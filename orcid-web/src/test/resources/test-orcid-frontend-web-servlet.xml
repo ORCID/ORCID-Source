@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+
+    =============================================================================
+
+    ORCID (R) Open Source
+    http://orcid.org
+
+    Copyright (c) 2012-2013 ORCID, Inc.
+    Licensed under an MIT-Style License (MIT)
+    http://orcid.org/open-source-license
+
+    This copyright and license information (including a link to the full license)
+    shall be included in its entirety in all copies or substantial portion of
+    the software.
+
+    =============================================================================
+
+-->
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:cache="http://www.springframework.org/schema/cache"
+	xsi:schemaLocation="http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.1.xsd
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd http://www.springframework.org/schema/cache http://www.springframework.org/schema/cache/spring-cache.xsd">
+
+	<!--  <import resource="classpath*:orcid-frontend-web-servlet.xml" /> -->
+	<context:property-placeholder file-encoding="UTF-8" location="classpath:test-orcid-frontend-web.properties" />
+
+	<bean name="webDriverHelper" class="org.orcid.frontend.forms.registration.test.WebDriverHelper">
+		<property name="baseUrl" value="${org.orcid.web.base.url}" />
+		<property name="webDriver" ref="webDriver" />	
+	</bean>
+	
+	<bean name="webDriver" class="org.openqa.selenium.htmlunit.HtmlUnitDriver"/>
+
+
+</beans>

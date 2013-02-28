@@ -1,0 +1,81 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!--
+
+    =============================================================================
+
+    ORCID (R) Open Source
+    http://orcid.org
+
+    Copyright (c) 2012-2013 ORCID, Inc.
+    Licensed under an MIT-Style License (MIT)
+    http://orcid.org/open-source-license
+
+    This copyright and license information (including a link to the full license)
+    shall be included in its entirety in all copies or substantial portion of 
+    the software.
+
+    =============================================================================
+
+-->
+<dataset>
+    <work work_id="1"
+          publication_year="2011"
+          publication_month="2"
+          publication_day="1"
+          title="A day in the life"
+          subtitle="Life in a day"
+          description="Very interesting book about days and life"
+          citation="Bobby Ewing, "
+          citation_type="FORMATTED_IEEE"
+            />
+    <work work_id="2"
+          publication_year="2011"
+          publication_month="2"
+          publication_day="1"
+          title="A day in the life"
+          citation="Sue Ellen ewing"
+          citation_type="FORMATTED_IEEE"
+            />
+
+    <patent patent_id="1"
+            patent_no="GB9283949348"
+            short_description="Telephone thing"
+            issue_date="2011-01-02"
+            issuing_country="UK"
+            />
+    <patent patent_id="2"
+            patent_no="GB9283949349"
+            short_description="Computer thing"
+            issue_date="2011-01-04"
+            issuing_country="UK"
+            />
+
+    <funding_grant grant_id="1"
+           agency_name="A grant agency 1"
+           agency_orcid="4444-4444-4444-4442"
+           grant_no="GB87273873837"
+           grant_external_id="AN-EXT-ID"
+           grant_external_program="External programme 1"
+           short_description="A short description of the grant 1"
+           grant_date="2009-01-02"
+            />
+    <funding_grant grant_id="2"
+           agency_name="A grant agency 2"
+           agency_orcid="4444-4444-4444-4442"
+           grant_no="GB87273873837"
+           grant_external_id="AN-EXT-ID"
+           grant_external_program="External programme 2"
+           short_description="A short description of the grant 2"
+           grant_date="2009-01-01"
+            />
+
+    <work_contributor work_contributor_id="1" work_id="1" credit_name="Jaylen Kessler" contributor_role="PRINCIPAL_INVESTIGATOR" contributor_sequence="FIRST"/>
+    <work_contributor work_contributor_id="2" work_id="1" credit_name="Makayla Lindgren" contributor_role="AUTHOR" contributor_sequence="ADDITIONAL"/>
+
+    <grant_contributor grant_contributor_id="1" grant_id="1" credit_name="Jaylen Kessler" contributor_role="PRINCIPAL_INVESTIGATOR" contributor_sequence="FIRST"/>
+    <grant_contributor grant_contributor_id="2" grant_id="1" credit_name="Makayla Lindgren" contributor_role="AUTHOR" contributor_sequence="ADDITIONAL"/>
+
+    <patent_contributor patent_contributor_id="1" patent_id="1" credit_name="Jaylen Kessler" contributor_role="PRINCIPAL_INVESTIGATOR" contributor_sequence="FIRST"/>
+    <patent_contributor patent_contributor_id="2" patent_id="1" credit_name="Makayla Lindgren" contributor_role="AUTHOR" contributor_sequence="ADDITIONAL"/>
+
+</dataset>

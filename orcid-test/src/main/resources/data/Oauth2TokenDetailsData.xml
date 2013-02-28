@@ -1,0 +1,50 @@
+<!--
+
+    =============================================================================
+
+    ORCID (R) Open Source
+    http://orcid.org
+
+    Copyright (c) 2012-2013 ORCID, Inc.
+    Licensed under an MIT-Style License (MIT)
+    http://orcid.org/open-source-license
+
+    This copyright and license information (including a link to the full license)
+    shall be included in its entirety in all copies or substantial portion of 
+    the software.
+
+    =============================================================================
+
+-->
+<dataset>
+    <oauth2_token_detail
+            id="1"
+            token_value="90703acf-d80f-4afc-8f95-9b48d28aaadb"
+            token_type="bearer"
+            token_expiration="2014-09-12"
+            user_orcid="4444-4444-4444-4443"
+            client_details_id="4444-4444-4444-4441"
+            is_approved="true"
+            redirect_uri="http://www.google.com"
+            scope_type="/orcid-profile/read-limited orcid-profile/create"
+            resource_id="orcid"
+            date_created="2012-07-23 08:16:00.00"
+            last_modified="2012-07-24 09:20:00.00"
+            authentication_key="85578468aafa19ed63a3de2f9eb11288"
+            />
+    <oauth2_token_detail
+            id="2"
+            token_value="90703acf-d80f-4afc-8f95-9b48d28aaadc"
+            token_type="bearer"
+            token_expiration="2014-09-12"
+            user_orcid="4444-4444-4444-4443"
+            client_details_id="4444-4444-4444-4445"
+            is_approved="true"
+            redirect_uri="http://www.google.com"
+            scope_type="/orcid-profile/read-limited"
+            resource_id="orcid"
+            date_created="2012-07-23 08:16:00.00"
+            last_modified="2012-07-24 09:20:00.00"
+            authentication_key="85578468aafa19ed63a3de2f9eb11289"
+            />
+</dataset>

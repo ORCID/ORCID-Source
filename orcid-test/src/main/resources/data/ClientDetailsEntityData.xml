@@ -1,0 +1,74 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!--
+
+    =============================================================================
+
+    ORCID (R) Open Source
+    http://orcid.org
+
+    Copyright (c) 2012-2013 ORCID, Inc.
+    Licensed under an MIT-Style License (MIT)
+    http://orcid.org/open-source-license
+
+    This copyright and license information (including a link to the full license)
+    shall be included in its entirety in all copies or substantial portion of 
+    the software.
+
+    =============================================================================
+
+-->
+
+<dataset>
+
+    <client_details client_details_id="4444-4444-4444-4441" client_secret="DhkFj5EI0qp6GsUKi55Vja+h+bsaKpBx" date_created="2012-04-25" last_modified="2012-04-25"/>
+    <client_details client_details_id="4444-4444-4444-4442" client_secret="DhkFj5EI0qp6GsUKi55Vja+h+bsaKpBx" date_created="2012-04-25" last_modified="2012-04-25"/>
+    <client_details client_details_id="4444-4444-4444-4443" client_secret="DhkFj5EI0qp6GsUKi55Vja+h+bsaKpBx" date_created="2012-04-25" last_modified="2012-04-25"/>
+    <client_details client_details_id="4444-4444-4444-4444" client_secret="DhkFj5EI0qp6GsUKi55Vja+h+bsaKpBx" date_created="2012-04-25" last_modified="2012-04-25"/>
+    <client_details client_details_id="4444-4444-4444-4445" client_secret="DhkFj5EI0qp6GsUKi55Vja+h+bsaKpBx" date_created="2012-04-25" last_modified="2012-04-25"/>
+
+    <client_authorised_grant_type client_details_id="4444-4444-4444-4441" grant_type="authorization_code" />
+    <client_authorised_grant_type client_details_id="4444-4444-4444-4441" grant_type="refresh_token" />
+    <client_authorised_grant_type client_details_id="4444-4444-4444-4441" grant_type="client_credentials" />
+
+    <client_authorised_grant_type client_details_id="4444-4444-4444-4442" grant_type="authorization_code" />
+    <client_authorised_grant_type client_details_id="4444-4444-4444-4442" grant_type="refresh_token" />
+    <client_authorised_grant_type client_details_id="4444-4444-4444-4442" grant_type="client_credentials" />
+
+    <client_authorised_grant_type client_details_id="4444-4444-4444-4443" grant_type="authorization_code" />
+    <client_authorised_grant_type client_details_id="4444-4444-4444-4443" grant_type="refresh_token" />
+    <client_authorised_grant_type client_details_id="4444-4444-4444-4443" grant_type="client_credentials" />
+
+    <client_authorised_grant_type client_details_id="4444-4444-4444-4444" grant_type="authorization_code" />
+    <client_authorised_grant_type client_details_id="4444-4444-4444-4444" grant_type="refresh_token" />
+    <client_authorised_grant_type client_details_id="4444-4444-4444-4444" grant_type="client_credentials" />
+
+    <client_authorised_grant_type client_details_id="4444-4444-4444-4445" grant_type="authorization_code" />
+    <client_authorised_grant_type client_details_id="4444-4444-4444-4445" grant_type="refresh_token" />
+    <client_authorised_grant_type client_details_id="4444-4444-4444-4445" grant_type="client_credentials" />
+
+    <client_granted_authority client_details_id="4444-4444-4444-4441" granted_authority="ROLE_CLIENT"/>
+    <client_granted_authority client_details_id="4444-4444-4444-4442" granted_authority="ROLE_CLIENT"/>
+    <client_granted_authority client_details_id="4444-4444-4444-4443" granted_authority="ROLE_CLIENT"/>
+    <client_granted_authority client_details_id="4444-4444-4444-4444" granted_authority="ROLE_CLIENT"/>
+    <client_granted_authority client_details_id="4444-4444-4444-4445" granted_authority="ROLE_CLIENT"/>
+
+    <client_redirect_uri client_details_id="4444-4444-4444-4441" redirect_uri="http:://www.4444-4444-4444-4441.com/redirect/oauth" 
+    predefined_client_redirect_scope ="/orcid-profile/create"/>
+    <client_redirect_uri client_details_id="4444-4444-4444-4442" redirect_uri="http:://www.4444-4444-4444-4442.com/redirect/oauth"/>
+    <client_redirect_uri client_details_id="4444-4444-4444-4443" redirect_uri="http:://www.4444-4444-4444-4443.com/redirect/oauth"/>
+    <client_redirect_uri client_details_id="4444-4444-4444-4444" redirect_uri="http:://www.4444-4444-4444-4444.com/redirect/oauth"/>
+    <client_redirect_uri client_details_id="4444-4444-4444-4445" redirect_uri="http:://www.4444-4444-4444-4445.com/redirect/oauth"/>
+
+    <client_resource_id client_details_id="4444-4444-4444-4441" resource_id="ORCID"/>
+    <client_resource_id client_details_id="4444-4444-4444-4442" resource_id="ORCID"/>
+    <client_resource_id client_details_id="4444-4444-4444-4443" resource_id="ORCID"/>
+    <client_resource_id client_details_id="4444-4444-4444-4444" resource_id="ORCID"/>
+    <client_resource_id client_details_id="4444-4444-4444-4445" resource_id="ORCID"/>
+
+    <client_scope client_details_id="4444-4444-4444-4441" scope_type="/orcid-bio/read-limited"/>
+    <client_scope client_details_id="4444-4444-4444-4442" scope_type="/orcid-bio/read-limited"/>
+    <client_scope client_details_id="4444-4444-4444-4443" scope_type="/orcid-bio/read-limited"/>
+    <client_scope client_details_id="4444-4444-4444-4444" scope_type="/orcid-bio/read-limited"/>
+    <client_scope client_details_id="4444-4444-4444-4445" scope_type="/orcid-bio/read-limited"/>
+
+</dataset>

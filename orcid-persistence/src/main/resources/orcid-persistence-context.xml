@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+
+    =============================================================================
+
+    ORCID (R) Open Source
+    http://orcid.org
+
+    Copyright (c) 2012-2013 ORCID, Inc.
+    Licensed under an MIT-Style License (MIT)
+    http://orcid.org/open-source-license
+
+    This copyright and license information (including a link to the full license)
+    shall be included in its entirety in all copies or substantial portion of
+    the software.
+
+    =============================================================================
+
+-->
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:tx="http://www.springframework.org/schema/tx"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd
+        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.1.xsd"
+>
+
+    <tx:annotation-driven />
+
+    <!-- ${org.orcid.persistence.properties} gets replaced during the Maven
+         build, but other properties are escaped from Maven build replacement by preceding
+         with \ and so are handled by Spring. -->
+    <context:property-placeholder location="\${org.orcid.config.file:}" ignore-resource-not-found="true" ignore-unresolvable="true" />
+    <context:property-placeholder location="classpath:${org.orcid.persistence.properties}" ignore-resource-not-found="true"
+        ignore-unresolvable="true" />
+
+    <bean id="jpaJaxbEntityAdapter" class="org.orcid.persistence.adapter.impl.JpaJaxbEntityAdapterImpl">
+        <constructor-arg ref="jpa2JaxbAdapter" />
+        <constructor-arg ref="jaxb2JpaAdapter" />
+    </bean>
+
+    <bean id="jpa2JaxbAdapter" class="org.orcid.persistence.adapter.impl.Jpa2JaxbAdapterImpl" />
+    <bean id="jaxb2JpaAdapter" class="org.orcid.persistence.adapter.impl.Jaxb2JpaAdapterImpl" />
+
+    <bean id="profileDao" class="org.orcid.persistence.dao.impl.ProfileDaoImpl" />
+    
+    <bean id="emailDao" class="org.orcid.persistence.dao.impl.EmailDaoImpl" />
+
+    <bean id="hearAboutDao" class="org.orcid.persistence.dao.impl.GenericDaoImpl">
+        <constructor-arg value="org.orcid.persistence.jpa.entities.HearAboutEntity" />
+    </bean>   
+
+    <bean id="securityQuestionDao" class="org.orcid.persistence.dao.impl.GenericDaoImpl">
+        <constructor-arg value="org.orcid.persistence.jpa.entities.SecurityQuestionEntity" />
+    </bean>
+
+    <bean id="registrationRoleDao" class="org.orcid.persistence.dao.impl.GenericDaoImpl">
+        <constructor-arg value="org.orcid.persistence.jpa.entities.RegistrationRoleEntity" />
+    </bean>
+
+    <bean id="refDataDao" class="org.orcid.persistence.dao.impl.GenericDaoImpl">
+        <constructor-arg value="org.orcid.persistence.jpa.entities.RefDataEntity" />
+    </bean>
+
+    <bean id="subjectDao" class="org.orcid.persistence.dao.impl.GenericDaoImpl">
+        <constructor-arg value="org.orcid.persistence.jpa.entities.SubjectEntity" />
+    </bean>
+
+    <bean id="workDao" class="org.orcid.persistence.dao.impl.GenericDaoImpl">
+        <constructor-arg value="org.orcid.persistence.jpa.entities.WorkEntity" />
+    </bean>
+
+    <bean id="clientDetailsDao" class="org.orcid.persistence.dao.impl.ClientDetailsDaoImpl" />
+
+    <bean id="clientAuthorisedGrantTypeDao" class="org.orcid.persistence.dao.impl.GenericDaoImpl">
+        <constructor-arg value="org.orcid.persistence.jpa.entities.ClientAuthorisedGrantTypeEntity" />
+    </bean>
+
+    <bean id="clientGrantedAuthorityDao" class="org.orcid.persistence.dao.impl.GenericDaoImpl">
+        <constructor-arg value="org.orcid.persistence.jpa.entities.ClientGrantedAuthorityEntity" />
+    </bean>
+
+    <bean id="clientRedirectUriDao" class="org.orcid.persistence.dao.impl.GenericDaoImpl">
+        <constructor-arg value="org.orcid.persistence.jpa.entities.ClientRedirectUriEntity" />
+    </bean>
+
+    <bean id="clientResourceIdDao" class="org.orcid.persistence.dao.impl.GenericDaoImpl">
+        <constructor-arg value="org.orcid.persistence.jpa.entities.ClientResourceIdEntity" />
+    </bean>
+
+    <bean id="clientScopeDao" class="org.orcid.persistence.dao.impl.GenericDaoImpl">
+        <constructor-arg value="org.orcid.persistence.jpa.entities.ClientScopeEntity" />
+    </bean>
+
+    <bean id="givenPermissionToDao" class="org.orcid.persistence.dao.impl.GivenPermissionToDaoImpl" />
+
+    <bean id="orcidOauth2TokenDetailDao" class="org.orcid.persistence.dao.impl.OrcidOauth2TokenDetailDaoImpl" />
+    <bean id="orcidOauth2AuthoriziationCodeDetailDao" class="org.orcid.persistence.dao.impl.OrcidOauth2AuthoriziationCodeDetailDaoImpl" />
+
+    <bean id="solrDao" class="org.orcid.persistence.dao.impl.SolrDaoImpl" />
+    
+    <bean id="clientRedirectDao" class="org.orcid.persistence.dao.impl.ClientRedirectDaoImpl" />
+
+    <bean id="isoCountryReferenceDataDao" class="org.orcid.persistence.dao.impl.GenericDaoImpl">
+        <constructor-arg value="org.orcid.persistence.jpa.entities.CountryIsoEntity" />
+    </bean>
+    
+    <bean id="profileEventDao" class="org.orcid.persistence.dao.impl.GenericDaoImpl">
+        <constructor-arg value="org.orcid.persistence.jpa.entities.ProfileEventEntity" />
+    </bean>    
+    
+    <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean" depends-on="liquibase">
+        <property name="jpaVendorAdapter" ref="jpaVendorAdapter" />
+        <property name="dataSource" ref="\${org.orcid.persistence.db.dataSource}" />
+        <property name="persistenceUnitName" value="orcid" />
+    </bean>
+
+    <bean id="liquibase" class="liquibase.integration.spring.SpringLiquibase">
+        <property name="dataSource" ref="\${org.orcid.persistence.db.dataSource}" />
+        <property name="changeLog" value="classpath:db-master.xml" />
+    </bean>
+
+    <bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor" />
+
+    <bean id="jpaVendorAdapter" class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
+        <property name="databasePlatform" value="\${org.orcid.persistence.db.dialect}" />
+        <property name="showSql" value="\${org.orcid.persistence.db.showSql}" />
+        <property name="generateDdl" value="\${org.orcid.persistence.db.generateDdl}" />
+    </bean>
+
+    <bean name="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+        <property name="entityManagerFactory" ref="entityManagerFactory" />
+    </bean>
+
+    <bean name="transactionTemplate" class="org.springframework.transaction.support.TransactionTemplate">
+        <constructor-arg ref="transactionManager" />
+        <property name="propagationBehaviorName" value="PROPAGATION_REQUIRED" />
+    </bean>
+
+    <bean id="pooledDataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
+        <property name="driverClass" value="\${org.orcid.persistence.db.class}" />
+        <property name="jdbcUrl" value="\${org.orcid.persistence.db.url}" />
+        <property name="user" value="\${org.orcid.persistence.db.username}" />
+        <property name="password" value="\${org.orcid.persistence.db.password}" />
+        <property name="initialPoolSize" value="\${org.orcid.persistence.db.initialPoolSize}" />
+        <property name="minPoolSize" value="\${org.orcid.persistence.db.minPoolSize}" />
+        <property name="maxPoolSize" value="\${org.orcid.persistence.db.maxPoolSize}" />
+        <property name="maxStatements" value="\${org.orcid.persistence.db.maxStatements}" />
+        <property name="idleConnectionTestPeriod" value="\${org.orcid.persistence.db.idleConnectionTestPeriod}" />
+        <property name="testConnectionOnCheckin" value="\${org.orcid.persistence.db.testConnectionOnCheckin}" />
+        <property name="preferredTestQuery" value="\${org.orcid.persistence.db.preferredTestQuery}" />
+        <property name="numHelperThreads" value="\${org.orcid.persistence.db.numHelperThreads:10}"/>
+    </bean>
+
+    <bean id="simpleDataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <property name="driverClassName" value="\${org.orcid.persistence.db.class}" />
+        <property name="url" value="\${org.orcid.persistence.db.url}" />
+        <property name="username" value="\${org.orcid.persistence.db.username}" />
+        <property name="password" value="\${org.orcid.persistence.db.password}" />
+    </bean>
+
+    <!--SOLR -->
+    <!-- Confusingly, the client is actually called a server -->
+    <bean id="solrServer" class="org.apache.solr.client.solrj.impl.CommonsHttpSolrServer">
+        <constructor-arg value="\${org.orcid.persistence.solr.url}" />
+        <property name="soTimeout" value="\${org.orcid.persistence.solr.socketTimeout}" />
+        <property name="connectionTimeout" value="\${org.orcid.persistence.solr.connectionTimeout}" />
+        <property name="allowCompression" value="\${org.orcid.persistence.solr.allowCompression}" />
+        <property name="maxRetries" value="\${org.orcid.persistence.solr.maxRetries}" />
+        <property name="defaultMaxConnectionsPerHost" value="\${org.orcid.persistence.solr.maxTotalConnections}" />
+        <property name="maxTotalConnections" value="\${org.orcid.persistence.solr.defaultMaxConnectionsPerHost}" />
+        <property name="parser" ref="responseParser" />
+    </bean>
+    <bean name="responseParser" class="org.apache.solr.client.solrj.impl.XMLResponseParser"></bean>
+
+    <bean id="externalEncryptor" class="org.jasypt.encryption.pbe.PooledPBEStringEncryptor">
+        <property name="algorithm" value="PBEWithMD5AndDES" />
+        <property name="password" value="#{ T(org.springframework.util.StringUtils).trimTrailingWhitespace('${org.orcid.core.passPhraseForExternalEncryption:HGFEDCBA}') }" />
+        <property name="keyObtentionIterations" value="${org.orcid.core.iterationCountForExternalEncryption:19}" />
+        <property name="poolSize" value="${org.orcid.core.poolSizeForExternalEncryption:4}" />
+        <property name="saltGenerator">
+            <bean class="org.jasypt.salt.ZeroSaltGenerator"/>
+        </property>
+    </bean>
+
+    <bean id="internalEncryptor" class="org.jasypt.encryption.pbe.PooledPBEStringEncryptor">
+        <property name="algorithm" value="PBEWithMD5AndDES" />
+        <property name="password" value="#{ T(org.springframework.util.StringUtils).trimTrailingWhitespace('${org.orcid.core.passPhraseForInternalEncryption:xxxx}') }" />
+        <property name="keyObtentionIterations" value="${org.orcid.core.iterationCountForInternalEncryption:1111}" />
+        <property name="poolSize" value="${org.orcid.core.poolSizeForInternalEncryption:16}" />
+    </bean>
+
+    <bean id="hibernateStringEncryptor" class="org.jasypt.hibernate.encryptor.HibernatePBEStringEncryptor">
+        <property name="registeredName" value="hibernateStringEncryptor" />
+        <property name="encryptor" ref="internalEncryptor" />
+    </bean>
+
+</beans>

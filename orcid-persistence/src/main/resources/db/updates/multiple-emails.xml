@@ -1,0 +1,56 @@
+<!--
+
+    =============================================================================
+
+    ORCID (R) Open Source
+    http://orcid.org
+
+    Copyright (c) 2012-2013 ORCID, Inc.
+    Licensed under an MIT-Style License (MIT)
+    http://orcid.org/open-source-license
+
+    This copyright and license information (including a link to the full license)
+    shall be included in its entirety in all copies or substantial portion of
+    the software.
+
+    =============================================================================
+
+-->
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+        
+    <changeSet id="CREATE-NEW-EMAIL-TABLE" author="Will Simpson">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="email"/>
+            </not>
+        </preConditions>
+        <createTable tableName="email">
+            <column name="date_created" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="last_modified" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="email" type="VARCHAR(350)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="orcid" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="visibility" defaultValue="PRIVATE" type="${visibility.type}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_primary" type="boolean" defaultValueBoolean="true">
+                <constraints nullable = "false"/>
+            </column>
+            <column name="is_current" type="boolean" defaultValueBoolean="true">
+                <constraints nullable = "false"/>
+            </column>
+            <column name="is_verified" type="boolean" defaultValueBoolean="false">
+                <constraints nullable = "false"/>
+            </column>
+        </createTable>
+        <addPrimaryKey tableName="email" columnNames="email" schemaName="public" constraintName="email_pk"/>
+        <addForeignKeyConstraint constraintName="email_orcid_fk"
+                                 baseTableName="email" baseColumnNames="orcid" baseTableSchemaName="public" 
+                                 referencedTableName="profile" referencedColumnNames="orcid" referencedTableSchemaName="public"/>
+    </changeSet>
+
+</databaseChangeLog>

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<orcid-profile xmlns="http://www.orcid.org/ns/orcid">
+    <orcid>4444-4444-4444-4446</orcid>
+    <orcid-history/>
+    <orcid-bio>
+        <personal-details>
+            <given-names>Johnny</given-names>
+            <family-name>Simpson</family-name>
+            <credit-name visibility="private">Homer Thompson</credit-name>
+            <other-names visibility="limited">
+                <other-name>Gal</other-name>
+                <other-name>Dove</other-name>
+            </other-names>
+        </personal-details>
+        <biography>my biography</biography>
+        <researcher-urls visibility="public">
+            <researcher-url>
+                <url-name>Ok this might not be my site</url-name>
+                <url>www.bbc.co.uk</url>
+            </researcher-url>
+        </researcher-urls>
+        <contact-details>
+            <email primary="true" visibility="limited"/>
+            <address>
+                <country visibility="limited">UK</country>
+            </address>
+        </contact-details>
+        <keywords visibility="public">
+            <keyword>Fudd</keyword>
+            <keyword>The</keyword>
+            <keyword>Wicker</keyword>
+        </keywords>
+        <external-identifiers visibility="public"/>
+    </orcid-bio>
+</orcid-profile>

@@ -1,0 +1,304 @@
+<!--
+
+    =============================================================================
+
+    ORCID (R) Open Source
+    http://orcid.org
+
+    Copyright (c) 2012-2013 ORCID, Inc.
+    Licensed under an MIT-Style License (MIT)
+    http://orcid.org/open-source-license
+
+    This copyright and license information (including a link to the full license)
+    shall be included in its entirety in all copies or substantial portion of
+    the software.
+
+    =============================================================================
+
+-->
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+	<changeSet author="will" id="ADD-TABLE-FOR-DELEGATION-OF-PERMISSIONS">
+		<createTable tableName="given_permission_to" schemaName="public">
+			<column name="receiver_orcid" type="VARCHAR(19)">
+				<constraints nullable="false" />
+			</column>
+			<column name="giver_orcid" type="VARCHAR(19)">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+		<addPrimaryKey columnNames="giver_orcid, receiver_orcid"
+			constraintName="given_permission_to_pkey" tableName="given_permission_to" />
+		<addForeignKeyConstraint baseColumnNames="giver_orcid"
+			baseTableName="given_permission_to" baseTableSchemaName="public"
+			constraintName="giver_orcid_to_profile_orcid" deferrable="false"
+			initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+			referencedColumnNames="orcid" referencedTableName="profile"
+			referencedTableSchemaName="public" referencesUniqueColumn="false" />
+		<addForeignKeyConstraint baseColumnNames="receiver_orcid"
+			baseTableName="given_permission_to" baseTableSchemaName="public"
+			constraintName="receiver_orcid_to_profile_orcid" deferrable="false"
+			initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+			referencedColumnNames="orcid" referencedTableName="profile"
+			referencedTableSchemaName="public" referencesUniqueColumn="false" />
+	</changeSet>
+
+	<changeSet author="will"
+		id="ADD-DATES-AND-ID-TO-DELEGATION-OF-PERMISSIONS">
+		<addColumn tableName="given_permission_to">
+			<column name="date_created" type="TIMESTAMP WITH TIME ZONE" />
+			<column name="last_modified" type="TIMESTAMP WITH TIME ZONE" />
+			<column name="approval_date" type="TIMESTAMP WITH TIME ZONE" />
+			<column name="given_permission_to_id" type="bigint">
+				<constraints nullable="false" />
+			</column>
+		</addColumn>
+		<dropPrimaryKey tableName="given_permission_to"
+			constraintName="given_permission_to_pkey" />
+		<addPrimaryKey columnNames="given_permission_to_id"
+			constraintName="given_permission_to_pkey" tableName="given_permission_to" />
+	</changeSet>
+
+	<changeSet id="ADD-SEQUENCE-FOR-DELEGATION-OF-PERMISSIONS"
+		author="will" dbms="postgresql">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<sequenceExists sequenceName="given_permission_to_seq" />
+			</not>
+		</preConditions>
+		<createSequence sequenceName="given_permission_to_seq" />
+	</changeSet>
+
+	<changeSet id="ADD-AUTO-COL-FOR-DELEGATION-OF-PERMISSIONS"
+		author="will" dbms="hsqldb">
+		<addAutoIncrement tableName="given_permission_to"
+			columnName="given_permission_to_id" columnDataType="bigint" />
+	</changeSet>
+
+	<changeSet id="ADD-VISIBILITY-ENUMS" author="Declan Newman">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<and>
+					<columnExists tableName="affiliate_profile_institution"
+						columnName="affiliate_institution_name_visibility" />
+					<columnExists tableName="affiliate_profile_institution"
+						columnName="affiliate_institution_detail_visibility" />
+					<columnExists tableName="primary_profile_institution"
+						columnName="primary_profile_institution_name_visibility" />
+					<columnExists tableName="primary_profile_institution"
+						columnName="primary_profile_institution_detail_visibility" />
+					<columnExists tableName="profile" columnName="personal_details_visibility" />
+					<columnExists tableName="profile" columnName="contact_details_visibility" />
+					<columnExists tableName="profile" columnName="short_description_visibility" />
+					<columnExists tableName="profile" columnName="subjects_visibility" />
+					<columnExists tableName="profile" columnName="keyword_visibility" />
+					<columnExists tableName="profile"
+						columnName="external_identifiers_visibility" />
+					<columnExists tableName="profile" columnName="researcher_url_visibility" />
+					<columnExists tableName="profile" columnName="past_institutions_visibility" />
+				</and>
+			</not>
+		</preConditions>
+
+		<addColumn tableName="affiliate_profile_institution">
+			<column name="affiliate_institution_name_visibility" type="${visibility.type}" />
+			<column name="affiliate_institution_detail_visibility" type="${visibility.type}" />
+		</addColumn>
+		<addColumn tableName="primary_profile_institution">
+			<column name="primary_profile_institution_name_visibility"
+				type="${visibility.type}" />
+			<column name="primary_profile_institution_detail_visibility"
+				type="${visibility.type}" />
+		</addColumn>
+		<addColumn tableName="profile">
+			<column name="personal_details_visibility" type="${visibility.type}" />
+			<column name="contact_details_visibility" type="${visibility.type}" />
+			<column name="short_description_visibility" type="${visibility.type}" />
+			<column name="subjects_visibility" type="${visibility.type}" />
+			<column name="keyword_visibility" type="${visibility.type}" />
+			<column name="external_identifiers_visibility" type="${visibility.type}" />
+			<column name="researcher_url_visibility" type="${visibility.type}" />
+			<column name="past_institutions_visibility" type="${visibility.type}" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="DROP-KEYWORD-VISIBILITY" author="Declan Newman">
+		<preConditions onFail="MARK_RAN">
+			<columnExists tableName="profile" columnName="keyword_visibility" />
+		</preConditions>
+		<dropColumn tableName="profile" columnName="keyword_visibility" />
+	</changeSet>
+
+	<changeSet id="ADD-OTHER_NAMES_VISIBILITY" author="Declan Newman">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<columnExists tableName="profile" columnName="other_names_visibility" />
+			</not>
+		</preConditions>
+		<addColumn tableName="profile">
+			<column name="other_names_visibility" type="${visibility.type}" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="CREATE-OAUTH-TABLES" author="Declan Newman">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<and>
+					<tableExists tableName="client_details" />
+					<tableExists tableName="client_authorised_grant_type" />
+					<tableExists tableName="client_granted_authority" />
+					<tableExists tableName="client_redirect_uri" />
+					<tableExists tableName="client_resource_id" />
+					<tableExists tableName="client_scope" />
+				</and>
+			</not>
+		</preConditions>
+		<createTable tableName="client_details">
+			<column name="client_details_id" type="VARCHAR(150)" />
+			<column name="client_secret" type="VARCHAR(150)" />
+			<column name="date_created" type="TIMESTAMP WITH TIME ZONE" />
+			<column name="last_modified" type="TIMESTAMP WITH TIME ZONE" />
+		</createTable>
+		<createTable tableName="client_authorised_grant_type">
+			<column name="client_details_id" type="VARCHAR(150)" />
+			<column name="grant_type" type="VARCHAR(150)" />
+			<column name="date_created" type="TIMESTAMP WITH TIME ZONE" />
+			<column name="last_modified" type="TIMESTAMP WITH TIME ZONE" />
+		</createTable>
+		<createTable tableName="client_granted_authority">
+			<column name="client_details_id" type="VARCHAR(150)" />
+			<column name="granted_authority" type="VARCHAR(150)" />
+			<column name="date_created" type="TIMESTAMP WITH TIME ZONE" />
+			<column name="last_modified" type="TIMESTAMP WITH TIME ZONE" />
+		</createTable>
+		<createTable tableName="client_redirect_uri">
+			<column name="client_details_id" type="VARCHAR(150)" />
+			<column name="redirect_uri" type="VARCHAR(500)" />
+			<column name="date_created" type="TIMESTAMP WITH TIME ZONE" />
+			<column name="last_modified" type="TIMESTAMP WITH TIME ZONE" />
+		</createTable>
+		<createTable tableName="client_resource_id">
+			<column name="client_details_id" type="VARCHAR(150)" />
+			<column name="resource_id" type="VARCHAR(175)" />
+			<column name="date_created" type="TIMESTAMP WITH TIME ZONE" />
+			<column name="last_modified" type="TIMESTAMP WITH TIME ZONE" />
+		</createTable>
+		<createTable tableName="client_scope">
+			<column name="client_details_id" type="VARCHAR(150)" />
+			<column name="scope_type" type="VARCHAR(150)" />
+			<column name="date_created" type="TIMESTAMP WITH TIME ZONE" />
+			<column name="last_modified" type="TIMESTAMP WITH TIME ZONE" />
+		</createTable>
+
+		<addPrimaryKey columnNames="client_details_id"
+			constraintName="client_details_pkey" tableName="client_details" />
+		<addPrimaryKey columnNames="client_details_id, scope_type"
+			constraintName="client_scope_pkey" tableName="client_scope" />
+		<addPrimaryKey columnNames="client_details_id, grant_type"
+			constraintName="client_authorised_grant_type_pkey" tableName="client_authorised_grant_type" />
+		<addPrimaryKey columnNames="client_details_id, granted_authority"
+			constraintName="client_granted_authority_pkey" tableName="client_granted_authority" />
+		<addPrimaryKey columnNames="client_details_id, redirect_uri"
+			constraintName="client_redirect_uri_pkey" tableName="client_redirect_uri" />
+		<addPrimaryKey columnNames="client_details_id, resource_id"
+			constraintName="client_resource_id_pkey" tableName="client_resource_id" />
+
+		<addForeignKeyConstraint baseColumnNames="client_details_id"
+			baseTableName="client_authorised_grant_type" baseTableSchemaName="public"
+			constraintName="client_details_authorised_grant_type_fk" deferrable="false"
+			initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+			referencedColumnNames="client_details_id" referencedTableName="client_details"
+			referencedTableSchemaName="public" referencesUniqueColumn="false" />
+
+		<addForeignKeyConstraint baseColumnNames="client_details_id"
+			baseTableName="client_scope" baseTableSchemaName="public"
+			constraintName="client_scope_fk" deferrable="false"
+			initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+			referencedColumnNames="client_details_id" referencedTableName="client_details"
+			referencedTableSchemaName="public" referencesUniqueColumn="false" />
+
+		<addForeignKeyConstraint baseColumnNames="client_details_id"
+			baseTableName="client_granted_authority" baseTableSchemaName="public"
+			constraintName="client_details_client_granted_authority_fk"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="client_details_id"
+			referencedTableName="client_details" referencedTableSchemaName="public"
+			referencesUniqueColumn="false" />
+
+		<addForeignKeyConstraint baseColumnNames="client_details_id"
+			baseTableName="client_redirect_uri" baseTableSchemaName="public"
+			constraintName="client_redirect_uri_fk" deferrable="false"
+			initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+			referencedColumnNames="client_details_id" referencedTableName="client_details"
+			referencedTableSchemaName="public" referencesUniqueColumn="false" />
+
+		<addForeignKeyConstraint baseColumnNames="client_details_id"
+			baseTableName="client_resource_id" baseTableSchemaName="public"
+			constraintName="client_resource_id_fk" deferrable="false"
+			initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+			referencedColumnNames="client_details_id" referencedTableName="client_details"
+			referencedTableSchemaName="public" referencesUniqueColumn="false" />
+
+		<createIndex tableName="client_details" indexName="client_details_id_idx">
+			<column name="client_details_id" />
+			<column name="client_secret" />
+		</createIndex>
+
+		<createIndex tableName="client_authorised_grant_type"
+			indexName="client_authorised_grant_type_id_idx">
+			<column name="client_details_id" />
+			<column name="grant_type" />
+		</createIndex>
+
+		<createIndex tableName="client_granted_authority"
+			indexName="client_granted_authority_id_idx">
+			<column name="client_details_id" />
+			<column name="granted_authority" />
+		</createIndex>
+
+		<createIndex tableName="client_redirect_uri" indexName="client_redirect_uri_id_idx">
+			<column name="client_details_id" />
+			<column name="redirect_uri" />
+		</createIndex>
+
+		<createIndex tableName="client_resource_id" indexName="client_resource_id_idx">
+			<column name="client_details_id" />
+			<column name="resource_id" />
+		</createIndex>
+
+		<createIndex tableName="client_scope" indexName="client_scope_id_idx">
+			<column name="client_details_id" />
+			<column name="scope_type" />
+		</createIndex>
+
+		<modifySql dbms="hsqldb">
+			<replace replace="bytea" with="VARBINARY(4096)" />
+		</modifySql>
+		<modifySql dbms="postgresql">
+			<replace replace="WITH TIME ZONE" with="WITHOUT TIME ZONE" />
+		</modifySql>
+
+	</changeSet>
+
+	<changeSet author="james" id="ADD-VISIBILITY-FOR-WORKS-TO-PROFILE">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<columnExists tableName="profile" columnName="work_visibility" />
+			</not>
+		</preConditions>
+		<addColumn tableName="profile">
+			<column name="works_visibility" type="${visibility.type}" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet author="will"
+		id="CHANGE_PAGE_NUMBERS_FROM_INTEGER_TO_STRING">
+		<modifyDataType tableName="work" columnName="page_start"
+			newDataType="varchar(20)" />
+		<modifyDataType tableName="work" columnName="page_end"
+			newDataType="varchar(20)" />
+	</changeSet>
+
+</databaseChangeLog>

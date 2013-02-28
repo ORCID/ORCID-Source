@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    =============================================================================
+
+    ORCID (R) Open Source
+    http://orcid.org
+
+    Copyright (c) 2012-2013 ORCID, Inc.
+    Licensed under an MIT-Style License (MIT)
+    http://orcid.org/open-source-license
+
+    This copyright and license information (including a link to the full license)
+    shall be included in its entirety in all copies or substantial portion of 
+    the software.
+
+    =============================================================================
+
+-->
+<orcid-message xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.orcid.org/ns/orcid ../../../../orcid-model/src/main/resources/orcid-message-1.0.10.xsd"
+	xmlns="http://www.orcid.org/ns/orcid">
+	<message-version>1.0.10</message-version>
+	<!-- Error message, if applicable -->
+	<!-- Unable to connect to ORCID, no matching researchers, etc. -->
+	<!-- <error-desc>No researcher found.</error-desc> -->
+	<orcid-search-results>
+		<orcid-search-result>
+			<relevancy-score>0.65</relevancy-score>
+			<orcid-profile>
+				<orcid>4444-4444-4444-4446</orcid>
+				<orcid-id>http://orcid.org/4444-4444-4444-4446</orcid-id>
+				<orcid-history>
+					<creation-method>API</creation-method>
+					<completion-date>2012-10-09T15:50:07</completion-date>
+					<submission-date>2012-10-09T15:50:07</submission-date>
+					<!-- In short, researcher has claimed the profile if confirmed=true -->
+					<claimed>true</claimed>
+					<!-- The name of the institution that invited the reasearcher to register 
+						with ORCID -->
+					<source>
+                        <source-orcid>2111-1111-1111-1105</source-orcid>
+                        <source-name>Sponsor 1</source-name>
+                        <source-date>2012-11-21T08:56:33</source-date>
+                    </source>
+				</orcid-history>
+				<orcid-bio scope="update">
+					<personal-details>
+						<given-names>Josiah</given-names>
+						<family-name>Carberry</family-name>
+						<credit-name>J. S. Carberry</credit-name>
+						<other-names>
+							<other-name>Josiah S Carberry</other-name>
+							<other-name>Josiah Carberry</other-name>
+						</other-names>
+					</personal-details>
+                    <biography visibility="limited"> Josiah Stinkney Carberry is a
+                        fictional professor, created as a joke. He is said to have taught at Brown
+                        University, and to be known for his work in "psychoceramics", the supposed
+                        study of "cracked pots". </biography>
+					<contact-details>
+						<email primary="true" visibility="limited" verfied="true">josiah_carberry@brown.edu</email>
+                        <email primary="false" visibility="limited">josiah_carberry_1@brown.edu</email>
+                        <email primary="false" visibility="limited">josiah_carberry_2@brown.edu</email>
+					</contact-details>
+					<keywords visibility="public">
+						<keyword>Bilocation</keyword>
+						<keyword>Humour</keyword>
+					</keywords>
+                    <external-identifiers visibility="public">
+                        <external-identifier>
+                            <external-id-orcid>8888-8888-8888-8880</external-id-orcid>
+                            <external-id-common-name>Facebook</external-id-common-name>
+                            <external-id-reference>12344</external-id-reference>
+                            <external-id-url>http://www.facebook.com/12344</external-id-url>
+                        </external-identifier>
+                    </external-identifiers>
+                    <affiliations>
+                        <affiliation visibility="public">
+                            <affiliation-name>Brown University</affiliation-name>
+                            <affiliation-type>funded-by</affiliation-type>
+                            <address>
+                                <country>United States</country>
+                            </address>
+                            <department-name>Psychoceramics</department-name>
+                            <role-title>Researcher (Academic)</role-title>
+                        </affiliation>
+                        <affiliation visibility="public">
+                            <affiliation-name>Yale University</affiliation-name>
+                            <affiliation-type>current-primary-institution</affiliation-type>
+                            <address>
+                                <country>United States</country>
+                            </address>
+                            <department-name>Law</department-name>
+                            <role-title>Researcher (Academic)</role-title>
+                        </affiliation>
+                    </affiliations>
+					<delegation visibility="limited">
+						<given-permission-to>
+							<delegation-details>
+								<approval-date>2012-11-10T13:18:51</approval-date>
+								<delegate-summary>
+                                    <orcid>8888-8888-8888-8880</orcid>
+                                    <credit-name>Bobie Ewing</credit-name>
+                                </delegate-summary>
+							</delegation-details>
+						</given-permission-to>
+						<given-permission-by>
+							<delegation-details>
+								<approval-date>2012-12-22T08:16:22</approval-date>
+								<delegate-summary>
+									<orcid>2222-2222-2222-2229</orcid>
+									<credit-name>W. J. R. Simpson</credit-name>
+								</delegate-summary>
+							</delegation-details>
+						</given-permission-by>
+					</delegation>
+				</orcid-bio>
+			</orcid-profile>
+		</orcid-search-result>
+	</orcid-search-results>
+</orcid-message>

@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+
+    =============================================================================
+
+    ORCID (R) Open Source
+    http://orcid.org
+
+    Copyright (c) 2012-2013 ORCID, Inc.
+    Licensed under an MIT-Style License (MIT)
+    http://orcid.org/open-source-license
+
+    This copyright and license information (including a link to the full license)
+    shall be included in its entirety in all copies or substantial portion of
+    the software.
+
+    =============================================================================
+
+-->
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.1.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd">
+
+    <tx:annotation-driven transaction-manager="auditTransactionManager"/>
+
+    <context:property-placeholder location="\${org.orcid.config.file:}" ignore-resource-not-found="true" ignore-unresolvable="true" />
+    <context:property-placeholder location="classpath:${org.orcid.audit.properties}" ignore-resource-not-found="true" ignore-unresolvable="true" />
+
+    <bean id="auditEntityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean" depends-on="auditLiquibase">
+        <property name="jpaVendorAdapter" ref="auditJpaVendorAdapter" />
+        <property name="dataSource" ref="\${org.orcid.audit.db.dataSource}" />
+        <property name="persistenceUnitName" value="orcid_audit" />
+    </bean>
+
+    <bean id="auditLiquibase" class="liquibase.integration.spring.SpringLiquibase">
+        <property name="dataSource" ref="\${org.orcid.audit.db.dataSource}" />
+        <property name="changeLog" value="classpath:/audit-db-master.xml" />
+    </bean>
+
+    <bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor" />
+
+    <bean id="auditJpaVendorAdapter" class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
+        <property name="databasePlatform" value="\${org.orcid.audit.db.dialect}" />
+        <property name="showSql" value="${org.orcid.audit.db.showSql}" />
+        <property name="generateDdl" value="${org.orcid.audit.db.generateDdl}" />
+    </bean>
+
+    <bean name="auditTransactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+        <property name="entityManagerFactory" ref="auditEntityManagerFactory" />
+    </bean>
+
+    <bean name="auditTransactionTemplate" class="org.springframework.transaction.support.TransactionTemplate">
+        <constructor-arg ref="auditTransactionManager" />
+        <property name="propagationBehaviorName" value="PROPAGATION_REQUIRED" />
+    </bean>
+
+    <bean id="auditPooledDataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
+        <property name="driverClass" value="\${org.orcid.audit.db.class}" />
+        <property name="jdbcUrl" value="\${org.orcid.audit.db.url}" />
+        <property name="user" value="\${org.orcid.audit.db.username}" />
+        <property name="password" value="\${org.orcid.audit.db.password}" />
+        <property name="initialPoolSize" value="\${org.orcid.audit.db.initialPoolSize}" />
+        <property name="minPoolSize" value="\${org.orcid.audit.db.minPoolSize}" />
+        <property name="maxPoolSize" value="\${org.orcid.audit.db.maxPoolSize}" />
+        <property name="maxStatements" value="\${org.orcid.audit.db.maxStatements}" />
+        <property name="idleConnectionTestPeriod" value="\${org.orcid.audit.db.idleConnectionTestPeriod}" />
+        <property name="testConnectionOnCheckin" value="\${org.orcid.audit.db.testConnectionOnCheckin}" />
+        <property name="preferredTestQuery" value="\${org.orcid.audit.db.preferredTestQuery}" />
+    </bean>
+
+    <bean id="auditSimpleDataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <property name="driverClassName" value="\${org.orcid.audit.db.class}" />
+        <property name="url" value="\${org.orcid.audit.db.url}" />
+        <property name="username" value="\${org.orcid.audit.db.username}" />
+        <property name="password" value="\${org.orcid.audit.db.password}" />
+    </bean>
+
+    <bean id="executorService" class="java.util.concurrent.Executors" factory-method="newFixedThreadPool">
+        <constructor-arg value="10"/>
+    </bean>
+
+    <bean id="auditEventQueue" class="java.util.concurrent.LinkedBlockingQueue" scope="singleton"/>
+
+    <bean id="auditEventDao" class="org.orcid.audit.dao.impl.AuditEventDaoImpl"/>
+
+    <bean id="auditEventManager" class="org.orcid.audit.manager.impl.AuditEventManagerImpl"/>
+
+    <bean id="auditEventConsumer" class="org.orcid.audit.concurrency.AuditEventConsumer">
+        <constructor-arg ref="auditEventQueue"/>
+        <constructor-arg ref="auditEventManager"/>
+        <constructor-arg ref="executorService"/>
+    </bean>
+
+    <bean id="auditEventConsumerInitialiser" class="org.orcid.audit.concurrency.AuditEventConsumerInitialiser" destroy-method="shutdown"/>
+
+    <bean id="auditor" class="org.orcid.audit.Auditor"/>
+
+</beans>

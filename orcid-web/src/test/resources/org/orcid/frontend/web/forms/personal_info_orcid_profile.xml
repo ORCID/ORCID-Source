@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<orcid-profile xmlns="http://www.orcid.org/ns/orcid">
+    <orcid>4444-4444-4444-4446</orcid>
+    <orcid-bio>
+        <personal-details>
+            <given-names>Johnny</given-names>
+            <family-name>Simpson</family-name>
+            <credit-name>Homer Thomson</credit-name>
+            <other-names visibility="limited">
+                <other-name>Gal</other-name>
+                <other-name>Don</other-name>
+            </other-names>
+        </personal-details>
+        <biography/>
+        <contact-details>
+            <email primary="true" visibility="public">homer.thomson@simpsons.com</email>
+        </contact-details>
+        <keywords/>
+    </orcid-bio>
+</orcid-profile>

@@ -1,0 +1,1065 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    =============================================================================
+
+    ORCID (R) Open Source
+    http://orcid.org
+
+    Copyright (c) 2012-2013 ORCID, Inc.
+    Licensed under an MIT-Style License (MIT)
+    http://orcid.org/open-source-license
+
+    This copyright and license information (including a link to the full license)
+    shall be included in its entirety in all copies or substantial portion of
+    the software.
+
+    =============================================================================
+
+-->
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+    <changeSet author="Declan Newman" id="INIT-BASE-URL">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">select count(*) from reference_data where ref_data_key =
+                'emailVerificationURL';
+            </sqlCheck>
+        </preConditions>
+        <insert tableName="reference_data">
+            <column name="id" value="0"/>
+            <column name="ref_data_key" value="emailVerificationURL"/>
+            <column name="ref_data_value" value="http://localhost:8080/orcid-frontend-web"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="INIT-HEAR_ABOUTS" author="Declan Newman">
+        <preConditions onFail="MARK_RAN">
+            <and>
+                <tableExists tableName="hear_about"/>
+                <sqlCheck expectedResult="0">select count(*) from hear_about;</sqlCheck>
+            </and>
+        </preConditions>
+        <insert tableName="hear_about">
+            <column name="id" value="0"/>
+            <column name="name" value="Select an Option"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="hear_about">
+            <column name="id" value="1"/>
+            <column name="name" value="Banner Ad"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="hear_about">
+            <column name="id" value="2"/>
+            <column name="name" value="Blog/Website"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="hear_about">
+            <column name="id" value="3"/>
+            <column name="name" value="Colleague"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="hear_about">
+            <column name="id" value="4"/>
+            <column name="name" value="Conference or Trade Show"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="hear_about">
+            <column name="id" value="5"/>
+            <column name="name" value="Link from another Website"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="hear_about">
+            <column name="id" value="6"/>
+            <column name="name" value="Newspaper or Magazine Article"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="hear_about">
+            <column name="id" value="7"/>
+            <column name="name" value="Print Ad"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="hear_about">
+            <column name="id" value="8"/>
+            <column name="name" value="Search Engine"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="hear_about">
+            <column name="id" value="9"/>
+            <column name="name" value="Second Life"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="hear_about">
+            <column name="id" value="10"/>
+            <column name="name" value="Other"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+    </changeSet>
+
+    <changeSet author="Declan Newman" id="INIT-REGISTRATION-ROLE">
+        <preConditions onFail="MARK_RAN">
+            <and>
+                <tableExists tableName="registration_role"/>
+                <sqlCheck expectedResult="0">select count(*) from registration_role;</sqlCheck>
+            </and>
+        </preConditions>
+        <insert tableName="registration_role">
+            <column name="id" value="1"/>
+            <column name="role" value="Student"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="registration_role">
+            <column name="id" value="2"/>
+            <column name="role" value="Faculty"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="registration_role">
+            <column name="id" value="3"/>
+            <column name="role" value="Administrator"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="registration_role">
+            <column name="id" value="4"/>
+            <column name="role" value="Librarian"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="registration_role">
+            <column name="id" value="5"/>
+            <column name="role" value="Researcher (Academic)"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="registration_role">
+            <column name="id" value="6"/>
+            <column name="role" value="Researcher (Non-Academic)"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="registration_role">
+            <column name="id" value="7"/>
+            <column name="role" value="Other"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="registration_role">
+            <column name="id" value="8"/>
+            <column name="role" value="Postdoctoral Fellow"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="registration_role">
+            <column name="id" value="9"/>
+            <column name="role" value="Graduate Student"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="registration_role">
+            <column name="id" value="10"/>
+            <column name="role" value="Undergraduate Student"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <modifySql dbms="hsqldb">
+            <replace replace="bytea" with="VARBINARY(4096)"/>
+            <replace replace="role" with="ROLE"/>
+        </modifySql>
+    </changeSet>
+
+    <changeSet author="Declan Newman" id="INIT-SECURITY-QUESTIONS">
+        <preConditions onFail="MARK_RAN">
+            <and>
+                <tableExists tableName="security_question"/>
+                <sqlCheck expectedResult="0">select count(*) from security_question;</sqlCheck>
+            </and>
+        </preConditions>
+        <insert tableName="security_question">
+            <column name="id" value="0"/>
+            <column name="question" value="Select a question"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="security_question">
+            <column name="id" value="1"/>
+            <column name="question" value="What was the name of your first school?"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="security_question">
+            <column name="id" value="2"/>
+            <column name="question" value="What is your favorite pastime?"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="security_question">
+            <column name="id" value="3"/>
+            <column name="question" value="What is your all-time favorite sports team?"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="security_question">
+            <column name="id" value="4"/>
+            <column name="question" value="What make was your first car or bike?"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="security_question">
+            <column name="id" value="5"/>
+            <column name="question" value="Where did you first meet your spouse?"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="security_question">
+            <column name="id" value="6"/>
+            <column name="question" value="What is your pet's name?"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="security_question">
+            <column name="id" value="7"/>
+            <column name="question" value="What year were you born?"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="security_question">
+            <column name="id" value="8"/>
+            <column name="question" value="In what city were you born?"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="security_question">
+            <column name="id" value="9"/>
+            <column name="question" value="How many siblings do you have?"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="security_question">
+            <column name="id" value="10"/>
+            <column name="question" value="What is your favorite sport or hobby?"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="security_question">
+            <column name="id" value="11"/>
+            <column name="question" value="In what city was your mother born?"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="security_question">
+            <column name="id" value="12"/>
+            <column name="question" value="In what city was your father born?"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="security_question">
+            <column name="id" value="13"/>
+            <column name="question" value="What is the name of your high school?"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="security_question">
+            <column name="id" value="14"/>
+            <column name="question" value="What year did you graduate from high school?"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="security_question">
+            <column name="id" value="15"/>
+            <column name="question" value="What is your father's middle name?"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="security_question">
+            <column name="id" value="16"/>
+            <column name="question" value="What is your mother's middle name?"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="security_question">
+            <column name="id" value="17"/>
+            <column name="question" value="What is your favorite color?"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="security_question">
+            <column name="id" value="18"/>
+            <column name="question" value="What is your mother's maiden name?"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+    </changeSet>
+
+    <changeSet author="Declan Newman" id="INIT-SUBJECTS">
+        <preConditions onFail="MARK_RAN">
+            <and>
+                <tableExists tableName="subject"/>
+                <sqlCheck expectedResult="0">select count(*) from subject;</sqlCheck>
+            </and>
+        </preConditions>
+        <insert tableName="subject">
+            <column name="name" value="Acoustics"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="name" value="Agriculture"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="name" value="Allergy"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="name" value="Anatomy &amp; Morphology"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="name" value="Anesthesiology"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="name" value="Anthropology"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="name" value="Archaeology"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="name" value="Architecture"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="name" value="Area Studies"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="name" value="Art"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="name" value="Arts &amp; Humanities - Other"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="name" value="Asian Studies"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="name" value="Astronomy &amp; Astrophysics"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="name" value="Automation &amp; Control Systems"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="name" value="Behavioral Sciences"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="name" value="Biochemistry &amp; Molecular Biology"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="name" value="Biodiversity &amp; Conservation"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="name" value="Biomedical Social Sciences"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="name" value="Biophysics"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="name" value="Biotechnology &amp; Applied Microbiology"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="name" value="Business &amp; Economics"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="name" value="Cardiovascular System &amp; Cardiology"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="name" value="Cell Biology"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="name" value="Chemistry"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="name" value="Classics"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="name" value="Communication"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="name" value="Computer Science"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="name" value="Construction &amp; Building Technology"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="name" value="Criminology &amp; Penology"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="name" value="Critical Care Medicine"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="name" value="Crystallography"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="name" value="Dance"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="name" value="Demography"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="name" value="Dentistry, Oral Surgery &amp; Medicine"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="name" value="Dermatology"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="name" value="Developmental Biology"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="name" value="Education &amp; Educational Research"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="name" value="Electrochemistry"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="name" value="Emergency Medicine"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="name" value="Endocrinology &amp; Metabolism"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="name" value="Energy &amp; Fuels"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="name" value="Engineering"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="name" value="Entomology"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="name" value="Environmental Sciences &amp; Ecology"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="name" value="Ethnic Studies"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="name" value="Evolutionary Biology"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="name" value="Family Studies"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="name" value="Film, Radio &amp; Television"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="name" value="Fisheries"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="name" value="Food Science &amp; Technology"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="name" value="Forestry"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="name" value="Gastroenterology &amp; Hepatology"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="name" value="General &amp; Internal Medicine"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="name" value="Genetics &amp; Heredity"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="name" value="Geochemistry &amp; Geophysics"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="name" value="Geography"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="name" value="Geology"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="name" value="Geriatrics &amp; Gerontology"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="name" value="Government &amp; Law"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="name" value="Health Care Sciences &amp; Services"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="name" value="Hematology"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="name" value="History"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="name" value="History &amp; Philosophy of Science"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="name" value="Imaging Science &amp; Photographic Technology"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="name" value="Immunology"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="name" value="Infectious Diseases"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="name" value="Information Science &amp; Library Science"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="name" value="Instruments &amp; Instrumentation"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="name" value="Integrative &amp; Complementary Medicine"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="name" value="International Relations"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="name" value="Legal Medicine"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="name" value="Life Sciences &amp; Biomedicine - Other "/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="name" value="Linguistics"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="name" value="Literature"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="name" value="Marine &amp; Freshwater Biology"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="name" value="Materials Science"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="name" value="Mathematical &amp; Computational Biology"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="name" value="Mathematical Methods In Social Sciences"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="name" value="Mathematics"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="name" value="Mechanics"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="name" value="Medical Ethics"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="name" value="Medical Informatics"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="name" value="Medical Laboratory Technology"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="name" value="Metallurgy &amp; Metallurgical Engineering"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="name" value="Meteorology &amp; Atmospheric Sciences"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="name" value="Microbiology"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="name" value="Microscopy"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="name" value="Mineralogy"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="name" value="Mining &amp; Mineral Processing"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="name" value="Music"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="name" value="Mycology"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="name" value="Neurosciences &amp; Neurology"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="name" value="Nuclear Science &amp; Technology"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="name" value="Nursing"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="name" value="Nutrition &amp; Dietetics"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="name" value="Obstetrics &amp; Gynecology"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="name" value="Oceanography"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="name" value="Oncology"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="name" value="Operations Research &amp; Management Science"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="name" value="Ophthalmology"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="name" value="Optics"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="name" value="Orthopedics"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="name" value="Otorhinolaryngology"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="name" value="Paleontology"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="name" value="Parasitology"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="name" value="Pathology"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="name" value="Pediatrics"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="name" value="Pharmacology &amp; Pharmacy"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="name" value="Philosophy"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="name" value="Physical Geography"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="name" value="Physics"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="name" value="Physiology"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="name" value="Plant Sciences"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="name" value="Polymer Science"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="name" value="Psychiatry"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="name" value="Psychology"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="name" value="Public Administration"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="name" value="Public, Environmental &amp; Occupational Health"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="name" value="Radiology, Nuclear Medicine &amp; Medical Imaging"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="name" value="Rehabilitation"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="name" value="Religion"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="name" value="Remote Sensing"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="name" value="Reproductive Biology"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="name" value="Research &amp; Experimental Medicine"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="name" value="Respiratory System"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="name" value="Rheumatology"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="name" value="Robotics"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="name" value="Science &amp; Technology - Other "/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="name" value="Social Issues"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="name" value="Social Sciences - Other"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="name" value="Social Work"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="name" value="Sociology"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="name" value="Spectroscopy"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="name" value="Sport Sciences"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="name" value="Substance Abuse"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="name" value="Surgery"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="name" value="Telecommunications"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="name" value="Theater"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="name" value="Thermodynamics"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="name" value="Toxicology"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="name" value="Transplantation"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="name" value="Transportation"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="name" value="Tropical Medicine"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="name" value="Urban Studies"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="name" value="Urology &amp; Nephrology"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="name" value="Veterinary Sciences"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="name" value="Virology"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="name" value="Water Resources"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="name" value="Women's Studies"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+    </changeSet>
+
+</databaseChangeLog>
