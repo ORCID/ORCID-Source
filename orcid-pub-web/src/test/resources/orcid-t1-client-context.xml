@@ -1,0 +1,74 @@
+<!--
+
+    =============================================================================
+
+    ORCID (R) Open Source
+    http://orcid.org
+
+    Copyright (c) 2012-2013 ORCID, Inc.
+    Licensed under an MIT-Style License (MIT)
+    http://orcid.org/open-source-license
+
+    This copyright and license information (including a link to the full license)
+    shall be included in its entirety in all copies or substantial portion of
+    the software.
+
+    =============================================================================
+
+-->
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+	                    http://www.springframework.org/schema/beans/spring-beans-3.1.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+
+    <context:property-placeholder file-encoding="UTF-8" location="classpath:staging-orcid-t1-client.properties"/>
+
+	 <bean id="t1OrcidApiClient" class="org.orcid.api.t1.integration.T1OrcidApiClientImpl">
+        <constructor-arg value="${org.orcid.t1.client.base_url}"/>
+        <constructor-arg ref="jerseyClient"/>
+    </bean>
+
+    <bean id="jerseyClient" class="com.sun.jersey.client.apache4.ApacheHttpClient4" factory-method="create">
+        <constructor-arg ref="clientConfig"/>
+    </bean>
+
+    <bean id="clientConfig" class="org.orcid.api.t1.integration.OrcidJerseyT1ClientConfig">
+        <constructor-arg ref="providers"/>
+        <property name="properties" ref="jerseyProperties"/>
+    </bean>
+
+    <util:map id="jerseyProperties">
+        <entry key="com.sun.jersey.client.apache4.config.ApacheHttpClient4Config.PROPERTY_CONNECTION_MANAGER"
+               value-ref="multiThreadedConnectionManager"/>
+    </util:map>
+	
+	 <bean id="addJerseyLoggingFilter" class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+        <property name="targetObject"><ref local="jerseyClient"/></property>
+        <property name="targetMethod"><value>addFilter</value></property>
+        <property name="arguments">
+            <list>
+                <bean class="com.sun.jersey.api.client.filter.LoggingFilter"/>
+            </list>
+        </property>
+    </bean>
+	
+    <util:set id="providers">
+        <value>org.codehaus.jackson.jaxrs.JacksonJaxbJsonProvider</value>
+        <value>org.orcid.api.common.jaxb.OrcidJacksonJaxbJsonProvider</value>
+        <value>org.orcid.api.common.jaxb.OrcidJsonJaxbContexResolver</value>
+    </util:set>
+
+    <bean id="multiThreadedConnectionManager" class="org.apache.commons.httpclient.MultiThreadedHttpConnectionManager">
+        <property name="params" ref="httpConnectionManagerParams"/>
+    </bean>
+
+    <bean id="httpConnectionManagerParams" class="org.apache.commons.httpclient.params.HttpConnectionManagerParams">
+        <property name="maxTotalConnections" value="${org.orcid.t1.client.maxTotalConnections}"/>
+        <property name="connectionTimeout" value="${org.orcid.t1.client.connectionTimeout}"/>
+        <property name="defaultMaxConnectionsPerHost" value="${org.orcid.t1.client.defaultMaxConnectionsPerHost}"/>
+        <property name="soTimeout" value="${org.orcid.t1.client.soTimeout}"/>
+        <property name="staleCheckingEnabled" value="${org.orcid.t1.client.staleCheckingEnabled}"/>
+    </bean>
+
+</beans>

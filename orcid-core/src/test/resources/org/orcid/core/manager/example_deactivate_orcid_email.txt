@@ -1,0 +1,19 @@
+Dear Josiah Carberry,
+
+You have requested that your ORCID Account associated with ORCID ID 4444-4444-4444-4446 be deactivated.
+Please click on the following link to complete the deactivation process:
+
+http://testserver.orcid.org/account/confirm-deactivate-orcid
+
+So as not to assign the same identifier to another person, ORCID will maintain in a private data
+file your ORCID ID, name, and email address; all other data in your record will be removed.
+You may contact ORCID if you later wish to re-claim your identifier and reactivate your account. 
+
+If you did not request account deactivation, please contact the ORCID Help Desk at 
+support@orcid.org. 
+
+Kind Regards,
+The ORCID Team
+support@orcid.org 
+http://testserver.orcid.org
+

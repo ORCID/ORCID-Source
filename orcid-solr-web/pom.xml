@@ -1,0 +1,101 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>orcid-solr-web</artifactId>
+    <packaging>war</packaging>
+    <name>ORCID - Solr</name>
+    <url>http://maven.apache.org</url>
+
+    <parent>
+        <relativePath>../pom.xml</relativePath>
+        <version>1.1.5-SNAPSHOT</version>
+        <groupId>org.orcid</groupId>
+        <artifactId>orcid-parent</artifactId>
+    </parent>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.solr</groupId>
+            <artifactId>solr-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.orcid</groupId>
+            <artifactId>orcid-test</artifactId>
+            <version>1.1.5-SNAPSHOT</version>
+            <scope>test</scope>
+        </dependency>
+        	<dependency>
+			<groupId>com.yammer.metrics</groupId>
+			<artifactId>metrics-servlet</artifactId>
+			<version>2.1.2</version>
+		</dependency>
+		<dependency>
+		    <groupId>org.springframework</groupId>
+            <artifactId>spring-web</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-core</artifactId>
+        </dependency>
+        
+        <!-- Internal test only -->
+
+    </dependencies>
+
+    <build>
+        <finalName>orcid-solr-web</finalName>
+        <plugins>
+             <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>tomcat-maven-plugin</artifactId>
+                <configuration>
+                   <url>${tomcat.manager.url}</url>
+                   <server>${tomcat.server.id}</server>
+                   <path>${artifactID}</path>
+		   <update>true</update>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>com.mycila.maven-license-plugin</groupId>
+                <artifactId>maven-license-plugin</artifactId>              
+                <configuration>
+                    <header>${project.basedir}/../SHORT_LICENSE.txt</header>                    
+                    <excludes>
+                        <exclude>**/src/main/webapp/**/**.txt</exclude>
+                        <exclude>**/src/main/webapp/**/**.xml</exclude>
+                       <exclude>**/.gitignore</exclude>
+                       <exclude>**/rebel.xml</exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+    <profiles>
+        <!-- QA fullstack deployments -->
+        <profile>
+            <id>env-fullstack</id>
+            <activation>
+                <property>
+                    <name>env</name>
+                    <value>qa-fullstack</value>
+                </property>
+            </activation>
+            <properties>
+                <tomcat.manager.url>http://solr.qa-fullstack.orcid.org:8080/manager/text</tomcat.manager.url>
+            </properties>
+        </profile>
+        <!-- QA 1 deployments -->
+        <profile>
+            <id>env-qa-1</id>
+            <activation>
+                <property>
+                    <name>env</name>
+                    <value>qa-1</value>
+                </property>
+            </activation>
+            <properties>
+                <tomcat.manager.url>http://solr.qa-1.orcid.org:8080/manager/text</tomcat.manager.url>
+            </properties>
+        </profile>
+    </profiles>
+</project>

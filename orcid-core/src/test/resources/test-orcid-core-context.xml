@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+
+    =============================================================================
+
+    ORCID (R) Open Source
+    http://orcid.org
+
+    Copyright (c) 2012-2013 ORCID, Inc.
+    Licensed under an MIT-Style License (MIT)
+    http://orcid.org/open-source-license
+
+    This copyright and license information (including a link to the full license)
+    shall be included in its entirety in all copies or substantial portion of 
+    the software.
+
+    =============================================================================
+
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
+
+	<!-- import  resource="classpath*:orcid-persistence-context.xml"/>  -->
+	<import  resource="classpath*:orcid-core-context.xml"/>  
+
+	<bean id="notificationManager" class="org.orcid.core.manager.impl.NotificationManagerImpl">		
+		<property name="encryptionManager" ref="encryptionManager" />
+		<property name="fromAddress" value="no_reply@orcid.org" />
+        <property name="supportAddress" value="support@orcid.org" />
+        <property name="baseUri" value="http://testserver.orcid.org" />
+		<property name="mailSender" ref="mailSender" />
+		<property name="templateManager" ref="templateManager" />
+        <property name="apiRecordCreationEmailEnabled" value="${org.orcid.core.mail.apiRecordCreationEmailEnabled:true}" />
+	</bean>
+	
+</beans>
