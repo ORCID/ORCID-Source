@@ -60,7 +60,7 @@
         <div class="row">
             <div class="span3 override">
                 <aside class="logo">
-                    <h1><a href="<@spring.url '/' />"><img src="<@spring.url '/static/img/orcid-logo.png'/>" alt="ORCID logo" /></a></h1>
+                    <h1><a href="${aboutUri}"><img src="<@spring.url '/static/img/orcid-logo.png'/>" alt="ORCID logo" /></a></h1>
                     <p>${springMacroRequestContext.getMessage("public-layout.logo.tagline")}</p>
                 </aside>
             </div>
