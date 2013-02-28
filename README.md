@@ -62,7 +62,8 @@ We'll set up postgres using the default settings in
 * Clone the repository
 
 	```
-    git clone git@github.com:ORCID/ORCID-Source.git ~/git/OCRID-Source
+	cd ~/git
+    git clone git@github.com:ORCID/ORCID-Source.git
     ```
 
 
