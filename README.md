@@ -114,7 +114,68 @@ Tip: use the same command for rebuilding.
     Tip: use the same command for rebuilding.    
  -->
 
+## Eclipse Setup (Spring Tool Suite Eclipse)
+These instructions are for Spring Tool Suite for Eclipse. 
 
+1. Download and install Spring Tool Suite for Eclipse:
+http://www.springsource.org/downloads/sts-ggts
+
+* Select File Import "Project from Git", Click Next.
+
+* Select Local, Click Next
+
+* Select Add, once ORCID-Source has been added, select it and click Next
+
+* Select "Import as general project", click Next.
+
+* Click Finish
+
+* In package Explorer, right click ORCID-Source.
+
+* Select Configure (at the bottom) -> Select "Convert to Maven Project"
+
+* In package Explorer Right click on ORCID-Sourc 
+
+* Select Import -> "Existing Maven Projects"
+
+* Unselect the first pom.xml (orcid-parent)
+
+* Select all pom.xml(s) after.
+
+* Click Finish
+
+* Select Window -> Show View -> Servers
+
+* Double Click "VMWare vFabric tc Server"
+
+* Select Open launch configuration
+
+* Select Arguments 
+
+* In VM Arguments add the following (changing the /Users/rcpeters/git/ORCID-Source path to your repo checkout)
+
+    ```
+    -Dsolr.solr.home=/Users/rcpeters/git/ORCID-Source/orcid-solr-web/src/main/webapp/solr -Dorg.orcid.config.file=classpath:staging-persistence.properties
+    ```
+
+* Click Ok
+
+* Right click on "VMWare vFabric tc Server"
+
+* Select "Add and Remove" Add orcid-api-web, orcid-pub, orcid-scheduler-web, orcid-solr-web and orcid-web
+
+* Right click on "VMWare vFabric tc Server"
+
+* Select Debug
+
+* Point your browser to http://localhost:8080/orcid-web/my-orcid
+
+* You should see a login page.
+
+* Finally help out by improving these instructions! 
+
+
+<!--
 ## Eclipse Setup
 
 Once the maven build has been run, 
@@ -157,7 +218,7 @@ Once the maven build has been run,
     of 'staging' it will point to the Postgres instance.
 
     ```
-	orcid-persistence --> properties --> maven and enter 'staging' inside the Active Maven Profiles text field
+	orcid-persistence -> properties -> maven and enter 'staging' inside the Active Maven Profiles text field
     ```
 
     However when you run a mvn clean install at the 'parent' level (i.e.) <ORCID-Work-in-Progress dir> you will run against an HSQl database.
@@ -165,13 +226,13 @@ Once the maven build has been run,
 *  Add a server config using Eclipse
 	
     ```
-    File --> New --> Other... Server --> Server     
+    File -> New -> Other... Server -> Server     
     ```
     
     Then select a Tomcat Server - point the config to the actual Tomcat installation you made earlier.
     
     ```
-    Apache --> Tomcat v 7.0 Server
+    Apache -> Tomcat v 7.0 Server
     ```
    
 * Add additional tomcat args
@@ -222,6 +283,8 @@ Once the maven build has been run,
 * Test the webapp [http://localhost:8080/orcid-web/signin](http://localhost:8080/orcid-web/signin)
 
 * Finally help out by improving these instructions! 
+
+-->
 
 ## Troubleshooting:
   
