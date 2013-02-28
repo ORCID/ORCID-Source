@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+
+    =============================================================================
+
+    ORCID (R) Open Source
+    http://orcid.org
+
+    Copyright (c) 2012-2013 ORCID, Inc.
+    Licensed under an MIT-Style License (MIT)
+    http://orcid.org/open-source-license
+
+    This copyright and license information (including a link to the full license)
+    shall be included in its entirety in all copies or substantial portion of
+    the software.
+
+    =============================================================================
+
+-->
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+	                    http://www.springframework.org/schema/beans/spring-beans-3.1.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.0.xsd">
+
+    <context:property-placeholder file-encoding="UTF-8" location="classpath:staging-orcid-t2-client.properties" ignore-unresolvable="true"/>
+
+    <bean id="t2OrcidApiClient" class="org.orcid.api.t2.integration.T2OrcidApiClientImpl">
+         <constructor-arg value="${org.orcid.t2.client.base_url}"/>
+         <constructor-arg ref="jerseyClient"/>
+    </bean>
+
+    <bean id="jerseyClient" class="com.sun.jersey.api.client.Client" factory-method="create">
+        <constructor-arg ref="clientConfig"/>
+    </bean>
+
+    <bean id="clientConfig" class="org.orcid.api.t2.integration.OrcidJerseyT2ClientConfig">
+        <constructor-arg ref="providers"/>
+        <property name="properties" ref="jerseyProperties"/>
+        <property name="keyStore" ref="keyStore"/>
+        <property name="keyStorePassword" value="${org.orcid.t2.client.keyStorePass}"/>
+        <property name="trustStore" ref="trustStore"/>
+    </bean>
+
+    <util:map id="jerseyProperties">
+        <entry key="com.sun.jersey.client.apache4.config.ApacheHttpClient4Config.PROPERTY_CONNECTION_MANAGER"
+               value-ref="multiThreadedConnectionManager"/>
+    </util:map>
+    
+    <util:set id="providers">
+        <value>org.codehaus.jackson.jaxrs.JacksonJaxbJsonProvider</value>
+        <value>org.orcid.api.common.jaxb.OrcidJacksonJaxbJsonProvider</value>
+        <value>org.orcid.api.common.jaxb.OrcidJsonJaxbContexResolver</value>
+    </util:set>
+
+    <bean id="multiThreadedConnectionManager" class="org.apache.commons.httpclient.MultiThreadedHttpConnectionManager">
+        <property name="params" ref="httpConnectionManagerParams"/>
+    </bean>
+    
+    <bean id="addJerseyLoggingFilter" class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+        <property name="targetObject"><ref local="jerseyClient"/></property>
+        <property name="targetMethod"><value>addFilter</value></property>
+        <property name="arguments">
+            <list>
+                <bean class="com.sun.jersey.api.client.filter.LoggingFilter"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="httpConnectionManagerParams" class="org.apache.commons.httpclient.params.HttpConnectionManagerParams">
+        <property name="maxTotalConnections" value="${org.orcid.t2.client.maxTotalConnections}"/>
+        <property name="connectionTimeout" value="${org.orcid.t2.client.connectionTimeout}"/>
+        <property name="defaultMaxConnectionsPerHost" value="${org.orcid.t2.client.defaultMaxConnectionsPerHost}"/>
+        <property name="soTimeout" value="${org.orcid.t2.client.soTimeout}"/>
+        <property name="staleCheckingEnabled" value="${org.orcid.t2.client.staleCheckingEnabled}"/>
+    </bean>
+
+    <bean id="keyStore" class="org.orcid.api.t2.integration.KeyStoreFactoryBean">
+        <property name="location" value="${org.orcid.t2.client.keyStoreLocation}"/>
+        <property name="password" value="${org.orcid.t2.client.keyStorePass}"/>
+    </bean>
+
+    <bean id="trustStore" class="org.orcid.api.t2.integration.KeyStoreFactoryBean">
+        <property name="location" value="${org.orcid.t2.client.trustStoreLocation}"/>
+        <property name="password" value="${org.orcid.t2.client.trustStorePass}"/>
+    </bean>
+
+</beans>

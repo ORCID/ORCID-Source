@@ -1,0 +1,56 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>org.orcid</groupId>
+		<artifactId>orcid-parent</artifactId>
+		<version>1.1.5-SNAPSHOT</version>
+		<relativePath>../pom.xml</relativePath>
+	</parent>
+
+    <artifactId>orcid-model</artifactId>
+
+
+    <name>ORCID - Model</name>
+    <description>Container for all classes that will be used to marshal and unmarshal XML/JSON from the API</description>
+
+    <dependencies>
+        <!-- Internal dependencies -->
+        <!-- External dependencies -->
+        <dependency>
+            <groupId>org.hibernate.javax.persistence</groupId>
+            <artifactId>hibernate-jpa-2.0-api</artifactId>
+        </dependency>
+
+        <!-- Test dependencies -->
+        <dependency>
+            <groupId>org.orcid</groupId>
+            <artifactId>orcid-test</artifactId>
+            <version>${project.parent.version}</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <finalName>orcid-model</finalName>
+        <plugins>
+            <plugin>
+                <groupId>com.mycila.maven-license-plugin</groupId>
+                <artifactId>maven-license-plugin</artifactId>
+                <configuration>
+                    <header>${project.basedir}/../SHORT_LICENSE.txt</header>
+                    <mapping>
+                        <xjb>XML_STYLE</xjb>
+                    </mapping>
+                    <excludes>
+                        <exclude>**/src/main/resources/**/*.xsd</exclude>
+                        <exclude>**/rebel.xml</exclude>
+                        <exclude>**/.gitignore</exclude>	
+                    </excludes>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+
+</project>

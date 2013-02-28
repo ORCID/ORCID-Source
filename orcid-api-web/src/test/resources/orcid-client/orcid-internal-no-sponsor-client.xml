@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    =============================================================================
+
+    ORCID (R) Open Source
+    http://orcid.org
+
+    Copyright (c) 2012-2013 ORCID, Inc.
+    Licensed under an MIT-Style License (MIT)
+    http://orcid.org/open-source-license
+
+    This copyright and license information (including a link to the full license)
+    shall be included in its entirety in all copies or substantial portion of
+    the software.
+
+    =============================================================================
+
+-->
+<orcid-message xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.orcid.org/ns/orcid ../../../../orcid-model/src/main/resources/orcid-message-1.0.10.xsd"
+    xmlns="http://www.orcid.org/ns/orcid">
+    <message-version>1.0.10</message-version>
+    <orcid-profile xmlns="http://www.orcid.org/ns/orcid">
+        <orcid-history>
+            <creation-method>API</creation-method>
+            <completion-date>2012-10-09T15:50:07</completion-date>
+            <submission-date>2012-10-09T15:50:07</submission-date>
+        </orcid-history>
+        <orcid-bio>
+            <personal-details>
+                <given-names>givenNames</given-names>
+                <family-name>familyName</family-name>
+                <credit-name>credit name</credit-name>
+                <other-names>
+                    <other-name>Other 1</other-name>
+                    <other-name>Other 2</other-name>
+                </other-names>
+            </personal-details>
+            <biography>Lets test some crazy stuff! How about a 1000 chars in japanese 難フドょ三点93隊は比埼回へ美宝投トしレ手採シ領馬公ノネ氏細ケロウヌ係入ヲハヌヱ厚院ひゃお川的ばぴイぎ言提オサ所熱サ自通をぶちス後筆本在親も。仕退ニレト由界フぱし庫越トメキホ来転を半別どば鈴内ト全
+41秀かゅや果物心マオル討赤モナマフ参月スどこや座念コソ言社ぐ食理ラセ対演ぎの変理かラ広暮クスネテ上進傑ゆくス。16要べ南聖ウチサ認府ネ長悪たやふ能住とぜべ王是にど新断切年セテ不紀つドょ歳県オスニ質
+38碁れ容57雑スネモ老泉シヘヒ関裕よはラク更記兆ムタワラ投困ゅんぜ治木ぞほ細通ウヤ年覧ト運現ざイたね冊7績よゆ暮誉ソサト投46軽ロ終時イ必迫の触勇囲速ぐイす。特なイりド通結ま鳥寄育ぼべく拶奈拳ナコ回
+書マク道月スどばせ社的ケ探尽タエホ枝力トル害地べっ治電は際材ヨ別断ツカウ文国ラヒ応治ぴぶ戦75収否禁辞4帝おだあへ平悪由ごと禁者ヒワコタ長強ふて見際まをづ質相抽綱もえ。卓側68点宇どのゆ式長実52染な
+憶オ調浄もゆ高京セハヘミ世曄タニ合東らね約環リ理聞話学ほ心褒ぼどばこ補禁球かを運人ねの判言ネツユタ級投とそらぜ辺罪サ放唱セ請月試セツヲリ票監笑怠殊ぼスお。断きだて野重探がそょ会上ミヘ社69点ルラコ
+憶オ調浄もゆ高京セハヘミ世曄タニ合東らね約環リ理聞話学ほ心褒ぼどばこ補禁球かを運人ねの判言ネツユタ級投とそらぜ辺罪サ放唱セ請月試セツヲリ票監笑怠殊ぼスお。断きだて野重探がそょ会上ミヘ社69点ルラコ
+憶オ調浄もゆ高京セハヘミ世曄タニ合東らね約環リ理聞話学ほ心褒ぼどばこ補禁球かを運人ねの判言ネツユタ級投とそらぜ辺罪サ放唱セ請月試セツヲリ票監笑怠殊ぼスお。断きだて野重探がそょ会上ミヘ社69点ルラコ
+v
+憶オ調浄もゆ高京セハヘミ世曄タニ合東らね約環リ理聞話学ほ心褒ぼどばこ補禁球かを運人ねの判言ネツユタ級投とそらぜ辺罪サ放唱セ請月試セツヲリ票監笑怠殊ぼスお。断きだて野重探がそょ会上ミヘ社69点ルラコ
+憶オ調浄もゆ高京セハヘミ世曄タニ合東らね約環リ理聞話学ほ心褒ぼどばこ補禁球かを運人ねの判言ネツユタ級投とそらぜ辺罪サ放唱セ請月試セツヲリ票監笑怠殊ぼスお。断きだて野重探がそょ会上ミヘ社69点ルラコ人ねの判言ネツユタ級投とそらぜ辺罪サ放唱セ請月試セツヲリ票監笑怠殊ぼスお。断きだ</biography>
+            <researcher-urls>
+                <researcher-url>
+                    <url>http://www.wjrs.co.uk</url>
+                </researcher-url>
+                <researcher-url>
+                    <url>http://www.vvs.com</url>
+                </researcher-url>
+            </researcher-urls>
+            <contact-details>
+                <email primary="true">jamesb@semantico.co.uk</email>
+            </contact-details>
+            <keywords>
+                <keyword>Pavement Studies</keyword>
+                <keyword>Advanced Tea Making</keyword>
+            </keywords>
+            <affiliations>
+                <affiliation>
+                    <affiliation-name>Past Inst 1</affiliation-name>
+                    <affiliation-type>past-institution</affiliation-type>
+                    <address>
+                        <country>United Kingdom</country>
+                    </address>
+                    <role-title>A Role</role-title>
+                </affiliation>
+                <affiliation>
+                    <affiliation-name>Past Inst 2</affiliation-name>
+                    <affiliation-type>past-institution</affiliation-type>
+                    <address>
+                        <country>United Kingdom</country>
+                    </address>
+                    <role-title>A Role</role-title>
+                </affiliation>
+                <affiliation>
+                    <affiliation-name>Primary Inst1</affiliation-name>
+                    <affiliation-type>current-primary-institution</affiliation-type>
+                    <address>
+                        <country>United Kingdom</country>
+                    </address>
+                    <role-title>A Role</role-title>
+                </affiliation>
+                <affiliation>
+                    <affiliation-name>Current Inst1</affiliation-name>
+                    <affiliation-type>current-institution</affiliation-type>
+                    <address>
+                        <country>United Kingdom</country>
+                    </address>
+                    <role-title>A Role</role-title>
+                </affiliation>
+                <affiliation>
+                    <affiliation-name>Current Inst2</affiliation-name>
+                    <affiliation-type>current-institution</affiliation-type>
+                    <address>
+                        <country>United Kingdom</country>
+                    </address>
+                    <role-title>A Role</role-title>
+                </affiliation>
+            </affiliations>
+        </orcid-bio>
+        <orcid-activities>
+            <orcid-works>
+                <orcid-work visibility="public">
+                    <work-title>
+                        <title>Work title 1</title>
+                        <subtitle>Work subtitle 1</subtitle>
+                    </work-title>
+                </orcid-work>
+                <orcid-work visibility="public">
+                    <work-title>
+                        <title>Work title 2</title>
+                        <subtitle>Work subtitle 2</subtitle>
+                    </work-title>
+                </orcid-work>
+                <orcid-work visibility="public">
+                    <work-title>
+                        <title>Work Title 3</title>
+                        <subtitle>Work subtitle 3</subtitle>
+                    </work-title>
+                </orcid-work>
+            </orcid-works>
+        </orcid-activities>
+        <orcid-internal>
+            <security-details>
+                <encrypted-password>abc123</encrypted-password>
+                <security-question-id>1</security-question-id>
+                <encrypted-security-answer>dMDyJ1Z7Qn6xWClFzA63fQ==
+                </encrypted-security-answer>
+                <encrypted-verification-code>ghi789
+                </encrypted-verification-code>
+            </security-details>
+            <preferences>
+                <send-change-notifications>false</send-change-notifications> 
+                <send-orcid-news>false</send-orcid-news>
+                <work-visibility-default>public</work-visibility-default>              
+            </preferences>
+        </orcid-internal>
+    </orcid-profile>
+</orcid-message>

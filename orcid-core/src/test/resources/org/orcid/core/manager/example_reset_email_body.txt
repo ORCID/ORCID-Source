@@ -1,0 +1,21 @@
+Dear Josiah Carberry,
+
+Sorry that you are having problems logging in. Please click or copy the link 
+below to reset your password. If you have set up a security question, you 
+will need to correctly answer this question before being able to reset your 
+password.
+
+To reset your password, copy and paste this link into your browser:
+
+http://testserver.orcid.org/reset-password-email/RXkrcXNoN0cyQkZHRXVxcWt6bFlSaWRMNE5va0drSWdERSsxS092NmFMVG1JeXJwcGRWQTZXWEZJYVEzS3NRcEtFYjlGR1VGUnFpV29yT2ZoYkIyd3c9PQ
+
+After changing your password you will be asked to sign in with your email 
+address/ORCID iD and new password.
+
+If you have any questions or concerns about this password reset request, 
+please contact ORCID Support at support@orcid.org.
+
+Kind Regards,
+The ORCID Team
+support@orcid.org
+http://testserver.orcid.org

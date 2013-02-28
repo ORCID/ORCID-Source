@@ -1,0 +1,42 @@
+<!--
+
+    =============================================================================
+
+    ORCID (R) Open Source
+    http://orcid.org
+
+    Copyright (c) 2012-2013 ORCID, Inc.
+    Licensed under an MIT-Style License (MIT)
+    http://orcid.org/open-source-license
+
+    This copyright and license information (including a link to the full license)
+    shall be included in its entirety in all copies or substantial portion of
+    the software.
+
+    =============================================================================
+
+-->
+<ehcache xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="ehcache.xsd">
+
+    <diskStore path="java.io.tmpdir"/>
+
+    <defaultCache
+            maxElementsInMemory="5"
+            eternal="false"
+            timeToIdleSeconds="20"
+            timeToLiveSeconds="20"
+            overflowToDisk="false"
+            diskPersistent="false"
+            memoryStoreEvictionPolicy="LRU"
+            />
+
+    <cache name="country-list" maxElementsInMemory="200" eternal="true" overflowToDisk="false" copyOnRead="true"
+           copyOnWrite="true"/>
+           
+    <cache name="iso-countries" maxElementsInMemory="200" eternal="true" overflowToDisk="false" copyOnRead="false"
+           copyOnWrite="false"/>
+           
+    <cache name="recent-orcid" maxElementsInMemory="20000" timeToLiveSeconds="60" overflowToDisk="false" copyOnRead="false"
+           copyOnWrite="false" eternal="false"/>
+
+</ehcache>

@@ -1,0 +1,20 @@
+[
+  {
+    "doi" : "10.1017\/CBO9780511523816.001",
+    "score" : 2.5354958,
+    "normalizedScore" : 60,
+    "title" : "Note on the regional division of Spain",
+    "fullCitation" : "Simpson, J &amp; Simpson, J, 2009, , Cambridge University Press, Cambridge.",
+    "shortCitation" : "(Simpson & Simpson 2009, pp. xvii-xix)",
+    "coins" : "ctx_ver=Z39.88-2004&rft_val_fmt=info:ofi\/fmt:kev:mtx:journal&rft_id=info:doi\/10.1017\/CBO9780511523816.001&rtf.genre=book&rtf.spage=xvii&rtf.epage=xix&rtf.date=2009&rtf.aulast=Simpson&rtf.aufirst=James&rtf.auinit=J&rtf.btitle=null"
+  },
+  {
+    "doi" : "10.1017\/CBO9780511523816.003",
+    "score" : 2.5354958,
+    "normalizedScore" : 60,
+    "title" : "Spanish agriculture: the long view",
+    "fullCitation" : "Simpson, J &amp; Simpson, J, 2009, , Cambridge University Press, Cambridge.",
+    "shortCitation" : "(Simpson & Simpson 2009, pp. 13-32)",
+    "coins" : "ctx_ver=Z39.88-2004&rft_val_fmt=info:ofi\/fmt:kev:mtx:journal&rft_id=info:doi\/10.1017\/CBO9780511523816.003&rtf.genre=book&rtf.spage=13&rtf.epage=32&rtf.date=2009&rtf.aulast=Simpson&rtf.aufirst=James&rtf.auinit=J&rtf.btitle=null"
+  }
+]

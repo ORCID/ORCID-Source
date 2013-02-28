@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    =============================================================================
+
+    ORCID (R) Open Source
+    http://orcid.org
+
+    Copyright (c) 2012-2013 ORCID, Inc.
+    Licensed under an MIT-Style License (MIT)
+    http://orcid.org/open-source-license
+
+    This copyright and license information (including a link to the full license)
+    shall be included in its entirety in all copies or substantial portion of
+    the software.
+
+    =============================================================================
+
+-->
+<!-- 
+    This is an example file to request creation of client details for use in
+    OAuth2 authorization requests. The file will be sent from the client system
+    adminstrators to the ORCID administrators (as an email attachement). 
+-->
+<orcid-client-group xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:schemaLocation="http://www.orcid.org/ns/orcid ../../../../orcid-model/src/main/resources/orcid-client-group-1.1.xsd"
+ xmlns="http://www.orcid.org/ns/orcid">
+    <group-name>Elsevier</group-name>
+    <email>orcid-admin@elsevier.com</email>
+    <orcid-client>
+        <display-name>Ecological Complexity</display-name>
+        <website>http://www.journals.elsevier.com/ecological-complexity</website>
+        <short-description>An International Journal on Biocomplexity in the Environment and Theoretical Ecology</short-description>
+        <redirect-uris>
+            <redirect-uri>http://www.journals.elsevier.com/ecological-complexity/orcid-callback</redirect-uri>
+        </redirect-uris>
+    </orcid-client>    
+</orcid-client-group>

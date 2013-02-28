@@ -1,0 +1,15 @@
+Dear Josiah Carberry,
+
+Brown University has updated your ORCID record.
+
+Please click the following URL to see your updated record: http://testserver.orcid.org/4444-4444-4444-4446
+
+You may opt-out of Amend notices in your ORCID Account settings page.  If you want to revoke 
+permission for this organization to update your record in the future, please go to the following
+URL: http://testserver.orcid.org/account
+
+Kind Regards,
+The ORCID Team
+support@orcid.org
+http://testserver.orcid.org
+

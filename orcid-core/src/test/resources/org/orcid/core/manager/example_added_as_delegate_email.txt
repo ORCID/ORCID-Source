@@ -1,0 +1,12 @@
+Dear Jimmy Dove,
+
+You have been made a proxy by Josiah Carberry with the ORCID iD 4444-4444-4444-4446.  Being made a proxy means that this user has included you in their trusted relationships, and as a result you may update and make additions to this user’s ORCID Record.
+
+If you have questions or concerns about being a proxy, please contact the user at usersEmail@domain.com, or the ORCID Help Desk at support@orcid.org.
+
+
+Kind Regards,
+The ORCID Team
+support@orcid.org 
+http://testserver.orcid.org
+

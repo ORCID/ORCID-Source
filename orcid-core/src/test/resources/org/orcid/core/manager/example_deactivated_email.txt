@@ -1,0 +1,13 @@
+Dear Josiah Carberry,
+
+The email stored for your ORCID Account has been successfully changed. Please use your new email address or your ORCID iD when logging into http://orcid.org.
+
+Please click the following URL to see your updated record: http://testserver.orcid.org/account
+
+IMPORTANT: If you did not request this change, please contact ORCID Support immediately at support@orcid.org
+
+Kind Regards,
+The ORCID Team
+support@orcid.org
+http://testserver.orcid.org
+

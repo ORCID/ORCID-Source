@@ -1,0 +1,28 @@
+Dear Josiah Carberry,
+
+Thank you for registering for an ORCID account. 
+
+You can manage your ORCID record at http://orcid.org/4444-4444-4444-4446
+
+To confirm your email address, copy and paste this link into your browser:
+
+http://testserver.orcid.org/verify-email/WnhVWGhYVk9lTng4bWdqaDl0azBXY3BmN1F4dHExOW95SnNxeVJSMy9Scz0
+
+The ORCID identifier is intended to help link you with your research works and activities. You 
+may include your ORCID ID in processes such as manuscript submission and grant applications
+and synchronize the data in your ORCID record with other identifiers and external systems.
+You may add or edit data in your ORCID record, adjust privacy settings, and select trusted 
+parties with whom to share your data. 
+
+If you have any questions about the registration process, please contact the ORCID support 
+team at support@orcid.org. Please note that the sending email address cannot accept replies.
+
+=======
+Kind Regards,
+The ORCID Team
+support@orcid.org 
+http://testserver.orcid.org
+
+
+You have received this e-mail in the genuine belief that its contents would be of interest to you. 
+To opt-out of messages from ORCID please go to your Account Settings page at http://www.orcid.org/4444-4444-4444-4446/manage.

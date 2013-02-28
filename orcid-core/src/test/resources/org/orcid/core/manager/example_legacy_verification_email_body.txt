@@ -1,0 +1,18 @@
+Dear Josiah Carberry,
+
+Thank you for confirming your registration with Open Researcher & Contributor ID.
+
+To update your profile information and create a publication list, login at
+http://testserver.orcid.org/signin
+
+If you cannot click on the url above, you can cut-and-paste (or type) the url into your browser.
+
+Please keep the following information for your reference.
+ORCID ID : 4444-4444-4444-4446
+Profile URL : http://testserver.orcid.org/4444-4444-4444-4446
+Security Question : What is the name of your favorite teacher?
+Answer : Yoda
+
+Thank you,
+Open Researcher & Contributor ID
+http://testserver.orcid.org
