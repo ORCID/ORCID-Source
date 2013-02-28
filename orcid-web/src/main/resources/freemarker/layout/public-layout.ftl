@@ -133,9 +133,9 @@
         <div class="row">
             <div class="span11 offset1">
                 <ul class="span11 offset1">
-                    <li class=""><a href="http://about.orcid.org/help/contact-us">${springMacroRequestContext.getMessage("public-layout.contact_us")}</a></li>
-				    <li class=""><a href="http://about.orcid.org/footer/privacy-policy">${springMacroRequestContext.getMessage("public-layout.privacy_policy")}</a></li>
-				    <li class=""><a href="http://about.orcid.org/content/orcid-terms-use">${springMacroRequestContext.getMessage("public-layout.terms_of_use")}</a></li>
+                    <li class=""><a href="${aboutUri}/help/contact-us">${springMacroRequestContext.getMessage("public-layout.contact_us")}</a></li>
+				    <li class=""><a href="${aboutUri}/footer/privacy-policy">${springMacroRequestContext.getMessage("public-layout.privacy_policy")}</a></li>
+				    <li class=""><a href="${aboutUri}/content/orcid-terms-use">${springMacroRequestContext.getMessage("public-layout.terms_of_use")}</a></li>
                 </ul>
             </div>
         </div>
