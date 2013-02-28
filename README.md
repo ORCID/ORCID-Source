@@ -20,7 +20,7 @@ will composite the two github directories to create production builds.
 
 ## Setup Postgres DB
 We'll set up postgres using the default settings in 
-[staging-persistence.properties](https://github.com/ORCID/ORCID-Work-in-Progress/blob/master/orcid-persistence/src/main/resources/staging-persistence.properties).
+[staging-persistence.properties](https://github.com/ORCID/ORCID-Source/blob/master/orcid-persistence/src/main/resources/staging-persistence.properties).
  Please change usernames and passwords for any production environments.
 
 1. Become postgres user
@@ -51,16 +51,18 @@ We'll set up postgres using the default settings in
 
 ## Clone the git repository
 
-1. Cd into your development directory
+1. Make a git directory if one doesn't exist
+
 
     ```
-    cd ~/Dev
+    mkdir ~/git
     ```
+
 
 * Clone the repository
 
 	```
-    git clone git@github.com:ORCID/ORCID-Work-in-Progress.git
+    git clone git@github.com:ORCID/ORCID-Source.git ~/git/OCRID-Source
     ```
 
 
@@ -70,7 +72,7 @@ Do to licensing issues this is only available to ORCID.org employees.
 1. Clone the ORCID-Fonts-Dot-Com repository into the static directory
 
 	```
-    git clone git@github.com:ORCID/ORCID-Fonts-Dot-Com.git ORCID-Work-in-Progress/orcid-web/src/main/webapp/static/ORCID-Fonts-Dot-Com
+    git clone git@github.com:ORCID/ORCID-Fonts-Dot-Com.git ~/git/ORCID-Source/orcid-web/src/main/webapp/static/ORCID-Fonts-Dot-Com
     ```
 
 
@@ -78,6 +80,7 @@ Do to licensing issues this is only available to ORCID.org employees.
 1. maven clean install
 
     ```
+    cd ~/git/ORCID-Source
     mvn clean install
     ```
     
