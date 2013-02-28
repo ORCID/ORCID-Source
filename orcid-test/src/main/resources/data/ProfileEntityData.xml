@@ -1,0 +1,454 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!--
+
+    =============================================================================
+
+    ORCID (R) Open Source
+    http://orcid.org
+
+    Copyright (c) 2012-2013 ORCID, Inc.
+    Licensed under an MIT-Style License (MIT)
+    http://orcid.org/open-source-license
+
+    This copyright and license information (including a link to the full license)
+    shall be included in its entirety in all copies or substantial portion of 
+    the software.
+
+    =============================================================================
+
+-->
+<dataset>
+    <profile
+            orcid="4444-4444-4444-4441"
+            creation_method="API"
+            completed_date="2011-07-02 15:31:00.00"
+            date_created="2011-06-29 15:31:00.00"
+            submission_date="2011-06-29 15:31:00.00"
+            last_indexed_date="2011-07-02 15:31:00.00"            
+            last_modified="2011-07-02 15:31:00.00"           
+            email="spike@milligan.com"
+            claimed="true"
+            given_names="Spike"
+            family_name="Milligan"
+            vocative_name="Spike Milligan"
+            credit_name="S. Milligan"
+            credit_name_visibility="PUBLIC"
+            email_visibility="PRIVATE"
+            alternative_emails_visibility="PRIVATE"
+            profile_address_visibility="PRIVATE"
+            external_identifiers_visibility="LIMITED"
+            biography_visibility="PUBLIC"
+            keywords_visibility="REGISTERED_ONLY"
+            other_names_visibility="PRIVATE"
+            researcher_urls_visibility="PUBLIC"
+            source_id="4444-4444-4444-4441"
+            is_selectable_sponsor="false"
+            encrypted_password="e9adO9I4UpBwqI5tGR+qDodvAZ7mlcISn+T+kyqXPf2Z6PPevg7JijqYr6KGO8VOskOYqVOEK2FEDwebxWKGDrV/TQ9gRfKWZlzxssxsOnA="
+            security_question_id="1"
+            encrypted_security_answer="iTlIoR2JsFl5guE56cazmg=="
+            encrypted_verification_code="1vLkD2Lm8c24TyALcW0Brg=="
+            send_change_notifications="false"
+            send_orcid_news="false"
+            work_visibility_default='PRIVATE'
+            credentials_expiry="2013-02-01"
+            group_orcid="4444-4444-4444-4446"
+            biography="Terence Alan Patrick Seán 'Spike' Milligan KBE (16 April 1918 – 27 February 2002) was a comedian, writer, musician, poet, playwright, soldier and actor."
+            indexing_status="DONE"
+            iso2_country="UK"
+            />
+
+    <profile
+            orcid="4444-4444-4444-4442"
+            creation_method="API"
+            completed_date="2011-07-02 15:31:00.00"
+            date_created="2011-06-29 15:31:00.00"
+            submission_date="2011-06-29 15:31:00.00"
+            last_indexed_date="2011-07-02 15:31:00.00"
+            last_modified="2011-07-02 15:31:00.00"
+            email="michael@bentine.com"
+            claimed="true"
+            given_names="Michael"
+            family_name="Bentine"
+            vocative_name="Michael Bentine"
+            credit_name="M. Bentine"
+            email_visibility="PRIVATE"
+            alternative_emails_visibility="PRIVATE"
+            external_identifiers_visibility="LIMITED"
+            biography_visibility="PUBLIC"
+            keywords_visibility="REGISTERED_ONLY"
+            other_names_visibility="PRIVATE"
+            researcher_urls_visibility="PUBLIC"           
+            source_id="4444-4444-4444-4441"
+            is_selectable_sponsor="false"
+            encrypted_password="e9adO9I4UpBwqI5tGR+qDodvAZ7mlcISn+T+kyqXPf2Z6PPevg7JijqYr6KGO8VOskOYqVOEK2FEDwebxWKGDrV/TQ9gRfKWZlzxssxsOnA="
+            security_question_id="1"
+            encrypted_security_answer="iTlIoR2JsFl5guE56cazmg=="
+            encrypted_verification_code="1vLkD2Lm8c24TyALcW0Brg=="
+            send_change_notifications="false"
+            send_orcid_news="false"
+            work_visibility_default='PRIVATE'
+            credentials_expiry="2013-02-01"
+            group_orcid="4444-4444-4444-4446"
+            biography="Michael Bentine CBE (26 January 1922[1] – 26 November 1996[2]) was a British comedian, comic actor and founding member of the Goons."
+            indexing_status="DONE"
+            />
+
+    <profile
+            orcid="4444-4444-4444-4443"
+            creation_method="API"
+            completed_date="2011-07-02 15:31:00.00"
+            date_created="2011-06-29 15:31:00.00"
+            submission_date="2011-06-29 15:31:00.00"
+            last_indexed_date="2011-07-02 15:31:00.00"
+            last_modified="2011-07-02 15:31:00.00"
+            profile_deactivation_date="2012-06-29 15:31:00.00"
+            email="peter@sellers.com"             
+            claimed="true"
+            given_names="Peter"
+            family_name="Sellers"
+            vocative_name="Peter Sellers"
+            credit_name="P. Sellers III"            
+            credit_name_visibility="LIMITED"
+            email_visibility="PRIVATE"
+            alternative_emails_visibility="PRIVATE"
+            external_identifiers_visibility="LIMITED"
+            biography_visibility="PUBLIC"
+            keywords_visibility="LIMITED"
+            other_names_visibility="PRIVATE"
+            researcher_urls_visibility="PUBLIC"          
+            profile_address_visibility="LIMITED"
+            source_id="4444-4444-4444-4441"
+            is_selectable_sponsor="false"
+            encrypted_password="e9adO9I4UpBwqI5tGR+qDodvAZ7mlcISn+T+kyqXPf2Z6PPevg7JijqYr6KGO8VOskOYqVOEK2FEDwebxWKGDrV/TQ9gRfKWZlzxssxsOnA="
+            security_question_id="1"
+            encrypted_security_answer="iTlIoR2JsFl5guE56cazmg=="
+            encrypted_verification_code="1vLkD2Lm8c24TyALcW0Brg=="
+            send_change_notifications="true"
+            send_orcid_news="false"
+            work_visibility_default='PRIVATE'
+            credentials_expiry="2013-02-01"
+            group_orcid="4444-4444-4444-4446"
+            biography="Richard Henry Sellers, CBE (8 September 1925 – 24 July 1980), known as Peter Sellers, was a British film actor, comedian and singer."
+            indexing_status="DONE"
+            iso2_country="UK"
+            />
+
+    <profile
+            orcid="4444-4444-4444-4444"
+            creation_method="API"
+            completed_date="2011-07-02 15:31:00.00"
+            date_created="2011-06-29 15:31:00.00"
+            submission_date="2011-06-29 15:31:00.00"
+            last_indexed_date="2011-07-02 15:31:00.00"
+            last_modified="2011-07-02 15:31:00.00"
+            email="harry@secombe.com"
+            claimed="true"
+            given_names="Harry"
+            family_name="Secombe"
+            vocative_name="Harry Secombe"
+            credit_name="H. Secombe"
+            email_visibility="PRIVATE"
+            alternative_emails_visibility="PRIVATE"
+            external_identifiers_visibility="LIMITED"
+            biography_visibility="PUBLIC"
+            keywords_visibility="REGISTERED_ONLY"
+            other_names_visibility="PRIVATE"
+            researcher_urls_visibility="PUBLIC"
+            source_id="4444-4444-4444-4441"
+            is_selectable_sponsor="true"
+            encrypted_password="e9adO9I4UpBwqI5tGR+qDodvAZ7mlcISn+T+kyqXPf2Z6PPevg7JijqYr6KGO8VOskOYqVOEK2FEDwebxWKGDrV/TQ9gRfKWZlzxssxsOnA="
+            security_question_id="1"
+            encrypted_security_answer="iTlIoR2JsFl5guE56cazmg=="
+            encrypted_verification_code="1vLkD2Lm8c24TyALcW0Brg=="
+            send_change_notifications="false"
+            send_orcid_news="false"
+            work_visibility_default='PRIVATE'
+            credentials_expiry="2013-02-01"
+            group_orcid="4444-4444-4444-4446"
+            biography="Sir Harry Donald Secombe, CBE (8 September 1921 – 11 April 2001) was a Welsh entertainer with a talent for comedy and a noted fine tenor singing voice."
+            indexing_status="DONE"
+            />
+
+    <profile
+            orcid="4444-4444-4444-4445"
+            creation_method="API"
+            completed_date="2011-07-02 15:31:00.00"
+            date_created="2011-06-29 15:31:00.00"
+            submission_date="2011-06-29 15:31:00.00"
+            last_indexed_date="2011-07-02 15:31:00.00"
+            last_modified="2011-07-02 15:31:00.00"
+            claimed="true"
+            given_names="Andrew"
+            family_name="Timothy"
+            vocative_name="Andrew Timothy"
+            credit_name="A. Timothy"
+            external_identifiers_visibility="LIMITED"
+            biography_visibility="PUBLIC"
+            keywords_visibility="REGISTERED_ONLY"
+            other_names_visibility="PRIVATE"
+            researcher_urls_visibility="PUBLIC"
+            source_id="4444-4444-4444-4441"
+            is_selectable_sponsor="false"
+            encrypted_password="e9adO9I4UpBwqI5tGR+qDodvAZ7mlcISn+T+kyqXPf2Z6PPevg7JijqYr6KGO8VOskOYqVOEK2FEDwebxWKGDrV/TQ9gRfKWZlzxssxsOnA="
+            security_question_id="1"
+            encrypted_security_answer="iTlIoR2JsFl5guE56cazmg=="
+            encrypted_verification_code="1vLkD2Lm8c24TyALcW0Brg=="
+            send_change_notifications="false"
+            send_orcid_news="false"
+            work_visibility_default='PRIVATE'
+            credentials_expiry="2013-02-01"
+            group_orcid="4444-4444-4444-4446"
+            biography="Andrew Timothy (1912–9 December 1990) was an Anglican priest and BBC Radio announcer, who is best remembered for being the original announcer of the comedy series The Goon Show."
+            indexing_status="PENDING"
+            />
+
+    <profile
+            orcid="4444-4444-4444-4446"
+            creation_method="API"
+            completed_date="2011-07-02 15:31:00.00"
+            date_created="2011-06-29 15:31:00.00"
+            submission_date="2011-06-29 15:31:00.00"
+            last_indexed_date="2011-07-02 15:31:00.00"
+            last_modified="2011-07-02 15:32:00.00"
+            email="billie@holiday.com"
+            claimed="true"
+            given_names="Billie"
+            family_name="Holiday"
+            vocative_name="Billie Holiday"
+            credit_name="B. Holiday"
+            email_visibility="PRIVATE"
+            alternative_emails_visibility="PRIVATE"
+            external_identifiers_visibility="LIMITED"
+            biography_visibility="PUBLIC"
+            keywords_visibility="REGISTERED_ONLY"
+            other_names_visibility="PRIVATE"
+            researcher_urls_visibility="PUBLIC"
+            source_id="4444-4444-4444-4441"
+            is_selectable_sponsor="true"
+            encrypted_password="e9adO9I4UpBwqI5tGR+qDodvAZ7mlcISn+T+kyqXPf2Z6PPevg7JijqYr6KGO8VOskOYqVOEK2FEDwebxWKGDrV/TQ9gRfKWZlzxssxsOnA="
+            security_question_id="1"
+            encrypted_security_answer="iTlIoR2JsFl5guE56cazmg=="
+            encrypted_verification_code="1vLkD2Lm8c24TyALcW0Brg=="
+            send_change_notifications="false"
+            send_orcid_news="false"
+            work_visibility_default='PRIVATE'
+            credentials_expiry="2013-02-01"
+            biography="Billie Holiday (born Eleanora Harris[1][4] April 7, 1915 – July 17, 1959) was an American jazz singer and songwriter."
+            indexing_status="PENDING"
+            />
+
+    <profile
+            orcid="4444-4444-4444-4447"
+            creation_method="API"
+            completed_date="2011-07-02 15:31:00.00"
+            date_created="2011-06-29 15:31:00.00"
+            submission_date="2011-06-29 15:31:00.00"
+            last_indexed_date="2011-07-02 15:31:00.00"
+            last_modified="2011-07-02 15:31:00.00"
+            email="otis@reading.com"
+            claimed="false"
+            given_names="Otis"
+            family_name="Redding"
+            vocative_name="Otis Redding"
+            credit_name="O. Redding"
+            email_visibility="PRIVATE"
+            alternative_emails_visibility="PRIVATE"
+            external_identifiers_visibility="LIMITED"
+            biography_visibility="PUBLIC"
+            keywords_visibility="REGISTERED_ONLY"
+            other_names_visibility="PRIVATE"
+            researcher_urls_visibility="PUBLIC"
+            source_id="4444-4444-4444-4441"
+            is_selectable_sponsor="true"
+            encrypted_password="e9adO9I4UpBwqI5tGR+qDodvAZ7mlcISn+T+kyqXPf2Z6PPevg7JijqYr6KGO8VOskOYqVOEK2FEDwebxWKGDrV/TQ9gRfKWZlzxssxsOnA="
+            security_question_id="1"
+            encrypted_security_answer="iTlIoR2JsFl5guE56cazmg=="
+            encrypted_verification_code="1vLkD2Lm8c24TyALcW0Brg=="
+            send_change_notifications="false"
+            send_orcid_news="false"
+            work_visibility_default='PRIVATE'
+            credentials_expiry="2013-02-01"
+            biography="Otis Ray Redding, Jr. (September 9, 1941 – December 10, 1967) was an American soul singer-songwriter, record producer, arranger, and talent scout."
+            indexing_status="DONE"
+            />
+
+    <granted_authority
+            authority="USER_ROLE"
+            orcid="4444-4444-4444-4441"
+            />
+    <granted_authority
+            authority="USER_ROLE"
+            orcid="4444-4444-4444-4442"
+            />
+    <granted_authority
+            authority="USER_ROLE"
+            orcid="4444-4444-4444-4443"
+            />
+    <granted_authority
+            authority="USER_ROLE"
+            orcid="4444-4444-4444-4444"
+            />
+    <granted_authority
+            authority="USER_ROLE"
+            orcid="4444-4444-4444-4445"
+            />
+
+    <granted_authority
+            authority="USER_ROLE"
+            orcid="4444-4444-4444-4446"
+            />
+
+    <granted_authority
+            authority="USER_ROLE"
+            orcid="4444-4444-4444-4447"
+            />
+
+    <external_identifier
+            external_id_reference="d3clan"
+            external_id_type="Facebook"
+            orcid="4444-4444-4444-4443"
+            external_id_url="http://www.facebook.com/d3clan"
+            external_orcid="4444-4444-4444-4441"
+            />
+
+    <researcher_url
+            id="1"
+            url="www.4444-4444-4444-4441.com"
+            url_name="444_1"
+            orcid="4444-4444-4444-4441"
+            />
+
+    <researcher_url
+            id="2"
+            url="http://www.researcherurl2.com?id=1"
+            url_name="443_1"
+            orcid="4444-4444-4444-4443"
+            />
+
+    <researcher_url
+            id="3"
+            url="http://www.researcherurl2.com?id=2"
+            url_name="443_2"
+            orcid="4444-4444-4444-4443"
+            />
+
+    <researcher_url
+            id="4"
+            url="www.4444-4444-4444-4445.com"
+            orcid="4444-4444-4444-4445"
+            />  
+
+    <other_name
+            other_name_id="1"
+            display_name="Slibberdy Slabinah"
+            orcid="4444-4444-4444-4443"
+            />
+
+    <other_name
+            other_name_id="2"
+            display_name="Flibberdy Flabinah"
+            orcid="4444-4444-4444-4443"
+            />
+
+    <other_name
+            other_name_id="3"
+            display_name="Flobberdy Flip"
+            orcid="4444-4444-4444-4446"
+            />
+
+    <address
+            id="1"
+            address_line_1="Address 1"
+            address_line_2="Address 2"
+            city="A City"
+            postal_code="BN3 1LK"
+            state_or_province="East Sussex"
+            country="England"
+            />
+
+    <institution
+            id="1"
+            institution_name="An institution"
+            address_id="1"
+            />
+
+    <affiliation
+            institution_id="1"
+            orcid="4444-4444-4444-4442"
+            role_title="Primary Researcher"
+            department_name="A Department"
+            date_created="2010-07-02 15:31:00.00"
+            last_modified="2010-07-02 15:31:00.00"
+            start_date="2010-07-02 15:31:00.00"
+            end_date="2011-07-02 15:31:00.00"
+            affiliation_details_visibility="PUBLIC"
+            affiliation_type="CURRENT_PRIMARY_INSTITUTION"
+            affiliation_address_visibility="PUBLIC"
+            />
+
+    <affiliation
+            institution_id="1"
+            orcid="4444-4444-4444-4443"
+            role_title="Primary Researcher"
+            department_name="A Department"
+            date_created="2010-07-02 15:31:00.00"
+            last_modified="2010-07-02 15:31:00.00"
+            start_date="2010-07-02 15:31:00.00"
+            end_date="2011-07-02 15:31:00.00"
+            affiliation_details_visibility="LIMITED"
+            affiliation_type="CURRENT_PRIMARY_INSTITUTION"
+            />
+
+    <given_permission_to
+            given_permission_to_id="1"
+            giver_orcid="4444-4444-4444-4441"
+            receiver_orcid="4444-4444-4444-4443"
+            approval_date="2011-08-24 11:28:16.00"
+            />
+
+    <given_permission_to
+            given_permission_to_id="2"
+            giver_orcid="4444-4444-4444-4443"
+            receiver_orcid="4444-4444-4444-4442"
+            approval_date="2011-10-17 16:59:32.00"
+            />
+    
+    <!-- Old way of doing emails -->
+    <alternate_email 
+        orcid="4444-4444-4444-4443"
+        alternate_email="teddybass@semantico.com"
+    />
+    <alternate_email 
+        orcid="4444-4444-4444-4443"
+        alternate_email="teddybass2@semantico.com"
+    />
+    
+    <!-- New way of doing emails -->
+    <email
+        orcid="4444-4444-4444-4445"
+        email="andrew@timothy.com"
+        is_primary="true"
+        is_current="true"
+        is_verified="false"
+        visibility="PRIVATE"
+    />
+    
+    <email
+        orcid="4444-4444-4444-4445"
+        email="andrew2@timothy.com"
+        is_primary="false"
+        is_current="false"
+        is_verified="false"
+        visibility="PRIVATE"
+    />
+        
+    <profile_keyword 
+        profile_orcid="4444-4444-4444-4443"
+        keywords_name="tea making"
+    />
+     <profile_keyword 
+        profile_orcid="4444-4444-4444-4443"
+        keywords_name="coffee making"
+    />
+
+</dataset>

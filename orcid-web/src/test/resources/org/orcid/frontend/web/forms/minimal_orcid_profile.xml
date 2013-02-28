@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<orcid-profile xmlns="http://www.orcid.org/ns/orcid">
+    <orcid-history>
+        <submission-date>2012-09-12T22:20:00.786+01:00</submission-date>
+        <claimed>true</claimed>
+    </orcid-history>
+    <orcid-bio>
+        <personal-details>
+            <given-names>givenNames</given-names>
+            <family-name>familyName</family-name>
+        </personal-details>
+        <contact-details>
+            <email>email</email>
+        </contact-details>
+    </orcid-bio>
+    <orcid-internal>
+        <security-details/>
+        <preferences>
+            <send-features-news>true</send-features-news>
+            <send-other-news>false</send-other-news>
+        </preferences>
+    </orcid-internal>
+</orcid-profile>

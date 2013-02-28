@@ -1,0 +1,715 @@
+<!--
+
+    =============================================================================
+
+    ORCID (R) Open Source
+    http://orcid.org
+
+    Copyright (c) 2012-2013 ORCID, Inc.
+    Licensed under an MIT-Style License (MIT)
+    http://orcid.org/open-source-license
+
+    This copyright and license information (including a link to the full license)
+    shall be included in its entirety in all copies or substantial portion of
+    the software.
+
+    =============================================================================
+
+-->
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd"
+        >
+    <changeSet id="PER-WORK-VISIBILITY" author="Will Simpson">
+        <addColumn tableName="profile_work">
+            <column name="visibility" type="${visibility.type}"/>
+        </addColumn>
+        <dropColumn tableName="profile" columnName="works_visibility"/>
+    </changeSet>
+
+    <changeSet id="POSTGRES-RENAME-ROLE-COLUMN" author="Declan Newman" dbms="postgresql">
+        <preConditions onFail="MARK_RAN">
+            <columnExists tableName="primary_profile_institution" columnName="role"/>
+        </preConditions>
+        <renameColumn tableName="primary_profile_institution" oldColumnName="role" newColumnName="role_title"/>
+    </changeSet>
+
+    <!-- hack as liquibase always quotes the column name 'role', meaning it doesn't get found -->
+    <changeSet id="HSQL-RENAME-ROLE-COLUMN" author="Declan Newman" dbms="hsqldb">
+        <sql>alter table primary_profile_institution alter column role rename to role_title</sql>
+    </changeSet>
+
+    <changeSet id="UPDATE-AND-RENAME-PRIMARY-PROFILE-INSTITUTION-TABLE" author="Declan Newman">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="primary_profile_institution"/>
+        </preConditions>
+        <addColumn tableName="primary_profile_institution">
+            <column name="end_date" type="DATE"/>
+            <column name="affiliation_type" type="VARCHAR(100)"/>
+            <column name="department_name" type="VARCHAR(400)"/>
+        </addColumn>
+        <update tableName="primary_profile_institution">
+            <column name="affiliation_type" value="CURRENT_PRIMARY_INSTITUTION"/>
+        </update>
+        <renameColumn tableName="primary_profile_institution" oldColumnName="primary_profile_institution_name_visibility" newColumnName="affiliation_details_visibility"/>
+        <dropColumn tableName="primary_profile_institution" columnName="primary_profile_institution_detail_visibility"/>
+        <renameTable oldTableName="primary_profile_institution" newTableName="affiliation"/>
+    </changeSet>
+
+    <changeSet id="COPY-AND-DROP-PAST-PROFILE-TABLE" author="Declan Newman">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="past_profile_institution"/>
+        </preConditions>
+        <sql>
+            insert into affiliation
+            (
+            institution_id,
+            orcid,
+            date_created,
+            last_modified,
+            role_title,
+            start_date,
+            affiliation_details_visibility,
+            affiliation_type
+            )
+            select
+            institution_id,
+            orcid,
+            date_created,
+            last_modified,
+            role,
+            start_date,
+            'PUBLIC',
+            'PAST_INSTITUTION' from past_profile_institution;
+        </sql>
+        <dropTable tableName="past_profile_institution"/>
+        <dropColumn tableName="profile" columnName="past_institutions_visibility"/>
+    </changeSet>
+
+    <changeSet id="COPY-AND-DROP-AFFILIATE-PROFILE-TABLE" author="Declan Newman">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="affiliate_profile_institution"/>
+        </preConditions>
+        <sql>
+            insert into affiliation
+            (
+            institution_id,
+            orcid,
+            date_created,
+            last_modified,
+            role_title,
+            start_date,
+            affiliation_details_visibility,
+            affiliation_type
+            )
+            select
+            institution_id,
+            orcid,
+            date_created,
+            last_modified,
+            role,
+            start_date,
+            'PUBLIC',
+            'CURRENT_INSTITUTION' from affiliate_profile_institution;
+        </sql>
+        <dropTable tableName="affiliate_profile_institution"/>
+    </changeSet>
+
+    <changeSet id="CHANGE-WORK-PRIMARY-KEY-NAME" author="Declan Newman">
+        <preConditions onFail="MARK_RAN">
+           <columnExists tableName="work" columnName="id"/>
+        </preConditions>
+        <renameColumn tableName="work" oldColumnName="id" newColumnName="work_id"/>
+    </changeSet>
+
+    <changeSet id="ADD-WORK-EXTERNAL-URL" author="Declan Neaman">
+        <preConditions onFail="MARK_RAN">
+            <not>
+               <columnExists tableName="work" columnName="work_external_url"/>
+            </not>
+        </preConditions>
+        <addColumn tableName="work">
+            <column name="work_external_url" type="VARCHAR(350)"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="DROP-COLUMNS-OF-WORK-TABLE" author="Declan Newman">
+        <preConditions onFail="MARK_RAN">
+            <columnExists tableName="work" columnName="volume"/>
+        </preConditions>
+        <dropColumn tableName="work" columnName="ref_type"/>
+        <dropColumn tableName="work" columnName="isbn"/>
+        <dropColumn tableName="work" columnName="issn"/>
+        <dropColumn tableName="work" columnName="work_external_url"/>
+        <dropColumn tableName="work" columnName="publisher"/>
+        <dropColumn tableName="work" columnName="secondary_title"/>
+        <dropColumn tableName="work" columnName="page_start"/>
+        <dropColumn tableName="work" columnName="page_end"/>
+        <dropColumn tableName="work" columnName="cover_date"/>
+        <dropColumn tableName="work" columnName="issue_number"/>
+        <dropColumn tableName="work" columnName="volume"/>
+    </changeSet>
+
+    <changeSet id="ADD-COLUMNS-TO-WORK-TABLE" author="Declan Newman">
+        <preConditions onFail="MARK_RAN">
+            <not>
+               <columnExists tableName="work" columnName="subtitle"/>
+            </not>
+        </preConditions>
+        <addColumn tableName="work">
+            <column name="subtitle" type="VARCHAR(1000)"/>
+            <column name="description" type="VARCHAR(5000)"/>
+            <column name="work_url" type="VARCHAR(350)"/>
+            <column name="citation" type="VARCHAR(500)"/>
+            <column name="work_type" type="VARCHAR(100)"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="CREATE-GRANT-TABLE" author="Declan Newman">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="funding_grant"/>
+            </not>
+        </preConditions>
+        <createTable tableName="funding_grant">
+            <column name="grant_id" type="bigint">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="grant_pkey"/>
+            </column>
+            <column name="agency_name" type="VARCHAR(255)"/>
+            <column name="agency_orcid" type="VARCHAR(19)"/>
+            <column name="grant_no" type="VARCHAR(40)"/>
+            <column name="grant_external_id" type="VARCHAR(155)"/>
+            <column name="grant_external_program" type="VARCHAR(155)"/>
+            <column name="short_description" type="VARCHAR(550)"/>
+            <column name="grant_date" type="DATE"/>
+            <column name="date_created" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="last_modified" type="TIMESTAMP WITH TIME ZONE"/>
+        </createTable>
+        <addForeignKeyConstraint baseColumnNames="agency_orcid" baseTableName="funding_grant" baseTableSchemaName="public"
+                                 constraintName="grant_agency_orcid_fk" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="orcid"
+                                 referencedTableName="profile" referencedTableSchemaName="public"
+                                 referencesUniqueColumn="false"/>
+    </changeSet>
+
+    <changeSet id="CREATE-FUNDING-GRANT-SEQUENCE" author="Declan Newman" dbms="postgresql" context="default">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <sequenceExists sequenceName="grant_seq"/>
+            </not>
+        </preConditions>
+        <createSequence sequenceName="grant_seq"/>
+    </changeSet>
+
+    <changeSet id="CREATE-FUNDING-GRANT-AUTO-COL" author="Declan Newman" dbms="hsqldb" context="default">
+        <addAutoIncrement tableName="funding_grant" columnName="grant_id" columnDataType="bigint"/>
+    </changeSet>
+
+    <changeSet id="CREATE-PROFILE-GRANT-TABLE" author="Declan Newman">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="profile_grant"/>
+            </not>
+        </preConditions>
+        <createTable tableName="profile_grant">
+            <column name="orcid" type="VARCHAR(19)"/>
+            <column name="grant_id" type="bigint"/>
+            <column name="added_to_profile_date" type="DATE"/>
+            <column name="visibility" type="${visibility.type}"/>
+            <column name="date_created" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="last_modified" type="TIMESTAMP WITH TIME ZONE"/>
+        </createTable>
+        <addForeignKeyConstraint baseColumnNames="orcid" baseTableName="profile_grant" baseTableSchemaName="public"
+                                 constraintName="profile_grant_orcid_fk" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="orcid"
+                                 referencedTableName="profile" referencedTableSchemaName="public"
+                                 referencesUniqueColumn="false"/>
+        <addForeignKeyConstraint baseColumnNames="grant_id" baseTableName="profile_grant" baseTableSchemaName="public"
+                                 constraintName="profile_grant_grant_fk" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="grant_id"
+                                 referencedTableName="funding_grant" referencedTableSchemaName="public"
+                                 referencesUniqueColumn="false"/>
+        <addPrimaryKey tableName="profile_grant" columnNames="orcid, grant_id" constraintName="profile_grant_pk"/>
+    </changeSet>
+
+    <changeSet id="CREATE-PATENT-TABLE" author="Declan Newman">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="patent"/>
+            </not>
+        </preConditions>
+        <createTable tableName="patent">
+            <column name="patent_id" type="bigint">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="patent_pkey"/>
+            </column>
+            <column name="issuing_country" type="VARCHAR(155)"/>
+            <column name="patent_no" type="VARCHAR(60)"/>
+            <column name="short_description" type="VARCHAR(550)"/>
+            <column name="issue_date" type="DATE"/>
+            <column name="date_created" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="last_modified" type="TIMESTAMP WITH TIME ZONE"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="CREATE-PATENT-SEQUENCE" author="Declan Newman" dbms="postgresql" context="default">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <sequenceExists sequenceName="patent_seq"/>
+            </not>
+        </preConditions>
+        <createSequence sequenceName="patent_seq"/>
+    </changeSet>
+
+    <changeSet id="CREATE-PATENT-AUTO-COL" author="Declan Newman" dbms="hsqldb" context="default">
+        <addAutoIncrement tableName="patent" columnName="patent_id" columnDataType="bigint"/>
+    </changeSet>
+
+    <changeSet id="CREATE-PROFILE-PATENT-TABLE" author="Declan Newman">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="profile_patent"/>
+            </not>
+        </preConditions>
+        <createTable tableName="profile_patent">
+            <column name="orcid" type="VARCHAR(19)"/>
+            <column name="patent_id" type="bigint"/>
+            <column name="added_to_profile_date" type="DATE"/>
+            <column name="visibility" type="${visibility.type}"/>
+            <column name="date_created" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="last_modified" type="TIMESTAMP WITH TIME ZONE"/>
+        </createTable>
+        <addForeignKeyConstraint baseColumnNames="orcid" baseTableName="profile_patent" baseTableSchemaName="public"
+                                 constraintName="profile_patent_orcid_fk" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="orcid"
+                                 referencedTableName="profile" referencedTableSchemaName="public"
+                                 referencesUniqueColumn="false"/>
+        <addForeignKeyConstraint baseColumnNames="patent_id" baseTableName="profile_patent" baseTableSchemaName="public"
+                                 constraintName="profile_patent_patent_fk" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="patent_id"
+                                 referencedTableName="patent" referencedTableSchemaName="public"
+                                 referencesUniqueColumn="false"/>
+        <addPrimaryKey tableName="profile_patent" columnNames="orcid, patent_id" constraintName="profile_patent_pk"/>
+    </changeSet>
+
+    <changeSet id="CREATE-WORK-SOURCE-TABLE" author="Declan Newman">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="work_source"/>
+            </not>
+        </preConditions>
+        <createTable tableName="work_source">
+            <column name="orcid" type="VARCHAR(19)"/>
+            <column name="work_id" type="bigint"/>
+            <column name="source_orcid" type="VARCHAR(19)"/>
+            <column name="deposited_date" type="DATE"/>
+            <column name="date_created" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="last_modified" type="TIMESTAMP WITH TIME ZONE"/>
+        </createTable>
+        <addPrimaryKey tableName="work_source" columnNames="orcid, work_id, source_orcid" constraintName="work_source_pk"/>
+        <addForeignKeyConstraint baseColumnNames="orcid" baseTableName="work_source" baseTableSchemaName="public"
+                                 constraintName="work_source_orcid_fk" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="orcid"
+                                 referencedTableName="profile" referencedTableSchemaName="public"
+                                 referencesUniqueColumn="false"/>
+        <addForeignKeyConstraint baseColumnNames="work_id" baseTableName="work_source" baseTableSchemaName="public"
+                                 constraintName="work_source_work_fk" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="work_id"
+                                 referencedTableName="work" referencedTableSchemaName="public"
+                                 referencesUniqueColumn="false"/>
+        <addForeignKeyConstraint baseColumnNames="source_orcid" baseTableName="work_source" baseTableSchemaName="public"
+                                 constraintName="work_source_source_orcid_fk" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="orcid"
+                                 referencedTableName="profile" referencedTableSchemaName="public"
+                                 referencesUniqueColumn="false"/>
+
+    </changeSet>
+
+    <changeSet id="CREATE-GRANT-SOURCE-TABLE" author="Declan Newman">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="grant_source"/>
+            </not>
+        </preConditions>
+        <createTable tableName="grant_source">
+            <column name="orcid" type="VARCHAR(19)"/>
+            <column name="grant_id" type="bigint"/>
+            <column name="source_orcid" type="VARCHAR(19)"/>
+            <column name="deposited_date" type="DATE"/>
+            <column name="date_created" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="last_modified" type="TIMESTAMP WITH TIME ZONE"/>
+        </createTable>
+        <addPrimaryKey tableName="grant_source" columnNames="orcid, grant_id, source_orcid" constraintName="grant_source_pk"/>
+        <addForeignKeyConstraint baseColumnNames="orcid" baseTableName="grant_source" baseTableSchemaName="public"
+                                 constraintName="grant_source_orcid_fk" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="orcid"
+                                 referencedTableName="profile" referencedTableSchemaName="public"
+                                 referencesUniqueColumn="false"/>
+        <addForeignKeyConstraint baseColumnNames="grant_id" baseTableName="grant_source" baseTableSchemaName="public"
+                                 constraintName="grant_source_grant_fk" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="grant_id"
+                                 referencedTableName="funding_grant" referencedTableSchemaName="public"
+                                 referencesUniqueColumn="false"/>
+        <addForeignKeyConstraint baseColumnNames="source_orcid" baseTableName="grant_source" baseTableSchemaName="public"
+                                 constraintName="grant_source_source_orcid_fk" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="orcid"
+                                 referencedTableName="profile" referencedTableSchemaName="public"
+                                 referencesUniqueColumn="false"/>
+
+    </changeSet>
+
+    <changeSet id="CREATE-PATENT-SOURCE-TABLE" author="Declan Newman">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="patent_source"/>
+            </not>
+        </preConditions>
+        <createTable tableName="patent_source">
+            <column name="orcid" type="VARCHAR(19)"/>
+            <column name="patent_id" type="bigint"/>
+            <column name="source_orcid" type="VARCHAR(19)"/>
+            <column name="deposited_date" type="DATE"/>
+            <column name="date_created" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="last_modified" type="TIMESTAMP WITH TIME ZONE"/>
+        </createTable>
+        <addPrimaryKey tableName="patent_source" columnNames="orcid, patent_id, source_orcid" constraintName="patent_source_pk"/>
+        <addForeignKeyConstraint baseColumnNames="orcid" baseTableName="patent_source" baseTableSchemaName="public"
+                                 constraintName="patent_source_orcid_fk" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="orcid"
+                                 referencedTableName="profile" referencedTableSchemaName="public"
+                                 referencesUniqueColumn="false"/>
+        <addForeignKeyConstraint baseColumnNames="patent_id" baseTableName="patent_source" baseTableSchemaName="public"
+                                 constraintName="patent_source_patent_fk" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="patent_id"
+                                 referencedTableName="patent" referencedTableSchemaName="public"
+                                 referencesUniqueColumn="false"/>
+        <addForeignKeyConstraint baseColumnNames="source_orcid" baseTableName="patent_source" baseTableSchemaName="public"
+                                 constraintName="patent_source_source_orcid_fk" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="orcid"
+                                 referencedTableName="profile" referencedTableSchemaName="public"
+                                 referencesUniqueColumn="false"/>
+    </changeSet>
+
+    <changeSet id="DROP-AUTHOR-OTHER-NAME-TABLE" author="Declan Newman">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="author_other_name"/>
+        </preConditions>
+        <dropTable tableName="author_other_name"/>
+    </changeSet>
+
+    <changeSet id="RENAME-AUTHOR-TABLE-TO-WORK-CONTRUBUTOR" author="Declan Newman">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="author"/>
+        </preConditions>
+        <renameTable oldTableName="author" newTableName="work_contributor"/>
+        <renameColumn tableName="work_contributor" oldColumnName="id" newColumnName="work_contributor_id"/>
+        <addColumn tableName="work_contributor">
+            <column name="contributor_role" type="VARCHAR(90)"/>
+            <column name="contributor_sequence" type="VARCHAR(90)"/>
+            <column name="contributor_email" type="VARCHAR(300)"/>
+        </addColumn>
+
+        <dropColumn tableName="work_contributor" columnName="family_name"/>
+        <dropColumn tableName="work_contributor" columnName="given_names"/>
+        <dropColumn tableName="work_contributor" columnName="vocative_name"/>
+        <dropColumn tableName="work_contributor" columnName="author_type"/>
+    </changeSet>
+
+    <changeSet id="CREATE-GRANT-CONTRIBUTOR" author="Declan Newman">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="grant_contributor"/>
+            </not>
+        </preConditions>
+        <createTable tableName="grant_contributor">
+            <column name="grant_contributor_id" type="bigint">
+                <constraints primaryKey="true" primaryKeyName="grant_contributor_pk"/>
+            </column>
+            <column name="orcid" type="VARCHAR(19)"/>
+            <column name="grant_id" type="bigint"/>
+            <column name="credit_name" type="VARCHAR(450)"/>
+            <column name="contributor_role" type="VARCHAR(90)"/>
+            <column name="contributor_sequence" type="VARCHAR(90)"/>
+            <column name="contributor_email" type="VARCHAR(300)"/>
+            <column name="date_created" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="last_modified" type="TIMESTAMP WITH TIME ZONE"/>
+        </createTable>
+        <addForeignKeyConstraint baseColumnNames="orcid" baseTableName="grant_contributor" baseTableSchemaName="public"
+                                 constraintName="grant_contributor_orcid_fk" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="orcid"
+                                 referencedTableName="profile" referencedTableSchemaName="public"
+                                 referencesUniqueColumn="false"/>
+        <addForeignKeyConstraint baseColumnNames="grant_id" baseTableName="grant_contributor" baseTableSchemaName="public"
+                                 constraintName="grant_contributor_grant_fk" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="grant_id"
+                                 referencedTableName="funding_grant" referencedTableSchemaName="public"
+                                 referencesUniqueColumn="false"/>
+    </changeSet>
+
+    <changeSet id="CREATE-PATENT-CONTRIBUTOR" author="Declan Newman">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="patent_contributor"/>
+            </not>
+        </preConditions>
+        <createTable tableName="patent_contributor">
+            <column name="patent_contributor_id" type="bigint">
+                <constraints primaryKey="true" primaryKeyName="patent_contributor_pk"/>
+            </column>
+            <column name="orcid" type="VARCHAR(19)"/>
+            <column name="patent_id" type="bigint"/>
+            <column name="credit_name" type="VARCHAR(450)"/>
+            <column name="contributor_role" type="VARCHAR(90)"/>
+            <column name="contributor_sequence" type="VARCHAR(90)"/>
+            <column name="contributor_email" type="VARCHAR(300)"/>
+            <column name="date_created" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="last_modified" type="TIMESTAMP WITH TIME ZONE"/>
+        </createTable>
+        <addForeignKeyConstraint baseColumnNames="orcid" baseTableName="patent_contributor" baseTableSchemaName="public"
+                                 constraintName="patent_contributor_orcid_fk" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="orcid"
+                                 referencedTableName="profile" referencedTableSchemaName="public"
+                                 referencesUniqueColumn="false"/>
+        <addForeignKeyConstraint baseColumnNames="patent_id" baseTableName="patent_contributor" baseTableSchemaName="public"
+                                 constraintName="patent_contributor_patent_fk" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="patent_id"
+                                 referencedTableName="patent" referencedTableSchemaName="public"
+                                 referencesUniqueColumn="false"/>
+    </changeSet>
+
+    <changeSet id="CREATE-WORK-EXTERNAL-IDENTIFIER-TABLE" author="Declan Newman">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="work_external_identifier"/>
+            </not>
+        </preConditions>
+        <createTable tableName="work_external_identifier">
+            <column name="identifier" type="VARCHAR(100)"/>
+            <column name="identifier_type" type="VARCHAR(100)"/>
+            <column name="work_id" type="bigint"/>
+            <column name="date_created" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="last_modified" type="TIMESTAMP WITH TIME ZONE"/>
+        </createTable>
+        <addPrimaryKey tableName="work_external_identifier" columnNames="identifier, identifier_type, work_id"/>
+        <addForeignKeyConstraint baseTableName="work_external_identifier" baseColumnNames="work_id" constraintName="work_external_identifier_work_fk"
+                                 referencedTableName="work" referencedColumnNames="work_id"/>
+
+    </changeSet>
+
+    <changeSet id="CREATE-CONTRIBUTOR-SEQUENCES" author="Declan Newman" dbms="postgresql" context="default">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <sequenceExists sequenceName="patent_contributor_seq"/>
+            </not>
+        </preConditions>
+        <renameTable oldTableName="author_seq" newTableName="work_contributor_seq"/>
+        <createSequence sequenceName="patent_contributor_seq"/>
+        <createSequence sequenceName="grant_contributor_seq"/>
+    </changeSet>
+
+    <changeSet id="CREATE-CONTRIBUTOR-AUTO-COLS" author="Declan Newman" dbms="hsqldb" context="default">
+        <addAutoIncrement tableName="patent_contributor" columnName="patent_contributor_id" columnDataType="bigint"/>
+        <addAutoIncrement tableName="grant_contributor" columnName="grant_contributor_id" columnDataType="bigint"/>
+        <addAutoIncrement tableName="work_contributor" columnName="work_contributor_id" columnDataType="bigint"/>
+    </changeSet>
+
+    <changeSet id="DROP-ACCESSION-NUM-TABLE" author="Declan Newman">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="accession_num"/>
+        </preConditions>
+        <dropTable tableName="accession_num"/>
+    </changeSet>
+
+    <changeSet id="DROP-ELECTRONIC-RESOURCE-NUM-TABLE" author="Declan Newman">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="electronic_resource_num"/>
+        </preConditions>
+        <dropTable tableName="electronic_resource_num"/>
+    </changeSet>
+
+    <changeSet id="DROP-RELATED-URL-TABLE" author="Declan Newman">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="related_url"/>
+        </preConditions>
+        <dropTable tableName="related_url"/>
+    </changeSet>
+
+    <changeSet id="DROP-INSTITUTION-DEPARTMENT-TABLE" author="Declan Newman">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="institution_department"/>
+        </preConditions>
+        <dropTable tableName="institution_department"/>
+    </changeSet>
+
+    <changeSet id="ADD-VISIBILITY-TO-RESEARCHER-URL-TABLE" author="Declan Newman">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="researcher_url" columnName="url_name"/>
+            </not>
+        </preConditions>
+        <addColumn tableName="researcher_url">
+            <column name="url_name" type="VARCHAR(350)"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="ALTER-PROFILE-TABLE" author="Declan Newman">
+        <preConditions onFail="MARK_RAN">
+            <columnExists tableName="profile" columnName="short_description"/>
+        </preConditions>
+        <renameColumn tableName="profile" oldColumnName="short_description" newColumnName="biography" columnDataType="VARCHAR(5000)"/>
+        <renameColumn tableName="profile" oldColumnName="short_description_visibility" newColumnName="biography_visibility"/>
+        <renameColumn tableName="profile" oldColumnName="subjects_visibility" newColumnName="keywords_visibility"/>
+        <renameColumn tableName="profile" oldColumnName="contact_details_visibility" newColumnName="alternative_emails_visibility"/>
+        <renameColumn tableName="profile" oldColumnName="researcher_url_visibility" newColumnName="researcher_urls_visibility"/>
+        <renameColumn tableName="profile" oldColumnName="sponsor_id" newColumnName="source_id"/>
+        <renameColumn tableName="profile" oldColumnName="confirmed" newColumnName="claimed"/>
+        
+        <update tableName="profile">
+            <column name="creation_method" value="website"/>
+            <where>creation_method='manual'</where>
+        </update>
+
+        <addColumn tableName="profile">
+            <column name="credit_name_visibility" type="${visibility.type}"/>
+            <column name="email_visibility" type="${visibility.type}"/>
+            <column name="iso2_country" type="VARCHAR(2)"/>
+        </addColumn>
+
+        <dropColumn tableName="profile" columnName="personal_details_visibility"/>
+    </changeSet>
+    
+    <changeSet id="ALTER-EXTERNAL-IDENTIFIER-TABLE" author="Declan Newman">
+        <preConditions onFail="MARK_RAN">
+            <columnExists tableName="external_identifier" columnName="sponsor_orcid"/>
+        </preConditions>
+        <delete tableName="external_identifier"/>
+        <dropPrimaryKey tableName="external_identifier" constraintName="external_identifier_pk"/>
+        <dropColumn tableName="external_identifier" columnName="sponsor_orcid"/>
+        <dropColumn tableName="external_identifier" columnName="sponsor_reference"/>
+
+        <addColumn tableName="external_identifier">
+            <column name="external_id_reference" type="VARCHAR(255)"/>
+            <column name="external_id_type" type="VARCHAR(255)"/>
+            <column name="external_id_url" type="VARCHAR(300)"/>
+            <column name="external_orcid" type="VARCHAR(19)"/>
+        </addColumn>
+        <addPrimaryKey tableName="external_identifier" columnNames="external_id_reference, orcid"/>
+        <addForeignKeyConstraint baseTableName="external_identifier" baseColumnNames="external_orcid" constraintName="external_identifier_external_orcid_fk"
+                                 referencedTableName="profile" referencedColumnNames="orcid"/>
+    </changeSet>
+
+    <changeSet id="ADD-ALTERNATE-EMAIL-TABLE" author="Declan Newman">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="alternate_email"/>
+            </not>
+        </preConditions>
+        <createTable tableName="alternate_email">
+            <column name="orcid" type="VARCHAR(19)"/>
+            <column name="alternate_email" type="VARCHAR(350)"/>
+            <column name="date_created" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="last_modified" type="TIMESTAMP WITH TIME ZONE"/>
+        </createTable>
+        <addPrimaryKey tableName="alternate_email" columnNames="orcid, alternate_email"/>
+        <addForeignKeyConstraint baseTableName="alternate_email" baseColumnNames="orcid" constraintName="alternate_email_orcid_fk"
+                                 referencedTableName="profile" referencedColumnNames="orcid"/>
+    </changeSet>
+
+    <changeSet id="UPDATE-PROTECTED-VISIBILITY-VALUES" author="Declan Newman">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <sqlCheck expectedResult="0">select count(p.orcid) from profile p where alternative_emails_visibility = 'PROTECTED'</sqlCheck>
+            </not>
+        </preConditions>
+        <update tableName="profile">
+            <column name="alternative_emails_visibility" value="LIMITED"/>
+            <where>alternative_emails_visibility = 'PROTECTED'</where>
+        </update>
+        <update tableName="profile">
+            <column name="biography_visibility" value="LIMITED"/>
+            <where>biography_visibility = 'PROTECTED'</where>
+        </update>
+        <update tableName="profile">
+            <column name="keywords_visibility" value="LIMITED"/>
+            <where>keywords_visibility = 'PROTECTED'</where>
+        </update>
+        <update tableName="profile">
+            <column name="external_identifiers_visibility" value="LIMITED"/>
+            <where>external_identifiers_visibility = 'PROTECTED'</where>
+        </update>
+        <update tableName="profile">
+            <column name="researcher_urls_visibility" value="LIMITED"/>
+            <where>researcher_urls_visibility = 'PROTECTED'</where>
+        </update>
+        <update tableName="profile">
+            <column name="other_names_visibility" value="LIMITED"/>
+            <where>other_names_visibility = 'PROTECTED'</where>
+        </update>
+        <update tableName="profile">
+            <column name="credit_name_visibility" value="LIMITED"/>
+            <where>credit_name_visibility = 'PROTECTED'</where>
+        </update>
+        <update tableName="profile">
+            <column name="email_visibility" value="LIMITED"/>
+            <where>email_visibility = 'PROTECTED'</where>
+        </update>
+        <update tableName="profile_work">
+            <column name="visibility" value="LIMITED"/>
+            <where>visibility = 'PROTECTED'</where>
+        </update>
+        <update tableName="affiliation">
+            <column name="affiliation_details_visibility" value="LIMITED"/>
+            <where>affiliation_details_visibility = 'PROTECTED'</where>
+        </update>
+    </changeSet>
+    
+    <changeSet id="UPDATE-PROTECTED-SCOPE-TO-LIMITED" author="Declan Newman">
+        <!-- Delete all active current scopes tied to a auth code-->
+        <delete tableName="orcidoauth2authoriziationcodedetail_scopes"/>
+        <update tableName="client_scope">
+            <column name="scope_type" value="/orcid-bio/read-limited"/>
+            <where>scope_type = '/orcid-bio/read-protected'</where>
+        </update>
+        <update tableName="client_scope">
+            <column name="scope_type" value="/orcid-profile/read-limited"/>
+            <where>scope_type = '/orcid-profile/read-protected'</where>
+        </update>
+        <update tableName="client_scope">
+            <column name="scope_type" value="/orcid-works/read-limited"/>
+            <where>scope_type = '/orcid-works/read-protected'</where>
+        </update>
+        <update tableName="client_scope">
+            <column name="scope_type" value="/orcid-patents/read-limited"/>
+            <where>scope_type = '/orcid-patents/read-protected'</where>
+        </update>
+        <update tableName="client_scope">
+            <column name="scope_type" value="/orcid-grants/read-limited"/>
+            <where>scope_type = '/orcid-grants/read-protected'</where>
+        </update>
+    </changeSet>
+    
+    <changeSet id="UPDATE-SCOPES-OAUTH-TOKEN-DETAIL" author="Declan Newman">
+        <update tableName="oauth2_token_detail">
+            <column name="scope_type" value="/orcid-bio/read-limited"/>
+            <where>scope_type = '/orcid-bio/read-protected'</where>
+        </update>
+        <update tableName="oauth2_token_detail">
+            <column name="scope_type" value="/orcid-profile/read-limited"/>
+            <where>scope_type = '/orcid-profile/read-protected'</where>
+        </update>
+        <update tableName="oauth2_token_detail">
+            <column name="scope_type" value="/orcid-works/read-limited"/>
+            <where>scope_type = '/orcid-works/read-protected'</where>
+        </update>
+        <update tableName="oauth2_token_detail">
+            <column name="scope_type" value="/orcid-patents/read-limited"/>
+            <where>scope_type = '/orcid-patents/read-protected'</where>
+        </update>
+        <update tableName="oauth2_token_detail">
+            <column name="scope_type" value="/orcid-grants/read-limited"/>
+            <where>scope_type = '/orcid-grants/read-protected'</where>
+        </update>
+    </changeSet>
+
+</databaseChangeLog>
+
+
+

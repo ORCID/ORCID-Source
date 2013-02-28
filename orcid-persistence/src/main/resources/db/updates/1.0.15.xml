@@ -1,0 +1,34 @@
+<!--
+
+    =============================================================================
+
+    ORCID (R) Open Source
+    http://orcid.org
+
+    Copyright (c) 2012-2013 ORCID, Inc.
+    Licensed under an MIT-Style License (MIT)
+    http://orcid.org/open-source-license
+
+    This copyright and license information (including a link to the full license)
+    shall be included in its entirety in all copies or substantial portion of
+    the software.
+
+    =============================================================================
+
+-->
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+        
+    <changeSet id="ADD-EMAIL-VERIFIED" author="Will Simpson">
+        <addColumn tableName="profile">
+            <column name="email_verified" type="boolean" valueBoolean="true" defaultValueBoolean="false" />
+        </addColumn>
+    </changeSet>
+    
+    <changeSet id="RENAME-EMAIL-PREFERENCES" author="Will Simpson">
+        <renameColumn tableName="profile" oldColumnName="send_features_news" newColumnName="send_change_notifications"/>
+        <renameColumn tableName="profile" oldColumnName="send_other_news" newColumnName="send_orcid_news"/>
+        <dropColumn tableName="profile" columnName="send_colleague_confirmed_registration"/>
+    </changeSet>
+    
+</databaseChangeLog>

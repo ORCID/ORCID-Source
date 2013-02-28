@@ -1,0 +1,2233 @@
+<!--
+
+    =============================================================================
+
+    ORCID (R) Open Source
+    http://orcid.org
+
+    Copyright (c) 2012-2013 ORCID, Inc.
+    Licensed under an MIT-Style License (MIT)
+    http://orcid.org/open-source-license
+
+    This copyright and license information (including a link to the full license)
+    shall be included in its entirety in all copies or substantial portion of
+    the software.
+
+    =============================================================================
+
+-->
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+        
+      <changeSet id="REMOVE_REGISTRATION_ENTITY" author="James Bowen">
+        <dropTable tableName="registration"/> 
+      </changeSet>
+
+    <changeSet id="ADD_EXTERNAL_IDENTIFIER_REFERENCE_DATA"
+        author="James Bowen">
+        <createTable tableName="external_identifier_reference_data">
+            <column name="external_id_ref_data_id" type="bigint">
+                <constraints nullable="false" primaryKey="true"
+                    primaryKeyName="external_id_ref_data_id_pkey" />
+            </column>
+            <column name="external_id_code" type="VARCHAR(255)" />
+            <column name="external_id_description" type="VARCHAR(255)" />
+            <column name="date_created" type="TIMESTAMP WITH TIME ZONE" />
+            <column name="last_modified" type="TIMESTAMP WITH TIME ZONE" />
+        </createTable>
+    </changeSet>
+
+    <changeSet id="INIT_EXTERNAL_IDENTIFIER_REFERENCE_DATA"
+        author="James Bowen">
+        <preConditions onFail="MARK_RAN">
+            <and>
+                <tableExists tableName="external_identifier_reference_data" />
+                <sqlCheck expectedResult="0">select count(*) from
+                    external_identifier_reference_data;
+                </sqlCheck>
+            </and>
+        </preConditions>
+        <insert tableName="external_identifier_reference_data">
+            <column name="external_id_ref_data_id" value="0" />
+            <column name="external_id_code" value="id" />
+            <column name="external_id_description"
+                value="A unique identifier, used where none of the specialized identifiers are applicable" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+        <insert tableName="external_identifier_reference_data">
+            <column name="external_id_ref_data_id" value="1" />
+            <column name="external_id_code" value="asin" />
+            <column name="external_id_description" value="Amazon Standard Identification Number" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+        <insert tableName="external_identifier_reference_data">
+            <column name="external_id_ref_data_id" value="2" />
+            <column name="external_id_code" value="asin-tld" />
+            <column name="external_id_description" value="ASIN top-level domain" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+        <insert tableName="external_identifier_reference_data">
+            <column name="external_id_ref_data_id" value="3" />
+            <column name="external_id_code" value="arxiv" />
+            <column name="external_id_description" value="ArXiv" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+        <insert tableName="external_identifier_reference_data">
+            <column name="external_id_ref_data_id" value="4" />
+            <column name="external_id_code" value="bibcode" />
+            <column name="external_id_description" value="Bibcode" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+        <insert tableName="external_identifier_reference_data">
+            <column name="external_id_ref_data_id" value="5" />
+            <column name="external_id_code" value="doi" />
+            <column name="external_id_description" value="Digital object identifier" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+        <insert tableName="external_identifier_reference_data">
+            <column name="external_id_ref_data_id" value="6" />
+            <column name="external_id_code" value="eid" />
+            <column name="external_id_description" value="Scopus Identifier" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+        <insert tableName="external_identifier_reference_data">
+            <column name="external_id_ref_data_id" value="7" />
+            <column name="external_id_code" value="isbn" />
+            <column name="external_id_description" value="International Standard Book Number" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+        <insert tableName="external_identifier_reference_data">
+            <column name="external_id_ref_data_id" value="8" />
+            <column name="external_id_code" value="issn" />
+            <column name="external_id_description" value="International Standard Serial Number" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+        <insert tableName="external_identifier_reference_data">
+            <column name="external_id_ref_data_id" value="9" />
+            <column name="external_id_code" value="jfm" />
+            <column name="external_id_description"
+                value="Jahrbuch über die Fortschritte der Mathematik" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+        <insert tableName="external_identifier_reference_data">
+            <column name="external_id_ref_data_id" value="10" />
+            <column name="external_id_code" value="jstor" />
+            <column name="external_id_description" value="JSTOR abstract" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+        <insert tableName="external_identifier_reference_data">
+            <column name="external_id_ref_data_id" value="11" />
+            <column name="external_id_code" value="lccn" />
+            <column name="external_id_description" value="Library of Congress Control Number" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+        <insert tableName="external_identifier_reference_data">
+            <column name="external_id_ref_data_id" value="12" />
+            <column name="external_id_code" value="mr" />
+            <column name="external_id_description" value="Mathematical Reviews" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+        <insert tableName="external_identifier_reference_data">
+            <column name="external_id_ref_data_id" value="13" />
+            <column name="external_id_code" value="oclc" />
+            <column name="external_id_description" value="Online Computer Library Center" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+        <insert tableName="external_identifier_reference_data">
+            <column name="external_id_ref_data_id" value="14" />
+            <column name="external_id_code" value="ol" />
+            <column name="external_id_description" value="Open Library" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+        <insert tableName="external_identifier_reference_data">
+            <column name="external_id_ref_data_id" value="15" />
+            <column name="external_id_code" value="osti" />
+            <column name="external_id_description"
+                value="Office of Scientific and Technical Information" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+        <insert tableName="external_identifier_reference_data">
+            <column name="external_id_ref_data_id" value="16" />
+            <column name="external_id_code" value="pmc" />
+            <column name="external_id_description"
+                value="PubMed Central article number for full-text free repository of an article" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+        <insert tableName="external_identifier_reference_data">
+            <column name="external_id_ref_data_id" value="17" />
+            <column name="external_id_code" value="pmid" />
+            <column name="external_id_description" value="PubMed Unique Identifier" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+        <insert tableName="external_identifier_reference_data">
+            <column name="external_id_ref_data_id" value="18" />
+            <column name="external_id_code" value="rfc" />
+            <column name="external_id_description" value="Request for Comments" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+        <insert tableName="external_identifier_reference_data">
+            <column name="external_id_ref_data_id" value="19" />
+            <column name="external_id_code" value="ssrn" />
+            <column name="external_id_description" value="Social Science Research Network" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+        <insert tableName="external_identifier_reference_data">
+            <column name="external_id_ref_data_id" value="20" />
+            <column name="external_id_code" value="zbl" />
+            <column name="external_id_description" value="Zentralblatt MATH" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+    </changeSet>
+
+    <changeSet id="ADD_COUNTRY_REFERENCE_DATA" author="James Bowen">
+        <createTable tableName="country_reference_data">            
+            <column name="country_iso_code" type="VARCHAR(2)" >
+                <constraints nullable="false" primaryKey="true"
+                    primaryKeyName="country_id_id_pkey" />
+            </column>
+            <column name="country_name" type="VARCHAR(255)" />
+            <column name="date_created" type="TIMESTAMP WITH TIME ZONE" />
+            <column name="last_modified" type="TIMESTAMP WITH TIME ZONE" />
+        </createTable>
+    </changeSet>
+    <!-- See http://www.iso.org/iso/home/standards/country_codes/country_names_and_code_elements_xml -->
+    <changeSet id="INIT_COUNTRY_REFERENCE_DATA" author="James Bowen">
+        <preConditions onFail="MARK_RAN">
+            <and>
+                <tableExists tableName="country_reference_data" />
+                <sqlCheck expectedResult="0">select count(*) from
+                    country_reference_data;
+                </sqlCheck>
+            </and>
+        </preConditions>
+        <insert tableName="country_reference_data">
+            <column name="country_name" value="AFGHANISTAN" />
+            <column name="country_iso_code" value="AF" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="ÅLAND ISLANDS" />
+            <column name="country_iso_code" value="AX" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="ALBANIA" />
+            <column name="country_iso_code" value="AL" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="ALGERIA" />
+            <column name="country_iso_code" value="DZ" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="AMERICAN SAMOA" />
+            <column name="country_iso_code" value="AS" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="ANDORRA" />
+            <column name="country_iso_code" value="AD" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="ANGOLA" />
+            <column name="country_iso_code" value="AO" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="ANGUILLA" />
+            <column name="country_iso_code" value="AI" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="ANTARCTICA" />
+            <column name="country_iso_code" value="AQ" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="ANTIGUA AND BARBUDA" />
+            <column name="country_iso_code" value="AG" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="ARGENTINA" />
+            <column name="country_iso_code" value="AR" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="ARMENIA" />
+            <column name="country_iso_code" value="AM" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="ARUBA" />
+            <column name="country_iso_code" value="AW" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="AUSTRALIA" />
+            <column name="country_iso_code" value="AU" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="AUSTRIA" />
+            <column name="country_iso_code" value="AT" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="AZERBAIJAN" />
+            <column name="country_iso_code" value="AZ" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="BAHAMAS" />
+            <column name="country_iso_code" value="BS" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="BAHRAIN" />
+            <column name="country_iso_code" value="BH" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="BANGLADESH" />
+            <column name="country_iso_code" value="BD" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="BARBADOS" />
+            <column name="country_iso_code" value="BB" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="BELARUS" />
+            <column name="country_iso_code" value="BY" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="BELGIUM" />
+            <column name="country_iso_code" value="BE" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="BELIZE" />
+            <column name="country_iso_code" value="BZ" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="BENIN" />
+            <column name="country_iso_code" value="BJ" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="BERMUDA" />
+            <column name="country_iso_code" value="BM" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="BHUTAN" />
+            <column name="country_iso_code" value="BT" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="BOLIVIA, PLURINATIONAL STATE OF" />
+            <column name="country_iso_code" value="BO" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="BONAIRE, SINT EUSTATIUS AND SABA" />
+            <column name="country_iso_code" value="BQ" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="BOSNIA AND HERZEGOVINA" />
+            <column name="country_iso_code" value="BA" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="BOTSWANA" />
+            <column name="country_iso_code" value="BW" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="BOUVET ISLAND" />
+            <column name="country_iso_code" value="BV" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="BRAZIL" />
+            <column name="country_iso_code" value="BR" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="BRITISH INDIAN OCEAN TERRITORY" />
+            <column name="country_iso_code" value="IO" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="BRUNEI DARUSSALAM" />
+            <column name="country_iso_code" value="BN" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="BULGARIA" />
+            <column name="country_iso_code" value="BG" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="BURKINA FASO" />
+            <column name="country_iso_code" value="BF" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="BURUNDI" />
+            <column name="country_iso_code" value="BI" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="CAMBODIA" />
+            <column name="country_iso_code" value="KH" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="CAMEROON" />
+            <column name="country_iso_code" value="CM" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="CANADA" />
+            <column name="country_iso_code" value="CA" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="CAPE VERDE" />
+            <column name="country_iso_code" value="CV" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="CAYMAN ISLANDS" />
+            <column name="country_iso_code" value="KY" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="CENTRAL AFRICAN REPUBLIC" />
+            <column name="country_iso_code" value="CF" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="CHAD" />
+            <column name="country_iso_code" value="TD" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="CHILE" />
+            <column name="country_iso_code" value="CL" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="CHINA" />
+            <column name="country_iso_code" value="CN" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="CHRISTMAS ISLAND" />
+            <column name="country_iso_code" value="CX" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="COCOS (KEELING) ISLANDS" />
+            <column name="country_iso_code" value="CC" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="COLOMBIA" />
+            <column name="country_iso_code" value="CO" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="COMOROS" />
+            <column name="country_iso_code" value="KM" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="CONGO" />
+            <column name="country_iso_code" value="CG" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="CONGO, THE DEMOCRATIC REPUBLIC OF THE" />
+            <column name="country_iso_code" value="CD" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="COOK ISLANDS" />
+            <column name="country_iso_code" value="CK" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="COSTA RICA" />
+            <column name="country_iso_code" value="CR" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="CÔTE D'IVOIRE" />
+            <column name="country_iso_code" value="CI" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="CROATIA" />
+            <column name="country_iso_code" value="HR" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="CUBA" />
+            <column name="country_iso_code" value="CU" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="CURAÇAO" />
+            <column name="country_iso_code" value="CW" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="CYPRUS" />
+            <column name="country_iso_code" value="CY" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="CZECH REPUBLIC" />
+            <column name="country_iso_code" value="CZ" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+            <column name="country_name" value="DENMARK" />
+            <column name="country_iso_code" value="DK" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="DJIBOUTI" />
+            <column name="country_iso_code" value="DJ" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="DOMINICA" />
+            <column name="country_iso_code" value="DM" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="DOMINICAN REPUBLIC" />
+            <column name="country_iso_code" value="DO" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="ECUADOR" />
+            <column name="country_iso_code" value="EC" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="EGYPT" />
+            <column name="country_iso_code" value="EG" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="EL SALVADOR" />
+            <column name="country_iso_code" value="SV" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="EQUATORIAL GUINEA" />
+            <column name="country_iso_code" value="GQ" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="ERITREA" />
+            <column name="country_iso_code" value="ER" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="ESTONIA" />
+            <column name="country_iso_code" value="EE" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="ETHIOPIA" />
+            <column name="country_iso_code" value="ET" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="FALKLAND ISLANDS (MALVINAS)" />
+            <column name="country_iso_code" value="FK" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="FAROE ISLANDS" />
+            <column name="country_iso_code" value="FO" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="FIJI" />
+            <column name="country_iso_code" value="FJ" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="FINLAND" />
+            <column name="country_iso_code" value="FI" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="FRANCE" />
+            <column name="country_iso_code" value="FR" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="FRENCH GUIANA" />
+            <column name="country_iso_code" value="GF" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="FRENCH POLYNESIA" />
+            <column name="country_iso_code" value="PF" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="FRENCH SOUTHERN TERRITORIES" />
+            <column name="country_iso_code" value="TF" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="GABON" />
+            <column name="country_iso_code" value="GA" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="GAMBIA" />
+            <column name="country_iso_code" value="GM" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="GEORGIA" />
+            <column name="country_iso_code" value="GE" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="GERMANY" />
+            <column name="country_iso_code" value="DE" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="GHANA" />
+            <column name="country_iso_code" value="GH" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="GIBRALTAR" />
+            <column name="country_iso_code" value="GI" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="GREECE" />
+            <column name="country_iso_code" value="GR" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="GREENLAND" />
+            <column name="country_iso_code" value="GL" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="GRENADA" />
+            <column name="country_iso_code" value="GD" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="GUADELOUPE" />
+            <column name="country_iso_code" value="GP" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="GUAM" />
+            <column name="country_iso_code" value="GU" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="GUATEMALA" />
+            <column name="country_iso_code" value="GT" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="GUERNSEY" />
+            <column name="country_iso_code" value="GG" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="GUINEA" />
+            <column name="country_iso_code" value="GN" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="GUINEA-BISSAU" />
+            <column name="country_iso_code" value="GW" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="GUYANA" />
+            <column name="country_iso_code" value="GY" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="HAITI" />
+            <column name="country_iso_code" value="HT" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="HEARD ISLAND AND MCDONALD ISLANDS" />
+            <column name="country_iso_code" value="HM" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="HOLY SEE (VATICAN CITY STATE)" />
+            <column name="country_iso_code" value="VA" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="HONDURAS" />
+            <column name="country_iso_code" value="HN" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="HONG KONG" />
+            <column name="country_iso_code" value="HK" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="HUNGARY" />
+            <column name="country_iso_code" value="HU" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="ICELAND" />
+            <column name="country_iso_code" value="IS" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="INDIA" />
+            <column name="country_iso_code" value="IN" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="INDONESIA" />
+            <column name="country_iso_code" value="ID" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="IRAN, ISLAMIC REPUBLIC OF" />
+            <column name="country_iso_code" value="IR" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="IRAQ" />
+            <column name="country_iso_code" value="IQ" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="IRELAND" />
+            <column name="country_iso_code" value="IE" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="ISLE OF MAN" />
+            <column name="country_iso_code" value="IM" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="ISRAEL" />
+            <column name="country_iso_code" value="IL" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="ITALY" />
+            <column name="country_iso_code" value="IT" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="JAMAICA" />
+            <column name="country_iso_code" value="JM" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="JAPAN" />
+            <column name="country_iso_code" value="JP" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="JERSEY" />
+            <column name="country_iso_code" value="JE" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="JORDAN" />
+            <column name="country_iso_code" value="JO" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="KAZAKHSTAN" />
+            <column name="country_iso_code" value="KZ" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="KENYA" />
+            <column name="country_iso_code" value="KE" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="KIRIBATI" />
+            <column name="country_iso_code" value="KI" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="KOREA, DEMOCRATIC PEOPLE'S REPUBLIC OF" />
+            <column name="country_iso_code" value="KP" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="KOREA, REPUBLIC OF" />
+            <column name="country_iso_code" value="KR" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="KUWAIT" />
+            <column name="country_iso_code" value="KW" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="KYRGYZSTAN" />
+            <column name="country_iso_code" value="KG" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="LAO PEOPLE'S DEMOCRATIC REPUBLIC" />
+            <column name="country_iso_code" value="LA" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="LATVIA" />
+            <column name="country_iso_code" value="LV" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="LEBANON" />
+            <column name="country_iso_code" value="LB" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="LESOTHO" />
+            <column name="country_iso_code" value="LS" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="LIBERIA" />
+            <column name="country_iso_code" value="LR" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="LIBYA" />
+            <column name="country_iso_code" value="LY" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="LIECHTENSTEIN" />
+            <column name="country_iso_code" value="LI" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="LITHUANIA" />
+            <column name="country_iso_code" value="LT" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="LUXEMBOURG" />
+            <column name="country_iso_code" value="LU" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="MACAO" />
+            <column name="country_iso_code" value="MO" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name"
+                value="MACEDONIA, THE FORMER YUGOSLAV REPUBLIC OF" />
+            <column name="country_iso_code" value="MK" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="MADAGASCAR" />
+            <column name="country_iso_code" value="MG" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="MALAWI" />
+            <column name="country_iso_code" value="MW" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="MALAYSIA" />
+            <column name="country_iso_code" value="MY" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="MALDIVES" />
+            <column name="country_iso_code" value="MV" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="MALI" />
+            <column name="country_iso_code" value="ML" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="MALTA" />
+            <column name="country_iso_code" value="MT" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="MARSHALL ISLANDS" />
+            <column name="country_iso_code" value="MH" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="MARTINIQUE" />
+            <column name="country_iso_code" value="MQ" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="MAURITANIA" />
+            <column name="country_iso_code" value="MR" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="MAURITIUS" />
+            <column name="country_iso_code" value="MU" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="MAYOTTE" />
+            <column name="country_iso_code" value="YT" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="MEXICO" />
+            <column name="country_iso_code" value="MX" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="MICRONESIA, FEDERATED STATES OF" />
+            <column name="country_iso_code" value="FM" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="MOLDOVA, REPUBLIC OF" />
+            <column name="country_iso_code" value="MD" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="MONACO" />
+            <column name="country_iso_code" value="MC" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="MONGOLIA" />
+            <column name="country_iso_code" value="MN" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="MONTENEGRO" />
+            <column name="country_iso_code" value="ME" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="MONTSERRAT" />
+            <column name="country_iso_code" value="MS" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="MOROCCO" />
+            <column name="country_iso_code" value="MA" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="MOZAMBIQUE" />
+            <column name="country_iso_code" value="MZ" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="MYANMAR" />
+            <column name="country_iso_code" value="MM" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="NAMIBIA" />
+            <column name="country_iso_code" value="NA" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="NAURU" />
+            <column name="country_iso_code" value="NR" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="NEPAL" />
+            <column name="country_iso_code" value="NP" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="NETHERLANDS" />
+            <column name="country_iso_code" value="NL" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="NEW CALEDONIA" />
+            <column name="country_iso_code" value="NC" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="NEW ZEALAND" />
+            <column name="country_iso_code" value="NZ" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="NICARAGUA" />
+            <column name="country_iso_code" value="NI" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="NIGER" />
+            <column name="country_iso_code" value="NE" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="NIGERIA" />
+            <column name="country_iso_code" value="NG" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="NIUE" />
+            <column name="country_iso_code" value="NU" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="NORFOLK ISLAND" />
+            <column name="country_iso_code" value="NF" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="NORTHERN MARIANA ISLANDS" />
+            <column name="country_iso_code" value="MP" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="NORWAY" />
+            <column name="country_iso_code" value="NO" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="OMAN" />
+            <column name="country_iso_code" value="OM" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="PAKISTAN" />
+            <column name="country_iso_code" value="PK" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="PALAU" />
+            <column name="country_iso_code" value="PW" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="PALESTINIAN TERRITORY, OCCUPIED" />
+            <column name="country_iso_code" value="PS" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="PANAMA" />
+            <column name="country_iso_code" value="PA" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="PAPUA NEW GUINEA" />
+            <column name="country_iso_code" value="PG" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="PARAGUAY" />
+            <column name="country_iso_code" value="PY" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="PERU" />
+            <column name="country_iso_code" value="PE" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="PHILIPPINES" />
+            <column name="country_iso_code" value="PH" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="PITCAIRN" />
+            <column name="country_iso_code" value="PN" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="POLAND" />
+            <column name="country_iso_code" value="PL" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="PORTUGAL" />
+            <column name="country_iso_code" value="PT" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="PUERTO RICO" />
+            <column name="country_iso_code" value="PR" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="QATAR" />
+            <column name="country_iso_code" value="QA" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="RÉUNION" />
+            <column name="country_iso_code" value="RE" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="ROMANIA" />
+            <column name="country_iso_code" value="RO" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="RUSSIAN FEDERATION" />
+            <column name="country_iso_code" value="RU" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="RWANDA" />
+            <column name="country_iso_code" value="RW" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="SAINT BARTHÉLEMY" />
+            <column name="country_iso_code" value="BL" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name"
+                value="SAINT HELENA, ASCENSION AND TRISTAN DA CUNHA" />
+            <column name="country_iso_code" value="SH" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="SAINT KITTS AND NEVIS" />
+            <column name="country_iso_code" value="KN" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="SAINT LUCIA" />
+            <column name="country_iso_code" value="LC" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="SAINT MARTIN (FRENCH PART)" />
+            <column name="country_iso_code" value="MF" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="SAINT PIERRE AND MIQUELON" />
+            <column name="country_iso_code" value="PM" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="SAINT VINCENT AND THE GRENADINES" />
+            <column name="country_iso_code" value="VC" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="SAMOA" />
+            <column name="country_iso_code" value="WS" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="SAN MARINO" />
+            <column name="country_iso_code" value="SM" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="SAO TOME AND PRINCIPE" />
+            <column name="country_iso_code" value="ST" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="SAUDI ARABIA" />
+            <column name="country_iso_code" value="SA" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="SENEGAL" />
+            <column name="country_iso_code" value="SN" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="SERBIA" />
+            <column name="country_iso_code" value="RS" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="SEYCHELLES" />
+            <column name="country_iso_code" value="SC" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="SIERRA LEONE" />
+            <column name="country_iso_code" value="SL" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="SINGAPORE" />
+            <column name="country_iso_code" value="SG" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="SINT MAARTEN (DUTCH PART)" />
+            <column name="country_iso_code" value="SX" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="SLOVAKIA" />
+            <column name="country_iso_code" value="SK" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="SLOVENIA" />
+            <column name="country_iso_code" value="SI" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="SOLOMON ISLANDS" />
+            <column name="country_iso_code" value="SB" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="SOMALIA" />
+            <column name="country_iso_code" value="SO" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="SOUTH AFRICA" />
+            <column name="country_iso_code" value="ZA" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name"
+                value="SOUTH GEORGIA AND THE SOUTH SANDWICH ISLANDS" />
+            <column name="country_iso_code" value="GS" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="SOUTH SUDAN" />
+            <column name="country_iso_code" value="SS" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="SPAIN" />
+            <column name="country_iso_code" value="ES" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="SRI LANKA" />
+            <column name="country_iso_code" value="LK" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="SUDAN" />
+            <column name="country_iso_code" value="SD" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="SURINAME" />
+            <column name="country_iso_code" value="SR" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="SVALBARD AND JAN MAYEN" />
+            <column name="country_iso_code" value="SJ" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="SWAZILAND" />
+            <column name="country_iso_code" value="SZ" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="SWEDEN" />
+            <column name="country_iso_code" value="SE" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="SWITZERLAND" />
+            <column name="country_iso_code" value="CH" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="SYRIAN ARAB REPUBLIC" />
+            <column name="country_iso_code" value="SY" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="TAIWAN, PROVINCE OF CHINA" />
+            <column name="country_iso_code" value="TW" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="TAJIKISTAN" />
+            <column name="country_iso_code" value="TJ" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="TANZANIA, UNITED REPUBLIC OF" />
+            <column name="country_iso_code" value="TZ" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="THAILAND" />
+            <column name="country_iso_code" value="TH" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="TIMOR-LESTE" />
+            <column name="country_iso_code" value="TL" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="TOGO" />
+            <column name="country_iso_code" value="TG" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="TOKELAU" />
+            <column name="country_iso_code" value="TK" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="TONGA" />
+            <column name="country_iso_code" value="TO" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="TRINIDAD AND TOBAGO" />
+            <column name="country_iso_code" value="TT" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="TUNISIA" />
+            <column name="country_iso_code" value="TN" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="TURKEY" />
+            <column name="country_iso_code" value="TR" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="TURKMENISTAN" />
+            <column name="country_iso_code" value="TM" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="TURKS AND CAICOS ISLANDS" />
+            <column name="country_iso_code" value="TC" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="TUVALU" />
+            <column name="country_iso_code" value="TV" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="UGANDA" />
+            <column name="country_iso_code" value="UG" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="UKRAINE" />
+            <column name="country_iso_code" value="UA" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="UNITED ARAB EMIRATES" />
+            <column name="country_iso_code" value="AE" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="UNITED KINGDOM" />
+            <column name="country_iso_code" value="GB" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="UNITED STATES" />
+            <column name="country_iso_code" value="US" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="UNITED STATES MINOR OUTLYING ISLANDS" />
+            <column name="country_iso_code" value="UM" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="URUGUAY" />
+            <column name="country_iso_code" value="UY" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="UZBEKISTAN" />
+            <column name="country_iso_code" value="UZ" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="VANUATU" />
+            <column name="country_iso_code" value="VU" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="VENEZUELA, BOLIVARIAN REPUBLIC OF" />
+            <column name="country_iso_code" value="VE" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="VIET NAM" />
+            <column name="country_iso_code" value="VN" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="VIRGIN ISLANDS, BRITISH" />
+            <column name="country_iso_code" value="VG" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="VIRGIN ISLANDS, U.S." />
+            <column name="country_iso_code" value="VI" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="WALLIS AND FUTUNA" />
+            <column name="country_iso_code" value="WF" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="WESTERN SAHARA" />
+            <column name="country_iso_code" value="EH" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="YEMEN" />
+            <column name="country_iso_code" value="YE" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="ZAMBIA" />
+            <column name="country_iso_code" value="ZM" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="ZIMBABWE" />
+            <column name="country_iso_code" value="ZW" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+
+    </changeSet>
+
+    <changeSet id="DROP-NOT-NULL-CONSTRAINTS-FROM-CONTRIBUTOR-TYPES" author="Declan Newman">
+        <dropNotNullConstraint tableName="work_contributor" columnName="contributor_role"/>
+        <dropNotNullConstraint tableName="work_contributor" columnName="contributor_sequence"/>
+        <dropNotNullConstraint tableName="grant_contributor" columnName="contributor_role"/>
+        <dropNotNullConstraint tableName="grant_contributor" columnName="contributor_sequence"/>
+        <dropNotNullConstraint tableName="patent_contributor" columnName="contributor_role"/>
+        <dropNotNullConstraint tableName="patent_contributor" columnName="contributor_sequence"/>
+    </changeSet>
+    
+    <changeSet id="DROP-EXTERNAL-ID-REF-DATA-TABLE" author="Declan Newman">
+        <dropTable tableName="external_identifier_reference_data"/>
+    </changeSet>
+
+
+</databaseChangeLog>

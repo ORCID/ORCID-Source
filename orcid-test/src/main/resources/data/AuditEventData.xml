@@ -1,0 +1,58 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!--
+
+    =============================================================================
+
+    ORCID (R) Open Source
+    http://orcid.org
+
+    Copyright (c) 2012-2013 ORCID, Inc.
+    Licensed under an MIT-Style License (MIT)
+    http://orcid.org/open-source-license
+
+    This copyright and license information (including a link to the full license)
+    shall be included in its entirety in all copies or substantial portion of 
+    the software.
+
+    =============================================================================
+
+<column name="modified_orcid" type="VARCHAR(19)"/>
+ <column name="modifier_orcid" type="VARCHAR(19)"/>
+ <column name="modifier_type" type="VARCHAR(75)"/>
+ <column name="modifier_ip" type="VARCHAR(39)"/>
+ <column name="modifier_iso2_country" type="VARCHAR(2)"/>
+ <column name="event_type" type="VARCHAR(75)"/>
+ <column name="event_method" type="VARCHAR(75)"/>
+ <column name="event_description" type="VARCHAR(255)"/>
+ <column name="event_date" type="TIMESTAMP WITH TIME ZONE"/>
+  <column name="date_created" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="last_modified" type="TIMESTAMP WITH TIME ZONE"/>
+-->
+
+<dataset>
+   <audit_event
+           id="1"
+           modified_orcid="0000-2222-1111-2222"
+           modifier_orcid="0000-2222-1111-2223"
+           modifier_type="CLIENT"
+           modifier_ip="192.168.1.23"
+           modifier_iso2_country="GB"
+           event_type="UPDATE"
+           event_method="API"
+           event_description="Updated personal details"
+           date_created="2012-07-25"
+           last_modified="2012-07-25"/>
+
+    <audit_event
+            id="2"
+            modified_orcid="0000-2222-1111-2224"
+            modifier_orcid="0000-2222-1111-2225"
+            modifier_type="USER"
+            modifier_ip="192.168.1.26"
+            modifier_iso2_country="GB"
+            event_type="UPDATE"
+            event_method="WEB"
+            event_description="Updated personal details"
+            date_created="2012-07-25"
+            last_modified="2012-07-25"/>
+</dataset>

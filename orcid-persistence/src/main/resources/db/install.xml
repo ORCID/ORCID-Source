@@ -1,0 +1,574 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    =============================================================================
+
+    ORCID (R) Open Source
+    http://orcid.org
+
+    Copyright (c) 2012-2013 ORCID, Inc.
+    Licensed under an MIT-Style License (MIT)
+    http://orcid.org/open-source-license
+
+    This copyright and license information (including a link to the full license)
+    shall be included in its entirety in all copies or substantial portion of
+    the software.
+
+    =============================================================================
+
+-->
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+    <changeSet author="Declan Newman" id="BASE-INSTALL" context="default">
+
+        <preConditions onFail="MARK_RAN">
+            <!-- Only perform the initial database create if key table doesn't exist -->
+            <not>
+                <tableExists tableName="profile"/>
+            </not>
+        </preConditions>
+
+        <createTable tableName="accession_num">
+            <column name="id" type="VARCHAR(350)">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="accession_num_pkey"/>
+            </column>
+            <column name="date_created" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="last_modified" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="type" type="VARCHAR(10)"/>
+            <column name="work_id" type="bigint"/>
+        </createTable>
+        <createTable tableName="address">
+            <column name="id" type="bigint">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="address_pkey"/>
+            </column>
+            <column name="date_created" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="last_modified" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="address_line_1" type="VARCHAR(350)"/>
+            <column name="address_line_2" type="VARCHAR(350)"/>
+            <column name="city" type="VARCHAR(150)"/>
+            <column name="country" type="VARCHAR(100)"/>
+            <column name="postal_code" type="VARCHAR(15)"/>
+            <column name="state_or_province" type="VARCHAR(150)"/>
+        </createTable>
+        <createTable tableName="affiliate_profile_institution">
+            <column name="institution_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="orcid" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="date_created" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="last_modified" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="end_date" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="role" type="VARCHAR(255)"/>
+            <column name="start_date" type="TIMESTAMP WITH TIME ZONE"/>
+        </createTable>
+        <createTable tableName="author">
+            <column name="id" type="bigint">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="author_pkey"/>
+            </column>
+            <column name="date_created" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="last_modified" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="credit_name" type="VARCHAR(450)"/>
+            <column name="family_name" type="VARCHAR(150)"/>
+            <column name="given_names" type="VARCHAR(150)"/>
+            <column name="vocative_name" type="VARCHAR(450)"/>
+            <column name="orcid" type="VARCHAR(19)"/>
+        </createTable>
+        <createTable tableName="author_other_name">
+            <column name="author_other_name_id" type="bigint">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="author_other_name_pkey"/>
+            </column>
+            <column name="date_created" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="last_modified" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="display_name" type="VARCHAR(255)"/>
+            <column name="author_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <createTable tableName="author_work">
+            <column name="author_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="work_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="date_created" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="last_modified" type="TIMESTAMP WITH TIME ZONE"/>
+        </createTable>
+        <createTable tableName="electronic_resource_num">
+            <column name="type" type="VARCHAR(10)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="value" type="VARCHAR(350)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="work_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="date_created" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="last_modified" type="TIMESTAMP WITH TIME ZONE"/>
+        </createTable>
+        <createTable tableName="external_identifier">
+            <column name="sponsor_orcid" type="VARCHAR(19)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="sponsor_reference" type="VARCHAR(400)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="date_created" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="last_modified" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="orcid" type="VARCHAR(19)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <createTable tableName="granted_authority">
+            <column name="authority" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="orcid" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="date_created" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="last_modified" type="TIMESTAMP WITH TIME ZONE"/>
+        </createTable>
+        <createTable tableName="hear_about">
+            <column name="id" type="integer">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="hear_about_pkey"/>
+            </column>
+            <column name="date_created" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="last_modified" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="name" type="VARCHAR(255)"/>
+        </createTable>
+        <createTable tableName="institution">
+            <column name="id" type="bigint">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="institution_pkey"/>
+            </column>
+            <column name="date_created" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="last_modified" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="institution_name" type="VARCHAR(350)"/>
+            <column name="address_id" type="bigint"/>
+        </createTable>
+        <createTable tableName="institution_department">
+            <column name="id" type="bigint">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="institution_department_pkey"/>
+            </column>
+            <column name="date_created" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="last_modified" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="name" type="VARCHAR(250)"/>
+            <column name="institution_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="position" type="integer"/>
+        </createTable>
+        <createTable tableName="keyword">
+            <column name="name" type="VARCHAR(255)">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="keyword_pkey"/>
+            </column>
+            <column name="date_created" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="last_modified" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="occurences" type="integer">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <createTable tableName="other_name">
+            <column name="other_name_id" type="bigint">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="other_name_pkey"/>
+            </column>
+            <column name="date_created" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="last_modified" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="display_name" type="VARCHAR(255)"/>
+            <column name="orcid" type="VARCHAR(19)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <createTable tableName="past_profile_institution">
+            <column name="institution_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="orcid" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="date_created" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="last_modified" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="end_date" type="DATE"/>
+            <column name="role" type="VARCHAR(255)"/>
+            <column name="start_date" type="DATE"/>
+        </createTable>
+        <createTable tableName="primary_profile_institution">
+            <column name="institution_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="orcid" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="date_created" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="last_modified" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="role" type="VARCHAR(255)"/>
+            <column name="start_date" type="TIMESTAMP WITH TIME ZONE"/>
+        </createTable>
+        <createTable tableName="profile">
+            <column name="orcid" type="VARCHAR(19)">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="profile_pkey"/>
+            </column>
+            <column name="date_created" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="last_modified" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="account_expiry" type="TIMESTAMP WITH TIME ZONE"/>
+            <column defaultValueBoolean="true" name="account_non_locked" type="boolean"/>
+            <column name="completed_date" type="TIMESTAMP WITH TIME ZONE"/>
+            <column defaultValueBoolean="false" name="confirmed" type="boolean"/>
+            <column name="creation_method" type="VARCHAR(10)"/>
+            <column name="credentials_expiry" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="credit_name" type="VARCHAR(150)"/>
+            <column name="email" type="VARCHAR(150)"/>
+            <column defaultValueBoolean="true" name="enabled" type="boolean"/>
+            <column name="encrypted_password" type="VARCHAR(255)"/>
+            <column name="encrypted_security_answer" type="VARCHAR(255)"/>
+            <column name="encrypted_verification_code" type="VARCHAR(255)"/>
+            <column name="family_name" type="VARCHAR(150)"/>
+            <column name="given_names" type="VARCHAR(150)"/>
+            <column name="is_selectable_sponsor" type="boolean"/>
+            <column name="send_colleague_confirmed_registration" type="boolean"/>
+            <column name="send_features_news" type="boolean"/>
+            <column name="send_other_news" type="boolean"/>
+            <column name="short_description" type="VARCHAR(300)"/>
+            <column name="submission_date" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="vocative_name" type="VARCHAR(450)"/>
+            <column name="security_question_id" type="integer"/>
+            <column name="sponsor_id" type="VARCHAR(19)"/>
+            <column defaultValueBoolean="true" name="non_locked" type="boolean"/>
+        </createTable>
+        <createTable tableName="profile_keyword">
+            <column name="profile_orcid" type="VARCHAR(19)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="keywords_name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <createTable tableName="profile_subject">
+            <column name="profile_orcid" type="VARCHAR(19)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="subjects_name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <createTable tableName="profile_work">
+            <column name="orcid" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="work_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="date_created" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="last_modified" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="added_to_profile_date" type="TIMESTAMP WITH TIME ZONE"/>
+        </createTable>
+        <createTable tableName="reference_data">
+            <column name="id" type="bigint">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="reference_data_pkey"/>
+            </column>
+            <column name="date_created" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="last_modified" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="ref_data_key" type="VARCHAR(255)"/>
+            <column name="ref_data_value" type="VARCHAR(255)"/>
+        </createTable>
+        <createTable tableName="registration">
+            <column name="id" type="bigint">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="registration_pkey"/>
+            </column>
+            <column name="date_created" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="last_modified" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="email" type="VARCHAR(255)"/>
+            <column name="email_send_status" type="VARCHAR(255)"/>
+            <column name="ip_address" type="VARCHAR(255)"/>
+            <column name="hearabout_id" type="integer"/>
+        </createTable>
+        <createTable tableName="registration_role">
+            <column name="id" type="integer">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="registration_role_pkey"/>
+            </column>
+            <column name="date_created" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="last_modified" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="role" type="VARCHAR(255)"/>
+        </createTable>
+        <createTable tableName="related_url">
+            <column name="id" type="bigint">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="related_url_pkey"/>
+            </column>
+            <column name="date_created" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="last_modified" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="related_url" type="VARCHAR(350)"/>
+            <column name="work_id" type="bigint"/>
+        </createTable>
+        <createTable tableName="researcher_url">
+            <column name="id" type="VARCHAR(350)">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="researcher_url_pkey"/>
+            </column>
+            <column name="date_created" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="last_modified" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="orcid" type="VARCHAR(19)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <createTable tableName="secondary_author_work">
+            <column name="secondary_author_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="work_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="date_created" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="last_modified" type="TIMESTAMP WITH TIME ZONE"/>
+        </createTable>
+        <createTable tableName="security_question">
+            <column name="id" type="integer">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="security_question_pkey"/>
+            </column>
+            <column name="date_created" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="last_modified" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="question" type="VARCHAR(255)"/>
+        </createTable>
+        <createTable tableName="subject">
+            <column name="name" type="VARCHAR(255)">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="subject_pkey"/>
+            </column>
+            <column name="date_created" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="last_modified" type="TIMESTAMP WITH TIME ZONE"/>
+        </createTable>
+        <createTable tableName="work">
+            <column name="id" type="bigint">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="work_pkey"/>
+            </column>
+            <column name="date_created" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="last_modified" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="cover_date" type="VARCHAR(30)"/>
+            <column name="isbn" type="VARCHAR(13)"/>
+            <column name="issn" type="VARCHAR(8)"/>
+            <column name="issue_number" type="VARCHAR(10)"/>
+            <column name="page_end" type="integer"/>
+            <column name="page_start" type="integer"/>
+            <column name="publication_day" type="integer"/>
+            <column name="publication_month" type="integer"/>
+            <column name="publication_year" type="integer"/>
+            <column name="publisher" type="VARCHAR(600)"/>
+            <column name="ref_type" type="VARCHAR(255)"/>
+            <column name="secondary_title" type="VARCHAR(1000)"/>
+            <column name="title" type="VARCHAR(1000)"/>
+            <column name="volume" type="VARCHAR(10)"/>
+        </createTable>
+        <addPrimaryKey columnNames="institution_id, orcid" constraintName="affiliate_profile_institution_pkey"
+                       tableName="affiliate_profile_institution"/>
+        <addPrimaryKey columnNames="author_id, work_id" constraintName="author_work_pkey" tableName="author_work"/>
+        <addPrimaryKey columnNames="type, value, work_id" constraintName="electronic_resource_num_pkey"
+                       tableName="electronic_resource_num"/>
+        <addPrimaryKey columnNames="sponsor_orcid, sponsor_reference" constraintName="external_identifier_pkey"
+                       tableName="external_identifier"/>
+        <addPrimaryKey columnNames="authority, orcid" constraintName="granted_authority_pkey"
+                       tableName="granted_authority"/>
+        <addPrimaryKey columnNames="institution_id, orcid" constraintName="past_profile_institution_pkey"
+                       tableName="past_profile_institution"/>
+        <addPrimaryKey columnNames="institution_id, orcid" constraintName="primary_profile_institution_pkey"
+                       tableName="primary_profile_institution"/>
+        <addPrimaryKey columnNames="profile_orcid, keywords_name" constraintName="profile_keyword_pkey"
+                       tableName="profile_keyword"/>
+        <addPrimaryKey columnNames="profile_orcid, subjects_name" constraintName="profile_subject_pkey"
+                       tableName="profile_subject"/>
+        <addPrimaryKey columnNames="orcid, work_id" constraintName="profile_work_pkey" tableName="profile_work"/>
+        <addPrimaryKey columnNames="secondary_author_id, work_id" constraintName="secondary_author_work_pkey"
+                       tableName="secondary_author_work"/>
+        <addUniqueConstraint columnNames="email" constraintName="profile_email_key" deferrable="false" disabled="false"
+                             initiallyDeferred="false" tableName="profile"/>
+        <addForeignKeyConstraint baseColumnNames="work_id" baseTableName="accession_num" baseTableSchemaName="public"
+                                 constraintName="fk9bb60ebf14b93eb" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id"
+                                 referencedTableName="work" referencedTableSchemaName="public"
+                                 referencesUniqueColumn="false"/>
+        <addForeignKeyConstraint baseColumnNames="institution_id" baseTableName="affiliate_profile_institution"
+                                 baseTableSchemaName="public" constraintName="fkfe6bc230cf1a386f" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="institution"
+                                 referencedTableSchemaName="public" referencesUniqueColumn="false"/>
+        <addForeignKeyConstraint baseColumnNames="orcid" baseTableName="affiliate_profile_institution"
+                                 baseTableSchemaName="public" constraintName="fkfe6bc230b2007f99" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="orcid" referencedTableName="profile"
+                                 referencedTableSchemaName="public" referencesUniqueColumn="false"/>
+        <addForeignKeyConstraint baseColumnNames="orcid" baseTableName="author" baseTableSchemaName="public"
+                                 constraintName="fkac2d218bb2007f99" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="orcid"
+                                 referencedTableName="profile" referencedTableSchemaName="public"
+                                 referencesUniqueColumn="false"/>
+        <addForeignKeyConstraint baseColumnNames="author_id" baseTableName="author_other_name"
+                                 baseTableSchemaName="public" constraintName="fk2f77fd8e72299aab" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="author"
+                                 referencedTableSchemaName="public" referencesUniqueColumn="false"/>
+        <addForeignKeyConstraint baseColumnNames="author_id" baseTableName="author_work" baseTableSchemaName="public"
+                                 constraintName="fk2a839d4572299aab" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id"
+                                 referencedTableName="author" referencedTableSchemaName="public"
+                                 referencesUniqueColumn="false"/>
+        <addForeignKeyConstraint baseColumnNames="work_id" baseTableName="author_work" baseTableSchemaName="public"
+                                 constraintName="fk2a839d45f14b93eb" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id"
+                                 referencedTableName="work" referencedTableSchemaName="public"
+                                 referencesUniqueColumn="false"/>
+        <addForeignKeyConstraint baseColumnNames="work_id" baseTableName="electronic_resource_num"
+                                 baseTableSchemaName="public" constraintName="fkd1e968b8f14b93eb" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="work"
+                                 referencedTableSchemaName="public" referencesUniqueColumn="false"/>
+        <addForeignKeyConstraint baseColumnNames="orcid" baseTableName="external_identifier"
+                                 baseTableSchemaName="public" constraintName="fk641fe19db2007f99" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="orcid" referencedTableName="profile"
+                                 referencedTableSchemaName="public" referencesUniqueColumn="false"/>
+        <addForeignKeyConstraint baseColumnNames="address_id" baseTableName="institution" baseTableSchemaName="public"
+                                 constraintName="fk3529a5b8e84caef" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id"
+                                 referencedTableName="address" referencedTableSchemaName="public"
+                                 referencesUniqueColumn="false"/>
+        <addForeignKeyConstraint baseColumnNames="institution_id" baseTableName="institution_department"
+                                 baseTableSchemaName="public" constraintName="fka1e8b039cf1a386f" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="institution"
+                                 referencedTableSchemaName="public" referencesUniqueColumn="false"/>
+        <addForeignKeyConstraint baseColumnNames="orcid" baseTableName="other_name" baseTableSchemaName="public"
+                                 constraintName="fkf5209e5ab2007f99" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="orcid"
+                                 referencedTableName="profile" referencedTableSchemaName="public"
+                                 referencesUniqueColumn="false"/>
+        <addForeignKeyConstraint baseColumnNames="institution_id" baseTableName="past_profile_institution"
+                                 baseTableSchemaName="public" constraintName="fk21888c75cf1a386f" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="institution"
+                                 referencedTableSchemaName="public" referencesUniqueColumn="false"/>
+        <addForeignKeyConstraint baseColumnNames="orcid" baseTableName="past_profile_institution"
+                                 baseTableSchemaName="public" constraintName="fk21888c75b2007f99" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="orcid" referencedTableName="profile"
+                                 referencedTableSchemaName="public" referencesUniqueColumn="false"/>
+        <addForeignKeyConstraint baseColumnNames="institution_id" baseTableName="primary_profile_institution"
+                                 baseTableSchemaName="public" constraintName="fk408de65cf1a386f" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="institution"
+                                 referencedTableSchemaName="public" referencesUniqueColumn="false"/>
+        <addForeignKeyConstraint baseColumnNames="orcid" baseTableName="primary_profile_institution"
+                                 baseTableSchemaName="public" constraintName="fk408de65b2007f99" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="orcid" referencedTableName="profile"
+                                 referencedTableSchemaName="public" referencesUniqueColumn="false"/>
+        <addForeignKeyConstraint baseColumnNames="security_question_id" baseTableName="profile"
+                                 baseTableSchemaName="public" constraintName="fked8e89a96b6f57ec" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="security_question"
+                                 referencedTableSchemaName="public" referencesUniqueColumn="false"/>
+        <addForeignKeyConstraint baseColumnNames="sponsor_id" baseTableName="profile" baseTableSchemaName="public"
+                                 constraintName="fked8e89a9d6bc0bfe" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="orcid"
+                                 referencedTableName="profile" referencedTableSchemaName="public"
+                                 referencesUniqueColumn="false"/>
+        <addForeignKeyConstraint baseColumnNames="keywords_name" baseTableName="profile_keyword"
+                                 baseTableSchemaName="public" constraintName="fk5c2795534882dde" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="name" referencedTableName="keyword"
+                                 referencedTableSchemaName="public" referencesUniqueColumn="false"/>
+        <addForeignKeyConstraint baseColumnNames="profile_orcid" baseTableName="profile_keyword"
+                                 baseTableSchemaName="public" constraintName="fk5c27955380ddc983" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="orcid" referencedTableName="profile"
+                                 referencedTableSchemaName="public" referencesUniqueColumn="false"/>
+        <addForeignKeyConstraint baseColumnNames="profile_orcid" baseTableName="profile_subject"
+                                 baseTableSchemaName="public" constraintName="fk1d5ccc9680ddc983" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="orcid" referencedTableName="profile"
+                                 referencedTableSchemaName="public" referencesUniqueColumn="false"/>
+        <addForeignKeyConstraint baseColumnNames="subjects_name" baseTableName="profile_subject"
+                                 baseTableSchemaName="public" constraintName="fk1d5ccc962d6b1fe4" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="name" referencedTableName="subject"
+                                 referencedTableSchemaName="public" referencesUniqueColumn="false"/>
+        <addForeignKeyConstraint baseColumnNames="orcid" baseTableName="profile_work" baseTableSchemaName="public"
+                                 constraintName="fk48f497e7b2007f99" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="orcid"
+                                 referencedTableName="profile" referencedTableSchemaName="public"
+                                 referencesUniqueColumn="false"/>
+        <addForeignKeyConstraint baseColumnNames="work_id" baseTableName="profile_work" baseTableSchemaName="public"
+                                 constraintName="fk48f497e7f14b93eb" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id"
+                                 referencedTableName="work" referencedTableSchemaName="public"
+                                 referencesUniqueColumn="false"/>
+        <addForeignKeyConstraint baseColumnNames="hearabout_id" baseTableName="registration"
+                                 baseTableSchemaName="public" constraintName="fkaf83e8b9bee4362f" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="hear_about"
+                                 referencedTableSchemaName="public" referencesUniqueColumn="false"/>
+        <addForeignKeyConstraint baseColumnNames="work_id" baseTableName="related_url" baseTableSchemaName="public"
+                                 constraintName="fk425c835bf14b93eb" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id"
+                                 referencedTableName="work" referencedTableSchemaName="public"
+                                 referencesUniqueColumn="false"/>
+        <addForeignKeyConstraint baseColumnNames="orcid" baseTableName="researcher_url" baseTableSchemaName="public"
+                                 constraintName="fkd433c438b2007f99" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="orcid"
+                                 referencedTableName="profile" referencedTableSchemaName="public"
+                                 referencesUniqueColumn="false"/>
+        <addForeignKeyConstraint baseColumnNames="secondary_author_id" baseTableName="secondary_author_work"
+                                 baseTableSchemaName="public" constraintName="fkf7f1defae36c5a0" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="author"
+                                 referencedTableSchemaName="public" referencesUniqueColumn="false"/>
+        <addForeignKeyConstraint baseColumnNames="work_id" baseTableName="secondary_author_work"
+                                 baseTableSchemaName="public" constraintName="fkf7f1defaf14b93eb" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="work"
+                                 referencedTableSchemaName="public" referencesUniqueColumn="false"/>
+
+        <modifySql dbms="hsqldb">
+            <replace replace="bytea" with="VARBINARY(4096)"/>
+            <replace replace="role" with="ROLE"/>
+            <replace replace="value" with="VALUE"/>
+        </modifySql>
+        <modifySql dbms="postgresql">
+            <replace replace="WITH TIME ZONE" with="WITHOUT TIME ZONE"/>
+        </modifySql>
+
+    </changeSet>
+
+    <changeSet id="CREATE-SEQUENCES" author="Declan Newman" dbms="postgresql" context="default">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <sequenceExists sequenceName="work_seq"/>
+            </not>
+        </preConditions>
+        <createSequence sequenceName="address_seq"/>
+        <createSequence sequenceName="author_seq"/>
+        <createSequence sequenceName="author_other_name_seq"/>
+        <createSequence sequenceName="institution_department_seq"/>
+        <createSequence sequenceName="institution_seq"/>
+        <createSequence sequenceName="other_name_seq"/>
+        <createSequence sequenceName="reference_data_seq"/>
+        <createSequence sequenceName="registration_seq"/>
+        <createSequence sequenceName="related_url_seq"/>
+        <createSequence sequenceName="work_seq"/>
+    </changeSet>
+
+    <changeSet id="CREATE-AUTO-COLS" author="Declan Newman" dbms="hsqldb" context="default">
+        <addAutoIncrement tableName="address" columnName="id" columnDataType="bigint"/>
+        <addAutoIncrement tableName="author" columnName="id" columnDataType="bigint"/>
+        <addAutoIncrement tableName="author_other_name" columnName="author_other_name_id" columnDataType="bigint"/>
+        <addAutoIncrement tableName="institution_department" columnName="id" columnDataType="bigint"/>
+        <addAutoIncrement tableName="institution" columnName="id" columnDataType="bigint"/>
+        <addAutoIncrement tableName="other_name" columnName="other_name_id" columnDataType="bigint"/>
+        <addAutoIncrement tableName="reference_data" columnName="id" columnDataType="bigint"/>
+        <addAutoIncrement tableName="registration" columnName="id" columnDataType="bigint"/>
+        <addAutoIncrement tableName="related_url" columnName="id" columnDataType="bigint"/>
+        <addAutoIncrement tableName="work" columnName="id" columnDataType="bigint"/>
+    </changeSet>
+
+</databaseChangeLog>

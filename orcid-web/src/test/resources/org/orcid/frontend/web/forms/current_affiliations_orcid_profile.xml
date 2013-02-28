@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<orcid-profile xmlns="http://www.orcid.org/ns/orcid">
+    <orcid>4444-4444-4444-4446</orcid>
+    <orcid-bio>
+        <external-identifiers visibility="limited">
+            <external-identifier>
+                <external-id-orcid>8888-8888-8888-8880</external-id-orcid>
+                <external-id-reference>123</external-id-reference>
+            </external-identifier>
+        </external-identifiers>
+        <affiliations>
+            <affiliation/>
+        </affiliations>
+    </orcid-bio>
+</orcid-profile>

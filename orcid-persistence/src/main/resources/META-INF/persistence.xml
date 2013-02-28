@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+
+    =============================================================================
+
+    ORCID (R) Open Source
+    http://orcid.org
+
+    Copyright (c) 2012-2013 ORCID, Inc.
+    Licensed under an MIT-Style License (MIT)
+    http://orcid.org/open-source-license
+
+    This copyright and license information (including a link to the full license)
+    shall be included in its entirety in all copies or substantial portion of
+    the software.
+
+    =============================================================================
+
+-->
+<persistence xmlns="http://java.sun.com/xml/ns/persistence"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_1_0.xsd"
+	version="1.0">
+
+	<persistence-unit name="orcid" transaction-type="RESOURCE_LOCAL">
+		<provider>org.hibernate.ejb.HibernatePersistence</provider>
+         <!-- Entity classes -->
+        <class>org.orcid.persistence.jpa.entities.AddressEntity</class>
+        <class>org.orcid.persistence.jpa.entities.AffiliationEntity</class>
+        <class>org.orcid.persistence.jpa.entities.AlternateEmailEntity</class>
+        <class>org.orcid.persistence.jpa.entities.CountryIsoEntity</class>
+        <class>org.orcid.persistence.jpa.entities.ExternalIdentifierEntity</class>
+        <class>org.orcid.persistence.jpa.entities.EmailEntity</class>
+        <class>org.orcid.persistence.jpa.entities.FuzzyDate</class>
+        <class>org.orcid.persistence.jpa.entities.GivenPermissionByEntity</class>
+        <class>org.orcid.persistence.jpa.entities.GivenPermissionToEntity</class>
+        <class>org.orcid.persistence.jpa.entities.GrantContributorEntity</class>
+        <class>org.orcid.persistence.jpa.entities.GrantEntity</class>
+        <class>org.orcid.persistence.jpa.entities.GrantSourceEntity</class>
+        <class>org.orcid.persistence.jpa.entities.HearAboutEntity</class>
+        <class>org.orcid.persistence.jpa.entities.InstitutionEntity</class>
+        <class>org.orcid.persistence.jpa.entities.KeywordViewEntity</class>
+        <class>org.orcid.persistence.jpa.entities.OtherNameEntity</class>
+        <class>org.orcid.persistence.jpa.entities.PatentContributorEntity</class>
+        <class>org.orcid.persistence.jpa.entities.PatentEntity</class>
+        <class>org.orcid.persistence.jpa.entities.PatentSourceEntity</class>
+        <class>org.orcid.persistence.jpa.entities.ProfileEntity</class>
+        <class>org.orcid.persistence.jpa.entities.ProfileEventEntity</class>
+        <class>org.orcid.persistence.jpa.entities.ProfileGrantEntity</class>
+        <class>org.orcid.persistence.jpa.entities.ProfileKeywordEntity</class>
+        <class>org.orcid.persistence.jpa.entities.ProfilePatentEntity</class>
+        <class>org.orcid.persistence.jpa.entities.ProfileSummaryEntity</class>
+        <class>org.orcid.persistence.jpa.entities.ProfileWorkEntity</class>
+        <class>org.orcid.persistence.jpa.entities.RefDataEntity</class>       
+        <class>org.orcid.persistence.jpa.entities.RegistrationRoleEntity</class>
+        <class>org.orcid.persistence.jpa.entities.ResearcherUrlEntity</class>
+        <class>org.orcid.persistence.jpa.entities.SecurityQuestionEntity</class>
+        <class>org.orcid.persistence.jpa.entities.SubjectEntity</class>
+        <class>org.orcid.persistence.jpa.entities.WorkContributorEntity</class>
+        <class>org.orcid.persistence.jpa.entities.WorkEntity</class>
+        <class>org.orcid.persistence.jpa.entities.WorkExternalIdentifierEntity</class>
+        <class>org.orcid.persistence.jpa.entities.WorkSourceEntity</class>
+        <class>org.orcid.persistence.jpa.entities</class>
+
+        <!-- OAuth entities -->
+        <class>org.orcid.persistence.jpa.entities.ClientDetailsEntity</class>
+        <class>org.orcid.persistence.jpa.entities.ClientAuthorisedGrantTypeEntity</class>
+        <class>org.orcid.persistence.jpa.entities.ClientGrantedAuthorityEntity</class>
+        <class>org.orcid.persistence.jpa.entities.ClientRedirectUriEntity</class>
+        <class>org.orcid.persistence.jpa.entities.ClientResourceIdEntity</class>
+        <class>org.orcid.persistence.jpa.entities.ClientScopeEntity</class>
+        <class>org.orcid.persistence.jpa.entities.OrcidGrantedAuthority</class>
+        <class>org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail</class>
+        <class>org.orcid.persistence.jpa.entities.OrcidOauth2AuthoriziationCodeDetail</class>
+
+		<exclude-unlisted-classes>true</exclude-unlisted-classes>
+
+	</persistence-unit>
+
+</persistence>

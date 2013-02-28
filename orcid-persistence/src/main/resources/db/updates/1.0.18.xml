@@ -1,0 +1,46 @@
+<!--
+
+    =============================================================================
+
+    ORCID (R) Open Source
+    http://orcid.org
+
+    Copyright (c) 2012-2013 ORCID, Inc.
+    Licensed under an MIT-Style License (MIT)
+    http://orcid.org/open-source-license
+
+    This copyright and license information (including a link to the full license)
+    shall be included in its entirety in all copies or substantial portion of
+    the software.
+
+    =============================================================================
+
+-->
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+        
+      <changeSet id="ALTER_DEFAULT_SECURITY_QUESTION_VALUE" author="James Bowen">
+        <sql>update security_question set question='None Selected' where id='0'</sql>
+      </changeSet>
+      
+      <changeSet id="ADD_DEACTIVATION_DATE_TO_PROFILE" author="James Bowen">
+         <addColumn tableName="profile">
+            <column name="profile_deactivation_date" type="TIMESTAMP"/>
+        </addColumn>
+        <modifySql dbms="postgresql">
+            <replace replace="WITH TIME ZONE" with="WITHOUT TIME ZONE" />
+        </modifySql>
+      </changeSet>
+
+    <changeSet id="ADD-CITATION-TYPE-COLUMN-TO-WORK-TABLE" author="Declan Newman">
+        <addColumn tableName="work">
+            <column name="citation_type" type="VARCHAR(100)"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="ALTER-CITATION-COLUMN-LENGTH" author="Declan Newman">
+       <modifyDataType tableName="work" columnName="citation" newDataType="VARCHAR(5000)"/>
+    </changeSet>
+    
+    
+</databaseChangeLog>

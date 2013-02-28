@@ -1,0 +1,149 @@
+/**
+ * =============================================================================
+ *
+ * ORCID (R) Open Source
+ * http://orcid.org
+ *
+ * Copyright (c) 2012-2013 ORCID, Inc.
+ * Licensed under an MIT-Style License (MIT)
+ * http://orcid.org/open-source-license
+ *
+ * This copyright and license information (including a link to the full license)
+ * shall be included in its entirety in all copies or substantial portion of
+ * the software.
+ *
+ * =============================================================================
+ */
+package org.orcid.persistence.jpa.entities;
+
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+import org.orcid.jaxb.model.message.Visibility;
+import org.orcid.persistence.jpa.entities.keys.ProfileWorkEntityPk;
+
+import javax.persistence.Basic;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.Id;
+import javax.persistence.IdClass;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+import java.util.Date;
+import java.util.Set;
+
+/**
+ * orcid-entities - Dec 6, 2011 - ProfileInstitutionEntity
+ *
+ * @author Declan Newman (declan)
+ */
+
+@Entity
+@Table(name = "profile_work")
+@IdClass(ProfileWorkEntityPk.class)
+public class ProfileWorkEntity extends BaseEntity<ProfileWorkEntityPk> implements Comparable<ProfileWorkEntity> {
+
+    private static final long serialVersionUID = -3187757614938904392L;
+
+    private ProfileEntity profile;
+    private WorkEntity work;
+    private Date addedToProfileDate;
+    private Set<WorkSourceEntity> sources;
+    private Visibility visibility;
+
+    @Override
+    @Transient
+    public ProfileWorkEntityPk getId() {
+        return null;
+    }
+
+    /**
+     * @return the profile
+     */
+    @Id
+    @ManyToOne(cascade = { CascadeType.REFRESH }, fetch = FetchType.EAGER)
+    @JoinColumn(name = "orcid", nullable = false)
+    public ProfileEntity getProfile() {
+        return profile;
+    }
+
+    /**
+     * @param profile
+     *         the profile to set
+     */
+    public void setProfile(ProfileEntity profile) {
+        this.profile = profile;
+    }
+
+    /**
+     * @return the work
+     */
+    @Id
+    @ManyToOne(cascade = { CascadeType.REFRESH }, fetch = FetchType.EAGER)
+    @JoinColumn(name = "work_id", nullable = false)
+    public WorkEntity getWork() {
+        return work;
+    }
+
+    /**
+     * @param work
+     *         the work to set
+     */
+    public void setWork(WorkEntity work) {
+        this.work = work;
+    }
+
+    @Column(name = "added_to_profile_date")
+    public Date getAddedToProfileDate() {
+        return addedToProfileDate;
+    }
+
+    public void setAddedToProfileDate(Date addedToProfileDate) {
+        this.addedToProfileDate = addedToProfileDate;
+    }
+
+    @OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.LAZY, mappedBy = "profileWork")
+    @Fetch(FetchMode.SUBSELECT)
+    public Set<WorkSourceEntity> getSources() {
+        return sources;
+    }
+
+    public void setSources(Set<WorkSourceEntity> sources) {
+        this.sources = sources;
+    }
+
+    @Basic
+    @Enumerated(EnumType.STRING)
+    public Visibility getVisibility() {
+        return visibility;
+    }
+
+    public void setVisibility(Visibility visibility) {
+        this.visibility = visibility;
+    }
+
+    @Override
+    public int compareTo(ProfileWorkEntity other) {
+        if (other == null) {
+            throw new NullPointerException("Can't compare with null");
+        }
+        if (other.getWork() == null) {
+            if (work == null) {
+                return 0;
+            } else {
+                return 1;
+            }
+        }
+        if (work == null) {
+            return -1;
+        }
+        return work.compareTo(other.getWork());
+    }
+
+}

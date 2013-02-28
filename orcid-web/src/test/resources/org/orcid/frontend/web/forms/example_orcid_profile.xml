@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<orcid-profile xmlns="http://www.orcid.org/ns/orcid">
+    <orcid-bio>
+        <personal-details>
+            <given-names>Will</given-names>
+            <family-name>Simpson</family-name>
+            <vocative-name>JR</vocative-name>
+            <credit-name>W. J. R. Simpson</credit-name>
+            <other-names>
+                <other-name>Jim</other-name>
+                <other-name>Tom</other-name>
+            </other-names>
+        </personal-details>
+        <contact-details>
+            <email>will@semantico.com</email>
+        </contact-details>
+        <primary-institution>
+            <primary-institution-name>Semantico</primary-institution-name>
+            <primary-institution-details>
+                <address>
+                    <address-line-1>Lees House</address-line-1>
+                    <address-line-2>21-23, Dyke Road</address-line-2>
+                    <city>Brighton</city>
+                    <state-or-province>East Sussex</state-or-province>
+                    <country>United Kingdom</country>
+                    <postal-code>BN1 3FE</postal-code>
+                </address>
+                <role>Researcher</role>
+            </primary-institution-details>
+        </primary-institution>
+        <external-identifiers>
+            <external-identifier>
+                <sponsor-orcid>8888-8888-8888-8880</sponsor-orcid>
+                <sponsor-reference>123</sponsor-reference>
+            </external-identifier>
+        </external-identifiers>
+    </orcid-bio>
+    <orcid-internal>
+        <security-details>
+            <security-question-id>5</security-question-id>
+        </security-details>
+    </orcid-internal>
+</orcid-profile>

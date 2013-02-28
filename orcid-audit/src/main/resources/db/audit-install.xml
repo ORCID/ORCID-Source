@@ -1,0 +1,91 @@
+<!--
+
+    =============================================================================
+
+    ORCID (R) Open Source
+    http://orcid.org
+
+    Copyright (c) 2012-2013 ORCID, Inc.
+    Licensed under an MIT-Style License (MIT)
+    http://orcid.org/open-source-license
+
+    This copyright and license information (including a link to the full license)
+    shall be included in its entirety in all copies or substantial portion of
+    the software.
+
+    =============================================================================
+
+-->
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+    <changeSet author="Declan Newman" id="BASE-INSTALL" context="default">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="audit_event"/>
+            </not>
+        </preConditions>
+
+        <createTable tableName="audit_event">
+            <column name="audit_event_id" type="bigint">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="audit_event_pkey"/>
+            </column>
+            <column name="modified_orcid" type="VARCHAR(19)"/>
+            <column name="modifier_orcid" type="VARCHAR(19)"/>
+            <column name="modifier_type" type="VARCHAR(75)"/>
+            <column name="modifier_ip" type="VARCHAR(39)"/>
+            <column name="modifier_iso2_country" type="VARCHAR(2)"/>
+            <column name="event_type" type="VARCHAR(75)"/>
+            <column name="event_method" type="VARCHAR(75)"/>
+            <column name="event_description" type="VARCHAR(255)"/>
+            <column name="date_created" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="last_modified" type="TIMESTAMP WITH TIME ZONE"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="CREATE-POSTGRES-SEQUENCES" author="Declan Newman" dbms="postgresql" context="default">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <sequenceExists sequenceName="audit_event_id_seq"/>
+            </not>
+        </preConditions>
+        <createSequence sequenceName="audit_event_id_seq"/>
+    </changeSet>
+
+    <changeSet id="CREATE-HSQL-AUTO-COLS" author="Declan Newman" dbms="hsqldb" context="default">
+        <addAutoIncrement tableName="audit_event" columnName="audit_event_id" columnDataType="bigint"/>
+    </changeSet>
+
+    <changeSet id="ADD-INDEXES" author="Declan Newman">
+        <preConditions onFail="MARK_RAN">
+            <indexExists indexName="modified_orcid_index"/>
+        </preConditions>
+        <createIndex tableName="audit_event" indexName="modified_orcid_index">
+            <column name="modified_orcid"/>
+        </createIndex>
+        <createIndex tableName="audit_event" indexName="modifier_orcid_index">
+            <column name="modifier_orcid"/>
+        </createIndex>
+        <createIndex tableName="audit_event" indexName="modifier_type_index">
+            <column name="modifier_type"/>
+        </createIndex>
+        <createIndex tableName="audit_event" indexName="modifier_ip_index">
+            <column name="modifier_ip"/>
+        </createIndex>
+        <createIndex tableName="audit_event" indexName="modifier_iso2_country_index">
+            <column name="modifier_iso2_country"/>
+        </createIndex>
+        <createIndex tableName="audit_event" indexName="event_type_index">
+            <column name="event_type"/>
+        </createIndex>
+        <createIndex tableName="audit_event" indexName="event_method_index">
+            <column name="event_method"/>
+        </createIndex>
+        <createIndex tableName="audit_event" indexName="date_created_index">
+            <column name="date_created"/>
+        </createIndex>
+    </changeSet>
+
+</databaseChangeLog>

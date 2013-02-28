@@ -1,0 +1,74 @@
+<!--
+
+    =============================================================================
+
+    ORCID (R) Open Source
+    http://orcid.org
+
+    Copyright (c) 2012-2013 ORCID, Inc.
+    Licensed under an MIT-Style License (MIT)
+    http://orcid.org/open-source-license
+
+    This copyright and license information (including a link to the full license)
+    shall be included in its entirety in all copies or substantial portion of
+    the software.
+
+    =============================================================================
+
+-->
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd"
+>
+    <changeSet id="ADD-WORK-ID-TO-AUTHORS" author="Will Simpson">
+        <addColumn tableName="author">
+            <column name="work_id" type="bigint" />
+            <column name="author_type" type="VARCHAR(20)" defaultValue="PRIMARY" />
+        </addColumn>
+        <createIndex tableName="author" indexName="author_work_id_idx">
+            <column name="work_id" />
+        </createIndex>
+        <addForeignKeyConstraint constraintName="author_work_id_to_work_id" baseTableName="author" baseColumnNames="work_id" referencedTableName="work"
+            referencedColumnNames="id" />
+        <sql>update author set work_id = (select aw.work_id from
+            author_work aw where aw.author_id = id)
+        </sql>
+        <dropTable tableName="author_work" />
+        <dropTable tableName="secondary_author_work" />
+    </changeSet>
+
+    <changeSet id="ADD-WORK-ID-INDEXES" author="Will Simpson">
+        <createIndex tableName="electronic_resource_num" indexName="electronic_resource_num_work_id_idx">
+            <column name="work_id" />
+        </createIndex>
+        <createIndex tableName="related_url" indexName="related_url_work_id_idx">
+            <column name="work_id" />
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="ADD-ORCID-INDEXES" author="Will Simpson">
+        <createIndex tableName="profile_subject" indexName="profile_subject_orcid_idx">
+            <column name="profile_orcid" />
+        </createIndex>
+        <createIndex tableName="profile_keyword" indexName="profile_keyword_orcid_idx">
+            <column name="profile_orcid" />
+        </createIndex>
+        <createIndex tableName="granted_authority" indexName="granted_authority_orcid_idx">
+            <column name="orcid" />
+        </createIndex>
+        <createIndex tableName="primary_profile_institution" indexName="primary_profile_institution_orcid_idx">
+            <column name="orcid" />
+        </createIndex>
+        <createIndex tableName="affiliate_profile_institution" indexName="affiliate_profile_institution_orcid_idx">
+            <column name="orcid" />
+        </createIndex>
+        <createIndex tableName="past_profile_institution" indexName="past_profile_institution_orcid_idx">
+            <column name="orcid" />
+        </createIndex>
+        <createIndex tableName="profile" indexName="profile_group_orcid">
+            <column name="group_orcid" />
+        </createIndex>
+    </changeSet>
+
+
+
+</databaseChangeLog>

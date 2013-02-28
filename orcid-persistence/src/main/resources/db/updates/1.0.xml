@@ -1,0 +1,607 @@
+<!--
+
+    =============================================================================
+
+    ORCID (R) Open Source
+    http://orcid.org
+
+    Copyright (c) 2012-2013 ORCID, Inc.
+    Licensed under an MIT-Style License (MIT)
+    http://orcid.org/open-source-license
+
+    This copyright and license information (including a link to the full license)
+    shall be included in its entirety in all copies or substantial portion of
+    the software.
+
+    =============================================================================
+
+-->
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+    <changeSet id="ADD-CLIENT_DETAILS_PROFILE_RELATIONSHIP" author="Declan Newman">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="client_details" columnName="orcid" />
+            </not>
+        </preConditions>
+        <addColumn tableName="client_details">
+            <column name="orcid" type="VARCHAR(19)">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="orcid" baseTableName="client_details" baseTableSchemaName="public"
+                                 constraintName="profile_client_details" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="orcid"
+                                 referencedTableName="profile" referencedTableSchemaName="public"
+                                 referencesUniqueColumn="false"/>
+    </changeSet>
+    
+    <changeSet id="ADD-GROUPS-AND-CLIENTS" author="Will Simpson">
+        <addColumn tableName="profile">
+            <column name="orcid_type" type="VARCHAR(20)" />
+            <column name="group_orcid" type="VARCHAR(255)" />
+        </addColumn>
+    </changeSet>
+    
+    <changeSet id="REMOVE_ORCID_FROM_CLIENT_DETAILS" author="Will Simpson">
+        <dropForeignKeyConstraint baseTableName="client_details" constraintName="profile_client_details"/>
+        <dropColumn tableName="client_details" columnName="orcid" />
+    </changeSet>
+
+    <changeSet id="CREATE-APPROVED-CLIENT-PROFILE-TABLE" author="Declan Newman">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="profile_client_details"/>
+            </not>
+        </preConditions>
+        <createTable tableName="profile_client_details">
+            <column name="orcid" type="VARCHAR(19)"/>
+            <column name="client_details_id" type="VARCHAR(19)"/>
+            <column name="date_created" type="TIMESTAMP WITH TIME ZONE" />
+            <column name="last_modified" type="TIMESTAMP WITH TIME ZONE" />
+        </createTable>
+        <addForeignKeyConstraint baseColumnNames="orcid" baseTableName="profile_client_details" baseTableSchemaName="public"
+                                 constraintName="profile_client_details_profile_fk" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="orcid"
+                                 referencedTableName="profile" referencedTableSchemaName="public"
+                                 referencesUniqueColumn="false"/>
+        <addForeignKeyConstraint baseColumnNames="client_details_id" baseTableName="profile_client_details" baseTableSchemaName="public"
+                                 constraintName="profile_client_details_client_fk" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="client_details_id"
+                                 referencedTableName="client_details" referencedTableSchemaName="public"
+                                 referencesUniqueColumn="false"/>
+        <modifySql dbms="postgresql">
+            <replace replace="WITH TIME ZONE" with="WITHOUT TIME ZONE" />
+        </modifySql>
+    </changeSet>
+
+    <changeSet id="ADD-PROFILE-DETAILS-PRIMARY-KEY" author="Declan Newman">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <primaryKeyExists primaryKeyName="profile_client_details_pk" tableName="profile_client_details"/>
+            </not>
+        </preConditions>
+        <addPrimaryKey tableName="profile_client_details" columnNames="orcid, client_details_id" constraintName="profile_client_details_pk"/>
+    </changeSet>
+
+    <changeSet id="CREATE-OAUTH2-REFRESH-TOKEN-DETAIL" author="Declan Newman">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="oauth2_refresh_token_detail"/>
+            </not>
+        </preConditions>
+        <createTable tableName="oauth2_refresh_token_detail">
+            <column name="token_value" type="VARCHAR(155)">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="oauth2_refresh_token_detail_pkey"/>
+            </column>
+            <column name="token_expiration" type="TIMESTAMP WITH TIME ZONE" />
+            <column name="orcid" type="VARCHAR(19)" />
+            <column name="client_details_id" type="VARCHAR(19)" />
+            <column name="date_created" type="TIMESTAMP WITH TIME ZONE" />
+            <column name="last_modified" type="TIMESTAMP WITH TIME ZONE" />
+            <column name="authentication_key" type="VARCHAR(150)"/>
+        </createTable>
+        <addUniqueConstraint tableName="oauth2_refresh_token_detail" columnNames="authentication_key" constraintName="refresh_token_authentication_key_unique_constraint"/>
+
+        <addForeignKeyConstraint baseColumnNames="orcid" baseTableName="oauth2_refresh_token_detail" baseTableSchemaName="public"
+                                 constraintName="oauth2_refresh_token_detail_orcid_fk" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="orcid"
+                                 referencedTableName="profile" referencedTableSchemaName="public"
+                                 referencesUniqueColumn="false"/>
+        <addForeignKeyConstraint baseColumnNames="client_details_id" baseTableName="oauth2_refresh_token_detail" baseTableSchemaName="public"
+                                 constraintName="oauth2_refresh_token_detail_client_details_fk" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="client_details_id"
+                                 referencedTableName="client_details" referencedTableSchemaName="public"
+                                 referencesUniqueColumn="false"/>
+
+        <createIndex tableName="oauth2_refresh_token_detail" indexName="refresh_token_value_index">
+            <column name="token_value"/>
+        </createIndex>
+        <createIndex tableName="oauth2_refresh_token_detail" indexName="refresh_token_orcid_index">
+            <column name="orcid"/>
+        </createIndex>
+        <createIndex tableName="oauth2_refresh_token_detail" indexName="refresh_token_client_details_id_index">
+            <column name="client_details_id"/>
+        </createIndex>
+        <createIndex tableName="oauth2_refresh_token_detail" indexName="refresh_token_authentication_key_index">
+            <column name="authentication_key"/>
+        </createIndex>
+        <modifySql dbms="postgresql">
+            <replace replace="WITH TIME ZONE" with="WITHOUT TIME ZONE" />
+        </modifySql>
+    </changeSet>
+
+    <changeSet id="CREATE-OAUTH2-TOKEN-DETAIL" author="Declan Newman">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="oauth2_token_detail"/>
+            </not>
+        </preConditions>
+        <createTable tableName="oauth2_token_detail">
+            <column name="token_value" type="VARCHAR(155)">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="oauth2_token_detail_pkey"/>
+            </column>
+            <column name="token_type" type="VARCHAR(50)" />
+            <column name="token_expiration" type="TIMESTAMP WITH TIME ZONE" />
+            <column name="orcid" type="VARCHAR(19)" />
+            <column name="client_details_id" type="VARCHAR(19)" />
+            <column name="refresh_token_id" type="VARCHAR(150)" />
+            <column name="is_approved" type="boolean" />
+            <column name="redirect_uri" type="VARCHAR(350)" />
+            <column name="response_type" type="VARCHAR(100)" />
+            <column name="state" type="VARCHAR(40)" />
+            <column name="scope_type" type="VARCHAR(50)" />
+            <column name="resource_id" type="VARCHAR(50)" />
+            <column name="date_created" type="TIMESTAMP WITH TIME ZONE" />
+            <column name="last_modified" type="TIMESTAMP WITH TIME ZONE" />
+            <column name="authentication_key" type="VARCHAR(150)"/>
+        </createTable>
+        <addUniqueConstraint tableName="oauth2_token_detail" columnNames="refresh_token_id" constraintName="refresh_token_unique_constraint"/>
+        <addUniqueConstraint tableName="oauth2_token_detail" columnNames="authentication_key" constraintName="token_authentication_key_unique_constraint"/>
+
+        <addForeignKeyConstraint baseColumnNames="orcid" baseTableName="oauth2_token_detail" baseTableSchemaName="public"
+                                 constraintName="oauth2_token_detail_orcid_fk" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="orcid"
+                                 referencedTableName="profile" referencedTableSchemaName="public"
+                                 referencesUniqueColumn="false"/>
+        <addForeignKeyConstraint baseColumnNames="client_details_id" baseTableName="oauth2_token_detail" baseTableSchemaName="public"
+                                 constraintName="oauth2_token_detail_client_details_fk" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="client_details_id"
+                                 referencedTableName="client_details" referencedTableSchemaName="public"
+                                 referencesUniqueColumn="false"/>
+        <addForeignKeyConstraint baseColumnNames="refresh_token_id" baseTableName="oauth2_token_detail" baseTableSchemaName="public"
+                                 constraintName="oauth2_refresh_token_detail_fk" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="token_value"
+                                 referencedTableName="oauth2_refresh_token_detail" referencedTableSchemaName="public"
+                                 referencesUniqueColumn="false"/>
+
+        <createIndex tableName="oauth2_token_detail" indexName="token_index">
+            <column name="token_value"/>
+        </createIndex>
+        <createIndex tableName="oauth2_token_detail" indexName="token_orcid_index">
+            <column name="orcid"/>
+        </createIndex>
+        <createIndex tableName="oauth2_token_detail" indexName="token_client_details_id_index">
+            <column name="client_details_id"/>
+        </createIndex>
+        <createIndex tableName="oauth2_token_detail" indexName="token_authentication_key_index">
+            <column name="authentication_key"/>
+        </createIndex>
+        <modifySql dbms="postgresql">
+            <replace replace="WITH TIME ZONE" with="WITHOUT TIME ZONE" />
+        </modifySql>
+    </changeSet>
+
+    <changeSet id="ADD-CLIENT-DETAILS-NAME-COLUMN" author="Declan Newman">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="client_details" columnName="client_name"/>
+            </not>
+        </preConditions>
+        <addColumn tableName="client_details">
+            <column name="client_name" type="VARCHAR(255)"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="CHANGE-CLIENT-DETAILS-CONSTRAINTS" author="Declan Newman">
+        <preConditions onFail="MARK_RAN">
+            <foreignKeyConstraintExists foreignKeyTableName="client_authorised_grant_type" foreignKeyName="client_details_authorised_grant_type_fk"/>
+            <foreignKeyConstraintExists foreignKeyTableName="client_scope" foreignKeyName="client_scope_fk"/>
+            <foreignKeyConstraintExists foreignKeyTableName="client_granted_authority" foreignKeyName="client_details_client_granted_authority_fk"/>
+            <foreignKeyConstraintExists foreignKeyTableName="client_redirect_uri" foreignKeyName="client_redirect_uri_fk"/>
+            <foreignKeyConstraintExists foreignKeyTableName="client_resource_id" foreignKeyName="client_resource_id_fk"/>
+        </preConditions>
+
+        <dropForeignKeyConstraint baseTableName="client_authorised_grant_type" constraintName="client_details_authorised_grant_type_fk"/>
+        <dropForeignKeyConstraint baseTableName="client_scope" constraintName="client_scope_fk"/>
+        <dropForeignKeyConstraint baseTableName="client_granted_authority" constraintName="client_details_client_granted_authority_fk"/>
+        <dropForeignKeyConstraint baseTableName="client_redirect_uri" constraintName="client_redirect_uri_fk"/>
+        <dropForeignKeyConstraint baseTableName="client_resource_id" constraintName="client_resource_id_fk"/>
+
+        <addForeignKeyConstraint baseColumnNames="client_details_id"
+                                 baseTableName="client_authorised_grant_type" baseTableSchemaName="public"
+                                 constraintName="client_details_authorised_grant_type_fk" deferrable="false"
+                                 initiallyDeferred="false" onDelete="CASCADE" onUpdate="NO ACTION"
+                                 referencedColumnNames="client_details_id" referencedTableName="client_details"
+                                 referencedTableSchemaName="public" referencesUniqueColumn="false" />
+
+        <addForeignKeyConstraint baseColumnNames="client_details_id"
+                                 baseTableName="client_scope" baseTableSchemaName="public"
+                                 constraintName="client_scope_fk" deferrable="false"
+                                 initiallyDeferred="false" onDelete="CASCADE" onUpdate="NO ACTION"
+                                 referencedColumnNames="client_details_id" referencedTableName="client_details"
+                                 referencedTableSchemaName="public" referencesUniqueColumn="false" />
+
+        <addForeignKeyConstraint baseColumnNames="client_details_id"
+                                 baseTableName="client_granted_authority" baseTableSchemaName="public"
+                                 constraintName="client_details_client_granted_authority_fk"
+                                 deferrable="false" initiallyDeferred="false" onDelete="CASCADE"
+                                 onUpdate="NO ACTION" referencedColumnNames="client_details_id"
+                                 referencedTableName="client_details" referencedTableSchemaName="public"
+                                 referencesUniqueColumn="false" />
+
+        <addForeignKeyConstraint baseColumnNames="client_details_id"
+                                 baseTableName="client_redirect_uri" baseTableSchemaName="public"
+                                 constraintName="client_redirect_uri_fk" deferrable="false"
+                                 initiallyDeferred="false" onDelete="CASCADE" onUpdate="NO ACTION"
+                                 referencedColumnNames="client_details_id" referencedTableName="client_details"
+                                 referencedTableSchemaName="public" referencesUniqueColumn="false" />
+
+        <addForeignKeyConstraint baseColumnNames="client_details_id"
+                                 baseTableName="client_resource_id" baseTableSchemaName="public"
+                                 constraintName="client_resource_id_fk" deferrable="false"
+                                 initiallyDeferred="false" onDelete="CASCADE" onUpdate="NO ACTION"
+                                 referencedColumnNames="client_details_id" referencedTableName="client_details"
+                                 referencedTableSchemaName="public" referencesUniqueColumn="false" />
+    </changeSet>
+
+    <changeSet id="CREATE-AUTHORIZATION-CODE_TABLES" author="Declan Newman">
+        <preConditions>
+            <not>
+                <tableExists tableName="oauth2_authoriziation_code_detail"/>
+            </not>
+        </preConditions>
+        <createTable tableName="oauth2_authoriziation_code_detail">
+            <column name="authoriziation_code_value" type="VARCHAR(255)">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="oauth2_authoriziation_code_detail_pkey"/>
+            </column>
+            <column name="is_aproved" type="boolean"/>
+            <column name="orcid" type="VARCHAR(19)"/>
+            <column name="credentials" type="VARCHAR(100)"/>
+            <column name="redirect_uri" type="VARCHAR(355)"/>
+            <column name="response_type" type="VARCHAR(55)"/>
+            <column name="state" type="VARCHAR(55)"/>
+            <column name="client_details_id" type="VARCHAR(150)"/>
+            <column name="remote_address" type="VARCHAR(40)"/>
+            <column name="session_id" type="VARCHAR(100)"/>
+            <column name="is_authenticated" type="boolean"/>
+            <column name="date_created" type="TIMESTAMP WITH TIME ZONE" />
+            <column name="last_modified" type="TIMESTAMP WITH TIME ZONE" />
+        </createTable>
+        <createTable tableName="orcidoauth2authoriziationcodedetail_scopes">
+            <column name="orcidoauth2authoriziationcodedetail_authoriziation_code_value" type="VARCHAR(255)"/>
+            <column name="scopes" type="VARCHAR(255)"/>
+        </createTable>
+        <createTable tableName="orcidoauth2authoriziationcodedetail_authorities">
+            <column name="orcidoauth2authoriziationcodedetail_authoriziation_code_value" type="VARCHAR(255)"/>
+            <column name="authorities" type="VARCHAR(255)"/>
+        </createTable>
+        <createTable tableName="orcidoauth2authoriziationcodedetail_resourceids">
+            <column name="orcidoauth2authoriziationcodedetail_authoriziation_code_value" type="VARCHAR(255)"/>
+            <column name="resourceids" type="VARCHAR(255)"/>
+        </createTable>
+
+        <addPrimaryKey tableName="orcidoauth2authoriziationcodedetail_scopes" columnNames="orcidoauth2authoriziationcodedetail_authoriziation_code_value, scopes"/>
+        <addPrimaryKey tableName="orcidoauth2authoriziationcodedetail_authorities" columnNames="orcidoauth2authoriziationcodedetail_authoriziation_code_value, authorities"/>
+        <addPrimaryKey tableName="orcidoauth2authoriziationcodedetail_resourceids" columnNames="orcidoauth2authoriziationcodedetail_authoriziation_code_value, resourceids"/>
+
+        <addForeignKeyConstraint baseColumnNames="orcid"
+                                 baseTableName="oauth2_authoriziation_code_detail" baseTableSchemaName="public"
+                                 constraintName="oauth2_authoriziation_code_detail_orcid_fk" deferrable="false"
+                                 initiallyDeferred="false" onDelete="CASCADE" onUpdate="NO ACTION"
+                                 referencedColumnNames="orcid" referencedTableName="profile"
+                                 referencedTableSchemaName="public" referencesUniqueColumn="false" />
+
+        <addForeignKeyConstraint baseColumnNames="client_details_id"
+                                 baseTableName="oauth2_authoriziation_code_detail" baseTableSchemaName="public"
+                                 constraintName="oauth2_authoriziation_code_detail_client_details_fk" deferrable="false"
+                                 initiallyDeferred="false" onDelete="CASCADE" onUpdate="NO ACTION"
+                                 referencedColumnNames="client_details_id" referencedTableName="client_details"
+                                 referencedTableSchemaName="public" referencesUniqueColumn="false" />
+
+        <addForeignKeyConstraint baseColumnNames="orcidoauth2authoriziationcodedetail_authoriziation_code_value"
+                                 baseTableName="orcidoauth2authoriziationcodedetail_scopes" baseTableSchemaName="public"
+                                 constraintName="oauth2authoriziationcodedetail_scopes_fk" deferrable="false"
+                                 initiallyDeferred="false" onDelete="CASCADE" onUpdate="NO ACTION"
+                                 referencedColumnNames="authoriziation_code_value" referencedTableName="oauth2_authoriziation_code_detail"
+                                 referencedTableSchemaName="public" referencesUniqueColumn="false" />
+
+        <addForeignKeyConstraint baseColumnNames="orcidoauth2authoriziationcodedetail_authoriziation_code_value"
+                                 baseTableName="orcidoauth2authoriziationcodedetail_authorities" baseTableSchemaName="public"
+                                 constraintName="oauth2authoriziationcodedetail_authorities_fk" deferrable="false"
+                                 initiallyDeferred="false" onDelete="CASCADE" onUpdate="NO ACTION"
+                                 referencedColumnNames="authoriziation_code_value" referencedTableName="oauth2_authoriziation_code_detail"
+                                 referencedTableSchemaName="public" referencesUniqueColumn="false" />
+
+        <addForeignKeyConstraint baseColumnNames="orcidoauth2authoriziationcodedetail_authoriziation_code_value"
+                                 baseTableName="orcidoauth2authoriziationcodedetail_resourceids" baseTableSchemaName="public"
+                                 constraintName="oauth2authoriziationcodedetail_resourceids_fk" deferrable="false"
+                                 initiallyDeferred="false" onDelete="CASCADE" onUpdate="NO ACTION"
+                                 referencedColumnNames="authoriziation_code_value" referencedTableName="oauth2_authoriziation_code_detail"
+                                 referencedTableSchemaName="public" referencesUniqueColumn="false" />
+    </changeSet>
+
+    <changeSet id="ADD-OAUTH-AUTHORIZATION-CODE-INDEXES" author="Declan Newman">
+        <preConditions>
+            <not>
+                <indexExists indexName="authoriziation_code_value_idx"/>
+            </not>
+        </preConditions>
+        <createIndex tableName="oauth2_authoriziation_code_detail" indexName="authoriziation_code_value_idx">
+            <column name="authoriziation_code_value"/>
+        </createIndex>
+        <createIndex tableName="orcidoauth2authoriziationcodedetail_authorities"
+                     indexName="orcidoauth2authoriziationcodedetail_authoriziation_code_value_idx">
+            <column name="orcidoauth2authoriziationcodedetail_authoriziation_code_value"/>
+        </createIndex>
+        <createIndex tableName="orcidoauth2authoriziationcodedetail_resourceids"
+                     indexName="orcidoauth2authoriziationcodedetail_resourceids_code_idx">
+            <column name="orcidoauth2authoriziationcodedetail_authoriziation_code_value"/>
+        </createIndex>
+        <createIndex tableName="orcidoauth2authoriziationcodedetail_scopes"
+                     indexName="orcidoauth2authoriziationcodedetail_scopes_code_value_idx">
+            <column name="orcidoauth2authoriziationcodedetail_authoriziation_code_value"/>
+        </createIndex>
+        <createIndex tableName="client_granted_authority" indexName="client_granted_authority_client_details_id_idx">
+            <column name="client_details_id"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="ADD-PROFILE-INDEXES" author="Declan Newman">
+        <preConditions>
+            <not>
+                <indexExists indexName="profile_orcid_idx"/>
+            </not>
+        </preConditions>
+        <createIndex tableName="profile" indexName="profile_orcid_idx">
+            <column name="orcid"/>
+        </createIndex>
+        <createIndex tableName="profile" indexName="profile_orcid_type_idx">
+            <column name="orcid_type"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="DELETE-PROFILE-CLIENT-DETAILS-TABLE" author="Declan Newman">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="profile_client_details"/>
+        </preConditions>
+        <dropTable tableName="profile_client_details" cascadeConstraints="true"/>
+    </changeSet>
+    
+    <changeSet id="CHANGE-TOKEN-PROFILE-COLUMN-NAME" author="Declan Newman">
+        <preConditions onFail="MARK_RAN">
+            <columnExists tableName="oauth2_token_detail" columnName="orcid"/>
+        </preConditions>
+        <renameColumn tableName="oauth2_token_detail" oldColumnName="orcid" newColumnName="user_orcid"/>
+    </changeSet>
+
+    <changeSet id="CHANGE-REFRESH-TOKEN-PROFILE-COLUMN-NAME" author="Declan Newman">
+        <preConditions onFail="MARK_RAN">
+            <columnExists tableName="oauth2_refresh_token_detail" columnName="orcid"/>
+        </preConditions>
+        <renameColumn tableName="oauth2_refresh_token_detail" oldColumnName="orcid" newColumnName="user_orcid"/>
+    </changeSet>
+
+    <changeSet id="UPDATE-TOKEN-CONSTRAINTS" author="Declan Newman">
+        <preConditions onFail="MARK_RAN">
+            <foreignKeyConstraintExists foreignKeyTableName="oauth2_token_detail" foreignKeyName="oauth2_token_detail_orcid_fk"/>
+            <foreignKeyConstraintExists foreignKeyTableName="oauth2_token_detail" foreignKeyName="oauth2_token_detail_client_details_id_fk"/>
+        </preConditions>
+        <dropForeignKeyConstraint baseTableName="oauth2_token_detail" constraintName="oauth2_token_detail_orcid_fk"/>
+        <dropForeignKeyConstraint baseTableName="oauth2_token_detail" constraintName="oauth2_token_detail_client_details_id_fk"/>
+
+        <addForeignKeyConstraint baseTableName="oauth2_token_detail" baseColumnNames="user_orcid" baseTableSchemaName="public"
+                                 constraintName="oauth2_token_detail_user_orcid_fk" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="orcid"
+                                 referencedTableName="profile" referencedTableSchemaName="public"
+                                 referencesUniqueColumn="false"/>
+
+        <addForeignKeyConstraint baseTableName="oauth2_token_detail" baseColumnNames="client_details_id" baseTableSchemaName="public"
+                                 constraintName="oauth2_token_detail_client_details_id_fk" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="client_details_id"
+                                 referencedTableName="client_details" referencedTableSchemaName="public"
+                                 referencesUniqueColumn="false"/>
+    </changeSet>
+
+    <changeSet id="PREPARE-TO-ADD-GENERATED-PK-TO-RESEARCHER-URL" author="Will Simpson">
+        <dropPrimaryKey tableName="researcher_url" constraintName="researcher_url_pkey" />
+        <renameColumn tableName="researcher_url" oldColumnName="id" newColumnName="url" />
+        <addUniqueConstraint tableName="researcher_url" columnNames="url,orcid" constraintName="researcher_url_orcid_unique_key" />
+    </changeSet>
+    
+    <changeSet id="ADD-SEQUENCE-FOR-RESEARCHER-URL-ID"
+		author="Will Simpson" dbms="postgresql">
+		<createSequence sequenceName="researcher_url_seq" />
+		<addColumn tableName="researcher_url">
+            <column name="id" type="bigint" defaultValueComputed="nextval('researcher_url_seq')">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+	</changeSet>
+    
+	<changeSet id="ADD-AUTO-COL-FOR-RESEARCHER_URL-ID"
+		author="Will Simpson" dbms="hsqldb">
+		<addColumn tableName="researcher_url">
+            <column name="id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+		<addAutoIncrement tableName="researcher_url"
+			columnName="id" columnDataType="bigint" />
+	</changeSet>
+	
+	<changeSet id="FINISH-ADDING-GENERATED-PK-TO-RESEARCHER-URL" author="Will Simpson">
+        <addPrimaryKey tableName="researcher_url" columnNames="id" constraintName="researcher_url_pkey" />
+    </changeSet>
+
+    <changeSet id="ADD-TIMESTAMPS-TO-PROFILE-KEYWORD-TABLE" author="Declan Newman">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="profile_keyword" columnName="date_created"/>
+            </not>
+        </preConditions>
+        <addColumn tableName="profile_keyword">
+            <column name="date_created" type="TIMESTAMP WITH TIME ZONE" />
+            <column name="last_modified" type="TIMESTAMP WITH TIME ZONE" />
+        </addColumn>
+        <modifySql dbms="postgresql">
+            <replace replace="WITH TIME ZONE" with="WITHOUT TIME ZONE" />
+        </modifySql>
+    </changeSet>
+
+    <changeSet id="DROP-KEYWORD-TABLE" author="Declan Newman">
+        <preConditions onFail="MARK_RAN">
+             <tableExists tableName="keyword"/>
+        </preConditions>
+        <dropForeignKeyConstraint constraintName="fk5c2795534882dde" baseTableName="profile_keyword"/>
+        <dropTable tableName="keyword" cascadeConstraints="false"/>
+    </changeSet>
+
+    <changeSet id="CREATE-KEYWORD-VIEW" author="Declan Newman">
+        <preConditions onFail="MARK_RAN">
+            <not><viewExists viewName="keyword_view"/></not>
+        </preConditions>
+        <createView viewName="keyword_view">
+            select distinct lower(pk.keywords_name) as keyword, count(lower(pk.keywords_name)) as occurrences, max(pk.date_created) as date_created, max(pk.last_modified) as last_modified
+            from profile_keyword pk
+            group by keyword
+            order by occurrences
+        </createView>
+    </changeSet>
+    
+    <changeSet id="UPDATE-EXTERNAL-IDENTIFIER-PK" author="Declan Newman">
+        <preConditions onFail="MARK_RAN" onError="CONTINUE">
+            <primaryKeyExists primaryKeyName="external_identifier_pkey"/>
+        </preConditions>
+        <dropPrimaryKey tableName="external_identifier" constraintName="external_identifier_pkey"/>
+        <addPrimaryKey tableName="external_identifier" columnNames="sponsor_orcid, sponsor_reference, orcid" constraintName="external_identifier_pk"/>
+    </changeSet>
+
+    <changeSet id="DROP-REFRESH-TOKEN-TABLE" author="Declan Newman">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="oauth2_refresh_token_detail"/>
+        </preConditions>
+        <dropTable tableName="oauth2_refresh_token_detail" cascadeConstraints="true"/>
+    </changeSet>
+
+    <changeSet id="PREPARE-TO-ADD-REFRESH-DETAILS-TO-TOKEN-TABLE" author="Declan Newman">
+        <preConditions onFail="MARK_RAN" onError="CONTINUE">
+            <primaryKeyExists tableName="oauth2_token_detail" primaryKeyName="oauth2_token_detail_pkey"/>
+        </preConditions>
+        <dropPrimaryKey tableName="oauth2_token_detail" constraintName="oauth2_token_detail_pkey"/>
+        <dropNotNullConstraint tableName="oauth2_token_detail" columnName="token_value"/>
+        <dropColumn tableName="oauth2_token_detail" columnName="refresh_token_id"/>
+    </changeSet>
+
+    <changeSet id="ADD-REFRESH-DETAILS-TO-TOKEN-TABLE" author="Declan Newman" dbms="postgresql">
+        <preConditions onFail="MARK_RAN">
+            <and>
+               <not>
+                    <columnExists tableName="oauth2_token_detail" columnName="id"/>
+               </not>
+               <not>
+                   <sequenceExists sequenceName="access_token_seq"/>
+               </not>
+            </and>
+        </preConditions>
+
+        <createSequence sequenceName="access_token_seq" />
+        <addColumn tableName="oauth2_token_detail">
+            <column name="id" type="bigint" defaultValueComputed="nextval('access_token_seq')">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="oauth2_token_pkey"/>
+            </column>
+        </addColumn>
+        <addColumn tableName="oauth2_token_detail">
+            <column name="refresh_token_expiration" type="TIMESTAMP WITH TIME ZONE"/>
+        </addColumn>
+        <addColumn tableName="oauth2_token_detail">
+            <column name="refresh_token_value" type="VARCHAR(150)">
+                <constraints unique="true" />
+            </column>
+        </addColumn>
+
+
+        <modifySql dbms="postgresql">
+            <replace replace="WITH TIME ZONE" with="WITHOUT TIME ZONE" />
+        </modifySql>
+    </changeSet>
+
+    <changeSet id="ADD-REFRESH-DETAILS-TO-TOKEN-TABLE" author="Declan Newman" dbms="hsqldb">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="oauth2_token_detail" columnName="id"/>
+            </not>
+        </preConditions>
+
+        <addColumn tableName="oauth2_token_detail">
+            <column name="id" type="bigint">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="oauth2_token_pkey"/>
+            </column>
+        </addColumn>
+        <addColumn tableName="oauth2_token_detail">
+            <column name="refresh_token_expiration" type="TIMESTAMP WITH TIME ZONE"/>
+        </addColumn>
+        <addColumn tableName="oauth2_token_detail">
+            <column name="refresh_token_value" type="VARCHAR(150)">
+                <constraints unique="true"/>
+            </column>
+        </addColumn>
+
+        <addAutoIncrement tableName="oauth2_token_detail" columnName="id" columnDataType="bigint" />
+    </changeSet>
+
+    <changeSet id="ADD-ACCESS-TOKEN-INCREMENT" author="Declan Newman" dbms="hsqldb">
+        <addAutoIncrement tableName="oauth2_token_detail" columnName="id" columnDataType="bigint"/>
+    </changeSet>
+
+    <changeSet id="ADD-TOKEN-DISABLED-COLUMN" author="Declan Newman">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="oauth2_token_detail" columnName="token_disabled"/>
+            </not>
+        </preConditions>
+        <addColumn tableName="oauth2_token_detail">
+            <column name="token_disabled" type="boolean" defaultValue="FALSE"/>
+        </addColumn>
+    </changeSet>
+    
+    <changeSet id="CHANGE-REFRESH-TOKEN-SCOPE-LENGTH" author="Declan Newman" dbms="postgresql">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="50">
+                select character_maximum_length from information_schema.columns where table_name = 'oauth2_token_detail' and column_name = 'scope_type';
+            </sqlCheck>
+        </preConditions>
+        <modifyDataType tableName="oauth2_token_detail" columnName="scope_type" newDataType="VARCHAR(500)"/>
+    </changeSet>
+    
+    <changeSet id="UPDATE-ACCESSION-NUM-PK" author="Declan Newman">
+        <preConditions onFail="MARK_RAN" onError="CONTINUE">
+           <primaryKeyExists primaryKeyName="accession_num_pkey" tableName="accession_num"/>
+        </preConditions>
+        <dropPrimaryKey tableName="accession_num" constraintName="accession_num_pkey"/>
+        <renameColumn tableName="accession_num" oldColumnName="id" newColumnName="accession_num_value"/>
+        <addPrimaryKey tableName="accession_num" columnNames="accession_num_value,type,work_id" constraintName="accession_num_pk"/>
+    </changeSet>
+    
+    <changeSet id="MAKE-SUBMISSION-DATE-NOT-NULL" author="Will Simpson">
+        <dropColumn tableName="profile" columnName="submission_date"/>
+        <addColumn tableName="profile">
+            <column name="submission_date" type="TIMESTAMP WITH TIME ZONE" defaultValueComputed="now()">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+</databaseChangeLog>

@@ -1,0 +1,1307 @@
+/**
+ * =============================================================================
+ *
+ * ORCID (R) Open Source
+ * http://orcid.org
+ *
+ * Copyright (c) 2012-2013 ORCID, Inc.
+ * Licensed under an MIT-Style License (MIT)
+ * http://orcid.org/open-source-license
+ *
+ * This copyright and license information (including a link to the full license)
+ * shall be included in its entirety in all copies or substantial portion of
+ * the software.
+ *
+ * =============================================================================
+ */
+.dropup,
+.dropdown {
+  position: relative;
+}
+
+.dropdown-toggle {
+  *margin-bottom: -3px;
+}
+
+.dropdown-toggle:active,
+.open .dropdown-toggle {
+  outline: 0;
+}
+
+.caret {
+  display: inline-block;
+  width: 0;
+  height: 0;
+  vertical-align: top;
+  border-top: 4px solid #000000;
+  border-right: 4px solid transparent;
+  border-left: 4px solid transparent;
+  content: "";
+}
+
+.dropdown .caret {
+  margin-top: 8px;
+  margin-left: 2px;
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 1000;
+  display: none;
+  float: left;
+  min-width: 160px;
+  padding: 5px 0;
+  margin: 2px 0 0;
+  list-style: none;
+  background-color: #ffffff;
+  border: 1px solid #ccc;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  *border-right-width: 2px;
+  *border-bottom-width: 2px;
+  -webkit-border-radius: 6px;
+     -moz-border-radius: 6px;
+          border-radius: 6px;
+  -webkit-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+     -moz-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+          box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+  -webkit-background-clip: padding-box;
+     -moz-background-clip: padding;
+          background-clip: padding-box;
+}
+
+.dropdown-menu.pull-right {
+  right: 0;
+  left: auto;
+}
+
+.dropdown-menu .divider {
+  *width: 100%;
+  height: 1px;
+  margin: 9px 1px;
+  *margin: -5px 0 5px;
+  overflow: hidden;
+  background-color: #e5e5e5;
+  border-bottom: 1px solid #ffffff;
+}
+
+.dropdown-menu a {
+  display: block;
+  padding: 3px 20px;
+  clear: both;
+  font-weight: normal;
+  line-height: 20px;
+  color: #333333;
+  white-space: nowrap;
+}
+
+.nav-dd .dropdown-menu li > a:hover,
+.nav-dd .dropdown-menu li > a:focus,
+.nav-dd .dropdown-submenu:hover > a {
+  color: #ffffff;
+  text-decoration: none;
+  background-color: #0088cc;
+  background-color: #0081c2;
+  background-image: -moz-linear-gradient(top, #0088cc, #0077b3);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#0088cc), to(#0077b3));
+  background-image: -webkit-linear-gradient(top, #0088cc, #0077b3);
+  background-image: -o-linear-gradient(top, #0088cc, #0077b3);
+  background-image: linear-gradient(to bottom, #0088cc, #0077b3);
+  background-repeat: repeat-x;
+  filter: progid:dximagetransform.microsoft.gradient(startColorstr='#ff0088cc', endColorstr='#ff0077b3', GradientType=0);
+}
+
+.nav-dd .dropdown-menu .active > a,
+.nav-dd .dropdown-menu .active > a:hover {
+  color: #ffffff;
+  text-decoration: none;
+  background-color: #0088cc;
+  background-color: #0081c2;
+  background-image: linear-gradient(to bottom, #0088cc, #0077b3);
+  background-image: -moz-linear-gradient(top, #0088cc, #0077b3);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#0088cc), to(#0077b3));
+  background-image: -webkit-linear-gradient(top, #0088cc, #0077b3);
+  background-image: -o-linear-gradient(top, #0088cc, #0077b3);
+  background-repeat: repeat-x;
+  outline: 0;
+  filter: progid:dximagetransform.microsoft.gradient(startColorstr='#ff0088cc', endColorstr='#ff0077b3', GradientType=0);
+}
+
+.dropdown-menu .disabled > a,
+.dropdown-menu .disabled > a:hover {
+  color: #999999;
+}
+
+.dropdown-menu .disabled > a:hover {
+  text-decoration: none;
+  cursor: default;
+  background-color: transparent;
+}
+
+.open {
+  *z-index: 1000;
+}
+
+.open > .dropdown-menu {
+  display: block;
+}
+
+.pull-right > .dropdown-menu {
+  right: 0;
+  left: auto;
+}
+
+.dropup .caret,
+.navbar-fixed-bottom .dropdown .caret {
+  border-top: 0;
+  border-bottom: 4px solid #000000;
+  content: "";
+}
+
+.dropup .dropdown-menu,
+.navbar-fixed-bottom .dropdown .dropdown-menu {
+  top: auto;
+  bottom: 100%;
+  margin-bottom: 1px;
+}
+
+.dropdown-submenu {
+  position: relative;
+}
+
+.dropdown-submenu > .dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  -webkit-border-radius: 0 6px 6px 6px;
+     -moz-border-radius: 0 6px 6px 6px;
+          border-radius: 0 6px 6px 6px;
+}
+
+.dropdown-submenu:hover > .dropdown-menu {
+  display: block;
+}
+
+.dropdown-submenu > a:after {
+  display: block;
+  float: right;
+  width: 0;
+  height: 0;
+  margin-top: 5px;
+  margin-right: -10px;
+  border-color: transparent;
+  border-left-color: #cccccc;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  content: " ";
+}
+
+.dropdown-submenu:hover > a:after {
+  border-left-color: #ffffff;
+}
+
+.dropdown .dropdown-menu .nav-header {
+  padding-right: 20px;
+  padding-left: 20px;
+}
+
+/*
+    ColorBox Core Style:
+    The following CSS is consistent between example themes and should not be altered.
+*/
+#colorbox, #cboxOverlay, #cboxWrapper{position:absolute; top:0; left:0; z-index:9999; overflow:hidden;}
+#cboxOverlay{position:fixed; width:100%; height:100%;}
+#cboxMiddleLeft, #cboxBottomLeft{clear:left;}
+#cboxContent{position:relative;}
+#cboxLoadedContent{overflow:auto;}
+#cboxTitle{margin:0;}
+#cboxLoadingOverlay, #cboxLoadingGraphic{position:absolute; top:0; left:0; width:100%; height:100%;}
+#cboxPrevious, #cboxNext, #cboxClose, #cboxSlideshow{cursor:pointer;}
+.cboxPhoto{float:left; margin:auto; border:0; display:block; max-width:none;}
+.cboxIframe{width:100%; height:100%; display:block; border:0;}
+#colorbox, #cboxContent, #cboxLoadedContent{box-sizing:content-box;}
+
+/*
+  The following fixes a problem where IE7 and IE8 replace a PNG's alpha transparency with a black fill
+  when an alpha filter (opacity change) is set on the element or ancestor element.  This style is not applied to or needed in IE9.
+  See: http://jacklmoore.com/notes/ie-transparency-problems/
+*/
+.cboxIE #cboxTopLeft,
+.cboxIE #cboxTopCenter,
+.cboxIE #cboxTopRight,
+.cboxIE #cboxBottomLeft,
+.cboxIE #cboxBottomCenter,
+.cboxIE #cboxBottomRight,
+.cboxIE #cboxMiddleLeft,
+.cboxIE #cboxMiddleRight {
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=#00FFFFFF,endColorstr=#00FFFFFF);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+body {
+    font-size: 16px;
+}
+
+h3,
+h4 {
+	color: #949599;
+}
+
+a:hover {
+     color: #9FC836;
+}
+
+
+.btn-update,
+.btn-update:visited {
+    color: #31789B !important;
+    font-size: 10px;
+    line-height: 1.1;
+    text-transform: uppercase;
+    font-weight: bold;
+    display: inline-block;
+    padding-right: 13px;
+    background: no-repeat url(../img/bg-update.png) top right;
+}
+
+.btn-update:hover {
+     color: #a6ce39 !important;
+     background: no-repeat url(../img/btn-update-hover.png) top right;
+}
+
+.no-icon.btn-update:hover {
+     background: none;
+} 
+
+.workspace-top {
+    border-top: 1px solid #c9c9c9;
+}
+
+.workspace-right {
+    border-left: 1px solid #c9c9c9;
+    min-height: 500px;
+}
+
+.workspace-left {
+    margin-left: -20px;
+}
+
+.workspace-header {
+    border-bottom: 1px solid #c9c9c9;
+    padding-left: 10px;
+}
+
+.orcid-id {
+    font-size: 12px;
+    line-height: 1;
+}
+
+.workspace-overview {
+    display: inline-block;
+    margin: 20px 30px 20px 0;
+    line-height: 1.25;
+}
+
+.workspace-overview div {
+     margin-top: 5px;
+     font-size: 10px;
+     line-height:1;
+} 
+    
+.overview-count,
+.overview-count:visited {
+    display: inline;
+    padding: 0 3px;
+    background: #31789B;
+    color: #fff;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.overview-count:hover {
+    background: #a6ce39;
+    color: #fff !important;
+}
+
+.overview-title {
+    display: inline-block;
+    color: #939597;
+    font-weight: bold;
+}
+
+.workspace-accordion-header,
+.workspace-accordion-content {
+    padding-left: 10px;
+}
+
+.workspace-accordion-header {
+    position: relative;
+    line-height: 1;
+}
+
+.workspace-accordion-header a,
+.workspace-accordion-header a:visited,
+.workspace-accordion-header a:hover,
+.workspace-header-public {
+    font-weight: bold;
+    color: #939597;    
+}
+        
+.workspace-accordion-header:after {
+    content: "";
+    position: absolute;
+    top: 5px;
+    right: 10px;
+}
+
+.workspace-accordion-header .btn-update {
+    display: none;
+}
+
+.workspace-accordion-active .btn-update {
+    display: inline-block;
+}
+.js .workspace-accordion-active .workspace-accordion-header:after {
+    border: 10px solid transparent;
+    border-bottom-color: #31789B;
+}
+
+.js .workspace-accordion-header:after {
+    border: 10px solid transparent;
+    border-top-color: #31789B;    
+}
+    
+.workspace-accordion-active .workspace-accordion-header,
+.workspace-header-public {
+    border: 0;
+}
+
+.workspace-header-public {
+     border-top: 1px solid #c9c9c9
+}
+
+.workspace-accordion-item {
+    border-bottom: 1px solid #c9c9c9;
+}
+
+.workspace-top .alert {
+     margin-bottom: 10px;
+}
+
+.js .workspace-accordion-content {
+    display: none;
+}
+
+.js .workspace-accordion-active .workspace-accordion-content,
+.workspace-header-public {
+    display: block;
+}
+
+.workspace-help {
+    margin: 0;
+    padding-top: 10px;
+    border-top: 1px solid #c9c9c9;
+    width:260px;
+}
+
+.workspace-help li {
+    margin-bottom: 10px; 
+}
+
+.workspace-help a {
+    font-weight: bold;
+}
+
+.full-name {
+    font-weight: bold;
+    margin: 10px 0 0 !important;
+    line-height: 1;
+}
+
+.privacy-list,
+.workspace-body-list {
+    margin: 0;
+}
+
+.workspace-body-list {
+     margin-top: -10px;
+}
+
+.workspace-body-list .pull-right {
+     position: absolute;
+     right: 0;
+     top: 15px;
+     float: none;
+}
+
+.privacy-list li {
+    position: relative;
+}
+
+.workspace-body-list > li {
+    position: relative;
+    padding: 10px 90px 0 0;    
+    min-height: 30px;
+}
+
+.workspace-body-list h3 {
+     line-height: 24px;
+     margin-bottom: 0;
+}
+
+.workspace-header-public {
+     padding-top: 10px;
+     line-height: 1.2;
+}
+
+.grant-title {
+    margin-right: 80px;
+}
+
+.label-clear {
+    background: #fff;
+    border: 1px solid #c9c9c9;
+    color: #949599;
+    text-shadow: 0;
+    font-weight: normal;
+}
+
+.grant-title {
+    margin-right: 90px;
+}
+
+.privacy-menu {
+    width: 80px;
+    min-width: 0;
+    padding: 5px 5px 0;
+    margin: 0 !important;  
+}
+
+.privacy-menu li {
+    margin-bottom: 5px !important; 
+}
+
+.privacy-menu a {
+     width: 38px;
+}
+
+.privacy-menu .caret {
+    display: none;
+}
+
+.privacy-menu .btn-success,
+.privacy-menu .btn-warning,
+.privacy-menu .btn-danger {
+    color: #fff;
+}
+
+.privacy-toggle {
+    width: 90px;
+}
+
+.abs-left-top {
+    position: absolute;
+    top: 0;
+    right: 0;
+}
+
+.privacy-group {
+	margin-bottom: 15px;
+}
+
+.js .privacy-form,
+.no-js .privacy-toggle {
+    display: none;    
+}
+
+.nav-dd .dropdown-menu {
+    left: auto;
+    right: 0;
+    top: 59px;
+    margin-top: 0;
+}
+
+.login-dropdown {
+    padding: 10px;
+}
+
+.login-dropdown input[type=text],
+.login-dropdown input[type=password] {
+	display: block;
+    margin-bottom: 10px;
+}
+
+.login-dropdown .forgotten-link {
+	display: inline;
+	padding: 0;
+}
+
+#cboxOverlay {
+    background: #ddd;
+}
+
+#colorbox {
+    background: #fff;
+    border-top: 10px solid #A3CD39;
+    -webkit-box-shadow: 0px 5px 20px 0px #aaa;
+            box-shadow: 0px 5px 20px 0px #aaa;
+}
+
+.colorbox-content {
+    padding: 20px;
+}
+
+.alert {
+    border-color: #F5C120;
+    background-color: #F5C120;
+    color: #333;
+    border-radius: 0;
+    padding: 8px 10px;
+}
+
+.alert-icon-large {
+    font-size: 40px;
+    margin-right: 10px;
+    margin-top: 10px;
+    color: #fff;
+}
+
+.lightbox-title {
+    margin-top: 0;
+    text-transform: uppercase;
+}
+
+.inline-list {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+.inline-list li {
+    float:left;
+}
+
+.inline-list a {
+    display: inline-block;
+    *display: inline;
+}
+
+.tabs {
+    border: 1px solid #cacaca;
+    border-width: 0 0 1px 1px;
+}
+
+.tabs a,
+.tabs a:visited {
+    padding: 10px 5px;
+    text-transform: uppercase;
+    border: 1px solid #cacaca;
+    border-width: 1px 1px 0 0;
+    color: #cacaca;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.tabs a:hover {
+    color: #cacaca !important;
+}
+
+.tabs .selected a,
+.tabs .selected a:visited {
+    background-color: #A3CD39;
+    color: #fff;    
+}
+
+.tabs .selected a:hover {
+    color: #fff !important;
+}
+
+.colorbox-content .row {
+    margin-left: -20px;
+}
+
+.selector-title {
+    padding: 5px 10px;
+    line-height: 1;
+    border: 1px solid #cacaca;
+    border-width: 0 1px 1px 1px;
+    margin-bottom: 0;
+}
+
+.no-tabs {
+    border-top-width: 1px;
+    margin-top: 41px !important;
+}
+
+.selector-scroller {
+    border: 1px solid #cacaca;
+    border-width: 0 1px 1px 1px;
+    height: 300px;
+    overflow: auto;
+    overflow-x: hidden;
+}
+
+.selector-scroller ul {
+     margin: 10px 0 0 10px;
+}
+
+.selector-scroller li {
+    position: relative;
+    margin: 0 10px 10px 0;
+    min-height: 30px;
+}
+
+.xref-search-results ul {
+     margin: 5px 0 0 5px
+}
+
+.msg,
+.selector-scroller .control-group {
+     margin: 10px;
+}
+
+.selector-scroller .input-xlarge {
+     width: 390px;
+}
+
+.selector-scroller label,
+.selector-scroller input,
+.selector-scroller select,
+.selector-scroller textarea {
+     margin-bottom: 0;
+}
+
+.js .works-scroller li {
+    margin: 0 10px 10px 0;
+    padding: 0 110px 0 0;
+    border-bottom: 1px solid;
+    border-color: #CACACA;
+}
+
+.js .search-scroller li {
+    padding: 5px 15px 5px 5px;
+    border-bottom: 1px solid;
+    border-color: #CACACA;
+}
+
+.js .search-scroller li:hover {
+     background: no-repeat url(../img/bg-search-result.png) #A3CD39 right center;
+     color: #fff;
+     cursor: pointer;
+}
+
+.js .works-scroller li li {
+     margin:0;
+     padding:0;
+     border:0;
+}
+
+.just-added {
+     background: #F5C120;
+}
+
+.just-changed {
+     background: #fff;
+     -webkit-transition: background 0.5s ease-out;  /* Safari 3.2+, Chrome */
+        -moz-transition: background 0.5s ease-out;  /* Firefox 4-15 */
+          -o-transition: background 0.5s ease-out;  /* Opera 10.5 12.00 */
+             transition: background 0.5s ease-out;  /* Firefox 16+, Opera 12.50+ */
+}
+
+.selector-scroller .privacy-group {
+    right: 10px;
+}
+
+.main {
+	min-height: 500px;
+}
+
+.settings-table td,
+.settings-table th {
+	width: 50%;
+	position: relative;
+}
+
+.normal-width td,
+.normal-width th {
+     width: auto;
+}
+
+.settings-table .popover {
+	top: 80%;
+	left: -220px;
+}
+
+.popover-large {
+	width: 480px;
+}
+
+.popover-frame .help-block,
+.password-details .help-block {
+	overflow: hidden;
+	margin: 0 50px 20px;
+	padding: 10px 10px 0 10px;
+	background: #f7f7f7;
+	font-size: 14px;
+	color: #949599;
+}
+
+.password-details .help-block {
+     margin:0;
+}
+
+.help-block p {
+	margin-bottom: 10px;
+}
+
+.help-block ul {
+	margin-bottom: 10px;
+	list-style: disc;
+}
+
+.testresult {
+     display: block;
+     padding-top: 5px;
+}
+
+.shortPass, .badPass {
+     color: red;
+}
+
+.goodPass {
+     color: orange;
+}
+
+.strongPass {
+     color: green;
+}
+
+.control-bar {
+     margin-top: 10px; 
+     padding-top: 10px;
+     padding-left: 20px;
+     border-top: 1px solid #CACACA;
+}
+
+
+.form-refer-actions {
+     display: none;
+}
+
+
+.js .tab-content {
+     display: none;
+}
+
+.js .tab-content.open {
+     display: block;
+}
+
+.js .no-js {
+     display: none;
+}
+
+.privacy-toggle-lbl select {
+     display:none;     
+}
+
+.popover-content {
+     overflow: hidden;
+}
+
+.popover-iframe {
+     border: 0;
+     width: 452px;
+     overflow-y: hidden
+}
+
+.workspace-inner {
+     padding-left: 10px;
+}
+
+.no-border {
+     border:0;
+}
+
+.js .inline-modal {
+     display: none;
+}
+
+.js #colorbox .inline-modal {
+     display: block;
+}
+
+.no-js .colorbox-modal {
+     display: none;
+}
+
+.colorbox-content hr {
+  margin: 0;
+}
+
+#third-parties {
+     padding: 25px;
+     width: 300px;
+}
+
+.no-icon {
+     background: none; 
+     padding-right: 0;
+}
+
+.header .main {
+     min-height: 0;
+}
+
+.controls {
+     position: relative;
+}
+
+.controls .privacy-group {
+     right: auto;
+     left: 300px;
+}
+
+.js .visibility-lbl {
+     display: none;
+}
+
+.manage-bio h4,
+.save-btns {
+     margin-top: 30px;
+}
+
+.workspace-help {
+     list-style: none;
+}
+
+ul {
+     list-style: none;
+}
+
+.password-details {
+     top: 22px;
+     left: 254px;
+}
+
+label.error, span.orcid-error {
+     color: red;
+}
+
+span.orcid-error {
+     display: block;
+}
+
+input.error {
+     border-color:red;
+}
+
+.settings-table td > div {
+    position: relative;
+}
+
+
+.controls-right {
+     padding-right: 10px;
+     text-align: right;
+}
+
+.form-sign-up .control-label {
+     width: 110px;
+}
+
+.form-sign-up .controls {
+     margin-left: 130px;
+}
+
+.form-sign-up .orcid-error {
+     width: 284px;
+}
+
+.password-info {
+     position: absolute;
+     top: 5px;
+     left: 368px;
+}
+
+.form-sign-in .control-label {
+     width: 66px;
+}
+
+.form-sign-in .controls {
+     margin-left: 86px;
+}
+
+.popover-frame .password-info {
+    left: 438px;
+}
+
+.settings-password {
+     z-index:10000;
+     top: 425px;
+     left: 823px;
+}
+
+.control-links {
+     width: 284px;
+}
+
+.control-links .reg {
+     position: absolute;
+     right:0;
+}
+
+.bg-white {
+     background: #fff !important;
+}
+
+.workspace-public .alert {
+     background: none;
+     padding: 0;
+     border: 0;
+}
+
+.workspace-public .privacy-tool,
+.workspace-public .privacy-label {
+     display: none !important;
+}
+
+.workspace-public .alert,
+.workspace-public .alert.alert-info strong {
+     font-family: 'Gill Sans W01 Medium', 'Gill Sans', sans-serif;;
+     font-weight:normal;
+     color: #939598;
+}
+
+
+
+/*
+TODO: fix up button colours in less
+*/
+.btn-primary {
+    background: #31789B;
+}
+
+.btn-primary:hover {
+     background: #a6ce39;
+     text-shadow:none;
+}
+
+/*
+header overrides
+*/
+
+.header .primary-nav > ul > li > a {
+  padding: 20px 20px 30px 10px;
+}
+
+/* To-do list fixes */
+.lhs.override ul {
+	margin: 16px 0 0;
+	padding: 0;
+}
+
+.lhs.override ul li {
+	margin-bottom: 10px;
+	text-transform: uppercase;
+}
+
+.oauth-login {
+	border-top: 10px solid #A3CD39;
+	width: 975px;
+	background: #fff;
+	margin: 0 auto;
+}
+
+.oauth-login .alert {
+	width: 953px;
+	margin-left: -20px;
+}
+.oauth-login .alert p {
+	margin-bottom: 0;
+}
+
+.oauth-login .row {
+	float: left;
+	margin-left: 20px;
+	padding-left: 0;
+}
+
+.oauth-login .control-group {
+	margin-bottom: 10px;
+}
+
+.oauth-login .control-group label {
+	width: 86px;
+}
+
+.oauth-login .control-group label.checkbox {
+	width: 440px;
+	margin-bottom: 5px;
+}
+
+.oauth-login .control-group label.checkbox input[type="checkbox"] {
+	display: inline;
+	width: 20px;
+}
+
+.oauth-login .control-group .controls {
+	margin-left: 96px;
+}
+
+.oauth-login .control-group .controls.checky {
+	margin-left: 0;
+}
+
+.oauth-login .control-group .controls input {
+	width: 330px;
+}
+
+.oauth-login .page-header {
+	border-bottom: 0;
+	margin: 0;
+	padding: 0;
+}
+
+.oauth-login .page-header h3 {
+	font-weight: 100;
+	border-bottom: 0;
+	font-size: 24px;
+	margin: 0 0 15px;
+	text-transform: uppercase;
+}
+
+.oauth-login .logo {
+	width: 237px;
+}
+
+.oauth-login .row .span6:first-of-type {
+	margin-left: 0;
+}
+
+.oauth-login .row .span6:first-of-type .control-group:last-of-type .controls {
+	text-align: right;
+	margin-right: 19px;
+}
+
+.oauth-login .logo p {
+     width: 140px;
+     float: right;
+     font-size: 14px;
+     color: #939498;
+     line-height: 13px;
+     font-weight: 100;
+}
+
+.manage-bio .control-label {
+     width: 100px;
+}
+
+.manage-bio .controls {
+     margin-left: 120px;
+}
+
+.manage-bio .input-xlarge {
+     /*width: 220px;*/
+}
+
+.manage-bio .span6 {
+     position: relative;
+}
+
+.manage-bio .privacy-group {
+     left: auto;
+     right: 0;
+}
+
+.manage-bio h3 {
+     margin: 0;
+}
+
+.manage-bio .control-group {
+     margin-bottom: 5px;
+}
+
+.manage-bio label,
+.manage-bio input,
+.manage-bio textarea,
+.manage-bio select {
+     margin-bottom: 0;
+}
+
+.websites {
+     position: relative;
+}
+
+.websites-vis .privacy-group {
+     left: 370px;
+     top: 10px;
+}
+
+.websites .input-xlarge {
+     width: 160px;
+}
+
+.websites .privcay-group {
+     left: auto;
+     right: 0;
+}
+
+.workspace-header .alert {
+     margin: 10px 0 0;
+}
+
+.form-change-alert {
+    height: 15px;
+    margin-right: 10px;
+    padding:2px 5px;
+}
+
+.work-metadata {
+    font-size: 14px;
+}
+
+.span-date {
+     width: 80px;
+}
+
+.span-year {
+     width: 100px;
+}
+
+.password-group .required {
+     position: absolute;
+     left: 358px;
+     top: 6px;
+}
+
+.maintenance-header {
+    background-color: #F7F7F7;
+    margin-bottom: 0px;    
+}
+
+.oauth-title {
+     color: #949599;
+     text-transform:uppercase;
+     line-height: 1.2;
+}
+
+.oauth-title span {
+     text-transform:capitalize;
+     color: #a6ce39;
+}
+
+.logo h1 {
+    font-weight: 100;
+}
+
+.logo p {
+    width: 140px;
+    margin-left: 95px;
+    font-size: 14px;
+    color: #939498;
+    line-height: 13px;
+    font-weight: 100;
+}
+
+
+.input-xlarge {
+    width: 340px;
+}
+
+.relative {
+     position: relative;
+}
+
+.control-links {
+     width: 354px;
+     position: relative;
+}
+
+.public-profile .workspace-inner {
+     margin-top: -1px;
+     padding-top: 1px;
+     padding-left: 0;
+}
+
+.public-profile .workspace-inner > * {
+     padding-left: 10px;
+}
+
+.public-profile .workspace-inner .alert {
+     margin-left: 10px;
+}
+
+.workspace-header-public.no-border {
+     margin-top: 0;
+}
+
+
+.header .main > .menu > li > .menu > li:last-of-type {
+     border-color: #C9CACB;
+}
+
+.settings-table {
+     border-radius: 0;
+     -webkit-border-radius: 0;
+     -moz-border-radius: 0;
+     border-collapse: none;
+}
+
+.settings-table,
+.settings-table th,
+.settings-table td {
+     border-left: 0;
+     border-right: 0;
+     padding-left: 0;
+     padding-right: 5;
+}
+
+.account-settings {
+     margin-top: 0;
+}
+
+.settings-nav {
+     padding-top: 5px !important;
+}
+
+.workspace-profile p {
+     margin-bottom: 5px;
+}
+
+.work-title {
+    font-weight: normal;
+    font-family: 'Gill Sans W01 Medium', 'Gill Sans', sans-serif;
+}
+
+.popover-form .input-xlarge {
+     width: 410px;
+}
+
+
+#workspace-grants h3:after,
+#workspace-patents h3:after,
+#workspace-affiliations h3:after {
+     border: 0 !important;
+     content: '';
+}
+
+
+#current-work-list h3 {
+     margin: 0;
+     line-height: 1.1em;
+}

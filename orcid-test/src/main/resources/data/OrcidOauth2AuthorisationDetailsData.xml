@@ -1,0 +1,75 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!--
+
+    =============================================================================
+
+    ORCID (R) Open Source
+    http://orcid.org
+
+    Copyright (c) 2012-2013 ORCID, Inc.
+    Licensed under an MIT-Style License (MIT)
+    http://orcid.org/open-source-license
+
+    This copyright and license information (including a link to the full license)
+    shall be included in its entirety in all copies or substantial portion of 
+    the software.
+
+    =============================================================================
+
+-->
+
+<dataset>
+
+    <oauth2_token_detail
+            id="1"
+            token_value="some-long-oauth2-token-value-1"
+            token_type="bearer"
+            token_expiration="2020-01-01"
+            user_orcid="4444-4444-4444-4441"
+            client_details_id="4444-4444-4444-4441"
+            refresh_token_value="some-long-oauth2-refresh-value-1"
+            refresh_token_expiration="2020-01-01"
+            is_approved="true"
+            redirect_uri="http://www.google.com/"
+            response_type="bearer"
+            state="a-state"
+            scope_type="/orcid-profile/update"
+            resource_id="orcid"
+            authentication_key="an-authentication-key-1"
+            />
+    <oauth2_token_detail
+            id="2"
+            token_value="some-long-oauth2-token-value-2"
+            token_type="bearer"
+            token_expiration="2020-01-01"
+            user_orcid="4444-4444-4444-4442"
+            client_details_id="4444-4444-4444-4442"
+            refresh_token_value="some-long-oauth2-refresh-value-2"
+            refresh_token_expiration="2020-01-01"
+            is_approved="true"
+            redirect_uri="http://www.google.com/"
+            response_type="bearer"
+            state="a-state"
+            scope_type="/orcid-profile/update"
+            resource_id="orcid"
+            authentication_key="an-authentication-key-2"
+            />
+    <oauth2_token_detail
+            id="3"
+            token_value="some-long-oauth2-token-value-3"
+            token_type="bearer"
+            token_expiration="2020-01-01"
+            user_orcid="4444-4444-4444-4443"
+            client_details_id="4444-4444-4444-4443"
+            refresh_token_value="some-long-oauth2-refresh-value-3"
+            refresh_token_expiration="2020-02-01"
+            is_approved="true"
+            redirect_uri="http://www.google.com/"
+            response_type="bearer"
+            state="a-state"
+            scope_type="/orcid-profile/update"
+            resource_id="orcid"
+            authentication_key="an-authentication-key-3"
+            />
+
+</dataset>

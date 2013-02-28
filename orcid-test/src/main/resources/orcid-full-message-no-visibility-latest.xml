@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    =============================================================================
+
+    ORCID (R) Open Source
+    http://orcid.org
+
+    Copyright (c) 2012-2013 ORCID, Inc.
+    Licensed under an MIT-Style License (MIT)
+    http://orcid.org/open-source-license
+
+    This copyright and license information (including a link to the full license)
+    shall be included in its entirety in all copies or substantial portion of 
+    the software.
+
+    =============================================================================
+
+-->
+<orcid-message xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.orcid.org/ns/orcid ../../../../orcid-model/src/main/resources/orcid-message-1.0.10.xsd"
+    xmlns="http://www.orcid.org/ns/orcid">
+    <message-version>1.0.10</message-version>
+    <orcid-profile xmlns="http://www.orcid.org/ns/orcid">
+        <orcid>4444-4444-4444-4446</orcid>
+        <orcid-id>http://orcid.org/4444-4444-4444-4446</orcid-id>
+        <orcid-history>
+            <creation-method>API</creation-method>
+            <completion-date>2012-10-09T15:50:07</completion-date>
+            <submission-date>2012-10-09T15:50:07</submission-date>
+            <!-- In short, researcher has claimed the profile if confirmed=true -->
+            <claimed>true</claimed>
+            <source>
+                <source-orcid>8888-8888-8888-8880</source-orcid>
+                <source-name>Brown University Library</source-name>
+            </source>
+        </orcid-history>
+        <orcid-bio>
+            <personal-details>
+                <given-names>givenNames</given-names>
+                <family-name>familyName</family-name>
+                <credit-name>credit name</credit-name>
+                <other-names>
+                    <other-name>Other 1</other-name>
+                    <other-name>Other 2</other-name>
+                </other-names>
+            </personal-details>
+            <biography>A man, just a man</biography>
+            <researcher-urls>
+                <researcher-url>
+                    <url>http://www.wjrs.co.uk</url>
+                </researcher-url>
+                <researcher-url>
+                    <url>http://www.vvs.com</url>
+                </researcher-url>
+            </researcher-urls>
+            <contact-details>
+                <email primary="true" verified="true" current="true">jamesb@semantico.co.uk</email>
+                <email primary="false">jamesb1@semantico.co.uk</email>
+                <email primary="false">jamesb2@semantico.co.uk</email>
+            </contact-details>
+            <keywords>
+                <keyword>Pavement Studies</keyword>
+                <keyword>Advanced Tea Making</keyword>
+            </keywords>
+            <external-identifiers>
+                <external-identifier>
+                    <external-id-orcid>8888-8888-8888-8880</external-id-orcid>
+                    <external-id-reference>YH0923</external-id-reference>
+                </external-identifier>
+            </external-identifiers>
+            <affiliations>
+                <affiliation>
+                    <affiliation-name>Past Inst 1</affiliation-name>
+                    <affiliation-type>past-institution</affiliation-type>
+                    <address>
+                        <country>United Kingdom</country>
+                    </address>
+                    <role-title>A Role</role-title>
+                </affiliation>
+                <affiliation>
+                    <affiliation-name>Past Inst 2</affiliation-name>
+                    <affiliation-type>past-institution</affiliation-type>
+                    <address>
+                        <country>United Kingdom</country>
+                    </address>
+                    <role-title>A Role</role-title>
+                </affiliation>
+                <affiliation>
+                    <affiliation-name>Primary Inst1</affiliation-name>
+                    <affiliation-type>current-primary-institution</affiliation-type>
+                    <address>
+                        <country>United Kingdom</country>
+                    </address>
+                    <role-title>A Role</role-title>
+                </affiliation>
+                <affiliation>
+                    <affiliation-name>Current Inst1</affiliation-name>
+                    <affiliation-type>current-institution</affiliation-type>
+                    <address>
+                        <country>United Kingdom</country>
+                    </address>
+                    <role-title>A Role</role-title>
+                </affiliation>
+                <affiliation>
+                    <affiliation-name>Current Inst2</affiliation-name>
+                    <affiliation-type>current-institution</affiliation-type>
+                    <address>
+                        <country>United Kingdom</country>
+                    </address>
+                    <role-title>A Role</role-title>
+                </affiliation>
+            </affiliations>
+        </orcid-bio>
+        <orcid-activities>
+            <orcid-works>
+                <orcid-work>
+                    <work-title>
+                        <title>Work title 1</title>
+                        <subtitle>Work subtitle 1</subtitle>
+                    </work-title>
+                </orcid-work>
+                <orcid-work>
+                    <work-title>
+                        <title>Work title 2</title>
+                        <subtitle>Work subtitle 2</subtitle>
+                    </work-title>
+                </orcid-work>
+                <orcid-work>
+                    <work-title>
+                        <title>Work Title 3</title>
+                        <subtitle>Work subtitle 3</subtitle>
+                    </work-title>
+                </orcid-work>
+            </orcid-works>
+        </orcid-activities>
+        <orcid-internal>
+            <security-details>
+                <encrypted-password>abc123</encrypted-password>
+                <security-question-id>1</security-question-id>
+                <encrypted-security-answer>dMDyJ1Z7Qn6xWClFzA63fQ==
+                </encrypted-security-answer>
+                <encrypted-verification-code>ghi789
+                </encrypted-verification-code>
+            </security-details>
+            <preferences>
+                <send-change-notifications>true</send-change-notifications>
+                <send-orcid-news>false</send-orcid-news>
+                <work-visibility-default>public</work-visibility-default>
+            </preferences>
+        </orcid-internal>
+    </orcid-profile>
+</orcid-message>
