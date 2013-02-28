@@ -1,0 +1,15 @@
+target
+*.project
+*.classpath
+*.settings
+atlassian-ide-plugin.xml
+*.iml
+*.idea
+orcid-solr/data/*
+orcid-solr/src/main/webapp/solr/data/*
+.externalToolBuilders
+*.DS_Store
+orcid-solr-web/bin/
+rebel.xml
+orcid-solr-web/src/main/webapp/solr/data/
+
