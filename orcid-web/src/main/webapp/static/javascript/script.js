@@ -200,24 +200,31 @@ $(function () {
 	});
 
 	$('form#loginForm').submit(function() {
+		if($('form#loginForm').attr('disabled')){
+			return false;
+		}
+		$('form#loginForm').attr('disabled', 'disabled');
+		$('#ajax-loader').show();
 		$.ajax({
 	        url: baseUrl + 'signin/auth.json',
 	        type: 'POST',
 	        data: $('form#loginForm').serialize(),
 	        dataType: 'json',
 	        success: function(data) {
+	        	$('#ajax-loader').hide();
+	        	$('form#loginForm').removeAttr('disabled');
 	            if (data.success) {
 	               window.location.href = data.url;
 	            } else {
 	            	if ($('form#loginForm #login-error-mess').length == 0) {
 	            	$("<div class='alert' id='login-error-mess'>"+ OM.getInstance().get('orcid.frontend.security.bad_credentials')+ "</div>")
-	            	.hide()
-	            	.appendTo('form#loginForm')
-	            	.fadeIn('fast');
+	            	    .hide()
+	            	    .appendTo('form#loginForm')
+	            	    .fadeIn('fast');
 	            	} else {
 	            		$('form#loginForm #login-error-mess').fadeOut('fast', 
 	            				function() { 
-	            					$($('form#loginForm #login-error-mess')).fadeIn('fast')
+	            					$($('form#loginForm #login-error-mess')).fadeIn('fast');
 	            		});
 	            	}
 	        	};
