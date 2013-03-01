@@ -29,9 +29,6 @@
 
     <context:annotation-config/>
 
-    <bean id="orcidUsernamePasswordAuthenticationProvider"
-          class="org.orcid.core.security.OrcidUsernamePasswordAuthenticationProvider"/>
-
     <bean id="authorizationEndpoint" class="org.orcid.core.oauth.service.OrcidAuthorizationEndpoint">
         <property name="authorizationCodeServices" ref="orcidAuthorizationCodeService"/>
         <property name="clientDetailsService" ref="orcidClientDetailsService"/>

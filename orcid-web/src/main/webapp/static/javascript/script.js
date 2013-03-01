@@ -217,10 +217,23 @@ $(function () {
 	               window.location.href = data.url;
 	            } else {
 	            	if ($('form#loginForm #login-error-mess').length == 0) {
-	            	$("<div class='alert' id='login-error-mess'>"+ OM.getInstance().get('orcid.frontend.security.bad_credentials')+ "</div>")
-	            	    .hide()
-	            	    .appendTo('form#loginForm')
-	            	    .fadeIn('fast');
+	            		var message;
+	            		if(data.unclaimed){
+	            			var resendClaimUrl = window.location + "/../resend-claim";
+	            			var userId = $('#userId').val();
+                            if(userId.indexOf('@') != -1){
+	            		        resendClaimUrl += '?email=' + encodeURIComponent(userId);	
+	            		    }
+	            		    message = _.template(OM.getInstance().get('orcid.frontend.security.unclaimed_exists'),
+	            		    		             {resendClaimUrl:resendClaimUrl});
+	            		}
+	            		else{
+	            			message = OM.getInstance().get('orcid.frontend.security.bad_credentials'); 
+	            		}
+		            	$("<div class='alert' id='login-error-mess'>"+ message + "</div>")
+		            	    .hide()
+		            	    .appendTo('form#loginForm')
+		            	    .fadeIn('fast');
 	            	} else {
 	            		$('form#loginForm #login-error-mess').fadeOut('fast', 
 	            				function() { 
