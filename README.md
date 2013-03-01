@@ -1,10 +1,6 @@
 # ORCID-Source
 
-This is the current active development repository. In the future we will be sharing the 
-contents of this repository with the public. **Anything that shouldn't be shared with the 
-public should be migrated/refactored to the 
-[ORCID-internal](https://github.com/ORCID/ORCID-Internal)**. We will create a build that 
-will composite the two github directories to create production builds.
+This is the current active development repository. 
 
 # Development Environment Setup
 
