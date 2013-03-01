@@ -1029,7 +1029,7 @@ header overrides
 
 .oauth-login .alert {
 	width: 100%;
-	margin-left: -20px;
+	width: 330px;
 }
 .oauth-login .alert p {
 	margin-bottom: 0;
