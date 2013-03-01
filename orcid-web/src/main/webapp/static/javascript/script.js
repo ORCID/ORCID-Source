@@ -210,7 +210,7 @@ $(function () {
 	               window.location.href = data.url;
 	            } else {
 	            	if ($('form#loginForm #login-error-mess').length == 0) {
-	            	$("<div class='alert' id='login-error-mess'>"+ OM.getInstance().get('orcid.frontend.security.bad_credentials')+ "</div>")
+	            	$("<style>.alert {width:335px;}</style><div class='alert' id='login-error-mess'>"+ OM.getInstance().get('orcid.frontend.security.bad_credentials')+ "</div>")
 	            	.hide()
 	            	.appendTo('form#loginForm')
 	            	.fadeIn('fast');

@@ -22,6 +22,7 @@
 	    <h3>Sign in</h3>
 	</div>
         <form id="loginForm" action="<@spring.url '/signin/auth'/>" method="post">
+            
             <@spring.bind "loginForm" />
             <@spring.showErrors "<br/>" "error" />
 
@@ -31,13 +32,13 @@
                    <@spring.formInput "loginForm.userId" 'placeholder="Email or ORCID" class="input-xlarge"' />
                 </div>
             </div>
-            <div>
+            <div id="passwordField">
                 <label for="password">Password</label>
                 <div class="relative">
                    <@spring.formPasswordInput "loginForm.password" 'placeholder="Password" class="input-xlarge"' />
                 </div>
             </div>
-            <div>
+            <div id="buttons">
                 <div class="relative">
                     <button class="btn-large btn-primary" type="submit">Sign in</button>
                 </div>
