@@ -13,6 +13,13 @@ Welcome to ORCID Source. Here are some resources to get you started.
 * [ORCID's Member API](https://github.com/ORCID/ORCID-Source/tree/master/orcid-api-web)
 
 
+# Getting support
+
+If you are experience problems using ORCID you can check our [help page](http://orcid.org/help). 
+
+# Contributing
+[Pull requests] are welcome; we are working on contributor guidelines. Until then please
+reach out to the OST [https://github.com/organizations/ORCID/teams/208575] members directly.
 
 # Development Environment Setup
 
