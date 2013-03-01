@@ -122,13 +122,15 @@ $(function () {
 	window.baseUrl = $('body').data('baseurl');
     window.basePath = window.location.pathname; 	
     
-    
+    // fire off login check, if this page wasn't loaded via iframe (or html5 foo)
+    if (location == parent.location) {
+        checkOrcidLoggedIn();
+        setInterval(checkOrcidLoggedIn,15000);
+    }    
     
     // if not iframed check if not orcid.org
     if (location == parent.location && window.location.hostname.toLowerCase() != "orcid.org") {
-        checkOrcidLoggedIn();
-        setInterval(checkOrcidLoggedIn,15000);
-    	
+     	
     	var cookieName = "testWarningCookie";
     	var warnMessCookie=OrcidCookie.getCookie(cookieName);
     	if (!warnMessCookie) {
