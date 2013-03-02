@@ -342,10 +342,10 @@ You'll need to re-import the projects from the file system (don't worry this doe
 NB if you deleted the persistence project (you shouldn't need to as it's not a WAR project), don't forget to add the 'staging' profile as described earlier.
 
 # License
-See [LICENSE.md](https://github.com/ORCID/ORCID-Work-in-Progress/blob/master/LICENSE.md)
+See [LICENSE.md](https://github.com/ORCID/ORCID-Source/blob/master/LICENSE.md)
 
 # Contributors
-See [CREDITS.md](https://github.com/ORCID/ORCID-Work-in-Progress/blob/master/CREDITS.md)
+See [CREDITS.md](https://github.com/ORCID/ORCID-Source/blob/master/CREDITS.md)
 
 # Projects
-See [PROJECTS.md](https://github.com/ORCID/ORCID-Work-in-Progress/blob/master/PROJECTS.md)
+See [PROJECTS.md](https://github.com/ORCID/ORCID-Source/blob/master/PROJECTS.md)
