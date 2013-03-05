@@ -60,7 +60,7 @@
         <div class="row">
             <div class="span3 override">
                 <aside class="logo">
-                    <h1><a href="<@spring.url '/' />"><img src="<@spring.url '/static/img/orcid-logo.png'/>" alt="ORCID logo" /></a></h1>
+                    <h1><a href="${aboutUri}"><img src="<@spring.url '/static/img/orcid-logo.png'/>" alt="ORCID logo" /></a></h1>
                     <p>${springMacroRequestContext.getMessage("public-layout.logo.tagline")}</p>
                 </aside>
             </div>
@@ -133,9 +133,9 @@
         <div class="row">
             <div class="span11 offset1">
                 <ul class="span11 offset1">
-                    <li class=""><a href="http://about.orcid.org/help/contact-us">${springMacroRequestContext.getMessage("public-layout.contact_us")}</a></li>
-				    <li class=""><a href="http://about.orcid.org/footer/privacy-policy">${springMacroRequestContext.getMessage("public-layout.privacy_policy")}</a></li>
-				    <li class=""><a href="http://about.orcid.org/content/orcid-terms-use">${springMacroRequestContext.getMessage("public-layout.terms_of_use")}</a></li>
+                    <li class=""><a href="${aboutUri}/help/contact-us">${springMacroRequestContext.getMessage("public-layout.contact_us")}</a></li>
+				    <li class=""><a href="${aboutUri}/footer/privacy-policy">${springMacroRequestContext.getMessage("public-layout.privacy_policy")}</a></li>
+				    <li class=""><a href="${aboutUri}/content/orcid-terms-use">${springMacroRequestContext.getMessage("public-layout.terms_of_use")}</a></li>
                 </ul>
             </div>
         </div>
