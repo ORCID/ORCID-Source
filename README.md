@@ -60,7 +60,7 @@ We'll set up postgres using the default settings in
 * Verify user login and database exist
 
     ```
-    psql -U orcid -d orcid -c "\list"
+    psql -U orcid -d orcid -c "\list" -h localhost
     ```
 
 
