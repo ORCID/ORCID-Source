@@ -234,7 +234,6 @@ public class ChangePersonalInfoForm {
         this.emailVisibility = emailVisibility;
     }
 
-    @NotBlank(message = "Please enter your last name.")
     public String getLastName() {
         return lastName;
     }
