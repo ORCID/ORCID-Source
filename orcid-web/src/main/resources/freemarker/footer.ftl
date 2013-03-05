@@ -19,9 +19,9 @@
 <footer class="footer">
     <p class="pull-right"><a href="#">Back to top</a></p>
     <ul class="nav nav-pills">
-        <li class=""><a href="http://about.orcid.org/help/contact-us">Contact us</a></li>
-	    <li class=""><a href="http://about.orcid.org/footer/privacy-policy">Privacy Policy</a></li>
-	    <li class=""><a href="http://about.orcid.org/content/orcid-terms-use">Terms of Use</a></li>
+        <li class=""><a href="${aboutUri}/help/contact-us">Contact us</a></li>
+	    <li class=""><a href="${aboutUri}/footer/privacy-policy">Privacy Policy</a></li>
+	    <li class=""><a href="${aboutUri}/content/orcid-terms-use">Terms of Use</a></li>
     </ul>
     <p id="copyright">&copy; Copyright ORCID 2011-12</p>
 </footer>

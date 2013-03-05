@@ -29,7 +29,7 @@ What is ORCID? ORCID is a registry of unique identifiers for researchers and sch
 How do I claim my ORCID record? We encourage you to login and review your account, so that you may take full advantage of the ORCID Registry, including privacy settings, assignment of proxies, and selection of trusted parties. To claim your account, copy and paste this link into your browser:
 ${verificationUrl}
 
-Where do I learn more about ORCID? Please see our Webpage at http://about.orcid.org.  More on ORCID's Privacy Policy is available here - http://about.orcid.org/privacy-policy.
+Where do I learn more about ORCID? Please see our Webpage at http://orcid.org.  More on ORCID's Privacy Policy is available here - http://about.orcid.org/privacy-policy.
 
 Need help? If you have any questions about the registration process, please contact the ORCID support team at support@orcid.org. Please note that the sending email address cannot accept replies.
 
