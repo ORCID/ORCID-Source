@@ -28,6 +28,9 @@ if (typeof String.prototype.endsWith != 'function') {
 	  };
 }
 
+// This is to prevent IE from caching ajax request via jquery
+$.ajaxSetup({ cache: false });
+
 // function for javascript cookies
 var OrcidCookie = new function () {
     this.getCookie =  function (c_name) {
