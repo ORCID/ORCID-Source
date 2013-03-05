@@ -76,7 +76,6 @@ import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.message.VisibilityType;
 import org.orcid.persistence.adapter.JpaJaxbEntityAdapter;
 import org.orcid.persistence.dao.EmailDao;
-import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.dao.GivenPermissionToDao;
 import org.orcid.persistence.dao.OrcidOauth2TokenDetailDao;
 import org.orcid.persistence.dao.ProfileDao;
@@ -85,8 +84,6 @@ import org.orcid.persistence.jpa.entities.IndexingStatus;
 import org.orcid.persistence.jpa.entities.OrcidGrantedAuthority;
 import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
-import org.orcid.persistence.jpa.entities.ProfileEventEntity;
-import org.orcid.persistence.jpa.entities.ProfileEventType;
 import org.orcid.utils.DateUtils;
 import org.orcid.utils.NullUtils;
 import org.slf4j.Logger;
@@ -417,7 +414,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
     public OrcidProfile retrieveOrcidProfileByEmail(String email) {
         ProfileEntity profileEntity = profileDao.findByEmail(email);
         if (profileEntity == null) {
-            EmailEntity emailEntity = emailDao.find(email);
+            EmailEntity emailEntity = emailDao.findCaseInsensitive(email);
             if (emailEntity != null) {
                 profileEntity = emailEntity.getProfile();
             }

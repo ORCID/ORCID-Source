@@ -53,5 +53,6 @@
     <include file="/db/updates/multiple-emails.xml"/>
     <include file="/db/updates/claim-wait-period.xml"/>
     <include file="/db/updates/increase-citation-size-limit.xml"/>
+    <include file="/db/updates/fix-email-case-sensitivity.xml"/>
 
 </databaseChangeLog>
