@@ -16,6 +16,8 @@
  */
 package org.orcid.persistence.dao.impl;
 
+import java.util.List;
+
 import javax.persistence.TypedQuery;
 
 import org.orcid.persistence.dao.EmailDao;
@@ -36,10 +38,19 @@ public class EmailDaoImpl extends GenericDaoImpl<EmailEntity, String> implements
     @Override
     public boolean emailExists(String email) {
         Assert.hasText(email, "Cannot check for an empty email address");
-        TypedQuery<Long> query = entityManager.createQuery("select count(email) from EmailEntity where lower(email) = :email", Long.class);
-        query.setParameter("email", email.toLowerCase());
+        TypedQuery<Long> query = entityManager.createQuery("select count(email) from EmailEntity where lower(email) = lower(:email)", Long.class);
+        query.setParameter("email", email);
         Long result = query.getSingleResult();
         return (result != null && result > 0);
+    }
+
+    @Override
+    public EmailEntity findCaseInsensitive(String email) {
+        Assert.hasText(email, "Cannot find using an empty email address");
+        TypedQuery<EmailEntity> query = entityManager.createQuery("from EmailEntity where lower(email) = lower(:email)", EmailEntity.class);
+        query.setParameter("email", email);
+        List<EmailEntity> results = query.getResultList();
+        return results.isEmpty() ? null : results.get(0);
     }
 
 }
