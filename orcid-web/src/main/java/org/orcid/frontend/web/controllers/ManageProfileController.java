@@ -779,6 +779,10 @@ public class ManageProfileController extends BaseWorkspaceController {
     		if (email.isPrimary()) newPrime = email.getValue();
     	}
     	
+    	if (newPrime == null) {
+    		allErrors.add("A Primary Email Must be selected");
+    	}
+    	
     	OrcidProfile currentProfile = getCurrentUser().getRealProfile();
     	if (currentProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail() != null)
     		oldPrime = currentProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue();

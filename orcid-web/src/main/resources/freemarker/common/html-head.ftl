@@ -32,4 +32,8 @@
 
 	<script src="<@spring.url '/static/javascript/modernizr.js?v=${ver}'/>"></script>
     <#include "/layout/google_analytics.ftl">
+    
+    <!--[if lte IE 8]>
+    	<script src="//cdnjs.cloudflare.com/ajax/libs/json3/3.2.4/json3.min.js"></script>
+     <![endif]-->
 </head>

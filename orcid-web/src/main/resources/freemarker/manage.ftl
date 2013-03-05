@@ -44,7 +44,7 @@
 				</div>
 			</#if>
 			
-			<table class="table table-bordered settings-table" ng-app="orcidApp" ng-controller="EditTableCtrl">
+			<table class="table table-bordered settings-table" id="ng-app" ng-app="orcidApp" ng-controller="EditTableCtrl">
 				<tbody>
 				    <#--<tr>
                         <th>${springMacroRequestContext.getMessage("manage.personal_details")}</th>
@@ -62,31 +62,30 @@
 						<tr>
 							<th>Email</th>
 							<td>
-								<a href="" ng-click="toggleEmail()">{{toggleText}}</a>
+								<a href="" ng-click="toggleEmail()" ng-bind="toggleText"></a>
 							</td>
 						</tr>
-						<tr ng-controller="EmailEdit" ng-show="showEditEmail">
+						<tr ng-controller="EmailEdit" ng-show="showEditEmail" ng-cloak>
 							<td colspan="2">
+								<!-- we should never see errors here, but just to be safe -->
+		   						<span class="orcid-error" ng-show="emailsPojo.errors.length > 0">
+			   						<span ng-repeat='error in emailsPojo.errors' ng-bind-html-unsafe="error"></span>
+			   					</span>
 		   						<div ng-repeat='email in emailsPojo.emails' style="height: 35px;">
-		   							<!-- we should never see errors here, but just to be safe -->
-		   							<span class="orcid-error" ng-show="emailsPojo.errors.length > 0">
-			   							<span ng-repeat='error in emailsPojo.errors' ng-bind-html-unsafe="error"></span>
-			   						</span>
-		   							<div style="width: 300px; display:inline-block;">{{email.value}}</div>
-		   							<div style="width: 100px; display:inline-block;"><a href="" ng-click="setPrimary(email)" ng-class="{muted: email.primary==false}">{{email.primary | emailPrimaryFtr}}</a>
+		   							<div style="width: 300px; display: inline-block; *display: inline;" ng-bind="email.value"></div>
+		   							<div style="width: 100px; display: inline-block; *display: inline;"><a href="" ng-click="setPrimary($index)" ng-class="{muted: email.primary==false}" ng-bind="email.primary | emailPrimaryFtr"></a>
 		   							</div> 
-		   							<div ng-click="toggleCurrent(email)" ng-bind="email.current | emailCurrentFtr" style="width: 70px; display:inline-block;"></div> 
-		   							<span ng-bind="email.verified | emailVerifiedFtr" ng-click="verifyEmail(email)"></span>
+		   							<div ng-click="toggleCurrent($index)" ng-bind="email.current | emailCurrentFtr" style="width: 70px; display: inline-block; *display: inline;"></div> 
+		   							<span ng-bind="email.verified | emailVerifiedFtr" ng-click="verifyEmail($index)"></span>
 		   							<span class="orcid-error" ng-show="email.errors.length > 0">
-		   								error!
-		   							   <span ng-repeat='error in email.errors'>{{error}}</span>
+		   							   <span ng-repeat='error in email.errors' ng-bind-html-unsafe="error"></span>
 		   							</span>
-		   							<div style="display:inline-block; width 30px">
+		   							<div style="width 30px; display: inline-block; *display: inline;">
 		   								<span ng-show="email.primary == false" ng-click="deleteEmail($index)" class="btn btn-danger">X</span>
 		   							</div>
 		   							<div class="privacy-tool" style="display:inline-block;">
 								        <div class="btn-group privacy-group abs-left-top">
-								            <button class="btn {{email.visibility | emailVisibilityBtnClassFtr}} dropdown-toggle privacy-toggle" ng-bind="email.visibility | emailVisibilityFtr" ng-click="toggleVisibility(email)"></button>
+								            <button class="btn dropdown-toggle privacy-toggle" ng-class="email.visibility | emailVisibilityBtnClassFtr" ng-bind="email.visibility | emailVisibilityFtr" ng-click="toggleVisibility($index)"></button>
 								        </div>
 									</div>
 		   						</div>

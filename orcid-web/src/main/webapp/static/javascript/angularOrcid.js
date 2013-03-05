@@ -48,10 +48,25 @@ function EditTableCtrl($scope) {
 function EmailEdit($scope, $http) {
 
 	$scope.getEmails = function() {
-		$http.get($('body').data('baseurl') + 'account/emails.json').success(
-				function(data) {
-					$scope.emailsPojo = data;
-		});		
+//		$http.get($('body').data('baseurl') + 'account/emails.json').success(
+//				function(data) {
+//					$scope.emailsPojo = data;
+//		});
+//		
+		
+		$.ajax({
+	        url: $('body').data('baseurl') + 'account/emails.json',
+	        //type: 'POST',
+	        //data: $scope.emailsPojo,
+	        dataType: 'json',
+	        success: function(data) {
+	        	$scope.emailsPojo = data;
+	        }
+	    }).fail(function() { 
+	    	// something bad is happening!
+	    	console.log("error with multi email");
+	    });
+		
 	};
 	
 	$scope.initInputEmail = function () {
@@ -62,11 +77,10 @@ function EmailEdit($scope, $http) {
 	$scope.getEmails();
 	$scope.initInputEmail();
 
-	$scope.setPrimary = function(obj, $event) {
-		
+	$scope.setPrimary = function(idx, $event) {
 		for (i in $scope.emailsPojo.emails) {
 			console.log($scope.emailsPojo.emails[i]);
-			if (obj == $scope.emailsPojo.emails[i]) {
+			if (i == idx) {
 				$scope.emailsPojo.emails[i].primary = true;
 			} else {
 				$scope.emailsPojo.emails[i].primary = false;
@@ -75,41 +89,47 @@ function EmailEdit($scope, $http) {
 		$scope.save();
 	};
 	
-	$scope.toggleCurrent = function(obj, $event) {
-		if (obj.current ==  true) {
-			obj.current = false;
+	$scope.toggleCurrent = function(idx, $event) {
+		
+		if ($scope.emailsPojo.emails[idx].current ==  true) {
+			$scope.emailsPojo.emails[idx].current = false;
 		} else {
-			obj.current = true;
+			$scope.emailsPojo.emails[idx].current = true;
 		}
 		$scope.save();
 	};
 	
-	$scope.toggleVisibility = function(obj, $event) {
-		if (obj.visibility ==  "PRIVATE") {
-			obj.visibility = "LIMITED";
-		} else if (obj.visibility ==  "LIMITED") {
-			obj.visibility = "PUBLIC";
+	$scope.toggleVisibility = function(idx, $event) {
+		if ($scope.emailsPojo.emails[idx].visibility ==  "PRIVATE") {
+			$scope.emailsPojo.emails[idx].visibility = "LIMITED";
+		} else if ($scope.emailsPojo.emails[idx].visibility ==  "LIMITED") {
+			$scope.emailsPojo.emails[idx].visibility = "PUBLIC";
 		} else {
-			obj.visibility = "PRIVATE";
+			$scope.emailsPojo.emails[idx].visibility = "PRIVATE";
 		}
 		$scope.save();
 	};
 	
-	$scope.verifyEmail = function(obj, $event) {
-	    alert( "we should send user to page to verify " + obj.value);  
+	$scope.verifyEmail = function(idx, $event) {
+	    alert( "we should send user to page to verify " + $scope.emailsPojo.emails[idx].value);  
 	};
 
 
 	$scope.save = function() {
-		$http({
-			url : $('body').data('baseurl') + 'account/emails.json',
-			method : "POST",
-			data : $scope.emailsPojo
-		}).success(function(data, status, headers, config) {
-			$scope.emailsPojo = data;
-		}).error(function(data, status, headers, config) {
-			$scope.status = status;
-		});
+		$.ajax({
+	        url: $('body').data('baseurl') + 'account/emails.json',
+	        type: 'POST',
+	        data:  angular.toJson($scope.emailsPojo),
+	        contentType: 'application/json;charset=UTF-8',
+	        dataType: 'json',
+	        success: function(data) {
+	        	$scope.emailsPojo = data;
+	        }
+	    }).fail(function() { 
+	    	// something bad is happening!
+	    	console.log("error with multi email");
+	    });
+
 	};
 
 	$scope.add = function (obj, $event) {
