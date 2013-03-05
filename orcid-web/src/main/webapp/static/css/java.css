@@ -1028,8 +1028,8 @@ header overrides
 }
 
 .oauth-login .alert {
-	width: 953px;
-	margin-left: -20px;
+	width: 100%;
+	width: 330px;
 }
 .oauth-login .alert p {
 	margin-bottom: 0;
