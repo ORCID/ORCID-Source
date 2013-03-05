@@ -40,6 +40,7 @@
             <div>
                 <div class="relative">
                     <button class="btn-large btn-primary" type="submit">Sign in</button>
+                    <img id="ajax-loader" class="hide" src="<@spring.url '/static/img/ajax-loader.gif'/>" alt="Progress animation"></img>
                 </div>
                 <div class="relative">
                 	<a href="<@spring.url '/reset-password'/>">Forgotten Password?</a>
