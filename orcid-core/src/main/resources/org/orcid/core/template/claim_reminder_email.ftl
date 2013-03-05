@@ -29,7 +29,7 @@ ${verificationUrl}
 
 WHAT IS ORCID?
 
-ORCID is a registry of unique identifiers for researchers. The ORCID iD helps link you with your research works and activities. You may include it in processes such as manuscript submission and grant applications, and synchronize the data in your ORCID record with other systems. You also may add or edit data in your ORCID record, adjust privacy settings, and select trusted parties with whom to share your data. Read more about ORCID at our Webpage: http://orcid.org. More on ORCID's Privacy Policy: http://about.orcid.org/privacy-policy.
+ORCID is a registry of unique identifiers for researchers. The ORCID iD helps link you with your research works and activities. You may include it in processes such as manuscript submission and grant applications, and synchronize the data in your ORCID record with other systems. You also may add or edit data in your ORCID record, adjust privacy settings, and select trusted parties with whom to share your data. Read more about ORCID at our Webpage: http://orcid.org. More on ORCID's Privacy Policy: http://orcid.org/privacy-policy.
 
 QUESTIONS?
 

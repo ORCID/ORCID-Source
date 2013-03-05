@@ -14,19 +14,25 @@
  *
  * =============================================================================
  */
-package org.orcid.persistence.dao;
+package org.orcid.core.security;
 
-import org.orcid.persistence.jpa.entities.EmailEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 
 /**
  * 
  * @author Will Simpson
  *
  */
-public interface EmailDao extends GenericDao<EmailEntity, String> {
+public class UnclaimedProfileExistsException extends BadCredentialsException {
 
-    boolean emailExists(String email);
+    private static final long serialVersionUID = 1L;
 
-    EmailEntity findCaseInsensitive(String email);
+    public UnclaimedProfileExistsException(String msg) {
+        super(msg);
+    }
+
+    public UnclaimedProfileExistsException(String msg, Throwable t) {
+        super(msg, t);
+    }
 
 }

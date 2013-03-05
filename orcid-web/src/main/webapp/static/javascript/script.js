@@ -28,6 +28,9 @@ if (typeof String.prototype.endsWith != 'function') {
 	  };
 }
 
+// This is to prevent IE from caching ajax request via jquery
+$.ajaxSetup({ cache: false });
+
 // function for javascript cookies
 var OrcidCookie = new function () {
     this.getCookie =  function (c_name) {
@@ -119,13 +122,15 @@ $(function () {
 	window.baseUrl = $('body').data('baseurl');
     window.basePath = window.location.pathname; 	
     
-    
+    // fire off login check, if this page wasn't loaded via iframe (or html5 foo)
+    if (location == parent.location) {
+        checkOrcidLoggedIn();
+        setInterval(checkOrcidLoggedIn,15000);
+    }    
     
     // if not iframed check if not orcid.org
     if (location == parent.location && window.location.hostname.toLowerCase() != "orcid.org") {
-        checkOrcidLoggedIn();
-        setInterval(checkOrcidLoggedIn,15000);
-    	
+     	
     	var cookieName = "testWarningCookie";
     	var warnMessCookie=OrcidCookie.getCookie(cookieName);
     	if (!warnMessCookie) {
@@ -200,24 +205,44 @@ $(function () {
 	});
 
 	$('form#loginForm').submit(function() {
+		if($('form#loginForm').attr('disabled')){
+			return false;
+		}
+		$('form#loginForm').attr('disabled', 'disabled');
+		$('#ajax-loader').show();
 		$.ajax({
 	        url: baseUrl + 'signin/auth.json',
 	        type: 'POST',
 	        data: $('form#loginForm').serialize(),
 	        dataType: 'json',
 	        success: function(data) {
+	        	$('#ajax-loader').hide();
+	        	$('form#loginForm').removeAttr('disabled');
 	            if (data.success) {
 	               window.location.href = data.url;
 	            } else {
 	            	if ($('form#loginForm #login-error-mess').length == 0) {
-	            	$("<div class='alert' id='login-error-mess'>"+ OM.getInstance().get('orcid.frontend.security.bad_credentials')+ "</div>")
-	            	.hide()
-	            	.appendTo('form#loginForm')
-	            	.fadeIn('fast');
+	            		var message;
+	            		if(data.unclaimed){
+	            			var resendClaimUrl = window.location + "/../resend-claim";
+	            			var userId = $('#userId').val();
+                            if(userId.indexOf('@') != -1){
+	            		        resendClaimUrl += '?email=' + encodeURIComponent(userId);	
+	            		    }
+	            		    message = _.template(OM.getInstance().get('orcid.frontend.security.unclaimed_exists'),
+	            		    		             {resendClaimUrl:resendClaimUrl});
+	            		}
+	            		else{
+	            			message = OM.getInstance().get('orcid.frontend.security.bad_credentials'); 
+	            		}
+		            	$("<div class='alert' id='login-error-mess'>"+ message + "</div>")
+		            	    .hide()
+		            	    .appendTo('form#loginForm')
+		            	    .fadeIn('fast');
 	            	} else {
 	            		$('form#loginForm #login-error-mess').fadeOut('fast', 
 	            				function() { 
-	            					$($('form#loginForm #login-error-mess')).fadeIn('fast')
+	            					$($('form#loginForm #login-error-mess')).fadeIn('fast');
 	            		});
 	            	}
 	        	};

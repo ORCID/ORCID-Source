@@ -229,6 +229,7 @@
                          <exclude>**/src/main/webapp/**/modernizr.js</exclude>
                          <exclude>**/src/main/webapp/static/css/bootstrap*</exclude>
                          <exclude>**/src/test/resources/org/**/*.xml</exclude>                                  
+                         <exclude>**/src/main/webapp/static/ORCID-Fonts-Dot-Com/*</exclude>                                  
                          <exclude>**/.gitignore</exclude>
                          <exclude>**/rebel.xml</exclude>
                     </excludes>

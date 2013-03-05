@@ -61,7 +61,9 @@ public class OrcidUserDetailsService implements UserDetailsService {
         if (profile == null) {
             throw new UsernameNotFoundException("Bad username or password");
         }
-
+        if (!profile.getOrcidHistory().isClaimed()) {
+            throw new UnclaimedProfileExistsException("orcid.frontend.security.unclaimed_exists");
+        }
         if (profile.isDeactivated()) {
             throw new DisabledException("Account not active, please call helpdesk");
         }
