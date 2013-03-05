@@ -52,7 +52,7 @@ public class OrcidMessageValidator {
         validate(orcidMessage);
     }
 
-    private void validate(OrcidMessage orcidMessage) {
+    static public void validate(OrcidMessage orcidMessage) {
         OrcidProfile orcidProfile = orcidMessage != null ? orcidMessage.getOrcidProfile() : null;
         if (orcidProfile == null) {
             throw new OrcidBadRequestException("There must be an orcid-profile element");
@@ -61,13 +61,13 @@ public class OrcidMessageValidator {
         checkActivities(orcidProfile.getOrcidActivities());
     }
 
-    private void checkBio(OrcidBio orcidBio) {
+    static private void checkBio(OrcidBio orcidBio) {
         if (orcidBio != null) {
             checkContactDetails(orcidBio.getContactDetails());
         }
     }
 
-    private void checkContactDetails(ContactDetails contactDetails) {
+    static private void checkContactDetails(ContactDetails contactDetails) {
         if (contactDetails != null) {
             List<Email> emailList = contactDetails.getEmail();
             int primaryCount = 0;
@@ -82,7 +82,7 @@ public class OrcidMessageValidator {
         }
     }
 
-    private void checkActivities(OrcidActivities orcidActivities) {
+    static private void checkActivities(OrcidActivities orcidActivities) {
         if (orcidActivities != null) {
             OrcidWorks works = orcidActivities.getOrcidWorks();
             if (works != null && works.getOrcidWork() != null && !works.getOrcidWork().isEmpty()) {
@@ -91,13 +91,13 @@ public class OrcidMessageValidator {
         }
     }
 
-    private void checkWorks(List<OrcidWork> orcidWork) {
+    static private void checkWorks(List<OrcidWork> orcidWork) {
         for (OrcidWork work : orcidWork) {
             checkWork(work);
         }
     }
 
-    public void checkWork(OrcidWork orcidWork) {
+    static public void checkWork(OrcidWork orcidWork) {
         if (orcidWork.getWorkCitation() != null) {
             Citation workCitation = orcidWork.getWorkCitation();
             if (CitationType.BIBTEX.equals(workCitation.getWorkCitationType())) {
