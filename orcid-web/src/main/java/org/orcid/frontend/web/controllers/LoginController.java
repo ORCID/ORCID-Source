@@ -20,7 +20,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.orcid.frontend.web.forms.LoginForm;
-import org.orcid.frontend.web.forms.OAuthRegistrationForm;
+import org.orcid.frontend.web.forms.RegistrationForm;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -49,7 +49,7 @@ public class LoginController extends BaseController {
     @RequestMapping(value = { "/oauth/signin", "/oauth/login" }, method = RequestMethod.GET)
     public ModelAndView loginGetHandler2(ModelAndView mav) {
         LoginForm form = new LoginForm();
-        OAuthRegistrationForm oAuthRegistrationForm = new OAuthRegistrationForm();
+        RegistrationForm oAuthRegistrationForm = new RegistrationForm();
         mav.addObject("loginForm", form);
         mav.addObject("oAuthRegistrationForm", oAuthRegistrationForm);
         mav.setViewName("oauth_login");

@@ -50,7 +50,7 @@ public class RegistrationFormValidationTest extends AbstractConstraintValidator<
         form.setEmail("will@semantico.com");
         form.setConfirmedEmail("will@semantico.com");
         form.setPassword("p4$$w0rd");
-        form.setRetypedPassword("p4$$w0rd");
+        form.setConfirmedPassword("p4$$w0rd");
         form.setAcceptTermsAndConditions(true);
         Set<ConstraintViolation<RegistrationForm>> errors = validator.validate(form);
         assertEquals("Should be no errors", 0, errors.size());
@@ -90,7 +90,7 @@ public class RegistrationFormValidationTest extends AbstractConstraintValidator<
         registrationForm.setConfirmedEmail(email2);
 
         registrationForm.setPassword(password);
-        registrationForm.setRetypedPassword(confirmedPassword);
+        registrationForm.setConfirmedPassword(confirmedPassword);
 
         Set<ConstraintViolation<RegistrationForm>> violations = validator.validate(registrationForm);
         Set<String> allErrorValues = retrieveErrorValuesOnly(violations);
@@ -99,7 +99,7 @@ public class RegistrationFormValidationTest extends AbstractConstraintValidator<
         assertTrue(allErrorValues.contains("The email and confirmed email must match"));
 
         registrationForm.setConfirmedEmail(email1);
-        registrationForm.setRetypedPassword(password);
+        registrationForm.setConfirmedPassword(password);
 
         violations = validator.validate(registrationForm);
         allErrorValues = retrieveErrorValuesOnly(violations);
@@ -116,7 +116,7 @@ public class RegistrationFormValidationTest extends AbstractConstraintValidator<
         form.setConfirmedEmail("will@semantico.com");
         form.setReferRegOrcid("Fell for honeypot");
         form.setPassword("p4$$w0rd");
-        form.setRetypedPassword("p4$$w0rd");
+        form.setConfirmedPassword("p4$$w0rd");
         form.setAcceptTermsAndConditions(true);
         Set<ConstraintViolation<RegistrationForm>> errors = validator.validate(form);
         Map<String, String> allErrorValues = retrieveErrorKeyAndMessage(errors);
