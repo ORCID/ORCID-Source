@@ -65,13 +65,11 @@ public class ChangePersonalInfoValidatorTest extends AbstractConstraintValidator
         
         Set<ConstraintViolation<ChangePersonalInfoForm>> errors = validator.validate(form);   
         Map<String, String> allErrorValues = retrieveErrorKeyAndMessage(errors);
-        assertEquals("Should be 3 errors", 3, allErrorValues.size());
-        String familyNameMissing = allErrorValues.get("lastName");         
+        assertEquals("Should be 2 errors", 2, allErrorValues.size());
         String givenNamesMissing = allErrorValues.get("firstName");
         String emailMissing = allErrorValues.get("email");  
         
         assertEquals("Please enter your first name.", givenNamesMissing);
-        assertEquals("Please enter your last name.",familyNameMissing);
         assertEquals("Please enter your e-mail address.",emailMissing);       
     }
     
