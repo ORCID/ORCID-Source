@@ -66,7 +66,7 @@ public class RegistrationFormValidationTest extends AbstractConstraintValidator<
         String givenNamesMissing = allErrorValues.get("givenNames");
         String email = allErrorValues.get("email");
         String password = allErrorValues.get("password");
-        String retypedPassword = allErrorValues.get("retypedPassword");
+        String retypedPassword = allErrorValues.get("confirmedPassword");
         String termsAndConditions = allErrorValues.get("acceptTermsAndConditions");
 
         assertEquals("Please enter your first name.", givenNamesMissing);
