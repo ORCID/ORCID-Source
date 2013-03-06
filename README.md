@@ -50,7 +50,7 @@ We'll set up postgres using the default settings in
     psql -c "CREATE USER orcid WITH PASSWORD 'orcid';" 
     psql -c "GRANT ALL PRIVILEGES ON DATABASE orcid to orcid;"
     ```
-	
+    
 * Exit postgres user prompt
     
     ```
@@ -309,7 +309,7 @@ To run the full set of unit test, go to the command line and:
 
 
 1. CD into the ORCID-Source folder (The folder where you downloaded the ORCID code)
-2. Run the command "mvn test"
+* Run the command "mvn test"
 
 **Integration tests**:
 
@@ -330,7 +330,7 @@ But, before running the integration tests, there are some things that might be c
 	Please notice that you should update the path on "*keystoreFile*" and "*truststoreFile*"; that path should point to the root path where you have the ORCID code. 
 	When this id done, restart the server.
 	
-2. We should run these tests using the ORCID persistence configuration, so, if you are using Eclipse or STS, follow these instructions: 
+* We should run these tests using the ORCID persistence configuration, so, if you are using Eclipse or STS, follow these instructions: 
 
 	* Go to the main menu and select *Run* → *Run Configurations* 
 	* Select the JUnit run configurations
@@ -338,14 +338,14 @@ But, before running the integration tests, there are some things that might be c
 	* On the "*VM arguments*" add "-Dorg.orcid.config.file=classpath:staging-persistence.properties" 
 	* Click "*Apply*" 
 
-3. Run the tests: 
+* Run the tests: 
 
 	* In order to run the integration tests, you should have the ORCID server up and running, so, start the server if it is not started yet.
 	* Go to "```/orcid-api-web/src/test/java/org/orcid/api/t2/integration```"
 	* Right click over the package
 	* Select “*Run As*” → “*JUnit Test*”
 
-4. Finally help out by improving these instructions! 
+* Finally help out by improving these instructions! 
 
 ## Troubleshooting:
   
