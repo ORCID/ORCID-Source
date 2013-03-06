@@ -753,7 +753,7 @@ public class ManageProfileController extends BaseWorkspaceController {
         	
         	emails.add(email);
         	currentProfile.getOrcidBio().getContactDetails().setEmail(emails);
-        	OrcidProfile updatedProfile = orcidProfileManager.updateOrcidBio(currentProfile);
+        	OrcidProfile updatedProfile = orcidProfileManager.updateOrcidProfile(currentProfile);
             if (newPrime != null && !newPrime.equalsIgnoreCase(oldPrime)) {
                 URI baseUri = OrcidWebUtils.getServerUriWithContextPath(request);
                 notificationManager.sendEmailAddressChangedNotification(updatedProfile, new Email(oldPrime), baseUri);
@@ -794,7 +794,7 @@ public class ManageProfileController extends BaseWorkspaceController {
         if (allErrors.size()==0) {
         	currentProfile.getOrcidBio().getContactDetails().setEmail((List<Email>)(Object)emails.getEmails());
 
-        	OrcidProfile updatedProfile = orcidProfileManager.updateOrcidBio(currentProfile);
+        	OrcidProfile updatedProfile = orcidProfileManager.updateOrcidProfile(currentProfile);
             if (newPrime != null && !newPrime.equalsIgnoreCase(oldPrime)) {
                 URI baseUri = OrcidWebUtils.getServerUriWithContextPath(request);
                 notificationManager.sendEmailAddressChangedNotification(updatedProfile, new Email(oldPrime), baseUri);
