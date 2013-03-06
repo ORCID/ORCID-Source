@@ -61,6 +61,7 @@ function EmailEdit($scope, $http) {
 	        dataType: 'json',
 	        success: function(data) {
 	        	$scope.emailsPojo = data;
+	        	$scope.$apply();
 	        }
 	    }).fail(function() { 
 	    	// something bad is happening!
@@ -124,6 +125,7 @@ function EmailEdit($scope, $http) {
 	        dataType: 'json',
 	        success: function(data) {
 	        	$scope.emailsPojo = data;
+	        	$scope.$apply();
 	        }
 	    }).fail(function() { 
 	    	// something bad is happening!
@@ -133,21 +135,30 @@ function EmailEdit($scope, $http) {
 	};
 
 	$scope.add = function (obj, $event) {
-		$http({
-			url : $('body').data('baseurl') + 'account/addEmail.json',
-			method : "POST",
-			data : $scope.inputEmail
-		}).success(function(data, status, headers, config) {
-			$scope.inputEmail = data;
-			if ($scope.inputEmail.errors.length == 0) {
-				$scope.initInputEmail();
-				$scope.getEmails();
-			}
-		}).error(function(data, status, headers, config) {
-			//$scope.inputEmail = status;
-			console.log("$EmailEdit.add() error "+ status + headers + data);
-		});
+		$.ajax({
+	        url: $('body').data('baseurl') + 'account/addEmail.json',
+	        type: 'POST',
+	        data:  angular.toJson($scope.inputEmail),
+	        contentType: 'application/json;charset=UTF-8',
+	        dataType: 'json',
+	        success: function(data) {
+	        	$scope.inputEmail = data;
+	        	//alert($scope.inputEmail.errors.length);
+	        	if ($scope.inputEmail.errors.length == 0) {
+					$scope.initInputEmail();
+					$scope.getEmails();
+				}
+	        	$scope.$apply();
+	        }
+	    }).fail(function() { 
+	    	// something bad is happening!
+	    	console.log("$EmailEdit.add() error");
+	    });
+
+		
 	};
+	
+	
 	
 	$scope.deleteEmail = function(idx) {
 		$scope.emailsPojo.emails.splice(idx, 1);

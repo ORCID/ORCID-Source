@@ -72,6 +72,7 @@ import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
 import org.orcid.jaxb.model.message.WorkVisibilityDefault;
 import org.orcid.pojo.Emails;
+import org.orcid.pojo.Errors;
 import org.orcid.utils.OrcidStringUtils;
 import org.orcid.utils.OrcidWebUtils;
 import org.slf4j.Logger;
@@ -697,14 +698,16 @@ public class ManageProfileController extends BaseWorkspaceController {
         notificationManager.sendVerificationEmail(currentProfile, baseUri);
         redirectAttributes.addFlashAttribute("verificationEmailSent", true);
         return manageBioView;
-
     }
-
-    @RequestMapping(value = "/emails_proto")
-    public ModelAndView emailsProt() {
-    	ModelAndView modelAndView = new ModelAndView("email_proto");
-        return modelAndView;
+    
+    @RequestMapping(value = "/verify-email.json", method = RequestMethod.GET)
+    public @ResponseBody Errors verifyEmailJson(HttpServletRequest request, @RequestParam("email") String email) {
+        OrcidProfile currentProfile = getCurrentUser().getRealProfile();
+        URI baseUri = OrcidWebUtils.getServerUriWithContextPath(request);
+        notificationManager.sendVerificationEmail(currentProfile, baseUri, email);
+        return new Errors();
     }
+    
     
     @SuppressWarnings("unchecked")
 	@RequestMapping(value = "/emails.json", method = RequestMethod.GET)
