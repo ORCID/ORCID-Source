@@ -72,7 +72,7 @@ function EmailEdit($scope, $http) {
 
 	$scope.setPrimary = function(idx, $event) {
 		for (i in $scope.emailsPojo.emails) {
-			console.log($scope.emailsPojo.emails[i]);
+			console.log($scope.emailsPojo.emails[idx]);
 			if (i == idx) {
 				$scope.emailsPojo.emails[i].primary = true;
 			} else {
@@ -122,7 +122,7 @@ function EmailEdit($scope, $http) {
 		$.ajax({
 	        url: $('body').data('baseurl') + 'account/emails.json',
 	        type: 'POST',
-	        data:  angular.toJson($scope.emailsPojo),
+	        data: angular.toJson($scope.emailsPojo),
 	        contentType: 'application/json;charset=UTF-8',
 	        dataType: 'json',
 	        success: function(data) {

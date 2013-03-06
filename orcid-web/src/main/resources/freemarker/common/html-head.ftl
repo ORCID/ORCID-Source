@@ -42,9 +42,8 @@
 
 	<script src="<@spring.url '/static/javascript/modernizr.js?v=${ver}'/>"></script>
     <#include "/layout/google_analytics.ftl">
-    
-    <!-- hack in json3 to allow angular js to work in IE7
-    <!--[if lte IE 8]>
-    	<script src="//cdnjs.cloudflare.com/ajax/libs/json3/3.2.4/json3.min.js"></script>
+    <!-- hack in json3 to allow angular js to work in IE7 -->
+    <!--[if IE 7]>
+    	<script src="//cdnjs.cloudflare.com/ajax/libs/json3/3.2.4/json3.min.js" type="text/javascript"></script>
      <![endif]-->
 </head>
