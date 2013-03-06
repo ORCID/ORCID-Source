@@ -48,7 +48,6 @@ import org.orcid.frontend.web.controllers.helper.SearchOrcidSolrCriteria;
 import org.orcid.frontend.web.forms.ChangeSecurityQuestionForm;
 import org.orcid.frontend.web.forms.ClaimForm;
 import org.orcid.frontend.web.forms.LoginForm;
-import org.orcid.frontend.web.forms.OAuthRegistrationForm;
 import org.orcid.frontend.web.forms.OneTimeResetPasswordForm;
 import org.orcid.frontend.web.forms.PasswordTypeAndConfirmForm;
 import org.orcid.frontend.web.forms.RegistrationForm;
@@ -533,14 +532,14 @@ public class RegistrationController extends BaseController {
     }
 
     @RequestMapping(value = "/claim/{encryptedEmail}", method = RequestMethod.GET)
-    public ModelAndView verifyClaim(HttpServletRequest request, @PathVariable("encryptedEmail") String encryptedEmail, RedirectAttributes redirectAttributes) throws NoSuchRequestHandlingMethodException,
-            UnsupportedEncodingException {
+    public ModelAndView verifyClaim(HttpServletRequest request, @PathVariable("encryptedEmail") String encryptedEmail, RedirectAttributes redirectAttributes)
+            throws NoSuchRequestHandlingMethodException, UnsupportedEncodingException {
         String decryptedEmail = encryptionManager.decryptForExternalUse(new String(Base64.decodeBase64(encryptedEmail), "UTF-8"));
         if (!isEmailOkForCurrentUser(decryptedEmail)) {
             return new ModelAndView("wrong_user");
         }
         OrcidProfile profileToClaim = orcidProfileManager.retrieveOrcidProfileByEmail(decryptedEmail);
-        if(profileToClaim.getOrcidHistory().isClaimed()){
+        if (profileToClaim.getOrcidHistory().isClaimed()) {
             // Already claimed so send to sign in page
             redirectAttributes.addFlashAttribute("alreadyClaimed", true);
             return new ModelAndView("redirect:/signin");
@@ -560,7 +559,7 @@ public class RegistrationController extends BaseController {
             return new ModelAndView("wrong_user");
         }
         OrcidProfile profileToClaim = orcidProfileManager.retrieveOrcidProfileByEmail(decryptedEmail);
-        if(profileToClaim.getOrcidHistory().isClaimed()){
+        if (profileToClaim.getOrcidHistory().isClaimed()) {
             // Already claimed so send to sign in page
             redirectAttributes.addFlashAttribute("alreadyClaimed", true);
             return new ModelAndView("redirect:/signin");
@@ -591,7 +590,8 @@ public class RegistrationController extends BaseController {
         return new ModelAndView("redirect:/my-orcid");
     }
 
-    private OrcidProfile confirmEmailAndClaim(String decryptedEmail, OrcidProfile orcidProfile, ClaimForm claimForm, HttpServletRequest request) throws NoSuchRequestHandlingMethodException {
+    private OrcidProfile confirmEmailAndClaim(String decryptedEmail, OrcidProfile orcidProfile, ClaimForm claimForm, HttpServletRequest request)
+            throws NoSuchRequestHandlingMethodException {
         if (orcidProfile == null) {
             throw new NoSuchRequestHandlingMethodException(request);
         }
@@ -638,7 +638,7 @@ public class RegistrationController extends BaseController {
 
     @RequestMapping(value = "/oauth-signup", method = RequestMethod.POST)
     public ModelAndView sendOAuthRegistration(HttpServletRequest request, HttpServletResponse response, LoginForm loginForm,
-            @ModelAttribute("oAuthRegistrationForm") @Valid OAuthRegistrationForm oAuthRegistrationForm, BindingResult bindingResult) {
+            @ModelAttribute("oAuthRegistrationForm") @Valid RegistrationForm oAuthRegistrationForm, BindingResult bindingResult) {
         String email = oAuthRegistrationForm.getEmail();
         String sessionId = request.getSession() == null ? null : request.getSession().getId();
         LOGGER.info("User with email={}, sessionid={} has asked to register during oauth", email, sessionId);
@@ -666,9 +666,9 @@ public class RegistrationController extends BaseController {
 
     @RequestMapping(value = "/oauth-complete-signup", method = RequestMethod.POST)
     public ModelAndView completeOAuthRegistration(HttpServletRequest request, HttpServletResponse response,
-            @ModelAttribute("oAuthRegistrationForm") OAuthRegistrationForm oAuthRegistrationForm) {
+            @ModelAttribute("oAuthRegistrationForm") RegistrationForm oAuthRegistrationForm) {
 
-        OrcidProfile orcidProfile = oAuthRegistrationForm.getOrcidProfile();
+        OrcidProfile orcidProfile = oAuthRegistrationForm.toOrcidProfile();
         orcidProfile.setPassword((String) request.getSession().getAttribute("password"));
         createMinimalRegistrationAndLogUserIn(request, orcidProfile);
         request.getSession().setAttribute("password", null);
