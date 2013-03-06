@@ -60,7 +60,6 @@ function EmailEdit($scope, $http) {
 	    	// something bad is happening!
 	    	console.log("error with multi email");
 	    });
-		
 	};
 	
 	$scope.initInputEmail = function () {
@@ -84,7 +83,6 @@ function EmailEdit($scope, $http) {
 	};
 	
 	$scope.toggleCurrent = function(idx, $event) {
-		
 		if ($scope.emailsPojo.emails[idx].current ==  true) {
 			$scope.emailsPojo.emails[idx].current = false;
 		} else {
@@ -105,7 +103,19 @@ function EmailEdit($scope, $http) {
 	};
 	
 	$scope.verifyEmail = function(idx, $event) {
-	    alert( "we should send user to page to verify " + $scope.emailsPojo.emails[idx].value);  
+		$.ajax({
+	        url: $('body').data('baseurl') + 'account/verifyEmail.json',
+	        type: 'get',
+	        data:  { "email": $scope.emailsPojo.emails[idx].value },
+	        contentType: 'application/json;charset=UTF-8',
+	        dataType: 'json',
+	        success: function(data) {
+	        	alert( "Verification Email Send To: " + $scope.emailsPojo.emails[idx].value); 	
+	        }
+	    }).fail(function() { 
+	    	// something bad is happening!
+	    	console.log("error with multi email");
+	    });  
 	};
 
 	$scope.save = function() {
@@ -123,7 +133,6 @@ function EmailEdit($scope, $http) {
 	    	// something bad is happening!
 	    	console.log("error with multi email");
 	    });
-
 	};
 
 	$scope.add = function (obj, $event) {

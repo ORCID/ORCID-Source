@@ -700,7 +700,7 @@ public class ManageProfileController extends BaseWorkspaceController {
         return manageBioView;
     }
     
-    @RequestMapping(value = "/verify-email.json", method = RequestMethod.GET)
+    @RequestMapping(value = "/verifyEmail.json", method = RequestMethod.GET)
     public @ResponseBody Errors verifyEmailJson(HttpServletRequest request, @RequestParam("email") String email) {
         OrcidProfile currentProfile = getCurrentUser().getRealProfile();
         URI baseUri = OrcidWebUtils.getServerUriWithContextPath(request);
