@@ -54,7 +54,6 @@
 			        	<@spring.formHiddenInput "oAuthRegistrationForm.familyName"/>			        	
 			        	<@spring.formHiddenInput "oAuthRegistrationForm.email"/>
 			        	<@spring.formHiddenInput "oAuthRegistrationForm.givenNames"/>
-			        	<@spring.formHiddenInput "oAuthRegistrationForm.familyName"/>			        	
 			        	<button class="btn btn-large btn-primary" type="submit">None of these are me - continue to registration </button>
 			        </div>
         		<form>

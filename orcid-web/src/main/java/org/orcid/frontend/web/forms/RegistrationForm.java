@@ -26,6 +26,7 @@ import javax.validation.constraints.Size;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotBlank;
 import org.orcid.frontend.web.forms.validate.FieldMatch;
+import org.orcid.frontend.web.forms.validate.StringMatchIgnoreCase;
 import org.orcid.jaxb.model.message.Claimed;
 import org.orcid.jaxb.model.message.ContactDetails;
 import org.orcid.jaxb.model.message.CreationMethod;
@@ -44,7 +45,6 @@ import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.message.WorkVisibilityDefault;
 import org.orcid.password.constants.OrcidPasswordConstants;
 import org.orcid.utils.DateUtils;
-import org.springframework.web.bind.annotation.SessionAttributes;
 
 /**
  * 
@@ -52,8 +52,8 @@ import org.springframework.web.bind.annotation.SessionAttributes;
  * 
  */
 
-@FieldMatch.List({ @FieldMatch(first = "password", second = "retypedPassword", message = "The password and confirmed password must match"),
-        @FieldMatch(first = "email", second = "confirmedEmail", message = "The email and confirmed email must match") })
+@FieldMatch(first = "password", second = "confirmedPassword", message = "The password and confirmed password must match")
+@StringMatchIgnoreCase(first = "email", second = "confirmedEmail", message = "The email and confirmed email must match")
 public class RegistrationForm implements Serializable {
 
     /**
@@ -73,11 +73,11 @@ public class RegistrationForm implements Serializable {
 
     private String password;
 
-    private String retypedPassword;
+    private String confirmedPassword;
 
     private boolean sendOrcidNews;
 
-    private boolean sendOrcidChangeNotifcations;
+    private boolean sendOrcidChangeNotifications;
 
     private boolean acceptTermsAndConditions;
 
@@ -141,12 +141,12 @@ public class RegistrationForm implements Serializable {
         this.sendOrcidNews = sendOrcidNews;
     }
 
-    public boolean isSendOrcidChangeNotifcations() {
-        return sendOrcidChangeNotifcations;
+    public boolean isSendOrcidChangeNotifications() {
+        return sendOrcidChangeNotifications;
     }
 
-    public void setSendOrcidChangeNotifcations(boolean sendOrcidChangeNotifcations) {
-        this.sendOrcidChangeNotifcations = sendOrcidChangeNotifcations;
+    public void setSendOrcidChangeNotifications(boolean sendOrcidChangeNotifications) {
+        this.sendOrcidChangeNotifications = sendOrcidChangeNotifications;
     }
 
     @AssertTrue(message = "You must accept the terms and conditions.")
@@ -169,12 +169,12 @@ public class RegistrationForm implements Serializable {
 
     @NotBlank(message = OrcidPasswordConstants.PASSWORD_REGEX_MESSAGE)
     @Pattern(regexp = OrcidPasswordConstants.ORCID_PASSWORD_REGEX, message = OrcidPasswordConstants.PASSWORD_REGEX_MESSAGE)
-    public String getRetypedPassword() {
-        return retypedPassword;
+    public String getConfirmedPassword() {
+        return confirmedPassword;
     }
 
-    public void setRetypedPassword(String retypedPassword) {
-        this.retypedPassword = retypedPassword;
+    public void setConfirmedPassword(String confirmedPassword) {
+        this.confirmedPassword = confirmedPassword;
     }
 
     public String getWorkVisibilityDefault() {
@@ -193,7 +193,7 @@ public class RegistrationForm implements Serializable {
         ContactDetails contactDetails = new ContactDetails();
         contactDetails.addOrReplacePrimaryEmail(new org.orcid.jaxb.model.message.Email(email));
         Preferences preferences = new Preferences();
-        preferences.setSendChangeNotifications(new SendChangeNotifications(sendOrcidChangeNotifcations));
+        preferences.setSendChangeNotifications(new SendChangeNotifications(sendOrcidChangeNotifications));
         preferences.setSendOrcidNews(new SendOrcidNews(sendOrcidNews));
         preferences.setWorkVisibilityDefault(new WorkVisibilityDefault(Visibility.fromValue(workVisibilityDefault)));
 
