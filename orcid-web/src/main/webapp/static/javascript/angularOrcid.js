@@ -6,7 +6,6 @@ orcidNgModule.filter('emailPrimaryFtr', function($filter) {
 	};
 });
 
-
 orcidNgModule.filter('emailVisibilityFtr', function($filter) {
 	return function(strValue) {
 		return strValue.substring(0,1) +  strValue.substring(1).toLowerCase();
