@@ -446,7 +446,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
     }
 
     private void setFamilyName(ProfileEntity profileEntity, FamilyName familyName) {
-        if (familyName != null && StringUtils.isNotBlank(familyName.getContent())) {
+        if (familyName != null) {
             profileEntity.setFamilyName(familyName.getContent());
         }
     }

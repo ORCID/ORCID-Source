@@ -95,18 +95,18 @@
         		<div>
         		    <label>Notification Email</label>
             		<div class="checky">
-                		<label class="checkbox"><@spring.formCheckbox "oAuthRegistrationForm.newFeatureInformationRequested"/>Send me notifications about changes to my ORCID Record.</label>
+                		<label class="checkbox"><@spring.formCheckbox "oAuthRegistrationForm.sendOrcidChangeNotifications"/>Send me notifications about changes to my ORCID Record.</label>
         			</div>
         		</div>
         		<div>
             		<div class="checky">
-                		<label class="checkbox"><@spring.formCheckbox "oAuthRegistrationForm.relatedProductsServiceInformationRequested"/>Send me information about events ORCID is sponsoring and ORCID news.</label>
+                		<label class="checkbox"><@spring.formCheckbox "oAuthRegistrationForm.sendOrcidNews"/>Send me information about events ORCID is sponsoring and ORCID news.</label>
         			</div>
         		</div>                    		                                                                    
         		<div style="margin-top: 20px;">
         		    <label>Terms of Use <span class="required">*</span></label>
             		<div class="checky">
-                		<label class="checkbox"><@spring.formCheckbox "oAuthRegistrationForm.termsAccepted"/>I consent to the <a href="${aboutUri}/privacy-policy">privacy policy</a> and <a href="${aboutUri}/legal">terms and conditions</a> of use, including allowing those who access the database to make commercial uses of the public data.</label>
+                		<label class="checkbox"><@spring.formCheckbox "oAuthRegistrationForm.acceptTermsAndConditions"/>I consent to the <a href="${aboutUri}/privacy-policy">privacy policy</a> and <a href="${aboutUri}/legal">terms and conditions</a> of use, including allowing those who access the database to make commercial uses of the public data.</label>
                 		<@spring.showErrors "<br/>" "orcid-error"/>        
                 	</div>
         		</div>

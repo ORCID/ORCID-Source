@@ -106,7 +106,7 @@ public class NotificationManagerTest extends BaseTest {
         SimpleMailMessage expected = new SimpleMailMessage();
         expected.setFrom("no_reply@orcid.org");
         expected.setTo("josiah_carberry@brown.edu");
-        expected.setSubject("Open Researcher & Contributor ID - Registration Complete");
+        expected.setSubject("[ORCID] Registration Complete");
         expected.setText(IOUtils.toString(getClass().getResourceAsStream("example_legacy_verification_email_body.txt")));
 
         verify(mailSender, times(1)).send(expected);
@@ -124,7 +124,7 @@ public class NotificationManagerTest extends BaseTest {
         SimpleMailMessage expected = new SimpleMailMessage();
         expected.setFrom("no_reply@orcid.org");
         expected.setTo("josiah_carberry@brown.edu");
-        expected.setSubject("Open Researcher & Contributor ID - Email Verification Required");
+        expected.setSubject("[ORCID] Email Verification Required");
         expected.setText(IOUtils.toString(getClass().getResourceAsStream("example_verification_email_body.txt")));
 
         verify(mailSender, times(1)).send(expected);
@@ -146,7 +146,7 @@ public class NotificationManagerTest extends BaseTest {
         SimpleMailMessage expected = new SimpleMailMessage();
         expected.setFrom("no_reply@orcid.org");
         expected.setTo("josiah_carberry@brown.edu");
-        expected.setSubject("Open Researcher & Contributor ID - Password Reset");
+        expected.setSubject("[ORCID] Password Reset");
         String expectedText = IOUtils.toString(getClass().getResourceAsStream("example_reset_email_body.txt"));
         expected.setText(expectedText);
 
@@ -164,7 +164,7 @@ public class NotificationManagerTest extends BaseTest {
         SimpleMailMessage expected = new SimpleMailMessage();
         expected.setFrom("no_reply@orcid.org");
         expected.setTo("josiah_carberry@brown.edu");
-        expected.setSubject("Open Researcher & Contributor ID - Record Amended");
+        expected.setSubject("[ORCID] Record Amended");
         String expectedText = IOUtils.toString(getClass().getResourceAsStream("example_amend_email_body.txt"));
         expected.setText(expectedText);
 
@@ -191,7 +191,7 @@ public class NotificationManagerTest extends BaseTest {
         SimpleMailMessage expected = new SimpleMailMessage();
         expected.setFrom("no_reply@orcid.org");
         expected.setTo("josiah_carberry@brown.edu");
-        expected.setSubject("Open Researcher & Contributor ID - You've been Made a Proxy!");
+        expected.setSubject("[ORCID] You've been Made a Proxy!");
         String expectedText = IOUtils.toString(getClass().getResourceAsStream("example_added_as_delegate_email.txt"));
         expected.setText(expectedText);
 
@@ -214,7 +214,7 @@ public class NotificationManagerTest extends BaseTest {
         SimpleMailMessage expected = new SimpleMailMessage();
         expected.setFrom("no_reply@orcid.org");
         expected.setTo("josiah_carberry@brown.edu");
-        expected.setSubject("Open Researcher & Contributor ID - Request to Deactivate Your Orcid Account");
+        expected.setSubject("[ORCID] Request to Deactivate Your Orcid Account");
         String expectedText = IOUtils.toString(getClass().getResourceAsStream("example_deactivate_orcid_email.txt"));
         expected.setText(expectedText);
 
@@ -274,7 +274,7 @@ public class NotificationManagerTest extends BaseTest {
         SimpleMailMessage newMessage = new SimpleMailMessage();
         newMessage.setFrom("no_reply@orcid.org");
         newMessage.setTo("josiah_carberry@brown.edu");
-        newMessage.setSubject("Open Researcher & Contributor ID - Email Verification Required");
+        newMessage.setSubject("[ORCID] Email Verification Required");
         newMessage.setText(IOUtils.toString(getClass().getResourceAsStream("example_verification_email_body.txt")));
 
         verify(mailSender, times(1)).send(newMessage);

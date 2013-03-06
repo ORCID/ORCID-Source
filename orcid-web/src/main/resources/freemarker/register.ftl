@@ -99,7 +99,7 @@ recognized.<br /><br /></p>
                       <div>
                         <label for="password" class="control-label">Confirm password</label>
                         <div class="relative">
-                            <@spring.formPasswordInput "registrationForm.retypedPassword" 'class="input-xlarge" data-validate="{required:true, equalTo:\'#password\'}"'/>
+                            <@spring.formPasswordInput "registrationForm.confirmedPassword" 'class="input-xlarge" data-validate="{required:true, equalTo:\'#password\'}"'/>
                             <span class="required">*</span>
                             <@spring.showErrors "<br/>" "orcid-error"/>
                         </div>
@@ -120,7 +120,7 @@ recognized.<br /><br /></p>
                     <div class="relative">
                         <label>Notification Email</label>
                         <label class="checkbox">
-                            <@spring.formCheckbox "registrationForm.sendOrcidChangeNotifcations"/>
+                            <@spring.formCheckbox "registrationForm.sendOrcidChangeNotifications"/>
                             Send me notifications about changes to my ORCID Record.
                         </label>
                         <label class="checkbox">
