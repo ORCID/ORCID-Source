@@ -34,7 +34,9 @@ if (typeof jQuery == 'undefined') {
 <script type="text/javascript" src="<@spring.url "/static/javascript/plugins.js?v=${ver}" />"></script>
 <script type="text/javascript" src="<@spring.url "/static/javascript/orcid.js?v=${ver}" />"></script>
 <script type="text/javascript" src="<@spring.url "/static/javascript/plugins.js?v=${ver}" />"></script>
+<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.0.4/angular.min.js"></script>
 <script type="text/javascript" src="<@spring.url "/static/javascript/script.js?v=${ver}" />"></script>
+<script type="text/javascript" src="<@spring.url "/static/javascript/angularOrcid.js?v=${ver}" />"></script>
 
 <script type="text/javascript">
 

@@ -193,11 +193,17 @@ public class NotificationManagerImpl implements NotificationManager {
     @Override
     public void sendVerificationEmail(OrcidProfile orcidProfile, URI baseUri) {
         // Create map of template params
-        Map<String, Object> templateParams = new HashMap<String, Object>();
+    	String email = orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue();
+        sendVerificationEmail(orcidProfile, baseUri, email);
+    }
+
+	public void sendVerificationEmail(OrcidProfile orcidProfile, URI baseUri,
+			String email) {
+		Map<String, Object> templateParams = new HashMap<String, Object>();
 
         String emailFriendlyName = deriveEmailFriendlyName(orcidProfile);
         templateParams.put("emailName", emailFriendlyName);
-        String verificationUrl = createVerificationUrl(orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue(), baseUri);
+        String verificationUrl = createVerificationUrl(email, baseUri);
         templateParams.put("verificationUrl", verificationUrl);
         templateParams.put("orcid", orcidProfile.getOrcid().getValue());
         templateParams.put("baseUri", baseUri);
@@ -206,12 +212,12 @@ public class NotificationManagerImpl implements NotificationManager {
         // Create email message
         SimpleMailMessage message = new SimpleMailMessage();
         message.setFrom(fromAddress);
-        message.setTo(orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue());
+        message.setTo(email);
         message.setSubject(emailSubjects.getProperty("verification"));
         message.setText(body);
         // Send message
         sendAndLogMessage(message);
-    }
+	}
 
     private String deriveEmailFriendlyName(OrcidProfile orcidProfile) {
         if (orcidProfile.getOrcidBio() != null && orcidProfile.getOrcidBio().getPersonalDetails() != null) {
