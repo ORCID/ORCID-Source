@@ -48,12 +48,6 @@ function EditTableCtrl($scope) {
 function EmailEdit($scope, $http) {
 
 	$scope.getEmails = function() {
-//		$http.get($('body').data('baseurl') + 'account/emails.json').success(
-//				function(data) {
-//					$scope.emailsPojo = data;
-//		});
-//		
-		
 		$.ajax({
 	        url: $('body').data('baseurl') + 'account/emails.json',
 	        //type: 'POST',
@@ -115,7 +109,6 @@ function EmailEdit($scope, $http) {
 	    alert( "we should send user to page to verify " + $scope.emailsPojo.emails[idx].value);  
 	};
 
-
 	$scope.save = function() {
 		$.ajax({
 	        url: $('body').data('baseurl') + 'account/emails.json',
@@ -154,11 +147,7 @@ function EmailEdit($scope, $http) {
 	    	// something bad is happening!
 	    	console.log("$EmailEdit.add() error");
 	    });
-
-		
 	};
-	
-	
 	
 	$scope.deleteEmail = function(idx) {
 		$scope.emailsPojo.emails.splice(idx, 1);
@@ -168,4 +157,4 @@ function EmailEdit($scope, $http) {
 	$scope.close = function() {
 		$scope.$parent.toggleEmail();
 	};
-}
+};
