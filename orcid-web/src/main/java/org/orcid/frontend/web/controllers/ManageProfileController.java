@@ -702,7 +702,7 @@ public class ManageProfileController extends BaseWorkspaceController {
     
     @RequestMapping(value = "/verifyEmail.json", method = RequestMethod.GET)
     public @ResponseBody Errors verifyEmailJson(HttpServletRequest request, @RequestParam("email") String email) {
-        OrcidProfile currentProfile = getCurrentUser().getRealProfile();
+        OrcidProfile currentProfile = getCurrentUser().getEffectiveProfile();
         URI baseUri = OrcidWebUtils.getServerUriWithContextPath(request);
         notificationManager.sendVerificationEmail(currentProfile, baseUri, email);
         return new Errors();
@@ -712,7 +712,7 @@ public class ManageProfileController extends BaseWorkspaceController {
     @SuppressWarnings("unchecked")
 	@RequestMapping(value = "/emails.json", method = RequestMethod.GET)
     public @ResponseBody org.orcid.pojo.Emails getEmailsJson(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {
-    	OrcidProfile currentProfile = getCurrentUser().getRealProfile();
+    	OrcidProfile currentProfile = getCurrentUser().getEffectiveProfile();
     	Emails emails = new org.orcid.pojo.Emails();
     	emails.setEmails((List<org.orcid.pojo.Email>)(Object)currentProfile.getOrcidBio().getContactDetails().getEmail());
     	return emails;
@@ -731,7 +731,7 @@ public class ManageProfileController extends BaseWorkspaceController {
     	if (email.getValue() == null || email.getValue().trim().equals("")) {
     		emailErrors.add(getMessage("Email.personalInfoForm.email"));
     	}
-    	OrcidProfile currentProfile = getCurrentUser().getRealProfile();
+    	OrcidProfile currentProfile = getCurrentUser().getEffectiveProfile();
     	List<Email> emails = currentProfile.getOrcidBio().getContactDetails().getEmail();
     	
     	MapBindingResult mbr = new MapBindingResult(new HashMap<String, String>(), "Email");
@@ -786,7 +786,7 @@ public class ManageProfileController extends BaseWorkspaceController {
     		allErrors.add("A Primary Email Must be selected");
     	}
     	
-    	OrcidProfile currentProfile = getCurrentUser().getRealProfile();
+    	OrcidProfile currentProfile = getCurrentUser().getEffectiveProfile();
     	if (currentProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail() != null)
     		oldPrime = currentProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue();
     	
