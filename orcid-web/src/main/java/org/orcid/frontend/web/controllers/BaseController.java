@@ -27,6 +27,8 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
+import javax.mail.internet.AddressException;
+import javax.mail.internet.InternetAddress;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.io.IOUtils;
@@ -263,6 +265,8 @@ public class BaseController {
     public LoginForm getLoginForm() {
         return new LoginForm();
     }
+    
+    
 
     protected void validateEmailAddress(String email, HttpServletRequest request, BindingResult bindingResult) {
         validateEmailAddress(email, true, request, bindingResult);
@@ -271,6 +275,14 @@ public class BaseController {
     protected void validateEmailAddress(String email, boolean ignoreCurrentUser, HttpServletRequest request, BindingResult bindingResult) {
         if (StringUtils.isNotBlank(email)) {
             OrcidProfile orcidProfile = orcidProfileManager.retrieveOrcidProfileByEmail(email);
+            try {  
+        		InternetAddress addr = new InternetAddress(email); 
+        	    addr.validate();  
+        	} catch (AddressException ex) {  
+                String[] codes = { "Email.personalInfoForm.email" };
+                String[] args = { email };
+                bindingResult.addError(new FieldError("email", "email", email, false, codes, args, "Not vaild"));
+        	}
             if (!(ignoreCurrentUser && emailMatchesCurrentUser(email)) && orcidProfile != null) {
                 if (orcidProfile.getOrcidHistory().isClaimed()) {
                     String[] codes = { "orcid.frontend.verify.duplicate_email" };

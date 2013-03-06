@@ -23,13 +23,18 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.ResourceBundle;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
 
 import org.apache.commons.lang.StringUtils;
+import org.orcid.api.common.validation.OrcidMessageValidator;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.OrcidSearchManager;
@@ -66,6 +71,9 @@ import org.orcid.jaxb.model.message.SendOrcidNews;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
 import org.orcid.jaxb.model.message.WorkVisibilityDefault;
+import org.orcid.pojo.Emails;
+import org.orcid.pojo.Errors;
+import org.orcid.utils.OrcidStringUtils;
 import org.orcid.utils.OrcidWebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -73,12 +81,18 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
+import org.springframework.validation.MapBindingResult;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.multiaction.NoSuchRequestHandlingMethodException;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.servlet.support.RequestContextUtils;
 
 import schema.constants.SolrConstants;
 
@@ -684,9 +698,111 @@ public class ManageProfileController extends BaseWorkspaceController {
         notificationManager.sendVerificationEmail(currentProfile, baseUri);
         redirectAttributes.addFlashAttribute("verificationEmailSent", true);
         return manageBioView;
-
     }
+    
+    @RequestMapping(value = "/verifyEmail.json", method = RequestMethod.GET)
+    public @ResponseBody Errors verifyEmailJson(HttpServletRequest request, @RequestParam("email") String email) {
+        OrcidProfile currentProfile = getCurrentUser().getEffectiveProfile();
+        URI baseUri = OrcidWebUtils.getServerUriWithContextPath(request);
+        notificationManager.sendVerificationEmail(currentProfile, baseUri, email);
+        return new Errors();
+    }
+    
+    
+    @SuppressWarnings("unchecked")
+	@RequestMapping(value = "/emails.json", method = RequestMethod.GET)
+    public @ResponseBody org.orcid.pojo.Emails getEmailsJson(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {
+    	OrcidProfile currentProfile = getCurrentUser().getEffectiveProfile();
+    	Emails emails = new org.orcid.pojo.Emails();
+    	emails.setEmails((List<org.orcid.pojo.Email>)(Object)currentProfile.getOrcidBio().getContactDetails().getEmail());
+    	return emails;
+    }    
+    
+    @RequestMapping(value = "/addEmail.json", method = RequestMethod.POST)
+    public @ResponseBody org.orcid.pojo.Email addEmailsJson(HttpServletRequest request, @RequestBody org.orcid.pojo.Email email) {
+       	String newPrime = null;
+    	String oldPrime = null;
+    	List<String> emailErrors = new ArrayList<String>();
+    	
+    	// clear errros
+    	email.setErrors(new ArrayList<String>());
+ 
+    	// if blank
+    	if (email.getValue() == null || email.getValue().trim().equals("")) {
+    		emailErrors.add(getMessage("Email.personalInfoForm.email"));
+    	}
+    	OrcidProfile currentProfile = getCurrentUser().getEffectiveProfile();
+    	List<Email> emails = currentProfile.getOrcidBio().getContactDetails().getEmail();
+    	
+    	MapBindingResult mbr = new MapBindingResult(new HashMap<String, String>(), "Email");
+    	validateEmailAddress(email.getValue(), false, request, mbr); // make sure there are no dups
+    	
+    	for (ObjectError oe:mbr.getAllErrors()) {
+    		emailErrors.add(getMessage(oe.getCode(), email.getValue()));
+    	}
+    	email.setErrors(emailErrors);
+    	
+        if (emailErrors.size()==0) {
+        	if (email.isPrimary()) {
+        		for (Email curEmail: emails) {
+        			if (curEmail.isPrimary()) oldPrime = curEmail.getValue();
+        			curEmail.setPrimary(false);
+        		}
+        		newPrime = email.getValue();
+        	}
+        	
+        	emails.add(email);
+        	currentProfile.getOrcidBio().getContactDetails().setEmail(emails);
+        	OrcidProfile updatedProfile = orcidProfileManager.updateOrcidProfile(currentProfile);
+            if (newPrime != null && !newPrime.equalsIgnoreCase(oldPrime)) {
+                URI baseUri = OrcidWebUtils.getServerUriWithContextPath(request);
+                notificationManager.sendEmailAddressChangedNotification(updatedProfile, new Email(oldPrime), baseUri);
+            }
+        }
+    	return email;    
+    }
+    
+    @RequestMapping(value = "/emails.json", method = RequestMethod.POST)
+    public @ResponseBody org.orcid.pojo.Emails postEmailsJson(HttpServletRequest request, @RequestBody org.orcid.pojo.Emails emails) {
+    	String newPrime = null;
+    	String oldPrime = null;
+    	List<String> allErrors = new ArrayList<String>();
+    	
+    	for (org.orcid.pojo.Email email: emails.getEmails()) {
+    		
+    		MapBindingResult mbr = new MapBindingResult(new HashMap<String, String>(), "Email");
+    		validateEmailAddress(email.getValue(), request, mbr);
+    		List<String> emailErrors = new ArrayList<String>();
+    		for (ObjectError oe:mbr.getAllErrors()) {
+    			String msg = getMessage(oe.getCode(), email.getValue());
+    			emailErrors.add(getMessage(oe.getCode(), email.getValue()));
+    			allErrors.add(msg);
+    		}
+    		email.setErrors(emailErrors);
+    		if (email.isPrimary()) newPrime = email.getValue();
+    	}
+    	
+    	if (newPrime == null) {
+    		allErrors.add("A Primary Email Must be selected");
+    	}
+    	
+    	OrcidProfile currentProfile = getCurrentUser().getEffectiveProfile();
+    	if (currentProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail() != null)
+    		oldPrime = currentProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue();
+    	
+        emails.setErrors(allErrors);
+        if (allErrors.size()==0) {
+        	currentProfile.getOrcidBio().getContactDetails().setEmail((List<Email>)(Object)emails.getEmails());
 
+        	OrcidProfile updatedProfile = orcidProfileManager.updateOrcidProfile(currentProfile);
+            if (newPrime != null && !newPrime.equalsIgnoreCase(oldPrime)) {
+                URI baseUri = OrcidWebUtils.getServerUriWithContextPath(request);
+                notificationManager.sendEmailAddressChangedNotification(updatedProfile, new Email(oldPrime), baseUri);
+            }
+        }
+    	return emails;    
+    }
+    
     @RequestMapping(value = "/save-bio-settings", method = RequestMethod.POST)
     public ModelAndView saveEditedBio(HttpServletRequest request, @Valid @ModelAttribute("changePersonalInfoForm") ChangePersonalInfoForm changePersonalInfoForm,
             BindingResult bindingResult, RedirectAttributes redirectAttributes) {
