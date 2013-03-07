@@ -25,7 +25,7 @@ orcidNgModule.filter('emailPrimaryFtr', function($filter) {
 
 orcidNgModule.filter('emailVisibilityFtr', function($filter) {
 	return function(strValue) {
-		return strValue.substring(0,1) +  strValue.substring(1).toLowerCase();
+		return strValue.substring(0,1) +  strValue.substring(1).toLowerCase() + " <span class='caret'></span>";
 	};
 });
 
@@ -84,10 +84,11 @@ function EmailEdit($scope, $http) {
 	};
 	
 	//init
+	$scope.curPrivToggle = null;
 	$scope.getEmails();
 	$scope.initInputEmail();
 
-	$scope.setPrimary = function(idx, $event) {
+	$scope.setPrimary = function(idx) {
 		for (i in $scope.emailsPojo.emails) {
 			console.log($scope.emailsPojo.emails[idx]);
 			if (i == idx) {
@@ -99,7 +100,7 @@ function EmailEdit($scope, $http) {
 		$scope.save();
 	};
 	
-	$scope.toggleCurrent = function(idx, $event) {
+	$scope.toggleCurrent = function(idx) {
 		if ($scope.emailsPojo.emails[idx].current ==  true) {
 			$scope.emailsPojo.emails[idx].current = false;
 		} else {
@@ -108,7 +109,9 @@ function EmailEdit($scope, $http) {
 		$scope.save();
 	};
 	
-	$scope.toggleVisibility = function(idx, $event) {
+	
+	// descoped delete after March 20
+	$scope.toggleVisibility = function(idx) {
 		if ($scope.emailsPojo.emails[idx].visibility ==  "PRIVATE") {
 			$scope.emailsPojo.emails[idx].visibility = "LIMITED";
 		} else if ($scope.emailsPojo.emails[idx].visibility ==  "LIMITED") {
@@ -119,7 +122,20 @@ function EmailEdit($scope, $http) {
 		$scope.save();
 	};
 	
-	$scope.verifyEmail = function(idx, $event) {
+	$scope.togglePrivacySelect = function(idx) {
+		var curEmail = $scope.emailsPojo.emails[idx].value;
+		if ($scope.curPrivToggle == null) $scope.curPrivToggle = curEmail;
+		else $scope.curPrivToggle = null;
+	};
+	
+	$scope.setPrivacy = function(idx, priv, $event) {
+		$event.preventDefault();
+		$scope.emailsPojo.emails[idx].visibility = priv;
+		$scope.curPrivToggle = null;
+		$scope.save();
+	};
+	
+	$scope.verifyEmail = function(idx) {
 		$.ajax({
 	        url: $('body').data('baseurl') + 'account/verifyEmail.json',
 	        type: 'get',

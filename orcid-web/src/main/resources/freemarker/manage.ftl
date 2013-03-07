@@ -83,9 +83,15 @@
 		   							<div style="width 30px; display: inline-block; *display: inline;">
 		   								<span ng-show="email.primary == false" ng-click="deleteEmail($index)" class="btn btn-danger">X</span>
 		   							</div>
-		   							<div class="privacy-tool" style="display:inline-block;">
-								        <div class="btn-group privacy-group abs-left-top">
-								            <button class="btn dropdown-toggle privacy-toggle" ng-class="email.visibility | emailVisibilityBtnClassFtr" ng-bind="email.visibility | emailVisibilityFtr" ng-click="toggleVisibility($index)"></button>
+		   							<div style="display:inline-block;">
+								        <div class="btn-group abs-left-top"  ng-class="{open: email.value==curPrivToggle}">
+								            <button class="btn dropdown-toggle privacy-toggle" ng-class="email.visibility | emailVisibilityBtnClassFtr" ng-bind-html-unsafe="email.visibility | emailVisibilityFtr" ng-click="togglePrivacySelect($index)"></button>
+											<ul class="dropdown-menu privacy-menu show">
+								                <li><a class="btn btn-success btn-privacy" href="#" ng-click="setPrivacy($index, 'PUBLIC', $event)">Public <span class="caret"></span></a></li>
+								                <li><a class="btn btn-warning btn-privacy" href="#" ng-click="setPrivacy($index, 'LIMITED', $event)">Limited <span class="caret"></span></a></li>
+								                <li><a class="btn btn-danger btn-privacy" href="#" ng-click="setPrivacy($index, 'PRIVATE', $event)">Private <span class="caret"></span></a></li>	
+								                <li><a class="btn" href="http://support.orcid.org/knowledgebase/articles/124518" target="_blank">Help <span class="caret"></span></a></li>
+	            							</ul>        								        
 								        </div>
 									</div>
 		   						</div>
