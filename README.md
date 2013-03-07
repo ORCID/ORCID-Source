@@ -19,7 +19,7 @@ If you are experience problems using ORCID you can check our [help page](http://
 
 # General Application Stack
 
-ORCID Source is set of web apps and libraries built in [Java](http://en.wikipedia.org/wiki/Java_(programming_language)) with [Spring Web MVC](http://www.springsource.org/) and persistence provided by [Postgres Database](http://www.postgresql.org/).  
+ORCID Source is set of web apps and libraries built in [Java](http://en.wikipedia.org/wiki/Java_%28programming_language%29) with [Spring Web MVC](http://www.springsource.org/) and persistence provided by [Postgres Database](http://www.postgresql.org/).  
 
 Frontend Technologies (brief version):
 On the client side we utilize [HTML](http://www.w3schools.com/html/default.asp), [AJAX](http://en.wikipedia.org/wiki/Ajax_(programming)), [JQuery](http://jquery.com/) and [AngularJS](http://angularjs.org/).  Server side we use [FreeMarker](http://freemarker.sourceforge.net/) for view rendering.
