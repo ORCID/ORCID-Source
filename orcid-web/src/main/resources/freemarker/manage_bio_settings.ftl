@@ -157,7 +157,7 @@
                  		<#list changePersonalInfoForm.externalIdentifiers.externalIdentifier as externalIdentifier>     		  	
                  			<tr>
                  				<td>${(externalIdentifier.externalIdCommonName.content)!"Information not provided"}</td>
-            					<td><a href="http://${(externalIdentifier.externalIdUrl.value)!}">${(externalIdentifier.externalIdReference.content)!"Information not provided"}</td>
+            					<td><a href="${(externalIdentifier.externalIdUrl.value)!}">${(externalIdentifier.externalIdReference.content)!"Information not provided"}</td>
                  			</tr>     		    
                         </#list>
                     </table>                     
