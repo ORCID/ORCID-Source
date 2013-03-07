@@ -51,12 +51,12 @@ import com.yammer.metrics.core.Counter;
 public class RegistrationManagerImpl implements RegistrationManager {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RegistrationManagerImpl.class);
-    
+
     public static final Counter REGISTRATIONS_VERIFIED_COUNTER = Metrics.newCounter(RegistrationManagerImpl.class, "orcid-registrations-completed");
-    
+
     @Resource(name = "hearAboutDao")
     private GenericDao<HearAboutEntity, Integer> hearAboutDao;
-    
+
     @Resource
     private ProfileDao profileDao;
 
@@ -66,9 +66,9 @@ public class RegistrationManagerImpl implements RegistrationManager {
     private EncryptionManager encryptionManager;
 
     private NotificationManager notificationManager;
-    
+
     @Resource
-	private PasswordGenerationManager passwordResetManager;
+    private PasswordGenerationManager passwordResetManager;
 
     public void setHearAboutDao(GenericDao<HearAboutEntity, Integer> hearAboutDao) {
         this.hearAboutDao = hearAboutDao;
@@ -88,7 +88,7 @@ public class RegistrationManagerImpl implements RegistrationManager {
         this.notificationManager = notificationManager;
     }
 
-   @Override
+    @Override
     public void verifyRegistration(OrcidProfile orcidProfile, URI baseUri) {
         LOGGER.debug("Verifying registration: {}", orcidProfile.getOrcid().getValue());
         OrcidHistory orcidHistory = orcidProfile.getOrcidHistory();
@@ -103,13 +103,13 @@ public class RegistrationManagerImpl implements RegistrationManager {
         notificationManager.sendLegacyVerificationEmail(orcidProfile, baseUri);
         REGISTRATIONS_VERIFIED_COUNTER.inc();
     }
-    
+
     @Override
     public void resetUserPassword(OrcidProfile orcidProfile, URI baseUri) {
-        LOGGER.debug("Resetting password for Orcid: {}", orcidProfile.getOrcid().getValue());      
+        LOGGER.debug("Resetting password for Orcid: {}", orcidProfile.getOrcid().getValue());
         notificationManager.sendPasswordResetEmail(orcidProfile, baseUri);
     }
-    
+
     @Override
     public Long getCount() {
         return profileDao.getConfirmedProfileCount();
@@ -124,11 +124,10 @@ public class RegistrationManagerImpl implements RegistrationManager {
 
     @Override
     public OrcidProfile createMinimalRegistration(OrcidProfile orcidProfile, URI baseURI) {
-       OrcidProfile minimalProfile = orcidProfileManager.createOrcidProfile(orcidProfile);
-       LOGGER.debug("Created minimal orcid and assigned id of {}", orcidProfile.getOrcid().getValue());
-       notificationManager.sendVerificationEmail(orcidProfile, baseURI);
-       return minimalProfile;
+        OrcidProfile minimalProfile = orcidProfileManager.createOrcidProfile(orcidProfile);
+        LOGGER.debug("Created minimal orcid and assigned id of {}", orcidProfile.getOrcid().getValue());
+        notificationManager.sendVerificationEmail(orcidProfile, baseURI);
+        return minimalProfile;
     }
-
 
 }
