@@ -146,21 +146,18 @@
              	</#if>
                	<label for="websiteUrlText">Website</label>
              	<div class="control-group form-inline websites">
+             	 	<@spring.formInput "changePersonalInfoForm.websiteUrlText", 'class="input-xlarge"  placeholder="Description"'/>
          			<@spring.formInput "changePersonalInfoForm.websiteUrl", 'class="input-xlarge" placeholder="URL"'/>
-                    <@spring.formInput "changePersonalInfoForm.websiteUrlText", 'class="input-xlarge"  placeholder="Description"'/>
-                    
              	</div>
              	 <#if changePersonalInfoForm.externalIdentifiers?? && changePersonalInfoForm.externalIdentifiers.externalIdentifier?size != 0>
-                 	<h4>Previously Saved External Identifiers (visibility is ${(changePersonalInfoForm.externalIdentifiers.visibility.value())!})</h4>
+                 	<h4>External Identifiers (visibility is ${(changePersonalInfoForm.externalIdentifiers.visibility.value())!})</h4>
                  	<table class="table">     		
-                 		<th>External Identifier Name</th>
-                 		<th>External Identifier Ref</th>
-                 		<th>External ID URL</th>      		
+                 		<th>Name</th>
+                 		<th>Ref</th>   		
                  		<#list changePersonalInfoForm.externalIdentifiers.externalIdentifier as externalIdentifier>     		  	
                  			<tr>
                  				<td>${(externalIdentifier.externalIdCommonName.content)!"Information not provided"}</td>
-            					<td>${(externalIdentifier.externalIdReference.content)!"Information not provided"}</td>
-            					<td><a href="http://${(externalIdentifier.externalIdUrl.value)!}">${(externalIdentifier.externalIdUrl.value)!}</td>
+            					<td><a href="${(externalIdentifier.externalIdUrl.value)!}" target="_blank">${(externalIdentifier.externalIdReference.content)!"Information not provided"}</a></td>
                  			</tr>     		    
                         </#list>
                     </table>                     
