@@ -150,16 +150,14 @@
          			<@spring.formInput "changePersonalInfoForm.websiteUrl", 'class="input-xlarge" placeholder="URL"'/>
              	</div>
              	 <#if changePersonalInfoForm.externalIdentifiers?? && changePersonalInfoForm.externalIdentifiers.externalIdentifier?size != 0>
-                 	<h4>Previously Saved External Identifiers (visibility is ${(changePersonalInfoForm.externalIdentifiers.visibility.value())!})</h4>
+                 	<h4>External Identifiers (visibility is ${(changePersonalInfoForm.externalIdentifiers.visibility.value())!})</h4>
                  	<table class="table">     		
                  		<th>Name</th>
-                 		<th>Ref</th>
-                 		<th>ID URL</th>      		
+                 		<th>Ref</th>   		
                  		<#list changePersonalInfoForm.externalIdentifiers.externalIdentifier as externalIdentifier>     		  	
                  			<tr>
                  				<td>${(externalIdentifier.externalIdCommonName.content)!"Information not provided"}</td>
-            					<td>${(externalIdentifier.externalIdReference.content)!"Information not provided"}</td>
-            					<td><a href="http://${(externalIdentifier.externalIdUrl.value)!}">Link To Site</td>
+            					<td><a href="http://${(externalIdentifier.externalIdUrl.value)!}">${(externalIdentifier.externalIdReference.content)!"Information not provided"}</td>
                  			</tr>     		    
                         </#list>
                     </table>                     
