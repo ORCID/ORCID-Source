@@ -50,7 +50,7 @@ orcidNgModule.filter('emailCurrentFtr', function($filter) {
 });
 
 function EditTableCtrl($scope) {
-	$scope.showEditEmail = true;
+	$scope.showEditEmail = false;
 	$scope.toggleText = "Edit";
 	$scope.toggleEmail = function() {
 		$scope.showEditEmail = !$scope.showEditEmail;
