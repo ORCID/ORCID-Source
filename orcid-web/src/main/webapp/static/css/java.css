@@ -1028,7 +1028,6 @@ header overrides
 }
 
 .oauth-login .alert {
-	width: 100%;
 	width: 330px;
 }
 .oauth-login .alert p {
