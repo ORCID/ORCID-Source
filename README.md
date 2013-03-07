@@ -13,7 +13,7 @@ Welcome to ORCID Source. Here are some resources to get you started.
 * [ORCID's Member API](https://github.com/ORCID/ORCID-Source/tree/master/orcid-api-web)
 
 
-# Getting support
+# Getting Support
 
 If you are experience problems using ORCID you can check our [help page](http://orcid.org/help). 
 
