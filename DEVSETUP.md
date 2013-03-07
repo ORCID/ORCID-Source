@@ -140,18 +140,7 @@ http://www.springsource.org/downloads/sts-ggts
 * Finally help out by improving these instructions! 
 
 
-## Testing Setup
-
-**Unit tests**: 
-
-To run the full set of unit test, go to the command line and:
-
-
-1. CD into the ORCID-Source folder (The folder where you downloaded the ORCID code)
-* Run the command "mvn test"
-
-**Integration tests**:
-
+### Integration tests
 
 Integration tests are under ```[ORCID-Source]/orcid-core/src/test/java/org/orcid/core/integration```.
 
@@ -159,15 +148,15 @@ In order to run them, you should have the ORCID project up and running.
 
 But, before running the integration tests, there are some things that might be configured: 
 
-1. We should enable our server to run over SSL using the ORCID configuration, so, on the ```server.xml``` add the following configuration:
-
-    * Inside the "service" tag, add the following connector tag to allow the application to run over https: 
+1. We should enable our server to run over SSL/https using the ORCID configuration, so, in the **server.xml** add the following configuration.
+Find the **service** element/tag and the following connector: 
 
 	```
 	<Connector SSLEnabled="true" clientAuth="want" keystoreFile="[ROOT_PATH]/orcid-api-web/src/test/resources/orcid-server-keystore.jks" keystorePass="changeit" maxThreads="150" port="8443" protocol="HTTP/1.1" scheme="https" secure="true" sslProtocol="TLS" truststoreFile="[ROOT_PATH]/orcid-api-web/src/test/resources/orcid-server-truststore.jks" truststorePass="changeit"/> 
 	```
 	Please notice that you should update the path on "*keystoreFile*" and "*truststoreFile*"; that path should point to the root path where you have the ORCID code. 
 	When this id done, restart the server.
+
 	
 * We should run these tests using the ORCID persistence configuration, so, if you are using Eclipse or STS, follow these instructions: 
 
@@ -185,3 +174,4 @@ But, before running the integration tests, there are some things that might be c
 	* Select “*Run As*” → “*JUnit Test*”
 
 * Finally help out by improving these instructions!    
+   
