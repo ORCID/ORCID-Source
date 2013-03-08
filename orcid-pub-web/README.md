@@ -12,7 +12,7 @@ This webapp provides the public API. Need to know:
 
 * **Local**: http://localhost:8080/orcid-t1-web
 
-* **Sandbox**: http://devsandbox.orcid.org
+* **Sandbox**: http://sandbox-1.orcid.org
 
 * **Public Production**: http://pub.orcid.org
 
@@ -23,12 +23,12 @@ This webapp provides the public API. Need to know:
 
 * **XML**
     ```
-    curl -H "Accept: application/orcid+xml" 'http://devsandbox.orcid.org/0000-0002-7148-2524/orcid-bio' -L -i
+    curl -H "Accept: application/orcid+xml" 'http://sandbox-1.orcid.org/0000-0002-7148-2524/orcid-bio' -L -i
     ```
     
 * **JSON**
     ```
-    curl -H "Accept: application/orcid+json" 'http://devsandbox.orcid.org/0000-0002-7148-2524/orcid-bio' -L -i
+    curl -H "Accept: application/orcid+json" 'http://sandbox-1.orcid.org/0000-0002-7148-2524/orcid-bio' -L -i
     ```
 
 
