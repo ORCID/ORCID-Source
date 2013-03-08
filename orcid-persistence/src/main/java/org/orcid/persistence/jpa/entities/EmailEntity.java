@@ -16,6 +16,10 @@
  */
 package org.orcid.persistence.jpa.entities;
 
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -44,6 +48,7 @@ public class EmailEntity extends BaseEntity<String> {
     private Boolean current;
     private Boolean verified;
     private Visibility visibility;
+    private ProfileEntity source;
 
     @Override
     @Id
@@ -101,6 +106,24 @@ public class EmailEntity extends BaseEntity<String> {
 
     public void setVisibility(Visibility visibility) {
         this.visibility = visibility;
+    }
+
+    @ManyToOne
+    @JoinColumn(name = "source_id")
+    public ProfileEntity getSource() {
+        return source;
+    }
+
+    public void setSource(ProfileEntity source) {
+        this.source = source;
+    }
+
+    public static Map<String, EmailEntity> mapByLowerCaseEmail(Collection<EmailEntity> emailEntities) {
+        Map<String, EmailEntity> map = new HashMap<>();
+        for (EmailEntity existingEmail : emailEntities) {
+            map.put(existingEmail.getId().toLowerCase(), existingEmail);
+        }
+        return map;
     }
 
 }
