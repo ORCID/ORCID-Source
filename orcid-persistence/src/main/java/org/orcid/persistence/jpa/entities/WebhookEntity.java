@@ -16,41 +16,68 @@
  */
 package org.orcid.persistence.jpa.entities;
 
-import java.net.URI;
 import java.util.Date;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.Id;
+import javax.persistence.IdClass;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.orcid.persistence.jpa.entities.keys.WebhookEntityPk;
 
 /**
  * @author Will Simpson
  */
+@Entity
+@Table(name = "webhook")
+@IdClass(WebhookEntityPk.class)
 public class WebhookEntity extends BaseEntity<WebhookEntityPk> {
 
     private WebhookEntityPk id;
-    private String orcid;
+    private ProfileEntity profile;
+    private String uri;
     private ClientDetailsEntity clientDetails;
-    private URI uri;
     private Date lastFailed;
-    private Integer failedAttemptCount;
-    private boolean enabled;
+    private int failedAttemptCount;
+    private boolean enabled = true;
     private Date disabledDate;
     private String disabledComments;
 
     private static final long serialVersionUID = 1L;
 
     @Override
+    @Transient
     public WebhookEntityPk getId() {
         return id;
     }
 
-    public String getOrcid() {
-        return orcid;
+    @Id
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "orcid", nullable = false, updatable = false, insertable = false)
+    public ProfileEntity getProfile() {
+        return profile;
     }
 
-    public void setOrcid(String orcid) {
-        this.orcid = orcid;
+    public void setProfile(ProfileEntity profile) {
+        this.profile = profile;
     }
 
+    @Id
+    public String getUri() {
+        return uri;
+    }
+
+    public void setUri(String uri) {
+        this.uri = uri;
+    }
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "client_details_id", nullable = false)
     public ClientDetailsEntity getClientDetails() {
         return clientDetails;
     }
@@ -59,14 +86,7 @@ public class WebhookEntity extends BaseEntity<WebhookEntityPk> {
         this.clientDetails = clientDetails;
     }
 
-    public URI getUri() {
-        return uri;
-    }
-
-    public void setUri(URI uri) {
-        this.uri = uri;
-    }
-
+    @Column(name = "last_failed")
     public Date getLastFailed() {
         return lastFailed;
     }
@@ -75,11 +95,12 @@ public class WebhookEntity extends BaseEntity<WebhookEntityPk> {
         this.lastFailed = lastFailed;
     }
 
-    public Integer getFailedAttemptCount() {
+    @Column(name = "failed_attempt_count")
+    public int getFailedAttemptCount() {
         return failedAttemptCount;
     }
 
-    public void setFailedAttemptCount(Integer failedAttemptCount) {
+    public void setFailedAttemptCount(int failedAttemptCount) {
         this.failedAttemptCount = failedAttemptCount;
     }
 
@@ -91,6 +112,7 @@ public class WebhookEntity extends BaseEntity<WebhookEntityPk> {
         this.enabled = enabled;
     }
 
+    @Column(name = "disabled_date")
     public Date getDisabledDate() {
         return disabledDate;
     }
@@ -99,6 +121,7 @@ public class WebhookEntity extends BaseEntity<WebhookEntityPk> {
         this.disabledDate = disabledDate;
     }
 
+    @Column(name = "disabled_comments")
     public String getDisabledComments() {
         return disabledComments;
     }

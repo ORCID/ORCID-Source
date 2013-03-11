@@ -18,11 +18,32 @@ package org.orcid.persistence.jpa.entities.keys;
 
 import java.io.Serializable;
 
+import org.orcid.persistence.jpa.entities.ProfileEntity;
+
 /**
  * @author Will Simpson
  */
 public class WebhookEntityPk implements Serializable {
 
     private static final long serialVersionUID = 1L;
+
+    private ProfileEntity profile;
+    private String uri;
+
+    public ProfileEntity getProfile() {
+        return profile;
+    }
+
+    public void setProfile(ProfileEntity profile) {
+        this.profile = profile;
+    }
+
+    public String getUri() {
+        return uri;
+    }
+
+    public void setUri(String uri) {
+        this.uri = uri;
+    }
 
 }
