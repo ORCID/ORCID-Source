@@ -1,4 +1,3 @@
-#Summary of API Changes from 1.0.8 to 1.0.9
+#Summary of API Changes from 1.0.7 to 1.0.8
 
-Element orcid-id has been added to the schema. Previous version of the XSD failed to 
-include the complete ORCID iD, which should be expressed as an URI.
+Bio Text was given a max character lenght of 1000
