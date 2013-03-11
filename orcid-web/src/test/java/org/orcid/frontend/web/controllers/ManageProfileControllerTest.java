@@ -67,12 +67,10 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.MapBindingResult;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import org.springframework.web.servlet.mvc.support.RedirectAttributesModelMap;
 
 /**
  * Copyright 2011-2012 ORCID
@@ -144,19 +142,6 @@ public class ManageProfileControllerTest extends BaseControllerTest {
         assertEquals("ManagePersonalInfo", activeTab);
         assertNotNull(model.get("securityQuestions"));
         assertNotNull(model.get("currentAffiliationsForm"));
-    }
-
-    // TODO: Test the data values too
-    @Test
-    public void testUpdatePersonalInfo() throws Exception {
-        ModelAndView mav = controller.manageProfile("ManagePersonalInfo");
-        ModelMap model = mav.getModelMap();
-        PersonalInfoForm personalInfoForm = (PersonalInfoForm) model.get("personalInfoForm");
-        Map<String, String> map = new HashMap<String, String>();
-        MapBindingResult bindingResult = new MapBindingResult(map, "personalInfoForm");
-        mav = controller.updatePersonalInfo(personalInfoForm, bindingResult, new RedirectAttributesModelMap());
-
-        assertEquals("redirect:/account", mav.getViewName());
     }
 
     @Test
