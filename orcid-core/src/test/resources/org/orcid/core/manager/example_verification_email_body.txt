@@ -4,7 +4,7 @@ Thank you for registering for an ORCID account.
 
 You can manage your ORCID record at http://orcid.org/4444-4444-4444-4446
 
-To confirm your email address follow this link and log in to the ORCID system.  If you can't click on the link, copy and paste it into your browser:
+To confirm your email address follow this link and log in to the ORCID system. If you can't click on the link, copy and paste it into your browser:
 
 http://testserver.orcid.org/verify-email/WnhVWGhYVk9lTng4bWdqaDl0azBXY3BmN1F4dHExOW95SnNxeVJSMy9Scz0
 

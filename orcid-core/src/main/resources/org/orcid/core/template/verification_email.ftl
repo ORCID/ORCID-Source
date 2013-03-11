@@ -22,7 +22,7 @@ Thank you for registering for an ORCID account.
 
 You can manage your ORCID record at http://orcid.org/${orcid}
 
-To confirm your email address follow this link and log in to the ORCID system.  If you can't click on the link, copy and paste it into your browser:
+To confirm your email address follow this link and log in to the ORCID system. If you can't click on the link, copy and paste it into your browser:
 
 ${verificationUrl}
 
