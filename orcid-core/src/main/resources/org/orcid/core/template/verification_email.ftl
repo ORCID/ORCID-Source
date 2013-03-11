@@ -43,4 +43,4 @@ ${baseUri}
 
 
 You have received this e-mail in the genuine belief that its contents would be of interest to you. 
-To opt-out of messages from ORCID please go to your Account Settings page at http://www.orcid.org/${orcid}/manage.
+To opt-out of messages from ORCID please go to your Account Settings page at https://orcid.org/account
