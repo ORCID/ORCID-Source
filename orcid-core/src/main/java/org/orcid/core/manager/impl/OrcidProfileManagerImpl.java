@@ -21,10 +21,12 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -223,10 +225,12 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
             setWorkPrivacy(orcidProfile, existingProfileEntity.getWorkVisibilityDefault());
         }
         dedupeProfileWorks(orcidProfile);
+        addSourceToEmails(orcidProfile, existingProfileEntity, amenderOrcid);
         ProfileEntity profileEntity = adapter.toProfileEntity(orcidProfile, existingProfileEntity);
         profileEntity.setIndexingStatus(IndexingStatus.PENDING);
         ProfileEntity updatedProfileEntity = profileDao.merge(profileEntity);
         profileDao.flush();
+        profileDao.refresh(updatedProfileEntity);
         OrcidProfile updatedOrcidProfile = adapter.toOrcidProfile(updatedProfileEntity);
         notificationManager.sendAmendEmail(updatedOrcidProfile, amenderOrcid);
         return updatedOrcidProfile;
@@ -245,6 +249,42 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
             return ((OrcidProfileUserDetails) authentication.getPrincipal()).getRealProfile().getOrcid().getValue();
         }
         return null;
+    }
+
+    /**
+     * Preserves existing source for existing emails, and adds specified source
+     * for new emails
+     * 
+     * @param orcidProfile
+     *            The incoming profile
+     * @param existingProfileEntity
+     *            The existing profile entity from the DB
+     * @param amenderOrcid
+     *            The source of new emails (from the security context)
+     */
+    private void addSourceToEmails(OrcidProfile orcidProfile, ProfileEntity existingProfileEntity, String amenderOrcid) {
+        Map<String, EmailEntity> existingMap = new HashMap<>();
+        Set<EmailEntity> existingEmails = existingProfileEntity.getEmails();
+        if (existingEmails != null) {
+            existingMap = EmailEntity.mapByLowerCaseEmail(existingEmails);
+        }
+        OrcidBio orcidBio = orcidProfile.getOrcidBio();
+        if (orcidBio != null) {
+            ContactDetails contactDetails = orcidBio.getContactDetails();
+            if (contactDetails != null) {
+                for (Email email : contactDetails.getEmail()) {
+                    EmailEntity existingEmail = existingMap.get(email.getValue().toLowerCase());
+                    if (existingEmail == null) {
+                        email.setSource(amenderOrcid);
+                    } else {
+                        ProfileEntity existingSource = existingEmail.getSource();
+                        if (existingSource != null) {
+                            email.setSource(existingSource.getId());
+                        }
+                    }
+                }
+            }
+        }
     }
 
     private void setWorkPrivacy(OrcidProfile updatedOrcidProfile, Visibility defaultWorkVisibility) {
