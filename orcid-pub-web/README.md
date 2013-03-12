@@ -10,7 +10,7 @@ This webapp provides the public API. Need to know:
 
 # URLS for different environments
 
-* **Local**: http://localhost:8080/orcid-t1-web
+* **Local**: http://localhost:8080/orcid-pub-web
 
 * **Sandbox**: http://pub.sandbox-1.orcid.org
 
