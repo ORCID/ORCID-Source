@@ -55,8 +55,8 @@ public interface T2OrcidApiService<T> extends OrcidApiService<T> {
      *         work(s)
      */
     @POST
-    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
-    @Consumes(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, MediaType.WILDCARD })
+    @Consumes(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, MediaType.WILDCARD })
     @Path(PROFILE_POST_PATH)
     T createProfileXML(OrcidMessage orcidMessage);
 
@@ -81,8 +81,8 @@ public interface T2OrcidApiService<T> extends OrcidApiService<T> {
      * @return the XML representation of the ORCID record
      */
     @PUT
-    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
-    @Consumes(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, MediaType.WILDCARD })
+    @Consumes(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, MediaType.WILDCARD })
     @Path(BIO_PATH)
     T updateBioDetailsXml(@PathParam("orcid") String orcid, OrcidMessage orcidMessage);
 
@@ -110,8 +110,8 @@ public interface T2OrcidApiService<T> extends OrcidApiService<T> {
      *         work(s)
      */
     @POST
-    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
-    @Consumes(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, MediaType.WILDCARD })
+    @Consumes(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, MediaType.WILDCARD })
     @Path(WORKS_PATH)
     T addWorksXml(@PathParam("orcid") String orcid, OrcidMessage orcidMessage);
 
@@ -139,8 +139,8 @@ public interface T2OrcidApiService<T> extends OrcidApiService<T> {
      *         work(s)
      */
     @PUT
-    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
-    @Consumes(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, MediaType.WILDCARD })
+    @Consumes(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, MediaType.WILDCARD })
     @Path(WORKS_PATH)
     T updateWorksXml(@PathParam("orcid") String orcid, OrcidMessage orcidMessage);
 
@@ -168,8 +168,8 @@ public interface T2OrcidApiService<T> extends OrcidApiService<T> {
      *         external identifiers(s)
      */
     @POST
-    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
-    @Consumes(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, MediaType.WILDCARD })
+    @Consumes(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, MediaType.WILDCARD })
     @Path(EXTERNAL_IDENTIFIER_PATH)
     T addExternalIdentifiersXml(@PathParam("orcid") String orcid, OrcidMessage orcidMessage);
 
@@ -209,8 +209,8 @@ public interface T2OrcidApiService<T> extends OrcidApiService<T> {
      * @return
      */
     @DELETE
-    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
-    @Consumes(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, MediaType.WILDCARD })
+    @Consumes(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, MediaType.WILDCARD })
     @Path(PROFILE_DELETE_PATH)
     T deleteProfileXML(@PathParam("orcid") String orcid);
 

@@ -49,8 +49,8 @@ public class T2OAuthOrcidApiClientImpl implements T2OAuthAPIService<ClientRespon
     }
 
     @Override
-    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
-    @Consumes(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, MediaType.WILDCARD })
+    @Consumes(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, MediaType.WILDCARD })
     @Path(PROFILE_POST_PATH)
     public ClientResponse createProfileXML(OrcidMessage orcidMessage, String token) {
         URI createProfilePath = UriBuilder.fromPath(PROFILE_POST_PATH).build();
@@ -96,8 +96,8 @@ public class T2OAuthOrcidApiClientImpl implements T2OAuthAPIService<ClientRespon
      * @return the XML representation of the ORCID record
      */
     @PUT
-    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
-    @Consumes(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, MediaType.WILDCARD })
+    @Consumes(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, MediaType.WILDCARD })
     @Path(BIO_PATH)
     public ClientResponse updateBioDetailsXml(@PathParam("orcid") String orcid, OrcidMessage orcidMessage, String token) {
         URI bioPath = UriBuilder.fromPath(BIO_PATH_NO_REGEX).build(orcid);
@@ -117,8 +117,8 @@ public class T2OAuthOrcidApiClientImpl implements T2OAuthAPIService<ClientRespon
 
     @Override
     @POST
-    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
-    @Consumes(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, MediaType.WILDCARD })
+    @Consumes(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, MediaType.WILDCARD })
     @Path(WORKS_PATH)
     public ClientResponse addWorksXml(String orcid, OrcidMessage orcidMessage, String token) {
         URI worksPathWithOrcidUrl = orcidClientHelper.deriveUriFromRestPath(WORKS_PATH, orcid);
@@ -137,8 +137,8 @@ public class T2OAuthOrcidApiClientImpl implements T2OAuthAPIService<ClientRespon
 
     @Override
     @PUT
-    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
-    @Consumes(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, MediaType.WILDCARD })
+    @Consumes(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, MediaType.WILDCARD })
     @Path(WORKS_PATH)
     public ClientResponse updateWorksXml(String orcid, OrcidMessage orcidMessage, String token) {
         URI worksPathWithOrcidUrl = orcidClientHelper.deriveUriFromRestPath(WORKS_PATH, orcid);
@@ -157,8 +157,8 @@ public class T2OAuthOrcidApiClientImpl implements T2OAuthAPIService<ClientRespon
 
     @Override
     @POST
-    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
-    @Consumes(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, MediaType.WILDCARD })
+    @Consumes(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, MediaType.WILDCARD })
     @Path(EXTERNAL_IDENTIFIER_PATH)
     public ClientResponse addExternalIdentifiersXml(String orcid, OrcidMessage orcidMessage, String token) {
         URI worksPathWithOrcidUrl = orcidClientHelper.deriveUriFromRestPath(EXTERNAL_IDENTIFIER_PATH, orcid);
@@ -167,8 +167,8 @@ public class T2OAuthOrcidApiClientImpl implements T2OAuthAPIService<ClientRespon
 
     @Override
     @POST
-    @Produces(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_XML })
-    @Consumes(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_XML })
+    @Produces(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_XML, MediaType.WILDCARD })
+    @Consumes(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_XML, MediaType.WILDCARD })
     @Path(EXTERNAL_IDENTIFIER_PATH)
     public ClientResponse addExternalIdentifiersJson(String orcid, OrcidMessage orcidMessage, String token) {
         URI worksPathWithOrcidUrl = orcidClientHelper.deriveUriFromRestPath(EXTERNAL_IDENTIFIER_PATH, orcid);
@@ -183,7 +183,7 @@ public class T2OAuthOrcidApiClientImpl implements T2OAuthAPIService<ClientRespon
      * @return the XML representation of the ORCID record
      */
     @GET
-    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, MediaType.WILDCARD })
     @Path(PROFILE_GET_PATH)
     @Override
     public ClientResponse viewFullDetailsXml(String orcid, String accessToken) {
@@ -242,7 +242,7 @@ public class T2OAuthOrcidApiClientImpl implements T2OAuthAPIService<ClientRespon
 
     @Override
     @GET
-    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, MediaType.WILDCARD })
     @Path(BIO_PATH)
     public ClientResponse viewBioDetailsXml(@PathParam("orcid") String orcid, String accessToken) {
         URI bioPathWithOrcid = UriBuilder.fromPath(BIO_PATH_NO_REGEX).build(orcid);
@@ -251,7 +251,7 @@ public class T2OAuthOrcidApiClientImpl implements T2OAuthAPIService<ClientRespon
 
     @Override
     @GET
-    @Produces(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_XML })
+    @Produces(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_XML, MediaType.WILDCARD })
     @Path(BIO_PATH)
     public ClientResponse viewBioDetailsJson(@PathParam("orcid") String orcid, String accessToken) {
         URI bioPathWithOrcid = UriBuilder.fromPath(BIO_PATH_NO_REGEX).build(orcid);

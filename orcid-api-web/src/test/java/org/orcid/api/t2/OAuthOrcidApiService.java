@@ -61,7 +61,7 @@ public interface OAuthOrcidApiService<T> {
      * @return the XML representation of the ORCID record
      */
     @GET
-    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, MediaType.WILDCARD })
     @Path(BIO_PATH)
     T viewBioDetailsXml(@PathParam("orcid") String orcid, String accessToken);
 
@@ -99,7 +99,7 @@ public interface OAuthOrcidApiService<T> {
      * @return the XML representation of the ORCID record
      */
     @GET
-    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, MediaType.WILDCARD })
     @Path(EXTERNAL_IDENTIFIER_PATH)
     T viewExternalIdentifiersXml(@PathParam("orcid") String orcid, String accessToken);
 
@@ -136,7 +136,7 @@ public interface OAuthOrcidApiService<T> {
      * @return the XML representation of the ORCID record
      */
     @GET
-    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, MediaType.WILDCARD })
     @Path(PROFILE_GET_PATH)
     T viewFullDetailsXml(@PathParam("orcid") String orcid, String accessToken);
 
@@ -174,7 +174,7 @@ public interface OAuthOrcidApiService<T> {
      * @return the XML representation of the ORCID record
      */
     @GET
-    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, MediaType.WILDCARD })
     @Path(WORKS_PATH)
     T viewWorksDetailsXml(@PathParam("orcid") String orcid, String accessToken);
 
@@ -211,7 +211,7 @@ public interface OAuthOrcidApiService<T> {
      * @return
      */
     @GET
-    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, MediaType.WILDCARD })
     @Path(BIO_SEARCH_PATH)
     public T searchByQueryXML(String query, String accessToken);
 

@@ -38,8 +38,8 @@ import org.orcid.jaxb.model.message.OrcidMessage;
  * @author Declan Newman (declan)
  **/
 @Provider
-@Consumes(value = { OrcidApiConstants.VND_ORCID_XML, OrcidApiConstants.ORCID_XML, MediaType.APPLICATION_XML })
-@Produces(value = { OrcidApiConstants.VND_ORCID_XML, OrcidApiConstants.ORCID_XML, MediaType.APPLICATION_XML })
+@Consumes(value = { OrcidApiConstants.VND_ORCID_XML, OrcidApiConstants.ORCID_XML, MediaType.APPLICATION_XML, MediaType.WILDCARD })
+@Produces(value = { OrcidApiConstants.VND_ORCID_XML, OrcidApiConstants.ORCID_XML, MediaType.APPLICATION_XML, MediaType.WILDCARD })
 public class OrcidMarshallerContextResolver implements ContextResolver<Marshaller> {
     private static final Logger logger = Logger.getLogger(OrcidMarshallerContextResolver.class);
 
