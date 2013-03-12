@@ -1,0 +1,59 @@
+<!--
+
+    =============================================================================
+
+    ORCID (R) Open Source
+    http://orcid.org
+
+    Copyright (c) 2012-2013 ORCID, Inc.
+    Licensed under an MIT-Style License (MIT)
+    http://orcid.org/open-source-license
+
+    This copyright and license information (including a link to the full license)
+    shall be included in its entirety in all copies or substantial portion of
+    the software.
+
+    =============================================================================
+
+-->
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+        
+    <changeSet id="CREATE-NEW-EMAIL-TABLE" author="Will Simpson">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="webhook"/>
+            </not>
+        </preConditions>
+        <createTable tableName="webhook">
+            <column name="orcid" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="client_details_id" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="uri" type="VARCHAR(1000)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="date_created" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="last_modified" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="last_failed" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="failed_attempt_count" type="INTEGER" defaultValue="0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="enabled" type="BOOLEAN" defaultValue="true">
+                <constraints nullable="false"/>
+            </column>
+            <column name="disabled_date" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="disabled_comments" type="TEXT"/>
+        </createTable>
+        <addPrimaryKey tableName="webhook" columnNames="orcid,uri" schemaName="public" constraintName="webhook_pk"/>
+        <addForeignKeyConstraint constraintName="webhook_orcid_fk"
+                                 baseTableName="webhook" baseColumnNames="orcid" baseTableSchemaName="public" 
+                                 referencedTableName="profile" referencedColumnNames="orcid" referencedTableSchemaName="public"/>
+        <addForeignKeyConstraint constraintName="webhook_client_details_fk"
+                                 baseTableName="webhook" baseColumnNames="client_details_id" baseTableSchemaName="public" 
+                                 referencedTableName="client_details" referencedColumnNames="client_details_id" referencedTableSchemaName="public"/>
+    </changeSet>
+
+</databaseChangeLog>
