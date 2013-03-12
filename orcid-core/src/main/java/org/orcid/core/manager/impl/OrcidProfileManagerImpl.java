@@ -52,6 +52,10 @@ import org.orcid.core.utils.OrcidJaxbCopyUtils;
 import org.orcid.jaxb.model.message.Affiliation;
 import org.orcid.jaxb.model.message.Claimed;
 import org.orcid.jaxb.model.message.ContactDetails;
+import org.orcid.jaxb.model.message.Contributor;
+import org.orcid.jaxb.model.message.ContributorEmail;
+import org.orcid.jaxb.model.message.ContributorOrcid;
+import org.orcid.jaxb.model.message.CreditName;
 import org.orcid.jaxb.model.message.DeactivationDate;
 import org.orcid.jaxb.model.message.Delegation;
 import org.orcid.jaxb.model.message.DelegationDetails;
@@ -76,6 +80,7 @@ import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.message.SecurityDetails;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.message.VisibilityType;
+import org.orcid.jaxb.model.message.WorkContributors;
 import org.orcid.persistence.adapter.JpaJaxbEntityAdapter;
 import org.orcid.persistence.dao.EmailDao;
 import org.orcid.persistence.dao.GivenPermissionToDao;
@@ -658,6 +663,41 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         }
         OrcidWorks existingOrcidWorks = existingProfile.retrieveOrcidWorks();
         OrcidWorks updatedOrcidWorks = updatedOrcidProfile.retrieveOrcidWorks();
+        
+        //Get each of the works and check the orcid and email parameters against existing profile information.
+        for(OrcidWork work : updatedOrcidWorks.getOrcidWork()){
+        	WorkContributors contributors = work.getWorkContributors();
+        	
+        	if(contributors != null){        	
+	        	for(Contributor contributor : contributors.getContributor()){        		
+	        		//If contributor orcid is available, look for the profile associated with that orcid
+	        		if(contributor.getContributorOrcid() != null){
+	        			ProfileEntity profile = profileDao.find(contributor.getContributorOrcid().getValue());
+	        			if(profile != null) {
+	        				contributor.setContributorEmail(new ContributorEmail(profile.getPrimaryEmail().getId()));
+	        				contributor.setCreditName(new CreditName(profile.getCreditName()));
+	        			}
+	        		} else if(contributor.getContributorEmail() != null){
+	        			//Else, if email is available, get the profile associated with that email
+	        			String email = contributor.getContributorEmail().getValue();
+	        			
+	        			ProfileEntity profileEntity = profileDao.findByEmail(email);
+	        	        if (profileEntity == null) {
+	        	            EmailEntity emailEntity = emailDao.findCaseInsensitive(email);
+	        	            if (emailEntity != null) {
+	        	                profileEntity = emailEntity.getProfile();
+	        	            }
+	        	        }
+	        			
+	        			if(profileEntity != null){
+	        				contributor.setContributorOrcid(new ContributorOrcid(profileEntity.getId()));
+	        				contributor.setCreditName(new CreditName(profileEntity.getCreditName()));
+	        			}
+	        		}
+	        	}
+        	}
+        }
+        
         if (existingOrcidWorks == null) {
             existingProfile.setOrcidWorks(updatedOrcidWorks);
         } else {

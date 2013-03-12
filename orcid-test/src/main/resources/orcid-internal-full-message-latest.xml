@@ -177,16 +177,16 @@
                     </work-external-identifiers>
                     <work-contributors>
                         <contributor>
-                            <contributor-orcid>4444-4444-4444-4449</contributor-orcid>
-                            <credit-name>J. S. Carberry</credit-name>
+                            <contributor-orcid>1111-1111-1111-1115</contributor-orcid>
+                            <credit-name>Flibberdy Flabinah</credit-name>
                             <contributor-attributes>
                                 <contributor-sequence>first</contributor-sequence>
                                 <contributor-role>author</contributor-role>
                             </contributor-attributes>
                         </contributor>
                         <contributor>
-                            <contributor-orcid>5555-5555-5555-555X</contributor-orcid>
-                            <credit-name>John W. Spaeth</credit-name>
+                            <contributor-orcid>2222-2222-2222-2229</contributor-orcid>
+                            <credit-name>Flobberdy Flip</credit-name>
                             <contributor-attributes>
                                 <contributor-sequence>additional</contributor-sequence>
                                 <contributor-role>author</contributor-role>
