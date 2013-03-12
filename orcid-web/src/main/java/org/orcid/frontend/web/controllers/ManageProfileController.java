@@ -153,31 +153,7 @@ public class ManageProfileController extends BaseWorkspaceController {
         ModelAndView mav = rebuildManageView(tab);
         return mav;
     }
-
-    @RequestMapping(value = "/personal-info", method = RequestMethod.GET)
-    public ModelAndView getPersonalInfo() {
-        ModelAndView mav = new ModelAndView("manage_personal_info");
-        OrcidProfile profile = orcidProfileManager.retrieveOrcidProfile(getCurrentUserOrcid());
-        mav.addObject("personalInfoForm", new PersonalInfoForm(profile, retrieveSubjectsAsMap()));
-        return mav;
-    }
-
-    @RequestMapping(value = "/personal-info", method = RequestMethod.POST)
-    public ModelAndView updatePersonalInfo(@ModelAttribute("personalInfoForm") @Valid PersonalInfoForm personalInfoForm, BindingResult bindingResult,
-            RedirectAttributes redirectAttributes) {
-        if (bindingResult.hasErrors()) {
-            ModelAndView mav = rebuildManageView("profile-tab");
-            mav.addAllObjects(bindingResult.getModel());
-            return mav;
-        }
-        ModelAndView mav = new ModelAndView("redirect:/account");
-        LOGGER.debug("Got personal info: {}", personalInfoForm);
-        // XXX Use T2 API
-        orcidProfileManager.updatePersonalInformation(personalInfoForm.getOrcidProfile());
-        redirectAttributes.addFlashAttribute("personalInformationSuccessfullyUpdated", true);
-        return mav;
-    }
-
+   
     @RequestMapping(value = "/preferences", method = RequestMethod.POST)
     public ModelAndView updatePreferences(@ModelAttribute("preferencesForm") PreferencesForm preferencesForm, RedirectAttributes redirectAttributes) {
         ModelAndView mav = new ModelAndView("redirect:/account?activeTab=options-tab");
