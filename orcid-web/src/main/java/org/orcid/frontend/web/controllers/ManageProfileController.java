@@ -345,7 +345,8 @@ public class ManageProfileController extends BaseWorkspaceController {
     }
 
     @RequestMapping(value = "/revoke-application")
-    public ModelAndView revokeApplication(@RequestParam("applicationOrcid") String applicationOrcid, @RequestParam("scopePaths") String[] scopePaths) {
+    public ModelAndView revokeApplication(@RequestParam("applicationOrcid") String applicationOrcid,
+            @RequestParam(value = "scopePaths", required = false, defaultValue = "") String[] scopePaths) {
         String userOrcid = getCurrentUserOrcid();
         getCurrentUser().setEffectiveProfile(
                 orcidProfileManager.revokeApplication(userOrcid, applicationOrcid, ScopePathType.getScopesFromStrings(Arrays.asList(scopePaths))));
@@ -675,110 +676,116 @@ public class ManageProfileController extends BaseWorkspaceController {
         redirectAttributes.addFlashAttribute("verificationEmailSent", true);
         return manageBioView;
     }
-    
+
     @RequestMapping(value = "/verifyEmail.json", method = RequestMethod.GET)
-    public @ResponseBody Errors verifyEmailJson(HttpServletRequest request, @RequestParam("email") String email) {
+    public @ResponseBody
+    Errors verifyEmailJson(HttpServletRequest request, @RequestParam("email") String email) {
         OrcidProfile currentProfile = getCurrentUser().getEffectiveProfile();
         URI baseUri = OrcidWebUtils.getServerUriWithContextPath(request);
         notificationManager.sendVerificationEmail(currentProfile, baseUri, email);
         return new Errors();
     }
-    
-    
-    @SuppressWarnings("unchecked")
-	@RequestMapping(value = "/emails.json", method = RequestMethod.GET)
-    public @ResponseBody org.orcid.pojo.Emails getEmailsJson(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {
-    	OrcidProfile currentProfile = getCurrentUser().getEffectiveProfile();
-    	Emails emails = new org.orcid.pojo.Emails();
-    	emails.setEmails((List<org.orcid.pojo.Email>)(Object)currentProfile.getOrcidBio().getContactDetails().getEmail());
-    	return emails;
-    }    
-    
-    @RequestMapping(value = "/addEmail.json", method = RequestMethod.POST)
-    public @ResponseBody org.orcid.pojo.Email addEmailsJson(HttpServletRequest request, @RequestBody org.orcid.pojo.Email email) {
-       	String newPrime = null;
-    	String oldPrime = null;
-    	List<String> emailErrors = new ArrayList<String>();
-    	
-    	// clear errros
-    	email.setErrors(new ArrayList<String>());
- 
-    	// if blank
-    	if (email.getValue() == null || email.getValue().trim().equals("")) {
-    		emailErrors.add(getMessage("Email.personalInfoForm.email"));
-    	}
-    	OrcidProfile currentProfile = getCurrentUser().getEffectiveProfile();
-    	List<Email> emails = currentProfile.getOrcidBio().getContactDetails().getEmail();
-    	
-    	MapBindingResult mbr = new MapBindingResult(new HashMap<String, String>(), "Email");
-    	validateEmailAddress(email.getValue(), false, request, mbr); // make sure there are no dups
-    	
-    	for (ObjectError oe:mbr.getAllErrors()) {
-    		emailErrors.add(getMessage(oe.getCode(), email.getValue()));
-    	}
-    	email.setErrors(emailErrors);
-    	
-        if (emailErrors.size()==0) {
-        	if (email.isPrimary()) {
-        		for (Email curEmail: emails) {
-        			if (curEmail.isPrimary()) oldPrime = curEmail.getValue();
-        			curEmail.setPrimary(false);
-        		}
-        		newPrime = email.getValue();
-        	}
-        	
-        	emails.add(email);
-        	currentProfile.getOrcidBio().getContactDetails().setEmail(emails);
-        	OrcidProfile updatedProfile = orcidProfileManager.updateOrcidProfile(currentProfile);
-            if (newPrime != null && !newPrime.equalsIgnoreCase(oldPrime)) {
-                URI baseUri = OrcidWebUtils.getServerUriWithContextPath(request);
-                notificationManager.sendEmailAddressChangedNotification(updatedProfile, new Email(oldPrime), baseUri);
-            }
-        }
-    	return email;    
-    }
-    
-    @RequestMapping(value = "/emails.json", method = RequestMethod.POST)
-    public @ResponseBody org.orcid.pojo.Emails postEmailsJson(HttpServletRequest request, @RequestBody org.orcid.pojo.Emails emails) {
-    	String newPrime = null;
-    	String oldPrime = null;
-    	List<String> allErrors = new ArrayList<String>();
-    	
-    	for (org.orcid.pojo.Email email: emails.getEmails()) {
-    		
-    		MapBindingResult mbr = new MapBindingResult(new HashMap<String, String>(), "Email");
-    		validateEmailAddress(email.getValue(), request, mbr);
-    		List<String> emailErrors = new ArrayList<String>();
-    		for (ObjectError oe:mbr.getAllErrors()) {
-    			String msg = getMessage(oe.getCode(), email.getValue());
-    			emailErrors.add(getMessage(oe.getCode(), email.getValue()));
-    			allErrors.add(msg);
-    		}
-    		email.setErrors(emailErrors);
-    		if (email.isPrimary()) newPrime = email.getValue();
-    	}
-    	
-    	if (newPrime == null) {
-    		allErrors.add("A Primary Email Must be selected");
-    	}
-    	
-    	OrcidProfile currentProfile = getCurrentUser().getEffectiveProfile();
-    	if (currentProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail() != null)
-    		oldPrime = currentProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue();
-    	
-        emails.setErrors(allErrors);
-        if (allErrors.size()==0) {
-        	currentProfile.getOrcidBio().getContactDetails().setEmail((List<Email>)(Object)emails.getEmails());
 
-        	OrcidProfile updatedProfile = orcidProfileManager.updateOrcidProfile(currentProfile);
+    @SuppressWarnings("unchecked")
+    @RequestMapping(value = "/emails.json", method = RequestMethod.GET)
+    public @ResponseBody
+    org.orcid.pojo.Emails getEmailsJson(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {
+        OrcidProfile currentProfile = getCurrentUser().getEffectiveProfile();
+        Emails emails = new org.orcid.pojo.Emails();
+        emails.setEmails((List<org.orcid.pojo.Email>) (Object) currentProfile.getOrcidBio().getContactDetails().getEmail());
+        return emails;
+    }
+
+    @RequestMapping(value = "/addEmail.json", method = RequestMethod.POST)
+    public @ResponseBody
+    org.orcid.pojo.Email addEmailsJson(HttpServletRequest request, @RequestBody org.orcid.pojo.Email email) {
+        String newPrime = null;
+        String oldPrime = null;
+        List<String> emailErrors = new ArrayList<String>();
+
+        // clear errros
+        email.setErrors(new ArrayList<String>());
+
+        // if blank
+        if (email.getValue() == null || email.getValue().trim().equals("")) {
+            emailErrors.add(getMessage("Email.personalInfoForm.email"));
+        }
+        OrcidProfile currentProfile = getCurrentUser().getEffectiveProfile();
+        List<Email> emails = currentProfile.getOrcidBio().getContactDetails().getEmail();
+
+        MapBindingResult mbr = new MapBindingResult(new HashMap<String, String>(), "Email");
+        // make sure there are no dups
+        validateEmailAddress(email.getValue(), false, request, mbr);
+
+        for (ObjectError oe : mbr.getAllErrors()) {
+            emailErrors.add(getMessage(oe.getCode(), email.getValue()));
+        }
+        email.setErrors(emailErrors);
+
+        if (emailErrors.size() == 0) {
+            if (email.isPrimary()) {
+                for (Email curEmail : emails) {
+                    if (curEmail.isPrimary())
+                        oldPrime = curEmail.getValue();
+                    curEmail.setPrimary(false);
+                }
+                newPrime = email.getValue();
+            }
+
+            emails.add(email);
+            currentProfile.getOrcidBio().getContactDetails().setEmail(emails);
+            OrcidProfile updatedProfile = orcidProfileManager.updateOrcidProfile(currentProfile);
             if (newPrime != null && !newPrime.equalsIgnoreCase(oldPrime)) {
                 URI baseUri = OrcidWebUtils.getServerUriWithContextPath(request);
                 notificationManager.sendEmailAddressChangedNotification(updatedProfile, new Email(oldPrime), baseUri);
             }
         }
-    	return emails;    
+        return email;
     }
-    
+
+    @RequestMapping(value = "/emails.json", method = RequestMethod.POST)
+    public @ResponseBody
+    org.orcid.pojo.Emails postEmailsJson(HttpServletRequest request, @RequestBody org.orcid.pojo.Emails emails) {
+        String newPrime = null;
+        String oldPrime = null;
+        List<String> allErrors = new ArrayList<String>();
+
+        for (org.orcid.pojo.Email email : emails.getEmails()) {
+
+            MapBindingResult mbr = new MapBindingResult(new HashMap<String, String>(), "Email");
+            validateEmailAddress(email.getValue(), request, mbr);
+            List<String> emailErrors = new ArrayList<String>();
+            for (ObjectError oe : mbr.getAllErrors()) {
+                String msg = getMessage(oe.getCode(), email.getValue());
+                emailErrors.add(getMessage(oe.getCode(), email.getValue()));
+                allErrors.add(msg);
+            }
+            email.setErrors(emailErrors);
+            if (email.isPrimary())
+                newPrime = email.getValue();
+        }
+
+        if (newPrime == null) {
+            allErrors.add("A Primary Email Must be selected");
+        }
+
+        OrcidProfile currentProfile = getCurrentUser().getEffectiveProfile();
+        if (currentProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail() != null)
+            oldPrime = currentProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue();
+
+        emails.setErrors(allErrors);
+        if (allErrors.size() == 0) {
+            currentProfile.getOrcidBio().getContactDetails().setEmail((List<Email>) (Object) emails.getEmails());
+
+            OrcidProfile updatedProfile = orcidProfileManager.updateOrcidProfile(currentProfile);
+            if (newPrime != null && !newPrime.equalsIgnoreCase(oldPrime)) {
+                URI baseUri = OrcidWebUtils.getServerUriWithContextPath(request);
+                notificationManager.sendEmailAddressChangedNotification(updatedProfile, new Email(oldPrime), baseUri);
+            }
+        }
+        return emails;
+    }
+
     @RequestMapping(value = "/save-bio-settings", method = RequestMethod.POST)
     public ModelAndView saveEditedBio(HttpServletRequest request, @Valid @ModelAttribute("changePersonalInfoForm") ChangePersonalInfoForm changePersonalInfoForm,
             BindingResult bindingResult, RedirectAttributes redirectAttributes) {
