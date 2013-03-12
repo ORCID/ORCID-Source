@@ -47,8 +47,8 @@ import org.xml.sax.SAXException;
  * @author Declan Newman (declan)
  **/
 @Provider
-@Produces(value = { OrcidApiConstants.VND_ORCID_XML, OrcidApiConstants.ORCID_XML, MediaType.APPLICATION_XML, MediaType.WILDCARD })
-@Consumes(value = { OrcidApiConstants.VND_ORCID_XML, OrcidApiConstants.ORCID_XML, MediaType.APPLICATION_XML, MediaType.WILDCARD })
+@Produces(value = { OrcidApiConstants.VND_ORCID_XML, OrcidApiConstants.ORCID_XML, MediaType.APPLICATION_XML })
+@Consumes(value = { OrcidApiConstants.VND_ORCID_XML, OrcidApiConstants.ORCID_XML, MediaType.APPLICATION_XML })
 public class OrcidValidationJaxbContextResolver implements ContextResolver<Unmarshaller> {
 
     private static final Logger logger = Logger.getLogger(OrcidValidationJaxbContextResolver.class);

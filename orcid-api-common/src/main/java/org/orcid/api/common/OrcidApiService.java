@@ -60,7 +60,7 @@ public interface OrcidApiService<T> {
      * @return the XML representation of the ORCID record
      */
     @GET
-    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, MediaType.WILDCARD })
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML})
     @Path(BIO_PATH)
     T viewBioDetailsXml(@PathParam("orcid") String orcid);
 
@@ -98,7 +98,7 @@ public interface OrcidApiService<T> {
      * @return the XML representation of the ORCID record
      */
     @GET
-    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, MediaType.WILDCARD })
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML})
     @Path(EXTERNAL_IDENTIFIER_PATH)
     T viewExternalIdentifiersXml(@PathParam("orcid") String orcid);
 
@@ -135,7 +135,7 @@ public interface OrcidApiService<T> {
      * @return the XML representation of the ORCID record
      */
     @GET
-    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, MediaType.WILDCARD })
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML})
     @Path(PROFILE_GET_PATH)
     T viewFullDetailsXml(@PathParam("orcid") String orcid);
 
@@ -173,7 +173,7 @@ public interface OrcidApiService<T> {
      * @return the XML representation of the ORCID record
      */
     @GET
-    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, MediaType.WILDCARD })
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML})
     @Path(WORKS_PATH)
     T viewWorksDetailsXml(@PathParam("orcid") String orcid);
 
@@ -210,7 +210,7 @@ public interface OrcidApiService<T> {
      * @return
      */
     @GET
-    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, MediaType.WILDCARD })
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML})
     @Path(BIO_SEARCH_PATH)
     public T searchByQueryXML(String query);
 
