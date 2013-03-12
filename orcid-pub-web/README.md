@@ -12,7 +12,7 @@ This webapp provides the public API. Need to know:
 
 * **Local**: http://localhost:8080/orcid-t1-web
 
-* **Sandbox**: http://sandbox-1.orcid.org
+* **Sandbox**: http://pub.sandbox-1.orcid.org
 
 * **Public Production**: http://pub.orcid.org
 
