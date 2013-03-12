@@ -18,22 +18,23 @@ This webapp provides the public API. Need to know:
 
 # Resources you can request:
 <table><tbody>
+
+<tr>
+<td>Profile</td>
+<td>/orcid-profile</td>
+<td>Returns all public data for the contributor.</td>
+</tr>
+
 <tr>
 <td>Bio</td>
 <td>/orcid-bio</td>
-<td>Given a contributor, return name and affiliation data.</td>
+<td>Returns name and affiliation data for the contributor.</td>
 </tr>
 
 <tr>
 <td>Works</td>
 <td>/orcid-works</td>
-<td>Given a contributor, return the list of works he has contributed to.</td>
-</tr>
-
-<tr>
-<td>Full</td>
-<td>/orcid-profile</td>
-<td>Given a contributor, return list of works he has contributed to, name and public affiliation data.</td>
+<td>Returns the list of works for the contributor.</td>
 </tr>
 
 <tr>
