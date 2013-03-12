@@ -143,6 +143,7 @@ public class JpaJaxbEntityAdapterToProfileEntityTest extends DBUnitTest {
         assertTrue(primaryEmail.getPrimary());
         assertTrue(primaryEmail.getCurrent());
         assertTrue(primaryEmail.getVerified());
+        assertEquals("4444-4444-4444-4446", primaryEmail.getSource().getId());
 
         EmailEntity nonPrimaryEmail1 = emailMap.get("josiah_carberry_1@brown.edu");
         assertNotNull(nonPrimaryEmail1);
@@ -150,6 +151,7 @@ public class JpaJaxbEntityAdapterToProfileEntityTest extends DBUnitTest {
         assertFalse(nonPrimaryEmail1.getPrimary());
         assertTrue(nonPrimaryEmail1.getCurrent());
         assertFalse(nonPrimaryEmail1.getVerified());
+        assertEquals("1111-1111-1111-1115", nonPrimaryEmail1.getSource().getId());
 
         EmailEntity nonPrimaryEmail2 = emailMap.get("josiah_carberry_2@brown.edu");
         assertNotNull(nonPrimaryEmail2);
@@ -157,6 +159,7 @@ public class JpaJaxbEntityAdapterToProfileEntityTest extends DBUnitTest {
         assertFalse(nonPrimaryEmail2.getPrimary());
         assertFalse(nonPrimaryEmail2.getCurrent());
         assertTrue(nonPrimaryEmail2.getVerified());
+        assertEquals("1111-1111-1111-1115", nonPrimaryEmail1.getSource().getId());
 
         assertEquals(2, profileEntity.getProfileGrants().size());
         for (ProfileGrantEntity profileGrantEntity : profileEntity.getProfileGrants()) {

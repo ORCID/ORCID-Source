@@ -546,6 +546,10 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
                 email.setCurrent(emailEntity.getCurrent());
                 email.setVerified(emailEntity.getVerified());
                 email.setVisibility(emailEntity.getVisibility());
+                ProfileEntity source = emailEntity.getSource();
+                if (source != null) {
+                    email.setSource(source.getId());
+                }
                 emailList.add(email);
             }
         }
@@ -637,11 +641,6 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
             return applications;
         }
         return null;
-    }
-
-    private void getScope() {
-        // TODO Auto-generated method stub
-
     }
 
     private OrcidWork getOrcidWork(ProfileWorkEntity profileWorkEntity) {

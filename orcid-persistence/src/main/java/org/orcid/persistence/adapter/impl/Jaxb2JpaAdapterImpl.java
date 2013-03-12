@@ -573,6 +573,11 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
                 emailEntity.setVisibility(email.getVisibility());
             }
             emailEntity.setProfile(profileEntity);
+            if (email.getSource() != null) {
+                ProfileEntity source = new ProfileEntity();
+                source.setId(email.getSource());
+                emailEntity.setSource(source);
+            }
             emailEntities.add(emailEntity);
         }
         profileEntity.setEmails(emailEntities);
