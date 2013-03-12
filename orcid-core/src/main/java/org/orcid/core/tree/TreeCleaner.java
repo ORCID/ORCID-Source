@@ -132,11 +132,11 @@ public class TreeCleaner {
     }
 
     private boolean isCandidate(Method method) {
-        if (method != null && method.getName().startsWith("get")) {
+    	if (method != null && method.getName().startsWith("get")) {
             Class<?> returnType = method.getReturnType();
             if (returnType != null && returnType.getPackage() != null) {
                 Package aPackage = returnType.getPackage();
-                if (aPackage.getName().startsWith("org.orcid") || Collection.class.isAssignableFrom(returnType)) {
+                if (aPackage.getName().startsWith("org.orcid") || Collection.class.isAssignableFrom(returnType) || String.class.isAssignableFrom(returnType)) {
                     return true;
                 }
             }
