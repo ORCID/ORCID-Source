@@ -1,4 +1,4 @@
-# ORCID-t1-web (Public API)
+# ORCID-Pub-Web (Public API)
 This webapp provides the public API. Need to know:
 
 * RESTful API.
