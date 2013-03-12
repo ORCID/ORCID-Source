@@ -16,29 +16,6 @@ This webapp provides the public API. Need to know:
 
 * **Public Production**: http://pub.orcid.org
 
-* **Member Production:**: http://api.orcid.org
-
-
-# Sample Curl Calls
-
-* **XML**
-    ```
-    curl -H "Accept: application/orcid+xml" 'http://sandbox-1.orcid.org/0000-0002-7148-2524/orcid-bio' -L -i
-    ```
-    
-* **JSON**
-    ```
-    curl -H "Accept: application/orcid+json" 'http://sandbox-1.orcid.org/0000-0002-7148-2524/orcid-bio' -L -i
-    ```
-
-
-# Known Implementations
-
-* [ORCID Python](https://github.com/scholrly/orcid-python)
-
-* [R ORCID](https://github.com/ropensci/rorcid)
- 
-    
 # Resources you can request:
 <table><tbody>
 <tr>
@@ -65,6 +42,31 @@ This webapp provides the public API. Need to know:
 <td>Given whatever metadata provided, return a ranked list of potential contributors identified by that metadata.</td>
 </tr>
 </tbody></table>
+
+
+# Sample Curl Calls
+
+* **XML**
+    ```
+    curl -H "Accept: application/orcid+xml" 'http://pub.sandbox-1.orcid.org/0000-0002-6657-1928/orcid-bio' -L -i
+    ```
+    
+* **JSON**
+    ```
+    curl -H "Accept: application/orcid+json" 'http://pub.sandbox-1.orcid.org/0000-0002-6657-1928/orcid-bio' -L -i
+    ```
+
+* **JSONP**
+    ```
+    curl -H "Accept: application/orcid+json" 'http://pub.sandbox-1.orcid.org/0000-0002-6657-1928/orcid-bio?callback=test' -L -i
+    ```
+
+
+# Known Implementations
+
+* [ORCID Python](https://github.com/scholrly/orcid-python)
+
+* [R ORCID](https://github.com/ropensci/rorcid)
 
     
 # License
