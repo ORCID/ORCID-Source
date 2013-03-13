@@ -150,6 +150,7 @@ public class JpaJaxbEntityAdapterToOrcidProfileTest extends DBUnitTest {
         assertFalse(primaryEmail.isVerified());
         assertEquals(Visibility.PRIVATE, primaryEmail.getVisibility());
         assertEquals("andrew@timothy.com", primaryEmail.getValue());
+        assertEquals("4444-4444-4444-4441", primaryEmail.getSource());
 
         Email nonPrimaryEmail = contactDetails.getEmailByString("andrew2@timothy.com");
         assertNotNull(nonPrimaryEmail);
@@ -158,6 +159,7 @@ public class JpaJaxbEntityAdapterToOrcidProfileTest extends DBUnitTest {
         assertFalse(nonPrimaryEmail.isVerified());
         assertEquals(Visibility.PRIVATE, nonPrimaryEmail.getVisibility());
         assertEquals("andrew2@timothy.com", nonPrimaryEmail.getValue());
+        assertEquals("4444-4444-4444-4441", nonPrimaryEmail.getSource());
 
         assertEquals(2, contactDetails.getEmail().size());
 
