@@ -76,6 +76,7 @@ import org.orcid.jaxb.model.message.SecurityDetails;
 import org.orcid.jaxb.model.message.Source;
 import org.orcid.jaxb.model.message.Url;
 import org.orcid.jaxb.model.message.Visibility;
+import org.orcid.jaxb.model.message.WorkContributors;
 import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.test.DBUnitTest;
@@ -194,6 +195,11 @@ public class JpaJaxbEntityAdapterToOrcidProfileTest extends DBUnitTest {
         assertNotNull(workCitation);
         assertEquals("Bobby Ewing, ", workCitation.getCitation());
         assertEquals(CitationType.FORMATTED_IEEE, workCitation.getWorkCitationType());
+        WorkContributors contributors = orcidWork.getWorkContributors();
+        assertNotNull(contributors);
+        assertEquals(2, contributors.getContributor().size());
+        assertEquals("Jaylen Kessler", contributors.getContributor().get(0).getCreditName().getContent());
+        assertEquals(Visibility.LIMITED, contributors.getContributor().get(0).getCreditName().getVisibility());
     }
 
     private void checkOrcidGrants(OrcidGrants orcidGrants) {
