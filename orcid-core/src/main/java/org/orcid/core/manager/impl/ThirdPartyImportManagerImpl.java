@@ -52,6 +52,7 @@ public class ThirdPartyImportManagerImpl implements ThirdPartyImportManager {
             redirectUri.setScope(new ArrayList<ScopePathType>(ScopePathType.getScopesFromSpaceSeparatedString(prefefinedScopes)));            
             OrcidClient minimalClientDetails = new OrcidClient();           
             minimalClientDetails.setDisplayName(clientDetails.getProfileEntity().getCreditName());
+            minimalClientDetails.setShortDescription(clientDetails.getProfileEntity().getBiography());
             RedirectUris redirectUris = new RedirectUris();
             redirectUris.getRedirectUri().add(redirectUri);            
             minimalClientDetails.setClientId(clientDetails.getClientId());
