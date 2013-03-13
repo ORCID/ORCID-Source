@@ -91,6 +91,12 @@
         <property name="claimReminderAfterDays" value="${org.orcid.core.claimReminderAfterDays:8}" />
     </bean>
     
+    <bean id="webhookManager" class="org.orcid.core.manager.impl.WebhookManagerImpl">
+    	<property name="maxJobsPerClient" value="${org.orcid.core.maxJobsPerClient:50}" />
+    </bean>
+    
+    <bean id="httpClient" class="org.apache.http.impl.client.DefaultHttpClient" />
+    
     <bean id="orcidProfileCleaner" class="org.orcid.core.manager.impl.OrcidProfileCleanerImpl" />
 
 	<bean id="crossRefManager" class="org.orcid.core.manager.impl.CrossRefManagerImpl" />
