@@ -115,6 +115,8 @@ function checkOrcidLoggedIn() {
 
 var OM = OrcidMessage;
 
+
+// jquery ready
 $(function () {
 	
 	// Common
@@ -155,6 +157,10 @@ $(function () {
  
     }
     
+    $('#confirmationForm').submit(function() {
+    	parent.$.colorbox.close();
+    	return true;
+    });
     
     // if on signin or register do cookie check
 	if ( basePath.startsWith(baseUrl + 'register') 
