@@ -157,8 +157,8 @@ $(function () {
  
     }
     
-    $('#confirmationForm').submit(function() {
-    	parent.$.colorbox.close();
+    $('#confirmationForm, #denialForm').submit(function() {
+    	if (window.location != window.parent.location) parent.$.colorbox.close();
     	return true;
     });
     
