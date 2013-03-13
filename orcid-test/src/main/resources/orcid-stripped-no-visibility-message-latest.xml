@@ -90,6 +90,18 @@
                         <citation>Carberry, Josiah S., John W. Spaeth, and Paulo Di Fillipo. "Neanderthal Man." Book of Prehistory. N.p.: Brown UP, 2012. 450-70. 09 Oct. 2012. Web.</citation>
                     </work-citation>
                     <work-type>religious-text</work-type>
+                    <work-contributors>
+                        <contributor>
+                            <contributor-orcid>4444-4444-4444-4446</contributor-orcid>
+                            <contributor-attributes>
+                                <contributor-sequence>first</contributor-sequence>
+                                <contributor-role>author</contributor-role>
+                            </contributor-attributes>
+                        </contributor>
+                        <contributor>
+                            <credit-name>John W. Spaeth</credit-name>
+                        </contributor>
+                    </work-contributors>
                 </orcid-work>
             </orcid-works>
             <orcid-grants>

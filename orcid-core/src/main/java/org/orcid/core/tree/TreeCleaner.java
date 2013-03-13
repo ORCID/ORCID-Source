@@ -21,6 +21,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -60,7 +61,7 @@ public class TreeCleaner {
     }
 
     private void processGetters(Object obj, TreeCleaningStrategy decisionMaker) {
-        Map<Method, Method> gettersAndSetters = getGetterAndCorrespondingSetter(obj.getClass().getMethods());
+        Map<Method, Method> gettersAndSetters = getGetterAndCorrespondingSetterForRecursion(obj.getClass().getMethods());
         Set<Method> getters = gettersAndSetters.keySet();
         for (Method getter : getters) {
             try {
@@ -95,8 +96,7 @@ public class TreeCleaner {
         if (ob == null) {
             return true;
         }
-        Map<Method, Method> orcidGettersAndSetters = getGetterAndCorrespondingSetter(ob.getClass().getMethods());
-        Set<Method> getters = orcidGettersAndSetters.keySet();
+        Set<Method> getters = getGettersForActivePropertyCheck(ob.getClass().getMethods());
 
         int inactiveCount = 0;
         for (Method getter : getters) {
@@ -119,31 +119,31 @@ public class TreeCleaner {
         return (getters != null && getters.size() > 0 && getters.size() == inactiveCount);
     }
 
-    private Map<Method, Method> getGetterAndCorrespondingSetter(Method[] methods) {
+    private Map<Method, Method> getGetterAndCorrespondingSetterForRecursion(Method[] methods) {
         Map<Method, Method> methodMap = new HashMap<Method, Method>();
         for (Method m : methods) {
             if (m.getName().startsWith("get") && m.getParameterTypes().length == 0) {
-                if (isCandidate(m)) {
+                if (isCandidateForRecursion(m)) {
                     methodMap.put(m, getCorrespondingSetter(m.getName(), methods));
                 }
             }
         }
         return methodMap;
     }
-
-    private boolean isCandidate(Method method) {
-    	if (method != null && method.getName().startsWith("get")) {
+    
+    private boolean isCandidateForRecursion(Method method) {
+        if (method != null && method.getName().startsWith("get")) {
             Class<?> returnType = method.getReturnType();
             if (returnType != null && returnType.getPackage() != null) {
                 Package aPackage = returnType.getPackage();
-                if (aPackage.getName().startsWith("org.orcid") || Collection.class.isAssignableFrom(returnType) || String.class.isAssignableFrom(returnType)) {
+                if (aPackage.getName().startsWith("org.orcid") || Collection.class.isAssignableFrom(returnType)) {
                     return true;
                 }
             }
         }
         return false;
     }
-
+    
     private Method getCorrespondingSetter(String methodName, Method[] methods) {
         String setterName = methodName.replace("get", "set");
         for (Method m : methods) {
@@ -152,6 +152,30 @@ public class TreeCleaner {
             }
         }
         return null;
+    }
+
+    private Set<Method> getGettersForActivePropertyCheck(Method[] methods) {
+        Set<Method> methodMap = new HashSet<Method>();
+        for (Method m : methods) {
+            if (m.getName().startsWith("get") && m.getParameterTypes().length == 0) {
+                if (isCandidateForActivePropertyCheck(m)) {
+                    methodMap.add(m);
+                }
+            }
+        }
+        return methodMap;
+    }
+
+    private boolean isCandidateForActivePropertyCheck(Method method) {
+        if (method != null && method.getName().startsWith("get")) {
+            Class<?> returnType = method.getReturnType();
+            if (returnType != null && returnType.getPackage() != null) {
+                if (!Class.class.isAssignableFrom(returnType)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
 }

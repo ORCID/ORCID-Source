@@ -18,7 +18,7 @@
 
 -->
 <orcid-message xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-               xsi:schemaLocation="http://www.orcid.org/ns/orcid ../../../../orcid-model/src/main/resources/orcid-message-1.0.10.xsd"
+               xsi:schemaLocation="http://www.orcid.org/ns/orcid ../../../../orcid-model/src/main/resources/orcid-message-1.0.11.xsd"
                xmlns="http://www.orcid.org/ns/orcid">
     <message-version>1.0.10</message-version>
     <!-- Error message, if applicable -->
@@ -138,6 +138,18 @@
                         <citation>Carberry, Josiah S., John W. Spaeth, and Paulo Di Fillipo. "Neanderthal Man." Book of Prehistory. N.p.: Brown UP, 2012. 450-70. 09 Oct. 2012. Web.</citation>
                     </work-citation>
                     <work-type>religious-text</work-type>
+                    <work-contributors>
+                        <contributor>
+                            <contributor-orcid>4444-4444-4444-4446</contributor-orcid>
+                            <contributor-attributes>
+                                <contributor-sequence>first</contributor-sequence>
+                                <contributor-role>author</contributor-role>
+                            </contributor-attributes>
+                        </contributor>
+                        <contributor>
+                            <credit-name visibility="public">John W. Spaeth</credit-name>
+                        </contributor>
+                    </work-contributors>
                 </orcid-work>
                 <orcid-work>
                     <work-title>

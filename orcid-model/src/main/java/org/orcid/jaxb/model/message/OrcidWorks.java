@@ -99,7 +99,7 @@ public class OrcidWorks implements Serializable {
         return this.orcidWork;
     }
 
-    public Map<OrcidWork, OrcidWork> getOrcidWorksAsMap() {
+    public Map<OrcidWork, OrcidWork> retrieveOrcidWorksAsMap() {
         Map<OrcidWork, OrcidWork> workMap = new HashMap<OrcidWork, OrcidWork>();
         if (orcidWork != null) {
             for (OrcidWork work : orcidWork) {
