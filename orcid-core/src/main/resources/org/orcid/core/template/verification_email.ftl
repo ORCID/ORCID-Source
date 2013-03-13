@@ -22,7 +22,7 @@ Thank you for registering for an ORCID account.
 
 You can manage your ORCID record at http://orcid.org/${orcid}
 
-To confirm your email address, copy and paste this link into your browser:
+To confirm your email address follow this link and log in to the ORCID system. If you can't click on the link, copy and paste it into your browser:
 
 ${verificationUrl}
 
@@ -33,7 +33,7 @@ You may add or edit data in your ORCID record, adjust privacy settings, and sele
 parties with whom to share your data. 
 
 If you have any questions about the registration process, please contact the ORCID support 
-team at support@orcid.org. Please note that the sending email address cannot accept replies.
+team at support@orcid.org.
 
 =======
 Kind Regards,
@@ -43,4 +43,4 @@ ${baseUri}
 
 
 You have received this e-mail in the genuine belief that its contents would be of interest to you. 
-To opt-out of messages from ORCID please go to your Account Settings page at http://www.orcid.org/${orcid}/manage.
+To opt-out of messages from ORCID please go to your Account Settings page at https://orcid.org/account

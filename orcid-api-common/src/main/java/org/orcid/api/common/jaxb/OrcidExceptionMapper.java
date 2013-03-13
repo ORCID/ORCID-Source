@@ -40,7 +40,7 @@ import org.springframework.security.core.AuthenticationException;
  */
 @Provider
 @Consumes(value = { OrcidApiConstants.VND_ORCID_JSON, OrcidApiConstants.VND_ORCID_XML, OrcidApiConstants.ORCID_JSON, OrcidApiConstants.ORCID_XML, MediaType.APPLICATION_XML, MediaType.WILDCARD, MediaType.APPLICATION_JSON })
-@Produces(value = { OrcidApiConstants.VND_ORCID_JSON, OrcidApiConstants.VND_ORCID_XML, OrcidApiConstants.ORCID_JSON, OrcidApiConstants.ORCID_XML, MediaType.APPLICATION_XML, MediaType.WILDCARD, MediaType.APPLICATION_JSON })
+@Produces(value = { OrcidApiConstants.VND_ORCID_JSON, OrcidApiConstants.VND_ORCID_XML, OrcidApiConstants.ORCID_JSON, OrcidApiConstants.ORCID_XML, MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OrcidExceptionMapper.class);

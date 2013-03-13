@@ -20,7 +20,7 @@
 <div class="row">
     <div class="offset2 span8">
         <div class="page-header">
-            <h1>Info <small>We've already got some details on record - are any of these you?</small></h1>
+           <h1>Are any of these you?</h1>
         </div>
         <div>
          <@spring.bind "oAuthRegistrationForm.*" />               

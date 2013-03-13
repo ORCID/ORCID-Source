@@ -54,6 +54,7 @@
     <include file="/db/updates/claim-wait-period.xml"/>
     <include file="/db/updates/increase-citation-size-limit.xml"/>
     <include file="/db/updates/fix-email-case-sensitivity.xml"/>
+    <include file="/db/updates/email-source.xml"/>
     <include file="/db/updates/webhooks.xml"/>
 
 </databaseChangeLog>

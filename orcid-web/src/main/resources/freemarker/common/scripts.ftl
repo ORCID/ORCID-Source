@@ -23,13 +23,6 @@ if (typeof jQuery == 'undefined') {
 }
 </script>
 <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.0/jquery-ui.min.js"></script>
-<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.4/underscore-min.js"></script>
-<script type="text/javascript">
- //Mustache style 
-	_.templateSettings = {
-	  interpolate : /\{\{(.+?)\}\}/g
-	};
-</script>
 
 <script type="text/javascript" src="<@spring.url "/static/javascript/plugins.js?v=${ver}" />"></script>
 <script type="text/javascript" src="<@spring.url "/static/javascript/orcid.js?v=${ver}" />"></script>
