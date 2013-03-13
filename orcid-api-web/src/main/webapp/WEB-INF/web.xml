@@ -55,7 +55,8 @@
 
 	<filter-mapping>
 		<filter-name>jsonpCallbackFilter</filter-name>
-		<url-pattern>*</url-pattern>
+		<url-pattern>/lang.json</url-pattern>
+		<url-pattern>/userStatus.json</url-pattern>
 	</filter-mapping>
 
 
