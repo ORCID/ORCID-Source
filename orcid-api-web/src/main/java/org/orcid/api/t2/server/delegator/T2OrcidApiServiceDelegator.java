@@ -113,11 +113,11 @@ public interface T2OrcidApiServiceDelegator extends OrcidApiServiceDelegator {
      * 
      * @param orcid
      *            the identifier of the profile to add the webhook
-     * @param uriInfo
-     *            an uri object containing the webhook           
+     * @param webhookUri
+     *            uri of the webhook           
      * @return If successful, returns a 200 OK.
      * */
-    Response registerWebhook(String orcid, String webhookUrl);
+    Response registerWebhook(String orcid, String webhookUri);
     
     /**
      * Unregister a webhook from a profile. As with all calls, if the
@@ -125,9 +125,9 @@ public interface T2OrcidApiServiceDelegator extends OrcidApiServiceDelegator {
      * 
      * @param orcid
      *            the identifier of the profile to unregister the webhook
-     * @param uriInfo
-     *            an uri object containing the webhook that will be unregistred          
+     * @param webhookUri
+     *            uri of the webhook          
      * @return If successful, returns a 200 OK.
      * */
-    Response unregisterWebhook(String orcid, String webhookUrl);
+    Response unregisterWebhook(String orcid, String webhookUri);
 }

@@ -600,8 +600,8 @@ public class T2OrcidApiServiceImpl implements T2OrcidApiService<Response> {
     @Produces(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Consumes(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(WEBHOOKS_PATH)
-    public Response registerWebhookXML(@PathParam("orcid") String orcid, @PathParam("webhook_uri") String webhookUrl){
-        serviceDelegator.registerWebhook(orcid, webhookUrl);
+    public Response registerWebhookXML(@PathParam("orcid") String orcid, @PathParam("webhook_uri") String webhookUri){
+        serviceDelegator.registerWebhook(orcid, webhookUri);
         return null;
     }
     
@@ -617,8 +617,8 @@ public class T2OrcidApiServiceImpl implements T2OrcidApiService<Response> {
     @Produces(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Consumes(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(WEBHOOKS_PATH)
-    public Response registerWebhookJson(@PathParam("orcid") String orcid, @PathParam("webhook_uri") String webhookUrl){
-        serviceDelegator.registerWebhook(orcid, webhookUrl);
+    public Response registerWebhookJson(@PathParam("orcid") String orcid, @PathParam("webhook_uri") String webhookUri){
+        serviceDelegator.registerWebhook(orcid, webhookUri);
         return null;
     }
     
@@ -634,8 +634,8 @@ public class T2OrcidApiServiceImpl implements T2OrcidApiService<Response> {
     @Produces(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Consumes(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(WEBHOOKS_PATH)
-    public Response unregisterWebhookXML(@PathParam("orcid") String orcid, @PathParam("webhook_uri") String webhookUrl){
-        serviceDelegator.unregisterWebhook(orcid, webhookUrl);
+    public Response unregisterWebhookXML(@PathParam("orcid") String orcid, @PathParam("webhook_uri") String webhookUri){
+        serviceDelegator.unregisterWebhook(orcid, webhookUri);
         return null;
     }
     
@@ -651,8 +651,8 @@ public class T2OrcidApiServiceImpl implements T2OrcidApiService<Response> {
     @Produces(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Consumes(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(WEBHOOKS_PATH)
-    public Response unregisterWebhookJson(@PathParam("orcid") String orcid, @PathParam("webhook_uri") String webhookUrl){
-        serviceDelegator.unregisterWebhook(orcid, webhookUrl);
+    public Response unregisterWebhookJson(@PathParam("orcid") String orcid, @PathParam("webhook_uri") String webhookUri){
+        serviceDelegator.unregisterWebhook(orcid, webhookUri);
         return null;
     }
 }

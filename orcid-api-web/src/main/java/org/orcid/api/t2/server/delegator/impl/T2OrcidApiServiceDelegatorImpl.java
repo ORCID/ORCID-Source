@@ -396,7 +396,7 @@ public class T2OrcidApiServiceDelegatorImpl implements T2OrcidApiServiceDelegato
      * */
     @Override
     /** TODO: @AccessControl */
-    public Response registerWebhook(String orcid, String webhookUrl){
+    public Response registerWebhook(String orcid, String webhookUri){
         return null;
     }
     
@@ -412,7 +412,7 @@ public class T2OrcidApiServiceDelegatorImpl implements T2OrcidApiServiceDelegato
      * */
     @Override
     /** TODO: @AccessControl */
-    public Response unregisterWebhook(String orcid, String webhookUrl){
+    public Response unregisterWebhook(String orcid, String webhookUri){
         return null;
     }
 
