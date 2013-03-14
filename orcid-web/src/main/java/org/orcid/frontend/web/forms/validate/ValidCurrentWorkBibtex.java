@@ -25,7 +25,7 @@ import java.lang.annotation.Target;
 import javax.validation.Constraint;
 import javax.validation.Payload;
 
-@Target({ ElementType.METHOD, ElementType.TYPE, ElementType.ANNOTATION_TYPE })
+@Target( { ElementType.METHOD, ElementType.TYPE, ElementType.ANNOTATION_TYPE })
 @Retention(RetentionPolicy.RUNTIME)
 @Constraint(validatedBy = CurrentWorkBibtexValidator.class)
 @Documented
@@ -33,7 +33,7 @@ public @interface ValidCurrentWorkBibtex {
 
     String message() default "{orcid.frontend.verify.current_work_bibtex_invalid}";
 
-    Class<?>[] groups() default { };
+    Class<?>[] groups() default {};
 
     Class<? extends Payload>[] payload() default {};
 }

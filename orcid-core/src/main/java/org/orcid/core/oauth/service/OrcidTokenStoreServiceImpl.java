@@ -281,8 +281,8 @@ public class OrcidTokenStoreServiceImpl implements TokenStore {
             AuthorizationRequest request = null;
             if (clientDetailsEntity != null) {
                 Set<String> scopes = OAuth2Utils.parseParameterList(details.getScope());
-                request = new AuthorizationRequest(clientDetailsEntity.getClientId(), scopes, clientDetailsEntity.getAuthorities(),
-                        Arrays.asList(details.getResourceId()));
+                request = new AuthorizationRequest(clientDetailsEntity.getClientId(), scopes, clientDetailsEntity.getAuthorities(), Arrays
+                        .asList(details.getResourceId()));
                 request = request.approved(details.isApproved());
                 ProfileEntity profile = details.getProfile();
                 if (profile != null) {

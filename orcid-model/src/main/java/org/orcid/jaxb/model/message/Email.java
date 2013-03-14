@@ -70,6 +70,8 @@ public class Email implements Serializable, VisibilityType {
     protected Boolean verified;
     @XmlAttribute
     protected Visibility visibility;
+    @XmlAttribute
+    protected String source;
 
     public Email() {
         super();
@@ -195,6 +197,14 @@ public class Email implements Serializable, VisibilityType {
      */
     public void setVisibility(Visibility value) {
         this.visibility = value;
+    }
+
+    public String getSource() {
+        return source;
+    }
+
+    public void setSource(String source) {
+        this.source = source;
     }
 
     /**

@@ -43,38 +43,40 @@ import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
 
 public class JsonpCallbackFilter implements Filter {
 
-	private static Log log = LogFactory.getLog(JsonpCallbackFilter.class);
+    private static Log log = LogFactory.getLog(JsonpCallbackFilter.class);
 
-	public void init(FilterConfig fConfig) throws ServletException {}
+    public void init(FilterConfig fConfig) throws ServletException {
+    }
 
-	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-		HttpServletRequest httpRequest = (HttpServletRequest) request;
-		HttpServletResponse httpResponse = (HttpServletResponse) response;
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+        HttpServletRequest httpRequest = (HttpServletRequest) request;
+        HttpServletResponse httpResponse = (HttpServletResponse) response;
 
-		@SuppressWarnings("unchecked")
-		Map<String, String[]> parms = httpRequest.getParameterMap();
+        @SuppressWarnings("unchecked")
+        Map<String, String[]> parms = httpRequest.getParameterMap();
 
-		if(parms.containsKey("callback")) {
-			if(log.isDebugEnabled())
-				log.debug("Wrapping response with JSONP callback '" + parms.get("callback")[0] + "'");
+        if (parms.containsKey("callback")) {
+            if (log.isDebugEnabled())
+                log.debug("Wrapping response with JSONP callback '" + parms.get("callback")[0] + "'");
 
-			OutputStream out = httpResponse.getOutputStream();
+            OutputStream out = httpResponse.getOutputStream();
 
-			GenericResponseWrapper wrapper = new GenericResponseWrapper(httpResponse);
+            GenericResponseWrapper wrapper = new GenericResponseWrapper(httpResponse);
 
-			chain.doFilter(request, wrapper);
+            chain.doFilter(request, wrapper);
 
-			out.write(new String(parms.get("callback")[0] + "(").getBytes());
-			out.write(wrapper.getData());
-			out.write(new String(");").getBytes());
+            out.write(new String(parms.get("callback")[0] + "(").getBytes());
+            out.write(wrapper.getData());
+            out.write(new String(");").getBytes());
 
-			wrapper.setContentType("text/javascript;charset=UTF-8");
+            wrapper.setContentType("text/javascript;charset=UTF-8");
 
-			out.close();
-		} else {
-			chain.doFilter(request, response);
-		}
-	}
+            out.close();
+        } else {
+            chain.doFilter(request, response);
+        }
+    }
 
-	public void destroy() {}
+    public void destroy() {
+    }
 }

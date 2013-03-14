@@ -15,6 +15,7 @@
  * =============================================================================
  */
 package org.orcid.frontend.web.controllers;
+
 import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.pojo.UserStatus;
 import org.orcid.utils.OrcidStringUtils;
@@ -60,31 +61,31 @@ public class HomeController extends BaseController {
         }
         return "robots";
     }
-    
+
     @RequestMapping(value = "/lang.json")
     @Produces(value = { MediaType.APPLICATION_JSON })
-    public @ResponseBody org.orcid.pojo.Local langJson(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {
-	
-    	Locale locale = RequestContextUtils.getLocale(request);
-    	org.orcid.pojo.Local lPojo = new org.orcid.pojo.Local();
-    	lPojo.setLocale(locale.toString());
-    	
-    	ResourceBundle resources = ResourceBundle.getBundle("i18n/messages", locale);
-    	lPojo.setMessages(OrcidStringUtils.resourceBundleToMap(resources));
-    	
-    	return lPojo;
-    
-    }
-    
-    @RequestMapping(value = "/userStatus.json")
-    @Produces(value = { MediaType.APPLICATION_JSON })
-    public @ResponseBody  Object getUserStatusJson(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {
-    	OrcidProfileUserDetails opd = getCurrentUser();
-    	UserStatus us = new UserStatus();
-    	us.setLoggedIn((opd != null));
-    	return us;
+    public @ResponseBody
+    org.orcid.pojo.Local langJson(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {
+
+        Locale locale = RequestContextUtils.getLocale(request);
+        org.orcid.pojo.Local lPojo = new org.orcid.pojo.Local();
+        lPojo.setLocale(locale.toString());
+
+        ResourceBundle resources = ResourceBundle.getBundle("i18n/messages", locale);
+        lPojo.setMessages(OrcidStringUtils.resourceBundleToMap(resources));
+
+        return lPojo;
+
     }
 
-    
+    @RequestMapping(value = "/userStatus.json")
+    @Produces(value = { MediaType.APPLICATION_JSON })
+    public @ResponseBody
+    Object getUserStatusJson(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {
+        OrcidProfileUserDetails opd = getCurrentUser();
+        UserStatus us = new UserStatus();
+        us.setLoggedIn((opd != null));
+        return us;
+    }
 
 }

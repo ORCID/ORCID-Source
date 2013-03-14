@@ -38,10 +38,10 @@ import org.springframework.cache.annotation.Cacheable;
  * 
  */
 public class CountryManagerImpl implements CountryManager {
-    
+
     @Resource(name = "isoCountryReferenceDataDao")
     private GenericDao<CountryIsoEntity, String> isoCountryReferenceDataDao;
-    
+
     /**
      * Use {@link #retrieveCountriesAndIsoCodes()} instead.
      */
@@ -65,16 +65,13 @@ public class CountryManagerImpl implements CountryManager {
                 return ((String) country1.getCountryName()).compareToIgnoreCase((String) country2.getCountryName());
             }
         });
-        
-        
-        Map<String, String> countriesMap = new LinkedHashMap<String, String>();        
-        
+
+        Map<String, String> countriesMap = new LinkedHashMap<String, String>();
+
         for (CountryIsoEntity country : countries) {
             countriesMap.put(country.getCountryIsoCode(), country.getCountryName());
         }
         return countriesMap;
     }
-    
-    
 
 }

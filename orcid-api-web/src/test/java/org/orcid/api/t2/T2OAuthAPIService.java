@@ -49,7 +49,7 @@ public interface T2OAuthAPIService<T> extends OAuthOrcidApiService<T> {
      *         work(s)
      */
     @POST
-    @Produces(value = { OrcidApiConstants.VND_ORCID_XML, OrcidApiConstants.ORCID_XML, MediaType.APPLICATION_XML, MediaType.WILDCARD })
+    @Produces(value = { OrcidApiConstants.VND_ORCID_XML, OrcidApiConstants.ORCID_XML, MediaType.APPLICATION_XML })
     @Consumes(value = { OrcidApiConstants.VND_ORCID_XML, OrcidApiConstants.ORCID_XML, MediaType.APPLICATION_XML, MediaType.WILDCARD })
     @Path(OrcidApiConstants.PROFILE_POST_PATH)
     T createProfileXML(OrcidMessage orcidMessage, String token);
@@ -75,7 +75,7 @@ public interface T2OAuthAPIService<T> extends OAuthOrcidApiService<T> {
      * @return the XML representation of the ORCID record
      */
     @PUT
-    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, MediaType.WILDCARD })
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
     @Consumes(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, MediaType.WILDCARD })
     @Path(BIO_PATH)
     T updateBioDetailsXml(@PathParam("orcid") String orcid, OrcidMessage orcidMessage, String token);
@@ -104,7 +104,7 @@ public interface T2OAuthAPIService<T> extends OAuthOrcidApiService<T> {
      *         work(s)
      */
     @POST
-    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, MediaType.WILDCARD })
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
     @Consumes(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, MediaType.WILDCARD })
     @Path(WORKS_PATH)
     T addWorksXml(@PathParam("orcid") String orcid, OrcidMessage orcidMessage, String token);
@@ -133,7 +133,7 @@ public interface T2OAuthAPIService<T> extends OAuthOrcidApiService<T> {
      *         work(s)
      */
     @PUT
-    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, MediaType.WILDCARD })
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
     @Consumes(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, MediaType.WILDCARD })
     @Path(WORKS_PATH)
     T updateWorksXml(@PathParam("orcid") String orcid, OrcidMessage orcidMessage, String token);
@@ -162,7 +162,7 @@ public interface T2OAuthAPIService<T> extends OAuthOrcidApiService<T> {
      *         external identifiers(s)
      */
     @POST
-    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, MediaType.WILDCARD })
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
     @Consumes(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, MediaType.WILDCARD })
     @Path(EXTERNAL_IDENTIFIER_PATH)
     T addExternalIdentifiersXml(@PathParam("orcid") String orcid, OrcidMessage orcidMessage, String token);

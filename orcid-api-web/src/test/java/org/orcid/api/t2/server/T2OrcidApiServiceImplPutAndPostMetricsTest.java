@@ -45,12 +45,12 @@ public class T2OrcidApiServiceImplPutAndPostMetricsTest {
     private final Response successResponse = Response.ok().build();
 
     private T2OrcidApiServiceDelegator mockServiceDelegator;
-    
+
     private OrcidMessage orcidMessage;
 
     @Before
     public void setupMocks() {
-        mockServiceDelegator = mock(T2OrcidApiServiceDelegator.class);        
+        mockServiceDelegator = mock(T2OrcidApiServiceDelegator.class);
         // view status is always fine
         t2OrcidApiService.setServiceDelegator(mockServiceDelegator);
         when(mockServiceDelegator.viewStatusText()).thenReturn(successResponse);
@@ -71,7 +71,7 @@ public class T2OrcidApiServiceImplPutAndPostMetricsTest {
         t2OrcidApiService.createProfileXML(orcidMessage);
         assertTrue(T2OrcidApiServiceImpl.T2_POST_REQUESTS.count() == 1);
         assertTrue(T2OrcidApiServiceImpl.T2_PUT_REQUESTS.count() == 0);
-        
+
     }
 
     @Test
@@ -87,17 +87,17 @@ public class T2OrcidApiServiceImplPutAndPostMetricsTest {
     public void testUpdateBioDetailsXml() {
         assertTrue(T2OrcidApiServiceImpl.T2_POST_REQUESTS.count() == 0);
         assertTrue(T2OrcidApiServiceImpl.T2_PUT_REQUESTS.count() == 0);
-        t2OrcidApiService.updateBioDetailsXml("",orcidMessage);
+        t2OrcidApiService.updateBioDetailsXml("", orcidMessage);
         assertTrue(T2OrcidApiServiceImpl.T2_POST_REQUESTS.count() == 0);
         assertTrue(T2OrcidApiServiceImpl.T2_PUT_REQUESTS.count() == 1);
-    
+
     }
 
     @Test
     public void testUpdateBioDetailsJson() {
         assertTrue(T2OrcidApiServiceImpl.T2_POST_REQUESTS.count() == 0);
         assertTrue(T2OrcidApiServiceImpl.T2_PUT_REQUESTS.count() == 0);
-        t2OrcidApiService.updateBioDetailsJson("",orcidMessage);
+        t2OrcidApiService.updateBioDetailsJson("", orcidMessage);
         assertTrue(T2OrcidApiServiceImpl.T2_POST_REQUESTS.count() == 0);
         assertTrue(T2OrcidApiServiceImpl.T2_PUT_REQUESTS.count() == 1);
     }
@@ -106,7 +106,7 @@ public class T2OrcidApiServiceImplPutAndPostMetricsTest {
     public void testAddWorksXml() {
         assertTrue(T2OrcidApiServiceImpl.T2_POST_REQUESTS.count() == 0);
         assertTrue(T2OrcidApiServiceImpl.T2_PUT_REQUESTS.count() == 0);
-        t2OrcidApiService.addWorksXml("",orcidMessage);
+        t2OrcidApiService.addWorksXml("", orcidMessage);
         assertTrue(T2OrcidApiServiceImpl.T2_POST_REQUESTS.count() == 1);
         assertTrue(T2OrcidApiServiceImpl.T2_PUT_REQUESTS.count() == 0);
     }
@@ -115,7 +115,7 @@ public class T2OrcidApiServiceImplPutAndPostMetricsTest {
     public void testAddWorksJson() {
         assertTrue(T2OrcidApiServiceImpl.T2_POST_REQUESTS.count() == 0);
         assertTrue(T2OrcidApiServiceImpl.T2_PUT_REQUESTS.count() == 0);
-        t2OrcidApiService.addWorksJson("",orcidMessage);
+        t2OrcidApiService.addWorksJson("", orcidMessage);
         assertTrue(T2OrcidApiServiceImpl.T2_POST_REQUESTS.count() == 1);
         assertTrue(T2OrcidApiServiceImpl.T2_PUT_REQUESTS.count() == 0);
     }
@@ -124,7 +124,7 @@ public class T2OrcidApiServiceImplPutAndPostMetricsTest {
     public void testUpdateWorksXml() {
         assertTrue(T2OrcidApiServiceImpl.T2_POST_REQUESTS.count() == 0);
         assertTrue(T2OrcidApiServiceImpl.T2_PUT_REQUESTS.count() == 0);
-        t2OrcidApiService.updateWorksXml("",orcidMessage);
+        t2OrcidApiService.updateWorksXml("", orcidMessage);
         assertTrue(T2OrcidApiServiceImpl.T2_POST_REQUESTS.count() == 0);
         assertTrue(T2OrcidApiServiceImpl.T2_PUT_REQUESTS.count() == 1);
     }
@@ -133,7 +133,7 @@ public class T2OrcidApiServiceImplPutAndPostMetricsTest {
     public void testUpdateWorksJson() {
         assertTrue(T2OrcidApiServiceImpl.T2_POST_REQUESTS.count() == 0);
         assertTrue(T2OrcidApiServiceImpl.T2_PUT_REQUESTS.count() == 0);
-        t2OrcidApiService.updateWorksJson("",orcidMessage);
+        t2OrcidApiService.updateWorksJson("", orcidMessage);
         assertTrue(T2OrcidApiServiceImpl.T2_POST_REQUESTS.count() == 0);
         assertTrue(T2OrcidApiServiceImpl.T2_PUT_REQUESTS.count() == 1);
     }
@@ -142,7 +142,7 @@ public class T2OrcidApiServiceImplPutAndPostMetricsTest {
     public void testAddExternalIdentifiersXml() {
         assertTrue(T2OrcidApiServiceImpl.T2_POST_REQUESTS.count() == 0);
         assertTrue(T2OrcidApiServiceImpl.T2_PUT_REQUESTS.count() == 0);
-        t2OrcidApiService.addExternalIdentifiersXml("",orcidMessage);
+        t2OrcidApiService.addExternalIdentifiersXml("", orcidMessage);
         assertTrue(T2OrcidApiServiceImpl.T2_POST_REQUESTS.count() == 1);
         assertTrue(T2OrcidApiServiceImpl.T2_PUT_REQUESTS.count() == 0);
     }
@@ -151,11 +151,9 @@ public class T2OrcidApiServiceImplPutAndPostMetricsTest {
     public void testAddExternalIdentifiersJson() {
         assertTrue(T2OrcidApiServiceImpl.T2_POST_REQUESTS.count() == 0);
         assertTrue(T2OrcidApiServiceImpl.T2_PUT_REQUESTS.count() == 0);
-        t2OrcidApiService.addExternalIdentifiersJson("",orcidMessage);
+        t2OrcidApiService.addExternalIdentifiersJson("", orcidMessage);
         assertTrue(T2OrcidApiServiceImpl.T2_POST_REQUESTS.count() == 1);
         assertTrue(T2OrcidApiServiceImpl.T2_PUT_REQUESTS.count() == 0);
     }
-
-    
 
 }

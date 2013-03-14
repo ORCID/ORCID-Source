@@ -39,22 +39,21 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 public class RegistrationManagerImplTest {
 
     @Resource
-    RegistrationManagerImpl registrationManagerImpl;  
-    
+    RegistrationManagerImpl registrationManagerImpl;
+
     private OrcidProfileManager orcidProfileManager;
 
     @Before
-    public void mockDependencies() {        
+    public void mockDependencies() {
         RegistrationManagerImpl.REGISTRATIONS_VERIFIED_COUNTER.clear();
-        orcidProfileManager=mock(OrcidProfileManager.class);
+        orcidProfileManager = mock(OrcidProfileManager.class);
         registrationManagerImpl.setNotificationManager(mock(NotificationManager.class));
-        registrationManagerImpl.setOrcidProfileManager(orcidProfileManager);         
+        registrationManagerImpl.setOrcidProfileManager(orcidProfileManager);
         registrationManagerImpl.setNotificationManager(mock(NotificationManager.class));
     }
-    
 
     @Test
-    public void testVerifyRegistration() throws Exception{      
+    public void testVerifyRegistration() throws Exception {
         assertTrue(RegistrationManagerImpl.REGISTRATIONS_VERIFIED_COUNTER.count() == 0);
         OrcidProfile orcidProfile = new OrcidProfile();
         orcidProfile.setOrcid("xyz");

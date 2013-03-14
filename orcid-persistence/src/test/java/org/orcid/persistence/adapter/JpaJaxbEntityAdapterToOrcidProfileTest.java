@@ -76,6 +76,7 @@ import org.orcid.jaxb.model.message.SecurityDetails;
 import org.orcid.jaxb.model.message.Source;
 import org.orcid.jaxb.model.message.Url;
 import org.orcid.jaxb.model.message.Visibility;
+import org.orcid.jaxb.model.message.WorkContributors;
 import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.test.DBUnitTest;
@@ -150,6 +151,7 @@ public class JpaJaxbEntityAdapterToOrcidProfileTest extends DBUnitTest {
         assertFalse(primaryEmail.isVerified());
         assertEquals(Visibility.PRIVATE, primaryEmail.getVisibility());
         assertEquals("andrew@timothy.com", primaryEmail.getValue());
+        assertEquals("4444-4444-4444-4441", primaryEmail.getSource());
 
         Email nonPrimaryEmail = contactDetails.getEmailByString("andrew2@timothy.com");
         assertNotNull(nonPrimaryEmail);
@@ -158,6 +160,7 @@ public class JpaJaxbEntityAdapterToOrcidProfileTest extends DBUnitTest {
         assertFalse(nonPrimaryEmail.isVerified());
         assertEquals(Visibility.PRIVATE, nonPrimaryEmail.getVisibility());
         assertEquals("andrew2@timothy.com", nonPrimaryEmail.getValue());
+        assertEquals("4444-4444-4444-4441", nonPrimaryEmail.getSource());
 
         assertEquals(2, contactDetails.getEmail().size());
 
@@ -192,6 +195,11 @@ public class JpaJaxbEntityAdapterToOrcidProfileTest extends DBUnitTest {
         assertNotNull(workCitation);
         assertEquals("Bobby Ewing, ", workCitation.getCitation());
         assertEquals(CitationType.FORMATTED_IEEE, workCitation.getWorkCitationType());
+        WorkContributors contributors = orcidWork.getWorkContributors();
+        assertNotNull(contributors);
+        assertEquals(2, contributors.getContributor().size());
+        assertEquals("Jaylen Kessler", contributors.getContributor().get(0).getCreditName().getContent());
+        assertEquals(Visibility.LIMITED, contributors.getContributor().get(0).getCreditName().getVisibility());
     }
 
     private void checkOrcidGrants(OrcidGrants orcidGrants) {

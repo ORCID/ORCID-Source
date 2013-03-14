@@ -131,11 +131,8 @@ public class OrcidBatchLoad {
         keywords.getKeyword().add(new Keyword(RandomStringUtils.randomAlphabetic(255)));
         profile.getOrcidBio().setKeywords(keywords);
 
-       
-      
         List<OrcidWork> orcidWorks = profile.retrieveOrcidWorks().getOrcidWork();
-      
-       
+
     }
 
 }

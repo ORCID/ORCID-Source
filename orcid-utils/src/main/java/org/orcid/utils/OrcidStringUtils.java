@@ -44,25 +44,25 @@ public class OrcidStringUtils {
             return false;
         }
     }
-    
+
     public static String getOrcidNumber(String orcid) {
-        Matcher matcher =  pattern.matcher(orcid);
+        Matcher matcher = pattern.matcher(orcid);
         if (matcher.find()) {
-             return matcher.group(0);
-        } 
+            return matcher.group(0);
+        }
         return null;
     }
-    
+
     public static Map<String, String> resourceBundleToMap(ResourceBundle resource) {
         Map<String, String> map = new HashMap<String, String>();
 
         Enumeration<String> keys = resource.getKeys();
         while (keys.hasMoreElements()) {
-          String key = keys.nextElement();
-          map.put(key, resource.getString(key));
+            String key = keys.nextElement();
+            map.put(key, resource.getString(key));
         }
 
         return map;
-      }
-    
+    }
+
 }

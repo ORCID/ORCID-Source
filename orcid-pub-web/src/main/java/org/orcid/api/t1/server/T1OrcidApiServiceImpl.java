@@ -50,7 +50,6 @@ public class T1OrcidApiServiceImpl implements OrcidApiService<Response> {
     final static Counter T1_GET_REQUESTS = Metrics.newCounter(T1OrcidApiServiceImpl.class, "T1-GET-REQUESTS");
     final static Counter T1_SEARCH_REQUESTS = Metrics.newCounter(T1OrcidApiServiceImpl.class, "T1-SEARCH-REQUESTS");
 
-
     final static Counter T1_SEARCH_RESULTS_NONE_FOUND = Metrics.newCounter(T1OrcidApiServiceImpl.class, "T1-SEARCH-RESULTS-NONE-FOUND");
     final static Counter T1_SEARCH_RESULTS_FOUND = Metrics.newCounter(T1OrcidApiServiceImpl.class, "T1-SEARCH-RESULTS-FOUND");
 
@@ -105,7 +104,7 @@ public class T1OrcidApiServiceImpl implements OrcidApiService<Response> {
      */
     @Override
     @GET
-    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, MediaType.WILDCARD })
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
     @Path(BIO_PATH)
     public Response viewBioDetailsXml(@PathParam("orcid") String orcid) {
         T1_GET_REQUESTS.inc();
@@ -156,7 +155,7 @@ public class T1OrcidApiServiceImpl implements OrcidApiService<Response> {
      */
     @Override
     @GET
-    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, MediaType.WILDCARD })
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
     @Path(EXTERNAL_IDENTIFIER_PATH)
     public Response viewExternalIdentifiersXml(@PathParam("orcid") String orcid) {
         T1_GET_REQUESTS.inc();
@@ -206,7 +205,7 @@ public class T1OrcidApiServiceImpl implements OrcidApiService<Response> {
      */
     @Override
     @GET
-    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, MediaType.WILDCARD })
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
     @Path(PROFILE_GET_PATH)
     public Response viewFullDetailsXml(@PathParam("orcid") String orcid) {
         T1_GET_REQUESTS.inc();
@@ -256,7 +255,7 @@ public class T1OrcidApiServiceImpl implements OrcidApiService<Response> {
      * @return the XML representation of the ORCID record
      */
     @GET
-    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, MediaType.WILDCARD })
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
     @Path(WORKS_PATH)
     public Response viewWorksDetailsXml(@PathParam("orcid") String orcid) {
         T1_GET_REQUESTS.inc();
@@ -308,7 +307,7 @@ public class T1OrcidApiServiceImpl implements OrcidApiService<Response> {
      */
     @Override
     @GET
-    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, MediaType.WILDCARD })
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
     @Path(BIO_SEARCH_PATH)
     public Response searchByQueryXML(String query) {
         T1_SEARCH_REQUESTS.inc();

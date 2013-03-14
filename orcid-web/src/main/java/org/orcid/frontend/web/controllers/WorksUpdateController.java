@@ -162,8 +162,8 @@ public class WorksUpdateController extends BaseWorkspaceController {
         String searchText = getSearchTerms(currentUser);
         List<CrossRefMetadata> metadatas = null;
         try {
-           metadatas = crossRefManager.searchForMetadata(searchText);
-           mav.addObject("searchAndAddForm", new CurrentWorksForm(metadatas));
+            metadatas = crossRefManager.searchForMetadata(searchText);
+            mav.addObject("searchAndAddForm", new CurrentWorksForm(metadatas));
         } catch (Exception e) {
             mav.addObject("searchAndAddFormError", "Yikes");
         }

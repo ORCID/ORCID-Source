@@ -82,12 +82,15 @@
     	        	<li><a href="#third-parties" class="colorbox-modal">Import Research Activities</a></li>
     	        </ul>
     	        <div class="inline-modal" id="third-parties">
+    	           <h1>Import Research Activities</h1>
+    	           <br />
     	           <#list thirdPartiesForImport as thirdPartyDetails>
-                        <#if thirdPartyDetails_index != 0><br/></#if>
                         <#assign redirect = (thirdPartyDetails.redirectUris.redirectUri[0].value) >
                         <#assign predefScopes = (thirdPartyDetails.redirectUris.redirectUri[0].scopeAsSingleString) >
-                        <a class="third-party-colorbox" href="<@spring.url '/oauth/authorize?client_id=${thirdPartyDetails.clientId}&response_type=code&scope=${predefScopes}&redirect_uri=${redirect}'/>">${thirdPartyDetails.displayName}</a>          
+                        <strong><a class="third-party-colorbox" href="<@spring.url '/oauth/authorize?client_id=${thirdPartyDetails.clientId}&response_type=code&scope=${predefScopes}&redirect_uri=${redirect}'/>">${thirdPartyDetails.displayName}</a></strong><br />
+                        ${(thirdPartyDetails.shortDescription)!}<#if (thirdPartyDetails_has_next)><hr /></#if>
                     </#list>
+                    <br /><br />
     	        </div>
 	        </#if>
         </div>

@@ -21,14 +21,12 @@
 // Generated on: 2012.08.09 at 01:52:56 PM BST 
 //
 
-
 package org.orcid.jaxb.model.message;
 
 import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlEnumValue;
 import javax.xml.bind.annotation.XmlType;
 import java.io.Serializable;
-
 
 /**
  * <p>Java class for scope.
@@ -50,8 +48,7 @@ import java.io.Serializable;
 public enum Scope implements Serializable {
 
     @XmlEnumValue("read-protected")
-    READ_PROTECTED("read-protected"),
-    @XmlEnumValue("update")
+    READ_PROTECTED("read-protected"), @XmlEnumValue("update")
     UPDATE("update");
     private final String value;
 
@@ -64,7 +61,7 @@ public enum Scope implements Serializable {
     }
 
     public static Scope fromValue(String v) {
-        for (Scope c: Scope.values()) {
+        for (Scope c : Scope.values()) {
             if (c.value.equals(v)) {
                 return c;
             }

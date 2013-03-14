@@ -16,7 +16,6 @@
  */
 package org.orcid.persistence.jpa.entities;
 
-
 import org.orcid.persistence.jpa.entities.keys.PatentSourceEntityPk;
 
 import javax.persistence.Column;
@@ -48,10 +47,7 @@ public class PatentSourceEntity extends BaseEntity<PatentSourceEntityPk> impleme
 
     @Id
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumns( {
-            @JoinColumn(name = "patent_id", nullable = false),
-            @JoinColumn(name = "orcid", nullable = false)
-    } )
+    @JoinColumns( { @JoinColumn(name = "patent_id", nullable = false), @JoinColumn(name = "orcid", nullable = false) })
     public ProfilePatentEntity getProfilePatent() {
         return profilePatent;
     }
@@ -83,9 +79,8 @@ public class PatentSourceEntity extends BaseEntity<PatentSourceEntityPk> impleme
     @Override
     public int compareTo(PatentSourceEntity sponsorEntity) {
         //TODO: implement
-        return 0;  //To change body of implemented methods use File | Settings | File Templates.
+        return 0; //To change body of implemented methods use File | Settings | File Templates.
     }
-
 
     /**
      * @return always null as we're using a composite key

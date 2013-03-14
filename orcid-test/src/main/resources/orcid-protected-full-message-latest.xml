@@ -69,8 +69,8 @@
                 </researcher-url>
             </researcher-urls>
             <contact-details>
-                <email visibility="limited" primary="true" current="true" verified="true">josiah_carberry@brown.edu</email>
-                <email visibility="limited" primary="false" current="true" verified="false">josiah_carberry_1@brown.edu</email>
+                <email visibility="limited" primary="true" current="true" verified="true" source="4444-4444-4444-4446">josiah_carberry@brown.edu</email>
+                <email visibility="limited" primary="false" current="true" verified="false" source="1111-1111-1111-1115">josiah_carberry_1@brown.edu</email>
                 <email visibility="limited" primary="false" current="false" verified="true">josiah_carberry_2@brown.edu</email>
                 <address>
                     <country>US</country>

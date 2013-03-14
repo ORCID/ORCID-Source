@@ -226,8 +226,8 @@ public class RegistrationController extends BaseController {
         LOGGER.info("User with email={}, sessionid={} has asked to register", email, sessionId);
         validateEmailAddress(email, false, request, bindingResult);
         if (bindingResult.hasErrors()) {
-            LOGGER.info("Failed validation on registration page for email={}, sessionid={}, with errors={}",
-                    new Object[] { email, sessionId, bindingResult.getAllErrors() });
+            LOGGER.info("Failed validation on registration page for email={}, sessionid={}, with errors={}", new Object[] { email, sessionId,
+                    bindingResult.getAllErrors() });
             ModelAndView erroredView = new ModelAndView("register");
             erroredView.addAllObjects(bindingResult.getModel());
             return erroredView;
@@ -644,8 +644,8 @@ public class RegistrationController extends BaseController {
         LOGGER.info("User with email={}, sessionid={} has asked to register during oauth", email, sessionId);
         validateEmailAddress(email, request, bindingResult);
         if (bindingResult.hasErrors()) {
-            LOGGER.info("Failed validation on registration page during oauth for email={}, sessionid={}, with errors={}",
-                    new Object[] { email, sessionId, bindingResult.getAllErrors() });
+            LOGGER.info("Failed validation on registration page during oauth for email={}, sessionid={}, with errors={}", new Object[] { email, sessionId,
+                    bindingResult.getAllErrors() });
             ModelAndView erroredView = new ModelAndView("oauth_login");
             erroredView.addObject("loginForm", loginForm);
             erroredView.addAllObjects(bindingResult.getModel());

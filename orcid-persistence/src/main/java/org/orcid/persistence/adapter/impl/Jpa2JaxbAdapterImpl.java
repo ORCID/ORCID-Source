@@ -546,6 +546,10 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
                 email.setCurrent(emailEntity.getCurrent());
                 email.setVerified(emailEntity.getVerified());
                 email.setVisibility(emailEntity.getVisibility());
+                ProfileEntity source = emailEntity.getSource();
+                if (source != null) {
+                    email.setSource(source.getId());
+                }
                 emailList.add(email);
             }
         }
@@ -639,11 +643,6 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         return null;
     }
 
-    private void getScope() {
-        // TODO Auto-generated method stub
-
-    }
-
     private OrcidWork getOrcidWork(ProfileWorkEntity profileWorkEntity) {
         WorkEntity work = profileWorkEntity.getWork();
         if (work == null) {
@@ -656,7 +655,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         orcidWork.setShortDescription(work.getDescription());
         orcidWork.setUrl(StringUtils.isNotBlank(work.getWorkUrl()) ? new Url(work.getWorkUrl()) : null);
         orcidWork.setWorkCitation(getWorkCitation(work));
-        orcidWork.setWorkContributors(getWorkContributors(work));
+        orcidWork.setWorkContributors(getWorkContributors(profileWorkEntity));
         orcidWork.setWorkExternalIdentifiers(getWorkExternalIdentifiers(work));
         orcidWork.setWorkSources(getWorkSources(profileWorkEntity));
         orcidWork.setWorkTitle(getWorkTitle(work));
@@ -742,14 +741,15 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         return workExternalIdentifier;
     }
 
-    private WorkContributors getWorkContributors(WorkEntity work) {
+    private WorkContributors getWorkContributors(ProfileWorkEntity profileWorkEntity) {
+        WorkEntity work = profileWorkEntity.getWork();
         if (work == null || work.getContributors() == null || work.getContributors().isEmpty()) {
             return null;
         }
         Set<WorkContributorEntity> contributorEntities = work.getContributors();
         WorkContributors workContributors = new WorkContributors();
         for (WorkContributorEntity contributorEntity : contributorEntities) {
-            Contributor workContributor = getWorkContributor(contributorEntity);
+            Contributor workContributor = getWorkContributor(contributorEntity, profileWorkEntity.getVisibility());
             if (workContributor != null) {
                 workContributors.getContributor().add(workContributor);
             }
@@ -757,21 +757,31 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         return workContributors;
     }
 
-    private Contributor getWorkContributor(WorkContributorEntity contributorEntity) {
+    private Contributor getWorkContributor(WorkContributorEntity contributorEntity, Visibility visibility) {
         if (contributorEntity == null) {
             return null;
         }
+
         Contributor contributor = new Contributor();
-        contributor.setContributorEmail(StringUtils.isNotBlank(contributorEntity.getContributorEmail()) ? new ContributorEmail(contributorEntity.getContributorEmail())
-                : null);
-        contributor.setContributorAttributes(getContributorAttributes(contributorEntity));
         ProfileEntity profile = contributorEntity.getProfile();
         if (profile != null) {
-            contributor.setContributorOrcid(new ContributorOrcid(profile.getId()));
+            contributor.setContributorEmail(profile.getPrimaryEmail() != null ? new ContributorEmail(profile.getPrimaryEmail().getId()) : null);
             contributor.setCreditName(new CreditName(profile.getCreditName()));
+            contributor.setContributorOrcid(new ContributorOrcid(profile.getId()));
         } else {
-            contributor.setCreditName(new CreditName(contributorEntity.getCreditName()));
+            contributor.setContributorEmail(StringUtils.isNotBlank(contributorEntity.getContributorEmail()) ? new ContributorEmail(contributorEntity
+                    .getContributorEmail()) : null);
+            if (StringUtils.isNotBlank(contributorEntity.getCreditName())) {
+                CreditName creditName = new CreditName(contributorEntity.getCreditName());
+                // Set visibility from parent work
+                creditName.setVisibility(visibility);
+                contributor.setCreditName(creditName);
+
+            }
         }
+
+        contributor.setContributorAttributes(getContributorAttributes(contributorEntity));
+
         return contributor;
     }
 

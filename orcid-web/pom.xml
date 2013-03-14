@@ -10,6 +10,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <main.basedir>${project.parent.basedir}</main.basedir>
     </properties>
 
     <artifactId>orcid-web</artifactId>
@@ -216,23 +217,6 @@
                             </dependency>
                         </dependencies>
                     </container>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>com.mycila.maven-license-plugin</groupId>
-                <artifactId>maven-license-plugin</artifactId>
-                <configuration>
-                    <header>${project.basedir}/../SHORT_LICENSE.txt</header>
-                    <excludes>
-                         <exclude>**/src/main/webapp/**/jquery*</exclude>
-                         <exclude>**/src/main/webapp/**/plugins.js</exclude>
-                         <exclude>**/src/main/webapp/**/modernizr.js</exclude>
-                         <exclude>**/src/main/webapp/static/css/bootstrap*</exclude>
-                         <exclude>**/src/test/resources/org/**/*.xml</exclude>                                  
-                         <exclude>**/src/main/webapp/static/ORCID-Fonts-Dot-Com/*</exclude>                                  
-                         <exclude>**/.gitignore</exclude>
-                         <exclude>**/rebel.xml</exclude>
-                    </excludes>
                 </configuration>
             </plugin>
         </plugins>

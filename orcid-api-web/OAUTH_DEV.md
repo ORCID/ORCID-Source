@@ -94,7 +94,7 @@ A further note on the redirect uri - there can be zero or more pre-defined scope
 
       export MAVEN_OPTS="-Xmx1024m -XX:MaxPermSize=256m -Dorg.orcid.config.file=file:///usr/local/orcid/webapps/conf/orcid.properties"
 
-* cd into orcid-frontend-web
+* cd into orcid-web
 
 * mvn install
 

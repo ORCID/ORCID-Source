@@ -23,3 +23,4 @@
 
 @javax.xml.bind.annotation.XmlSchema(namespace = "http://www.orcid.org/ns/orcid", elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED)
 package org.orcid.jaxb.model.message;
+

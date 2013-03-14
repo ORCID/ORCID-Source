@@ -34,7 +34,7 @@ public class CurrentWorkBibtexValidator implements ConstraintValidator<ValidCurr
         if (CitationType.BIBTEX.value().equals(currentWork.getCitationType())) {
             String citation = currentWork.getCitation();
             boolean isValid = BibtexUtils.isValid(citation);
-            if(!isValid){
+            if (!isValid) {
                 context.buildConstraintViolationWithTemplate("BibTeX is not valid").addNode("citation").addConstraintViolation();
             }
             return isValid;

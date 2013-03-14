@@ -54,16 +54,14 @@ import java.io.Serializable;
 @XmlRootElement(name = "country")
 public class Country implements Serializable, VisibilityType {
 
-    
-    
     @XmlValue
     protected String content;
 
     public Country() {
     }
-    
+
     @XmlAttribute
-    protected Visibility visibility;   
+    protected Visibility visibility;
 
     public Country(String content) {
         this.content = content;
@@ -107,7 +105,7 @@ public class Country implements Serializable, VisibilityType {
     public int hashCode() {
         return content.hashCode();
     }
-    
+
     public Visibility getVisibility() {
         return visibility;
     }

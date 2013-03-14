@@ -49,8 +49,8 @@ import org.orcid.jaxb.model.message.SourceName;
 
 public class MarshallingTest {
 
-    private static final List<String> GENESIS = new ArrayList<String>(Arrays.asList("Peter Gabriel", "Tony Banks", "Anthony Phillips", "Mike Rutherford",
-            "Chris Stewart"));
+    private static final List<String> GENESIS = new ArrayList<String>(Arrays
+            .asList("Peter Gabriel", "Tony Banks", "Anthony Phillips", "Mike Rutherford", "Chris Stewart"));
 
     @Test
     public void testMarshallingFullMessage() throws JAXBException {
@@ -75,11 +75,11 @@ public class MarshallingTest {
             SourceName sponsorName = sponsor.getSourceName();
             assertTrue(GENESIS.contains(sponsorName.getContent()));
         }
-        
-       OrcidWorks orcidWorks = orcidProfile.retrieveOrcidWorks();
-       assertTrue(orcidWorks!=null && orcidWorks.getOrcidWork().size()==1);
-       OrcidWork orcidWork = orcidWorks.getOrcidWork().get(0);
-       assertEquals("bible", orcidWork.getWorkType().value());
+
+        OrcidWorks orcidWorks = orcidProfile.retrieveOrcidWorks();
+        assertTrue(orcidWorks != null && orcidWorks.getOrcidWork().size() == 1);
+        OrcidWork orcidWork = orcidWorks.getOrcidWork().get(0);
+        assertEquals("bible", orcidWork.getWorkType().value());
 
     }
 

@@ -27,7 +27,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class IntegerStringCrossFieldValidator implements ConstraintValidator<IntegerStringCrossField, Object> {
-    
+
     private static final Logger LOGGER = LoggerFactory.getLogger(IntegerStringCrossFieldValidator.class);
     private int indexToPotentiallyIgnore;
     private String fieldToindex;
@@ -45,7 +45,7 @@ public class IntegerStringCrossFieldValidator implements ConstraintValidator<Int
 
         try {
             String indexFieldValue = BeanUtils.getProperty(value, fieldToindex);
-            String validationField = BeanUtils.getProperty(value, fieldToConditionallyValidate);           
+            String validationField = BeanUtils.getProperty(value, fieldToConditionallyValidate);
 
             if (indexFieldValue.equals(String.valueOf(indexToPotentiallyIgnore))) {
                 // it's valid if the value associated with the null index field is blank
@@ -60,7 +60,7 @@ public class IntegerStringCrossFieldValidator implements ConstraintValidator<Int
         } catch (InvocationTargetException e) {
             LOGGER.error("The underlying method used for date validation threw an exception", e);
         }
-        
+
         return false;
     }
 

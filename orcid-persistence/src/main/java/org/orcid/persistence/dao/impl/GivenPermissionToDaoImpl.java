@@ -28,7 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
  * @author Will Simpson
  * 
  */
-@PersistenceContext(unitName="orcid")
+@PersistenceContext(unitName = "orcid")
 public class GivenPermissionToDaoImpl extends GenericDaoImpl<GivenPermissionToEntity, Long> implements GivenPermissionToDao {
 
     public GivenPermissionToDaoImpl() {

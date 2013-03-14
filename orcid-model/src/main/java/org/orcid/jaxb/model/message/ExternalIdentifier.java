@@ -21,7 +21,6 @@
 // Generated on: 2012.08.02 at 11:50:02 AM BST 
 //
 
-
 package org.orcid.jaxb.model.message;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -30,7 +29,6 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import java.io.Serializable;
-
 
 /**
  * <p>Java class for anonymous complex type.
@@ -53,12 +51,7 @@ import java.io.Serializable;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = {
-        "externalIdOrcid",
-        "externalIdCommonName",
-        "externalIdReference",
-        "externalIdUrl"
-})
+@XmlType(name = "", propOrder = { "externalIdOrcid", "externalIdCommonName", "externalIdReference", "externalIdUrl" })
 @XmlRootElement(name = "external-identifier")
 public class ExternalIdentifier implements Serializable {
 
@@ -74,7 +67,6 @@ public class ExternalIdentifier implements Serializable {
     public ExternalIdentifier() {
         super();
     }
-
 
     public ExternalIdentifier(ExternalIdOrcid externalIdOrcid, ExternalIdReference externalIdReference) {
         super();

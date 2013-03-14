@@ -22,8 +22,8 @@ import org.springframework.validation.ObjectError;
 
 public interface ErrorsInterface {
 
-	public List<String> getErrors();
+    public List<String> getErrors();
 
-	public void setErrors(List<String> errors);
+    public void setErrors(List<String> errors);
 
 }

@@ -16,27 +16,25 @@
  */
 package org.orcid.pojo;
 
-
 import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.validation.ObjectError;
 
-public class Email extends org.orcid.jaxb.model.message.Email implements
-		ErrorsInterface {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
+public class Email extends org.orcid.jaxb.model.message.Email implements ErrorsInterface {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
 
-	private List<String> errors = new ArrayList<String>();
+    private List<String> errors = new ArrayList<String>();
 
-	public List<String> getErrors() {
-		return errors;
-	}
+    public List<String> getErrors() {
+        return errors;
+    }
 
-	public void setErrors(List<String> errors) {
-		this.errors = errors;
-	}
+    public void setErrors(List<String> errors) {
+        this.errors = errors;
+    }
 
 }

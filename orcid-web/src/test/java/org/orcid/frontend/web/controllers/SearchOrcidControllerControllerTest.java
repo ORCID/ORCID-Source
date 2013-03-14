@@ -51,106 +51,105 @@ public class SearchOrcidControllerControllerTest {
     public void setupDependencies() throws Exception {
         SearchOrcidController.FRONTEND_WEB_SEARCH_REQUESTS.clear();
         SearchOrcidController.FRONTEND_WEB_SEARCH_RESULTS_NONE_FOUND.clear();
-        SearchOrcidController.FRONTEND_WEB_SEARCH_RESULTS_FOUND.clear();        
+        SearchOrcidController.FRONTEND_WEB_SEARCH_RESULTS_FOUND.clear();
         orcidSearchManager = mock(OrcidSearchManager.class);
         searchOrcidController.setOrcidSearchManager(orcidSearchManager);
     }
 
     @Test
     public void testSearchByOrcidResultsReturned() {
-        assertTrue(SearchOrcidController.FRONTEND_WEB_SEARCH_REQUESTS.count()==0);
-        assertTrue(SearchOrcidController.FRONTEND_WEB_SEARCH_RESULTS_NONE_FOUND.count()==0);
-        assertTrue(SearchOrcidController.FRONTEND_WEB_SEARCH_RESULTS_NONE_FOUND.count()==0);        
-      
+        assertTrue(SearchOrcidController.FRONTEND_WEB_SEARCH_REQUESTS.count() == 0);
+        assertTrue(SearchOrcidController.FRONTEND_WEB_SEARCH_RESULTS_NONE_FOUND.count() == 0);
+        assertTrue(SearchOrcidController.FRONTEND_WEB_SEARCH_RESULTS_NONE_FOUND.count() == 0);
+
         when(orcidSearchManager.findOrcidSearchResultsById(any(String.class))).thenReturn(orcidWithMultipleResults());
         SearchOrcidBioForm orcidBioForm = new SearchOrcidBioForm();
         orcidBioForm.setOrcid("oid");
-        searchOrcidController.searchByOrcid(orcidBioForm,mock(BindingResult.class));
-        assertTrue(SearchOrcidController.FRONTEND_WEB_SEARCH_REQUESTS.count()==1);
-        assertTrue(SearchOrcidController.FRONTEND_WEB_SEARCH_RESULTS_FOUND.count()==3);
-        assertTrue(SearchOrcidController.FRONTEND_WEB_SEARCH_RESULTS_NONE_FOUND.count()==0);        
-        
+        searchOrcidController.searchByOrcid(orcidBioForm, mock(BindingResult.class));
+        assertTrue(SearchOrcidController.FRONTEND_WEB_SEARCH_REQUESTS.count() == 1);
+        assertTrue(SearchOrcidController.FRONTEND_WEB_SEARCH_RESULTS_FOUND.count() == 3);
+        assertTrue(SearchOrcidController.FRONTEND_WEB_SEARCH_RESULTS_NONE_FOUND.count() == 0);
+
     }
-    
+
     @Test
     public void testQuickSearchResultsReturned() {
-        assertTrue(SearchOrcidController.FRONTEND_WEB_SEARCH_REQUESTS.count()==0);
-        assertTrue(SearchOrcidController.FRONTEND_WEB_SEARCH_RESULTS_NONE_FOUND.count()==0);
-        assertTrue(SearchOrcidController.FRONTEND_WEB_SEARCH_RESULTS_NONE_FOUND.count()==0);        
-      
-        when(orcidSearchManager.findOrcidsByQuery("text:nonblank*")).thenReturn(orcidWithMultipleResults());      
+        assertTrue(SearchOrcidController.FRONTEND_WEB_SEARCH_REQUESTS.count() == 0);
+        assertTrue(SearchOrcidController.FRONTEND_WEB_SEARCH_RESULTS_NONE_FOUND.count() == 0);
+        assertTrue(SearchOrcidController.FRONTEND_WEB_SEARCH_RESULTS_NONE_FOUND.count() == 0);
+
+        when(orcidSearchManager.findOrcidsByQuery("text:nonblank*")).thenReturn(orcidWithMultipleResults());
         searchOrcidController.quickSearch("nonblank");
-        assertTrue(SearchOrcidController.FRONTEND_WEB_SEARCH_REQUESTS.count()==1);
-        assertTrue(SearchOrcidController.FRONTEND_WEB_SEARCH_RESULTS_FOUND.count()==3);
-        assertTrue(SearchOrcidController.FRONTEND_WEB_SEARCH_RESULTS_NONE_FOUND.count()==0);
+        assertTrue(SearchOrcidController.FRONTEND_WEB_SEARCH_REQUESTS.count() == 1);
+        assertTrue(SearchOrcidController.FRONTEND_WEB_SEARCH_RESULTS_FOUND.count() == 3);
+        assertTrue(SearchOrcidController.FRONTEND_WEB_SEARCH_RESULTS_NONE_FOUND.count() == 0);
     }
-    
+
     @Test
     public void testQuickSearchNoResultsReturned() {
-        assertTrue(SearchOrcidController.FRONTEND_WEB_SEARCH_REQUESTS.count()==0);
-        assertTrue(SearchOrcidController.FRONTEND_WEB_SEARCH_RESULTS_NONE_FOUND.count()==0);
-        assertTrue(SearchOrcidController.FRONTEND_WEB_SEARCH_RESULTS_NONE_FOUND.count()==0);
-        
+        assertTrue(SearchOrcidController.FRONTEND_WEB_SEARCH_REQUESTS.count() == 0);
+        assertTrue(SearchOrcidController.FRONTEND_WEB_SEARCH_RESULTS_NONE_FOUND.count() == 0);
+        assertTrue(SearchOrcidController.FRONTEND_WEB_SEARCH_RESULTS_NONE_FOUND.count() == 0);
+
         when(orcidSearchManager.findOrcidsByQuery("text:nonefound*")).thenReturn(orcidWithNoResults());
         searchOrcidController.quickSearch("");
-        assertTrue(SearchOrcidController.FRONTEND_WEB_SEARCH_REQUESTS.count()==0);
-        assertTrue(SearchOrcidController.FRONTEND_WEB_SEARCH_RESULTS_FOUND.count()==0);
-        assertTrue(SearchOrcidController.FRONTEND_WEB_SEARCH_RESULTS_NONE_FOUND.count()==1);
-        
+        assertTrue(SearchOrcidController.FRONTEND_WEB_SEARCH_REQUESTS.count() == 0);
+        assertTrue(SearchOrcidController.FRONTEND_WEB_SEARCH_RESULTS_FOUND.count() == 0);
+        assertTrue(SearchOrcidController.FRONTEND_WEB_SEARCH_RESULTS_NONE_FOUND.count() == 1);
+
         searchOrcidController.quickSearch("nonefound");
-        assertTrue(SearchOrcidController.FRONTEND_WEB_SEARCH_REQUESTS.count()==1);
-        assertTrue(SearchOrcidController.FRONTEND_WEB_SEARCH_RESULTS_FOUND.count()==0);
-        assertTrue(SearchOrcidController.FRONTEND_WEB_SEARCH_RESULTS_NONE_FOUND.count()==2);       
-        
+        assertTrue(SearchOrcidController.FRONTEND_WEB_SEARCH_REQUESTS.count() == 1);
+        assertTrue(SearchOrcidController.FRONTEND_WEB_SEARCH_RESULTS_FOUND.count() == 0);
+        assertTrue(SearchOrcidController.FRONTEND_WEB_SEARCH_RESULTS_NONE_FOUND.count() == 2);
+
     }
-    
+
     @Test
     public void testSearchByOrcidNoResultsReturned() {
-        assertTrue(SearchOrcidController.FRONTEND_WEB_SEARCH_REQUESTS.count()==0);
-        assertTrue(SearchOrcidController.FRONTEND_WEB_SEARCH_RESULTS_NONE_FOUND.count()==0);
-        assertTrue(SearchOrcidController.FRONTEND_WEB_SEARCH_RESULTS_NONE_FOUND.count()==0);        
-      
+        assertTrue(SearchOrcidController.FRONTEND_WEB_SEARCH_REQUESTS.count() == 0);
+        assertTrue(SearchOrcidController.FRONTEND_WEB_SEARCH_RESULTS_NONE_FOUND.count() == 0);
+        assertTrue(SearchOrcidController.FRONTEND_WEB_SEARCH_RESULTS_NONE_FOUND.count() == 0);
+
         when(orcidSearchManager.findOrcidSearchResultsById(any(String.class))).thenReturn(orcidWithNoResults());
         SearchOrcidBioForm orcidBioForm = new SearchOrcidBioForm();
         orcidBioForm.setOrcid("oid");
-        searchOrcidController.searchByOrcid(orcidBioForm,mock(BindingResult.class));
-        assertTrue(SearchOrcidController.FRONTEND_WEB_SEARCH_REQUESTS.count()==1);
-        assertTrue(SearchOrcidController.FRONTEND_WEB_SEARCH_RESULTS_FOUND.count()==0);
-        assertTrue(SearchOrcidController.FRONTEND_WEB_SEARCH_RESULTS_NONE_FOUND.count()==1);        
-        
+        searchOrcidController.searchByOrcid(orcidBioForm, mock(BindingResult.class));
+        assertTrue(SearchOrcidController.FRONTEND_WEB_SEARCH_REQUESTS.count() == 1);
+        assertTrue(SearchOrcidController.FRONTEND_WEB_SEARCH_RESULTS_FOUND.count() == 0);
+        assertTrue(SearchOrcidController.FRONTEND_WEB_SEARCH_RESULTS_NONE_FOUND.count() == 1);
+
     }
-    
+
     @Test
     public void testSearchByFormResultsReturned() {
-        assertTrue(SearchOrcidController.FRONTEND_WEB_SEARCH_REQUESTS.count()==0);
-        assertTrue(SearchOrcidController.FRONTEND_WEB_SEARCH_RESULTS_NONE_FOUND.count()==0);
-        assertTrue(SearchOrcidController.FRONTEND_WEB_SEARCH_RESULTS_NONE_FOUND.count()==0);        
-      
+        assertTrue(SearchOrcidController.FRONTEND_WEB_SEARCH_REQUESTS.count() == 0);
+        assertTrue(SearchOrcidController.FRONTEND_WEB_SEARCH_RESULTS_NONE_FOUND.count() == 0);
+        assertTrue(SearchOrcidController.FRONTEND_WEB_SEARCH_RESULTS_NONE_FOUND.count() == 0);
+
         when(orcidSearchManager.findOrcidsByQuery(any(String.class))).thenReturn(orcidWithMultipleResults());
-        SearchOrcidBioForm orcidBioForm = new SearchOrcidBioForm();        
-        searchOrcidController.searchByOrcid(orcidBioForm,mock(BindingResult.class));
-        assertTrue(SearchOrcidController.FRONTEND_WEB_SEARCH_REQUESTS.count()==1);
-        assertTrue(SearchOrcidController.FRONTEND_WEB_SEARCH_RESULTS_FOUND.count()==3);
-        assertTrue(SearchOrcidController.FRONTEND_WEB_SEARCH_RESULTS_NONE_FOUND.count()==0);        
-        
+        SearchOrcidBioForm orcidBioForm = new SearchOrcidBioForm();
+        searchOrcidController.searchByOrcid(orcidBioForm, mock(BindingResult.class));
+        assertTrue(SearchOrcidController.FRONTEND_WEB_SEARCH_REQUESTS.count() == 1);
+        assertTrue(SearchOrcidController.FRONTEND_WEB_SEARCH_RESULTS_FOUND.count() == 3);
+        assertTrue(SearchOrcidController.FRONTEND_WEB_SEARCH_RESULTS_NONE_FOUND.count() == 0);
+
     }
-    
+
     @Test
     public void testSearchByFormNoResultsReturned() {
-        assertTrue(SearchOrcidController.FRONTEND_WEB_SEARCH_REQUESTS.count()==0);
-        assertTrue(SearchOrcidController.FRONTEND_WEB_SEARCH_RESULTS_NONE_FOUND.count()==0);
-        assertTrue(SearchOrcidController.FRONTEND_WEB_SEARCH_RESULTS_NONE_FOUND.count()==0);        
-      
+        assertTrue(SearchOrcidController.FRONTEND_WEB_SEARCH_REQUESTS.count() == 0);
+        assertTrue(SearchOrcidController.FRONTEND_WEB_SEARCH_RESULTS_NONE_FOUND.count() == 0);
+        assertTrue(SearchOrcidController.FRONTEND_WEB_SEARCH_RESULTS_NONE_FOUND.count() == 0);
+
         when(orcidSearchManager.findOrcidsByQuery(any(String.class))).thenReturn(orcidWithNoResults());
-        SearchOrcidBioForm orcidBioForm = new SearchOrcidBioForm();        
-        searchOrcidController.searchByOrcid(orcidBioForm,mock(BindingResult.class));
-        assertTrue(SearchOrcidController.FRONTEND_WEB_SEARCH_REQUESTS.count()==1);
-        assertTrue(SearchOrcidController.FRONTEND_WEB_SEARCH_RESULTS_FOUND.count()==0);
-        assertTrue(SearchOrcidController.FRONTEND_WEB_SEARCH_RESULTS_NONE_FOUND.count()==1);        
-        
+        SearchOrcidBioForm orcidBioForm = new SearchOrcidBioForm();
+        searchOrcidController.searchByOrcid(orcidBioForm, mock(BindingResult.class));
+        assertTrue(SearchOrcidController.FRONTEND_WEB_SEARCH_REQUESTS.count() == 1);
+        assertTrue(SearchOrcidController.FRONTEND_WEB_SEARCH_RESULTS_FOUND.count() == 0);
+        assertTrue(SearchOrcidController.FRONTEND_WEB_SEARCH_RESULTS_NONE_FOUND.count() == 1);
+
     }
-    
-   
+
     private OrcidMessage orcidWithNoResults() {
         OrcidMessage orcidMessage = new OrcidMessage();
         OrcidSearchResults orcidSearchResults = new OrcidSearchResults();
@@ -158,7 +157,7 @@ public class SearchOrcidControllerControllerTest {
         orcidMessage.setOrcidSearchResults(orcidSearchResults);
         return orcidMessage;
     }
-    
+
     private OrcidMessage orcidWithMultipleResults() {
 
         OrcidMessage orcidMessage = new OrcidMessage();

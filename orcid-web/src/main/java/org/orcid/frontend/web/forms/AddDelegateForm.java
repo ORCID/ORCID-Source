@@ -32,7 +32,7 @@ import org.orcid.jaxb.model.message.OrcidProfile;
 public class AddDelegateForm {
 
     private String delegateOrcid;
-    
+
     public String getDelegateOrcid() {
         return delegateOrcid;
     }

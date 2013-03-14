@@ -125,6 +125,7 @@
         class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
         <property name="basename" value="classpath:i18n/messages" />
         <property name="defaultEncoding" value="UTF-8"/>
+        <property name="cacheSeconds" value="${org.orcid.core.messages.cacheSeconds:5}" />
     </bean>
 
 	<cache:annotation-driven />

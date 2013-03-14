@@ -72,7 +72,7 @@ public class SolrDaoTest {
     }
 
     @Test
-    public void searchByOrcid() throws Exception {       
+    public void searchByOrcid() throws Exception {
 
         OrcidSolrResult firstOrcidResult = solrDao.findByOrcid(firstOrcid);
         assertNull(firstOrcidResult);
@@ -84,22 +84,21 @@ public class SolrDaoTest {
         assertFalse(secondOrcid.getOrcid().equals(firstOrcidResult.getOrcid()));
         assertEquals("1234-5678", firstOrcidResult.getOrcid());
     }
-    
-    
+
     @Test
     public void queryStringSearchPatent() throws Exception {
-        OrcidSolrDocument firstOrcid = buildAndPersistFirstOrcid();       
+        OrcidSolrDocument firstOrcid = buildAndPersistFirstOrcid();
         String patentQueryString = "patent-numbers:Elec-hammer01X%3A";
-        List<OrcidSolrResult> solrResults = solrDao.findByDocumentCriteria(patentQueryString);      
+        List<OrcidSolrResult> solrResults = solrDao.findByDocumentCriteria(patentQueryString);
         assertTrue(solrResults.size() == 1);
         assertEquals(firstOrcid.getOrcid(), solrResults.get(0).getOrcid());
     }
-    
+
     @Test
     public void queryStringSearchGrant() throws Exception {
-        OrcidSolrDocument secondOrcid = buildAndPersistSecondOrcid();       
+        OrcidSolrDocument secondOrcid = buildAndPersistSecondOrcid();
         String patentQueryString = "grant-numbers:grant-number02X%3A";
-        List<OrcidSolrResult> solrResults = solrDao.findByDocumentCriteria(patentQueryString);      
+        List<OrcidSolrResult> solrResults = solrDao.findByDocumentCriteria(patentQueryString);
         assertTrue(solrResults.size() == 1);
         assertEquals(secondOrcid.getOrcid(), solrResults.get(0).getOrcid());
     }
@@ -177,8 +176,7 @@ public class SolrDaoTest {
         assertEquals(secondOrcid, result.getOrcid());
 
     }
-    
-    
+
     @Test
     public void queryFieldWeyword() throws Exception {
         buildAndPersistFirstOrcid();
@@ -297,11 +295,10 @@ public class SolrDaoTest {
         buildAndPersistFirstOrcid();
         buildAndPersistSecondOrcid();
 
-        
         String orcidQueryString = "text=1234\\-5678";
         List<OrcidSolrResult> solrResults = solrDao.findByDocumentCriteria(orcidQueryString);
         assertTrue(solrResults.size() == 1);
-        
+
         String givenNameQueryString = "text=Given";
         solrResults = solrDao.findByDocumentCriteria(givenNameQueryString);
         assertTrue(solrResults.size() == 2);
@@ -313,20 +310,20 @@ public class SolrDaoTest {
         String pastInstitutionsQueryString = "text=Brown";
         solrResults = solrDao.findByDocumentCriteria(pastInstitutionsQueryString);
         assertTrue(solrResults.size() == 1 && solrResults.get(0).getOrcid().equals(firstOrcid));
-        
+
         String currentInstitutionsQueryString = "text=Current";
         solrResults = solrDao.findByDocumentCriteria(currentInstitutionsQueryString);
         assertTrue(solrResults.size() == 2 && solrResults.get(0).getOrcid().equals(firstOrcid));
-        assertEquals(solrResults.get(1).getOrcid(),secondOrcid);
+        assertEquals(solrResults.get(1).getOrcid(), secondOrcid);
 
         String primaryInstitutionsQueryString = "text=Primary";
         solrResults = solrDao.findByDocumentCriteria(primaryInstitutionsQueryString);
         assertTrue(solrResults.size() == 1 && solrResults.get(0).getOrcid().equals(secondOrcid));
-        
+
         String patentsQueryString = "text=Elec-hammer01X%3A";
         solrResults = solrDao.findByDocumentCriteria(patentsQueryString);
         assertTrue(solrResults.size() == 1 && solrResults.get(0).getOrcid().equals(firstOrcid));
-        
+
         String grantQueryString = "text=Grant-number02X%3A";
         solrResults = solrDao.findByDocumentCriteria(grantQueryString);
         assertTrue(solrResults.size() == 1 && solrResults.get(0).getOrcid().equals(secondOrcid));
@@ -386,12 +383,12 @@ public class SolrDaoTest {
         secondOrcidDoc.setCreditName("Credit Name");
         secondOrcidDoc.setEmailAddress("stan@ficitional.co.uk");
         secondOrcidDoc.setFamilyName("Family Name");
-        secondOrcidDoc.setGivenNames("Given Names");      
+        secondOrcidDoc.setGivenNames("Given Names");
         secondOrcidDoc.setDigitalObjectIds(Arrays.asList(new String[] { "id1", "id2" }));
         secondOrcidDoc.setOtherNames(Arrays.asList(new String[] { "Other Name 1", "Other Name 2" }));
         secondOrcidDoc.setPastInstitutionNames(Arrays.asList(new String[] { "Past Inst 1", "Past Inst 2" }));
-        secondOrcidDoc.setAffiliateInstitutionNames(Arrays.asList(new String[] { "Current Inst 1"}));
-        secondOrcidDoc.setAffiliatePrimaryInstitutionNames(Arrays.asList(new String[]{"Primary Institution Name"}));
+        secondOrcidDoc.setAffiliateInstitutionNames(Arrays.asList(new String[] { "Current Inst 1" }));
+        secondOrcidDoc.setAffiliatePrimaryInstitutionNames(Arrays.asList(new String[] { "Primary Institution Name" }));
         secondOrcidDoc.setWorkTitles(Arrays.asList(new String[] { "Work Title 1", "Work Title 2" }));
         secondOrcidDoc.setGrantNumbers(Arrays.asList(new String[] { "Grant-number02X:" }));
         return secondOrcidDoc;

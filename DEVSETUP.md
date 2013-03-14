@@ -137,7 +137,14 @@ http://www.springsource.org/downloads/sts-ggts
 
 * You should see a login page.
 
+* Click OK.
+
 * Finally help out by improving these instructions! 
+
+### Setting up Eclipse to use ORCID formatting rules 
+1. Select Eclipse (or Spring Tool Suit) -> Preferences -> Java -> Code style -> Formatter -> Import
+
+* Navigate to ~/git/ORCID-Source and select eclipse_formatter.xml
 
 
 ### Integration tests

@@ -21,7 +21,6 @@
 // Generated on: 2012.08.02 at 11:50:02 AM BST 
 //
 
-
 package org.orcid.jaxb.model.message;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -30,7 +29,6 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import java.io.Serializable;
-
 
 /**
  * <p>Java class for anonymous complex type.
@@ -53,18 +51,15 @@ import java.io.Serializable;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = {
-    "orcid",
-    "creditName"
-})
+@XmlType(name = "", propOrder = { "orcid", "creditName" })
 @XmlRootElement(name = "delegate-summary")
 public class DelegateSummary implements Serializable {
 
     @XmlElement(required = true)
     protected Orcid orcid;
     @XmlElement(name = "credit-name")
-    protected CreditName creditName;    
-    
+    protected CreditName creditName;
+
     public DelegateSummary() {
         super();
     }

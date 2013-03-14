@@ -115,6 +115,8 @@ function checkOrcidLoggedIn() {
 
 var OM = OrcidMessage;
 
+
+// jquery ready
 $(function () {
 	
 	// Common
@@ -136,7 +138,7 @@ $(function () {
     	if (!warnMessCookie) {
     		var wHtml = '<div class="alert" id="test-warn-div">';
     			wHtml = wHtml + '<strong>';
-    			wHtml = wHtml + _.template(OM.getInstance().get('common.js.domain.warn.template'), {curentDomian:window.location.hostname});
+    			wHtml = wHtml + OM.getInstance().get('common.js.domain.warn.template').replace('{{curentDomian}}',window.location.hostname);
     			wHtml = wHtml + '</strong> ';
     			//don't let the warning be disabled for test-warn-dismiss
     			if (window.location.hostname.toLowerCase() != "sandbox-1.orcid.org") {
@@ -155,6 +157,10 @@ $(function () {
  
     }
     
+    $('#confirmationForm, #denialForm').submit(function() {
+    	if (window.location != window.parent.location) parent.$.colorbox.close();
+    	return true;
+    });
     
     // if on signin or register do cookie check
 	if ( basePath.startsWith(baseUrl + 'register') 
@@ -229,8 +235,7 @@ $(function () {
                             if(userId.indexOf('@') != -1){
 	            		        resendClaimUrl += '?email=' + encodeURIComponent(userId);	
 	            		    }
-	            		    message = _.template(OM.getInstance().get('orcid.frontend.security.unclaimed_exists'),
-	            		    		             {resendClaimUrl:resendClaimUrl});
+	            		    message = OM.getInstance().get('orcid.frontend.security.unclaimed_exists').replace("{{resendClaimUrl}}",resendClaimUrl);  
 	            		}
 	            		else{
 	            			message = OM.getInstance().get('orcid.frontend.security.bad_credentials'); 

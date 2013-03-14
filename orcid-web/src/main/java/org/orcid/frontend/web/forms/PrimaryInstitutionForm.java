@@ -40,7 +40,7 @@ public class PrimaryInstitutionForm {
     }
 
     public Affiliation getPrimaryInstitution() {
-       return null;
+        return null;
     }
 
     public boolean isInstitutionNamePublic() {

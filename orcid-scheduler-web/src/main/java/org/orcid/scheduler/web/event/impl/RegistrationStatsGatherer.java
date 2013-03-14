@@ -46,7 +46,7 @@ public class RegistrationStatsGatherer implements EventStatsGatherer {
     public void gather() {
         Long registrationCount = registrationManager.getCount();
         Long confirmedProfileCount = profileEntityManager.getConfirmedProfileCount();
-        if (registrationCount != null && confirmedProfileCount != null) {            
+        if (registrationCount != null && confirmedProfileCount != null) {
             registrationCompletedCount.update(confirmedProfileCount);
             registrationUnclaimedCount.update(registrationCount - confirmedProfileCount);
         }
