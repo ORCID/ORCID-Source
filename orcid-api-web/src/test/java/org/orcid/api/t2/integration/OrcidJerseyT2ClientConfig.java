@@ -53,7 +53,7 @@ public class OrcidJerseyT2ClientConfig extends DefaultClientConfig implements In
     public OrcidJerseyT2ClientConfig(Set<Class<?>> providers) {
         super(providers);
     }
-    
+
     public void setProperties(Map<String, Object> properties) {
         Set<String> keyset = properties.keySet();
         for (String key : keyset) {

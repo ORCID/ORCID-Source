@@ -82,7 +82,7 @@ public class CrossRefReferenceTypes {
     // Journal-like Reference types
     /** constant value for PERSONAL_COMMUNICATION. */
     public static final String PERSONAL_COMMUNICATION = "PCOMM"; // Personal
-                                                                 // Communication
+    // Communication
     /** constant value for REPORT. */
     public static final String REPORT = "RPRT"; // Report
     /** constant value for SERIAL. */

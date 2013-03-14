@@ -54,7 +54,7 @@ public class DBUnitTest {
             connection.getConfig().setProperty(DatabaseConfig.PROPERTY_PRIMARY_KEY_FILTER, new NullPrimaryKeyFilter(primaryKeyFilter));
         }
 
-        connection.getConfig().setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, new HsqldbDataTypeFactory());      
+        connection.getConfig().setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, new HsqldbDataTypeFactory());
         for (String flatXMLDataFile : flatXMLDataFiles) {
             DatabaseOperation.CLEAN_INSERT.execute(connection, getDataSet(flatXMLDataFile));
         }

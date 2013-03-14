@@ -26,7 +26,7 @@ import org.codehaus.jackson.annotate.JsonIgnoreProperties;
  * 
  */
 @XmlRootElement
-@JsonIgnoreProperties(ignoreUnknown=true)
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class CrossRefMetadata {
 
     private String doi;
@@ -42,7 +42,7 @@ public class CrossRefMetadata {
     private String shortCitation;
 
     private String coins;
-    
+
     public String getDoi() {
         return doi;
     }
@@ -99,5 +99,4 @@ public class CrossRefMetadata {
         this.coins = coins;
     }
 
-    
 }

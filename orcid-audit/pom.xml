@@ -13,6 +13,11 @@
     <name>ORCID - Audit</name>
     <description>Module that encapsulates the auditing functionality</description>
 
+    <properties>
+        <org.orcid.audit.properties>test-audit.properties</org.orcid.audit.properties>
+        <main.basedir>${project.parent.basedir}</main.basedir>
+    </properties>
+
     <build>
         <resources>
             <resource>
@@ -128,9 +133,6 @@
         </dependency>
     </dependencies>
 
-    <properties>
-        <org.orcid.audit.properties>test-audit.properties</org.orcid.audit.properties>
-    </properties>
 
     <profiles>
         <profile>

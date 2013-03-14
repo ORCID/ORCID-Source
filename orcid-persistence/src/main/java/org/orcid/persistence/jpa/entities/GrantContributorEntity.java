@@ -62,8 +62,4 @@ public class GrantContributorEntity extends BaseContributorEntity {
         this.grant = grant;
     }
 
-
-
-
-
 }

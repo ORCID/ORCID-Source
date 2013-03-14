@@ -40,7 +40,7 @@ public class PersonalInfoFormTest {
         PersonalInfoForm form = new PersonalInfoForm();
         form.setOrcid("4444-4444-4444-4446");
         form.setGivenNames("Johnny");
-        form.setFamilyName("Simpson");  
+        form.setFamilyName("Simpson");
         // show that other names aren't duplicates
         form.setSelectedOtherNames(Arrays.asList(new String[] { "Don", "Gal", "Don" }));
         form.setCreditName("Homer Thomson");

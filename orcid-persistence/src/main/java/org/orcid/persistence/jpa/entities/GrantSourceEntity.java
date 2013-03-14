@@ -48,10 +48,7 @@ public class GrantSourceEntity extends BaseEntity<GrantSourceEntityPk> implement
 
     @Id
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumns({
-            @JoinColumn(name = "grant_id", nullable = false),
-            @JoinColumn(name = "orcid", nullable = false)
-    })
+    @JoinColumns( { @JoinColumn(name = "grant_id", nullable = false), @JoinColumn(name = "orcid", nullable = false) })
     public ProfileGrantEntity getProfileGrant() {
         return profileGrant;
     }
@@ -61,7 +58,7 @@ public class GrantSourceEntity extends BaseEntity<GrantSourceEntityPk> implement
     }
 
     @Id
-    @ManyToOne(fetch = FetchType.EAGER, cascade = { CascadeType.MERGE } )
+    @ManyToOne(fetch = FetchType.EAGER, cascade = { CascadeType.MERGE })
     @JoinColumn(name = "source_orcid", nullable = false, updatable = false, insertable = false)
     public ProfileEntity getSponsorOrcid() {
         return sponsorOrcid;
@@ -97,7 +94,6 @@ public class GrantSourceEntity extends BaseEntity<GrantSourceEntityPk> implement
         }
         return profileGrant.compareTo(sponsorEntity.getProfileGrant());
     }
-
 
     /**
      * @return always null as we're using a composite key

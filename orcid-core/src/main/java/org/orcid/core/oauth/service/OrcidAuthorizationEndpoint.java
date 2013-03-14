@@ -32,7 +32,7 @@ public class OrcidAuthorizationEndpoint extends AuthorizationEndpoint {
 
     @Override
     @ExceptionHandler(HttpSessionRequiredException.class)
-    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @SuppressWarnings( { "unchecked", "rawtypes" })
     public HttpEntity handleException(HttpSessionRequiredException e, ServletWebRequest webRequest) throws Exception {
         HttpHeaders headers = new HttpHeaders();
         headers.setLocation(buildRedirectUri(webRequest));

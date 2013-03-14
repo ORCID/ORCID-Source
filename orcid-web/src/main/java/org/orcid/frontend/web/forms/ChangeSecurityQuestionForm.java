@@ -18,26 +18,21 @@ package org.orcid.frontend.web.forms;
 
 import org.orcid.frontend.web.forms.validate.IntegerStringCrossField;
 
-
-
-@IntegerStringCrossField(indexToIgnoreValidation = 0,
-        theFieldToIgnoreValidation = "securityQuestionAnswer",
-        theFieldToIndex="securityQuestionId",
-        message = "Please provide an answer to your challenge question.")
+@IntegerStringCrossField(indexToIgnoreValidation = 0, theFieldToIgnoreValidation = "securityQuestionAnswer", theFieldToIndex = "securityQuestionId", message = "Please provide an answer to your challenge question.")
 public class ChangeSecurityQuestionForm {
 
     private Integer securityQuestionId;
 
     private String securityQuestionAnswer;
-    
+
     public Integer getSecurityQuestionId() {
         return securityQuestionId;
     }
-   
+
     public void setSecurityQuestionId(Integer securityQuestionId) {
         this.securityQuestionId = securityQuestionId;
     }
-    
+
     public String getSecurityQuestionAnswer() {
         return securityQuestionAnswer;
     }

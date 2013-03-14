@@ -187,7 +187,7 @@ public class DefaultPermissionChecker implements PermissionChecker {
             ProfileEntity principal = (ProfileEntity) oAuth2Authentication.getPrincipal();
             visibilities.add(Visibility.REGISTERED_ONLY);
             if (principal != null && principal.getId().equals(orcid)) {
-                visibilities.add(Visibility.LIMITED);          
+                visibilities.add(Visibility.LIMITED);
             }
             // This is a client credential authenticated client. If the profile
             // was created using this client and it
@@ -320,7 +320,7 @@ public class DefaultPermissionChecker implements PermissionChecker {
         }
         return false;
     }
-    
+
     public void setOrcidOauthTokenDetailService(OrcidOauth2TokenDetailService orcidOauthTokenDetailService) {
         this.orcidOauthTokenDetailService = orcidOauthTokenDetailService;
     }

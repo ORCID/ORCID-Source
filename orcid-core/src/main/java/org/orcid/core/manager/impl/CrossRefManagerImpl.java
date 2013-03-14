@@ -44,15 +44,15 @@ import com.sun.jersey.client.apache4.ApacheHttpClient4;
  * 
  */
 public class CrossRefManagerImpl implements CrossRefManager {
-	
-	private static final Logger LOGGER = LoggerFactory.getLogger(CrossRefManagerImpl.class);
-	
-	/* sample url get
-	 * old: http://crossref.org/sigg/sigg/FindWorks?version=1&access=API_KEY&format=json&op=OR&expression=Laura+Paglione
-	 * new: http://search.crossref.org/dois?content-type=application%2Fjson&op=OR&access=API_KEY&version=1&q=Laura+Paglione
-	 *
-	 * Documentation: http://search.crossref.org/help/api
-	 */
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(CrossRefManagerImpl.class);
+
+    /* sample url get
+     * old: http://crossref.org/sigg/sigg/FindWorks?version=1&access=API_KEY&format=json&op=OR&expression=Laura+Paglione
+     * new: http://search.crossref.org/dois?content-type=application%2Fjson&op=OR&access=API_KEY&version=1&q=Laura+Paglione
+     *
+     * Documentation: http://search.crossref.org/help/api
+     */
     private String crossRefUrl = "http://search.crossref.org/dois";
     private static final String queryString = "content-type=application%2Fjson&op=OR&access=API_KEY&version=1&q=";
 
@@ -62,8 +62,9 @@ public class CrossRefManagerImpl implements CrossRefManager {
 
     @Override
     public List<CrossRefMetadata> searchForMetadata(String searchTerms) {
-    	WebResource resource = createResource(searchTerms);
-        return resource.get(new GenericType<ArrayList<CrossRefMetadata>>() {});
+        WebResource resource = createResource(searchTerms);
+        return resource.get(new GenericType<ArrayList<CrossRefMetadata>>() {
+        });
     }
 
     @Override
@@ -73,15 +74,15 @@ public class CrossRefManagerImpl implements CrossRefManager {
     }
 
     private WebResource createResource(String searchTerms) {
-    	 Client client = createClient();
-      	 String encoded = null;
-    	 try {
-    		encoded = URLEncoder.encode(searchTerms,"UTF-8");
-    	 } catch (UnsupportedEncodingException e) {
-    		LOGGER.error("search terms: "+ searchTerms + "cannot be encoded", e);
-    	 }
-         WebResource resource = client.resource(crossRefUrl+"?"+queryString + encoded);
-         return resource;
+        Client client = createClient();
+        String encoded = null;
+        try {
+            encoded = URLEncoder.encode(searchTerms, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            LOGGER.error("search terms: " + searchTerms + "cannot be encoded", e);
+        }
+        WebResource resource = client.resource(crossRefUrl + "?" + queryString + encoded);
+        return resource;
     }
 
     private Client createClient() {

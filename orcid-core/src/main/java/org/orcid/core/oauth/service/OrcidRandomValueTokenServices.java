@@ -83,8 +83,8 @@ public class OrcidRandomValueTokenServices extends RandomValueTokenServices {
 
         OAuth2AccessToken accessToken = createAccessToken(authentication, refreshToken);
         tokenStore.storeAccessToken(accessToken, authentication);
-        LOGGER.info("Creating new access token: clientId={}, scopes={}, userOrcid={}",
-                new Object[] { authInfo.getClientId(), authInfo.getScopes(), authInfo.getUserOrcid() });
+        LOGGER.info("Creating new access token: clientId={}, scopes={}, userOrcid={}", new Object[] { authInfo.getClientId(), authInfo.getScopes(),
+                authInfo.getUserOrcid() });
         return accessToken;
     }
 

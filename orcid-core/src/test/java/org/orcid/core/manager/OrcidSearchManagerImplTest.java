@@ -134,43 +134,40 @@ public class OrcidSearchManagerImplTest extends BaseTest {
 
         OrcidWorks orcidWorks = retrievedProfile.retrieveOrcidWorks();
         OrcidWork orcidWork1 = orcidWorks.getOrcidWork().get(0);
-        OrcidWork orcidWork2 = orcidWorks.getOrcidWork().get(1);    
-        
-        assertTrue(orcidWork1.getWorkExternalIdentifiers().getWorkExternalIdentifier().size()==1);
-        assertEquals("work1-doi1", 
-                orcidWork1.getWorkExternalIdentifiers().getWorkExternalIdentifier().get(0).getWorkExternalIdentifierId().getContent());
-       
-        assertTrue(orcidWork2.getWorkExternalIdentifiers().getWorkExternalIdentifier().size()==2);
-        assertEquals("work2-doi1", 
-                orcidWork2.getWorkExternalIdentifiers().getWorkExternalIdentifier().get(0).getWorkExternalIdentifierId().getContent());
-        assertEquals("work2-doi2", 
-                orcidWork2.getWorkExternalIdentifiers().getWorkExternalIdentifier().get(1).getWorkExternalIdentifierId().getContent());
-        
+        OrcidWork orcidWork2 = orcidWorks.getOrcidWork().get(1);
+
+        assertTrue(orcidWork1.getWorkExternalIdentifiers().getWorkExternalIdentifier().size() == 1);
+        assertEquals("work1-doi1", orcidWork1.getWorkExternalIdentifiers().getWorkExternalIdentifier().get(0).getWorkExternalIdentifierId().getContent());
+
+        assertTrue(orcidWork2.getWorkExternalIdentifiers().getWorkExternalIdentifier().size() == 2);
+        assertEquals("work2-doi1", orcidWork2.getWorkExternalIdentifiers().getWorkExternalIdentifier().get(0).getWorkExternalIdentifierId().getContent());
+        assertEquals("work2-doi2", orcidWork2.getWorkExternalIdentifiers().getWorkExternalIdentifier().get(1).getWorkExternalIdentifierId().getContent());
+
         List<OrcidPatent> orcidPatents = retrievedProfile.retrieveOrcidPatents().getOrcidPatent();
-        assertTrue(orcidPatents.size()==2);
-        OrcidPatent retrievedPatent1 = orcidPatents.get(0); 
+        assertTrue(orcidPatents.size() == 2);
+        OrcidPatent retrievedPatent1 = orcidPatents.get(0);
         OrcidPatent retrievedPatent2 = orcidPatents.get(1);
-          
+
         //check returns a reduced payload
-        assertEquals("patent1",retrievedPatent1.getPatentNumber().getContent());
-        assertEquals("Patent 1 - a short description",retrievedPatent1.getShortDescription());
+        assertEquals("patent1", retrievedPatent1.getPatentNumber().getContent());
+        assertEquals("Patent 1 - a short description", retrievedPatent1.getShortDescription());
         assertNull(retrievedPatent1.getPutCode());
-        
-        assertEquals("patent2",retrievedPatent2.getPatentNumber().getContent());
-        assertEquals("Patent 2 - a short description",retrievedPatent2.getShortDescription());
+
+        assertEquals("patent2", retrievedPatent2.getPatentNumber().getContent());
+        assertEquals("Patent 2 - a short description", retrievedPatent2.getShortDescription());
         assertNull(retrievedPatent2.getPutCode());
-        
+
         List<OrcidGrant> orcidGrants = retrievedProfile.retrieveOrcidGrants().getOrcidGrant();
-        OrcidGrant retrievedGrant1 = orcidGrants.get(0); 
+        OrcidGrant retrievedGrant1 = orcidGrants.get(0);
         OrcidGrant retrievedGrant2 = orcidGrants.get(1);
-        
+
         //check returns a reduced payload
-        assertEquals("grant1",retrievedGrant1.getGrantNumber().getContent());
-        assertEquals("Grant 1 - a short description",retrievedGrant1.getShortDescription());
+        assertEquals("grant1", retrievedGrant1.getGrantNumber().getContent());
+        assertEquals("Grant 1 - a short description", retrievedGrant1.getShortDescription());
         assertNull(retrievedGrant1.getPutCode());
-        
-        assertEquals("grant2",retrievedGrant2.getGrantNumber().getContent());
-        assertEquals("Grant 2 - a short description",retrievedGrant2.getShortDescription());
+
+        assertEquals("grant2", retrievedGrant2.getGrantNumber().getContent());
+        assertEquals("Grant 2 - a short description", retrievedGrant2.getShortDescription());
         assertNull(retrievedGrant2.getPutCode());
 
     }
@@ -330,39 +327,38 @@ public class OrcidSearchManagerImplTest extends BaseTest {
 
         orcidWorks.getOrcidWork().add(orcidWork1);
         orcidWorks.getOrcidWork().add(orcidWork2);
-        
+
         OrcidPatents orcidPatents = new OrcidPatents();
         OrcidPatent orcidPatent1 = new OrcidPatent();
         orcidPatent1.setPatentNumber(new PatentNumber("patent1"));
         orcidPatent1.setShortDescription("Patent 1 - a short description");
         orcidPatent1.setPutCode("patent 1 - put-code");
-        
+
         OrcidPatent orcidPatent2 = new OrcidPatent();
         orcidPatent2.setPatentNumber(new PatentNumber("patent2"));
         orcidPatent2.setShortDescription("Patent 2 - a short description");
         orcidPatent2.setPutCode("patent 2 - put-code");
-        
+
         orcidPatents.getOrcidPatent().add(orcidPatent1);
         orcidPatents.getOrcidPatent().add(orcidPatent2);
         orcidProfile.setOrcidPatents(orcidPatents);
         orcidProfile.setOrcidWorks(orcidWorks);
-        
+
         OrcidGrants orcidGrants = new OrcidGrants();
         OrcidGrant orcidGrant1 = new OrcidGrant();
         orcidGrant1.setGrantNumber(new GrantNumber("grant1"));
         orcidGrant1.setShortDescription("Grant 1 - a short description");
         orcidGrant1.setPutCode("grant 1 - put-code");
-        
+
         OrcidGrant orcidGrant2 = new OrcidGrant();
         orcidGrant2.setGrantNumber(new GrantNumber("grant2"));
         orcidGrant2.setShortDescription("Grant 2 - a short description");
         orcidGrant2.setPutCode("grant 2 - put-code");
-        
+
         orcidGrants.getOrcidGrant().add(orcidGrant1);
         orcidGrants.getOrcidGrant().add(orcidGrant2);
         orcidProfile.setOrcidGrants(orcidGrants);
         orcidProfile.setOrcidWorks(orcidWorks);
-
 
         return orcidProfile;
     }

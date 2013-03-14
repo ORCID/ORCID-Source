@@ -21,14 +21,12 @@
 // Generated on: 2012.08.09 at 01:52:56 PM BST 
 //
 
-
 package org.orcid.jaxb.model.message;
 
 import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlEnumValue;
 import javax.xml.bind.annotation.XmlType;
 import java.io.Serializable;
-
 
 /**
  * <p>Java class for media-type.
@@ -51,10 +49,8 @@ import java.io.Serializable;
 public enum MediaType implements Serializable {
 
     @XmlEnumValue("print")
-    PRINT("print"),
-    @XmlEnumValue("online")
-    ONLINE("online"),
-    @XmlEnumValue("other")
+    PRINT("print"), @XmlEnumValue("online")
+    ONLINE("online"), @XmlEnumValue("other")
     OTHER("other");
     private final String value;
 
@@ -67,7 +63,7 @@ public enum MediaType implements Serializable {
     }
 
     public static MediaType fromValue(String v) {
-        for (MediaType c: MediaType.values()) {
+        for (MediaType c : MediaType.values()) {
             if (c.value.equals(v)) {
                 return c;
             }

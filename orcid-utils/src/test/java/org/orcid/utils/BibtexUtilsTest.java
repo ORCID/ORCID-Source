@@ -33,19 +33,11 @@ public class BibtexUtilsTest {
     @Test
     public void testValidParse() throws Exception {
         // @formatter:off
-        String citation = BibtexUtils.toCitation("@Article{Aravind:2011:NDB,\n" +
-                "  author =       \"Alex A. Aravind and Wim H. Hesselink\",\n" +
-                "  title =        \"Nonatomic dual bakery algorithm with bounded tokens\",\n" +
-                "  journal =      \"Acta Informatica\",\n" +
-                "  volume =       \"48\",\n" +
-                "  number =       \"2\",\n" +
-                "  pages =        \"67--96\",\n" +
-                "  month =        \"2\",\n" +
-                "  year =         \"2011\",\n" +
-                "  CODEN =        \"AINFA2\",\n" +
-                "  ISSN =         \"0001-5903 (print), 1432-0525 (electronic)\",\n" +
-                "  ISSN-L =       \"0001-5903\"\n" +
-                "}");
+        String citation = BibtexUtils.toCitation("@Article{Aravind:2011:NDB,\n" + "  author =       \"Alex A. Aravind and Wim H. Hesselink\",\n"
+                + "  title =        \"Nonatomic dual bakery algorithm with bounded tokens\",\n" + "  journal =      \"Acta Informatica\",\n"
+                + "  volume =       \"48\",\n" + "  number =       \"2\",\n" + "  pages =        \"67--96\",\n" + "  month =        \"2\",\n"
+                + "  year =         \"2011\",\n" + "  CODEN =        \"AINFA2\",\n" + "  ISSN =         \"0001-5903 (print), 1432-0525 (electronic)\",\n"
+                + "  ISSN-L =       \"0001-5903\"\n" + "}");
         // @formatter:on
 
         assertNotNull(citation);
@@ -56,11 +48,8 @@ public class BibtexUtilsTest {
     @Test(expected = ObjectResolutionException.class)
     public void testInvalidVariable() throws Exception {
         // @formatter:off
-        BibtexUtils.toCitation("@Article{Aravind:2011:NDB,\n" +
-                "  author =       VARIABLE,\n" +
-                "  title =        \"Nonatomic dual bakery algorithm with bounded tokens\",\n" +
-                "  journal =      \"Acta Informatica\",\n" +
-                "}");
+        BibtexUtils.toCitation("@Article{Aravind:2011:NDB,\n" + "  author =       VARIABLE,\n"
+                + "  title =        \"Nonatomic dual bakery algorithm with bounded tokens\",\n" + "  journal =      \"Acta Informatica\",\n" + "}");
         // @formatter:on
     }
 

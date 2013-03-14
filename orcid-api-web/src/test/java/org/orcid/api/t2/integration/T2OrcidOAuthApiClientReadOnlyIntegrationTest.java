@@ -55,7 +55,7 @@ public class T2OrcidOAuthApiClientReadOnlyIntegrationTest extends BaseT2OrcidOAu
 
     @Test
     public void testViewBioDetailsJson() throws Exception {
-        
+
         // doesn't matter which format we use to create - it's only to get the
         // orcid back from the header location
 
@@ -70,7 +70,6 @@ public class T2OrcidOAuthApiClientReadOnlyIntegrationTest extends BaseT2OrcidOAu
         assertNotNull(orcidMessage.getOrcidProfile().getOrcidBio());
         assertNull(orcidMessage.getOrcidProfile().retrieveOrcidWorks());
     }
-    
 
     @Test
     public void testViewFullDetailsXml() throws Exception {
@@ -87,7 +86,7 @@ public class T2OrcidOAuthApiClientReadOnlyIntegrationTest extends BaseT2OrcidOAu
         assertNotNull(orcidMessage.getOrcidProfile().retrieveOrcidWorks());
         assertNotNull(orcidMessage.getOrcidProfile().getOrcidHistory());
     }
-    
+
     @Test
     public void testViewWorksDetailsXml() throws Exception {
         createNewOrcidUsingAccessToken();
@@ -136,5 +135,5 @@ public class T2OrcidOAuthApiClientReadOnlyIntegrationTest extends BaseT2OrcidOAu
         assertNotNull(orcidMessage.getOrcidProfile().retrieveOrcidWorks());
         assertNotNull(orcidMessage.getOrcidProfile().getOrcidHistory());
     }
-    
+
 }

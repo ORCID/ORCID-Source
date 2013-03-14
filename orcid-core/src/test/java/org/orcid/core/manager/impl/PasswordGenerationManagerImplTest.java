@@ -35,18 +35,18 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @ContextConfiguration(locations = { "classpath:orcid-core-context.xml" })
 public class PasswordGenerationManagerImplTest {
 
-	@Resource
-	private PasswordGenerationManager passwordGenerationManager;	
-	
-	@Test
-	public void testCreateNewPassword() {
-		char[] newPassword=passwordGenerationManager.createNewPassword();
-		assertNotNull(newPassword);
-		assertTrue(newPassword.length==12);
-		Pattern passwordPattern = Pattern.compile(OrcidPasswordConstants.ORCID_PASSWORD_REGEX);
-		Matcher matcher = passwordPattern.matcher(new String(newPassword));
-		assertTrue(matcher.matches());
-		
-	}
+    @Resource
+    private PasswordGenerationManager passwordGenerationManager;
+
+    @Test
+    public void testCreateNewPassword() {
+        char[] newPassword = passwordGenerationManager.createNewPassword();
+        assertNotNull(newPassword);
+        assertTrue(newPassword.length == 12);
+        Pattern passwordPattern = Pattern.compile(OrcidPasswordConstants.ORCID_PASSWORD_REGEX);
+        Matcher matcher = passwordPattern.matcher(new String(newPassword));
+        assertTrue(matcher.matches());
+
+    }
 
 }

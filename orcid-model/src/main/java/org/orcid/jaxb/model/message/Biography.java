@@ -21,7 +21,6 @@
 // Generated on: 2012.08.09 at 01:52:56 PM BST 
 //
 
-
 package org.orcid.jaxb.model.message;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -31,7 +30,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
 import java.io.Serializable;
-
 
 /**
  * <p>Java class for anonymous complex type.
@@ -51,9 +49,7 @@ import java.io.Serializable;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = {
-    "content"
-})
+@XmlType(name = "", propOrder = { "content" })
 @XmlRootElement(name = "biography")
 public class Biography implements VisibilityType, Serializable {
 
@@ -61,25 +57,21 @@ public class Biography implements VisibilityType, Serializable {
     protected String content;
     @XmlAttribute
     protected Visibility visibility;
-    
+
     public Biography() {
-        
+
     }
-    
-    
+
     public Biography(String content) {
         super();
         this.content = content;
     }
-    
-    
 
     public Biography(String content, Visibility visibility) {
         super();
         this.content = content;
         this.visibility = visibility;
     }
-
 
     /**
      * Gets the value of the content property.

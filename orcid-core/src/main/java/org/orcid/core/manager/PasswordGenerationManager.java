@@ -25,8 +25,6 @@ package org.orcid.core.manager;
  */
 public interface PasswordGenerationManager {
 
-	
-	char[] createNewPassword();
-	
-	
+    char[] createNewPassword();
+
 }

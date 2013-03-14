@@ -42,7 +42,7 @@ public interface NotificationManager {
     void sendVerificationEmail(OrcidProfile orcidProfile, URI baseUri, String email);
 
     void sendPasswordResetEmail(OrcidProfile orcidProfile, URI baseUri);
-    
+
     void sendNotificationToAddedDelegate(OrcidProfile grantingUser, List<DelegationDetails> delegatesGrantedByUser);
 
     void sendAmendEmail(OrcidProfile amendedProfile, String amenderOrcid);

@@ -13,6 +13,10 @@
     <name>ORCID - Test</name>
     <description>Test utilities that can be brought in to other modules with the test scope</description>
 
+    <properties>
+        <main.basedir>${project.parent.basedir}</main.basedir>
+    </properties>
+
     <dependencies>
 
         <!-- Dependencies -->

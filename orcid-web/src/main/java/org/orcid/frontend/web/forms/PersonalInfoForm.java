@@ -125,21 +125,20 @@ public class PersonalInfoForm {
         GivenNames profileGivenNames = personalDetails != null ? personalDetails.getGivenNames() : null;
         givenNames = profileGivenNames == null ? null : profileGivenNames.getContent();
 
-//        Visibility personalVisibility = (personalDetails != null && personalDetails.getVisibility() != null) ? personalDetails.getVisibility()
-//                : OrcidVisibilityDefaults.PERSONAL_DETAILS_DEFAULT.getVisibility();
-//
-//        masterPublic = personalVisibility.equals(Visibility.PUBLIC);
+        //        Visibility personalVisibility = (personalDetails != null && personalDetails.getVisibility() != null) ? personalDetails.getVisibility()
+        //                : OrcidVisibilityDefaults.PERSONAL_DETAILS_DEFAULT.getVisibility();
+        //
+        //        masterPublic = personalVisibility.equals(Visibility.PUBLIC);
 
         FamilyName profileFamilyName = personalDetails != null ? personalDetails.getFamilyName() : null;
         familyName = profileFamilyName == null ? null : profileFamilyName.getContent();
 
-
         CreditName profileCreditName = personalDetails != null ? personalDetails.getCreditName() : null;
         creditName = profileCreditName == null ? null : profileCreditName.getContent();
 
-        Visibility otherNameVisibility = (personalDetails != null && personalDetails.getOtherNames() != null && personalDetails.getOtherNames().getVisibility() !=
-                null) ? personalDetails
-                .getOtherNames().getVisibility() : OrcidVisibilityDefaults.OTHER_NAMES_DEFAULT.getVisibility();
+        Visibility otherNameVisibility = (personalDetails != null && personalDetails.getOtherNames() != null && personalDetails.getOtherNames().getVisibility() != null) ? personalDetails
+                .getOtherNames().getVisibility()
+                : OrcidVisibilityDefaults.OTHER_NAMES_DEFAULT.getVisibility();
         otherNamesPublic = otherNameVisibility.equals(Visibility.PUBLIC);
 
         if (personalDetails != null && personalDetails.getOtherNames() != null) {
@@ -158,10 +157,10 @@ public class PersonalInfoForm {
         Visibility researcherUrlVisibility = (personalDetails != null && orcidBio.getResearcherUrls() != null && orcidBio.getResearcherUrls()
                 .getVisibility() != null) ? orcidBio().getVisibility() : OrcidVisibilityDefaults.RESEARCHER_URLS_DEFAULT.getVisibility();
         researcherUrlsPublic = researcherUrlVisibility.equals(Visibility.PUBLIC);
-*/
+         */
         email = (contactDetails != null && contactDetails.getEmail() != null) ? contactDetails.retrievePrimaryEmail().getValue() : null;
-        emailVisibility = (contactDetails != null && contactDetails.getEmail() != null && contactDetails.retrievePrimaryEmail().getVisibility() != null) ? contactDetails.retrievePrimaryEmail
-                ().getVisibility().toString() : OrcidVisibilityDefaults.PRIMARY_EMAIL_DEFAULT.getVisibility().toString();
+        emailVisibility = (contactDetails != null && contactDetails.getEmail() != null && contactDetails.retrievePrimaryEmail().getVisibility() != null) ? contactDetails
+                .retrievePrimaryEmail().getVisibility().toString() : OrcidVisibilityDefaults.PRIMARY_EMAIL_DEFAULT.getVisibility().toString();
 
         //   Visibility contactDetailsVisibility = (contactDetails != null && contactDetails.getEmail() != null) ? contactDetails.getEmail().getVisibility()
         // : OrcidVisibilityDefaults.CONTACT_DETAIL_DEFAULT.getVisibility();
@@ -206,14 +205,14 @@ public class PersonalInfoForm {
             }
         }
 
-//        ResearcherUrls researcherUrls = new ResearcherUrls();
-//        researcherUrls.setVisibility(researcherUrlsPublic ? Visibility.PUBLIC : Visibility.LIMITED);
-//        bio.setResearcherUrls(researcherUrls);
-//        if (selectedResearcherUrls != null && !selectedResearcherUrls.isEmpty()) {
-//            for (String url : selectedResearcherUrls) {
-//                researcherUrls.getResearcherUrl().add(new ResearcherUrl(new Url(url)));
-//            }
-//        }
+        //        ResearcherUrls researcherUrls = new ResearcherUrls();
+        //        researcherUrls.setVisibility(researcherUrlsPublic ? Visibility.PUBLIC : Visibility.LIMITED);
+        //        bio.setResearcherUrls(researcherUrls);
+        //        if (selectedResearcherUrls != null && !selectedResearcherUrls.isEmpty()) {
+        //            for (String url : selectedResearcherUrls) {
+        //                researcherUrls.getResearcherUrl().add(new ResearcherUrl(new Url(url)));
+        //            }
+        //        }
 
         ContactDetails contactDetails = new ContactDetails();
         Visibility emailVisibility = Visibility.fromValue(this.emailVisibility);
