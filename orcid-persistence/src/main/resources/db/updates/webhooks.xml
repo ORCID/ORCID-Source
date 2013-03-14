@@ -19,7 +19,7 @@
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
         
-    <changeSet id="CREATE-NEW-EMAIL-TABLE" author="Will Simpson">
+    <changeSet id="CREATE-WEBHOOK-TABLE" author="Will Simpson">
         <preConditions onFail="MARK_RAN">
             <not>
                 <tableExists tableName="webhook"/>
@@ -54,6 +54,25 @@
         <addForeignKeyConstraint constraintName="webhook_client_details_fk"
                                  baseTableName="webhook" baseColumnNames="client_details_id" baseTableSchemaName="public" 
                                  referencedTableName="client_details" referencedColumnNames="client_details_id" referencedTableSchemaName="public"/>
+    </changeSet>
+    
+    <changeSet id="ADD-WEBHOOKS-ENABLED-TO-CLIENT-DETAILS" author="Will Simpson">
+        <addColumn tableName="client_details">
+            <column name="webhooks_enabled" type="boolean" defaultValue="true" valueBoolean="true">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+    
+    <changeSet id="CREATE-UNIX-TIMESTAMP-FUCTION" author="Will Simpson" dbms="postgresql">
+        <createProcedure>
+            -- For compatibility with hypersonic
+            CREATE OR REPLACE FUNCTION unix_timestamp(TIMESTAMP WITH TIME ZONE) RETURNS DOUBLE PRECISION
+            AS $$ SELECT EXTRACT(epoch FROM $1) $$
+            LANGUAGE SQL
+            IMMUTABLE
+            RETURNS NULL ON NULL INPUT;
+        </createProcedure>
     </changeSet>
 
 </databaseChangeLog>

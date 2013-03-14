@@ -16,6 +16,11 @@
  */
 package org.orcid.persistence.dao.impl;
 
+import java.util.Date;
+import java.util.List;
+
+import javax.persistence.TypedQuery;
+
 import org.orcid.persistence.dao.WebhookDao;
 import org.orcid.persistence.jpa.entities.WebhookEntity;
 import org.orcid.persistence.jpa.entities.keys.WebhookEntityPk;
@@ -27,6 +32,13 @@ public class WebhookDaoImpl extends GenericDaoImpl<WebhookEntity, WebhookEntityP
 
     public WebhookDaoImpl() {
         super(WebhookEntity.class);
+    }
+
+    @Override
+    public List<WebhookEntity> findWebhooksReadyToProcess(Date profileModifiedBefore, int retryDelayMinutes, int maxResults) {
+        TypedQuery<WebhookEntity> query = entityManager.createNamedQuery(WebhookEntity.FIND_WEBHOOKS_READY_TO_PROCESS, WebhookEntity.class);
+        query.setParameter("retryDelayMinutes", retryDelayMinutes);
+        return query.getResultList();
     }
 
 }
