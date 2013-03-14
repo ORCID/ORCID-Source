@@ -31,9 +31,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.orcid.frontend.web.forms.ChangeSecurityQuestionForm;
 
+public class ChangeSecurityDetailsValidatorTest extends AbstractConstraintValidator<ChangeSecurityQuestionForm> {
 
-public class ChangeSecurityDetailsValidatorTest extends AbstractConstraintValidator<ChangeSecurityQuestionForm>{
-    
     Validator validator;
 
     @Before
@@ -50,7 +49,7 @@ public class ChangeSecurityDetailsValidatorTest extends AbstractConstraintValida
         Set<ConstraintViolation<ChangeSecurityQuestionForm>> errors = validator.validate(form);
         assertEquals("Should be no errors", 0, errors.size());
     }
-    
+
     @Test
     public void blankEntryPermittedWhenIndex0() {
         ChangeSecurityQuestionForm form = new ChangeSecurityQuestionForm();
@@ -59,14 +58,14 @@ public class ChangeSecurityDetailsValidatorTest extends AbstractConstraintValida
         Set<ConstraintViolation<ChangeSecurityQuestionForm>> violations = validator.validate(form);
         Set<String> fieldLevelErrors = retrieveErrorValuesOnly(violations);
         assertTrue(fieldLevelErrors.contains("Please provide an answer to your challenge question."));
-       
+
         form.setSecurityQuestionAnswer("");
         form.setSecurityQuestionId(0);
         violations = validator.validate(form);
         fieldLevelErrors = retrieveErrorValuesOnly(violations);
         assertFalse(fieldLevelErrors.contains("Please provide an answer to your challenge question."));
     }
-    
+
     @Test
     public void blankEntryNotPermittedWhenIndexNot0() {
         ChangeSecurityQuestionForm form = new ChangeSecurityQuestionForm();
@@ -75,14 +74,12 @@ public class ChangeSecurityDetailsValidatorTest extends AbstractConstraintValida
         Set<ConstraintViolation<ChangeSecurityQuestionForm>> violations = validator.validate(form);
         Set<String> fieldLevelErrors = retrieveErrorValuesOnly(violations);
         assertTrue(fieldLevelErrors.contains("Please provide an answer to your challenge question."));
-       
+
         form.setSecurityQuestionAnswer("An answer");
         form.setSecurityQuestionId(3);
         violations = validator.validate(form);
         fieldLevelErrors = retrieveErrorValuesOnly(violations);
         assertFalse(fieldLevelErrors.contains("Please provide an answer to your challenge question."));
     }
-    
-   
 
 }

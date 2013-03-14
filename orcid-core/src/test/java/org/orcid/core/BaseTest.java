@@ -46,7 +46,7 @@ public class BaseTest {
      * @return
      * @throws Exception
      */
-    @SuppressWarnings({ "unchecked" })
+    @SuppressWarnings( { "unchecked" })
     protected <T> T getTargetObject(Object proxy, Class<T> targetClass) throws Exception {
         return TargetProxyHelper.getTargetObject(proxy, targetClass);
     }

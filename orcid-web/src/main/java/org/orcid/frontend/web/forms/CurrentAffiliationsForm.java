@@ -61,9 +61,8 @@ public class CurrentAffiliationsForm {
         jointAffiliationForm = new JointAffiliationForm(orcidProfile);
         pastInstitutionsForm = new PastInstitutionsForm(orcidProfile);
 
-        Visibility visibility = (orcidBio != null && orcidBio.getExternalIdentifiers() != null) ?
-                orcidBio.getExternalIdentifiers().getVisibility() :
-                OrcidVisibilityDefaults.EXTERNAL_IDENTIFIER_DEFAULT.getVisibility();
+        Visibility visibility = (orcidBio != null && orcidBio.getExternalIdentifiers() != null) ? orcidBio.getExternalIdentifiers().getVisibility()
+                : OrcidVisibilityDefaults.EXTERNAL_IDENTIFIER_DEFAULT.getVisibility();
         setExternalIdentifiersPublic(Visibility.PUBLIC.equals(visibility));
     }
 
@@ -78,7 +77,7 @@ public class CurrentAffiliationsForm {
         profile.setOrcidBio(bio);
         Affiliation primaryInstitution = primaryInstitutionForm.getPrimaryInstitution();
         if (primaryInstitution != null) {
-            bio.getAffiliations().add(primaryInstitution) ;
+            bio.getAffiliations().add(primaryInstitution);
         }
         List<Affiliation> affiliateInstitutions = jointAffiliationForm.getAffiliateInstitutions();
         if (affiliateInstitutions != null && !affiliateInstitutions.isEmpty()) {

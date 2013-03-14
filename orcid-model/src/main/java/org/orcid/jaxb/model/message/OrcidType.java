@@ -21,14 +21,12 @@
 // Generated on: 2012.08.09 at 01:52:56 PM BST 
 //
 
-
 package org.orcid.jaxb.model.message;
 
 import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlEnumValue;
 import javax.xml.bind.annotation.XmlType;
 import java.io.Serializable;
-
 
 /**
  * <p>Java class for orcid-type.
@@ -51,10 +49,8 @@ import java.io.Serializable;
 public enum OrcidType implements Serializable {
 
     @XmlEnumValue("user")
-    USER("user"),
-    @XmlEnumValue("group")
-    GROUP("group"),
-    @XmlEnumValue("client")
+    USER("user"), @XmlEnumValue("group")
+    GROUP("group"), @XmlEnumValue("client")
     CLIENT("client");
     private final String value;
 
@@ -67,7 +63,7 @@ public enum OrcidType implements Serializable {
     }
 
     public static OrcidType fromValue(String v) {
-        for (OrcidType c: OrcidType.values()) {
+        for (OrcidType c : OrcidType.values()) {
             if (c.value.equals(v)) {
                 return c;
             }

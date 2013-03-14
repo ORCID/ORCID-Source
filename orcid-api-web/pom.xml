@@ -15,6 +15,10 @@
     <name>ORCID - Tier 2 Services Web</name>
     <description>REST Service endpoints for the ORCID tier 2 API.</description>
 
+    <properties>
+        <main.basedir>${project.parent.basedir}</main.basedir>
+    </properties>
+
     <dependencies>
 
         <!-- Internal dependencies -->

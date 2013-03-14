@@ -119,7 +119,7 @@ public class OrcidIndexManagerImpl implements OrcidIndexManager {
                 if (!extIdRefs.isEmpty()) {
                     profileIndexDocument.setExternalIdReferences(extIdRefs);
                 }
-                if(!extIdOrcidsAndRefs.isEmpty()){
+                if (!extIdOrcidsAndRefs.isEmpty()) {
                     profileIndexDocument.setExternalIdOrcidsAndReferences(extIdOrcidsAndRefs);
                 }
             }

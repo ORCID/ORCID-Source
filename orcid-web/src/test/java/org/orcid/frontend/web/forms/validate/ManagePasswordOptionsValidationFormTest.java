@@ -63,9 +63,9 @@ public class ManagePasswordOptionsValidationFormTest extends AbstractConstraintV
         Set<ConstraintViolation<ManagePasswordOptionsForm>> errors = validator.validate(form);
         assertEquals("Should be no errors", 0, errors.size());
     }
-    
+
     @Test
-    public void testNonUsAsciiCharsPermitted() throws Exception{
+    public void testNonUsAsciiCharsPermitted() throws Exception {
         ManagePasswordOptionsForm form = new ManagePasswordOptionsForm();
         form.setPassword("ååååååå1å");
         form.setRetypedPassword("ååååååå1å");
@@ -77,9 +77,9 @@ public class ManagePasswordOptionsValidationFormTest extends AbstractConstraintV
         Set<ConstraintViolation<ManagePasswordOptionsForm>> errors = validator.validate(form);
         assertEquals("Should be no errors", 0, errors.size());
     }
-    
+
     @Test
-    public void testSpacesPermittted() throws Exception{
+    public void testSpacesPermittted() throws Exception {
         ManagePasswordOptionsForm form = new ManagePasswordOptionsForm();
         form.setPassword("Stellan Skasgård  is my no. 1 actor");
         form.setRetypedPassword("Stellan Skasgård  is my no. 1 actor");
@@ -89,12 +89,12 @@ public class ManagePasswordOptionsValidationFormTest extends AbstractConstraintV
         Map<String, String> registrationRoles = new HashMap<String, String>();
         registrationRoles.put("1", "Researcher");
         Set<ConstraintViolation<ManagePasswordOptionsForm>> errors = validator.validate(form);
-        assertEquals("Should be no errors", 0, errors.size());    
-    
+        assertEquals("Should be no errors", 0, errors.size());
+
     }
-    
+
     @Test
-    public void testSymbolsPermitttedButNotRequired() throws Exception{
+    public void testSymbolsPermitttedButNotRequired() throws Exception {
         ManagePasswordOptionsForm form = new ManagePasswordOptionsForm();
         form.setPassword("passw0rd");
         form.setRetypedPassword("passw0rd");
@@ -105,15 +105,13 @@ public class ManagePasswordOptionsValidationFormTest extends AbstractConstraintV
         registrationRoles.put("1", "Researcher");
         Set<ConstraintViolation<ManagePasswordOptionsForm>> errors = validator.validate(form);
         assertEquals("Should be no errors", 0, errors.size());
-        
+
         //check that the test doesn't break when symbols introduced
         form.setPassword("p$ssw0rd");
         form.setRetypedPassword("p$ssw0rd");
         errors = validator.validate(form);
         assertEquals("Should be no errors", 0, errors.size());
     }
-    
-    
 
     @Test
     public void testPasswordFormMissingData() {

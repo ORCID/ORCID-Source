@@ -21,9 +21,7 @@
 // Generated on: 2012.08.09 at 01:52:56 PM BST 
 //
 
-
 package org.orcid.jaxb.model.message;
-
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -34,7 +32,6 @@ import javax.xml.bind.annotation.XmlValue;
 import org.apache.commons.lang.StringUtils;
 
 import java.io.Serializable;
-
 
 /**
  * <p>Java class for anonymous complex type.
@@ -53,9 +50,7 @@ import java.io.Serializable;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = {
-    "value"
-})
+@XmlType(name = "", propOrder = { "value" })
 @XmlRootElement(name = "month")
 public class Month implements Serializable {
 
@@ -68,7 +63,7 @@ public class Month implements Serializable {
     public Month(Integer value) {
         this.value = StringUtils.leftPad(Integer.toString(value), 2, '0');
     }
-    
+
     /**
      * Gets the value of the value property.
      * 

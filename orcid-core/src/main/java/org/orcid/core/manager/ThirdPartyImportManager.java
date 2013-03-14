@@ -26,8 +26,7 @@ import org.orcid.jaxb.model.clientgroup.OrcidClient;
  *
  */
 public interface ThirdPartyImportManager {
-    
+
     public List<OrcidClient> findOrcidClientsWithPredefinedOauthScopeForImport();
-    
-    
+
 }

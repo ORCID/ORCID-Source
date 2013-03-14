@@ -26,31 +26,26 @@ import javax.validation.ConstraintViolation;
 import org.junit.Test;
 import org.orcid.frontend.web.forms.EmailAddressForm;
 
-public class ResetPasswordFormValidatorTest extends
-		AbstractConstraintValidator<EmailAddressForm> {
+public class ResetPasswordFormValidatorTest extends AbstractConstraintValidator<EmailAddressForm> {
 
-	@Test
-	public void testEmailEmpty() {
+    @Test
+    public void testEmailEmpty() {
 
-		EmailAddressForm form = new EmailAddressForm();
-		Set<ConstraintViolation<EmailAddressForm>> violations = validator
-				.validate(form);
-		Set<String> allErrorValues = retrieveErrorValuesOnly(violations);
-		String errorMessage = "Please enter your email address";
-		assertTrue(allErrorValues.size() == 1
-				&& allErrorValues.contains(errorMessage));
-	}
+        EmailAddressForm form = new EmailAddressForm();
+        Set<ConstraintViolation<EmailAddressForm>> violations = validator.validate(form);
+        Set<String> allErrorValues = retrieveErrorValuesOnly(violations);
+        String errorMessage = "Please enter your email address";
+        assertTrue(allErrorValues.size() == 1 && allErrorValues.contains(errorMessage));
+    }
 
-	@Test
-	public void testEmailInvalidFormat() {
-		EmailAddressForm form = new EmailAddressForm();
-		form.setUserEmailAddress("jim_invalid_email@co.");
-		Set<ConstraintViolation<EmailAddressForm>> violations = validator
-				.validate(form);
-		Set<String> allErrorValues = retrieveErrorValuesOnly(violations);
-		String errorMessage = "not a well-formed email address";
-		assertTrue(allErrorValues.size() == 1
-				&& allErrorValues.contains(errorMessage));
-	}
+    @Test
+    public void testEmailInvalidFormat() {
+        EmailAddressForm form = new EmailAddressForm();
+        form.setUserEmailAddress("jim_invalid_email@co.");
+        Set<ConstraintViolation<EmailAddressForm>> violations = validator.validate(form);
+        Set<String> allErrorValues = retrieveErrorValuesOnly(violations);
+        String errorMessage = "not a well-formed email address";
+        assertTrue(allErrorValues.size() == 1 && allErrorValues.contains(errorMessage));
+    }
 
 }

@@ -37,30 +37,30 @@ import org.springframework.web.util.WebUtils;
  * @author Robert Peters
  */
 public class CookieLocaleResolver extends org.springframework.web.servlet.i18n.CookieLocaleResolver {
-	protected final Log logger = LogFactory.getLog(getClass());
-	
-	private boolean allowSubDomains =  false;
-	
+    protected final Log logger = LogFactory.getLog(getClass());
+
+    private boolean allowSubDomains = false;
+
     public Locale resolveLocale(HttpServletRequest request) {
-    	if (allowSubDomains) {
-	    	try {
-	    		String domain = new URL(request.getRequestURL().toString()).getHost();
-	    		if (domain != null) domain = "." + domain;
-	    		this.setCookieDomain(domain);
-			} catch (MalformedURLException e) {
-				logger.error(e);
-			}
-    	}
-	 	return super.resolveLocale(request);
-	}
+        if (allowSubDomains) {
+            try {
+                String domain = new URL(request.getRequestURL().toString()).getHost();
+                if (domain != null)
+                    domain = "." + domain;
+                this.setCookieDomain(domain);
+            } catch (MalformedURLException e) {
+                logger.error(e);
+            }
+        }
+        return super.resolveLocale(request);
+    }
 
-	public boolean getAllowSubDomains() {
-		return allowSubDomains;
-	}
+    public boolean getAllowSubDomains() {
+        return allowSubDomains;
+    }
 
-	public void setAllowSubDomains(boolean allowSubDomains) {
-		this.allowSubDomains = allowSubDomains;
-	}
-
+    public void setAllowSubDomains(boolean allowSubDomains) {
+        this.allowSubDomains = allowSubDomains;
+    }
 
 }

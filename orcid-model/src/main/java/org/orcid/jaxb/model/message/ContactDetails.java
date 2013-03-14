@@ -92,9 +92,9 @@ public class ContactDetails implements Serializable {
         }
         return this.email;
     }
-    
+
     public void setEmail(List<Email> email) {
-       this.email = email;
+        this.email = email;
     }
 
     public Email getEmailByString(String emailString) {

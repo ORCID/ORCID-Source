@@ -32,7 +32,7 @@ import org.orcid.utils.NullUtils;
 
 public class PasswordResetToken {
 
-  //  public static final String RESET_TOKEN_DATE_FORMAT = "dd/MM/yyyy HH:mm:ss";
+    //  public static final String RESET_TOKEN_DATE_FORMAT = "dd/MM/yyyy HH:mm:ss";
     private static final String EMAIL_PARAM_KEY = "email";
     private static final String ISSUE_DATE_PARAM_KEY = "issueDate";
     private static final String EQUALS = "=";
@@ -54,15 +54,15 @@ public class PasswordResetToken {
                 params.put(keyValue[0], keyValue[1]);
             }
         }
-        email = params.get(EMAIL_PARAM_KEY);       
-        issueDate=DateUtils.convertToXMLGregorianCalendar(params.get(ISSUE_DATE_PARAM_KEY));
-        
-    }   
-    
-    public String getEmail() {     
+        email = params.get(EMAIL_PARAM_KEY);
+        issueDate = DateUtils.convertToXMLGregorianCalendar(params.get(ISSUE_DATE_PARAM_KEY));
+
+    }
+
+    public String getEmail() {
         return email;
     }
-    
+
     public Date getIssueDate() {
         return issueDate.toGregorianCalendar().getTime();
     }

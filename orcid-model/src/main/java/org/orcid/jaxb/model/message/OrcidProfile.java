@@ -61,22 +61,22 @@ public class OrcidProfile implements Serializable {
 
     private static final long serialVersionUID = 1L;
     protected Orcid orcid;
-    
+
     @XmlElement(name = "orcid-id")
     protected String orcidId;
-    
+
     @XmlElement(name = "orcid-history")
     protected OrcidHistory orcidHistory;
-    
+
     @XmlElement(name = "orcid-bio")
     protected OrcidBio orcidBio;
 
     @XmlElement(name = "orcid-activities")
     protected OrcidActivities orcidActivities;
-    
+
     @XmlElement(name = "orcid-internal")
     protected OrcidInternal orcidInternal;
-    
+
     @XmlAttribute
     protected OrcidType type;
 
@@ -110,16 +110,15 @@ public class OrcidProfile implements Serializable {
     public void setOrcid(Orcid value) {
         this.orcid = value;
     }
-     
+
     public String getOrcidId() {
         return this.orcidId; // orcidId;
     }
 
     public void setOrcidId(String value) {
-    	this.orcidId = value;
+        this.orcidId = value;
     }
 
-    
     /**
      * Sets the value of the orcid property.
      * 
@@ -128,7 +127,7 @@ public class OrcidProfile implements Serializable {
      * 
      */
     public void setOrcid(String value) {
-    	//this.orcidId = "http://orcid.org/" + value;
+        //this.orcidId = "http://orcid.org/" + value;
         this.orcid = new Orcid(value);
     }
 
@@ -141,12 +140,9 @@ public class OrcidProfile implements Serializable {
     public OrcidHistory getOrcidHistory() {
         return orcidHistory;
     }
-    
-    public boolean isDeactivated()
-    {
-        return orcidHistory!=null && 
-                orcidHistory.getDeactivationDate()!=null && 
-                orcidHistory.getDeactivationDate().getValue()!=null;
+
+    public boolean isDeactivated() {
+        return orcidHistory != null && orcidHistory.getDeactivationDate() != null && orcidHistory.getDeactivationDate().getValue() != null;
     }
 
     /**

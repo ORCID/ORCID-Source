@@ -21,13 +21,11 @@
 // Generated on: 2012.10.04 at 01:24:28 PM BST 
 //
 
-
 package org.orcid.jaxb.model.message;
 
 import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlEnumValue;
 import javax.xml.bind.annotation.XmlType;
-
 
 /**
  * <p>Java class for citation-type.
@@ -54,20 +52,13 @@ import javax.xml.bind.annotation.XmlType;
 public enum CitationType {
 
     @XmlEnumValue("formatted-unspecified")
-    FORMATTED_UNSPECIFIED("formatted-unspecified"),
-    @XmlEnumValue("bibtex")
-    BIBTEX("bibtex"),
-    @XmlEnumValue("formatted-apa")
-    FORMATTED_APA("formatted-apa"),
-    @XmlEnumValue("formatted-harvard")
-    FORMATTED_HARVARD("formatted-harvard"),
-    @XmlEnumValue("formatted-ieee")
-    FORMATTED_IEEE("formatted-ieee"),
-    @XmlEnumValue("formatted-mla")
-    FORMATTED_MLA("formatted-mla"),
-    @XmlEnumValue("formatted-vancouver")
-    FORMATTED_VANCOUVER("formatted-vancouver"),
-    @XmlEnumValue("formatted-chicago")
+    FORMATTED_UNSPECIFIED("formatted-unspecified"), @XmlEnumValue("bibtex")
+    BIBTEX("bibtex"), @XmlEnumValue("formatted-apa")
+    FORMATTED_APA("formatted-apa"), @XmlEnumValue("formatted-harvard")
+    FORMATTED_HARVARD("formatted-harvard"), @XmlEnumValue("formatted-ieee")
+    FORMATTED_IEEE("formatted-ieee"), @XmlEnumValue("formatted-mla")
+    FORMATTED_MLA("formatted-mla"), @XmlEnumValue("formatted-vancouver")
+    FORMATTED_VANCOUVER("formatted-vancouver"), @XmlEnumValue("formatted-chicago")
     FORMATTED_CHICAGO("formatted-chicago");
     private final String value;
 
@@ -80,13 +71,12 @@ public enum CitationType {
     }
 
     public static CitationType fromValue(String v) {
-        for (CitationType c: CitationType.values()) {
+        for (CitationType c : CitationType.values()) {
             if (c.value.equals(v)) {
                 return c;
             }
         }
         throw new IllegalArgumentException(v);
     }
-
 
 }

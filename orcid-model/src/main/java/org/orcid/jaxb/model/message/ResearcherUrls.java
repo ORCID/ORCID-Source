@@ -21,7 +21,6 @@
 // Generated on: 2012.08.09 at 01:52:56 PM BST 
 //
 
-
 package org.orcid.jaxb.model.message;
 
 import java.io.Serializable;
@@ -33,7 +32,6 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-
 
 /**
  * <p>Java class for anonymous complex type.
@@ -56,18 +54,16 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = {
-    "researcherUrl"
-})
+@XmlType(name = "", propOrder = { "researcherUrl" })
 @XmlRootElement(name = "researcher-urls")
 public class ResearcherUrls implements VisibilityType, Serializable {
 
     @XmlElement(name = "researcher-url")
     protected List<ResearcherUrl> researcherUrl;
-    
+
     @XmlAttribute
     protected Visibility visibility;
-    
+
     public Visibility getVisibility() {
         return visibility;
     }
@@ -104,7 +100,6 @@ public class ResearcherUrls implements VisibilityType, Serializable {
         }
         return this.researcherUrl;
     }
-
 
     @Override
     public boolean equals(Object o) {

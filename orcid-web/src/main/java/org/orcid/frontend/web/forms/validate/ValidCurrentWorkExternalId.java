@@ -31,7 +31,7 @@ import java.lang.annotation.Target;
  *         Date: 12/10/2012
  */
 
-@Target({ ElementType.METHOD, ElementType.FIELD, ElementType.ANNOTATION_TYPE })
+@Target( { ElementType.METHOD, ElementType.FIELD, ElementType.ANNOTATION_TYPE })
 @Retention(RetentionPolicy.RUNTIME)
 @Constraint(validatedBy = CurrentWorkExternalIdValidator.class)
 @Documented
@@ -39,7 +39,7 @@ public @interface ValidCurrentWorkExternalId {
 
     String message() default "{orcid.frontend.verify.current_work_external_id_invalid}";
 
-    Class<?>[] groups() default { };
+    Class<?>[] groups() default {};
 
     Class<? extends Payload>[] payload() default {};
 }

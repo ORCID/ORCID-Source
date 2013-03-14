@@ -21,7 +21,6 @@
 // Generated on: 2012.08.09 at 01:52:56 PM BST 
 //
 
-
 package org.orcid.jaxb.model.message;
 
 import java.io.Serializable;
@@ -32,7 +31,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-
 
 /**
  * <p>Java class for anonymous complex type.
@@ -55,9 +53,7 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = {
-    "source"
-})
+@XmlType(name = "", propOrder = { "source" })
 @XmlRootElement(name = "work-sources")
 public class WorkSources implements Serializable {
 
@@ -117,7 +113,6 @@ public class WorkSources implements Serializable {
     public void setScope(Scope value) {
         this.scope = value;
     }
-
 
     @Override
     public boolean equals(Object o) {

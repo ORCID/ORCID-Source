@@ -13,6 +13,11 @@
     <name>ORCID - Persistence</name>
     <description>Holds all data layer logic and implementations</description>
 
+    <properties>
+        <org.orcid.persistence.properties>test-persistence.properties</org.orcid.persistence.properties>
+        <main.basedir>${project.parent.basedir}</main.basedir>
+    </properties>
+
     <build>
         <resources>
             <resource>
@@ -183,10 +188,6 @@
         </dependency>
 
     </dependencies>
-
-    <properties>
-        <org.orcid.persistence.properties>test-persistence.properties</org.orcid.persistence.properties>
-    </properties>
 
     <profiles>
         <profile>

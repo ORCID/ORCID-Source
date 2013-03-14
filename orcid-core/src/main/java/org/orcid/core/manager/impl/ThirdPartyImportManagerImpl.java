@@ -33,32 +33,30 @@ import org.orcid.persistence.jpa.entities.ClientRedirectUriEntity;
 
 public class ThirdPartyImportManagerImpl implements ThirdPartyImportManager {
 
-    @Resource(name="clientRedirectDao")
+    @Resource(name = "clientRedirectDao")
     private ClientRedirectDao clientRedirectDao;
 
     @Override
     public List<OrcidClient> findOrcidClientsWithPredefinedOauthScopeForImport() {
-        
 
         List<OrcidClient> orcidClients = new ArrayList<OrcidClient>();
-        List<ClientRedirectUriEntity> entitiesWithPredefinedScopes =
-                clientRedirectDao.findClientDetailsWithRedirectScope();
-        
+        List<ClientRedirectUriEntity> entitiesWithPredefinedScopes = clientRedirectDao.findClientDetailsWithRedirectScope();
+
         for (ClientRedirectUriEntity entity : entitiesWithPredefinedScopes) {
-            
+
             ClientDetailsEntity clientDetails = entity.getClientDetailsEntity();
-            RedirectUri redirectUri = new RedirectUri(entity.getRedirectUri());            
+            RedirectUri redirectUri = new RedirectUri(entity.getRedirectUri());
             String prefefinedScopes = entity.getPredefinedClientScope();
-            redirectUri.setScope(new ArrayList<ScopePathType>(ScopePathType.getScopesFromSpaceSeparatedString(prefefinedScopes)));            
-            OrcidClient minimalClientDetails = new OrcidClient();           
+            redirectUri.setScope(new ArrayList<ScopePathType>(ScopePathType.getScopesFromSpaceSeparatedString(prefefinedScopes)));
+            OrcidClient minimalClientDetails = new OrcidClient();
             minimalClientDetails.setDisplayName(clientDetails.getProfileEntity().getCreditName());
             minimalClientDetails.setShortDescription(clientDetails.getProfileEntity().getBiography());
             RedirectUris redirectUris = new RedirectUris();
-            redirectUris.getRedirectUri().add(redirectUri);            
+            redirectUris.getRedirectUri().add(redirectUri);
             minimalClientDetails.setClientId(clientDetails.getClientId());
             minimalClientDetails.setRedirectUris(redirectUris);
             orcidClients.add(minimalClientDetails);
-            
+
         }
         return orcidClients;
     }

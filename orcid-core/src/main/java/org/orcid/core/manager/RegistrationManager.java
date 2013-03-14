@@ -26,15 +26,15 @@ import org.orcid.jaxb.model.message.OrcidProfile;
  * @author Will Simpson
  * 
  */
-public interface RegistrationManager {    
+public interface RegistrationManager {
 
     void verifyRegistration(OrcidProfile orcidProfile, URI baseUri);
 
     VerifyRegistrationToken parseEncyrptedParamsForVerification(String encryptedParams);
-    
+
     void resetUserPassword(OrcidProfile orcidProfile, URI baseUri);
-    
-    OrcidProfile createMinimalRegistration(OrcidProfile orcidProfile,URI baseURI);
-    
+
+    OrcidProfile createMinimalRegistration(OrcidProfile orcidProfile, URI baseURI);
+
     Long getCount();
 }

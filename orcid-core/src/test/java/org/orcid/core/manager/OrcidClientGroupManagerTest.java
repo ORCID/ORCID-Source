@@ -104,14 +104,14 @@ public class OrcidClientGroupManagerTest extends BaseTest {
         OrcidClient complexityClient = createdClientsMappedByName.get("Ecological Complexity");
         assertNotNull(complexityClient);
         assertEquals("http://www.journals.elsevier.com/ecological-complexity", complexityClient.getWebsite());
-        assertEquals("An International Journal on Biocomplexity in the Environment and Theoretical Ecology", complexityClient.getShortDescription());        
+        assertEquals("An International Journal on Biocomplexity in the Environment and Theoretical Ecology", complexityClient.getShortDescription());
         List<RedirectUri> createdRedirectUris = complexityClient.getRedirectUris().getRedirectUri();
         assertNotNull(createdRedirectUris);
         assertEquals(2, createdRedirectUris.size());
         assertEquals("http://www.journals.elsevier.com/ecological-complexity/orcid-callback", createdRedirectUris.get(0).getValue());
         List<ScopePathType> scopesForRedirect = createdRedirectUris.get(0).getScope();
-        assertTrue(scopesForRedirect.size()==2);
-        assertTrue(scopesForRedirect.contains(ScopePathType.ORCID_PROFILE_CREATE) && scopesForRedirect.contains(ScopePathType.ORCID_BIO_READ_LIMITED));        
+        assertTrue(scopesForRedirect.size() == 2);
+        assertTrue(scopesForRedirect.contains(ScopePathType.ORCID_PROFILE_CREATE) && scopesForRedirect.contains(ScopePathType.ORCID_BIO_READ_LIMITED));
         assertEquals("https://developers.google.com/oauthplayground", createdRedirectUris.get(1).getValue());
         assertNull(createdRedirectUris.get(1).getScope());
         // Look up client details directly to check scopes
@@ -164,7 +164,7 @@ public class OrcidClientGroupManagerTest extends BaseTest {
         assertTrue(clientScopeTypes.contains("/orcid-works/read-limited"));
     }
 
-    @Test   
+    @Test
     @Rollback(true)
     @Transactional
     public void testUpdateOrcidClientGroup() {
@@ -205,14 +205,14 @@ public class OrcidClientGroupManagerTest extends BaseTest {
         assertEquals(2, updatedRedirectUris.size());
         Collections.sort(updatedRedirectUris, new Comparator<RedirectUri>() {
             public int compare(RedirectUri redirectUri1, RedirectUri redirectUri2) {
-                return ((String) redirectUri1.getValue()).compareToIgnoreCase((String)redirectUri1.getValue());
+                return ((String) redirectUri1.getValue()).compareToIgnoreCase((String) redirectUri1.getValue());
             }
         });
-        
+
         assertEquals("http://www.journals.elsevier.com/ecological-complexity/orcid-callback", updatedRedirectUris.get(0).getValue());
-        List<ScopePathType> scopesForRedirect  = updatedRedirectUris.get(0).getScope();
-        assertTrue(scopesForRedirect.size()==2);
-        assertTrue(scopesForRedirect.contains(ScopePathType.ORCID_PROFILE_CREATE) && scopesForRedirect.contains(ScopePathType.ORCID_BIO_READ_LIMITED));        
+        List<ScopePathType> scopesForRedirect = updatedRedirectUris.get(0).getScope();
+        assertTrue(scopesForRedirect.size() == 2);
+        assertTrue(scopesForRedirect.contains(ScopePathType.ORCID_PROFILE_CREATE) && scopesForRedirect.contains(ScopePathType.ORCID_BIO_READ_LIMITED));
         assertEquals("https://developers.google.com/oauthplayground", updatedRedirectUris.get(1).getValue());
         assertNull(updatedRedirectUris.get(1).getScope());
     }

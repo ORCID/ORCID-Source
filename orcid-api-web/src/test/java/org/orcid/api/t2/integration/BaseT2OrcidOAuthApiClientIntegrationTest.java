@@ -59,7 +59,7 @@ public abstract class BaseT2OrcidOAuthApiClientIntegrationTest {
 
     @Resource
     protected Client jerseyClient;
-    
+
     @Value("${org.orcid.t2.client.base_url}")
     protected URI t2BaseUrl;
 

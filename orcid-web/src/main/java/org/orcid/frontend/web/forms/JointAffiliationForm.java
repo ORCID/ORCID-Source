@@ -175,7 +175,6 @@ public class JointAffiliationForm {
         Affiliation affiliation = new Affiliation();
         affiliateInstitutions.add(affiliation);
 
-
         return affiliateInstitutions;
     }
 

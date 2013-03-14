@@ -42,8 +42,7 @@ import org.springframework.util.AutoPopulatingList;
 /**
  * Form to represent the past institutions elements on the manage pages
  */
-@DateCompare.List({ @DateCompare(startDate = "startDate", endDate = "endDate", boundFields = { "startDate", "endDate" }, dateFormat = "yyyy",
-        message = "End date must be after the start date.") })
+@DateCompare.List( { @DateCompare(startDate = "startDate", endDate = "endDate", boundFields = { "startDate", "endDate" }, dateFormat = "yyyy", message = "End date must be after the start date.") })
 public class PastInstitutionsForm {
 
     private CommonInstitutionFormDetails currentForm;
@@ -77,10 +76,10 @@ public class PastInstitutionsForm {
         List<Affiliation> affiliations = orcidBio.getAffiliations();
         if (affiliations != null && !affiliations.isEmpty()) {
             //TODO: Copy the visibilities over from the form
-//            currentForm.setInstitutionNamePublic(Visibility.PUBLIC.equals(pastInstitutions.getVisibility()));
-//            for (PastInstitution pastInstitution : pastInstitutions.getPastInstitution()) {
-//                allFormSummaries.add(getCommonInstitutionDetails(pastInstitution));
-//            }
+            //            currentForm.setInstitutionNamePublic(Visibility.PUBLIC.equals(pastInstitutions.getVisibility()));
+            //            for (PastInstitution pastInstitution : pastInstitutions.getPastInstitution()) {
+            //                allFormSummaries.add(getCommonInstitutionDetails(pastInstitution));
+            //            }
         }
 
     }
@@ -254,8 +253,8 @@ public class PastInstitutionsForm {
     }
 
     private void populateCommonInstitutionFormDetailsAddress(CommonInstitutionFormDetails commonInstitutionFormDetails, Address address) {
-        if (address != null) {           
-          
+        if (address != null) {
+
             String countryName = address.getCountry() == null ? null : address.getCountry().getContent();
             commonInstitutionFormDetails.setCountry(countryName);
         }
@@ -281,7 +280,7 @@ public class PastInstitutionsForm {
     }
 
     private Address getAddress(CommonInstitutionFormDetails formSummary) {
-        Address address = new Address();      
+        Address address = new Address();
         address.setCountry(new Country(formSummary.getCountry()));
         return address;
     }

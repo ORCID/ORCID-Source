@@ -14,6 +14,10 @@
     <name>ORCID - Model</name>
     <description>Container for all classes that will be used to marshal and unmarshal XML/JSON from the API</description>
 
+    <properties>
+        <main.basedir>${project.parent.basedir}</main.basedir>
+    </properties>
+
     <dependencies>
         <!-- Internal dependencies -->
         <!-- External dependencies -->

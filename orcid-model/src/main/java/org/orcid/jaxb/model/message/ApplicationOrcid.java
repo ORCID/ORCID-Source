@@ -21,7 +21,6 @@
 // Generated on: 2012.08.02 at 11:50:02 AM BST 
 //
 
-
 package org.orcid.jaxb.model.message;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -30,7 +29,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
 import java.io.Serializable;
-
 
 /**
  * <p>Java class for anonymous complex type.
@@ -49,16 +47,14 @@ import java.io.Serializable;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = {
-    "value"
-})
+@XmlType(name = "", propOrder = { "value" })
 @XmlRootElement(name = "application-orcid")
 public class ApplicationOrcid implements Serializable {
-    
+
     public ApplicationOrcid() {
-        super();       
+        super();
     }
-    
+
     public ApplicationOrcid(String value) {
         super();
         this.value = value;

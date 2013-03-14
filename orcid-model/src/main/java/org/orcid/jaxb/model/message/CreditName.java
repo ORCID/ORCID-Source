@@ -59,7 +59,7 @@ public class CreditName implements Serializable, VisibilityType {
 
     @XmlValue
     protected String content;
-    
+
     @XmlAttribute
     protected Visibility visibility;
 
@@ -113,14 +113,13 @@ public class CreditName implements Serializable, VisibilityType {
 
     @Override
     public Visibility getVisibility() {
-       return visibility;
+        return visibility;
     }
 
     @Override
     public void setVisibility(Visibility visibility) {
-       this.visibility=visibility;
-        
+        this.visibility = visibility;
+
     }
-    
-    
+
 }

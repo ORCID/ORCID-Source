@@ -11,6 +11,11 @@
     <packaging>war</packaging>
     <name>ORCID - Metrics</name> 
     <description>The web application that displays the metrics and health of the Orcid Components</description>
+
+    <properties>
+        <main.basedir>${project.parent.basedir}</main.basedir>
+    </properties>
+
     <url>http://maven.apache.org</url>
     <dependencies>
         <dependency>

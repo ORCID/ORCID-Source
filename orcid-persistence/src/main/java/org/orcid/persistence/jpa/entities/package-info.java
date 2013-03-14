@@ -14,7 +14,7 @@
  *
  * =============================================================================
  */
-@TypeDefs({ @TypeDef(name = "encryptedString", typeClass = EncryptedStringType.class, parameters = { @Parameter(name = "encryptorRegisteredName", value = "hibernateStringEncryptor") }) })
+@TypeDefs( { @TypeDef(name = "encryptedString", typeClass = EncryptedStringType.class, parameters = { @Parameter(name = "encryptorRegisteredName", value = "hibernateStringEncryptor") }) })
 package org.orcid.persistence.jpa.entities;
 
 import org.hibernate.annotations.TypeDefs;

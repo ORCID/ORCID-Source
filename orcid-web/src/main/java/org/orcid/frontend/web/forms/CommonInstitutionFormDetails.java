@@ -27,7 +27,7 @@ import java.util.Map;
 public class CommonInstitutionFormDetails {
 
     private String dateFormat = "dd/MM/yyyy"; // can set this to be overriden if
-                                              // needed in future
+    // needed in future
 
     private String orcid;
     private boolean institutionNamePublic;

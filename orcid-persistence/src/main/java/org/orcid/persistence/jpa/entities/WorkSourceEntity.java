@@ -47,10 +47,7 @@ public class WorkSourceEntity extends BaseEntity<WorkSourceEntityPk> implements 
 
     @Id
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumns({
-            @JoinColumn(name = "orcid", nullable = false),
-            @JoinColumn(name = "work_id", nullable = false)
-    })
+    @JoinColumns( { @JoinColumn(name = "orcid", nullable = false), @JoinColumn(name = "work_id", nullable = false) })
     public ProfileWorkEntity getProfileWork() {
         return profileWork;
     }
@@ -82,9 +79,8 @@ public class WorkSourceEntity extends BaseEntity<WorkSourceEntityPk> implements 
     @Override
     public int compareTo(WorkSourceEntity sponsorEntity) {
         //TODO: implement
-        return 0;  //To change body of implemented methods use File | Settings | File Templates.
+        return 0; //To change body of implemented methods use File | Settings | File Templates.
     }
-
 
     /**
      * @return always null as we're using a composite key
