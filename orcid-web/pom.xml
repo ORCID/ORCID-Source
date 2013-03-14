@@ -223,7 +223,6 @@
                 <groupId>com.mycila.maven-license-plugin</groupId>
                 <artifactId>maven-license-plugin</artifactId>
                 <configuration>
-                    <header>${project.basedir}/../SHORT_LICENSE.txt</header>
                     <excludes>
                          <exclude>**/src/main/webapp/**/jquery*</exclude>
                          <exclude>**/src/main/webapp/**/plugins.js</exclude>

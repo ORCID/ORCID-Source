@@ -191,7 +191,7 @@ the software.
                     <artifactId>maven-license-plugin</artifactId>
                     <version>1.9.0</version>
                     <configuration>
-                        <header>${basedir}/SHORT_LICENSE.txt</header>
+                        <header>${main.basedir}/SHORT_LICENSE.txt</header>
                         <failIfMissing>true</failIfMissing>
                         <aggregate>false</aggregate>
                         <strictCheck>true</strictCheck>
