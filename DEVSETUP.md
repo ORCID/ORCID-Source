@@ -137,6 +137,12 @@ http://www.springsource.org/downloads/sts-ggts
 
 * You should see a login page.
 
+* Select Eclipse -> Preferences -> Java -> Code style -> Formatter -> Import
+
+* Navigate to ~/git/ORCID-Source and select eclipse_formatter.xml
+
+* Click OK.
+
 * Finally help out by improving these instructions! 
 
 
