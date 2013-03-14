@@ -21,11 +21,14 @@ import static org.orcid.api.common.OrcidApiConstants.*;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 
 import org.orcid.api.common.OrcidApiService;
@@ -380,5 +383,36 @@ public class T2OrcidApiClientImpl implements T2OrcidApiService<ClientResponse> {
     public ClientResponse searchByQueryXML(String query) {
         return orcidClientHelper.getClientResponse(UriBuilder.fromPath(BIO_SEARCH_PATH).replaceQuery(query).build(), VND_ORCID_XML);
     }
+    
+    /**
+     * TODO 
+     * */
+    @Override
+    public ClientResponse registerWebhookXML(@PathParam("orcid") String orcid, @PathParam("webhook_uri") String webhook_uri){
+        return null;
+    }
+    
+    /**
+     * TODO 
+     * */
+    @Override
+    public ClientResponse registerWebhookJson(@PathParam("orcid") String orcid, @PathParam("webhook_uri") String webhook_uri){
+        return null;
+    }
 
+    /**
+     * TODO 
+     * */
+    @Override
+    public ClientResponse unregisterWebhookXML(@PathParam("orcid") String orcid, @PathParam("webhook_uri") String webhook_uri){
+        return null;
+    }
+    
+    /**
+     * TODO 
+     * */
+    @Override
+    public ClientResponse unregisterWebhookJson(@PathParam("orcid") String orcid, @PathParam("webhook_uri") String webhook_uri){
+        return null;
+    }
 }

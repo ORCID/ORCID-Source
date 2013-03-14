@@ -214,4 +214,59 @@ public interface T2OrcidApiService<T> extends OrcidApiService<T> {
     @Path(PROFILE_DELETE_PATH)
     T deleteProfileXML(@PathParam("orcid") String orcid);
 
+    /**
+     * Register a new webhook to a specific client.
+     * @param orcid
+     *            the ORCID that corresponds to the user's record
+     * @param webhook_uri
+     *            the webhook that will be added to the user                    
+     * @return
+     * */
+    @PUT
+    @Produces(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Consumes(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(WEBHOOKS_PATH)
+    T registerWebhookXML(@PathParam("orcid") String orcid, @PathParam("webhook_uri") String webhookUri);
+    
+    /**
+     * Register a new webhook to a specific client.
+     * @param orcid
+     *            the ORCID that corresponds to the user's record
+     * @param webhook_uri
+     *            the webhook that will be added to the user                    
+     * @return
+     * */
+    @PUT
+    @Produces(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Consumes(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(WEBHOOKS_PATH)
+    T registerWebhookJson(@PathParam("orcid") String orcid, @PathParam("webhook_uri") String webhookUri);
+    
+    /**
+     * Unregister a webhook from specific client.
+     * @param orcid
+     *            the ORCID that corresponds to the user's record
+     * @param webhook_uri
+     *            the webhook that will be deleted from the user                    
+     * @return
+     * */
+    @DELETE
+    @Produces(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Consumes(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(WEBHOOKS_PATH)
+    T unregisterWebhookXML(@PathParam("orcid") String orcid, @PathParam("webhook_uri") String webhookUri);
+    
+    /**
+     * Unregister a webhook from specific client.
+     * @param orcid
+     *            the ORCID that corresponds to the user's record
+     * @param webhook_uri
+     *            the webhook that will be deleted from the user                    
+     * @return
+     * */
+    @DELETE
+    @Produces(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Consumes(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(WEBHOOKS_PATH)
+    T unregisterWebhookJson(@PathParam("orcid") String orcid, @PathParam("webhook_uri") String webhookUri);
 }

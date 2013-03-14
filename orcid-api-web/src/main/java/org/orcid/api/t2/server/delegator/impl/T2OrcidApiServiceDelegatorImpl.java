@@ -383,5 +383,37 @@ public class T2OrcidApiServiceDelegatorImpl implements T2OrcidApiServiceDelegato
             profile.getOrcidHistory().setSource(sponsor);
         }
     }
+    
+    /**
+     * Register a new webhook to the profile. As with all calls, if the
+     * message contains any other elements, a 400 Bad Request will be returned.
+     * 
+     * @param orcid
+     *            the identifier of the profile to add the webhook
+     * @param uriInfo
+     *            an uri object containing the webhook           
+     * @return If successful, returns a 200 OK.
+     * */
+    @Override
+    /** TODO: @AccessControl */
+    public Response registerWebhook(String orcid, String webhookUrl){
+        return null;
+    }
+    
+    /**
+     * Unregister a webhook from a profile. As with all calls, if the
+     * message contains any other elements, a 400 Bad Request will be returned.
+     * 
+     * @param orcid
+     *            the identifier of the profile to unregister the webhook
+     * @param uriInfo
+     *            an uri object containing the webhook that will be unregistred          
+     * @return If successful, returns a 200 OK.
+     * */
+    @Override
+    /** TODO: @AccessControl */
+    public Response unregisterWebhook(String orcid, String webhookUrl){
+        return null;
+    }
 
 }
