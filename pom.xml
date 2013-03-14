@@ -203,10 +203,17 @@ the software.
                             <exclude>.idea</exclude>
                             <exclude>.idea/**</exclude>
                             <exclude>**.xjb</exclude>
+                            <exclude>**.lock</exclude>
                             <exclude>atlassian-ide-plugin.xml</exclude>
                         </excludes>
                     </configuration>
                     <executions>
+                        <execution>
+                            <phase>test</phase>
+                            <goals>
+                                <goal>check</goal>
+                            </goals>
+                        </execution>
                         <execution>
                             <id>check-headers</id>
                             <phase>verify</phase>
