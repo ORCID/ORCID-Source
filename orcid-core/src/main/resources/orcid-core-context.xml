@@ -1,49 +1,38 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<!--
-
-    =============================================================================
-
-    ORCID (R) Open Source
-    http://orcid.org
-
-    Copyright (c) 2012-2013 ORCID, Inc.
-    Licensed under an MIT-Style License (MIT)
-    http://orcid.org/open-source-license
-
-    This copyright and license information (including a link to the full license)
-    shall be included in its entirety in all copies or substantial portion of
-    the software.
-
-    =============================================================================
-
--->
+<!-- ============================================================================= 
+	ORCID (R) Open Source http://orcid.org Copyright (c) 2012-2013 ORCID, Inc. 
+	Licensed under an MIT-Style License (MIT) http://orcid.org/open-source-license 
+	This copyright and license information (including a link to the full license) 
+	shall be included in its entirety in all copies or substantial portion of 
+	the software. ============================================================================= -->
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
-	xmlns:cache="http://www.springframework.org/schema/cache"
-    xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:cache="http://www.springframework.org/schema/cache" xmlns:aop="http://www.springframework.org/schema/aop"
 	xsi:schemaLocation="
         http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
         http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd
         http://www.springframework.org/schema/cache http://www.springframework.org/schema/cache/spring-cache.xsd
         http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd">
 
-    <import resource="classpath*:orcid-persistence-context.xml" />
-    <!-- Commenting out whilst the auditing is still being discussed -->
-    <!-- <import resource="classpath*:orcid-audit-context.xml" /> -->
-    
-	<context:component-scan base-package="org.orcid.core.manager.impl, org.orcid.core.oauth.service, org.orcid.core.security" />
-    <aop:aspectj-autoproxy />
+	<import resource="classpath*:orcid-persistence-context.xml" />
+	<!-- Commenting out whilst the auditing is still being discussed -->
+	<!-- <import resource="classpath*:orcid-audit-context.xml" /> -->
+
+	<context:component-scan
+		base-package="org.orcid.core.manager.impl, org.orcid.core.oauth.service, org.orcid.core.security" />
+	<aop:aspectj-autoproxy />
 
 	<bean id="templateManager" class="org.orcid.core.manager.impl.TemplateManagerImpl" />
 
 	<bean id="notificationManager" class="org.orcid.core.manager.impl.NotificationManagerImpl">
 		<property name="encryptionManager" ref="encryptionManager" />
 		<property name="fromAddress" value="${org.orcid.core.mail.fromAddress}" />
-        <property name="supportAddress" value="${org.orcid.core.mail.supportAddress}" />
-        <property name="baseUri" value="${org.orcid.core.baseUri}" />
+		<property name="supportAddress" value="${org.orcid.core.mail.supportAddress}" />
+		<property name="baseUri" value="${org.orcid.core.baseUri}" />
 		<property name="mailSender" ref="mailSender" />
 		<property name="templateManager" ref="templateManager" />
-        <property name="apiRecordCreationEmailEnabled" value="${org.orcid.core.mail.apiRecordCreationEmailEnabled:true}" />
+		<property name="apiRecordCreationEmailEnabled"
+			value="${org.orcid.core.mail.apiRecordCreationEmailEnabled:true}" />
 	</bean>
 
 	<bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
@@ -51,21 +40,26 @@
 	</bean>
 
 	<bean id="encryptionManager" class="org.orcid.core.manager.impl.EncryptionManagerImpl">
-		<property name="passPhraseForInternalEncryption" value="${org.orcid.core.passPhraseForInternalEncryption:xxxx}" />
-		<property name="iterationCountForInternalEncryption" value="${org.orcid.core.iterationCountForInternalEncryption:1111}" />
-        <property name="internalEncryptor" ref="internalEncryptor"/>
-        <property name="externalEncryptor" ref="externalEncryptor"/>
-        <property name="passwordEncryptor">
-            <bean class=" org.jasypt.util.password.ConfigurablePasswordEncryptor">
-                <property name="config">
-                    <bean class="org.jasypt.digest.config.SimpleDigesterConfig">
-                        <property name="algorithm" value="${org.orcid.core.passwordEncryptionAlgorithm:SHA-512}"/>
-                        <property name="iterations" value="${org.orcid.core.passwordEncryptionIterations:250000}"/>
-                        <property name="saltSizeBytes" value="${org.orcid.core.passwordEncryptionSaltSize:16}"/>
-                    </bean>
-                </property>
-            </bean>
-        </property>
+		<property name="passPhraseForInternalEncryption"
+			value="${org.orcid.core.passPhraseForInternalEncryption:xxxx}" />
+		<property name="iterationCountForInternalEncryption"
+			value="${org.orcid.core.iterationCountForInternalEncryption:1111}" />
+		<property name="internalEncryptor" ref="internalEncryptor" />
+		<property name="externalEncryptor" ref="externalEncryptor" />
+		<property name="passwordEncryptor">
+			<bean class=" org.jasypt.util.password.ConfigurablePasswordEncryptor">
+				<property name="config">
+					<bean class="org.jasypt.digest.config.SimpleDigesterConfig">
+						<property name="algorithm"
+							value="${org.orcid.core.passwordEncryptionAlgorithm:SHA-512}" />
+						<property name="iterations"
+							value="${org.orcid.core.passwordEncryptionIterations:250000}" />
+						<property name="saltSizeBytes"
+							value="${org.orcid.core.passwordEncryptionSaltSize:16}" />
+					</bean>
+				</property>
+			</bean>
+		</property>
 	</bean>
 
 	<bean id="hearAboutManager" class="org.orcid.core.manager.impl.HearAboutManagerImpl" />
@@ -85,19 +79,17 @@
 
 	<bean id="registrationRoleManager" class="org.orcid.core.manager.impl.RegistrationRoleManagerImpl" />
 
-	<bean id="orcidProfileManager" class="org.orcid.core.manager.impl.OrcidProfileManagerImpl" >
-        <property name="numberOfIndexingThreads" value="${org.orcid.core.numberOfIndexingThreads:4}" />
-        <property name="claimWaitPeriodDays" value="${org.orcid.core.claimWaitPeriodDays:10}" />
-        <property name="claimReminderAfterDays" value="${org.orcid.core.claimReminderAfterDays:8}" />
-    </bean>
-    
-    <bean id="webhookManager" class="org.orcid.core.manager.impl.WebhookManagerImpl">
-    	<property name="maxJobsPerClient" value="${org.orcid.core.maxJobsPerClient:50}" />
-    </bean>
-    
-    <bean id="httpClient" class="org.apache.http.impl.client.DefaultHttpClient" />
-    
-    <bean id="orcidProfileCleaner" class="org.orcid.core.manager.impl.OrcidProfileCleanerImpl" />
+	<bean id="orcidProfileManager" class="org.orcid.core.manager.impl.OrcidProfileManagerImpl">
+		<property name="numberOfIndexingThreads" value="${org.orcid.core.numberOfIndexingThreads:4}" />
+		<property name="claimWaitPeriodDays" value="${org.orcid.core.claimWaitPeriodDays:10}" />
+		<property name="claimReminderAfterDays" value="${org.orcid.core.claimReminderAfterDays:8}" />
+	</bean>
+
+	<bean id="webhookManager" class="org.orcid.core.manager.impl.WebhookManagerImpl">
+		<property name="maxJobsPerClient" value="${org.orcid.core.maxJobsPerClient:50}" />
+	</bean>
+
+	<bean id="orcidProfileCleaner" class="org.orcid.core.manager.impl.OrcidProfileCleanerImpl" />
 
 	<bean id="crossRefManager" class="org.orcid.core.manager.impl.CrossRefManagerImpl" />
 
@@ -106,33 +98,36 @@
 	<bean id="subjectManager" class="org.orcid.core.manager.impl.SubjectManagerImpl" />
 
 	<bean id="orcidSearchManager" class="org.orcid.core.manager.impl.OrcidSearchManagerImpl" />
-	
-	<bean id="searchManager" class="org.orcid.core.manager.impl.SolrAndDBSearchManagerImpl" />
-	
-	<bean id="orcidIndexManager" class="org.orcid.core.manager.impl.OrcidIndexManagerImpl" />
-    
-    <bean id="thirdPartyImportManagerImpl" class="org.orcid.core.manager.impl.ThirdPartyImportManagerImpl" />
 
-	<bean id="passwordGenerationManager" class="org.orcid.core.manager.impl.PasswordGenerationManagerImpl" >
+	<bean id="searchManager" class="org.orcid.core.manager.impl.SolrAndDBSearchManagerImpl" />
+
+	<bean id="orcidIndexManager" class="org.orcid.core.manager.impl.OrcidIndexManagerImpl" />
+
+	<bean id="thirdPartyImportManagerImpl" class="org.orcid.core.manager.impl.ThirdPartyImportManagerImpl" />
+
+	<bean id="passwordGenerationManager"
+		class="org.orcid.core.manager.impl.PasswordGenerationManagerImpl">
 		<constructor-arg value="12"></constructor-arg>
 	</bean>
-	
-	<bean id="orcidClientGroupManager" class="org.orcid.core.manager.impl.OrcidClientGroupManagerImpl" >
-        <property name="defaultRedirectUrisAsWhiteSpaceSeparatedList" value="${org.orcid.core.defaultRedirectUrisAsWhiteSpaceSeparatedList}" />
-    </bean>
-	
-	<bean id="validationManager" class="org.orcid.core.manager.impl.ValidationManagerImpl">
-		<property name="validationBehaviour" value="${org.orcid.core.manager.validationBehaviour:LOG_WARNING}" />	
+
+	<bean id="orcidClientGroupManager" class="org.orcid.core.manager.impl.OrcidClientGroupManagerImpl">
+		<property name="defaultRedirectUrisAsWhiteSpaceSeparatedList"
+			value="${org.orcid.core.defaultRedirectUrisAsWhiteSpaceSeparatedList}" />
 	</bean>
-	
-    <bean id="localeManager" class="org.orcid.core.manager.impl.LocaleManagerImpl"/>
-    
+
+	<bean id="validationManager" class="org.orcid.core.manager.impl.ValidationManagerImpl">
+		<property name="validationBehaviour"
+			value="${org.orcid.core.manager.validationBehaviour:LOG_WARNING}" />
+	</bean>
+
+	<bean id="localeManager" class="org.orcid.core.manager.impl.LocaleManagerImpl" />
+
 	<bean id="messageSource"
-        class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
-        <property name="basename" value="classpath:i18n/messages" />
-        <property name="defaultEncoding" value="UTF-8"/>
-        <property name="cacheSeconds" value="${org.orcid.core.messages.cacheSeconds:5}" />
-    </bean>
+		class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+		<property name="basename" value="classpath:i18n/messages" />
+		<property name="defaultEncoding" value="UTF-8" />
+		<property name="cacheSeconds" value="${org.orcid.core.messages.cacheSeconds:5}" />
+	</bean>
 
 	<cache:annotation-driven />
 	<bean id="ehcache"
@@ -147,15 +142,78 @@
 		<property name="cacheName" value="recent-orcid" />
 	</bean>
 
-    <!-- Reporting -->
-    <!-- Graphite reporter can be created here, but we need a way of only creating this when running 'live' -->
-    <bean id="graphiteReporter" class="org.orcid.core.reporting.ReporterInitializer" destroy-method="shutdown">
-        <constructor-arg value="${org.orcid.core.reporting.graphite.periodInMins:1}" type="long"/>
-        <constructor-arg value="MINUTES" type="java.util.concurrent.TimeUnit"/>
-        <constructor-arg value="${org.orcid.core.reporting.graphite.host:localhost}"/>
-        <constructor-arg value="${org.orcid.core.reporting.graphite.port:2003}" type="int"/>
-        <constructor-arg value="${org.orcid.core.reporting.graphite.prefix:orcid-reporter}"/>
-        <constructor-arg value="${org.orcid.core.reporting.useGraphite:false}"/>
-    </bean>
+	<!-- Reporting -->
+	<!-- Graphite reporter can be created here, but we need a way of only creating 
+		this when running 'live' -->
+	<bean id="graphiteReporter" class="org.orcid.core.reporting.ReporterInitializer"
+		destroy-method="shutdown">
+		<constructor-arg value="${org.orcid.core.reporting.graphite.periodInMins:1}"
+			type="long" />
+		<constructor-arg value="MINUTES" type="java.util.concurrent.TimeUnit" />
+		<constructor-arg value="${org.orcid.core.reporting.graphite.host:localhost}" />
+		<constructor-arg value="${org.orcid.core.reporting.graphite.port:2003}"
+			type="int" />
+		<constructor-arg
+			value="${org.orcid.core.reporting.graphite.prefix:orcid-reporter}" />
+		<constructor-arg value="${org.orcid.core.reporting.useGraphite:false}" />
+	</bean>
+
+	<!-- HTTP client connection beans -->
+	<bean id="plainSocketFactory" class="org.apache.http.conn.scheme.PlainSocketFactory"
+		factory-method="getSocketFactory" />
+
+	<bean id="sslSocketFactory" class="org.apache.http.conn.ssl.SSLSocketFactory"
+		factory-method="getSocketFactory" />
+
+	<bean id="plainScheme" class="org.apache.http.conn.scheme.Scheme">
+		<constructor-arg type="java.lang.String" value="http" />
+		<constructor-arg ref="plainSocketFactory" />
+		<constructor-arg type="int" value="80" />
+	</bean>
+
+	<bean id="sslScheme" class="org.apache.http.conn.scheme.Scheme">
+		<constructor-arg type="java.lang.String" value="https" />
+		<constructor-arg ref="sslSocketFactory" />
+		<constructor-arg type="int" value="443" />
+	</bean>
+
+	<bean id="schemeRegistry" class="org.apache.http.conn.scheme.SchemeRegistry" />
+
+	<bean id="registerPlainScheme"
+		class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+		<property name="targetObject">
+			<ref local="schemeRegistry" />
+		</property>
+		<property name="targetMethod" value="register" />
+		<property name="arguments">
+			<list>
+				<ref bean="plainScheme" />
+			</list>
+		</property>
+	</bean>
+
+	<bean id="registerSSLScheme"
+		class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+		<property name="targetObject">
+			<ref local="schemeRegistry" />
+		</property>
+		<property name="targetMethod" value="register" />
+		<property name="arguments">
+			<list>
+				<ref bean="sslScheme" />
+			</list>
+		</property>
+	</bean>
+
+	<bean id="poolingClientConnectionManager"
+		class="org.apache.http.impl.conn.PoolingClientConnectionManager">
+		<constructor-arg ref="schemeRegistry" />
+		<property name="maxTotal" value="100" />
+		<property name="defaultMaxPerRoute" value="10" />
+	</bean>
+
+	<bean id="httpClient" class="org.apache.http.impl.client.DefaultHttpClient">
+		<constructor-arg ref="poolingClientConnectionManager" />
+	</bean>
 
 </beans>
