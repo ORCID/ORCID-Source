@@ -13,6 +13,10 @@
     <name>ORCID - Core</name>
     <description>Holds all business logic to drive the various services and web applications</description>
 
+    <properties>
+        <main.basedir>${project.parent.basedir}</main.basedir>
+    </properties>
+
     <dependencies>
         <!-- Internal dependencies -->
         <dependency>

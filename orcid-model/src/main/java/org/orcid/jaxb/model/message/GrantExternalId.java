@@ -21,7 +21,6 @@
 // Generated on: 2012.08.13 at 04:58:08 PM BST 
 //
 
-
 package org.orcid.jaxb.model.message;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -30,7 +29,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
 import java.io.Serializable;
-
 
 /**
  * <p>Java class for anonymous complex type.
@@ -49,15 +47,12 @@ import java.io.Serializable;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = {
-    "content"
-})
+@XmlType(name = "", propOrder = { "content" })
 @XmlRootElement(name = "grant-external-id")
 public class GrantExternalId implements Serializable {
 
     @XmlValue
     protected String content;
-
 
     public GrantExternalId() {
 

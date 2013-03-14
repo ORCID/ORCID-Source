@@ -74,7 +74,7 @@ public class T2OrcidApiServiceImplGetAndSearchMetricsTest {
         T2OrcidApiServiceImpl.T2_GET_REQUESTS.clear();
         T2OrcidApiServiceImpl.T2_SEARCH_RESULTS_NONE_FOUND.clear();
         T2OrcidApiServiceImpl.T2_SEARCH_RESULTS_FOUND.clear();
-        
+
     }
 
     @Test
@@ -247,13 +247,13 @@ public class T2OrcidApiServiceImplGetAndSearchMetricsTest {
         when(mockServiceDelegator.searchByQuery(queryMaps)).thenReturn(successResponse);
         assertTrue(T2OrcidApiServiceImpl.T2_SEARCH_REQUESTS.count() == 0);
         Response response = t2OrcidApiService.searchByQueryJSON("orcid");
-        assertTrue(200==response.getStatus());
+        assertTrue(200 == response.getStatus());
         assertTrue(T2OrcidApiServiceImpl.T2_GET_REQUESTS.count() == 0);
         assertTrue(T2OrcidApiServiceImpl.T2_SEARCH_REQUESTS.count() == 1);
         assertTrue(T2OrcidApiServiceImpl.T2_SEARCH_RESULTS_NONE_FOUND.count() == 1);
         assertTrue(T2OrcidApiServiceImpl.T2_SEARCH_RESULTS_FOUND.count() == 0);
     }
-    
+
     @Test
     public void testSearchByQueryJSONResultsReturned() {
         UriInfo uriInfo = mock(UriInfo.class);
@@ -271,7 +271,6 @@ public class T2OrcidApiServiceImplGetAndSearchMetricsTest {
         assertTrue(T2OrcidApiServiceImpl.T2_SEARCH_RESULTS_NONE_FOUND.count() == 0);
         assertTrue(T2OrcidApiServiceImpl.T2_SEARCH_RESULTS_FOUND.count() == 3);
     }
-
 
     private MultivaluedMap<String, String> queryParams() {
 
@@ -315,8 +314,6 @@ public class T2OrcidApiServiceImplGetAndSearchMetricsTest {
         assertTrue(T2OrcidApiServiceImpl.T2_SEARCH_RESULTS_NONE_FOUND.count() == 0);
         assertTrue(T2OrcidApiServiceImpl.T2_SEARCH_RESULTS_FOUND.count() == 3);
     }
-    
-    
 
     private Response orcidWithMultipleResults() {
 
@@ -328,22 +325,21 @@ public class T2OrcidApiServiceImplGetAndSearchMetricsTest {
         OrcidSearchResult orcidSearchResult1 = new OrcidSearchResult();
         OrcidSearchResult orcidSearchResult2 = new OrcidSearchResult();
         OrcidSearchResult orcidSearchResult3 = new OrcidSearchResult();
-        
+
         orcidSearchResult1.setOrcidProfile(orcidProfile1);
         orcidSearchResult2.setOrcidProfile(orcidProfile2);
         orcidSearchResult3.setOrcidProfile(orcidProfile3);
-      
+
         List<OrcidSearchResult> searchResults = new ArrayList<OrcidSearchResult>();
         searchResults.add(orcidSearchResult1);
         searchResults.add(orcidSearchResult2);
         searchResults.add(orcidSearchResult3);
-      
+
         OrcidSearchResults orcidSearchResults = new OrcidSearchResults();
         orcidSearchResults.getOrcidSearchResult().addAll(searchResults);
         orcidMessage.setOrcidSearchResults(orcidSearchResults);
         return Response.ok(orcidMessage).build();
 
     }
-
 
 }

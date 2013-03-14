@@ -168,8 +168,8 @@ public class OrcidOauth2TokenDetailServiceImpl implements OrcidOauth2TokenDetail
 
     @Override
     public void removeConflictsAndCreateNew(OrcidOauth2TokenDetail detail) {
-        orcidOauth2TokenDetailDao.removeByAuthenticationKeyOrTokenValueOrRefreshTokenValue(detail.getAuthenticationKey(), detail.getTokenValue(),
-                detail.getRefreshTokenValue());
+        orcidOauth2TokenDetailDao.removeByAuthenticationKeyOrTokenValueOrRefreshTokenValue(detail.getAuthenticationKey(), detail.getTokenValue(), detail
+                .getRefreshTokenValue());
         orcidOauth2TokenDetailDao.persist(detail);
     }
 }

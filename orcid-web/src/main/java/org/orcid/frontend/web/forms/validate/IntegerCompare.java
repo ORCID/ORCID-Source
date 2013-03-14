@@ -27,7 +27,7 @@ import java.lang.annotation.Target;
 import javax.validation.Constraint;
 import javax.validation.Payload;
 
-@Target({ TYPE, ANNOTATION_TYPE })
+@Target( { TYPE, ANNOTATION_TYPE })
 @Retention(RUNTIME)
 @Constraint(validatedBy = FirstIntegerNotHigherThanSecondIntegerValidator.class)
 @Documented
@@ -53,7 +53,7 @@ public @interface IntegerCompare {
      * 
      * @see FieldMatch
      */
-    @Target({ TYPE, ANNOTATION_TYPE })
+    @Target( { TYPE, ANNOTATION_TYPE })
     @Retention(RUNTIME)
     @Documented
     @interface List {

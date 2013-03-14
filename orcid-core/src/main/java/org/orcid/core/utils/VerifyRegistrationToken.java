@@ -70,7 +70,7 @@ public class VerifyRegistrationToken {
         sponsorName = params.get(SPONSOR_NAME_PARAM_KEY);
         sponsorId = params.get(SPONSOR_ID_PARAM_KEY);
         institutionName = params.get(INSTITUTION_NAME_PARAM_KEY);
-    }   
+    }
 
     public String getEmail() {
         return email;

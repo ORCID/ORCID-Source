@@ -125,5 +125,4 @@ public class EmailEntity extends BaseEntity<String> {
         }
         return map;
     }
-
 }

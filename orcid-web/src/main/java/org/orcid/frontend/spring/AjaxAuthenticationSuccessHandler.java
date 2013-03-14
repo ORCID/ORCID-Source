@@ -49,16 +49,18 @@ public class AjaxAuthenticationSuccessHandler extends SimpleUrlAuthenticationSuc
         SavedRequest savedRequest = new HttpSessionRequestCache().getRequest(request, response);
         String url = null;
         if (savedRequest != null) {
-        	url = savedRequest.getRedirectUrl();
+            url = savedRequest.getRedirectUrl();
         }
 
         // this next section is a hack, we should refactor to us
         // some of kind of configuration file
         if (url != null) {
-	        if (url.contains("/signin/auth")) url = null;
-	        else if (url.contains(".json"))  url = null;
+            if (url.contains("/signin/auth"))
+                url = null;
+            else if (url.contains(".json"))
+                url = null;
         }
-        
+
         return url;
     }
 

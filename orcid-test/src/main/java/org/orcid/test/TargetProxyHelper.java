@@ -21,12 +21,12 @@ import org.springframework.aop.support.AopUtils;
 
 public class TargetProxyHelper {
 
-    @SuppressWarnings({ "unchecked" })
+    @SuppressWarnings( { "unchecked" })
     public static <T> T getTargetObject(Object proxy, Class<T> targetClass) throws Exception {
         while ((AopUtils.isJdkDynamicProxy(proxy))) {
             return (T) getTargetObject(((Advised) proxy).getTargetSource().getTarget(), targetClass);
         }
         return (T) proxy; // expected to be cglib proxy then, which is simply a
-                          // specialized class
+        // specialized class
     }
 }

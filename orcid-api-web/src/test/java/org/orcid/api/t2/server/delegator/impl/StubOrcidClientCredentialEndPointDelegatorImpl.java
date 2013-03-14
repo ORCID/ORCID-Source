@@ -22,7 +22,7 @@ import javax.ws.rs.core.Response;
 
 import org.orcid.api.t2.server.delegator.OrcidClientCredentialEndPointDelegator;
 
-public class StubOrcidClientCredentialEndPointDelegatorImpl implements OrcidClientCredentialEndPointDelegator{
+public class StubOrcidClientCredentialEndPointDelegatorImpl implements OrcidClientCredentialEndPointDelegator {
 
     @Override
     public Response obtainOauth2Token(String clientId, String clientSecret, String refreshToken, String grantType, String code, Set<String> scopes, String state,

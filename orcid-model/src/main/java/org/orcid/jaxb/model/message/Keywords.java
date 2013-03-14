@@ -21,7 +21,6 @@
 // Generated on: 2012.08.09 at 01:52:56 PM BST 
 //
 
-
 package org.orcid.jaxb.model.message;
 
 import java.io.Serializable;
@@ -32,7 +31,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-
 
 /**
  * <p>Java class for anonymous complex type.
@@ -55,9 +53,7 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = {
-    "keyword"
-})
+@XmlType(name = "", propOrder = { "keyword" })
 @XmlRootElement(name = "keywords")
 public class Keywords implements VisibilityType, Serializable {
 
@@ -145,7 +141,7 @@ public class Keywords implements VisibilityType, Serializable {
         result = 31 * result + (visibility != null ? visibility.hashCode() : 0);
         return result;
     }
-    
+
     public List<String> getKeywordsAsStrings() {
         List<Keyword> keywords = getKeyword();
         List<String> strings = new ArrayList<String>(keywords.size());

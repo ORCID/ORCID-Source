@@ -36,6 +36,7 @@ the software.
         <servlet.port>9437</servlet.port>
         <ajp.port>9438</ajp.port>
         <metrics.version>2.1.2</metrics.version>
+        <main.basedir>${project.basedir}</main.basedir>
     </properties>
 
     <modules>
@@ -94,6 +95,14 @@ the software.
 
     <build>
         <plugins>
+	     <plugin>
+  		<groupId>com.googlecode.maven-java-formatter-plugin</groupId>
+  		<artifactId>maven-java-formatter-plugin</artifactId>
+  		<version>0.3.1</version>
+  		<configuration>
+    		    <configFile>${main.basedir}/eclipse_formatter.xml</configFile>
+  		</configuration>
+	    </plugin>
             <plugin>
                <groupId>org.apache.maven.plugins</groupId>
                <artifactId>maven-war-plugin</artifactId>

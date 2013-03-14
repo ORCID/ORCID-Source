@@ -57,19 +57,19 @@ public class DefaultOAuthClientVisibilityTest extends BaseTest {
 
     @Resource(name = "defaultPermissionChecker")
     private PermissionChecker permissionChecker;
-    
+
     @Mock
     private OrcidOauth2TokenDetailService orcidOauth2TokenDetailService;
 
     @Before
-    public void mockDependencies() throws Exception{
+    public void mockDependencies() throws Exception {
         DefaultPermissionChecker defaultPermissionChecker = (DefaultPermissionChecker) permissionChecker;
         defaultPermissionChecker.setOrcidOauthTokenDetailService(orcidOauth2TokenDetailService);
     }
-    
+
     @Test
     @Transactional
-    @Rollback    
+    @Rollback
     public void testCheckClientPermissionsAllowOnlyPublicAndLimitedVisibility() throws Exception {
         Collection<String> resourceIds = new HashSet<String>(Arrays.asList("orcid"));
         HashSet<GrantedAuthority> grantedAuthorities = new HashSet<GrantedAuthority>(Arrays.asList(new SimpleGrantedAuthority("ROLE_CLIENT")));
@@ -79,21 +79,19 @@ public class DefaultOAuthClientVisibilityTest extends BaseTest {
         OrcidOauth2UserAuthentication oauth2UserAuthentication = new OrcidOauth2UserAuthentication(entity, true);
         //we care only that an OAuth client request results in the correct visibilities 
         OrcidOAuth2Authentication oAuth2Authentication = new OrcidOAuth2Authentication(request, oauth2UserAuthentication, "made-up-token");
-       
+
         when(orcidOauth2TokenDetailService.findNonDisabledByTokenValue(any(String.class))).thenReturn(new OrcidOauth2TokenDetail());
         ScopePathType scopePathType = ScopePathType.ORCID_BIO_EXTERNAL_IDENTIFIERS_CREATE;
         Set<Visibility> visibilitiesForClient = permissionChecker.obtainVisibilitiesForAuthentication(oAuth2Authentication, scopePathType, getOrcidMessage());
-        assertTrue(visibilitiesForClient.size()==3);
+        assertTrue(visibilitiesForClient.size() == 3);
         assertTrue(visibilitiesForClient.contains(Visibility.LIMITED));
         assertTrue(visibilitiesForClient.contains(Visibility.REGISTERED_ONLY));
         assertTrue(visibilitiesForClient.contains(Visibility.PUBLIC));
-    }    
-    
-    
+    }
+
     private OrcidMessage getOrcidMessage() throws JAXBException {
         JAXBContext context = JAXBContext.newInstance(OrcidMessage.class);
         Unmarshaller unmarshaller = context.createUnmarshaller();
-        return (OrcidMessage) unmarshaller.unmarshal(DefaultPermissionCheckerTest.class.getResourceAsStream(
-                "/orcid-full-message-no-visibility-latest.xml"));
+        return (OrcidMessage) unmarshaller.unmarshal(DefaultPermissionCheckerTest.class.getResourceAsStream("/orcid-full-message-no-visibility-latest.xml"));
     }
 }

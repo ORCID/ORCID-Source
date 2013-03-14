@@ -24,7 +24,6 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-
 /**
  * <p>Java class for anonymous complex type.
  * 
@@ -45,9 +44,7 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = {
-    "redirectUri"
-})
+@XmlType(name = "", propOrder = { "redirectUri" })
 @XmlRootElement(name = "redirect-uris")
 public class RedirectUris {
 
@@ -81,7 +78,6 @@ public class RedirectUris {
             redirectUri = new ArrayList<RedirectUri>();
         }
         return this.redirectUri;
-    }   
-   
+    }
 
 }

@@ -38,7 +38,7 @@ public class LoginApplicationListenerTest {
     public void testOnApplicationEvent() {
         Long counter = LoginApplicationListener.LOGIN_COUNTER.count();
         LoginApplicationListener loginApplicationListener = new LoginApplicationListener();
-        AuthenticationSuccessEvent authenticationSuccessEvent = new AuthenticationSuccessEvent(fakeAuth());       
+        AuthenticationSuccessEvent authenticationSuccessEvent = new AuthenticationSuccessEvent(fakeAuth());
         // call synchronously - not the normal usage of an event model, but this
         // is only to check the counter
         loginApplicationListener.onApplicationEvent(authenticationSuccessEvent);

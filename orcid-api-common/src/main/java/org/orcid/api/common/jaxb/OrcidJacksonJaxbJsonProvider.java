@@ -30,8 +30,8 @@ import static org.orcid.api.common.OrcidApiConstants.*;
  * @author Declan Newman (declan) Date: 12/04/2012
  */
 @Provider
-@Consumes({ VND_ORCID_JSON, ORCID_JSON, "text/orcid+json" })
-@Produces({ VND_ORCID_JSON, ORCID_JSON, "text/orcid+json" })
+@Consumes( { VND_ORCID_JSON, ORCID_JSON, "text/orcid+json" })
+@Produces( { VND_ORCID_JSON, ORCID_JSON, "text/orcid+json" })
 public class OrcidJacksonJaxbJsonProvider extends JacksonJaxbJsonProvider {
 
 }

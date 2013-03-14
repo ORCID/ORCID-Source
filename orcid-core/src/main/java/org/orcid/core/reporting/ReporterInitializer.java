@@ -56,8 +56,8 @@ public class ReporterInitializer implements InitializingBean {
         this.prefix = prefix;
         if (useGraphite) {
             LOGGER.info("Starting Graphite reporter");
-            reporter = new GraphiteReporter(Metrics.defaultRegistry(), prefix, MetricPredicate.ALL,
-                    new GraphiteReporter.DefaultSocketProvider(host, port), Clock.defaultClock(), VirtualMachineMetrics.getInstance());
+            reporter = new GraphiteReporter(Metrics.defaultRegistry(), prefix, MetricPredicate.ALL, new GraphiteReporter.DefaultSocketProvider(host, port), Clock
+                    .defaultClock(), VirtualMachineMetrics.getInstance());
         } else {
             LOGGER.info("Starting Console reporter");
             reporter = new ConsoleReporter(Metrics.defaultRegistry(), System.out, MetricPredicate.ALL);

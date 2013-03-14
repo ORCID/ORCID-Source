@@ -23,33 +23,29 @@ package org.orcid.password.constants;
  * 
  */
 public class OrcidPasswordConstants {
-	
-	private static char[] ENTIRE_PASSWORD_CHARS_RANGE;
-	
-	//one digit, one character (including non-us ascii), mix the rest...
-	public static final String ORCID_PASSWORD_REGEX = "(?=.{8,})(?=.*\\d)(?=.*\\D)(?=.*\\w).*";	
 
-	public static final String UNESCAPED_SYMBOL_RANGE = "!@#$%^*()[]~'{}|&_]";
+    private static char[] ENTIRE_PASSWORD_CHARS_RANGE;
 
-	public static final String CHAR_CLASS_NUMBERS = "0123456789";
+    //one digit, one character (including non-us ascii), mix the rest...
+    public static final String ORCID_PASSWORD_REGEX = "(?=.{8,})(?=.*\\d)(?=.*\\D)(?=.*\\w).*";
 
-	public static final String LOWERCASE_ALPHABET= "abcdefghijklmnopqrstuvwxyz";
+    public static final String UNESCAPED_SYMBOL_RANGE = "!@#$%^*()[]~'{}|&_]";
 
-	public static final String UPPERCASE_ALPHABET= "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    public static final String CHAR_CLASS_NUMBERS = "0123456789";
 
-	
-	public static final char[] getEntirePasswordCharsRange()
-	{
-		if (ENTIRE_PASSWORD_CHARS_RANGE==null)
-		{
-			
-			return (UNESCAPED_SYMBOL_RANGE+CHAR_CLASS_NUMBERS+LOWERCASE_ALPHABET+UPPERCASE_ALPHABET).toCharArray();	
-		}
-		
-		return ENTIRE_PASSWORD_CHARS_RANGE;
-	}
+    public static final String LOWERCASE_ALPHABET = "abcdefghijklmnopqrstuvwxyz";
 
+    public static final String UPPERCASE_ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+    public static final char[] getEntirePasswordCharsRange() {
+        if (ENTIRE_PASSWORD_CHARS_RANGE == null) {
+
+            return (UNESCAPED_SYMBOL_RANGE + CHAR_CLASS_NUMBERS + LOWERCASE_ALPHABET + UPPERCASE_ALPHABET).toCharArray();
+        }
+
+        return ENTIRE_PASSWORD_CHARS_RANGE;
+    }
 
     public static final String PASSWORD_REGEX_MESSAGE = "Passwords must be 8 or more characters and contain at least 1 number and at least 1 alpha character or symbol";
-	
+
 }

@@ -153,7 +153,7 @@ public class ManageProfileController extends BaseWorkspaceController {
         ModelAndView mav = rebuildManageView(tab);
         return mav;
     }
-   
+
     @RequestMapping(value = "/preferences", method = RequestMethod.POST)
     public ModelAndView updatePreferences(@ModelAttribute("preferencesForm") PreferencesForm preferencesForm, RedirectAttributes redirectAttributes) {
         ModelAndView mav = new ModelAndView("redirect:/account?activeTab=options-tab");

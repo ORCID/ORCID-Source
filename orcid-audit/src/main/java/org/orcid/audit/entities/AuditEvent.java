@@ -56,7 +56,7 @@ public class AuditEvent implements Serializable {
     }
 
     public AuditEvent(String recordModifiedOrcid, String recordModifierOrcid, String recordModifierType, String recordModifierIp, String recordModifierIso2Country,
-                      AuditEventType eventType, String eventMethod, String eventDescription) {
+            AuditEventType eventType, String eventMethod, String eventDescription) {
         this.recordModifiedOrcid = recordModifiedOrcid;
         this.recordModifierOrcid = recordModifierOrcid;
         this.recordModifierType = recordModifierType;

@@ -771,12 +771,12 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         } else {
             contributor.setContributorEmail(StringUtils.isNotBlank(contributorEntity.getContributorEmail()) ? new ContributorEmail(contributorEntity
                     .getContributorEmail()) : null);
-            if(StringUtils.isNotBlank(contributorEntity.getCreditName())){
+            if (StringUtils.isNotBlank(contributorEntity.getCreditName())) {
                 CreditName creditName = new CreditName(contributorEntity.getCreditName());
                 // Set visibility from parent work
                 creditName.setVisibility(visibility);
                 contributor.setCreditName(creditName);
-                
+
             }
         }
 

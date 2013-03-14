@@ -30,46 +30,45 @@ import javax.servlet.http.HttpServletResponseWrapper;
  *
  */
 
-
 public class GenericResponseWrapper extends HttpServletResponseWrapper {
 
-	private ByteArrayOutputStream output;
-	private int contentLength;
-	private String contentType;
+    private ByteArrayOutputStream output;
+    private int contentLength;
+    private String contentType;
 
-	public GenericResponseWrapper(HttpServletResponse response) {
-		super(response);
+    public GenericResponseWrapper(HttpServletResponse response) {
+        super(response);
 
-		output = new ByteArrayOutputStream();
-	}
+        output = new ByteArrayOutputStream();
+    }
 
-	public byte[] getData() {
-		return output.toByteArray();
-	}
+    public byte[] getData() {
+        return output.toByteArray();
+    }
 
-	public ServletOutputStream getOutputStream() {
-		return new FilterServletOutputStream(output);
-	}
+    public ServletOutputStream getOutputStream() {
+        return new FilterServletOutputStream(output);
+    }
 
-	public PrintWriter getWriter() {
-		return new PrintWriter(getOutputStream(), true);
-	}
+    public PrintWriter getWriter() {
+        return new PrintWriter(getOutputStream(), true);
+    }
 
-	public void setContentLength(int length) {
-		this.contentLength = length;
-		super.setContentLength(length);
-	}
+    public void setContentLength(int length) {
+        this.contentLength = length;
+        super.setContentLength(length);
+    }
 
-	public int getContentLength() {
-		return contentLength;
-	}
+    public int getContentLength() {
+        return contentLength;
+    }
 
-	public void setContentType(String type) {
-		this.contentType = type;
-		super.setContentType(type);
-	}
+    public void setContentType(String type) {
+        this.contentType = type;
+        super.setContentType(type);
+    }
 
-	public String getContentType() {
-		return contentType;
-	}
+    public String getContentType() {
+        return contentType;
+    }
 }

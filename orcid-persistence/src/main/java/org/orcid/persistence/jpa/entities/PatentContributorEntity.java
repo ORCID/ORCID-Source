@@ -62,8 +62,4 @@ public class PatentContributorEntity extends BaseContributorEntity {
         this.patent = patent;
     }
 
-
-
-
-
 }

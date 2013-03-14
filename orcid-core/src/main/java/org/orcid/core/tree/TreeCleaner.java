@@ -132,7 +132,7 @@ public class TreeCleaner {
     }
 
     private boolean isCandidate(Method method) {
-    	if (method != null && method.getName().startsWith("get")) {
+        if (method != null && method.getName().startsWith("get")) {
             Class<?> returnType = method.getReturnType();
             if (returnType != null && returnType.getPackage() != null) {
                 Package aPackage = returnType.getPackage();

@@ -13,6 +13,10 @@
     <name>ORCID - Utils</name>
     <description>Utilities used throughout the ORCID project</description>
 
+    <properties>
+        <main.basedir>${project.parent.basedir}</main.basedir>
+    </properties>
+
     <dependencies>
         <!-- Internal dependencies -->
 

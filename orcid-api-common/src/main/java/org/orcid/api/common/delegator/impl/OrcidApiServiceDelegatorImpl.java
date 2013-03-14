@@ -172,16 +172,16 @@ public class OrcidApiServiceDelegatorImpl implements OrcidApiServiceDelegator {
      * @return
      */
     private Response getOrcidMessageResponse(OrcidProfile profile, String requestedOrcid) {
-    	
-    	if (profile == null) {
-    	    throw new OrcidNotFoundException("ORCID " + requestedOrcid + " not found");
-    	}
-    	
+
+        if (profile == null) {
+            throw new OrcidNotFoundException("ORCID " + requestedOrcid + " not found");
+        }
+
         profile.setOrcidInternal(null);
         OrcidMessage orcidMessage = new OrcidMessage(profile);
         validationManager.validateMessage(orcidMessage);
-            
-        return Response.ok(orcidMessage).build();    		
+
+        return Response.ok(orcidMessage).build();
     }
 
     private Response getOrcidSearchResultsResponse(OrcidSearchResults orcidSearchResults, String query) {

@@ -51,46 +51,26 @@ import java.io.Serializable;
 public enum WorkExternalIdentifierType implements Serializable {
 
     @XmlEnumValue("other-id")
-    OTHER_ID("other-id", "Other identifier type"),
-    @XmlEnumValue("asin")
-    ASIN("asin", "Amazon Standard Identification Number"),
-    @XmlEnumValue("asin-tld")
-    ASIN_TLD("asin-tld", "ASIN top-level domain"),
-    @XmlEnumValue("arxiv")
-    ARXIV("arxiv", "ArXiv"),
-    @XmlEnumValue("bibcode")
-    BIBCODE("bibcode", "Bibcode"),
-    @XmlEnumValue("doi")
-    DOI("doi", "Digital object identifier"),
-    @XmlEnumValue("eid")
-    EID("eid", "Scopus Identifier"),
-    @XmlEnumValue("isbn")
-    ISBN("isbn", "International Standard Book Number"),
-    @XmlEnumValue("issn")
-    ISSN("issn", "International Standard Serial Number"),
-    @XmlEnumValue("jfm")
-    JFM("jfm", "Jahrbuch über die Fortschritte der Mathematik"),
-    @XmlEnumValue("jstor")
-    JSTOR("jstor", "JSTOR abstract"),
-    @XmlEnumValue("lccn")
-    LCCN("lccn", "Library of Congress Control Number"),
-    @XmlEnumValue("mr")
-    MR("mr", "Mathematical Reviews"),
-    @XmlEnumValue("oclc")
-    OCLC("oclc", "Online Computer Library Center"),
-    @XmlEnumValue("ol")
-    OL("ol", "Open Library"),
-    @XmlEnumValue("osti")
-    OSTI("osti", "Office of Scientific and Technical Information"),
-    @XmlEnumValue("pmc")
-    PMC("pmc", "PubMed Central article number"),
-    @XmlEnumValue("pmid")
-    PMID("pmid", "PubMed Unique Identifier"),
-    @XmlEnumValue("rfc")
-    RFC("rfc", "Request for Comments"),
-    @XmlEnumValue("ssrn")
-    SSRN("ssrn", "Social Science Research Network"),
-    @XmlEnumValue("zbl")
+    OTHER_ID("other-id", "Other identifier type"), @XmlEnumValue("asin")
+    ASIN("asin", "Amazon Standard Identification Number"), @XmlEnumValue("asin-tld")
+    ASIN_TLD("asin-tld", "ASIN top-level domain"), @XmlEnumValue("arxiv")
+    ARXIV("arxiv", "ArXiv"), @XmlEnumValue("bibcode")
+    BIBCODE("bibcode", "Bibcode"), @XmlEnumValue("doi")
+    DOI("doi", "Digital object identifier"), @XmlEnumValue("eid")
+    EID("eid", "Scopus Identifier"), @XmlEnumValue("isbn")
+    ISBN("isbn", "International Standard Book Number"), @XmlEnumValue("issn")
+    ISSN("issn", "International Standard Serial Number"), @XmlEnumValue("jfm")
+    JFM("jfm", "Jahrbuch über die Fortschritte der Mathematik"), @XmlEnumValue("jstor")
+    JSTOR("jstor", "JSTOR abstract"), @XmlEnumValue("lccn")
+    LCCN("lccn", "Library of Congress Control Number"), @XmlEnumValue("mr")
+    MR("mr", "Mathematical Reviews"), @XmlEnumValue("oclc")
+    OCLC("oclc", "Online Computer Library Center"), @XmlEnumValue("ol")
+    OL("ol", "Open Library"), @XmlEnumValue("osti")
+    OSTI("osti", "Office of Scientific and Technical Information"), @XmlEnumValue("pmc")
+    PMC("pmc", "PubMed Central article number"), @XmlEnumValue("pmid")
+    PMID("pmid", "PubMed Unique Identifier"), @XmlEnumValue("rfc")
+    RFC("rfc", "Request for Comments"), @XmlEnumValue("ssrn")
+    SSRN("ssrn", "Social Science Research Network"), @XmlEnumValue("zbl")
     XBL("zbl", "Zentralblatt MATH");
 
     private final String value;

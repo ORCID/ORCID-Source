@@ -119,7 +119,7 @@ public class CurrentWork {
             subtitle = workTitle.getSubtitle() == null ? null : workTitle.getSubtitle().getContent();
         }
         WorkType orcidWorkType = orcidWork.getWorkType();
-        if(orcidWorkType != null){
+        if (orcidWorkType != null) {
             workType = orcidWorkType.value();
         }
         description = orcidWork.getShortDescription();

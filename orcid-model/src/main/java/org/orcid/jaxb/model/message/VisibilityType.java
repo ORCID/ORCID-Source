@@ -16,7 +16,6 @@
  */
 package org.orcid.jaxb.model.message;
 
-
 /**
  * 2011-2012 ORCID
  * 

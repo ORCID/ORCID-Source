@@ -33,7 +33,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
  * @author Declan Newman (declan)
  *         Date: 08/10/2012
  */
-@Target({ METHOD })
+@Target( { METHOD })
 @Retention(RUNTIME)
 @Inherited
 @Documented

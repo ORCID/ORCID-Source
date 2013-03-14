@@ -26,7 +26,7 @@ import javax.persistence.PersistenceContext;
  * 
  * @author Declan Newman (declan) Date: 24/04/2012
  */
-@PersistenceContext(unitName="orcid")
+@PersistenceContext(unitName = "orcid")
 public class OrcidOauth2AuthoriziationCodeDetailDaoImpl extends GenericDaoImpl<OrcidOauth2AuthoriziationCodeDetail, String> implements
         OrcidOauth2AuthoriziationCodeDetailDao {
 
