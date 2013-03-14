@@ -191,15 +191,31 @@ the software.
                     <artifactId>maven-license-plugin</artifactId>
                     <version>1.9.0</version>
                     <configuration>
-                        <header>${basedir}/SHORT_LICENSE.txt</header>
+                        <header>${main.basedir}/SHORT_LICENSE.txt</header>
                         <failIfMissing>true</failIfMissing>
                         <aggregate>false</aggregate>
                         <strictCheck>true</strictCheck>
+                        <mapping>
+                            <xjb>XML_STYLE</xjb>
+                        </mapping>
                         <excludes>
-                            <exclude>header.txt</exclude>
-                            <exclude>**/src/test/resources/**</exclude>
+                        	<exclude>**/src/main/resources/data/AuditEventData.xml</exclude>
+                        	<exclude>**/src/main/resources/orcid-client-group-for-db-unit-data.xml</exclude>
+                        	<exclude>**/src/main/webapp/static/ORCID-Fonts-Dot-Com/**</exclude>
+                        	<exclude>**/src/main/webapp/static/javascript/plugins.js</exclude>
+                        	<exclude>**/src/main/webapp/static/javascript/modernizr.js</exclude>
+                        	<exclude>**/src/main/webapp/static/css/jquery-*.css</exclude>
+                        	<exclude>**/src/main/webapp/static/javascript/jquery-*.js</exclude>
+                        	<exclude>**/src/main/webapp/solr/**/*.txt</exclude>
+                        	<exclude>**/src/main/webapp/solr/**/*.xml</exclude>
+                            <exclude>**/src/test/resources/solr/conf/**</exclude>
+                            <exclude>**/src/test/resources/org/orcid/core/manager/example**</exclude>
+                            <exclude>**/src/test/resources/org/orcid/frontend/web/forms/**</exclude>
+                            <exclude>**.md</exclude>
+                        	<exclude>**/src/main/resources/**/*countries.txt</exclude>
+                        	<exclude>**/.gitignore</exclude>
+                        	<exclude>**/rebel.xml</exclude>
                             <exclude>**/src/main/webapp/**/**.xml</exclude>
-                            <exclude>.gitignore</exclude>
                             <exclude>.idea</exclude>
                             <exclude>.idea/**</exclude>
                             <exclude>**.xjb</exclude>
