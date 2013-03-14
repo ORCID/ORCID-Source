@@ -84,16 +84,6 @@
 		   <update>true</update>
                 </configuration>
             </plugin>
-            <plugin>
-                <groupId>com.mycila.maven-license-plugin</groupId>
-                <artifactId>maven-license-plugin</artifactId>
-                <configuration>
-                    <excludes>
-                       <exclude>**/.gitignore</exclude>
-                       <exclude>**/rebel.xml</exclude>
-                    </excludes>
-                </configuration>
-            </plugin>
         </plugins>
     </build>
     <profiles>

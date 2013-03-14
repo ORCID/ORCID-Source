@@ -166,21 +166,4 @@
         <!-- Test dependencies -->
 
     </dependencies>
-    <build>
-        <finalName>orcid-core</finalName>
-        <plugins>
-            <plugin>
-                <groupId>com.mycila.maven-license-plugin</groupId>
-                <artifactId>maven-license-plugin</artifactId>
-                <configuration>
-                    <excludes>
-                        <exclude>**/.gitignore</exclude>
-                        <exclude>**/rebel.xml</exclude>
-                        <exclude>**/src/test/resources/**</exclude>
-                        <exclude>**/src/main/resources/**/*countries.txt</exclude>
-                    </excludes>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
 </project>

@@ -41,19 +41,6 @@
                 </excludes>
             </resource>
         </resources>
-        <plugins>
-            <plugin>
-                <groupId>com.mycila.maven-license-plugin</groupId>
-                <artifactId>maven-license-plugin</artifactId>
-                <configuration>
-                    <excludes>
-                        <exclude>**/src/test/resources/solr/conf/**/*.*</exclude>
-                        <exclude>**/rebel.xml</exclude>
-                        <exclude>**/.gitignore</exclude>
-                    </excludes>
-                </configuration>
-            </plugin>
-        </plugins>
     </build>
 
     <dependencies>
