@@ -151,4 +151,8 @@
         <constructor-arg value="${org.orcid.core.reporting.useGraphite:false}"/>
     </bean>
 
+	<!-- CDN config path -->
+	<bean id="cdnConfigFile" class="java.lang.String">
+		<constructor-arg value="/root/ORCID/cdn_url.txt"/>
+	</bean>
 </beans>

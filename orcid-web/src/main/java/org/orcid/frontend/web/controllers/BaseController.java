@@ -16,7 +16,10 @@
  */
 package org.orcid.frontend.web.controllers;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLEncoder;
@@ -44,6 +47,7 @@ import org.orcid.utils.OrcidWebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -72,6 +76,15 @@ public class BaseController {
     private static final Logger LOGGER = LoggerFactory.getLogger(BaseController.class);
 
     private Date startupDate = new Date();
+
+    // TODO
+    private String staticContentPath;
+
+    // TODO
+    private String staticCdnPath;
+    
+    @Resource
+    private String cdnConfigFile;
     
     @Resource
     private LocaleManager localeManager;
@@ -179,6 +192,63 @@ public class BaseController {
         this.domainsAllowingRobots = domainsAllowingRobots;
     }
 
+    public String getCdnConfigFile(){
+        return this.cdnConfigFile;
+    }
+    
+    public void setCdnConfigFile(String cdnConfigFile){
+        this.cdnConfigFile = cdnConfigFile;
+    }
+    
+    @ModelAttribute("staticLoc")
+    public String getStaticContentPath() {
+        return staticContentPath;
+    }
+
+    @Value("${org.orcid.frontend.web.staticContentPath:/static}")
+    public void setStaticContentPath(String staticContentPath) {
+        this.staticContentPath = staticContentPath;
+    }
+
+    /**
+     * Return the path where the static content will be.
+     * If there is a cdn path configured, it will return the cdn path; if it is not a cdn path
+     * it will return a reference to the static folder "/static"
+     * */
+    @ModelAttribute("staticCdn")
+    public String getStaticCdnPath() {
+        if(StringUtils.isEmpty(this.cdnConfigFile)){
+            return staticContentPath;
+        }
+            
+        FileSystemResource configFile = new FileSystemResource(this.cdnConfigFile);
+        if (configFile.exists()) {
+            try {
+                InputStream is = configFile.getInputStream();
+                BufferedReader br = new BufferedReader(new InputStreamReader(is));
+
+                String uri = br.readLine();
+
+                br.close();
+                if (uri != null)
+                    this.staticCdnPath = uri;
+                else
+                    this.staticCdnPath = this.staticContentPath;
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+        } else {
+            this.staticCdnPath = this.staticContentPath;
+        }
+        return staticCdnPath;
+    }
+    
+    @Value("${org.orcid.frontend.web.staticCdnPath:/static}")
+    public void setStaticCdnPath(String staticCdnPath) {
+        this.staticCdnPath = staticCdnPath;
+    }
+
     @ModelAttribute("visibilities")
     public Map<String, String> retrieveVisibilitiesAsMap() {
         Map<String, String> visibilities = new LinkedHashMap<String, String>();
@@ -265,8 +335,6 @@ public class BaseController {
     public LoginForm getLoginForm() {
         return new LoginForm();
     }
-    
-    
 
     protected void validateEmailAddress(String email, HttpServletRequest request, BindingResult bindingResult) {
         validateEmailAddress(email, true, request, bindingResult);
@@ -275,14 +343,14 @@ public class BaseController {
     protected void validateEmailAddress(String email, boolean ignoreCurrentUser, HttpServletRequest request, BindingResult bindingResult) {
         if (StringUtils.isNotBlank(email)) {
             OrcidProfile orcidProfile = orcidProfileManager.retrieveOrcidProfileByEmail(email);
-            try {  
-        		InternetAddress addr = new InternetAddress(email); 
-        	    addr.validate();  
-        	} catch (AddressException ex) {  
+            try {
+                InternetAddress addr = new InternetAddress(email);
+                addr.validate();
+            } catch (AddressException ex) {
                 String[] codes = { "Email.personalInfoForm.email" };
                 String[] args = { email };
                 bindingResult.addError(new FieldError("email", "email", email, false, codes, args, "Not vaild"));
-        	}
+            }
             if (!(ignoreCurrentUser && emailMatchesCurrentUser(email)) && orcidProfile != null) {
                 if (orcidProfile.getOrcidHistory().isClaimed()) {
                     String[] codes = { "orcid.frontend.verify.duplicate_email" };
@@ -321,8 +389,9 @@ public class BaseController {
             return false;
         }
         boolean match = false;
-        for (Email cuEmail: currentUser.getEffectiveProfile().getOrcidBio().getContactDetails().getEmail()) {
-        	if (cuEmail.getValue() != null && cuEmail.getValue().equalsIgnoreCase(email)) match = true;
+        for (Email cuEmail : currentUser.getEffectiveProfile().getOrcidBio().getContactDetails().getEmail()) {
+            if (cuEmail.getValue() != null && cuEmail.getValue().equalsIgnoreCase(email))
+                match = true;
         }
         return match;
     }
