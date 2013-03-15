@@ -3,7 +3,8 @@ The ORCID Team is always excited to get contributions. Checkout our pointers bel
 1.  **Understand the basics**	
 
     Not sure what a pull request is, or how to submit one?  Take a look at GitHub's
-    excellent [Collaborating](https://help.github.com/categories/63/articles) first.
+    excellent [Collaborating Documenation](https://help.github.com/categories/63/articles) first.
+
 
 * **Discuss non-trivial contribution ideas with committers**
 
@@ -19,15 +20,16 @@ The ORCID Team is always excited to get contributions. Checkout our pointers bel
     within. 
 
 
+* **Run all tests prior to submission**
+
+    Make sure that all tests pass prior to submitting your pull request. See the 
+   [DEVSETUP.md Testing](DEVSETUP.md#integration-tests)
+
+
 * **Squash commits**
 
     Use `git rebase --interactive`, `git add --patch` and other tools to "squash"
     multiple commits into atomic changes.
 
-
-* **Run all tests prior to submission**
-
-    Make sure that all tests pass prior to submitting your pull request. See the 
-   [DEVSETUP.md Testing](DEVSETUP.md#integration-tests)
 
 * **Also Make it fun :-)**
