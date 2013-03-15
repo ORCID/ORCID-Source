@@ -87,9 +87,9 @@
 								        <div class="btn-group abs-left-top"  ng-class="{open: email.value==curPrivToggle}">
 								            <button class="btn dropdown-toggle privacy-toggle" ng-class="email.visibility | emailVisibilityBtnClassFtr" ng-bind-html-unsafe="email.visibility | emailVisibilityFtr" ng-click="togglePrivacySelect($index)"></button>
 											<ul class="dropdown-menu privacy-menu show">
-								                <li><a class="btn btn-success btn-privacy" href="#" ng-click="setPrivacy($index, 'PUBLIC', $event)">Public <span class="caret"></span></a></li>
-								                <li><a class="btn btn-warning btn-privacy" href="#" ng-click="setPrivacy($index, 'LIMITED', $event)">Limited <span class="caret"></span></a></li>
-								                <li><a class="btn btn-danger btn-privacy" href="#" ng-click="setPrivacy($index, 'PRIVATE', $event)">Private <span class="caret"></span></a></li>	
+								                <li><a class="btn btn-success btn-privacy" href="#" ng-click="setPrivacy($index, 'PUBLIC', $event)"><span class="caret"></span></a></li>
+								                <li><a class="btn btn-warning btn-privacy" href="#" ng-click="setPrivacy($index, 'LIMITED', $event)"><span class="caret"></span></a></li>
+								                <li><a class="btn btn-danger btn-privacy" href="#" ng-click="setPrivacy($index, 'PRIVATE', $event)"><span class="caret"></span></a></li>	
 								                <li><a class="btn" href="http://support.orcid.org/knowledgebase/articles/124518" target="_blank">Help <span class="caret"></span></a></li>
 	            							</ul>        								        
 								        </div>
