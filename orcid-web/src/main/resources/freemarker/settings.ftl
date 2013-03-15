@@ -21,95 +21,95 @@
 	<div class="row">
 		<div class="span3">
 			<ul>
-				<li><a href="#account-settings">Account Settings</a></li>
-				<li><a href="#manage-permissions">Manage Permissions</a></li>
+				<li><a href="#account-settings">${springMacroRequestContext.getMessage("manage.accountsettings")}</a></li>
+				<li><a href="#manage-permissions">${springMacroRequestContext.getMessage("manage.managepermission")}</a></li>
 			</ul>
 		</div>
 		<div class="span9">
-			<h1 id="account-settings">Account Settings</h1>
+			<h1 id="account-settings">${springMacroRequestContext.getMessage("manage.accountsettings")}</h1>
 			<table class="table table-bordered table-settings">
 				<tbody>
 					<tr>
-						<th>Emails</th>
-						<td><a href="#">Edit</a></td>
+						<th>${springMacroRequestContext.getMessage("manage.emails")}</th>
+						<td><a href="#">${springMacroRequestContext.getMessage("settings.tdEdit")}</a></td>
 					</tr>
 					<tr>
-						<th>Password</th>
-						<td><a href="#">Edit</a></td>
+						<th>${springMacroRequestContext.getMessage("claim.password")}</th>
+						<td><a href="#">${springMacroRequestContext.getMessage("settings.tdEdit")}</a></td>
 					</tr>
 					<tr>
-						<th>Security question</th>
-						<td><a href="#">Edit</a></td>
+						<th>${springMacroRequestContext.getMessage("change_security_question.securityquestion")}</th>
+						<td><a href="#">${springMacroRequestContext.getMessage("settings.tdEdit")}</a></td>
 					</tr>
 					<tr>
-						<th>Email Preferences</th>
-						<td><a href="#">Edit</a></td>
+						<th>${springMacroRequestContext.getMessage("manage.email_preferences")}</th>
+						<td><a href="#">${springMacroRequestContext.getMessage("settings.tdEdit")}</a></td>
 					</tr>
 					<tr>
-						<th>Close account</th>
-						<td><a href="#">Deactivate this ORCID record</a></td>
+						<th>${springMacroRequestContext.getMessage("manage.close_account")}</th>
+						<td><a href="#">${springMacroRequestContext.getMessage("settings.tddeactivate")}</a></td>
 					</tr>
 				</tbody>
 			</table>
-			<h1 id="manage-permissions">Manage Permissions</h1>
-			<h4>Trusted organisations</h4>
-			<p>You can allow permission for your ORCID Record to be updated by a trusted organisation.<br /> 
-			<a href="http://support.orcid.org/knowledgebase/articles/131598">Find out more</a></p>
+			<h1 id="manage-permissions">${springMacroRequestContext.getMessage("manage.managepermission")}</h1>
+			<h4>${springMacroRequestContext.getMessage("manage.trusted_organisations")}</h4>
+			<p>${springMacroRequestContext.getMessage("manage.youcanallowpermission")}<br /> 
+			<a href="http://support.orcid.org/knowledgebase/articles/131598">${springMacroRequestContext.getMessage("manage.findoutmore")}</a></p>
 			<table class="table table-bordered table-settings">
 				<thead>
 					<tr>
-						<th>Proxy</th>
-						<th>Site URL</th>
-						<th>Approval date</th>
-						<th>Access type</th>
+						<th>${springMacroRequestContext.getMessage("manage.thproxy")}</th>
+						<th>${springMacroRequestContext.getMessage("settings.tdSiteURL")}</th>
+						<th>${springMacroRequestContext.getMessage("manage.thapprovaldate")}</th>
+						<th>${springMacroRequestContext.getMessage("manage.thaccesstype")}</th>
 						<td></td>
 					</tr>
 				</thead>
 				<tbody>
 					<tr>
-						<td>SCOPUS</td>
-						<td><a href="http://www.scopus.com">www.scopus.com</a></td>
-						<td>5th Aug 2012</td>
-						<td>Read Limited <br /> Personal info and Publications</td>
-						<td><a href="#">Revoke access</a></td>
+						<td>${springMacroRequestContext.getMessage("settings.tdSCOPUS")}</td>
+						<td><a href="http://www.scopus.com">${springMacroRequestContext.getMessage("settings.tdscopuscom")}</a></td>
+						<td>${springMacroRequestContext.getMessage("settings.td5aug2012")}</td>
+						<td>${springMacroRequestContext.getMessage("settings.tdReadLimited")} <br /> ${springMacroRequestContext.getMessage("settings.tdpersonalinfo")}</td>
+						<td><a href="#">${springMacroRequestContext.getMessage("manage.revokeaccess")}</a></td>
 					</tr>
 					<tr>
-						<td>Journal of Pschoceramic Manuscript Tracking System</td>
-						<td><a href="http://www.pmts.org">www.pmts.org</a></td>
-						<td>5th Aug 2012</td>
-						<td>Read Limited <br /> Personal info and Publications</td>
-						<td><a href="#">Revoke access</a></td>
+						<td>${springMacroRequestContext.getMessage("settings.tdjournalof")}</td>
+						<td><a href="http://www.pmts.org">${springMacroRequestContext.getMessage("settings.tdpmtscom")}</a></td>
+						<td>${springMacroRequestContext.getMessage("settings.td5aug2012")}</td>
+						<td>${springMacroRequestContext.getMessage("settings.tdReadLimited")} <br /> ${springMacroRequestContext.getMessage("settings.tdpersonalinfo")}</td>
+						<td><a href="#">${springMacroRequestContext.getMessage("manage.revokeaccess")}</a></td>
 					</tr>
 				</tbody>
 			</table>
-			<p><a href="#" class="btn btn-primary">Add an organisation</a></p>
-			<h4>Trusted individuals</h4>
-			<p>You can allow permission for your ORCID Record to be updated by another ORCID user.<br /> <a href="#">Find out more</a></p>
+			<p><a href="#" class="btn btn-primary">${springMacroRequestContext.getMessage("settings.tdorganisation")}</a></p>
+			<h4>${springMacroRequestContext.getMessage("settings.tdtrustindividual")}</h4>
+			<p>${springMacroRequestContext.getMessage("settings.tdallowpermission")}<br /> <a href="#">${springMacroRequestContext.getMessage("manage.findoutmore")}</a></p>
 			<table class="table table-bordered table-settings">
 				<thead>
 					<tr>
-						<th>Proxy</th>
-						<th>ORCID</th>
-						<th>Approval date</th>
+						<th>${springMacroRequestContext.getMessage("manage.thproxy")}</th>
+						<th>${springMacroRequestContext.getMessage("home.ORCID")}</th>
+						<th>${springMacroRequestContext.getMessage("manage.thapprovaldate")}</th>
 						<td></td>
 					</tr>
 				</thead>
 				<tbody>
 					<tr>
-						<td>Jo Smith</td>
+						<td>${springMacroRequestContext.getMessage("settings.tdJoSmith")}</td>
 						<td>0000-0000-0000-000</td>
-						<td>5th Aug 2012</td>
-						<td><a href="#">Revoke access</a></td>
+						<td>${springMacroRequestContext.getMessage("settings.td5aug2012")}</td>
+						<td><a href="#">${springMacroRequestContext.getMessage("manage.revokeaccess")}</a></td>
 					</tr>
 					<tr>
-						<td>Monica Thompson</td>
+						<td>${springMacroRequestContext.getMessage("settings.MonicaThompson")}</td>
 						<td>0000-0000-0000-000</td>
-						<td>5th Aug 2012</td>
-						<td><a href="#">Revoke access</a></td>
+						<td>${springMacroRequestContext.getMessage("settings.td5aug2012")}</td>
+						<td><a href="#">${springMacroRequestContext.getMessage("manage.revokeaccess")}</a></td>
 					</tr>
 				</tbody>
 			</table>
-			<p><a href="#" class="btn btn-primary">Add an organisation</a></p>
+			<p><a href="#" class="btn btn-primary">${springMacroRequestContext.getMessage("settings.Addanorganisation")}</a></p>
 		</div>
 	</div>
 

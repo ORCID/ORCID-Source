@@ -19,37 +19,37 @@
 <ul class="workspace-patents privacy-list">
 	<li>
 		<@orcid.privacy "hello" />
-		<h4 class="grant-title"><a href="#">Lorem ipsum dolor sit amet</a> <span class="label label-clear"><b>Updated by:</b> Brown University</span></h4>
-		<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse scelerisque volutpat gravida. In at urna in nisl rhoncus accumsan id a neque. 2000</p>
+		<h4 class="grant-title"><a href="#">${springMacroRequestContext.getMessage("workspace_grants.Loremipsumdolorsitamet")}</a> <span class="label label-clear"><b>${springMacroRequestContext.getMessage("workspace_grants.Updatedby")}</b> ${springMacroRequestContext.getMessage("workspace_grants.BrownUniversity")}</span></h4>
+		<p>${springMacroRequestContext.getMessage("workspace_grants.Loremipsum")}</p>
 	</li>
 	<li>
 		<@orcid.privacy "hello" "private" />
-		<h4 class="grant-title"><a href="#">Lorem ipsum dolor sit amet</a> <span class="label label-clear"><b>Updated by:</b> Brown University</span></h4>
-		<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse scelerisque volutpat gravida. In at urna in nisl rhoncus accumsan id a neque. 2000</p>
+		<h4 class="grant-title"><a href="#">${springMacroRequestContext.getMessage("workspace_grants.Loremipsumdolorsitamet")}</a> <span class="label label-clear"><b>${springMacroRequestContext.getMessage("workspace_grants.Updatedby")}</b> ${springMacroRequestContext.getMessage("workspace_grants.BrownUniversity")}</span></h4>
+		<p>${springMacroRequestContext.getMessage("workspace_grants.Loremipsum")}</p>
 	</li>
 	<li>
 		<@orcid.privacy "hello" />
-		<h4 class="grant-title"><a href="#">Lorem ipsum dolor sit amet</a> <span class="label label-clear"><b>Updated by:</b> Brown University</span></h4>
-		<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse scelerisque volutpat gravida. In at urna in nisl rhoncus accumsan id a neque. 2000</p>
+		<h4 class="grant-title"><a href="#">${springMacroRequestContext.getMessage("workspace_grants.Loremipsumdolorsitamet")}</a> <span class="label label-clear"><b>${springMacroRequestContext.getMessage("workspace_grants.Updatedby")}</b> ${springMacroRequestContext.getMessage("workspace_grants.BrownUniversity")}</span></h4>
+		<p>${springMacroRequestContext.getMessage("workspace_grants.Loremipsum")}</p>
 	</li>
 	<li>
 		<@orcid.privacy "hello" "private" />
-		<h4 class="grant-title"><a href="#">Lorem ipsum dolor sit amet</a> <span class="label label-clear"><b>Updated by:</b> Brown University</span></h4>
-		<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse scelerisque volutpat gravida. In at urna in nisl rhoncus accumsan id a neque. 2000</p>
+		<h4 class="grant-title"><a href="#">${springMacroRequestContext.getMessage("workspace_grants.Loremipsumdolorsitamet")}</a> <span class="label label-clear"><b>${springMacroRequestContext.getMessage("workspace_grants.Updatedby")}</b> ${springMacroRequestContext.getMessage("workspace_grants.BrownUniversity")}</span></h4>
+		<p>${springMacroRequestContext.getMessage("workspace_grants.Loremipsum")}</p>
 	</li>
 	<li>
 		<@orcid.privacy "hello" />
-		<h4 class="grant-title"><a href="#">Lorem ipsum dolor sit amet</a> <span class="label label-clear"><b>Updated by:</b> Brown University</span></h4>
-		<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse scelerisque volutpat gravida. In at urna in nisl rhoncus accumsan id a neque. 2000</p>
+		<h4 class="grant-title"><a href="#">${springMacroRequestContext.getMessage("workspace_grants.Loremipsumdolorsitamet")}</a> <span class="label label-clear"><b>${springMacroRequestContext.getMessage("workspace_grants.Updatedby")}</b> ${springMacroRequestContext.getMessage("workspace_grants.BrownUniversity")}</span></h4>
+		<p>${springMacroRequestContext.getMessage("workspace_grants.Loremipsum")}</p>
 	</li>
 	<li>
 		<@orcid.privacy "hello" "private" />
-		<h4 class="grant-title"><a href="#">Lorem ipsum dolor sit amet</a> <span class="label label-clear"><b>Updated by:</b> Brown University</span></h4>
-		<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse scelerisque volutpat gravida. In at urna in nisl rhoncus accumsan id a neque. 2000</p>
+		<h4 class="grant-title"><a href="#">${springMacroRequestContext.getMessage("workspace_grants.Loremipsumdolorsitamet")}</a> <span class="label label-clear"><b>${springMacroRequestContext.getMessage("workspace_grants.Updatedby")}</b> ${springMacroRequestContext.getMessage("workspace_grants.BrownUniversity")}</span></h4>
+		<p>${springMacroRequestContext.getMessage("workspace_grants.Loremipsum")}</p>
 	</li>
 	<li>
 		<@orcid.privacy "hello" />
-		<h4 class="grant-title"><a href="#">Lorem ipsum dolor sit amet</a> <span class="label label-clear"><b>Updated by:</b> Brown University</span></h4>
-		<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse scelerisque volutpat gravida. In at urna in nisl rhoncus accumsan id a neque. 2000</p>
+		<h4 class="grant-title"><a href="#">${springMacroRequestContext.getMessage("workspace_grants.Loremipsumdolorsitamet")}</a> <span class="label label-clear"><b>${springMacroRequestContext.getMessage("workspace_grants.Updatedby")}</b> ${springMacroRequestContext.getMessage("workspace_grants.BrownUniversity")}</span></h4>
+		<p>${springMacroRequestContext.getMessage("workspace_grants.Loremipsum")}</p>
 	</li>
 </ul>

@@ -31,30 +31,30 @@
             </h2>
             <p><small id="orcid-id" class="orcid-id">${(profile.orcid.value)!}</small></p>
             <#if (profile.orcidBio.personalDetails.otherNames)?? && (profile.orcidBio.personalDetails.otherNames.otherName?size != 0)>
-                <p><strong>Also known as:</strong><br />
+                <p><strong>${springMacroRequestContext.getMessage("public_profile.labelAlsoknownas")}</strong><br />
                   <#list profile.orcidBio.personalDetails.otherNames.otherName as otherName>
                     ${otherName.content}<#if otherName_has_next><br /></#if>
                   </#list>
             </#if>
             <#if (profile.orcidBio.contactDetails.address.country.content)??>
-                <p><strong>Country:</strong>
+                <p><strong>${springMacroRequestContext.getMessage("public_profile.labelCountry")}</strong>
                 ${(profile.orcidBio.contactDetails.address.country.content)!}
                 </p>
             </#if>
             <#if (profile.orcidBio.keywords)?? && (profile.orcidBio.keywords.keyword?size != 0)>
-                <p><strong>Keywords:</strong> 
+                <p><strong>${springMacroRequestContext.getMessage("public_profile.labelKeywords")}</strong> 
                     <#list profile.orcidBio.keywords.keyword as keyword>
                         ${keyword.content}<#if keyword_has_next>,</#if>
                     </#list></p>
             </#if>
             <#if (profile.orcidBio.researcherUrls)?? && (profile.orcidBio.researcherUrls.researcherUrl?size != 0)>
-                <p><strong>Websites:</strong><br/>
+                <p><strong>${springMacroRequestContext.getMessage("public_profile.labelWebsites")}</strong><br/>
                     <#list profile.orcidBio.researcherUrls.researcherUrl as url>
                         <a href="${url.url.value}"><#if (url.urlName.content)! != "">${url.urlName.content}<#else>${url.url.value}</#if></a><#if url_has_next><br/></#if>
                     </#list></p>
             </#if>
             <#if (profile.orcidBio.externalIdentifiers)?? && (profile.orcidBio.externalIdentifiers.externalIdentifier?size != 0)>
-                <p><strong>Other IDs:</strong> <br/>
+                <p><strong>${springMacroRequestContext.getMessage("public_profile.labelOtherIDs")}</strong> <br/>
                     <#list profile.orcidBio.externalIdentifiers.externalIdentifier as external>
                         <#if (external.externalIdUrl.value)??>
                             <a href="${external.externalIdUrl.value}">${(external.externalIdCommonName.content)!}: ${(external.externalIdReference.content)!}</a><#if external_has_next><br/></#if>
@@ -70,8 +70,8 @@
         <div class="workspace-right">
             <div class="workspace-inner workspace-public">
                 <#if (profile.orcidBio.biography.content)??>
-                    <h3 class="workspace-header-public no-border">Personal Information</h3>
-                    <p><b>Biography</b><br />${(profile.orcidBio.biography.content)!}</p>
+                    <h3 class="workspace-header-public no-border">${springMacroRequestContext.getMessage("public_profile.h3PersonalInformation")}</h3>
+                    <p><b>${springMacroRequestContext.getMessage("public_profile.labelBiography")}</b><br />${(profile.orcidBio.biography.content)!}</p>
                 </#if>
                 <#assign publicProfile = true />
                 <#include "workspace_preview_activities.ftl"/>

@@ -50,7 +50,7 @@
 	);
 </script>
 <#if (searchForDelegatesForm.results?size = 0)>
-	<span>No results found</span>
+	<span>${springMacroRequestContext.getMessage("search_for_delegates_results.spanNoresultsfound")}</span>
 <#else>
 	<form id="addSelectedDelegateForm" action="manage/confirm-delegate" method="post">
 		<table class="table">
@@ -63,8 +63,8 @@
 			</#list>
 		</table>
 		<div class="profileDataCells">
-			<span><button class="btn" id="cancelAddDelegateButton">Cancel</button></span>
-			<span><button class="btn" id="addSelectedDelegateButton">Add Selected User As Delegated Manager</button></span>
+			<span><button class="btn" id="cancelAddDelegateButton">${springMacroRequestContext.getMessage("freemarker.btncancel")}</button></span>
+			<span><button class="btn" id="addSelectedDelegateButton">${springMacroRequestContext.getMessage("search_for_delegates_results.btnaddselect")}</button></span>
 		</div>
 	</form>
 </#if>

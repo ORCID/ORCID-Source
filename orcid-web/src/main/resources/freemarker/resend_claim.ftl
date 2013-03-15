@@ -30,11 +30,11 @@
 				</div>
 			</#if>       
             <h2><@spring.message "resend_claim.title"/></h2>
-            <p><small><@spring.message "resend_claim.resend_help"/> <a href="mailto:support@orcid.org">support@orcid.org</a>.</small></p>      		
+            <p><small><@spring.message "resend_claim.resend_help"/> <a href="mailto:support@orcid.org">${springMacroRequestContext.getMessage("resend_claim.labelorg")}</a>.</small></p>      		
         	<form id="resend-claim-form" name="emailAddressForm" action="resend-claim" method="post">
         		<fieldset>
         			<div class="control-group">
-            			<label for="givenNames" class="control-label">Email Address </label>
+            			<label for="givenNames" class="control-label">${springMacroRequestContext.getMessage("resend_claim.labelEmailAddress")} </label>
                				<div class="controls">                    	
                				<@spring.formInput "emailAddressForm.userEmailAddress" 'class="input-xlarge" name="userEmail"'/>
                				<span class="required">*</span>

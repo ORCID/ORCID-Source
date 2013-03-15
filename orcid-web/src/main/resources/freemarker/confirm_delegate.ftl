@@ -31,8 +31,7 @@
 <div>
 	<div class="row-fluid">
 		<div class="span12">
-			Are you sure that you want to add this user as a delegated manager to your ORCID record?
-			Doing so will enable the person to manage all elements of your ORCID record <strong>except</strong> your password and your e-mail address
+			${springMacroRequestContext.getMessage("confirm_delegate.areyousuredelegatedmanager")} <strong>${springMacroRequestContext.getMessage("confirm_delegate.except")}</strong> ${springMacroRequestContext.getMessage("confirm_delegate.yourpasswordandemail")}
 		</div>
 	</div>
 	<form id="addDelegateForm" action="<@spring.url '/account/add-delegate'/>" method="post">
@@ -42,8 +41,8 @@
 			<span>${delegateProfile.orcidBio.contactDetails.email.value}</span>
 		</div>
 		<div class="regFieldData">
-			<button class="btn" id="cancelAddDelegateButton" href="">No</button>
-			<button class="btn btn-primary" id="addDelegateLink">Yes</button>
+			<button class="btn" id="cancelAddDelegateButton" href="">${springMacroRequestContext.getMessage("freemarker.btnNo")}</button>
+			<button class="btn btn-primary" id="addDelegateLink">${springMacroRequestContext.getMessage("freemarker.btnYes")}</button>
 		</div>
 	</form>
 </div>

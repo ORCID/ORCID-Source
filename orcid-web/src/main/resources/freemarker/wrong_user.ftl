@@ -18,7 +18,7 @@
 -->
 <@protected>
 <div class="alert alert-error">
-    Wrong user?
+    ${springMacroRequestContext.getMessage("wrong_user.Wronguser")}
 </div>
-<div><a href="<@spring.url '/signout'/>">Sign out</a> and try again?</div>
+<div><a href="<@spring.url '/signout'/>">${springMacroRequestContext.getMessage("public-layout.sign_out")}</a> ${springMacroRequestContext.getMessage("wrong_user.andtryagain")}</div>
 </@protected>
