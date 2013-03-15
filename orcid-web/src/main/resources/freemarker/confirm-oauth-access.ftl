@@ -30,11 +30,11 @@
         
         <aside class="logo">
             <h1><img src="<@spring.url "/static/img/orcid-logo.png" />" alt="ORCID logo"></h1>
-            <p>Connecting Research and Researchers</p>
+            <p>${springMacroRequestContext.getMessage("confirm-oauth-access.connectingresearchandresearchers")}</p>
         </aside>
         
         <br />
-        <h2 class="oauth-title">Connecting<br /> <span>${clientProfile.orcidBio.personalDetails.creditName.content}</span><br /> with your ORCID Record</h2>
+        <h2 class="oauth-title">${springMacroRequestContext.getMessage("confirm-oauth-access.connecting")}<br /> <span>${clientProfile.orcidBio.personalDetails.creditName.content}</span><br /> ${springMacroRequestContext.getMessage("confirm-oauth-access.withyourrecord")}</h2>
         
         <hr />
         
@@ -42,7 +42,7 @@
     
     <div class="span6">
          <h3>${clientProfile.orcidBio.personalDetails.creditName.content}</h3>
-         <p>has asked for the following access to your ORCID Record</p>
+         <p>${springMacroRequestContext.getMessage("confirm-oauth-access.hasaskedforthefollowing")}</p>
          <#list scopes as scope>
              <div class="alert">
                  <@spring.message "${scope.declaringClass.name}.${scope.name()}"/>
@@ -53,13 +53,13 @@
              <span class="span">
                 <form id="denialForm" class="form-inline" name="denialForm" action="<@spring.url '/oauth/authorize'/>" method="post">
                     <input name="user_oauth_approval" value="false" type="hidden"/>
-                    <input class="btn btn-success" name="deny" value="Deny" type="submit">
+                    <input class="btn btn-success" name="deny" value="${springMacroRequestContext.getMessage('confirm-oauth-access.Deny')}" type="submit">
                 </form>        
             </span>
             <span class="span">
                 <form id="confirmationForm" class="form-inline" name="confirmationForm" action="<@spring.url '/oauth/authorize'/>" target="_blank" method="post">
                     <input name="user_oauth_approval" value="true" type="hidden"/>
-                    <input class="btn btn-success" name="authorize" value="Authorize" type="submit">
+                    <input class="btn btn-success" name="authorize" value="${springMacroRequestContext.getMessage('confirm-oauth-access.Authorize')}" type="submit">
                 </form>
             </span>
         </div>

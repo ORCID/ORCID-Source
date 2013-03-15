@@ -43,6 +43,6 @@
     </ul>
 <#else>
     <div class="alert alert-info">
-        <strong>You haven't added any affiliations</strong>
+        <strong>${springMacroRequestContext.getMessage("workspace_affiliations.havenotaddaffiliation")}</strong>
     </div>
 </#if>

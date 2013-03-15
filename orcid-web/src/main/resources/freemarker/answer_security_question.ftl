@@ -31,7 +31,7 @@
             			<#list spring.status.errorMessages?sort as error>${error}<#if error_has_next><br/></#if></#list>        			
     			</div>
     		</#if>
-    		<p><small>Please provide the answer to your security question to reset your password.</small></p>    		
+    		<p><small>${springMacroRequestContext.getMessage("answer_security_question.answertosecuritypassword")}</small></p>    		
         	<form id="answer-security--question-form" name="changeSecurityQuestionForm" action="<@spring.url '/answer-security-question/${encryptedEmail}'/>" method="post" autocomplete="off">
         		<fieldset>
         			<div class="control-group">            			
@@ -42,7 +42,7 @@
             			</div>
         			</div>        
          			<div class="controls">
-            			<button id="bottom-submit-security-question" class="btn btn-primary" type="submit">Submit</button>            
+            			<button id="bottom-submit-security-question" class="btn btn-primary" type="submit">${springMacroRequestContext.getMessage("answer_security_question.submit")}</button>            
         			</div>
         		</fieldset>
         		<input type="hidden" name="securityQuestionId" value="${changeSecurityQuestionForm.securityQuestionId}"/>

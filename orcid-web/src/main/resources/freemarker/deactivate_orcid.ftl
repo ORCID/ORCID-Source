@@ -24,16 +24,16 @@
     		</div>	
     	</#if>
     
-     	<div class="top-margin"You may deactivate an ORCID account at any time</div>
-     	<div class="top-margin">So as not to assign the same identifier to another person, ORCID will maintain in a private data file your name and email address.</div>
-     	<div class="top-margin">All other data in your record will be removed.</div>
-     	<div class="top-margin">You may contact ORCID if you later wish to re-claim your identifier and reactivate your account</p></div>
+     	<div class="top-margin">${springMacroRequestContext.getMessage("deactivate_orcid.youmaydeactivateaccount")}</div>
+     	<div class="top-margin">${springMacroRequestContext.getMessage("deactivate_orcid.soasnottoassignthesameidentifier")}</div>
+     	<div class="top-margin">${springMacroRequestContext.getMessage("deactivate_orcid.Allotherdatainyourrecord")}</div>
+     	<div class="top-margin">${springMacroRequestContext.getMessage("deactivate_orcid.youmaycontactORCID")}</div>
      	
-     	<h3>To deactivate your account</h3>
-     	<div class="top-margin">Click on the Send Deactivation link below:</div>
-     	<div><a href="<@spring.url '/account/start-deactivate-orcid-account'/>">Deactivate My Orcid Account...</a></div>
-     	<div class="top-margin">Find the deactivation email that will be sent to the address currently in your account.</div>
-     	<div class="top-margin">Click the link provided in the email to confirm the deactivation.</div>
+     	<h3>${springMacroRequestContext.getMessage("deactivate_orcid.todeactivateyouraccount")}</h3>
+     	<div class="top-margin">${springMacroRequestContext.getMessage("deactivate_orcid.clickonthesenddeactivation")}</div>
+     	<div><a href="<@spring.url '/account/start-deactivate-orcid-account'/>">${springMacroRequestContext.getMessage("deactivate_orcid.deactivatemyOrcidaccount")}</a></div>
+     	<div class="top-margin">${springMacroRequestContext.getMessage("deactivate_orcid.finddeactivationemail")}</div>
+     	<div class="top-margin">${springMacroRequestContext.getMessage("deactivate_orcid.clickthelinkprovided")}</div>
      </div>
  
  

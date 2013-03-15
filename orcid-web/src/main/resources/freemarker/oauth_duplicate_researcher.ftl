@@ -20,29 +20,29 @@
 <div class="row">
     <div class="offset2 span8">
         <div class="page-header">
-           <h1>Are any of these you?</h1>
+           <h1>${springMacroRequestContext.getMessage("oauth_duplicate_researcher.h1areanyoftheseyou")}</h1>
         </div>
         <div>
          <@spring.bind "oAuthRegistrationForm.*" />               
         	
         		
-           			<h3 class="search-result-head">Existing Orcid Users</h3>
+           			<h3 class="search-result-head">${springMacroRequestContext.getMessage("oauth_duplicate_researcher.h3existingorcidusers")}</h3>
         			<table class="table table-striped">
             			<thead>
             				<tr>               				
-                				<th>ORCID ID</th>
-                				<th>Email</th>
-                				<th>Given Name(s)</th>
-                				<th>Family Name</th>
+                				<th>${springMacroRequestContext.getMessage("oauth_duplicate_researcher.thorcidID")}</th>
+                				<th>${springMacroRequestContext.getMessage("oauth_duplicate_researcher.themail")}</th>
+                				<th>${springMacroRequestContext.getMessage("oauth_duplicate_researcher.thgivennames")}</th>
+                				<th>${springMacroRequestContext.getMessage("oauth_duplicate_researcher.thfamilyname")}</th>
             				</tr>
             			</thead>
             			<tbody>
             				<#list potentialDuplicates as duplicate>
             				 <tr>
             				 	<td><a href="<@spring.url '/account'/>">${duplicate.orcid.value}</a></td>
-                    			<td>${(duplicate.orcidBio.contactDetails.retrievePrimaryEmail().value)!"Information not available"}</td>
-                    			<td>${(duplicate.orcidBio.personalDetails.givenNames.content)!"Information not available"}</td>
-                    			<td>${(duplicate.orcidBio.personalDetails.familyName.content)!"Information not available"}</td>
+                    			<td>${(duplicate.orcidBio.contactDetails.retrievePrimaryEmail().value)!"${springMacroRequestContext.getMessage('oauth_duplicate_researcher.informationnotavailable')}"}</td>
+                    			<td>${(duplicate.orcidBio.personalDetails.givenNames.content)!"${springMacroRequestContext.getMessage('oauth_duplicate_researcher.informationnotavailable')}"}</td>
+                    			<td>${(duplicate.orcidBio.personalDetails.familyName.content)!"${springMacroRequestContext.getMessage('oauth_duplicate_researcher.informationnotavailable')}"}</td>
                 			</tr>
                 			</#list>
             			</tbody>
@@ -54,7 +54,7 @@
 			        	<@spring.formHiddenInput "oAuthRegistrationForm.familyName"/>			        	
 			        	<@spring.formHiddenInput "oAuthRegistrationForm.email"/>
 			        	<@spring.formHiddenInput "oAuthRegistrationForm.givenNames"/>
-			        	<button class="btn btn-large btn-primary" type="submit">None of these are me - continue to registration </button>
+			        	<button class="btn btn-large btn-primary" type="submit">${springMacroRequestContext.getMessage("oauth_duplicate_researcher.btnnoneoftheseare")} </button>
 			        </div>
         		<form>
         </div>

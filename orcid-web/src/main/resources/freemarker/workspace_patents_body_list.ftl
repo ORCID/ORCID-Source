@@ -31,6 +31,6 @@
     </ul>
 <#else>
     <div class="alert alert-info">
-        <strong><#if (publicProfile)?? && publicProfile == true>No patents added yet<#else>You haven't added any patents</#if></strong>
+        <strong><#if (publicProfile)?? && publicProfile == true>${springMacroRequestContext.getMessage("workspace_patents_body_list.Nopatentsaddedyet")}<#else>${springMacroRequestContext.getMessage("workspace_patents_body_list.havenotaddedanypatents")}</#if></strong>
     </div>
 </#if>

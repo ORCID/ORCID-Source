@@ -19,7 +19,7 @@
     <#include "/common/browser-checks.ftl" />
     <div class="span6">
     <div class="page-header">
-	    <h3>Sign in</h3>
+	    <h3>${springMacroRequestContext.getMessage("oauth_sign_in.h3signin")}</h3>
 	</div>
         <form id="loginForm" action="<@spring.url '/signin/auth'/>" method="post">
             
@@ -27,24 +27,24 @@
             <@spring.showErrors "<br/>" "error" />
 
             <div>
-                <label for="userId">Email or iD</label>
+                <label for="userId">${springMacroRequestContext.getMessage("oauth_sign_in.labelemailorID")}</label>
                 <div class="relative">
                    <@spring.formInput "loginForm.userId" 'placeholder="Email or ORCID" class="input-xlarge"' />
                 </div>
             </div>
             <div id="passwordField">
-                <label for="password">Password</label>
+                <label for="password">${springMacroRequestContext.getMessage("oauth_sign_in.labelpassword")}</label>
                 <div class="relative">
                    <@spring.formPasswordInput "loginForm.password" 'placeholder="Password" class="input-xlarge"' />
                 </div>
             </div>
             <div id="buttons">
                 <div class="relative">
-                    <button class="btn-large btn-primary" type="submit">Sign in</button>
+                    <button class="btn-large btn-primary" type="submit">${springMacroRequestContext.getMessage("oauth_sign_in.h3signin")}</button>
                     <img id="ajax-loader" class="hide" src="<@spring.url '/static/img/ajax-loader.gif'/>" alt="Progress animation"></img>
                 </div>
                 <div class="relative">
-                	<a href="<@spring.url '/reset-password'/>">Forgotten Password?</a>
+                	<a href="<@spring.url '/reset-password'/>">${springMacroRequestContext.getMessage("oauth_sign_in.forgottenpassword")}</a>
                 </div>
             </div>
         </form>

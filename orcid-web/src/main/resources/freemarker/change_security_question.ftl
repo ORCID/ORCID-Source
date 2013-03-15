@@ -34,22 +34,22 @@
     </#if>
     <form id="reg-form-password" class="popover-form" action="<@spring.url '/account/security-question'/>" method="post" autocomplete="off">
         <div class="">
-            <label for="changeSecurityQuestionForm.securityQuestionId" class="">Security Question</label>
+            <label for="changeSecurityQuestionForm.securityQuestionId" class="">${springMacroRequestContext.getMessage("change_security_question.securityquestion")}</label>
             <div class="relative">
             <@spring.formSingleSelect "changeSecurityQuestionForm.securityQuestionId", securityQuestions, 'class="input-xlarge"' />
                 <span class="required">*</span>
             </div>
         </div>
         <div class="">
-            <label for="changeSecurityQuestionForm.securityQuestionAnswer" class="">Security Answer</label>
+            <label for="changeSecurityQuestionForm.securityQuestionAnswer" class="">${springMacroRequestContext.getMessage("change_security_question.securityanswer")}</label>
             <div class="relative">
             <@spring.formInput "changeSecurityQuestionForm.securityQuestionAnswer", 'class="input-xlarge"' />
                 <span class="required">*</span>
             </div>
         </div>
          <div class="relative">
-            <button id="bottom-submit-security-question" class="btn btn-primary" type="submit">Save changes</button>
-            <button id="bottom-reset-security-question" class="btn close-parent-popover" type="reset">Cancel</button>
+            <button id="bottom-submit-security-question" class="btn btn-primary" type="submit">${springMacroRequestContext.getMessage("freemarker.btnsavechanges")}</button>
+            <button id="bottom-reset-security-question" class="btn close-parent-popover" type="reset">${springMacroRequestContext.getMessage("freemarker.btncancel")}</button>
         </div>
     </form>
 </div>

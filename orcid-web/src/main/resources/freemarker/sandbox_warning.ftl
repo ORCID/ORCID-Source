@@ -18,10 +18,10 @@
 -->
 <#if devSandboxUrl != ''>
     <div class="alert alert-error readme">
-        <h3>Welcome to the ORCID Beta Developer Sandbox</h3>
-        <p class="emphasis small-top-margin">See <a href="http://dev.orcid.org/release-notes#CurrentSandbox" target="_blank">Release Notes</a>. Comments and feedback: <a href="mailto:devsupport@orcid.org">devsupport@orcid.org</a></p>
-        <p>The Sandbox provides a test environment for illustrating use cases and gathering feedback from the community for services ORCID may provide.</p>
-        <p>The Sandbox does not represent ORCID's live system, and eventually all data will be deleted from this test environment.</p>
-        <a href="${devSandboxUrl}">READ ME FIRST: What is this developer sandbox thing?</a>
+        <h3>${springMacroRequestContext.getMessage("sandbox_warning.labelWelcometotheORCID")}</h3>
+        <p class="emphasis small-top-margin">${springMacroRequestContext.getMessage("sandbox_warning.labelSee")} <a href="http://dev.orcid.org/release-notes#CurrentSandbox" target="_blank">${springMacroRequestContext.getMessage("sandbox_warning.labelReleaseNotes")}</a>. ${springMacroRequestContext.getMessage("sandbox_warning.labelcommentandfeedback")} <a href="mailto:devsupport@orcid.org">${springMacroRequestContext.getMessage("sandbox_warning.labelorg")}</a></p>
+        <p>${springMacroRequestContext.getMessage("sandbox_warning.sandboxproviders")}</p>
+        <p>${springMacroRequestContext.getMessage("sandbox_warning.sandboxdoesnotrepresent")}</p>
+        <a href="${devSandboxUrl}">${springMacroRequestContext.getMessage("sandbox_warning.readmefirst")}</a>
     </div>
 </#if>

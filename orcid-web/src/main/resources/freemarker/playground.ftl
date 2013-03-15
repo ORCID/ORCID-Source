@@ -19,7 +19,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8"/>
-    <title>ORCID Playground</title>
+    <title>${springMacroRequestContext.getMessage("playground.titleORCIDPlayground")}</title>
     <script src="<@spring.url '/static/javascript/jquery-1.8.1.min.js?v=1'/>?v=1"></script>
     <script>
         $(document).ready(
@@ -115,38 +115,38 @@
 <body>
 <form id="config">
     <div>
-        <label>Client ID</label>
+        <label>${springMacroRequestContext.getMessage("playground.labelClientID")}</label>
         <input id="client_id" type="text"></input>
-        <label>Client secret</label>
+        <label>${springMacroRequestContext.getMessage("playground.labelClientsecret")}</label>
         <input id="client_secret" type="text"></input>
-        <label>Scope</label>
+        <label>${springMacroRequestContext.getMessage("playground.labelScope")}</label>
         <input id="scope" type="text"></input>
     </div>
     <div>
-        <label>Method</label>
+        <label>${springMacroRequestContext.getMessage("playground.labelMethod")}</label>
         <select id="method">
-            <option>GET</option>
-            <option>PUT</option>
-            <option>POST</option>
+            <option>${springMacroRequestContext.getMessage("playground.labelGET")}</option>
+            <option>${springMacroRequestContext.getMessage("playground.labelPUT")}</option>
+            <option>${springMacroRequestContext.getMessage("playground.labelPOST")}</option>
         </select>
-        <label>URI suffix</label>
+        <label>${springMacroRequestContext.getMessage("playground.labelURIsuffix")}</label>
         <input id="uri_suffix" type="text"></input>
     </div>
     <div>
-        <label>Body</label>
+        <label>${springMacroRequestContext.getMessage("playground.labelBody")}</label>
         <textarea id="body" rows="20" cols="100"></textarea>
     </div>
     <div>
         <input type="submit" value="Save config"></input>
     </div>
 </form>
-<a id="authorize" href="#">Authorize</a>
+<a id="authorize" href="#">${springMacroRequestContext.getMessage("playground.labelAuthorize")}</a>
 <div id="code"></div>
-<a id="getToken" href="#">Get token</a> (<a id="refreshToken" href="#">Refresh</a>)
+<a id="getToken" href="#">${springMacroRequestContext.getMessage("playground.labelGettoken")}</a> (<a id="refreshToken" href="#">${springMacroRequestContext.getMessage("playground.labelRefresh")}</a>)
 <div id="token"></div>
 <div id="refresh_token"></div>
 <div id="orcid"></div>
-<a id="callApi" href="#">Call API</a>
+<a id="callApi" href="#">${springMacroRequestContext.getMessage("playground.labelCallAPI")}</a>
 <pre id="result"></pre>
 </body>
 </html>

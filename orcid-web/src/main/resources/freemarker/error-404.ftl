@@ -20,7 +20,7 @@
 
 <div class="row">
     <div class="offset3 span9">
-        <p>The page requested cannot be found. If you have this page bookmarked, please delete it. If you have followed a link, please report it.</p>
+        <p>${springMacroRequestContext.getMessage("error-404.pagerequestnotfound")}</p>
     </div>
 </div>
 </@public>

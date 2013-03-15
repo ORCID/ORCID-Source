@@ -20,28 +20,28 @@
 <div class="row">
 <div class="span3"></div>
     <div class="span9">
-            <h1>Are any of these you?</h1>
+            <h1>${springMacroRequestContext.getMessage("duplicate_researcher.Areanyoftheseyou")}</h1>
          <@spring.bind "registrationForm.*" />
         		
-           			<h4>We've found the following records. Your institution may have already created an ORCID Record for you.</h4>
+           			<h4>${springMacroRequestContext.getMessage("duplicate_researcher.wefoundfollowingrecords")}</h4>
         			<table class="table table-striped">
             			<thead>
             				<tr>               				
-                				<th>ORCID ID (click link to login)</th>
-                				<th>Email</th>
-                				<th>Given Name(s)</th>
-                				<th>Family Name</th>                				
-                				<th>Institution</th>
+                				<th>${springMacroRequestContext.getMessage("duplicate_researcher.thORCID")}</th>
+                				<th>${springMacroRequestContext.getMessage("duplicate_researcher.thEmail")}</th>
+                				<th>${springMacroRequestContext.getMessage("duplicate_researcher.thgivennames")}</th>
+                				<th>${springMacroRequestContext.getMessage("duplicate_researcher.thFamilyName")}</th>                				
+                				<th>${springMacroRequestContext.getMessage("duplicate_researcher.thInstitution")}</th>
             				</tr>
             			</thead>
             			<tbody>
             				<#list potentialDuplicates as duplicate>
             				 <tr>
             				 	<td><a href="<@spring.url '/account'/>">${duplicate.orcid.value}</a></td>
-                    			<td>${(duplicate.orcidBio.contactDetails.retrievePrimaryEmail().value)!"Information not available"}</td>
-                    			<td>${(duplicate.orcidBio.personalDetails.givenNames.content)!"Information not available"}</td>
-                    			<td>${(duplicate.orcidBio.personalDetails.familyName.content)!"Information not available"}</td>             			
-                    			<td>${(duplicate.orcidBio.primaryInstitution.primaryInstitutionName.content)!"Information not available"}</td>
+                    			<td>${(duplicate.orcidBio.contactDetails.retrievePrimaryEmail().value)!"${springMacroRequestContext.getMessage('duplicate_researcher.thInformationNotavailable')}"}</td>
+                    			<td>${(duplicate.orcidBio.personalDetails.givenNames.content)!"${springMacroRequestContext.getMessage('duplicate_researcher.thInformationNotavailable')}"}</td>
+                    			<td>${(duplicate.orcidBio.personalDetails.familyName.content)!"${springMacroRequestContext.getMessage('duplicate_researcher.thInformationNotavailable')}"}</td>             			
+                    			<td>${(duplicate.orcidBio.primaryInstitution.primaryInstitutionName.content)!"${springMacroRequestContext.getMessage('duplicate_researcher.thInformationNotavailable')}"}</td>
                 			</tr>
                 			</#list>
             			</tbody>
@@ -49,7 +49,7 @@
         		
         		
         		<form id="ignoreDupesAndConfirmRegForm" class="form-horizontal" action="<@spring.url '/progress-to-confirm-registration-details'/>" method="post">
-			        <button class="btn btn-primary" type="submit">None of these are me - continue to registration </button>
+			        <button class="btn btn-primary" type="submit">${springMacroRequestContext.getMessage("duplicate_researcher.btncontinuetoregistration")}</button>
         		<form>
     </div>
  </div>

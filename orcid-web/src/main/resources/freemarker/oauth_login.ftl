@@ -21,7 +21,7 @@
 	<div class="row">
     <aside class="logo">
         <h1><img src="<@spring.url '/static/img/orcid-logo.png'/>" alt="ORCID logo" /></h1>
-        <p>Connecting Research and Researchers</p>
+        <p>${springMacroRequestContext.getMessage("oauth_login.connectingresearch")}</p>
     </aside>
     </div>
     <div class="row">

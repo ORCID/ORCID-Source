@@ -26,29 +26,29 @@
  
 <#macro workDetails work>
 	<td class="summary_data">
-		Title: ${(work.workTitle.title.content)!}
+		${springMacroRequestContext.getMessage("macros.orcid.Title")} ${(work.workTitle.title.content)!}
 		<#if (work.workContributors.contributor)??>
 			<br>
-			Author(s):
+			${springMacroRequestContext.getMessage("macros.orcid.Author")}
 			<#list work.workContributors.contributor as contributor>
 				${(contributor.creditName.content)!} <#if contributor_has_next >, </#if>
 			</#list>
 		</#if>
 		<br>
 		<#if (work.workTitle.subtitle.content)??>
-			Subtitle: <span class="data_bold">${work.workTitle.subtitle.content}</span>
+			${springMacroRequestContext.getMessage("macros.orcid.Subtitle")} <span class="data_bold">${work.workTitle.subtitle.content}</span>
 		</#if>
 		<#if work.volume??>
-			Volume: <span class="data_bold">${work.volume.content}</span>
+			${springMacroRequestContext.getMessage("macros.orcid.Volume")} <span class="data_bold">${work.volume.content}</span>
 		</#if>
 		<input type="hidden" value="" name="artifacts[0].volume">
 		<#if work.pages??>
-			Pages:
+			${springMacroRequestContext.getMessage("macros.orcid.Pages")}
 			<#if work.pages.start??><span class="data_bold">${work.pages.start}</span></#if><#if work.pages.end??><span class="data_bold">-${work.pages.end}</span></#if>
 		</#if>
 		<input type="hidden" value="" name="artifacts[0].bibPages">
 		<#if work.publicationDate??>
-			Published:
+			${springMacroRequestContext.getMessage("macros.orcid.Published")}
 			<span class="data_bold">
 				${work.publicationDate.year.value}<#if work.publicationDate.month??>-${work.publicationDate.month.value}</#if><#if work.publicationDate.day??>-${work.publicationDate.day.value}</#if>
 			</span>
@@ -68,15 +68,15 @@
 	<#if showPrivacy!false>
 	    <td class="summary_data">
 	        <#if work.visibility! != 'public' >
-	            Limited access
+	            ${springMacroRequestContext.getMessage("macros.orcid.Limitedaccess")}
 	        <#else>
-	            Public
+	            ${springMacroRequestContext.getMessage("manage.lipublic")}
             </#if>
         </td>
     </#if>
     <td class="summary_date">
         <#if work.addedToProfileDate??>
-            added
+            ${springMacroRequestContext.getMessage("macros.orcid.added")}
             <br>
             ${work.addedToProfileDate.value.toGregorianCalendar().time?date}
         </#if>
@@ -85,15 +85,15 @@
 
 <#macro grantDetails grant>
     <li>
-        <#if (grant.fundingAgency.agencyOrcid)??><div><b>Agency ORCID</b>: ${grant.fundingAgency.agencyOrcid.content}</div></#if>
-        <#if (grant.fundingAgency.agencyName)??><div><b>Agency name</b>: ${grant.fundingAgency.agencyName.content}</div></#if>
-        <#if (grant.grantExternalIdentifier.grantExternalProgram)??><div><b>External program</b>: ${grant.grantExternalIdentifier.grantExternalProgram.content}</div></#if>
-        <#if (grant.grantExternalIdentifier.grantExternalId)??><div><b>External ID</b>: ${grant.grantExternalIdentifier.grantExternalId.content}</div></#if>
-        <#if grant.grantNumber??><div><b>Grant number</b>: ${grant.grantNumber.content}</div></#if>
-        <#if grant.shortDescription??><div><b>Description</b>: ${grant.shortDescription}</div></#if>
+        <#if (grant.fundingAgency.agencyOrcid)??><div><b>${springMacroRequestContext.getMessage("macros.orcid.AgencyORCID")}</b>: ${grant.fundingAgency.agencyOrcid.content}</div></#if>
+        <#if (grant.fundingAgency.agencyName)??><div><b>${springMacroRequestContext.getMessage("macros.orcid.Agencyname")}</b>: ${grant.fundingAgency.agencyName.content}</div></#if>
+        <#if (grant.grantExternalIdentifier.grantExternalProgram)??><div><b>${springMacroRequestContext.getMessage("macros.orcid.Externalprogram")}</b>: ${grant.grantExternalIdentifier.grantExternalProgram.content}</div></#if>
+        <#if (grant.grantExternalIdentifier.grantExternalId)??><div><b>${springMacroRequestContext.getMessage("macros.orcid.ExternalID")}</b>: ${grant.grantExternalIdentifier.grantExternalId.content}</div></#if>
+        <#if grant.grantNumber??><div><b>${springMacroRequestContext.getMessage("macros.orcid.Grantnumber")}</b>: ${grant.grantNumber.content}</div></#if>
+        <#if grant.shortDescription??><div><b>${springMacroRequestContext.getMessage("macros.orcid.Description")}</b>: ${grant.shortDescription}</div></#if>
         <#if (grant.grantContributors.contributor)??>
             <div>
-                <b>Contributor(s)</b>: <@contributorList grant.grantContributors.contributor/>
+                <b>${springMacroRequestContext.getMessage("macros.orcid.Contributor")}</b>: <@contributorList grant.grantContributors.contributor/>
             </div>
         </#if>
         <#if showPrivacy!false>
@@ -105,13 +105,13 @@
 <#macro patentDetails patent>
     <li>
         <#if (patent.shortDescription)??><h4>${patent.shortDescription}</h4></#if>
-        <#if (patent.country)??><div><b>Country</b>: ${patent.country.content}</div></#if>
-        <#if (patent.patentNumber)??><div><b>Patent number</b>: ${patent.patentNumber.content}</div></#if>
-        <#if (patent.shortDescription)??><div><b>Description</b>: ${patent.shortDescription}</div></#if>
-        <#if (patent.patentIssueDate)??><div><b>Patent issue date</b>: ${patent.patentIssueDate.value.toGregorianCalendar().time?date}</div></#if>
+        <#if (patent.country)??><div><b>${springMacroRequestContext.getMessage("macros.orcid.Country")}</b>: ${patent.country.content}</div></#if>
+        <#if (patent.patentNumber)??><div><b>${springMacroRequestContext.getMessage("macros.orcid.Patentnumber")}</b>: ${patent.patentNumber.content}</div></#if>
+        <#if (patent.shortDescription)??><div><b>${springMacroRequestContext.getMessage("macros.orcid.Description")}</b>: ${patent.shortDescription}</div></#if>
+        <#if (patent.patentIssueDate)??><div><b>${springMacroRequestContext.getMessage("macros.orcid.Patentissuedate")}</b>: ${patent.patentIssueDate.value.toGregorianCalendar().time?date}</div></#if>
         <#if (patent.assignee)?? && patent.assignee?size &gt; 0>
             <div>
-                <b>Assignee(s)</b>:
+                <b>${springMacroRequestContext.getMessage("macros.orcid.Assignee")}</b>:
                 <#list patent.assignee as assignee>
                     ${assignee} <#if assignee_has_next >, </#if>
                 </#list>
@@ -119,7 +119,7 @@
         </#if>
         <#if (patent.patentContributors.contributor)??>
             <div>
-                <b>Contributor(s)</b>: <@contributorList patent.patentContributors.contributor/>
+                <b>${springMacroRequestContext.getMessage("macros.orcid.Contributor")}</b>: <@contributorList patent.patentContributors.contributor/>
             </div>
         </#if>
         <#if showPrivacy!false>
@@ -185,23 +185,23 @@ kind of variable. This temp value is only used in this macro lib -->
     <div class="privacy-tool">
         
         <div class="${btnContainerClass}">
-            <#if selected == "" || selected == "public"><button class="btn btn-success dropdown-toggle privacy-toggle">Public <span class="caret"></span></button></#if>
-            <#if selected == "limited"><button class="btn btn-warning dropdown-toggle privacy-toggle">Limited <span class="caret"></span></button></#if>
-            <#if selected == "private" || selected == "protected"><button class="btn btn-danger dropdown-toggle privacy-toggle">Private <span class="caret"></span></button></#if>
+            <#if selected == "" || selected == "public"><button class="btn btn-success dropdown-toggle privacy-toggle">${springMacroRequestContext.getMessage("manage.lipublic")} <span class="caret"></span></button></#if>
+            <#if selected == "limited"><button class="btn btn-warning dropdown-toggle privacy-toggle">${springMacroRequestContext.getMessage("manage.lilimited")} <span class="caret"></span></button></#if>
+            <#if selected == "private" || selected == "protected"><button class="btn btn-danger dropdown-toggle privacy-toggle">${springMacroRequestContext.getMessage("manage.liprivate")} <span class="caret"></span></button></#if>
             <ul class="dropdown-menu privacy-menu">
-                <li><a class="btn btn-success btn-privacy" href="#">Public <span class="caret"></span></a></li>
-                <li><a class="btn btn-warning btn-privacy" href="#">Limited <span class="caret"></span></a></li>
-                <li><a class="btn btn-danger btn-privacy" href="#">Private <span class="caret"></span></a></li>	
-                <li><a class="btn" href="${helpLink}" target="_blank">Help <span class="caret"></span></a></li>
+                <li><a class="btn btn-success btn-privacy" href="#">${springMacroRequestContext.getMessage("manage.lipublic")} <span class="caret"></span></a></li>
+                <li><a class="btn btn-warning btn-privacy" href="#">${springMacroRequestContext.getMessage("manage.lilimited")} <span class="caret"></span></a></li>
+                <li><a class="btn btn-danger btn-privacy" href="#">${springMacroRequestContext.getMessage("manage.liprivate")} <span class="caret"></span></a></li>	
+                <li><a class="btn" href="${helpLink}" target="_blank">${springMacroRequestContext.getMessage("manage.lihelp")} <span class="caret"></span></a></li>
             </ul>
         </div>
     </div>
 </#macro>
 
 <#macro privacyLabel selected="private">
-    <#if selected == "" || selected == "public"><span class="label label-success privacy-label">Public</span></#if>
-    <#if selected == "limited"><span class="label label-warning privacy-label">Limited</span></#if>
-    <#if selected == "private" || selected == "protected"><span class="label label-important privacy-label">Private</span></#if>
+    <#if selected == "" || selected == "public"><span class="label label-success privacy-label">${springMacroRequestContext.getMessage("manage.lipublic")}</span></#if>
+    <#if selected == "limited"><span class="label label-warning privacy-label">${springMacroRequestContext.getMessage("manage.lilimited")}</span></#if>
+    <#if selected == "private" || selected == "protected"><span class="label label-important privacy-label">${springMacroRequestContext.getMessage("manage.liprivate")}</span></#if>
 </#macro>
 
 <#macro settingsPopover id includeFile title open="" link="Edit">
