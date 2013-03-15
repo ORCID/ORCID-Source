@@ -50,14 +50,20 @@
          </#list>
          <p><@spring.message "orcid.frontend.web.oauth_is_secure"/></p>
          <div class="row">
+         <#assign authOnClick = "">
+         <#list scopes as scope>
+            <#assign authOnClick = authOnClick + " orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'Authorize_" + scope.name()?replace("ORCID_", "") + "', 'OAuth " + clientProfile.orcidBio.personalDetails.creditName.content + "']);">     
+         </#list>
+
+    	 <#assign denyOnClick = " orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'Authorize_Deny', 'OAuth " + clientProfile.orcidBio.personalDetails.creditName.content + "']);">     
              <span class="span">
-                <form id="denialForm" class="form-inline" name="denialForm" action="<@spring.url '/oauth/authorize'/>" method="post">
+                <form id="denialForm" class="form-inline" name="denialForm" action="<@spring.url '/oauth/authorize'/>" onsubmit="${denyOnClick}  return true;" method="post">
                     <input name="user_oauth_approval" value="false" type="hidden"/>
                     <input class="btn btn-success" name="deny" value="Deny" type="submit">
                 </form>        
             </span>
             <span class="span">
-                <form id="confirmationForm" class="form-inline" name="confirmationForm" action="<@spring.url '/oauth/authorize'/>" target="_blank" method="post">
+                <form id="confirmationForm" class="form-inline" name="confirmationForm" action="<@spring.url '/oauth/authorize'/>" target="_blank" onsubmit="${authOnClick} return true;" method="post">
                     <input name="user_oauth_approval" value="true" type="hidden"/>
                     <input class="btn btn-success" name="authorize" value="Authorize" type="submit">
                 </form>

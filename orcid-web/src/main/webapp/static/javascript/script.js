@@ -53,6 +53,18 @@ var OrcidCookie = new function () {
     };
 };
 
+var OrcidGA = function () {	
+	this.gaPush = function (trackArray) {
+		if (typeof _gaq != 'undefined') {
+			_gaq.push(trackArray);
+		} else {
+			console.log("no _gap.push for " + trackArray);
+		}
+	};
+};
+
+var orcidGA = new OrcidGA();
+
 var OrcidMessage = function (messageUrl) {
 	this.localData = null;
 	this.load(messageUrl);
@@ -210,10 +222,24 @@ $(function () {
 		$(this).toggleClass('open');
 	});
 
+	$('#self-reg-form').submit(function() {
+		if (basePath.startsWith(baseUrl + 'oauth')) 
+		    orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'New-Registration-Submit', 'OAuth']);
+	    else if (basePath.startsWith(baseUrl + 'claim/'))
+	    	orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'New-Registration-Submit', 'Claim']);
+	    else
+	    	orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'New-Registration-Submit', 'Website']);	
+		return true;
+	});
+	
 	$('form#loginForm').submit(function() {
 		if($('form#loginForm').attr('disabled')){
 			return false;
 		}
+		if (basePath.startsWith(baseUrl + 'oauth')) 
+		    orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'Sign-In-Submit', 'OAuth']);
+	    else
+	    	orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'Sign-In-Submit', 'Website']);	
 		$('form#loginForm').attr('disabled', 'disabled');
 		$('#ajax-loader').show();
 		$.ajax({
@@ -225,7 +251,11 @@ $(function () {
 	        	$('#ajax-loader').hide();
 	        	$('form#loginForm').removeAttr('disabled');
 	            if (data.success) {
-	               window.location.href = data.url;
+	        	    if (basePath.startsWith(baseUrl + 'oauth/signin')) 
+	        		    orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'Sign-In', 'OAuth']);
+	        	    else
+	        	    	orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'Sign-In', 'Website']);	
+	                window.location.href = data.url;
 	            } else {
 	            	if ($('form#loginForm #login-error-mess').length == 0) {
 	            		var message;
