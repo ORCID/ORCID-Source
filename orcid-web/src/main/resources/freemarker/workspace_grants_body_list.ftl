@@ -29,6 +29,6 @@
     </ul>
 <#else>
     <div class="alert alert-info">
-        <strong><#if (publicProfile)?? && publicProfile == true>No grants added yet<#else>You haven't added any grants</#if></strong>
+        <strong><#if (publicProfile)?? && publicProfile == true>${springMacroRequestContext.getMessage("workspace_grants_body_list.Nograntsaddedyet")}<#else>${springMacroRequestContext.getMessage("workspace_grants_body_list.havenotadd")}</#if></strong>
     </div>
 </#if>

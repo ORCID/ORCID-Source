@@ -20,7 +20,7 @@
 
 <div class="row">
     <div class="offset3 span9">
-        <p>There has been a problem with the server. If this problem persists, please contact <a href="${(aboutUri)}/help/contact-us">support</a>.</p>
+        <p>${springMacroRequestContext.getMessage("error-500.hasbeenproblemwithserver")} <a href="${(aboutUri)}/help/contact-us">${springMacroRequestContext.getMessage("error-500.support")}</a>.</p>
     </div>
 </div>
 <div class="hide">

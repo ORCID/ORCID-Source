@@ -18,9 +18,8 @@
 -->
 <noscript>
 	<div class="alert">
-         For full functionality of this site it is necessary to enable JavaScript.
-         Here are the <a href="http://www.enable-javascript.com/" target="_blank">
-         instructions how to enable JavaScript in your web browser</a>.
+         ${springMacroRequestContext.getMessage("common.browser-checks.functionalityofthissite")} <a href="http://www.enable-javascript.com/" target="_blank">
+         ${springMacroRequestContext.getMessage("common.browser-checks.instructionhowtoadd")}</a>.
  	</div>
 </noscript>
 <div id="cookie-check-msg" style="display: none;">

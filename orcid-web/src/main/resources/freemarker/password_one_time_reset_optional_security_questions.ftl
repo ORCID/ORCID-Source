@@ -31,7 +31,7 @@
 		</#if>
 		<form id="reg-form-password" action="<@spring.url '/reset-password-email/${encryptedEmail}'/>" method="post" autocomplete="off">
     		<div class="control-group password-group">
-    			<label for="passwordField" class="control-label">Please enter a New Password</label>
+    			<label for="passwordField" class="control-label">${springMacroRequestContext.getMessage("password_one_time_reset_optional_security_questions.pleaseenternewpassword")}</label>
     			<div class="controls">
         			<input id="passwordField" type="password" name="password" value="${(oneTimeResetPasswordForm.password)!}" class="input-xlarge password-strength"/>
         			<span class="required">*</span>
@@ -40,40 +40,40 @@
                         	<div class="arrow"></div>
                         	<div class="popover-content">
 	                        	<div class="help-block">
-                                        <p>Must be 8 or more characters and contain:</p>
+                                        <p>${springMacroRequestContext.getMessage("password_one_time_reset.labelmust8more")}</p>
                                         <ul>
-                                            <li>at least 1 numeral: 0 - 9</li>
-                                            <li>at least 1 of the following:</li>
+                                            <li>${springMacroRequestContext.getMessage("password_one_time_reset.labelatleast09")}</li>
+                                            <li>${springMacroRequestContext.getMessage("password_one_time_reset.labelatleast1following")}</li>
                                             <ul>
-                                            	<li>alpha character, case-sensitive a-Z</li>
-                                            	<li>any of the following symbols:<br /> ! @ # $ % ^ * ( ) ~ `{ } [ ] | \ &amp; _</li>
+                                            	<li>${springMacroRequestContext.getMessage("password_one_time_reset.labelalphacharacter")}</li>
+                                            	<li>${springMacroRequestContext.getMessage("password_one_time_reset.labelanyoffollow")}<br /> ! @ # $ % ^ * ( ) ~ `{ } [ ] | \ &amp; _</li>
                                             </ul>
-                                            <li>optionally the space character, i.e ' ' and other punctuation such as . , ;</li>
+                                            <li>${springMacroRequestContext.getMessage("password_one_time_reset.labeloptionallyspace")}</li>
                                         </ul>                                       
-                                        <p>Example: sun% moon2</p>
+                                        <p>${springMacroRequestContext.getMessage("password_one_time_reset.examplesunmoon")}</p>
                                     </div>
                         	</div>
                         </div>    
     			</div>
 			</div>
 			<div class="control-group password-group">
-	    		<label for="retypedPassword" class="control-label">Confirm your new password</label>
+	    		<label for="retypedPassword" class="control-label">${springMacroRequestContext.getMessage("password_one_time_reset_optional_security_questions.confirmyournewpassword")}</label>
     			<div class="controls">
 	    			<input id="retypedPassword" type="password" name="retypedPassword" value="${(oneTimeResetPasswordForm.retypedPassword)!}" class="input-xlarge"/>
     	    		<span class="required">*</span>
     			</div>        
 			</div>
-			<p><small>(optional) Please consider setting a challenge question for additional security.<small></p>			
+			<p><small>${springMacroRequestContext.getMessage("password_one_time_reset_optional_security_questions.optionalconsidersetting")}<small></p>			
 			<div class="control-group">        		   
 	            	<div class="controls">
-	            	 	<label for="oneTimeResetPasswordForm.securityQuestionId" class="control-label">Challenge Question</label>
+	            	 	<label for="oneTimeResetPasswordForm.securityQuestionId" class="control-label">${springMacroRequestContext.getMessage("password_one_time_reset_optional_security_questions.challengequestion")}</label>
             			<@spring.formSingleSelect "oneTimeResetPasswordForm.securityQuestionId", securityQuestions, 'class="span5"' />                		            		
-            			<label for="oneTimeResetPasswordForm.securityQuestionAnswer" class="control-label">Challenge Answer</label>            	
+            			<label for="oneTimeResetPasswordForm.securityQuestionAnswer" class="control-label">${springMacroRequestContext.getMessage("password_one_time_reset_optional_security_questions.challengeanswer")}</label>            	
             			<@spring.formInput "oneTimeResetPasswordForm.securityQuestionAnswer", 'class="span5"' />	                	
 	                </div>
         		</div>
     			<div class="controls">
-        			<button id="bottom-submit-password-change" class="btn btn-primary" type="submit">Save changes</button>      
+        			<button id="bottom-submit-password-change" class="btn btn-primary" type="submit">${springMacroRequestContext.getMessage("freemarker.btnsavechanges")}</button>      
     			</div>    
 		</form>
 	</div>

@@ -19,16 +19,16 @@
 <#-- @ftlvariable name="aboutUri" type="java.lang.String" -->
 <#escape x as x?html>
 <#if searchResults??>
-        <h3 class="search-result-head">Search results</h3>
+        <h3 class="search-result-head">${springMacroRequestContext.getMessage("search_results.h3Searchresults")}</h3>
         <table class="table table-striped">
             <thead>
             <tr>
-                <th>Relevance</th>
-                <th>ORCID ID</th>
-                <th>Given name</th>
-                <th>Family names</th>
-                <th>Other names</th>
-                <th>Institutions</th>
+                <th>${springMacroRequestContext.getMessage("search_results.thRelevance")}</th>
+                <th>${springMacroRequestContext.getMessage("search_results.thORCIDID")}</th>
+                <th>${springMacroRequestContext.getMessage("search_results.thGivenname")}</th>
+                <th>${springMacroRequestContext.getMessage("search_results.thFamilynames")}</th>
+                <th>${springMacroRequestContext.getMessage("search_results.thOthernames")}</th>
+                <th>${springMacroRequestContext.getMessage("search_results.thInstitutions")}</th>
             </tr>
             </thead>
             <tbody>
@@ -38,7 +38,7 @@
                     <td>${(searchResult.relevancyScore.value)!}</td>
                     <td><a href="<@orcid.orcidUrl (profileInfo.orcid.value)!/>">${(profileInfo.orcid.value)!}</td>
                      <#if (profileInfo.isDeactivated()) >
-                    	 <td colspan="4">This Account is no longer active</td>
+                    	 <td colspan="4">${springMacroRequestContext.getMessage("search_results.tdnologneractive")}</td>
 					<#else>                     
                     	<td>${(profileInfo.orcidBio.personalDetails.givenNames.content)!}</td>
                     	<td>${(profileInfo.orcidBio.personalDetails.familyName.content)!}</td>

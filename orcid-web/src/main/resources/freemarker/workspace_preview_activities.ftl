@@ -16,9 +16,9 @@
     =============================================================================
 
 -->
-    <h3 class="workspace-header-public">Publications</h3>
+    <h3 class="workspace-header-public">${springMacroRequestContext.getMessage("workspace_preview_activities.Publications")}</h3>
     <#include "workspace_works_body_list.ftl" />
-    <h3 class="workspace-header-public">Grants</h3>
+    <h3 class="workspace-header-public">${springMacroRequestContext.getMessage("workspace_preview_activities.Grants")}</h3>
 <#include "workspace_grants_body_list.ftl" />
-    <h3 class="workspace-header-public">Patents</h3>
+    <h3 class="workspace-header-public">${springMacroRequestContext.getMessage("workspace_preview_activities.Patents")}</h3>
 <#include "workspace_patents_body_list.ftl" />

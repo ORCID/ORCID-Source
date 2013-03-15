@@ -20,10 +20,10 @@
     <div class="span12">
         <div class="pull-left">
             <#if isPreview??>
-                <h3>ORCID Record for ${(profile.orcidBio.personalDetails.creditName.content)!}</h3>
+                <h3>${springMacroRequestContext.getMessage("workspace_preview.ORCIDRecordfor")} ${(profile.orcidBio.personalDetails.creditName.content)!}</h3>
                 <div class="alert alert-block">
-                    <h4 class="alert-heading">Preview!</h4>
-                    <p>This is what visitors will see when they view your ORCID Record page based on your privacy settings. To modify those settings, change the 'public' options in the  <a href="<@spring.url '/account'/>">Manage ORCID Record</a> page.</p>
+                    <h4 class="alert-heading">${springMacroRequestContext.getMessage("workspace_preview.Preview")}</h4>
+                    <p>${springMacroRequestContext.getMessage("workspace_preview.whatvisitors")}  <a href="<@spring.url '/account'/>">${springMacroRequestContext.getMessage("workspace_preview.ManageORCIDRecord")}</a> ${springMacroRequestContext.getMessage("workspace_preview.page")}</p>
                 </div>
             </#if>
         </div>

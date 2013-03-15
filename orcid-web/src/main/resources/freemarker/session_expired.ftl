@@ -20,7 +20,7 @@
 <div class="container">
 <div class="row">
     <div class="offset3 span6">
-        <div class="alert">Your session has expired. Please <a href="<@spring.url '/signin'/>">sign in</a> and try again. Thank you.</p>
+        <div class="alert">${springMacroRequestContext.getMessage("session_expired.labelsessionexpired")} <a href="<@spring.url '/signin'/>">${springMacroRequestContext.getMessage("header.signin")}</a> ${springMacroRequestContext.getMessage("session_expired.labeltryagain")}</p>
     </div>
 </div>
 </div>

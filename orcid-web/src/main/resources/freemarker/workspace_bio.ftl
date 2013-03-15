@@ -23,38 +23,38 @@
     <div class="row-fluid">
         <div class="span6">
             <dl class="dl-horizontal">
-                <dt>ORCID</dt>
+                <dt>${springMacroRequestContext.getMessage("home.ORCID")}</dt>
                 <dd>${(profile.orcid.value)!}</dd>
                 <#if ((profile.orcidBio.personalDetails.givenNames.content)?has_content)>
-                    <dt>Given names</dt>
+                    <dt>${springMacroRequestContext.getMessage("workspace_bio.givenname")}</dt>
                     <dd>${(profile.orcidBio.personalDetails.givenNames.content)!}</dd>
                 </#if>
             <#if ((profile.orcidBio.personalDetails.familyName.content)?has_content)>
-                <dt>Family name</dt>
+                <dt>${springMacroRequestContext.getMessage("duplicate_researcher.thFamilyName")}</dt>
                 <dd>${(profile.orcidBio.personalDetails.familyName.content)!}</dd>
             </#if>
             <#if ((profile.orcidBio.personalDetails.creditName.content)?has_content)>
-                <dt>Credit name</dt>
+                <dt>${springMacroRequestContext.getMessage("workspace_bio.Creditname")}</dt>
                 <dd>${(profile.orcidBio.personalDetails.creditName.content)!}</dd>
             </#if>
             <#if (profile.orcidBio.personalDetails.otherNames)?? && (profile.orcidBio.personalDetails.otherNames.otherName)?size &gt; 0>
-                <dt>Other names</dt>
+                <dt>${springMacroRequestContext.getMessage("manage_bio_settings.othernames")}</dt>
                 <#list profile.orcidBio.personalDetails.otherNames.otherName as otherName>
                     <dd>${otherName.content}</dd>
                 </#list>
             </#if>
                 <#if ((profile.orcidBio.contactDetails.email.value)??)>
-                <dt>Email</dt>
+                <dt>${springMacroRequestContext.getMessage("duplicate_researcher.thEmail")}</dt>
                 <dd><a href="mailto:${(profile.orcidBio.contactDetails.email.value)!}">${(profile.orcidBio.contactDetails.email.value)!}</a></dd>
                 </#if>
-                <dt>URL</dt>
+                <dt>${springMacroRequestContext.getMessage("workspace_bio.URL")}</dt>
                 <dd><a href="<@orcid.orcidUrl profile.orcid.value/>"><@orcid.orcidUrl profile.orcid.value/></a></dd>
                 <#if (profile.orcidBio.shortDescription.content)??>
-                <dt>Description</dt>
+                <dt>${springMacroRequestContext.getMessage("workspace_bio.Description")}</dt>
                 <dd>${profile.orcidBio.shortDescription.content}</dd>
                 </#if>
                 <#if (profile.orcidBio.personalDetails.researcherUrls.url)?? && (profile.orcidBio.personalDetails.researcherUrls.url)?size &gt; 0>
-                <dt>My URLs</dt>
+                <dt>${springMacroRequestContext.getMessage("workspace_bio.MyURLs")}</dt>
                 <dd>
                     <#list profile.orcidBio.personalDetails.researcherUrls.url as url>
                         <a href="${url.value}">${url.value}</a><#if url_has_next><br /></#if>
@@ -62,7 +62,7 @@
                 </dd>
                 </#if>
                  <#if ((profile.orcidBio.keywords.keyword)?? && profile.orcidBio.keywords.keyword?size &gt; 0 )>
-                <dt>Keywords</dt>
+                <dt>${springMacroRequestContext.getMessage("manage_bio_settings.labelkeywords")}</dt>
                 <dd>
                  <#list profile.orcidBio.keywords.keyword as keyword>
                         ${keyword.content}<#if keyword_has_next><br /></#if>
@@ -70,7 +70,7 @@
                 </dd>
                 </#if>
                  <#if ((profile.orcidBio.subjects.subject)?? && profile.orcidBio.subjects.subject?size &gt; 0)>
-                <dt>Subjects</dt>
+                <dt>${springMacroRequestContext.getMessage("workspace_bio.Subjects")}</dt>
                 <dd>
                  <#list profile.orcidBio.subjects.subject as subject>
                         ${subject.content}<#if subject_has_next><br /></#if>
@@ -81,7 +81,7 @@
         </div>
         <div class="span6">
             <#if (profile.orcidBio.affiliations)?? && profile.orcidBio.affiliations?size &gt; 0>
-                <h5>Affiliations</h5>
+                <h5>${springMacroRequestContext.getMessage("workspace_bio.Affiliations")}</h5>
                 <#list profile.orcidBio.affiliations as affiliation>
                     <span>${(affiliation.affiliationName)!}<#if affiliation.departmentName??>, ${affiliation.departmentName}</#if></span><span> (${(affiliation.affiliationType?replace('_', ' ')?lower_case?cap_first)!})</span><span><#if affiliation.startDate??> from ${affiliation.startDate.value.toGregorianCalendar().time?date}</#if><#if affiliation.endDate??> to ${affiliation.endDate.value.toGregorianCalendar().time?date}</#if><#if affiliation.roleTitle??>, as ${affiliation.roleTitle}</#if></span>
                     <#if affiliation_has_next><br/></#if>

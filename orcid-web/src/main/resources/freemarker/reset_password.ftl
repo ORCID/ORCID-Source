@@ -36,19 +36,17 @@
 	    			<strong><@spring.message "orcid.frontend.reset.password.successfulReset"/></strong>
 				</div>
 			</#if>                         
-            <h2>Forgotten Password</h2>
-            <p><small>Please enter the email address that you are using for your ORCID iD. An email will be sent to this
-             address with further instructions. If you no longer have access to this address please contact 
-             support at <a href="mailto:support@orcid.org">support@orcid.org</a>.</small></p>      		
+            <h2>${springMacroRequestContext.getMessage("reset_password.h2ForgottenPassword")}</h2>
+            <p><small>${springMacroRequestContext.getMessage("reset_password.labelenteremailaddress")} <a href="mailto:support@orcid.org">${springMacroRequestContext.getMessage("resend_claim.labelorg")}</a>.</small></p>      		
         	<form id="password-reset-form" name="emailAddressForm" action="reset-password" method="post">
         		<fieldset>
         			<div class="control-group">
-            			<label for="givenNames" class="control-label">Email Address </label>
+            			<label for="givenNames" class="control-label">${springMacroRequestContext.getMessage("manage_bio_settings.emailaddress")} </label>
                				<div class="controls">                    	
                				<@spring.formInput "emailAddressForm.userEmailAddress" 'class="input-xlarge" name="userEmail"'/>
                				<span class="required">*</span>
                			</div>
-               			<button class="btn btn-primary" type="submit">Send Instructions</button>
+               			<button class="btn btn-primary" type="submit">${springMacroRequestContext.getMessage("reset_password.labelSendInstructions")}</button>
         			</div>
         		</fieldset>
         	</form>
