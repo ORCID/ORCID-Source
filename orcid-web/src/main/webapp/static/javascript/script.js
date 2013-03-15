@@ -547,6 +547,7 @@ $(function () {
 		var newLi = li.clone();
 		var privacyTemplate = $('#privacy-template');
 		var newPrivacy = privacyTemplate.clone();
+		newPrivacy.removeAttr('id');
 		newLi.append(newPrivacy);
 		newLi.find('.work-delete-lbl').show();
 		newLi.find(':input:not(:button)').each(function(index, value) {
