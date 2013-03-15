@@ -267,9 +267,6 @@
         </xs:complexType>
     </xs:element>
     <xs:element name="biography">
-    	<xs:annotation>
-    		<xs:documentation>Description of the researcher's professional career</xs:documentation>
-    	</xs:annotation>
         <xs:complexType>
             <xs:simpleContent>
                 <xs:extension base="orcid:bio-text">
@@ -338,9 +335,6 @@
         </xs:complexType>
     </xs:element>
     <xs:element name="keywords">
-    	<xs:annotation>
-    		<xs:documentation>Contain for words or phrases describing areas of research</xs:documentation>
-    	</xs:annotation>
         <xs:complexType>
             <xs:sequence>
                 <xs:element ref="orcid:keyword" minOccurs="0" maxOccurs="unbounded"/>
@@ -446,9 +440,6 @@
         </xs:complexType>
     </xs:element>
     <xs:element name="delegation">
-    	<xs:annotation>
-    		<xs:documentation>Contain for functionality that has not yet been built</xs:documentation>
-    	</xs:annotation>
         <xs:complexType>
             <xs:sequence>
                 <xs:element minOccurs="0" ref="orcid:given-permission-to"/>
@@ -495,9 +486,6 @@
         </xs:complexType>
     </xs:element>
     <xs:element name="applications">
-    	<xs:annotation>
-    		<xs:documentation>Container for Authorizations. Not used by the API.</xs:documentation>
-    	</xs:annotation>
         <xs:complexType>
             <xs:sequence>
                 <xs:element maxOccurs="unbounded" ref="orcid:application-summary"/>
@@ -1146,9 +1134,6 @@
         <xs:complexType mixed="true"/>
     </xs:element>
     <xs:element name="address">
-    	<xs:annotation>
-    		<xs:documentation>Container for location information</xs:documentation>
-    	</xs:annotation>
         <xs:complexType>
             <xs:sequence>
                 <xs:element minOccurs="0" ref="orcid:country"/>
