@@ -169,7 +169,15 @@ $(function () {
  
     }
     
-    $('#confirmationForm, #denialForm').submit(function() {
+    $('#confirmationForm').submit(function() {
+    	if (window.location != window.parent.location) {
+    		parent.$.colorbox.close();
+    		this.target = '_blank';
+    	}
+    	return true;
+    });
+ 
+    $('#denialForm').submit(function() {
     	if (window.location != window.parent.location) parent.$.colorbox.close();
     	return true;
     });
@@ -569,6 +577,7 @@ $(function () {
 		var newLi = li.clone();
 		var privacyTemplate = $('#privacy-template');
 		var newPrivacy = privacyTemplate.clone();
+		newPrivacy.removeAttr('id');
 		newLi.append(newPrivacy);
 		newLi.find('.work-delete-lbl').show();
 		newLi.find(':input:not(:button)').each(function(index, value) {

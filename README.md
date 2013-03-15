@@ -31,8 +31,7 @@ The above is just a brief introduction. Best way to see everything used is to di
 
 
 # Contributing
-Pull requests are welcome; we are working on contributor guidelines. Until then please
-reach out to the [OST] (https://github.com/organizations/ORCID/teams/208575) members directly.
+Pull requests are welcome; See [CONTRIBING.md](CONTRIBING.md)
 
 # Development Environment Setup
 See [DEVSETUP.md](https://github.com/ORCID/ORCID-Source/blob/master/DEVSETUP.md)

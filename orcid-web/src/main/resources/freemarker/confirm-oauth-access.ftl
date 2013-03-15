@@ -63,7 +63,7 @@
                 </form>        
             </span>
             <span class="span">
-                <form id="confirmationForm" class="form-inline" name="confirmationForm" action="<@spring.url '/oauth/authorize'/>" target="_blank" onsubmit="${authOnClick} return true;" method="post">
+                <form id="confirmationForm" class="form-inline" name="confirmationForm" action="<@spring.url '/oauth/authorize'/>" onsubmit="${authOnClick} return true;" method="post">
                     <input name="user_oauth_approval" value="true" type="hidden"/>
                     <input class="btn btn-success" name="authorize" value="Authorize" type="submit">
                 </form>
