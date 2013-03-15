@@ -157,7 +157,15 @@ $(function () {
  
     }
     
-    $('#confirmationForm, #denialForm').submit(function() {
+    $('#confirmationForm').submit(function() {
+    	if (window.location != window.parent.location) {
+    		parent.$.colorbox.close();
+    		this.target = '_blank';
+    	}
+    	return true;
+    });
+ 
+    $('#denialForm').submit(function() {
     	if (window.location != window.parent.location) parent.$.colorbox.close();
     	return true;
     });
