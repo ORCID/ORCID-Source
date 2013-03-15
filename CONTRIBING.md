@@ -1,4 +1,4 @@
-The ORCID Team is always excited to get contributions. Checkout our pointers below:
+The ORCID Team is always **EXCITED** to get contributions. Checkout our pointers below:
 
 1.  **Understand the basics**	
 
