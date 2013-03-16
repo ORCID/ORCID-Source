@@ -138,7 +138,7 @@
                             <#include "current_works_list.ftl"/>
                             <li class="no-js">
                                 <input type="submit" value="${springMacroRequestContext.getMessage('works_update.Savecurrentpublicationslist')}"></input>
-                                <input type="reset" value="${springMacroRequestContext.getMessage('${springMacroRequestContext.getMessage("log")}')}"></input>
+                                <input type="reset" value="${springMacroRequestContext.getMessage('freemarker.btncancel')}"></input>
                             </li>
                         </ul>
                     </form>
