@@ -158,9 +158,9 @@
 <div class="hide">
     <label id="privacy-template" class="privacy-toggle-lbl">
         <select class="works-visibility" name="currentWorks[0].visibility" id="currentWorks[0].visibility">
-            <#if workVisibilityDefault == "public"><option value="${springMacroRequestContext.getMessage('manage.lipublic')}" selected="selected">${springMacroRequestContext.getMessage("manage.lipublic")}</option><#else><option value="${springMacroRequestContext.getMessage('manage.lipublic')}">${springMacroRequestContext.getMessage("manage.lipublic")}</option></#if>
-            <#if workVisibilityDefault == "limited"><option value="${springMacroRequestContext.getMessage('manage.lilimited')}" selected="selected">${springMacroRequestContext.getMessage("manage.lilimited")}</option><#else><option value="${springMacroRequestContext.getMessage('manage.lilimited')}">${springMacroRequestContext.getMessage("manage.lilimited")}</option></#if>
-            <#if workVisibilityDefault == "private"><option value="${springMacroRequestContext.getMessage('manage.liprivate')}" selected="selected">${springMacroRequestContext.getMessage("manage.liprivate")}</option><#else><option value="${springMacroRequestContext.getMessage('manage.liprivate')}">${springMacroRequestContext.getMessage("manage.liprivate")}</option></#if>
+            <#if workVisibilityDefault == "public"><option value="public" selected="selected">${springMacroRequestContext.getMessage("manage.lipublic")}</option><#else><option value="${springMacroRequestContext.getMessage('manage.lipublic')}">${springMacroRequestContext.getMessage("manage.lipublic")}</option></#if>
+            <#if workVisibilityDefault == "limited"><option value="limited" selected="selected">${springMacroRequestContext.getMessage("manage.lilimited")}</option><#else><option value="${springMacroRequestContext.getMessage('manage.lilimited')}">${springMacroRequestContext.getMessage("manage.lilimited")}</option></#if>
+            <#if workVisibilityDefault == "private"><option value="private" selected="selected">${springMacroRequestContext.getMessage("manage.liprivate")}</option><#else><option value="${springMacroRequestContext.getMessage('manage.liprivate')}">${springMacroRequestContext.getMessage("manage.liprivate")}</option></#if>
         </select>
         <div class="privacy-tool">
             <div class="btn-group privacy-group abs-left-top">
