@@ -101,7 +101,7 @@ public enum Visibility implements Serializable {
 
     public static Visibility fromValue(String v) {
         for (Visibility c : Visibility.values()) {
-            if (c.value.equals(v)) {
+            if (c.value.equals(v.toLowerCase())) {
                 return c;
             }
         }
