@@ -337,7 +337,7 @@ $(function () {
 				} else {
 					var s = toggle.closest('.privacy-tool').prev('.visibility-lbl').find('select');
 					if (s.length) {
-						s.val($.trim($(this).text().toLowerCase()));
+						s.val($(this).attr('href').replace("#",""));
 					}
 					toggle.removeClass(current).addClass(getBtnClass(this));
 					toggle.html($(this).html());
