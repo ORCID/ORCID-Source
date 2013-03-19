@@ -80,6 +80,10 @@ public class WebhookManagerImpl implements WebhookManager {
         this.httpClient = httpClient;
     }
 
+    public void setWebhookDao(WebhookDao webhookDao) {
+        this.webhookDao = webhookDao;
+    }
+
     @Override
     public void processWebHooks() {
         // Log start time

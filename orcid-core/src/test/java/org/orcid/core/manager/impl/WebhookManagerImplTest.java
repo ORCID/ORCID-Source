@@ -18,6 +18,9 @@ package org.orcid.core.manager.impl;
 
 import static junit.framework.Assert.assertNotNull;
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import javax.annotation.Resource;
@@ -35,6 +38,7 @@ import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.orcid.core.BaseTest;
 import org.orcid.core.manager.WebhookManager;
+import org.orcid.persistence.dao.WebhookDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.WebhookEntity;
@@ -46,6 +50,9 @@ public class WebhookManagerImplTest extends BaseTest {
 
     @Mock
     private HttpClient mockHttpClient;
+
+    @Mock
+    private WebhookDao mockWebhookDao;
 
     private ClientDetailsEntity clientDetails;
 
@@ -65,6 +72,7 @@ public class WebhookManagerImplTest extends BaseTest {
                 return httpPost.getURI().getHost().equals("qa-1.orcid.org");
             }
         }))).thenReturn(new BasicHttpResponse(HttpVersion.HTTP_1_1, HttpStatus.SC_OK, "OK"));
+        webhookManagerImpl.setWebhookDao(mockWebhookDao);
 
         ProfileEntity profile = new ProfileEntity();
         profile.setId("0000-0000-0000-0001");
@@ -83,6 +91,7 @@ public class WebhookManagerImplTest extends BaseTest {
         webhook.setUri("http://qa-1.orcid.org");
         webhookManager.processWebhook(webhook);
         assertEquals(webhook.getFailedAttemptCount(), 0);
+        verify(mockWebhookDao, times(1)).merge(webhook);
     }
 
     @Test
@@ -96,6 +105,7 @@ public class WebhookManagerImplTest extends BaseTest {
             webhookManager.processWebhook(webhook);
         }
         assertEquals(webhook.getFailedAttemptCount(), 4);
+        verify(mockWebhookDao, times(4)).merge(webhook);
     }
 
     @Test
@@ -109,6 +119,7 @@ public class WebhookManagerImplTest extends BaseTest {
             webhookManager.processWebhook(webhook);
         }
         assertEquals(webhook.getFailedAttemptCount(), 4);
+        verify(mockWebhookDao, times(4)).merge(webhook);
     }
 
     @Test
@@ -126,5 +137,7 @@ public class WebhookManagerImplTest extends BaseTest {
         webhook.setUri("http://qa-1.orcid.org");
         webhookManager.processWebhook(webhook);
         assertEquals(webhook.getFailedAttemptCount(), 0);
+        verify(mockWebhookDao, times(3)).merge(webhook);
     }
+
 }
