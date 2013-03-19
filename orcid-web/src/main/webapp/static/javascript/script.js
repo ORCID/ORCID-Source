@@ -610,8 +610,7 @@ $(function () {
 			var s;
 			if (f.length && (f.attr('action') == 'save-current-works')) {
 				s = $('select', toggle.closest('label'));
-				var t = $.trim($(this).text().toLowerCase());
-				s.val(t);
+				s.val($(this).attr('href').replace("#",""));
 				showChangeMessage();
 				priv.removeClass('open');
 				toggle.removeClass(current).addClass(getBtnClass(this));
