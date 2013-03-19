@@ -326,10 +326,10 @@ $(function () {
 				e.preventDefault();
 				var f = toggle.closest('form');
 				var s;
+				var priAct = $(this).attr('href').replace("#","");
 				if (f.length && (f.attr('action') == 'save-current-works')) {
 					s = $('select', toggle.closest('label'));
-					var t = $.trim($(this).text().toLowerCase());
-					s.val(t);
+					s.val(priAct);
                     showChangeMessage();
                     $el.removeClass('open');
                     toggle.removeClass(current).addClass(getBtnClass(this));
@@ -337,7 +337,7 @@ $(function () {
 				} else {
 					var s = toggle.closest('.privacy-tool').prev('.visibility-lbl').find('select');
 					if (s.length) {
-						s.val($(this).attr('href').replace("#",""));
+						s.val(priAct);
 					}
 					toggle.removeClass(current).addClass(getBtnClass(this));
 					toggle.html($(this).html());
