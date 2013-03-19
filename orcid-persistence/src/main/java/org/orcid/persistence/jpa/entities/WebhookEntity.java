@@ -49,7 +49,6 @@ import org.orcid.persistence.jpa.entities.keys.WebhookEntityPk;
 //@formatter:on
 public class WebhookEntity extends BaseEntity<WebhookEntityPk> {
 
-    private WebhookEntityPk id;
     private ProfileEntity profile;
     private String uri;
     private ClientDetailsEntity clientDetails;
@@ -66,7 +65,7 @@ public class WebhookEntity extends BaseEntity<WebhookEntityPk> {
     @Override
     @Transient
     public WebhookEntityPk getId() {
-        return id;
+        return new WebhookEntityPk(profile, uri);
     }
 
     @Id
