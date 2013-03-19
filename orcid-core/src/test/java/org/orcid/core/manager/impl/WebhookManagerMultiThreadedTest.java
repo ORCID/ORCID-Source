@@ -28,7 +28,6 @@ import javax.annotation.Resource;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.core.manager.WebhookManager;
@@ -67,7 +66,6 @@ public class WebhookManagerMultiThreadedTest extends DBUnitTest {
     }
 
     @Test
-    @Ignore("Not working as yet")
     public void testProcessWebhooks() {
         Date now = new Date();
         List<WebhookEntity> webhooks = webhookDao.findWebhooksReadyToProcess(now, 5, 10);

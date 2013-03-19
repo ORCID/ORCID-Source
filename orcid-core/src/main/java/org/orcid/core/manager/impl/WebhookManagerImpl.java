@@ -154,13 +154,14 @@ public class WebhookManagerImpl implements WebhookManager {
             int statusCode = doPost(uri);
             if (statusCode == 200) {
                 LOGGER.info("Webhook {} for Client: {} With ORCID: {} has been processed", new Object[] { webhook.getUri(), clientId, orcid });
-                webhook.setLastModified(new Date());
+                webhook.setLastSent(new Date());
                 webhook.setFailedAttemptCount(0);
             } else {
                 LOGGER.warn("Webhook {} for Client: {} With ORCID: {} could not be processed", new Object[] { webhook.getUri(), clientId, orcid });
                 webhook.setLastFailed(new Date());
                 webhook.setFailedAttemptCount(webhook.getFailedAttemptCount() + 1);
             }
+            webhookDao.merge(webhook);
         } finally {
             decreaseWebhook(clientId);
         }
