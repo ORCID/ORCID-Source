@@ -168,9 +168,9 @@
 	            <#if workVisibilityDefault == "limited"><button class="btn btn-warning dropdown-toggle privacy-toggle">${springMacroRequestContext.getMessage("manage.lilimited")} <span class="caret"></span></button></#if>
 	            <#if workVisibilityDefault == "private" || workVisibilityDefault == "protected"><button class="btn btn-danger dropdown-toggle privacy-toggle">${springMacroRequestContext.getMessage("manage.liprivate")} <span class="caret"></span></button></#if>
 	            <ul class="dropdown-menu privacy-menu">
-	                <li><a class="btn btn-success btn-privacy" href="#">${springMacroRequestContext.getMessage("manage.lipublic")} <span class="caret"></span></a></li>
-	                <li><a class="btn btn-warning btn-privacy" href="#">${springMacroRequestContext.getMessage("manage.lilimited")} <span class="caret"></span></a></li>
-	                <li><a class="btn btn-danger btn-privacy" href="#">${springMacroRequestContext.getMessage("manage.liprivate")} <span class="caret"></span></a></li>	
+	                <li><a class="btn btn-success btn-privacy" href="#public">${springMacroRequestContext.getMessage("manage.lipublic")} <span class="caret"></span></a></li>
+	                <li><a class="btn btn-warning btn-privacy" href="#limited">${springMacroRequestContext.getMessage("manage.lilimited")} <span class="caret"></span></a></li>
+	                <li><a class="btn btn-danger btn-privacy" href="#private">${springMacroRequestContext.getMessage("manage.liprivate")} <span class="caret"></span></a></li>	
 	                <li><a class="btn" href="http://support.orcid.org/knowledgebase/articles/124518" target="_blank">${springMacroRequestContext.getMessage("manage.lihelp")} <span class="caret"></span></a></li>
 	            </ul>
             </div>
