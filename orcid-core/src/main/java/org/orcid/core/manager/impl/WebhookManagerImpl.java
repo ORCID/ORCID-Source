@@ -31,8 +31,8 @@ import java.util.concurrent.TimeUnit;
 import javax.annotation.Resource;
 
 import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 import org.orcid.core.manager.WebhookManager;
 import org.orcid.persistence.dao.WebhookDao;
@@ -51,7 +51,7 @@ public class WebhookManagerImpl implements WebhookManager {
     private int retryDelayMinutes;
 
     @Resource
-    private DefaultHttpClient httpClient;
+    private HttpClient httpClient;
 
     @Resource
     private WebhookDao webhookDao;
@@ -74,6 +74,10 @@ public class WebhookManagerImpl implements WebhookManager {
 
     public void setRetryDelayMinutes(int retryDelayMinutes) {
         this.retryDelayMinutes = retryDelayMinutes;
+    }
+
+    public void setHttpClient(HttpClient httpClient) {
+        this.httpClient = httpClient;
     }
 
     @Override

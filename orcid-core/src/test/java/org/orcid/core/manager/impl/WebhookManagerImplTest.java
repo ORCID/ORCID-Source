@@ -18,31 +18,54 @@ package org.orcid.core.manager.impl;
 
 import static junit.framework.Assert.assertNotNull;
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.when;
 
 import javax.annotation.Resource;
 
+import org.apache.http.HttpStatus;
+import org.apache.http.HttpVersion;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.message.BasicHttpResponse;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.mockito.ArgumentMatcher;
+import org.mockito.Matchers;
+import org.mockito.Mock;
+import org.orcid.core.BaseTest;
 import org.orcid.core.manager.WebhookManager;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.WebhookEntity;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:orcid-core-context.xml" })
-public class WebhookManagerImplTest {
+public class WebhookManagerImplTest extends BaseTest {
 
     @Resource
     private WebhookManager webhookManager;
 
+    @Mock
+    private HttpClient mockHttpClient;
+
     private ClientDetailsEntity clientDetails;
 
     @Before
-    public void init() {
+    public void init() throws Exception {
         assertNotNull(webhookManager);
+
+        WebhookManagerImpl webhookManagerImpl = getTargetObject(webhookManager, WebhookManagerImpl.class);
+        webhookManagerImpl.setHttpClient(mockHttpClient);
+        when(mockHttpClient.execute(Matchers.<HttpUriRequest> any())).thenReturn(new BasicHttpResponse(HttpVersion.HTTP_1_1, HttpStatus.SC_NOT_FOUND, "Not found"));
+        when(mockHttpClient.execute(Matchers.<HttpPost> argThat(new ArgumentMatcher<HttpPost>() {
+            public boolean matches(Object argument) {
+                if (argument == null || !(argument instanceof HttpPost)) {
+                    return false;
+                }
+                HttpPost httpPost = (HttpPost) argument;
+                return httpPost.getURI().getHost().equals("qa-1.orcid.org");
+            }
+        }))).thenReturn(new BasicHttpResponse(HttpVersion.HTTP_1_1, HttpStatus.SC_OK, "OK"));
+
         ProfileEntity profile = new ProfileEntity();
         profile.setId("0000-0000-0000-0001");
         clientDetails = new ClientDetailsEntity();
@@ -79,7 +102,7 @@ public class WebhookManagerImplTest {
     public void testInvalidUriOnWebhook() {
         WebhookEntity webhook = new WebhookEntity();
         webhook.setClientDetails(clientDetails);
-        webhook.setUri("http123://qa-1.orcid.org");
+        webhook.setUri("http://123.qa-1.orcid.org");
         webhookManager.processWebhook(webhook);
         assertEquals(webhook.getFailedAttemptCount(), 1);
         for (int i = 0; i < 3; i++) {
@@ -92,7 +115,7 @@ public class WebhookManagerImplTest {
     public void testFailAttemptCounterReset() {
         WebhookEntity webhook = new WebhookEntity();
         webhook.setClientDetails(clientDetails);
-        webhook.setUri("http123://qa-1.orcid.org");
+        webhook.setUri("http://123.qa-1.orcid.org");
         webhookManager.processWebhook(webhook);
         assertEquals(webhook.getFailedAttemptCount(), 1);
 
