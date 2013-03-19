@@ -131,7 +131,7 @@ public class WebhookDaoTest extends DBUnitTest {
         pk.setProfile(profileDao.find("4444-4444-4444-4443"));
         pk.setUri("http://nowhere.com/orcid/4444-4444-4444-4443");
         WebhookEntity webhook = webhookDao.find(pk);
-        webhook.setLastFailed(new Date(now.getTime() - 120 * 60 * 1000));
+        webhook.setLastFailed(new Date(now.getTime() - 120 * 1000));
         webhook.setFailedAttemptCount(1);
         webhookDao.merge(webhook);
 

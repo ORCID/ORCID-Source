@@ -74,5 +74,11 @@
             RETURNS NULL ON NULL INPUT;
         </createProcedure>
     </changeSet>
+    
+    <changeSet id="ADD-LAST-SENT-DATE-TO-WEBHOOK" author="Will Simpson">
+        <addColumn tableName="webhook">
+            <column name="last_sent" type="TIMESTAMP WITH TIME ZONE"/>
+        </addColumn>
+    </changeSet>
 
 </databaseChangeLog>

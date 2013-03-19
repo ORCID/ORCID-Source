@@ -40,7 +40,7 @@ import org.orcid.persistence.jpa.entities.keys.WebhookEntityPk;
 //@formatter:off
 @NamedNativeQuery(name = WebhookEntity.FIND_WEBHOOKS_READY_TO_PROCESS,query =
 "SELECT * FROM webhook w " +
-"JOIN profile p ON p.orcid = w.orcid AND p.last_modified >= w.last_modified " +
+"JOIN profile p ON p.orcid = w.orcid AND p.last_modified >= w.last_sent " +
 "JOIN client_details c ON c.client_details_id = w.client_details_id AND c.webhooks_enabled = 'true' " +
 "WHERE w.enabled = 'true' " +
 "AND w.failed_attempt_count = 0 OR unix_timestamp(w.last_failed) + w.failed_attempt_count * :retryDelayMinutes * 60 < unix_timestamp(now()) " +
@@ -53,6 +53,7 @@ public class WebhookEntity extends BaseEntity<WebhookEntityPk> {
     private ProfileEntity profile;
     private String uri;
     private ClientDetailsEntity clientDetails;
+    private Date lastSent;
     private Date lastFailed;
     private int failedAttemptCount;
     private boolean enabled = true;
@@ -105,6 +106,15 @@ public class WebhookEntity extends BaseEntity<WebhookEntityPk> {
 
     public void setLastFailed(Date lastFailed) {
         this.lastFailed = lastFailed;
+    }
+
+    @Column(name = "last_sent")
+    public Date getLastSent() {
+        return lastSent;
+    }
+
+    public void setLastSent(Date lastSent) {
+        this.lastSent = lastSent;
     }
 
     @Column(name = "failed_attempt_count")
