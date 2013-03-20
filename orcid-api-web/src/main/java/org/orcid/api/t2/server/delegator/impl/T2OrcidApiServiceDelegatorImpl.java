@@ -52,6 +52,11 @@ import org.orcid.jaxb.model.message.Source;
 import org.orcid.jaxb.model.message.SourceName;
 import org.orcid.jaxb.model.message.SourceOrcid;
 import org.orcid.jaxb.model.message.SubmissionDate;
+import org.orcid.persistence.dao.ProfileDao;
+import org.orcid.persistence.dao.WebhookDao;
+import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.orcid.persistence.jpa.entities.WebhookEntity;
+import org.orcid.persistence.jpa.entities.keys.WebhookEntityPk;
 import org.orcid.utils.DateUtils;
 import org.orcid.utils.NullUtils;
 import org.springframework.dao.DataAccessException;
@@ -83,6 +88,12 @@ public class T2OrcidApiServiceDelegatorImpl implements T2OrcidApiServiceDelegato
 
     @Resource
     private ValidationManager validationManager;
+    
+    @Resource
+    private WebhookDao webhookDao;
+    
+    @Resource
+    private ProfileDao profileDao;
 
     @Override
     public Response viewStatusText() {
@@ -397,7 +408,22 @@ public class T2OrcidApiServiceDelegatorImpl implements T2OrcidApiServiceDelegato
     @Override
     /** TODO: @AccessControl */
     public Response registerWebhook(String orcid, String webhookUri){
-        return null;
+        ProfileEntity profile = profileDao.find(orcid);
+        if(profile != null){
+            WebhookEntity webhook = new WebhookEntity();        
+            
+            webhook.setProfile(profile);
+            webhook.setDateCreated(new Date());
+            webhook.setEnabled(true);
+            webhook.setUri(webhookUri);
+            webhook.setClientDetails(profile.getClientDetails() != null ? profile.getClientDetails() : null);
+            
+            webhookDao.merge(webhook);
+            webhookDao.flush();
+            return Response.ok().build();
+        } else {
+            throw new OrcidNotFoundException("Unable to find profile associated with orcid:" + orcid);
+        }
     }
     
     /**
@@ -413,7 +439,16 @@ public class T2OrcidApiServiceDelegatorImpl implements T2OrcidApiServiceDelegato
     @Override
     /** TODO: @AccessControl */
     public Response unregisterWebhook(String orcid, String webhookUri){
-        return null;
+        ProfileEntity profile = profileDao.find(orcid);
+        if(profile != null){
+            WebhookEntityPk webhookPk = new WebhookEntityPk(profile, webhookUri);
+            webhookDao.find(webhookPk);
+            webhookDao.remove(webhookPk);
+            webhookDao.flush();
+            return Response.ok().build();
+        } else {
+            throw new OrcidNotFoundException("Unable to find profile associated with orcid:" + orcid);
+        }        
     }
 
 }
