@@ -18,7 +18,6 @@ package org.orcid.core.manager.impl;
 
 import static junit.framework.Assert.assertNotNull;
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -42,7 +41,9 @@ import org.orcid.persistence.dao.WebhookDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.WebhookEntity;
+import org.springframework.test.annotation.DirtiesContext;
 
+@DirtiesContext
 public class WebhookManagerImplTest extends BaseTest {
 
     @Resource
