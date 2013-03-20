@@ -70,7 +70,7 @@ public class WebhookManagerMultiThreadedTest extends DBUnitTest {
         Date now = new Date();
         List<WebhookEntity> webhooks = webhookDao.findWebhooksReadyToProcess(now, 5, 10);
         assertEquals(1, webhooks.size());
-        webhookManager.processWebHooks();
+        webhookManager.processWebhooks();
         webhooks = webhookDao.findWebhooksReadyToProcess(now, 5, 10);
         assertEquals(0, webhooks.size());
     }

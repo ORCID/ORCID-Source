@@ -85,7 +85,7 @@ public class WebhookManagerImpl implements WebhookManager {
     }
 
     @Override
-    public void processWebHooks() {
+    public void processWebhooks() {
         // Log start time
         LOGGER.info("About to process webhooks");
         Date startTime = new Date();

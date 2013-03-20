@@ -23,7 +23,7 @@ import org.orcid.persistence.jpa.entities.WebhookEntity;
  */
 public interface WebhookManager {
 
-    void processWebHooks();
+    void processWebhooks();
 
     void processWebhook(WebhookEntity webhook);
 
