@@ -597,12 +597,11 @@ public class T2OrcidApiServiceImpl implements T2OrcidApiService<Response> {
      * @return
      * */
     @PUT
-    @Produces(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
-    @Consumes(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
+    @Consumes(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
     @Path(WEBHOOKS_PATH)
-    public Response registerWebhookXML(@PathParam("orcid") String orcid, @PathParam("webhook_uri") String webhookUri){
-        serviceDelegator.registerWebhook(orcid, webhookUri);
-        return null;
+    public Response registerWebhookXML(@PathParam("orcid") String orcid, @PathParam("webhook_uri") String webhookUri){        
+        return serviceDelegator.registerWebhook(orcid, webhookUri);
     }
     
     /**
@@ -617,9 +616,24 @@ public class T2OrcidApiServiceImpl implements T2OrcidApiService<Response> {
     @Produces(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Consumes(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(WEBHOOKS_PATH)
-    public Response registerWebhookJson(@PathParam("orcid") String orcid, @PathParam("webhook_uri") String webhookUri){
-        serviceDelegator.registerWebhook(orcid, webhookUri);
-        return null;
+    public Response registerWebhookJson(@PathParam("orcid") String orcid, @PathParam("webhook_uri") String webhookUri){        
+        return serviceDelegator.registerWebhook(orcid, webhookUri);
+    }
+    
+    /**
+     * Unregister a webhook from specific client.
+     * @param orcid
+     *            the ORCID that corresponds to the user's record
+     * @param webhook_uri
+     *            the webhook that will be deleted from the user                    
+     * @return
+     * */
+    @DELETE
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
+    @Consumes(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
+    @Path(WEBHOOKS_PATH)
+    public Response unregisterWebhookXML(@PathParam("orcid") String orcid, @PathParam("webhook_uri") String webhookUri){        
+        return serviceDelegator.unregisterWebhook(orcid, webhookUri);
     }
     
     /**
@@ -634,25 +648,7 @@ public class T2OrcidApiServiceImpl implements T2OrcidApiService<Response> {
     @Produces(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Consumes(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(WEBHOOKS_PATH)
-    public Response unregisterWebhookXML(@PathParam("orcid") String orcid, @PathParam("webhook_uri") String webhookUri){
-        serviceDelegator.unregisterWebhook(orcid, webhookUri);
-        return null;
-    }
-    
-    /**
-     * Unregister a webhook from specific client.
-     * @param orcid
-     *            the ORCID that corresponds to the user's record
-     * @param webhook_uri
-     *            the webhook that will be deleted from the user                    
-     * @return
-     * */
-    @DELETE
-    @Produces(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
-    @Consumes(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
-    @Path(WEBHOOKS_PATH)
-    public Response unregisterWebhookJson(@PathParam("orcid") String orcid, @PathParam("webhook_uri") String webhookUri){
-        serviceDelegator.unregisterWebhook(orcid, webhookUri);
-        return null;
+    public Response unregisterWebhookJson(@PathParam("orcid") String orcid, @PathParam("webhook_uri") String webhookUri){        
+        return serviceDelegator.unregisterWebhook(orcid, webhookUri);
     }
 }

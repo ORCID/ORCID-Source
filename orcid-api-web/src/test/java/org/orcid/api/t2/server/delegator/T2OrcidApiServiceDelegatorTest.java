@@ -242,5 +242,19 @@ public class T2OrcidApiServiceDelegatorTest extends DBUnitTest {
         when(authorizationRequest.getScope()).thenReturn(scopes);
         when(mockedAuthentication.getAuthorizationRequest()).thenReturn(authorizationRequest);
     }
+    
+    @Test
+    public void testRegisterWebhook(){
+        Response response = t2OrcidApiServiceDelegator.registerWebhook("4444-4444-4444-4447", "www.webhook.com");
+        assertNotNull(response);
+        assertEquals(HttpStatus.SC_OK, response.getStatus());
+    }
+    
+    @Test
+    public void testUnregisterWebhook(){
+        Response response = t2OrcidApiServiceDelegator.unregisterWebhook("4444-4444-4444-4447", "www.webhook.com");
+        assertNotNull(response);
+        assertEquals(HttpStatus.SC_OK, response.getStatus());
+    }
 
 }
