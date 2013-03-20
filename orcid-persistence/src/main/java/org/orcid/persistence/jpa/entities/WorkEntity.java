@@ -39,6 +39,7 @@ import org.orcid.jaxb.model.message.CitationType;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.message.WorkType;
 
+import java.util.Comparator;
 import java.util.Set;
 import java.util.SortedSet;
 
@@ -202,12 +203,17 @@ public class WorkEntity extends BaseEntity<Long> implements Comparable<WorkEntit
         if (other == null) {
             throw new NullPointerException("Can't compare with null");
         }
-        int titleComparison = compareTitles(other);
-        if (titleComparison == 0) {
-            return compareIds(other);
+        
+        int comparison = comparePublicationDate(other);
+        
+        if(comparison == 0){        
+            comparison = compareTitles(other);
+            if (comparison == 0) {
+                return compareIds(other);
+            }
         }
-
-        return titleComparison;
+        
+        return comparison;
     }
 
     private int compareTitles(WorkEntity other) {
@@ -242,5 +248,39 @@ public class WorkEntity extends BaseEntity<Long> implements Comparable<WorkEntit
             return -1;
         }
         return id.compareTo(other.getId());
+    }
+    
+    private int comparePublicationDate(WorkEntity other){
+        if(other.getPublicationDate() == null){
+            if(this.publicationDate == null){
+                return 0;
+            } else {
+                return 1;
+            }
+        } else if(this.publicationDate == null) {
+            return -1;
+        }
+        
+        return this.publicationDate.compareTo(other.getPublicationDate());
+    }
+    
+    public static class ChronologicallyOrderedWorkEntityComparator implements Comparator<WorkEntity> {
+        public int compare(WorkEntity work1, WorkEntity work2){
+            if (work2 == null) {
+                throw new NullPointerException("Can't compare with null");
+            }
+            
+            //Negate the result (Multiply it by -1) to reverse the order.
+            int comparison = work1.comparePublicationDate(work2) * -1;
+            
+            if(comparison == 0){        
+                comparison = work1.compareTitles(work2);
+                if (comparison == 0) {
+                    return work1.compareIds(work2);
+                }
+            } 
+            
+            return comparison;
+        }
     }
 }
