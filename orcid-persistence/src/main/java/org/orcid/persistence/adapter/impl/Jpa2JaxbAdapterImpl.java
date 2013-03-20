@@ -766,17 +766,19 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         ProfileEntity profile = contributorEntity.getProfile();
         if (profile != null) {
             contributor.setContributorEmail(profile.getPrimaryEmail() != null ? new ContributorEmail(profile.getPrimaryEmail().getId()) : null);
-            contributor.setCreditName(new CreditName(profile.getCreditName()));
+            CreditName creditName = new CreditName(profile.getCreditName());
+            contributor.setCreditName(creditName);
+            // Set visibility from parent work
+            creditName.setVisibility(visibility);
             contributor.setContributorOrcid(new ContributorOrcid(profile.getId()));
         } else {
             contributor.setContributorEmail(StringUtils.isNotBlank(contributorEntity.getContributorEmail()) ? new ContributorEmail(contributorEntity
                     .getContributorEmail()) : null);
             if (StringUtils.isNotBlank(contributorEntity.getCreditName())) {
                 CreditName creditName = new CreditName(contributorEntity.getCreditName());
+                contributor.setCreditName(creditName);
                 // Set visibility from parent work
                 creditName.setVisibility(visibility);
-                contributor.setCreditName(creditName);
-
             }
         }
 
