@@ -101,11 +101,11 @@ function EmailEdit($scope, $http) {
 	};
 	
 	$scope.toggleCurrent = function(idx) {
-		if ($scope.emailsPojo.emails[idx].current ==  true) {
-			$scope.emailsPojo.emails[idx].current = false;
-		} else {
-			$scope.emailsPojo.emails[idx].current = true;
-		}
+//		if ($scope.emailsPojo.emails[idx].current ==  true) {
+//			$scope.emailsPojo.emails[idx].current = false;
+//		} else {
+//			$scope.emailsPojo.emails[idx].current = true;
+//		}
 		$scope.save();
 	};
 	
@@ -143,7 +143,7 @@ function EmailEdit($scope, $http) {
 	        contentType: 'application/json;charset=UTF-8',
 	        dataType: 'json',
 	        success: function(data) {
-	        	alert( "Verification Email Send To: " + $scope.emailsPojo.emails[idx].value); 	
+	        	//alert( "Verification Email Send To: " + $scope.emailsPojo.emails[idx].value); 	
 	        }
 	    }).fail(function() { 
 	    	// something bad is happening!

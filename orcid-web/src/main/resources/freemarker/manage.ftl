@@ -72,31 +72,40 @@
 			   						<span ng-repeat='error in emailsPojo.errors' ng-bind-html-unsafe="error"></span>
 			   					</span>
 		   						<div ng-repeat='email in emailsPojo.emails' style="height: 35px;">
-		   							<div style="width: 300px; display: inline-block; *display: inline;" ng-bind="email.value"></div>
-		   							<div style="width: 100px; display: inline-block; *display: inline;"><a href="" ng-click="setPrimary($index)" ng-class="{muted: email.primary==false}" ng-bind="email.primary | emailPrimaryFtr"></a>
+		   							<div style="width: 300px; display: inline-block; *display: inline;" ng-class="{primaryEmail:email.primary}" ng-bind="email.value"></div>
+		   							<div style="width: 100px; display: inline-block; *display: inline;">
+		   							
+		   							<span ng-hide="email.primary" ><a href=""  ng-click="setPrimary($index)" ng-class="{muted: email.primary==false}" ng-bind="email.primary | emailPrimaryFtr"></a></span>
+		   							<span ng-show="email.primary" ng-class="{muted: email.primary==false}" ng-bind="email.primary | emailPrimaryFtr"></span>
 		   							</div> 
 		   							<div ng-click="toggleCurrent($index)" ng-bind="email.current | emailCurrentFtr" style="width: 70px; display: inline-block; *display: inline;"></div> 
-		   							<span ng-bind="email.verified | emailVerifiedFtr" ng-click="verifyEmail($index)"></span>
+		   							<!--<select style="width: 100px;" ng-change="toggleCurrent($index)" ng-model="email.current" value="{{email.current}}">
+              							<option value="true" ng-selected="email.current">Current</option>
+              							<option value="false" ng-selected="email.current">Past</option>              
+            						</select>  -->
+            							
+		   							<span ng-hide="email.verified"><a href=""  ng-click="verifyEmail($index)">Verify</a></span>
+		   							<span ng-show="email.verified">Verified</span>		
 		   							<span class="orcid-error" ng-show="email.errors.length > 0">
 		   							   <span ng-repeat='error in email.errors' ng-bind-html-unsafe="error"></span>
 		   							</span>
 		   							<div style="width 30px; display: inline-block; *display: inline;">
-		   								<span ng-show="email.primary == false" ng-click="deleteEmail($index)" class="btn btn-danger">X</span>
+		   								<span ng-show="email.primary == false" ng-click="deleteEmail($index)" class="btn btn-mini">X</span>
 		   							</div>
 		   							<div style="display:inline-block;">
 								        <div class="btn-group abs-left-top"  ng-class="{open: email.value==curPrivToggle}">
-								            <button class="btn dropdown-toggle privacy-toggle" ng-class="email.visibility | emailVisibilityBtnClassFtr" ng-bind-html-unsafe="email.visibility | emailVisibilityFtr" ng-click="togglePrivacySelect($index)"></button>
+								            <button class="btn dropdown-toggle privacy-toggle btn-small" ng-class="email.visibility | emailVisibilityBtnClassFtr" ng-bind-html-unsafe="email.visibility | emailVisibilityFtr" ng-click="togglePrivacySelect($index)"></button>
 											<ul class="dropdown-menu privacy-menu show">
-								                <li><a class="btn btn-success btn-privacy" href="#" ng-click="setPrivacy($index, 'PUBLIC', $event)">${springMacroRequestContext.getMessage("manage.lipublic")} <span class="caret"></span></a></li>
-								                <li><a class="btn btn-warning btn-privacy" href="#" ng-click="setPrivacy($index, 'LIMITED', $event)">${springMacroRequestContext.getMessage("manage.lilimited")} <span class="caret"></span></a></li>
-								                <li><a class="btn btn-danger btn-privacy" href="#" ng-click="setPrivacy($index, 'PRIVATE', $event)">${springMacroRequestContext.getMessage("manage.liprivate")} <span class="caret"></span></a></li>	
-								                <li><a class="btn" href="http://support.orcid.org/knowledgebase/articles/124518" target="_blank">${springMacroRequestContext.getMessage("manage.lihelp")} <span class="caret"></span></a></li>
+								                <li><a class="btn btn-success btn-privacy btn-small" href="#" ng-click="setPrivacy($index, 'PUBLIC', $event)">${springMacroRequestContext.getMessage("manage.lipublic")} <span class="caret"></span></a></li>
+								                <li><a class="btn btn-warning btn-privacy btn-small" href="#" ng-click="setPrivacy($index, 'LIMITED', $event)">${springMacroRequestContext.getMessage("manage.lilimited")} <span class="caret"></span></a></li>
+								                <li><a class="btn btn-danger btn-privacy btn-small" href="#" ng-click="setPrivacy($index, 'PRIVATE', $event)">${springMacroRequestContext.getMessage("manage.liprivate")} <span class="caret"></span></a></li>	
+								                <li><a class="btn btn-small" href="http://support.orcid.org/knowledgebase/articles/124518" target="_blank">${springMacroRequestContext.getMessage("manage.lihelp")} <span class="caret"></span></a></li>
 	            							</ul>        								        
 								        </div>
 									</div>
 		   						</div>
 		   						<div>
-		   							<input type="text" placeholder="Add Another Email" class="input-xlarge" ng-model="inputEmail.value" style="margin: 0px;"/> <span ng-click="add()" class="btn">${springMacroRequestContext.getMessage("manage.spanadd")}</span>
+		   							<input type="email" placeholder="Add Another Email" class="input-xlarge" ng-model="inputEmail.value" style="margin: 0px;" required/> <span ng-click="add()" class="btn">${springMacroRequestContext.getMessage("manage.spanadd")}</span>
 		   							<span class="orcid-error" ng-show="inputEmail.errors.length > 0">
 			   							<span ng-repeat='error in inputEmail.errors' ng-bind-html-unsafe="error"></span>
 			   						</span>

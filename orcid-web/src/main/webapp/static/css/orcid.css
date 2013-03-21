@@ -5781,3 +5781,8 @@ strong,
      font-family:'Gill Sans W01 Bold', 'Gill Sans', sans-serif;
      font-weight: normal !important;
 }
+
+
+.primaryEmail{
+	font-weight: bold;
+}
