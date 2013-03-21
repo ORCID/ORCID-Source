@@ -57,6 +57,8 @@ public class WebhookManagerImplTest extends BaseTest {
 
     private ClientDetailsEntity clientDetails;
 
+    private ProfileEntity testProfile;
+
     @Before
     public void init() throws Exception {
         assertNotNull(webhookManager);
@@ -83,6 +85,8 @@ public class WebhookManagerImplTest extends BaseTest {
 
         assertNotNull(clientDetails.getProfileEntity());
         assertNotNull(clientDetails.getId());
+
+        testProfile = new ProfileEntity("4444-4444-4444-4444");
     }
 
     @Test
@@ -90,6 +94,7 @@ public class WebhookManagerImplTest extends BaseTest {
         WebhookEntity webhook = new WebhookEntity();
         webhook.setClientDetails(clientDetails);
         webhook.setUri("http://qa-1.orcid.org");
+        webhook.setProfile(testProfile);
         webhookManager.processWebhook(webhook);
         assertEquals(webhook.getFailedAttemptCount(), 0);
         verify(mockWebhookDao, times(1)).merge(webhook);
@@ -100,6 +105,7 @@ public class WebhookManagerImplTest extends BaseTest {
         WebhookEntity webhook = new WebhookEntity();
         webhook.setClientDetails(clientDetails);
         webhook.setUri("http://unexisting.orcid.com");
+        webhook.setProfile(testProfile);
         webhookManager.processWebhook(webhook);
         assertEquals(webhook.getFailedAttemptCount(), 1);
         for (int i = 0; i < 3; i++) {
@@ -114,6 +120,7 @@ public class WebhookManagerImplTest extends BaseTest {
         WebhookEntity webhook = new WebhookEntity();
         webhook.setClientDetails(clientDetails);
         webhook.setUri("http://123.qa-1.orcid.org");
+        webhook.setProfile(testProfile);
         webhookManager.processWebhook(webhook);
         assertEquals(webhook.getFailedAttemptCount(), 1);
         for (int i = 0; i < 3; i++) {
@@ -128,6 +135,7 @@ public class WebhookManagerImplTest extends BaseTest {
         WebhookEntity webhook = new WebhookEntity();
         webhook.setClientDetails(clientDetails);
         webhook.setUri("http://123.qa-1.orcid.org");
+        webhook.setProfile(testProfile);
         webhookManager.processWebhook(webhook);
         assertEquals(webhook.getFailedAttemptCount(), 1);
 
