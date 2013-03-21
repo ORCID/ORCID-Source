@@ -71,7 +71,6 @@ var OrcidGA = function () {
 			$el = $(el);
 		}
 		this.gaPush(function() {
-			alert("for delay worked");
 			$el.submit();
 		});
 		return false;
