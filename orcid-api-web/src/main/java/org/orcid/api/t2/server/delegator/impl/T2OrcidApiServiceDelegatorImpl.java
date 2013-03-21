@@ -406,23 +406,30 @@ public class T2OrcidApiServiceDelegatorImpl implements T2OrcidApiServiceDelegato
      * @return If successful, returns a 200 OK.
      * */
     @Override
-    /** TODO: @AccessControl */
     public Response registerWebhook(String orcid, String webhookUri){
         ProfileEntity profile = profileDao.find(orcid);
-        if(profile != null){
-            WebhookEntity webhook = new WebhookEntity();        
-            
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        ProfileEntity clientProfile = null;
+        String clientId = null;
+        if (OAuth2Authentication.class.isAssignableFrom(authentication.getClass())) {
+            AuthorizationRequest authorizationRequest = ((OAuth2Authentication) authentication).getAuthorizationRequest();
+            clientId = authorizationRequest.getClientId();
+            clientProfile = profileDao.find(clientId);
+        }        
+        if(profile != null && clientProfile != null){
+            WebhookEntity webhook = new WebhookEntity();                    
             webhook.setProfile(profile);
             webhook.setDateCreated(new Date());
             webhook.setEnabled(true);
             webhook.setUri(webhookUri);
-            webhook.setClientDetails(profile.getClientDetails() != null ? profile.getClientDetails() : null);
-            
+            webhook.setClientDetails(clientProfile.getClientDetails());            
             webhookDao.merge(webhook);
             webhookDao.flush();
             return Response.ok().build();
-        } else {
+        } else  if(profile == null) {
             throw new OrcidNotFoundException("Unable to find profile associated with orcid:" + orcid);
+        } else {
+            throw new OrcidNotFoundException("Unable to find client profile associated with client:" + clientId);
         }
     }
     
@@ -437,13 +444,13 @@ public class T2OrcidApiServiceDelegatorImpl implements T2OrcidApiServiceDelegato
      * @return If successful, returns a 200 OK.
      * */
     @Override
-    /** TODO: @AccessControl */
     public Response unregisterWebhook(String orcid, String webhookUri){
         ProfileEntity profile = profileDao.find(orcid);
         if(profile != null){
             WebhookEntityPk webhookPk = new WebhookEntityPk(profile, webhookUri);
-            webhookDao.find(webhookPk);
-            webhookDao.remove(webhookPk);
+            WebhookEntity webhook = webhookDao.find(webhookPk);
+            if(webhook != null)
+                webhookDao.remove(webhook);
             webhookDao.flush();
             return Response.ok().build();
         } else {

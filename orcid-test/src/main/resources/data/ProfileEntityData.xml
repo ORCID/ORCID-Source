@@ -451,21 +451,6 @@
      <profile_keyword 
         profile_orcid="4444-4444-4444-4443"
         keywords_name="coffee making"
-    />
-    
-    <client_details 
-    	client_details_id="4444-4444-4444-4447"
-    	client_secret="BYd7y2Gw9ofVB4s0n0bsJmOHc6Wyp7cuQSZ+sT6ENy+9NhLxCxWL2fBdmeZffiAJ"
-    	date_created="2013-03-06 17:56:33.107"
-    	last_modified="2013-03-06 17:56:33.107"
-    	client_name=""
-    	webhooks_enabled="true"
-    />
-    
-    <webhook
-    	orcid="4444-4444-4444-4447"
-    	client_details_id="4444-4444-4444-4447"
-    	uri="www.webhook.com"
-    />
+    />        
 
 </dataset>
