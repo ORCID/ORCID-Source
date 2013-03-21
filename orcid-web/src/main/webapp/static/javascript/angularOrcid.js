@@ -100,15 +100,10 @@ function EmailEdit($scope, $http) {
 		$scope.save();
 	};
 	
-	$scope.toggleCurrent = function(idx) {
-//		if ($scope.emailsPojo.emails[idx].current ==  true) {
-//			$scope.emailsPojo.emails[idx].current = false;
-//		} else {
-//			$scope.emailsPojo.emails[idx].current = true;
-//		}
-		$scope.save();
-	};
-	
+//	$scope.current = function(idx) {
+//		$scope.save();
+//	};
+//	
 	
 	// descoped delete after March 20
 	$scope.toggleVisibility = function(idx) {

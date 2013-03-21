@@ -78,12 +78,10 @@
 		   							<span ng-hide="email.primary" ><a href=""  ng-click="setPrimary($index)" ng-class="{muted: email.primary==false}" ng-bind="email.primary | emailPrimaryFtr"></a></span>
 		   							<span ng-show="email.primary" ng-class="{muted: email.primary==false}" ng-bind="email.primary | emailPrimaryFtr"></span>
 		   							</div> 
-		   							<div ng-click="toggleCurrent($index)" ng-bind="email.current | emailCurrentFtr" style="width: 70px; display: inline-block; *display: inline;"></div> 
-		   							<!--<select style="width: 100px;" ng-change="toggleCurrent($index)" ng-model="email.current" value="{{email.current}}">
-              							<option value="true" ng-selected="email.current">Current</option>
-              							<option value="false" ng-selected="email.current">Past</option>              
-            						</select>  -->
-            							
+		   							<select style="width: 100px;" ng-change="save()" ng-model="email.current">
+              							<option value="true" ng-selected="email.current == true">Current</option>
+              							<option value="false" ng-selected="email.current == false">Past</option>              
+            						</select>
 		   							<span ng-hide="email.verified"><a href=""  ng-click="verifyEmail($index)">Verify</a></span>
 		   							<span ng-show="email.verified">Verified</span>		
 		   							<span class="orcid-error" ng-show="email.errors.length > 0">
