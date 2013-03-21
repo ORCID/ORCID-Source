@@ -58,8 +58,30 @@ var OrcidGA = function () {
 		if (typeof _gaq != 'undefined') {
 			_gaq.push(trackArray);
 		} else {
+			// if it's a function and _gap isn't available run (typically only on dev)
+			if (typeof trackArray === 'function') trackArray();
 			console.log("no _gap.push for " + trackArray);
 		}
+	};
+	
+    // Delays are async functions used to make sure event track que has cleared
+	// See https://developers.google.com/analytics/devguides/collection/gajs/methods/gaJSApi_gaq
+	this.gaFormSumbitDelay = function ($el) {
+		if (!$el instanceof jQuery) {
+			$el = $(el);
+		}
+		this.gaPush(function() {
+			alert("for delay worked");
+			$el.submit();
+		});
+		return false;
+	};
+	
+	this.windowLocationHrefDelay = function (url) {
+		this.gaPush(function() {
+			window.location.href = url; 
+		});
+		return false;
 	};
 };
 
@@ -262,8 +284,8 @@ $(function () {
 	        	    if (basePath.startsWith(baseUrl + 'oauth/signin')) 
 	        		    orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'Sign-In', 'OAuth']);
 	        	    else
-	        	    	orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'Sign-In', 'Website']);	
-	                window.location.href = data.url;
+	        	    	orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'Sign-In', 'Website']);
+	        	    orcidGA.windowLocationHrefDelay(data.url);
 	            } else {
 	            	if ($('form#loginForm #login-error-mess').length == 0) {
 	            		var message;
