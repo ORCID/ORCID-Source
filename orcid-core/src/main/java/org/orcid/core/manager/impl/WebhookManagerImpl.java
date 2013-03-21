@@ -141,7 +141,7 @@ public class WebhookManagerImpl implements WebhookManager {
     @Override
     public void processWebhook(WebhookEntity webhook) {
         String clientId = webhook.getClientDetails().getClientId();
-        String orcid = webhook.getClientDetails().getProfileEntity().getId();
+        String orcid = webhook.getProfile().getId();
         String uri = webhook.getUri();
 
         if (webhookMaxed(clientId)) {
@@ -161,7 +161,8 @@ public class WebhookManagerImpl implements WebhookManager {
                 webhook.setLastSent(new Date());
                 webhook.setFailedAttemptCount(0);
             } else {
-                LOGGER.warn("Webhook {} for Client: {} With ORCID: {} could not be processed", new Object[] { webhook.getUri(), clientId, orcid });
+                LOGGER.warn("Webhook {} for Client: {} With ORCID: {} could not be processed because of response status code: {}", new Object[] { webhook.getUri(),
+                        clientId, orcid, statusCode });
                 webhook.setLastFailed(new Date());
                 webhook.setFailedAttemptCount(webhook.getFailedAttemptCount() + 1);
             }
