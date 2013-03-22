@@ -21,6 +21,7 @@ import static org.orcid.api.common.OrcidApiConstants.STATUS_OK_MESSAGE;
 import static org.orcid.api.common.OrcidApiConstants.WORKS_PATH;
 
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -403,10 +404,18 @@ public class T2OrcidApiServiceDelegatorImpl implements T2OrcidApiServiceDelegato
      *            the identifier of the profile to add the webhook
      * @param uriInfo
      *            an uri object containing the webhook
-     * @return If successful, returns a 200 OK.
+     * @return If successful, returns a 2xx.
      * */
     @Override
-    public Response registerWebhook(String orcid, String webhookUri) {
+    public Response registerWebhook(UriInfo uriInfo, String orcid, String webhookUri) {
+        @SuppressWarnings("unused")
+        URI validatedWebhookUri = null;
+        try {
+            validatedWebhookUri = new URI(webhookUri);
+        } catch (URISyntaxException e) {
+            throw new OrcidBadRequestException(String.format("Webhook uri:%s is syntactically incorrect", webhookUri));
+        }
+        
         ProfileEntity profile = profileDao.find(orcid);
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         ProfileEntity clientProfile = null;
@@ -417,15 +426,21 @@ public class T2OrcidApiServiceDelegatorImpl implements T2OrcidApiServiceDelegato
             clientProfile = profileDao.find(clientId);
         }
         if (profile != null && clientProfile != null) {
-            WebhookEntity webhook = new WebhookEntity();
-            webhook.setProfile(profile);
-            webhook.setDateCreated(new Date());
-            webhook.setEnabled(true);
-            webhook.setUri(webhookUri);
-            webhook.setClientDetails(clientProfile.getClientDetails());
+            WebhookEntityPk webhookPk = new WebhookEntityPk(profile, webhookUri);
+            WebhookEntity webhook = webhookDao.find(webhookPk);
+            boolean isNew = webhook == null;
+            if (isNew) {
+                webhook = new WebhookEntity();
+                webhook.setProfile(profile);
+                webhook.setDateCreated(new Date());
+                webhook.setEnabled(true);
+                webhook.setUri(webhookUri);
+                webhook.setClientDetails(clientProfile.getClientDetails());
+            }
             webhookDao.merge(webhook);
             webhookDao.flush();
-            return Response.ok().build();
+
+            return isNew ? Response.created(uriInfo.getAbsolutePath()).build() : Response.noContent().build();
         } else if (profile == null) {
             throw new OrcidNotFoundException("Unable to find profile associated with orcid:" + orcid);
         } else {
@@ -441,7 +456,7 @@ public class T2OrcidApiServiceDelegatorImpl implements T2OrcidApiServiceDelegato
      *            the identifier of the profile to unregister the webhook
      * @param uriInfo
      *            an uri object containing the webhook that will be unregistred
-     * @return If successful, returns a 200 OK.
+     * @return If successful, returns a 204 No content.
      * */
     @Override
     public Response unregisterWebhook(String orcid, String webhookUri) {
@@ -449,10 +464,13 @@ public class T2OrcidApiServiceDelegatorImpl implements T2OrcidApiServiceDelegato
         if (profile != null) {
             WebhookEntityPk webhookPk = new WebhookEntityPk(profile, webhookUri);
             WebhookEntity webhook = webhookDao.find(webhookPk);
-            if (webhook != null)
-                webhookDao.remove(webhook);
-            webhookDao.flush();
-            return Response.ok().build();
+            if (webhook == null) {
+                throw new OrcidNotFoundException(String.format("No webhook found for orcid=%s, and uri=%s", orcid, webhookUri));
+            } else {
+                webhookDao.remove(webhookPk);
+                webhookDao.flush();
+                return Response.noContent().build();
+            }
         } else {
             throw new OrcidNotFoundException("Unable to find profile associated with orcid:" + orcid);
         }

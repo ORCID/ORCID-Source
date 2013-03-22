@@ -68,7 +68,8 @@ import com.sun.jersey.api.uri.UriBuilderImpl;
 @ContextConfiguration(locations = { "classpath:orcid-t2-web-context.xml", "classpath:orcid-t2-security-context.xml" })
 public class T2OrcidApiServiceDelegatorTest extends DBUnitTest {
 
-    private static final List<String> DATA_FILES = Arrays.asList("/data/SecurityQuestionEntityData.xml", "/data/SubjectEntityData.xml", "/data/ProfileEntityData.xml");
+    private static final List<String> DATA_FILES = Arrays.asList("/data/SecurityQuestionEntityData.xml", "/data/SubjectEntityData.xml", "/data/ProfileEntityData.xml",
+            "/data/ClientDetailsEntityData.xml");
 
     @Resource
     private T2OrcidApiServiceDelegator t2OrcidApiServiceDelegator;
@@ -225,7 +226,7 @@ public class T2OrcidApiServiceDelegatorTest extends DBUnitTest {
     }
 
     private void setUpSecurityContextForClientOnly() {
-        setUpSecurityContextForClientOnly("4444-4444-4444-4447");
+        setUpSecurityContextForClientOnly("4444-4444-4444-4445");
     }
 
     private void setUpSecurityContextForClientOnly(String clientId) {
@@ -242,19 +243,16 @@ public class T2OrcidApiServiceDelegatorTest extends DBUnitTest {
         when(authorizationRequest.getScope()).thenReturn(scopes);
         when(mockedAuthentication.getAuthorizationRequest()).thenReturn(authorizationRequest);
     }
-    
+
     @Test
-    public void testRegisterWebhook(){
-        Response response = t2OrcidApiServiceDelegator.registerWebhook("4444-4444-4444-4447", "www.webhook.com");
+    public void testRegisterAndUnregisterWebhook() {
+        setUpSecurityContextForClientOnly();
+        Response response = t2OrcidApiServiceDelegator.registerWebhook(mockedUriInfo, "4444-4444-4444-4447", "www.webhook.com");
         assertNotNull(response);
-        assertEquals(HttpStatus.SC_OK, response.getStatus());
-    }
-    
-    @Test
-    public void testUnregisterWebhook(){
-        Response response = t2OrcidApiServiceDelegator.unregisterWebhook("4444-4444-4444-4447", "www.webhook.com");
+        assertEquals(HttpStatus.SC_CREATED, response.getStatus());
+        response = t2OrcidApiServiceDelegator.unregisterWebhook("4444-4444-4444-4447", "www.webhook.com");
         assertNotNull(response);
-        assertEquals(HttpStatus.SC_OK, response.getStatus());
+        assertEquals(HttpStatus.SC_NO_CONTENT, response.getStatus());
     }
 
 }
