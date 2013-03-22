@@ -27,7 +27,6 @@
 		</div>
 		<div class="span9">
 			<h1 id="account-settings">${springMacroRequestContext.getMessage("manage.account_settings")}</h1>
-			
 			<#assign open = "" />
 			<@spring.bind "managePasswordOptionsForm.*" />
 			<#if spring.status.error>
@@ -53,12 +52,11 @@
                         </td>
                     </tr>-->
 					<tr>
-						<th>${springMacroRequestContext.getMessage("manage.emails")}</th>
+						<th>${springMacroRequestContext.getMessage("public_profile.h3PersonalInformation")}</th>
 						<td>
-							<div><a href="<@spring.url '/account/manage-bio-settings'/>" class="update">${springMacroRequestContext.getMessage("manage.editpersonalinformation")}</a></div>
+							<div><a href="<@spring.url '/account/manage-bio-settings'/>" class="update">${springMacroRequestContext.getMessage("settings.tdEdit")}</a></div>
 						</td>
 					</tr>
-					<#if (RequestParameters['showMulti'])??>
 						<tr>
 							<th>${springMacroRequestContext.getMessage("manage.thEmail")}</th>
 							<td>
@@ -75,20 +73,20 @@
 		   							<div style="width: 300px; display: inline-block; *display: inline;" ng-class="{primaryEmail:email.primary}" ng-bind="email.value"></div>
 		   							<div style="width: 100px; display: inline-block; *display: inline;">
 		   							
-		   							<span ng-hide="email.primary" ><a href=""  ng-click="setPrimary($index)" ng-class="{muted: email.primary==false}" ng-bind="email.primary | emailPrimaryFtr"></a></span>
-		   							<span ng-show="email.primary" ng-class="{muted: email.primary==false}" ng-bind="email.primary | emailPrimaryFtr"></span>
+		   							<span ng-hide="email.primary" ><a href="" ng-click="setPrimary($index)" ng-bind="email.primary | emailPrimaryFtr"></a></span>
+		   							<span ng-show="email.primary" class="muted" style="color: #bd362f"ng-bind="email.primary | emailPrimaryFtr"></span>
 		   							</div> 
-		   							<select style="width: 100px;" ng-change="save()" ng-model="email.current">
+		   							<select style="width: 100px; height: 26px;" ng-change="save()" ng-model="email.current">
               							<option value="true" ng-selected="email.current == true">Current</option>
               							<option value="false" ng-selected="email.current == false">Past</option>              
             						</select>
-		   							<span ng-hide="email.verified"><a href=""  ng-click="verifyEmail($index)">Verify</a></span>
+		   							<span ng-hide="email.verified"><a href="" ng-click="verifyEmail($index)">Verify</a></span>
 		   							<span ng-show="email.verified">Verified</span>		
 		   							<span class="orcid-error" ng-show="email.errors.length > 0">
 		   							   <span ng-repeat='error in email.errors' ng-bind-html-unsafe="error"></span>
 		   							</span>
-		   							<div style="width 30px; display: inline-block; *display: inline;">
-		   								<span ng-show="email.primary == false" ng-click="deleteEmail($index)" class="btn btn-mini">X</span>
+		   							<div style="display:inline-block;">
+		   							      <button ng-show="email.primary == false" ng-click="deleteEmail($index)" class="btn btn-small" style="position: absolute; top: 0;">X</button>
 		   							</div>
 		   							<div style="display:inline-block;">
 								        <div class="btn-group abs-left-top"  ng-class="{open: email.value==curPrivToggle}">
@@ -110,7 +108,6 @@
 			   					</div>	
 							</td>
 						</tr>
-					</#if>
 					<tr>
 						<th>${springMacroRequestContext.getMessage("manage.password")}</th>
 						<td>
