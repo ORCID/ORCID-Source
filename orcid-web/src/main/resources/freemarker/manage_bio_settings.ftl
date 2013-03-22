@@ -158,6 +158,7 @@
                  			<tr>
                  				<td>${(externalIdentifier.externalIdCommonName.content)!"${springMacroRequestContext.getMessage('manage_bio_settings.informationnotprovided')}"}</td>
             					<td><a href="${(externalIdentifier.externalIdUrl.value)!}" target="_blank">${(externalIdentifier.externalIdReference.content)!"${springMacroRequestContext.getMessage('manage_bio_settings.informationnotprovided')}"}</a></td>
+            					<td><button class="btn delete-external-identifier">${springMacroRequestContext.getMessage("manage_bio_settings.btnremove")}</button></td>
                  			</tr>     		    
                         </#list>
                     </table>                     
@@ -193,5 +194,6 @@
         </div>
     </form>
 </div>
+<div id="confirm-dialog"></div>
 </@base>
 
