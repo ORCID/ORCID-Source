@@ -222,6 +222,9 @@ public class WebhookManagerImpl implements WebhookManager {
      *         request
      * */
     private int doPost(String url) {
+        if (!url.toLowerCase().startsWith("http")) {
+            url = "http://" + url;
+        }
         HttpResponse response = null;
         try {
             HttpPost httpPost = new HttpPost(url);
