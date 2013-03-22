@@ -149,6 +149,8 @@
              	 	<@spring.formInput "changePersonalInfoForm.websiteUrlText", 'class="input-xlarge"  placeholder="Description"'/>
          			<@spring.formInput "changePersonalInfoForm.websiteUrl", 'class="input-xlarge" placeholder="URL"'/>
              	</div>
+             	             	             	
+             	
              	 <#if changePersonalInfoForm.externalIdentifiers?? && changePersonalInfoForm.externalIdentifiers.externalIdentifier?size != 0>
                  	<h4>External Identifiers (visibility is ${(changePersonalInfoForm.externalIdentifiers.visibility.value())!})</h4>
                  	<table class="table">     		
@@ -158,11 +160,26 @@
                  			<tr>
                  				<td>${(externalIdentifier.externalIdCommonName.content)!"${springMacroRequestContext.getMessage('manage_bio_settings.informationnotprovided')}"}</td>
             					<td><a href="${(externalIdentifier.externalIdUrl.value)!}" target="_blank">${(externalIdentifier.externalIdReference.content)!"${springMacroRequestContext.getMessage('manage_bio_settings.informationnotprovided')}"}</a></td>
-            					<td><button class="btn delete-external-identifier">${springMacroRequestContext.getMessage("manage_bio_settings.btnremove")}</button></td>
+            					<td>
+            					
+            					
+            					
+            					
+            					
+            					
+            						<@spring.formHiddenInput "changePersonalInfoForm.externalIdentifiers.externalIdentifier[${externalIdentifier_index}].externalIdOrcid.value" />
+            						<@spring.formHiddenInput "changePersonalInfoForm.externalIdentifiers.externalIdentifier[${externalIdentifier_index}].externalIdReference.content" />
+            						<button class="btn delete-external-identifier">${springMacroRequestContext.getMessage("manage_bio_settings.btnremove")}</button>
+            						
+            						
+            						
+            						
+            					</td>
                  			</tr>     		    
                         </#list>
                     </table>                     
              	</#if>
+             	
              	<h3>${springMacroRequestContext.getMessage("manage_bio_settings.h3email")}</h3>
              	<#if (changePersonalInfoForm.emailVerified)??>
                  	<#if !changePersonalInfoForm.emailVerified >
