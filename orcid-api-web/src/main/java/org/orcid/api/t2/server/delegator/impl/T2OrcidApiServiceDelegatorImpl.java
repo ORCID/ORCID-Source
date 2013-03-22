@@ -88,10 +88,10 @@ public class T2OrcidApiServiceDelegatorImpl implements T2OrcidApiServiceDelegato
 
     @Resource
     private ValidationManager validationManager;
-    
+
     @Resource
     private WebhookDao webhookDao;
-    
+
     @Resource
     private ProfileDao profileDao;
 
@@ -394,19 +394,19 @@ public class T2OrcidApiServiceDelegatorImpl implements T2OrcidApiServiceDelegato
             profile.getOrcidHistory().setSource(sponsor);
         }
     }
-    
+
     /**
-     * Register a new webhook to the profile. As with all calls, if the
-     * message contains any other elements, a 400 Bad Request will be returned.
+     * Register a new webhook to the profile. As with all calls, if the message
+     * contains any other elements, a 400 Bad Request will be returned.
      * 
      * @param orcid
      *            the identifier of the profile to add the webhook
      * @param uriInfo
-     *            an uri object containing the webhook           
+     *            an uri object containing the webhook
      * @return If successful, returns a 200 OK.
      * */
     @Override
-    public Response registerWebhook(String orcid, String webhookUri){
+    public Response registerWebhook(String orcid, String webhookUri) {
         ProfileEntity profile = profileDao.find(orcid);
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         ProfileEntity clientProfile = null;
@@ -415,47 +415,47 @@ public class T2OrcidApiServiceDelegatorImpl implements T2OrcidApiServiceDelegato
             AuthorizationRequest authorizationRequest = ((OAuth2Authentication) authentication).getAuthorizationRequest();
             clientId = authorizationRequest.getClientId();
             clientProfile = profileDao.find(clientId);
-        }        
-        if(profile != null && clientProfile != null){
-            WebhookEntity webhook = new WebhookEntity();                    
+        }
+        if (profile != null && clientProfile != null) {
+            WebhookEntity webhook = new WebhookEntity();
             webhook.setProfile(profile);
             webhook.setDateCreated(new Date());
             webhook.setEnabled(true);
             webhook.setUri(webhookUri);
-            webhook.setClientDetails(clientProfile.getClientDetails());            
+            webhook.setClientDetails(clientProfile.getClientDetails());
             webhookDao.merge(webhook);
             webhookDao.flush();
             return Response.ok().build();
-        } else  if(profile == null) {
+        } else if (profile == null) {
             throw new OrcidNotFoundException("Unable to find profile associated with orcid:" + orcid);
         } else {
             throw new OrcidNotFoundException("Unable to find client profile associated with client:" + clientId);
         }
     }
-    
+
     /**
-     * Unregister a webhook from a profile. As with all calls, if the
-     * message contains any other elements, a 400 Bad Request will be returned.
+     * Unregister a webhook from a profile. As with all calls, if the message
+     * contains any other elements, a 400 Bad Request will be returned.
      * 
      * @param orcid
      *            the identifier of the profile to unregister the webhook
      * @param uriInfo
-     *            an uri object containing the webhook that will be unregistred          
+     *            an uri object containing the webhook that will be unregistred
      * @return If successful, returns a 200 OK.
      * */
     @Override
-    public Response unregisterWebhook(String orcid, String webhookUri){
+    public Response unregisterWebhook(String orcid, String webhookUri) {
         ProfileEntity profile = profileDao.find(orcid);
-        if(profile != null){
+        if (profile != null) {
             WebhookEntityPk webhookPk = new WebhookEntityPk(profile, webhookUri);
             WebhookEntity webhook = webhookDao.find(webhookPk);
-            if(webhook != null)
+            if (webhook != null)
                 webhookDao.remove(webhook);
             webhookDao.flush();
             return Response.ok().build();
         } else {
             throw new OrcidNotFoundException("Unable to find profile associated with orcid:" + orcid);
-        }        
+        }
     }
 
 }
