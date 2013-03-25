@@ -739,6 +739,11 @@ public class ManageProfileController extends BaseWorkspaceController {
                 URI baseUri = OrcidWebUtils.getServerUriWithContextPath(request);
                 notificationManager.sendEmailAddressChangedNotification(updatedProfile, new Email(oldPrime), baseUri);
             }
+            
+            //also send verifcation email for new address
+            URI baseUri = OrcidWebUtils.getServerUriWithContextPath(request);
+            notificationManager.sendVerificationEmail(currentProfile, baseUri, email.getValue());
+
         }
         return email;
     }
