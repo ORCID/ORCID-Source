@@ -205,6 +205,8 @@ $(function () {
 	    	
 	    	$('#orcPreviewSel').change(function() {
 	    		var lang = $('#orcPreviewSel').val();
+	    		//hack to in case there are multipule local cookies
+	    		OrcidCookie.setCookie("locale",lang);
 	    		window.location.href = basePath + "?lang=" + lang + "&aprilFools=true";
 	    	});
 	    	
