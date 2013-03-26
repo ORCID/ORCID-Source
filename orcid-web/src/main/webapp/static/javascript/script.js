@@ -207,6 +207,26 @@ $(function () {
 	    		var lang = $('#orcPreviewSel').val();
 	    		//hack to in case there are multipule local cookies
 	    		OrcidCookie.setCookie("locale",lang);
+	    		
+	    		//set the java side
+	    		$.ajax({
+	    			url: $('body').data('baseurl') + "lang.json?lang="+lang,
+	    			async: false,
+	    			dataType: 'json',
+	    			success:function(data) {
+	    			    //do nothing
+	    	        }
+	    		});
+	    		
+	    		//set drupal side
+	    		$.ajax({
+	    			url: "/about?lang="+lang, 
+	    			async: false,
+	    			dataType: 'json',
+	    			success:function(data) {
+	    				// do nothing
+	    	        }
+	    		});
 	    		window.location.href = basePath + "?lang=" + lang + "&aprilFools=true";
 	    	});
 	    	
