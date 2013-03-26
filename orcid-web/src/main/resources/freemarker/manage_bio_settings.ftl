@@ -161,19 +161,12 @@
                  				<td>${(externalIdentifier.externalIdCommonName.content)!"${springMacroRequestContext.getMessage('manage_bio_settings.informationnotprovided')}"}</td>
             					<td><a href="${(externalIdentifier.externalIdUrl.value)!}" target="_blank">${(externalIdentifier.externalIdReference.content)!"${springMacroRequestContext.getMessage('manage_bio_settings.informationnotprovided')}"}</a></td>
             					<td>
-            					
-            					
-            					
-            					
-            					
-            					
-            						<@spring.formHiddenInput "changePersonalInfoForm.externalIdentifiers.externalIdentifier[${externalIdentifier_index}].externalIdOrcid.value" />
+            						<@spring.formHiddenInput "changePersonalInfoForm.externalIdentifiers.externalIdentifier[${externalIdentifier_index}].orcid.value" />
             						<@spring.formHiddenInput "changePersonalInfoForm.externalIdentifiers.externalIdentifier[${externalIdentifier_index}].externalIdReference.content" />
+            						<@spring.formHiddenInput "changePersonalInfoForm.externalIdentifiers.externalIdentifier[${externalIdentifier_index}].externalIdOrcid.value" />
+            						<@spring.formHiddenInput "changePersonalInfoForm.externalIdentifiers.externalIdentifier[${externalIdentifier_index}].externalIdCommonName.content" />
+            						<@spring.formHiddenInput "changePersonalInfoForm.externalIdentifiers.externalIdentifier[${externalIdentifier_index}].externalIdUrl.value" />
             						<button class="btn delete-external-identifier">${springMacroRequestContext.getMessage("manage_bio_settings.btnremove")}</button>
-            						
-            						
-            						
-            						
             					</td>
                  			</tr>     		    
                         </#list>

@@ -31,6 +31,7 @@ import org.orcid.jaxb.model.message.Biography;
 import org.orcid.jaxb.model.message.ContactDetails;
 import org.orcid.jaxb.model.message.Country;
 import org.orcid.jaxb.model.message.CreditName;
+import org.orcid.jaxb.model.message.ExternalIdentifier;
 import org.orcid.jaxb.model.message.ExternalIdentifiers;
 import org.orcid.jaxb.model.message.FamilyName;
 import org.orcid.jaxb.model.message.GivenNames;
@@ -388,7 +389,9 @@ public class ChangePersonalInfoForm {
         orcidProfile.getOrcidBio().getResearcherUrls().setVisibility(StringUtils.isBlank(websiteUrlVisibility) ? null : Visibility.fromValue(websiteUrlVisibility));
         orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().setValue(email);
         orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().setVisibility(Visibility.fromValue(emailVisibility));
-        orcidProfile.getOrcidBio().setExternalIdentifiers(externalIdentifiers);
+        orcidProfile.getOrcidBio().setExternalIdentifiers(persistExternalIdentifierInfo());
+        orcidProfile.getOrcidBio().getExternalIdentifiers().setVisibility(StringUtils.isBlank(websiteUrlVisibility) ? null : Visibility.fromValue(websiteUrlVisibility));
+        
     }
 
     private String buildOtherNamesAsDelimitedString(OtherNames otherNames) {
@@ -437,6 +440,18 @@ public class ChangePersonalInfoForm {
             }
         }
         return allResearchersForSave;
+    }
+    
+    private ExternalIdentifiers persistExternalIdentifierInfo() {
+        ExternalIdentifiers allExternalIdentifiersForSave = externalIdentifiers != null ? externalIdentifiers : new ExternalIdentifiers();
+        Iterator<ExternalIdentifier> iterator = allExternalIdentifiersForSave.getExternalIdentifier().iterator();
+        while(iterator.hasNext()){
+            ExternalIdentifier externalIdentifier = iterator.next();
+            if(externalIdentifier.getOrcid() == null){
+                iterator.remove();
+            }
+        }
+        return allExternalIdentifiersForSave;
     }
 
     private String buildKeywordsAsDelimitedString(Keywords keywords) {
