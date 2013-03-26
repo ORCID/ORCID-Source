@@ -157,6 +157,69 @@ $(function () {
 	window.baseUrl = $('body').data('baseurl');
     window.basePath = window.location.pathname; 	
     
+    
+    // Aprils fools!
+    var today = new Date();
+    var aprSecond = new Date(2013,04,01);
+    if (  location == parent.location  
+    	  && (today < aprSecond || window.location.search.indexOf("aprilFools=true") != -1) ){ 
+    		//&& window.location.search.indexOf("aprilFools=true") != -1) {
+    	var locale = 'en';
+    	var localeCookie = OrcidCookie.getCookie("locale");
+    	if (localeCookie) locale = localeCookie;
+    	
+    	var afCookie = OrcidCookie.getCookie("aprilFools");
+    	console.log(afCookie);
+    	if (!afCookie) {
+    		//haven't been prank
+    		OrcidCookie.setCookie("aprilFools","pranked",14);
+    		window.location.href = basePath + "?lang=orc&aprilFools=true";
+    	}
+    	
+    	//reset to pranked for goWay state
+    	if (window.location.search.indexOf("aprilFools=true") != -1) {
+    		OrcidCookie.setCookie("aprilFools","pranked",14);
+    		afCookie = OrcidCookie.getCookie("aprilFools");
+    	}
+    	
+    	var enSelected = "selected";
+    	var orcSelected ="";
+    	if (locale == 'orc') {
+        	enSelected = "";
+    		orcSelected = "selected";
+    	}
+    	
+    	if (afCookie != "goAway") {
+	    	$('body').append( $(
+	    			  "<div style='position:fixed; bottom: 0px; left: 0px; width: 500px; height: 299px; background-image:url(\""+ baseUrl +"static/img/miss/Orc-Take-Over.png\");'>" 
+	    			+ "     <div style='position:absolute; left:320px; top:200px;'><strong>Select language</strong>:<br />"
+	    			+ "        <select id='orcPreviewSel' style='width: 85px'>"
+	    			+ "           <option value='en' " + enSelected + ">english</option>"
+	    			+ "           <option value='orc' " + orcSelected +">orc/troll</option>"
+	    			+ "        </select>"
+	    			+ "     </div>"
+	    			+ "     <div style='position:absolute; left:320px; bottom: 10px; background-color: white;'>"
+	    			+ "        <a href='' id='orcPreviewGoAway'>I hate tolls, go away!</a>"
+	    			+ "     </div>"
+	    			+ "</div>"));
+	    	
+	    	$('#orcPreviewSel').change(function() {
+	    		var lang = $('#orcPreviewSel').val();
+	    		window.location.href = basePath + "?lang=" + lang + "&aprilFools=true";
+	    	});
+	    	
+	    	$('#orcPreviewGoAway').click(function(e) {
+	    		e.preventDefault();    		
+	    		OrcidCookie.setCookie("aprilFools","goAway",14);
+	    		window.location.href = basePath + "?lang=en";
+	    	});
+    	
+    	}
+
+    }
+    
+    
+    
     // fire off login check, if this page wasn't loaded via iframe (or html5 foo)
     if (location == parent.location) {
         checkOrcidLoggedIn();
