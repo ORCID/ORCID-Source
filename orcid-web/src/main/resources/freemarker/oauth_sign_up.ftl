@@ -106,7 +106,7 @@
         		<div style="margin-top: 20px;">
         		    <label>${springMacroRequestContext.getMessage("oauth_sign_up.labeltermsofuse")} <span class="required">*</span></label>
             		<div class="checky">
-                		<label class="checkbox"><@spring.formCheckbox "oAuthRegistrationForm.acceptTermsAndConditions"/>${springMacroRequestContext.getMessage("oauth_sign_up.labeliconsent")} <a href="${aboutUri}/privacy-policy">${springMacroRequestContext.getMessage("oauth_sign_up.labelprivacypolish")}</a> ${springMacroRequestContext.getMessage("oauth_sign_up.labeland")} <a href="${aboutUri}/legal">${springMacroRequestContext.getMessage("oauth_sign_up.labeltermsandconditions")}</a> ${springMacroRequestContext.getMessage("oauth_sign_up.labeluseincluding")}</label>
+                		<label class="checkbox"><@spring.formCheckbox "oAuthRegistrationForm.acceptTermsAndConditions"/>${springMacroRequestContext.getMessage("oauth_sign_up.labeliconsent")} <a href="${aboutUri}/privacy-policy?lang=${locale}">${springMacroRequestContext.getMessage("oauth_sign_up.labelprivacypolish")}</a> ${springMacroRequestContext.getMessage("oauth_sign_up.labeland")} <a href="${aboutUri}/legal?lang=${locale}">${springMacroRequestContext.getMessage("oauth_sign_up.labeltermsandconditions")}</a> ${springMacroRequestContext.getMessage("oauth_sign_up.labeluseincluding")}</label>
                 		<@spring.showErrors "<br/>" "orcid-error"/>        
                 	</div>
         		</div>
