@@ -197,7 +197,7 @@ $(function () {
 	    	$('body').append( $(
 	    			
 	    			"<div style='width: 960px;margin: 0 auto; position:fixed; bottom: 50px; left: 0px;'>" 
-	    			 +" <img src='"+aprilFoolsOrcidWeb+"static/img/lang.png'  width='393' height='397' style='text-align:center;display: inline-block;float:left;margin-left: 10px;'>" 
+	    			 +" <img src='"+aprilFoolsOrcidWeb+"/static/img/lang.png'  width='393' height='397' style='text-align:center;display: inline-block;float:left;margin-left: 10px;'>" 
 	    			 + " <div style='background-image:url(\""+ baseUrl +"static/img/lang-tooltip.png\"); display: inline-block;height: 188px;margin-left: -38px;margin-top: 85px;padding-left: 8px;text-align: center;width: 334px;'>"
 	    			 + " 	<h3 style='font-weight: bold;margin-top: 35px;font-size: 27px;color: #999999;margin-bottom: 0px;'><b style='color: #006600;'>ORC</b>id.org has <br/> been captured!</h3>"
 	    			 + "	<p style='font-size: 22px;color: #999999;'>"
