@@ -34,6 +34,7 @@ import javax.ws.rs.core.UriInfo;
 import org.apache.commons.lang.StringUtils;
 import org.orcid.api.common.delegator.OrcidApiServiceDelegator;
 import org.orcid.api.common.exception.OrcidBadRequestException;
+import org.orcid.api.common.exception.OrcidForbiddenException;
 import org.orcid.api.common.exception.OrcidNotFoundException;
 import org.orcid.api.common.validation.ValidOrcidMessage;
 import org.orcid.api.t2.server.delegator.T2OrcidApiServiceDelegator;
@@ -467,9 +468,21 @@ public class T2OrcidApiServiceDelegatorImpl implements T2OrcidApiServiceDelegato
             if (webhook == null) {
                 throw new OrcidNotFoundException(String.format("No webhook found for orcid=%s, and uri=%s", orcid, webhookUri));
             } else {
-                webhookDao.remove(webhookPk);
-                webhookDao.flush();
-                return Response.noContent().build();
+                Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+                String clientId = null;
+                if (OAuth2Authentication.class.isAssignableFrom(authentication.getClass())) {
+                    AuthorizationRequest authorizationRequest = ((OAuth2Authentication) authentication).getAuthorizationRequest();
+                    clientId = authorizationRequest.getClientId();
+                }
+                //Check if user can unregister this webhook
+                if(webhook.getClientDetails().getId().equals(clientId)){
+                    webhookDao.remove(webhookPk);
+                    webhookDao.flush();
+                    return Response.noContent().build();
+                } else {
+                    //Throw 403 exception: user is not allowed to unregister that webhook
+                    throw new OrcidForbiddenException("Unable to unregister webhook: Only the client that register the webhook can unregister it.");
+                }
             }
         } else {
             throw new OrcidNotFoundException("Unable to find profile associated with orcid:" + orcid);
