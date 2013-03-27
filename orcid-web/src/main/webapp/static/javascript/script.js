@@ -191,17 +191,35 @@ $(function () {
     	
     	if (afCookie != "goAway") {
 	    	$('body').append( $(
-	    			  "<div style='position:fixed; bottom: 0px; left: 0px; width: 500px; height: 299px; background-image:url(\""+ baseUrl +"static/img/miss/Orc-Take-Over.png\");'>" 
-	    			+ "     <div style='position:absolute; left:320px; top:200px;'><strong>Select language</strong>:<br />"
-	    			+ "        <select id='orcPreviewSel' style='width: 85px'>"
-	    			+ "           <option value='en' " + enSelected + ">english</option>"
-	    			+ "           <option value='orc' " + orcSelected +">orc/troll</option>"
-	    			+ "        </select>"
-	    			+ "     </div>"
-	    			+ "     <div style='position:absolute; left:320px; bottom: 10px; background-color: white;'>"
-	    			+ "        <a href='' id='orcPreviewGoAway'>I hate tolls, go away!</a>"
-	    			+ "     </div>"
-	    			+ "</div>"));
+	    			
+	    			"<div class='langsel'>" 
+	    			 +" <img src='"+baseUrl+"static/img/lang.png'  width='393' height='397'>" 
+	    			 + " <div class='lang-tooltip'>"
+	    			 + " 	<h3><b>ORC</b>id.org has <br/> been captured!</h3>"
+	    			 + "	<p>"
+	    			 + "		Read in:"
+	    			 + "		<select id='orcPreviewSel' class='selsty'>"
+	    			 + "            <option value='en' " + enSelected + ">english</option>"
+		    		 + "            <option value='orc' " + orcSelected +">orc/troll</option>"
+	    			 + "		</select>"
+	    			 + "	</p>"
+	    			 + "     <div style='position: left:320px; bottom: 10px;'>"
+		    		 + "        <a href='' id='orcPreviewGoAway'>I hate tolls, go away!</a>"
+		    		 + "     </div>"
+	    			 + " </div>"
+	    			 + "</div>"));
+	    	
+//	    			  "<div style='position:fixed; bottom: 0px; left: 0px; width: 500px; height: 299px; background-image:url(\""+ baseUrl +"static/img/miss/Orc-Take-Over.png\");'>" 
+//	    			+ "     <div style='position:absolute; left:320px; top:200px;'><strong>Select language</strong>:<br />"
+//	    			+ "        <select id='orcPreviewSel' style='width: 85px'>"
+//	    			+ "           <option value='en' " + enSelected + ">english</option>"
+//	    			+ "           <option value='orc' " + orcSelected +">orc/troll</option>"
+//	    			+ "        </select>"
+//	    			+ "     </div>"
+//	    			+ "     <div style='position:absolute; left:320px; bottom: 10px; background-color: white;'>"
+//	    			+ "        <a href='' id='orcPreviewGoAway'>I hate tolls, go away!</a>"
+//	    			+ "     </div>"
+//	    			+ "</div>"));
 	    	
 	    	$('#orcPreviewSel').change(function() {
 	    		var lang = $('#orcPreviewSel').val();
