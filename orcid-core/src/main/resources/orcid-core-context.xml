@@ -101,6 +101,7 @@
 		<property name="maxJobsPerClient" value="${org.orcid.core.maxJobsPerClient:50}" />
 		<property name="numberOfWebhookThreads" value="${org.orcid.core.numberOfWebhookThreads:4}" />
         <property name="retryDelayMinutes" value="${org.orcid.core.webhookRetryDelayMinutes:5}" />
+        <property name="maxPerRun" value="${org.orcid.core.webhookMaxPerRun:10000}" />
 	</bean>
 
 	<bean id="orcidProfileCleaner" class="org.orcid.core.manager.impl.OrcidProfileCleanerImpl" />

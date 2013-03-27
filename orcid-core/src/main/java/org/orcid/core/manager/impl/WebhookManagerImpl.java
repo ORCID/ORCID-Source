@@ -49,6 +49,7 @@ public class WebhookManagerImpl implements WebhookManager {
     private int maxJobsPerClient;
     private int numberOfWebhookThreads;
     private int retryDelayMinutes;
+    private int maxPerRun;
 
     @Resource
     private HttpClient httpClient;
@@ -76,6 +77,10 @@ public class WebhookManagerImpl implements WebhookManager {
         this.retryDelayMinutes = retryDelayMinutes;
     }
 
+    public void setMaxPerRun(int maxPerRun) {
+        this.maxPerRun = maxPerRun;
+    }
+
     public void setHttpClient(HttpClient httpClient) {
         this.httpClient = httpClient;
     }
@@ -89,11 +94,14 @@ public class WebhookManagerImpl implements WebhookManager {
         // Log start time
         LOGGER.info("About to process webhooks");
         Date startTime = new Date();
+        long count = webhookDao.countWebhooksReadyToProcess(startTime, retryDelayMinutes);
+        LOGGER.info("Total number of webhooks ready to process={}", count);
         // Create thread pool of size determined by runtime property
         ExecutorService executorService = createThreadPoolForWebhooks();
         List<WebhookEntity> webhooks = new ArrayList<>(0);
         Map<WebhookEntityPk, WebhookEntity> mapOfpreviousBatch = null;
-        do {
+        int executedCount = 0;
+        OUTER: do {
             mapOfpreviousBatch = WebhookEntity.mapById(webhooks);
             // Get chunk of webhooks to process for records that changed before
             // start time
@@ -102,6 +110,10 @@ public class WebhookManagerImpl implements WebhookManager {
             LOGGER.info("Found batch of {} webhooks to process", webhooks.size());
             // For each callback in chunk
             for (final WebhookEntity webhook : webhooks) {
+                if (executedCount == maxPerRun) {
+                    LOGGER.info("Reached maxiumum of {} webhooks for this run", executedCount);
+                    break OUTER;
+                }
                 // Need to ignore anything in previous chunk
                 if (mapOfpreviousBatch.containsKey(webhook.getId())) {
                     LOGGER.debug("Skipping webhook as was in previous batch: {}", webhook.getId());
@@ -113,6 +125,7 @@ public class WebhookManagerImpl implements WebhookManager {
                         processWebhookInTransaction(webhook);
                     }
                 });
+                executedCount++;
             }
         } while (!webhooks.isEmpty());
         // Shutdown thread pool
@@ -122,7 +135,7 @@ public class WebhookManagerImpl implements WebhookManager {
         } catch (InterruptedException e) {
             LOGGER.warn("Received an interupt exception whilst waiting for the webhook processing complete", e);
         }
-        LOGGER.info("Finished processing webhooks");
+        LOGGER.info("Finished processing webhooks. Number of webhooks processed={}", executedCount);
     }
 
     private ExecutorService createThreadPoolForWebhooks() {
