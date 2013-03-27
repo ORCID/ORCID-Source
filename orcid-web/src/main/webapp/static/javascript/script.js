@@ -212,19 +212,7 @@ $(function () {
 		    		 + "     </div>"
 	    			 + " </div>"
 	    			 + "</div>"));
-	    	
-//	    			  "<div style='position:fixed; bottom: 0px; left: 0px; width: 500px; height: 299px; background-image:url(\""+ baseUrl +"static/img/miss/Orc-Take-Over.png\");'>" 
-//	    			+ "     <div style='position:absolute; left:320px; top:200px;'><strong>Select language</strong>:<br />"
-//	    			+ "        <select id='orcPreviewSel' style='width: 85px'>"
-//	    			+ "           <option value='en' " + enSelected + ">english</option>"
-//	    			+ "           <option value='orc' " + orcSelected +">orc/troll</option>"
-//	    			+ "        </select>"
-//	    			+ "     </div>"
-//	    			+ "     <div style='position:absolute; left:320px; bottom: 10px; background-color: white;'>"
-//	    			+ "        <a href='' id='orcPreviewGoAway'>I hate tolls, go away!</a>"
-//	    			+ "     </div>"
-//	    			+ "</div>"));
-	    	
+	    		    	
 	    	$('#orcPreviewSel').change(function() {
 	    		var lang = $('#orcPreviewSel').val();
 	    		//hack to in case there are multipule local cookies
