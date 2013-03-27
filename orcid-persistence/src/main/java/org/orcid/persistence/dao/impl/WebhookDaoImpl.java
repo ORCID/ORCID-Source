@@ -16,6 +16,7 @@
  */
 package org.orcid.persistence.dao.impl;
 
+import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
 
@@ -39,6 +40,13 @@ public class WebhookDaoImpl extends GenericDaoImpl<WebhookEntity, WebhookEntityP
         TypedQuery<WebhookEntity> query = entityManager.createNamedQuery(WebhookEntity.FIND_WEBHOOKS_READY_TO_PROCESS, WebhookEntity.class);
         query.setParameter("retryDelayMinutes", retryDelayMinutes);
         return query.getResultList();
+    }
+
+    @Override
+    public long countWebhooksReadyToProcess(Date profileModifiedBefore, int retryDelayMinutes) {
+        TypedQuery<BigInteger> query = entityManager.createNamedQuery(WebhookEntity.COUNT_WEBHOOKS_READY_TO_PROCESS, BigInteger.class);
+        query.setParameter("retryDelayMinutes", retryDelayMinutes);
+        return query.getSingleResult().longValue();
     }
 
 }

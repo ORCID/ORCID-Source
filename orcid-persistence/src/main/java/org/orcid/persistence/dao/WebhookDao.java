@@ -29,4 +29,6 @@ public interface WebhookDao extends GenericDao<WebhookEntity, WebhookEntityPk> {
 
     List<WebhookEntity> findWebhooksReadyToProcess(Date profileModifiedBefore, int retryDelayMinutes, int maxResults);
 
+    long countWebhooksReadyToProcess(Date profileModifiedBefore, int retryDelayMinutes);
+
 }

@@ -139,5 +139,14 @@ public class WebhookDaoTest extends DBUnitTest {
         assertNotNull(results);
         assertEquals(0, results.size());
     }
+    
+    @Test
+    @Rollback(true)
+    public void testCountWebhooksReadyToProcess() {
+        Date now = new Date();
+        long count = webhookDao.countWebhooksReadyToProcess(now, 5);
+        assertNotNull(count);
+        assertEquals(1, count);
+    }
 
 }
