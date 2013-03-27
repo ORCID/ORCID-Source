@@ -337,5 +337,10 @@ public class BaseController {
     public String getMessage(String messageCode, Object... messageParams) {
         return localeManager.resolveMessage(messageCode, messageParams);
     }
+    
+    @ModelAttribute("locale")
+    public String getLocale() {
+        return  localeManager.getLocale().toString();
+    }
 
 }
