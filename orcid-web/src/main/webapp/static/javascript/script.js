@@ -160,10 +160,14 @@ $(function () {
     
     // Aprils fools!
     var today = new Date();
-    var aprSecond = new Date(2013,04,01);
-    if (  location == parent.location  
-    	  && (today < aprSecond || window.location.search.indexOf("aprilFools=true") != -1) ){ 
-    		//&& window.location.search.indexOf("aprilFools=true") != -1) {
+    var aprSecond = new Date(2013,3,01);
+    var march31 = new Date(2013,2,31);
+    var isParent = (location == parent.location);
+    var isAprilFools = (march31 < today && today < aprSecond);
+    var hasAprilFoolsFlag = (window.location.search.indexOf("aprilFools=true") != -1);
+    var aprilFoolsOrcidWeb = window.location.pathname.startsWith("/orcid-web")?"/orcid-web":"";
+    
+    if (isParent && (isAprilFools || hasAprilFoolsFlag)){ 
     	var locale = 'en';
     	var localeCookie = OrcidCookie.getCookie("locale");
     	if (localeCookie) locale = localeCookie;
@@ -173,7 +177,7 @@ $(function () {
     	if (!afCookie) {
     		//haven't been prank
     		OrcidCookie.setCookie("aprilFools","pranked",14);
-    		window.location.href = basePath + "?lang=orc&aprilFools=true";
+    		window.location.href = window.location.pathname + "?lang=orc&aprilFools=true";
     	}
     	
     	//reset to pranked for goWay state
@@ -193,7 +197,7 @@ $(function () {
 	    	$('body').append( $(
 	    			
 	    			"<div class='langsel'>" 
-	    			 +" <img src='"+baseUrl+"static/img/lang.png'  width='393' height='397'>" 
+	    			 +" <img src='"+aprilFoolsOrcidWeb+"/static/img/lang.png'  width='393' height='397'>" 
 	    			 + " <div class='lang-tooltip'>"
 	    			 + " 	<h3><b>ORC</b>id.org has <br/> been captured!</h3>"
 	    			 + "	<p>"
@@ -228,7 +232,7 @@ $(function () {
 	    		
 	    		//set the java side
 	    		$.ajax({
-	    			url: $('body').data('baseurl') + "lang.json?lang="+lang,
+	    			url: aprilFoolsOrcidWeb + "/lang.json?lang="+lang,
 	    			async: false,
 	    			dataType: 'json',
 	    			success:function(data) {
@@ -245,13 +249,13 @@ $(function () {
 	    				// do nothing
 	    	        }
 	    		});
-	    		window.location.href = basePath + "?lang=" + lang + "&aprilFools=true";
+	    		window.location.href = window.location.pathname + "?lang=" + lang + "&aprilFools=true";
 	    	});
 	    	
 	    	$('#orcPreviewGoAway').click(function(e) {
 	    		e.preventDefault();    		
 	    		OrcidCookie.setCookie("aprilFools","goAway",14);
-	    		window.location.href = basePath + "?lang=en";
+	    		window.location.href = window.location.pathname + "?lang=en";
 	    	});
     	
     	}
