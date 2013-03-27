@@ -50,7 +50,7 @@ public class FindOrcidWorkDuplicates {
     public static final String NEW_LINE = "\n";
     public static final String CARRIAGE_RETURN = "\r";
     public static final String MISSING_ENTRY = "Missing";
-    public static final String HEADER = "ORCID"+SEPERATOR+"Definitive/Duplicate"+SEPERATOR+"Put Code"+SEPERATOR+"Title"+SEPERATOR+"Visibility";
+    public static final String HEADER = "ORCID" + SEPERATOR + "Definitive/Duplicate" + SEPERATOR + "Put Code" + SEPERATOR + "Title" + SEPERATOR + "Visibility";
 
     private static final Logger LOG = LoggerFactory.getLogger(FindOrcidWorkDuplicates.class);
 
@@ -64,8 +64,6 @@ public class FindOrcidWorkDuplicates {
     private String orcid;
 
     private OrcidProfileManager orcidProfileManager;
-    
-    
 
     private List<String> orcidsToQuery;
 
@@ -104,52 +102,48 @@ public class FindOrcidWorkDuplicates {
     private void createOutputFile() throws Exception {
         ApplicationContext context = new ClassPathXmlApplicationContext("orcid-core-context.xml");
         orcidProfileManager = (OrcidProfileManager) context.getBean("orcidProfileManager");
-        
-        LOG.info(MessageFormat.format("Started building file {0} at {1}", new Object[]{outputFileName,new Date()}));
-        File outputFile =  new File(outputFileName);
-        FileUtils.writeStringToFile(outputFile, "\n"+HEADER+"\n",true);
-       
-        int counter =0;
+
+        LOG.info(MessageFormat.format("Started building file {0} at {1}", new Object[] { outputFileName, new Date() }));
+        File outputFile = new File(outputFileName);
+        FileUtils.writeStringToFile(outputFile, "\n" + HEADER + "\n", true);
+
+        int counter = 0;
         for (String orcidIdentifier : orcidsToQuery) {
             try {
-                StringBuilder records = new StringBuilder();           
+                StringBuilder records = new StringBuilder();
                 OrcidProfile orcidProfileWorksOnly = orcidProfileManager.retrieveClaimedOrcidWorks(orcidIdentifier);
                 // is there are less than 2 works there obv can't be duplicates
                 if (!multipleWorks(orcidProfileWorksOnly))
                     continue;
 
-                List<OrcidWorkDeduped> dedupedWorks =
-                        dedupeWorksForOrcid(orcidProfileWorksOnly.getOrcidActivities().getOrcidWorks());
+                List<OrcidWorkDeduped> dedupedWorks = dedupeWorksForOrcid(orcidProfileWorksOnly.getOrcidActivities().getOrcidWorks());
 
                 if (dedupedWorks != null) {
                     LOG.debug("Found orcid with duplicate works: " + orcidIdentifier);
-                   records.append(buildDuplicationString(dedupedWorks, orcidIdentifier));
+                    records.append(buildDuplicationString(dedupedWorks, orcidIdentifier));
                 }
-                
-                
-                FileUtils.writeStringToFile(outputFile, records.toString(),true);
+
+                FileUtils.writeStringToFile(outputFile, records.toString(), true);
                 records.delete(0, records.length());
             }
 
             catch (Exception e) {
                 LOG.error("exception processing ORCID: " + orcidIdentifier, e);
             }
-            
-            LOG.debug("iteration: "+counter++);
-            
-        }  
-      
+
+            LOG.debug("iteration: " + counter++);
+
+        }
+
         // create file with tab seperated headers..
-        LOG.info(MessageFormat.format("Finished building file {0} at {1}", new Object[]{outputFileName,new Date()}));
+        LOG.info(MessageFormat.format("Finished building file {0} at {1}", new Object[] { outputFileName, new Date() }));
     }
 
     private List<OrcidWorkDeduped> dedupeWorksForOrcid(OrcidWorks orcidWorks) {
-        
-        
+
         Map<OrcidWorkMatcher, List<OrcidWork>> worksSplitByDuplicates = splitWorksIntoDuplicateSets(orcidWorks);
-        
+
         List<OrcidWorkDeduped> orcidWorkDupes = new ArrayList<FindOrcidWorkDuplicates.OrcidWorkDeduped>();
-        
 
         for (Map.Entry<OrcidWorkMatcher, List<OrcidWork>> entry : worksSplitByDuplicates.entrySet()) {
 
@@ -158,7 +152,7 @@ public class FindOrcidWorkDuplicates {
             //there may have been more than one work on a profile, but may not be duplicates
             if (allOrcidWorks.size() < 2) {
                 continue;
-            }          
+            }
 
             // sort by desc put code in case we cant rely on visibility
             Collections.sort(allOrcidWorks, new Comparator<OrcidWork>() {
@@ -196,44 +190,42 @@ public class FindOrcidWorkDuplicates {
             // if they all match the definitive is the most recent date
             definitiveWork = definitiveWork != null ? definitiveWork : allOrcidWorks.get(0);
             allOrcidWorks.remove(definitiveWork);
-            
-            orcidWorkDupes.add(new OrcidWorkDeduped(definitiveWork, allOrcidWorks) );
+
+            orcidWorkDupes.add(new OrcidWorkDeduped(definitiveWork, allOrcidWorks));
         }
 
         return orcidWorkDupes;
     }
 
-    private StringBuffer buildDuplicationString(List<OrcidWorkDeduped> dedupedWorks, String orcid) {        
-        
+    private StringBuffer buildDuplicationString(List<OrcidWorkDeduped> dedupedWorks, String orcid) {
+
         StringBuffer allDupes = new StringBuffer();
-        for (OrcidWorkDeduped dedupedWork : dedupedWorks){
-            allDupes.append(deriveOrcidData(orcid, true, Arrays.asList(new OrcidWork[]{dedupedWork.getDefinitive()})));
-            allDupes.append(deriveOrcidData(orcid, false,dedupedWork.getDupes()));
+        for (OrcidWorkDeduped dedupedWork : dedupedWorks) {
+            allDupes.append(deriveOrcidData(orcid, true, Arrays.asList(new OrcidWork[] { dedupedWork.getDefinitive() })));
+            allDupes.append(deriveOrcidData(orcid, false, dedupedWork.getDupes()));
         }
-             
+
         return allDupes;
     }
-    
-    private StringBuffer deriveOrcidData(String orcid,boolean definitive, List<OrcidWork> orcidWorks)
-    {
-        
+
+    private StringBuffer deriveOrcidData(String orcid, boolean definitive, List<OrcidWork> orcidWorks) {
+
         StringBuffer duplicationString = new StringBuffer();
         String definitiveIdentifier = definitive ? "Definitive" : "Duplicate";
-      
-        for (OrcidWork duplicate : orcidWorks)
-        {
+
+        for (OrcidWork duplicate : orcidWorks) {
             String putCode = duplicate.getPutCode();
-            String title = duplicate.getWorkTitle()!=null &&  duplicate.getWorkTitle().getTitle()!=null && 
-                    StringUtils.isNotBlank(duplicate.getWorkTitle().getTitle().getContent()) ? duplicate.getWorkTitle().getTitle().getContent() : MISSING_ENTRY;                    
-            
-        String visibility = duplicate.getVisibility()!=null ? duplicate.getVisibility().value() : MISSING_ENTRY;
-        duplicationString.append(orcid).append(SEPERATOR);
-        duplicationString.append(definitiveIdentifier).append(SEPERATOR);
-        duplicationString.append(putCode).append(SEPERATOR);
-        duplicationString.append(title).append(SEPERATOR);             
-        duplicationString.append(visibility).append(SEPERATOR);
-        duplicationString.append(NEW_LINE);
-        
+            String title = duplicate.getWorkTitle() != null && duplicate.getWorkTitle().getTitle() != null
+                    && StringUtils.isNotBlank(duplicate.getWorkTitle().getTitle().getContent()) ? duplicate.getWorkTitle().getTitle().getContent() : MISSING_ENTRY;
+
+            String visibility = duplicate.getVisibility() != null ? duplicate.getVisibility().value() : MISSING_ENTRY;
+            duplicationString.append(orcid).append(SEPERATOR);
+            duplicationString.append(definitiveIdentifier).append(SEPERATOR);
+            duplicationString.append(putCode).append(SEPERATOR);
+            duplicationString.append(title).append(SEPERATOR);
+            duplicationString.append(visibility).append(SEPERATOR);
+            duplicationString.append(NEW_LINE);
+
         }
         return duplicationString;
     }
@@ -267,8 +259,7 @@ public class FindOrcidWorkDuplicates {
     }
 
     private boolean multipleWorks(OrcidProfile orcidProfile) {
-        return orcidProfile != null && orcidProfile.getOrcidActivities() != null
-                && orcidProfile.getOrcidActivities().getOrcidWorks() != null
+        return orcidProfile != null && orcidProfile.getOrcidActivities() != null && orcidProfile.getOrcidActivities().getOrcidWorks() != null
                 && orcidProfile.getOrcidActivities().getOrcidWorks().getOrcidWork().size() > 1;
     }
 
@@ -294,4 +285,3 @@ public class FindOrcidWorkDuplicates {
     }
 
 }
-

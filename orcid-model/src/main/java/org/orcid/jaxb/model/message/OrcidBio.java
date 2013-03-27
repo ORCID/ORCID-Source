@@ -184,9 +184,9 @@ public class OrcidBio implements Serializable {
 
     public List<Affiliation> getAffiliationsByType(AffiliationType affiliationType) {
         List<Affiliation> filteredAffilations = new ArrayList<Affiliation>();
-        if (affiliations != null && affiliationType!=null) {
+        if (affiliations != null && affiliationType != null) {
             for (Affiliation affiliation : affiliations) {
-                if (affiliationType.equals(affiliation.getAffiliationType())){
+                if (affiliationType.equals(affiliation.getAffiliationType())) {
                     filteredAffilations.add(affiliation);
                 }
             }

@@ -28,7 +28,7 @@ import java.lang.annotation.Target;
  * 
  * @author Declan Newman (declan) Date: 16/03/2012
  */
-@Target({ java.lang.annotation.ElementType.METHOD })
+@Target( { java.lang.annotation.ElementType.METHOD })
 @Retention(java.lang.annotation.RetentionPolicy.RUNTIME)
 @Inherited
 @Documented

@@ -40,33 +40,33 @@
                 </#if>
             </h2>
             <p><small id="orcid-id" class="orcid-id">${(profile.orcid.value)!}</small></p>
-	        <p><a href="<@spring.url "/" + (profile.orcid.value)!"my-orcid/public" />" class="label btn-primary">View Public ORCID Record</a></p>
-	        <p><a href="<@spring.url '/account/manage-bio-settings'/>" class="btn-update">Update</a></p>
+	        <p><a href="<@spring.url "/" + (profile.orcid.value)!"my-orcid/public" />" class="label btn-primary">${springMacroRequestContext.getMessage("workspace.ViewPublicORCIDRecord")}</a></p>
+	        <p><a href="<@spring.url '/account/manage-bio-settings'/>" class="btn-update">${springMacroRequestContext.getMessage("workspace.Update")}</a></p>
 	        <#if ((profile.orcidBio.personalDetails.otherNames.otherName)?size != 0)>
-	        	<p><strong>Also known as:</strong><br />
+	        	<p><strong>${springMacroRequestContext.getMessage("workspace.Alsoknownas")}</strong><br />
 		       		<#list profile.orcidBio.personalDetails.otherNames.otherName as otherName>
 		       			${otherName.content}<#if otherName_has_next><br /></#if>
 		       		</#list></p>
 	       	</#if>
             <#if (profile.orcidBio.contactDetails.address.country.content)??>
-                <p><strong>Country:</strong>
+                <p><strong>${springMacroRequestContext.getMessage("public_profile.labelCountry")}</strong>
                 ${(profile.orcidBio.contactDetails.address.country.content)!}
                 </p>
             </#if>
 	       	<#if (profile.orcidBio.keywords)?? && (profile.orcidBio.keywords.keyword?size != 0)>
-	        	<p><strong>Keywords:</strong> 
+	        	<p><strong>${springMacroRequestContext.getMessage("public_profile.labelKeywords")}</strong> 
 		       		<#list profile.orcidBio.keywords.keyword as keyword>
 		       			${keyword.content}<#if keyword_has_next>,</#if>
 		       		</#list></p>
 	       	</#if>
 	       	<#if (profile.orcidBio.researcherUrls)?? && (profile.orcidBio.researcherUrls.researcherUrl?size != 0)>
-	        	<p><strong>Websites:</strong> <br/>
+	        	<p><strong>${springMacroRequestContext.getMessage("public_profile.labelWebsites")}</strong> <br/>
 		       		<#list profile.orcidBio.researcherUrls.researcherUrl as url>		       		
 		       		   <a href="<@orcid.absUrl url.url/>"><#if (url.urlName.content)! != "">${url.urlName.content}<#else>${url.url.value}</#if></a><#if url_has_next><br/></#if>
 		       		</#list></p>
 	       	</#if>
 		    <#if (profile.orcidBio.externalIdentifiers)?? && (profile.orcidBio.externalIdentifiers.externalIdentifier)?size != 0>
-		        <p><strong>Other IDs:</strong> <br />   
+		        <p><strong>${springMacroRequestContext.getMessage("public_profile.labelOtherIDs")}</strong> <br />   
 		        	<#list profile.orcidBio.externalIdentifiers.externalIdentifier as external>
 		        		<#if (external.externalIdUrl.value)??>
 		        		    <a href="${(external.externalIdUrl.value)!}">${(external.externalIdCommonName.content)!} ${(external.externalIdReference.content)!}</a>
@@ -79,15 +79,18 @@
 		    </#if>
 		    <#if ((thirdPartiesForImport)?? && (thirdPartiesForImport)?size &gt; 0)>
     	        <ul class="workspace-help">
-    	        	<li><a href="#third-parties" class="colorbox-modal">Import Research Activities</a></li>
+    	        	<li><a href="#third-parties" class="colorbox-modal">${springMacroRequestContext.getMessage("workspace.ImportResearchActivities")}</a></li>
     	        </ul>
     	        <div class="inline-modal" id="third-parties">
+    	           <h1>${springMacroRequestContext.getMessage("workspace.ImportResearchActivities")}</h1>
+    	           <br />
     	           <#list thirdPartiesForImport as thirdPartyDetails>
-                        <#if thirdPartyDetails_index != 0><br/></#if>
                         <#assign redirect = (thirdPartyDetails.redirectUris.redirectUri[0].value) >
                         <#assign predefScopes = (thirdPartyDetails.redirectUris.redirectUri[0].scopeAsSingleString) >
-                        <a class="third-party-colorbox" href="<@spring.url '/oauth/authorize?client_id=${thirdPartyDetails.clientId}&response_type=code&scope=${predefScopes}&redirect_uri=${redirect}'/>">${thirdPartyDetails.displayName}</a>          
+                        <strong><a class="third-party-colorbox" href="<@spring.url '/oauth/authorize?client_id=${thirdPartyDetails.clientId}&response_type=code&scope=${predefScopes}&redirect_uri=${redirect}'/>">${thirdPartyDetails.displayName}</a></strong><br />
+                        ${(thirdPartyDetails.shortDescription)!}<#if (thirdPartyDetails_has_next)><hr /></#if>
                     </#list>
+                    <br /><br />
     	        </div>
 	        </#if>
         </div>
@@ -95,62 +98,62 @@
     <div class="span9">
         <div class="workspace-right">
         	<div class="workspace-inner workspace-header">
-                <div class="alert alert-info"><strong>Add information about you to help distinguish you from other researchers.</strong></div>
+                <div class="alert alert-info"><strong>${springMacroRequestContext.getMessage("workspace.addinformationaboutyou")}</strong></div>
                 <div class="workspace-overview">
                     <a href="#workspace-affiliations" class="overview-count">${(profile.orcidBio.affiliations?size)!0}</a>
-                    <a href="#workspace-affiliations" class="overview-title">Affiliations</a>
-                    <div><a target="_blank" href="http://support.orcid.org/forums/179657-coming-soon" class="btn-update no-icon">Coming Soon</a></div>
+                    <a href="#workspace-affiliations" class="overview-title">${springMacroRequestContext.getMessage("workspace_bio.Affiliations")}</a>
+                    <div><a target="_blank" href="http://support.orcid.org/forums/179657-coming-soon" class="btn-update no-icon">${springMacroRequestContext.getMessage("workspace.ComingSoon")}</a></div>
                 </div>
         		<div class="workspace-overview">
         			<a href="#workspace-publications" class="overview-count">${(profile.orcidActivities.orcidWorks.orcidWork?size)!0}</a>
-        			<a href="#workspace-publications" class="overview-title">Works</a>
-                    <div><a href="<@spring.url '/works-update'/>" class="btn-update">Update</a></div>
+        			<a href="#workspace-publications" class="overview-title">${springMacroRequestContext.getMessage("workspace.Works")}</a>
+                    <div><a href="<@spring.url '/works-update'/>" class="btn-update">${springMacroRequestContext.getMessage("workspace.Update")}</a></div>
         		</div>
         		<div class="workspace-overview">
         			<a href="#workspace-grants" class="overview-count">${(profile.orcidActivities.orcidGrants.orcidGrant?size)!0}</a>
-        			<a href="#workspace-grants" class="overview-title">Grants</a>
+        			<a href="#workspace-grants" class="overview-title">${springMacroRequestContext.getMessage("workspace.Grants")}</a>
         			<br />
         			<a target="_blank" href="http://support.orcid.org/forums/179657-coming-soon" class="btn-update no-icon">Coming Soon</a>
         		</div>
         		<div class="workspace-overview">
         			<a href="#workspace-patents" class="overview-count">${(profile.orcidActivities.orcidPatents.orcidPatent?size)!0}</a>
-        			<a href="#workspace-patents" class="overview-title">Patents</a>
+        			<a href="#workspace-patents" class="overview-title">${springMacroRequestContext.getMessage("workspace.Patents")}</a>
         			<br />
-        			<a target="_blank" href="http://support.orcid.org/forums/179657-coming-soon" class="btn-update no-icon">Coming Soon</a>
+        			<a target="_blank" href="http://support.orcid.org/forums/179657-coming-soon" class="btn-update no-icon">${springMacroRequestContext.getMessage("workspace.ComingSoon")}</a>
         		</div>
         	</div>
         	<div class="workspace-accordion" id="workspace-accordion">
         	
         	   <div id="workspace-personal" class="workspace-accordion-item workspace-accordion-active">
-        			<h3 class="workspace-accordion-header"><a href="#">${springMacroRequestContext.getMessage("workspace.personal_information")}</a> <a href="<@spring.url '/account/manage-bio-settings'/>" class="btn-update">Update</a></h3>
+        			<h3 class="workspace-accordion-header"><a href="#">${springMacroRequestContext.getMessage("workspace.personal_information")}</a> <a href="<@spring.url '/account/manage-bio-settings'/>" class="btn-update">${springMacroRequestContext.getMessage("workspace.Update")}</a></h3>
             		<div class="workspace-accordion-content">
             			<#include "workspace_personal.ftl"/>
         			</div>
             	</div>
             	
         		<div id="workspace-affiliations" class="workspace-accordion-item${(!(profile.orcidBio.affiliations)?? || (profile.orcidBio.affiliations?size = 0))?string(" workspace-accordion-active", "")}">
-                    <h3 class="workspace-accordion-header"><a href="#">Affiliations</a> <#--<a href="#" class="btn-update">Update</a></h3>--><#--<a target="_blank" href="http://support.orcid.org/forums/179657-coming-soon" class="btn-update no-icon">Coming Soon</a></h3>
+                    <h3 class="workspace-accordion-header"><a href="#">${springMacroRequestContext.getMessage("workspace_bio.Affiliations")}</a> <#--<a href="#" class="btn-update">${springMacroRequestContext.getMessage("workspace.Update")}</a></h3>--><#--<a target="_blank" href="http://support.orcid.org/forums/179657-coming-soon" class="btn-update no-icon">${springMacroRequestContext.getMessage("workspace.ComingSoon")}</a></h3>
                     <div class="workspace-accordion-content">
                         <#include "workspace_affiliations.ftl"/>
                     </div>-->
                 </div>
                 
                 <div id="workspace-publications" class="workspace-accordion-item workspace-accordion-active">
-        			<h3 class="workspace-accordion-header"><a href="#">Works</a> <a href="<@spring.url '/works-update'/>" class="btn-update">Update</a></h3>
+        			<h3 class="workspace-accordion-header"><a href="#">${springMacroRequestContext.getMessage("workspace.Works")}</a> <a href="<@spring.url '/works-update'/>" class="btn-update">${springMacroRequestContext.getMessage("workspace.Update")}</a></h3>
             		<div class="workspace-accordion-content">
             			<#include "workspace_works_body_list.ftl"/>
             		</div>
             	</div>
             	
         		<div id="workspace-grants" class="workspace-accordion-item<#--${(!(profile.orcidActivities.orcidGrants)??)?string(" workspace-accordion-active", "")}-->">
-        			<h3 class="workspace-accordion-header"><a href="#">Grants</a> <#--<a target="_blank" href="http://support.orcid.org/forums/179657-coming-soon" class="btn-update no-icon">Coming Soon</a></h3>
+        			<h3 class="workspace-accordion-header"><a href="#">${springMacroRequestContext.getMessage("workspace.Grants")}</a> <#--<a target="_blank" href="http://support.orcid.org/forums/179657-coming-soon" class="btn-update no-icon">${springMacroRequestContext.getMessage("workspace.ComingSoon")}</a></h3>
             		<div class="workspace-accordion-content">
             			<#include "workspace_grants_body_list.ftl"/>
             		</div>-->
             	</div>
             	
         		<div id="workspace-patents" class="workspace-accordion-item<#--${(!(profile.orcidActivities.orcidPatents)??)?string(" workspace-accordion-active", "")}-->">
-        			<h3 class="workspace-accordion-header"><a href="#">Patents</a> <#--<a target="_blank" href="http://support.orcid.org/forums/179657-coming-soon" class="btn-update no-icon">Coming Soon</a></h3>
+        			<h3 class="workspace-accordion-header"><a href="#">${springMacroRequestContext.getMessage("workspace.Patents")}</a> <#--<a target="_blank" href="http://support.orcid.org/forums/179657-coming-soon" class="btn-update no-icon">${springMacroRequestContext.getMessage("workspace.ComingSoon")}</a></h3>
             		<div class="workspace-accordion-content">
             			<#include "workspace_patents_body_list.ftl"/>
             		</div>-->

@@ -47,11 +47,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 public class BaseControllerTest extends DBUnitTest {
 
     private OrcidProfile orcidProfile;
-    
-    
+
     @BeforeClass
     public static void beforeClass() throws Exception {
-        initDBUnitData(Arrays.asList("/data/SecurityQuestionEntityData.xml", "/data/ProfileEntityData.xml"), null);       
+        initDBUnitData(Arrays.asList("/data/SecurityQuestionEntityData.xml", "/data/ProfileEntityData.xml"), null);
     }
 
     @Before
@@ -66,7 +65,9 @@ public class BaseControllerTest extends DBUnitTest {
     }
 
     private Authentication getAuthentication() {
-        if (orcidProfile ==null){ orcidProfile=getOrcidProfile();}
+        if (orcidProfile == null) {
+            orcidProfile = getOrcidProfile();
+        }
         OrcidProfileUserDetails details = new OrcidProfileUserDetails(orcidProfile);
         UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(details, "4444-4444-4444-4446", Arrays.asList(OrcidWebRole.ROLE_USER));
         return auth;
@@ -74,24 +75,24 @@ public class BaseControllerTest extends DBUnitTest {
 
     protected static OrcidProfile getOrcidProfile() {
         try {
-            JAXBContext context = JAXBContext.newInstance(OrcidMessage.class);            
+            JAXBContext context = JAXBContext.newInstance(OrcidMessage.class);
             Unmarshaller unmarshaller = context.createUnmarshaller();
             OrcidMessage orcidMessage = (OrcidMessage) unmarshaller.unmarshal(BaseControllerTest.class.getResourceAsStream(
 
-                    "/orcid-internal-full-message-latest.xml"));
+            "/orcid-internal-full-message-latest.xml"));
             return orcidMessage.getOrcidProfile();
         } catch (JAXBException e) {
             throw new RuntimeException(e);
         }
     }
 
-    @SuppressWarnings({ "unchecked" })
+    @SuppressWarnings( { "unchecked" })
     protected <T> T getTargetObject(Object proxy, Class<T> targetClass) throws Exception {
         while ((AopUtils.isJdkDynamicProxy(proxy))) {
             return (T) getTargetObject(((Advised) proxy).getTargetSource().getTarget(), targetClass);
         }
         return (T) proxy; // expected to be cglib proxy then, which is simply a
-                          // specialized class
+        // specialized class
     }
 
 }

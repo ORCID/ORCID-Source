@@ -21,7 +21,6 @@
 // Generated on: 2012.08.09 at 01:52:56 PM BST 
 //
 
-
 package org.orcid.jaxb.model.message;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -31,7 +30,6 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import java.io.Serializable;
-
 
 /**
  * <p>Java class for anonymous complex type.
@@ -55,10 +53,7 @@ import java.io.Serializable;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = {
-    "assigneeOrcid",
-    "assigneeName"
-})
+@XmlType(name = "", propOrder = { "assigneeOrcid", "assigneeName" })
 @XmlRootElement(name = "assignee")
 public class Assignee implements VisibilityType, Serializable {
 

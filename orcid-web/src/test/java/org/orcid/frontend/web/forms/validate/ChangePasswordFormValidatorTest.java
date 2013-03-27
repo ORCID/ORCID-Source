@@ -33,18 +33,15 @@ import org.junit.Before;
 import org.junit.Test;
 import org.orcid.frontend.web.forms.ChangePasswordForm;
 
+public class ChangePasswordFormValidatorTest extends AbstractConstraintValidator<ChangePasswordForm> {
 
-public class ChangePasswordFormValidatorTest extends AbstractConstraintValidator<ChangePasswordForm>{
-    
     Validator validator;
-   
+
     @Before
     public void resetValidator() {
         ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
         validator = factory.getValidator();
     }
-    
-   
 
     @Test
     public void allValuesPopulatedHappyPath() {
@@ -55,120 +52,114 @@ public class ChangePasswordFormValidatorTest extends AbstractConstraintValidator
         Set<ConstraintViolation<ChangePasswordForm>> errors = validator.validate(form);
         assertEquals("Should be no errors", 0, errors.size());
     }
-    
+
     @Test
     public void testPasswordNumbersOnlyInvalid() {
         ChangePasswordForm form = new ChangePasswordForm();
-        form.setOldPassword("12345678");       
+        form.setOldPassword("12345678");
         Set<ConstraintViolation<ChangePasswordForm>> violations = validator.validate(form);
         Map<String, String> allErrorValues = retrieveErrorKeyAndMessage(violations);
 
         String password = allErrorValues.get("oldPassword");
         assertEquals("Passwords must be 8 or more characters and contain at least 1 number and at least 1 alpha character or symbol", password);
-        
+
         //add in a char
-        form.setOldPassword("12345678b");       
+        form.setOldPassword("12345678b");
         violations = validator.validate(form);
         allErrorValues = retrieveErrorKeyAndMessage(violations);
 
         password = allErrorValues.get("oldPassword");
         assertNull(password);
     }
-   
+
     @Test
     public void testPasswordLengthMin8() {
         ChangePasswordForm form = new ChangePasswordForm();
-        form.setPassword("a$1");       
+        form.setPassword("a$1");
         Set<ConstraintViolation<ChangePasswordForm>> violations = validator.validate(form);
         Map<String, String> allErrorValues = retrieveErrorKeyAndMessage(violations);
         String password = allErrorValues.get("password");
         assertEquals("Passwords must be 8 or more characters and contain at least 1 number and at least 1 alpha character or symbol", password);
-        
-        form.setPassword("a$1a$1a$1");     
+
+        form.setPassword("a$1a$1a$1");
         violations = validator.validate(form);
         allErrorValues = retrieveErrorKeyAndMessage(violations);
         password = allErrorValues.get("password");
-        assertNull(password);        
+        assertNull(password);
     }
-    
-    
+
     @Test
     public void testPasswordMissingNumberInvalid() {
         ChangePasswordForm form = new ChangePasswordForm();
-        form.setOldPassword("£$$$$$$r");       
+        form.setOldPassword("£$$$$$$r");
         Set<ConstraintViolation<ChangePasswordForm>> violations = validator.validate(form);
         Map<String, String> allErrorValues = retrieveErrorKeyAndMessage(violations);
 
         String password = allErrorValues.get("oldPassword");
         assertEquals("Passwords must be 8 or more characters and contain at least 1 number and at least 1 alpha character or symbol", password);
-        
+
         //add in a number
-        form.setOldPassword("£$$$$$r1");       
+        form.setOldPassword("£$$$$$r1");
         violations = validator.validate(form);
         allErrorValues = retrieveErrorKeyAndMessage(violations);
 
         password = allErrorValues.get("oldPassword");
         assertNull(password);
     }
-    
+
     @Test
     public void testPasswordWithSymbolButNotCharacterValid() {
         ChangePasswordForm form = new ChangePasswordForm();
-        form.setPassword("£$$$$$$$");      
-       
+        form.setPassword("£$$$$$$$");
+
         Set<ConstraintViolation<ChangePasswordForm>> violations = validator.validate(form);
         Map<String, String> allErrorValues = retrieveErrorKeyAndMessage(violations);
         String password = allErrorValues.get("password");
         assertEquals("Passwords must be 8 or more characters and contain at least 1 number and at least 1 alpha character or symbol", password);
-        
-        form.setPassword("£$$$$$$7"); 
+
+        form.setPassword("£$$$$$$7");
         violations = validator.validate(form);
         allErrorValues = retrieveErrorKeyAndMessage(violations);
         password = allErrorValues.get("password");
         assertNull(password);
     }
 
-    
-    
     @Test
-    public void testNonUsAsciiCharsPermitted() throws Exception{
+    public void testNonUsAsciiCharsPermitted() throws Exception {
         ChangePasswordForm form = new ChangePasswordForm();
         form.setOldPassword("passw0rd");
         form.setPassword("ååååååå1å");
-        form.setRetypedPassword("ååååååå1å");      
+        form.setRetypedPassword("ååååååå1å");
         Set<ConstraintViolation<ChangePasswordForm>> errors = validator.validate(form);
         assertEquals("Should be no errors", 0, errors.size());
     }
-    
-    
+
     @Test
-    public void testSpacesPermittted() throws Exception{
+    public void testSpacesPermittted() throws Exception {
         ChangePasswordForm form = new ChangePasswordForm();
         form.setPassword("Ben Kingsley  is my no. 1 actor");
         form.setRetypedPassword("Ben Kingsley  is my no. 1 actor");
-        form.setOldPassword("ååååååå1å");        
+        form.setOldPassword("ååååååå1å");
         Set<ConstraintViolation<ChangePasswordForm>> errors = validator.validate(form);
-        assertEquals("Should be no errors", 0, errors.size());  
-    
+        assertEquals("Should be no errors", 0, errors.size());
+
     }
-    
+
     @Test
-    public void testSymbolsPermitttedButNotRequired() throws Exception{
+    public void testSymbolsPermitttedButNotRequired() throws Exception {
         ChangePasswordForm form = new ChangePasswordForm();
         form.setOldPassword("Ben Kingsley  is my no. 1 actor");
         form.setPassword("passw0rd");
-        form.setRetypedPassword("passw0rd");       
+        form.setRetypedPassword("passw0rd");
         Set<ConstraintViolation<ChangePasswordForm>> errors = validator.validate(form);
         assertEquals("Should be no errors", 0, errors.size());
-        
+
         //check that the test doesn't break when symbols introduced
         form.setPassword("p$ssw0rd");
         form.setRetypedPassword("p$ssw0rd");
         errors = validator.validate(form);
         assertEquals("Should be no errors", 0, errors.size());
     }
-    
-    
 
     @Test
     public void testPasswordFormMissingData() {
@@ -182,15 +173,12 @@ public class ChangePasswordFormValidatorTest extends AbstractConstraintValidator
         String password = allErrorValues.get("password");
         String confirmedPassword = allErrorValues.get("retypedPassword");
         String oldPassword = allErrorValues.get("oldPassword");
-     
 
         assertEquals("Passwords must be 8 or more characters and contain at least 1 number and at least 1 alpha character or symbol", password);
         assertEquals("Passwords must be 8 or more characters and contain at least 1 number and at least 1 alpha character or symbol", confirmedPassword);
         assertEquals("Passwords must be 8 or more characters and contain at least 1 number and at least 1 alpha character or symbol", oldPassword);
 
     }
-
- 
 
     @Test
     public void testPasswordFormatValidation() throws Exception {
@@ -242,7 +230,7 @@ public class ChangePasswordFormValidatorTest extends AbstractConstraintValidator
 
     }
 
-    @Test   
+    @Test
     public void testPasswordsMatchValidation() throws Exception {
         String eightMixedCharactersDigitsAndSymbol = "p4s]sW[rd";
         String incorrectRetype = "p4s]sT]rd";
@@ -282,7 +270,5 @@ public class ChangePasswordFormValidatorTest extends AbstractConstraintValidator
         assertFalse(fieldLevelErrors.contains("The password and confirmed password must match"));
 
     }
-
-    
 
 }

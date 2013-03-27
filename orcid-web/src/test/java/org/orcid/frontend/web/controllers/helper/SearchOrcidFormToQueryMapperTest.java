@@ -118,7 +118,8 @@ public class SearchOrcidFormToQueryMapperTest {
         form.setInstitutionName("University of Portsmouth");
         form.setPastInstitutionsSearchable(true);
         String derivedQueryString = setupQuery().deriveQueryString();
-        assertEquals("current-primary-institution-affiliation-name:university of portsmouth* OR past-institution-affiliation-name:university of portsmouth*", derivedQueryString);
+        assertEquals("current-primary-institution-affiliation-name:university of portsmouth* OR past-institution-affiliation-name:university of portsmouth*",
+                derivedQueryString);
     }
 
     @Test

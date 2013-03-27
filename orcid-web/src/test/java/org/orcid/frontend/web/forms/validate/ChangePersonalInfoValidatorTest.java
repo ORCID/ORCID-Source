@@ -32,8 +32,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.orcid.frontend.web.forms.ChangePersonalInfoForm;
 
-
-public class ChangePersonalInfoValidatorTest extends AbstractConstraintValidator<ChangePersonalInfoForm>  {
+public class ChangePersonalInfoValidatorTest extends AbstractConstraintValidator<ChangePersonalInfoForm> {
     Validator validator;
 
     @Before
@@ -44,57 +43,53 @@ public class ChangePersonalInfoValidatorTest extends AbstractConstraintValidator
 
     @Test
     public void allMandatoryValuesPopulated() {
-        
+
         ChangePersonalInfoForm form = new ChangePersonalInfoForm();
         form.setFirstName("firstName");
         form.setLastName("lastName");
         form.setEmail("jimmy@this.com");
-        
-        
-        Set<ConstraintViolation<ChangePersonalInfoForm>> errors = validator.validate(form);   
+
+        Set<ConstraintViolation<ChangePersonalInfoForm>> errors = validator.validate(form);
         Map<String, String> allErrorValues = retrieveErrorKeyAndMessage(errors);
         assertEquals("Should be 0 errors", 0, allErrorValues.size());
-        
-    
-        
+
     }
-    
+
     @Test
     public void noMandatoryValuesPopulated() {
         ChangePersonalInfoForm form = new ChangePersonalInfoForm();
-        
-        Set<ConstraintViolation<ChangePersonalInfoForm>> errors = validator.validate(form);   
+
+        Set<ConstraintViolation<ChangePersonalInfoForm>> errors = validator.validate(form);
         Map<String, String> allErrorValues = retrieveErrorKeyAndMessage(errors);
         assertEquals("Should be 2 errors", 2, allErrorValues.size());
         String givenNamesMissing = allErrorValues.get("firstName");
-        String emailMissing = allErrorValues.get("email");  
-        
+        String emailMissing = allErrorValues.get("email");
+
         assertEquals("Please enter your first name.", givenNamesMissing);
-        assertEquals("Please enter your e-mail address.",emailMissing);       
+        assertEquals("Please enter your e-mail address.", emailMissing);
     }
-    
+
     @Test
-    public void lengthGreaterThan100NotAcceptedForBio() throws Exception
-    {
-        String thousandAndOneChars = StringUtils.repeat("a",1001);
-        assertTrue(thousandAndOneChars.length()==1001);
-        
+    public void lengthGreaterThan100NotAcceptedForBio() throws Exception {
+        String thousandAndOneChars = StringUtils.repeat("a", 1001);
+        assertTrue(thousandAndOneChars.length() == 1001);
+
         ChangePersonalInfoForm form = new ChangePersonalInfoForm();
         form.setFirstName("firstName");
         form.setLastName("lastName");
-        form.setEmail("test+11@orcid.org");        
+        form.setEmail("test+11@orcid.org");
         form.setBiography(thousandAndOneChars);
-        Set<ConstraintViolation<ChangePersonalInfoForm>> errors = validator.validate(form);   
+        Set<ConstraintViolation<ChangePersonalInfoForm>> errors = validator.validate(form);
         Map<String, String> allErrorValues = retrieveErrorKeyAndMessage(errors);
         assertEquals("Should be 1 error", 1, allErrorValues.size());
         String tooLong = allErrorValues.get("biography");
-        assertEquals("The maximum length for biography is 1000 characters, including line breaks",tooLong);    
-        
-        String thousandChars = StringUtils.repeat("z",1000);               
+        assertEquals("The maximum length for biography is 1000 characters, including line breaks", tooLong);
+
+        String thousandChars = StringUtils.repeat("z", 1000);
         form.setBiography(thousandChars);
         errors = validator.validate(form);
         allErrorValues = retrieveErrorKeyAndMessage(errors);
         assertEquals("Should be valid", 0, allErrorValues.size());
-        
+
     }
 }

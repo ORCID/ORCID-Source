@@ -21,13 +21,12 @@
     <div class="row">
 		<div class="span3 lhs override">
 			<ul class="settings-nav">
-				<li><a href="#account-settings">Account Settings</a></li>
-				<li><a href="#manage-permissions">Manage Permissions</a></li>
+				<li><a href="#account-settings">${springMacroRequestContext.getMessage("manage.accountsettings")}</a></li>
+				<li><a href="#manage-permissions">${springMacroRequestContext.getMessage("manage.managepermission")}</a></li>
 			</ul>
 		</div>
 		<div class="span9">
 			<h1 id="account-settings">${springMacroRequestContext.getMessage("manage.account_settings")}</h1>
-			
 			<#assign open = "" />
 			<@spring.bind "managePasswordOptionsForm.*" />
 			<#if spring.status.error>
@@ -53,14 +52,13 @@
                         </td>
                     </tr>-->
 					<tr>
-						<th>${springMacroRequestContext.getMessage("manage.emails")}</th>
+						<th>${springMacroRequestContext.getMessage("public_profile.h3PersonalInformation")}</th>
 						<td>
-							<div><a href="<@spring.url '/account/manage-bio-settings'/>" class="update">Edit personal information</a></div>
+							<div><a href="<@spring.url '/account/manage-bio-settings'/>" class="update">${springMacroRequestContext.getMessage("settings.tdEdit")}</a></div>
 						</td>
 					</tr>
-					<#if (RequestParameters['showMulti'])??>
 						<tr>
-							<th>Email</th>
+							<th>${springMacroRequestContext.getMessage("manage.thEmail")}</th>
 							<td>
 								<a href="" ng-click="toggleEmail()" ng-bind="toggleText"></a>
 							</td>
@@ -72,38 +70,44 @@
 			   						<span ng-repeat='error in emailsPojo.errors' ng-bind-html-unsafe="error"></span>
 			   					</span>
 		   						<div ng-repeat='email in emailsPojo.emails' style="height: 35px;">
-		   							<div style="width: 300px; display: inline-block; *display: inline;" ng-bind="email.value"></div>
-		   							<div style="width: 100px; display: inline-block; *display: inline;"><a href="" ng-click="setPrimary($index)" ng-class="{muted: email.primary==false}" ng-bind="email.primary | emailPrimaryFtr"></a>
+		   							<div style="width: 300px; display: inline-block; *display: inline;" ng-class="{primaryEmail:email.primary}" ng-bind="email.value"></div>
+		   							<div style="width: 100px; display: inline-block; *display: inline;">
+		   							
+		   							<span ng-hide="email.primary" ><a href="" ng-click="setPrimary($index)" ng-bind="email.primary | emailPrimaryFtr"></a></span>
+		   							<span ng-show="email.primary" class="muted" style="color: #bd362f"ng-bind="email.primary | emailPrimaryFtr"></span>
 		   							</div> 
-		   							<div ng-click="toggleCurrent($index)" ng-bind="email.current | emailCurrentFtr" style="width: 70px; display: inline-block; *display: inline;"></div> 
-		   							<span ng-bind="email.verified | emailVerifiedFtr" ng-click="verifyEmail($index)"></span>
+		   							<select style="width: 100px; height: 26px;" ng-change="save()" ng-model="email.current">
+              							<option value="true" ng-selected="email.current == true">Current</option>
+              							<option value="false" ng-selected="email.current == false">Past</option>              
+            						</select>
+		   							<span ng-hide="email.verified"><a href="" ng-click="verifyEmail($index)">Verify</a></span>
+		   							<span ng-show="email.verified">Verified</span>		
 		   							<span class="orcid-error" ng-show="email.errors.length > 0">
 		   							   <span ng-repeat='error in email.errors' ng-bind-html-unsafe="error"></span>
 		   							</span>
-		   							<div style="width 30px; display: inline-block; *display: inline;">
-		   								<span ng-show="email.primary == false" ng-click="deleteEmail($index)" class="btn btn-danger">X</span>
+		   							<div style="display:inline-block;">
+		   							      <button ng-show="email.primary == false" ng-click="deleteEmail($index)" class="btn btn-small" style="position: absolute; top: 0;">X</button>
 		   							</div>
 		   							<div style="display:inline-block;">
 								        <div class="btn-group abs-left-top"  ng-class="{open: email.value==curPrivToggle}">
-								            <button class="btn dropdown-toggle privacy-toggle" ng-class="email.visibility | emailVisibilityBtnClassFtr" ng-bind-html-unsafe="email.visibility | emailVisibilityFtr" ng-click="togglePrivacySelect($index)"></button>
+								            <button class="btn dropdown-toggle privacy-toggle btn-small" ng-class="email.visibility | emailVisibilityBtnClassFtr" ng-bind-html-unsafe="email.visibility | emailVisibilityFtr" ng-click="togglePrivacySelect($index)"></button>
 											<ul class="dropdown-menu privacy-menu show">
-								                <li><a class="btn btn-success btn-privacy" href="#" ng-click="setPrivacy($index, 'PUBLIC', $event)">Public <span class="caret"></span></a></li>
-								                <li><a class="btn btn-warning btn-privacy" href="#" ng-click="setPrivacy($index, 'LIMITED', $event)">Limited <span class="caret"></span></a></li>
-								                <li><a class="btn btn-danger btn-privacy" href="#" ng-click="setPrivacy($index, 'PRIVATE', $event)">Private <span class="caret"></span></a></li>	
-								                <li><a class="btn" href="http://support.orcid.org/knowledgebase/articles/124518" target="_blank">Help <span class="caret"></span></a></li>
+								                <li><a class="btn btn-success btn-privacy btn-small" href="#" ng-click="setPrivacy($index, 'PUBLIC', $event)">${springMacroRequestContext.getMessage("manage.lipublic")} <span class="caret"></span></a></li>
+								                <li><a class="btn btn-warning btn-privacy btn-small" href="#" ng-click="setPrivacy($index, 'LIMITED', $event)">${springMacroRequestContext.getMessage("manage.lilimited")} <span class="caret"></span></a></li>
+								                <li><a class="btn btn-danger btn-privacy btn-small" href="#" ng-click="setPrivacy($index, 'PRIVATE', $event)">${springMacroRequestContext.getMessage("manage.liprivate")} <span class="caret"></span></a></li>	
+								                <li><a class="btn btn-small" href="http://support.orcid.org/knowledgebase/articles/124518" target="_blank">${springMacroRequestContext.getMessage("manage.lihelp")} <span class="caret"></span></a></li>
 	            							</ul>        								        
 								        </div>
 									</div>
 		   						</div>
 		   						<div>
-		   							<input type="text" placeholder="Add Another Email" class="input-xlarge" ng-model="inputEmail.value" style="margin: 0px;"/> <span ng-click="add()" class="btn">Add</span>
+		   							<input type="email" placeholder="Add Another Email" class="input-xlarge" ng-model="inputEmail.value" style="margin: 0px;" required/> <span ng-click="add()" class="btn">${springMacroRequestContext.getMessage("manage.spanadd")}</span>
 		   							<span class="orcid-error" ng-show="inputEmail.errors.length > 0">
 			   							<span ng-repeat='error in inputEmail.errors' ng-bind-html-unsafe="error"></span>
 			   						</span>
 			   					</div>	
 							</td>
 						</tr>
-					</#if>
 					<tr>
 						<th>${springMacroRequestContext.getMessage("manage.password")}</th>
 						<td>
@@ -140,17 +144,17 @@
                 <div class="arrow"></div>
                 <div class="popover-content">
                     <div class="help-block">
-                    	<p>Must be 8 or more characters and contain:</p>
+                    	<p>${springMacroRequestContext.getMessage("manage.must8morecharacters")}</p>
                      	<ul>
-                           	<li>at least 1 numeral: 0 - 9</li>
-                           	<li>at least 1 of the following:</li>
+                           	<li>${springMacroRequestContext.getMessage("manage.liatleast09")}</li>
+                           	<li>${springMacroRequestContext.getMessage("manage.liatleast1following")}</li>
                                	<ul>
-                                  	<li>alpha character, case-sensitive a-Z</li>
-                                    <li>any of the following symbols:<br /> ! @ # $ % ^ * ( ) ~ `{ } [ ] | \ &amp; _</li>
+                                  	<li>${springMacroRequestContext.getMessage("manage.lialphacharacter")}</li>
+                                    <li>${springMacroRequestContext.getMessage("manage.lianysymbols")}<br /> ! @ # $ % ^ * ( ) ~ `{ } [ ] | \ &amp; _</li>
                                 </ul>
-                            <li>optionally the space character, i.e ' ' and other punctuation such as . , ;</li>
+                            <li>${springMacroRequestContext.getMessage("manage.limanagespacecharacters")}</li>
                         </ul>
-                        <p>Example: sun% moon2</p>
+                        <p>${springMacroRequestContext.getMessage("manage.examplesunmoon2")}</p>
                     </div>
                 </div>
             </div>   
@@ -158,14 +162,14 @@
             
             <h1 id="manage-permissions">${springMacroRequestContext.getMessage("manage.manage_permissions")}</h1>
 			<h3><b>${springMacroRequestContext.getMessage("manage.trusted_organisations")}</b></h3>
-			<p>You can allow permission for your ORCID Record to be updated by a trusted organisation.<br /> <a href="http://support.orcid.org/knowledgebase/articles/131598">Find out more</a></p>
+			<p>${springMacroRequestContext.getMessage("manage.youcanallowpermission")}<br /> <a href="http://support.orcid.org/knowledgebase/articles/131598">${springMacroRequestContext.getMessage("manage.findoutmore")}</a></p>
 			<#if (profile.orcidBio.applications.applicationSummary)??>
     			<table class="table table-bordered settings-table normal-width">
     				<thead>
     					<tr>
-    						<th width="35%">Proxy</th>
-    						<th width="5%">Approval date</th>
-    						<th width="35%">Access type</th>
+    						<th width="35%">${springMacroRequestContext.getMessage("manage.thproxy")}</th>
+    						<th width="5%">${springMacroRequestContext.getMessage("manage.thapprovaldate")}</th>
+    						<th width="35%">${springMacroRequestContext.getMessage("manage.thaccesstype")}</th>
     						<td width="5%"></td>
     					</tr>
     				</thead>
@@ -187,7 +191,7 @@
                                             </#list>
                                         </#if>
                                     </td width="35%">                                    
-                                    <td width="5%"><button class="btn btn-link">Revoke Access</button></td>
+                                    <td width="5%"><button class="btn btn-link">${springMacroRequestContext.getMessage("manage.revokeaccess")}</button></td>
                                 </form>
                             </tr>
                         </#list>
@@ -195,7 +199,7 @@
     			</table>
 			</#if>
 			
-			<#--<h4><b>Trusted Individuals</b></h4>
+			<#--<h4><b>${springMacroRequestContext.getMessage("manage.trustindividuals")}</b></h4>
 			<#include "/manage_delegation.ftl" />-->
 			
 		</div>

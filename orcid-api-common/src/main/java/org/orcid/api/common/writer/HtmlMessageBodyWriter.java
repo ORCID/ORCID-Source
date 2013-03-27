@@ -37,7 +37,7 @@ import static javax.ws.rs.core.MediaType.TEXT_HTML;
  * @author Declan Newman (declan) Date: 02/03/2012
  */
 @Provider
-@Produces({ TEXT_HTML })
+@Produces( { TEXT_HTML })
 public class HtmlMessageBodyWriter implements MessageBodyWriter<OrcidMessage> {
 
     /**

@@ -15,6 +15,10 @@
     <name>ORCID - Tier 2 Services Web</name>
     <description>REST Service endpoints for the ORCID tier 2 API.</description>
 
+    <properties>
+        <main.basedir>${project.parent.basedir}</main.basedir>
+    </properties>
+
     <dependencies>
 
         <!-- Internal dependencies -->
@@ -90,7 +94,6 @@
                 <groupId>com.mycila.maven-license-plugin</groupId>
                 <artifactId>maven-license-plugin</artifactId>
                 <configuration>
-                    <header>${project.basedir}/../SHORT_LICENSE.txt</header>
                     <excludes>
                        <exclude>**/.gitignore</exclude>
                        <exclude>**/rebel.xml</exclude>

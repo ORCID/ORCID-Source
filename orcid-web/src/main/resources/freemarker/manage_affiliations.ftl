@@ -26,9 +26,9 @@
 </#if>
 
 
-<legend>Primary institution name<div class="pull-right"><label for="primaryInstitutionForm.institutionNamePublic" class="control-label legend-label">public</label><div class="controls"><@spring.formCheckbox "currentAffiliationsForm.primaryInstitutionForm.institutionNamePublic"/></div></div></legend>
+<legend>${springMacroRequestContext.getMessage("manage_affiliations.primaryinstitutionname")}<div class="pull-right"><label for="primaryInstitutionForm.institutionNamePublic" class="control-label legend-label">${springMacroRequestContext.getMessage("manage_affiliations.public")}</label><div class="controls"><@spring.formCheckbox "currentAffiliationsForm.primaryInstitutionForm.institutionNamePublic"/></div></div></legend>
     <div class="control-group">
-        <label for="primaryInstitutionForm.institutionName" class="control-label">Institution name</label>
+        <label for="primaryInstitutionForm.institutionName" class="control-label">${springMacroRequestContext.getMessage("manage_affiliations.institutionname")}</label>
         <div class="controls">
         <@spring.formInput "currentAffiliationsForm.primaryInstitutionForm.institutionName" 'class="span4"'/>
             <span class="required">*</span>
@@ -36,7 +36,7 @@
         </div>
     </div>
     <div class="control-group">
-        <label for="primaryInstitutionForm.departments" class="control-label">Sub-org/Dept</label>
+        <label for="primaryInstitutionForm.departments" class="control-label">${springMacroRequestContext.getMessage("manage_affiliations.suborgdept")}</label>
         <div class="controls">
             <input type="text" id="primary-dept-name" name="subject" class="span4"/>
             <a id="add-primary-dept-name" href="#" class="btn"><i class="icon-arrow-down"></i></a>
@@ -49,9 +49,9 @@
     </div>
 </fieldset>
 <fieldset>
-    <legend>Primary institution address<div class="pull-right"><label for="primaryInstitutionForm.addressPublic" class="control-label legend-label">public</label><div class="controls"><@spring.formCheckbox "currentAffiliationsForm.primaryInstitutionForm.addressPublic"/></div></div></legend>
+    <legend>${springMacroRequestContext.getMessage("manage_affiliations.primaryinstitutionaddress")}<div class="pull-right"><label for="primaryInstitutionForm.addressPublic" class="control-label legend-label">${springMacroRequestContext.getMessage("manage_affiliations.public")}</label><div class="controls"><@spring.formCheckbox "currentAffiliationsForm.primaryInstitutionForm.addressPublic"/></div></div></legend>
     <div class="control-group">
-        <label for="currentAffiliationsForm.primaryInstitutionForm.addressLine1" class="control-label">Address 1</label>
+        <label for="currentAffiliationsForm.primaryInstitutionForm.addressLine1" class="control-label">${springMacroRequestContext.getMessage("manage_affiliations.labeladdress1")}</label>
         <div class="controls">
         <@spring.formInput "currentAffiliationsForm.primaryInstitutionForm.addressLine1" 'class="span4"'/>
             <span class="required">*</span>
@@ -59,14 +59,14 @@
         </div>
     </div>
     <div class="control-group">
-        <label for="currentAffiliationsForm.primaryInstitutionForm.addressLine2" class="control-label">Address 2</label>
+        <label for="currentAffiliationsForm.primaryInstitutionForm.addressLine2" class="control-label">${springMacroRequestContext.getMessage("manage_affiliations.labeladdress2")}</label>
         <div class="controls">
         <@spring.formInput "currentAffiliationsForm.primaryInstitutionForm.addressLine2" 'class="span4"'/>
         <@spring.showErrors "<br/>" "orcid-error"/>
         </div>
     </div>
     <div class="control-group">
-        <label for="currentAffiliationsForm.primaryInstitutionForm.city" class="control-label">Town/City</label>
+        <label for="currentAffiliationsForm.primaryInstitutionForm.city" class="control-label">${springMacroRequestContext.getMessage("manage_affiliations.labeltowncity")}</label>
         <div class="controls">
         <@spring.formInput "currentAffiliationsForm.primaryInstitutionForm.city" 'class="span4"'/>
             <span class="required">*</span>
@@ -74,19 +74,19 @@
         </div>
     </div>
     <div class="control-group">
-        <label for="currentAffiliationsForm.primaryInstitutionForm.state" class="control-label">State/County/Province</label>
+        <label for="currentAffiliationsForm.primaryInstitutionForm.state" class="control-label">${springMacroRequestContext.getMessage("manage_affiliations.labelstatecountryprovince")}</label>
         <div class="controls">
         <@spring.formInput "currentAffiliationsForm.primaryInstitutionForm.state" 'class="span4"'/>         
         </div>
     </div>
     <div class="control-group">
-        <label for="currentAffiliationsForm.primaryInstitutionForm.zipCode" class="control-label">Postcode/Zip</label>
+        <label for="currentAffiliationsForm.primaryInstitutionForm.zipCode" class="control-label">${springMacroRequestContext.getMessage("manage_affiliations.labelpostcodezip")}</label>
         <div class="controls">
         <@spring.formInput "currentAffiliationsForm.primaryInstitutionForm.zipCode" 'class="span4"'/>    
         </div>
     </div>
     <div class="control-group">
-        <label for="currentAffiliationsForm.primaryInstitutionForm.country" class="control-label">Country</label>
+        <label for="currentAffiliationsForm.primaryInstitutionForm.country" class="control-label">${springMacroRequestContext.getMessage("manage_affiliations.labelcountry")}</label>
         <div class="controls">
         <@spring.formSingleSelect "currentAffiliationsForm.primaryInstitutionForm.country", countries, 'class="span4"'/>
             <span class="required">*</span>
@@ -94,13 +94,13 @@
         </div>
     </div>
     <div class="control-group">
-        <label for="currentAffiliationsForm.primaryInstitutionForm.startDate" class="control-label">Start date</label>
+        <label for="currentAffiliationsForm.primaryInstitutionForm.startDate" class="control-label">${springMacroRequestContext.getMessage("manage_affiliations.labelstartdate")}</label>
         <div class="controls">
         	<@spring.formSingleSelect "currentAffiliationsForm.primaryInstitutionForm.startDate", allDates, 'class="span4"'/>    
         </div>
     </div>
     <div class="control-group">
-        <label for="currentAffiliationsForm.primaryInstitutionForm.registrationRole" class="control-label">Role</label>
+        <label for="currentAffiliationsForm.primaryInstitutionForm.registrationRole" class="control-label">${springMacroRequestContext.getMessage("manage_affiliations.labelRole")}</label>
         <div class="controls">
         <@spring.formSingleSelect "currentAffiliationsForm.primaryInstitutionForm.registrationRole", registrationRoles, 'class="span4"'/>
             <span class="required">*</span>
@@ -108,14 +108,14 @@
         </div>
     </div>
     <div class="form-actions">
-        <button class="btn btn-primary" type="submit">Save changes</button>
-        <button class="btn" type="reset" id='main-affiliations-form-reset'>Reset</button>
+        <button class="btn btn-primary" type="submit">${springMacroRequestContext.getMessage("manage_affiliations.btnsavechanges")}</button>
+        <button class="btn" type="reset" id='main-affiliations-form-reset'>${springMacroRequestContext.getMessage("manage_affiliations.btnReset")}</button>
     </div>
 </fieldset>
 <fieldset>
-        <legend>Joint Affiliation name <small>optional</small><div class="pull-right"><label for="jointAffiliationForm.institutionNamePublic" class="control-label legend-label">public</label><div class="controls"><@spring.formCheckbox "currentAffiliationsForm.jointAffiliationForm.institutionNamePublic"/></div></div></legend>
+        <legend>${springMacroRequestContext.getMessage("manage_affiliations.jointaffiliationname")} <small>${springMacroRequestContext.getMessage("manage_affiliations.optional")}</small><div class="pull-right"><label for="jointAffiliationForm.institutionNamePublic" class="control-label legend-label">${springMacroRequestContext.getMessage("manage_affiliations.labelpublic")}</label><div class="controls"><@spring.formCheckbox "currentAffiliationsForm.jointAffiliationForm.institutionNamePublic"/></div></div></legend>
         <div class="control-group">
-            <label for="jointAffiliationForm.institutionName" class="control-label">Institution name</label>
+            <label for="jointAffiliationForm.institutionName" class="control-label">${springMacroRequestContext.getMessage("manage_affiliations.institutionname")}</label>
             <div class="controls">
             <@spring.formInput "currentAffiliationsForm.jointAffiliationForm.institutionName" 'class="span4"'/>
                 <span class="required">*</span>
@@ -123,7 +123,7 @@
             </div>
         </div>
         <div class="control-group">
-            <label for="jointAffiliationForm.departments" class="control-label">Sub-org/Dept</label>
+            <label for="jointAffiliationForm.departments" class="control-label">${springMacroRequestContext.getMessage("manage_affiliations.suborgdept")}</label>
             <div class="controls">
                 <input type="text" id="joint-dept-name" name="subject" class="span4"/>
                 <a id="add-joint-dept-name" href="#" class="btn"><i class="icon-arrow-down"></i></a>
@@ -143,9 +143,9 @@
         	</div>        	        	
         </#if>
 	
-    <legend>Joint affiliation address <small>optional</small><div class="pull-right"><label for="jointAffiliationForm.institutionNamePublic" class="control-label legend-label">public</label><div class="controls"><@spring.formCheckbox "currentAffiliationsForm.jointAffiliationForm.institutionNamePublic"/></div></div></legend>
+    <legend>${springMacroRequestContext.getMessage("manage_affiliations.jointaffiliationaddress")} <small>${springMacroRequestContext.getMessage("manage_affiliations.optional")}</small><div class="pull-right"><label for="jointAffiliationForm.institutionNamePublic" class="control-label legend-label">${springMacroRequestContext.getMessage("manage_affiliations.labelpublic")}</label><div class="controls"><@spring.formCheckbox "currentAffiliationsForm.jointAffiliationForm.institutionNamePublic"/></div></div></legend>
     <div class="control-group">
-        <label for="currentAffiliationsForm.jointAffiliationForm.addressLine1" class="control-label">Address 1</label>
+        <label for="currentAffiliationsForm.jointAffiliationForm.addressLine1" class="control-label">${springMacroRequestContext.getMessage("manage_affiliations.labeladdress1")}</label>
         <div class="controls">
         <@spring.bind "currentAffiliationsForm.jointAffiliationForm" />
         <@spring.formInput "currentAffiliationsForm.jointAffiliationForm.addressLine1" 'class="span4"'/>
@@ -154,14 +154,14 @@
         </div>
     </div>
     <div class="control-group">
-        <label for="currentAffiliationsForm.jointAffiliationForm.addressLine2" class="control-label">Address 2</label>
+        <label for="currentAffiliationsForm.jointAffiliationForm.addressLine2" class="control-label">${springMacroRequestContext.getMessage("manage_affiliations.labeladdress2")}</label>
         <div class="controls">
         <@spring.formInput "currentAffiliationsForm.jointAffiliationForm.addressLine2" 'class="span4"'/>
         <@spring.showErrors "<br/>" "orcid-error"/>
         </div>
     </div>
     <div class="control-group">
-        <label for="currentAffiliationsForm.jointAffiliationForm.city" class="control-label">Town/City</label>
+        <label for="currentAffiliationsForm.jointAffiliationForm.city" class="control-label">${springMacroRequestContext.getMessage("manage_affiliations.labeltowncity")}</label>
         <div class="controls">
         <@spring.formInput "currentAffiliationsForm.jointAffiliationForm.city" 'class="span4"'/>
             <span class="required">*</span>
@@ -169,19 +169,19 @@
         </div>
     </div>
     <div class="control-group">
-        <label for="currentAffiliationsForm.jointAffiliationForm.state" class="control-label">State/County/Province</label>
+        <label for="currentAffiliationsForm.jointAffiliationForm.state" class="control-label">${springMacroRequestContext.getMessage("manage_affiliations.labelstatecountryprovince")}</label>
         <div class="controls">
         <@spring.formInput "currentAffiliationsForm.jointAffiliationForm.state" 'class="span4"'/>           
         </div>
     </div>
     <div class="control-group">
-        <label for="currentAffiliationsForm.jointAffiliationForm.zipCode" class="control-label">Postcode/Zip</label>
+        <label for="currentAffiliationsForm.jointAffiliationForm.zipCode" class="control-label">${springMacroRequestContext.getMessage("manage_affiliations.labelpostcodezip")}</label>
         <div class="controls">
         <@spring.formInput "currentAffiliationsForm.jointAffiliationForm.zipCode" 'class="span4"'/>          
         </div>
     </div>
     <div class="control-group">
-        <label for="currentAffiliationsForm.jointAffiliationForm.country" class="control-label">Country</label>
+        <label for="currentAffiliationsForm.jointAffiliationForm.country" class="control-label">${springMacroRequestContext.getMessage("manage_affiliations.labelcountry")}</label>
         <div class="controls">
         <@spring.formSingleSelect "currentAffiliationsForm.jointAffiliationForm.country", countries, 'class="span4"'/>
           <span class="required">*</span>
@@ -189,30 +189,30 @@
         </div>
     </div>
     <div class="control-group">
-        <label for="currentAffiliationsForm.jointAffiliationForm.startDate" class="control-label">Start date</label>
+        <label for="currentAffiliationsForm.jointAffiliationForm.startDate" class="control-label">${springMacroRequestContext.getMessage("manage_affiliations.labelstartdate")}</label>
         <div class="controls">
         <@spring.formSingleSelect "currentAffiliationsForm.jointAffiliationForm.startDate", allDates, 'class="span4"'/>           
         </div>
     </div>
     <div class="control-group">
-        <label for="currentAffiliationsForm.jointAffiliationForm.registrationRole" class="control-label">Role</label>
+        <label for="currentAffiliationsForm.jointAffiliationForm.registrationRole" class="control-label">${springMacroRequestContext.getMessage("manage_affiliations.labelRole")}</label>
         <div class="controls">
         <@spring.formSingleSelect "currentAffiliationsForm.jointAffiliationForm.registrationRole", registrationRoles, 'class="span4"'/>
         </div>
     </div>
     <div class="form-actions">
-        <button class="btn btn-primary" type="submit">Save changes</button>
-        <button class="btn" type="reset" id='joint-affiliations-form-reset'>Reset</button>        
-        <a id="delete-affiliate" href="#" class="btn btn-danger pull-right"><i class="icon-trash icon-white"></i> Remove joint affiliation</a>
+        <button class="btn btn-primary" type="submit">${springMacroRequestContext.getMessage("manage_affiliations.btnsavechanges")}</button>
+        <button class="btn" type="reset" id='joint-affiliations-form-reset'>${springMacroRequestContext.getMessage("manage_affiliations.btnReset")}</button>        
+        <a id="delete-affiliate" href="#" class="btn btn-danger pull-right"><i class="icon-trash icon-white"></i> ${springMacroRequestContext.getMessage("manage_affiliations.removejointaffiliation")}</a>
     </div>
 </fieldset>
 <fieldset>
-    <legend>External identifiers <small>optional</small><div class="pull-right"><label for="jointAffiliationForm.externalIdentifiersPublic" class="control-label legend-label">public</label><div class="controls"><@spring.formCheckbox "currentAffiliationsForm.externalIdentifiersPublic"/></div></div></legend>
+    <legend>${springMacroRequestContext.getMessage("manage_affiliations.externalidentifiers")} <small>${springMacroRequestContext.getMessage("manage_affiliations.optional")}</small><div class="pull-right"><label for="jointAffiliationForm.externalIdentifiersPublic" class="control-label legend-label">${springMacroRequestContext.getMessage("manage_affiliations.public")}</label><div class="controls"><@spring.formCheckbox "currentAffiliationsForm.externalIdentifiersPublic"/></div></div></legend>
     <table id="external-id-table" class="table">
         <thead>
         <tr>
-            <th>Name</th>
-            <th>Identifier</th>
+            <th>${springMacroRequestContext.getMessage("manage_affiliations.thname")}</th>
+            <th>${springMacroRequestContext.getMessage("manage_affiliations.thidentifier")}</th>
         </tr>
         </thead>
         <tbody>

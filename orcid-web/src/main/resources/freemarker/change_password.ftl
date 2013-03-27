@@ -33,14 +33,14 @@
 </#if>
 <form id="reg-form-password" class="popover-form" action="<@spring.url '/account/password'/>" method="post" autocomplete="off">
     <div class="">
-    	<label for="passwordField" class="">Old password</label>
+    	<label for="passwordField" class="">${springMacroRequestContext.getMessage("change_password.oldpassword")}</label>
     	<div class="relative">
         	<input id="passwordField" type="password" name="oldPassword" value="${(changePasswordForm.oldPassword)!}" class="input-xlarge"/>
         	<span class="required">*</span>            
     	</div>
 	</div>
 	<div class="">
-    	<label for="passwordField" class="">New password</label>
+    	<label for="passwordField" class="">${springMacroRequestContext.getMessage("change_password.newpassword")}</label>
     	<div class="relative">
         	<input id="passwordField" type="password" name="password" value="${(changePasswordForm.password)!}" class="password-strength input-xlarge"/>
         	<span class="required">*</span>
@@ -48,15 +48,15 @@
     	</div>
 	</div>
 	<div class="">
-    	<label for="retypedPassword" class="">Confirm new password</label>
+    	<label for="retypedPassword" class="">${springMacroRequestContext.getMessage("change_password.confirmnewpassword")}</label>
     	<div class="relative">
     		<input id="retypedPassword" type="password" name="retypedPassword" value="${(changePasswordForm.retypedPassword)!}" class="input-xlarge"/>
         	<span class="required">*</span>
     	</div>        
 	</div><br />
     <div class="">
-        <button id="bottom-submit-password-change" class="btn btn-primary" type="submit">Save changes</button>
-        <button id="bottom-clear-password-changes" class="btn close-parent-popover" type="reset">Cancel</button>
+        <button id="bottom-submit-password-change" class="btn btn-primary" type="submit">${springMacroRequestContext.getMessage("freemarker.btnsavechanges")}</button>
+        <button id="bottom-clear-password-changes" class="btn close-parent-popover" type="reset">${springMacroRequestContext.getMessage("freemarker.btncancel")}</button>
     </div>
 </form>
 </div>

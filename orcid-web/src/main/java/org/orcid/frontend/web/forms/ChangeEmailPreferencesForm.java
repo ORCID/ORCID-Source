@@ -16,33 +16,26 @@
  */
 package org.orcid.frontend.web.forms;
 
-
 public class ChangeEmailPreferencesForm {
 
-    
     private boolean sendOrcidNews;
-    
+
     private boolean sendOrcidChangeNotifcations;
 
-    
     public boolean getSendOrcidNews() {
         return sendOrcidNews;
     }
 
-    
     public void setSendOrcidNews(boolean sendOrcidNews) {
         this.sendOrcidNews = sendOrcidNews;
     }
 
-    
     public boolean getSendOrcidChangeNotifcations() {
         return sendOrcidChangeNotifcations;
     }
 
-    
     public void setSendOrcidChangeNotifcations(boolean sendOrcidChangeNotifcations) {
         this.sendOrcidChangeNotifcations = sendOrcidChangeNotifcations;
     }
-    
-    
+
 }

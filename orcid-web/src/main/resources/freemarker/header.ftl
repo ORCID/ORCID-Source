@@ -17,11 +17,11 @@
 
 -->
 <div id="logo">
-    <h1>ORCID - Open Researcher &amp; Contributor ID</h1>
+    <h1>${springMacroRequestContext.getMessage("header.Openresearchercontributor")}</h1>
 </div>
 <div id="login-nav">
     <ul class="nav nav-pills">
-        <li class=""><a href="<@spring.url '/signin'/>">Sign in</a></li>
+        <li class=""><a href="<@spring.url '/signin'/>">${springMacroRequestContext.getMessage("header.signin")}</a></li>
     </ul>
 </div>
 <p class="lead"></p>
@@ -35,8 +35,8 @@
             </a>
             <div class="nav-collapse">
                 <ul class="nav">
-                    <li class="active"><a href="<@spring.url '/'/>">Home</a></li>
-                    <li><a href="<@spring.url '/register'/>" id='regLink'>Register</a></li>
+                    <li class="active"><a href="<@spring.url '/'/>">${springMacroRequestContext.getMessage("header.Home")}</a></li>
+                    <li><a href="<@spring.url '/register'/>" id='regLink'>${springMacroRequestContext.getMessage("header.register")}</a></li>
                 </ul>
                 <form action="<@spring.url '/search/quick'/>" class="navbar-search pull-right" method="get">
                     <input type="text" placeholder="Search" class="search-query span2">

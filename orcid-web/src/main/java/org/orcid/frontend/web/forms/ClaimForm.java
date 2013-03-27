@@ -26,12 +26,12 @@ import org.orcid.frontend.web.forms.validate.FieldMatch;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.password.constants.OrcidPasswordConstants;
 
-@FieldMatch.List({ @FieldMatch(first = "password", second = "retypedPassword", message = "New password values don’t match. Please try again") })
+@FieldMatch.List( { @FieldMatch(first = "password", second = "retypedPassword", message = "New password values don’t match. Please try again") })
 public class ClaimForm implements Serializable {
 
     /**
-	 * 
-	 */
+     * 
+     */
     private static final long serialVersionUID = 1L;
 
     private String password;

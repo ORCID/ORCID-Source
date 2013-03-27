@@ -28,7 +28,6 @@ public interface CountryManager {
 
     List<String> retrieveCountries();
 
-    
-    Map<String,String> retrieveCountriesAndIsoCodes();
+    Map<String, String> retrieveCountriesAndIsoCodes();
 
 }

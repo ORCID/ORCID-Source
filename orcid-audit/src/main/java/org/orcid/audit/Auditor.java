@@ -52,7 +52,8 @@ public class Auditor {
     }
 
     public void audit(String recordModifiedOrcid, String recordModifierOrcid, String recordModifierType, String recordModifierIp, String recordModifierIso2Country,
-                      AuditEventType eventType, String eventMethod, String eventDescription) {
-        audit(new AuditEvent(recordModifiedOrcid, recordModifierOrcid, recordModifierType, recordModifierIp, recordModifierIso2Country, eventType, eventMethod, eventDescription));
+            AuditEventType eventType, String eventMethod, String eventDescription) {
+        audit(new AuditEvent(recordModifiedOrcid, recordModifierOrcid, recordModifierType, recordModifierIp, recordModifierIso2Country, eventType, eventMethod,
+                eventDescription));
     }
 }

@@ -23,17 +23,13 @@ import org.orcid.frontend.web.forms.validate.FieldMatch;
 import org.orcid.frontend.web.forms.validate.IntegerStringCrossField;
 import org.orcid.password.constants.OrcidPasswordConstants;
 
-@IntegerStringCrossField(indexToIgnoreValidation = 0,
-theFieldToIgnoreValidation = "securityQuestionAnswer",
-theFieldToIndex="securityQuestionId",
-message = "Please provide an answer to your challenge question.")
-@FieldMatch.List({ @FieldMatch(first = "password", second = "retypedPassword", message = "Your password values do not match. Please try again.") })
+@IntegerStringCrossField(indexToIgnoreValidation = 0, theFieldToIgnoreValidation = "securityQuestionAnswer", theFieldToIndex = "securityQuestionId", message = "Please provide an answer to your challenge question.")
+@FieldMatch.List( { @FieldMatch(first = "password", second = "retypedPassword", message = "Your password values do not match. Please try again.") })
 public class OneTimeResetPasswordForm {
 
     private PasswordTypeAndConfirmForm passwordTypeAndConfirmForm;
     private ChangeSecurityQuestionForm changeSecurityQuestionForm;
-       
-    
+
     public ChangeSecurityQuestionForm getChangeSecurityQuestionForm() {
         return changeSecurityQuestionForm;
     }
@@ -42,12 +38,12 @@ public class OneTimeResetPasswordForm {
         passwordTypeAndConfirmForm = new PasswordTypeAndConfirmForm();
         changeSecurityQuestionForm = new ChangeSecurityQuestionForm();
     }
-    
+
     public PasswordTypeAndConfirmForm getForm() {
         return passwordTypeAndConfirmForm;
     }
-        
-    @Pattern(regexp = OrcidPasswordConstants.ORCID_PASSWORD_REGEX, message = OrcidPasswordConstants.PASSWORD_REGEX_MESSAGE)    
+
+    @Pattern(regexp = OrcidPasswordConstants.ORCID_PASSWORD_REGEX, message = OrcidPasswordConstants.PASSWORD_REGEX_MESSAGE)
     public String getPassword() {
         return passwordTypeAndConfirmForm.getPassword();
     }
@@ -55,7 +51,8 @@ public class OneTimeResetPasswordForm {
     public void setPassword(String password) {
         passwordTypeAndConfirmForm.setPassword(password);
     }
-    @Pattern(regexp = OrcidPasswordConstants.ORCID_PASSWORD_REGEX, message = OrcidPasswordConstants.PASSWORD_REGEX_MESSAGE)    
+
+    @Pattern(regexp = OrcidPasswordConstants.ORCID_PASSWORD_REGEX, message = OrcidPasswordConstants.PASSWORD_REGEX_MESSAGE)
     public String getRetypedPassword() {
         return passwordTypeAndConfirmForm.getRetypedPassword();
     }
@@ -64,32 +61,25 @@ public class OneTimeResetPasswordForm {
         passwordTypeAndConfirmForm.setRetypedPassword(retypedPassword);
     }
 
-    
     public int getSecurityQuestionId() {
         return changeSecurityQuestionForm.getSecurityQuestionId();
     }
 
-    
     public void setSecurityQuestionId(int securityQuestionId) {
         this.changeSecurityQuestionForm.setSecurityQuestionId(securityQuestionId);
     }
 
-    
     public String getSecurityQuestionAnswer() {
         return changeSecurityQuestionForm.getSecurityQuestionAnswer();
     }
 
-    
     public void setSecurityQuestionAnswer(String securityAnswer) {
         this.changeSecurityQuestionForm.setSecurityQuestionAnswer(securityAnswer);
-    } 
-    
-    public boolean isSecurityDetailsPopulated()
-    {
-        return changeSecurityQuestionForm.getSecurityQuestionId()!=null && changeSecurityQuestionForm.getSecurityQuestionId() !=0 && StringUtils.isNotBlank(changeSecurityQuestionForm.getSecurityQuestionAnswer());
     }
-    
-    
-   
+
+    public boolean isSecurityDetailsPopulated() {
+        return changeSecurityQuestionForm.getSecurityQuestionId() != null && changeSecurityQuestionForm.getSecurityQuestionId() != 0
+                && StringUtils.isNotBlank(changeSecurityQuestionForm.getSecurityQuestionAnswer());
+    }
 
 }

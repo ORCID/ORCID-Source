@@ -293,7 +293,7 @@ public class T1OrcidApiServiceImplMetricsTest {
         assertTrue(T1OrcidApiServiceImpl.T1_SEARCH_RESULTS_NONE_FOUND.count() == 0);
         assertTrue(T1OrcidApiServiceImpl.T1_SEARCH_RESULTS_FOUND.count() == 3);
     }
-    
+
     @Test
     public void testSearchByQueryJSONResultsReturned() {
         UriInfo uriInfo = mock(UriInfo.class);
@@ -322,16 +322,16 @@ public class T1OrcidApiServiceImplMetricsTest {
         OrcidSearchResult orcidSearchResult1 = new OrcidSearchResult();
         OrcidSearchResult orcidSearchResult2 = new OrcidSearchResult();
         OrcidSearchResult orcidSearchResult3 = new OrcidSearchResult();
-        
+
         orcidSearchResult1.setOrcidProfile(orcidProfile1);
         orcidSearchResult2.setOrcidProfile(orcidProfile2);
         orcidSearchResult3.setOrcidProfile(orcidProfile3);
-      
+
         List<OrcidSearchResult> searchResults = new ArrayList<OrcidSearchResult>();
         searchResults.add(orcidSearchResult1);
         searchResults.add(orcidSearchResult2);
         searchResults.add(orcidSearchResult3);
-      
+
         OrcidSearchResults orcidSearchResults = new OrcidSearchResults();
         orcidSearchResults.getOrcidSearchResult().addAll(searchResults);
         orcidMessage.setOrcidSearchResults(orcidSearchResults);

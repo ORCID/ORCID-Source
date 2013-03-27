@@ -164,7 +164,6 @@ public class OrcidProfileUserDetails implements UserDetails {
         this.inDelegationMode = inDelegationMode;
     }
 
-
     @Override
     public boolean equals(Object o) {
         if (this == o) {

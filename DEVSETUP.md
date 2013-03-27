@@ -137,10 +137,23 @@ http://www.springsource.org/downloads/sts-ggts
 
 * You should see a login page.
 
-* Finally help out by improving these instructions! 
+* Click OK.
 
+### Setting up Eclipse to use ORCID formatting rules 
+1. Select Eclipse (or Spring Tool Suit) -> Preferences -> Java -> Code style -> Formatter -> Import
 
-### Integration tests
+* Navigate to ~/git/ORCID-Source and select eclipse_formatter.xml
+
+Finally help out by improving these instructions! 
+
+# Testing
+## Maven test
+
+1. cd to [ORCID-Source]
+
+2. run maven test ```mvn test```
+
+## Integration tests
 
 Integration tests are under ```[ORCID-Source]/orcid-core/src/test/java/org/orcid/core/integration```.
 

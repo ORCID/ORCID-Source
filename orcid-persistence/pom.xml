@@ -13,6 +13,11 @@
     <name>ORCID - Persistence</name>
     <description>Holds all data layer logic and implementations</description>
 
+    <properties>
+        <org.orcid.persistence.properties>test-persistence.properties</org.orcid.persistence.properties>
+        <main.basedir>${project.parent.basedir}</main.basedir>
+    </properties>
+
     <build>
         <resources>
             <resource>
@@ -36,20 +41,6 @@
                 </excludes>
             </resource>
         </resources>
-        <plugins>
-            <plugin>
-                <groupId>com.mycila.maven-license-plugin</groupId>
-                <artifactId>maven-license-plugin</artifactId>
-                <configuration>
-                    <header>${project.basedir}/../SHORT_LICENSE.txt</header>
-                    <excludes>
-                        <exclude>**/src/test/resources/solr/conf/**/*.*</exclude>
-                        <exclude>**/rebel.xml</exclude>
-                        <exclude>**/.gitignore</exclude>
-                    </excludes>
-                </configuration>
-            </plugin>
-        </plugins>
     </build>
 
     <dependencies>
@@ -183,10 +174,6 @@
         </dependency>
 
     </dependencies>
-
-    <properties>
-        <org.orcid.persistence.properties>test-persistence.properties</org.orcid.persistence.properties>
-    </properties>
 
     <profiles>
         <profile>

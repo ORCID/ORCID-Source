@@ -182,11 +182,10 @@ public class SolrAndDBSearchManagerImplTest extends BaseTest {
         personalDetails.setOtherNames(otherNames);
 
         bio.setPersonalDetails(personalDetails);
-        
-        Affiliation affiliation =  getAffiliation();
+
+        Affiliation affiliation = getAffiliation();
         affiliation.setVisibility(Visibility.PUBLIC);
         bio.getAffiliations().add(affiliation);
-        
 
         ResearcherUrls researcherUrls = new ResearcherUrls();
         bio.setResearcherUrls(researcherUrls);
@@ -199,11 +198,9 @@ public class SolrAndDBSearchManagerImplTest extends BaseTest {
         keywords.getKeyword().add(new Keyword("Java"));
         keywords.setVisibility(Visibility.PUBLIC);
 
-      
-
         OrcidWork orcidWork = new OrcidWork();
         orcidWork.setVisibility(Visibility.PUBLIC);
-      
+
         OrcidWorks orcidWorks = new OrcidWorks();
         orcidWorks.getOrcidWork().add(orcidWork);
         profile1.setOrcidWorks(orcidWorks);
@@ -212,11 +209,11 @@ public class SolrAndDBSearchManagerImplTest extends BaseTest {
     }
 
     private Affiliation getAffiliation() {
-        Affiliation affiliation= new Affiliation();
+        Affiliation affiliation = new Affiliation();
         affiliation.setAffiliationType(AffiliationType.CURRENT_INSTITUTION);
         affiliation.setAffiliationName("Past Institution");
         affiliation.setRoleTitle("A Role");
-        Address address = new Address();  
+        Address address = new Address();
         address.setCountry(new Country("United Kingdom"));
         address.getCountry().setVisibility(Visibility.PUBLIC);
         affiliation.setAddress(address);

@@ -76,7 +76,7 @@ public class OrcidProfileManagerBaseTest extends BaseTest {
     protected static final String DELEGATE_ORCID = "1111-1111-1111-1115";
 
     protected static final String TEST_ORCID = "4444-4444-4444-4447";
-    
+
     @Resource
     protected OrcidProfileManager orcidProfileManager;
 
@@ -91,13 +91,13 @@ public class OrcidProfileManagerBaseTest extends BaseTest {
 
     @Resource
     protected EncryptionManager encryptionManager;
-    
+
     @Resource
     protected GenericDao<SubjectEntity, String> subjectDao;
 
     @Mock
     protected OrcidIndexManager orcidIndexManager;
-    
+
     /**
      * The classes loaded from the app context are in fact proxies to the
      * OrcidProfileManagerImpl class, required for transactionality. However we

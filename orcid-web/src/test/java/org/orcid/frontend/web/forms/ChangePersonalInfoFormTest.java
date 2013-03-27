@@ -21,13 +21,11 @@ import static org.junit.Assert.assertEquals;
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 import org.orcid.jaxb.model.message.OrcidProfile;
+
 public class ChangePersonalInfoFormTest {
 
-    
-    
     @Test
-    public void testConvertFormToOrcidProfile() throws Exception
-    {
+    public void testConvertFormToOrcidProfile() throws Exception {
         OrcidProfile profile = new OrcidProfile();
         profile.setOrcid("4444-4444-4444-4446");
         ChangePersonalInfoForm changePersonalInfoForm = new ChangePersonalInfoForm(profile);
@@ -39,15 +37,14 @@ public class ChangePersonalInfoFormTest {
         changePersonalInfoForm.setOtherNamesVisibility("limited");
         changePersonalInfoForm.setBiography("my biography");
         changePersonalInfoForm.setKeywordsDelimited("The;Wicker;Fudd");
-        changePersonalInfoForm.setIsoCountryCode("UK"); 
+        changePersonalInfoForm.setIsoCountryCode("UK");
         changePersonalInfoForm.setWebsiteUrl("www.bbc.co.uk");
         changePersonalInfoForm.setWebsiteUrlText("Ok this might not be my site");
-        changePersonalInfoForm.mergeOrcidBioDetails(profile);  
-        
+        changePersonalInfoForm.mergeOrcidBioDetails(profile);
+
         String expected = IOUtils.toString(getClass().getResourceAsStream("change_personal_info_orcid_profile.xml"));
         String actual = profile.toString();
         assertEquals(expected, actual);
     }
-    
-    
+
 }

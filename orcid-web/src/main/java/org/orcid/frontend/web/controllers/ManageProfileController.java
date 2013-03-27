@@ -153,7 +153,7 @@ public class ManageProfileController extends BaseWorkspaceController {
         ModelAndView mav = rebuildManageView(tab);
         return mav;
     }
-   
+
     @RequestMapping(value = "/preferences", method = RequestMethod.POST)
     public ModelAndView updatePreferences(@ModelAttribute("preferencesForm") PreferencesForm preferencesForm, RedirectAttributes redirectAttributes) {
         ModelAndView mav = new ModelAndView("redirect:/account?activeTab=options-tab");
@@ -739,6 +739,11 @@ public class ManageProfileController extends BaseWorkspaceController {
                 URI baseUri = OrcidWebUtils.getServerUriWithContextPath(request);
                 notificationManager.sendEmailAddressChangedNotification(updatedProfile, new Email(oldPrime), baseUri);
             }
+            
+            //also send verifcation email for new address
+            URI baseUri = OrcidWebUtils.getServerUriWithContextPath(request);
+            notificationManager.sendVerificationEmail(currentProfile, baseUri, email.getValue());
+
         }
         return email;
     }

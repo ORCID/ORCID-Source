@@ -91,8 +91,8 @@ public class OrcidAuthorizationCodeServiceImpl extends RandomValueAuthorizationC
         AuthorizationRequestHolder authorizationRequestHolder = getAuthorizationRequestHolderFromDetail(detail);
         OrcidOauth2AuthInfo authInfo = new OrcidOauth2AuthInfo(authorizationRequestHolder);
         if (detail == null) {
-            LOGGER.info("No such authorization code to remove: code={}, clientId={}, scopes={}, userOrcid={}",
-                    new Object[] { code, authInfo.getClientId(), authInfo.getScopes(), authInfo.getUserOrcid() });
+            LOGGER.info("No such authorization code to remove: code={}, clientId={}, scopes={}, userOrcid={}", new Object[] { code, authInfo.getClientId(),
+                    authInfo.getScopes(), authInfo.getUserOrcid() });
         } else {
             LOGGER.info("Removed authorization code: code={}, clientId={}, scopes={}, userOrcid={}", new Object[] { code, authInfo.getClientId(), authInfo.getScopes(),
                     authInfo.getUserOrcid() });

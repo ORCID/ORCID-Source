@@ -32,10 +32,8 @@ import java.io.Serializable;
 public enum SequenceType implements Serializable {
 
     @XmlEnumValue("first")
-    FIRST("first"),
-    @XmlEnumValue("additional")
+    FIRST("first"), @XmlEnumValue("additional")
     ADDITIONAL("additional");
-
 
     private final String value;
 
@@ -48,7 +46,7 @@ public enum SequenceType implements Serializable {
     }
 
     public static SequenceType fromValue(String v) {
-        for (SequenceType c: SequenceType.values()) {
+        for (SequenceType c : SequenceType.values()) {
             if (c.value.equals(v)) {
                 return c;
             }

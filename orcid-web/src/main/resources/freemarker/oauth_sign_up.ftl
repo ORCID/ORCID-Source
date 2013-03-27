@@ -19,7 +19,7 @@
 <@spring.bind "oAuthRegistrationForm.*" />
 <#if spring.status.errors.globalErrors?? && spring.status.errors.globalErrors?size &gt; 0>
 <div class="errorBox">
-    <div class="errorHead">Notice:</div>
+    <div class="errorHead">${springMacroRequestContext.getMessage("oauth_sign_up.notice")}</div>
     <div class="errorText">
         <@orcid.showGlobalErrorsUnescaped/>
     </div>
@@ -27,12 +27,12 @@
 </#if>
     <div class="span6">
     <div class="page-header">
-	    <h3>Don't have an iD? Register</h3>
+	    <h3>${springMacroRequestContext.getMessage("oauth_sign_up.h3donothaveid")}</h3>
 	</div>
         <form id="self-reg-form" class="" name="selfRegForm" action="<@spring.url '/oauth-signup'/>" method="post">
             <fieldset>
                 <div>
-                    <label for="givenNames">First name</label>
+                    <label for="givenNames">${springMacroRequestContext.getMessage("oauth_sign_up.labelfirstname")}</label>
                     <div >
                         <@spring.formInput "oAuthRegistrationForm.givenNames" 'class="input-xlarge"'/>
                         <span class="required">*</span>
@@ -40,7 +40,7 @@
                     </div>
                 </div>
                 <div>
-                    <label for="familyName">Last name</label>
+                    <label for="familyName">${springMacroRequestContext.getMessage("oauth_sign_up.labellastname")}</label>
                     <div >
                         <@spring.formInput "oAuthRegistrationForm.familyName" 'class="input-xlarge" name="lastName"'/>
                         <span class="required">*</span>
@@ -48,7 +48,7 @@
                     </div>
                 </div>
                  <div>
-                    <label for="email">Email</label>
+                    <label for="email">${springMacroRequestContext.getMessage("oauth_sign_up.labelemail")}</label>
                     <div >
                         <@spring.formInput "oAuthRegistrationForm.email" 'class="input-xlarge" name="email"'/>
                         <span class="required">*</span>
@@ -57,7 +57,7 @@
                     </div>
                 </div>
                 <div>
-                    <label for="confirmedEmail">Re-enter email</label>
+                    <label for="confirmedEmail">${springMacroRequestContext.getMessage("oauth_sign_up.labelreenteremail")}</label>
                     <div >
                         <@spring.formInput "oAuthRegistrationForm.confirmedEmail" 'class="input-xlarge" name="confirmedEmail"'/>
                         <span class="required">*</span>
@@ -65,7 +65,7 @@
                     </div>
                 </div>
                 <div>
-                    <label for="confirmedEmail">Password</label>
+                    <label for="confirmedEmail">${springMacroRequestContext.getMessage("oauth_sign_up.labelpassword")}</label>
                     <div >
                         <@spring.formPasswordInput "oAuthRegistrationForm.password" 'class="input-xlarge password-strength" name="confirmedEmail"'/>
                         <span class="required">*</span>
@@ -73,7 +73,7 @@
                     </div>
                 </div>
                  <div>
-                    <label for="confirmedEmail">Re-enter Password</label>
+                    <label for="confirmedEmail">${springMacroRequestContext.getMessage("oauth_sign_up.labelreenterpassword")}</label>
                     <div >
                         <@spring.formPasswordInput "oAuthRegistrationForm.confirmedPassword" 'class="input-xlarge" name="confirmedEmail"'/>
                         <span class="required">*</span>
@@ -81,37 +81,37 @@
                     </div>
                 </div>
                 <div style="margin-bottom: 20px; margin-top: 10px;">
-                     <label class="privacy-toggle-lbl">Default privacy for new works</label>
+                     <label class="privacy-toggle-lbl">${springMacroRequestContext.getMessage("oauth_sign_up.labeldefaultprivacy")}</label>
                      <label class="visibility-lbl">
                          <@spring.formSingleSelect "oAuthRegistrationForm.workVisibilityDefault", visibilities />
                      </label>
 					 <@orcid.privacy "" oAuthRegistrationForm.workVisibilityDefault 'btn-group privacy-group'/>
                      <div>
                         <label>
-                        You will be able to add information to your ORCID record about work that you have done. This privacy setting will apply to all works/publications added to your record. You can change this any time.
+                        ${springMacroRequestContext.getMessage("oauth_sign_up.labeladdinformationtoyourORCID")}
                         </label>
                     </div>
                 </div>                    
         		<div>
-        		    <label>Notification Email</label>
+        		    <label>${springMacroRequestContext.getMessage("oauth_sign_up.labelnotificationemail")}</label>
             		<div class="checky">
-                		<label class="checkbox"><@spring.formCheckbox "oAuthRegistrationForm.sendOrcidChangeNotifications"/>Send me notifications about changes to my ORCID Record.</label>
+                		<label class="checkbox"><@spring.formCheckbox "oAuthRegistrationForm.sendOrcidChangeNotifications"/>${springMacroRequestContext.getMessage("oauth_sign_up.labelsendmenotification")}</label>
         			</div>
         		</div>
         		<div>
             		<div class="checky">
-                		<label class="checkbox"><@spring.formCheckbox "oAuthRegistrationForm.sendOrcidNews"/>Send me information about events ORCID is sponsoring and ORCID news.</label>
+                		<label class="checkbox"><@spring.formCheckbox "oAuthRegistrationForm.sendOrcidNews"/>${springMacroRequestContext.getMessage("oauth_sign_up.labelsendmeinformation")}</label>
         			</div>
         		</div>                    		                                                                    
         		<div style="margin-top: 20px;">
-        		    <label>Terms of Use <span class="required">*</span></label>
+        		    <label>${springMacroRequestContext.getMessage("oauth_sign_up.labeltermsofuse")} <span class="required">*</span></label>
             		<div class="checky">
-                		<label class="checkbox"><@spring.formCheckbox "oAuthRegistrationForm.acceptTermsAndConditions"/>I consent to the <a href="${aboutUri}/privacy-policy">privacy policy</a> and <a href="${aboutUri}/legal">terms and conditions</a> of use, including allowing those who access the database to make commercial uses of the public data.</label>
+                		<label class="checkbox"><@spring.formCheckbox "oAuthRegistrationForm.acceptTermsAndConditions"/>${springMacroRequestContext.getMessage("oauth_sign_up.labeliconsent")} <a href="${aboutUri}/privacy-policy">${springMacroRequestContext.getMessage("oauth_sign_up.labelprivacypolish")}</a> ${springMacroRequestContext.getMessage("oauth_sign_up.labeland")} <a href="${aboutUri}/legal">${springMacroRequestContext.getMessage("oauth_sign_up.labeltermsandconditions")}</a> ${springMacroRequestContext.getMessage("oauth_sign_up.labeluseincluding")}</label>
                 		<@spring.showErrors "<br/>" "orcid-error"/>        
                 	</div>
         		</div>
             </fieldset>
-            <button class="btn btn-large btn-primary" type="submit">Register</button>
+            <button class="btn btn-large btn-primary" type="submit">${springMacroRequestContext.getMessage("oauth_sign_up.btnregister")}</button>
         </form>
     </div>
 

@@ -22,27 +22,26 @@ import java.util.List;
 import org.springframework.validation.ObjectError;
 
 public class Emails implements ErrorsInterface {
-	private List<Email> emails = null;
-	@SuppressWarnings("unused")
-	private static final long serialVersionUID = 1L;
-	
-	private List<String> errors = new ArrayList<String>();
+    private List<Email> emails = null;
+    @SuppressWarnings("unused")
+    private static final long serialVersionUID = 1L;
 
-	public List<String> getErrors() {
-		return errors;
-	}
+    private List<String> errors = new ArrayList<String>();
 
-	public void setErrors(List<String> errors) {
-		this.errors = errors;
-	}
+    public List<String> getErrors() {
+        return errors;
+    }
 
-	public List<Email> getEmails() {
-		return emails;
-	}
+    public void setErrors(List<String> errors) {
+        this.errors = errors;
+    }
 
-	public void setEmails(List<Email> emails) {
-		this.emails = emails;
-	}
+    public List<Email> getEmails() {
+        return emails;
+    }
 
+    public void setEmails(List<Email> emails) {
+        this.emails = emails;
+    }
 
 }

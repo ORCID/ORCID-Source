@@ -15,7 +15,6 @@
  * =============================================================================
  */
 
-
 package org.orcid.jaxb.model.clientgroup;
 
 import java.io.Serializable;
@@ -30,7 +29,6 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
 
 import org.orcid.jaxb.model.message.ScopePathType;
-
 
 /**
  * <p>Java class for anonymous complex type.
@@ -50,11 +48,9 @@ import org.orcid.jaxb.model.message.ScopePathType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = {
-    "value"
-})
+@XmlType(name = "", propOrder = { "value" })
 @XmlRootElement(name = "redirect-uri")
-public class RedirectUri implements Serializable{
+public class RedirectUri implements Serializable {
 
     /**
      * 
@@ -64,19 +60,17 @@ public class RedirectUri implements Serializable{
     @XmlSchemaType(name = "anyURI")
     protected String value;
     @XmlAttribute
-    protected List<ScopePathType>scope; 
+    protected List<ScopePathType> scope;
 
-    
     public RedirectUri() {
         super();
     }
-    
+
     public RedirectUri(String value) {
         super();
         setValue(value);
     }
 
-    
     /**
      * Gets the value of the value property.
      * 
@@ -112,21 +106,18 @@ public class RedirectUri implements Serializable{
     public List<ScopePathType> getScope() {
         return scope;
     }
-    
+
     public String getScopeAsSingleString() {
-        
+
         String allScopes = "";
-        
-        if (scope!=null && !scope.isEmpty()) 
-        {
-            allScopes=ScopePathType.getScopesAsSingleString(scope);
+
+        if (scope != null && !scope.isEmpty()) {
+            allScopes = ScopePathType.getScopesAsSingleString(scope);
         }
-        
+
         return allScopes;
-        
+
     }
-            
-       
 
     /**
      * Sets the value of the scope property.
@@ -167,7 +158,5 @@ public class RedirectUri implements Serializable{
             return false;
         return true;
     }
-    
-    
 
 }

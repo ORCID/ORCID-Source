@@ -127,7 +127,6 @@ public class DefaultPermissionCheckerTest extends DBUnitTest {
     private OrcidMessage getOrcidMessage() throws JAXBException {
         JAXBContext context = JAXBContext.newInstance(OrcidMessage.class);
         Unmarshaller unmarshaller = context.createUnmarshaller();
-        return (OrcidMessage) unmarshaller.unmarshal(DefaultPermissionCheckerTest.class.getResourceAsStream(
-                "/orcid-full-message-no-visibility-latest.xml"));
+        return (OrcidMessage) unmarshaller.unmarshal(DefaultPermissionCheckerTest.class.getResourceAsStream("/orcid-full-message-no-visibility-latest.xml"));
     }
 }

@@ -49,8 +49,8 @@ public class OrcidBioSearchValidator implements ConstraintValidator<ValidOrcidBi
 
         // if any field other than the orcid is populated, it's eligible for
         // validation
-        return isAtLeastOneField2Chars(searchOrcidBioForm.getFamilyName(), searchOrcidBioForm.getGivenName(), searchOrcidBioForm.getInstitutionName(),
-                searchOrcidBioForm.getKeyword());
+        return isAtLeastOneField2Chars(searchOrcidBioForm.getFamilyName(), searchOrcidBioForm.getGivenName(), searchOrcidBioForm.getInstitutionName(), searchOrcidBioForm
+                .getKeyword());
 
     }
 

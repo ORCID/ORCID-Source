@@ -21,7 +21,6 @@
 // Generated on: 2012.08.03 at 11:47:41 AM BST 
 //
 
-
 package org.orcid.jaxb.model.message;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -34,7 +33,6 @@ import javax.xml.bind.annotation.XmlType;
 import org.apache.commons.lang.StringUtils;
 
 import java.io.Serializable;
-
 
 /**
  * <p>Java class for anonymous complex type.
@@ -58,10 +56,7 @@ import java.io.Serializable;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = {
-    "urlName",
-    "url"
-})
+@XmlType(name = "", propOrder = { "urlName", "url" })
 @XmlRootElement(name = "researcher-url")
 public class ResearcherUrl implements Comparable<ResearcherUrl>, Serializable {
 
@@ -72,12 +67,11 @@ public class ResearcherUrl implements Comparable<ResearcherUrl>, Serializable {
     @XmlElement(name = "url-name")
     protected UrlName urlName;
     protected Url url;
-      
 
     public ResearcherUrl() {
         super();
     }
-    
+
     public ResearcherUrl(Url url) {
         super();
         this.url = url;
@@ -132,7 +126,7 @@ public class ResearcherUrl implements Comparable<ResearcherUrl>, Serializable {
     }
 
     @Override
-    public int compareTo(ResearcherUrl researcherUrl) {        
+    public int compareTo(ResearcherUrl researcherUrl) {
         if (researcherUrl == null || StringUtils.isBlank(researcherUrl.getUrl().getValue())) {
             return -1;
         } else if (url == null || StringUtils.isBlank(url.getValue())) {

@@ -39,7 +39,7 @@ import static junit.framework.Assert.assertEquals;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:orcid-audit-context.xml" })
-public class AuditEventDaoTest  {
+public class AuditEventDaoTest {
 
     @Resource(name = "auditEventDao")
     private AuditEventDao auditEventDao;
@@ -72,7 +72,5 @@ public class AuditEventDaoTest  {
         assertEquals(Long.valueOf(1), auditEventDao.count());
         auditEventDao.removeAll();
     }
-
-
 
 }

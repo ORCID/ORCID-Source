@@ -21,10 +21,10 @@
         <div class="span3"></div>
         <div class="span9">
  
-<h2>Claim your ORCID Record</h2>
+<h2>${springMacroRequestContext.getMessage("claim.claimyourrecord")}</h2>
 <#if (profile.orcidHistory.source.sourceName.content)??>
 	<p>
-	    To make creating your ORCID record easier, ${profile.orcidHistory.source.sourceName.content} has already entered information into your account. Please review it.
+	    ${springMacroRequestContext.getMessage("claim.createyourrecordeasier")} ${profile.orcidHistory.source.sourceName.content} ${springMacroRequestContext.getMessage("claim.alreadyenterinfomation")}
 	    <br/>
 	    <br/>
 	</p>
@@ -39,7 +39,7 @@
 </#if>
 <form id="claim-form" class="form-sign-up" action="<@spring.url '/claim/${encryptedEmail}'/>" method="post" autocomplete="off">
                     <div class="control-group password-group">
-                        <label for="password" class="control-label">Password</label>
+                        <label for="password" class="control-label">${springMacroRequestContext.getMessage("claim.password")}</label>
                         <div class="relative">
                             <@spring.formPasswordInput "claimForm.password" 'class="input-xlarge password-strength" data-validate="{required:true}"'/>
                             <span class="required">*</span>
@@ -49,24 +49,24 @@
                                 <div class="arrow"></div>
                                 <div class="popover-content">
                                     <div class="help-block">
-                                        <p>Must be 8 or more characters and contain:</p>
+                                        <p>${springMacroRequestContext.getMessage("claim.must8morecharacters")}</p>
                                         <ul>
-                                            <li>at least 1 numeral: 0 - 9</li>
-                                            <li>at least 1 of the following:</li>
+                                            <li>${springMacroRequestContext.getMessage("claim.atleast09")}</li>
+                                            <li>${springMacroRequestContext.getMessage("claim.atleastfollowing")}</li>
                                             <ul>
-                                            	<li>alpha character, case-sensitive a-Z</li>
-                                            	<li>any of the following symbols:<br /> ! @ # $ % ^ * ( ) ~ `{ } [ ] | \ &amp; _</li>
+                                            	<li>${springMacroRequestContext.getMessage("claim.alphacharactercase")}</li>
+                                            	<li>${springMacroRequestContext.getMessage("claim.anyofsymbols")}<br /> ! @ # $ % ^ * ( ) ~ `{ } [ ] | \ &amp; _</li>
                                             </ul>
-                                            <li>optionally the space character, i.e ' ' and other punctuation such as . , ;</li>
+                                            <li>${springMacroRequestContext.getMessage("claim.optionallyspacecharacter")}</li>
                                         </ul>                                       
-                                        <p>Example: sun% moon2</p>
+                                        <p>${springMacroRequestContext.getMessage("claim.examplesunmoon")}</p>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                       <div>
-                        <label for="password" class="control-label">Confirm password</label>
+                        <label for="password" class="control-label">${springMacroRequestContext.getMessage("claim.confirmpassword")}</label>
                         <div class="relative">
                             <@spring.formPasswordInput "claimForm.retypedPassword" 'class="input-xlarge" data-validate="{required:true, equalTo:\'#password\'}"'/>
                             <span class="required">*</span>
@@ -75,14 +75,14 @@
                     </div>
 
                     <div style="margin-bottom: 20px; margin-top: 10px;">
-                        <label class="privacy-toggle-lbl">Default privacy for new works</label>
+                        <label class="privacy-toggle-lbl">${springMacroRequestContext.getMessage("claim.defaultprivacynewworks")}</label>
                         <label class="visibility-lbl">
                             <@spring.formSingleSelect "claimForm.workVisibilityDefault", visibilities />
                         </label>
                         <@orcid.privacy "" claimForm.workVisibilityDefault 'btn-group privacy-group'/>
                         <div  style="width: 480px;">
                             <label>
-                                You will be able to add information to your ORCID record about work that you have done. This privacy setting will apply to all works/publications added to your record. You can change this any time.
+                                ${springMacroRequestContext.getMessage("claim.youwilladdinformation")}
                             </label>
                         </div>
                     </div>                    
@@ -90,14 +90,14 @@
 
                <div style="margin-bottom: 15px;">
                     <div class="relative">
-                        <label>Notification Email</label>
+                        <label>${springMacroRequestContext.getMessage("claim.notificationemail")}</label>
                         <label class="checkbox">
                             <@spring.formCheckbox "claimForm.sendOrcidChangeNotifcations"/>
-                            Send me notifications about changes to my ORCID Record.
+                            ${springMacroRequestContext.getMessage("claim.sendmenotificationchange")}
                         </label>
                         <label class="checkbox">
                             <@spring.formCheckbox "claimForm.sendOrcidNews"/>
-                            Send me information about events ORCID is sponsoring and ORCID news.
+                            ${springMacroRequestContext.getMessage("claim.sendmeinformationabout")}
                         </label>
                         </div>
                         </div>
@@ -106,13 +106,13 @@
                         <label>Terms of Use <span class="required">*</span></label>
                         <label class="checkbox" style="width: 480px;">
                             <@spring.formCheckbox "claimForm.acceptTermsAndConditions"/>
-                            I consent to the <a href="${aboutUri}/footer/privacy-policy">privacy policy</a> and <a href="${aboutUri}/content/orcid-terms-use">terms and conditions</a> of use, including allowing those who access the database to make commercial uses of the public data.</p>
+                            ${springMacroRequestContext.getMessage("claim.Iconsenttothe")} <a href="${aboutUri}/footer/privacy-policy">${springMacroRequestContext.getMessage("claim.privacypolicy")}</a> ${springMacroRequestContext.getMessage("claim.and")} <a href="${aboutUri}/content/orcid-terms-use">${springMacroRequestContext.getMessage("claim.termsandconditions")}</a> ${springMacroRequestContext.getMessage("claim.ofuseincluding")}</p>
                             <@spring.showErrors "<br/>" "orcid-error"/>
                         </label>
                     </div>
                 </div>   
                 <div class="relative">
-                      <button type="submit" class="btn btn-primary">Claim</button>
+                      <button type="submit" class="btn btn-primary">${springMacroRequestContext.getMessage("claim.btnClaim")}</button>
                 </div>           
  
   </form>

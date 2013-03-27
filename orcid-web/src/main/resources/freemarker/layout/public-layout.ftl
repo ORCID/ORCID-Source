@@ -43,9 +43,9 @@
                     <form id="form-search" action="${aboutUri}/search/node" method="POST">
                         <input type="search" name="keys" placeholder="${springMacroRequestContext.getMessage("public-layout.search")}" />
                         <fieldset class="search_options">
-                            <input type="radio" name="huh_radio" id="filter_registry" value="registry" checked />
+                            <input type="radio" name="huh_radio" id="filter_registry" value="${springMacroRequestContext.getMessage('layout.public-layout.registry')}" checked />
                             <label for="filter_registry">${springMacroRequestContext.getMessage("public-layout.search.choice.registry")}</label>
-                            <input type="radio" name="huh_radio" id="filter_website" value="website" />
+                            <input type="radio" name="huh_radio" id="filter_website" value="${springMacroRequestContext.getMessage('layout.public-layout.website')}" />
                             <label for="filter_website">${springMacroRequestContext.getMessage("public-layout.search.choice.website")}</label>
                         </fieldset>
                         <div class="conditions">

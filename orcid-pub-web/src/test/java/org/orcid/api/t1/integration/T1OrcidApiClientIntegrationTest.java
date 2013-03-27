@@ -183,5 +183,4 @@ public class T1OrcidApiClientIntegrationTest {
         assertEquals(ORCID, orcidMessage.getOrcidProfile().getOrcid().getValue());
     }
 
-   
 }

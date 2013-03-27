@@ -83,7 +83,6 @@ public class AuditEventConsumer implements Runnable {
         }
     }
 
-
     public void shutdownNow() {
         LOGGER.info("Shutting down the audit event executor");
         List<Runnable> runnables = executorService.shutdownNow();

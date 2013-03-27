@@ -23,10 +23,10 @@
         <h3 class="work-title"><b>${(work.title)!}</b><#if (work.subtitle)??>: <span class="work-subtitle">${(work.subtitle)!""}</span></#if><#if (work.year)??> <#if (work.month)?? && work.month?has_content><@orcid.month work.month />-</#if>${work.year}</#if></h3>
         <label class="work-delete-lbl">
             <div class="delete-group">
-                <a href="#" class="delete-work">delete</a>
+                <a href="#" class="delete-work">${springMacroRequestContext.getMessage("current_works_list.delete")}</a>
                 <span class="alert hide form-change-alert deleted-alert">
-                    <a href="#" class="confirm-link">Confirm (requires save) </a> |
-                    <a href="#" class="deny-link">Abandon</a></span>
+                    <a href="#" class="confirm-link">${springMacroRequestContext.getMessage("current_works_list.confirmrequiressave")}</a> |
+                    <a href="#" class="deny-link">${springMacroRequestContext.getMessage("current_works_list.Abandon")}</a></span>
                 </span>
             </div>
         </label>
@@ -34,7 +34,7 @@
             <#list work.currentWorkExternalIds as ei>
             <#-- @ftlvariable name="ei" type="org.orcid.frontend.web.forms.CurrentWorkExternalId" -->
                 <#if (ei.type = 'doi') && (ei.id)??>
-                    <span class="work-metadata">DOI: <a href="http://dx.doi.org/${ei.id}">${ei.id}</a></span>
+                    <span class="work-metadata">${springMacroRequestContext.getMessage("current_works_list.DOI")} <a href="http://dx.doi.org/${ei.id}">${ei.id}</a></span>
                     <img onclick="javascript:window.open(&quot;http://dx.doi.org/${ei.id}&quot;)" style="cursor:pointer;" src="<@spring.url '/static/img/view_full_text.gif'/>"><input type="hidden" value="null" name="artifacts[0].destApp"><input type="hidden" value="JOUR" name="artifacts[0].type"><input type="hidden" value="W" name="artifacts[0].uploadedBy">
                 </#if>
             </#list>

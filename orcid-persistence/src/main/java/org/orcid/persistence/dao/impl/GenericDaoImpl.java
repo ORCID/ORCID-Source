@@ -38,7 +38,7 @@ import java.util.List;
 @PersistenceUnit(name = "entityManagerFactory")
 public class GenericDaoImpl<E extends OrcidEntity<I>, I extends Serializable> implements GenericDao<E, I> {
 
-    @PersistenceContext(unitName="orcid")
+    @PersistenceContext(unitName = "orcid")
     protected EntityManager entityManager;
 
     private Class<E> clazz;

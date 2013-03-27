@@ -45,7 +45,7 @@ import java.lang.annotation.Target;
  *         "http://stackoverflow.com/questions/1972933/cross-field-validation-with-hibernate-validator-jsr-303"
  *         >stackoverflow.com</a>
  */
-@Target({ TYPE, ANNOTATION_TYPE })
+@Target( { TYPE, ANNOTATION_TYPE })
 @Retention(RUNTIME)
 @Constraint(validatedBy = StringMatchIgnoreCaseValidator.class)
 @Documented
@@ -72,7 +72,7 @@ public @interface StringMatchIgnoreCase {
      * 
      * @see StringMatchIgnoreCase
      */
-    @Target({ TYPE, ANNOTATION_TYPE })
+    @Target( { TYPE, ANNOTATION_TYPE })
     @Retention(RUNTIME)
     @Documented
     @interface List {

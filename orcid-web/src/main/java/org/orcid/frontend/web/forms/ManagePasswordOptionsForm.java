@@ -30,10 +30,9 @@ import javax.validation.constraints.Pattern;
  * @author jamesb
  * 
  */
-@FieldMatch.List({ @FieldMatch(first = "passwordOptionsForm.password", second = "passwordOptionsForm.retypedPassword", message = "The password and confirm password field must match") })
+@FieldMatch.List( { @FieldMatch(first = "passwordOptionsForm.password", second = "passwordOptionsForm.retypedPassword", message = "The password and confirm password field must match") })
 public class ManagePasswordOptionsForm {
 
-   
     private PasswordOptionsForm passwordOptionsForm;
 
     public ManagePasswordOptionsForm() {
@@ -50,7 +49,7 @@ public class ManagePasswordOptionsForm {
         this.passwordOptionsForm.setPassword(password);
     }
 
-    @Pattern(regexp =  OrcidPasswordConstants.ORCID_PASSWORD_REGEX, message = "The confirm password field is invalid.")
+    @Pattern(regexp = OrcidPasswordConstants.ORCID_PASSWORD_REGEX, message = "The confirm password field is invalid.")
     public String getRetypedPassword() {
         return this.getPasswordOptionsForm().getRetypedPassword();
     }

@@ -14,6 +14,10 @@
     <name>ORCID - Model</name>
     <description>Container for all classes that will be used to marshal and unmarshal XML/JSON from the API</description>
 
+    <properties>
+        <main.basedir>${project.parent.basedir}</main.basedir>
+    </properties>
+
     <dependencies>
         <!-- Internal dependencies -->
         <!-- External dependencies -->
@@ -38,7 +42,6 @@
                 <groupId>com.mycila.maven-license-plugin</groupId>
                 <artifactId>maven-license-plugin</artifactId>
                 <configuration>
-                    <header>${project.basedir}/../SHORT_LICENSE.txt</header>
                     <mapping>
                         <xjb>XML_STYLE</xjb>
                     </mapping>

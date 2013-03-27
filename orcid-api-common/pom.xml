@@ -13,6 +13,10 @@
     <name>ORCID - API Commons</name>
     <description>Common classes and resources shared between the two API tiers.</description>
 
+    <properties>
+        <main.basedir>${project.parent.basedir}</main.basedir>
+    </properties>
+
     <dependencies>
         <!-- Internal dependencies -->
 
@@ -93,7 +97,6 @@
                 <groupId>com.mycila.maven-license-plugin</groupId>               
                 <artifactId>maven-license-plugin</artifactId>                                                     
                 <configuration>
-                    <header>${project.basedir}/../SHORT_LICENSE.txt</header>
                     <excludes>
                         <exclude>**/.gitignore</exclude>
                         <exclude>**/rebel.xml</exclude>

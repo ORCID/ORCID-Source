@@ -21,7 +21,6 @@
 // Generated on: 2012.10.04 at 01:24:28 PM BST 
 //
 
-
 package org.orcid.jaxb.model.message;
 
 import java.io.Serializable;
@@ -30,7 +29,6 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
-
 
 /**
  * Element to contain a citation of a given type
@@ -53,10 +51,7 @@ import javax.xml.bind.annotation.XmlType;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "citation", propOrder = {
-        "workCitationType",
-        "citation"
-})
+@XmlType(name = "citation", propOrder = { "workCitationType", "citation" })
 public class Citation implements Serializable {
 
     @XmlElement(name = "work-citation-type", required = true, defaultValue = "formatted-unspecified")
@@ -75,7 +70,6 @@ public class Citation implements Serializable {
     public Citation(String citation) {
         this(citation, CitationType.FORMATTED_UNSPECIFIED);
     }
-
 
     /**
      * Gets the value of the workCitationType property.

@@ -36,6 +36,7 @@ the software.
         <servlet.port>9437</servlet.port>
         <ajp.port>9438</ajp.port>
         <metrics.version>2.1.2</metrics.version>
+        <main.basedir>${project.basedir}</main.basedir>
     </properties>
 
     <modules>
@@ -94,6 +95,14 @@ the software.
 
     <build>
         <plugins>
+	     <plugin>
+  		<groupId>com.googlecode.maven-java-formatter-plugin</groupId>
+  		<artifactId>maven-java-formatter-plugin</artifactId>
+  		<version>0.3.1</version>
+  		<configuration>
+    		    <configFile>${main.basedir}/eclipse_formatter.xml</configFile>
+  		</configuration>
+	    </plugin>
             <plugin>
                <groupId>org.apache.maven.plugins</groupId>
                <artifactId>maven-war-plugin</artifactId>
@@ -182,22 +191,45 @@ the software.
                     <artifactId>maven-license-plugin</artifactId>
                     <version>1.9.0</version>
                     <configuration>
-                        <header>${basedir}/SHORT_LICENSE.txt</header>
+                        <header>${main.basedir}/SHORT_LICENSE.txt</header>
                         <failIfMissing>true</failIfMissing>
                         <aggregate>false</aggregate>
                         <strictCheck>true</strictCheck>
+                        <mapping>
+                            <xjb>XML_STYLE</xjb>
+                        </mapping>
                         <excludes>
-                            <exclude>header.txt</exclude>
-                            <exclude>**/src/test/resources/**</exclude>
+                        	<exclude>**/src/main/resources/data/AuditEventData.xml</exclude>
+                        	<exclude>**/src/main/resources/orcid-client-group-for-db-unit-data.xml</exclude>
+                        	<exclude>**/src/main/webapp/static/ORCID-Fonts-Dot-Com/**</exclude>
+                        	<exclude>**/src/main/webapp/static/javascript/plugins.js</exclude>
+                        	<exclude>**/src/main/webapp/static/javascript/modernizr.js</exclude>
+                        	<exclude>**/src/main/webapp/static/css/jquery-*.css</exclude>
+                        	<exclude>**/src/main/webapp/static/javascript/jquery-*.js</exclude>
+                        	<exclude>**/src/main/webapp/solr/**/*.txt</exclude>
+                        	<exclude>**/src/main/webapp/solr/**/*.xml</exclude>
+                            <exclude>**/src/test/resources/solr/conf/**</exclude>
+                            <exclude>**/src/test/resources/org/orcid/core/manager/example**</exclude>
+                            <exclude>**/src/test/resources/org/orcid/frontend/web/forms/**</exclude>
+                            <exclude>**.md</exclude>
+                        	<exclude>**/src/main/resources/**/*countries.txt</exclude>
+                        	<exclude>**/.gitignore</exclude>
+                        	<exclude>**/rebel.xml</exclude>
                             <exclude>**/src/main/webapp/**/**.xml</exclude>
-                            <exclude>.gitignore</exclude>
                             <exclude>.idea</exclude>
                             <exclude>.idea/**</exclude>
                             <exclude>**.xjb</exclude>
+                            <exclude>**.lock</exclude>
                             <exclude>atlassian-ide-plugin.xml</exclude>
                         </excludes>
                     </configuration>
                     <executions>
+                        <execution>
+                            <phase>test</phase>
+                            <goals>
+                                <goal>check</goal>
+                            </goals>
+                        </execution>
                         <execution>
                             <id>check-headers</id>
                             <phase>verify</phase>

@@ -21,7 +21,6 @@
 // Generated on: 2012.08.13 at 11:03:27 AM BST 
 //
 
-
 package org.orcid.jaxb.model.message;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -30,7 +29,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
 import java.io.Serializable;
-
 
 /**
  * <p>Java class for anonymous complex type.
@@ -49,19 +47,17 @@ import java.io.Serializable;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = {
-    "content"
-})
+@XmlType(name = "", propOrder = { "content" })
 @XmlRootElement(name = "work-external-identifier-id")
 public class WorkExternalIdentifierId implements Serializable {
 
     @XmlValue
     protected String content;
-    
+
     public WorkExternalIdentifierId() {
-        super();      
+        super();
     }
-    
+
     public WorkExternalIdentifierId(String content) {
         super();
         this.content = content;

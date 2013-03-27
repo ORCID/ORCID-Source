@@ -53,6 +53,39 @@ var OrcidCookie = new function () {
     };
 };
 
+var OrcidGA = function () {	
+	this.gaPush = function (trackArray) {
+		if (typeof _gaq != 'undefined') {
+			_gaq.push(trackArray);
+		} else {
+			// if it's a function and _gap isn't available run (typically only on dev)
+			if (typeof trackArray === 'function') trackArray();
+			console.log("no _gap.push for " + trackArray);
+		}
+	};
+	
+    // Delays are async functions used to make sure event track que has cleared
+	// See https://developers.google.com/analytics/devguides/collection/gajs/methods/gaJSApi_gaq
+	this.gaFormSumbitDelay = function ($el) {
+		if (!$el instanceof jQuery) {
+			$el = $(el);
+		}
+		this.gaPush(function() {
+			$el.submit();
+		});
+		return false;
+	};
+	
+	this.windowLocationHrefDelay = function (url) {
+		this.gaPush(function() {
+			window.location.href = url; 
+		});
+		return false;
+	};
+};
+
+var orcidGA = new OrcidGA();
+
 var OrcidMessage = function (messageUrl) {
 	this.localData = null;
 	this.load(messageUrl);
@@ -115,6 +148,8 @@ function checkOrcidLoggedIn() {
 
 var OM = OrcidMessage;
 
+
+// jquery ready
 $(function () {
 	
 	// Common
@@ -155,6 +190,18 @@ $(function () {
  
     }
     
+    $('#confirmationForm').submit(function() {
+    	if (window.location != window.parent.location) {
+    		parent.$.colorbox.close();
+    		this.target = '_blank';
+    	}
+    	return true;
+    });
+ 
+    $('#denialForm').submit(function() {
+    	if (window.location != window.parent.location) parent.$.colorbox.close();
+    	return true;
+    });
     
     // if on signin or register do cookie check
 	if ( basePath.startsWith(baseUrl + 'register') 
@@ -204,10 +251,24 @@ $(function () {
 		$(this).toggleClass('open');
 	});
 
+	$('#self-reg-form').submit(function() {
+		if (basePath.startsWith(baseUrl + 'oauth')) 
+		    orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'New-Registration-Submit', 'OAuth']);
+	    else if (basePath.startsWith(baseUrl + 'claim/'))
+	    	orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'New-Registration-Submit', 'Claim']);
+	    else
+	    	orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'New-Registration-Submit', 'Website']);	
+		return true;
+	});
+	
 	$('form#loginForm').submit(function() {
 		if($('form#loginForm').attr('disabled')){
 			return false;
 		}
+		if (basePath.startsWith(baseUrl + 'oauth')) 
+		    orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'Sign-In-Submit', 'OAuth']);
+	    else
+	    	orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'Sign-In-Submit', 'Website']);	
 		$('form#loginForm').attr('disabled', 'disabled');
 		$('#ajax-loader').show();
 		$.ajax({
@@ -219,7 +280,11 @@ $(function () {
 	        	$('#ajax-loader').hide();
 	        	$('form#loginForm').removeAttr('disabled');
 	            if (data.success) {
-	               window.location.href = data.url;
+	        	    if (basePath.startsWith(baseUrl + 'oauth/signin')) 
+	        		    orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'Sign-In', 'OAuth']);
+	        	    else
+	        	    	orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'Sign-In', 'Website']);
+	        	    orcidGA.windowLocationHrefDelay(data.url);
 	            } else {
 	            	if ($('form#loginForm #login-error-mess').length == 0) {
 	            		var message;
@@ -282,10 +347,10 @@ $(function () {
 				e.preventDefault();
 				var f = toggle.closest('form');
 				var s;
+				var priAct = $(this).attr('href').replace("#","");
 				if (f.length && (f.attr('action') == 'save-current-works')) {
 					s = $('select', toggle.closest('label'));
-					var t = $.trim($(this).text().toLowerCase());
-					s.val(t);
+					s.val(priAct);
                     showChangeMessage();
                     $el.removeClass('open');
                     toggle.removeClass(current).addClass(getBtnClass(this));
@@ -293,7 +358,7 @@ $(function () {
 				} else {
 					var s = toggle.closest('.privacy-tool').prev('.visibility-lbl').find('select');
 					if (s.length) {
-						s.val($.trim($(this).text().toLowerCase()));
+						s.val(priAct);
 					}
 					toggle.removeClass(current).addClass(getBtnClass(this));
 					toggle.html($(this).html());
@@ -533,6 +598,7 @@ $(function () {
 		var newLi = li.clone();
 		var privacyTemplate = $('#privacy-template');
 		var newPrivacy = privacyTemplate.clone();
+		newPrivacy.removeAttr('id');
 		newLi.append(newPrivacy);
 		newLi.find('.work-delete-lbl').show();
 		newLi.find(':input:not(:button)').each(function(index, value) {
@@ -565,8 +631,7 @@ $(function () {
 			var s;
 			if (f.length && (f.attr('action') == 'save-current-works')) {
 				s = $('select', toggle.closest('label'));
-				var t = $.trim($(this).text().toLowerCase());
-				s.val(t);
+				s.val($(this).attr('href').replace("#",""));
 				showChangeMessage();
 				priv.removeClass('open');
 				toggle.removeClass(current).addClass(getBtnClass(this));

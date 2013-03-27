@@ -44,7 +44,7 @@ import org.orcid.persistence.jpa.entities.keys.ClientRedirectUriPk;
 public class ClientRedirectUriEntity extends BaseEntity<ClientRedirectUriPk> implements Comparable<ClientRedirectUriEntity> {
 
     private static final long serialVersionUID = 1L;
-    private String redirectUri;  
+    private String redirectUri;
     private String predefinedClientScope;
     private ClientDetailsEntity clientDetailsEntity;
 
@@ -54,8 +54,7 @@ public class ClientRedirectUriEntity extends BaseEntity<ClientRedirectUriPk> imp
     public ClientRedirectUriEntity(String redirectUri, ClientDetailsEntity clientDetailsEntity) {
         this.redirectUri = redirectUri;
         this.clientDetailsEntity = clientDetailsEntity;
-    }   
-    
+    }
 
     /**
      * As this uses a composite key this is ignored. Always returns null
@@ -76,14 +75,13 @@ public class ClientRedirectUriEntity extends BaseEntity<ClientRedirectUriPk> imp
 
     public void setRedirectUri(String redirectUri) {
         this.redirectUri = redirectUri;
-    }   
+    }
 
     @Column(name = "predefined_client_redirect_scope", length = 150)
     public String getPredefinedClientScope() {
         return predefinedClientScope;
     }
 
-    
     public void setPredefinedClientScope(String predefinedClientScope) {
         this.predefinedClientScope = predefinedClientScope;
     }

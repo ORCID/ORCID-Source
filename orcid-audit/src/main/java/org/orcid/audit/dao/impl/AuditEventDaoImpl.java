@@ -58,5 +58,4 @@ public class AuditEventDaoImpl implements AuditEventDao {
         query.executeUpdate();
     }
 
-
 }

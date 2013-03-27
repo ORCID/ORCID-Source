@@ -77,7 +77,7 @@ public class DateUtils {
         return createDataTypeFactory().newXMLGregorianCalendar(gregorianCalendar);
 
     }
-    
+
     public static XMLGregorianCalendar convertToXMLGregorianCalendarNoTimeZoneNoMillis(Date date) {
         XMLGregorianCalendar basicCalender = convertToXMLGregorianCalendar(date);
         basicCalender.setTimezone(DatatypeConstants.FIELD_UNDEFINED);
@@ -133,9 +133,9 @@ public class DateUtils {
     }
 
     public static boolean olderThan(Date date, int days) {
-    	return date.getTime() < new Date().getTime() - days * 24 * 60 * 60 * 1000;
+        return date.getTime() < new Date().getTime() - days * 24 * 60 * 60 * 1000;
     }
-    
+
     private static String mapSeasonsAndQuartersToMonth(String month) {
         if (seasonsAndQuartersToMonth.containsKey(month)) {
             return seasonsAndQuartersToMonth.get(month);
@@ -143,7 +143,7 @@ public class DateUtils {
             return month;
         }
     }
- 
+
     private static DatatypeFactory createDataTypeFactory() {
         DatatypeFactory dataTypeFactory;
         try {

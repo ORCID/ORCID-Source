@@ -50,7 +50,6 @@ public class T1OrcidApiServiceImpl implements OrcidApiService<Response> {
     final static Counter T1_GET_REQUESTS = Metrics.newCounter(T1OrcidApiServiceImpl.class, "T1-GET-REQUESTS");
     final static Counter T1_SEARCH_REQUESTS = Metrics.newCounter(T1OrcidApiServiceImpl.class, "T1-SEARCH-REQUESTS");
 
-
     final static Counter T1_SEARCH_RESULTS_NONE_FOUND = Metrics.newCounter(T1OrcidApiServiceImpl.class, "T1-SEARCH-RESULTS-NONE-FOUND");
     final static Counter T1_SEARCH_RESULTS_FOUND = Metrics.newCounter(T1OrcidApiServiceImpl.class, "T1-SEARCH-RESULTS-FOUND");
 

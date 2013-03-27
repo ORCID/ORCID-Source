@@ -11,6 +11,11 @@
     <packaging>war</packaging>
     <name>ORCID - Metrics</name> 
     <description>The web application that displays the metrics and health of the Orcid Components</description>
+
+    <properties>
+        <main.basedir>${project.parent.basedir}</main.basedir>
+    </properties>
+
     <url>http://maven.apache.org</url>
     <dependencies>
         <dependency>
@@ -66,17 +71,6 @@
                    <server>${tomcat.server.id}</server>
                    <path>${artifactID}</path>
 		   <update>true</update>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>com.mycila.maven-license-plugin</groupId>
-                <artifactId>maven-license-plugin</artifactId>
-                <configuration>
-                    <header>${project.basedir}/../SHORT_LICENSE.txt</header>
-                    <excludes>
-                       <exclude>**/.gitignore</exclude>
-                       <exclude>**/rebel.xml</exclude>
-                    </excludes>
                 </configuration>
             </plugin>
         </plugins>       
