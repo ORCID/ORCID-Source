@@ -52,8 +52,8 @@ import org.orcid.utils.DateUtils;
  * 
  */
 
-@FieldMatch(first = "password", second = "confirmedPassword", message = "The password and confirmed password must match")
-@StringMatchIgnoreCase(first = "email", second = "confirmedEmail", message = "The email and confirmed email must match")
+@FieldMatch(first = "password", second = "confirmedPassword")
+@StringMatchIgnoreCase(first = "email", second = "confirmedEmail")
 public class RegistrationForm implements Serializable {
 
     /**
@@ -83,7 +83,7 @@ public class RegistrationForm implements Serializable {
 
     private String workVisibilityDefault = Visibility.PUBLIC.value();
 
-    @NotBlank(message = "Please enter your first name.")
+    @NotBlank
     public String getGivenNames() {
         return givenNames;
     }
@@ -100,8 +100,8 @@ public class RegistrationForm implements Serializable {
         this.familyName = familyName;
     }
 
-    @NotBlank(message = "Please enter your e-mail address.")
-    @Email(message = "Invalid email address.")
+    @NotBlank
+    @Email
     public String getEmail() {
         return email;
     }
@@ -110,7 +110,7 @@ public class RegistrationForm implements Serializable {
         this.email = email;
     }
 
-    @Size(max = 0, message = "There was an error validating your input")
+    @Size(max = 0)
     public String getReferRegOrcid() {
         return antiSpam;
     }
@@ -149,7 +149,7 @@ public class RegistrationForm implements Serializable {
         this.sendOrcidChangeNotifications = sendOrcidChangeNotifications;
     }
 
-    @AssertTrue(message = "You must accept the terms and conditions.")
+    @AssertTrue
     public boolean isAcceptTermsAndConditions() {
         return acceptTermsAndConditions;
     }
@@ -158,7 +158,7 @@ public class RegistrationForm implements Serializable {
         this.acceptTermsAndConditions = acceptTermsAndConditions;
     }
 
-    @NotBlank(message = "Please enter a password")
+    @NotBlank
     public String getPassword() {
         return password;
     }
@@ -167,8 +167,8 @@ public class RegistrationForm implements Serializable {
         this.password = password;
     }
 
-    @NotBlank(message = OrcidPasswordConstants.PASSWORD_REGEX_MESSAGE)
-    @Pattern(regexp = OrcidPasswordConstants.ORCID_PASSWORD_REGEX, message = OrcidPasswordConstants.PASSWORD_REGEX_MESSAGE)
+    @NotBlank
+    @Pattern(regexp = OrcidPasswordConstants.ORCID_PASSWORD_REGEX)
     public String getConfirmedPassword() {
         return confirmedPassword;
     }
