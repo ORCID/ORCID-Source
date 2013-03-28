@@ -59,7 +59,7 @@ jQuery(function () {
     // Aprils fools!
     var today = new Date();
     var aprSecond = new Date(2013,3,01);
-    var march31 = new Date(2013,2,26); // coded to march 26 for testing until final release
+    var march31 = new Date(2013,2,31); // coded to march 26 for testing until final release
     var isParent = (location == parent.location);
     var isAprilFools = (march31 < today && today < aprSecond);
     var hasAprilFoolsFlag = (window.location.search.indexOf("aprilFools=true") != -1);
@@ -109,14 +109,14 @@ jQuery(function () {
     	}
     	
     }
-        
-    if (isParent && (isAprilFools || hasAprilFoolsFlag)){ 
+
+	var afCookie = OrcidCookie.getCookie("aprilFools");
+    if (isParent && (isAprilFools || hasAprilFoolsFlag || afCookie)){ 
 
         var locale = 'en';
     	var localeCookie = OrcidCookie.getCookie("locale_v2");
     	if (localeCookie) locale = localeCookie;
     	
-    	var afCookie = OrcidCookie.getCookie("aprilFools");
     	console.log(afCookie);
     	if (!afCookie) {
     		//haven't been prank
