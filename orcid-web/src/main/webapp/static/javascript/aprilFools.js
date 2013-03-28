@@ -67,7 +67,7 @@ $(function () {
     
     function pingJavaAppAndDrupal(lang) {
  		//hack in case there are multipule locale cookies
-		OrcidCookie.setCookie("locale",lang);
+		OrcidCookie.setCookie("locale_v2",lang);
 
 		//set the java side
 		$.ajax({
@@ -93,7 +93,7 @@ $(function () {
     if (isParent && (isAprilFools || hasAprilFoolsFlag)){ 
 
         var locale = 'en';
-    	var localeCookie = OrcidCookie.getCookie("locale");
+    	var localeCookie = OrcidCookie.getCookie("locale_v2");
     	if (localeCookie) locale = localeCookie;
     	
     	var afCookie = OrcidCookie.getCookie("aprilFools");
