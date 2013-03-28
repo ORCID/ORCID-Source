@@ -121,6 +121,7 @@ jQuery(function () {
     	if (!afCookie) {
     		//haven't been prank
     		OrcidCookie.setCookie("aprilFools","pranked",14);
+    		pingJavaAppAndDrupal('orc');
     		reloadVsRefresh("?lang=orc");
     		return;
     	}
