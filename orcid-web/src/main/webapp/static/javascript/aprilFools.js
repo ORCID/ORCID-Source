@@ -120,8 +120,8 @@ $(function () {
     	if (afCookie != "goAway") {
 	    	$('body').append( $(
 	    			
-	    			"<div style='width: 960px;margin: 0 auto; position:fixed; bottom: 0px; left: 0px;'>" 
-	    			 +" <img src='"+aprilFoolsOrcidWeb+"/static/img/orc.png'  width='300' height='300' style='text-align:center; display: inline-block;float:left;margin-left: 10px;'/>" 
+	    			   "<div style='width: 300px;margin: 0 auto; position:fixed; bottom: 0px; left: 0px;'>" 
+	    			 + " <img src='"+aprilFoolsOrcidWeb+"/static/img/orc.png'  width='300' height='300' style='text-align:center; display: inline-block;float:left;margin-left: 10px;'/>" 
 	    			 + " <div style='position:absolute; left:80px; bottom: 170px;'>"
 	    			 + "		Read in:"
 	    			 + "		<select id='orcPreviewSel' style='width: 100px;'>"
@@ -130,9 +130,9 @@ $(function () {
 	    			 + "		</select>"
 	    			 + "	</p>"
 	    			 + " </div>"
-		    		 + "     <div style='position:absolute; left:270px; bottom: 0px; background: #ffffff;'>"
-		    		 + "        <a href='' id='orcPreviewGoAway'>I hate orcs, go away!</a>"
-		    		 + "     </div>"
+	    			 + "</div>"
+		    		 + "<div style=' widh: 100px; position: fixed; left:285px; bottom: 20px; background: #ffffff;'>"
+		    		 + "     <a href='' id='orcPreviewGoAway'>I hate orcs, go away!</a>"
 	    			 + "</div>"));
 	    			
 //	    			"<div style='width: 960px;margin: 0 auto; position:fixed; bottom: 50px; left: 0px;'>" 
