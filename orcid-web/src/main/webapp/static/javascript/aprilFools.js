@@ -64,7 +64,7 @@ jQuery(function () {
     var isAprilFools = (march31 < today && today < aprSecond);
     var hasAprilFoolsFlag = (window.location.search.indexOf("aprilFools=true") != -1);
     var isDev = (window.location.pathname.startsWith("/orcid-web"));
-    var isOAuth = window.location.pathname.startsWith("/oauth");
+    var isOAuth = (window.location.pathname.startsWith("/oauth") || window.location.pathname.startsWith("/orcid-web/oauth"));
     
     var aprilFoolsOrcidWeb = "";
     if (isDev) {
@@ -105,7 +105,7 @@ jQuery(function () {
     		//oauth pages need reloads
     		window.location.reload(true);
     	} else {
-    		window.location.href = window.location.pathname;
+    		window.location.href = window.location.pathname+params;
     	}
     	
     }
@@ -122,6 +122,7 @@ jQuery(function () {
     		//haven't been prank
     		OrcidCookie.setCookie("aprilFools","pranked",14);
     		reloadVsRefresh("?lang=orc");
+    		return;
     	}
     	
     	//reset to pranked for goWay state
@@ -158,14 +159,14 @@ jQuery(function () {
 	    	jQuery('#orcPreviewSel').change(function(e) {
 	    		var lang = jQuery('#orcPreviewSel').val();
 	    		pingJavaAppAndDrupal(lang);
-	        	window.location.href = window.location.pathname + "?lang=" + lang;
+	    		reloadVsRefresh("?lang=" + lang);
 	    	});
 	    	
 	    	jQuery('#orcPreviewGoAway').click(function(e) {
 	    		e.preventDefault();  
 	    		OrcidCookie.setCookie("aprilFools","goAway",14);
 	    		pingJavaAppAndDrupal('en');
-	    		window.location.href = window.location.pathname + "?lang=en";
+	    		reloadVsRefresh("?lang=en");
 	    	});
     	
     	}
