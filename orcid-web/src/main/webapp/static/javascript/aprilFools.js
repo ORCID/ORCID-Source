@@ -120,22 +120,37 @@ $(function () {
     	if (afCookie != "goAway") {
 	    	$('body').append( $(
 	    			
-	    			"<div style='width: 960px;margin: 0 auto; position:fixed; bottom: 50px; left: 0px;'>" 
-	    			 +" <img src='"+aprilFoolsOrcidWeb+"/static/img/lang.png'  width='393' height='397' style='text-align:center;display: inline-block;float:left;margin-left: 10px;'>" 
-	    			 + " <div style='background-image:url(\""+ aprilFoolsOrcidWeb +"/static/img/lang-tooltip.png\"); display: inline-block;height: 188px;margin-left: -38px;margin-top: 85px;padding-left: 8px;text-align: center;width: 334px;'>"
-	    			 + " 	<h3 style='font-weight: bold;margin-top: 35px;font-size: 27px;color: #999999;margin-bottom: 0px;'><b style='color: #006600;'>ORC</b>id.org has <br/> been captured!</h3>"
-	    			 + "	<p style='font-size: 22px;color: #999999;'>"
+	    			"<div style='width: 960px;margin: 0 auto; position:fixed; bottom: 0px; left: 0px;'>" 
+	    			 +" <img src='"+aprilFoolsOrcidWeb+"/static/img/orc.png'  width='300' height='300' style='text-align:center; display: inline-block;float:left;margin-left: 10px;'/>" 
+	    			 + " <div style='position:absolute; left:80px; bottom: 170px;'>"
 	    			 + "		Read in:"
-	    			 + "		<select id='orcPreviewSel' style='width: 120px;'>"
+	    			 + "		<select id='orcPreviewSel' style='width: 100px;'>"
 	    			 + "            <option value='en' " + enSelected + ">english</option>"
 		    		 + "            <option value='orc' " + orcSelected +">orc/troll</option>"
 	    			 + "		</select>"
 	    			 + "	</p>"
-	    			 + "     <div style='position: left:320px; bottom: 10px;'>"
-		    		 + "        <a href='' id='orcPreviewGoAway'>I hate tolls, go away!</a>"
-		    		 + "     </div>"
 	    			 + " </div>"
+		    		 + "     <div style='position:absolute; left:270px; bottom: 0px; background: #ffffff;'>"
+		    		 + "        <a href='' id='orcPreviewGoAway'>I hate orcs, go away!</a>"
+		    		 + "     </div>"
 	    			 + "</div>"));
+	    			
+//	    			"<div style='width: 960px;margin: 0 auto; position:fixed; bottom: 50px; left: 0px;'>" 
+//	    			 +" <img src='"+aprilFoolsOrcidWeb+"/static/img/lang.png'  width='393' height='397' style='text-align:center;display: inline-block;float:left;margin-left: 10px;'>" 
+//	    			 + " <div style='background-image:url(\""+ aprilFoolsOrcidWeb +"/static/img/lang-tooltip.png\"); display: inline-block;height: 188px;margin-left: -38px;margin-top: 85px;padding-left: 8px;text-align: center;width: 334px;'>"
+//	    			 + " 	<h3 style='font-weight: bold;margin-top: 35px;font-size: 27px;color: #999999;margin-bottom: 0px;'><b style='color: #006600;'>ORC</b>id.org has <br/> been captured!</h3>"
+//	    			 + "	<p style='font-size: 22px;color: #999999;'>"
+//	    			 + "		Read in:"
+//	    			 + "		<select id='orcPreviewSel' style='width: 120px;'>"
+//	    			 + "            <option value='en' " + enSelected + ">english</option>"
+//		    		 + "            <option value='orc' " + orcSelected +">orc/troll</option>"
+//	    			 + "		</select>"
+//	    			 + "	</p>"
+//	    			 + "     <div style='position: left:320px; bottom: 10px;'>"
+//		    		 + "        <a href='' id='orcPreviewGoAway'>I hate tolls, go away!</a>"
+//		    		 + "     </div>"
+//	    			 + " </div>"
+//	    			 + "</div>"));
 	    		    	
 	    	$('#orcPreviewSel').change(function(e) {
 	    		var lang = $('#orcPreviewSel').val();
