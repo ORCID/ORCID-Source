@@ -36,7 +36,7 @@ if(typeof OrcidCookie == "undefined") {
 	    	for (i=0;i<ARRcookies.length;i++) {
 	    	    x=ARRcookies[i].substr(0,ARRcookies[i].indexOf("="));
 	    	    y=ARRcookies[i].substr(ARRcookies[i].indexOf("=")+1);
-	    	    x=x.replace(/^\s+|\s+$/g,"");
+	    	    x=x.replace(/^\s+|\s+jQuery/g,"");
 	    	    if (x==c_name) {
 	    	       return unescape(y);
 	    	    }
@@ -54,7 +54,7 @@ if(typeof OrcidCookie == "undefined") {
 
 
 // jquery ready
-$(function () {
+jQuery(function () {
     
     // Aprils fools!
     var today = new Date();
@@ -70,7 +70,7 @@ $(function () {
 		OrcidCookie.setCookie("locale_v2",lang);
 
 		//set the java side
-		$.ajax({
+		jQuery.ajax({
 			url: aprilFoolsOrcidWeb + "/lang.json?lang="+lang,
 			async: false,
 			dataType: 'json',
@@ -80,7 +80,7 @@ $(function () {
 		});
 		
 		//set drupal side
-		$.ajax({
+		jQuery.ajax({
 			url: "/about?lang="+lang, // I would prefer a must shorter faster page (json maybe)
 			async: false,
 			dataType: 'json',
@@ -118,7 +118,7 @@ $(function () {
     	}
     	
     	if (afCookie != "goAway") {
-	    	$('body').append( $(
+	    	jQuery('body').append( jQuery(
 	    			
 	    			   "<div style='width: 300px;margin: 0 auto; position:fixed; bottom: 0px; left: 0px;'>" 
 	    			 + " <img src='"+aprilFoolsOrcidWeb+"/static/img/orc.png'  width='300' height='300' style='text-align:center; display: inline-block;float:left;margin-left: 10px;'/>" 
@@ -152,13 +152,13 @@ $(function () {
 //	    			 + " </div>"
 //	    			 + "</div>"));
 	    		    	
-	    	$('#orcPreviewSel').change(function(e) {
-	    		var lang = $('#orcPreviewSel').val();
+	    	jQuery('#orcPreviewSel').change(function(e) {
+	    		var lang = jQuery('#orcPreviewSel').val();
 	    		pingJavaAppAndDrupal(lang);
 	    		window.location.href = window.location.pathname + "?lang=" + lang + "&aprilFools=true";
 	    	});
 	    	
-	    	$('#orcPreviewGoAway').click(function(e) {
+	    	jQuery('#orcPreviewGoAway').click(function(e) {
 	    		e.preventDefault();  
 	    		OrcidCookie.setCookie("aprilFools","goAway",14);
 	    		pingJavaAppAndDrupal('en');
