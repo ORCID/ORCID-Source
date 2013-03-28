@@ -105,7 +105,7 @@ jQuery(function () {
     		//oauth pages need reloads
     		window.location.reload(true);
     	} else {
-    		window.location.href = window.location.pathname;
+    		window.location.href = window.location.pathname+params;
     	}
     	
     }
@@ -122,6 +122,7 @@ jQuery(function () {
     		//haven't been prank
     		OrcidCookie.setCookie("aprilFools","pranked",14);
     		reloadVsRefresh("?lang=orc");
+    		return;
     	}
     	
     	//reset to pranked for goWay state
