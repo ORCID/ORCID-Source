@@ -69,6 +69,17 @@ jQuery(function () {
  		//hack in case there are multipule locale cookies
 		OrcidCookie.setCookie("locale_v2",lang);
 
+		
+		//set drupal side
+		jQuery.ajax({
+			url: "/about?lang="+lang, // I would prefer a must shorter faster page (json maybe)
+			async: false,
+			dataType: 'json',
+			success:function(data) {
+				// do nothing
+	        }
+		});    	
+
 		//set the java side
 		jQuery.ajax({
 			url: aprilFoolsOrcidWeb + "/lang.json?lang="+lang,
@@ -86,16 +97,6 @@ jQuery(function () {
 			    }
 	        }
 		});
-		
-		//set drupal side
-		jQuery.ajax({
-			url: "/about?lang="+lang, // I would prefer a must shorter faster page (json maybe)
-			async: false,
-			dataType: 'json',
-			success:function(data) {
-				// do nothing
-	        }
-		});    	
     }
     
     if (isParent && (isAprilFools || hasAprilFoolsFlag)){ 
