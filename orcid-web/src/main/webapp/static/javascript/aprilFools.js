@@ -64,6 +64,7 @@ jQuery(function () {
     var isAprilFools = (march31 < today && today < aprSecond);
     var hasAprilFoolsFlag = (window.location.search.indexOf("aprilFools=true") != -1);
     var isDev = (window.location.pathname.startsWith("/orcid-web"));
+    var isOAuth = window.location.pathname.startsWith("/oauth");
     
     var aprilFoolsOrcidWeb = "";
     if (isDev) {
@@ -73,7 +74,7 @@ jQuery(function () {
     }
     
     
-    function pingJavaAppAndDrupal(lang, refresh) {
+    function pingJavaAppAndDrupal(lang) {
  		//hack in case there are multipule locale cookies
 		OrcidCookie.setCookie("locale_v2",lang);
 
@@ -94,19 +95,21 @@ jQuery(function () {
 			async: false,
 			dataType: 'json',
 			success:function(data) {
-			    if(refresh){
-			    }
 	        }
 		});
-
-        if( window.location.search.indexOf("aprilFools=true") != -1
-		           || window.location.search.indexOf("lang=") != -1){
-		    	    window.location.href = window.location.pathname;
-		} else {
-		   window.location.reload(true);
-		}   
+		
     }
     
+    function reloadVsRefresh(params) {
+    	if (isOAuth) {
+    		//oauth pages need reloads
+    		window.location.reload(true);
+    	} else {
+    		window.location.href = window.location.pathname;
+    	}
+    	
+    }
+        
     if (isParent && (isAprilFools || hasAprilFoolsFlag)){ 
 
         var locale = 'en';
@@ -118,7 +121,7 @@ jQuery(function () {
     	if (!afCookie) {
     		//haven't been prank
     		OrcidCookie.setCookie("aprilFools","pranked",14);
-    		window.location.href = window.location.pathname + "?lang=orc&aprilFools=true";
+    		reloadVsRefresh("?lang=orc");
     	}
     	
     	//reset to pranked for goWay state
@@ -151,33 +154,18 @@ jQuery(function () {
 		    		 + "<div style=' widh: 100px; position: fixed; left:285px; bottom: 20px; background: #ffffff;'>"
 		    		 + "     <a href='' id='orcPreviewGoAway'>I hate orcs, go away!</a>"
 	    			 + "</div>"));
-	    			
-//	    			"<div style='width: 960px;margin: 0 auto; position:fixed; bottom: 50px; left: 0px;'>" 
-//	    			 +" <img src='"+aprilFoolsOrcidWeb+"/static/img/lang.png'  width='393' height='397' style='text-align:center;display: inline-block;float:left;margin-left: 10px;'>" 
-//	    			 + " <div style='background-image:url(\""+ aprilFoolsOrcidWeb +"/static/img/lang-tooltip.png\"); display: inline-block;height: 188px;margin-left: -38px;margin-top: 85px;padding-left: 8px;text-align: center;width: 334px;'>"
-//	    			 + " 	<h3 style='font-weight: bold;margin-top: 35px;font-size: 27px;color: #999999;margin-bottom: 0px;'><b style='color: #006600;'>ORC</b>id.org has <br/> been captured!</h3>"
-//	    			 + "	<p style='font-size: 22px;color: #999999;'>"
-//	    			 + "		Read in:"
-//	    			 + "		<select id='orcPreviewSel' style='width: 120px;'>"
-//	    			 + "            <option value='en' " + enSelected + ">english</option>"
-//		    		 + "            <option value='orc' " + orcSelected +">orc/troll</option>"
-//	    			 + "		</select>"
-//	    			 + "	</p>"
-//	    			 + "     <div style='position: left:320px; bottom: 10px;'>"
-//		    		 + "        <a href='' id='orcPreviewGoAway'>I hate tolls, go away!</a>"
-//		    		 + "     </div>"
-//	    			 + " </div>"
-//	    			 + "</div>"));
 	    		    	
 	    	jQuery('#orcPreviewSel').change(function(e) {
 	    		var lang = jQuery('#orcPreviewSel').val();
-	    		pingJavaAppAndDrupal(lang, true);
+	    		pingJavaAppAndDrupal(lang);
+	        	window.location.href = window.location.pathname + "?lang=" + lang;
 	    	});
 	    	
 	    	jQuery('#orcPreviewGoAway').click(function(e) {
 	    		e.preventDefault();  
 	    		OrcidCookie.setCookie("aprilFools","goAway",14);
-	    		pingJavaAppAndDrupal('en', true);
+	    		pingJavaAppAndDrupal('en');
+	    		window.location.href = window.location.pathname + "?lang=en";
 	    	});
     	
     	}
