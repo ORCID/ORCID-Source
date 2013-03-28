@@ -32,22 +32,7 @@
                 </ul>
             </div>
         </#if>
-        <#if duplicateEmailFound?? && duplicateEmailFound>
-            <div class="alert alert-error">
-                    <strong><@orcid.unescapedMessage "orcid.frontend.verify.duplicate_email"/></strong>
-            </div>
-        </#if>  
-        <#if verificationEmailSent?? && verificationEmailSent>
-            <div class="alert alert-success">
-                    <strong><@spring.message "orcid.frontend.verify.email_sent"/></strong>
-            </div>
-        </#if>  
-        <#if emailUpdated?? && emailUpdated>
-            <div class="alert alert-success">
-                <strong><@spring.message "orcid.frontend.web.email_updated"/></strong>
-            </div>
-        </#if>  
-        <#if changesSaved?? && changesSaved>
+         <#if changesSaved?? && changesSaved>
             <div class="alert alert-success">
                 <strong><@spring.message "orcid.frontend.web.details_saved"/></strong>
             </div>
@@ -162,26 +147,10 @@
                         </#list>
                     </table>                     
              	</#if>
-             	<h3>${springMacroRequestContext.getMessage("manage_bio_settings.h3email")}</h3>
-             	<#if (changePersonalInfoForm.emailVerified)??>
-                 	<#if !changePersonalInfoForm.emailVerified >
-                	 	${springMacroRequestContext.getMessage("manage_bio_settings.emailnotverified")} <a href="<@spring.url '/manage/verify-email'/>"/>${springMacroRequestContext.getMessage("manage_bio_settings.here")}</a> ${springMacroRequestContext.getMessage("manage_bio_settings.toresend")}
-                	 </#if>
-                 	<#if emailAddressUpdated?? && emailAddressUpdated>
-                		<div class="alert alert-success">
-                    		<strong><@spring.message "orcid.frontend.web.email_updated"/></strong>
-                		</div>
-                	</#if>
-            	</#if>	
             	<div class="control-group">
                     <label for="websiteUrlText">${springMacroRequestContext.getMessage("manage_bio_settings.emailaddress")}</label>
                     <div class="relative">
-                        <@spring.formInput "changePersonalInfoForm.email", 'class="input-xlarge"'/>
-                        <label class="visibility-lbl">
-                            ${springMacroRequestContext.getMessage("manage_bio_settings.labelvisibility")}
-                            <@spring.formSingleSelect "changePersonalInfoForm.emailVisibility", visibilities />
-                        </label>
-                        <@orcid.privacy "" changePersonalInfoForm.emailVisibility! />
+                       <a href="<@spring.url '/account#editEmail'/>" onClick="parent.location.href=this.href; parent.$.colorbox.close(); return false;">${springMacroRequestContext.getMessage("settings.tdEdit")}</a>
                     </div>
                 </div>
              	 		
