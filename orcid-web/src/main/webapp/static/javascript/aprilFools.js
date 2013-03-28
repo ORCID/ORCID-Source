@@ -63,7 +63,15 @@ jQuery(function () {
     var isParent = (location == parent.location);
     var isAprilFools = (march31 < today && today < aprSecond);
     var hasAprilFoolsFlag = (window.location.search.indexOf("aprilFools=true") != -1);
-    var aprilFoolsOrcidWeb = window.location.pathname.startsWith("/orcid-web")?"/orcid-web":"";
+    var isDev = (window.location.pathname.startsWith("/orcid-web"));
+    
+    var aprilFoolsOrcidWeb = "";
+    if (isDev) {
+    	aprilFoolsOrcidWeb = 'http://' + window.location.host +  "/orcid-web";
+    } else {
+    	aprilFoolsOrcidWeb = 'https://' + window.location.host;
+    }
+    
     
     function pingJavaAppAndDrupal(lang, refresh) {
  		//hack in case there are multipule locale cookies
@@ -87,16 +95,16 @@ jQuery(function () {
 			dataType: 'json',
 			success:function(data) {
 			    if(refresh){
-			        if(window.location.search.indexOf("aprilFools=true") != -1
-			           || window.location.search.indexOf("lang=") != -1){
-			    	    window.location.href = window.location.pathname;
-			        }
-			        else{
-			            window.location.reload(true);
-			        }
 			    }
 	        }
 		});
+
+        if( window.location.search.indexOf("aprilFools=true") != -1
+		           || window.location.search.indexOf("lang=") != -1){
+		    	    window.location.href = window.location.pathname;
+		} else {
+		   window.location.reload(true);
+		}   
     }
     
     if (isParent && (isAprilFools || hasAprilFoolsFlag)){ 
