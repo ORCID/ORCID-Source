@@ -47,7 +47,7 @@ if(typeof OrcidCookie == "undefined") {
 	       var exdate=new Date();
 	       exdate.setDate(exdate.getDate() + exdays);
 	       var c_value=escape(value) + ((exdays==null) ? "" : "; expires="+exdate.toUTCString());
-	       document.cookie=c_name + "=" + c_value;
+	       document.cookie=c_name + "=" + c_value + ";path=/";
 	    };
 	};	
 }
@@ -65,7 +65,7 @@ jQuery(function () {
     var hasAprilFoolsFlag = (window.location.search.indexOf("aprilFools=true") != -1);
     var aprilFoolsOrcidWeb = window.location.pathname.startsWith("/orcid-web")?"/orcid-web":"";
     
-    function pingJavaAppAndDrupal(lang) {
+    function pingJavaAppAndDrupal(lang, refresh) {
  		//hack in case there are multipule locale cookies
 		OrcidCookie.setCookie("locale_v2",lang);
 
@@ -75,7 +75,15 @@ jQuery(function () {
 			async: false,
 			dataType: 'json',
 			success:function(data) {
-			    //do nothing
+			    if(refresh){
+			        if(window.location.search.indexOf("aprilFools=true") != -1
+			           || window.location.search.indexOf("lang=") != -1){
+			    	    window.location.href = window.location.pathname;
+			        }
+			        else{
+			            window.location.reload(true);
+			        }
+			    }
 	        }
 		});
 		
@@ -154,15 +162,13 @@ jQuery(function () {
 	    		    	
 	    	jQuery('#orcPreviewSel').change(function(e) {
 	    		var lang = jQuery('#orcPreviewSel').val();
-	    		pingJavaAppAndDrupal(lang);
-	    		window.location.href = window.location.pathname + "?lang=" + lang + "&aprilFools=true";
+	    		pingJavaAppAndDrupal(lang, true);
 	    	});
 	    	
 	    	jQuery('#orcPreviewGoAway').click(function(e) {
 	    		e.preventDefault();  
 	    		OrcidCookie.setCookie("aprilFools","goAway",14);
-	    		pingJavaAppAndDrupal('en');
-	    		window.location.href = window.location.pathname + "?lang=en";
+	    		pingJavaAppAndDrupal('en', true);
 	    	});
     	
     	}
