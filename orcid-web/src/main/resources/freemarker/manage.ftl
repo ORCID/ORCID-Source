@@ -191,7 +191,7 @@
                                             </#list>
                                         </#if>
                                     </td width="35%">                                    
-                                    <td width="5%"><button class="btn btn-link">${springMacroRequestContext.getMessage("manage.revokeaccess")}</button></td>
+                                    <td width="5%"><button class="btn btn-link" onclick="orcidGA.gaPush(['_trackEvent', 'Disengagement', 'Revoke_Access', 'OAuth ${applicationSummary.applicationName.content}']);">${springMacroRequestContext.getMessage("manage.revokeaccess")}</button></td>
                                 </form>
                             </tr>
                         </#list>

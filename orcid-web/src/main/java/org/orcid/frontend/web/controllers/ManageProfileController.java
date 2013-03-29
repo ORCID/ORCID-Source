@@ -654,7 +654,7 @@ public class ManageProfileController extends BaseWorkspaceController {
     @RequestMapping(value = "/confirm-deactivate-orcid", method = RequestMethod.GET)
     public ModelAndView confirmDeactivateOrcidAccount(HttpServletRequest request) {
         getCurrentUser().setRealProfile(orcidProfileManager.deactivateOrcidProfile(getCurrentUser().getRealProfile()));
-        ModelAndView deactivateOrcidView = new ModelAndView("redirect:/signout");
+        ModelAndView deactivateOrcidView = new ModelAndView("redirect:/signout#deactivated");
         return deactivateOrcidView;
     }
 

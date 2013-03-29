@@ -203,6 +203,11 @@ $(function () {
     	return true;
     });
     
+    // track when deactived people are pushed to signin page
+    if (window.location.href.endsWith("signin#deactivated")) {
+    	orcidGA.gaPush(['_trackEvent', 'Disengagement', 'Deactivate_Complete', 'Website']);
+    }
+    
     // if on signin or register do cookie check
 	if ( basePath.startsWith(baseUrl + 'register') 
     	 || basePath.startsWith(baseUrl + 'signin')
