@@ -25,6 +25,7 @@ import org.orcid.jaxb.model.message.*;
 import org.orcid.persistence.adapter.Jpa2JaxbAdapter;
 import org.orcid.persistence.jpa.entities.*;
 import org.orcid.utils.DateUtils;
+import org.springframework.beans.factory.annotation.Value;
 
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
@@ -52,6 +53,9 @@ import java.util.SortedSet;
  */
 
 public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
+    
+    @Value("${org.orcid.core.baseUri:}")
+    private String baseUri = null;
 
     private DatatypeFactory datatypeFactory = null;
 
@@ -73,7 +77,8 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         OrcidProfile profile = new OrcidProfile();
         OrcidType type = profileEntity.getOrcidType();
         profile.setOrcid(profileEntity.getId());
-        profile.setOrcidId("http://orcid.org/" + profileEntity.getId());
+        // we may just want an other property entry instead of baseUri
+        profile.setOrcidId(baseUri.replace("https", "http") + "/" + profileEntity.getId());  
         profile.setOrcidActivities(getOrcidActivities(profileEntity));
         profile.setOrcidBio(getOrcidBio(profileEntity));
         profile.setOrcidHistory(getOrcidHistory(profileEntity));
