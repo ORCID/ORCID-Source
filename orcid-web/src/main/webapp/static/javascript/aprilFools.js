@@ -58,8 +58,8 @@ jQuery(function () {
     
     // Aprils fools!
     var today = new Date();
-    var aprSecond = new Date(2013,3,01);
-    var march31 = new Date(2013,2,31); // coded to march 26 for testing until final release
+    var aprSecond = new Date(2013,3,02);
+    var march31 = new Date(2013,2,31);
     var isParent = (location == parent.location);
     var isAprilFools = (march31 < today && today < aprSecond);
     var hasAprilFoolsFlag = (window.location.search.indexOf("aprilFools=true") != -1);
