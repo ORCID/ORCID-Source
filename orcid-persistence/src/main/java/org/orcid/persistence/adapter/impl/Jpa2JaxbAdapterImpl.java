@@ -53,7 +53,7 @@ import java.util.SortedSet;
  */
 
 public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
-    
+
     @Value("${org.orcid.core.baseUri:}")
     private String baseUri = null;
 
@@ -78,7 +78,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         OrcidType type = profileEntity.getOrcidType();
         profile.setOrcid(profileEntity.getId());
         // we may just want an other property entry instead of baseUri
-        profile.setOrcidId(baseUri.replace("https", "http") + "/" + profileEntity.getId());  
+        profile.setOrcidId(baseUri.replace("https", "http") + "/" + profileEntity.getId());
         profile.setOrcidActivities(getOrcidActivities(profileEntity));
         profile.setOrcidBio(getOrcidBio(profileEntity));
         profile.setOrcidHistory(getOrcidHistory(profileEntity));
