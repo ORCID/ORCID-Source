@@ -125,9 +125,9 @@
     <div>
         <label>${springMacroRequestContext.getMessage("playground.labelMethod")}</label>
         <select id="method">
-            <option>${springMacroRequestContext.getMessage("playground.labelGET")}</option>
-            <option>${springMacroRequestContext.getMessage("playground.labelPUT")}</option>
-            <option>${springMacroRequestContext.getMessage("playground.labelPOST")}</option>
+            <option>GET</option>
+            <option>PUT</option>
+            <option>POST</option>
         </select>
         <label>${springMacroRequestContext.getMessage("playground.labelURIsuffix")}</label>
         <input id="uri_suffix" type="text"></input>
