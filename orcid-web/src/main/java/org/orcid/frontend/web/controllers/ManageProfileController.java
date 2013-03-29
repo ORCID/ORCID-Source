@@ -803,6 +803,7 @@ public class ManageProfileController extends BaseWorkspaceController {
         }
 
         OrcidProfile currentProfile = getCurrentUser().getRealProfile();
+        changePersonalInfoForm.mergeOrcidBioDetails(currentProfile);
         OrcidProfile updatedProfile = orcidProfileManager.updateOrcidBio(currentProfile);
         getCurrentUser().setEffectiveProfile(updatedProfile);
         

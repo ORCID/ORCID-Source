@@ -148,7 +148,7 @@
                     </table>                     
              	</#if>
             	<div class="control-group">
-                    <label for="websiteUrlText">${springMacroRequestContext.getMessage("manage_bio_settings.emailaddress")}</label>
+                    <h3>${springMacroRequestContext.getMessage("manage_bio_settings.emailaddress")}</h3>
                     <div class="relative">
                        <a href="<@spring.url '/account#editEmail'/>" onClick="parent.location.href=this.href; parent.$.colorbox.close(); return false;">${springMacroRequestContext.getMessage("settings.tdEdit")}</a>
                     </div>
