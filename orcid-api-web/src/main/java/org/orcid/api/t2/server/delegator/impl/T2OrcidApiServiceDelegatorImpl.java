@@ -42,6 +42,9 @@ import org.orcid.core.manager.ValidationManager;
 import org.orcid.core.security.visibility.aop.AccessControl;
 import org.orcid.core.security.visibility.aop.VisibilityControl;
 import org.orcid.jaxb.model.message.CreationMethod;
+import org.orcid.jaxb.model.message.ExternalIdOrcid;
+import org.orcid.jaxb.model.message.ExternalIdentifier;
+import org.orcid.jaxb.model.message.ExternalIdentifiers;
 import org.orcid.jaxb.model.message.OrcidHistory;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidProfile;
@@ -281,6 +284,27 @@ public class T2OrcidApiServiceDelegatorImpl implements T2OrcidApiServiceDelegato
     public Response addExternalIdentifiers(UriInfo uriInfo, String orcid, OrcidMessage orcidMessage) {
         OrcidProfile orcidProfile = orcidMessage.getOrcidProfile();
         try {
+
+            ExternalIdentifiers updatedExternalIdentifiers = orcidProfile.getOrcidBio().getExternalIdentifiers();
+
+            // Get the client profile information
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String clientId = null;
+            if (OAuth2Authentication.class.isAssignableFrom(authentication.getClass())) {
+                AuthorizationRequest authorizationRequest = ((OAuth2Authentication) authentication).getAuthorizationRequest();
+                clientId = authorizationRequest.getClientId();
+            }
+
+            // Set the client profile to each external identifier
+            if (clientId != null) {
+                for (ExternalIdentifier ei : updatedExternalIdentifiers.getExternalIdentifier()) {
+                    ExternalIdOrcid eio = new ExternalIdOrcid(clientId);
+                    ei.setExternalIdOrcid(eio);
+                }
+            } else {                
+                throw new OrcidNotFoundException("Unable to find client profile associated with this request.");
+            }
+
             orcidProfile = orcidProfileManager.addExternalIdentifiers(orcidProfile);
             return getOrcidMessageResponse(orcidProfile, orcid);
         } catch (DataAccessException e) {

@@ -17,6 +17,7 @@
 package org.orcid.persistence.adapter.impl;
 
 import org.apache.commons.lang.StringUtils;
+import org.codehaus.jackson.map.ObjectMapper.DefaultTyping;
 import org.orcid.jaxb.model.message.*;
 import org.orcid.persistence.adapter.Jaxb2JpaAdapter;
 import org.orcid.persistence.dao.GenericDao;
@@ -488,8 +489,20 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
     private void setExternalIdentifiers(ProfileEntity profileEntity, ExternalIdentifiers externalIdentifiers) {
         if (externalIdentifiers != null) {
             profileEntity.setExternalIdentifiersVisibility(externalIdentifiers.getVisibility());
+
+            Set<ExternalIdentifierEntity> existingExternalIdentifiers = profileEntity.getExternalIdentifiers();
+            Set<ExternalIdentifierEntity> externalIdentifierEntities = null;
+
+            if (existingExternalIdentifiers == null) {
+                externalIdentifierEntities = new HashSet<ExternalIdentifierEntity>();
+            } else {
+                // To allow for orphan deletion
+                existingExternalIdentifiers.clear();
+                externalIdentifierEntities = existingExternalIdentifiers;
+            }
+
             List<ExternalIdentifier> externalIdentifierList = externalIdentifiers.getExternalIdentifier();
-            Set<ExternalIdentifierEntity> externalIdentifierEntities = new HashSet<ExternalIdentifierEntity>();
+
             if (externalIdentifierList != null && !externalIdentifierList.isEmpty()) {
                 for (ExternalIdentifier externalIdentifier : externalIdentifierList) {
                     ExternalIdentifierEntity externalIdentifierEntity = getExternalIdentifierEntity(externalIdentifier);
@@ -498,8 +511,9 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
                         externalIdentifierEntities.add(externalIdentifierEntity);
                     }
                 }
-                profileEntity.setExternalIdentifiers(externalIdentifierEntities);
             }
+
+            profileEntity.setExternalIdentifiers(externalIdentifierEntities);
         }
     }
 
