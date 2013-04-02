@@ -295,14 +295,12 @@ public class T2OrcidApiServiceDelegatorImpl implements T2OrcidApiServiceDelegato
                 clientId = authorizationRequest.getClientId();
             }
 
-            // Set the client profile to each external identifier
-            if (clientId != null) {
-                for (ExternalIdentifier ei : updatedExternalIdentifiers.getExternalIdentifier()) {
-                    ExternalIdOrcid eio = new ExternalIdOrcid(clientId);
+            for (ExternalIdentifier ei : updatedExternalIdentifiers.getExternalIdentifier()) {
+                ExternalIdOrcid eio = new ExternalIdOrcid(clientId);
+                // Set the client profile to each external identifier
+                if (ei.getExternalIdOrcid() == null) {
                     ei.setExternalIdOrcid(eio);
                 }
-            } else {                
-                throw new OrcidNotFoundException("Unable to find client profile associated with this request.");
             }
 
             orcidProfile = orcidProfileManager.addExternalIdentifiers(orcidProfile);
