@@ -795,7 +795,6 @@ public class ManageProfileController extends BaseWorkspaceController {
     public ModelAndView saveEditedBio(HttpServletRequest request, @Valid @ModelAttribute("changePersonalInfoForm") ChangePersonalInfoForm changePersonalInfoForm,
             BindingResult bindingResult, RedirectAttributes redirectAttributes) {
         ModelAndView manageBioView = new ModelAndView("redirect:manage-bio-settings");
-        validateEmailAddress(changePersonalInfoForm.getEmail(), request, bindingResult);
 
         if (bindingResult.hasErrors()) {
             ModelAndView erroredView = new ModelAndView("manage_bio_settings");
@@ -804,20 +803,10 @@ public class ManageProfileController extends BaseWorkspaceController {
         }
 
         OrcidProfile currentProfile = getCurrentUser().getRealProfile();
-        Email originalEmail = new Email(currentProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue());
         changePersonalInfoForm.mergeOrcidBioDetails(currentProfile);
-        Email updatedEmail = currentProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail();
-        boolean changedEmail = !originalEmail.equals(updatedEmail);
-        updatedEmail.setVerified(!changedEmail);
         OrcidProfile updatedProfile = orcidProfileManager.updateOrcidBio(currentProfile);
         getCurrentUser().setEffectiveProfile(updatedProfile);
-
-        if (changedEmail) {
-            URI baseUri = OrcidWebUtils.getServerUriWithContextPath(request);
-            notificationManager.sendEmailAddressChangedNotification(updatedProfile, originalEmail, baseUri);
-            redirectAttributes.addFlashAttribute("emailUpdated", true);
-        }
-
+        
         redirectAttributes.addFlashAttribute("changesSaved", true);
         return manageBioView;
     }
