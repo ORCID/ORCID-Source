@@ -478,7 +478,7 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
     /**
      * @return the externalIdentifiers
      */
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "owner")
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "owner", orphanRemoval = true)
     public Set<ExternalIdentifierEntity> getExternalIdentifiers() {
         return externalIdentifiers;
     }

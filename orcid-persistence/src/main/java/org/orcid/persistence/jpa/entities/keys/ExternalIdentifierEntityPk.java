@@ -18,13 +18,26 @@ package org.orcid.persistence.jpa.entities.keys;
 
 import java.io.Serializable;
 
+import org.orcid.persistence.jpa.entities.ProfileEntity;
+
 public class ExternalIdentifierEntityPk implements Serializable {
 
     private static final long serialVersionUID = 1L;
-
+                   
     private String externalIdReference;
 
-    private String owner;
+    private ProfileEntity owner;
+
+
+    public ExternalIdentifierEntityPk(){
+        
+    }
+    
+    public ExternalIdentifierEntityPk(String externalIdReference, ProfileEntity owner) {
+        super();
+        this.externalIdReference = externalIdReference;
+        this.owner = owner;
+    }
 
     public String getExternalIdReference() {
         return externalIdReference;
@@ -34,11 +47,11 @@ public class ExternalIdentifierEntityPk implements Serializable {
         this.externalIdReference = externalIdReference;
     }
 
-    public String getOwner() {
+    public ProfileEntity getOwner() {
         return owner;
     }
 
-    public void setOwner(String owner) {
+    public void setOwner(ProfileEntity owner) {
         this.owner = owner;
     }
 

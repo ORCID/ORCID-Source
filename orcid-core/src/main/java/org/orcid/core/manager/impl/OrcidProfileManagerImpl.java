@@ -63,6 +63,7 @@ import org.orcid.jaxb.model.message.Email;
 import org.orcid.jaxb.model.message.EncryptedPassword;
 import org.orcid.jaxb.model.message.EncryptedSecurityAnswer;
 import org.orcid.jaxb.model.message.EncryptedVerificationCode;
+import org.orcid.jaxb.model.message.ExternalIdOrcid;
 import org.orcid.jaxb.model.message.ExternalIdentifier;
 import org.orcid.jaxb.model.message.ExternalIdentifiers;
 import org.orcid.jaxb.model.message.FamilyName;
@@ -528,17 +529,19 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         OrcidProfile existingProfile = retrieveOrcidProfile(updatedOrcidProfile.getOrcid().getValue());
 
         if (existingProfile != null && existingProfile.getOrcidBio() != null) {
-            ExternalIdentifiers externalIdentifiers = existingProfile.getOrcidBio().getExternalIdentifiers();
             OrcidBio orcidBio = existingProfile.getOrcidBio();
+            ExternalIdentifiers externalIdentifiers = orcidBio.getExternalIdentifiers();
+            
             if (externalIdentifiers == null) {
                 orcidBio.setExternalIdentifiers(new ExternalIdentifiers());
             }
             ExternalIdentifiers externalIdentifier = updatedOrcidProfile.getOrcidBio().getExternalIdentifiers();
             List<ExternalIdentifier> updatedExternalIdentifiers = externalIdentifier.getExternalIdentifier();
             List<ExternalIdentifier> existingExternalIdentifiers = orcidBio.getExternalIdentifiers().getExternalIdentifier();
-
-            for (ExternalIdentifier ei : updatedExternalIdentifiers) {
-                existingExternalIdentifiers.add(ei);
+            
+            //Copy all the existing external identifiers to the updated profile
+            for (ExternalIdentifier ei : existingExternalIdentifiers) {
+                updatedExternalIdentifiers.add(ei);
             }
 
             OrcidJaxbCopyUtils.copyUpdatedExternalIdentifiersToExistingPreservingVisibility(orcidBio, updatedOrcidProfile.getOrcidBio());
