@@ -38,6 +38,7 @@ import org.orcid.api.common.validation.ValidOrcidMessage;
 import org.orcid.api.t2.server.delegator.T2OrcidApiServiceDelegator;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.manager.OrcidSearchManager;
+import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.ValidationManager;
 import org.orcid.core.security.visibility.aop.AccessControl;
 import org.orcid.core.security.visibility.aop.VisibilityControl;
@@ -87,6 +88,9 @@ public class T2OrcidApiServiceDelegatorImpl implements T2OrcidApiServiceDelegato
     @Resource
     private ValidationManager validationManager;
 
+    @Resource 
+    private ProfileEntityManager profileEntityManager;
+    
     @Override
     public Response viewStatusText() {
         return Response.ok(STATUS_OK_MESSAGE).build();
@@ -295,11 +299,18 @@ public class T2OrcidApiServiceDelegatorImpl implements T2OrcidApiServiceDelegato
                 clientId = authorizationRequest.getClientId();
             }
 
-            for (ExternalIdentifier ei : updatedExternalIdentifiers.getExternalIdentifier()) {
-                ExternalIdOrcid eio = new ExternalIdOrcid(clientId);
+            for (ExternalIdentifier ei : updatedExternalIdentifiers.getExternalIdentifier()) {                
                 // Set the client profile to each external identifier
                 if (ei.getExternalIdOrcid() == null) {
+                    ExternalIdOrcid eio = new ExternalIdOrcid(clientId);
                     ei.setExternalIdOrcid(eio);
+                } else {
+                    //Check if the provided external orcid exists
+                    ExternalIdOrcid eio = ei.getExternalIdOrcid();
+                    
+                    if(StringUtils.isBlank(eio.getValue()) || !profileEntityManager.orcidExists(eio.getValue())){
+                        throw new OrcidNotFoundException("Cannot find external ORCID");
+                    }                                        
                 }
             }
 
