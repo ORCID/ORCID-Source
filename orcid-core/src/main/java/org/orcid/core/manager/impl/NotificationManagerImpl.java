@@ -321,7 +321,10 @@ public class NotificationManagerImpl implements NotificationManager {
     @Override
     public void sendEmailAddressChangedNotification(OrcidProfile updatedProfile, Email oldEmail, URI baseUri) {
         // new email sent out
-        sendVerificationEmail(updatedProfile, baseUri);
+        if (!updatedProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().isVerified()) { 
+            sendVerificationEmail(updatedProfile, baseUri);
+        }
+        
         // build up old template
         Map<String, Object> templateParams = new HashMap<String, Object>();
         SimpleMailMessage message = new SimpleMailMessage();

@@ -50,7 +50,7 @@ import java.lang.annotation.Target;
 @Constraint(validatedBy = StringMatchIgnoreCaseValidator.class)
 @Documented
 public @interface StringMatchIgnoreCase {
-    String message() default "{constraints.fieldmatch}";
+    String message() default "{constraints.stringmatchignorecase}";
 
     Class<?>[] groups() default {};
 

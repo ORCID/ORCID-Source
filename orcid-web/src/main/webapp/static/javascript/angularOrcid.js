@@ -50,7 +50,7 @@ orcidNgModule.filter('emailCurrentFtr', function($filter) {
 });
 
 function EditTableCtrl($scope) {
-	$scope.showEditEmail = false;
+	$scope.showEditEmail = (window.location.hash === "#editEmail");
 	$scope.toggleText = "Edit";
 	$scope.toggleEmail = function() {
 		$scope.showEditEmail = !$scope.showEditEmail;
@@ -144,6 +144,15 @@ function EmailEdit($scope, $http) {
 	    	// something bad is happening!
 	    	console.log("error with multi email");
 	    });  
+	    $.colorbox({
+	        html : $('<div style="padding: 20px;" class="colorbox-modal"><h3>Verification email sent to ' + $scope.emailsPojo.emails[idx].value + '</h3>'
+	            	+ '<div class="btn" id="modal-close">Close</div>')
+	            	
+	    });
+	    $.colorbox.resize();
+	    $('#modal-close').click(function(e) {
+	    	$.colorbox.close();
+	    });
 	};
 
 	$scope.save = function() {
@@ -186,8 +195,21 @@ function EmailEdit($scope, $http) {
 	};
 	
 	$scope.deleteEmail = function(idx) {
-		$scope.emailsPojo.emails.splice(idx, 1);
-		$scope.save();
+        $.colorbox({
+            html : $('<div style="padding: 20px;" class="colorbox-modal"><h3>Please confirm deletion of ' + $scope.emailsPojo.emails[idx].value + '</h3>'
+            	+ '<div class="btn btn-danger" id="modal-del-email">Delete Email</div> <a href="" id="modal-cancel">cancel</a><div>')
+            	
+        });
+        $.colorbox.resize();
+        $('#modal-del-email').click(function(e) {
+    		$scope.emailsPojo.emails.splice(idx, 1);
+    		$scope.save();
+    		$.colorbox.close();
+        });
+        $('#modal-cancel').click(function(e) {
+        	e.preventDefault();
+        	$.colorbox.close();
+        });
 	};
 	
 	$scope.close = function() {

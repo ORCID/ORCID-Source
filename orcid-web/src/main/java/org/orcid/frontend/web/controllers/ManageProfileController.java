@@ -654,7 +654,7 @@ public class ManageProfileController extends BaseWorkspaceController {
     @RequestMapping(value = "/confirm-deactivate-orcid", method = RequestMethod.GET)
     public ModelAndView confirmDeactivateOrcidAccount(HttpServletRequest request) {
         getCurrentUser().setRealProfile(orcidProfileManager.deactivateOrcidProfile(getCurrentUser().getRealProfile()));
-        ModelAndView deactivateOrcidView = new ModelAndView("redirect:/signout");
+        ModelAndView deactivateOrcidView = new ModelAndView("redirect:/signout#deactivated");
         return deactivateOrcidView;
     }
 
@@ -739,6 +739,11 @@ public class ManageProfileController extends BaseWorkspaceController {
                 URI baseUri = OrcidWebUtils.getServerUriWithContextPath(request);
                 notificationManager.sendEmailAddressChangedNotification(updatedProfile, new Email(oldPrime), baseUri);
             }
+            
+            //also send verifcation email for new address
+            URI baseUri = OrcidWebUtils.getServerUriWithContextPath(request);
+            notificationManager.sendVerificationEmail(currentProfile, baseUri, email.getValue());
+
         }
         return email;
     }
@@ -790,7 +795,6 @@ public class ManageProfileController extends BaseWorkspaceController {
     public ModelAndView saveEditedBio(HttpServletRequest request, @Valid @ModelAttribute("changePersonalInfoForm") ChangePersonalInfoForm changePersonalInfoForm,
             BindingResult bindingResult, RedirectAttributes redirectAttributes) {
         ModelAndView manageBioView = new ModelAndView("redirect:manage-bio-settings");
-        validateEmailAddress(changePersonalInfoForm.getEmail(), request, bindingResult);
 
         if (bindingResult.hasErrors()) {
             ModelAndView erroredView = new ModelAndView("manage_bio_settings");
@@ -799,20 +803,10 @@ public class ManageProfileController extends BaseWorkspaceController {
         }
 
         OrcidProfile currentProfile = getCurrentUser().getRealProfile();
-        Email originalEmail = new Email(currentProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue());
         changePersonalInfoForm.mergeOrcidBioDetails(currentProfile);
-        Email updatedEmail = currentProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail();
-        boolean changedEmail = !originalEmail.equals(updatedEmail);
-        updatedEmail.setVerified(!changedEmail);
         OrcidProfile updatedProfile = orcidProfileManager.updateOrcidBio(currentProfile);
         getCurrentUser().setEffectiveProfile(updatedProfile);
-
-        if (changedEmail) {
-            URI baseUri = OrcidWebUtils.getServerUriWithContextPath(request);
-            notificationManager.sendEmailAddressChangedNotification(updatedProfile, originalEmail, baseUri);
-            redirectAttributes.addFlashAttribute("emailUpdated", true);
-        }
-
+        
         redirectAttributes.addFlashAttribute("changesSaved", true);
         return manageBioView;
     }

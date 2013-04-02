@@ -49,7 +49,7 @@ var OrcidCookie = new function () {
        var exdate=new Date();
        exdate.setDate(exdate.getDate() + exdays);
        var c_value=escape(value) + ((exdays==null) ? "" : "; expires="+exdate.toUTCString());
-       document.cookie=c_name + "=" + c_value;
+       document.cookie=c_name + "=" + c_value + ";path=/";
     };
 };
 
@@ -189,19 +189,16 @@ $(function () {
     	}    
  
     }
-    
-    $('#confirmationForm').submit(function() {
-    	if (window.location != window.parent.location) {
-    		parent.$.colorbox.close();
-    		this.target = '_blank';
-    	}
-    	return true;
-    });
- 
+     
     $('#denialForm').submit(function() {
     	if (window.location != window.parent.location) parent.$.colorbox.close();
     	return true;
     });
+    
+    // track when deactived people are pushed to signin page
+    if (window.location.href.endsWith("signin#deactivated")) {
+    	orcidGA.gaPush(['_trackEvent', 'Disengagement', 'Deactivate_Complete', 'Website']);
+    }
     
     // if on signin or register do cookie check
 	if ( basePath.startsWith(baseUrl + 'register') 
@@ -216,7 +213,21 @@ $(function () {
 			$('#cookie-check-msg').css("display","inline");	
 		}
     }
-
+	
+	$('.third-party-colorbox').click(function(e) {
+		e.preventDefault();
+		var href = $(this).attr('href');
+		if (window.location != window.parent.location) {
+			parent.$.colorbox.close();
+		} else {
+			//alert('here 2');
+			$.colorbox.close();
+		}
+		var newWin = window.open(href);
+		if (!newWin) window.location.href = href;
+		return false;
+	});
+	
 	// jquery browser is deprecated, when you upgrade 
 	// to 1.9 or higher you will need to use the pluggin
 	var oldBrowserFlag =  false;

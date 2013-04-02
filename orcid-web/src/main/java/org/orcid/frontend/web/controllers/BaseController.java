@@ -230,9 +230,11 @@ public class BaseController {
         if (orcidProfile == null) {
             return true;
         }
-        String primaryEmail = orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue();
-        if (decryptedEmail.equalsIgnoreCase(primaryEmail)) {
-            return true;
+        List<Email> emails = orcidProfile.getOrcidBio().getContactDetails().getEmail();
+        for (Email email:emails) {
+            if (decryptedEmail.equalsIgnoreCase(email.getValue())) {
+                return true;
+            }
         }
         return false;
     }
@@ -334,6 +336,11 @@ public class BaseController {
 
     public String getMessage(String messageCode, Object... messageParams) {
         return localeManager.resolveMessage(messageCode, messageParams);
+    }
+    
+    @ModelAttribute("locale")
+    public String getLocale() {
+        return  localeManager.getLocale().toString();
     }
 
 }

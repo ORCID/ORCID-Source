@@ -55,15 +55,15 @@
             <#assign authOnClick = authOnClick + " orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'Authorize_" + scope.name()?replace("ORCID_", "") + "', 'OAuth " + clientProfile.orcidBio.personalDetails.creditName.content + "']);">     
          </#list>
 
-    	 <#assign denyOnClick = " orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'Authorize_Deny', 'OAuth " + clientProfile.orcidBio.personalDetails.creditName.content + "']);">     
+    	 <#assign denyOnClick = " orcidGA.gaPush(['_trackEvent', 'Disengagement', 'Authorize_Deny', 'OAuth " + clientProfile.orcidBio.personalDetails.creditName.content + "']);">     
              <span class="span">
-                <form id="denialForm" class="form-inline" name="denialForm" action="<@spring.url '/oauth/authorize'/>" onsubmit="${denyOnClick} orcidGA.gaFormSumbitDelay(this);" method="post">
+                <form id="denialForm" class="form-inline" name="denialForm" action="<@spring.url '/oauth/authorize'/>" onsubmit="${denyOnClick} orcidGA.gaFormSumbitDelay(this); return false;" method="post">
                     <input name="user_oauth_approval" value="false" type="hidden"/>
                     <input class="btn btn-success" name="deny" value="${springMacroRequestContext.getMessage('confirm-oauth-access.Deny')}" type="submit">
                 </form>        
             </span>
             <span class="span">
-                <form id="confirmationForm" class="form-inline" name="confirmationForm" action="<@spring.url '/oauth/authorize'/>" onsubmit="${authOnClick} orcidGA.gaFormSumbitDelay(this);" method="post">
+                <form id="confirmationForm" class="form-inline" name="confirmationForm" action="<@spring.url '/oauth/authorize'/>" onsubmit="${authOnClick} orcidGA.gaFormSumbitDelay(this); return false;" method="post">
                     <input name="user_oauth_approval" value="true" type="hidden"/>
                     <input class="btn btn-success" name="authorize" value="${springMacroRequestContext.getMessage('confirm-oauth-access.Authorize')}" type="submit">
                 </form>

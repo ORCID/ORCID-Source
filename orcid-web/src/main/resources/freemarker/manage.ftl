@@ -58,7 +58,8 @@
 						</td>
 					</tr>
 						<tr>
-							<th>${springMacroRequestContext.getMessage("manage.thEmail")}</th>
+							<th><a name="editEmail"></a>
+		   						${springMacroRequestContext.getMessage("manage.thEmail")}</th>
 							<td>
 								<a href="" ng-click="toggleEmail()" ng-bind="toggleText"></a>
 							</td>
@@ -66,7 +67,7 @@
 						<tr ng-controller="EmailEdit" ng-show="showEditEmail" ng-cloak>
 							<td colspan="2">
 								<!-- we should never see errors here, but just to be safe -->
-		   						<span class="orcid-error" ng-show="emailsPojo.errors.length > 0">
+								<span class="orcid-error" ng-show="emailsPojo.errors.length > 0">
 			   						<span ng-repeat='error in emailsPojo.errors' ng-bind-html-unsafe="error"></span>
 			   					</span>
 		   						<div ng-repeat='email in emailsPojo.emails' style="height: 35px;">
@@ -191,7 +192,7 @@
                                             </#list>
                                         </#if>
                                     </td width="35%">                                    
-                                    <td width="5%"><button class="btn btn-link">${springMacroRequestContext.getMessage("manage.revokeaccess")}</button></td>
+                                    <td width="5%"><button class="btn btn-link" onclick="orcidGA.gaPush(['_trackEvent', 'Disengagement', 'Revoke_Access', 'OAuth ${applicationSummary.applicationName.content}']);">${springMacroRequestContext.getMessage("manage.revokeaccess")}</button></td>
                                 </form>
                             </tr>
                         </#list>
