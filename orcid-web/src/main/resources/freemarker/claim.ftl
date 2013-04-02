@@ -106,7 +106,7 @@
                         <label>Terms of Use <span class="required">*</span></label>
                         <label class="checkbox" style="width: 480px;">
                             <@spring.formCheckbox "claimForm.acceptTermsAndConditions"/>
-                            ${springMacroRequestContext.getMessage("claim.Iconsenttothe")} <a href="${aboutUri}/footer/privacy-policy">${springMacroRequestContext.getMessage("claim.privacypolicy")}</a> ${springMacroRequestContext.getMessage("claim.and")} <a href="${aboutUri}/content/orcid-terms-use">${springMacroRequestContext.getMessage("claim.termsandconditions")}</a> ${springMacroRequestContext.getMessage("claim.ofuseincluding")}</p>
+                            ${springMacroRequestContext.getMessage("claim.Iconsenttothe")} <a href="${aboutUri}/footer/privacy-policy?lang=${locale}">${springMacroRequestContext.getMessage("claim.privacypolicy")}</a> ${springMacroRequestContext.getMessage("claim.and")} <a href="${aboutUri}/content/orcid-terms-use?lang=${locale}">${springMacroRequestContext.getMessage("claim.termsandconditions")}</a> ${springMacroRequestContext.getMessage("claim.ofuseincluding")}</p>
                             <@spring.showErrors "<br/>" "orcid-error"/>
                         </label>
                     </div>
