@@ -16,10 +16,9 @@
  */
 package org.orcid.persistence.jpa.entities;
 
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
-import org.orcid.jaxb.model.message.Visibility;
-import org.orcid.persistence.jpa.entities.keys.ProfileWorkEntityPk;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.Set;
 
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
@@ -35,8 +34,11 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-import java.util.Date;
-import java.util.Set;
+
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+import org.orcid.jaxb.model.message.Visibility;
+import org.orcid.persistence.jpa.entities.keys.ProfileWorkEntityPk;
 
 /**
  * orcid-entities - Dec 6, 2011 - ProfileInstitutionEntity
@@ -144,6 +146,32 @@ public class ProfileWorkEntity extends BaseEntity<ProfileWorkEntityPk> implement
             return -1;
         }
         return work.compareTo(other.getWork());
+    }
+    
+    
+    public static class ChronologicallyOrderedProfileWorkEntityComparator implements Comparator<ProfileWorkEntity> {
+        public int compare(ProfileWorkEntity profileWork1, ProfileWorkEntity profileWork2){
+            if(profileWork2 == null){
+                throw new NullPointerException("Can't compare with null");
+            }
+            
+            if(profileWork2.getWork() == null){
+                if(profileWork1.getWork() == null){
+                    return 0;
+                } else {
+                    return 1;
+                }
+            } else if(profileWork1.getWork() == null){
+                return -1;
+            }
+            
+            WorkEntity work1 = profileWork1.getWork();
+            WorkEntity work2 = profileWork2.getWork();
+            
+            WorkEntity.ChronologicallyOrderedWorkEntityComparator workEntityComparator = new WorkEntity.ChronologicallyOrderedWorkEntityComparator();
+            
+            return workEntityComparator.compare(work1, work2);
+        }
     }
 
 }
