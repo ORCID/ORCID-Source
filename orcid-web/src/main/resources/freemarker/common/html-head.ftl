@@ -22,10 +22,10 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <link rel="stylesheet" href="<@spring.url '/static/ORCID-Fonts-Dot-Com/style.css?v=${ver}'/>"/>
-    <link rel="stylesheet" href="<@spring.url '/static/css/orcid.css?v=${ver}'/>"/>
-    <link rel="stylesheet" href="<@spring.url '/static/css/java.css?v=${ver}'/>"/>
-    <link rel="stylesheet" href="<@spring.url '/static/css/jquery-ui-1.10.0.custom.min.css?v=${ver}'/>"/>
+    <link rel="stylesheet" href="${staticCdn}/ORCID-Fonts-Dot-Com/style.css?v=${ver}"/>
+    <link rel="stylesheet" href="${staticCdn}/css/orcid.css?v=${ver}"/>
+    <link rel="stylesheet" href="${staticCdn}/css/java.css?v=${ver}"/>
+    <link rel="stylesheet" href="${staticCdn}/css/jquery-ui-1.10.0.custom.min.css?v=${ver}"/>
 	<style type="text/css">
 		/* 
 	  	Allow angular.js to be loaded in body, hiding cloaked elements until 
@@ -37,10 +37,10 @@
 		}
 	</style> 
 
-    <link rel="shortcut icon" href="<@spring.url '/static/img/favicon.ico'/>"/>
-    <link rel="apple-touch-icon" href="<@spring.url '/static/img/apple-touch-icon.png'/>" />
+    <link rel="shortcut icon" href="${staticCdn}/img/favicon.ico"/>
+    <link rel="apple-touch-icon" href="${staticCdn}/img/apple-touch-icon.png" />
 
-	<script src="<@spring.url '/static/javascript/modernizr.js?v=${ver}'/>"></script>
+	<script src="${staticCdn}/javascript/modernizr.js?v=${ver}"></script>
     <#include "/layout/google_analytics.ftl">
     <!-- hack in json3 to allow angular js to work in IE7 -->
     <!--[if IE 7]>
