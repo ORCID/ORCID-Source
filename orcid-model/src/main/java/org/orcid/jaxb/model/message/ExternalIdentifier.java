@@ -40,6 +40,7 @@ import java.io.Serializable;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
+ *         &lt;element ref="{http://www.orcid.org/ns/orcid}orcid"/>
  *         &lt;element ref="{http://www.orcid.org/ns/orcid}external-id-orcid"/>
  *         &lt;element ref="{http://www.orcid.org/ns/orcid}external-id-common-name"/>
  *         &lt;element ref="{http://www.orcid.org/ns/orcid}external-id-reference"/>
@@ -51,17 +52,19 @@ import java.io.Serializable;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "externalIdOrcid", "externalIdCommonName", "externalIdReference", "externalIdUrl" })
+@XmlType(name = "", propOrder = { "orcid", "externalIdOrcid", "externalIdCommonName", "externalIdReference", "externalIdUrl" })
 @XmlRootElement(name = "external-identifier")
 public class ExternalIdentifier implements Serializable {
 
-    @XmlElement(name = "external-id-orcid", required = true)
+    @XmlElement(name = "orcid", required = true)
+    protected Orcid orcid;
+    @XmlElement(name = "external-id-orcid", required = false)
     protected ExternalIdOrcid externalIdOrcid;
-    @XmlElement(name = "external-id-common-name", required = true)
+    @XmlElement(name = "external-id-common-name", required = false)
     protected ExternalIdCommonName externalIdCommonName;
     @XmlElement(name = "external-id-reference", required = true)
     protected ExternalIdReference externalIdReference;
-    @XmlElement(name = "external-id-url", required = true)
+    @XmlElement(name = "external-id-url", required = false)
     protected ExternalIdUrl externalIdUrl;
 
     public ExternalIdentifier() {
@@ -72,6 +75,28 @@ public class ExternalIdentifier implements Serializable {
         super();
         this.externalIdOrcid = externalIdOrcid;
         this.externalIdReference = externalIdReference;
+    }
+
+    
+    /**
+     * Gets the value of the eorcid property.
+     *
+     * @return possible object is
+     *         {@link Orcid }
+     */
+    public Orcid getOrcid() {
+        return orcid;
+    }
+
+    /**
+     * Sets the value of the orcid property.
+     *
+     * @param value
+     *         allowed object is
+     *         {@link Orcid }
+     */
+    public void setOrcid(Orcid orcid) {
+        this.orcid = orcid;
     }
 
     /**
@@ -169,6 +194,9 @@ public class ExternalIdentifier implements Serializable {
 
         ExternalIdentifier that = (ExternalIdentifier) o;
 
+        if(orcid != null? !orcid.equals(that.getOrcid()) : that.getOrcid() != null){
+            return false;
+        }
         if (externalIdCommonName != null ? !externalIdCommonName.equals(that.externalIdCommonName) : that.externalIdCommonName != null) {
             return false;
         }
@@ -188,6 +216,7 @@ public class ExternalIdentifier implements Serializable {
     @Override
     public int hashCode() {
         int result = externalIdOrcid != null ? externalIdOrcid.hashCode() : 0;
+        result = 31 * result + (orcid != null ? orcid.hashCode() : 0);
         result = 31 * result + (externalIdCommonName != null ? externalIdCommonName.hashCode() : 0);
         result = 31 * result + (externalIdReference != null ? externalIdReference.hashCode() : 0);
         result = 31 * result + (externalIdUrl != null ? externalIdUrl.hashCode() : 0);

@@ -36,7 +36,7 @@ import javax.persistence.Transient;
 @Entity
 @Table(name = "external_identifier")
 @IdClass(ExternalIdentifierEntityPk.class)
-public class ExternalIdentifierEntity extends BaseEntity<String> {
+public class ExternalIdentifierEntity extends BaseEntity<ExternalIdentifierEntityPk> {
 
     private static final long serialVersionUID = 1L;
 
@@ -48,7 +48,7 @@ public class ExternalIdentifierEntity extends BaseEntity<String> {
 
     @Override
     @Transient
-    public String getId() {
+    public ExternalIdentifierEntityPk getId() {
         return null;
     }
 
@@ -85,7 +85,7 @@ public class ExternalIdentifierEntity extends BaseEntity<String> {
      * @return the owner
      */
     @Id
-    @ManyToOne(fetch = FetchType.EAGER, optional = false)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "orcid", nullable = false)
     public ProfileEntity getOwner() {
         return owner;
