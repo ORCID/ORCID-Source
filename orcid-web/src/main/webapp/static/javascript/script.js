@@ -189,15 +189,7 @@ $(function () {
     	}    
  
     }
-    
-    $('#confirmationForm').submit(function() {
-    	if (window.location != window.parent.location) {
-    		parent.$.colorbox.close();
-    		this.target = '_blank';
-    	}
-    	return true;
-    });
- 
+     
     $('#denialForm').submit(function() {
     	if (window.location != window.parent.location) parent.$.colorbox.close();
     	return true;
@@ -216,7 +208,21 @@ $(function () {
 			$('#cookie-check-msg').css("display","inline");	
 		}
     }
-
+	
+	$('.third-party-colorbox').click(function(e) {
+		e.preventDefault();
+		var href = $(this).attr('href');
+		if (window.location != window.parent.location) {
+			parent.$.colorbox.close();
+		} else {
+			//alert('here 2');
+			$.colorbox.close();
+		}
+		var newWin = window.open(href);
+		if (!newWin) window.location.href = href;
+		return false;
+	});
+	
 	// jquery browser is deprecated, when you upgrade 
 	// to 1.9 or higher you will need to use the pluggin
 	var oldBrowserFlag =  false;
