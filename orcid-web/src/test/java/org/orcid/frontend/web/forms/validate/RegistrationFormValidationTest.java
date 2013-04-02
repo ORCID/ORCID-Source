@@ -18,29 +18,25 @@ package org.orcid.frontend.web.forms.validate;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import java.util.Map;
+import java.util.List;
 import java.util.Set;
 
+import javax.annotation.Resource;
 import javax.validation.ConstraintViolation;
-import javax.validation.Validation;
-import javax.validation.Validator;
-import javax.validation.ValidatorFactory;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.orcid.frontend.web.forms.RegistrationForm;
+import org.springframework.validation.BeanPropertyBindingResult;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 
 public class RegistrationFormValidationTest extends AbstractConstraintValidator<RegistrationForm> {
 
-    Validator validator;
-
-    @Before
-    public void resetValidator() {
-        ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
-        validator = factory.getValidator();
-    }
+    @Resource(name = "validator")
+    LocalValidatorFactoryBean localValidatorFactoryBean;
 
     @Test
     public void allMandatoryValuesPopulated() {
@@ -58,23 +54,22 @@ public class RegistrationFormValidationTest extends AbstractConstraintValidator<
 
     @Test
     public void noMandatoryValuesPopulated() {
-        RegistrationForm form = new RegistrationForm();
-        Set<ConstraintViolation<RegistrationForm>> errors = validator.validate(form);
-        Map<String, String> allErrorValues = retrieveErrorKeyAndMessage(errors);
-        assertEquals("Should be 6 errors", 5, errors.size());
+        RegistrationForm registrationForm = new RegistrationForm();
+        BindingResult bindingResult = new BeanPropertyBindingResult(registrationForm, "registrationForm");
+        localValidatorFactoryBean.validate(registrationForm, bindingResult);
+        assertEquals("Should be 5 errors", 5, bindingResult.getErrorCount());
 
-        String givenNamesMissing = allErrorValues.get("givenNames");
-        String email = allErrorValues.get("email");
-        String password = allErrorValues.get("password");
-        String retypedPassword = allErrorValues.get("confirmedPassword");
-        String termsAndConditions = allErrorValues.get("acceptTermsAndConditions");
+        String givenNamesMissing = resolveFieldErrorMessage(bindingResult, "givenNames");
+        String email = resolveFieldErrorMessage(bindingResult, "email");
+        String password = resolveFieldErrorMessage(bindingResult, "password");
+        String retypedPassword = resolveFieldErrorMessage(bindingResult, "confirmedPassword");
+        String termsAndConditions = resolveFieldErrorMessage(bindingResult, "acceptTermsAndConditions");
 
         assertEquals("Please enter your first name.", givenNamesMissing);
         assertEquals("Please enter your e-mail address.", email);
-        assertEquals("Please enter a password", password);
-        assertEquals("Passwords must be 8 or more characters and contain at least 1 number and at least 1 alpha character or symbol", retypedPassword);
+        assertEquals("Please enter a password.", password);
+        assertEquals("Passwords must be 8 or more characters and contain at least 1 number and at least 1 alpha character or symbol.", retypedPassword);
         assertEquals("You must accept the terms and conditions.", termsAndConditions);
-
     }
 
     @Test
@@ -92,19 +87,21 @@ public class RegistrationFormValidationTest extends AbstractConstraintValidator<
         registrationForm.setPassword(password);
         registrationForm.setConfirmedPassword(confirmedPassword);
 
-        Set<ConstraintViolation<RegistrationForm>> violations = validator.validate(registrationForm);
-        Set<String> allErrorValues = retrieveErrorValuesOnly(violations);
+        BindingResult bindingResult = new BeanPropertyBindingResult(registrationForm, "registrationForm");
+        localValidatorFactoryBean.validate(registrationForm, bindingResult);
+        List<String> allErrorValues = resolveAllErrorMessages(bindingResult);
 
-        assertTrue(allErrorValues.contains("The password and confirmed password must match"));
-        assertTrue(allErrorValues.contains("The email and confirmed email must match"));
+        assertTrue(allErrorValues.contains("The password and confirmed password must match."));
+        assertTrue(allErrorValues.contains("The email and confirmed email must match."));
 
         registrationForm.setConfirmedEmail(email1);
         registrationForm.setConfirmedPassword(password);
 
-        violations = validator.validate(registrationForm);
-        allErrorValues = retrieveErrorValuesOnly(violations);
-        assertFalse(allErrorValues.contains("The password and confirmed password must match"));
-        assertFalse(allErrorValues.contains("The email and confirmed email must match"));
+        bindingResult = new BeanPropertyBindingResult(registrationForm, "registrationForm");
+        localValidatorFactoryBean.validate(registrationForm, bindingResult);
+        allErrorValues = resolveAllErrorMessages(bindingResult);
+        assertFalse(allErrorValues.contains("The password and confirmed password must match."));
+        assertFalse(allErrorValues.contains("The email and confirmed email must match."));
     }
 
     @Test
@@ -118,11 +115,11 @@ public class RegistrationFormValidationTest extends AbstractConstraintValidator<
         form.setPassword("p4$$w0rd");
         form.setConfirmedPassword("p4$$w0rd");
         form.setAcceptTermsAndConditions(true);
-        Set<ConstraintViolation<RegistrationForm>> errors = validator.validate(form);
-        Map<String, String> allErrorValues = retrieveErrorKeyAndMessage(errors);
+        BindingResult bindingResult = new BeanPropertyBindingResult(form, "registrationForm");
+        localValidatorFactoryBean.validate(form, bindingResult);
+        List<String> allErrorValues = resolveAllErrorMessages(bindingResult);
         assertEquals("Should be a single error", 1, allErrorValues.size());
-        String spamErrorMessage = allErrorValues.get("referRegOrcid");
-        assertEquals("There was an error validating your input", spamErrorMessage);
+        assertNotNull(bindingResult.getFieldError("referRegOrcid"));
     }
 
 }
