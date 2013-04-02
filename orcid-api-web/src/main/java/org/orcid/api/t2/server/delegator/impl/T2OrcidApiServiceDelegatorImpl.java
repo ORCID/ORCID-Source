@@ -21,6 +21,7 @@ import static org.orcid.api.common.OrcidApiConstants.STATUS_OK_MESSAGE;
 import static org.orcid.api.common.OrcidApiConstants.WORKS_PATH;
 
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -33,6 +34,7 @@ import javax.ws.rs.core.UriInfo;
 import org.apache.commons.lang.StringUtils;
 import org.orcid.api.common.delegator.OrcidApiServiceDelegator;
 import org.orcid.api.common.exception.OrcidBadRequestException;
+import org.orcid.api.common.exception.OrcidForbiddenException;
 import org.orcid.api.common.exception.OrcidNotFoundException;
 import org.orcid.api.common.validation.ValidOrcidMessage;
 import org.orcid.api.t2.server.delegator.T2OrcidApiServiceDelegator;
@@ -52,6 +54,11 @@ import org.orcid.jaxb.model.message.Source;
 import org.orcid.jaxb.model.message.SourceName;
 import org.orcid.jaxb.model.message.SourceOrcid;
 import org.orcid.jaxb.model.message.SubmissionDate;
+import org.orcid.persistence.dao.ProfileDao;
+import org.orcid.persistence.dao.WebhookDao;
+import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.orcid.persistence.jpa.entities.WebhookEntity;
+import org.orcid.persistence.jpa.entities.keys.WebhookEntityPk;
 import org.orcid.utils.DateUtils;
 import org.orcid.utils.NullUtils;
 import org.springframework.dao.DataAccessException;
@@ -83,6 +90,12 @@ public class T2OrcidApiServiceDelegatorImpl implements T2OrcidApiServiceDelegato
 
     @Resource
     private ValidationManager validationManager;
+
+    @Resource
+    private WebhookDao webhookDao;
+
+    @Resource
+    private ProfileDao profileDao;
 
     @Override
     public Response viewStatusText() {
@@ -381,6 +394,98 @@ public class T2OrcidApiServiceDelegatorImpl implements T2OrcidApiServiceDelegato
             sponsor.setSourceName(new SourceName(sponsorProfile.getOrcidBio().getPersonalDetails().getCreditName().getContent()));
             sponsor.setSourceOrcid(new SourceOrcid(sponsorOrcid));
             profile.getOrcidHistory().setSource(sponsor);
+        }
+    }
+
+    /**
+     * Register a new webhook to the profile. As with all calls, if the message
+     * contains any other elements, a 400 Bad Request will be returned.
+     * 
+     * @param orcid
+     *            the identifier of the profile to add the webhook
+     * @param uriInfo
+     *            an uri object containing the webhook
+     * @return If successful, returns a 2xx.
+     * */
+    @Override
+    public Response registerWebhook(UriInfo uriInfo, String orcid, String webhookUri) {
+        @SuppressWarnings("unused")
+        URI validatedWebhookUri = null;
+        try {
+            validatedWebhookUri = new URI(webhookUri);
+        } catch (URISyntaxException e) {
+            throw new OrcidBadRequestException(String.format("Webhook uri:%s is syntactically incorrect", webhookUri));
+        }
+        
+        ProfileEntity profile = profileDao.find(orcid);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        ProfileEntity clientProfile = null;
+        String clientId = null;
+        if (OAuth2Authentication.class.isAssignableFrom(authentication.getClass())) {
+            AuthorizationRequest authorizationRequest = ((OAuth2Authentication) authentication).getAuthorizationRequest();
+            clientId = authorizationRequest.getClientId();
+            clientProfile = profileDao.find(clientId);
+        }
+        if (profile != null && clientProfile != null) {
+            WebhookEntityPk webhookPk = new WebhookEntityPk(profile, webhookUri);
+            WebhookEntity webhook = webhookDao.find(webhookPk);
+            boolean isNew = webhook == null;
+            if (isNew) {
+                webhook = new WebhookEntity();
+                webhook.setProfile(profile);
+                webhook.setDateCreated(new Date());
+                webhook.setEnabled(true);
+                webhook.setUri(webhookUri);
+                webhook.setClientDetails(clientProfile.getClientDetails());
+            }
+            webhookDao.merge(webhook);
+            webhookDao.flush();
+
+            return isNew ? Response.created(uriInfo.getAbsolutePath()).build() : Response.noContent().build();
+        } else if (profile == null) {
+            throw new OrcidNotFoundException("Unable to find profile associated with orcid:" + orcid);
+        } else {
+            throw new OrcidNotFoundException("Unable to find client profile associated with client:" + clientId);
+        }
+    }
+
+    /**
+     * Unregister a webhook from a profile. As with all calls, if the message
+     * contains any other elements, a 400 Bad Request will be returned.
+     * 
+     * @param orcid
+     *            the identifier of the profile to unregister the webhook
+     * @param uriInfo
+     *            an uri object containing the webhook that will be unregistred
+     * @return If successful, returns a 204 No content.
+     * */
+    @Override
+    public Response unregisterWebhook(String orcid, String webhookUri) {
+        ProfileEntity profile = profileDao.find(orcid);
+        if (profile != null) {
+            WebhookEntityPk webhookPk = new WebhookEntityPk(profile, webhookUri);
+            WebhookEntity webhook = webhookDao.find(webhookPk);
+            if (webhook == null) {
+                throw new OrcidNotFoundException(String.format("No webhook found for orcid=%s, and uri=%s", orcid, webhookUri));
+            } else {
+                Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+                String clientId = null;
+                if (OAuth2Authentication.class.isAssignableFrom(authentication.getClass())) {
+                    AuthorizationRequest authorizationRequest = ((OAuth2Authentication) authentication).getAuthorizationRequest();
+                    clientId = authorizationRequest.getClientId();
+                }
+                //Check if user can unregister this webhook
+                if(webhook.getClientDetails().getId().equals(clientId)){
+                    webhookDao.remove(webhookPk);
+                    webhookDao.flush();
+                    return Response.noContent().build();
+                } else {
+                    //Throw 403 exception: user is not allowed to unregister that webhook
+                    throw new OrcidForbiddenException("Unable to unregister webhook: Only the client that register the webhook can unregister it.");
+                }
+            }
+        } else {
+            throw new OrcidNotFoundException("Unable to find profile associated with orcid:" + orcid);
         }
     }
 
