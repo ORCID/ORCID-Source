@@ -24,7 +24,7 @@ When your record becomes active, any information ${creatorName} marked as "publi
 
 CLAIMING YOUR iD
 
-Claim your iD to take full advantage of the ORCID Registry, including privacy settings, and selection of trusted parties. To claim your account, copy and paste this link into your browser:
+Claim your iD to take full advantage of the ORCID Registry, including privacy settings, and selection of trusted parties. To claim your account follow this link to set a password and access your record. If you can't click on the link, copy and paste it into your browser:
 ${verificationUrl}
 
 WHAT IS ORCID?

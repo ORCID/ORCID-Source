@@ -26,7 +26,7 @@ If you are satisfied with the information in your account, you need not take fur
 
 What is ORCID? ORCID is a registry of unique identifiers for researchers and scholars. The ORCID identifier is intended to help link you with your research works and activities. You may include your ORCID ID in processes such as manuscript submission and grant applications and synchronize the data in your ORCID record with external systems by including external identifiers. You may add or edit data in your ORCID record, adjust privacy settings, and select trusted parties with whom to share your data.
 
-How do I claim my ORCID record? We encourage you to login and review your account, so that you may take full advantage of the ORCID Registry, including privacy settings, assignment of proxies, and selection of trusted parties. To claim your account, copy and paste this link into your browser:
+How do I claim my ORCID record? We encourage you to login and review your account, so that you may take full advantage of the ORCID Registry, including privacy settings, assignment of proxies, and selection of trusted parties. To claim your account follow this link to set a password and access your record. If you can't click on the link, copy and paste it into your browser:
 ${verificationUrl}
 
 Where do I learn more about ORCID? Please see our Webpage at http://orcid.org.  More on ORCID's Privacy Policy is available here - http://orcid.org/privacy-policy.
