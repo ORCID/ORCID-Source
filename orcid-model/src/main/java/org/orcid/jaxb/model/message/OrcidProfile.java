@@ -127,7 +127,6 @@ public class OrcidProfile implements Serializable {
      * 
      */
     public void setOrcid(String value) {
-        //this.orcidId = "http://orcid.org/" + value;
         this.orcid = new Orcid(value);
     }
 
