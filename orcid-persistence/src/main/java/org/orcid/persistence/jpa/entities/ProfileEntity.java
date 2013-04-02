@@ -929,4 +929,29 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
         this.deactivationDate = deactivationDate;
     }
 
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((orcid == null) ? 0 : orcid.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        ProfileEntity other = (ProfileEntity) obj;
+        if (orcid == null) {
+            if (other.orcid != null)
+                return false;
+        } else if (!orcid.equals(other.orcid))
+            return false;
+        return true;
+    }
+
 }

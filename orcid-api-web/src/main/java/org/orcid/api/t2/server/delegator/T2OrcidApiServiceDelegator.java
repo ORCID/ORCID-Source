@@ -106,4 +106,28 @@ public interface T2OrcidApiServiceDelegator extends OrcidApiServiceDelegator {
      * @return
      */
     Response deleteProfile(UriInfo uriInfo, String orcid);
+
+    /**
+     * Register a new webhook to the profile. As with all calls, if the message
+     * contains any other elements, a 400 Bad Request will be returned.
+     * 
+     * @param orcid
+     *            the identifier of the profile to add the webhook
+     * @param webhookUri
+     *            uri of the webhook
+     * @return If successful, returns a 2xx.
+     * */
+    Response registerWebhook(UriInfo uriInfo, String orcid, String webhookUri);
+
+    /**
+     * Unregister a webhook from a profile. As with all calls, if the message
+     * contains any other elements, a 400 Bad Request will be returned.
+     * 
+     * @param orcid
+     *            the identifier of the profile to unregister the webhook
+     * @param webhookUri
+     *            uri of the webhook
+     * @return If successful, returns a 204 No content.
+     * */
+    Response unregisterWebhook(String orcid, String webhookUri);
 }
