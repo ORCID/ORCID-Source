@@ -26,6 +26,7 @@
     <link rel="stylesheet" href="${staticCdn}/css/orcid.css?v=${ver}"/>
     <link rel="stylesheet" href="${staticCdn}/css/java.css?v=${ver}"/>
     <link rel="stylesheet" href="${staticCdn}/css/jquery-ui-1.10.0.custom.min.css?v=${ver}"/>
+	<link rel="stylesheet" href="<@spring.url '/static/css/font.css?v=${ver}' />"/>
 	<style type="text/css">
 		/* 
 	  	Allow angular.js to be loaded in body, hiding cloaked elements until 

@@ -141,7 +141,7 @@
         </div>
     </footer>
 <form action="<@spring.url '/'/>">
-    <input id="imageUrl" type="hidden" value="<@spring.url '/static/images'/>">
+    <input id="imageUrl" type="hidden" value="${staticCdn}/images">
 </form>
 </@base>
 </#macro>
