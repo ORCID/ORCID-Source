@@ -54,7 +54,7 @@ import java.util.SortedSet;
 
 public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
 
-    @Value("${org.orcid.core.baseUri:}")
+    @Value("${org.orcid.core.baseUri:http://orcid.org}")
     private String baseUri = null;
 
     private DatatypeFactory datatypeFactory = null;
