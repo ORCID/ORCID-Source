@@ -160,23 +160,6 @@ public class ManageProfileControllerTest extends BaseControllerTest {
     }
 
     @Test
-    public void testUpdateEmailInvokesNotificationManager() throws Exception {
-
-        controller.setNotificationManager(mockNotificationManager);
-        controller.setOrcidProfileManager(mock(OrcidProfileManager.class));
-
-        BindingResult bindingResult = mock(BindingResult.class);
-        HttpServletRequest request = mock(HttpServletRequest.class);
-
-        ChangePersonalInfoForm changePersonalInfoForm = new ChangePersonalInfoForm(getOrcidProfile());
-        assertEquals("josiah_carberry@brown.edu", getOrcidProfile().getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue());
-        changePersonalInfoForm.setEmail("newemail@orcid.org");
-        ModelAndView successView = controller.saveEditedBio(request, changePersonalInfoForm, bindingResult, mock(RedirectAttributes.class));
-        verify(mockNotificationManager, times(1)).sendEmailAddressChangedNotification(any(OrcidProfile.class), any(Email.class), any(URI.class));
-        assertEquals("redirect:manage-bio-settings", successView.getViewName());
-    }
-
-    @Test
     public void testUpdateAffiliations() throws Exception {
         Map<String, String> map = new HashMap<String, String>();
         MapBindingResult bindingResult = new MapBindingResult(map, "currentAffiliationsForm");
