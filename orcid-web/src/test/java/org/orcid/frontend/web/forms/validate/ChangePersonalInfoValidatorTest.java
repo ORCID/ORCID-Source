@@ -47,7 +47,6 @@ public class ChangePersonalInfoValidatorTest extends AbstractConstraintValidator
         ChangePersonalInfoForm form = new ChangePersonalInfoForm();
         form.setFirstName("firstName");
         form.setLastName("lastName");
-        form.setEmail("jimmy@this.com");
 
         Set<ConstraintViolation<ChangePersonalInfoForm>> errors = validator.validate(form);
         Map<String, String> allErrorValues = retrieveErrorKeyAndMessage(errors);
@@ -61,12 +60,10 @@ public class ChangePersonalInfoValidatorTest extends AbstractConstraintValidator
 
         Set<ConstraintViolation<ChangePersonalInfoForm>> errors = validator.validate(form);
         Map<String, String> allErrorValues = retrieveErrorKeyAndMessage(errors);
-        assertEquals("Should be 2 errors", 2, allErrorValues.size());
+        assertEquals("Should be 1 error1", 1, allErrorValues.size());
         String givenNamesMissing = allErrorValues.get("firstName");
-        String emailMissing = allErrorValues.get("email");
 
         assertEquals("Please enter your first name.", givenNamesMissing);
-        assertEquals("Please enter your e-mail address.", emailMissing);
     }
 
     @Test
@@ -77,7 +74,6 @@ public class ChangePersonalInfoValidatorTest extends AbstractConstraintValidator
         ChangePersonalInfoForm form = new ChangePersonalInfoForm();
         form.setFirstName("firstName");
         form.setLastName("lastName");
-        form.setEmail("test+11@orcid.org");
         form.setBiography(thousandAndOneChars);
         Set<ConstraintViolation<ChangePersonalInfoForm>> errors = validator.validate(form);
         Map<String, String> allErrorValues = retrieveErrorKeyAndMessage(errors);
