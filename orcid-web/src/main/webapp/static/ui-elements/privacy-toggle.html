@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Toggle Privacy</title>
+<link rel="stylesheet" href="css/jquery-ui.css" />
+<script src="javascript/jquery/jquery/1.8.1/jquery.min.js"></script>
+<script src="javascript/jqueryui/jquery-ui.js"></script>
+<script>
+	$(function(){$( ".radio" ).buttonset();});
+</script>
+</head>
+<body>
+	<form>
+		<div class="radio">
+			<input type="radio" id="radio1" name="radio" /><label for="radio1"><i class="icon-privacy icon-public"></i></label>
+			<input type="radio" id="radio2" name="radio" checked="checked" /><label for="radio2"><i class="icon-privacy icon-limited"></i></label>
+			<input type="radio" id="radio3" name="radio" /><label for="radio3"><i class="icon-privacy icon-private"></i></label>
+		</div>
+	</form>
+	<br/>
+	<form>
+		<div class="radio toggle-b">
+			<input type="radio" id="radio4" name="radio" /><label for="radio4" class="btn-circle"><i class="icon-privacy icon-public"></i></label>
+			<input type="radio" id="radio5" name="radio" checked="checked" /><label for="radio5" class="btn-circle"><i class="icon-privacy icon-limited"></i></label>
+			<input type="radio" id="radio6" name="radio" /><label for="radio6" class="btn-circle"><i class="icon-privacy icon-private"></i></label>
+		</div>
+	</form>
+</body>
+</html>
