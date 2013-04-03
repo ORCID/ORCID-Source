@@ -5786,3 +5786,9 @@ strong,
 .primaryEmail{
 	font-weight: bold;
 }
+
+.privacyToggle {
+	background-image: url('../img/prive_toggle_sprite.png');
+	width: 80px;
+	height: 30px;
+}

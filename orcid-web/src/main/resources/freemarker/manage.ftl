@@ -90,6 +90,10 @@
 		   							      <button ng-show="email.primary == false" ng-click="deleteEmail($index)" class="btn btn-small" style="position: absolute; top: 0;">X</button>
 		   							</div>
 		   							<div style="display:inline-block;">
+		   							   <div class="privacyToggle">here</div>
+		   							</div>
+		   							<#--
+		   							<div style="display:inline-block;">
 								        <div class="btn-group abs-left-top"  ng-class="{open: email.value==curPrivToggle}">
 								            <button class="btn dropdown-toggle privacy-toggle btn-small" ng-class="email.visibility | emailVisibilityBtnClassFtr" ng-bind-html-unsafe="email.visibility | emailVisibilityFtr" ng-click="togglePrivacySelect($index)"></button>
 											<ul class="dropdown-menu privacy-menu show">
@@ -100,6 +104,7 @@
 	            							</ul>        								        
 								        </div>
 									</div>
+									-->
 		   						</div>
 		   						<div>
 		   							<input type="email" placeholder="Add Another Email" class="input-xlarge" ng-model="inputEmail.value" style="margin: 0px;" required/> <span ng-click="add()" class="btn">${springMacroRequestContext.getMessage("manage.spanadd")}</span>
