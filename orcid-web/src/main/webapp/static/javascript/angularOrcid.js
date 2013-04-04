@@ -204,7 +204,7 @@ function EmailEdit($scope, $http) {
 	    });
 	};
 
-	$scope.save = function() {
+	$scope.saveEmail = function() {
 		$.ajax({
 	        url: $('body').data('baseurl') + 'account/emails.json',
 	        type: 'POST',
