@@ -5791,54 +5791,44 @@ strong,
 
 .privacyToggle li {
 	list-style: none; position: absolute; top:0; left: 0px; 
+	background: url('../img/priv_toggle_sprite.png') no-repeat;
 }
 
 .privacyToggle li, .privacyToggle a {
 	display: block;
 	height: 29px;
-	margin:0; padding:0;
+	margin:0; 
+	padding:0;
+	width: 27px; 
+	margin: 0px; 
+	padding: 0px;
 }
 
 .privacyToggle .publicActive {
-	background: url('../img/priv_toggle_sprite.png') 0px 0px;
-	background-repeat: no-repeat;
-	left: 0px; width: 27px; 
-	margin: 0px; padding: 0px;
+	background-position: 0px 0px;
+    left: 0px; 
 }
 
 .privacyToggle .publicInActive {
-	background: url('../img/priv_toggle_sprite.png') 0px -35px;
-	background-repeat: no-repeat;
-	left: 0px; width: 27px;
-	margin: 0px; padding: 0px;
+	background-position: 0px -35px;
 }
 
 .privacyToggle .limitedActive {
-	background: url('../img/priv_toggle_sprite.png') -29px -35px;
-	background-repeat: no-repeat;
-	left:27px; width: 26px;
-	margin: 0px; padding: 0px;
+	background-position: -29px -35px;
+	left:27px;
 }
 
 .privacyToggle .limitedInActive {
-	background: url('../img/priv_toggle_sprite.png') -29px 0px;
-	background-repeat: no-repeat;
-	left:27px; width: 26px;
-	margin: 0px; padding: 0px;
+	background-position: -29px 0px;
 }
 
 .privacyToggle .privateActive {
-	background: url('../img/priv_toggle_sprite.png') -55px -70px;
-	background-repeat: no-repeat;
-	left: 53px; width: 26px;
-	margin: 0px; padding: 0px;
+	background-position: -55px -70px;
+	left: 53px; 
 }
 
 .privacyToggle .privateInActive {
-	background: url('../img/priv_toggle_sprite.png') -55px 0px;
-	background-repeat: no-repeat;
-	left: 53px; width: 26px;
-	margin: 0px; padding: 0px;
+	background-position: -55px 0px;
 }
 
 #emailTable {width: 620px; padding: 0px; margin: 0px;}
