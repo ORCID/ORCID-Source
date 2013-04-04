@@ -51,7 +51,7 @@
                         <div class="conditions">
                             <p>${springMacroRequestContext.getMessage("public-layout.search.terms1")}<a href="${aboutUri}/legal?lang=${locale}">${springMacroRequestContext.getMessage("public-layout.search.terms2")}</a>${springMacroRequestContext.getMessage("public-layout.search.terms3")}</p>
                         </div>
-                        <button type="submit" href="#" class="search-button"><i class="icon-orcid-search"></i></button>
+                        <button type="submit" class="search-button"><i class="icon-orcid-search"></i></button>
                         <a href="<@spring.url "/orcid-search/search" />" class="settings-button" title="${springMacroRequestContext.getMessage("public-layout.search.advanced")}"><i class="icon-cog"></i></a>
                     </form>
                 </div>
