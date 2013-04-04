@@ -79,10 +79,8 @@ public class BaseController {
 
     private Date startupDate = new Date();
 
-    //TODO
     private String staticContentPath;
 
-    //TODO
     private String staticCdnPath;
     
     @Resource
@@ -373,6 +371,9 @@ public class BaseController {
         this.cdnConfigFile = cdnConfigFile;
     }
     
+    /**
+     * @return the path to the static content on local project
+     * */
     @ModelAttribute("staticLoc")
     public String getStaticContentPath(HttpServletRequest request) {
         if(StringUtils.isBlank(this.staticContentPath))
@@ -384,6 +385,7 @@ public class BaseController {
      * Return the path where the static content will be.
      * If there is a cdn path configured, it will return the cdn path; if it is not a cdn path
      * it will return a reference to the static folder "/static"
+     * @return the path to the CDN or the path to the local static content
      * */
     @ModelAttribute("staticCdn")
     public String getStaticCdnPath(HttpServletRequest request) {
@@ -416,7 +418,9 @@ public class BaseController {
     }
     
     /**
-     * Return true if the config file was modified since the last time it was used
+     * Return true if the config file was modified since the last time it was used.
+     * @param configFile the config file that contains the CDN information
+     * @return true if the file has been modified since the last time we used it.
      * */
     private boolean reloadCdnInformation(FileSystemResource configFile){        
         try {
