@@ -5790,15 +5790,18 @@ strong,
 .privacyToggle { position: relative; }
 
 .privacyToggle li {
-	list-style: none; position: absolute; top:0; left: 0px; 
+	list-style: none; 
+	position: absolute; 
+	top:0; 
+	left: 0px; 
 	background: url('../img/priv_toggle_sprite.png') no-repeat;
 }
 
 .privacyToggle li, .privacyToggle a {
 	display: block;
 	height: 29px;
-	margin:0; 
-	padding:0;
+	margin: 0; 
+	padding: 0;
 	width: 27px; 
 	margin: 0px; 
 	padding: 0px;
@@ -5831,6 +5834,19 @@ strong,
 	background-position: -55px 0px;
 }
 
-#emailTable {width: 620px; padding: 0px; margin: 0px;}
-#emailTable td {padding: 0px; padding-right: 0px; border-style: none; border: none;}
-#emailTable td.padRgt { padding-right: 15px;}
+#emailTable {
+	width: 620px; 
+	padding: 0px; 
+	margin: 0px;
+}
+
+#emailTable td {
+	padding: 0px; 
+	padding-right: 0px; 
+	border-style: none; 
+	border: none;
+}
+
+#emailTable td.padRgt { 
+	padding-right: 15px;
+}
