@@ -36,10 +36,14 @@ import javax.xml.bind.annotation.XmlEnumValue;
 import javax.xml.bind.annotation.XmlType;
 
 /**
- * <p>Java class for scope-path-type.
- * 
- * <p>The following schema fragment specifies the expected content contained within this class.
  * <p>
+ * Java class for scope-path-type.
+ * 
+ * <p>
+ * The following schema fragment specifies the expected content contained within
+ * this class.
+ * <p>
+ * 
  * <pre>
  * &lt;simpleType name="scope-path-type">
  *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
@@ -67,25 +71,26 @@ import javax.xml.bind.annotation.XmlType;
 @XmlEnum
 public enum ScopePathType implements Serializable {
 
-    @XmlEnumValue("/authenticate")
-    AUTHENTICATE("/authenticate"), @XmlEnumValue("/read-public")
-    READ_PUBLIC("/read-public"), @XmlEnumValue("/orcid-bio/read-limited")
-    ORCID_BIO_READ_LIMITED("/orcid-bio/read-limited", READ_PUBLIC), @XmlEnumValue("/orcid-profile/read-limited")
-    ORCID_PROFILE_READ_LIMITED("/orcid-profile/read-limited", READ_PUBLIC), @XmlEnumValue("/orcid-works/read-limited")
-    ORCID_WORKS_READ_LIMITED("/orcid-works/read-limited", READ_PUBLIC), @XmlEnumValue("/orcid-grants/read-limited")
-    ORCID_GRANTS_READ_LIMITED("/orcid-grants/read-limited", READ_PUBLIC), @XmlEnumValue("/orcid-patents/read-limited")
-    ORCID_PATENTS_READ_LIMITED("/orcid-patents/read-limited", READ_PUBLIC), XmlEnumValue("/orcid-works/update"), ORCID_WORKS_UPDATE("/orcid-works/update",
-            ORCID_WORKS_READ_LIMITED, READ_PUBLIC), @XmlEnumValue("/orcid-grants/update")
-    ORCID_GRANTS_UPDATE("/orcid-grants/update", ORCID_GRANTS_READ_LIMITED, READ_PUBLIC), @XmlEnumValue("/orcid-patents/update")
-    ORCID_PATENTS_UPDATE("/orcid-patents/update", ORCID_PATENTS_READ_LIMITED, READ_PUBLIC), @XmlEnumValue("/orcid-bio/external-identifiers/create")
-    ORCID_BIO_EXTERNAL_IDENTIFIERS_CREATE("/orcid-bio/external-identifiers/create", READ_PUBLIC), @XmlEnumValue("/orcid-bio/update")
-    ORCID_BIO_UPDATE("/orcid-bio/update", ORCID_BIO_READ_LIMITED, ORCID_BIO_EXTERNAL_IDENTIFIERS_CREATE, READ_PUBLIC), @XmlEnumValue("/orcid-works/create")
-    ORCID_WORKS_CREATE("/orcid-works/create", ORCID_WORKS_READ_LIMITED, READ_PUBLIC), @XmlEnumValue("/orcid-grants/create")
-    ORCID_GRANTS_CREATE("/orcid-grants/create", ORCID_GRANTS_READ_LIMITED, READ_PUBLIC), @XmlEnumValue("/orcid-patents/create")
-    ORCID_PATENTS_CREATE("/orcid-patents/create", ORCID_PATENTS_UPDATE, READ_PUBLIC), @XmlEnumValue("/orcid-profile/create")
-    ORCID_PROFILE_CREATE("/orcid-profile/create", ORCID_BIO_READ_LIMITED, ORCID_WORKS_READ_LIMITED, ORCID_PROFILE_READ_LIMITED, ORCID_WORKS_UPDATE, ORCID_BIO_UPDATE,
-            ORCID_GRANTS_UPDATE, ORCID_PATENTS_UPDATE, ORCID_BIO_EXTERNAL_IDENTIFIERS_CREATE, ORCID_WORKS_CREATE, ORCID_GRANTS_CREATE, ORCID_PATENTS_CREATE,
-            AUTHENTICATE, READ_PUBLIC);
+    //@formatter:off
+    @XmlEnumValue("/authenticate") AUTHENTICATE("/authenticate"),
+    @XmlEnumValue("/read-public") READ_PUBLIC("/read-public"),
+    @XmlEnumValue("/orcid-bio/read-limited") ORCID_BIO_READ_LIMITED("/orcid-bio/read-limited", READ_PUBLIC),
+    @XmlEnumValue("/orcid-profile/read-limited") ORCID_PROFILE_READ_LIMITED("/orcid-profile/read-limited", READ_PUBLIC),
+    @XmlEnumValue("/orcid-works/read-limited") ORCID_WORKS_READ_LIMITED("/orcid-works/read-limited", READ_PUBLIC),
+    @XmlEnumValue("/orcid-grants/read-limited") ORCID_GRANTS_READ_LIMITED("/orcid-grants/read-limited", READ_PUBLIC),
+    @XmlEnumValue("/orcid-patents/read-limited") ORCID_PATENTS_READ_LIMITED("/orcid-patents/read-limited", READ_PUBLIC),
+    @XmlEnumValue("/orcid-works/update") ORCID_WORKS_UPDATE("/orcid-works/update", ORCID_WORKS_READ_LIMITED, READ_PUBLIC),
+    @XmlEnumValue("/orcid-grants/update") ORCID_GRANTS_UPDATE("/orcid-grants/update", ORCID_GRANTS_READ_LIMITED, READ_PUBLIC),
+    @XmlEnumValue("/orcid-patents/update") ORCID_PATENTS_UPDATE("/orcid-patents/update", ORCID_PATENTS_READ_LIMITED, READ_PUBLIC),
+    @XmlEnumValue("/orcid-bio/external-identifiers/create") ORCID_BIO_EXTERNAL_IDENTIFIERS_CREATE("/orcid-bio/external-identifiers/create", READ_PUBLIC),
+    @XmlEnumValue("/orcid-bio/update") ORCID_BIO_UPDATE("/orcid-bio/update", ORCID_BIO_READ_LIMITED, ORCID_BIO_EXTERNAL_IDENTIFIERS_CREATE, READ_PUBLIC),
+    @XmlEnumValue("/orcid-works/create") ORCID_WORKS_CREATE("/orcid-works/create", ORCID_WORKS_READ_LIMITED, READ_PUBLIC),
+    @XmlEnumValue("/orcid-grants/create") ORCID_GRANTS_CREATE("/orcid-grants/create", ORCID_GRANTS_READ_LIMITED, READ_PUBLIC),
+    @XmlEnumValue("/orcid-patents/create") ORCID_PATENTS_CREATE("/orcid-patents/create", ORCID_PATENTS_UPDATE, READ_PUBLIC),
+    @XmlEnumValue("/orcid-profile/create") ORCID_PROFILE_CREATE("/orcid-profile/create", ORCID_BIO_READ_LIMITED, ORCID_WORKS_READ_LIMITED, ORCID_PROFILE_READ_LIMITED, ORCID_WORKS_UPDATE, ORCID_BIO_UPDATE,
+        ORCID_GRANTS_UPDATE, ORCID_PATENTS_UPDATE, ORCID_BIO_EXTERNAL_IDENTIFIERS_CREATE, ORCID_WORKS_CREATE, ORCID_GRANTS_CREATE, ORCID_PATENTS_CREATE, AUTHENTICATE, READ_PUBLIC);
+    //@formatter:on
+
     private final String value;
 
     Set<ScopePathType> combined;
