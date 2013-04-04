@@ -85,9 +85,9 @@
 			   						  </td>
 			   						  <td>
 		   							     <ul class="privacyToggle">
-		   							       <li class="publicActive" ng-class="{publicInActive: email.visibility != 'PUBLIC'}"><a href="" ng-click="setPrivacy($index, 'PUBLIC', $event)"></a></li>
-		   							       <li class="limitedActive" ng-class="{limitedInActive: email.visibility != 'LIMITED'}"><a href="" ng-click="setPrivacy($index, 'LIMITED', $event)"></a></li>
-		   							       <li class="privateActive" ng-class="{privateInActive: email.visibility != 'PRIVATE'}"><a href="" ng-click="setPrivacy($index, 'PRIVATE', $event)"></a></li>
+		   							       <li class="publicActive" ng-class="{publicInActive: email.visibility != 'PUBLIC'}"><a href="" title="PUBLIC" ng-click="setPrivacy($index, 'PUBLIC', $event)"></a></li>
+		   							       <li class="limitedActive" ng-class="{limitedInActive: email.visibility != 'LIMITED'}"><a href="" title="LIMITED" ng-click="setPrivacy($index, 'LIMITED', $event)"></a></li>
+		   							       <li class="privateActive" ng-class="{privateInActive: email.visibility != 'PRIVATE'}"><a href="" title="PRIVATE" ng-click="setPrivacy($index, 'PRIVATE', $event)"></a></li>
 		   							     </ul>			   						      
 			   						  </td>
 			   						</tr>
