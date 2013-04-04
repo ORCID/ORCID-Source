@@ -90,7 +90,7 @@
                                                     <@spring.formHiddenInput "searchAndAddForm.currentWorks[${work_index}].currentWorkExternalIds[${ei_index}].type"/>
                                                     <#if (ei.type = 'doi') && (ei.id)??>
                                                         <span class="work-metadata">DOI: ${ei.id}</span>
-                                                        <img onclick="javascript:window.open(&quot;http://dx.doi.org/${ei.id}&quot;)" style="cursor:pointer;" src="<@spring.url '/static/img/view_full_text.gif'/>"><input type="hidden" value="null" name="artifacts[0].destApp"><input type="hidden" value="JOUR" name="artifacts[0].type"><input type="hidden" value="W" name="artifacts[0].uploadedBy">
+                                                        <img onclick="javascript:window.open(&quot;http://dx.doi.org/${ei.id}&quot;)" style="cursor:pointer;" src="${staticCdn}/img/view_full_text.gif"><input type="hidden" value="null" name="artifacts[0].destApp"><input type="hidden" value="JOUR" name="artifacts[0].type"><input type="hidden" value="W" name="artifacts[0].uploadedBy">
                                                      </#if>
                                                 </#list>
                                             </#if>
@@ -152,7 +152,7 @@
               <a href="#" class="btn btn-primary close-and-reload" id="works-list-save">${springMacroRequestContext.getMessage("freemarker.btnsavechanges")}</a>
               <a href="#" class="btn close-button" id="works-list-reset" type="reset">${springMacroRequestContext.getMessage("freemarker.btncancel")}</a>
           </div>
-          ${springMacroRequestContext.getMessage("works_update.Poweredby")} <img src="<@spring.url "/static/img/xref.png" />" alt="${springMacroRequestContext.getMessage('works_update.altcross')}" />
+          ${springMacroRequestContext.getMessage("works_update.Poweredby")} <img src="${staticCdn}/img/xref.png" alt="${springMacroRequestContext.getMessage('works_update.altcross')}" />
     </div>
 </div>
 <div class="hide">
