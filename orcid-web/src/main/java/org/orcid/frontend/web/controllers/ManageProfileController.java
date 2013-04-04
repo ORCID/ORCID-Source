@@ -71,8 +71,10 @@ import org.orcid.jaxb.model.message.SendOrcidNews;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
 import org.orcid.jaxb.model.message.WorkVisibilityDefault;
+import org.orcid.password.constants.OrcidPasswordConstants;
 import org.orcid.pojo.Emails;
 import org.orcid.pojo.Errors;
+import org.orcid.pojo.ChangePassword;
 import org.orcid.utils.OrcidStringUtils;
 import org.orcid.utils.OrcidWebUtils;
 import org.slf4j.Logger;
@@ -632,6 +634,40 @@ public class ManageProfileController extends BaseWorkspaceController {
         changePasswordView.addObject("passwordOptionsSaved", true);
         return changePasswordView;
     }
+    
+    
+    @RequestMapping(value = { "/change-password.json" }, method = RequestMethod.GET) 
+    public @ResponseBody ChangePassword getChangedPasswordJson(HttpServletRequest request) {
+        ChangePassword p = new ChangePassword();
+        return p;
+    }
+    
+    @RequestMapping(value = { "/change-password.json" }, method = RequestMethod.POST)
+    public @ResponseBody ChangePassword changedPasswordJson(HttpServletRequest request, @RequestBody ChangePassword cp) {
+        List<String> errors = new ArrayList<String>();
+        
+        
+        if (cp.getPassword() == null || !cp.getPassword().matches(OrcidPasswordConstants.ORCID_PASSWORD_REGEX)) {
+            errors.add(getMessage("NotBlank.registrationForm.confirmedPassword"));
+        } else if (!cp.getPassword().equals(cp.getRetypedPassword())) {
+            errors.add(getMessage("FieldMatch.registrationForm"));
+        }
+
+        if (cp.getOldPassword() == null || !encryptionManager.hashMatches(cp.getOldPassword(), getCurrentUser().getPassword())) {
+            errors.add(getMessage("orcid.frontend.change.password.current_password_incorrect"));
+        }
+        
+        if (errors.size() == 0) {
+            OrcidProfile profile = getCurrentUser().getEffectiveProfile();
+            profile.setPassword(cp.getPassword());
+            orcidProfileManager.updatePasswordInformation(profile);
+            cp = new ChangePassword();
+            errors.add(getMessage("orcid.frontend.change.password.change.successfully"));
+        }
+        cp.setErrors(errors);
+        return cp;
+    }
+    
 
     @RequestMapping(value = { "deactivate-orcid", "/view-deactivate-orcid-account" }, method = RequestMethod.GET)
     public ModelAndView viewDeactivateOrcidAccount() {
