@@ -5786,3 +5786,73 @@ strong,
 .primaryEmail{
 	font-weight: bold;
 }
+
+.privacyToggle {
+	position: relative;
+	margin: 0px; 
+	padding: 0px;
+}
+
+.privacyToggle li {
+	list-style: none; 
+	position: absolute; 
+	top: 0px; 
+	left: 0px; 
+    background: url('../img/priv_toggle_sprite.png') no-repeat;
+}
+
+.privacyToggle li, .privacyToggle a {
+	display: block;
+	height: 29px;
+	margin: 0px; 
+	padding: 0px;
+	width: 27px; 
+}
+
+.privacyToggle .publicActive {
+	background-position: 0px -1px;
+    left: 0px; 
+}
+
+.privacyToggle .publicInActive {
+	background-position: 0px -36px;
+}
+
+.privacyToggle .limitedActive {
+	background-position: -29px -36px;
+	left:27px;
+}
+
+.privacyToggle .limitedInActive {
+	background-position: -29px -1px;
+}
+
+.privacyToggle .privateActive {
+	background-position: -55px -71px;
+	left: 53px; 
+}
+
+.privacyToggle .privateInActive {
+	background-position: -55px -1px;
+}
+
+.editTablePadCell50 {
+	padding-left: 50px;
+}
+
+#emailTable {
+	width: 570px; 
+	padding: 0px; 
+	margin: 0px;
+}
+
+#emailTable td {
+	padding: 0px; 
+	padding-right: 0px; 
+	border-style: none; 
+	border: none;
+}
+
+#emailTable td.padRgt { 
+	padding-right: 10px;
+}

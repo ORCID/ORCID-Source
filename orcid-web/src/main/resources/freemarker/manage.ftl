@@ -45,12 +45,6 @@
 			
 			<table class="table table-bordered settings-table" id="ng-app" ng-app="orcidApp" ng-controller="EditTableCtrl">
 				<tbody>
-				    <#--<tr>
-                        <th>${springMacroRequestContext.getMessage("manage.personal_details")}</th>
-                        <td>
-                            <@orcid.settingsPopover "password" "/manage_personal_info.ftl" "Edit personal details" open />
-                        </td>
-                    </tr>-->
 					<tr>
 						<th>${springMacroRequestContext.getMessage("public_profile.h3PersonalInformation")}</th>
 						<td>
@@ -65,50 +59,51 @@
 							</td>
 						</tr>
 						<tr ng-controller="EmailEdit" ng-show="showEditEmail" ng-cloak>
-							<td colspan="2">
+							<td colspan="2" class="editTablePadCell40">
+							<div class="editTablePadCell50">
 								<!-- we should never see errors here, but just to be safe -->
 								<span class="orcid-error" ng-show="emailsPojo.errors.length > 0">
 			   						<span ng-repeat='error in emailsPojo.errors' ng-bind-html-unsafe="error"></span>
-			   					</span>
-		   						<div ng-repeat='email in emailsPojo.emails' style="height: 35px;">
-		   							<div style="width: 300px; display: inline-block; *display: inline;" ng-class="{primaryEmail:email.primary}" ng-bind="email.value"></div>
-		   							<div style="width: 100px; display: inline-block; *display: inline;">
-		   							
-		   							<span ng-hide="email.primary" ><a href="" ng-click="setPrimary($index)" ng-bind="email.primary | emailPrimaryFtr"></a></span>
-		   							<span ng-show="email.primary" class="muted" style="color: #bd362f"ng-bind="email.primary | emailPrimaryFtr"></span>
-		   							</div> 
-		   							<select style="width: 100px; height: 26px;" ng-change="saveEmail()" ng-model="email.current">
-              							<option value="true" ng-selected="email.current == true">Current</option>
-              							<option value="false" ng-selected="email.current == false">Past</option>              
-            						</select>
-		   							<span ng-hide="email.verified"><a href="" ng-click="verifyEmail($index)">Verify</a></span>
-		   							<span ng-show="email.verified">Verified</span>		
-		   							<span class="orcid-error" ng-show="email.errors.length > 0">
-		   							   <span ng-repeat='error in email.errors' ng-bind-html-unsafe="error"></span>
-		   							</span>
-		   							<div style="display:inline-block;">
-		   							      <button ng-show="email.primary == false" ng-click="deleteEmail($index)" class="btn btn-small" style="position: absolute; top: 0;">X</button>
-		   							</div>
-		   							<div style="display:inline-block;">
-								        <div class="btn-group abs-left-top"  ng-class="{open: email.value==curPrivToggle}">
-								            <button class="btn dropdown-toggle privacy-toggle btn-small" ng-class="email.visibility | emailVisibilityBtnClassFtr" ng-bind-html-unsafe="email.visibility | emailVisibilityFtr" ng-click="togglePrivacySelect($index)"></button>
-											<ul class="dropdown-menu privacy-menu show">
-								                <li><a class="btn btn-success btn-privacy btn-small" href="#" ng-click="setPrivacy($index, 'PUBLIC', $event)">${springMacroRequestContext.getMessage("manage.lipublic")} <span class="caret"></span></a></li>
-								                <li><a class="btn btn-warning btn-privacy btn-small" href="#" ng-click="setPrivacy($index, 'LIMITED', $event)">${springMacroRequestContext.getMessage("manage.lilimited")} <span class="caret"></span></a></li>
-								                <li><a class="btn btn-danger btn-privacy btn-small" href="#" ng-click="setPrivacy($index, 'PRIVATE', $event)">${springMacroRequestContext.getMessage("manage.liprivate")} <span class="caret"></span></a></li>	
-								                <li><a class="btn btn-small" href="http://support.orcid.org/knowledgebase/articles/124518" target="_blank">${springMacroRequestContext.getMessage("manage.lihelp")} <span class="caret"></span></a></li>
-	            							</ul>        								        
-								        </div>
-									</div>
-		   						</div>
-		   						<div>
-		   							<input type="email" placeholder="Add Another Email" class="input-xlarge" ng-model="inputEmail.value" style="margin: 0px;" required/> <span ng-click="addEmail()" class="btn">${springMacroRequestContext.getMessage("manage.spanadd")}</span>
-		   							<span class="orcid-error" ng-show="inputEmail.errors.length > 0">
-			   							<span ng-repeat='error in inputEmail.errors' ng-bind-html-unsafe="error"></span>
-			   						</span>
-			   					</div>	
+			   					</span>	
+			   					<table id="emailTable">
+			   						<tr style="vertical-align:bottom;" ng-repeat='email in emailsPojo.emails'>
+			   						  <td class="padRgt" ng-class="{primaryEmail:email.primary}" ng-bind="email.value">
+			   						  </td>
+			   						  <td class="padRgt">
+			   						  		<span ng-hide="email.primary" ><a href="" ng-click="setPrimary($index)" ng-bind="email.primary | emailPrimaryFtr"></a></span>
+			   							    <span ng-show="email.primary" class="muted" style="color: #bd362f;" ng-bind="email.primary | emailPrimaryFtr"></span>
+			   						  </td> 
+			   						  <td class="padRgt">
+			   						  	<select style="width: 100px; height: 26px;" ng-change="saveEmail()" ng-model="email.current">
+              							    <option value="true" ng-selected="email.current == true">Current</option>
+              							    <option value="false" ng-selected="email.current == false">Past</option>              
+            						    </select>
+			   						  </td>
+			   						  <td class="padRgt">
+			   						      <span ng-hide="email.verified"><a href="" ng-click="verifyEmail($index)">Verify</a></span>
+		   							      <span ng-show="email.verified">Verified</span>		
+			   						  </td>
+			   						  <td class="padRgt">
+			   						      <button ng-show="email.primary == false" ng-click="deleteEmail($index)" class="btn btn-small">X</button>
+			   						  </td>
+			   						  <td>
+		   							     <ul class="privacyToggle">
+		   							       <li class="publicActive" ng-class="{publicInActive: email.visibility != 'PUBLIC'}"><a href="" title="PUBLIC" ng-click="setPrivacy($index, 'PUBLIC', $event)"></a></li>
+		   							       <li class="limitedActive" ng-class="{limitedInActive: email.visibility != 'LIMITED'}"><a href="" title="LIMITED" ng-click="setPrivacy($index, 'LIMITED', $event)"></a></li>
+		   							       <li class="privateActive" ng-class="{privateInActive: email.visibility != 'PRIVATE'}"><a href="" title="PRIVATE" ng-click="setPrivacy($index, 'PRIVATE', $event)"></a></li>
+		   							     </ul>			   						      
+			   						  </td>
+			   						</tr>
+				   					</table>
+				   					<div>
+			   							<input type="email" placeholder="Add Another Email" class="input-xlarge" ng-model="inputEmail.value" style="margin: 0px;" required/> <span ng-click="addEmail()" class="btn btn-primary">${springMacroRequestContext.getMessage("manage.spanadd")}</span>
+			   							<span class="orcid-error" ng-show="inputEmail.errors.length > 0">
+				   							<span ng-repeat='error in inputEmail.errors' ng-bind-html-unsafe="error"></span>
+				   						</span>
+				   					</div>	
+			   					</div>
 							</td>
-						</tr>
+					</tr>
 					<tr>
 						<th>${springMacroRequestContext.getMessage("manage.password")}</th>
 						<td>
@@ -117,6 +112,7 @@
 					</tr>
 					<tr ng-controller="PasswordEdit" ng-show="showEditPassword" ng-cloak>
 						<td colspan="2">
+						<div class="editTablePadCell50">
 							    <span class="orcid-error" ng-show="changePasswordPojo.errors.length > 0">
 				   						<div ng-repeat='error in changePasswordPojo.errors' ng-bind-html-unsafe="error"></div>
 				   				</span>
@@ -146,6 +142,7 @@
 							        <button id="bottom-submit-password-change" class="btn btn-primary" ng-click="saveChangePassword()">${springMacroRequestContext.getMessage("freemarker.btnsavechanges")}</button>
 							        <button id="bottom-clear-password-changes" class="btn close-parent-popover" ng-click="getChangePassword()">${springMacroRequestContext.getMessage("freemarker.btncancel")}</button>
 							    </div>
+						</div>
 						</td>
 					</tr>
 					<#--
@@ -246,6 +243,7 @@
 			
 		</div>
 	</div>
+	
 
 
 
