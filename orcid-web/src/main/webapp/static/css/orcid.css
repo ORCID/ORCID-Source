@@ -5787,6 +5787,10 @@ strong,
 	font-weight: bold;
 }
 
+.privacyToggle {
+	position: relative;
+}
+
 .privacyToggle li {
 	list-style: none; 
 	position: absolute; 
@@ -5798,8 +5802,8 @@ strong,
 .privacyToggle li, .privacyToggle a {
 	display: block;
 	height: 29px;
-	margin: 0; 
-	padding: 0;
+	margin: 0px; 
+	padding: 0px;
 	width: 27px; 
 	margin: 0px; 
 	padding: 0px;
