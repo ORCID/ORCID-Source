@@ -5789,6 +5789,8 @@ strong,
 
 .privacyToggle {
 	position: relative;
+	margin: 0px; 
+	padding: 0px;
 }
 
 .privacyToggle li {
@@ -5796,7 +5798,7 @@ strong,
 	position: absolute; 
 	top: 0px; 
 	left: 0px; 
-	background: url('../img/priv_toggle_sprite.png') no-repeat;
+    background: url('../img/priv_toggle_sprite.png') no-repeat;
 }
 
 .privacyToggle li, .privacyToggle a {
@@ -5805,8 +5807,6 @@ strong,
 	margin: 0px; 
 	padding: 0px;
 	width: 27px; 
-	margin: 0px; 
-	padding: 0px;
 }
 
 .privacyToggle .publicActive {
@@ -5836,8 +5836,12 @@ strong,
 	background-position: -55px -1px;
 }
 
+.editTablePadCell50 {
+	padding-left: 50px;
+}
+
 #emailTable {
-	width: 620px; 
+	width: 570px; 
 	padding: 0px; 
 	margin: 0px;
 }
@@ -5850,5 +5854,5 @@ strong,
 }
 
 #emailTable td.padRgt { 
-	padding-right: 15px;
+	padding-right: 10px;
 }

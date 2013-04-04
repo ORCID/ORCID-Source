@@ -59,19 +59,22 @@
 							</td>
 						</tr>
 						<tr ng-controller="EmailEdit" ng-show="showEditEmail" ng-cloak>
-							<td colspan="2">
+							<td colspan="2" class="editTablePadCell40">
+							<div class="editTablePadCell50">
 								<!-- we should never see errors here, but just to be safe -->
 								<span class="orcid-error" ng-show="emailsPojo.errors.length > 0">
 			   						<span ng-repeat='error in emailsPojo.errors' ng-bind-html-unsafe="error"></span>
-			   					</span>
+			   					</span>	
 			   					<table id="emailTable">
 			   						<tr style="vertical-align:bottom;" ng-repeat='email in emailsPojo.emails'>
 			   						  <td class="padRgt" ng-class="{primaryEmail:email.primary}" ng-bind="email.value">
+			   						  </td>
+			   						  <td class="padRgt">
 			   						  		<span ng-hide="email.primary" ><a href="" ng-click="setPrimary($index)" ng-bind="email.primary | emailPrimaryFtr"></a></span>
 			   							    <span ng-show="email.primary" class="muted" style="color: #bd362f;" ng-bind="email.primary | emailPrimaryFtr"></span>
 			   						  </td> 
 			   						  <td class="padRgt">
-			   						  	<select style="width: 100px;" ng-change="saveEmail()" ng-model="email.current">
+			   						  	<select style="width: 100px; height: 26px;" ng-change="saveEmail()" ng-model="email.current">
               							    <option value="true" ng-selected="email.current == true">Current</option>
               							    <option value="false" ng-selected="email.current == false">Past</option>              
             						    </select>
@@ -91,13 +94,14 @@
 		   							     </ul>			   						      
 			   						  </td>
 			   						</tr>
-			   					</table>
-			   					<div>
-		   							<input type="email" placeholder="Add Another Email" class="input-xlarge" ng-model="inputEmail.value" style="margin: 0px;" required/> <span ng-click="addEmail()" class="btn btn-primary">${springMacroRequestContext.getMessage("manage.spanadd")}</span>
-		   							<span class="orcid-error" ng-show="inputEmail.errors.length > 0">
-			   							<span ng-repeat='error in inputEmail.errors' ng-bind-html-unsafe="error"></span>
-			   						</span>
-			   					</div>	
+				   					</table>
+				   					<div>
+			   							<input type="email" placeholder="Add Another Email" class="input-xlarge" ng-model="inputEmail.value" style="margin: 0px;" required/> <span ng-click="addEmail()" class="btn btn-primary">${springMacroRequestContext.getMessage("manage.spanadd")}</span>
+			   							<span class="orcid-error" ng-show="inputEmail.errors.length > 0">
+				   							<span ng-repeat='error in inputEmail.errors' ng-bind-html-unsafe="error"></span>
+				   						</span>
+				   					</div>	
+			   					</div>
 							</td>
 					</tr>
 					<tr>
@@ -108,6 +112,7 @@
 					</tr>
 					<tr ng-controller="PasswordEdit" ng-show="showEditPassword" ng-cloak>
 						<td colspan="2">
+						<div class="editTablePadCell50">
 							    <span class="orcid-error" ng-show="changePasswordPojo.errors.length > 0">
 				   						<div ng-repeat='error in changePasswordPojo.errors' ng-bind-html-unsafe="error"></div>
 				   				</span>
@@ -137,6 +142,7 @@
 							        <button id="bottom-submit-password-change" class="btn btn-primary" ng-click="saveChangePassword()">${springMacroRequestContext.getMessage("freemarker.btnsavechanges")}</button>
 							        <button id="bottom-clear-password-changes" class="btn close-parent-popover" ng-click="getChangePassword()">${springMacroRequestContext.getMessage("freemarker.btncancel")}</button>
 							    </div>
+						</div>
 						</td>
 					</tr>
 					<#--
