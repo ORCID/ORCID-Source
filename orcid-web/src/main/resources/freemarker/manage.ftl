@@ -71,7 +71,7 @@
 			   							    <span ng-show="email.primary" class="muted" style="color: #bd362f;" ng-bind="email.primary | emailPrimaryFtr"></span>
 			   						  </td> 
 			   						  <td class="padRgt">
-			   						  	<select style="width: 100px; height: 26px;" ng-change="save()" ng-model="email.current">
+			   						  	<select style="width: 100px;" ng-change="save()" ng-model="email.current">
               							    <option value="true" ng-selected="email.current == true">Current</option>
               							    <option value="false" ng-selected="email.current == false">Past</option>              
             						    </select>
