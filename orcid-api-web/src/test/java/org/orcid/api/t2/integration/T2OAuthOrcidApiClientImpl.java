@@ -22,6 +22,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -175,6 +176,24 @@ public class T2OAuthOrcidApiClientImpl implements T2OAuthAPIService<ClientRespon
         return postClientResponseWithToken(worksPathWithOrcidUrl, VND_ORCID_JSON, orcidMessage, token);
     }
 
+    @Override
+    @PUT
+    @Consumes(MediaType.WILDCARD)
+    @Path(WEBHOOKS_PATH)
+    public ClientResponse registerWebhook(String orcid, String webhookUri, String token) {
+        URI worksPathWithOrcidUrl = UriBuilder.fromPath(WEBHOOKS_PATH).build(orcid, webhookUri);
+        return putClientResponseWithToken(worksPathWithOrcidUrl, VND_ORCID_JSON, null, token);
+    }
+
+    @Override
+    @DELETE
+    @Consumes(MediaType.WILDCARD)
+    @Path(WEBHOOKS_PATH)
+    public ClientResponse unregisterWebhook(String orcid, String webhookUri, String token) {
+        URI worksPathWithOrcidUrl = UriBuilder.fromPath(WEBHOOKS_PATH).build(orcid, webhookUri);
+        return deleteClientResponseWithToken(worksPathWithOrcidUrl, VND_ORCID_JSON, token);
+    }
+
     /**
      * GETs the XML representation of the ORCID record containing all details
      * 
@@ -213,6 +232,10 @@ public class T2OAuthOrcidApiClientImpl implements T2OAuthAPIService<ClientRespon
 
     private ClientResponse putClientResponseWithToken(URI restPath, String accept, OrcidMessage orcidMessage, String oauthToken) {
         return setupRequestCommonParams(restPath, accept, oauthToken).put(ClientResponse.class, orcidMessage);
+    }
+
+    private ClientResponse deleteClientResponseWithToken(URI restPath, String accept, String oauthToken) {
+        return setupRequestCommonParams(restPath, accept, oauthToken).delete(ClientResponse.class);
     }
 
     private ClientResponse getClientResponseWithToken(URI restPath, String accept, String oauthToken) {

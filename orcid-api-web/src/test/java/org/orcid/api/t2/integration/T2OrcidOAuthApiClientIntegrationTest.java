@@ -23,6 +23,7 @@ import static org.junit.Assert.assertTrue;
 import static org.orcid.api.common.OrcidApiConstants.EXTERNAL_IDENTIFIER_PATH;
 
 import java.net.URI;
+import java.net.URLEncoder;
 import java.util.Collections;
 import java.util.Comparator;
 
@@ -449,6 +450,19 @@ public class T2OrcidOAuthApiClientIntegrationTest extends BaseT2OrcidOAuthApiCli
         externalIdentifiers = orcidBio.getExternalIdentifiers();
         assertEquals(1, externalIdentifiers.getExternalIdentifier().size());
 
+    }
+
+    @Test
+    public void testRegisterAndUnRegisterWebhook() throws Exception {
+        createNewOrcidUsingAccessToken();
+        createAccessTokenFromCredentials();
+        String webhookUri = URLEncoder.encode("http://nowhere.com", "UTF-8");
+        ClientResponse putResponse = oauthT2Client.registerWebhook(this.orcid, webhookUri, this.accessToken);
+        assertNotNull(putResponse);
+        assertEquals(201, putResponse.getStatus());
+        ClientResponse deleteResponse = oauthT2Client.unregisterWebhook(this.orcid, webhookUri, this.accessToken);
+        assertNotNull(deleteResponse);
+        assertEquals(204, deleteResponse.getStatus());
     }
 
 }
