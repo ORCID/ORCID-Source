@@ -61,7 +61,7 @@
 							<th><a name="editEmail"></a>
 		   						${springMacroRequestContext.getMessage("manage.thEmail")}</th>
 							<td>
-								<a href="" ng-click="toggleEmail()" ng-bind="toggleText"></a>
+								<a href="" ng-click="toggleEmailEdit()" ng-bind="emailToggleText"></a>
 							</td>
 						</tr>
 						<tr ng-controller="EmailEdit" ng-show="showEditEmail" ng-cloak>
@@ -77,7 +77,7 @@
 		   							<span ng-hide="email.primary" ><a href="" ng-click="setPrimary($index)" ng-bind="email.primary | emailPrimaryFtr"></a></span>
 		   							<span ng-show="email.primary" class="muted" style="color: #bd362f"ng-bind="email.primary | emailPrimaryFtr"></span>
 		   							</div> 
-		   							<select style="width: 100px; height: 26px;" ng-change="save()" ng-model="email.current">
+		   							<select style="width: 100px; height: 26px;" ng-change="saveEmail()" ng-model="email.current">
               							<option value="true" ng-selected="email.current == true">Current</option>
               							<option value="false" ng-selected="email.current == false">Past</option>              
             						</select>
@@ -102,7 +102,7 @@
 									</div>
 		   						</div>
 		   						<div>
-		   							<input type="email" placeholder="Add Another Email" class="input-xlarge" ng-model="inputEmail.value" style="margin: 0px;" required/> <span ng-click="add()" class="btn">${springMacroRequestContext.getMessage("manage.spanadd")}</span>
+		   							<input type="email" placeholder="Add Another Email" class="input-xlarge" ng-model="inputEmail.value" style="margin: 0px;" required/> <span ng-click="addEmail()" class="btn">${springMacroRequestContext.getMessage("manage.spanadd")}</span>
 		   							<span class="orcid-error" ng-show="inputEmail.errors.length > 0">
 			   							<span ng-repeat='error in inputEmail.errors' ng-bind-html-unsafe="error"></span>
 			   						</span>
@@ -112,9 +112,50 @@
 					<tr>
 						<th>${springMacroRequestContext.getMessage("manage.password")}</th>
 						<td>
+						    <a href="" ng-click="togglePasswordEdit()" ng-bind="passwordToggleText"></a>
+						</td>
+					</tr>
+					<tr ng-controller="PasswordEdit" ng-show="showEditPassword" ng-cloak>
+						<td colspan="2">
+							    <span class="orcid-error" ng-show="changePasswordPojo.errors.length > 0">
+				   						<div ng-repeat='error in changePasswordPojo.errors' ng-bind-html-unsafe="error"></div>
+				   				</span>
+							    <div>
+							    	<label for="passwordField" class="">${springMacroRequestContext.getMessage("change_password.oldpassword")}</label>
+							    	<div class="relative">
+							        	<input id="passwordField" type="password" name="oldPassword" ng-model="changePasswordPojo.oldPassword" class="input-xlarge"/>
+							        	<span class="required">*</span>            
+							    	</div>
+								</div>
+								<div>
+							    	<label for="passwordField" class="">${springMacroRequestContext.getMessage("change_password.newpassword")}</label>
+							    	<div class="relative">
+							        	<input id="password" type="password" name="password" ng-model="changePasswordPojo.password" class="input-xlarge"/>
+							        	<span class="required">*</span>
+							        	<a class="password-info" href="#"><i class="icon-question-sign"></i></a>    
+							    	</div>
+								</div>
+								<div>
+							    	<label for="retypedPassword" class="">${springMacroRequestContext.getMessage("change_password.confirmnewpassword")}</label>
+							    	<div class="relative">
+							    		<input id="retypedPassword" type="password" name="retypedPassword" ng-model="changePasswordPojo.retypedPassword" class="input-xlarge"/>
+							        	<span class="required">*</span>
+							    	</div>        
+								</div><br />
+							    <div>
+							        <button id="bottom-submit-password-change" class="btn btn-primary" ng-click="saveChangePassword()">${springMacroRequestContext.getMessage("freemarker.btnsavechanges")}</button>
+							        <button id="bottom-clear-password-changes" class="btn close-parent-popover" ng-click="getChangePassword()">${springMacroRequestContext.getMessage("freemarker.btncancel")}</button>
+							    </div>
+						</td>
+					</tr>
+					<#--
+					<tr>
+						<th>${springMacroRequestContext.getMessage("manage.password")}</th>
+						<td>
 							<div><@orcid.settingsPopover "password" "/account/password" "Change password" open /></div>
 						</td>
 					</tr>
+					-->
 					<tr>
 						<th>${springMacroRequestContext.getMessage("manage.privacy_preferences")}</th>
 						<td>
