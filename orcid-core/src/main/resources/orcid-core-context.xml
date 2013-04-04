@@ -230,5 +230,10 @@
 	<bean id="httpClient" class="org.apache.http.impl.client.DefaultHttpClient">
 		<constructor-arg ref="poolingClientConnectionManager" />
 	</bean>
+	
+	<!-- CDN config path -->
+	<bean id="cdnConfigFile" class="java.lang.String">
+		<constructor-arg value="/home/root/ORCID/cdn_url.txt"/>
+	</bean>
 
 </beans>
