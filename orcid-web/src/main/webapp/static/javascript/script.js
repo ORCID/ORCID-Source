@@ -57,28 +57,37 @@ var OrcidGA = function () {
 	this.gaPush = function (trackArray) {
 		if (typeof _gaq != 'undefined') {
 			_gaq.push(trackArray);
+			console.log("_gap.push for " + trackArray);
 		} else {
 			// if it's a function and _gap isn't available run (typically only on dev)
-			if (typeof trackArray === 'function') trackArray();
+			if (typeof trackArray === 'function') trackArray();	
 			console.log("no _gap.push for " + trackArray);
 		}
 	};
 	
     // Delays are async functions used to make sure event track que has cleared
 	// See https://developers.google.com/analytics/devguides/collection/gajs/methods/gaJSApi_gaq
+	//
+	// Additionally adding in delay: http://support.google.com/analytics/answer/1136920?hl=en
 	this.gaFormSumbitDelay = function ($el) {
 		if (!$el instanceof jQuery) {
 			$el = $(el);
 		}
 		this.gaPush(function() {
-			$el.submit();
+			console.log("_gap.push executing $el.submit()");
+			setTimeout(function() {
+			    $el.submit();
+				}, 100); 
 		});
 		return false;
 	};
 	
 	this.windowLocationHrefDelay = function (url) {
 		this.gaPush(function() {
-			window.location.href = url; 
+			console.log("_gap.push has executing window.location.href " + url);
+			setTimeout(function() {
+				window.location.href = url;
+				}, 100); 
 		});
 		return false;
 	};
@@ -135,9 +144,10 @@ function checkOrcidLoggedIn() {
         	if ( data.loggedIn == false
         			&& (basePath.startsWith(baseUrl + 'my-orcid')
         			     || basePath.startsWith(baseUrl + 'account'))) {
+        		console.log("loggedOutRedir " + data);
         		window.location.href = baseUrl + "signin"; 
         	}
-        	console.log("loggedIn" + data.loggedIn);
+        	
         }
     }).fail(function() { 
     	// something bad is happening!
