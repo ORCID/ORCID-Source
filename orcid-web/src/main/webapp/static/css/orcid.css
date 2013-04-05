@@ -5856,3 +5856,7 @@ strong,
 #emailTable td.padRgt { 
 	padding-right: 10px;
 }
+
+#externalIdentifierTable td.padRgt { 
+	padding-right: 7px;
+}
