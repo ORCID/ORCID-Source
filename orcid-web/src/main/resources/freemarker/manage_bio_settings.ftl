@@ -160,7 +160,7 @@
             	<div class="control-group">
                     <h3>${springMacroRequestContext.getMessage("manage_bio_settings.emailaddress")}</h3>
                     <div class="relative">
-                       <a href="javascript:void(0)" onClick="parent.$.colorbox.close(); top.location='<@spring.url '/account#editEmail'/>'; return false;">${springMacroRequestContext.getMessage("manage_bio_settings.editEmail")}</a>
+                       <a href="javascript:void(0)" onClick="top.location='<@spring.url '/account#editEmail'/>'; top.$.colorbox.close(); return false;">${springMacroRequestContext.getMessage("manage_bio_settings.editEmail")}</a>
                     </div>
                 </div>
              	 		

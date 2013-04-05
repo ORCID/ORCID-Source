@@ -554,7 +554,7 @@ $(function () {
 		width: 990,
 		close: '',
 		onClosed: function () {
-			parent.location = parent.location;
+			top.location = top.location;
 		}
 	});
 	
