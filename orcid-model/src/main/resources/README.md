@@ -14,11 +14,11 @@ You can stay informed of updates to the XSD and API by subscribing to our [API U
 
 ## Our Guidelines for XSD Updates
 
-**BACKWARD COMPATIBLE CHANGES**
+### BACKWARD COMPATIBLE CHANGES
 
 All updates to the XSD will be backward compatible unless otherwise specified.
 
-**NON-BACKWARD COMPATIBLE CHANGES**
+### NON-BACKWARD COMPATIBLE CHANGES
 
 * _ADVANCED COMMUNICATION_: In the instance where something will not be backward compatible, we communicate in advance what the planned change will be, and provide an approximate timeline for this change. (note, it is possible that there will be additional backward compatible updates during this interval.)
 * _TESTING PERIOD_: For at least two weeks before a change that isn't backward compatible is in place, we will support both versions. While we are allowing members to code to changes during the advance communication period, we also allow for this testing period against the final XSD.
