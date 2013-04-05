@@ -50,16 +50,65 @@ orcidNgModule.filter('emailCurrentFtr', function($filter) {
 });
 
 function EditTableCtrl($scope) {
+	// email edit table
 	$scope.showEditEmail = (window.location.hash === "#editEmail");
-	$scope.toggleText = "Edit";
-	$scope.toggleEmail = function() {
+	
+	$scope.emailToggleText = "Edit";
+	$scope.toggleEmailEdit = function() {
 		$scope.showEditEmail = !$scope.showEditEmail;
-		if ($scope.toggleText == "Edit")
-			$scope.toggleText = "Hide";
+		if ($scope.emailToggleText == "Edit")
+			$scope.emailToggleText = "Hide";
 		else
-			$scope.toggleText = "Edit";
+			$scope.emailToggleText = "Edit";
 	};
+	
+	// password edit table
+	$scope.showEditPassword = (window.location.hash === "#editPassword");
+	$scope.passwordToggleText = "Edit";
+	$scope.togglePasswordEdit = function() {
+		$scope.showEditPassword = !$scope.showEditPassword;
+		if ($scope.passwordToggleText == "Edit")
+			$scope.passwordToggleText = "Hide";
+		else
+			$scope.passwordToggleText = "Edit";
+	};
+
 };
+
+function PasswordEdit($scope, $http) {
+	$scope.getChangePassword = function() {
+		$.ajax({
+	        url: $('body').data('baseurl') + 'account/change-password.json',
+	        dataType: 'json',
+	        success: function(data) {
+	        	$scope.changePasswordPojo = data;
+	        	$scope.$apply();
+	        }
+	    }).fail(function() { 
+	    	// something bad is happening!
+	    	console.log("error with change password");
+	    });
+	};
+	
+	$scope.getChangePassword();
+	
+	$scope.saveChangePassword = function() {
+		$.ajax({
+	        url: $('body').data('baseurl') + 'account/change-password.json',
+	        type: 'POST',
+	        data: angular.toJson($scope.changePasswordPojo),
+	        contentType: 'application/json;charset=UTF-8',
+	        dataType: 'json',
+	        success: function(data) {
+	        	$scope.changePasswordPojo = data;
+	        	$scope.$apply();
+	        }
+	    }).fail(function() { 
+	    	// something bad is happening!
+	    	console.log("error with multi email");
+	    });
+	};
+}
 
 function EmailEdit($scope, $http) {
 
@@ -97,11 +146,11 @@ function EmailEdit($scope, $http) {
 				$scope.emailsPojo.emails[i].primary = false;
 			}
 		}
-		$scope.save();
+		$scope.saveEmail();
 	};
 	
 //	$scope.current = function(idx) {
-//		$scope.save();
+//		$scope.saveEmail();
 //	};
 //	
 	
@@ -114,7 +163,7 @@ function EmailEdit($scope, $http) {
 		} else {
 			$scope.emailsPojo.emails[idx].visibility = "PRIVATE";
 		}
-		$scope.save();
+		$scope.saveEmail();
 	};
 	
 	$scope.togglePrivacySelect = function(idx) {
@@ -127,7 +176,7 @@ function EmailEdit($scope, $http) {
 		$event.preventDefault();
 		$scope.emailsPojo.emails[idx].visibility = priv;
 		$scope.curPrivToggle = null;
-		$scope.save();
+		$scope.saveEmail();
 	};
 	
 	$scope.verifyEmail = function(idx) {
@@ -155,7 +204,7 @@ function EmailEdit($scope, $http) {
 	    });
 	};
 
-	$scope.save = function() {
+	$scope.saveEmail = function() {
 		$.ajax({
 	        url: $('body').data('baseurl') + 'account/emails.json',
 	        type: 'POST',
@@ -172,7 +221,7 @@ function EmailEdit($scope, $http) {
 	    });
 	};
 
-	$scope.add = function (obj, $event) {
+	$scope.addEmail = function (obj, $event) {
 		$.ajax({
 	        url: $('body').data('baseurl') + 'account/addEmail.json',
 	        type: 'POST',
@@ -203,7 +252,7 @@ function EmailEdit($scope, $http) {
         $.colorbox.resize();
         $('#modal-del-email').click(function(e) {
     		$scope.emailsPojo.emails.splice(idx, 1);
-    		$scope.save();
+    		$scope.saveEmail();
     		$.colorbox.close();
         });
         $('#modal-cancel').click(function(e) {
@@ -212,7 +261,4 @@ function EmailEdit($scope, $http) {
         });
 	};
 	
-	$scope.close = function() {
-		$scope.$parent.toggleEmail();
-	};
 };
