@@ -42,6 +42,7 @@ import org.orcid.jaxb.model.message.OrcidHistory;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidWork;
 import org.orcid.jaxb.model.message.OrcidWorks;
+import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.message.Subtitle;
 import org.orcid.jaxb.model.message.Title;
 import org.orcid.jaxb.model.message.Visibility;
@@ -455,7 +456,7 @@ public class T2OrcidOAuthApiClientIntegrationTest extends BaseT2OrcidOAuthApiCli
     @Test
     public void testRegisterAndUnRegisterWebhook() throws Exception {
         createNewOrcidUsingAccessToken();
-        createAccessTokenFromCredentials();
+        createAccessTokenFromCredentials(ScopePathType.WEBHOOK.value());
         String webhookUri = URLEncoder.encode("http://nowhere.com", "UTF-8");
         ClientResponse putResponse = oauthT2Client.registerWebhook(this.orcid, webhookUri, this.accessToken);
         assertNotNull(putResponse);

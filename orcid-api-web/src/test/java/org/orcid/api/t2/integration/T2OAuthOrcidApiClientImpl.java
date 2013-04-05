@@ -181,7 +181,7 @@ public class T2OAuthOrcidApiClientImpl implements T2OAuthAPIService<ClientRespon
     @Consumes(MediaType.WILDCARD)
     @Path(WEBHOOKS_PATH)
     public ClientResponse registerWebhook(String orcid, String webhookUri, String token) {
-        URI worksPathWithOrcidUrl = UriBuilder.fromPath(WEBHOOKS_PATH).build(orcid, webhookUri);
+        URI worksPathWithOrcidUrl = UriBuilder.fromPath(WEBHOOKS_PATH).buildFromEncoded(orcid, webhookUri);
         return putClientResponseWithToken(worksPathWithOrcidUrl, VND_ORCID_JSON, null, token);
     }
 
@@ -190,7 +190,7 @@ public class T2OAuthOrcidApiClientImpl implements T2OAuthAPIService<ClientRespon
     @Consumes(MediaType.WILDCARD)
     @Path(WEBHOOKS_PATH)
     public ClientResponse unregisterWebhook(String orcid, String webhookUri, String token) {
-        URI worksPathWithOrcidUrl = UriBuilder.fromPath(WEBHOOKS_PATH).build(orcid, webhookUri);
+        URI worksPathWithOrcidUrl = UriBuilder.fromPath(WEBHOOKS_PATH).buildFromEncoded(orcid, webhookUri);
         return deleteClientResponseWithToken(worksPathWithOrcidUrl, VND_ORCID_JSON, token);
     }
 

@@ -309,15 +309,39 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
 
     private Set<String> createScopes(ClientType clientType) {
         switch (clientType) {
+        case PREMIUM_CREATOR:
+            return premiumCreatorScopes();
         case CREATOR:
-            return ScopePathType.ORCID_PROFILE_CREATE.getCombinedAsStrings();
+            return creatorScopes();
+        case PREMIUM_UPDATER:
+            return premiumUpdaterScopes();
         case UPDATER:
-            return new HashSet<String>(ScopePathType.getScopesAsStrings(ScopePathType.AUTHENTICATE, ScopePathType.ORCID_BIO_READ_LIMITED,
-                    ScopePathType.ORCID_WORKS_READ_LIMITED, ScopePathType.ORCID_PROFILE_READ_LIMITED, ScopePathType.ORCID_WORKS_UPDATE,
-                    ScopePathType.ORCID_BIO_EXTERNAL_IDENTIFIERS_CREATE, ScopePathType.ORCID_BIO_UPDATE, ScopePathType.ORCID_WORKS_CREATE));
+            return updaterScopes();
         default:
             throw new IllegalArgumentException("Unsupported client type: " + clientType);
         }
+    }
+
+    private Set<String> premiumCreatorScopes() {
+        Set<String> creatorScopes = creatorScopes();
+        creatorScopes.add(ScopePathType.WEBHOOK.value());
+        return creatorScopes;
+    }
+
+    private Set<String> creatorScopes() {
+        return ScopePathType.ORCID_PROFILE_CREATE.getCombinedAsStrings();
+    }
+
+    private Set<String> premiumUpdaterScopes() {
+        Set<String> updaterScopes = updaterScopes();
+        updaterScopes.add(ScopePathType.WEBHOOK.value());
+        return updaterScopes;
+    }
+
+    private Set<String> updaterScopes() {
+        return new HashSet<>(ScopePathType.getScopesAsStrings(ScopePathType.AUTHENTICATE, ScopePathType.ORCID_BIO_READ_LIMITED, ScopePathType.ORCID_WORKS_READ_LIMITED,
+                ScopePathType.ORCID_PROFILE_READ_LIMITED, ScopePathType.ORCID_WORKS_UPDATE, ScopePathType.ORCID_BIO_EXTERNAL_IDENTIFIERS_CREATE,
+                ScopePathType.ORCID_BIO_UPDATE, ScopePathType.ORCID_WORKS_CREATE));
     }
 
     @Override

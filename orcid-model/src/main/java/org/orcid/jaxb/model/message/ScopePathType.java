@@ -48,6 +48,8 @@ import javax.xml.bind.annotation.XmlType;
  * &lt;simpleType name="scope-path-type">
  *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
  *     &lt;enumeration value="/authenticate"/>
+ *     &lt;enumeration value="/read-public"/>
+ *     &lt;enumeration value="/webhook"/>
  *     &lt;enumeration value="/orcid-bio/read-limited"/>
  *     &lt;enumeration value="/orcid-profile/read-limited"/>
  *     &lt;enumeration value="/orcid-works/read-limited"/>
@@ -74,6 +76,7 @@ public enum ScopePathType implements Serializable {
     //@formatter:off
     @XmlEnumValue("/authenticate") AUTHENTICATE("/authenticate"),
     @XmlEnumValue("/read-public") READ_PUBLIC("/read-public"),
+    @XmlEnumValue("/webhook") WEBHOOK("/webhook"),
     @XmlEnumValue("/orcid-bio/read-limited") ORCID_BIO_READ_LIMITED("/orcid-bio/read-limited", READ_PUBLIC),
     @XmlEnumValue("/orcid-profile/read-limited") ORCID_PROFILE_READ_LIMITED("/orcid-profile/read-limited", READ_PUBLIC),
     @XmlEnumValue("/orcid-works/read-limited") ORCID_WORKS_READ_LIMITED("/orcid-works/read-limited", READ_PUBLIC),

@@ -194,7 +194,7 @@ public interface T2OAuthAPIService<T> extends OAuthOrcidApiService<T> {
      * @param orcid
      *            the ORCID that corresponds to the user's record
      * @param the
-     *            webhook url
+     *            url encoded webhook url
      * @return the response code
      */
     @PUT
@@ -208,7 +208,7 @@ public interface T2OAuthAPIService<T> extends OAuthOrcidApiService<T> {
      * @param orcid
      *            the ORCID that corresponds to the user's record
      * @param the
-     *            webhook url
+     *            url encoded webhook url
      * @return the response code
      */
     @PUT
