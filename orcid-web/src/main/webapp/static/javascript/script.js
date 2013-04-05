@@ -548,13 +548,16 @@ $(function () {
 	
 	$('.colorbox').colorbox();
 	
+	
+	top.colorOnCloseBoxDest = top.location;
+	
 	$('.btn-update:not(.no-icon),.update').colorbox({
 		iframe: true,
 		height: 600,
 		width: 990,
 		close: '',
 		onClosed: function () {
-			top.location = top.location;
+			top.location = top.colorOnCloseBoxDest;
 		}
 	});
 	
