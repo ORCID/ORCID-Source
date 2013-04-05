@@ -56,6 +56,7 @@ import org.orcid.frontend.web.forms.SearchForDelegatesForm;
 import org.orcid.jaxb.model.message.Delegation;
 import org.orcid.jaxb.model.message.DelegationDetails;
 import org.orcid.jaxb.model.message.Email;
+import org.orcid.jaxb.model.message.ExternalIdentifier;
 import org.orcid.jaxb.model.message.GivenPermissionBy;
 import org.orcid.jaxb.model.message.GivenPermissionTo;
 import org.orcid.jaxb.model.message.Orcid;
@@ -810,5 +811,83 @@ public class ManageProfileController extends BaseWorkspaceController {
         redirectAttributes.addFlashAttribute("changesSaved", true);
         return manageBioView;
     }
+    
+    @RequestMapping(value = "/externalIdentifiers.json", method = RequestMethod.POST)
+    public @ResponseBody
+    org.orcid.pojo.Email removeExternalIdentifierJson(HttpServletRequest request, @RequestBody org.orcid.pojo.ExternalIdentifiers externalIdentifiers) {
+        List<String> allErrors = new ArrayList<String>();
+
+        //clear errors
+        externalIdentifiers.setErrors(new ArrayList<String>());
+        
+        for(org.orcid.pojo.ExternalIdentifier externalIdentifier : externalIdentifiers.getExternalIdentifiers()){
+            List<String> externalIdentifierErrors = new ArrayList<String>();
+            
+            //If the orcid is blank, add an error
+            if (externalIdentifier.getOrcid() == null || StringUtils.isBlank(externalIdentifier.getOrcid().getValue())) {
+                allErrors.add(getMessage("ExternalIdentifier.orcid"));
+                externalIdentifierErrors.add(getMessage("ExternalIdentifier.orcid"));
+            }
+            
+            //If the external identifier is blank, add an error
+            if(externalIdentifier.getExternalIdReference() == null || StringUtils.isBlank(externalIdentifier.getExternalIdReference().getContent())){
+                allErrors.add(getMessage("ExternalIdentifier.externalIdReference"));
+                externalIdentifierErrors.add(getMessage("ExternalIdentifier.externalIdReference"));
+            }
+            
+            //Add errors to the external identifier
+            externalIdentifier.setErrors(externalIdentifierErrors);
+        }
+        
+        
+        if(allErrors.isEmpty()){
+            OrcidProfile currentProfile = getCurrentUser().getEffectiveProfile();
+            currentProfile.getOrcidBio().getExternalIdentifiers().getExternalIdentifier().clear();
+            currentProfile.getOrcidBio().getExternalIdentifiers().getExternalIdentifier().addAll(externalIdentifiers.getExternalIdentifiers());
+            orcidProfileManager.updateOrcidProfile(currentProfile);
+        }
+        
+        
+        return null;        
+    }
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
