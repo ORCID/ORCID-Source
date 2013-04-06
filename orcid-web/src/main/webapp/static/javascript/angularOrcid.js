@@ -114,10 +114,12 @@ function EmailEdit($scope, $http) {
 
 	$scope.getEmails = function() {
 		$.ajax({
-	        url: $('body').data('baseurl') + 'account/emails.json',	        
+	        url: $('body').data('baseurl') + 'account/emails.json',
+	        //type: 'POST',
+	        //data: $scope.emailsPojo, 
 	        dataType: 'json',
 	        success: function(data) {
-	        	$scope.externalIdentifiersPojo = data;
+	        	$scope.emailsPojo = data;
 	        	$scope.$apply();
 	        }
 	    }).fail(function() { 
