@@ -687,15 +687,7 @@ public class ManageProfileController extends BaseWorkspaceController {
         return deactivateOrcidView;
     }
     
-    @RequestMapping(value = "/start-deactivate-orcid-account.json", method = RequestMethod.GET)
-    public @ResponseBody org.orcid.pojo.Email startDeactivateOrcidAccountJson(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {
-        URI uri = OrcidWebUtils.getServerUriWithContextPath(request);
-        OrcidProfile currentProfile = getCurrentUser().getRealProfile();
-        Email email = currentProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail();
-        notificationManager.sendOrcidDeactivateEmail(currentProfile, uri);
-        return (org.orcid.pojo.Email)email;
-    }
-
+    
     @RequestMapping(value = "/confirm-deactivate-orcid", method = RequestMethod.GET)
     public ModelAndView confirmDeactivateOrcidAccount(HttpServletRequest request) {
         getCurrentUser().setRealProfile(orcidProfileManager.deactivateOrcidProfile(getCurrentUser().getRealProfile()));
@@ -731,6 +723,17 @@ public class ManageProfileController extends BaseWorkspaceController {
         return new Errors();
     }
 
+    @SuppressWarnings("unchecked")
+    @RequestMapping(value = "/send-deactivate-account.json", method = RequestMethod.GET)
+    public @ResponseBody Email startDeactivateOrcidAccountJson(HttpServletRequest request) {
+        URI uri = OrcidWebUtils.getServerUriWithContextPath(request);
+        OrcidProfile currentProfile = getCurrentUser().getRealProfile();
+        Email email = currentProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail();
+        notificationManager.sendOrcidDeactivateEmail(currentProfile, uri);
+        return email;
+    }
+
+    
     @SuppressWarnings("unchecked")
     @RequestMapping(value = "/emails.json", method = RequestMethod.GET)
     public @ResponseBody
