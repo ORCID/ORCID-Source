@@ -407,49 +407,6 @@ $(function () {
         $(this).closest('p').fadeOut(300, function() { $(this).closest('p').remove(); });
     });
 	
-    
-    
-    $("#confirm-dialog").dialog({
-		modal: true,
-		bgiframe: true,
-		width: 300,
-		height: 200,
-		autoOpen: false,
-		title: 'Confirm'
-		});
-    
-    
-    
-    $('.delete-external-identifier').live('click', function (e) {
-    	e.preventDefault();
-    	
-    	var to_delete = $(this).closest('tr'); 
-    	
-    	$("#confirm-dialog").html("<p>Are you sure you want to delete that External Identifier?</p>");
-        $("#confirm-dialog").dialog('option', 'buttons', {
-            "Confirm" : function() {
-            	to_delete.fadeOut(300, function() { to_delete.remove(); });
-            	$(this).dialog("close");
-                },
-            "Cancel" : function() {
-                $(this).dialog("close");
-                }
-            });
-        	$("#confirm-dialog").dialog("open");
-		});
-    
-    
-    
-    
-    
-    
-    
-    $("a.confirm").click(function(link) {
-    	e.preventDefault();
-        $(this).closest('tr').fadeOut(300, function() { $(this).closest('tr').remove(); });
-    });
-    
-    
 	var hideThing = function (e, selector, className) {
 		var p = $(selector + "." + className);
 		if (p.length == 0) {
