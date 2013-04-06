@@ -5788,6 +5788,7 @@ strong,
 }
 
 .privacyToggle {
+	position: relative;
 	margin: 0px; 
 	padding: 0px;
 }
@@ -5797,43 +5798,53 @@ strong,
 	position: absolute; 
 	top: 0px; 
 	left: 0px; 
-    background: url('../img/priv_toggle_sprite_v2.png') no-repeat;
+    background: url('../img/privacy-toggle_100.png') no-repeat;
+}
+
+@media only screen and (-webkit-min-device-pixel-ratio: 2), 
+only screen and (min-device-pixel-ratio: 2) {
+	
+    /* Retina-specific stuff here */
+   .privacyToggle li {
+      background: url('../img/privacy-toggle_200.png') no-repeat;
+      background-size: 100px 59px;
+   }
 }
 
 .privacyToggle li, .privacyToggle a {
 	display: block;
-	height: 34px;
+	height: 29px;
 	margin: 0px; 
 	padding: 0px;
-	width: 34px; 
+	width: 33px; 
 }
 
 .privacyToggle .publicActive {
-	background-position: -5px -6px;
+	background-position: 0px 0px;
     left: 0px; 
 }
 
 .privacyToggle .publicInActive {
-	background-position: -5px -38px;
+	background-position: -0px -29px;
 }
 
 .privacyToggle .limitedActive {
-	background-position: -38px -48px;
-	left:34px;
-	width: 33px;
+	background-position: -34px -0px;
+	left:33px;
+	width: 34px;
 }
 
 .privacyToggle .limitedInActive {
-	background-position: -33px -1px;
+	background-position: -34px -29px;
 }
 
 .privacyToggle .privateActive {
-	background-position: -69px -91px;
+	background-position: -67px 0px;
 	left: 67px; 
 }
 
 .privacyToggle .privateInActive {
-	background-position: -55px -1px;
+	background-position: -67px -29px;
 }
 
 .editTablePadCell50 {

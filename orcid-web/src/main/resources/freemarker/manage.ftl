@@ -87,11 +87,13 @@
 			   						      <button ng-show="email.primary == false" ng-click="deleteEmail($index)" class="btn btn-small">X</button>
 			   						  </td>
 			   						  <td>
+			   						     <div style="padding-bottom: 28px;">
 		   							     <ul class="privacyToggle">
-		   							       <li class="publicActive" ng-class="{publicInActive: email.visibility != 'PUBLIC' && false}"><a href="" title="PUBLIC" ng-click="setPrivacy($index, 'PUBLIC', $event)"></a></li>
-		   							       <li class="limitedActive" ng-class="{limitedInActive: email.visibility != 'LIMITED' && false}"><a href="" title="LIMITED" ng-click="setPrivacy($index, 'LIMITED', $event)"></a></li>
-		   							       <li class="privateActive" ng-class="{privateInActive: email.visibility != 'PRIVATE' && false}"><a href="" title="PRIVATE" ng-click="setPrivacy($index, 'PRIVATE', $event)"></a></li>
-		   							     </ul>			   						      
+		   							       <li class="publicActive" ng-class="{publicInActive: email.visibility != 'PUBLIC'}"><a href="" title="PUBLIC" ng-click="setPrivacy($index, 'PUBLIC', $event)"></a></li>
+		   							       <li class="limitedActive" ng-class="{limitedInActive: email.visibility != 'LIMITED'}"><a href="" title="LIMITED" ng-click="setPrivacy($index, 'LIMITED', $event)"></a></li>
+		   							       <li class="privateActive" ng-class="{privateInActive: email.visibility != 'PRIVATE'}"><a href="" title="PRIVATE" ng-click="setPrivacy($index, 'PRIVATE', $event)"></a></li>
+		   							     </ul>
+		   							     </div>			   						      
 			   						  </td>
 			   						</tr>
 				   					</table>
