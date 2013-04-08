@@ -25,6 +25,9 @@
 				<li><a href="#manage-permissions">${springMacroRequestContext.getMessage("manage.managepermission")}</a></li>
 			</ul>
 		</div>
+		<div class="right">
+		Here
+		</span>
 		<div class="span9">
 			<h1 id="account-settings">${springMacroRequestContext.getMessage("manage.account_settings")}</h1>
 			<#assign open = "" />
@@ -84,7 +87,7 @@
 		   							      <span ng-show="email.verified">Verified</span>		
 			   						  </td>
 			   						  <td class="padRgt">
-			   						      <button ng-show="email.primary == false" ng-click="deleteEmail($index)" class="btn btn-small">X</button>
+			   						  	<a href="" class="icon-trash icon-large" ng-show="email.primary == false" ng-click="deleteEmail($index)"></a>
 			   						  </td>
 			   						  <td>
 			   						     <div style="padding-bottom: 28px;">
