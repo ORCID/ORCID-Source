@@ -56,6 +56,7 @@ import org.orcid.frontend.web.forms.SearchForDelegatesForm;
 import org.orcid.jaxb.model.message.Delegation;
 import org.orcid.jaxb.model.message.DelegationDetails;
 import org.orcid.jaxb.model.message.Email;
+import org.orcid.jaxb.model.message.ExternalIdentifier;
 import org.orcid.jaxb.model.message.GivenPermissionBy;
 import org.orcid.jaxb.model.message.GivenPermissionTo;
 import org.orcid.jaxb.model.message.Orcid;
@@ -858,5 +859,4 @@ public class ManageProfileController extends BaseWorkspaceController {
         redirectAttributes.addFlashAttribute("changesSaved", true);
         return manageBioView;
     }
-
 }

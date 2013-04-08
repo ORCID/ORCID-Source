@@ -140,7 +140,7 @@ function EmailEdit($scope, $http) {
 		$.ajax({
 	        url: $('body').data('baseurl') + 'account/emails.json',
 	        //type: 'POST',
-	        //data: $scope.emailsPojo,
+	        //data: $scope.emailsPojo, 
 	        dataType: 'json',
 	        success: function(data) {
 	        	$scope.emailsPojo = data;
@@ -286,3 +286,63 @@ function EmailEdit($scope, $http) {
 	};
 	
 };
+
+function ExternalIdentifierCtrl($scope, $http){		
+	$scope.getExternalIdentifiers = function(){
+		$.ajax({
+			url: $('body').data('baseurl') + 'my-orcid/externalIdentifiers.json',	        
+	        dataType: 'json',
+	        success: function(data) {
+	        	$scope.externalIdentifiersPojo = data;
+	        	$scope.$apply();
+	        }
+		}).fail(function(){
+			// something bad is happening!
+	    	console.log("error fetching external identifiers");
+		});
+	};
+	
+	//init
+	$scope.getExternalIdentifiers();
+	
+	$scope.deleteExternalIdentifier = function(idx) {
+        $.colorbox({        	
+            html: function(){
+            	var value = null;
+            	if($scope.externalIdentifiersPojo.externalIdentifiers[idx].externalIdUrl != null)
+            		value = $scope.externalIdentifiersPojo.externalIdentifiers[idx].externalIdUrl.value;
+            	else
+            		value = $scope.externalIdentifiersPojo.externalIdentifiers[idx].externalIdReference.content;
+            	return '<div style="padding: 20px;" class="colorbox-modal"><h3>Please confirm deletion of ' + value + '</h3>'
+	            	+ '<div class="btn btn-danger" id="modal-del-external-identifier">Delete</div> <a href="" id="modal-cancel">cancel</a><div>'; 
+            }
+            	
+        });
+        $.colorbox.resize();
+        $('#modal-del-external-identifier').click(function(e) {
+    		$scope.externalIdentifiersPojo.externalIdentifiers.splice(idx, 1);
+    		$scope.saveExternalIdentifier();
+    		$.colorbox.close();
+        });
+        $('#modal-cancel').click(function(e) {
+        	e.preventDefault();
+        	$.colorbox.close();
+        });
+	};
+	
+	$scope.saveExternalIdentifier = function() {
+		$.ajax({
+	        url: $('body').data('baseurl') + 'my-orcid/externalIdentifiers.json',
+	        type: 'POST',
+	        data: angular.toJson($scope.externalIdentifiersPojo),
+	        contentType: 'application/json;charset=UTF-8',
+	        dataType: 'json',
+	        success: function(data) {
+	        	$scope.externalIdentifiersPojo = data;
+	        	$scope.$apply();
+	        }
+	    }).fail(function() { 
+	    	console.log("error with external identifiers");
+	    });
+	};
+}

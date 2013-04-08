@@ -66,7 +66,7 @@
 			   						<span ng-repeat='error in emailsPojo.errors' ng-bind-html-unsafe="error"></span>
 			   					</span>	
 			   					<table id="emailTable">
-			   						<tr style="vertical-align:bottom;" ng-repeat='email in emailsPojo.emails'>
+			   						<tr ng-repeat='email in emailsPojo.emails'>
 			   						  <td class="padRgt" ng-class="{primaryEmail:email.primary}" ng-bind="email.value">
 			   						  </td>
 			   						  <td class="padRgt">
@@ -74,7 +74,7 @@
 			   							    <span ng-show="email.primary" class="muted" style="color: #bd362f;" ng-bind="email.primary | emailPrimaryFtr"></span>
 			   						  </td> 
 			   						  <td class="padRgt">
-			   						  	<select style="width: 100px; height: 26px;" ng-change="saveEmail()" ng-model="email.current">
+			   						  	<select style="width: 100px; margin: 0px;" ng-change="saveEmail()" ng-model="email.current">
               							    <option value="true" ng-selected="email.current == true">Current</option>
               							    <option value="false" ng-selected="email.current == false">Past</option>              
             						    </select>
@@ -84,14 +84,16 @@
 		   							      <span ng-show="email.verified">Verified</span>		
 			   						  </td>
 			   						  <td class="padRgt">
-			   						      <button ng-show="email.primary == false" ng-click="deleteEmail($index)" class="btn btn-small">X</button>
+			   						  	<a href="" class="icon-trash icon-large" ng-show="email.primary == false" ng-click="deleteEmail($index)"></a>
 			   						  </td>
 			   						  <td>
+			   						     <div style="padding-bottom: 28px;">
 		   							     <ul class="privacyToggle">
 		   							       <li class="publicActive" ng-class="{publicInActive: email.visibility != 'PUBLIC'}"><a href="" title="PUBLIC" ng-click="setPrivacy($index, 'PUBLIC', $event)"></a></li>
 		   							       <li class="limitedActive" ng-class="{limitedInActive: email.visibility != 'LIMITED'}"><a href="" title="LIMITED" ng-click="setPrivacy($index, 'LIMITED', $event)"></a></li>
 		   							       <li class="privateActive" ng-class="{privateInActive: email.visibility != 'PRIVATE'}"><a href="" title="PRIVATE" ng-click="setPrivacy($index, 'PRIVATE', $event)"></a></li>
-		   							     </ul>			   						      
+		   							     </ul>
+		   							     </div>			   						      
 			   						  </td>
 			   						</tr>
 				   					</table>
