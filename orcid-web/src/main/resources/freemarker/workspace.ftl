@@ -77,7 +77,9 @@
 		        			<input type="hidden" value="{{externalIdentifier.externalIdCommonName.content}}" />
 			   			</td>
 			   			<td class="padRgt">
-			   				<a href ng-click="deleteExternalIdentifier($index)" class="icon-trash icon-large"></a>
+			   				<#if (RequestParameters['deleteExId'])??>
+			   				    <a href ng-click="deleteExternalIdentifier($index)" class="icon-trash icon-large"></a>
+			   				</#if>
 			   			</td		        		
 		        	</tr>
 		        </table>
