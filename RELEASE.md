@@ -1,15 +1,17 @@
 # Release notes and highlights
 
-
-## release-1.1.13.4 
-
-* Import Wizard opens in new tab one window sooner
-
+## release-1.1.14.5
+ 
 * Order works chronologically
 
 * Add Disengagement GA Tracking
 
 * New Privacy Selector used in Multi Email
+
+
+## release-1.1.13.4 
+
+* Import Wizard opens in new tab one window sooner
 
 * Fixed JavaScript Internet Explorer race condition with our new gaEvent Tracking  
 
