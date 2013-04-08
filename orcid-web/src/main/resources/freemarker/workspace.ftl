@@ -65,18 +65,23 @@
 		       		   <a href="<@orcid.absUrl url.url/>"><#if (url.urlName.content)! != "">${url.urlName.content}<#else>${url.url.value}</#if></a><#if url_has_next><br/></#if>
 		       		</#list></p>
 	       	</#if>
-		    <#if (profile.orcidBio.externalIdentifiers)?? && (profile.orcidBio.externalIdentifiers.externalIdentifier)?size != 0>
-		        <p><strong>${springMacroRequestContext.getMessage("public_profile.labelOtherIDs")}</strong> <br />   
-		        	<#list profile.orcidBio.externalIdentifiers.externalIdentifier as external>
-		        		<#if (external.externalIdUrl.value)??>
-		        		    <a href="${(external.externalIdUrl.value)!}">${(external.externalIdCommonName.content)!} ${(external.externalIdReference.content)!}</a>
-		        		<#else>
-		        		    ${(external.externalIdCommonName.content)!} ${(external.externalIdReference.content)!}
-		        		</#if>
-		        		<#if external_has_next><br /></#if>
-		        	</#list>
-		        </p>
-		    </#if>
+       		<div ng-app="orcidApp" ng-controller="ExternalIdentifierCtrl" ng-hide="!externalIdentifiersPojo.externalIdentifiers.length">	       			
+       			<p><strong>${springMacroRequestContext.getMessage("public_profile.labelOtherIDs")}</strong> <br />
+		        <table id="externalIdentifierTable">
+		        	<tr style="vertical-align:bottom;" ng-repeat='externalIdentifier in externalIdentifiersPojo.externalIdentifiers'>
+		        		<td class="padRgt">
+		        			<span ng-hide="externalIdentifier.externalIdUrl" ng-bind="externalIdentifier.externalIdReference.content"></span>
+		        			<span ng-show="externalIdentifier.externalIdUrl"><a ng-href="{{externalIdentifier.externalIdUrl.value}}" ng-bind="externalIdentifier.externalIdUrl.value"></a></span>
+		        			<input type="hidden" value="{{externalIdentifier.orcid.value}}" />
+		        			<input type="hidden" value="{{externalIdentifier.externalIdOrcid.value}}" />
+		        			<input type="hidden" value="{{externalIdentifier.externalIdCommonName.content}}" />
+			   			</td>
+			   			<td class="padRgt">
+			   				<button ng-click="deleteExternalIdentifier($index)" class="btn btn-small">X</button>
+			   			</td		        		
+		        	</tr>
+		        </table>
+			</div>
 		    <#if ((thirdPartiesForImport)?? && (thirdPartiesForImport)?size &gt; 0)>
     	        <ul class="workspace-help">
     	        	<li><a href="#third-parties" class="colorbox-modal">${springMacroRequestContext.getMessage("workspace.ImportResearchActivities")}</a></li>

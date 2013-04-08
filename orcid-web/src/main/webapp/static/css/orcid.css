@@ -5869,3 +5869,7 @@ only screen and (min-device-pixel-ratio: 2) {
 #emailTable td.padRgt { 
 	padding-right: 10px;
 }
+
+#externalIdentifierTable td.padRgt { 
+	padding-right: 7px;
+}
