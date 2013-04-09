@@ -182,22 +182,16 @@
 					<tr ng-controller="DeactivateAccount" ng-show="showEditDeactivate" ng-cloak>
 						<td colspan="2">
 						<div class="editTablePadCell50">
-						     <#if deactivateEmailSent??>
-					    		<div class="alert alert-success">
-					        		<strong>${deactivateEmailSent}</strong>
-					    		</div>	
-					    	</#if>
-    
-						     	<div class="top-margin">${springMacroRequestContext.getMessage("deactivate_orcid.youmaydeactivateaccount")}</div>
-						     	<div class="top-margin">${springMacroRequestContext.getMessage("deactivate_orcid.soasnottoassignthesameidentifier")}</div>
-						     	<div class="top-margin">${springMacroRequestContext.getMessage("deactivate_orcid.Allotherdatainyourrecord")}</div>
-						     	<div class="top-margin">${springMacroRequestContext.getMessage("deactivate_orcid.youmaycontactORCID")}</div>
-						     	
-						     	<h3>${springMacroRequestContext.getMessage("deactivate_orcid.todeactivateyouraccount")}</h3>
-						     	<div class="top-margin">${springMacroRequestContext.getMessage("deactivate_orcid.clickonthesenddeactivation")}</div>
-						     	<div><a href="" ng-click="sendDeactivateEmail()">${springMacroRequestContext.getMessage("deactivate_orcid.deactivatemyOrcidaccount")}</a></div>
-						     	<div class="top-margin">${springMacroRequestContext.getMessage("deactivate_orcid.finddeactivationemail")}</div>
-						     	<div class="top-margin">${springMacroRequestContext.getMessage("deactivate_orcid.clickthelinkprovided")}</div>
+						        ${springMacroRequestContext.getMessage("deactivate_orcid.you_may")}
+						        <a href="http://support.orcid.org/knowledgebase/articles/148970-closing-an-orcid-account">${springMacroRequestContext.getMessage("deactivate_orcid.close_an")}</a><br />
+						     	<br />
+						     	<strong>${springMacroRequestContext.getMessage("deactivate_orcid.listTitle")}</strong>
+						     	<ol>
+						     		<li>${springMacroRequestContext.getMessage("deactivate_orcid.b1")}</li>
+						     		<li>${springMacroRequestContext.getMessage("deactivate_orcid.b2")}</li>
+						     		<li>${springMacroRequestContext.getMessage("deactivate_orcid.b3")}</li>
+						     	</ol>
+						     	<h3><a href="" ng-click="sendDeactivateEmail()">${springMacroRequestContext.getMessage("deactivate_orcid.deactivatemyOrcidaccount")}</a></h3>
 						</div>
 						</td>
 					</tr>
