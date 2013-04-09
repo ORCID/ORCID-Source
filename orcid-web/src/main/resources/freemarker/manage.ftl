@@ -43,7 +43,7 @@
 				</div>
 			</#if>
 			
-			<table class="table table-bordered settings-table" id="ng-app" ng-app="orcidApp" ng-controller="EditTableCtrl">
+			<table class="table table-bordered settings-table" id="ng-app" ng-app="orcidApp" ng-controller="EditTableCtrl" style="margin: 0px, padding: 0px;">
 				<tbody>
 					<tr>
 						<th>${springMacroRequestContext.getMessage("public_profile.h3PersonalInformation")}</th>
@@ -59,7 +59,7 @@
 							</td>
 						</tr>
 						<tr ng-controller="EmailEdit" ng-show="showEditEmail" ng-cloak>
-							<td colspan="2" class="editTablePadCell40">
+							<td colspan="2">
 							<div class="editTablePadCell35">
 								<!-- we should never see errors here, but just to be safe -->
 								<span class="orcid-error" ng-show="emailsPojo.errors.length > 0">
@@ -86,15 +86,19 @@
 			   						  <td class="padRgt">
 			   						  	<a href="" class="icon-trash grey" ng-show="email.primary == false" ng-click="deleteEmail($index)"></a>
 			   						  </td>
-			   						  <td>
-			   						     <div style="padding-bottom: 28px;">
-		   							     <ul class="privacyToggle">
+			   						  <td class="padRgt">
+			   						     <ul class="privacyToggle">
 		   							       <li class="publicActive" ng-class="{publicInActive: email.visibility != 'PUBLIC'}"><a href="" title="PUBLIC" ng-click="setPrivacy($index, 'PUBLIC', $event)"></a></li>
 		   							       <li class="limitedActive" ng-class="{limitedInActive: email.visibility != 'LIMITED'}"><a href="" title="LIMITED" ng-click="setPrivacy($index, 'LIMITED', $event)"></a></li>
 		   							       <li class="privateActive" ng-class="{privateInActive: email.visibility != 'PRIVATE'}"><a href="" title="PRIVATE" ng-click="setPrivacy($index, 'PRIVATE', $event)"></a></li>
 		   							     </ul>
-		   							     </div>			   						      
 			   						  </td>
+			   						  <td style="width: 20px;">
+			   						  <div class="privacyLedgendHide">
+			   						  <a href="javascript:void(0);"><i class="icon-question-sign"></i></a>
+			   						  <div class="privacyLedgend"></div>
+			   						  </div>
+                               	      </td>
 			   						</tr>
 				   					</table>
 				   					<div>
