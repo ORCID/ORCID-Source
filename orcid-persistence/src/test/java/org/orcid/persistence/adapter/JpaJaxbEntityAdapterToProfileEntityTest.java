@@ -170,12 +170,12 @@ public class JpaJaxbEntityAdapterToProfileEntityTest extends DBUnitTest {
         assertEquals(1, profileEntity.getGivenPermissionTo().size());
         GivenPermissionToEntity retrievedGivenPermissionToEntity = profileEntity.getGivenPermissionTo().iterator().next();
         assertEquals("1111-1111-1111-1115", retrievedGivenPermissionToEntity.getReceiver().getId());
-        assertEquals("2012-11-10T13:18:51.000Z", DateUtils.convertToXMLGregorianCalendar(retrievedGivenPermissionToEntity.getApprovalDate()).toXMLFormat());
+        assertEquals(DateUtils.convertToDate("2012-11-10T13:18:51"), retrievedGivenPermissionToEntity.getApprovalDate());
         assertNotNull(profileEntity.getGivenPermissionBy());
         assertEquals(1, profileEntity.getGivenPermissionBy().size());
         GivenPermissionByEntity retrievedGivenPermissionByEntity = profileEntity.getGivenPermissionBy().iterator().next();
         assertEquals("2222-2222-2222-2229", retrievedGivenPermissionByEntity.getGiver().getId());
-        assertEquals("2012-12-22T08:16:22.000Z", DateUtils.convertToXMLGregorianCalendar(retrievedGivenPermissionByEntity.getApprovalDate()).toXMLFormat());
+        assertEquals(DateUtils.convertToDate("2012-12-22T08:16:22"), retrievedGivenPermissionByEntity.getApprovalDate());
 
         OrcidProfile retrievedOrcidProfile = adapter.toOrcidProfile(retrievedProfileEntity);
     }
