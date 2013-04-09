@@ -84,7 +84,7 @@
 		   							      <span ng-show="email.verified">${springMacroRequestContext.getMessage("manage.email.verified")}</span>		
 			   						  </td>
 			   						  <td class="padRgt">
-			   						  	<a href="" class="icon-trash icon-large" ng-show="email.primary == false" ng-click="deleteEmail($index)"></a>
+			   						  	<a href="" class="icon-trash grey" ng-show="email.primary == false" ng-click="deleteEmail($index)"></a>
 			   						  </td>
 			   						  <td>
 			   						     <div style="padding-bottom: 28px;">
@@ -182,7 +182,8 @@
 					<tr ng-controller="DeactivateAccount" ng-show="showEditDeactivate" ng-cloak>
 						<td colspan="2">
 						<div class="editTablePadCell35">
-						        ${springMacroRequestContext.getMessage("deactivate_orcid.you_may")}
+								<p>${springMacroRequestContext.getMessage("deactivate_orcid.you_may")}</p>
+								<p>${springMacroRequestContext.getMessage("deactivate_orcid.once")}</p>
 						        <a href="http://support.orcid.org/knowledgebase/articles/148970-closing-an-orcid-account">${springMacroRequestContext.getMessage("deactivate_orcid.close_an")}</a><br />
 						     	<br />
 						     	<strong>${springMacroRequestContext.getMessage("deactivate_orcid.listTitle")}</strong>
@@ -191,7 +192,7 @@
 						     		<li>${springMacroRequestContext.getMessage("deactivate_orcid.b2")}</li>
 						     		<li>${springMacroRequestContext.getMessage("deactivate_orcid.b3")}</li>
 						     	</ol>
-						     	<h3><a href="" ng-click="sendDeactivateEmail()">${springMacroRequestContext.getMessage("deactivate_orcid.deactivatemyOrcidaccount")}</a></h3>
+						     	<button ng-click="sendDeactivateEmail()" class="btn btn-primary">${springMacroRequestContext.getMessage("deactivate_orcid.deactivatemyOrcidaccount")}</button>
 						</div>
 						</td>
 					</tr>
