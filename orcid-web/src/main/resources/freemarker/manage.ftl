@@ -94,9 +94,9 @@
 		   							     </ul>
 			   						  </td>
 			   						  <td style="width: 20px;">
-			   						  <div class="privacyLedgendHide">
+			   						  <div class="privacyLegendHide">
 			   						  <a href="javascript:void(0);"><i class="icon-question-sign"></i></a>
-			   						  <div class="privacyLedgend"></div>
+			   						  <div class="privacyLegend"></div>
 			   						  </div>
                                	      </td>
 			   						</tr>

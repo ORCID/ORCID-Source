@@ -5133,7 +5133,7 @@ only screen and (min-device-pixel-ratio: 2) {
 	background-position: -67px -29px;
 }
 
-.privacyLedgend {
+.privacyLegend {
 	width: 206px; height: 70px;      
 	background: url('../img/privacy-legend_100.png') no-repeat;
     background-size: 206px 70px;
@@ -5145,7 +5145,7 @@ only screen and (min-device-pixel-ratio: 2) {
 @media only screen and (-webkit-min-device-pixel-ratio: 2), 
 only screen and (min-device-pixel-ratio: 2) {
 	
-   .privacyLedgend {
+   .privacyLegend {
       background: url('../img/privacy-legend_200.png') no-repeat;
       background-size: 206px 70px;
    }
@@ -5153,7 +5153,7 @@ only screen and (min-device-pixel-ratio: 2) {
 */
 
 
-.privacyLedgendHide:hover .privacyLedgend {
+.privacyLegendHide:hover .privacyLegend {
   display: block;	
 }
 
