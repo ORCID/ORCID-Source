@@ -19,7 +19,7 @@ var orcidNgModule = angular.module('orcidApp', []);
 
 orcidNgModule.filter('emailPrimaryFtr', function($filter) {
 	return function(booleanValue) {
-		return booleanValue ? 'Primary Email' : 'Set Primary';
+		return booleanValue ? OM.getInstance().get("manage.email.primary_email"): OM.getInstance().get("manage.email.set_primary");
 	};
 });
 
@@ -39,13 +39,13 @@ orcidNgModule.filter('emailVisibilityBtnClassFtr', function($filter) {
 
 orcidNgModule.filter('emailVerifiedFtr', function($filter) {
 	return function(booleanValue) {
-		return booleanValue ? 'Verifed' : 'Unverfied';
+		return booleanValue ? OM.getInstance().get("manage.email.verifed") : OM.getInstance().get("manage.email.unverifed");
 	};
 });
 
 orcidNgModule.filter('emailCurrentFtr', function($filter) {
 	return function(booleanValue) {
-		return booleanValue ? 'Active' : 'Inactive';
+		return booleanValue ? OM.getInstance().get("manage.email.active") : OM.getInstance().get("manage.email.inactive");
 	};
 });
 
@@ -53,8 +53,8 @@ function EditTableCtrl($scope) {
 	
 	// email edit row
 	$scope.emailUpdateToggleText = function () {
-		if ($scope.showEditEmail) $scope.emailToggleText = "Hide";
-		else $scope.emailToggleText = "Edit";		
+		if ($scope.showEditEmail) $scope.emailToggleText = OM.getInstance().get("manage.editTable.hide");
+		else $scope.emailToggleText = OM.getInstance().get("manage.editTable.edit");		
 	};
 	
 	$scope.toggleEmailEdit = function() {
@@ -69,13 +69,13 @@ function EditTableCtrl($scope) {
 
 	// password edit rpw
 	$scope.passwordUpdateToggleText = function () {
-		if ($scope.showEditPassword) $scope.passwordToggleText = "Hide";
-		else $scope.passwordToggleText = "Edit";		
+		if ($scope.showEditPassword) $scope.passwordToggleText = OM.getInstance().get("manage.editTable.hide");
+		else $scope.passwordToggleText = OM.getInstance().get("manage.editTable.edit");		
 	};
 	
 	$scope.togglePasswordEdit = function() {
 		$scope.showEditPassword = !$scope.showEditPassword;
-		$passwordUpdateToggleText();
+		$scope.passwordUpdateToggleText();
 	};
 
 	// init password row
@@ -84,8 +84,8 @@ function EditTableCtrl($scope) {
 	
 	// deactivate edit row
 	$scope.deactivateUpdateToggleText = function () {
-		if ($scope.showEditDeactivate) $scope.deactivateToggleText = "Hide";
-		else $scope.deactivateToggleText = "Deactivate this ORCID record...";		
+		if ($scope.showEditDeactivate) $scope.deactivateToggleText = OM.getInstance().get("manage.editTable.hide");
+		else $scope.deactivateToggleText = OM.getInstance().get("manage.editTable.deactivateRecord");		
 	};
 
 	$scope.toggleDeactivateEdit = function() {
@@ -107,8 +107,8 @@ function DeactivateAccount($scope, $http) {
 	        dataType: 'json',
 	        success: function(data) {
 	    	    $.colorbox({
-	    	        html : $('<div style="padding: 20px;" class="colorbox-modal"><h3>Deactivate email sent to ' + data.value + '</h3>'
-	    	            	+ '<div class="btn" id="modal-close">Close</div>')	            	
+	    	        html : $('<div style="padding: 20px;" class="colorbox-modal"><h3>' + OM.getInstance().get("manage.deactivateSend") + data.value + '</h3>'
+	    	            	+ '<div class="btn" id="modal-close">' + OM.getInstance().get("manage.deactivateSend.close") + '</div>')	            	
 	    	    });
 	    	    $.colorbox.resize();
 	    	    $('#modal-close').click(function(e) {
@@ -242,8 +242,8 @@ function EmailEdit($scope, $http) {
 	    	console.log("error with multi email");
 	    });  
 	    $.colorbox({
-	        html : $('<div style="padding: 20px;" class="colorbox-modal"><h3>Verification email sent to ' + $scope.emailsPojo.emails[idx].value + '</h3>'
-	            	+ '<div class="btn" id="modal-close">Close</div>')
+	        html : $('<div style="padding: 20px;" class="colorbox-modal"><h3>' + OM.getInstance().get("manage.email.verificationEmail") + ' ' + $scope.emailsPojo.emails[idx].value + '</h3>'
+	            	+ '<div class="btn" id="modal-close">' + OM.getInstance().get("manage.email.verificationEmail.close") + '</div>')
 	            	
 	    });
 	    $.colorbox.resize();
@@ -293,8 +293,10 @@ function EmailEdit($scope, $http) {
 	
 	$scope.deleteEmail = function(idx) {
         $.colorbox({
-            html : $('<div style="padding: 20px;" class="colorbox-modal"><h3>Please confirm deletion of ' + $scope.emailsPojo.emails[idx].value + '</h3>'
-            	+ '<div class="btn btn-danger" id="modal-del-email">Delete Email</div> <a href="" id="modal-cancel">cancel</a><div>')
+            html : $('<div style="padding: 20px;" class="colorbox-modal"><h3>'+ OM.getInstance().get("manage.email.pleaseConfirmDeletion") + ' ' + $scope.emailsPojo.emails[idx].value + '</h3>'
+            	+ '<div class="btn btn-danger" id="modal-del-email">'
+            	+ OM.getInstance().get("manage.email.deleteEmail") 
+            	+ ' </div> <a href="" id="modal-cancel">' + OM.getInstance().get("manage.email.cancel") + '</a><div>')
             	
         });
         $.colorbox.resize();
@@ -337,8 +339,8 @@ function ExternalIdentifierCtrl($scope, $http){
             		value = $scope.externalIdentifiersPojo.externalIdentifiers[idx].externalIdUrl.value;
             	else
             		value = $scope.externalIdentifiersPojo.externalIdentifiers[idx].externalIdReference.content;
-            	return '<div style="padding: 20px;" class="colorbox-modal"><h3>Please confirm deletion of ' + value + '</h3>'
-	            	+ '<div class="btn btn-danger" id="modal-del-external-identifier">Delete</div> <a href="" id="modal-cancel">cancel</a><div>'; 
+            	return '<div style="padding: 20px;" class="colorbox-modal"><h3>' + OM.getInstance().get("manage.deleteExternalIdentifier.pleaseConfirm") + ' ' + value + '</h3>'
+	            	+ '<div class="btn btn-danger" id="modal-del-external-identifier">' + OM.getInstance().get("manage.deleteExternalIdentifier.delete") + '</div> <a href="" id="modal-cancel">' + OM.getInstance().get("manage.deleteExternalIdentifier.cancel") + '</a><div>'; 
             }
             	
         });
