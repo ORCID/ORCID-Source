@@ -80,8 +80,8 @@
             						    </select>
 			   						  </td>
 			   						  <td class="padRgt">
-			   						      <span ng-hide="email.verified"><a href="" ng-click="verifyEmail($index)">Verify</a></span>
-		   							      <span ng-show="email.verified">Verified</span>		
+			   						      <span ng-hide="email.verified"><a href="" ng-click="verifyEmail($index)">${springMacroRequestContext.getMessage("manage.email.verify")}</a></span>
+		   							      <span ng-show="email.verified">${springMacroRequestContext.getMessage("manage.email.verified")}</span>		
 			   						  </td>
 			   						  <td class="padRgt">
 			   						  	<a href="" class="icon-trash icon-large" ng-show="email.primary == false" ng-click="deleteEmail($index)"></a>
