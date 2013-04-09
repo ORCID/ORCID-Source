@@ -125,8 +125,8 @@
                       		<#else> 
                       		    ${savedResearcherUrl.urlName.content} (<a href="${savedResearcherUrl.url.value}">${savedResearcherUrl.url.value}</a>)
                       		</#if>
-                      		<button class="btn btn-link delete-url">${springMacroRequestContext.getMessage("manage_bio_settings.btnremove")}</button>		  		    		  		     		  		
-             			</p>     		    
+                      		<a href="" class="icon-trash grey delete-url" ng-show="email.primary == false" ng-click="deleteEmail($index)" title="remove url"></a>
+                      		</p>     		    
                     </#list>
              	</#if>
                	<label for="websiteUrlText">${springMacroRequestContext.getMessage("manage_bio_settings.labelwebsite")}</label>
