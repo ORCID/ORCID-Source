@@ -107,7 +107,7 @@
 							</td>
 					</tr>
 					<tr>
-						<th>${springMacroRequestContext.getMessage("manage.password")}</th>
+						<th><a name="editPassword">${springMacroRequestContext.getMessage("manage.password")}</th>
 						<td>
 						    <a href="" ng-click="togglePasswordEdit()" ng-bind="passwordToggleText"></a>
 						</td>
@@ -174,8 +174,26 @@
                         </td>
 					</tr>
 					<tr>
-						<th>${springMacroRequestContext.getMessage("manage.close_account")}</th>
-						<td><div><@orcid.settingsPopover "security" "/account/deactivate-orcid" "Deactivate this ORCID record..." open "Deactivate this ORCID record..."/></div></td>
+						<th><a name="editDeactivate">${springMacroRequestContext.getMessage("manage.close_account")}</th>
+						<td>
+							<a href="" ng-click="toggleDeactivateEdit()" ng-bind="deactivateToggleText"></a>
+						</td>
+					</tr>
+					<tr ng-controller="DeactivateAccount" ng-show="showEditDeactivate" ng-cloak>
+						<td colspan="2">
+						<div class="editTablePadCell50">
+						        ${springMacroRequestContext.getMessage("deactivate_orcid.you_may")}
+						        <a href="http://support.orcid.org/knowledgebase/articles/148970-closing-an-orcid-account">${springMacroRequestContext.getMessage("deactivate_orcid.close_an")}</a><br />
+						     	<br />
+						     	<strong>${springMacroRequestContext.getMessage("deactivate_orcid.listTitle")}</strong>
+						     	<ol>
+						     		<li>${springMacroRequestContext.getMessage("deactivate_orcid.b1")}</li>
+						     		<li>${springMacroRequestContext.getMessage("deactivate_orcid.b2")}</li>
+						     		<li>${springMacroRequestContext.getMessage("deactivate_orcid.b3")}</li>
+						     	</ol>
+						     	<h3><a href="" ng-click="sendDeactivateEmail()">${springMacroRequestContext.getMessage("deactivate_orcid.deactivatemyOrcidaccount")}</a></h3>
+						</div>
+						</td>
 					</tr>
 				</tbody>
 			</table>

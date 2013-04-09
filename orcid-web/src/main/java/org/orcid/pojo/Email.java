@@ -28,6 +28,19 @@ public class Email extends org.orcid.jaxb.model.message.Email implements ErrorsI
     private static final long serialVersionUID = 1L;
 
     private List<String> errors = new ArrayList<String>();
+    
+    public Email() {
+        
+    }
+    
+    public Email(org.orcid.jaxb.model.message.Email castEmail) {
+        this.setCurrent(castEmail.isCurrent());
+        this.setPrimary(castEmail.isPrimary());
+        this.setSource(castEmail.getSource());
+        this.setValue(castEmail.getValue());
+        this.setVerified(castEmail.isVerified());
+        this.setVisibility(castEmail.getVisibility());
+    }
 
     public List<String> getErrors() {
         return errors;
