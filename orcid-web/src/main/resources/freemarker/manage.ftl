@@ -60,7 +60,7 @@
 						</tr>
 						<tr ng-controller="EmailEdit" ng-show="showEditEmail" ng-cloak>
 							<td colspan="2" class="editTablePadCell40">
-							<div class="editTablePadCell50">
+							<div class="editTablePadCell35">
 								<!-- we should never see errors here, but just to be safe -->
 								<span class="orcid-error" ng-show="emailsPojo.errors.length > 0">
 			   						<span ng-repeat='error in emailsPojo.errors' ng-bind-html-unsafe="error"></span>
@@ -114,7 +114,7 @@
 					</tr>
 					<tr ng-controller="PasswordEdit" ng-show="showEditPassword" ng-cloak>
 						<td colspan="2">
-						<div class="editTablePadCell50">
+						<div class="editTablePadCell35">
 							    <span class="orcid-error" ng-show="changePasswordPojo.errors.length > 0">
 				   						<div ng-repeat='error in changePasswordPojo.errors' ng-bind-html-unsafe="error"></div>
 				   				</span>
@@ -181,7 +181,7 @@
 					</tr>
 					<tr ng-controller="DeactivateAccount" ng-show="showEditDeactivate" ng-cloak>
 						<td colspan="2">
-						<div class="editTablePadCell50">
+						<div class="editTablePadCell35">
 						        ${springMacroRequestContext.getMessage("deactivate_orcid.you_may")}
 						        <a href="http://support.orcid.org/knowledgebase/articles/148970-closing-an-orcid-account">${springMacroRequestContext.getMessage("deactivate_orcid.close_an")}</a><br />
 						     	<br />
