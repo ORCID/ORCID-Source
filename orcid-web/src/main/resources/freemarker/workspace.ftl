@@ -78,7 +78,7 @@
 			   			</td>
 			   			<td class="padRgt">
 			   				<#if (RequestParameters['deleteExId'])??>
-			   				    <a href ng-click="deleteExternalIdentifier($index)" class="icon-trash icon-large"></a>
+			   				    <a href ng-click="deleteExternalIdentifier($index)" class="icon-trash grey"></a>
 			   				</#if>
 			   			</td		        		
 		        	</tr>
