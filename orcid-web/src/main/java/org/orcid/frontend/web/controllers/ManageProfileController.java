@@ -675,19 +675,7 @@ public class ManageProfileController extends BaseWorkspaceController {
         ModelAndView deactivateOrcidView = new ModelAndView("deactivate_orcid");
         return deactivateOrcidView;
     }
-
-    @RequestMapping(value = "/start-deactivate-orcid-account", method = RequestMethod.GET)
-    public ModelAndView startDeactivateOrcidAccount(HttpServletRequest request) {
-        URI uri = OrcidWebUtils.getServerUriWithContextPath(request);
-        OrcidProfile currentProfile = getCurrentUser().getRealProfile();
-        Email email = currentProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail();
-        notificationManager.sendOrcidDeactivateEmail(currentProfile, uri);
-        ModelAndView deactivateOrcidView = new ModelAndView("deactivate_orcid");
-
-        deactivateOrcidView.addObject("deactivateEmailSent", MessageFormat.format("Email sent to {0}", new Object[] { email.getValue() }));
-        return deactivateOrcidView;
-    }
-
+    
     @RequestMapping(value = "/confirm-deactivate-orcid", method = RequestMethod.GET)
     public ModelAndView confirmDeactivateOrcidAccount(HttpServletRequest request) {
         getCurrentUser().setRealProfile(orcidProfileManager.deactivateOrcidProfile(getCurrentUser().getRealProfile()));
@@ -723,6 +711,17 @@ public class ManageProfileController extends BaseWorkspaceController {
         return new Errors();
     }
 
+    @SuppressWarnings("unchecked")
+    @RequestMapping(value = "/send-deactivate-account.json", method = RequestMethod.GET)
+    public @ResponseBody Email startDeactivateOrcidAccountJson(HttpServletRequest request) {
+        URI uri = OrcidWebUtils.getServerUriWithContextPath(request);
+        OrcidProfile currentProfile = getCurrentUser().getRealProfile();
+        Email email = currentProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail();
+        notificationManager.sendOrcidDeactivateEmail(currentProfile, uri);
+        return email;
+    }
+
+    
     @SuppressWarnings("unchecked")
     @RequestMapping(value = "/emails.json", method = RequestMethod.GET)
     public @ResponseBody

@@ -50,30 +50,78 @@ orcidNgModule.filter('emailCurrentFtr', function($filter) {
 });
 
 function EditTableCtrl($scope) {
-	// email edit table
-	$scope.showEditEmail = (window.location.hash === "#editEmail");
 	
-	$scope.emailToggleText = "Edit";
+	// email edit row
+	$scope.emailUpdateToggleText = function () {
+		if ($scope.showEditEmail) $scope.emailToggleText = "Hide";
+		else $scope.emailToggleText = "Edit";		
+	};
+	
 	$scope.toggleEmailEdit = function() {
 		$scope.showEditEmail = !$scope.showEditEmail;
-		if ($scope.emailToggleText == "Edit")
-			$scope.emailToggleText = "Hide";
-		else
-			$scope.emailToggleText = "Edit";
+		$scope.emailUpdateToggleText();
 	};
 	
-	// password edit table
-	$scope.showEditPassword = (window.location.hash === "#editPassword");
-	$scope.passwordToggleText = "Edit";
+	// init email edit row
+	$scope.showEditEmail = (window.location.hash === "#editEmail");
+	$scope.emailUpdateToggleText();
+	
+
+	// password edit rpw
+	$scope.passwordUpdateToggleText = function () {
+		if ($scope.showEditPassword) $scope.passwordToggleText = "Hide";
+		else $scope.passwordToggleText = "Edit";		
+	};
+	
 	$scope.togglePasswordEdit = function() {
 		$scope.showEditPassword = !$scope.showEditPassword;
-		if ($scope.passwordToggleText == "Edit")
-			$scope.passwordToggleText = "Hide";
-		else
-			$scope.passwordToggleText = "Edit";
+		$passwordUpdateToggleText();
 	};
 
+	// init password row
+	$scope.showEditPassword = (window.location.hash === "#editPassword");
+	$scope.passwordUpdateToggleText();
+	
+	// deactivate edit row
+	$scope.deactivateUpdateToggleText = function () {
+		if ($scope.showEditDeactivate) $scope.deactivateToggleText = "Hide";
+		else $scope.deactivateToggleText = "Deactivate this ORCID record...";		
+	};
+
+	$scope.toggleDeactivateEdit = function() {
+		$scope.showEditDeactivate = !$scope.showEditDeactivate;
+		$scope.deactivateUpdateToggleText();
+	};
+	
+	// init deactivate
+	$scope.showEditDeactivate = (window.location.hash === "#editDeactivate");
+	$scope.deactivateUpdateToggleText();
+	
 };
+
+function DeactivateAccount($scope, $http) {
+	$scope.sendDeactivateEmail = function() {
+		orcidGA.gaPush(['_trackEvent', 'Disengagement', 'Deactivate_Initiate', 'Website']);
+		$.ajax({
+	        url: $('body').data('baseurl') + 'account/send-deactivate-account.json',
+	        dataType: 'json',
+	        success: function(data) {
+	    	    $.colorbox({
+	    	        html : $('<div style="padding: 20px;" class="colorbox-modal"><h3>Deactivate email sent to ' + data.value + '</h3>'
+	    	            	+ '<div class="btn" id="modal-close">Close</div>')	            	
+	    	    });
+	    	    $.colorbox.resize();
+	    	    $('#modal-close').click(function(e) {
+	    	    	$.colorbox.close();
+	    	    });
+	        }
+	    }).fail(function() { 
+	    	// something bad is happening!
+	    	console.log("error with change DeactivateAccount");
+	    });
+
+	}
+}
 
 function PasswordEdit($scope, $http) {
 	$scope.getChangePassword = function() {
