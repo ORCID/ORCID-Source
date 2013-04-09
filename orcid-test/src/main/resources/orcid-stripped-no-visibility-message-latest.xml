@@ -23,7 +23,7 @@
     <message-version>1.0.12</message-version>
     <orcid-profile>
         <orcid>4444-4444-4444-4446</orcid>
-        <orcid-id>http://localhost:8080/orcid-web/4444-4444-4444-4446</orcid-id>
+        <orcid-id>http://orcid.org/4444-4444-4444-4446</orcid-id>
         <orcid-history>
             <creation-method>API</creation-method>
             <completion-date>2012-10-09T15:50:07</completion-date>
