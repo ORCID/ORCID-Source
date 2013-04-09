@@ -491,6 +491,11 @@ a:hover {
     margin: 0 !important;  
 }
 
+.grey {
+  color: #949599;
+}
+
+
 .privacy-menu li {
     margin-bottom: 5px !important; 
 }
