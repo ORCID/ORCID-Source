@@ -179,7 +179,7 @@
 							<a href="" ng-click="toggleDeactivateEdit()" ng-bind="deactivateToggleText"></a>
 						</td>
 					</tr>
-					<tr ng-show="showEditDeactivate" ng-cloak>
+					<tr ng-controller="DeactivateAccount" ng-show="showEditDeactivate" ng-cloak>
 						<td colspan="2">
 						<div class="editTablePadCell50">
 						     <#if deactivateEmailSent??>
@@ -195,7 +195,7 @@
 						     	
 						     	<h3>${springMacroRequestContext.getMessage("deactivate_orcid.todeactivateyouraccount")}</h3>
 						     	<div class="top-margin">${springMacroRequestContext.getMessage("deactivate_orcid.clickonthesenddeactivation")}</div>
-						     	<div><a href="" onclick="orcidGA.gaPush(['_trackEvent', 'Disengagement', 'Deactivate_Initiate', 'Website']); orcidGA.windowLocationHrefDelay('<@spring.url '/account/start-deactivate-orcid-account'/>'); return false;">${springMacroRequestContext.getMessage("deactivate_orcid.deactivatemyOrcidaccount")}</a></div>
+						     	<div><a href="" ng-click="sendDeactivateEmail()">${springMacroRequestContext.getMessage("deactivate_orcid.deactivatemyOrcidaccount")}</a></div>
 						     	<div class="top-margin">${springMacroRequestContext.getMessage("deactivate_orcid.finddeactivationemail")}</div>
 						     	<div class="top-margin">${springMacroRequestContext.getMessage("deactivate_orcid.clickthelinkprovided")}</div>
 						</div>

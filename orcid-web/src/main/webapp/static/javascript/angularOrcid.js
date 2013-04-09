@@ -94,10 +94,34 @@ function EditTableCtrl($scope) {
 	};
 	
 	// init deactivate
-	$scope.showDeactivate = (window.location.hash === "#Deactivate");
+	$scope.showEditDeactivate = (window.location.hash === "#editDeactivate");
 	$scope.deactivateUpdateToggleText();
 	
 };
+
+function DeactivateAccount($scope, $http) {
+	$scope.sendDeactivateEmail = function() {
+		orcidGA.gaPush(['_trackEvent', 'Disengagement', 'Deactivate_Initiate', 'Website']);
+		$.ajax({
+	        url: $('body').data('baseurl') + 'account/send-deactivate-account.json',
+	        dataType: 'json',
+	        success: function(data) {
+	    	    $.colorbox({
+	    	        html : $('<div style="padding: 20px;" class="colorbox-modal"><h3>Deactivate email sent to ' + data.value + '</h3>'
+	    	            	+ '<div class="btn" id="modal-close">Close</div>')	            	
+	    	    });
+	    	    $.colorbox.resize();
+	    	    $('#modal-close').click(function(e) {
+	    	    	$.colorbox.close();
+	    	    });
+	        }
+	    }).fail(function() { 
+	    	// something bad is happening!
+	    	console.log("error with change DeactivateAccount");
+	    });
+
+	}
+}
 
 function PasswordEdit($scope, $http) {
 	$scope.getChangePassword = function() {
