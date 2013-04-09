@@ -84,7 +84,7 @@
 		   							      <span ng-show="email.verified">${springMacroRequestContext.getMessage("manage.email.verified")}</span>		
 			   						  </td>
 			   						  <td class="padRgt">
-			   						  	<a href="" class="icon-trash icon-large" ng-show="email.primary == false" ng-click="deleteEmail($index)"></a>
+			   						  	<a href="" class="icon-trash grey" ng-show="email.primary == false" ng-click="deleteEmail($index)"></a>
 			   						  </td>
 			   						  <td>
 			   						     <div style="padding-bottom: 28px;">
