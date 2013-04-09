@@ -80,8 +80,8 @@
             						    </select>
 			   						  </td>
 			   						  <td class="padRgt">
-			   						      <span ng-hide="email.verified"><a href="" ng-click="verifyEmail($index)">Verify</a></span>
-		   							      <span ng-show="email.verified">Verified</span>		
+			   						      <span ng-hide="email.verified"><a href="" ng-click="verifyEmail($index)">${springMacroRequestContext.getMessage("manage.email.verify")}</a></span>
+		   							      <span ng-show="email.verified">${springMacroRequestContext.getMessage("manage.email.verified")}</span>		
 			   						  </td>
 			   						  <td class="padRgt">
 			   						  	<a href="" class="icon-trash icon-large" ng-show="email.primary == false" ng-click="deleteEmail($index)"></a>
@@ -158,19 +158,19 @@
 					<tr>
 						<th>${springMacroRequestContext.getMessage("manage.privacy_preferences")}</th>
 						<td>
-							<div><@orcid.settingsPopover "security" "/account/privacy-preferences" "Change privacy preferences" open /></div>
+							<div><@orcid.settingsPopover "security" "/account/privacy-preferences" springMacroRequestContext.getMessage("manage.password.changePrivacy") open /></div>
 						</td>
 					</tr>					
 					<tr>
 						<th>${springMacroRequestContext.getMessage("manage.security_question")}</th>
 						<td>
-							<div><@orcid.settingsPopover "security" "/account/security-question" "Update security question" open /></div>
+							<div><@orcid.settingsPopover "security" "/account/security-question" springMacroRequestContext.getMessage("manage.securityQuestion.updateSecurity") open /></div>
 						</td>
 					</tr>
 					<tr>
                         <th>${springMacroRequestContext.getMessage("manage.email_preferences")}</th>
                         <td>
-                            <div><@orcid.settingsPopover "security" "/account/email-preferences" "Change email preferences" open /></div>
+                            <div><@orcid.settingsPopover "security" "/account/email-preferences" springMacroRequestContext.getMessage("manage.emailPrefs.change") open /></div>
                         </td>
 					</tr>
 					<tr>
