@@ -43,7 +43,7 @@
             <div class="control-group">
                 <div>
                     <button id='form-sign-in-button' class="btn btn-primary" type="submit">${springMacroRequestContext.getMessage("login.signin")}</button>
-                    <img id="ajax-loader" class="hide" src="<@spring.url '/static/img/ajax-loader.gif'/>" alt="Progress animation"/>
+                    <span id="ajax-loader" class="hide"><i id="ajax-loader" class="icon-spinner icon-large icon-spin green"></i></span>
                 </div>
                 <div class="control-links">
                 	<a href="<@spring.url '/reset-password'/>">${springMacroRequestContext.getMessage("login.reset")}</a>&nbsp;&nbsp;
