@@ -5074,6 +5074,8 @@ strong,
 	position: relative;
 	margin: 0px; 
 	padding: 0px;
+	width: 100px;
+	height: 29px;
 }
 
 .privacyToggle li {
@@ -5082,6 +5084,7 @@ strong,
 	top: 0px; 
 	left: 0px; 
     background: url('../img/privacy-toggle_100.png') no-repeat;
+    background-size: 100px 59px;
 }
 
 @media only screen and (-webkit-min-device-pixel-ratio: 2), 
@@ -5130,12 +5133,39 @@ only screen and (min-device-pixel-ratio: 2) {
 	background-position: -67px -29px;
 }
 
+.privacyLedgend {
+	width: 206px; height: 70px;      
+	background: url('../img/privacy-legend_100.png') no-repeat;
+    background-size: 206px 70px;
+    position: absolute; right: 15px; top: -25px;
+	z-index: 1000;
+	display: none;	
+}
+/*
+@media only screen and (-webkit-min-device-pixel-ratio: 2), 
+only screen and (min-device-pixel-ratio: 2) {
+	
+   .privacyLedgend {
+      background: url('../img/privacy-legend_200.png') no-repeat;
+      background-size: 206px 70px;
+   }
+}
+*/
+
+
+.privacyLedgendHide:hover .privacyLedgend {
+  display: block;	
+}
+
+
 .editTablePadCell35 {
-	padding-left: 35px;
+	margin: 0px; 
+	padding: 0px;
+	margin-left: 35px;
 }
 
 #emailTable {
-	width: 570px; 
+	width: 655px; 
 	padding: 0px; 
 	margin: 0px;
 }
