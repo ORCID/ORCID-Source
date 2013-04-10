@@ -203,12 +203,6 @@
 						</td>
 					</tr>					
 					<tr>
-                        <th>${springMacroRequestContext.getMessage("manage.email_preferences")}</th>
-                        <td>
-                            <div><@orcid.settingsPopover "security" "/account/email-preferences" springMacroRequestContext.getMessage("manage.emailPrefs.change") open /></div>
-                        </td>
-					</tr>
-					<tr>
 						<th><a name="editDeactivate"></a>${springMacroRequestContext.getMessage("manage.close_account")}</th>
 						<td>
 							<a href="" ng-click="toggleDeactivateEdit()" ng-bind="deactivateToggleText"></a>
