@@ -520,30 +520,24 @@ public class ManageProfileController extends BaseWorkspaceController {
         return changeSecurityDetailsView;
 
     }
-
-    @RequestMapping(value = { "/privacy-preferences" }, method = RequestMethod.GET)
-    public ModelAndView viewPrivacyPrefs() {
+   
+    @RequestMapping(value = "/default-privacy-preferences.json", method = RequestMethod.GET)
+    public @ResponseBody
+    Preferences getDefaultPreference(HttpServletRequest request) {
         OrcidProfile profile = orcidProfileManager.retrieveOrcidProfile(getCurrentUserOrcid());
-        Preferences preferences = profile.getOrcidInternal().getPreferences();
-        Visibility worksVisibilityDefault = preferences != null && preferences.getWorkVisibilityDefault() != null ? preferences.getWorkVisibilityDefault().getValue()
-                : Visibility.PUBLIC;
-        ChangeVisibilityPreferencesForm changeVisibilityPreferencesForm = new ChangeVisibilityPreferencesForm();
-        changeVisibilityPreferencesForm.setWorkVisibilityDefault(worksVisibilityDefault.value());
-        ModelAndView modelAndView = new ModelAndView("privacy_preferences");
-        modelAndView.addObject("changeVisibilityPreferencesForm", changeVisibilityPreferencesForm);
-        return modelAndView;
+        profile.getOrcidInternal().getPreferences();
+        return profile.getOrcidInternal().getPreferences() != null ? profile.getOrcidInternal().getPreferences() : new Preferences();
     }
 
-    @RequestMapping(value = "/update-privacy-preferences", method = RequestMethod.POST)
-    public ModelAndView savePrivacyPrefs(@ModelAttribute("changeVisibilityPreferencesForm") ChangeVisibilityPreferencesForm changeVisbilityPreferencesForm) {
-        Visibility workDefaultVisibility = Visibility.fromValue(changeVisbilityPreferencesForm.getWorkVisibilityDefault());
+    @RequestMapping(value = "/default-privacy-preferences.json", method = RequestMethod.POST)
+    public @ResponseBody
+    Preferences setDefaultPreference(HttpServletRequest request,@RequestBody Preferences preferences) {
         OrcidProfile profile = orcidProfileManager.retrieveOrcidProfile(getCurrentUserOrcid());
-        Preferences preferences = profile.getOrcidInternal().getPreferences() != null ? profile.getOrcidInternal().getPreferences() : new Preferences();
-        preferences.setWorkVisibilityDefault(new WorkVisibilityDefault(workDefaultVisibility));
+        profile.getOrcidInternal().setPreferences(preferences);
         OrcidProfile updatedProfile = orcidProfileManager.updateOrcidProfile(profile);
-        return new ModelAndView("ok");
+        return updatedProfile.getOrcidInternal().getPreferences();
     }
-
+    
     @RequestMapping(value = { "/email-preferences", "/change-email-preferences" }, method = RequestMethod.GET)
     public ModelAndView viewChangeEmailPrefs() {
         OrcidProfile profile = orcidProfileManager.retrieveOrcidProfile(getCurrentUserOrcid());
