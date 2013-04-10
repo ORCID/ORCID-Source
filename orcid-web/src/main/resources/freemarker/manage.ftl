@@ -150,7 +150,6 @@
 						</div>
 						</td>
 					</tr>
-
 					<tr>
 						<th><a name="editPrivacyPreferences"></a>${springMacroRequestContext.getMessage("manage.privacy_preferences")}</th>
 						<td>
@@ -174,13 +173,35 @@
 			   				</div>
 						</div>
 						</td>
-					</tr>
+					</tr>					
 					<tr>
 						<th>${springMacroRequestContext.getMessage("manage.security_question")}</th>
 						<td>
 							<div><@orcid.settingsPopover "security" "/account/security-question" springMacroRequestContext.getMessage("manage.securityQuestion.updateSecurity") open /></div>
 						</td>
 					</tr>
+					<tr>
+						<th><a name="editEmailPreferences"></a>${springMacroRequestContext.getMessage("manage.email_preferences")}</th>
+						<td>
+							<a href="" ng-click="toggleEmailPreferencesEdit()" ng-bind="emailPreferencesToggleText"></a>
+						</td>
+					</tr>
+					<tr ng-controller="PrivacyPreferences" ng-show="showEditEmailPreferences" ng-cloak>
+						<td colspan="2">
+						<div class="editTablePadCell35">
+							    <label class="checkbox">
+				                <input type="checkbox" id="sendOrcidChangeNotifcations" name="sendOrcidChangeNotifcations" ng-model="privacyPreferences.sendChangeNotifications.value" ng-click="savePrivacyPreferences()" />
+				                    ${springMacroRequestContext.getMessage("change_email_preferences.sendnotification")}
+				                </label>
+				                <label class="checkbox">
+				                <input type="checkbox" id="sendOrcidNews" name="sendOrcidNews" ng-model="privacyPreferences.sendOrcidNews.value" ng-click="savePrivacyPreferences()" />
+				                    ${springMacroRequestContext.getMessage("change_email_preferences.sendinformation")}
+				                </label>
+				                <br />
+				                <p><strong>${springMacroRequestContext.getMessage("change_email_preferences.privacy")}</strong>${springMacroRequestContext.getMessage("change_email_preferences.yourregistrationinfo")}</p>
+						</div>
+						</td>
+					</tr>					
 					<tr>
                         <th>${springMacroRequestContext.getMessage("manage.email_preferences")}</th>
                         <td>
