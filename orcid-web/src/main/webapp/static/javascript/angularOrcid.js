@@ -114,7 +114,7 @@ function EditTableCtrl($scope) {
 
 	// email preferences edit row
 	$scope.emailPreferencesUpdateToggleText = function () {
-		if ($scope.showEditemailPreferences) $scope.emailPreferencesToggleText = OM.getInstance().get("manage.editTable.hide");
+		if ($scope.showEditEmailPreferences) $scope.emailPreferencesToggleText = OM.getInstance().get("manage.editTable.hide");
 		else $scope.emailPreferencesToggleText = OM.getInstance().get("manage.editTable.edit");		
 	};
 
@@ -126,6 +126,7 @@ function EditTableCtrl($scope) {
 	// init privacy preferences
 	$scope.showEditEmailPreferences = (window.location.hash === "#editEmailPreferences");
 	$scope.emailPreferencesUpdateToggleText();	
+
 	
 };
 
