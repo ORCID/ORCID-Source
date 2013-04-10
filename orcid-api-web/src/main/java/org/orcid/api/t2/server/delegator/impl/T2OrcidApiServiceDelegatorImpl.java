@@ -230,7 +230,7 @@ public class T2OrcidApiServiceDelegatorImpl implements T2OrcidApiServiceDelegato
             orcidProfile = orcidProfileManager.createOrcidProfileAndNotify(orcidProfile);
             return getCreatedResponse(uriInfo, PROFILE_GET_PATH, orcidProfile);
         } catch (DataAccessException e) {            
-            if(ConstraintViolationException.class.isAssignableFrom(e.getCause().getClass())){
+            if(e.getCause() != null && ConstraintViolationException.class.isAssignableFrom(e.getCause().getClass())){
                 throw new OrcidBadRequestException("User with this email already exist.");
             } 
             throw new OrcidBadRequestException("Cannot create ORCID", e);
