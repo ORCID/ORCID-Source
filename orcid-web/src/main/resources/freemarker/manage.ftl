@@ -52,8 +52,7 @@
 						</td>
 					</tr>
 						<tr>
-							<th><a name="editEmail"></a>
-		   						${springMacroRequestContext.getMessage("manage.thEmail")}</th>
+							<th><a name="editEmail"></a>${springMacroRequestContext.getMessage("manage.thEmail")}</th>
 							<td>
 								<a href="" ng-click="toggleEmailEdit()" ng-bind="emailToggleText"></a>
 							</td>
@@ -111,7 +110,7 @@
 							</td>
 					</tr>
 					<tr>
-						<th><a name="editPassword">${springMacroRequestContext.getMessage("manage.password")}</th>
+						<th><a name="editPassword"></a>${springMacroRequestContext.getMessage("manage.password")}</th>
 						<td>
 						    <a href="" ng-click="togglePasswordEdit()" ng-bind="passwordToggleText"></a>
 						</td>
@@ -178,7 +177,7 @@
                         </td>
 					</tr>
 					<tr>
-						<th><a name="editDeactivate">${springMacroRequestContext.getMessage("manage.close_account")}</th>
+						<th><a name="editDeactivate"></a>${springMacroRequestContext.getMessage("manage.close_account")}</th>
 						<td>
 							<a href="" ng-click="toggleDeactivateEdit()" ng-bind="deactivateToggleText"></a>
 						</td>
