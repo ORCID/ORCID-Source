@@ -97,7 +97,73 @@ function EditTableCtrl($scope) {
 	$scope.showEditDeactivate = (window.location.hash === "#editDeactivate");
 	$scope.deactivateUpdateToggleText();
 	
+	// privacy preferences edit row
+	$scope.privacyPreferencesUpdateToggleText = function () {
+		if ($scope.showEditPrivacyPreferences) $scope.privacyPreferencesToggleText = OM.getInstance().get("manage.editTable.hide");
+		else $scope.privacyPreferencesToggleText = OM.getInstance().get("manage.editTable.edit");		
+	};
+
+	$scope.togglePrivacyPreferencesEdit = function() {
+		$scope.showEditPrivacyPreferences = !$scope.showEditPrivacyPreferences;
+		$scope.privacyPreferencesUpdateToggleText();
+	};
+	
+	// init privacy preferences
+	$scope.showEditPrivacyPreferences = (window.location.hash === "#editPrivacyPreferences");
+	$scope.privacyPreferencesUpdateToggleText();
+
+	
 };
+
+function PrivacyPreferences($scope, $http) {
+	$scope.getPrivacyPreferences = function() {	
+		$.ajax({
+	        url: $('body').data('baseurl') + 'account/default-privacy-preferences.json',
+	        dataType: 'json',
+	        success: function(data) {
+	        	$scope.privacyPreferences = data;
+	        	$scope.$apply();
+	        	//alert($scope.privacyPreferences.workVisibilityDefault.value);
+	        }
+	    }).fail(function() { 
+	    	// something bad is happening!
+	    	console.log("error with multi email");
+	    });
+	};
+	
+	$scope.savePrivacyPreferences = function() {
+		$.ajax({
+	        url: $('body').data('baseurl') + 'account/default-privacy-preferences.json',
+	        type: 'POST',
+	        data: angular.toJson($scope.privacyPreferences),
+	        contentType: 'application/json;charset=UTF-8',
+	        dataType: 'json',
+	        success: function(data) {
+	        	$scope.privacyPreferences = data;
+	        	$scope.$apply();
+	         	//alert($scope.privacyPreferences.workVisibilityDefault.value);
+	 	       
+	        }
+	    }).fail(function() { 
+	    	// something bad is happening!
+	    	console.log("error with multi email");
+	    });
+	};
+
+	$scope.updateWorkVisibilityDefault = function(priv, $event) {
+		$scope.privacyPreferences.workVisibilityDefault.value = priv;
+		$scope.savePrivacyPreferences();
+	};
+	
+	
+	//init
+	$scope.privacyPreferences = $scope.getPrivacyPreferences();
+	
+	
+	
+	
+};
+
 
 function DeactivateAccount($scope, $http) {
 	$scope.sendDeactivateEmail = function() {
@@ -197,12 +263,6 @@ function EmailEdit($scope, $http) {
 		$scope.saveEmail();
 	};
 	
-//	$scope.current = function(idx) {
-//		$scope.saveEmail();
-//	};
-//	
-	
-	// descoped delete after March 20
 	$scope.toggleVisibility = function(idx) {
 		if ($scope.emailsPojo.emails[idx].visibility ==  "PRIVATE") {
 			$scope.emailsPojo.emails[idx].visibility = "LIMITED";
