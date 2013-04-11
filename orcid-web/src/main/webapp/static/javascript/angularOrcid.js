@@ -141,8 +141,6 @@ function EditTableCtrl($scope) {
 	// init security question
 	$scope.showEditSecurityQuestion = (window.location.hash === "#editSecurityQuestion");
 	$scope.securityQuestionUpdateToggleText();	
-
-	
 	
 };
 
@@ -217,7 +215,44 @@ function DeactivateAccount($scope, $http) {
 	    	console.log("error with change DeactivateAccount");
 	    });
 
-	}
+	};
+}
+
+
+function SecurityQuestionEdit($scope, $http) {
+	$scope.getSecurityQuestion = function() {
+		$.ajax({
+	        url: $('body').data('baseurl') + 'account/security-question.json',
+	        dataType: 'json',
+	        success: function(data) {
+	        	$scope.securityQuestionPojo = data;
+	        	$scope.$apply();
+	        }
+	    }).fail(function() { 
+	    	// something bad is happening!
+	    	console.log("error with security question.json");
+	    });
+	};
+	
+	$scope.getSecurityQuestion();
+	
+	$scope.saveSecurityQuestion = function() {
+		$.ajax({
+	        url: $('body').data('baseurl') + 'account/security-question.json',
+	        type: 'POST',
+	        data: angular.toJson($scope.securityQuestionPojo),
+	        contentType: 'application/json;charset=UTF-8',
+	        dataType: 'json',
+	        success: function(data) {
+	        	//alert(angular.toJson($scope.securityQuestionPojo));
+	        	$scope.securityQuestionPojo = data;
+	        	$scope.$apply();
+	        }
+	    }).fail(function() { 
+	    	// something bad is happening!
+	    	console.log("error with security question");
+	    });
+	};
 }
 
 function PasswordEdit($scope, $http) {

@@ -56,6 +56,7 @@ import org.orcid.frontend.web.forms.SearchForDelegatesForm;
 import org.orcid.jaxb.model.message.Delegation;
 import org.orcid.jaxb.model.message.DelegationDetails;
 import org.orcid.jaxb.model.message.Email;
+import org.orcid.jaxb.model.message.EncryptedSecurityAnswer;
 import org.orcid.jaxb.model.message.ExternalIdentifier;
 import org.orcid.jaxb.model.message.GivenPermissionBy;
 import org.orcid.jaxb.model.message.GivenPermissionTo;
@@ -76,6 +77,7 @@ import org.orcid.password.constants.OrcidPasswordConstants;
 import org.orcid.pojo.Emails;
 import org.orcid.pojo.Errors;
 import org.orcid.pojo.ChangePassword;
+import org.orcid.pojo.SecurityQuestion;
 import org.orcid.utils.OrcidStringUtils;
 import org.orcid.utils.OrcidWebUtils;
 import org.slf4j.Logger;
@@ -469,6 +471,7 @@ public class ManageProfileController extends BaseWorkspaceController {
 
     @ModelAttribute("securityQuestions")
     public Map<String, String> getSecurityQuestions() {
+        securityQuestionManager.retrieveSecurityQuestionsAsMap();//
         return securityQuestionManager.retrieveSecurityQuestionsAsMap();
     }
 
@@ -520,6 +523,50 @@ public class ManageProfileController extends BaseWorkspaceController {
         return changeSecurityDetailsView;
 
     }
+    
+    @RequestMapping(value = "/security-question.json", method = RequestMethod.GET)
+    public @ResponseBody
+    SecurityQuestion getSecurityQuestionJson(HttpServletRequest request) {
+        OrcidProfile profile = getCurrentUser().getEffectiveProfile();
+        SecurityDetails sd = profile.getOrcidInternal().getSecurityDetails();
+        SecurityQuestionId securityQuestionId = sd.getSecurityQuestionId();
+        EncryptedSecurityAnswer encryptedSecurityAnswer = sd.getEncryptedSecurityAnswer();
+        
+        if (securityQuestionId == null) {
+            sd.getSecurityQuestionId();
+            securityQuestionId = new SecurityQuestionId();
+        }
+        
+        if (encryptedSecurityAnswer ==  null) {
+            encryptedSecurityAnswer = new EncryptedSecurityAnswer();
+        }
+        
+        SecurityQuestion securityQuestion = new SecurityQuestion();
+        securityQuestion.setEncryptedSecurityAnswer(encryptedSecurityAnswer);
+        securityQuestion.setSecurityQuestionId(securityQuestionId);
+        return securityQuestion;
+    }
+    
+    @RequestMapping(value = "/security-question.json", method = RequestMethod.POST)
+    public @ResponseBody
+    SecurityQuestion setSecurityQuestionJson(HttpServletRequest request, @RequestBody SecurityQuestion securityQuestion) {
+        List<String> errors = new ArrayList<String>();
+        if (securityQuestion.getEncryptedSecurityAnswer().getContent() == null
+                || securityQuestion.getEncryptedSecurityAnswer().getContent() == null
+                || securityQuestion.getEncryptedSecurityAnswer().getContent().trim() == "") errors.add("Please provide an answer. ");
+        if (securityQuestion.getSecurityQuestionId().getValue() == 0) errors.add("Please choose a question. ");
+        
+        if (errors.size() == 0) {
+           OrcidProfile profile = getCurrentUser().getEffectiveProfile();
+           profile.getOrcidInternal().getSecurityDetails().setSecurityQuestionId(securityQuestion.getSecurityQuestionId());
+           profile.getOrcidInternal().getSecurityDetails().setEncryptedSecurityAnswer(securityQuestion.getEncryptedSecurityAnswer());
+        }
+        
+        securityQuestion.setErrors(errors);
+        return securityQuestion;
+    }
+    
+
    
     @RequestMapping(value = "/default-privacy-preferences.json", method = RequestMethod.GET)
     public @ResponseBody

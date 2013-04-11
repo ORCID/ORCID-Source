@@ -180,10 +180,24 @@
 							<a href="" ng-click="toggleSecurityQuestionEdit()" ng-bind="securityQuestionToggleText"></a>
 						</td>
 					</tr>
-					<tr ng-controller="PrivacyPreferences" ng-show="showEditSecurityQuestion" ng-cloak>
+					<tr ng-controller="SecurityQuestionEdit" ng-show="showEditSecurityQuestion" ng-cloak>
 						<td colspan="2">
 						<div class="editTablePadCell35">
-					     !! ${securityQuestions}
+							<span class="orcid-error" ng-show="securityQuestionPojo.errors.length > 0">
+			   					<span ng-repeat='error in securityQuestionPojo.errors' ng-bind-html-unsafe="error"></span>
+			   					here
+			   				</span>	
+	
+							<select id="securityQuestionId" name="securityQuestionId" class="input-xlarge" ng-model="securityQuestionPojo.securityQuestionId.value">
+								<#list securityQuestions?keys as key>
+								   <option value="${key}" ng-selected="securityQuestionPojo.securityQuestionId.value == ${key}">${securityQuestions[key]}</option>
+								</#list>
+	    					</select> 
+	    					<label for="changeSecurityQuestionForm.securityQuestionAnswer" class="">Security Answer</label>
+	    					<input type="text" id="securityQuestionAnswer" name="securityQuestionAnswer" class="input-xlarge" ng-model="securityQuestionPojo.encryptedSecurityAnswer.content"><br />
+	    					<br />
+	    					<button id="bottom-submit-security-question" class="btn btn-primary" ng-click="saveSecurityQuestion()">Save changes</button>
+	    					<button id="bottom-reset-security-question" class="btn close-parent-popover" ng-click="getSecurityQuestion()">Cancel</button>
 						</div>
 						</td>
 					</tr>							
