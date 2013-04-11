@@ -183,10 +183,7 @@
 					<tr ng-controller="PrivacyPreferences" ng-show="showEditSecurityQuestion" ng-cloak>
 						<td colspan="2">
 						<div class="editTablePadCell35">
-					       <div class="">
-					            
-					        </div>
-					   
+					     !! ${securityQuestions}
 						</div>
 						</td>
 					</tr>							
