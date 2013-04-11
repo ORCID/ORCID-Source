@@ -536,14 +536,14 @@ public class ManageProfileController extends BaseWorkspaceController {
             sd.getSecurityQuestionId();
             securityQuestionId = new SecurityQuestionId();
         }
-        
-        if (encryptedSecurityAnswer ==  null) {
-            encryptedSecurityAnswer = new EncryptedSecurityAnswer();
+
+        SecurityQuestion securityQuestion = new SecurityQuestion();
+        securityQuestion.setSecurityQuestionId(securityQuestionId);
+
+        if (encryptedSecurityAnswer !=  null) {
+            securityQuestion.setSecurityAnswer(encryptionManager.decryptForInternalUse(encryptedSecurityAnswer.getContent()));
         }
         
-        SecurityQuestion securityQuestion = new SecurityQuestion();
-        securityQuestion.setEncryptedSecurityAnswer(encryptedSecurityAnswer);
-        securityQuestion.setSecurityQuestionId(securityQuestionId);
         return securityQuestion;
     }
     
@@ -551,15 +551,15 @@ public class ManageProfileController extends BaseWorkspaceController {
     public @ResponseBody
     SecurityQuestion setSecurityQuestionJson(HttpServletRequest request, @RequestBody SecurityQuestion securityQuestion) {
         List<String> errors = new ArrayList<String>();
-        if (securityQuestion.getEncryptedSecurityAnswer().getContent() == null
-                || securityQuestion.getEncryptedSecurityAnswer().getContent() == null
-                || securityQuestion.getEncryptedSecurityAnswer().getContent().trim() == "") errors.add("Please provide an answer. ");
+        if (securityQuestion.getSecurityAnswer() == null
+                || securityQuestion.getSecurityAnswer().trim() == "") errors.add("Please provide an answer. ");
         if (securityQuestion.getSecurityQuestionId().getValue() == 0) errors.add("Please choose a question. ");
         
         if (errors.size() == 0) {
            OrcidProfile profile = getCurrentUser().getEffectiveProfile();
            profile.getOrcidInternal().getSecurityDetails().setSecurityQuestionId(securityQuestion.getSecurityQuestionId());
-           profile.getOrcidInternal().getSecurityDetails().setEncryptedSecurityAnswer(securityQuestion.getEncryptedSecurityAnswer());
+           //encryptionManager.decryptForInternalUse(
+           profile.getOrcidInternal().getSecurityDetails().setEncryptedSecurityAnswer(securityQuestion.getSecurityAnswer());
         }
         
         securityQuestion.setErrors(errors);
