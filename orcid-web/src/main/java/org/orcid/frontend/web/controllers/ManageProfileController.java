@@ -537,52 +537,8 @@ public class ManageProfileController extends BaseWorkspaceController {
         OrcidProfile updatedProfile = orcidProfileManager.updateOrcidProfile(profile);
         return updatedProfile.getOrcidInternal().getPreferences();
     }
-    
-    @RequestMapping(value = { "/email-preferences", "/change-email-preferences" }, method = RequestMethod.GET)
-    public ModelAndView viewChangeEmailPrefs() {
-        OrcidProfile profile = orcidProfileManager.retrieveOrcidProfile(getCurrentUserOrcid());
-        Preferences preferences = profile.getOrcidInternal().getPreferences();
-        boolean sendChangeNotifications = preferences != null && preferences.getSendChangeNotifications() != null ? preferences.getSendChangeNotifications().isValue()
-                : false;
-
-        boolean sendOrcidNews = preferences != null && preferences.getSendOrcidNews() != null ? preferences.getSendOrcidNews().isValue() : false;
-
-        ChangeEmailPreferencesForm changeEmailPreferencesForm = new ChangeEmailPreferencesForm();
-        changeEmailPreferencesForm.setSendOrcidChangeNotifcations(sendChangeNotifications);
-        changeEmailPreferencesForm.setSendOrcidNews(sendOrcidNews);
-
-        ModelAndView modelAndView = new ModelAndView("change_email_preferences");
-        modelAndView.addObject(changeEmailPreferencesForm);
-        return modelAndView;
-
-    }
-
-    @RequestMapping(value = "/update-email-preferences", method = RequestMethod.POST)
-    public ModelAndView saveChangeEmailPrefs(@ModelAttribute("changeEmailPreferencesForm") ChangeEmailPreferencesForm changeEmailPreferencesForm) {
-
-        boolean sendChangeNotificationsValue = changeEmailPreferencesForm.getSendOrcidChangeNotifcations();
-        boolean sendOrcidNewsValue = changeEmailPreferencesForm.getSendOrcidNews();
-
-        OrcidProfile profile = orcidProfileManager.retrieveOrcidProfile(getCurrentUserOrcid());
-
-        Preferences preferences = profile.getOrcidInternal().getPreferences() != null ? profile.getOrcidInternal().getPreferences() : new Preferences();
-        SendChangeNotifications sendChangeNotifications = preferences.getSendChangeNotifications() != null ? preferences.getSendChangeNotifications()
-                : new SendChangeNotifications();
-
-        SendOrcidNews sendOrcidNews = preferences.getSendOrcidNews() != null ? preferences.getSendOrcidNews() : new SendOrcidNews();
-        sendChangeNotifications.setValue(sendChangeNotificationsValue);
-        sendOrcidNews.setValue(sendOrcidNewsValue);
-
-        preferences.setSendChangeNotifications(sendChangeNotifications);
-        preferences.setSendOrcidNews(sendOrcidNews);
-        profile.getOrcidInternal().setPreferences(preferences);
-
-        OrcidProfile updatedProfile = orcidProfileManager.updatePreferences(profile);
-        getCurrentUser().setEffectiveProfile(updatedProfile);
-
-        return new ModelAndView("ok");
-    }
-
+   
+ 
     private ModelAndView populateChangeSecurityDetailsViewFromUserProfile(ChangeSecurityQuestionForm changeSecurityQuestionForm) {
         ModelAndView changeSecurityDetailsView = new ModelAndView("change_security_question");
 
