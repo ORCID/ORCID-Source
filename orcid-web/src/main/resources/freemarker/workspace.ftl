@@ -71,16 +71,14 @@
 		        	<tr style="vertical-align:bottom;" ng-repeat='externalIdentifier in externalIdentifiersPojo.externalIdentifiers'>
 		        		<td class="padRgt">
 		        			<span ng-hide="externalIdentifier.externalIdUrl" ng-bind="externalIdentifier.externalIdReference.content"></span>
-		        			<span ng-show="externalIdentifier.externalIdUrl"><a ng-href="{{externalIdentifier.externalIdUrl.value}}"><span ng-bind="externalIdentifier.externalIdCommonName.content"></span> <span ng-bind="externalIdentifier.externalIdReference.content"></span></a></span>
+		        			<span ng-show="externalIdentifier.externalIdUrl"><a ng-href="{{externalIdentifier.externalIdUrl.value}}" ng-bind="externalIdentifier.externalIdUrl.value"></a></span>
 		        			<input type="hidden" value="{{externalIdentifier.orcid.value}}" />
 		        			<input type="hidden" value="{{externalIdentifier.externalIdOrcid.value}}" />
 		        			<input type="hidden" value="{{externalIdentifier.externalIdCommonName.content}}" />
 			   			</td>
 			   			<td class="padRgt">
-			   				<#if (RequestParameters['deleteExId'])??>
-			   				    <a href ng-click="deleteExternalIdentifier($index)" class="icon-trash grey"></a>
-			   				</#if>
-			   			</td		        		
+			   				<a href ng-click="deleteExternalIdentifier($index)" class="icon-trash grey"></a>
+			   			</td>		        		
 		        	</tr>
 		        </table>
 			</div>
