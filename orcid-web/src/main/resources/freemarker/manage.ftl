@@ -173,7 +173,23 @@
 			   				</div>
 						</div>
 						</td>
-					</tr>					
+					</tr>
+				    <tr>
+						<th><a name="editSecurityQuestion"></a>${springMacroRequestContext.getMessage("manage.security_question")}</th>
+						<td>
+							<a href="" ng-click="toggleSecurityQuestionEdit()" ng-bind="securityQuestionToggleText"></a>
+						</td>
+					</tr>
+					<tr ng-controller="PrivacyPreferences" ng-show="showEditSecurityQuestion" ng-cloak>
+						<td colspan="2">
+						<div class="editTablePadCell35">
+					       <div class="">
+					            
+					        </div>
+					   
+						</div>
+						</td>
+					</tr>							
 					<tr>
 						<th>${springMacroRequestContext.getMessage("manage.security_question")}</th>
 						<td>

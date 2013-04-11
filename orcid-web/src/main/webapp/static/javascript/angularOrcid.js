@@ -127,6 +127,22 @@ function EditTableCtrl($scope) {
 	$scope.showEditEmailPreferences = (window.location.hash === "#editEmailPreferences");
 	$scope.emailPreferencesUpdateToggleText();	
 
+	// security question edit row
+	$scope.securityQuestionUpdateToggleText = function () {
+		if ($scope.showEditSecurityQuestion) $scope.securityQuestionToggleText = OM.getInstance().get("manage.editTable.hide");
+		else $scope.securityQuestionToggleText = OM.getInstance().get("manage.editTable.edit");		
+	};
+
+	$scope.toggleSecurityQuestionEdit = function() {
+		$scope.showEditSecurityQuestion = !$scope.showEditSecurityQuestion;
+		$scope.securityQuestionUpdateToggleText();
+	};
+	
+	// init security question
+	$scope.showEditSecurityQuestion = (window.location.hash === "#editSecurityQuestion");
+	$scope.securityQuestionUpdateToggleText();	
+
+	
 	
 };
 
