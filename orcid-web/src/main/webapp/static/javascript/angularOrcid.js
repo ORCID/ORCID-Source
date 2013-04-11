@@ -67,7 +67,7 @@ function EditTableCtrl($scope) {
 	$scope.emailUpdateToggleText();
 	
 
-	// password edit rpw
+	// password edit row
 	$scope.passwordUpdateToggleText = function () {
 		if ($scope.showEditPassword) $scope.passwordToggleText = OM.getInstance().get("manage.editTable.hide");
 		else $scope.passwordToggleText = OM.getInstance().get("manage.editTable.edit");		
@@ -285,7 +285,7 @@ function PasswordEdit($scope, $http) {
 	        }
 	    }).fail(function() { 
 	    	// something bad is happening!
-	    	console.log("error with multi email");
+	    	console.log("error with edit password");
 	    });
 	};
 }

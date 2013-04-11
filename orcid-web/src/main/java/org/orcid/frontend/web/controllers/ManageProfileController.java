@@ -538,7 +538,7 @@ public class ManageProfileController extends BaseWorkspaceController {
         }
 
         SecurityQuestion securityQuestion = new SecurityQuestion();
-        securityQuestion.setSecurityQuestionId(securityQuestionId);
+        securityQuestion.setSecurityQuestionId(securityQuestionId.getValue());
 
         if (encryptedSecurityAnswer !=  null) {
             securityQuestion.setSecurityAnswer(encryptionManager.decryptForInternalUse(encryptedSecurityAnswer.getContent()));
@@ -552,14 +552,19 @@ public class ManageProfileController extends BaseWorkspaceController {
     SecurityQuestion setSecurityQuestionJson(HttpServletRequest request, @RequestBody SecurityQuestion securityQuestion) {
         List<String> errors = new ArrayList<String>();
         if (securityQuestion.getSecurityAnswer() == null
-                || securityQuestion.getSecurityAnswer().trim() == "") errors.add("Please provide an answer. ");
-        if (securityQuestion.getSecurityQuestionId().getValue() == 0) errors.add("Please choose a question. ");
+                || securityQuestion.getSecurityAnswer().trim() == "") errors.add(getMessage("manage.pleaseProvideAnAnswer"));
+        if (securityQuestion.getSecurityQuestionId() == 0) errors.add(getMessage("manage.pleaseChooseAQuestion"));
         
         if (errors.size() == 0) {
            OrcidProfile profile = getCurrentUser().getEffectiveProfile();
-           profile.getOrcidInternal().getSecurityDetails().setSecurityQuestionId(securityQuestion.getSecurityQuestionId());
-           //encryptionManager.decryptForInternalUse(
-           profile.getOrcidInternal().getSecurityDetails().setEncryptedSecurityAnswer(securityQuestion.getSecurityAnswer());
+           if (profile.getOrcidInternal().getSecurityDetails().getSecurityQuestionId() == null) profile.getOrcidInternal().getSecurityDetails().setSecurityQuestionId(new SecurityQuestionId());
+           profile.getOrcidInternal().getSecurityDetails().getSecurityQuestionId().setValue(securityQuestion.getSecurityQuestionId());
+           
+           if (profile.getOrcidInternal().getSecurityDetails().getEncryptedSecurityAnswer() == null) profile.getOrcidInternal().getSecurityDetails().setEncryptedSecurityAnswer(new EncryptedSecurityAnswer());
+           profile.setSecurityQuestionAnswer(securityQuestion.getSecurityAnswer());
+           orcidProfileManager.updatePasswordSecurityQuestionsInformation(profile);
+           getCurrentUser().setEffectiveProfile(profile);
+           errors.add(getMessage("manage.securityQuestionUpdated"));
         }
         
         securityQuestion.setErrors(errors);
