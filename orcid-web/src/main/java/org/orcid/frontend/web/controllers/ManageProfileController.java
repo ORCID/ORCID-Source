@@ -56,6 +56,7 @@ import org.orcid.frontend.web.forms.SearchForDelegatesForm;
 import org.orcid.jaxb.model.message.Delegation;
 import org.orcid.jaxb.model.message.DelegationDetails;
 import org.orcid.jaxb.model.message.Email;
+import org.orcid.jaxb.model.message.EncryptedSecurityAnswer;
 import org.orcid.jaxb.model.message.ExternalIdentifier;
 import org.orcid.jaxb.model.message.GivenPermissionBy;
 import org.orcid.jaxb.model.message.GivenPermissionTo;
@@ -76,6 +77,7 @@ import org.orcid.password.constants.OrcidPasswordConstants;
 import org.orcid.pojo.Emails;
 import org.orcid.pojo.Errors;
 import org.orcid.pojo.ChangePassword;
+import org.orcid.pojo.SecurityQuestion;
 import org.orcid.utils.OrcidStringUtils;
 import org.orcid.utils.OrcidWebUtils;
 import org.slf4j.Logger;
@@ -469,6 +471,7 @@ public class ManageProfileController extends BaseWorkspaceController {
 
     @ModelAttribute("securityQuestions")
     public Map<String, String> getSecurityQuestions() {
+        securityQuestionManager.retrieveSecurityQuestionsAsMap();//
         return securityQuestionManager.retrieveSecurityQuestionsAsMap();
     }
 
@@ -520,6 +523,55 @@ public class ManageProfileController extends BaseWorkspaceController {
         return changeSecurityDetailsView;
 
     }
+    
+    @RequestMapping(value = "/security-question.json", method = RequestMethod.GET)
+    public @ResponseBody
+    SecurityQuestion getSecurityQuestionJson(HttpServletRequest request) {
+        OrcidProfile profile = getCurrentUser().getEffectiveProfile();
+        SecurityDetails sd = profile.getOrcidInternal().getSecurityDetails();
+        SecurityQuestionId securityQuestionId = sd.getSecurityQuestionId();
+        EncryptedSecurityAnswer encryptedSecurityAnswer = sd.getEncryptedSecurityAnswer();
+        
+        if (securityQuestionId == null) {
+            sd.getSecurityQuestionId();
+            securityQuestionId = new SecurityQuestionId();
+        }
+
+        SecurityQuestion securityQuestion = new SecurityQuestion();
+        securityQuestion.setSecurityQuestionId(securityQuestionId.getValue());
+
+        if (encryptedSecurityAnswer !=  null) {
+            securityQuestion.setSecurityAnswer(encryptionManager.decryptForInternalUse(encryptedSecurityAnswer.getContent()));
+        }
+        
+        return securityQuestion;
+    }
+    
+    @RequestMapping(value = "/security-question.json", method = RequestMethod.POST)
+    public @ResponseBody
+    SecurityQuestion setSecurityQuestionJson(HttpServletRequest request, @RequestBody SecurityQuestion securityQuestion) {
+        List<String> errors = new ArrayList<String>();
+        if (securityQuestion.getSecurityAnswer() == null
+                || securityQuestion.getSecurityAnswer().trim() == "") errors.add(getMessage("manage.pleaseProvideAnAnswer"));
+        if (securityQuestion.getSecurityQuestionId() == 0) errors.add(getMessage("manage.pleaseChooseAQuestion"));
+        
+        if (errors.size() == 0) {
+           OrcidProfile profile = getCurrentUser().getEffectiveProfile();
+           if (profile.getOrcidInternal().getSecurityDetails().getSecurityQuestionId() == null) profile.getOrcidInternal().getSecurityDetails().setSecurityQuestionId(new SecurityQuestionId());
+           profile.getOrcidInternal().getSecurityDetails().getSecurityQuestionId().setValue(securityQuestion.getSecurityQuestionId());
+           
+           if (profile.getOrcidInternal().getSecurityDetails().getEncryptedSecurityAnswer() == null) profile.getOrcidInternal().getSecurityDetails().setEncryptedSecurityAnswer(new EncryptedSecurityAnswer());
+           profile.setSecurityQuestionAnswer(securityQuestion.getSecurityAnswer());
+           orcidProfileManager.updatePasswordSecurityQuestionsInformation(profile);
+           getCurrentUser().setEffectiveProfile(profile);
+           errors.add(getMessage("manage.securityQuestionUpdated"));
+        }
+        
+        securityQuestion.setErrors(errors);
+        return securityQuestion;
+    }
+    
+
    
     @RequestMapping(value = "/default-privacy-preferences.json", method = RequestMethod.GET)
     public @ResponseBody

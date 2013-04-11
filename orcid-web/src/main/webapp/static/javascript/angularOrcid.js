@@ -67,7 +67,7 @@ function EditTableCtrl($scope) {
 	$scope.emailUpdateToggleText();
 	
 
-	// password edit rpw
+	// password edit row
 	$scope.passwordUpdateToggleText = function () {
 		if ($scope.showEditPassword) $scope.passwordToggleText = OM.getInstance().get("manage.editTable.hide");
 		else $scope.passwordToggleText = OM.getInstance().get("manage.editTable.edit");		
@@ -127,6 +127,20 @@ function EditTableCtrl($scope) {
 	$scope.showEditEmailPreferences = (window.location.hash === "#editEmailPreferences");
 	$scope.emailPreferencesUpdateToggleText();	
 
+	// security question edit row
+	$scope.securityQuestionUpdateToggleText = function () {
+		if ($scope.showEditSecurityQuestion) $scope.securityQuestionToggleText = OM.getInstance().get("manage.editTable.hide");
+		else $scope.securityQuestionToggleText = OM.getInstance().get("manage.editTable.edit");		
+	};
+
+	$scope.toggleSecurityQuestionEdit = function() {
+		$scope.showEditSecurityQuestion = !$scope.showEditSecurityQuestion;
+		$scope.securityQuestionUpdateToggleText();
+	};
+	
+	// init security question
+	$scope.showEditSecurityQuestion = (window.location.hash === "#editSecurityQuestion");
+	$scope.securityQuestionUpdateToggleText();	
 	
 };
 
@@ -201,7 +215,44 @@ function DeactivateAccount($scope, $http) {
 	    	console.log("error with change DeactivateAccount");
 	    });
 
-	}
+	};
+}
+
+
+function SecurityQuestionEdit($scope, $http) {
+	$scope.getSecurityQuestion = function() {
+		$.ajax({
+	        url: $('body').data('baseurl') + 'account/security-question.json',
+	        dataType: 'json',
+	        success: function(data) {
+	        	$scope.securityQuestionPojo = data;
+	        	$scope.$apply();
+	        }
+	    }).fail(function() { 
+	    	// something bad is happening!
+	    	console.log("error with security question.json");
+	    });
+	};
+	
+	$scope.getSecurityQuestion();
+	
+	$scope.saveSecurityQuestion = function() {
+		$.ajax({
+	        url: $('body').data('baseurl') + 'account/security-question.json',
+	        type: 'POST',
+	        data: angular.toJson($scope.securityQuestionPojo),
+	        contentType: 'application/json;charset=UTF-8',
+	        dataType: 'json',
+	        success: function(data) {
+	        	//alert(angular.toJson($scope.securityQuestionPojo));
+	        	$scope.securityQuestionPojo = data;
+	        	$scope.$apply();
+	        }
+	    }).fail(function() { 
+	    	// something bad is happening!
+	    	console.log("error with security question");
+	    });
+	};
 }
 
 function PasswordEdit($scope, $http) {
@@ -234,7 +285,7 @@ function PasswordEdit($scope, $http) {
 	        }
 	    }).fail(function() { 
 	    	// something bad is happening!
-	    	console.log("error with multi email");
+	    	console.log("error with edit password");
 	    });
 	};
 }
