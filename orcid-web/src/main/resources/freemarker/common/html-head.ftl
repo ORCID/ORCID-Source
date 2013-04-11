@@ -30,9 +30,10 @@
 	    <link rel="stylesheet" href="<@spring.url '/static/css/orcid.css?v=${ver}'/>"/>
 	    <link rel="stylesheet" href="<@spring.url '/static/css/java.css?v=${ver}'/>"/>
 	    <link rel="stylesheet" href="<@spring.url '/static/css/jquery-ui-1.10.0.custom.min.css?v=${ver}'/>"/>
+	    <link rel="stylesheet" href="<@spring.url '/static/font-awesome/3.0.2/css/font-awesome.css'/>"/>
 	    <link href="//netdna.bootstrapcdn.com/font-awesome/3.0.2/css/font-awesome.css" rel="stylesheet">
 	    <!--[if IE 7]>
-			<link href="//netdna.bootstrapcdn.com/font-awesome/3.0.2/css/font-awesome-ie7.min.css" rel="stylesheet">
+	    	<link href="//netdna.bootstrapcdn.com/font-awesome/3.0.2/css/font-awesome-ie7.css" rel="stylesheet">
 		<![endif]-->
 		<script src="<@spring.url '/static/javascript/modernizr.js?v=${ver}'/>"></script>
     </#if>
