@@ -202,6 +202,7 @@ the software.
                         	<exclude>**/src/main/resources/data/AuditEventData.xml</exclude>
                         	<exclude>**/src/main/resources/orcid-client-group-for-db-unit-data.xml</exclude>
                         	<exclude>**/src/main/webapp/static/ORCID-Fonts-Dot-Com/**</exclude>
+                        	<exclude>**/src/main/webapp/static/font-awesome/**</exclude>
                         	<exclude>**/src/main/webapp/static/javascript/plugins.js</exclude>
                         	<exclude>**/src/main/webapp/static/javascript/modernizr.js</exclude>
                         	<exclude>**/src/main/webapp/static/javascript/jquery/**</exclude>
