@@ -462,7 +462,7 @@ function ExternalIdentifierCtrl($scope, $http){
             html: function(){
             	var value = null;
             	if($scope.externalIdentifiersPojo.externalIdentifiers[idx].externalIdUrl != null)
-            		value = $scope.externalIdentifiersPojo.externalIdentifiers[idx].externalIdUrl.value;
+            		value = $scope.externalIdentifiersPojo.externalIdentifiers[idx].externalIdCommonName.content;
             	else
             		value = $scope.externalIdentifiersPojo.externalIdentifiers[idx].externalIdReference.content;
             	return '<div style="padding: 20px;" class="colorbox-modal"><h3>' + OM.getInstance().get("manage.deleteExternalIdentifier.pleaseConfirm") + ' ' + value + '</h3>'
