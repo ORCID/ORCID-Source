@@ -5186,3 +5186,10 @@ only screen and (min-device-pixel-ratio: 2) {
 #externalIdentifierTable td.padRgt { 
 	padding-right: 7px;
 }
+
+#externalIdentifierTable p {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	width: 225px;
+}
