@@ -460,11 +460,10 @@ function ExternalIdentifierCtrl($scope, $http){
 	$scope.deleteExternalIdentifier = function(idx) {
         $.colorbox({        	
             html: function(){
-            	var value = null;
-            	if($scope.externalIdentifiersPojo.externalIdentifiers[idx].externalIdUrl != null)
-            		value = $scope.externalIdentifiersPojo.externalIdentifiers[idx].externalIdCommonName.content;
-            	else
-            		value = $scope.externalIdentifiersPojo.externalIdentifiers[idx].externalIdReference.content;
+            	var value = '';
+            	if($scope.externalIdentifiersPojo.externalIdentifiers[idx].externalIdCommonName != null)
+            		value = $scope.externalIdentifiersPojo.externalIdentifiers[idx].externalIdCommonName.content + ' ';
+            	value += $scope.externalIdentifiersPojo.externalIdentifiers[idx].externalIdReference.content;
             	return '<div style="padding: 20px;" class="colorbox-modal"><h3>' + OM.getInstance().get("manage.deleteExternalIdentifier.pleaseConfirm") + ' ' + value + '</h3>'
 	            	+ '<div class="btn btn-danger" id="modal-del-external-identifier">' + OM.getInstance().get("manage.deleteExternalIdentifier.delete") + '</div> <a href="" id="modal-cancel">' + OM.getInstance().get("manage.deleteExternalIdentifier.cancel") + '</a><div>'; 
             }
