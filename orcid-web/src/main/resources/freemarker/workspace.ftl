@@ -70,8 +70,8 @@
 		        <table id="externalIdentifierTable">
 		        	<tr style="vertical-align:bottom;" ng-repeat='externalIdentifier in externalIdentifiersPojo.externalIdentifiers'>
 		        		<td class="padRgt">
-		        			<span ng-hide="externalIdentifier.externalIdUrl" ng-bind="externalIdentifier.externalIdReference.content"></span>
-		        			<span ng-show="externalIdentifier.externalIdUrl"><a ng-href="{{externalIdentifier.externalIdUrl.value}}" ng-bind="externalIdentifier.externalIdCommonName.content"></a></span>
+		        			<span ng-hide="externalIdentifier.externalIdUrl">{{externalIdentifier.externalIdCommonName.content}} {{externalIdentifier.externalIdReference.content}}</span>
+		        			<span ng-show="externalIdentifier.externalIdUrl"><a ng-href="{{externalIdentifier.externalIdUrl.value}}">{{externalIdentifier.externalIdCommonName.content}} {{externalIdentifier.externalIdReference.content}}</a></span>
 		        			<input type="hidden" value="{{externalIdentifier.orcid.value}}" />
 		        			<input type="hidden" value="{{externalIdentifier.externalIdOrcid.value}}" />
 		        			<input type="hidden" value="{{externalIdentifier.externalIdCommonName.content}}" />
