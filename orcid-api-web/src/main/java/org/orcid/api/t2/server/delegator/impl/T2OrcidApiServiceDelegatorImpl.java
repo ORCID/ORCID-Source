@@ -97,9 +97,9 @@ public class T2OrcidApiServiceDelegatorImpl implements T2OrcidApiServiceDelegato
     @Resource
     private ValidationManager validationManager;
 
-    @Resource 
+    @Resource
     private ProfileEntityManager profileEntityManager;
-    
+
     @Resource
     private WebhookDao webhookDao;
 
@@ -229,10 +229,10 @@ public class T2OrcidApiServiceDelegatorImpl implements T2OrcidApiServiceDelegato
             setSponsorFromAuthentication(orcidProfile);
             orcidProfile = orcidProfileManager.createOrcidProfileAndNotify(orcidProfile);
             return getCreatedResponse(uriInfo, PROFILE_GET_PATH, orcidProfile);
-        } catch (DataAccessException e) {            
-            if(e.getCause() != null && ConstraintViolationException.class.isAssignableFrom(e.getCause().getClass())){
+        } catch (DataAccessException e) {
+            if (e.getCause() != null && ConstraintViolationException.class.isAssignableFrom(e.getCause().getClass())) {
                 throw new OrcidBadRequestException("User with this email already exist.");
-            } 
+            }
             throw new OrcidBadRequestException("Cannot create ORCID", e);
         }
     }
@@ -317,7 +317,7 @@ public class T2OrcidApiServiceDelegatorImpl implements T2OrcidApiServiceDelegato
                 clientId = authorizationRequest.getClientId();
             }
 
-            for (ExternalIdentifier ei : updatedExternalIdentifiers.getExternalIdentifier()) {                
+            for (ExternalIdentifier ei : updatedExternalIdentifiers.getExternalIdentifier()) {
                 // Set the client profile to each external identifier
                 if (ei.getExternalIdOrcid() == null) {
                     ExternalIdOrcid eio = new ExternalIdOrcid(clientId);
@@ -325,10 +325,10 @@ public class T2OrcidApiServiceDelegatorImpl implements T2OrcidApiServiceDelegato
                 } else {
                     //Check if the provided external orcid exists
                     ExternalIdOrcid eio = ei.getExternalIdOrcid();
-                    
-                    if(StringUtils.isBlank(eio.getValue()) || !profileEntityManager.orcidExists(eio.getValue())){
+
+                    if (StringUtils.isBlank(eio.getValue()) || !profileEntityManager.orcidExists(eio.getValue())) {
                         throw new OrcidNotFoundException("Cannot find external ORCID");
-                    }                                        
+                    }
                 }
             }
 
@@ -454,7 +454,7 @@ public class T2OrcidApiServiceDelegatorImpl implements T2OrcidApiServiceDelegato
         } catch (URISyntaxException e) {
             throw new OrcidBadRequestException(String.format("Webhook uri:%s is syntactically incorrect", webhookUri));
         }
-        
+
         ProfileEntity profile = profileDao.find(orcid);
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         ProfileEntity clientProfile = null;
@@ -513,7 +513,7 @@ public class T2OrcidApiServiceDelegatorImpl implements T2OrcidApiServiceDelegato
                     clientId = authorizationRequest.getClientId();
                 }
                 //Check if user can unregister this webhook
-                if(webhook.getClientDetails().getId().equals(clientId)){
+                if (webhook.getClientDetails().getId().equals(clientId)) {
                     webhookDao.remove(webhookPk);
                     webhookDao.flush();
                     return Response.noContent().build();

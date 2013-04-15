@@ -353,7 +353,7 @@ public class ChangePersonalInfoForm {
         orcidProfile.getOrcidBio().getBiography().setContent(biography);
         orcidProfile.getOrcidBio().setResearcherUrls(persistResearcherInfo());
         orcidProfile.getOrcidBio().getResearcherUrls().setVisibility(StringUtils.isBlank(websiteUrlVisibility) ? null : Visibility.fromValue(websiteUrlVisibility));
-        orcidProfile.getOrcidBio().setExternalIdentifiers(externalIdentifiers);        
+        orcidProfile.getOrcidBio().setExternalIdentifiers(externalIdentifiers);
     }
 
     private String buildOtherNamesAsDelimitedString(OtherNames otherNames) {
@@ -403,7 +403,7 @@ public class ChangePersonalInfoForm {
         }
         return allResearchersForSave;
     }
-    
+
     private String buildKeywordsAsDelimitedString(Keywords keywords) {
 
         String keywordsDelimited = null;

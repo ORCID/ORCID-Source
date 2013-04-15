@@ -531,14 +531,14 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         if (existingProfile != null && existingProfile.getOrcidBio() != null) {
             OrcidBio orcidBio = existingProfile.getOrcidBio();
             ExternalIdentifiers externalIdentifiers = orcidBio.getExternalIdentifiers();
-            
+
             if (externalIdentifiers == null) {
                 orcidBio.setExternalIdentifiers(new ExternalIdentifiers());
             }
             ExternalIdentifiers externalIdentifier = updatedOrcidProfile.getOrcidBio().getExternalIdentifiers();
             List<ExternalIdentifier> updatedExternalIdentifiers = externalIdentifier.getExternalIdentifier();
             List<ExternalIdentifier> existingExternalIdentifiers = orcidBio.getExternalIdentifiers().getExternalIdentifier();
-            
+
             //Copy all the existing external identifiers to the updated profile
             for (ExternalIdentifier ei : existingExternalIdentifiers) {
                 updatedExternalIdentifiers.add(ei);

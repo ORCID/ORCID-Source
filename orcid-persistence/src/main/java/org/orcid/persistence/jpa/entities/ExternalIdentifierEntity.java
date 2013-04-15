@@ -107,15 +107,15 @@ public class ExternalIdentifierEntity extends BaseEntity<ExternalIdentifierEntit
     public void setExternalIdUrl(String externalIdUrl) {
         this.externalIdUrl = externalIdUrl;
     }
-    
+
     @Override
     public int compareTo(ExternalIdentifierEntity other) {
         if (other == null) {
             throw new NullPointerException("Can't compare with null");
         }
-        
+
         int result = 0;
-        
+
         //First check externalIdUrl
         if (other.getExternalIdUrl() == null) {
             if (externalIdUrl == null) {
@@ -124,30 +124,30 @@ public class ExternalIdentifierEntity extends BaseEntity<ExternalIdentifierEntit
                 result = 1;
             }
         } else {
-            if(externalIdUrl == null){
+            if (externalIdUrl == null) {
                 result = -1;
             } else {
                 result = externalIdUrl.compareToIgnoreCase(other.getExternalIdUrl());
             }
         }
-        
+
         //If they are still equal, compare against the externalIdReference
-        if(result == 0){
-            if(other.getExternalIdReference() == null){
-                if(externalIdReference == null){
+        if (result == 0) {
+            if (other.getExternalIdReference() == null) {
+                if (externalIdReference == null) {
                     result = 0;
                 } else {
                     result = 1;
                 }
             } else {
-                if(externalIdReference == null){
+                if (externalIdReference == null) {
                     result = -1;
                 } else {
                     result = externalIdReference.compareToIgnoreCase(other.getExternalIdReference());
                 }
             }
         }
-                
+
         return result;
     }
 }
