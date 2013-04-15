@@ -523,7 +523,7 @@ public class ManageProfileController extends BaseWorkspaceController {
         return changeSecurityDetailsView;
 
     }
-    
+
     @RequestMapping(value = "/security-question.json", method = RequestMethod.GET)
     public @ResponseBody
     SecurityQuestion getSecurityQuestionJson(HttpServletRequest request) {
@@ -531,7 +531,7 @@ public class ManageProfileController extends BaseWorkspaceController {
         SecurityDetails sd = profile.getOrcidInternal().getSecurityDetails();
         SecurityQuestionId securityQuestionId = sd.getSecurityQuestionId();
         EncryptedSecurityAnswer encryptedSecurityAnswer = sd.getEncryptedSecurityAnswer();
-        
+
         if (securityQuestionId == null) {
             sd.getSecurityQuestionId();
             securityQuestionId = new SecurityQuestionId();
@@ -540,39 +540,40 @@ public class ManageProfileController extends BaseWorkspaceController {
         SecurityQuestion securityQuestion = new SecurityQuestion();
         securityQuestion.setSecurityQuestionId(securityQuestionId.getValue());
 
-        if (encryptedSecurityAnswer !=  null) {
+        if (encryptedSecurityAnswer != null) {
             securityQuestion.setSecurityAnswer(encryptionManager.decryptForInternalUse(encryptedSecurityAnswer.getContent()));
         }
-        
+
         return securityQuestion;
     }
-    
+
     @RequestMapping(value = "/security-question.json", method = RequestMethod.POST)
     public @ResponseBody
     SecurityQuestion setSecurityQuestionJson(HttpServletRequest request, @RequestBody SecurityQuestion securityQuestion) {
         List<String> errors = new ArrayList<String>();
-        if (securityQuestion.getSecurityAnswer() == null
-                || securityQuestion.getSecurityAnswer().trim() == "") errors.add(getMessage("manage.pleaseProvideAnAnswer"));
-        if (securityQuestion.getSecurityQuestionId() == 0) errors.add(getMessage("manage.pleaseChooseAQuestion"));
-        
+        if (securityQuestion.getSecurityAnswer() == null || securityQuestion.getSecurityAnswer().trim() == "")
+            errors.add(getMessage("manage.pleaseProvideAnAnswer"));
+        if (securityQuestion.getSecurityQuestionId() == 0)
+            errors.add(getMessage("manage.pleaseChooseAQuestion"));
+
         if (errors.size() == 0) {
-           OrcidProfile profile = getCurrentUser().getEffectiveProfile();
-           if (profile.getOrcidInternal().getSecurityDetails().getSecurityQuestionId() == null) profile.getOrcidInternal().getSecurityDetails().setSecurityQuestionId(new SecurityQuestionId());
-           profile.getOrcidInternal().getSecurityDetails().getSecurityQuestionId().setValue(securityQuestion.getSecurityQuestionId());
-           
-           if (profile.getOrcidInternal().getSecurityDetails().getEncryptedSecurityAnswer() == null) profile.getOrcidInternal().getSecurityDetails().setEncryptedSecurityAnswer(new EncryptedSecurityAnswer());
-           profile.setSecurityQuestionAnswer(securityQuestion.getSecurityAnswer());
-           orcidProfileManager.updatePasswordSecurityQuestionsInformation(profile);
-           getCurrentUser().setEffectiveProfile(profile);
-           errors.add(getMessage("manage.securityQuestionUpdated"));
+            OrcidProfile profile = getCurrentUser().getEffectiveProfile();
+            if (profile.getOrcidInternal().getSecurityDetails().getSecurityQuestionId() == null)
+                profile.getOrcidInternal().getSecurityDetails().setSecurityQuestionId(new SecurityQuestionId());
+            profile.getOrcidInternal().getSecurityDetails().getSecurityQuestionId().setValue(securityQuestion.getSecurityQuestionId());
+
+            if (profile.getOrcidInternal().getSecurityDetails().getEncryptedSecurityAnswer() == null)
+                profile.getOrcidInternal().getSecurityDetails().setEncryptedSecurityAnswer(new EncryptedSecurityAnswer());
+            profile.setSecurityQuestionAnswer(securityQuestion.getSecurityAnswer());
+            orcidProfileManager.updatePasswordSecurityQuestionsInformation(profile);
+            getCurrentUser().setEffectiveProfile(profile);
+            errors.add(getMessage("manage.securityQuestionUpdated"));
         }
-        
+
         securityQuestion.setErrors(errors);
         return securityQuestion;
     }
-    
 
-   
     @RequestMapping(value = "/default-privacy-preferences.json", method = RequestMethod.GET)
     public @ResponseBody
     Preferences getDefaultPreference(HttpServletRequest request) {
@@ -583,14 +584,13 @@ public class ManageProfileController extends BaseWorkspaceController {
 
     @RequestMapping(value = "/default-privacy-preferences.json", method = RequestMethod.POST)
     public @ResponseBody
-    Preferences setDefaultPreference(HttpServletRequest request,@RequestBody Preferences preferences) {
+    Preferences setDefaultPreference(HttpServletRequest request, @RequestBody Preferences preferences) {
         OrcidProfile profile = orcidProfileManager.retrieveOrcidProfile(getCurrentUserOrcid());
         profile.getOrcidInternal().setPreferences(preferences);
         OrcidProfile updatedProfile = orcidProfileManager.updateOrcidProfile(profile);
         return updatedProfile.getOrcidInternal().getPreferences();
     }
-   
- 
+
     private ModelAndView populateChangeSecurityDetailsViewFromUserProfile(ChangeSecurityQuestionForm changeSecurityQuestionForm) {
         ModelAndView changeSecurityDetailsView = new ModelAndView("change_security_question");
 
@@ -637,19 +637,19 @@ public class ManageProfileController extends BaseWorkspaceController {
         changePasswordView.addObject("passwordOptionsSaved", true);
         return changePasswordView;
     }
-    
-    
-    @RequestMapping(value = { "/change-password.json" }, method = RequestMethod.GET) 
-    public @ResponseBody ChangePassword getChangedPasswordJson(HttpServletRequest request) {
+
+    @RequestMapping(value = { "/change-password.json" }, method = RequestMethod.GET)
+    public @ResponseBody
+    ChangePassword getChangedPasswordJson(HttpServletRequest request) {
         ChangePassword p = new ChangePassword();
         return p;
     }
-    
+
     @RequestMapping(value = { "/change-password.json" }, method = RequestMethod.POST)
-    public @ResponseBody ChangePassword changedPasswordJson(HttpServletRequest request, @RequestBody ChangePassword cp) {
+    public @ResponseBody
+    ChangePassword changedPasswordJson(HttpServletRequest request, @RequestBody ChangePassword cp) {
         List<String> errors = new ArrayList<String>();
-        
-        
+
         if (cp.getPassword() == null || !cp.getPassword().matches(OrcidPasswordConstants.ORCID_PASSWORD_REGEX)) {
             errors.add(getMessage("NotBlank.registrationForm.confirmedPassword"));
         } else if (!cp.getPassword().equals(cp.getRetypedPassword())) {
@@ -659,7 +659,7 @@ public class ManageProfileController extends BaseWorkspaceController {
         if (cp.getOldPassword() == null || !encryptionManager.hashMatches(cp.getOldPassword(), getCurrentUser().getPassword())) {
             errors.add(getMessage("orcid.frontend.change.password.current_password_incorrect"));
         }
-        
+
         if (errors.size() == 0) {
             OrcidProfile profile = getCurrentUser().getEffectiveProfile();
             profile.setPassword(cp.getPassword());
@@ -670,14 +670,13 @@ public class ManageProfileController extends BaseWorkspaceController {
         cp.setErrors(errors);
         return cp;
     }
-    
 
     @RequestMapping(value = { "deactivate-orcid", "/view-deactivate-orcid-account" }, method = RequestMethod.GET)
     public ModelAndView viewDeactivateOrcidAccount() {
         ModelAndView deactivateOrcidView = new ModelAndView("deactivate_orcid");
         return deactivateOrcidView;
     }
-    
+
     @RequestMapping(value = "/confirm-deactivate-orcid", method = RequestMethod.GET)
     public ModelAndView confirmDeactivateOrcidAccount(HttpServletRequest request) {
         getCurrentUser().setRealProfile(orcidProfileManager.deactivateOrcidProfile(getCurrentUser().getRealProfile()));
@@ -715,7 +714,8 @@ public class ManageProfileController extends BaseWorkspaceController {
 
     @SuppressWarnings("unchecked")
     @RequestMapping(value = "/send-deactivate-account.json", method = RequestMethod.GET)
-    public @ResponseBody Email startDeactivateOrcidAccountJson(HttpServletRequest request) {
+    public @ResponseBody
+    Email startDeactivateOrcidAccountJson(HttpServletRequest request) {
         URI uri = OrcidWebUtils.getServerUriWithContextPath(request);
         OrcidProfile currentProfile = getCurrentUser().getRealProfile();
         Email email = currentProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail();
@@ -723,7 +723,6 @@ public class ManageProfileController extends BaseWorkspaceController {
         return email;
     }
 
-    
     @SuppressWarnings("unchecked")
     @RequestMapping(value = "/emails.json", method = RequestMethod.GET)
     public @ResponseBody
@@ -777,7 +776,7 @@ public class ManageProfileController extends BaseWorkspaceController {
                 URI baseUri = OrcidWebUtils.getServerUriWithContextPath(request);
                 notificationManager.sendEmailAddressChangedNotification(updatedProfile, new Email(oldPrime), baseUri);
             }
-            
+
             //also send verifcation email for new address
             URI baseUri = OrcidWebUtils.getServerUriWithContextPath(request);
             notificationManager.sendVerificationEmail(currentProfile, baseUri, email.getValue());
@@ -844,7 +843,7 @@ public class ManageProfileController extends BaseWorkspaceController {
         changePersonalInfoForm.mergeOrcidBioDetails(currentProfile);
         OrcidProfile updatedProfile = orcidProfileManager.updateOrcidBio(currentProfile);
         getCurrentUser().setEffectiveProfile(updatedProfile);
-        
+
         redirectAttributes.addFlashAttribute("changesSaved", true);
         return manageBioView;
     }

@@ -23,16 +23,15 @@ import org.orcid.persistence.jpa.entities.ProfileEntity;
 public class ExternalIdentifierEntityPk implements Serializable {
 
     private static final long serialVersionUID = 1L;
-                   
+
     private String externalIdReference;
 
     private ProfileEntity owner;
 
+    public ExternalIdentifierEntityPk() {
 
-    public ExternalIdentifierEntityPk(){
-        
     }
-    
+
     public ExternalIdentifierEntityPk(String externalIdReference, ProfileEntity owner) {
         super();
         this.externalIdReference = externalIdReference;

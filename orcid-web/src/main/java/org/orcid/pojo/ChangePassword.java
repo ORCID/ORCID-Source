@@ -34,7 +34,7 @@ public class ChangePassword implements ErrorsInterface {
     private String retypedPassword;
 
     private String oldPassword;
-    
+
     public List<String> getErrors() {
         return errors;
     }
