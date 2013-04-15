@@ -5083,17 +5083,17 @@ strong,
 	position: absolute; 
 	top: 0px; 
 	left: 0px; 
-    background: url('../img/privacy-toggle_100.png') no-repeat;
-    background-size: 100px 59px;
+    background: url('../img/privacy-toggle_100_v2.png') no-repeat;
+    background-size: 98px 89px;
 }
 
 @media only screen and (-webkit-min-device-pixel-ratio: 2), 
 only screen and (min-device-pixel-ratio: 2) {
 	
-    /* Retina-specific stuff here */
+    Retina-specific stuff here
    .privacyToggle li {
-      background: url('../img/privacy-toggle_200.png') no-repeat;
-      background-size: 100px 59px;
+      background: url('../img/privacy-toggle_200_v2.png') no-repeat;
+      background-size: 98px 89px;
    }
 }
 
@@ -5111,7 +5111,11 @@ only screen and (min-device-pixel-ratio: 2) {
 }
 
 .privacyToggle .publicInActive {
-	background-position: -0px -29px;
+	background-position: -0px -30px;
+}
+
+.privacyToggle .publicInActive:hover {
+	background-position: -0px -60px;
 }
 
 .privacyToggle .limitedActive {
@@ -5121,7 +5125,11 @@ only screen and (min-device-pixel-ratio: 2) {
 }
 
 .privacyToggle .limitedInActive {
-	background-position: -34px -29px;
+	background-position: -34px -30px;
+}
+
+.privacyToggle .limitedInActive:hover {
+	background-position: -34px -60px;
 }
 
 .privacyToggle .privateActive {
@@ -5130,7 +5138,11 @@ only screen and (min-device-pixel-ratio: 2) {
 }
 
 .privacyToggle .privateInActive {
-	background-position: -67px -29px;
+	background-position: -67px -30px;
+}
+
+.privacyToggle .privateInActive:hover {
+	background-position: -67px -60px;
 }
 
 .privacyLegend {
