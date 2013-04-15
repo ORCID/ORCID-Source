@@ -108,7 +108,9 @@ public class RegistrationControllerTest {
         registrationForm.setGivenNames("Teddy");
         when(servletRequest.getSession()).thenReturn(session);
         // don't forget query builder converts name criteria to lower-case
-        when(searchManager.findFilteredOrcidsBasedOnQuery("given-names:teddy* AND family-name:bass*",  RegistrationController.DUP_SEARCH_START, RegistrationController.DUP_SEARCH_ROWS)).thenReturn(orcidMessageDetailingRecordsFoundForTeddyBass());
+        when(
+                searchManager.findFilteredOrcidsBasedOnQuery("given-names:teddy* AND family-name:bass*", RegistrationController.DUP_SEARCH_START,
+                        RegistrationController.DUP_SEARCH_ROWS)).thenReturn(orcidMessageDetailingRecordsFoundForTeddyBass());
 
         ModelAndView modelAndView = registrationController.submitRegistration(servletRequest, registrationForm, bindingResult);
         assertEquals("duplicate_researcher", modelAndView.getViewName());
@@ -137,7 +139,9 @@ public class RegistrationControllerTest {
         registrationForm.setGivenNames("Teddy");
         when(servletRequest.getSession()).thenReturn(session);
         // don't forget query builder converts name criteria to lower-case
-        when(searchManager.findFilteredOrcidsBasedOnQuery("given-names:teddy* AND family-name:bass*", RegistrationController.DUP_SEARCH_START, RegistrationController.DUP_SEARCH_ROWS)).thenReturn(orcidMessageDetailingRecordsFoundForTeddyBass());
+        when(
+                searchManager.findFilteredOrcidsBasedOnQuery("given-names:teddy* AND family-name:bass*", RegistrationController.DUP_SEARCH_START,
+                        RegistrationController.DUP_SEARCH_ROWS)).thenReturn(orcidMessageDetailingRecordsFoundForTeddyBass());
 
         LoginForm nullLoginForm = null;
         ModelAndView modelAndView = registrationController.sendOAuthRegistration(servletRequest, servletResponse, nullLoginForm, registrationForm, bindingResult);

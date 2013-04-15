@@ -46,7 +46,7 @@ public class SolrAndDBSearchManagerImpl implements SolrAndDBSearchManager {
     public void setOrcidProfileManager(OrcidProfileManager orcidProfileManager) {
         this.orcidProfileManager = orcidProfileManager;
     }
-    
+
     @Override
     public OrcidMessage findFilteredOrcidsBasedOnQuery(String query, Integer start, Integer rows) {
 
