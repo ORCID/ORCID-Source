@@ -54,12 +54,12 @@ public class SolrAndDBSearchManagerImplTest extends BaseTest {
     @Test
     public void testThatQueriesReturnedBySolrHaveVisibilityApplied() throws Exception {
         String solrSearchString = "A string that results in 3 orcids returned";
-        when(orcidSearchManager.findOrcidsByQuery(solrSearchString)).thenReturn(solrOrcidMessage());
+        when(orcidSearchManager.findOrcidsByQuery(solrSearchString, null, null)).thenReturn(solrOrcidMessage());
         when(orcidProfileManager.retrieveOrcidProfile("1234X")).thenReturn(orcidAllPublicVisibility());
         when(orcidProfileManager.retrieveOrcidProfile("4567Y")).thenReturn(orcid2SomeProtectedVisibility());
         when(orcidProfileManager.retrieveOrcidProfile("8910Z")).thenReturn(null);
 
-        OrcidMessage retrievedMessage = solrAndDBSearchManager.findFilteredOrcidsBasedOnQuery(solrSearchString);
+        OrcidMessage retrievedMessage = solrAndDBSearchManager.findFilteredOrcidsBasedOnQuery(solrSearchString, null, null);
         List<OrcidSearchResult> retrievedResults = retrievedMessage.getOrcidSearchResults().getOrcidSearchResult();
         assertTrue(retrievedResults.size() == 2);
 

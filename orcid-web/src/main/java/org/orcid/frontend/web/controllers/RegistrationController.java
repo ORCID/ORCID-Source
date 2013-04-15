@@ -96,6 +96,10 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class RegistrationController extends BaseController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RegistrationController.class);
+    
+    final static Integer DUP_SEARCH_START = 0;
+    
+    final static Integer DUP_SEARCH_ROWS = 25;
 
     @Resource
     private HearAboutManager hearAboutManager;
@@ -625,7 +629,7 @@ public class RegistrationController extends BaseController {
         queryForm.setFamilyName(lastName);
 
         String query = queryForm.deriveQueryString();
-        OrcidMessage visibleProfiles = searchManager.findFilteredOrcidsBasedOnQuery(query, 0, 25);
+        OrcidMessage visibleProfiles = searchManager.findFilteredOrcidsBasedOnQuery(query, DUP_SEARCH_START, DUP_SEARCH_ROWS);
         if (visibleProfiles.getOrcidSearchResults() != null) {
             for (OrcidSearchResult searchResult : visibleProfiles.getOrcidSearchResults().getOrcidSearchResult()) {
                 orcidProfiles.add(searchResult.getOrcidProfile());

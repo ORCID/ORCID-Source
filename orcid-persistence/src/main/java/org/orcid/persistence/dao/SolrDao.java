@@ -56,8 +56,8 @@ public interface SolrDao {
      * currently expects only the query values representing the 'q' query field.
      * 
      * @param solrQuery
-     * @param start TODO
-     * @param rows TODO
+     * @param start row to start query at
+     * @param rows number of row to query
      * @return
      * @See {@link SolrDaoTest} for examples of this usage
      */
