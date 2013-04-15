@@ -56,10 +56,12 @@ public interface SolrDao {
      * currently expects only the query values representing the 'q' query field.
      * 
      * @param solrQuery
+     * @param start TODO
+     * @param rows TODO
      * @return
      * @See {@link SolrDaoTest} for examples of this usage
      */
-    List<OrcidSolrResult> findByDocumentCriteria(String solrQuery);
+    List<OrcidSolrResult> findByDocumentCriteria(String solrQuery, Integer start, Integer rows);
 
     /**
      * /** Method to retrieve a List of OrcidSolrResult. Since this is exposed

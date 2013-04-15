@@ -144,9 +144,14 @@ public class OrcidSearchManagerImpl implements OrcidSearchManager {
 
     @Override
     public OrcidMessage findOrcidsByQuery(String query) {
+       return findOrcidsByQuery(query, null, null);
+    }
+    
+    @Override
+    public OrcidMessage findOrcidsByQuery(String query, Integer start, Integer rows) {
         OrcidMessage orcidMessage = new OrcidMessage();
         OrcidSearchResults searchResults = new OrcidSearchResults();
-        List<OrcidSolrResult> indexedOrcids = solrDao.findByDocumentCriteria(query);
+        List<OrcidSolrResult> indexedOrcids = solrDao.findByDocumentCriteria(query, start,  rows);
         if (indexedOrcids != null && !indexedOrcids.isEmpty()) {
 
             List<OrcidSearchResult> orcidSearchResults = buildSearchResultsFromDb(indexedOrcids);
@@ -157,6 +162,7 @@ public class OrcidSearchManagerImpl implements OrcidSearchManager {
         return orcidMessage;
 
     }
+
 
     @Override
     public OrcidMessage findOrcidsByQuery(Map<String, List<String>> query) {

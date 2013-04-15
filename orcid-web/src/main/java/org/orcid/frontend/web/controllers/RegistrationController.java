@@ -625,7 +625,7 @@ public class RegistrationController extends BaseController {
         queryForm.setFamilyName(lastName);
 
         String query = queryForm.deriveQueryString();
-        OrcidMessage visibleProfiles = searchManager.findFilteredOrcidsBasedOnQuery(query);
+        OrcidMessage visibleProfiles = searchManager.findFilteredOrcidsBasedOnQuery(query, 0, 25);
         if (visibleProfiles.getOrcidSearchResults() != null) {
             for (OrcidSearchResult searchResult : visibleProfiles.getOrcidSearchResults().getOrcidSearchResult()) {
                 orcidProfiles.add(searchResult.getOrcidProfile());

@@ -89,9 +89,11 @@ public class SolrDaoImpl implements SolrDao {
     }
 
     @Override
-    public List<OrcidSolrResult> findByDocumentCriteria(String queryString) {
+    public List<OrcidSolrResult> findByDocumentCriteria(String queryString, Integer start, Integer rows) {
         List<OrcidSolrResult> orcidSolrResults = new ArrayList<OrcidSolrResult>();
         SolrQuery query = new SolrQuery(queryString).setFields("score");
+        if (start != null) query.setStart(start);
+        if (rows != null) query.setRows(rows);
         try {
             QueryResponse queryResponse = solrServer.query(query);
             for (SolrDocument solrDocument : queryResponse.getResults()) {
