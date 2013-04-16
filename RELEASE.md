@@ -1,5 +1,33 @@
 # Release notes and highlights
 
+
+## release-1.1.14.17
+
+* Added Delete External ID button.
+
+* Ajaxed Email Preferences
+
+* Ajaxed Deactivate Account
+
+* Ajaxed Change Password
+
+* Ajaxed Privacy Preferences
+
+* Changed delete links to trash cans
+
+* Updated font awesome
+
+* XML's orcid-id now reflect environment
+
+* Order Work Chronologically
+
+* Releasing new privacy toggle on account setting page
+
+* Completed account settings translation
+
+* Add missing links on java web app footer and header 
+
+
 ## release-1.1.14.5
  
 * Order works chronologically
