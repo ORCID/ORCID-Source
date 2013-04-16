@@ -861,7 +861,7 @@ the software.
             <dependency>
                 <groupId>org.jbibtex</groupId>
                 <artifactId>jbibtex</artifactId>
-                <version>1.0.1</version>
+                <version>1.0.4</version>
             </dependency>
 
             <!-- Test -->
