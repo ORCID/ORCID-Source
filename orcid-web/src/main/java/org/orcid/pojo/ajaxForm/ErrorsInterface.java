@@ -14,23 +14,14 @@
  *
  * =============================================================================
  */
-package org.orcid.pojo;
+package org.orcid.pojo.ajaxForm;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import org.orcid.pojo.ajaxForm.ErrorsInterface;
+public interface ErrorsInterface {
 
-public class ExternalIdentifier extends org.orcid.jaxb.model.message.ExternalIdentifier implements ErrorsInterface {
-    private static final long serialVersionUID = 1L;
+    public List<String> getErrors();
 
-    private List<String> errors = new ArrayList<String>();
+    public void setErrors(List<String> errors);
 
-    public List<String> getErrors() {
-        return errors;
-    }
-
-    public void setErrors(List<String> errors) {
-        this.errors = errors;
-    }
 }

@@ -21,12 +21,22 @@ import java.util.List;
 
 import org.orcid.pojo.ajaxForm.ErrorsInterface;
 
-public class SecurityQuestion implements ErrorsInterface {
+public class FamilyNames extends org.orcid.jaxb.model.message.GivenNames implements ErrorsInterface {
+
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
+
     private List<String> errors = new ArrayList<String>();
-
-    private String securityAnswer;
-
-    private long securityQuestionId;
+    
+    public FamilyNames() {
+        
+    }
+    
+    public FamilyNames(org.orcid.jaxb.model.message.GivenNames givenNames) {
+        this.setContent(givenNames.getContent());
+    }
 
     public List<String> getErrors() {
         return errors;
@@ -34,22 +44,6 @@ public class SecurityQuestion implements ErrorsInterface {
 
     public void setErrors(List<String> errors) {
         this.errors = errors;
-    }
-
-    public long getSecurityQuestionId() {
-        return securityQuestionId;
-    }
-
-    public void setSecurityQuestionId(long securityQuestionId) {
-        this.securityQuestionId = securityQuestionId;
-    }
-
-    public String getSecurityAnswer() {
-        return securityAnswer;
-    }
-
-    public void setSecurityAnswer(String securityAnswer) {
-        this.securityAnswer = securityAnswer;
     }
 
 }

@@ -14,14 +14,12 @@
  *
  * =============================================================================
  */
-package org.orcid.pojo;
+package org.orcid.pojo.ajaxForm;
 
-import java.util.List;
-
-public interface ErrorsInterface {
-
-    public List<String> getErrors();
-
-    public void setErrors(List<String> errors);
+public interface Required {
+   
+    public boolean isRequired();
+    
+    public String getGetRequiredMessage();
 
 }
