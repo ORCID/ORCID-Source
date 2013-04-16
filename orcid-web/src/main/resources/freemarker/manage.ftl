@@ -233,7 +233,7 @@
 						<div class="editTablePadCell35">
 								<p>${springMacroRequestContext.getMessage("deactivate_orcid.you_may")}</p>
 								<p>${springMacroRequestContext.getMessage("deactivate_orcid.once")}</p>
-						        <a href="http://support.orcid.org/knowledgebase/articles/148970-closing-an-orcid-account">${springMacroRequestContext.getMessage("deactivate_orcid.close_an")}</a><br />
+						        <a href="http://support.orcid.org/knowledgebase/articles/148970-closing-an-orcid-account" target="_blank">${springMacroRequestContext.getMessage("deactivate_orcid.close_an")}</a><br />
 						     	<br />
 						     	<strong>${springMacroRequestContext.getMessage("deactivate_orcid.listTitle")}</strong>
 						     	<ol>
