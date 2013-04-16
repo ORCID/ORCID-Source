@@ -38,6 +38,8 @@ public interface OrcidSearchManager {
 
     OrcidMessage findOrcidsByQuery(String query);
 
+    OrcidMessage findOrcidsByQuery(String query, Integer start, Integer rows);
+
     OrcidMessage findOrcidsByQuery(Map<String, List<String>> query);
 
 }
