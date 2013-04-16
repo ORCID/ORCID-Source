@@ -14,7 +14,7 @@ public class StatisticsDaoImpl implements StatisticsDao {
     protected EntityManager entityManager;
     
     public long getLiveIds(){
-        Query query = entityManager.createNativeQuery("select count(*) from profile");
+        Query query = entityManager.createNativeQuery("select count(*) from profile where profile_deactivation_date is null");
         BigInteger numberOfLiveIds = (BigInteger)query.getSingleResult();        
         return numberOfLiveIds.longValue();
     } 
