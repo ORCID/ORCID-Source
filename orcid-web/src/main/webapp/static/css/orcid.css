@@ -5090,7 +5090,7 @@ strong,
 @media only screen and (-webkit-min-device-pixel-ratio: 2), 
 only screen and (min-device-pixel-ratio: 2) {
 	
-    Retina-specific stuff here
+   /* Retina-specific stuff here */
    .privacyToggle li {
       background: url('../img/privacy-toggle_200_v2.png') no-repeat;
       background-size: 98px 89px;
@@ -5153,7 +5153,7 @@ only screen and (min-device-pixel-ratio: 2) {
 	z-index: 1000;
 	display: none;	
 }
-/*
+
 @media only screen and (-webkit-min-device-pixel-ratio: 2), 
 only screen and (min-device-pixel-ratio: 2) {
 	
@@ -5162,7 +5162,7 @@ only screen and (min-device-pixel-ratio: 2) {
       background-size: 206px 70px;
    }
 }
-*/
+
 
 
 .privacyLegendHide:hover .privacyLegend {
