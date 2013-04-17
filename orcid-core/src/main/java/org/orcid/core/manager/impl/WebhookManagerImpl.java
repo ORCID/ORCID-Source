@@ -256,5 +256,4 @@ public class WebhookManagerImpl implements WebhookManager {
         }
         return 0;
     }
-
 }

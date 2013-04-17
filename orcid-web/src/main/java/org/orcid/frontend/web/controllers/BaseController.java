@@ -246,7 +246,7 @@ public class BaseController {
             return true;
         }
         List<Email> emails = orcidProfile.getOrcidBio().getContactDetails().getEmail();
-        for (Email email:emails) {
+        for (Email email : emails) {
             if (decryptedEmail.equalsIgnoreCase(email.getValue())) {
                 return true;
             }
@@ -352,10 +352,10 @@ public class BaseController {
     public String getMessage(String messageCode, Object... messageParams) {
         return localeManager.resolveMessage(messageCode, messageParams);
     }
-    
+
     @ModelAttribute("locale")
     public String getLocale() {
-        return  localeManager.getLocale().toString();
+        return localeManager.getLocale().toString();
     }
 
     /**

@@ -147,29 +147,28 @@ public class ProfileWorkEntity extends BaseEntity<ProfileWorkEntityPk> implement
         }
         return work.compareTo(other.getWork());
     }
-    
-    
+
     public static class ChronologicallyOrderedProfileWorkEntityComparator implements Comparator<ProfileWorkEntity> {
-        public int compare(ProfileWorkEntity profileWork1, ProfileWorkEntity profileWork2){
-            if(profileWork2 == null){
+        public int compare(ProfileWorkEntity profileWork1, ProfileWorkEntity profileWork2) {
+            if (profileWork2 == null) {
                 throw new NullPointerException("Can't compare with null");
             }
-            
-            if(profileWork2.getWork() == null){
-                if(profileWork1.getWork() == null){
+
+            if (profileWork2.getWork() == null) {
+                if (profileWork1.getWork() == null) {
                     return 0;
                 } else {
                     return 1;
                 }
-            } else if(profileWork1.getWork() == null){
+            } else if (profileWork1.getWork() == null) {
                 return -1;
             }
-            
+
             WorkEntity work1 = profileWork1.getWork();
             WorkEntity work2 = profileWork2.getWork();
-            
+
             WorkEntity.ChronologicallyOrderedWorkEntityComparator workEntityComparator = new WorkEntity.ChronologicallyOrderedWorkEntityComparator();
-            
+
             return workEntityComparator.compare(work1, work2);
         }
     }

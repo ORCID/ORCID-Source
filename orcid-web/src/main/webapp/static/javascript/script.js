@@ -57,28 +57,37 @@ var OrcidGA = function () {
 	this.gaPush = function (trackArray) {
 		if (typeof _gaq != 'undefined') {
 			_gaq.push(trackArray);
+			console.log("_gap.push for " + trackArray);
 		} else {
 			// if it's a function and _gap isn't available run (typically only on dev)
-			if (typeof trackArray === 'function') trackArray();
+			if (typeof trackArray === 'function') trackArray();	
 			console.log("no _gap.push for " + trackArray);
 		}
 	};
 	
     // Delays are async functions used to make sure event track que has cleared
 	// See https://developers.google.com/analytics/devguides/collection/gajs/methods/gaJSApi_gaq
+	//
+	// Additionally adding in delay: http://support.google.com/analytics/answer/1136920?hl=en
 	this.gaFormSumbitDelay = function ($el) {
 		if (!$el instanceof jQuery) {
 			$el = $(el);
 		}
 		this.gaPush(function() {
-			$el.submit();
+			console.log("_gap.push executing $el.submit()");
+			setTimeout(function() {
+			    $el.submit();
+				}, 100); 
 		});
 		return false;
 	};
 	
 	this.windowLocationHrefDelay = function (url) {
 		this.gaPush(function() {
-			window.location.href = url; 
+			console.log("_gap.push has executing window.location.href " + url);
+			setTimeout(function() {
+				window.location.href = url;
+				}, 100); 
 		});
 		return false;
 	};
@@ -135,9 +144,10 @@ function checkOrcidLoggedIn() {
         	if ( data.loggedIn == false
         			&& (basePath.startsWith(baseUrl + 'my-orcid')
         			     || basePath.startsWith(baseUrl + 'account'))) {
+        		console.log("loggedOutRedir " + data);
         		window.location.href = baseUrl + "signin"; 
         	}
-        	console.log("loggedIn" + data.loggedIn);
+        	
         }
     }).fail(function() { 
     	// something bad is happening!
@@ -407,49 +417,6 @@ $(function () {
         $(this).closest('p').fadeOut(300, function() { $(this).closest('p').remove(); });
     });
 	
-    
-    
-    $("#confirm-dialog").dialog({
-		modal: true,
-		bgiframe: true,
-		width: 300,
-		height: 200,
-		autoOpen: false,
-		title: 'Confirm'
-		});
-    
-    
-    
-    $('.delete-external-identifier').live('click', function (e) {
-    	e.preventDefault();
-    	
-    	var to_delete = $(this).closest('tr'); 
-    	
-    	$("#confirm-dialog").html("<p>Are you sure you want to delete that External Identifier?</p>");
-        $("#confirm-dialog").dialog('option', 'buttons', {
-            "Confirm" : function() {
-            	to_delete.fadeOut(300, function() { to_delete.remove(); });
-            	$(this).dialog("close");
-                },
-            "Cancel" : function() {
-                $(this).dialog("close");
-                }
-            });
-        	$("#confirm-dialog").dialog("open");
-		});
-    
-    
-    
-    
-    
-    
-    
-    $("a.confirm").click(function(link) {
-    	e.preventDefault();
-        $(this).closest('tr').fadeOut(300, function() { $(this).closest('tr').remove(); });
-    });
-    
-    
 	var hideThing = function (e, selector, className) {
 		var p = $(selector + "." + className);
 		if (p.length == 0) {
@@ -548,13 +515,16 @@ $(function () {
 	
 	$('.colorbox').colorbox();
 	
+	
+	top.colorOnCloseBoxDest = top.location;
+	
 	$('.btn-update:not(.no-icon),.update').colorbox({
 		iframe: true,
 		height: 600,
 		width: 990,
 		close: '',
 		onClosed: function () {
-			parent.location = parent.location;
+			top.location = top.colorOnCloseBoxDest;
 		}
 	});
 	

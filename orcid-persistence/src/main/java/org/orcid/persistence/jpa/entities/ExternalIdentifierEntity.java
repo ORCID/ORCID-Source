@@ -36,7 +36,7 @@ import javax.persistence.Transient;
 @Entity
 @Table(name = "external_identifier")
 @IdClass(ExternalIdentifierEntityPk.class)
-public class ExternalIdentifierEntity extends BaseEntity<ExternalIdentifierEntityPk> {
+public class ExternalIdentifierEntity extends BaseEntity<ExternalIdentifierEntityPk> implements Comparable<ExternalIdentifierEntity> {
 
     private static final long serialVersionUID = 1L;
 
@@ -108,4 +108,46 @@ public class ExternalIdentifierEntity extends BaseEntity<ExternalIdentifierEntit
         this.externalIdUrl = externalIdUrl;
     }
 
+    @Override
+    public int compareTo(ExternalIdentifierEntity other) {
+        if (other == null) {
+            throw new NullPointerException("Can't compare with null");
+        }
+
+        int result = 0;
+
+        //First check externalIdUrl
+        if (other.getExternalIdUrl() == null) {
+            if (externalIdUrl == null) {
+                result = 0;
+            } else {
+                result = 1;
+            }
+        } else {
+            if (externalIdUrl == null) {
+                result = -1;
+            } else {
+                result = externalIdUrl.compareToIgnoreCase(other.getExternalIdUrl());
+            }
+        }
+
+        //If they are still equal, compare against the externalIdReference
+        if (result == 0) {
+            if (other.getExternalIdReference() == null) {
+                if (externalIdReference == null) {
+                    result = 0;
+                } else {
+                    result = 1;
+                }
+            } else {
+                if (externalIdReference == null) {
+                    result = -1;
+                } else {
+                    result = externalIdReference.compareToIgnoreCase(other.getExternalIdReference());
+                }
+            }
+        }
+
+        return result;
+    }
 }

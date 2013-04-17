@@ -125,8 +125,8 @@
                       		<#else> 
                       		    ${savedResearcherUrl.urlName.content} (<a href="${savedResearcherUrl.url.value}">${savedResearcherUrl.url.value}</a>)
                       		</#if>
-                      		<button class="btn btn-link delete-url">${springMacroRequestContext.getMessage("manage_bio_settings.btnremove")}</button>		  		    		  		     		  		
-             			</p>     		    
+                      		<a href="" class="icon-trash grey delete-url" ng-show="email.primary == false" ng-click="deleteEmail($index)" title="remove url"></a>
+                      		</p>     		    
                     </#list>
              	</#if>
                	<label for="websiteUrlText">${springMacroRequestContext.getMessage("manage_bio_settings.labelwebsite")}</label>
@@ -134,33 +134,11 @@
              	 	<@spring.formInput "changePersonalInfoForm.websiteUrlText", 'class="input-xlarge"  placeholder="Description"'/>
          			<@spring.formInput "changePersonalInfoForm.websiteUrl", 'class="input-xlarge" placeholder="URL"'/>
              	</div>
-             	             	             	
-             	
-             	 <#if changePersonalInfoForm.externalIdentifiers?? && changePersonalInfoForm.externalIdentifiers.externalIdentifier?size != 0>
-                 	<h4>External Identifiers (visibility is ${(changePersonalInfoForm.externalIdentifiers.visibility.value())!})</h4>
-                 	<table class="table">     		
-                 		<th>${springMacroRequestContext.getMessage("manage_bio_settings.thname")}</th>
-                 		<th>${springMacroRequestContext.getMessage("manage_bio_settings.thref")}</th>   		
-                 		<#list changePersonalInfoForm.externalIdentifiers.externalIdentifier as externalIdentifier>     		  	
-                 			<tr>
-                 				<td>${(externalIdentifier.externalIdCommonName.content)!"${springMacroRequestContext.getMessage('manage_bio_settings.informationnotprovided')}"}</td>
-            					<td><a href="${(externalIdentifier.externalIdUrl.value)!}" target="_blank">${(externalIdentifier.externalIdReference.content)!"${springMacroRequestContext.getMessage('manage_bio_settings.informationnotprovided')}"}</a></td>
-            					<td>
-            						<@spring.formHiddenInput "changePersonalInfoForm.externalIdentifiers.externalIdentifier[${externalIdentifier_index}].orcid.value" />
-            						<@spring.formHiddenInput "changePersonalInfoForm.externalIdentifiers.externalIdentifier[${externalIdentifier_index}].externalIdReference.content" />
-            						<@spring.formHiddenInput "changePersonalInfoForm.externalIdentifiers.externalIdentifier[${externalIdentifier_index}].externalIdOrcid.value" />
-            						<@spring.formHiddenInput "changePersonalInfoForm.externalIdentifiers.externalIdentifier[${externalIdentifier_index}].externalIdCommonName.content" />
-            						<@spring.formHiddenInput "changePersonalInfoForm.externalIdentifiers.externalIdentifier[${externalIdentifier_index}].externalIdUrl.value" />
-            						<button class="btn delete-external-identifier">${springMacroRequestContext.getMessage("manage_bio_settings.btnremove")}</button>
-            					</td>
-                 			</tr>     		    
-                        </#list>
-                    </table>                     
-             	</#if>
+             	             	             	             	             	 
             	<div class="control-group">
                     <h3>${springMacroRequestContext.getMessage("manage_bio_settings.emailaddress")}</h3>
                     <div class="relative">
-                       <a href="<@spring.url '/account#editEmail'/>" onClick="parent.location.href=this.href; parent.$.colorbox.close(); return false;">${springMacroRequestContext.getMessage("settings.tdEdit")}</a>
+                       <a href="javascript:void(0)" onClick="top.colorOnCloseBoxDest='<@spring.url '/account#editEmail'/>'; top.$.colorbox.close(); return false;">${springMacroRequestContext.getMessage("manage_bio_settings.editEmail")}</a>
                     </div>
                 </div>
              	 		

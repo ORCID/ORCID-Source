@@ -4444,6 +4444,7 @@ a.badge:hover {
 .affix {
   position: fixed;
 }
+
 /*
     Some default styles
 */
@@ -5067,4 +5068,157 @@ strong,
 
 .primaryEmail{
 	font-weight: bold;
+}
+
+.privacyToggle {
+	position: relative;
+	margin: 0px; 
+	padding: 0px;
+	width: 100px;
+	height: 29px;
+}
+
+.privacyToggle li {
+	list-style: none; 
+	position: absolute; 
+	top: 0px; 
+	left: 0px; 
+    background: url('../img/privacy-toggle_100_v2.png') no-repeat;
+    background-size: 98px 89px;
+}
+
+@media only screen and (-webkit-min-device-pixel-ratio: 2), 
+only screen and (min-device-pixel-ratio: 2) {
+	
+   /* Retina-specific stuff here */
+   .privacyToggle li {
+      background: url('../img/privacy-toggle_200_v2.png') no-repeat;
+      background-size: 98px 89px;
+   }
+}
+
+.privacyToggle li, .privacyToggle a {
+	display: block;
+	height: 29px;
+	margin: 0px; 
+	padding: 0px;
+	width: 33px; 
+}
+
+.privacyToggle .publicActive {
+	background-position: 0px 0px;
+    left: 0px; 
+}
+
+.privacyToggle .publicInActive {
+	background-position: -0px -30px;
+}
+
+.privacyToggle .publicInActive:hover {
+	background-position: -0px -60px;
+}
+
+.privacyToggle .limitedActive {
+	background-position: -34px -0px;
+	left:33px;
+	width: 34px;
+}
+
+.privacyToggle .limitedInActive {
+	background-position: -34px -30px;
+}
+
+.privacyToggle .limitedInActive:hover {
+	background-position: -34px -60px;
+}
+
+.privacyToggle .privateActive {
+	background-position: -67px 0px;
+	left: 67px; 
+}
+
+.privacyToggle .privateInActive {
+	background-position: -67px -30px;
+}
+
+.privacyToggle .privateInActive:hover {
+	background-position: -67px -60px;
+}
+
+.privacyLegend {
+	width: 206px; height: 70px;      
+	background: url('../img/privacy-legend_100.png') no-repeat;
+    background-size: 206px 70px;
+    position: absolute; right: 15px; top: -25px;
+	z-index: 1000;
+	display: none;	
+}
+
+@media only screen and (-webkit-min-device-pixel-ratio: 2), 
+only screen and (min-device-pixel-ratio: 2) {
+	
+   .privacyLegend {
+      background: url('../img/privacy-legend_200.png') no-repeat;
+      background-size: 206px 70px;
+   }
+}
+
+
+
+.privacyLegendHide:hover .privacyLegend {
+  display: block;	
+}
+
+
+.editTablePadCell35 {
+	margin: 0px; 
+	padding: 0px;
+	margin-left: 35px;
+}
+
+#emailTable {
+	width: 655px; 
+	padding: 0px; 
+	margin: 0px;
+}
+
+#emailTable td {
+	vertical-align: middle;
+	padding: 0px; 
+	padding-right: 0px; 
+	border-style: none; 
+	border: none;
+	height: 40px;
+}
+
+#emailTable td.padRgt { 
+	padding-right: 10px;
+}
+
+#externalIdentifierTable td.padRgt { 
+	padding-right: 7px;
+}
+
+#externalIdentifierTable p {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	width: 225px;
+}
+
+#statistics .page-header {
+	font-size: 2em;
+	font-weight: bolder;
+	color: #A6CE39;
+}
+
+#statistics .stat-name {
+	font-size: 1.5em;
+	font-weight: bold;
+	color: #338CAF;
+}
+
+#statistics .pull-right {
+	font-size: 2em;
+	font-weight: bolder;
 }

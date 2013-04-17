@@ -68,6 +68,7 @@
     <sec:http pattern="/error" security="none"/>
     <sec:http pattern="/not-found" security="none"/>
     <sec:http pattern="/favicon.ico" security="none"/>
+    <sec:http pattern="/statistics" security="none"/>
     <sec:http pattern="/static/**" security="none"/>
     
     <sec:http pattern="/oauth/.*" access-denied-page="/oauth/signin" access-decision-manager-ref="accessDecisionManager" create-session="ifRequired" path-type="regex">

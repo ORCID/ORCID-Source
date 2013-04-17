@@ -468,7 +468,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
                 ExternalIdentifier externalIdentifier = new ExternalIdentifier();
                 ProfileEntity externalIdEntity = externalIdentifierEntity.getExternalIdOrcid();
                 ProfileEntity orcidProfile = externalIdentifierEntity.getOwner();
-                externalIdentifier.setExternalIdOrcid(externalIdEntity != null ? new ExternalIdOrcid(externalIdEntity.getId()) : null);                
+                externalIdentifier.setExternalIdOrcid(externalIdEntity != null ? new ExternalIdOrcid(externalIdEntity.getId()) : null);
                 externalIdentifier.setOrcid(orcidProfile != null ? new Orcid(orcidProfile.getId()) : null);
                 externalIdentifier.setExternalIdReference(StringUtils.isNotBlank(externalIdentifierEntity.getExternalIdReference()) ? new ExternalIdReference(
                         externalIdentifierEntity.getExternalIdReference()) : null);

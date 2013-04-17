@@ -51,7 +51,7 @@
                         <div class="conditions">
                             <p>${springMacroRequestContext.getMessage("public-layout.search.terms1")}<a href="${aboutUri}/legal?lang=${locale}">${springMacroRequestContext.getMessage("public-layout.search.terms2")}</a>${springMacroRequestContext.getMessage("public-layout.search.terms3")}</p>
                         </div>
-                        <button type="submit" href="#" class="search-button"><i class="icon-orcid-search"></i></button>
+                        <button type="submit" class="search-button"><i class="icon-orcid-search"></i></button>
                         <a href="<@spring.url "/orcid-search/search" />" class="settings-button" title="${springMacroRequestContext.getMessage("public-layout.search.advanced")}"><i class="icon-cog"></i></a>
                     </form>
                 </div>
@@ -103,7 +103,9 @@
 <li class="leaf"><a href="${aboutUri}/about/membership/standard-member-agreement?lang=${locale}" title="">${springMacroRequestContext.getMessage("public-layout.standard_member_agreement")}</a></li>
 <li class="last leaf"><a href="${aboutUri}/about/community/members?lang=${locale}" title="">${springMacroRequestContext.getMessage("public-layout.our_members")}</a></li>
 </ul></li>
-<li class="last expanded"><a href="${aboutUri}/about/news/news?lang=${locale}" title="">${springMacroRequestContext.getMessage("public-layout.news")}</a><ul class="menu"><li class="first leaf"><a href="${aboutUri}/about/news/news?lang=${locale}" title="">${springMacroRequestContext.getMessage("public-layout.news")}</a></li>
+<li class="leaf"><a href="${aboutUri}/about/news/news?lang=${locale}" title="">${springMacroRequestContext.getMessage("public-layout.news")}</a>
+<li class="last expanded"><a href="${aboutUri}/about/events?lang=${locale}" title="">${springMacroRequestContext.getMessage("public-layout.events")}</a>
+<ul class="menu"><li class="first leaf"><a href="${aboutUri}/about/news/news?lang=${locale}" title="">${springMacroRequestContext.getMessage("public-layout.news")}</a></li>
 <li class="last leaf"><a href="${aboutUri}/about/news/docs?lang=${locale}" title="">${springMacroRequestContext.getMessage("public-layout.documentation")}</a></li>
 </ul></li>
 </ul></li>
@@ -136,6 +138,7 @@
                     <li class=""><a href="${aboutUri}/help/contact-us?lang=${locale}">${springMacroRequestContext.getMessage("public-layout.contact_us")}</a></li>
 				    <li class=""><a href="${aboutUri}/footer/privacy-policy?lang=${locale}">${springMacroRequestContext.getMessage("public-layout.privacy_policy")}</a></li>
 				    <li class=""><a href="${aboutUri}/content/orcid-terms-use?lang=${locale}">${springMacroRequestContext.getMessage("public-layout.terms_of_use")}</a></li>
+				    <li class=""><a href="${aboutUri}/open-source-license?lang=${locale}">${springMacroRequestContext.getMessage("footer.openSource")}</a></li>
                 </ul>
             </div>
         </div>
