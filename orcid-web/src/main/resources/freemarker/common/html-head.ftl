@@ -30,9 +30,9 @@
 	    <link rel="stylesheet" href="${staticCdn}/css/orcid.css?v=${ver}"/>
 	    <link rel="stylesheet" href="${staticCdn}/css/java.css?v=${ver}"/>
 	    <link rel="stylesheet" href="${staticCdn}/css/jquery-ui-1.10.0.custom.min.css?v=${ver}"/>
-	    <link rel="stylesheet" href="${staticCdn}/font-awesome/3.0.2/css/font-awesome.css"/>
+	    <link rel="stylesheet" href="${staticLoc}/font-awesome/3.0.2/css/font-awesome.css"/>
 	    <!--[if IE 7]>
-	    	<link href="/static/font-awesome/3.0.2/css/font-awesome-ie7.css" rel="stylesheet">
+	    	<link href="${staticLoc}/font-awesome/3.0.2/css/font-awesome-ie7.css" rel="stylesheet">
 		<![endif]-->
 		<script src="${staticCdn}/javascript/modernizr.js?v=${ver}"></script>
     </#if>
