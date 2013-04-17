@@ -1,5 +1,15 @@
 # Webhooks (Member API)
 
+## Overview
+Webhooks is an asynchronous url push notification system that pings an URL when an ORCID 
+Record has changed. Notifications are sent out in off-peak hours within 24 hours period 
+the ORCID Record change. Upon notification your system will want to pull the ORCID Record 
+and sync the record with your system. 
+
+**Note**: Webhooks is unaware if the change is in a scope visible to your system. Often upon 
+syncing your system will find no visible changes.
+ 
+
 ## Get an access token for webhooks
 
 Make sure you get our Authorization to register webhooks.
