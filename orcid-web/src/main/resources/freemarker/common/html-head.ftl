@@ -22,19 +22,19 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <link rel="stylesheet" href="<@spring.url '/static/ORCID-Fonts-Dot-Com/style.css?v=${ver}'/>"/>
+    <link rel="stylesheet" href="${staticCdn}/ORCID-Fonts-Dot-Com/style.css?v=${ver}"/>
     
 	<#if (RequestParameters['lemur'])??>
 	
 	<#else>
-	    <link rel="stylesheet" href="<@spring.url '/static/css/orcid.css?v=${ver}'/>"/>
-	    <link rel="stylesheet" href="<@spring.url '/static/css/java.css?v=${ver}'/>"/>
-	    <link rel="stylesheet" href="<@spring.url '/static/css/jquery-ui-1.10.0.custom.min.css?v=${ver}'/>"/>
-	    <link rel="stylesheet" href="<@spring.url '/static/font-awesome/3.0.2/css/font-awesome.css'/>"/>
+	    <link rel="stylesheet" href="${staticCdn}/css/orcid.css?v=${ver}"/>
+	    <link rel="stylesheet" href="${staticCdn}/css/java.css?v=${ver}"/>
+	    <link rel="stylesheet" href="${staticCdn}/css/jquery-ui-1.10.0.custom.min.css?v=${ver}"/>
+	    <link rel="stylesheet" href="${staticLoc}/font-awesome/3.0.2/css/font-awesome.css"/>
 	    <!--[if IE 7]>
-	    	<link href="/static/font-awesome/3.0.2/css/font-awesome-ie7.css" rel="stylesheet">
+	    	<link href="${staticLoc}/font-awesome/3.0.2/css/font-awesome-ie7.css" rel="stylesheet">
 		<![endif]-->
-		<script src="<@spring.url '/static/javascript/modernizr.js?v=${ver}'/>"></script>
+		<script src="${staticCdn}/javascript/modernizr.js?v=${ver}"></script>
     </#if>
 	<style type="text/css">
 		/* 
@@ -47,8 +47,8 @@
 		}
 	</style> 
 
-    <link rel="shortcut icon" href="<@spring.url '/static/img/favicon.ico'/>"/>
-    <link rel="apple-touch-icon" href="<@spring.url '/static/img/apple-touch-icon.png'/>" />
+    <link rel="shortcut icon" href="${staticCdn}/img/favicon.ico"/>
+    <link rel="apple-touch-icon" href="${staticCdn}/img/apple-touch-icon.png" />
 
 
     <#include "/layout/google_analytics.ftl">
