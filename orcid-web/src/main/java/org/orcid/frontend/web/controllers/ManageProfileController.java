@@ -56,6 +56,8 @@ import org.orcid.frontend.web.forms.SearchForDelegatesForm;
 import org.orcid.jaxb.model.message.Delegation;
 import org.orcid.jaxb.model.message.DelegationDetails;
 import org.orcid.jaxb.model.message.Email;
+import org.orcid.jaxb.model.message.EncryptedSecurityAnswer;
+import org.orcid.jaxb.model.message.ExternalIdentifier;
 import org.orcid.jaxb.model.message.GivenPermissionBy;
 import org.orcid.jaxb.model.message.GivenPermissionTo;
 import org.orcid.jaxb.model.message.Orcid;
@@ -75,6 +77,7 @@ import org.orcid.password.constants.OrcidPasswordConstants;
 import org.orcid.pojo.Emails;
 import org.orcid.pojo.Errors;
 import org.orcid.pojo.ChangePassword;
+import org.orcid.pojo.SecurityQuestion;
 import org.orcid.utils.OrcidStringUtils;
 import org.orcid.utils.OrcidWebUtils;
 import org.slf4j.Logger;
@@ -468,6 +471,7 @@ public class ManageProfileController extends BaseWorkspaceController {
 
     @ModelAttribute("securityQuestions")
     public Map<String, String> getSecurityQuestions() {
+        securityQuestionManager.retrieveSecurityQuestionsAsMap();//
         return securityQuestionManager.retrieveSecurityQuestionsAsMap();
     }
 
@@ -520,72 +524,71 @@ public class ManageProfileController extends BaseWorkspaceController {
 
     }
 
-    @RequestMapping(value = { "/privacy-preferences" }, method = RequestMethod.GET)
-    public ModelAndView viewPrivacyPrefs() {
-        OrcidProfile profile = orcidProfileManager.retrieveOrcidProfile(getCurrentUserOrcid());
-        Preferences preferences = profile.getOrcidInternal().getPreferences();
-        Visibility worksVisibilityDefault = preferences != null && preferences.getWorkVisibilityDefault() != null ? preferences.getWorkVisibilityDefault().getValue()
-                : Visibility.PUBLIC;
-        ChangeVisibilityPreferencesForm changeVisibilityPreferencesForm = new ChangeVisibilityPreferencesForm();
-        changeVisibilityPreferencesForm.setWorkVisibilityDefault(worksVisibilityDefault.value());
-        ModelAndView modelAndView = new ModelAndView("privacy_preferences");
-        modelAndView.addObject("changeVisibilityPreferencesForm", changeVisibilityPreferencesForm);
-        return modelAndView;
+    @RequestMapping(value = "/security-question.json", method = RequestMethod.GET)
+    public @ResponseBody
+    SecurityQuestion getSecurityQuestionJson(HttpServletRequest request) {
+        OrcidProfile profile = getCurrentUser().getEffectiveProfile();
+        SecurityDetails sd = profile.getOrcidInternal().getSecurityDetails();
+        SecurityQuestionId securityQuestionId = sd.getSecurityQuestionId();
+        EncryptedSecurityAnswer encryptedSecurityAnswer = sd.getEncryptedSecurityAnswer();
+
+        if (securityQuestionId == null) {
+            sd.getSecurityQuestionId();
+            securityQuestionId = new SecurityQuestionId();
+        }
+
+        SecurityQuestion securityQuestion = new SecurityQuestion();
+        securityQuestion.setSecurityQuestionId(securityQuestionId.getValue());
+
+        if (encryptedSecurityAnswer != null) {
+            securityQuestion.setSecurityAnswer(encryptionManager.decryptForInternalUse(encryptedSecurityAnswer.getContent()));
+        }
+
+        return securityQuestion;
     }
 
-    @RequestMapping(value = "/update-privacy-preferences", method = RequestMethod.POST)
-    public ModelAndView savePrivacyPrefs(@ModelAttribute("changeVisibilityPreferencesForm") ChangeVisibilityPreferencesForm changeVisbilityPreferencesForm) {
-        Visibility workDefaultVisibility = Visibility.fromValue(changeVisbilityPreferencesForm.getWorkVisibilityDefault());
-        OrcidProfile profile = orcidProfileManager.retrieveOrcidProfile(getCurrentUserOrcid());
-        Preferences preferences = profile.getOrcidInternal().getPreferences() != null ? profile.getOrcidInternal().getPreferences() : new Preferences();
-        preferences.setWorkVisibilityDefault(new WorkVisibilityDefault(workDefaultVisibility));
-        OrcidProfile updatedProfile = orcidProfileManager.updateOrcidProfile(profile);
-        return new ModelAndView("ok");
+    @RequestMapping(value = "/security-question.json", method = RequestMethod.POST)
+    public @ResponseBody
+    SecurityQuestion setSecurityQuestionJson(HttpServletRequest request, @RequestBody SecurityQuestion securityQuestion) {
+        List<String> errors = new ArrayList<String>();
+        if (securityQuestion.getSecurityAnswer() == null || securityQuestion.getSecurityAnswer().trim() == "")
+            errors.add(getMessage("manage.pleaseProvideAnAnswer"));
+        if (securityQuestion.getSecurityQuestionId() == 0)
+            errors.add(getMessage("manage.pleaseChooseAQuestion"));
+
+        if (errors.size() == 0) {
+            OrcidProfile profile = getCurrentUser().getEffectiveProfile();
+            if (profile.getOrcidInternal().getSecurityDetails().getSecurityQuestionId() == null)
+                profile.getOrcidInternal().getSecurityDetails().setSecurityQuestionId(new SecurityQuestionId());
+            profile.getOrcidInternal().getSecurityDetails().getSecurityQuestionId().setValue(securityQuestion.getSecurityQuestionId());
+
+            if (profile.getOrcidInternal().getSecurityDetails().getEncryptedSecurityAnswer() == null)
+                profile.getOrcidInternal().getSecurityDetails().setEncryptedSecurityAnswer(new EncryptedSecurityAnswer());
+            profile.setSecurityQuestionAnswer(securityQuestion.getSecurityAnswer());
+            orcidProfileManager.updatePasswordSecurityQuestionsInformation(profile);
+            getCurrentUser().setEffectiveProfile(profile);
+            errors.add(getMessage("manage.securityQuestionUpdated"));
+        }
+
+        securityQuestion.setErrors(errors);
+        return securityQuestion;
     }
 
-    @RequestMapping(value = { "/email-preferences", "/change-email-preferences" }, method = RequestMethod.GET)
-    public ModelAndView viewChangeEmailPrefs() {
+    @RequestMapping(value = "/default-privacy-preferences.json", method = RequestMethod.GET)
+    public @ResponseBody
+    Preferences getDefaultPreference(HttpServletRequest request) {
         OrcidProfile profile = orcidProfileManager.retrieveOrcidProfile(getCurrentUserOrcid());
-        Preferences preferences = profile.getOrcidInternal().getPreferences();
-        boolean sendChangeNotifications = preferences != null && preferences.getSendChangeNotifications() != null ? preferences.getSendChangeNotifications().isValue()
-                : false;
-
-        boolean sendOrcidNews = preferences != null && preferences.getSendOrcidNews() != null ? preferences.getSendOrcidNews().isValue() : false;
-
-        ChangeEmailPreferencesForm changeEmailPreferencesForm = new ChangeEmailPreferencesForm();
-        changeEmailPreferencesForm.setSendOrcidChangeNotifcations(sendChangeNotifications);
-        changeEmailPreferencesForm.setSendOrcidNews(sendOrcidNews);
-
-        ModelAndView modelAndView = new ModelAndView("change_email_preferences");
-        modelAndView.addObject(changeEmailPreferencesForm);
-        return modelAndView;
-
+        profile.getOrcidInternal().getPreferences();
+        return profile.getOrcidInternal().getPreferences() != null ? profile.getOrcidInternal().getPreferences() : new Preferences();
     }
 
-    @RequestMapping(value = "/update-email-preferences", method = RequestMethod.POST)
-    public ModelAndView saveChangeEmailPrefs(@ModelAttribute("changeEmailPreferencesForm") ChangeEmailPreferencesForm changeEmailPreferencesForm) {
-
-        boolean sendChangeNotificationsValue = changeEmailPreferencesForm.getSendOrcidChangeNotifcations();
-        boolean sendOrcidNewsValue = changeEmailPreferencesForm.getSendOrcidNews();
-
+    @RequestMapping(value = "/default-privacy-preferences.json", method = RequestMethod.POST)
+    public @ResponseBody
+    Preferences setDefaultPreference(HttpServletRequest request, @RequestBody Preferences preferences) {
         OrcidProfile profile = orcidProfileManager.retrieveOrcidProfile(getCurrentUserOrcid());
-
-        Preferences preferences = profile.getOrcidInternal().getPreferences() != null ? profile.getOrcidInternal().getPreferences() : new Preferences();
-        SendChangeNotifications sendChangeNotifications = preferences.getSendChangeNotifications() != null ? preferences.getSendChangeNotifications()
-                : new SendChangeNotifications();
-
-        SendOrcidNews sendOrcidNews = preferences.getSendOrcidNews() != null ? preferences.getSendOrcidNews() : new SendOrcidNews();
-        sendChangeNotifications.setValue(sendChangeNotificationsValue);
-        sendOrcidNews.setValue(sendOrcidNewsValue);
-
-        preferences.setSendChangeNotifications(sendChangeNotifications);
-        preferences.setSendOrcidNews(sendOrcidNews);
         profile.getOrcidInternal().setPreferences(preferences);
-
-        OrcidProfile updatedProfile = orcidProfileManager.updatePreferences(profile);
-        getCurrentUser().setEffectiveProfile(updatedProfile);
-
-        return new ModelAndView("ok");
+        OrcidProfile updatedProfile = orcidProfileManager.updateOrcidProfile(profile);
+        return updatedProfile.getOrcidInternal().getPreferences();
     }
 
     private ModelAndView populateChangeSecurityDetailsViewFromUserProfile(ChangeSecurityQuestionForm changeSecurityQuestionForm) {
@@ -634,19 +637,19 @@ public class ManageProfileController extends BaseWorkspaceController {
         changePasswordView.addObject("passwordOptionsSaved", true);
         return changePasswordView;
     }
-    
-    
-    @RequestMapping(value = { "/change-password.json" }, method = RequestMethod.GET) 
-    public @ResponseBody ChangePassword getChangedPasswordJson(HttpServletRequest request) {
+
+    @RequestMapping(value = { "/change-password.json" }, method = RequestMethod.GET)
+    public @ResponseBody
+    ChangePassword getChangedPasswordJson(HttpServletRequest request) {
         ChangePassword p = new ChangePassword();
         return p;
     }
-    
+
     @RequestMapping(value = { "/change-password.json" }, method = RequestMethod.POST)
-    public @ResponseBody ChangePassword changedPasswordJson(HttpServletRequest request, @RequestBody ChangePassword cp) {
+    public @ResponseBody
+    ChangePassword changedPasswordJson(HttpServletRequest request, @RequestBody ChangePassword cp) {
         List<String> errors = new ArrayList<String>();
-        
-        
+
         if (cp.getPassword() == null || !cp.getPassword().matches(OrcidPasswordConstants.ORCID_PASSWORD_REGEX)) {
             errors.add(getMessage("NotBlank.registrationForm.confirmedPassword"));
         } else if (!cp.getPassword().equals(cp.getRetypedPassword())) {
@@ -656,7 +659,7 @@ public class ManageProfileController extends BaseWorkspaceController {
         if (cp.getOldPassword() == null || !encryptionManager.hashMatches(cp.getOldPassword(), getCurrentUser().getPassword())) {
             errors.add(getMessage("orcid.frontend.change.password.current_password_incorrect"));
         }
-        
+
         if (errors.size() == 0) {
             OrcidProfile profile = getCurrentUser().getEffectiveProfile();
             profile.setPassword(cp.getPassword());
@@ -667,23 +670,10 @@ public class ManageProfileController extends BaseWorkspaceController {
         cp.setErrors(errors);
         return cp;
     }
-    
 
     @RequestMapping(value = { "deactivate-orcid", "/view-deactivate-orcid-account" }, method = RequestMethod.GET)
     public ModelAndView viewDeactivateOrcidAccount() {
         ModelAndView deactivateOrcidView = new ModelAndView("deactivate_orcid");
-        return deactivateOrcidView;
-    }
-
-    @RequestMapping(value = "/start-deactivate-orcid-account", method = RequestMethod.GET)
-    public ModelAndView startDeactivateOrcidAccount(HttpServletRequest request) {
-        URI uri = OrcidWebUtils.getServerUriWithContextPath(request);
-        OrcidProfile currentProfile = getCurrentUser().getRealProfile();
-        Email email = currentProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail();
-        notificationManager.sendOrcidDeactivateEmail(currentProfile, uri);
-        ModelAndView deactivateOrcidView = new ModelAndView("deactivate_orcid");
-
-        deactivateOrcidView.addObject("deactivateEmailSent", MessageFormat.format("Email sent to {0}", new Object[] { email.getValue() }));
         return deactivateOrcidView;
     }
 
@@ -720,6 +710,17 @@ public class ManageProfileController extends BaseWorkspaceController {
         URI baseUri = OrcidWebUtils.getServerUriWithContextPath(request);
         notificationManager.sendVerificationEmail(currentProfile, baseUri, email);
         return new Errors();
+    }
+
+    @SuppressWarnings("unchecked")
+    @RequestMapping(value = "/send-deactivate-account.json", method = RequestMethod.GET)
+    public @ResponseBody
+    Email startDeactivateOrcidAccountJson(HttpServletRequest request) {
+        URI uri = OrcidWebUtils.getServerUriWithContextPath(request);
+        OrcidProfile currentProfile = getCurrentUser().getRealProfile();
+        Email email = currentProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail();
+        notificationManager.sendOrcidDeactivateEmail(currentProfile, uri);
+        return email;
     }
 
     @SuppressWarnings("unchecked")
@@ -775,7 +776,7 @@ public class ManageProfileController extends BaseWorkspaceController {
                 URI baseUri = OrcidWebUtils.getServerUriWithContextPath(request);
                 notificationManager.sendEmailAddressChangedNotification(updatedProfile, new Email(oldPrime), baseUri);
             }
-            
+
             //also send verifcation email for new address
             URI baseUri = OrcidWebUtils.getServerUriWithContextPath(request);
             notificationManager.sendVerificationEmail(currentProfile, baseUri, email.getValue());
@@ -842,9 +843,8 @@ public class ManageProfileController extends BaseWorkspaceController {
         changePersonalInfoForm.mergeOrcidBioDetails(currentProfile);
         OrcidProfile updatedProfile = orcidProfileManager.updateOrcidBio(currentProfile);
         getCurrentUser().setEffectiveProfile(updatedProfile);
-        
+
         redirectAttributes.addFlashAttribute("changesSaved", true);
         return manageBioView;
     }
-
 }

@@ -30,6 +30,10 @@
 	    <link rel="stylesheet" href="<@spring.url '/static/css/orcid.css?v=${ver}'/>"/>
 	    <link rel="stylesheet" href="<@spring.url '/static/css/java.css?v=${ver}'/>"/>
 	    <link rel="stylesheet" href="<@spring.url '/static/css/jquery-ui-1.10.0.custom.min.css?v=${ver}'/>"/>
+	    <link rel="stylesheet" href="<@spring.url '/static/font-awesome/3.0.2/css/font-awesome.css'/>"/>
+	    <!--[if IE 7]>
+	    	<link href="/static/font-awesome/3.0.2/css/font-awesome-ie7.css" rel="stylesheet">
+		<![endif]-->
 		<script src="<@spring.url '/static/javascript/modernizr.js?v=${ver}'/>"></script>
     </#if>
 	<style type="text/css">
@@ -52,4 +56,19 @@
     <!--[if IE 7]>
     	<script src="//cdnjs.cloudflare.com/ajax/libs/json3/3.2.4/json3.min.js" type="text/javascript"></script>
      <![endif]-->
+     <script type="application/javascript">
+		  var _prum={id:"51682c74abe53d6049000000"};
+		  var PRUM_EPISODES=PRUM_EPISODES||{};
+		  PRUM_EPISODES.q=[];
+		  PRUM_EPISODES.mark=function(b,a){PRUM_EPISODES.q.push(["mark",b,a||new Date().getTime()])};
+		  PRUM_EPISODES.measure=function(b,a,b){PRUM_EPISODES.q.push(["measure",b,a,b||new Date().getTime()])};
+		  PRUM_EPISODES.done=function(a){PRUM_EPISODES.q.push(["done",a])};
+		  PRUM_EPISODES.mark("firstbyte");
+		  (function(){
+		    var b=document.getElementsByTagName("script")[0];
+		    var a=document.createElement("script");
+		    a.type="text/javascript";a.async=true;a.charset="UTF-8";
+		    a.src="//rum-static.pingdom.net/prum.min.js";b.parentNode.insertBefore(a,b)
+		  })();
+	</script>
 </head>

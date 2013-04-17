@@ -19,7 +19,7 @@ var orcidNgModule = angular.module('orcidApp', []);
 
 orcidNgModule.filter('emailPrimaryFtr', function($filter) {
 	return function(booleanValue) {
-		return booleanValue ? 'Primary Email' : 'Set Primary';
+		return booleanValue ? OM.getInstance().get("manage.email.primary_email"): OM.getInstance().get("manage.email.set_primary");
 	};
 });
 
@@ -39,41 +39,221 @@ orcidNgModule.filter('emailVisibilityBtnClassFtr', function($filter) {
 
 orcidNgModule.filter('emailVerifiedFtr', function($filter) {
 	return function(booleanValue) {
-		return booleanValue ? 'Verifed' : 'Unverfied';
+		return booleanValue ? OM.getInstance().get("manage.email.verifed") : OM.getInstance().get("manage.email.unverifed");
 	};
 });
 
 orcidNgModule.filter('emailCurrentFtr', function($filter) {
 	return function(booleanValue) {
-		return booleanValue ? 'Active' : 'Inactive';
+		return booleanValue ? OM.getInstance().get("manage.email.active") : OM.getInstance().get("manage.email.inactive");
 	};
 });
 
 function EditTableCtrl($scope) {
-	// email edit table
-	$scope.showEditEmail = (window.location.hash === "#editEmail");
 	
-	$scope.emailToggleText = "Edit";
+	// email edit row
+	$scope.emailUpdateToggleText = function () {
+		if ($scope.showEditEmail) $scope.emailToggleText = OM.getInstance().get("manage.editTable.hide");
+		else $scope.emailToggleText = OM.getInstance().get("manage.editTable.edit");		
+	};
+	
 	$scope.toggleEmailEdit = function() {
 		$scope.showEditEmail = !$scope.showEditEmail;
-		if ($scope.emailToggleText == "Edit")
-			$scope.emailToggleText = "Hide";
-		else
-			$scope.emailToggleText = "Edit";
+		$scope.emailUpdateToggleText();
 	};
 	
-	// password edit table
-	$scope.showEditPassword = (window.location.hash === "#editPassword");
-	$scope.passwordToggleText = "Edit";
+	// init email edit row
+	$scope.showEditEmail = (window.location.hash === "#editEmail");
+	$scope.emailUpdateToggleText();
+	
+
+	// password edit row
+	$scope.passwordUpdateToggleText = function () {
+		if ($scope.showEditPassword) $scope.passwordToggleText = OM.getInstance().get("manage.editTable.hide");
+		else $scope.passwordToggleText = OM.getInstance().get("manage.editTable.edit");		
+	};
+	
 	$scope.togglePasswordEdit = function() {
 		$scope.showEditPassword = !$scope.showEditPassword;
-		if ($scope.passwordToggleText == "Edit")
-			$scope.passwordToggleText = "Hide";
-		else
-			$scope.passwordToggleText = "Edit";
+		$scope.passwordUpdateToggleText();
 	};
 
+	// init password row
+	$scope.showEditPassword = (window.location.hash === "#editPassword");
+	$scope.passwordUpdateToggleText();
+	
+	// deactivate edit row
+	$scope.deactivateUpdateToggleText = function () {
+		if ($scope.showEditDeactivate) $scope.deactivateToggleText = OM.getInstance().get("manage.editTable.hide");
+		else $scope.deactivateToggleText = OM.getInstance().get("manage.editTable.deactivateRecord");		
+	};
+
+	$scope.toggleDeactivateEdit = function() {
+		$scope.showEditDeactivate = !$scope.showEditDeactivate;
+		$scope.deactivateUpdateToggleText();
+	};
+	
+	// init deactivate
+	$scope.showEditDeactivate = (window.location.hash === "#editDeactivate");
+	$scope.deactivateUpdateToggleText();
+	
+	// privacy preferences edit row
+	$scope.privacyPreferencesUpdateToggleText = function () {
+		if ($scope.showEditPrivacyPreferences) $scope.privacyPreferencesToggleText = OM.getInstance().get("manage.editTable.hide");
+		else $scope.privacyPreferencesToggleText = OM.getInstance().get("manage.editTable.edit");		
+	};
+
+	$scope.togglePrivacyPreferencesEdit = function() {
+		$scope.showEditPrivacyPreferences = !$scope.showEditPrivacyPreferences;
+		$scope.privacyPreferencesUpdateToggleText();
+	};
+	
+	// init privacy preferences
+	$scope.showEditPrivacyPreferences = (window.location.hash === "#editPrivacyPreferences");
+	$scope.privacyPreferencesUpdateToggleText();
+
+	// email preferences edit row
+	$scope.emailPreferencesUpdateToggleText = function () {
+		if ($scope.showEditEmailPreferences) $scope.emailPreferencesToggleText = OM.getInstance().get("manage.editTable.hide");
+		else $scope.emailPreferencesToggleText = OM.getInstance().get("manage.editTable.edit");		
+	};
+
+	$scope.toggleEmailPreferencesEdit = function() {
+		$scope.showEditEmailPreferences = !$scope.showEditEmailPreferences;
+		$scope.emailPreferencesUpdateToggleText();
+	};
+	
+	// init privacy preferences
+	$scope.showEditEmailPreferences = (window.location.hash === "#editEmailPreferences");
+	$scope.emailPreferencesUpdateToggleText();	
+
+	// security question edit row
+	$scope.securityQuestionUpdateToggleText = function () {
+		if ($scope.showEditSecurityQuestion) $scope.securityQuestionToggleText = OM.getInstance().get("manage.editTable.hide");
+		else $scope.securityQuestionToggleText = OM.getInstance().get("manage.editTable.edit");		
+	};
+
+	$scope.toggleSecurityQuestionEdit = function() {
+		$scope.showEditSecurityQuestion = !$scope.showEditSecurityQuestion;
+		$scope.securityQuestionUpdateToggleText();
+	};
+	
+	// init security question
+	$scope.showEditSecurityQuestion = (window.location.hash === "#editSecurityQuestion");
+	$scope.securityQuestionUpdateToggleText();	
+	
 };
+
+function PrivacyPreferences($scope, $http) {
+	$scope.getPrivacyPreferences = function() {	
+		$.ajax({
+	        url: $('body').data('baseurl') + 'account/default-privacy-preferences.json',
+	        dataType: 'json',
+	        success: function(data) {
+	        	$scope.privacyPreferences = data;
+	        	$scope.$apply();
+	        	//alert($scope.privacyPreferences.workVisibilityDefault.value);
+	        }
+	    }).fail(function() { 
+	    	// something bad is happening!
+	    	console.log("error with multi email");
+	    });
+	};
+	
+	$scope.savePrivacyPreferences = function() {
+		$.ajax({
+	        url: $('body').data('baseurl') + 'account/default-privacy-preferences.json',
+	        type: 'POST',
+	        data: angular.toJson($scope.privacyPreferences),
+	        contentType: 'application/json;charset=UTF-8',
+	        dataType: 'json',
+	        success: function(data) {
+	        	$scope.privacyPreferences = data;
+	        	$scope.$apply();
+	         	//alert($scope.privacyPreferences.workVisibilityDefault.value);
+	 	       
+	        }
+	    }).fail(function() { 
+	    	// something bad is happening!
+	    	console.log("error with multi email");
+	    });
+	};
+
+	$scope.updateWorkVisibilityDefault = function(priv, $event) {
+		$scope.privacyPreferences.workVisibilityDefault.value = priv;
+		$scope.savePrivacyPreferences();
+	};
+	
+	
+	//init
+	$scope.privacyPreferences = $scope.getPrivacyPreferences();
+	
+	
+	
+	
+};
+
+
+function DeactivateAccount($scope, $http) {
+	$scope.sendDeactivateEmail = function() {
+		orcidGA.gaPush(['_trackEvent', 'Disengagement', 'Deactivate_Initiate', 'Website']);
+		$.ajax({
+	        url: $('body').data('baseurl') + 'account/send-deactivate-account.json',
+	        dataType: 'json',
+	        success: function(data) {
+	    	    $.colorbox({
+	    	        html : $('<div style="padding: 20px;" class="colorbox-modal"><h3>' + OM.getInstance().get("manage.deactivateSend") + data.value + '</h3>'
+	    	            	+ '<div class="btn" id="modal-close">' + OM.getInstance().get("manage.deactivateSend.close") + '</div>')	            	
+	    	    });
+	    	    $.colorbox.resize();
+	    	    $('#modal-close').click(function(e) {
+	    	    	$.colorbox.close();
+	    	    });
+	        }
+	    }).fail(function() { 
+	    	// something bad is happening!
+	    	console.log("error with change DeactivateAccount");
+	    });
+
+	};
+}
+
+
+function SecurityQuestionEdit($scope, $http) {
+	$scope.getSecurityQuestion = function() {
+		$.ajax({
+	        url: $('body').data('baseurl') + 'account/security-question.json',
+	        dataType: 'json',
+	        success: function(data) {
+	        	$scope.securityQuestionPojo = data;
+	        	$scope.$apply();
+	        }
+	    }).fail(function() { 
+	    	// something bad is happening!
+	    	console.log("error with security question.json");
+	    });
+	};
+	
+	$scope.getSecurityQuestion();
+	
+	$scope.saveSecurityQuestion = function() {
+		$.ajax({
+	        url: $('body').data('baseurl') + 'account/security-question.json',
+	        type: 'POST',
+	        data: angular.toJson($scope.securityQuestionPojo),
+	        contentType: 'application/json;charset=UTF-8',
+	        dataType: 'json',
+	        success: function(data) {
+	        	//alert(angular.toJson($scope.securityQuestionPojo));
+	        	$scope.securityQuestionPojo = data;
+	        	$scope.$apply();
+	        }
+	    }).fail(function() { 
+	    	// something bad is happening!
+	    	console.log("error with security question");
+	    });
+	};
+}
 
 function PasswordEdit($scope, $http) {
 	$scope.getChangePassword = function() {
@@ -105,7 +285,7 @@ function PasswordEdit($scope, $http) {
 	        }
 	    }).fail(function() { 
 	    	// something bad is happening!
-	    	console.log("error with multi email");
+	    	console.log("error with edit password");
 	    });
 	};
 }
@@ -116,7 +296,7 @@ function EmailEdit($scope, $http) {
 		$.ajax({
 	        url: $('body').data('baseurl') + 'account/emails.json',
 	        //type: 'POST',
-	        //data: $scope.emailsPojo,
+	        //data: $scope.emailsPojo, 
 	        dataType: 'json',
 	        success: function(data) {
 	        	$scope.emailsPojo = data;
@@ -149,12 +329,6 @@ function EmailEdit($scope, $http) {
 		$scope.saveEmail();
 	};
 	
-//	$scope.current = function(idx) {
-//		$scope.saveEmail();
-//	};
-//	
-	
-	// descoped delete after March 20
 	$scope.toggleVisibility = function(idx) {
 		if ($scope.emailsPojo.emails[idx].visibility ==  "PRIVATE") {
 			$scope.emailsPojo.emails[idx].visibility = "LIMITED";
@@ -194,8 +368,8 @@ function EmailEdit($scope, $http) {
 	    	console.log("error with multi email");
 	    });  
 	    $.colorbox({
-	        html : $('<div style="padding: 20px;" class="colorbox-modal"><h3>Verification email sent to ' + $scope.emailsPojo.emails[idx].value + '</h3>'
-	            	+ '<div class="btn" id="modal-close">Close</div>')
+	        html : $('<div style="padding: 20px;" class="colorbox-modal"><h3>' + OM.getInstance().get("manage.email.verificationEmail") + ' ' + $scope.emailsPojo.emails[idx].value + '</h3>'
+	            	+ '<div class="btn" id="modal-close">' + OM.getInstance().get("manage.email.verificationEmail.close") + '</div>')
 	            	
 	    });
 	    $.colorbox.resize();
@@ -245,8 +419,10 @@ function EmailEdit($scope, $http) {
 	
 	$scope.deleteEmail = function(idx) {
         $.colorbox({
-            html : $('<div style="padding: 20px;" class="colorbox-modal"><h3>Please confirm deletion of ' + $scope.emailsPojo.emails[idx].value + '</h3>'
-            	+ '<div class="btn btn-danger" id="modal-del-email">Delete Email</div> <a href="" id="modal-cancel">cancel</a><div>')
+            html : $('<div style="padding: 20px;" class="colorbox-modal"><h3>'+ OM.getInstance().get("manage.email.pleaseConfirmDeletion") + ' ' + $scope.emailsPojo.emails[idx].value + '</h3>'
+            	+ '<div class="btn btn-danger" id="modal-del-email">'
+            	+ OM.getInstance().get("manage.email.deleteEmail") 
+            	+ ' </div> <a href="" id="modal-cancel">' + OM.getInstance().get("manage.email.cancel") + '</a><div>')
             	
         });
         $.colorbox.resize();
@@ -262,3 +438,62 @@ function EmailEdit($scope, $http) {
 	};
 	
 };
+
+function ExternalIdentifierCtrl($scope, $http){		
+	$scope.getExternalIdentifiers = function(){
+		$.ajax({
+			url: $('body').data('baseurl') + 'my-orcid/externalIdentifiers.json',	        
+	        dataType: 'json',
+	        success: function(data) {
+	        	$scope.externalIdentifiersPojo = data;
+	        	$scope.$apply();
+	        }
+		}).fail(function(){
+			// something bad is happening!
+	    	console.log("error fetching external identifiers");
+		});
+	};
+	
+	//init
+	$scope.getExternalIdentifiers();
+	
+	$scope.deleteExternalIdentifier = function(idx) {
+        $.colorbox({        	
+            html: function(){
+            	var value = '';
+            	if($scope.externalIdentifiersPojo.externalIdentifiers[idx].externalIdCommonName != null)
+            		value = $scope.externalIdentifiersPojo.externalIdentifiers[idx].externalIdCommonName.content + ' ';
+            	value += $scope.externalIdentifiersPojo.externalIdentifiers[idx].externalIdReference.content;
+            	return '<div style="padding: 20px;" class="colorbox-modal"><h3>' + OM.getInstance().get("manage.deleteExternalIdentifier.pleaseConfirm") + ' ' + value + '</h3>'
+	            	+ '<div class="btn btn-danger" id="modal-del-external-identifier">' + OM.getInstance().get("manage.deleteExternalIdentifier.delete") + '</div> <a href="" id="modal-cancel">' + OM.getInstance().get("manage.deleteExternalIdentifier.cancel") + '</a><div>'; 
+            }
+            	
+        });
+        $.colorbox.resize();
+        $('#modal-del-external-identifier').click(function(e) {
+    		$scope.externalIdentifiersPojo.externalIdentifiers.splice(idx, 1);
+    		$scope.saveExternalIdentifier();
+    		$.colorbox.close();
+        });
+        $('#modal-cancel').click(function(e) {
+        	e.preventDefault();
+        	$.colorbox.close();
+        });
+	};
+	
+	$scope.saveExternalIdentifier = function() {
+		$.ajax({
+	        url: $('body').data('baseurl') + 'my-orcid/externalIdentifiers.json',
+	        type: 'POST',
+	        data: angular.toJson($scope.externalIdentifiersPojo),
+	        contentType: 'application/json;charset=UTF-8',
+	        dataType: 'json',
+	        success: function(data) {
+	        	$scope.externalIdentifiersPojo = data;
+	        	$scope.$apply();
+	        }
+	    }).fail(function() { 
+	    	console.log("error with external identifiers");
+	    });
+	};
+}

@@ -77,7 +77,6 @@ public class ExternalIdentifier implements Serializable {
         this.externalIdReference = externalIdReference;
     }
 
-    
     /**
      * Gets the value of the eorcid property.
      *
@@ -194,7 +193,7 @@ public class ExternalIdentifier implements Serializable {
 
         ExternalIdentifier that = (ExternalIdentifier) o;
 
-        if(orcid != null? !orcid.equals(that.getOrcid()) : that.getOrcid() != null){
+        if (orcid != null ? !orcid.equals(that.getOrcid()) : that.getOrcid() != null) {
             return false;
         }
         if (externalIdCommonName != null ? !externalIdCommonName.equals(that.externalIdCommonName) : that.externalIdCommonName != null) {

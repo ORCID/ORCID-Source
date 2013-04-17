@@ -204,7 +204,7 @@ kind of variable. This temp value is only used in this macro lib -->
     <#if selected == "private" || selected == "protected"><span class="label label-important privacy-label">${springMacroRequestContext.getMessage("manage.liprivate")}</span></#if>
 </#macro>
 
-<#macro settingsPopover id includeFile title open="" link="Edit">
+<#macro settingsPopover id includeFile title open="" link=springMacroRequestContext.getMessage("manage.editTable.edit")>
     <a class="settings-popover-trigger" data-id="${id}" href="<@spring.url includeFile />">${link}</a>
     <div id="${id}" class="popover popover-large bottom<#if open==id> show</#if>">
         <div class="arrow"></div>

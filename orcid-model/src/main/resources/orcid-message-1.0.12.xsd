@@ -1262,7 +1262,7 @@
     </xs:simpleType>
     <xs:simpleType name="orcid-id">
         <xs:restriction base="xs:string">
-            <xs:pattern value="http://orcid\.org/(\d{4}-){3,}\d{3}[\dX]"/>
+            <xs:pattern value="http://([^/]*orcid\.org|localhost.*/orcid-web)/(\d{4}-){3,}\d{3}[\dX]"/>
         </xs:restriction>
     </xs:simpleType>
     <xs:simpleType name="orcid-type">

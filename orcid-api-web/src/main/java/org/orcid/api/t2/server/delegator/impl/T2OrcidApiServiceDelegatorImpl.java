@@ -73,6 +73,8 @@ import org.springframework.security.oauth2.provider.AuthorizationRequest;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.stereotype.Component;
 
+import org.hibernate.exception.ConstraintViolationException;
+
 /**
  * 2011-2012 ORCID
  * <p/>
@@ -228,6 +230,9 @@ public class T2OrcidApiServiceDelegatorImpl implements T2OrcidApiServiceDelegato
             orcidProfile = orcidProfileManager.createOrcidProfileAndNotify(orcidProfile);
             return getCreatedResponse(uriInfo, PROFILE_GET_PATH, orcidProfile);
         } catch (DataAccessException e) {
+            if (e.getCause() != null && ConstraintViolationException.class.isAssignableFrom(e.getCause().getClass())) {
+                throw new OrcidBadRequestException("User with this email already exist.");
+            }
             throw new OrcidBadRequestException("Cannot create ORCID", e);
         }
     }

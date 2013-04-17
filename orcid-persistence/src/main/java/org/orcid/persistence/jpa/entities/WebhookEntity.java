@@ -40,7 +40,7 @@ import org.orcid.persistence.jpa.entities.keys.WebhookEntityPk;
 @Entity
 @Table(name = "webhook")
 @IdClass(WebhookEntityPk.class)
-@NamedNativeQueries({
+@NamedNativeQueries( {
         @NamedNativeQuery(name = WebhookEntity.COUNT_WEBHOOKS_READY_TO_PROCESS, query = "SELECT COUNT(*) webhook_count "
                 + WebhookEntity.WEBHOOKS_READY_TO_PROCESS_FROM_CLAUSE, resultSetMapping = "countMapping"),
         @NamedNativeQuery(name = WebhookEntity.FIND_WEBHOOKS_READY_TO_PROCESS, query = "SELECT *  " + WebhookEntity.WEBHOOKS_READY_TO_PROCESS_FROM_CLAUSE

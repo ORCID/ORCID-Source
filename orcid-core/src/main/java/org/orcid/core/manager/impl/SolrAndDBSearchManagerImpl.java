@@ -48,9 +48,9 @@ public class SolrAndDBSearchManagerImpl implements SolrAndDBSearchManager {
     }
 
     @Override
-    public OrcidMessage findFilteredOrcidsBasedOnQuery(String query) {
+    public OrcidMessage findFilteredOrcidsBasedOnQuery(String query, Integer start, Integer rows) {
 
-        OrcidMessage solrSearchResults = orcidSearchManager.findOrcidsByQuery(query);
+        OrcidMessage solrSearchResults = orcidSearchManager.findOrcidsByQuery(query, start, rows);
         OrcidMessage filteredMessage = new OrcidMessage();
         OrcidSearchResults orcidSearchResults = solrSearchResults.getOrcidSearchResults();
 

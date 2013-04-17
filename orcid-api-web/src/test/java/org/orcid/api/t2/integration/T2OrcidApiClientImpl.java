@@ -383,20 +383,12 @@ public class T2OrcidApiClientImpl implements T2OrcidApiService<ClientResponse> {
     public ClientResponse searchByQueryXML(String query) {
         return orcidClientHelper.getClientResponse(UriBuilder.fromPath(BIO_SEARCH_PATH).replaceQuery(query).build(), VND_ORCID_XML);
     }
-    
+
     /**
      * TODO 
      * */
     @Override
-    public ClientResponse registerWebhookXML(@PathParam("orcid") String orcid, @PathParam("webhook_uri") String webhook_uri){
-        return null;
-    }
-    
-    /**
-     * TODO 
-     * */
-    @Override
-    public ClientResponse registerWebhookJson(@PathParam("orcid") String orcid, @PathParam("webhook_uri") String webhook_uri){
+    public ClientResponse registerWebhookXML(@PathParam("orcid") String orcid, @PathParam("webhook_uri") String webhook_uri) {
         return null;
     }
 
@@ -404,15 +396,23 @@ public class T2OrcidApiClientImpl implements T2OrcidApiService<ClientResponse> {
      * TODO 
      * */
     @Override
-    public ClientResponse unregisterWebhookXML(@PathParam("orcid") String orcid, @PathParam("webhook_uri") String webhook_uri){
+    public ClientResponse registerWebhookJson(@PathParam("orcid") String orcid, @PathParam("webhook_uri") String webhook_uri) {
         return null;
     }
-    
+
     /**
      * TODO 
      * */
     @Override
-    public ClientResponse unregisterWebhookJson(@PathParam("orcid") String orcid, @PathParam("webhook_uri") String webhook_uri){
+    public ClientResponse unregisterWebhookXML(@PathParam("orcid") String orcid, @PathParam("webhook_uri") String webhook_uri) {
+        return null;
+    }
+
+    /**
+     * TODO 
+     * */
+    @Override
+    public ClientResponse unregisterWebhookJson(@PathParam("orcid") String orcid, @PathParam("webhook_uri") String webhook_uri) {
         return null;
     }
 }

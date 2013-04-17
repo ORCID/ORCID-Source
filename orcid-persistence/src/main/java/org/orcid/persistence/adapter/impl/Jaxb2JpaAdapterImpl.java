@@ -494,7 +494,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             Set<ExternalIdentifierEntity> externalIdentifierEntities = null;
 
             if (existingExternalIdentifiers == null) {
-                externalIdentifierEntities = new HashSet<ExternalIdentifierEntity>();
+                externalIdentifierEntities = new TreeSet<ExternalIdentifierEntity>();
             } else {
                 // To allow for orphan deletion
                 existingExternalIdentifiers.clear();
