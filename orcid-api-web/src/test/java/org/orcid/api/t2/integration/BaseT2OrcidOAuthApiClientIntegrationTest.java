@@ -33,6 +33,7 @@ import org.orcid.api.t2.T2OAuthAPIService;
 import org.orcid.jaxb.model.clientgroup.OrcidClient;
 import org.orcid.jaxb.model.clientgroup.OrcidClientGroup;
 import org.orcid.jaxb.model.message.OrcidMessage;
+import org.orcid.jaxb.model.message.ScopePathType;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.ContextConfiguration;
 
@@ -48,7 +49,6 @@ public abstract class BaseT2OrcidOAuthApiClientIntegrationTest {
     protected String groupOrcid;
     protected String orcid;
     protected String accessToken;
-    protected String scopes = "/orcid-profile/create";
     protected String grantType = "client_credentials";
 
     @Resource
@@ -64,6 +64,10 @@ public abstract class BaseT2OrcidOAuthApiClientIntegrationTest {
     protected URI t2BaseUrl;
 
     protected void createAccessTokenFromCredentials() throws Exception {
+        createAccessTokenFromCredentials(ScopePathType.ORCID_PROFILE_CREATE.value());
+    }
+
+    protected void createAccessTokenFromCredentials(String scopes) throws Exception {
         MultivaluedMap<String, String> params = new MultivaluedMapImpl();
         params.add("client_id", clientId);
         params.add("client_secret", clientSecret);

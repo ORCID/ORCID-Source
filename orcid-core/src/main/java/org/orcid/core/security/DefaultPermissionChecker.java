@@ -222,11 +222,7 @@ public class DefaultPermissionChecker implements PermissionChecker {
             return;
         } else if (OAuth2Authentication.class.isAssignableFrom(authentication.getClass())) {
             OAuth2Authentication oAuth2Authentication = (OAuth2Authentication) authentication;
-            // Assume that this is write operation if the OrcidMessage is not
-            // null
-            if (orcidMessage != null) {
-                checkScopes(oAuth2Authentication, requiredScope);
-            }
+            checkScopes(oAuth2Authentication, requiredScope);
             performSecurityChecks(oAuth2Authentication, requiredScope, orcidMessage, orcid);
         } else {
             throw new AccessControlException("Cannot access method with authentication type " + authentication != null ? authentication.toString() : ", as it's null!");

@@ -16,10 +16,17 @@
  */
 package org.orcid.api.t2;
 
-import static org.orcid.api.common.OrcidApiConstants.*;
+import static org.orcid.api.common.OrcidApiConstants.BIO_PATH;
+import static org.orcid.api.common.OrcidApiConstants.EXTERNAL_IDENTIFIER_PATH;
+import static org.orcid.api.common.OrcidApiConstants.ORCID_JSON;
+import static org.orcid.api.common.OrcidApiConstants.ORCID_XML;
+import static org.orcid.api.common.OrcidApiConstants.PROFILE_POST_PATH;
+import static org.orcid.api.common.OrcidApiConstants.VND_ORCID_JSON;
+import static org.orcid.api.common.OrcidApiConstants.VND_ORCID_XML;
+import static org.orcid.api.common.OrcidApiConstants.WEBHOOKS_PATH;
+import static org.orcid.api.common.OrcidApiConstants.WORKS_PATH;
 
 import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -29,7 +36,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 
 import org.orcid.api.common.OrcidApiConstants;
-import org.orcid.api.t2.T2OrcidApiService;
 import org.orcid.jaxb.model.message.OrcidMessage;
 
 import com.sun.jersey.api.client.ClientResponse;
@@ -183,11 +189,31 @@ public interface T2OAuthAPIService<T> extends OAuthOrcidApiService<T> {
     T addExternalIdentifiersJson(@PathParam("orcid") String orcid, OrcidMessage orcidMessage, String token);
 
     /**
-     * GETs the XML representation of the ORCID record containing all details
+     * PUT a webhook callback url to an ORCID record
      * 
      * @param orcid
      *            the ORCID that corresponds to the user's record
-     * @return the XML representation of the ORCID record
+     * @param the
+     *            url encoded webhook url
+     * @return the response code
      */
+    @PUT
+    @Consumes(value = { MediaType.WILDCARD })
+    @Path(WEBHOOKS_PATH)
+    T registerWebhook(@PathParam("orcid") String orcid, @PathParam("webhook_uri") String webhookUri, String token);
+
+    /**
+     * DELETE a webhook callback url to an ORCID record
+     * 
+     * @param orcid
+     *            the ORCID that corresponds to the user's record
+     * @param the
+     *            url encoded webhook url
+     * @return the response code
+     */
+    @PUT
+    @Consumes(value = { MediaType.WILDCARD })
+    @Path(WEBHOOKS_PATH)
+    T unregisterWebhook(String orcid, String webhookUri, String token);
 
 }

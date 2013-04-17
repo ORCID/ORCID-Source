@@ -57,7 +57,7 @@ public class OrcidClientCredentialsChecker {
             Set<String> validScope = clientDetails.getScope();
             if (scopes.isEmpty()) {
                 throw new InvalidScopeException("Invalid scope (none)", validScope);
-            } else if (!validScope.contains(ScopePathType.ORCID_PROFILE_CREATE.value()) && !(scopes.contains(ScopePathType.READ_PUBLIC.value()) && scopes.size() == 1)) {
+            } else if (!containsAny(validScope, ScopePathType.ORCID_PROFILE_CREATE, ScopePathType.WEBHOOK) && !scopes.contains(ScopePathType.READ_PUBLIC.value()) && scopes.size() == 1) {
                 throw new InvalidScopeException("Invalid scope" + (scopes != null && scopes.size() > 1 ? "s: " : ": " + "") + OAuth2Utils.formatParameterList(scopes),
                         validScope);
             }
@@ -75,6 +75,15 @@ public class OrcidClientCredentialsChecker {
             }
         }
 
+    }
+
+    private boolean containsAny(Set<String> scopes, ScopePathType... scopePathTypes) {
+        for (ScopePathType scopePathType : scopePathTypes) {
+            if (scopes.contains(scopePathType.value())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private void validateGrantType(String grantType, ClientDetails clientDetails) {

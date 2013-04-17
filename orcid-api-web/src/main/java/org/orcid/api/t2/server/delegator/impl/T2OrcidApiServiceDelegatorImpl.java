@@ -323,7 +323,7 @@ public class T2OrcidApiServiceDelegatorImpl implements T2OrcidApiServiceDelegato
                     ExternalIdOrcid eio = new ExternalIdOrcid(clientId);
                     ei.setExternalIdOrcid(eio);
                 } else {
-                    //Check if the provided external orcid exists
+                    // Check if the provided external orcid exists
                     ExternalIdOrcid eio = ei.getExternalIdOrcid();
 
                     if (StringUtils.isBlank(eio.getValue()) || !profileEntityManager.orcidExists(eio.getValue())) {
@@ -446,6 +446,7 @@ public class T2OrcidApiServiceDelegatorImpl implements T2OrcidApiServiceDelegato
      * @return If successful, returns a 2xx.
      * */
     @Override
+    @AccessControl(requiredScope = ScopePathType.WEBHOOK)
     public Response registerWebhook(UriInfo uriInfo, String orcid, String webhookUri) {
         @SuppressWarnings("unused")
         URI validatedWebhookUri = null;
@@ -498,6 +499,7 @@ public class T2OrcidApiServiceDelegatorImpl implements T2OrcidApiServiceDelegato
      * @return If successful, returns a 204 No content.
      * */
     @Override
+    @AccessControl(requiredScope = ScopePathType.WEBHOOK)
     public Response unregisterWebhook(String orcid, String webhookUri) {
         ProfileEntity profile = profileDao.find(orcid);
         if (profile != null) {
@@ -512,13 +514,14 @@ public class T2OrcidApiServiceDelegatorImpl implements T2OrcidApiServiceDelegato
                     AuthorizationRequest authorizationRequest = ((OAuth2Authentication) authentication).getAuthorizationRequest();
                     clientId = authorizationRequest.getClientId();
                 }
-                //Check if user can unregister this webhook
+                // Check if user can unregister this webhook
                 if (webhook.getClientDetails().getId().equals(clientId)) {
                     webhookDao.remove(webhookPk);
                     webhookDao.flush();
                     return Response.noContent().build();
                 } else {
-                    //Throw 403 exception: user is not allowed to unregister that webhook
+                    // Throw 403 exception: user is not allowed to unregister
+                    // that webhook
                     throw new OrcidForbiddenException("Unable to unregister webhook: Only the client that register the webhook can unregister it.");
                 }
             }

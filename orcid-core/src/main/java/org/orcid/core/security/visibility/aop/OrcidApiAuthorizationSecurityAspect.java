@@ -49,6 +49,11 @@ public class OrcidApiAuthorizationSecurityAspect {
     @Resource(name = "defaultPermissionChecker")
     private PermissionChecker permissionChecker;
 
+    @Before("@annotation(accessControl) && (args(uriInfo , orcid, *))")
+    public void checkPermissionsWithOrcid(AccessControl accessControl, UriInfo uriInfo, String orcid) {
+        permissionChecker.checkPermissions(getAuthentication(), accessControl.requiredScope(), orcid, null);
+    }
+
     @Before("@annotation(accessControl) && (args(uriInfo ,orcid, orcidMessage))")
     public void checkPermissionsWithAll(AccessControl accessControl, UriInfo uriInfo, String orcid, OrcidMessage orcidMessage) {
         permissionChecker.checkPermissions(getAuthentication(), accessControl.requiredScope(), orcid, orcidMessage);

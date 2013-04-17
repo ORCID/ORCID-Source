@@ -40,7 +40,9 @@ import javax.xml.bind.annotation.XmlType;
  * &lt;simpleType name="client-type">
  *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
  *     &lt;enumeration value="creator"/>
+ *     &lt;enumeration value="premium-creator"/>
  *     &lt;enumeration value="updater"/>
+ *     &lt;enumeration value="premium-updater"/>
  *   &lt;/restriction>
  * &lt;/simpleType>
  * </pre>
@@ -50,9 +52,13 @@ import javax.xml.bind.annotation.XmlType;
 @XmlEnum
 public enum ClientType {
 
-    @XmlEnumValue("creator")
-    CREATOR("creator"), @XmlEnumValue("updater")
-    UPDATER("updater");
+    //@formatter:off
+    @XmlEnumValue("creator") CREATOR("creator"),
+    @XmlEnumValue("premium-creator") PREMIUM_CREATOR("premium-creator"),
+    @XmlEnumValue("updater") UPDATER("updater"),
+    @XmlEnumValue("premium-updater") PREMIUM_UPDATER("premium-updater");
+    //@formatter:on
+
     private final String value;
 
     ClientType(String v) {

@@ -80,5 +80,9 @@
             <column name="last_sent" type="TIMESTAMP WITH TIME ZONE"/>
         </addColumn>
     </changeSet>
+    
+    <changeSet id="ADD-WEBHOOK-SCOPE-TO-ALL-CLIENTS" author="Will Simpson">
+        <sql>INSERT INTO client_scope SELECT client_details_id, '/webhook', now(), now() FROM client_details;</sql>
+    </changeSet>
 
 </databaseChangeLog>
