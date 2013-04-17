@@ -39,4 +39,6 @@
     <cache name="recent-orcid" maxElementsInMemory="20000" timeToLiveSeconds="60" overflowToDisk="false" copyOnRead="false"
            copyOnWrite="false" eternal="false"/>
 
+	<cache name="statistics" maxElementsInMemory="100" timeToLiveSeconds="600" overflowToDisk="false" copyOnRead="false"
+           copyOnWrite="false" eternal="false"/>
 </ehcache>
