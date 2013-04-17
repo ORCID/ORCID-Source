@@ -230,6 +230,12 @@ public class T2OrcidApiServiceDelegatorTest extends DBUnitTest {
     }
 
     private void setUpSecurityContextForClientOnly(String clientId) {
+        Set<String> scopes = new HashSet<String>();
+        scopes.add(ScopePathType.ORCID_PROFILE_CREATE.value());
+        setUpSecurityContextForClientOnly(clientId, scopes);
+    }
+
+    private void setUpSecurityContextForClientOnly(String clientId, Set<String> scopes) {
         SecurityContextImpl securityContext = new SecurityContextImpl();
         OrcidOAuth2Authentication mockedAuthentication = mock(OrcidOAuth2Authentication.class);
         securityContext.setAuthentication(mockedAuthentication);
@@ -238,15 +244,15 @@ public class T2OrcidApiServiceDelegatorTest extends DBUnitTest {
         when(mockedAuthentication.isClientOnly()).thenReturn(true);
         AuthorizationRequest authorizationRequest = mock(AuthorizationRequest.class);
         when(authorizationRequest.getClientId()).thenReturn(clientId);
-        Set<String> scopes = new HashSet<String>();
-        scopes.add(ScopePathType.ORCID_PROFILE_CREATE.value());
         when(authorizationRequest.getScope()).thenReturn(scopes);
         when(mockedAuthentication.getAuthorizationRequest()).thenReturn(authorizationRequest);
     }
 
     @Test
     public void testRegisterAndUnregisterWebhook() {
-        setUpSecurityContextForClientOnly();
+        Set<String> scopes = new HashSet<String>();
+        scopes.add(ScopePathType.WEBHOOK.value());
+        setUpSecurityContextForClientOnly("4444-4444-4444-4445", scopes);
         Response response = t2OrcidApiServiceDelegator.registerWebhook(mockedUriInfo, "4444-4444-4444-4447", "www.webhook.com");
         assertNotNull(response);
         assertEquals(HttpStatus.SC_CREATED, response.getStatus());

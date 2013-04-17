@@ -120,7 +120,7 @@ http://www.springsource.org/downloads/sts-ggts
 * In VM Arguments add the following (changing the /Users/rcpeters/git/ORCID-Source path to your repo checkout)
 
     ```
-    -Dsolr.solr.home=/Users/rcpeters/git/ORCID-Source/orcid-solr-web/src/main/webapp/solr -Dorg.orcid.config.file=classpath:staging-persistence.properties
+    -Dsolr.solr.home=/Users/rcpeters/git/ORCID-Source/orcid-solr-web/src/main/webapp/solr -Dorg.orcid.config.file=classpath:staging-persistence.properties -Dorg.apache.tomcat.util.buf.UDecoder.ALLOW_ENCODED_SLASH=true
     ```
 
 * Click Ok

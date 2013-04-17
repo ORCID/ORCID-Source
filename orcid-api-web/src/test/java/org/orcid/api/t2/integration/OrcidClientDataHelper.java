@@ -69,7 +69,7 @@ public class OrcidClientDataHelper implements InitializingBean {
         init();
     }
 
-    @SuppressWarnings( { "unchecked" })
+    @SuppressWarnings({ "unchecked" })
     protected <T> T getTargetObject(Object proxy, Class<T> targetClass) throws Exception {
         return TargetProxyHelper.getTargetObject(proxy, targetClass);
     }
@@ -85,8 +85,8 @@ public class OrcidClientDataHelper implements InitializingBean {
 
     protected OrcidMessage createFromXML(String xmlLoc) throws JAXBException {
         OrcidMessage emptyOrcid = (OrcidMessage) unmarshaller.unmarshal(OrcidClientDataHelper.class.getResourceAsStream(xmlLoc));
-        emptyOrcid.getOrcidProfile().getOrcidBio().getContactDetails().addOrReplacePrimaryEmail(
-                new Email("orcid.integration.test+" + System.currentTimeMillis() + "@semantico.com"));
+        emptyOrcid.getOrcidProfile().getOrcidBio().getContactDetails()
+                .addOrReplacePrimaryEmail(new Email("orcid.integration.test+" + System.currentTimeMillis() + "@semantico.com"));
         return emptyOrcid;
     }
 
@@ -112,7 +112,7 @@ public class OrcidClientDataHelper implements InitializingBean {
     protected OrcidClientGroup createAndPersistClientGroupSingle() {
         OrcidClientGroup unmarshalledGroup = getOrcidClientGroup();
         unmarshalledGroup.setEmail("orcid.integration.test.client+" + System.currentTimeMillis() + "@semantico.com");
-        OrcidClientGroup createdGroup = orcidClientGroupManager.createOrUpdateOrcidClientGroup(unmarshalledGroup, ClientType.CREATOR);
+        OrcidClientGroup createdGroup = orcidClientGroupManager.createOrUpdateOrcidClientGroup(unmarshalledGroup, ClientType.PREMIUM_CREATOR);
         return createdGroup;
     }
 

@@ -2,7 +2,10 @@
 
 ## Getting Credentials
 Send a request to support@orcid.org for credentials that are destined for either the dev sandbox or the production environment.
-For working with a local deployment see: see [OAUTH_DEV.md](OAUTH_DEV.md)
+
+For working with a local deployment see [OAUTH_DEV.md](OAUTH_DEV.md).
+
+For working with webhooks see [WEBHOOKS.md](WEBHOOKS.md)
 
 ## Generate an Access Token
 The following sequence of requests emulates a user interacting with the sandbox front end and authorizing a client application. Change the client credentials and callback URL to match your own client application.
