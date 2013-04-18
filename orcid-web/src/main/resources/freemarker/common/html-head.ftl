@@ -22,7 +22,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <link rel="stylesheet" href="${staticCdn}/ORCID-Fonts-Dot-Com/style.css?v=${ver}"/>
+    <link rel="stylesheet" href="${staticLoc}/ORCID-Fonts-Dot-Com/style.css?v=${ver}"/>
     
 	<#if (RequestParameters['lemur'])??>
 	
