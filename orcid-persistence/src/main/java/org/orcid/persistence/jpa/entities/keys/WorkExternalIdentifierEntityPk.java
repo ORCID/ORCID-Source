@@ -23,16 +23,25 @@ import java.io.Serializable;
 
 /**
  * 2011-2012 - ORCID.
- *
- * @author Declan Newman (declan)
- *         Date: 07/08/2012
+ * 
+ * @author Declan Newman (declan) Date: 07/08/2012
  */
 @Embeddable
 public class WorkExternalIdentifierEntityPk implements Serializable {
 
+    private static final long serialVersionUID = 1L;
     private String identifier;
     private WorkExternalIdentifierType identifierType;
     private Long work;
+
+    public WorkExternalIdentifierEntityPk() {
+    }
+
+    public WorkExternalIdentifierEntityPk(String identifier, WorkExternalIdentifierType identifierType, Long work) {
+        this.identifier = identifier;
+        this.identifierType = identifierType;
+        this.work = work;
+    }
 
     public String getIdentifier() {
         return identifier;

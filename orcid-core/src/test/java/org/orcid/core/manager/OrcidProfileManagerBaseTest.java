@@ -32,6 +32,9 @@ import org.orcid.jaxb.model.message.Affiliation;
 import org.orcid.jaxb.model.message.AffiliationType;
 import org.orcid.jaxb.model.message.Biography;
 import org.orcid.jaxb.model.message.ContactDetails;
+import org.orcid.jaxb.model.message.Contributor;
+import org.orcid.jaxb.model.message.ContributorAttributes;
+import org.orcid.jaxb.model.message.ContributorRole;
 import org.orcid.jaxb.model.message.Country;
 import org.orcid.jaxb.model.message.CreditName;
 import org.orcid.jaxb.model.message.Email;
@@ -51,10 +54,12 @@ import org.orcid.jaxb.model.message.ResearcherUrl;
 import org.orcid.jaxb.model.message.ResearcherUrls;
 import org.orcid.jaxb.model.message.SecurityDetails;
 import org.orcid.jaxb.model.message.SecurityQuestionId;
+import org.orcid.jaxb.model.message.SequenceType;
 import org.orcid.jaxb.model.message.StartDate;
 import org.orcid.jaxb.model.message.Subtitle;
 import org.orcid.jaxb.model.message.Title;
 import org.orcid.jaxb.model.message.Url;
+import org.orcid.jaxb.model.message.WorkContributors;
 import org.orcid.jaxb.model.message.WorkExternalIdentifier;
 import org.orcid.jaxb.model.message.WorkExternalIdentifierId;
 import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
@@ -197,15 +202,15 @@ public class OrcidProfileManagerBaseTest extends BaseTest {
     }
 
     protected OrcidWork createWork1(WorkTitle workTitle) {
-        return createWork(workTitle, createWork1Identifiers());
+        return createWork(workTitle, createWork1Identifiers(), createWork1Contributors());
     }
 
     protected OrcidWork createWork2(WorkTitle workTitle) {
-        return createWork(workTitle, createWork2Identifiers());
+        return createWork(workTitle, createWork2Identifiers(), null);
     }
 
     protected OrcidWork createWork3(WorkTitle workTitle) {
-        return createWork(workTitle, createWork3Identifiers());
+        return createWork(workTitle, createWork3Identifiers(), null);
     }
 
     protected WorkExternalIdentifiers createWork1Identifiers() {
@@ -247,10 +252,30 @@ public class OrcidProfileManagerBaseTest extends BaseTest {
         return work3ExternalIdentifiers;
     }
 
-    protected OrcidWork createWork(WorkTitle title, WorkExternalIdentifiers workExternalIdentifiers) {
+    private WorkContributors createWork1Contributors() {
+        WorkContributors workContributors = new WorkContributors();
+        Contributor workContributor1 = new Contributor();
+        workContributors.getContributor().add(workContributor1);
+        workContributor1.setCreditName(new CreditName("Will Simpson"));
+        ContributorAttributes contributorAttributes1 = new ContributorAttributes();
+        workContributor1.setContributorAttributes(contributorAttributes1);
+        contributorAttributes1.setContributorRole(ContributorRole.AUTHOR);
+        contributorAttributes1.setContributorSequence(SequenceType.FIRST);
+        Contributor workContributor2 = new Contributor();
+        workContributors.getContributor().add(workContributor2);
+        workContributor2.setCreditName(new CreditName("Josiah Wedgewood"));
+        ContributorAttributes contributorAttributes2 = new ContributorAttributes();
+        workContributor2.setContributorAttributes(contributorAttributes2);
+        contributorAttributes2.setContributorRole(ContributorRole.AUTHOR);
+        contributorAttributes2.setContributorSequence(SequenceType.ADDITIONAL);
+        return workContributors;
+    }
+
+    protected OrcidWork createWork(WorkTitle title, WorkExternalIdentifiers workExternalIdentifiers, WorkContributors workContributors) {
         OrcidWork orcidWork = new OrcidWork();
         orcidWork.setWorkTitle(title);
         orcidWork.setWorkExternalIdentifiers(workExternalIdentifiers);
+        orcidWork.setWorkContributors(workContributors);
         return orcidWork;
     }
 

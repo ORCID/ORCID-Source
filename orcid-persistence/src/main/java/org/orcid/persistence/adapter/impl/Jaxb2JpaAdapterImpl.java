@@ -16,25 +16,121 @@
  */
 package org.orcid.persistence.adapter.impl;
 
-import org.apache.commons.lang.StringUtils;
-import org.codehaus.jackson.map.ObjectMapper.DefaultTyping;
-import org.orcid.jaxb.model.message.*;
-import org.orcid.persistence.adapter.Jaxb2JpaAdapter;
-import org.orcid.persistence.dao.GenericDao;
-import org.orcid.persistence.jpa.entities.*;
-import org.orcid.utils.DateUtils;
-import org.orcid.utils.OrcidStringUtils;
-import org.springframework.util.Assert;
-
-import javax.annotation.Resource;
-import javax.xml.datatype.XMLGregorianCalendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
+
+import javax.annotation.Resource;
+import javax.xml.datatype.XMLGregorianCalendar;
+
+import org.apache.commons.lang.StringUtils;
+import org.orcid.jaxb.model.message.Address;
+import org.orcid.jaxb.model.message.Affiliation;
+import org.orcid.jaxb.model.message.AgencyName;
+import org.orcid.jaxb.model.message.AgencyOrcid;
+import org.orcid.jaxb.model.message.ApprovalDate;
+import org.orcid.jaxb.model.message.Biography;
+import org.orcid.jaxb.model.message.Citation;
+import org.orcid.jaxb.model.message.CompletionDate;
+import org.orcid.jaxb.model.message.ContactDetails;
+import org.orcid.jaxb.model.message.Contributor;
+import org.orcid.jaxb.model.message.ContributorAttributes;
+import org.orcid.jaxb.model.message.ContributorRole;
+import org.orcid.jaxb.model.message.Country;
+import org.orcid.jaxb.model.message.CreationMethod;
+import org.orcid.jaxb.model.message.CreditName;
+import org.orcid.jaxb.model.message.DeactivationDate;
+import org.orcid.jaxb.model.message.DelegateSummary;
+import org.orcid.jaxb.model.message.Delegation;
+import org.orcid.jaxb.model.message.DelegationDetails;
+import org.orcid.jaxb.model.message.Email;
+import org.orcid.jaxb.model.message.EndDate;
+import org.orcid.jaxb.model.message.ExternalIdCommonName;
+import org.orcid.jaxb.model.message.ExternalIdOrcid;
+import org.orcid.jaxb.model.message.ExternalIdReference;
+import org.orcid.jaxb.model.message.ExternalIdUrl;
+import org.orcid.jaxb.model.message.ExternalIdentifier;
+import org.orcid.jaxb.model.message.ExternalIdentifiers;
+import org.orcid.jaxb.model.message.FamilyName;
+import org.orcid.jaxb.model.message.FundingAgency;
+import org.orcid.jaxb.model.message.GivenNames;
+import org.orcid.jaxb.model.message.GivenPermissionBy;
+import org.orcid.jaxb.model.message.GivenPermissionTo;
+import org.orcid.jaxb.model.message.GrantExternalIdentifier;
+import org.orcid.jaxb.model.message.GrantSources;
+import org.orcid.jaxb.model.message.Keyword;
+import org.orcid.jaxb.model.message.Keywords;
+import org.orcid.jaxb.model.message.OrcidActivities;
+import org.orcid.jaxb.model.message.OrcidBio;
+import org.orcid.jaxb.model.message.OrcidGrant;
+import org.orcid.jaxb.model.message.OrcidGrants;
+import org.orcid.jaxb.model.message.OrcidHistory;
+import org.orcid.jaxb.model.message.OrcidInternal;
+import org.orcid.jaxb.model.message.OrcidPatent;
+import org.orcid.jaxb.model.message.OrcidPatents;
+import org.orcid.jaxb.model.message.OrcidProfile;
+import org.orcid.jaxb.model.message.OrcidWork;
+import org.orcid.jaxb.model.message.OrcidWorks;
+import org.orcid.jaxb.model.message.OtherName;
+import org.orcid.jaxb.model.message.OtherNames;
+import org.orcid.jaxb.model.message.PatentContributors;
+import org.orcid.jaxb.model.message.PatentSources;
+import org.orcid.jaxb.model.message.PersonalDetails;
+import org.orcid.jaxb.model.message.Preferences;
+import org.orcid.jaxb.model.message.PublicationDate;
+import org.orcid.jaxb.model.message.ResearcherUrl;
+import org.orcid.jaxb.model.message.ResearcherUrls;
+import org.orcid.jaxb.model.message.SecurityDetails;
+import org.orcid.jaxb.model.message.SequenceType;
+import org.orcid.jaxb.model.message.Source;
+import org.orcid.jaxb.model.message.StartDate;
+import org.orcid.jaxb.model.message.SubmissionDate;
+import org.orcid.jaxb.model.message.Visibility;
+import org.orcid.jaxb.model.message.WorkContributors;
+import org.orcid.jaxb.model.message.WorkExternalIdentifier;
+import org.orcid.jaxb.model.message.WorkExternalIdentifiers;
+import org.orcid.jaxb.model.message.WorkSources;
+import org.orcid.jaxb.model.message.WorkTitle;
+import org.orcid.jaxb.model.message.WorkType;
+import org.orcid.persistence.adapter.Jaxb2JpaAdapter;
+import org.orcid.persistence.dao.GenericDao;
+import org.orcid.persistence.jpa.entities.AddressEntity;
+import org.orcid.persistence.jpa.entities.AffiliationEntity;
+import org.orcid.persistence.jpa.entities.EmailEntity;
+import org.orcid.persistence.jpa.entities.ExternalIdentifierEntity;
+import org.orcid.persistence.jpa.entities.FuzzyDate;
+import org.orcid.persistence.jpa.entities.GivenPermissionByEntity;
+import org.orcid.persistence.jpa.entities.GivenPermissionToEntity;
+import org.orcid.persistence.jpa.entities.GrantContributorEntity;
+import org.orcid.persistence.jpa.entities.GrantEntity;
+import org.orcid.persistence.jpa.entities.GrantSourceEntity;
+import org.orcid.persistence.jpa.entities.InstitutionEntity;
+import org.orcid.persistence.jpa.entities.OtherNameEntity;
+import org.orcid.persistence.jpa.entities.PatentContributorEntity;
+import org.orcid.persistence.jpa.entities.PatentEntity;
+import org.orcid.persistence.jpa.entities.PatentSourceEntity;
+import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.orcid.persistence.jpa.entities.ProfileGrantEntity;
+import org.orcid.persistence.jpa.entities.ProfileKeywordEntity;
+import org.orcid.persistence.jpa.entities.ProfilePatentEntity;
+import org.orcid.persistence.jpa.entities.ProfileSummaryEntity;
+import org.orcid.persistence.jpa.entities.ProfileWorkEntity;
+import org.orcid.persistence.jpa.entities.ResearcherUrlEntity;
+import org.orcid.persistence.jpa.entities.SecurityQuestionEntity;
+import org.orcid.persistence.jpa.entities.WorkContributorEntity;
+import org.orcid.persistence.jpa.entities.WorkEntity;
+import org.orcid.persistence.jpa.entities.WorkExternalIdentifierEntity;
+import org.orcid.persistence.jpa.entities.WorkSourceEntity;
+import org.orcid.persistence.jpa.entities.keys.WorkExternalIdentifierEntityPk;
+import org.orcid.utils.DateUtils;
+import org.orcid.utils.OrcidStringUtils;
+import org.springframework.util.Assert;
 
 /**
  * orcid-persistence - Dec 7, 2011 - Jaxb2JpaAdapterImpl
@@ -69,32 +165,66 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
     }
 
     private void setActivityDetails(ProfileEntity profileEntity, OrcidActivities orcidActivities) {
+        OrcidPatents orcidPatents = null;
+        OrcidGrants orcidGrants = null;
+        OrcidWorks orcidWorks = null;
         if (orcidActivities != null) {
-            setPatents(profileEntity, orcidActivities.getOrcidPatents());
-            setGrants(profileEntity, orcidActivities.getOrcidGrants());
-            setWorks(profileEntity, orcidActivities.getOrcidWorks());
+            orcidPatents = orcidActivities.getOrcidPatents();
+            orcidGrants = orcidActivities.getOrcidGrants();
+            orcidWorks = orcidActivities.getOrcidWorks();
         }
+        setPatents(profileEntity, orcidPatents);
+        setGrants(profileEntity, orcidGrants);
+        setWorks(profileEntity, orcidWorks);
     }
 
     private void setWorks(ProfileEntity profileEntity, OrcidWorks orcidWorks) {
+        SortedSet<ProfileWorkEntity> existingProfileWorkEntities = profileEntity.getProfileWorks();
+        Map<String, ProfileWorkEntity> existingProfileWorkEntitiesMap = createProfileWorkEntitiesMap(existingProfileWorkEntities);
+        SortedSet<ProfileWorkEntity> profileWorkEntities = null;
+        if (existingProfileWorkEntities == null) {
+            profileWorkEntities = new TreeSet<ProfileWorkEntity>();
+        } else {
+            // To allow for orphan deletion
+            existingProfileWorkEntities.clear();
+            profileWorkEntities = existingProfileWorkEntities;
+        }
         if (orcidWorks != null && orcidWorks.getOrcidWork() != null && !orcidWorks.getOrcidWork().isEmpty()) {
             List<OrcidWork> orcidWorkList = orcidWorks.getOrcidWork();
-            SortedSet<ProfileWorkEntity> profileWorkEntities = new TreeSet<ProfileWorkEntity>();
             for (OrcidWork orcidWork : orcidWorkList) {
-                ProfileWorkEntity profileWorkEntity = getProfileWorkEntity(orcidWork);
+                ProfileWorkEntity profileWorkEntity = getProfileWorkEntity(orcidWork, existingProfileWorkEntitiesMap.get(orcidWork.getPutCode()));
                 if (profileWorkEntity != null) {
                     profileWorkEntity.setProfile(profileEntity);
                     profileWorkEntities.add(profileWorkEntity);
                 }
             }
-            profileEntity.setProfileWorks(profileWorkEntities);
         }
+        profileEntity.setProfileWorks(profileWorkEntities);
     }
 
-    private ProfileWorkEntity getProfileWorkEntity(OrcidWork orcidWork) {
+    private Map<String, ProfileWorkEntity> createProfileWorkEntitiesMap(SortedSet<ProfileWorkEntity> profileWorkEntities) {
+        Map<String, ProfileWorkEntity> map = new HashMap<>();
+        if (profileWorkEntities != null) {
+            for (ProfileWorkEntity profileWorkEntity : profileWorkEntities) {
+                map.put(String.valueOf(profileWorkEntity.getWork().getId()), profileWorkEntity);
+            }
+        }
+        return map;
+    }
+
+    private ProfileWorkEntity getProfileWorkEntity(OrcidWork orcidWork, ProfileWorkEntity existingProfileWorkEntity) {
         if (orcidWork != null) {
-            ProfileWorkEntity profileWorkEntity = new ProfileWorkEntity();
-            profileWorkEntity.setWork(getWorkEntity(orcidWork));
+            ProfileWorkEntity profileWorkEntity = null;
+            WorkEntity workEntity = null;
+            if (existingProfileWorkEntity == null) {
+                profileWorkEntity = new ProfileWorkEntity();
+                workEntity = new WorkEntity();
+            } else {
+                profileWorkEntity = existingProfileWorkEntity;
+                workEntity = existingProfileWorkEntity.getWork();
+                workEntity.clean();
+            }
+            profileWorkEntity.setWork(getWorkEntity(orcidWork, workEntity));
             profileWorkEntity.setVisibility(orcidWork.getVisibility() == null ? Visibility.PRIVATE : orcidWork.getVisibility());
             profileWorkEntity.setSources(getWorkSources(orcidWork.getWorkSources()));
             return profileWorkEntity;
@@ -117,9 +247,8 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
         return null;
     }
 
-    private WorkEntity getWorkEntity(OrcidWork orcidWork) {
+    private WorkEntity getWorkEntity(OrcidWork orcidWork, WorkEntity workEntity) {
         if (orcidWork != null) {
-            WorkEntity workEntity = new WorkEntity();
             Citation workCitation = orcidWork.getWorkCitation();
             if (workCitation != null && StringUtils.isNotBlank(workCitation.getCitation()) && workCitation.getWorkCitationType() != null) {
                 workEntity.setCitation(workCitation.getCitation());
@@ -127,7 +256,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             }
             workEntity.setContributors(getWorkContributors(workEntity, orcidWork.getWorkContributors()));
             workEntity.setDescription(orcidWork.getShortDescription() != null ? orcidWork.getShortDescription() : null);
-            workEntity.setExternalIdentifiers(getWorkExternalIdentififiers(workEntity, orcidWork.getWorkExternalIdentifiers()));
+            workEntity.setExternalIdentifiers(getWorkExternalIdentifiers(workEntity, orcidWork.getWorkExternalIdentifiers()));
             workEntity.setPublicationDate(getWorkPublicationDate(orcidWork));
             WorkTitle workTitle = orcidWork.getWorkTitle();
             if (workTitle != null) {
@@ -142,22 +271,58 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
         return null;
     }
 
-    private SortedSet<WorkExternalIdentifierEntity> getWorkExternalIdentififiers(WorkEntity workEntity, WorkExternalIdentifiers workExternalIdentifiers) {
+    private SortedSet<WorkExternalIdentifierEntity> getWorkExternalIdentifiers(WorkEntity workEntity, WorkExternalIdentifiers workExternalIdentifiers) {
+        SortedSet<WorkExternalIdentifierEntity> existingWorkExternalIdentifierEntities = workEntity.getExternalIdentifiers();
+        Map<WorkExternalIdentifierEntityPk, WorkExternalIdentifierEntity> existingWorkExternalIdentifierEntitiesMap = createWorkExternalIdentifierEntitiesMap(existingWorkExternalIdentifierEntities);
+        SortedSet<WorkExternalIdentifierEntity> workExternalIdentifierEntities = null;
+        if (existingWorkExternalIdentifierEntities == null) {
+            workExternalIdentifierEntities = new TreeSet<WorkExternalIdentifierEntity>();
+        } else {
+            // To allow for orphan deletion
+            existingWorkExternalIdentifierEntities.clear();
+            workExternalIdentifierEntities = existingWorkExternalIdentifierEntities;
+        }
         if (workExternalIdentifiers != null && workExternalIdentifiers.getWorkExternalIdentifier() != null
                 && !workExternalIdentifiers.getWorkExternalIdentifier().isEmpty()) {
             List<WorkExternalIdentifier> workExternalIdentifierList = workExternalIdentifiers.getWorkExternalIdentifier();
-            SortedSet<WorkExternalIdentifierEntity> workExternalIdentifierEntities = new TreeSet<WorkExternalIdentifierEntity>();
             for (WorkExternalIdentifier workExternalIdentifier : workExternalIdentifierList) {
-                WorkExternalIdentifierEntity workExternalIdentifierEntity = new WorkExternalIdentifierEntity();
-                workExternalIdentifierEntity.setIdentifier(workExternalIdentifier.getWorkExternalIdentifierId() != null ? workExternalIdentifier
-                        .getWorkExternalIdentifierId().getContent() : null);
-                workExternalIdentifierEntity.setIdentifierType(workExternalIdentifier.getWorkExternalIdentifierType());
-                workExternalIdentifierEntity.setWork(workEntity);
+                WorkExternalIdentifierEntity existingWorkExternalIdentifierEntity = null;
+                if (workEntity.getId() != null) {
+                    existingWorkExternalIdentifierEntity = existingWorkExternalIdentifierEntitiesMap.get(new WorkExternalIdentifierEntityPk(workExternalIdentifier
+                            .getWorkExternalIdentifierId().getContent(), workExternalIdentifier.getWorkExternalIdentifierType(), workEntity.getId()));
+                }
+                WorkExternalIdentifierEntity workExternalIdentifierEntity = getWorkExternalIdentifier(workEntity, workExternalIdentifier,
+                        existingWorkExternalIdentifierEntity);
                 workExternalIdentifierEntities.add(workExternalIdentifierEntity);
             }
-            return workExternalIdentifierEntities;
         }
-        return null;
+        return workExternalIdentifierEntities;
+    }
+
+    private WorkExternalIdentifierEntity getWorkExternalIdentifier(WorkEntity workEntity, WorkExternalIdentifier workExternalIdentifier,
+            WorkExternalIdentifierEntity existingWorkExternalIdentifierEntity) {
+        WorkExternalIdentifierEntity workExternalIdentifierEntity = null;
+        if (existingWorkExternalIdentifierEntity == null) {
+            workExternalIdentifierEntity = new WorkExternalIdentifierEntity();
+        } else {
+            workExternalIdentifierEntity = existingWorkExternalIdentifierEntity;
+        }
+        workExternalIdentifierEntity.setIdentifier(workExternalIdentifier.getWorkExternalIdentifierId() != null ? workExternalIdentifier.getWorkExternalIdentifierId()
+                .getContent() : null);
+        workExternalIdentifierEntity.setIdentifierType(workExternalIdentifier.getWorkExternalIdentifierType());
+        workExternalIdentifierEntity.setWork(workEntity);
+        return workExternalIdentifierEntity;
+    }
+
+    private Map<WorkExternalIdentifierEntityPk, WorkExternalIdentifierEntity> createWorkExternalIdentifierEntitiesMap(
+            SortedSet<WorkExternalIdentifierEntity> workExternalIdentifierEntities) {
+        Map<WorkExternalIdentifierEntityPk, WorkExternalIdentifierEntity> map = new HashMap<>();
+        if (workExternalIdentifierEntities != null) {
+            for (WorkExternalIdentifierEntity workExternalIdentifierEntity : workExternalIdentifierEntities) {
+                map.put(workExternalIdentifierEntity.getId(), workExternalIdentifierEntity);
+            }
+        }
+        return map;
     }
 
     private FuzzyDate getWorkPublicationDate(OrcidWork orcidWork) {
@@ -180,8 +345,14 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
     }
 
     private SortedSet<WorkContributorEntity> getWorkContributors(WorkEntity workEntity, WorkContributors workContributors) {
+        SortedSet<WorkContributorEntity> workContributorEntities = workEntity.getContributors();
+        if (workContributorEntities == null) {
+            workContributorEntities = new TreeSet<WorkContributorEntity>();
+        } else {
+            // To allow for orphan deletion
+            workContributorEntities.clear();
+        }
         if (workContributors != null && workContributors.getContributor() != null && !workContributors.getContributor().isEmpty()) {
-            SortedSet<WorkContributorEntity> workContributorEntities = new TreeSet<WorkContributorEntity>();
             List<Contributor> contributorList = workContributors.getContributor();
             for (Contributor contributor : contributorList) {
                 WorkContributorEntity workContributorEntity = new WorkContributorEntity();
@@ -198,9 +369,8 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
                 workContributorEntity.setCreditName(contributor.getCreditName() != null ? contributor.getCreditName().getContent() : null);
                 workContributorEntities.add(workContributorEntity);
             }
-            return workContributorEntities;
         }
-        return null;
+        return workContributorEntities;
     }
 
     private void setGrants(ProfileEntity profileEntity, OrcidGrants orcidGrants) {

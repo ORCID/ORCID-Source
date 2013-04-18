@@ -61,7 +61,7 @@ public class WorkExternalIdentifierEntity extends BaseEntity<WorkExternalIdentif
     @Override
     @Transient
     public WorkExternalIdentifierEntityPk getId() {
-        return null;
+        return new WorkExternalIdentifierEntityPk(identifier, identifierType, work.getId());
     }
 
     @Id
@@ -91,7 +91,7 @@ public class WorkExternalIdentifierEntity extends BaseEntity<WorkExternalIdentif
     }
 
     @Id
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @ManyToOne(cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.DETACH }, fetch = FetchType.EAGER)
     @JoinColumn(name = "work_id")
     public WorkEntity getWork() {
         return work;

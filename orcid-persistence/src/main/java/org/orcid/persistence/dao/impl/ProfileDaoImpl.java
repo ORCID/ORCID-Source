@@ -226,7 +226,6 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
         String orcid = profileEntity.getId();
         removeChildren(orcid, profileEntity.getProfileGrants());
         removeChildren(orcid, profileEntity.getProfilePatents());
-        removeChildren(orcid, profileEntity.getProfileWorks());
         removeChildren(orcid, profileEntity.getResearcherUrls(), "user.id");
         removeChildren(orcid, profileEntity.getOtherNames());
         removeChildren(orcid, profileEntity.getGivenPermissionTo(), "giver");
