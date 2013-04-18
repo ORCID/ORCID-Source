@@ -20,7 +20,7 @@
 <head>
     <meta charset="utf-8"/>
     <title>${springMacroRequestContext.getMessage("playground.titleORCIDPlayground")}</title>
-    <script src="<@spring.url '/static/javascript/jquery-1.8.1.min.js?v=1'/>?v=1"></script>
+    <script src="${staticCdn}/javascript/jquery-1.8.1.min.js?v=1"></script>
     <script>
         $(document).ready(
                 function(){

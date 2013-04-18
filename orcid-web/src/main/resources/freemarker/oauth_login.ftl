@@ -20,7 +20,7 @@
 <div class="oauth-login clearfix">
 	<div class="row">
     <aside class="logo">
-        <h1><img src="<@spring.url '/static/img/orcid-logo.png'/>" alt="ORCID logo" /></h1>
+        <h1><img src="${staticCdn}/img/orcid-logo.png" alt="ORCID logo" /></h1>
         <p>${springMacroRequestContext.getMessage("oauth_login.connectingresearch")}</p>
     </aside>
     </div>
