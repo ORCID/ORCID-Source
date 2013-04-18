@@ -84,6 +84,9 @@ public class BaseController {
 
     private String staticCdnPath;
     
+    @Value("${org.orcid.core.baseUri:http://orcid.org}")
+    private String baseUri;
+    
     @Resource
     private String cdnConfigFile;
     
@@ -358,6 +361,14 @@ public class BaseController {
     public String getLocale() {
         return localeManager.getLocale().toString();
     }
+    
+    public String getBaseUri() {
+        return baseUri;
+    }
+
+    public void setBaseUri(String baseUri) {
+        this.baseUri = baseUri;
+    }
 
     /**
      * 
@@ -378,7 +389,7 @@ public class BaseController {
     @ModelAttribute("staticLoc")
     public String getStaticContentPath(HttpServletRequest request) {
         if(StringUtils.isBlank(this.staticContentPath))
-            this.staticContentPath = OrcidWebUtils.getServerStringWithContextPath(request) + STATIC_FOLDER_PATH; 
+            this.staticContentPath = this.baseUri + STATIC_FOLDER_PATH; 
         return this.staticContentPath;
     }
 
