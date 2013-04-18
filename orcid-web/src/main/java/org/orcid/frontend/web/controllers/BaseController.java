@@ -47,6 +47,7 @@ import org.orcid.utils.OrcidWebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -393,7 +394,7 @@ public class BaseController {
             return getStaticContentPath(request);
         }
             
-        FileSystemResource configFile = new FileSystemResource(this.cdnConfigFile);    
+        ClassPathResource configFile = new ClassPathResource(this.cdnConfigFile);
         boolean reloadConfigFile = reloadCdnInformation(configFile);
         if (reloadConfigFile && configFile.exists()) {                        
             try (InputStream is = configFile.getInputStream(); BufferedReader br = new BufferedReader(new InputStreamReader(is))){
@@ -422,7 +423,7 @@ public class BaseController {
      * @param configFile the config file that contains the CDN information
      * @return true if the file has been modified since the last time we used it.
      * */
-    private boolean reloadCdnInformation(FileSystemResource configFile){        
+    private boolean reloadCdnInformation(ClassPathResource configFile){        
         try {
             if(this.cdnConfigFileLastModified != configFile.lastModified())
                 return true;            
