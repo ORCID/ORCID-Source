@@ -211,6 +211,7 @@ the software.
                         	<exclude>**/src/main/webapp/static/css/jquery-*.css</exclude>
                         	<exclude>**/src/main/webapp/solr/**/*.txt</exclude>
                         	<exclude>**/src/main/webapp/solr/**/*.xml</exclude>
+				<exclude>**/src/main/resources/cdn_url.txt</exclude>
                             <exclude>**/src/test/resources/solr/conf/**</exclude>
                             <exclude>**/src/test/resources/org/orcid/core/manager/example**</exclude>
                             <exclude>**/src/test/resources/org/orcid/frontend/web/forms/**</exclude>
