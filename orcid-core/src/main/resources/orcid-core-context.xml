@@ -146,17 +146,22 @@
 		<property name="cacheSeconds" value="${org.orcid.core.messages.cacheSeconds:5}" />
 	</bean>
 
-	<cache:annotation-driven />
-	<bean id="ehcache"
+	<cache:annotation-driven cache-manager="springCoreCacheManager"/>
+	
+	<bean id="coreCacheManager"
 		class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean">
 		<property name="configLocation" value="classpath:ehcache.xml" />
 		<property name="shared" value="true" />
+		<property name="cacheManagerName" value="coreCacheManager" />
 	</bean>
-	<bean id="cacheManager" class="org.springframework.cache.ehcache.EhCacheCacheManager">
-		<property name="cacheManager" ref="ehcache" />
+	
+	<bean id="springCoreCacheManager" class="org.springframework.cache.ehcache.EhCacheCacheManager">
+		<property name="cacheManager" ref="coreCacheManager" />
 	</bean>
+	
 	<bean id="recentOrcidCache" class="org.springframework.cache.ehcache.EhCacheFactoryBean">
 		<property name="cacheName" value="recent-orcid" />
+		<property name="cacheManager" ref="coreCacheManager" />
 	</bean>
 
 	<!-- Reporting -->
