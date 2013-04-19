@@ -31,7 +31,6 @@
 
     <import resource="classpath*:orcid-frontend-security.xml"/>
     <import resource="classpath*:orcid-solr-config.xml"/>
-    <cache:annotation-driven cache-manager="cacheManager"/>
     <mvc:resources location="/static/" mapping="/static/**" cache-period="1206297260"/>
 
     <context:component-scan base-package="org.orcid"/>
@@ -69,12 +68,17 @@
         <property name="contentType" value="text/html;charset=UTF-8"/>
     </bean>
 
-    <bean id="cacheManager" class="org.springframework.cache.ehcache.EhCacheCacheManager">
-        <property name="cacheManager" ref="ehcache"/>
-    </bean>
+    <cache:annotation-driven cache-manager="springWebCacheManager"/>
 
-    <bean id="ehcache" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean">
-        <property name="configLocation" value="classpath:/ehcache.xml"/>
+	<bean id="webCacheManager"
+		class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean">
+		<property name="configLocation" value="classpath:ehcache.xml" />
+		<property name="shared" value="true" />
+		<property name="cacheManagerName" value="webCacheManager" />
+	</bean>
+
+    <bean id="springWebCacheManager" class="org.springframework.cache.ehcache.EhCacheCacheManager">
+        <property name="cacheManager" ref="webCacheManager"/>
     </bean>
 
 	<bean id="localeChangeInterceptor"
