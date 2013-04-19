@@ -124,13 +124,13 @@
                             ${springMacroRequestContext.getMessage("register.labelsendinformation")}
                         </label>
                         </div>
-                        </div>
+				</div>
                    <div>
                     <div class="relative"  style="margin-bottom: 15px;">
                         <label>${springMacroRequestContext.getMessage("register.labelTermsofUse")} <span class="required">*</span></label>
                         <label class="checkbox" style="width: 480px;">
                             <@spring.formCheckbox "registrationForm.acceptTermsAndConditions"/>
-                            ${springMacroRequestContext.getMessage("register.labelconsent")} <a href="${aboutUri}/footer/privacy-policy?lang=${locale}">${springMacroRequestContext.getMessage("register.labelprivacypolicy")}</a> ${springMacroRequestContext.getMessage("register.labeland")} <a href="${aboutUri}/content/orcid-terms-use?lang=${locale}">${springMacroRequestContext.getMessage("register.labeltermsandconditions")}</a> ${springMacroRequestContext.getMessage("register.labelofuseinclude")}</p>
+                            ${springMacroRequestContext.getMessage("register.labelconsent")} <a href="${aboutUri}/footer/privacy-policy?lang=${locale}" target="_blank">${springMacroRequestContext.getMessage("register.labelprivacypolicy")}</a> ${springMacroRequestContext.getMessage("register.labeland")} <a href="${aboutUri}/content/orcid-terms-use?lang=${locale}" target="_blank">${springMacroRequestContext.getMessage("register.labeltermsandconditions")}</a> ${springMacroRequestContext.getMessage("register.labelofuseinclude")}</p>
                             <@spring.showErrors "<br/>" "orcid-error"/>
                         </label>
                     </div>
