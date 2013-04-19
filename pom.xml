@@ -759,14 +759,6 @@ the software.
                 <version>${solr.version}</version>
             </dependency>
 
-            <!-- Cache -->
-            <dependency>
-                <groupId>net.sf.ehcache</groupId>
-                <artifactId>ehcache-web</artifactId>
-                <version>2.0.4</version>
-                <scope>compile</scope>
-            </dependency>
-
             <!-- Logging -->
             <dependency>
                 <groupId>org.slf4j</groupId>
