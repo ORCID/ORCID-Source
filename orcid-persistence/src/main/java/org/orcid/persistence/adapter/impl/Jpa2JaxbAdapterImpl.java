@@ -16,20 +16,6 @@
  */
 package org.orcid.persistence.adapter.impl;
 
-import org.apache.commons.lang.StringUtils;
-import org.orcid.jaxb.model.clientgroup.OrcidClient;
-import org.orcid.jaxb.model.clientgroup.OrcidClientGroup;
-import org.orcid.jaxb.model.clientgroup.RedirectUri;
-import org.orcid.jaxb.model.clientgroup.RedirectUris;
-import org.orcid.jaxb.model.message.*;
-import org.orcid.persistence.adapter.Jpa2JaxbAdapter;
-import org.orcid.persistence.jpa.entities.*;
-import org.orcid.utils.DateUtils;
-import org.springframework.beans.factory.annotation.Value;
-
-import javax.xml.datatype.DatatypeConfigurationException;
-import javax.xml.datatype.DatatypeFactory;
-import javax.xml.datatype.XMLGregorianCalendar;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -38,6 +24,51 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
+
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
+
+import org.apache.commons.lang.StringUtils;
+import org.orcid.jaxb.model.clientgroup.OrcidClient;
+import org.orcid.jaxb.model.clientgroup.OrcidClientGroup;
+import org.orcid.jaxb.model.clientgroup.RedirectUri;
+import org.orcid.jaxb.model.clientgroup.RedirectUris;
+import org.orcid.jaxb.model.message.*;
+import org.orcid.persistence.adapter.Jpa2JaxbAdapter;
+import org.orcid.persistence.jpa.entities.AddressEntity;
+import org.orcid.persistence.jpa.entities.AffiliationEntity;
+import org.orcid.persistence.jpa.entities.AlternateEmailEntity;
+import org.orcid.persistence.jpa.entities.BaseContributorEntity;
+import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
+import org.orcid.persistence.jpa.entities.ClientRedirectUriEntity;
+import org.orcid.persistence.jpa.entities.EmailEntity;
+import org.orcid.persistence.jpa.entities.ExternalIdentifierEntity;
+import org.orcid.persistence.jpa.entities.FuzzyDate;
+import org.orcid.persistence.jpa.entities.GivenPermissionByEntity;
+import org.orcid.persistence.jpa.entities.GivenPermissionToEntity;
+import org.orcid.persistence.jpa.entities.GrantContributorEntity;
+import org.orcid.persistence.jpa.entities.GrantEntity;
+import org.orcid.persistence.jpa.entities.GrantSourceEntity;
+import org.orcid.persistence.jpa.entities.InstitutionEntity;
+import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
+import org.orcid.persistence.jpa.entities.OtherNameEntity;
+import org.orcid.persistence.jpa.entities.PatentContributorEntity;
+import org.orcid.persistence.jpa.entities.PatentEntity;
+import org.orcid.persistence.jpa.entities.PatentSourceEntity;
+import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.orcid.persistence.jpa.entities.ProfileGrantEntity;
+import org.orcid.persistence.jpa.entities.ProfileKeywordEntity;
+import org.orcid.persistence.jpa.entities.ProfilePatentEntity;
+import org.orcid.persistence.jpa.entities.ProfileWorkEntity;
+import org.orcid.persistence.jpa.entities.ResearcherUrlEntity;
+import org.orcid.persistence.jpa.entities.WorkContributorEntity;
+import org.orcid.persistence.jpa.entities.WorkEntity;
+import org.orcid.persistence.jpa.entities.WorkExternalIdentifierEntity;
+import org.orcid.persistence.jpa.entities.WorkSourceEntity;
+import org.orcid.utils.DateUtils;
+import org.orcid.utils.NullUtils;
+import org.springframework.beans.factory.annotation.Value;
 
 /**
  * <p/>
@@ -161,10 +192,16 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
     }
 
     private OrcidActivities getOrcidActivities(ProfileEntity profileEntity) {
+        OrcidGrants orcidGrants = getOrcidGrants(profileEntity);
+        OrcidPatents orcidPatents = getOrcidPatents(profileEntity);
+        OrcidWorks orcidWorks = getOrcidWorks(profileEntity);
+        if (NullUtils.allNull(orcidGrants, orcidPatents, orcidWorks)) {
+            return null;
+        }
         OrcidActivities orcidActivities = new OrcidActivities();
-        orcidActivities.setOrcidGrants(getOrcidGrants(profileEntity));
-        orcidActivities.setOrcidPatents(getOrcidPatents(profileEntity));
-        orcidActivities.setOrcidWorks(getOrcidWorks(profileEntity));
+        orcidActivities.setOrcidGrants(orcidGrants);
+        orcidActivities.setOrcidPatents(orcidPatents);
+        orcidActivities.setOrcidWorks(orcidWorks);
         return orcidActivities;
     }
 

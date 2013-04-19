@@ -85,7 +85,7 @@ public abstract class BaseContributorEntity extends BaseEntity<Long> implements 
         this.sequence = sequence;
     }
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = { CascadeType.MERGE }, optional = true)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = { CascadeType.REFRESH, CascadeType.DETACH }, optional = true)
     @JoinColumn(name = "orcid", nullable = true, updatable = false)
     public ProfileEntity getProfile() {
         return profile;
