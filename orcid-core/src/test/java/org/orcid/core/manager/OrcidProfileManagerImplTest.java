@@ -21,8 +21,12 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -33,9 +37,11 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
+import org.orcid.core.manager.impl.OrcidProfileManagerImpl;
 import org.orcid.jaxb.model.message.Affiliation;
 import org.orcid.jaxb.model.message.AffiliationType;
 import org.orcid.jaxb.model.message.ApprovalDate;
+import org.orcid.jaxb.model.message.Contributor;
 import org.orcid.jaxb.model.message.CreditName;
 import org.orcid.jaxb.model.message.DelegateSummary;
 import org.orcid.jaxb.model.message.Delegation;
@@ -54,9 +60,12 @@ import org.orcid.jaxb.model.message.Preferences;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.message.SendChangeNotifications;
 import org.orcid.jaxb.model.message.SendOrcidNews;
+import org.orcid.jaxb.model.message.SequenceType;
 import org.orcid.jaxb.model.message.Subtitle;
 import org.orcid.jaxb.model.message.Title;
 import org.orcid.jaxb.model.message.Visibility;
+import org.orcid.jaxb.model.message.WorkExternalIdentifier;
+import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
 import org.orcid.jaxb.model.message.WorkTitle;
 import org.orcid.jaxb.model.message.WorkVisibilityDefault;
 import org.orcid.persistence.dao.ClientDetailsDao;
@@ -68,13 +77,16 @@ import org.orcid.persistence.jpa.entities.IndexingStatus;
 import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.SubjectEntity;
+import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.utils.DateUtils;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @author Will Simpson
  */
+@DirtiesContext
 public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
 
     protected static final String APPLICATION_ORCID = "2222-2222-2222-2228";
@@ -101,13 +113,19 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
     @Resource
     private GenericDao<SubjectEntity, String> subjectDao;
 
+    @Resource
+    private GenericDao<WorkEntity, Long> workDao;
+
     @Mock
-    private OrcidIndexManager orcidIndexManager;
+    private NotificationManager notificationManager;
 
     @Before
     @Transactional
     @Rollback
-    public void before() {
+    public void before() throws Exception {
+        OrcidProfileManagerImpl orcidProfileManagerImpl = getTargetObject(orcidProfileManager, OrcidProfileManagerImpl.class);
+        orcidProfileManagerImpl.setNotificationManager(notificationManager);
+
         if (profileDao.find(TEST_ORCID) != null) {
             profileDao.remove(TEST_ORCID);
         }
@@ -157,17 +175,99 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
     @Rollback(true)
     public void testUpdateProfile() {
         OrcidProfile profile1 = createBasicProfile();
-        orcidProfileManager.createOrcidProfile(profile1);
+        profile1 = orcidProfileManager.createOrcidProfile(profile1);
+        String originalPutCode = profile1.getOrcidActivities().getOrcidWorks().getOrcidWork().get(0).getPutCode();
 
         OrcidProfile profile2 = createBasicProfile();
-        orcidProfileManager.updateOrcidProfile(profile2);
+        profile2.getOrcidActivities().getOrcidWorks().getOrcidWork().get(0).setPutCode(originalPutCode);
+        profile2 = orcidProfileManager.updateOrcidProfile(profile2);
 
         OrcidProfile resultProfile = orcidProfileManager.retrieveOrcidProfile(TEST_ORCID);
+        String resultPutCode = resultProfile.getOrcidActivities().getOrcidWorks().getOrcidWork().get(0).getPutCode();
+
         assertNotNull(resultProfile);
         assertEquals("Will", resultProfile.getOrcidBio().getPersonalDetails().getGivenNames().getContent());
         assertEquals(1, resultProfile.retrieveOrcidWorks().getOrcidWork().size());
         assertEquals(1, resultProfile.getOrcidBio().getResearcherUrls().getResearcherUrl().size());
         assertEquals("http://www.wjrs.co.uk", resultProfile.getOrcidBio().getResearcherUrls().getResearcherUrl().get(0).getUrl().getValue());
+        assertEquals("Put code should not change", originalPutCode, resultPutCode);
+    }
+
+    @Test
+    @Transactional
+    @Rollback(true)
+    public void testUpdateProfileButRemoveActivities() {
+        OrcidProfile profile1 = createBasicProfile();
+        profile1 = orcidProfileManager.createOrcidProfile(profile1);
+
+        OrcidProfile profile2 = createBasicProfile();
+        profile2.setOrcidActivities(null);
+        profile2 = orcidProfileManager.updateOrcidProfile(profile2);
+
+        OrcidProfile resultProfile = orcidProfileManager.retrieveOrcidProfile(TEST_ORCID);
+
+        assertNotNull(resultProfile);
+        assertEquals("Will", resultProfile.getOrcidBio().getPersonalDetails().getGivenNames().getContent());
+        assertEquals(1, resultProfile.getOrcidBio().getResearcherUrls().getResearcherUrl().size());
+        assertEquals("http://www.wjrs.co.uk", resultProfile.getOrcidBio().getResearcherUrls().getResearcherUrl().get(0).getUrl().getValue());
+        assertNull("There should be no activities", resultProfile.getOrcidActivities());
+    }
+
+    @Test
+    @Transactional
+    @Rollback(true)
+    public void testUpdateProfileButRemoveWorkExternalIdentifier() {
+        OrcidProfile profile1 = createBasicProfile();
+        profile1 = orcidProfileManager.createOrcidProfile(profile1);
+
+        List<WorkExternalIdentifier> workExternalIdentifiers = profile1.getOrcidActivities().getOrcidWorks().getOrcidWork().get(0).getWorkExternalIdentifiers()
+                .getWorkExternalIdentifier();
+        assertEquals(2, workExternalIdentifiers.size());
+        Iterator<WorkExternalIdentifier> workExternalIdentifiersIterator = workExternalIdentifiers.iterator();
+        while (workExternalIdentifiersIterator.hasNext()) {
+            if (WorkExternalIdentifierType.PMID.equals(workExternalIdentifiersIterator.next().getWorkExternalIdentifierType())) {
+                workExternalIdentifiersIterator.remove();
+            }
+        }
+
+        profile1 = orcidProfileManager.updateOrcidProfile(profile1);
+
+        OrcidProfile resultProfile = orcidProfileManager.retrieveOrcidProfile(TEST_ORCID);
+
+        assertNotNull(resultProfile);
+        assertEquals("Will", resultProfile.getOrcidBio().getPersonalDetails().getGivenNames().getContent());
+        assertEquals(1, resultProfile.retrieveOrcidWorks().getOrcidWork().size());
+        assertEquals(1, resultProfile.getOrcidBio().getResearcherUrls().getResearcherUrl().size());
+        assertEquals("http://www.wjrs.co.uk", resultProfile.getOrcidBio().getResearcherUrls().getResearcherUrl().get(0).getUrl().getValue());
+        assertEquals(1, resultProfile.getOrcidActivities().getOrcidWorks().getOrcidWork().get(0).getWorkExternalIdentifiers().getWorkExternalIdentifier().size());
+    }
+    
+    @Test
+    @Transactional
+    @Rollback(true)
+    public void testUpdateProfileButRemoveWorkContributor() {
+        OrcidProfile profile1 = createBasicProfile();
+        profile1 = orcidProfileManager.createOrcidProfile(profile1);
+
+        List<Contributor> contributors = profile1.getOrcidActivities().getOrcidWorks().getOrcidWork().get(0).getWorkContributors().getContributor();
+        assertEquals(2, contributors.size());
+        Iterator<Contributor> contributorsIterator = contributors.iterator();
+        while (contributorsIterator.hasNext()) {
+            if (SequenceType.ADDITIONAL.equals(contributorsIterator.next().getContributorAttributes().getContributorSequence())) {
+                contributorsIterator.remove();
+            }
+        }
+
+        profile1 = orcidProfileManager.updateOrcidProfile(profile1);
+
+        OrcidProfile resultProfile = orcidProfileManager.retrieveOrcidProfile(TEST_ORCID);
+
+        assertNotNull(resultProfile);
+        assertEquals("Will", resultProfile.getOrcidBio().getPersonalDetails().getGivenNames().getContent());
+        assertEquals(1, resultProfile.retrieveOrcidWorks().getOrcidWork().size());
+        assertEquals(1, resultProfile.getOrcidBio().getResearcherUrls().getResearcherUrl().size());
+        assertEquals("http://www.wjrs.co.uk", resultProfile.getOrcidBio().getResearcherUrls().getResearcherUrl().get(0).getUrl().getValue());
+        assertEquals(1, resultProfile.getOrcidActivities().getOrcidWorks().getOrcidWork().get(0).getWorkContributors().getContributor().size());
     }
 
     @Test
@@ -328,7 +428,8 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
     public void testAddOrcidWorks() {
 
         OrcidProfile profile1 = createBasicProfile();
-        orcidProfileManager.createOrcidProfile(profile1);
+        profile1 = orcidProfileManager.createOrcidProfile(profile1);
+        String originalPutCode = profile1.getOrcidActivities().getOrcidWorks().getOrcidWork().get(0).getPutCode();
 
         OrcidProfile profile2 = new OrcidProfile();
         profile2.setOrcid(TEST_ORCID);
@@ -340,17 +441,6 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
         workTitle1.setSubtitle(new Subtitle("Journal of Cloud Spotting"));
         OrcidWork work1 = createWork1(workTitle1);
         orcidWorks.getOrcidWork().add(work1);
-        // TODO JB - resource num testing here!!!
-        // work1.getElectronicResourceNum().add(new
-        // ElectronicResourceNum("10.1016/S0021-8502(00)90373-2",
-        // ElectronicResourceNumType.DOI));
-        // Contributors contributors = new Contributors();
-        // work1.setContributors(contributors);
-        // Authors authors = new Authors();
-        // contributors.setAuthors(authors);
-        // Author author = new Author();
-        // authors.getAuthor().add(author);
-        // author.setCreditName(new CreditName("W. J. R. Simpson"));
 
         WorkTitle workTitle2 = new WorkTitle();
         workTitle2.setTitle(new Title("New Title"));
@@ -376,49 +466,7 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
         for (OrcidWork work : works) {
             assertEquals(Visibility.PRIVATE, work.getVisibility());
         }
-
-        // assertEquals("10.1016/S0021-8502(00)90373-2",
-        // works.get(0).getElectronicResourceNum().get(0).getContent());
-        // assertEquals(ElectronicResourceNumType.DOI,
-        // works.get(0).getElectronicResourceNum().get(0).getType());
-        // assertEquals("495", works.get(0).getVolume().getContent());
-        // assertEquals("W. J. R. Simpson",
-        // works.get(0).getContributors().getAuthors().getAuthor().get(0).getCreditName().getContent());
-        // assertFalse(testStartDate.after(DateUtils.convertToDate(works.get(0).getAddedToProfileDate().getValue())));
-
-        // assertEquals("Test Title",
-        // works.get(1).getTitles().getTitle().getContent());
-        // assertEquals(DateUtils.convertToDate("2010-03-04"),
-        // DateUtils.convertToDate(works.get(1).getAddedToProfileDate().getValue()));
-
-        // assertEquals("Yet Another Title",
-        // works.get(2).getTitles().getTitle().getContent());
-        // assertFalse(testStartDate.after(DateUtils.convertToDate(works.get(2).getAddedToProfileDate().getValue())));
-
-        // assertEquals(IndexingStatus.PENDING,
-        // profileDao.find(TEST_ORCID).getIndexingStatus());
-
-        // assertEquals("10.1016/S0021-8502(00)90373-2",
-        // works.get(0).getElectronicResourceNum().get(0).getContent());
-        // assertEquals(ElectronicResourceNumType.DOI,
-        // works.get(0).getElectronicResourceNum().get(0).getType());
-        // assertEquals("495", works.get(0).getVolume().getContent());
-        // assertEquals("W. J. R. Simpson",
-        // works.get(0).getContributors().getAuthors().getAuthor().get(0).getCreditName().getContent());
-        // assertFalse(testStartDate.after(DateUtils.convertToDate(works.get(0).getAddedToProfileDate().getValue())));
-
-        // assertEquals("Test Title",
-        // works.get(1).getTitles().getTitle().getContent());
-        // assertEquals(DateUtils.convertToDate("2010-03-04"),
-        // DateUtils.convertToDate(works.get(1).getAddedToProfileDate().getValue()));
-
-        // assertEquals("Yet Another Title",
-        // works.get(2).getTitles().getTitle().getContent());
-        // assertFalse(testStartDate.after(DateUtils.convertToDate(works.get(2).getAddedToProfileDate().getValue())));
-
-        // assertEquals(IndexingStatus.PENDING,
-        // profileDao.find(TEST_ORCID).getIndexingStatus());
-
+        assertEquals("Put code of original work should not have changed", originalPutCode, works.get(2).getPutCode());
     }
 
     @Test
@@ -531,8 +579,8 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
         assertNotNull(userProfile.getOrcidBio().getApplications());
         assertEquals(1, userProfile.getOrcidBio().getApplications().getApplicationSummary().size());
 
-        orcidProfileManager.revokeApplication(DELEGATE_ORCID, APPLICATION_ORCID, Arrays.asList(new ScopePathType[] { ScopePathType.ORCID_BIO_READ_LIMITED,
-                ScopePathType.ORCID_BIO_UPDATE }));
+        orcidProfileManager.revokeApplication(DELEGATE_ORCID, APPLICATION_ORCID,
+                Arrays.asList(new ScopePathType[] { ScopePathType.ORCID_BIO_READ_LIMITED, ScopePathType.ORCID_BIO_UPDATE }));
 
         OrcidProfile retrievedProfile = orcidProfileManager.retrieveOrcidProfile(DELEGATE_ORCID);
         assertNotNull(retrievedProfile);
@@ -636,6 +684,7 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
         assertEquals(IndexingStatus.PENDING, profileDao.find(TEST_ORCID).getIndexingStatus());
     }
 
+    @SuppressWarnings("unchecked")
     @Test
     @Transactional
     @Rollback(true)
@@ -669,6 +718,7 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
         assertEquals(DELEGATE_ORCID, retrievedDelegateSummary.getOrcid().getValue());
         assertEquals("H. Shearer", retrievedDelegateSummary.getCreditName().getContent());
         assertEquals(DateUtils.convertToDate("2011-03-14T02:34:16"), DateUtils.convertToDate(retrievedDelegationDetails.getApprovalDate().getValue()));
+        verify(notificationManager, times(1)).sendNotificationToAddedDelegate(any(OrcidProfile.class), any(List.class));
     }
 
     @Test

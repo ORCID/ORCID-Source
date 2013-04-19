@@ -42,7 +42,7 @@ import org.orcid.persistence.jpa.entities.keys.ProfileWorkEntityPk;
 
 /**
  * orcid-entities - Dec 6, 2011 - ProfileInstitutionEntity
- *
+ * 
  * @author Declan Newman (declan)
  */
 
@@ -77,7 +77,7 @@ public class ProfileWorkEntity extends BaseEntity<ProfileWorkEntityPk> implement
 
     /**
      * @param profile
-     *         the profile to set
+     *            the profile to set
      */
     public void setProfile(ProfileEntity profile) {
         this.profile = profile;
@@ -87,7 +87,7 @@ public class ProfileWorkEntity extends BaseEntity<ProfileWorkEntityPk> implement
      * @return the work
      */
     @Id
-    @ManyToOne(cascade = { CascadeType.REFRESH }, fetch = FetchType.EAGER)
+    @ManyToOne(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER)
     @JoinColumn(name = "work_id", nullable = false)
     public WorkEntity getWork() {
         return work;
@@ -95,7 +95,7 @@ public class ProfileWorkEntity extends BaseEntity<ProfileWorkEntityPk> implement
 
     /**
      * @param work
-     *         the work to set
+     *            the work to set
      */
     public void setWork(WorkEntity work) {
         this.work = work;

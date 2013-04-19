@@ -191,6 +191,7 @@ public class JpaJaxbEntityAdapterToOrcidProfileTest extends DBUnitTest {
         assertEquals(2, orcidWorkList.size());
         OrcidWork orcidWork = orcidWorkList.get(0);
         assertEquals(Visibility.LIMITED, orcidWork.getVisibility());
+        assertEquals("1", orcidWork.getPutCode());
         Citation workCitation = orcidWork.getWorkCitation();
         assertNotNull(workCitation);
         assertEquals("Bobby Ewing, ", workCitation.getCitation());

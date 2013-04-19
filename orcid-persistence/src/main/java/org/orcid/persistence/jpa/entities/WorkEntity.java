@@ -187,7 +187,7 @@ public class WorkEntity extends BaseEntity<Long> implements Comparable<WorkEntit
         this.contributors = contributors;
     }
 
-    @OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.LAZY, mappedBy = WORK)
+    @OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.LAZY, mappedBy = WORK, orphanRemoval = true)
     @Fetch(FetchMode.SUBSELECT)
     @Sort(type = SortType.NATURAL)
     public SortedSet<WorkExternalIdentifierEntity> getExternalIdentifiers() {
@@ -270,7 +270,7 @@ public class WorkEntity extends BaseEntity<Long> implements Comparable<WorkEntit
                 throw new NullPointerException("Can't compare with null");
             }
 
-            //Negate the result (Multiply it by -1) to reverse the order.
+            // Negate the result (Multiply it by -1) to reverse the order.
             int comparison = work1.comparePublicationDate(work2) * -1;
 
             if (comparison == 0) {
@@ -283,4 +283,19 @@ public class WorkEntity extends BaseEntity<Long> implements Comparable<WorkEntit
             return comparison;
         }
     }
+
+    /**
+     * Clean simple fields so that entity can be reused.
+     */
+    public void clean() {
+        title = null;
+        subtitle = null;
+        description = null;
+        workUrl = null;
+        citation = null;
+        citationType = null;
+        workType = null;
+        publicationDate = null;
+    }
+
 }
