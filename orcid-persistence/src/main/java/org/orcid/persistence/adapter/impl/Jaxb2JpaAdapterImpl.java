@@ -218,7 +218,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             WorkEntity workEntity = null;
             if (existingProfileWorkEntity == null) {
                 String putCode = orcidWork.getPutCode();
-                if (StringUtils.isNotBlank(putCode)) {
+                if (StringUtils.isNotBlank(putCode) && !"-1".equals(putCode)) {
                     throw new IllegalArgumentException("Invalid put-code was supplied: " + putCode);
                 }
                 profileWorkEntity = new ProfileWorkEntity();
