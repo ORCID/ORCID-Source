@@ -23,7 +23,7 @@
     <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.8.1/jquery.min.js"></script>
     <script type="text/javascript">
         if (typeof jQuery == 'undefined') {
-            document.write(unescape("%3Cscript src='<@spring.url "/static/javascript/jquery/1.8.1/jquery.min.js" />' type='text/javascript'%3E%3C/script%3E"));
+            document.write(unescape("%3Cscript src='${staticCdn}/javascript/jquery/1.8.1/jquery.min.js' type='text/javascript'%3E%3C/script%3E"));
         }
     </script>
     <script>

@@ -16,7 +16,10 @@
  */
 package org.orcid.frontend.web.controllers;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLEncoder;
@@ -44,6 +47,8 @@ import org.orcid.utils.OrcidWebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -68,11 +73,25 @@ public class BaseController {
     private String googleAnalyticsTrackingId;
 
     protected List<String> domainsAllowingRobots;
+    
+    protected static final String STATIC_FOLDER_PATH = "/static";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BaseController.class);
 
     private Date startupDate = new Date();
 
+    private String staticContentPath;
+
+    private String staticCdnPath;
+    
+    @Value("${org.orcid.core.baseUri:http://orcid.org}")
+    private String baseUri;
+    
+    @Resource
+    private String cdnConfigFile;
+    
+    private long cdnConfigFileLastModified = -1;
+    
     @Resource
     private LocaleManager localeManager;
 
@@ -342,5 +361,87 @@ public class BaseController {
     public String getLocale() {
         return localeManager.getLocale().toString();
     }
+    
+    public String getBaseUri() {
+        return baseUri;
+    }
 
+    public void setBaseUri(String baseUri) {
+        this.baseUri = baseUri;
+    }
+
+    /**
+     * 
+     * CDN Configuration
+     * 
+     * */
+    public String getCdnConfigFile(){
+        return this.cdnConfigFile;
+    }
+    
+    public void setCdnConfigFile(String cdnConfigFile){
+        this.cdnConfigFile = cdnConfigFile;
+    }
+    
+    /**
+     * @return the path to the static content on local project
+     * */
+    @ModelAttribute("staticLoc")
+    public String getStaticContentPath(HttpServletRequest request) {
+        if(StringUtils.isBlank(this.staticContentPath))
+            this.staticContentPath = this.baseUri + STATIC_FOLDER_PATH; 
+        return this.staticContentPath;
+    }
+
+    /**
+     * Return the path where the static content will be.
+     * If there is a cdn path configured, it will return the cdn path; if it is not a cdn path
+     * it will return a reference to the static folder "/static"
+     * @return the path to the CDN or the path to the local static content
+     * */
+    @ModelAttribute("staticCdn")
+    public String getStaticCdnPath(HttpServletRequest request) {
+        if(StringUtils.isEmpty(this.cdnConfigFile)){
+            return getStaticContentPath(request);
+        }
+            
+        ClassPathResource configFile = new ClassPathResource(this.cdnConfigFile);
+        boolean reloadConfigFile = reloadCdnInformation(configFile);
+        if (reloadConfigFile && configFile.exists()) {                        
+            try (InputStream is = configFile.getInputStream(); BufferedReader br = new BufferedReader(new InputStreamReader(is))){
+                //Update the last modified date of the config file
+                this.cdnConfigFileLastModified = configFile.lastModified();
+
+                String uri = br.readLine();
+                
+                if (uri != null)
+                    this.staticCdnPath = uri;
+                else
+                    this.staticCdnPath = this.getStaticContentPath(request);
+            } catch (IOException e) {
+                e.printStackTrace();
+            } 
+        } 
+        
+        if(StringUtils.isBlank(this.staticCdnPath))
+            this.staticCdnPath = this.getStaticContentPath(request);
+        
+        return staticCdnPath;
+    }
+    
+    /**
+     * Return true if the config file was modified since the last time it was used.
+     * @param configFile the config file that contains the CDN information
+     * @return true if the file has been modified since the last time we used it.
+     * */
+    private boolean reloadCdnInformation(ClassPathResource configFile){        
+        try {
+            if(this.cdnConfigFileLastModified != configFile.lastModified())
+                return true;            
+        } catch(IOException ioe){
+            //This means the file doesnt exists
+            return false;
+        }
+        return false;
+    }
 }
