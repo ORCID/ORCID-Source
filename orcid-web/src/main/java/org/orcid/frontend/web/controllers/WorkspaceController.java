@@ -28,8 +28,6 @@ import org.orcid.frontend.web.forms.CurrentWork;
 import org.orcid.jaxb.model.clientgroup.OrcidClient;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.pojo.ExternalIdentifiers;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -46,8 +44,6 @@ import org.springframework.web.servlet.mvc.multiaction.NoSuchRequestHandlingMeth
 @Controller("workspaceController")
 @RequestMapping(value = { "/my-orcid", "/workspace" })
 public class WorkspaceController extends BaseWorkspaceController {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(WorkspaceController.class);
 
     @Resource
     private ThirdPartyImportManager thirdPartyImportManager;

@@ -41,6 +41,10 @@ import java.util.Date;
 @IdClass(WorkSourceEntityPk.class)
 public class WorkSourceEntity extends BaseEntity<WorkSourceEntityPk> implements Comparable<WorkSourceEntity> {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
     private ProfileWorkEntity profileWork;
     private ProfileEntity sponsorOrcid;
     private Date depositedDate;

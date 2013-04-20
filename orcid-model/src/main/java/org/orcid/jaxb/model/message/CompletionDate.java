@@ -56,6 +56,10 @@ import java.io.Serializable;
 @XmlRootElement(name = "completion-date")
 public class CompletionDate implements Serializable {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
     @XmlValue
     @XmlSchemaType(name = "dateTime")
     protected XMLGregorianCalendar value;

@@ -28,6 +28,10 @@ import java.io.Serializable;
 @Embeddable
 public class PatentExternalIdentifierEntityPk implements Serializable {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
     private String identifierName;
     private String identifierId;
     private Long patent;

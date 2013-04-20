@@ -19,8 +19,6 @@ package org.orcid.core.manager.impl;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
-
 import javax.annotation.Resource;
 
 import org.orcid.core.manager.RegistrationRoleManager;

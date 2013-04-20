@@ -34,7 +34,6 @@ import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OtherName;
 import org.orcid.jaxb.model.message.OtherNames;
 import org.orcid.jaxb.model.message.PersonalDetails;
-import org.orcid.jaxb.model.message.ResearcherUrl;
 import org.orcid.jaxb.model.message.ResearcherUrls;
 import org.orcid.jaxb.model.message.ShortDescription;
 import org.orcid.jaxb.model.message.Visibility;
@@ -147,12 +146,6 @@ public class PersonalInfoForm {
             }
         }
         ResearcherUrls researcherUrls = personalDetails != null ? orcidBio.getResearcherUrls() : null;
-        if (researcherUrls != null) {
-            for (ResearcherUrl researcherUrl : researcherUrls.getResearcherUrl()) {
-                //TODO JB check this!!
-                //  this.researcherUrls.put(url.getValue(), url.getValue());
-            }
-        }
         /*
         Visibility researcherUrlVisibility = (personalDetails != null && orcidBio.getResearcherUrls() != null && orcidBio.getResearcherUrls()
                 .getVisibility() != null) ? orcidBio().getVisibility() : OrcidVisibilityDefaults.RESEARCHER_URLS_DEFAULT.getVisibility();

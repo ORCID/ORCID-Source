@@ -25,6 +25,10 @@ import java.io.Serializable;
  */
 public class ClientGrantedAuthorityPk implements Serializable {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
     private String clientDetailsEntity;
     private String authority;
 

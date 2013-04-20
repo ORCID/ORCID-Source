@@ -16,7 +16,6 @@
  */
 package org.orcid.persistence.jpa.entities.keys;
 
-import javax.persistence.Embeddable;
 import java.io.Serializable;
 
 /**

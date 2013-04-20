@@ -54,6 +54,11 @@ import java.io.Serializable;
 @XmlRootElement(name = "encrypted-verification-code")
 public class EncryptedVerificationCode implements Serializable {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
+
     public EncryptedVerificationCode() {
     }
 

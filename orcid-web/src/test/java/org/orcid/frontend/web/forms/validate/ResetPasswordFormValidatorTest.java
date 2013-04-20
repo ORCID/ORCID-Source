@@ -17,8 +17,6 @@
 package org.orcid.frontend.web.forms.validate;
 
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
 import java.util.Set;
 
 import javax.validation.ConstraintViolation;

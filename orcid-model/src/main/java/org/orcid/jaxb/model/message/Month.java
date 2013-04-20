@@ -54,6 +54,10 @@ import java.io.Serializable;
 @XmlRootElement(name = "month")
 public class Month implements Serializable {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
     @XmlValue
     protected String value;
 

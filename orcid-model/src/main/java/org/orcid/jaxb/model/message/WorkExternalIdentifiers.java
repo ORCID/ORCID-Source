@@ -58,6 +58,10 @@ import javax.xml.bind.annotation.XmlType;
 @XmlRootElement(name = "work-external-identifiers")
 public class WorkExternalIdentifiers implements Serializable {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
     @XmlElement(name = "work-external-identifier")
     protected List<WorkExternalIdentifier> workExternalIdentifier;
     @XmlAttribute

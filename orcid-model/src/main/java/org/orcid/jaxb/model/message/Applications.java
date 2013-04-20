@@ -58,6 +58,10 @@ import javax.xml.bind.annotation.XmlType;
 @XmlRootElement(name = "applications")
 public class Applications implements VisibilityType, Serializable {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
     @XmlElement(name = "application-summary", required = true)
     protected List<ApplicationSummary> applicationSummary;
     @XmlAttribute

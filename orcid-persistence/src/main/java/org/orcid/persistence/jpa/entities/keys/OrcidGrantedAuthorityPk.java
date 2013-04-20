@@ -16,7 +16,6 @@
  */
 package org.orcid.persistence.jpa.entities.keys;
 
-import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import java.io.Serializable;
 
@@ -28,6 +27,10 @@ import java.io.Serializable;
 @Embeddable
 public class OrcidGrantedAuthorityPk implements Serializable {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
     private String profileEntity;
     private String authority;
 

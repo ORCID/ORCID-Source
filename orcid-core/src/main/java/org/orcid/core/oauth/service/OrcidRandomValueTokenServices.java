@@ -41,8 +41,6 @@ import org.springframework.security.oauth2.provider.token.TokenStore;
  */
 public class OrcidRandomValueTokenServices extends RandomValueTokenServices {
 
-    private ClientDetailsService clientDetailsService;
-
     private final int writeValiditySeconds;
     private final int readValiditySeconds;
 
@@ -52,7 +50,6 @@ public class OrcidRandomValueTokenServices extends RandomValueTokenServices {
     private static final Logger LOGGER = LoggerFactory.getLogger(OrcidRandomValueTokenServices.class);
 
     public OrcidRandomValueTokenServices(ClientDetailsService clientDetailsService, int writeValiditySeconds, int readValiditySeconds) {
-        this.clientDetailsService = clientDetailsService;
         this.writeValiditySeconds = writeValiditySeconds;
         this.readValiditySeconds = readValiditySeconds;
     }

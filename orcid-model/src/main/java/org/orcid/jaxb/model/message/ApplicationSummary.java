@@ -58,6 +58,10 @@ import java.io.Serializable;
 @XmlRootElement(name = "application-summary")
 public class ApplicationSummary implements Serializable {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
     @XmlElement(name = "application-orcid", required = true)
     protected ApplicationOrcid applicationOrcid;
     @XmlElement(name = "application-name", required = true)

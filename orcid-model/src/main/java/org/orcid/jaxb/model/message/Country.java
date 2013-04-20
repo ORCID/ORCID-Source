@@ -54,6 +54,10 @@ import java.io.Serializable;
 @XmlRootElement(name = "country")
 public class Country implements Serializable, VisibilityType {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
     @XmlValue
     protected String content;
 

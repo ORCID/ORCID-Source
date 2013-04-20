@@ -51,6 +51,10 @@ import java.io.Serializable;
 @XmlRootElement(name = "contributor-email")
 public class ContributorEmail implements Serializable {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
     @XmlValue
     protected String value;
 

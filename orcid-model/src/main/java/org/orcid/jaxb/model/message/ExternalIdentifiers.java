@@ -58,6 +58,10 @@ import javax.xml.bind.annotation.XmlType;
 @XmlRootElement(name = "external-identifiers")
 public class ExternalIdentifiers implements VisibilityType, Serializable {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
     @XmlElement(name = "external-identifier")
     protected List<ExternalIdentifier> externalIdentifier;
     @XmlAttribute

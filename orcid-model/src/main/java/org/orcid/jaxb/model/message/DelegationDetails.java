@@ -55,6 +55,10 @@ import java.io.Serializable;
 @XmlRootElement(name = "delegation-details")
 public class DelegationDetails implements Serializable {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
     @XmlElement(name = "approval-date", required = true)
     protected ApprovalDate approvalDate;
     @XmlElement(name = "delegate-summary", required = true)

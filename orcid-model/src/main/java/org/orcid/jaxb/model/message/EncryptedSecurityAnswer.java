@@ -54,6 +54,11 @@ import java.io.Serializable;
 @XmlRootElement(name = "encrypted-security-answer")
 public class EncryptedSecurityAnswer implements Serializable {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
+
     public EncryptedSecurityAnswer() {
     }
 

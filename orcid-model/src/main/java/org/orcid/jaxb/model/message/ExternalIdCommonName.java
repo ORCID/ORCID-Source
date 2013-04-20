@@ -51,6 +51,10 @@ import java.io.Serializable;
 @XmlRootElement(name = "external-id-common-name")
 public class ExternalIdCommonName implements Serializable {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
     @XmlValue
     protected String content;
 

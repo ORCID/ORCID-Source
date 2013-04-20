@@ -55,6 +55,10 @@ import java.io.Serializable;
 @XmlRootElement(name = "delegate-summary")
 public class DelegateSummary implements Serializable {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
     @XmlElement(required = true)
     protected Orcid orcid;
     @XmlElement(name = "credit-name")

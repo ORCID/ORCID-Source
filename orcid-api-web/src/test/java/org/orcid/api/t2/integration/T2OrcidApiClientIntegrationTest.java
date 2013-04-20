@@ -343,7 +343,7 @@ public class T2OrcidApiClientIntegrationTest extends AbstractT2ClientIntegration
         OrcidWorks orcidWorks = message.getOrcidProfile().retrieveOrcidWorks();
         assertTrue(orcidWorks != null && orcidWorks.getOrcidWork() != null && orcidWorks.getOrcidWork().size() == 3);
 
-        OrcidWork secondWork = orcidWorks.getOrcidWork().get(1);
+        orcidWorks.getOrcidWork().get(1);
         // String secondTitle = secondWork.getTitles().getTitle().getContent();
         // assertEquals("Chromosome 5a55.5 microdeletions comprising AB555 and CD5555\n\t\t\t\t\t\tare\n\t\t\t\t\t\tassociated with bilocation ability\n\t\t\t\t\t",
         // secondTitle);
@@ -357,10 +357,7 @@ public class T2OrcidApiClientIntegrationTest extends AbstractT2ClientIntegration
         orcidWorks = message.getOrcidProfile().retrieveOrcidWorks();
         assertTrue(orcidWorks != null && orcidWorks.getOrcidWork() != null && orcidWorks.getOrcidWork().size() == 3);
 
-        secondWork = orcidWorks.getOrcidWork().get(1);
-        // secondTitle = secondWork.getTitles().getTitle().getContent();
-        // assertEquals("Chromosome 5a55.5 microdeletions comprising AB555 and CD5555",
-        // secondTitle);
+        orcidWorks.getOrcidWork().get(1);
 
     }
 
@@ -418,7 +415,7 @@ public class T2OrcidApiClientIntegrationTest extends AbstractT2ClientIntegration
         OrcidWorks orcidWorks = message.getOrcidProfile().retrieveOrcidWorks();
         assertTrue(orcidWorks != null && orcidWorks.getOrcidWork() != null && orcidWorks.getOrcidWork().size() == 3);
 
-        OrcidWork secondWork = orcidWorks.getOrcidWork().get(1);
+        orcidWorks.getOrcidWork().get(1);
         // String secondTitle = secondWork.getTitles().getTitle().getContent();
         // assertEquals("Chromosome 5a55.5 microdeletions comprising AB555 and CD5555\n\t\t\t\t\t\tare\n\t\t\t\t\t\tassociated with bilocation ability\n\t\t\t\t\t",
         // secondTitle);
@@ -432,10 +429,7 @@ public class T2OrcidApiClientIntegrationTest extends AbstractT2ClientIntegration
         orcidWorks = message.getOrcidProfile().retrieveOrcidWorks();
         assertTrue(orcidWorks != null && orcidWorks.getOrcidWork() != null && orcidWorks.getOrcidWork().size() == 3);
 
-        secondWork = orcidWorks.getOrcidWork().get(1);
-        // secondTitle = secondWork.getTitles().getTitle().getContent();
-        // assertEquals("Chromosome 5a55.5 microdeletions comprising AB555 and CD5555",
-        // secondTitle);
+        orcidWorks.getOrcidWork().get(1);
     }
 
     @Test

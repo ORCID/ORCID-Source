@@ -56,6 +56,10 @@ import java.io.Serializable;
 @XmlRootElement(name = "source")
 public class Source implements Serializable {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
     @XmlElement(name = "source-orcid")
     protected SourceOrcid sourceOrcid;
     @XmlElement(name = "source-name")

@@ -54,6 +54,10 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "citation", propOrder = { "workCitationType", "citation" })
 public class Citation implements Serializable {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
     @XmlElement(name = "work-citation-type", required = true, defaultValue = "formatted-unspecified")
     protected CitationType workCitationType = CitationType.FORMATTED_UNSPECIFIED;
     @XmlElement(name = "citation", required = true)

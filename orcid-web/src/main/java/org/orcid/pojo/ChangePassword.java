@@ -19,14 +19,7 @@ package org.orcid.pojo;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.validation.ObjectError;
-
 public class ChangePassword implements ErrorsInterface {
-    /**
-     * 
-     */
-    private static final long serialVersionUID = 1L;
-
     private List<String> errors = new ArrayList<String>();
 
     private String password;

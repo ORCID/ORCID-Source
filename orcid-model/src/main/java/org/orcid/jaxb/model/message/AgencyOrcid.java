@@ -51,6 +51,10 @@ import java.io.Serializable;
 @XmlRootElement(name = "agency-orcid")
 public class AgencyOrcid implements Serializable {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
     @XmlValue
     protected String value;
 

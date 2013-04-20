@@ -28,7 +28,6 @@ import java.util.zip.ZipException;
 import org.junit.Test;
 
 import org.junit.Before;
-import org.orcid.core.cli.FindOrcidWorkDuplicates;
 import org.orcid.core.utils.Classpath;
 import org.orcid.core.utils.Classpath.FileFilter;
 import org.slf4j.Logger;

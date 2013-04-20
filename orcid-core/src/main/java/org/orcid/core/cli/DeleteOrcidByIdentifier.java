@@ -101,6 +101,9 @@ public class DeleteOrcidByIdentifier {
             } catch (IOException e) {
                 throw new RuntimeException("Error reading from: " + orcidsToDelete, e);
             }
+            br.close();
+        } catch (IOException e) {
+            System.err.println("IOException " + e.getMessage());
         } finally {
             IOUtils.closeQuietly(fis);
         }

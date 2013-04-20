@@ -41,6 +41,10 @@ import java.util.Date;
 @IdClass(PatentSourceEntityPk.class)
 public class PatentSourceEntity extends BaseEntity<PatentSourceEntityPk> implements Comparable<PatentSourceEntity> {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
     private ProfilePatentEntity profilePatent;
     private ProfileEntity sponsorOrcid;
     private Date depositedDate;

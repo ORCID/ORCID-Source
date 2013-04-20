@@ -44,16 +44,10 @@ public class ReporterInitializer implements InitializingBean {
 
     private final long period;
     private final TimeUnit unit;
-    private final String host;
-    private final int port;
-    private final String prefix;
 
     public ReporterInitializer(long period, TimeUnit unit, String host, int port, String prefix, boolean useGraphite) throws IOException {
         this.period = period;
         this.unit = unit;
-        this.host = host;
-        this.port = port;
-        this.prefix = prefix;
         if (useGraphite) {
             LOGGER.info("Starting Graphite reporter");
             reporter = new GraphiteReporter(Metrics.defaultRegistry(), prefix, MetricPredicate.ALL, new GraphiteReporter.DefaultSocketProvider(host, port), Clock

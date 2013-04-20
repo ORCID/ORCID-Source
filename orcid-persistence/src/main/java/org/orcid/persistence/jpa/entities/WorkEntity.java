@@ -34,13 +34,10 @@ import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.Sort;
 import org.hibernate.annotations.SortType;
-import org.hibernate.annotations.Where;
 import org.orcid.jaxb.model.message.CitationType;
-import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.message.WorkType;
 
 import java.util.Comparator;
-import java.util.Set;
 import java.util.SortedSet;
 
 /**

@@ -19,11 +19,8 @@ package org.orcid.api.t2.integration;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.orcid.api.common.OrcidApiConstants.*;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.orcid.api.common.OrcidApiConstants;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 

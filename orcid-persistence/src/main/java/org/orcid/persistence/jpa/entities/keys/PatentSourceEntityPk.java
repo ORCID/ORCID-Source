@@ -26,6 +26,10 @@ import java.io.Serializable;
  */
 public class PatentSourceEntityPk implements Serializable {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
     private ProfilePatentEntityPk profilePatent;
     private String sponsorOrcid;
 

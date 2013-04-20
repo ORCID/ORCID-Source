@@ -55,6 +55,10 @@ import java.io.Serializable;
 @XmlRootElement(name = "contributor-attributes")
 public class ContributorAttributes implements Serializable {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
     @XmlElement(name = "contributor-sequence", required = true)
     protected SequenceType contributorSequence;
     @XmlElement(name = "contributor-role", required = true)
