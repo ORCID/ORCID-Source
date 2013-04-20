@@ -40,6 +40,10 @@ import java.util.Date;
 @Table(name = "audit_event")
 public class AuditEvent implements Serializable {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
     private Long id;
     private String recordModifiedOrcid;
     private String recordModifierOrcid;

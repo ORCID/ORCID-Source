@@ -26,6 +26,10 @@ import java.io.Serializable;
  */
 public class GrantSourceEntityPk implements Serializable {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
     private ProfileGrantEntityPk profileGrant;
     private String sponsorOrcid;
 

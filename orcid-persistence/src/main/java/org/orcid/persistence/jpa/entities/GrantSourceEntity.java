@@ -42,6 +42,10 @@ import java.util.Date;
 @IdClass(GrantSourceEntityPk.class)
 public class GrantSourceEntity extends BaseEntity<GrantSourceEntityPk> implements Comparable<GrantSourceEntity> {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
     private ProfileGrantEntity profileGrant;
     private ProfileEntity sponsorOrcid;
     private Date depositedDate;

@@ -34,7 +34,6 @@ public class PreferencesForm {
     private String orcid;
     private List<String> sendChangeNotifications;
     private List<String> sendOrcidNews;
-    private List<String> sendColleagueConfirmedRegistration;
 
     public PreferencesForm() {
     }

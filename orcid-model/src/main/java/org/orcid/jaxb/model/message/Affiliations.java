@@ -55,6 +55,10 @@ import javax.xml.bind.annotation.XmlType;
 @XmlRootElement(name = "affiliations")
 public class Affiliations implements Serializable {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
     protected List<Affiliation> affiliation;
 
     /**

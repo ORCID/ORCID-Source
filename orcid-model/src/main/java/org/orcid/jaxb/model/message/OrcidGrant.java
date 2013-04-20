@@ -63,6 +63,10 @@ import java.io.Serializable;
 @XmlRootElement(name = "orcid-grant")
 public class OrcidGrant implements VisibilityType, Serializable {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
     @XmlElement(name = "funding-agency")
     protected FundingAgency fundingAgency;
     @XmlElement(name = "grant-external-identifier")

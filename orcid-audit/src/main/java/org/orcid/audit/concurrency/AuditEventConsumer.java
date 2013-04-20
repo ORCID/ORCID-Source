@@ -20,8 +20,6 @@ import org.orcid.audit.entities.AuditEvent;
 import org.orcid.audit.manager.AuditEventManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.ExecutorService;

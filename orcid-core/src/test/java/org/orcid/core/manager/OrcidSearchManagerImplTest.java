@@ -224,7 +224,7 @@ public class OrcidSearchManagerImplTest extends BaseTest {
         PersonalDetails personalDetails = new PersonalDetails();
         personalDetails.setFamilyName(new FamilyName("Logan"));
         personalDetails.setGivenNames(new GivenNames("Donald Edward"));
-        Affiliation primaryInstitution = new Affiliation();
+        new Affiliation();
         orcidBio.setPersonalDetails(personalDetails);
         orcidProfile.setOrcidBio(orcidBio);
         return orcidProfile;

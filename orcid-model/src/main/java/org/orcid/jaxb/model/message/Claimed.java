@@ -51,6 +51,10 @@ import java.io.Serializable;
 @XmlRootElement(name = "claimed")
 public class Claimed implements Serializable {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
     @XmlValue
     protected boolean value;
 

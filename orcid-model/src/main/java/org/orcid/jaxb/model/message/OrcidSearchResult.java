@@ -55,6 +55,10 @@ import java.io.Serializable;
 @XmlRootElement(name = "orcid-search-result")
 public class OrcidSearchResult implements Serializable {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
     @XmlElement(name = "relevancy-score", required = true)
     protected RelevancyScore relevancyScore;
     @XmlElement(name = "orcid-profile", required = true)

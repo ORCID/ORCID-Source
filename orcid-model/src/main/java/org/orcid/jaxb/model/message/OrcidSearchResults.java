@@ -56,6 +56,10 @@ import javax.xml.bind.annotation.XmlType;
 @XmlRootElement(name = "orcid-search-results")
 public class OrcidSearchResults implements Serializable {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
     @XmlElement(name = "orcid-search-result")
     protected List<OrcidSearchResult> orcidSearchResult;
 

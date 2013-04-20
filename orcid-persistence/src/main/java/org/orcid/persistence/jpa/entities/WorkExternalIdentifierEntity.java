@@ -16,14 +16,10 @@
  */
 package org.orcid.persistence.jpa.entities;
 
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
 import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
-import org.orcid.persistence.jpa.entities.keys.PatentExternalIdentifierEntityPk;
 import org.orcid.persistence.jpa.entities.keys.WorkExternalIdentifierEntityPk;
 import org.orcid.utils.NullUtils;
 
-import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -34,10 +30,8 @@ import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-import java.util.Set;
 
 /**
  * 2011-2012 - ORCID.
@@ -49,6 +43,10 @@ import java.util.Set;
 @IdClass(WorkExternalIdentifierEntityPk.class)
 public class WorkExternalIdentifierEntity extends BaseEntity<WorkExternalIdentifierEntityPk> implements Comparable<WorkExternalIdentifierEntity> {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
     private String identifier;
     private WorkExternalIdentifierType identifierType;
     private WorkEntity work;

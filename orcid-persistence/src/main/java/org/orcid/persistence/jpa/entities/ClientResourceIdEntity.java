@@ -39,6 +39,10 @@ import javax.persistence.Transient;
 @IdClass(ClientResourceIdPk.class)
 public class ClientResourceIdEntity extends BaseEntity<ClientResourceIdPk> {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
     private String resourceId;
     private ClientDetailsEntity clientDetailsEntity;
 

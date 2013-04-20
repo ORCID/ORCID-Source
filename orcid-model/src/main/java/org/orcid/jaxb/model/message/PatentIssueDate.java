@@ -53,6 +53,10 @@ import java.io.Serializable;
 @XmlRootElement(name = "patent-issue-date")
 public class PatentIssueDate implements Serializable {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
     @XmlValue
     @XmlSchemaType(name = "dateTime")
     protected XMLGregorianCalendar value;

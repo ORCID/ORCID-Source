@@ -52,6 +52,10 @@ import java.io.Serializable;
 @XmlRootElement(name = "external-id-url")
 public class ExternalIdUrl implements Serializable {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
     @XmlValue
     @XmlSchemaType(name = "anyURI")
     protected String value;

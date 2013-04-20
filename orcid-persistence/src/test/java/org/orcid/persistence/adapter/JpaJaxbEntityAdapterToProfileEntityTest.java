@@ -19,9 +19,6 @@ package org.orcid.persistence.adapter;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
 import static org.junit.Assert.*;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -38,13 +35,11 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.jaxb.model.message.OrcidMessage;
-import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidWork;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.message.WorkType;
 import org.orcid.persistence.JaxbOrcidMessageUtil;
 import org.orcid.persistence.dao.GenericDao;
-import org.orcid.persistence.jpa.entities.AlternateEmailEntity;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.GivenPermissionByEntity;
 import org.orcid.persistence.jpa.entities.GivenPermissionToEntity;
@@ -177,7 +172,7 @@ public class JpaJaxbEntityAdapterToProfileEntityTest extends DBUnitTest {
         assertEquals("2222-2222-2222-2229", retrievedGivenPermissionByEntity.getGiver().getId());
         assertEquals(DateUtils.convertToDate("2012-12-22T08:16:22"), retrievedGivenPermissionByEntity.getApprovalDate());
 
-        OrcidProfile retrievedOrcidProfile = adapter.toOrcidProfile(retrievedProfileEntity);
+        adapter.toOrcidProfile(retrievedProfileEntity);
     }
 
     @Test

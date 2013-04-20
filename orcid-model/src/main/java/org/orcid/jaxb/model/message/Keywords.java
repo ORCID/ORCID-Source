@@ -57,6 +57,10 @@ import javax.xml.bind.annotation.XmlType;
 @XmlRootElement(name = "keywords")
 public class Keywords implements VisibilityType, Serializable {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
     protected List<Keyword> keyword;
     @XmlAttribute
     protected Visibility visibility;

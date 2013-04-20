@@ -55,6 +55,10 @@ import javax.xml.bind.annotation.XmlType;
 @XmlRootElement(name = "patent-contributors")
 public class PatentContributors implements Serializable {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
     protected List<Contributor> contributor;
 
     /**

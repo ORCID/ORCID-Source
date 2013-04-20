@@ -25,7 +25,6 @@ package org.orcid.jaxb.model.message;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
@@ -59,6 +58,10 @@ import java.io.Serializable;
 @XmlRootElement(name = "personal-details")
 public class PersonalDetails implements Serializable {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
     @XmlElement(name = "given-names", required = true)
     protected GivenNames givenNames;
     @XmlElement(name = "family-name", required = true)

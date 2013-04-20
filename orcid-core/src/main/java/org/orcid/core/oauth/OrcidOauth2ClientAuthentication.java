@@ -29,6 +29,10 @@ import java.util.Collection;
  */
 public class OrcidOauth2ClientAuthentication implements Authentication {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
     private ClientDetailsEntity clientDetails;
     private boolean authenticated = false;
 

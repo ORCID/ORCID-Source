@@ -16,13 +16,8 @@
  */
 package org.orcid.persistence.jpa.entities;
 
-import org.orcid.jaxb.model.message.Visibility;
-
-import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;

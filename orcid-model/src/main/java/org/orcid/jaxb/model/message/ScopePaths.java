@@ -56,6 +56,10 @@ import javax.xml.bind.annotation.XmlType;
 @XmlRootElement(name = "scope-paths")
 public class ScopePaths implements Serializable {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
     @XmlElement(name = "scope-path", required = true)
     protected List<ScopePath> scopePath;
 

@@ -57,6 +57,10 @@ import java.io.Serializable;
 @XmlRootElement(name = "security-details")
 public class SecurityDetails implements Serializable {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
     @XmlElement(name = "encrypted-password", required = true)
     protected EncryptedPassword encryptedPassword;
     @XmlElement(name = "security-question-id", required = true)

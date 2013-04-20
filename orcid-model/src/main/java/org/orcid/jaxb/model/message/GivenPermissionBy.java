@@ -56,6 +56,10 @@ import javax.xml.bind.annotation.XmlType;
 @XmlRootElement(name = "given-permission-by")
 public class GivenPermissionBy implements Serializable {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
     @XmlElement(name = "delegation-details", required = true)
     protected List<DelegationDetails> delegationDetails;
 

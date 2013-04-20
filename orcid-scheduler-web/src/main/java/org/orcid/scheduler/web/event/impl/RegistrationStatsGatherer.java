@@ -18,7 +18,6 @@ package org.orcid.scheduler.web.event.impl;
 
 import com.yammer.metrics.Metrics;
 import com.yammer.metrics.core.Histogram;
-import com.yammer.metrics.reporting.ConsoleReporter;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.RegistrationManager;
 import org.orcid.scheduler.web.event.EventStatsGatherer;

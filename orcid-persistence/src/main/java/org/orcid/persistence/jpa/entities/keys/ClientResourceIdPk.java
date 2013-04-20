@@ -25,6 +25,10 @@ import java.io.Serializable;
  */
 public class ClientResourceIdPk implements Serializable {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
     private String clientDetailsEntity;
     private String resourceId;
 

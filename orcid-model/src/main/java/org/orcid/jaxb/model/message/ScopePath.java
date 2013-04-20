@@ -51,6 +51,10 @@ import java.io.Serializable;
 @XmlRootElement(name = "scope-path")
 public class ScopePath implements Serializable {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
     @XmlValue
     protected ScopePathType value;
 

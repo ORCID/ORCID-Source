@@ -28,7 +28,6 @@ import org.orcid.frontend.web.forms.SearchOrcidBioForm;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidSearchResult;
 import org.orcid.utils.OrcidStringUtils;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;

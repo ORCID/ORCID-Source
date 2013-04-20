@@ -25,7 +25,6 @@ package org.orcid.jaxb.model.message;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
@@ -59,6 +58,10 @@ import java.io.Serializable;
 @XmlRootElement(name = "orcid-activities")
 public class OrcidActivities implements Serializable {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
     @XmlElement(name = "orcid-works")
     protected OrcidWorks orcidWorks;
     @XmlElement(name = "orcid-grants")

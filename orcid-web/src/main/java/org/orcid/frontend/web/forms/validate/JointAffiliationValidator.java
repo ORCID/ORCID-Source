@@ -78,7 +78,6 @@ public class JointAffiliationValidator implements ConstraintValidator<ValidJoint
     }
 
     private boolean validateRequiredFields(JointAffiliationForm value, ConstraintValidatorContext context) {
-        String message = "Joint affiliation {1} is a required field";
         boolean valid = true;
         if (StringUtils.isBlank(value.getInstitutionName())) {
             context.disableDefaultConstraintViolation();

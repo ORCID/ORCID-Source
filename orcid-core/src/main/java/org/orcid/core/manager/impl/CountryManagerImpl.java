@@ -27,7 +27,6 @@ import javax.annotation.Resource;
 
 import org.apache.commons.io.IOUtils;
 import org.orcid.core.manager.CountryManager;
-import org.orcid.jaxb.model.message.OrcidSearchResult;
 import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.jpa.entities.CountryIsoEntity;
 import org.springframework.cache.annotation.Cacheable;

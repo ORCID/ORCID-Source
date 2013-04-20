@@ -65,6 +65,10 @@ import javax.xml.bind.annotation.XmlType;
 @XmlRootElement(name = "orcid-patent")
 public class OrcidPatent implements VisibilityType, Serializable {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
     protected Country country;
     @XmlElement(name = "patent-number")
     protected PatentNumber patentNumber;

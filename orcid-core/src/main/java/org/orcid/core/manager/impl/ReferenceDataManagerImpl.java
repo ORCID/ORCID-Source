@@ -24,7 +24,6 @@ import javax.annotation.Resource;
 import org.orcid.core.manager.ReferenceDataManager;
 import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.jpa.entities.RefDataEntity;
-import org.springframework.beans.factory.annotation.Required;
 
 /**
  * Class to map simple key value pairs of reference org.orcid.test.data for use

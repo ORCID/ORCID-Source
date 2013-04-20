@@ -18,11 +18,6 @@ package org.orcid.api.t1.integration;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-
-import java.text.MessageFormat;
-
 import javax.annotation.Resource;
 import javax.ws.rs.core.MediaType;
 
@@ -31,7 +26,6 @@ import org.junit.runner.RunWith;
 import org.orcid.api.common.OrcidApiConstants;
 import org.orcid.api.common.OrcidApiService;
 import org.orcid.jaxb.model.message.OrcidMessage;
-import org.orcid.jaxb.model.message.OrcidSearchResult;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 

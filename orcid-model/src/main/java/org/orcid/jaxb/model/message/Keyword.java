@@ -54,6 +54,10 @@ import java.io.Serializable;
 @XmlRootElement(name = "keyword")
 public class Keyword implements Serializable {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
     @XmlValue
     protected String content;
 

@@ -32,12 +32,12 @@ public class StatisticsController extends BaseController {
 
     @Resource
     private StatisticsManager statisticsManager;
-    
+
     @RequestMapping(value = "/statistics", method = RequestMethod.GET)
     @Cacheable("statistics")
-    public ModelAndView getStatistics(){
+    public ModelAndView getStatistics() {
         ModelAndView mav = new ModelAndView("statistics");
-        Map<String, Long> statistics = statisticsManager.getStatistics(); 
+        Map<String, Long> statistics = statisticsManager.getStatistics();
         mav.addObject("statistics", statistics);
         return mav;
     }

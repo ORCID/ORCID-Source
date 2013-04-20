@@ -17,24 +17,16 @@
 package org.orcid.frontend.web.controllers;
 
 import java.net.URI;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
-import java.util.ResourceBundle;
-
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
-
 import org.apache.commons.lang.StringUtils;
-import org.orcid.api.common.validation.OrcidMessageValidator;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.OrcidSearchManager;
@@ -42,11 +34,9 @@ import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.utils.SolrFieldWeight;
 import org.orcid.core.utils.SolrQueryBuilder;
 import org.orcid.frontend.web.forms.AddDelegateForm;
-import org.orcid.frontend.web.forms.ChangeEmailPreferencesForm;
 import org.orcid.frontend.web.forms.ChangePasswordForm;
 import org.orcid.frontend.web.forms.ChangePersonalInfoForm;
 import org.orcid.frontend.web.forms.ChangeSecurityQuestionForm;
-import org.orcid.frontend.web.forms.ChangeVisibilityPreferencesForm;
 import org.orcid.frontend.web.forms.CurrentAffiliationsForm;
 import org.orcid.frontend.web.forms.ManagePasswordOptionsForm;
 import org.orcid.frontend.web.forms.PastInstitutionsForm;
@@ -57,7 +47,6 @@ import org.orcid.jaxb.model.message.Delegation;
 import org.orcid.jaxb.model.message.DelegationDetails;
 import org.orcid.jaxb.model.message.Email;
 import org.orcid.jaxb.model.message.EncryptedSecurityAnswer;
-import org.orcid.jaxb.model.message.ExternalIdentifier;
 import org.orcid.jaxb.model.message.GivenPermissionBy;
 import org.orcid.jaxb.model.message.GivenPermissionTo;
 import org.orcid.jaxb.model.message.Orcid;
@@ -68,17 +57,13 @@ import org.orcid.jaxb.model.message.Preferences;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.message.SecurityDetails;
 import org.orcid.jaxb.model.message.SecurityQuestionId;
-import org.orcid.jaxb.model.message.SendChangeNotifications;
-import org.orcid.jaxb.model.message.SendOrcidNews;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
-import org.orcid.jaxb.model.message.WorkVisibilityDefault;
 import org.orcid.password.constants.OrcidPasswordConstants;
 import org.orcid.pojo.Emails;
 import org.orcid.pojo.Errors;
 import org.orcid.pojo.ChangePassword;
 import org.orcid.pojo.SecurityQuestion;
-import org.orcid.utils.OrcidStringUtils;
 import org.orcid.utils.OrcidWebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -97,8 +82,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.multiaction.NoSuchRequestHandlingMethodException;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import org.springframework.web.servlet.support.RequestContextUtils;
-
 import schema.constants.SolrConstants;
 
 /**
@@ -178,7 +161,7 @@ public class ManageProfileController extends BaseWorkspaceController {
 
     @RequestMapping(value = "/delete-affiliations", method = RequestMethod.POST)
     public ModelAndView deleteAffiliations(ModelAndView mav) {
-        OrcidProfile profile = orcidProfileManager.retrieveOrcidProfile(getCurrentUserOrcid());
+        orcidProfileManager.retrieveOrcidProfile(getCurrentUserOrcid());
 
         mav.setViewName("redirect:/account?activeTab=affiliations-tab");
         return mav;

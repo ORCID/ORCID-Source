@@ -54,6 +54,10 @@ import java.io.Serializable;
 @XmlRootElement(name = "work-title")
 public class WorkTitle implements Serializable {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
     protected Title title;
     protected Subtitle subtitle;
 
