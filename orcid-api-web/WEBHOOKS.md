@@ -42,7 +42,7 @@ For example, using the webhook URL above, and the ORCID 0000-0002-7253-3645:
 
 Use your webhook access token to register your webhook against the user's ORCID record.
 
-      curl -v -H 'Accept: application/json' -H 'Authorization: Bearer 5eb23750-1e19-47a3-b6f6-26635c34e8ee' -H "Content-Length: 0" -X PUT 'http://localhost:8080/orcid-api-web/0000-0002-7253-3645/webhook/http%3A%2F%2Fnowhere2.com%2F0000-0002-7253-3645%2Fupdated'
+      curl -v -H 'Accept: application/json' -H 'Authorization: Bearer 5eb23750-1e19-47a3-b6f6-26635c34e8ee' -H 'Content-Length: 0' -X PUT 'http://localhost:8080/orcid-api-web/0000-0002-7253-3645/webhook/http%3A%2F%2Fnowhere2.com%2F0000-0002-7253-3645%2Fupdated'
 
 You need to use an HTTP PUT request, but you should not include anything in the body of the request.
 
@@ -61,7 +61,7 @@ If the callback already existed, then the response will be 204 No Content.
 
 The URL for unregistering a webhook is the same as for registering. However, you need to use the HTTP DELETE method.
 
-      curl -v -H 'Accept: application/json' -H 'Authorization: Bearer 5eb23750-1e19-47a3-b6f6-26635c34e8ee' -H "Content-Length: 0" -X DELETE 'http://localhost:8080/orcid-api-web/0000-0002-7253-3645/webhook/http%3A%2F%2Fnowhere2.com%2F0000-0002-7253-3645%2Fupdated'
+      curl -v -H 'Accept: application/json' -H 'Authorization: Bearer 5eb23750-1e19-47a3-b6f6-26635c34e8ee' -H 'Content-Length: 0' -X DELETE 'http://localhost:8080/orcid-api-web/0000-0002-7253-3645/webhook/http%3A%2F%2Fnowhere2.com%2F0000-0002-7253-3645%2Fupdated'
 
 The response should be 204 No Content.
 
