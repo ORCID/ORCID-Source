@@ -17,38 +17,6 @@
 
 var orcidNgModule = angular.module('orcidApp', []);
 
-orcidNgModule.filter('emailPrimaryFtr', function($filter) {
-	return function(booleanValue) {
-		return booleanValue ? OM.getInstance().get("manage.email.primary_email"): OM.getInstance().get("manage.email.set_primary");
-	};
-});
-
-orcidNgModule.filter('emailVisibilityFtr', function($filter) {
-	return function(strValue) {
-		return strValue.substring(0,1) +  strValue.substring(1).toLowerCase() + " <span class='caret'></span>";
-	};
-});
-
-orcidNgModule.filter('emailVisibilityBtnClassFtr', function($filter) {
-	return function(strValue) {
-		if (strValue == "PRIVATE") return "btn-danger";
-		else if (strValue == "LIMITED") return "btn-warning";
-		return "btn-success";
-	};
-});
-
-orcidNgModule.filter('emailVerifiedFtr', function($filter) {
-	return function(booleanValue) {
-		return booleanValue ? OM.getInstance().get("manage.email.verifed") : OM.getInstance().get("manage.email.unverifed");
-	};
-});
-
-orcidNgModule.filter('emailCurrentFtr', function($filter) {
-	return function(booleanValue) {
-		return booleanValue ? OM.getInstance().get("manage.email.active") : OM.getInstance().get("manage.email.inactive");
-	};
-});
-
 function EditTableCtrl($scope) {
 	
 	// email edit row
@@ -144,7 +112,7 @@ function EditTableCtrl($scope) {
 	
 };
 
-function PrivacyPreferences($scope, $http) {
+function PrivacyPreferencesCtrl($scope, $http) {
 	$scope.getPrivacyPreferences = function() {	
 		$.ajax({
 	        url: $('body').data('baseurl') + 'account/default-privacy-preferences.json',
@@ -184,17 +152,13 @@ function PrivacyPreferences($scope, $http) {
 		$scope.savePrivacyPreferences();
 	};
 	
-	
 	//init
 	$scope.privacyPreferences = $scope.getPrivacyPreferences();
-	
-	
-	
 	
 };
 
 
-function DeactivateAccount($scope, $http) {
+function DeactivateAccountCtrl($scope, $http) {
 	$scope.sendDeactivateEmail = function() {
 		orcidGA.gaPush(['_trackEvent', 'Disengagement', 'Deactivate_Initiate', 'Website']);
 		$.ajax({
@@ -216,10 +180,10 @@ function DeactivateAccount($scope, $http) {
 	    });
 
 	};
-}
+};
 
 
-function SecurityQuestionEdit($scope, $http) {
+function SecurityQuestionEditCtrl($scope, $http) {
 	$scope.getSecurityQuestion = function() {
 		$.ajax({
 	        url: $('body').data('baseurl') + 'account/security-question.json',
@@ -253,9 +217,10 @@ function SecurityQuestionEdit($scope, $http) {
 	    	console.log("error with security question");
 	    });
 	};
-}
+};
 
-function PasswordEdit($scope, $http) {
+
+function PasswordEditCtrl($scope, $http) {
 	$scope.getChangePassword = function() {
 		$.ajax({
 	        url: $('body').data('baseurl') + 'account/change-password.json',
@@ -288,10 +253,9 @@ function PasswordEdit($scope, $http) {
 	    	console.log("error with edit password");
 	    });
 	};
-}
+};
 
-function EmailEdit($scope, $http) {
-
+function EmailEditCtrl($scope, $http) {
 	$scope.getEmails = function() {
 		$.ajax({
 	        url: $('body').data('baseurl') + 'account/emails.json',
@@ -439,6 +403,7 @@ function EmailEdit($scope, $http) {
 	
 };
 
+
 function ExternalIdentifierCtrl($scope, $http){		
 	$scope.getExternalIdentifiers = function(){
 		$.ajax({
@@ -496,4 +461,4 @@ function ExternalIdentifierCtrl($scope, $http){
 	    	console.log("error with external identifiers");
 	    });
 	};
-}
+};

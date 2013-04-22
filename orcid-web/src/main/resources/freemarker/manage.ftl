@@ -57,7 +57,7 @@
 								<a href="" ng-click="toggleEmailEdit()" ng-bind="emailToggleText"></a>
 							</td>
 						</tr>
-						<tr ng-controller="EmailEdit" ng-show="showEditEmail" ng-cloak>
+						<tr ng-controller="EmailEditCtrl" ng-show="showEditEmail" ng-cloak>
 							<td colspan="2">
 							<div class="editTablePadCell35">
 								<!-- we should never see errors here, but just to be safe -->
@@ -69,8 +69,8 @@
 			   						  <td class="padRgt" ng-class="{primaryEmail:email.primary}" ng-bind="email.value">
 			   						  </td>
 			   						  <td class="padRgt">
-			   						  		<span ng-hide="email.primary" ><a href="" ng-click="setPrimary($index)" ng-bind="email.primary | emailPrimaryFtr"></a></span>
-			   							    <span ng-show="email.primary" class="muted" style="color: #bd362f;" ng-bind="email.primary | emailPrimaryFtr"></span>
+			   						  		<span ng-hide="email.primary" ><a href="" ng-click="setPrimary($index)">${springMacroRequestContext.getMessage("manage.email.primary_email")}</a></span>
+			   							    <span ng-show="email.primary" class="muted" style="color: #bd362f;">${springMacroRequestContext.getMessage("manage.email.set_primary")}</span>
 			   						  </td> 
 			   						  <td class="padRgt">
 			   						  	<select style="width: 100px; margin: 0px;" ng-change="saveEmail()" ng-model="email.current">
@@ -115,7 +115,7 @@
 						    <a href="" ng-click="togglePasswordEdit()" ng-bind="passwordToggleText"></a>
 						</td>
 					</tr>
-					<tr ng-controller="PasswordEdit" ng-show="showEditPassword" ng-cloak>
+					<tr ng-controller="PasswordEditCtrl" ng-show="showEditPassword" ng-cloak>
 						<td colspan="2">
 						<div class="editTablePadCell35">
 							    <span class="orcid-error" ng-show="changePasswordPojo.errors.length > 0">
@@ -156,7 +156,7 @@
 							<a href="" ng-click="togglePrivacyPreferencesEdit()" ng-bind="privacyPreferencesToggleText"></a>
 						</td>
 					</tr>
-					<tr ng-controller="PrivacyPreferences" ng-show="showEditPrivacyPreferences" ng-cloak>
+					<tr ng-controller="PrivacyPreferencesCtrl" ng-show="showEditPrivacyPreferences" ng-cloak>
 						<td colspan="2">
 						<div class="editTablePadCell35">
 							${springMacroRequestContext.getMessage("privacy_preferences.labelDefaultprivacyfornewWorks")}<br />
@@ -180,7 +180,7 @@
 							<a href="" ng-click="toggleSecurityQuestionEdit()" ng-bind="securityQuestionToggleText"></a>
 						</td>
 					</tr>
-					<tr ng-controller="SecurityQuestionEdit" ng-show="showEditSecurityQuestion" ng-cloak>
+					<tr ng-controller="SecurityQuestionEditCtrl" ng-show="showEditSecurityQuestion" ng-cloak>
 						<td colspan="2">
 						<div class="editTablePadCell35">
 							<span class="orcid-error" ng-show="securityQuestionPojo.errors.length > 0">
@@ -206,7 +206,7 @@
 							<a href="" ng-click="toggleEmailPreferencesEdit()" ng-bind="emailPreferencesToggleText"></a>
 						</td>
 					</tr>
-					<tr ng-controller="PrivacyPreferences" ng-show="showEditEmailPreferences" ng-cloak>
+					<tr ng-controller="PrivacyPreferencesCtrl" ng-show="showEditEmailPreferences" ng-cloak>
 						<td colspan="2">
 						<div class="editTablePadCell35">
 							    <label class="checkbox">
@@ -234,7 +234,7 @@
 							<a href="" ng-click="toggleDeactivateEdit()" ng-bind="deactivateToggleText"></a>
 						</td>
 					</tr>
-					<tr ng-controller="DeactivateAccount" ng-show="showEditDeactivate" ng-cloak>
+					<tr ng-controller="DeactivateAccountCtrl" ng-show="showEditDeactivate" ng-cloak>
 						<td colspan="2">
 						<div class="editTablePadCell35">
 								<p>${springMacroRequestContext.getMessage("deactivate_orcid.you_may")}</p>
