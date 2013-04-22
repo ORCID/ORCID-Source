@@ -270,17 +270,19 @@ public class T2OrcidApiServiceDelegatorImpl implements T2OrcidApiServiceDelegato
             throw new OrcidBadRequestException("Cannot create ORCID");
         } catch (PersistenceException pe) {
             StringBuffer errorMessage = new StringBuffer("Unable to create work");
-            if(pe.getCause() != null && DataException.class.isAssignableFrom(pe.getCause().getClass())){
-              DataException de = (DataException)pe.getCause();
-              if(de.getCause() != null && BatchUpdateException.class.isAssignableFrom(de.getCause().getClass())){
-                  BatchUpdateException bue = (BatchUpdateException) de.getCause();
-                  if(bue.getSQLState().equals("22001")){
-                          errorMessage.append("\nOne of the parameters passed in the request is either too big or invalid.");
-                          if(bue.getNextException() != null)
-                              errorMessage.append("\nCode: " + bue.getNextException());
-                  }                                     
-              }              
-            } 
+            if (pe.getCause() != null && DataException.class.isAssignableFrom(pe.getCause().getClass())) {
+                DataException de = (DataException) pe.getCause();
+                if (de.getCause() != null && BatchUpdateException.class.isAssignableFrom(de.getCause().getClass())) {
+                    BatchUpdateException bue = (BatchUpdateException) de.getCause();
+                    if (bue != null && bue.getSQLState() != null) {
+                        if (bue.getSQLState().equals("22001")) {
+                            errorMessage.append("\nOne of the parameters passed in the request is either too big or invalid.");
+                            if (bue.getNextException() != null)
+                                errorMessage.append("\nCode: " + bue.getNextException());
+                        }
+                    }
+                }
+            }
             throw new OrcidBadRequestException(errorMessage.toString());
         }
     }
