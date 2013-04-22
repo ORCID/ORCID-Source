@@ -53,6 +53,10 @@ import java.io.Serializable;
 @XmlRootElement(name = "biography")
 public class Biography implements VisibilityType, Serializable {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
     @XmlValue
     protected String content;
     @XmlAttribute

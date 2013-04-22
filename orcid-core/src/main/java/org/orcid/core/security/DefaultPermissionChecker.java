@@ -290,9 +290,7 @@ public class DefaultPermissionChecker implements PermissionChecker {
                         + " do NOT match.");
             }
 
-            // Does the profile exist? If so, has it been claimed? Does it
-            // belong to the calling client?
-            ProfileEntity tmp = profileEntityManager.findByOrcid(messageOrcid);
+            profileEntityManager.findByOrcid(messageOrcid);
             if (!profileEntityManager.existsAndNotClaimedAndBelongsTo(messageOrcid, authorizationRequest.getClientId())) {
                 throw new AccessControlException("You cannot update this profile as it has been claimed, " + "or you are not the owner.");
             }

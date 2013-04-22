@@ -241,7 +241,7 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
         assertEquals("http://www.wjrs.co.uk", resultProfile.getOrcidBio().getResearcherUrls().getResearcherUrl().get(0).getUrl().getValue());
         assertEquals(1, resultProfile.getOrcidActivities().getOrcidWorks().getOrcidWork().get(0).getWorkExternalIdentifiers().getWorkExternalIdentifier().size());
     }
-    
+
     @Test
     @Transactional
     @Rollback(true)
@@ -579,8 +579,8 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
         assertNotNull(userProfile.getOrcidBio().getApplications());
         assertEquals(1, userProfile.getOrcidBio().getApplications().getApplicationSummary().size());
 
-        orcidProfileManager.revokeApplication(DELEGATE_ORCID, APPLICATION_ORCID,
-                Arrays.asList(new ScopePathType[] { ScopePathType.ORCID_BIO_READ_LIMITED, ScopePathType.ORCID_BIO_UPDATE }));
+        orcidProfileManager.revokeApplication(DELEGATE_ORCID, APPLICATION_ORCID, Arrays.asList(new ScopePathType[] { ScopePathType.ORCID_BIO_READ_LIMITED,
+                ScopePathType.ORCID_BIO_UPDATE }));
 
         OrcidProfile retrievedProfile = orcidProfileManager.retrieveOrcidProfile(DELEGATE_ORCID);
         assertNotNull(retrievedProfile);

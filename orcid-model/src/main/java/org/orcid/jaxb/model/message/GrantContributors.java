@@ -57,6 +57,10 @@ import javax.xml.bind.annotation.XmlType;
 @XmlRootElement(name = "grant-contributors")
 public class GrantContributors implements Serializable {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
     protected List<Contributor> contributor;
     @XmlAttribute
     protected Scope scope;

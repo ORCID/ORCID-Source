@@ -57,6 +57,10 @@ import java.io.Serializable;
 @XmlRootElement(name = "assignee")
 public class Assignee implements VisibilityType, Serializable {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
     @XmlElement(name = "assignee-orcid")
     protected AssigneeOrcid assigneeOrcid;
     @XmlElement(name = "assignee-name")

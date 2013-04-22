@@ -19,16 +19,7 @@ package org.orcid.pojo;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.orcid.jaxb.model.message.EncryptedSecurityAnswer;
-import org.orcid.jaxb.model.message.SecurityQuestionId;
-import org.springframework.validation.ObjectError;
-
 public class SecurityQuestion implements ErrorsInterface {
-    /**
-     * 
-     */
-    private static final long serialVersionUID = 1L;
-
     private List<String> errors = new ArrayList<String>();
 
     private String securityAnswer;

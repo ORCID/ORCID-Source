@@ -55,6 +55,10 @@ import javax.xml.bind.annotation.XmlType;
 @XmlRootElement(name = "grant-sources")
 public class GrantSources implements Serializable {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
     protected List<Source> source;
 
     /**

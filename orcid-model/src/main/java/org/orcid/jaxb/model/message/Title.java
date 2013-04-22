@@ -51,6 +51,11 @@ import java.io.Serializable;
 @XmlRootElement(name = "title")
 public class Title implements Serializable {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
+
     public Title() {
     }
 

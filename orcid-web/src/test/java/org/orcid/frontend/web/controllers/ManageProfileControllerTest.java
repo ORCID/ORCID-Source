@@ -173,7 +173,7 @@ public class ManageProfileControllerTest extends BaseControllerTest {
         PersonalInfoForm personalInfoForm = (PersonalInfoForm) model.get("personalInfoForm");
         ManagePasswordOptionsForm passwordOptionsForm = (ManagePasswordOptionsForm) model.get("managePasswordOptionsForm");
         OrcidProfile profile = (OrcidProfile) model.get("profile");
-        List<String> startYears = (List<String>) model.get("startYears");
+        model.get("startYears");
         String activeTab = (String) model.get("activeTab");
         Map<String, String> securityQuestions = (Map<String, String>) model.get("securityQuestions");
         currentAffiliationsForm = (CurrentAffiliationsForm) model.get("currentAffiliationsForm");

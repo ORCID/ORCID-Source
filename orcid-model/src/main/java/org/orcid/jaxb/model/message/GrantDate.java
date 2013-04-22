@@ -53,6 +53,10 @@ import java.io.Serializable;
 @XmlRootElement(name = "grant-date")
 public class GrantDate implements Serializable {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
     @XmlValue
     @XmlSchemaType(name = "dateTime")
     protected XMLGregorianCalendar value;

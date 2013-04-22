@@ -51,6 +51,10 @@ import java.io.Serializable;
 @XmlRootElement(name = "work-external-identifier-id")
 public class WorkExternalIdentifierId implements Serializable {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
     @XmlValue
     protected String content;
 

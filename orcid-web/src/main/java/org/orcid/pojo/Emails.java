@@ -19,8 +19,6 @@ package org.orcid.pojo;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.validation.ObjectError;
-
 public class Emails implements ErrorsInterface {
     private List<Email> emails = null;
     @SuppressWarnings("unused")

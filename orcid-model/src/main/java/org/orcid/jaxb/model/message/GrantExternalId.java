@@ -51,6 +51,10 @@ import java.io.Serializable;
 @XmlRootElement(name = "grant-external-id")
 public class GrantExternalId implements Serializable {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
     @XmlValue
     protected String content;
 

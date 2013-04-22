@@ -19,8 +19,6 @@ package org.orcid.core.cli;
 import java.io.InputStream;
 import java.text.MessageFormat;
 import java.util.Date;
-import java.util.List;
-
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
@@ -34,10 +32,6 @@ import org.orcid.jaxb.model.message.Keyword;
 import org.orcid.jaxb.model.message.Keywords;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidProfile;
-import org.orcid.jaxb.model.message.OrcidWork;
-import org.orcid.jaxb.model.message.ResearcherUrl;
-import org.orcid.jaxb.model.message.ResearcherUrls;
-import org.orcid.jaxb.model.message.Url;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -131,7 +125,7 @@ public class OrcidBatchLoad {
         keywords.getKeyword().add(new Keyword(RandomStringUtils.randomAlphabetic(255)));
         profile.getOrcidBio().setKeywords(keywords);
 
-        List<OrcidWork> orcidWorks = profile.retrieveOrcidWorks().getOrcidWork();
+        profile.retrieveOrcidWorks().getOrcidWork();
 
     }
 

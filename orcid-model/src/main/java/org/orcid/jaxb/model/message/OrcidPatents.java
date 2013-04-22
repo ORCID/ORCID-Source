@@ -58,6 +58,10 @@ import javax.xml.bind.annotation.XmlType;
 @XmlRootElement(name = "orcid-patents")
 public class OrcidPatents implements Serializable {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
     @XmlElement(name = "orcid-patent")
     protected List<OrcidPatent> orcidPatent;
     @XmlAttribute

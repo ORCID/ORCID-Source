@@ -25,6 +25,11 @@ import javax.ws.rs.core.Response;
  */
 public class OrcidNotFoundException extends OrcidApiException {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
+
     public OrcidNotFoundException(String message) {
         super(message, Response.Status.NOT_FOUND);
     }

@@ -57,6 +57,10 @@ import javax.xml.bind.annotation.XmlType;
 @XmlRootElement(name = "work-sources")
 public class WorkSources implements Serializable {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
     protected List<Source> source;
     @XmlAttribute
     protected Scope scope;

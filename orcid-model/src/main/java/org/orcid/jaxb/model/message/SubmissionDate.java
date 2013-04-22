@@ -56,6 +56,10 @@ import java.io.Serializable;
 @XmlRootElement(name = "submission-date")
 public class SubmissionDate implements Serializable {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
     @XmlValue
     @XmlSchemaType(name = "dateTime")
     protected XMLGregorianCalendar value;

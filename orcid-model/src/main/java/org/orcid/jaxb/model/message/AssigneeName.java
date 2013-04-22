@@ -51,6 +51,10 @@ import java.io.Serializable;
 @XmlRootElement(name = "assignee-name")
 public class AssigneeName implements Serializable {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
     @XmlValue
     protected String content;
 

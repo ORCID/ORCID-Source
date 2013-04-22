@@ -58,6 +58,11 @@ import javax.xml.bind.annotation.XmlType;
 @XmlRootElement(name = "researcher-urls")
 public class ResearcherUrls implements VisibilityType, Serializable {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
+
     @XmlElement(name = "researcher-url")
     protected List<ResearcherUrl> researcherUrl;
 

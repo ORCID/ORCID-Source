@@ -28,6 +28,10 @@ import org.springframework.util.Assert;
  */
 public class OrcidOAuth2Authentication extends OAuth2Authentication {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
     private String activeToken;
 
     /**

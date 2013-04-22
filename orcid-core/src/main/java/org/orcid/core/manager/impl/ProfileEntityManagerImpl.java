@@ -19,7 +19,6 @@ package org.orcid.core.manager.impl;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;

@@ -27,7 +27,6 @@ import javax.ws.rs.core.Response;
 
 import org.orcid.api.common.delegator.OrcidApiServiceDelegator;
 import org.orcid.api.common.exception.OrcidNotFoundException;
-import org.orcid.api.common.exception.OrcidUnauthorizedException;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.manager.OrcidSearchManager;
 import org.orcid.core.manager.ValidationManager;

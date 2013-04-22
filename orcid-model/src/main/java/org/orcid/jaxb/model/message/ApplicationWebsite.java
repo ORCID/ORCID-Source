@@ -52,6 +52,11 @@ import java.io.Serializable;
 @XmlRootElement(name = "application-website")
 public class ApplicationWebsite implements Serializable {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
+
     public ApplicationWebsite() {
 
     }

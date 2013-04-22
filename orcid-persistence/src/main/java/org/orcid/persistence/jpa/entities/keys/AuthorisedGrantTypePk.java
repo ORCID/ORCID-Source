@@ -28,6 +28,10 @@ import java.io.Serializable;
 @Embeddable
 public class AuthorisedGrantTypePk implements Serializable {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
     private String clientId;
     private String scope;
 

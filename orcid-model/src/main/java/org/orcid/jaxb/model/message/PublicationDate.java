@@ -60,6 +60,10 @@ import java.io.Serializable;
 @XmlRootElement(name = "publication-date")
 public class PublicationDate implements Serializable {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
     @XmlElement(required = true)
     protected Year year;
     protected Month month;

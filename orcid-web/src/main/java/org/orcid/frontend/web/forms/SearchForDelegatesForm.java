@@ -19,7 +19,6 @@ package org.orcid.frontend.web.forms;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.orcid.jaxb.model.message.Affiliation;
 import org.orcid.jaxb.model.message.OrcidBio;
 import org.orcid.jaxb.model.message.OrcidSearchResult;
 import org.orcid.jaxb.model.message.OrcidSearchResults;

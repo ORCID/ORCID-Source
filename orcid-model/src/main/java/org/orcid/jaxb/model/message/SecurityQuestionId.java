@@ -54,6 +54,11 @@ import java.io.Serializable;
 @XmlRootElement(name = "security-question-id")
 public class SecurityQuestionId implements Serializable {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
+
     public SecurityQuestionId() {
     }
 

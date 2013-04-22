@@ -58,6 +58,10 @@ import java.io.Serializable;
 @XmlRootElement(name = "orcid-internal")
 public class OrcidInternal implements VisibilityType, Serializable {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
     @XmlElement(name = "security-details")
     protected SecurityDetails securityDetails;
     protected Preferences preferences;

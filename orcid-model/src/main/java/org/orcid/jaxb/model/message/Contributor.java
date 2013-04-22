@@ -57,6 +57,10 @@ import java.io.Serializable;
 @XmlRootElement(name = "contributor")
 public class Contributor implements Serializable {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
     @XmlElement(name = "contributor-orcid")
     protected ContributorOrcid contributorOrcid;
     @XmlElement(name = "credit-name")

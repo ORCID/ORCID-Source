@@ -25,6 +25,11 @@ import javax.ws.rs.core.Response;
  */
 public class OrcidNotAcceptableException extends OrcidApiException {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
+
     public OrcidNotAcceptableException(String message) {
         super(message, Response.Status.NOT_ACCEPTABLE);
     }

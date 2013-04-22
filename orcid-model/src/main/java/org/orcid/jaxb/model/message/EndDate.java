@@ -51,6 +51,10 @@ import java.io.Serializable;
 @XmlRootElement(name = "end-date")
 public class EndDate implements Serializable {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
     @XmlValue
     @XmlSchemaType(name = "date")
     protected XMLGregorianCalendar value;

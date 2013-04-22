@@ -19,6 +19,11 @@ package org.orcid.api.common.exception;
 import javax.ws.rs.core.Response;
 
 public class OrcidForbiddenException extends OrcidApiException {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
+
     public OrcidForbiddenException(String message) {
         super(message, Response.Status.FORBIDDEN);
     }

@@ -38,6 +38,10 @@ import java.util.Set;
 @Table(name = "oauth2_authoriziation_code_detail")
 public class OrcidOauth2AuthoriziationCodeDetail extends BaseEntity<String> {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
     // Request attributes
     private String authoriziationCode;
     private Set<String> scopes;

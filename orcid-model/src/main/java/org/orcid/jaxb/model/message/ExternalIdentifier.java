@@ -56,6 +56,10 @@ import java.io.Serializable;
 @XmlRootElement(name = "external-identifier")
 public class ExternalIdentifier implements Serializable {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
     @XmlElement(name = "orcid", required = true)
     protected Orcid orcid;
     @XmlElement(name = "external-id-orcid", required = false)

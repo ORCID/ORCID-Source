@@ -51,6 +51,11 @@ import java.io.Serializable;
 @XmlRootElement(name = "external-id-orcid")
 public class ExternalIdOrcid implements Serializable {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
+
     public ExternalIdOrcid() {
 
     }

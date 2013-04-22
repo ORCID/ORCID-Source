@@ -27,7 +27,6 @@ import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlEnumValue;
 import javax.xml.bind.annotation.XmlType;
 import java.io.Serializable;
-import java.util.Map;
 
 /**
  * <p/>

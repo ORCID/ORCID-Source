@@ -51,6 +51,11 @@ import java.io.Serializable;
 @XmlRootElement(name = "application-orcid")
 public class ApplicationOrcid implements Serializable {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
+
     public ApplicationOrcid() {
         super();
     }

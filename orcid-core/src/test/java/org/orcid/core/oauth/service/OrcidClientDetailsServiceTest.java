@@ -74,7 +74,6 @@ public class OrcidClientDetailsServiceTest extends DBUnitTest {
     public void testLoadClientByClientId() throws Exception {
         List<ClientDetailsEntity> all = clientDetailsDao.getAll();
         assertEquals(5, all.size());
-        int counter = 1;
         for (ClientDetailsEntity clientDetailsEntity : all) {
             ClientDetails clientDetails = clientDetailsService.loadClientByClientId(clientDetailsEntity.getId());
             assertNotNull(clientDetails);
@@ -147,8 +146,8 @@ public class OrcidClientDetailsServiceTest extends DBUnitTest {
         List<String> clientGrantedAuthorities = new ArrayList<String>();
         clientGrantedAuthorities.add("ROLE_ADMIN");
 
-        ClientDetailsEntity clientDetails = clientDetailsService.createClientDetails("8888-9999-9999-9999", clientScopes, clientResourceIds, clientAuthorizedGrantTypes,
-                clientRegisteredRedirectUris, clientGrantedAuthorities);
+        clientDetailsService.createClientDetails("8888-9999-9999-9999", clientScopes, clientResourceIds, clientAuthorizedGrantTypes, clientRegisteredRedirectUris,
+                clientGrantedAuthorities);
     }
 
     @Test

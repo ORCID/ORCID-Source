@@ -53,10 +53,11 @@ import javax.xml.bind.annotation.XmlType;
 public enum ClientType {
 
     //@formatter:off
-    @XmlEnumValue("creator") CREATOR("creator"),
-    @XmlEnumValue("premium-creator") PREMIUM_CREATOR("premium-creator"),
-    @XmlEnumValue("updater") UPDATER("updater"),
-    @XmlEnumValue("premium-updater") PREMIUM_UPDATER("premium-updater");
+    @XmlEnumValue("creator")
+    CREATOR("creator"), @XmlEnumValue("premium-creator")
+    PREMIUM_CREATOR("premium-creator"), @XmlEnumValue("updater")
+    UPDATER("updater"), @XmlEnumValue("premium-updater")
+    PREMIUM_UPDATER("premium-updater");
     //@formatter:on
 
     private final String value;

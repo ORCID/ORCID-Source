@@ -58,6 +58,10 @@ import java.util.List;
 @XmlRootElement(name = "alternative-emails")
 public class AlternativeEmails implements VisibilityType, Serializable {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
     @XmlElement(name = "alternative-email", required = true)
     protected List<AlternativeEmail> alternativeEmails;
     @XmlAttribute

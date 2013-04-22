@@ -48,7 +48,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.FileSystemResource;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -73,7 +72,7 @@ public class BaseController {
     private String googleAnalyticsTrackingId;
 
     protected List<String> domainsAllowingRobots;
-    
+
     protected static final String STATIC_FOLDER_PATH = "/static";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BaseController.class);
@@ -83,15 +82,15 @@ public class BaseController {
     private String staticContentPath;
 
     private String staticCdnPath;
-    
+
     @Value("${org.orcid.core.baseUri:http://orcid.org}")
     private String baseUri;
-    
+
     @Resource
     private String cdnConfigFile;
-    
+
     private long cdnConfigFileLastModified = -1;
-    
+
     @Resource
     private LocaleManager localeManager;
 
@@ -361,7 +360,7 @@ public class BaseController {
     public String getLocale() {
         return localeManager.getLocale().toString();
     }
-    
+
     public String getBaseUri() {
         return baseUri;
     }
@@ -375,21 +374,21 @@ public class BaseController {
      * CDN Configuration
      * 
      * */
-    public String getCdnConfigFile(){
+    public String getCdnConfigFile() {
         return this.cdnConfigFile;
     }
-    
-    public void setCdnConfigFile(String cdnConfigFile){
+
+    public void setCdnConfigFile(String cdnConfigFile) {
         this.cdnConfigFile = cdnConfigFile;
     }
-    
+
     /**
      * @return the path to the static content on local project
      * */
     @ModelAttribute("staticLoc")
     public String getStaticContentPath(HttpServletRequest request) {
-        if(StringUtils.isBlank(this.staticContentPath))
-            this.staticContentPath = this.baseUri + STATIC_FOLDER_PATH; 
+        if (StringUtils.isBlank(this.staticContentPath))
+            this.staticContentPath = this.baseUri + STATIC_FOLDER_PATH;
         return this.staticContentPath;
     }
 
@@ -428,17 +427,17 @@ public class BaseController {
         
         return staticCdnPath;
     }
-    
+
     /**
      * Return true if the config file was modified since the last time it was used.
      * @param configFile the config file that contains the CDN information
      * @return true if the file has been modified since the last time we used it.
      * */
-    private boolean reloadCdnInformation(ClassPathResource configFile){        
+    private boolean reloadCdnInformation(ClassPathResource configFile) {
         try {
-            if(this.cdnConfigFileLastModified != configFile.lastModified())
-                return true;            
-        } catch(IOException ioe){
+            if (this.cdnConfigFileLastModified != configFile.lastModified())
+                return true;
+        } catch (IOException ioe) {
             //This means the file doesnt exists
             return false;
         }

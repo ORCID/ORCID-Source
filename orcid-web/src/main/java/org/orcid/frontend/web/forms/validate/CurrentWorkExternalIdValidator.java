@@ -17,8 +17,6 @@
 package org.orcid.frontend.web.forms.validate;
 
 import org.orcid.frontend.web.forms.CurrentWorkExternalId;
-import org.orcid.jaxb.model.message.WorkExternalIdentifier;
-
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 import java.util.Iterator;

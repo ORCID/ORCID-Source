@@ -24,7 +24,6 @@ import javax.annotation.Resource;
 import org.orcid.core.manager.HearAboutManager;
 import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.jpa.entities.HearAboutEntity;
-import org.springframework.beans.factory.annotation.Required;
 
 /**
  * 

@@ -57,6 +57,10 @@ import java.io.Serializable;
 @XmlRootElement(name = "delegation")
 public class Delegation implements VisibilityType, Serializable {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
     @XmlElement(name = "given-permission-to")
     protected GivenPermissionTo givenPermissionTo;
     @XmlElement(name = "given-permission-by")

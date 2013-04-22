@@ -18,8 +18,6 @@ package org.orcid.pojo;
 
 import java.util.List;
 
-import org.springframework.validation.ObjectError;
-
 public interface ErrorsInterface {
 
     public List<String> getErrors();

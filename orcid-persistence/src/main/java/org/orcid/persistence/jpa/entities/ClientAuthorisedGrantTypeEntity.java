@@ -39,6 +39,10 @@ import javax.persistence.Transient;
 @IdClass(ClientAuthorisedGrantTypePk.class)
 public class ClientAuthorisedGrantTypeEntity extends BaseEntity<ClientAuthorisedGrantTypePk> {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
     private String grantType;
     private ClientDetailsEntity clientDetailsEntity;
 
