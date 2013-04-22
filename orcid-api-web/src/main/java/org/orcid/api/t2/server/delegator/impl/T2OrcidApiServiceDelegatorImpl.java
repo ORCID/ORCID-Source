@@ -22,16 +22,20 @@ import static org.orcid.api.common.OrcidApiConstants.WORKS_PATH;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.sql.BatchUpdateException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
+import javax.persistence.PersistenceException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import org.apache.commons.lang.StringUtils;
+import org.hibernate.exception.ConstraintViolationException;
+import org.hibernate.exception.DataException;
 import org.orcid.api.common.delegator.OrcidApiServiceDelegator;
 import org.orcid.api.common.exception.OrcidBadRequestException;
 import org.orcid.api.common.exception.OrcidForbiddenException;
@@ -72,8 +76,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.provider.AuthorizationRequest;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.stereotype.Component;
-
-import org.hibernate.exception.ConstraintViolationException;
 
 /**
  * 2011-2012 ORCID
@@ -266,6 +268,20 @@ public class T2OrcidApiServiceDelegatorImpl implements T2OrcidApiServiceDelegato
             return getCreatedResponse(uriInfo, WORKS_PATH, orcidProfile);
         } catch (DataAccessException e) {
             throw new OrcidBadRequestException("Cannot create ORCID");
+        } catch (PersistenceException pe) {
+            StringBuffer errorMessage = new StringBuffer("Unable to create work");
+            if(pe.getCause() != null && DataException.class.isAssignableFrom(pe.getCause().getClass())){
+              DataException de = (DataException)pe.getCause();
+              if(de.getCause() != null && BatchUpdateException.class.isAssignableFrom(de.getCause().getClass())){
+                  BatchUpdateException bue = (BatchUpdateException) de.getCause();
+                  if(bue.getSQLState().equals("22001")){
+                          errorMessage.append("\nOne of the parameters passed in the request is either too big or invalid.");
+                          if(bue.getNextException() != null)
+                              errorMessage.append("\nCode: " + bue.getNextException());
+                  }                                     
+              }              
+            } 
+            throw new OrcidBadRequestException(errorMessage.toString());
         }
     }
 
