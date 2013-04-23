@@ -2,8 +2,6 @@
 
 ## release-1.1.15.17
 
-* Refactor works to reuse table rows
-
 * Refactor works to reuse db table rows
 
 * Upgraded EhCache
