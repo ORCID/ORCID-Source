@@ -20,12 +20,15 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+
 import org.apache.commons.lang.StringUtils;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.NotificationManager;
@@ -60,9 +63,9 @@ import org.orcid.jaxb.model.message.SecurityQuestionId;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
 import org.orcid.password.constants.OrcidPasswordConstants;
+import org.orcid.pojo.ChangePassword;
 import org.orcid.pojo.Emails;
 import org.orcid.pojo.Errors;
-import org.orcid.pojo.ChangePassword;
 import org.orcid.pojo.SecurityQuestion;
 import org.orcid.utils.OrcidWebUtils;
 import org.slf4j.Logger;
@@ -82,6 +85,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.multiaction.NoSuchRequestHandlingMethodException;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
 import schema.constants.SolrConstants;
 
 /**
@@ -695,7 +699,6 @@ public class ManageProfileController extends BaseWorkspaceController {
         return new Errors();
     }
 
-    @SuppressWarnings("unchecked")
     @RequestMapping(value = "/send-deactivate-account.json", method = RequestMethod.GET)
     public @ResponseBody
     Email startDeactivateOrcidAccountJson(HttpServletRequest request) {
@@ -754,16 +757,52 @@ public class ManageProfileController extends BaseWorkspaceController {
 
             emails.add(email);
             currentProfile.getOrcidBio().getContactDetails().setEmail(emails);
-            OrcidProfile updatedProfile = orcidProfileManager.updateOrcidProfile(currentProfile);
+            email.setSource(getRealUserOrcid());
+            emailManager.addEmail(currentProfile.getOrcid().getValue(), email);
             if (newPrime != null && !newPrime.equalsIgnoreCase(oldPrime)) {
                 URI baseUri = OrcidWebUtils.getServerUriWithContextPath(request);
-                notificationManager.sendEmailAddressChangedNotification(updatedProfile, new Email(oldPrime), baseUri);
+                notificationManager.sendEmailAddressChangedNotification(currentProfile, new Email(oldPrime), baseUri);
             }
 
-            //also send verifcation email for new address
+            // also send verifcation email for new address
             URI baseUri = OrcidWebUtils.getServerUriWithContextPath(request);
             notificationManager.sendVerificationEmail(currentProfile, baseUri, email.getValue());
 
+        }
+        return email;
+    }
+
+    @RequestMapping(value = "/deleteEmail.json", method = RequestMethod.DELETE)
+    public @ResponseBody
+    org.orcid.pojo.Email deleteEmailJson(HttpServletRequest request, @RequestBody org.orcid.pojo.Email email) {
+        List<String> emailErrors = new ArrayList<String>();
+
+        // clear errros
+        email.setErrors(new ArrayList<String>());
+
+        // if blank
+        if (email.getValue() == null || email.getValue().trim().equals("")) {
+            emailErrors.add(getMessage("Email.personalInfoForm.email"));
+        }
+        OrcidProfile currentProfile = getCurrentUser().getEffectiveProfile();
+        List<Email> emails = currentProfile.getOrcidBio().getContactDetails().getEmail();
+
+        if (email.isPrimary()) {
+            emailErrors.add(getMessage("manage.email.primaryEmailDeletion"));
+        }
+
+        email.setErrors(emailErrors);
+
+        if (emailErrors.size() == 0) {
+            Iterator<Email> emailIterator = emails.iterator();
+            while (emailIterator.hasNext()) {
+                Email nextEmail = emailIterator.next();
+                if (nextEmail.getValue().equals(email.getValue())) {
+                    emailIterator.remove();
+                }
+            }
+            currentProfile.getOrcidBio().getContactDetails().setEmail(emails);
+            emailManager.removeEmail(currentProfile.getOrcid().getValue(), email.getValue());
         }
         return email;
     }
@@ -801,11 +840,10 @@ public class ManageProfileController extends BaseWorkspaceController {
         emails.setErrors(allErrors);
         if (allErrors.size() == 0) {
             currentProfile.getOrcidBio().getContactDetails().setEmail((List<Email>) (Object) emails.getEmails());
-
-            OrcidProfile updatedProfile = orcidProfileManager.updateOrcidProfile(currentProfile);
+            emailManager.updateEmails(currentProfile.getOrcid().getValue(), currentProfile.getOrcidBio().getContactDetails().getEmail());
             if (newPrime != null && !newPrime.equalsIgnoreCase(oldPrime)) {
                 URI baseUri = OrcidWebUtils.getServerUriWithContextPath(request);
-                notificationManager.sendEmailAddressChangedNotification(updatedProfile, new Email(oldPrime), baseUri);
+                notificationManager.sendEmailAddressChangedNotification(currentProfile, new Email(oldPrime), baseUri);
             }
         }
         return emails;
