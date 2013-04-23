@@ -69,8 +69,8 @@
 			   						  <td class="padRgt" ng-class="{primaryEmail:email.primary}" ng-bind="email.value">
 			   						  </td>
 			   						  <td class="padRgt">
-			   						  		<span ng-hide="email.primary" ><a href="" ng-click="setPrimary($index)">${springMacroRequestContext.getMessage("manage.email.primary_email")}</a></span>
-			   							    <span ng-show="email.primary" class="muted" style="color: #bd362f;">${springMacroRequestContext.getMessage("manage.email.set_primary")}</span>
+			   						  		<span ng-hide="email.primary" ><a href="" ng-click="setPrimary($index)">${springMacroRequestContext.getMessage("manage.email.set_primary")}</a></span>
+			   							    <span ng-show="email.primary" class="muted" style="color: #bd362f;">${springMacroRequestContext.getMessage("manage.email.primary_email")}</span>
 			   						  </td> 
 			   						  <td class="padRgt">
 			   						  	<select style="width: 100px; margin: 0px;" ng-change="saveEmail()" ng-model="email.current">
@@ -83,7 +83,7 @@
 		   							      <span ng-show="email.verified">${springMacroRequestContext.getMessage("manage.email.verified")}</span>		
 			   						  </td>
 			   						  <td class="padRgt">
-			   						  	<a href="" class="icon-trash grey" ng-show="email.primary == false" ng-click="deleteEmail($index)"></a>
+			   						  	<a href="" class="icon-trash grey" ng-show="email.primary == false" ng-click="confirmDeleteEmail($index)"></a>
 			   						  </td>
 			   						  <td class="padRgt">
 			   						     <ul class="privacyToggle">

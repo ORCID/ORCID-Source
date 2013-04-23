@@ -36,6 +36,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
+import org.orcid.core.manager.EmailManager;
 import org.orcid.core.manager.LocaleManager;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
@@ -96,6 +97,9 @@ public class BaseController {
 
     @Resource
     protected OrcidProfileManager orcidProfileManager;
+
+    @Resource
+    protected EmailManager emailManager;
 
     public OrcidProfileManager getOrcidProfileManager() {
         return orcidProfileManager;
@@ -292,7 +296,6 @@ public class BaseController {
 
     protected void validateEmailAddress(String email, boolean ignoreCurrentUser, HttpServletRequest request, BindingResult bindingResult) {
         if (StringUtils.isNotBlank(email)) {
-            OrcidProfile orcidProfile = orcidProfileManager.retrieveOrcidProfileByEmail(email);
             try {
                 InternetAddress addr = new InternetAddress(email);
                 addr.validate();
@@ -301,7 +304,8 @@ public class BaseController {
                 String[] args = { email };
                 bindingResult.addError(new FieldError("email", "email", email, false, codes, args, "Not vaild"));
             }
-            if (!(ignoreCurrentUser && emailMatchesCurrentUser(email)) && orcidProfile != null) {
+            if (!(ignoreCurrentUser && emailMatchesCurrentUser(email)) && emailManager.emailExists(email)) {
+                OrcidProfile orcidProfile = orcidProfileManager.retrieveOrcidProfileByEmail(email);
                 if (orcidProfile.getOrcidHistory().isClaimed()) {
                     String[] codes = { "orcid.frontend.verify.duplicate_email" };
                     String[] args = { email };
