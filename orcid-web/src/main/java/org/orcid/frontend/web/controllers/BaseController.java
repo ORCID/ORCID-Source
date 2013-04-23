@@ -387,8 +387,11 @@ public class BaseController {
      * */
     @ModelAttribute("staticLoc")
     public String getStaticContentPath(HttpServletRequest request) {
-        if (StringUtils.isBlank(this.staticContentPath))
+        if (StringUtils.isBlank(this.staticContentPath)){
             this.staticContentPath = this.baseUri + STATIC_FOLDER_PATH;
+            this.staticContentPath = this.staticContentPath.replace("https:", "");
+            this.staticContentPath = this.staticContentPath.replace("http:", "");
+        }
         return this.staticContentPath;
     }
 
