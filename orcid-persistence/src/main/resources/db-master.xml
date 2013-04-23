@@ -56,5 +56,6 @@
     <include file="/db/updates/fix-email-case-sensitivity.xml"/>
     <include file="/db/updates/email-source.xml"/>
     <include file="/db/updates/webhooks.xml"/>
+    <include file="/db/updates/increase-work-external-identifier-length.xml"/>
 
 </databaseChangeLog>
