@@ -36,6 +36,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
+import org.orcid.core.manager.EmailManager;
 import org.orcid.core.manager.LocaleManager;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
@@ -96,6 +97,9 @@ public class BaseController {
 
     @Resource
     protected OrcidProfileManager orcidProfileManager;
+
+    @Resource
+    protected EmailManager emailManager;
 
     public OrcidProfileManager getOrcidProfileManager() {
         return orcidProfileManager;
@@ -292,7 +296,6 @@ public class BaseController {
 
     protected void validateEmailAddress(String email, boolean ignoreCurrentUser, HttpServletRequest request, BindingResult bindingResult) {
         if (StringUtils.isNotBlank(email)) {
-            OrcidProfile orcidProfile = orcidProfileManager.retrieveOrcidProfileByEmail(email);
             try {
                 InternetAddress addr = new InternetAddress(email);
                 addr.validate();
@@ -301,7 +304,8 @@ public class BaseController {
                 String[] args = { email };
                 bindingResult.addError(new FieldError("email", "email", email, false, codes, args, "Not vaild"));
             }
-            if (!(ignoreCurrentUser && emailMatchesCurrentUser(email)) && orcidProfile != null) {
+            if (!(ignoreCurrentUser && emailMatchesCurrentUser(email)) && emailManager.emailExists(email)) {
+                OrcidProfile orcidProfile = orcidProfileManager.retrieveOrcidProfileByEmail(email);
                 if (orcidProfile.getOrcidHistory().isClaimed()) {
                     String[] codes = { "orcid.frontend.verify.duplicate_email" };
                     String[] args = { email };
@@ -396,52 +400,57 @@ public class BaseController {
     }
 
     /**
-     * Return the path where the static content will be.
-     * If there is a cdn path configured, it will return the cdn path; if it is not a cdn path
-     * it will return a reference to the static folder "/static"
+     * Return the path where the static content will be. If there is a cdn path
+     * configured, it will return the cdn path; if it is not a cdn path it will
+     * return a reference to the static folder "/static"
+     * 
      * @return the path to the CDN or the path to the local static content
      * */
     @ModelAttribute("staticCdn")
     public String getStaticCdnPath(HttpServletRequest request) {
-        if(StringUtils.isEmpty(this.cdnConfigFile)){
+        if (StringUtils.isEmpty(this.cdnConfigFile)) {
             return getStaticContentPath(request);
         }
-            
+
         ClassPathResource configFile = new ClassPathResource(this.cdnConfigFile);
         boolean reloadConfigFile = reloadCdnInformation(configFile);
-        if (reloadConfigFile && configFile.exists()) {                        
-            try (InputStream is = configFile.getInputStream(); BufferedReader br = new BufferedReader(new InputStreamReader(is))){
-                //Update the last modified date of the config file
+        if (reloadConfigFile && configFile.exists()) {
+            try (InputStream is = configFile.getInputStream(); BufferedReader br = new BufferedReader(new InputStreamReader(is))) {
+                // Update the last modified date of the config file
                 this.cdnConfigFileLastModified = configFile.lastModified();
 
                 String uri = br.readLine();
-                
+
                 if (uri != null)
                     this.staticCdnPath = uri;
                 else
                     this.staticCdnPath = this.getStaticContentPath(request);
             } catch (IOException e) {
                 e.printStackTrace();
-            } 
-        } 
-        
-        if(StringUtils.isBlank(this.staticCdnPath))
+            }
+        }
+
+        if (StringUtils.isBlank(this.staticCdnPath))
             this.staticCdnPath = this.getStaticContentPath(request);
-        
+
         return staticCdnPath;
     }
 
     /**
-     * Return true if the config file was modified since the last time it was used.
-     * @param configFile the config file that contains the CDN information
-     * @return true if the file has been modified since the last time we used it.
+     * Return true if the config file was modified since the last time it was
+     * used.
+     * 
+     * @param configFile
+     *            the config file that contains the CDN information
+     * @return true if the file has been modified since the last time we used
+     *         it.
      * */
     private boolean reloadCdnInformation(ClassPathResource configFile) {
         try {
             if (this.cdnConfigFileLastModified != configFile.lastModified())
                 return true;
         } catch (IOException ioe) {
-            //This means the file doesnt exists
+            // This means the file doesnt exists
             return false;
         }
         return false;

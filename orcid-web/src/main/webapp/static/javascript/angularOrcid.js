@@ -377,28 +377,51 @@ function EmailEditCtrl($scope, $http) {
 	        }
 	    }).fail(function() { 
 	    	// something bad is happening!
-	    	console.log("$EmailEdit.add() error");
+	    	console.log("$EmailEditCtrl.addEmail() error");
 	    });
 	};
 	
-	$scope.deleteEmail = function(idx) {
-        $.colorbox({
-            html : $('<div style="padding: 20px;" class="colorbox-modal"><h3>'+ OM.getInstance().get("manage.email.pleaseConfirmDeletion") + ' ' + $scope.emailsPojo.emails[idx].value + '</h3>'
-            	+ '<div class="btn btn-danger" id="modal-del-email">'
-            	+ OM.getInstance().get("manage.email.deleteEmail") 
-            	+ ' </div> <a href="" id="modal-cancel">' + OM.getInstance().get("manage.email.cancel") + '</a><div>')
-            	
-        });
-        $.colorbox.resize();
-        $('#modal-del-email').click(function(e) {
-    		$scope.emailsPojo.emails.splice(idx, 1);
-    		$scope.saveEmail();
-    		$.colorbox.close();
-        });
-        $('#modal-cancel').click(function(e) {
-        	e.preventDefault();
-        	$.colorbox.close();
-        });
+	$scope.confirmDeleteEmail = function(idx) {
+            $.colorbox({
+                html : $('<div style="padding: 20px;" class="colorbox-modal"><h3>'+ OM.getInstance().get("manage.email.pleaseConfirmDeletion") + ' ' + $scope.emailsPojo.emails[idx].value + '</h3>'
+                	+ '<div class="btn btn-danger" id="modal-del-email">'
+                	+ OM.getInstance().get("manage.email.deleteEmail") 
+                	+ ' </div> <a href="" id="modal-cancel">' + OM.getInstance().get("manage.email.cancel") + '</a><div>')
+                	
+            });
+            $.colorbox.resize();
+            $('#modal-del-email').click(function(e) {
+        	var email = $scope.emailsPojo.emails[idx];
+                $scope.emailsPojo.emails.splice(idx, 1);
+                $scope.deleteEmail(email);
+                $.colorbox.close();
+            });
+            $('#modal-cancel').click(function(e) {
+                e.preventDefault();
+                $.colorbox.close();
+            });
+	};
+	
+	$scope.deleteEmail = function (email) {
+		$.ajax({
+	        url: $('body').data('baseurl') + 'account/deleteEmail.json',
+	        type: 'DELETE',
+	        data:  angular.toJson(email),
+	        contentType: 'application/json;charset=UTF-8',
+	        dataType: 'json',
+	        success: function(data) {
+	        	$scope.inputEmail = data;
+	        	//alert($scope.inputEmail.errors.length);
+	        	if ($scope.inputEmail.errors.length == 0) {
+					$scope.initInputEmail();
+					$scope.getEmails();
+				}
+	        	$scope.$apply();
+	        }
+	    }).fail(function() { 
+	    	// something bad is happening!
+	    	console.log("$EmailEditCtrl.deleteEmail() error");
+	    });
 	};
 	
 };

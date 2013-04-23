@@ -16,17 +16,26 @@
  */
 package org.orcid.persistence.dao;
 
+import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 
 /**
  * 
  * @author Will Simpson
- *
+ * 
  */
 public interface EmailDao extends GenericDao<EmailEntity, String> {
 
     boolean emailExists(String email);
 
     EmailEntity findCaseInsensitive(String email);
+
+    void updateEmail(String orcid, String email, boolean isCurrent, Visibility visibility);
+
+    void updatePrimary(String orcid, String primaryEmail);
+
+    void addEmail(String orcid, String email, Visibility visibility, String sourceOrcid);
+
+    void removeEmail(String orcid, String email);
 
 }
