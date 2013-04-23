@@ -1,5 +1,22 @@
 # Release notes and highlights
 
+## release-1.1.15.17
+
+* Refactor works to reuse table rows
+
+* Refactor works to reuse db table rows
+
+* Upgraded EhCache
+
+* Terms of use in blank window
+
+* Prototype statistics page 
+
+* Member Webhooks 
+
+* Enabled CDN 
+
+* New script to create releases
 
 ## release-1.1.14.17
 
