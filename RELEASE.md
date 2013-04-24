@@ -1,5 +1,16 @@
 # Release notes and highlights
 
+## release-1.1.16.2
+
+* Email specific DAOs
+
+* Expand external identifier length
+
+* Fixed fonts on http:// pages
+
+* Fixed token validation logic
+
+
 ## release-1.1.15.17
 
 * Refactor works to reuse db table rows
