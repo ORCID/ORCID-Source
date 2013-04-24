@@ -39,6 +39,8 @@ import javax.annotation.Resource;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
+
+import java.security.AccessControlException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
@@ -76,7 +78,24 @@ public class DefaultPermissionCheckerTest extends DBUnitTest {
         HashSet<GrantedAuthority> grantedAuthorities = new HashSet<GrantedAuthority>(Arrays.asList(new SimpleGrantedAuthority("ROLE_CLIENT")));
         AuthorizationRequest request = new AuthorizationRequest("4444-4444-4444-4441", Arrays.asList("/orcid-bio/external-identifiers/create"), grantedAuthorities,
                 resourceIds);
-        ProfileEntity entity = profileEntityManager.findByOrcid("4444-4444-4444-4441");
+        ProfileEntity entity = profileEntityManager.findByOrcid("4444-4444-4444-4446");
+        OrcidOauth2UserAuthentication oauth2UserAuthentication = new OrcidOauth2UserAuthentication(entity, true);
+        OAuth2Authentication oAuth2Authentication = new OAuth2Authentication(request, oauth2UserAuthentication);
+        ScopePathType requiredScope = ScopePathType.ORCID_BIO_EXTERNAL_IDENTIFIERS_CREATE;
+        OrcidMessage orcidMessage = getOrcidMessage();
+        String messageOrcid = orcidMessage.getOrcidProfile().getOrcid().getValue();
+        defaultPermissionChecker.checkPermissions(oAuth2Authentication, requiredScope, messageOrcid, orcidMessage);
+    }
+
+    @Test(expected = AccessControlException.class)
+    @Transactional
+    @Rollback
+    public void testCheckUserPermissionsAuthenticationScopesOrcidAndOrcidMessageWhenWrongUser() throws Exception {
+        Collection<String> resourceIds = new HashSet<String>(Arrays.asList("orcid"));
+        HashSet<GrantedAuthority> grantedAuthorities = new HashSet<GrantedAuthority>(Arrays.asList(new SimpleGrantedAuthority("ROLE_CLIENT")));
+        AuthorizationRequest request = new AuthorizationRequest("4444-4444-4444-4441", Arrays.asList("/orcid-bio/external-identifiers/create"), grantedAuthorities,
+                resourceIds);
+        ProfileEntity entity = profileEntityManager.findByOrcid("4444-4444-4444-4445");
         OrcidOauth2UserAuthentication oauth2UserAuthentication = new OrcidOauth2UserAuthentication(entity, true);
         OAuth2Authentication oAuth2Authentication = new OAuth2Authentication(request, oauth2UserAuthentication);
         ScopePathType requiredScope = ScopePathType.ORCID_BIO_EXTERNAL_IDENTIFIERS_CREATE;
