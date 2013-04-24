@@ -459,8 +459,9 @@ function ExternalIdentifierCtrl($scope, $http){
         });
         $.colorbox.resize();
         $('#modal-del-external-identifier').click(function(e) {
+        	var externalIdentifier = $scope.externalIdentifiersPojo.externalIdentifiers[idx];
     		$scope.externalIdentifiersPojo.externalIdentifiers.splice(idx, 1);
-    		$scope.saveExternalIdentifier();
+    		$scope.removeExternalIdentifier(externalIdentifier);
     		$.colorbox.close();
         });
         $('#modal-cancel').click(function(e) {
@@ -469,16 +470,15 @@ function ExternalIdentifierCtrl($scope, $http){
         });
 	};
 	
-	$scope.saveExternalIdentifier = function() {
+	$scope.removeExternalIdentifier = function(externalIdentifier) {
 		$.ajax({
 	        url: $('body').data('baseurl') + 'my-orcid/externalIdentifiers.json',
-	        type: 'POST',
-	        data: angular.toJson($scope.externalIdentifiersPojo),
+	        type: 'DELETE',
+	        data: angular.toJson(externalIdentifier),
 	        contentType: 'application/json;charset=UTF-8',
 	        dataType: 'json',
 	        success: function(data) {
-	        	$scope.externalIdentifiersPojo = data;
-	        	$scope.$apply();
+	        	$scope.getExternalIdentifiers();
 	        }
 	    }).fail(function() { 
 	    	console.log("error with external identifiers");
