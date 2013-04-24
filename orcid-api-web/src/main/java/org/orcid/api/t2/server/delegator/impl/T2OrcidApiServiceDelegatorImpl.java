@@ -518,7 +518,7 @@ public class T2OrcidApiServiceDelegatorImpl implements T2OrcidApiServiceDelegato
      * */
     @Override
     @AccessControl(requiredScope = ScopePathType.WEBHOOK)
-    public Response unregisterWebhook(String orcid, String webhookUri) {
+    public Response unregisterWebhook(UriInfo uriInfo, String orcid, String webhookUri) {
         ProfileEntity profile = profileDao.find(orcid);
         if (profile != null) {
             WebhookEntityPk webhookPk = new WebhookEntityPk(profile, webhookUri);

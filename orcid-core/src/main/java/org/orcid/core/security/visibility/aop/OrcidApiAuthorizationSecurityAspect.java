@@ -49,15 +49,9 @@ public class OrcidApiAuthorizationSecurityAspect {
     @Resource(name = "defaultPermissionChecker")
     private PermissionChecker permissionChecker;
 
-    @Before("@annotation(accessControl) && (args(uriInfo , orcid, *))")
-    public void checkPermissionsWithOrcid(AccessControl accessControl, UriInfo uriInfo, String orcid) {
-        permissionChecker.checkPermissions(getAuthentication(), accessControl.requiredScope(), orcid, null);
-    }
-
     @Before("@annotation(accessControl) && (args(uriInfo ,orcid, orcidMessage))")
     public void checkPermissionsWithAll(AccessControl accessControl, UriInfo uriInfo, String orcid, OrcidMessage orcidMessage) {
         permissionChecker.checkPermissions(getAuthentication(), accessControl.requiredScope(), orcid, orcidMessage);
-
     }
 
     @Before("@annotation(accessControl) && (args(uriInfo, orcidMessage))")
@@ -72,6 +66,11 @@ public class OrcidApiAuthorizationSecurityAspect {
 
     }
 
+    @Before("@annotation(accessControl) && args(uriInfo , orcid, webhookUri)")
+    public void checkPermissionsWithOrcidAndWebhookUri(AccessControl accessControl, UriInfo uriInfo, String orcid, String webhookUri) {
+        permissionChecker.checkPermissions(getAuthentication(), accessControl.requiredScope(), orcid);
+    }
+    
     @AfterReturning(pointcut = "@annotation(accessControl)", returning = "response")
     public void visibilityResponseFilter(Response response, AccessControl accessControl) {
         Object entity = response.getEntity();

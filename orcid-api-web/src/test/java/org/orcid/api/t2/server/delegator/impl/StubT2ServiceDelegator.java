@@ -106,7 +106,7 @@ public class StubT2ServiceDelegator implements T2OrcidApiServiceDelegator {
     }
 
     @Override
-    public Response unregisterWebhook(String orcid, String webhookUri) {
+    public Response unregisterWebhook(UriInfo uriInfo, String orcid, String webhookUri) {
         // TODO Auto-generated method stub
         return null;
     }
