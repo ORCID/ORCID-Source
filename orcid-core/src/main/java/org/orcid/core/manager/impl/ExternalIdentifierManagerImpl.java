@@ -10,8 +10,18 @@ public class ExternalIdentifierManagerImpl implements ExternalIdentifierManager 
     @Resource
     private ExternalIdentifierDao externalIdentifierDao;
     
+    /**
+     * Removes an external identifier from database based on his ID.
+     * The ID for external identifiers consists of the "orcid" of the owner and
+     * the "externalIdReference" which is an identifier of the external id.
+     * 
+     * @param orcid
+     *            The orcid of the owner
+     * @param externalIdReference
+     *            Identifier of the external id.
+     * */
     @Override
-    public void removeExternalIdentifier(String orcid, String externalIdReference) {        
+    public void removeExternalIdentifier(String orcid, String externalIdReference) { 
         externalIdentifierDao.removeExternalIdentifier(orcid, externalIdReference);
     }
 

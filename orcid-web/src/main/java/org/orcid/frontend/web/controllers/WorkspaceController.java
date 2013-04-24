@@ -110,38 +110,27 @@ public class WorkspaceController extends BaseWorkspaceController {
      * */
     @RequestMapping(value = "/externalIdentifiers.json", method = RequestMethod.DELETE)
     public @ResponseBody
-    org.orcid.pojo.ExternalIdentifiers removeExternalIdentifierJson(HttpServletRequest request, @RequestBody org.orcid.pojo.ExternalIdentifier externalIdentifier) {
-        List<String> allErrors = new ArrayList<String>();
+    org.orcid.pojo.ExternalIdentifier removeExternalIdentifierJson(HttpServletRequest request, @RequestBody org.orcid.pojo.ExternalIdentifier externalIdentifier) {
+        OrcidProfile currentProfile = getCurrentUser().getEffectiveProfile();
+        List<ExternalIdentifier> externalIdentifiers = currentProfile.getOrcidBio().getExternalIdentifiers().getExternalIdentifier();        
+        List<String> errors = new ArrayList<String>();
 
-        externalIdentifier.setErrors(allErrors);
-        
         // If the orcid is blank, add an error
         if (externalIdentifier.getOrcid() == null || StringUtils.isBlank(externalIdentifier.getOrcid().getValue())) {
-            allErrors.add(getMessage("ExternalIdentifier.orcid"));
+            errors.add(getMessage("ExternalIdentifier.orcid"));
         }
 
         // If the external identifier is blank, add an error
         if (externalIdentifier.getExternalIdReference() == null || StringUtils.isBlank(externalIdentifier.getExternalIdReference().getContent())) {
-            allErrors.add(getMessage("ExternalIdentifier.externalIdReference"));                
+            errors.add(getMessage("ExternalIdentifier.externalIdReference"));                
         }
-
+        // Set errors to the external 
+        externalIdentifier.setErrors(errors);
         
-        if (allErrors.isEmpty()) {
-            OrcidProfile currentProfile = getCurrentUser().getEffectiveProfile();
-            List<ExternalIdentifier> externalIdentifiers = currentProfile.getOrcidBio().getExternalIdentifiers().getExternalIdentifier();
-            Iterator<ExternalIdentifier> externalIdentifierIterator = externalIdentifiers.iterator();
-            
-            while(externalIdentifierIterator.hasNext()){
-                ExternalIdentifier identifier = externalIdentifierIterator.next();
-                if(identifier.getOrcid().getValue().equals(externalIdentifier.getOrcid().getValue()) && identifier.getExternalIdReference().getContent().equals(externalIdentifier.getExternalIdReference().getContent())){
-                    externalIdentifierIterator.remove();
-                    break;
-                }
-            }
-            
+        if (errors.isEmpty()) {            
             externalIdentifierManager.removeExternalIdentifier(externalIdentifier.getOrcid().getValue(), externalIdentifier.getExternalIdReference().getContent());
         }
 
-        return null;
+        return externalIdentifier;
     }
 }

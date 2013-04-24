@@ -22,7 +22,6 @@ import org.orcid.persistence.dao.ExternalIdentifierDao;
 import org.orcid.persistence.jpa.entities.ExternalIdentifierEntity;
 import org.orcid.persistence.jpa.entities.keys.ExternalIdentifierEntityPk;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.Assert;
 
 public class ExternalIdentifierDaoImpl extends GenericDaoImpl<ExternalIdentifierEntity, ExternalIdentifierEntityPk> implements ExternalIdentifierDao {
 
@@ -30,11 +29,19 @@ public class ExternalIdentifierDaoImpl extends GenericDaoImpl<ExternalIdentifier
         super(ExternalIdentifierEntity.class);
     }
 
+    /**
+     * Removes an external identifier from database based on his ID.
+     * The ID for external identifiers consists of the "orcid" of the owner and
+     * the "externalIdReference" which is an identifier of the external id.
+     * 
+     * @param orcid
+     *            The orcid of the owner
+     * @param externalIdReference
+     *            Identifier of the external id.
+     * */
     @Override
     @Transactional
-    public void removeExternalIdentifier(String orcid, String externalIdReference) {
-        Assert.hasText(orcid, "Cannot delete external identifier with emtpy orcid");
-        Assert.hasText(externalIdReference, "Cannot delete external identifier with emtpy externalIdRefere");
+    public void removeExternalIdentifier(String orcid, String externalIdReference) {        
         Query query = entityManager.createQuery("delete from ExternalIdentifierEntity where owner.id=:orcid and externalIdReference=:externalIdReference");
         query.setParameter("orcid", orcid);
         query.setParameter("externalIdReference", externalIdReference);
