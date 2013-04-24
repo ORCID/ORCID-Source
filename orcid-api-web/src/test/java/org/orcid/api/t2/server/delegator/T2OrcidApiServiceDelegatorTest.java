@@ -256,7 +256,7 @@ public class T2OrcidApiServiceDelegatorTest extends DBUnitTest {
         Response response = t2OrcidApiServiceDelegator.registerWebhook(mockedUriInfo, "4444-4444-4444-4447", "www.webhook.com");
         assertNotNull(response);
         assertEquals(HttpStatus.SC_CREATED, response.getStatus());
-        response = t2OrcidApiServiceDelegator.unregisterWebhook("4444-4444-4444-4447", "www.webhook.com");
+        response = t2OrcidApiServiceDelegator.unregisterWebhook(mockedUriInfo, "4444-4444-4444-4447", "www.webhook.com");
         assertNotNull(response);
         assertEquals(HttpStatus.SC_NO_CONTENT, response.getStatus());
     }
