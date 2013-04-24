@@ -129,5 +129,5 @@ public interface T2OrcidApiServiceDelegator extends OrcidApiServiceDelegator {
      *            uri of the webhook
      * @return If successful, returns a 204 No content.
      * */
-    Response unregisterWebhook(String orcid, String webhookUri);
+    Response unregisterWebhook(UriInfo uriInfo, String orcid, String webhookUri);
 }

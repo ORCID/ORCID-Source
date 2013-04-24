@@ -256,25 +256,21 @@ public class DefaultPermissionChecker implements PermissionChecker {
                 throw new IllegalArgumentException("The ORCID in the body and the URI do not match. Body ORCID: " + messageOrcid + " URI ORCID: " + orcid
                         + " do NOT match.");
             }
-
-            // Is this the owner making the call? If it is, then let 'em on
-            // through
-            if (userOrcid.equals(orcid)) {
-                return;
-            } else {
-                // Have they been granted permission?
-                if (profileEntityManager.hasBeenGivenPermissionTo(orcid, userOrcid)) {
-                    // TODO: We will need to parse both incoming and existing to
-                    // make sure they're not trying to
-                    // update private information.
-                    return;
-                }
-            }
-            // Looks like they're trying to call a create. Something that they
-            // aren't allowed to do
-        } else if (orcidMessage != null && orcidMessage.getOrcidProfile() != null && orcidMessage.getOrcidProfile().getOrcid() == null) {
-            throw new AccessControlException("You do not have the correct privileges to create new profiles.");
         }
+        // Is this the owner making the call? If it is, then let 'em on
+        // through
+        if (userOrcid.equals(orcid)) {
+            return;
+        } else {
+            // Have they been granted permission?
+            if (profileEntityManager.hasBeenGivenPermissionTo(orcid, userOrcid)) {
+                // TODO: We will need to parse both incoming and existing to
+                // make sure they're not trying to
+                // update private information.
+                return;
+            }
+        }
+        throw new AccessControlException("You do not have the required permissions.");
     }
 
     private void performClientChecks(OAuth2Authentication oAuth2Authentication, ScopePathType requiredScope, OrcidMessage orcidMessage, String orcid) {
