@@ -18,7 +18,6 @@ package org.orcid.persistence.jpa.entities;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -85,7 +84,7 @@ public class ResearcherUrlEntity extends BaseEntity<Long> implements Comparable<
     /**
      * @return the user
      */
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne
     @JoinColumn(name = "orcid", nullable = false)
     public ProfileEntity getUser() {
         return user;

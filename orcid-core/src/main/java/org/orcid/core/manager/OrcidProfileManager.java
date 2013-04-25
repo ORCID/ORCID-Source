@@ -17,6 +17,7 @@
 package org.orcid.core.manager;
 
 import java.util.Collection;
+import java.util.Date;
 
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidWorks;
@@ -302,5 +303,7 @@ public interface OrcidProfileManager {
     OrcidWorks dedupeWorks(OrcidWorks orcidWorks);
 
     OrcidProfile retrieveClaimedOrcidProfile(String orcid);
+    
+    Date retrieveLastModifiedDate(String orcid);
 
 }
