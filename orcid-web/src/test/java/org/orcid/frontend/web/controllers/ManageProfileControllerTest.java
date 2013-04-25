@@ -134,7 +134,6 @@ public class ManageProfileControllerTest extends BaseControllerTest {
         assertEquals("manage", mav.getViewName());
         assertNotNull(model.get("managePasswordOptionsForm"));
         assertNotNull(model.get("profile"));
-        assertNotNull(model.get("sponsors"));
         String activeTab = (String) model.get("activeTab");
         assertNotNull(activeTab);
         assertEquals("ManagePersonalInfo", activeTab);
