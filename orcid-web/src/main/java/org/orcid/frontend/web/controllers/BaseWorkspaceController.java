@@ -23,9 +23,9 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
+
 import org.orcid.core.manager.CountryManager;
 import org.orcid.core.manager.CrossRefManager;
-import org.orcid.core.manager.RegistrationRoleManager;
 import org.orcid.core.manager.SecurityQuestionManager;
 import org.orcid.core.manager.SponsorManager;
 import org.orcid.core.manager.SubjectManager;
@@ -48,12 +48,6 @@ public class BaseWorkspaceController extends BaseController {
     protected static final String WORKS_RESULTS_ATTRIBUTE = "works_results_attribute";
 
     protected static final String PUBLIC_WORKS_RESULTS_ATTRIBUTE = "public_works_results_attribute";
-
-    @Resource
-    protected SubjectManager subjectManager;
-
-    @Resource
-    protected RegistrationRoleManager registrationRoleManager;
 
     @Resource
     protected SponsorManager sponsorManager;
@@ -101,11 +95,6 @@ public class BaseWorkspaceController extends BaseController {
         return sponsors;
     }
 
-    @ModelAttribute("availableSubjects")
-    public Map<String, String> retrieveSubjectsAsMap() {
-        return subjectManager.retrieveSubjectAsMap();
-    }
-
     @ModelAttribute("emailVisibilities")
     public Map<String, String> getEmailVisibilities() {
         Map<String, String> emailVisibilities = new HashMap<String, String>();
@@ -113,11 +102,6 @@ public class BaseWorkspaceController extends BaseController {
         emailVisibilities.put(Visibility.LIMITED.value(), "Trusted users only");
         emailVisibilities.put(Visibility.PUBLIC.value(), "Publicly available (not recommended)");
         return emailVisibilities;
-    }
-
-    @ModelAttribute("registrationRoles")
-    public Map<String, String> getRegistrationRoles() {
-        return registrationRoleManager.retrieveRegistrationRolesAsMap();
     }
 
     @ModelAttribute("allDates")

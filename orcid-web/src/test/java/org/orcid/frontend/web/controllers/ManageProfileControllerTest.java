@@ -133,7 +133,6 @@ public class ManageProfileControllerTest extends BaseControllerTest {
         ModelAndView mav = controller.manageProfile("ManagePersonalInfo");
         Map<String, Object> model = mav.getModel();
         assertEquals("manage", mav.getViewName());
-        assertNotNull(model.get("personalInfoForm"));
         assertNotNull(model.get("managePasswordOptionsForm"));
         assertNotNull(model.get("profile"));
         assertNotNull(model.get("sponsors"));
@@ -170,7 +169,6 @@ public class ManageProfileControllerTest extends BaseControllerTest {
 
         Map<String, Object> model = mav.getModel();
 
-        PersonalInfoForm personalInfoForm = (PersonalInfoForm) model.get("personalInfoForm");
         ManagePasswordOptionsForm passwordOptionsForm = (ManagePasswordOptionsForm) model.get("managePasswordOptionsForm");
         OrcidProfile profile = (OrcidProfile) model.get("profile");
         model.get("startYears");
@@ -179,7 +177,6 @@ public class ManageProfileControllerTest extends BaseControllerTest {
         currentAffiliationsForm = (CurrentAffiliationsForm) model.get("currentAffiliationsForm");
 
         assertEquals("manage", mav.getViewName());
-        assertNotNull(personalInfoForm);
         assertNotNull(passwordOptionsForm);
         assertNotNull(profile);
         assertEquals("4444-4444-4444-4446", profile.getOrcid().getValue());
