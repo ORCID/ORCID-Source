@@ -2,7 +2,7 @@
 
 ## release-1.1.17.2
 
-* Implement timestamp session tracking for Profile
+* Implement timestamp session caching for Profile
 
 * Implement caching for static data in db (like select box values)
 
