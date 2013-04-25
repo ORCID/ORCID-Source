@@ -88,13 +88,6 @@ public class BaseWorkspaceController extends BaseController {
         return countries;
     }
 
-    public Map<String, String> retrieveSelectableSponsorsAsMap() {
-        Map<String, String> sponsors = new LinkedHashMap<String, String>();
-        sponsors.put("", "Select a Sponsor");
-        sponsors.putAll(sponsorManager.retrieveSponsorsAsMap());
-        return sponsors;
-    }
-
     @ModelAttribute("emailVisibilities")
     public Map<String, String> getEmailVisibilities() {
         Map<String, String> emailVisibilities = new HashMap<String, String>();

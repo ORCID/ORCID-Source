@@ -399,7 +399,6 @@ public class ManageProfileController extends BaseWorkspaceController {
         mav.addObject("managePasswordOptionsForm", populateManagePasswordFormFromUserInfo());
         mav.addObject("preferencesForm", new PreferencesForm(profile));
         mav.addObject("profile", profile);
-        mav.addObject("sponsors", retrieveSelectableSponsorsAsMap());
         mav.addObject("activeTab", activeTab);
         mav.addObject("securityQuestions", securityQuestionManager.retrieveSecurityQuestionsAsMap());
         CurrentAffiliationsForm currentAffiliationsForm = new CurrentAffiliationsForm(profile);
