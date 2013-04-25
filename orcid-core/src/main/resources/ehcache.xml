@@ -39,6 +39,9 @@
     <cache name="security-questions" maxElementsInMemory="200" eternal="true" overflowToDisk="false" copyOnRead="false"
            copyOnWrite="false"/>
            
+    <cache name="import-clients" maxElementsInMemory="200" eternal="true" overflowToDisk="false" copyOnRead="false"
+           copyOnWrite="false"/>
+           
     <cache name="recent-orcid" maxElementsInMemory="20000" timeToLiveSeconds="60" overflowToDisk="false" copyOnRead="false"
            copyOnWrite="false" eternal="false"/>
 
