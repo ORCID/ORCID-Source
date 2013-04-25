@@ -25,6 +25,7 @@ import javax.annotation.Resource;
 import org.orcid.core.manager.SecurityQuestionManager;
 import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.jpa.entities.SecurityQuestionEntity;
+import org.springframework.cache.annotation.Cacheable;
 
 /**
  * 
@@ -37,6 +38,7 @@ public class SecurityQuestionManagerImpl implements SecurityQuestionManager {
     private GenericDao<SecurityQuestionEntity, Integer> securityQuestionDao;
 
     @Override
+    @Cacheable("security-questions")
     public Map<String, String> retrieveSecurityQuestionsAsMap() {
         List<SecurityQuestionEntity> questions = securityQuestionDao.getAll();
         Map<String, String> map = new TreeMap<String, String>();

@@ -18,6 +18,7 @@ package org.orcid.persistence.dao.impl;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -281,6 +282,13 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
     @Override
     public Long getConfirmedProfileCount() {
         TypedQuery<Long> query = entityManager.createQuery("select count(pe) from ProfileEntity pe where pe.completedDate is not null", Long.class);
+        return query.getSingleResult();
+    }
+
+    @Override
+    public Date retrieveLastModifiedDate(String orcid) {
+        TypedQuery<Date> query = entityManager.createQuery("select lastModified from ProfileEntity where orcid = :orcid", Date.class);
+        query.setParameter("orcid", orcid);
         return query.getSingleResult();
     }
 

@@ -232,6 +232,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         dedupeProfileWorks(orcidProfile);
         addSourceToEmails(orcidProfile, existingProfileEntity, amenderOrcid);
         ProfileEntity profileEntity = adapter.toProfileEntity(orcidProfile, existingProfileEntity);
+        profileEntity.setLastModified(new Date());
         profileEntity.setIndexingStatus(IndexingStatus.PENDING);
         ProfileEntity updatedProfileEntity = profileDao.merge(profileEntity);
         profileDao.flush();
@@ -1107,6 +1108,11 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         profileEntity.setEncryptedVerificationCode(verificationCode == null ? null : encryptionManager.encryptForInternalUse(verificationCode));
         String securityAnswer = orcidProfile.getSecurityQuestionAnswer();
         profileEntity.setEncryptedSecurityAnswer(securityAnswer == null ? null : encryptionManager.encryptForInternalUse(securityAnswer));
+    }
+
+    @Override
+    public Date retrieveLastModifiedDate(String orcid) {
+        return profileDao.retrieveLastModifiedDate(orcid);
     }
 
 }

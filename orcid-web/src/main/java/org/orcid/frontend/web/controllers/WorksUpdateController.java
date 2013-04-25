@@ -156,8 +156,7 @@ public class WorksUpdateController extends BaseWorkspaceController {
 
     ModelAndView createWorksUpdateModelAndView() {
         ModelAndView mav = new ModelAndView("works_update");
-        OrcidProfile currentUser = orcidProfileManager.retrieveOrcidProfile(getCurrentUserOrcid());
-        getCurrentUser().setEffectiveProfile(currentUser);
+        OrcidProfile currentUser = getCurrentUserAndRefreshIfNecessary().getEffectiveProfile();
         mav.addObject(new CurrentWorksForm(currentUser));
         String searchText = getSearchTerms(currentUser);
         List<CrossRefMetadata> metadatas = null;

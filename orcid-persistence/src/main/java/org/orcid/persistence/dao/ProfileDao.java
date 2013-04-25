@@ -17,6 +17,7 @@
 package org.orcid.persistence.dao;
 
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 import org.orcid.persistence.jpa.entities.IndexingStatus;
@@ -55,5 +56,7 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
     void updateIndexingStatus(String orcid, IndexingStatus indexingStatus);
 
     Long getConfirmedProfileCount();
+
+    Date retrieveLastModifiedDate(String orcid);
 
 }

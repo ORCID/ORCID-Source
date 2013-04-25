@@ -24,6 +24,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Date;
 
 /**
  * 2011-2012 ORCID
@@ -37,6 +38,8 @@ public class OrcidProfileUserDetails implements UserDetails {
     private OrcidProfile realProfile;
 
     private OrcidProfile effectiveProfile;
+
+    private Date effectiveProfileLastModified;
 
     private boolean inDelegationMode;
 
@@ -149,6 +152,14 @@ public class OrcidProfileUserDetails implements UserDetails {
         if (!inDelegationMode) {
             this.realProfile = profile;
         }
+    }
+
+    public Date getEffectiveProfileLastModified() {
+        return effectiveProfileLastModified;
+    }
+
+    public void setEffectiveProfileLastModified(Date effectiveProfileLastModified) {
+        this.effectiveProfileLastModified = effectiveProfileLastModified;
     }
 
     public void switchDelegationMode(OrcidProfile profile) {
