@@ -43,7 +43,6 @@ import org.orcid.frontend.web.forms.ChangeSecurityQuestionForm;
 import org.orcid.frontend.web.forms.CurrentAffiliationsForm;
 import org.orcid.frontend.web.forms.ManagePasswordOptionsForm;
 import org.orcid.frontend.web.forms.PastInstitutionsForm;
-import org.orcid.frontend.web.forms.PersonalInfoForm;
 import org.orcid.frontend.web.forms.PreferencesForm;
 import org.orcid.frontend.web.forms.SearchForDelegatesForm;
 import org.orcid.jaxb.model.message.Delegation;

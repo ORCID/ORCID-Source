@@ -54,7 +54,6 @@ import org.orcid.frontend.web.forms.ChangePersonalInfoForm;
 import org.orcid.frontend.web.forms.ChangeSecurityQuestionForm;
 import org.orcid.frontend.web.forms.CurrentAffiliationsForm;
 import org.orcid.frontend.web.forms.ManagePasswordOptionsForm;
-import org.orcid.frontend.web.forms.PersonalInfoForm;
 import org.orcid.frontend.web.util.BaseControllerTest;
 import org.orcid.jaxb.model.message.DelegationDetails;
 import org.orcid.jaxb.model.message.Email;
