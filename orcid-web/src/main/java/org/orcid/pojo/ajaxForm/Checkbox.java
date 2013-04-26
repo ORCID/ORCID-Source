@@ -19,14 +19,13 @@ package org.orcid.pojo.ajaxForm;
 import java.util.ArrayList;
 import java.util.List;
 
-
 public class Checkbox implements ErrorsInterface, Required {
 
     private List<String> errors = new ArrayList<String>();
     private boolean value;
     private boolean required = true;
     private String getRequiredMessage;
-    
+
     public List<String> getErrors() {
         return errors;
     }

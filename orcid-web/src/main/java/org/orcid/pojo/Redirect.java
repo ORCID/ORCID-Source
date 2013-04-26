@@ -26,7 +26,7 @@ public class Redirect implements ErrorsInterface {
      * 
      */
     private String url;
-    
+
     private List<String> errors = new ArrayList<String>();
 
     public List<String> getErrors() {

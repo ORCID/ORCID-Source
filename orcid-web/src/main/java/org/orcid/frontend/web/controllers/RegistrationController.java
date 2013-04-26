@@ -232,25 +232,25 @@ public class RegistrationController extends BaseController {
     public @ResponseBody
     Registration getRegister(HttpServletRequest request) {
         Registration reg = new Registration();
-        
+
         reg.getEmail().setRequired(true);
-        
+
         reg.getEmailConfirm().setRequired(true);
-       
+
         reg.getPassword();
         reg.getPasswordConfirm();
         reg.getEmail();
-        
+
         reg.getFamilyNames().setRequired(false);
-        
+
         reg.getGivenNames().setRequired(true);
-        
+
         reg.getSendChangeNotifications().setValue(true);
         reg.getSendOrcidNews().setValue(true);
         reg.getTermsOfUse().setValue(true);
         return reg;
     }
-    
+
     private static OrcidProfile toProfile(Registration reg) {
         OrcidProfile profile = new OrcidProfile();
         OrcidBio bio = new OrcidBio();
@@ -290,79 +290,82 @@ public class RegistrationController extends BaseController {
     public @ResponseBody
     Registration setRegister(HttpServletRequest request, @RequestBody Registration reg) {
         reg.setErrors(new ArrayList<String>());
-        
+
         registerGivenNameValidate(reg);
         registerPasswordValidate(reg);
         registerPasswordConfirmValidate(reg);
-        regEmailValidate(request, reg);                
-        
+        regEmailValidate(request, reg);
+
         // validate terms accepted
         reg.getTermsOfUse().setErrors(new ArrayList<String>());
 
-        if(reg.getTermsOfUse().getValue() !=  true) {
-            setError(reg.getTermsOfUse(),"AssertTrue.registrationForm.acceptTermsAndConditions");
+        if (reg.getTermsOfUse().getValue() != true) {
+            setError(reg.getTermsOfUse(), "AssertTrue.registrationForm.acceptTermsAndConditions");
         }
-        
-        copyErrors(reg.getEmailConfirm(),reg);
-        copyErrors(reg.getEmail(),reg);
-        copyErrors(reg.getGivenNames(),reg);
-        copyErrors(reg.getPassword(),reg);
-        copyErrors(reg.getPasswordConfirm(),reg);
-        copyErrors(reg.getTermsOfUse(),reg);
-        
+
+        copyErrors(reg.getEmailConfirm(), reg);
+        copyErrors(reg.getEmail(), reg);
+        copyErrors(reg.getGivenNames(), reg);
+        copyErrors(reg.getPassword(), reg);
+        copyErrors(reg.getPasswordConfirm(), reg);
+        copyErrors(reg.getTermsOfUse(), reg);
+
         // create user createMinimalRegistrationAndLogUserIn(request, registrationForm.toOrcidProfile());
-        
+
         return reg;
     }
-    
+
     @RequestMapping(value = "/registerConfirm.json", method = RequestMethod.POST)
     public @ResponseBody
     Redirect setRegisterConfirm(HttpServletRequest request, @RequestBody Registration reg) {
         Redirect r = new Redirect();
-        
+
         // make sure validation still passes
         reg = setRegister(request, reg);
         if (reg.getErrors() != null && reg.getErrors().size() > 0) {
             r.getErrors().add("Please revalidate at /register.json");
             return r;
         }
-        
-        createMinimalRegistrationAndLogUserIn(request,toProfile(reg));
+
+        createMinimalRegistrationAndLogUserIn(request, toProfile(reg));
         r.setUrl(getBaseUri() + "/my-orcid");
         return r;
     }
 
     @RequestMapping(value = "/registerPasswordConfirmValidate.json", method = RequestMethod.POST)
-    public @ResponseBody Registration registerPasswordConfirmValidate(@RequestBody Registration reg) {
+    public @ResponseBody
+    Registration registerPasswordConfirmValidate(@RequestBody Registration reg) {
         reg.getPasswordConfirm().setErrors(new ArrayList<String>());
         // validate passwords match
-        if(reg.getPasswordConfirm().getValue()==null || !reg.getPasswordConfirm().getValue().equals(reg.getPassword().getValue())) {
-            setError(reg.getPasswordConfirm(),"FieldMatch.registrationForm");
+        if (reg.getPasswordConfirm().getValue() == null || !reg.getPasswordConfirm().getValue().equals(reg.getPassword().getValue())) {
+            setError(reg.getPasswordConfirm(), "FieldMatch.registrationForm");
         }
         return reg;
     }
-    
+
     @RequestMapping(value = "/registerPasswordValidate.json", method = RequestMethod.POST)
-    public @ResponseBody Registration registerPasswordValidate(@RequestBody Registration reg) {
+    public @ResponseBody
+    Registration registerPasswordValidate(@RequestBody Registration reg) {
         reg.getPassword().setErrors(new ArrayList<String>());
         // validate password regex
         if (reg.getPassword().getValue() == null || !reg.getPassword().getValue().matches(OrcidPasswordConstants.ORCID_PASSWORD_REGEX)) {
-            setError(reg.getPassword(),"Pattern.registrationForm.password");
+            setError(reg.getPassword(), "Pattern.registrationForm.password");
         }
-        
+
         if (reg.getPasswordConfirm().getValue() != null) {
             registerPasswordConfirmValidate(reg);
         }
 
         return reg;
     }
-    
+
     @RequestMapping(value = "/registerGivenNamesValidate.json", method = RequestMethod.POST)
-    public @ResponseBody Registration registerGivenNameValidate(@RequestBody Registration reg) {
+    public @ResponseBody
+    Registration registerGivenNameValidate(@RequestBody Registration reg) {
         // validate given name isn't blank
         reg.getGivenNames().setErrors(new ArrayList<String>());
         if (reg.getGivenNames().getValue() == null || reg.getGivenNames().getValue().trim().isEmpty()) {
-            setError(reg.getGivenNames(),"NotBlank.registrationForm.givenNames");
+            setError(reg.getGivenNames(), "NotBlank.registrationForm.givenNames");
         }
         return reg;
     }
@@ -372,7 +375,7 @@ public class RegistrationController extends BaseController {
     Registration regEmailValidate(HttpServletRequest request, @RequestBody Registration reg) {
         reg.getEmail().setErrors(new ArrayList<String>());
         if (reg.getEmail().getValue() == null || reg.getEmail().getValue().trim().isEmpty()) {
-            setError(reg.getEmail(),"Email.registrationForm.email");
+            setError(reg.getEmail(), "Email.registrationForm.email");
         }
         // validate email
         MapBindingResult mbr = new MapBindingResult(new HashMap<String, String>(), "Email");
@@ -382,38 +385,36 @@ public class RegistrationController extends BaseController {
         for (ObjectError oe : mbr.getAllErrors()) {
             reg.getEmail().getErrors().add(getMessage(oe.getCode(), reg.getEmail().getValue()));
         }
-        
+
         //validate confirm if already field out
         if (reg.getEmailConfirm().getValue() != null) {
             regEmailConfirmValidate(reg);
         }
-        
+
         return reg;
     }
-    
+
     @RequestMapping(value = "/registerEmailConfirmValidate.json", method = RequestMethod.POST)
     public @ResponseBody
     Registration regEmailConfirmValidate(@RequestBody Registration reg) {
         reg.getEmailConfirm().setErrors(new ArrayList<String>());
-        if (reg.getEmail().getValue()==null || !reg.getEmailConfirm().getValue().equalsIgnoreCase(reg.getEmail().getValue())) {
-            setError(reg.getEmailConfirm(),"StringMatchIgnoreCase.registrationForm");
+        if (reg.getEmail().getValue() == null || !reg.getEmailConfirm().getValue().equalsIgnoreCase(reg.getEmail().getValue())) {
+            setError(reg.getEmailConfirm(), "StringMatchIgnoreCase.registrationForm");
         }
-         
+
         return reg;
     }
-    
-    
-    private static void copyErrors(ErrorsInterface from, ErrorsInterface  into) {
-        for (String s:from.getErrors()) {
+
+    private static void copyErrors(ErrorsInterface from, ErrorsInterface into) {
+        for (String s : from.getErrors()) {
             into.getErrors().add(s);
         }
     }
-    
+
     private void setError(ErrorsInterface ei, String msg) {
         ei.getErrors().add(getMessage(msg));
     }
-    
-    
+
     @RequestMapping(value = "/register", method = RequestMethod.GET)
     public ModelAndView register(HttpServletRequest request, HttpServletResponse response) {
         ModelAndView mav = new ModelAndView("register");
@@ -423,31 +424,30 @@ public class RegistrationController extends BaseController {
         LOGGER.debug("Saved url before registration is: " + (savedRequest != null ? savedRequest.getRedirectUrl() : " no saved request"));
         return mav;
     }
-    
 
     @RequestMapping(value = "/dupicateResearcher.json", method = RequestMethod.GET)
-    public @ResponseBody List<DupicateResearcher> getDupicateResearcher(@RequestParam("givenNames") String givenNames, @RequestParam("familyNames") String familyNames) {
+    public @ResponseBody
+    List<DupicateResearcher> getDupicateResearcher(@RequestParam("givenNames") String givenNames, @RequestParam("familyNames") String familyNames) {
         List<DupicateResearcher> drList = new ArrayList<DupicateResearcher>();
-        
+
         List<OrcidProfile> potentialDuplicates = findPotentialDuplicatesByFirstNameLastName(givenNames, familyNames);
-        for (OrcidProfile op:potentialDuplicates) {
+        for (OrcidProfile op : potentialDuplicates) {
             DupicateResearcher dr = new DupicateResearcher();
             if (op.getOrcidBio() != null) {
-               if (op.getOrcidBio().getContactDetails() != null) {
-                   if (op.getOrcidBio().getContactDetails().retrievePrimaryEmail() != null) {
-                      dr.setEmail(op.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue());
-                   }
-               }
-               dr.setFamilyNames(op.getOrcidBio().getPersonalDetails().getFamilyName().getContent());
-               dr.setGivenNames(op.getOrcidBio().getPersonalDetails().getFamilyName().getContent());
+                if (op.getOrcidBio().getContactDetails() != null) {
+                    if (op.getOrcidBio().getContactDetails().retrievePrimaryEmail() != null) {
+                        dr.setEmail(op.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue());
+                    }
+                }
+                dr.setFamilyNames(op.getOrcidBio().getPersonalDetails().getFamilyName().getContent());
+                dr.setGivenNames(op.getOrcidBio().getPersonalDetails().getFamilyName().getContent());
             }
             dr.setOrcid(op.getOrcid().getValue());
             drList.add(dr);
-         }
-        
+        }
+
         return drList;
     }
-
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     public ModelAndView submitRegistration(HttpServletRequest request, @ModelAttribute("registrationForm") @Valid RegistrationForm registrationForm,
@@ -457,8 +457,8 @@ public class RegistrationController extends BaseController {
         LOGGER.info("User with email={}, sessionid={} has asked to register", email, sessionId);
         validateEmailAddress(email, false, request, bindingResult);
         if (bindingResult.hasErrors()) {
-            LOGGER.info("Failed validation on registration page for email={}, sessionid={}, with errors={}",
-                    new Object[] { email, sessionId, bindingResult.getAllErrors() });
+            LOGGER.info("Failed validation on registration page for email={}, sessionid={}, with errors={}", new Object[] { email, sessionId,
+                    bindingResult.getAllErrors() });
             ModelAndView erroredView = new ModelAndView("register");
             erroredView.addAllObjects(bindingResult.getModel());
             return erroredView;
@@ -482,8 +482,6 @@ public class RegistrationController extends BaseController {
 
         }
     }
-    
-    
 
     @RequestMapping(value = "/reset-password", method = RequestMethod.GET)
     public ModelAndView resetPassword() {
@@ -877,8 +875,8 @@ public class RegistrationController extends BaseController {
         LOGGER.info("User with email={}, sessionid={} has asked to register during oauth", email, sessionId);
         validateEmailAddress(email, request, bindingResult);
         if (bindingResult.hasErrors()) {
-            LOGGER.info("Failed validation on registration page during oauth for email={}, sessionid={}, with errors={}",
-                    new Object[] { email, sessionId, bindingResult.getAllErrors() });
+            LOGGER.info("Failed validation on registration page during oauth for email={}, sessionid={}, with errors={}", new Object[] { email, sessionId,
+                    bindingResult.getAllErrors() });
             ModelAndView erroredView = new ModelAndView("oauth_login");
             erroredView.addObject("loginForm", loginForm);
             erroredView.addAllObjects(bindingResult.getModel());

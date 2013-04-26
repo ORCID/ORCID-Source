@@ -20,7 +20,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-
 public class Registration implements ErrorsInterface, Serializable {
     /**
      * 
@@ -30,25 +29,25 @@ public class Registration implements ErrorsInterface, Serializable {
     private List<String> errors;
 
     private Checkbox sendChangeNotifications;
-    
+
     private Checkbox sendOrcidNews;
 
     private Checkbox termsOfUse;
-    
+
     private Visibility workVisibilityDefault;
-    
+
     private Text password;
-    
+
     private Text passwordConfirm;
-     
+
     private Text email;
-    
+
     private Text emailConfirm;
 
     private Text givenNames;
-    
+
     private Text familyNames;
-    
+
     public Registration() {
         errors = new ArrayList<String>();
         password = new Text();
@@ -63,7 +62,7 @@ public class Registration implements ErrorsInterface, Serializable {
         workVisibilityDefault = new Visibility();
 
     }
-    
+
     public List<String> getErrors() {
         return errors;
     }
@@ -71,7 +70,7 @@ public class Registration implements ErrorsInterface, Serializable {
     public void setErrors(List<String> errors) {
         this.errors = errors;
     }
-    
+
     public Text getPassword() {
         return password;
     }
@@ -151,5 +150,5 @@ public class Registration implements ErrorsInterface, Serializable {
     public void setTermsOfUse(Checkbox termsOfUse) {
         this.termsOfUse = termsOfUse;
     }
-    
+
 }

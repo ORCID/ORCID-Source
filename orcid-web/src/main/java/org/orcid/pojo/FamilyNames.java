@@ -29,11 +29,11 @@ public class FamilyNames extends org.orcid.jaxb.model.message.GivenNames impleme
     private static final long serialVersionUID = 1L;
 
     private List<String> errors = new ArrayList<String>();
-    
+
     public FamilyNames() {
-        
+
     }
-    
+
     public FamilyNames(org.orcid.jaxb.model.message.GivenNames givenNames) {
         this.setContent(givenNames.getContent());
     }

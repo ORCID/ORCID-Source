@@ -19,7 +19,6 @@ package org.orcid.pojo.ajaxForm;
 import java.util.ArrayList;
 import java.util.List;
 
-
 public class Visibility implements ErrorsInterface, Required {
     /**
      * 
@@ -27,11 +26,11 @@ public class Visibility implements ErrorsInterface, Required {
     private static final long serialVersionUID = 1L;
 
     private List<String> errors = new ArrayList<String>();
-    
+
     private boolean required = true;
-    
+
     private String getRequiredMessage;
-    
+
     private org.orcid.jaxb.model.message.Visibility visibility;
 
     public Visibility() {
