@@ -40,10 +40,12 @@ import org.orcid.jaxb.model.message.Delegation;
 import org.orcid.jaxb.model.message.DelegationDetails;
 import org.orcid.jaxb.model.message.Email;
 import org.orcid.jaxb.model.message.OrcidProfile;
+import org.orcid.jaxb.model.message.OrcidType;
 import org.orcid.jaxb.model.message.PersonalDetails;
 import org.orcid.jaxb.model.message.SendChangeNotifications;
 import org.orcid.jaxb.model.message.Source;
 import org.orcid.persistence.dao.GenericDao;
+import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.ProfileEventEntity;
 import org.orcid.persistence.jpa.entities.ProfileEventType;
 import org.orcid.persistence.jpa.entities.SecurityQuestionEntity;
@@ -79,6 +81,9 @@ public class NotificationManagerImpl implements NotificationManager {
 
     @Resource
     private GenericDao<ProfileEventEntity, Long> profileEventDao;
+
+    @Resource
+    private ProfileDao profileDao;
 
     private Properties emailSubjects = new Properties();
     {
@@ -176,8 +181,8 @@ public class NotificationManagerImpl implements NotificationManager {
         templateParams.put("securityQuestion", securityQuestionDao.find((int) orcidProfile.getOrcidInternal().getSecurityDetails().getSecurityQuestionId().getValue())
                 .getQuestion());
         templateParams.put("baseUri", baseUri);
-        templateParams.put("securityAnswer", encryptionManager.decryptForInternalUse(orcidProfile.getOrcidInternal().getSecurityDetails().getEncryptedSecurityAnswer()
-                .getContent()));
+        templateParams.put("securityAnswer",
+                encryptionManager.decryptForInternalUse(orcidProfile.getOrcidInternal().getSecurityDetails().getEncryptedSecurityAnswer().getContent()));
         // Generate body from template
         String body = templateManager.processTemplate("legacy_verification_email.ftl", templateParams);
         // Create email message
@@ -271,6 +276,10 @@ public class NotificationManagerImpl implements NotificationManager {
         SendChangeNotifications sendChangeNotifications = amendedProfile.getOrcidInternal().getPreferences().getSendChangeNotifications();
         if (sendChangeNotifications == null || !sendChangeNotifications.isValue()) {
             LOGGER.debug("Not sending amend email, because option to send change notifications not set to true: {}", amendedProfile);
+            return;
+        }
+        if (OrcidType.ADMIN.equals(profileDao.retrieveOrcidType(amenderOrcid))) {
+            LOGGER.debug("Not sending amend email, because modified by admin ({}): {}", amenderOrcid, amendedProfile);
             return;
         }
         // Create map of template params

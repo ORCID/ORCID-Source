@@ -30,6 +30,7 @@ import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
 import org.apache.commons.lang.StringUtils;
+import org.orcid.jaxb.model.message.OrcidType;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.BaseEntity;
 import org.orcid.persistence.jpa.entities.GivenPermissionToEntity;
@@ -288,6 +289,13 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
     @Override
     public Date retrieveLastModifiedDate(String orcid) {
         TypedQuery<Date> query = entityManager.createQuery("select lastModified from ProfileEntity where orcid = :orcid", Date.class);
+        query.setParameter("orcid", orcid);
+        return query.getSingleResult();
+    }
+
+    @Override
+    public OrcidType retrieveOrcidType(String orcid) {
+        TypedQuery<OrcidType> query = entityManager.createQuery("select orcidType from ProfileEntity where orcid = :orcid", OrcidType.class);
         query.setParameter("orcid", orcid);
         return query.getSingleResult();
     }
