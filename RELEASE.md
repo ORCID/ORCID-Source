@@ -1,5 +1,12 @@
 # Release notes and highlights
 
+## release-1.1.17.2
+
+* Implement timestamp session caching for Profile
+
+* Implement caching for static data in db (like select box values)
+
+
 ## release-1.1.16.2
 
 * Email specific DAOs

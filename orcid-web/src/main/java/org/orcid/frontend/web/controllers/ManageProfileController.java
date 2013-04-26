@@ -43,7 +43,6 @@ import org.orcid.frontend.web.forms.ChangeSecurityQuestionForm;
 import org.orcid.frontend.web.forms.CurrentAffiliationsForm;
 import org.orcid.frontend.web.forms.ManagePasswordOptionsForm;
 import org.orcid.frontend.web.forms.PastInstitutionsForm;
-import org.orcid.frontend.web.forms.PersonalInfoForm;
 import org.orcid.frontend.web.forms.PreferencesForm;
 import org.orcid.frontend.web.forms.SearchForDelegatesForm;
 import org.orcid.jaxb.model.message.Delegation;
@@ -396,12 +395,10 @@ public class ManageProfileController extends BaseWorkspaceController {
     protected ModelAndView rebuildManageView(String activeTab) {
         ModelAndView mav = new ModelAndView("manage");
         mav.addObject("showPrivacy", true);
-        OrcidProfile profile = orcidProfileManager.retrieveOrcidProfile(getCurrentUserOrcid());
-        mav.addObject("personalInfoForm", new PersonalInfoForm(profile, retrieveSubjectsAsMap()));
+        OrcidProfile profile = getCurrentUserAndRefreshIfNecessary().getEffectiveProfile();
         mav.addObject("managePasswordOptionsForm", populateManagePasswordFormFromUserInfo());
         mav.addObject("preferencesForm", new PreferencesForm(profile));
         mav.addObject("profile", profile);
-        mav.addObject("sponsors", retrieveSelectableSponsorsAsMap());
         mav.addObject("activeTab", activeTab);
         mav.addObject("securityQuestions", securityQuestionManager.retrieveSecurityQuestionsAsMap());
         CurrentAffiliationsForm currentAffiliationsForm = new CurrentAffiliationsForm(profile);
@@ -564,7 +561,7 @@ public class ManageProfileController extends BaseWorkspaceController {
     @RequestMapping(value = "/default-privacy-preferences.json", method = RequestMethod.GET)
     public @ResponseBody
     Preferences getDefaultPreference(HttpServletRequest request) {
-        OrcidProfile profile = orcidProfileManager.retrieveOrcidProfile(getCurrentUserOrcid());
+        OrcidProfile profile = getCurrentUserAndRefreshIfNecessary().getEffectiveProfile();
         profile.getOrcidInternal().getPreferences();
         return profile.getOrcidInternal().getPreferences() != null ? profile.getOrcidInternal().getPreferences() : new Preferences();
     }
@@ -674,7 +671,7 @@ public class ManageProfileController extends BaseWorkspaceController {
     @RequestMapping(value = "/manage-bio-settings", method = RequestMethod.GET)
     public ModelAndView viewEditBio(HttpServletRequest request) {
         ModelAndView manageBioView = new ModelAndView("manage_bio_settings");
-        OrcidProfile profile = orcidProfileManager.retrieveOrcidProfile(getCurrentUserOrcid());
+        OrcidProfile profile = getCurrentUserAndRefreshIfNecessary().getEffectiveProfile();
         ChangePersonalInfoForm changePersonalInfoForm = new ChangePersonalInfoForm(profile);
         manageBioView.addObject("changePersonalInfoForm", changePersonalInfoForm);
         return manageBioView;

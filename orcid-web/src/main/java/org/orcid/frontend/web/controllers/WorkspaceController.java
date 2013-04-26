@@ -59,7 +59,7 @@ public class WorkspaceController extends BaseWorkspaceController {
         ModelAndView mav = new ModelAndView("workspace");
         mav.addObject("showPrivacy", true);
 
-        OrcidProfile profile = orcidProfileManager.retrieveOrcidProfile(getCurrentUserOrcid());
+        OrcidProfile profile = getCurrentUserAndRefreshIfNecessary().getEffectiveProfile();
         getCurrentUser().setEffectiveProfile(profile);
         List<CurrentWork> currentWorks = getCurrentWorksFromProfile(profile);
         if (currentWorks != null && !currentWorks.isEmpty()) {

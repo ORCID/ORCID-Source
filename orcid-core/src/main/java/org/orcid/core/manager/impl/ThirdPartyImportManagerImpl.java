@@ -29,6 +29,7 @@ import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.persistence.dao.ClientRedirectDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ClientRedirectUriEntity;
+import org.springframework.cache.annotation.Cacheable;
 
 public class ThirdPartyImportManagerImpl implements ThirdPartyImportManager {
 
@@ -36,6 +37,7 @@ public class ThirdPartyImportManagerImpl implements ThirdPartyImportManager {
     private ClientRedirectDao clientRedirectDao;
 
     @Override
+    @Cacheable("import-clients")
     public List<OrcidClient> findOrcidClientsWithPredefinedOauthScopeForImport() {
 
         List<OrcidClient> orcidClients = new ArrayList<OrcidClient>();

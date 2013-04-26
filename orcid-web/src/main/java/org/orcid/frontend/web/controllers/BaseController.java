@@ -216,6 +216,19 @@ public class BaseController {
         return startupDate;
     }
 
+    protected OrcidProfileUserDetails getCurrentUserAndRefreshIfNecessary() {
+        OrcidProfileUserDetails currentUser = getCurrentUser();
+        OrcidProfile effectiveProfile = currentUser.getEffectiveProfile();
+        String effectiveOrcid = effectiveProfile.getOrcid().getValue();
+        Date actualLastModified = orcidProfileManager.retrieveLastModifiedDate(effectiveOrcid);
+        Date cachedEffectiveProfileLastModified = currentUser.getEffectiveProfileLastModified();
+        if (cachedEffectiveProfileLastModified == null || actualLastModified.after(cachedEffectiveProfileLastModified)) {
+            currentUser.setEffectiveProfile(orcidProfileManager.retrieveOrcidProfile(effectiveOrcid));
+            currentUser.setEffectiveProfileLastModified(actualLastModified);
+        }
+        return currentUser;
+    }
+
     protected OrcidProfileUserDetails getCurrentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication instanceof UsernamePasswordAuthenticationToken && authentication.getPrincipal() instanceof OrcidProfileUserDetails) {
@@ -391,7 +404,7 @@ public class BaseController {
      * */
     @ModelAttribute("staticLoc")
     public String getStaticContentPath(HttpServletRequest request) {
-        if (StringUtils.isBlank(this.staticContentPath)){
+        if (StringUtils.isBlank(this.staticContentPath)) {
             this.staticContentPath = this.baseUri + STATIC_FOLDER_PATH;
             this.staticContentPath = this.staticContentPath.replace("https:", "");
             this.staticContentPath = this.staticContentPath.replace("http:", "");
