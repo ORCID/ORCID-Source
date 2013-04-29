@@ -469,25 +469,6 @@ $(function () {
 	
 	// Popovers
 	
-	$('.settings-popover-trigger').on('click', function (e) {
-		e.preventDefault();
-		var $this = $(this),
-			next  = $this.next(),
-			height;
-		next.toggleClass('show');
-		if (!$this.data('height')) {
-			iframe = $('iframe', next);
-			height = iframe.contents().height();
-			iframe.height(height);
-			$this.data('height', true);
-		}
-	});
-	
-	$('.close-parent-popover').on('click', function () {
-		$('.popover.show', parent.document).removeClass('show');	
-		parent.$.colorbox.close();
-	});
-	
 	$('body').on('click', function (e) {
 		var p = parent.$('.password-details:visible');
 		if (p.length) {
@@ -495,11 +476,20 @@ $(function () {
 		}
 	});
 	
-	var pInfo = $('.password-info').on('click', function (e) {
+	$('.password-info').on('click', function (e) {
 		e.preventDefault();
 		e.stopPropagation();
 		parent.$('.password-details').show();
 	});
+	
+	$('.password-info').hover(
+			function () {
+				$('.password-details').show();
+			},
+			function () {
+				$('.password-details').hide();
+			}
+			);
 	
 	if (parent !== window) {
 		var popover = parent.$('.popover-large:visible');
@@ -716,23 +706,7 @@ $(function () {
 			$('#searchResults').html(data);
 		});
 	});
-	
-    function submitAndClosePopover(e) {
-		e.preventDefault();
-		var $this = $(this);
-		$.ajax({
-			url: $this.attr('action'),
-			type: $this.attr('method'),
-			data: $this.serialize()
-		}).success(function () {
-			$('.popover.show', parent.document).removeClass('show');
-		});
-	}
-    
-    $('#email-pref-form').on('submit', submitAndClosePopover);
-    $('#privacy-pref-form').on('submit', submitAndClosePopover);
-	
-	
+	    	
 	$('.parent-import').on('click', function(e) {
 		e.preventDefault();
 		parent.$('a[href="#third-parties"]').click();

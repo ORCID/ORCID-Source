@@ -14,19 +14,17 @@
  *
  * =============================================================================
  */
-package org.orcid.pojo;
+package org.orcid.pojo.ajaxForm;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.orcid.pojo.ajaxForm.ErrorsInterface;
+public class Text implements ErrorsInterface, Required {
 
-public class SecurityQuestion implements ErrorsInterface {
     private List<String> errors = new ArrayList<String>();
-
-    private String securityAnswer;
-
-    private long securityQuestionId;
+    private String value;
+    private boolean required = true;
+    private String getRequiredMessage;
 
     public List<String> getErrors() {
         return errors;
@@ -36,20 +34,28 @@ public class SecurityQuestion implements ErrorsInterface {
         this.errors = errors;
     }
 
-    public long getSecurityQuestionId() {
-        return securityQuestionId;
+    public String getValue() {
+        return value;
     }
 
-    public void setSecurityQuestionId(long securityQuestionId) {
-        this.securityQuestionId = securityQuestionId;
+    public void setValue(String value) {
+        this.value = value;
     }
 
-    public String getSecurityAnswer() {
-        return securityAnswer;
+    public boolean isRequired() {
+        return required;
     }
 
-    public void setSecurityAnswer(String securityAnswer) {
-        this.securityAnswer = securityAnswer;
+    public void setRequired(boolean required) {
+        this.required = required;
+    }
+
+    public String getGetRequiredMessage() {
+        return getRequiredMessage;
+    }
+
+    public void setGetRequiredMessage(String getRequiredMessage) {
+        this.getRequiredMessage = getRequiredMessage;
     }
 
 }

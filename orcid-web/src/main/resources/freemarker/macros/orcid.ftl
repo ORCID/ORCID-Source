@@ -204,17 +204,6 @@ kind of variable. This temp value is only used in this macro lib -->
     <#if selected == "private" || selected == "protected"><span class="label label-important privacy-label">${springMacroRequestContext.getMessage("manage.liprivate")}</span></#if>
 </#macro>
 
-<#macro settingsPopover id includeFile title open="" link=springMacroRequestContext.getMessage("manage.editTable.edit")>
-    <a class="settings-popover-trigger" data-id="${id}" href="<@spring.url includeFile />">${link}</a>
-    <div id="${id}" class="popover popover-large bottom<#if open==id> show</#if>">
-        <div class="arrow"></div>
-        <h3 class="popover-title">${title}</h3>
-        <div class="popover-content">
-            <iframe class="popover-iframe" scrolling="no" frameborder="0" src="<@spring.url includeFile />"></iframe>
-        </div>                
-    </div>
-</#macro>
-
 <#macro month number=0><#compress>
    <#attempt><#local months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'July', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'] />
       ${months[number?number-1]}

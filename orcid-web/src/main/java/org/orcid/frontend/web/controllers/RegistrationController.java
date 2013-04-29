@@ -53,17 +53,30 @@ import org.orcid.frontend.web.forms.RegistrationForm;
 import org.orcid.frontend.web.forms.EmailAddressForm;
 import org.orcid.jaxb.model.message.Claimed;
 import org.orcid.jaxb.model.message.CompletionDate;
+import org.orcid.jaxb.model.message.ContactDetails;
+import org.orcid.jaxb.model.message.CreationMethod;
 import org.orcid.jaxb.model.message.Email;
+import org.orcid.jaxb.model.message.FamilyName;
+import org.orcid.jaxb.model.message.GivenNames;
+import org.orcid.jaxb.model.message.OrcidBio;
 import org.orcid.jaxb.model.message.OrcidHistory;
+import org.orcid.jaxb.model.message.OrcidInternal;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidSearchResult;
+import org.orcid.jaxb.model.message.PersonalDetails;
 import org.orcid.jaxb.model.message.Preferences;
 import org.orcid.jaxb.model.message.SecurityQuestionId;
 import org.orcid.jaxb.model.message.SendChangeNotifications;
 import org.orcid.jaxb.model.message.SendOrcidNews;
+import org.orcid.jaxb.model.message.SubmissionDate;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.message.WorkVisibilityDefault;
+import org.orcid.password.constants.OrcidPasswordConstants;
+import org.orcid.pojo.DupicateResearcher;
+import org.orcid.pojo.Redirect;
+import org.orcid.pojo.ajaxForm.ErrorsInterface;
+import org.orcid.pojo.ajaxForm.Registration;
 import org.orcid.utils.DateUtils;
 import org.orcid.utils.OrcidWebUtils;
 import org.slf4j.Logger;
@@ -79,11 +92,15 @@ import org.springframework.security.web.savedrequest.SavedRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
+import org.springframework.validation.MapBindingResult;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.multiaction.NoSuchRequestHandlingMethodException;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -211,6 +228,190 @@ public class RegistrationController extends BaseController {
         return registrationRoles;
     }
 
+    @RequestMapping(value = "/register.json", method = RequestMethod.GET)
+    public @ResponseBody
+    Registration getRegister(HttpServletRequest request) {
+        Registration reg = new Registration();
+
+        reg.getEmail().setRequired(true);
+
+        reg.getEmailConfirm().setRequired(true);
+
+        reg.getPassword();
+        reg.getPasswordConfirm();
+        reg.getEmail();
+
+        reg.getFamilyNames().setRequired(false);
+
+        reg.getGivenNames().setRequired(true);
+
+        reg.getSendChangeNotifications().setValue(true);
+        reg.getSendOrcidNews().setValue(true);
+        reg.getTermsOfUse().setValue(true);
+        return reg;
+    }
+
+    private static OrcidProfile toProfile(Registration reg) {
+        OrcidProfile profile = new OrcidProfile();
+        OrcidBio bio = new OrcidBio();
+
+        ContactDetails contactDetails = new ContactDetails();
+        contactDetails.addOrReplacePrimaryEmail(new org.orcid.jaxb.model.message.Email(reg.getEmail().getValue()));
+        Preferences preferences = new Preferences();
+        preferences.setSendChangeNotifications(new SendChangeNotifications(reg.getSendChangeNotifications().getValue()));
+        preferences.setSendOrcidNews(new SendOrcidNews(reg.getSendOrcidNews().getValue()));
+        preferences.setWorkVisibilityDefault(new WorkVisibilityDefault(Visibility.fromValue(reg.getWorkVisibilityDefault().getVisibility().value())));
+
+        PersonalDetails personalDetails = new PersonalDetails();
+        personalDetails.setFamilyName(new FamilyName(reg.getFamilyNames().getValue()));
+        personalDetails.setGivenNames(new GivenNames(reg.getGivenNames().getValue()));
+
+        bio.setContactDetails(contactDetails);
+        bio.setPersonalDetails(personalDetails);
+        OrcidInternal internal = new OrcidInternal();
+        internal.setPreferences(preferences);
+        profile.setOrcidBio(bio);
+        profile.setOrcidInternal(internal);
+
+        OrcidHistory orcidHistory = new OrcidHistory();
+        orcidHistory.setClaimed(new Claimed(true));
+        orcidHistory.setCreationMethod(CreationMethod.WEBSITE);
+
+        profile.setOrcidHistory(orcidHistory);
+        orcidHistory.setSubmissionDate(new SubmissionDate(DateUtils.convertToXMLGregorianCalendar(new Date())));
+
+        profile.setPassword(reg.getPassword().getValue());
+
+        return profile;
+
+    }
+
+    @RequestMapping(value = "/register.json", method = RequestMethod.POST)
+    public @ResponseBody
+    Registration setRegister(HttpServletRequest request, @RequestBody Registration reg) {
+        reg.setErrors(new ArrayList<String>());
+
+        registerGivenNameValidate(reg);
+        registerPasswordValidate(reg);
+        registerPasswordConfirmValidate(reg);
+        regEmailValidate(request, reg);
+
+        // validate terms accepted
+        reg.getTermsOfUse().setErrors(new ArrayList<String>());
+
+        if (reg.getTermsOfUse().getValue() != true) {
+            setError(reg.getTermsOfUse(), "AssertTrue.registrationForm.acceptTermsAndConditions");
+        }
+
+        copyErrors(reg.getEmailConfirm(), reg);
+        copyErrors(reg.getEmail(), reg);
+        copyErrors(reg.getGivenNames(), reg);
+        copyErrors(reg.getPassword(), reg);
+        copyErrors(reg.getPasswordConfirm(), reg);
+        copyErrors(reg.getTermsOfUse(), reg);
+
+        return reg;
+    }
+
+    @RequestMapping(value = "/registerConfirm.json", method = RequestMethod.POST)
+    public @ResponseBody
+    Redirect setRegisterConfirm(HttpServletRequest request, @RequestBody Registration reg) {
+        Redirect r = new Redirect();
+
+        // make sure validation still passes
+        reg = setRegister(request, reg);
+        if (reg.getErrors() != null && reg.getErrors().size() > 0) {
+            r.getErrors().add("Please revalidate at /register.json");
+            return r;
+        }
+
+        createMinimalRegistrationAndLogUserIn(request, toProfile(reg));
+        r.setUrl(getBaseUri() + "/my-orcid");
+        return r;
+    }
+
+    @RequestMapping(value = "/registerPasswordConfirmValidate.json", method = RequestMethod.POST)
+    public @ResponseBody
+    Registration registerPasswordConfirmValidate(@RequestBody Registration reg) {
+        reg.getPasswordConfirm().setErrors(new ArrayList<String>());
+        // validate passwords match
+        if (reg.getPasswordConfirm().getValue() == null || !reg.getPasswordConfirm().getValue().equals(reg.getPassword().getValue())) {
+            setError(reg.getPasswordConfirm(), "FieldMatch.registrationForm");
+        }
+        return reg;
+    }
+
+    @RequestMapping(value = "/registerPasswordValidate.json", method = RequestMethod.POST)
+    public @ResponseBody
+    Registration registerPasswordValidate(@RequestBody Registration reg) {
+        reg.getPassword().setErrors(new ArrayList<String>());
+        // validate password regex
+        if (reg.getPassword().getValue() == null || !reg.getPassword().getValue().matches(OrcidPasswordConstants.ORCID_PASSWORD_REGEX)) {
+            setError(reg.getPassword(), "Pattern.registrationForm.password");
+        }
+
+        if (reg.getPasswordConfirm().getValue() != null) {
+            registerPasswordConfirmValidate(reg);
+        }
+        return reg;
+    }
+
+    @RequestMapping(value = "/registerGivenNamesValidate.json", method = RequestMethod.POST)
+    public @ResponseBody
+    Registration registerGivenNameValidate(@RequestBody Registration reg) {
+        // validate given name isn't blank
+        reg.getGivenNames().setErrors(new ArrayList<String>());
+        if (reg.getGivenNames().getValue() == null || reg.getGivenNames().getValue().trim().isEmpty()) {
+            setError(reg.getGivenNames(), "NotBlank.registrationForm.givenNames");
+        }
+        return reg;
+    }
+
+    @RequestMapping(value = "/registerEmailValidate.json", method = RequestMethod.POST)
+    public @ResponseBody
+    Registration regEmailValidate(HttpServletRequest request, @RequestBody Registration reg) {
+        reg.getEmail().setErrors(new ArrayList<String>());
+        if (reg.getEmail().getValue() == null || reg.getEmail().getValue().trim().isEmpty()) {
+            setError(reg.getEmail(), "Email.registrationForm.email");
+        }
+        // validate email
+        MapBindingResult mbr = new MapBindingResult(new HashMap<String, String>(), "Email");
+        // make sure there are no dups
+        validateEmailAddress(reg.getEmail().getValue(), false, request, mbr);
+
+        for (ObjectError oe : mbr.getAllErrors()) {
+            reg.getEmail().getErrors().add(getMessage(oe.getCode(), reg.getEmail().getValue()));
+        }
+
+        //validate confirm if already field out
+        if (reg.getEmailConfirm().getValue() != null) {
+            regEmailConfirmValidate(reg);
+        }
+
+        return reg;
+    }
+
+    @RequestMapping(value = "/registerEmailConfirmValidate.json", method = RequestMethod.POST)
+    public @ResponseBody
+    Registration regEmailConfirmValidate(@RequestBody Registration reg) {
+        reg.getEmailConfirm().setErrors(new ArrayList<String>());
+        if (reg.getEmail().getValue() == null || !reg.getEmailConfirm().getValue().equalsIgnoreCase(reg.getEmail().getValue())) {
+            setError(reg.getEmailConfirm(), "StringMatchIgnoreCase.registrationForm");
+        }
+
+        return reg;
+    }
+
+    private static void copyErrors(ErrorsInterface from, ErrorsInterface into) {
+        for (String s : from.getErrors()) {
+            into.getErrors().add(s);
+        }
+    }
+
+    private void setError(ErrorsInterface ei, String msg) {
+        ei.getErrors().add(getMessage(msg));
+    }
+
     @RequestMapping(value = "/register", method = RequestMethod.GET)
     public ModelAndView register(HttpServletRequest request, HttpServletResponse response) {
         ModelAndView mav = new ModelAndView("register");
@@ -219,6 +420,31 @@ public class RegistrationController extends BaseController {
         SavedRequest savedRequest = new HttpSessionRequestCache().getRequest(request, response);
         LOGGER.debug("Saved url before registration is: " + (savedRequest != null ? savedRequest.getRedirectUrl() : " no saved request"));
         return mav;
+    }
+
+    @RequestMapping(value = "/dupicateResearcher.json", method = RequestMethod.GET)
+    public @ResponseBody
+    List<DupicateResearcher> getDupicateResearcher(@RequestParam("givenNames") String givenNames, @RequestParam("familyNames") String familyNames) {
+        List<DupicateResearcher> drList = new ArrayList<DupicateResearcher>();
+
+        List<OrcidProfile> potentialDuplicates = findPotentialDuplicatesByFirstNameLastName(givenNames, familyNames);
+        for (OrcidProfile op : potentialDuplicates) {
+            DupicateResearcher dr = new DupicateResearcher();
+            if (op.getOrcidBio() != null) {
+                if (op.getOrcidBio().getContactDetails() != null) {
+                    if (op.getOrcidBio().getContactDetails().retrievePrimaryEmail() != null) {
+                        dr.setEmail(op.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue());
+                    }
+                }
+                dr.setFamilyNames(op.getOrcidBio().getPersonalDetails().getFamilyName().getContent());
+                dr.setGivenNames(op.getOrcidBio().getPersonalDetails().getGivenNames().getContent());
+                dr.setInstitution(null);
+            }
+            dr.setOrcid(op.getOrcid().getValue());
+            drList.add(dr);
+        }
+
+        return drList;
     }
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)

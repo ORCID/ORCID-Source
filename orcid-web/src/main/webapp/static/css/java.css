@@ -240,18 +240,6 @@
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
 body {
     font-size: 16px;
 }
@@ -836,6 +824,24 @@ a:hover {
      border: 0;
      width: 452px;
      overflow-y: hidden
+}
+
+.popover-help-container .popover {
+	display: none;
+	position: absolute; 
+	left: -145px; 
+	top: 17px;
+	width: 300px;
+	background-color: #ffffff;
+	font-size: 14px;
+}
+
+.popover-help-container  ul {
+	list-style-type: disc;
+}
+
+.popover-help-container:hover .popover {
+	display: block;
 }
 
 .workspace-inner {
