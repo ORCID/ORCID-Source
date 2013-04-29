@@ -98,7 +98,7 @@ Sample Create XML (note: email used must not already exist)
 
       <!--?xml version="1.0" encoding="UTF-8" standalone="yes"?-->
       <orcid-message xmlns="http://www.orcid.org/ns/orcid">
-            <message-version>1.0.4</message-version>
+            <message-version>1.0.13</message-version>
       	<orcid-profile type="user">
       		<orcid-bio>
       			<personal-details>
