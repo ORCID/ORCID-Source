@@ -21,12 +21,13 @@ import java.util.List;
 
 import org.orcid.pojo.ajaxForm.ErrorsInterface;
 
-public class SecurityQuestion implements ErrorsInterface {
+public class Redirect implements ErrorsInterface {
+    /**
+     * 
+     */
+    private String url;
+
     private List<String> errors = new ArrayList<String>();
-
-    private String securityAnswer;
-
-    private long securityQuestionId;
 
     public List<String> getErrors() {
         return errors;
@@ -36,20 +37,12 @@ public class SecurityQuestion implements ErrorsInterface {
         this.errors = errors;
     }
 
-    public long getSecurityQuestionId() {
-        return securityQuestionId;
+    public String getUrl() {
+        return url;
     }
 
-    public void setSecurityQuestionId(long securityQuestionId) {
-        this.securityQuestionId = securityQuestionId;
-    }
-
-    public String getSecurityAnswer() {
-        return securityAnswer;
-    }
-
-    public void setSecurityAnswer(String securityAnswer) {
-        this.securityAnswer = securityAnswer;
+    public void setUrl(String url) {
+        this.url = url;
     }
 
 }

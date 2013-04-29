@@ -19,12 +19,32 @@ package org.orcid.pojo;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.orcid.jaxb.model.message.SendChangeNotifications;
+import org.orcid.jaxb.model.message.SendOrcidNews;
+import org.orcid.jaxb.model.message.WorkVisibilityDefault;
 import org.orcid.pojo.ajaxForm.ErrorsInterface;
+import org.springframework.validation.ObjectError;
 
-public class ExternalIdentifier extends org.orcid.jaxb.model.message.ExternalIdentifier implements ErrorsInterface {
+public class Preferences extends org.orcid.jaxb.model.message.Preferences implements ErrorsInterface {
+    /**
+     * 
+     */
     private static final long serialVersionUID = 1L;
 
     private List<String> errors = new ArrayList<String>();
+
+    public Preferences() {
+        this.setSendChangeNotifications(new SendChangeNotifications());
+        this.setSendOrcidNews(new SendOrcidNews());
+        this.setWorkVisibilityDefault(new WorkVisibilityDefault());
+
+    }
+
+    public Preferences(org.orcid.jaxb.model.message.Preferences castPreferences) {
+        this.setSendChangeNotifications(castPreferences.getSendChangeNotifications());
+        this.setSendOrcidNews(castPreferences.getSendOrcidNews());
+        this.setWorkVisibilityDefault(castPreferences.getWorkVisibilityDefault());
+    }
 
     public List<String> getErrors() {
         return errors;
@@ -33,4 +53,5 @@ public class ExternalIdentifier extends org.orcid.jaxb.model.message.ExternalIde
     public void setErrors(List<String> errors) {
         this.errors = errors;
     }
+
 }

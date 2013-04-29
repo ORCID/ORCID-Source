@@ -15,7 +15,32 @@
  * =============================================================================
  */
 
-var orcidNgModule = angular.module('orcidApp', []);
+var orcidNgModule = angular.module('orcidApp', []).directive('ngModelOnblur', function() {
+    return {
+        restrict: 'A',
+        require: 'ngModel',
+        link: function(scope, elm, attr, ngModelCtrl) {
+            if (attr.type === 'radio' || attr.type === 'checkbox') return;
+
+            elm.unbind('input').unbind('keydown').unbind('change');
+            
+            elm.bind("keydown keypress", function(event) {
+                if (event.which === 13) {
+                    scope.$apply(function() {
+                        ngModelCtrl.$setViewValue(elm.val());
+                    });
+                }
+            });
+
+            elm.bind('blur', function() {
+                scope.$apply(function() {
+                    ngModelCtrl.$setViewValue(elm.val());
+                });
+            });
+        }
+    };
+});
+
 
 function EditTableCtrl($scope) {
 	
@@ -491,4 +516,161 @@ function ExternalIdentifierCtrl($scope, $http){
 	    	console.log("Error deleting external identifier.");
 	    });
 	};
+};	
+
+
+function RegistrationCtrl($scope, $compile) {
+	$scope.getRegister = function(){
+		$.ajax({
+			url: $('body').data('baseurl') + 'register.json',	        
+	        dataType: 'json',
+	        success: function(data) {
+	       	$scope.register = data;
+	        $scope.$apply();
+	        }
+		}).fail(function(){
+		// something bad is happening!
+			console.log("error fetching register.json");
+		});
+	};
+	
+	$scope.getDuplicates = function(){
+		$.ajax({
+			//url: $('body').data('baseurl') + 'dupicateResearcher.json?familyNames=test&givenNames=test',	        
+			url: $('body').data('baseurl') + 'dupicateResearcher.json?familyNames=' + $scope.register.familyNames.value + '&givenNames=' + $scope.register.givenNames.value,	        
+	        dataType: 'json',
+	        success: function(data) {
+		       	$scope.duplicates = data;
+		        $scope.$apply();
+		        if ($scope.duplicates.length > 0 ) {
+		        	$scope.showDuplicatesColorBox();
+		        } else {
+		        	$scope.postRegisterConfirm();
+		        }
+	        }
+		}).fail(function(){
+		// something bad is happening!
+			console.log("error fetching register.json");
+		});
+	};
+
+	
+	$scope.updateWorkVisibilityDefault = function(priv, $event) {
+		$scope.register.workVisibilityDefault.visibility = priv;
+	};
+	
+	$scope.postRegister = function () {
+		$.ajax({
+	        url: $('body').data('baseurl') + 'register.json',
+	        type: 'POST',
+	        data:  angular.toJson($scope.register),
+	        contentType: 'application/json;charset=UTF-8',
+	        dataType: 'json',
+	        success: function(data) {
+	        	$scope.register = data;
+	        	$scope.$apply();
+	        	if ($scope.register.errors.length == 0) {
+	        		$scope.showProcessingColorBox();
+	        		$scope.getDuplicates();
+	        	}
+	        }
+	    }).fail(function() { 
+	    	// something bad is happening!
+	    	console.log("RegistrationCtrl.postRegister() error");
+	    });
+	};
+	
+	$scope.postRegisterConfirm = function () {
+		$scope.showProcessingColorBox();
+		$.ajax({
+	        url: $('body').data('baseurl') + 'registerConfirm.json',
+	        type: 'POST',
+	        data:  angular.toJson($scope.register),
+	        contentType: 'application/json;charset=UTF-8',
+	        dataType: 'json',
+	        success: function(data) {
+	        	window.location.href = data.url;
+	        }
+	    }).fail(function() { 
+	    	// something bad is happening!
+	    	console.log("RegistrationCtrl.postRegister() error");
+	    });
+	};
+
+	
+
+	$scope.postRegisterValidate = function (field) {
+		if (field === undefined) field = '';
+		$.ajax({
+	        url: $('body').data('baseurl') + 'register' + field + 'Validate.json',
+	        type: 'POST',
+	        data:  angular.toJson($scope.register),
+	        contentType: 'application/json;charset=UTF-8',
+	        dataType: 'json',
+	        success: function(data) {
+	        	$scope.copyErrorsLeft($scope.register, data);
+	        	$scope.$apply();
+	        }
+	    }).fail(function() { 
+	    	// something bad is happening!
+	    	console.log("RegistrationCtrl.postRegisterValidate() error");
+	    });
+	};
+
+	// in the case of slow network connection
+	// we don't want to overwrite  values while
+	// user is typing
+	$scope.copyErrorsLeft = function (data1, data2) {
+		for (var key in data1) {
+			if (key == 'errors') {
+				data1.errors = data2.errors;
+			} else {
+				if (data1[key].errors !== undefined)
+				data1[key].errors = data2[key].errors;
+			};
+		};
+	};
+	
+	$scope.showProcessingColorBox = function () {
+	    $.colorbox({
+	        html : $('<div style="font-size: 50px; line-height: 60px; padding: 20px; text-align:center">Processing <i id="ajax-loader" class="icon-spinner icon-spin green"></i></div>'),
+	        width: '400px', 
+	        close: '',
+	        escKey:false, 
+	        overlayClose:false
+	    });
+	    $.colorbox.resize({width:"400px" , height:"100px"});
+	};
+
+	$scope.showDuplicatesColorBox = function () {
+	    $.colorbox({
+	        html : $compile($('#duplicates').html())($scope),
+	        escKey:false, 
+	        overlayClose:false,
+	        transition: 'fade',
+	        close: '',
+	        scrolling: true,
+	        	    });
+	    $scope.$apply();
+	    $.colorbox.resize({width:"780px" , height:"400px"});
+	};
+	
+	$scope.hideProcessingColorBox = function () {
+		$.colorbox.close();
+	};
+
+	
+	$scope.isValidClass = function (cur) {
+		if (cur === undefined) return '';
+		var valid = true;
+		if (cur.required && (cur.value == null || cur.value.trim() == '')) valid = false;
+		if (cur.errors !== undefined && cur.errors.length > 0) valid = false;
+		return valid ? '' : 'text-error';
+	};
+	
+	//init
+	$scope.getRegister();	
+	//$scope.getDuplicates();
+		 
 };
+		
