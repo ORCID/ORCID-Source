@@ -498,21 +498,21 @@
 		<field name="orcid" type="string" indexed="true" stored="true"
             multiValued="false" />
         <field name="email" type="string" indexed="true"
-            stored="false" multiValued="false" />
+            stored="true" multiValued="false" />
         <field name="given-names" type="text_general" indexed="true"
-            stored="false" multiValued="false" />
+            stored="true" multiValued="false" />
         <field name="family-name" type="text_general" indexed="true"
-            stored="false" multiValued="false" />
+            stored="true" multiValued="false" />
         <field name="current-primary-institution-affiliation-name" type="text_general" indexed="true"
-            stored="false" multiValued="true" />
+            stored="true" multiValued="true" />
         <field name="current-institution-affiliation-name" type="text_general" indexed="true"
-            stored="false" multiValued="true" />
+            stored="true" multiValued="true" />
         <field name="past-institution-affiliation-name" type="text_general" indexed="true"
-            stored="false" multiValued="true" />        
+            stored="true" multiValued="true" />        
         <field name="credit-name" type="text_general" indexed="true"
-            stored="false" multiValued="false" />
+            stored="true" multiValued="false" />
         <field name="other-names" type="text_general" indexed="true"
-            stored="false" multiValued="true" />
+            stored="true" multiValued="true" />
         <field name="external-id-orcid" type="string" indexed="true" stored="false"
             multiValued="true" />
         <field name="external-id-reference" type="string" indexed="true" stored="false"
