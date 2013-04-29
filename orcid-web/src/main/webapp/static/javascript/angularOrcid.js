@@ -649,7 +649,7 @@ function RegistrationCtrl($scope, $compile) {
 	        overlayClose:false,
 	        transition: 'fade',
 	        close: '',
-	        scrolling: true,
+	        scrolling: true
 	        	    });
 	    $scope.$apply();
 	    $.colorbox.resize({width:"780px" , height:"400px"});
