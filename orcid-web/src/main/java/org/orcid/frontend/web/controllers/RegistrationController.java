@@ -310,8 +310,6 @@ public class RegistrationController extends BaseController {
         copyErrors(reg.getPasswordConfirm(), reg);
         copyErrors(reg.getTermsOfUse(), reg);
 
-        // create user createMinimalRegistrationAndLogUserIn(request, registrationForm.toOrcidProfile());
-
         return reg;
     }
 
@@ -355,7 +353,6 @@ public class RegistrationController extends BaseController {
         if (reg.getPasswordConfirm().getValue() != null) {
             registerPasswordConfirmValidate(reg);
         }
-
         return reg;
     }
 
