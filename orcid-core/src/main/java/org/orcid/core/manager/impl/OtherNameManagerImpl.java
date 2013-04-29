@@ -32,7 +32,10 @@ public class OtherNameManagerImpl implements OtherNameManager {
     private OtherNameDao otherNameDao;
 
     /**
-     * TODO
+     * Get other names for an specific orcid account
+     * @param orcid          
+     * @return
+     *           The list of other names related with the specified orcid profile
      * */
     @Override
     public List<OtherNameEntity> getOtherName(String orcid) {        
@@ -40,7 +43,10 @@ public class OtherNameManagerImpl implements OtherNameManager {
     }
 
     /**
-     * TODO
+     * Update other name entity with new values
+     * @param otherName
+     * @return
+     *          true if the other name was sucessfully updated, false otherwise
      * */
     @Override
     public boolean updateOtherName(OtherNameEntity otherName) {        
@@ -48,7 +54,11 @@ public class OtherNameManagerImpl implements OtherNameManager {
     }
 
     /**
-     * TODO
+     * Create other name for the specified account
+     * @param orcid
+     * @param displayName
+     * @return
+     *          true if the other name was successfully created, false otherwise 
      * */
     @Override
     public boolean addOtherName(String orcid, String displayName) {        
@@ -56,7 +66,10 @@ public class OtherNameManagerImpl implements OtherNameManager {
     }
 
     /**
-     * TODO
+     * Delete other name from database
+     * @param otherName
+     * @return 
+     *          true if the other name was successfully deleted, false otherwise
      * */
     @Override
     public boolean deleteOtherName(OtherNameEntity otherName){
@@ -64,7 +77,10 @@ public class OtherNameManagerImpl implements OtherNameManager {
     }
     
     /**
-     * TODO
+     * Get a list of other names and decide which other names might be deleted,
+     * and which ones should be created
+     * @param orcid
+     * @param List<String> otherNames
      * */
     @Override
     public void updateOtherNames(String orcid, List<String> otherNames){
