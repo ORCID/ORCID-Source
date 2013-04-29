@@ -377,24 +377,14 @@ public class ManageProfileController extends BaseWorkspaceController {
         ModelAndView mav = new ModelAndView("redirect:/my-orcid");
         return mav;
     }
-    
+
     @RequestMapping(value = "/admin-switch-user", method = RequestMethod.GET)
     public ModelAndView adminSwitchUser(HttpServletRequest request, @RequestParam("orcid") String targetOrcid) {
         refreshCurrentUserProfile();
         OrcidProfileUserDetails userDetails = getCurrentUser();
         // Check permissions!
-        if (isInDelegationMode()) {
-            // If already in delegation mode, check that is switching back to
-            // current user
-            if (!getRealUserOrcid().equals(targetOrcid)) {
-                throw new AccessDeniedException("You are not allowed to switch back to that user");
-            }
-        } else {
-            // If not yet in delegation mode, then check that the real user has
-            // permission to become the giver
-            if (!OrcidType.ADMIN.equals(userDetails.getRealProfile().getType())) {
-                throw new AccessDeniedException("You are not allowed to switch to that user");
-            }
+        if (!OrcidType.ADMIN.equals(userDetails.getRealProfile().getType())) {
+            throw new AccessDeniedException("You are not allowed to switch to that user");
         }
         getCurrentUser().switchDelegationMode(orcidProfileManager.retrieveOrcidProfile(targetOrcid));
         request.getSession().removeAttribute(WORKS_RESULTS_ATTRIBUTE);
