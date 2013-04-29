@@ -36,7 +36,22 @@
 	                        <div class="relative">
 	                            <input name="givenNames" type="text" class="input-xlarge" ng-model="register.givenNames.value" ng-model-onblur ng-change="postRegisterValidate('GivenNames')"/>
 	                            <span class="required" ng-class="isValidClass(register.givenNames)">*</span>
-	                            <a href="${knowledgeBaseUri}/articles/142948-names-in-the-orcid-registry" target="_blank"><i class="icon-question-sign"></i></a>                            
+	                            <div class="popover-help-container" style="display: inline; position: relative;">
+	                                <a href="javascript:void(0);"><i class="icon-question-sign"></i></a>
+	                                <div id="name-help" class="popover bottom">
+								        <div class="arrow"></div>
+								        <div class="popover-content">
+								            <p>First name is your given name or the name you most commonly go by.</p>
+								            <br /> 
+											<p>Last name is your family name.</p>
+											<br />
+											<p>You will have a chance to add additional names after you have 
+								            created your account by updating Personal Information.</p>
+								            <br />
+											<a href="http://support.orcid.org/knowledgebase/articles/142948-names-in-the-orcid-registry" target="_blank">More information on names</a>
+								        </div>                
+								    </div>
+	                            </div>
 								<span class="orcid-error" ng-show="register.givenNames.errors.length > 0">
 									<div ng-repeat='error in register.givenNames.errors' ng-bind-html-unsafe="error"></div>
 					   			</span>
@@ -71,19 +86,16 @@
 					   			</span>
 	                        </div>
 	                    </div>				
-	                    <div class="control-group password-group">
+	                    <div class="control-group">
 	                        <label class="control-label">${springMacroRequestContext.getMessage("oauth_sign_up.labelpassword")}</label>
 	                        <div class="relative">
 	                            <input type="password" name="password" class="input-xlarge" ng-model="register.password.value" ng-change="postRegisterValidate('Password')"/>
 	                            <span class="required" ng-class="isValidClass(register.password)">*</span>
-	                            <span class="orcid-error" ng-show="register.password.errors.length > 0">
-									<div ng-repeat='error in register.password.errors' ng-bind-html-unsafe="error"></div>
-					   			</span>
-	                            <a class="password-info" href="#"><i class="icon-question-sign"></i></a>
-	                            <div class="popover bottom password-details">
-	                                <div class="arrow"></div>
-	                                <div class="popover-content">
-	                                    <div class="help-block">
+					   			<div class="popover-help-container" style="display: inline; position: relative;">
+	                                <a href="javascript:void(0);"><i class="icon-question-sign"></i></a>
+	                                <div id="name-help" class="popover bottom">
+								        <div class="arrow"></div>
+								        <div class="popover-content">
 	                                        <p>${springMacroRequestContext.getMessage("password_one_time_reset.labelmust8more")}</p>
 	                                        <ul>
 	                                            <li>${springMacroRequestContext.getMessage("password_one_time_reset.labelatleast09")}</li>
@@ -93,11 +105,15 @@
 	                                            	<li>${springMacroRequestContext.getMessage("password_one_time_reset.labelanyoffollow")}<br /> ! @ # $ % ^ * ( ) ~ `{ } [ ] | \ &amp; _</li>
 	                                            </ul>
 	                                            <li>${springMacroRequestContext.getMessage("password_one_time_reset.labeloptionallyspace")}</li>
-	                                        </ul>                                       
-	                                        <p>${springMacroRequestContext.getMessage("password_one_time_reset.examplesunmoon")}</p>
-	                                    </div>
-	                                </div>
+	                                        </ul>                         
+	                                        <br />              
+	                                        <p><strong>${springMacroRequestContext.getMessage("password_one_time_reset.examplesunmoon")}</strong></p>
+								        </div>                
+								    </div>
 	                            </div>
+	                            <span class="orcid-error" ng-show="register.password.errors.length > 0">
+									<div ng-repeat='error in register.password.errors' ng-bind-html-unsafe="error"></div>
+					   			</span>
 	                        </div>
 	                    </div>
 	                    <div>
@@ -167,7 +183,8 @@
 		                				<th>${springMacroRequestContext.getMessage("duplicate_researcher.thORCID")}</th>
 		                				<th>${springMacroRequestContext.getMessage("duplicate_researcher.thEmail")}</th>
 		                				<th>${springMacroRequestContext.getMessage("duplicate_researcher.thgivennames")}</th>
-		                				<th>${springMacroRequestContext.getMessage("duplicate_researcher.thFamilyName")}</th>                				
+		                				<th>${springMacroRequestContext.getMessage("duplicate_researcher.thFamilyName")}</th>
+		                				<th>${springMacroRequestContext.getMessage("duplicate_researcher.thInstitution")}</th>                				
 		            				</tr>
 		            			</thead>
 		            			<tbody>
@@ -176,6 +193,7 @@
 		                    			<td>{{dup.email}}</td>
 		                    			<td>{{dup.givenNames}}</td>
 		                    			<td>{{dup.familyNames}}</td>
+		                    			<td>{{dup.institution}}</td>
 		                			</tr>
 		            			</tbody>
 		        			</table>

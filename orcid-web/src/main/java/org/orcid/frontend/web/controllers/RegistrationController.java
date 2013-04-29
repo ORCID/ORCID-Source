@@ -440,7 +440,8 @@ public class RegistrationController extends BaseController {
                     }
                 }
                 dr.setFamilyNames(op.getOrcidBio().getPersonalDetails().getFamilyName().getContent());
-                dr.setGivenNames(op.getOrcidBio().getPersonalDetails().getFamilyName().getContent());
+                dr.setGivenNames(op.getOrcidBio().getPersonalDetails().getGivenNames().getContent());
+                dr.setInstitution(null);
             }
             dr.setOrcid(op.getOrcid().getValue());
             drList.add(dr);

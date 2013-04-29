@@ -22,6 +22,7 @@ public class DupicateResearcher {
     private String email;
     private String givenNames;
     private String familyNames;
+    private String institution;
 
     public String getOrcid() {
         return orcid;
@@ -53,6 +54,14 @@ public class DupicateResearcher {
 
     public void setFamilyNames(String familynames) {
         this.familyNames = familynames;
+    }
+
+    public String getInstitution() {
+        return institution;
+    }
+
+    public void setInstitution(String institution) {
+        this.institution = institution;
     }
 
 }
