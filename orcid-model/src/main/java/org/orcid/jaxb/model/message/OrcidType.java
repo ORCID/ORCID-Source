@@ -29,10 +29,14 @@ import javax.xml.bind.annotation.XmlType;
 import java.io.Serializable;
 
 /**
- * <p>Java class for orcid-type.
- * 
- * <p>The following schema fragment specifies the expected content contained within this class.
  * <p>
+ * Java class for orcid-type.
+ * 
+ * <p>
+ * The following schema fragment specifies the expected content contained within
+ * this class.
+ * <p>
+ * 
  * <pre>
  * &lt;simpleType name="orcid-type">
  *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
@@ -47,8 +51,8 @@ import java.io.Serializable;
 @XmlType(name = "orcid-type")
 @XmlEnum
 public enum OrcidType implements Serializable {
-
-    @XmlEnumValue("user")
+    @XmlEnumValue("admin")
+    ADMIN("admin"), @XmlEnumValue("user")
     USER("user"), @XmlEnumValue("group")
     GROUP("group"), @XmlEnumValue("client")
     CLIENT("client");
