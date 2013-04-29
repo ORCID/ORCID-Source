@@ -459,8 +459,14 @@ function ExternalIdentifierCtrl($scope, $http){
         });
         $.colorbox.resize();
         $('#modal-del-external-identifier').click(function(e) {
-    		$scope.externalIdentifiersPojo.externalIdentifiers.splice(idx, 1);
-    		$scope.saveExternalIdentifier();
+        	var externalIdentifier = $scope.externalIdentifiersPojo.externalIdentifiers[idx];
+        	// remove the external identifier on server
+    		$scope.removeExternalIdentifier(externalIdentifier);
+    		// remove the external identifier from the UI
+        	$scope.externalIdentifiersPojo.externalIdentifiers.splice(idx, 1);
+        	// apply changes on scope
+    		$scope.$apply();
+    		// close box
     		$.colorbox.close();
         });
         $('#modal-cancel').click(function(e) {
@@ -469,19 +475,20 @@ function ExternalIdentifierCtrl($scope, $http){
         });
 	};
 	
-	$scope.saveExternalIdentifier = function() {
+	$scope.removeExternalIdentifier = function(externalIdentifier) {
 		$.ajax({
 	        url: $('body').data('baseurl') + 'my-orcid/externalIdentifiers.json',
-	        type: 'POST',
-	        data: angular.toJson($scope.externalIdentifiersPojo),
+	        type: 'DELETE',
+	        data: angular.toJson(externalIdentifier),
 	        contentType: 'application/json;charset=UTF-8',
 	        dataType: 'json',
-	        success: function(data) {
-	        	$scope.externalIdentifiersPojo = data;
-	        	$scope.$apply();
+	        success: function(data) {	        	
+	        	if(data.errors.length != 0){
+	        		console.log("Unable to delete external identifier.");
+	        	} 
 	        }
 	    }).fail(function() { 
-	    	console.log("error with external identifiers");
+	    	console.log("Error deleting external identifier.");
 	    });
 	};
 };
