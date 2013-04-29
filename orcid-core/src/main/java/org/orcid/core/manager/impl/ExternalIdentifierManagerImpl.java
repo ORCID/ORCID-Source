@@ -16,15 +16,30 @@
  */
 package org.orcid.core.manager.impl;
 
+import java.util.List;
+
 import javax.annotation.Resource;
 
 import org.orcid.core.manager.ExternalIdentifierManager;
 import org.orcid.persistence.dao.ExternalIdentifierDao;
+import org.orcid.persistence.jpa.entities.ExternalIdentifierEntity;
 
 public class ExternalIdentifierManagerImpl implements ExternalIdentifierManager {
 
     @Resource
     private ExternalIdentifierDao externalIdentifierDao;
+    
+    
+    /**
+     * Get the list of external identifiers associated with an specific account
+     * @param orcid
+     *          The orcid of the owner
+     * @return
+     *          A list that contains all external identifiers for the specific account
+     * */
+    public List<ExternalIdentifierEntity> getExternalIdentifiers(String orcid){
+        return externalIdentifierDao.getExternalIdentifiers(orcid);
+    }
     
     /**
      * Removes an external identifier from database based on his ID.

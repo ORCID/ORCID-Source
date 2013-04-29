@@ -16,7 +16,20 @@
  */
 package org.orcid.persistence.dao;
 
+import java.util.List;
+
+import org.orcid.persistence.jpa.entities.ExternalIdentifierEntity;
+
 public interface ExternalIdentifierDao {
+    
+    /**
+     * Get the list of external identifiers associated with an specific account
+     * @param orcid
+     *          The orcid of the owner
+     * @return
+     *          A list that contains all external identifiers for the specific account
+     * */
+    List<ExternalIdentifierEntity> getExternalIdentifiers(String orcid);
     
     /**
      * Removes an external identifier from database based on his ID.

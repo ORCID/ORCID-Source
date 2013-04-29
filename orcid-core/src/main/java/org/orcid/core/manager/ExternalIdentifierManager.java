@@ -16,8 +16,21 @@
  */
 package org.orcid.core.manager;
 
+import java.util.List;
+
+import org.orcid.persistence.jpa.entities.ExternalIdentifierEntity;
+
 public interface ExternalIdentifierManager {
 
+    /**
+     * Get the list of external identifiers associated with an specific account
+     * @param orcid
+     *          The orcid of the owner
+     * @return
+     *          A list that contains all external identifiers for the specific account
+     * */
+    public List<ExternalIdentifierEntity> getExternalIdentifiers(String orcid);
+    
     /**
      * Removes an external identifier from database based on his ID.
      * The ID for external identifiers consists of the "orcid" of the owner and
