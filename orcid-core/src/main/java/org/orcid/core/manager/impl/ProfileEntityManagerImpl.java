@@ -64,5 +64,13 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
     public Long getConfirmedProfileCount() {
         return profileDao.getConfirmedProfileCount();
     }
+    
+    /**
+     * TODO
+     * */    
+    @Override
+    public boolean updateProfile(ProfileEntity profile) {
+        return profileDao.updateProfile(profile);
+    }
 
 }

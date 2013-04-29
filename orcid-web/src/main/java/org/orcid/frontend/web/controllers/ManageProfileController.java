@@ -33,6 +33,10 @@ import org.apache.commons.lang.StringUtils;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.OrcidSearchManager;
+import org.orcid.core.manager.OtherNameManager;
+import org.orcid.core.manager.ProfileEntityManager;
+import org.orcid.core.manager.ProfileKeywordManager;
+import org.orcid.core.manager.ResearcherUrlManager;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.utils.SolrFieldWeight;
 import org.orcid.core.utils.SolrQueryBuilder;
@@ -57,12 +61,15 @@ import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidSearchResults;
 import org.orcid.jaxb.model.message.Preferences;
+import org.orcid.jaxb.model.message.ResearcherUrl;
+import org.orcid.jaxb.model.message.ResearcherUrls;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.message.SecurityDetails;
 import org.orcid.jaxb.model.message.SecurityQuestionId;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
 import org.orcid.password.constants.OrcidPasswordConstants;
+import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.ChangePassword;
 import org.orcid.pojo.Emails;
 import org.orcid.pojo.Errors;
@@ -107,7 +114,19 @@ public class ManageProfileController extends BaseWorkspaceController {
 
     @Resource
     private NotificationManager notificationManager;
+    
+    @Resource
+    private ResearcherUrlManager researcherUrlManager;
 
+    @Resource
+    private ProfileKeywordManager profileKeywordManager;
+    
+    @Resource
+    private OtherNameManager otherNameManager;
+    
+    @Resource
+    private ProfileEntityManager profileEntityManager;
+    
     public EncryptionManager getEncryptionManager() {
         return encryptionManager;
     }
@@ -118,6 +137,18 @@ public class ManageProfileController extends BaseWorkspaceController {
 
     public void setNotificationManager(NotificationManager notificationManager) {
         this.notificationManager = notificationManager;
+    }
+
+    public void setResearcherUrlManager(ResearcherUrlManager researcherUrlManager) {
+        this.researcherUrlManager = researcherUrlManager;
+    }
+
+    public void setProfileKeywordManager(ProfileKeywordManager profileKeywordManager) {
+        this.profileKeywordManager = profileKeywordManager;
+    }
+
+    public void setOtherNameManager(OtherNameManager otherNameManager) {
+        this.otherNameManager = otherNameManager;
     }
 
     @ModelAttribute("visibilities")
@@ -674,7 +705,7 @@ public class ManageProfileController extends BaseWorkspaceController {
     @RequestMapping(value = "/manage-bio-settings", method = RequestMethod.GET)
     public ModelAndView viewEditBio(HttpServletRequest request) {
         ModelAndView manageBioView = new ModelAndView("manage_bio_settings");
-        OrcidProfile profile = orcidProfileManager.retrieveOrcidProfile(getCurrentUserOrcid());
+        ProfileEntity profile = profileEntityManager.findByOrcid(getCurrentUserOrcid());        
         ChangePersonalInfoForm changePersonalInfoForm = new ChangePersonalInfoForm(profile);
         manageBioView.addObject("changePersonalInfoForm", changePersonalInfoForm);
         return manageBioView;
@@ -860,12 +891,28 @@ public class ManageProfileController extends BaseWorkspaceController {
             return erroredView;
         }
 
-        OrcidProfile currentProfile = getCurrentUser().getRealProfile();
-        changePersonalInfoForm.mergeOrcidBioDetails(currentProfile);
-        OrcidProfile updatedProfile = orcidProfileManager.updateOrcidBio(currentProfile);
-        getCurrentUser().setEffectiveProfile(updatedProfile);
-
+        String orcid = getCurrentUserOrcid();
+        ProfileEntity profile = profileEntityManager.findByOrcid(orcid);
+        changePersonalInfoForm.mergePersonalInfo(profile);
+        //Update profile
+        profileEntityManager.updateProfile(profile);
+        
+        //Update other names
+        List<String> otherNameList = changePersonalInfoForm.getOtherNameAsList();
+        otherNameManager.updateOtherNames(orcid, otherNameList);
+        
+        //Update keywords
+        List<String> keywordList = changePersonalInfoForm.getKeywordsAsList();
+        profileKeywordManager.updateProfileKeyword(orcid, keywordList);
+                
+        List<ResearcherUrl> researcherUrlList = new ArrayList<ResearcherUrl>();
+        ResearcherUrls researcherUrls = changePersonalInfoForm.getUpToDateResearcherUrls();
+        if(researcherUrls != null)
+            researcherUrlList = researcherUrls.getResearcherUrl();
+        //Update researcher urls
+        researcherUrlManager.updateResearcherUrls(orcid, researcherUrlList);
+        
         redirectAttributes.addFlashAttribute("changesSaved", true);
         return manageBioView;
-    }
+    }        
 }

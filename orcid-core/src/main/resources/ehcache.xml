@@ -41,4 +41,7 @@
 
 	<cache name="statistics" maxElementsInMemory="100" timeToLiveSeconds="600" overflowToDisk="false" copyOnRead="false"
            copyOnWrite="false" eternal="false"/>
+           
+	<cache name="staticContent" maxElementsInMemory="100" timeToLiveSeconds="900" overflowToDisk="false" copyOnRead="false"
+           copyOnWrite="false" eternal="false"/>
 </ehcache>

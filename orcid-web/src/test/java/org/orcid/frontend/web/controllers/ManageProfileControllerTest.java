@@ -46,6 +46,9 @@ import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.OrcidIndexManager;
 import org.orcid.core.manager.OrcidProfileManager;
+import org.orcid.core.manager.OtherNameManager;
+import org.orcid.core.manager.ProfileKeywordManager;
+import org.orcid.core.manager.ResearcherUrlManager;
 import org.orcid.core.manager.impl.OrcidProfileManagerImpl;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.frontend.web.forms.AddDelegateForm;
@@ -96,7 +99,16 @@ public class ManageProfileControllerTest extends BaseControllerTest {
 
     @Mock
     private NotificationManager mockNotificationManager;
+    
+    @Mock
+    private OtherNameManager otherNameManager;
+    
+    @Mock 
+    private ResearcherUrlManager researcherUrlManager;
 
+    @Mock 
+    private ProfileKeywordManager profileKeywordManager;
+    
     /**
      * The classes loaded from the app context are in fact proxies to the
      * OrcidProfileManagerImpl class, required for transactionality. However we
@@ -149,7 +161,10 @@ public class ManageProfileControllerTest extends BaseControllerTest {
 
         controller.setNotificationManager(mockNotificationManager);
         controller.setOrcidProfileManager(mock(OrcidProfileManager.class));
-
+        controller.setProfileKeywordManager(mock(ProfileKeywordManager.class));
+        controller.setOtherNameManager(mock(OtherNameManager.class));
+        controller.setResearcherUrlManager(mock(ResearcherUrlManager.class));
+        
         BindingResult bindingResult = mock(BindingResult.class);
         HttpServletRequest request = mock(HttpServletRequest.class);
 
