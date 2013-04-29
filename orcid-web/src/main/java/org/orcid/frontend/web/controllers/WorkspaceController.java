@@ -17,7 +17,6 @@
 package org.orcid.frontend.web.controllers;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -28,8 +27,13 @@ import org.orcid.core.manager.ExternalIdentifierManager;
 import org.orcid.core.manager.ThirdPartyImportManager;
 import org.orcid.frontend.web.forms.CurrentWork;
 import org.orcid.jaxb.model.clientgroup.OrcidClient;
-import org.orcid.jaxb.model.message.ExternalIdentifier;
+import org.orcid.jaxb.model.message.ExternalIdCommonName;
+import org.orcid.jaxb.model.message.ExternalIdOrcid;
+import org.orcid.jaxb.model.message.ExternalIdReference;
+import org.orcid.jaxb.model.message.ExternalIdUrl;
+import org.orcid.jaxb.model.message.Orcid;
 import org.orcid.jaxb.model.message.OrcidProfile;
+import org.orcid.persistence.jpa.entities.ExternalIdentifierEntity;
 import org.orcid.pojo.ExternalIdentifiers;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -94,14 +98,31 @@ public class WorkspaceController extends BaseWorkspaceController {
     /**
      * Retrieve all external identifiers as a json string
      * */
-    @SuppressWarnings("unchecked")
     @RequestMapping(value = "/externalIdentifiers.json", method = RequestMethod.GET)
     public @ResponseBody
     org.orcid.pojo.ExternalIdentifiers getExternalIdentifiersJson(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {
-        OrcidProfile currentProfile = getCurrentUser().getEffectiveProfile();
+        String orcid = getCurrentUserOrcid();
+        //Create the external identifiers pojo to return to UI
         ExternalIdentifiers externalIdentifiers = new org.orcid.pojo.ExternalIdentifiers();
-        externalIdentifiers.setExternalIdentifiers((List<org.orcid.pojo.ExternalIdentifier>) (Object) currentProfile.getOrcidBio().getExternalIdentifiers()
-                .getExternalIdentifier());
+        //Create the list of external identifiers to add to the externalIdentifiers pojo
+        List<org.orcid.pojo.ExternalIdentifier> externalIdentifiersList = new ArrayList<org.orcid.pojo.ExternalIdentifier>();
+        externalIdentifiers.setExternalIdentifiers(externalIdentifiersList);
+        
+        //Get the list of external identifiers
+        List<ExternalIdentifierEntity> currentExternalIdentifiers = externalIdentifierManager.getExternalIdentifiers(orcid);
+        
+        //Transform that list into a org.orcid.pojo.ExternalIdentifiers list to return it to the UI
+        for(ExternalIdentifierEntity externalIdentifierEntity : currentExternalIdentifiers){                                    
+            org.orcid.pojo.ExternalIdentifier externalIdentifierPojo = new org.orcid.pojo.ExternalIdentifier();
+            externalIdentifierPojo.setExternalIdCommonName(new ExternalIdCommonName(externalIdentifierEntity.getExternalIdCommonName()));
+            externalIdentifierPojo.setExternalIdOrcid(new ExternalIdOrcid(externalIdentifierEntity.getExternalIdOrcid().getId()));
+            externalIdentifierPojo.setExternalIdReference(new ExternalIdReference(externalIdentifierEntity.getExternalIdReference()));
+            externalIdentifierPojo.setExternalIdUrl(new ExternalIdUrl(externalIdentifierEntity.getExternalIdUrl()));
+            externalIdentifierPojo.setOrcid(new Orcid(externalIdentifierEntity.getOwner().getId()));
+            
+            externalIdentifiersList.add(externalIdentifierPojo);
+        }
+                        
         return externalIdentifiers;
     }
 
@@ -111,8 +132,6 @@ public class WorkspaceController extends BaseWorkspaceController {
     @RequestMapping(value = "/externalIdentifiers.json", method = RequestMethod.DELETE)
     public @ResponseBody
     org.orcid.pojo.ExternalIdentifier removeExternalIdentifierJson(HttpServletRequest request, @RequestBody org.orcid.pojo.ExternalIdentifier externalIdentifier) {
-        OrcidProfile currentProfile = getCurrentUser().getEffectiveProfile();
-        List<ExternalIdentifier> externalIdentifiers = currentProfile.getOrcidBio().getExternalIdentifiers().getExternalIdentifier();        
         List<String> errors = new ArrayList<String>();
 
         // If the orcid is blank, add an error
