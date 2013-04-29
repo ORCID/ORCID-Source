@@ -297,7 +297,8 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
     public OrcidType retrieveOrcidType(String orcid) {
         TypedQuery<OrcidType> query = entityManager.createQuery("select orcidType from ProfileEntity where orcid = :orcid", OrcidType.class);
         query.setParameter("orcid", orcid);
-        return query.getSingleResult();
+        List<OrcidType> results = query.getResultList();
+        return results.isEmpty() ? null : results.get(0);
     }
 
 }
