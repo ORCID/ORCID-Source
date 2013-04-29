@@ -29,8 +29,8 @@ import org.orcid.core.manager.ThirdPartyImportManager;
 import org.orcid.frontend.web.forms.CurrentWork;
 import org.orcid.jaxb.model.clientgroup.OrcidClient;
 import org.orcid.jaxb.model.message.ExternalIdentifier;
+import org.orcid.jaxb.model.message.ExternalIdentifiers;
 import org.orcid.jaxb.model.message.OrcidProfile;
-import org.orcid.pojo.ExternalIdentifiers;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -99,7 +99,7 @@ public class WorkspaceController extends BaseWorkspaceController {
     public @ResponseBody
     org.orcid.pojo.ExternalIdentifiers getExternalIdentifiersJson(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {
         OrcidProfile currentProfile = getCurrentUser().getEffectiveProfile();
-        ExternalIdentifiers externalIdentifiers = new org.orcid.pojo.ExternalIdentifiers();
+        org.orcid.pojo.ExternalIdentifiers externalIdentifiers = new org.orcid.pojo.ExternalIdentifiers();
         externalIdentifiers.setExternalIdentifiers((List<org.orcid.pojo.ExternalIdentifier>) (Object) currentProfile.getOrcidBio().getExternalIdentifiers()
                 .getExternalIdentifier());
         return externalIdentifiers;
@@ -111,8 +111,6 @@ public class WorkspaceController extends BaseWorkspaceController {
     @RequestMapping(value = "/externalIdentifiers.json", method = RequestMethod.DELETE)
     public @ResponseBody
     org.orcid.pojo.ExternalIdentifier removeExternalIdentifierJson(HttpServletRequest request, @RequestBody org.orcid.pojo.ExternalIdentifier externalIdentifier) {
-        OrcidProfile currentProfile = getCurrentUser().getEffectiveProfile();
-        List<ExternalIdentifier> externalIdentifiers = currentProfile.getOrcidBio().getExternalIdentifiers().getExternalIdentifier();        
         List<String> errors = new ArrayList<String>();
 
         // If the orcid is blank, add an error
@@ -127,7 +125,21 @@ public class WorkspaceController extends BaseWorkspaceController {
         // Set errors to the external 
         externalIdentifier.setErrors(errors);
         
-        if (errors.isEmpty()) {            
+        if (errors.isEmpty()) {
+            //Get cached profile
+            OrcidProfile currentProfile = getCurrentUser().getEffectiveProfile();            
+            ExternalIdentifiers externalIdentifiers = currentProfile.getOrcidBio().getExternalIdentifiers();                         
+            List<ExternalIdentifier> externalIdentifiersList = externalIdentifiers.getExternalIdentifier();
+            Iterator<ExternalIdentifier> externalIdentifierIterator = externalIdentifiersList.iterator();
+            //Remove external identifier from the cached profile
+            while(externalIdentifierIterator.hasNext()){
+                ExternalIdentifier existingExternalIdentifier = externalIdentifierIterator.next(); 
+                if(existingExternalIdentifier.equals(externalIdentifier)){
+                    externalIdentifierIterator.remove();
+                }
+            }
+            //Update cached profile
+            currentProfile.getOrcidBio().setExternalIdentifiers(externalIdentifiers);
             externalIdentifierManager.removeExternalIdentifier(externalIdentifier.getOrcid().getValue(), externalIdentifier.getExternalIdReference().getContent());
         }
 
