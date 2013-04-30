@@ -1,5 +1,17 @@
 # Release notes and highlights
 
+## releaes-1.1.18.2 
+(2013-04-30)
+
+* DB optimisations for externtal identifiers
+
+* Ajax registration form - hidden feature /register?ajax
+
+* Store fields in solar
+
+* IE 7 External ID Display Issues
+
+
 ## release-1.1.17.2
 
 * Implement timestamp session caching for Profile
