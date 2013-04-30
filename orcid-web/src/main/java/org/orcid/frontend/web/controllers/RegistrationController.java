@@ -315,7 +315,7 @@ public class RegistrationController extends BaseController {
 
     @RequestMapping(value = "/registerConfirm.json", method = RequestMethod.POST)
     public @ResponseBody
-    Redirect setRegisterConfirm(HttpServletRequest request, @RequestBody Registration reg) {
+    Redirect setRegisterConfirm(HttpServletRequest request, HttpServletResponse response, @RequestBody Registration reg) {
         Redirect r = new Redirect();
 
         // make sure validation still passes
@@ -326,7 +326,10 @@ public class RegistrationController extends BaseController {
         }
 
         createMinimalRegistrationAndLogUserIn(request, toProfile(reg));
-        r.setUrl(getBaseUri() + "/my-orcid");
+        SavedRequest savedRequest = new HttpSessionRequestCache().getRequest(request, response);
+        String redirectUrl = (savedRequest != null ? savedRequest.getRedirectUrl() : null);
+        if (redirectUrl == null) redirectUrl = getBaseUri() + "/my-orcid";
+        r.setUrl(redirectUrl);
         return r;
     }
 
