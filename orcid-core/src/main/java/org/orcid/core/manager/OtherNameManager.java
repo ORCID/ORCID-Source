@@ -18,6 +18,7 @@ package org.orcid.core.manager;
 
 import java.util.List;
 
+import org.orcid.jaxb.model.message.OtherNames;
 import org.orcid.persistence.jpa.entities.OtherNameEntity;
 
 public interface OtherNameManager {
@@ -54,7 +55,7 @@ public interface OtherNameManager {
      * Get a list of other names and decide which other names might be deleted,
      * and which ones should be created
      * @param orcid
-     * @param List<String> otherNames
+     * @param otherNames
      * */
-    public void updateOtherNames(String orcid, List<String> otherName);
+    public void updateOtherNames(String orcid, OtherNames otherNames);
 }

@@ -97,76 +97,6 @@ public class ChangePersonalInfoForm {
         setWebsiteUrlVisibility(orcidProfile.getOrcidBio().getResearcherUrls().getVisibility().value());
     }
     
-    public ChangePersonalInfoForm(ProfileEntity profile){
-        initNullSafeValues(profile);
-        setCreditName(profile.getCreditName());
-        setCreditNameVisibility(profile.getCreditNameVisibility().value());
-        setFirstName(profile.getGivenNames());
-        setLastName(profile.getFamilyName());
-        setOtherNamesDelimited(buildOtherNamesAsDelimitedString(profile.getOtherNames()));
-        setOtherNamesVisibility(profile.getOtherNamesVisibility().value());        
-        setKeywordsDelimited(buildKeywordsAsDelimitedString(profile.getKeywords()));
-        setKeywordsVisibility(profile.getKeywordsVisibility().value());        
-        setBiography(profile.getBiography());
-        setIsoCountryCode(profile.getIso2Country());
-        setIsoCountryVisibility(profile.getProfileAddressVisibility().value());
-        setSavedResearcherUrls(buildResearcherUrls(profile.getResearcherUrls()));
-        setWebsiteUrlVisibility(profile.getResearcherUrlsVisibility().value());
-    }    
-    
-    /**
-     * TODO
-     * */
-    private void initNullSafeValues(ProfileEntity profile){
-        if(profile.getCreditName() == null){
-            profile.setCreditName(new String());
-        }
-        
-        if(profile.getCreditNameVisibility() == null){
-            profile.setCreditNameVisibility(OrcidVisibilityDefaults.CREDIT_NAME_DEFAULT.getVisibility());
-        }
-        
-        if(profile.getGivenNames() == null){
-            profile.setGivenNames(new String());
-        }
-        
-        if(profile.getFamilyName() == null){
-            profile.setFamilyName(new String());
-        }
-        
-        if(profile.getOtherNames() == null){
-            profile.setOtherNames(new TreeSet<OtherNameEntity>());
-        }
-        
-        if(profile.getOtherNamesVisibility() == null){
-            profile.setOtherNamesVisibility(OrcidVisibilityDefaults.OTHER_NAMES_DEFAULT.getVisibility());
-        }
-        
-        if(profile.getKeywords() == null){
-            profile.setKeywords(new TreeSet<ProfileKeywordEntity>());                        
-        }
-        
-        if(profile.getKeywordsVisibility() == null){
-            profile.setKeywordsVisibility(OrcidVisibilityDefaults.KEYWORD_DEFAULT.getVisibility());
-        }
-        
-        if(profile.getBiography() == null){
-            profile.setBiography(new String());
-        }
-        
-        if(profile.getProfileAddressVisibility() == null){
-            profile.setProfileAddressVisibility(OrcidVisibilityDefaults.COUNTRY_DEFAULT.getVisibility());
-        }
-        
-        if(profile.getResearcherUrls() == null){
-            profile.setResearcherUrls(new TreeSet<ResearcherUrlEntity>());
-        }
-        
-        if(profile.getResearcherUrlsVisibility() == null){
-            profile.setResearcherUrlsVisibility(OrcidVisibilityDefaults.RESEARCHER_URLS_DEFAULT.getVisibility());
-        }
-    }
-    
     private void initNullSafeValues(OrcidProfile currentOrcidProfile) {
         if (currentOrcidProfile.getOrcidBio() == null) {
             currentOrcidProfile.setOrcidBio(new OrcidBio());
@@ -409,19 +339,6 @@ public class ChangePersonalInfoForm {
         orcidProfile.getOrcidBio().getResearcherUrls().setVisibility(StringUtils.isBlank(websiteUrlVisibility) ? null : Visibility.fromValue(websiteUrlVisibility));
     }
 
-    public void mergePersonalInfo(ProfileEntity profile) {
-        profile.setBiography(biography);
-        profile.setCreditName(creditName);
-        profile.setCreditNameVisibility(Visibility.fromValue(creditNameVisibility));
-        profile.setFamilyName(lastName);
-        profile.setGivenNames(firstName);
-        profile.setIso2Country(isoCountryCode);
-        profile.setKeywordsVisibility(Visibility.fromValue(keywordsVisibility));
-        profile.setOtherNamesVisibility(Visibility.fromValue(otherNamesVisibility));
-        profile.setProfileAddressVisibility(Visibility.fromValue(isoCountryVisibility));
-        profile.setResearcherUrlsVisibility(Visibility.fromValue(this.websiteUrlVisibility));        
-    }
-    
     private String buildOtherNamesAsDelimitedString(OtherNames otherNames) {
 
         String otherNamesDelimted = null;
@@ -432,15 +349,6 @@ public class ChangePersonalInfoForm {
         return otherNamesDelimted != null ? otherNamesDelimted : "";
     }
     
-    private String buildOtherNamesAsDelimitedString(Set<OtherNameEntity> otherNames){
-        String otherNamesDelimted = null;
-        Set<String> values = new TreeSet<String>();
-        for(OtherNameEntity otherName : otherNames)
-            values.add(otherName.getDisplayName());
-        otherNamesDelimted = StringUtils.join(values, DELIMITER);
-        return otherNamesDelimted != null ? otherNamesDelimted : "";        
-    }
-
     private OtherNames buildOtherNamesFromDelimitedString(String otherNamesDelimted) {
 
         OtherNames otherNames = new OtherNames();
@@ -489,16 +397,6 @@ public class ChangePersonalInfoForm {
         return keywordsDelimited != null ? keywordsDelimited : "";
     }
 
-    
-    private String buildKeywordsAsDelimitedString(Set<ProfileKeywordEntity> keywords){
-        String keywordsDelimted = null;
-        Set<String> values = new TreeSet<String>();
-        for(ProfileKeywordEntity keyword : keywords)
-            values.add(keyword.getKeyword());
-        keywordsDelimted = StringUtils.join(values, DELIMITER);
-        return keywordsDelimted != null ? keywordsDelimted : "";        
-    }
-    
     private Keywords buildKeywordsFromDelimitedString(String otherNamesDelimted) {
 
         Keywords keywords = new Keywords();
@@ -518,19 +416,6 @@ public class ChangePersonalInfoForm {
 
     }
 
-    /**
-     * TODO
-     * */
-    private ResearcherUrls buildResearcherUrls(Set<ResearcherUrlEntity> researcherUrlEntities){
-        ResearcherUrls researcherUrls = new ResearcherUrls();
-        for(ResearcherUrlEntity researcherUrl : researcherUrlEntities){
-            ResearcherUrl newResearcherUrl = new ResearcherUrl(new Url(researcherUrl.getUrl()));
-            newResearcherUrl.setUrlName(new UrlName(researcherUrl.getUrlName()));
-            researcherUrls.getResearcherUrl().add(newResearcherUrl);
-        }        
-        return researcherUrls;        
-    }
-    
     /**
      * TODO
      * */

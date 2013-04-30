@@ -56,10 +56,12 @@ import org.orcid.jaxb.model.message.Email;
 import org.orcid.jaxb.model.message.EncryptedSecurityAnswer;
 import org.orcid.jaxb.model.message.GivenPermissionBy;
 import org.orcid.jaxb.model.message.GivenPermissionTo;
+import org.orcid.jaxb.model.message.Keywords;
 import org.orcid.jaxb.model.message.Orcid;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidSearchResults;
+import org.orcid.jaxb.model.message.OtherNames;
 import org.orcid.jaxb.model.message.Preferences;
 import org.orcid.jaxb.model.message.ResearcherUrl;
 import org.orcid.jaxb.model.message.ResearcherUrls;
@@ -69,7 +71,6 @@ import org.orcid.jaxb.model.message.SecurityQuestionId;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
 import org.orcid.password.constants.OrcidPasswordConstants;
-import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.ChangePassword;
 import org.orcid.pojo.Emails;
 import org.orcid.pojo.Errors;
@@ -705,7 +706,7 @@ public class ManageProfileController extends BaseWorkspaceController {
     @RequestMapping(value = "/manage-bio-settings", method = RequestMethod.GET)
     public ModelAndView viewEditBio(HttpServletRequest request) {
         ModelAndView manageBioView = new ModelAndView("manage_bio_settings");
-        ProfileEntity profile = profileEntityManager.findByOrcid(getCurrentUserOrcid());        
+        OrcidProfile profile = orcidProfileManager.retrieveOrcidProfile(getCurrentUserOrcid());        
         ChangePersonalInfoForm changePersonalInfoForm = new ChangePersonalInfoForm(profile);
         manageBioView.addObject("changePersonalInfoForm", changePersonalInfoForm);
         return manageBioView;
@@ -891,28 +892,41 @@ public class ManageProfileController extends BaseWorkspaceController {
             return erroredView;
         }
 
-        String orcid = getCurrentUserOrcid();
-        ProfileEntity profile = profileEntityManager.findByOrcid(orcid);
-        changePersonalInfoForm.mergePersonalInfo(profile);
-        //Update profile
+        OrcidProfile profile = getCurrentUser().getRealProfile();
+        //Update profile with values that comes from user request
+        changePersonalInfoForm.mergeOrcidBioDetails(profile);
+        
+        //Update profile on database
         profileEntityManager.updateProfile(profile);
         
-        //Update other names
-        List<String> otherNameList = changePersonalInfoForm.getOtherNameAsList();
-        otherNameManager.updateOtherNames(orcid, otherNameList);
+        String orcid = profile.getOrcid().getValue();
         
-        //Update keywords
-        List<String> keywordList = changePersonalInfoForm.getKeywordsAsList();
-        profileKeywordManager.updateProfileKeyword(orcid, keywordList);
-                
-        List<ResearcherUrl> researcherUrlList = new ArrayList<ResearcherUrl>();
-        ResearcherUrls researcherUrls = changePersonalInfoForm.getUpToDateResearcherUrls();
-        if(researcherUrls != null)
-            researcherUrlList = researcherUrls.getResearcherUrl();
-        //Update researcher urls
-        researcherUrlManager.updateResearcherUrls(orcid, researcherUrlList);
+        //Update other names on database
+        OtherNames otherNames = profile.getOrcidBio().getPersonalDetails().getOtherNames();
+        otherNameManager.updateOtherNames(orcid, otherNames);
+        
+        //Update keywords on database
+        Keywords keywords = profile.getOrcidBio().getKeywords();
+        profileKeywordManager.updateProfileKeyword(orcid, keywords);
+        
+        //Update researcher urls on database
+        ResearcherUrls researcherUrls = profile.getOrcidBio().getResearcherUrls();
+        researcherUrlManager.updateResearcherUrls(orcid, researcherUrls);
+        
+        //Update cached profile
+        getCurrentUser().setEffectiveProfile(profile); 
         
         redirectAttributes.addFlashAttribute("changesSaved", true);
         return manageBioView;
     }        
 }
+
+
+
+
+
+
+
+
+
+

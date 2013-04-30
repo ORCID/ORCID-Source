@@ -21,16 +21,23 @@ import java.util.Iterator;
 import java.util.List;
 
 import javax.annotation.Resource;
+import javax.persistence.PersistenceException;
 
+import org.hibernate.exception.ConstraintViolationException;
 import org.orcid.core.manager.ResearcherUrlManager;
 import org.orcid.jaxb.model.message.ResearcherUrl;
+import org.orcid.jaxb.model.message.ResearcherUrls;
 import org.orcid.jaxb.model.message.Url;
 import org.orcid.jaxb.model.message.UrlName;
 import org.orcid.persistence.dao.ResearcherUrlDao;
 import org.orcid.persistence.jpa.entities.ResearcherUrlEntity;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ResearcherUrlManagerImpl implements ResearcherUrlManager {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(ResearcherUrlManagerImpl.class);
+    
     @Resource
     private ResearcherUrlDao researcherUrlDao;
     
@@ -55,16 +62,16 @@ public class ResearcherUrlManagerImpl implements ResearcherUrlManager {
     }
 
     @Override
-    public void updateResearcherUrls(String orcid, List<ResearcherUrl> researcherUrls){
+    public void updateResearcherUrls(String orcid, ResearcherUrls researcherUrls){
         List<ResearcherUrlEntity> currentResearcherUrls = this.getResearcherUrls(orcid);
         Iterator<ResearcherUrlEntity> currentIterator = currentResearcherUrls.iterator();
-        ArrayList<ResearcherUrl> newResearcherUrls = new ArrayList<ResearcherUrl>(researcherUrls);
+        ArrayList<ResearcherUrl> newResearcherUrls = new ArrayList<ResearcherUrl>(researcherUrls.getResearcherUrl());
         
         while(currentIterator.hasNext()){
             ResearcherUrlEntity existingResearcherUrl = currentIterator.next();
             ResearcherUrl researcherUrl = new ResearcherUrl(new Url(existingResearcherUrl.getUrl()), new UrlName(existingResearcherUrl.getUrlName()));
             //Delete non modified researcher urls from the parameter list
-            if(researcherUrls.contains(researcherUrl)) {
+            if(newResearcherUrls.contains(researcherUrl)) {
                 newResearcherUrls.remove(researcherUrl);
             } else {
                 //Delete researcher urls deleted by user
@@ -72,10 +79,36 @@ public class ResearcherUrlManagerImpl implements ResearcherUrlManager {
             }
         }
         
+        //Init null fields
+        initNullSafeValues(newResearcherUrls);
         //At this point, only new researcher urls are in the list newResearcherUrls
         //Insert all these researcher urls on database
         for(ResearcherUrl newResearcherUrl : newResearcherUrls){
-            researcherUrlDao.addResearcherUrls(orcid, newResearcherUrl.getUrl().getValue(), newResearcherUrl.getUrlName().getContent());            
+            try {
+                researcherUrlDao.addResearcherUrls(orcid, newResearcherUrl.getUrl().getValue(), newResearcherUrl.getUrlName().getContent());
+            } catch(PersistenceException e){
+                //If the researcher url was duplicated, log the error
+                if(e.getCause()  != null && e.getCause().getClass().isAssignableFrom(ConstraintViolationException.class))
+                    LOGGER.warn("Duplicated researcher url was found, the url {} already exists for {}", newResearcherUrl.getUrl().getValue(), orcid);
+                else {
+                    //If the error is not a duplicated error, something else happened, so, log the error and throw an exception
+                    LOGGER.warn("Error inserting new researcher url {} for {}", newResearcherUrl.getUrl().getValue(), orcid);
+                    throw new IllegalArgumentException("Unable to create Researcher Url", e);
+                }
+            }
+        }
+    }
+    
+    /**
+     * Init null safe values for researcher urls
+     * @param researcherUrls
+     * */
+    private void initNullSafeValues(ArrayList<ResearcherUrl> newResearcherUrls){
+        for(ResearcherUrl researcherUrl : newResearcherUrls){
+            if(researcherUrl.getUrl() == null)
+                researcherUrl.setUrl(new Url(new String()));
+            if(researcherUrl.getUrlName() == null)
+                researcherUrl.setUrlName(new UrlName(new String()));
         }
     }
 }

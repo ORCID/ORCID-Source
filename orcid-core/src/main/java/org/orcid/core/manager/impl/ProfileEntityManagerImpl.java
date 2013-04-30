@@ -16,12 +16,14 @@
  */
 package org.orcid.core.manager.impl;
 
+import javax.annotation.Resource;
+
 import org.orcid.core.manager.ProfileEntityManager;
+import org.orcid.jaxb.model.message.OrcidProfile;
+import org.orcid.persistence.adapter.JpaJaxbEntityAdapter;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.springframework.stereotype.Service;
-
-import javax.annotation.Resource;
 
 /**
  * 2011-2012 ORCID
@@ -35,12 +37,14 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
 
     @Resource
     private ProfileDao profileDao;
+    @Resource
+    private JpaJaxbEntityAdapter adapter;
 
     @Override
     public ProfileEntity findByOrcid(String orcid) {
         return profileDao.find(orcid);
     }
-
+ 
     @Override
     public ProfileEntity findByEmail(String email) {
         return profileDao.findByEmail(email);
@@ -69,8 +73,33 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
      * TODO
      * */    
     @Override
-    public boolean updateProfile(ProfileEntity profile) {
+    public boolean updateProfile(OrcidProfile orcidProfile) {
+        ProfileEntity profile = generateProfileEntityWithBio(orcidProfile);
         return profileDao.updateProfile(profile);
+    }
+    
+    /**
+     * Generate a ProfileEntity object with the bio information populated from the info that comes from the
+     * OrcidProfile parameter
+     * @param orcidProfile
+     * @return 
+     *          A Profile Entity containing the bio information that comes in the OrcidProfile parameter
+     * */
+    private ProfileEntity generateProfileEntityWithBio(OrcidProfile orcidProfile){
+        ProfileEntity profile = new ProfileEntity();
+        profile.setCreditName(orcidProfile.getOrcidBio().getPersonalDetails().getCreditName().getContent());
+        profile.setFamilyName(orcidProfile.getOrcidBio().getPersonalDetails().getFamilyName().getContent());
+        profile.setGivenNames(orcidProfile.getOrcidBio().getPersonalDetails().getGivenNames().getContent());
+        profile.setBiography(orcidProfile.getOrcidBio().getBiography().getContent());
+        profile.setIso2Country(orcidProfile.getOrcidBio().getContactDetails().getAddress().getCountry().getContent());
+        profile.setBiographyVisibility(orcidProfile.getOrcidBio().getBiography().getVisibility());
+        profile.setKeywordsVisibility(orcidProfile.getOrcidBio().getKeywords().getVisibility());
+        profile.setResearcherUrlsVisibility(orcidProfile.getOrcidBio().getResearcherUrls().getVisibility());
+        profile.setOtherNamesVisibility(orcidProfile.getOrcidBio().getPersonalDetails().getOtherNames().getVisibility());
+        profile.setCreditNameVisibility(orcidProfile.getOrcidBio().getPersonalDetails().getCreditName().getVisibility());
+        profile.setProfileAddressVisibility(orcidProfile.getOrcidBio().getContactDetails().getAddress().getCountry().getVisibility());
+        profile.setId(orcidProfile.getOrcid().getValue());
+        return profile;
     }
 
 }

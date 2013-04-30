@@ -18,7 +18,7 @@ package org.orcid.core.manager;
 
 import java.util.List;
 
-import org.orcid.jaxb.model.message.ResearcherUrl;
+import org.orcid.jaxb.model.message.ResearcherUrls;
 import org.orcid.persistence.jpa.entities.ResearcherUrlEntity;
 
 public interface ResearcherUrlManager {
@@ -26,5 +26,5 @@ public interface ResearcherUrlManager {
     public boolean deleteResearcherUrl(long id);
     public ResearcherUrlEntity getResearcherUrl(long id);
     public void addResearcherUrls(String orcid, String url, String urlName);
-    public void updateResearcherUrls(String orcid, List<ResearcherUrl> researcherUrls);
+    public void updateResearcherUrls(String orcid, ResearcherUrls researcherUrls);
 }

@@ -16,6 +16,7 @@
  */
 package org.orcid.core.manager;
 
+import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 
 /**
@@ -41,5 +42,5 @@ public interface ProfileEntityManager {
 
     Long getConfirmedProfileCount();
     
-    public boolean updateProfile(ProfileEntity profile); 
+    public boolean updateProfile(OrcidProfile profile); 
 }

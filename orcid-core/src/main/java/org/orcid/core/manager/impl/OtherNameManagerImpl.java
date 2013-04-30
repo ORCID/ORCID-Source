@@ -23,6 +23,7 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import org.orcid.core.manager.OtherNameManager;
+import org.orcid.jaxb.model.message.OtherNames;
 import org.orcid.persistence.dao.OtherNameDao;
 import org.orcid.persistence.jpa.entities.OtherNameEntity;
 
@@ -83,15 +84,15 @@ public class OtherNameManagerImpl implements OtherNameManager {
      * @param List<String> otherNames
      * */
     @Override
-    public void updateOtherNames(String orcid, List<String> otherNames){
+    public void updateOtherNames(String orcid, OtherNames otherNames){
         List<OtherNameEntity> currentOtherNames = this.getOtherName(orcid);        
         Iterator<OtherNameEntity> currentIt = currentOtherNames.iterator();
-        ArrayList<String> newOtherNames = new ArrayList<String>(otherNames);
+        ArrayList<String> newOtherNames = new ArrayList<String>(otherNames.getOtherNamesAsStrings());
         
         while(currentIt.hasNext()){            
             OtherNameEntity existingOtherName = currentIt.next(); 
             //Delete non modified other names from the parameter list
-            if(otherNames.contains(existingOtherName.getDisplayName())) {
+            if(newOtherNames.contains(existingOtherName.getDisplayName())) {
                 newOtherNames.remove(existingOtherName.getDisplayName());
             } else {
                 //Delete other names deleted by user

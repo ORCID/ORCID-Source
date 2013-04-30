@@ -18,11 +18,12 @@ package org.orcid.core.manager;
 
 import java.util.List;
 
+import org.orcid.jaxb.model.message.Keywords;
 import org.orcid.persistence.jpa.entities.ProfileKeywordEntity;
 
 public interface ProfileKeywordManager {
     public List<ProfileKeywordEntity> getProfileKeywors(String orcid);
     public boolean deleteProfileKeyword(String orcid, String keyword);
     public void addProfileKeyword(String orcid, String keyword);
-    public void updateProfileKeyword(String orcid, List<String> keywords);
+    public void updateProfileKeyword(String orcid, Keywords keywords);
 }

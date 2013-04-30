@@ -23,8 +23,8 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import org.orcid.core.manager.ProfileKeywordManager;
+import org.orcid.jaxb.model.message.Keywords;
 import org.orcid.persistence.dao.ProfileKeywordDao;
-import org.orcid.persistence.jpa.entities.OtherNameEntity;
 import org.orcid.persistence.jpa.entities.ProfileKeywordEntity;
 
 public class ProfileKeywordManagerImpl implements ProfileKeywordManager {
@@ -60,15 +60,15 @@ public class ProfileKeywordManagerImpl implements ProfileKeywordManager {
      * TODO
      * */
     @Override
-    public void updateProfileKeyword(String orcid, List<String> keywords){
+    public void updateProfileKeyword(String orcid, Keywords keywords){
         List<ProfileKeywordEntity> currentKeywords = this.getProfileKeywors(orcid);
         Iterator<ProfileKeywordEntity> currentIt = currentKeywords.iterator();
-        ArrayList<String> newKeywords = new ArrayList<String>(keywords);
+        ArrayList<String> newKeywords = new ArrayList<String>(keywords.getKeywordsAsStrings());
         
         while(currentIt.hasNext()){            
             ProfileKeywordEntity existingKeyword = currentIt.next(); 
             //Delete non modified other names from the parameter list
-            if(keywords.contains(existingKeyword.getKeyword())) {
+            if(newKeywords.contains(existingKeyword.getKeyword())) {
                 newKeywords.remove(existingKeyword.getKeyword());
             } else {
                 //Delete other names deleted by user
