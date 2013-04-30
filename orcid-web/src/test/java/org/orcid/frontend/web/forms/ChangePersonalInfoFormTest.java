@@ -46,5 +46,51 @@ public class ChangePersonalInfoFormTest {
         String actual = profile.toString();
         assertEquals(expected, actual);
     }
+    
+    @Test
+    public void testRemoveDuplicatedOtherNames() throws Exception {
+        OrcidProfile profile = new OrcidProfile();
+        profile.setOrcid("4444-4444-4444-4446");
+        ChangePersonalInfoForm changePersonalInfoForm = new ChangePersonalInfoForm(profile);
+        changePersonalInfoForm.setFirstName("Johnny");
+        changePersonalInfoForm.setLastName("Simpson");
+        changePersonalInfoForm.setCreditName("Homer Thompson");
+        changePersonalInfoForm.setCreditNameVisibility("private");
+        changePersonalInfoForm.setOtherNames("Gal;Dove;Gal;Dove");
+        changePersonalInfoForm.setOtherNamesVisibility("limited");
+        changePersonalInfoForm.setBiography("my biography");
+        changePersonalInfoForm.setKeywordsDelimited("The;Wicker;Fudd");
+        changePersonalInfoForm.setIsoCountryCode("UK");
+        changePersonalInfoForm.setWebsiteUrl("www.bbc.co.uk");
+        changePersonalInfoForm.setWebsiteUrlText("Ok this might not be my site");
+        changePersonalInfoForm.mergeOrcidBioDetails(profile);
+
+        String expected = IOUtils.toString(getClass().getResourceAsStream("change_personal_info_orcid_profile.xml"));
+        String actual = profile.toString();
+        assertEquals(expected, actual);
+    }
+    
+    @Test
+    public void testRemoveDuplicatedKeywords() throws Exception {
+        OrcidProfile profile = new OrcidProfile();
+        profile.setOrcid("4444-4444-4444-4446");
+        ChangePersonalInfoForm changePersonalInfoForm = new ChangePersonalInfoForm(profile);
+        changePersonalInfoForm.setFirstName("Johnny");
+        changePersonalInfoForm.setLastName("Simpson");
+        changePersonalInfoForm.setCreditName("Homer Thompson");
+        changePersonalInfoForm.setCreditNameVisibility("private");
+        changePersonalInfoForm.setOtherNames("Gal;Dove;Gal;Dove");
+        changePersonalInfoForm.setOtherNamesVisibility("limited");
+        changePersonalInfoForm.setBiography("my biography");
+        changePersonalInfoForm.setKeywordsDelimited("The;Wicker;Fudd;Fudd;Wicker;The");
+        changePersonalInfoForm.setIsoCountryCode("UK");
+        changePersonalInfoForm.setWebsiteUrl("www.bbc.co.uk");
+        changePersonalInfoForm.setWebsiteUrlText("Ok this might not be my site");
+        changePersonalInfoForm.mergeOrcidBioDetails(profile);
+
+        String expected = IOUtils.toString(getClass().getResourceAsStream("change_personal_info_orcid_profile.xml"));
+        String actual = profile.toString();
+        assertEquals(expected, actual);
+    }
 
 }

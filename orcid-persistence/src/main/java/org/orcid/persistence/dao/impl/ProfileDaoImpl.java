@@ -18,6 +18,7 @@ package org.orcid.persistence.dao.impl;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -29,6 +30,7 @@ import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
 import org.apache.commons.lang.StringUtils;
+import org.orcid.jaxb.model.message.OrcidType;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.BaseEntity;
 import org.orcid.persistence.jpa.entities.GivenPermissionToEntity;
@@ -301,5 +303,19 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
         query.setParameter("profile_address_visibility", StringUtils.upperCase(profile.getProfileAddressVisibility().value()));
         query.setParameter("orcid", profile.getId());
         return query.executeUpdate() > 0 ? true : false;
+    }
+
+    public Date retrieveLastModifiedDate(String orcid) {
+        TypedQuery<Date> query = entityManager.createQuery("select lastModified from ProfileEntity where orcid = :orcid", Date.class);
+        query.setParameter("orcid", orcid);
+        return query.getSingleResult();
+    }
+
+    @Override
+    public OrcidType retrieveOrcidType(String orcid) {
+        TypedQuery<OrcidType> query = entityManager.createQuery("select orcidType from ProfileEntity where orcid = :orcid", OrcidType.class);
+        query.setParameter("orcid", orcid);
+        List<OrcidType> results = query.getResultList();
+        return results.isEmpty() ? null : results.get(0);
     }
 }

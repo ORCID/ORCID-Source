@@ -47,7 +47,6 @@ import org.orcid.frontend.web.forms.ChangeSecurityQuestionForm;
 import org.orcid.frontend.web.forms.CurrentAffiliationsForm;
 import org.orcid.frontend.web.forms.ManagePasswordOptionsForm;
 import org.orcid.frontend.web.forms.PastInstitutionsForm;
-import org.orcid.frontend.web.forms.PersonalInfoForm;
 import org.orcid.frontend.web.forms.PreferencesForm;
 import org.orcid.frontend.web.forms.SearchForDelegatesForm;
 import org.orcid.jaxb.model.message.Delegation;
@@ -61,6 +60,7 @@ import org.orcid.jaxb.model.message.Orcid;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidSearchResults;
+import org.orcid.jaxb.model.message.OrcidType;
 import org.orcid.jaxb.model.message.OtherNames;
 import org.orcid.jaxb.model.message.Preferences;
 import org.orcid.jaxb.model.message.ResearcherUrl;
@@ -68,9 +68,12 @@ import org.orcid.jaxb.model.message.ResearcherUrls;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.message.SecurityDetails;
 import org.orcid.jaxb.model.message.SecurityQuestionId;
+import org.orcid.jaxb.model.message.Url;
+import org.orcid.jaxb.model.message.UrlName;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
 import org.orcid.password.constants.OrcidPasswordConstants;
+import org.orcid.persistence.jpa.entities.ResearcherUrlEntity;
 import org.orcid.pojo.ChangePassword;
 import org.orcid.pojo.Emails;
 import org.orcid.pojo.Errors;
@@ -410,6 +413,20 @@ public class ManageProfileController extends BaseWorkspaceController {
         return mav;
     }
 
+    @RequestMapping(value = "/admin-switch-user", method = RequestMethod.GET)
+    public ModelAndView adminSwitchUser(HttpServletRequest request, @RequestParam("orcid") String targetOrcid) {
+        refreshCurrentUserProfile();
+        OrcidProfileUserDetails userDetails = getCurrentUser();
+        // Check permissions!
+        if (!OrcidType.ADMIN.equals(userDetails.getRealProfile().getType())) {
+            throw new AccessDeniedException("You are not allowed to switch to that user");
+        }
+        getCurrentUser().switchDelegationMode(orcidProfileManager.retrieveOrcidProfile(targetOrcid));
+        request.getSession().removeAttribute(WORKS_RESULTS_ATTRIBUTE);
+        ModelAndView mav = new ModelAndView("redirect:/my-orcid");
+        return mav;
+    }
+
     private boolean hasDelegatePermission(OrcidProfileUserDetails userDetails, String giverOrcid) {
         Delegation delegation = userDetails.getRealProfile().getOrcidBio().getDelegation();
         if (delegation != null) {
@@ -428,12 +445,10 @@ public class ManageProfileController extends BaseWorkspaceController {
     protected ModelAndView rebuildManageView(String activeTab) {
         ModelAndView mav = new ModelAndView("manage");
         mav.addObject("showPrivacy", true);
-        OrcidProfile profile = orcidProfileManager.retrieveOrcidProfile(getCurrentUserOrcid());
-        mav.addObject("personalInfoForm", new PersonalInfoForm(profile, retrieveSubjectsAsMap()));
+        OrcidProfile profile = getCurrentUserAndRefreshIfNecessary().getEffectiveProfile();
         mav.addObject("managePasswordOptionsForm", populateManagePasswordFormFromUserInfo());
         mav.addObject("preferencesForm", new PreferencesForm(profile));
         mav.addObject("profile", profile);
-        mav.addObject("sponsors", retrieveSelectableSponsorsAsMap());
         mav.addObject("activeTab", activeTab);
         mav.addObject("securityQuestions", securityQuestionManager.retrieveSecurityQuestionsAsMap());
         CurrentAffiliationsForm currentAffiliationsForm = new CurrentAffiliationsForm(profile);
@@ -596,7 +611,7 @@ public class ManageProfileController extends BaseWorkspaceController {
     @RequestMapping(value = "/default-privacy-preferences.json", method = RequestMethod.GET)
     public @ResponseBody
     Preferences getDefaultPreference(HttpServletRequest request) {
-        OrcidProfile profile = orcidProfileManager.retrieveOrcidProfile(getCurrentUserOrcid());
+        OrcidProfile profile = getCurrentUserAndRefreshIfNecessary().getEffectiveProfile();
         profile.getOrcidInternal().getPreferences();
         return profile.getOrcidInternal().getPreferences() != null ? profile.getOrcidInternal().getPreferences() : new Preferences();
     }
@@ -706,7 +721,7 @@ public class ManageProfileController extends BaseWorkspaceController {
     @RequestMapping(value = "/manage-bio-settings", method = RequestMethod.GET)
     public ModelAndView viewEditBio(HttpServletRequest request) {
         ModelAndView manageBioView = new ModelAndView("manage_bio_settings");
-        OrcidProfile profile = orcidProfileManager.retrieveOrcidProfile(getCurrentUserOrcid());        
+        OrcidProfile profile = getCurrentUserAndRefreshIfNecessary().getEffectiveProfile();
         ChangePersonalInfoForm changePersonalInfoForm = new ChangePersonalInfoForm(profile);
         manageBioView.addObject("changePersonalInfoForm", changePersonalInfoForm);
         return manageBioView;
@@ -911,14 +926,42 @@ public class ManageProfileController extends BaseWorkspaceController {
         
         //Update researcher urls on database
         ResearcherUrls researcherUrls = profile.getOrcidBio().getResearcherUrls();
-        researcherUrlManager.updateResearcherUrls(orcid, researcherUrls);
+        boolean hasErrors = researcherUrlManager.updateResearcherUrls(orcid, researcherUrls);
+        //TODO: The researcherUrlManager will not store any duplicated researcher url on database, 
+        //however there is no way to tell the controller that some of the researcher urls were not 
+        //saved, so, if an error occurs, we need to reload researcher ids from database and update
+        //cached profile. A more efficient way to fix this might be used. 
+        if(hasErrors){            
+            ResearcherUrls upToDateResearcherUrls = getUpToDateResearcherUrls(orcid, researcherUrls.getVisibility());
+            profile.getOrcidBio().setResearcherUrls(upToDateResearcherUrls);
+        }
         
         //Update cached profile
         getCurrentUser().setEffectiveProfile(profile); 
         
         redirectAttributes.addFlashAttribute("changesSaved", true);
         return manageBioView;
-    }        
+    }  
+    
+    /**
+     * Generate an up to date ResearcherUrls object.
+     * @param orcid
+     * @param visibility
+     * */
+    private ResearcherUrls getUpToDateResearcherUrls(String orcid, Visibility visibility){
+        ResearcherUrls upTodateResearcherUrls = new ResearcherUrls();
+        upTodateResearcherUrls.setVisibility(visibility);
+        List<ResearcherUrlEntity> upToDateResearcherUrls = researcherUrlManager.getResearcherUrls(orcid);
+        
+        for(ResearcherUrlEntity researcherUrlEntity : upToDateResearcherUrls){
+            ResearcherUrl newResearcherUrl = new ResearcherUrl();
+            newResearcherUrl.setUrl(new Url(researcherUrlEntity.getUrl()));
+            newResearcherUrl.setUrlName(new UrlName(researcherUrlEntity.getUrlName()));
+            upTodateResearcherUrls.getResearcherUrl().add(newResearcherUrl);
+        }
+        
+        return upTodateResearcherUrls;
+    }
 }
 
 

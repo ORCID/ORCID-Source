@@ -215,6 +215,19 @@ public class BaseController {
         return startupDate;
     }
 
+    protected OrcidProfileUserDetails getCurrentUserAndRefreshIfNecessary() {
+        OrcidProfileUserDetails currentUser = getCurrentUser();
+        OrcidProfile effectiveProfile = currentUser.getEffectiveProfile();
+        String effectiveOrcid = effectiveProfile.getOrcid().getValue();
+        Date actualLastModified = orcidProfileManager.retrieveLastModifiedDate(effectiveOrcid);
+        Date cachedEffectiveProfileLastModified = currentUser.getEffectiveProfileLastModified();
+        if (cachedEffectiveProfileLastModified == null || actualLastModified.after(cachedEffectiveProfileLastModified)) {
+            currentUser.setEffectiveProfile(orcidProfileManager.retrieveOrcidProfile(effectiveOrcid));
+            currentUser.setEffectiveProfileLastModified(actualLastModified);
+        }
+        return currentUser;
+    }
+
     protected OrcidProfileUserDetails getCurrentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication instanceof UsernamePasswordAuthenticationToken && authentication.getPrincipal() instanceof OrcidProfileUserDetails) {

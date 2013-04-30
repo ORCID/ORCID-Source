@@ -1,8 +1,8 @@
 # ORCID XSD Information
 
-The current version of the ORCID XSD is [Version 1.0.12](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/orcid-message-1.0.12.xsd).
+The current version of the ORCID XSD is [Version 1.0.13](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/orcid-message-1.0.13.xsd).
 
-Read the [changelog from the previous version](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/orcid-message-1.0.12.md).
+Read the [changelog from the previous version](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/orcid-message-1.0.13.md).
 
 ## Key Notices
 

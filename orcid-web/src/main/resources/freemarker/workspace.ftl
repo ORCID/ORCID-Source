@@ -65,17 +65,14 @@
 		       		   <a href="<@orcid.absUrl url.url/>"><#if (url.urlName.content)! != "">${url.urlName.content}<#else>${url.url.value}</#if></a><#if url_has_next><br/></#if>
 		       		</#list></p>
 	       	</#if>
-       		<div ng-app="orcidApp" ng-controller="ExternalIdentifierCtrl" ng-hide="!externalIdentifiersPojo.externalIdentifiers.length">	       			
-       			<p><strong>${springMacroRequestContext.getMessage("public_profile.labelOtherIDs")}</strong> <br />
+       		<div id="ng-app" ng-app="orcidApp" ng-controller="ExternalIdentifierCtrl" ng-hide="!externalIdentifiersPojo.externalIdentifiers.length" ng-cloak>	       			
+       			<p><strong>${springMacroRequestContext.getMessage("public_profile.labelOtherIDs")}</strong> </p>
 		        <table id="externalIdentifierTable">
 		        	<tr style="vertical-align:bottom;" ng-repeat='externalIdentifier in externalIdentifiersPojo.externalIdentifiers'>
 		        		<td class="padRgt">
 		        			<p ng-hide="externalIdentifier.externalIdUrl">{{externalIdentifier.externalIdCommonName.content}} {{externalIdentifier.externalIdReference.content}}</p>
 		        			<p ng-show="externalIdentifier.externalIdUrl"><a ng-href="{{externalIdentifier.externalIdUrl.value}}">{{externalIdentifier.externalIdCommonName.content}} {{externalIdentifier.externalIdReference.content}}</a></p>
-		        			<input type="hidden" value="{{externalIdentifier.orcid.value}}" />
-		        			<input type="hidden" value="{{externalIdentifier.externalIdOrcid.value}}" />
-		        			<input type="hidden" value="{{externalIdentifier.externalIdCommonName.content}}" />
-			   			</td>
+		     			</td>
 			   			<td class="padRgt">
 			   				<a href ng-click="deleteExternalIdentifier($index)" class="icon-trash grey"></a>
 			   			</td>		        		

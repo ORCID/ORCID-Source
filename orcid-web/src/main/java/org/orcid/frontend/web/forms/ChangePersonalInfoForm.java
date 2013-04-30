@@ -17,6 +17,8 @@
 package org.orcid.frontend.web.forms;
 
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -353,10 +355,12 @@ public class ChangePersonalInfoForm {
 
         OtherNames otherNames = new OtherNames();
         String[] otherNamesSplit = StringUtils.split(otherNamesDelimted, DELIMITER);
+        Set<String> dedupOtherNames = new TreeSet<>();
+        Collections.addAll(dedupOtherNames, otherNamesSplit);
         if (otherNamesSplit != null) {
 
-            for (int i = 0; i < otherNamesSplit.length; i++) {
-                OtherName otherName = new OtherName(otherNamesSplit[i]);
+            for (String otherNameString : dedupOtherNames) {
+                OtherName otherName = new OtherName(otherNameString);
                 otherNames.getOtherName().add(otherName);
             }
         }
@@ -392,6 +396,7 @@ public class ChangePersonalInfoForm {
         String keywordsDelimited = null;
         if (keywords != null) {
             List<String> allOtherNames = keywords.getKeywordsAsStrings();
+            Collections.sort(allOtherNames);
             keywordsDelimited = StringUtils.join(allOtherNames, DELIMITER);
         }
         return keywordsDelimited != null ? keywordsDelimited : "";
@@ -400,7 +405,7 @@ public class ChangePersonalInfoForm {
     private Keywords buildKeywordsFromDelimitedString(String otherNamesDelimted) {
 
         Keywords keywords = new Keywords();
-        String[] keywordsSplit = StringUtils.split(otherNamesDelimted, DELIMITER);
+        String[] keywordsSplit = StringUtils.split(otherNamesDelimted, DELIMITER);        
         Set<Keyword> allKeywords = new java.util.HashSet<Keyword>();
         if (keywordsSplit != null) {
 

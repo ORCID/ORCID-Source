@@ -146,6 +146,8 @@
 	<bean id="otherNameManager" class="org.orcid.core.manager.impl.OtherNameManagerImpl" />
 	<bean id="profileEntityManager" class="org.orcid.core.manager.impl.ProfileEntityManagerImpl" />
 
+	<bean id="externalIdentifierManager" class="org.orcid.core.manager.impl.ExternalIdentifierManagerImpl" />
+
 	<bean id="messageSource"
 		class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
 		<property name="basename" value="classpath:i18n/messages" />

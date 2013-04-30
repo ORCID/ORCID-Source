@@ -62,7 +62,8 @@ public class ResearcherUrlManagerImpl implements ResearcherUrlManager {
     }
 
     @Override
-    public void updateResearcherUrls(String orcid, ResearcherUrls researcherUrls){
+    public boolean updateResearcherUrls(String orcid, ResearcherUrls researcherUrls){
+        boolean hasErrors = false;
         List<ResearcherUrlEntity> currentResearcherUrls = this.getResearcherUrls(orcid);
         Iterator<ResearcherUrlEntity> currentIterator = currentResearcherUrls.iterator();
         ArrayList<ResearcherUrl> newResearcherUrls = new ArrayList<ResearcherUrl>(researcherUrls.getResearcherUrl());
@@ -88,15 +89,17 @@ public class ResearcherUrlManagerImpl implements ResearcherUrlManager {
                 researcherUrlDao.addResearcherUrls(orcid, newResearcherUrl.getUrl().getValue(), newResearcherUrl.getUrlName().getContent());
             } catch(PersistenceException e){
                 //If the researcher url was duplicated, log the error
-                if(e.getCause()  != null && e.getCause().getClass().isAssignableFrom(ConstraintViolationException.class))
+                if(e.getCause()  != null && e.getCause().getClass().isAssignableFrom(ConstraintViolationException.class)) {
                     LOGGER.warn("Duplicated researcher url was found, the url {} already exists for {}", newResearcherUrl.getUrl().getValue(), orcid);
-                else {
+                    hasErrors = true;                    
+                } else {
                     //If the error is not a duplicated error, something else happened, so, log the error and throw an exception
                     LOGGER.warn("Error inserting new researcher url {} for {}", newResearcherUrl.getUrl().getValue(), orcid);
                     throw new IllegalArgumentException("Unable to create Researcher Url", e);
                 }
             }
         }
+        return hasErrors;
     }
     
     /**

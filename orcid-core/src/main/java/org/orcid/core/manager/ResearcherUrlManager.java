@@ -26,5 +26,5 @@ public interface ResearcherUrlManager {
     public boolean deleteResearcherUrl(long id);
     public ResearcherUrlEntity getResearcherUrl(long id);
     public void addResearcherUrls(String orcid, String url, String urlName);
-    public void updateResearcherUrls(String orcid, ResearcherUrls researcherUrls);
+    public boolean updateResearcherUrls(String orcid, ResearcherUrls researcherUrls);
 }
