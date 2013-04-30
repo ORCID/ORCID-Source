@@ -560,6 +560,10 @@ function RegistrationCtrl($scope, $compile) {
 	};
 	
 	$scope.postRegister = function () {
+		if (basePath.startsWith(baseUrl + 'oauth')) 
+		    orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'New-Registration-Submit', 'OAuth']);
+	    else
+	    	orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'New-Registration-Submit', 'Website']);	
 		$.ajax({
 	        url: $('body').data('baseurl') + 'register.json',
 	        type: 'POST',
@@ -589,7 +593,11 @@ function RegistrationCtrl($scope, $compile) {
 	        contentType: 'application/json;charset=UTF-8',
 	        dataType: 'json',
 	        success: function(data) {
-	        	window.location.href = data.url;
+	    		if (basePath.startsWith(baseUrl + 'oauth')) 
+	    		    orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'New-Registration', 'OAuth']);
+	    	    else
+	    	    	orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'New-Registration', 'Website']);
+	    		orcidGA.windowLocationHrefDelay(window.location.href = data.url);
 	        }
 	    }).fail(function() { 
 	    	// something bad is happening!
