@@ -19,6 +19,7 @@ package org.orcid.persistence.dao.impl;
 import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -88,6 +89,7 @@ public class SolrDaoImpl implements SolrDao {
         return orcidSolrResult;
     }
 
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     @Override
     public List<OrcidSolrResult> findByDocumentCriteria(String queryString, Integer start, Integer rows) {
         List<OrcidSolrResult> orcidSolrResults = new ArrayList<OrcidSolrResult>();
@@ -100,8 +102,16 @@ public class SolrDaoImpl implements SolrDao {
             QueryResponse queryResponse = solrServer.query(query);
             for (SolrDocument solrDocument : queryResponse.getResults()) {
                 OrcidSolrResult orcidSolrResult = new OrcidSolrResult();
-                orcidSolrResult.setRelevancyScore((Float) solrDocument.get("score"));
-                orcidSolrResult.setOrcid((String) solrDocument.get("orcid"));
+                orcidSolrResult.setRelevancyScore((Float) solrDocument.getFieldValue("score"));
+                orcidSolrResult.setOrcid((String) solrDocument.getFieldValue("orcid"));
+                orcidSolrResult.setEmail((String) solrDocument.getFieldValue("email"));
+                orcidSolrResult.setGivenNames((String) solrDocument.getFieldValue("given-names"));
+                orcidSolrResult.setFamilyName((String) solrDocument.getFieldValue("family-name"));
+                orcidSolrResult.setCurrentPrimaryInstitutionAffiliationNames((Collection) solrDocument.getFieldValues("current-primary-institution-affiliation-name"));
+                orcidSolrResult.setCurrentInstitutionAffiliationNames((Collection) solrDocument.getFieldValues("current-institution-affiliation-name"));
+                orcidSolrResult.setPastInstitutionAffiliationNames((Collection) solrDocument.getFieldValues("past-institution-affiliation-name"));
+                orcidSolrResult.setCreditName((String) solrDocument.getFieldValue("credit-name"));
+                orcidSolrResult.setOtherNames((Collection) solrDocument.getFieldValues("other-names"));
                 orcidSolrResults.add(orcidSolrResult);
             }
 

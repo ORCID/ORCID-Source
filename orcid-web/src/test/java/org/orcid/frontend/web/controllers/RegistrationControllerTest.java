@@ -44,14 +44,14 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.OrcidProfileManager;
+import org.orcid.core.manager.OrcidSearchManager;
 import org.orcid.core.manager.RegistrationManager;
-import org.orcid.core.manager.SolrAndDBSearchManager;
 import org.orcid.frontend.web.forms.ChangeSecurityQuestionForm;
+import org.orcid.frontend.web.forms.EmailAddressForm;
 import org.orcid.frontend.web.forms.LoginForm;
 import org.orcid.frontend.web.forms.OneTimeResetPasswordForm;
 import org.orcid.frontend.web.forms.PasswordTypeAndConfirmForm;
 import org.orcid.frontend.web.forms.RegistrationForm;
-import org.orcid.frontend.web.forms.EmailAddressForm;
 import org.orcid.jaxb.model.message.OrcidInternal;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidProfile;
@@ -77,7 +77,7 @@ public class RegistrationControllerTest {
     RegistrationManager registrationManager;
 
     @Mock
-    SolrAndDBSearchManager searchManager;
+    OrcidSearchManager orcidSearchManager;
 
     @Mock
     OrcidProfileManager orcidProfileManager;
@@ -89,7 +89,7 @@ public class RegistrationControllerTest {
     public void before() {
         MockitoAnnotations.initMocks(this);
         registrationController.setRegistrationManager(registrationManager);
-        registrationController.setSearchManager(searchManager);
+        registrationController.setOrcidSearchManager(orcidSearchManager);
         registrationController.setOrcidProfileManager(orcidProfileManager);
         registrationController.setEncryptionManager(encryptionManager);
     }
@@ -109,8 +109,8 @@ public class RegistrationControllerTest {
         when(servletRequest.getSession()).thenReturn(session);
         // don't forget query builder converts name criteria to lower-case
         when(
-                searchManager.findFilteredOrcidsBasedOnQuery("given-names:teddy* AND family-name:bass*", RegistrationController.DUP_SEARCH_START,
-                        RegistrationController.DUP_SEARCH_ROWS)).thenReturn(orcidMessageDetailingRecordsFoundForTeddyBass());
+                orcidSearchManager.findOrcidsByQuery("given-names:teddy* AND family-name:bass*", RegistrationController.DUP_SEARCH_START,
+                        RegistrationController.DUP_SEARCH_ROWS, false)).thenReturn(orcidMessageDetailingRecordsFoundForTeddyBass());
 
         ModelAndView modelAndView = registrationController.submitRegistration(servletRequest, registrationForm, bindingResult);
         assertEquals("duplicate_researcher", modelAndView.getViewName());
@@ -140,8 +140,8 @@ public class RegistrationControllerTest {
         when(servletRequest.getSession()).thenReturn(session);
         // don't forget query builder converts name criteria to lower-case
         when(
-                searchManager.findFilteredOrcidsBasedOnQuery("given-names:teddy* AND family-name:bass*", RegistrationController.DUP_SEARCH_START,
-                        RegistrationController.DUP_SEARCH_ROWS)).thenReturn(orcidMessageDetailingRecordsFoundForTeddyBass());
+                orcidSearchManager.findOrcidsByQuery("given-names:teddy* AND family-name:bass*", RegistrationController.DUP_SEARCH_START,
+                        RegistrationController.DUP_SEARCH_ROWS, false)).thenReturn(orcidMessageDetailingRecordsFoundForTeddyBass());
 
         LoginForm nullLoginForm = null;
         ModelAndView modelAndView = registrationController.sendOAuthRegistration(servletRequest, servletResponse, nullLoginForm, registrationForm, bindingResult);

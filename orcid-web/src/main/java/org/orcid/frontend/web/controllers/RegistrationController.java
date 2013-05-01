@@ -37,20 +37,20 @@ import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.HearAboutManager;
 import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.OrcidProfileManager;
+import org.orcid.core.manager.OrcidSearchManager;
 import org.orcid.core.manager.RegistrationManager;
 import org.orcid.core.manager.RegistrationRoleManager;
 import org.orcid.core.manager.SecurityQuestionManager;
-import org.orcid.core.manager.SolrAndDBSearchManager;
 import org.orcid.core.manager.SponsorManager;
 import org.orcid.core.utils.PasswordResetToken;
 import org.orcid.frontend.web.controllers.helper.SearchOrcidSolrCriteria;
 import org.orcid.frontend.web.forms.ChangeSecurityQuestionForm;
 import org.orcid.frontend.web.forms.ClaimForm;
+import org.orcid.frontend.web.forms.EmailAddressForm;
 import org.orcid.frontend.web.forms.LoginForm;
 import org.orcid.frontend.web.forms.OneTimeResetPasswordForm;
 import org.orcid.frontend.web.forms.PasswordTypeAndConfirmForm;
 import org.orcid.frontend.web.forms.RegistrationForm;
-import org.orcid.frontend.web.forms.EmailAddressForm;
 import org.orcid.jaxb.model.message.Claimed;
 import org.orcid.jaxb.model.message.CompletionDate;
 import org.orcid.jaxb.model.message.ContactDetails;
@@ -142,7 +142,7 @@ public class RegistrationController extends BaseController {
     private OrcidProfileManager orcidProfileManager;
 
     @Resource
-    private SolrAndDBSearchManager searchManager;
+    private OrcidSearchManager orcidSearchManager;
 
     @Resource
     private EncryptionManager encryptionManager;
@@ -158,12 +158,12 @@ public class RegistrationController extends BaseController {
         this.registrationManager = registrationManager;
     }
 
-    public void setSearchManager(SolrAndDBSearchManager searchManager) {
-        this.searchManager = searchManager;
+    public void setOrcidSearchManager(OrcidSearchManager orcidSearchManager) {
+        this.orcidSearchManager = orcidSearchManager;
     }
 
-    public SolrAndDBSearchManager getSearchManager() {
-        return searchManager;
+    public OrcidSearchManager getOrcidSearchManager() {
+        return orcidSearchManager;
     }
 
     public void setOrcidProfileManager(OrcidProfileManager orcidProfileManager) {
@@ -383,7 +383,7 @@ public class RegistrationController extends BaseController {
             reg.getEmail().getErrors().add(getMessage(oe.getCode(), reg.getEmail().getValue()));
         }
 
-        //validate confirm if already field out
+        // validate confirm if already field out
         if (reg.getEmailConfirm().getValue() != null) {
             regEmailConfirmValidate(reg);
         }
@@ -455,8 +455,8 @@ public class RegistrationController extends BaseController {
         LOGGER.info("User with email={}, sessionid={} has asked to register", email, sessionId);
         validateEmailAddress(email, false, request, bindingResult);
         if (bindingResult.hasErrors()) {
-            LOGGER.info("Failed validation on registration page for email={}, sessionid={}, with errors={}", new Object[] { email, sessionId,
-                    bindingResult.getAllErrors() });
+            LOGGER.info("Failed validation on registration page for email={}, sessionid={}, with errors={}",
+                    new Object[] { email, sessionId, bindingResult.getAllErrors() });
             ModelAndView erroredView = new ModelAndView("register");
             erroredView.addAllObjects(bindingResult.getModel());
             return erroredView;
@@ -854,7 +854,7 @@ public class RegistrationController extends BaseController {
         queryForm.setFamilyName(lastName);
 
         String query = queryForm.deriveQueryString();
-        OrcidMessage visibleProfiles = searchManager.findFilteredOrcidsBasedOnQuery(query, DUP_SEARCH_START, DUP_SEARCH_ROWS);
+        OrcidMessage visibleProfiles = orcidSearchManager.findOrcidsByQuery(query, DUP_SEARCH_START, DUP_SEARCH_ROWS, false);
         if (visibleProfiles.getOrcidSearchResults() != null) {
             for (OrcidSearchResult searchResult : visibleProfiles.getOrcidSearchResults().getOrcidSearchResult()) {
                 orcidProfiles.add(searchResult.getOrcidProfile());
@@ -873,8 +873,8 @@ public class RegistrationController extends BaseController {
         LOGGER.info("User with email={}, sessionid={} has asked to register during oauth", email, sessionId);
         validateEmailAddress(email, request, bindingResult);
         if (bindingResult.hasErrors()) {
-            LOGGER.info("Failed validation on registration page during oauth for email={}, sessionid={}, with errors={}", new Object[] { email, sessionId,
-                    bindingResult.getAllErrors() });
+            LOGGER.info("Failed validation on registration page during oauth for email={}, sessionid={}, with errors={}",
+                    new Object[] { email, sessionId, bindingResult.getAllErrors() });
             ModelAndView erroredView = new ModelAndView("oauth_login");
             erroredView.addObject("loginForm", loginForm);
             erroredView.addAllObjects(bindingResult.getModel());

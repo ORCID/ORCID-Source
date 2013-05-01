@@ -36,10 +36,16 @@ public interface OrcidSearchManager {
 
     OrcidMessage findOrcidSearchResultsById(String orcid);
 
+    OrcidMessage findOrcidSearchResultsById(String orcid, boolean useDb);
+
     OrcidMessage findOrcidsByQuery(String query);
+
+    OrcidMessage findOrcidsByQuery(String query, boolean useDb);
 
     OrcidMessage findOrcidsByQuery(String query, Integer start, Integer rows);
 
     OrcidMessage findOrcidsByQuery(Map<String, List<String>> query);
+
+    OrcidMessage findOrcidsByQuery(String query, Integer start, Integer rows, boolean useDb);
 
 }
