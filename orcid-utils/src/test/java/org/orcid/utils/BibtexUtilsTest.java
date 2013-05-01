@@ -55,9 +55,9 @@ public class BibtexUtilsTest {
 
     @Test
     public void testValidityOfBadBibtex() {
-        // Real bad BibTeX taken from the wild.
+        // Extra { after @article
         assertFalse(BibtexUtils
-                .isValid("@article{10.1371/journal.pgen.1002992,\n"
+                .isValid("@article{{10.1371/journal.pgen.1002992,\n"
                         + "\n"
                         + "author = {Amambua-Ngwa, , Alfred AND Tetteh, , Kevin K. A. AND Manske, , Magnus AND Gomez-Escobar, , Natalia AND Stewart, , Lindsay B. AND Deerhake, , M. Elizabeth AND Cheeseman, , Ian H. AND Newbold, , Christopher I. AND Holder, , Anthony A. AND Knuepfer, , Ellen AND Janha, , Omar AND Jallow, , Muminatou AND Campino, , Susana AND MacInnis, , Bronwyn AND Kwiatkowski, , Dominic P. AND Conway, , David J.},\n"
                         + "\n"
