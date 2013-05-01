@@ -607,7 +607,7 @@ function RegistrationCtrl($scope, $compile) {
 
 	
 
-	$scope.postRegisterValidate = function (field) {
+	$scope.serverValidate = function (field) {
 		if (field === undefined) field = '';
 		$.ajax({
 	        url: $('body').data('baseurl') + 'register' + field + 'Validate.json',
@@ -621,7 +621,7 @@ function RegistrationCtrl($scope, $compile) {
 	        }
 	    }).fail(function() { 
 	    	// something bad is happening!
-	    	console.log("RegistrationCtrl.postRegisterValidate() error");
+	    	console.log("RegistrationCtrl.serverValidate() error");
 	    });
 	};
 
