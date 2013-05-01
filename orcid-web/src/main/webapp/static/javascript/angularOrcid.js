@@ -700,7 +700,7 @@ function ClaimCtrl($scope, $compile) {
 		
 	$scope.postClaim = function () {
 		$.ajax({
-	        url: $('body').data('baseurl') + 'register.json',
+	        url: window.location + '.json',
 	        type: 'POST',
 	        data:  angular.toJson($scope.register),
 	        contentType: 'application/json;charset=UTF-8',
@@ -709,8 +709,9 @@ function ClaimCtrl($scope, $compile) {
 	        	$scope.register = data;
 	        	$scope.$apply();
 	        	if ($scope.register.errors.length == 0) {
-	        		$scope.showProcessingColorBox();
-	        		$scope.getDuplicates();
+	        		if ($scope.register.url != null) {
+	        			window.location.href = $scope.register.url;
+	        		}
 	        	}
 	        }
 	    }).fail(function() { 
@@ -724,15 +725,16 @@ function ClaimCtrl($scope, $compile) {
 		$scope.register.workVisibilityDefault.visibility = priv;
 	};
 
-	$scope.fieldValidate = function (field) {
+	$scope.serverValidate = function (field) {
 		if (field === undefined) field = '';
 		$.ajax({
-	        url: $('body').data('baseurl') + 'register' + field + 'Validate.json',
+	        url: $('body').data('baseurl') + 'claim' + field + 'Validate.json',
 	        type: 'POST',
 	        data:  angular.toJson($scope.register),
 	        contentType: 'application/json;charset=UTF-8',
 	        dataType: 'json',
 	        success: function(data) {
+	        	//alert(angular.toJson(data));
 	        	$scope.copyErrorsLeft($scope.register, data);
 	        	$scope.$apply();
 	        }
@@ -750,7 +752,7 @@ function ClaimCtrl($scope, $compile) {
 			if (key == 'errors') {
 				data1.errors = data2.errors;
 			} else {
-				if (data1[key].errors !== undefined)
+				if (data1[key] != null && data1[key].errors !== undefined)
 				data1[key].errors = data2[key].errors;
 			};
 		};
