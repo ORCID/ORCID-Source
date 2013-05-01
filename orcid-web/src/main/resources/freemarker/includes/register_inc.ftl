@@ -17,7 +17,7 @@
 
 -->
 <#include "/common/browser-checks.ftl" />
-				<div ng-app="orcidApp" ng-controller="RegistrationCtrl">
+				<div id="ng-app" ng-app="orcidApp" ng-controller="RegistrationCtrl">
 					<div>
 						<!-- span class="orcid-error" ng-show="register.errors.length > 0">
 							<div ng-repeat='error in register.errors' ng-bind-html-unsafe="error"></div>
