@@ -188,6 +188,9 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
             history.setDeactivationDate(new DeactivationDate(toXMLGregorianCalendar(profileEntity.getDeactivationDate())));
         }
 
+        if (profileEntity.getLastModified() != null) {
+            history.setLastModifiedDate(new LastModifiedDate(toXMLGregorianCalendar(profileEntity.getLastModified())));
+        }
         return history;
     }
 
