@@ -272,15 +272,15 @@ $(function () {
 		$(this).toggleClass('open');
 	});
 
-	$('#self-reg-form').submit(function() {
-		if (basePath.startsWith(baseUrl + 'oauth')) 
-		    orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'New-Registration-Submit', 'OAuth']);
-	    else if (basePath.startsWith(baseUrl + 'claim/'))
-	    	orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'New-Registration-Submit', 'Claim']);
-	    else
-	    	orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'New-Registration-Submit', 'Website']);	
-		return true;
-	});
+//	$('#self-reg-form').submit(function() {
+//		if (basePath.startsWith(baseUrl + 'oauth')) 
+//		    orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'New-Registration-Submit', 'OAuth']);
+//	    else if (basePath.startsWith(baseUrl + 'claim/'))
+//	    	orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'New-Registration-Submit', 'Claim']);
+//	    else
+//	    	orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'New-Registration-Submit', 'Website']);	
+//		return true;
+//	});
 	
 	$('form#loginForm').submit(function() {
 		if($('form#loginForm').attr('disabled')){
