@@ -791,18 +791,24 @@ public class RegistrationController extends BaseController {
         return new Claim();
     }
 
-//    @RequestMapping(value = "/claim/{encryptedEmail}", method = RequestMethod.POST)
-//    public @ResponseBody Claim submitClaimJson(HttpServletRequest request, @PathVariable("encryptedEmail") String encryptedEmail, @RequestBody Claim claim) throws NoSuchRequestHandlingMethodException, UnsupportedEncodingException {
-//        String decryptedEmail = encryptionManager.decryptForExternalUse(new String(Base64.decodeBase64(encryptedEmail), "UTF-8"));
-//        if (!isEmailOkForCurrentUser(decryptedEmail)) {
-//            return new ModelAndView("wrong_user");
-//        }
-//        OrcidProfile profileToClaim = orcidProfileManager.retrieveOrcidProfileByEmail(decryptedEmail);
-//        if (profileToClaim.getOrcidHistory().isClaimed()) {
-//            // Already claimed so send to sign in page
-//            redirectAttributes.addFlashAttribute("alreadyClaimed", true);
-//            return new ModelAndView("redirect:/signin");
-//        }
+    @RequestMapping(value = "/claim/{encryptedEmail}", method = RequestMethod.POST)
+    public @ResponseBody Claim submitClaimJson(HttpServletRequest request, @PathVariable("encryptedEmail") String encryptedEmail, @RequestBody Claim claim) throws NoSuchRequestHandlingMethodException, UnsupportedEncodingException {
+        String decryptedEmail = encryptionManager.decryptForExternalUse(new String(Base64.decodeBase64(encryptedEmail), "UTF-8"));
+        if (!isEmailOkForCurrentUser(decryptedEmail)) {
+            claim.setUrl(getBaseUri() + "/claim/wrong_user");
+            return claim;
+        }
+        OrcidProfile profileToClaim = orcidProfileManager.retrieveOrcidProfileByEmail(decryptedEmail);
+        if (profileToClaim.getOrcidHistory().isClaimed()) {
+            // Already claimed so send to sign in page
+            claim.setUrl(getBaseUri() + "/signin?alreadyClaimed");
+            return claim;
+        }
+        
+        
+        
+//        
+//        
 //        if (bindingResult.hasErrors()) {
 //            ModelAndView mav = new ModelAndView("claim");
 //            mav.addAllObjects(bindingResult.getModel());
@@ -815,7 +821,8 @@ public class RegistrationController extends BaseController {
 //        automaticallyLogin(request, claimForm.getPassword(), orcidProfile);
 //        redirectAttributes.addFlashAttribute("recordClaimed", true);
 //        return new ModelAndView("redirect:/my-orcid");
-//    }
+        return claim;
+    }
 
     @RequestMapping(value = "/claim/wrong_user", method = RequestMethod.GET)
     public ModelAndView claimWrongUser(HttpServletRequest request) {

@@ -25,7 +25,7 @@
             <@spring.bind "loginForm" />
             <@spring.showErrors "<br/>" "error" />
             <#include "/common/browser-checks.ftl" />
-            <#if alreadyClaimed!false>
+            <#if (RequestParameters['alreadyClaimed'])??>
                 <div class="alert"><@spring.message "orcid.frontend.security.already_claimed"/></div>
             </#if>
             <div class="control-group">

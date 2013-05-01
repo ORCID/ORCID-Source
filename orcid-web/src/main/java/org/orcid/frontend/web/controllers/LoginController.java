@@ -23,7 +23,6 @@ import org.orcid.frontend.web.forms.LoginForm;
 import org.orcid.frontend.web.forms.RegistrationForm;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
@@ -40,11 +39,10 @@ public class LoginController extends BaseController {
     }
 
     @RequestMapping(value = { "/signin", "/login" }, method = RequestMethod.GET)
-    public ModelAndView loginGetHandler(ModelAndView mav, @PathVariable(value="alreadyClaimed") String alreadyClaimed) {
-        // in case have come via a link that requires them to be signed out       
+    public ModelAndView loginGetHandler(ModelAndView mav) {
+        // in case have come via a link that requires them to be signed out
         logoutCurrentUser();
         mav.setViewName("login");
-        if (alreadyClaimed!= null) mav.addObject("alreadyClaimed", true);
         return mav;
     }
 
