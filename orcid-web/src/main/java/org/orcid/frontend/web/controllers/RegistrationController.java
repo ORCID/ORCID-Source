@@ -75,6 +75,7 @@ import org.orcid.jaxb.model.message.WorkVisibilityDefault;
 import org.orcid.password.constants.OrcidPasswordConstants;
 import org.orcid.pojo.DupicateResearcher;
 import org.orcid.pojo.Redirect;
+import org.orcid.pojo.ajaxForm.Claim;
 import org.orcid.pojo.ajaxForm.ErrorsInterface;
 import org.orcid.pojo.ajaxForm.Registration;
 import org.orcid.utils.DateUtils;
@@ -783,6 +784,46 @@ public class RegistrationController extends BaseController {
         return mav;
     }
 
+    @RequestMapping(value = "/claim/{encryptedEmail}.json", method = RequestMethod.GET)
+    public @ResponseBody Claim
+     verifyClaimJson(HttpServletRequest request, @PathVariable("encryptedEmail") String encryptedEmail, RedirectAttributes redirectAttributes)
+            throws NoSuchRequestHandlingMethodException, UnsupportedEncodingException {
+        return new Claim();
+    }
+
+//    @RequestMapping(value = "/claim/{encryptedEmail}", method = RequestMethod.POST)
+//    public @ResponseBody Claim submitClaimJson(HttpServletRequest request, @PathVariable("encryptedEmail") String encryptedEmail, @RequestBody Claim claim) throws NoSuchRequestHandlingMethodException, UnsupportedEncodingException {
+//        String decryptedEmail = encryptionManager.decryptForExternalUse(new String(Base64.decodeBase64(encryptedEmail), "UTF-8"));
+//        if (!isEmailOkForCurrentUser(decryptedEmail)) {
+//            return new ModelAndView("wrong_user");
+//        }
+//        OrcidProfile profileToClaim = orcidProfileManager.retrieveOrcidProfileByEmail(decryptedEmail);
+//        if (profileToClaim.getOrcidHistory().isClaimed()) {
+//            // Already claimed so send to sign in page
+//            redirectAttributes.addFlashAttribute("alreadyClaimed", true);
+//            return new ModelAndView("redirect:/signin");
+//        }
+//        if (bindingResult.hasErrors()) {
+//            ModelAndView mav = new ModelAndView("claim");
+//            mav.addAllObjects(bindingResult.getModel());
+//            mav.addObject("profile", profileToClaim);
+//            return mav;
+//        }
+//        OrcidProfile orcidProfile = confirmEmailAndClaim(decryptedEmail, profileToClaim, claimForm, request);
+//        orcidProfile.setPassword(claimForm.getPassword());
+//        orcidProfileManager.updatePasswordInformation(orcidProfile);
+//        automaticallyLogin(request, claimForm.getPassword(), orcidProfile);
+//        redirectAttributes.addFlashAttribute("recordClaimed", true);
+//        return new ModelAndView("redirect:/my-orcid");
+//    }
+
+    @RequestMapping(value = "/claim/wrong_user", method = RequestMethod.GET)
+    public ModelAndView claimWrongUser(HttpServletRequest request) {
+       return new ModelAndView("wrong_user");
+    }
+
+    
+    
     @RequestMapping(value = "/claim/{encryptedEmail}", method = RequestMethod.POST)
     public ModelAndView submitClaim(HttpServletRequest request, @PathVariable("encryptedEmail") String encryptedEmail, @ModelAttribute @Valid ClaimForm claimForm,
             BindingResult bindingResult, RedirectAttributes redirectAttributes) throws NoSuchRequestHandlingMethodException, UnsupportedEncodingException {
