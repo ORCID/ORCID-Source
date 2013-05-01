@@ -248,7 +248,8 @@ public class RegistrationController extends BaseController {
 
         reg.getSendChangeNotifications().setValue(true);
         reg.getSendOrcidNews().setValue(true);
-        reg.getTermsOfUse().setValue(true);
+        reg.getTermsOfUse().setValue(false);
+        setError(reg.getTermsOfUse(), "AssertTrue.registrationForm.acceptTermsAndConditions");
         return reg;
     }
 
@@ -296,14 +297,8 @@ public class RegistrationController extends BaseController {
         registerPasswordValidate(reg);
         registerPasswordConfirmValidate(reg);
         regEmailValidate(request, reg);
-
-        // validate terms accepted
-        reg.getTermsOfUse().setErrors(new ArrayList<String>());
-
-        if (reg.getTermsOfUse().getValue() != true) {
-            setError(reg.getTermsOfUse(), "AssertTrue.registrationForm.acceptTermsAndConditions");
-        }
-
+        registerTermsOfUseValidate(reg);
+      
         copyErrors(reg.getEmailConfirm(), reg);
         copyErrors(reg.getEmail(), reg);
         copyErrors(reg.getGivenNames(), reg);
@@ -360,6 +355,17 @@ public class RegistrationController extends BaseController {
         return reg;
     }
 
+    @RequestMapping(value = "/registerTermsOfUseValidate.json", method = RequestMethod.POST)
+    public @ResponseBody
+    Registration registerTermsOfUseValidate(@RequestBody Registration reg) {
+        reg.getTermsOfUse().setErrors(new ArrayList<String>());
+        if (reg.getTermsOfUse().getValue() != true) {
+            setError(reg.getTermsOfUse(), "AssertTrue.registrationForm.acceptTermsAndConditions");
+        }
+        return reg;
+    }
+
+    
     @RequestMapping(value = "/registerGivenNamesValidate.json", method = RequestMethod.POST)
     public @ResponseBody
     Registration registerGivenNameValidate(@RequestBody Registration reg) {
