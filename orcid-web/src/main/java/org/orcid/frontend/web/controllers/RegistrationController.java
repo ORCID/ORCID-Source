@@ -45,7 +45,6 @@ import org.orcid.core.manager.SponsorManager;
 import org.orcid.core.utils.PasswordResetToken;
 import org.orcid.frontend.web.controllers.helper.SearchOrcidSolrCriteria;
 import org.orcid.frontend.web.forms.ChangeSecurityQuestionForm;
-import org.orcid.frontend.web.forms.ClaimForm;
 import org.orcid.frontend.web.forms.EmailAddressForm;
 import org.orcid.frontend.web.forms.LoginForm;
 import org.orcid.frontend.web.forms.OneTimeResetPasswordForm;
