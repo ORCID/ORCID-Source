@@ -18,6 +18,7 @@ package org.orcid.core.manager.impl;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -25,6 +26,14 @@ import javax.annotation.Resource;
 
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.manager.OrcidSearchManager;
+import org.orcid.jaxb.model.message.Affiliation;
+import org.orcid.jaxb.model.message.AffiliationType;
+import org.orcid.jaxb.model.message.ContactDetails;
+import org.orcid.jaxb.model.message.CreditName;
+import org.orcid.jaxb.model.message.Email;
+import org.orcid.jaxb.model.message.FamilyName;
+import org.orcid.jaxb.model.message.GivenNames;
+import org.orcid.jaxb.model.message.OrcidBio;
 import org.orcid.jaxb.model.message.OrcidGrant;
 import org.orcid.jaxb.model.message.OrcidGrants;
 import org.orcid.jaxb.model.message.OrcidMessage;
@@ -35,6 +44,8 @@ import org.orcid.jaxb.model.message.OrcidSearchResult;
 import org.orcid.jaxb.model.message.OrcidSearchResults;
 import org.orcid.jaxb.model.message.OrcidWork;
 import org.orcid.jaxb.model.message.OrcidWorks;
+import org.orcid.jaxb.model.message.OtherNames;
+import org.orcid.jaxb.model.message.PersonalDetails;
 import org.orcid.jaxb.model.message.RelevancyScore;
 import org.orcid.persistence.dao.SolrDao;
 import org.orcid.persistence.solr.entities.OrcidSolrResult;
@@ -65,6 +76,11 @@ public class OrcidSearchManagerImpl implements OrcidSearchManager {
 
     @Override
     public OrcidMessage findOrcidSearchResultsById(String orcid) {
+        return findOrcidSearchResultsById(orcid, true);
+    }
+
+    @Override
+    public OrcidMessage findOrcidSearchResultsById(String orcid, boolean useDb) {
 
         OrcidMessage orcidMessage = new OrcidMessage();
         OrcidSearchResults searchResults = new OrcidSearchResults();
@@ -142,19 +158,95 @@ public class OrcidSearchManagerImpl implements OrcidSearchManager {
         return orcidSearchResults;
     }
 
+    private List<OrcidSearchResult> buildSearchResultsFromSolr(List<OrcidSolrResult> solrResults) {
+        List<OrcidSearchResult> orcidSearchResults = new ArrayList<OrcidSearchResult>();
+        for (OrcidSolrResult solrResult : solrResults) {
+            OrcidSearchResult orcidSearchResult = new OrcidSearchResult();
+            RelevancyScore relevancyScore = new RelevancyScore();
+            relevancyScore.setValue(solrResult.getRelevancyScore());
+            orcidSearchResult.setRelevancyScore(relevancyScore);
+
+            OrcidProfile orcidProfile = new OrcidProfile();
+            orcidProfile.setOrcid(solrResult.getOrcid());
+            OrcidBio orcidBio = new OrcidBio();
+            orcidProfile.setOrcidBio(orcidBio);
+            String email = solrResult.getEmail();
+            if (email != null) {
+                ContactDetails contactDetails = new ContactDetails();
+                orcidBio.setContactDetails(contactDetails);
+                contactDetails.addOrReplacePrimaryEmail(new Email(email));
+            }
+            PersonalDetails personalDetails = new PersonalDetails();
+            orcidBio.setPersonalDetails(personalDetails);
+            personalDetails.setGivenNames(new GivenNames(solrResult.getGivenNames()));
+            personalDetails.setFamilyName(new FamilyName(solrResult.getFamilyName()));
+            personalDetails.setCreditName(new CreditName(solrResult.getCreditName()));
+            OtherNames otherNames = new OtherNames();
+            personalDetails.setOtherNames(otherNames);
+            Collection<String> otherNameStrings = solrResult.getOtherNames();
+            if (otherNameStrings != null) {
+                for (String otherNameString : otherNameStrings) {
+                    otherNames.addOtherName(otherNameString);
+                }
+            }
+            List<Affiliation> affiliations = orcidBio.getAffiliations();
+            Collection<String> currentPrimaryInstitutionAffiliationNames = solrResult.getCurrentPrimaryInstitutionAffiliationNames();
+            if (currentPrimaryInstitutionAffiliationNames != null) {
+                for (String currentPrimaryInstitutionsAffiliationName : currentPrimaryInstitutionAffiliationNames) {
+                    Affiliation affiliation = new Affiliation();
+                    affiliation.setAffiliationName(currentPrimaryInstitutionsAffiliationName);
+                    affiliation.setAffiliationType(AffiliationType.CURRENT_PRIMARY_INSTITUTION);
+                    affiliations.add(affiliation);
+                }
+            }
+            Collection<String> currentInstitutionAffiliationNames = solrResult.getCurrentInstitutionAffiliationNames();
+            if (currentInstitutionAffiliationNames != null) {
+                for (String currentInstitutionsAffiliationName : currentInstitutionAffiliationNames) {
+                    Affiliation affiliation = new Affiliation();
+                    affiliation.setAffiliationName(currentInstitutionsAffiliationName);
+                    affiliation.setAffiliationType(AffiliationType.CURRENT_INSTITUTION);
+                    affiliations.add(affiliation);
+                }
+            }
+            Collection<String> pastInstitutionAffiliationNames = solrResult.getPastInstitutionAffiliationNames();
+            if (pastInstitutionAffiliationNames != null) {
+                for (String pastInstitutionsAffiliationName : pastInstitutionAffiliationNames) {
+                    Affiliation affiliation = new Affiliation();
+                    affiliation.setAffiliationName(pastInstitutionsAffiliationName);
+                    affiliation.setAffiliationType(AffiliationType.PAST_INSTITUTION);
+                    affiliations.add(affiliation);
+                }
+            }
+
+            orcidSearchResult.setOrcidProfile(orcidProfile);
+            orcidSearchResults.add(orcidSearchResult);
+        }
+        return orcidSearchResults;
+    }
+
     @Override
     public OrcidMessage findOrcidsByQuery(String query) {
         return findOrcidsByQuery(query, null, null);
     }
 
     @Override
+    public OrcidMessage findOrcidsByQuery(String query, boolean useDb) {
+        return findOrcidsByQuery(query, null, null, useDb);
+    }
+
+    @Override
     public OrcidMessage findOrcidsByQuery(String query, Integer start, Integer rows) {
+        return findOrcidsByQuery(query, start, rows, true);
+    }
+
+    @Override
+    public OrcidMessage findOrcidsByQuery(String query, Integer start, Integer rows, boolean useDb) {
         OrcidMessage orcidMessage = new OrcidMessage();
         OrcidSearchResults searchResults = new OrcidSearchResults();
         List<OrcidSolrResult> indexedOrcids = solrDao.findByDocumentCriteria(query, start, rows);
         if (indexedOrcids != null && !indexedOrcids.isEmpty()) {
 
-            List<OrcidSearchResult> orcidSearchResults = buildSearchResultsFromDb(indexedOrcids);
+            List<OrcidSearchResult> orcidSearchResults = useDb ? buildSearchResultsFromDb(indexedOrcids) : buildSearchResultsFromSolr(indexedOrcids);
             searchResults.getOrcidSearchResult().addAll(orcidSearchResults);
 
         }
