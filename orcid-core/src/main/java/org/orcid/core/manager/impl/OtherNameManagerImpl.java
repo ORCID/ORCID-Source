@@ -39,7 +39,7 @@ public class OtherNameManagerImpl implements OtherNameManager {
      *           The list of other names related with the specified orcid profile
      * */
     @Override
-    public List<OtherNameEntity> getOtherName(String orcid) {        
+    public List<OtherNameEntity> getOtherName(String orcid) {
         return otherNameDao.getOtherName(orcid);
     }
 
@@ -50,7 +50,7 @@ public class OtherNameManagerImpl implements OtherNameManager {
      *          true if the other name was sucessfully updated, false otherwise
      * */
     @Override
-    public boolean updateOtherName(OtherNameEntity otherName) {        
+    public boolean updateOtherName(OtherNameEntity otherName) {
         return otherNameDao.updateOtherName(otherName);
     }
 
@@ -62,7 +62,7 @@ public class OtherNameManagerImpl implements OtherNameManager {
      *          true if the other name was successfully created, false otherwise 
      * */
     @Override
-    public boolean addOtherName(String orcid, String displayName) {        
+    public boolean addOtherName(String orcid, String displayName) {
         return otherNameDao.addOtherName(orcid, displayName);
     }
 
@@ -73,10 +73,10 @@ public class OtherNameManagerImpl implements OtherNameManager {
      *          true if the other name was successfully deleted, false otherwise
      * */
     @Override
-    public boolean deleteOtherName(OtherNameEntity otherName){
+    public boolean deleteOtherName(OtherNameEntity otherName) {
         return otherNameDao.deleteOtherName(otherName);
     }
-    
+
     /**
      * Get a list of other names and decide which other names might be deleted,
      * and which ones should be created
@@ -84,26 +84,26 @@ public class OtherNameManagerImpl implements OtherNameManager {
      * @param List<String> otherNames
      * */
     @Override
-    public void updateOtherNames(String orcid, OtherNames otherNames){
-        List<OtherNameEntity> currentOtherNames = this.getOtherName(orcid);        
+    public void updateOtherNames(String orcid, OtherNames otherNames) {
+        List<OtherNameEntity> currentOtherNames = this.getOtherName(orcid);
         Iterator<OtherNameEntity> currentIt = currentOtherNames.iterator();
         ArrayList<String> newOtherNames = new ArrayList<String>(otherNames.getOtherNamesAsStrings());
-        
-        while(currentIt.hasNext()){            
-            OtherNameEntity existingOtherName = currentIt.next(); 
+
+        while (currentIt.hasNext()) {
+            OtherNameEntity existingOtherName = currentIt.next();
             //Delete non modified other names from the parameter list
-            if(newOtherNames.contains(existingOtherName.getDisplayName())) {
+            if (newOtherNames.contains(existingOtherName.getDisplayName())) {
                 newOtherNames.remove(existingOtherName.getDisplayName());
             } else {
                 //Delete other names deleted by user
                 otherNameDao.deleteOtherName(existingOtherName);
             }
         }
-        
+
         //At this point, only new other names are in the parameter list otherNames
         //Insert all these other names on database
-        for(String newOtherName : newOtherNames){
-            otherNameDao.addOtherName(orcid, newOtherName);            
+        for (String newOtherName : newOtherNames) {
+            otherNameDao.addOtherName(orcid, newOtherName);
         }
     }
 }

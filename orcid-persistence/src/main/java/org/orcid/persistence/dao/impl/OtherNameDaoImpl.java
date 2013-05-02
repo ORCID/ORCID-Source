@@ -27,10 +27,10 @@ import org.springframework.util.Assert;
 
 public class OtherNameDaoImpl extends GenericDaoImpl<OtherNameEntity, Long> implements OtherNameDao {
 
-    public OtherNameDaoImpl(){
+    public OtherNameDaoImpl() {
         super(OtherNameEntity.class);
     }
-    
+
     /**
      * Get other names for an specific orcid account
      * @param orcid          
@@ -67,7 +67,8 @@ public class OtherNameDaoImpl extends GenericDaoImpl<OtherNameEntity, Long> impl
     @Override
     @Transactional
     public boolean addOtherName(String orcid, String displayName) {
-        Query query = entityManager.createNativeQuery("INSERT INTO other_name (other_name_id, date_created, last_modified, display_name, orcid) VALUES (nextval('other_name_seq'), now(), now(), :displayName, :orcid)");
+        Query query = entityManager
+                .createNativeQuery("INSERT INTO other_name (other_name_id, date_created, last_modified, display_name, orcid) VALUES (nextval('other_name_seq'), now(), now(), :displayName, :orcid)");
         query.setParameter("orcid", orcid);
         query.setParameter("displayName", displayName);
         return query.executeUpdate() > 0 ? true : false;
@@ -84,7 +85,7 @@ public class OtherNameDaoImpl extends GenericDaoImpl<OtherNameEntity, Long> impl
     public boolean deleteOtherName(OtherNameEntity otherName) {
         Assert.notNull(otherName);
         Query query = entityManager.createQuery("DELETE FROM OtherNameEntity WHERE id=:id");
-        query.setParameter("id", otherName.getId());        
+        query.setParameter("id", otherName.getId());
         return query.executeUpdate() > 0 ? true : false;
     }
 }

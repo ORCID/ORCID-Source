@@ -29,6 +29,7 @@ public interface OtherNameDao {
      *           The list of other names related with the specified orcid profile
      * */
     public List<OtherNameEntity> getOtherName(String orcid);
+
     /**
      * Update other name entity with new values
      * @param otherName
@@ -36,6 +37,7 @@ public interface OtherNameDao {
      *          true if the other name was sucessfully updated, false otherwise
      * */
     public boolean updateOtherName(OtherNameEntity otherName);
+
     /**
      * Create other name for the specified account
      * @param orcid
@@ -44,6 +46,7 @@ public interface OtherNameDao {
      *          true if the other name was successfully created, false otherwise 
      * */
     public boolean addOtherName(String orcid, String displayName);
+
     /**
      * Delete other name from database
      * @param otherName

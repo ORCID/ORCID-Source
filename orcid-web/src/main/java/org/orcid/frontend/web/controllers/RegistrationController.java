@@ -276,14 +276,13 @@ public class RegistrationController extends BaseController {
         return reg;
     }
 
- 
     @RequestMapping(value = "/registerPasswordValidate.json", method = RequestMethod.POST)
     public @ResponseBody
     Registration registerPasswordValidate(@RequestBody Registration reg) {
         passwordValidate(reg.getPasswordConfirm(), reg.getPassword());
         return reg;
     }
-    
+
     @RequestMapping(value = "/claimPasswordConfirmValidate.json", method = RequestMethod.POST)
     public @ResponseBody
     Claim claimPasswordConfirmValidate(@RequestBody Claim claim) {
@@ -291,14 +290,12 @@ public class RegistrationController extends BaseController {
         return claim;
     }
 
- 
     @RequestMapping(value = "/claimPasswordValidate.json", method = RequestMethod.POST)
     public @ResponseBody
     Claim claimPasswordValidate(@RequestBody Claim claim) {
         passwordValidate(claim.getPasswordConfirm(), claim.getPassword());
         return claim;
     }
-
 
     private void passwordConfirmValidate(Text passwordConfirm, Text password) {
         passwordConfirm.setErrors(new ArrayList<String>());
@@ -326,14 +323,13 @@ public class RegistrationController extends BaseController {
         termsOfUserValidate(reg.getTermsOfUse());
         return reg;
     }
-    
+
     @RequestMapping(value = "/claimTermsOfUseValidate.json", method = RequestMethod.POST)
     public @ResponseBody
-    Claim claimTermsOfUseValidate(@RequestBody Claim  claim) {
+    Claim claimTermsOfUseValidate(@RequestBody Claim claim) {
         termsOfUserValidate(claim.getTermsOfUse());
         return claim;
     }
-
 
     private void termsOfUserValidate(Checkbox termsOfUser) {
         termsOfUser.setErrors(new ArrayList<String>());
@@ -710,19 +706,21 @@ public class RegistrationController extends BaseController {
     }
 
     @RequestMapping(value = "/claim/{encryptedEmail}.json", method = RequestMethod.GET)
-    public @ResponseBody Claim
-     verifyClaimJson(HttpServletRequest request, @PathVariable("encryptedEmail") String encryptedEmail, RedirectAttributes redirectAttributes)
+    public @ResponseBody
+    Claim verifyClaimJson(HttpServletRequest request, @PathVariable("encryptedEmail") String encryptedEmail, RedirectAttributes redirectAttributes)
             throws NoSuchRequestHandlingMethodException, UnsupportedEncodingException {
         Claim c = new Claim();
         c.getSendChangeNotifications().setValue(true);
         c.getSendOrcidNews().setValue(true);
         c.getTermsOfUse().setValue(false);
-        claimTermsOfUseValidate(c);      
+        claimTermsOfUseValidate(c);
         return c;
     }
 
     @RequestMapping(value = "/claim/{encryptedEmail}.json", method = RequestMethod.POST)
-    public @ResponseBody Claim submitClaimJson(HttpServletRequest request, @PathVariable("encryptedEmail") String encryptedEmail, @RequestBody Claim claim) throws NoSuchRequestHandlingMethodException, UnsupportedEncodingException {
+    public @ResponseBody
+    Claim submitClaimJson(HttpServletRequest request, @PathVariable("encryptedEmail") String encryptedEmail, @RequestBody Claim claim)
+            throws NoSuchRequestHandlingMethodException, UnsupportedEncodingException {
         String decryptedEmail = encryptionManager.decryptForExternalUse(new String(Base64.decodeBase64(encryptedEmail), "UTF-8"));
         if (!isEmailOkForCurrentUser(decryptedEmail)) {
             claim.setUrl(getBaseUri() + "/claim/wrong_user");
@@ -734,12 +732,11 @@ public class RegistrationController extends BaseController {
             claim.setUrl(getBaseUri() + "/signin?alreadyClaimed");
             return claim;
         }
-        
-        
+
         claimPasswordValidate(claim);
         claimPasswordConfirmValidate(claim);
         claimTermsOfUseValidate(claim);
-      
+
         copyErrors(claim.getPassword(), claim);
         copyErrors(claim.getPasswordConfirm(), claim);
         copyErrors(claim.getTermsOfUse(), claim);
@@ -757,7 +754,7 @@ public class RegistrationController extends BaseController {
 
     @RequestMapping(value = "/claim/wrong_user", method = RequestMethod.GET)
     public ModelAndView claimWrongUser(HttpServletRequest request) {
-       return new ModelAndView("wrong_user");
+        return new ModelAndView("wrong_user");
     }
 
     private ModelAndView buildVerificationView(HttpServletRequest request, String encryptedEmail, RedirectAttributes redirectAttributes)

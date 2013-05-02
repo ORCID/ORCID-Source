@@ -90,10 +90,10 @@ public class EmailDaoImpl extends GenericDaoImpl<EmailEntity, String> implements
         query.setParameter("sourceOrcid", sourceOrcid);
         query.executeUpdate();
     }
-    
+
     @Override
     @Transactional
-    public void removeEmail(String orcid, String email){
+    public void removeEmail(String orcid, String email) {
         Query query = entityManager.createQuery("delete from EmailEntity where orcid = :orcid and email = :email and primary != 'true'");
         query.setParameter("orcid", orcid);
         query.setParameter("email", email);

@@ -29,6 +29,7 @@ public interface ProfileKeywordDao {
      *          the list of keywords associated with the orcid profile
      * */
     public List<ProfileKeywordEntity> getProfileKeywors(String orcid);
+
     /**
      * Deleted a keyword from database
      * @param orcid
@@ -36,6 +37,7 @@ public interface ProfileKeywordDao {
      * @return true if the keyword was successfully deleted
      * */
     public boolean deleteProfileKeyword(String orcid, String keyword);
+
     /**
      * Adds a keyword to a specific profile
      * @param orcid

@@ -70,7 +70,7 @@ public class OrcidApiAuthorizationSecurityAspect {
     public void checkPermissionsWithOrcidAndWebhookUri(AccessControl accessControl, UriInfo uriInfo, String orcid, String webhookUri) {
         permissionChecker.checkPermissions(getAuthentication(), accessControl.requiredScope(), orcid);
     }
-    
+
     @AfterReturning(pointcut = "@annotation(accessControl)", returning = "response")
     public void visibilityResponseFilter(Response response, AccessControl accessControl) {
         Object entity = response.getEntity();

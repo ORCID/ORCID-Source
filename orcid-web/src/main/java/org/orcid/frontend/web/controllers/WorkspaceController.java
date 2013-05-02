@@ -53,7 +53,7 @@ public class WorkspaceController extends BaseWorkspaceController {
 
     @Resource
     private ExternalIdentifierManager externalIdentifierManager;
-    
+
     @ModelAttribute("thirdPartiesForImport")
     public List<OrcidClient> retrieveThirdPartiesForImport() {
         return thirdPartyImportManager.findOrcidClientsWithPredefinedOauthScopeForImport();
@@ -120,21 +120,21 @@ public class WorkspaceController extends BaseWorkspaceController {
 
         // If the external identifier is blank, add an error
         if (externalIdentifier.getExternalIdReference() == null || StringUtils.isBlank(externalIdentifier.getExternalIdReference().getContent())) {
-            errors.add(getMessage("ExternalIdentifier.externalIdReference"));                
+            errors.add(getMessage("ExternalIdentifier.externalIdReference"));
         }
         // Set errors to the external 
         externalIdentifier.setErrors(errors);
-        
+
         if (errors.isEmpty()) {
             //Get cached profile
-            OrcidProfile currentProfile = getCurrentUser().getEffectiveProfile();            
-            ExternalIdentifiers externalIdentifiers = currentProfile.getOrcidBio().getExternalIdentifiers();                         
+            OrcidProfile currentProfile = getCurrentUser().getEffectiveProfile();
+            ExternalIdentifiers externalIdentifiers = currentProfile.getOrcidBio().getExternalIdentifiers();
             List<ExternalIdentifier> externalIdentifiersList = externalIdentifiers.getExternalIdentifier();
             Iterator<ExternalIdentifier> externalIdentifierIterator = externalIdentifiersList.iterator();
             //Remove external identifier from the cached profile
-            while(externalIdentifierIterator.hasNext()){
-                ExternalIdentifier existingExternalIdentifier = externalIdentifierIterator.next(); 
-                if(existingExternalIdentifier.equals(externalIdentifier)){
+            while (externalIdentifierIterator.hasNext()) {
+                ExternalIdentifier existingExternalIdentifier = externalIdentifierIterator.next();
+                if (existingExternalIdentifier.equals(externalIdentifier)) {
                     externalIdentifierIterator.remove();
                 }
             }

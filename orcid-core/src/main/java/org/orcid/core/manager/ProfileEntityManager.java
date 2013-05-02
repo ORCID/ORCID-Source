@@ -41,6 +41,6 @@ public interface ProfileEntityManager {
     boolean existsAndNotClaimedAndBelongsTo(String messageOrcid, String clientId);
 
     Long getConfirmedProfileCount();
-    
-    public boolean updateProfile(OrcidProfile profile); 
+
+    public boolean updateProfile(OrcidProfile profile);
 }

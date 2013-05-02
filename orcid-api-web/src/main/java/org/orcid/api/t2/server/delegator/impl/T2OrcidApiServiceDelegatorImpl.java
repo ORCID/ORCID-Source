@@ -268,7 +268,7 @@ public class T2OrcidApiServiceDelegatorImpl implements T2OrcidApiServiceDelegato
             return getCreatedResponse(uriInfo, WORKS_PATH, orcidProfile);
         } catch (DataAccessException e) {
             throw new OrcidBadRequestException("Cannot create ORCID");
-        } catch (PersistenceException pe) {            
+        } catch (PersistenceException pe) {
             throw new OrcidBadRequestException("One of the parameters passed in the request is either too big or invalid.");
         }
     }
