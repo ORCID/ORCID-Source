@@ -44,10 +44,10 @@ public class ProfileKeywordDaoTest extends DBUnitTest {
 
     @Resource
     private ProfileKeywordDao profileKeywordDao;
-    
+
     @BeforeClass
     public static void initDBUnitData() throws Exception {
-        initDBUnitData(Arrays.asList("/data/SecurityQuestionEntityData.xml", "/data/SubjectEntityData.xml", "/data/ProfileEntityData.xml"), null);        
+        initDBUnitData(Arrays.asList("/data/SecurityQuestionEntityData.xml", "/data/SubjectEntityData.xml", "/data/ProfileEntityData.xml"), null);
     }
 
     @AfterClass
@@ -57,9 +57,9 @@ public class ProfileKeywordDaoTest extends DBUnitTest {
 
     @Before
     public void beforeRunning() {
-        assertNotNull(profileKeywordDao);        
+        assertNotNull(profileKeywordDao);
     }
-    
+
     @Test
     @Rollback(true)
     @Transactional(propagation = Propagation.REQUIRES_NEW)
@@ -68,21 +68,21 @@ public class ProfileKeywordDaoTest extends DBUnitTest {
         assertNotNull(keywords);
         assertEquals(2, keywords.size());
     }
-    
+
     @Test
     @Rollback(true)
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public void testAddProfileKeyword(){
+    public void testAddProfileKeyword() {
         assertEquals(2, profileKeywordDao.getProfileKeywors("4444-4444-4444-4443").size());
         boolean result = profileKeywordDao.addProfileKeyword("4444-4444-4444-4443", "new_keyword");
         assertTrue(result);
-        assertEquals(3, profileKeywordDao.getProfileKeywors("4444-4444-4444-4443").size());        
+        assertEquals(3, profileKeywordDao.getProfileKeywors("4444-4444-4444-4443").size());
     }
-    
+
     @Test
     @Rollback(true)
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public void testDeleteProfileKeyword(){
+    public void testDeleteProfileKeyword() {
         assertEquals(2, profileKeywordDao.getProfileKeywors("4444-4444-4444-4443").size());
         profileKeywordDao.deleteProfileKeyword("4444-4444-4444-4443", "tea making");
         assertEquals(1, profileKeywordDao.getProfileKeywors("4444-4444-4444-4443").size());

@@ -446,11 +446,11 @@ public class ProfileDaoTest extends DBUnitTest {
         confirmedProfileCount = profileDao.getConfirmedProfileCount();
         assertEquals(Long.valueOf(6), confirmedProfileCount);
     }
-    
+
     @Test
     @Rollback(true)
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public void testUpdateProfile(){
+    public void testUpdateProfile() {
         ProfileEntity profile = profileDao.find("4444-4444-4444-4441");
         profile.setBiography("Updated Biography");
         profile.setBiographyVisibility(Visibility.PRIVATE);
@@ -462,7 +462,7 @@ public class ProfileDaoTest extends DBUnitTest {
         profile.setKeywordsVisibility(Visibility.PRIVATE);
         profile.setResearcherUrlsVisibility(Visibility.PRIVATE);
         profile.setOtherNamesVisibility(Visibility.PRIVATE);
-        profile.setProfileAddressVisibility(Visibility.PRIVATE);        
+        profile.setProfileAddressVisibility(Visibility.PRIVATE);
         boolean result = profileDao.updateProfile(profile);
         assertTrue(result);
         profile = profileDao.find("4444-4444-4444-4441");

@@ -29,18 +29,21 @@ public interface ResearcherUrlDao {
      *          the list of researcher urls associated with the orcid profile
      * */
     public List<ResearcherUrlEntity> getResearcherUrls(String orcid);
+
     /**
      * Deleted a researcher url from database
      * @param id
      * @return true if the researcher url was successfully deleted
      * */
     public boolean deleteResearcherUrl(long id);
+
     /**
      * Retrieve a researcher url from database
      * @param id
      * @return the ResearcherUrlEntity associated with the parameter id
      * */
     public ResearcherUrlEntity getResearcherUrl(long id);
+
     /**
      * Adds a researcher url to a specific profile
      * @param orcid

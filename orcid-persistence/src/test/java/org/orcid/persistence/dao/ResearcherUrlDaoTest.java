@@ -46,10 +46,10 @@ public class ResearcherUrlDaoTest extends DBUnitTest {
 
     @Resource
     private ResearcherUrlDao researcherUrlDao;
-    
+
     @BeforeClass
     public static void initDBUnitData() throws Exception {
-        initDBUnitData(Arrays.asList("/data/SecurityQuestionEntityData.xml", "/data/SubjectEntityData.xml", "/data/ProfileEntityData.xml"), null);        
+        initDBUnitData(Arrays.asList("/data/SecurityQuestionEntityData.xml", "/data/SubjectEntityData.xml", "/data/ProfileEntityData.xml"), null);
     }
 
     @AfterClass
@@ -59,59 +59,59 @@ public class ResearcherUrlDaoTest extends DBUnitTest {
 
     @Before
     public void beforeRunning() {
-        assertNotNull(researcherUrlDao);        
+        assertNotNull(researcherUrlDao);
     }
-    
+
     @Test
     @Rollback(true)
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void testfindResearcherUrls() {
-       List<ResearcherUrlEntity> researcherUrls = researcherUrlDao.getResearcherUrls("4444-4444-4444-4443");
-       assertNotNull(researcherUrls);
-       assertEquals(2, researcherUrls.size());
+        List<ResearcherUrlEntity> researcherUrls = researcherUrlDao.getResearcherUrls("4444-4444-4444-4443");
+        assertNotNull(researcherUrls);
+        assertEquals(2, researcherUrls.size());
     }
-    
+
     @Test
     @Rollback(true)
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void testfindResearcherUrl() {
-       ResearcherUrlEntity researcherUrl = researcherUrlDao.getResearcherUrl(1);
-       assertNotNull(researcherUrl);
-       assertEquals("444_1", researcherUrl.getUrlName());
+        ResearcherUrlEntity researcherUrl = researcherUrlDao.getResearcherUrl(1);
+        assertNotNull(researcherUrl);
+        assertEquals("444_1", researcherUrl.getUrlName());
     }
-    
+
     @Test
     @Rollback(true)
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public void testAddResearcherUrl(){
-        assertEquals(2,researcherUrlDao.getResearcherUrls("4444-4444-4444-4443").size());
+    public void testAddResearcherUrl() {
+        assertEquals(2, researcherUrlDao.getResearcherUrls("4444-4444-4444-4443").size());
         boolean result = researcherUrlDao.addResearcherUrls("4444-4444-4444-4443", "www.4443.com", "test");
         assertTrue(result);
-        assertEquals(3,researcherUrlDao.getResearcherUrls("4444-4444-4444-4443").size());
+        assertEquals(3, researcherUrlDao.getResearcherUrls("4444-4444-4444-4443").size());
     }
-    
+
     @Test
     @Rollback(true)
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public void testDeleteResearcherUrl(){
+    public void testDeleteResearcherUrl() {
         List<ResearcherUrlEntity> researcherUrls = researcherUrlDao.getResearcherUrls("4444-4444-4444-4443");
         assertNotNull(researcherUrls);
-        assertEquals(2,researcherUrls.size());
+        assertEquals(2, researcherUrls.size());
         researcherUrlDao.deleteResearcherUrl(researcherUrls.get(0).getId());
         researcherUrls = researcherUrlDao.getResearcherUrls("4444-4444-4444-4443");
         assertNotNull(researcherUrls);
-        assertEquals(1,researcherUrls.size());
+        assertEquals(1, researcherUrls.size());
     }
-    
+
     @Test
     @Rollback(true)
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public void testCannotAddDuplicatedResearcherUrl(){
+    public void testCannotAddDuplicatedResearcherUrl() {
         try {
             researcherUrlDao.addResearcherUrls("4444-4444-4444-4443", "http://www.researcherurl2.com?id=1", "test");
             fail();
-        } catch (PersistenceException e){
-            
-        } 
+        } catch (PersistenceException e) {
+
+        }
     }
 }

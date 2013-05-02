@@ -402,8 +402,8 @@ public class BaseController {
      * @return the path to the static content on local project
      * */
     @ModelAttribute("staticLoc")
-    public String getStaticContentPath() {            
-        if (StringUtils.isBlank(this.staticContentPath)){
+    public String getStaticContentPath() {
+        if (StringUtils.isBlank(this.staticContentPath)) {
             this.staticContentPath = this.baseUri + STATIC_FOLDER_PATH;
             this.staticContentPath = this.staticContentPath.replace("https:", "");
             this.staticContentPath = this.staticContentPath.replace("http:", "");

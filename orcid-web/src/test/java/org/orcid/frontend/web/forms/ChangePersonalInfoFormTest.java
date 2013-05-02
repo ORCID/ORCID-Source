@@ -46,7 +46,7 @@ public class ChangePersonalInfoFormTest {
         String actual = profile.toString();
         assertEquals(expected, actual);
     }
-    
+
     @Test
     public void testRemoveDuplicatedOtherNames() throws Exception {
         OrcidProfile profile = new OrcidProfile();
@@ -69,7 +69,7 @@ public class ChangePersonalInfoFormTest {
         String actual = profile.toString();
         assertEquals(expected, actual);
     }
-    
+
     @Test
     public void testRemoveDuplicatedKeywords() throws Exception {
         OrcidProfile profile = new OrcidProfile();

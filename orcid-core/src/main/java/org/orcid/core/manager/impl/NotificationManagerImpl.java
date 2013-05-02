@@ -181,8 +181,8 @@ public class NotificationManagerImpl implements NotificationManager {
         templateParams.put("securityQuestion", securityQuestionDao.find((int) orcidProfile.getOrcidInternal().getSecurityDetails().getSecurityQuestionId().getValue())
                 .getQuestion());
         templateParams.put("baseUri", baseUri);
-        templateParams.put("securityAnswer",
-                encryptionManager.decryptForInternalUse(orcidProfile.getOrcidInternal().getSecurityDetails().getEncryptedSecurityAnswer().getContent()));
+        templateParams.put("securityAnswer", encryptionManager.decryptForInternalUse(orcidProfile.getOrcidInternal().getSecurityDetails().getEncryptedSecurityAnswer()
+                .getContent()));
         // Generate body from template
         String body = templateManager.processTemplate("legacy_verification_email.ftl", templateParams);
         // Create email message

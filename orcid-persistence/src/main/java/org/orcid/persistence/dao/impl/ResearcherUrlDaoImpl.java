@@ -30,7 +30,7 @@ public class ResearcherUrlDaoImpl extends GenericDaoImpl<ResearcherUrlEntity, Lo
     public ResearcherUrlDaoImpl() {
         super(ResearcherUrlEntity.class);
     }
-    
+
     /**
      * Return the list of researcher urls associated to a specific profile
      * @param orcid
@@ -42,7 +42,7 @@ public class ResearcherUrlDaoImpl extends GenericDaoImpl<ResearcherUrlEntity, Lo
     public List<ResearcherUrlEntity> getResearcherUrls(String orcid) {
         Query query = entityManager.createQuery("FROM ResearcherUrlEntity WHERE orcid = :orcid");
         query.setParameter("orcid", orcid);
-        return query.getResultList();        
+        return query.getResultList();
     }
 
     /**
@@ -54,7 +54,7 @@ public class ResearcherUrlDaoImpl extends GenericDaoImpl<ResearcherUrlEntity, Lo
     @Transactional
     public boolean deleteResearcherUrl(long id) {
         Query query = entityManager.createQuery("DELETE FROM ResearcherUrlEntity WHERE id = :id");
-        query.setParameter("id", id);        
+        query.setParameter("id", id);
         return query.executeUpdate() > 0 ? true : false;
     }
 
@@ -66,7 +66,7 @@ public class ResearcherUrlDaoImpl extends GenericDaoImpl<ResearcherUrlEntity, Lo
     @Override
     public ResearcherUrlEntity getResearcherUrl(long id) {
         TypedQuery<ResearcherUrlEntity> query = entityManager.createQuery("FROM ResearcherUrlEntity WHERE id = :id", ResearcherUrlEntity.class);
-        query.setParameter("id", id); 
+        query.setParameter("id", id);
         return query.getSingleResult();
     }
 
@@ -80,7 +80,8 @@ public class ResearcherUrlDaoImpl extends GenericDaoImpl<ResearcherUrlEntity, Lo
     @Override
     @Transactional
     public boolean addResearcherUrls(String orcid, String url, String urlName) {
-        Query query = entityManager.createNativeQuery("INSERT INTO researcher_url (date_created, last_modified, orcid, url, url_name) VALUES (now(), now(), :orcid, :url, :url_name)");
+        Query query = entityManager
+                .createNativeQuery("INSERT INTO researcher_url (date_created, last_modified, orcid, url, url_name) VALUES (now(), now(), :orcid, :url, :url_name)");
         query.setParameter("orcid", orcid);
         query.setParameter("url", url);
         query.setParameter("url_name", urlName);

@@ -78,7 +78,6 @@ public class ChangePersonalInfoForm {
 
     private ResearcherUrls savedResearcherUrls;
 
-
     public ChangePersonalInfoForm() {
     }
 
@@ -98,7 +97,7 @@ public class ChangePersonalInfoForm {
         setSavedResearcherUrls(orcidProfile.getOrcidBio().getResearcherUrls());
         setWebsiteUrlVisibility(orcidProfile.getOrcidBio().getResearcherUrls().getVisibility().value());
     }
-    
+
     private void initNullSafeValues(OrcidProfile currentOrcidProfile) {
         if (currentOrcidProfile.getOrcidBio() == null) {
             currentOrcidProfile.setOrcidBio(new OrcidBio());
@@ -350,7 +349,7 @@ public class ChangePersonalInfoForm {
         }
         return otherNamesDelimted != null ? otherNamesDelimted : "";
     }
-    
+
     private OtherNames buildOtherNamesFromDelimitedString(String otherNamesDelimted) {
 
         OtherNames otherNames = new OtherNames();
@@ -405,7 +404,7 @@ public class ChangePersonalInfoForm {
     private Keywords buildKeywordsFromDelimitedString(String otherNamesDelimted) {
 
         Keywords keywords = new Keywords();
-        String[] keywordsSplit = StringUtils.split(otherNamesDelimted, DELIMITER);        
+        String[] keywordsSplit = StringUtils.split(otherNamesDelimted, DELIMITER);
         Set<Keyword> allKeywords = new java.util.HashSet<Keyword>();
         if (keywordsSplit != null) {
 
@@ -424,15 +423,15 @@ public class ChangePersonalInfoForm {
     /**
      * TODO
      * */
-    public List<String> getOtherNameAsList(){
+    public List<String> getOtherNameAsList() {
         return Arrays.asList(StringUtils.split(otherNamesDelimited, DELIMITER));
-        
+
     }
-    
+
     /**
      * TODO
      * */
-    public List<String> getKeywordsAsList(){
+    public List<String> getKeywordsAsList() {
         return Arrays.asList(StringUtils.split(keywordsDelimited, DELIMITER));
     }
 }

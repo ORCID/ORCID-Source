@@ -57,7 +57,7 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
     void updateIndexingStatus(String orcid, IndexingStatus indexingStatus);
 
     Long getConfirmedProfileCount();
-    
+
     boolean updateProfile(ProfileEntity profile);
 
     Date retrieveLastModifiedDate(String orcid);

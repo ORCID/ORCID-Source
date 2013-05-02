@@ -98,13 +98,13 @@ public class ManageProfileControllerTest extends BaseControllerTest {
 
     @Mock
     private NotificationManager mockNotificationManager;
-    
-    @Mock 
+
+    @Mock
     private ResearcherUrlManager researcherUrlManager;
 
-    @Mock 
+    @Mock
     private ProfileKeywordManager profileKeywordManager;
-    
+
     /**
      * The classes loaded from the app context are in fact proxies to the
      * OrcidProfileManagerImpl class, required for transactionality. However we
@@ -158,7 +158,7 @@ public class ManageProfileControllerTest extends BaseControllerTest {
         controller.setProfileKeywordManager(mock(ProfileKeywordManager.class));
         controller.setOtherNameManager(mock(OtherNameManager.class));
         controller.setResearcherUrlManager(mock(ResearcherUrlManager.class));
-        
+
         BindingResult bindingResult = mock(BindingResult.class);
         HttpServletRequest request = mock(HttpServletRequest.class);
 
