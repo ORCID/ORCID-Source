@@ -17,8 +17,6 @@
 
 -->
 <@public classes=['home'] nav="register">
-
-    <@spring.bind "registrationForm.*" />
     <div class="row">
         <div class="span3"></div>
         <div class="span9">
