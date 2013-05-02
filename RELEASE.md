@@ -1,5 +1,15 @@
 # Release notes and highlights
 
+## release-1.1.19.5
+(2013-05-02)
+
+* Upgrade 1.0.5 java-bibtex
+
+* Use solar instead of postgres for public search results
+
+* Enable ajax registration
+
+
 ## releaes-1.1.18.2 
 (2013-04-30)
 
