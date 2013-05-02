@@ -595,7 +595,7 @@ public class ManageProfileController extends BaseWorkspaceController {
 
         Integer securityQuestionId = null;
 
-        SecurityDetails securityDetails = getCurrentUser().getRealProfile().getOrcidInternal().getSecurityDetails();
+        SecurityDetails securityDetails = getCurrentUser().getEffectiveProfile().getOrcidInternal().getSecurityDetails();
         if (securityDetails != null) {
             securityQuestionId = securityDetails.getSecurityQuestionId() != null ? new Integer((int) securityDetails.getSecurityQuestionId().getValue()) : null;
 
@@ -678,7 +678,7 @@ public class ManageProfileController extends BaseWorkspaceController {
 
     @RequestMapping(value = "/confirm-deactivate-orcid", method = RequestMethod.GET)
     public ModelAndView confirmDeactivateOrcidAccount(HttpServletRequest request) {
-        getCurrentUser().setRealProfile(orcidProfileManager.deactivateOrcidProfile(getCurrentUser().getRealProfile()));
+        getCurrentUser().setRealProfile(orcidProfileManager.deactivateOrcidProfile(getCurrentUser().getEffectiveProfile()));
         ModelAndView deactivateOrcidView = new ModelAndView("redirect:/signout#deactivated");
         return deactivateOrcidView;
     }
@@ -695,7 +695,7 @@ public class ManageProfileController extends BaseWorkspaceController {
     @RequestMapping(value = "/verify-email", method = RequestMethod.GET)
     public ModelAndView verifyEmail(HttpServletRequest request, RedirectAttributes redirectAttributes) {
         ModelAndView manageBioView = new ModelAndView("redirect:manage-bio-settings");
-        OrcidProfile currentProfile = getCurrentUser().getRealProfile();
+        OrcidProfile currentProfile = getCurrentUser().getEffectiveProfile();
         URI baseUri = OrcidWebUtils.getServerUriWithContextPath(request);
         notificationManager.sendVerificationEmail(currentProfile, baseUri);
         redirectAttributes.addFlashAttribute("verificationEmailSent", true);
@@ -715,7 +715,7 @@ public class ManageProfileController extends BaseWorkspaceController {
     public @ResponseBody
     Email startDeactivateOrcidAccountJson(HttpServletRequest request) {
         URI uri = OrcidWebUtils.getServerUriWithContextPath(request);
-        OrcidProfile currentProfile = getCurrentUser().getRealProfile();
+        OrcidProfile currentProfile = getCurrentUser().getEffectiveProfile();
         Email email = currentProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail();
         notificationManager.sendOrcidDeactivateEmail(currentProfile, uri);
         return email;
@@ -872,7 +872,7 @@ public class ManageProfileController extends BaseWorkspaceController {
             return erroredView;
         }
 
-        OrcidProfile currentProfile = getCurrentUser().getRealProfile();
+        OrcidProfile currentProfile = getCurrentUser().getEffectiveProfile();
         changePersonalInfoForm.mergeOrcidBioDetails(currentProfile);
         OrcidProfile updatedProfile = orcidProfileManager.updateOrcidBio(currentProfile);
         getCurrentUser().setEffectiveProfile(updatedProfile);
