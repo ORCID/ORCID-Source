@@ -105,16 +105,3 @@ public class OtherNameDaoTest extends DBUnitTest {
         assertEquals(1, updatedOtherNames.size());        
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-

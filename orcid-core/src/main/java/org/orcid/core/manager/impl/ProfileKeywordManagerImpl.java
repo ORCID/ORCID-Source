@@ -33,7 +33,10 @@ public class ProfileKeywordManagerImpl implements ProfileKeywordManager {
     ProfileKeywordDao profileKeywordDao;
     
     /**
-     * TODO
+     * Return the list of keywords associated to a specific profile
+     * @param orcid
+     * @return 
+     *          the list of keywords associated with the orcid profile
      * */
     @Override
     public List<ProfileKeywordEntity> getProfileKeywors(String orcid) {
@@ -41,7 +44,10 @@ public class ProfileKeywordManagerImpl implements ProfileKeywordManager {
     }
 
     /**
-     * TODO
+     * Deleted a keyword from database
+     * @param orcid
+     * @param keyword
+     * @return true if the keyword was successfully deleted
      * */
     @Override
     public boolean deleteProfileKeyword(String orcid, String keyword) {
@@ -49,7 +55,10 @@ public class ProfileKeywordManagerImpl implements ProfileKeywordManager {
     }
 
     /**
-     * TODO
+     * Adds a keyword to a specific profile
+     * @param orcid
+     * @param keyword
+     * @return true if the keyword was successfully created on database
      * */
     @Override
     public void addProfileKeyword(String orcid, String keyword) {
@@ -57,7 +66,9 @@ public class ProfileKeywordManagerImpl implements ProfileKeywordManager {
     }
 
     /**
-     * TODO
+     * Update the list of keywords associated with a specific account
+     * @param orcid
+     * @param keywords    
      * */
     @Override
     public void updateProfileKeyword(String orcid, Keywords keywords){

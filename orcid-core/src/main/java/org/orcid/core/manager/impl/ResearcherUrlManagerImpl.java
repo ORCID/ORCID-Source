@@ -41,26 +41,54 @@ public class ResearcherUrlManagerImpl implements ResearcherUrlManager {
     @Resource
     private ResearcherUrlDao researcherUrlDao;
     
+    /**
+     * Return the list of researcher urls associated to a specific profile
+     * @param orcid
+     * @return 
+     *          the list of researcher urls associated with the orcid profile
+     * */
     @Override
     public List<ResearcherUrlEntity> getResearcherUrls(String orcid) {
         return researcherUrlDao.getResearcherUrls(orcid);
     }
 
+    /**
+     * Deleted a researcher url from database
+     * @param id
+     * @return true if the researcher url was successfully deleted
+     * */
     @Override
     public boolean deleteResearcherUrl(long id) {
         return researcherUrlDao.deleteResearcherUrl(id);
     }
 
+    /**
+     * Retrieve a researcher url from database
+     * @param id
+     * @return the ResearcherUrlEntity associated with the parameter id
+     * */
     @Override
     public ResearcherUrlEntity getResearcherUrl(long id) {
         return researcherUrlDao.getResearcherUrl(id);
     }
 
+    /**
+     * Adds a researcher url to a specific profile
+     * @param orcid
+     * @param url
+     * @param urlName
+     * @return true if the researcher url was successfully created on database
+     * */
     @Override
     public void addResearcherUrls(String orcid, String url, String urlName) {
         researcherUrlDao.addResearcherUrls(orcid, url, urlName);
     }
 
+    /**
+     * Update the researcher urls associated with a specific account
+     * @param orcid
+     * @param researcherUrls
+     * */
     @Override
     public boolean updateResearcherUrls(String orcid, ResearcherUrls researcherUrls){
         boolean hasErrors = false;

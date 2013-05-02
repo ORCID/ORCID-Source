@@ -115,10 +115,3 @@ public class ResearcherUrlDaoTest extends DBUnitTest {
         } 
     }
 }
-
-
-
-
-
-
-

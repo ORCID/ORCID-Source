@@ -31,19 +31,39 @@ public class OtherNameDaoImpl extends GenericDaoImpl<OtherNameEntity, Long> impl
         super(OtherNameEntity.class);
     }
     
+    /**
+     * Get other names for an specific orcid account
+     * @param orcid          
+     * @return
+     *           The list of other names related with the specified orcid profile
+     * */
     @Override
+    @SuppressWarnings("unchecked")
     public List<OtherNameEntity> getOtherName(String orcid) {
         Query query = entityManager.createQuery("FROM OtherNameEntity WHERE profile.id=:orcid");
         query.setParameter("orcid", orcid);
         return query.getResultList();
     }
 
+    /**
+     * Update other name entity with new values
+     * @param otherName
+     * @return
+     *          true if the other name was sucessfully updated, false otherwise
+     * */
     @Override
     @Transactional
     public boolean updateOtherName(OtherNameEntity otherName) {
         throw new UnsupportedOperationException("This opperation is not supported yet");
     }
 
+    /**
+     * Create other name for the specified account
+     * @param orcid
+     * @param displayName
+     * @return
+     *          true if the other name was successfully created, false otherwise 
+     * */
     @Override
     @Transactional
     public boolean addOtherName(String orcid, String displayName) {
@@ -53,6 +73,12 @@ public class OtherNameDaoImpl extends GenericDaoImpl<OtherNameEntity, Long> impl
         return query.executeUpdate() > 0 ? true : false;
     }
 
+    /**
+     * Delete other name from database
+     * @param otherName
+     * @return 
+     *          true if the other name was successfully deleted, false otherwise
+     * */
     @Override
     @Transactional
     public boolean deleteOtherName(OtherNameEntity otherName) {

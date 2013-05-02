@@ -20,7 +20,6 @@ import javax.annotation.Resource;
 
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.jaxb.model.message.OrcidProfile;
-import org.orcid.persistence.adapter.JpaJaxbEntityAdapter;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.springframework.stereotype.Service;
@@ -37,8 +36,6 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
 
     @Resource
     private ProfileDao profileDao;
-    @Resource
-    private JpaJaxbEntityAdapter adapter;
 
     @Override
     public ProfileEntity findByOrcid(String orcid) {

@@ -963,13 +963,3 @@ public class ManageProfileController extends BaseWorkspaceController {
         return upTodateResearcherUrls;
     }
 }
-
-
-
-
-
-
-
-
-
-
