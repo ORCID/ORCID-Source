@@ -41,6 +41,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.jaxb.model.message.OrcidType;
+import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.persistence.jpa.entities.IndexingStatus;
 import org.orcid.persistence.jpa.entities.InstitutionEntity;
 import org.orcid.persistence.jpa.entities.OrcidEntityIdComparator;
@@ -444,6 +445,38 @@ public class ProfileDaoTest extends DBUnitTest {
         profileDao.persist(profileEntity);
         confirmedProfileCount = profileDao.getConfirmedProfileCount();
         assertEquals(Long.valueOf(6), confirmedProfileCount);
+    }
+    
+    @Test
+    @Rollback(true)
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void testUpdateProfile(){
+        ProfileEntity profile = profileDao.find("4444-4444-4444-4441");
+        profile.setBiography("Updated Biography");
+        profile.setBiographyVisibility(Visibility.PRIVATE);
+        profile.setCreditName("Updated Credit Name");
+        profile.setCreditNameVisibility(Visibility.PRIVATE);
+        profile.setGivenNames("Updated Give Name");
+        profile.setFamilyName("Updated Last Name");
+        profile.setIso2Country("US");
+        profile.setKeywordsVisibility(Visibility.PRIVATE);
+        profile.setResearcherUrlsVisibility(Visibility.PRIVATE);
+        profile.setOtherNamesVisibility(Visibility.PRIVATE);
+        profile.setProfileAddressVisibility(Visibility.PRIVATE);        
+        boolean result = profileDao.updateProfile(profile);
+        assertTrue(result);
+        profile = profileDao.find("4444-4444-4444-4441");
+        assertEquals("Updated Biography", profile.getBiography());
+        assertEquals(Visibility.PRIVATE.value(), profile.getBiographyVisibility().value());
+        assertEquals("Updated Credit Name", profile.getCreditName());
+        assertEquals(Visibility.PRIVATE.value(), profile.getCreditNameVisibility().value());
+        assertEquals("Updated Give Name", profile.getGivenNames());
+        assertEquals("Updated Last Name", profile.getFamilyName());
+        assertEquals("US", profile.getIso2Country());
+        assertEquals(Visibility.PRIVATE.value(), profile.getKeywordsVisibility().value());
+        assertEquals(Visibility.PRIVATE.value(), profile.getResearcherUrlsVisibility().value());
+        assertEquals(Visibility.PRIVATE.value(), profile.getOtherNamesVisibility().value());
+        assertEquals(Visibility.PRIVATE.value(), profile.getProfileAddressVisibility().value());
     }
 
 }

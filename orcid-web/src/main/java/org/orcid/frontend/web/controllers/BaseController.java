@@ -48,6 +48,7 @@ import org.orcid.utils.OrcidWebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -89,8 +90,6 @@ public class BaseController {
 
     @Resource
     private String cdnConfigFile;
-
-    private long cdnConfigFileLastModified = -1;
 
     @Resource
     private LocaleManager localeManager;
@@ -403,8 +402,8 @@ public class BaseController {
      * @return the path to the static content on local project
      * */
     @ModelAttribute("staticLoc")
-    public String getStaticContentPath(HttpServletRequest request) {
-        if (StringUtils.isBlank(this.staticContentPath)) {
+    public String getStaticContentPath() {            
+        if (StringUtils.isBlank(this.staticContentPath)){
             this.staticContentPath = this.baseUri + STATIC_FOLDER_PATH;
             this.staticContentPath = this.staticContentPath.replace("https:", "");
             this.staticContentPath = this.staticContentPath.replace("http:", "");
@@ -420,52 +419,25 @@ public class BaseController {
      * @return the path to the CDN or the path to the local static content
      * */
     @ModelAttribute("staticCdn")
-    public String getStaticCdnPath(HttpServletRequest request) {
+    @Cacheable("staticContent")
+    public String getStaticCdnPath() {        
         if (StringUtils.isEmpty(this.cdnConfigFile)) {
-            return getStaticContentPath(request);
+            return getStaticContentPath();
         }
 
         ClassPathResource configFile = new ClassPathResource(this.cdnConfigFile);
-        boolean reloadConfigFile = reloadCdnInformation(configFile);
-        if (reloadConfigFile && configFile.exists()) {
-            try (InputStream is = configFile.getInputStream(); BufferedReader br = new BufferedReader(new InputStreamReader(is))) {
-                // Update the last modified date of the config file
-                this.cdnConfigFileLastModified = configFile.lastModified();
-
+        if (configFile.exists()) {
+            try (InputStream is = configFile.getInputStream(); BufferedReader br = new BufferedReader(new InputStreamReader(is))) {                
                 String uri = br.readLine();
-
                 if (uri != null)
                     this.staticCdnPath = uri;
-                else
-                    this.staticCdnPath = this.getStaticContentPath(request);
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
 
         if (StringUtils.isBlank(this.staticCdnPath))
-            this.staticCdnPath = this.getStaticContentPath(request);
-
+            this.staticCdnPath = this.getStaticContentPath();
         return staticCdnPath;
-    }
-
-    /**
-     * Return true if the config file was modified since the last time it was
-     * used.
-     * 
-     * @param configFile
-     *            the config file that contains the CDN information
-     * @return true if the file has been modified since the last time we used
-     *         it.
-     * */
-    private boolean reloadCdnInformation(ClassPathResource configFile) {
-        try {
-            if (this.cdnConfigFileLastModified != configFile.lastModified())
-                return true;
-        } catch (IOException ioe) {
-            // This means the file doesnt exists
-            return false;
-        }
-        return false;
     }
 }

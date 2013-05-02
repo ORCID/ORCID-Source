@@ -287,6 +287,24 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
     }
 
     @Override
+    @Transactional
+    public boolean updateProfile(ProfileEntity profile) {
+        Query query = entityManager.createNativeQuery("update profile set last_modified=now(), credit_name=:credit_name, family_name=:family_name, given_names=:given_names, biography=:biography, iso2_country=:iso2_country, biography_visibility=:biography_visibility, keywords_visibility=:keywords_visibility, researcher_urls_visibility=:researcher_urls_visibility, other_names_visibility=:other_names_visibility, credit_name_visibility=:credit_name_visibility, profile_address_visibility=:profile_address_visibility where orcid=:orcid");
+        query.setParameter("credit_name", profile.getCreditName());
+        query.setParameter("family_name", profile.getFamilyName());
+        query.setParameter("given_names", profile.getGivenNames());
+        query.setParameter("biography", profile.getBiography());
+        query.setParameter("iso2_country", profile.getIso2Country());
+        query.setParameter("biography_visibility", StringUtils.upperCase(profile.getBiographyVisibility().value()));
+        query.setParameter("keywords_visibility", StringUtils.upperCase(profile.getKeywordsVisibility().value()));
+        query.setParameter("researcher_urls_visibility", StringUtils.upperCase(profile.getResearcherUrlsVisibility().value()));
+        query.setParameter("other_names_visibility", StringUtils.upperCase(profile.getOtherNamesVisibility().value()));
+        query.setParameter("credit_name_visibility", StringUtils.upperCase(profile.getCreditNameVisibility().value()));
+        query.setParameter("profile_address_visibility", StringUtils.upperCase(profile.getProfileAddressVisibility().value()));
+        query.setParameter("orcid", profile.getId());
+        return query.executeUpdate() > 0 ? true : false;
+    }
+
     public Date retrieveLastModifiedDate(String orcid) {
         TypedQuery<Date> query = entityManager.createQuery("select lastModified from ProfileEntity where orcid = :orcid", Date.class);
         query.setParameter("orcid", orcid);
@@ -300,5 +318,4 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
         List<OrcidType> results = query.getResultList();
         return results.isEmpty() ? null : results.get(0);
     }
-
 }

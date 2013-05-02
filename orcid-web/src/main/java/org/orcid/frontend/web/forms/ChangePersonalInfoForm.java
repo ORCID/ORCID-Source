@@ -16,16 +16,19 @@
  */
 package org.orcid.frontend.web.forms;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
 import org.orcid.jaxb.model.message.Address;
-import org.orcid.jaxb.model.message.AlternativeEmails;
 import org.orcid.jaxb.model.message.Biography;
 import org.orcid.jaxb.model.message.ContactDetails;
 import org.orcid.jaxb.model.message.Country;
@@ -46,6 +49,10 @@ import org.orcid.jaxb.model.message.ResearcherUrls;
 import org.orcid.jaxb.model.message.Url;
 import org.orcid.jaxb.model.message.UrlName;
 import org.orcid.jaxb.model.message.Visibility;
+import org.orcid.persistence.jpa.entities.OtherNameEntity;
+import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.orcid.persistence.jpa.entities.ProfileKeywordEntity;
+import org.orcid.persistence.jpa.entities.ResearcherUrlEntity;
 
 public class ChangePersonalInfoForm {
 
@@ -69,10 +76,8 @@ public class ChangePersonalInfoForm {
     private String websiteUrlText;
     private String websiteUrlVisibility;
 
-    private ExternalIdentifiers externalIdentifiers;
     private ResearcherUrls savedResearcherUrls;
 
-    private AlternativeEmails savedAlternativeEmails;
 
     public ChangePersonalInfoForm() {
     }
@@ -92,9 +97,8 @@ public class ChangePersonalInfoForm {
         setIsoCountryVisibility(orcidProfile.getOrcidBio().getContactDetails().getAddress().getCountry().getVisibility().value());
         setSavedResearcherUrls(orcidProfile.getOrcidBio().getResearcherUrls());
         setWebsiteUrlVisibility(orcidProfile.getOrcidBio().getResearcherUrls().getVisibility().value());
-        setExternalIdentifiers(orcidProfile.getOrcidBio().getExternalIdentifiers());
     }
-
+    
     private void initNullSafeValues(OrcidProfile currentOrcidProfile) {
         if (currentOrcidProfile.getOrcidBio() == null) {
             currentOrcidProfile.setOrcidBio(new OrcidBio());
@@ -279,14 +283,6 @@ public class ChangePersonalInfoForm {
         this.savedResearcherUrls = savedResearcherUrls;
     }
 
-    public AlternativeEmails getSavedAlternativeEmails() {
-        return savedAlternativeEmails;
-    }
-
-    public void setSavedAlternativeEmails(AlternativeEmails savedAlternativeEmails) {
-        this.savedAlternativeEmails = savedAlternativeEmails;
-    }
-
     public String getOtherNamesVisibility() {
         return otherNamesVisibility;
     }
@@ -328,14 +324,6 @@ public class ChangePersonalInfoForm {
         this.isoCountryVisibility = isoCountryVisibility;
     }
 
-    public ExternalIdentifiers getExternalIdentifiers() {
-        return externalIdentifiers;
-    }
-
-    public void setExternalIdentifiers(ExternalIdentifiers externalIdentifiers) {
-        this.externalIdentifiers = externalIdentifiers;
-    }
-
     public void mergeOrcidBioDetails(OrcidProfile orcidProfile) {
         initNullSafeValues(orcidProfile);
         orcidProfile.getOrcidBio().getPersonalDetails().getCreditName().setContent(creditName);
@@ -349,9 +337,8 @@ public class ChangePersonalInfoForm {
         orcidProfile.getOrcidBio().getContactDetails().getAddress().getCountry().setContent(isoCountryCode);
         orcidProfile.getOrcidBio().getContactDetails().getAddress().getCountry().setVisibility(Visibility.fromValue(isoCountryVisibility));
         orcidProfile.getOrcidBio().getBiography().setContent(biography);
-        orcidProfile.getOrcidBio().setResearcherUrls(persistResearcherInfo());
+        orcidProfile.getOrcidBio().setResearcherUrls(getUpToDateResearcherUrls());
         orcidProfile.getOrcidBio().getResearcherUrls().setVisibility(StringUtils.isBlank(websiteUrlVisibility) ? null : Visibility.fromValue(websiteUrlVisibility));
-        orcidProfile.getOrcidBio().setExternalIdentifiers(externalIdentifiers);
     }
 
     private String buildOtherNamesAsDelimitedString(OtherNames otherNames) {
@@ -363,15 +350,17 @@ public class ChangePersonalInfoForm {
         }
         return otherNamesDelimted != null ? otherNamesDelimted : "";
     }
-
+    
     private OtherNames buildOtherNamesFromDelimitedString(String otherNamesDelimted) {
 
         OtherNames otherNames = new OtherNames();
         String[] otherNamesSplit = StringUtils.split(otherNamesDelimted, DELIMITER);
+        Set<String> dedupOtherNames = new TreeSet<>();
+        Collections.addAll(dedupOtherNames, otherNamesSplit);
         if (otherNamesSplit != null) {
 
-            for (int i = 0; i < otherNamesSplit.length; i++) {
-                OtherName otherName = new OtherName(otherNamesSplit[i]);
+            for (String otherNameString : dedupOtherNames) {
+                OtherName otherName = new OtherName(otherNameString);
                 otherNames.getOtherName().add(otherName);
             }
         }
@@ -381,7 +370,7 @@ public class ChangePersonalInfoForm {
 
     }
 
-    private ResearcherUrls persistResearcherInfo() {
+    public ResearcherUrls getUpToDateResearcherUrls() {
         ResearcherUrls allResearchersForSave = savedResearcherUrls != null ? savedResearcherUrls : new ResearcherUrls();
         if (StringUtils.isNotBlank(websiteUrl)) {
             List<ResearcherUrl> allUrls = allResearchersForSave.getResearcherUrl();
@@ -407,6 +396,7 @@ public class ChangePersonalInfoForm {
         String keywordsDelimited = null;
         if (keywords != null) {
             List<String> allOtherNames = keywords.getKeywordsAsStrings();
+            Collections.sort(allOtherNames);
             keywordsDelimited = StringUtils.join(allOtherNames, DELIMITER);
         }
         return keywordsDelimited != null ? keywordsDelimited : "";
@@ -415,7 +405,7 @@ public class ChangePersonalInfoForm {
     private Keywords buildKeywordsFromDelimitedString(String otherNamesDelimted) {
 
         Keywords keywords = new Keywords();
-        String[] keywordsSplit = StringUtils.split(otherNamesDelimted, DELIMITER);
+        String[] keywordsSplit = StringUtils.split(otherNamesDelimted, DELIMITER);        
         Set<Keyword> allKeywords = new java.util.HashSet<Keyword>();
         if (keywordsSplit != null) {
 
@@ -431,4 +421,18 @@ public class ChangePersonalInfoForm {
 
     }
 
+    /**
+     * TODO
+     * */
+    public List<String> getOtherNameAsList(){
+        return Arrays.asList(StringUtils.split(otherNamesDelimited, DELIMITER));
+        
+    }
+    
+    /**
+     * TODO
+     * */
+    public List<String> getKeywordsAsList(){
+        return Arrays.asList(StringUtils.split(keywordsDelimited, DELIMITER));
+    }
 }
