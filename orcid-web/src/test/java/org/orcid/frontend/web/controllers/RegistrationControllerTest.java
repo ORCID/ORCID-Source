@@ -94,68 +94,6 @@ public class RegistrationControllerTest {
         registrationController.setEncryptionManager(encryptionManager);
     }
 
-    @Test
-    public void testMultipleResearchersFoundByFirstNameLastNameThenProceed() throws Exception {
-
-        HttpSession session = new MockHttpSession();
-        assertNull(session.getAttribute("registrationForm"));
-        HttpServletRequest servletRequest = mock(HttpServletRequest.class);
-
-        BindingResult bindingResult = mock(BindingResult.class);
-        RegistrationForm registrationForm = new RegistrationForm();
-        registrationForm.setPassword("password");
-        registrationForm.setFamilyName("Bass");
-        registrationForm.setGivenNames("Teddy");
-        when(servletRequest.getSession()).thenReturn(session);
-        // don't forget query builder converts name criteria to lower-case
-        when(
-                orcidSearchManager.findOrcidsByQuery("given-names:teddy* AND family-name:bass*", RegistrationController.DUP_SEARCH_START,
-                        RegistrationController.DUP_SEARCH_ROWS, false)).thenReturn(orcidMessageDetailingRecordsFoundForTeddyBass());
-
-        ModelAndView modelAndView = registrationController.submitRegistration(servletRequest, registrationForm, bindingResult);
-        assertEquals("duplicate_researcher", modelAndView.getViewName());
-        assertNotNull(modelAndView.getModelMap().get("potentialDuplicates"));
-        assertEquals("Registration Form stashed in session", session.getAttribute("registrationForm"), registrationForm);
-
-        when(registrationManager.createMinimalRegistration(any(OrcidProfile.class), any(URI.class))).thenReturn(orcidWithIdentifierOnly());
-        ModelAndView redirectToWorkspace = registrationController.progressToConfirmRegistration(servletRequest);
-        assertEquals("redirect:/my-orcid", redirectToWorkspace.getViewName());
-        assertNull("Registration Form should not be in session", session.getAttribute("registrationForm"));
-
-    }
-
-    @Test
-    public void testMultipleResearchersFoundInOAuthFlow() throws Exception {
-
-        HttpSession session = new MockHttpSession();
-        assertNull("Password should not be stashed in session", session.getAttribute("password"));
-        HttpServletRequest servletRequest = mock(HttpServletRequest.class);
-        HttpServletResponse servletResponse = mock(HttpServletResponse.class);
-
-        BindingResult bindingResult = mock(BindingResult.class);
-        RegistrationForm registrationForm = new RegistrationForm();
-        registrationForm.setPassword("password");
-        registrationForm.setFamilyName("Bass");
-        registrationForm.setGivenNames("Teddy");
-        when(servletRequest.getSession()).thenReturn(session);
-        // don't forget query builder converts name criteria to lower-case
-        when(
-                orcidSearchManager.findOrcidsByQuery("given-names:teddy* AND family-name:bass*", RegistrationController.DUP_SEARCH_START,
-                        RegistrationController.DUP_SEARCH_ROWS, false)).thenReturn(orcidMessageDetailingRecordsFoundForTeddyBass());
-
-        LoginForm nullLoginForm = null;
-        ModelAndView modelAndView = registrationController.sendOAuthRegistration(servletRequest, servletResponse, nullLoginForm, registrationForm, bindingResult);
-        assertEquals("oauth_duplicate_researcher", modelAndView.getViewName());
-        assertNotNull(modelAndView.getModelMap().get("potentialDuplicates"));
-        assertEquals("Password stashed in session", session.getAttribute("password"), "password");
-
-        when(registrationManager.createMinimalRegistration(any(OrcidProfile.class), any(URI.class))).thenReturn(orcidWithIdentifierOnly());
-        ModelAndView redirectToWorkspace = registrationController.completeOAuthRegistration(servletRequest, servletResponse, registrationForm);
-        assertEquals("redirect:/my-orcid", redirectToWorkspace.getViewName());
-        assertNull("Password should not be stashed in session", session.getAttribute("password"));
-
-    }
-
     private OrcidProfile orcidWithIdentifierOnly() {
         OrcidProfile orcidProfile = new OrcidProfile();
         orcidProfile.setOrcid("orcid");
