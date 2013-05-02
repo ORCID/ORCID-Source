@@ -235,7 +235,7 @@ public class RegistrationController extends BaseController {
         registerPasswordConfirmValidate(reg);
         regEmailValidate(request, reg);
         registerTermsOfUseValidate(reg);
-      
+
         copyErrors(reg.getEmailConfirm(), reg);
         copyErrors(reg.getEmail(), reg);
         copyErrors(reg.getGivenNames(), reg);
@@ -261,7 +261,8 @@ public class RegistrationController extends BaseController {
         createMinimalRegistrationAndLogUserIn(request, toProfile(reg));
         SavedRequest savedRequest = new HttpSessionRequestCache().getRequest(request, response);
         String redirectUrl = (savedRequest != null ? savedRequest.getRedirectUrl() : null);
-        if (redirectUrl == null) redirectUrl = getBaseUri() + "/my-orcid";
+        if (redirectUrl == null)
+            redirectUrl = getBaseUri() + "/my-orcid";
         r.setUrl(redirectUrl);
         return r;
     }
@@ -302,7 +303,6 @@ public class RegistrationController extends BaseController {
         return reg;
     }
 
-    
     @RequestMapping(value = "/registerGivenNamesValidate.json", method = RequestMethod.POST)
     public @ResponseBody
     Registration registerGivenNameValidate(@RequestBody Registration reg) {
