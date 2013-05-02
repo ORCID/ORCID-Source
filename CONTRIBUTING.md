@@ -3,7 +3,7 @@ The ORCID Team is always **EXCITED** to get contributions. Checkout our pointers
 1.  **Understand the basics**	
 
     Not sure what a pull request is, or how to submit one?  Take a look at GitHub's
-    excellent [Collaborating Documenation](https://help.github.com/categories/63/articles) first.
+    excellent [Collaborating Documentation](https://help.github.com/categories/63/articles) first.
 
 
 * **Discuss non-trivial contribution ideas with committers**
