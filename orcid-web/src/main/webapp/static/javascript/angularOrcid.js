@@ -597,7 +597,7 @@ function RegistrationCtrl($scope, $compile) {
 	    		    orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'New-Registration', 'OAuth']);
 	    	    else
 	    	    	orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'New-Registration', 'Website']);
-	    		orcidGA.windowLocationHrefDelay(window.location.href = data.url);
+	    		orcidGA.windowLocationHrefDelay(data.url);
 	        }
 	    }).fail(function() { 
 	    	// something bad is happening!
