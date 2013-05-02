@@ -17,7 +17,7 @@
 package org.orcid.persistence.dao;
 
 public interface ExternalIdentifierDao {
-    
+
     /**
      * Removes an external identifier from database based on his ID.
      * The ID for external identifiers consists of the "orcid" of the owner and

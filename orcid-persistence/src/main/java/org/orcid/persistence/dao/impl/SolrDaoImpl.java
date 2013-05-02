@@ -89,7 +89,7 @@ public class SolrDaoImpl implements SolrDao {
         return orcidSolrResult;
     }
 
-    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @SuppressWarnings( { "unchecked", "rawtypes" })
     @Override
     public List<OrcidSolrResult> findByDocumentCriteria(String queryString, Integer start, Integer rows) {
         List<OrcidSolrResult> orcidSolrResults = new ArrayList<OrcidSolrResult>();

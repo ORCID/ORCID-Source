@@ -41,13 +41,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:orcid-persistence-context.xml" })
-public class OtherNameDaoTest extends DBUnitTest {        
+public class OtherNameDaoTest extends DBUnitTest {
     @Resource
     private OtherNameDao otherNameDao;
-    
+
     @BeforeClass
     public static void initDBUnitData() throws Exception {
-        initDBUnitData(Arrays.asList("/data/SecurityQuestionEntityData.xml", "/data/SubjectEntityData.xml", "/data/ProfileEntityData.xml"), null);        
+        initDBUnitData(Arrays.asList("/data/SecurityQuestionEntityData.xml", "/data/SubjectEntityData.xml", "/data/ProfileEntityData.xml"), null);
     }
 
     @AfterClass
@@ -57,30 +57,30 @@ public class OtherNameDaoTest extends DBUnitTest {
 
     @Before
     public void beforeRunning() {
-        assertNotNull(otherNameDao);        
+        assertNotNull(otherNameDao);
     }
-    
+
     @Test
     @Rollback(true)
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void testfindOtherNameByOrcid() {
         List<OtherNameEntity> otherNames = otherNameDao.getOtherName("4444-4444-4444-4443");
         assertNotNull(otherNames);
-        assertEquals(2,otherNames.size());
+        assertEquals(2, otherNames.size());
     }
-    
+
     @Test
     @Rollback(true)
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public void testUpdateOtherName(){
+    public void testUpdateOtherName() {
         try {
             otherNameDao.updateOtherName(null);
             fail();
-        } catch(UnsupportedOperationException e){
-            
+        } catch (UnsupportedOperationException e) {
+
         }
     }
-    
+
     @Test
     @Rollback(true)
     @Transactional(propagation = Propagation.REQUIRES_NEW)
@@ -88,20 +88,20 @@ public class OtherNameDaoTest extends DBUnitTest {
         assertEquals(2, otherNameDao.getOtherName("4444-4444-4444-4443").size());
         boolean result = otherNameDao.addOtherName("4444-4444-4444-4443", "OtherName");
         assertEquals(true, result);
-        assertEquals(3, otherNameDao.getOtherName("4444-4444-4444-4443").size());        
+        assertEquals(3, otherNameDao.getOtherName("4444-4444-4444-4443").size());
     }
-    
+
     @Test
     @Rollback(true)
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public void testDeleteOtherName(){
-        List<OtherNameEntity> otherNames = otherNameDao.getOtherName("4444-4444-4444-4443");        
+    public void testDeleteOtherName() {
+        List<OtherNameEntity> otherNames = otherNameDao.getOtherName("4444-4444-4444-4443");
         assertNotNull(otherNames);
         assertEquals(2, otherNames.size());
         OtherNameEntity otherName = otherNames.get(0);
         assertTrue(otherNameDao.deleteOtherName(otherName));
         List<OtherNameEntity> updatedOtherNames = otherNameDao.getOtherName("4444-4444-4444-4443");
-        assertNotNull(updatedOtherNames);        
-        assertEquals(1, updatedOtherNames.size());        
+        assertNotNull(updatedOtherNames);
+        assertEquals(1, updatedOtherNames.size());
     }
 }

@@ -22,7 +22,7 @@ import org.orcid.jaxb.model.message.ResearcherUrls;
 import org.orcid.persistence.jpa.entities.ResearcherUrlEntity;
 
 public interface ResearcherUrlManager {
-    
+
     /**
      * Return the list of researcher urls associated to a specific profile
      * @param orcid
@@ -30,18 +30,21 @@ public interface ResearcherUrlManager {
      *          the list of researcher urls associated with the orcid profile
      * */
     public List<ResearcherUrlEntity> getResearcherUrls(String orcid);
+
     /**
      * Deleted a researcher url from database
      * @param id
      * @return true if the researcher url was successfully deleted
      * */
     public boolean deleteResearcherUrl(long id);
+
     /**
      * Retrieve a researcher url from database
      * @param id
      * @return the ResearcherUrlEntity associated with the parameter id
      * */
     public ResearcherUrlEntity getResearcherUrl(long id);
+
     /**
      * Adds a researcher url to a specific profile
      * @param orcid
@@ -50,6 +53,7 @@ public interface ResearcherUrlManager {
      * @return true if the researcher url was successfully created on database
      * */
     public void addResearcherUrls(String orcid, String url, String urlName);
+
     /**
      * Update the researcher urls associated with a specific account
      * @param orcid

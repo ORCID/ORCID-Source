@@ -30,7 +30,7 @@ public class ProfileKeywordDaoImpl extends GenericDaoImpl<ProfileKeywordEntity, 
     public ProfileKeywordDaoImpl() {
         super(ProfileKeywordEntity.class);
     }
-    
+
     /**
      * Return the list of keywords associated to a specific profile
      * @param orcid
@@ -69,7 +69,8 @@ public class ProfileKeywordDaoImpl extends GenericDaoImpl<ProfileKeywordEntity, 
     @Override
     @Transactional
     public boolean addProfileKeyword(String orcid, String keyword) {
-        Query query = entityManager.createNativeQuery("INSERT INTO profile_keyword (date_created, last_modified, profile_orcid, keywords_name) VALUES (now(), now(), :orcid, :keywords_name)");
+        Query query = entityManager
+                .createNativeQuery("INSERT INTO profile_keyword (date_created, last_modified, profile_orcid, keywords_name) VALUES (now(), now(), :orcid, :keywords_name)");
         query.setParameter("orcid", orcid);
         query.setParameter("keywords_name", keyword);
         return query.executeUpdate() > 0 ? true : false;

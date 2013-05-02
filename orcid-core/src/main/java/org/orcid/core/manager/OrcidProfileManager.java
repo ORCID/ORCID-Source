@@ -303,7 +303,7 @@ public interface OrcidProfileManager {
     OrcidWorks dedupeWorks(OrcidWorks orcidWorks);
 
     OrcidProfile retrieveClaimedOrcidProfile(String orcid);
-    
+
     Date retrieveLastModifiedDate(String orcid);
 
 }

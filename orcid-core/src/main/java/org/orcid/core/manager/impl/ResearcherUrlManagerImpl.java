@@ -37,10 +37,10 @@ import org.slf4j.LoggerFactory;
 public class ResearcherUrlManagerImpl implements ResearcherUrlManager {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ResearcherUrlManagerImpl.class);
-    
+
     @Resource
     private ResearcherUrlDao researcherUrlDao;
-    
+
     /**
      * Return the list of researcher urls associated to a specific profile
      * @param orcid
@@ -90,36 +90,36 @@ public class ResearcherUrlManagerImpl implements ResearcherUrlManager {
      * @param researcherUrls
      * */
     @Override
-    public boolean updateResearcherUrls(String orcid, ResearcherUrls researcherUrls){
+    public boolean updateResearcherUrls(String orcid, ResearcherUrls researcherUrls) {
         boolean hasErrors = false;
         List<ResearcherUrlEntity> currentResearcherUrls = this.getResearcherUrls(orcid);
         Iterator<ResearcherUrlEntity> currentIterator = currentResearcherUrls.iterator();
         ArrayList<ResearcherUrl> newResearcherUrls = new ArrayList<ResearcherUrl>(researcherUrls.getResearcherUrl());
-        
-        while(currentIterator.hasNext()){
+
+        while (currentIterator.hasNext()) {
             ResearcherUrlEntity existingResearcherUrl = currentIterator.next();
             ResearcherUrl researcherUrl = new ResearcherUrl(new Url(existingResearcherUrl.getUrl()), new UrlName(existingResearcherUrl.getUrlName()));
             //Delete non modified researcher urls from the parameter list
-            if(newResearcherUrls.contains(researcherUrl)) {
+            if (newResearcherUrls.contains(researcherUrl)) {
                 newResearcherUrls.remove(researcherUrl);
             } else {
                 //Delete researcher urls deleted by user
                 researcherUrlDao.deleteResearcherUrl(existingResearcherUrl.getId());
             }
         }
-        
+
         //Init null fields
         initNullSafeValues(newResearcherUrls);
         //At this point, only new researcher urls are in the list newResearcherUrls
         //Insert all these researcher urls on database
-        for(ResearcherUrl newResearcherUrl : newResearcherUrls){
+        for (ResearcherUrl newResearcherUrl : newResearcherUrls) {
             try {
                 researcherUrlDao.addResearcherUrls(orcid, newResearcherUrl.getUrl().getValue(), newResearcherUrl.getUrlName().getContent());
-            } catch(PersistenceException e){
+            } catch (PersistenceException e) {
                 //If the researcher url was duplicated, log the error
-                if(e.getCause()  != null && e.getCause().getClass().isAssignableFrom(ConstraintViolationException.class)) {
+                if (e.getCause() != null && e.getCause().getClass().isAssignableFrom(ConstraintViolationException.class)) {
                     LOGGER.warn("Duplicated researcher url was found, the url {} already exists for {}", newResearcherUrl.getUrl().getValue(), orcid);
-                    hasErrors = true;                    
+                    hasErrors = true;
                 } else {
                     //If the error is not a duplicated error, something else happened, so, log the error and throw an exception
                     LOGGER.warn("Error inserting new researcher url {} for {}", newResearcherUrl.getUrl().getValue(), orcid);
@@ -129,16 +129,16 @@ public class ResearcherUrlManagerImpl implements ResearcherUrlManager {
         }
         return hasErrors;
     }
-    
+
     /**
      * Init null safe values for researcher urls
      * @param researcherUrls
      * */
-    private void initNullSafeValues(ArrayList<ResearcherUrl> newResearcherUrls){
-        for(ResearcherUrl researcherUrl : newResearcherUrls){
-            if(researcherUrl.getUrl() == null)
+    private void initNullSafeValues(ArrayList<ResearcherUrl> newResearcherUrls) {
+        for (ResearcherUrl researcherUrl : newResearcherUrls) {
+            if (researcherUrl.getUrl() == null)
                 researcherUrl.setUrl(new Url(new String()));
-            if(researcherUrl.getUrlName() == null)
+            if (researcherUrl.getUrlName() == null)
                 researcherUrl.setUrlName(new UrlName(new String()));
         }
     }

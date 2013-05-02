@@ -42,7 +42,6 @@ public class Claim extends Redirect implements ErrorsInterface, Serializable {
 
     private Text passwordConfirm;
 
-
     public Claim() {
         errors = new ArrayList<String>();
         password = new Text();

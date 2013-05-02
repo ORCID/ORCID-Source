@@ -31,7 +31,7 @@ public class ProfileKeywordManagerImpl implements ProfileKeywordManager {
 
     @Resource
     ProfileKeywordDao profileKeywordDao;
-    
+
     /**
      * Return the list of keywords associated to a specific profile
      * @param orcid
@@ -71,27 +71,27 @@ public class ProfileKeywordManagerImpl implements ProfileKeywordManager {
      * @param keywords    
      * */
     @Override
-    public void updateProfileKeyword(String orcid, Keywords keywords){
+    public void updateProfileKeyword(String orcid, Keywords keywords) {
         List<ProfileKeywordEntity> currentKeywords = this.getProfileKeywors(orcid);
         Iterator<ProfileKeywordEntity> currentIt = currentKeywords.iterator();
         ArrayList<String> newKeywords = new ArrayList<String>(keywords.getKeywordsAsStrings());
-        
-        while(currentIt.hasNext()){            
-            ProfileKeywordEntity existingKeyword = currentIt.next(); 
+
+        while (currentIt.hasNext()) {
+            ProfileKeywordEntity existingKeyword = currentIt.next();
             //Delete non modified other names from the parameter list
-            if(newKeywords.contains(existingKeyword.getKeyword())) {
+            if (newKeywords.contains(existingKeyword.getKeyword())) {
                 newKeywords.remove(existingKeyword.getKeyword());
             } else {
                 //Delete other names deleted by user
-                profileKeywordDao.deleteProfileKeyword(orcid, existingKeyword.getKeyword());                        
+                profileKeywordDao.deleteProfileKeyword(orcid, existingKeyword.getKeyword());
             }
         }
-        
+
         //At this point, only new other names are in the parameter list otherNames
         //Insert all these other names on database
-        for(String newKeyword : newKeywords){
-            profileKeywordDao.addProfileKeyword(orcid, newKeyword);            
+        for (String newKeyword : newKeywords) {
+            profileKeywordDao.addProfileKeyword(orcid, newKeyword);
         }
     }
-    
+
 }

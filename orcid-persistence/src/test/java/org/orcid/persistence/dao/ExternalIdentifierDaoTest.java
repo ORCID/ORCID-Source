@@ -42,10 +42,10 @@ public class ExternalIdentifierDaoTest extends DBUnitTest {
 
     @Resource
     private ExternalIdentifierDao externalIdentifierDao;
-    
+
     @BeforeClass
     public static void initDBUnitData() throws Exception {
-        initDBUnitData(Arrays.asList("/data/SecurityQuestionEntityData.xml", "/data/SubjectEntityData.xml", "/data/ProfileEntityData.xml"), null);        
+        initDBUnitData(Arrays.asList("/data/SecurityQuestionEntityData.xml", "/data/SubjectEntityData.xml", "/data/ProfileEntityData.xml"), null);
     }
 
     @AfterClass
@@ -55,9 +55,9 @@ public class ExternalIdentifierDaoTest extends DBUnitTest {
 
     @Before
     public void beforeRunning() {
-        assertNotNull(externalIdentifierDao);        
+        assertNotNull(externalIdentifierDao);
     }
-    
+
     @Test
     @Rollback(true)
     @Transactional(propagation = Propagation.REQUIRES_NEW)

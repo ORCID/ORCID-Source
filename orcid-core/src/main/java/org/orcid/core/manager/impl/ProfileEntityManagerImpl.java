@@ -41,7 +41,7 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
     public ProfileEntity findByOrcid(String orcid) {
         return profileDao.find(orcid);
     }
- 
+
     @Override
     public ProfileEntity findByEmail(String email) {
         return profileDao.findByEmail(email);
@@ -65,16 +65,16 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
     public Long getConfirmedProfileCount() {
         return profileDao.getConfirmedProfileCount();
     }
-    
+
     /**
      * TODO
-     * */    
+     * */
     @Override
     public boolean updateProfile(OrcidProfile orcidProfile) {
         ProfileEntity profile = generateProfileEntityWithBio(orcidProfile);
         return profileDao.updateProfile(profile);
     }
-    
+
     /**
      * Generate a ProfileEntity object with the bio information populated from the info that comes from the
      * OrcidProfile parameter
@@ -82,7 +82,7 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
      * @return 
      *          A Profile Entity containing the bio information that comes in the OrcidProfile parameter
      * */
-    private ProfileEntity generateProfileEntityWithBio(OrcidProfile orcidProfile){
+    private ProfileEntity generateProfileEntityWithBio(OrcidProfile orcidProfile) {
         ProfileEntity profile = new ProfileEntity();
         profile.setCreditName(orcidProfile.getOrcidBio().getPersonalDetails().getCreditName().getContent());
         profile.setFamilyName(orcidProfile.getOrcidBio().getPersonalDetails().getFamilyName().getContent());

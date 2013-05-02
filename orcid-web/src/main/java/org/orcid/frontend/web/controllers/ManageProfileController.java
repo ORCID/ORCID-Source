@@ -118,19 +118,19 @@ public class ManageProfileController extends BaseWorkspaceController {
 
     @Resource
     private NotificationManager notificationManager;
-    
+
     @Resource
     private ResearcherUrlManager researcherUrlManager;
 
     @Resource
     private ProfileKeywordManager profileKeywordManager;
-    
+
     @Resource
     private OtherNameManager otherNameManager;
-    
+
     @Resource
     private ProfileEntityManager profileEntityManager;
-    
+
     public EncryptionManager getEncryptionManager() {
         return encryptionManager;
     }
@@ -910,20 +910,20 @@ public class ManageProfileController extends BaseWorkspaceController {
         OrcidProfile profile = getCurrentUser().getRealProfile();
         //Update profile with values that comes from user request
         changePersonalInfoForm.mergeOrcidBioDetails(profile);
-        
+
         //Update profile on database
         profileEntityManager.updateProfile(profile);
-        
+
         String orcid = profile.getOrcid().getValue();
-        
+
         //Update other names on database
         OtherNames otherNames = profile.getOrcidBio().getPersonalDetails().getOtherNames();
         otherNameManager.updateOtherNames(orcid, otherNames);
-        
+
         //Update keywords on database
         Keywords keywords = profile.getOrcidBio().getKeywords();
         profileKeywordManager.updateProfileKeyword(orcid, keywords);
-        
+
         //Update researcher urls on database
         ResearcherUrls researcherUrls = profile.getOrcidBio().getResearcherUrls();
         boolean hasErrors = researcherUrlManager.updateResearcherUrls(orcid, researcherUrls);
@@ -931,35 +931,35 @@ public class ManageProfileController extends BaseWorkspaceController {
         //however there is no way to tell the controller that some of the researcher urls were not 
         //saved, so, if an error occurs, we need to reload researcher ids from database and update
         //cached profile. A more efficient way to fix this might be used. 
-        if(hasErrors){            
+        if (hasErrors) {
             ResearcherUrls upToDateResearcherUrls = getUpToDateResearcherUrls(orcid, researcherUrls.getVisibility());
             profile.getOrcidBio().setResearcherUrls(upToDateResearcherUrls);
         }
-        
+
         //Update cached profile
-        getCurrentUser().setEffectiveProfile(profile); 
-        
+        getCurrentUser().setEffectiveProfile(profile);
+
         redirectAttributes.addFlashAttribute("changesSaved", true);
         return manageBioView;
-    }  
-    
+    }
+
     /**
      * Generate an up to date ResearcherUrls object.
      * @param orcid
      * @param visibility
      * */
-    private ResearcherUrls getUpToDateResearcherUrls(String orcid, Visibility visibility){
+    private ResearcherUrls getUpToDateResearcherUrls(String orcid, Visibility visibility) {
         ResearcherUrls upTodateResearcherUrls = new ResearcherUrls();
         upTodateResearcherUrls.setVisibility(visibility);
         List<ResearcherUrlEntity> upToDateResearcherUrls = researcherUrlManager.getResearcherUrls(orcid);
-        
-        for(ResearcherUrlEntity researcherUrlEntity : upToDateResearcherUrls){
+
+        for (ResearcherUrlEntity researcherUrlEntity : upToDateResearcherUrls) {
             ResearcherUrl newResearcherUrl = new ResearcherUrl();
             newResearcherUrl.setUrl(new Url(researcherUrlEntity.getUrl()));
             newResearcherUrl.setUrlName(new UrlName(researcherUrlEntity.getUrlName()));
             upTodateResearcherUrls.getResearcherUrl().add(newResearcherUrl);
         }
-        
+
         return upTodateResearcherUrls;
     }
 }

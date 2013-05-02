@@ -29,6 +29,7 @@ public interface ProfileKeywordManager {
      *          the list of keywords associated with the orcid profile
      * */
     public List<ProfileKeywordEntity> getProfileKeywors(String orcid);
+
     /**
      * Deleted a keyword from database
      * @param orcid
@@ -36,6 +37,7 @@ public interface ProfileKeywordManager {
      * @return true if the keyword was successfully deleted
      * */
     public boolean deleteProfileKeyword(String orcid, String keyword);
+
     /**
      * Adds a keyword to a specific profile
      * @param orcid
@@ -43,6 +45,7 @@ public interface ProfileKeywordManager {
      * @return true if the keyword was successfully created on database
      * */
     public void addProfileKeyword(String orcid, String keyword);
+
     /**
      * Update the list of keywords associated with a specific account
      * @param orcid
