@@ -69,7 +69,7 @@ public class RegistrationFormValidationTest extends AbstractConstraintValidator<
         assertEquals("Please enter your e-mail address.", email);
         assertEquals("Please enter a password.", password);
         assertEquals("Passwords must be 8 or more characters and contain at least 1 number and at least 1 alpha character or symbol.", retypedPassword);
-        assertEquals("You must accept the terms and conditions.", termsAndConditions);
+        assertEquals("You must accept the terms and conditions to register.", termsAndConditions);
     }
 
     @Test
