@@ -45,7 +45,6 @@ import org.orcid.core.manager.SponsorManager;
 import org.orcid.core.utils.PasswordResetToken;
 import org.orcid.frontend.web.controllers.helper.SearchOrcidSolrCriteria;
 import org.orcid.frontend.web.forms.ChangeSecurityQuestionForm;
-import org.orcid.frontend.web.forms.ClaimForm;
 import org.orcid.frontend.web.forms.EmailAddressForm;
 import org.orcid.frontend.web.forms.LoginForm;
 import org.orcid.frontend.web.forms.OneTimeResetPasswordForm;
@@ -75,8 +74,11 @@ import org.orcid.jaxb.model.message.WorkVisibilityDefault;
 import org.orcid.password.constants.OrcidPasswordConstants;
 import org.orcid.pojo.DupicateResearcher;
 import org.orcid.pojo.Redirect;
+import org.orcid.pojo.ajaxForm.Checkbox;
+import org.orcid.pojo.ajaxForm.Claim;
 import org.orcid.pojo.ajaxForm.ErrorsInterface;
 import org.orcid.pojo.ajaxForm.Registration;
+import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.utils.DateUtils;
 import org.orcid.utils.OrcidWebUtils;
 import org.slf4j.Logger;
@@ -331,37 +333,74 @@ public class RegistrationController extends BaseController {
     @RequestMapping(value = "/registerPasswordConfirmValidate.json", method = RequestMethod.POST)
     public @ResponseBody
     Registration registerPasswordConfirmValidate(@RequestBody Registration reg) {
-        reg.getPasswordConfirm().setErrors(new ArrayList<String>());
-        // validate passwords match
-        if (reg.getPasswordConfirm().getValue() == null || !reg.getPasswordConfirm().getValue().equals(reg.getPassword().getValue())) {
-            setError(reg.getPasswordConfirm(), "FieldMatch.registrationForm");
-        }
+        passwordConfirmValidate(reg.getPasswordConfirm(), reg.getPassword());
         return reg;
     }
 
+ 
     @RequestMapping(value = "/registerPasswordValidate.json", method = RequestMethod.POST)
     public @ResponseBody
     Registration registerPasswordValidate(@RequestBody Registration reg) {
-        reg.getPassword().setErrors(new ArrayList<String>());
+        passwordValidate(reg.getPasswordConfirm(), reg.getPassword());
+        return reg;
+    }
+    
+    @RequestMapping(value = "/claimPasswordConfirmValidate.json", method = RequestMethod.POST)
+    public @ResponseBody
+    Claim claimPasswordConfirmValidate(@RequestBody Claim claim) {
+        passwordConfirmValidate(claim.getPasswordConfirm(), claim.getPassword());
+        return claim;
+    }
+
+ 
+    @RequestMapping(value = "/claimPasswordValidate.json", method = RequestMethod.POST)
+    public @ResponseBody
+    Claim claimPasswordValidate(@RequestBody Claim claim) {
+        passwordValidate(claim.getPasswordConfirm(), claim.getPassword());
+        return claim;
+    }
+
+
+    private void passwordConfirmValidate(Text passwordConfirm, Text password) {
+        passwordConfirm.setErrors(new ArrayList<String>());
+        // validate passwords match
+        if (passwordConfirm.getValue() == null || !passwordConfirm.getValue().equals(password.getValue())) {
+            setError(passwordConfirm, "FieldMatch.registrationForm");
+        }
+    }
+
+    private void passwordValidate(Text passwordConfirm, Text password) {
+        password.setErrors(new ArrayList<String>());
         // validate password regex
-        if (reg.getPassword().getValue() == null || !reg.getPassword().getValue().matches(OrcidPasswordConstants.ORCID_PASSWORD_REGEX)) {
-            setError(reg.getPassword(), "Pattern.registrationForm.password");
+        if (password.getValue() == null || !password.getValue().matches(OrcidPasswordConstants.ORCID_PASSWORD_REGEX)) {
+            setError(password, "Pattern.registrationForm.password");
         }
 
-        if (reg.getPasswordConfirm().getValue() != null) {
-            registerPasswordConfirmValidate(reg);
+        if (passwordConfirm.getValue() != null) {
+            passwordConfirmValidate(passwordConfirm, password);
         }
-        return reg;
     }
 
     @RequestMapping(value = "/registerTermsOfUseValidate.json", method = RequestMethod.POST)
     public @ResponseBody
     Registration registerTermsOfUseValidate(@RequestBody Registration reg) {
-        reg.getTermsOfUse().setErrors(new ArrayList<String>());
-        if (reg.getTermsOfUse().getValue() != true) {
-            setError(reg.getTermsOfUse(), "AssertTrue.registrationForm.acceptTermsAndConditions");
-        }
+        termsOfUserValidate(reg.getTermsOfUse());
         return reg;
+    }
+    
+    @RequestMapping(value = "/claimTermsOfUseValidate.json", method = RequestMethod.POST)
+    public @ResponseBody
+    Claim claimTermsOfUseValidate(@RequestBody Claim  claim) {
+        termsOfUserValidate(claim.getTermsOfUse());
+        return claim;
+    }
+
+
+    private void termsOfUserValidate(Checkbox termsOfUser) {
+        termsOfUser.setErrors(new ArrayList<String>());
+        if (termsOfUser.getValue() != true) {
+            setError(termsOfUser, "AssertTrue.registrationForm.acceptTermsAndConditions");
+        }
     }
 
     
@@ -778,42 +817,61 @@ public class RegistrationController extends BaseController {
         }
         OrcidProfile profileToClaim = orcidProfileManager.retrieveOrcidProfileByEmail(decryptedEmail);
         if (profileToClaim.getOrcidHistory().isClaimed()) {
-            // Already claimed so send to sign in page
-            redirectAttributes.addFlashAttribute("alreadyClaimed", true);
-            return new ModelAndView("redirect:/signin");
+            return new ModelAndView("redirect:/signin?alreadyClaimed");
         }
         ModelAndView mav = new ModelAndView("claim");
-        ClaimForm claimForm = new ClaimForm();
-        mav.addObject(claimForm);
-        mav.addObject("profile", profileToClaim);
         return mav;
     }
 
-    @RequestMapping(value = "/claim/{encryptedEmail}", method = RequestMethod.POST)
-    public ModelAndView submitClaim(HttpServletRequest request, @PathVariable("encryptedEmail") String encryptedEmail, @ModelAttribute @Valid ClaimForm claimForm,
-            BindingResult bindingResult, RedirectAttributes redirectAttributes) throws NoSuchRequestHandlingMethodException, UnsupportedEncodingException {
+    @RequestMapping(value = "/claim/{encryptedEmail}.json", method = RequestMethod.GET)
+    public @ResponseBody Claim
+     verifyClaimJson(HttpServletRequest request, @PathVariable("encryptedEmail") String encryptedEmail, RedirectAttributes redirectAttributes)
+            throws NoSuchRequestHandlingMethodException, UnsupportedEncodingException {
+        Claim c = new Claim();
+        c.getSendChangeNotifications().setValue(true);
+        c.getSendOrcidNews().setValue(true);
+        c.getTermsOfUse().setValue(false);
+        claimTermsOfUseValidate(c);      
+        return c;
+    }
+
+    @RequestMapping(value = "/claim/{encryptedEmail}.json", method = RequestMethod.POST)
+    public @ResponseBody Claim submitClaimJson(HttpServletRequest request, @PathVariable("encryptedEmail") String encryptedEmail, @RequestBody Claim claim) throws NoSuchRequestHandlingMethodException, UnsupportedEncodingException {
         String decryptedEmail = encryptionManager.decryptForExternalUse(new String(Base64.decodeBase64(encryptedEmail), "UTF-8"));
         if (!isEmailOkForCurrentUser(decryptedEmail)) {
-            return new ModelAndView("wrong_user");
+            claim.setUrl(getBaseUri() + "/claim/wrong_user");
+            return claim;
         }
         OrcidProfile profileToClaim = orcidProfileManager.retrieveOrcidProfileByEmail(decryptedEmail);
         if (profileToClaim.getOrcidHistory().isClaimed()) {
             // Already claimed so send to sign in page
-            redirectAttributes.addFlashAttribute("alreadyClaimed", true);
-            return new ModelAndView("redirect:/signin");
+            claim.setUrl(getBaseUri() + "/signin?alreadyClaimed");
+            return claim;
         }
-        if (bindingResult.hasErrors()) {
-            ModelAndView mav = new ModelAndView("claim");
-            mav.addAllObjects(bindingResult.getModel());
-            mav.addObject("profile", profileToClaim);
-            return mav;
+        
+        
+        claimPasswordValidate(claim);
+        claimPasswordConfirmValidate(claim);
+        claimTermsOfUseValidate(claim);
+      
+        copyErrors(claim.getPassword(), claim);
+        copyErrors(claim.getPasswordConfirm(), claim);
+        copyErrors(claim.getTermsOfUse(), claim);
+
+        if (claim.getErrors().size() > 0) {
+            return claim;
         }
-        OrcidProfile orcidProfile = confirmEmailAndClaim(decryptedEmail, profileToClaim, claimForm, request);
-        orcidProfile.setPassword(claimForm.getPassword());
+        OrcidProfile orcidProfile = confirmEmailAndClaim(decryptedEmail, profileToClaim, claim, request);
+        orcidProfile.setPassword(claim.getPassword().getValue());
         orcidProfileManager.updatePasswordInformation(orcidProfile);
-        automaticallyLogin(request, claimForm.getPassword(), orcidProfile);
-        redirectAttributes.addFlashAttribute("recordClaimed", true);
-        return new ModelAndView("redirect:/my-orcid");
+        automaticallyLogin(request, claim.getPassword().getValue(), orcidProfile);
+        claim.setUrl(getBaseUri() + "/my-orcid?recordClaimed");
+        return claim;
+    }
+
+    @RequestMapping(value = "/claim/wrong_user", method = RequestMethod.GET)
+    public ModelAndView claimWrongUser(HttpServletRequest request) {
+       return new ModelAndView("wrong_user");
     }
 
     private ModelAndView buildVerificationView(HttpServletRequest request, String encryptedEmail, RedirectAttributes redirectAttributes)
@@ -828,7 +886,7 @@ public class RegistrationController extends BaseController {
         return new ModelAndView("redirect:/my-orcid");
     }
 
-    private OrcidProfile confirmEmailAndClaim(String decryptedEmail, OrcidProfile orcidProfile, ClaimForm claimForm, HttpServletRequest request)
+    private OrcidProfile confirmEmailAndClaim(String decryptedEmail, OrcidProfile orcidProfile, Claim claim, HttpServletRequest request)
             throws NoSuchRequestHandlingMethodException {
         if (orcidProfile == null) {
             throw new NoSuchRequestHandlingMethodException(request);
@@ -842,14 +900,14 @@ public class RegistrationController extends BaseController {
         if (completionDate == null) {
             orcidHistory.setCompletionDate(new CompletionDate(DateUtils.convertToXMLGregorianCalendar(new Date())));
         }
-        if (claimForm != null) {
+        if (claim != null) {
             Preferences preferences = orcidProfile.getOrcidInternal().getPreferences();
             if (preferences == null) {
                 preferences = new Preferences();
             }
-            preferences.setSendChangeNotifications(new SendChangeNotifications(claimForm.isSendOrcidChangeNotifcations()));
-            preferences.setSendOrcidNews(new SendOrcidNews(claimForm.isSendOrcidNews()));
-            preferences.setWorkVisibilityDefault(new WorkVisibilityDefault(Visibility.fromValue(claimForm.getWorkVisibilityDefault())));
+            preferences.setSendChangeNotifications(new SendChangeNotifications(claim.getSendChangeNotifications().getValue()));
+            preferences.setSendOrcidNews(new SendOrcidNews(claim.getSendOrcidNews().getValue()));
+            preferences.setWorkVisibilityDefault(new WorkVisibilityDefault(claim.getWorkVisibilityDefault().getVisibility()));
         }
         return orcidProfileManager.updateOrcidProfile(orcidProfile);
     }

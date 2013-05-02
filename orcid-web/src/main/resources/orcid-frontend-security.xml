@@ -94,6 +94,7 @@
         <sec:intercept-url pattern="/register(\?.*)?" access="IS_AUTHENTICATED_ANONYMOUSLY"/>
         <sec:intercept-url pattern="/register.json(\?.*)?" access="IS_AUTHENTICATED_ANONYMOUSLY"/>
         <sec:intercept-url pattern="/register(.*)Validate.json(\?.*)?" access="IS_AUTHENTICATED_ANONYMOUSLY"/>
+        <sec:intercept-url pattern="/claim(.*)Validate.json(\?.*)?" access="IS_AUTHENTICATED_ANONYMOUSLY"/>
         <sec:intercept-url pattern="/registerConfirm.json(\?.*)?" access="IS_AUTHENTICATED_ANONYMOUSLY"/>
         <sec:intercept-url pattern="/dupicateResearcher.json(\?.*)?" access="IS_AUTHENTICATED_ANONYMOUSLY"/>
         <sec:intercept-url pattern="/claim/.*" access="IS_AUTHENTICATED_ANONYMOUSLY"/>
