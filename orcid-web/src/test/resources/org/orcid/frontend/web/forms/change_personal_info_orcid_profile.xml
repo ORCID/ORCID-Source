@@ -8,8 +8,8 @@
             <family-name>Simpson</family-name>
             <credit-name visibility="private">Homer Thompson</credit-name>
             <other-names visibility="limited">
-                <other-name>Gal</other-name>
                 <other-name>Dove</other-name>
+                <other-name>Gal</other-name>
             </other-names>
         </personal-details>
         <biography>my biography</biography>

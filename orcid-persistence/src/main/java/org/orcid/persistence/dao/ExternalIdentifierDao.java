@@ -28,5 +28,5 @@ public interface ExternalIdentifierDao {
      * @param externalIdReference
      *            Identifier of the external id.
      * */
-    void removeExternalIdentifier(String orcid, String externalIdReference);
+    boolean removeExternalIdentifier(String orcid, String externalIdReference);
 }

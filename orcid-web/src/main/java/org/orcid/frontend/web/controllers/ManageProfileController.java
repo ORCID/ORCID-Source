@@ -33,6 +33,10 @@ import org.apache.commons.lang.StringUtils;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.OrcidSearchManager;
+import org.orcid.core.manager.OtherNameManager;
+import org.orcid.core.manager.ProfileEntityManager;
+import org.orcid.core.manager.ProfileKeywordManager;
+import org.orcid.core.manager.ResearcherUrlManager;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.utils.SolrFieldWeight;
 import org.orcid.core.utils.SolrQueryBuilder;
@@ -51,18 +55,25 @@ import org.orcid.jaxb.model.message.Email;
 import org.orcid.jaxb.model.message.EncryptedSecurityAnswer;
 import org.orcid.jaxb.model.message.GivenPermissionBy;
 import org.orcid.jaxb.model.message.GivenPermissionTo;
+import org.orcid.jaxb.model.message.Keywords;
 import org.orcid.jaxb.model.message.Orcid;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidSearchResults;
 import org.orcid.jaxb.model.message.OrcidType;
+import org.orcid.jaxb.model.message.OtherNames;
 import org.orcid.jaxb.model.message.Preferences;
+import org.orcid.jaxb.model.message.ResearcherUrl;
+import org.orcid.jaxb.model.message.ResearcherUrls;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.message.SecurityDetails;
 import org.orcid.jaxb.model.message.SecurityQuestionId;
+import org.orcid.jaxb.model.message.Url;
+import org.orcid.jaxb.model.message.UrlName;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
 import org.orcid.password.constants.OrcidPasswordConstants;
+import org.orcid.persistence.jpa.entities.ResearcherUrlEntity;
 import org.orcid.pojo.ChangePassword;
 import org.orcid.pojo.Emails;
 import org.orcid.pojo.Errors;
@@ -107,7 +118,19 @@ public class ManageProfileController extends BaseWorkspaceController {
 
     @Resource
     private NotificationManager notificationManager;
+    
+    @Resource
+    private ResearcherUrlManager researcherUrlManager;
 
+    @Resource
+    private ProfileKeywordManager profileKeywordManager;
+    
+    @Resource
+    private OtherNameManager otherNameManager;
+    
+    @Resource
+    private ProfileEntityManager profileEntityManager;
+    
     public EncryptionManager getEncryptionManager() {
         return encryptionManager;
     }
@@ -118,6 +141,18 @@ public class ManageProfileController extends BaseWorkspaceController {
 
     public void setNotificationManager(NotificationManager notificationManager) {
         this.notificationManager = notificationManager;
+    }
+
+    public void setResearcherUrlManager(ResearcherUrlManager researcherUrlManager) {
+        this.researcherUrlManager = researcherUrlManager;
+    }
+
+    public void setProfileKeywordManager(ProfileKeywordManager profileKeywordManager) {
+        this.profileKeywordManager = profileKeywordManager;
+    }
+
+    public void setOtherNameManager(OtherNameManager otherNameManager) {
+        this.otherNameManager = otherNameManager;
     }
 
     @ModelAttribute("visibilities")
@@ -872,12 +907,59 @@ public class ManageProfileController extends BaseWorkspaceController {
             return erroredView;
         }
 
-        OrcidProfile currentProfile = getCurrentUser().getEffectiveProfile();
-        changePersonalInfoForm.mergeOrcidBioDetails(currentProfile);
-        OrcidProfile updatedProfile = orcidProfileManager.updateOrcidBio(currentProfile);
-        getCurrentUser().setEffectiveProfile(updatedProfile);
-
+        OrcidProfile profile = getCurrentUser().getRealProfile();
+        //Update profile with values that comes from user request
+        changePersonalInfoForm.mergeOrcidBioDetails(profile);
+        
+        //Update profile on database
+        profileEntityManager.updateProfile(profile);
+        
+        String orcid = profile.getOrcid().getValue();
+        
+        //Update other names on database
+        OtherNames otherNames = profile.getOrcidBio().getPersonalDetails().getOtherNames();
+        otherNameManager.updateOtherNames(orcid, otherNames);
+        
+        //Update keywords on database
+        Keywords keywords = profile.getOrcidBio().getKeywords();
+        profileKeywordManager.updateProfileKeyword(orcid, keywords);
+        
+        //Update researcher urls on database
+        ResearcherUrls researcherUrls = profile.getOrcidBio().getResearcherUrls();
+        boolean hasErrors = researcherUrlManager.updateResearcherUrls(orcid, researcherUrls);
+        //TODO: The researcherUrlManager will not store any duplicated researcher url on database, 
+        //however there is no way to tell the controller that some of the researcher urls were not 
+        //saved, so, if an error occurs, we need to reload researcher ids from database and update
+        //cached profile. A more efficient way to fix this might be used. 
+        if(hasErrors){            
+            ResearcherUrls upToDateResearcherUrls = getUpToDateResearcherUrls(orcid, researcherUrls.getVisibility());
+            profile.getOrcidBio().setResearcherUrls(upToDateResearcherUrls);
+        }
+        
+        //Update cached profile
+        getCurrentUser().setEffectiveProfile(profile); 
+        
         redirectAttributes.addFlashAttribute("changesSaved", true);
         return manageBioView;
+    }  
+    
+    /**
+     * Generate an up to date ResearcherUrls object.
+     * @param orcid
+     * @param visibility
+     * */
+    private ResearcherUrls getUpToDateResearcherUrls(String orcid, Visibility visibility){
+        ResearcherUrls upTodateResearcherUrls = new ResearcherUrls();
+        upTodateResearcherUrls.setVisibility(visibility);
+        List<ResearcherUrlEntity> upToDateResearcherUrls = researcherUrlManager.getResearcherUrls(orcid);
+        
+        for(ResearcherUrlEntity researcherUrlEntity : upToDateResearcherUrls){
+            ResearcherUrl newResearcherUrl = new ResearcherUrl();
+            newResearcherUrl.setUrl(new Url(researcherUrlEntity.getUrl()));
+            newResearcherUrl.setUrlName(new UrlName(researcherUrlEntity.getUrlName()));
+            upTodateResearcherUrls.getResearcherUrl().add(newResearcherUrl);
+        }
+        
+        return upTodateResearcherUrls;
     }
 }

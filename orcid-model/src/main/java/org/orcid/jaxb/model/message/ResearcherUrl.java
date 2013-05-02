@@ -76,6 +76,12 @@ public class ResearcherUrl implements Comparable<ResearcherUrl>, Serializable {
         this.url = url;
     }
 
+    public ResearcherUrl(Url url, UrlName urlName){
+        super();
+        this.url = url;
+        this.urlName = urlName;
+    }
+    
     /**
      * Gets the value of the urlName property.
      * 
