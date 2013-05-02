@@ -710,7 +710,8 @@ function ClaimCtrl($scope, $compile) {
 	        	$scope.$apply();
 	        	if ($scope.register.errors.length == 0) {
 	        		if ($scope.register.url != null) {
-	        			window.location.href = $scope.register.url;
+		    	    	orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'New-Registration', 'Website']);
+			    		orcidGA.windowLocationHrefDelay($scope.register.url);
 	        		}
 	        	}
 	        }
