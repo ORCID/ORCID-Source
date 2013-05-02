@@ -118,19 +118,10 @@ public class RegistrationController extends BaseController {
     final static Integer DUP_SEARCH_ROWS = 25;
 
     @Resource
-    private HearAboutManager hearAboutManager;
-
-    @Resource
     private RegistrationManager registrationManager;
 
     @Resource
     private AuthenticationManager authenticationManager;
-
-    @Resource
-    private CountryManager countryManager;
-
-    @Resource
-    private SponsorManager sponsorManager;
 
     @Resource
     private SecurityQuestionManager securityQuestionManager;
@@ -170,62 +161,9 @@ public class RegistrationController extends BaseController {
         this.orcidProfileManager = orcidProfileManager;
     }
 
-    @ModelAttribute("hearAbouts")
-    public Map<String, String> retrieveHearAboutsAsMap() {
-        return hearAboutManager.retrieveHearAboutsAsMap();
-    }
-
-    @ModelAttribute("yesNo")
-    public Map<String, String> retrieveYesNoMap() {
-        Map<String, String> map = new LinkedHashMap<String, String>();
-        map.put("true", "Yes");
-        map.put("false", "No");
-        return map;
-    }
-
-    @ModelAttribute("changeNotificationsMap")
-    public Map<String, String> getChangeNotificationsMap() {
-        Map<String, String> changeNotificationsMap = new HashMap<String, String>();
-        changeNotificationsMap.put("sendMe", "");
-        return changeNotificationsMap;
-    }
-
-    @ModelAttribute("orcidNewsMap")
-    public Map<String, String> getOrcidNewsMap() {
-        Map<String, String> orcidNewsMap = new HashMap<String, String>();
-        orcidNewsMap.put("sendMe", "");
-        return orcidNewsMap;
-    }
-
-    public Map<String, String> retrieveCountries() {
-        Map<String, String> countriesWithId = new LinkedHashMap<String, String>();
-        List<String> countries = new ArrayList<String>();
-        countries.add("Select a country");
-        countries.addAll(countryManager.retrieveCountries());
-        for (String countryName : countries) {
-            countriesWithId.put(countryName, countryName);
-        }
-        return countriesWithId;
-    }
-
-    @ModelAttribute("sponsors")
-    public Map<String, String> retrieveSelectableSponsorsAsMap() {
-        Map<String, String> sponsors = new LinkedHashMap<String, String>();
-        sponsors.put("0", "Select a Sponsor");
-        sponsors.putAll(sponsorManager.retrieveSponsorsAsMap());
-        return sponsors;
-    }
-
     @ModelAttribute("securityQuestions")
     public Map<String, String> retrieveSecurityQuestionsAsMap() {
         return securityQuestionManager.retrieveSecurityQuestionsAsMap();
-    }
-
-    public Map<String, String> retrieveRegistrationRolesAsMap() {
-        Map<String, String> registrationRoles = new LinkedHashMap<String, String>();
-        registrationRoles.put("", "Select a role");
-        registrationRoles.putAll(registrationRoleManager.retrieveRegistrationRolesAsMap());
-        return registrationRoles;
     }
 
     @RequestMapping(value = "/register.json", method = RequestMethod.GET)
@@ -424,8 +362,6 @@ public class RegistrationController extends BaseController {
     @RequestMapping(value = "/register", method = RequestMethod.GET)
     public ModelAndView register(HttpServletRequest request, HttpServletResponse response) {
         ModelAndView mav = new ModelAndView("register");
-        RegistrationForm registrationForm = new RegistrationForm();
-        mav.addObject(registrationForm);
         SavedRequest savedRequest = new HttpSessionRequestCache().getRequest(request, response);
         LOGGER.debug("Saved url before registration is: " + (savedRequest != null ? savedRequest.getRedirectUrl() : " no saved request"));
         return mav;
@@ -454,40 +390,6 @@ public class RegistrationController extends BaseController {
         }
 
         return drList;
-    }
-
-    @RequestMapping(value = "/register", method = RequestMethod.POST)
-    public ModelAndView submitRegistration(HttpServletRequest request, @ModelAttribute("registrationForm") @Valid RegistrationForm registrationForm,
-            BindingResult bindingResult) {
-        String email = registrationForm.getEmail();
-        String sessionId = request.getSession() == null ? null : request.getSession().getId();
-        LOGGER.info("User with email={}, sessionid={} has asked to register", email, sessionId);
-        validateEmailAddress(email, false, request, bindingResult);
-        if (bindingResult.hasErrors()) {
-            LOGGER.info("Failed validation on registration page for email={}, sessionid={}, with errors={}",
-                    new Object[] { email, sessionId, bindingResult.getAllErrors() });
-            ModelAndView erroredView = new ModelAndView("register");
-            erroredView.addAllObjects(bindingResult.getModel());
-            return erroredView;
-        } else {
-            LOGGER.info("Passed validation on registration page for email={}, sessionid={}", email, sessionId);
-            // search for duplicates
-            // if they exist, put them in the view, along with the original reg
-            // form and hear about which we could need later
-            ModelAndView registrationView = new ModelAndView();
-            List<OrcidProfile> potentialDuplicates = findPotentialDuplicatesByFirstNameLastName(registrationForm.getGivenNames(), registrationForm.getFamilyName());
-            if (!potentialDuplicates.isEmpty()) {
-                // stash the original form in case none of the duplicates are
-                // the current registrar
-                request.getSession().setAttribute("registrationForm", registrationForm);
-                registrationView.addObject("potentialDuplicates", potentialDuplicates);
-                registrationView.setViewName("duplicate_researcher");
-                return registrationView;
-            } else {
-                return createConfirmRegistration(request, registrationForm);
-            }
-
-        }
     }
 
     @RequestMapping(value = "/reset-password", method = RequestMethod.GET)
@@ -564,22 +466,6 @@ public class RegistrationController extends BaseController {
             mav.addObject("claimResendSuccessful", true);
             return mav;
         }
-    }
-
-    @RequestMapping(value = "/progress-to-confirm-registration-details", method = RequestMethod.POST)
-    public ModelAndView progressToConfirmRegistration(HttpServletRequest request) {
-        // restore the valid form to be saved
-        RegistrationForm registrationForm = (RegistrationForm) request.getSession().getAttribute("registrationForm");
-        return createConfirmRegistration(request, registrationForm);
-    }
-
-    @RequestMapping(value = "/confirm-registration-details", method = RequestMethod.POST)
-    private ModelAndView createConfirmRegistration(HttpServletRequest request, RegistrationForm registrationForm) {
-
-        ModelAndView confirmRegView = new ModelAndView("redirect:/my-orcid");
-        createMinimalRegistrationAndLogUserIn(request, registrationForm.toOrcidProfile());
-        request.getSession().setAttribute("registrationForm", null);
-        return confirmRegView;
     }
 
     private void automaticallyLogin(HttpServletRequest request, String password, OrcidProfile orcidProfile) {
@@ -872,51 +758,6 @@ public class RegistrationController extends BaseController {
         LOGGER.info("Found {} potential duplicates during registration for first name={}, last name={}", new Object[] { orcidProfiles.size(), firstName, lastName });
         return orcidProfiles;
 
-    }
-
-    @RequestMapping(value = "/oauth-signup", method = RequestMethod.POST)
-    public ModelAndView sendOAuthRegistration(HttpServletRequest request, HttpServletResponse response, LoginForm loginForm,
-            @ModelAttribute("oAuthRegistrationForm") @Valid RegistrationForm oAuthRegistrationForm, BindingResult bindingResult) {
-        String email = oAuthRegistrationForm.getEmail();
-        String sessionId = request.getSession() == null ? null : request.getSession().getId();
-        LOGGER.info("User with email={}, sessionid={} has asked to register during oauth", email, sessionId);
-        validateEmailAddress(email, request, bindingResult);
-        if (bindingResult.hasErrors()) {
-            LOGGER.info("Failed validation on registration page during oauth for email={}, sessionid={}, with errors={}",
-                    new Object[] { email, sessionId, bindingResult.getAllErrors() });
-            ModelAndView erroredView = new ModelAndView("oauth_login");
-            erroredView.addObject("loginForm", loginForm);
-            erroredView.addAllObjects(bindingResult.getModel());
-            return erroredView;
-        }
-
-        request.getSession().setAttribute("password", oAuthRegistrationForm.getPassword());
-        List<OrcidProfile> potentialDuplicates = findPotentialDuplicatesByFirstNameLastName(oAuthRegistrationForm.getGivenNames(), oAuthRegistrationForm.getFamilyName());
-        if (!potentialDuplicates.isEmpty()) {
-            ModelAndView duplicateView = new ModelAndView("oauth_duplicate_researcher");
-            duplicateView.addObject("potentialDuplicates", potentialDuplicates);
-            duplicateView.addObject("oAuthRegistrationForm", oAuthRegistrationForm);
-            return duplicateView;
-        }
-
-        return completeOAuthRegistration(request, response, oAuthRegistrationForm);
-    }
-
-    @RequestMapping(value = "/oauth-complete-signup", method = RequestMethod.POST)
-    public ModelAndView completeOAuthRegistration(HttpServletRequest request, HttpServletResponse response,
-            @ModelAttribute("oAuthRegistrationForm") RegistrationForm oAuthRegistrationForm) {
-
-        OrcidProfile orcidProfile = oAuthRegistrationForm.toOrcidProfile();
-        orcidProfile.setPassword((String) request.getSession().getAttribute("password"));
-        createMinimalRegistrationAndLogUserIn(request, orcidProfile);
-        request.getSession().setAttribute("password", null);
-        // Flash attribute doesn't seem to work here, so use session directly
-        request.getSession().setAttribute("justRegistered", true);
-
-        SavedRequest savedRequest = new HttpSessionRequestCache().getRequest(request, response);
-        String redirectUrl = (savedRequest != null ? savedRequest.getRedirectUrl() : null);
-        LOGGER.debug("Saved url after OAuth registration is: " + redirectUrl);
-        return new ModelAndView(redirectUrl == null ? "redirect:/my-orcid" : "redirect:" + redirectUrl);
     }
 
     private void createMinimalRegistrationAndLogUserIn(HttpServletRequest request, OrcidProfile profileToSave) {
