@@ -1115,4 +1115,9 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         return profileDao.retrieveLastModifiedDate(orcid);
     }
 
+    @Override
+    public Date updateLastModifiedDate(String orcid) {
+        return profileDao.updateLastModifiedDate(orcid);
+    }
+
 }

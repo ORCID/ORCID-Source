@@ -313,6 +313,15 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
     }
 
     @Override
+    @Transactional
+    public Date updateLastModifiedDate(String orcid) {
+        Query updateQuery = entityManager.createQuery("update ProfileEntity set lastModified = now() where orcid = :orcid");
+        updateQuery.setParameter("orcid", orcid);
+        updateQuery.executeUpdate();
+        return retrieveLastModifiedDate(orcid);
+    }
+
+    @Override
     public OrcidType retrieveOrcidType(String orcid) {
         TypedQuery<OrcidType> query = entityManager.createQuery("select orcidType from ProfileEntity where orcid = :orcid", OrcidType.class);
         query.setParameter("orcid", orcid);

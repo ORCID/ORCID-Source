@@ -26,6 +26,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import java.util.Arrays;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -579,8 +580,8 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
         assertNotNull(userProfile.getOrcidBio().getApplications());
         assertEquals(1, userProfile.getOrcidBio().getApplications().getApplicationSummary().size());
 
-        orcidProfileManager.revokeApplication(DELEGATE_ORCID, APPLICATION_ORCID, Arrays.asList(new ScopePathType[] { ScopePathType.ORCID_BIO_READ_LIMITED,
-                ScopePathType.ORCID_BIO_UPDATE }));
+        orcidProfileManager.revokeApplication(DELEGATE_ORCID, APPLICATION_ORCID,
+                Arrays.asList(new ScopePathType[] { ScopePathType.ORCID_BIO_READ_LIMITED, ScopePathType.ORCID_BIO_UPDATE }));
 
         OrcidProfile retrievedProfile = orcidProfileManager.retrieveOrcidProfile(DELEGATE_ORCID);
         assertNotNull(retrievedProfile);
@@ -795,6 +796,25 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
         assertTrue("Password should not have changed", hashedPasswordValue.equals(retrieved.getPassword()));
         assertEquals("A new random answer", retrieved.getSecurityQuestionAnswer());
 
+    }
+
+    @Test
+    @Transactional
+    @Rollback(true)
+    public void testUpdateLastModifiedDate() throws InterruptedException {
+        Date start = new Date();
+        OrcidProfile profile1 = createBasicProfile();
+        profile1 = orcidProfileManager.createOrcidProfile(profile1);
+        Date profile1LastModified = profile1.getOrcidHistory().getLastModifiedDate().getValue().toGregorianCalendar().getTime();
+        assertNotNull(profile1LastModified);
+        assertFalse(start.after(profile1LastModified));
+
+        Thread.sleep(100);
+        orcidProfileManager.updateLastModifiedDate(TEST_ORCID);
+
+        OrcidProfile profile2 = orcidProfileManager.retrieveOrcidProfile(TEST_ORCID);
+        Date profile2LastModified = profile2.getOrcidHistory().getLastModifiedDate().getValue().toGregorianCalendar().getTime();
+        assertTrue(profile2LastModified.after(profile1LastModified));
     }
 
 }
