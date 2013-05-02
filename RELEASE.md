@@ -1,5 +1,15 @@
 # Release notes and highlights
 
+## release-1.1.19.5
+(2013-05-02)
+
+* Upgrade 1.0.5 java-bibtex
+
+* Use solar instead of postgres for public search results
+
+* Enable ajax registration
+
+
 ## releaes-1.1.18.2 
 (2013-04-30)
 
@@ -20,6 +30,7 @@
 
 
 ## release-1.1.16.2
+(2013-04-24)
 
 * Email specific DAOs
 
@@ -31,6 +42,7 @@
 
 
 ## release-1.1.15.17
+(2013-04-23)
 
 * Refactor works to reuse db table rows
 
@@ -47,6 +59,7 @@
 * New script to create releases
 
 ## release-1.1.14.17
+(2013-04-16)
 
 * Added Delete External ID button.
 
@@ -83,6 +96,7 @@
 
 
 ## release-1.1.13.4 
+(2013-04-02)
 
 * Import Wizard opens in new tab one window sooner
 
@@ -90,6 +104,7 @@
 
 
 ## release-1.1.12.12
+(2013-03-28)
 
 * April Fools internationalized ORC/Troll
 

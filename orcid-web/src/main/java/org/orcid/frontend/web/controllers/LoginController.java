@@ -48,10 +48,6 @@ public class LoginController extends BaseController {
 
     @RequestMapping(value = { "/oauth/signin", "/oauth/login" }, method = RequestMethod.GET)
     public ModelAndView loginGetHandler2(ModelAndView mav) {
-        LoginForm form = new LoginForm();
-        RegistrationForm oAuthRegistrationForm = new RegistrationForm();
-        mav.addObject("loginForm", form);
-        mav.addObject("oAuthRegistrationForm", oAuthRegistrationForm);
         mav.setViewName("oauth_login");
         return mav;
     }

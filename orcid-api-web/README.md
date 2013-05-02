@@ -160,7 +160,7 @@ Sample Create XML (note: email used must not already exist)
 
 Sample Curl Statement Create Post
 
-      curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer fd1f0da1-aa1a-4f8b-8736-6d011463d6db' 'http://localhost:8080/orcid-api-web/orcid-profile' -X POST --data '@/path/create.xml' http://localhost:8080/orcid-api-web/orcid-profile
+      curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer fd1f0da1-aa1a-4f8b-8736-6d011463d6db' -X POST --data '@/path/create.xml' http://localhost:8080/orcid-api-web/orcid-profile
 
 
 

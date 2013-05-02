@@ -560,6 +560,10 @@ function RegistrationCtrl($scope, $compile) {
 	};
 	
 	$scope.postRegister = function () {
+		if (basePath.startsWith(baseUrl + 'oauth')) 
+		    orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'New-Registration-Submit', 'OAuth']);
+	    else
+	    	orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'New-Registration-Submit', 'Website']);	
 		$.ajax({
 	        url: $('body').data('baseurl') + 'register.json',
 	        type: 'POST',
@@ -589,7 +593,11 @@ function RegistrationCtrl($scope, $compile) {
 	        contentType: 'application/json;charset=UTF-8',
 	        dataType: 'json',
 	        success: function(data) {
-	        	window.location.href = data.url;
+	    		if (basePath.startsWith(baseUrl + 'oauth')) 
+	    		    orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'New-Registration', 'OAuth']);
+	    	    else
+	    	    	orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'New-Registration', 'Website']);
+	    		orcidGA.windowLocationHrefDelay(data.url);
 	        }
 	    }).fail(function() { 
 	    	// something bad is happening!
@@ -599,7 +607,7 @@ function RegistrationCtrl($scope, $compile) {
 
 	
 
-	$scope.postRegisterValidate = function (field) {
+	$scope.serverValidate = function (field) {
 		if (field === undefined) field = '';
 		$.ajax({
 	        url: $('body').data('baseurl') + 'register' + field + 'Validate.json',
@@ -613,7 +621,7 @@ function RegistrationCtrl($scope, $compile) {
 	        }
 	    }).fail(function() { 
 	    	// something bad is happening!
-	    	console.log("RegistrationCtrl.postRegisterValidate() error");
+	    	console.log("RegistrationCtrl.serverValidate() error");
 	    });
 	};
 
@@ -674,3 +682,95 @@ function RegistrationCtrl($scope, $compile) {
 		 
 };
 		
+
+function ClaimCtrl($scope, $compile) {
+	$scope.getClaim = function(){
+		$.ajax({
+			url: window.location + '.json',	        
+	        dataType: 'json',
+	        success: function(data) {
+	       	$scope.register = data;
+	        $scope.$apply();
+	        }
+		}).fail(function(){
+		// something bad is happening!
+			console.log("error fetching register.json");
+		});
+	};
+		
+	$scope.postClaim = function () {
+		$.ajax({
+	        url: window.location + '.json',
+	        type: 'POST',
+	        data:  angular.toJson($scope.register),
+	        contentType: 'application/json;charset=UTF-8',
+	        dataType: 'json',
+	        success: function(data) {
+	        	$scope.register = data;
+	        	$scope.$apply();
+	        	if ($scope.register.errors.length == 0) {
+	        		if ($scope.register.url != null) {
+		    	    	orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'New-Registration', 'Website']);
+			    		orcidGA.windowLocationHrefDelay($scope.register.url);
+	        		}
+	        	}
+	        }
+	    }).fail(function() { 
+	    	// something bad is happening!
+	    	console.log("RegistrationCtrl.postRegister() error");
+	    });
+	};
+	
+	
+	$scope.updateWorkVisibilityDefault = function(priv, $event) {
+		$scope.register.workVisibilityDefault.visibility = priv;
+	};
+
+	$scope.serverValidate = function (field) {
+		if (field === undefined) field = '';
+		$.ajax({
+	        url: $('body').data('baseurl') + 'claim' + field + 'Validate.json',
+	        type: 'POST',
+	        data:  angular.toJson($scope.register),
+	        contentType: 'application/json;charset=UTF-8',
+	        dataType: 'json',
+	        success: function(data) {
+	        	//alert(angular.toJson(data));
+	        	$scope.copyErrorsLeft($scope.register, data);
+	        	$scope.$apply();
+	        }
+	    }).fail(function() { 
+	    	// something bad is happening!
+	    	console.log("RegistrationCtrl.postRegisterValidate() error");
+	    });
+	};
+
+	// in the case of slow network connection
+	// we don't want to overwrite  values while
+	// user is typing
+	$scope.copyErrorsLeft = function (data1, data2) {
+		for (var key in data1) {
+			if (key == 'errors') {
+				data1.errors = data2.errors;
+			} else {
+				if (data1[key] != null && data1[key].errors !== undefined)
+				data1[key].errors = data2[key].errors;
+			};
+		};
+	};
+	
+	$scope.isValidClass = function (cur) {
+		if (cur === undefined) return '';
+		var valid = true;
+		if (cur.required && (cur.value == null || cur.value.trim() == '')) valid = false;
+		if (cur.errors !== undefined && cur.errors.length > 0) valid = false;
+		return valid ? '' : 'text-error';
+	};
+	
+	//init
+	$scope.getClaim();	
+	//$scope.getDuplicates();
+		 
+};
+
+

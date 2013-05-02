@@ -365,7 +365,7 @@ public class BaseController {
     @ModelAttribute("profile")
     public OrcidProfile getOrcidProfile() {
         OrcidProfileUserDetails currentUser = getCurrentUser();
-        return (currentUser != null && currentUser.getRealProfile() != null) ? currentUser.getRealProfile() : null;
+        return currentUser == null ? null : currentUser.getEffectiveProfile();
     }
 
     public String getMessage(String messageCode, Object... messageParams) {

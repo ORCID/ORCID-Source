@@ -24,7 +24,7 @@
         <strong><@spring.message "orcid.frontend.web.email_verified"/></strong>
     </div>
 </#if>
-<#if recordClaimed?? && recordClaimed>
+<#if RequestParameters['recordClaimed']??>
     <div class="alert alert-success">
         <strong><@spring.message "orcid.frontend.web.record_claimed"/></strong>
     </div>

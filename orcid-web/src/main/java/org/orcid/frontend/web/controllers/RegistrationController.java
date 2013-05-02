@@ -37,20 +37,19 @@ import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.HearAboutManager;
 import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.OrcidProfileManager;
+import org.orcid.core.manager.OrcidSearchManager;
 import org.orcid.core.manager.RegistrationManager;
 import org.orcid.core.manager.RegistrationRoleManager;
 import org.orcid.core.manager.SecurityQuestionManager;
-import org.orcid.core.manager.SolrAndDBSearchManager;
 import org.orcid.core.manager.SponsorManager;
 import org.orcid.core.utils.PasswordResetToken;
 import org.orcid.frontend.web.controllers.helper.SearchOrcidSolrCriteria;
 import org.orcid.frontend.web.forms.ChangeSecurityQuestionForm;
-import org.orcid.frontend.web.forms.ClaimForm;
+import org.orcid.frontend.web.forms.EmailAddressForm;
 import org.orcid.frontend.web.forms.LoginForm;
 import org.orcid.frontend.web.forms.OneTimeResetPasswordForm;
 import org.orcid.frontend.web.forms.PasswordTypeAndConfirmForm;
 import org.orcid.frontend.web.forms.RegistrationForm;
-import org.orcid.frontend.web.forms.EmailAddressForm;
 import org.orcid.jaxb.model.message.Claimed;
 import org.orcid.jaxb.model.message.CompletionDate;
 import org.orcid.jaxb.model.message.ContactDetails;
@@ -75,8 +74,11 @@ import org.orcid.jaxb.model.message.WorkVisibilityDefault;
 import org.orcid.password.constants.OrcidPasswordConstants;
 import org.orcid.pojo.DupicateResearcher;
 import org.orcid.pojo.Redirect;
+import org.orcid.pojo.ajaxForm.Checkbox;
+import org.orcid.pojo.ajaxForm.Claim;
 import org.orcid.pojo.ajaxForm.ErrorsInterface;
 import org.orcid.pojo.ajaxForm.Registration;
+import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.utils.DateUtils;
 import org.orcid.utils.OrcidWebUtils;
 import org.slf4j.Logger;
@@ -118,19 +120,10 @@ public class RegistrationController extends BaseController {
     final static Integer DUP_SEARCH_ROWS = 25;
 
     @Resource
-    private HearAboutManager hearAboutManager;
-
-    @Resource
     private RegistrationManager registrationManager;
 
     @Resource
     private AuthenticationManager authenticationManager;
-
-    @Resource
-    private CountryManager countryManager;
-
-    @Resource
-    private SponsorManager sponsorManager;
 
     @Resource
     private SecurityQuestionManager securityQuestionManager;
@@ -142,7 +135,7 @@ public class RegistrationController extends BaseController {
     private OrcidProfileManager orcidProfileManager;
 
     @Resource
-    private SolrAndDBSearchManager searchManager;
+    private OrcidSearchManager orcidSearchManager;
 
     @Resource
     private EncryptionManager encryptionManager;
@@ -158,74 +151,21 @@ public class RegistrationController extends BaseController {
         this.registrationManager = registrationManager;
     }
 
-    public void setSearchManager(SolrAndDBSearchManager searchManager) {
-        this.searchManager = searchManager;
+    public void setOrcidSearchManager(OrcidSearchManager orcidSearchManager) {
+        this.orcidSearchManager = orcidSearchManager;
     }
 
-    public SolrAndDBSearchManager getSearchManager() {
-        return searchManager;
+    public OrcidSearchManager getOrcidSearchManager() {
+        return orcidSearchManager;
     }
 
     public void setOrcidProfileManager(OrcidProfileManager orcidProfileManager) {
         this.orcidProfileManager = orcidProfileManager;
     }
 
-    @ModelAttribute("hearAbouts")
-    public Map<String, String> retrieveHearAboutsAsMap() {
-        return hearAboutManager.retrieveHearAboutsAsMap();
-    }
-
-    @ModelAttribute("yesNo")
-    public Map<String, String> retrieveYesNoMap() {
-        Map<String, String> map = new LinkedHashMap<String, String>();
-        map.put("true", "Yes");
-        map.put("false", "No");
-        return map;
-    }
-
-    @ModelAttribute("changeNotificationsMap")
-    public Map<String, String> getChangeNotificationsMap() {
-        Map<String, String> changeNotificationsMap = new HashMap<String, String>();
-        changeNotificationsMap.put("sendMe", "");
-        return changeNotificationsMap;
-    }
-
-    @ModelAttribute("orcidNewsMap")
-    public Map<String, String> getOrcidNewsMap() {
-        Map<String, String> orcidNewsMap = new HashMap<String, String>();
-        orcidNewsMap.put("sendMe", "");
-        return orcidNewsMap;
-    }
-
-    public Map<String, String> retrieveCountries() {
-        Map<String, String> countriesWithId = new LinkedHashMap<String, String>();
-        List<String> countries = new ArrayList<String>();
-        countries.add("Select a country");
-        countries.addAll(countryManager.retrieveCountries());
-        for (String countryName : countries) {
-            countriesWithId.put(countryName, countryName);
-        }
-        return countriesWithId;
-    }
-
-    @ModelAttribute("sponsors")
-    public Map<String, String> retrieveSelectableSponsorsAsMap() {
-        Map<String, String> sponsors = new LinkedHashMap<String, String>();
-        sponsors.put("0", "Select a Sponsor");
-        sponsors.putAll(sponsorManager.retrieveSponsorsAsMap());
-        return sponsors;
-    }
-
     @ModelAttribute("securityQuestions")
     public Map<String, String> retrieveSecurityQuestionsAsMap() {
         return securityQuestionManager.retrieveSecurityQuestionsAsMap();
-    }
-
-    public Map<String, String> retrieveRegistrationRolesAsMap() {
-        Map<String, String> registrationRoles = new LinkedHashMap<String, String>();
-        registrationRoles.put("", "Select a role");
-        registrationRoles.putAll(registrationRoleManager.retrieveRegistrationRolesAsMap());
-        return registrationRoles;
     }
 
     @RequestMapping(value = "/register.json", method = RequestMethod.GET)
@@ -247,7 +187,8 @@ public class RegistrationController extends BaseController {
 
         reg.getSendChangeNotifications().setValue(true);
         reg.getSendOrcidNews().setValue(true);
-        reg.getTermsOfUse().setValue(true);
+        reg.getTermsOfUse().setValue(false);
+        setError(reg.getTermsOfUse(), "AssertTrue.registrationForm.acceptTermsAndConditions");
         return reg;
     }
 
@@ -295,13 +236,7 @@ public class RegistrationController extends BaseController {
         registerPasswordValidate(reg);
         registerPasswordConfirmValidate(reg);
         regEmailValidate(request, reg);
-
-        // validate terms accepted
-        reg.getTermsOfUse().setErrors(new ArrayList<String>());
-
-        if (reg.getTermsOfUse().getValue() != true) {
-            setError(reg.getTermsOfUse(), "AssertTrue.registrationForm.acceptTermsAndConditions");
-        }
+        registerTermsOfUseValidate(reg);
 
         copyErrors(reg.getEmailConfirm(), reg);
         copyErrors(reg.getEmail(), reg);
@@ -315,7 +250,7 @@ public class RegistrationController extends BaseController {
 
     @RequestMapping(value = "/registerConfirm.json", method = RequestMethod.POST)
     public @ResponseBody
-    Redirect setRegisterConfirm(HttpServletRequest request, @RequestBody Registration reg) {
+    Redirect setRegisterConfirm(HttpServletRequest request, HttpServletResponse response, @RequestBody Registration reg) {
         Redirect r = new Redirect();
 
         // make sure validation still passes
@@ -326,34 +261,85 @@ public class RegistrationController extends BaseController {
         }
 
         createMinimalRegistrationAndLogUserIn(request, toProfile(reg));
-        r.setUrl(getBaseUri() + "/my-orcid");
+        SavedRequest savedRequest = new HttpSessionRequestCache().getRequest(request, response);
+        String redirectUrl = (savedRequest != null ? savedRequest.getRedirectUrl() : null);
+        if (redirectUrl == null)
+            redirectUrl = getBaseUri() + "/my-orcid";
+        r.setUrl(redirectUrl);
         return r;
     }
 
     @RequestMapping(value = "/registerPasswordConfirmValidate.json", method = RequestMethod.POST)
     public @ResponseBody
     Registration registerPasswordConfirmValidate(@RequestBody Registration reg) {
-        reg.getPasswordConfirm().setErrors(new ArrayList<String>());
-        // validate passwords match
-        if (reg.getPasswordConfirm().getValue() == null || !reg.getPasswordConfirm().getValue().equals(reg.getPassword().getValue())) {
-            setError(reg.getPasswordConfirm(), "FieldMatch.registrationForm");
-        }
+        passwordConfirmValidate(reg.getPasswordConfirm(), reg.getPassword());
         return reg;
     }
 
+ 
     @RequestMapping(value = "/registerPasswordValidate.json", method = RequestMethod.POST)
     public @ResponseBody
     Registration registerPasswordValidate(@RequestBody Registration reg) {
-        reg.getPassword().setErrors(new ArrayList<String>());
+        passwordValidate(reg.getPasswordConfirm(), reg.getPassword());
+        return reg;
+    }
+    
+    @RequestMapping(value = "/claimPasswordConfirmValidate.json", method = RequestMethod.POST)
+    public @ResponseBody
+    Claim claimPasswordConfirmValidate(@RequestBody Claim claim) {
+        passwordConfirmValidate(claim.getPasswordConfirm(), claim.getPassword());
+        return claim;
+    }
+
+ 
+    @RequestMapping(value = "/claimPasswordValidate.json", method = RequestMethod.POST)
+    public @ResponseBody
+    Claim claimPasswordValidate(@RequestBody Claim claim) {
+        passwordValidate(claim.getPasswordConfirm(), claim.getPassword());
+        return claim;
+    }
+
+
+    private void passwordConfirmValidate(Text passwordConfirm, Text password) {
+        passwordConfirm.setErrors(new ArrayList<String>());
+        // validate passwords match
+        if (passwordConfirm.getValue() == null || !passwordConfirm.getValue().equals(password.getValue())) {
+            setError(passwordConfirm, "FieldMatch.registrationForm");
+        }
+    }
+
+    private void passwordValidate(Text passwordConfirm, Text password) {
+        password.setErrors(new ArrayList<String>());
         // validate password regex
-        if (reg.getPassword().getValue() == null || !reg.getPassword().getValue().matches(OrcidPasswordConstants.ORCID_PASSWORD_REGEX)) {
-            setError(reg.getPassword(), "Pattern.registrationForm.password");
+        if (password.getValue() == null || !password.getValue().matches(OrcidPasswordConstants.ORCID_PASSWORD_REGEX)) {
+            setError(password, "Pattern.registrationForm.password");
         }
 
-        if (reg.getPasswordConfirm().getValue() != null) {
-            registerPasswordConfirmValidate(reg);
+        if (passwordConfirm.getValue() != null) {
+            passwordConfirmValidate(passwordConfirm, password);
         }
+    }
+
+    @RequestMapping(value = "/registerTermsOfUseValidate.json", method = RequestMethod.POST)
+    public @ResponseBody
+    Registration registerTermsOfUseValidate(@RequestBody Registration reg) {
+        termsOfUserValidate(reg.getTermsOfUse());
         return reg;
+    }
+    
+    @RequestMapping(value = "/claimTermsOfUseValidate.json", method = RequestMethod.POST)
+    public @ResponseBody
+    Claim claimTermsOfUseValidate(@RequestBody Claim  claim) {
+        termsOfUserValidate(claim.getTermsOfUse());
+        return claim;
+    }
+
+
+    private void termsOfUserValidate(Checkbox termsOfUser) {
+        termsOfUser.setErrors(new ArrayList<String>());
+        if (termsOfUser.getValue() != true) {
+            setError(termsOfUser, "AssertTrue.registrationForm.acceptTermsAndConditions");
+        }
     }
 
     @RequestMapping(value = "/registerGivenNamesValidate.json", method = RequestMethod.POST)
@@ -383,7 +369,7 @@ public class RegistrationController extends BaseController {
             reg.getEmail().getErrors().add(getMessage(oe.getCode(), reg.getEmail().getValue()));
         }
 
-        //validate confirm if already field out
+        // validate confirm if already field out
         if (reg.getEmailConfirm().getValue() != null) {
             regEmailConfirmValidate(reg);
         }
@@ -415,8 +401,6 @@ public class RegistrationController extends BaseController {
     @RequestMapping(value = "/register", method = RequestMethod.GET)
     public ModelAndView register(HttpServletRequest request, HttpServletResponse response) {
         ModelAndView mav = new ModelAndView("register");
-        RegistrationForm registrationForm = new RegistrationForm();
-        mav.addObject(registrationForm);
         SavedRequest savedRequest = new HttpSessionRequestCache().getRequest(request, response);
         LOGGER.debug("Saved url before registration is: " + (savedRequest != null ? savedRequest.getRedirectUrl() : " no saved request"));
         return mav;
@@ -445,40 +429,6 @@ public class RegistrationController extends BaseController {
         }
 
         return drList;
-    }
-
-    @RequestMapping(value = "/register", method = RequestMethod.POST)
-    public ModelAndView submitRegistration(HttpServletRequest request, @ModelAttribute("registrationForm") @Valid RegistrationForm registrationForm,
-            BindingResult bindingResult) {
-        String email = registrationForm.getEmail();
-        String sessionId = request.getSession() == null ? null : request.getSession().getId();
-        LOGGER.info("User with email={}, sessionid={} has asked to register", email, sessionId);
-        validateEmailAddress(email, false, request, bindingResult);
-        if (bindingResult.hasErrors()) {
-            LOGGER.info("Failed validation on registration page for email={}, sessionid={}, with errors={}", new Object[] { email, sessionId,
-                    bindingResult.getAllErrors() });
-            ModelAndView erroredView = new ModelAndView("register");
-            erroredView.addAllObjects(bindingResult.getModel());
-            return erroredView;
-        } else {
-            LOGGER.info("Passed validation on registration page for email={}, sessionid={}", email, sessionId);
-            // search for duplicates
-            // if they exist, put them in the view, along with the original reg
-            // form and hear about which we could need later
-            ModelAndView registrationView = new ModelAndView();
-            List<OrcidProfile> potentialDuplicates = findPotentialDuplicatesByFirstNameLastName(registrationForm.getGivenNames(), registrationForm.getFamilyName());
-            if (!potentialDuplicates.isEmpty()) {
-                // stash the original form in case none of the duplicates are
-                // the current registrar
-                request.getSession().setAttribute("registrationForm", registrationForm);
-                registrationView.addObject("potentialDuplicates", potentialDuplicates);
-                registrationView.setViewName("duplicate_researcher");
-                return registrationView;
-            } else {
-                return createConfirmRegistration(request, registrationForm);
-            }
-
-        }
     }
 
     @RequestMapping(value = "/reset-password", method = RequestMethod.GET)
@@ -555,22 +505,6 @@ public class RegistrationController extends BaseController {
             mav.addObject("claimResendSuccessful", true);
             return mav;
         }
-    }
-
-    @RequestMapping(value = "/progress-to-confirm-registration-details", method = RequestMethod.POST)
-    public ModelAndView progressToConfirmRegistration(HttpServletRequest request) {
-        // restore the valid form to be saved
-        RegistrationForm registrationForm = (RegistrationForm) request.getSession().getAttribute("registrationForm");
-        return createConfirmRegistration(request, registrationForm);
-    }
-
-    @RequestMapping(value = "/confirm-registration-details", method = RequestMethod.POST)
-    private ModelAndView createConfirmRegistration(HttpServletRequest request, RegistrationForm registrationForm) {
-
-        ModelAndView confirmRegView = new ModelAndView("redirect:/my-orcid");
-        createMinimalRegistrationAndLogUserIn(request, registrationForm.toOrcidProfile());
-        request.getSession().setAttribute("registrationForm", null);
-        return confirmRegView;
     }
 
     private void automaticallyLogin(HttpServletRequest request, String password, OrcidProfile orcidProfile) {
@@ -769,42 +703,61 @@ public class RegistrationController extends BaseController {
         }
         OrcidProfile profileToClaim = orcidProfileManager.retrieveOrcidProfileByEmail(decryptedEmail);
         if (profileToClaim.getOrcidHistory().isClaimed()) {
-            // Already claimed so send to sign in page
-            redirectAttributes.addFlashAttribute("alreadyClaimed", true);
-            return new ModelAndView("redirect:/signin");
+            return new ModelAndView("redirect:/signin?alreadyClaimed");
         }
         ModelAndView mav = new ModelAndView("claim");
-        ClaimForm claimForm = new ClaimForm();
-        mav.addObject(claimForm);
-        mav.addObject("profile", profileToClaim);
         return mav;
     }
 
-    @RequestMapping(value = "/claim/{encryptedEmail}", method = RequestMethod.POST)
-    public ModelAndView submitClaim(HttpServletRequest request, @PathVariable("encryptedEmail") String encryptedEmail, @ModelAttribute @Valid ClaimForm claimForm,
-            BindingResult bindingResult, RedirectAttributes redirectAttributes) throws NoSuchRequestHandlingMethodException, UnsupportedEncodingException {
+    @RequestMapping(value = "/claim/{encryptedEmail}.json", method = RequestMethod.GET)
+    public @ResponseBody Claim
+     verifyClaimJson(HttpServletRequest request, @PathVariable("encryptedEmail") String encryptedEmail, RedirectAttributes redirectAttributes)
+            throws NoSuchRequestHandlingMethodException, UnsupportedEncodingException {
+        Claim c = new Claim();
+        c.getSendChangeNotifications().setValue(true);
+        c.getSendOrcidNews().setValue(true);
+        c.getTermsOfUse().setValue(false);
+        claimTermsOfUseValidate(c);      
+        return c;
+    }
+
+    @RequestMapping(value = "/claim/{encryptedEmail}.json", method = RequestMethod.POST)
+    public @ResponseBody Claim submitClaimJson(HttpServletRequest request, @PathVariable("encryptedEmail") String encryptedEmail, @RequestBody Claim claim) throws NoSuchRequestHandlingMethodException, UnsupportedEncodingException {
         String decryptedEmail = encryptionManager.decryptForExternalUse(new String(Base64.decodeBase64(encryptedEmail), "UTF-8"));
         if (!isEmailOkForCurrentUser(decryptedEmail)) {
-            return new ModelAndView("wrong_user");
+            claim.setUrl(getBaseUri() + "/claim/wrong_user");
+            return claim;
         }
         OrcidProfile profileToClaim = orcidProfileManager.retrieveOrcidProfileByEmail(decryptedEmail);
         if (profileToClaim.getOrcidHistory().isClaimed()) {
             // Already claimed so send to sign in page
-            redirectAttributes.addFlashAttribute("alreadyClaimed", true);
-            return new ModelAndView("redirect:/signin");
+            claim.setUrl(getBaseUri() + "/signin?alreadyClaimed");
+            return claim;
         }
-        if (bindingResult.hasErrors()) {
-            ModelAndView mav = new ModelAndView("claim");
-            mav.addAllObjects(bindingResult.getModel());
-            mav.addObject("profile", profileToClaim);
-            return mav;
+        
+        
+        claimPasswordValidate(claim);
+        claimPasswordConfirmValidate(claim);
+        claimTermsOfUseValidate(claim);
+      
+        copyErrors(claim.getPassword(), claim);
+        copyErrors(claim.getPasswordConfirm(), claim);
+        copyErrors(claim.getTermsOfUse(), claim);
+
+        if (claim.getErrors().size() > 0) {
+            return claim;
         }
-        OrcidProfile orcidProfile = confirmEmailAndClaim(decryptedEmail, profileToClaim, claimForm, request);
-        orcidProfile.setPassword(claimForm.getPassword());
+        OrcidProfile orcidProfile = confirmEmailAndClaim(decryptedEmail, profileToClaim, claim, request);
+        orcidProfile.setPassword(claim.getPassword().getValue());
         orcidProfileManager.updatePasswordInformation(orcidProfile);
-        automaticallyLogin(request, claimForm.getPassword(), orcidProfile);
-        redirectAttributes.addFlashAttribute("recordClaimed", true);
-        return new ModelAndView("redirect:/my-orcid");
+        automaticallyLogin(request, claim.getPassword().getValue(), orcidProfile);
+        claim.setUrl(getBaseUri() + "/my-orcid?recordClaimed");
+        return claim;
+    }
+
+    @RequestMapping(value = "/claim/wrong_user", method = RequestMethod.GET)
+    public ModelAndView claimWrongUser(HttpServletRequest request) {
+       return new ModelAndView("wrong_user");
     }
 
     private ModelAndView buildVerificationView(HttpServletRequest request, String encryptedEmail, RedirectAttributes redirectAttributes)
@@ -819,7 +772,7 @@ public class RegistrationController extends BaseController {
         return new ModelAndView("redirect:/my-orcid");
     }
 
-    private OrcidProfile confirmEmailAndClaim(String decryptedEmail, OrcidProfile orcidProfile, ClaimForm claimForm, HttpServletRequest request)
+    private OrcidProfile confirmEmailAndClaim(String decryptedEmail, OrcidProfile orcidProfile, Claim claim, HttpServletRequest request)
             throws NoSuchRequestHandlingMethodException {
         if (orcidProfile == null) {
             throw new NoSuchRequestHandlingMethodException(request);
@@ -833,14 +786,14 @@ public class RegistrationController extends BaseController {
         if (completionDate == null) {
             orcidHistory.setCompletionDate(new CompletionDate(DateUtils.convertToXMLGregorianCalendar(new Date())));
         }
-        if (claimForm != null) {
+        if (claim != null) {
             Preferences preferences = orcidProfile.getOrcidInternal().getPreferences();
             if (preferences == null) {
                 preferences = new Preferences();
             }
-            preferences.setSendChangeNotifications(new SendChangeNotifications(claimForm.isSendOrcidChangeNotifcations()));
-            preferences.setSendOrcidNews(new SendOrcidNews(claimForm.isSendOrcidNews()));
-            preferences.setWorkVisibilityDefault(new WorkVisibilityDefault(Visibility.fromValue(claimForm.getWorkVisibilityDefault())));
+            preferences.setSendChangeNotifications(new SendChangeNotifications(claim.getSendChangeNotifications().getValue()));
+            preferences.setSendOrcidNews(new SendOrcidNews(claim.getSendOrcidNews().getValue()));
+            preferences.setWorkVisibilityDefault(new WorkVisibilityDefault(claim.getWorkVisibilityDefault().getVisibility()));
         }
         return orcidProfileManager.updateOrcidProfile(orcidProfile);
     }
@@ -854,7 +807,7 @@ public class RegistrationController extends BaseController {
         queryForm.setFamilyName(lastName);
 
         String query = queryForm.deriveQueryString();
-        OrcidMessage visibleProfiles = searchManager.findFilteredOrcidsBasedOnQuery(query, DUP_SEARCH_START, DUP_SEARCH_ROWS);
+        OrcidMessage visibleProfiles = orcidSearchManager.findOrcidsByQuery(query, DUP_SEARCH_START, DUP_SEARCH_ROWS, false);
         if (visibleProfiles.getOrcidSearchResults() != null) {
             for (OrcidSearchResult searchResult : visibleProfiles.getOrcidSearchResults().getOrcidSearchResult()) {
                 orcidProfiles.add(searchResult.getOrcidProfile());
@@ -863,51 +816,6 @@ public class RegistrationController extends BaseController {
         LOGGER.info("Found {} potential duplicates during registration for first name={}, last name={}", new Object[] { orcidProfiles.size(), firstName, lastName });
         return orcidProfiles;
 
-    }
-
-    @RequestMapping(value = "/oauth-signup", method = RequestMethod.POST)
-    public ModelAndView sendOAuthRegistration(HttpServletRequest request, HttpServletResponse response, LoginForm loginForm,
-            @ModelAttribute("oAuthRegistrationForm") @Valid RegistrationForm oAuthRegistrationForm, BindingResult bindingResult) {
-        String email = oAuthRegistrationForm.getEmail();
-        String sessionId = request.getSession() == null ? null : request.getSession().getId();
-        LOGGER.info("User with email={}, sessionid={} has asked to register during oauth", email, sessionId);
-        validateEmailAddress(email, request, bindingResult);
-        if (bindingResult.hasErrors()) {
-            LOGGER.info("Failed validation on registration page during oauth for email={}, sessionid={}, with errors={}", new Object[] { email, sessionId,
-                    bindingResult.getAllErrors() });
-            ModelAndView erroredView = new ModelAndView("oauth_login");
-            erroredView.addObject("loginForm", loginForm);
-            erroredView.addAllObjects(bindingResult.getModel());
-            return erroredView;
-        }
-
-        request.getSession().setAttribute("password", oAuthRegistrationForm.getPassword());
-        List<OrcidProfile> potentialDuplicates = findPotentialDuplicatesByFirstNameLastName(oAuthRegistrationForm.getGivenNames(), oAuthRegistrationForm.getFamilyName());
-        if (!potentialDuplicates.isEmpty()) {
-            ModelAndView duplicateView = new ModelAndView("oauth_duplicate_researcher");
-            duplicateView.addObject("potentialDuplicates", potentialDuplicates);
-            duplicateView.addObject("oAuthRegistrationForm", oAuthRegistrationForm);
-            return duplicateView;
-        }
-
-        return completeOAuthRegistration(request, response, oAuthRegistrationForm);
-    }
-
-    @RequestMapping(value = "/oauth-complete-signup", method = RequestMethod.POST)
-    public ModelAndView completeOAuthRegistration(HttpServletRequest request, HttpServletResponse response,
-            @ModelAttribute("oAuthRegistrationForm") RegistrationForm oAuthRegistrationForm) {
-
-        OrcidProfile orcidProfile = oAuthRegistrationForm.toOrcidProfile();
-        orcidProfile.setPassword((String) request.getSession().getAttribute("password"));
-        createMinimalRegistrationAndLogUserIn(request, orcidProfile);
-        request.getSession().setAttribute("password", null);
-        // Flash attribute doesn't seem to work here, so use session directly
-        request.getSession().setAttribute("justRegistered", true);
-
-        SavedRequest savedRequest = new HttpSessionRequestCache().getRequest(request, response);
-        String redirectUrl = (savedRequest != null ? savedRequest.getRedirectUrl() : null);
-        LOGGER.debug("Saved url after OAuth registration is: " + redirectUrl);
-        return new ModelAndView(redirectUrl == null ? "redirect:/my-orcid" : "redirect:" + redirectUrl);
     }
 
     private void createMinimalRegistrationAndLogUserIn(HttpServletRequest request, OrcidProfile profileToSave) {

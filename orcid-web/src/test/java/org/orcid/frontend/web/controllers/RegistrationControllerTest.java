@@ -44,14 +44,14 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.OrcidProfileManager;
+import org.orcid.core.manager.OrcidSearchManager;
 import org.orcid.core.manager.RegistrationManager;
-import org.orcid.core.manager.SolrAndDBSearchManager;
 import org.orcid.frontend.web.forms.ChangeSecurityQuestionForm;
+import org.orcid.frontend.web.forms.EmailAddressForm;
 import org.orcid.frontend.web.forms.LoginForm;
 import org.orcid.frontend.web.forms.OneTimeResetPasswordForm;
 import org.orcid.frontend.web.forms.PasswordTypeAndConfirmForm;
 import org.orcid.frontend.web.forms.RegistrationForm;
-import org.orcid.frontend.web.forms.EmailAddressForm;
 import org.orcid.jaxb.model.message.OrcidInternal;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidProfile;
@@ -77,7 +77,7 @@ public class RegistrationControllerTest {
     RegistrationManager registrationManager;
 
     @Mock
-    SolrAndDBSearchManager searchManager;
+    OrcidSearchManager orcidSearchManager;
 
     @Mock
     OrcidProfileManager orcidProfileManager;
@@ -89,71 +89,9 @@ public class RegistrationControllerTest {
     public void before() {
         MockitoAnnotations.initMocks(this);
         registrationController.setRegistrationManager(registrationManager);
-        registrationController.setSearchManager(searchManager);
+        registrationController.setOrcidSearchManager(orcidSearchManager);
         registrationController.setOrcidProfileManager(orcidProfileManager);
         registrationController.setEncryptionManager(encryptionManager);
-    }
-
-    @Test
-    public void testMultipleResearchersFoundByFirstNameLastNameThenProceed() throws Exception {
-
-        HttpSession session = new MockHttpSession();
-        assertNull(session.getAttribute("registrationForm"));
-        HttpServletRequest servletRequest = mock(HttpServletRequest.class);
-
-        BindingResult bindingResult = mock(BindingResult.class);
-        RegistrationForm registrationForm = new RegistrationForm();
-        registrationForm.setPassword("password");
-        registrationForm.setFamilyName("Bass");
-        registrationForm.setGivenNames("Teddy");
-        when(servletRequest.getSession()).thenReturn(session);
-        // don't forget query builder converts name criteria to lower-case
-        when(
-                searchManager.findFilteredOrcidsBasedOnQuery("given-names:teddy* AND family-name:bass*", RegistrationController.DUP_SEARCH_START,
-                        RegistrationController.DUP_SEARCH_ROWS)).thenReturn(orcidMessageDetailingRecordsFoundForTeddyBass());
-
-        ModelAndView modelAndView = registrationController.submitRegistration(servletRequest, registrationForm, bindingResult);
-        assertEquals("duplicate_researcher", modelAndView.getViewName());
-        assertNotNull(modelAndView.getModelMap().get("potentialDuplicates"));
-        assertEquals("Registration Form stashed in session", session.getAttribute("registrationForm"), registrationForm);
-
-        when(registrationManager.createMinimalRegistration(any(OrcidProfile.class), any(URI.class))).thenReturn(orcidWithIdentifierOnly());
-        ModelAndView redirectToWorkspace = registrationController.progressToConfirmRegistration(servletRequest);
-        assertEquals("redirect:/my-orcid", redirectToWorkspace.getViewName());
-        assertNull("Registration Form should not be in session", session.getAttribute("registrationForm"));
-
-    }
-
-    @Test
-    public void testMultipleResearchersFoundInOAuthFlow() throws Exception {
-
-        HttpSession session = new MockHttpSession();
-        assertNull("Password should not be stashed in session", session.getAttribute("password"));
-        HttpServletRequest servletRequest = mock(HttpServletRequest.class);
-        HttpServletResponse servletResponse = mock(HttpServletResponse.class);
-
-        BindingResult bindingResult = mock(BindingResult.class);
-        RegistrationForm registrationForm = new RegistrationForm();
-        registrationForm.setPassword("password");
-        registrationForm.setFamilyName("Bass");
-        registrationForm.setGivenNames("Teddy");
-        when(servletRequest.getSession()).thenReturn(session);
-        // don't forget query builder converts name criteria to lower-case
-        when(
-                searchManager.findFilteredOrcidsBasedOnQuery("given-names:teddy* AND family-name:bass*", RegistrationController.DUP_SEARCH_START,
-                        RegistrationController.DUP_SEARCH_ROWS)).thenReturn(orcidMessageDetailingRecordsFoundForTeddyBass());
-
-        LoginForm nullLoginForm = null;
-        ModelAndView modelAndView = registrationController.sendOAuthRegistration(servletRequest, servletResponse, nullLoginForm, registrationForm, bindingResult);
-        assertEquals("oauth_duplicate_researcher", modelAndView.getViewName());
-        assertNotNull(modelAndView.getModelMap().get("potentialDuplicates"));
-        assertEquals("Password stashed in session", session.getAttribute("password"), "password");
-
-        when(registrationManager.createMinimalRegistration(any(OrcidProfile.class), any(URI.class))).thenReturn(orcidWithIdentifierOnly());
-        ModelAndView redirectToWorkspace = registrationController.completeOAuthRegistration(servletRequest, servletResponse, registrationForm);
-        assertEquals("redirect:/my-orcid", redirectToWorkspace.getViewName());
-        assertNull("Password should not be stashed in session", session.getAttribute("password"));
-
     }
 
     private OrcidProfile orcidWithIdentifierOnly() {
