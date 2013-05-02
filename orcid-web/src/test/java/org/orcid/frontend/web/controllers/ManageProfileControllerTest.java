@@ -99,9 +99,6 @@ public class ManageProfileControllerTest extends BaseControllerTest {
     @Mock
     private NotificationManager mockNotificationManager;
     
-    @Mock
-    private OtherNameManager otherNameManager;
-    
     @Mock 
     private ResearcherUrlManager researcherUrlManager;
 

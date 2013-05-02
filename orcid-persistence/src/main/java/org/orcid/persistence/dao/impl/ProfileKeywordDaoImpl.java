@@ -22,7 +22,6 @@ import javax.persistence.Query;
 
 import org.orcid.persistence.dao.ProfileKeywordDao;
 import org.orcid.persistence.jpa.entities.ProfileKeywordEntity;
-import org.orcid.persistence.jpa.entities.ResearcherUrlEntity;
 import org.orcid.persistence.jpa.entities.keys.ProfileKeywordEntityPk;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,9 +32,13 @@ public class ProfileKeywordDaoImpl extends GenericDaoImpl<ProfileKeywordEntity, 
     }
     
     /**
-     * TODO
+     * Return the list of keywords associated to a specific profile
+     * @param orcid
+     * @return 
+     *          the list of keywords associated with the orcid profile
      * */
     @Override
+    @SuppressWarnings("unchecked")
     public List<ProfileKeywordEntity> getProfileKeywors(String orcid) {
         Query query = entityManager.createQuery("FROM ProfileKeywordEntity WHERE profile.id = :orcid");
         query.setParameter("orcid", orcid);
@@ -43,7 +46,10 @@ public class ProfileKeywordDaoImpl extends GenericDaoImpl<ProfileKeywordEntity, 
     }
 
     /**
-     * TODO
+     * Deleted a keyword from database
+     * @param orcid
+     * @param keyword
+     * @return true if the keyword was successfully deleted
      * */
     @Override
     @Transactional
@@ -55,15 +61,18 @@ public class ProfileKeywordDaoImpl extends GenericDaoImpl<ProfileKeywordEntity, 
     }
 
     /**
-     * TODO
+     * Adds a keyword to a specific profile
+     * @param orcid
+     * @param keyword
+     * @return true if the keyword was successfully created on database
      * */
     @Override
     @Transactional
-    public void addProfileKeyword(String orcid, String keyword) {
+    public boolean addProfileKeyword(String orcid, String keyword) {
         Query query = entityManager.createNativeQuery("INSERT INTO profile_keyword (date_created, last_modified, profile_orcid, keywords_name) VALUES (now(), now(), :orcid, :keywords_name)");
         query.setParameter("orcid", orcid);
         query.setParameter("keywords_name", keyword);
-        query.executeUpdate();
+        return query.executeUpdate() > 0 ? true : false;
     }
 
 }

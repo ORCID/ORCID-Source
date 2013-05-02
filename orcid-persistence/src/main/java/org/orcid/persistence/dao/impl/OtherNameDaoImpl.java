@@ -41,10 +41,7 @@ public class OtherNameDaoImpl extends GenericDaoImpl<OtherNameEntity, Long> impl
     @Override
     @Transactional
     public boolean updateOtherName(OtherNameEntity otherName) {
-        Query query = entityManager.createQuery("UPDATE OtherNameEntity SET lastModified=now(), displayName=:displayName WHERE profile.id=:orcid");
-        query.setParameter("displayName", otherName.getDisplayName());
-        query.setParameter("orcid", otherName.getProfile().getId());
-        return query.executeUpdate() > 0 ? true : false;
+        throw new UnsupportedOperationException("This opperation is not supported yet");
     }
 
     @Override

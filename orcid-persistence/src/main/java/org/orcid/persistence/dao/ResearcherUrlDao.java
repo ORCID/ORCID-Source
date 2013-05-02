@@ -22,8 +22,31 @@ import org.orcid.persistence.jpa.entities.ResearcherUrlEntity;
 
 public interface ResearcherUrlDao {
 
+    /**
+     * Return the list of researcher urls associated to a specific profile
+     * @param orcid
+     * @return 
+     *          the list of researcher urls associated with the orcid profile
+     * */
     public List<ResearcherUrlEntity> getResearcherUrls(String orcid);
+    /**
+     * Deleted a researcher url from database
+     * @param id
+     * @return true if the researcher url was successfully deleted
+     * */
     public boolean deleteResearcherUrl(long id);
+    /**
+     * Retrieve a researcher url from database
+     * @param id
+     * @return the ResearcherUrlEntity associated with the parameter id
+     * */
     public ResearcherUrlEntity getResearcherUrl(long id);
-    public void addResearcherUrls(String orcid, String url, String urlName);
+    /**
+     * Adds a researcher url to a specific profile
+     * @param orcid
+     * @param url
+     * @param urlName
+     * @return true if the researcher url was successfully created on database
+     * */
+    public boolean addResearcherUrls(String orcid, String url, String urlName);
 }

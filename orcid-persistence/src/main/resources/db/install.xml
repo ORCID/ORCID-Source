@@ -558,7 +558,11 @@
         <createSequence sequenceName="work_seq"/>
     </changeSet>
 
-    <changeSet id="CREATE-AUTO-COLS" author="Declan Newman" dbms="hsqldb" context="default">
+	<changeSet id="CREATE-SEQUENCES" author="Angel Montenegro" dbms="hsqldb" context="default">
+		<createSequence sequenceName="other_name_seq"/>
+	</changeSet>
+
+    <changeSet id="CREATE-AUTO-COLS" author="Declan Newman" dbms="hsqldb" context="default">        
         <addAutoIncrement tableName="address" columnName="id" columnDataType="bigint"/>
         <addAutoIncrement tableName="author" columnName="id" columnDataType="bigint"/>
         <addAutoIncrement tableName="author_other_name" columnName="author_other_name_id" columnDataType="bigint"/>
