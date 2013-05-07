@@ -36,6 +36,9 @@ import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Resource;
 
+import net.sf.ehcache.Cache;
+import net.sf.ehcache.Element;
+
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.LocaleManager;
@@ -68,6 +71,7 @@ import org.orcid.jaxb.model.message.ExternalIdentifiers;
 import org.orcid.jaxb.model.message.FamilyName;
 import org.orcid.jaxb.model.message.GivenNames;
 import org.orcid.jaxb.model.message.GivenPermissionTo;
+import org.orcid.jaxb.model.message.LastModifiedDate;
 import org.orcid.jaxb.model.message.OrcidActivities;
 import org.orcid.jaxb.model.message.OrcidBio;
 import org.orcid.jaxb.model.message.OrcidHistory;
@@ -78,6 +82,7 @@ import org.orcid.jaxb.model.message.OrcidWorks;
 import org.orcid.jaxb.model.message.PersonalDetails;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.message.SecurityDetails;
+import org.orcid.jaxb.model.message.Source;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.message.VisibilityType;
 import org.orcid.jaxb.model.message.WorkContributors;
@@ -158,6 +163,9 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
     @Resource
     private LocaleManager localeManager;
 
+    @Resource(name = "profileCache")
+    private Cache profileCache;
+
     private int claimWaitPeriodDays = 10;
 
     private int claimReminderAfterDays = 8;
@@ -237,7 +245,8 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         ProfileEntity updatedProfileEntity = profileDao.merge(profileEntity);
         profileDao.flush();
         profileDao.refresh(updatedProfileEntity);
-        OrcidProfile updatedOrcidProfile = adapter.toOrcidProfile(updatedProfileEntity);
+        OrcidProfile updatedOrcidProfile = convertToOrcidProfile(updatedProfileEntity);
+        putInCache(updatedOrcidProfile);
         notificationManager.sendAmendEmail(updatedOrcidProfile, amenderOrcid);
         return updatedOrcidProfile;
     }
@@ -373,40 +382,74 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
     @Override
     @Transactional
     public OrcidProfile retrieveOrcidProfile(String orcid) {
+        Element element = getFromCache(orcid);
+        if (element == null) {
+            OrcidProfile freshOrcidProfile = retrieveFreshOrcidProfile(orcid);
+            return freshOrcidProfile;
+        } else {
+            OrcidProfile cachedProfile = (OrcidProfile) element.getObjectValue();
+            Date cachedProfileLastModified = extractLastModifiedDateFromObject(cachedProfile);
+            if (cachedProfileLastModified == null) {
+                return retrieveFreshOrcidProfile(orcid);
+            }
+            Date actualLastModified = retrieveLastModifiedDate(orcid);
+            if (actualLastModified == null) {
+                return retrieveFreshOrcidProfile(orcid);
+            }
+            if (actualLastModified.after(cachedProfileLastModified)) {
+                return retrieveFreshOrcidProfile(orcid);
+            }
+            return cachedProfile;
+        }
+    }
+
+    private OrcidProfile retrieveFreshOrcidProfile(String orcid) {
         profileDao.flush();
         ProfileEntity profileEntity = profileDao.find(orcid);
         if (profileEntity != null) {
-            return convertToOrcidProfile(profileEntity);
-        } else {
+            OrcidProfile freshOrcidProfile = convertToOrcidProfile(profileEntity);
+            putInCache(orcid, freshOrcidProfile);
+            return freshOrcidProfile;
+        }
+        return null;
+    }
+
+    private Date extractLastModifiedDateFromObject(OrcidProfile orcidProfile) {
+        OrcidHistory orcidHistory = orcidProfile.getOrcidHistory();
+        if (orcidHistory == null) {
             return null;
         }
-
+        LastModifiedDate lastModifiedDate = orcidHistory.getLastModifiedDate();
+        if (lastModifiedDate == null) {
+            return null;
+        }
+        return lastModifiedDate.getValue().toGregorianCalendar().getTime();
     }
 
     @Override
     @Transactional
     public OrcidProfile retrieveClaimedOrcidProfile(String orcid) {
-        profileDao.flush();
-        ProfileEntity profileEntity = profileDao.find(orcid);
-        if (profileEntity != null) {
-            if (Boolean.TRUE.equals(profileEntity.getClaimed()) || isOldEnough(profileEntity) || isBeingAccessedByCreator(profileEntity) || haveSystemRole()) {
-                return convertToOrcidProfile(profileEntity);
+        OrcidProfile orcidProfile = retrieveOrcidProfile(orcid);
+        if (orcidProfile != null) {
+            if (Boolean.TRUE.equals(orcidProfile.getOrcidHistory().getClaimed().isValue()) || isOldEnough(orcidProfile) || isBeingAccessedByCreator(orcidProfile)
+                    || haveSystemRole()) {
+                return orcidProfile;
             } else {
-                return createReservedForClaimOrcidProfile(profileEntity);
+                return createReservedForClaimOrcidProfile(orcid);
             }
         }
         return null;
     }
 
-    private boolean isOldEnough(ProfileEntity profileEntity) {
-        return DateUtils.olderThan(profileEntity.getDateCreated(), claimWaitPeriodDays);
+    private boolean isOldEnough(OrcidProfile orcidProfile) {
+        return DateUtils.olderThan(orcidProfile.getOrcidHistory().getSubmissionDate().getValue().toGregorianCalendar().getTime(), claimWaitPeriodDays);
     }
 
-    private boolean isBeingAccessedByCreator(ProfileEntity profileEntity) {
+    private boolean isBeingAccessedByCreator(OrcidProfile orcidProfile) {
         String amenderOrcid = retrieveAmenderOrcid();
-        ProfileEntity sourceEntity = profileEntity.getSource();
-        if (NullUtils.noneNull(amenderOrcid, sourceEntity)) {
-            return amenderOrcid.equals(sourceEntity.getId());
+        Source source = orcidProfile.getOrcidHistory().getSource();
+        if (NullUtils.noneNull(amenderOrcid, source)) {
+            return amenderOrcid.equals(source.getSourceOrcid().getValue());
         }
         return false;
     }
@@ -422,9 +465,9 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         return false;
     }
 
-    private OrcidProfile createReservedForClaimOrcidProfile(ProfileEntity profileEntity) {
+    private OrcidProfile createReservedForClaimOrcidProfile(String orcid) {
         OrcidProfile op = new OrcidProfile();
-        op.setOrcid(profileEntity.getId());
+        op.setOrcid(orcid);
         OrcidHistory oh = new OrcidHistory();
         oh.setClaimed(new Claimed(false));
         op.setOrcidHistory(oh);
@@ -852,7 +895,10 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
                 }
             }
         }
-        return adapter.toOrcidProfile(existingProfile);
+        orcidOauth2TokenDetailDao.flush();
+        OrcidProfile updatedOrcidProfile = convertToOrcidProfile(existingProfile);
+        putInCache(userOrcid, updatedOrcidProfile);
+        return updatedOrcidProfile;
     }
 
     /**
@@ -966,14 +1012,15 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
             LOG.debug("Asked to delete profile {}, but not found in DB", orcid);
             return null;
         }
+        profileDao.remove(profileEntity);
+        profileDao.flush();
+        orcidIndexManager.deleteOrcidProfile(orcid);
+        removeFromCache(orcid);
         // There seems to be a Hibernate problem relating
         // OrcidOauth2TokenDetail, when getting and deleting in same
         // transaction. So not possible to return deleted profile, and probably
         // not really necessary either.
         // OrcidProfile orcidProfile = adapter.toOrcidProfile(profileEntity);
-        profileDao.remove(profileEntity);
-        orcidIndexManager.deleteOrcidProfile(orcid);
-        // See comment above
         return null;
     }
 
@@ -1118,6 +1165,33 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
     @Override
     public Date updateLastModifiedDate(String orcid) {
         return profileDao.updateLastModifiedDate(orcid);
+    }
+
+    private Element getFromCache(String orcid) {
+        Element element = profileCache.get(createCacheKey(orcid));
+        return element;
+    }
+
+    private void putInCache(OrcidProfile orcidProfile) {
+        putInCache(orcidProfile.getOrcid().getValue(), orcidProfile);
+    }
+
+    private void putInCache(String orcid, OrcidProfile orcidProfile) {
+        profileCache.put(new Element(createCacheKey(orcid), orcidProfile));
+    }
+
+    private void removeFromCache(String orcid) {
+        profileCache.remove(createCacheKey(orcid));
+    }
+
+    private Object createCacheKey(String orcid) {
+        // XXX Need to put release version number in cache key
+        return orcid;
+    }
+
+    @Override
+    public void clearOrcidProfileCache() {
+        profileCache.removeAll();
     }
 
 }

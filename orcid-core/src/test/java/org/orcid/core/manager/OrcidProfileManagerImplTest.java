@@ -27,8 +27,10 @@ import static org.mockito.Mockito.verify;
 
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import javax.annotation.Resource;
 import javax.xml.datatype.DatatypeConfigurationException;
@@ -153,7 +155,9 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
 
         ClientDetailsEntity clientDetails = new ClientDetailsEntity();
         clientDetails.setId(applicationProfile.getOrcid().getValue());
-        clientDetails.setProfileEntity(profileDao.find(applicationProfile.getOrcid().getValue()));
+        ProfileEntity applicationProfileEntity = profileDao.find(applicationProfile.getOrcid().getValue());
+        profileDao.refresh(applicationProfileEntity);
+        clientDetails.setProfileEntity(applicationProfileEntity);
         clientDetailsDao.merge(clientDetails);
 
         OrcidOauth2TokenDetail token = new OrcidOauth2TokenDetail();
@@ -161,14 +165,18 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
         token.setClientDetailsEntity(clientDetails);
         token.setProfile(profileDao.find(delegateProfile.getOrcid().getValue()));
         token.setScope(StringUtils.join(new String[] { ScopePathType.ORCID_BIO_READ_LIMITED.value(), ScopePathType.ORCID_BIO_UPDATE.value() }, " "));
-        orcidOauth2TokenDetailDao.merge(token);
+        Set<OrcidOauth2TokenDetail> tokens = new HashSet<>();
+        tokens.add(token);
+        ProfileEntity delegateProfileEntity = profileDao.find(delegateProfile.getOrcid().getValue());
+        delegateProfileEntity.setTokenDetails(tokens);
+        profileDao.merge(delegateProfileEntity);
     }
 
     @After
     public void after() {
-        for (ProfileEntity profileEntity : profileDao.getAll()) {
-            orcidProfileManager.deleteProfile(profileEntity.getId());
-        }
+        profileDao.remove(DELEGATE_ORCID);
+        profileDao.remove(APPLICATION_ORCID);
+        orcidProfileManager.clearOrcidProfileCache();
     }
 
     @Test

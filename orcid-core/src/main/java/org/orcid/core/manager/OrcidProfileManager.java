@@ -308,4 +308,6 @@ public interface OrcidProfileManager {
     
     Date updateLastModifiedDate(String orcid);
 
+    void clearOrcidProfileCache();
+
 }

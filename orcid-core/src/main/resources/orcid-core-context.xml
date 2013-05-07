@@ -172,6 +172,11 @@
 		<property name="cacheName" value="recent-orcid" />
 		<property name="cacheManager" ref="coreCacheManager" />
 	</bean>
+	
+	<bean id="profileCache" class="org.springframework.cache.ehcache.EhCacheFactoryBean">
+		<property name="cacheName" value="profile" />
+		<property name="cacheManager" ref="coreCacheManager" />
+	</bean>
 
 	<!-- Reporting -->
 	<!-- Graphite reporter can be created here, but we need a way of only creating 

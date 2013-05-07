@@ -38,6 +38,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.hamcrest.Description;
 import org.hamcrest.TypeSafeMatcher;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -133,6 +134,11 @@ public class ManageProfileControllerTest extends BaseControllerTest {
     @Before
     public void init() {
         assertNotNull(controller);
+    }
+
+    @After
+    public void after() {
+        orcidProfileManager.clearOrcidProfileCache();
     }
 
     // TODO: Test the data values too
