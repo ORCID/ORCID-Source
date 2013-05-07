@@ -159,7 +159,7 @@ the software.
   <xs:simpleType name="redirect-uri-type">
     <xs:restriction base="xs:string">
       <xs:enumeration value="default"/>
-      <xs:enumeration value="grant-read"/>
+      <xs:enumeration value="grant-read-wizard"/>
     </xs:restriction>
   </xs:simpleType>
   <xs:simpleType name="scope">

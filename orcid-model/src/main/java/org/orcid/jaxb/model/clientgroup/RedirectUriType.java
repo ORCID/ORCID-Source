@@ -55,8 +55,8 @@ public enum RedirectUriType {
     //@formatter:off
     @XmlEnumValue("default")
     DEFAULT("default"), 
-    @XmlEnumValue("grant-read")
-    GRANT_READ("grant-read");
+    @XmlEnumValue("grant-read-wizard")
+    GRANT_READ_WIZARD("grant-read-wizard");
     //@formatter:on
 
     private final String value;

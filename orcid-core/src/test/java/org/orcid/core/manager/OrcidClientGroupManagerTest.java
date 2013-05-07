@@ -110,7 +110,7 @@ public class OrcidClientGroupManagerTest extends BaseTest {
         assertNotNull(createdRedirectUris);
         assertEquals(2, createdRedirectUris.size());
         assertEquals("http://www.journals.elsevier.com/ecological-complexity/orcid-callback", createdRedirectUris.get(0).getValue());
-        assertEquals("grant-read", createdRedirectUris.get(0).getType().value());
+        assertEquals("grant-read-wizard", createdRedirectUris.get(0).getType().value());
         List<ScopePathType> scopesForRedirect = createdRedirectUris.get(0).getScope();
         assertTrue(scopesForRedirect.size() == 2);
         assertTrue(scopesForRedirect.contains(ScopePathType.ORCID_PROFILE_CREATE) && scopesForRedirect.contains(ScopePathType.ORCID_BIO_READ_LIMITED));

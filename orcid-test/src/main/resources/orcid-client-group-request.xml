@@ -32,7 +32,7 @@
         <website>http://www.journals.elsevier.com/ecological-complexity</website>
         <short-description>An International Journal on Biocomplexity in the Environment and Theoretical Ecology</short-description>
         <redirect-uris>
-            <redirect-uri scope="/orcid-profile/create /orcid-bio/read-limited" type="grant-read">http://www.journals.elsevier.com/ecological-complexity/orcid-callback</redirect-uri>
+            <redirect-uri scope="/orcid-profile/create /orcid-bio/read-limited" type="grant-read-wizard">http://www.journals.elsevier.com/ecological-complexity/orcid-callback</redirect-uri>
         </redirect-uris>
     </orcid-client>
     <orcid-client>
