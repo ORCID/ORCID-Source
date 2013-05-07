@@ -156,7 +156,6 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
                 client.setRedirectUris(redirectUris);
                 for (ClientRedirectUriEntity redirectUriEntity : redirectUriEntities) {
                     RedirectUri redirectUri = new RedirectUri(redirectUriEntity.getRedirectUri());
-                    if (redirectUriEntity.getRedirectUriType()!=null)
                     redirectUri.setType(RedirectUriType.fromValue(redirectUriEntity.getRedirectUriType()));
                     String predefinedScope = redirectUriEntity.getPredefinedClientScope();
                     if (StringUtils.isNotBlank(predefinedScope)) {
