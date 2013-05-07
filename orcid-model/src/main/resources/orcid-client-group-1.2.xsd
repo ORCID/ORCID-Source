@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    =============================================================================
+
+    ORCID (R) Open Source
+    http://orcid.org
+
+    Copyright (c) 2012-2013 ORCID, Inc.
+    Licensed under an MIT-Style License (MIT)
+    http://orcid.org/open-source-license
+
+    This copyright and license information (including a link to the full license)
+    shall be included in its entirety in all copies or substantial portion of 
+    the software.
+
+    =============================================================================
+
+-->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified"
+  targetNamespace="http://www.orcid.org/ns/orcid"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:orcid="http://www.orcid.org/ns/orcid">
+  <xs:annotation>
+    <xs:documentation> 
+=============================================================================
+
+ORCID (R) Open Source
+http://orcid.org
+
+Copyright (c) 2012-2013 ORCID, Inc.
+Licensed under an MIT-Style License (MIT)
+http://orcid.org/open-source-license
+
+This copyright and license information (including a link to the full license)
+shall be included in its entirety in all copies or substantial portion of 
+the software.
+ 
+=============================================================================
+    </xs:documentation>
+    <xs:documentation>This schema describes the format used to define creation of groups of ORCID
+      clients for OAuth2. The top level element is orcid-client-group.</xs:documentation>
+  </xs:annotation>
+  <xs:element name="orcid-client-group">
+    <xs:annotation>
+      <xs:documentation>A group of OAuth2 clients to be created, or have been created.</xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="orcid:group-orcid" minOccurs="0"/>
+        <xs:element ref="orcid:group-name"/>
+        <xs:element ref="orcid:email"/>
+        <xs:element ref="orcid:orcid-client" maxOccurs="unbounded"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="group-orcid" type="orcid:orcid">
+    <xs:annotation>
+      <xs:documentation>The overall ORCID identifier for the group of clients. If this is omitted then a new group of clients will be created.</xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:element name="group-name" type="orcid:short-text">
+    <xs:annotation>
+      <xs:documentation>A descriptive name for the group of clients.</xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:element name="email" type="orcid:email">
+    <xs:annotation>
+      <xs:documentation>A contact email for the group of clients. This email will be contact in the event of any issues relating to the clients.</xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:element name="orcid-client">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="orcid:display-name"/>
+        <xs:element ref="orcid:website"/>
+        <xs:element ref="orcid:short-description"/>
+        <xs:element ref="orcid:redirect-uris"/>
+        <xs:element ref="orcid:client-id" minOccurs="0"/>
+        <xs:element ref="orcid:client-secret" minOccurs="0"/>
+      </xs:sequence>
+      <xs:attribute name="type" type="orcid:client-type"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="display-name" type="orcid:short-text">
+    <xs:annotation>
+      <xs:documentation>The display name of the client. This will be shown to the user during OAuth2 authorization.</xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:element name="website" type="xs:anyURI">
+    <xs:annotation>
+      <xs:documentation>The address of the web user interface of the client system. The user will be
+        able to navigate to this address during OAuth2 authorization, if they wish to do
+        so.</xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:element name="short-description" type="orcid:short-text">
+    <xs:annotation>
+      <xs:documentation>A short description of the client system. This will be shown to the user
+        during OAuth2 authorization.</xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:element name="redirect-uris">
+    <xs:annotation>
+      <xs:documentation>The list of redirect_uris that the client is permitted to use during OAuth2
+        authorization.</xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element maxOccurs="unbounded" ref="orcid:redirect-uri"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="redirect-uri">
+    <xs:complexType>
+    <xs:simpleContent>
+        <xs:extension base="xs:anyURI">
+            <xs:attribute name="scope" type="orcid:scope" />
+            <xs:attribute name="type" type="orcid:redirect-uri-type"  use="required"></xs:attribute>
+        </xs:extension>
+    </xs:simpleContent>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="client-id" type="orcid:orcid">
+    <xs:annotation>
+      <xs:documentation>The client ID to be used by the client for OAuth2 authorization. If this is absent then a new client will be created.</xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:element name="client-secret" type="orcid:short-text">
+    <xs:annotation>
+      <xs:documentation>The client secret to be used by the client for OAuth2 authorization. This
+        will be generated by ORCID and returned to the administrators of the client system in an XML
+        file in this format. In other words, this should be omitted in the XML file that is sent to
+        the ORCID administrators when requesting client creation or client
+        updates.</xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:simpleType name="orcid">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="(\d{4}-){3,}\d{3}[\dX]"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="email">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="[^@]+@[^\.]+\..+"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="short-text">
+    <xs:restriction base="xs:string">
+      <xs:minLength value="3"/>
+      <xs:maxLength value="300"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="client-type">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="creator"/>
+      <xs:enumeration value="updater"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="redirect-uri-type">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="default"/>
+      <xs:enumeration value="grant-read-wizard"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="scope">
+    <xs:list itemType="orcid:scope-path-type"/>
+  </xs:simpleType>
+  <xs:simpleType name="scope-path-type">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="/authenticate" />
+      <xs:enumeration value="/orcid-bio/read-limited" />
+      <xs:enumeration value="/orcid-profile/read-limited" />
+      <xs:enumeration value="/orcid-works/read-limited" />
+      <xs:enumeration value="/orcid-grants/read-limited" />
+      <xs:enumeration value="/orcid-patents/read-limited" />
+      <xs:enumeration value="/orcid-works/update" />
+      <xs:enumeration value="/orcid-grants/update" />
+      <xs:enumeration value="/orcid-patents/update" />
+      <xs:enumeration value="/orcid-bio/external-identifiers/create" />
+      <xs:enumeration value="/orcid-bio/update" />
+      <xs:enumeration value="/orcid-works/create" />
+      <xs:enumeration value="/orcid-grants/create" />
+      <xs:enumeration value="/orcid-patents/create" />
+      <xs:enumeration value="/orcid-profile/create" />
+    </xs:restriction>
+  </xs:simpleType>
+</xs:schema>

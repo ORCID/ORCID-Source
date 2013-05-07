@@ -105,14 +105,17 @@ public class OrcidClientGroupManagerTest extends BaseTest {
         assertNotNull(complexityClient);
         assertEquals("http://www.journals.elsevier.com/ecological-complexity", complexityClient.getWebsite());
         assertEquals("An International Journal on Biocomplexity in the Environment and Theoretical Ecology", complexityClient.getShortDescription());
+        
         List<RedirectUri> createdRedirectUris = complexityClient.getRedirectUris().getRedirectUri();
         assertNotNull(createdRedirectUris);
         assertEquals(2, createdRedirectUris.size());
         assertEquals("http://www.journals.elsevier.com/ecological-complexity/orcid-callback", createdRedirectUris.get(0).getValue());
+        assertEquals("grant-read-wizard", createdRedirectUris.get(0).getType().value());
         List<ScopePathType> scopesForRedirect = createdRedirectUris.get(0).getScope();
         assertTrue(scopesForRedirect.size() == 2);
         assertTrue(scopesForRedirect.contains(ScopePathType.ORCID_PROFILE_CREATE) && scopesForRedirect.contains(ScopePathType.ORCID_BIO_READ_LIMITED));
         assertEquals("https://developers.google.com/oauthplayground", createdRedirectUris.get(1).getValue());
+        assertEquals("default", createdRedirectUris.get(1).getType().value());
         assertNull(createdRedirectUris.get(1).getScope());
         // Look up client details directly to check scopes
         ClientDetailsEntity complexityEntity = clientDetailsDao.find(complexityClient.getClientId());
