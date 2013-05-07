@@ -47,6 +47,9 @@ public class ClientRedirectUriEntity extends BaseEntity<ClientRedirectUriPk> imp
     private String redirectUri;
     private String predefinedClientScope;
     private ClientDetailsEntity clientDetailsEntity;
+    private String redirectUriType;
+    
+    
 
     public ClientRedirectUriEntity() {
     }
@@ -115,6 +118,15 @@ public class ClientRedirectUriEntity extends BaseEntity<ClientRedirectUriPk> imp
             return redirectUri == null ? 0 : 1;
         }
         return redirectUri == null ? -1 : redirectUri.compareTo(otherUri);
+    }
+
+    @Column(name = "redirect_uri_type", length = 20)
+    public String getRedirectUriType() {
+        return redirectUriType;
+    }
+
+    public void setRedirectUriType(String redirectUriType) {
+        this.redirectUriType = redirectUriType;
     }
 
 }

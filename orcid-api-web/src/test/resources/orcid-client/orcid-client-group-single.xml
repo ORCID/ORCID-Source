@@ -23,7 +23,7 @@
     adminstrators to the ORCID administrators (as an email attachement). 
 -->
 <orcid-client-group xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
- xsi:schemaLocation="http://www.orcid.org/ns/orcid ../../../../../orcid-model/src/main/resources/orcid-client-group-1.1.xsd"
+ xsi:schemaLocation="http://www.orcid.org/ns/orcid ../../../../../orcid-model/src/main/resources/orcid-client-group-1.2.xsd"
  xmlns="http://www.orcid.org/ns/orcid">
     <group-name>Elsevier</group-name>
     <email>orcid-admin@elsevier.com</email>
@@ -32,7 +32,7 @@
         <website>http://www.journals.elsevier.com/ecological-complexity</website>
         <short-description>An International Journal on Biocomplexity in the Environment and Theoretical Ecology</short-description>
         <redirect-uris>
-            <redirect-uri>http://www.journals.elsevier.com/ecological-complexity/orcid-callback</redirect-uri>
+            <redirect-uri type="default">http://www.journals.elsevier.com/ecological-complexity/orcid-callback</redirect-uri>
         </redirect-uris>
     </orcid-client>    
 </orcid-client-group>

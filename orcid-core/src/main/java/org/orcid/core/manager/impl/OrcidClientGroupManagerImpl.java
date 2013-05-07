@@ -39,6 +39,7 @@ import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.clientgroup.OrcidClient;
 import org.orcid.jaxb.model.clientgroup.OrcidClientGroup;
 import org.orcid.jaxb.model.clientgroup.RedirectUri;
+import org.orcid.jaxb.model.clientgroup.RedirectUriType;
 import org.orcid.jaxb.model.message.Biography;
 import org.orcid.jaxb.model.message.Claimed;
 import org.orcid.jaxb.model.message.ContactDetails;
@@ -227,6 +228,7 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
             } else {
                 ClientRedirectUriEntity clientRedirectUriEntity = new ClientRedirectUriEntity(redirectUri.getValue(), clientDetailsEntity);
                 List<ScopePathType> clientPredefinedScopes = redirectUri.getScope();
+                clientRedirectUriEntity.setRedirectUriType(redirectUri.getType().value());
                 String allPreDefScopes = null;
                 if (clientPredefinedScopes != null) {
                     allPreDefScopes = ScopePathType.getScopesAsSingleString(clientPredefinedScopes);

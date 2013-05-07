@@ -8,7 +8,7 @@
         <website>www.4444-4444-4444-4441.com</website>
         <short-description>Terence Alan Patrick Seán 'Spike' Milligan KBE (16 April 1918 – 27 February 2002) was a comedian, writer, musician, poet, playwright, soldier and actor.</short-description>
         <redirect-uris>
-            <redirect-uri scope="/orcid-profile/create">http:://www.4444-4444-4444-4441.com/redirect/oauth</redirect-uri>
+            <redirect-uri scope="/orcid-profile/create" type="default">http:://www.4444-4444-4444-4441.com/redirect/oauth</redirect-uri>
         </redirect-uris>
         <client-id>4444-4444-4444-4441</client-id>
         <client-secret>DhkFj5EI0qp6GsUKi55Vja+h+bsaKpBx</client-secret>
@@ -17,7 +17,7 @@
         <display-name>M. Bentine</display-name>
         <short-description>Michael Bentine CBE (26 January 1922[1] – 26 November 1996[2]) was a British comedian, comic actor and founding member of the Goons.</short-description>
         <redirect-uris>
-            <redirect-uri>http:://www.4444-4444-4444-4442.com/redirect/oauth</redirect-uri>
+            <redirect-uri type="default">http:://www.4444-4444-4444-4442.com/redirect/oauth</redirect-uri>
         </redirect-uris>
         <client-id>4444-4444-4444-4442</client-id>
         <client-secret>DhkFj5EI0qp6GsUKi55Vja+h+bsaKpBx</client-secret>
@@ -27,7 +27,7 @@
         <website>http://www.researcherurl2.com?id=1</website>
         <short-description>Richard Henry Sellers, CBE (8 September 1925 – 24 July 1980), known as Peter Sellers, was a British film actor, comedian and singer.</short-description>
         <redirect-uris>
-            <redirect-uri>http:://www.4444-4444-4444-4443.com/redirect/oauth</redirect-uri>
+            <redirect-uri type="default">http:://www.4444-4444-4444-4443.com/redirect/oauth</redirect-uri>
         </redirect-uris>
         <client-id>4444-4444-4444-4443</client-id>
         <client-secret>DhkFj5EI0qp6GsUKi55Vja+h+bsaKpBx</client-secret>
@@ -36,7 +36,7 @@
         <display-name>H. Secombe</display-name>
         <short-description>Sir Harry Donald Secombe, CBE (8 September 1921 – 11 April 2001) was a Welsh entertainer with a talent for comedy and a noted fine tenor singing voice.</short-description>
         <redirect-uris>
-            <redirect-uri>http:://www.4444-4444-4444-4444.com/redirect/oauth</redirect-uri>
+            <redirect-uri type="default">http:://www.4444-4444-4444-4444.com/redirect/oauth</redirect-uri>
         </redirect-uris>
         <client-id>4444-4444-4444-4444</client-id>
         <client-secret>DhkFj5EI0qp6GsUKi55Vja+h+bsaKpBx</client-secret>
@@ -46,7 +46,7 @@
         <website>www.4444-4444-4444-4445.com</website>
         <short-description>Andrew Timothy (1912–9 December 1990) was an Anglican priest and BBC Radio announcer, who is best remembered for being the original announcer of the comedy series The Goon Show.</short-description>
         <redirect-uris>
-            <redirect-uri>http:://www.4444-4444-4444-4445.com/redirect/oauth</redirect-uri>
+            <redirect-uri type="default">http:://www.4444-4444-4444-4445.com/redirect/oauth</redirect-uri>
         </redirect-uris>
         <client-id>4444-4444-4444-4445</client-id>
         <client-secret>DhkFj5EI0qp6GsUKi55Vja+h+bsaKpBx</client-secret>
