@@ -49,6 +49,7 @@
     <include file="/db/updates/1.0.22.xml"/>
     <include file="/db/updates/1.1.13.xml"/>
     <include file="/db/updates/1.1.3.4.xml"/>
+    <include file="/db/updates/add-source-to-profile-works.xml"/>
     <include file="/db/updates/works-global-priv-setting.xml"/>
     <include file="/db/updates/multiple-emails.xml"/>
     <include file="/db/updates/claim-wait-period.xml"/>

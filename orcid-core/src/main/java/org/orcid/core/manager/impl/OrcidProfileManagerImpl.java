@@ -81,6 +81,7 @@ import org.orcid.jaxb.model.message.SecurityDetails;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.message.VisibilityType;
 import org.orcid.jaxb.model.message.WorkContributors;
+import org.orcid.jaxb.model.message.WorkSource;
 import org.orcid.persistence.adapter.JpaJaxbEntityAdapter;
 import org.orcid.persistence.dao.EmailDao;
 import org.orcid.persistence.dao.GivenPermissionToDao;
@@ -91,6 +92,7 @@ import org.orcid.persistence.jpa.entities.IndexingStatus;
 import org.orcid.persistence.jpa.entities.OrcidGrantedAuthority;
 import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.orcid.persistence.jpa.entities.ProfileWorkEntity;
 import org.orcid.utils.DateUtils;
 import org.orcid.utils.NullUtils;
 import org.slf4j.Logger;
@@ -231,6 +233,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         }
         dedupeProfileWorks(orcidProfile);
         addSourceToEmails(orcidProfile, existingProfileEntity, amenderOrcid);
+        addSourceToWorks(orcidProfile, amenderOrcid);
         ProfileEntity profileEntity = adapter.toProfileEntity(orcidProfile, existingProfileEntity);
         profileEntity.setLastModified(new Date());
         profileEntity.setIndexingStatus(IndexingStatus.PENDING);
@@ -293,6 +296,21 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         }
     }
 
+    /**
+     * TODO
+     * */
+    private void addSourceToWorks(OrcidProfile orcidProfile, String amenderOrcid){
+        OrcidWorks orcidWorks = orcidProfile.getOrcidActivities() == null ? null : orcidProfile.getOrcidActivities().getOrcidWorks();
+        
+        if(orcidWorks != null && !orcidWorks.getOrcidWork().isEmpty()){
+            for(OrcidWork orcidWork : orcidWorks.getOrcidWork()){
+                if(orcidWork.getWorkSource() == null || StringUtils.isEmpty(orcidWork.getWorkSource().getContent()))
+                    orcidWork.setWorkSource(new WorkSource(amenderOrcid));
+            }
+        }
+        
+    }
+    
     private void setWorkPrivacy(OrcidProfile updatedOrcidProfile, Visibility defaultWorkVisibility) {
         OrcidActivities incomingActivities = updatedOrcidProfile.getOrcidActivities();
         if (incomingActivities != null) {

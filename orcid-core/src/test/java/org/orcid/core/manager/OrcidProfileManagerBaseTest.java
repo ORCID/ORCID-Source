@@ -64,6 +64,7 @@ import org.orcid.jaxb.model.message.WorkExternalIdentifier;
 import org.orcid.jaxb.model.message.WorkExternalIdentifierId;
 import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
 import org.orcid.jaxb.model.message.WorkExternalIdentifiers;
+import org.orcid.jaxb.model.message.WorkSource;
 import org.orcid.jaxb.model.message.WorkTitle;
 import org.orcid.persistence.dao.ClientDetailsDao;
 import org.orcid.persistence.dao.GenericDao;
@@ -276,6 +277,7 @@ public class OrcidProfileManagerBaseTest extends BaseTest {
         orcidWork.setWorkTitle(title);
         orcidWork.setWorkExternalIdentifiers(workExternalIdentifiers);
         orcidWork.setWorkContributors(workContributors);
+        orcidWork.setWorkSource(new WorkSource(WorkSource.NULL_SOURCE_PROFILE));
         return orcidWork;
     }
 

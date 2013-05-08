@@ -304,8 +304,8 @@ public class ObjectFactory {
      * Create an instance of {@link WorkSources }
      * 
      */
-    public WorkSources createWorkSources() {
-        return new WorkSources();
+    public WorkSource createWorkSources() {
+        return new WorkSource();
     }
 
     /**
