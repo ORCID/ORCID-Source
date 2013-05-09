@@ -18,7 +18,6 @@ package org.orcid.persistence.jpa.entities;
 
 import java.util.Comparator;
 import java.util.Date;
-import java.util.Set;
 
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
@@ -31,12 +30,9 @@ import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.persistence.jpa.entities.keys.ProfileWorkEntityPk;
 
@@ -93,7 +89,8 @@ public class ProfileWorkEntity extends BaseEntity<ProfileWorkEntityPk> implement
     }
     
     /**
-     * TODO
+     * Set the source to the profile work
+     * @param sourceProfile
      * */
     public void setSourceProfile(ProfileEntity sourceProfile){
         this.sourceProfile = sourceProfile;

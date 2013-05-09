@@ -297,7 +297,11 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
     }
 
     /**
-     * TODO
+     * Add source to the profile works
+     * @param orcidProfile
+     *          The profile
+     * @param amenderOrcid
+     *          The orcid of the user or client that add the work to the profile user
      * */
     private void addSourceToWorks(OrcidProfile orcidProfile, String amenderOrcid){
         OrcidWorks orcidWorks = orcidProfile.getOrcidActivities() == null ? null : orcidProfile.getOrcidActivities().getOrcidWorks();
