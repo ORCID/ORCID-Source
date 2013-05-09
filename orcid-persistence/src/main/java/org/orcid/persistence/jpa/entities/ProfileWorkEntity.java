@@ -49,7 +49,7 @@ import org.orcid.persistence.jpa.entities.keys.ProfileWorkEntityPk;
 @Entity
 @Table(name = "profile_work")
 @IdClass(ProfileWorkEntityPk.class)
-public class ProfileWorkEntity extends BaseEntity<ProfileWorkEntityPk> implements Comparable<ProfileWorkEntity> {
+public class ProfileWorkEntity extends BaseEntity<ProfileWorkEntityPk> implements Comparable<ProfileWorkEntity>, ProfileAware {
 
     private static final long serialVersionUID = -3187757614938904392L;
 

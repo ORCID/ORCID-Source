@@ -38,7 +38,7 @@ import javax.persistence.Table;
  **/
 @Entity
 @Table(name = "other_name")
-public class OtherNameEntity extends BaseEntity<Long> implements Comparable<OtherNameEntity> {
+public class OtherNameEntity extends BaseEntity<Long> implements Comparable<OtherNameEntity>, ProfileAware {
 
     private static final long serialVersionUID = -3227122865862310024L;
 

@@ -25,6 +25,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 /**
  * orcid-entities - Dec 6, 2011 - ElectronicResourceNumTypeEntity
@@ -33,7 +34,7 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "researcher_url")
-public class ResearcherUrlEntity extends BaseEntity<Long> implements Comparable<ResearcherUrlEntity> {
+public class ResearcherUrlEntity extends BaseEntity<Long> implements Comparable<ResearcherUrlEntity>, ProfileAware {
 
     private static final long serialVersionUID = -632507196189018770L;
 
@@ -87,6 +88,12 @@ public class ResearcherUrlEntity extends BaseEntity<Long> implements Comparable<
     @ManyToOne
     @JoinColumn(name = "orcid", nullable = false)
     public ProfileEntity getUser() {
+        return user;
+    }
+
+    @Transient
+    @Override
+    public ProfileEntity getProfile() {
         return user;
     }
 

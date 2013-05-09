@@ -40,14 +40,14 @@ import java.util.Set;
 
 /**
  * orcid-entities - Dec 6, 2011 - ProfileInstitutionEntity
- *
+ * 
  * @author Declan Newman (declan)
  */
 
 @Entity
 @Table(name = "profile_grant")
 @IdClass(ProfileGrantEntityPk.class)
-public class ProfileGrantEntity extends BaseEntity<ProfileGrantEntityPk> implements Comparable<ProfileGrantEntity> {
+public class ProfileGrantEntity extends BaseEntity<ProfileGrantEntityPk> implements Comparable<ProfileGrantEntity>, ProfileAware {
 
     private static final long serialVersionUID = -3187757614938904392L;
 

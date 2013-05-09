@@ -45,7 +45,7 @@ import org.springframework.util.StringUtils;
  */
 @Entity
 @Table(name = "client_details")
-public class ClientDetailsEntity extends BaseEntity<String> implements ClientDetails {
+public class ClientDetailsEntity extends BaseEntity<String> implements ClientDetails, ProfileAware {
 
     private static final long serialVersionUID = 1L;
 
@@ -147,6 +147,12 @@ public class ClientDetailsEntity extends BaseEntity<String> implements ClientDet
 
     @OneToOne(mappedBy = "clientDetails")
     public ProfileEntity getProfileEntity() {
+        return profileEntity;
+    }
+    
+    @Transient
+    @Override
+    public ProfileEntity getProfile(){
         return profileEntity;
     }
 

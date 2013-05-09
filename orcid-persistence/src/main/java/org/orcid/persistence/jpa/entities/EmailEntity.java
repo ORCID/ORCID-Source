@@ -38,7 +38,7 @@ import org.orcid.jaxb.model.message.Visibility;
  */
 @Entity
 @Table(name = "email")
-public class EmailEntity extends BaseEntity<String> {
+public class EmailEntity extends BaseEntity<String> implements ProfileAware {
 
     private static final long serialVersionUID = 1;
 

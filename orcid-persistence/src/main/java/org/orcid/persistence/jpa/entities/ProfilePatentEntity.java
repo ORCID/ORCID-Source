@@ -47,7 +47,7 @@ import java.util.Set;
 @Entity
 @Table(name = "profile_patent")
 @IdClass(ProfilePatentEntityPk.class)
-public class ProfilePatentEntity extends BaseEntity<ProfilePatentEntityPk> implements Comparable<ProfilePatentEntity> {
+public class ProfilePatentEntity extends BaseEntity<ProfilePatentEntityPk> implements Comparable<ProfilePatentEntity>, ProfileAware {
 
     private static final long serialVersionUID = -3187757614938904392L;
 

@@ -36,7 +36,7 @@ import org.orcid.utils.NullUtils;
  * @author Declan Newman (declan) Date: 08/08/2012
  */
 @MappedSuperclass
-public abstract class BaseContributorEntity extends BaseEntity<Long> implements Comparable<BaseContributorEntity> {
+public abstract class BaseContributorEntity extends BaseEntity<Long> implements Comparable<BaseContributorEntity>, ProfileAware {
 
     private static final long serialVersionUID = -371826957062237679L;
     private ProfileEntity profile;

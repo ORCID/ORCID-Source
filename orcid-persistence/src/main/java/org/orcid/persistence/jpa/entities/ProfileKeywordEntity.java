@@ -37,7 +37,7 @@ import javax.persistence.Transient;
 @Entity
 @Table(name = "profile_keyword")
 @IdClass(ProfileKeywordEntityPk.class)
-public class ProfileKeywordEntity extends BaseEntity<ProfileKeywordEntityPk> implements Comparable<ProfileKeywordEntity> {
+public class ProfileKeywordEntity extends BaseEntity<ProfileKeywordEntityPk> implements Comparable<ProfileKeywordEntity>, ProfileAware {
 
     private static final long serialVersionUID = -3187757614938904392L;
 
