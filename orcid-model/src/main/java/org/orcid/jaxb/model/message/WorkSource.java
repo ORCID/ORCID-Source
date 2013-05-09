@@ -54,7 +54,7 @@ public class WorkSource implements Serializable {
 
     //This field indicates that the source is null on database
     //So -1 will be the same as a null value on the source
-    public static String NULL_SOURCE_PROFILE = "-1";
+    public static String NULL_SOURCE_PROFILE = "NOT_DEFINED";
     
     /**
      * 
