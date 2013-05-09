@@ -21,6 +21,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
+import java.util.Date;
 
 import javax.annotation.Resource;
 
@@ -42,6 +43,9 @@ public class ExternalIdentifierDaoTest extends DBUnitTest {
 
     @Resource
     private ExternalIdentifierDao externalIdentifierDao;
+    
+    @Resource
+    private ProfileDao profileDao;
 
     @BeforeClass
     public static void initDBUnitData() throws Exception {
@@ -62,8 +66,10 @@ public class ExternalIdentifierDaoTest extends DBUnitTest {
     @Rollback(true)
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void testRemoveExternalIdentifier() {
+        Date lastModifiedOrig = profileDao.retrieveLastModifiedDate("4444-4444-4444-4443");
         assertFalse(externalIdentifierDao.removeExternalIdentifier("4444-4444-4444-4441", "d3clan"));
         assertFalse(externalIdentifierDao.removeExternalIdentifier("4444-4444-4444-4443", "d3clan1"));
+        assertFalse("Profile last modified should be updated", lastModifiedOrig.after(profileDao.retrieveLastModifiedDate("4444-4444-4444-4443")));
         assertTrue(externalIdentifierDao.removeExternalIdentifier("4444-4444-4444-4443", "d3clan"));
     }
 }
