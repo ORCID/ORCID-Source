@@ -29,7 +29,7 @@
         <strong><@spring.message "orcid.frontend.web.record_claimed"/></strong>
     </div>
 </#if>
-<div class="row workspace-top public-profile">
+<div id="ng-app" ng-app="orcidApp" class="row workspace-top public-profile">
     <div class="span3 lhs">
     	<div class="workspace-left workspace-profile">
             <h2 class="full-name">
@@ -65,7 +65,7 @@
 		       		   <a href="<@orcid.absUrl url.url/>"><#if (url.urlName.content)! != "">${url.urlName.content}<#else>${url.url.value}</#if></a><#if url_has_next><br/></#if>
 		       		</#list></p>
 	       	</#if>
-       		<div id="ng-app" ng-app="orcidApp" ng-controller="ExternalIdentifierCtrl" ng-hide="!externalIdentifiersPojo.externalIdentifiers.length" ng-cloak>	       			
+       		<div ng-controller="ExternalIdentifierCtrl" ng-hide="!externalIdentifiersPojo.externalIdentifiers.length" ng-cloak>	       			
        			<p><strong>${springMacroRequestContext.getMessage("public_profile.labelOtherIDs")}</strong> </p>
 		        <table id="externalIdentifierTable">
 		        	<tr style="vertical-align:bottom;" ng-repeat='externalIdentifier in externalIdentifiersPojo.externalIdentifiers'>
@@ -164,6 +164,24 @@
             </div>
         </div>
     </div>
+    <#if !Session.CHECK_EMAIL_VALIDATED?exists>
+    <div ng-controller="VerifyEmailCtrl" style="display: hidden;">
+		<script type="text/ng-template" id="verify-email-modal">
+		  <div style="padding: 20px">
+		  	  <div ng-show="emailSent == false">
+			     <h3>${springMacroRequestContext.getMessage("workspace.your_primary_email")}</h3>
+			     <span class="btn btn-primary" id="modal-close" ng-click="verifyEmail()">${springMacroRequestContext.getMessage("workspace.send_verification")}</span>
+			     <span class="btn" id="modal-close" ng-click="closeColorBox()">${springMacroRequestContext.getMessage("freemarker.btncancel")}</span>
+			  </div>
+			  <div ng-show="emailSent == true">
+			  	 <h3>${springMacroRequestContext.getMessage("workspace.email_sent_please")}</h3>
+			     <span class="btn" id="modal-close" ng-click="closeColorBox()">${springMacroRequestContext.getMessage("freemarker.btnclose")}</span>
+			  </div>
+		  </div>
+		</script>        
+	</div>
+	</#if>
+    
 </div>
 </#escape>
 </@protected>

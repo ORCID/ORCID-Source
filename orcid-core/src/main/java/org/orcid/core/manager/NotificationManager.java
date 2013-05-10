@@ -19,6 +19,7 @@ package org.orcid.core.manager;
 import java.net.URI;
 import java.util.List;
 
+
 import org.orcid.jaxb.model.message.DelegationDetails;
 import org.orcid.jaxb.model.message.Email;
 import org.orcid.jaxb.model.message.OrcidProfile;
@@ -33,11 +34,6 @@ public interface NotificationManager {
     void setSecurityQuestionDao(GenericDao<SecurityQuestionEntity, Integer> securityQuestionDao);
 
     // void sendRegistrationEmail(RegistrationEntity registration, URI baseUri);
-
-    @Deprecated
-    void sendLegacyVerificationEmail(OrcidProfile orcidProfile, URI baseUri);
-
-    void sendVerificationEmail(OrcidProfile orcidProfile, URI baseUri);
 
     void sendVerificationEmail(OrcidProfile orcidProfile, URI baseUri, String email);
 
