@@ -74,7 +74,7 @@
 		        			<p ng-show="externalIdentifier.externalIdUrl"><a ng-href="{{externalIdentifier.externalIdUrl.value}}">{{externalIdentifier.externalIdCommonName.content}} {{externalIdentifier.externalIdReference.content}}</a></p>
 		     			</td>
 			   			<td class="padRgt">
-			   				<a href ng-click="deleteExternalIdentifier($index)" class="icon-trash grey"></a>
+			   				<p><a href ng-click="deleteExternalIdentifier($index)" class="icon-trash grey"></a></p>
 			   			</td>		        		
 		        	</tr>
 		        </table>
