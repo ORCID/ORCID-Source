@@ -100,7 +100,6 @@ public class RegistrationManagerImpl implements RegistrationManager {
         orcidHistory.setCreationMethod(CreationMethod.WEBSITE);
         orcidProfile.setOrcidHistory(orcidHistory);
         orcidProfileManager.updateOrcidHistory(orcidProfile);
-        notificationManager.sendLegacyVerificationEmail(orcidProfile, baseUri);
         REGISTRATIONS_VERIFIED_COUNTER.inc();
     }
 

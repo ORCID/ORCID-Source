@@ -35,9 +35,6 @@ public interface NotificationManager {
 
     // void sendRegistrationEmail(RegistrationEntity registration, URI baseUri);
 
-    @Deprecated
-    void sendLegacyVerificationEmail(OrcidProfile orcidProfile, URI baseUri);
-
     void sendVerificationEmail(OrcidProfile orcidProfile, URI baseUri, String email);
 
     void sendPasswordResetEmail(OrcidProfile orcidProfile, URI baseUri);

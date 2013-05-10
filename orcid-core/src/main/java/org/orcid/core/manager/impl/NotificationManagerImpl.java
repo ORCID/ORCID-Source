@@ -170,31 +170,6 @@ public class NotificationManagerImpl implements NotificationManager {
         sendAndLogMessage(message);
     }
 
-    @Override
-    public void sendLegacyVerificationEmail(OrcidProfile orcidProfile, URI baseUri) {
-        // Create map of template params
-        Map<String, Object> templateParams = new HashMap<String, Object>();
-
-        String emailFriendlyName = deriveEmailFriendlyName(orcidProfile);
-        templateParams.put("emailName", emailFriendlyName);
-        templateParams.put("orcid", orcidProfile.getOrcid().getValue());
-        templateParams.put("securityQuestion", securityQuestionDao.find((int) orcidProfile.getOrcidInternal().getSecurityDetails().getSecurityQuestionId().getValue())
-                .getQuestion());
-        templateParams.put("baseUri", baseUri);
-        templateParams.put("securityAnswer",
-                encryptionManager.decryptForInternalUse(orcidProfile.getOrcidInternal().getSecurityDetails().getEncryptedSecurityAnswer().getContent()));
-        // Generate body from template
-        String body = templateManager.processTemplate("legacy_verification_email.ftl", templateParams);
-        // Create email message
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom(fromAddress);
-        message.setTo(orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue());
-        message.setSubject(emailSubjects.getProperty("legacyVerification"));
-        message.setText(body);
-        // Send message
-        sendAndLogMessage(message);
-    }
-
     public void sendVerificationEmail(OrcidProfile orcidProfile, URI baseUri, String email) {
         Map<String, Object> templateParams = new HashMap<String, Object>();
 

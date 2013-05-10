@@ -90,28 +90,7 @@ public class NotificationManagerTest extends BaseTest {
         notificationManagerImpl.setProfileEventDao(profileEventDao);
     }
 
-    @Test
-    @Rollback
-    public void testSendLegacyVerificationEmail() throws JAXBException, IOException, URISyntaxException {
-        URI baseUri = new URI("http://testserver.orcid.org");
-        SecurityQuestionEntity securityQuestion = new SecurityQuestionEntity();
-        securityQuestion.setId(1);
-        securityQuestion.setQuestion("What is the name of your favorite teacher?");
-        when(securityQuestionDao.find(1)).thenReturn(securityQuestion);
-
-        OrcidMessage orcidMessage = (OrcidMessage) unmarshaller.unmarshal(getClass().getResourceAsStream(ORCID_INTERNAL_FULL_XML));
-        OrcidProfile orcidProfile = orcidMessage.getOrcidProfile();
-        notificationManager.sendLegacyVerificationEmail(orcidProfile, baseUri);
-
-        SimpleMailMessage expected = new SimpleMailMessage();
-        expected.setFrom("no_reply@orcid.org");
-        expected.setTo("josiah_carberry@brown.edu");
-        expected.setSubject("[ORCID] Registration Complete");
-        expected.setText(IOUtils.toString(getClass().getResourceAsStream("example_legacy_verification_email_body.txt")));
-
-        verify(mailSender, times(1)).send(expected);
-    }
-
+ 
     @Test
     @Rollback
     public void testSendVerificationEmail() throws JAXBException, IOException, URISyntaxException {
@@ -271,13 +250,6 @@ public class NotificationManagerTest extends BaseTest {
         String expectedText = IOUtils.toString(getClass().getResourceAsStream("example_deactivated_email.txt"));
         deactivateMessage.setText(expectedText);
 
-        SimpleMailMessage newMessage = new SimpleMailMessage();
-        newMessage.setFrom("no_reply@orcid.org");
-        newMessage.setTo("josiah_carberry@brown.edu");
-        newMessage.setSubject("[ORCID] Email Verification Required");
-        newMessage.setText(IOUtils.toString(getClass().getResourceAsStream("example_verification_email_body.txt")));
-
-        verify(mailSender, times(1)).send(newMessage);
         verify(mailSender, times(1)).send(deactivateMessage);
     }
 
