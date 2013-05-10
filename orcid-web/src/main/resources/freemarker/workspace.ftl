@@ -169,13 +169,13 @@
 		<script type="text/ng-template" id="verify-email-modal">
 		  <div style="padding: 20px">
 		  	  <div ng-show="emailSent == false">
-			     <h3>Your primary email must be verified.</h3>
-			     <span class="btn btn-primary" id="modal-close" ng-click="verifyEmail()">Send verification email now.</span>
-			     <span class="btn" id="modal-close" ng-click="closeColorBox()">Cancel</span>
+			     <h3>${springMacroRequestContext.getMessage("workspace.your_primary_email")}</h3>
+			     <span class="btn btn-primary" id="modal-close" ng-click="verifyEmail()">${springMacroRequestContext.getMessage("workspace.send_verification")}</span>
+			     <span class="btn" id="modal-close" ng-click="closeColorBox()">${springMacroRequestContext.getMessage("freemarker.btncancel")}</span>
 			  </div>
 			  <div ng-show="emailSent == true">
-			  	 <h3>Email sent, please check your email inbox (and spam box).</h3>
-			     <span class="btn" id="modal-close" ng-click="closeColorBox()">Close</span>
+			  	 <h3>${springMacroRequestContext.getMessage("workspace.email_sent_please")}</h3>
+			     <span class="btn" id="modal-close" ng-click="closeColorBox()">${springMacroRequestContext.getMessage("freemarker.btnclose")}</span>
 			  </div>
 		  </div>
 		</script>        
