@@ -110,11 +110,12 @@ public class ManageProfileController extends BaseWorkspaceController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ManageProfileController.class);
 
-    /* session attribute that is used to see if we should check and
-     * notify the user if thier primary emails ins't verified.
+    /*
+     * session attribute that is used to see if we should check and notify the
+     * user if thier primary emails ins't verified.
      */
-    public static String CHECK_EMAIL_VALIDATED  = "CHECK_EMAIL_VALIDATED";
-    
+    public static String CHECK_EMAIL_VALIDATED = "CHECK_EMAIL_VALIDATED";
+
     @Resource
     private OrcidSearchManager orcidSearchManager;
 
@@ -739,7 +740,7 @@ public class ManageProfileController extends BaseWorkspaceController {
         String primaryEmail = currentProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue();
         if (primaryEmail.equals(email))
             request.getSession().setAttribute(ManageProfileController.CHECK_EMAIL_VALIDATED, false);
-        
+
         URI baseUri = OrcidWebUtils.getServerUriWithContextPath(request);
         notificationManager.sendVerificationEmail(currentProfile, baseUri, email);
         return new Errors();
@@ -809,8 +810,7 @@ public class ManageProfileController extends BaseWorkspaceController {
             // send verifcation email for new address
             URI baseUri = OrcidWebUtils.getServerUriWithContextPath(request);
             notificationManager.sendVerificationEmail(currentProfile, baseUri, email.getValue());
-            
-            
+
             // if primary also send change notification.
             if (newPrime != null && !newPrime.equalsIgnoreCase(oldPrime)) {
                 request.getSession().setAttribute(ManageProfileController.CHECK_EMAIL_VALIDATED, false);
@@ -914,35 +914,38 @@ public class ManageProfileController extends BaseWorkspaceController {
         }
 
         OrcidProfile profile = getCurrentUser().getRealProfile();
-        //Update profile with values that comes from user request
+        // Update profile with values that comes from user request
         changePersonalInfoForm.mergeOrcidBioDetails(profile);
 
-        //Update profile on database
+        // Update profile on database
         profileEntityManager.updateProfile(profile);
 
         String orcid = profile.getOrcid().getValue();
 
-        //Update other names on database
+        // Update other names on database
         OtherNames otherNames = profile.getOrcidBio().getPersonalDetails().getOtherNames();
         otherNameManager.updateOtherNames(orcid, otherNames);
 
-        //Update keywords on database
+        // Update keywords on database
         Keywords keywords = profile.getOrcidBio().getKeywords();
         profileKeywordManager.updateProfileKeyword(orcid, keywords);
 
-        //Update researcher urls on database
+        // Update researcher urls on database
         ResearcherUrls researcherUrls = profile.getOrcidBio().getResearcherUrls();
         boolean hasErrors = researcherUrlManager.updateResearcherUrls(orcid, researcherUrls);
-        //TODO: The researcherUrlManager will not store any duplicated researcher url on database, 
-        //however there is no way to tell the controller that some of the researcher urls were not 
-        //saved, so, if an error occurs, we need to reload researcher ids from database and update
-        //cached profile. A more efficient way to fix this might be used. 
+        // TODO: The researcherUrlManager will not store any duplicated
+        // researcher url on database,
+        // however there is no way to tell the controller that some of the
+        // researcher urls were not
+        // saved, so, if an error occurs, we need to reload researcher ids from
+        // database and update
+        // cached profile. A more efficient way to fix this might be used.
         if (hasErrors) {
             ResearcherUrls upToDateResearcherUrls = getUpToDateResearcherUrls(orcid, researcherUrls.getVisibility());
             profile.getOrcidBio().setResearcherUrls(upToDateResearcherUrls);
         }
 
-        //Update cached profile
+        // Update cached profile
         getCurrentUser().setEffectiveProfile(profile);
 
         redirectAttributes.addFlashAttribute("changesSaved", true);
@@ -951,6 +954,7 @@ public class ManageProfileController extends BaseWorkspaceController {
 
     /**
      * Generate an up to date ResearcherUrls object.
+     * 
      * @param orcid
      * @param visibility
      * */

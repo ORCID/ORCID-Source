@@ -181,8 +181,8 @@ public class NotificationManagerImpl implements NotificationManager {
         templateParams.put("securityQuestion", securityQuestionDao.find((int) orcidProfile.getOrcidInternal().getSecurityDetails().getSecurityQuestionId().getValue())
                 .getQuestion());
         templateParams.put("baseUri", baseUri);
-        templateParams.put("securityAnswer", encryptionManager.decryptForInternalUse(orcidProfile.getOrcidInternal().getSecurityDetails().getEncryptedSecurityAnswer()
-                .getContent()));
+        templateParams.put("securityAnswer",
+                encryptionManager.decryptForInternalUse(orcidProfile.getOrcidInternal().getSecurityDetails().getEncryptedSecurityAnswer().getContent()));
         // Generate body from template
         String body = templateManager.processTemplate("legacy_verification_email.ftl", templateParams);
         // Create email message
@@ -194,7 +194,6 @@ public class NotificationManagerImpl implements NotificationManager {
         // Send message
         sendAndLogMessage(message);
     }
-
 
     public void sendVerificationEmail(OrcidProfile orcidProfile, URI baseUri, String email) {
         Map<String, Object> templateParams = new HashMap<String, Object>();
@@ -323,7 +322,7 @@ public class NotificationManagerImpl implements NotificationManager {
 
     @Override
     public void sendEmailAddressChangedNotification(OrcidProfile updatedProfile, Email oldEmail, URI baseUri) {
- 
+
         // build up old template
         Map<String, Object> templateParams = new HashMap<String, Object>();
         SimpleMailMessage message = new SimpleMailMessage();
