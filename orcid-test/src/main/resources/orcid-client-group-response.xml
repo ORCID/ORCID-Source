@@ -23,7 +23,7 @@
     administrators to the client system administrators (as an email attachment). 
 -->
 <orcid-client-group xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
- xsi:schemaLocation="http://www.orcid.org/ns/orcid ../../../../orcid-model/src/main/resources/orcid-client-group-1.0.xsd"
+ xsi:schemaLocation="http://www.orcid.org/ns/orcid ../../../../orcid-model/src/main/resources/orcid-client-group-1.0.2.xsd"
  xmlns="http://www.orcid.org/ns/orcid">
     <group-orcid>1111-1111-1111-1117</group-orcid>
     <group-name>Elsevier</group-name>
@@ -33,7 +33,7 @@
         <website>http://www.journals.elsevier.com/ecological-complexity</website>
         <short-description>An International Journal on Biocomplexity in the Environment and Theoretical Ecology</short-description>
         <redirect-uris>
-            <redirect-uri>http://www.journals.elsevier.com/ecological-complexity/orcid-callback</redirect-uri>
+            <redirect-uri type="default">http://www.journals.elsevier.com/ecological-complexity/orcid-callback</redirect-uri>
         </redirect-uris>
         <client-id>2222-2222-2222-2228</client-id>
         <client-secret>8136gh46783hwe7390fwe</client-secret>
@@ -43,7 +43,7 @@
         <website>http://www.journals.elsevier.com/ecological-economics</website>
         <short-description>The Transdisciplinary Journal of the International Society for Ecological Economics (ISEE)</short-description>
         <redirect-uris>
-            <redirect-uri>http://www.journals.elsevier.com/ecological-economics/orcid-callback</redirect-uri>
+            <redirect-uri type="default">http://www.journals.elsevier.com/ecological-economics/orcid-callback</redirect-uri>
         </redirect-uris>
         <client-id>3333-3333-3333-3339</client-id>
         <client-secret>34r3lfefr808fweffe783</client-secret>

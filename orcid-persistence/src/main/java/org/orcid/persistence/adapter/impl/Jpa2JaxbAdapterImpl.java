@@ -33,6 +33,7 @@ import org.apache.commons.lang.StringUtils;
 import org.orcid.jaxb.model.clientgroup.OrcidClient;
 import org.orcid.jaxb.model.clientgroup.OrcidClientGroup;
 import org.orcid.jaxb.model.clientgroup.RedirectUri;
+import org.orcid.jaxb.model.clientgroup.RedirectUriType;
 import org.orcid.jaxb.model.clientgroup.RedirectUris;
 import org.orcid.jaxb.model.message.*;
 import org.orcid.persistence.adapter.Jpa2JaxbAdapter;
@@ -155,6 +156,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
                 client.setRedirectUris(redirectUris);
                 for (ClientRedirectUriEntity redirectUriEntity : redirectUriEntities) {
                     RedirectUri redirectUri = new RedirectUri(redirectUriEntity.getRedirectUri());
+                    redirectUri.setType(RedirectUriType.fromValue(redirectUriEntity.getRedirectUriType()));
                     String predefinedScope = redirectUriEntity.getPredefinedClientScope();
                     if (StringUtils.isNotBlank(predefinedScope)) {
                         List<ScopePathType> scopePathType = new ArrayList<ScopePathType>(ScopePathType.getScopesFromSpaceSeparatedString(predefinedScope));
