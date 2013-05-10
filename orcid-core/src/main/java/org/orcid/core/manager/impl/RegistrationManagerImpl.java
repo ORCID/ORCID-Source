@@ -128,10 +128,9 @@ public class RegistrationManagerImpl implements RegistrationManager {
     }
 
     @Override
-    public OrcidProfile createMinimalRegistration(OrcidProfile orcidProfile, URI baseURI) {
+    public OrcidProfile createMinimalRegistration(OrcidProfile orcidProfile) {
         OrcidProfile minimalProfile = orcidProfileManager.createOrcidProfile(orcidProfile);
         LOGGER.debug("Created minimal orcid and assigned id of {}", orcidProfile.getOrcid().getValue());
-        notificationManager.sendVerificationEmail(orcidProfile, baseURI);
         return minimalProfile;
     }
 

@@ -823,7 +823,9 @@ public class RegistrationController extends BaseController {
         String email = profileToSave.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue();
         try {
             LOGGER.info("About to create profile from registration email={}, sessionid={}", email, sessionId);
-            profileToSave = registrationManager.createMinimalRegistration(profileToSave, uri);
+            profileToSave = registrationManager.createMinimalRegistration(profileToSave);
+            notificationManager.sendVerificationEmail(profileToSave, uri, profileToSave.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue());
+            request.getSession().setAttribute(ManageProfileController.CHECK_EMAIL_VALIDATED, false);
             LOGGER.info("Created profile from registration orcid={}, email={}, sessionid={}", new Object[] { profileToSave.getOrcid().getValue(), email, sessionId });
             token = new UsernamePasswordAuthenticationToken(profileToSave.getOrcid().getValue(), password);
             token.setDetails(new WebAuthenticationDetails(request));

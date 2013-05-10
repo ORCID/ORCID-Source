@@ -195,12 +195,6 @@ public class NotificationManagerImpl implements NotificationManager {
         sendAndLogMessage(message);
     }
 
-    @Override
-    public void sendVerificationEmail(OrcidProfile orcidProfile, URI baseUri) {
-        // Create map of template params
-        String email = orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue();
-        sendVerificationEmail(orcidProfile, baseUri, email);
-    }
 
     public void sendVerificationEmail(OrcidProfile orcidProfile, URI baseUri, String email) {
         Map<String, Object> templateParams = new HashMap<String, Object>();
@@ -329,11 +323,7 @@ public class NotificationManagerImpl implements NotificationManager {
 
     @Override
     public void sendEmailAddressChangedNotification(OrcidProfile updatedProfile, Email oldEmail, URI baseUri) {
-        // new email sent out
-        if (!updatedProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().isVerified()) {
-            sendVerificationEmail(updatedProfile, baseUri);
-        }
-
+ 
         // build up old template
         Map<String, Object> templateParams = new HashMap<String, Object>();
         SimpleMailMessage message = new SimpleMailMessage();

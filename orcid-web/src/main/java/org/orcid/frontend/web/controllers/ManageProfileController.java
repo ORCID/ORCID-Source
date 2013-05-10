@@ -110,6 +110,11 @@ public class ManageProfileController extends BaseWorkspaceController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ManageProfileController.class);
 
+    /* session attribute that is used to see if we should check and
+     * notify the user if thier primary emails ins't verified.
+     */
+    public static String CHECK_EMAIL_VALIDATED  = "CHECK_EMAIL_VALIDATED";
+    
     @Resource
     private OrcidSearchManager orcidSearchManager;
 
@@ -727,20 +732,14 @@ public class ManageProfileController extends BaseWorkspaceController {
         return manageBioView;
     }
 
-    @RequestMapping(value = "/verify-email", method = RequestMethod.GET)
-    public ModelAndView verifyEmail(HttpServletRequest request, RedirectAttributes redirectAttributes) {
-        ModelAndView manageBioView = new ModelAndView("redirect:manage-bio-settings");
-        OrcidProfile currentProfile = getCurrentUser().getEffectiveProfile();
-        URI baseUri = OrcidWebUtils.getServerUriWithContextPath(request);
-        notificationManager.sendVerificationEmail(currentProfile, baseUri);
-        redirectAttributes.addFlashAttribute("verificationEmailSent", true);
-        return manageBioView;
-    }
-
     @RequestMapping(value = "/verifyEmail.json", method = RequestMethod.GET)
     public @ResponseBody
     Errors verifyEmailJson(HttpServletRequest request, @RequestParam("email") String email) {
         OrcidProfile currentProfile = getCurrentUser().getEffectiveProfile();
+        String primaryEmail = currentProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue();
+        if (primaryEmail.equals(email))
+            request.getSession().setAttribute(ManageProfileController.CHECK_EMAIL_VALIDATED, false);
+        
         URI baseUri = OrcidWebUtils.getServerUriWithContextPath(request);
         notificationManager.sendVerificationEmail(currentProfile, baseUri, email);
         return new Errors();
@@ -806,14 +805,17 @@ public class ManageProfileController extends BaseWorkspaceController {
             currentProfile.getOrcidBio().getContactDetails().setEmail(emails);
             email.setSource(getRealUserOrcid());
             emailManager.addEmail(currentProfile.getOrcid().getValue(), email);
-            if (newPrime != null && !newPrime.equalsIgnoreCase(oldPrime)) {
-                URI baseUri = OrcidWebUtils.getServerUriWithContextPath(request);
-                notificationManager.sendEmailAddressChangedNotification(currentProfile, new Email(oldPrime), baseUri);
-            }
 
-            // also send verifcation email for new address
+            // send verifcation email for new address
             URI baseUri = OrcidWebUtils.getServerUriWithContextPath(request);
             notificationManager.sendVerificationEmail(currentProfile, baseUri, email.getValue());
+            
+            
+            // if primary also send change notification.
+            if (newPrime != null && !newPrime.equalsIgnoreCase(oldPrime)) {
+                request.getSession().setAttribute(ManageProfileController.CHECK_EMAIL_VALIDATED, false);
+                notificationManager.sendEmailAddressChangedNotification(currentProfile, new Email(oldPrime), baseUri);
+            }
 
         }
         return email;
@@ -857,8 +859,8 @@ public class ManageProfileController extends BaseWorkspaceController {
     @RequestMapping(value = "/emails.json", method = RequestMethod.POST)
     public @ResponseBody
     org.orcid.pojo.Emails postEmailsJson(HttpServletRequest request, @RequestBody org.orcid.pojo.Emails emails) {
-        String newPrime = null;
-        String oldPrime = null;
+        org.orcid.pojo.Email newPrime = null;
+        org.orcid.pojo.Email oldPrime = null;
         List<String> allErrors = new ArrayList<String>();
 
         for (org.orcid.pojo.Email email : emails.getEmails()) {
@@ -873,7 +875,7 @@ public class ManageProfileController extends BaseWorkspaceController {
             }
             email.setErrors(emailErrors);
             if (email.isPrimary())
-                newPrime = email.getValue();
+                newPrime = email;
         }
 
         if (newPrime == null) {
@@ -882,15 +884,19 @@ public class ManageProfileController extends BaseWorkspaceController {
 
         OrcidProfile currentProfile = getCurrentUser().getEffectiveProfile();
         if (currentProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail() != null)
-            oldPrime = currentProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue();
+            oldPrime = new org.orcid.pojo.Email(currentProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail());
 
         emails.setErrors(allErrors);
         if (allErrors.size() == 0) {
             currentProfile.getOrcidBio().getContactDetails().setEmail((List<Email>) (Object) emails.getEmails());
             emailManager.updateEmails(currentProfile.getOrcid().getValue(), currentProfile.getOrcidBio().getContactDetails().getEmail());
-            if (newPrime != null && !newPrime.equalsIgnoreCase(oldPrime)) {
+            if (newPrime != null && !newPrime.getValue().equalsIgnoreCase(oldPrime.getValue())) {
                 URI baseUri = OrcidWebUtils.getServerUriWithContextPath(request);
-                notificationManager.sendEmailAddressChangedNotification(currentProfile, new Email(oldPrime), baseUri);
+                notificationManager.sendEmailAddressChangedNotification(currentProfile, new Email(oldPrime.getValue()), baseUri);
+                if (!newPrime.isVerified()) {
+                    notificationManager.sendVerificationEmail(currentProfile, baseUri, newPrime.getValue());
+                    request.getSession().setAttribute(ManageProfileController.CHECK_EMAIL_VALIDATED, false);
+                }
             }
         }
         return emails;

@@ -119,7 +119,7 @@ public class NotificationManagerTest extends BaseTest {
 
         OrcidMessage orcidMessage = (OrcidMessage) unmarshaller.unmarshal(getClass().getResourceAsStream(ORCID_INTERNAL_FULL_XML));
         OrcidProfile orcidProfile = orcidMessage.getOrcidProfile();
-        notificationManager.sendVerificationEmail(orcidProfile, baseUri);
+        notificationManager.sendVerificationEmail(orcidProfile, baseUri, orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue());
 
         SimpleMailMessage expected = new SimpleMailMessage();
         expected.setFrom("no_reply@orcid.org");
