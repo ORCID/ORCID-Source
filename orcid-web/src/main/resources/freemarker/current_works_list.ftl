@@ -59,6 +59,7 @@
         <@spring.formHiddenInput "currentWorksForm.currentWorks[${work_index?string.computer}].year"/>
         <@spring.formHiddenInput "currentWorksForm.currentWorks[${work_index?string.computer}].url"/>
         <@spring.formHiddenInput "currentWorksForm.currentWorks[${work_index?string.computer}].description"/>
+        <@spring.formHiddenInput "currentWorksForm.currentWorks[${work_index?string.computer}].source"/>
         <#if (work.currentWorkExternalIds)??>
             <#list work.currentWorkExternalIds as ei>
                 <@spring.formHiddenInput "currentWorksForm.currentWorks[${work_index?string.computer}].currentWorkExternalIds[${ei_index}].id"/>

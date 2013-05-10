@@ -589,7 +589,7 @@
                 <xs:element ref="orcid:work-external-identifiers" minOccurs="0"/>
                 <xs:element ref="orcid:url" minOccurs="0"/>
                 <xs:element ref="orcid:work-contributors" minOccurs="0"/>
-                <xs:element ref="orcid:work-sources" minOccurs="0"/>
+                <xs:element ref="orcid:work-source" minOccurs="0"/>
             </xs:sequence>
             <xs:attributeGroup ref="orcid:visibility"/>
             <xs:attributeGroup ref="orcid:put-code"/>
@@ -723,16 +723,11 @@
         </xs:annotation>
         <xs:complexType mixed="true"/>
     </xs:element>
-    <xs:element name="work-sources">
+    <xs:element name="work-source">
         <xs:annotation>
-            <xs:documentation>Container for the sources of a work.</xs:documentation>
+            <xs:documentation>Container for the source of a work.</xs:documentation>
         </xs:annotation>
-        <xs:complexType>
-            <xs:sequence>
-                <xs:element maxOccurs="unbounded" minOccurs="0" ref="orcid:source"/>
-            </xs:sequence>
-            <xs:attributeGroup ref="orcid:scope"/>
-        </xs:complexType>
+        <xs:complexType mixed="true"/>
     </xs:element>
     <xs:element name="work-contributors">
         <xs:annotation>
