@@ -53,7 +53,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element ref="{http://www.orcid.org/ns/orcid}work-external-identifiers" minOccurs="0"/>
  *         &lt;element ref="{http://www.orcid.org/ns/orcid}url" minOccurs="0"/>
  *         &lt;element ref="{http://www.orcid.org/ns/orcid}work-contributors" minOccurs="0"/>
- *         &lt;element ref="{http://www.orcid.org/ns/orcid}work-sources" minOccurs="0"/>
+ *         &lt;element ref="{http://www.orcid.org/ns/orcid}work-source" minOccurs="0"/>
  *       &lt;/sequence>
  *       &lt;attGroup ref="{http://www.orcid.org/ns/orcid}put-code"/>
  *       &lt;attGroup ref="{http://www.orcid.org/ns/orcid}visibility"/>
@@ -66,7 +66,7 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = { "putCode", "workTitle", "shortDescription", "workCitation", "workType", "publicationDate", "workExternalIdentifiers", "url",
-        "workContributors", "workSources" })
+        "workContributors", "workSource" })
 @XmlRootElement(name = "orcid-work")
 public class OrcidWork implements VisibilityType, Serializable {
 
@@ -86,8 +86,8 @@ public class OrcidWork implements VisibilityType, Serializable {
     protected Url url;
     @XmlElement(name = "work-contributors")
     protected WorkContributors workContributors;
-    @XmlElement(name = "work-sources")
-    protected WorkSources workSources;
+    @XmlElement(name = "work-source")
+    protected WorkSource workSource;
     @XmlAttribute(name = "put-code")
     protected String putCode;
     @XmlAttribute
@@ -285,22 +285,22 @@ public class OrcidWork implements VisibilityType, Serializable {
     /**
      * Gets the value of the workSources property.
      * 
-     * @return possible object is {@link WorkSources }
+     * @return possible object is {@link WorkSource }
      * 
      */
-    public WorkSources getWorkSources() {
-        return workSources;
+    public WorkSource getWorkSource() {
+        return workSource;
     }
 
     /**
      * Sets the value of the workSources property.
      * 
      * @param value
-     *            allowed object is {@link WorkSources }
+     *            allowed object is {@link WorkSource }
      * 
      */
-    public void setWorkSources(WorkSources value) {
-        this.workSources = value;
+    public void setWorkSource(WorkSource value) {
+        this.workSource = value;
     }
 
     /**
@@ -344,7 +344,7 @@ public class OrcidWork implements VisibilityType, Serializable {
         result = prime * result + ((workCitation == null) ? 0 : workCitation.hashCode());
         result = prime * result + ((workContributors == null) ? 0 : workContributors.hashCode());
         result = prime * result + ((workExternalIdentifiers == null) ? 0 : workExternalIdentifiers.hashCode());
-        result = prime * result + ((workSources == null) ? 0 : workSources.hashCode());
+        result = prime * result + ((workSource == null) ? 0 : workSource.hashCode());
         result = prime * result + ((workTitle == null) ? 0 : workTitle.hashCode());
         result = prime * result + ((workType == null) ? 0 : workType.hashCode());
         return result;
@@ -395,10 +395,10 @@ public class OrcidWork implements VisibilityType, Serializable {
                 return false;
         } else if (!workExternalIdentifiers.equals(other.workExternalIdentifiers))
             return false;
-        if (workSources == null) {
-            if (other.workSources != null)
+        if (workSource == null) {
+            if (other.workSource != null)
                 return false;
-        } else if (!workSources.equals(other.workSources))
+        } else if (!workSource.equals(other.workSource))
             return false;
         if (workTitle == null) {
             if (other.workTitle != null)

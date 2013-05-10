@@ -95,7 +95,7 @@ import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.message.WorkContributors;
 import org.orcid.jaxb.model.message.WorkExternalIdentifier;
 import org.orcid.jaxb.model.message.WorkExternalIdentifiers;
-import org.orcid.jaxb.model.message.WorkSources;
+import org.orcid.jaxb.model.message.WorkSource;
 import org.orcid.jaxb.model.message.WorkTitle;
 import org.orcid.jaxb.model.message.WorkType;
 import org.orcid.persistence.adapter.Jaxb2JpaAdapter;
@@ -126,7 +126,6 @@ import org.orcid.persistence.jpa.entities.SecurityQuestionEntity;
 import org.orcid.persistence.jpa.entities.WorkContributorEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.persistence.jpa.entities.WorkExternalIdentifierEntity;
-import org.orcid.persistence.jpa.entities.WorkSourceEntity;
 import org.orcid.persistence.jpa.entities.keys.WorkExternalIdentifierEntityPk;
 import org.orcid.utils.DateUtils;
 import org.orcid.utils.OrcidStringUtils;
@@ -230,23 +229,15 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             }
             profileWorkEntity.setWork(getWorkEntity(orcidWork, workEntity));
             profileWorkEntity.setVisibility(orcidWork.getVisibility() == null ? Visibility.PRIVATE : orcidWork.getVisibility());
-            profileWorkEntity.setSources(getWorkSources(orcidWork.getWorkSources()));
+            profileWorkEntity.setSourceProfile(getWorkSource(orcidWork.getWorkSource()));
             return profileWorkEntity;
         }
         return null;
     }
 
-    private Set<WorkSourceEntity> getWorkSources(WorkSources workSources) {
-        if (workSources != null && workSources.getSource() != null && !workSources.getSource().isEmpty()) {
-            List<Source> sources = workSources.getSource();
-            Set<WorkSourceEntity> workSourceEntities = new HashSet<WorkSourceEntity>();
-            for (Source source : sources) {
-                WorkSourceEntity workSourceEntity = new WorkSourceEntity();
-                workSourceEntity.setSponsorOrcid(source.getSourceOrcid() != null ? new ProfileEntity(source.getSourceOrcid().getValue()) : null);
-                workSourceEntity.setDepositedDate(source.getSourceDate() != null ? toDate(source.getSourceDate().getValue()) : null);
-                workSourceEntities.add(workSourceEntity);
-            }
-            return workSourceEntities;
+    private ProfileEntity getWorkSource(WorkSource workSource) {
+        if (workSource != null && StringUtils.isNotEmpty(workSource.getContent()) && !workSource.getContent().equals(WorkSource.NULL_SOURCE_PROFILE)) {
+            return new ProfileEntity(workSource.getContent());
         }
         return null;
     }

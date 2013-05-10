@@ -66,7 +66,6 @@ import org.orcid.persistence.jpa.entities.ResearcherUrlEntity;
 import org.orcid.persistence.jpa.entities.WorkContributorEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.persistence.jpa.entities.WorkExternalIdentifierEntity;
-import org.orcid.persistence.jpa.entities.WorkSourceEntity;
 import org.orcid.utils.DateUtils;
 import org.orcid.utils.NullUtils;
 import org.springframework.beans.factory.annotation.Value;
@@ -400,6 +399,11 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
             for (ProfileWorkEntity profileWorkEntity : profileWorks) {
                 OrcidWork orcidWork = getOrcidWork(profileWorkEntity);
                 orcidWork.setVisibility(profileWorkEntity.getVisibility());
+                if(profileWorkEntity.getSourceProfile() == null){
+                    orcidWork.setWorkSource(new WorkSource(WorkSource.NULL_SOURCE_PROFILE));
+                } else {
+                    orcidWork.setWorkSource(new WorkSource(profileWorkEntity.getSourceProfile().getId()));
+                }
                 works.getOrcidWork().add(orcidWork);
             }
             return works;
@@ -703,7 +707,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         orcidWork.setWorkCitation(getWorkCitation(work));
         orcidWork.setWorkContributors(getWorkContributors(profileWorkEntity));
         orcidWork.setWorkExternalIdentifiers(getWorkExternalIdentifiers(work));
-        orcidWork.setWorkSources(getWorkSources(profileWorkEntity));
+        orcidWork.setWorkSource(getWorkSource(profileWorkEntity));
         orcidWork.setWorkTitle(getWorkTitle(work));
         orcidWork.setWorkType(work.getWorkType());
         orcidWork.setVisibility(profileWorkEntity.getVisibility());
@@ -727,30 +731,12 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         return workTitle;
     }
 
-    private WorkSources getWorkSources(ProfileWorkEntity profileWorkEntity) {
-        if (profileWorkEntity == null || profileWorkEntity.getSources() == null || profileWorkEntity.getSources().isEmpty()) {
+    private WorkSource getWorkSource(ProfileWorkEntity profileWorkEntity) {
+        if (profileWorkEntity == null || profileWorkEntity.getSourceProfile() == null) {
             return null;
         }
-        Set<WorkSourceEntity> sources = profileWorkEntity.getSources();
-        WorkSources workSources = new WorkSources();
-        for (WorkSourceEntity workSourceEntity : sources) {
-            workSources.getSource().add(getWorkSource(workSourceEntity));
-        }
-
-        return workSources;
-    }
-
-    private Source getWorkSource(WorkSourceEntity workSourceEntity) {
-        if (workSourceEntity == null) {
-            return null;
-        }
-        Source source = new Source();
-        Date depositedDate = workSourceEntity.getDepositedDate();
-        source.setSourceDate(getSourceDate(depositedDate));
-        ProfileEntity sponsorOrcid = workSourceEntity.getSponsorOrcid();
-        source.setSourceName(sponsorOrcid != null ? new SourceName(sponsorOrcid.getCreditName()) : null);
-        source.setSourceOrcid(sponsorOrcid != null ? new SourceOrcid(sponsorOrcid.getId()) : null);
-        return source;
+        ProfileEntity sourceProfile = profileWorkEntity.getSourceProfile();
+        return new WorkSource(sourceProfile.getId());        
     }
 
     private SourceDate getSourceDate(Date depositedDate) {

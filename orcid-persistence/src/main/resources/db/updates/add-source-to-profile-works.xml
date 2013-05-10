@@ -1,0 +1,36 @@
+<!--
+
+    =============================================================================
+
+    ORCID (R) Open Source
+    http://orcid.org
+
+    Copyright (c) 2012-2013 ORCID, Inc.
+    Licensed under an MIT-Style License (MIT)
+    http://orcid.org/open-source-license
+
+    This copyright and license information (including a link to the full license)
+    shall be included in its entirety in all copies or substantial portion of
+    the software.
+
+    =============================================================================
+
+-->
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+	<changeSet id="ADD-SOURCE-TO-PROFILE-WORKS" author="Angel Montenegro">
+		<addColumn tableName="profile_work">
+			<column name="source_id" type="VARCHAR(19)" />
+		</addColumn>
+		
+		<dropForeignKeyConstraint baseTableName="work_source" 
+			baseTableSchemaName="public"
+            constraintName="work_source_orcid_fk" />
+            
+		<addForeignKeyConstraint constraintName="profile_work_source_orcid_fk"
+			baseTableName="profile_work" baseColumnNames="source_id"
+			baseTableSchemaName="public" referencedTableName="profile"
+			referencedColumnNames="orcid" referencedTableSchemaName="public" />
+	</changeSet>
+</databaseChangeLog>
