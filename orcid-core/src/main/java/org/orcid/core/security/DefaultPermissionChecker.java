@@ -307,6 +307,14 @@ public class DefaultPermissionChecker implements PermissionChecker {
             if (ScopePathType.hasStringScope(requestedScope, requiredScope)) {
                 return true;
             }
+            if (requiredScope.isReadOnlyScope()) {
+                // If read only (limited or otherwise) then let it through it
+                // the user has /read-public, and let the visibility filter take
+                // care of it.
+                if (ScopePathType.hasStringScope(requestedScope, ScopePathType.READ_PUBLIC)) {
+                    return true;
+                }
+            }
         }
         return false;
     }

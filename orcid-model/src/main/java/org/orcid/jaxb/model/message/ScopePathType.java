@@ -135,6 +135,23 @@ public enum ScopePathType implements Serializable {
         return combined;
     }
 
+    public boolean isReadOnlyScope() {
+        switch (this) {
+        case ORCID_BIO_READ_LIMITED:
+            return true;
+        case ORCID_PROFILE_READ_LIMITED:
+            return true;
+        case ORCID_WORKS_READ_LIMITED:
+            return true;
+        case ORCID_GRANTS_READ_LIMITED:
+            return true;
+        case ORCID_PATENTS_READ_LIMITED:
+            return true;
+        default:
+            return false;
+        }
+    }
+
     public boolean isWriteOperationScope() {
         switch (this) {
         case ORCID_WORKS_UPDATE:
