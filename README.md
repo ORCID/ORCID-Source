@@ -31,7 +31,7 @@ The above is just a brief introduction. Best way to see everything used is to di
 
 
 # Contributing
-Pull requests are welcome; See [CONTRIBING.md](CONTRIBING.md)
+Pull requests are welcome; See [CONTRIBUTING.md](CONTRIBUTING.md)
 
 # Development Environment Setup
 See [DEVSETUP.md](https://github.com/ORCID/ORCID-Source/blob/master/DEVSETUP.md)
