@@ -52,6 +52,7 @@ import org.orcid.core.security.OrcidWebRole;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
 import org.orcid.core.security.visibility.aop.VisibilityControl;
 import org.orcid.core.utils.OrcidJaxbCopyUtils;
+import org.orcid.core.utils.ReleaseNameUtils;
 import org.orcid.jaxb.model.message.Affiliation;
 import org.orcid.jaxb.model.message.Claimed;
 import org.orcid.jaxb.model.message.ContactDetails;
@@ -169,6 +170,8 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
     private int claimWaitPeriodDays = 10;
 
     private int claimReminderAfterDays = 8;
+
+    private String releaseName = ReleaseNameUtils.getReleaseName();
 
     public NotificationManager getNotificationManager() {
         return notificationManager;
@@ -1185,8 +1188,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
     }
 
     private Object createCacheKey(String orcid) {
-        // XXX Need to put release version number in cache key
-        return orcid;
+        return new OrcidCacheKey(orcid, releaseName);
     }
 
     @Override
