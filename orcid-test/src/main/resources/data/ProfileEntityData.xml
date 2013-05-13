@@ -311,6 +311,14 @@
             external_orcid="4444-4444-4444-4441"
             />
 
+    <external_identifier
+            external_id_reference="abc123"
+            external_id_type="Facebook"
+            orcid="4444-4444-4444-4442"
+            external_id_url="http://www.facebook.com/abc123"
+            external_orcid="4444-4444-4444-4441"
+            />
+
     <researcher_url
             id="1"
             url="www.4444-4444-4444-4441.com"

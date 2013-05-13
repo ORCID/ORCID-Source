@@ -24,7 +24,6 @@
 
 	<import resource="classpath*:orcid-core-context.xml" />
 	<import resource="classpath*:orcid-t2-client-context.xml" />
-
 	
 	<bean id="t2OAuthClient" class="org.orcid.api.t2.integration.T2OAuthOrcidApiClientImpl">
 		 <constructor-arg value="${org.orcid.t2.client.base_url}"/>
@@ -41,7 +40,10 @@
 	<bean id="orcidClientDataHelper" class="org.orcid.api.t2.integration.OrcidClientDataHelper">
 		<property name="OrcidClientGroupManager" ref="orcidClientGroupManager" />
 	</bean>
-
-
+	
+	<!--  Web driver, for emulating the web interface user -->
+	<bean name="webDriver" class="org.openqa.selenium.htmlunit.HtmlUnitDriver">
+	    <property name="javascriptEnabled" value="true" />
+	</bean>
 
 </beans>

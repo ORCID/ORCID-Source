@@ -59,11 +59,11 @@
     <client_redirect_uri client_details_id="4444-4444-4444-4444" redirect_uri="http:://www.4444-4444-4444-4444.com/redirect/oauth"/>
     <client_redirect_uri client_details_id="4444-4444-4444-4445" redirect_uri="http:://www.4444-4444-4444-4445.com/redirect/oauth"/>
 
-    <client_resource_id client_details_id="4444-4444-4444-4441" resource_id="ORCID"/>
-    <client_resource_id client_details_id="4444-4444-4444-4442" resource_id="ORCID"/>
-    <client_resource_id client_details_id="4444-4444-4444-4443" resource_id="ORCID"/>
-    <client_resource_id client_details_id="4444-4444-4444-4444" resource_id="ORCID"/>
-    <client_resource_id client_details_id="4444-4444-4444-4445" resource_id="ORCID"/>
+    <client_resource_id client_details_id="4444-4444-4444-4441" resource_id="orcid"/>
+    <client_resource_id client_details_id="4444-4444-4444-4442" resource_id="orcid"/>
+    <client_resource_id client_details_id="4444-4444-4444-4443" resource_id="orcid"/>
+    <client_resource_id client_details_id="4444-4444-4444-4444" resource_id="orcid"/>
+    <client_resource_id client_details_id="4444-4444-4444-4445" resource_id="orcid"/>
 
     <client_scope client_details_id="4444-4444-4444-4441" scope_type="/orcid-bio/read-limited"/>
     <client_scope client_details_id="4444-4444-4444-4442" scope_type="/orcid-bio/read-limited"/>
