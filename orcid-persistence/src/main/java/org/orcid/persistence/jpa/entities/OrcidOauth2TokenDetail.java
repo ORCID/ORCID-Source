@@ -35,7 +35,7 @@ import java.util.Date;
  */
 @Entity
 @Table(name = "oauth2_token_detail")
-public class OrcidOauth2TokenDetail extends BaseEntity<Long> {
+public class OrcidOauth2TokenDetail extends BaseEntity<Long> implements ProfileAware {
 
     /**
      * 

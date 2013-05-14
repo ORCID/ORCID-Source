@@ -60,7 +60,7 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "creationMethod", "completionDate", "submissionDate", "claimed", "source", "deactivationDate" })
+@XmlType(name = "", propOrder = { "creationMethod", "completionDate", "submissionDate", "lastModifiedDate", "claimed", "source", "deactivationDate" })
 @XmlRootElement(name = "orcid-history")
 public class OrcidHistory implements Serializable {
 
@@ -71,6 +71,8 @@ public class OrcidHistory implements Serializable {
     protected CompletionDate completionDate;
     @XmlElement(name = "submission-date")
     protected SubmissionDate submissionDate;
+    @XmlElement(name = "last-modified-date")
+    protected LastModifiedDate lastModifiedDate;
     protected Claimed claimed;
     protected Source source;
     @XmlElement(name = "deactivation-date")
@@ -139,6 +141,27 @@ public class OrcidHistory implements Serializable {
      */
     public void setSubmissionDate(SubmissionDate value) {
         this.submissionDate = value;
+    }
+
+    /**
+     * Gets the value of the lastModifiedDate property.
+     * 
+     * @return possible object is {@link LastModifiedDate }
+     * 
+     */
+    public LastModifiedDate getLastModifiedDate() {
+        return lastModifiedDate;
+    }
+
+    /**
+     * Sets the value of the lastModifiedDate property.
+     * 
+     * @param value
+     *            allowed object is {@link LastModifiedDate }
+     * 
+     */
+    public void setLastModifiedDate(LastModifiedDate value) {
+        this.lastModifiedDate = value;
     }
 
     /**

@@ -30,13 +30,13 @@ import javax.persistence.Transient;
 
 /**
  * orcid-entities - Dec 6, 2011 - AlternateEmailEntity
- *
+ * 
  * @author Declan Newman (declan)
  */
 @Entity
 @Table(name = "alternate_email")
 @IdClass(AlternateEmailEntityPk.class)
-public class AlternateEmailEntity extends BaseEntity<AlternateEmailEntityPk> {
+public class AlternateEmailEntity extends BaseEntity<AlternateEmailEntityPk> implements ProfileAware {
 
     private static final long serialVersionUID = -3187757614938904392L;
 
@@ -62,7 +62,7 @@ public class AlternateEmailEntity extends BaseEntity<AlternateEmailEntityPk> {
 
     /**
      * @param profile
-     *         the profile to set
+     *            the profile to set
      */
     public void setProfile(ProfileEntity profile) {
         this.profile = profile;

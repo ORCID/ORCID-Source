@@ -36,7 +36,7 @@ import javax.persistence.Transient;
 @Entity
 @Table(name = "external_identifier")
 @IdClass(ExternalIdentifierEntityPk.class)
-public class ExternalIdentifierEntity extends BaseEntity<ExternalIdentifierEntityPk> implements Comparable<ExternalIdentifierEntity> {
+public class ExternalIdentifierEntity extends BaseEntity<ExternalIdentifierEntityPk> implements Comparable<ExternalIdentifierEntity>, ProfileAware {
 
     private static final long serialVersionUID = 1L;
 
@@ -91,6 +91,12 @@ public class ExternalIdentifierEntity extends BaseEntity<ExternalIdentifierEntit
         return owner;
     }
 
+    @Override
+    @Transient
+    public ProfileEntity getProfile() {
+        return owner;
+    }
+
     /**
      * @param owner
      *            the owner to set
@@ -116,7 +122,7 @@ public class ExternalIdentifierEntity extends BaseEntity<ExternalIdentifierEntit
 
         int result = 0;
 
-        //First check externalIdUrl
+        // First check externalIdUrl
         if (other.getExternalIdUrl() == null) {
             if (externalIdUrl == null) {
                 result = 0;
@@ -131,7 +137,7 @@ public class ExternalIdentifierEntity extends BaseEntity<ExternalIdentifierEntit
             }
         }
 
-        //If they are still equal, compare against the externalIdReference
+        // If they are still equal, compare against the externalIdReference
         if (result == 0) {
             if (other.getExternalIdReference() == null) {
                 if (externalIdReference == null) {
