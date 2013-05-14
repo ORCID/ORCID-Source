@@ -51,7 +51,4 @@
 	<cache name="staticContent" maxElementsInMemory="100" timeToLiveSeconds="900" overflowToDisk="false" copyOnRead="false"
            copyOnWrite="false" eternal="false"/>
            
-    <cache name="profile" maxElementsInMemory="1000" timeToLiveSeconds="600" overflowToDisk="false" copyOnRead="true"
-           copyOnWrite="true" eternal="false"/>
-    
 </ehcache>
