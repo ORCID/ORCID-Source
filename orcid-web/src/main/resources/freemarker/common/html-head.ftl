@@ -30,7 +30,6 @@
 		
 	    <link rel="stylesheet" href="${staticCdn}/twitter-bootstrap/2.3.1/css/bootstrap.css?v=${ver}"/>
 	    <link rel="stylesheet" href="${staticCdn}/css/orcid.css?v=${ver}"/>
-	    <link rel="stylesheet" href="${staticCdn}/css/java.css?v=${ver}"/>
 	    <link rel="stylesheet" href="${staticCdn}/css/jquery-ui-1.10.0.custom.min.css?v=${ver}"/>
 	    <link rel="stylesheet" href="${staticLoc}/font-awesome/3.0.2/css/font-awesome.css"/>
 	    <!--[if IE 7]>
