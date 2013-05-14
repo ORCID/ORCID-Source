@@ -17,6 +17,7 @@
 package org.orcid.persistence.dao.impl;
 
 import org.apache.commons.lang.StringUtils;
+import org.orcid.persistence.aop.ExcludeFromProfileLastModifiedUpdate;
 import org.orcid.persistence.dao.OrcidOauth2TokenDetailDao;
 import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 import org.slf4j.Logger;
@@ -60,6 +61,7 @@ public class OrcidOauth2TokenDetailDaoImpl extends GenericDaoImpl<OrcidOauth2Tok
     }
 
     @Override
+    @ExcludeFromProfileLastModifiedUpdate
     public void removeByTokenValue(String tokenValue) {
         Assert.hasText(tokenValue, "Attempt to retrieve a OrcidOauth2TokenDetail with a null or empty token value");
         Query query = entityManager.createQuery("delete from OrcidOauth2TokenDetail where tokenValue = " + ":tokenValue");
@@ -71,6 +73,7 @@ public class OrcidOauth2TokenDetailDaoImpl extends GenericDaoImpl<OrcidOauth2Tok
     }
 
     @Override
+    @ExcludeFromProfileLastModifiedUpdate
     public void removeByRefreshTokenValue(String refreshTokenValue) {
         Query query = entityManager.createQuery("delete from OrcidOauth2TokenDetail where refreshTokenValue = " + ":refreshToken");
         query.setParameter("refreshToken", refreshTokenValue);
@@ -100,6 +103,7 @@ public class OrcidOauth2TokenDetailDaoImpl extends GenericDaoImpl<OrcidOauth2Tok
     }
 
     @Override
+    @ExcludeFromProfileLastModifiedUpdate
     public OrcidOauth2TokenDetail findByAuthenticationKey(String authenticationKey) {
         TypedQuery<OrcidOauth2TokenDetail> query = entityManager.createQuery("from " + "OrcidOauth2TokenDetail where authenticationKey = :authenticationKey",
                 OrcidOauth2TokenDetail.class);
@@ -145,6 +149,7 @@ public class OrcidOauth2TokenDetailDaoImpl extends GenericDaoImpl<OrcidOauth2Tok
 
     @Override
     @Transactional(propagation = Propagation.REQUIRES_NEW)
+    @ExcludeFromProfileLastModifiedUpdate
     public void removeByAuthenticationKeyOrTokenValueOrRefreshTokenValue(String authenticationKey, String tokenValue, String refreshTokenValue) {
         String or = " or ";
         Map<String, String> queryParams = new HashMap<String, String>();

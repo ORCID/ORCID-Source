@@ -40,7 +40,7 @@ import javax.persistence.Transient;
 @Entity
 @Table(name = "granted_authority")
 @IdClass(OrcidGrantedAuthorityPk.class)
-public class OrcidGrantedAuthority extends BaseEntity<OrcidGrantedAuthorityPk> implements GrantedAuthority {
+public class OrcidGrantedAuthority extends BaseEntity<OrcidGrantedAuthorityPk> implements GrantedAuthority, ProfileAware {
 
     private static final long serialVersionUID = 2301981481864446645L;
 
@@ -51,6 +51,11 @@ public class OrcidGrantedAuthority extends BaseEntity<OrcidGrantedAuthorityPk> i
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "orcid", nullable = false, updatable = false, insertable = false)
     public ProfileEntity getProfileEntity() {
+        return profileEntity;
+    }
+    
+    @Transient
+    public ProfileEntity getProfile(){
         return profileEntity;
     }
 

@@ -27,6 +27,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
+
 import java.util.Set;
 
 /**
@@ -36,7 +38,7 @@ import java.util.Set;
  */
 @Entity
 @Table(name = "oauth2_authoriziation_code_detail")
-public class OrcidOauth2AuthoriziationCodeDetail extends BaseEntity<String> {
+public class OrcidOauth2AuthoriziationCodeDetail extends BaseEntity<String> implements ProfileAware {
 
     /**
      * 
@@ -113,6 +115,12 @@ public class OrcidOauth2AuthoriziationCodeDetail extends BaseEntity<String> {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "orcid")
     public ProfileEntity getProfileEntity() {
+        return profileEntity;
+    }
+
+    @Override
+    @Transient
+    public ProfileEntity getProfile() {
         return profileEntity;
     }
 

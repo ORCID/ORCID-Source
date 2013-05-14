@@ -26,8 +26,11 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import java.util.Arrays;
+import java.util.Date;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import javax.annotation.Resource;
 import javax.xml.datatype.DatatypeConfigurationException;
@@ -152,7 +155,9 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
 
         ClientDetailsEntity clientDetails = new ClientDetailsEntity();
         clientDetails.setId(applicationProfile.getOrcid().getValue());
-        clientDetails.setProfileEntity(profileDao.find(applicationProfile.getOrcid().getValue()));
+        ProfileEntity applicationProfileEntity = profileDao.find(applicationProfile.getOrcid().getValue());
+        profileDao.refresh(applicationProfileEntity);
+        clientDetails.setProfileEntity(applicationProfileEntity);
         clientDetailsDao.merge(clientDetails);
 
         OrcidOauth2TokenDetail token = new OrcidOauth2TokenDetail();
@@ -160,14 +165,18 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
         token.setClientDetailsEntity(clientDetails);
         token.setProfile(profileDao.find(delegateProfile.getOrcid().getValue()));
         token.setScope(StringUtils.join(new String[] { ScopePathType.ORCID_BIO_READ_LIMITED.value(), ScopePathType.ORCID_BIO_UPDATE.value() }, " "));
-        orcidOauth2TokenDetailDao.merge(token);
+        Set<OrcidOauth2TokenDetail> tokens = new HashSet<>();
+        tokens.add(token);
+        ProfileEntity delegateProfileEntity = profileDao.find(delegateProfile.getOrcid().getValue());
+        delegateProfileEntity.setTokenDetails(tokens);
+        profileDao.merge(delegateProfileEntity);
     }
 
     @After
     public void after() {
-        for (ProfileEntity profileEntity : profileDao.getAll()) {
-            orcidProfileManager.deleteProfile(profileEntity.getId());
-        }
+        profileDao.remove(DELEGATE_ORCID);
+        profileDao.remove(APPLICATION_ORCID);
+        orcidProfileManager.clearOrcidProfileCache();
     }
 
     @Test
@@ -579,8 +588,8 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
         assertNotNull(userProfile.getOrcidBio().getApplications());
         assertEquals(1, userProfile.getOrcidBio().getApplications().getApplicationSummary().size());
 
-        orcidProfileManager.revokeApplication(DELEGATE_ORCID, APPLICATION_ORCID, Arrays.asList(new ScopePathType[] { ScopePathType.ORCID_BIO_READ_LIMITED,
-                ScopePathType.ORCID_BIO_UPDATE }));
+        orcidProfileManager.revokeApplication(DELEGATE_ORCID, APPLICATION_ORCID,
+                Arrays.asList(new ScopePathType[] { ScopePathType.ORCID_BIO_READ_LIMITED, ScopePathType.ORCID_BIO_UPDATE }));
 
         OrcidProfile retrievedProfile = orcidProfileManager.retrieveOrcidProfile(DELEGATE_ORCID);
         assertNotNull(retrievedProfile);
@@ -795,6 +804,25 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
         assertTrue("Password should not have changed", hashedPasswordValue.equals(retrieved.getPassword()));
         assertEquals("A new random answer", retrieved.getSecurityQuestionAnswer());
 
+    }
+
+    @Test
+    @Transactional
+    @Rollback(true)
+    public void testUpdateLastModifiedDate() throws InterruptedException {
+        Date start = new Date();
+        OrcidProfile profile1 = createBasicProfile();
+        profile1 = orcidProfileManager.createOrcidProfile(profile1);
+        Date profile1LastModified = profile1.getOrcidHistory().getLastModifiedDate().getValue().toGregorianCalendar().getTime();
+        assertNotNull(profile1LastModified);
+        assertFalse(start.after(profile1LastModified));
+
+        Thread.sleep(100);
+        orcidProfileManager.updateLastModifiedDate(TEST_ORCID);
+
+        OrcidProfile profile2 = orcidProfileManager.retrieveOrcidProfile(TEST_ORCID);
+        Date profile2LastModified = profile2.getOrcidHistory().getLastModifiedDate().getValue().toGregorianCalendar().getTime();
+        assertTrue(profile2LastModified.after(profile1LastModified));
     }
 
 }

@@ -66,6 +66,7 @@
                 <xs:enumeration value="1.0.11"/>
                 <xs:enumeration value="1.0.12"/>
                 <xs:enumeration value="1.0.13"/>
+                <xs:enumeration value="1.0.14"/>
             </xs:restriction>
         </xs:simpleType>
     </xs:element>
@@ -125,6 +126,7 @@
                 <xs:element ref="orcid:creation-method" minOccurs="0" maxOccurs="1"/>
                 <xs:element ref="orcid:completion-date" minOccurs="0" maxOccurs="1"/>
                 <xs:element ref="orcid:submission-date" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="orcid:last-modified-date" minOccurs="0" maxOccurs="1"/>
                 <xs:element ref="orcid:claimed" minOccurs="0" maxOccurs="1"/>
                 <xs:element ref="orcid:source" minOccurs="0" maxOccurs="1"/>
                 <xs:element ref="orcid:deactivation-date" minOccurs="0" maxOccurs="1"/>
@@ -151,6 +153,17 @@
     <xs:element name="submission-date">
         <xs:annotation>
             <xs:documentation>The date time when the profile was first submitted to ORCID.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:simpleContent>
+                <xs:extension base="xs:dateTime"/>
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="last-modified-date">
+        <xs:annotation>
+            <xs:documentation>The date time when the profile was last modified.
             </xs:documentation>
         </xs:annotation>
         <xs:complexType>
@@ -589,7 +602,7 @@
                 <xs:element ref="orcid:work-external-identifiers" minOccurs="0"/>
                 <xs:element ref="orcid:url" minOccurs="0"/>
                 <xs:element ref="orcid:work-contributors" minOccurs="0"/>
-                <xs:element ref="orcid:work-sources" minOccurs="0"/>
+                <xs:element ref="orcid:work-source" minOccurs="0"/>
             </xs:sequence>
             <xs:attributeGroup ref="orcid:visibility"/>
             <xs:attributeGroup ref="orcid:put-code"/>
@@ -723,16 +736,11 @@
         </xs:annotation>
         <xs:complexType mixed="true"/>
     </xs:element>
-    <xs:element name="work-sources">
+    <xs:element name="work-source">
         <xs:annotation>
-            <xs:documentation>Container for the sources of a work.</xs:documentation>
+            <xs:documentation>Container for the source of a work.</xs:documentation>
         </xs:annotation>
-        <xs:complexType>
-            <xs:sequence>
-                <xs:element maxOccurs="unbounded" minOccurs="0" ref="orcid:source"/>
-            </xs:sequence>
-            <xs:attributeGroup ref="orcid:scope"/>
-        </xs:complexType>
+        <xs:complexType mixed="true"/>
     </xs:element>
     <xs:element name="work-contributors">
         <xs:annotation>

@@ -133,7 +133,6 @@
         <dependency>
            <groupId>net.sf.ehcache</groupId>
            <artifactId>ehcache-core</artifactId>
-           <version>2.6.5</version>
         </dependency>
         <dependency>
             <groupId>net.sf.ehcache</groupId>
@@ -183,46 +182,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
-            </plugin>
-            <plugin>
-                <groupId>org.codehaus.cargo</groupId>
-                <artifactId>cargo-maven2-plugin</artifactId>
-                <configuration>
-                    <configuration>
-                        <properties>
-                            <cargo.servlet.port>${servlet.port}</cargo.servlet.port>
-                            <cargo.tomcat.ajp.port>${ajp.port}</cargo.tomcat.ajp.port>
-                        </properties>
-                        <deployables>
-                            <!-- The project's artifact is automatically deployed if no deployable is defined. However, we define it here so that we can specify the context 
-                                (we don't want the version to be included in the context). -->
-                            <deployable>
-                                <groupId>${project.groupId}</groupId>
-                                <artifactId>${project.artifactId}</artifactId>
-                                <type>war</type>
-                                <properties>
-                                    <context>${project.artifactId}</context>
-                                </properties>
-                            </deployable>
-                        </deployables>
-                    </configuration>
-                    <container>
-                        <dependencies>
-                            <dependency>
-                                <groupId>org.orcid</groupId>
-                                <artifactId>orcid-test</artifactId>
-                            </dependency>
-                            <dependency>
-                                <groupId>org.hsqldb</groupId>
-                                <artifactId>hsqldb</artifactId>
-                            </dependency>
-                            <dependency>
-                                <groupId>junit</groupId>
-                                <artifactId>junit</artifactId>
-                            </dependency>
-                        </dependencies>
-                    </container>
-                </configuration>
             </plugin>
         </plugins>
     </build>

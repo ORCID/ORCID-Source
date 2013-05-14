@@ -305,5 +305,9 @@ public interface OrcidProfileManager {
     OrcidProfile retrieveClaimedOrcidProfile(String orcid);
 
     Date retrieveLastModifiedDate(String orcid);
+    
+    Date updateLastModifiedDate(String orcid);
+
+    void clearOrcidProfileCache();
 
 }
