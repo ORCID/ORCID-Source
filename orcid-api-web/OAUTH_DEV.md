@@ -30,7 +30,7 @@ The class provides the following features:
 This file shows an example of a valid Orcid Client Request:	
 	
 	<orcid-client-group xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
- 	xsi:schemaLocation="http://www.orcid.org/ns/orcid ../../../../orcid-model/src/main/resources/orcid-client-group-1.1.xsd"
+ 	xsi:schemaLocation="http://www.orcid.org/ns/orcid ../../../../orcid-model/src/main/resources/orcid-client-group-1.2.xsd"
  	xmlns="http://www.orcid.org/ns/orcid">
     	<group-name>Elsevier</group-name>
     	<email>orcid-admin@elsevier.com</email>
@@ -39,7 +39,7 @@ This file shows an example of a valid Orcid Client Request:
         	<website>http://www.journals.elsevier.com/ecological-complexity</website>
         	<short-description>An International Journal on Biocomplexity in the Environment and Theoretical Ecology</short-description>
         	<redirect-uris>
-            	<redirect-uri scope="/orcid-profile/create /orcid-bio/read-limited">http://www.journals.elsevier.com/ecological-complexity/orcid-callback</redirect-uri>
+            	<redirect-uri scope="/orcid-profile/create /orcid-bio/read-limited" type="default">http://www.journals.elsevier.com/ecological-complexity/orcid-callback</redirect-uri>
         	</redirect-uris>
     	</orcid-client>
     	<orcid-client>
@@ -47,7 +47,7 @@ This file shows an example of a valid Orcid Client Request:
         	<website>http://www.journals.elsevier.com/ecological-economics</website>
         	<short-description>The Transdisciplinary Journal of the International Society for Ecological Economics (ISEE)</short-description>
         	<redirect-uris>
-            	<redirect-uri scope="/orcid-bio/read-limited">http://www.journals.elsevier.com/ecological-economics/orcid-callback</redirect-uri>
+            	<redirect-uri scope="/orcid-bio/read-limited" type="default">http://www.journals.elsevier.com/ecological-economics/orcid-callback</redirect-uri>
         	</redirect-uris>
     	</orcid-client>
 	</orcid-client-group>
@@ -58,7 +58,7 @@ We can use the example that we use for integration testing as our reference. Thi
 
 Which ultimately conforms to the client group xml schema at:
 	
-	/orcid-model/src/main/resources/orcid-client-group-1.1.xsd
+	/orcid-model/src/main/resources/orcid-client-group-1.2.xsd
 	
 With the client group sample we are adding:
 
@@ -115,8 +115,8 @@ An example response is given here, which provides the credentials you can set up
         <website>http://www.journals.elsevier.com/ecological-economics</website>
         <short-description>The Transdisciplinary Journal of the International Society for Ecological Economics (ISEE)</short-description>
         <redirect-uris>
-            <redirect-uri scope="/orcid-bio/read-limited">http://www.journals.elsevier.com/ecological-economics/orcid-callback</redirect-uri>
-            <redirect-uri>https://developers.google.com/oauthplayground</redirect-uri>
+            <redirect-uri scope="/orcid-bio/read-limited" type="default">http://www.journals.elsevier.com/ecological-economics/orcid-callback</redirect-uri>
+            <redirect-uri type="default">https://developers.google.com/oauthplayground</redirect-uri>
         </redirect-uris>
         <client-id>0000-0001-8306-1105</client-id>
         <client-secret>afbb50fc-1b3c-4f5a-ae9a-a3d9e8cb2946</client-secret>
@@ -126,8 +126,8 @@ An example response is given here, which provides the credentials you can set up
         <website>http://www.journals.elsevier.com/ecological-complexity</website>
         <short-description>An International Journal on Biocomplexity in the Environment and Theoretical Ecology</short-description>
         <redirect-uris>
-            <redirect-uri scope="/orcid-bio/read-limited /orcid-profile/create">http://www.journals.elsevier.com/ecological-complexity/orcid-callback</redirect-uri>
-            <redirect-uri>https://developers.google.com/oauthplayground</redirect-uri>
+            <redirect-uri scope="/orcid-bio/read-limited /orcid-profile/create" type="default">http://www.journals.elsevier.com/ecological-complexity/orcid-callback</redirect-uri>
+            <redirect-uri type="default">https://developers.google.com/oauthplayground</redirect-uri>
         </redirect-uris>
         <client-id>0000-0003-4680-8112</client-id>
         <client-secret>c2647373-52e2-4a24-aa40-90444e6f92f7</client-secret>
@@ -150,8 +150,8 @@ E.g, here I add a third client app, Ecological Complexity 2, to the group with n
         <website>http://www.journals.elsevier.com/ecological-economics</website>
         <short-description>The Transdisciplinary Journal of the International Society for Ecological Economics (ISEE)</short-description>
         <redirect-uris>
-            <redirect-uri>https://developers.google.com/oauthplayground</redirect-uri>
-            <redirect-uri scope="/orcid-bio/read-limited">http://www.journals.elsevier.com/ecological-economics/orcid-callback</redirect-uri>
+            <redirect-uri type="default">https://developers.google.com/oauthplayground</redirect-uri>
+            <redirect-uri scope="/orcid-bio/read-limited" type="default">http://www.journals.elsevier.com/ecological-economics/orcid-callback</redirect-uri>
         </redirect-uris>
         <client-id>0000-0003-0501-3882</client-id>
         <client-secret>e0173f69-e26c-4c1f-83cc-526baf223b0f</client-secret>
@@ -161,8 +161,8 @@ E.g, here I add a third client app, Ecological Complexity 2, to the group with n
         <website>http://www.journals.elsevier.com/ecological-complexity</website>
         <short-description>An International Journal on Biocomplexity in the Environment and Theoretical Ecology</short-description>
         <redirect-uris>
-            <redirect-uri>https://developers.google.com/oauthplayground</redirect-uri>
-            <redirect-uri scope="/orcid-profile/create /orcid-bio/read-limited">http://www.journals.elsevier.com/ecological-complexity/orcid-callback</redirect-uri>
+            <redirect-uri type="default">https://developers.google.com/oauthplayground</redirect-uri>
+            <redirect-uri scope="/orcid-profile/create /orcid-bio/read-limited" type="default">http://www.journals.elsevier.com/ecological-complexity/orcid-callback</redirect-uri>
         </redirect-uris>
         <client-id>0000-0003-3664-1216</client-id>
         <client-secret>c8dde1e9-3e1d-4720-aec1-0830eae6cea4</client-secret>
@@ -172,7 +172,7 @@ E.g, here I add a third client app, Ecological Complexity 2, to the group with n
             <website>http://www.journals.elsevier.com/ecological-complexity</website>
             <short-description>An International Journal on Biocomplexity in the Environment and Theoretical Ecology</short-description>
             <redirect-uris>                
-                <redirect-uri scope="/orcid-profile/create /orcid-bio/read-limited">http://www.journals.elsevier.com/ecological-complexity/orcid-callback2</redirect-uri>
+                <redirect-uri scope="/orcid-profile/create /orcid-bio/read-limited" type="default">http://www.journals.elsevier.com/ecological-complexity/orcid-callback2</redirect-uri>
             </redirect-uris>            
     </orcid-client>
 </orcid-client-group>
@@ -189,8 +189,8 @@ And I am returned the full listing as a response from running the util:
         <website>http://www.journals.elsevier.com/ecological-complexity</website>
         <short-description>An International Journal on Biocomplexity in the Environment and Theoretical Ecology</short-description>
         <redirect-uris>
-            <redirect-uri>https://developers.google.com/oauthplayground</redirect-uri>
-            <redirect-uri scope="/orcid-bio/read-limited /orcid-profile/create">http://www.journals.elsevier.com/ecological-complexity/orcid-callback2</redirect-uri>
+            <redirect-uri type="default">https://developers.google.com/oauthplayground</redirect-uri>
+            <redirect-uri scope="/orcid-bio/read-limited /orcid-profile/create" type="default">http://www.journals.elsevier.com/ecological-complexity/orcid-callback2</redirect-uri>
         </redirect-uris>
         <client-id>0000-0002-0274-8923</client-id>
         <client-secret>1cfdf792-159a-4ce5-a7fe-93cfc0842373</client-secret>
@@ -200,8 +200,8 @@ And I am returned the full listing as a response from running the util:
         <website>http://www.journals.elsevier.com/ecological-economics</website>
         <short-description>The Transdisciplinary Journal of the International Society for Ecological Economics (ISEE)</short-description>
         <redirect-uris>
-            <redirect-uri>https://developers.google.com/oauthplayground</redirect-uri>
-            <redirect-uri scope="/orcid-bio/read-limited">http://www.journals.elsevier.com/ecological-economics/orcid-callback</redirect-uri>
+            <redirect-uri type="default">https://developers.google.com/oauthplayground</redirect-uri>
+            <redirect-uri scope="/orcid-bio/read-limited" type="default">http://www.journals.elsevier.com/ecological-economics/orcid-callback</redirect-uri>
         </redirect-uris>
         <client-id>0000-0003-0501-3882</client-id>
         <client-secret>e0173f69-e26c-4c1f-83cc-526baf223b0f</client-secret>
@@ -211,8 +211,8 @@ And I am returned the full listing as a response from running the util:
         <website>http://www.journals.elsevier.com/ecological-complexity</website>
         <short-description>An International Journal on Biocomplexity in the Environment and Theoretical Ecology</short-description>
         <redirect-uris>
-             <redirect-uri>https://developers.google.com/oauthplayground</redirect-uri>
-            <redirect-uri scope="/orcid-bio/read-limited /orcid-profile/create">http://www.journals.elsevier.com/ecological-complexity/orcid-callback</redirect-uri>
+             <redirect-uri type="default">https://developers.google.com/oauthplayground</redirect-uri>
+            <redirect-uri scope="/orcid-bio/read-limited /orcid-profile/create" type="default">http://www.journals.elsevier.com/ecological-complexity/orcid-callback</redirect-uri>
         </redirect-uris>
         <client-id>0000-0003-3664-1216</client-id>
         <client-secret>c8dde1e9-3e1d-4720-aec1-0830eae6cea4</client-secret>

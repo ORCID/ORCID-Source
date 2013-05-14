@@ -39,7 +39,9 @@ import org.orcid.jaxb.model.message.Email;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidWork;
+import org.orcid.jaxb.model.message.Title;
 import org.orcid.jaxb.model.message.Visibility;
+import org.orcid.jaxb.model.message.WorkTitle;
 import org.orcid.persistence.dao.ClientDetailsDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.test.TargetProxyHelper;
@@ -145,8 +147,12 @@ public class OrcidClientDataHelper implements InitializingBean {
 
     }
 
-    protected OrcidWork createWork(String title) {
+    protected OrcidWork createWork(String theTitle) {
         OrcidWork orcidWork = new OrcidWork();
+        Title title = new Title(theTitle);
+        WorkTitle workTitle = new WorkTitle();
+        workTitle.setTitle(title);
+        orcidWork.setWorkTitle(workTitle);
         orcidWork.setVisibility(Visibility.PUBLIC);
         return orcidWork;
     }

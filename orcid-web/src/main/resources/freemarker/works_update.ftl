@@ -83,7 +83,7 @@
                                             <@spring.formHiddenInput "searchAndAddForm.currentWorks[${work_index}].month"/>
                                             <@spring.formHiddenInput "searchAndAddForm.currentWorks[${work_index}].year"/>
                                             <@spring.formHiddenInput "searchAndAddForm.currentWorks[${work_index}].url"/>
-                                            <@spring.formHiddenInput "searchAndAddForm.currentWorks[${work_index}].description"/>
+                                            <@spring.formHiddenInput "searchAndAddForm.currentWorks[${work_index}].description"/>                                            
                                             <#if (work.currentWorkExternalIds)??>
                                                 <#list work.currentWorkExternalIds as ei>
                                                     <@spring.formHiddenInput "searchAndAddForm.currentWorks[${work_index}].currentWorkExternalIds[${ei_index}].id"/>

@@ -61,6 +61,9 @@ public class RedirectUri implements Serializable {
     protected String value;
     @XmlAttribute
     protected List<ScopePathType> scope;
+    
+    @XmlAttribute (required = true)
+    private RedirectUriType type; 
 
     public RedirectUri() {
         super();
@@ -69,6 +72,7 @@ public class RedirectUri implements Serializable {
     public RedirectUri(String value) {
         super();
         setValue(value);
+        setType(RedirectUriType.DEFAULT);
     }
 
     /**
@@ -137,6 +141,7 @@ public class RedirectUri implements Serializable {
         int result = 1;
         result = prime * result + ((scope == null) ? 0 : scope.hashCode());
         result = prime * result + ((value == null) ? 0 : value.hashCode());
+        result = prime * result + ((type == null) ? 0 : type.hashCode());
         return result;
     }
 
@@ -151,12 +156,22 @@ public class RedirectUri implements Serializable {
         RedirectUri other = (RedirectUri) obj;
         if (scope != other.scope)
             return false;
+        if (type != other.type)
+            return false;
         if (value == null) {
             if (other.value != null)
                 return false;
         } else if (!value.equals(other.value))
             return false;
         return true;
+    }
+
+    public RedirectUriType getType() {
+        return type;
+    }
+
+    public void setType(RedirectUriType redirectUriType) {
+        this.type = redirectUriType;
     }
 
 }

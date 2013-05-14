@@ -16,6 +16,13 @@
  */
 package org.orcid.frontend.web.forms;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.validation.Valid;
+import javax.xml.datatype.DatatypeConstants;
+import javax.xml.datatype.XMLGregorianCalendar;
+
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.validator.constraints.NotBlank;
 import org.jbibtex.ParseException;
@@ -43,6 +50,7 @@ import org.orcid.jaxb.model.message.WorkContributors;
 import org.orcid.jaxb.model.message.WorkExternalIdentifier;
 import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
 import org.orcid.jaxb.model.message.WorkExternalIdentifiers;
+import org.orcid.jaxb.model.message.WorkSource;
 import org.orcid.jaxb.model.message.WorkTitle;
 import org.orcid.jaxb.model.message.WorkType;
 import org.orcid.jaxb.model.message.Year;
@@ -52,12 +60,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.AutoPopulatingList;
 import org.springframework.web.util.HtmlUtils;
-
-import javax.validation.Valid;
-import javax.xml.datatype.DatatypeConstants;
-import javax.xml.datatype.XMLGregorianCalendar;
-import java.util.ArrayList;
-import java.util.List;
 
 @ValidCurrentWorkBibtex
 public class CurrentWork {
@@ -97,6 +99,8 @@ public class CurrentWork {
     private CrossRefContext crossRefContext;
 
     private boolean selected;
+    
+    private String source;
 
     public CurrentWork() {
     }
@@ -150,6 +154,8 @@ public class CurrentWork {
             setCurrentWorkExternalIds(currentWorkExternalIds);
         }
 
+        if(orcidWork.getWorkSource() != null)
+            source = orcidWork.getWorkSource().getContent();
     }
 
     private void setCitationDetails(OrcidWork orcidWork) {
@@ -347,6 +353,14 @@ public class CurrentWork {
         this.putCode = putCode;
     }
 
+    public void setSource(String source) {
+        this.source = source;
+    }
+    
+    public String getSource(){
+        return this.source;
+    }
+    
     public OrcidWork getOrcidWork() {
         OrcidWork orcidWork = new OrcidWork();
         Citation workCitation = getConvertedCitation();
@@ -410,6 +424,10 @@ public class CurrentWork {
             orcidWork.setPutCode(putCode);
         }
 
+        if(StringUtils.isNotBlank(source)){
+            orcidWork.setWorkSource(new WorkSource(source));
+        }
+        
         return orcidWork;
     }
 
