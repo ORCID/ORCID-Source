@@ -150,7 +150,13 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
         password.submit();
         (new WebDriverWait(webDriver, DEFAULT_TIMEOUT_SECONDS)).until(new ExpectedCondition<Boolean>() {
             public Boolean apply(WebDriver d) {
-                return d.getCurrentUrl().contains("authorize");
+                if (d.getCurrentUrl().contains("authorize")) {
+                    WebElement authorizeButton = d.findElement(By.name("authorize"));
+                    if (authorizeButton != null) {
+                        return true;
+                    }
+                }
+                return false;
             }
         });
         WebElement authorizeButton = webDriver.findElement(By.name("authorize"));
