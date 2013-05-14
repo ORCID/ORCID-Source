@@ -16,12 +16,16 @@
  */
 package org.orcid.core.manager.impl;
 
+import java.io.Serializable;
+
 /**
  * 
  * @author Will Simpson
  * 
  */
-public class OrcidCacheKey {
+public class OrcidCacheKey implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     private String orcid;
 
