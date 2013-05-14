@@ -792,7 +792,7 @@ function VerifyEmailCtrl($scope, $compile) {
 	        		};
 	        	};
 	        	if (!primeVerified) {
-	        		colorboxHtml = $compile($('#verify-email-modal').html())($scope);
+	        		var colorboxHtml = $compile($('#verify-email-modal').html())($scope);
 	        		$scope.$apply();
 	        	    
 	        		$.colorbox({
@@ -801,11 +801,11 @@ function VerifyEmailCtrl($scope, $compile) {
 	        	        overlayClose:false,
 	        	        transition: 'fade',
 	        	        close: '',
-	        	        height: '200px',
-	        	        width: '500px',
+	        	        //height: '200px',
+	        	        //width: '500px',
 	        	        scrolling: false
 	        	        	    });
-	        	        //$.colorbox.resize();	        		
+	        	        $.colorbox.resize();	        		
 	        	};
 	        }
 	    }).fail(function() { 
@@ -828,7 +828,19 @@ function VerifyEmailCtrl($scope, $compile) {
 	    	// something bad is happening!
 	    	console.log("error with multi email");
 	    });  		
+		var colorboxHtml = $compile($('#verify-email-modal-sent').html())($scope);
+		
 		$scope.emailSent = true;
+		$.colorbox({
+	        html : colorboxHtml,
+	        escKey: true, 
+	        overlayClose: true,
+	        transition: 'fade',
+	        close: '',
+	        scrolling: false
+	        	    });
+	    $.colorbox.resize();
+		
 	};
 	
 	
