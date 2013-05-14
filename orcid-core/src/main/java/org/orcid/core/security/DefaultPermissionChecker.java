@@ -166,6 +166,7 @@ public class DefaultPermissionChecker implements PermissionChecker {
     }
 
     private Set<Visibility> getVisibilitiesForOauth2Authentication(OAuth2Authentication oAuth2Authentication, OrcidMessage orcidMessage, ScopePathType requiredScope) {
+
         Set<Visibility> visibilities = new HashSet<Visibility>();
         visibilities.add(Visibility.PUBLIC);
 
@@ -187,7 +188,13 @@ public class DefaultPermissionChecker implements PermissionChecker {
             ProfileEntity principal = (ProfileEntity) oAuth2Authentication.getPrincipal();
             visibilities.add(Visibility.REGISTERED_ONLY);
             if (principal != null && principal.getId().equals(orcid)) {
-                visibilities.add(Visibility.LIMITED);
+                Set<String> requestedScopes = oAuth2Authentication.getAuthorizationRequest().getScope();
+                for (String scope : requestedScopes) {
+                    if (ScopePathType.hasStringScope(scope, requiredScope)) {
+                        visibilities.add(Visibility.LIMITED);
+                        break;
+                    }
+                }
             }
             // This is a client credential authenticated client. If the profile
             // was created using this client and it
@@ -306,6 +313,14 @@ public class DefaultPermissionChecker implements PermissionChecker {
         for (String requestedScope : requestedScopes) {
             if (ScopePathType.hasStringScope(requestedScope, requiredScope)) {
                 return true;
+            }
+            if (requiredScope.isReadOnlyScope()) {
+                // If read only (limited or otherwise) then let it through it
+                // the user has /read-public, and let the visibility filter take
+                // care of it.
+                if (ScopePathType.hasStringScope(requestedScope, ScopePathType.READ_PUBLIC)) {
+                    return true;
+                }
             }
         }
         return false;

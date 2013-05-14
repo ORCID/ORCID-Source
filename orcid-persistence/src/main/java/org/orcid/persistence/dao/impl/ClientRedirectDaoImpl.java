@@ -23,11 +23,12 @@ import javax.persistence.Query;
 import org.orcid.persistence.dao.ClientRedirectDao;
 import org.orcid.persistence.jpa.entities.ClientRedirectUriEntity;
 import org.orcid.persistence.jpa.entities.keys.ClientRedirectUriPk;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * 
  * @author jamesb
- *
+ * 
  */
 public class ClientRedirectDaoImpl extends GenericDaoImpl<ClientRedirectUriEntity, ClientRedirectUriPk> implements ClientRedirectDao {
 
@@ -43,6 +44,16 @@ public class ClientRedirectDaoImpl extends GenericDaoImpl<ClientRedirectUriEntit
 
         return query.getResultList();
 
+    }
+
+    @Override
+    @Transactional
+    public void addClientRedirectUri(String clientId, String redirectUri) {
+        Query query = entityManager
+                .createNativeQuery("INSERT INTO client_redirect_uri (date_created, last_modified, client_details_id, redirect_uri) VALUES (now(), now(), :clientId, :redirectUri)");
+        query.setParameter("clientId", clientId);
+        query.setParameter("redirectUri", redirectUri);
+        query.executeUpdate();
     }
 
 }

@@ -66,6 +66,7 @@
             last_indexed_date="2011-07-02 15:31:00.00"
             last_modified="2011-07-02 15:31:00.00"
             email="michael@bentine.com"
+            email_verified="true"
             claimed="true"
             given_names="Michael"
             family_name="Bentine"
@@ -308,6 +309,14 @@
             external_id_type="Facebook"
             orcid="4444-4444-4444-4443"
             external_id_url="http://www.facebook.com/d3clan"
+            external_orcid="4444-4444-4444-4441"
+            />
+
+    <external_identifier
+            external_id_reference="abc123"
+            external_id_type="Facebook"
+            orcid="4444-4444-4444-4442"
+            external_id_url="http://www.facebook.com/abc123"
             external_orcid="4444-4444-4444-4441"
             />
 

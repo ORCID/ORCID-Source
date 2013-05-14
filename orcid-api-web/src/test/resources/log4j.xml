@@ -48,6 +48,10 @@
 	   <level value="WARN" />
 	</logger>
 	
+	<logger name="org.dbunit">
+		<level value="WARN" />
+	</logger>
+	
 	<logger name="com.sun.jersey.api.client.filter.LoggingFilter">
 	   <level value="DEBUG" />
 	</logger>
