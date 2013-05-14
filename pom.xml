@@ -210,6 +210,7 @@ the software.
                         	<exclude>**/src/main/webapp/static/javascript/angularjs/**</exclude>
                         	<exclude>**/src/main/webapp/static/css/jquery-*.css</exclude>
                         	<exclude>**/src/main/webapp/static/css/bootstrap*</exclude>
+                        	<exclude>**/src/main/webapp/static/twitter-bootstrap/**</exclude>
                         	<exclude>**/src/main/webapp/solr/**/*.txt</exclude>
                         	<exclude>**/src/main/webapp/solr/**/*.xml</exclude>
 				<exclude>**/src/main/resources/cdn_url.txt</exclude>
