@@ -226,6 +226,7 @@ public class OrcidClientDetailsServiceImpl implements OrcidClientDetailsService 
             ClientRedirectUriEntity clientRedirectUriEntity = new ClientRedirectUriEntity();
             clientRedirectUriEntity.setClientDetailsEntity(clientDetailsEntity);
             clientRedirectUriEntity.setRedirectUri(clientRegisteredRedirectUri.getValue());
+            clientRedirectUriEntity.setRedirectUriType(clientRegisteredRedirectUri.getType().value());
             List<ScopePathType> scopesForRedirect = clientRegisteredRedirectUri.getScope();
             String clientPredefinedScopes = scopesForRedirect != null ? ScopePathType.getScopesAsSingleString(scopesForRedirect) : null;
             clientRedirectUriEntity.setPredefinedClientScope(clientPredefinedScopes);

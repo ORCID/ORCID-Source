@@ -65,7 +65,7 @@ class OrcidWorkMatcher {
                 .getWorkExternalIdentifiers() != null) {
             return false;
         }
-        if (this.orcidWork.getWorkSources() != null ? !this.orcidWork.getWorkSources().equals(orcidWork.getWorkSources()) : orcidWork.getWorkSources() != null) {
+        if (this.orcidWork.getWorkSource() != null ? !this.orcidWork.getWorkSource().equals(orcidWork.getWorkSource()) : orcidWork.getWorkSource() != null) {
             return false;
         }
         if (this.orcidWork.getWorkTitle() != null ? !this.orcidWork.getWorkTitle().equals(orcidWork.getWorkTitle()) : orcidWork.getWorkTitle() != null) {
@@ -88,7 +88,7 @@ class OrcidWorkMatcher {
         result = 31 * result + (this.orcidWork.getWorkExternalIdentifiers() != null ? this.orcidWork.getWorkExternalIdentifiers().hashCode() : 0);
         result = 31 * result + (this.orcidWork.getUrl() != null ? this.orcidWork.getUrl().hashCode() : 0);
         result = 31 * result + (this.orcidWork.getWorkContributors() != null ? this.orcidWork.getWorkContributors().hashCode() : 0);
-        result = 31 * result + (this.orcidWork.getWorkSources() != null ? this.orcidWork.getWorkSources().hashCode() : 0);
+        result = 31 * result + (this.orcidWork.getWorkSource() != null ? this.orcidWork.getWorkSource().hashCode() : 0);
         return result;
     }
 

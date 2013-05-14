@@ -26,12 +26,14 @@ import java.net.URI;
 import java.net.URLEncoder;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
 
 import javax.ws.rs.core.MediaType;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.api.common.OrcidApiConstants;
+import org.orcid.jaxb.model.clientgroup.OrcidClientGroup;
 import org.orcid.jaxb.model.message.ExternalIdOrcid;
 import org.orcid.jaxb.model.message.ExternalIdReference;
 import org.orcid.jaxb.model.message.ExternalIdentifier;
@@ -262,14 +264,13 @@ public class T2OrcidOAuthApiClientIntegrationTest extends BaseT2OrcidOAuthApiCli
 
     @Test
     public void testAddWorksJson() throws Exception {
-
         createNewOrcidUsingAccessToken();
         OrcidMessage message = orcidClientDataHelper.createFromXML(OrcidClientDataHelper.ORCID_INTERNAL_NO_SPONSOR_XML);
         message.getOrcidProfile().setOrcid(this.orcid);
         OrcidWorks orcidWorks = message.getOrcidProfile().retrieveOrcidWorks();
         assertTrue(orcidWorks != null && orcidWorks.getOrcidWork() != null && orcidWorks.getOrcidWork().size() == 3);
 
-        OrcidWork orcidWork = orcidClientDataHelper.createWork("Single works");
+        OrcidWork orcidWork = orcidClientDataHelper.createWork("Single works with title");
         orcidWorks = new OrcidWorks();
         orcidWorks.getOrcidWork().add(orcidWork);
         message.getOrcidProfile().setOrcidWorks(orcidWorks);
@@ -277,8 +278,22 @@ public class T2OrcidOAuthApiClientIntegrationTest extends BaseT2OrcidOAuthApiCli
         ClientResponse clientResponse = oauthT2Client.addWorksJson(this.orcid, message, accessToken);
         assertEquals(201, clientResponse.getStatus());
 
-        ClientResponse retrievedOrcidWorks = oauthT2Client.viewWorksDetailsJson(this.orcid, accessToken);
-        assertTrue(retrievedOrcidWorks.getEntity(OrcidMessage.class).getOrcidProfile().retrieveOrcidWorks().getOrcidWork().size() == 4);
+        ClientResponse orcidWorksFromResponse = oauthT2Client.viewWorksDetailsJson(this.orcid, accessToken);
+        List<OrcidWork> retrievedOrcidWorks = orcidWorksFromResponse.getEntity(OrcidMessage.class).getOrcidProfile().retrieveOrcidWorks().getOrcidWork();
+        assertTrue(retrievedOrcidWorks.size() == 4);
+                
+        String clientOrcid = this.clientId;
+        
+        for(OrcidWork work : retrievedOrcidWorks){
+            WorkTitle workTitle = work.getWorkTitle();
+            
+            if(workTitle != null && workTitle.getTitle() != null){
+                if("Single works with title".equals(workTitle.getTitle().getContent())){
+                    assertEquals(clientOrcid, work.getWorkSource().getContent());
+                    break;
+                }
+            }
+        }
 
     }
 
@@ -311,7 +326,7 @@ public class T2OrcidOAuthApiClientIntegrationTest extends BaseT2OrcidOAuthApiCli
         ClientResponse worksResponse = oauthT2Client.viewWorksDetailsXml(this.orcid, this.accessToken);
         assertEquals(200, worksResponse.getStatus());
         message = worksResponse.getEntity(OrcidMessage.class);
-
+        
         orcidWorks = message.getOrcidProfile().retrieveOrcidWorks();
         assertTrue(orcidWorks != null && orcidWorks.getOrcidWork() != null && orcidWorks.getOrcidWork().size() == 3);
 
@@ -325,6 +340,8 @@ public class T2OrcidOAuthApiClientIntegrationTest extends BaseT2OrcidOAuthApiCli
 
         assertEquals("Chromosome 5a55.5 microdeletions comprising AB555 and CD5555", workToUpdate.getWorkTitle().getTitle().getContent());
         assertEquals("Chromosome subtitle", workToUpdate.getWorkTitle().getSubtitle().getContent());
+        assertEquals(this.clientId, workToUpdate.getWorkSource().getContent());
+        
         // check other works unchanged
         assertEquals("Work title 1", orcidWorks.getOrcidWork().get(1).getWorkTitle().getTitle().getContent());
         assertEquals("Work subtitle 1", orcidWorks.getOrcidWork().get(1).getWorkTitle().getSubtitle().getContent());

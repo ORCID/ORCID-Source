@@ -34,7 +34,7 @@ public interface RegistrationManager {
 
     void resetUserPassword(OrcidProfile orcidProfile, URI baseUri);
 
-    OrcidProfile createMinimalRegistration(OrcidProfile orcidProfile, URI baseURI);
+    OrcidProfile createMinimalRegistration(OrcidProfile orcidProfile);
 
     Long getCount();
 }

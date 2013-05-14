@@ -301,11 +301,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link WorkSources }
+     * Create an instance of {@link WorkSource }
      * 
      */
-    public WorkSources createWorkSources() {
-        return new WorkSources();
+    public WorkSource createWorkSource() {
+        return new WorkSource();
     }
 
     /**

@@ -774,3 +774,68 @@ function ClaimCtrl($scope, $compile) {
 };
 
 
+function VerifyEmailCtrl($scope, $compile) {
+	$scope.getEmails = function() {
+		$.ajax({
+	        url: $('body').data('baseurl') + 'account/emails.json',
+	        //type: 'POST',
+	        //data: $scope.emailsPojo, 
+	        dataType: 'json',
+	        success: function(data) {
+	        	$scope.emailsPojo = data;
+	        	$scope.$apply();
+	        	var primeVerified = false;
+	        	for (i in $scope.emailsPojo.emails) {
+	        		if ($scope.emailsPojo.emails[i].primary) {
+	        			$scope.primaryEmail = $scope.emailsPojo.emails[i].value;
+	        			if ($scope.emailsPojo.emails[i].verified) primeVerified = true;
+	        		};
+	        	};
+	        	if (!primeVerified) {
+	        		colorboxHtml = $compile($('#verify-email-modal').html())($scope);
+	        		$scope.$apply();
+	        	    
+	        		$.colorbox({
+	        	        html : colorboxHtml,
+	        	        escKey:false, 
+	        	        overlayClose:false,
+	        	        transition: 'fade',
+	        	        close: '',
+	        	        height: '200px',
+	        	        width: '500px',
+	        	        scrolling: false
+	        	        	    });
+	        	        //$.colorbox.resize();	        		
+	        	};
+	        }
+	    }).fail(function() { 
+	    	// something bad is happening!
+	    	console.log("error with multi email");
+	    });
+	};
+	
+	$scope.verifyEmail = function() {
+		$.ajax({
+	        url: $('body').data('baseurl') + 'account/verifyEmail.json',
+	        type: 'get',
+	        data:  { "email": $scope.primaryEmail },
+	        contentType: 'application/json;charset=UTF-8',
+	        dataType: 'json',
+	        success: function(data) {
+	        	//alert( "Verification Email Send To: " + $scope.emailsPojo.emails[idx].value); 	
+	        }
+	    }).fail(function() { 
+	    	// something bad is happening!
+	    	console.log("error with multi email");
+	    });  		
+		$scope.emailSent = true;
+	};
+	
+	
+	$scope.closeColorBox = function() {
+		$.colorbox.close();
+	};
+	
+	$scope.emailSent = false;
+	$scope.getEmails();
+};
