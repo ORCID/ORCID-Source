@@ -128,4 +128,17 @@
 
 * Import wizard now opens 3rd parties into new window after Authorize
 
-   
+
+## release-1.1.9.7
+(2013-03-12)
+
+* Migrate java web-app about links to point to orcid.org 
+* Search by ORCID iD (love it Will!)
+* Claim email is now only good for one use
+* Fix IE caching issue for login check (I Hope!)
+* Multiple email backend release
+* Last name is now not required (Way to go Angel)
+* Fix login error formatting. 
+* Email is now case insensitive on login screen.
+* Email is validated on OAuth Create
+* Formatting improvement to Personal Info Window (Brian's making us look nice)
