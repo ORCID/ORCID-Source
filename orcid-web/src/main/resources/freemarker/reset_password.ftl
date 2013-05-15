@@ -25,7 +25,12 @@
     			<div class="alert alert-success">
     				<@spring.showErrors "orcid-error"/>
 				</div>	
-			</#if>                     
+			</#if>   
+			<#if disabledAccount?? && disabledAccount>
+				<div class="alert alert-success">
+	    			<strong><@spring.message "orcid.frontend.reset.password.disabled_account"/>&nbsp;<a href="${(aboutUri)}/help/contact-us"><@spring.message "orcid.frontend.reset.password.disabled_account.link"/></a></strong>
+				</div>
+			</#if>                   
     		<#if passwordResetLinkExpired?? && passwordResetLinkExpired>
 				<div class="alert alert-success">
 					<strong><@spring.message "orcid.frontend.reset.password.resetLinkExpired"/></strong>
