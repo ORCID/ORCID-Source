@@ -110,11 +110,13 @@
 
 
 ## release-1.1.11.3
+(2013-03-25)
 
 * Multiple emails -MPV (minium viable product)
 
 
 ## release-1.1.10.12
+(2013-03-21)
 
 * GA event tracking, with custom page change extensions
 
