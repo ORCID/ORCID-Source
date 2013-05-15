@@ -824,30 +824,47 @@ only screen and (min-device-pixel-ratio: 2) {
 	background-position: -67px -60px;
 }
 
-.privacyLegend {
-	width: 206px; height: 70px;      
-	background: url('../img/privacy-legend_100.png') no-repeat;
-    background-size: 206px 70px;
-    position: absolute; right: 15px; top: -25px;
-	z-index: 1000;
-	display: none;	
+ul.privacyHelp {
+	list-style-type: none;
+	padding: 0px; 
+	margin: 0px;
+	margin-top: 8px;
+	margin-bottom: 8px;
+	
+}
+
+ul.privacyHelp li {
+	list-style-type: none;
+	 padding: 0px;
+	 padding-left: 27px; 
+	 margin: 0px;
+	 margin-left: 15px;
+	 height: 22px;
+	 background: url('../img/privacy_icons_100.png') no-repeat;
+     background-size: 25px 66px;
 }
 
 @media only screen and (-webkit-min-device-pixel-ratio: 2), 
 only screen and (min-device-pixel-ratio: 2) {
 	
-   .privacyLegend {
-      background: url('../img/privacy-legend_200.png') no-repeat;
-      background-size: 206px 70px;
+   ul.privacyHelp li {
+	 background: url('../img/privacy_icons_200.png') no-repeat;
+     background-size: 25px 66px;
    }
 }
 
 
-
-.privacyLegendHide:hover .privacyLegend {
-  display: block;	
+ul.privacyHelp li.public {
+	background-position: -0px -2px;
 }
 
+ul.privacyHelp li.limited {
+	background-position: -0px -22px;
+}
+
+ul.privacyHelp li.private {
+	background-position: -0px -45px;
+}
 
 .editTablePadCell35 {
 	margin: 0px; 
@@ -857,7 +874,7 @@ only screen and (min-device-pixel-ratio: 2) {
 
 #emailTable {
 	width: 655px; 
-	padding: 0px; 
+	padding: 0px; 	
 	margin: 0px;
 }
 
