@@ -120,17 +120,8 @@
 	                    </div>
 	     				<div style="margin-bottom: 20px; margin-top: 10px;">
 	                        <label class="privacy-toggle-lbl">${springMacroRequestContext.getMessage("register.labelDefaultprivacyfornewworks")}</label>
-	                    	<div class="relative">
-									<ul class="privacyToggle">
-				   						<li class="publicActive" ng-class="{publicInActive: register.workVisibilityDefault.visibility != 'PUBLIC'}"><a href="" title="PUBLIC" ng-click="updateWorkVisibilityDefault('PUBLIC', $event)"></a></li>
-				   						<li class="limitedActive" ng-class="{limitedInActive: register.workVisibilityDefault.visibility != 'LIMITED'}"><a href="" title="LIMITED" ng-click="updateWorkVisibilityDefault('LIMITED', $event)"></a></li>
-				   						<li class="privateActive" ng-class="{privateInActive: register.workVisibilityDefault.visibility != 'PRIVATE'}"><a href="" title="PRIVATE" ng-click="updateWorkVisibilityDefault('PRIVATE', $event)"></a></li>
-				   					</ul>
-				   					<div class="privacyLegendHide" style="position: absolute; left: 110px; top: 5px;">
-					   				    <a href="javascript:void(0);"><i class="icon-question-sign"></i></a>
-					   				    <div class="privacyLegend"></div>
-					   				</div>
-				   			</div>
+	                    	<@orcid.privacyToggle "register.workVisibilityDefault.visibility" "updateWorkVisibilityDefault('PUBLIC', $event)" 
+	                    	  "updateWorkVisibilityDefault('LIMITED', $event)" "updateWorkVisibilityDefault('PRIVATE', $event)" /> 
 	                    </div>                    
 		                <div style="margin-bottom: 15px;">
 		                    <div class="relative">

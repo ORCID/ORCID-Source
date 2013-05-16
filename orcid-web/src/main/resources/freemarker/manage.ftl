@@ -86,17 +86,7 @@
 			   						  	<a href="" class="icon-trash grey" ng-show="email.primary == false" ng-click="confirmDeleteEmail($index)"></a>
 			   						  </td>
 			   						  <td class="padRgt">
-			   						     <ul class="privacyToggle">
-		   							       <li class="publicActive" ng-class="{publicInActive: email.visibility != 'PUBLIC'}"><a href="" title="PUBLIC" ng-click="setPrivacy($index, 'PUBLIC', $event)"></a></li>
-		   							       <li class="limitedActive" ng-class="{limitedInActive: email.visibility != 'LIMITED'}"><a href="" title="LIMITED" ng-click="setPrivacy($index, 'LIMITED', $event)"></a></li>
-		   							       <li class="privateActive" ng-class="{privateInActive: email.visibility != 'PRIVATE'}"><a href="" title="PRIVATE" ng-click="setPrivacy($index, 'PRIVATE', $event)"></a></li>
-		   							     </ul>
-			   						  </td>
-			   						  <td style="width: 20px;">
-			   						  <div class="privacyLegendHide">
-			   						  <a href="javascript:void(0);"><i class="icon-question-sign"></i></a>
-			   						  <div class="privacyLegend"></div>
-			   						  </div>
+			   						  	<@orcid.privacyToggle "email.visibility" "setPrivacy($index, 'PUBLIC', $event)" "setPrivacy($index, 'LIMITED', $event)" "setPrivacy($index, 'PRIVATE', $event)" />
                                	      </td>
 			   						</tr>
 				   					</table>
@@ -160,17 +150,7 @@
 						<td colspan="2">
 						<div class="editTablePadCell35">
 							${springMacroRequestContext.getMessage("privacy_preferences.labelDefaultprivacyfornewWorks")}<br />
-							<div>
-								<ul class="privacyToggle">
-			   						<li class="publicActive" ng-class="{publicInActive: privacyPreferences.workVisibilityDefault.value != 'PUBLIC'}"><a href="" title="PUBLIC" ng-click="updateWorkVisibilityDefault('PUBLIC', $event)"></a></li>
-			   						<li class="limitedActive" ng-class="{limitedInActive: privacyPreferences.workVisibilityDefault.value != 'LIMITED'}"><a href="" title="LIMITED" ng-click="updateWorkVisibilityDefault('LIMITED', $event)"></a></li>
-			   						<li class="privateActive" ng-class="{privateInActive: privacyPreferences.workVisibilityDefault.value != 'PRIVATE'}"><a href="" title="PRIVATE" ng-click="updateWorkVisibilityDefault('PRIVATE', $event)"></a></li>
-			   					</ul>
-			   					<div class="privacyLegendHide" style="position: absolute; left: 110px; top: 25px;">
-				   				    <a href="javascript:void(0);"><i class="icon-question-sign"></i></a>
-				   				    <div class="privacyLegend"></div>
-				   				</div>
-			   				</div>
+							<@orcid.privacyToggle "privacyPreferences.workVisibilityDefault.value" "updateWorkVisibilityDefault('PUBLIC', $event)" "updateWorkVisibilityDefault('LIMITED', $event)" "updateWorkVisibilityDefault('PRIVATE', $event)" />
 						</div>
 						</td>
 					</tr>
