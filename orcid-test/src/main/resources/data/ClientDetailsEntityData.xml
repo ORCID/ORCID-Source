@@ -64,11 +64,13 @@
     <client_resource_id client_details_id="4444-4444-4444-4443" resource_id="orcid"/>
     <client_resource_id client_details_id="4444-4444-4444-4444" resource_id="orcid"/>
     <client_resource_id client_details_id="4444-4444-4444-4445" resource_id="orcid"/>
+    
 
     <client_scope client_details_id="4444-4444-4444-4441" scope_type="/orcid-bio/read-limited"/>
     <client_scope client_details_id="4444-4444-4444-4442" scope_type="/orcid-bio/read-limited"/>
     <client_scope client_details_id="4444-4444-4444-4443" scope_type="/orcid-bio/read-limited"/>
     <client_scope client_details_id="4444-4444-4444-4444" scope_type="/orcid-bio/read-limited"/>
     <client_scope client_details_id="4444-4444-4444-4445" scope_type="/orcid-bio/read-limited"/>
+    <client_scope client_details_id="4444-4444-4444-4445" scope_type="/orcid-works/create"/>
 
 </dataset>
