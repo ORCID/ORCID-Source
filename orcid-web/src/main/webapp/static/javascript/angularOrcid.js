@@ -851,3 +851,22 @@ function VerifyEmailCtrl($scope, $compile) {
 	$scope.emailSent = false;
 	$scope.getEmails();
 };
+
+
+function ClaimThanks($scope, $compile) {
+	$scope.showThanks = function () {
+		var colorboxHtml = $compile($('#claimed-record-thanks').html())($scope);
+		$.colorbox({
+	        html : colorboxHtml,
+	        escKey: true, 
+	        overlayClose: true,
+	        transition: 'fade',
+	        close: '',
+	        scrolling: false
+	        	    });
+	    $.colorbox.resize();
+	};
+	
+	$scope.showThanks();
+	
+};

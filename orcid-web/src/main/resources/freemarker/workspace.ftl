@@ -24,12 +24,19 @@
         <strong><@spring.message "orcid.frontend.web.email_verified"/></strong>
     </div>
 </#if>
-<#if RequestParameters['recordClaimed']??>
-    <div class="alert alert-success">
-        <strong><@spring.message "orcid.frontend.web.record_claimed"/></strong>
-    </div>
-</#if>
 <div id="ng-app" ng-app="orcidApp" class="row workspace-top public-profile">
+
+	<#if RequestParameters['recordClaimed']??>
+	    <div ng-controller="ClaimThanks"></div>
+	    <script type="text/ng-template" id="claimed-record-thanks">
+	    	<div style="padding: 20px;">
+	    		<strong><@spring.message "orcid.frontend.web.record_claimed"/></strong><br />
+	    		<br />
+	    		<button class="btn btn-primary" ng-click="close()">close</button>
+	    	</div>
+	    </script>
+	</#if>
+
     <div class="span3 lhs">
     	<div class="workspace-left workspace-profile">
             <h2 class="full-name">

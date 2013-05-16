@@ -104,6 +104,7 @@ public class WorkspaceController extends BaseWorkspaceController {
                 .getExternalIdentifier());
         return externalIdentifiers;
     }
+    
 
     /**
      * Updates the list of external identifiers assigned to a user
