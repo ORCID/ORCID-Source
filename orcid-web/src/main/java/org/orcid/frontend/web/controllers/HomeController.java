@@ -19,6 +19,7 @@ package org.orcid.frontend.web.controllers;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.pojo.UserStatus;
 import org.orcid.utils.OrcidStringUtils;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.Locale;
@@ -28,6 +29,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
@@ -80,7 +82,13 @@ public class HomeController extends BaseController {
     @RequestMapping(value = "/userStatus.json")
     @Produces(value = { MediaType.APPLICATION_JSON })
     public @ResponseBody
-    Object getUserStatusJson(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {
+    Object getUserStatusJson(HttpServletRequest request, @RequestParam(value = "logUserOut", required = false) Boolean logUserOut) throws NoSuchRequestHandlingMethodException {
+        
+        if (logUserOut != null && logUserOut.booleanValue()) {
+            SecurityContextHolder.clearContext();
+            request.getSession().invalidate();
+        }
+        
         OrcidProfileUserDetails opd = getCurrentUser();
         UserStatus us = new UserStatus();
         us.setLoggedIn((opd != null));
