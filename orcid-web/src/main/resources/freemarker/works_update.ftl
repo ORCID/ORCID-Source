@@ -149,8 +149,8 @@
     <div class="control-bar">
           <div class="pull-right">
               <span id="changed-alert" class="hide alert form-change-alert">${springMacroRequestContext.getMessage("works_update.youmadechanges")} </span>
-              <a href="#" class="btn btn-primary close-and-reload" id="works-list-save">${springMacroRequestContext.getMessage("freemarker.btnsavechanges")}</a>
-              <a href="#" class="btn close-button" id="works-list-reset" type="reset">${springMacroRequestContext.getMessage("freemarker.btncancel")}</a>
+              <button class="btn btn-primary close-and-reload" id="works-list-save">${springMacroRequestContext.getMessage("freemarker.btnsavechanges")}</button>
+              <button class="btn close-button" id="works-list-reset" type="reset">${springMacroRequestContext.getMessage("freemarker.btncancel")}</button>
           </div>
           ${springMacroRequestContext.getMessage("works_update.Poweredby")} <img src="${staticCdn}/img/xref.png" alt="${springMacroRequestContext.getMessage('works_update.altcross')}" />
     </div>
