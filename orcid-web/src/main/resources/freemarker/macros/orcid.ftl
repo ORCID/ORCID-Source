@@ -102,6 +102,32 @@
     </li>
 </#macro>
 
+<#macro privacyToggle angularModel publicClick limitedClick privateClick>
+	<div class="relative">
+		<ul class="privacyToggle">
+			<li class="publicActive" ng-class="{publicInActive: ${angularModel} != 'PUBLIC'}"><a href="" title="PUBLIC" ng-click="${publicClick}"></a></li>
+			<li class="limitedActive" ng-class="{limitedInActive: ${angularModel} != 'LIMITED'}"><a href="" title="LIMITED" ng-click="${limitedClick}"></a></li>
+			<li class="privateActive" ng-class="{privateInActive: ${angularModel} != 'PRIVATE'}"><a href="" title="PRIVATE" ng-click="${privateClick}"></a></li>
+		</ul>
+		<div class="popover-help-container" style="position: absolute; left: 110px; top: 5px;">
+        	<a href="javascript:void(0);"><i class="icon-question-sign"></i></a>
+            <div class="popover bottom">
+		        <div class="arrow"></div>
+		        <div class="popover-content">
+		        	<strong>${springMacroRequestContext.getMessage("privacyToggle.help.who_can_see")}</strong>
+			        <ul class="privacyHelp">
+			        	<li class="public" style="color: #009900;">${springMacroRequestContext.getMessage("privacyToggle.help.everyone")}</li>
+			        	<li class="limited"style="color: #ffb027;">${springMacroRequestContext.getMessage("privacyToggle.help.trusted_parties")}</li>
+			        	<li class="private" style="color: #990000;">${springMacroRequestContext.getMessage("privacyToggle.help.only_me")}</li>
+			        </ul>
+			        <a href="http://support.orcid.org/knowledgebase/articles/124518-orcid-privacy-settings" target="_blank">${springMacroRequestContext.getMessage("privacyToggle.help.more_information")}</a>
+		        </div>                
+		    </div>
+    	</div>				   					
+	</div>
+</#macro>
+
+
 <#macro patentDetails patent>
     <li>
         <#if (patent.shortDescription)??><h4>${patent.shortDescription}</h4></#if>
