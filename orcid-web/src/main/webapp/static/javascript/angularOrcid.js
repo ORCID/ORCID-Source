@@ -844,7 +844,18 @@ function VerifyEmailCtrl($scope, $compile) {
 	};
 	
 	
-	$scope.closeColorBox = function() {
+	$scope.closeColorBox = function() {		
+		$.ajax({
+	        url: $('body').data('baseurl') + 'account/delayVerifyEmail.json',
+	        type: 'get',
+	        contentType: 'application/json;charset=UTF-8',
+	        success: function(data) {
+	        	//alert( "Verification Email Send To: " + $scope.emailsPojo.emails[idx].value); 	
+	        }
+	    }).fail(function() { 
+	    	// something bad is happening!
+	    	console.log("error with multi email");
+	    });
 		$.colorbox.close();
 	};
 	

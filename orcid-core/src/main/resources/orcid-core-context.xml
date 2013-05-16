@@ -33,6 +33,8 @@
 	<context:component-scan
 		base-package="org.orcid.core.manager.impl, org.orcid.core.oauth.service, org.orcid.core.security" />
 	<aop:aspectj-autoproxy />
+	
+    <context:mbean-server />
 
 	<bean id="templateManager" class="org.orcid.core.manager.impl.TemplateManagerImpl" />
 
@@ -163,6 +165,17 @@
 		<property name="shared" value="true" />
 		<property name="cacheManagerName" value="coreCacheManager" />
 	</bean>
+	
+	<!-- Exposing cache statistics through JMX. -->
+    <bean class="org.orcid.core.utils.OrcidEhcacheManagementService" init-method="init">
+        <constructor-arg ref="coreCacheManager"/>
+        <constructor-arg ref="mbeanServer"/>
+        <constructor-arg value="true"/>
+        <constructor-arg value="true"/>
+        <constructor-arg value="true"/>
+        <constructor-arg value="true"/>
+    </bean>   
+	
 	
 	<bean id="springCoreCacheManager" class="org.springframework.cache.ehcache.EhCacheCacheManager">
 		<property name="cacheManager" ref="coreCacheManager" />

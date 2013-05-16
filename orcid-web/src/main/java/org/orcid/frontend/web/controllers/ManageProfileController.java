@@ -112,7 +112,7 @@ public class ManageProfileController extends BaseWorkspaceController {
 
     /*
      * session attribute that is used to see if we should check and notify the
-     * user if thier primary emails ins't verified.
+     * user if their primary email ins't verified.
      */
     public static String CHECK_EMAIL_VALIDATED = "CHECK_EMAIL_VALIDATED";
 
@@ -745,6 +745,14 @@ public class ManageProfileController extends BaseWorkspaceController {
         notificationManager.sendVerificationEmail(currentProfile, baseUri, email);
         return new Errors();
     }
+    
+    @RequestMapping(value = "/delayVerifyEmail.json", method = RequestMethod.GET)
+    public @ResponseBody
+    Errors delayVerifyEmailJson(HttpServletRequest request) {
+        request.getSession().setAttribute(ManageProfileController.CHECK_EMAIL_VALIDATED, false);
+        return new Errors();
+    }
+
 
     @RequestMapping(value = "/send-deactivate-account.json", method = RequestMethod.GET)
     public @ResponseBody

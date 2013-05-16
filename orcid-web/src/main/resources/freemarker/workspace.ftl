@@ -195,8 +195,7 @@
 					     <span class="btn" id="modal-close" ng-click="closeColorBox()">${springMacroRequestContext.getMessage("freemarker.btnclose")}</span>
 					  </div>
 				  </div>
-				</script>        
-				        
+				</script>
 			</div>
 		</#noescape>
 	</#if>

@@ -42,9 +42,17 @@ import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.orcid.api.t2.T2OAuthAPIService;
 import org.orcid.jaxb.model.message.ExternalIdentifiers;
+import org.orcid.jaxb.model.message.OrcidActivities;
 import org.orcid.jaxb.model.message.OrcidMessage;
+import org.orcid.jaxb.model.message.OrcidProfile;
+import org.orcid.jaxb.model.message.OrcidWork;
+import org.orcid.jaxb.model.message.OrcidWorks;
+import org.orcid.jaxb.model.message.Title;
 import org.orcid.jaxb.model.message.Visibility;
+import org.orcid.jaxb.model.message.WorkTitle;
 import org.orcid.persistence.dao.ClientRedirectDao;
+import org.orcid.persistence.dao.ProfileDao;
+import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.keys.ClientRedirectUriPk;
 import org.orcid.test.DBUnitTest;
 import org.springframework.beans.factory.annotation.Value;
@@ -75,7 +83,10 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
     private ClientRedirectDao clientRedirectDao;
 
     @Resource
-    protected T2OAuthAPIService<ClientResponse> oauthT2Client;
+    private T2OAuthAPIService<ClientResponse> oauthT2Client;
+
+    @Resource
+    private ProfileDao profileDao;
 
     @Value("${org.orcid.web.base.url:http://localhost:8080/orcid-web}")
     private String webBaseUrl;
@@ -101,12 +112,20 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
         if (clientRedirectDao.find(clientRedirectUriPk) == null) {
             clientRedirectDao.addClientRedirectUri(CLIENT_DETAILS_ID, redirectUri);
         }
+        webDriver.get(webBaseUrl + "/signout");
+        // Update last modified to force cache eviction (because DB unit deletes
+        // a load of stuff from the DB, but reinserts profiles with older last
+        // modified date)
+        for (ProfileEntity profile : profileDao.getAll()) {
+            profileDao.updateLastModifiedDateWithoutResult(profile.getId());
+        }
     }
 
     @Test
-    public void testGetAuthorizationCode() throws JSONException {
-        String authorizationCode = obtainAuthorizationCode();
-        String accessToken = obtainAccessToken(authorizationCode);
+    public void testGetBioReadLimited() throws JSONException, InterruptedException {
+        String scopes = "/orcid-bio/read-limited";
+        String authorizationCode = obtainAuthorizationCode(scopes);
+        String accessToken = obtainAccessToken(authorizationCode, scopes);
 
         ClientResponse bioResponse1 = oauthT2Client.viewBioDetailsJson("4444-4444-4444-4442", accessToken);
         assertEquals(200, bioResponse1.getStatus());
@@ -118,18 +137,41 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
         assertEquals(1, externalIdentifiers.getExternalIdentifier().size());
 
         ClientResponse bioResponse2 = oauthT2Client.viewBioDetailsJson("4444-4444-4444-4443", accessToken);
-        assertEquals(200, bioResponse2.getStatus());
+        assertEquals(403, bioResponse2.getStatus());
         OrcidMessage orcidMessage2 = bioResponse2.getEntity(OrcidMessage.class);
         assertNotNull(orcidMessage2);
-        assertNull("Shouldn't be able to see external identifiers for other profile", orcidMessage2.getOrcidProfile().getOrcidBio().getExternalIdentifiers());
     }
 
-    private String obtainAccessToken(String authorizationCode) throws JSONException {
+    @Test
+    public void testAddWork() throws InterruptedException, JSONException {
+        String scopes = "/orcid-works/create";
+        String authorizationCode = obtainAuthorizationCode(scopes);
+        String accessToken = obtainAccessToken(authorizationCode, scopes);
+
+        OrcidMessage orcidMessage = new OrcidMessage();
+        OrcidProfile orcidProfile = new OrcidProfile();
+        orcidMessage.setOrcidProfile(orcidProfile);
+        OrcidActivities orcidActivities = new OrcidActivities();
+        orcidProfile.setOrcidActivities(orcidActivities);
+        OrcidWorks orcidWorks = new OrcidWorks();
+        orcidActivities.setOrcidWorks(orcidWorks);
+        OrcidWork orcidWork = new OrcidWork();
+        orcidWorks.getOrcidWork().add(orcidWork);
+        WorkTitle workTitle = new WorkTitle();
+        orcidWork.setWorkTitle(workTitle);
+        workTitle.setTitle(new Title("Work added by integration test"));
+
+        ClientResponse clientResponse = oauthT2Client.addWorksJson("4444-4444-4444-4442", orcidMessage, accessToken);
+        assertEquals(201, clientResponse.getStatus());
+        // XXX Should also check that can't add works other people's profile!
+    }
+
+    private String obtainAccessToken(String authorizationCode, String scopes) throws JSONException {
         MultivaluedMap<String, String> params = new MultivaluedMapImpl();
         params.add("client_id", CLIENT_DETAILS_ID);
         params.add("client_secret", "client-secret");
         params.add("grant_type", "authorization_code");
-        params.add("scope", "/orcid-bio/read-limited");
+        params.add("scope", scopes);
         params.add("redirect_uri", redirectUri);
         params.add("code", authorizationCode);
         ClientResponse tokenResponse = oauthT2Client.obtainOauth2TokenPost("client_credentials", params);
@@ -141,8 +183,8 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
         return accessToken;
     }
 
-    private String obtainAuthorizationCode() {
-        webDriver.get(webBaseUrl + "/oauth/authorize?client_id=4444-4444-4444-4445&response_type=code&scope=/orcid-bio/read-limited&redirect_uri=" + redirectUri);
+    private String obtainAuthorizationCode(String scopes) throws InterruptedException {
+        webDriver.get(String.format("%s/oauth/authorize?client_id=%s&response_type=code&scope=%s&redirect_uri=%s", webBaseUrl, CLIENT_DETAILS_ID, scopes, redirectUri));
         WebElement userId = webDriver.findElement(By.id("userId"));
         userId.sendKeys("michael@bentine.com");
         WebElement password = webDriver.findElement(By.id("password"));
@@ -160,6 +202,7 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
             }
         });
         WebElement authorizeButton = webDriver.findElement(By.name("authorize"));
+        Thread.sleep(3000);
         authorizeButton.submit();
         (new WebDriverWait(webDriver, DEFAULT_TIMEOUT_SECONDS)).until(new ExpectedCondition<Boolean>() {
             public Boolean apply(WebDriver d) {
@@ -173,5 +216,4 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
         assertNotNull(authorizationCode);
         return authorizationCode;
     }
-
 }
