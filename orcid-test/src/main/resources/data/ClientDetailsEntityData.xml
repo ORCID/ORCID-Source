@@ -70,5 +70,6 @@
     <client_scope client_details_id="4444-4444-4444-4443" scope_type="/orcid-bio/read-limited"/>
     <client_scope client_details_id="4444-4444-4444-4444" scope_type="/orcid-bio/read-limited"/>
     <client_scope client_details_id="4444-4444-4444-4445" scope_type="/orcid-bio/read-limited"/>
+    <client_scope client_details_id="4444-4444-4444-4445" scope_type="/orcid-works/create"/>
 
 </dataset>
