@@ -329,7 +329,7 @@ public class JpaJaxbEntityAdapterToOrcidProfileTest extends DBUnitTest {
         assertNotNull(delegation);
         assertEquals(1, delegation.getGivenPermissionTo().getDelegationDetails().size());
         DelegationDetails givenPermssionToDetails = delegation.getGivenPermissionTo().getDelegationDetails().iterator().next();
-        assertEquals("4444-4444-4444-4442", givenPermssionToDetails.getDelegateSummary().getOrcid().getValue());
+        assertEquals("4444-4444-4444-4446", givenPermssionToDetails.getDelegateSummary().getOrcid().getValue());
         assertTrue(givenPermssionToDetails.getApprovalDate().getValue().toXMLFormat().startsWith("2011-10-17T16:59:32.000"));
         assertEquals(1, delegation.getGivenPermissionBy().getDelegationDetails().size());
         DelegationDetails givenPermissionByDetails = delegation.getGivenPermissionBy().getDelegationDetails().iterator().next();

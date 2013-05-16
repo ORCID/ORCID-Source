@@ -268,15 +268,17 @@ public class DefaultPermissionChecker implements PermissionChecker {
         // through
         if (userOrcid.equals(orcid)) {
             return;
-        } else {
-            // Have they been granted permission?
-            if (profileEntityManager.hasBeenGivenPermissionTo(orcid, userOrcid)) {
-                // TODO: We will need to parse both incoming and existing to
-                // make sure they're not trying to
-                // update private information.
-                return;
-            }
         }
+        if (profileEntityManager.hasBeenGivenPermissionTo(orcid, userOrcid)) {
+            // Have they been granted permission?
+            return;
+        }
+        if (isReadOnly(requiredScope, oAuth2Authentication)) {
+            return;
+        }
+        // TODO: We will need to parse both incoming and existing to
+        // make sure they're not trying to
+        // update private information.
         throw new AccessControlException("You do not have the required permissions.");
     }
 
@@ -314,13 +316,31 @@ public class DefaultPermissionChecker implements PermissionChecker {
             if (ScopePathType.hasStringScope(requestedScope, requiredScope)) {
                 return true;
             }
-            if (requiredScope.isReadOnlyScope()) {
-                // If read only (limited or otherwise) then let it through it
-                // the user has /read-public, and let the visibility filter take
-                // care of it.
-                if (ScopePathType.hasStringScope(requestedScope, ScopePathType.READ_PUBLIC)) {
-                    return true;
-                }
+            if (isReadOnly(requiredScope, requestedScope)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean isReadOnly(ScopePathType requiredScope, OAuth2Authentication oAuth2Authentication) {
+        AuthorizationRequest authorizationRequest = oAuth2Authentication.getAuthorizationRequest();
+        Set<String> requestedScopes = authorizationRequest.getScope();
+        for (String requestedScope : requestedScopes) {
+            if (isReadOnly(requiredScope, requestedScope)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean isReadOnly(ScopePathType requiredScope, String requestedScope) {
+        if (requiredScope.isReadOnlyScope()) {
+            // If read only (limited or otherwise) then let it through if
+            // the user has /read-public, and let the visibility filter take
+            // care of it.
+            if (ScopePathType.hasStringScope(requestedScope, ScopePathType.READ_PUBLIC)) {
+                return true;
             }
         }
         return false;
