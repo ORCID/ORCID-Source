@@ -59,4 +59,5 @@
     <include file="/db/updates/webhooks.xml"/>
     <include file="/db/updates/increase-work-external-identifier-length.xml"/>
 	<include file="/db/updates/add_client_redir_type.xml"/>
+	<include file="/db/updates/define-import-works-wizard.xml"/>
 </databaseChangeLog>

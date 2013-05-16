@@ -56,7 +56,7 @@ public class WorkspaceController extends BaseWorkspaceController {
 
     @ModelAttribute("thirdPartiesForImport")
     public List<OrcidClient> retrieveThirdPartiesForImport() {
-        return thirdPartyImportManager.findOrcidClientsWithPredefinedOauthScopeForImport();
+        return thirdPartyImportManager.findOrcidClientsWithPredefinedOauthScopeWorksImport();
     }
 
     @RequestMapping

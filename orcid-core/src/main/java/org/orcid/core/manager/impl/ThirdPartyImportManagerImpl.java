@@ -24,6 +24,7 @@ import javax.annotation.Resource;
 import org.orcid.core.manager.ThirdPartyImportManager;
 import org.orcid.jaxb.model.clientgroup.OrcidClient;
 import org.orcid.jaxb.model.clientgroup.RedirectUri;
+import org.orcid.jaxb.model.clientgroup.RedirectUriType;
 import org.orcid.jaxb.model.clientgroup.RedirectUris;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.persistence.dao.ClientRedirectDao;
@@ -37,26 +38,39 @@ public class ThirdPartyImportManagerImpl implements ThirdPartyImportManager {
     private ClientRedirectDao clientRedirectDao;
 
     @Override
-    @Cacheable("import-clients")
-    public List<OrcidClient> findOrcidClientsWithPredefinedOauthScopeForImport() {
+    @Cacheable("import-works-clients")
+    public List<OrcidClient> findOrcidClientsWithPredefinedOauthScopeWorksImport() {
 
+        return getClients(RedirectUriType.IMPORT_WORKS_WIZARD);
+    }
+    
+    @Override
+    @Cacheable("read-access-clients")
+    public List<OrcidClient> findOrcidClientsWithPredefinedOauthScopeReadAccess() {
+        return getClients(RedirectUriType.GRANT_READ_WIZARD);
+    }
+
+
+    private List<OrcidClient> getClients(RedirectUriType rut) {
         List<OrcidClient> orcidClients = new ArrayList<OrcidClient>();
         List<ClientRedirectUriEntity> entitiesWithPredefinedScopes = clientRedirectDao.findClientDetailsWithRedirectScope();
 
         for (ClientRedirectUriEntity entity : entitiesWithPredefinedScopes) {
 
-            ClientDetailsEntity clientDetails = entity.getClientDetailsEntity();
-            RedirectUri redirectUri = new RedirectUri(entity.getRedirectUri());
-            String prefefinedScopes = entity.getPredefinedClientScope();
-            redirectUri.setScope(new ArrayList<ScopePathType>(ScopePathType.getScopesFromSpaceSeparatedString(prefefinedScopes)));
-            OrcidClient minimalClientDetails = new OrcidClient();
-            minimalClientDetails.setDisplayName(clientDetails.getProfileEntity().getCreditName());
-            minimalClientDetails.setShortDescription(clientDetails.getProfileEntity().getBiography());
-            RedirectUris redirectUris = new RedirectUris();
-            redirectUris.getRedirectUri().add(redirectUri);
-            minimalClientDetails.setClientId(clientDetails.getClientId());
-            minimalClientDetails.setRedirectUris(redirectUris);
-            orcidClients.add(minimalClientDetails);
+            if (RedirectUriType.IMPORT_WORKS_WIZARD.value().equals(entity.getRedirectUriType())) {
+                ClientDetailsEntity clientDetails = entity.getClientDetailsEntity();
+                RedirectUri redirectUri = new RedirectUri(entity.getRedirectUri());
+                String prefefinedScopes = entity.getPredefinedClientScope();
+                redirectUri.setScope(new ArrayList<ScopePathType>(ScopePathType.getScopesFromSpaceSeparatedString(prefefinedScopes)));
+                OrcidClient minimalClientDetails = new OrcidClient();
+                minimalClientDetails.setDisplayName(clientDetails.getProfileEntity().getCreditName());
+                minimalClientDetails.setShortDescription(clientDetails.getProfileEntity().getBiography());
+                RedirectUris redirectUris = new RedirectUris();
+                redirectUris.getRedirectUri().add(redirectUri);
+                minimalClientDetails.setClientId(clientDetails.getClientId());
+                minimalClientDetails.setRedirectUris(redirectUris);
+                orcidClients.add(minimalClientDetails);
+            }
 
         }
         return orcidClients;
