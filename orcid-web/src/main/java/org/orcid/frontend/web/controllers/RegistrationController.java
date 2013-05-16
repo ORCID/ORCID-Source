@@ -461,10 +461,15 @@ public class RegistrationController extends BaseController {
         }
 
         else {
-            URI uri = OrcidWebUtils.getServerUriWithContextPath(request);
-            registrationManager.resetUserPassword(profile, uri);
-            mav.addObject("passwordResetSuccessful", true);
-            return mav;
+            if(profile.isDeactivated()){
+                mav.addObject("disabledAccount", true);
+                return mav;
+            } else {
+                URI uri = OrcidWebUtils.getServerUriWithContextPath(request);
+                registrationManager.resetUserPassword(profile, uri);
+                mav.addObject("passwordResetSuccessful", true);
+                return mav;
+            }
         }
     }
 
