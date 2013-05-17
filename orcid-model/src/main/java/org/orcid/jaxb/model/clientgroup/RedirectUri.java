@@ -70,11 +70,12 @@ public class RedirectUri implements Serializable {
     }
 
     public RedirectUri(String value) {
+        //error is here!
         super();
         setValue(value);
         setType(RedirectUriType.DEFAULT);
     }
-
+    
     /**
      * Gets the value of the value property.
      * 

@@ -57,16 +57,18 @@ public class ThirdPartyImportManagerImpl implements ThirdPartyImportManager {
 
         for (ClientRedirectUriEntity entity : entitiesWithPredefinedScopes) {
 
-            if (RedirectUriType.IMPORT_WORKS_WIZARD.value().equals(entity.getRedirectUriType())) {
+            if (rut.value().equals(entity.getRedirectUriType())) {
                 ClientDetailsEntity clientDetails = entity.getClientDetailsEntity();
                 RedirectUri redirectUri = new RedirectUri(entity.getRedirectUri());
                 String prefefinedScopes = entity.getPredefinedClientScope();
                 redirectUri.setScope(new ArrayList<ScopePathType>(ScopePathType.getScopesFromSpaceSeparatedString(prefefinedScopes)));
+                redirectUri.setType(RedirectUriType.fromValue(entity.getRedirectUriType()));
+                RedirectUris redirectUris = new RedirectUris();
+                redirectUris.getRedirectUri().add(redirectUri);
+                
                 OrcidClient minimalClientDetails = new OrcidClient();
                 minimalClientDetails.setDisplayName(clientDetails.getProfileEntity().getCreditName());
                 minimalClientDetails.setShortDescription(clientDetails.getProfileEntity().getBiography());
-                RedirectUris redirectUris = new RedirectUris();
-                redirectUris.getRedirectUri().add(redirectUri);
                 minimalClientDetails.setClientId(clientDetails.getClientId());
                 minimalClientDetails.setRedirectUris(redirectUris);
                 orcidClients.add(minimalClientDetails);

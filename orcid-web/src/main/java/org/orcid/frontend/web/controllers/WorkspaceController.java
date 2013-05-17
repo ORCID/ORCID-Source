@@ -28,6 +28,8 @@ import org.orcid.core.manager.ExternalIdentifierManager;
 import org.orcid.core.manager.ThirdPartyImportManager;
 import org.orcid.frontend.web.forms.CurrentWork;
 import org.orcid.jaxb.model.clientgroup.OrcidClient;
+import org.orcid.jaxb.model.clientgroup.RedirectUri;
+import org.orcid.jaxb.model.clientgroup.RedirectUriType;
 import org.orcid.jaxb.model.message.ExternalIdentifier;
 import org.orcid.jaxb.model.message.ExternalIdentifiers;
 import org.orcid.jaxb.model.message.OrcidProfile;
@@ -119,9 +121,11 @@ public class WorkspaceController extends BaseWorkspaceController {
         List<OrcidClient> orcidClients = thirdPartyImportManager.findOrcidClientsWithPredefinedOauthScopeReadAccess();
         for (OrcidClient orcidClient : orcidClients) {
             if (sourcStr.equals(orcidClient.getClientId())) {
-                String redirect = getBaseUri() + "/oauth/authorize?client_id=" + orcidClient.getClientId() + "&response_type=code&scope="
-                        + orcidClient.getRedirectUris().getRedirectUri().get(0).getScopeAsSingleString() + "&redirect_uri="
-                        + orcidClient.getRedirectUris().getRedirectUri().get(0).getValue();
+                RedirectUri ru = orcidClient.getRedirectUris().getRedirectUri().get(0);
+                String redirect = getBaseUri() + "/oauth/authorize?client_id=" 
+                        + orcidClient.getClientId() + "&response_type=code&scope="
+                        + ru.getScopeAsSingleString() + "&redirect_uri="
+                        + ru.getValue();
                 tpr.setUrl(redirect);
                 tpr.setDisplayName(orcidClient.getDisplayName());
                 tpr.setShortDescription(orcidClient.getShortDescription());
