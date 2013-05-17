@@ -921,7 +921,7 @@ public class ManageProfileController extends BaseWorkspaceController {
             return erroredView;
         }
 
-        OrcidProfile profile = getCurrentUser().getRealProfile();
+        OrcidProfile profile = getCurrentUser().getEffectiveProfile();
         // Update profile with values that comes from user request
         changePersonalInfoForm.mergeOrcidBioDetails(profile);
 
