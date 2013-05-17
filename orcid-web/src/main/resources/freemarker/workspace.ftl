@@ -24,12 +24,30 @@
         <strong><@spring.message "orcid.frontend.web.email_verified"/></strong>
     </div>
 </#if>
-<#if RequestParameters['recordClaimed']??>
-    <div class="alert alert-success">
-        <strong><@spring.message "orcid.frontend.web.record_claimed"/></strong>
-    </div>
-</#if>
 <div id="ng-app" ng-app="orcidApp" class="row workspace-top public-profile">
+
+	<#if RequestParameters['recordClaimed']??>
+	    <div ng-controller="ClaimThanks"></div>
+	    <script type="text/ng-template" id="claimed-record-thanks">
+	    	<div style="padding: 20px;">
+	    		<strong><@spring.message "orcid.frontend.web.record_claimed"/></strong><br />
+	    		<br />
+	    		<button class="btn" ng-click="close()"><@spring.message "freemarker.btnclose"/></button>
+	    	</div>
+	    </script>
+	    <script type="text/ng-template" id="claimed-record-thanks-source-grand-read">
+	    	<div style="padding: 20px;">
+	    		<strong><@spring.message "orcid.frontend.web.record_claimed"/></strong><br />
+	    		<br />
+	    		<strong ng-bind="sourceGrantReadWizard.displayName"></strong> <@spring.message "orcid.frontend.web.record_claimed.would_like"/><br />
+	    		<br />
+	    		<button class="btn btn-primary" ng-click="yes()"><@spring.message "orcid.frontend.web.record_claimed.yes_go_to" /></button> 
+	    		<button class="btn" ng-click="close()"><@spring.message "orcid.frontend.web.record_claimed.no_thanks" /></button>
+	    	</div>
+	    </script>
+	    
+	</#if>
+
     <div class="span3 lhs">
     	<div class="workspace-left workspace-profile">
             <h2 class="full-name">
