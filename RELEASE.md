@@ -1,5 +1,21 @@
 # Release notes and highlights
 
+## release-1.1.21.3
+(2013-05-17)
+
+* Caching ORCID Profiles!
+
+* Migrated unknown bootstrap to 2.3.1
+
+* Fix read public profile issue
+
+* User is asked to verify email on login if primary isn't verified
+
+* Add source to works
+
+* Added jsonp user logout feature
+
+
 ## release-1.1.19.5
 (2013-05-02)
 
