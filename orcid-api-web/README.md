@@ -3,7 +3,7 @@
 ## Getting Credentials
 Send a request to support@orcid.org for credentials that are destined for either the dev sandbox or the production environment.
 
-For working with a local deployment see [OAUTH_DEV.md](OAUTH_DEV.md).
+For creating a client locally see [OAUTH_DEV.md](OAUTH_DEV.md).
 
 For working with webhooks see [WEBHOOKS.md](WEBHOOKS.md)
 
