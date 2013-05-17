@@ -28,9 +28,13 @@ import org.orcid.core.manager.ExternalIdentifierManager;
 import org.orcid.core.manager.ThirdPartyImportManager;
 import org.orcid.frontend.web.forms.CurrentWork;
 import org.orcid.jaxb.model.clientgroup.OrcidClient;
+import org.orcid.jaxb.model.clientgroup.RedirectUri;
+import org.orcid.jaxb.model.clientgroup.RedirectUriType;
 import org.orcid.jaxb.model.message.ExternalIdentifier;
 import org.orcid.jaxb.model.message.ExternalIdentifiers;
 import org.orcid.jaxb.model.message.OrcidProfile;
+import org.orcid.jaxb.model.message.SourceOrcid;
+import org.orcid.pojo.ThirdPartyRedirect;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -56,7 +60,7 @@ public class WorkspaceController extends BaseWorkspaceController {
 
     @ModelAttribute("thirdPartiesForImport")
     public List<OrcidClient> retrieveThirdPartiesForImport() {
-        return thirdPartyImportManager.findOrcidClientsWithPredefinedOauthScopeForImport();
+        return thirdPartyImportManager.findOrcidClientsWithPredefinedOauthScopeWorksImport();
     }
 
     @RequestMapping
@@ -103,6 +107,32 @@ public class WorkspaceController extends BaseWorkspaceController {
         externalIdentifiers.setExternalIdentifiers((List<org.orcid.pojo.ExternalIdentifier>) (Object) currentProfile.getOrcidBio().getExternalIdentifiers()
                 .getExternalIdentifier());
         return externalIdentifiers;
+    }
+    
+    @RequestMapping(value = "/sourceGrantReadWizard.json", method = RequestMethod.GET)
+    public @ResponseBody
+    ThirdPartyRedirect getSourceGrantReadWizard() {
+        ThirdPartyRedirect tpr = new ThirdPartyRedirect();
+               
+        OrcidProfile currentProfile = getCurrentUser().getEffectiveProfile();
+        if (currentProfile.getOrcidHistory().getSource() == null) return tpr;
+        SourceOrcid sourceOrcid = currentProfile.getOrcidHistory().getSource().getSourceOrcid();
+        String sourcStr = sourceOrcid.getValue();
+        List<OrcidClient> orcidClients = thirdPartyImportManager.findOrcidClientsWithPredefinedOauthScopeReadAccess();
+        for (OrcidClient orcidClient : orcidClients) {
+            if (sourcStr.equals(orcidClient.getClientId())) {
+                RedirectUri ru = orcidClient.getRedirectUris().getRedirectUri().get(0);
+                String redirect = getBaseUri() + "/oauth/authorize?client_id=" 
+                        + orcidClient.getClientId() + "&response_type=code&scope="
+                        + ru.getScopeAsSingleString() + "&redirect_uri="
+                        + ru.getValue();
+                tpr.setUrl(redirect);
+                tpr.setDisplayName(orcidClient.getDisplayName());
+                tpr.setShortDescription(orcidClient.getShortDescription());
+                return tpr;
+            }
+        }
+        return tpr;
     }
 
     /**
