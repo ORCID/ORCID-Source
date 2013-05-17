@@ -32,17 +32,17 @@
 	    	<div style="padding: 20px;">
 	    		<strong><@spring.message "orcid.frontend.web.record_claimed"/></strong><br />
 	    		<br />
-	    		<button class="btn" ng-click="close()">Close</button>
+	    		<button class="btn" ng-click="close()"><@spring.message "freemarker.btnclose"/></button>
 	    	</div>
 	    </script>
 	    <script type="text/ng-template" id="claimed-record-thanks-source-grand-read">
 	    	<div style="padding: 20px;">
 	    		<strong><@spring.message "orcid.frontend.web.record_claimed"/></strong><br />
 	    		<br />
-	    		<strong ng-bind="sourceGrantReadWizard.displayName"></strong> would like to read your profile.<br />
+	    		<strong ng-bind="sourceGrantReadWizard.displayName"></strong> <@spring.message "orcid.frontend.web.record_claimed.would_like"/><br />
 	    		<br />
-	    		<button class="btn btn-primary" ng-click="yes()">Yes, goto authorize</button> 
-	    		<button class="btn" ng-click="close()">No Thanks</button>
+	    		<button class="btn btn-primary" ng-click="yes()"><@spring.message "orcid.frontend.web.record_claimed.yes_go_to" /></button> 
+	    		<button class="btn" ng-click="close()"><@spring.message "orcid.frontend.web.record_claimed.no_thanks" /></button>
 	    	</div>
 	    </script>
 	    
