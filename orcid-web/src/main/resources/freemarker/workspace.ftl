@@ -32,9 +32,20 @@
 	    	<div style="padding: 20px;">
 	    		<strong><@spring.message "orcid.frontend.web.record_claimed"/></strong><br />
 	    		<br />
-	    		<button class="btn btn-primary" ng-click="close()">close</button>
+	    		<button class="btn" ng-click="close()">Close</button>
 	    	</div>
 	    </script>
+	    <script type="text/ng-template" id="claimed-record-thanks-source-grand-read">
+	    	<div style="padding: 20px;">
+	    		<strong><@spring.message "orcid.frontend.web.record_claimed"/></strong><br />
+	    		<br />
+	    		<strong ng-bind="sourceGrantReadWizard.displayName"></strong> would like to read your profile.<br />
+	    		<br />
+	    		<button class="btn btn-primary" ng-click="yes()">Yes, goto authorize</button> 
+	    		<button class="btn" ng-click="close()">No Thanks</button>
+	    	</div>
+	    </script>
+	    
 	</#if>
 
     <div class="span3 lhs">

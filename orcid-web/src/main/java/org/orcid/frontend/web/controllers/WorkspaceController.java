@@ -31,6 +31,8 @@ import org.orcid.jaxb.model.clientgroup.OrcidClient;
 import org.orcid.jaxb.model.message.ExternalIdentifier;
 import org.orcid.jaxb.model.message.ExternalIdentifiers;
 import org.orcid.jaxb.model.message.OrcidProfile;
+import org.orcid.jaxb.model.message.SourceOrcid;
+import org.orcid.pojo.ThirdPartyRedirect;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -105,6 +107,29 @@ public class WorkspaceController extends BaseWorkspaceController {
         return externalIdentifiers;
     }
     
+    @RequestMapping(value = "/sourceGrantReadWizard.json", method = RequestMethod.GET)
+    public @ResponseBody
+    ThirdPartyRedirect getSourceGrantReadWizard() {
+        ThirdPartyRedirect tpr = new ThirdPartyRedirect();
+               
+        OrcidProfile currentProfile = getCurrentUser().getEffectiveProfile();
+        if (currentProfile.getOrcidHistory().getSource() == null) return tpr;
+        SourceOrcid sourceOrcid = currentProfile.getOrcidHistory().getSource().getSourceOrcid();
+        String sourcStr = sourceOrcid.getValue();
+        List<OrcidClient> orcidClients = thirdPartyImportManager.findOrcidClientsWithPredefinedOauthScopeReadAccess();
+        for (OrcidClient orcidClient : orcidClients) {
+            if (sourcStr.equals(orcidClient.getClientId())) {
+                String redirect = getBaseUri() + "/oauth/authorize?client_id=" + orcidClient.getClientId() + "&response_type=code&scope="
+                        + orcidClient.getRedirectUris().getRedirectUri().get(0).getScopeAsSingleString() + "&redirect_uri="
+                        + orcidClient.getRedirectUris().getRedirectUri().get(0).getValue();
+                tpr.setUrl(redirect);
+                tpr.setDisplayName(orcidClient.getDisplayName());
+                tpr.setShortDescription(orcidClient.getShortDescription());
+                return tpr;
+            }
+        }
+        return tpr;
+    }
 
     /**
      * Updates the list of external identifiers assigned to a user
