@@ -235,6 +235,7 @@ $(function () {
 		}
 		var newWin = window.open(href);
 		if (!newWin) window.location.href = href;
+		else newWin.focus();
 		return false;
 	});
 	
