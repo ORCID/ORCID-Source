@@ -12,7 +12,7 @@
                 <other-name>Gal</other-name>
             </other-names>
         </personal-details>
-        <biography>my biography</biography>
+        <biography visibility="public">my biography</biography>
         <researcher-urls visibility="public">
             <researcher-url>
                 <url-name>Ok this might not be my site</url-name>
