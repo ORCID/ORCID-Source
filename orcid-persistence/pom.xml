@@ -41,6 +41,22 @@
                 </excludes>
             </resource>
         </resources>
+        <plugins>
+            <plugin>
+                <groupId>com.mycila.maven-license-plugin</groupId>
+                <artifactId>maven-license-plugin</artifactId>
+                <configuration>
+                    <mapping>
+                        <xjb>XML_STYLE</xjb>
+                    </mapping>
+                    <excludes>                       
+                    	<exclude>**/src/test/resources/solr/conf/*.*</exclude>                        
+                        <exclude>**/release_name.txt</exclude>	
+                        <exclude>**/.gitignore</exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
+        </plugins>
     </build>
 
     <dependencies>
