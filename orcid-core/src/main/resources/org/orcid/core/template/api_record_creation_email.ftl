@@ -31,7 +31,7 @@ ${verificationUrl}
 
 Where do I learn more about ORCID? Please see our Webpage at http://orcid.org.  More on ORCID's Privacy Policy is available here - http://orcid.org/privacy-policy.
 
-Need help? If you have any questions about the registration process, please contact the ORCID support team at support@orcid.org. Please note that the sending email address cannot accept replies.
+Need help? If you have any questions about the registration process, please contact the ORCID support team at support@orcid.org.
 
 Kind Regards,
 The ORCID Team
