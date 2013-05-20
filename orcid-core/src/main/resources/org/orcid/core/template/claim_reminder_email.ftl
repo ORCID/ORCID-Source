@@ -33,7 +33,7 @@ ORCID is a registry of unique identifiers for researchers. The ORCID iD helps li
 
 QUESTIONS?
 
-If you have any questions about the registration process, please contact the ORCID support team at support@orcid.org. Please note that the sending email address cannot accept replies.
+If you have any questions about the registration process, please contact the ORCID support team at support@orcid.org.
 
 Kind Regards,
 The ORCID Team
