@@ -901,8 +901,10 @@ function ClaimThanks($scope, $compile) {
 	};
 	
 	$scope.yes = function () {
+		$.colorbox.close();
 		var newWin = window.open($scope.sourceGrantReadWizard.url);
 		if (!newWin) window.location.href = $scope.sourceGrantReadWizard.url;
+		else newWin.focus();
 	};
 	
 	$scope.close = function () {
