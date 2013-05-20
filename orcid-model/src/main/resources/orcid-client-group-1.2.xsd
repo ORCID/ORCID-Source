@@ -111,14 +111,14 @@ the software.
     </xs:complexType>
   </xs:element>
   <xs:element name="redirect-uri">
-    <xs:complexType>
+   <xs:complexType>
     <xs:simpleContent>
-        <xs:extension base="xs:anyURI">
+      <xs:extension base="xs:string">
             <xs:attribute name="scope" type="orcid:scope" />
             <xs:attribute name="type" type="orcid:redirect-uri-type"  use="required"></xs:attribute>
-        </xs:extension>
+       </xs:extension>
     </xs:simpleContent>
-    </xs:complexType>
+  </xs:complexType>
   </xs:element>
   <xs:element name="client-id" type="orcid:orcid">
     <xs:annotation>
