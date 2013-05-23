@@ -914,3 +914,48 @@ function ClaimThanks($scope, $compile) {
 	$scope.getSourceGrantReadWizard();
 	
 };
+
+function WorkCtrl($scope){
+	$scope.deleteWork = function(putCode, title) {
+		$.colorbox({        	
+            html: function(){
+            	var fixedTitle = title;
+            	var maxSize = 100;
+            	if(fixedTitle.length > MaxSize)
+            		fixedTitle = fixedTitle.substring(0, MaxSize) + '...';
+            	return '<div style="padding: 20px;" class="colorbox-modal"><h3>' + OM.getInstance().get("manage.deleteWork.pleaseConfirm") + '<br />' + fixedTitle + '</h3>'
+	            	+ '<div class="btn btn-danger" id="modal-del-work">' + OM.getInstance().get("manage.deleteWork.delete") + '</div> <a href="" id="modal-cancel">' + OM.getInstance().get("manage.deleteWork.cancel") + '</a><div>'; 
+            }
+            	
+        });
+        $.colorbox.resize();
+        $('#modal-del-work').click(function(e) {
+        	element = document.getElementById("work_" + putCode);
+        	element.parentNode.removeChild(element);
+        	$scope.removeWork(putCode);
+    		// close box
+    		$.colorbox.close();
+        });
+        $('#modal-cancel').click(function(e) {
+        	e.preventDefault();
+        	$.colorbox.close();
+        });
+	};
+	
+	$scope.removeWork = function(putCode) {
+		$.ajax({
+	        url: $('body').data('baseurl') + 'my-orcid/works.json?putCode=' + putCode,
+	        type: 'DELETE',
+	        contentType: 'application/html;charset=UTF-8',
+	        dataType: 'text',
+	        success: function(data) {	        	
+	        	if(data.errors.length != 0){
+	        		console.log("Unable to delete work.");
+	        	} 
+	        }
+	    }).fail(function() { 
+	    	console.log("Error deleting work.");
+	    });
+	};
+}
+
