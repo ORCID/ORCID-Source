@@ -1589,7 +1589,7 @@ a:hover {
 
 .js .works-scroller li {
     margin: 0 10px 10px 0;
-    padding: 0 110px 0 0;
+    padding: 0 5px 0 0;
     border-bottom: 1px solid;
     border-color: #CACACA;
 }
@@ -1719,6 +1719,17 @@ a:hover {
 
 .privacy-toggle-lbl select {
      display:none;     
+}
+
+.works-privacy-toggle {
+	float: right;
+	height: 30px;
+	width: 25%
+}
+
+.works-privacy-toggle ul li {
+	display:inline;
+	position: absolute;
 }
 
 .popover-content {
@@ -2223,4 +2234,5 @@ header overrides
 #current-work-list h3 {
      margin: 0;
      line-height: 1.1em;
+     width: 75%;
 }

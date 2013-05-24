@@ -20,6 +20,15 @@
 <#list currentWorksForm.currentWorks as work>
 <#-- @ftlvariable name="work" type="org.orcid.frontend.web.forms.CurrentWork" -->
     <li>
+    	<#if showPrivacy!true>
+            <div class="works-privacy-toggle">
+                <ul class="privacyToggle">
+					<li class="publicActive"><a href="" title="PUBLIC"></a></li>
+					<li class="limitedActive"><a href="" title="LIMITED"></a></li>
+					<li class="privateActive"><a href="" title="PRIVATE"></a></li>
+				</ul>
+            </div>
+        </#if>
         <h3 class="work-title"><b>${(work.title)!}</b><#if (work.subtitle)??>: <span class="work-subtitle">${(work.subtitle)!""}</span></#if><#if (work.year)??> <#if (work.month)?? && work.month?has_content><@orcid.month work.month />-</#if>${work.year}</#if></h3>
         <label class="work-delete-lbl">
             <div class="delete-group">
@@ -75,13 +84,7 @@
                 <@spring.formHiddenInput "currentWorksForm.currentWorks[${work_index?string.computer}].currentWorkContributors[${contributor_index}].role"/>
                 <@spring.formHiddenInput "currentWorksForm.currentWorks[${work_index?string.computer}].currentWorkContributors[${contributor_index}].sequence"/>
             </#list>
-        </#if>
-        <#if showPrivacy!true>
-            <label class="privacy-toggle-lbl">
-                <@spring.formSingleSelect "currentWorksForm.currentWorks[${work_index?string.computer}].visibility", visibilities, "class='works-visibility'" />
-                <@orcid.privacy "test" currentWorksForm.currentWorks[work_index].visibility/> 
-            </label>
-        </#if>
+        </#if>        
     </li>
 </#list>
 </#if>
