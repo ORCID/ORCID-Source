@@ -1723,8 +1723,7 @@ a:hover {
 
 .works-privacy-toggle {
 	float: right;
-	height: 30px;
-	width: 25%
+	width: 30%
 }
 
 .works-privacy-toggle ul li {
@@ -2234,5 +2233,5 @@ header overrides
 #current-work-list h3 {
      margin: 0;
      line-height: 1.1em;
-     width: 75%;
+     width: 70%;
 }
