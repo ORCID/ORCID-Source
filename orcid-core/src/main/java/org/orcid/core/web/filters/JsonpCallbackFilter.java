@@ -20,34 +20,32 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Map;
 
-import javax.servlet.Filter;
 import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.web.filter.OncePerRequestFilter;
 
 /**
- * Adds jsonp callbacks 
- * Follow spring tutorial 
- * http://jpgmr.wordpress.com/2010/07/28/tutorial-implementing-a-servlet-filter-for-jsonp-callback-with-springs-delegatingfilterproxy/ 
+ * Adds jsonp callbacks Follow spring tutorial
+ * http://jpgmr.wordpress.com/2010/07
+ * /28/tutorial-implementing-a-servlet-filter-for
+ * -jsonp-callback-with-springs-delegatingfilterproxy/
+ * 
  * @author Robert Peters (rcpeters)
- *
+ * 
  */
 
-public class JsonpCallbackFilter implements Filter {
+public class JsonpCallbackFilter extends OncePerRequestFilter {
 
     private static Log log = LogFactory.getLog(JsonpCallbackFilter.class);
 
-    public void init(FilterConfig fConfig) throws ServletException {
-    }
-
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+    @Override
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         HttpServletResponse httpResponse = (HttpServletResponse) response;
 
@@ -58,24 +56,24 @@ public class JsonpCallbackFilter implements Filter {
             if (log.isDebugEnabled())
                 log.debug("Wrapping response with JSONP callback '" + parms.get("callback")[0] + "'");
 
+            HttpServletRequestWrapper requestWrapper = new AcceptHeaderRequestWrapper(httpRequest, "application/json");
+
             OutputStream out = httpResponse.getOutputStream();
 
-            GenericResponseWrapper wrapper = new GenericResponseWrapper(httpResponse);
+            GenericResponseWrapper responseWrapper = new GenericResponseWrapper(httpResponse);
 
-            chain.doFilter(request, wrapper);
+            filterChain.doFilter(requestWrapper, responseWrapper);
 
             out.write(new String(parms.get("callback")[0] + "(").getBytes());
-            out.write(wrapper.getData());
+            out.write(responseWrapper.getData());
             out.write(new String(");").getBytes());
 
-            wrapper.setContentType("text/javascript;charset=UTF-8");
+            responseWrapper.setContentType("text/javascript;charset=UTF-8");
 
             out.close();
         } else {
-            chain.doFilter(request, response);
+            filterChain.doFilter(request, response);
         }
     }
 
-    public void destroy() {
-    }
 }
