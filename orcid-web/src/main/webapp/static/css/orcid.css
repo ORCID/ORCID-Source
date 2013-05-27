@@ -1728,16 +1728,6 @@ a:hover {
      display:none;     
 }
 
-.works-privacy-toggle {
-	float: right;
-	width: 30%
-}
-
-.works-privacy-toggle ul li {
-	display:inline;
-	position: absolute;
-}
-
 .popover-content {
      overflow: hidden;
 }

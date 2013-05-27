@@ -16,42 +16,33 @@
     =============================================================================
 
 -->
-<#if (currentWorks)??>
-
-	<ul ng-controller="WorkCtrl" class="workspace-publications workspace-body-list">
-        <#list currentWorks as work>
-        <#-- @ftlvariable name="work" type="org.orcid.frontend.web.forms.CurrentWork" -->
-            <li id="work_${work.putCode}">
-             	<span class="pull-right"><@orcid.privacyLabel work.visibility /></span>             
-                <h3 class="work-title"><b>${(work.title)!}</b><#if (work.subtitle)??>: <span class="work-subtitle">${(work.subtitle)!""}</span></#if><#if (work.year)??> <#if (work.month)??><@orcid.month work.month />-</#if>${work.year}</#if></h3>
-                <#if (work.currentWorkExternalIds)??>
-                    <#list work.currentWorkExternalIds as ei>
-                    <#-- @ftlvariable name="ei" type="org.orcid.frontend.web.forms.CurrentWorkExternalId" -->
-                        <#if (ei.type = 'doi') && (ei.id)??>
-                            <span class="work-metadata">${springMacroRequestContext.getMessage("workspace_works_body_list.DOI")} <a href="http://dx.doi.org/${ei.id}">${ei.id}</a></span>
-                            <img onclick="javascript:window.open(&quot;http://dx.doi.org/${ei.id}&quot;)" style="cursor:pointer;" src="${staticCdn}/img/view_full_text.gif"><input type="hidden" value="null" name="artifacts[0].destApp"><input type="hidden" value="JOUR" name="artifacts[0].type"><input type="hidden" value="W" name="artifacts[0].uploadedBy">
-                        </#if>
-                    </#list>
-                </#if>
-                <#if (work.url)??>
-                    <div><a href="${work.url}">${work.url}</a></div>
-                </#if>
-                <#if (work.description)?? && work.description?has_content>
-                    <div>${work.description}</div>
-                <#else>
-                    <#if (work.citationForDisplay)??><div class="citation ${work.citationType}">${work.citationForDisplay}</div></#if>
-                </#if>
-                <span class="pull-right-level-two"><a href ng-click="deleteWork(${work.putCode}, '${work.title}')" class="icon-trash grey"></a></span>
+	<ul ng-controller="WorkCtrl" ng-hide="!worksPojo.works.length" class="workspace-publications workspace-body-list" ng-cloak>        
+            <li ng-repeat='work in worksPojo.works'>            	
+            	<div class="pull-right" ng-switch on="work.visibility">             		
+             		<span class="label label-success privacy-label" ng-switch-when="PUBLIC">${springMacroRequestContext.getMessage("manage.lipublic")}</span>
+             		<span class="label label-warning privacy-label" ng-switch-when="LIMITED">${springMacroRequestContext.getMessage("manage.lilimited")}</span>
+             		<span class="label label-important privacy-label" ng-switch-when="PRIVATE">${springMacroRequestContext.getMessage("manage.liprivate")}</span>
+             		<span class="label label-important privacy-label" ng-switch-when="PROTECTED">${springMacroRequestContext.getMessage("manage.liprivate")}</span>
+             		<span class="label label-success privacy-label" ng-switch-default>${springMacroRequestContext.getMessage("manage.lipublic")}</span>             		    				
+             	</div>             
+                <h3 class="work-title">
+                	<b ng-bind-html-unsafe="work.workTitle.title.content"></b>&nbsp;
+                	<span class="work-subtitle" ng-hide="!work.workTitle.subtitle.content" ng-bind-html-unsafe="{: {work.workTitle.subtitle.content}}"></span>
+                	<span ng-hide="!work.publicationDate.month.value">{{work.publicationDate.month.value}}-</span><span ng-hide="!work.publicationDate.year.value">{{work.publicationDate.year.value}}</span>
+                </h3>
+                <div ng-repeat='ie in work.workExternalIdentifiers.workExternalIdentifier'>
+                	<div ng-show="ie.workExternalIdentifierType=='DOI' && ie.workExternalIdentifierId.content">
+                		<span class="work-metadata">${springMacroRequestContext.getMessage("workspace_works_body_list.DOI")} <a href="http://dx.doi.org/{{ie.workExternalIdentifierId.content}}">{{ie.workExternalIdentifierId.content}}</a></span>
+                		<img onclick="javascript:window.open(&quot;http://dx.doi.org/{{ie.workExternalIdentifierId.content}}&quot;)" style="cursor:pointer;" src="${staticCdn}/img/view_full_text.gif"><input type="hidden" value="null" name="artifacts[0].destApp"><input type="hidden" value="JOUR" name="artifacts[0].type"><input type="hidden" value="W" name="artifacts[0].uploadedBy">
+                	</div>                	             
+                </div>
+                <div ng-show="work.url.value"><a href="{{work.url.value}}">{{work.url.value}}</a></div>
+                <div ng-show="work.shortDescription" ng-bind-html-unsafe="work.shortDescription"></div>
+                <div ng-show="work.workCitation" class="citation {{work.workCitation.workCitationType}}" ng-bind-html-unsafe="work.workCitation.citation"></div>
+                <span class="pull-right-level-two"><a href ng-click="deleteWork($index)" class="icon-trash grey"></a></span>
             </li>           
-        </#list>
 	</ul>
 	
-	<#--<#if profile.orcidActivities.orcidWorks.orcidWork?size &gt; 10>
-		<p><a href="<@spring.url '/publications/manage'/>" class="btn btn-primary">${springMacroRequestContext.getMessage("workspace_works_body_list.Viewmore")} <span class="icon-arrow-right"></span></a></p>
-	</#if>-->
-
-<#else>
-    <div class="alert alert-info">
+    <div ng-controller="WorkCtrl" ng-hide="worksPojo.works.length" class="alert alert-info">
         <strong><#if (publicProfile)?? && publicProfile == true>${springMacroRequestContext.getMessage("workspace_works_body_list.Nopublicationsaddedyet")}<#else>${springMacroRequestContext.getMessage("workspace_works_body_list.havenotaddedanyworks")} <a href="<@spring.url '/works-update'/>" class="update">${springMacroRequestContext.getMessage("workspace_works_body_list.addsomenow")}</a></#if></strong>
     </div>
-</#if>

@@ -38,6 +38,7 @@ import org.orcid.jaxb.model.message.OrcidWorks;
 import org.orcid.jaxb.model.message.SourceOrcid;
 import org.orcid.pojo.ThirdPartyRedirect;
 import org.orcid.pojo.Work;
+import org.orcid.pojo.Works;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -187,7 +188,7 @@ public class WorkspaceController extends BaseWorkspaceController {
      * Removes a work from a profile
      * */
     @RequestMapping(value = "/works.json", method = RequestMethod.DELETE)
-    public @ResponseBody org.orcid.pojo.Work removeWorkJson(HttpServletRequest request, @RequestParam String putCode) {
+    public @ResponseBody Work removeWorkJson(HttpServletRequest request,  @RequestBody Work work) {
         //Get cached profile
         OrcidProfile currentProfile = getCurrentUser().getEffectiveProfile();
         OrcidWorks works = currentProfile.getOrcidActivities() == null ? null : currentProfile.getOrcidActivities().getOrcidWorks();
@@ -197,16 +198,30 @@ public class WorkspaceController extends BaseWorkspaceController {
             Iterator<OrcidWork> workIterator = workList.iterator();
             while(workIterator.hasNext()){
                 OrcidWork orcidWork = workIterator.next();                
-                if(putCode.equals(orcidWork.getPutCode())){
+                if(work.equals(orcidWork)){
                     workIterator.remove();
-                    deletedWork = new Work(orcidWork);
+                    deletedWork = work;
                 }
             }
-            
+            works.setOrcidWork(workList);
             currentProfile.getOrcidActivities().setOrcidWorks(works);
-            profileWorkManager.removeWork(putCode, currentProfile.getOrcid().getValue());
+            profileWorkManager.removeWork(work.getPutCode(), currentProfile.getOrcid().getValue());
         }
         
         return deletedWork;
-    }            
+    }
+    
+    /**
+     * List works associated with a profile
+     * */
+    @SuppressWarnings("unchecked")
+    @RequestMapping(value = "/works.json", method = RequestMethod.GET)
+    public @ResponseBody Works getWorkJson(HttpServletRequest request) {
+        //Get cached profile
+        OrcidProfile currentProfile = getCurrentUser().getEffectiveProfile();
+        OrcidWorks orcidWorks = currentProfile.getOrcidActivities() == null ? null : currentProfile.getOrcidActivities().getOrcidWorks();
+        Works works = new Works();
+        works.setWorks((List<Work>)(Object)orcidWorks.getOrcidWork());
+        return works;
+    }
 }
