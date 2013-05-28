@@ -18,12 +18,29 @@
 -->
 	<ul ng-controller="WorkCtrl" ng-hide="!worksPojo.works.length" class="workspace-publications workspace-body-list" ng-cloak>        
             <li ng-repeat='work in worksPojo.works'>            	
-            	<div class="pull-right" ng-switch on="work.visibility">             		
-             		<span class="label label-success privacy-label" ng-switch-when="PUBLIC">${springMacroRequestContext.getMessage("manage.lipublic")}</span>
-             		<span class="label label-warning privacy-label" ng-switch-when="LIMITED">${springMacroRequestContext.getMessage("manage.lilimited")}</span>
-             		<span class="label label-important privacy-label" ng-switch-when="PRIVATE">${springMacroRequestContext.getMessage("manage.liprivate")}</span>
-             		<span class="label label-important privacy-label" ng-switch-when="PROTECTED">${springMacroRequestContext.getMessage("manage.liprivate")}</span>
-             		<span class="label label-success privacy-label" ng-switch-default>${springMacroRequestContext.getMessage("manage.lipublic")}</span>             		    				
+            	<div class="pull-right">             		
+					<div class="relative">
+						<ul class="privacyToggle">
+							<li class="publicActive" ng-class="{publicInActive: work.visibility != 'PUBLIC'}"><a href="" title="PUBLIC" ng-click="setPrivacy($index, 'PUBLIC', $event)"></a></li>
+							<li class="limitedActive" ng-class="{limitedInActive: work.visibility != 'LIMITED'}"><a href="" title="LIMITED" ng-click="setPrivacy($index, 'LIMITED', $event)"></a></li>
+							<li class="privateActive" ng-class="{privateInActive: work.visibility != 'PRIVATE'}"><a href="" title="PRIVATE" ng-click="setPrivacy($index, 'PRIVATE', $event)"></a></li>
+						</ul>					   				
+					</div>
+					<div class="popover-help-container" style="position: absolute; left: 100px; top: 5px;">
+        				<a href="javascript:void(0);"><i class="icon-question-sign"></i></a>
+            			<div class="popover bottom">
+		        			<div class="arrow"></div>
+		        			<div class="popover-content">
+		        				<strong>${springMacroRequestContext.getMessage("privacyToggle.help.who_can_see")}</strong>
+			        			<ul class="privacyHelp">
+			        				<li class="public" style="color: #009900;">${springMacroRequestContext.getMessage("privacyToggle.help.everyone")}</li>
+			        				<li class="limited"style="color: #ffb027;">${springMacroRequestContext.getMessage("privacyToggle.help.trusted_parties")}</li>
+			        				<li class="private" style="color: #990000;">${springMacroRequestContext.getMessage("privacyToggle.help.only_me")}</li>
+			        			</ul>
+			        			<a href="http://support.orcid.org/knowledgebase/articles/124518-orcid-privacy-settings" target="_blank">${springMacroRequestContext.getMessage("privacyToggle.help.more_information")}</a>
+		        			</div>                
+		    			</div>
+    				</div>		             		             		    				
              	</div>             
                 <h3 class="work-title">
                 	<b ng-bind-html-unsafe="work.workTitle.title.content"></b>&nbsp;

@@ -981,7 +981,7 @@ function WorkCtrl($scope){
 	};
 		
 	
-	$scope.privacyTemplate = { name: 'privacyToggle.html', url: 'privacy.html'};
+	$scope.privacyTemplate = { name: 'privacyToggle.html', url: 'privacyToggle.html'};
 	
 	$scope.setPrivacy = function(idx, priv, $event) {
 		$event.preventDefault();
