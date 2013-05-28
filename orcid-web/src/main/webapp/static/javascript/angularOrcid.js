@@ -980,14 +980,29 @@ function WorkCtrl($scope){
 	    });
 	};
 		
-	
-	$scope.privacyTemplate = { name: 'privacyToggle.html', url: 'privacyToggle.html'};
-	
 	$scope.setPrivacy = function(idx, priv, $event) {
 		$event.preventDefault();
 		$scope.worksPojo.works[idx].visibility = priv;
 		$scope.curPrivToggle = null;
-		$scope.saveEmail();
+		$scope.updateProfileWork(idx);
+	};
+	
+	$scope.updateProfileWork = function(idx) {
+		var work = $scope.worksPojo.works[idx];
+		$.ajax({
+	        url: $('body').data('baseurl') + 'my-orcid/profileWork.json',
+	        type: 'PUT',
+	        data: angular.toJson(work),
+	        contentType: 'application/json;charset=UTF-8',
+	        dataType: 'json',
+	        success: function(data) {	        	
+	        	if(data.errors.length != 0){
+	        		console.log("Unable to update profile work.");
+	        	} 
+	        }
+	    }).fail(function() { 
+	    	console.log("Error updating profile work.");
+	    });
 	};
 }
 

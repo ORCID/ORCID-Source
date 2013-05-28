@@ -1361,6 +1361,7 @@ a:hover {
 .workspace-body-list h3 {
      line-height: 24px;
      margin-bottom: 0;
+     margin-right: 15px;
 }
 
 .workspace-header-public {
@@ -1596,7 +1597,7 @@ a:hover {
 
 .js .works-scroller li {
     margin: 0 10px 10px 0;
-    padding: 0 5px 0 0;
+    padding: 0 110px 0 0;
     border-bottom: 1px solid;
     border-color: #CACACA;
 }
@@ -2230,5 +2231,4 @@ header overrides
 #current-work-list h3 {
      margin: 0;
      line-height: 1.1em;
-     width: 70%;
 }

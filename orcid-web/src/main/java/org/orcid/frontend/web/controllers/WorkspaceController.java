@@ -205,7 +205,7 @@ public class WorkspaceController extends BaseWorkspaceController {
             }
             works.setOrcidWork(workList);
             currentProfile.getOrcidActivities().setOrcidWorks(works);
-            profileWorkManager.removeWork(work.getPutCode(), currentProfile.getOrcid().getValue());
+            profileWorkManager.removeWork(currentProfile.getOrcid().getValue(), work.getPutCode());
         }
         
         return deletedWork;
@@ -223,5 +223,28 @@ public class WorkspaceController extends BaseWorkspaceController {
         Works works = new Works();
         works.setWorks((List<Work>)(Object)orcidWorks.getOrcidWork());
         return works;
+    }
+    
+    /**
+     * List works associated with a profile
+     * */
+    @RequestMapping(value = "/profileWork.json", method = RequestMethod.PUT)
+    public @ResponseBody Work updateProfileWorkJson(HttpServletRequest request,  @RequestBody Work work){
+        //Get cached profile
+        OrcidProfile currentProfile = getCurrentUser().getEffectiveProfile();
+        OrcidWorks orcidWorks = currentProfile.getOrcidActivities() == null? null : currentProfile.getOrcidActivities().getOrcidWorks(); 
+        if(orcidWorks != null){
+            List<OrcidWork> orcidWorksList = orcidWorks.getOrcidWork();
+            if(orcidWorksList != null){
+                for(OrcidWork orcidWork : orcidWorksList){
+                    //If the put codes are equal, we know that they are the same work
+                    if(orcidWork.getPutCode().equals(work.getPutCode())){
+                        //Update the privacy of the work
+                        profileWorkManager.updateWork(currentProfile.getOrcid().getValue(), work.getPutCode(), work.getVisibility());
+                    }
+                }
+            }
+        }
+        return work;
     }
 }
