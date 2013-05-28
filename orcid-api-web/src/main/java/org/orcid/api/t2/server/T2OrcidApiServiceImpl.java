@@ -16,6 +16,7 @@
  */
 package org.orcid.api.t2.server;
 
+import static org.orcid.api.common.OrcidApiConstants.APPLICATION_RDFXML;
 import static org.orcid.api.common.OrcidApiConstants.BIO_PATH;
 import static org.orcid.api.common.OrcidApiConstants.BIO_SEARCH_PATH;
 import static org.orcid.api.common.OrcidApiConstants.EXTERNAL_IDENTIFIER_PATH;
@@ -25,6 +26,8 @@ import static org.orcid.api.common.OrcidApiConstants.PROFILE_DELETE_PATH;
 import static org.orcid.api.common.OrcidApiConstants.PROFILE_GET_PATH;
 import static org.orcid.api.common.OrcidApiConstants.PROFILE_POST_PATH;
 import static org.orcid.api.common.OrcidApiConstants.STATUS_PATH;
+import static org.orcid.api.common.OrcidApiConstants.TEXT_N3;
+import static org.orcid.api.common.OrcidApiConstants.TEXT_TURTLE;
 import static org.orcid.api.common.OrcidApiConstants.VND_ORCID_JSON;
 import static org.orcid.api.common.OrcidApiConstants.VND_ORCID_XML;
 import static org.orcid.api.common.OrcidApiConstants.WEBHOOKS_PATH;
@@ -159,6 +162,40 @@ public class T2OrcidApiServiceImpl implements T2OrcidApiService<Response> {
         return serviceDelegator.findBioDetails(orcid);
     }
 
+    /**
+     * GETs the RDF Turtle representation of the ORCID record containing only the
+     * Biography details
+     * 
+     * @param orcid
+     *            the ORCID that corresponds to the user's record
+     * @return the RDF Turtle representation of the ORCID record
+     */
+    @Override
+    @GET
+    @Produces(value = { TEXT_N3, TEXT_TURTLE })
+    @Path(BIO_PATH)
+    public Response viewBioDetailsTurtle(@PathParam("orcid") String orcid) {
+        T2_GET_REQUESTS.inc();
+        return serviceDelegator.findBioDetails(orcid);
+    }
+
+    /**
+     * GETs the RDF/XML representation of the ORCID record containing only the
+     * Biography details
+     * 
+     * @param orcid
+     *            the ORCID that corresponds to the user's record
+     * @return the RDF/XML representation of the ORCID record
+     */
+    @Override
+    @GET
+    @Produces(value = { APPLICATION_RDFXML })
+    @Path(BIO_PATH)
+    public Response viewBioDetailsRdf(@PathParam("orcid") String orcid) {
+        T2_GET_REQUESTS.inc();
+        return serviceDelegator.findBioDetails(orcid);
+    }
+    
     /**
      * GETs the HTML representation of the ORCID external identifiers
      * 

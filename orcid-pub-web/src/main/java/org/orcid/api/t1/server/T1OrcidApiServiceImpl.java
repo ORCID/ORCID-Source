@@ -16,13 +16,22 @@
  */
 package org.orcid.api.t1.server;
 
-import com.yammer.metrics.Metrics;
-import com.yammer.metrics.core.Counter;
+import static org.orcid.api.common.OrcidApiConstants.APPLICATION_RDFXML;
+import static org.orcid.api.common.OrcidApiConstants.BIO_PATH;
+import static org.orcid.api.common.OrcidApiConstants.BIO_SEARCH_PATH;
+import static org.orcid.api.common.OrcidApiConstants.EXTERNAL_IDENTIFIER_PATH;
+import static org.orcid.api.common.OrcidApiConstants.ORCID_JSON;
+import static org.orcid.api.common.OrcidApiConstants.ORCID_XML;
+import static org.orcid.api.common.OrcidApiConstants.PROFILE_GET_PATH;
+import static org.orcid.api.common.OrcidApiConstants.STATUS_PATH;
+import static org.orcid.api.common.OrcidApiConstants.TEXT_N3;
+import static org.orcid.api.common.OrcidApiConstants.TEXT_TURTLE;
+import static org.orcid.api.common.OrcidApiConstants.VND_ORCID_JSON;
+import static org.orcid.api.common.OrcidApiConstants.VND_ORCID_XML;
+import static org.orcid.api.common.OrcidApiConstants.WORKS_PATH;
 
-import org.orcid.api.common.OrcidApiService;
-import org.orcid.api.common.delegator.OrcidApiServiceDelegator;
-import org.orcid.jaxb.model.message.OrcidMessage;
-import org.springframework.stereotype.Component;
+import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.ws.rs.GET;
@@ -33,10 +42,14 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
-import java.util.List;
-import java.util.Map;
 
-import static org.orcid.api.common.OrcidApiConstants.*;
+import org.orcid.api.common.OrcidApiService;
+import org.orcid.api.common.delegator.OrcidApiServiceDelegator;
+import org.orcid.jaxb.model.message.OrcidMessage;
+import org.springframework.stereotype.Component;
+
+import com.yammer.metrics.Metrics;
+import com.yammer.metrics.core.Counter;
 
 /**
  * Copyright 2011-2012 ORCID
@@ -107,6 +120,40 @@ public class T1OrcidApiServiceImpl implements OrcidApiService<Response> {
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
     @Path(BIO_PATH)
     public Response viewBioDetailsXml(@PathParam("orcid") String orcid) {
+        T1_GET_REQUESTS.inc();
+        return serviceDelegator.findBioDetails(orcid);
+    }
+    
+    /**
+     * GETs the RDF/XML representation of the ORCID record containing only the
+     * Biography details
+     * 
+     * @param orcid
+     *            the ORCID that corresponds to the user's record
+     * @return the RDF/XML representation of the ORCID record
+     */
+    @Override
+    @GET
+    @Produces(value = { APPLICATION_RDFXML })
+    @Path(BIO_PATH)
+    public Response viewBioDetailsRdf(@PathParam("orcid") String orcid) {
+        T1_GET_REQUESTS.inc();
+        return serviceDelegator.findBioDetails(orcid);
+    }
+
+
+    /**
+     * GETs the RDF Turtle representation of the ORCID record containing only the
+     * Biography details
+     * 
+     * @param orcid
+     *            the ORCID that corresponds to the user's record
+     * @return the RDF Turtle representation of the ORCID record
+     */
+    @GET
+    @Produces(value = { TEXT_N3, TEXT_TURTLE })
+    @Path(BIO_PATH)
+    public Response viewBioDetailsTurtle(@PathParam("orcid") String orcid) {
         T1_GET_REQUESTS.inc();
         return serviceDelegator.findBioDetails(orcid);
     }
