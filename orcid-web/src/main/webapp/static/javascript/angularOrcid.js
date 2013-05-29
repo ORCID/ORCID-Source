@@ -1003,6 +1003,6 @@ function WorkCtrl($scope){
 	    }).fail(function() { 
 	    	console.log("Error updating profile work.");
 	    });
-	};
+	};		
 }
 

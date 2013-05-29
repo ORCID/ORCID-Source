@@ -20,10 +20,19 @@
 
     <dependencies>
         <!-- Internal dependencies -->
+        <dependency>
+            <groupId>${project.parent.groupId}</groupId>
+            <artifactId>orcid-utils</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
         <!-- External dependencies -->
         <dependency>
             <groupId>org.hibernate.javax.persistence</groupId>
             <artifactId>hibernate-jpa-2.0-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-webmvc</artifactId>
         </dependency>
 
         <!-- Test dependencies -->
