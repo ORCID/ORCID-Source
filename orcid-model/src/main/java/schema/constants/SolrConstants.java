@@ -35,4 +35,5 @@ public class SolrConstants {
     public static final String PATENT_NUMBERS = "patent-numbers";
     public static final String KEYWORDS = "keyword";
     public static final String TEXT = "text";
+    public static final String PUBLIC_PROFILE = "public-profile-message";
 }

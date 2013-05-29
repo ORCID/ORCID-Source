@@ -90,7 +90,7 @@ public class T1OrcidApiServiceImplMetricsTest {
 
         assertTrue(T1OrcidApiServiceImpl.T1_SEARCH_REQUESTS.count() == 0);
         assertTrue(T1OrcidApiServiceImpl.T1_GET_REQUESTS.count() == 0);
-        when(mockServiceDelegator.findBioDetails(any(String.class))).thenReturn(successResponse);
+        when(mockServiceDelegator.findBioDetailsFromPublicCache(any(String.class))).thenReturn(successResponse);
         assertTrue(T1OrcidApiServiceImpl.T1_SEARCH_REQUESTS.count() == 0);
         Response response = t1OrcidApiService.viewBioDetailsHtml("orcid");
         assertEquals(200, response.getStatus());
@@ -102,7 +102,7 @@ public class T1OrcidApiServiceImplMetricsTest {
     public void testViewBioDetailsXml() {
         assertTrue(T1OrcidApiServiceImpl.T1_SEARCH_REQUESTS.count() == 0);
         assertTrue(T1OrcidApiServiceImpl.T1_GET_REQUESTS.count() == 0);
-        when(mockServiceDelegator.findBioDetails(any(String.class))).thenReturn(successResponse);
+        when(mockServiceDelegator.findBioDetailsFromPublicCache(any(String.class))).thenReturn(successResponse);
         assertTrue(T1OrcidApiServiceImpl.T1_SEARCH_REQUESTS.count() == 0);
         Response response = t1OrcidApiService.viewBioDetailsXml("orcid");
         assertEquals(200, response.getStatus());
@@ -114,7 +114,7 @@ public class T1OrcidApiServiceImplMetricsTest {
     public void testViewBioDetailsJson() {
         assertTrue(T1OrcidApiServiceImpl.T1_SEARCH_REQUESTS.count() == 0);
         assertTrue(T1OrcidApiServiceImpl.T1_GET_REQUESTS.count() == 0);
-        when(mockServiceDelegator.findBioDetails(any(String.class))).thenReturn(successResponse);
+        when(mockServiceDelegator.findBioDetailsFromPublicCache(any(String.class))).thenReturn(successResponse);
         assertTrue(T1OrcidApiServiceImpl.T1_SEARCH_REQUESTS.count() == 0);
         Response response = t1OrcidApiService.viewBioDetailsJson("orcid");
         assertEquals(200, response.getStatus());
@@ -126,7 +126,7 @@ public class T1OrcidApiServiceImplMetricsTest {
     public void testViewExternalIdentifiersHtml() {
         assertTrue(T1OrcidApiServiceImpl.T1_SEARCH_REQUESTS.count() == 0);
         assertTrue(T1OrcidApiServiceImpl.T1_GET_REQUESTS.count() == 0);
-        when(mockServiceDelegator.findExternalIdentifiers(any(String.class))).thenReturn(successResponse);
+        when(mockServiceDelegator.findExternalIdentifiersFromPublicCache(any(String.class))).thenReturn(successResponse);
         assertTrue(T1OrcidApiServiceImpl.T1_SEARCH_REQUESTS.count() == 0);
         Response response = t1OrcidApiService.viewExternalIdentifiersHtml("orcid");
         assertEquals(200, response.getStatus());
@@ -138,7 +138,7 @@ public class T1OrcidApiServiceImplMetricsTest {
     public void testViewExternalIdentifiersXml() {
         assertTrue(T1OrcidApiServiceImpl.T1_SEARCH_REQUESTS.count() == 0);
         assertTrue(T1OrcidApiServiceImpl.T1_GET_REQUESTS.count() == 0);
-        when(mockServiceDelegator.findExternalIdentifiers(any(String.class))).thenReturn(successResponse);
+        when(mockServiceDelegator.findExternalIdentifiersFromPublicCache(any(String.class))).thenReturn(successResponse);
         assertTrue(T1OrcidApiServiceImpl.T1_SEARCH_REQUESTS.count() == 0);
         Response response = t1OrcidApiService.viewExternalIdentifiersXml("orcid");
         assertEquals(200, response.getStatus());
@@ -150,7 +150,7 @@ public class T1OrcidApiServiceImplMetricsTest {
     public void testViewExternalIdentifiersJson() {
         assertTrue(T1OrcidApiServiceImpl.T1_SEARCH_REQUESTS.count() == 0);
         assertTrue(T1OrcidApiServiceImpl.T1_GET_REQUESTS.count() == 0);
-        when(mockServiceDelegator.findExternalIdentifiers(any(String.class))).thenReturn(successResponse);
+        when(mockServiceDelegator.findExternalIdentifiersFromPublicCache(any(String.class))).thenReturn(successResponse);
         assertTrue(T1OrcidApiServiceImpl.T1_SEARCH_REQUESTS.count() == 0);
         Response response = t1OrcidApiService.viewExternalIdentifiersJson("orcid");
         assertEquals(200, response.getStatus());
@@ -162,7 +162,7 @@ public class T1OrcidApiServiceImplMetricsTest {
     public void testViewFullDetailsHtml() {
         assertTrue(T1OrcidApiServiceImpl.T1_SEARCH_REQUESTS.count() == 0);
         assertTrue(T1OrcidApiServiceImpl.T1_GET_REQUESTS.count() == 0);
-        when(mockServiceDelegator.findFullDetails(any(String.class))).thenReturn(successResponse);
+        when(mockServiceDelegator.findFullDetailsFromPublicCache(any(String.class))).thenReturn(successResponse);
         assertTrue(T1OrcidApiServiceImpl.T1_SEARCH_REQUESTS.count() == 0);
         Response response = t1OrcidApiService.viewFullDetailsHtml("orcid");
         assertEquals(200, response.getStatus());
@@ -174,7 +174,7 @@ public class T1OrcidApiServiceImplMetricsTest {
     public void testViewFullDetailsXml() {
         assertTrue(T1OrcidApiServiceImpl.T1_SEARCH_REQUESTS.count() == 0);
         assertTrue(T1OrcidApiServiceImpl.T1_GET_REQUESTS.count() == 0);
-        when(mockServiceDelegator.findFullDetails(any(String.class))).thenReturn(successResponse);
+        when(mockServiceDelegator.findFullDetailsFromPublicCache(any(String.class))).thenReturn(successResponse);
         assertTrue(T1OrcidApiServiceImpl.T1_SEARCH_REQUESTS.count() == 0);
         Response response = t1OrcidApiService.viewFullDetailsXml("orcid");
         assertEquals(200, response.getStatus());
@@ -187,7 +187,7 @@ public class T1OrcidApiServiceImplMetricsTest {
     public void testViewFullDetailsJson() {
         assertTrue(T1OrcidApiServiceImpl.T1_SEARCH_REQUESTS.count() == 0);
         assertTrue(T1OrcidApiServiceImpl.T1_GET_REQUESTS.count() == 0);
-        when(mockServiceDelegator.findFullDetails(any(String.class))).thenReturn(successResponse);
+        when(mockServiceDelegator.findFullDetailsFromPublicCache(any(String.class))).thenReturn(successResponse);
         assertTrue(T1OrcidApiServiceImpl.T1_SEARCH_REQUESTS.count() == 0);
         Response response = t1OrcidApiService.viewFullDetailsJson("orcid");
         assertEquals(200, response.getStatus());
@@ -199,7 +199,7 @@ public class T1OrcidApiServiceImplMetricsTest {
     public void testViewWorksDetailsHtml() {
         assertTrue(T1OrcidApiServiceImpl.T1_SEARCH_REQUESTS.count() == 0);
         assertTrue(T1OrcidApiServiceImpl.T1_GET_REQUESTS.count() == 0);
-        when(mockServiceDelegator.findWorksDetails(any(String.class))).thenReturn(successResponse);
+        when(mockServiceDelegator.findWorksDetailsFromPublicCache(any(String.class))).thenReturn(successResponse);
         assertTrue(T1OrcidApiServiceImpl.T1_SEARCH_REQUESTS.count() == 0);
         Response response = t1OrcidApiService.viewWorksDetailsHtml("orcid");
         assertEquals(200, response.getStatus());
@@ -211,7 +211,7 @@ public class T1OrcidApiServiceImplMetricsTest {
     public void testViewWorksDetailsXml() {
         assertTrue(T1OrcidApiServiceImpl.T1_SEARCH_REQUESTS.count() == 0);
         assertTrue(T1OrcidApiServiceImpl.T1_GET_REQUESTS.count() == 0);
-        when(mockServiceDelegator.findWorksDetails(any(String.class))).thenReturn(successResponse);
+        when(mockServiceDelegator.findWorksDetailsFromPublicCache(any(String.class))).thenReturn(successResponse);
         assertTrue(T1OrcidApiServiceImpl.T1_SEARCH_REQUESTS.count() == 0);
         Response response = t1OrcidApiService.viewWorksDetailsXml("orcid");
         assertEquals(200, response.getStatus());
@@ -223,7 +223,7 @@ public class T1OrcidApiServiceImplMetricsTest {
     public void testViewWorksDetailsJson() {
         assertTrue(T1OrcidApiServiceImpl.T1_SEARCH_REQUESTS.count() == 0);
         assertTrue(T1OrcidApiServiceImpl.T1_GET_REQUESTS.count() == 0);
-        when(mockServiceDelegator.findWorksDetails(any(String.class))).thenReturn(successResponse);
+        when(mockServiceDelegator.findWorksDetailsFromPublicCache(any(String.class))).thenReturn(successResponse);
         assertTrue(T1OrcidApiServiceImpl.T1_SEARCH_REQUESTS.count() == 0);
         Response response = t1OrcidApiService.viewWorksDetailsJson("orcid");
         assertEquals(200, response.getStatus());

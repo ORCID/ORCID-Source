@@ -80,6 +80,7 @@ public class SolrDaoImpl implements SolrDao {
                 orcidSolrResult = new OrcidSolrResult();
                 orcidSolrResult.setRelevancyScore((Float) solrDocument.get("score"));
                 orcidSolrResult.setOrcid((String) solrDocument.get("orcid"));
+                orcidSolrResult.setPublicProfileMessage((String)solrDocument.getFieldValue("public-profile-message"));
             }
         } catch (SolrServerException se) {
             String errorMessage = MessageFormat.format("Error when attempting to retrieve orcid {0}", new Object[] { orcid });
@@ -112,6 +113,7 @@ public class SolrDaoImpl implements SolrDao {
                 orcidSolrResult.setPastInstitutionAffiliationNames((Collection) solrDocument.getFieldValues("past-institution-affiliation-name"));
                 orcidSolrResult.setCreditName((String) solrDocument.getFieldValue("credit-name"));
                 orcidSolrResult.setOtherNames((Collection) solrDocument.getFieldValues("other-names"));
+                orcidSolrResult.setPublicProfileMessage((String)solrDocument.getFieldValue("public-profile-message"));
                 orcidSolrResults.add(orcidSolrResult);
             }
 

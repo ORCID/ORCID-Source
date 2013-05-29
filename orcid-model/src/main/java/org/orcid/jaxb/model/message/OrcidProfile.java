@@ -330,6 +330,24 @@ public class OrcidProfile implements Serializable {
         this.type = value;
     }
 
+    public void downgradeToBioOnly() {
+        setOrcidActivities(null);
+    }
+
+    public void downgradeToExternalIdentifiersOnly() {
+        downgradeToBioOnly();
+        if (orcidBio != null) {
+            orcidBio.downGradeToExternalIdentifiersOnly();
+        }
+    }
+
+    public void downgradeToWorksOnly() {
+        setOrcidBio(null);
+        if (orcidActivities != null) {
+            orcidActivities.downgradeToWorksOnly();
+        }
+    }
+
     @Override
     public String toString() {
         return OrcidMessage.convertToString(this);

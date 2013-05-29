@@ -98,7 +98,6 @@ import org.orcid.persistence.jpa.entities.IndexingStatus;
 import org.orcid.persistence.jpa.entities.OrcidGrantedAuthority;
 import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
-import org.orcid.persistence.jpa.entities.ProfileWorkEntity;
 import org.orcid.utils.DateUtils;
 import org.orcid.utils.NullUtils;
 import org.slf4j.Logger;
@@ -310,23 +309,25 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
 
     /**
      * Add source to the profile works
+     * 
      * @param orcidProfile
-     *          The profile
+     *            The profile
      * @param amenderOrcid
-     *          The orcid of the user or client that add the work to the profile user
+     *            The orcid of the user or client that add the work to the
+     *            profile user
      * */
-    private void addSourceToWorks(OrcidProfile orcidProfile, String amenderOrcid){
+    private void addSourceToWorks(OrcidProfile orcidProfile, String amenderOrcid) {
         OrcidWorks orcidWorks = orcidProfile.getOrcidActivities() == null ? null : orcidProfile.getOrcidActivities().getOrcidWorks();
-        
-        if(orcidWorks != null && !orcidWorks.getOrcidWork().isEmpty()){
-            for(OrcidWork orcidWork : orcidWorks.getOrcidWork()){
-                if(orcidWork.getWorkSource() == null || StringUtils.isEmpty(orcidWork.getWorkSource().getContent()))
+
+        if (orcidWorks != null && !orcidWorks.getOrcidWork().isEmpty()) {
+            for (OrcidWork orcidWork : orcidWorks.getOrcidWork()) {
+                if (orcidWork.getWorkSource() == null || StringUtils.isEmpty(orcidWork.getWorkSource().getContent()))
                     orcidWork.setWorkSource(new WorkSource(amenderOrcid));
             }
         }
-        
+
     }
-    
+
     private void setWorkPrivacy(OrcidProfile updatedOrcidProfile, Visibility defaultWorkVisibility) {
         OrcidActivities incomingActivities = updatedOrcidProfile.getOrcidActivities();
         if (incomingActivities != null) {
@@ -356,16 +357,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
     public OrcidProfile retrieveClaimedExternalIdentifiers(String orcid) {
         OrcidProfile profile = retrieveClaimedOrcidProfile(orcid);
         if (profile != null) {
-            OrcidBio orcidBio = profile.getOrcidBio();
-            if (orcidBio != null) {
-                orcidBio.getAffiliations().clear();
-                orcidBio.setContactDetails(null);
-                orcidBio.setKeywords(null);
-                orcidBio.setPersonalDetails(null);
-                orcidBio.setScope(null);
-                orcidBio.setBiography(null);
-            }
-            profile.setOrcidWorks(null);
+            profile.downgradeToExternalIdentifiersOnly();
         }
         return profile;
     }
@@ -382,7 +374,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
     public OrcidProfile retrieveClaimedOrcidBio(String orcid) {
         OrcidProfile profile = retrieveClaimedOrcidProfile(orcid);
         if (profile != null) {
-            profile.setOrcidActivities(null);
+            profile.downgradeToBioOnly();
         }
         return profile;
     }
@@ -399,7 +391,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
     public OrcidProfile retrieveClaimedOrcidWorks(String orcid) {
         OrcidProfile profile = retrieveClaimedOrcidProfile(orcid);
         if (profile != null) {
-            profile.setOrcidBio(null);
+            profile.downgradeToWorksOnly();
         }
         return profile;
     }

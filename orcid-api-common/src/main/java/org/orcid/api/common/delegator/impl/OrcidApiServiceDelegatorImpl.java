@@ -27,6 +27,7 @@ import javax.ws.rs.core.Response;
 
 import org.orcid.api.common.delegator.OrcidApiServiceDelegator;
 import org.orcid.api.common.exception.OrcidNotFoundException;
+import org.orcid.core.exception.OrcidSearchException;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.manager.OrcidSearchManager;
 import org.orcid.core.manager.ValidationManager;
@@ -35,6 +36,8 @@ import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidSearchResult;
 import org.orcid.jaxb.model.message.OrcidSearchResults;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 /**
@@ -58,6 +61,8 @@ public class OrcidApiServiceDelegatorImpl implements OrcidApiServiceDelegator {
 
     @Resource
     private ValidationManager validationManager;
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(OrcidApiServiceDelegatorImpl.class);
 
     /**
      * @return Plain text message indicating health of service
@@ -83,6 +88,24 @@ public class OrcidApiServiceDelegatorImpl implements OrcidApiServiceDelegator {
         return getOrcidMessageResponse(profile, orcid);
     }
 
+    @Override
+    @VisibilityControl
+    public Response findBioDetailsFromPublicCache(String orcid) {
+        try {
+            OrcidMessage orcidMessage = orcidSearchManager.findPublicProfileById(orcid);
+            if (orcidMessage != null) {
+                OrcidProfile orcidProfile = orcidMessage.getOrcidProfile();
+                if (orcidProfile != null) {
+                    orcidProfile.downgradeToBioOnly();
+                }
+            }
+            return getOrcidMessageResponse(orcidMessage, orcid);
+        } catch (OrcidSearchException e) {
+            LOGGER.warn("Error searching, so falling back to DB", e);
+            return findBioDetails(orcid);
+        }
+    }
+
     /**
      * finds and returns the {@link org.orcid.jaxb.model.message.OrcidMessage}
      * wrapped in a {@link javax.xml.ws.Response} with only the profile's
@@ -98,6 +121,24 @@ public class OrcidApiServiceDelegatorImpl implements OrcidApiServiceDelegator {
     public Response findExternalIdentifiers(String orcid) {
         OrcidProfile profile = orcidProfileManager.retrieveClaimedExternalIdentifiers(orcid);
         return getOrcidMessageResponse(profile, orcid);
+    }
+
+    @Override
+    @VisibilityControl
+    public Response findExternalIdentifiersFromPublicCache(String orcid) {
+        try {
+            OrcidMessage orcidMessage = orcidSearchManager.findPublicProfileById(orcid);
+            if (orcidMessage != null) {
+                OrcidProfile orcidProfile = orcidMessage.getOrcidProfile();
+                if (orcidProfile != null) {
+                    orcidProfile.downgradeToExternalIdentifiersOnly();
+                }
+            }
+            return getOrcidMessageResponse(orcidMessage, orcid);
+        } catch (OrcidSearchException e) {
+            LOGGER.warn("Error searching, so falling back to DB", e);
+            return findExternalIdentifiers(orcid);
+        }
     }
 
     /**
@@ -117,6 +158,18 @@ public class OrcidApiServiceDelegatorImpl implements OrcidApiServiceDelegator {
         return getOrcidMessageResponse(profile, orcid);
     }
 
+    @Override
+    @VisibilityControl
+    public Response findFullDetailsFromPublicCache(String orcid) {
+        try {
+            OrcidMessage orcidMessage = orcidSearchManager.findPublicProfileById(orcid);
+            return getOrcidMessageResponse(orcidMessage, orcid);
+        } catch (OrcidSearchException e) {
+            LOGGER.warn("Error searching, so falling back to DB", e);
+            return findFullDetails(orcid);
+        }
+    }
+
     /**
      * finds and returns the {@link org.orcid.jaxb.model.message.OrcidMessage}
      * wrapped in a {@link javax.xml.ws.Response} with only the work details
@@ -131,6 +184,24 @@ public class OrcidApiServiceDelegatorImpl implements OrcidApiServiceDelegator {
     public Response findWorksDetails(String orcid) {
         OrcidProfile profile = orcidProfileManager.retrieveClaimedOrcidWorks(orcid);
         return getOrcidMessageResponse(profile, orcid);
+    }
+
+    @Override
+    @VisibilityControl
+    public Response findWorksDetailsFromPublicCache(String orcid) {
+        try {
+            OrcidMessage orcidMessage = orcidSearchManager.findPublicProfileById(orcid);
+            if (orcidMessage != null) {
+                OrcidProfile orcidProfile = orcidMessage.getOrcidProfile();
+                if (orcidProfile != null) {
+                    orcidProfile.downgradeToWorksOnly();
+                }
+            }
+            return getOrcidMessageResponse(orcidMessage, orcid);
+        } catch (OrcidSearchException e) {
+            LOGGER.warn("Error searching, so falling back to DB", e);
+            return findWorksDetails(orcid);
+        }
     }
 
     /**
@@ -180,6 +251,18 @@ public class OrcidApiServiceDelegatorImpl implements OrcidApiServiceDelegator {
         OrcidMessage orcidMessage = new OrcidMessage(profile);
         validationManager.validateMessage(orcidMessage);
 
+        return Response.ok(orcidMessage).build();
+    }
+
+    private Response getOrcidMessageResponse(OrcidMessage orcidMessage, String requestedOrcid) {
+        if (orcidMessage == null) {
+            throw new OrcidNotFoundException("ORCID " + requestedOrcid + " not found");
+        }
+        OrcidProfile orcidProfile = orcidMessage.getOrcidProfile();
+        if (orcidProfile != null) {
+            orcidProfile.setOrcidInternal(null);
+        }
+        validationManager.validateMessage(orcidMessage);
         return Response.ok(orcidMessage).build();
     }
 

@@ -280,6 +280,15 @@ public class OrcidBio implements Serializable {
         this.scope = value;
     }
 
+    public void downGradeToExternalIdentifiersOnly() {
+        getAffiliations().clear();
+        setContactDetails(null);
+        setKeywords(null);
+        setPersonalDetails(null);
+        setScope(null);
+        setBiography(null);
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj)

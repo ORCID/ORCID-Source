@@ -24,6 +24,7 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import org.orcid.core.exception.OrcidSearchException;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.manager.OrcidSearchManager;
 import org.orcid.jaxb.model.message.Affiliation;
@@ -49,6 +50,7 @@ import org.orcid.jaxb.model.message.PersonalDetails;
 import org.orcid.jaxb.model.message.RelevancyScore;
 import org.orcid.persistence.dao.SolrDao;
 import org.orcid.persistence.solr.entities.OrcidSolrResult;
+import org.springframework.dao.NonTransientDataAccessResourceException;
 
 public class OrcidSearchManagerImpl implements OrcidSearchManager {
 
@@ -225,6 +227,23 @@ public class OrcidSearchManagerImpl implements OrcidSearchManager {
     }
 
     @Override
+    public OrcidMessage findPublicProfileById(String orcid) {
+        try {
+            OrcidSolrResult indexedOrcid = solrDao.findByOrcid(orcid);
+            if (indexedOrcid == null) {
+                return null;
+            }
+            String publicProfileMessage = indexedOrcid.getPublicProfileMessage();
+            if (publicProfileMessage == null) {
+                throw new OrcidSearchException("Found document in index, but no public profile in document for orcid=" + orcid);
+            }
+            return OrcidMessage.unmarshall(publicProfileMessage);
+        } catch (NonTransientDataAccessResourceException e) {
+            throw new OrcidSearchException("Error searching by id", e);
+        }
+    }
+
+    @Override
     public OrcidMessage findOrcidsByQuery(String query) {
         return findOrcidsByQuery(query, null, null);
     }
@@ -252,7 +271,6 @@ public class OrcidSearchManagerImpl implements OrcidSearchManager {
         }
         orcidMessage.setOrcidSearchResults(searchResults);
         return orcidMessage;
-
     }
 
     @Override
