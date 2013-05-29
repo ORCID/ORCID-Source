@@ -28,7 +28,15 @@
                     <#list work.currentWorkExternalIds as ei>
                     <#-- @ftlvariable name="ei" type="org.orcid.frontend.web.forms.CurrentWorkExternalId" -->
                         <#if (ei.type = 'doi') && (ei.id)??>
-                            <span class="work-metadata">${springMacroRequestContext.getMessage("workspace_works_body_list.DOI")} <a href="http://dx.doi.org/${ei.id}">${ei.id}</a></span>
+                             <span class="work-metadata">${springMacroRequestContext.getMessage("workspace_works_body_list.DOI")} 
+                            	<#if ei.id?starts_with('http://dx.doi.org/')>
+                            		<a href="http://dx.doi.org/${ei.id?replace('http://dx.doi.org/','')}">
+                            	<#else>
+                            		<a href="http://dx.doi.org/${ei.id}">
+                            	</#if>
+                            		${ei.id}
+                            	</a>
+                            </span>
                             <img onclick="javascript:window.open(&quot;http://dx.doi.org/${ei.id}&quot;)" style="cursor:pointer;" src="${staticCdn}/img/view_full_text.gif"><input type="hidden" value="null" name="artifacts[0].destApp"><input type="hidden" value="JOUR" name="artifacts[0].type"><input type="hidden" value="W" name="artifacts[0].uploadedBy">
                         </#if>
                     </#list>
