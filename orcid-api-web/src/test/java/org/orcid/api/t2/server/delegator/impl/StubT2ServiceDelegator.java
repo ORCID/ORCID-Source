@@ -111,4 +111,28 @@ public class StubT2ServiceDelegator implements T2OrcidApiServiceDelegator {
         return null;
     }
 
+    @Override
+    public Response findBioDetailsFromPublicCache(String orcid) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Response findExternalIdentifiersFromPublicCache(String orcid) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Response findFullDetailsFromPublicCache(String orcid) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Response findWorksDetailsFromPublicCache(String orcid) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
 }

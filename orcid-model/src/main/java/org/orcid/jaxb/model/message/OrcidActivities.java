@@ -31,9 +31,12 @@ import javax.xml.bind.annotation.XmlType;
 import java.io.Serializable;
 
 /**
- * <p>Java class for anonymous complex type.
+ * <p>
+ * Java class for anonymous complex type.
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p>
+ * The following schema fragment specifies the expected content contained within
+ * this class.
  * 
  * <pre>
  * &lt;complexType>
@@ -72,10 +75,8 @@ public class OrcidActivities implements Serializable {
     /**
      * Gets the value of the orcidWorks property.
      * 
-     * @return
-     *     possible object is
-     *     {@link OrcidWorks }
-     *     
+     * @return possible object is {@link OrcidWorks }
+     * 
      */
     public OrcidWorks getOrcidWorks() {
         return orcidWorks;
@@ -85,9 +86,8 @@ public class OrcidActivities implements Serializable {
      * Sets the value of the orcidWorks property.
      * 
      * @param value
-     *     allowed object is
-     *     {@link OrcidWorks }
-     *     
+     *            allowed object is {@link OrcidWorks }
+     * 
      */
     public void setOrcidWorks(OrcidWorks value) {
         this.orcidWorks = value;
@@ -96,10 +96,8 @@ public class OrcidActivities implements Serializable {
     /**
      * Gets the value of the orcidGrants property.
      * 
-     * @return
-     *     possible object is
-     *     {@link OrcidGrants }
-     *     
+     * @return possible object is {@link OrcidGrants }
+     * 
      */
     public OrcidGrants getOrcidGrants() {
         return orcidGrants;
@@ -109,9 +107,8 @@ public class OrcidActivities implements Serializable {
      * Sets the value of the orcidGrants property.
      * 
      * @param value
-     *     allowed object is
-     *     {@link OrcidGrants }
-     *     
+     *            allowed object is {@link OrcidGrants }
+     * 
      */
     public void setOrcidGrants(OrcidGrants value) {
         this.orcidGrants = value;
@@ -120,10 +117,8 @@ public class OrcidActivities implements Serializable {
     /**
      * Gets the value of the orcidPatents property.
      * 
-     * @return
-     *     possible object is
-     *     {@link OrcidPatents }
-     *     
+     * @return possible object is {@link OrcidPatents }
+     * 
      */
     public OrcidPatents getOrcidPatents() {
         return orcidPatents;
@@ -133,12 +128,16 @@ public class OrcidActivities implements Serializable {
      * Sets the value of the orcidPatents property.
      * 
      * @param value
-     *     allowed object is
-     *     {@link OrcidPatents }
-     *     
+     *            allowed object is {@link OrcidPatents }
+     * 
      */
     public void setOrcidPatents(OrcidPatents value) {
         this.orcidPatents = value;
+    }
+
+    public void downgradeToWorksOnly() {
+        setOrcidGrants(null);
+        setOrcidPatents(null);
     }
 
     @Override

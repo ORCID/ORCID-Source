@@ -529,6 +529,8 @@
             stored="false" multiValued="true" />
         <field name="keyword" type="text_general" indexed="true"
             stored="false" multiValued="true" />
+        <field name="public-profile-message" type="string" indexed="false" stored="true"
+            multiValued="false" />
 
 		<!-- Dynamic field definitions. If a field name is not found, dynamicFields 
 			will be used if the name matches any of the patterns. RESTRICTION: the glob-like 

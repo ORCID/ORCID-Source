@@ -22,7 +22,6 @@ import static org.orcid.api.common.OrcidApiConstants.WORKS_PATH;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.sql.BatchUpdateException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -35,8 +34,8 @@ import javax.ws.rs.core.UriInfo;
 
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.exception.ConstraintViolationException;
-import org.hibernate.exception.DataException;
 import org.orcid.api.common.delegator.OrcidApiServiceDelegator;
+import org.orcid.api.common.delegator.impl.OrcidApiServiceDelegatorImpl;
 import org.orcid.api.common.exception.OrcidBadRequestException;
 import org.orcid.api.common.exception.OrcidForbiddenException;
 import org.orcid.api.common.exception.OrcidNotFoundException;
@@ -88,7 +87,7 @@ import org.springframework.stereotype.Component;
  * @author Declan Newman (declan) Date: 07/03/2012
  */
 @Component("orcidT2ServiceDelegator")
-public class T2OrcidApiServiceDelegatorImpl implements T2OrcidApiServiceDelegator {
+public class T2OrcidApiServiceDelegatorImpl extends OrcidApiServiceDelegatorImpl implements T2OrcidApiServiceDelegator {
 
     @Resource(name = "orcidProfileManager")
     private OrcidProfileManager orcidProfileManager;

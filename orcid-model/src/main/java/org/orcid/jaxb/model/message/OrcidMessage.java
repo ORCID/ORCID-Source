@@ -26,6 +26,7 @@ package org.orcid.jaxb.model.message;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -34,7 +35,12 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.util.JAXBSource;
 import javax.xml.transform.Source;
 
+import org.orcid.jaxb.model.clientgroup.OrcidClientGroup;
+
+import java.io.InputStream;
+import java.io.Reader;
 import java.io.Serializable;
+import java.io.StringReader;
 import java.io.StringWriter;
 
 /**
@@ -230,4 +236,21 @@ public class OrcidMessage implements Serializable {
         result = 31 * result + (errorDesc != null ? errorDesc.hashCode() : 0);
         return result;
     }
+
+    public static OrcidMessage unmarshall(String orcidMessageString) {
+        Reader reader = new StringReader(orcidMessageString);
+        return unmarshall(reader);
+    }
+
+    public static OrcidMessage unmarshall(Reader reader) {
+        try {
+            JAXBContext context = JAXBContext.newInstance(OrcidMessage.class.getPackage().getName());
+            Unmarshaller unmarshaller = context.createUnmarshaller();
+            return (OrcidMessage) unmarshaller.unmarshal(reader);
+        } catch (JAXBException e) {
+            // XXX Should be more specific exception
+            throw new RuntimeException("Unable to unmarshall orcid message" + e);
+        }
+    }
+
 }

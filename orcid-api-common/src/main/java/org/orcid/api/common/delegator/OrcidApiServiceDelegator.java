@@ -52,6 +52,8 @@ public interface OrcidApiServiceDelegator {
      *         {@link org.orcid.jaxb.model.message.OrcidMessage} within it
      */
     Response findBioDetails(String orcid);
+    
+    Response findBioDetailsFromPublicCache(String orcid);
 
     /**
      * finds and returns the {@link org.orcid.jaxb.model.message.OrcidMessage}
@@ -64,6 +66,8 @@ public interface OrcidApiServiceDelegator {
      *         {@link org.orcid.jaxb.model.message.OrcidMessage} within it
      */
     Response findExternalIdentifiers(String orcid);
+    
+    Response findExternalIdentifiersFromPublicCache(String orcid);
 
     /**
      * finds and returns the {@link org.orcid.jaxb.model.message.OrcidMessage}
@@ -75,6 +79,8 @@ public interface OrcidApiServiceDelegator {
      *         {@link org.orcid.jaxb.model.message.OrcidMessage} within it
      */
     Response findFullDetails(String orcid);
+    
+    Response findFullDetailsFromPublicCache(String orcid);
 
     /**
      * finds and returns the {@link org.orcid.jaxb.model.message.OrcidMessage}
@@ -86,6 +92,8 @@ public interface OrcidApiServiceDelegator {
      *         {@link org.orcid.jaxb.model.message.OrcidMessage} within it
      */
     Response findWorksDetails(String orcid);
+    
+    Response findWorksDetailsFromPublicCache(String orcid);
 
     /**
      * finds and returns the
