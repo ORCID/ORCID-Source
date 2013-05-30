@@ -25,12 +25,14 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.solr.common.SolrDocument;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.orcid.core.BaseTest;
 import org.orcid.core.manager.impl.OrcidIndexManagerImpl;
+import org.orcid.core.security.visibility.filter.VisibilityFilter;
 import org.orcid.jaxb.model.message.Address;
 import org.orcid.jaxb.model.message.Affiliation;
 import org.orcid.jaxb.model.message.AffiliationType;
@@ -50,6 +52,7 @@ import org.orcid.jaxb.model.message.Keywords;
 import org.orcid.jaxb.model.message.OrcidBio;
 import org.orcid.jaxb.model.message.OrcidGrant;
 import org.orcid.jaxb.model.message.OrcidGrants;
+import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidPatent;
 import org.orcid.jaxb.model.message.OrcidPatents;
 import org.orcid.jaxb.model.message.OrcidProfile;
@@ -86,6 +89,9 @@ public class OrcidIndexManagerImplTest extends BaseTest {
 
     @Resource
     private OrcidIndexManagerImpl orcidIndexManager;
+
+    @Resource
+    private VisibilityFilter visibilityFilter;
 
     @Mock
     private SolrDao solrDao;
@@ -160,6 +166,8 @@ public class OrcidIndexManagerImplTest extends BaseTest {
 
         // so this should leave only the second doi
         doiListings.setDigitalObjectIds(Arrays.asList(new String[] { "work2-doi2" }));
+        OrcidMessage orcidMessage = createFilteredOrcidMessage(orcidProfileWithDOI);
+        doiListings.setPublicProfileMessage(orcidMessage.toString());
 
         orcidIndexManager.persistProfileInformationForIndexing(orcidProfileWithDOI);
         verify(solrDao).persist(eq(doiListings));
@@ -287,6 +295,9 @@ public class OrcidIndexManagerImplTest extends BaseTest {
         orcidSolrDocument.setFamilyName("Logan");
         orcidSolrDocument.setGivenNames("Donald Edward");
         orcidSolrDocument.setAffiliatePrimaryInstitutionNames(Arrays.asList(new String[] { "University of Portsmouth" }));
+        OrcidProfile orcidProfile = getOrcidProfileMandatoryOnly();
+        OrcidMessage orcidMessage = createFilteredOrcidMessage(orcidProfile);
+        orcidSolrDocument.setPublicProfileMessage(orcidMessage.toString());
         return orcidSolrDocument;
     }
 
@@ -472,36 +483,51 @@ public class OrcidIndexManagerImplTest extends BaseTest {
     }
 
     private OrcidSolrDocument solrDocFilteredByNameVisibility() {
-        OrcidSolrDocument docToFilter = fullyPopulatedSolrDocumentForPersistence();
-        docToFilter.setCreditName(null);
-        docToFilter.setOtherNames(null);
-        return docToFilter;
+        OrcidSolrDocument orcidSolrDocument = fullyPopulatedSolrDocumentForPersistence();
+        orcidSolrDocument.setCreditName(null);
+        orcidSolrDocument.setOtherNames(null);
+        OrcidProfile orcidProfile = orcidProfileLimitedVisiblityCreditNameAndOtherNames();
+        OrcidMessage orcidMessage = createFilteredOrcidMessage(orcidProfile);
+        orcidSolrDocument.setPublicProfileMessage(orcidMessage.toString());
+        return orcidSolrDocument;
     }
 
     private OrcidSolrDocument solrDocWithAdditionalSubtitles() {
-        OrcidSolrDocument standardWorkListing = fullyPopulatedSolrDocumentForPersistence();
-        standardWorkListing.setWorkTitles(Arrays.asList(new String[] { "Work title 1", "Subtitle 1", "Work title 2", "Subtitle 2" }));
-        return standardWorkListing;
+        OrcidSolrDocument orcidSolrDocument = fullyPopulatedSolrDocumentForPersistence();
+        orcidSolrDocument.setWorkTitles(Arrays.asList(new String[] { "Work title 1", "Subtitle 1", "Work title 2", "Subtitle 2" }));
+        OrcidProfile orcidProfile = getOrcidWithSubtitledWork();
+        OrcidMessage orcidMessage = createFilteredOrcidMessage(orcidProfile);
+        orcidSolrDocument.setPublicProfileMessage(orcidMessage.toString());
+        return orcidSolrDocument;
     }
 
     private OrcidSolrDocument solrDocWithGrantNumbers() {
-        OrcidSolrDocument orcidGrantsListing = fullyPopulatedSolrDocumentForPersistence();
-        orcidGrantsListing.setGrantNumbers(Arrays.asList(new String[] { "grant 1", "grant 2" }));
-        return orcidGrantsListing;
+        OrcidSolrDocument orcidSolrDocument = fullyPopulatedSolrDocumentForPersistence();
+        orcidSolrDocument.setGrantNumbers(Arrays.asList(new String[] { "grant 1", "grant 2" }));
+        OrcidProfile orcidProfile = getOrcidWithGrants();
+        OrcidMessage orcidMessage = createFilteredOrcidMessage(orcidProfile);
+        orcidSolrDocument.setPublicProfileMessage(orcidMessage.toString());
+        return orcidSolrDocument;
     }
 
     private OrcidSolrDocument solrDocWithPatentNumbers() {
-        OrcidSolrDocument orcidGrantsListing = fullyPopulatedSolrDocumentForPersistence();
-        orcidGrantsListing.setPatentNumbers(Arrays.asList(new String[] { "patent 1", "patent 2" }));
-        return orcidGrantsListing;
+        OrcidSolrDocument orcidSolrDocument = fullyPopulatedSolrDocumentForPersistence();
+        orcidSolrDocument.setPatentNumbers(Arrays.asList(new String[] { "patent 1", "patent 2" }));
+        OrcidProfile orcidProfile = orcidProfileAllLimitedVisibilityPatents();
+        OrcidMessage orcidMessage = createFilteredOrcidMessage(orcidProfile);
+        orcidSolrDocument.setPublicProfileMessage(orcidMessage.toString());
+        return orcidSolrDocument;
     }
 
     private OrcidSolrDocument solrDocFilteredByAffilliationVisibility() {
-        OrcidSolrDocument docToFilter = fullyPopulatedSolrDocumentForPersistence();
-        docToFilter.setAffiliatePastInstitutionNames(null);
-        docToFilter.setAffiliatePrimaryInstitutionNames(null);
-        docToFilter.setAffiliateInstitutionNames(null);
-        return docToFilter;
+        OrcidSolrDocument orcidSolrDocument = fullyPopulatedSolrDocumentForPersistence();
+        orcidSolrDocument.setAffiliatePastInstitutionNames(null);
+        orcidSolrDocument.setAffiliatePrimaryInstitutionNames(null);
+        orcidSolrDocument.setAffiliateInstitutionNames(null);
+        OrcidProfile orcidProfile = orcidProfileLimitedVisiblityAffiliations();
+        OrcidMessage orcidMessage = createFilteredOrcidMessage(orcidProfile);
+        orcidSolrDocument.setPublicProfileMessage(orcidMessage.toString());
+        return orcidSolrDocument;
     }
 
     private OrcidSolrDocument fullyPopulatedSolrDocumentForPersistence() {
@@ -521,12 +547,26 @@ public class OrcidIndexManagerImplTest extends BaseTest {
         orcidSolrDocument.setPastInstitutionNames(Arrays.asList(new String[] { "Past Inst 1", "Past Inst 2" }));
         orcidSolrDocument.setWorkTitles(Arrays.asList(new String[] { "Work title 1", "Work title 2" }));
         orcidSolrDocument.setKeywords(Arrays.asList(new String[] { "Pavement Studies", "Advanced Tea Making" }));
+        OrcidProfile orcidProfile = getStandardOrcid();
+        OrcidMessage orcidMessage = createFilteredOrcidMessage(orcidProfile);
+        orcidSolrDocument.setPublicProfileMessage(orcidMessage.toString());
         return orcidSolrDocument;
+    }
+
+    private OrcidMessage createFilteredOrcidMessage(OrcidProfile orcidProfile) {
+        OrcidMessage orcidMessage = new OrcidMessage();
+        orcidMessage.setMessageVersion(OrcidMessage.DEFAULT_VERSION);
+        orcidMessage.setOrcidProfile(orcidProfile);
+        visibilityFilter.filter(orcidMessage, Visibility.PUBLIC);
+        return orcidMessage;
     }
 
     private OrcidSolrDocument solrDocumentLimitedtoVisibleDoi() {
         OrcidSolrDocument orcidSolrDocument = fullyPopulatedSolrDocumentForPersistence();
         orcidSolrDocument.setDigitalObjectIds((Arrays.asList(new String[] { "work1-doi1", "work2-doi1", "work2-doi2" })));
+        OrcidProfile orcidProfile = getStandardOrcidWithDoiInformation();
+        OrcidMessage orcidMessage = createFilteredOrcidMessage(orcidProfile);
+        orcidSolrDocument.setPublicProfileMessage(orcidMessage.toString());
         return orcidSolrDocument;
     }
 

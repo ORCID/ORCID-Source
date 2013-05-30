@@ -217,6 +217,10 @@ public class OrcidIndexManagerImpl implements OrcidIndexManager {
             profileIndexDocument.setPatentNumbers(patentNumbers);
         }
 
+        OrcidMessage orcidMessage = new OrcidMessage();
+        orcidMessage.setMessageVersion(OrcidMessage.DEFAULT_VERSION);
+        orcidMessage.setOrcidProfile(filteredProfile);
+        profileIndexDocument.setPublicProfileMessage(orcidMessage.toString());
         solrDao.persist(profileIndexDocument);
     }
 

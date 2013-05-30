@@ -30,6 +30,7 @@ public class OrcidSolrResult {
     private Collection<String> pastInstitutionAffiliationNames;
     private String creditName;
     private Collection<String> otherNames;
+    private String publicProfileMessage;
 
     public String getOrcid() {
         return orcid;
@@ -109,6 +110,14 @@ public class OrcidSolrResult {
 
     public void setOtherNames(Collection<String> otherNames) {
         this.otherNames = otherNames;
+    }
+
+    public String getPublicProfileMessage() {
+        return publicProfileMessage;
+    }
+
+    public void setPublicProfileMessage(String publicProfileMessage) {
+        this.publicProfileMessage = publicProfileMessage;
     }
 
 }

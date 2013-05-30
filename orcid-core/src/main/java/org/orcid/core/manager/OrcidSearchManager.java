@@ -36,6 +36,11 @@ public interface OrcidSearchManager {
 
     OrcidMessage findOrcidSearchResultsById(String orcid);
 
+    /**
+     * throws OrcidSearchException if there is any error doing the search.
+     */
+    OrcidMessage findPublicProfileById(String orcid);
+
     OrcidMessage findOrcidSearchResultsById(String orcid, boolean useDb);
 
     OrcidMessage findOrcidsByQuery(String query);
