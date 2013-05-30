@@ -18,16 +18,16 @@
 -->
 <#if (currentWorks)??>
 
-	<ul class="workspace-publications workspace-body-list">
+	<ul ng-controller="WorkCtrl" class="workspace-publications workspace-body-list">
         <#list currentWorks as work>
         <#-- @ftlvariable name="work" type="org.orcid.frontend.web.forms.CurrentWork" -->
-            <li>
-             <span class="pull-right"><@orcid.privacyLabel work.visibility /></span>
+            <li id="work_${work.putCode}">
+             	<span class="pull-right"><@orcid.privacyLabel work.visibility /></span>             
                 <h3 class="work-title"><b>${(work.title)!}</b><#if (work.subtitle)??>: <span class="work-subtitle">${(work.subtitle)!""}</span></#if><#if (work.year)??> <#if (work.month)??><@orcid.month work.month />-</#if>${work.year}</#if></h3>
                 <#if (work.currentWorkExternalIds)??>
                     <#list work.currentWorkExternalIds as ei>
                     <#-- @ftlvariable name="ei" type="org.orcid.frontend.web.forms.CurrentWorkExternalId" -->
-                        <#if (ei.type = 'doi') && (ei.id)??>                        	
+                        <#if (ei.type = 'doi') && (ei.id)??>
                             <span class="work-metadata">${springMacroRequestContext.getMessage("workspace_works_body_list.DOI")} 
                             	<#if ei.id?starts_with('http://dx.doi.org/')>
                             		<a href="http://dx.doi.org/${ei.id?replace('http://dx.doi.org/','')}">
@@ -49,6 +49,7 @@
                 <#else>
                     <#if (work.citationForDisplay)??><div class="citation ${work.citationType}">${work.citationForDisplay}</div></#if>
                 </#if>
+                <span class="pull-right-level-two"><a href ng-click="deleteWork(${work.putCode}, '${work.title}')" class="icon-trash grey"></a></span>
             </li>           
         </#list>
 	</ul>
