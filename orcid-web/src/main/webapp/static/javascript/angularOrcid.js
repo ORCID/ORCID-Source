@@ -916,10 +916,27 @@ function ClaimThanks($scope, $compile) {
 };
 
 function WorkCtrl($scope){
-	$scope.deleteWork = function(putCode, title) {
+	$scope.getWorks = function(){
+		$.ajax({
+			url: $('body').data('baseurl') + 'my-orcid/works.json',	        
+	        dataType: 'json',
+	        success: function(data) {
+	        	$scope.worksPojo = data;
+	        	$scope.$apply();
+	        }
+		}).fail(function(){
+			// something bad is happening!
+	    	console.log("error fetching works");
+		});
+	};
+	
+	//init
+	$scope.getWorks();
+	
+	$scope.deleteWork = function(idx) {
 		$.colorbox({        	
             html: function(){
-            	var fixedTitle = title;
+            	var fixedTitle = $scope.worksPojo.works[idx].workTitle.title.content;
             	var maxSize = 100;
             	if(fixedTitle.length > maxSize)
             		fixedTitle = fixedTitle.substring(0, maxSize) + '...';
@@ -929,12 +946,16 @@ function WorkCtrl($scope){
             	
         });
         $.colorbox.resize();
-        $('#modal-del-work').click(function(e) {
-        	element = document.getElementById("work_" + putCode);
-        	element.parentNode.removeChild(element);
-        	$scope.removeWork(putCode);
+        $('#modal-del-work').click(function(e) {        	        	
+        	var work = $scope.worksPojo.works[idx];
+        	// remove work on server
+    		$scope.removeWork(work);
+    		// remove the work from the UI
+        	$scope.worksPojo.works.splice(idx, 1);
+        	// apply changes on scope
+    		$scope.$apply();
     		// close box
-    		$.colorbox.close();
+    		$.colorbox.close();        	
         });
         $('#modal-cancel').click(function(e) {
         	e.preventDefault();
@@ -942,12 +963,13 @@ function WorkCtrl($scope){
         });
 	};
 	
-	$scope.removeWork = function(putCode) {
+	$scope.removeWork = function(work) {
 		$.ajax({
-	        url: $('body').data('baseurl') + 'my-orcid/works.json?putCode=' + putCode,
+	        url: $('body').data('baseurl') + 'my-orcid/works.json',
 	        type: 'DELETE',
-	        contentType: 'application/html;charset=UTF-8',
-	        dataType: 'text',
+	        data: angular.toJson(work),
+	        contentType: 'application/json;charset=UTF-8',
+	        dataType: 'json',
 	        success: function(data) {	        	
 	        	if(data.errors.length != 0){
 	        		console.log("Unable to delete work.");
@@ -957,5 +979,30 @@ function WorkCtrl($scope){
 	    	console.log("Error deleting work.");
 	    });
 	};
+		
+	$scope.setPrivacy = function(idx, priv, $event) {
+		$event.preventDefault();
+		$scope.worksPojo.works[idx].visibility = priv;
+		$scope.curPrivToggle = null;
+		$scope.updateProfileWork(idx);
+	};
+	
+	$scope.updateProfileWork = function(idx) {
+		var work = $scope.worksPojo.works[idx];
+		$.ajax({
+	        url: $('body').data('baseurl') + 'my-orcid/profileWork.json',
+	        type: 'PUT',
+	        data: angular.toJson(work),
+	        contentType: 'application/json;charset=UTF-8',
+	        dataType: 'json',
+	        success: function(data) {	        	
+	        	if(data.errors.length != 0){
+	        		console.log("Unable to update profile work.");
+	        	} 
+	        }
+	    }).fail(function() { 
+	    	console.log("Error updating profile work.");
+	    });
+	};		
 }
 

@@ -1344,7 +1344,7 @@ a:hover {
 .workspace-body-list .pull-right-level-two {
      position: absolute;
      right: 0;
-     top: 40px;
+     top: 50px;
      float: none;
 }
 
@@ -1361,6 +1361,7 @@ a:hover {
 .workspace-body-list h3 {
      line-height: 24px;
      margin-bottom: 0;
+     margin-right: 15px;
 }
 
 .workspace-header-public {
