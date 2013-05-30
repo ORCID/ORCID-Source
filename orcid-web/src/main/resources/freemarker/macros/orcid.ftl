@@ -58,7 +58,11 @@
 		    <#list work.workExternalIdentifiers.workExternalIdentifier as externalId>
 		        ${externalId.workExternalIdentifierType}:
 		        <#if externalId.workExternalIdentifierType = 'DOI'>
-		            <a href="http://dx.doi.org/${externalId.workExternalIdentifierId.content}" target="_blank">${externalId.workExternalIdentifierId.content}</a>
+		        	<#if externalId.workExternalIdentifierId.content?starts_with('http://dx.doi.org/')>
+		            	<a href="http://dx.doi.org/${externalId.workExternalIdentifierId.content?replace('http://dx.doi.org/','')}" target="_blank">${externalId.workExternalIdentifierId.content}</a>
+		            <#else>
+		            	<a href="http://dx.doi.org/${externalId.workExternalIdentifierId.content}" target="_blank">${externalId.workExternalIdentifierId.content}</a>
+		            </#if>		            		            		            
 		        <#else>
 		            ${externalId.workExternalIdentifierId.content}
 		        </#if>
