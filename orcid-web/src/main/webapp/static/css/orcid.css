@@ -2232,3 +2232,11 @@ header overrides
      margin: 0;
      line-height: 1.1em;
 }
+
+.bottom-margin-small {
+	margin-bottom: 15px;
+}
+
+.bottom-margin-medium {
+	margin-bottom: 25px;
+}
