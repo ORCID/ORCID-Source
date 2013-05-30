@@ -149,6 +149,8 @@
 	<bean id="profileEntityManager" class="org.orcid.core.manager.impl.ProfileEntityManagerImpl" />
 
 	<bean id="externalIdentifierManager" class="org.orcid.core.manager.impl.ExternalIdentifierManagerImpl" />
+	
+	<bean id="profileWorkManager" class="org.orcid.core.manager.impl.ProfileWorkManagerImpl" />
 
 	<bean id="messageSource"
 		class="org.springframework.context.support.ReloadableResourceBundleMessageSource">

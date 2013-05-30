@@ -25,16 +25,19 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
 import org.orcid.core.manager.ExternalIdentifierManager;
+import org.orcid.core.manager.ProfileWorkManager;
 import org.orcid.core.manager.ThirdPartyImportManager;
 import org.orcid.frontend.web.forms.CurrentWork;
 import org.orcid.jaxb.model.clientgroup.OrcidClient;
 import org.orcid.jaxb.model.clientgroup.RedirectUri;
-import org.orcid.jaxb.model.clientgroup.RedirectUriType;
 import org.orcid.jaxb.model.message.ExternalIdentifier;
 import org.orcid.jaxb.model.message.ExternalIdentifiers;
 import org.orcid.jaxb.model.message.OrcidProfile;
+import org.orcid.jaxb.model.message.OrcidWork;
+import org.orcid.jaxb.model.message.OrcidWorks;
 import org.orcid.jaxb.model.message.SourceOrcid;
 import org.orcid.pojo.ThirdPartyRedirect;
+import org.orcid.pojo.Work;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -57,6 +60,9 @@ public class WorkspaceController extends BaseWorkspaceController {
 
     @Resource
     private ExternalIdentifierManager externalIdentifierManager;
+    
+    @Resource
+    private ProfileWorkManager profileWorkManager;
 
     @ModelAttribute("thirdPartiesForImport")
     public List<OrcidClient> retrieveThirdPartiesForImport() {
@@ -176,4 +182,31 @@ public class WorkspaceController extends BaseWorkspaceController {
 
         return externalIdentifier;
     }
+    
+    /**
+     * Removes a work from a profile
+     * */
+    @RequestMapping(value = "/works.json", method = RequestMethod.DELETE)
+    public @ResponseBody org.orcid.pojo.Work removeWorkJson(HttpServletRequest request, @RequestParam String putCode) {
+        //Get cached profile
+        OrcidProfile currentProfile = getCurrentUser().getEffectiveProfile();
+        OrcidWorks works = currentProfile.getOrcidActivities() == null ? null : currentProfile.getOrcidActivities().getOrcidWorks();
+        Work deletedWork = new Work();
+        if(works != null){
+            List<OrcidWork> workList = works.getOrcidWork();
+            Iterator<OrcidWork> workIterator = workList.iterator();
+            while(workIterator.hasNext()){
+                OrcidWork orcidWork = workIterator.next();                
+                if(putCode.equals(orcidWork.getPutCode())){
+                    workIterator.remove();
+                    deletedWork = new Work(orcidWork);
+                }
+            }
+            
+            currentProfile.getOrcidActivities().setOrcidWorks(works);
+            profileWorkManager.removeWork(putCode, currentProfile.getOrcid().getValue());
+        }
+        
+        return deletedWork;
+    }            
 }
