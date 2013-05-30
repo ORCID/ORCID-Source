@@ -65,7 +65,7 @@ public class ProfileLastModifiedAspect implements PriorityOrdered {
                 LOGGER.debug("Invalid ORCID for last modified date update: orcid={}, join point={}", orcid, joinPoint);
             }
         }
-        profileDao.updateLastModifiedDateWithoutResult(orcid);
+        profileDao.updateLastModifiedDateAndIndexingStatus(orcid);
     }
 
     @AfterReturning(POINTCUT_DEFINITION_BASE + " && args(profileAware, ..)")

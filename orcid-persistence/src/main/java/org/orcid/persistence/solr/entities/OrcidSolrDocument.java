@@ -86,6 +86,9 @@ public class OrcidSolrDocument {
     @Field(SolrConstants.PATENT_NUMBERS)
     private List<String> patentNumbers;
 
+    @Field(SolrConstants.PUBLIC_PROFILE)
+    private String publicProfileMessage;
+
     public String getOrcid() {
         return orcid;
     }
@@ -214,6 +217,14 @@ public class OrcidSolrDocument {
         this.patentNumbers = patentNumbers;
     }
 
+    public String getPublicProfileMessage() {
+        return publicProfileMessage;
+    }
+
+    public void setPublicProfileMessage(String publicProfileMessage) {
+        this.publicProfileMessage = publicProfileMessage;
+    }
+
     @Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this);
@@ -239,6 +250,7 @@ public class OrcidSolrDocument {
         result = prime * result + ((orcid == null) ? 0 : orcid.hashCode());
         result = prime * result + ((otherNames == null) ? 0 : otherNames.hashCode());
         result = prime * result + ((patentNumbers == null) ? 0 : patentNumbers.hashCode());
+        result = prime * result + ((publicProfileMessage == null) ? 0 : publicProfileMessage.hashCode());
         result = prime * result + ((workTitles == null) ? 0 : workTitles.hashCode());
         return result;
     }
@@ -331,6 +343,11 @@ public class OrcidSolrDocument {
             if (other.patentNumbers != null)
                 return false;
         } else if (!patentNumbers.equals(other.patentNumbers))
+            return false;
+        if (publicProfileMessage == null) {
+            if (other.publicProfileMessage != null)
+                return false;
+        } else if (!publicProfileMessage.equals(other.publicProfileMessage))
             return false;
         if (workTitles == null) {
             if (other.workTitles != null)

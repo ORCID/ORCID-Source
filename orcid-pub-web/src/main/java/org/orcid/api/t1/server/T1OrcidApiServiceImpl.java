@@ -90,7 +90,7 @@ public class T1OrcidApiServiceImpl implements OrcidApiService<Response> {
     @Path(BIO_PATH)
     public Response viewBioDetailsHtml(@PathParam("orcid") String orcid) {
         T1_GET_REQUESTS.inc();
-        Response response = serviceDelegator.findBioDetails(orcid);
+        Response response = serviceDelegator.findBioDetailsFromPublicCache(orcid);
         return Response.fromResponse(response).header("Content-Disposition", "attachment; filename=\"" + orcid + "-bio.xml\"").build();
     }
 
@@ -108,7 +108,7 @@ public class T1OrcidApiServiceImpl implements OrcidApiService<Response> {
     @Path(BIO_PATH)
     public Response viewBioDetailsXml(@PathParam("orcid") String orcid) {
         T1_GET_REQUESTS.inc();
-        return serviceDelegator.findBioDetails(orcid);
+        return serviceDelegator.findBioDetailsFromPublicCache(orcid);
     }
 
     /**
@@ -125,7 +125,7 @@ public class T1OrcidApiServiceImpl implements OrcidApiService<Response> {
     @Path(BIO_PATH)
     public Response viewBioDetailsJson(@PathParam("orcid") String orcid) {
         T1_GET_REQUESTS.inc();
-        return serviceDelegator.findBioDetails(orcid);
+        return serviceDelegator.findBioDetailsFromPublicCache(orcid);
     }
 
     /**
@@ -141,7 +141,7 @@ public class T1OrcidApiServiceImpl implements OrcidApiService<Response> {
     @Path(EXTERNAL_IDENTIFIER_PATH)
     public Response viewExternalIdentifiersHtml(@PathParam("orcid") String orcid) {
         T1_GET_REQUESTS.inc();
-        Response response = serviceDelegator.findExternalIdentifiers(orcid);
+        Response response = serviceDelegator.findExternalIdentifiersFromPublicCache(orcid);
         return Response.fromResponse(response).header("Content-Disposition", "attachment; filename=\"" + orcid + "-external-ids.xml\"").build();
     }
 
@@ -159,7 +159,7 @@ public class T1OrcidApiServiceImpl implements OrcidApiService<Response> {
     @Path(EXTERNAL_IDENTIFIER_PATH)
     public Response viewExternalIdentifiersXml(@PathParam("orcid") String orcid) {
         T1_GET_REQUESTS.inc();
-        return serviceDelegator.findExternalIdentifiers(orcid);
+        return serviceDelegator.findExternalIdentifiersFromPublicCache(orcid);
     }
 
     /**
@@ -176,7 +176,7 @@ public class T1OrcidApiServiceImpl implements OrcidApiService<Response> {
     @Path(EXTERNAL_IDENTIFIER_PATH)
     public Response viewExternalIdentifiersJson(@PathParam("orcid") String orcid) {
         T1_GET_REQUESTS.inc();
-        return serviceDelegator.findExternalIdentifiers(orcid);
+        return serviceDelegator.findExternalIdentifiersFromPublicCache(orcid);
     }
 
     /**
@@ -192,7 +192,7 @@ public class T1OrcidApiServiceImpl implements OrcidApiService<Response> {
     @Path(PROFILE_GET_PATH)
     public Response viewFullDetailsHtml(@PathParam("orcid") String orcid) {
         T1_GET_REQUESTS.inc();
-        Response response = serviceDelegator.findFullDetails(orcid);
+        Response response = serviceDelegator.findFullDetailsFromPublicCache(orcid);
         return Response.fromResponse(response).header("Content-Disposition", "attachment; filename=\"" + orcid + "-profile.xml\"").build();
     }
 
@@ -209,7 +209,7 @@ public class T1OrcidApiServiceImpl implements OrcidApiService<Response> {
     @Path(PROFILE_GET_PATH)
     public Response viewFullDetailsXml(@PathParam("orcid") String orcid) {
         T1_GET_REQUESTS.inc();
-        return serviceDelegator.findFullDetails(orcid);
+        return serviceDelegator.findFullDetailsFromPublicCache(orcid);
     }
 
     /**
@@ -225,7 +225,7 @@ public class T1OrcidApiServiceImpl implements OrcidApiService<Response> {
     @Path(PROFILE_GET_PATH)
     public Response viewFullDetailsJson(@PathParam("orcid") String orcid) {
         T1_GET_REQUESTS.inc();
-        return serviceDelegator.findFullDetails(orcid);
+        return serviceDelegator.findFullDetailsFromPublicCache(orcid);
     }
 
     /**
@@ -242,7 +242,7 @@ public class T1OrcidApiServiceImpl implements OrcidApiService<Response> {
     @Path(WORKS_PATH)
     public Response viewWorksDetailsHtml(@PathParam("orcid") String orcid) {
         T1_GET_REQUESTS.inc();
-        Response response = serviceDelegator.findWorksDetails(orcid);
+        Response response = serviceDelegator.findWorksDetailsFromPublicCache(orcid);
         return Response.fromResponse(response).header("Content-Disposition", "attachment; filename=\"" + orcid + "-works.xml\"").build();
     }
 
@@ -259,7 +259,7 @@ public class T1OrcidApiServiceImpl implements OrcidApiService<Response> {
     @Path(WORKS_PATH)
     public Response viewWorksDetailsXml(@PathParam("orcid") String orcid) {
         T1_GET_REQUESTS.inc();
-        return serviceDelegator.findWorksDetails(orcid);
+        return serviceDelegator.findWorksDetailsFromPublicCache(orcid);
     }
 
     /**
@@ -276,7 +276,7 @@ public class T1OrcidApiServiceImpl implements OrcidApiService<Response> {
     @Path(WORKS_PATH)
     public Response viewWorksDetailsJson(@PathParam("orcid") String orcid) {
         T1_GET_REQUESTS.inc();
-        return serviceDelegator.findWorksDetails(orcid);
+        return serviceDelegator.findWorksDetailsFromPublicCache(orcid);
     }
 
     /**
