@@ -19,8 +19,10 @@
 -->
 <dataset>
 	<!-- Empty tables here needed to ensure correct clean up in integration tests -->
-	<profile/>
+	<profile/>	
+	<profile_event/>
     <work/>
+    <work_external_identifier/>
     <profile_work/>
     <work_contributor/>
     <researcher_url/>
@@ -35,6 +37,6 @@
     <other_name/>
     <profile_keyword/>
     <profile_patent/>
-    <alternate_email/>
-    <webhook/>
+    <alternate_email/>    
+    <webhook/>    
 </dataset>
