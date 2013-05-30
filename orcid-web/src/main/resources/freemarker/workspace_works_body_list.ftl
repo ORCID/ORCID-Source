@@ -16,50 +16,49 @@
     =============================================================================
 
 -->
-<#if (currentWorks)??>
-
-	<ul ng-controller="WorkCtrl" class="workspace-publications workspace-body-list">
-        <#list currentWorks as work>
-        <#-- @ftlvariable name="work" type="org.orcid.frontend.web.forms.CurrentWork" -->
-            <li id="work_${work.putCode}">
-             	<span class="pull-right"><@orcid.privacyLabel work.visibility /></span>             
-                <h3 class="work-title"><b>${(work.title)!}</b><#if (work.subtitle)??>: <span class="work-subtitle">${(work.subtitle)!""}</span></#if><#if (work.year)??> <#if (work.month)??><@orcid.month work.month />-</#if>${work.year}</#if></h3>
-                <#if (work.currentWorkExternalIds)??>
-                    <#list work.currentWorkExternalIds as ei>
-                    <#-- @ftlvariable name="ei" type="org.orcid.frontend.web.forms.CurrentWorkExternalId" -->
-                        <#if (ei.type = 'doi') && (ei.id)??>
-                            <span class="work-metadata">${springMacroRequestContext.getMessage("workspace_works_body_list.DOI")} 
-                            	<#if ei.id?starts_with('http://dx.doi.org/')>
-                            		<a href="http://dx.doi.org/${ei.id?replace('http://dx.doi.org/','')}">
-                            	<#else>
-                            		<a href="http://dx.doi.org/${ei.id}">
-                            	</#if>
-                            		${ei.id}
-                            	</a>
-                            </span>
-                            <img onclick="javascript:window.open(&quot;http://dx.doi.org/${ei.id}&quot;)" style="cursor:pointer;" src="${staticCdn}/img/view_full_text.gif"><input type="hidden" value="null" name="artifacts[0].destApp"><input type="hidden" value="JOUR" name="artifacts[0].type"><input type="hidden" value="W" name="artifacts[0].uploadedBy">
-                        </#if>
-                    </#list>
-                </#if>
-                <#if (work.url)??>
-                    <div><a href="${work.url}">${work.url}</a></div>
-                </#if>
-                <#if (work.description)?? && work.description?has_content>
-                    <div>${work.description}</div>
-                <#else>
-                    <#if (work.citationForDisplay)??><div class="citation ${work.citationType}">${work.citationForDisplay}</div></#if>
-                </#if>
-                <span class="pull-right-level-two"><a href ng-click="deleteWork(${work.putCode}, '${work.title}')" class="icon-trash grey"></a></span>
+	<ul ng-controller="WorkCtrl" ng-hide="!worksPojo.works.length" class="workspace-publications workspace-body-list" ng-cloak>        
+            <li ng-repeat='work in worksPojo.works'>            	                
+            	<div class="pull-right">             		
+					<div class="relative">
+						<ul class="privacyToggle">
+							<li class="publicActive" ng-class="{publicInActive: work.visibility != 'PUBLIC'}"><a href="" title="PUBLIC" ng-click="setPrivacy($index, 'PUBLIC', $event)"></a></li>
+							<li class="limitedActive" ng-class="{limitedInActive: work.visibility != 'LIMITED'}"><a href="" title="LIMITED" ng-click="setPrivacy($index, 'LIMITED', $event)"></a></li>
+							<li class="privateActive" ng-class="{privateInActive: work.visibility != 'PRIVATE'}"><a href="" title="PRIVATE" ng-click="setPrivacy($index, 'PRIVATE', $event)"></a></li>
+						</ul>					   				
+					</div>
+					<div class="popover-help-container" style="position: absolute; left: 100px; top: 5px;">
+        				<a href="javascript:void(0);"><i class="icon-question-sign"></i></a>
+            			<div class="popover bottom">
+		        			<div class="arrow"></div>
+		        			<div class="popover-content">
+		        				<strong>${springMacroRequestContext.getMessage("privacyToggle.help.who_can_see")}</strong>
+			        			<ul class="privacyHelp">
+			        				<li class="public" style="color: #009900;">${springMacroRequestContext.getMessage("privacyToggle.help.everyone")}</li>
+			        				<li class="limited"style="color: #ffb027;">${springMacroRequestContext.getMessage("privacyToggle.help.trusted_parties")}</li>
+			        				<li class="private" style="color: #990000;">${springMacroRequestContext.getMessage("privacyToggle.help.only_me")}</li>
+			        			</ul>
+			        			<a href="http://support.orcid.org/knowledgebase/articles/124518-orcid-privacy-settings" target="_blank">${springMacroRequestContext.getMessage("privacyToggle.help.more_information")}</a>
+		        			</div>                
+		    			</div>
+    				</div>		             		             		    				
+             	</div>             
+                <h3 class="work-title">
+                	<b ng-bind-html-unsafe="work.workTitle.title.content"></b><span class="work-subtitle" ng-show="work.workTitle.subtitle.content" ng-bind-html-unsafe="':&nbsp;'.concat(work.workTitle.subtitle.content)"></span>
+                	<span ng-show="work.publicationDate.month.value">{{work.publicationDate.month.value}}-</span><span ng-show="work.publicationDate.year.value">{{work.publicationDate.year.value}}</span>
+                </h3>
+                <div ng-repeat='ie in work.workExternalIdentifiers.workExternalIdentifier'>
+                	<div ng-show="ie.workExternalIdentifierType=='DOI' && ie.workExternalIdentifierId.content">
+                		<span class="work-metadata">${springMacroRequestContext.getMessage("workspace_works_body_list.DOI")} <a href="http://dx.doi.org/{{ie.workExternalIdentifierId.content.replace('http://dx.doi.org/','')}}">{{ie.workExternalIdentifierId.content}}</a></span>
+                		<img onclick="javascript:window.open(&quot;http://dx.doi.org/{{ie.workExternalIdentifierId.content}}&quot;)" style="cursor:pointer;" src="${staticCdn}/img/view_full_text.gif"><input type="hidden" value="null" name="artifacts[0].destApp"><input type="hidden" value="JOUR" name="artifacts[0].type"><input type="hidden" value="W" name="artifacts[0].uploadedBy">
+                	</div>                	             
+                </div>
+                <div ng-show="work.url.value"><a href="{{work.url.value}}">{{work.url.value}}</a></div>
+                <div ng-show="work.shortDescription" ng-bind-html-unsafe="work.shortDescription"></div>
+                <div ng-show="work.citationForDisplay" class="citation {{work.workCitation.workCitationType.toLowerCase()}}" ng-bind-html-unsafe="work.citationForDisplay"></div>
+                <span class="pull-right-level-two"><a href ng-click="deleteWork($index)" class="icon-trash grey"></a></span>
             </li>           
-        </#list>
 	</ul>
 	
-	<#--<#if profile.orcidActivities.orcidWorks.orcidWork?size &gt; 10>
-		<p><a href="<@spring.url '/publications/manage'/>" class="btn btn-primary">${springMacroRequestContext.getMessage("workspace_works_body_list.Viewmore")} <span class="icon-arrow-right"></span></a></p>
-	</#if>-->
-
-<#else>
-    <div class="alert alert-info">
+    <div ng-controller="WorkCtrl" ng-hide="worksPojo.works.length" class="alert alert-info">
         <strong><#if (publicProfile)?? && publicProfile == true>${springMacroRequestContext.getMessage("workspace_works_body_list.Nopublicationsaddedyet")}<#else>${springMacroRequestContext.getMessage("workspace_works_body_list.havenotaddedanyworks")} <a href="<@spring.url '/works-update'/>" class="update">${springMacroRequestContext.getMessage("workspace_works_body_list.addsomenow")}</a></#if></strong>
     </div>
-</#if>
