@@ -28,7 +28,7 @@
                     <#list work.currentWorkExternalIds as ei>
                     <#-- @ftlvariable name="ei" type="org.orcid.frontend.web.forms.CurrentWorkExternalId" -->
                         <#if (ei.type = 'doi') && (ei.id)??>
-                             <span class="work-metadata">${springMacroRequestContext.getMessage("workspace_works_body_list.DOI")} 
+                            <span class="work-metadata">${springMacroRequestContext.getMessage("workspace_works_body_list.DOI")} 
                             	<#if ei.id?starts_with('http://dx.doi.org/')>
                             		<a href="http://dx.doi.org/${ei.id?replace('http://dx.doi.org/','')}">
                             	<#else>
