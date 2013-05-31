@@ -48,7 +48,7 @@
     <div class="relative">
         <@spring.formSingleSelect "manualWork.day", days 'class="span1"'/>
         <@spring.formSingleSelect "manualWork.month", months 'class="span1"'/>
-        <@spring.formSingleSelect "manualWork.year", years 'class="span1"' />
+        <@spring.formSingleSelect "manualWork.year", years 'class="span2"' />
     </div>
 </div>
 <div class="control-group">

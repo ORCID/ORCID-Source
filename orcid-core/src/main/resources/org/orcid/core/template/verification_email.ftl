@@ -18,7 +18,7 @@
 -->
 Dear ${emailName},
 
-Thank you for verifying your email address.
+Thank you for adding this email address to your ORCID record.
 
 You can manage your ORCID record at http://orcid.org/${orcid}
 
