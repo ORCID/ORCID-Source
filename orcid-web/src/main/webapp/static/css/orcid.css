@@ -1783,7 +1783,7 @@ a:hover {
 
 #third-parties {
      padding: 25px;
-     width: 600px;
+     width: 700px;
 }
 
 .no-icon {
@@ -1926,7 +1926,7 @@ TODO: fix up button colours in less
 
 .btn-primary:hover {
      background: #a6ce39;
-     text-shadow:none;
+     text-shadow:none;    
 }
 
 /*
@@ -2233,10 +2233,34 @@ header overrides
      line-height: 1.1em;
 }
 
+#third-parties .span9 {
+	margin-left: 0;
+	width: 680px;
+}
+
+#third-parties .footer {
+	background: none;
+	border-top: 1px solid #CACACA;
+	font-size: 13px;
+  	margin-top: 30px; 
+}
+
+#add-manually .span2 {
+	width: 75px;
+}
+
 .bottom-margin-small {
 	margin-bottom: 15px;
 }
 
 .bottom-margin-medium {
 	margin-bottom: 25px;
+}
+
+.workspace-left a:hover {
+	color: #FFF !important;
+} 
+
+.justify {
+	text-align: justify;
 }
