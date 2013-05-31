@@ -16,8 +16,8 @@
     =============================================================================
 
 -->
-	<ul ng-controller="WorkCtrl" ng-hide="!worksPojo.works.length" class="workspace-publications workspace-body-list" ng-cloak>        
-            <li ng-repeat='work in worksPojo.works'>            	                
+	<ul ng-controller="WorkCtrl" ng-hide="!worksPojo.works.length" class="workspace-publications workspace-body-list bottom-margin-medium" ng-cloak>        
+            <li class="bottom-margin-small" ng-repeat='work in worksPojo.works'>            	                
             	<div class="pull-right">             		
 					<div class="relative">
 						<ul class="privacyToggle">

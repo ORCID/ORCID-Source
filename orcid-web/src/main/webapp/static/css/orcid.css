@@ -2249,6 +2249,14 @@ header overrides
 	width: 75px;
 }
 
+.bottom-margin-small {
+	margin-bottom: 15px;
+}
+
+.bottom-margin-medium {
+	margin-bottom: 25px;
+}
+
 .workspace-left a:hover {
 	color: #FFF !important;
 } 
