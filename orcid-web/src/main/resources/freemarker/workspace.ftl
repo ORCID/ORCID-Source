@@ -101,16 +101,29 @@
     	        <ul class="workspace-help">
     	        	<li><a href="#third-parties" class="colorbox-modal">${springMacroRequestContext.getMessage("workspace.ImportResearchActivities")}</a></li>
     	        </ul>
-    	        <div class="inline-modal" id="third-parties">
-    	           <h1>${springMacroRequestContext.getMessage("workspace.ImportResearchActivities")}</h1>
-    	           <br />
-    	           <#list thirdPartiesForImport as thirdPartyDetails>
+    	        <div class="inline-modal" id="third-parties">					
+					<div class="span9">
+	           			<h1 class="lightbox-title pull-left">${springMacroRequestContext.getMessage("workspace.ImportResearchActivities")?upper_case}</h1>
+	           			<a class="btn pull-right close-button">X</a>
+	           		</div>
+	           		<br />          		
+    	           	<div class="justify">${springMacroRequestContext.getMessage("workspace.ImportResearchActivities.description")}</div>
+    	           	<br />    	           	
+    	           	<#list thirdPartiesForImport as thirdPartyDetails>
                         <#assign redirect = (thirdPartyDetails.redirectUris.redirectUri[0].value) >
                         <#assign predefScopes = (thirdPartyDetails.redirectUris.redirectUri[0].scopeAsSingleString) >
                         <strong><a class="third-party-colorbox" href="<@spring.url '/oauth/authorize?client_id=${thirdPartyDetails.clientId}&response_type=code&scope=${predefScopes}&redirect_uri=${redirect}'/>">${thirdPartyDetails.displayName}</a></strong><br />
-                        ${(thirdPartyDetails.shortDescription)!}<#if (thirdPartyDetails_has_next)><hr /></#if>
+                        <div class="justify">${(thirdPartyDetails.shortDescription)!}</div>
+                        <#if (thirdPartyDetails_has_next)><hr /></#if>
                     </#list>
-                    <br /><br />
+                    <br />
+                    <div class="footer">
+	                    <#noescape>
+	                    	<strong>${springMacroRequestContext.getMessage("workspace.ImportResearchActivities.footer.title")}</strong>
+	                    </#noescape>
+	                    <br />
+	                    ${springMacroRequestContext.getMessage("workspace.ImportResearchActivities.footer.description1")} <a href="${springMacroRequestContext.getMessage("workspace.ImportResearchActivities.footer.description.url")}">${springMacroRequestContext.getMessage("workspace.ImportResearchActivities.footer.description.link")}</a> ${springMacroRequestContext.getMessage("workspace.ImportResearchActivities.footer.description2")}
+                    </div>
     	        </div>
 	        </#if>
         </div>
