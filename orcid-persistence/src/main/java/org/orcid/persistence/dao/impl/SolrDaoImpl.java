@@ -39,8 +39,11 @@ import schema.constants.SolrConstants;
 
 public class SolrDaoImpl implements SolrDao {
 
-    @Resource
+    @Resource(name="solrServer")
     private SolrServer solrServer;
+    
+    @Resource(name="solrServerReadOnly")
+    private SolrServer solrServerReadOnly;
 
     @Override
     public void persist(OrcidSolrDocument orcidSolrDocument) {
@@ -74,7 +77,7 @@ public class SolrDaoImpl implements SolrDao {
         query.setQuery(SolrConstants.ORCID + ":" + orcid).setFields("score");
         ;
         try {
-            QueryResponse queryResponse = solrServer.query(query);
+            QueryResponse queryResponse = solrServerReadOnly.query(query);
             if (!queryResponse.getResults().isEmpty()) {
                 SolrDocument solrDocument = queryResponse.getResults().get(0);
                 orcidSolrResult = new OrcidSolrResult();
@@ -100,7 +103,7 @@ public class SolrDaoImpl implements SolrDao {
         if (rows != null)
             query.setRows(rows);
         try {
-            QueryResponse queryResponse = solrServer.query(query);
+            QueryResponse queryResponse = solrServerReadOnly.query(query);
             for (SolrDocument solrDocument : queryResponse.getResults()) {
                 OrcidSolrResult orcidSolrResult = new OrcidSolrResult();
                 orcidSolrResult.setRelevancyScore((Float) solrDocument.getFieldValue("score"));
@@ -135,7 +138,7 @@ public class SolrDaoImpl implements SolrDao {
         }
 
         try {
-            QueryResponse queryResponse = solrServer.query(solrQuery.setFields("score"));
+            QueryResponse queryResponse = solrServerReadOnly.query(solrQuery.setFields("score"));
             for (SolrDocument solrDocument : queryResponse.getResults()) {
                 OrcidSolrResult orcidSolrResult = new OrcidSolrResult();
                 orcidSolrResult.setRelevancyScore((Float) solrDocument.get("score"));
