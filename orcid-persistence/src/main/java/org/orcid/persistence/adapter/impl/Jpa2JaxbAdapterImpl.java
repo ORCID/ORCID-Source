@@ -696,7 +696,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         return null;
     }
 
-    private OrcidWork getOrcidWork(ProfileWorkEntity profileWorkEntity) {
+    public OrcidWork getOrcidWork(ProfileWorkEntity profileWorkEntity) {
         WorkEntity work = profileWorkEntity.getWork();
         if (work == null) {
             return null;

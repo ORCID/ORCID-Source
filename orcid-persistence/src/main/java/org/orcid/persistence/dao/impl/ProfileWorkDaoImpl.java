@@ -72,4 +72,24 @@ public class ProfileWorkDaoImpl extends GenericDaoImpl<ProfileWorkEntity, Profil
         return query.executeUpdate() > 0 ? true : false;
     }
     
+    /**
+     * Get the profile work associated with the client orcid and the workId 
+     * 
+     * @param clientOrcid
+     *          The client orcid
+     *          
+     * @param workId
+     *          The id of the work that will be updated
+     *          
+     * @return the profileWork object
+     * */    
+    @Override
+    @Transactional    
+    public ProfileWorkEntity getProfileWork(String clientOrcid, String workId){
+        Query query = entityManager.createQuery("from ProfileWorkEntity where profile.id=:clientOrcid and work.id=:workId");
+        query.setParameter("clientOrcid", clientOrcid);
+        query.setParameter("workId", Long.valueOf(workId));
+        return (ProfileWorkEntity) query.getSingleResult(); 
+    }
+    
 }
