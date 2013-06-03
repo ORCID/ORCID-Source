@@ -234,6 +234,10 @@
 				</tbody>
 			</table>
 			
+			<script type="text/ng-template" id="deactivate-account-modal">
+				<div style="padding: 20px;" class="colorbox-modal"><h3>${springMacroRequestContext.getMessage("manage.deactivateSend")} <span ng-bind="primaryEmail"></span></h3>
+				<button class="btn" ng-click="closeModal()">${springMacroRequestContext.getMessage("manage.deactivateSend.close")}</button>
+			</script>
 			
               <div class="popover bottom password-details settings-password">
                 <div class="arrow"></div>

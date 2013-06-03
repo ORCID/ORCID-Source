@@ -183,27 +183,28 @@ function PrivacyPreferencesCtrl($scope, $http) {
 };
 
 
-function DeactivateAccountCtrl($scope, $http) {
+function DeactivateAccountCtrl($scope, $compile) {
 	$scope.sendDeactivateEmail = function() {
 		orcidGA.gaPush(['_trackEvent', 'Disengagement', 'Deactivate_Initiate', 'Website']);
 		$.ajax({
 	        url: $('body').data('baseurl') + 'account/send-deactivate-account.json',
 	        dataType: 'json',
 	        success: function(data) {
+	        	$scope.primaryEmail = data.value;
 	    	    $.colorbox({
-	    	        html : $('<div style="padding: 20px;" class="colorbox-modal"><h3>' + OM.getInstance().get("manage.deactivateSend") + data.value + '</h3>'
-	    	            	+ '<div class="btn" id="modal-close">' + OM.getInstance().get("manage.deactivateSend.close") + '</div>')	            	
+	    	        html : $compile($('#deactivate-account-modal').html())($scope)	            	
 	    	    });
+	    	    $scope.$apply();
 	    	    $.colorbox.resize();
-	    	    $('#modal-close').click(function(e) {
-	    	    	$.colorbox.close();
-	    	    });
 	        }
 	    }).fail(function() { 
 	    	// something bad is happening!
 	    	console.log("error with change DeactivateAccount");
 	    });
-
+	};
+	
+	$scope.closeModal = function() {
+		$.colorbox.close();
 	};
 };
 
