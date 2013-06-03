@@ -899,14 +899,36 @@ function ClaimThanks($scope, $compile) {
 	
 };
 
-function WorkCtrl($scope){
+function WorkCtrl($scope, $compile){
+	$scope.works = new Array();
+	
+	$scope.addWorkToScope = function(workIds){
+		if(workIds.length != 0 ) {
+			var workId = workIds[0];			
+			$.ajax({
+				url: $('body').data('baseurl') + 'my-orcid/work.json?workId=' + workId,
+				dataType: 'json',
+				success: function(data) {
+					$scope.$apply(function(){    					
+						$scope.works.push(data);
+					});   			
+					workIds.splice(0,1);
+					$scope.addWorkToScope(workIds);
+				}
+			}).fail(function() { 
+		    	console.log("Error fetching work: " + value);
+		    });
+		}
+	}; 
+	
+	
 	$scope.getWorks = function(){
 		$.ajax({
 			url: $('body').data('baseurl') + 'my-orcid/works.json',	        
 	        dataType: 'json',
 	        success: function(data) {
-	        	$scope.worksPojo = data;
-	        	$scope.$apply();
+	        	var workIds = data;	        	
+	        	$scope.addWorkToScope(workIds);	        	
 	        }
 		}).fail(function(){
 			// something bad is happening!
@@ -917,34 +939,33 @@ function WorkCtrl($scope){
 	//init
 	$scope.getWorks();
 	
-	$scope.deleteWork = function(idx) {
-		$.colorbox({        	
-            html: function(){
-            	var fixedTitle = $scope.worksPojo.works[idx].workTitle.title.content;
-            	var maxSize = 100;
-            	if(fixedTitle.length > maxSize)
-            		fixedTitle = fixedTitle.substring(0, maxSize) + '...';
-            	return '<div style="padding: 20px;" class="colorbox-modal"><h3>' + OM.getInstance().get("manage.deleteWork.pleaseConfirm") + '<br />' + fixedTitle + '</h3>'
-	            	+ '<div class="btn btn-danger" id="modal-del-work">' + OM.getInstance().get("manage.deleteWork.delete") + '</div> <a href="" id="modal-cancel">' + OM.getInstance().get("manage.deleteWork.cancel") + '</a><div>'; 
-            }
-            	
+	$scope.deleteWork = function(idx) {		
+		$scope.deleteIndex = idx;
+		$scope.fixedTitle = $scope.works[idx].workTitle.title.content;
+        var maxSize = 100;
+        if($scope.fixedTitle.length > maxSize)
+        	$scope.fixedTitle = $scope.fixedTitle.substring(0, maxSize) + '...';
+		$.colorbox({        	            
+            html : $compile($('#delete-work-modal').html())($scope)           
         });
-        $.colorbox.resize();
-        $('#modal-del-work').click(function(e) {        	        	
-        	var work = $scope.worksPojo.works[idx];
-        	// remove work on server
-    		$scope.removeWork(work);
-    		// remove the work from the UI
-        	$scope.worksPojo.works.splice(idx, 1);
-        	// apply changes on scope
-    		$scope.$apply();
-    		// close box
-    		$.colorbox.close();        	
-        });
-        $('#modal-cancel').click(function(e) {
-        	e.preventDefault();
-        	$.colorbox.close();
-        });
+		$scope.$apply(); 
+        $.colorbox.resize();        
+	};
+	
+	$scope.deleteByIndex = function() {		
+		var work = $scope.works[$scope.deleteIndex];
+    	// remove work on server
+		$scope.removeWork(work);
+		// remove the work from the UI
+    	$scope.works.splice($scope.deleteIndex, 1);
+    	// apply changes on scope
+		$scope.$apply();
+		// close box
+		$.colorbox.close(); 
+	};
+	
+	$scope.closeModal = function() {
+		$.colorbox.close();
 	};
 	
 	$scope.removeWork = function(work) {
@@ -966,13 +987,13 @@ function WorkCtrl($scope){
 		
 	$scope.setPrivacy = function(idx, priv, $event) {
 		$event.preventDefault();
-		$scope.worksPojo.works[idx].visibility = priv;
+		$scope.works[idx].visibility = priv;
 		$scope.curPrivToggle = null;
 		$scope.updateProfileWork(idx);
 	};
 	
 	$scope.updateProfileWork = function(idx) {
-		var work = $scope.worksPojo.works[idx];
+		var work = $scope.works[idx];
 		$.ajax({
 	        url: $('body').data('baseurl') + 'my-orcid/profileWork.json',
 	        type: 'PUT',
