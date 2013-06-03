@@ -281,7 +281,7 @@ function PasswordEditCtrl($scope, $http) {
 	};
 };
 
-function EmailEditCtrl($scope, $http) {
+function EmailEditCtrl($scope, $compile) {
 	$scope.getEmails = function() {
 		$.ajax({
 	        url: $('body').data('baseurl') + 'account/emails.json',
@@ -344,6 +344,7 @@ function EmailEditCtrl($scope, $http) {
 	};
 	
 	$scope.verifyEmail = function(idx) {
+		$scope.verifyEmailIdx = idx;
 		$.ajax({
 	        url: $('body').data('baseurl') + 'account/verifyEmail.json',
 	        type: 'get',
@@ -351,22 +352,22 @@ function EmailEditCtrl($scope, $http) {
 	        contentType: 'application/json;charset=UTF-8',
 	        dataType: 'json',
 	        success: function(data) {
-	        	//alert( "Verification Email Send To: " + $scope.emailsPojo.emails[idx].value); 	
+	    	    $.colorbox({
+	    	        html : $compile($('#verify-email-modal').html())($scope)
+	    	    });
+	    	    $scope.$apply();
+	    	    $.colorbox.resize();
 	        }
 	    }).fail(function() { 
 	    	// something bad is happening!
 	    	console.log("error with multi email");
 	    });  
-	    $.colorbox({
-	        html : $('<div style="padding: 20px;" class="colorbox-modal"><h3>' + OM.getInstance().get("manage.email.verificationEmail") + ' ' + $scope.emailsPojo.emails[idx].value + '</h3>'
-	            	+ '<div class="btn" id="modal-close">' + OM.getInstance().get("manage.email.verificationEmail.close") + '</div>')
-	            	
-	    });
-	    $.colorbox.resize();
-	    $('#modal-close').click(function(e) {
-	    	$.colorbox.close();
-	    });
 	};
+	
+	$scope.closeModal = function() {
+		$.colorbox.close();
+	};
+
 
 	$scope.saveEmail = function() {
 		$.ajax({
@@ -408,27 +409,17 @@ function EmailEditCtrl($scope, $http) {
 	};
 	
 	$scope.confirmDeleteEmail = function(idx) {
+		    $scope.deleteEmailIdx = idx;
             $.colorbox({
-                html : $('<div style="padding: 20px;" class="colorbox-modal"><h3>'+ OM.getInstance().get("manage.email.pleaseConfirmDeletion") + ' ' + $scope.emailsPojo.emails[idx].value + '</h3>'
-                	+ '<div class="btn btn-danger" id="modal-del-email">'
-                	+ OM.getInstance().get("manage.email.deleteEmail") 
-                	+ ' </div> <a href="" id="modal-cancel">' + OM.getInstance().get("manage.email.cancel") + '</a><div>')
+                html : $compile($('#delete-email-modal').html())($scope)
                 	
             });
             $.colorbox.resize();
-            $('#modal-del-email').click(function(e) {
-        	var email = $scope.emailsPojo.emails[idx];
-                $scope.emailsPojo.emails.splice(idx, 1);
-                $scope.deleteEmail(email);
-                $.colorbox.close();
-            });
-            $('#modal-cancel').click(function(e) {
-                e.preventDefault();
-                $.colorbox.close();
-            });
 	};
 	
-	$scope.deleteEmail = function (email) {
+	$scope.deleteEmail = function () {
+		var email = $scope.emailsPojo.emails[$scope.deleteEmailIdx];
+		$scope.deleteEmailIdx = null;
 		$.ajax({
 	        url: $('body').data('baseurl') + 'account/deleteEmail.json',
 	        type: 'DELETE',
@@ -443,6 +434,7 @@ function EmailEditCtrl($scope, $http) {
 					$scope.getEmails();
 				}
 	        	$scope.$apply();
+	        	$scope.closeModal();
 	        }
 	    }).fail(function() { 
 	    	// something bad is happening!
