@@ -199,7 +199,7 @@
 		<h4>${springMacroRequestContext.getMessage("workspace.sent")}</h4>
 		${springMacroRequestContext.getMessage("workspace.check_your_email")}<br />
 		<br />
-		<span class="btn" id="modal-close" ng-click="closeColorBox()">${springMacroRequestContext.getMessage("freemarker.btnclose")}</span>
+		<span class="btn" ng-click="closeColorBox()">${springMacroRequestContext.getMessage("freemarker.btnclose")}</span>
 	</div>
 </script>
 
@@ -220,6 +220,14 @@
 		<button class="btn btn-primary" ng-click="yes()"><@spring.message "orcid.frontend.web.record_claimed.yes_go_to" /></button>
 		<button class="btn" ng-click="close()"><@spring.message "orcid.frontend.web.record_claimed.no_thanks" /></button>
 	</div>
+</script>
+
+<script type="text/ng-template" id="delete-external-id-modal">
+	<div style="padding: 20px;">
+		<h3>${springMacroRequestContext.getMessage("manage.deleteExternalIdentifier.pleaseConfirm")} {{removeExternalModalText}} </h3>
+		<button class="btn btn-danger" ng-click="removeExternalIdentifier()">${springMacroRequestContext.getMessage("manage.deleteExternalIdentifier.delete")}</button> 
+		<a href="" ng-click="closeModal()">${springMacroRequestContext.getMessage("manage.deleteExternalIdentifier.cancel")}</a>
+	<div>
 </script>
 	
 </@protected>

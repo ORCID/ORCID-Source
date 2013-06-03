@@ -445,7 +445,7 @@ function EmailEditCtrl($scope, $compile) {
 };
 
 
-function ExternalIdentifierCtrl($scope, $http){		
+function ExternalIdentifierCtrl($scope, $compile){		
 	$scope.getExternalIdentifiers = function(){
 		$.ajax({
 			url: $('body').data('baseurl') + 'my-orcid/externalIdentifiers.json',	        
@@ -464,36 +464,21 @@ function ExternalIdentifierCtrl($scope, $http){
 	$scope.getExternalIdentifiers();
 	
 	$scope.deleteExternalIdentifier = function(idx) {
+		$scope.removeExternalIdentifierIndex = idx;
+		$scope.removeExternalModalText = $scope.externalIdentifiersPojo.externalIdentifiers[idx].externalIdReference.content;
+		if ($scope.externalIdentifiersPojo.externalIdentifiers[idx].externalIdCommonName != null)
+			$scope.removeExternalModalText = $scope.externalIdentifiersPojo.externalIdentifiers[idx].externalIdCommonName.content + ' ' + $scope.removeExternalModalText;
         $.colorbox({        	
-            html: function(){
-            	var value = '';
-            	if($scope.externalIdentifiersPojo.externalIdentifiers[idx].externalIdCommonName != null)
-            		value = $scope.externalIdentifiersPojo.externalIdentifiers[idx].externalIdCommonName.content + ' ';
-            	value += $scope.externalIdentifiersPojo.externalIdentifiers[idx].externalIdReference.content;
-            	return '<div style="padding: 20px;" class="colorbox-modal"><h3>' + OM.getInstance().get("manage.deleteExternalIdentifier.pleaseConfirm") + ' ' + value + '</h3>'
-	            	+ '<div class="btn btn-danger" id="modal-del-external-identifier">' + OM.getInstance().get("manage.deleteExternalIdentifier.delete") + '</div> <a href="" id="modal-cancel">' + OM.getInstance().get("manage.deleteExternalIdentifier.cancel") + '</a><div>'; 
-            }
+            html: $compile($('#delete-external-id-modal').html())($scope)
             	
         });
         $.colorbox.resize();
-        $('#modal-del-external-identifier').click(function(e) {
-        	var externalIdentifier = $scope.externalIdentifiersPojo.externalIdentifiers[idx];
-        	// remove the external identifier on server
-    		$scope.removeExternalIdentifier(externalIdentifier);
-    		// remove the external identifier from the UI
-        	$scope.externalIdentifiersPojo.externalIdentifiers.splice(idx, 1);
-        	// apply changes on scope
-    		$scope.$apply();
-    		// close box
-    		$.colorbox.close();
-        });
-        $('#modal-cancel').click(function(e) {
-        	e.preventDefault();
-        	$.colorbox.close();
-        });
 	};
 	
-	$scope.removeExternalIdentifier = function(externalIdentifier) {
+	$scope.removeExternalIdentifier = function() {
+		var externalIdentifier = $scope.externalIdentifiersPojo.externalIdentifiers[$scope.removeExternalIdentifierIndex];
+		$scope.externalIdentifiersPojo.externalIdentifiers.splice($scope.removeExternalIdentifierIndex, 1);
+		$scope.removeExternalIdentifierIndex = null;
 		$.ajax({
 	        url: $('body').data('baseurl') + 'my-orcid/externalIdentifiers.json',
 	        type: 'DELETE',
@@ -508,7 +493,13 @@ function ExternalIdentifierCtrl($scope, $http){
 	    }).fail(function() { 
 	    	console.log("Error deleting external identifier.");
 	    });
+		$scope.closeModal();
 	};
+	
+	$scope.closeModal = function() {
+		$.colorbox.close();
+	};
+	
 };	
 
 
