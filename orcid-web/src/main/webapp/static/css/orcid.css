@@ -1661,18 +1661,6 @@ a:hover {
 }
 
 .popover-frame .help-block,
-.password-details .help-block {
-	overflow: hidden;
-	margin: 0 50px 20px;
-	padding: 10px 10px 0 10px;
-	background: #f7f7f7;
-	font-size: 14px;
-	color: #949599;
-}
-
-.password-details .help-block {
-     margin:0;
-}
 
 .help-block p {
 	margin-bottom: 10px;
@@ -1819,11 +1807,6 @@ a:hover {
 
 ul {
      list-style: none;
-}
-
-.password-details {
-     top: 22px;
-     left: 254px;
 }
 
 label.error, span.orcid-error {
@@ -2108,12 +2091,6 @@ header overrides
 
 .span-year {
      width: 100px;
-}
-
-.password-group .required {
-     position: absolute;
-     left: 358px;
-     top: 6px;
 }
 
 .maintenance-header {

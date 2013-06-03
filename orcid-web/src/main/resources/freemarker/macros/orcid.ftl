@@ -298,3 +298,26 @@ kind of variable. This temp value is only used in this macro lib -->
 <#macro showGlobalErrorsUnescaped>
     <#list spring.status.errors.globalErrors?sort as error> <span class="orcid-error">${springMacroRequestContext.getMessage(error, false)}</span><#if error_has_next><br/></#if></#list>
 </#macro>
+
+<#macro passwordHelpPopup>
+	<div class="popover-help-container" style="display: inline; position: relative;">
+		<a href="javascript:void(0);"><i class="icon-question-sign"></i></a>
+		<div id="name-help" class="popover bottom">
+			<div class="arrow"></div>
+			<div class="popover-content">
+		    	<p>${springMacroRequestContext.getMessage("password_one_time_reset.labelmust8more")}</p>
+		        <ul>
+					<li>${springMacroRequestContext.getMessage("password_one_time_reset.labelatleast09")}</li>
+					<li>${springMacroRequestContext.getMessage("password_one_time_reset.labelatleast1following")}</li>
+					<ul>
+						<li>${springMacroRequestContext.getMessage("password_one_time_reset.labelalphacharacter")}</li>
+						<li>${springMacroRequestContext.getMessage("password_one_time_reset.labelanyoffollow")}<br /> ! @ # $ % ^ * ( ) ~ `{ } [ ] | \ &amp; _</li>
+					</ul>
+					<li>${springMacroRequestContext.getMessage("password_one_time_reset.labeloptionallyspace")}</li>
+				</ul>                         
+				<br />              
+				<p><strong>${springMacroRequestContext.getMessage("password_one_time_reset.examplesunmoon")}</strong></p>
+			</div>                
+		</div>
+	</div>
+</#macro>

@@ -28,20 +28,6 @@
 		<div class="span9">
 			<h1 id="account-settings">${springMacroRequestContext.getMessage("manage.account_settings")}</h1>
 			<#assign open = "" />
-			<@spring.bind "managePasswordOptionsForm.*" />
-			<#if spring.status.error>
-				<#assign open="password" />
-				<div class="alert alert-error">
-				    <ul class="validationerrors">
-				        <#list spring.status.errorMessages?sort as error> <li>${error}</li> </#list>
-				    </ul>
-				</div>
-			</#if>
-			<#if passwordOptionsSaved?? && passwordOptionsSaved>
-				<div class="alert alert-success">
-				    <strong><@spring.message "orcid.frontend.web.passwordoptions_changed"/></strong>
-				</div>
-			</#if>
 			
 			<table class="table table-bordered settings-table" id="ng-app" ng-app="orcidApp" ng-controller="EditTableCtrl" style="margin: 0px, padding: 0px;">
 				<tbody>
@@ -123,7 +109,7 @@
 							    	<div class="relative">
 							        	<input id="password" type="password" name="password" ng-model="changePasswordPojo.password" class="input-xlarge"/>
 							        	<span class="required">*</span>
-							        	<a class="password-info" href="#"><i class="icon-question-sign"></i></a>    
+							        	<@orcid.passwordHelpPopup />    
 							    	</div>
 								</div>
 								<div>
@@ -248,27 +234,7 @@
 				<div style="padding: 20px;"><h3>${springMacroRequestContext.getMessage("manage.email.pleaseConfirmDeletion")} {{emailsPojo.emails[deleteEmailIdx].value}}</h3>
 				<button class="btn btn-danger" ng-click="deleteEmail()">${springMacroRequestContext.getMessage("manage.email.deleteEmail")}</button> 
 				<a href="" ng-click="closeModal()">${springMacroRequestContext.getMessage("manage.email.cancel")}</a><div>
-			</script>
-			
-              <div class="popover bottom password-details settings-password">
-                <div class="arrow"></div>
-                <div class="popover-content">
-                    <div class="help-block">
-                    	<p>${springMacroRequestContext.getMessage("manage.must8morecharacters")}</p>
-                     	<ul>
-                           	<li>${springMacroRequestContext.getMessage("manage.liatleast09")}</li>
-                           	<li>${springMacroRequestContext.getMessage("manage.liatleast1following")}</li>
-                               	<ul>
-                                  	<li>${springMacroRequestContext.getMessage("manage.lialphacharacter")}</li>
-                                    <li>${springMacroRequestContext.getMessage("manage.lianysymbols")}<br /> ! @ # $ % ^ * ( ) ~ `{ } [ ] | \ &amp; _</li>
-                                </ul>
-                            <li>${springMacroRequestContext.getMessage("manage.limanagespacecharacters")}</li>
-                        </ul>
-                        <p>${springMacroRequestContext.getMessage("manage.examplesunmoon2")}</p>
-                    </div>
-                </div>
-            </div>   
-            
+			</script>            
             
             <h1 id="manage-permissions">${springMacroRequestContext.getMessage("manage.manage_permissions")}</h1>
 			<h3><b>${springMacroRequestContext.getMessage("manage.trusted_organisations")}</b></h3>

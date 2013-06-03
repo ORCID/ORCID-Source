@@ -27,30 +27,12 @@
     			</div>
     		</#if>               
             <form id="reset-password-one-time" name="oneTimeResetForm" action="<@spring.url '/one-time-password/${encryptedEmail}'/>" method="post" autocomplete="off">
-                    <div class="control-group password-group">
+                    <div class="control-group">
                         <label for="passwordTypeAndConfirmForm.password" class="control-label">${springMacroRequestContext.getMessage("password_one_time_reset.labelpassword")}</label>
                         <div class="controls">
-                            <a class="password-info" href="#"><i class="icon-question-sign"></i></a>
-                        	<input id="passwordField" type="password" name="password" value="${(passwordTypeAndConfirmForm.password)!}" class="input-xlarge password-strength" data-validate="{required:true}"/>                            
-                            <span class="required">*</span>                            
-                        </div>
-        	 			<div class="popover bottom password-details">
-                        	<div class="arrow"></div>
-                        	<div class="popover-content">
-	                        	<div class="help-block">
-                                        <p>${springMacroRequestContext.getMessage("password_one_time_reset.labelmust8more")}</p>
-                                        <ul>
-                                            <li>${springMacroRequestContext.getMessage("password_one_time_reset.labelatleast09")}</li>
-                                            <li>${springMacroRequestContext.getMessage("password_one_time_reset.labelatleast1following")}</li>
-                                            <ul>
-                                            	<li>${springMacroRequestContext.getMessage("password_one_time_reset.labelalphacharacter")}</li>
-                                            	<li>${springMacroRequestContext.getMessage("password_one_time_reset.labelanyoffollow")}<br /> ! @ # $ % ^ * ( ) ~ `{ } [ ] | \ &amp; _</li>
-                                            </ul>
-                                            <li>${springMacroRequestContext.getMessage("password_one_time_reset.labeloptionallyspace")}</li>
-                                        </ul>                                       
-                                        <p>${springMacroRequestContext.getMessage("password_one_time_reset.examplesunmoon")}</p>
-                                    </div>
-                        	</div>
+                            <input id="passwordField" type="password" name="password" value="${(passwordTypeAndConfirmForm.password)!}" class="input-xlarge password-strength" data-validate="{required:true}"/>                            
+                            <span class="required">*</span>
+                            <@orcid.passwordHelpPopup />                            
                         </div>
                         <label for="passwordTypeAndConfirmForm.retypedPassword" class="control-label">${springMacroRequestContext.getMessage("password_one_time_reset.labelconfirmpassword")}</label>
                          <div class="controls">                         	
