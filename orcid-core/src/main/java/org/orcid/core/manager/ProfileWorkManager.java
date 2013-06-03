@@ -17,6 +17,7 @@
 package org.orcid.core.manager;
 
 import org.orcid.jaxb.model.message.Visibility;
+import org.orcid.persistence.jpa.entities.ProfileWorkEntity;
 
 public interface ProfileWorkManager {
     
@@ -48,4 +49,17 @@ public interface ProfileWorkManager {
      * @return true if the relationship was updated
      * */
     boolean updateWork(String clientOrcid, String workId, Visibility visibility);
+    
+    /**
+     * Get the profile work associated with the client orcid and the workId 
+     * 
+     * @param clientOrcid
+     *          The client orcid
+     *          
+     * @param workId
+     *          The id of the work that will be updated
+     *          
+     * @return the profileWork object
+     * */    
+    ProfileWorkEntity getProfileWork(String clientOrcid, String workId);
 }

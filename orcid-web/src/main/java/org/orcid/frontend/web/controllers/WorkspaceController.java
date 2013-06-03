@@ -36,9 +36,10 @@ import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidWork;
 import org.orcid.jaxb.model.message.OrcidWorks;
 import org.orcid.jaxb.model.message.SourceOrcid;
+import org.orcid.persistence.adapter.Jpa2JaxbAdapter;
+import org.orcid.persistence.jpa.entities.ProfileWorkEntity;
 import org.orcid.pojo.ThirdPartyRedirect;
 import org.orcid.pojo.Work;
-import org.orcid.pojo.Works;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -65,6 +66,9 @@ public class WorkspaceController extends BaseWorkspaceController {
     @Resource
     private ProfileWorkManager profileWorkManager;
 
+    @Resource
+    private Jpa2JaxbAdapter jpa2JaxbAdapter;
+    
     @ModelAttribute("thirdPartiesForImport")
     public List<OrcidClient> retrieveThirdPartiesForImport() {
         return thirdPartyImportManager.findOrcidClientsWithPredefinedOauthScopeWorksImport();
@@ -214,15 +218,38 @@ public class WorkspaceController extends BaseWorkspaceController {
     /**
      * List works associated with a profile
      * */
-    @SuppressWarnings("unchecked")
+    @RequestMapping(value = "/work.json", method = RequestMethod.GET)
+    public @ResponseBody OrcidWork getWorkJson(HttpServletRequest request, @RequestParam(value = "workId", defaultValue = "-1") String workId) {
+        OrcidWork work = null;
+        
+        if(!StringUtils.isEmpty(workId) && !workId.equals("-1")){
+            //Get cached profile
+            OrcidProfile currentProfile = getCurrentUser().getEffectiveProfile();
+            String clientOrcid = currentProfile.getOrcid().getValue();        
+            ProfileWorkEntity profileWork = profileWorkManager.getProfileWork(clientOrcid, workId);
+            
+            if(profileWork != null)
+                work = jpa2JaxbAdapter.getOrcidWork(profileWork);
+        }
+        return work;
+    }
+    
+    
+    /**
+     * List works associated with a profile
+     * */
     @RequestMapping(value = "/works.json", method = RequestMethod.GET)
-    public @ResponseBody Works getWorkJson(HttpServletRequest request) {
+    public @ResponseBody List<String> getWorksJson(HttpServletRequest request) {
         //Get cached profile
         OrcidProfile currentProfile = getCurrentUser().getEffectiveProfile();
         OrcidWorks orcidWorks = currentProfile.getOrcidActivities() == null ? null : currentProfile.getOrcidActivities().getOrcidWorks();
-        Works works = new Works();
-        works.setWorks((List<Work>)(Object)orcidWorks.getOrcidWork());
-        return works;
+        
+        List<String> workIds = new ArrayList<String>();
+        for(OrcidWork work : orcidWorks.getOrcidWork()) {
+            workIds.add(work.getPutCode());
+        }
+        
+        return workIds;
     }
     
     /**

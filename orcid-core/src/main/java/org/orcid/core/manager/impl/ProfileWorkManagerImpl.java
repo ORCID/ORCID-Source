@@ -21,6 +21,7 @@ import javax.annotation.Resource;
 import org.orcid.core.manager.ProfileWorkManager;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.persistence.dao.ProfileWorkDao;
+import org.orcid.persistence.jpa.entities.ProfileWorkEntity;
 
 public class ProfileWorkManagerImpl implements ProfileWorkManager {
 
@@ -57,5 +58,20 @@ public class ProfileWorkManagerImpl implements ProfileWorkManager {
      * */
     public boolean updateWork(String clientOrcid, String workId, Visibility visibility){
         return profileWorkDao.updateWork(clientOrcid, workId, visibility);
+    }
+    
+    /**
+     * Get the profile work associated with the client orcid and the workId 
+     * 
+     * @param clientOrcid
+     *          The client orcid
+     *          
+     * @param workId
+     *          The id of the work that will be updated
+     *          
+     * @return the profileWork object
+     * */    
+    public ProfileWorkEntity getProfileWork(String clientOrcid, String workId) {
+        return profileWorkDao.getProfileWork(clientOrcid, workId);
     }
 }
