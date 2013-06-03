@@ -83,26 +83,7 @@
 	                        <div class="relative">
 	                            <input type="password" name="password" class="input-xlarge" ng-model="register.password.value" ng-change="serverValidate('Password')"/>
 	                            <span class="required" ng-class="isValidClass(register.password)">*</span>
-					   			<div class="popover-help-container" style="display: inline; position: relative;">
-	                                <a href="javascript:void(0);"><i class="icon-question-sign"></i></a>
-	                                <div id="name-help" class="popover bottom">
-								        <div class="arrow"></div>
-								        <div class="popover-content">
-	                                        <p>${springMacroRequestContext.getMessage("password_one_time_reset.labelmust8more")}</p>
-	                                        <ul>
-	                                            <li>${springMacroRequestContext.getMessage("password_one_time_reset.labelatleast09")}</li>
-	                                            <li>${springMacroRequestContext.getMessage("password_one_time_reset.labelatleast1following")}</li>
-	                                            <ul>
-	                                            	<li>${springMacroRequestContext.getMessage("password_one_time_reset.labelalphacharacter")}</li>
-	                                            	<li>${springMacroRequestContext.getMessage("password_one_time_reset.labelanyoffollow")}<br /> ! @ # $ % ^ * ( ) ~ `{ } [ ] | \ &amp; _</li>
-	                                            </ul>
-	                                            <li>${springMacroRequestContext.getMessage("password_one_time_reset.labeloptionallyspace")}</li>
-	                                        </ul>                         
-	                                        <br />              
-	                                        <p><strong>${springMacroRequestContext.getMessage("password_one_time_reset.examplesunmoon")}</strong></p>
-								        </div>                
-								    </div>
-	                            </div>
+					   			<@orcid.passwordHelpPopup />
 	                            <span class="orcid-error" ng-show="register.password.errors.length > 0">
 									<div ng-repeat='error in register.password.errors' ng-bind-html-unsafe="error"></div>
 					   			</span>
