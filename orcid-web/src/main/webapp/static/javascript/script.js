@@ -469,29 +469,7 @@ $(function () {
 	// Manage
 	
 	// Popovers
-	
-	$('body').on('click', function (e) {
-		var p = parent.$('.password-details:visible');
-		if (p.length) {
-			p.hide();
-		}
-	});
-	
-	$('.password-info').on('click', function (e) {
-		e.preventDefault();
-		e.stopPropagation();
-		parent.$('.password-details').show();
-	});
-	
-	$('.password-info').hover(
-			function () {
-				$('.password-details').show();
-			},
-			function () {
-				$('.password-details').hide();
-			}
-			);
-	
+		
 	if (parent !== window) {
 		var popover = parent.$('.popover-large:visible');
 		if (popover.length) {
