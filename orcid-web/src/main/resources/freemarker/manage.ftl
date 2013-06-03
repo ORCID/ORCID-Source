@@ -219,23 +219,7 @@
 					</tr>
 				</tbody>
 			</table>
-			
-			<script type="text/ng-template" id="deactivate-account-modal">
-				<div style="padding: 20px;"><h3>${springMacroRequestContext.getMessage("manage.deactivateSend")} {{primaryEmail}}</h3>
-				<button class="btn" ng-click="closeModal()">${springMacroRequestContext.getMessage("manage.deactivateSend.close")}</button>
-			</script>
-			
-			<script type="text/ng-template" id="verify-email-modal">
-				<div style="padding: 20px;"><h3>${springMacroRequestContext.getMessage("manage.email.verificationEmail")} {{emailsPojo.emails[verifyEmailIdx].value}}</h3>
-				<button class="btn" ng-click="closeModal()">${springMacroRequestContext.getMessage("manage.email.verificationEmail.close")}</button>
-			</script>
-
-			<script type="text/ng-template" id="delete-email-modal">
-				<div style="padding: 20px;"><h3>${springMacroRequestContext.getMessage("manage.email.pleaseConfirmDeletion")} {{emailsPojo.emails[deleteEmailIdx].value}}</h3>
-				<button class="btn btn-danger" ng-click="deleteEmail()">${springMacroRequestContext.getMessage("manage.email.deleteEmail")}</button> 
-				<a href="" ng-click="closeModal()">${springMacroRequestContext.getMessage("manage.email.cancel")}</a><div>
-			</script>            
-            
+			            
             <h1 id="manage-permissions">${springMacroRequestContext.getMessage("manage.manage_permissions")}</h1>
 			<h3><b>${springMacroRequestContext.getMessage("manage.trusted_organisations")}</b></h3>
 			<p>${springMacroRequestContext.getMessage("manage.youcanallowpermission")}<br /> <a href="http://support.orcid.org/knowledgebase/articles/131598">${springMacroRequestContext.getMessage("manage.findoutmore")}</a></p>
@@ -274,15 +258,25 @@
     				</tbody>
     			</table>
 			</#if>
-			
-			<#--<h4><b>${springMacroRequestContext.getMessage("manage.trustindividuals")}</b></h4>
-			<#include "/manage_delegation.ftl" />-->
-			
+						
 		</div>
 	</div>
 	
+	<script type="text/ng-template" id="deactivate-account-modal">
+		<div style="padding: 20px;"><h3>${springMacroRequestContext.getMessage("manage.deactivateSend")} {{primaryEmail}}</h3>
+		<button class="btn" ng-click="closeModal()">${springMacroRequestContext.getMessage("manage.deactivateSend.close")}</button>
+	</script>
+		
+	<script type="text/ng-template" id="verify-email-modal">
+		<div style="padding: 20px;"><h3>${springMacroRequestContext.getMessage("manage.email.verificationEmail")} {{emailsPojo.emails[verifyEmailIdx].value}}</h3>
+		<button class="btn" ng-click="closeModal()">${springMacroRequestContext.getMessage("manage.email.verificationEmail.close")}</button>
+	</script>
 
-
+	<script type="text/ng-template" id="delete-email-modal">
+		<div style="padding: 20px;"><h3>${springMacroRequestContext.getMessage("manage.email.pleaseConfirmDeletion")} {{emailsPojo.emails[deleteEmailIdx].value}}</h3>
+		<button class="btn btn-danger" ng-click="deleteEmail()">${springMacroRequestContext.getMessage("manage.email.deleteEmail")}</button> 
+		<a href="" ng-click="closeModal()">${springMacroRequestContext.getMessage("manage.email.cancel")}</a><div>
+	</script>            
 
 
 </@protected>
