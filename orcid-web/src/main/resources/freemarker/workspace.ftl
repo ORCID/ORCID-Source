@@ -24,28 +24,14 @@
         <strong><@spring.message "orcid.frontend.web.email_verified"/></strong>
     </div>
 </#if>
+
 <div id="ng-app" ng-app="orcidApp" class="row workspace-top public-profile">
 
+	<#-- hidden divs that trigger angular -->
 	<#if RequestParameters['recordClaimed']??>
-	    <div ng-controller="ClaimThanks"></div>
-	    <script type="text/ng-template" id="claimed-record-thanks">
-	    	<div style="padding: 20px;">
-	    		<strong><@spring.message "orcid.frontend.web.record_claimed"/></strong><br />
-	    		<br />
-	    		<button class="btn" ng-click="close()"><@spring.message "freemarker.btnclose"/></button>
-	    	</div>
-	    </script>
-	    <script type="text/ng-template" id="claimed-record-thanks-source-grand-read">
-	    	<div style="padding: 20px;">
-	    		<strong><@spring.message "orcid.frontend.web.record_claimed"/></strong><br />
-	    		<br />
-	    		<strong ng-bind="sourceGrantReadWizard.displayName"></strong> <@spring.message "orcid.frontend.web.record_claimed.would_like"/><br />
-	    		<br />
-	    		<button class="btn btn-primary" ng-click="yes()"><@spring.message "orcid.frontend.web.record_claimed.yes_go_to" /></button> 
-	    		<button class="btn" ng-click="close()"><@spring.message "orcid.frontend.web.record_claimed.no_thanks" /></button>
-	    	</div>
-	    </script>
-	    
+	    <div ng-controller="ClaimThanks" style="display: hidden;"></div>	    
+	<#elseif !Session.CHECK_EMAIL_VALIDATED?exists>
+    	<div ng-controller="VerifyEmailCtrl" style="display: hidden;"></div>
 	</#if>
 
     <div class="span3 lhs">
@@ -194,37 +180,46 @@
             	
             </div>
         </div>
-    </div>
-    
-    <#if !Session.CHECK_EMAIL_VALIDATED?exists>
-	    <#noescape>
-		    <div ng-controller="VerifyEmailCtrl" style="display: hidden;">   
-				<script type="text/ng-template" id="verify-email-modal">
-				  <div style="padding: 20px">
-				  	  <div>
-					     <h4>${springMacroRequestContext.getMessage("workspace.your_primary_email")}</h4>
-					     ${springMacroRequestContext.getMessage("workspace.ensure_future_access")}<br />
-					     <br />
-					     <span class="btn btn-primary" id="modal-close" ng-click="verifyEmail()">${springMacroRequestContext.getMessage("workspace.send_verification")}</span>
-					     <span class="btn" id="modal-close" ng-click="closeColorBox()">${springMacroRequestContext.getMessage("freemarker.btncancel")}</span>
-					  </div>
-				  </div>
-				</script>
-				<script type="text/ng-template" id="verify-email-modal-sent">
-				  <div style="padding: 20px">
-					  <div style="width: 400px;">
-					  	 <h4>${springMacroRequestContext.getMessage("workspace.sent")}</h4>
-					     ${springMacroRequestContext.getMessage("workspace.check_your_email")}<br />
-					     <br />
-					     <span class="btn" id="modal-close" ng-click="closeColorBox()">${springMacroRequestContext.getMessage("freemarker.btnclose")}</span>
-					  </div>
-				  </div>
-				</script>
-			</div>
-		</#noescape>
-	</#if>
-    
+    </div>    
 </div>
 </#escape>
 
+<script type="text/ng-template" id="verify-email-modal">
+	<div style="padding: 20px">
+			<h4>${springMacroRequestContext.getMessage("workspace.your_primary_email")}</h4>
+			${springMacroRequestContext.getMessage("workspace.ensure_future_access")}<br />
+			<br />
+			<span class="btn btn-primary" id="modal-close" ng-click="verifyEmail()">${springMacroRequestContext.getMessage("workspace.send_verification")}</span>
+			<span class="btn" id="modal-close" ng-click="closeColorBox()">${springMacroRequestContext.getMessage("freemarker.btncancel")}</span>
+		</div>
+</script>
+
+<script type="text/ng-template" id="verify-email-modal-sent">
+	<div style="padding: 20px; width: 400px;">
+		<h4>${springMacroRequestContext.getMessage("workspace.sent")}</h4>
+		${springMacroRequestContext.getMessage("workspace.check_your_email")}<br />
+		<br />
+		<span class="btn" id="modal-close" ng-click="closeColorBox()">${springMacroRequestContext.getMessage("freemarker.btnclose")}</span>
+	</div>
+</script>
+
+<script type="text/ng-template" id="claimed-record-thanks">
+	<div style="padding: 20px;">
+		<strong><@spring.message "orcid.frontend.web.record_claimed"/></strong><br />
+		<br />
+		<button class="btn" ng-click="close()"><@spring.message "freemarker.btnclose"/></button>
+	</div>
+</script>
+	
+<script type="text/ng-template" id="claimed-record-thanks-source-grand-read">
+	<div style="padding: 20px;">
+		<strong><@spring.message "orcid.frontend.web.record_claimed"/></strong><br />
+		<br />
+		<strong ng-bind="sourceGrantReadWizard.displayName"></strong> <@spring.message "orcid.frontend.web.record_claimed.would_like"/><br />
+		<br />
+		<button class="btn btn-primary" ng-click="yes()"><@spring.message "orcid.frontend.web.record_claimed.yes_go_to" /></button>
+		<button class="btn" ng-click="close()"><@spring.message "orcid.frontend.web.record_claimed.no_thanks" /></button>
+	</div>
+</script>
+	
 </@protected>
