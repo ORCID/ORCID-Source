@@ -266,11 +266,13 @@ public class WorkspaceController extends BaseWorkspaceController {
         
         HashMap<String,OrcidWork> worksMap = new HashMap<String,OrcidWork>();        
         List<String> workIds = new ArrayList<String>();
-        for(OrcidWork work : orcidWorks.getOrcidWork()) {
-            worksMap.put(work.getPutCode(), work);
-            workIds.add(work.getPutCode());
-        }
-        request.getSession().setAttribute(WORKS_MAP, worksMap);
+        if (orcidWorks != null) {
+            for(OrcidWork work : orcidWorks.getOrcidWork()) {
+                worksMap.put(work.getPutCode(), work);
+                workIds.add(work.getPutCode());
+            }
+            request.getSession().setAttribute(WORKS_MAP, worksMap);
+            }
         return workIds;
     }
     
