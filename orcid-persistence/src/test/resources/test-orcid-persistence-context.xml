@@ -33,6 +33,7 @@
 	<bean id="solrServer" class="org.orcid.persistence.dao.EmbeddedSolrFactory"
 		factory-method="createInstance">
 	</bean>
-
+	
+	<alias name="solrServer" alias="solrServerReadOnly"/>
 
 </beans>
