@@ -928,7 +928,7 @@ function WorkCtrl($scope, $compile){
 	        dataType: 'json',
 	        success: function(data) {
 	        	$scope.worksToAddIds = data;
-	        	$scope.addWorkToScope();	        	
+	        	if (data.length > 0 ) $scope.addWorkToScope();	        	
 	        }
 		}).fail(function(){
 			// something bad is happening!
