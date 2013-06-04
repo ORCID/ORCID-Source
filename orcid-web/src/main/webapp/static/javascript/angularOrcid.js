@@ -902,18 +902,17 @@ function ClaimThanks($scope, $compile) {
 function WorkCtrl($scope, $compile){
 	$scope.works = new Array();
 	
-	$scope.addWorkToScope = function(workIds){
-		if(workIds.length != 0 ) {
-			var workId = workIds[0];			
+	$scope.addWorkToScope = function(){
+		if($scope.worksToAddIds.length != 0 ) {
+			var workId = $scope.worksToAddIds.pop();			
 			$.ajax({
 				url: $('body').data('baseurl') + 'my-orcid/work.json?workId=' + workId,
 				dataType: 'json',
 				success: function(data) {
 					$scope.$apply(function(){    					
 						$scope.works.push(data);
-					});   			
-					workIds.splice(0,1);
-					$scope.addWorkToScope(workIds);
+					});
+					setTimeout(function () {$scope.addWorkToScope();},150);
 				}
 			}).fail(function() { 
 		    	console.log("Error fetching work: " + value);
@@ -927,8 +926,8 @@ function WorkCtrl($scope, $compile){
 			url: $('body').data('baseurl') + 'my-orcid/works.json',	        
 	        dataType: 'json',
 	        success: function(data) {
-	        	var workIds = data;	        	
-	        	$scope.addWorkToScope(workIds);	        	
+	        	$scope.worksToAddIds = data.reverse();	        	
+	        	$scope.addWorkToScope();	        	
 	        }
 		}).fail(function(){
 			// something bad is happening!
