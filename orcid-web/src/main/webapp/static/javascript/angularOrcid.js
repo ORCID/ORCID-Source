@@ -912,7 +912,7 @@ function WorkCtrl($scope, $compile){
 					$scope.$apply(function(){    					
 						$scope.works.push(data);
 					});
-					setTimeout(function () {$scope.addWorkToScope();},100);
+					setTimeout(function () {$scope.addWorkToScope();},150);
 				}
 			}).fail(function() { 
 		    	console.log("Error fetching work: " + value);
