@@ -941,7 +941,9 @@ function WorkCtrl($scope, $compile){
 	
 	$scope.deleteWork = function(idx) {		
 		$scope.deleteIndex = idx;
-		$scope.fixedTitle = $scope.works[idx].workTitle.title.content;
+		if ($scope.works[idx].workTitle) 
+			$scope.fixedTitle = $scope.works[idx].workTitle.title.content;
+		else $scope.fixedTitle = ''
         var maxSize = 100;
         if($scope.fixedTitle.length > maxSize)
         	$scope.fixedTitle = $scope.fixedTitle.substring(0, maxSize) + '...';
