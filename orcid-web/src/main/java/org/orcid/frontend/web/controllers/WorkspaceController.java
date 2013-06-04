@@ -229,7 +229,7 @@ public class WorkspaceController extends BaseWorkspaceController {
         if(!StringUtils.isEmpty(workId) && !workId.equals("-1")){
             @SuppressWarnings("unchecked")
             HashMap<String,OrcidWork> worksMap = (HashMap<String,OrcidWork>)request.getSession().getAttribute(WORKS_MAP);
-            // this should never happen, but just incase.
+            // this should never happen, but just in case.
             if (worksMap == null) {
                 createWorksIdList(request);
                 worksMap = (HashMap<String,OrcidWork>)request.getSession().getAttribute(WORKS_MAP);
