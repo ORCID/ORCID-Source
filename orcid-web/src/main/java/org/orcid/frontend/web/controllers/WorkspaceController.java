@@ -17,6 +17,7 @@
 package org.orcid.frontend.web.controllers;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
@@ -56,6 +57,8 @@ import org.springframework.web.servlet.mvc.multiaction.NoSuchRequestHandlingMeth
 @Controller("workspaceController")
 @RequestMapping(value = { "/my-orcid", "/workspace" })
 public class WorkspaceController extends BaseWorkspaceController {
+
+    private static final String WORKS_MAP = "WORKS_MAP";
 
     @Resource
     private ThirdPartyImportManager thirdPartyImportManager;
@@ -218,18 +221,20 @@ public class WorkspaceController extends BaseWorkspaceController {
     /**
      * List works associated with a profile
      * */
+    @SuppressWarnings("unchecked")
     @RequestMapping(value = "/work.json", method = RequestMethod.GET)
     public @ResponseBody OrcidWork getWorkJson(HttpServletRequest request, @RequestParam(value = "workId", defaultValue = "-1") String workId) {
         OrcidWork work = null;
         
         if(!StringUtils.isEmpty(workId) && !workId.equals("-1")){
-            //Get cached profile
-            OrcidProfile currentProfile = getCurrentUser().getEffectiveProfile();
-            String clientOrcid = currentProfile.getOrcid().getValue();        
-            ProfileWorkEntity profileWork = profileWorkManager.getProfileWork(clientOrcid, workId);
-            
-            if(profileWork != null)
-                work = jpa2JaxbAdapter.getOrcidWork(profileWork);
+            @SuppressWarnings("unchecked")
+            HashMap<String,OrcidWork> worksMap = (HashMap<String,OrcidWork>)request.getSession().getAttribute(WORKS_MAP);
+            // this should never happen, but just incase.
+            if (worksMap == null) {
+                createWorksIdList(request);
+                worksMap = (HashMap<String,OrcidWork>)request.getSession().getAttribute(WORKS_MAP);
+            }
+            work = worksMap.get(workId);
         }
         return work;
     }
@@ -241,14 +246,26 @@ public class WorkspaceController extends BaseWorkspaceController {
     @RequestMapping(value = "/works.json", method = RequestMethod.GET)
     public @ResponseBody List<String> getWorksJson(HttpServletRequest request) {
         //Get cached profile
+        List<String> workIds = createWorksIdList(request);
+        return workIds;
+    }
+
+    /**
+     * created a work id list and sorts a map associated with the list in
+     * in the session
+     *
+     */
+    private List<String> createWorksIdList(HttpServletRequest request) {
         OrcidProfile currentProfile = getCurrentUser().getEffectiveProfile();
         OrcidWorks orcidWorks = currentProfile.getOrcidActivities() == null ? null : currentProfile.getOrcidActivities().getOrcidWorks();
         
+        HashMap<String,OrcidWork> worksMap = new HashMap<String,OrcidWork>();        
         List<String> workIds = new ArrayList<String>();
         for(OrcidWork work : orcidWorks.getOrcidWork()) {
+            worksMap.put(work.getPutCode(), work);
             workIds.add(work.getPutCode());
         }
-        
+        request.getSession().setAttribute(WORKS_MAP, worksMap);
         return workIds;
     }
     
