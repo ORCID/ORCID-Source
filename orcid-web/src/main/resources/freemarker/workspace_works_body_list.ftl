@@ -58,7 +58,7 @@
     				</div>		             		             		    				
              	</div>             
                 <h3 class="work-title">
-                	<strong ng-bind-html-unsafe="work.workTitle.title.content"></strong><span class="work-subtitle" ng-show="work.workTitle.subtitle.content" ng-bind-html-unsafe="':&nbsp;'.concat(work.workTitle.subtitle.content)"></span>
+                	<strong ng-bind="work.workTitle.title.content"></strong><span class="work-subtitle" ng-show="work.workTitle.subtitle.content" ng-bind-html-unsafe="':&nbsp;'.concat(work.workTitle.subtitle.content)"></span>
                 	<span ng-show="work.publicationDate.month.value">{{work.publicationDate.month.value}}-</span><span ng-show="work.publicationDate.year.value">{{work.publicationDate.year.value}}</span>
                 </h3>
                 <div ng-repeat='ie in work.workExternalIdentifiers.workExternalIdentifier'>
