@@ -28,8 +28,10 @@
 	    	<a href="" ng-click="closeModal()">${springMacroRequestContext.getMessage("manage.deleteWork.cancel")}</a>
 	    <div>; 
 	</script>
+	
+	<div ng-controller="WorkCtrl">
 	 
-	<ul ng-controller="WorkCtrl" ng-hide="!works.length" class="workspace-publications workspace-body-list bottom-margin-medium" ng-cloak>        
+	<ul ng-hide="!works.length" class="workspace-publications workspace-body-list bottom-margin-medium" ng-cloak>        
             <li class="bottom-margin-small" ng-repeat='work in works'>            	
             	<div class="pull-right">             		
 					<div class="relative">
@@ -72,6 +74,8 @@
             </li>           
 	</ul>
 	
-    <div ng-controller="WorkCtrl" ng-hide="works.length" class="alert alert-info">
+    <div ng-hide="works.length" class="alert alert-info">
         <strong><#if (publicProfile)?? && publicProfile == true>${springMacroRequestContext.getMessage("workspace_works_body_list.Nopublicationsaddedyet")}<#else>${springMacroRequestContext.getMessage("workspace_works_body_list.havenotaddedanyworks")} <a href="<@spring.url '/works-update'/>" class="update">${springMacroRequestContext.getMessage("workspace_works_body_list.addsomenow")}</a></#if></strong>
+    </div>
+    
     </div>

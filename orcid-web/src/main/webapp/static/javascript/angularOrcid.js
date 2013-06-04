@@ -904,13 +904,14 @@ function WorkCtrl($scope, $compile){
 	
 	$scope.addWorkToScope = function(){
 		if($scope.worksToAddIds.length != 0 ) {
-			var workId = $scope.worksToAddIds.pop();			
+			var workIds = $scope.worksToAddIds.splice(0,20).join();
 			$.ajax({
-				url: $('body').data('baseurl') + 'my-orcid/work.json?workId=' + workId,
+				url: $('body').data('baseurl') + 'my-orcid/work.json?workIds=' + workIds,
 				dataType: 'json',
 				success: function(data) {
-					$scope.$apply(function(){    					
-						$scope.works.push(data);
+					$scope.$apply(function(){ 
+						for (i in data)
+						$scope.works.push(data[i]);
 					});
 					setTimeout(function () {$scope.addWorkToScope();},50);
 				}
@@ -926,7 +927,7 @@ function WorkCtrl($scope, $compile){
 			url: $('body').data('baseurl') + 'my-orcid/works.json',	        
 	        dataType: 'json',
 	        success: function(data) {
-	        	$scope.worksToAddIds = data.reverse();	        	
+	        	$scope.worksToAddIds = data;
 	        	$scope.addWorkToScope();	        	
 	        }
 		}).fail(function(){

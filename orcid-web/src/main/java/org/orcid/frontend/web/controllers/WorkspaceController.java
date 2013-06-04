@@ -223,20 +223,25 @@ public class WorkspaceController extends BaseWorkspaceController {
      * */
     @SuppressWarnings("unchecked")
     @RequestMapping(value = "/work.json", method = RequestMethod.GET)
-    public @ResponseBody OrcidWork getWorkJson(HttpServletRequest request, @RequestParam(value = "workId", defaultValue = "-1") String workId) {
+    public @ResponseBody List<OrcidWork> getWorkJson(HttpServletRequest request, @RequestParam(value = "workIds") String workIdsStr) {
+        ArrayList<OrcidWork> workList = new ArrayList<OrcidWork>();
         OrcidWork work = null;
+        String[] workIds = workIdsStr.split(",");
         
-        if(!StringUtils.isEmpty(workId) && !workId.equals("-1")){
-            @SuppressWarnings("unchecked")
+        if(workIds != null){
             HashMap<String,OrcidWork> worksMap = (HashMap<String,OrcidWork>)request.getSession().getAttribute(WORKS_MAP);
             // this should never happen, but just in case.
             if (worksMap == null) {
                 createWorksIdList(request);
                 worksMap = (HashMap<String,OrcidWork>)request.getSession().getAttribute(WORKS_MAP);
             }
-            work = worksMap.get(workId);
+            for (String workId: workIds) {
+                work = worksMap.get(workId);
+                workList.add(work);
+            }
         }
-        return work;
+        
+        return workList;
     }
     
     
