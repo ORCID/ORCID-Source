@@ -44,7 +44,6 @@ public class BibtexUtils {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BibtexUtils.class);
 
-    private static final BibTeXParser BIBTEX_PARSER = new BibTeXParser();
     public static final String COMMA_AND_WHITESPACE = ", ";
     private static final Pattern BIBTEX_PATTERN = Pattern.compile(".*}\\s*", Pattern.DOTALL);
 
@@ -164,7 +163,7 @@ public class BibtexUtils {
         StringReader reader = null;
         try {
             reader = new StringReader(bibtex);
-            return BIBTEX_PARSER.parse(reader);
+            return new BibTeXParser().parse(reader);
         } catch (IOException e) {
             LOGGER.warn("Problem with reading the string.", e);
             throw new IllegalStateException("Problem reading from a StringReader!", e);
