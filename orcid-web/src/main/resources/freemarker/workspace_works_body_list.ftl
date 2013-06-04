@@ -19,7 +19,9 @@
 
 	<script type="text/ng-template" id="delete-work-modal">
 		<div style="padding: 20px;" class="colorbox-modal">
-			<h3>${springMacroRequestContext.getMessage("manage.deleteWork.pleaseConfirm")}<br /> <span ng-bind="fixedTitle"></span></h3>
+			<h3 style="margin-bottom: 0px;">${springMacroRequestContext.getMessage("manage.deleteWork.pleaseConfirm")}</h3>
+			{{fixedTitle}}<br />
+			<br />
 	    	<div class="btn btn-danger" ng-click="deleteByIndex()">
 	    		${springMacroRequestContext.getMessage("manage.deleteWork.delete")}
 	    	</div>
@@ -54,7 +56,7 @@
     				</div>		             		             		    				
              	</div>             
                 <h3 class="work-title">
-                	<b ng-bind-html-unsafe="work.workTitle.title.content"></b><span class="work-subtitle" ng-show="work.workTitle.subtitle.content" ng-bind-html-unsafe="':&nbsp;'.concat(work.workTitle.subtitle.content)"></span>
+                	<strong ng-bind-html-unsafe="work.workTitle.title.content"></strong><span class="work-subtitle" ng-show="work.workTitle.subtitle.content" ng-bind-html-unsafe="':&nbsp;'.concat(work.workTitle.subtitle.content)"></span>
                 	<span ng-show="work.publicationDate.month.value">{{work.publicationDate.month.value}}-</span><span ng-show="work.publicationDate.year.value">{{work.publicationDate.year.value}}</span>
                 </h3>
                 <div ng-repeat='ie in work.workExternalIdentifiers.workExternalIdentifier'>
