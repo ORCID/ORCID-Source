@@ -30,79 +30,68 @@
 	</script>
 	
 	<div ng-controller="WorkCtrl">
-	 
-	<div ng-repeat='work in works' style="background-color: #dddddd">
-	
-			<@orcid.privacyToggle "register.workVisibilityDefault.visibility" "updateWorkVisibilityDefault('PUBLIC', $event)" 
-	                    	  "updateWorkVisibilityDefault('LIMITED', $event)" "updateWorkVisibilityDefault('PRIVATE', $event)" />
-	<table style="margin-bottom: 20px; border: solid 1px #00FF00; background-color: #ffffff; width: 100%;">
-		<tr style="vertical-align:top;">
-			<td class="label" style="font-size: 80%; padding-right: 5px;"><strong>Title<strong></td>
-			<td><strong>{{work.workTitle.title.content}}</strong></td>
-		</tr>
-		<tr ng-show="work.workTitle.subtitle.content">
-			<td class="label" style="margin-right: 15px;">Subtitle</td>
-			<td ng-bind-html-unsafe="work.workTitle.subtitle.content"></td>
-		</tr>
-		<tr ng-show="work.url.value">
-			<td class="label" style="margin-right: 15px;">Url</td>
-			<td><a href="{work.url.value}" target="_blank" ng-bind-html-unsafe="work.url.value"></td>
-			<td></td>
-		</tr>
-		<tr ng-repeat="ie in work.workExternalIdentifiers.workExternalIdentifier">
-			<td class="label" style="margin-right: 15px;">External Id</td>
-			<td ><strong>ID:</strong> <span ng-bind-html-unsafe="ie.workExternalIdentifierId.content"></span> 
-				 <strong>TYPE:</strong> <span ng-bind="ie.workExternalIdentifierType"></span> 
-			</td>
-		</tr>
-		<tr>
-		   <td colspan="3" style="text-align: center;"><a href="#"><i class="icon-caret-down"></i> show all details <i class="icon-caret-down"></i> </a></td>
-		</tr>
-		
-	</table>
+	<#if RequestParameters['showWorkCards']??> 
+	<div ng-repeat='work in works' style="background-color: #ffffff; border: 1px solid #ddd; -webkit-border-radius: 16px;
+	    -moz-border-radius: 8px; border-radius: 8px; margin-bottom: 20px;">
+		<div style=" padding: 5px; height: 30px;">
+				<div class="pull-right" style="width: 130px;">
+				<@orcid.privacyToggle "work.visibility" "setPrivacy($index, 'PUBLIC', $event)" 
+		                    	  "setPrivacy($index, 'LIMITED', $event)" "setPrivacy($index, 'PRIVACY', $event)" />
+				</div>
+				<div style="position: relative; left: 522px; top: 4px; width: 15px;"><a href ng-click="deleteWork($index)" class="icon-trash grey"></a></div>
+		</div>
+		<table style="border-top: solid 1px #dddddd; width: 100%;">
+			<tr style="vertical-align: middle;">
+				<td style=" padding: 5px;"><span class="label"><strong>Title<strong></span></td>
+				<td style=" padding: 5px;"><strong>{{work.workTitle.title.content}}</strong></td>
+			</tr>
+			<tr ng-show="work.workTitle.subtitle.content">
+				<td style=" padding: 5px;"><span class="label"><strong>Subtitle</strong></span></td>
+				<td style=" padding: 5px;" ng-bind-html-unsafe="work.workTitle.subtitle.content"></td>
+			</tr>
+			<tr ng-show="work.url.value">
+				<td style=" padding: 5px;" ><span class="label"><strong>Url</strong></span></td>
+				<td style=" padding: 5px;"><a href="{work.url.value}" target="_blank" ng-bind-html-unsafe="work.url.value"></td>
+			</tr>
+			<tr ng-repeat="ie in work.workExternalIdentifiers.workExternalIdentifier">
+				<td style=" padding: 5px;"><span class="label"><strong>External Id</strong></span></td>
+				<td style=" padding: 5px;"><strong>ID:</strong> <span ng-bind-html-unsafe="ie.workExternalIdentifierId.content"></span> 
+					 <strong>TYPE:</strong> <span ng-bind="ie.workExternalIdentifierType"></span> 
+				</td>
+			</tr>
+			<tr>
+			   <td colspan="2" style="text-align: center;  padding: 5px;"><a href="#"><i class="icon-caret-down"></i> show all details <i class="icon-caret-down"></i> </a></td>
+			</tr>
+			
+		</table>
 	</div>
+	</#if>
 
 	 
 	<ul ng-hide="!works.length" class="workspace-publications workspace-body-list bottom-margin-medium" ng-cloak>        
             <li class="bottom-margin-small" ng-repeat='work in works'>            	
-            	<div class="pull-right">             		
-					<div class="relative">
-						<ul class="privacyToggle">
-							<li class="publicActive" ng-class="{publicInActive: work.visibility != 'PUBLIC'}"><a href="" title="PUBLIC" ng-click="setPrivacy($index, 'PUBLIC', $event)"></a></li>
-							<li class="limitedActive" ng-class="{limitedInActive: work.visibility != 'LIMITED'}"><a href="" title="LIMITED" ng-click="setPrivacy($index, 'LIMITED', $event)"></a></li>
-							<li class="privateActive" ng-class="{privateInActive: work.visibility != 'PRIVATE'}"><a href="" title="PRIVATE" ng-click="setPrivacy($index, 'PRIVATE', $event)"></a></li>
-						</ul>					   				
-					</div>
-					<div class="popover-help-container" style="position: absolute; left: 100px; top: 5px;">
-        				<a href="javascript:void(0);"><i class="icon-question-sign"></i></a>
-            			<div class="popover bottom">
-		        			<div class="arrow"></div>
-		        			<div class="popover-content">
-		        				<strong>${springMacroRequestContext.getMessage("privacyToggle.help.who_can_see")}</strong>
-			        			<ul class="privacyHelp">
-			        				<li class="public" style="color: #009900;">${springMacroRequestContext.getMessage("privacyToggle.help.everyone")}</li>
-			        				<li class="limited" style="color: #ffb027;">${springMacroRequestContext.getMessage("privacyToggle.help.trusted_parties")}</li>
-			        				<li class="private" style="color: #990000;">${springMacroRequestContext.getMessage("privacyToggle.help.only_me")}</li>
-			        			</ul>
-			        			<a href="http://support.orcid.org/knowledgebase/articles/124518-orcid-privacy-settings" target="_blank">${springMacroRequestContext.getMessage("privacyToggle.help.more_information")}</a>
-		        			</div>                
-		    			</div>
-    				</div>		             		             		    				
-             	</div>             
+                <div class="pull-right" style="right: 145px; top: 20px; width: 15px;"><a href ng-click="deleteWork($index)" class="icon-trash grey"></a></div>
+				<div style="width: 530px;">
                 <h3 class="work-title">
                 	<strong ng-bind="work.workTitle.title.content"></strong><span class="work-subtitle" ng-show="work.workTitle.subtitle.content" ng-bind-html-unsafe="':&nbsp;'.concat(work.workTitle.subtitle.content)"></span>
                 	<span ng-show="work.publicationDate.month.value">{{work.publicationDate.month.value}}-</span><span ng-show="work.publicationDate.year.value">{{work.publicationDate.year.value}}</span>
                 </h3>
-                <div ng-repeat='ie in work.workExternalIdentifiers.workExternalIdentifier'>
-                	<div ng-show="ie.workExternalIdentifierType=='DOI' && ie.workExternalIdentifierId.content">
-                		<span class="work-metadata">${springMacroRequestContext.getMessage("workspace_works_body_list.DOI")} <a href="http://dx.doi.org/{{ie.workExternalIdentifierId.content.replace('http://dx.doi.org/','')}}">{{ie.workExternalIdentifierId.content}}</a></span>
-                		<img onclick="javascript:window.open(&quot;http://dx.doi.org/{{ie.workExternalIdentifierId.content}}&quot;)" style="cursor:pointer;" src="${staticCdn}/img/view_full_text.gif"><input type="hidden" value="null" name="artifacts[0].destApp"><input type="hidden" value="JOUR" name="artifacts[0].type"><input type="hidden" value="W" name="artifacts[0].uploadedBy">
-                	</div>                	             
                 </div>
-                <div ng-show="work.url.value"><a href="{{work.url.value}}">{{work.url.value}}</a></div>
-                <div ng-show="work.shortDescription" ng-bind-html-unsafe="work.shortDescription"></div>
-                <div ng-show="work.citationForDisplay" class="citation {{work.workCitation.workCitationType.toLowerCase()}}" ng-bind-html-unsafe="work.citationForDisplay"></div>
-                <span class="pull-right-level-two"><a href ng-click="deleteWork($index)" class="icon-trash grey"></a></span>
+                <div class="pull-right" style="width: 130px;">
+				<@orcid.privacyToggle "work.visibility" "setPrivacy($index, 'PUBLIC', $event)" 
+		                    	  "setPrivacy($index, 'LIMITED', $event)" "setPrivacy($index, 'PRIVACY', $event)" />
+				</div>
+				<div  style="width: 680px;" class="work-metadata">
+	                <span ng-repeat='ie in work.workExternalIdentifiers.workExternalIdentifier'>
+	                	<span ng-show="ie.workExternalIdentifierType=='DOI' && ie.workExternalIdentifierId.content">
+	                		<span>${springMacroRequestContext.getMessage("workspace_works_body_list.DOI")} <a href="http://dx.doi.org/{{ie.workExternalIdentifierId.content.replace('http://dx.doi.org/','')}}">{{ie.workExternalIdentifierId.content}}</a></span>	          
+	                	</span>                	             
+	                </span>
+	                <span ng-show="work.url.value" style=" display: inline-block;">URL: <a href="{{work.url.value}}">{{work.url.value}}</a></span>
+	            </div>
+                
+                <div ng-show="work.shortDescription" ng-bind-html-unsafe="work.shortDescription" style="width: 680px;"></div>
+                <div ng-show="work.citationForDisplay" class="citation {{work.workCitation.workCitationType.toLowerCase()}}" ng-bind-html-unsafe="work.citationForDisplay" style="width: 680px;"></div>
             </li>           
 	</ul>
 	

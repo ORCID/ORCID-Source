@@ -114,7 +114,7 @@
 			<li class="privateActive" ng-class="{privateInActive: ${angularModel} != 'PRIVATE'}"><a href="" title="PRIVATE" ng-click="${privateClick}"></a></li>
 		</ul>
 		<div class="popover-help-container" style="position: absolute; left: 110px; top: 5px;">
-        	<a href="javascript:void(0);"><i class="icon-question-sign"></i></a>
+        	<a href="javascript:void(0);"><i class="icon-question-sign"style="width: 14px;"></i></a>
             <div class="popover bottom">
 		        <div class="arrow"></div>
 		        <div class="popover-content">
