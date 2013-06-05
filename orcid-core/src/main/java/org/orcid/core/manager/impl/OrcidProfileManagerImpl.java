@@ -1041,11 +1041,24 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         return null;
     }
 
+    ExecutorService executorService = null;
+    Object executorServiceLock = new Object();
+    
     @Override
     synchronized public void processProfilesPendingIndexing() {
         // XXX There are some concurrency related edge cases to fix here.
         LOG.info("About to process profiles pending indexing");
-        ExecutorService executorService = createThreadPoolForIndexing();
+        if (executorService == null || executorService.isShutdown()) {
+            synchronized(executorServiceLock) {
+                if (executorService == null || executorService.isShutdown()) {
+                    executorService = createThreadPoolForIndexing();
+                }
+            }
+        } else {
+            // already running
+            return;
+        }
+        
         List<String> orcidsForIndexing = Collections.<String> emptyList();
         do {
             orcidsForIndexing = profileDao.findOrcidsByIndexingStatus(IndexingStatus.PENDING, INDEXING_BATCH_SIZE, orcidsForIndexing);
@@ -1059,13 +1072,19 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
                 });
             }
         } while (!orcidsForIndexing.isEmpty());
-        executorService.shutdown();
-        try {
-            executorService.awaitTermination(30, TimeUnit.SECONDS);
-        } catch (InterruptedException e) {
-            LOG.warn("Received an interupt exception whilst waiting for the indexing to complete", e);
+        if (!executorService.isShutdown()) {
+            synchronized(executorServiceLock) {
+                if (!executorService.isShutdown()) {
+                    executorService.shutdown();
+                    try {
+                        executorService.awaitTermination(30, TimeUnit.SECONDS);
+                    } catch (InterruptedException e) {
+                        LOG.warn("Received an interupt exception whilst waiting for the indexing to complete", e);
+                    }
+                    LOG.info("Finished processing profiles pending indexing");
+                }
+            }
         }
-        LOG.info("Finished processing profiles pending indexing");
     }
 
     private ExecutorService createThreadPoolForIndexing() {
