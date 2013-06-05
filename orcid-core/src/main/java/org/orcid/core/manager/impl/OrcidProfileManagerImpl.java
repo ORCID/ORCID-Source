@@ -1080,7 +1080,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
             }
             for (final String orcid : orcidsForIndexing) {
                 try {
-                    LOG.info(futureHM.get(orcid).get(15, TimeUnit.SECONDS));
+                    futureHM.get(orcid).get(15, TimeUnit.SECONDS);
                 } catch (InterruptedException e) {
                     orcidFailures.add(orcid);
                     LOG.error(orcid +" InterruptedException ", e);
