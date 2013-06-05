@@ -1099,7 +1099,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
             protected void doInTransactionWithoutResult(TransactionStatus status) {
-                LOG.debug("About to index profile: {}", orcid);
+                LOG.info("About to index profile: {}", orcid);
                 OrcidProfile orcidProfile = retrieveClaimedOrcidProfile(orcid);
                 if (orcidProfile == null) {
                     LOG.debug("Null profile found during indexing: {}", orcid);
