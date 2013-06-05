@@ -159,7 +159,7 @@ public class BibtexUtils {
      * @throws ParseException
      *             if the bibtex string is invalid
      */
-    public static BibTeXDatabase getBibTeXDatabase(String bibtex) throws ParseException {
+    public static synchronized BibTeXDatabase getBibTeXDatabase(String bibtex) throws ParseException {
         StringReader reader = null;
         try {
             reader = new StringReader(bibtex);
