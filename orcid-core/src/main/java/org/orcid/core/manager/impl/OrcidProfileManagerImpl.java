@@ -1052,6 +1052,9 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
             synchronized(executorServiceLock) {
                 if (executorService == null || executorService.isShutdown()) {
                     executorService = createThreadPoolForIndexing();
+                } else {
+                    // already running
+                    return;                    
                 }
             }
         } else {
