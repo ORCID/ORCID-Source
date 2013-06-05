@@ -38,7 +38,6 @@ import org.orcid.jaxb.model.message.OrcidWork;
 import org.orcid.jaxb.model.message.OrcidWorks;
 import org.orcid.jaxb.model.message.SourceOrcid;
 import org.orcid.persistence.adapter.Jpa2JaxbAdapter;
-import org.orcid.persistence.jpa.entities.ProfileWorkEntity;
 import org.orcid.pojo.ThirdPartyRedirect;
 import org.orcid.pojo.Work;
 import org.springframework.stereotype.Controller;
@@ -223,17 +222,17 @@ public class WorkspaceController extends BaseWorkspaceController {
      * */
     @SuppressWarnings("unchecked")
     @RequestMapping(value = "/work.json", method = RequestMethod.GET)
-    public @ResponseBody List<OrcidWork> getWorkJson(HttpServletRequest request, @RequestParam(value = "workIds") String workIdsStr) {
-        ArrayList<OrcidWork> workList = new ArrayList<OrcidWork>();
-        OrcidWork work = null;
+    public @ResponseBody List<Work> getWorkJson(HttpServletRequest request, @RequestParam(value = "workIds") String workIdsStr) {
+        List<Work> workList = new ArrayList<>();
+        Work work = null;
         String[] workIds = workIdsStr.split(",");
         
         if(workIds != null){
-            HashMap<String,OrcidWork> worksMap = (HashMap<String,OrcidWork>)request.getSession().getAttribute(WORKS_MAP);
+            HashMap<String,Work> worksMap = (HashMap<String,Work>)request.getSession().getAttribute(WORKS_MAP);
             // this should never happen, but just in case.
             if (worksMap == null) {
                 createWorksIdList(request);
-                worksMap = (HashMap<String,OrcidWork>)request.getSession().getAttribute(WORKS_MAP);
+                worksMap = (HashMap<String,Work>)request.getSession().getAttribute(WORKS_MAP);
             }
             for (String workId: workIds) {
                 work = worksMap.get(workId);
@@ -268,7 +267,7 @@ public class WorkspaceController extends BaseWorkspaceController {
         List<String> workIds = new ArrayList<String>();
         if (orcidWorks != null) {
             for(OrcidWork work : orcidWorks.getOrcidWork()) {
-                worksMap.put(work.getPutCode(), work);
+                worksMap.put(work.getPutCode(), new Work(work));
                 workIds.add(work.getPutCode());
             }
             request.getSession().setAttribute(WORKS_MAP, worksMap);
