@@ -107,27 +107,26 @@ public class BibtexUtils {
     // variable placeholders
     // For example -
     static private ExecutorService executor = Executors.newFixedThreadPool(4);
-    
+
     public static String toCitation(String bibtex) throws ParseException {
-        /* bibtex parser thread locks, use a future task and return an
-         * error string if that happens
+        /*
+         * bibtex parser thread locks, use a future task and return an error
+         * string if that happens
          */
         FutureTask<String> task = new FutureTask<String>(new ToCitationCallable(bibtex));
         executor.execute(task);
         try {
             return task.get(1, TimeUnit.SECONDS);
-        } catch (InterruptedException e) {    
-            LOGGER.error("bad bibtex: "+ bibtex +" InterruptedException ", e);
+        } catch (InterruptedException e) {
+            LOGGER.error("bad bibtex: " + bibtex + " InterruptedException ", e);
         } catch (ExecutionException e) {
-            LOGGER.error("bad bibtex: "+ bibtex +" ExecutionException ", e);
+            LOGGER.error("bad bibtex: " + bibtex + " ExecutionException ", e);
         } catch (TimeoutException e) {
-            LOGGER.error("bad bibtex: "+ bibtex +" TimeoutException ", e);
+            LOGGER.error("bad bibtex: " + bibtex + " TimeoutException ", e);
         }
         return "error parsing bibtex";
     }
 
-
-    
     /**
      * Utility method to obtain the underlying {@link BibTeXDatabase} object
      * 

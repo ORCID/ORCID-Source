@@ -28,10 +28,11 @@ import org.jbibtex.Value;
 
 public class ToCitationCallable implements Callable<String> {
     String bibtex = null;
+
     public ToCitationCallable(String bibtex) {
         this.bibtex = bibtex;
     }
-    
+
     @Override
     public String call() throws Exception {
         StringBuilder citation = new StringBuilder();
@@ -80,5 +81,5 @@ public class ToCitationCallable implements Callable<String> {
         }
         return trimmed;
     }
-    
+
 }
