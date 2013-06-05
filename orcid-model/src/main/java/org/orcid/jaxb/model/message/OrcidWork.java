@@ -32,13 +32,6 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-import org.apache.commons.lang.StringUtils;
-import org.jbibtex.ParseException;
-import org.orcid.utils.BibtexUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.web.util.HtmlUtils;
-
 /**
  * <p>
  * Java class for anonymous complex type.
@@ -78,8 +71,6 @@ import org.springframework.web.util.HtmlUtils;
 @XmlRootElement(name = "orcid-work")
 public class OrcidWork implements VisibilityType, Serializable {
 
-    private static Logger LOGGER = LoggerFactory.getLogger(OrcidWork.class);
-    
     private static final long serialVersionUID = 1L;
     @XmlElement(name = "work-title")
     protected WorkTitle workTitle;
@@ -102,8 +93,6 @@ public class OrcidWork implements VisibilityType, Serializable {
     protected String putCode;
     @XmlAttribute
     protected Visibility visibility;
-    @XmlAttribute
-    protected String citationForDisplay;
 
     /**
      * Gets the value of the putCode property.
@@ -421,27 +410,5 @@ public class OrcidWork implements VisibilityType, Serializable {
             return false;
         return true;
     }
-    
-    /**
-     * Return the Bibtex work citations in a readable format.
-     * @return the bibtex citation converted into a readable string
-     * */
-    public String getCitationForDisplay() {
-        if (this.workCitation != null && this.workCitation.citation != null && CitationType.BIBTEX.value().toLowerCase().equals(this.workCitation.workCitationType.value().toLowerCase())) {
-            try {
-                String result = BibtexUtils.toCitation(HtmlUtils.htmlUnescape(this.workCitation.citation));                               
-                return result;
-            } catch (ParseException e) {
-                LOGGER.info("Invalid BibTeX. Sending back as a string");
-            }
-        }
-        if (this.workCitation != null && StringUtils.isNotBlank(this.workCitation.citation)) {
-            return this.workCitation.citation;
-        }
-        return null;
-    }
-    
-    public void setCitationForDisplay(String citation) {
-        this.citationForDisplay = citation;
-    }
+
 }

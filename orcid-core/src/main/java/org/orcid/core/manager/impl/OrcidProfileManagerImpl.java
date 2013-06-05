@@ -28,11 +28,15 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.FutureTask;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import javax.annotation.Resource;
 
@@ -1067,12 +1071,17 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
             orcidsForIndexing = profileDao.findOrcidsByIndexingStatus(IndexingStatus.PENDING, INDEXING_BATCH_SIZE, orcidsForIndexing);
             LOG.info("Got batch of {} profiles for indexing", orcidsForIndexing.size());
             for (final String orcid : orcidsForIndexing) {
-                executorService.execute(new Runnable() {
-
-                    public void run() {
-                        processProfilePendingIndexingInTransaction(orcid);
-                    }
-                });
+                FutureTask<String> task = new FutureTask<String>(new GetPendingOrcid(orcid));
+                executorService.execute(task);
+                try {
+                    LOG.info(task.get(15, TimeUnit.SECONDS));
+                } catch (InterruptedException e) {
+                    LOG.error(orcid +" InterruptedException ", e);
+                } catch (ExecutionException e) {
+                    LOG.error(orcid +" ExecutionException ", e);
+                } catch (TimeoutException e) {
+                    LOG.error(orcid +" TimeoutException ", e);
+                }
             }
         } while (!orcidsForIndexing.isEmpty());
         if (!executorService.isShutdown()) {
@@ -1090,6 +1099,20 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         }
     }
 
+    class GetPendingOrcid implements Callable<String> {
+        String orcid = null;
+        public GetPendingOrcid(String orcid) {
+            this.orcid = orcid;
+        }
+        
+        @Override
+        public String call() throws Exception {
+            processProfilePendingIndexingInTransaction(orcid);
+            return "was successful " + orcid;
+        }
+        
+    }
+    
     private ExecutorService createThreadPoolForIndexing() {
         return new ThreadPoolExecutor(numberOfIndexingThreads, numberOfIndexingThreads, 0L, TimeUnit.MILLISECONDS,
                 new LinkedBlockingQueue<Runnable>(INDEXING_BATCH_SIZE), Executors.defaultThreadFactory(), new ThreadPoolExecutor.CallerRunsPolicy());
