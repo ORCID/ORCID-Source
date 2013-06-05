@@ -1041,8 +1041,8 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         return null;
     }
 
-    ExecutorService executorService = null;
-    Object executorServiceLock = new Object();
+    static ExecutorService executorService = null;
+    static Object executorServiceLock = new Object();
     
     @Override
     synchronized public void processProfilesPendingIndexing() {
