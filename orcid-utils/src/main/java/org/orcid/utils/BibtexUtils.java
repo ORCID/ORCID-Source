@@ -46,6 +46,8 @@ import org.slf4j.LoggerFactory;
  */
 public class BibtexUtils {
 
+    public static final String ERROR_PARSING_BIBTEX = "error parsing bibtex";
+
     private static final Logger LOGGER = LoggerFactory.getLogger(BibtexUtils.class);
 
     public static final String COMMA_AND_WHITESPACE = ", ";
@@ -124,7 +126,7 @@ public class BibtexUtils {
         } catch (TimeoutException e) {
             LOGGER.error("bad bibtex: " + bibtex + " TimeoutException ", e);
         }
-        return "error parsing bibtex";
+        return ERROR_PARSING_BIBTEX;
     }
 
     /**
