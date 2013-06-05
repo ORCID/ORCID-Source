@@ -45,12 +45,13 @@ public class BibtexUtilsTest {
                 + "pp. 67--96", citation);
     }
 
-    @Test(expected = ObjectResolutionException.class)
+    @Test //(expected = ObjectResolutionException.class)
     public void testInvalidVariable() throws Exception {
         // @formatter:off
-        BibtexUtils.toCitation("@Article{Aravind:2011:NDB,\n" + "  author =       VARIABLE,\n"
+        String citation = BibtexUtils.toCitation("@Article{Aravind:2011:NDB,\n" + "  author =       VARIABLE,\n"
                 + "  title =        \"Nonatomic dual bakery algorithm with bounded tokens\",\n" + "  journal =      \"Acta Informatica\",\n" + "}");
         // @formatter:on
+        assertEquals(citation,BibtexUtils.ERROR_PARSING_BIBTEX);
     }
 
     @Test
