@@ -20,7 +20,12 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.Map;
-import java.util.Set;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.FutureTask;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
@@ -31,7 +36,6 @@ import org.jbibtex.BibTeXParser;
 import org.jbibtex.Key;
 import org.jbibtex.ParseException;
 import org.jbibtex.TokenMgrError;
-import org.jbibtex.Value;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -102,52 +106,25 @@ public class BibtexUtils {
     // create string templates for various citation styles and simply replace
     // variable placeholders
     // For example -
+    static private ExecutorService executor = Executors.newFixedThreadPool(4);
+
     public static String toCitation(String bibtex) throws ParseException {
-        StringBuilder citation = new StringBuilder();
-        Map<Key, BibTeXEntry> entries = getBibTeXEntries(bibtex);
-        Set<Key> keys = entries.keySet();
-        for (Key key : keys) {
-            BibTeXEntry bibTeXEntry = entries.get(key);
-            Value author = bibTeXEntry.getField(BibTeXEntry.KEY_AUTHOR);
-            Value editor = bibTeXEntry.getField(BibTeXEntry.KEY_EDITOR);
-            Value year = bibTeXEntry.getField(BibTeXEntry.KEY_YEAR);
-            Value title = bibTeXEntry.getField(BibTeXEntry.KEY_TITLE);
-            Value journal = bibTeXEntry.getField(BibTeXEntry.KEY_JOURNAL);
-            Value volume = bibTeXEntry.getField(BibTeXEntry.KEY_VOLUME);
-            Value number = bibTeXEntry.getField(BibTeXEntry.KEY_NUMBER);
-            Value pages = bibTeXEntry.getField(BibTeXEntry.KEY_PAGES);
-
-            if (author != null && StringUtils.isNotBlank(author.toUserString())) {
-                citation.append(author.toUserString()).append(COMMA_AND_WHITESPACE);
-            }
-            if (editor != null && StringUtils.isNotBlank(editor.toUserString())) {
-                citation.append(editor.toUserString()).append(COMMA_AND_WHITESPACE);
-            }
-            if (year != null && StringUtils.isNotBlank(year.toUserString())) {
-                citation.append("(").append(year.toUserString()).append("). ");
-            }
-            if (title != null && StringUtils.isNotBlank(title.toUserString())) {
-                citation.append('"').append(title.toUserString()).append('"').append(COMMA_AND_WHITESPACE);
-            }
-            if (journal != null && StringUtils.isNotBlank(journal.toUserString())) {
-                citation.append(journal.toUserString()).append(COMMA_AND_WHITESPACE);
-            }
-            if (volume != null && StringUtils.isNotBlank(volume.toUserString())) {
-                citation.append("vol. ").append(volume.toUserString()).append(COMMA_AND_WHITESPACE);
-            }
-            if (number != null && StringUtils.isNotBlank(number.toUserString())) {
-                citation.append("no. ").append(number.toUserString()).append(COMMA_AND_WHITESPACE);
-            }
-            if (pages != null && StringUtils.isNotBlank(pages.toUserString())) {
-                citation.append("pp. ").append(pages.toUserString()).append(COMMA_AND_WHITESPACE);
-            }
+        /*
+         * bibtex parser thread locks, use a future task and return an error
+         * string if that happens
+         */
+        FutureTask<String> task = new FutureTask<String>(new ToCitationCallable(bibtex));
+        executor.execute(task);
+        try {
+            return task.get(1, TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+            LOGGER.error("bad bibtex: " + bibtex + " InterruptedException ", e);
+        } catch (ExecutionException e) {
+            LOGGER.error("bad bibtex: " + bibtex + " ExecutionException ", e);
+        } catch (TimeoutException e) {
+            LOGGER.error("bad bibtex: " + bibtex + " TimeoutException ", e);
         }
-
-        String trimmed = citation.toString().trim();
-        if (trimmed.endsWith(",")) {
-            trimmed = trimmed.substring(0, trimmed.length() - 1);
-        }
-        return trimmed;
+        return "error parsing bibtex";
     }
 
     /**
