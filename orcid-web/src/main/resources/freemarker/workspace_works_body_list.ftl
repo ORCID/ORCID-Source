@@ -31,26 +31,26 @@
 	
 	<div ng-controller="WorkCtrl">
 	 
-	<div ng-repeat='work in works'>
+	<div ng-repeat='work in works' style="background-color: #dddddd">
 	
 			<@orcid.privacyToggle "register.workVisibilityDefault.visibility" "updateWorkVisibilityDefault('PUBLIC', $event)" 
 	                    	  "updateWorkVisibilityDefault('LIMITED', $event)" "updateWorkVisibilityDefault('PRIVATE', $event)" />
-	<table style="margin-bottom: 20px; border: solid 1px #00FF00;">
+	<table style="margin-bottom: 20px; border: solid 1px #00FF00; background-color: #ffffff; width: 100%;">
 		<tr style="vertical-align:top;">
-			<td class="label" style="font-size: 80%; padding-right: 5px;"><strong>TITLE<strong></td>
+			<td class="label" style="font-size: 80%; padding-right: 5px;"><strong>Title<strong></td>
 			<td><strong>{{work.workTitle.title.content}}</strong></td>
 		</tr>
 		<tr ng-show="work.workTitle.subtitle.content">
-			<td class="label" style="margin-right: 15px;">SUBTITLE</td>
+			<td class="label" style="margin-right: 15px;">Subtitle</td>
 			<td ng-bind-html-unsafe="work.workTitle.subtitle.content"></td>
 		</tr>
 		<tr ng-show="work.url.value">
-			<td class="label" style="margin-right: 15px;">URL</td>
+			<td class="label" style="margin-right: 15px;">Url</td>
 			<td><a href="{work.url.value}" target="_blank" ng-bind-html-unsafe="work.url.value"></td>
 			<td></td>
 		</tr>
 		<tr ng-repeat="ie in work.workExternalIdentifiers.workExternalIdentifier">
-			<td class="label" style="margin-right: 15px;">External ID</td>
+			<td class="label" style="margin-right: 15px;">External Id</td>
 			<td ><strong>ID:</strong> <span ng-bind-html-unsafe="ie.workExternalIdentifierId.content"></span> 
 				 <strong>TYPE:</strong> <span ng-bind="ie.workExternalIdentifierType"></span> 
 			</td>
