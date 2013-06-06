@@ -923,6 +923,11 @@ the software.
                 <version>2.13.0</version>
                 <scope>test</scope>
             </dependency>
+            <dependency>
+                <groupId>org.apache.jena</groupId>
+                <artifactId>jena-core</artifactId>
+                <version>2.10.1</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
