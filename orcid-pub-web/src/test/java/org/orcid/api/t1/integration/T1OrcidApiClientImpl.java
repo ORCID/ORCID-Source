@@ -72,6 +72,32 @@ public class T1OrcidApiClientImpl implements OrcidApiService<ClientResponse> {
     public ClientResponse viewBioDetailsXml(@PathParam("orcid") String orcid) {
         return orcidClientHelper.getClientResponse(UriBuilder.fromPath(BIO_PATH_NO_REGEX).build(orcid), VND_ORCID_XML);
     }
+    
+    /**
+     * GETs the RDF/XML representation of the ORCID record containing only the
+     * Biography details
+     * 
+     * @param orcid
+     *            the ORCID that corresponds to the user's record
+     * @return the RDF/XML representation of the ORCID record
+     */
+    @Override
+    public ClientResponse viewBioDetailsRdf(@PathParam("orcid") String orcid) {
+        return orcidClientHelper.getClientResponse(UriBuilder.fromPath(BIO_PATH_NO_REGEX).build(orcid), APPLICATION_RDFXML);
+    }
+
+    /**
+     * GETs the RDF Turtle representation of the ORCID record containing only the
+     * Biography details
+     * 
+     * @param orcid
+     *            the ORCID that corresponds to the user's record
+     * @return the RDF Turtle representation of the ORCID record
+     */
+    @Override
+    public ClientResponse viewBioDetailsTurtle(@PathParam("orcid") String orcid) {
+        return orcidClientHelper.getClientResponse(UriBuilder.fromPath(BIO_PATH_NO_REGEX).build(orcid), TEXT_TURTLE);
+    }
 
     /**
      * GETs the JSON representation of the ORCID record containing only the
