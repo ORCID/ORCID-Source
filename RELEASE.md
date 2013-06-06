@@ -4,6 +4,21 @@ We release updates to the Registry regularly. Below is a list of the improvement
 * [2013 Releases](https://trello.com/b/ZgYVAlel)
 * [2012 Releases](https://trello.com/b/vyCDYdvR)
 
+## release-1.1.22.24
+(2013-06-05)
+
+* Added in defensive threading to kill jbibtex thread locks
+
+* Caching public records with Solr
+
+* Works delete and privacy settings are ajaxed on the /my-orcid 
+
+* "View Public Record" button displays white text when hover
+
+* When adding works manually, the last digits of the year are now visible
+
+* Import wizzard popup now have a header, a footer and a close button.
+
 
 ## release-1.1.21.3
 (2013-05-17)
