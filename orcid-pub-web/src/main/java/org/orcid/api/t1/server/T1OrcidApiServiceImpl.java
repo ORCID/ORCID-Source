@@ -123,7 +123,7 @@ public class T1OrcidApiServiceImpl implements OrcidApiService<Response> {
         T1_GET_REQUESTS.inc();
         return serviceDelegator.findBioDetailsFromPublicCache(orcid);
     }
-    
+
     /**
      * GETs the RDF/XML representation of the ORCID record containing only the
      * Biography details
@@ -140,7 +140,6 @@ public class T1OrcidApiServiceImpl implements OrcidApiService<Response> {
         T1_GET_REQUESTS.inc();
         return serviceDelegator.findBioDetails(orcid);
     }
-
 
     /**
      * GETs the RDF Turtle representation of the ORCID record containing only the

@@ -90,7 +90,6 @@ public interface OrcidApiService<T> {
     @Path(BIO_PATH)
     T viewBioDetailsRdf(@PathParam("orcid") String orcid);
 
-    
     /**
      * GETs the RDF Turtle representation of the ORCID record containing only the
      * Biography details
@@ -103,7 +102,7 @@ public interface OrcidApiService<T> {
     @Produces(value = { TEXT_N3, TEXT_TURTLE })
     @Path(BIO_PATH)
     T viewBioDetailsTurtle(@PathParam("orcid") String orcid);
-    
+
     /**
      * GETs the HTML representation of the ORCID external identifiers
      * 

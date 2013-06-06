@@ -53,9 +53,9 @@ public class OrcidGrantedAuthority extends BaseEntity<OrcidGrantedAuthorityPk> i
     public ProfileEntity getProfileEntity() {
         return profileEntity;
     }
-    
+
     @Transient
-    public ProfileEntity getProfile(){
+    public ProfileEntity getProfile() {
         return profileEntity;
     }
 

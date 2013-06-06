@@ -26,10 +26,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 public class ProfileWorkDaoImpl extends GenericDaoImpl<ProfileWorkEntity, ProfileWorkEntityPk> implements ProfileWorkDao {
 
-    
-    public ProfileWorkDaoImpl(){
+    public ProfileWorkDaoImpl() {
         super(ProfileWorkEntity.class);
     }
+
     /**
      * Removes the relationship that exists between a work and a profile.
      * 
@@ -64,14 +64,15 @@ public class ProfileWorkDaoImpl extends GenericDaoImpl<ProfileWorkEntity, Profil
      * */
     @Override
     @Transactional
-    public boolean updateWork(String clientOrcid, String workId, Visibility visibility){
-        Query query = entityManager.createQuery("update ProfileWorkEntity set visibility=:visibility, lastModified=now() where profile.id=:clientOrcid and work.id=:workId");
+    public boolean updateWork(String clientOrcid, String workId, Visibility visibility) {
+        Query query = entityManager
+                .createQuery("update ProfileWorkEntity set visibility=:visibility, lastModified=now() where profile.id=:clientOrcid and work.id=:workId");
         query.setParameter("clientOrcid", clientOrcid);
         query.setParameter("workId", Long.valueOf(workId));
         query.setParameter("visibility", visibility);
         return query.executeUpdate() > 0 ? true : false;
     }
-    
+
     /**
      * Get the profile work associated with the client orcid and the workId 
      * 
@@ -82,14 +83,14 @@ public class ProfileWorkDaoImpl extends GenericDaoImpl<ProfileWorkEntity, Profil
      *          The id of the work that will be updated
      *          
      * @return the profileWork object
-     * */    
+     * */
     @Override
-    @Transactional    
-    public ProfileWorkEntity getProfileWork(String clientOrcid, String workId){
+    @Transactional
+    public ProfileWorkEntity getProfileWork(String clientOrcid, String workId) {
         Query query = entityManager.createQuery("from ProfileWorkEntity where profile.id=:clientOrcid and work.id=:workId");
         query.setParameter("clientOrcid", clientOrcid);
         query.setParameter("workId", Long.valueOf(workId));
-        return (ProfileWorkEntity) query.getSingleResult(); 
+        return (ProfileWorkEntity) query.getSingleResult();
     }
-    
+
 }

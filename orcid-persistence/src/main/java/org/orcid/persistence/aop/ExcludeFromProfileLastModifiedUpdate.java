@@ -25,7 +25,7 @@ import java.lang.annotation.Target;
  * @author Will Simpson
  * 
  */
-@Target({ java.lang.annotation.ElementType.METHOD })
+@Target( { java.lang.annotation.ElementType.METHOD })
 @Retention(java.lang.annotation.RetentionPolicy.RUNTIME)
 @Documented
 public @interface ExcludeFromProfileLastModifiedUpdate {

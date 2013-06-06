@@ -149,10 +149,10 @@ public class ClientDetailsEntity extends BaseEntity<String> implements ClientDet
     public ProfileEntity getProfileEntity() {
         return profileEntity;
     }
-    
+
     @Transient
     @Override
-    public ProfileEntity getProfile(){
+    public ProfileEntity getProfile() {
         return profileEntity;
     }
 

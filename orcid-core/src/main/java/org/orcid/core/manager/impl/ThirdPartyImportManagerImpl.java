@@ -43,13 +43,12 @@ public class ThirdPartyImportManagerImpl implements ThirdPartyImportManager {
 
         return getClients(RedirectUriType.IMPORT_WORKS_WIZARD);
     }
-    
+
     @Override
     @Cacheable("read-access-clients")
     public List<OrcidClient> findOrcidClientsWithPredefinedOauthScopeReadAccess() {
         return getClients(RedirectUriType.GRANT_READ_WIZARD);
     }
-
 
     private List<OrcidClient> getClients(RedirectUriType rut) {
         List<OrcidClient> orcidClients = new ArrayList<OrcidClient>();
@@ -65,7 +64,7 @@ public class ThirdPartyImportManagerImpl implements ThirdPartyImportManager {
                 redirectUri.setType(RedirectUriType.fromValue(entity.getRedirectUriType()));
                 RedirectUris redirectUris = new RedirectUris();
                 redirectUris.getRedirectUri().add(redirectUri);
-                
+
                 OrcidClient minimalClientDetails = new OrcidClient();
                 minimalClientDetails.setDisplayName(clientDetails.getProfileEntity().getCreditName());
                 minimalClientDetails.setShortDescription(clientDetails.getProfileEntity().getBiography());

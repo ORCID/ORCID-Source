@@ -1047,25 +1047,25 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
 
     static ExecutorService executorService = null;
     static Object executorServiceLock = new Object();
-    
+
     @Override
     synchronized public void processProfilesPendingIndexing() {
         // XXX There are some concurrency related edge cases to fix here.
         LOG.info("About to process profiles pending indexing");
         if (executorService == null || executorService.isShutdown()) {
-            synchronized(executorServiceLock) {
+            synchronized (executorServiceLock) {
                 if (executorService == null || executorService.isShutdown()) {
                     executorService = createThreadPoolForIndexing();
                 } else {
                     // already running
-                    return;                    
+                    return;
                 }
             }
         } else {
             // already running
             return;
         }
-        
+
         List<String> orcidsForIndexing = Collections.<String> emptyList();
         do {
             orcidsForIndexing = profileDao.findOrcidsByIndexingStatus(IndexingStatus.PENDING, INDEXING_BATCH_SIZE, orcidsForIndexing);
@@ -1076,16 +1076,16 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
                 try {
                     LOG.info(task.get(15, TimeUnit.SECONDS));
                 } catch (InterruptedException e) {
-                    LOG.error(orcid +" InterruptedException ", e);
+                    LOG.error(orcid + " InterruptedException ", e);
                 } catch (ExecutionException e) {
-                    LOG.error(orcid +" ExecutionException ", e);
+                    LOG.error(orcid + " ExecutionException ", e);
                 } catch (TimeoutException e) {
-                    LOG.error(orcid +" TimeoutException ", e);
+                    LOG.error(orcid + " TimeoutException ", e);
                 }
             }
         } while (!orcidsForIndexing.isEmpty());
         if (!executorService.isShutdown()) {
-            synchronized(executorServiceLock) {
+            synchronized (executorServiceLock) {
                 if (!executorService.isShutdown()) {
                     executorService.shutdown();
                     try {
@@ -1101,18 +1101,19 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
 
     class GetPendingOrcid implements Callable<String> {
         String orcid = null;
+
         public GetPendingOrcid(String orcid) {
             this.orcid = orcid;
         }
-        
+
         @Override
         public String call() throws Exception {
             processProfilePendingIndexingInTransaction(orcid);
             return "was successful " + orcid;
         }
-        
+
     }
-    
+
     private ExecutorService createThreadPoolForIndexing() {
         return new ThreadPoolExecutor(numberOfIndexingThreads, numberOfIndexingThreads, 0L, TimeUnit.MILLISECONDS,
                 new LinkedBlockingQueue<Runnable>(INDEXING_BATCH_SIZE), Executors.defaultThreadFactory(), new ThreadPoolExecutor.CallerRunsPolicy());

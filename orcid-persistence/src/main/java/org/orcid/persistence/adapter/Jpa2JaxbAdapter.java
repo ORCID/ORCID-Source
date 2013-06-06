@@ -33,7 +33,7 @@ public interface Jpa2JaxbAdapter {
     OrcidProfile toOrcidProfile(ProfileEntity profileEntity);
 
     OrcidClientGroup toOrcidClientGroup(ProfileEntity profileEntity);
-    
+
     OrcidWork getOrcidWork(ProfileWorkEntity profileWorkEntity);
 
 }

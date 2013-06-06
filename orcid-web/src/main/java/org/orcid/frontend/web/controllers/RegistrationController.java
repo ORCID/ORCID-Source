@@ -461,7 +461,7 @@ public class RegistrationController extends BaseController {
         }
 
         else {
-            if(profile.isDeactivated()){
+            if (profile.isDeactivated()) {
                 mav.addObject("disabledAccount", true);
                 return mav;
             } else {

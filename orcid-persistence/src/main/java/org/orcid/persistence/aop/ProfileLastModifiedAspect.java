@@ -47,15 +47,12 @@ public class ProfileLastModifiedAspect implements PriorityOrdered {
     private static final Logger LOGGER = LoggerFactory.getLogger(ProfileLastModifiedAspect.class);
 
     //@formatter:off
-    private static final String POINTCUT_DEFINITION_BASE =
-           "(execution(* org.orcid.persistence.dao.*.remove*(..))" +
-           "|| execution(* org.orcid.persistence.dao.*.delete*(..))" +
-           "|| execution(* org.orcid.persistence.dao.*.update*(..))" +
-           "|| execution(* org.orcid.persistence.dao.*.merge*(..))" +
-           "|| execution(* org.orcid.persistence.dao.*.add*(..)))" +
-           "&& !@annotation(org.orcid.persistence.aop.ExcludeFromProfileLastModifiedUpdate)" +
-           "&& !within(org.orcid.persistence.dao.impl.ProfileDaoImpl)" +
-           "&& !within(org.orcid.persistence.dao.impl.WebhookDaoImpl)";
+    private static final String POINTCUT_DEFINITION_BASE = "(execution(* org.orcid.persistence.dao.*.remove*(..))"
+            + "|| execution(* org.orcid.persistence.dao.*.delete*(..))" + "|| execution(* org.orcid.persistence.dao.*.update*(..))"
+            + "|| execution(* org.orcid.persistence.dao.*.merge*(..))" + "|| execution(* org.orcid.persistence.dao.*.add*(..)))"
+            + "&& !@annotation(org.orcid.persistence.aop.ExcludeFromProfileLastModifiedUpdate)" + "&& !within(org.orcid.persistence.dao.impl.ProfileDaoImpl)"
+            + "&& !within(org.orcid.persistence.dao.impl.WebhookDaoImpl)";
+
     //@formatter:on
 
     @AfterReturning(POINTCUT_DEFINITION_BASE + " && args(orcid, ..)")

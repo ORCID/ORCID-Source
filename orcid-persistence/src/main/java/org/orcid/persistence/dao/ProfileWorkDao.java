@@ -31,7 +31,7 @@ public interface ProfileWorkDao {
      * @return true if the relationship was deleted
      * */
     boolean removeWork(String clientOrcid, String workId);
-    
+
     /**
      * Updates the visibility of an existing profile work relationship
      * 
@@ -47,7 +47,7 @@ public interface ProfileWorkDao {
      * @return true if the relationship was updated
      * */
     boolean updateWork(String clientOrcid, String workId, Visibility visibility);
-    
+
     /**
      * Get the profile work associated with the client orcid and the workId 
      * 
@@ -58,6 +58,6 @@ public interface ProfileWorkDao {
      *          The id of the work that will be updated
      *          
      * @return the profileWork object
-     * */    
+     * */
     ProfileWorkEntity getProfileWork(String clientOrcid, String workId);
 }

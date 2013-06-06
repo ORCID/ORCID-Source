@@ -40,7 +40,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:orcid-persistence-context.xml" })
-public class ProfileWorkDaoTest extends DBUnitTest  {
+public class ProfileWorkDaoTest extends DBUnitTest {
 
     @Resource
     private ProfileWorkDao profileWorkDao;
@@ -50,19 +50,21 @@ public class ProfileWorkDaoTest extends DBUnitTest  {
 
     @BeforeClass
     public static void initDBUnitData() throws Exception {
-        initDBUnitData(Arrays.asList("/data/SecurityQuestionEntityData.xml", "/data/ProfileEntityData.xml", "/data/WorksEntityData.xml", "/data/ProfileWorksEntityData.xml"), null);
+        initDBUnitData(Arrays.asList("/data/SecurityQuestionEntityData.xml", "/data/ProfileEntityData.xml", "/data/WorksEntityData.xml",
+                "/data/ProfileWorksEntityData.xml"), null);
     }
 
     @AfterClass
     public static void removeDBUnitData() throws Exception {
-        removeDBUnitData(Arrays.asList("/data/ProfileWorksEntityData.xml", "/data/WorksEntityData.xml", "/data/ProfileEntityData.xml", "/data/SecurityQuestionEntityData.xml"), null);
+        removeDBUnitData(Arrays.asList("/data/ProfileWorksEntityData.xml", "/data/WorksEntityData.xml", "/data/ProfileEntityData.xml",
+                "/data/SecurityQuestionEntityData.xml"), null);
     }
 
     @Before
     public void beforeRunning() {
         assertNotNull(profileWorkDao);
     }
-    
+
     @Test
     @Rollback(true)
     @Transactional(propagation = Propagation.REQUIRES_NEW)
@@ -71,7 +73,7 @@ public class ProfileWorkDaoTest extends DBUnitTest  {
         Date justBeforeStart = new Date(now.getTime() - 1000);
         assertFalse(profileWorkDao.removeWork("4444-4444-4444-4443", "3"));
         assertTrue(profileWorkDao.removeWork("4444-4444-4444-4443", "1"));
-        
+
         assertFalse(profileWorkDao.updateWork("4444-4444-4444-4443", "3", Visibility.PUBLIC));
         assertTrue(profileWorkDao.updateWork("4444-4444-4444-4443", "2", Visibility.PUBLIC));
     }

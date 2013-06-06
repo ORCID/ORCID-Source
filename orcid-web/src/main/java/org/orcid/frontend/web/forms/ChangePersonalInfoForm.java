@@ -170,7 +170,7 @@ public class ChangePersonalInfoForm {
         if (currentOrcidProfile.getOrcidBio().getBiography() == null) {
             currentOrcidProfile.getOrcidBio().setBiography(new Biography());
         }
-        
+
         if (currentOrcidProfile.getOrcidBio().getBiography().getVisibility() == null) {
             currentOrcidProfile.getOrcidBio().getBiography().setVisibility(OrcidVisibilityDefaults.BIOGRAPHY_DEFAULT.getVisibility());
         }
