@@ -139,7 +139,6 @@ public class T1OrcidApiServiceImpl implements OrcidApiService<Response> {
      *            the ORCID that corresponds to the user's record
      * @return A 307 redirect
      */
-    @Override
     @GET
     @Produces(value = { APPLICATION_RDFXML })
     @Path(BIO_PATH)
