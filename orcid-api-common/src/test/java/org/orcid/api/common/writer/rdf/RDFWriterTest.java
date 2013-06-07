@@ -47,7 +47,7 @@ import org.orcid.jaxb.model.message.PersonalDetails;
 public class RDFWriterTest {
 
     private RDFMessageBodyWriter rdfWriter = new RDFMessageBodyWriter();
-    
+
     private OrcidMessage fakeBio() {
         OrcidMessage orcidMessage = new OrcidMessage();
         OrcidProfile orcidProfile1 = new OrcidProfile();
@@ -67,7 +67,6 @@ public class RDFWriterTest {
         bio.setContactDetails(new ContactDetails());
         bio.getContactDetails().setEmail(Arrays.asList(new Email("john@example.org"), new Email("doe@example.com")));
 
-        
         orcidMessage.setOrcidProfile(orcidProfile1);
         return orcidMessage;
 
@@ -75,11 +74,11 @@ public class RDFWriterTest {
 
     @Test
     public void writeRdfXML() throws Exception {
-        
+
         ByteArrayOutputStream entityStream = new ByteArrayOutputStream(1024);
 
         rdfWriter.writeTo(fakeBio(), OrcidMessage.class, null, null, new MediaType("application", "rdf+xml"), null, entityStream);
-        
+
         String str = entityStream.toString("utf-8");
         System.out.println(str);
         assertTrue(str.contains("http://orcid.example.com/000-1337"));
@@ -90,10 +89,10 @@ public class RDFWriterTest {
 
     @Test
     public void writeTurte() throws Exception {
-        
+
         ByteArrayOutputStream entityStream = new ByteArrayOutputStream(1024);
         rdfWriter.writeTo(fakeBio(), OrcidMessage.class, null, null, new MediaType("text", "turtle"), null, entityStream);
-        
+
         String str = entityStream.toString("utf-8");
         System.out.println(str);
         assertTrue(str.contains("<http://orcid.example.com/000-1337>"));
@@ -102,5 +101,4 @@ public class RDFWriterTest {
         assertFalse(str.contains("subClassOf"));
     }
 
-    
 }

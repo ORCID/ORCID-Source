@@ -48,8 +48,6 @@ public class ClientRedirectUriEntity extends BaseEntity<ClientRedirectUriPk> imp
     private String predefinedClientScope;
     private ClientDetailsEntity clientDetailsEntity;
     private String redirectUriType;
-    
-    
 
     public ClientRedirectUriEntity() {
     }

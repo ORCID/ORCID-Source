@@ -48,5 +48,4 @@ public class AcceptHeaderRequestWrapper extends HttpServletRequestWrapper {
         }
         return super.getHeaders(name);
     }
-
 }

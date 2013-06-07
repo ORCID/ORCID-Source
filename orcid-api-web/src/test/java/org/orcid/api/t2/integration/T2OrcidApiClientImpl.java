@@ -274,7 +274,7 @@ public class T2OrcidApiClientImpl implements T2OrcidApiService<ClientResponse> {
     public ClientResponse viewBioDetailsTurtle(@PathParam("orcid") String orcid) {
         return orcidClientHelper.getClientResponse(UriBuilder.fromPath(BIO_PATH_NO_REGEX).build(orcid), TEXT_TURTLE);
     }
-    
+
     /**
      * GETs the HTML representation of the ORCID external identifiers
      * 

@@ -745,14 +745,13 @@ public class ManageProfileController extends BaseWorkspaceController {
         notificationManager.sendVerificationEmail(currentProfile, baseUri, email);
         return new Errors();
     }
-    
+
     @RequestMapping(value = "/delayVerifyEmail.json", method = RequestMethod.GET)
     public @ResponseBody
     Errors delayVerifyEmailJson(HttpServletRequest request) {
         request.getSession().setAttribute(ManageProfileController.CHECK_EMAIL_VALIDATED, false);
         return new Errors();
     }
-
 
     @RequestMapping(value = "/send-deactivate-account.json", method = RequestMethod.GET)
     public @ResponseBody

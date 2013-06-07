@@ -82,13 +82,14 @@ public class HomeController extends BaseController {
     @RequestMapping(value = "/userStatus.json")
     @Produces(value = { MediaType.APPLICATION_JSON })
     public @ResponseBody
-    Object getUserStatusJson(HttpServletRequest request, @RequestParam(value = "logUserOut", required = false) Boolean logUserOut) throws NoSuchRequestHandlingMethodException {
-        
+    Object getUserStatusJson(HttpServletRequest request, @RequestParam(value = "logUserOut", required = false) Boolean logUserOut)
+            throws NoSuchRequestHandlingMethodException {
+
         if (logUserOut != null && logUserOut.booleanValue()) {
             SecurityContextHolder.clearContext();
             request.getSession().invalidate();
         }
-        
+
         OrcidProfileUserDetails opd = getCurrentUser();
         UserStatus us = new UserStatus();
         us.setLoggedIn((opd != null));

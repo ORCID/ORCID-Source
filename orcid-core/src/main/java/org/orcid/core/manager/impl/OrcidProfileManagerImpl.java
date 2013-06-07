@@ -1048,26 +1048,26 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
 
     static ExecutorService executorService = null;
     static Object executorServiceLock = new Object();
-    static ConcurrentHashMap <String,FutureTask<String>> futureHM = new ConcurrentHashMap<String,FutureTask<String>>();
-    
+    static ConcurrentHashMap<String, FutureTask<String>> futureHM = new ConcurrentHashMap<String, FutureTask<String>>();
+
     @Override
     public void processProfilesPendingIndexing() {
         // XXX There are some concurrency related edge cases to fix here.
         LOG.info("About to process profiles pending indexing");
         if (executorService == null || executorService.isShutdown()) {
-            synchronized(executorServiceLock) {
+            synchronized (executorServiceLock) {
                 if (executorService == null || executorService.isShutdown()) {
                     executorService = createThreadPoolForIndexing();
                 } else {
                     // already running
-                    return;                    
+                    return;
                 }
             }
         } else {
             // already running
             return;
         }
-        
+
         List<String> orcidsForIndexing = Collections.<String> emptyList();
         List<String> orcidFailures = Collections.<String> emptyList();
         do {
@@ -1083,18 +1083,18 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
                     futureHM.remove(orcid).get(15, TimeUnit.SECONDS);
                 } catch (InterruptedException e) {
                     orcidFailures.add(orcid);
-                    LOG.error(orcid +" InterruptedException ", e);
+                    LOG.error(orcid + " InterruptedException ", e);
                 } catch (ExecutionException e) {
                     orcidFailures.add(orcid);
-                    LOG.error(orcid +" ExecutionException ", e);
+                    LOG.error(orcid + " ExecutionException ", e);
                 } catch (TimeoutException e) {
                     orcidFailures.add(orcid);
-                    LOG.error(orcid +" TimeoutException ", e);
-                }                
+                    LOG.error(orcid + " TimeoutException ", e);
+                }
             }
         } while (!orcidsForIndexing.isEmpty());
         if (!executorService.isShutdown()) {
-            synchronized(executorServiceLock) {
+            synchronized (executorServiceLock) {
                 if (!executorService.isShutdown()) {
                     executorService.shutdown();
                     try {
@@ -1110,18 +1110,19 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
 
     class GetPendingOrcid implements Callable<String> {
         String orcid = null;
+
         public GetPendingOrcid(String orcid) {
             this.orcid = orcid;
         }
-        
+
         @Override
         public String call() throws Exception {
             processProfilePendingIndexingInTransaction(orcid);
             return "was successful " + orcid;
         }
-        
+
     }
-    
+
     private ExecutorService createThreadPoolForIndexing() {
         return new ThreadPoolExecutor(numberOfIndexingThreads, numberOfIndexingThreads, 0L, TimeUnit.MILLISECONDS,
                 new LinkedBlockingQueue<Runnable>(INDEXING_BATCH_SIZE), Executors.defaultThreadFactory(), new ThreadPoolExecutor.CallerRunsPolicy());

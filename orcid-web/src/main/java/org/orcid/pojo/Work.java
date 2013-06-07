@@ -37,7 +37,7 @@ public class Work extends OrcidWork implements ErrorsInterface {
     private List<String> errors = new ArrayList<String>();
 
     private static Logger LOGGER = LoggerFactory.getLogger(Work.class);
-    
+
     @XmlAttribute
     protected String citationForDisplay;
 

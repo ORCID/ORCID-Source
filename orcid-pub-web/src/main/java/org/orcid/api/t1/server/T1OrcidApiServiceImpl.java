@@ -29,7 +29,10 @@ import static org.orcid.api.common.OrcidApiConstants.TEXT_TURTLE;
 import static org.orcid.api.common.OrcidApiConstants.VND_ORCID_JSON;
 import static org.orcid.api.common.OrcidApiConstants.VND_ORCID_XML;
 import static org.orcid.api.common.OrcidApiConstants.WORKS_PATH;
+import static org.orcid.api.common.OrcidApiConstants.EXPERIMENTAL_RDF_V1;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Map;
 
@@ -46,6 +49,7 @@ import javax.ws.rs.core.UriInfo;
 import org.orcid.api.common.OrcidApiService;
 import org.orcid.api.common.delegator.OrcidApiServiceDelegator;
 import org.orcid.jaxb.model.message.OrcidMessage;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import com.yammer.metrics.Metrics;
@@ -59,6 +63,9 @@ import com.yammer.metrics.core.Counter;
 @Component
 @Path("/")
 public class T1OrcidApiServiceImpl implements OrcidApiService<Response> {
+
+    @Value("${org.orcid.core.pubBaseUri:http://orcid.org}")
+    private String pubBaseUri;
 
     final static Counter T1_GET_REQUESTS = Metrics.newCounter(T1OrcidApiServiceImpl.class, "T1-GET-REQUESTS");
     final static Counter T1_SEARCH_REQUESTS = Metrics.newCounter(T1OrcidApiServiceImpl.class, "T1-SEARCH-REQUESTS");
@@ -123,7 +130,28 @@ public class T1OrcidApiServiceImpl implements OrcidApiService<Response> {
         T1_GET_REQUESTS.inc();
         return serviceDelegator.findBioDetailsFromPublicCache(orcid);
     }
-    
+
+    /**
+     *  returns a redirect to experimental rdf api
+     *        
+     * @param orcid
+     *            the ORCID that corresponds to the user's record
+     * @return A 307 redirect
+     */
+    @GET
+    @Produces(value = { APPLICATION_RDFXML })
+    @Path(BIO_PATH)
+    public Response redirBioDetailsRdf(@PathParam("orcid") String orcid) {
+        URI uri = null;
+        try {
+            uri = new URI(pubBaseUri + EXPERIMENTAL_RDF_V1 + "/" + orcid);
+        } catch (URISyntaxException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return Response.temporaryRedirect(uri).build();
+    }
+
     /**
      * GETs the RDF/XML representation of the ORCID record containing only the
      * Biography details
@@ -135,12 +163,32 @@ public class T1OrcidApiServiceImpl implements OrcidApiService<Response> {
     @Override
     @GET
     @Produces(value = { APPLICATION_RDFXML })
-    @Path(BIO_PATH)
+    @Path(EXPERIMENTAL_RDF_V1 + BIO_PATH)
     public Response viewBioDetailsRdf(@PathParam("orcid") String orcid) {
         T1_GET_REQUESTS.inc();
         return serviceDelegator.findBioDetails(orcid);
     }
 
+    /**
+     *  returns a redirect to experimental rdf api
+     *        
+     * @param orcid
+     *            the ORCID that corresponds to the user's record
+     * @return A 307 redirect
+     */
+    @GET
+    @Produces(value = { TEXT_N3, TEXT_TURTLE })
+    @Path(BIO_PATH)
+    public Response redirBioDetailsTurtle(@PathParam("orcid") String orcid) {
+        URI uri = null;
+        try {
+            uri = new URI(pubBaseUri + EXPERIMENTAL_RDF_V1 + "/" + orcid);
+        } catch (URISyntaxException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return Response.temporaryRedirect(uri).build();
+    }
 
     /**
      * GETs the RDF Turtle representation of the ORCID record containing only the
@@ -152,7 +200,7 @@ public class T1OrcidApiServiceImpl implements OrcidApiService<Response> {
      */
     @GET
     @Produces(value = { TEXT_N3, TEXT_TURTLE })
-    @Path(BIO_PATH)
+    @Path(EXPERIMENTAL_RDF_V1 + BIO_PATH)
     public Response viewBioDetailsTurtle(@PathParam("orcid") String orcid) {
         T1_GET_REQUESTS.inc();
         return serviceDelegator.findBioDetails(orcid);

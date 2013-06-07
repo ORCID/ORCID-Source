@@ -19,7 +19,6 @@ package org.orcid.core.manager;
 import java.net.URI;
 import java.util.List;
 
-
 import org.orcid.jaxb.model.message.DelegationDetails;
 import org.orcid.jaxb.model.message.Email;
 import org.orcid.jaxb.model.message.OrcidProfile;

@@ -72,7 +72,7 @@ public class T1OrcidApiClientImpl implements OrcidApiService<ClientResponse> {
     public ClientResponse viewBioDetailsXml(@PathParam("orcid") String orcid) {
         return orcidClientHelper.getClientResponse(UriBuilder.fromPath(BIO_PATH_NO_REGEX).build(orcid), VND_ORCID_XML);
     }
-    
+
     /**
      * GETs the RDF/XML representation of the ORCID record containing only the
      * Biography details

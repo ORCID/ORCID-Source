@@ -20,7 +20,7 @@ import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.persistence.jpa.entities.ProfileWorkEntity;
 
 public interface ProfileWorkManager {
-    
+
     /**
      * Removes the relationship that exists between a work and a profile.
      *      
@@ -33,7 +33,7 @@ public interface ProfileWorkManager {
      * @return true if the relationship was deleted
      * */
     boolean removeWork(String clientOrcid, String workId);
-    
+
     /**
      * Updates the visibility of an existing profile work relationship
      * 
@@ -49,7 +49,7 @@ public interface ProfileWorkManager {
      * @return true if the relationship was updated
      * */
     boolean updateWork(String clientOrcid, String workId, Visibility visibility);
-    
+
     /**
      * Get the profile work associated with the client orcid and the workId 
      * 
@@ -60,6 +60,6 @@ public interface ProfileWorkManager {
      *          The id of the work that will be updated
      *          
      * @return the profileWork object
-     * */    
+     * */
     ProfileWorkEntity getProfileWork(String clientOrcid, String workId);
 }

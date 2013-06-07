@@ -55,33 +55,33 @@ public class WorkSource implements Serializable {
     //This field indicates that the source is null on database
     //So -1 will be the same as a null value on the source
     public static String NULL_SOURCE_PROFILE = "NOT_DEFINED";
-    
+
     /**
      * 
      */
     private static final long serialVersionUID = 1L;
-    @XmlValue    
+    @XmlValue
     protected String content;
-    
-    public WorkSource(){
-        
+
+    public WorkSource() {
+
     }
-    
-    public WorkSource(String content){
+
+    public WorkSource(String content) {
         setContent(content);
     }
-    
+
     /**
      * Gets the value of the content property.     
      */
     public String getContent() {
         return this.content;
     }
-    
+
     /**
      * Set the value of the content property
      * */
-    public void setContent(String content){
+    public void setContent(String content) {
         this.content = content;
     }
 
@@ -95,12 +95,12 @@ public class WorkSource implements Serializable {
         }
 
         WorkSource that = (WorkSource) o;
-        
-        if(content != null )
-        
-        if (content != null ? !content.equals(that.content) : that.content != null) {
-            return false;
-        }
+
+        if (content != null)
+
+            if (content != null ? !content.equals(that.content) : that.content != null) {
+                return false;
+            }
 
         return true;
     }

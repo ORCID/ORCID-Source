@@ -281,14 +281,14 @@ public class T2OrcidOAuthApiClientIntegrationTest extends BaseT2OrcidOAuthApiCli
         ClientResponse orcidWorksFromResponse = oauthT2Client.viewWorksDetailsJson(this.orcid, accessToken);
         List<OrcidWork> retrievedOrcidWorks = orcidWorksFromResponse.getEntity(OrcidMessage.class).getOrcidProfile().retrieveOrcidWorks().getOrcidWork();
         assertTrue(retrievedOrcidWorks.size() == 4);
-                
+
         String clientOrcid = this.clientId;
-        
-        for(OrcidWork work : retrievedOrcidWorks){
+
+        for (OrcidWork work : retrievedOrcidWorks) {
             WorkTitle workTitle = work.getWorkTitle();
-            
-            if(workTitle != null && workTitle.getTitle() != null){
-                if("Single works with title".equals(workTitle.getTitle().getContent())){
+
+            if (workTitle != null && workTitle.getTitle() != null) {
+                if ("Single works with title".equals(workTitle.getTitle().getContent())) {
                     assertEquals(clientOrcid, work.getWorkSource().getContent());
                     break;
                 }
@@ -326,7 +326,7 @@ public class T2OrcidOAuthApiClientIntegrationTest extends BaseT2OrcidOAuthApiCli
         ClientResponse worksResponse = oauthT2Client.viewWorksDetailsXml(this.orcid, this.accessToken);
         assertEquals(200, worksResponse.getStatus());
         message = worksResponse.getEntity(OrcidMessage.class);
-        
+
         orcidWorks = message.getOrcidProfile().retrieveOrcidWorks();
         assertTrue(orcidWorks != null && orcidWorks.getOrcidWork() != null && orcidWorks.getOrcidWork().size() == 3);
 
@@ -341,7 +341,7 @@ public class T2OrcidOAuthApiClientIntegrationTest extends BaseT2OrcidOAuthApiCli
         assertEquals("Chromosome 5a55.5 microdeletions comprising AB555 and CD5555", workToUpdate.getWorkTitle().getTitle().getContent());
         assertEquals("Chromosome subtitle", workToUpdate.getWorkTitle().getSubtitle().getContent());
         assertEquals(this.clientId, workToUpdate.getWorkSource().getContent());
-        
+
         // check other works unchanged
         assertEquals("Work title 1", orcidWorks.getOrcidWork().get(1).getWorkTitle().getTitle().getContent());
         assertEquals("Work subtitle 1", orcidWorks.getOrcidWork().get(1).getWorkTitle().getSubtitle().getContent());

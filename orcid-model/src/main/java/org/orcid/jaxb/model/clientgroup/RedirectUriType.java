@@ -54,17 +54,15 @@ public enum RedirectUriType {
 
     //@formatter:off
     @XmlEnumValue("default")
-    DEFAULT("default"), 
-    
+    DEFAULT("default"),
+
     @XmlEnumValue("grant-read-wizard")
     GRANT_READ_WIZARD("grant-read-wizard"),
-    
+
     @XmlEnumValue("import-works-wizard")
     IMPORT_WORKS_WIZARD("import-works-wizard");
     //@formatter:on
 
-    
-    
     private final String value;
 
     RedirectUriType(String v) {
