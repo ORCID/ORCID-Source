@@ -78,6 +78,19 @@ public interface OrcidApiService<T> {
     T viewBioDetailsJson(@PathParam("orcid") String orcid);
 
     /**
+     * 
+     * returns a redirect to experimental rdf api
+     *  
+     * @param orcid
+     *            the ORCID that corresponds to the user's record
+     * @return a 307 redirect
+     */
+    @GET
+    @Produces(value = { APPLICATION_RDFXML })
+    @Path(BIO_PATH)
+    T redirBioDetailsRdf(@PathParam("orcid") String orcid);
+
+    /**
      * GETs the RDF/XML representation of the ORCID record containing only the
      * Biography details
      * 
@@ -87,9 +100,23 @@ public interface OrcidApiService<T> {
      */
     @GET
     @Produces(value = { APPLICATION_RDFXML })
-    @Path(BIO_PATH)
+    @Path(EXPERIMENTAL_RDF_V1+BIO_PATH)
     T viewBioDetailsRdf(@PathParam("orcid") String orcid);
 
+    
+    /**
+     *  returns a redirect to experimental rdf api
+     *        
+     * @param orcid
+     *            the ORCID that corresponds to the user's record
+     * @return A 307 redirect
+     */
+    @GET
+    @Produces(value = { TEXT_N3, TEXT_TURTLE })
+    @Path(BIO_PATH)
+    T redirBioDetailsTurtle(@PathParam("orcid") String orcid);
+
+    
     /**
      * GETs the RDF Turtle representation of the ORCID record containing only the
      * Biography details
@@ -100,7 +127,7 @@ public interface OrcidApiService<T> {
      */
     @GET
     @Produces(value = { TEXT_N3, TEXT_TURTLE })
-    @Path(BIO_PATH)
+    @Path(EXPERIMENTAL_RDF_V1+BIO_PATH)
     T viewBioDetailsTurtle(@PathParam("orcid") String orcid);
 
     /**

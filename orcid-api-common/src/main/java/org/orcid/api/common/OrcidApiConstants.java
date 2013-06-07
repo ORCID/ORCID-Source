@@ -17,6 +17,8 @@
 package org.orcid.api.common;
 
 public class OrcidApiConstants {
+    
+    public static final String EXPERIMENTAL_RDF_V1 = "/experimental_rdf_v1";
 
     public static final String PROFILE_POST_PATH = "/orcid-profile";
     public static final String PROFILE_GET_PATH = "/{orcid}" + PROFILE_POST_PATH;
@@ -32,9 +34,7 @@ public class OrcidApiConstants {
     public static final String ORCID_XML = "application/orcid+xml; qs=3";
     public static final String ORCID_JSON = "application/orcid+json; qs=2";
     public static final String TEXT_TURTLE = "text/turtle; qs=3";
-    public static final String TEXT_TURTLE_UTF8 = "text/turtle; charset=utf8; qs=3";
     public static final String TEXT_N3 = "text/n3; qs=2";
-    public static final String TEXT_N3_UTF8 = "text/n3; charset=utf8; qs=2";
 
     public static final String APPLICATION_RDFXML = "application/rdf+xml; qs=2";
     public static final String VND_ORCID_XML = "application/vnd.orcid+xml; qs=5";
