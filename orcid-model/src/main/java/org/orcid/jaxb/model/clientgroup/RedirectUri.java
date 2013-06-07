@@ -61,9 +61,9 @@ public class RedirectUri implements Serializable {
     protected String value;
     @XmlAttribute
     protected List<ScopePathType> scope;
-    
-    @XmlAttribute (required = true)
-    private RedirectUriType type; 
+
+    @XmlAttribute(required = true)
+    private RedirectUriType type;
 
     public RedirectUri() {
         super();
@@ -75,7 +75,7 @@ public class RedirectUri implements Serializable {
         setValue(value);
         setType(RedirectUriType.DEFAULT);
     }
-    
+
     /**
      * Gets the value of the value property.
      * 

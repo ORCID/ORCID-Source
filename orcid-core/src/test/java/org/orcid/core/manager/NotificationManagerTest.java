@@ -90,7 +90,6 @@ public class NotificationManagerTest extends BaseTest {
         notificationManagerImpl.setProfileEventDao(profileEventDao);
     }
 
- 
     @Test
     @Rollback
     public void testSendVerificationEmail() throws JAXBException, IOException, URISyntaxException {

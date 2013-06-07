@@ -195,7 +195,7 @@ public class T2OrcidApiServiceImpl implements T2OrcidApiService<Response> {
         T2_GET_REQUESTS.inc();
         return serviceDelegator.findBioDetails(orcid);
     }
-    
+
     /**
      * GETs the HTML representation of the ORCID external identifiers
      * 

@@ -99,7 +99,7 @@ public class CurrentWork {
     private CrossRefContext crossRefContext;
 
     private boolean selected;
-    
+
     private String source;
 
     public CurrentWork() {
@@ -154,7 +154,7 @@ public class CurrentWork {
             setCurrentWorkExternalIds(currentWorkExternalIds);
         }
 
-        if(orcidWork.getWorkSource() != null)
+        if (orcidWork.getWorkSource() != null)
             source = orcidWork.getWorkSource().getContent();
     }
 
@@ -356,11 +356,11 @@ public class CurrentWork {
     public void setSource(String source) {
         this.source = source;
     }
-    
-    public String getSource(){
+
+    public String getSource() {
         return this.source;
     }
-    
+
     public OrcidWork getOrcidWork() {
         OrcidWork orcidWork = new OrcidWork();
         Citation workCitation = getConvertedCitation();
@@ -424,10 +424,10 @@ public class CurrentWork {
             orcidWork.setPutCode(putCode);
         }
 
-        if(StringUtils.isNotBlank(source)){
+        if (StringUtils.isNotBlank(source)) {
             orcidWork.setWorkSource(new WorkSource(source));
         }
-        
+
         return orcidWork;
     }
 

@@ -105,7 +105,7 @@ public class OrcidClientGroupManagerTest extends BaseTest {
         assertNotNull(complexityClient);
         assertEquals("http://www.journals.elsevier.com/ecological-complexity", complexityClient.getWebsite());
         assertEquals("An International Journal on Biocomplexity in the Environment and Theoretical Ecology", complexityClient.getShortDescription());
-        
+
         List<RedirectUri> createdRedirectUris = complexityClient.getRedirectUris().getRedirectUri();
         assertNotNull(createdRedirectUris);
         assertEquals(2, createdRedirectUris.size());

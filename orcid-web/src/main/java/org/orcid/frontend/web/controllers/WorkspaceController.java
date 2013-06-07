@@ -64,13 +64,13 @@ public class WorkspaceController extends BaseWorkspaceController {
 
     @Resource
     private ExternalIdentifierManager externalIdentifierManager;
-    
+
     @Resource
     private ProfileWorkManager profileWorkManager;
 
     @Resource
     private Jpa2JaxbAdapter jpa2JaxbAdapter;
-    
+
     @ModelAttribute("thirdPartiesForImport")
     public List<OrcidClient> retrieveThirdPartiesForImport() {
         return thirdPartyImportManager.findOrcidClientsWithPredefinedOauthScopeWorksImport();
@@ -121,24 +121,23 @@ public class WorkspaceController extends BaseWorkspaceController {
                 .getExternalIdentifier());
         return externalIdentifiers;
     }
-    
+
     @RequestMapping(value = "/sourceGrantReadWizard.json", method = RequestMethod.GET)
     public @ResponseBody
     ThirdPartyRedirect getSourceGrantReadWizard() {
         ThirdPartyRedirect tpr = new ThirdPartyRedirect();
-               
+
         OrcidProfile currentProfile = getCurrentUser().getEffectiveProfile();
-        if (currentProfile.getOrcidHistory().getSource() == null) return tpr;
+        if (currentProfile.getOrcidHistory().getSource() == null)
+            return tpr;
         SourceOrcid sourceOrcid = currentProfile.getOrcidHistory().getSource().getSourceOrcid();
         String sourcStr = sourceOrcid.getValue();
         List<OrcidClient> orcidClients = thirdPartyImportManager.findOrcidClientsWithPredefinedOauthScopeReadAccess();
         for (OrcidClient orcidClient : orcidClients) {
             if (sourcStr.equals(orcidClient.getClientId())) {
                 RedirectUri ru = orcidClient.getRedirectUris().getRedirectUri().get(0);
-                String redirect = getBaseUri() + "/oauth/authorize?client_id=" 
-                        + orcidClient.getClientId() + "&response_type=code&scope="
-                        + ru.getScopeAsSingleString() + "&redirect_uri="
-                        + ru.getValue();
+                String redirect = getBaseUri() + "/oauth/authorize?client_id=" + orcidClient.getClientId() + "&response_type=code&scope=" + ru.getScopeAsSingleString()
+                        + "&redirect_uri=" + ru.getValue();
                 tpr.setUrl(redirect);
                 tpr.setDisplayName(orcidClient.getDisplayName());
                 tpr.setShortDescription(orcidClient.getShortDescription());
@@ -189,22 +188,23 @@ public class WorkspaceController extends BaseWorkspaceController {
 
         return externalIdentifier;
     }
-    
+
     /**
      * Removes a work from a profile
      * */
     @RequestMapping(value = "/works.json", method = RequestMethod.DELETE)
-    public @ResponseBody Work removeWorkJson(HttpServletRequest request,  @RequestBody Work work) {
+    public @ResponseBody
+    Work removeWorkJson(HttpServletRequest request, @RequestBody Work work) {
         //Get cached profile
         OrcidProfile currentProfile = getCurrentUser().getEffectiveProfile();
         OrcidWorks works = currentProfile.getOrcidActivities() == null ? null : currentProfile.getOrcidActivities().getOrcidWorks();
         Work deletedWork = new Work();
-        if(works != null){
+        if (works != null) {
             List<OrcidWork> workList = works.getOrcidWork();
             Iterator<OrcidWork> workIterator = workList.iterator();
-            while(workIterator.hasNext()){
-                OrcidWork orcidWork = workIterator.next();                
-                if(work.equals(orcidWork)){
+            while (workIterator.hasNext()) {
+                OrcidWork orcidWork = workIterator.next();
+                if (work.equals(orcidWork)) {
                     workIterator.remove();
                     deletedWork = work;
                 }
@@ -213,10 +213,10 @@ public class WorkspaceController extends BaseWorkspaceController {
             currentProfile.getOrcidActivities().setOrcidWorks(works);
             profileWorkManager.removeWork(currentProfile.getOrcid().getValue(), work.getPutCode());
         }
-        
+
         return deletedWork;
     }
-    
+
     /**
      * List works associated with a profile
      * */
@@ -242,13 +242,13 @@ public class WorkspaceController extends BaseWorkspaceController {
         
         return workList;
     }
-    
-    
+
     /**
      * List works associated with a profile
      * */
     @RequestMapping(value = "/works.json", method = RequestMethod.GET)
-    public @ResponseBody List<String> getWorksJson(HttpServletRequest request) {
+    public @ResponseBody
+    List<String> getWorksJson(HttpServletRequest request) {
         //Get cached profile
         List<String> workIds = createWorksIdList(request);
         return workIds;
@@ -262,33 +262,34 @@ public class WorkspaceController extends BaseWorkspaceController {
     private List<String> createWorksIdList(HttpServletRequest request) {
         OrcidProfile currentProfile = getCurrentUser().getEffectiveProfile();
         OrcidWorks orcidWorks = currentProfile.getOrcidActivities() == null ? null : currentProfile.getOrcidActivities().getOrcidWorks();
-        
-        HashMap<String,OrcidWork> worksMap = new HashMap<String,OrcidWork>();        
+
+        HashMap<String, OrcidWork> worksMap = new HashMap<String, OrcidWork>();
         List<String> workIds = new ArrayList<String>();
         if (orcidWorks != null) {
-            for(OrcidWork work : orcidWorks.getOrcidWork()) {
+            for (OrcidWork work : orcidWorks.getOrcidWork()) {
                 worksMap.put(work.getPutCode(), new Work(work));
                 workIds.add(work.getPutCode());
             }
             request.getSession().setAttribute(WORKS_MAP, worksMap);
-            }
+        }
         return workIds;
     }
-    
+
     /**
      * List works associated with a profile
      * */
     @RequestMapping(value = "/profileWork.json", method = RequestMethod.PUT)
-    public @ResponseBody Work updateProfileWorkJson(HttpServletRequest request,  @RequestBody Work work){
+    public @ResponseBody
+    Work updateProfileWorkJson(HttpServletRequest request, @RequestBody Work work) {
         //Get cached profile
         OrcidProfile currentProfile = getCurrentUser().getEffectiveProfile();
-        OrcidWorks orcidWorks = currentProfile.getOrcidActivities() == null? null : currentProfile.getOrcidActivities().getOrcidWorks(); 
-        if(orcidWorks != null){
+        OrcidWorks orcidWorks = currentProfile.getOrcidActivities() == null ? null : currentProfile.getOrcidActivities().getOrcidWorks();
+        if (orcidWorks != null) {
             List<OrcidWork> orcidWorksList = orcidWorks.getOrcidWork();
-            if(orcidWorksList != null){
-                for(OrcidWork orcidWork : orcidWorksList){
+            if (orcidWorksList != null) {
+                for (OrcidWork orcidWork : orcidWorksList) {
                     //If the put codes are equal, we know that they are the same work
-                    if(orcidWork.getPutCode().equals(work.getPutCode())){
+                    if (orcidWork.getPutCode().equals(work.getPutCode())) {
                         //Update the privacy of the work
                         profileWorkManager.updateWork(currentProfile.getOrcid().getValue(), work.getPutCode(), work.getVisibility());
                     }

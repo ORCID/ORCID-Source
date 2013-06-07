@@ -402,7 +402,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
             for (ProfileWorkEntity profileWorkEntity : profileWorks) {
                 OrcidWork orcidWork = getOrcidWork(profileWorkEntity);
                 orcidWork.setVisibility(profileWorkEntity.getVisibility());
-                if(profileWorkEntity.getSourceProfile() == null){
+                if (profileWorkEntity.getSourceProfile() == null) {
                     orcidWork.setWorkSource(new WorkSource(WorkSource.NULL_SOURCE_PROFILE));
                 } else {
                     orcidWork.setWorkSource(new WorkSource(profileWorkEntity.getSourceProfile().getId()));
@@ -739,7 +739,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
             return null;
         }
         ProfileEntity sourceProfile = profileWorkEntity.getSourceProfile();
-        return new WorkSource(sourceProfile.getId());        
+        return new WorkSource(sourceProfile.getId());
     }
 
     private SourceDate getSourceDate(Date depositedDate) {

@@ -27,7 +27,7 @@ public class ProfileWorkManagerImpl implements ProfileWorkManager {
 
     @Resource
     private ProfileWorkDao profileWorkDao;
-    
+
     /**
      * Removes the relationship that exists between a work and a profile.
      * 
@@ -38,10 +38,10 @@ public class ProfileWorkManagerImpl implements ProfileWorkManager {
      * @return true if the relationship was deleted
      * */
     @Override
-    public boolean removeWork(String clientOrcid, String workId){
+    public boolean removeWork(String clientOrcid, String workId) {
         return profileWorkDao.removeWork(clientOrcid, workId);
     }
-    
+
     /**
      * Updates the visibility of an existing profile work relationship
      * 
@@ -56,10 +56,10 @@ public class ProfileWorkManagerImpl implements ProfileWorkManager {
      *                     
      * @return true if the relationship was updated
      * */
-    public boolean updateWork(String clientOrcid, String workId, Visibility visibility){
+    public boolean updateWork(String clientOrcid, String workId, Visibility visibility) {
         return profileWorkDao.updateWork(clientOrcid, workId, visibility);
     }
-    
+
     /**
      * Get the profile work associated with the client orcid and the workId 
      * 
@@ -70,7 +70,7 @@ public class ProfileWorkManagerImpl implements ProfileWorkManager {
      *          The id of the work that will be updated
      *          
      * @return the profileWork object
-     * */    
+     * */
     public ProfileWorkEntity getProfileWork(String clientOrcid, String workId) {
         return profileWorkDao.getProfileWork(clientOrcid, workId);
     }

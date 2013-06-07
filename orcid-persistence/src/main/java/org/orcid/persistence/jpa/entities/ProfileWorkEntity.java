@@ -52,7 +52,7 @@ public class ProfileWorkEntity extends BaseEntity<ProfileWorkEntityPk> implement
     private ProfileEntity profile;
     private ProfileEntity sourceProfile;
     private WorkEntity work;
-    private Date addedToProfileDate;    
+    private Date addedToProfileDate;
     private Visibility visibility;
 
     @Override
@@ -83,19 +83,19 @@ public class ProfileWorkEntity extends BaseEntity<ProfileWorkEntityPk> implement
      * return the source profile
      * */
     @ManyToOne(cascade = { CascadeType.REFRESH }, fetch = FetchType.EAGER)
-    @JoinColumn(name = "source_id", nullable = true, updatable=false)
-    public ProfileEntity getSourceProfile(){
+    @JoinColumn(name = "source_id", nullable = true, updatable = false)
+    public ProfileEntity getSourceProfile() {
         return sourceProfile;
     }
-    
+
     /**
      * Set the source to the profile work
      * @param sourceProfile
      * */
-    public void setSourceProfile(ProfileEntity sourceProfile){
+    public void setSourceProfile(ProfileEntity sourceProfile) {
         this.sourceProfile = sourceProfile;
     }
-    
+
     /**
      * @return the work
      */

@@ -24,7 +24,7 @@ import org.orcid.persistence.jpa.entities.keys.ClientRedirectUriPk;
 public interface ClientRedirectDao extends GenericDao<ClientRedirectUriEntity, ClientRedirectUriPk> {
 
     public List<ClientRedirectUriEntity> findClientDetailsWithRedirectScope();
-    
+
     void addClientRedirectUri(String clientId, String redirectUri);
 
 }
