@@ -19,9 +19,9 @@ package org.orcid.persistence.jpa.entities;
 /**
  * 
  * @author Will Simpson
- *
+ * 
  */
 public enum ProfileEventType {
 
-    CLAIM_REMINDER_SENT;
+    CLAIM_REMINDER_SENT, EMAIL_VERIFY_CROSSREF_MARKETING;
 }

@@ -37,6 +37,8 @@ public interface NotificationManager {
     void sendVerificationEmail(OrcidProfile orcidProfile, URI baseUri, String email);
 
     void sendPasswordResetEmail(OrcidProfile orcidProfile, URI baseUri);
+    
+    public String deriveEmailFriendlyName(OrcidProfile orcidProfile);
 
     void sendNotificationToAddedDelegate(OrcidProfile grantingUser, List<DelegationDetails> delegatesGrantedByUser);
 
