@@ -314,7 +314,7 @@ public class RDFMessageBodyWriter implements MessageBodyWriter<OrcidMessage> {
                 account.addLiteral(pavCreatedOn, calendarAsLiteral(history.getSubmissionDate().getValue(), m));
             }
             if (history.getCompletionDate() != null) {
-                account.addLiteral(pavContributedOn, calendarAsLiteral(history.getDeactivationDate().getValue(), m));
+                account.addLiteral(pavContributedOn, calendarAsLiteral(history.getCompletionDate().getValue(), m));
             }
             if (history.getDeactivationDate() != null) {
                 account.addLiteral(provInvalidatedAt, calendarAsLiteral(history.getDeactivationDate().getValue(), m));
