@@ -151,10 +151,7 @@
             	</div>
             	
         		<div id="workspace-affiliations" class="workspace-accordion-item${(!(profile.orcidBio.affiliations)?? || (profile.orcidBio.affiliations?size = 0))?string(" workspace-accordion-active", "")}">
-                    <h3 class="workspace-accordion-header"><a href="#">${springMacroRequestContext.getMessage("workspace_bio.Affiliations")}</a> <#--<a href="#" class="btn-update">${springMacroRequestContext.getMessage("workspace.Update")}</a></h3>--><#--<a target="_blank" href="http://support.orcid.org/forums/179657-coming-soon" class="btn-update no-icon">${springMacroRequestContext.getMessage("workspace.ComingSoon")}</a></h3>
-                    <div class="workspace-accordion-content">
-                        <#include "workspace_affiliations.ftl"/>
-                    </div>-->
+                    <h3 class="workspace-accordion-header"><a href="#">${springMacroRequestContext.getMessage("workspace_bio.Affiliations")}</a></h3>
                 </div>
                 
                 <div id="workspace-publications" class="workspace-accordion-item workspace-accordion-active">
@@ -165,17 +162,11 @@
             	</div>
             	
         		<div id="workspace-grants" class="workspace-accordion-item<#--${(!(profile.orcidActivities.orcidGrants)??)?string(" workspace-accordion-active", "")}-->">
-        			<h3 class="workspace-accordion-header"><a href="#">${springMacroRequestContext.getMessage("workspace.Grants")}</a> <#--<a target="_blank" href="http://support.orcid.org/forums/179657-coming-soon" class="btn-update no-icon">${springMacroRequestContext.getMessage("workspace.ComingSoon")}</a></h3>
-            		<div class="workspace-accordion-content">
-            			<#include "workspace_grants_body_list.ftl"/>
-            		</div>-->
+        			<h3 class="workspace-accordion-header"><a href="#">${springMacroRequestContext.getMessage("workspace.Grants")}</a></h3>
             	</div>
             	
         		<div id="workspace-patents" class="workspace-accordion-item<#--${(!(profile.orcidActivities.orcidPatents)??)?string(" workspace-accordion-active", "")}-->">
-        			<h3 class="workspace-accordion-header"><a href="#">${springMacroRequestContext.getMessage("workspace.Patents")}</a> <#--<a target="_blank" href="http://support.orcid.org/forums/179657-coming-soon" class="btn-update no-icon">${springMacroRequestContext.getMessage("workspace.ComingSoon")}</a></h3>
-            		<div class="workspace-accordion-content">
-            			<#include "workspace_patents_body_list.ftl"/>
-            		</div>-->
+        			<h3 class="workspace-accordion-header"><a href="#">${springMacroRequestContext.getMessage("workspace.Patents")}</a></h3>
             	</div>
             	
             </div>

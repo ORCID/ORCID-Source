@@ -63,11 +63,10 @@ import com.yammer.metrics.core.Counter;
 @Component
 @Path("/")
 public class T1OrcidApiServiceImpl implements OrcidApiService<Response> {
-    
+
     @Value("${org.orcid.core.pubBaseUri:http://orcid.org}")
     private String pubBaseUri;
 
-    
     final static Counter T1_GET_REQUESTS = Metrics.newCounter(T1OrcidApiServiceImpl.class, "T1-GET-REQUESTS");
     final static Counter T1_SEARCH_REQUESTS = Metrics.newCounter(T1OrcidApiServiceImpl.class, "T1-SEARCH-REQUESTS");
 
@@ -145,12 +144,12 @@ public class T1OrcidApiServiceImpl implements OrcidApiService<Response> {
     public Response redirBioDetailsRdf(@PathParam("orcid") String orcid) {
         URI uri = null;
         try {
-            uri = new URI (  pubBaseUri + EXPERIMENTAL_RDF_V1 +"/" + orcid);
+            uri = new URI(pubBaseUri + EXPERIMENTAL_RDF_V1 + "/" + orcid);
         } catch (URISyntaxException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        return Response.temporaryRedirect(uri).build(); 
+        return Response.temporaryRedirect(uri).build();
     }
 
     /**
@@ -164,13 +163,12 @@ public class T1OrcidApiServiceImpl implements OrcidApiService<Response> {
     @Override
     @GET
     @Produces(value = { APPLICATION_RDFXML })
-    @Path(EXPERIMENTAL_RDF_V1+BIO_PATH)
+    @Path(EXPERIMENTAL_RDF_V1 + BIO_PATH)
     public Response viewBioDetailsRdf(@PathParam("orcid") String orcid) {
         T1_GET_REQUESTS.inc();
         return serviceDelegator.findBioDetails(orcid);
     }
 
-    
     /**
      *  returns a redirect to experimental rdf api
      *        
@@ -184,12 +182,12 @@ public class T1OrcidApiServiceImpl implements OrcidApiService<Response> {
     public Response redirBioDetailsTurtle(@PathParam("orcid") String orcid) {
         URI uri = null;
         try {
-            uri = new URI (  pubBaseUri + EXPERIMENTAL_RDF_V1 +"/" + orcid);
+            uri = new URI(pubBaseUri + EXPERIMENTAL_RDF_V1 + "/" + orcid);
         } catch (URISyntaxException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        return Response.temporaryRedirect(uri).build(); 
+        return Response.temporaryRedirect(uri).build();
     }
 
     /**
@@ -202,13 +200,12 @@ public class T1OrcidApiServiceImpl implements OrcidApiService<Response> {
      */
     @GET
     @Produces(value = { TEXT_N3, TEXT_TURTLE })
-    @Path(EXPERIMENTAL_RDF_V1+BIO_PATH)
+    @Path(EXPERIMENTAL_RDF_V1 + BIO_PATH)
     public Response viewBioDetailsTurtle(@PathParam("orcid") String orcid) {
         T1_GET_REQUESTS.inc();
         return serviceDelegator.findBioDetails(orcid);
     }
 
-    
     /**
      * GETs the JSON representation of the ORCID record containing only the
      * Biography details

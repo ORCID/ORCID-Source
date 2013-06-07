@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -1047,9 +1048,10 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
 
     static ExecutorService executorService = null;
     static Object executorServiceLock = new Object();
+    static ConcurrentHashMap<String, FutureTask<String>> futureHM = new ConcurrentHashMap<String, FutureTask<String>>();
 
     @Override
-    synchronized public void processProfilesPendingIndexing() {
+    public void processProfilesPendingIndexing() {
         // XXX There are some concurrency related edge cases to fix here.
         LOG.info("About to process profiles pending indexing");
         if (executorService == null || executorService.isShutdown()) {
@@ -1067,19 +1069,26 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         }
 
         List<String> orcidsForIndexing = Collections.<String> emptyList();
+        List<String> orcidFailures = Collections.<String> emptyList();
         do {
-            orcidsForIndexing = profileDao.findOrcidsByIndexingStatus(IndexingStatus.PENDING, INDEXING_BATCH_SIZE, orcidsForIndexing);
+            orcidsForIndexing = profileDao.findOrcidsByIndexingStatus(IndexingStatus.PENDING, INDEXING_BATCH_SIZE, orcidFailures);
             LOG.info("Got batch of {} profiles for indexing", orcidsForIndexing.size());
             for (final String orcid : orcidsForIndexing) {
                 FutureTask<String> task = new FutureTask<String>(new GetPendingOrcid(orcid));
                 executorService.execute(task);
+                futureHM.put(orcid, task);
+            }
+            for (final String orcid : orcidsForIndexing) {
                 try {
-                    LOG.info(task.get(15, TimeUnit.SECONDS));
+                    futureHM.remove(orcid).get(15, TimeUnit.SECONDS);
                 } catch (InterruptedException e) {
+                    orcidFailures.add(orcid);
                     LOG.error(orcid + " InterruptedException ", e);
                 } catch (ExecutionException e) {
+                    orcidFailures.add(orcid);
                     LOG.error(orcid + " ExecutionException ", e);
                 } catch (TimeoutException e) {
+                    orcidFailures.add(orcid);
                     LOG.error(orcid + " TimeoutException ", e);
                 }
             }

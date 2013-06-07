@@ -17,7 +17,7 @@
 package org.orcid.api.common;
 
 public class OrcidApiConstants {
-    
+
     public static final String EXPERIMENTAL_RDF_V1 = "/experimental_rdf_v1";
 
     public static final String PROFILE_POST_PATH = "/orcid-profile";
