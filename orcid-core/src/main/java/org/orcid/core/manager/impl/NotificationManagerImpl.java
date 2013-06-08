@@ -410,7 +410,7 @@ public class NotificationManagerImpl implements NotificationManager {
         return createEmailBaseUrl(email, baseUri, "claim");
     }
 
-    private String createVerificationUrl(String email, URI baseUri) {
+    public String createVerificationUrl(String email, URI baseUri) {
         return createEmailBaseUrl(email, baseUri, "verify-email");
     }
 

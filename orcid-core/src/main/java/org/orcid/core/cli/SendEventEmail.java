@@ -16,14 +16,19 @@
  */
 package org.orcid.core.cli;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
 import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.OrcidProfileManager;
+import org.orcid.core.manager.TemplateManager;
 import org.orcid.core.manager.impl.MailGunManager;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.persistence.dao.GenericDao;
@@ -40,7 +45,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 /**
  * 
- * @author Will Simpson
+ * @author rcpeters
  * 
  */
 public class SendEventEmail {
@@ -49,9 +54,11 @@ public class SendEventEmail {
     private OrcidProfileManager orcidProfileManager;
     
     private MailGunManager mailGunManager;
+    
+    private TemplateManager templateManager;
 
     private GenericDao<ProfileEventEntity, Long> profileEventDao;
-
+    private String baseUri = "https://orcid.org";  //HARDCODED FIX
     private NotificationManager notificationManager;
     private TransactionTemplate transactionTemplate;
     private static Logger LOG = LoggerFactory.getLogger(SendEventEmail.class);
@@ -64,19 +71,22 @@ public class SendEventEmail {
     private void run() {
         init();
         sendEmailByEvent();
-        OrcidProfile orcidProfile = orcidProfileManager.retrieveOrcidProfile(orcid);
+        OrcidProfile orcidProfile = orcidProfileManager.retrieveOrcidProfile("0000-0003-0468-350X");
+        String email = orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue();
         String emailFriendlyName = notificationManager.deriveEmailFriendlyName(orcidProfile);
+        Map<String, Object> templateParams = new HashMap<String, Object>();
         templateParams.put("emailName", emailFriendlyName);
-        String verificationUrl = notificationManager.createVerificationUrl(email, baseUri);
+        String verificationUrl = null;
+        try {
+            verificationUrl = notificationManager.createVerificationUrl(email, new URI(baseUri));
+        } catch (URISyntaxException e) {
+            LOG.debug("SendEventEmail exception", e);
+        }
         templateParams.put("verificationUrl", verificationUrl);
         templateParams.put("orcid", orcidProfile.getOrcid().getValue());
         templateParams.put("baseUri", baseUri);
-
-        
-        
-        mailGunManager.sendSimpleVerfiyEmail();
-        
-        
+        String text = templateManager.processTemplate("verification_email_w_crossref.ftl", templateParams);
+        mailGunManager.sendSimpleVerfiyEmail("support@verify.orcid.org","info@rcpeters.com","Please verify your email",text);
     }
 
     private void sendEmailByEvent() {
@@ -110,7 +120,8 @@ public class SendEventEmail {
         mailGunManager = (MailGunManager) context.getBean("mailGunManager");
         orcidProfileManager = (OrcidProfileManager) context.getBean("orcidProfileManager");
         transactionTemplate = (TransactionTemplate) context.getBean("transactionTemplate");
-        notificationManager = (TransactionTemplate) context.getBean("notificationManager");
+        notificationManager = (NotificationManager) context.getBean("notificationManager");
+        templateManager = (TemplateManager) context.getBean("templateManager");        
 
     }
 

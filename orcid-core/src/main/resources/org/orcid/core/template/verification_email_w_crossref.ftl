@@ -22,7 +22,7 @@ At ORCID we care about the accuracy and security of your information. Help us in
 by verifying the primary email address associated with your ORCID iD. Please click on the 
 link below (or paste it into your browser), and then sign into your ORCID account. 
 
-link!!!
+${verificationUrl}
 
 DID YOU KNOW?
 The ORCID Registry is constantly under development, with new releases often, sometimes 

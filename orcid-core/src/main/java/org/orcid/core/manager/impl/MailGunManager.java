@@ -32,9 +32,12 @@ public class MailGunManager {
     @Value("${com.mailgun.apiUrl:https://api.mailgun.net/v2/samples.mailgun.org/messages}")
     private String apiUrl;
     
+    @Value("${com.mailgun.apiUrl:yes}")
+    private String testmode;
+    
     private static final Logger LOGGER = LoggerFactory.getLogger(MailGunManager.class);
 
-    public ClientResponse sendSimpleVerfiyEmail() {
+    public ClientResponse sendSimpleVerfiyEmail(String from,String to, String subject, String text) {
         
         Client client = Client.create();
         client.addFilter(new HTTPBasicAuthFilter("api",
@@ -42,11 +45,11 @@ public class MailGunManager {
         WebResource webResource =
                 client.resource(getApiUrl());
         MultivaluedMapImpl formData = new MultivaluedMapImpl();
-        formData.add("from", "Excited User <me@samples.mailgun.org>");
-        formData.add("to", "sergeyo@profista.com");
-        formData.add("to", "serobnic@mail.ru");
-        formData.add("subject", "Hello");
-        formData.add("text", "Testing some Mailgun awesomness!");
+        formData.add("from", from);
+        formData.add("to", to);
+        formData.add("subject", subject);
+        formData.add("text", text);
+        formData.add("o:testmode", testmode);
         LOGGER.debug("Email form data: \n" + formData.toString());
         return webResource.type(MediaType.APPLICATION_FORM_URLENCODED).
                 post(ClientResponse.class, formData);
