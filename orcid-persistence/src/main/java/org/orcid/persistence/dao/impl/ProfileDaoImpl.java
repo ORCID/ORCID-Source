@@ -171,6 +171,27 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
         return query.getResultList();
     }
 
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<String> findByEventType(int maxResults, ProfileEventType pet, Collection<String> orcidsToExclude, boolean not) {
+        String notStr = "";
+        if (not) notStr = " not";
+        String queryStr = "select p.orcid from profile as p where p.orcid" + notStr +" in (select pe.orcid from profile_event as pe where pe.profile_event_type=:profileEventType)";
+        
+        if (orcidsToExclude != null && !orcidsToExclude.isEmpty()) {
+            queryStr += " AND p.orcid NOT IN :orcidsToExclude";
+        }
+        
+        Query query = entityManager.createNativeQuery(queryStr);
+        query.setParameter("profileEventType", pet.name());
+        if (orcidsToExclude != null && !orcidsToExclude.isEmpty()) {
+            query.setParameter("orcidsToExclude", orcidsToExclude);
+        }
+        query.setMaxResults(maxResults);
+        return query.getResultList();
+    }
+
+
     @Override
     public List<String> findOrcidsNeedingEmailMigration(int maxResults) {
         TypedQuery<String> query = entityManager.createQuery("select p.id from ProfileEntity p where email is not null and orcidType != 'CLIENT'", String.class);
