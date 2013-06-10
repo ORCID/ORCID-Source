@@ -33,13 +33,12 @@
 		    	the primary email address associated with your ORCID iD. Please click on the link below (or paste it into
 		    	your browser), and then sign into your ORCID account.
 		    </p>
-		    <p style="font-family: arial, helvetica, sans-serif;font-size: 15px; color: #666666;">
-				At ORCID we care about the accuracy and security of your information. Help us in this effort by verifying the primary email address associated with your ORCID iD. 
-				Please click on the link below (or paste it into your browser), and then sign into your ORCID account.<br /> 
-				<a href="${verificationUrl}">${verificationUrl}</a>
-			</p>
+		    <p>
+		    	<a href="${verificationUrl}">${verificationUrl}</a><br>
+		    	<br>
+		    </p>
 			<p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">
-				DID YOU KNOW?<br />
+				DID YOU KNOW?<br>
 				The ORCID Registry is constantly under development, with new releases often, sometimes weekly! Explore some of our recent updates:
 			</p>	
 			<ul style="font-family: arial, helvetica, sans-serif; font-size: 13px; color: #666666;">
@@ -55,11 +54,11 @@
 		  	</ul>
 		  	<p style="font-family: arial,  helvetica, sans-serif;font-size: 15px;color: #666666;">
 				See these and other updates by clicking on the link above, or reading our blog 
-				<a href="http://orcid.org/about/news">(http://orcid.org/about/news)</a>.<br />
-				<br />
-				Regards,<br />
-				The ORCID Team<br />
-				support@orcid.org<br />
+				<a href="http://orcid.org/about/news">(http://orcid.org/about/news)</a>.<br>
+				<br>
+				Regards,<br>
+				The ORCID Team<br>
+				support@orcid.org<br>
 			</p>
 		 </div>
 	 </body>
