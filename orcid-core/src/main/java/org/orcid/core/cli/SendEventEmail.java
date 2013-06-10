@@ -83,14 +83,14 @@ public class SendEventEmail {
     public static void main(String... args) {
         SendEventEmail se = new SendEventEmail();
         CmdLineParser parser = new CmdLineParser(se);
+        if (args == null) {
+            parser.printUsage(System.err);
+        }
         try {
             parser.parseArgument(args);
             se.execute();
         } catch (CmdLineException e) {
             System.err.println(e.getMessage());
-            parser.printUsage(System.err);
-        }
-        if (parser.getArguments().size() == 0) {
             parser.printUsage(System.err);
         }
 
