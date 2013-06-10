@@ -26,10 +26,14 @@ import java.util.Map;
 import javax.annotation.Resource;
 
 import org.apache.commons.lang3.time.DurationFormatUtils;
+import org.kohsuke.args4j.CmdLineException;
+import org.kohsuke.args4j.CmdLineParser;
+import org.kohsuke.args4j.Option;
 import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.manager.TemplateManager;
 import org.orcid.core.manager.impl.MailGunManager;
+import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.dao.ProfileDao;
@@ -51,43 +55,87 @@ import org.springframework.transaction.support.TransactionTemplate;
 public class SendEventEmail {
 
     private ProfileDao profileDao;
+    
     private OrcidProfileManager orcidProfileManager;
-    
+
     private MailGunManager mailGunManager;
-    
+
     private TemplateManager templateManager;
 
     private GenericDao<ProfileEventEntity, Long> profileEventDao;
-    private String baseUri = "https://orcid.org";  //HARDCODED FIX
+
+    private OrcidUrlManager orcidUrlManager;
+
     private NotificationManager notificationManager;
+    
     private TransactionTemplate transactionTemplate;
+    
     private static Logger LOG = LoggerFactory.getLogger(SendEventEmail.class);
+    
     private static final int CHUNK_SIZE = 1000;
 
+    @Option(name = "-testSendToOrcids", usage = "Send validation email to following ORCID Ids")
+    private String orcs;
+
+    @Option(name = "-run", usage = "Runs sendEmailByEvent, which loops through all orcids who haven't been verified and not sent the crossref email and sends the crossref email")
+    private String run;
+
     public static void main(String... args) {
-        new SendEventEmail().run();
+        SendEventEmail se = new SendEventEmail();
+        CmdLineParser parser = new CmdLineParser(se);
+        try {
+            parser.parseArgument(args);
+            se.execute();
+        } catch (CmdLineException e) {
+            System.err.println(e.getMessage());
+            parser.printUsage(System.err);
+        }
+        if (parser.getArguments().size() == 0) {
+            parser.printUsage(System.err);
+        }
+
     }
 
-    private void run() {
+    private void execute() {
         init();
-        sendEmailByEvent();
-        OrcidProfile orcidProfile = orcidProfileManager.retrieveOrcidProfile("0000-0003-0468-350X");
-        String email = orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue();
-        String emailFriendlyName = notificationManager.deriveEmailFriendlyName(orcidProfile);
-        Map<String, Object> templateParams = new HashMap<String, Object>();
-        templateParams.put("emailName", emailFriendlyName);
-        String verificationUrl = null;
-        try {
-            verificationUrl = notificationManager.createVerificationUrl(email, new URI(baseUri));
-        } catch (URISyntaxException e) {
-            LOG.debug("SendEventEmail exception", e);
+        if (run != null && run.equalsIgnoreCase("true")) {
+            sendEmailByEvent();
+        } else if (orcs != null) {
+            for (String orc : orcs.split(" ")) {
+                sendEmail(orc);
+            }
         }
-        templateParams.put("verificationUrl", verificationUrl);
-        templateParams.put("orcid", orcidProfile.getOrcid().getValue());
-        templateParams.put("baseUri", baseUri);
-        String text = templateManager.processTemplate("verification_email_w_crossref.ftl", templateParams);
-        String html = templateManager.processTemplate("verification_email_w_crossref_html.ftl", templateParams);
-        mailGunManager.sendSimpleVerfiyEmail("support@verify.orcid.org","info@rcpeters.com","Please verify your email",text, html);
+    }
+
+    private boolean sendEmail(String orcid) {
+        OrcidProfile orcidProfile = orcidProfileManager.retrieveOrcidProfile(orcid);
+        if (orcidProfile.getOrcidBio() != null && orcidProfile.getOrcidBio().getContactDetails() != null
+                && orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail() != null
+                && orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue() != null) {
+            try {
+            String email = orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue();
+            String emailFriendlyName = notificationManager.deriveEmailFriendlyName(orcidProfile);
+            Map<String, Object> templateParams = new HashMap<String, Object>();
+            templateParams.put("emailName", emailFriendlyName);
+            String verificationUrl = null;
+            try {
+                verificationUrl = notificationManager.createVerificationUrl(email, new URI(orcidUrlManager.getBaseUrl()));
+            } catch (URISyntaxException e) {
+                LOG.debug("SendEventEmail exception", e);
+            }
+            templateParams.put("verificationUrl", verificationUrl);
+            templateParams.put("orcid", orcidProfile.getOrcid().getValue());
+            templateParams.put("baseUri", orcidUrlManager.getBaseUrl());
+            String text = templateManager.processTemplate("verification_email_w_crossref.ftl", templateParams);
+            String html = templateManager.processTemplate("verification_email_w_crossref_html.ftl", templateParams);
+            mailGunManager.sendSimpleVerfiyEmail("support@verify.orcid.org", "info@rcpeters.com", "Please verify your email", text, html);
+            } catch (Exception e) {
+                LOG.error("Exception trying to send email to: " +orcid, e);
+                return false;
+            }
+            return true;
+        }
+        return false;
     }
 
     private void sendEmailByEvent() {
@@ -95,23 +143,30 @@ public class SendEventEmail {
         @SuppressWarnings("unchecked")
         List<String> orcids = Collections.EMPTY_LIST;
         int doneCount = 0;
-        orcids = profileDao.findByEventType(CHUNK_SIZE, ProfileEventType.EMAIL_VERIFY_CROSSREF_MARKETING, null, true);
-        for (final String orcid : orcids) {
-            LOG.info("Migrating emails for profile: {}", orcid);
-            transactionTemplate.execute(new TransactionCallbackWithoutResult() {
-                @Override
-                protected void doInTransactionWithoutResult(TransactionStatus status) {
-                    OrcidProfile orcidProfile = orcidProfileManager.retrieveOrcidProfile(orcid);
-                    if (!orcidProfile.isDeactivated()) {
-                        profileEventDao.persist(new ProfileEventEntity(orcid, ProfileEventType.EMAIL_VERIFY_CROSSREF_MARKETING));
+        do {
+            orcids = profileDao.findByEventType(CHUNK_SIZE, ProfileEventType.EMAIL_VERIFY_CROSSREF_MARKETING_CHECK, null, true);
+            for (final String orcid : orcids) {
+                LOG.info("Migrating emails for profile: {}", orcid);
+                transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+                    @Override
+                    protected void doInTransactionWithoutResult(TransactionStatus status) {
+                        OrcidProfile orcidProfile = orcidProfileManager.retrieveOrcidProfile(orcid);
+                        profileEventDao.persist(new ProfileEventEntity(orcid, ProfileEventType.EMAIL_VERIFY_CROSSREF_MARKETING_CHECK));
+                        if (orcidProfile.isDeactivated()) {
+                            profileEventDao.persist(new ProfileEventEntity(orcid, ProfileEventType.EMAIL_VERIFY_CROSSREF_MARKETING_SKIPPED));
+                        } else {
+                            if (sendEmail(orcid))
+                            profileEventDao.persist(new ProfileEventEntity(orcid, ProfileEventType.EMAIL_VERIFY_CROSSREF_MARKETING_SENT));
+                        }
                     }
-                }
-            });
-            doneCount++;
-        }
+                });
+                doneCount++;
+            }
+            LOG.info("Sending crossref verify emails on number: {}", doneCount);
+        } while (!orcids.isEmpty());
         long endTime = System.currentTimeMillis();
         String timeTaken = DurationFormatUtils.formatDurationHMS(endTime - startTime);
-        LOG.info("Finished migrating emails: doneCount={}, timeTaken={} (H:m:s.S)", doneCount, timeTaken);
+        LOG.info("Sending crossref verify emails: doneCount={}, timeTaken={} (H:m:s.S)", doneCount, timeTaken);
     }
 
     private void init() {
@@ -122,8 +177,8 @@ public class SendEventEmail {
         orcidProfileManager = (OrcidProfileManager) context.getBean("orcidProfileManager");
         transactionTemplate = (TransactionTemplate) context.getBean("transactionTemplate");
         notificationManager = (NotificationManager) context.getBean("notificationManager");
-        templateManager = (TemplateManager) context.getBean("templateManager");        
-
+        templateManager = (TemplateManager) context.getBean("templateManager");
+        orcidUrlManager = (OrcidUrlManager) context.getBean("orcidUrlManager");
     }
 
 }

@@ -26,13 +26,13 @@ public class MailGunManager {
      *    
       */
     
-    @Value("${com.mailgun.apiKey:key-3ax6xnjp29jd6fds4gc373sgvjxteol0}")
+    @Value("${com.mailgun.apiKey}")
     private String apiKey;
     
-    @Value("${com.mailgun.apiUrl:https://api.mailgun.net/v2/samples.mailgun.org/messages}")
+    @Value("${com.mailgun.apiUrl}")
     private String apiUrl;
     
-    @Value("${com.mailgun.apiUrl:no}")
+    @Value("${com.mailgun.testmode}")
     private String testmode;
     
     private static final Logger LOGGER = LoggerFactory.getLogger(MailGunManager.class);
