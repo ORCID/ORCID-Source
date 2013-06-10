@@ -120,7 +120,7 @@ public class SearchOrcidController extends BaseController {
         if (OrcidStringUtils.isValidOrcid(queryFromUser)) {
             query = "orcid:" + queryFromUser;
         } else {
-            query = "{!edismax qf='given-and-family-names^50.0 family-name^10.0 given-names^10.0 credit-name^10.0 other-names:5.0 text^1.0' pf='given-and-family-names^50.0' mm=1}" + queryFromUser;
+            query = "{!edismax qf='given-and-family-names^50.0 family-name^10.0 given-names^5.0 credit-name^10.0 other-names:5.0 text^1.0' pf='given-and-family-names^50.0' mm=1}" + queryFromUser;
         }
         OrcidMessage orcidMessage = orcidSearchManager.findOrcidsByQuery(query, false);
         FRONTEND_WEB_SEARCH_REQUESTS.inc();
