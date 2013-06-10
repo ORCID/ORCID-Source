@@ -24,7 +24,7 @@
         http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
         http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd http://www.springframework.org/schema/cache http://www.springframework.org/schema/cache/spring-cache.xsd">
 	
-	<bean id="solrServer" class="org.apache.solr.client.solrj.impl.CommonsHttpSolrServer">
+	<bean id="solrServer" class="org.apache.solr.client.solrj.impl.HttpSolrServer">
 		<constructor-arg value="http://localhost:8080/orcid-solr" />
 		<property name="parser" ref="responseParser" />
 	</bean>

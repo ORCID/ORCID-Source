@@ -424,6 +424,19 @@
 		<!-- A Geohash is a compact representation of a latitude longitude pair 
 			in a single field. See http://wiki.apache.org/solr/SpatialSearch -->
 		<fieldtype name="geohash" class="solr.GeoHashField" />
+		
+		<!-- Custom field type for ORCID to get stricter person name matching -->
+		<fieldType name="orcid_text_name" class="solr.TextField"
+			positionIncrementGap="100">
+			<analyzer type="index">
+				<tokenizer class="solr.StandardTokenizerFactory" />
+				<filter class="solr.LowerCaseFilterFactory" />
+			</analyzer>
+			<analyzer type="query">
+				<tokenizer class="solr.StandardTokenizerFactory" />
+				<filter class="solr.LowerCaseFilterFactory" />
+			</analyzer>
+		</fieldType>
 	</types>
 
 
@@ -503,6 +516,8 @@
             stored="true" multiValued="false" />
         <field name="family-name" type="text_general" indexed="true"
             stored="true" multiValued="false" />
+        <field name="given-and-family-names" type="orcid_text_name" indexed="true"
+            stored="true" multiValued="false"/>
         <field name="current-primary-institution-affiliation-name" type="text_general" indexed="true"
             stored="true" multiValued="true" />
         <field name="current-institution-affiliation-name" type="text_general" indexed="true"
@@ -614,7 +629,7 @@
 		way to map multiple source fields to the same destination field is to use 
 		the dynamic field syntax. copyField also supports a maxChars to copy setting. -->
 
-	<copyField source="*" dest="text"/> -->
+	<copyField source="*" dest="text"/>
 
 	<!-- copy name to alphaNameSort, a field designed for sorting by name -->
 	<!-- <copyField source="name" dest="alphaNameSort"/> -->

@@ -74,7 +74,7 @@ public class SolrDaoImpl implements SolrDao {
     public OrcidSolrResult findByOrcid(String orcid) {
         OrcidSolrResult orcidSolrResult = null;
         SolrQuery query = new SolrQuery();
-        query.setQuery(SolrConstants.ORCID + ":" + orcid).setFields("score");
+        query.setQuery(SolrConstants.ORCID + ":" + orcid).setFields("score", "*");
         ;
         try {
             QueryResponse queryResponse = solrServerReadOnly.query(query);
@@ -93,11 +93,11 @@ public class SolrDaoImpl implements SolrDao {
         return orcidSolrResult;
     }
 
-    @SuppressWarnings( { "unchecked", "rawtypes" })
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     @Override
     public List<OrcidSolrResult> findByDocumentCriteria(String queryString, Integer start, Integer rows) {
         List<OrcidSolrResult> orcidSolrResults = new ArrayList<OrcidSolrResult>();
-        SolrQuery query = new SolrQuery(queryString).setFields("score");
+        SolrQuery query = new SolrQuery(queryString).setFields("score", "*");
         if (start != null)
             query.setStart(start);
         if (rows != null)
@@ -138,7 +138,7 @@ public class SolrDaoImpl implements SolrDao {
         }
 
         try {
-            QueryResponse queryResponse = solrServerReadOnly.query(solrQuery.setFields("score"));
+            QueryResponse queryResponse = solrServerReadOnly.query(solrQuery.setFields("score", "*"));
             for (SolrDocument solrDocument : queryResponse.getResults()) {
                 OrcidSolrResult orcidSolrResult = new OrcidSolrResult();
                 orcidSolrResult.setRelevancyScore((Float) solrDocument.get("score"));

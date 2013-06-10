@@ -181,6 +181,13 @@
             <groupId>org.jasypt</groupId>
             <artifactId>jasypt-hibernate3</artifactId>
         </dependency>
+        
+        <!-- Test -->
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>servlet-api</artifactId>
+            <scope>test</scope>
+        </dependency>
 
     </dependencies>
 

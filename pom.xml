@@ -29,7 +29,7 @@ the software.
         <spring.version>3.1.1.RELEASE</spring.version>
         <security.version>3.1.0.RELEASE</security.version>
         <jersey.version>1.14</jersey.version>
-        <solr.version>3.5.0</solr.version>
+        <solr.version>4.3.0</solr.version>
         <aspectj.version>1.6.12</aspectj.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>

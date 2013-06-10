@@ -53,9 +53,7 @@
         <value>org.orcid.api.common.jaxb.OrcidJsonJaxbContexResolver</value>
     </util:set>
 
-    <bean id="multiThreadedConnectionManager" class="org.apache.commons.httpclient.MultiThreadedHttpConnectionManager">
-        <property name="params" ref="httpConnectionManagerParams"/>
-    </bean>
+    <bean id="multiThreadedConnectionManager" class="org.apache.http.impl.conn.PoolingClientConnectionManager"/>
     
     <bean id="addJerseyLoggingFilter" class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
         <property name="targetObject"><ref local="jerseyClient"/></property>
@@ -65,14 +63,6 @@
                 <bean class="com.sun.jersey.api.client.filter.LoggingFilter"/>
             </list>
         </property>
-    </bean>
-
-    <bean id="httpConnectionManagerParams" class="org.apache.commons.httpclient.params.HttpConnectionManagerParams">
-        <property name="maxTotalConnections" value="${org.orcid.t2.client.maxTotalConnections}"/>
-        <property name="connectionTimeout" value="${org.orcid.t2.client.connectionTimeout}"/>
-        <property name="defaultMaxConnectionsPerHost" value="${org.orcid.t2.client.defaultMaxConnectionsPerHost}"/>
-        <property name="soTimeout" value="${org.orcid.t2.client.soTimeout}"/>
-        <property name="staleCheckingEnabled" value="${org.orcid.t2.client.staleCheckingEnabled}"/>
     </bean>
 
     <bean id="keyStore" class="org.orcid.api.t2.integration.KeyStoreFactoryBean">
