@@ -42,5 +42,3 @@ Regards,
 The ORCID Team
 support@orcid.org
 
-You have received this e-mail in the genuine belief that its contents would be of interest to you.
-To opt-out of messages from ORCID please go to your account settings page http://orcid.org/account.
