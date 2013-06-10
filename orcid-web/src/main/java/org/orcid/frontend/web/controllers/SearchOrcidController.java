@@ -108,21 +108,21 @@ public class SearchOrcidController extends BaseController {
     }
 
     @RequestMapping(value = "/quick-search")
-    public ModelAndView quickSearch(@ModelAttribute("searchQuery") String searchQuery) {
+    public ModelAndView quickSearch(@ModelAttribute("searchQuery") String queryFromUser) {
         ModelAndView mav = new ModelAndView("quick_search");
-        if (StringUtils.isBlank(searchQuery)) {
+        if (StringUtils.isBlank(queryFromUser)) {
             incrementSearchMetrics(null);
             mav.addObject("noResultsFound", true);
             return mav;
         }
-        SearchOrcidSolrCriteria query = new SearchOrcidSolrCriteria();
-        searchQuery = searchQuery.trim();
-        if (OrcidStringUtils.isValidOrcid(searchQuery)) {
-            query.setOrcid(searchQuery);
+        String query = "";
+        queryFromUser = queryFromUser.trim();
+        if (OrcidStringUtils.isValidOrcid(queryFromUser)) {
+            query = "orcid:" + queryFromUser;
         } else {
-            query.setText(searchQuery);
+            query = "{!edismax qf='given-and-family-names^50.0 family-name^10.0 given-names^10.0 credit-name^10.0 other-names:5.0 text^1.0' pf='given-and-family-names^50.0' mm=1}" + queryFromUser;
         }
-        OrcidMessage orcidMessage = orcidSearchManager.findOrcidsByQuery(query.deriveQueryString(), false);
+        OrcidMessage orcidMessage = orcidSearchManager.findOrcidsByQuery(query, false);
         FRONTEND_WEB_SEARCH_REQUESTS.inc();
         if (!orcidMessage.getOrcidSearchResults().getOrcidSearchResult().isEmpty()) {
             incrementSearchMetrics(orcidMessage.getOrcidSearchResults().getOrcidSearchResult());
