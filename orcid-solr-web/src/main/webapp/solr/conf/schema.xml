@@ -517,7 +517,7 @@
         <field name="family-name" type="text_general" indexed="true"
             stored="true" multiValued="false" />
         <field name="given-and-family-names" type="orcid_text_name" indexed="true"
-            stored="true" multiValued="false"/>
+            stored="false" multiValued="false"/>
         <field name="current-primary-institution-affiliation-name" type="text_general" indexed="true"
             stored="true" multiValued="true" />
         <field name="current-institution-affiliation-name" type="text_general" indexed="true"
