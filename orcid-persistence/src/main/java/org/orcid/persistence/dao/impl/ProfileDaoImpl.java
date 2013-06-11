@@ -57,32 +57,6 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
         return (List<ProfileEntity>) entityManager.createQuery("from ProfileEntity where isSelectableSponsor=true order by vocativeName").getResultList();
     }
 
-    /**
-     * <p>
-     * Search for an ProfileEntity with a matching email address.
-     * </p>
-     * 
-     * @param email
-     *            to find the profile by
-     * @return the OrcidProfile with an email matching the email in their
-     *         profile
-     */
-    @Override
-    public ProfileEntity findByEmail(String email) {
-        if (StringUtils.isNotBlank(email)) {
-            TypedQuery<ProfileEntity> query = entityManager.createQuery("from ProfileEntity pe where lower(pe.email) = :email", ProfileEntity.class);
-            query.setParameter("email", email.toLowerCase());
-            try {
-                return query.getSingleResult();
-            } catch (NonUniqueResultException e) {
-                LOGGER.error("Attempted to retrieve ProfileEntity by email and was a non-unique result, for email {} ", email);
-            } catch (NoResultException e) {
-                LOGGER.debug("No ProfileEntity result found for email {} ", email);
-            }
-        }
-        return null;
-    }
-
     @Override
     public List<String> findOrcidsByName(String name) {
         TypedQuery<String> query = entityManager.createQuery("select id from ProfileEntity where lower(givenNames) like lower(:name || '%') or lower"

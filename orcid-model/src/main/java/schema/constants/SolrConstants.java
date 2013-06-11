@@ -20,6 +20,7 @@ public class SolrConstants {
     public static final String ORCID = "orcid";
     public static final String GIVEN_NAMES = "given-names";
     public static final String FAMILY_NAME = "family-name";
+    public static final String GIVEN_AND_FAMILY_NAMES = "given-and-family-names";
     public static final String EMAIL_ADDRESS = "email";
     public static final String AFFILIATE_PAST_INSTITUTION_NAMES = "past-institution-affiliation-name";
     public static final String AFFILIATE_PRIMARY_INSTITUTION_NAMES = "current-primary-institution-affiliation-name";

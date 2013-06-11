@@ -32,8 +32,6 @@ public interface ProfileEntityManager {
 
     ProfileEntity findByOrcid(String orcid);
 
-    ProfileEntity findByEmail(String email);
-
     boolean orcidExists(String orcid);
 
     boolean hasBeenGivenPermissionTo(String giverOrcid, String receiverOrcid);

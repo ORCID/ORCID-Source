@@ -29,8 +29,6 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
 
     List<ProfileEntity> retrieveSelectableSponsors();
 
-    ProfileEntity findByEmail(String email);
-
     List<String> findOrcidsByName(String name);
     
     List<String> findByEventTypes(int maxResults, List<ProfileEventType> pet, Collection<String> orcidsToExclude ,boolean not);

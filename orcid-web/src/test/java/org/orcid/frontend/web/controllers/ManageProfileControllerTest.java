@@ -298,7 +298,6 @@ public class ManageProfileControllerTest extends BaseControllerTest {
 
     private ProfileEntity orcidWithExistingSingleDelegate() {
         ProfileEntity mockEntity = new ProfileEntity();
-        mockEntity.setEmail("josiah.carberry@brown.edu");
         mockEntity.setId("4444-4444-4444-4446");
         Set<GivenPermissionToEntity> existingPermissions = new HashSet<GivenPermissionToEntity>();
         GivenPermissionToEntity singlePermission = new GivenPermissionToEntity();

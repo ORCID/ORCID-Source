@@ -181,7 +181,7 @@
 
     <!--SOLR -->
     <!-- Confusingly, the client is actually called a server -->
-    <bean id="solrServer" class="org.apache.solr.client.solrj.impl.CommonsHttpSolrServer">
+    <bean id="solrServer" class="org.apache.solr.client.solrj.impl.HttpSolrServer">
         <constructor-arg value="\${org.orcid.persistence.solr.url}" />
         <property name="soTimeout" value="\${org.orcid.persistence.solr.socketTimeout}" />
         <property name="connectionTimeout" value="\${org.orcid.persistence.solr.connectionTimeout}" />
@@ -191,7 +191,7 @@
         <property name="maxTotalConnections" value="\${org.orcid.persistence.solr.defaultMaxConnectionsPerHost}" />
         <property name="parser" ref="responseParser" />
     </bean>
-    <bean id="solrServerReadOnly" class="org.apache.solr.client.solrj.impl.CommonsHttpSolrServer">
+    <bean id="solrServerReadOnly" class="org.apache.solr.client.solrj.impl.HttpSolrServer">
         <constructor-arg value="\${org.orcid.persistence.solr.read.only.url}" />
         <property name="soTimeout" value="\${org.orcid.persistence.solr.socketTimeout}" />
         <property name="connectionTimeout" value="\${org.orcid.persistence.solr.connectionTimeout}" />

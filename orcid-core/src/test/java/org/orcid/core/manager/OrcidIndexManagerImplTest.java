@@ -25,7 +25,6 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
-import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.solr.common.SolrDocument;
 import org.junit.Before;
 import org.junit.Test;

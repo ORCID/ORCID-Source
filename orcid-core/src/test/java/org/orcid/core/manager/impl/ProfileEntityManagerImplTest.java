@@ -74,15 +74,4 @@ public class ProfileEntityManagerImplTest extends DBUnitTest {
         assertEquals(harrysOrcid, profileEntity.getId());
     }
 
-    @Test
-    @Transactional("transactionManager")
-    @Rollback(true)
-    public void testFindByEmail() throws Exception {
-        String spikesEmail = "spike@milligan.com";
-        ProfileEntity profileEntity = profileEntityManager.findByEmail(spikesEmail);
-        assertNotNull(profileEntity);
-        assertEquals("Spike", profileEntity.getGivenNames());
-        assertEquals("Milligan", profileEntity.getFamilyName());
-        assertEquals(spikesEmail, profileEntity.getEmail());
-    }
 }

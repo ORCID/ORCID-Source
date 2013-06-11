@@ -129,7 +129,6 @@ public class ProfileDaoTest extends DBUnitTest {
         String newOrcid = "4444-1111-6666-4441";
         ProfileEntity profile = new ProfileEntity();
         profile.setId(newOrcid);
-        profile.setEmail("new@newman.com");
 
         profileDao.persist(profile);
 
@@ -156,7 +155,6 @@ public class ProfileDaoTest extends DBUnitTest {
         String newOrcid = "4444-1111-6666-4442";
         ProfileEntity profile = new ProfileEntity();
         profile.setId(newOrcid);
-        profile.setEmail("an@email.com");
 
         profileDao.persist(profile);
 
@@ -183,7 +181,6 @@ public class ProfileDaoTest extends DBUnitTest {
         String newOrcid = "4444-1111-6666-4443";
         ProfileEntity profile = new ProfileEntity();
         profile.setId(newOrcid);
-        profile.setEmail("an@email.com");
 
         Set<InstitutionEntity> institutionEntities = new HashSet<InstitutionEntity>();
         InstitutionEntity institutionEntity = new InstitutionEntity();
@@ -229,7 +226,6 @@ public class ProfileDaoTest extends DBUnitTest {
         String newOrcid = "4444-1111-6666-4444";
         ProfileEntity profile = new ProfileEntity();
         profile.setId(newOrcid);
-        profile.setEmail("an@email.com");
         Set<SubjectEntity> subjects = new HashSet<SubjectEntity>(2);
         // profile.setSubjects(subjects);
         subjects.add(new SubjectEntity("Rhymin"));
@@ -258,7 +254,6 @@ public class ProfileDaoTest extends DBUnitTest {
         String groupOrcid = "4444-1111-6666-4444";
         ProfileEntity groupProfile = new ProfileEntity();
         groupProfile.setId(groupOrcid);
-        groupProfile.setEmail("an@email.com");
         groupProfile.setOrcidType(OrcidType.GROUP);
 
         SortedSet<ProfileEntity> clientProfiles = new TreeSet<ProfileEntity>(new OrcidEntityIdComparator<String>());
@@ -350,15 +345,6 @@ public class ProfileDaoTest extends DBUnitTest {
         assertNotNull(results);
         assertEquals(3, results.size());
         assertEquals("Billie Holiday", results.get(0).getVocativeName());
-    }
-
-    @Test
-    @Rollback(true)
-    public void testFindByEmail() {
-        String email = "spike@milligan.com";
-        ProfileEntity entity = profileDao.findByEmail(email);
-        assertNotNull(entity);
-        assertEquals(email, entity.getEmail());
     }
 
     @Test
