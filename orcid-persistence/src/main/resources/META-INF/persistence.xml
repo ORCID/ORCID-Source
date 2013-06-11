@@ -27,7 +27,6 @@
          <!-- Entity classes -->
         <class>org.orcid.persistence.jpa.entities.AddressEntity</class>
         <class>org.orcid.persistence.jpa.entities.AffiliationEntity</class>
-        <class>org.orcid.persistence.jpa.entities.AlternateEmailEntity</class>
         <class>org.orcid.persistence.jpa.entities.CountryIsoEntity</class>
         <class>org.orcid.persistence.jpa.entities.ExternalIdentifierEntity</class>
         <class>org.orcid.persistence.jpa.entities.EmailEntity</class>

@@ -81,17 +81,10 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
     private SortedSet<OtherNameEntity> otherNames;
     private SortedSet<ResearcherUrlEntity> researcherUrls;
     private String biography;
-    @Deprecated
-    private String email;
-    @Deprecated
-    private Boolean emailVerified;
     private String iso2Country;
     private SortedSet<ProfileKeywordEntity> keywords;
     private Set<ExternalIdentifierEntity> externalIdentifiers;
     private SortedSet<AffiliationEntity> affiliations;
-    @Deprecated
-    private Set<AlternateEmailEntity> alternateEmails;
-    // New way of doing emails
     private Set<EmailEntity> emails;
 
     // Poor old vocative name :-(
@@ -135,10 +128,6 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
     private Visibility creditNameVisibility;
     private Visibility otherNamesVisibility;
     private Visibility biographyVisibility;
-    @Deprecated
-    private Visibility emailVisibility;
-    @Deprecated
-    private Visibility alternativeEmailsVisibility;
     private Visibility keywordsVisibility;
     private Visibility externalIdentifiersVisibility;
     private Visibility researcherUrlsVisibility;
@@ -166,28 +155,6 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
 
     public void setOrcidType(OrcidType orcidType) {
         this.orcidType = orcidType;
-    }
-
-    @Column(name = "email", length = 150, unique = true)
-    @Deprecated
-    public String getEmail() {
-        return email;
-    }
-
-    @Deprecated
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    @Column(name = "email_verified")
-    @Deprecated
-    public Boolean getEmailVerified() {
-        return emailVerified;
-    }
-
-    @Deprecated
-    public void setEmailVerified(Boolean emailVerified) {
-        this.emailVerified = emailVerified;
     }
 
     @Column(name = "given_names", length = 150)
@@ -462,15 +429,6 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
 
     public void setEmails(Set<EmailEntity> emails) {
         this.emails = emails;
-    }
-
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = PROFILE)
-    public Set<AlternateEmailEntity> getAlternateEmails() {
-        return alternateEmails;
-    }
-
-    public void setAlternateEmails(Set<AlternateEmailEntity> alternateEmails) {
-        this.alternateEmails = alternateEmails;
     }
 
     /**
@@ -836,32 +794,6 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
 
     public void setBiographyVisibility(Visibility biographyVisibility) {
         this.biographyVisibility = biographyVisibility;
-    }
-
-    @Basic
-    @Enumerated(EnumType.STRING)
-    @Column(name = "email_visibility")
-    @Deprecated
-    public Visibility getEmailVisibility() {
-        return emailVisibility;
-    }
-
-    @Deprecated
-    public void setEmailVisibility(Visibility emailVisibility) {
-        this.emailVisibility = emailVisibility;
-    }
-
-    @Basic
-    @Enumerated(EnumType.STRING)
-    @Column(name = "alternative_emails_visibility")
-    @Deprecated
-    public Visibility getAlternativeEmailsVisibility() {
-        return alternativeEmailsVisibility;
-    }
-
-    @Deprecated
-    public void setAlternativeEmailsVisibility(Visibility alternativeEmailsVisibility) {
-        this.alternativeEmailsVisibility = alternativeEmailsVisibility;
     }
 
     @Basic
