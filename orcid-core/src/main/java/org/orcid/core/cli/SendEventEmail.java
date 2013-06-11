@@ -35,6 +35,7 @@ import org.orcid.core.manager.TemplateManager;
 import org.orcid.core.manager.impl.MailGunManager;
 import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.jaxb.model.message.OrcidProfile;
+import org.orcid.jaxb.model.message.OrcidType;
 import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.ProfileEventEntity;
@@ -102,16 +103,23 @@ public class SendEventEmail {
             sendEmailByEvent();
         } else if (orcs != null) {
             for (String orc : orcs.split(" ")) {
-                sendEmail(orc);
+                OrcidProfile orcidProfile = orcidProfileManager.retrieveOrcidProfile(orc);
+                sendEmail(orcidProfile);
             }
         }
     }
 
-    private boolean sendEmail(String orcid) {
-        OrcidProfile orcidProfile = orcidProfileManager.retrieveOrcidProfile(orcid);
-        if (orcidProfile.getOrcidBio() != null && orcidProfile.getOrcidBio().getContactDetails() != null
+    private ProfileEventType sendEmail(OrcidProfile orcidProfile) {
+        
+        boolean primaryNotNull = orcidProfile.getOrcidBio() != null && orcidProfile.getOrcidBio().getContactDetails() != null
                 && orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail() != null
-                && orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue() != null) {
+                && orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue() != null;
+  
+        boolean needsVerification = primaryNotNull 
+                && !orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().isVerified() 
+                && orcidProfile.getType().equals(OrcidType.USER) ;
+        
+        if (needsVerification) {
             try {
             String email = orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue();
             String emailFriendlyName = notificationManager.deriveEmailFriendlyName(orcidProfile);
@@ -130,12 +138,12 @@ public class SendEventEmail {
             String html = templateManager.processTemplate("verification_email_w_crossref_html.ftl", templateParams);
             mailGunManager.sendSimpleVerfiyEmail("support@verify.orcid.org", email, "Please verify your email", text, html);
             } catch (Exception e) {
-                LOG.error("Exception trying to send email to: " +orcid, e);
-                return false;
+                LOG.error("Exception trying to send email to: " +orcidProfile.getOrcidId(), e);
+                return ProfileEventType.EMAIL_VERIFY_CROSSREF_MARKETING_FAIL;
             }
-            return true;
+            return ProfileEventType.EMAIL_VERIFY_CROSSREF_MARKETING_SENT;
         }
-        return false;
+        return ProfileEventType.EMAIL_VERIFY_CROSSREF_MARKETING_SKIPPED;
     }
 
     private void sendEmailByEvent() {
@@ -152,12 +160,7 @@ public class SendEventEmail {
                     protected void doInTransactionWithoutResult(TransactionStatus status) {
                         OrcidProfile orcidProfile = orcidProfileManager.retrieveOrcidProfile(orcid);
                         profileEventDao.persist(new ProfileEventEntity(orcid, ProfileEventType.EMAIL_VERIFY_CROSSREF_MARKETING_CHECK));
-                        if (orcidProfile.isDeactivated()) {
-                            profileEventDao.persist(new ProfileEventEntity(orcid, ProfileEventType.EMAIL_VERIFY_CROSSREF_MARKETING_SKIPPED));
-                        } else {
-                            if (sendEmail(orcid))
-                            profileEventDao.persist(new ProfileEventEntity(orcid, ProfileEventType.EMAIL_VERIFY_CROSSREF_MARKETING_SENT));
-                        }
+                        profileEventDao.persist(new ProfileEventEntity(orcid, sendEmail(orcidProfile)));
                     }
                 });
                 doneCount++;
