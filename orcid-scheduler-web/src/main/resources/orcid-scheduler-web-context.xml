@@ -34,6 +34,7 @@
         <task:scheduled ref="orcidProfileManager" method="processUnclaimedProfilesForReminder" cron="${org.orcid.scheduler.web.processUnclaimedProfilesForReminderCron:35 35 * * * *}"/>
         <task:scheduled ref="webhookManager" method="processWebhooks" cron="${org.orcid.scheduler.web.processWebhooks:25 25 0-2 * * *}"/>
         <task:scheduled ref="registrationStartedStatsGatherer" method="gather" fixed-delay="${org.orcid.scheduler.web.gatherRegistrationStats:3600}000"/>
+        <task:scheduled ref="statisticsGeneratorManager" method="generateStatistics" cron="${org.orcid.scheduler.web.processStatisticsGeneratorManager:0 0 0 L * *}"/>
     </task:scheduled-tasks>
 
     <task:scheduler id="scheduler" pool-size="10"/>

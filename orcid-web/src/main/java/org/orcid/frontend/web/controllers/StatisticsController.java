@@ -24,9 +24,7 @@ import javax.annotation.Resource;
 
 import org.orcid.core.manager.StatisticsGeneratorManager;
 import org.orcid.core.manager.StatisticsManager;
-import org.orcid.persistence.jpa.entities.StatisticKeyEntity;
 import org.orcid.persistence.jpa.entities.StatisticValuesEntity;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -42,7 +40,6 @@ public class StatisticsController extends BaseController {
     private StatisticsManager statisticsManager;
     
     @RequestMapping(value = "/statistics", method = RequestMethod.GET)
-    @Cacheable("statistics")
     public ModelAndView getStatistics() {        
         ModelAndView mav = new ModelAndView("statistics");
         Map<String, Long> statisticsMap = new HashMap<String, Long>();
@@ -57,19 +54,5 @@ public class StatisticsController extends BaseController {
         mav.addObject("statistics", statisticsMap);        
        
         return mav;
-    }
-    
-    public boolean generateStatistics(){
-        //Get statistics from database
-        Map<String, Long> statistics = statisticsGeneratorManager.getStatistics();
-        
-        StatisticKeyEntity statisticKey = statisticsManager.createHistory();
-        
-        //Store statistics on database
-        for(String key : statistics.keySet()){
-            statisticsManager.saveStatistic(statisticKey, key, statistics.get(key));
-        }   
-        
-        return true;
-    }
+    }    
 }
