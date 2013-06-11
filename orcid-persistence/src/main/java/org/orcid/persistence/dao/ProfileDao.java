@@ -23,12 +23,15 @@ import java.util.List;
 import org.orcid.jaxb.model.message.OrcidType;
 import org.orcid.persistence.jpa.entities.IndexingStatus;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.orcid.persistence.jpa.entities.ProfileEventType;
 
 public interface ProfileDao extends GenericDao<ProfileEntity, String> {
 
     List<ProfileEntity> retrieveSelectableSponsors();
 
     List<String> findOrcidsByName(String name);
+    
+    List<String> findByEventType(int maxResults, ProfileEventType pet, Collection<String> orcidsToExclude ,boolean not);
 
     List<String> findOrcidsByIndexingStatus(IndexingStatus indexingStatus, int maxResults);
 
