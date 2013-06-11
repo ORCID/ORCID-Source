@@ -18,12 +18,11 @@ package org.orcid.core.cli;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import javax.annotation.Resource;
 
 import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.kohsuke.args4j.CmdLineException;
@@ -147,19 +146,23 @@ public class SendEventEmail {
     }
 
     private void sendEmailByEvent() {
+        List <ProfileEventType> pes = new ArrayList<ProfileEventType>();
+        pes.add(ProfileEventType.EMAIL_VERIFY_CROSSREF_MARKETING_FAIL);
+        pes.add(ProfileEventType.EMAIL_VERIFY_CROSSREF_MARKETING_SENT);
+        pes.add(ProfileEventType.EMAIL_VERIFY_CROSSREF_MARKETING_SKIPPED);
+        
         long startTime = System.currentTimeMillis();
         @SuppressWarnings("unchecked")
         List<String> orcids = Collections.EMPTY_LIST;
         int doneCount = 0;
         do {
-            orcids = profileDao.findByEventType(CHUNK_SIZE, ProfileEventType.EMAIL_VERIFY_CROSSREF_MARKETING_CHECK, null, true);
+            orcids = profileDao.findByEventTypes(CHUNK_SIZE, pes, null, true);
             for (final String orcid : orcids) {
                 LOG.info("Migrating emails for profile: {}", orcid);
                 transactionTemplate.execute(new TransactionCallbackWithoutResult() {
                     @Override
                     protected void doInTransactionWithoutResult(TransactionStatus status) {
                         OrcidProfile orcidProfile = orcidProfileManager.retrieveOrcidProfile(orcid);
-                        profileEventDao.persist(new ProfileEventEntity(orcid, ProfileEventType.EMAIL_VERIFY_CROSSREF_MARKETING_CHECK));
                         profileEventDao.persist(new ProfileEventEntity(orcid, sendEmail(orcidProfile)));
                     }
                 });

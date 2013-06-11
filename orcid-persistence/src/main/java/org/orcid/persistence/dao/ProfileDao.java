@@ -33,7 +33,7 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
 
     List<String> findOrcidsByName(String name);
     
-    List<String> findByEventType(int maxResults, ProfileEventType pet, Collection<String> orcidsToExclude ,boolean not);
+    List<String> findByEventTypes(int maxResults, List<ProfileEventType> pet, Collection<String> orcidsToExclude ,boolean not);
 
     List<String> findOrcidsByIndexingStatus(IndexingStatus indexingStatus, int maxResults);
 

@@ -170,20 +170,63 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
         query.setMaxResults(maxResults);
         return query.getResultList();
     }
-
+    
+    
+    /**
+     * Finds ORCID Ids by ProfileEventTypes     
+     *  
+     * @param maxResults
+     *          Maximum number of results returned.
+     *          
+     * @param pets 
+     *          A list of ProfileEventTypes. 
+     *          
+     * @param not
+     *          If false ORCIDs returned ARE associated with one of the ProfileEventTypes
+     *          If true ORCIDs returned ARE NOT associated with one of the ProfileEventTypes
+     * 
+     * @param orcidsToExclude
+     *          ORCID Ids to be excluded from reuturned results 
+     * 
+     * @return list of ORCID Ids as a list of strings
+     */
     @SuppressWarnings("unchecked")
     @Override
-    public List<String> findByEventType(int maxResults, ProfileEventType pet, Collection<String> orcidsToExclude, boolean not) {
-        String notStr = "";
-        if (not) notStr = " not";
-        String queryStr = "select p.orcid from profile as p where p.orcid" + notStr +" in (select pe.orcid from profile_event as pe where pe.profile_event_type=:profileEventType)";
+    public List<String> findByEventTypes(int maxResults, List<ProfileEventType> pets, Collection<String> orcidsToExclude, boolean not) {
+        /* 
+         * builder produces a query that will look like the following
+         * select p.orcid from profile as p 
+         *      where p.orcid not in (
+         *              select pe.orcid from profile_event as pe 
+         *                      where pe.profile_event_type=:profileEventType0 
+         *                      or pe.profile_event_type=:profileEventType1 
+         *                      or pe.profile_event_type=:profileEventType2
+         *       )
+         *       
+         */
+        StringBuilder builder = new StringBuilder();
+        
+        builder.append("select p.orcid from profile as p where p.orcid ");
+        if (not) builder.append("not ");
+        builder.append("in (select pe.orcid from profile_event as pe where ");
+        for (int i = 0; i< pets.size() ; i++) {
+            if (i != 0 ) builder.append("or ");
+            builder.append("pe.profile_event_type=:profileEventType");
+            builder.append(Integer.toString(i));
+            if (i != pets.size() -1) builder.append(" ");
+        }
+        builder.append(")");
         
         if (orcidsToExclude != null && !orcidsToExclude.isEmpty()) {
-            queryStr += " AND p.orcid NOT IN :orcidsToExclude";
+            builder.append(" AND p.orcid NOT IN :orcidsToExclude");
         }
         
-        Query query = entityManager.createNativeQuery(queryStr);
-        query.setParameter("profileEventType", pet.name());
+        Query query = entityManager.createNativeQuery(builder.toString());
+        
+        for (int i = 0; i< pets.size() ; i++) {
+            query.setParameter("profileEventType"+i, pets.get(i).name());
+        }
+
         if (orcidsToExclude != null && !orcidsToExclude.isEmpty()) {
             query.setParameter("orcidsToExclude", orcidsToExclude);
         }
