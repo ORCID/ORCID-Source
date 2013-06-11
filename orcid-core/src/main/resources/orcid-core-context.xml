@@ -143,7 +143,7 @@
 	<bean id="statisticsGeneratorManager" class="org.orcid.core.manager.impl.StatisticsGeneratorManagerImpl" />
 	
 	<!-- Statistics Manager -->
-	<bean id="statisticManager" class="org.orcid.core.manager.impl.StatisticManagerImpl" />
+	<bean id="statisticsManager" class="org.orcid.core.manager.impl.StatisticsManagerImpl" />
 	
 	<bean id="emailManager" class="org.orcid.core.manager.impl.EmailManagerImpl" />
 	

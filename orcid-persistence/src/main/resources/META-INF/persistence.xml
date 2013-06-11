@@ -87,8 +87,8 @@
 	
 	<persistence-unit name="statistics" transaction-type="RESOURCE_LOCAL">
 		<provider>org.hibernate.ejb.HibernatePersistence</provider>
-		<class>org.orcid.persistence.jpa.entities.StatisticEntity</class>
-		<class>org.orcid.persistence.jpa.entities.StatisticHistoryEntity</class>		
+		<class>org.orcid.persistence.jpa.entities.StatisticValuesEntity</class>
+		<class>org.orcid.persistence.jpa.entities.StatisticKeyEntity</class>		
 	</persistence-unit>
 
 </persistence>

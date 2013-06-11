@@ -12,8 +12,8 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "statistic_history")
-public class StatisticHistoryEntity implements Serializable {
+@Table(name = "statistic_key")
+public class StatisticKeyEntity implements Serializable {
 
     //TODO
     private static final long serialVersionUID = -3187757614938904329L;
@@ -21,8 +21,8 @@ public class StatisticHistoryEntity implements Serializable {
     private Date generationDate;
     
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "history_seq")
-    @SequenceGenerator(name = "history_seq", sequenceName = "history_seq")
+    @GeneratedValue(strategy = GenerationType.AUTO, generator = "key_seq")
+    @SequenceGenerator(name = "key_seq", sequenceName = "key_seq")
     @Column(name = "id")
     public Long getId() {
         return id;
