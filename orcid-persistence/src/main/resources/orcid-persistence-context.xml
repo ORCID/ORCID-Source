@@ -216,6 +216,14 @@
         <property name="password" value="\${org.orcid.persistence.db.password}" />
     </bean>
 
+	<!-- Statistics -->
+	<bean id="statisticsSimpleDataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <property name="driverClassName" value="\${org.orcid.persistence.statistics.db.class}" />
+        <property name="url" value="\${org.orcid.persistence.statistics.db.url}" />
+        <property name="username" value="\${org.orcid.persistence.statistics.db.username}" />
+        <property name="password" value="\${org.orcid.persistence.statistics.db.password}" />
+    </bean>
+
     <!--SOLR -->
     <!-- Confusingly, the client is actually called a server -->
     <bean id="solrServer" class="org.apache.solr.client.solrj.impl.CommonsHttpSolrServer">

@@ -145,6 +145,9 @@
 	<!-- Statistics Manager -->
 	<bean id="statisticsManager" class="org.orcid.core.manager.impl.StatisticsManagerImpl" />
 	
+	<!-- Statistics Cron Job -->
+	<bean id="statisticsCronJob" class="org.orcid.core.cron.impl.StatisticsGeneratorCronJobImpl" />
+	
 	<bean id="emailManager" class="org.orcid.core.manager.impl.EmailManagerImpl" />
 	
 	<bean id="researcherUrlManager" class="org.orcid.core.manager.impl.ResearcherUrlManagerImpl" />

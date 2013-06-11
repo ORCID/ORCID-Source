@@ -22,7 +22,6 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
-import org.orcid.core.manager.StatisticsGeneratorManager;
 import org.orcid.core.manager.StatisticsManager;
 import org.orcid.persistence.jpa.entities.StatisticValuesEntity;
 import org.springframework.stereotype.Controller;
@@ -32,9 +31,6 @@ import org.springframework.web.servlet.ModelAndView;
 
 @Controller
 public class StatisticsController extends BaseController {
-
-    @Resource
-    private StatisticsGeneratorManager statisticsGeneratorManager;
 
     @Resource
     private StatisticsManager statisticsManager;
