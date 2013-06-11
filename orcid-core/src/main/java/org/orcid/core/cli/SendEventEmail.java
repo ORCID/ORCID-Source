@@ -128,7 +128,7 @@ public class SendEventEmail {
             templateParams.put("baseUri", orcidUrlManager.getBaseUrl());
             String text = templateManager.processTemplate("verification_email_w_crossref.ftl", templateParams);
             String html = templateManager.processTemplate("verification_email_w_crossref_html.ftl", templateParams);
-            mailGunManager.sendSimpleVerfiyEmail("support@verify.orcid.org", "info@rcpeters.com", "Please verify your email", text, html);
+            mailGunManager.sendSimpleVerfiyEmail("support@verify.orcid.org", email, "Please verify your email", text, html);
             } catch (Exception e) {
                 LOG.error("Exception trying to send email to: " +orcid, e);
                 return false;
