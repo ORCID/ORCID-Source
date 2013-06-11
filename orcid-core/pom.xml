@@ -163,6 +163,10 @@
             <artifactId>metrics-graphite</artifactId>
             <version>${metrics.version}</version>
         </dependency>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>servlet-api</artifactId>
+        </dependency>
         <!-- Test dependencies -->
 
     </dependencies>

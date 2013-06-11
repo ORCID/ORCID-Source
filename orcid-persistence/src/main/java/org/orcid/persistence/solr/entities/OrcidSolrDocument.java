@@ -89,6 +89,9 @@ public class OrcidSolrDocument {
     @Field(SolrConstants.PUBLIC_PROFILE)
     private String publicProfileMessage;
 
+    @Field(SolrConstants.GIVEN_AND_FAMILY_NAMES)
+    private String givenAndFamilyNames;
+
     public String getOrcid() {
         return orcid;
     }
@@ -103,6 +106,7 @@ public class OrcidSolrDocument {
 
     public void setFamilyName(String familyName) {
         this.familyName = familyName;
+        generateCombinedGivenAndFamilyNames();
     }
 
     public String getGivenNames() {
@@ -111,6 +115,15 @@ public class OrcidSolrDocument {
 
     public void setGivenNames(String givenNames) {
         this.givenNames = givenNames;
+        generateCombinedGivenAndFamilyNames();
+    }
+
+    public String getGivenAndFamilyNames() {
+        return givenAndFamilyNames;
+    }
+
+    public void setGivenAndFamilyNames(String givenAndFamilyNames) {
+        this.givenAndFamilyNames = givenAndFamilyNames;
     }
 
     public List<String> getPastInstitutionNames() {
@@ -371,6 +384,16 @@ public class OrcidSolrDocument {
 
     public void setAffiliatePrimaryInstitutionNames(List<String> affiliatePrimaryInstitutionNames) {
         this.affiliatePrimaryInstitutionNames = affiliatePrimaryInstitutionNames;
+    }
+
+    private void generateCombinedGivenAndFamilyNames() {
+        if (givenNames == null) {
+            setGivenAndFamilyNames(familyName);
+        }
+        if (familyName == null) {
+            setGivenAndFamilyNames(givenNames);
+        }
+        setGivenAndFamilyNames(givenNames + " " + familyName);
     }
 
 }

@@ -59,16 +59,6 @@
         <value>org.orcid.api.common.jaxb.OrcidJsonJaxbContexResolver</value>
     </util:set>
 
-    <bean id="multiThreadedConnectionManager" class="org.apache.commons.httpclient.MultiThreadedHttpConnectionManager">
-        <property name="params" ref="httpConnectionManagerParams"/>
-    </bean>
-
-    <bean id="httpConnectionManagerParams" class="org.apache.commons.httpclient.params.HttpConnectionManagerParams">
-        <property name="maxTotalConnections" value="${org.orcid.t1.client.maxTotalConnections}"/>
-        <property name="connectionTimeout" value="${org.orcid.t1.client.connectionTimeout}"/>
-        <property name="defaultMaxConnectionsPerHost" value="${org.orcid.t1.client.defaultMaxConnectionsPerHost}"/>
-        <property name="soTimeout" value="${org.orcid.t1.client.soTimeout}"/>
-        <property name="staleCheckingEnabled" value="${org.orcid.t1.client.staleCheckingEnabled}"/>
-    </bean>
+    <bean id="multiThreadedConnectionManager" class="org.apache.http.impl.conn.PoolingClientConnectionManager"/>
 
 </beans>

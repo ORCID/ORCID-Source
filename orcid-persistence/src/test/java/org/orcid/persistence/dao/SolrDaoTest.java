@@ -231,7 +231,7 @@ public class SolrDaoTest {
         assertTrue(familyNameMatch1.getRelevancyScore() < 1.0);
         assertTrue(familyNameMatch2.getRelevancyScore() < 1.0);
 
-        String familyNameGivenNameQueryWithExclude = familyNameGivenNameQuery + " -orcid: " + thirdOrcidDoc.getOrcid();
+        String familyNameGivenNameQueryWithExclude = familyNameGivenNameQuery + " -orcid:" + thirdOrcidDoc.getOrcid();
         solrResults = solrDao.findByDocumentCriteria(familyNameGivenNameQueryWithExclude, null, null);
         assertTrue(solrResults.size() == 2);
         givenNameMatch = solrResults.get(0);
