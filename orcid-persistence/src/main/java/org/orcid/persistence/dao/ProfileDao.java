@@ -28,8 +28,6 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
 
     List<ProfileEntity> retrieveSelectableSponsors();
 
-    ProfileEntity findByEmail(String email);
-
     List<String> findOrcidsByName(String name);
 
     List<String> findOrcidsByIndexingStatus(IndexingStatus indexingStatus, int maxResults);

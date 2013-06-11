@@ -43,11 +43,6 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
     }
 
     @Override
-    public ProfileEntity findByEmail(String email) {
-        return profileDao.findByEmail(email);
-    }
-
-    @Override
     public boolean orcidExists(String orcid) {
         return profileDao.orcidExists(orcid);
     }

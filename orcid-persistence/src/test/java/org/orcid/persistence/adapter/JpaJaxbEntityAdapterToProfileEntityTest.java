@@ -121,11 +121,6 @@ public class JpaJaxbEntityAdapterToProfileEntityTest extends DBUnitTest {
         assertNotNull(retrievedProfileEntity);
         assertEquals("Josiah", retrievedProfileEntity.getGivenNames());
 
-        // Check old way of doing emails is not being used.
-        assertNull(retrievedProfileEntity.getEmailVerified());
-        assertNull(profileEntity.getEmailVisibility());
-        assertNull(profileEntity.getAlternateEmails());
-
         // Check all email visibility and values
         Set<EmailEntity> emails = profileEntity.getEmails();
         assertNotNull(emails);
