@@ -123,7 +123,27 @@
     
     <bean id="webhookDao" class="org.orcid.persistence.dao.impl.WebhookDaoImpl" />
      
-	<bean id="statisticsDao" class="org.orcid.persistence.dao.impl.StatisticsDaoImpl" />
+    <!-- Statistics Generation DAO -->
+	<bean id="statisticsGeneratorDao" class="org.orcid.persistence.dao.impl.StatisticsGeneratorDaoImpl" />
+	<!-- Statistics DAO -->
+	<bean id="statisticDao" class="org.orcid.persistence.dao.impl.StatisticsDaoImpl" />
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
      
 	<bean id="externalIdentifierDao" class="org.orcid.persistence.dao.impl.ExternalIdentifierDaoImpl" />
 	
@@ -138,6 +158,17 @@
     <bean id="liquibase" class="liquibase.integration.spring.SpringLiquibase">
         <property name="dataSource" ref="\${org.orcid.persistence.db.dataSource}" />
         <property name="changeLog" value="classpath:db-master.xml" />
+    </bean>
+
+
+
+
+
+	<!-- Statistics -->
+	<bean id="statisticManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+	    <property name="jpaVendorAdapter" ref="jpaVendorAdapter" />
+        <property name="dataSource" ref="\${org.orcid.persistence.statistics.db.dataSource}" />
+        <property name="persistenceUnitName" value="statistics" />
     </bean>
 
     <bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor" />
@@ -156,6 +187,27 @@
         <constructor-arg ref="transactionManager" />
         <property name="propagationBehaviorName" value="PROPAGATION_REQUIRED" />
     </bean>
+
+
+
+
+
+
+	<!-- Statistics -->
+	<bean id="statisticsDataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
+		<property name="driverClass" value="\${org.orcid.persistence.statistics.db.class}" />
+        <property name="jdbcUrl" value="\${org.orcid.persistence.statistics.db.url}" />
+        <property name="user" value="\${org.orcid.persistence.statistics.db.username}" />
+        <property name="password" value="\${org.orcid.persistence.statistics.db.password}" />
+        <property name="initialPoolSize" value="\${org.orcid.persistence.statistics.db.initialPoolSize}" />
+        <property name="minPoolSize" value="\${org.orcid.persistence.statistics.db.minPoolSize}" />
+        <property name="maxPoolSize" value="\${org.orcid.persistence.statistics.db.maxPoolSize}" />
+        <property name="maxStatements" value="\${org.orcid.persistence.statistics.db.maxStatements}" />
+        <property name="idleConnectionTestPeriod" value="\${org.orcid.persistence.statistics.db.idleConnectionTestPeriod}" />
+        <property name="testConnectionOnCheckin" value="\${org.orcid.persistence.statistics.db.testConnectionOnCheckin}" />
+        <property name="preferredTestQuery" value="\${org.orcid.persistence.statistics.db.preferredTestQuery}" />
+        <property name="numHelperThreads" value="\${org.orcid.persistence.statistics.db.numHelperThreads:10}"/>
+	</bean>
 
     <bean id="pooledDataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
         <property name="driverClass" value="\${org.orcid.persistence.db.class}" />

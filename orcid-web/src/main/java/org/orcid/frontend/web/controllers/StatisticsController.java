@@ -20,7 +20,8 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
-import org.orcid.core.manager.StatisticsManager;
+import org.orcid.core.manager.StatisticManager;
+import org.orcid.core.manager.StatisticsGeneratorManager;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,14 +32,24 @@ import org.springframework.web.servlet.ModelAndView;
 public class StatisticsController extends BaseController {
 
     @Resource
-    private StatisticsManager statisticsManager;
+    private StatisticsGeneratorManager statisticsGeneratorManager;
 
+    @Resource
+    private StatisticManager statisticManager;
+    
     @RequestMapping(value = "/statistics", method = RequestMethod.GET)
     @Cacheable("statistics")
     public ModelAndView getStatistics() {
         ModelAndView mav = new ModelAndView("statistics");
-        Map<String, Long> statistics = statisticsManager.getStatistics();
+        Map<String, Long> statistics = statisticsGeneratorManager.getStatistics();
         mav.addObject("statistics", statistics);
+        
+        long statisticId = statisticManager.createHistory();
+        
+        for(String key : statistics.keySet()){
+            statisticManager.saveStatistic(statisticId, key, statistics.get(key));
+        }
+        
         return mav;
     }
 }

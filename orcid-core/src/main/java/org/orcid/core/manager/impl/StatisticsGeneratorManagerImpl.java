@@ -21,13 +21,13 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
-import org.orcid.core.manager.StatisticsManager;
-import org.orcid.persistence.dao.StatisticsDao;
+import org.orcid.core.manager.StatisticsGeneratorManager;
+import org.orcid.persistence.dao.StatisticsGeneratorDao;
 
-public class StatisticsManagerImpl implements StatisticsManager {
+public class StatisticsGeneratorManagerImpl implements StatisticsGeneratorManager {
 
     @Resource
-    private StatisticsDao statisticsDao;
+    private StatisticsGeneratorDao statisticsGeneratorDao;
 
     public static final String KEY_LIVE_IDS = "liveIds";
     public static final String KEY_IDS_WITH_VERIFIED_EMAIL = "idsWithVerifiedEmail";
@@ -38,11 +38,11 @@ public class StatisticsManagerImpl implements StatisticsManager {
     @Override
     public Map<String, Long> getStatistics() {
         Map<String, Long> statistics = new HashMap<String, Long>();
-        statistics.put(KEY_LIVE_IDS, statisticsDao.getLiveIds());
-        statistics.put(KEY_IDS_WITH_VERIFIED_EMAIL, statisticsDao.getAccountsWithVerifiedEmails());
-        statistics.put(KEY_IDS_WITH_WORKS, statisticsDao.getAccountsWithWorks());
-        statistics.put(KEY_NUMBER_OF_WORKS, statisticsDao.getNumberOfWorks());
-        statistics.put(KEY_WORKS_WITH_DOIS, statisticsDao.getNumberOfWorksWithDOIs());
+        statistics.put(KEY_LIVE_IDS, statisticsGeneratorDao.getLiveIds());
+        statistics.put(KEY_IDS_WITH_VERIFIED_EMAIL, statisticsGeneratorDao.getAccountsWithVerifiedEmails());
+        statistics.put(KEY_IDS_WITH_WORKS, statisticsGeneratorDao.getAccountsWithWorks());
+        statistics.put(KEY_NUMBER_OF_WORKS, statisticsGeneratorDao.getNumberOfWorks());
+        statistics.put(KEY_WORKS_WITH_DOIS, statisticsGeneratorDao.getNumberOfWorksWithDOIs());
         return statistics;
     }
 

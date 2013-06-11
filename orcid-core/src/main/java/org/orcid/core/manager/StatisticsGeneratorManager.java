@@ -18,7 +18,7 @@ package org.orcid.core.manager;
 
 import java.util.Map;
 
-public interface StatisticsManager {
+public interface StatisticsGeneratorManager {
 
     public Map<String, Long> getStatistics();
 }

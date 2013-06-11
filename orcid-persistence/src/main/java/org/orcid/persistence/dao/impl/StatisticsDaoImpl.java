@@ -1,62 +1,44 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2013 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.persistence.dao.impl;
-
-import java.math.BigInteger;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.PersistenceUnit;
 import javax.persistence.Query;
 
 import org.orcid.persistence.dao.StatisticsDao;
+import org.springframework.transaction.annotation.Transactional;
 
+@PersistenceUnit(name = "statisticManagerFactory")
 public class StatisticsDaoImpl implements StatisticsDao {
 
-    @PersistenceContext(unitName = "orcid")
+    @PersistenceContext(unitName = "statistics")
     protected EntityManager entityManager;
-
-    public long getLiveIds() {
-        Query query = entityManager.createNativeQuery("select count(*) from profile where profile_deactivation_date is null");
-        BigInteger numberOfLiveIds = (BigInteger) query.getSingleResult();
-        return numberOfLiveIds.longValue();
+    
+    @Override
+    @Transactional
+    public long createHistory(){
+        Query query = entityManager.createNativeQuery("insert into statistic_history(id, generation_date) values (nextval('history_seq'), now()) returning id");
+        System.out.println(query.executeUpdate());
+        System.out.println(query.getFirstResult());
+        System.out.println(query.executeUpdate());
+        return query.getFirstResult();
+    }
+    
+    @Override
+    @Transactional
+    public boolean saveStatistic(long id, String name, double value) {
+        Query query = entityManager.createNativeQuery("insert into statistic(history_id, name, resulting_value) values (:history_id, :name, :resulting_value)");
+        query.setParameter("history_id", id);
+        query.setParameter("name", name);
+        query.setParameter("resulting_value", value);
+        return query.executeUpdate() > 0 ? true : false;
     }
 
-    public long getAccountsWithVerifiedEmails() {
-        Query query = entityManager
-                .createNativeQuery("select count(distinct profile.orcid) from email join profile on profile.profile_deactivation_date is null and email.is_verified=true and email.orcid=profile.orcid");
-        BigInteger numberOfLiveIdsWithVerifiedEmail = (BigInteger) query.getSingleResult();
-        return numberOfLiveIdsWithVerifiedEmail.longValue();
+    @Override
+    @Transactional
+    public double getStatistic(long id, String name) {
+        // TODO Auto-generated method stub
+        return 0;
     }
 
-    public long getAccountsWithWorks() {
-        Query query = entityManager.createNativeQuery("select count (distinct orcid) from profile_work");
-        BigInteger numberOfAccountsWithWorks = (BigInteger) query.getSingleResult();
-        return numberOfAccountsWithWorks.longValue();
-    }
-
-    public long getNumberOfWorks() {
-        Query query = entityManager.createNativeQuery("select count(*) from work");
-        BigInteger numberOfWorks = (BigInteger) query.getSingleResult();
-        return numberOfWorks.longValue();
-    }
-
-    public long getNumberOfWorksWithDOIs() {
-        Query query = entityManager.createNativeQuery("select count(distinct identifier) from work_external_identifier where identifier_type='DOI'");
-        BigInteger numberOfWorksWithDOIs = (BigInteger) query.getSingleResult();
-        return numberOfWorksWithDOIs.longValue();
-    }
 }
