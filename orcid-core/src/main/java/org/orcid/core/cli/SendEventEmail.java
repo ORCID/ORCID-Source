@@ -56,7 +56,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 public class SendEventEmail {
 
     private ProfileDao profileDao;
-    
+
     private OrcidProfileManager orcidProfileManager;
 
     private MailGunManager mailGunManager;
@@ -68,11 +68,11 @@ public class SendEventEmail {
     private OrcidUrlManager orcidUrlManager;
 
     private NotificationManager notificationManager;
-    
+
     private TransactionTemplate transactionTemplate;
-    
+
     private static Logger LOG = LoggerFactory.getLogger(SendEventEmail.class);
-    
+
     private static final int CHUNK_SIZE = 1000;
 
     @Option(name = "-testSendToOrcids", usage = "Send validation email to following ORCID Ids")
@@ -110,38 +110,38 @@ public class SendEventEmail {
     }
 
     private ProfileEventType sendEmail(OrcidProfile orcidProfile) {
-        
         boolean primaryNotNull = orcidProfile.getOrcidBio() != null && orcidProfile.getOrcidBio().getContactDetails() != null
                 && orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail() != null
                 && orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue() != null;
-  
-        boolean needsVerification = primaryNotNull 
-                && !orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().isVerified() 
-                && orcidProfile.getType().equals(OrcidType.USER) ;
-        
+
+        boolean needsVerification = primaryNotNull && !orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().isVerified()
+                && orcidProfile.getType().equals(OrcidType.USER);
+
         if (needsVerification) {
+            ProfileEventType pet = ProfileEventType.EMAIL_VERIFY_CROSSREF_MARKETING_SENT;
             try {
-            String email = orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue();
-            String emailFriendlyName = notificationManager.deriveEmailFriendlyName(orcidProfile);
-            Map<String, Object> templateParams = new HashMap<String, Object>();
-            templateParams.put("emailName", emailFriendlyName);
-            String verificationUrl = null;
-            try {
-                verificationUrl = notificationManager.createVerificationUrl(email, new URI(orcidUrlManager.getBaseUrl()));
-            } catch (URISyntaxException e) {
-                LOG.debug("SendEventEmail exception", e);
-            }
-            templateParams.put("verificationUrl", verificationUrl);
-            templateParams.put("orcid", orcidProfile.getOrcid().getValue());
-            templateParams.put("baseUri", orcidUrlManager.getBaseUrl());
-            String text = templateManager.processTemplate("verification_email_w_crossref.ftl", templateParams);
-            String html = templateManager.processTemplate("verification_email_w_crossref_html.ftl", templateParams);
-            mailGunManager.sendSimpleVerfiyEmail("support@verify.orcid.org", email, "Please verify your email", text, html);
+                String email = orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue();
+                String emailFriendlyName = notificationManager.deriveEmailFriendlyName(orcidProfile);
+                Map<String, Object> templateParams = new HashMap<String, Object>();
+                templateParams.put("emailName", emailFriendlyName);
+                String verificationUrl = null;
+                try {
+                    verificationUrl = notificationManager.createVerificationUrl(email, new URI(orcidUrlManager.getBaseUrl()));
+                } catch (URISyntaxException e) {
+                    LOG.debug("SendEventEmail exception", e);
+                }
+                templateParams.put("verificationUrl", verificationUrl);
+                templateParams.put("orcid", orcidProfile.getOrcid().getValue());
+                templateParams.put("baseUri", orcidUrlManager.getBaseUrl());
+                String text = templateManager.processTemplate("verification_email_w_crossref.ftl", templateParams);
+                String html = templateManager.processTemplate("verification_email_w_crossref_html.ftl", templateParams);
+                if (!mailGunManager.sendEmail("support@verify.orcid.org", email, "Please verify your email", text, html))
+                    pet = ProfileEventType.EMAIL_VERIFY_CROSSREF_MARKETING_FAIL;
             } catch (Exception e) {
-                LOG.error("Exception trying to send email to: " +orcidProfile.getOrcidId(), e);
-                return ProfileEventType.EMAIL_VERIFY_CROSSREF_MARKETING_FAIL;
+                LOG.error("ProfileEventType exception trying to send email to: " + orcidProfile.getOrcidId(), e);
+                pet = ProfileEventType.EMAIL_VERIFY_CROSSREF_MARKETING_FAIL;
             }
-            return ProfileEventType.EMAIL_VERIFY_CROSSREF_MARKETING_SENT;
+            return pet;
         }
         return ProfileEventType.EMAIL_VERIFY_CROSSREF_MARKETING_SKIPPED;
     }
