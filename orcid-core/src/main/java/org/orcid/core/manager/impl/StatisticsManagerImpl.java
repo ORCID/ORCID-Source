@@ -1,5 +1,7 @@
 package org.orcid.core.manager.impl;
 
+import java.util.List;
+
 import javax.annotation.Resource;
 
 import org.orcid.core.manager.StatisticsManager;
@@ -21,7 +23,7 @@ public class StatisticsManagerImpl implements StatisticsManager {
 
     @Override
     @Transactional
-    public StatisticValuesEntity saveStatistic(StatisticKeyEntity id, String name, float value) {
+    public StatisticValuesEntity saveStatistic(StatisticKeyEntity id, String name, long value) {
         StatisticValuesEntity statisticEntity = new StatisticValuesEntity(id, name, value);
         return statisticsDao.saveStatistic(statisticEntity);
     }
@@ -29,6 +31,12 @@ public class StatisticsManagerImpl implements StatisticsManager {
     @Override
     public StatisticValuesEntity getStatistic(StatisticKeyEntity id, String name) {        
         return statisticsDao.getStatistic(id.getId(), name);
+    }
+    
+    @Override
+    public List<StatisticValuesEntity> getLatestStatistics(){
+        StatisticKeyEntity latestKey = statisticsDao.getLatestKey();
+        return statisticsDao.getStatistic(latestKey.getId());
     }
 
 }

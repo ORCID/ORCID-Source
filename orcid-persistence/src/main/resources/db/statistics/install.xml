@@ -38,6 +38,9 @@
         </createTable>
         
         <createTable tableName="statistic_values">
+        	<column name="id" type="bigint">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="statistic_values_pkey"/>
+            </column>
             <column name="key_id" type="bigint">
                 <constraints nullable="false" />
             </column>
@@ -59,5 +62,6 @@
             </not>
         </preConditions>
         <createSequence sequenceName="key_seq"/>
+        <createSequence sequenceName="values_seq"/>
 	</changeSet>
 </databaseChangeLog>

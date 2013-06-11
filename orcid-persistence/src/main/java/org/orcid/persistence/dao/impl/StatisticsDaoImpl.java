@@ -30,6 +30,14 @@ public class StatisticsDaoImpl implements StatisticsDao {
     
     @Override
     @Transactional("statisticsTransactionManager")
+    public StatisticKeyEntity getLatestKey(){
+        TypedQuery<StatisticKeyEntity> query = entityManager.createQuery("FROM StatisticKeyEntity ORDER BY generationDate DESC", StatisticKeyEntity.class);
+        query.setMaxResults(1);
+        return query.getSingleResult();
+    }
+    
+    @Override
+    @Transactional("statisticsTransactionManager")
     public StatisticValuesEntity saveStatistic(StatisticValuesEntity statistic) {
         entityManager.persist(statistic);
         return statistic;
@@ -37,8 +45,22 @@ public class StatisticsDaoImpl implements StatisticsDao {
 
     @Override
     @Transactional
+    public List<StatisticValuesEntity> getStatistic(long id) {
+        TypedQuery<StatisticValuesEntity> query = entityManager.createQuery("FROM StatisticValuesEntity WHERE key.id = :id", StatisticValuesEntity.class);
+        query.setParameter("id", id); 
+        List<StatisticValuesEntity> results = query.getResultList(); 
+        
+        for(StatisticValuesEntity result : results){
+            System.out.println("Result: " + result.getStatisticName() + " - " + result.getStatisticValue());
+        }
+        
+        return results;
+    }
+    
+    @Override
+    @Transactional
     public StatisticValuesEntity getStatistic(long id, String name) {
-        TypedQuery<StatisticValuesEntity> query = entityManager.createQuery("FROM StatisticEntity WHERE history.id = :id AND name = :name", StatisticValuesEntity.class);
+        TypedQuery<StatisticValuesEntity> query = entityManager.createQuery("FROM StatisticValuesEntity WHERE key.id = :id AND name = :name", StatisticValuesEntity.class);
         query.setParameter("id", id);
         query.setParameter("name", name);
         List<StatisticValuesEntity> results = query.getResultList();

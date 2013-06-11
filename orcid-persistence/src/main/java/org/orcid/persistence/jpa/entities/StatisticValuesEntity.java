@@ -6,9 +6,12 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 @Entity
@@ -18,18 +21,31 @@ public class StatisticValuesEntity implements Serializable {
     //TODO
     private static final long serialVersionUID = -3187757614938904329L;
     
+    private long id;
     private StatisticKeyEntity key;
     private String statisticName;
-    private float statisticValue;
+    private long statisticValue;
     
     public StatisticValuesEntity(){
         
     }
     
-    public StatisticValuesEntity(StatisticKeyEntity key, String statisticName, float statisticValue){
+    public StatisticValuesEntity(StatisticKeyEntity key, String statisticName, long statisticValue){
         this.key = key;
         this.statisticName = statisticName;
         this.statisticValue = statisticValue;
+    }
+    
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO, generator = "values_seq")
+    @SequenceGenerator(name = "values_seq", sequenceName = "values_seq")
+    @Column(name = "id")
+    public Long getId() {
+        return id;
+    }
+    
+    public void setId(long id){
+        this.id = id;
     }
     
     @Id
@@ -45,7 +61,7 @@ public class StatisticValuesEntity implements Serializable {
     }
     
     @Column(name="statistic_value")
-    public float getStatisticValue(){
+    public long getStatisticValue(){
         return statisticValue;
     }
     
@@ -57,7 +73,7 @@ public class StatisticValuesEntity implements Serializable {
         this.statisticName = name;
     }
 
-    public void setStatisticValue(float value){
+    public void setStatisticValue(long value){
         this.statisticValue = value;
     }
 }
