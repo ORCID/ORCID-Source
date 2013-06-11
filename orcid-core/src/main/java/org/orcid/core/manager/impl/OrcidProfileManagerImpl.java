@@ -523,14 +523,9 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
     @Override
     @Transactional
     public OrcidProfile retrieveOrcidProfileByEmail(String email) {
-        ProfileEntity profileEntity = profileDao.findByEmail(email);
-        if (profileEntity == null) {
-            EmailEntity emailEntity = emailDao.findCaseInsensitive(email);
-            if (emailEntity != null) {
-                profileEntity = emailEntity.getProfile();
-            }
-        }
-        if (profileEntity != null) {
+        EmailEntity emailEntity = emailDao.findCaseInsensitive(email);
+        if (emailEntity != null) {
+            ProfileEntity profileEntity = emailEntity.getProfile();
             OrcidProfile orcidProfile = adapter.toOrcidProfile(profileEntity);
             String verificationCode = profileEntity.getEncryptedVerificationCode();
             String securityAnswer = profileEntity.getEncryptedSecurityAnswer();
@@ -752,15 +747,9 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
                         // associated with that email
                         String email = contributor.getContributorEmail().getValue();
 
-                        ProfileEntity profileEntity = profileDao.findByEmail(email);
-                        if (profileEntity == null) {
-                            EmailEntity emailEntity = emailDao.findCaseInsensitive(email);
-                            if (emailEntity != null) {
-                                profileEntity = emailEntity.getProfile();
-                            }
-                        }
-
-                        if (profileEntity != null) {
+                        EmailEntity emailEntity = emailDao.findCaseInsensitive(email);
+                        if (emailEntity != null) {
+                            ProfileEntity profileEntity = emailEntity.getProfile();
                             contributor.setContributorOrcid(new ContributorOrcid(profileEntity.getId()));
                             contributor.setCreditName(new CreditName(profileEntity.getCreditName()));
                         }

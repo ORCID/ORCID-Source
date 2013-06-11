@@ -1,0 +1,36 @@
+<!--
+
+    =============================================================================
+
+    ORCID (R) Open Source
+    http://orcid.org
+
+    Copyright (c) 2012-2013 ORCID, Inc.
+    Licensed under an MIT-Style License (MIT)
+    http://orcid.org/open-source-license
+
+    This copyright and license information (including a link to the full license)
+    shall be included in its entirety in all copies or substantial portion of
+    the software.
+
+    =============================================================================
+
+-->
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+	<changeSet id="REMOVE-OLD-WAY-OF-DOING-EMAILS"
+		author="Will Simpson">
+		<preConditions onFail="WARN"
+			onFailMessage="There are still emails in the profile table, so not removing old way of doing emails">
+			<sqlCheck expectedResult="0">SELECT COUNT(*) FROM profile WHERE email IS NOT NULL</sqlCheck>
+		</preConditions>
+		<dropColumn tableName="profile" columnName="email" />
+		<dropColumn tableName="profile" columnName="email_visibility" />
+		<dropColumn tableName="profile" columnName="email_verified" />
+		<dropColumn tableName="profile" columnName="alternative_emails_visibility" />
+		<dropTable tableName="alternate_email" />
+	</changeSet>
+
+</databaseChangeLog>
