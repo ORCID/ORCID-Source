@@ -16,6 +16,8 @@
  */
 package org.orcid.persistence.dao.impl;
 
+import static schema.constants.SolrConstants.*;
+
 import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -44,6 +46,9 @@ public class SolrDaoImpl implements SolrDao {
 
     @Resource(name = "solrServerReadOnly")
     private SolrServer solrServerReadOnly;
+
+    private static final String[] SCORE_AND_INDIVIDUAL_FIELDS = new String[] { "score", ORCID, GIVEN_NAMES, FAMILY_NAME, EMAIL_ADDRESS,
+            AFFILIATE_PRIMARY_INSTITUTION_NAMES, AFFILIATE_INSTITUTION_NAME, AFFILIATE_PAST_INSTITUTION_NAMES, CREDIT_NAME, OTHER_NAMES };
 
     @Override
     public void persist(OrcidSolrDocument orcidSolrDocument) {
@@ -74,7 +79,7 @@ public class SolrDaoImpl implements SolrDao {
     public OrcidSolrResult findByOrcid(String orcid) {
         OrcidSolrResult orcidSolrResult = null;
         SolrQuery query = new SolrQuery();
-        query.setQuery(SolrConstants.ORCID + ":" + orcid).setFields("score");
+        query.setQuery(SolrConstants.ORCID + ":" + orcid).setFields("score", "*");
         ;
         try {
             QueryResponse queryResponse = solrServerReadOnly.query(query);
@@ -93,11 +98,11 @@ public class SolrDaoImpl implements SolrDao {
         return orcidSolrResult;
     }
 
-    @SuppressWarnings( { "unchecked", "rawtypes" })
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     @Override
     public List<OrcidSolrResult> findByDocumentCriteria(String queryString, Integer start, Integer rows) {
         List<OrcidSolrResult> orcidSolrResults = new ArrayList<OrcidSolrResult>();
-        SolrQuery query = new SolrQuery(queryString).setFields("score");
+        SolrQuery query = new SolrQuery(queryString).setFields(SCORE_AND_INDIVIDUAL_FIELDS);
         if (start != null)
             query.setStart(start);
         if (rows != null)
@@ -138,7 +143,7 @@ public class SolrDaoImpl implements SolrDao {
         }
 
         try {
-            QueryResponse queryResponse = solrServerReadOnly.query(solrQuery.setFields("score"));
+            QueryResponse queryResponse = solrServerReadOnly.query(solrQuery.setFields(SCORE_AND_INDIVIDUAL_FIELDS));
             for (SolrDocument solrDocument : queryResponse.getResults()) {
                 OrcidSolrResult orcidSolrResult = new OrcidSolrResult();
                 orcidSolrResult.setRelevancyScore((Float) solrDocument.get("score"));

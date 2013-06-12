@@ -22,12 +22,39 @@ import org.orcid.persistence.jpa.entities.StatisticKeyEntity;
 import org.orcid.persistence.jpa.entities.StatisticValuesEntity;
 
 public interface StatisticsManager {
-    //TODO
+    /**
+     * Creates a new statistics key
+     * 
+     * @return the statistic key object
+     * */
     public StatisticKeyEntity createKey();
-    //TODO
+
+    /**
+     * Save an statistics record on database
+     * 
+     * @param id
+     * @param name
+     *            the name of the statistic
+     * @param value
+     *            the statistic value
+     * @return the statistic value object
+     * */
     public StatisticValuesEntity saveStatistic(StatisticKeyEntity id, String name, long value);
-    //TODO
+
+    /**
+     * Get an statistics object from database
+     * 
+     * @param id
+     * @param name
+     * @return the Statistic value object associated with the id and name
+     *         parameters
+     * */
     public StatisticValuesEntity getStatistic(StatisticKeyEntity id, String name);
-    //TODO
+
+    /**
+     * Get the list of the latest statistics
+     * 
+     * @return a list that contains the latest set of statistics
+     * */
     public List<StatisticValuesEntity> getLatestStatistics();
 }

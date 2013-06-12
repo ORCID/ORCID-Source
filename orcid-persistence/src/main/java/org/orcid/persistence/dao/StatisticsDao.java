@@ -22,14 +22,47 @@ import org.orcid.persistence.jpa.entities.StatisticValuesEntity;
 import org.orcid.persistence.jpa.entities.StatisticKeyEntity;
 
 public interface StatisticsDao {
-    //TODO
+    /**
+     * Creates a new statistics key
+     * 
+     * @return the statistic key object
+     * */
     public StatisticKeyEntity createKey();
-    //TODO
+
+    /**
+     * Get the latest statistics key
+     * 
+     * @return the latest statistics key
+     * */
     public StatisticKeyEntity getLatestKey();
-    //TODO
+
+    /**
+     * Save an statistics record on database
+     * 
+     * @param id
+     * @param name
+     *            the name of the statistic
+     * @param value
+     *            the statistic value
+     * @return the statistic value object
+     * */
     public StatisticValuesEntity saveStatistic(StatisticValuesEntity statistic);
-    //TODO
+
+    /**
+     * Get an statistics object from database
+     * 
+     * @param id
+     * @return the Statistic value object associated with the id
+     * */
     public List<StatisticValuesEntity> getStatistic(long id);
-    //TODO
-    public StatisticValuesEntity getStatistic(long id, String name);    
+
+    /**
+     * Get an statistics object from database
+     * 
+     * @param id
+     * @param name
+     * @return the Statistic value object associated with the id and name
+     *         parameters
+     * */
+    public StatisticValuesEntity getStatistic(long id, String name);
 }

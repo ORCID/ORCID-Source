@@ -17,6 +17,8 @@
 package org.orcid.core.cron;
 
 public interface StatisticsGeneratorCronJob {
-    //TODO
+    /**
+     * Cron job that will generate statistics and store them on database 
+     * */
     public void generateStatistics();
 }

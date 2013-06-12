@@ -14,16 +14,17 @@
  *
  * =============================================================================
  */
-package org.orcid.persistence.jpa.entities;
+package org.orcid.core.profileEvent;
 
-/**
- * 
- * @author Will Simpson
- * 
- */
-public enum ProfileEventType {
+import java.util.List;
+import java.util.concurrent.Callable;
 
-    CLAIM_REMINDER_SENT, 
-    
-    EMAIL_VERIFY_CROSSREF_MARKETING_FAIL, EMAIL_VERIFY_CROSSREF_MARKETING_SENT, EMAIL_VERIFY_CROSSREF_MARKETING_SKIPPED;
+import org.orcid.jaxb.model.message.OrcidProfile;
+import org.orcid.persistence.jpa.entities.ProfileEventType;
+import org.springframework.context.ApplicationContext;
+
+public interface ProfileEvent extends Callable<ProfileEventType> {
+
+    public List<ProfileEventType> outcomes();
+
 }

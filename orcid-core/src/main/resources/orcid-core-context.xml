@@ -154,6 +154,10 @@
 	<bean id="profileKeywordManager" class="org.orcid.core.manager.impl.ProfileKeywordManagerImpl" />
 	<bean id="otherNameManager" class="org.orcid.core.manager.impl.OtherNameManagerImpl" />
 	<bean id="profileEntityManager" class="org.orcid.core.manager.impl.ProfileEntityManagerImpl" />
+	
+	<bean id="mailGunManager" class="org.orcid.core.manager.impl.MailGunManager" />
+
+    <bean id="orcidUrlManager" class="org.orcid.core.manager.impl.OrcidUrlManager" />
 
 	<bean id="externalIdentifierManager" class="org.orcid.core.manager.impl.ExternalIdentifierManagerImpl" />
 	

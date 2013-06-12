@@ -28,11 +28,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 public class StatisticsManagerImpl implements StatisticsManager {
 
-    @Resource 
+    @Resource
     StatisticsDao statisticsDao;
-    
+
     /**
-     * TODO
+     * Creates a new statistics key
+     * 
+     * @return the statistic key object
      * */
     @Override
     @Transactional
@@ -41,7 +43,14 @@ public class StatisticsManagerImpl implements StatisticsManager {
     }
 
     /**
-     * TODO
+     * Save an statistics record on database
+     * 
+     * @param id
+     * @param name
+     *            the name of the statistic
+     * @param value
+     *            the statistic value
+     * @return the statistic value object
      * */
     @Override
     @Transactional
@@ -51,18 +60,25 @@ public class StatisticsManagerImpl implements StatisticsManager {
     }
 
     /**
-     * TODO
+     * Get an statistics object from database
+     * 
+     * @param id
+     * @param name
+     * @return the Statistic value object associated with the id and name
+     *         parameters
      * */
     @Override
-    public StatisticValuesEntity getStatistic(StatisticKeyEntity id, String name) {        
+    public StatisticValuesEntity getStatistic(StatisticKeyEntity id, String name) {
         return statisticsDao.getStatistic(id.getId(), name);
     }
-    
+
     /**
-     * TODO
+     * Get the list of the latest statistics
+     * 
+     * @return a list that contains the latest set of statistics
      * */
     @Override
-    public List<StatisticValuesEntity> getLatestStatistics(){
+    public List<StatisticValuesEntity> getLatestStatistics() {
         StatisticKeyEntity latestKey = statisticsDao.getLatestKey();
         return statisticsDao.getStatistic(latestKey.getId());
     }

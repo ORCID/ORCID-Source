@@ -39,7 +39,6 @@ import org.orcid.jaxb.model.message.*;
 import org.orcid.persistence.adapter.Jpa2JaxbAdapter;
 import org.orcid.persistence.jpa.entities.AddressEntity;
 import org.orcid.persistence.jpa.entities.AffiliationEntity;
-import org.orcid.persistence.jpa.entities.AlternateEmailEntity;
 import org.orcid.persistence.jpa.entities.BaseContributorEntity;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ClientRedirectUriEntity;
@@ -126,16 +125,9 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         OrcidClientGroup group = new OrcidClientGroup();
         group.setGroupOrcid(profileEntity.getId());
         group.setGroupName(profileEntity.getCreditName());
-        // Old way of doing emails
-        if (profileEntity.getEmail() != null) {
-            group.setEmail(profileEntity.getEmail());
-        }
-        // New way of doing emails
-        else {
-            Set<EmailEntity> emailEntities = profileEntity.getEmails();
-            for (EmailEntity emailEntity : emailEntities) {
-                group.setEmail(emailEntity.getId());
-            }
+        Set<EmailEntity> emailEntities = profileEntity.getEmails();
+        for (EmailEntity emailEntity : emailEntities) {
+            group.setEmail(emailEntity.getId());
         }
         for (ProfileEntity clientProfileEntity : profileEntity.getClientProfiles()) {
             OrcidClient client = new OrcidClient();
@@ -567,11 +559,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
 
     private ContactDetails getContactDetails(ProfileEntity profileEntity) {
         ContactDetails contactDetails = new ContactDetails();
-        if (profileEntity.getEmail() != null) {
-            setEmailsFromOldDbSchema(profileEntity, contactDetails);
-        } else {
-            setEmails(profileEntity, contactDetails);
-        }
+        setEmails(profileEntity, contactDetails);
         setCountry(profileEntity, contactDetails);
         return contactDetails;
     }
@@ -603,29 +591,6 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
                 if (source != null) {
                     email.setSource(source.getId());
                 }
-                emailList.add(email);
-            }
-        }
-    }
-
-    @SuppressWarnings("deprecation")
-    private void setEmailsFromOldDbSchema(ProfileEntity profileEntity, ContactDetails contactDetails) {
-        List<Email> emailList = contactDetails.getEmail();
-        // The old way of doing emails.
-        Email primaryEmail = new Email(profileEntity.getEmail());
-        primaryEmail.setVisibility(profileEntity.getEmailVisibility());
-        primaryEmail.setPrimary(true);
-        primaryEmail.setVerified(profileEntity.getEmailVerified());
-        primaryEmail.setCurrent(true);
-        emailList.add(primaryEmail);
-        Set<AlternateEmailEntity> alternateEmails = profileEntity.getAlternateEmails();
-        if (alternateEmails != null) {
-            for (AlternateEmailEntity alternativeEmailEntity : alternateEmails) {
-                Email email = new Email(alternativeEmailEntity.getAlternateEmail());
-                email.setVisibility(profileEntity.getAlternativeEmailsVisibility());
-                email.setPrimary(false);
-                email.setVerified(false);
-                email.setCurrent(true);
                 emailList.add(email);
             }
         }

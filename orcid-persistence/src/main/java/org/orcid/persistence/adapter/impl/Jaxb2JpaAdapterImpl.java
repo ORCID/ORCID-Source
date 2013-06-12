@@ -707,7 +707,6 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
     private void setContactDetails(ProfileEntity profileEntity, ContactDetails contactDetails) {
         if (contactDetails != null) {
             setEmails(profileEntity, contactDetails);
-            clearUpOldWayOfDoingEmails(profileEntity);
             setCountry(profileEntity, contactDetails);
         }
     }
@@ -718,17 +717,6 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
         String country = contactCountry != null ? contactCountry.getContent() : null;
         profileEntity.setProfileAddressVisibility(contactCountry != null ? contactCountry.getVisibility() : null);
         profileEntity.setIso2Country(country);
-    }
-
-    private void clearUpOldWayOfDoingEmails(ProfileEntity profileEntity) {
-        // Clear up old way of doing emails
-        profileEntity.setEmail(null);
-        profileEntity.setEmailVerified(null);
-        profileEntity.setEmailVisibility(null);
-        if (profileEntity.getAlternateEmails() != null) {
-            profileEntity.getAlternateEmails().clear();
-        }
-        profileEntity.setAlternativeEmailsVisibility(null);
     }
 
     private void setEmails(ProfileEntity profileEntity, ContactDetails contactDetails) {

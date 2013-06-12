@@ -29,25 +29,25 @@ import org.slf4j.LoggerFactory;
 
 public class StatisticsGeneratorCronJobImpl implements StatisticsGeneratorCronJob {
 
-private static final Logger LOG = LoggerFactory.getLogger(StatisticsGeneratorCronJobImpl.class);
-    
+    private static final Logger LOG = LoggerFactory.getLogger(StatisticsGeneratorCronJobImpl.class);
+
     @Resource
     private StatisticsGeneratorManager statisticsGeneratorManager;
 
     @Resource
     private StatisticsManager statisticsManager;
-    
+
     /**
-     * TODO
+     * Cron job that will generate statistics and store them on database
      * */
     @Override
-    public void generateStatistics(){
+    public void generateStatistics() {
         LOG.debug("About to run statistics generator thread");
         Map<String, Long> statistics = statisticsGeneratorManager.generateStatistics();
         StatisticKeyEntity statisticKey = statisticsManager.createKey();
-        
-        //Store statistics on database
-        for(String key : statistics.keySet()){
+
+        // Store statistics on database
+        for (String key : statistics.keySet()) {
             statisticsManager.saveStatistic(statisticKey, key, statistics.get(key));
         }
     }

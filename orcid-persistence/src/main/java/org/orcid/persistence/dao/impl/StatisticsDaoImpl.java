@@ -34,32 +34,43 @@ public class StatisticsDaoImpl implements StatisticsDao {
 
     @PersistenceContext(unitName = "statistics")
     protected EntityManager entityManager;
-    
+
     /**
-     * TODO
+     * Creates a new statistics key
+     * 
+     * @return the statistic key object
      * */
     @Override
     @Transactional("statisticsTransactionManager")
-    public StatisticKeyEntity createKey(){        
+    public StatisticKeyEntity createKey() {
         StatisticKeyEntity key = new StatisticKeyEntity();
         key.setGenerationDate(new Date());
         entityManager.persist(key);
         return key;
     }
-    
+
     /**
-     * TODO
+     * Get the latest statistics key
+     * 
+     * @return the latest statistics key
      * */
     @Override
     @Transactional("statisticsTransactionManager")
-    public StatisticKeyEntity getLatestKey(){
+    public StatisticKeyEntity getLatestKey() {
         TypedQuery<StatisticKeyEntity> query = entityManager.createQuery("FROM StatisticKeyEntity ORDER BY generationDate DESC", StatisticKeyEntity.class);
         query.setMaxResults(1);
         return query.getSingleResult();
     }
-    
+
     /**
-     * TODO
+     * Save an statistics record on database
+     * 
+     * @param id
+     * @param name
+     *            the name of the statistic
+     * @param value
+     *            the statistic value
+     * @return the statistic value object
      * */
     @Override
     @Transactional("statisticsTransactionManager")
@@ -69,29 +80,38 @@ public class StatisticsDaoImpl implements StatisticsDao {
     }
 
     /**
-     * TODO
+     * Get an statistics object from database
+     * 
+     * @param id
+     * @return the Statistic value object associated with the id
      * */
     @Override
     @Transactional
     public List<StatisticValuesEntity> getStatistic(long id) {
         TypedQuery<StatisticValuesEntity> query = entityManager.createQuery("FROM StatisticValuesEntity WHERE key.id = :id", StatisticValuesEntity.class);
-        query.setParameter("id", id); 
-        List<StatisticValuesEntity> results = query.getResultList(); 
-        
-        for(StatisticValuesEntity result : results){
+        query.setParameter("id", id);
+        List<StatisticValuesEntity> results = query.getResultList();
+
+        for (StatisticValuesEntity result : results) {
             System.out.println("Result: " + result.getStatisticName() + " - " + result.getStatisticValue());
         }
-        
+
         return results;
     }
-    
+
     /**
-     * TODO
+     * Get an statistics object from database
+     * 
+     * @param id
+     * @param name
+     * @return the Statistic value object associated with the id and name
+     *         parameters
      * */
     @Override
     @Transactional
     public StatisticValuesEntity getStatistic(long id, String name) {
-        TypedQuery<StatisticValuesEntity> query = entityManager.createQuery("FROM StatisticValuesEntity WHERE key.id = :id AND name = :name", StatisticValuesEntity.class);
+        TypedQuery<StatisticValuesEntity> query = entityManager
+                .createQuery("FROM StatisticValuesEntity WHERE key.id = :id AND name = :name", StatisticValuesEntity.class);
         query.setParameter("id", id);
         query.setParameter("name", name);
         List<StatisticValuesEntity> results = query.getResultList();

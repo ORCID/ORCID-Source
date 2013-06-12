@@ -57,32 +57,6 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
         return (List<ProfileEntity>) entityManager.createQuery("from ProfileEntity where isSelectableSponsor=true order by vocativeName").getResultList();
     }
 
-    /**
-     * <p>
-     * Search for an ProfileEntity with a matching email address.
-     * </p>
-     * 
-     * @param email
-     *            to find the profile by
-     * @return the OrcidProfile with an email matching the email in their
-     *         profile
-     */
-    @Override
-    public ProfileEntity findByEmail(String email) {
-        if (StringUtils.isNotBlank(email)) {
-            TypedQuery<ProfileEntity> query = entityManager.createQuery("from ProfileEntity pe where lower(pe.email) = :email", ProfileEntity.class);
-            query.setParameter("email", email.toLowerCase());
-            try {
-                return query.getSingleResult();
-            } catch (NonUniqueResultException e) {
-                LOGGER.error("Attempted to retrieve ProfileEntity by email and was a non-unique result, for email {} ", email);
-            } catch (NoResultException e) {
-                LOGGER.debug("No ProfileEntity result found for email {} ", email);
-            }
-        }
-        return null;
-    }
-
     @Override
     public List<String> findOrcidsByName(String name) {
         TypedQuery<String> query = entityManager.createQuery("select id from ProfileEntity where lower(givenNames) like lower(:name || '%') or lower"
@@ -170,6 +144,71 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
         query.setMaxResults(maxResults);
         return query.getResultList();
     }
+    
+    
+    /**
+     * Finds ORCID Ids by ProfileEventTypes     
+     *  
+     * @param maxResults
+     *          Maximum number of results returned.
+     *          
+     * @param pets 
+     *          A list of ProfileEventTypes. 
+     *          
+     * @param not
+     *          If false ORCIDs returned ARE associated with one of the ProfileEventTypes
+     *          If true ORCIDs returned ARE NOT associated with one of the ProfileEventTypes
+     * 
+     * @param orcidsToExclude
+     *          ORCID Ids to be excluded from reuturned results 
+     * 
+     * @return list of ORCID Ids as a list of strings
+     */
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<String> findByEventTypes(int maxResults, List<ProfileEventType> pets, Collection<String> orcidsToExclude, boolean not) {
+        /* 
+         * builder produces a query that will look like the following
+         *        
+         * select p.orcid from profile p left join profile_event pe on pe.orcid = p.orcid and 
+         *      (pe.profile_event_type0='EMAIL_VERIFY_CROSSREF_MARKETING_CHECK' or pe.profile_event_type0='EMAIL_VERIFY_CROSSREF_MARKETING_FAIL')
+         *      where pe.orcid is null limit 1000;
+         * 
+         */
+        StringBuilder builder = new StringBuilder();
+        
+        builder.append("select p.orcid from profile p left join profile_event pe on pe.orcid = p.orcid and ");
+        
+        //builder.append("in (select pe.orcid from profile_event as pe where ");
+        builder.append("(");
+        for (int i = 0; i< pets.size() ; i++) {
+            if (i != 0 ) builder.append("or ");
+            builder.append("pe.profile_event_type=:profileEventType");
+            builder.append(Integer.toString(i));
+            builder.append(" ");
+        }
+        builder.append(")");
+        builder.append("where pe.orcid is ");
+        if (!not) builder.append("not ");
+        builder.append("null ");
+        
+        if (orcidsToExclude != null && !orcidsToExclude.isEmpty()) {
+            builder.append(" AND p.orcid NOT IN :orcidsToExclude");
+        }
+        
+        Query query = entityManager.createNativeQuery(builder.toString());
+        
+        for (int i = 0; i< pets.size() ; i++) {
+            query.setParameter("profileEventType"+i, pets.get(i).name());
+        }
+
+        if (orcidsToExclude != null && !orcidsToExclude.isEmpty()) {
+            query.setParameter("orcidsToExclude", orcidsToExclude);
+        }
+        query.setMaxResults(maxResults);
+        return query.getResultList();
+    }
+
 
     @Override
     public List<String> findOrcidsNeedingEmailMigration(int maxResults) {

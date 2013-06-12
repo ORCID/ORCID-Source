@@ -26,15 +26,12 @@
             submission_date="2011-06-29 15:31:00.00"
             last_indexed_date="2011-07-02 15:31:00.00"            
             last_modified="2011-07-02 15:31:00.00"           
-            email="spike@milligan.com"
             claimed="true"
             given_names="Spike"
             family_name="Milligan"
             vocative_name="Spike Milligan"
             credit_name="S. Milligan"
             credit_name_visibility="PUBLIC"
-            email_visibility="PRIVATE"
-            alternative_emails_visibility="PRIVATE"
             profile_address_visibility="PRIVATE"
             external_identifiers_visibility="LIMITED"
             biography_visibility="PUBLIC"
@@ -65,15 +62,11 @@
             submission_date="2011-06-29 15:31:00.00"
             last_indexed_date="2011-07-02 15:31:00.00"
             last_modified="2011-07-02 15:31:00.00"
-            email="michael@bentine.com"
-            email_verified="true"
             claimed="true"
             given_names="Michael"
             family_name="Bentine"
             vocative_name="Michael Bentine"
             credit_name="M. Bentine"
-            email_visibility="PRIVATE"
-            alternative_emails_visibility="PRIVATE"
             external_identifiers_visibility="LIMITED"
             biography_visibility="PUBLIC"
             keywords_visibility="REGISTERED_ONLY"
@@ -103,15 +96,12 @@
             last_indexed_date="2011-07-02 15:31:00.00"
             last_modified="2011-07-02 15:31:00.00"
             profile_deactivation_date="2012-06-29 15:31:00.00"
-            email="peter@sellers.com"             
             claimed="true"
             given_names="Peter"
             family_name="Sellers"
             vocative_name="Peter Sellers"
             credit_name="P. Sellers III"            
             credit_name_visibility="LIMITED"
-            email_visibility="PRIVATE"
-            alternative_emails_visibility="PRIVATE"
             external_identifiers_visibility="LIMITED"
             biography_visibility="PUBLIC"
             keywords_visibility="LIMITED"
@@ -142,15 +132,11 @@
             submission_date="2011-06-29 15:31:00.00"
             last_indexed_date="2011-07-02 15:31:00.00"
             last_modified="2011-07-02 15:31:00.00"
-            email="harry@secombe.com"
             claimed="true"
             given_names="Harry"
             family_name="Secombe"
             vocative_name="Harry Secombe"
             credit_name="H. Secombe"
-            email_visibility="PRIVATE"
-            alternative_emails_visibility="PRIVATE"
-            external_identifiers_visibility="LIMITED"
             biography_visibility="PUBLIC"
             keywords_visibility="REGISTERED_ONLY"
             other_names_visibility="PRIVATE"
@@ -211,14 +197,11 @@
             submission_date="2011-06-29 15:31:00.00"
             last_indexed_date="2011-07-02 15:31:00.00"
             last_modified="2011-07-02 15:32:00.00"
-            email="billie@holiday.com"
             claimed="true"
             given_names="Billie"
             family_name="Holiday"
             vocative_name="Billie Holiday"
             credit_name="B. Holiday"
-            email_visibility="PRIVATE"
-            alternative_emails_visibility="PRIVATE"
             external_identifiers_visibility="LIMITED"
             biography_visibility="PUBLIC"
             keywords_visibility="REGISTERED_ONLY"
@@ -246,14 +229,11 @@
             submission_date="2011-06-29 15:31:00.00"
             last_indexed_date="2011-07-02 15:31:00.00"
             last_modified="2011-07-02 15:31:00.00"
-            email="otis@reading.com"
             claimed="false"
             given_names="Otis"
             family_name="Redding"
             vocative_name="Otis Redding"
             credit_name="O. Redding"
-            email_visibility="PRIVATE"
-            alternative_emails_visibility="PRIVATE"
             external_identifiers_visibility="LIMITED"
             biography_visibility="PUBLIC"
             keywords_visibility="REGISTERED_ONLY"
@@ -422,17 +402,66 @@
             approval_date="2011-10-17 16:59:32.00"
             />
     
-    <!-- Old way of doing emails -->
-    <alternate_email 
-        orcid="4444-4444-4444-4443"
-        alternate_email="teddybass@semantico.com"
-    />
-    <alternate_email 
-        orcid="4444-4444-4444-4443"
-        alternate_email="teddybass2@semantico.com"
+    <email
+        orcid="4444-4444-4444-4441"
+        email="spike@milligan.com"
+        is_primary="true"
+        is_current="true"
+        is_verified="true"
+        visibility="PRIVATE"
+        source_id="4444-4444-4444-4441"
     />
     
-    <!-- New way of doing emails -->
+     <email
+        orcid="4444-4444-4444-4442"
+        email="michael@bentine.com"
+        is_primary="true"
+        is_current="true"
+        is_verified="true"
+        visibility="PRIVATE"
+        source_id="4444-4444-4444-4442"
+    />
+    
+    <email
+        orcid="4444-4444-4444-4443"
+        email="peter@sellers.com"
+        is_primary="true"
+        is_current="true"
+        is_verified="false"
+        visibility="PRIVATE"
+        source_id="4444-4444-4444-4443"
+    />
+    
+    <email
+        orcid="4444-4444-4444-4443"
+        email="teddybass@semantico.com"
+        is_primary="false"
+        is_current="true"
+        is_verified="false"
+        visibility="PRIVATE"
+        source_id="4444-4444-4444-4443"
+    />
+    
+    <email
+        orcid="4444-4444-4444-4443"
+        email="teddybass2@semantico.com"
+        is_primary="false"
+        is_current="true"
+        is_verified="false"
+        visibility="PRIVATE"
+        source_id="4444-4444-4444-4443"
+    />
+    
+    <email
+        orcid="4444-4444-4444-4444"
+        email="harry@secombe.com"
+        is_primary="true"
+        is_current="true"
+        is_verified="true"
+        visibility="PRIVATE"
+        source_id="4444-4444-4444-4444"
+    />
+    
     <email
         orcid="4444-4444-4444-4445"
         email="andrew@timothy.com"
@@ -442,27 +471,7 @@
         visibility="PRIVATE"
         source_id="4444-4444-4444-4441"
     />
-    
-    <email
-        orcid="4444-4444-4444-4445"
-        email="andrew2@timothy.com"
-        is_primary="false"
-        is_current="false"
-        is_verified="false"
-        visibility="PRIVATE"
-        source_id="4444-4444-4444-4441"
-    />
         
-    <email
-        orcid="4444-4444-4444-4444"
-        email="angel1@montenegro.com"
-        is_primary="false"
-        is_current="false"
-        is_verified="true"
-        visibility="PRIVATE"
-        source_id="4444-4444-4444-4441"
-    />
-    
     <email
         orcid="4444-4444-4444-4443"
         email="angel2@montenegro.com"
@@ -473,6 +482,47 @@
         source_id="4444-4444-4444-4441"
     />
     
+    
+    <email
+        orcid="4444-4444-4444-4444"
+        email="angel1@montenegro.com"
+        is_primary="false"
+        is_current="false"
+        is_verified="true"
+        visibility="PRIVATE"
+        source_id="4444-4444-4444-4441"
+    />
+    
+	<email
+        orcid="4444-4444-4444-4445"
+        email="andrew2@timothy.com"
+        is_primary="false"
+        is_current="false"
+        is_verified="false"
+        visibility="PRIVATE"
+        source_id="4444-4444-4444-4441"
+    />    
+    
+    <email
+        orcid="4444-4444-4444-4446"
+        email="billie@holiday.com"
+        is_primary="true"
+        is_current="true"
+        is_verified="true"
+        visibility="PRIVATE"
+        source_id="4444-4444-4444-4446"
+    />
+    
+    <email
+        orcid="4444-4444-4444-4447"
+        email="otis@reading.com"
+        is_primary="true"
+        is_current="true"
+        is_verified="true"
+        visibility="PRIVATE"
+        source_id="4444-4444-4444-4447"
+    />
+      
     <profile_keyword 
         profile_orcid="4444-4444-4444-4443"
         keywords_name="tea making"

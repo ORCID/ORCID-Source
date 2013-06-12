@@ -191,7 +191,7 @@ public class NotificationManagerImpl implements NotificationManager {
         sendAndLogMessage(message);
     }
 
-    private String deriveEmailFriendlyName(OrcidProfile orcidProfile) {
+    public String deriveEmailFriendlyName(OrcidProfile orcidProfile) {
         if (orcidProfile.getOrcidBio() != null && orcidProfile.getOrcidBio().getPersonalDetails() != null) {
             PersonalDetails personalDetails = orcidProfile.getOrcidBio().getPersonalDetails();
             // all this should never be null as given names are required for
@@ -410,7 +410,7 @@ public class NotificationManagerImpl implements NotificationManager {
         return createEmailBaseUrl(email, baseUri, "claim");
     }
 
-    private String createVerificationUrl(String email, URI baseUri) {
+    public String createVerificationUrl(String email, URI baseUri) {
         return createEmailBaseUrl(email, baseUri, "verify-email");
     }
 
@@ -421,7 +421,7 @@ public class NotificationManagerImpl implements NotificationManager {
         return createEmailBaseUrl(resetParams, baseUri, "reset-password-email");
     }
 
-    private String createEmailBaseUrl(String unencryptedParams, URI baseUri, String path) {
+    public String createEmailBaseUrl(String unencryptedParams, URI baseUri, String path) {
         // Encrypt and encode params
         String encryptedUrlParams = encryptionManager.encryptForExternalUse(unencryptedParams);
         String base64EncodedParams = null;
