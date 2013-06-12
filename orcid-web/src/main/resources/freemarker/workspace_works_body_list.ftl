@@ -36,7 +36,7 @@
 		<div style=" padding: 5px; height: 30px;">
 				<div class="pull-right" style="width: 130px;">
 				<@orcid.privacyToggle "work.visibility" "setPrivacy($index, 'PUBLIC', $event)" 
-		                    	  "setPrivacy($index, 'LIMITED', $event)" "setPrivacy($index, 'PRIVACY', $event)" />
+		                    	  "setPrivacy($index, 'LIMITED', $event)" "setPrivacy($index, 'PRIVATE', $event)" />
 				</div>
 				<div style="position: relative; left: 522px; top: 4px; width: 15px;"><a href ng-click="deleteWork($index)" class="icon-trash grey"></a></div>
 		</div>
@@ -79,7 +79,7 @@
                 </div>
                 <div class="pull-right" style="width: 130px;">
 				<@orcid.privacyToggle "work.visibility" "setPrivacy($index, 'PUBLIC', $event)" 
-		                    	  "setPrivacy($index, 'LIMITED', $event)" "setPrivacy($index, 'PRIVACY', $event)" />
+		                    	  "setPrivacy($index, 'LIMITED', $event)" "setPrivacy($index, 'PRIVATE', $event)" />
 				</div>
 				<div  style="width: 680px;" class="work-metadata">
 	                <span ng-repeat='ie in work.workExternalIdentifiers.workExternalIdentifier'>
