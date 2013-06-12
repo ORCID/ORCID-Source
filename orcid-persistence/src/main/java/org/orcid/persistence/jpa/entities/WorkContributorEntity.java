@@ -63,30 +63,34 @@ public class WorkContributorEntity extends BaseContributorEntity {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof WorkContributorEntity)) {
-            return false;
-        }
-
-        WorkContributorEntity that = (WorkContributorEntity) o;
-
-        if (id != null ? !id.equals(that.id) : that.id != null) {
-            return false;
-        }
-        if (work != null ? !work.equals(that.work) : that.work != null) {
-            return false;
-        }
-
-        return true;
+    public int hashCode() {
+        final int prime = 31;
+        int result = super.hashCode();
+        result = prime * result + ((id == null) ? 0 : id.hashCode());
+        result = prime * result + ((work == null) ? 0 : work.hashCode());
+        return result;
     }
 
     @Override
-    public int hashCode() {
-        int result = id != null ? id.hashCode() : 0;
-        result = 31 * result + (work != null ? work.hashCode() : 0);
-        return result;
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (!super.equals(obj))
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        WorkContributorEntity other = (WorkContributorEntity) obj;
+        if (id == null) {
+            if (other.id != null)
+                return false;
+        } else if (!id.equals(other.id))
+            return false;
+        if (work == null) {
+            if (other.work != null)
+                return false;
+        } else if (!work.equals(other.work))
+            return false;
+        return true;
     }
+
 }

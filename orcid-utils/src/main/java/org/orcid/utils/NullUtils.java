@@ -55,4 +55,11 @@ public class NullUtils {
         }
     }
 
+    public static <T extends Comparable<T>> int compareObjectsNullSafe(T thisObject, T otherObject) {
+        if (anyNull(thisObject, otherObject)) {
+            return compareNulls(thisObject, otherObject);
+        }
+        return thisObject.compareTo(otherObject);
+    }
+
 }
