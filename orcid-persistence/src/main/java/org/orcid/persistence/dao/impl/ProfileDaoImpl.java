@@ -169,27 +169,28 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
     public List<String> findByEventTypes(int maxResults, List<ProfileEventType> pets, Collection<String> orcidsToExclude, boolean not) {
         /* 
          * builder produces a query that will look like the following
-         * select p.orcid from profile as p 
-         *      where p.orcid not in (
-         *              select pe.orcid from profile_event as pe 
-         *                      where pe.profile_event_type=:profileEventType0 
-         *                      or pe.profile_event_type=:profileEventType1 
-         *                      or pe.profile_event_type=:profileEventType2
-         *       )
-         *       
+         *        
+         * select p.orcid from profile p left join profile_event pe on pe.orcid = p.orcid and 
+         *      (pe.profile_event_type0='EMAIL_VERIFY_CROSSREF_MARKETING_CHECK' or pe.profile_event_type0='EMAIL_VERIFY_CROSSREF_MARKETING_FAIL')
+         *      where pe.orcid is null limit 1000;
+         * 
          */
         StringBuilder builder = new StringBuilder();
         
-        builder.append("select p.orcid from profile as p where p.orcid ");
-        if (not) builder.append("not ");
-        builder.append("in (select pe.orcid from profile_event as pe where ");
+        builder.append("select p.orcid from profile p left join profile_event pe on pe.orcid = p.orcid and ");
+        
+        //builder.append("in (select pe.orcid from profile_event as pe where ");
+        builder.append("(");
         for (int i = 0; i< pets.size() ; i++) {
             if (i != 0 ) builder.append("or ");
             builder.append("pe.profile_event_type=:profileEventType");
             builder.append(Integer.toString(i));
-            if (i != pets.size() -1) builder.append(" ");
+            builder.append(" ");
         }
         builder.append(")");
+        builder.append("where pe.orcid is ");
+        if (!not) builder.append("not ");
+        builder.append("null ");
         
         if (orcidsToExclude != null && !orcidsToExclude.isEmpty()) {
             builder.append(" AND p.orcid NOT IN :orcidsToExclude");
