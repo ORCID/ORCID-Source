@@ -149,11 +149,11 @@
         <property name="dataSource" ref="\${org.orcid.persistence.statistics.db.dataSource}" />
         <property name="persistenceUnitName" value="statistics" />
     </bean>
-
-	<bean id="statisticsLiquibase" class="liquibase.integration.spring.SpringLiquibase">
-        <property name="dataSource" ref="\${org.orcid.persistence.statistics.db.dataSource}" />
-        <property name="changeLog" value="classpath:statistics-db-master.xml" />
-    </bean>
+    
+    <bean id="statisticsLiquibase" class="liquibase.integration.spring.SpringLiquibase">
+		<property name="dataSource" ref="\${org.orcid.persistence.statistics.db.dataSource}" />
+		<property name="changeLog" value="classpath:statistics-db-master.xml" />
+	</bean>
 
 	<!-- Statistics -->
 	<bean name="statisticsTransactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
@@ -216,7 +216,7 @@
         <property name="password" value="\${org.orcid.persistence.db.password}" />
     </bean>
 
-	<!-- Statistics -->
+	<!-- Statistics tests-->
 	<bean id="statisticsSimpleDataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
         <property name="driverClassName" value="\${org.orcid.persistence.statistics.db.class}" />
         <property name="url" value="\${org.orcid.persistence.statistics.db.url}" />

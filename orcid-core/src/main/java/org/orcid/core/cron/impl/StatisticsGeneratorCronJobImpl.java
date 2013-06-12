@@ -1,3 +1,19 @@
+/**
+ * =============================================================================
+ *
+ * ORCID (R) Open Source
+ * http://orcid.org
+ *
+ * Copyright (c) 2012-2013 ORCID, Inc.
+ * Licensed under an MIT-Style License (MIT)
+ * http://orcid.org/open-source-license
+ *
+ * This copyright and license information (including a link to the full license)
+ * shall be included in its entirety in all copies or substantial portion of
+ * the software.
+ *
+ * =============================================================================
+ */
 package org.orcid.core.cron.impl;
 
 import java.util.Map;
@@ -22,13 +38,13 @@ private static final Logger LOG = LoggerFactory.getLogger(StatisticsGeneratorCro
     private StatisticsManager statisticsManager;
     
     /**
-     * 
+     * TODO
      * */
     @Override
     public void generateStatistics(){
         LOG.debug("About to run statistics generator thread");
         Map<String, Long> statistics = statisticsGeneratorManager.generateStatistics();
-        StatisticKeyEntity statisticKey = statisticsManager.createHistory();
+        StatisticKeyEntity statisticKey = statisticsManager.createKey();
         
         //Store statistics on database
         for(String key : statistics.keySet()){

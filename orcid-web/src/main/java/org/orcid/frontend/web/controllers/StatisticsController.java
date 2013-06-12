@@ -43,7 +43,6 @@ public class StatisticsController extends BaseController {
         List<StatisticValuesEntity> statistics = statisticsManager.getLatestStatistics();
         
         for(StatisticValuesEntity statistic : statistics){
-            System.out.println(statistic.getStatisticName() + " - " + statistic.getStatisticValue());
             statisticsMap.put(statistic.getStatisticName(), statistic.getStatisticValue());
         }        
         

@@ -1,3 +1,19 @@
+/**
+ * =============================================================================
+ *
+ * ORCID (R) Open Source
+ * http://orcid.org
+ *
+ * Copyright (c) 2012-2013 ORCID, Inc.
+ * Licensed under an MIT-Style License (MIT)
+ * http://orcid.org/open-source-license
+ *
+ * This copyright and license information (including a link to the full license)
+ * shall be included in its entirety in all copies or substantial portion of
+ * the software.
+ *
+ * =============================================================================
+ */
 package org.orcid.persistence.dao.impl;
 
 import java.util.Date;
@@ -19,15 +35,21 @@ public class StatisticsDaoImpl implements StatisticsDao {
     @PersistenceContext(unitName = "statistics")
     protected EntityManager entityManager;
     
+    /**
+     * TODO
+     * */
     @Override
     @Transactional("statisticsTransactionManager")
-    public StatisticKeyEntity createHistory(){        
+    public StatisticKeyEntity createKey(){        
         StatisticKeyEntity key = new StatisticKeyEntity();
         key.setGenerationDate(new Date());
         entityManager.persist(key);
         return key;
     }
     
+    /**
+     * TODO
+     * */
     @Override
     @Transactional("statisticsTransactionManager")
     public StatisticKeyEntity getLatestKey(){
@@ -36,6 +58,9 @@ public class StatisticsDaoImpl implements StatisticsDao {
         return query.getSingleResult();
     }
     
+    /**
+     * TODO
+     * */
     @Override
     @Transactional("statisticsTransactionManager")
     public StatisticValuesEntity saveStatistic(StatisticValuesEntity statistic) {
@@ -43,6 +68,9 @@ public class StatisticsDaoImpl implements StatisticsDao {
         return statistic;
     }
 
+    /**
+     * TODO
+     * */
     @Override
     @Transactional
     public List<StatisticValuesEntity> getStatistic(long id) {
@@ -57,6 +85,9 @@ public class StatisticsDaoImpl implements StatisticsDao {
         return results;
     }
     
+    /**
+     * TODO
+     * */
     @Override
     @Transactional
     public StatisticValuesEntity getStatistic(long id, String name) {
@@ -66,5 +97,4 @@ public class StatisticsDaoImpl implements StatisticsDao {
         List<StatisticValuesEntity> results = query.getResultList();
         return results.isEmpty() ? null : results.get(0);
     }
-
 }

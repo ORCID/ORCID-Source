@@ -64,4 +64,10 @@
         <createSequence sequenceName="key_seq"/>
         <createSequence sequenceName="values_seq"/>
 	</changeSet>
+
+	<changeSet id="CREATE-AUTO-COLS" author="Angel Montenegro" dbms="hsqldb" context="default">  
+		<addAutoIncrement tableName="statistic_key" columnName="id" columnDataType="bigint"/>
+		<addAutoIncrement tableName="statistic_values" columnName="id" columnDataType="bigint"/>
+	</changeSet>
+	
 </databaseChangeLog>

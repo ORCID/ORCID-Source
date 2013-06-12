@@ -1,3 +1,19 @@
+/**
+ * =============================================================================
+ *
+ * ORCID (R) Open Source
+ * http://orcid.org
+ *
+ * Copyright (c) 2012-2013 ORCID, Inc.
+ * Licensed under an MIT-Style License (MIT)
+ * http://orcid.org/open-source-license
+ *
+ * This copyright and license information (including a link to the full license)
+ * shall be included in its entirety in all copies or substantial portion of
+ * the software.
+ *
+ * =============================================================================
+ */
 package org.orcid.persistence.jpa.entities;
 
 import java.io.Serializable;
@@ -21,7 +37,7 @@ public class StatisticValuesEntity implements Serializable {
     //TODO
     private static final long serialVersionUID = -3187757614938904329L;
     
-    private long id;
+    private Long id;
     private StatisticKeyEntity key;
     private String statisticName;
     private long statisticValue;
@@ -44,11 +60,10 @@ public class StatisticValuesEntity implements Serializable {
         return id;
     }
     
-    public void setId(long id){
+    public void setId(Long id){
         this.id = id;
     }
-    
-    @Id
+        
     @ManyToOne(cascade = { CascadeType.REFRESH }, fetch = FetchType.EAGER)
     @JoinColumn(name = "key_id", nullable = false)
     public StatisticKeyEntity getKey(){
@@ -75,5 +90,25 @@ public class StatisticValuesEntity implements Serializable {
 
     public void setStatisticValue(long value){
         this.statisticValue = value;
+    }
+    
+    public boolean equals(Object otherObject){
+        if(otherObject == null)
+            return false;
+        
+        if (!(otherObject instanceof StatisticValuesEntity)){
+            return false;
+        }
+        
+        StatisticValuesEntity otherEntity = (StatisticValuesEntity)otherObject;               
+        
+        if(this.id == null){
+            if(otherEntity.getId() != null)
+                return false;
+        }
+        
+        if(!this.id.equals(otherEntity.getId()))
+            return false;
+        return true;
     }
 }
