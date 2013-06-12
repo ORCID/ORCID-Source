@@ -24,7 +24,7 @@ import org.orcid.persistence.jpa.entities.ProfileEventType;
 import org.springframework.context.ApplicationContext;
 
 public interface ProfileEvent extends Callable<ProfileEventType> {
-    
-    public List <ProfileEventType> outcomes();
-    
+
+    public List<ProfileEventType> outcomes();
+
 }
