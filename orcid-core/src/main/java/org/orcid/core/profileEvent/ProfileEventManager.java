@@ -14,16 +14,17 @@
  *
  * =============================================================================
  */
-package org.orcid.core.cli;
+package org.orcid.core.profileEvent;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import javax.annotation.Resource;
 
 import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.kohsuke.args4j.CmdLineException;
@@ -48,41 +49,40 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import com.sun.xml.bind.CycleRecoverable.Context;
+
 /**
  * 
  * @author rcpeters
  * 
  */
-public class SendEventEmail {
+public class ProfileEventManager {
+
+    ApplicationContext context;
 
     private ProfileDao profileDao;
-    
+
     private OrcidProfileManager orcidProfileManager;
-
-    private MailGunManager mailGunManager;
-
-    private TemplateManager templateManager;
 
     private GenericDao<ProfileEventEntity, Long> profileEventDao;
 
-    private OrcidUrlManager orcidUrlManager;
-
-    private NotificationManager notificationManager;
-    
     private TransactionTemplate transactionTemplate;
-    
-    private static Logger LOG = LoggerFactory.getLogger(SendEventEmail.class);
-    
+
+    private static Logger LOG = LoggerFactory.getLogger(ProfileEventManager.class);
+
     private static final int CHUNK_SIZE = 1000;
 
-    @Option(name = "-testSendToOrcids", usage = "Send validation email to following ORCID Ids")
+    @Option(name = "-testSendToOrcids", usage = "Call only on passed ORCID Ids")
     private String orcs;
 
-    @Option(name = "-run", usage = "Runs sendEmailByEvent, which loops through all orcids who haven't been verified and not sent the crossref email and sends the crossref email")
-    private String run;
+    @Option(name = "-callOnAll", usage = "Calls on all orcids")
+    private String callOnAll;
+
+    @Option(name = "-class", usage = "ProfileEvent class to instantiate", required = true)
+    private String peClassStr;
 
     public static void main(String... args) {
-        SendEventEmail se = new SendEventEmail();
+        ProfileEventManager se = new ProfileEventManager();
         CmdLineParser parser = new CmdLineParser(se);
         if (args == null) {
             parser.printUsage(System.err);
@@ -99,68 +99,40 @@ public class SendEventEmail {
 
     private void execute() {
         init();
-        if (run != null && run.equalsIgnoreCase("true")) {
-            sendEmailByEvent();
+        if (callOnAll != null) {
+            callOnAll();
         } else if (orcs != null) {
             for (String orc : orcs.split(" ")) {
                 OrcidProfile orcidProfile = orcidProfileManager.retrieveOrcidProfile(orc);
-                sendEmail(orcidProfile);
+                CrossRefEmail cre = new CrossRefEmail(orcidProfile, context);
+                try {
+                    cre.call();
+                } catch (Exception e) {
+                    LOG.error("Error calling ", e);
+                }
             }
         }
     }
 
-    private ProfileEventType sendEmail(OrcidProfile orcidProfile) {
-        
-        boolean primaryNotNull = orcidProfile.getOrcidBio() != null && orcidProfile.getOrcidBio().getContactDetails() != null
-                && orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail() != null
-                && orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue() != null;
-  
-        boolean needsVerification = primaryNotNull 
-                && !orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().isVerified() 
-                && orcidProfile.getType().equals(OrcidType.USER) ;
-        
-        if (needsVerification) {
-            try {
-            String email = orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue();
-            String emailFriendlyName = notificationManager.deriveEmailFriendlyName(orcidProfile);
-            Map<String, Object> templateParams = new HashMap<String, Object>();
-            templateParams.put("emailName", emailFriendlyName);
-            String verificationUrl = null;
-            try {
-                verificationUrl = notificationManager.createVerificationUrl(email, new URI(orcidUrlManager.getBaseUrl()));
-            } catch (URISyntaxException e) {
-                LOG.debug("SendEventEmail exception", e);
-            }
-            templateParams.put("verificationUrl", verificationUrl);
-            templateParams.put("orcid", orcidProfile.getOrcid().getValue());
-            templateParams.put("baseUri", orcidUrlManager.getBaseUrl());
-            String text = templateManager.processTemplate("verification_email_w_crossref.ftl", templateParams);
-            String html = templateManager.processTemplate("verification_email_w_crossref_html.ftl", templateParams);
-            mailGunManager.sendSimpleVerfiyEmail("support@verify.orcid.org", email, "Please verify your email", text, html);
-            } catch (Exception e) {
-                LOG.error("Exception trying to send email to: " +orcidProfile.getOrcidId(), e);
-                return ProfileEventType.EMAIL_VERIFY_CROSSREF_MARKETING_FAIL;
-            }
-            return ProfileEventType.EMAIL_VERIFY_CROSSREF_MARKETING_SENT;
-        }
-        return ProfileEventType.EMAIL_VERIFY_CROSSREF_MARKETING_SKIPPED;
-    }
-
-    private void sendEmailByEvent() {
+    private void callOnAll() {
+        ProfileEvent dummyPe = eventNewInstance(null);
         long startTime = System.currentTimeMillis();
         @SuppressWarnings("unchecked")
         List<String> orcids = Collections.EMPTY_LIST;
         int doneCount = 0;
         do {
-            orcids = profileDao.findByEventType(CHUNK_SIZE, ProfileEventType.EMAIL_VERIFY_CROSSREF_MARKETING_CHECK, null, true);
+            orcids = profileDao.findByEventTypes(CHUNK_SIZE, dummyPe.outcomes(), null, true);
             for (final String orcid : orcids) {
                 LOG.info("Migrating emails for profile: {}", orcid);
                 transactionTemplate.execute(new TransactionCallbackWithoutResult() {
                     @Override
                     protected void doInTransactionWithoutResult(TransactionStatus status) {
                         OrcidProfile orcidProfile = orcidProfileManager.retrieveOrcidProfile(orcid);
-                        profileEventDao.persist(new ProfileEventEntity(orcid, ProfileEventType.EMAIL_VERIFY_CROSSREF_MARKETING_CHECK));
-                        profileEventDao.persist(new ProfileEventEntity(orcid, sendEmail(orcidProfile)));
+                        try {
+                            profileEventDao.persist(new ProfileEventEntity(orcid, eventNewInstance(orcidProfile).call()));
+                        } catch (Exception e) {
+                            LOG.error("Error calling ", e);
+                        }
                     }
                 });
                 doneCount++;
@@ -172,16 +144,43 @@ public class SendEventEmail {
         LOG.info("Sending crossref verify emails: doneCount={}, timeTaken={} (H:m:s.S)", doneCount, timeTaken);
     }
 
+    private ProfileEvent eventNewInstance(OrcidProfile orcidProfile) {
+        ProfileEvent pe = null;
+        try {
+            Class<?> peClass = Class.forName(peClassStr);
+            Constructor<?> peConstructor = peClass.getDeclaredConstructor(OrcidProfile.class, ApplicationContext.class);
+            pe = (ProfileEvent) peConstructor.newInstance(orcidProfile, context);
+        } catch (InstantiationException e1) {
+            // TODO Auto-generated catch block
+            e1.printStackTrace();
+        } catch (IllegalAccessException e1) {
+            // TODO Auto-generated catch block
+            e1.printStackTrace();
+        } catch (ClassNotFoundException e1) {
+            // TODO Auto-generated catch block
+            e1.printStackTrace();
+        } catch (NoSuchMethodException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (SecurityException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (IllegalArgumentException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return pe;
+    }
+
     private void init() {
-        ApplicationContext context = new ClassPathXmlApplicationContext("orcid-core-context.xml");
+        context = new ClassPathXmlApplicationContext("orcid-core-context.xml");
         profileDao = (ProfileDao) context.getBean("profileDao");
         profileEventDao = (GenericDao<ProfileEventEntity, Long>) context.getBean("profileEventDao");
-        mailGunManager = (MailGunManager) context.getBean("mailGunManager");
         orcidProfileManager = (OrcidProfileManager) context.getBean("orcidProfileManager");
         transactionTemplate = (TransactionTemplate) context.getBean("transactionTemplate");
-        notificationManager = (NotificationManager) context.getBean("notificationManager");
-        templateManager = (TemplateManager) context.getBean("templateManager");
-        orcidUrlManager = (OrcidUrlManager) context.getBean("orcidUrlManager");
     }
 
 }
