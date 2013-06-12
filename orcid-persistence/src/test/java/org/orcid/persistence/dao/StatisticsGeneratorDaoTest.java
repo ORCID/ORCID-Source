@@ -41,27 +41,31 @@ public class StatisticsGeneratorDaoTest extends DBUnitTest {
 
     @Resource
     StatisticsGeneratorDao statisticsGeneratorDao;
-    
+
     @BeforeClass
     public static void initDBUnitData() throws Exception {
-        initDBUnitData(Arrays.asList("/data/SecurityQuestionEntityData.xml", "/data/ProfileEntityData.xml", "/data/WorksEntityData.xml", "/data/ProfileWorksEntityData.xml"), null);
+        initDBUnitData(
+                Arrays.asList("/data/SecurityQuestionEntityData.xml", "/data/ProfileEntityData.xml", "/data/WorksEntityData.xml", "/data/ProfileWorksEntityData.xml"),
+                null);
     }
 
     @AfterClass
     public static void removeDBUnitData() throws Exception {
-        removeDBUnitData(Arrays.asList("/data/ProfileWorksEntityData.xml", "/data/WorksEntityData.xml", "/data/ProfileEntityData.xml", "/data/SecurityQuestionEntityData.xml"), null);
+        removeDBUnitData(
+                Arrays.asList("/data/ProfileWorksEntityData.xml", "/data/WorksEntityData.xml", "/data/ProfileEntityData.xml", "/data/SecurityQuestionEntityData.xml"),
+                null);
     }
-    
+
     @Before
     public void beforeRunning() {
         assertNotNull(statisticsGeneratorDao);
     }
-    
+
     @Test
     @Rollback(true)
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public void testStatistics(){
-        assertEquals(1, statisticsGeneratorDao.getAccountsWithVerifiedEmails());
+    public void testStatistics() {
+        assertEquals(5, statisticsGeneratorDao.getAccountsWithVerifiedEmails());
         assertEquals(1, statisticsGeneratorDao.getAccountsWithWorks());
         assertEquals(6, statisticsGeneratorDao.getLiveIds());
         assertEquals(2, statisticsGeneratorDao.getNumberOfWorks());

@@ -35,7 +35,7 @@ import javax.persistence.Table;
 public class StatisticValuesEntity implements Serializable {
 
     //TODO
-    private static final long serialVersionUID = -3187757614938904329L;
+    private static final long serialVersionUID = -3187757614988914339L;
     
     private Long id;
     private StatisticKeyEntity key;
