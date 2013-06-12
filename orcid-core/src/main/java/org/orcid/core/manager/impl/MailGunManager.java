@@ -30,6 +30,8 @@ import com.sun.jersey.core.util.MultivaluedMapImpl;
 public class MailGunManager {
 
     /*
+     * Non-production keys will throw 500 errors
+     * 
      * From mailguns home page! Yey!
      * 
      * curl -s -k --user api:key-3ax6xnjp29jd6fds4gc373sgvjxteol0 \
@@ -51,9 +53,12 @@ public class MailGunManager {
     @Value("${com.mailgun.testmode}")
     private String testmode;
     
+    @Value("${com.mailgun.regexFilter}")
+    private String filter;
+    
     private static final Logger LOGGER = LoggerFactory.getLogger(MailGunManager.class);
 
-    public ClientResponse sendSimpleVerfiyEmail(String from,String to, String subject, String text, String html) {
+    public boolean sendEmail(String from,String to, String subject, String text, String html) {
         
         Client client = Client.create();
         client.addFilter(new HTTPBasicAuthFilter("api",
@@ -70,8 +75,15 @@ public class MailGunManager {
         }
         formData.add("o:testmode", testmode);
         LOGGER.debug("Email form data: \n" + formData.toString());
-        return webResource.type(MediaType.APPLICATION_FORM_URLENCODED).
-                post(ClientResponse.class, formData);
+        // the filter is used to prevent sending email to users in qa and sandbox
+        if (to.matches(filter)) {
+            ClientResponse cr = webResource.type(MediaType.APPLICATION_FORM_URLENCODED).post(ClientResponse.class, formData);
+            if (cr.getStatus() != 200) {
+                LOGGER.error("Post MailGunManager.sendEmail not accepted: " + formData.toString());
+                return false;
+            }
+        }
+        return true;
     }
 
     public String getApiKey() {
