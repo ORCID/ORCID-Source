@@ -59,7 +59,7 @@ import com.sun.xml.bind.CycleRecoverable.Context;
 public class ProfileEventManager {
 
     ApplicationContext context;
-    
+
     private ProfileDao profileDao;
 
     private OrcidProfileManager orcidProfileManager;
@@ -81,7 +81,6 @@ public class ProfileEventManager {
     @Option(name = "-class", usage = "ProfileEvent class to instantiate", required = true)
     private String peClassStr;
 
-    
     public static void main(String... args) {
         ProfileEventManager se = new ProfileEventManager();
         CmdLineParser parser = new CmdLineParser(se);
@@ -105,11 +104,11 @@ public class ProfileEventManager {
         } else if (orcs != null) {
             for (String orc : orcs.split(" ")) {
                 OrcidProfile orcidProfile = orcidProfileManager.retrieveOrcidProfile(orc);
-                CrossRefEmail cre = new CrossRefEmail(orcidProfile,context);
+                CrossRefEmail cre = new CrossRefEmail(orcidProfile, context);
                 try {
                     cre.call();
                 } catch (Exception e) {
-                    LOG.error("Error calling ",e);
+                    LOG.error("Error calling ", e);
                 }
             }
         }
@@ -132,7 +131,7 @@ public class ProfileEventManager {
                         try {
                             profileEventDao.persist(new ProfileEventEntity(orcid, eventNewInstance(orcidProfile).call()));
                         } catch (Exception e) {
-                            LOG.error("Error calling ",e);
+                            LOG.error("Error calling ", e);
                         }
                     }
                 });
@@ -149,8 +148,8 @@ public class ProfileEventManager {
         ProfileEvent pe = null;
         try {
             Class<?> peClass = Class.forName(peClassStr);
-            Constructor<?> peConstructor = peClass.getDeclaredConstructor(OrcidProfile.class,ApplicationContext.class);
-            pe = (ProfileEvent)peConstructor.newInstance(orcidProfile, context);
+            Constructor<?> peConstructor = peClass.getDeclaredConstructor(OrcidProfile.class, ApplicationContext.class);
+            pe = (ProfileEvent) peConstructor.newInstance(orcidProfile, context);
         } catch (InstantiationException e1) {
             // TODO Auto-generated catch block
             e1.printStackTrace();
