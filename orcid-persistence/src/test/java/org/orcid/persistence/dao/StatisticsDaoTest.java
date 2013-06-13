@@ -18,6 +18,8 @@ package org.orcid.persistence.dao;
 
 import static junit.framework.Assert.assertNotNull;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 import java.util.List;
@@ -76,6 +78,8 @@ public class StatisticsDaoTest extends DBUnitTest {
         long s3 = statisticsGeneratorDao.getLiveIds();
         long s4 = statisticsGeneratorDao.getNumberOfWorks();
         long s5 = statisticsGeneratorDao.getNumberOfWorksWithDOIs();
+        long s6 = 0;
+        long s7 = 0;
 
         assertEquals(5, s1);
         assertEquals(1, s2);
@@ -90,6 +94,10 @@ public class StatisticsDaoTest extends DBUnitTest {
         StatisticValuesEntity os3 = new StatisticValuesEntity(key, "s3", s3);
         StatisticValuesEntity os4 = new StatisticValuesEntity(key, "s4", s4);
         StatisticValuesEntity os5 = new StatisticValuesEntity(key, "s5", s5);
+        StatisticValuesEntity os6 = new StatisticValuesEntity(key, "s6", s6);
+        StatisticValuesEntity os7 = new StatisticValuesEntity(null, "s7", s7);
+        
+        
 
         statisticsDao.saveStatistic(os1);
         statisticsDao.saveStatistic(os2);
@@ -105,5 +113,12 @@ public class StatisticsDaoTest extends DBUnitTest {
 
         assertNotNull(statistics);
         assertEquals(statistics.size(), 5);
+        assertTrue(statistics.contains(os1));
+        assertTrue(statistics.contains(os2));
+        assertTrue(statistics.contains(os3));
+        assertTrue(statistics.contains(os4));
+        assertTrue(statistics.contains(os5));
+        assertFalse(statistics.contains(os6));
+        assertFalse(statistics.contains(os7));
     }
 }

@@ -109,6 +109,12 @@ public class StatisticValuesEntity implements Serializable {
         
         if(!this.id.equals(otherEntity.getId()))
             return false;
-        return true;
+        
+        if(this.key == null){
+            if(otherEntity.getKey() != null)
+                return false;
+        }
+        
+        return this.key.equals(otherEntity.getKey());       
     }
 }
