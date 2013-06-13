@@ -1013,3 +1013,49 @@ function WorkCtrl($scope, $compile){
 	};		
 }
 
+function QuickSearchCtrl($scope, $compile){
+	$scope.results = new Array();
+	$scope.start = 0;
+	$scope.rows = 10;
+	
+	$scope.getResults = function(rows){
+		$.ajax({
+			url: $('#ng-app').data('search-query-url') + '&start=' + $scope.start + '&rows=' + $scope.rows,      
+			dataType: 'json',
+			headers: { Accept: 'application/json'},
+			success: function(data) {
+				$scope.results = $scope.results.concat(data['orcid-search-results']['orcid-search-result']);
+				$scope.$apply();
+				var newSearchResults = $('.new-search-result');
+				newSearchResults.fadeIn(1200);
+				newSearchResults.removeClass('new-search-result');
+				$('html, body').animate({ 
+					scrollTop: $(document).height()-$(window).height()}, 
+					1000, 
+					"easeOutQuint"
+				);
+			}
+		}).fail(function(){
+			// something bad is happening!
+			console.log("error doing quick search");
+		});
+	};
+	
+	$scope.getMoreResults = function(){
+		$scope.start += 10;
+		$scope.getResults();
+	};
+	
+	$scope.concatPropertyValues = function(array, propertyName){
+		if(typeof array === 'undefined'){
+			return '';
+		}
+		else{
+			return $.map(array, function(o){ return o[propertyName]; }).join(', ');
+		}
+	};
+	
+	// init
+	$scope.getResults(10);
+}
+

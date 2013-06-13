@@ -2241,3 +2241,7 @@ header overrides
 .justify {
 	text-align: justify;
 }
+
+.new-search-result {
+	display: none;
+}
