@@ -155,6 +155,10 @@
 	<bean id="externalIdentifierManager" class="org.orcid.core.manager.impl.ExternalIdentifierManagerImpl" />
 	
 	<bean id="profileWorkManager" class="org.orcid.core.manager.impl.ProfileWorkManagerImpl" />
+	
+	<bean id="profileEventManager" class="org.orcid.core.profileEvent.ProfileEventManager" />
+	
+	<bean id="crossRefEmail" class="org.orcid.core.profileEvent.CrossRefEmail" scope="prototype"/>
 
 	<bean id="messageSource"
 		class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
