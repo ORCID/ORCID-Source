@@ -81,7 +81,7 @@ public class CrossRefEmail implements ProfileEvent {
                 && orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue() != null;
 
         boolean needsVerification = primaryNotNull && !orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().isVerified()
-                && orcidProfile.getType().equals(OrcidType.USER);
+                && orcidProfile.getType().equals(OrcidType.USER) && !orcidProfile.isDeactivated();
 
         if (needsVerification) {
             ProfileEventType pet = ProfileEventType.EMAIL_VERIFY_CROSSREF_MARKETING_SENT;
