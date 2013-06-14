@@ -16,34 +16,70 @@
  */
 package org.orcid.core.manager.impl;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 
 import javax.annotation.Resource;
 
 import org.orcid.core.manager.StatisticsManager;
 import org.orcid.persistence.dao.StatisticsDao;
+import org.orcid.persistence.jpa.entities.StatisticValuesEntity;
+import org.orcid.persistence.jpa.entities.StatisticKeyEntity;
+import org.springframework.transaction.annotation.Transactional;
 
 public class StatisticsManagerImpl implements StatisticsManager {
 
     @Resource
-    private StatisticsDao statisticsDao;
+    StatisticsDao statisticsDao;
 
-    public static final String KEY_LIVE_IDS = "liveIds";
-    public static final String KEY_IDS_WITH_VERIFIED_EMAIL = "idsWithVerifiedEmail";
-    public static final String KEY_IDS_WITH_WORKS = "idsWithWorks";
-    public static final String KEY_NUMBER_OF_WORKS = "works";
-    public static final String KEY_WORKS_WITH_DOIS = "worksWithDois";
-
+    /**
+     * Creates a new statistics key
+     * 
+     * @return the statistic key object
+     * */
     @Override
-    public Map<String, Long> getStatistics() {
-        Map<String, Long> statistics = new HashMap<String, Long>();
-        statistics.put(KEY_LIVE_IDS, statisticsDao.getLiveIds());
-        statistics.put(KEY_IDS_WITH_VERIFIED_EMAIL, statisticsDao.getAccountsWithVerifiedEmails());
-        statistics.put(KEY_IDS_WITH_WORKS, statisticsDao.getAccountsWithWorks());
-        statistics.put(KEY_NUMBER_OF_WORKS, statisticsDao.getNumberOfWorks());
-        statistics.put(KEY_WORKS_WITH_DOIS, statisticsDao.getNumberOfWorksWithDOIs());
-        return statistics;
+    @Transactional
+    public StatisticKeyEntity createKey() {
+        return statisticsDao.createKey();
     }
 
+    /**
+     * Save an statistics record on database
+     * 
+     * @param id
+     * @param name
+     *            the name of the statistic
+     * @param value
+     *            the statistic value
+     * @return the statistic value object
+     * */
+    @Override
+    @Transactional
+    public StatisticValuesEntity saveStatistic(StatisticKeyEntity id, String name, long value) {
+        StatisticValuesEntity statisticEntity = new StatisticValuesEntity(id, name, value);
+        return statisticsDao.saveStatistic(statisticEntity);
+    }
+
+    /**
+     * Get an statistics object from database
+     * 
+     * @param id
+     * @param name
+     * @return the Statistic value object associated with the id and name
+     *         parameters
+     * */
+    @Override
+    public StatisticValuesEntity getStatistic(StatisticKeyEntity id, String name) {
+        return statisticsDao.getStatistic(id.getId(), name);
+    }
+
+    /**
+     * Get the list of the latest statistics
+     * 
+     * @return a list that contains the latest set of statistics
+     * */
+    @Override
+    public List<StatisticValuesEntity> getLatestStatistics() {
+        StatisticKeyEntity latestKey = statisticsDao.getLatestKey();
+        return statisticsDao.getStatistic(latestKey.getId());
+    }
 }

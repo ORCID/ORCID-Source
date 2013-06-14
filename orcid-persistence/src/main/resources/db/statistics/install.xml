@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    =============================================================================
+
+    ORCID (R) Open Source
+    http://orcid.org
+
+    Copyright (c) 2012-2013 ORCID, Inc.
+    Licensed under an MIT-Style License (MIT)
+    http://orcid.org/open-source-license
+
+    This copyright and license information (including a link to the full license)
+    shall be included in its entirety in all copies or substantial portion of
+    the software.
+
+    =============================================================================
+
+-->
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+	<changeSet author="Angel Montenegro" id="BASE-INSTALL" context="default">
+		<preConditions onFail="MARK_RAN">
+	            <!-- Only perform the initial database create if key table doesn't exist -->
+	            <not>
+	                <tableExists tableName="statistic_key"/>
+	            </not>
+		</preConditions>
+		
+		<createTable tableName="statistic_key">
+            <column name="id" type="bigint">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="statistic_key_pkey"/>
+            </column>
+            <column name="generation_date" type="TIMESTAMP WITH TIME ZONE"/>
+        </createTable>
+        
+        <createTable tableName="statistic_values">
+        	<column name="id" type="bigint">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="statistic_values_pkey"/>
+            </column>
+            <column name="key_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="statistic_name" type="VARCHAR(255)"/>
+            <column name="statistic_value" type="bigint"/>
+        </createTable>		
+		
+		<addForeignKeyConstraint baseColumnNames="key_id" baseTableName="statistic_values" baseTableSchemaName="public"
+                                 constraintName="fk9bb60ebf14b94af" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id"
+                                 referencedTableName="statistic_key" referencedTableSchemaName="public"
+                                 referencesUniqueColumn="false"/>
+	</changeSet>
+	
+	<changeSet id="CREATE-SEQUENCES" author="Angel Montenegro" dbms="postgresql" context="default">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <sequenceExists sequenceName="key_seq"/>
+            </not>
+        </preConditions>
+        <createSequence sequenceName="key_seq"/>
+        <createSequence sequenceName="values_seq"/>
+	</changeSet>
+
+	<changeSet id="CREATE-AUTO-COLS" author="Angel Montenegro" dbms="hsqldb" context="default">  
+		<addAutoIncrement tableName="statistic_key" columnName="id" columnDataType="bigint"/>
+		<addAutoIncrement tableName="statistic_values" columnName="id" columnDataType="bigint"/>
+	</changeSet>
+	
+</databaseChangeLog>

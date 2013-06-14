@@ -341,7 +341,7 @@ public class JpaJaxbEntityAdapterToOrcidProfileTest extends DBUnitTest {
         assertNotNull(contactDetails);
 
         List<Email> emails = contactDetails.getEmail();
-        assertEquals(3, emails.size());
+        assertEquals(4, emails.size());
         Map<String, Email> emailMap = new HashMap<>();
         for (Email email : emails) {
             emailMap.put(email.getValue(), email);

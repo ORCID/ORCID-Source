@@ -16,9 +16,45 @@
  */
 package org.orcid.core.manager;
 
-import java.util.Map;
+import java.util.List;
+
+import org.orcid.persistence.jpa.entities.StatisticKeyEntity;
+import org.orcid.persistence.jpa.entities.StatisticValuesEntity;
 
 public interface StatisticsManager {
+    /**
+     * Creates a new statistics key
+     * 
+     * @return the statistic key object
+     * */
+    public StatisticKeyEntity createKey();
 
-    public Map<String, Long> getStatistics();
+    /**
+     * Save an statistics record on database
+     * 
+     * @param id
+     * @param name
+     *            the name of the statistic
+     * @param value
+     *            the statistic value
+     * @return the statistic value object
+     * */
+    public StatisticValuesEntity saveStatistic(StatisticKeyEntity id, String name, long value);
+
+    /**
+     * Get an statistics object from database
+     * 
+     * @param id
+     * @param name
+     * @return the Statistic value object associated with the id and name
+     *         parameters
+     * */
+    public StatisticValuesEntity getStatistic(StatisticKeyEntity id, String name);
+
+    /**
+     * Get the list of the latest statistics
+     * 
+     * @return a list that contains the latest set of statistics
+     * */
+    public List<StatisticValuesEntity> getLatestStatistics();
 }
