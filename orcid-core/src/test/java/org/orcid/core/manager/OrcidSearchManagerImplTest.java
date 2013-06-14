@@ -22,7 +22,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -63,6 +63,7 @@ import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
 import org.orcid.jaxb.model.message.WorkExternalIdentifiers;
 import org.orcid.persistence.dao.SolrDao;
 import org.orcid.persistence.solr.entities.OrcidSolrResult;
+import org.orcid.persistence.solr.entities.OrcidSolrResults;
 import org.springframework.test.annotation.Rollback;
 
 /**
@@ -104,7 +105,8 @@ public class OrcidSearchManagerImplTest extends BaseTest {
         String orcid = "1434";
 
         // demonstrate that the mapping from solr (profile 1234) and dao (5678)
-        // are truly seperate - the search results only return a subset of the full orcid
+        // are truly seperate - the search results only return a subset of the
+        // full orcid
         // because we want to keep the payload down.
 
         OrcidMessage retrievedOrcidMessage = orcidSearchManager.findOrcidSearchResultsById(orcid);
@@ -148,7 +150,7 @@ public class OrcidSearchManagerImplTest extends BaseTest {
         OrcidPatent retrievedPatent1 = orcidPatents.get(0);
         OrcidPatent retrievedPatent2 = orcidPatents.get(1);
 
-        //check returns a reduced payload
+        // check returns a reduced payload
         assertEquals("patent1", retrievedPatent1.getPatentNumber().getContent());
         assertEquals("Patent 1 - a short description", retrievedPatent1.getShortDescription());
         assertNull(retrievedPatent1.getPutCode());
@@ -161,7 +163,7 @@ public class OrcidSearchManagerImplTest extends BaseTest {
         OrcidGrant retrievedGrant1 = orcidGrants.get(0);
         OrcidGrant retrievedGrant2 = orcidGrants.get(1);
 
-        //check returns a reduced payload
+        // check returns a reduced payload
         assertEquals("grant1", retrievedGrant1.getGrantNumber().getContent());
         assertEquals("Grant 1 - a short description", retrievedGrant1.getShortDescription());
         assertNull(retrievedGrant1.getPutCode());
@@ -294,10 +296,13 @@ public class OrcidSearchManagerImplTest extends BaseTest {
         return solrResult;
     }
 
-    private List<OrcidSolrResult> multipleResultsForQuery() {
-        OrcidSolrResult orcidRes5678 = getSolrRes5678();
-        OrcidSolrResult orcidRes6789 = getSolrRes6789();
-        return Arrays.asList(new OrcidSolrResult[] { orcidRes5678, orcidRes6789 });
+    private OrcidSolrResults multipleResultsForQuery() {
+        OrcidSolrResults orcidSolrResults = new OrcidSolrResults();
+        List<OrcidSolrResult> resultsList = new ArrayList<>();
+        orcidSolrResults.setResults(resultsList);
+        resultsList.add(getSolrRes5678());
+        resultsList.add(getSolrRes6789());
+        return orcidSolrResults;
     }
 
     private OrcidProfile getOrcidProfileAllIndexFieldsPopulated() {

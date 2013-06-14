@@ -127,6 +127,7 @@ public class SearchOrcidController extends BaseController {
             searchQueryUrl += "{!edismax qf='given-and-family-names^50.0 family-name^10.0 given-names^5.0 credit-name^10.0 other-names:5.0 text^1.0' pf='given-and-family-names^50.0' mm=1}"
                     + queryFromUser;
         }
+        FRONTEND_WEB_SEARCH_REQUESTS.inc();
         mav.addObject("searchQueryUrl", searchQueryUrl);
         return mav;
     }

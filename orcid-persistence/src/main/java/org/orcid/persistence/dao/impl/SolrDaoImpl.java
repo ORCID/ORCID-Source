@@ -35,6 +35,7 @@ import org.apache.solr.common.SolrDocument;
 import org.orcid.persistence.dao.SolrDao;
 import org.orcid.persistence.solr.entities.OrcidSolrDocument;
 import org.orcid.persistence.solr.entities.OrcidSolrResult;
+import org.orcid.persistence.solr.entities.OrcidSolrResults;
 import org.springframework.dao.NonTransientDataAccessResourceException;
 
 import schema.constants.SolrConstants;
@@ -100,8 +101,10 @@ public class SolrDaoImpl implements SolrDao {
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
     @Override
-    public List<OrcidSolrResult> findByDocumentCriteria(String queryString, Integer start, Integer rows) {
-        List<OrcidSolrResult> orcidSolrResults = new ArrayList<OrcidSolrResult>();
+    public OrcidSolrResults findByDocumentCriteria(String queryString, Integer start, Integer rows) {
+        OrcidSolrResults orcidSolrResults = new OrcidSolrResults();
+        List<OrcidSolrResult> orcidSolrResultsList = new ArrayList<>();
+        orcidSolrResults.setResults(orcidSolrResultsList);
         SolrQuery query = new SolrQuery(queryString).setFields(SCORE_AND_INDIVIDUAL_FIELDS);
         if (start != null)
             query.setStart(start);
@@ -122,8 +125,9 @@ public class SolrDaoImpl implements SolrDao {
                 orcidSolrResult.setCreditName((String) solrDocument.getFieldValue("credit-name"));
                 orcidSolrResult.setOtherNames((Collection) solrDocument.getFieldValues("other-names"));
                 orcidSolrResult.setPublicProfileMessage((String) solrDocument.getFieldValue("public-profile-message"));
-                orcidSolrResults.add(orcidSolrResult);
+                orcidSolrResultsList.add(orcidSolrResult);
             }
+            orcidSolrResults.setNumFound(queryResponse.getResults().getNumFound());
 
         } catch (SolrServerException se) {
             throw new NonTransientDataAccessResourceException("Error retrieving from SOLR Server", se);
@@ -133,8 +137,10 @@ public class SolrDaoImpl implements SolrDao {
     }
 
     @Override
-    public List<OrcidSolrResult> findByDocumentCriteria(Map<String, List<String>> queryMap) {
-        List<OrcidSolrResult> orcidSolrResults = new ArrayList<OrcidSolrResult>();
+    public OrcidSolrResults findByDocumentCriteria(Map<String, List<String>> queryMap) {
+        OrcidSolrResults orcidSolrResults = new OrcidSolrResults();
+        List<OrcidSolrResult> orcidSolrResultsList = new ArrayList<>();
+        orcidSolrResults.setResults(orcidSolrResultsList);
         SolrQuery solrQuery = new SolrQuery();
         for (Map.Entry<String, List<String>> entry : queryMap.entrySet()) {
             String queryKey = entry.getKey();
@@ -148,8 +154,9 @@ public class SolrDaoImpl implements SolrDao {
                 OrcidSolrResult orcidSolrResult = new OrcidSolrResult();
                 orcidSolrResult.setRelevancyScore((Float) solrDocument.get("score"));
                 orcidSolrResult.setOrcid((String) solrDocument.get("orcid"));
-                orcidSolrResults.add(orcidSolrResult);
+                orcidSolrResultsList.add(orcidSolrResult);
             }
+            orcidSolrResults.setNumFound(queryResponse.getResults().getNumFound());
 
         } catch (SolrServerException se) {
             throw new NonTransientDataAccessResourceException("Error retrieving from SOLR Server", se);

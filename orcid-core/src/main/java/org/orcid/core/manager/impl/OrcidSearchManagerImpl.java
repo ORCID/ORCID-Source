@@ -50,6 +50,7 @@ import org.orcid.jaxb.model.message.PersonalDetails;
 import org.orcid.jaxb.model.message.RelevancyScore;
 import org.orcid.persistence.dao.SolrDao;
 import org.orcid.persistence.solr.entities.OrcidSolrResult;
+import org.orcid.persistence.solr.entities.OrcidSolrResults;
 import org.springframework.dao.NonTransientDataAccessResourceException;
 
 public class OrcidSearchManagerImpl implements OrcidSearchManager {
@@ -94,6 +95,7 @@ public class OrcidSearchManagerImpl implements OrcidSearchManager {
 
         }
         orcidMessage.setOrcidSearchResults(searchResults);
+        searchResults.setNumFound(1);
         return orcidMessage;
     }
 
@@ -262,7 +264,9 @@ public class OrcidSearchManagerImpl implements OrcidSearchManager {
     public OrcidMessage findOrcidsByQuery(String query, Integer start, Integer rows, boolean useDb) {
         OrcidMessage orcidMessage = new OrcidMessage();
         OrcidSearchResults searchResults = new OrcidSearchResults();
-        List<OrcidSolrResult> indexedOrcids = solrDao.findByDocumentCriteria(query, start, rows);
+        OrcidSolrResults orcidSolrResults = solrDao.findByDocumentCriteria(query, start, rows);
+        searchResults.setNumFound(orcidSolrResults.getNumFound());
+        List<OrcidSolrResult> indexedOrcids = orcidSolrResults.getResults();
         if (indexedOrcids != null && !indexedOrcids.isEmpty()) {
 
             List<OrcidSearchResult> orcidSearchResults = useDb ? buildSearchResultsFromDb(indexedOrcids) : buildSearchResultsFromSolr(indexedOrcids);
@@ -277,7 +281,9 @@ public class OrcidSearchManagerImpl implements OrcidSearchManager {
     public OrcidMessage findOrcidsByQuery(Map<String, List<String>> query) {
         OrcidMessage orcidMessage = new OrcidMessage();
         OrcidSearchResults searchResults = new OrcidSearchResults();
-        List<OrcidSolrResult> indexedOrcids = solrDao.findByDocumentCriteria(query);
+        OrcidSolrResults orcidSolrResults = solrDao.findByDocumentCriteria(query);
+        searchResults.setNumFound(orcidSolrResults.getNumFound());
+        List<OrcidSolrResult> indexedOrcids = orcidSolrResults.getResults();
         if (indexedOrcids != null && !indexedOrcids.isEmpty()) {
 
             List<OrcidSearchResult> orcidSearchResults = buildSearchResultsFromDb(indexedOrcids);
