@@ -1029,10 +1029,12 @@ function QuickSearchCtrl($scope, $compile){
 				var newSearchResults = $('.new-search-result');
 				newSearchResults.fadeIn(1200);
 				newSearchResults.removeClass('new-search-result');
+				$('#ajax-loader').hide();
+				$('#init-ajax-loader').hide();
 				$('html, body').animate({ 
 					scrollTop: $(document).height()-$(window).height()}, 
 					1000, 
-					"easeOutQuint"
+					'easeOutQuint'
 				);
 			}
 		}).fail(function(){
@@ -1042,6 +1044,7 @@ function QuickSearchCtrl($scope, $compile){
 	};
 	
 	$scope.getMoreResults = function(){
+		$('#ajax-loader').show();
 		$scope.start += 10;
 		$scope.getResults();
 	};

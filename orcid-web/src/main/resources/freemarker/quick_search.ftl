@@ -44,7 +44,11 @@
 		                </tr>
 		            </tbody>
 		        </table>
-                <button type="submit" class="btn" ng-click="getMoreResults()">Show more</button>
+		        <div id="init-ajax-loader"><i class="icon-spinner icon-large icon-spin green"></i></div>
+		        <div>
+                    <button type="submit" class="btn" ng-click="getMoreResults()">Show more</button>
+                    <span class="hide" id="ajax-loader"><i class="icon-spinner icon-large icon-spin green"></i></span>
+                </div>
             </div>   
         </div>
     </div>
