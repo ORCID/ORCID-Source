@@ -4,6 +4,22 @@ We release updates to the Registry regularly. Below is a list of the improvement
 * [2013 Releases](https://trello.com/b/ZgYVAlel)
 * [2012 Releases](https://trello.com/b/vyCDYdvR)
 
+
+## release-1.1.23.5
+(2013-06-12)
+
+* Improve Solr
+
+* Send out one off verify email via MailGun. Also first html email
+
+* Remove legancy email code
+
+* Upgrade java-bibtex
+
+* Release experimental RDF
+
+
+
 ## release-1.1.22.24
 (2013-06-05)
 
