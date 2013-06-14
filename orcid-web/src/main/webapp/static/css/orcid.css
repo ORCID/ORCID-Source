@@ -2245,3 +2245,7 @@ header overrides
 .new-search-result {
 	display: none;
 }
+
+.search-result-orcid-id {
+	white-space:nowrap;
+}
