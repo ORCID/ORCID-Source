@@ -21,8 +21,8 @@
     <div class="row">
         <div class="span12">
             <div ng-controller="QuickSearchCtrl">
-                <h3 class="search-result-head">${springMacroRequestContext.getMessage("search_results.h3Searchresults")}</h3>
-		        <table class="table table-striped">
+                <h3 class="ng-cloak search-result-head" ng-show="areResults()">${springMacroRequestContext.getMessage("search_results.h3Searchresults")}</h3>
+		        <table class="ng-cloak table table-striped" ng-show="areResults()">
 		            <thead>
 		            <tr>
 		                <th>${springMacroRequestContext.getMessage("search_results.thRelevance")}</th>
@@ -44,11 +44,11 @@
 		                </tr>
 		            </tbody>
 		        </table>
-		        <div id="init-ajax-loader"><i class="icon-spinner icon-large icon-spin green"></i></div>
 		        <div>
-                    <button type="submit" class="btn" ng-click="getMoreResults()">Show more</button>
+                    <button type="submit" class="ng-cloak btn" ng-click="getMoreResults()" ng-show="areMoreResults()">Show more</button>
                     <span class="hide" id="ajax-loader"><i class="icon-spinner icon-large icon-spin green"></i></span>
                 </div>
+                <div id="no-results-alert" class="hide alert alert-error"><@spring.message "orcid.frontend.web.no_results"/></div>
             </div>   
         </div>
     </div>
