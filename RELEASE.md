@@ -8,15 +8,15 @@ We release updates to the Registry regularly. Below is a list of the improvement
 ## release-1.1.23.5
 (2013-06-12)
 
-* Improve Solr
+* Improve Solr quick search results.
 
-* Send out one off verify email via MailGun. Also first html email
+* Send out one-off verify email via MailGun. Also first html email.
 
-* Remove legancy email code
+* Remove legancy email code.
 
-* Upgrade java-bibtex
+* Upgrade java-bibtex.
 
-* Release experimental RDF
+* Release experimental RDF.
 
 
 
