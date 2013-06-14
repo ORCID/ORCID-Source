@@ -36,7 +36,7 @@
 		            <tbody>
 		                <tr ng-repeat='result in results' class="new-search-result">
 		                    <td>{{result['relevancy-score'].value | number:3}}</td>
-		                    <td class='search-result-orcid-id'><a href="<@orcid.orcidUrl (profileInfo.orcid.value)!/>">{{result['orcid-profile'].orcid.value}}</td>
+		                    <td class='search-result-orcid-id'><a href="{{result['orcid-profile']['orcid-id']}}">{{result['orcid-profile'].orcid.value}}</td>
 		                    <td>{{result['orcid-profile']['orcid-bio']['personal-details']['given-names'].value}}</td>
 		                    <td>{{result['orcid-profile']['orcid-bio']['personal-details']['family-name'].value}}</td>
 		                    <td>{{concatPropertyValues(result['orcid-profile']['orcid-bio']['personal-details']['other-names']['other-name'], 'value')}}</td>
