@@ -989,7 +989,7 @@ function WorkCtrl($scope, $compile){
 		
 	$scope.setPrivacy = function(idx, priv, $event) {
 		$event.preventDefault();
-		$scope.works[idx].visibility = priv;
+		$scope.works[idx].visibility.visibility = priv;
 		$scope.curPrivToggle = null;
 		$scope.updateProfileWork(idx);
 	};

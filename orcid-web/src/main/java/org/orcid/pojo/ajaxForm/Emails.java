@@ -19,20 +19,15 @@ package org.orcid.pojo.ajaxForm;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Text implements ErrorsInterface, Required {
+import org.orcid.pojo.Email;
+
+public class Emails implements ErrorsInterface {
+    private List<Email> emails = null;
+    @SuppressWarnings("unused")
+    private static final long serialVersionUID = 1L;
 
     private List<String> errors = new ArrayList<String>();
-    private String value;
-    private boolean required = true;
-    private String getRequiredMessage;
 
-    public Text() {
-        
-    }
-    
-    public Text(String value) {
-        this.value = value;
-    }
     public List<String> getErrors() {
         return errors;
     }
@@ -41,28 +36,12 @@ public class Text implements ErrorsInterface, Required {
         this.errors = errors;
     }
 
-    public String getValue() {
-        return value;
+    public List<Email> getEmails() {
+        return emails;
     }
 
-    public void setValue(String value) {
-        this.value = value;
-    }
-
-    public boolean isRequired() {
-        return required;
-    }
-
-    public void setRequired(boolean required) {
-        this.required = required;
-    }
-
-    public String getGetRequiredMessage() {
-        return getRequiredMessage;
-    }
-
-    public void setGetRequiredMessage(String getRequiredMessage) {
-        this.getRequiredMessage = getRequiredMessage;
+    public void setEmails(List<Email> emails) {
+        this.emails = emails;
     }
 
 }

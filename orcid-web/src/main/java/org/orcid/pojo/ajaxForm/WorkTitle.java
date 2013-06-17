@@ -14,19 +14,33 @@
  *
  * =============================================================================
  */
-package org.orcid.pojo;
+package org.orcid.pojo.ajaxForm;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.orcid.pojo.ajaxForm.ErrorsInterface;
-
-public class Emails implements ErrorsInterface {
-    private List<Email> emails = null;
+public class WorkTitle implements ErrorsInterface {
     @SuppressWarnings("unused")
     private static final long serialVersionUID = 1L;
 
     private List<String> errors = new ArrayList<String>();
+
+    private Text title;
+
+    private Text subtitle;
+
+    public WorkTitle(org.orcid.jaxb.model.message.WorkTitle workTitle) {
+        if (workTitle != null) {
+            if (workTitle.getTitle() != null) {
+                this.setTitle(new Text(workTitle.getTitle().getContent()));
+            }
+            if (workTitle.getSubtitle() != null) {
+                this.setSubtitle(new Text(workTitle.getSubtitle().getContent()));
+            }
+
+        }
+
+    }
 
     public List<String> getErrors() {
         return errors;
@@ -36,12 +50,20 @@ public class Emails implements ErrorsInterface {
         this.errors = errors;
     }
 
-    public List<Email> getEmails() {
-        return emails;
+    public Text getTitle() {
+        return title;
     }
 
-    public void setEmails(List<Email> emails) {
-        this.emails = emails;
+    public void setTitle(Text title) {
+        this.title = title;
+    }
+
+    public Text getSubtitle() {
+        return subtitle;
+    }
+
+    public void setSubtitle(Text subtitle) {
+        this.subtitle = subtitle;
     }
 
 }

@@ -19,42 +19,36 @@ package org.orcid.pojo.ajaxForm;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Visibility implements ErrorsInterface, Required {
-    /**
-     * 
-     */
-    private static final long serialVersionUID = 1L;
+
+public class Citation implements ErrorsInterface, Required {
 
     private List<String> errors = new ArrayList<String>();
-
+    private String citation;
+    private String citationType;
     private boolean required = true;
-
     private String getRequiredMessage;
 
-    private org.orcid.jaxb.model.message.Visibility visibility;
-
-    public Visibility() {
-        visibility = org.orcid.jaxb.model.message.Visibility.PUBLIC;
+    public Citation() {
+        
     }
     
-    public Visibility(org.orcid.jaxb.model.message.Visibility visibility) {
-      this.visibility = visibility;
+    public Citation(org.orcid.jaxb.model.message.Citation citation) {
+        if (citation != null) {
+            if (citation.getCitation() !=null) {
+               this.citation = citation.getCitation();
+            }
+            if (citation.getWorkCitationType() != null) {
+                this.citationType = citation.getWorkCitationType().value();
+            }
+        }
     }
-
+    
     public List<String> getErrors() {
         return errors;
     }
 
     public void setErrors(List<String> errors) {
         this.errors = errors;
-    }
-
-    public org.orcid.jaxb.model.message.Visibility getVisibility() {
-        return visibility;
-    }
-
-    public void setVisibility(org.orcid.jaxb.model.message.Visibility visibility) {
-        this.visibility = visibility;
     }
 
     public boolean isRequired() {
@@ -71,6 +65,22 @@ public class Visibility implements ErrorsInterface, Required {
 
     public void setGetRequiredMessage(String getRequiredMessage) {
         this.getRequiredMessage = getRequiredMessage;
+    }
+
+    public String getCitation() {
+        return citation;
+    }
+
+    public void setCitation(String citation) {
+        this.citation = citation;
+    }
+
+    public String getCitationType() {
+        return citationType;
+    }
+
+    public void setCitationType(String citationType) {
+        this.citationType = citationType;
     }
 
 }

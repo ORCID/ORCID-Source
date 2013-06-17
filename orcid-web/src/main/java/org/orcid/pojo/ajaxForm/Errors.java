@@ -14,12 +14,11 @@
  *
  * =============================================================================
  */
-package org.orcid.pojo;
+package org.orcid.pojo.ajaxForm;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.orcid.pojo.ajaxForm.ErrorsInterface;
 
 public class Errors implements ErrorsInterface {
 

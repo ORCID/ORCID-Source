@@ -19,26 +19,33 @@ package org.orcid.pojo.ajaxForm;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Visibility implements ErrorsInterface, Required {
-    /**
-     * 
-     */
-    private static final long serialVersionUID = 1L;
+public class Date implements ErrorsInterface, Required {
 
     private List<String> errors = new ArrayList<String>();
-
+    private String month;
+    private String day;
+    private String year;
+    
     private boolean required = true;
-
     private String getRequiredMessage;
-
-    private org.orcid.jaxb.model.message.Visibility visibility;
-
-    public Visibility() {
-        visibility = org.orcid.jaxb.model.message.Visibility.PUBLIC;
+    
+    public Date() {
+        
     }
     
-    public Visibility(org.orcid.jaxb.model.message.Visibility visibility) {
-      this.visibility = visibility;
+    public Date(org.orcid.jaxb.model.message.PublicationDate publicationDate) {
+        if (publicationDate != null) {
+            if (publicationDate.getDay() != null)
+                this.setDay(publicationDate.getDay().getValue());
+            if (publicationDate.getMonth() != null)
+                this.setMonth(publicationDate.getMonth().getValue());
+            if (publicationDate.getYear() != null)
+                this.setYear(publicationDate.getYear().getValue());
+        }
+    }
+    
+    public Date(String year, String month, String day) {
+        
     }
 
     public List<String> getErrors() {
@@ -47,14 +54,6 @@ public class Visibility implements ErrorsInterface, Required {
 
     public void setErrors(List<String> errors) {
         this.errors = errors;
-    }
-
-    public org.orcid.jaxb.model.message.Visibility getVisibility() {
-        return visibility;
-    }
-
-    public void setVisibility(org.orcid.jaxb.model.message.Visibility visibility) {
-        this.visibility = visibility;
     }
 
     public boolean isRequired() {
@@ -71,6 +70,30 @@ public class Visibility implements ErrorsInterface, Required {
 
     public void setGetRequiredMessage(String getRequiredMessage) {
         this.getRequiredMessage = getRequiredMessage;
+    }
+
+    public String getMonth() {
+        return month;
+    }
+
+    public void setMonth(String month) {
+        this.month = month;
+    }
+
+    public String getDay() {
+        return day;
+    }
+
+    public void setDay(String day) {
+        this.day = day;
+    }
+
+    public String getYear() {
+        return year;
+    }
+
+    public void setYear(String year) {
+        this.year = year;
     }
 
 }
