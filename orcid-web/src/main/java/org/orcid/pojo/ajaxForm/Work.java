@@ -80,9 +80,9 @@ public class Work implements ErrorsInterface {
             this.setShortDescription(new Text(orcidWork.getShortDescription()));
         if (orcidWork.getUrl() != null)
             this.setUrl(new Text(orcidWork.getUrl().getValue()));
-        if (this.getVisibility() != null)
+        if (orcidWork.getVisibility() != null)
             this.setVisibility(new Visibility(orcidWork.getVisibility()));
-        if (this.getCitation() != null)
+        if (orcidWork.getWorkCitation() != null)
             this.setCitation(new Citation(orcidWork.getWorkCitation()));
         
         if (orcidWork.getWorkContributors() != null && orcidWork.getWorkContributors().getContributor() != null) {

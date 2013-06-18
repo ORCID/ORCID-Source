@@ -42,7 +42,7 @@ public class Contributor implements ErrorsInterface {
     
     private Text contributorRole;
     
-    private Visibility contributorRoleVisibility;
+    private Visibility creditNameVisibility;
 
     public Contributor(org.orcid.jaxb.model.message.Contributor contributor) {
        if (contributor != null) {
@@ -59,9 +59,8 @@ public class Contributor implements ErrorsInterface {
                this.setOrcid(new Text(contributor.getContributorOrcid().getValue()));
            if (contributor.getCreditName() != null) {
                this.setCreditName(new  Text(contributor.getCreditName().getContent()));
-               this.setContributorRoleVisibility(new Visibility(contributor.getCreditName().getVisibility()));
-           }
-               
+               this.setCreditNameVisibility(new Visibility(contributor.getCreditName().getVisibility()));
+           }       
        }
         
     }
@@ -71,7 +70,7 @@ public class Contributor implements ErrorsInterface {
         if (this.getContributorRole() != null || this.getContributorSequence() != null) {
             org.orcid.jaxb.model.message.ContributorAttributes ca = new org.orcid.jaxb.model.message.ContributorAttributes();
             if (this.getContributorRole() != null)
-                ca.setContributorRole(ContributorRole.valueOf(this.getContributorRole().getValue()));
+                ca.setContributorRole(ContributorRole.fromValue(this.getContributorRole().getValue()));
             if (this.getContributorSequence() != null)
                 ca.setContributorSequence(SequenceType.fromValue(this.getContributorSequence().getValue()));
             c.setContributorAttributes(ca);
@@ -81,7 +80,9 @@ public class Contributor implements ErrorsInterface {
         if (this.getOrcid() != null)
             c.setContributorOrcid(new ContributorOrcid(this.getOrcid().getValue()));
         if (this.getCreditName() != null) {
-            c.setCreditName(new CreditName(this.getCreditName().getValue()));
+            CreditName cn = new CreditName(this.getCreditName().getValue());
+            cn.setVisibility(org.orcid.jaxb.model.message.Visibility.fromValue(this.getCreditNameVisibility().getVisibility().value()));
+            c.setCreditName(cn);
         }
         return c; 
     }
@@ -134,12 +135,12 @@ public class Contributor implements ErrorsInterface {
         this.creditName = creditName;
     }
 
-    public Visibility getContributorRoleVisibility() {
-        return contributorRoleVisibility;
+    public Visibility getCreditNameVisibility() {
+        return creditNameVisibility;
     }
 
-    public void setContributorRoleVisibility(Visibility contributorRoleVisibility) {
-        this.contributorRoleVisibility = contributorRoleVisibility;
+    public void setCreditNameVisibility(Visibility contributorRoleVisibility) {
+        this.creditNameVisibility = contributorRoleVisibility;
     }
 
     
