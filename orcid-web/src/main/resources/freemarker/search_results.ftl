@@ -42,8 +42,8 @@
 					<#else>                     
                     	<td>${(profileInfo.orcidBio.personalDetails.givenNames.content)!}</td>
                     	<td>${(profileInfo.orcidBio.personalDetails.familyName.content)!}</td>
-                    	<td title="<@otherNameTitle profileInfo.orcidBio.personalDetails.otherNames.otherName/>">
-                        	<@otherNameContent profileInfo.orcidBio.personalDetails.otherNames.otherName/>
+                    	<td title="<@otherNameTitle (profileInfo.orcidBio.personalDetails.otherNames.otherName)!/>">
+                        	<@otherNameContent (profileInfo.orcidBio.personalDetails.otherNames.otherName)!/>
                     	</td>
                     	<td>${(profileInfo.orcidBio.primaryInstitution.primaryInstitutionName.content)!}</td>
                     </#if>
