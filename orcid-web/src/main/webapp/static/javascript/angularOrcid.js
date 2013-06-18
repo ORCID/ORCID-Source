@@ -1040,9 +1040,11 @@ function QuickSearchCtrl($scope, $compile){
 				newSearchResults.removeClass('new-search-result');
 				var newSearchResultsTop = newSearchResults.offset().top;
 				console.log("search results top = " + newSearchResultsTop);
+				var showMoreButtonTop = $('#show-more-button').offset().top;
+				console.log("show more button top = " + showMoreButtonTop);
 				var bottom = $(window).height();
 				console.log("bottom = " + bottom);
-				if(newSearchResultsTop > (bottom - 20) ){
+				if(showMoreButtonTop > bottom){
 					$('html, body').animate(
 						{ 
 							scrollTop: newSearchResultsTop
