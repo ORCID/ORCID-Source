@@ -1013,3 +1013,77 @@ function WorkCtrl($scope, $compile){
 	};		
 }
 
+function QuickSearchCtrl($scope, $compile){
+	$scope.results = new Array();
+	$scope.numFound = 0;
+	$scope.start = 0;
+	$scope.rows = 10;
+	
+	$scope.getResults = function(rows){
+		$.ajax({
+			url: $('#ng-app').data('search-query-url') + '&start=' + $scope.start + '&rows=' + $scope.rows,      
+			dataType: 'json',
+			headers: { Accept: 'application/json'},
+			success: function(data) {
+				var resultsContainer = data['orcid-search-results']; 
+				if(typeof resultsContainer !== 'undefined'){
+					$scope.numFound = resultsContainer['num-found'];
+					$scope.results = $scope.results.concat(resultsContainer['orcid-search-result']);
+				}
+				else{
+					$('#no-results-alert').fadeIn(1200);
+				}
+				$scope.$apply();
+				$('#ajax-loader').hide();
+				var newSearchResults = $('.new-search-result');
+				newSearchResults.fadeIn(1200);
+				newSearchResults.removeClass('new-search-result');
+				var newSearchResultsTop = newSearchResults.offset().top;
+				console.log("search results top = " + newSearchResultsTop);
+				var showMoreButtonTop = $('#show-more-button').offset().top;
+				console.log("show more button top = " + showMoreButtonTop);
+				var bottom = $(window).height();
+				console.log("bottom = " + bottom);
+				if(showMoreButtonTop > bottom){
+					$('html, body').animate(
+						{ 
+							scrollTop: newSearchResultsTop
+						}, 
+						1000, 
+						'easeOutQuint'
+					);
+				}
+			}
+		}).fail(function(){
+			// something bad is happening!
+			console.log("error doing quick search");
+		});
+	};
+	
+	$scope.getMoreResults = function(){
+		$('#ajax-loader').show();
+		$scope.start += 10;
+		$scope.getResults();
+	};
+	
+	$scope.concatPropertyValues = function(array, propertyName){
+		if(typeof array === 'undefined'){
+			return '';
+		}
+		else{
+			return $.map(array, function(o){ return o[propertyName]; }).join(', ');
+		}
+	};
+	
+	$scope.areMoreResults = function(){
+		return $scope.numFound > $scope.rows;
+	};
+	
+	$scope.areResults = function(){
+		return $scope.numFound != 0;
+	};
+	
+	// init
+	$scope.getResults(10);
+}
+

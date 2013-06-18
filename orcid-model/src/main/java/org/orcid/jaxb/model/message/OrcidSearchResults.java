@@ -28,14 +28,18 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 /**
- * <p>Java class for anonymous complex type.
+ * <p>
+ * Java class for anonymous complex type.
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p>
+ * The following schema fragment specifies the expected content contained within
+ * this class.
  * 
  * <pre>
  * &lt;complexType>
@@ -60,22 +64,33 @@ public class OrcidSearchResults implements Serializable {
      * 
      */
     private static final long serialVersionUID = 1L;
+    @XmlAttribute(name = "num-found")
+    protected long numFound;
     @XmlElement(name = "orcid-search-result")
     protected List<OrcidSearchResult> orcidSearchResult;
+
+    public long getNumFound() {
+        return numFound;
+    }
+
+    public void setNumFound(long numFound) {
+        this.numFound = numFound;
+    }
 
     /**
      * Gets the value of the orcidSearchResult property.
      * 
      * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the orcidSearchResult property.
+     * This accessor method returns a reference to the live list, not a
+     * snapshot. Therefore any modification you make to the returned list will
+     * be present inside the JAXB object. This is why there is not a
+     * <CODE>set</CODE> method for the orcidSearchResult property.
      * 
      * <p>
      * For example, to add a new item, do as follows:
+     * 
      * <pre>
-     *    getOrcidSearchResult().add(newItem);
+     * getOrcidSearchResult().add(newItem);
      * </pre>
      * 
      * 

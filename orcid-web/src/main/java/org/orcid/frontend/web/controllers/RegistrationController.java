@@ -809,7 +809,7 @@ public class RegistrationController extends BaseController {
         queryForm.setFamilyName(lastName);
 
         String query = queryForm.deriveQueryString();
-        OrcidMessage visibleProfiles = orcidSearchManager.findOrcidsByQuery(query, DUP_SEARCH_START, DUP_SEARCH_ROWS, false);
+        OrcidMessage visibleProfiles = orcidSearchManager.findOrcidsByQuery(query, DUP_SEARCH_START, DUP_SEARCH_ROWS);
         if (visibleProfiles.getOrcidSearchResults() != null) {
             for (OrcidSearchResult searchResult : visibleProfiles.getOrcidSearchResults().getOrcidSearchResult()) {
                 orcidProfiles.add(searchResult.getOrcidProfile());

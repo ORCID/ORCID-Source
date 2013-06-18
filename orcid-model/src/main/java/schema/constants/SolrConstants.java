@@ -17,6 +17,7 @@
 package schema.constants;
 
 public class SolrConstants {
+    public static final String SCORE = "score";
     public static final String ORCID = "orcid";
     public static final String GIVEN_NAMES = "given-names";
     public static final String FAMILY_NAME = "family-name";
