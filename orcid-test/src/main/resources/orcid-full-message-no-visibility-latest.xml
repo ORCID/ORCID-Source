@@ -18,9 +18,9 @@
 
 -->
 <orcid-message xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://www.orcid.org/ns/orcid ../../../../orcid-model/src/main/resources/orcid-message-1.0.14.xsd"
+    xsi:schemaLocation="http://www.orcid.org/ns/orcid ../../../../orcid-model/src/main/resources/orcid-message-1.0.15.xsd"
     xmlns="http://www.orcid.org/ns/orcid">
-    <message-version>1.0.14</message-version>
+    <message-version>1.0.15</message-version>
     <orcid-profile xmlns="http://www.orcid.org/ns/orcid">
         <orcid>4444-4444-4444-4446</orcid>
         <orcid-id>http://orcid.org/4444-4444-4444-4446</orcid-id>

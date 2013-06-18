@@ -2241,3 +2241,11 @@ header overrides
 .justify {
 	text-align: justify;
 }
+
+.new-search-result {
+	display: none;
+}
+
+.search-result-orcid-id {
+	white-space:nowrap;
+}
