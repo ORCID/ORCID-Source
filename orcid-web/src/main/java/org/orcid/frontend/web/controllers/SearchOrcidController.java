@@ -84,7 +84,7 @@ public class SearchOrcidController extends BaseController {
 
         // no need to use other criteria if we're searching by a single orcid
         if (!StringUtils.isBlank(orcid)) {
-            orcidMessage = orcidSearchManager.findOrcidSearchResultsById(orcid, false);
+            orcidMessage = orcidSearchManager.findOrcidSearchResultsById(orcid);
             FRONTEND_WEB_SEARCH_REQUESTS.inc();
         } else {
             SearchOrcidSolrCriteria orcidSolrQuery = new SearchOrcidSolrCriteria();
@@ -95,7 +95,7 @@ public class SearchOrcidController extends BaseController {
             orcidSolrQuery.setPastInstitutionsSearchable(searchOrcidForm.isPastInstitutionsSearchable());
             orcidSolrQuery.setKeyword(searchOrcidForm.getKeyword());
             String query = orcidSolrQuery.deriveQueryString();
-            orcidMessage = orcidSearchManager.findOrcidsByQuery(query, false);
+            orcidMessage = orcidSearchManager.findOrcidsByQuery(query);
             FRONTEND_WEB_SEARCH_REQUESTS.inc();
         }
 

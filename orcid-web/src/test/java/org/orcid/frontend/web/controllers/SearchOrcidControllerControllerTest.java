@@ -64,7 +64,7 @@ public class SearchOrcidControllerControllerTest {
         assertTrue(SearchOrcidController.FRONTEND_WEB_SEARCH_RESULTS_NONE_FOUND.count() == 0);
         assertTrue(SearchOrcidController.FRONTEND_WEB_SEARCH_RESULTS_NONE_FOUND.count() == 0);
 
-        when(orcidSearchManager.findOrcidSearchResultsById(any(String.class), eq(false))).thenReturn(orcidWithMultipleResults());
+        when(orcidSearchManager.findOrcidSearchResultsById(any(String.class))).thenReturn(orcidWithMultipleResults());
         SearchOrcidBioForm orcidBioForm = new SearchOrcidBioForm();
         orcidBioForm.setOrcid("oid");
         searchOrcidController.searchByOrcid(orcidBioForm, mock(BindingResult.class));
@@ -80,7 +80,7 @@ public class SearchOrcidControllerControllerTest {
         assertTrue(SearchOrcidController.FRONTEND_WEB_SEARCH_RESULTS_NONE_FOUND.count() == 0);
         assertTrue(SearchOrcidController.FRONTEND_WEB_SEARCH_RESULTS_NONE_FOUND.count() == 0);
 
-        when(orcidSearchManager.findOrcidSearchResultsById(any(String.class), eq(false))).thenReturn(orcidWithNoResults());
+        when(orcidSearchManager.findOrcidSearchResultsById(any(String.class))).thenReturn(orcidWithNoResults());
         SearchOrcidBioForm orcidBioForm = new SearchOrcidBioForm();
         orcidBioForm.setOrcid("oid");
         searchOrcidController.searchByOrcid(orcidBioForm, mock(BindingResult.class));
@@ -96,7 +96,7 @@ public class SearchOrcidControllerControllerTest {
         assertTrue(SearchOrcidController.FRONTEND_WEB_SEARCH_RESULTS_NONE_FOUND.count() == 0);
         assertTrue(SearchOrcidController.FRONTEND_WEB_SEARCH_RESULTS_NONE_FOUND.count() == 0);
 
-        when(orcidSearchManager.findOrcidsByQuery(any(String.class), eq(false))).thenReturn(orcidWithMultipleResults());
+        when(orcidSearchManager.findOrcidsByQuery(any(String.class))).thenReturn(orcidWithMultipleResults());
         SearchOrcidBioForm orcidBioForm = new SearchOrcidBioForm();
         searchOrcidController.searchByOrcid(orcidBioForm, mock(BindingResult.class));
         assertTrue(SearchOrcidController.FRONTEND_WEB_SEARCH_REQUESTS.count() == 1);
@@ -111,7 +111,7 @@ public class SearchOrcidControllerControllerTest {
         assertTrue(SearchOrcidController.FRONTEND_WEB_SEARCH_RESULTS_NONE_FOUND.count() == 0);
         assertTrue(SearchOrcidController.FRONTEND_WEB_SEARCH_RESULTS_NONE_FOUND.count() == 0);
 
-        when(orcidSearchManager.findOrcidsByQuery(any(String.class), eq(false))).thenReturn(orcidWithNoResults());
+        when(orcidSearchManager.findOrcidsByQuery(any(String.class))).thenReturn(orcidWithNoResults());
         SearchOrcidBioForm orcidBioForm = new SearchOrcidBioForm();
         searchOrcidController.searchByOrcid(orcidBioForm, mock(BindingResult.class));
         assertTrue(SearchOrcidController.FRONTEND_WEB_SEARCH_REQUESTS.count() == 1);

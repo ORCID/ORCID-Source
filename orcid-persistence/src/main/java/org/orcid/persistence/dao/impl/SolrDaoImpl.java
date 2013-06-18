@@ -16,12 +16,13 @@
  */
 package org.orcid.persistence.dao.impl;
 
-import static schema.constants.SolrConstants.*;
+import static schema.constants.SolrConstants.SCORE;
+import static schema.constants.SolrConstants.ORCID;
+import static schema.constants.SolrConstants.PUBLIC_PROFILE;
 
 import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -38,8 +39,6 @@ import org.orcid.persistence.solr.entities.OrcidSolrResult;
 import org.orcid.persistence.solr.entities.OrcidSolrResults;
 import org.springframework.dao.NonTransientDataAccessResourceException;
 
-import schema.constants.SolrConstants;
-
 public class SolrDaoImpl implements SolrDao {
 
     @Resource(name = "solrServer")
@@ -47,9 +46,6 @@ public class SolrDaoImpl implements SolrDao {
 
     @Resource(name = "solrServerReadOnly")
     private SolrServer solrServerReadOnly;
-
-    private static final String[] SCORE_AND_INDIVIDUAL_FIELDS = new String[] { "score", ORCID, GIVEN_NAMES, FAMILY_NAME, EMAIL_ADDRESS,
-            AFFILIATE_PRIMARY_INSTITUTION_NAMES, AFFILIATE_INSTITUTION_NAME, AFFILIATE_PAST_INSTITUTION_NAMES, CREDIT_NAME, OTHER_NAMES };
 
     @Override
     public void persist(OrcidSolrDocument orcidSolrDocument) {
@@ -80,16 +76,16 @@ public class SolrDaoImpl implements SolrDao {
     public OrcidSolrResult findByOrcid(String orcid) {
         OrcidSolrResult orcidSolrResult = null;
         SolrQuery query = new SolrQuery();
-        query.setQuery(SolrConstants.ORCID + ":" + orcid).setFields("score", "*");
+        query.setQuery(ORCID + ":" + orcid).setFields(SCORE, ORCID, PUBLIC_PROFILE);
         ;
         try {
             QueryResponse queryResponse = solrServerReadOnly.query(query);
             if (!queryResponse.getResults().isEmpty()) {
                 SolrDocument solrDocument = queryResponse.getResults().get(0);
                 orcidSolrResult = new OrcidSolrResult();
-                orcidSolrResult.setRelevancyScore((Float) solrDocument.get("score"));
-                orcidSolrResult.setOrcid((String) solrDocument.get("orcid"));
-                orcidSolrResult.setPublicProfileMessage((String) solrDocument.getFieldValue("public-profile-message"));
+                orcidSolrResult.setRelevancyScore((Float) solrDocument.get(SCORE));
+                orcidSolrResult.setOrcid((String) solrDocument.get(ORCID));
+                orcidSolrResult.setPublicProfileMessage((String) solrDocument.getFieldValue(PUBLIC_PROFILE));
             }
         } catch (SolrServerException se) {
             String errorMessage = MessageFormat.format("Error when attempting to retrieve orcid {0}", new Object[] { orcid });
@@ -99,41 +95,14 @@ public class SolrDaoImpl implements SolrDao {
         return orcidSolrResult;
     }
 
-    @SuppressWarnings({ "unchecked", "rawtypes" })
     @Override
     public OrcidSolrResults findByDocumentCriteria(String queryString, Integer start, Integer rows) {
-        OrcidSolrResults orcidSolrResults = new OrcidSolrResults();
-        List<OrcidSolrResult> orcidSolrResultsList = new ArrayList<>();
-        orcidSolrResults.setResults(orcidSolrResultsList);
-        SolrQuery query = new SolrQuery(queryString).setFields(SCORE_AND_INDIVIDUAL_FIELDS);
+        SolrQuery query = new SolrQuery(queryString).setFields(SCORE, ORCID, PUBLIC_PROFILE);
         if (start != null)
             query.setStart(start);
         if (rows != null)
             query.setRows(rows);
-        try {
-            QueryResponse queryResponse = solrServerReadOnly.query(query);
-            for (SolrDocument solrDocument : queryResponse.getResults()) {
-                OrcidSolrResult orcidSolrResult = new OrcidSolrResult();
-                orcidSolrResult.setRelevancyScore((Float) solrDocument.getFieldValue("score"));
-                orcidSolrResult.setOrcid((String) solrDocument.getFieldValue("orcid"));
-                orcidSolrResult.setEmail((String) solrDocument.getFieldValue("email"));
-                orcidSolrResult.setGivenNames((String) solrDocument.getFieldValue("given-names"));
-                orcidSolrResult.setFamilyName((String) solrDocument.getFieldValue("family-name"));
-                orcidSolrResult.setCurrentPrimaryInstitutionAffiliationNames((Collection) solrDocument.getFieldValues("current-primary-institution-affiliation-name"));
-                orcidSolrResult.setCurrentInstitutionAffiliationNames((Collection) solrDocument.getFieldValues("current-institution-affiliation-name"));
-                orcidSolrResult.setPastInstitutionAffiliationNames((Collection) solrDocument.getFieldValues("past-institution-affiliation-name"));
-                orcidSolrResult.setCreditName((String) solrDocument.getFieldValue("credit-name"));
-                orcidSolrResult.setOtherNames((Collection) solrDocument.getFieldValues("other-names"));
-                orcidSolrResult.setPublicProfileMessage((String) solrDocument.getFieldValue("public-profile-message"));
-                orcidSolrResultsList.add(orcidSolrResult);
-            }
-            orcidSolrResults.setNumFound(queryResponse.getResults().getNumFound());
-
-        } catch (SolrServerException se) {
-            throw new NonTransientDataAccessResourceException("Error retrieving from SOLR Server", se);
-        }
-
-        return orcidSolrResults;
+        return querySolr(query);
     }
 
     @Override
@@ -147,13 +116,21 @@ public class SolrDaoImpl implements SolrDao {
             List<String> queryVals = entry.getValue();
             solrQuery.add(queryKey, queryVals.get(0));
         }
+        solrQuery.setFields(SCORE, ORCID, PUBLIC_PROFILE);
+        return querySolr(solrQuery);
+    }
 
+    private OrcidSolrResults querySolr(SolrQuery query) {
+        OrcidSolrResults orcidSolrResults = new OrcidSolrResults();
+        List<OrcidSolrResult> orcidSolrResultsList = new ArrayList<>();
+        orcidSolrResults.setResults(orcidSolrResultsList);
         try {
-            QueryResponse queryResponse = solrServerReadOnly.query(solrQuery.setFields(SCORE_AND_INDIVIDUAL_FIELDS));
+            QueryResponse queryResponse = solrServerReadOnly.query(query);
             for (SolrDocument solrDocument : queryResponse.getResults()) {
                 OrcidSolrResult orcidSolrResult = new OrcidSolrResult();
-                orcidSolrResult.setRelevancyScore((Float) solrDocument.get("score"));
-                orcidSolrResult.setOrcid((String) solrDocument.get("orcid"));
+                orcidSolrResult.setRelevancyScore((Float) solrDocument.getFieldValue(SCORE));
+                orcidSolrResult.setOrcid((String) solrDocument.getFieldValue(ORCID));
+                orcidSolrResult.setPublicProfileMessage((String) solrDocument.getFieldValue(PUBLIC_PROFILE));
                 orcidSolrResultsList.add(orcidSolrResult);
             }
             orcidSolrResults.setNumFound(queryResponse.getResults().getNumFound());
@@ -161,7 +138,6 @@ public class SolrDaoImpl implements SolrDao {
         } catch (SolrServerException se) {
             throw new NonTransientDataAccessResourceException("Error retrieving from SOLR Server", se);
         }
-
         return orcidSolrResults;
     }
 
