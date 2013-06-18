@@ -1038,11 +1038,19 @@ function QuickSearchCtrl($scope, $compile){
 				var newSearchResults = $('.new-search-result');
 				newSearchResults.fadeIn(1200);
 				newSearchResults.removeClass('new-search-result');
-				$('html, body').animate({ 
-					scrollTop: $(document).height()-$(window).height()}, 
-					1000, 
-					'easeOutQuint'
-				);
+				var newSearchResultsTop = newSearchResults.offset().top;
+				console.log("search results top = " + newSearchResultsTop);
+				var bottom = $(window).height();
+				console.log("bottom = " + bottom);
+				if(newSearchResultsTop > (bottom - 20) ){
+					$('html, body').animate(
+						{ 
+							scrollTop: newSearchResultsTop
+						}, 
+						1000, 
+						'easeOutQuint'
+					);
+				}
 			}
 		}).fail(function(){
 			// something bad is happening!
