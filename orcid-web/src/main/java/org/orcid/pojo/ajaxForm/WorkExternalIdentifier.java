@@ -19,6 +19,8 @@ package org.orcid.pojo.ajaxForm;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.orcid.jaxb.model.message.WorkExternalIdentifierId;
+import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
 import org.orcid.pojo.Email;
 
 public class WorkExternalIdentifier implements ErrorsInterface {
@@ -39,6 +41,15 @@ public class WorkExternalIdentifier implements ErrorsInterface {
                 this.setWorkExternalIdentifierType(new Text(workExternalIdentifier.getWorkExternalIdentifierType().value()));
         }
 
+    }
+    
+    public org.orcid.jaxb.model.message.WorkExternalIdentifier toWorkExternalIdentifier() {
+        org.orcid.jaxb.model.message.WorkExternalIdentifier we = new org.orcid.jaxb.model.message.WorkExternalIdentifier();
+        if (this.getWorkExternalIdentifierId() != null) 
+            we.setWorkExternalIdentifierId(new WorkExternalIdentifierId(this.getWorkExternalIdentifierId().getValue()));
+        if (this.getWorkExternalIdentifierType() != null)
+            we.setWorkExternalIdentifierType(WorkExternalIdentifierType.fromValue(this.getWorkExternalIdentifierType().getValue()));
+        return we;
     }
 
     public List<String> getErrors() {

@@ -14,32 +14,28 @@
  *
  * =============================================================================
  */
-package org.orcid.pojo;
+package org.orcid.pojo.ajaxForm;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlAttribute;
 
-import org.apache.commons.lang.StringUtils;
 import org.jbibtex.ParseException;
 import org.orcid.jaxb.model.message.CitationType;
 import org.orcid.jaxb.model.message.OrcidWork;
-import org.orcid.persistence.jpa.entities.WorkContributorEntity;
-import org.orcid.pojo.ajaxForm.Citation;
-import org.orcid.pojo.ajaxForm.Contributor;
-import org.orcid.pojo.ajaxForm.Date;
-import org.orcid.pojo.ajaxForm.ErrorsInterface;
-import org.orcid.pojo.ajaxForm.Text;
-import org.orcid.pojo.ajaxForm.Visibility;
-import org.orcid.pojo.ajaxForm.WorkExternalIdentifier;
-import org.orcid.pojo.ajaxForm.WorkTitle;
+import org.orcid.jaxb.model.message.Url;
+import org.orcid.jaxb.model.message.WorkContributors;
+import org.orcid.jaxb.model.message.WorkExternalIdentifiers;
+import org.orcid.jaxb.model.message.WorkSource;
+import org.orcid.jaxb.model.message.WorkType;
 import org.orcid.utils.BibtexUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.util.HtmlUtils;
 
 public class Work implements ErrorsInterface {
+    @SuppressWarnings("unused")
     private static final long serialVersionUID = 1L;
 
     private List<String> errors = new ArrayList<String>();
@@ -76,14 +72,18 @@ public class Work implements ErrorsInterface {
     }
 
     public Work(OrcidWork orcidWork) {
-        this.setPublicationDate(new Date(orcidWork.getPublicationDate()));      
-        this.setPutCode(new Text(orcidWork.getPutCode()));
-        this.setShortDescription(new Text(orcidWork.getShortDescription()));
-        Text url = new Text();
-        if (orcidWork.getUrl() != null) url.setValue(orcidWork.getUrl().getValue());
+        if (orcidWork.getPublicationDate() != null) 
+            this.setPublicationDate(new Date(orcidWork.getPublicationDate()));
+        if (this.getPutCode() !=null)
+            this.setPutCode(new Text(orcidWork.getPutCode()));
+        if (orcidWork.getShortDescription() != null)
+            this.setShortDescription(new Text(orcidWork.getShortDescription()));
+        if (orcidWork.getUrl() != null)
             this.setUrl(new Text(orcidWork.getUrl().getValue()));
-        this.setVisibility(new Visibility(orcidWork.getVisibility()));
-        this.setCitation(new Citation(orcidWork.getWorkCitation()));
+        if (this.getVisibility() != null)
+            this.setVisibility(new Visibility(orcidWork.getVisibility()));
+        if (this.getCitation() != null)
+            this.setCitation(new Citation(orcidWork.getWorkCitation()));
         
         if (orcidWork.getWorkContributors() != null && orcidWork.getWorkContributors().getContributor() != null) {
             List<Contributor> contributors = new ArrayList<Contributor>();
@@ -100,9 +100,50 @@ public class Work implements ErrorsInterface {
             this.setWorkExternalIdentifiers(workExternalIdentifiers);
         }
         if (orcidWork.getWorkSource() != null) 
-        this.setWorkSource(new Text(orcidWork.getWorkSource().getContent()));
-        this.setWorkTitle(new WorkTitle(orcidWork.getWorkTitle()));
-        this.setWorkType(new Text(orcidWork.getWorkType().value()));
+            this.setWorkSource(new Text(orcidWork.getWorkSource().getContent()));
+        if (orcidWork.getWorkTitle() != null)
+            this.setWorkTitle(new WorkTitle(orcidWork.getWorkTitle()));
+        if (orcidWork.getWorkType() != null)
+            this.setWorkType(new Text(orcidWork.getWorkType().value()));
+    }
+    
+    public OrcidWork toOrcidWork() {
+        OrcidWork ow = new OrcidWork();
+        if (this.getPublicationDate() != null)
+            ow.setPublicationDate(this.getPublicationDate().toPublicationDate());
+        if (this.getPutCode() != null)
+            ow.setPutCode(this.getPutCode().getValue());
+        if (this.getShortDescription() != null)
+            ow.setShortDescription(this.shortDescription.getValue());
+        if (this.getUrl() != null) 
+            ow.setUrl(new Url(this.url.getValue()));
+        if (this.getVisibility() != null)
+            ow.setVisibility(this.getVisibility().getVisibility());
+        if (this.getCitation() != null) 
+            ow.setWorkCitation(this.citation.toCitiation());
+        if (this.getContributors() != null) {
+            List<org.orcid.jaxb.model.message.Contributor> cList =  new ArrayList<org.orcid.jaxb.model.message.Contributor>();
+            for (Contributor c: this.getContributors()) {
+                cList.add(c.toContributor());
+                
+            }
+            ow.setWorkContributors(new WorkContributors(cList));
+        }
+        if (this.getWorkExternalIdentifiers() != null) {
+            List<org.orcid.jaxb.model.message.WorkExternalIdentifier> wiList = new ArrayList<org.orcid.jaxb.model.message.WorkExternalIdentifier>();
+            for (WorkExternalIdentifier wi:this.getWorkExternalIdentifiers()) {
+                wiList.add(wi.toWorkExternalIdentifier());
+            }
+            ow.setWorkExternalIdentifiers(new WorkExternalIdentifiers(wiList));
+        }
+        if (this.getWorkSource() != null)
+            ow.setWorkSource(new WorkSource(this.getWorkSource().getValue()));
+        if (this.getWorkTitle() != null)
+            ow.setWorkTitle(this.workTitle.toWorkTitle());
+        if (this.getWorkType() != null) {
+            ow.setWorkType(WorkType.fromValue(this.getWorkType().getValue()));
+        }
+        return ow;
     }
 
     /**

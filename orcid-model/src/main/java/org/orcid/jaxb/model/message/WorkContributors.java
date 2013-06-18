@@ -60,6 +60,14 @@ public class WorkContributors implements Serializable {
      */
     private static final long serialVersionUID = 1L;
     protected List<Contributor> contributor;
+    
+    public WorkContributors() {
+        
+    }
+    
+    public WorkContributors(List<Contributor> contributor) {
+        this.contributor=contributor;
+    }
 
     /**
      * Gets the value of the contributor property.

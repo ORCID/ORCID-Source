@@ -19,6 +19,11 @@ package org.orcid.pojo.ajaxForm;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.orcid.jaxb.model.message.Day;
+import org.orcid.jaxb.model.message.Month;
+import org.orcid.jaxb.model.message.PublicationDate;
+import org.orcid.jaxb.model.message.Year;
+
 public class Date implements ErrorsInterface, Required {
 
     private List<String> errors = new ArrayList<String>();
@@ -33,19 +38,24 @@ public class Date implements ErrorsInterface, Required {
         
     }
     
-    public Date(org.orcid.jaxb.model.message.PublicationDate publicationDate) {
-        if (publicationDate != null) {
+    public Date(PublicationDate publicationDate) {
             if (publicationDate.getDay() != null)
                 this.setDay(publicationDate.getDay().getValue());
             if (publicationDate.getMonth() != null)
                 this.setMonth(publicationDate.getMonth().getValue());
             if (publicationDate.getYear() != null)
                 this.setYear(publicationDate.getYear().getValue());
-        }
     }
     
-    public Date(String year, String month, String day) {
-        
+    public PublicationDate toPublicationDate() {
+        PublicationDate pd = new PublicationDate();
+        if (this.getDay() != null)
+            pd.setDay(new Day(Integer.getInteger(this.getDay())));
+        if (this.getMonth() != null)
+            pd.setMonth(new Month(Integer.getInteger(this.getMonth())));
+        if (this.getYear() != null)
+            pd.setYear(new Year(Integer.getInteger(this.getYear())));
+        return pd;
     }
 
     public List<String> getErrors() {

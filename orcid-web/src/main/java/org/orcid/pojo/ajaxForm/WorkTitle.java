@@ -19,6 +19,9 @@ package org.orcid.pojo.ajaxForm;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.orcid.jaxb.model.message.Subtitle;
+import org.orcid.jaxb.model.message.Title;
+
 public class WorkTitle implements ErrorsInterface {
     @SuppressWarnings("unused")
     private static final long serialVersionUID = 1L;
@@ -42,6 +45,15 @@ public class WorkTitle implements ErrorsInterface {
 
     }
 
+    public org.orcid.jaxb.model.message.WorkTitle toWorkTitle() {
+        org.orcid.jaxb.model.message.WorkTitle wt = new org.orcid.jaxb.model.message.WorkTitle();
+        if (this.getTitle() != null)
+            wt.setSubtitle(new Subtitle(this.getSubtitle().getValue()));
+        if (this.getSubtitle() != null)
+            wt.setTitle(new Title(this.getTitle().getValue()));
+        return wt;
+    }
+    
     public List<String> getErrors() {
         return errors;
     }

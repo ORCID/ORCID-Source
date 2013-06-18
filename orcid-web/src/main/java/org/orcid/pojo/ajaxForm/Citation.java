@@ -19,6 +19,8 @@ package org.orcid.pojo.ajaxForm;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.orcid.jaxb.model.message.CitationType;
+
 
 public class Citation implements ErrorsInterface, Required {
 
@@ -33,14 +35,19 @@ public class Citation implements ErrorsInterface, Required {
     }
     
     public Citation(org.orcid.jaxb.model.message.Citation citation) {
-        if (citation != null) {
             if (citation.getCitation() !=null) {
                this.citation = citation.getCitation();
             }
             if (citation.getWorkCitationType() != null) {
                 this.citationType = citation.getWorkCitationType().value();
             }
-        }
+    }
+    
+    public org.orcid.jaxb.model.message.Citation toCitiation() {
+        org.orcid.jaxb.model.message.Citation c = new org.orcid.jaxb.model.message.Citation();
+        c.setCitation(this.citation);
+        c.setWorkCitationType(CitationType.fromValue(this.citationType));
+        return c;
     }
     
     public List<String> getErrors() {

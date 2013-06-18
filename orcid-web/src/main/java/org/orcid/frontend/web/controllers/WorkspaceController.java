@@ -39,7 +39,7 @@ import org.orcid.jaxb.model.message.OrcidWorks;
 import org.orcid.jaxb.model.message.SourceOrcid;
 import org.orcid.persistence.adapter.Jpa2JaxbAdapter;
 import org.orcid.pojo.ThirdPartyRedirect;
-import org.orcid.pojo.Work;
+import org.orcid.pojo.ajaxForm.Work;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
