@@ -18,42 +18,36 @@ package org.orcid.core.profileEvent;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Callable;
-import java.util.concurrent.Future;
+
+import javax.annotation.Resource;
 
 import org.orcid.core.manager.NotificationManager;
-import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.manager.TemplateManager;
 import org.orcid.core.manager.impl.MailGunManager;
 import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidType;
-import org.orcid.persistence.dao.GenericDao;
-import org.orcid.persistence.dao.ProfileDao;
-import org.orcid.persistence.jpa.entities.ProfileEventEntity;
 import org.orcid.persistence.jpa.entities.ProfileEventType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
-import org.springframework.transaction.support.TransactionTemplate;
 
 public class CrossRefEmail implements ProfileEvent {
 
+    @Resource
     private MailGunManager mailGunManager;
 
+    @Resource
     private TemplateManager templateManager;
 
+    @Resource
     private OrcidUrlManager orcidUrlManager;
 
+    @Resource
     private NotificationManager notificationManager;
 
     private OrcidProfile orcidProfile;
@@ -67,12 +61,8 @@ public class CrossRefEmail implements ProfileEvent {
         return pes;
     }
 
-    public CrossRefEmail(OrcidProfile orcidProfile, ApplicationContext context) {
+    public CrossRefEmail(OrcidProfile orcidProfile) {
         this.orcidProfile = orcidProfile;
-        mailGunManager = (MailGunManager) context.getBean("mailGunManager");
-        notificationManager = (NotificationManager) context.getBean("notificationManager");
-        templateManager = (TemplateManager) context.getBean("templateManager");
-        orcidUrlManager = (OrcidUrlManager) context.getBean("orcidUrlManager");
     }
 
     public ProfileEventType call() throws Exception {
