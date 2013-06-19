@@ -171,6 +171,15 @@
 		<property name="defaultEncoding" value="UTF-8" />
 		<property name="cacheSeconds" value="${org.orcid.core.messages.cacheSeconds:5}" />
 	</bean>
+	
+	<bean id="orcidMessageVersionConverterChain" class="org.orcid.core.version.impl.OrcidMessageVersionConverterChainImpl">
+	    <property name="converters">
+	        <list>
+	            <bean class="org.orcid.core.version.impl.OrcidMessageVersionConverterImplV1_0_14ToV1_0_15"/>
+	            <bean class="org.orcid.core.version.impl.OrcidMessageVersionConverterImplV1_0_15ToV1_0_16"/>
+	        </list>
+	    </property>
+	</bean>
 
 	<cache:annotation-driven cache-manager="springCoreCacheManager"/>
 	
