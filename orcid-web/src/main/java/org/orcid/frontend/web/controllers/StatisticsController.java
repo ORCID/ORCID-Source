@@ -16,12 +16,14 @@
  */
 package org.orcid.frontend.web.controllers;
 
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
 
 import org.orcid.core.manager.StatisticsManager;
-import org.springframework.cache.annotation.Cacheable;
+import org.orcid.persistence.jpa.entities.StatisticValuesEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -32,13 +34,20 @@ public class StatisticsController extends BaseController {
 
     @Resource
     private StatisticsManager statisticsManager;
-
+    
     @RequestMapping(value = "/statistics", method = RequestMethod.GET)
-    @Cacheable("statistics")
-    public ModelAndView getStatistics() {
+    public ModelAndView getStatistics() {        
         ModelAndView mav = new ModelAndView("statistics");
-        Map<String, Long> statistics = statisticsManager.getStatistics();
-        mav.addObject("statistics", statistics);
+        Map<String, Long> statisticsMap = new HashMap<String, Long>();
+                
+        List<StatisticValuesEntity> statistics = statisticsManager.getLatestStatistics();
+        
+        for(StatisticValuesEntity statistic : statistics){
+            statisticsMap.put(statistic.getStatisticName(), statistic.getStatisticValue());
+        }        
+        
+        mav.addObject("statistics", statisticsMap);        
+       
         return mav;
-    }
+    }    
 }

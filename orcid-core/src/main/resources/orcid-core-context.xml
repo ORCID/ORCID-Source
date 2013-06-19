@@ -116,8 +116,6 @@
 
 	<bean id="orcidSearchManager" class="org.orcid.core.manager.impl.OrcidSearchManagerImpl" />
 
-	<bean id="searchManager" class="org.orcid.core.manager.impl.SolrAndDBSearchManagerImpl" />
-
 	<bean id="orcidIndexManager" class="org.orcid.core.manager.impl.OrcidIndexManagerImpl" />
 
 	<bean id="thirdPartyImportManagerImpl" class="org.orcid.core.manager.impl.ThirdPartyImportManagerImpl" />
@@ -139,7 +137,14 @@
 
 	<bean id="localeManager" class="org.orcid.core.manager.impl.LocaleManagerImpl" />
 
+	<!-- Statistics Generator Manager -->
+	<bean id="statisticsGeneratorManager" class="org.orcid.core.manager.impl.StatisticsGeneratorManagerImpl" />
+	
+	<!-- Statistics Manager -->
 	<bean id="statisticsManager" class="org.orcid.core.manager.impl.StatisticsManagerImpl" />
+	
+	<!-- Statistics Cron Job -->
+	<bean id="statisticsCronJob" class="org.orcid.core.cron.impl.StatisticsGeneratorCronJobImpl" />
 	
 	<bean id="emailManager" class="org.orcid.core.manager.impl.EmailManagerImpl" />
 	
@@ -155,6 +160,10 @@
 	<bean id="externalIdentifierManager" class="org.orcid.core.manager.impl.ExternalIdentifierManagerImpl" />
 	
 	<bean id="profileWorkManager" class="org.orcid.core.manager.impl.ProfileWorkManagerImpl" />
+	
+	<bean id="profileEventManager" class="org.orcid.core.profileEvent.ProfileEventManager" />
+	
+	<bean id="crossRefEmail" class="org.orcid.core.profileEvent.CrossRefEmail" scope="prototype"/>
 
 	<bean id="messageSource"
 		class="org.springframework.context.support.ReloadableResourceBundleMessageSource">

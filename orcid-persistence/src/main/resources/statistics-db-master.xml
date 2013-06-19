@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    =============================================================================
+
+    ORCID (R) Open Source
+    http://orcid.org
+
+    Copyright (c) 2012-2013 ORCID, Inc.
+    Licensed under an MIT-Style License (MIT)
+    http://orcid.org/open-source-license
+
+    This copyright and license information (including a link to the full license)
+    shall be included in its entirety in all copies or substantial portion of
+    the software.
+
+    =============================================================================
+
+-->
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+    <!--
+       If you're reading this after (or before) adding a visibility column
+       Please use the property as the 'type' e.g.
+       <column name="personal_details_visibility" type="${visibility.type}"/>
+     -->
+
+    <property name="visibility.type" value="VARCHAR(20)" dbms="postgresql"/>
+    <property name="visibility.type" value="VARCHAR(25)" dbms="hsqldb"/>
+
+    <include file="/db/statistics/install.xml"/>    
+</databaseChangeLog>

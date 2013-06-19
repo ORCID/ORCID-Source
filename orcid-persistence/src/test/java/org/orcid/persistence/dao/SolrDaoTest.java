@@ -35,6 +35,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.persistence.solr.entities.OrcidSolrDocument;
 import org.orcid.persistence.solr.entities.OrcidSolrResult;
+import org.orcid.persistence.solr.entities.OrcidSolrResults;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -89,18 +90,20 @@ public class SolrDaoTest {
     public void queryStringSearchPatent() throws Exception {
         OrcidSolrDocument firstOrcid = buildAndPersistFirstOrcid();
         String patentQueryString = "patent-numbers:Elec-hammer01X%3A";
-        List<OrcidSolrResult> solrResults = solrDao.findByDocumentCriteria(patentQueryString, null, null);
-        assertTrue(solrResults.size() == 1);
-        assertEquals(firstOrcid.getOrcid(), solrResults.get(0).getOrcid());
+        OrcidSolrResults orcidSolrResults = solrDao.findByDocumentCriteria(patentQueryString, null, null);
+        List<OrcidSolrResult> solrResultsList = orcidSolrResults.getResults();
+        assertTrue(solrResultsList.size() == 1);
+        assertEquals(firstOrcid.getOrcid(), solrResultsList.get(0).getOrcid());
     }
 
     @Test
     public void queryStringSearchGrant() throws Exception {
         OrcidSolrDocument secondOrcid = buildAndPersistSecondOrcid();
         String patentQueryString = "grant-numbers:grant-number02X%3A";
-        List<OrcidSolrResult> solrResults = solrDao.findByDocumentCriteria(patentQueryString, null, null);
-        assertTrue(solrResults.size() == 1);
-        assertEquals(secondOrcid.getOrcid(), solrResults.get(0).getOrcid());
+        OrcidSolrResults orcidSolrResults = solrDao.findByDocumentCriteria(patentQueryString, null, null);
+        List<OrcidSolrResult> solrResultsList = orcidSolrResults.getResults();
+        assertTrue(solrResultsList.size() == 1);
+        assertEquals(secondOrcid.getOrcid(), solrResultsList.get(0).getOrcid());
     }
 
     @Test
@@ -127,15 +130,16 @@ public class SolrDaoTest {
 
         String familyNameGivenNameQuery = "given-names:teddy AND family-name:bass";
 
-        List<OrcidSolrResult> solrResults = solrDao.findByDocumentCriteria(familyNameGivenNameQuery, null, null);
-        assertTrue(solrResults.size() == 1);
-        assertEquals(firstOrcid, solrResults.get(0).getOrcid());
+        OrcidSolrResults orcidSolrResults = solrDao.findByDocumentCriteria(familyNameGivenNameQuery, null, null);
+        List<OrcidSolrResult> solrResultsList = orcidSolrResults.getResults();
+        assertTrue(solrResultsList.size() == 1);
+        assertEquals(firstOrcid, solrResultsList.get(0).getOrcid());
 
         String familyNameQueryRelaxed = "given-names:te* AND family-name:Bass";
-        solrResults = solrDao.findByDocumentCriteria(familyNameQueryRelaxed, null, null);
-        assertTrue(solrResults.size() == 2);
-        assertEquals(firstOrcid, solrResults.get(0).getOrcid());
-        assertEquals(secondOrcid, solrResults.get(1).getOrcid());
+        solrResultsList = solrDao.findByDocumentCriteria(familyNameQueryRelaxed, null, null).getResults();
+        assertTrue(solrResultsList.size() == 2);
+        assertEquals(firstOrcid, solrResultsList.get(0).getOrcid());
+        assertEquals(secondOrcid, solrResultsList.get(1).getOrcid());
 
     }
 
@@ -145,11 +149,11 @@ public class SolrDaoTest {
         buildAndPersistSecondOrcid();
 
         String givenNameQueryString = "given-names:Given";
-        List<OrcidSolrResult> solrResults = solrDao.findByDocumentCriteria(givenNameQueryString, null, null);
+        List<OrcidSolrResult> solrResults = solrDao.findByDocumentCriteria(givenNameQueryString, null, null).getResults();
         assertTrue(solrResults.size() == 2);
 
         String givenNameWithExclusionsQueryString = MessageFormat.format("given-names:Given -orcid: {0}", new Object[] { secondOrcid });
-        solrResults = solrDao.findByDocumentCriteria(givenNameWithExclusionsQueryString, null, null);
+        solrResults = solrDao.findByDocumentCriteria(givenNameWithExclusionsQueryString, null, null).getResults();
         assertTrue(solrResults.size() == 1 && solrResults.get(0).getOrcid().equals(firstOrcid));
     }
 
@@ -164,13 +168,13 @@ public class SolrDaoTest {
         persistOrcid(secondDoc);
 
         String familyNameKeywordsQueryString = "given-names:given AND keyword:basic";
-        List<OrcidSolrResult> solrResults = solrDao.findByDocumentCriteria(familyNameKeywordsQueryString, null, null);
+        List<OrcidSolrResult> solrResults = solrDao.findByDocumentCriteria(familyNameKeywordsQueryString, null, null).getResults();
         assertTrue(solrResults.size() == 1);
         OrcidSolrResult result = solrResults.get(0);
         assertEquals(secondOrcid, result.getOrcid());
 
         familyNameKeywordsQueryString = "given-names:given AND keyword:advanced";
-        solrResults = solrDao.findByDocumentCriteria(familyNameKeywordsQueryString, null, null);
+        solrResults = solrDao.findByDocumentCriteria(familyNameKeywordsQueryString, null, null).getResults();
         assertTrue(solrResults.size() == 1);
         result = solrResults.get(0);
         assertEquals(secondOrcid, result.getOrcid());
@@ -188,13 +192,13 @@ public class SolrDaoTest {
         persistOrcid(secondDoc);
 
         String familyNameKeywordsQueryString = "given-names:given AND keyword:basic";
-        List<OrcidSolrResult> solrResults = solrDao.findByDocumentCriteria(familyNameKeywordsQueryString, null, null);
+        List<OrcidSolrResult> solrResults = solrDao.findByDocumentCriteria(familyNameKeywordsQueryString, null, null).getResults();
         assertTrue(solrResults.size() == 1);
         OrcidSolrResult result = solrResults.get(0);
         assertEquals(secondOrcid, result.getOrcid());
 
         familyNameKeywordsQueryString = "given-names:given AND keyword:advanced";
-        solrResults = solrDao.findByDocumentCriteria(familyNameKeywordsQueryString, null, null);
+        solrResults = solrDao.findByDocumentCriteria(familyNameKeywordsQueryString, null, null).getResults();
         assertTrue(solrResults.size() == 1);
         result = solrResults.get(0);
         assertEquals(secondOrcid, result.getOrcid());
@@ -221,7 +225,7 @@ public class SolrDaoTest {
 
         String familyNameGivenNameQuery = "{!edismax qf='family-name^1.0 given-names^2.0'}James";
 
-        List<OrcidSolrResult> solrResults = solrDao.findByDocumentCriteria(familyNameGivenNameQuery, null, null);
+        List<OrcidSolrResult> solrResults = solrDao.findByDocumentCriteria(familyNameGivenNameQuery, null, null).getResults();
 
         assertTrue(solrResults.size() == 3);
         OrcidSolrResult givenNameMatch = solrResults.get(0);
@@ -232,7 +236,7 @@ public class SolrDaoTest {
         assertTrue(familyNameMatch2.getRelevancyScore() < 1.0);
 
         String familyNameGivenNameQueryWithExclude = familyNameGivenNameQuery + " -orcid:" + thirdOrcidDoc.getOrcid();
-        solrResults = solrDao.findByDocumentCriteria(familyNameGivenNameQueryWithExclude, null, null);
+        solrResults = solrDao.findByDocumentCriteria(familyNameGivenNameQueryWithExclude, null, null).getResults();
         assertTrue(solrResults.size() == 2);
         givenNameMatch = solrResults.get(0);
         assertTrue(givenNameMatch.getOrcid().equals(secondOrcid));
@@ -258,7 +262,7 @@ public class SolrDaoTest {
 
         String familyNameGivenNameQuery = "{!edismax qf='family-name^1.0 given-names^2.0'}James";
 
-        List<OrcidSolrResult> solrResults = solrDao.findByDocumentCriteria(familyNameGivenNameQuery, null, null);
+        List<OrcidSolrResult> solrResults = solrDao.findByDocumentCriteria(familyNameGivenNameQuery, null, null).getResults();
 
         assertTrue(solrResults.size() == 2);
         assertTrue(solrResults.get(0).getOrcid().equals(secondOrcid));
@@ -281,11 +285,11 @@ public class SolrDaoTest {
         }
 
         String familyNameOnlyQuery = "family-name:Family Name";
-        List<OrcidSolrResult> solrResults = solrDao.findByDocumentCriteria(familyNameOnlyQuery, null, null);
+        List<OrcidSolrResult> solrResults = solrDao.findByDocumentCriteria(familyNameOnlyQuery, null, null).getResults();
         assertTrue(solrResults.size() == 10);
 
         familyNameOnlyQuery = "{!start=0 rows=5} family-name:Family Name";
-        solrResults = solrDao.findByDocumentCriteria(familyNameOnlyQuery, null, null);
+        solrResults = solrDao.findByDocumentCriteria(familyNameOnlyQuery, null, null).getResults();
         assertTrue(solrResults.size() == 5);
 
     }
@@ -296,56 +300,56 @@ public class SolrDaoTest {
         buildAndPersistSecondOrcid();
 
         String orcidQueryString = "text=1234\\-5678";
-        List<OrcidSolrResult> solrResults = solrDao.findByDocumentCriteria(orcidQueryString, null, null);
+        List<OrcidSolrResult> solrResults = solrDao.findByDocumentCriteria(orcidQueryString, null, null).getResults();
         assertTrue(solrResults.size() == 1);
 
         String givenNameQueryString = "text=Given";
-        solrResults = solrDao.findByDocumentCriteria(givenNameQueryString, null, null);
+        solrResults = solrDao.findByDocumentCriteria(givenNameQueryString, null, null).getResults();
         assertTrue(solrResults.size() == 2);
 
         String familyNameQueryString = "text=Smith";
-        solrResults = solrDao.findByDocumentCriteria(familyNameQueryString, null, null);
+        solrResults = solrDao.findByDocumentCriteria(familyNameQueryString, null, null).getResults();
         assertTrue(solrResults.size() == 1 && solrResults.get(0).getOrcid().equals(firstOrcid));
 
         String pastInstitutionsQueryString = "text=Brown";
-        solrResults = solrDao.findByDocumentCriteria(pastInstitutionsQueryString, null, null);
+        solrResults = solrDao.findByDocumentCriteria(pastInstitutionsQueryString, null, null).getResults();
         assertTrue(solrResults.size() == 1 && solrResults.get(0).getOrcid().equals(firstOrcid));
 
         String currentInstitutionsQueryString = "text=Current";
-        solrResults = solrDao.findByDocumentCriteria(currentInstitutionsQueryString, null, null);
+        solrResults = solrDao.findByDocumentCriteria(currentInstitutionsQueryString, null, null).getResults();
         assertTrue(solrResults.size() == 2 && solrResults.get(0).getOrcid().equals(firstOrcid));
         assertEquals(solrResults.get(1).getOrcid(), secondOrcid);
 
         String primaryInstitutionsQueryString = "text=Primary";
-        solrResults = solrDao.findByDocumentCriteria(primaryInstitutionsQueryString, null, null);
+        solrResults = solrDao.findByDocumentCriteria(primaryInstitutionsQueryString, null, null).getResults();
         assertTrue(solrResults.size() == 1 && solrResults.get(0).getOrcid().equals(secondOrcid));
 
         String patentsQueryString = "text=Elec-hammer01X%3A";
-        solrResults = solrDao.findByDocumentCriteria(patentsQueryString, null, null);
+        solrResults = solrDao.findByDocumentCriteria(patentsQueryString, null, null).getResults();
         assertTrue(solrResults.size() == 1 && solrResults.get(0).getOrcid().equals(firstOrcid));
 
         String grantQueryString = "text=Grant-number02X%3A";
-        solrResults = solrDao.findByDocumentCriteria(grantQueryString, null, null);
+        solrResults = solrDao.findByDocumentCriteria(grantQueryString, null, null).getResults();
         assertTrue(solrResults.size() == 1 && solrResults.get(0).getOrcid().equals(secondOrcid));
 
         String creditNameQueryString = "text=Credit";
-        solrResults = solrDao.findByDocumentCriteria(creditNameQueryString, null, null);
+        solrResults = solrDao.findByDocumentCriteria(creditNameQueryString, null, null).getResults();
         assertTrue(solrResults.size() == 1 && solrResults.get(0).getOrcid().equals(secondOrcid));
 
         String otherNamesQueryString = "text=Other";
-        solrResults = solrDao.findByDocumentCriteria(otherNamesQueryString, null, null);
+        solrResults = solrDao.findByDocumentCriteria(otherNamesQueryString, null, null).getResults();
         assertTrue(solrResults.size() == 1 && solrResults.get(0).getOrcid().equals(secondOrcid));
 
         String doiQueryString = "text=id2";
-        solrResults = solrDao.findByDocumentCriteria(doiQueryString, null, null);
+        solrResults = solrDao.findByDocumentCriteria(doiQueryString, null, null).getResults();
         assertTrue(solrResults.size() == 1 && solrResults.get(0).getOrcid().equals(secondOrcid));
 
         String worksTitlesQueryString = "text=Work Title 1";
-        solrResults = solrDao.findByDocumentCriteria(worksTitlesQueryString, null, null);
+        solrResults = solrDao.findByDocumentCriteria(worksTitlesQueryString, null, null).getResults();
         assertTrue(solrResults.size() == 1 && solrResults.get(0).getOrcid().equals(secondOrcid));
 
         String emailQueryString = "text=stan@ficitional.co.uk";
-        solrResults = solrDao.findByDocumentCriteria(emailQueryString, null, null);
+        solrResults = solrDao.findByDocumentCriteria(emailQueryString, null, null).getResults();
         assertTrue(solrResults.size() == 1 && solrResults.get(0).getOrcid().equals(secondOrcid));
 
     }

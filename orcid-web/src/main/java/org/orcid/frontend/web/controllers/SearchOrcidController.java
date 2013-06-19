@@ -23,6 +23,7 @@ import javax.validation.Valid;
 
 import org.apache.commons.lang.StringUtils;
 import org.orcid.core.manager.OrcidSearchManager;
+import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.frontend.web.controllers.helper.SearchOrcidSolrCriteria;
 import org.orcid.frontend.web.forms.SearchOrcidBioForm;
 import org.orcid.jaxb.model.message.OrcidMessage;
@@ -49,6 +50,9 @@ public class SearchOrcidController extends BaseController {
 
     @Resource
     private OrcidSearchManager orcidSearchManager;
+
+    @Resource
+    private OrcidUrlManager orcidUrlManager;
 
     public void setOrcidSearchManager(OrcidSearchManager orcidSearchManager) {
         this.orcidSearchManager = orcidSearchManager;
@@ -80,7 +84,7 @@ public class SearchOrcidController extends BaseController {
 
         // no need to use other criteria if we're searching by a single orcid
         if (!StringUtils.isBlank(orcid)) {
-            orcidMessage = orcidSearchManager.findOrcidSearchResultsById(orcid, false);
+            orcidMessage = orcidSearchManager.findOrcidSearchResultsById(orcid);
             FRONTEND_WEB_SEARCH_REQUESTS.inc();
         } else {
             SearchOrcidSolrCriteria orcidSolrQuery = new SearchOrcidSolrCriteria();
@@ -91,7 +95,7 @@ public class SearchOrcidController extends BaseController {
             orcidSolrQuery.setPastInstitutionsSearchable(searchOrcidForm.isPastInstitutionsSearchable());
             orcidSolrQuery.setKeyword(searchOrcidForm.getKeyword());
             String query = orcidSolrQuery.deriveQueryString();
-            orcidMessage = orcidSearchManager.findOrcidsByQuery(query, false);
+            orcidMessage = orcidSearchManager.findOrcidsByQuery(query);
             FRONTEND_WEB_SEARCH_REQUESTS.inc();
         }
 
@@ -115,22 +119,16 @@ public class SearchOrcidController extends BaseController {
             mav.addObject("noResultsFound", true);
             return mav;
         }
-        String query = "";
+        String searchQueryUrl = orcidUrlManager.getPubBaseUrl() + "/search/orcid-bio/?q=";
         queryFromUser = queryFromUser.trim();
         if (OrcidStringUtils.isValidOrcid(queryFromUser)) {
-            query = "orcid:" + queryFromUser;
+            searchQueryUrl += "orcid:" + queryFromUser;
         } else {
-            query = "{!edismax qf='given-and-family-names^50.0 family-name^10.0 given-names^5.0 credit-name^10.0 other-names:5.0 text^1.0' pf='given-and-family-names^50.0' mm=1}" + queryFromUser;
+            searchQueryUrl += "{!edismax qf='given-and-family-names^50.0 family-name^10.0 given-names^5.0 credit-name^10.0 other-names:5.0 text^1.0' pf='given-and-family-names^50.0' mm=1}"
+                    + queryFromUser;
         }
-        OrcidMessage orcidMessage = orcidSearchManager.findOrcidsByQuery(query, false);
         FRONTEND_WEB_SEARCH_REQUESTS.inc();
-        if (!orcidMessage.getOrcidSearchResults().getOrcidSearchResult().isEmpty()) {
-            incrementSearchMetrics(orcidMessage.getOrcidSearchResults().getOrcidSearchResult());
-            mav.addObject("searchResults", orcidMessage.getOrcidSearchResults().getOrcidSearchResult());
-        } else {
-            incrementSearchMetrics(null);
-            mav.addObject("noResultsFound", true);
-        }
+        mav.addObject("searchQueryUrl", searchQueryUrl);
         return mav;
     }
 

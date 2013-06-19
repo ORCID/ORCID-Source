@@ -21,6 +21,7 @@ import java.util.Map;
 
 import org.orcid.persistence.solr.entities.OrcidSolrDocument;
 import org.orcid.persistence.solr.entities.OrcidSolrResult;
+import org.orcid.persistence.solr.entities.OrcidSolrResults;
 
 public interface SolrDao {
 
@@ -51,27 +52,31 @@ public interface SolrDao {
     OrcidSolrResult findByOrcid(String orcid);
 
     /**
-     * Method to retrieve a List of OrcidSolrResult. Since this is for internal
-     * (NOT exposed via a REST API and only used by the Orcid web app) this
-     * currently expects only the query values representing the 'q' query field.
+     * Method to retrieve a List of OrcidSolrResult wrapped in an
+     * OrcidSolrResults object. Since this is for internal (NOT exposed via a
+     * REST API and only used by the Orcid web app) this currently expects only
+     * the query values representing the 'q' query field.
      * 
      * @param solrQuery
-     * @param start row to start query at
-     * @param rows number of row to query
+     * @param start
+     *            row to start query at
+     * @param rows
+     *            number of row to query
      * @return
      * @See {@link SolrDaoTest} for examples of this usage
      */
-    List<OrcidSolrResult> findByDocumentCriteria(String solrQuery, Integer start, Integer rows);
+    OrcidSolrResults findByDocumentCriteria(String solrQuery, Integer start, Integer rows);
 
     /**
-     * /** Method to retrieve a List of OrcidSolrResult. Since this is exposed
-     * this uses a set of Map values to build up the different params of a SOLR
-     * query. NB currently only a single value is accepted per key for this map.
+     * /** Method to retrieve a List of OrcidSolrResult wrapped in an
+     * OrcidSolrResults object. Since this is exposed this uses a set of Map
+     * values to build up the different params of a SOLR query. NB currently
+     * only a single value is accepted per key for this map.
      * 
      * @param solrMap
      * @return
      * @See {@link T2OrcidApiClientIntegrationTest} for example usage of the
      *      query string
      */
-    List<OrcidSolrResult> findByDocumentCriteria(Map<String, List<String>> solrMap);
+    OrcidSolrResults findByDocumentCriteria(Map<String, List<String>> solrMap);
 }
