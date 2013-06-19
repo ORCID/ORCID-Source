@@ -1022,8 +1022,7 @@ function QuickSearchCtrl($scope, $compile){
 	$scope.getResults = function(rows){
 		$.ajax({
 			url: $('#ng-app').data('search-query-url') + '&start=' + $scope.start + '&rows=' + $scope.rows,      
-			dataType: 'json',
-			headers: { Accept: 'application/json'},
+			dataType: 'jsonp',
 			success: function(data) {
 				var resultsContainer = data['orcid-search-results']; 
 				if(typeof resultsContainer !== 'undefined'){
