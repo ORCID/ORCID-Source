@@ -92,22 +92,6 @@ public class WorkspaceController extends BaseWorkspaceController {
         return mav;
     }
 
-    @RequestMapping(value = { "/public", "/preview" })
-    public ModelAndView preview(HttpServletRequest request, @RequestParam(value = "page", defaultValue = "1") int pageNo,
-            @RequestParam(value = "maxResults", defaultValue = "200") int maxResults) {
-        ModelAndView mav = new ModelAndView("public_profile");
-        mav.addObject("isPreview", true);
-
-        OrcidProfile profile = orcidProfileManager.retrievePublicOrcidProfile(getCurrentUserOrcid());
-        request.getSession().removeAttribute(PUBLIC_WORKS_RESULTS_ATTRIBUTE);
-        List<CurrentWork> currentWorks = getCurrentWorksFromProfile(profile);
-        if (currentWorks != null && !currentWorks.isEmpty()) {
-            mav.addObject("currentWorks", currentWorks);
-        }
-        mav.addObject("profile", profile);
-        return mav;
-    }
-
     /**
      * Retrieve all external identifiers as a json string
      * */
