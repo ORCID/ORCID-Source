@@ -16,10 +16,11 @@
  */
 package org.orcid.pojo.ajaxForm;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Visibility implements ErrorsInterface, Required {
+public class Visibility implements ErrorsInterface, Required, Serializable {
     /**
      * 
      */

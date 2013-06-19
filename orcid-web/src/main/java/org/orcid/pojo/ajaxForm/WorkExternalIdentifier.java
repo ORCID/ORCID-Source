@@ -16,15 +16,15 @@
  */
 package org.orcid.pojo.ajaxForm;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.orcid.jaxb.model.message.WorkExternalIdentifierId;
 import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
-import org.orcid.pojo.Email;
 
-public class WorkExternalIdentifier implements ErrorsInterface {
-    @SuppressWarnings("unused")
+public class WorkExternalIdentifier implements ErrorsInterface, Serializable {
+    
     private static final long serialVersionUID = 1L;
 
     private List<String> errors = new ArrayList<String>();
@@ -32,6 +32,10 @@ public class WorkExternalIdentifier implements ErrorsInterface {
     private Text workExternalIdentifierId;
 
     private Text workExternalIdentifierType;
+    
+    public WorkExternalIdentifier() {
+        
+    }
 
     public WorkExternalIdentifier(org.orcid.jaxb.model.message.WorkExternalIdentifier workExternalIdentifier) {
         if (workExternalIdentifier != null) {
@@ -75,5 +79,6 @@ public class WorkExternalIdentifier implements ErrorsInterface {
     public void setWorkExternalIdentifierType(Text workExternalIdentifierType) {
         this.workExternalIdentifierType = workExternalIdentifierType;
     }
+
 
 }

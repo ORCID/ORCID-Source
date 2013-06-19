@@ -16,14 +16,17 @@
  */
 package org.orcid.pojo.ajaxForm;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.orcid.jaxb.model.message.CitationType;
 
 
-public class Citation implements ErrorsInterface, Required {
+public class Citation implements ErrorsInterface, Required, Serializable {
 
+    private static final long serialVersionUID = 1L;
+    
     private List<String> errors = new ArrayList<String>();
     private String citation;
     private String citationType;

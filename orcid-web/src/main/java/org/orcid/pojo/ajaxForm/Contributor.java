@@ -16,6 +16,7 @@
  */
 package org.orcid.pojo.ajaxForm;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,8 +27,8 @@ import org.orcid.jaxb.model.message.CreditName;
 import org.orcid.jaxb.model.message.SequenceType;
 
 
-public class Contributor implements ErrorsInterface {
-    @SuppressWarnings("unused")
+public class Contributor implements ErrorsInterface, Serializable {
+    
     private static final long serialVersionUID = 1L;
 
     private List<String> errors = new ArrayList<String>();
@@ -44,6 +45,10 @@ public class Contributor implements ErrorsInterface {
     
     private Visibility creditNameVisibility;
 
+    public Contributor() {
+        
+    }
+    
     public Contributor(org.orcid.jaxb.model.message.Contributor contributor) {
        if (contributor != null) {
            if (contributor.getContributorAttributes() != null) {

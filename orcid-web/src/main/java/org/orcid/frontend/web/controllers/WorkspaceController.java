@@ -281,22 +281,22 @@ public class WorkspaceController extends BaseWorkspaceController {
     @RequestMapping(value = "/profileWork.json", method = RequestMethod.PUT)
     public @ResponseBody
     Work updateProfileWorkJson(HttpServletRequest request, @RequestBody Work work) {
-//        //Get cached profile
-//        OrcidProfile currentProfile = getCurrentUser().getEffectiveProfile();
-//        OrcidWorks orcidWorks = currentProfile.getOrcidActivities() == null ? null : currentProfile.getOrcidActivities().getOrcidWorks();
-//        if (orcidWorks != null) {
-//            List<OrcidWork> orcidWorksList = orcidWorks.getOrcidWork();
-//            if (orcidWorksList != null) {
-//                for (OrcidWork orcidWork : orcidWorksList) {
-//                    //If the put codes are equal, we know that they are the same work
-//                    if (orcidWork.getPutCode().equals(work.getPutCode())) {
-//                        //Update the privacy of the work
-//                        profileWorkManager.updateWork(currentProfile.getOrcid().getValue(), work.getPutCode(), work.getVisibility());
-//                    }
-//                }
-//            }
-//        }
-//        return work;
-        return null;
+        //Get cached profile
+        OrcidWork ow = work.toOrcidWork();
+        OrcidProfile currentProfile = getCurrentUser().getEffectiveProfile();
+        OrcidWorks orcidWorks = currentProfile.getOrcidActivities() == null ? null : currentProfile.getOrcidActivities().getOrcidWorks();
+        if (orcidWorks != null) {
+            List<OrcidWork> orcidWorksList = orcidWorks.getOrcidWork();
+            if (orcidWorksList != null) {
+                for (OrcidWork orcidWork : orcidWorksList) {
+                    //If the put codes are equal, we know that they are the same work
+                    if (orcidWork.getPutCode().equals(ow.getPutCode())) {
+                        //Update the privacy of the work
+                        profileWorkManager.updateWork(currentProfile.getOrcid().getValue(), ow.getPutCode(), ow.getVisibility());
+                    }
+                }
+            }
+        }
+        return work;
     }
 }

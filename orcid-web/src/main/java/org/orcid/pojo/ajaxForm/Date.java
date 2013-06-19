@@ -50,11 +50,11 @@ public class Date implements ErrorsInterface, Required {
     public PublicationDate toPublicationDate() {
         PublicationDate pd = new PublicationDate();
         if (this.getDay() != null)
-            pd.setDay(new Day(Integer.getInteger(this.getDay())));
+            pd.setDay(new Day(new Integer(this.getDay())));
         if (this.getMonth() != null)
-            pd.setMonth(new Month(Integer.getInteger(this.getMonth())));
+            pd.setMonth(new Month( new Integer(this.getMonth())));
         if (this.getYear() != null)
-            pd.setYear(new Year(Integer.getInteger(this.getYear())));
+            pd.setYear(new Year( new Integer(this.getYear())));
         return pd;
     }
 

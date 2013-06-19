@@ -16,10 +16,9 @@
  */
 package org.orcid.pojo.ajaxForm;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.xml.bind.annotation.XmlAttribute;
 
 import org.jbibtex.ParseException;
 import org.orcid.jaxb.model.message.CitationType;
@@ -34,8 +33,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.util.HtmlUtils;
 
-public class Work implements ErrorsInterface {
-    @SuppressWarnings("unused")
+public class Work implements ErrorsInterface, Serializable {
+    
     private static final long serialVersionUID = 1L;
 
     private List<String> errors = new ArrayList<String>();
@@ -64,7 +63,6 @@ public class Work implements ErrorsInterface {
     
     private Text workType;
 
-    @XmlAttribute
     protected String citationForDisplay;
 
     public Work() {
@@ -74,7 +72,7 @@ public class Work implements ErrorsInterface {
     public Work(OrcidWork orcidWork) {
         if (orcidWork.getPublicationDate() != null) 
             this.setPublicationDate(new Date(orcidWork.getPublicationDate()));
-        if (this.getPutCode() !=null)
+        if (orcidWork.getPutCode() !=null)
             this.setPutCode(new Text(orcidWork.getPutCode()));
         if (orcidWork.getShortDescription() != null)
             this.setShortDescription(new Text(orcidWork.getShortDescription()));
