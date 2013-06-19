@@ -20,18 +20,23 @@ import java.util.Date;
 import java.util.List;
 
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceUnit;
 import javax.persistence.TypedQuery;
 
 import org.orcid.persistence.dao.StatisticsDao;
-import org.orcid.persistence.jpa.entities.StatisticValuesEntity;
 import org.orcid.persistence.jpa.entities.StatisticKeyEntity;
+import org.orcid.persistence.jpa.entities.StatisticValuesEntity;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 
 @PersistenceUnit(name = "statisticManagerFactory")
 public class StatisticsDaoImpl implements StatisticsDao {
 
+    private static final Logger LOG = LoggerFactory.getLogger(StatisticsDaoImpl.class);
+    
     @PersistenceContext(unitName = "statistics")
     protected EntityManager entityManager;
 
@@ -57,9 +62,15 @@ public class StatisticsDaoImpl implements StatisticsDao {
     @Override
     @Transactional("statisticsTransactionManager")
     public StatisticKeyEntity getLatestKey() {
+        StatisticKeyEntity result = null;
         TypedQuery<StatisticKeyEntity> query = entityManager.createQuery("FROM StatisticKeyEntity ORDER BY generationDate DESC", StatisticKeyEntity.class);
         query.setMaxResults(1);
-        return query.getSingleResult();
+        try {
+            result = query.getSingleResult();
+        } catch(NoResultException nre){
+            LOG.warn("Couldnt find any statistics key, the cron job needs to run for the first time.");
+        }
+        return result;
     }
 
     /**
@@ -90,12 +101,13 @@ public class StatisticsDaoImpl implements StatisticsDao {
     public List<StatisticValuesEntity> getStatistic(long id) {
         TypedQuery<StatisticValuesEntity> query = entityManager.createQuery("FROM StatisticValuesEntity WHERE key.id = :id", StatisticValuesEntity.class);
         query.setParameter("id", id);
-        List<StatisticValuesEntity> results = query.getResultList();
-
-        for (StatisticValuesEntity result : results) {
-            System.out.println("Result: " + result.getStatisticName() + " - " + result.getStatisticValue());
+        List<StatisticValuesEntity> results = null;
+        try {
+            results = query.getResultList();
+        } catch(NoResultException nre){
+            LOG.warn("Couldnt find any statistics for the statistic key {}, the cron job might be running.", id); 
         }
-
+        
         return results;
     }
 
