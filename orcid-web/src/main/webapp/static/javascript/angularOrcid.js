@@ -941,17 +941,16 @@ function WorkCtrl($scope, $compile){
 	
 	$scope.deleteWork = function(idx) {		
 		$scope.deleteIndex = idx;
-		if ($scope.works[idx].workTitle) 
-			$scope.fixedTitle = $scope.works[idx].workTitle.title.content;
-		else $scope.fixedTitle = ''
+		if ($scope.works[idx].workTitle && $scope.works[idx].workTitle.title) 
+			$scope.fixedTitle = $scope.works[idx].workTitle.title.value;
+		else $scope.fixedTitle = '';
         var maxSize = 100;
         if($scope.fixedTitle.length > maxSize)
         	$scope.fixedTitle = $scope.fixedTitle.substring(0, maxSize) + '...';
 		$.colorbox({        	            
             html : $compile($('#delete-work-modal').html())($scope)           
         });
-		$scope.$apply(); 
-        $.colorbox.resize();        
+		$.colorbox.resize();        
 	};
 	
 	$scope.deleteByIndex = function() {		
@@ -961,7 +960,6 @@ function WorkCtrl($scope, $compile){
 		// remove the work from the UI
     	$scope.works.splice($scope.deleteIndex, 1);
     	// apply changes on scope
-		$scope.$apply();
 		// close box
 		$.colorbox.close(); 
 	};
