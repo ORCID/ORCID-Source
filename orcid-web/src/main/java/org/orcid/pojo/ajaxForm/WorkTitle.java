@@ -32,21 +32,19 @@ public class WorkTitle implements ErrorsInterface, Serializable {
     private Text title;
 
     private Text subtitle;
-
-    public WorkTitle() {
-        
-    }
     
-    public WorkTitle(org.orcid.jaxb.model.message.WorkTitle workTitle) {
+    public static WorkTitle valueOf(org.orcid.jaxb.model.message.WorkTitle workTitle) {
+        WorkTitle wt = new WorkTitle(); 
         if (workTitle != null) {
             if (workTitle.getTitle() != null) {
-                this.setTitle(new Text(workTitle.getTitle().getContent()));
+                wt.setTitle(Text.valueOf(workTitle.getTitle().getContent()));
             }
             if (workTitle.getSubtitle() != null) {
-                this.setSubtitle(new Text(workTitle.getSubtitle().getContent()));
+                wt.setSubtitle(Text.valueOf(workTitle.getSubtitle().getContent()));
             }
 
         }
+        return wt;
 
     }
 

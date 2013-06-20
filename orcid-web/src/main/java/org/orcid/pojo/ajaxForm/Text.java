@@ -29,12 +29,10 @@ public class Text implements ErrorsInterface, Required, Serializable {
     private boolean required = true;
     private String getRequiredMessage;
 
-    public Text() {
-
-    }
-
-    public Text(String value) {
-        this.value = value;
+    public static Text valueOf(String value) {
+        Text t = new Text();
+        t.setValue(value);
+       return t;
     }
 
     public List<String> getErrors() {

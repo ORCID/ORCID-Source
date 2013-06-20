@@ -267,7 +267,7 @@ public class WorkspaceController extends BaseWorkspaceController {
         List<String> workIds = new ArrayList<String>();
         if (orcidWorks != null) {
             for (OrcidWork work : orcidWorks.getOrcidWork()) {
-                worksMap.put(work.getPutCode(), new Work(work));
+                worksMap.put(work.getPutCode(), Work.valueOf(work));
                 workIds.add(work.getPutCode());
             }
             request.getSession().setAttribute(WORKS_MAP, worksMap);

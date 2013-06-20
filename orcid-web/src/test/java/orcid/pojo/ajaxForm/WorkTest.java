@@ -51,11 +51,11 @@ public class WorkTest extends XMLTestCase {
     }
 
     @Test
-    public void testSerilalize() throws Exception {
+    public void testValueOfAndBack() throws Exception {
         
         // check the empty work case
         OrcidWork ow = new OrcidWork();
-        Work work = new Work(ow);
+        Work work = Work.valueOf(ow);
         OrcidWork ow2 = work.toOrcidWork();
         assertEquals(ow.toString(), ow2.toString());
         
@@ -63,7 +63,7 @@ public class WorkTest extends XMLTestCase {
         OrcidMessage om = getOrcidMessage("/orcid-protected-full-message-latest.xml");
         List<OrcidWork> owList = om.getOrcidProfile().getOrcidActivities().getOrcidWorks().getOrcidWork();
         for (OrcidWork curOw: owList) {
-            Work curWork = new Work(curOw);
+            Work curWork = Work.valueOf(curOw);
             OrcidWork curOw2 = curWork.toOrcidWork();  
             assertEquals(curOw.toString(), curOw2.toString());           
         }

@@ -33,17 +33,15 @@ public class WorkExternalIdentifier implements ErrorsInterface, Serializable {
 
     private Text workExternalIdentifierType;
     
-    public WorkExternalIdentifier() {
-        
-    }
-
-    public WorkExternalIdentifier(org.orcid.jaxb.model.message.WorkExternalIdentifier workExternalIdentifier) {
+    public static WorkExternalIdentifier valueOf(org.orcid.jaxb.model.message.WorkExternalIdentifier workExternalIdentifier) {
+        WorkExternalIdentifier wi = new WorkExternalIdentifier();
         if (workExternalIdentifier != null) {
             if (workExternalIdentifier.getWorkExternalIdentifierId() != null)
-                this.setWorkExternalIdentifierId(new Text(workExternalIdentifier.getWorkExternalIdentifierId().getContent()));
+                wi.setWorkExternalIdentifierId(Text.valueOf(workExternalIdentifier.getWorkExternalIdentifierId().getContent()));
             if (workExternalIdentifier.getWorkExternalIdentifierType() != null)
-                this.setWorkExternalIdentifierType(new Text(workExternalIdentifier.getWorkExternalIdentifierType().value()));
+                wi.setWorkExternalIdentifierType(Text.valueOf(workExternalIdentifier.getWorkExternalIdentifierType().value()));
         }
+        return wi;
 
     }
     

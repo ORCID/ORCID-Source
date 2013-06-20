@@ -33,17 +33,15 @@ public class Citation implements ErrorsInterface, Required, Serializable {
     private boolean required = true;
     private String getRequiredMessage;
 
-    public Citation() {
-        
-    }
-    
-    public Citation(org.orcid.jaxb.model.message.Citation citation) {
+    public static Citation valueOf(org.orcid.jaxb.model.message.Citation citation) {
+        Citation c  = new Citation();
             if (citation.getCitation() !=null) {
-               this.citation = citation.getCitation();
+               c.setCitation(citation.getCitation());
             }
             if (citation.getWorkCitationType() != null) {
-                this.citationType = citation.getWorkCitationType().value();
+                c.setCitationType(citation.getWorkCitationType().value());
             }
+            return c;
     }
     
     public org.orcid.jaxb.model.message.Citation toCitiation() {

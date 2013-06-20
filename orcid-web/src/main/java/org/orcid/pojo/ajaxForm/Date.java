@@ -30,31 +30,29 @@ public class Date implements ErrorsInterface, Required {
     private String month;
     private String day;
     private String year;
-    
+
     private boolean required = true;
     private String getRequiredMessage;
-    
-    public Date() {
-        
+
+    public static Date valueOf(PublicationDate publicationDate) {
+        Date d = new Date();
+        if (publicationDate.getDay() != null)
+            d.setDay(publicationDate.getDay().getValue());
+        if (d.getMonth() != null)
+            d.setMonth(publicationDate.getMonth().getValue());
+        if (publicationDate.getYear() != null)
+            d.setYear(publicationDate.getYear().getValue());
+        return d;
     }
-    
-    public Date(PublicationDate publicationDate) {
-            if (publicationDate.getDay() != null)
-                this.setDay(publicationDate.getDay().getValue());
-            if (publicationDate.getMonth() != null)
-                this.setMonth(publicationDate.getMonth().getValue());
-            if (publicationDate.getYear() != null)
-                this.setYear(publicationDate.getYear().getValue());
-    }
-    
+
     public PublicationDate toPublicationDate() {
         PublicationDate pd = new PublicationDate();
         if (this.getDay() != null)
             pd.setDay(new Day(new Integer(this.getDay())));
         if (this.getMonth() != null)
-            pd.setMonth(new Month( new Integer(this.getMonth())));
+            pd.setMonth(new Month(new Integer(this.getMonth())));
         if (this.getYear() != null)
-            pd.setYear(new Year( new Integer(this.getYear())));
+            pd.setYear(new Year(new Integer(this.getYear())));
         return pd;
     }
 

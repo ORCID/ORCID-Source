@@ -65,44 +65,42 @@ public class Work implements ErrorsInterface, Serializable {
 
     protected String citationForDisplay;
 
-    public Work() {
-
-    }
-
-    public Work(OrcidWork orcidWork) {
+    public static Work valueOf(OrcidWork orcidWork) {
+        Work w = new Work();
         if (orcidWork.getPublicationDate() != null) 
-            this.setPublicationDate(new Date(orcidWork.getPublicationDate()));
+            w.setPublicationDate(Date.valueOf(orcidWork.getPublicationDate()));
         if (orcidWork.getPutCode() !=null)
-            this.setPutCode(new Text(orcidWork.getPutCode()));
+            w.setPutCode(Text.valueOf(orcidWork.getPutCode()));
         if (orcidWork.getShortDescription() != null)
-            this.setShortDescription(new Text(orcidWork.getShortDescription()));
+            w.setShortDescription(Text.valueOf(orcidWork.getShortDescription()));
         if (orcidWork.getUrl() != null)
-            this.setUrl(new Text(orcidWork.getUrl().getValue()));
+            w.setUrl(Text.valueOf(orcidWork.getUrl().getValue()));
         if (orcidWork.getVisibility() != null)
-            this.setVisibility(new Visibility(orcidWork.getVisibility()));
+            w.setVisibility(Visibility.valueOf(orcidWork.getVisibility()));
         if (orcidWork.getWorkCitation() != null)
-            this.setCitation(new Citation(orcidWork.getWorkCitation()));
+            w.setCitation(Citation.valueOf(orcidWork.getWorkCitation()));
         
         if (orcidWork.getWorkContributors() != null && orcidWork.getWorkContributors().getContributor() != null) {
             List<Contributor> contributors = new ArrayList<Contributor>();
             for ( org.orcid.jaxb.model.message.Contributor owContributor:orcidWork.getWorkContributors().getContributor()) {
-                contributors.add(new Contributor(owContributor));
+                contributors.add(Contributor.valueOf(owContributor));
             }
-            this.setContributors(contributors);
+            w.setContributors(contributors);
         }
         if (orcidWork.getWorkExternalIdentifiers() != null && orcidWork.getWorkExternalIdentifiers().getWorkExternalIdentifier() != null) {
             List<WorkExternalIdentifier> workExternalIdentifiers =  new ArrayList<WorkExternalIdentifier>();
             for (org.orcid.jaxb.model.message.WorkExternalIdentifier owWorkExternalIdentifier: orcidWork.getWorkExternalIdentifiers().getWorkExternalIdentifier()) {
-                workExternalIdentifiers.add(new WorkExternalIdentifier(owWorkExternalIdentifier));
+                workExternalIdentifiers.add(WorkExternalIdentifier.valueOf(owWorkExternalIdentifier));
             }
-            this.setWorkExternalIdentifiers(workExternalIdentifiers);
+            w.setWorkExternalIdentifiers(workExternalIdentifiers);
         }
         if (orcidWork.getWorkSource() != null) 
-            this.setWorkSource(new Text(orcidWork.getWorkSource().getContent()));
+            w.setWorkSource(Text.valueOf(orcidWork.getWorkSource().getContent()));
         if (orcidWork.getWorkTitle() != null)
-            this.setWorkTitle(new WorkTitle(orcidWork.getWorkTitle()));
+            w.setWorkTitle(WorkTitle.valueOf(orcidWork.getWorkTitle()));
         if (orcidWork.getWorkType() != null)
-            this.setWorkType(new Text(orcidWork.getWorkType().value()));
+            w.setWorkType(Text.valueOf(orcidWork.getWorkType().value()));
+        return w;
     }
     
     public OrcidWork toOrcidWork() {

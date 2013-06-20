@@ -26,50 +26,47 @@ import org.orcid.jaxb.model.message.ContributorRole;
 import org.orcid.jaxb.model.message.CreditName;
 import org.orcid.jaxb.model.message.SequenceType;
 
-
 public class Contributor implements ErrorsInterface, Serializable {
-    
+
     private static final long serialVersionUID = 1L;
 
     private List<String> errors = new ArrayList<String>();
-    
+
     private Text contributorSequence;
-    
+
     private Text email;
-    
+
     private Text orcid;
-    
+
     private Text creditName;
-    
+
     private Text contributorRole;
-    
+
     private Visibility creditNameVisibility;
 
-    public Contributor() {
-        
+    public static Contributor valueOf(org.orcid.jaxb.model.message.Contributor contributor) {
+        Contributor c = new Contributor();
+        if (contributor != null) {
+            if (contributor.getContributorAttributes() != null) {
+                contributor.getContributorAttributes();
+                if (contributor.getContributorAttributes().getContributorRole() != null)
+                    c.setContributorRole(Text.valueOf(contributor.getContributorAttributes().getContributorRole().value()));
+                if (contributor.getContributorAttributes().getContributorRole() != null)
+                    c.setContributorSequence(Text.valueOf(contributor.getContributorAttributes().getContributorSequence().value()));
+            }
+            if (contributor.getContributorEmail() != null)
+                c.setEmail(Text.valueOf(contributor.getContributorEmail().getValue()));
+            if (contributor.getContributorOrcid() != null)
+                c.setOrcid(Text.valueOf(contributor.getContributorOrcid().getValue()));
+            if (contributor.getCreditName() != null) {
+                c.setCreditName(Text.valueOf(contributor.getCreditName().getContent()));
+                c.setCreditNameVisibility(Visibility.valueOf(contributor.getCreditName().getVisibility()));
+            }
+        }
+        return c;
+
     }
-    
-    public Contributor(org.orcid.jaxb.model.message.Contributor contributor) {
-       if (contributor != null) {
-           if (contributor.getContributorAttributes() != null) {
-               contributor.getContributorAttributes();
-               if (contributor.getContributorAttributes().getContributorRole() != null) 
-                   this.setContributorRole( new Text(contributor.getContributorAttributes().getContributorRole().value()));
-               if (contributor.getContributorAttributes().getContributorRole() != null)
-                this.setContributorSequence(new Text(contributor.getContributorAttributes().getContributorSequence().value()));
-           }
-           if (contributor.getContributorEmail() != null)
-               this.setEmail(new Text(contributor.getContributorEmail().getValue()));
-           if (contributor.getContributorOrcid() != null)
-               this.setOrcid(new Text(contributor.getContributorOrcid().getValue()));
-           if (contributor.getCreditName() != null) {
-               this.setCreditName(new  Text(contributor.getCreditName().getContent()));
-               this.setCreditNameVisibility(new Visibility(contributor.getCreditName().getVisibility()));
-           }       
-       }
-        
-    }
-    
+
     public org.orcid.jaxb.model.message.Contributor toContributor() {
         org.orcid.jaxb.model.message.Contributor c = new org.orcid.jaxb.model.message.Contributor();
         if (this.getContributorRole() != null || this.getContributorSequence() != null) {
@@ -89,9 +86,9 @@ public class Contributor implements ErrorsInterface, Serializable {
             cn.setVisibility(org.orcid.jaxb.model.message.Visibility.fromValue(this.getCreditNameVisibility().getVisibility().value()));
             c.setCreditName(cn);
         }
-        return c; 
+        return c;
     }
-    
+
     public List<String> getErrors() {
         return errors;
     }
@@ -147,7 +144,5 @@ public class Contributor implements ErrorsInterface, Serializable {
     public void setCreditNameVisibility(Visibility contributorRoleVisibility) {
         this.creditNameVisibility = contributorRoleVisibility;
     }
-
-    
 
 }
