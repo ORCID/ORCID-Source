@@ -27,23 +27,33 @@
     	<hr>
 
         <span class="stat-name">${springMacroRequestContext.getMessage("statistics.live_ids")}</span>
-  		<div class="pull-right">${statistics['liveIds']}</div>
-  		<hr>
+		<div class="pull-right">
+	        <#if statistics['liveIds']??>${statistics['liveIds']}<#else>Calculating</#if>
+	    </div>
+  		<hr>        
         
         <span class="stat-name">${springMacroRequestContext.getMessage("statistics.ids_with_verified_emails")}</span>
-  		<div class="pull-right">${statistics['idsWithVerifiedEmail']}</div>
+  		<div class="pull-right">
+	        <#if statistics['idsWithVerifiedEmail']??>${statistics['idsWithVerifiedEmail']}<#else>Calculating</#if>
+		</div>  		
   		<hr>
-        
+  		        
 		<span class="stat-name">${springMacroRequestContext.getMessage("statistics.ids_with_works")}</span>
-  		<div class="pull-right">${statistics['idsWithWorks']}</div>
+  		<div class="pull-right">
+	        <#if statistics['idsWithWorks']??>${statistics['idsWithWorks']}<#else>Calculating</#if>
+		</div>
   		<hr>
 		
 		<span class="stat-name">${springMacroRequestContext.getMessage("statistics.number_of_works")}</span>
-  		<div class="pull-right">${statistics['works']}</div>
+  		<div class="pull-right">
+	        <#if statistics['works']??>${statistics['works']}<#else>Calculating</#if>
+		</div>
   		<hr>
 
 		<span class="stat-name">${springMacroRequestContext.getMessage("statistics.number_of_works_with_dois")}</span>
-  		<div class="pull-right">${statistics['worksWithDois']}</div>
+  		<div class="pull-right">
+	        <#if statistics['worksWithDois']??>${statistics['worksWithDois']}<#else>Calculating</#if>
+		</div>
   		<hr>
     </div>
 </div>

@@ -42,9 +42,10 @@ public class StatisticsController extends BaseController {
                 
         List<StatisticValuesEntity> statistics = statisticsManager.getLatestStatistics();
         
-        for(StatisticValuesEntity statistic : statistics){
-            statisticsMap.put(statistic.getStatisticName(), statistic.getStatisticValue());
-        }        
+        if(statistics != null)
+            for(StatisticValuesEntity statistic : statistics){
+                statisticsMap.put(statistic.getStatisticName(), statistic.getStatisticValue());
+            }        
         
         mav.addObject("statistics", statisticsMap);        
        
