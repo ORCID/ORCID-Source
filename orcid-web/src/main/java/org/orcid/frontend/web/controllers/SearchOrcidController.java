@@ -19,6 +19,7 @@ package org.orcid.frontend.web.controllers;
 import java.util.List;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.apache.commons.lang.StringUtils;
@@ -112,14 +113,14 @@ public class SearchOrcidController extends BaseController {
     }
 
     @RequestMapping(value = "/quick-search")
-    public ModelAndView quickSearch(@ModelAttribute("searchQuery") String queryFromUser, @ModelAttribute("solrQuery") String solrQuery) {
+    public ModelAndView quickSearch(HttpServletRequest request, @ModelAttribute("searchQuery") String queryFromUser, @ModelAttribute("solrQuery") String solrQuery) {
         ModelAndView mav = new ModelAndView("quick_search");
         if (StringUtils.isBlank(queryFromUser) && StringUtils.isBlank(solrQuery)) {
             incrementSearchMetrics(null);
             mav.addObject("noResultsFound", true);
             return mav;
         }
-        String searchQueryUrl = orcidUrlManager.getPubBaseUrl() + "/search/orcid-bio/?q=";
+        String searchQueryUrl = createSearchBaseUrl(request);
         queryFromUser = queryFromUser.trim();
         if (StringUtils.isNotBlank(solrQuery)) {
             searchQueryUrl += solrQuery;
@@ -141,6 +142,13 @@ public class SearchOrcidController extends BaseController {
         }
 
         FRONTEND_WEB_SEARCH_RESULTS_FOUND.inc(searchResults.size());
+    }
+
+    private String createSearchBaseUrl(HttpServletRequest request) {
+        String scheme = request.getScheme();
+        String baseUrlWithCorrectedProtocol = orcidUrlManager.getBaseUrl().replaceAll("^https?", scheme);
+        String baseUrlWithCorrectedContext = baseUrlWithCorrectedProtocol.replaceAll("/orcid-web$", "/orcid-pub-web");
+        return baseUrlWithCorrectedContext + "/search/orcid-bio/?q=";
     }
 
 }
