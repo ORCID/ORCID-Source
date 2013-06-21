@@ -41,7 +41,7 @@ public class EmailDaoImpl extends GenericDaoImpl<EmailEntity, String> implements
     @Override
     public boolean emailExists(String email) {
         Assert.hasText(email, "Cannot check for an empty email address");
-        TypedQuery<Long> query = entityManager.createQuery("select count(email) from EmailEntity where lower(email) = lower(:email)", Long.class);
+        TypedQuery<Long> query = entityManager.createQuery("select count(email) from EmailEntity where trim(lower(email)) = trim(lower(:email))", Long.class);
         query.setParameter("email", email);
         Long result = query.getSingleResult();
         return (result != null && result > 0);
@@ -50,7 +50,7 @@ public class EmailDaoImpl extends GenericDaoImpl<EmailEntity, String> implements
     @Override
     public EmailEntity findCaseInsensitive(String email) {
         Assert.hasText(email, "Cannot find using an empty email address");
-        TypedQuery<EmailEntity> query = entityManager.createQuery("from EmailEntity where lower(email) = lower(:email)", EmailEntity.class);
+        TypedQuery<EmailEntity> query = entityManager.createQuery("from EmailEntity where trim(lower(email)) = trim(lower(:email))", EmailEntity.class);
         query.setParameter("email", email);
         List<EmailEntity> results = query.getResultList();
         return results.isEmpty() ? null : results.get(0);

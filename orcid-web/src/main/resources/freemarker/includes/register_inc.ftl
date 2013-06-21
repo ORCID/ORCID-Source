@@ -52,7 +52,7 @@
 						<div>
 	                        <label class="control-label">${springMacroRequestContext.getMessage("oauth_sign_up.labellastname")}</label>
 	                        <div class="relative">
-	                            <input name="familyNames" type="text" class="input-xlarge"  ng-model="register.familyNames.value"/>
+	                            <input name="familyNames" type="text" class="input-xlarge"  ng-model="register.familyNames.value" ng-model-onblur/>
 	                            <span class="orcid-error" ng-show="register.familyNames.errors.length > 0">
 									<div ng-repeat='error in register.familyNames.errors' ng-bind-html-unsafe="error"></div>
 					   			</span>
