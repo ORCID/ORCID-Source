@@ -17,11 +17,12 @@
 package org.orcid.frontend.web.controllers;
 
 import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
 import java.net.URI;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -32,24 +33,19 @@ import javax.validation.Valid;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
-import org.orcid.core.manager.CountryManager;
 import org.orcid.core.manager.EncryptionManager;
-import org.orcid.core.manager.HearAboutManager;
 import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.manager.OrcidSearchManager;
 import org.orcid.core.manager.RegistrationManager;
 import org.orcid.core.manager.RegistrationRoleManager;
 import org.orcid.core.manager.SecurityQuestionManager;
-import org.orcid.core.manager.SponsorManager;
 import org.orcid.core.utils.PasswordResetToken;
 import org.orcid.frontend.web.controllers.helper.SearchOrcidSolrCriteria;
 import org.orcid.frontend.web.forms.ChangeSecurityQuestionForm;
 import org.orcid.frontend.web.forms.EmailAddressForm;
-import org.orcid.frontend.web.forms.LoginForm;
 import org.orcid.frontend.web.forms.OneTimeResetPasswordForm;
 import org.orcid.frontend.web.forms.PasswordTypeAndConfirmForm;
-import org.orcid.frontend.web.forms.RegistrationForm;
 import org.orcid.jaxb.model.message.Claimed;
 import org.orcid.jaxb.model.message.CompletionDate;
 import org.orcid.jaxb.model.message.ContactDetails;
@@ -261,12 +257,28 @@ public class RegistrationController extends BaseController {
         }
 
         createMinimalRegistrationAndLogUserIn(request, toProfile(reg));
-        SavedRequest savedRequest = new HttpSessionRequestCache().getRequest(request, response);
-        String redirectUrl = (savedRequest != null ? savedRequest.getRedirectUrl() : null);
-        if (redirectUrl == null)
-            redirectUrl = getBaseUri() + "/my-orcid";
+        String redirectUrl = calculateRedirectUrl(request, response);
         r.setUrl(redirectUrl);
         return r;
+    }
+
+    private String calculateRedirectUrl(HttpServletRequest request, HttpServletResponse response) {
+        SavedRequest savedRequest = new HttpSessionRequestCache().getRequest(request, response);
+        if (savedRequest != null) {
+            String savedUrl = savedRequest.getRedirectUrl();
+            if (savedUrl != null) {
+                try {
+                    String path = new URL(savedUrl).getPath();
+                    if (path != null && path.contains("/oauth/")) {
+                        // This redirect url is OK
+                        return savedUrl;
+                    }
+                } catch (MalformedURLException e) {
+                    LOGGER.debug("Malformed saved redirect url: {}", savedUrl);
+                }
+            }
+        }
+        return getBaseUri() + "/my-orcid";
     }
 
     @RequestMapping(value = "/registerPasswordConfirmValidate.json", method = RequestMethod.POST)
