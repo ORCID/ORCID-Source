@@ -511,7 +511,7 @@
 		<field name="orcid" type="string" indexed="true" stored="true"
             multiValued="false" />
         <field name="email" type="string" indexed="true"
-            stored="true" multiValued="false" />
+            stored="true" multiValued="true" />
         <field name="given-names" type="text_general" indexed="true"
             stored="true" multiValued="false" />
         <field name="family-name" type="text_general" indexed="true"
