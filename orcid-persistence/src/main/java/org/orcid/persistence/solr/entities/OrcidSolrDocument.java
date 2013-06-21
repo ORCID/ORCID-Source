@@ -16,6 +16,7 @@
  */
 package org.orcid.persistence.solr.entities;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -39,7 +40,7 @@ public class OrcidSolrDocument {
     private String orcid;
 
     @Field(SolrConstants.EMAIL_ADDRESS)
-    private String emailAddress;
+    private List<String> emailAddresses;
 
     @Field(SolrConstants.FAMILY_NAME)
     private String familyName;
@@ -206,12 +207,19 @@ public class OrcidSolrDocument {
         this.keywords = keywords;
     }
 
-    public String getEmailAddress() {
-        return emailAddress;
+    public List<String> getEmailAddresses() {
+        return emailAddresses;
     }
 
-    public void setEmailAddress(String emailAddress) {
-        this.emailAddress = emailAddress;
+    public void setEmailAddresses(List<String> emailAddresses) {
+        this.emailAddresses = emailAddresses;
+    }
+
+    public void addEmailAddress(String emailAddress) {
+        if (emailAddresses == null) {
+            emailAddresses = new ArrayList<>();
+        }
+        emailAddresses.add(emailAddress);
     }
 
     public List<String> getGrantNumbers() {
@@ -252,11 +260,12 @@ public class OrcidSolrDocument {
         result = prime * result + ((affiliatePrimaryInstitutionNames == null) ? 0 : affiliatePrimaryInstitutionNames.hashCode());
         result = prime * result + ((creditName == null) ? 0 : creditName.hashCode());
         result = prime * result + ((digitalObjectIds == null) ? 0 : digitalObjectIds.hashCode());
-        result = prime * result + ((emailAddress == null) ? 0 : emailAddress.hashCode());
+        result = prime * result + ((emailAddresses == null) ? 0 : emailAddresses.hashCode());
         result = prime * result + ((externalIdOrcids == null) ? 0 : externalIdOrcids.hashCode());
         result = prime * result + ((externalIdOrcidsAndReferences == null) ? 0 : externalIdOrcidsAndReferences.hashCode());
         result = prime * result + ((externalIdReferences == null) ? 0 : externalIdReferences.hashCode());
         result = prime * result + ((familyName == null) ? 0 : familyName.hashCode());
+        result = prime * result + ((givenAndFamilyNames == null) ? 0 : givenAndFamilyNames.hashCode());
         result = prime * result + ((givenNames == null) ? 0 : givenNames.hashCode());
         result = prime * result + ((grantNumbers == null) ? 0 : grantNumbers.hashCode());
         result = prime * result + ((keywords == null) ? 0 : keywords.hashCode());
@@ -302,10 +311,10 @@ public class OrcidSolrDocument {
                 return false;
         } else if (!digitalObjectIds.equals(other.digitalObjectIds))
             return false;
-        if (emailAddress == null) {
-            if (other.emailAddress != null)
+        if (emailAddresses == null) {
+            if (other.emailAddresses != null)
                 return false;
-        } else if (!emailAddress.equals(other.emailAddress))
+        } else if (!emailAddresses.equals(other.emailAddresses))
             return false;
         if (externalIdOrcids == null) {
             if (other.externalIdOrcids != null)
@@ -326,6 +335,11 @@ public class OrcidSolrDocument {
             if (other.familyName != null)
                 return false;
         } else if (!familyName.equals(other.familyName))
+            return false;
+        if (givenAndFamilyNames == null) {
+            if (other.givenAndFamilyNames != null)
+                return false;
+        } else if (!givenAndFamilyNames.equals(other.givenAndFamilyNames))
             return false;
         if (givenNames == null) {
             if (other.givenNames != null)

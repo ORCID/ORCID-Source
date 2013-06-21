@@ -504,6 +504,7 @@ function ExternalIdentifierCtrl($scope, $compile){
 
 
 function RegistrationCtrl($scope, $compile) {
+		
 	$scope.getRegister = function(){
 		$.ajax({
 			url: $('body').data('baseurl') + 'register.json',	        
@@ -511,6 +512,26 @@ function RegistrationCtrl($scope, $compile) {
 	        success: function(data) {
 	       	$scope.register = data;
 	        $scope.$apply();
+	        
+	        // make sure inputs stayed trimmed
+	    	$scope.$watch('register.email.value', function() {
+	    		trimAjaxFormText($scope.register.email);
+	    	}); // initialize the watch
+	    	
+	    	// make sure email is trimmed
+	    	$scope.$watch('register.emailConfirm.value', function() {
+	    		 trimAjaxFormText($scope.register.emailConfirm);
+	    	}); // initialize the watch
+	    	
+	    	$scope.$watch('register.givenNames.value', function() {
+	    		trimAjaxFormText($scope.register.givenNames);
+	    	}); // initialize the watch
+	    	
+	    	$scope.$watch('register.familyNames.value', function() {
+	    		 trimAjaxFormText($scope.register.familyNames);
+	    	}); // initialize the watch
+
+	    	
 	        }
 		}).fail(function(){
 		// something bad is happening!

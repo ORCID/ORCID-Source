@@ -22,6 +22,7 @@ import org.orcid.core.security.visibility.filter.VisibilityFilter;
 import org.orcid.jaxb.model.message.Affiliation;
 import org.orcid.jaxb.model.message.AffiliationType;
 import org.orcid.jaxb.model.message.ContactDetails;
+import org.orcid.jaxb.model.message.Email;
 import org.orcid.jaxb.model.message.ExternalIdOrcid;
 import org.orcid.jaxb.model.message.ExternalIdReference;
 import org.orcid.jaxb.model.message.ExternalIdentifier;
@@ -92,7 +93,9 @@ public class OrcidIndexManagerImpl implements OrcidIndexManager {
 
             ContactDetails contactDetails = orcidBio.getContactDetails();
             if (contactDetails != null) {
-                profileIndexDocument.setEmailAddress(contactDetails.retrievePrimaryEmail() != null ? contactDetails.retrievePrimaryEmail().getValue() : null);
+                for (Email email : contactDetails.getEmail()) {
+                    profileIndexDocument.addEmailAddress(email.getValue());
+                }
             }
 
             ExternalIdentifiers externalIdentifiers = orcidBio.getExternalIdentifiers();

@@ -28,6 +28,12 @@ if (typeof String.prototype.endsWith != 'function') {
 	  };
 }
 
+if (typeof String.prototype.trim != 'function') {  
+  String.prototype.trim = function () {  
+	return this.replace(/^\s+|\s+$/g,'');  
+  };  
+}
+
 // This is to prevent IE from caching ajax request via jquery
 $.ajaxSetup({ cache: false });
 
@@ -157,6 +163,17 @@ function checkOrcidLoggedIn() {
 }
 
 var OM = OrcidMessage;
+
+
+/* used for triming org.orcid.pojo.ajaxForm.Text *
+ * trim the value if it has spaces */
+function trimAjaxFormText(pojoMember) {
+  if (pojoMember != null 
+		  && pojoMember.value != null
+		  && ( pojoMember.value.charAt(0) == ' '
+				  || pojoMember.value.charAt(pojoMember.value.length - 1) == ' '))
+	  pojoMember.value = pojoMember.value.trim();
+}
 
 
 // jquery ready
