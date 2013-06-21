@@ -88,6 +88,11 @@ public class StatisticsGeneratorCronJobImpl implements StatisticsGeneratorCronJo
     private long getDaysOffset(Date lastRun){
         Calendar lastRunCalendar = Calendar.getInstance();
         lastRunCalendar.setTime(lastRun);
+        lastRunCalendar.set(Calendar.HOUR_OF_DAY, 0);
+        lastRunCalendar.set(Calendar.MINUTE, 0);
+        lastRunCalendar.set(Calendar.SECOND, 0);
+        lastRunCalendar.set(Calendar.MILLISECOND, 0);
+        
         long lastRunMillis = lastRunCalendar.getTimeInMillis();
         long todayMillis = System.currentTimeMillis();        
         return (todayMillis - lastRunMillis) / dayInMillis;

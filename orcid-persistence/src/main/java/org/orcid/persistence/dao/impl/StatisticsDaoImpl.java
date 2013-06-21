@@ -101,12 +101,13 @@ public class StatisticsDaoImpl implements StatisticsDao {
     public List<StatisticValuesEntity> getStatistic(long id) {
         TypedQuery<StatisticValuesEntity> query = entityManager.createQuery("FROM StatisticValuesEntity WHERE key.id = :id", StatisticValuesEntity.class);
         query.setParameter("id", id);
-        List<StatisticValuesEntity> results = query.getResultList();
-
-        for (StatisticValuesEntity result : results) {
-            System.out.println("Result: " + result.getStatisticName() + " - " + result.getStatisticValue());
+        List<StatisticValuesEntity> results = null;
+        try {
+            results = query.getResultList();
+        } catch(NoResultException nre){
+            LOG.warn("Couldnt find any statistics for the statistic key {}, the cron job might be running.", id); 
         }
-
+        
         return results;
     }
 
