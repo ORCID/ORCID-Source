@@ -16,6 +16,8 @@
  */
 package org.orcid.core.cron.impl;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -37,19 +39,63 @@ public class StatisticsGeneratorCronJobImpl implements StatisticsGeneratorCronJo
     @Resource
     private StatisticsManager statisticsManager;
 
+    private long dayInMillis = 24 * 60 * 60 * 1000;
+    
+    private int daysOffset;
+    
+    public StatisticsGeneratorCronJobImpl(){
+        this.daysOffset = 1;
+    }
+    
+    public StatisticsGeneratorCronJobImpl(int daysOffset){
+        this.daysOffset = daysOffset;
+    }
+    
     /**
      * Cron job that will generate statistics and store them on database
      * */
     @Override
     public void generateStatistics() {
         LOG.debug("About to run statistics generator thread");
-        Map<String, Long> statistics = statisticsGeneratorManager.generateStatistics();
-        StatisticKeyEntity statisticKey = statisticsManager.createKey();
-
-        // Store statistics on database
-        for (String key : statistics.keySet()) {
-            statisticsManager.saveStatistic(statisticKey, key, statistics.get(key));
+        boolean run = true;
+        StatisticKeyEntity lastStatisticsKey = statisticsManager.getLatestKey();
+        
+        if(lastStatisticsKey != null && lastStatisticsKey.getGenerationDate() != null){
+            LOG.info("Last time the statistics were generated: {}", lastStatisticsKey.getGenerationDate());
+            long currentDaysOffset = this.getDaysOffset(lastStatisticsKey.getGenerationDate());
+            LOG.info("Days since the last time the statistics were generated: {}", currentDaysOffset);
+            if(currentDaysOffset < this.daysOffset)
+                run = false;
+        }                                
+        
+        if(run){
+            LOG.info("Last time the statistics cron job ran: {}", new Date());
+            Map<String, Long> statistics = statisticsGeneratorManager.generateStatistics();
+            StatisticKeyEntity statisticKey = statisticsManager.createKey();
+    
+            // Store statistics on database
+            for (String key : statistics.keySet()) {
+                statisticsManager.saveStatistic(statisticKey, key, statistics.get(key));
+            }
         }
+    }
+    
+    /**
+     * Get the number of days since the last time the cron job ran
+     * @param lastRun The last time the cron ran
+     * @return the number of days since the last time the cron ran
+     * */
+    private long getDaysOffset(Date lastRun){
+        Calendar lastRunCalendar = Calendar.getInstance();
+        lastRunCalendar.setTime(lastRun);
+        lastRunCalendar.set(Calendar.HOUR_OF_DAY, 0);
+        lastRunCalendar.set(Calendar.MINUTE, 0);
+        lastRunCalendar.set(Calendar.SECOND, 0);
+        lastRunCalendar.set(Calendar.MILLISECOND, 0);
+        
+        long lastRunMillis = lastRunCalendar.getTimeInMillis();
+        long todayMillis = System.currentTimeMillis();        
+        return (todayMillis - lastRunMillis) / dayInMillis;
     }
 
 }
