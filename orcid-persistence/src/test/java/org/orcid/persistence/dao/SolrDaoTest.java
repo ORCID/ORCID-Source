@@ -385,7 +385,7 @@ public class SolrDaoTest {
 
         OrcidSolrDocument secondOrcidDoc = new OrcidSolrDocument();
         secondOrcidDoc.setCreditName("Credit Name");
-        secondOrcidDoc.setEmailAddress("stan@ficitional.co.uk");
+        secondOrcidDoc.addEmailAddress("stan@ficitional.co.uk");
         secondOrcidDoc.setFamilyName("Family Name");
         secondOrcidDoc.setGivenNames("Given Names");
         secondOrcidDoc.setDigitalObjectIds(Arrays.asList(new String[] { "id1", "id2" }));

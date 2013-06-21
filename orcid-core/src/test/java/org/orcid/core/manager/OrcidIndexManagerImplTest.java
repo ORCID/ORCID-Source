@@ -536,7 +536,7 @@ public class OrcidIndexManagerImplTest extends BaseTest {
         orcidSolrDocument.setDigitalObjectIds(new ArrayList<String>());
         orcidSolrDocument.setFamilyName("familyName");
         orcidSolrDocument.setGivenNames("givenNames");
-        orcidSolrDocument.setEmailAddress("email");
+        orcidSolrDocument.addEmailAddress("email");
         orcidSolrDocument.setAffiliatePrimaryInstitutionNames(Arrays.asList(new String[] { "Primary Inst1" }));
         orcidSolrDocument.setAffiliateInstitutionNames(Arrays.asList(new String[] { "Current Inst2" }));
         orcidSolrDocument.setOtherNames(Arrays.asList(new String[] { "Other 1", "Other 2" }));
