@@ -522,9 +522,12 @@ public class T2OrcidApiClientIntegrationTest extends AbstractT2ClientIntegration
 
         OrcidMessage message = getInternalFullOrcidMessage(OrcidClientDataHelper.ORCID_INTERNAL_NO_SPONSOR_XML);
         message.getOrcidProfile().setOrcid(this.orcid);
-        //message.getOrcidProfile().setOrcidWorks(null);
+        message.getOrcidProfile().setOrcidWorks(null);
         message.getOrcidProfile().getOrcidBio().getPersonalDetails().setFamilyName(new FamilyName("Bowen"));
-        
+        List<Email> emails = message.getOrcidProfile().getOrcidBio().getContactDetails().getEmail();
+        Email email6 = new Email("test6@email.com");
+        email6.setPrimary(false);
+        emails.add(email6);
         ClientResponse response = t2Client.updateBioDetailsJson(this.orcid, message);
         assertNotNull(response);
         assertEquals(200, response.getStatus());
@@ -534,7 +537,9 @@ public class T2OrcidApiClientIntegrationTest extends AbstractT2ClientIntegration
         OrcidMessage responseEntity = response.getEntity(OrcidMessage.class);
         assertNotNull(responseEntity);
         String familyName = responseEntity.getOrcidProfile().getOrcidBio().getPersonalDetails().getFamilyName().getContent();
-        assertEquals("Bowen", familyName);                
+        assertEquals("Bowen", familyName);  
+        List<Email> updatedEmails = responseEntity.getOrcidProfile().getOrcidBio().getContactDetails().getEmail();
+        assertTrue(updatedEmails.contains(email6));
     }
     
     @Test
@@ -542,8 +547,12 @@ public class T2OrcidApiClientIntegrationTest extends AbstractT2ClientIntegration
 
         OrcidMessage message = getInternalFullOrcidMessage(OrcidClientDataHelper.ORCID_INTERNAL_NO_SPONSOR_XML);
         message.getOrcidProfile().setOrcid(this.orcid);
-        //message.getOrcidProfile().setOrcidWorks(null);
+        message.getOrcidProfile().setOrcidWorks(null);
         message.getOrcidProfile().getOrcidBio().getPersonalDetails().setFamilyName(new FamilyName("Bowen"));
+        List<Email> emails = message.getOrcidProfile().getOrcidBio().getContactDetails().getEmail();
+        Email email6 = new Email("test6@email.com");
+        email6.setPrimary(false);
+        emails.add(email6);
         ClientResponse response = t2Client.updateBioDetailsXml(this.orcid, message);
         assertNotNull(response);
         assertEquals(200, response.getStatus());
@@ -554,6 +563,8 @@ public class T2OrcidApiClientIntegrationTest extends AbstractT2ClientIntegration
         assertNotNull(responseEntity);
         String familyName = responseEntity.getOrcidProfile().getOrcidBio().getPersonalDetails().getFamilyName().getContent();
         assertEquals("Bowen", familyName);
+        List<Email> updatedEmails = responseEntity.getOrcidProfile().getOrcidBio().getContactDetails().getEmail();
+        assertTrue(updatedEmails.contains(email6));
     }
     
     private void createOrcidAndVerifyResponse201() throws Exception {
