@@ -74,7 +74,6 @@ public class T2OrcidApiClientIntegrationTest extends AbstractT2ClientIntegration
 
     @After
     public void clearOrcid() {
-        System.out.println("--------------------------------------------->" + orcid);
         if (orcid != null) {            
             t2Client.deleteProfileXML(orcid);
             orcid = null;
