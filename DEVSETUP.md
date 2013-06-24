@@ -23,9 +23,13 @@ We'll set up postgres using the default settings in
     
 * Set up database
     ```
-    psql -c "CREATE DATABASE orcid;" 
+    psql -c "CREATE DATABASE orcid;"     
     psql -c "CREATE USER orcid WITH PASSWORD 'orcid';" 
     psql -c "GRANT ALL PRIVILEGES ON DATABASE orcid to orcid;"
+    
+    psql -c "CREATE DATABASE statistics;" 
+    psql -c "CREATE USER statistics WITH PASSWORD 'statistics';" 
+    psql -c "GRANT ALL PRIVILEGES ON DATABASE statistics to statistics;"
     ```
     
 * Exit postgres user prompt
@@ -38,6 +42,7 @@ We'll set up postgres using the default settings in
 
     ```
     psql -U orcid -d orcid -c "\list" -h localhost
+    psql -U statistics -d statistics -c "\list" -h localhost
     ```
 
 

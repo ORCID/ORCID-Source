@@ -57,4 +57,11 @@ public interface StatisticsManager {
      * @return a list that contains the latest set of statistics
      * */
     public List<StatisticValuesEntity> getLatestStatistics();
+    
+    /**
+     * Get the last statistics key
+     * 
+     * @return the last statistics key
+     * */
+    public StatisticKeyEntity getLatestKey();
 }

@@ -47,13 +47,6 @@ public class HomeController extends BaseController {
         return new ModelAndView(newUri.toString());
     }
 
-    @RequestMapping(value = "/home")
-    public ModelAndView appHomeHandler() {
-        ModelAndView mav = new ModelAndView();
-        mav.setViewName("home");
-        return mav;
-    }
-
     @RequestMapping(value = "/robots.txt")
     public String dynamicRobots(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {
         String requestedDomain = request.getServerName();

@@ -80,6 +80,17 @@ public class StatisticsManagerImpl implements StatisticsManager {
     @Override
     public List<StatisticValuesEntity> getLatestStatistics() {
         StatisticKeyEntity latestKey = statisticsDao.getLatestKey();
-        return statisticsDao.getStatistic(latestKey.getId());
+        if(latestKey != null)
+            return statisticsDao.getStatistic(latestKey.getId());
+        return null;
+    }
+    
+    /**
+     * Get the last statistics key
+     * 
+     * @return the last statistics key
+     * */
+    public StatisticKeyEntity getLatestKey(){
+        return statisticsDao.getLatestKey();
     }
 }

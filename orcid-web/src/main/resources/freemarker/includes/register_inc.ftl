@@ -52,7 +52,7 @@
 						<div>
 	                        <label class="control-label">${springMacroRequestContext.getMessage("oauth_sign_up.labellastname")}</label>
 	                        <div class="relative">
-	                            <input name="familyNames" type="text" class="input-xlarge"  ng-model="register.familyNames.value"/>
+	                            <input name="familyNames" type="text" class="input-xlarge"  ng-model="register.familyNames.value" ng-model-onblur/>
 	                            <span class="orcid-error" ng-show="register.familyNames.errors.length > 0">
 									<div ng-repeat='error in register.familyNames.errors' ng-bind-html-unsafe="error"></div>
 					   			</span>
@@ -122,7 +122,7 @@
 		                        <label>${springMacroRequestContext.getMessage("register.labelTermsofUse")} <span class="required"  ng-class="{'text-error':register.termsOfUse.value == false}">*</span></label>
 		                        <label class="checkbox" style="width: 480px;">
 		                        <input type="checkbox" name="acceptTermsAndConditions" ng-model="register.termsOfUse.value" ng-change="serverValidate('TermsOfUse')" />
-		                        ${springMacroRequestContext.getMessage("register.labelconsent")} <a href="${aboutUri}/footer/privacy-policy?lang=${locale}" target="_blank">${springMacroRequestContext.getMessage("register.labelprivacypolicy")}</a> ${springMacroRequestContext.getMessage("register.labeland")} <a href="${aboutUri}/content/orcid-terms-use?lang=${locale}" target="_blank">${springMacroRequestContext.getMessage("register.labeltermsandconditions")}</a> ${springMacroRequestContext.getMessage("register.labelofuseinclude")}</p>
+		                        ${springMacroRequestContext.getMessage("register.labelconsent")} <a href="${aboutUri}/footer/privacy-policy?lang=${locale}" target="_blank">${springMacroRequestContext.getMessage("register.labelprivacypolicy")}</a> ${springMacroRequestContext.getMessage("register.labeland")}  ${springMacroRequestContext.getMessage("common.termsandconditions1")}<a href="${aboutUri}/content/orcid-terms-use?lang=${locale}" target="_blank">${springMacroRequestContext.getMessage("common.termsandconditions2")}</a> ${springMacroRequestContext.getMessage("common.termsandconditions3")}</p>
 		                        </label>
 		                        <span class="orcid-error" ng-show="register.termsOfUse.errors.length > 0">
 									<div ng-repeat='error in register.termsOfUse.errors' ng-bind-html-unsafe="error"></div>
