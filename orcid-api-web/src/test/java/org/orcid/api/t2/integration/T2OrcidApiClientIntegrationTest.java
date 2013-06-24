@@ -101,11 +101,6 @@ public class T2OrcidApiClientIntegrationTest extends AbstractT2ClientIntegration
         String orcidProfileBioOnly = clientResponse.getEntity(String.class);
         assertTrue(orcidProfileBioOnly.indexOf("<orcid-bio>") != -1);
         assertTrue(orcidProfileBioOnly.indexOf("<orcid-works>") == -1);
-        assertTrue(orcidProfileBioOnly.indexOf("<email primary=\"false\" current=\"true\" verified=\"false\" visibility=\"private\">test1@email.com</email>") != -1);
-        assertTrue(orcidProfileBioOnly.indexOf("<email primary=\"false\" current=\"true\" verified=\"false\" visibility=\"private\">test2@email.com</email>") != -1);
-        assertTrue(orcidProfileBioOnly.indexOf("<email primary=\"false\" current=\"true\" verified=\"false\" visibility=\"private\">test3@email.com</email>") != -1);
-        assertTrue(orcidProfileBioOnly.indexOf("<email primary=\"false\" current=\"true\" verified=\"false\" visibility=\"private\">test4@email.com</email>") != -1);
-        assertTrue(orcidProfileBioOnly.indexOf("<email primary=\"false\" current=\"true\" verified=\"false\" visibility=\"private\">test5@email.com</email>") != -1);                
     }
 
     @Test
@@ -125,11 +120,9 @@ public class T2OrcidApiClientIntegrationTest extends AbstractT2ClientIntegration
         assertNull(orcidMessage.getOrcidProfile().retrieveOrcidWorks());
         List<Email> emails = orcidMessage.getOrcidProfile().getOrcidBio().getContactDetails().getEmail();
         assertNotNull(emails);
-        assertTrue(emails.contains(new Email("test1@email.com")));
-        assertTrue(emails.contains(new Email("test2@email.com")));
-        assertTrue(emails.contains(new Email("test3@email.com")));
-        assertTrue(emails.contains(new Email("test4@email.com")));
-        assertTrue(emails.contains(new Email("test5@email.com")));
+        for(Email email : emails){
+            assertTrue(email.getValue().equals(email.getValue().trim()));
+        }
     }
 
     @Test
@@ -145,11 +138,9 @@ public class T2OrcidApiClientIntegrationTest extends AbstractT2ClientIntegration
         assertNull(orcidMessage.getOrcidProfile().retrieveOrcidWorks());
         List<Email> emails = orcidMessage.getOrcidProfile().getOrcidBio().getContactDetails().getEmail();
         assertNotNull(emails);
-        assertTrue(emails.contains(new Email("test1@email.com")));
-        assertTrue(emails.contains(new Email("test2@email.com")));
-        assertTrue(emails.contains(new Email("test3@email.com")));
-        assertTrue(emails.contains(new Email("test4@email.com")));
-        assertTrue(emails.contains(new Email("test5@email.com")));
+        for(Email email : emails){
+            assertTrue(email.getValue().equals(email.getValue().trim()));
+        }
     }
 
     @Test
@@ -168,11 +159,8 @@ public class T2OrcidApiClientIntegrationTest extends AbstractT2ClientIntegration
         assertTrue(orcidProfileFullDetails.indexOf("<title>Work title 2</title>") != -1);
         assertTrue(orcidProfileFullDetails.indexOf("<subtitle>Work subtitle 2</subtitle>") != -1);
         assertTrue(orcidProfileFullDetails.indexOf("<orcid-history>") != -1);
-        assertTrue(orcidProfileFullDetails.indexOf("<email primary=\"false\" current=\"true\" verified=\"false\" visibility=\"private\">test1@email.com</email>") != -1);
-        assertTrue(orcidProfileFullDetails.indexOf("<email primary=\"false\" current=\"true\" verified=\"false\" visibility=\"private\">test2@email.com</email>") != -1);
-        assertTrue(orcidProfileFullDetails.indexOf("<email primary=\"false\" current=\"true\" verified=\"false\" visibility=\"private\">test3@email.com</email>") != -1);
-        assertTrue(orcidProfileFullDetails.indexOf("<email primary=\"false\" current=\"true\" verified=\"false\" visibility=\"private\">test4@email.com</email>") != -1);
-        assertTrue(orcidProfileFullDetails.indexOf("<email primary=\"false\" current=\"true\" verified=\"false\" visibility=\"private\">test5@email.com</email>") != -1);
+        assertTrue(orcidProfileFullDetails.indexOf("<email primary=\"false\" current=\"true\" verified=\"false\" visibility=\"private\">") != -1);
+        assertTrue(orcidProfileFullDetails.indexOf("<email primary=\"true\" current=\"true\" verified=\"false\" visibility=\"private\">") != -1);        
     }
 
     @Test
@@ -190,11 +178,9 @@ public class T2OrcidApiClientIntegrationTest extends AbstractT2ClientIntegration
         assertNotNull(orcidMessage.getOrcidProfile().getOrcidHistory());
         List<Email> emails = orcidMessage.getOrcidProfile().getOrcidBio().getContactDetails().getEmail();
         assertNotNull(emails);
-        assertTrue(emails.contains(new Email("test1@email.com")));
-        assertTrue(emails.contains(new Email("test2@email.com")));
-        assertTrue(emails.contains(new Email("test3@email.com")));
-        assertTrue(emails.contains(new Email("test4@email.com")));
-        assertTrue(emails.contains(new Email("test5@email.com")));
+        for(Email email : emails){
+            assertTrue(email.getValue().equals(email.getValue().trim()));
+        }
     }
 
     @Test
@@ -213,11 +199,9 @@ public class T2OrcidApiClientIntegrationTest extends AbstractT2ClientIntegration
         assertNotNull(orcidMessage.getOrcidProfile().getOrcidHistory());
         List<Email> emails = orcidMessage.getOrcidProfile().getOrcidBio().getContactDetails().getEmail();
         assertNotNull(emails);
-        assertTrue(emails.contains(new Email("test1@email.com")));
-        assertTrue(emails.contains(new Email("test2@email.com")));
-        assertTrue(emails.contains(new Email("test3@email.com")));
-        assertTrue(emails.contains(new Email("test4@email.com")));
-        assertTrue(emails.contains(new Email("test5@email.com")));
+        for(Email email : emails){
+            assertTrue(email.getValue().equals(email.getValue().trim()));
+        }
     }
 
     @Test
@@ -524,7 +508,7 @@ public class T2OrcidApiClientIntegrationTest extends AbstractT2ClientIntegration
         message.getOrcidProfile().setOrcidWorks(null);
         message.getOrcidProfile().getOrcidBio().getPersonalDetails().setFamilyName(new FamilyName("Bowen"));
         List<Email> emails = message.getOrcidProfile().getOrcidBio().getContactDetails().getEmail();
-        Email email6 = new Email("test6@email.com");
+        Email email6 = new Email("test-new-email+" + System.currentTimeMillis() + "@email.com");
         email6.setPrimary(false);
         emails.add(email6);
         ClientResponse response = t2Client.updateBioDetailsJson(this.orcid, message);
@@ -549,7 +533,7 @@ public class T2OrcidApiClientIntegrationTest extends AbstractT2ClientIntegration
         message.getOrcidProfile().setOrcidWorks(null);
         message.getOrcidProfile().getOrcidBio().getPersonalDetails().setFamilyName(new FamilyName("Bowen"));
         List<Email> emails = message.getOrcidProfile().getOrcidBio().getContactDetails().getEmail();
-        Email email6 = new Email("test6@email.com");
+        Email email6 = new Email("test-new-email+" + System.currentTimeMillis() + "@email.com");
         email6.setPrimary(false);
         emails.add(email6);
         ClientResponse response = t2Client.updateBioDetailsXml(this.orcid, message);
