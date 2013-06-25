@@ -87,7 +87,7 @@ public class T2OrcidApiServiceImpl implements T2OrcidApiService<Response> {
     final static Counter T2_SEARCH_RESULTS_NONE_FOUND = Metrics.newCounter(T2OrcidApiServiceImpl.class, "T2-SEARCH-RESULTS-NONE-FOUND");
     final static Counter T2_SEARCH_RESULTS_FOUND = Metrics.newCounter(T2OrcidApiServiceImpl.class, "T2-SEARCH-RESULTS-FOUND");
 
-    @Resource
+    @Resource(name="orcidT2ServiceDelegator")
     private T2OrcidApiServiceDelegator serviceDelegator;
 
     @Resource

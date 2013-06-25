@@ -34,7 +34,7 @@ import org.orcid.jaxb.model.message.OrcidMessage;
  */
 public class T2OrcidApiServiceVersionedDelegatorImpl implements T2OrcidApiServiceDelegator {
 
-    @Resource
+    @Resource(name="orcidT2ServiceDelegator")
     private T2OrcidApiServiceDelegator t2OrcidApiServiceDelegator;
 
     @Resource
@@ -147,7 +147,7 @@ public class T2OrcidApiServiceVersionedDelegatorImpl implements T2OrcidApiServic
 
     @Override
     public Response unregisterWebhook(UriInfo uriInfo, String orcid, String webhookUri) {
-        return t2OrcidApiServiceDelegator.registerWebhook(uriInfo, orcid, webhookUri);
+        return t2OrcidApiServiceDelegator.unregisterWebhook(uriInfo, orcid, webhookUri);
     }
 
     private OrcidMessage upgradeMessage(OrcidMessage orcidMessage) {

@@ -84,7 +84,7 @@ abstract public class T2OrcidApiServiceImplBase implements T2OrcidApiService<Res
     final static Counter T2_SEARCH_RESULTS_NONE_FOUND = Metrics.newCounter(T2OrcidApiServiceImplBase.class, "T2-SEARCH-RESULTS-NONE-FOUND");
     final static Counter T2_SEARCH_RESULTS_FOUND = Metrics.newCounter(T2OrcidApiServiceImplBase.class, "T2-SEARCH-RESULTS-FOUND");
 
-    @Resource
+    @Resource(name="orcidT2ServiceDelegator")
     private T2OrcidApiServiceDelegator serviceDelegator;
 
     @Resource

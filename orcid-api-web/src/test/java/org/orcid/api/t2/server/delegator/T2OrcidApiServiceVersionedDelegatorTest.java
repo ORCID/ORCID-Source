@@ -36,6 +36,7 @@ import org.apache.http.HttpStatus;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -66,12 +67,12 @@ import com.sun.jersey.api.uri.UriBuilderImpl;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:orcid-t2-web-context.xml", "classpath:orcid-t2-security-context.xml" })
-public class T2OrcidApiServiceDelegatorTest extends DBUnitTest {
+public class T2OrcidApiServiceVersionedDelegatorTest extends DBUnitTest {
 
     private static final List<String> DATA_FILES = Arrays.asList("/data/SecurityQuestionEntityData.xml", "/data/SubjectEntityData.xml", "/data/ProfileEntityData.xml",
             "/data/ClientDetailsEntityData.xml");
 
-    @Resource(name="orcidT2ServiceDelegator")
+    @Resource(name = "t2OrcidApiServiceDelegatorV1_0_14")
     private T2OrcidApiServiceDelegator t2OrcidApiServiceDelegator;
 
     @Mock
@@ -167,6 +168,21 @@ public class T2OrcidApiServiceDelegatorTest extends DBUnitTest {
         OrcidMessage retrievedMessage = (OrcidMessage) readResponse.getEntity();
         assertEquals(orcid, retrievedMessage.getOrcidProfile().getOrcid().getValue());
         assertEquals("Test credit name", retrievedMessage.getOrcidProfile().getOrcidBio().getPersonalDetails().getCreditName().getContent());
+    }
+
+    @Test
+    @Ignore("Pending implementation")
+    public void testAttemptCreateWithLaterVersion() {
+        setUpSecurityContextForClientOnly();
+        OrcidMessage orcidMessage = createStubOrcidMessage();
+        orcidMessage.setMessageVersion("1.0.15");
+        Email email = new Email("madeupemail@semantico.com");
+        orcidMessage.getOrcidProfile().getOrcidBio().getContactDetails().getEmail().add(email);
+
+        Response createResponse = t2OrcidApiServiceDelegator.createProfile(mockedUriInfo, orcidMessage);
+
+        assertNotNull(createResponse);
+        assertEquals(HttpStatus.SC_BAD_REQUEST, createResponse.getStatus());
     }
 
     @Test
