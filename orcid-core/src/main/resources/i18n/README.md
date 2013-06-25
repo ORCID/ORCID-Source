@@ -3,12 +3,12 @@
 This directory contains the java properties files needed for i18n support. To
  add additional languages simply add a property file with the proper extension
  containing translations. You can read more about java for Locale codes 
- [here](http://docs.oracle.com/javase/1.5.0/docs/api/java/util/Locale.html).
+ [here](http://www.oracle.com/technetwork/java/javase/locales-137662.html).
  
  Additionally for fun and testing we support Orc/Troll the language of the 
  middle earth.
 
-# Properties file format
+# Properties file format 
 The file is organized into key value pairs. Keys (the part before the equal sign) should 
 only appear in the file once. Each file should have the same set of keys. Wikipedia has 
 general good [overview](http://en.wikipedia.org/wiki/.properties) of properties files.
