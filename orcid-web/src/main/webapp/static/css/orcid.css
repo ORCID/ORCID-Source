@@ -2249,3 +2249,9 @@ header overrides
 .search-result-orcid-id {
 	white-space:nowrap;
 }
+
+a.btn-primary:hover {
+     background: #a6ce39;
+     color: #ffffff !important;
+     text-shadow:none;    
+}

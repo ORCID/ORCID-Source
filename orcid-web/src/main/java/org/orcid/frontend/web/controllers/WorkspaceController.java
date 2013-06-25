@@ -19,7 +19,10 @@ package org.orcid.frontend.web.controllers;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -29,17 +32,28 @@ import org.orcid.core.manager.ExternalIdentifierManager;
 import org.orcid.core.manager.ProfileWorkManager;
 import org.orcid.core.manager.ThirdPartyImportManager;
 import org.orcid.frontend.web.forms.CurrentWork;
+import org.orcid.frontend.web.util.NumberList;
+import org.orcid.frontend.web.util.YearsList;
 import org.orcid.jaxb.model.clientgroup.OrcidClient;
 import org.orcid.jaxb.model.clientgroup.RedirectUri;
+import org.orcid.jaxb.model.message.CitationType;
+import org.orcid.jaxb.model.message.ContributorRole;
 import org.orcid.jaxb.model.message.ExternalIdentifier;
 import org.orcid.jaxb.model.message.ExternalIdentifiers;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidWork;
 import org.orcid.jaxb.model.message.OrcidWorks;
+import org.orcid.jaxb.model.message.SequenceType;
 import org.orcid.jaxb.model.message.SourceOrcid;
+import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
+import org.orcid.jaxb.model.message.WorkType;
 import org.orcid.persistence.adapter.Jpa2JaxbAdapter;
 import org.orcid.pojo.ThirdPartyRedirect;
+import org.orcid.pojo.ajaxForm.Citation;
+import org.orcid.pojo.ajaxForm.Date;
+import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.pojo.ajaxForm.Work;
+import org.orcid.pojo.ajaxForm.WorkTitle;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -75,6 +89,92 @@ public class WorkspaceController extends BaseWorkspaceController {
     public List<OrcidClient> retrieveThirdPartiesForImport() {
         return thirdPartyImportManager.findOrcidClientsWithPredefinedOauthScopeWorksImport();
     }
+    
+    @ModelAttribute("workTypes")
+    public Map<String, String> retrieveWorkTypesAsMap() {
+        Map<String, String> workTypes = new TreeMap<String, String>();
+        workTypes.put("", "Pick a publication type");
+        for (WorkType workType : WorkType.values()) {
+            workTypes.put(workType.value(), StringUtils.capitalize(workType.value().replace('-', ' ')));
+        }
+
+        workTypes.remove(WorkType.BIBLE.value());
+        return workTypes;
+    }
+
+    @ModelAttribute("citationTypes")
+    public Map<String, String> retrieveTypesAsMap() {
+        Map<String, String> citationTypes = new TreeMap<String, String>();
+        citationTypes.put("", "Pick a citation type");
+        for (CitationType citationType : CitationType.values()) {
+            String value = citationType.value().replace("formatted-", "");
+            citationTypes.put(citationType.value(), StringUtils.upperCase(value));
+        }
+        return citationTypes;
+    }
+
+    @ModelAttribute("years")
+    public Map<String, String> retrieveYearsAsMap() {
+        Map<String, String> map = new LinkedHashMap<String, String>();
+        List<String> list = YearsList.createList();
+        map.put("", "Year");
+        for (String year : list) {
+            map.put(year, year);
+        }
+        return map;
+    }
+
+    @ModelAttribute("months")
+    public Map<String, String> retrieveMonthsAsMap() {
+        Map<String, String> map = new LinkedHashMap<String, String>();
+        List<String> list = NumberList.createList(12);
+        map.put("", "Month");
+        for (String month : list) {
+            map.put(month, month);
+        }
+        return map;
+    }
+
+    @ModelAttribute("days")
+    public Map<String, String> retrieveDaysAsMap() {
+        Map<String, String> map = new LinkedHashMap<String, String>();
+        List<String> list = NumberList.createList(31);
+        map.put("", "Day");
+        for (String day : list) {
+            map.put(day, day);
+        }
+        return map;
+    }
+
+    @ModelAttribute("idTypes")
+    public Map<String, String> retrieveIdTypesAsMap() {
+        Map<String, String> map = new TreeMap<String, String>();
+        map.put("", "What type of external ID?");
+        for (WorkExternalIdentifierType type : WorkExternalIdentifierType.values()) {
+            map.put(type.value(), type.description());
+        }
+        return map;
+    }
+
+    @ModelAttribute("roles")
+    public Map<String, String> retrieveRolesAsMap() {
+        Map<String, String> map = new TreeMap<String, String>();
+        map.put("", "What was your role?");
+        for (ContributorRole contributorRole : ContributorRole.values()) {
+            map.put(contributorRole.value(), StringUtils.capitalize(contributorRole.value().replaceAll("[-_]", " ")));
+        }
+        return map;
+    }
+
+    @ModelAttribute("sequences")
+    public Map<String, String> retrieveSequencesAsMap() {
+        Map<String, String> map = new LinkedHashMap<String, String>();
+        for (SequenceType sequenceType : SequenceType.values()) {
+            map.put(sequenceType.value(), StringUtils.capitalize(sequenceType.value().replaceAll("[-]", " ")));
+        }
+        return map;
+    }
+
 
     @RequestMapping
     public ModelAndView viewWorkspace(HttpServletRequest request, @RequestParam(value = "page", defaultValue = "1") int pageNo,
@@ -205,7 +305,7 @@ public class WorkspaceController extends BaseWorkspaceController {
      * List works associated with a profile
      * */
     @SuppressWarnings("unchecked")
-    @RequestMapping(value = "/work.json", method = RequestMethod.GET)
+    @RequestMapping(value = "/works.json", method = RequestMethod.GET)
     public @ResponseBody List<Work> getWorkJson(HttpServletRequest request, @RequestParam(value = "workIds") String workIdsStr) {
         List<Work> workList = new ArrayList<>();
         Work work = null;
@@ -228,9 +328,49 @@ public class WorkspaceController extends BaseWorkspaceController {
     }
 
     /**
+     * Returns a blank work
+     * */
+    @RequestMapping(value = "/work.json", method = RequestMethod.GET)
+    public @ResponseBody
+    Work getWork(HttpServletRequest request) {
+        Work w = new Work();
+        
+        // work title and subtitle
+        Text wtt = new Text();
+        wtt.setValue("Work title");
+        wtt.setRequired(true);
+        WorkTitle wt = new WorkTitle();
+        wt.setTitle(wtt);
+        Text wst = new Text();
+        wst.setValue("Subtitle");
+        wt.setSubtitle(wst);
+        w.setWorkTitle(wt);
+        
+        // set citation text and type
+        Citation c = new Citation();
+        c.setCitationType(CitationType.FORMATTED_UNSPECIFIED.value());
+        c.setCitation("citation text");
+        w.setCitation(c);
+      
+        Text wTypeText = new Text();
+        wTypeText.setValue(WorkType.BROCHURE.value());
+        w.setWorkType(wTypeText);
+        
+        Date d = new Date();
+        d.setMonth("03");
+        d.setDay("25");
+        d.setYear("1974");
+        w.setPublicationDate(d);
+        
+       
+        return w;
+    }
+
+    
+    /**
      * List works associated with a profile
      * */
-    @RequestMapping(value = "/works.json", method = RequestMethod.GET)
+    @RequestMapping(value = "/workIds.json", method = RequestMethod.GET)
     public @ResponseBody
     List<String> getWorksJson(HttpServletRequest request) {
         //Get cached profile

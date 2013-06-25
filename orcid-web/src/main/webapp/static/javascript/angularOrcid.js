@@ -923,11 +923,37 @@ function ClaimThanks($scope, $compile) {
 function WorkCtrl($scope, $compile){
 	$scope.works = new Array();
 	
+	$scope.showAddModal = function(){;
+	    $.colorbox({        	
+	        html: $compile($('#add-work-modal').html())($scope)
+	    });
+	    $.colorbox.resize();
+	};
+	
+	
+	$scope.addWorkModal = function(){;
+		$.ajax({
+			url: $('body').data('baseurl') + 'my-orcid/work.json',
+			dataType: 'json',
+			success: function(data) {
+				$scope.newWork = data;
+				$scope.$apply();
+				$scope.showAddModal();
+			}
+		}).fail(function() { 
+	    	console.log("Error fetching work: " + value);
+	    });
+	};
+	
+	
+	//$scope.addWorkModal();
+	
+	
 	$scope.addWorkToScope = function(){
 		if($scope.worksToAddIds.length != 0 ) {
 			var workIds = $scope.worksToAddIds.splice(0,20).join();
 			$.ajax({
-				url: $('body').data('baseurl') + 'my-orcid/work.json?workIds=' + workIds,
+				url: $('body').data('baseurl') + 'my-orcid/works.json?workIds=' + workIds,
 				dataType: 'json',
 				success: function(data) {
 					$scope.$apply(function(){ 
@@ -945,7 +971,7 @@ function WorkCtrl($scope, $compile){
 	
 	$scope.getWorks = function(){
 		$.ajax({
-			url: $('body').data('baseurl') + 'my-orcid/works.json',	        
+			url: $('body').data('baseurl') + 'my-orcid/workIds.json',	        
 	        dataType: 'json',
 	        success: function(data) {
 	        	$scope.worksToAddIds = data;
