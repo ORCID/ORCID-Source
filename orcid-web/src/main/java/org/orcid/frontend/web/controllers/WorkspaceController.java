@@ -53,6 +53,7 @@ import org.orcid.pojo.ajaxForm.Citation;
 import org.orcid.pojo.ajaxForm.Date;
 import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.pojo.ajaxForm.Work;
+import org.orcid.pojo.ajaxForm.WorkExternalIdentifier;
 import org.orcid.pojo.ajaxForm.WorkTitle;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -348,8 +349,12 @@ public class WorkspaceController extends BaseWorkspaceController {
         
         // set citation text and type
         Citation c = new Citation();
-        c.setCitationType(CitationType.FORMATTED_UNSPECIFIED.value());
-        c.setCitation("citation text");
+        Text ctText = new Text();
+        ctText.setValue(CitationType.FORMATTED_UNSPECIFIED.value());       
+        c.setCitationType(ctText);
+        Text cText = new Text();
+        cText.setValue("Citation text");
+        c.setCitation(cText);
         w.setCitation(c);
       
         Text wTypeText = new Text();
@@ -362,7 +367,17 @@ public class WorkspaceController extends BaseWorkspaceController {
         d.setYear("1974");
         w.setPublicationDate(d);
         
-       
+        WorkExternalIdentifier wdi = new WorkExternalIdentifier();
+        Text wdiT = new Text();
+        wdiT.setValue("Works external identifier");
+        Text wdiType = new Text();
+        wdiType.setValue(WorkExternalIdentifierType.BIBCODE.value());
+        wdi.setWorkExternalIdentifierId(wdiT);
+        wdi.setWorkExternalIdentifierType(wdiType);
+        List<WorkExternalIdentifier> wdiL = new ArrayList<WorkExternalIdentifier>();
+        wdiL.add(wdi);
+        w.setWorkExternalIdentifiers(wdiL);
+        
         return w;
     }
 

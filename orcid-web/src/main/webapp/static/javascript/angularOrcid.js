@@ -946,7 +946,7 @@ function WorkCtrl($scope, $compile){
 	};
 	
 	
-	//$scope.addWorkModal();
+	$scope.addWorkModal();
 	
 	
 	$scope.addWorkToScope = function(){

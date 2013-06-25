@@ -28,26 +28,32 @@ public class Citation implements ErrorsInterface, Required, Serializable {
     private static final long serialVersionUID = 1L;
     
     private List<String> errors = new ArrayList<String>();
-    private String citation;
-    private String citationType;
+    private Text citation;
+    private Text citationType;
     private boolean required = true;
     private String getRequiredMessage;
 
     public static Citation valueOf(org.orcid.jaxb.model.message.Citation citation) {
         Citation c  = new Citation();
             if (citation.getCitation() !=null) {
-               c.setCitation(citation.getCitation());
+                Text cText = new Text();
+                cText.setValue(citation.getCitation());
+               c.setCitation(cText);
             }
             if (citation.getWorkCitationType() != null) {
-                c.setCitationType(citation.getWorkCitationType().value());
+                Text ctText = new Text();
+                ctText.setValue(citation.getWorkCitationType().value());
+                c.setCitationType(ctText);
             }
             return c;
     }
     
     public org.orcid.jaxb.model.message.Citation toCitiation() {
         org.orcid.jaxb.model.message.Citation c = new org.orcid.jaxb.model.message.Citation();
-        c.setCitation(this.citation);
-        c.setWorkCitationType(CitationType.fromValue(this.citationType));
+        if (this.getCitation() != null)
+            c.setCitation(this.getCitation().getValue());
+        if (this.getCitationType() != null)
+            c.setWorkCitationType(CitationType.fromValue(this.getCitationType().getValue()));
         return c;
     }
     
@@ -75,20 +81,21 @@ public class Citation implements ErrorsInterface, Required, Serializable {
         this.getRequiredMessage = getRequiredMessage;
     }
 
-    public String getCitation() {
+    public Text getCitation() {
         return citation;
     }
 
-    public void setCitation(String citation) {
+    public void setCitation(Text citation) {
         this.citation = citation;
     }
 
-    public String getCitationType() {
+    public Text getCitationType() {
         return citationType;
     }
 
-    public void setCitationType(String citationType) {
+    public void setCitationType(Text citationType) {
         this.citationType = citationType;
     }
 
+ 
 }

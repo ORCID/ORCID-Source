@@ -148,17 +148,17 @@ public class Work implements ErrorsInterface, Serializable {
      * @return the bibtex citation converted into a readable string
      * */
     public String getCitationForDisplay() {
-        if (this.citation != null
-                && CitationType.BIBTEX.value().toLowerCase().equals(this.citation.getCitationType().toLowerCase())) {
+        if (this.citation != null && this.citation.getCitation() != null
+                && CitationType.BIBTEX.value().toLowerCase().equals(this.citation.getCitationType().getValue().toLowerCase())) {
             try {
-                String result = BibtexUtils.toCitation(HtmlUtils.htmlUnescape(this.citation.getCitation()));
+                String result = BibtexUtils.toCitation(HtmlUtils.htmlUnescape(this.citation.getCitation().getValue()));
                 return result;
             } catch (ParseException e) {
                 LOGGER.info("Invalid BibTeX. Sending back as a string");
             }
         }
-        if (this.citation != null) {
-            return this.citation.getCitation();
+        if (this.citation != null && this.getCitation() != null) {
+            return this.citation.getCitation().getValue();
         }
         return null;
     }

@@ -249,30 +249,33 @@
 			<label class="control-label">${springMacroRequestContext.getMessage("manual_work_form_contents.labelsubtitle")}</label>
 		    <div class="relative">
 				<input name="familyNames" type="text" class="input-xlarge"  ng-model="newWork.workTitle.subtitle.value" placeholder="Add ${springMacroRequestContext.getMessage("manual_work_form_contents.labelsubtitle")}" ng-model-onblur/>
-					<span class="orcid-error" ng-show="newWork.workTitle.subtitle.errors.length > 0">
-						<div ng-repeat='error in newWork.workTitlesub.title.errors' ng-bind-html-unsafe="error"></div>
-					</span>
+				<span class="orcid-error" ng-show="newWork.workTitle.subtitle.errors.length > 0">
+					<div ng-repeat='error in newWork.workTitlesub.title.errors' ng-bind-html-unsafe="error"></div>
+				</span>
 			</div>
 		</div>
 		
 		<div class="control-group">
 			<label class="control-label">${springMacroRequestContext.getMessage("manual_work_form_contents.labelcitation")}</label>
 		    <div class="relative">
-				<textarea name="familyNames" type="text" class="input-xlarge"  ng-model="newWork.citation.citation" placeholder="Add ${springMacroRequestContext.getMessage("manual_work_form_contents.labelcitation")}" ng-model-onblur/>
-					<span class="orcid-error" ng-show="newWork.citation.errors.length > 0">
-						<div ng-repeat='error in newWork.citation.errors' ng-bind-html-unsafe="error"></div>
-					</span>
+				<textarea name="familyNames" type="text" class="input-xlarge"  ng-model="newWork.citation.citation.value" placeholder="Add ${springMacroRequestContext.getMessage("manual_work_form_contents.labelcitation")}" ng-model-onblur/>
+				<span class="orcid-error" ng-show="newWork.citation.citation.errors.length > 0">
+					<div ng-repeat='error in newWork.citation.citation.errors' ng-bind-html-unsafe="error"></div>
+				</span>
 			</div>
 		</div>
 		
 		<div class="control-group">
     		<label class="relative">${springMacroRequestContext.getMessage("manual_work_form_contents.labelcitationtype")}</label>
     		<div class="relative">
-	    		<select id="citationType" name="citationType" class="input-xlarge" ng-model="newWork.citation.citationType">
+	    		<select id="citationType" name="citationType" class="input-xlarge" ng-model="newWork.citation.citationType.value">
 					<#list citationTypes?keys as key>
 						<option value="${key}">${citationTypes[key]}</option>
 					</#list>
 				</select> 
+				<span class="orcid-error" ng-show="newWork.citation.citationType.errors.length > 0">
+					<div ng-repeat='error in newWork.citation.citationType.errors' ng-bind-html-unsafe="error"></div>
+				</span>
 			</div>
 		</div>
  
@@ -311,59 +314,31 @@
 					<option value="${key}">${years[key]}</option>
 				</#list>
     		</select>
+    		</div>
     	</div>
     	
-   		<div class="control-group">
+   		<div class="control-group" ng-repeat="workExternalIdentifier in newWork.workExternalIdentifiers">
 			<label class="control-label">${springMacroRequestContext.getMessage("manual_work_form_contents.labelID")}</label>
 		    <div class="relative">
-				<textarea name="currentWorkExternalIds" type="text" class="input-xlarge"  ng-model="newWork.citation.citation" placeholder="Add ${springMacroRequestContext.getMessage("manual_work_form_contents.labelID")}" ng-model-onblur/>
-					<span class="orcid-error" ng-show="newWork.citation.errors.length > 0">
-						<div ng-repeat='error in newWork.citation.errors' ng-bind-html-unsafe="error"></div>
+				<input name="currentWorkExternalIds" type="text" class="input-xlarge"  ng-model="workExternalIdentifier.workExternalIdentifierId.value" placeholder="Add ${springMacroRequestContext.getMessage("manual_work_form_contents.labelID")}" ng-model-onblur/>
+					<span class="orcid-error" ng-show="workExternalIdentifier.workExternalIdentifierId.errors.length > 0">
+						<div ng-repeat='error in workExternalIdentifier.workExternalIdentifierId.errors' ng-bind-html-unsafe="error"></div>
 					</span>
 			</div>
+			<label class="relative">ID type</label>
+			<div class="relative">
+	    		<select id="workType" name="workType" class="input-xlarge" ng-model="workExternalIdentifier.workExternalIdentifierType.value">
+					<#list idTypes?keys as key>
+						<option value="${key}">${idTypes[key]}</option>
+					</#list>
+				</select> 
+				<span class="orcid-error" ng-show="workExternalIdentifier.workExternalIdentifierType.errors.length > 0">
+					<div ng-repeat='error in workExternalIdentifier.workExternalIdentifierType.errors' ng-bind-html-unsafe="error"></div>
+				</span>
+			</div>	
 		</div>
     	
-    	
-    	
-    	
-</div>
-<div class="control-group">
-    <label class="relative" for="manualWork.currentWorkExternalIds[0].id">ID</label>
-    <div class="relative">    <input type="text" id="currentWorkExternalIds[0].id" name="currentWorkExternalIds[0].id" value="" placeholder="Enter an external ID" class="input-xlarge">
-
-
-    </div>
-</div>
-<div class="control-group">
-    <label class="relative" for="manualWork.currentWorkExternalIds[0].type">ID type</label>
-    <div class="relative">    <select id="currentWorkExternalIds[0].type" name="currentWorkExternalIds[0].type" class="input-xlarge">
-            <option value="" selected="selected">What type of external ID?</option>
-            <option value="arxiv">ArXiv</option>
-            <option value="asin">Amazon Standard Identification Number</option>
-            <option value="asin-tld">ASIN top-level domain</option>
-            <option value="bibcode">Bibcode</option>
-            <option value="doi">Digital object identifier</option>
-            <option value="eid">Scopus Identifier</option>
-            <option value="isbn">International Standard Book Number</option>
-            <option value="issn">International Standard Serial Number</option>
-            <option value="jfm">Jahrbuch über die Fortschritte der Mathematik</option>
-            <option value="jstor">JSTOR abstract</option>
-            <option value="lccn">Library of Congress Control Number</option>
-            <option value="mr">Mathematical Reviews</option>
-            <option value="oclc">Online Computer Library Center</option>
-            <option value="ol">Open Library</option>
-            <option value="osti">Office of Scientific and Technical Information</option>
-            <option value="other-id">Other identifier type</option>
-            <option value="pmc">PubMed Central article number</option>
-            <option value="pmid">PubMed Unique Identifier</option>
-            <option value="rfc">Request for Comments</option>
-            <option value="ssrn">Social Science Research Network</option>
-            <option value="zbl">Zentralblatt MATH</option>
-    </select>
-
-    </div>
-</div>
-<div class="control-group">
+    	<div class="control-group">
     <label class="relative" for="manualWork.url">URL</label>
     <div class="relative">    <input type="text" id="url" name="url" value="" placeholder="Enter a link to the work" class="input-xlarge">
 
