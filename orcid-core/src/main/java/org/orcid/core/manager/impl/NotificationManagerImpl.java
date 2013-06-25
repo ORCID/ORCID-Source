@@ -67,7 +67,7 @@ public class NotificationManagerImpl implements NotificationManager {
 
     private String supportAddress;
 
-    private String LAST_RESORT_ORCID_USER_EMAIL_NAME = "Orcid User";
+    private String LAST_RESORT_ORCID_USER_EMAIL_NAME = "ORCID Registry User";
 
     private URI baseUri;
 
