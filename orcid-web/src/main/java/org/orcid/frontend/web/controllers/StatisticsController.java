@@ -16,6 +16,8 @@
  */
 package org.orcid.frontend.web.controllers;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,6 +25,7 @@ import java.util.Map;
 import javax.annotation.Resource;
 
 import org.orcid.core.manager.StatisticsManager;
+import org.orcid.persistence.jpa.entities.StatisticKeyEntity;
 import org.orcid.persistence.jpa.entities.StatisticValuesEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -40,6 +43,7 @@ public class StatisticsController extends BaseController {
         ModelAndView mav = new ModelAndView("statistics");
         Map<String, Long> statisticsMap = new HashMap<String, Long>();
                 
+        StatisticKeyEntity latestKey = statisticsManager.getLatestKey();
         List<StatisticValuesEntity> statistics = statisticsManager.getLatestStatistics();
         
         if(statistics != null)
@@ -48,7 +52,16 @@ public class StatisticsController extends BaseController {
             }        
         
         mav.addObject("statistics", statisticsMap);        
-       
+        mav.addObject("statistics_date", formatStatisticsDate(latestKey.getGenerationDate()));
+        
         return mav;
     }    
+    
+    /**
+     * Formats the date when the statistic was added
+     * */
+    private String formatStatisticsDate(Date date){
+        SimpleDateFormat dt = new SimpleDateFormat("MM-dd-yyyy"); 
+        return dt.format(date);
+    }
 }
