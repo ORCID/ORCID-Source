@@ -25,7 +25,10 @@
     <div class="span9">
     	<span class="page-header">${springMacroRequestContext.getMessage("statistics.header")}</span>
     	<hr>
-
+	
+		<span class="stat-name">${springMacroRequestContext.getMessage("statistics.statistics_generation_date_label")}&nbsp;${statistics_date}</span>
+		<hr>
+		
         <span class="stat-name">${springMacroRequestContext.getMessage("statistics.live_ids")}</span>
 		<div class="pull-right">
 	        <#if statistics['liveIds']??>${statistics['liveIds']}<#else>Calculating</#if>
