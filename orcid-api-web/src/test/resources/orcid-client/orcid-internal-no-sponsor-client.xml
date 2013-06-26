@@ -57,11 +57,6 @@ v
             </researcher-urls>
             <contact-details>
                 <email primary="true">jamesb@semantico.co.uk</email>
-                <email primary="false">test1@email.com</email>
-                <email primary="false"> test2@email.com</email>
-                <email primary="false">test3@email.com </email>
-                <email primary="false"> test4@email.com </email>
-                <email primary="false">        test5@email.com         </email>
             </contact-details>
             <keywords>
                 <keyword>Pavement Studies</keyword>
