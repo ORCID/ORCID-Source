@@ -16,6 +16,9 @@
     =============================================================================
 
 -->
+
+<##-- Legacy email - I think this can be removed, but didn't do an exhaustive search to ensure that it isn't used somewhere (Comment by lpaglione) -->
+
 Dear ${emailName},
 
 Thank you for registering for an ORCID account. To activate your account, copy and paste this link into your browser:
