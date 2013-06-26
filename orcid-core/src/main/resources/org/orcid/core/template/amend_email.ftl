@@ -18,16 +18,15 @@
 -->
 Dear ${emailName},
 
-${amenderName} has updated your ORCID record.
+Thought you'd like to know... ${amenderName} has updated your ORCID record.
 
-Please click the following URL to see your updated record: ${baseUri}/${orcid}
+Please click the following URL to see your updated record: 
 
-You may opt-out of Amend notices in your ORCID Account settings page.  If you want to revoke 
-permission for this organization to update your record in the future, please go to the following
-URL: ${baseUri}/account
+    ${baseUri}/${orcid}
 
 Kind Regards,
 The ORCID Team
 support@orcid.org
 ${baseUri}
 
+You have received this email in the genuine belief that its contents would be of interest to you. To opt-out of messages from ORCID please go to your Account Settings page at ${baseUri}/account.
