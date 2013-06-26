@@ -32,7 +32,7 @@ You have been made an Account Delegate by ${grantingOrcidName} with the ORCID iD
 
 For a tutorial on the functions that you can perform as an Account Delegate please view http://support.orcid.org/knowledgebase/articles/217659.
 
-If you have questions or concerns about being a proxy, please contact ${grantingOrcidName} at usersEmail@domain.com, or the ORCID Help Desk at support@orcid.org.
+If you have questions or concerns about being an Account Delegate, please contact ${grantingOrcidName} at usersEmail@domain.com, or the ORCID Help Desk at support@orcid.org.
 
 
 Kind Regards,
