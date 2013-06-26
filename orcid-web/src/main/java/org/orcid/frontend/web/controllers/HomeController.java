@@ -19,6 +19,7 @@ package org.orcid.frontend.web.controllers;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.pojo.UserStatus;
 import org.orcid.utils.OrcidStringUtils;
+import org.orcid.utils.UTF8Control;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -65,7 +66,7 @@ public class HomeController extends BaseController {
         org.orcid.pojo.Local lPojo = new org.orcid.pojo.Local();
         lPojo.setLocale(locale.toString());
 
-        ResourceBundle resources = ResourceBundle.getBundle("i18n/messages", locale);
+        ResourceBundle resources = ResourceBundle.getBundle("i18n/messages", locale, new UTF8Control());
         lPojo.setMessages(OrcidStringUtils.resourceBundleToMap(resources));
 
         return lPojo;
