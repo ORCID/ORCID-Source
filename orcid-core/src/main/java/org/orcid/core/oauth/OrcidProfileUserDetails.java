@@ -19,6 +19,7 @@ package org.orcid.core.oauth;
 import org.apache.commons.lang.StringUtils;
 import org.orcid.core.security.OrcidWebRole;
 import org.orcid.jaxb.model.message.OrcidProfile;
+import org.orcid.jaxb.model.message.OrcidType;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -58,7 +59,14 @@ public class OrcidProfileUserDetails implements UserDetails {
      */
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Arrays.asList(OrcidWebRole.ROLE_USER);
+        Collection<OrcidWebRole> result = null;
+        if(realProfile == null || realProfile.getType() == null || realProfile.getType().equals(OrcidType.USER)) 
+            result = Arrays.asList(OrcidWebRole.ROLE_USER);
+        else if (realProfile.getType().equals(OrcidType.GROUP))
+            result = Arrays.asList(OrcidWebRole.ROLE_GROUP);
+        else if (realProfile.getType().equals(OrcidType.PREMIUM_GROUP))
+            result = Arrays.asList(OrcidWebRole.ROLE_PREMIUM_GROUP);
+        return result;
     }
 
     /**

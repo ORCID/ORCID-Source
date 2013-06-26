@@ -83,6 +83,7 @@ import org.orcid.jaxb.model.message.OrcidBio;
 import org.orcid.jaxb.model.message.OrcidHistory;
 import org.orcid.jaxb.model.message.OrcidInternal;
 import org.orcid.jaxb.model.message.OrcidProfile;
+import org.orcid.jaxb.model.message.OrcidType;
 import org.orcid.jaxb.model.message.OrcidWork;
 import org.orcid.jaxb.model.message.OrcidWorks;
 import org.orcid.jaxb.model.message.PersonalDetails;
@@ -1179,7 +1180,12 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
     private Set<OrcidGrantedAuthority> getGrantedAuthorities(ProfileEntity profileEntity) {
         OrcidGrantedAuthority authority = new OrcidGrantedAuthority();
         authority.setProfileEntity(profileEntity);
-        authority.setAuthority(OrcidWebRole.ROLE_USER.getAuthority());
+        if(profileEntity.getOrcidType() == null || profileEntity.getOrcidType().equals(OrcidType.USER))
+            authority.setAuthority(OrcidWebRole.ROLE_USER.getAuthority());
+        else if(profileEntity.getOrcidType().equals(OrcidType.GROUP))
+            authority.setAuthority(OrcidWebRole.ROLE_GROUP.getAuthority());
+        else if(profileEntity.getOrcidType().equals(OrcidType.PREMIUM_GROUP))
+            authority.setAuthority(OrcidWebRole.ROLE_PREMIUM_GROUP.getAuthority());
         Set<OrcidGrantedAuthority> authorities = new HashSet<OrcidGrantedAuthority>(1);
         authorities.add(authority);
         return authorities;

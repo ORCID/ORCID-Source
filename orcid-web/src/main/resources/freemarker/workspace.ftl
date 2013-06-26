@@ -112,6 +112,12 @@
                     </div>
     	        </div>
 	        </#if>
+	        
+	        <#if (profile.type)?? && ((profile.type) = "GROUP" || (profile.type) = "PREMIUM_GROUP")>
+	        	 <p><a href="<@spring.url "/manage-clients" />">${springMacroRequestContext.getMessage("workspace.ManageClientCredentials")}</a></p>	        	 
+	        </#if>
+	        
+	        	        
         </div>
     </div>
     <div class="span9">
