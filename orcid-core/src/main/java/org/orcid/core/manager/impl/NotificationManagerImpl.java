@@ -191,6 +191,28 @@ public class NotificationManagerImpl implements NotificationManager {
         sendAndLogMessage(message);
     }
 
+    public void sendVerificationReminderEmail(OrcidProfile orcidProfile, URI baseUri, String email) {
+        Map<String, Object> templateParams = new HashMap<String, Object>();
+
+        String emailFriendlyName = deriveEmailFriendlyName(orcidProfile);
+        templateParams.put("emailName", emailFriendlyName);
+        String verificationUrl = createVerificationUrl(email, baseUri);
+        templateParams.put("verificationUrl", verificationUrl);
+        templateParams.put("orcid", orcidProfile.getOrcid().getValue());
+        templateParams.put("baseUri", baseUri);
+        // Generate body from template
+        String body = templateManager.processTemplate("verification_reminder_email.ftl", templateParams);
+        // Create email message
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setFrom(fromAddress);
+        message.setTo(email);
+        message.setSubject(emailSubjects.getProperty("verify_reminder"));
+        message.setText(body);
+        // Send message
+        sendAndLogMessage(message);
+    }
+
+
     public String deriveEmailFriendlyName(OrcidProfile orcidProfile) {
         if (orcidProfile.getOrcidBio() != null && orcidProfile.getOrcidBio().getPersonalDetails() != null) {
             PersonalDetails personalDetails = orcidProfile.getOrcidBio().getPersonalDetails();

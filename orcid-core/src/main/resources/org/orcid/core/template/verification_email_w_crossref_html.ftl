@@ -60,6 +60,9 @@
 				The ORCID Team<br>
 				support@orcid.org<br>
 			</p>
+			<p style="font-family: arial,  helvetica, sans-serif;font-size: 15px;color: #666666;">
+				You have received this email as a service announcement related to your ORCID Account.
+			</p>
 		 </div>
 	 </body>
  </html>
