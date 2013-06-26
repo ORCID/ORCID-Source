@@ -59,9 +59,6 @@ public class OrcidApiServiceDelegatorImpl implements OrcidApiServiceDelegator {
     @Resource(name = "orcidSearchManager")
     private OrcidSearchManager orcidSearchManager;
 
-    @Resource
-    private ValidationManager validationManager;
-
     private static final Logger LOGGER = LoggerFactory.getLogger(OrcidApiServiceDelegatorImpl.class);
 
     /**
@@ -248,7 +245,6 @@ public class OrcidApiServiceDelegatorImpl implements OrcidApiServiceDelegator {
 
         profile.setOrcidInternal(null);
         OrcidMessage orcidMessage = new OrcidMessage(profile);
-        validationManager.validateMessage(orcidMessage);
 
         return Response.ok(orcidMessage).build();
     }
@@ -261,7 +257,6 @@ public class OrcidApiServiceDelegatorImpl implements OrcidApiServiceDelegator {
         if (orcidProfile != null) {
             orcidProfile.setOrcidInternal(null);
         }
-        validationManager.validateMessage(orcidMessage);
         return Response.ok(orcidMessage).build();
     }
 

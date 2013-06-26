@@ -36,7 +36,6 @@ import org.apache.http.HttpStatus;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -69,8 +68,8 @@ import com.sun.jersey.api.uri.UriBuilderImpl;
 @ContextConfiguration(locations = { "classpath:orcid-t2-web-context.xml", "classpath:orcid-t2-security-context.xml" })
 public class T2OrcidApiServiceVersionedDelegatorTest extends DBUnitTest {
 
-    private static final List<String> DATA_FILES = Arrays.asList("/data/EmptyEntityData.xml", "/data/SecurityQuestionEntityData.xml", "/data/ProfileEntityData.xml", "/data/WorksEntityData.xml",
-            "/data/ProfileWorksEntityData.xml", "/data/ClientDetailsEntityData.xml", "/data/Oauth2TokenDetailsData.xml");
+    private static final List<String> DATA_FILES = Arrays.asList("/data/EmptyEntityData.xml", "/data/SecurityQuestionEntityData.xml", "/data/ProfileEntityData.xml",
+            "/data/WorksEntityData.xml", "/data/ProfileWorksEntityData.xml", "/data/ClientDetailsEntityData.xml", "/data/Oauth2TokenDetailsData.xml");
 
     @Resource(name = "t2OrcidApiServiceDelegatorV1_0_14")
     private T2OrcidApiServiceDelegator t2OrcidApiServiceDelegator;
@@ -105,6 +104,7 @@ public class T2OrcidApiServiceVersionedDelegatorTest extends DBUnitTest {
     public void testAddWorks() {
         setUpSecurityContext();
         OrcidMessage orcidMessage = new OrcidMessage();
+        orcidMessage.setMessageVersion("1.0.14");
         OrcidProfile orcidProfile = new OrcidProfile();
         orcidMessage.setOrcidProfile(orcidProfile);
         orcidProfile.setOrcid("4444-4444-4444-4441");
@@ -170,19 +170,26 @@ public class T2OrcidApiServiceVersionedDelegatorTest extends DBUnitTest {
         assertEquals("Test credit name", retrievedMessage.getOrcidProfile().getOrcidBio().getPersonalDetails().getCreditName().getContent());
     }
 
-    @Test
-    @Ignore("Pending implementation")
-    public void testAttemptCreateWithLaterVersion() {
+    @Test(expected = OrcidBadRequestException.class)
+    public void testAttemptCreateWithLaterButOtherwiseValidVersion() {
         setUpSecurityContextForClientOnly();
         OrcidMessage orcidMessage = createStubOrcidMessage();
         orcidMessage.setMessageVersion("1.0.15");
-        Email email = new Email("madeupemail@semantico.com");
+        Email email = new Email("madeupemail3@semantico.com");
         orcidMessage.getOrcidProfile().getOrcidBio().getContactDetails().getEmail().add(email);
 
-        Response createResponse = t2OrcidApiServiceDelegator.createProfile(mockedUriInfo, orcidMessage);
+        t2OrcidApiServiceDelegator.createProfile(mockedUriInfo, orcidMessage);
+    }
 
-        assertNotNull(createResponse);
-        assertEquals(HttpStatus.SC_BAD_REQUEST, createResponse.getStatus());
+    @Test(expected = OrcidBadRequestException.class)
+    public void testAttemptCreateWithTotallyIncorrectVersion() {
+        setUpSecurityContextForClientOnly();
+        OrcidMessage orcidMessage = createStubOrcidMessage();
+        orcidMessage.setMessageVersion("abc");
+        Email email = new Email("madeupemail4@semantico.com");
+        orcidMessage.getOrcidProfile().getOrcidBio().getContactDetails().getEmail().add(email);
+
+        t2OrcidApiServiceDelegator.createProfile(mockedUriInfo, orcidMessage);
     }
 
     @Test
@@ -214,12 +221,15 @@ public class T2OrcidApiServiceVersionedDelegatorTest extends DBUnitTest {
 
     private OrcidMessage createStubOrcidMessage() {
         OrcidMessage orcidMessage = new OrcidMessage();
+        orcidMessage.setMessageVersion("1.0.14");
         OrcidProfile orcidProfile = new OrcidProfile();
         orcidMessage.setOrcidProfile(orcidProfile);
         OrcidBio orcidBio = new OrcidBio();
         orcidProfile.setOrcidBio(orcidBio);
         PersonalDetails personalDetails = new PersonalDetails();
         orcidBio.setPersonalDetails(personalDetails);
+        GivenNames givenNames = new GivenNames("Test given names");
+        personalDetails.setGivenNames(givenNames);
         CreditName creditName = new CreditName("Test credit name");
         personalDetails.setCreditName(creditName);
         creditName.setVisibility(Visibility.LIMITED);
