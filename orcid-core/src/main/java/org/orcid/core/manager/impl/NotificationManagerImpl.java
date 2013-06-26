@@ -340,6 +340,7 @@ public class NotificationManagerImpl implements NotificationManager {
         Source source = createdProfile.getOrcidHistory().getSource();
         templateParams.put("creatorName", source == null ? "" : source.getSourceName().getContent());
         templateParams.put("baseUri", baseUri);
+        //the one below is a duplicate, right?
         templateParams.put("orcid", createdProfile.getOrcid().getValue());
         String verificationUrl = createClaimVerificationUrl(createdProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue(), baseUri);
         templateParams.put("verificationUrl", verificationUrl);
