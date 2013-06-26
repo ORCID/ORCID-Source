@@ -20,9 +20,9 @@ Dear ${emailName},
 
 Thought you'd like to know... ${amenderName} has updated your ORCID record.
 
-Please click the following URL to see your updated record: 
+Please click the following URL to log in and see your updated record: 
 
-    ${baseUri}/${orcid}
+    ${baseUri}/my-orcid
 
 Kind Regards,
 The ORCID Team
