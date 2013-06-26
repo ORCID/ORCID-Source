@@ -29,4 +29,6 @@ The ORCID Team
 support@orcid.org
 ${baseUri}
 
-You have received this email in the genuine belief that its contents would be of interest to you. To opt-out of messages from ORCID please go to your Account Settings page at ${baseUri}/account.
+You have received this email in the genuine belief that its contents would be of 
+interest to you. To opt-out of messages from ORCID please go to your Account 
+Settings page at ${baseUri}/account.
