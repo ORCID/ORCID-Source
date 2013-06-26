@@ -40,4 +40,4 @@ The ORCID Team
 support@orcid.org 
 ${baseUri}
 
-You have received this e-mail as a service announcement related to your ORCID Account. 
+You have received this email as a service announcement related to your ORCID Account. 
