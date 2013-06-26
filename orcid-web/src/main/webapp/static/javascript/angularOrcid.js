@@ -936,7 +936,7 @@ function WorkCtrl($scope, $compile){
 			url: $('body').data('baseurl') + 'my-orcid/work.json',
 			dataType: 'json',
 			success: function(data) {
-				$scope.newWork = data;
+				$scope.editWork = data;
 				$scope.$apply();
 				$scope.showAddModal();
 			}
@@ -1038,6 +1038,50 @@ function WorkCtrl($scope, $compile){
 		$scope.curPrivToggle = null;
 		$scope.updateProfileWork(idx);
 	};
+	
+	$scope.serverValidate = function (relativePath) {
+		$.ajax({
+	        url: $('body').data('baseurl') + relativePath,
+	        type: 'POST',
+	        data:  angular.toJson($scope.editWork),
+	        contentType: 'application/json;charset=UTF-8',
+	        dataType: 'json',
+	        success: function(data) {
+	        	$scope.copyErrorsLeft($scope.editWork, data);
+	        	$scope.$apply();
+	        }
+	    }).fail(function() { 
+	    	// something bad is happening!
+	    	console.log("RegistrationCtrl.serverValidate() error");
+	    });
+	};
+	
+	// in the case of slow network connection
+	// we don't want to overwrite  values while
+	// user is typing
+	$scope.copyErrorsLeft = function (data1, data2) {
+		for (var key in data1) {
+			if (key == null) continue;
+			if (key == 'errors') {
+				data1.errors = data2.errors;
+			} else {
+				console.log("key is:" + key);
+				console.log(data1[key]);
+				if (typeof(data1[key])=="object") {
+					$scope.copyErrorsLeft(data1[key], data2[key]);
+				}
+			};
+		};
+	};
+
+	$scope.isValidClass = function (cur) {
+		if (cur === undefined) return '';
+		var valid = true;
+		if (cur.required && (cur.value == null || cur.value.trim() == '')) valid = false;
+		if (cur.errors !== undefined && cur.errors.length > 0) valid = false;
+		return valid ? '' : 'text-error';
+	};
+
 	
 	$scope.updateProfileWork = function(idx) {
 		var work = $scope.works[idx];

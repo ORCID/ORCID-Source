@@ -52,6 +52,8 @@ import org.orcid.pojo.ThirdPartyRedirect;
 import org.orcid.pojo.ajaxForm.Citation;
 import org.orcid.pojo.ajaxForm.Contributor;
 import org.orcid.pojo.ajaxForm.Date;
+import org.orcid.pojo.ajaxForm.ErrorsInterface;
+import org.orcid.pojo.ajaxForm.Registration;
 import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.pojo.ajaxForm.Work;
 import org.orcid.pojo.ajaxForm.WorkExternalIdentifier;
@@ -339,7 +341,7 @@ public class WorkspaceController extends BaseWorkspaceController {
         
         // work title and subtitle
         Text wtt = new Text();
-        wtt.setValue("Work title");
+        wtt.setValue("");
         wtt.setRequired(true);
         WorkTitle wt = new WorkTitle();
         wt.setTitle(wtt);
@@ -359,7 +361,8 @@ public class WorkspaceController extends BaseWorkspaceController {
         w.setCitation(c);
       
         Text wTypeText = new Text();
-        wTypeText.setValue(WorkType.BROCHURE.value());
+        wTypeText.setValue("");
+        wTypeText.setRequired(true);
         w.setWorkType(wTypeText);
         
         Date d = new Date();
@@ -401,6 +404,42 @@ public class WorkspaceController extends BaseWorkspaceController {
         w.setShortDescription(disText);
         
         return w;
+    }
+
+    
+    /**
+     * Returns a blank work
+     * */
+    @RequestMapping(value = "/work.json", method = RequestMethod.POST)
+    public @ResponseBody
+    Work postWork(HttpServletRequest request,  @RequestBody Work work) {
+        work.setErrors(new ArrayList<String>());
+        
+        workWorkTitleTitleValidate(work);
+        copyErrors(work.getWorkTitle().getTitle(), work);
+        
+        return work;
+    }
+
+    @RequestMapping(value = "/work/workTitle/titleValidate.json", method = RequestMethod.POST)
+    public @ResponseBody
+    Work workWorkTitleTitleValidate(@RequestBody Work work) {
+        work.getWorkTitle().getTitle().setErrors(new ArrayList<String>());
+        if (work.getWorkTitle().getTitle().getValue() == null || work.getWorkTitle().getTitle().getValue().trim().length() == 0) {
+            setError(work.getWorkTitle().getTitle(), "NotBlank.manualWork.title");
+        }
+
+        return work;
+    }
+    
+    private static void copyErrors(ErrorsInterface from, ErrorsInterface into) {
+        for (String s : from.getErrors()) {
+            into.getErrors().add(s);
+        }
+    }
+
+    private void setError(ErrorsInterface ei, String msg) {
+        ei.getErrors().add(getMessage(msg));
     }
 
     
