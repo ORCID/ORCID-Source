@@ -50,6 +50,7 @@ import org.orcid.jaxb.model.message.WorkType;
 import org.orcid.persistence.adapter.Jpa2JaxbAdapter;
 import org.orcid.pojo.ThirdPartyRedirect;
 import org.orcid.pojo.ajaxForm.Citation;
+import org.orcid.pojo.ajaxForm.Contributor;
 import org.orcid.pojo.ajaxForm.Date;
 import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.pojo.ajaxForm.Work;
@@ -377,6 +378,27 @@ public class WorkspaceController extends BaseWorkspaceController {
         List<WorkExternalIdentifier> wdiL = new ArrayList<WorkExternalIdentifier>();
         wdiL.add(wdi);
         w.setWorkExternalIdentifiers(wdiL);
+        
+        Text uText = new Text();
+        uText.setValue("http://test.com");
+        w.setUrl(uText);
+        
+        Contributor contr = new Contributor();
+        List<Contributor> contrList = new ArrayList<Contributor>();
+        Text rText = new Text();
+        rText.setValue(ContributorRole.AUTHOR.value());
+        contr.setContributorRole(rText);
+        
+        Text sText= new Text();
+        sText.setValue(SequenceType.FIRST.value());
+        contr.setContributorSequence(sText);
+        contrList.add(contr);
+        w.setContributors(contrList);
+        
+        Text disText= new Text();
+        disText.setValue("test test test test test");
+        
+        w.setShortDescription(disText);
         
         return w;
     }
