@@ -104,7 +104,7 @@
                     </work-title>
                     <work-citation>
                         <work-citation-type>bibtex</work-citation-type>
-                        <citation>A citation</citation>
+                        <citation>@article{anarticle, title = {Example title from bibtex} }</citation>
                     </work-citation>
                 </orcid-work>
                 <orcid-work>

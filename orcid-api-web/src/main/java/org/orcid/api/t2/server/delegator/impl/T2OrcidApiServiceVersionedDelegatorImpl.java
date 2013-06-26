@@ -23,7 +23,10 @@ import javax.annotation.Resource;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
+import org.orcid.api.common.exception.OrcidBadRequestException;
 import org.orcid.api.t2.server.delegator.T2OrcidApiServiceDelegator;
+import org.orcid.core.exception.OrcidValidationException;
+import org.orcid.core.manager.ValidationManager;
 import org.orcid.core.version.OrcidMessageVersionConverterChain;
 import org.orcid.jaxb.model.message.OrcidMessage;
 
@@ -34,16 +37,22 @@ import org.orcid.jaxb.model.message.OrcidMessage;
  */
 public class T2OrcidApiServiceVersionedDelegatorImpl implements T2OrcidApiServiceDelegator {
 
-    @Resource(name="orcidT2ServiceDelegator")
+    @Resource(name = "orcidT2ServiceDelegator")
     private T2OrcidApiServiceDelegator t2OrcidApiServiceDelegator;
 
     @Resource
     private OrcidMessageVersionConverterChain orcidMessageVersionConverterChain;
 
+    private ValidationManager incomingValidationManager;
+
     private String externalVersion;
 
     public void setExternalVersion(String externalVersion) {
         this.externalVersion = externalVersion;
+    }
+
+    public void setIncomingValidationManager(ValidationManager incomingValidationManager) {
+        this.incomingValidationManager = incomingValidationManager;
     }
 
     @Override
@@ -107,30 +116,35 @@ public class T2OrcidApiServiceVersionedDelegatorImpl implements T2OrcidApiServic
 
     @Override
     public Response createProfile(UriInfo uriInfo, OrcidMessage orcidMessage) {
+        validateIncomingMessage(orcidMessage);
         OrcidMessage upgradedMessage = upgradeMessage(orcidMessage);
         return t2OrcidApiServiceDelegator.createProfile(uriInfo, upgradedMessage);
     }
 
     @Override
     public Response updateBioDetails(UriInfo uriInfo, String orcid, OrcidMessage orcidMessage) {
+        validateIncomingMessage(orcidMessage);
         OrcidMessage upgradedMessage = upgradeMessage(orcidMessage);
         return t2OrcidApiServiceDelegator.updateBioDetails(uriInfo, orcid, upgradedMessage);
     }
 
     @Override
     public Response addWorks(UriInfo uriInfo, String orcid, OrcidMessage orcidMessage) {
+        validateIncomingMessage(orcidMessage);
         OrcidMessage upgradedMessage = upgradeMessage(orcidMessage);
         return t2OrcidApiServiceDelegator.addWorks(uriInfo, orcid, upgradedMessage);
     }
 
     @Override
     public Response updateWorks(UriInfo uriInfo, String orcid, OrcidMessage orcidMessage) {
+        validateIncomingMessage(orcidMessage);
         OrcidMessage upgradedMessage = upgradeMessage(orcidMessage);
         return t2OrcidApiServiceDelegator.updateWorks(uriInfo, orcid, upgradedMessage);
     }
 
     @Override
     public Response addExternalIdentifiers(UriInfo uriInfo, String orcid, OrcidMessage orcidMessage) {
+        validateIncomingMessage(orcidMessage);
         OrcidMessage upgradedMessage = upgradeMessage(orcidMessage);
         return t2OrcidApiServiceDelegator.addExternalIdentifiers(uriInfo, orcid, upgradedMessage);
     }
@@ -148,6 +162,14 @@ public class T2OrcidApiServiceVersionedDelegatorImpl implements T2OrcidApiServic
     @Override
     public Response unregisterWebhook(UriInfo uriInfo, String orcid, String webhookUri) {
         return t2OrcidApiServiceDelegator.unregisterWebhook(uriInfo, orcid, webhookUri);
+    }
+
+    private void validateIncomingMessage(OrcidMessage orcidMessage) {
+        try {
+            incomingValidationManager.validateMessage(orcidMessage);
+        } catch (OrcidValidationException e) {
+            throw new OrcidBadRequestException("Invalid incoming message", e);
+        }
     }
 
     private OrcidMessage upgradeMessage(OrcidMessage orcidMessage) {

@@ -17,15 +17,28 @@
 package org.orcid.core.manager.impl;
 
 import java.io.IOException;
+import java.util.List;
 
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
 
 import org.orcid.core.cli.ValidateOrcidMessage;
+import org.orcid.core.exception.OrcidValidationException;
 import org.orcid.core.manager.ValidationBehaviour;
 import org.orcid.core.manager.ValidationManager;
+import org.orcid.jaxb.model.message.Citation;
+import org.orcid.jaxb.model.message.CitationType;
+import org.orcid.jaxb.model.message.ContactDetails;
+import org.orcid.jaxb.model.message.Email;
+import org.orcid.jaxb.model.message.OrcidActivities;
+import org.orcid.jaxb.model.message.OrcidBio;
 import org.orcid.jaxb.model.message.OrcidMessage;
+import org.orcid.jaxb.model.message.OrcidProfile;
+import org.orcid.jaxb.model.message.OrcidWork;
+import org.orcid.jaxb.model.message.OrcidWorks;
+import org.orcid.utils.BibtexException;
+import org.orcid.utils.BibtexUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
@@ -39,6 +52,10 @@ public class ValidationManagerImpl implements ValidationManager {
 
     private ValidationBehaviour validationBehaviour = ValidationBehaviour.LOG_WARNING;
 
+    private String version = OrcidMessage.DEFAULT_VERSION;
+
+    private boolean requireOrcidProfile;
+
     private Schema schema;
 
     private static final Logger LOG = LoggerFactory.getLogger(ValidationManagerImpl.class);
@@ -46,6 +63,14 @@ public class ValidationManagerImpl implements ValidationManager {
     @Override
     public void setValidationBehaviour(ValidationBehaviour validationBehaviour) {
         this.validationBehaviour = validationBehaviour;
+    }
+
+    public void setVersion(String version) {
+        this.version = version;
+    }
+
+    public void setRequireOrcidProfile(boolean requireOrcidProfile) {
+        this.requireOrcidProfile = requireOrcidProfile;
     }
 
     @Override
@@ -57,10 +82,74 @@ public class ValidationManagerImpl implements ValidationManager {
         if (validator != null) {
             try {
                 validator.validate(orcidMessage.toSource());
+                doCustomValidation(orcidMessage);
             } catch (SAXException e) {
                 handleError("ORCID message is invalid", e, orcidMessage);
             } catch (IOException e) {
                 handleError("Unable to read ORCID message", e, orcidMessage);
+            } catch (OrcidValidationException e) {
+                handleError("Custom validation found a problem", e, orcidMessage);
+            }
+        }
+    }
+
+    public void doCustomValidation(OrcidMessage orcidMessage) {
+        OrcidProfile orcidProfile = orcidMessage != null ? orcidMessage.getOrcidProfile() : null;
+        if (orcidProfile == null) {
+            if (requireOrcidProfile) {
+                throw new OrcidValidationException("There must be an orcid-profile element");
+            }
+        } else {
+            checkBio(orcidProfile.getOrcidBio());
+            checkActivities(orcidProfile.getOrcidActivities());
+        }
+    }
+
+    private void checkBio(OrcidBio orcidBio) {
+        if (orcidBio != null) {
+            checkContactDetails(orcidBio.getContactDetails());
+        }
+    }
+
+    private void checkContactDetails(ContactDetails contactDetails) {
+        if (contactDetails != null) {
+            List<Email> emailList = contactDetails.getEmail();
+            int primaryCount = 0;
+            for (Email email : emailList) {
+                if (email.isPrimary()) {
+                    primaryCount++;
+                }
+            }
+            if (primaryCount > 1) {
+                throw new OrcidValidationException("There must not be more than one primary email");
+            }
+        }
+    }
+
+    private void checkActivities(OrcidActivities orcidActivities) {
+        if (orcidActivities != null) {
+            OrcidWorks works = orcidActivities.getOrcidWorks();
+            if (works != null && works.getOrcidWork() != null && !works.getOrcidWork().isEmpty()) {
+                checkWorks(works.getOrcidWork());
+            }
+        }
+    }
+
+    private void checkWorks(List<OrcidWork> orcidWork) {
+        for (OrcidWork work : orcidWork) {
+            checkWork(work);
+        }
+    }
+
+    public void checkWork(OrcidWork orcidWork) {
+        if (orcidWork.getWorkCitation() != null) {
+            Citation workCitation = orcidWork.getWorkCitation();
+            if (CitationType.BIBTEX.equals(workCitation.getWorkCitationType())) {
+                try {
+                    BibtexUtils.validate(workCitation.getCitation());
+                } catch (BibtexException e) {
+                    throw new OrcidValidationException("Invalid BibTeX citation: " + workCitation.getCitation() + "\n", e);
+                }
             }
         }
     }
@@ -69,7 +158,7 @@ public class ValidationManagerImpl implements ValidationManager {
         if (schema == null) {
             SchemaFactory factory = SchemaFactory.newInstance("http://www.w3.org/2001/XMLSchema");
             try {
-                schema = factory.newSchema(ValidateOrcidMessage.class.getResource("/orcid-message-" + OrcidMessage.DEFAULT_VERSION + ".xsd"));
+                schema = factory.newSchema(ValidateOrcidMessage.class.getResource("/orcid-message-" + version + ".xsd"));
             } catch (SAXException e) {
                 handleError("Error initializing schema", e);
             }
@@ -114,8 +203,12 @@ public class ValidationManagerImpl implements ValidationManager {
                 LOG.error("ORCID message is: {}", orcidMessage);
             }
             break;
-        case THROW_RUNTIME_EXCEPTION:
-            throw new RuntimeException(message, t);
+        case THROW_VALIDATION_EXCEPTION:
+            if (t instanceof OrcidValidationException) {
+                throw (OrcidValidationException) t;
+            } else {
+                throw new OrcidValidationException(message, t);
+            }
         default:
             throw new RuntimeException("Unknown validation behaviour: " + validationBehaviour);
         }
