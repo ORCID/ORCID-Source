@@ -274,10 +274,19 @@ public class NotificationManagerImpl implements NotificationManager {
         // Create map of template params
         Map<String, Object> templateParams = new HashMap<String, Object>();
         SimpleMailMessage message = new SimpleMailMessage();
+        // LADP, Please Check, can't test yet
+        // Would prefer if this email came from ORCID user granting permission - parameter also needed for the body of the email
+        // Add parameter to get the email address of the ORCID user granting permssion
+        // String grantingOrcidEmail = orcidUserGrantingPermission.getEmail();
+
+        // message.setFrom(grantingOrcidEmail);
         message.setFrom(fromAddress);
         message.setSubject(emailSubjects.getProperty("added_as_delegate"));
 
         for (DelegationDetails newDelegation : delegatesGrantedByUser) {
+            // LADP, suggest swapping out this statement to use the deriveEmailFriendlyName() function instead
+            // (pretty sure the line below won't work...)
+            // String emailNameForDelegate = deriveEmailFriendlyName(newDelegation.getDelegateSummary());
             String emailNameForDelegate = newDelegation.getDelegateSummary() != null && newDelegation.getDelegateSummary().getCreditName() != null ? newDelegation
                     .getDelegateSummary().getCreditName().getContent() : LAST_RESORT_ORCID_USER_EMAIL_NAME;
 
@@ -285,6 +294,7 @@ public class NotificationManagerImpl implements NotificationManager {
             templateParams.put("grantingOrcidValue", orcidUserGrantingPermission.getOrcid().getValue());
             templateParams.put("grantingOrcidName", deriveEmailFriendlyName(orcidUserGrantingPermission));
             templateParams.put("baseUri", baseUri);
+            // templateParams.put("grantingOrcidEmail", grantingOrcidEmail);
             String body = templateManager.processTemplate("added_as_delegate_email.ftl", templateParams);
             String toAddress = orcidUserGrantingPermission.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue();
             message.setTo(toAddress);
