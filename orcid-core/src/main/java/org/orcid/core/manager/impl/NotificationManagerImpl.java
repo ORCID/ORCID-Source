@@ -370,6 +370,7 @@ public class NotificationManagerImpl implements NotificationManager {
         Source source = orcidProfile.getOrcidHistory().getSource();
         templateParams.put("creatorName", source == null ? "" : source.getSourceName().getContent());
         templateParams.put("baseUri", baseUri);
+        // duplicate below, right?
         templateParams.put("orcid", orcid);
         templateParams.put("daysUntilActivation", daysUntilActivation);
         Email primaryEmail = orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail();
