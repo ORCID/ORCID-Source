@@ -260,7 +260,7 @@
 			<div class="control-group">
 				<label class="control-label">${springMacroRequestContext.getMessage("manual_work_form_contents.labelcitation")}</label>
 			    <div class="relative">
-					<textarea name="familyNames" type="text" class="input-xlarge"  ng-model="editWork.citation.citation.value" placeholder="Add ${springMacroRequestContext.getMessage("manual_work_form_contents.labelcitation")}" ng-model-onblur/>
+					<textarea name="familyNames" type="text" class="input-xlarge"  ng-model="editWork.citation.citation.value" placeholder="Add ${springMacroRequestContext.getMessage("manual_work_form_contents.labelcitation")}" ng-change="serverValidate('my-orcid/work/citationValidate.json')" ng-model-onblur/>
 					<span class="orcid-error" ng-show="editWork.citation.citation.errors.length > 0">
 						<div ng-repeat='error in editWork.citation.citation.errors' ng-bind-html-unsafe="error"></div>
 					</span>
@@ -270,7 +270,7 @@
 			<div class="control-group">
 	    		<label class="relative">${springMacroRequestContext.getMessage("manual_work_form_contents.labelcitationtype")}</label>
 	    		<div class="relative">
-		    		<select id="citationType" name="citationType" class="input-xlarge" ng-model="editWork.citation.citationType.value">
+		    		<select id="citationType" name="citationType" class="input-xlarge" ng-model="editWork.citation.citationType.value" ng-change="serverValidate('my-orcid/work/citationValidate.json')">
 						<#list citationTypes?keys as key>
 							<option value="${key}">${citationTypes[key]}</option>
 						</#list>
@@ -284,7 +284,7 @@
 			<div class="control-group">
 	    		<label class="relative">${springMacroRequestContext.getMessage("manual_work_form_contents.labelworktype")}</label>
 	    		<div class="relative">
-		    		<select id="workType" name="workType" class="input-xlarge" ng-model="editWork.workType.value">
+		    		<select id="workType" name="workType" class="input-xlarge" ng-model="editWork.workType.value" ng-change="serverValidate('my-orcid/work/workTypeValidate.json')">
 						<#list workTypes?keys as key>
 							<option value="${key}">${workTypes[key]}</option>
 						</#list>

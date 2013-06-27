@@ -28,6 +28,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
+import org.jbibtex.ParseException;
 import org.orcid.core.manager.ExternalIdentifierManager;
 import org.orcid.core.manager.ProfileWorkManager;
 import org.orcid.core.manager.ThirdPartyImportManager;
@@ -58,6 +59,7 @@ import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.pojo.ajaxForm.Work;
 import org.orcid.pojo.ajaxForm.WorkExternalIdentifier;
 import org.orcid.pojo.ajaxForm.WorkTitle;
+import org.orcid.utils.BibtexUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -67,6 +69,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.multiaction.NoSuchRequestHandlingMethodException;
+import org.springframework.web.util.HtmlUtils;
 
 /**
  * @author Will Simpson
@@ -431,6 +434,45 @@ public class WorkspaceController extends BaseWorkspaceController {
 
         return work;
     }
+
+    
+    @RequestMapping(value = "/work/workTypeValidate.json", method = RequestMethod.POST)
+    public @ResponseBody
+    Work workWorkTypeValidate(@RequestBody Work work) {
+        work.getWorkType().setErrors(new ArrayList<String>());
+        if (work.getWorkType().getValue() == null || work.getWorkType().getValue().trim().length() == 0) {
+            setError(work.getWorkType(), "NotBlank.manualWork.workType");
+        }
+
+        return work;
+    }
+
+    @RequestMapping(value = "/work/citationValidate.json", method = RequestMethod.POST)
+    public @ResponseBody
+    Work workCitationValidate(@RequestBody Work work) {
+        work.getCitation().getCitation().setErrors(new ArrayList<String>());
+        if (work.getCitation().getCitationType() != null 
+                && work.getCitation().getCitationType().getValue() != null) {
+            // citation should not be blank if citation type is set 
+            if (work.getCitation().getCitation() != null 
+                    && work.getCitation().getCitation().getValue().trim().equals("")) {
+                setError(work.getCitation().getCitation(), "NotBlank.manualWork.citation");
+            }
+            
+            // if bibtext must be valid
+            if (work.getCitation().getCitationType().getValue().equals(CitationType.BIBTEX.value())) {
+                try {
+                    BibtexUtils.toCitation(HtmlUtils.htmlUnescape(work.getCitation().getCitationType().getValue()));
+                } catch (ParseException e) {
+                    setError(work.getCitation().getCitation(), "manualWork.bibtext.notValid");
+                }
+            }
+        
+        }
+        
+        return work;
+    }
+
     
     private static void copyErrors(ErrorsInterface from, ErrorsInterface into) {
         for (String s : from.getErrors()) {
