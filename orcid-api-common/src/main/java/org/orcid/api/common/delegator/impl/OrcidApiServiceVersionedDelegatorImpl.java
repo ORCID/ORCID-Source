@@ -34,7 +34,6 @@ import org.orcid.jaxb.model.message.OrcidMessage;
  */
 public class OrcidApiServiceVersionedDelegatorImpl implements OrcidApiServiceDelegator {
 
-    @Resource
     private OrcidApiServiceDelegator orcidApiServiceDelegator;
 
     @Resource

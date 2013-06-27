@@ -49,7 +49,6 @@ import org.orcid.api.common.OrcidApiService;
 import org.orcid.api.common.delegator.OrcidApiServiceDelegator;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 
 import com.yammer.metrics.Metrics;
 import com.yammer.metrics.core.Counter;

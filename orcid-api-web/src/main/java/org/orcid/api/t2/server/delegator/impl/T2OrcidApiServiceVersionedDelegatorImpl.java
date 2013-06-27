@@ -175,7 +175,16 @@ public class T2OrcidApiServiceVersionedDelegatorImpl implements T2OrcidApiServic
         try {
             incomingValidationManager.validateMessage(orcidMessage);
         } catch (OrcidValidationException e) {
-            throw new OrcidBadRequestException("Invalid incoming message", e);
+            Throwable cause = e.getCause();
+            if (cause == null) {
+                cause = e;
+            } else {
+                Throwable underlyingCause = cause.getCause();
+                if (underlyingCause != null) {
+                    cause = underlyingCause;
+                }
+            }
+            throw new OrcidBadRequestException("Invalid incoming message: " + cause.toString());
         }
     }
 
@@ -195,7 +204,7 @@ public class T2OrcidApiServiceVersionedDelegatorImpl implements T2OrcidApiServic
         }
         return Response.fromResponse(response).entity(orcidMessage).build();
     }
-    
+
     private Response downgradeAndValidateResponse(Response response) {
         Response downgradedResponse = downgradeResponse(response);
         validateOutgoingResponse(downgradedResponse);
