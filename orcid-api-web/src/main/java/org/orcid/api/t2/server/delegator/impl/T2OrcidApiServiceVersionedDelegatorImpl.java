@@ -45,6 +45,8 @@ public class T2OrcidApiServiceVersionedDelegatorImpl implements T2OrcidApiServic
 
     private ValidationManager incomingValidationManager;
 
+    private ValidationManager outgoingValidationManager;
+
     private String externalVersion;
 
     public void setExternalVersion(String externalVersion) {
@@ -55,6 +57,10 @@ public class T2OrcidApiServiceVersionedDelegatorImpl implements T2OrcidApiServic
         this.incomingValidationManager = incomingValidationManager;
     }
 
+    public void setOutgoingValidationManager(ValidationManager outgoingValidationManager) {
+        this.outgoingValidationManager = outgoingValidationManager;
+    }
+
     @Override
     public Response viewStatusText() {
         return t2OrcidApiServiceDelegator.viewStatusText();
@@ -63,55 +69,55 @@ public class T2OrcidApiServiceVersionedDelegatorImpl implements T2OrcidApiServic
     @Override
     public Response findBioDetails(String orcid) {
         Response response = t2OrcidApiServiceDelegator.findBioDetails(orcid);
-        return downgradeResponse(response);
+        return downgradeAndValidateResponse(response);
     }
 
     @Override
     public Response findBioDetailsFromPublicCache(String orcid) {
         Response response = t2OrcidApiServiceDelegator.findBioDetailsFromPublicCache(orcid);
-        return downgradeResponse(response);
+        return downgradeAndValidateResponse(response);
     }
 
     @Override
     public Response findExternalIdentifiers(String orcid) {
         Response response = t2OrcidApiServiceDelegator.findExternalIdentifiers(orcid);
-        return downgradeResponse(response);
+        return downgradeAndValidateResponse(response);
     }
 
     @Override
     public Response findExternalIdentifiersFromPublicCache(String orcid) {
         Response response = t2OrcidApiServiceDelegator.findExternalIdentifiersFromPublicCache(orcid);
-        return downgradeResponse(response);
+        return downgradeAndValidateResponse(response);
     }
 
     @Override
     public Response findFullDetails(String orcid) {
         Response response = t2OrcidApiServiceDelegator.findFullDetails(orcid);
-        return downgradeResponse(response);
+        return downgradeAndValidateResponse(response);
     }
 
     @Override
     public Response findFullDetailsFromPublicCache(String orcid) {
         Response response = t2OrcidApiServiceDelegator.findFullDetailsFromPublicCache(orcid);
-        return downgradeResponse(response);
+        return downgradeAndValidateResponse(response);
     }
 
     @Override
     public Response findWorksDetails(String orcid) {
         Response response = t2OrcidApiServiceDelegator.findWorksDetails(orcid);
-        return downgradeResponse(response);
+        return downgradeAndValidateResponse(response);
     }
 
     @Override
     public Response findWorksDetailsFromPublicCache(String orcid) {
         Response response = t2OrcidApiServiceDelegator.findWorksDetailsFromPublicCache(orcid);
-        return downgradeResponse(response);
+        return downgradeAndValidateResponse(response);
     }
 
     @Override
     public Response searchByQuery(Map<String, List<String>> queryMap) {
         Response response = t2OrcidApiServiceDelegator.searchByQuery(queryMap);
-        return downgradeResponse(response);
+        return downgradeAndValidateResponse(response);
     }
 
     @Override
@@ -125,7 +131,8 @@ public class T2OrcidApiServiceVersionedDelegatorImpl implements T2OrcidApiServic
     public Response updateBioDetails(UriInfo uriInfo, String orcid, OrcidMessage orcidMessage) {
         validateIncomingMessage(orcidMessage);
         OrcidMessage upgradedMessage = upgradeMessage(orcidMessage);
-        return t2OrcidApiServiceDelegator.updateBioDetails(uriInfo, orcid, upgradedMessage);
+        Response response = t2OrcidApiServiceDelegator.updateBioDetails(uriInfo, orcid, upgradedMessage);
+        return downgradeAndValidateResponse(response);
     }
 
     @Override
@@ -172,6 +179,11 @@ public class T2OrcidApiServiceVersionedDelegatorImpl implements T2OrcidApiServic
         }
     }
 
+    private void validateOutgoingResponse(Response response) {
+        OrcidMessage orcidMessage = (OrcidMessage) response.getEntity();
+        outgoingValidationManager.validateMessage(orcidMessage);
+    }
+
     private OrcidMessage upgradeMessage(OrcidMessage orcidMessage) {
         return orcidMessageVersionConverterChain.upgradeMessage(orcidMessage, externalVersion);
     }
@@ -182,6 +194,12 @@ public class T2OrcidApiServiceVersionedDelegatorImpl implements T2OrcidApiServic
             orcidMessageVersionConverterChain.downgradeMessage(orcidMessage, externalVersion);
         }
         return Response.fromResponse(response).entity(orcidMessage).build();
+    }
+    
+    private Response downgradeAndValidateResponse(Response response) {
+        Response downgradedResponse = downgradeResponse(response);
+        validateOutgoingResponse(downgradedResponse);
+        return downgradedResponse;
     }
 
 }

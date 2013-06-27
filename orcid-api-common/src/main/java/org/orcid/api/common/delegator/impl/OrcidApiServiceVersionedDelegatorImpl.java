@@ -23,6 +23,7 @@ import javax.annotation.Resource;
 import javax.ws.rs.core.Response;
 
 import org.orcid.api.common.delegator.OrcidApiServiceDelegator;
+import org.orcid.core.manager.ValidationManager;
 import org.orcid.core.version.OrcidMessageVersionConverterChain;
 import org.orcid.jaxb.model.message.OrcidMessage;
 
@@ -39,6 +40,8 @@ public class OrcidApiServiceVersionedDelegatorImpl implements OrcidApiServiceDel
     @Resource
     private OrcidMessageVersionConverterChain orcidMessageVersionConverterChain;
 
+    private ValidationManager outgoingValidationManager;
+
     private String externalVersion;
 
     public String getExternalVersion() {
@@ -49,6 +52,10 @@ public class OrcidApiServiceVersionedDelegatorImpl implements OrcidApiServiceDel
         this.externalVersion = externalVersion;
     }
 
+    public void setOutgoingValidationManager(ValidationManager outgoingValidationManager) {
+        this.outgoingValidationManager = outgoingValidationManager;
+    }
+
     @Override
     public Response viewStatusText() {
         return orcidApiServiceDelegator.viewStatusText();
@@ -57,55 +64,55 @@ public class OrcidApiServiceVersionedDelegatorImpl implements OrcidApiServiceDel
     @Override
     public Response findBioDetails(String orcid) {
         Response response = orcidApiServiceDelegator.findBioDetails(orcid);
-        return downgradeResponse(response);
+        return downgradeAndValidateResponse(response);
     }
 
     @Override
     public Response findBioDetailsFromPublicCache(String orcid) {
         Response response = orcidApiServiceDelegator.findBioDetailsFromPublicCache(orcid);
-        return downgradeResponse(response);
+        return downgradeAndValidateResponse(response);
     }
 
     @Override
     public Response findExternalIdentifiers(String orcid) {
         Response response = orcidApiServiceDelegator.findExternalIdentifiers(orcid);
-        return downgradeResponse(response);
+        return downgradeAndValidateResponse(response);
     }
 
     @Override
     public Response findExternalIdentifiersFromPublicCache(String orcid) {
         Response response = orcidApiServiceDelegator.findExternalIdentifiersFromPublicCache(orcid);
-        return downgradeResponse(response);
+        return downgradeAndValidateResponse(response);
     }
 
     @Override
     public Response findFullDetails(String orcid) {
         Response response = orcidApiServiceDelegator.findFullDetails(orcid);
-        return downgradeResponse(response);
+        return downgradeAndValidateResponse(response);
     }
 
     @Override
     public Response findFullDetailsFromPublicCache(String orcid) {
         Response response = orcidApiServiceDelegator.findFullDetailsFromPublicCache(orcid);
-        return downgradeResponse(response);
+        return downgradeAndValidateResponse(response);
     }
 
     @Override
     public Response findWorksDetails(String orcid) {
         Response response = orcidApiServiceDelegator.findWorksDetails(orcid);
-        return downgradeResponse(response);
+        return downgradeAndValidateResponse(response);
     }
 
     @Override
     public Response findWorksDetailsFromPublicCache(String orcid) {
         Response response = orcidApiServiceDelegator.findFullDetailsFromPublicCache(orcid);
-        return downgradeResponse(response);
+        return downgradeAndValidateResponse(response);
     }
 
     @Override
     public Response searchByQuery(Map<String, List<String>> queryMap) {
         Response response = orcidApiServiceDelegator.searchByQuery(queryMap);
-        return downgradeResponse(response);
+        return downgradeAndValidateResponse(response);
     }
 
     private Response downgradeResponse(Response response) {
@@ -114,6 +121,17 @@ public class OrcidApiServiceVersionedDelegatorImpl implements OrcidApiServiceDel
             orcidMessageVersionConverterChain.downgradeMessage(orcidMessage, externalVersion);
         }
         return Response.fromResponse(response).entity(orcidMessage).build();
+    }
+
+    private void validateOutgoingResponse(Response response) {
+        OrcidMessage orcidMessage = (OrcidMessage) response.getEntity();
+        outgoingValidationManager.validateMessage(orcidMessage);
+    }
+
+    private Response downgradeAndValidateResponse(Response response) {
+        Response downgradedResponse = downgradeResponse(response);
+        validateOutgoingResponse(downgradedResponse);
+        return downgradedResponse;
     }
 
 }
