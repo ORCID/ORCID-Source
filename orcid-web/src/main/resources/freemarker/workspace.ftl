@@ -324,14 +324,14 @@
 	   		<div class="control-group" ng-repeat="workExternalIdentifier in editWork.workExternalIdentifiers">
 				<label class="control-label">${springMacroRequestContext.getMessage("manual_work_form_contents.labelID")}</label>
 			    <div class="relative">
-					<input name="currentWorkExternalIds" type="text" class="input-xlarge"  ng-model="workExternalIdentifier.workExternalIdentifierId.value" placeholder="Add ${springMacroRequestContext.getMessage("manual_work_form_contents.labelID")}" ng-model-onblur/>
+					<input name="currentWorkExternalIds" type="text" class="input-xlarge"  ng-model="workExternalIdentifier.workExternalIdentifierId.value" placeholder="Add ${springMacroRequestContext.getMessage("manual_work_form_contents.labelID")}"  ng-change="serverValidate('my-orcid/work/workExternalIdentifiersValidate.json')" ng-model-onblur/>
 						<span class="orcid-error" ng-show="workExternalIdentifier.workExternalIdentifierId.errors.length > 0">
 							<div ng-repeat='error in workExternalIdentifier.workExternalIdentifierId.errors' ng-bind-html-unsafe="error"></div>
 						</span>
 				</div>
 				<label class="relative">ID type</label>
 				<div class="relative">
-		    		<select id="workType" name="workType" class="input-xlarge" ng-model="workExternalIdentifier.workExternalIdentifierType.value">
+		    		<select id="workType" name="workType" class="input-xlarge" ng-model="workExternalIdentifier.workExternalIdentifierType.value" ng-change="serverValidate('my-orcid/work/workExternalIdentifiersValidate.json')">
 						<#list idTypes?keys as key>
 							<option value="${key}">${idTypes[key]}</option>
 						</#list>

@@ -421,11 +421,16 @@ public class WorkspaceController extends BaseWorkspaceController {
         workCitationValidate(work);
         workWorkTitleTitleValidate(work);
         workWorkTypeValidate(work);
+        workWorkExternalIdentifiersValidate(work);
         
         copyErrors(work.getCitation().getCitation(), work);
         copyErrors(work.getCitation().getCitationType(), work);
         copyErrors(work.getWorkTitle().getTitle(), work);
         copyErrors(work.getWorkType(), work);
+        for (WorkExternalIdentifier wId:work.getWorkExternalIdentifiers()) {
+            copyErrors(wId.getWorkExternalIdentifierId(), work);
+            copyErrors(wId.getWorkExternalIdentifierType(), work);
+        }
         
         return work;
     }
@@ -453,6 +458,33 @@ public class WorkspaceController extends BaseWorkspaceController {
         return work;
     }
 
+
+    @RequestMapping(value = "/work/workExternalIdentifiersValidate.json", method = RequestMethod.POST)
+    public @ResponseBody
+    Work workWorkExternalIdentifiersValidate(@RequestBody Work work) {
+        for (WorkExternalIdentifier wId:work.getWorkExternalIdentifiers()) {
+            wId.getWorkExternalIdentifierId().setErrors(new ArrayList<String>());
+            wId.getWorkExternalIdentifierType().setErrors(new ArrayList<String>());
+            // if has id type must be specified 
+            if (wId.getWorkExternalIdentifierId().getValue() != null
+                    && !wId.getWorkExternalIdentifierId().getValue().trim().equals("")
+                    && (wId.getWorkExternalIdentifierType().getValue() == null
+                        || wId.getWorkExternalIdentifierType().getValue().equals(""))) {
+                setError(wId.getWorkExternalIdentifierType(), "NotBlank.currentWorkExternalIds.idType"); 
+            }
+            // if type is set a id must set
+            if (wId.getWorkExternalIdentifierType().getValue() != null
+                    && !wId.getWorkExternalIdentifierType().getValue().trim().equals("")
+                    && (wId.getWorkExternalIdentifierId().getValue() == null
+                         || wId.getWorkExternalIdentifierId().getValue().trim().equals(""))) {
+                setError(wId.getWorkExternalIdentifierId(), "NotBlank.currentWorkExternalIds.id");
+            }
+        }
+         
+        return work;
+    }
+
+    
     @RequestMapping(value = "/work/citationValidate.json", method = RequestMethod.POST)
     public @ResponseBody
     Work workCitationValidate(@RequestBody Work work) {
