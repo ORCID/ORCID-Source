@@ -26,7 +26,7 @@
     	<span class="page-header">${springMacroRequestContext.getMessage("statistics.header")}</span>
     	<hr>
 	
-		<span class="stat-name">${springMacroRequestContext.getMessage("statistics.statistics_generation_date_label")}&nbsp;${statistics_date}</span>
+		<span class="stat-name">${springMacroRequestContext.getMessage("statistics.statistics_generation_date_label")}&nbsp;<#if (statistics_date)??>${statistics_date}<#else>NA</#if></span>
 		<hr>
 		
         <span class="stat-name">${springMacroRequestContext.getMessage("statistics.live_ids")}</span>
