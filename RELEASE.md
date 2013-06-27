@@ -4,6 +4,20 @@ We release updates to the Registry regularly. Below is a list of the improvement
 * [2013 Releases](https://trello.com/b/ZgYVAlel)
 * [2012 Releases](https://trello.com/b/vyCDYdvR)
 
+## release-1.1.24.10
+(2013-06-27)
+
+* Fix email's with spaces being allowed into the db
+
+* Quick Search is AJAX and paginates
+
+* Push out property files for Chinese Simplified, Chinese Traditional, Spanish, French and English.
+
+* Fix registration redirecting non-existent pages issue.
+
+* Push out statistics page. /statistics 
+
+
 
 ## release-1.1.23.5
 (2013-06-12)

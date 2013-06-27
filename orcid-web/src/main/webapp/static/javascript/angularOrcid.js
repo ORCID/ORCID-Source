@@ -1122,22 +1122,20 @@ function QuickSearchCtrl($scope, $compile){
 				else{
 					$('#no-results-alert').fadeIn(1200);
 				}
+				$scope.areMoreResults = $scope.numFound >= ($scope.start + $scope.rows);
 				$scope.$apply();
 				$('#ajax-loader').hide();
 				var newSearchResults = $('.new-search-result');
 				newSearchResults.fadeIn(1200);
 				newSearchResults.removeClass('new-search-result');
 				var newSearchResultsTop = newSearchResults.offset().top;
-				console.log("search results top = " + newSearchResultsTop);
-				var showMoreButtonTop = $('#show-more-button').offset().top;
-				console.log("show more button top = " + showMoreButtonTop);
+				var showMoreButtonTop = $('#show-more-button-container').offset().top;
 				var bottom = $(window).height();
-				console.log("bottom = " + bottom);
 				if(showMoreButtonTop > bottom){
 					$('html, body').animate(
 						{ 
 							scrollTop: newSearchResultsTop
-						}, 
+						},
 						1000, 
 						'easeOutQuint'
 					);
@@ -1162,10 +1160,6 @@ function QuickSearchCtrl($scope, $compile){
 		else{
 			return $.map(array, function(o){ return o[propertyName]; }).join(', ');
 		}
-	};
-	
-	$scope.areMoreResults = function(){
-		return $scope.numFound > $scope.rows;
 	};
 	
 	$scope.areResults = function(){
