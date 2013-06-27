@@ -69,12 +69,12 @@
                 
                     <nav class="main">
                         <ul class="menu"><li class="first expanded active-trail"><a href="<@spring.url "/" />" title="">${springMacroRequestContext.getMessage("public-layout.for_researchers")}</a><ul class="menu">
-                            <@security.authorize ifNotGranted="ROLE_USER">
+                            <@security.authorize ifNotGranted="ROLE_USER, ROLE_GROUP, ROLE_PREMIUM_GROUP">
                                 <li class="leaf last"><a ${(nav=="signin")?string('class="active" ', '')} href="<@spring.url "/signin" />">${springMacroRequestContext.getMessage("public-layout.sign_in")}</a></li>
                                 <li class="leaf first"><a ${(nav=="register")?string('class="active" ', '')}href="<@spring.url "/register" />">${springMacroRequestContext.getMessage("public-layout.register")}</a></li>
                             </@security.authorize>
                             <#assign isProxy = (profile.orcidBio.delegation.givenPermissionBy)?? && profile.orcidBio.delegation.givenPermissionBy.delegationDetails?size != 0>
-                            <@security.authorize ifAnyGranted="ROLE_USER">
+                            <@security.authorize ifAnyGranted="ROLE_USER, ROLE_GROUP, ROLE_PREMIUM_GROUP">
                                 <li><a ${(nav=="record")?string('class="active" ', '')}href="<@spring.url '/my-orcid'/>">${springMacroRequestContext.getMessage("public-layout.my_orcid_record")}</a></li>
                                 <li><a ${(nav=="settings")?string('class="active" ', '')}href="<@spring.url '/account'/>">${springMacroRequestContext.getMessage("public-layout.account_setting")}</a></li>
                                 
@@ -115,8 +115,8 @@
 <li class="last leaf"><a href="http://orcid.uservoice.com/knowledgebase" title="">${springMacroRequestContext.getMessage("public-layout.knowledge_base")}Knowledge Base</a></li>
 </ul></li>
 <li class="last leaf">
-    <@security.authorize ifNotGranted="ROLE_USER"><a href="<@spring.url "/signin" />" title="">${springMacroRequestContext.getMessage("public-layout.sign_in")}</a></@security.authorize>
-    <@security.authorize ifAnyGranted="ROLE_USER"><a href="<@spring.url '/signout'/>">${springMacroRequestContext.getMessage("public-layout.sign_out")}</a></@security.authorize>
+    <@security.authorize ifNotGranted="ROLE_USER, ROLE_GROUP, ROLE_PREMIUM_GROUP"><a href="<@spring.url "/signin" />" title="">${springMacroRequestContext.getMessage("public-layout.sign_in")}</a></@security.authorize>
+    <@security.authorize ifAnyGranted="ROLE_USER, ROLE_GROUP, ROLE_PREMIUM_GROUP"><a href="<@spring.url '/signout'/>">${springMacroRequestContext.getMessage("public-layout.sign_out")}</a></@security.authorize>
 </li>
 </ul>                    </nav>
     <#--<#if isProxy><#include "/common/change_proxy.ftl" /></#if>-->

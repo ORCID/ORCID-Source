@@ -70,5 +70,4 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
     void updateLastModifiedDateAndIndexingStatus(String orcid);
 
     OrcidType retrieveOrcidType(String orcid);
-
 }

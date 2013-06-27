@@ -380,5 +380,5 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
         query.setParameter("orcid", orcid);
         List<OrcidType> results = query.getResultList();
         return results.isEmpty() ? null : results.get(0);
-    }
+    }    
 }
