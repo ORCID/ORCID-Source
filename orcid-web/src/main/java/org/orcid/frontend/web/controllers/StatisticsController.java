@@ -51,8 +51,10 @@ public class StatisticsController extends BaseController {
                 statisticsMap.put(statistic.getStatisticName(), statistic.getStatisticValue());
             }        
         
-        mav.addObject("statistics", statisticsMap);        
-        mav.addObject("statistics_date", formatStatisticsDate(latestKey.getGenerationDate()));
+        mav.addObject("statistics", statisticsMap);
+        
+        if(latestKey != null)
+            mav.addObject("statistics_date", formatStatisticsDate(latestKey.getGenerationDate()));
         
         return mav;
     }    
