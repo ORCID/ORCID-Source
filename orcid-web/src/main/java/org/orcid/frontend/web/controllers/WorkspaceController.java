@@ -349,7 +349,7 @@ public class WorkspaceController extends BaseWorkspaceController {
         WorkTitle wt = new WorkTitle();
         wt.setTitle(wtt);
         Text wst = new Text();
-        wst.setValue("Subtitle");
+        wst.setValue("");
         wt.setSubtitle(wst);
         w.setWorkTitle(wt);
         
@@ -359,7 +359,7 @@ public class WorkspaceController extends BaseWorkspaceController {
         ctText.setValue(CitationType.FORMATTED_UNSPECIFIED.value());       
         c.setCitationType(ctText);
         Text cText = new Text();
-        cText.setValue("Citation text");
+        cText.setValue("");
         c.setCitation(cText);
         w.setCitation(c);
       
@@ -369,16 +369,16 @@ public class WorkspaceController extends BaseWorkspaceController {
         w.setWorkType(wTypeText);
         
         Date d = new Date();
-        d.setMonth("03");
-        d.setDay("25");
-        d.setYear("1974");
+        d.setMonth("");
+        d.setDay("");
+        d.setYear("");
         w.setPublicationDate(d);
         
         WorkExternalIdentifier wdi = new WorkExternalIdentifier();
         Text wdiT = new Text();
-        wdiT.setValue("Works external identifier");
+        wdiT.setValue("");
         Text wdiType = new Text();
-        wdiType.setValue(WorkExternalIdentifierType.BIBCODE.value());
+        wdiType.setValue("");
         wdi.setWorkExternalIdentifierId(wdiT);
         wdi.setWorkExternalIdentifierType(wdiType);
         List<WorkExternalIdentifier> wdiL = new ArrayList<WorkExternalIdentifier>();
@@ -386,23 +386,23 @@ public class WorkspaceController extends BaseWorkspaceController {
         w.setWorkExternalIdentifiers(wdiL);
         
         Text uText = new Text();
-        uText.setValue("http://test.com");
+        uText.setValue("");
         w.setUrl(uText);
         
         Contributor contr = new Contributor();
         List<Contributor> contrList = new ArrayList<Contributor>();
         Text rText = new Text();
-        rText.setValue(ContributorRole.AUTHOR.value());
+        rText.setValue("");
         contr.setContributorRole(rText);
         
         Text sText= new Text();
-        sText.setValue(SequenceType.FIRST.value());
+        sText.setValue("");
         contr.setContributorSequence(sText);
         contrList.add(contr);
         w.setContributors(contrList);
         
         Text disText= new Text();
-        disText.setValue("test test test test test");
+        disText.setValue("");
         
         w.setShortDescription(disText);
         
@@ -418,8 +418,14 @@ public class WorkspaceController extends BaseWorkspaceController {
     Work postWork(HttpServletRequest request,  @RequestBody Work work) {
         work.setErrors(new ArrayList<String>());
         
+        workCitationValidate(work);
         workWorkTitleTitleValidate(work);
+        workWorkTypeValidate(work);
+        
+        copyErrors(work.getCitation().getCitation(), work);
+        copyErrors(work.getCitation().getCitationType(), work);
         copyErrors(work.getWorkTitle().getTitle(), work);
+        copyErrors(work.getWorkType(), work);
         
         return work;
     }
@@ -451,11 +457,15 @@ public class WorkspaceController extends BaseWorkspaceController {
     public @ResponseBody
     Work workCitationValidate(@RequestBody Work work) {
         work.getCitation().getCitation().setErrors(new ArrayList<String>());
-        if (work.getCitation().getCitationType() != null 
-                && work.getCitation().getCitationType().getValue() != null) {
+        work.getCitation().getCitationType().setErrors(new ArrayList<String>());
+        if (work.getCitation().getCitationType() == null 
+                || work.getCitation().getCitationType().getValue() == null
+                || work.getCitation().getCitationType().getValue().trim().equals("")) {
+            setError(work.getCitation().getCitationType(), "NotBlank.manualWork.citationType");
+        } else if (!work.getCitation().getCitationType().getValue().trim().equals(CitationType.FORMATTED_UNSPECIFIED.value())) {
             // citation should not be blank if citation type is set 
-            if (work.getCitation().getCitation() != null 
-                    && work.getCitation().getCitation().getValue().trim().equals("")) {
+            if (work.getCitation().getCitation() != null || 
+                     work.getCitation().getCitation().getValue().trim().equals("")) {
                 setError(work.getCitation().getCitation(), "NotBlank.manualWork.citation");
             }
             

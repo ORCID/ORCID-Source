@@ -944,6 +944,25 @@ function WorkCtrl($scope, $compile){
 	    	console.log("Error fetching work: " + value);
 	    });
 	};
+
+
+	$scope.addWork = function(){
+		$.ajax({
+			url: $('body').data('baseurl') + 'my-orcid/work.json',	        
+	        contentType: 'application/json;charset=UTF-8',
+	        dataType: 'json',
+	        type: 'POST',
+	        data:  angular.toJson($scope.editWork),
+	        success: function(data) {
+	        	$scope.editWork = data;
+	        	$scope.copyErrorsLeft($scope.editWork, data);
+	        	$scope.$apply();
+	        }
+		}).fail(function(){
+			// something bad is happening!
+	    	console.log("error fetching works");
+		});
+	};
 	
 	
 	$scope.addWorkModal();
@@ -968,6 +987,7 @@ function WorkCtrl($scope, $compile){
 		}
 	}; 
 	
+
 	
 	$scope.getWorks = function(){
 		$.ajax({
