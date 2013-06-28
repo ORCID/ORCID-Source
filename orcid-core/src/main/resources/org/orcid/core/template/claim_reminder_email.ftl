@@ -18,26 +18,41 @@
 -->
 Dear ${emailName},
 
-This is a reminder message that ${creatorName} has registered for an ORCID iD on your behalf. If you take no further action, your ORCID iD and record will become active in ${daysUntilActivation} days.
+This is a reminder message that ${creatorName} has created an ORCID iD for you. 
+If you take no further action, your ORCID iD and Record will become active in 
+${daysUntilActivation} days, and any information ${creatorName} may have marked as 
+"viewable by all" will viewable in the ORCID Registry and freely available to 
+the public.
 
-When your record becomes active, any information ${creatorName} marked as "public" will be viewable in the ORCID Registry and freely available to the public for use, unless you change the privacy settings.
+WHAT DO YOU NEED TO DO?
 
-CLAIMING YOUR iD
+Within the next ${daysUntilActivation} days, please review the information that 
+${creatorName} entered as a courtesy on your behalf. Once you have logged 
+in the first time, your account will become active, and you will have complete 
+control over the privacy of your record and the information it contains. To review 
+your record and make changes, click your unique link below or copy and paste it 
+into your browser:
 
-Claim your iD to take full advantage of the ORCID Registry, including privacy settings, and selection of trusted parties. To claim your account follow this link to set a password and access your record. If you can't click on the link, copy and paste it into your browser:
 ${verificationUrl}
 
 WHAT IS ORCID?
 
-ORCID is a registry of unique identifiers for researchers. The ORCID iD helps link you with your research works and activities. You may include it in processes such as manuscript submission and grant applications, and synchronize the data in your ORCID record with other systems. You also may add or edit data in your ORCID record, adjust privacy settings, and select trusted parties with whom to share your data. Read more about ORCID at our Webpage: http://orcid.org. More on ORCID's Privacy Policy: http://orcid.org/privacy-policy.
+Launched in October 2013, the ORCID Registry contains  unique identifiers 
+(ORCID iDs) for researchers and scholars. Many publishers and granting agencies 
+have started to ask for ORCID iDs with submissions to better link researchers with 
+their research activities. ORCID iD holders control what is in their Records and 
+who can see this information. Learn more about ORCID at ${baseUri}. 
 
-QUESTIONS?
-
-If you have any questions about the registration process, please contact the ORCID support team at support@orcid.org.
+Read ORCID's Privacy Policy at  ${baseUri}/privacy-policy.
+Get help or ask questions by emailing support@orcid.org or visiting 
+http://support.orcid.org.
 
 Kind Regards,
 The ORCID Team
 support@orcid.org
 ${baseUri}
 
-You have received this e-mail in the genuine belief that its contents would be of interest to you. To opt-out of messages from ORCID please go to your Account Settings page at ${baseUri}/manage - you'll need to claim your record before you can do this.
+You have received this email as a service announcement related to your ORCID Account. 
+To opt-out of messages from ORCID please go to your Account Settings page at 
+${baseUri}/account. You'll need to sign-in to your Account for the first time 
+before you can take this action.

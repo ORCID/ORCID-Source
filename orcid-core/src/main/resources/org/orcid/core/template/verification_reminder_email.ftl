@@ -18,24 +18,21 @@
 -->
 Dear ${emailName},
 
-Thank you for adding this email address to your ORCID record, 
-${baseUri}/${orcid}.
-
-To verify your email address use the following link and log into your ORCID 
-Record. If you can't click on the link, copy and paste it into your browser:
+We're just sending a quick reminder to verify the primary email address that 
+you set on your ORCID Account last week. Doing so will help us to maintain the 
+accuracy and security of your information. To help us in this effort, please 
+click on the link below (or paste it into your browser), and then sign into your 
+ORCID account. 
 
 ${verificationUrl}
 
 DID YOU KNOW?
-The ORCID Registry is always evolving. Stay up-to-date on the latest at our 
-blog: ${baseUri}/about/news
+The ORCID Registry has new releases often, sometimes weekly! Keep up-to-date on 
+the latest at our blog ${baseUri}/about/news.
 
-If you have any questions or need help, please contact the ORCID support 
-team at support@orcid.org or visit http://support.orcid.org.
-
-Kind Regards,
+Regards,
 The ORCID Team
-support@orcid.org 
+support@orcid.org
 ${baseUri}
 
 You have received this email as a service announcement related to your 
