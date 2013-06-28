@@ -18,7 +18,6 @@ package org.orcid.frontend.web.forms;
 
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -49,10 +48,6 @@ import org.orcid.jaxb.model.message.ResearcherUrls;
 import org.orcid.jaxb.model.message.Url;
 import org.orcid.jaxb.model.message.UrlName;
 import org.orcid.jaxb.model.message.Visibility;
-import org.orcid.persistence.jpa.entities.OtherNameEntity;
-import org.orcid.persistence.jpa.entities.ProfileEntity;
-import org.orcid.persistence.jpa.entities.ProfileKeywordEntity;
-import org.orcid.persistence.jpa.entities.ResearcherUrlEntity;
 
 public class ChangePersonalInfoForm {
 
@@ -302,7 +297,7 @@ public class ChangePersonalInfoForm {
         this.keywordsVisibility = keywordsVisibility;
     }
 
-    @Length(max = 1000, message = "The maximum length for biography is 1000 characters, including line breaks")
+    @Length(max = 1000)
     public String getBiography() {
         return biography;
     }
