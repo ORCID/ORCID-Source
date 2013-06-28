@@ -988,7 +988,6 @@ function WorkCtrl($scope, $compile){
 	}; 
 	
 
-	
 	$scope.getWorks = function(){
 		$.ajax({
 			url: $('body').data('baseurl') + 'my-orcid/workIds.json',	        

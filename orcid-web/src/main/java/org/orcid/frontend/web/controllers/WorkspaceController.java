@@ -344,12 +344,10 @@ public class WorkspaceController extends BaseWorkspaceController {
         
         // work title and subtitle
         Text wtt = new Text();
-        wtt.setValue("");
         wtt.setRequired(true);
         WorkTitle wt = new WorkTitle();
         wt.setTitle(wtt);
         Text wst = new Text();
-        wst.setValue("");
         wt.setSubtitle(wst);
         w.setWorkTitle(wt);
         
@@ -359,26 +357,19 @@ public class WorkspaceController extends BaseWorkspaceController {
         ctText.setValue(CitationType.FORMATTED_UNSPECIFIED.value());       
         c.setCitationType(ctText);
         Text cText = new Text();
-        cText.setValue("");
         c.setCitation(cText);
         w.setCitation(c);
       
         Text wTypeText = new Text();
-        wTypeText.setValue("");
         wTypeText.setRequired(true);
         w.setWorkType(wTypeText);
         
         Date d = new Date();
-        d.setMonth("");
-        d.setDay("");
-        d.setYear("");
         w.setPublicationDate(d);
         
         WorkExternalIdentifier wdi = new WorkExternalIdentifier();
         Text wdiT = new Text();
-        wdiT.setValue("");
         Text wdiType = new Text();
-        wdiType.setValue("");
         wdi.setWorkExternalIdentifierId(wdiT);
         wdi.setWorkExternalIdentifierType(wdiType);
         List<WorkExternalIdentifier> wdiL = new ArrayList<WorkExternalIdentifier>();
@@ -386,23 +377,19 @@ public class WorkspaceController extends BaseWorkspaceController {
         w.setWorkExternalIdentifiers(wdiL);
         
         Text uText = new Text();
-        uText.setValue("");
         w.setUrl(uText);
         
         Contributor contr = new Contributor();
         List<Contributor> contrList = new ArrayList<Contributor>();
         Text rText = new Text();
-        rText.setValue("");
         contr.setContributorRole(rText);
         
         Text sText= new Text();
-        sText.setValue("");
         contr.setContributorSequence(sText);
         contrList.add(contr);
         w.setContributors(contrList);
         
         Text disText= new Text();
-        disText.setValue("");
         
         w.setShortDescription(disText);
         
@@ -430,6 +417,17 @@ public class WorkspaceController extends BaseWorkspaceController {
         for (WorkExternalIdentifier wId:work.getWorkExternalIdentifiers()) {
             copyErrors(wId.getWorkExternalIdentifierId(), work);
             copyErrors(wId.getWorkExternalIdentifierType(), work);
+        }
+        
+        if (work.getErrors().size() == 0) {
+            OrcidWork newOw = work.toOrcidWork();
+            // Why do we have to save all the works?
+            OrcidProfile profile = getCurrentUser().getEffectiveProfile();
+            List<OrcidWork> owList = profile.getOrcidActivities().getOrcidWorks().getOrcidWork();
+            owList.add(newOw);
+            profile.getOrcidActivities().getOrcidWorks().setOrcidWork(owList);
+            OrcidProfile updatedProfile = orcidProfileManager.updateOrcidWorks(profile);
+            getCurrentUser().setEffectiveProfile(updatedProfile);
         }
         
         return work;
