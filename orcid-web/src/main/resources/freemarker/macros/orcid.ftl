@@ -243,6 +243,11 @@ kind of variable. This temp value is only used in this macro lib -->
 </#compress></#macro>
 
 <#--
+	Make is easy to get properties.
+-->
+<#macro msg key, htmlEscape=false>${springMacroRequestContext.getMessage(key, [], "", htmlEscape)}</#macro>
+
+<#--
  * unescapedMessage
  *
  * Macro to translate a message code into a message,
