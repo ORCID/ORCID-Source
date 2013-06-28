@@ -89,8 +89,9 @@
     	        </ul>
     	        <div class="inline-modal" id="third-parties">					
 					<div class="span9">
-	           			<h1 class="lightbox-title pull-left">${springMacroRequestContext.getMessage("workspace.ImportResearchActivities")?upper_case}</h1>
-	           			<a class="btn pull-right close-button">X</a>
+						<a class="btn pull-right close-button">X</a>
+	           			<h1 class="lightbox-title" style="text-transform: uppercase;"><@orcid.msg 'workspace.ImportResearchActivities'/></h1>
+	           		
 	           		</div>
 	           		<br />          		
     	           	<div class="justify"><@orcid.msg 'workspace.ImportResearchActivities.description'/></div>
