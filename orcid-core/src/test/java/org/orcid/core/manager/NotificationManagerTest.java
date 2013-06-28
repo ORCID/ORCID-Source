@@ -18,8 +18,6 @@ package org.orcid.core.manager;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
@@ -32,7 +30,6 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
-import org.apache.commons.io.IOUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -49,7 +46,6 @@ import org.orcid.persistence.jpa.entities.ProfileEventEntity;
 import org.orcid.persistence.jpa.entities.SecurityQuestionEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.MailSender;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 
@@ -159,6 +155,15 @@ public class NotificationManagerTest extends BaseTest {
         notificationManager.sendApiRecordCreationEmail(orcidProfile);
     }
 
+    
+    @Test
+    public void testSendVerificationReminderEmail() throws JAXBException, IOException, URISyntaxException {
+
+        OrcidMessage orcidMessage = (OrcidMessage) unmarshaller.unmarshal(getClass().getResourceAsStream(ORCID_INTERNAL_FULL_XML));
+        OrcidProfile orcidProfile = orcidMessage.getOrcidProfile();
+        notificationManager.sendVerificationReminderEmail(orcidProfile, new URI("http://testserver.orcid.org"), orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue());
+    }
+    
     @Test
     @Rollback
     public void testClaimReminderEmail() throws JAXBException, IOException, URISyntaxException {
@@ -167,6 +172,7 @@ public class NotificationManagerTest extends BaseTest {
         OrcidProfile orcidProfile = orcidMessage.getOrcidProfile();
         notificationManager.sendClaimReminderEmail(orcidProfile, 2);
     }
+
 
     @Test
     public void testChangeEmailAddress() throws Exception {
