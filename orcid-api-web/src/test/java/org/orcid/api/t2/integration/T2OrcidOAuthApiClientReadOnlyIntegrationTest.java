@@ -19,6 +19,7 @@ package org.orcid.api.t2.integration;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.jaxb.model.message.OrcidMessage;
@@ -47,7 +48,8 @@ public class T2OrcidOAuthApiClientReadOnlyIntegrationTest extends BaseT2OrcidOAu
         assertNotNull(orcidMessage);
         assertEquals(this.orcid, orcidMessage.getOrcidProfile().getOrcid().getValue());
         assertNotNull(orcidMessage.getOrcidProfile().getOrcidBio());
-        assertNull(orcidMessage.getOrcidProfile().retrieveOrcidWorks());
+        assertNull(orcidMessage.getOrcidProfile().retrieveOrcidWorks());       
+        orcidClientDataHelper.deleteOrcidProfile(this.orcid);
     }
 
     @Test
@@ -65,7 +67,8 @@ public class T2OrcidOAuthApiClientReadOnlyIntegrationTest extends BaseT2OrcidOAu
         OrcidMessage orcidMessage = clientResponse.getEntity(OrcidMessage.class);
         assertEquals(this.orcid, orcidMessage.getOrcidProfile().getOrcid().getValue());
         assertNotNull(orcidMessage.getOrcidProfile().getOrcidBio());
-        assertNull(orcidMessage.getOrcidProfile().retrieveOrcidWorks());
+        assertNull(orcidMessage.getOrcidProfile().retrieveOrcidWorks());        
+        orcidClientDataHelper.deleteOrcidProfile(this.orcid);
     }
 
     @Test

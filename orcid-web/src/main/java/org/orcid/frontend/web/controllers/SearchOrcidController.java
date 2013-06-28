@@ -112,16 +112,18 @@ public class SearchOrcidController extends BaseController {
     }
 
     @RequestMapping(value = "/quick-search")
-    public ModelAndView quickSearch(@ModelAttribute("searchQuery") String queryFromUser) {
+    public ModelAndView quickSearch(@ModelAttribute("searchQuery") String queryFromUser, @ModelAttribute("solrQuery") String solrQuery) {
         ModelAndView mav = new ModelAndView("quick_search");
-        if (StringUtils.isBlank(queryFromUser)) {
+        if (StringUtils.isBlank(queryFromUser) && StringUtils.isBlank(solrQuery)) {
             incrementSearchMetrics(null);
             mav.addObject("noResultsFound", true);
             return mav;
         }
-        String searchQueryUrl = orcidUrlManager.getPubBaseUrl() + "/search/orcid-bio/?q=";
+        String searchQueryUrl = createSearchBaseUrl();
         queryFromUser = queryFromUser.trim();
-        if (OrcidStringUtils.isValidOrcid(queryFromUser)) {
+        if (StringUtils.isNotBlank(solrQuery)) {
+            searchQueryUrl += solrQuery;
+        } else if (OrcidStringUtils.isValidOrcid(queryFromUser)) {
             searchQueryUrl += "orcid:" + queryFromUser;
         } else {
             searchQueryUrl += "{!edismax qf='given-and-family-names^50.0 family-name^10.0 given-names^5.0 credit-name^10.0 other-names:5.0 text^1.0' pf='given-and-family-names^50.0' mm=1}"
@@ -139,6 +141,12 @@ public class SearchOrcidController extends BaseController {
         }
 
         FRONTEND_WEB_SEARCH_RESULTS_FOUND.inc(searchResults.size());
+    }
+
+    private String createSearchBaseUrl() {
+        String baseUrlWithCorrectedProtocol = orcidUrlManager.getBaseUrl().replaceAll("^https?:", "");
+        String baseUrlWithCorrectedContext = baseUrlWithCorrectedProtocol.replaceAll("/orcid-web$", "/orcid-pub-web");
+        return baseUrlWithCorrectedContext + "/search/orcid-bio/?q=";
     }
 
 }

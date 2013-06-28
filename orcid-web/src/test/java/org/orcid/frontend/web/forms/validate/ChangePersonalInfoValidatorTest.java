@@ -22,19 +22,24 @@ import static org.junit.Assert.assertTrue;
 import java.util.Map;
 import java.util.Set;
 
+import javax.annotation.Resource;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
-import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 
 import org.apache.commons.lang.StringUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.orcid.frontend.web.forms.ChangePersonalInfoForm;
+import org.springframework.validation.BeanPropertyBindingResult;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 
-public class ChangePersonalInfoValidatorTest extends AbstractConstraintValidator<ChangePersonalInfoForm> {
-    Validator validator;
+public class ChangePersonalInfoValidatorTest extends AbstractConstraintValidator<ChangePersonalInfoForm> {    
 
+    @Resource(name = "validator")
+    LocalValidatorFactoryBean localValidatorFactoryBean;
+    
     @Before
     public void resetValidator() {
         ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
@@ -75,17 +80,20 @@ public class ChangePersonalInfoValidatorTest extends AbstractConstraintValidator
         form.setFirstName("firstName");
         form.setLastName("lastName");
         form.setBiography(thousandAndOneChars);
-        Set<ConstraintViolation<ChangePersonalInfoForm>> errors = validator.validate(form);
-        Map<String, String> allErrorValues = retrieveErrorKeyAndMessage(errors);
-        assertEquals("Should be 1 error", 1, allErrorValues.size());
-        String tooLong = allErrorValues.get("biography");
+        
+        
+        BindingResult bindingResult = new BeanPropertyBindingResult(form, "changePersonalInfoForm");
+        
+        localValidatorFactoryBean.validate(form, bindingResult);
+        String tooLong = resolveFieldErrorMessage(bindingResult, "biography");        
+        assertEquals("Should be 1 error", 1, bindingResult.getErrorCount());
         assertEquals("The maximum length for biography is 1000 characters, including line breaks", tooLong);
 
         String thousandChars = StringUtils.repeat("z", 1000);
         form.setBiography(thousandChars);
-        errors = validator.validate(form);
-        allErrorValues = retrieveErrorKeyAndMessage(errors);
-        assertEquals("Should be valid", 0, allErrorValues.size());
+        bindingResult = new BeanPropertyBindingResult(form, "changePersonalInfoForm");
+        localValidatorFactoryBean.validate(form, bindingResult);
+        assertEquals("Should be valid", 0, bindingResult.getErrorCount());
 
     }
 }

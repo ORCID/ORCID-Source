@@ -59,6 +59,7 @@ public class OrcidStringUtils {
         Enumeration<String> keys = resource.getKeys();
         while (keys.hasMoreElements()) {
             String key = keys.nextElement();
+            String value = resource.getString(key);
             map.put(key, resource.getString(key));
         }
 

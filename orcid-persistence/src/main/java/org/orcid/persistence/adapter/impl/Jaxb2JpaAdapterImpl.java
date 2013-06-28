@@ -731,7 +731,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
         }
         for (Email email : contactDetails.getEmail()) {
             EmailEntity emailEntity = new EmailEntity();
-            emailEntity.setId(email.getValue());
+            emailEntity.setId(email.getValue().trim());
             emailEntity.setPrimary(email.isPrimary());
             emailEntity.setCurrent(email.isCurrent());
             emailEntity.setVerified(email.isVerified());
