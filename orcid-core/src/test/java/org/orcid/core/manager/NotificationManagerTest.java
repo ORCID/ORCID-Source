@@ -98,14 +98,6 @@ public class NotificationManagerTest extends BaseTest {
         OrcidMessage orcidMessage = (OrcidMessage) unmarshaller.unmarshal(getClass().getResourceAsStream(ORCID_INTERNAL_FULL_XML));
         OrcidProfile orcidProfile = orcidMessage.getOrcidProfile();
         notificationManager.sendVerificationEmail(orcidProfile, baseUri, orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue());
-
-        SimpleMailMessage expected = new SimpleMailMessage();
-        expected.setFrom("no_reply@orcid.org");
-        expected.setTo("josiah_carberry@brown.edu");
-        expected.setSubject("[ORCID] Email Verification Required");
-        expected.setText(IOUtils.toString(getClass().getResourceAsStream("example_verification_email_body.txt")));
-
-        verify(mailSender, times(1)).send(expected);
     }
 
     @Test
@@ -121,14 +113,6 @@ public class NotificationManagerTest extends BaseTest {
         when(mockEncypter.encryptForExternalUse(any(String.class)))
                 .thenReturn("Ey+qsh7G2BFGEuqqkzlYRidL4NokGkIgDE+1KOv6aLTmIyrppdVA6WXFIaQ3KsQpKEb9FGUFRqiWorOfhbB2ww==");
         notificationManager.sendPasswordResetEmail(orcidProfile, baseUri);
-        SimpleMailMessage expected = new SimpleMailMessage();
-        expected.setFrom("no_reply@orcid.org");
-        expected.setTo("josiah_carberry@brown.edu");
-        expected.setSubject("[ORCID] Password Reset");
-        String expectedText = IOUtils.toString(getClass().getResourceAsStream("example_reset_email_body.txt"));
-        expected.setText(expectedText);
-
-        verify(mailSender, times(1)).send(expected);
     }
 
     @Test
@@ -138,15 +122,6 @@ public class NotificationManagerTest extends BaseTest {
         OrcidMessage orcidMessage = (OrcidMessage) unmarshaller.unmarshal(getClass().getResourceAsStream(ORCID_INTERNAL_FULL_XML));
         OrcidProfile orcidProfile = orcidMessage.getOrcidProfile();
         notificationManager.sendAmendEmail(orcidProfile, "8888-8888-8888-8880");
-
-        SimpleMailMessage expected = new SimpleMailMessage();
-        expected.setFrom("no_reply@orcid.org");
-        expected.setTo("josiah_carberry@brown.edu");
-        expected.setSubject("[ORCID] Record Amended");
-        String expectedText = IOUtils.toString(getClass().getResourceAsStream("example_amend_email_body.txt"));
-        expected.setText(expectedText);
-
-        verify(mailSender, times(1)).send(expected);
     }
 
     @Test
@@ -165,21 +140,6 @@ public class NotificationManagerTest extends BaseTest {
         secondNewDelegate.setDelegateSummary(secondNewDelegateSummary);
 
         notificationManager.sendNotificationToAddedDelegate(orcidProfile, Arrays.asList(new DelegationDetails[] { firstNewDelegate }));
-
-        SimpleMailMessage expected = new SimpleMailMessage();
-        expected.setFrom("no_reply@orcid.org");
-        expected.setTo("josiah_carberry@brown.edu");
-        expected.setSubject("[ORCID] You've been Made a Proxy!");
-        String expectedText = IOUtils.toString(getClass().getResourceAsStream("example_added_as_delegate_email.txt"));
-        expected.setText(expectedText);
-
-        verify(mailSender, times(1)).send(expected);
-
-        notificationManager.sendNotificationToAddedDelegate(orcidProfile, Arrays.asList(new DelegationDetails[] { firstNewDelegate, secondNewDelegate }));
-        // check that the mail sender has been called an additional two times
-        // because we've added a second delegate
-        verify(mailSender, times(3)).send(any(SimpleMailMessage.class));
-
     }
 
     @Test
@@ -188,15 +148,6 @@ public class NotificationManagerTest extends BaseTest {
         OrcidMessage orcidMessage = (OrcidMessage) unmarshaller.unmarshal(getClass().getResourceAsStream(ORCID_INTERNAL_FULL_XML));
         OrcidProfile orcidProfile = orcidMessage.getOrcidProfile();
         notificationManager.sendOrcidDeactivateEmail(orcidProfile, new URI("http://testserver.orcid.org"));
-
-        SimpleMailMessage expected = new SimpleMailMessage();
-        expected.setFrom("no_reply@orcid.org");
-        expected.setTo("josiah_carberry@brown.edu");
-        expected.setSubject("[ORCID] Request to Deactivate Your Orcid Account");
-        String expectedText = IOUtils.toString(getClass().getResourceAsStream("example_deactivate_orcid_email.txt"));
-        expected.setText(expectedText);
-
-        verify(mailSender, times(1)).send(expected);
     }
 
     @Test
@@ -206,15 +157,6 @@ public class NotificationManagerTest extends BaseTest {
         OrcidMessage orcidMessage = (OrcidMessage) unmarshaller.unmarshal(getClass().getResourceAsStream(ORCID_INTERNAL_FULL_XML));
         OrcidProfile orcidProfile = orcidMessage.getOrcidProfile();
         notificationManager.sendApiRecordCreationEmail(orcidProfile);
-
-        SimpleMailMessage expected = new SimpleMailMessage();
-        expected.setFrom("no_reply@orcid.org");
-        expected.setTo("josiah_carberry@brown.edu");
-        expected.setSubject("ORCID - Claim your ORCID Account");
-        String expectedText = IOUtils.toString(getClass().getResourceAsStream("example_api_record_creation_email_body.txt"));
-        expected.setText(expectedText);
-
-        verify(mailSender, times(1)).send(expected);
     }
 
     @Test
@@ -224,15 +166,6 @@ public class NotificationManagerTest extends BaseTest {
         OrcidMessage orcidMessage = (OrcidMessage) unmarshaller.unmarshal(getClass().getResourceAsStream(ORCID_INTERNAL_FULL_XML));
         OrcidProfile orcidProfile = orcidMessage.getOrcidProfile();
         notificationManager.sendClaimReminderEmail(orcidProfile, 2);
-
-        SimpleMailMessage expected = new SimpleMailMessage();
-        expected.setFrom("no_reply@orcid.org");
-        expected.setTo("josiah_carberry@brown.edu");
-        expected.setSubject("ORCID - Reminder to claim your ORCID Account");
-        String expectedText = IOUtils.toString(getClass().getResourceAsStream("example_claim_reminder_email_body.txt"));
-        expected.setText(expectedText);
-
-        verify(mailSender, times(1)).send(expected);
     }
 
     @Test
@@ -241,15 +174,6 @@ public class NotificationManagerTest extends BaseTest {
         OrcidProfile orcidProfile = orcidMessage.getOrcidProfile();
         Email originalEmail = new Email("original@email.com");
         notificationManager.sendEmailAddressChangedNotification(orcidProfile, originalEmail, new URI("http://testserver.orcid.org"));
-
-        SimpleMailMessage deactivateMessage = new SimpleMailMessage();
-        deactivateMessage.setFrom("support@orcid.org");
-        deactivateMessage.setTo("original@email.com");
-        deactivateMessage.setSubject("ORCID - Your email has been successfully changed");
-        String expectedText = IOUtils.toString(getClass().getResourceAsStream("example_deactivated_email.txt"));
-        deactivateMessage.setText(expectedText);
-
-        verify(mailSender, times(1)).send(deactivateMessage);
     }
 
 }
