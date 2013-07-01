@@ -937,8 +937,9 @@ function WorkCtrl($scope, $compile){
 			dataType: 'json',
 			success: function(data) {
 				$scope.editWork = data;
-				$scope.$apply();
-				$scope.showAddModal();
+				$scope.$apply(function() {
+					$scope.showAddModal();
+				});
 			}
 		}).fail(function() { 
 	    	console.log("Error fetching work: " + value);
@@ -968,9 +969,6 @@ function WorkCtrl($scope, $compile){
 	    	console.log("error fetching works");
 		});
 	};
-	
-	
-	$scope.addWorkModal();
 	
 	
 	$scope.addWorkToScope = function(){

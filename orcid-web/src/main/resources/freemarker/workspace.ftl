@@ -160,13 +160,15 @@
             		<#else>
         				<h3 class="workspace-accordion-header"><a href="#">${springMacroRequestContext.getMessage("workspace.Works")}</a> <a href="<@spring.url '/works-update'/>" class="btn-update">${springMacroRequestContext.getMessage("workspace.Update")}</a></h3>
 					</#if>            		
-					<div style="margin-left: 20px;">
-						<a href="#third-parties" class="colorbox-modal label btn-primary">${springMacroRequestContext.getMessage("workspace.ImportResearchActivities")}</a>
-						<a href="#" class="label btn-primary" ng-click="addWorkModal()">Add Research Activities</a>
-					</div>
-            		<div class="workspace-accordion-content">
-            			<#include "workspace_works_body_list.ftl"/>
-            		</div>
+					<#if RequestParameters['addWork']??>
+						<div style="margin-left: 20px;">
+							<a href="#third-parties" class="colorbox-modal label btn-primary">${springMacroRequestContext.getMessage("workspace.ImportResearchActivities")}</a>
+							<a href="#" class="label btn-primary" ng-click="addWorkModal()">Add Work Manually</a>
+						</div>
+					</#if>
+	            	<div class="workspace-accordion-content">
+	            		<#include "workspace_works_body_list.ftl"/>
+	            	</div>
             	</div>
             	
         		<div id="workspace-grants" class="workspace-accordion-item<#--${(!(profile.orcidActivities.orcidGrants)??)?string(" workspace-accordion-active", "")}-->">

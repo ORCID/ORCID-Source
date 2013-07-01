@@ -488,13 +488,15 @@ public class WorkspaceController extends BaseWorkspaceController {
     Work workCitationValidate(@RequestBody Work work) {
         work.getCitation().getCitation().setErrors(new ArrayList<String>());
         work.getCitation().getCitationType().setErrors(new ArrayList<String>());
+        
+        // Citations must have a type
         if (work.getCitation().getCitationType() == null 
                 || work.getCitation().getCitationType().getValue() == null
                 || work.getCitation().getCitationType().getValue().trim().equals("")) {
             setError(work.getCitation().getCitationType(), "NotBlank.manualWork.citationType");
         } else if (!work.getCitation().getCitationType().getValue().trim().equals(CitationType.FORMATTED_UNSPECIFIED.value())) {
             // citation should not be blank if citation type is set 
-            if (work.getCitation().getCitation() != null || 
+            if (work.getCitation().getCitation() == null || 
                      work.getCitation().getCitation().getValue().trim().equals("")) {
                 setError(work.getCitation().getCitation(), "NotBlank.manualWork.citation");
             }
