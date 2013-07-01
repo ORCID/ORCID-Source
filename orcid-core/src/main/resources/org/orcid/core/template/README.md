@@ -140,12 +140,5 @@ _Email to the Account Delegate when someone grants them access to their account.
 	* ${grantingOrcidName} - the name of the person granting Delegate permissions
 	* ${baseUri} - the base URI of the sending site
 
-### LEGACY EMAILS
 
-### Registration Complete - NOT USED
 
-* legacy\_verification\_email.ftl
-
-### Invitation to register for an ORCID Account - NOT USED
-
-* registration\_email.ftl
