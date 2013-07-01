@@ -39,7 +39,7 @@ import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.clientgroup.OrcidClient;
 import org.orcid.jaxb.model.clientgroup.OrcidClientGroup;
 import org.orcid.jaxb.model.clientgroup.RedirectUri;
-import org.orcid.jaxb.model.clientgroup.RedirectUriType;
+import org.orcid.jaxb.model.clientgroup.RedirectUris;
 import org.orcid.jaxb.model.message.Biography;
 import org.orcid.jaxb.model.message.Claimed;
 import org.orcid.jaxb.model.message.ContactDetails;
@@ -103,6 +103,32 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
         }
     }
 
+    @Override
+    @Transactional
+    public OrcidClient createOrUpdateOrcidClientGroup(String groupOrcid, OrcidClient orcidClient, ClientType clientType) {
+        OrcidClient result = null;
+        //Use the profile DAO to link the clients to the group, so get the
+        // group profile entity.
+        ProfileEntity groupProfileEntity = profileDao.find(groupOrcid);
+        SortedSet<ProfileEntity> clientProfileEntities = groupProfileEntity.getClientProfiles();
+        if (clientProfileEntities == null) {
+            clientProfileEntities = new TreeSet<ProfileEntity>(new OrcidEntityIdComparator<String>());
+            groupProfileEntity.setClientProfiles(clientProfileEntities);
+        }
+        
+        processClient(groupOrcid, clientProfileEntities, orcidClient, clientType);
+        
+        OrcidClientGroup group = retrieveOrcidClientGroup(groupOrcid);
+        
+        for(OrcidClient populatedClient : group.getOrcidClient()){
+            if(compareClients(orcidClient, populatedClient))
+                result = populatedClient;
+        }
+        
+        // Regenerate client group and return.
+        return result;
+    }
+    
     @Override
     @Transactional
     public OrcidClientGroup createOrUpdateOrcidClientGroup(OrcidClientGroup orcidClientGroup, ClientType clientType) {
@@ -353,5 +379,39 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
 
     public OrcidProfileManager getOrcidProfileManager() {
         return orcidProfileManager;
+    }
+    
+    /**
+     * Compare two client objects, one sent by the user and another one already inserted on database.
+     * They both will be the same OrcidClient if they share all properties but the key and secret.
+     * 
+     * @param original
+     *          Orcid client sent by the user form the UI
+     * @param withPopulatedKeys
+     *          Orcid client populated from database
+     * @return true if the orcidClient original is "equals" to the populated orcidClient
+     * */
+    private boolean compareClients(OrcidClient original, OrcidClient withPopulatedKeys){
+        if(original == null)
+            return false;
+        if(withPopulatedKeys == null)
+            return false;
+        
+        if(!original.getDisplayName().equals(withPopulatedKeys.getDisplayName()))
+            return false;
+        
+        if(!original.getWebsite().equals(withPopulatedKeys.getWebsite()))
+            return false;
+        
+        if(!original.getShortDescription().equals(withPopulatedKeys.getShortDescription()))
+            return false;
+        
+        List<RedirectUri> originalUris = original.getRedirectUris().getRedirectUri();
+        List<RedirectUri> withPopulatedKeysUris = withPopulatedKeys.getRedirectUris().getRedirectUri();
+        
+        if(!originalUris.containsAll(withPopulatedKeysUris) || !withPopulatedKeysUris.containsAll(originalUris))
+            return false;
+        
+        return true;
     }
 }

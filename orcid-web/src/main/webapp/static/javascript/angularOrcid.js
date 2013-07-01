@@ -444,7 +444,6 @@ function EmailEditCtrl($scope, $compile) {
 	
 };
 
-
 function ExternalIdentifierCtrl($scope, $compile){		
 	$scope.getExternalIdentifiers = function(){
 		$.ajax({
@@ -1108,3 +1107,38 @@ function QuickSearchCtrl($scope, $compile){
 	$scope.getResults(10);
 }
 
+function ClientEditCtrl($scope, $compile){
+	$scope.client = {
+			displayName: '',
+			website: '',
+			shortDescription: '',
+			redirectUri: [
+			              {value:''}
+			             ]
+	};
+	
+	$scope.submitCredentials = function(){	
+		alert(angular.toJson($scope.client));
+		$.ajax({
+	        url: $('body').data('baseurl') + 'manage-clients/add-client.json',
+	        type: 'POST',
+	        data: angular.toJson($scope.client),
+	        contentType: 'application/json;charset=UTF-8',
+	        dataType: 'json',
+	        success: function(data) {	        	
+	        	if(data.errors.length != 0){
+	        		console.log("Unable to create client information.");
+	        	} 
+	        }
+	    }).fail(function() { 
+	    	console.log("Error creating client information.");
+	    });
+	};
+	
+	$scope.addRowToClientTable = function(){
+		$('#client-table').find('tr:last > td:last').html('&nbsp;');
+		
+		this.client.redirectUri.push({value: ''});
+	
+	};	
+}
