@@ -954,9 +954,14 @@ function WorkCtrl($scope, $compile){
 	        type: 'POST',
 	        data:  angular.toJson($scope.editWork),
 	        success: function(data) {
-	        	$scope.editWork = data;
-	        	$scope.copyErrorsLeft($scope.editWork, data);
-	        	$scope.$apply();
+	        	if (data.errors.length == 0){
+	        		$.colorbox.close(); 
+	        		$scope.getWorks();
+	        	} else {
+		        	$scope.editWork = data;
+		        	$scope.copyErrorsLeft($scope.editWork, data);
+		        	$scope.$apply();
+	        	}
 	        }
 		}).fail(function(){
 			// something bad is happening!
@@ -988,7 +993,11 @@ function WorkCtrl($scope, $compile){
 	}; 
 	
 
-	$scope.getWorks = function(){
+	$scope.getWorks = function() {
+		//clear out current works
+		$scope.worksToAddIds = null;
+		$scope.works.length = 0;
+		//get work ids
 		$.ajax({
 			url: $('body').data('baseurl') + 'my-orcid/workIds.json',	        
 	        dataType: 'json',
@@ -1084,8 +1093,6 @@ function WorkCtrl($scope, $compile){
 			if (key == 'errors') {
 				data1.errors = data2.errors;
 			} else {
-				console.log("key is:" + key);
-				console.log(data1[key]);
 				if (typeof(data1[key])=="object") {
 					$scope.copyErrorsLeft(data1[key], data2[key]);
 				}
