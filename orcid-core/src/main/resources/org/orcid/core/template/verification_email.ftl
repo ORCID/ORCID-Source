@@ -16,27 +16,21 @@
     =============================================================================
 
 -->
-Dear ${emailName},
+<#import "email_macros.ftl" as emailMacros />
 
-Thank you for adding this email address to your ORCID record, 
+<@emailMacros.msg "email.common.dear" /> ${emailName}<@emailMacros.msg "email.common.dear.comma" />
+
+<@emailMacros.msg "email.verify.thank_you" /> 
 ${baseUri}/${orcid}.
 
-To verify your email address use the following link and log into your ORCID 
-Record. If you can't click on the link, copy and paste it into your browser:
-
+<@emailMacros.msg "email.verify.to_verify" />
 ${verificationUrl}
 
-DID YOU KNOW?
-The ORCID Registry is always evolving. Stay up-to-date on the latest at our 
-blog: ${baseUri}/about/news
+<@emailMacros.msg "email.common.did_you_know" />${baseUri}/about/news
 
-If you have any questions or need help, please contact the ORCID support 
-team at support@orcid.org or visit http://support.orcid.org.
+<@emailMacros.msg "email.common.if_you_have_any" />
 
-Kind Regards,
-The ORCID Team
-support@orcid.org 
+<@emailMacros.msg "email.common.kind_regards" />
 ${baseUri}
 
-You have received this email as a service announcement related to your 
-ORCID Account.
+<@emailMacros.msg "email.common.you_have_received_this_email" />
