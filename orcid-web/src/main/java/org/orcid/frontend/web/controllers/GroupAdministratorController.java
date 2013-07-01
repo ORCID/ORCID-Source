@@ -7,6 +7,7 @@ import javax.ws.rs.core.MediaType;
 
 import org.orcid.core.manager.OrcidClientGroupManager;
 import org.orcid.jaxb.model.clientgroup.OrcidClientGroup;
+import org.orcid.jaxb.model.clientgroup.RedirectUriType;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.pojo.ajaxForm.Client;
 import org.springframework.stereotype.Controller;
@@ -34,6 +35,7 @@ public class GroupAdministratorController extends BaseWorkspaceController {
         OrcidProfile profile = getCurrentUserAndRefreshIfNecessary().getEffectiveProfile();
         OrcidClientGroup group = orcidClientGroupManager.retrieveOrcidClientGroup(profile.getOrcid().getValue());
         mav.addObject("group", group);
+        mav.addObject("client-types", RedirectUriType.values());
         return mav;
     }
     
