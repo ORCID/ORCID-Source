@@ -2,12 +2,21 @@ package org.orcid.pojo.ajaxForm;
 
 import java.util.List;
 
+import org.orcid.jaxb.model.clientgroup.ClientType;
+
 public class Client {
+    private ClientType type;
     private String displayName;
     private String website;
     private String shortDescription;
     private List<RedirectUri> redirectUri;
     
+    public ClientType getType() {
+        return type;
+    }
+    public void setType(ClientType type) {
+        this.type = type;
+    }
     public String getDisplayName() {
         return displayName;
     }

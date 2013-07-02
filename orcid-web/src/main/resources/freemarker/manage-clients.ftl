@@ -34,6 +34,21 @@
 			<table id="client-table">
 				<tbody>
 				<tr>
+					<td>Client type:</td>
+					<td>
+						<select ng-model="client.type">
+							<@security.authorize ifAnyGranted="ROLE_PREMIUM_GROUP">
+								<option value="PREMIUM_CREATOR">PREMIUM_CREATOR</option>
+								<option value="PREMIUM_UPDATER">PREMIUM_UPDATER</option>
+							</@security.authorize>
+							<@security.authorize ifAnyGranted="ROLE_GROUP">
+								<option value="CREATOR">CREATOR</option>
+								<option value="UPDATER">UPDATER</option>
+							</@security.authorize>
+						</select>
+					</td>
+				</tr>
+				<tr>
 					<td>Display name:</td>
 					<td><input type="text" placeholder="Display name" class="input-xlarge" ng-model="client.displayName"></td>
 					<td>&nbsp;</td>
@@ -50,7 +65,7 @@
 			 	</tr>
 			 	<tr ng-repeat='rUri in client.redirectUri'>
 			 		<td>Redirect URL's:</td>
-			 		<td><input type="text" placeholder="Redirect Uri" class="input-xlarge" ng-model="rUri.value"></td>
+			 		<td><input type="text" placeholder="Redirect Uri" class="input-xlarge" ng-model="rUri.value"></td>			 		
 			 		<td><span id="add-uri" ng-click="addRowToClientTable()" class="btn btn-primary">${springMacroRequestContext.getMessage("manage.spanadd")}</span></td>
 			 	</tr>
 			 	</tbody>			 	

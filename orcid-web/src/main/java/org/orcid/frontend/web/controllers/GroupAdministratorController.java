@@ -6,6 +6,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import org.orcid.core.manager.OrcidClientGroupManager;
+import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.clientgroup.OrcidClientGroup;
 import org.orcid.jaxb.model.clientgroup.RedirectUriType;
 import org.orcid.jaxb.model.message.OrcidProfile;
@@ -35,16 +36,15 @@ public class GroupAdministratorController extends BaseWorkspaceController {
         OrcidProfile profile = getCurrentUserAndRefreshIfNecessary().getEffectiveProfile();
         OrcidClientGroup group = orcidClientGroupManager.retrieveOrcidClientGroup(profile.getOrcid().getValue());
         mav.addObject("group", group);
-        mav.addObject("client-types", RedirectUriType.values());
+        mav.addObject("redirectUriTypes", RedirectUriType.values());
+        mav.addObject("clientTypes", ClientType.values());
         return mav;
     }
     
     @RequestMapping(value = "/add-client.json", method = RequestMethod.POST)
     @Produces(value = { MediaType.APPLICATION_JSON })
     public @ResponseBody Client createClient(HttpServletRequest request, @RequestBody Client client) {        
-        System.out.println(client.getDisplayName());
-        System.out.println(client.getShortDescription());
-        System.out.println(client.getWebsite());
+        
         
         return null;
     }            

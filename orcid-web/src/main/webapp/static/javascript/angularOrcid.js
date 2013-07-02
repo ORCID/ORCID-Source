@@ -1109,11 +1109,12 @@ function QuickSearchCtrl($scope, $compile){
 
 function ClientEditCtrl($scope, $compile){
 	$scope.client = {
+			type: '',
 			displayName: '',
 			website: '',
 			shortDescription: '',
 			redirectUri: [
-			              {value:''}
+			              {type: 'DEFAULT', value:''}
 			             ]
 	};
 	
@@ -1138,7 +1139,7 @@ function ClientEditCtrl($scope, $compile){
 	$scope.addRowToClientTable = function(){
 		$('#client-table').find('tr:last > td:last').html('&nbsp;');
 		
-		this.client.redirectUri.push({value: ''});
+		this.client.redirectUri.push({type: 'DEFAULT', value: ''});
 	
 	};	
 }
