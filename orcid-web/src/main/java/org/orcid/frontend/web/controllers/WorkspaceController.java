@@ -60,6 +60,8 @@ import org.orcid.pojo.ajaxForm.Work;
 import org.orcid.pojo.ajaxForm.WorkExternalIdentifier;
 import org.orcid.pojo.ajaxForm.WorkTitle;
 import org.orcid.utils.BibtexUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -77,6 +79,8 @@ import org.springframework.web.util.HtmlUtils;
 @Controller("workspaceController")
 @RequestMapping(value = { "/my-orcid", "/workspace" })
 public class WorkspaceController extends BaseWorkspaceController {
+    
+    private static final Logger LOGGER = LoggerFactory.getLogger(WorkspaceController.class);
 
     private static final String WORKS_MAP = "WORKS_MAP";
 
@@ -551,8 +555,12 @@ public class WorkspaceController extends BaseWorkspaceController {
         List<String> workIds = new ArrayList<String>();
         if (orcidWorks != null) {
             for (OrcidWork work : orcidWorks.getOrcidWork()) {
-                worksMap.put(work.getPutCode(), Work.valueOf(work));
-                workIds.add(work.getPutCode());
+                try {
+                    worksMap.put(work.getPutCode(), Work.valueOf(work));
+                    workIds.add(work.getPutCode());
+                } catch (Exception e) {
+                    LOGGER.error("ProfileWork failed to parse as Work. Put code" + work.getPutCode());
+                }
             }
             request.getSession().setAttribute(WORKS_MAP, worksMap);
         }
