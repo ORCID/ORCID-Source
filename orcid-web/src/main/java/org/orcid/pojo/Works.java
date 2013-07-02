@@ -21,6 +21,7 @@ import java.util.List;
 
 import org.orcid.jaxb.model.message.OrcidWorks;
 import org.orcid.pojo.ajaxForm.ErrorsInterface;
+import org.orcid.pojo.ajaxForm.Work;
 
 public class Works extends OrcidWorks implements ErrorsInterface {
     private List<Work> works = null;

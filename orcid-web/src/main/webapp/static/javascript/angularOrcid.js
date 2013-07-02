@@ -925,11 +925,64 @@ function ClaimThanks($scope, $compile) {
 function WorkCtrl($scope, $compile){
 	$scope.works = new Array();
 	
-	$scope.addWorkToScope = function(){
+	$scope.showAddModal = function(){;
+	    $.colorbox({        	
+	        html: $compile($('#add-work-modal').html())($scope)
+	    });
+	    $.colorbox.resize();
+	};
+	
+	
+	$scope.addWorkModal = function(){;
+		$.ajax({
+			url: $('body').data('baseurl') + 'my-orcid/work.json',
+			dataType: 'json',
+			success: function(data) {
+				$scope.editWork = data;
+				$scope.$apply(function() {
+					$scope.showAddModal();
+				});
+			}
+		}).fail(function() { 
+	    	console.log("Error fetching work: " + value);
+	    });
+	};
+
+
+	$scope.addWork = function(){
+		if ($scope.addingWork) return; // don't process if adding work
+		$scope.addingWork = true;
+		$.ajax({
+			url: $('body').data('baseurl') + 'my-orcid/work.json',	        
+	        contentType: 'application/json;charset=UTF-8',
+	        dataType: 'json',
+	        type: 'POST',
+	        data:  angular.toJson($scope.editWork),
+	        success: function(data) {
+	        	if (data.errors.length == 0){
+	        		$.colorbox.close(); 
+	        		$scope.addingWork = false;
+	        		$scope.getWorks();
+	        	} else {
+		        	$scope.editWork = data;
+		        	$scope.copyErrorsLeft($scope.editWork, data);
+		        	$scope.addingWork = false;
+		        	$scope.$apply();
+	        	}
+	        }
+		}).fail(function(){
+			// something bad is happening!
+			$scope.addingWork = false;
+	    	console.log("error fetching works");
+		});
+	};
+	
+	
+	$scope.addWorkToScope = function() {
 		if($scope.worksToAddIds.length != 0 ) {
 			var workIds = $scope.worksToAddIds.splice(0,20).join();
 			$.ajax({
-				url: $('body').data('baseurl') + 'my-orcid/work.json?workIds=' + workIds,
+				url: $('body').data('baseurl') + 'my-orcid/works.json?workIds=' + workIds,
 				dataType: 'json',
 				success: function(data) {
 					$scope.$apply(function(){ 
@@ -944,10 +997,14 @@ function WorkCtrl($scope, $compile){
 		}
 	}; 
 	
-	
-	$scope.getWorks = function(){
+
+	$scope.getWorks = function() {
+		//clear out current works
+		$scope.worksToAddIds = null;
+		$scope.works.length = 0;
+		//get work ids
 		$.ajax({
-			url: $('body').data('baseurl') + 'my-orcid/works.json',	        
+			url: $('body').data('baseurl') + 'my-orcid/workIds.json',	        
 	        dataType: 'json',
 	        success: function(data) {
 	        	$scope.worksToAddIds = data;
@@ -964,17 +1021,16 @@ function WorkCtrl($scope, $compile){
 	
 	$scope.deleteWork = function(idx) {		
 		$scope.deleteIndex = idx;
-		if ($scope.works[idx].workTitle) 
-			$scope.fixedTitle = $scope.works[idx].workTitle.title.content;
-		else $scope.fixedTitle = ''
+		if ($scope.works[idx].workTitle && $scope.works[idx].workTitle.title) 
+			$scope.fixedTitle = $scope.works[idx].workTitle.title.value;
+		else $scope.fixedTitle = '';
         var maxSize = 100;
         if($scope.fixedTitle.length > maxSize)
         	$scope.fixedTitle = $scope.fixedTitle.substring(0, maxSize) + '...';
 		$.colorbox({        	            
             html : $compile($('#delete-work-modal').html())($scope)           
         });
-		$scope.$apply(); 
-        $.colorbox.resize();        
+		$.colorbox.resize();        
 	};
 	
 	$scope.deleteByIndex = function() {		
@@ -984,7 +1040,6 @@ function WorkCtrl($scope, $compile){
 		// remove the work from the UI
     	$scope.works.splice($scope.deleteIndex, 1);
     	// apply changes on scope
-		$scope.$apply();
 		// close box
 		$.colorbox.close(); 
 	};
@@ -1012,10 +1067,52 @@ function WorkCtrl($scope, $compile){
 		
 	$scope.setPrivacy = function(idx, priv, $event) {
 		$event.preventDefault();
-		$scope.works[idx].visibility = priv;
+		$scope.works[idx].visibility.visibility = priv;
 		$scope.curPrivToggle = null;
 		$scope.updateProfileWork(idx);
 	};
+	
+	$scope.serverValidate = function (relativePath) {
+		$.ajax({
+	        url: $('body').data('baseurl') + relativePath,
+	        type: 'POST',
+	        data:  angular.toJson($scope.editWork),
+	        contentType: 'application/json;charset=UTF-8',
+	        dataType: 'json',
+	        success: function(data) {
+	        	$scope.copyErrorsLeft($scope.editWork, data);
+	        	$scope.$apply();
+	        }
+	    }).fail(function() { 
+	    	// something bad is happening!
+	    	console.log("RegistrationCtrl.serverValidate() error");
+	    });
+	};
+	
+	// in the case of slow network connection
+	// we don't want to overwrite  values while
+	// user is typing
+	$scope.copyErrorsLeft = function (data1, data2) {
+		for (var key in data1) {
+			if (key == null) continue;
+			if (key == 'errors') {
+				data1.errors = data2.errors;
+			} else {
+				if (typeof(data1[key])=="object") {
+					$scope.copyErrorsLeft(data1[key], data2[key]);
+				}
+			};
+		};
+	};
+
+	$scope.isValidClass = function (cur) {
+		if (cur === undefined) return '';
+		var valid = true;
+		if (cur.required && (cur.value == null || cur.value.trim() == '')) valid = false;
+		if (cur.errors !== undefined && cur.errors.length > 0) valid = false;
+		return valid ? '' : 'text-error';
+	};
+
 	
 	$scope.updateProfileWork = function(idx) {
 		var work = $scope.works[idx];
