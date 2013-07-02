@@ -1028,9 +1028,11 @@ function WorkCtrl($scope, $compile){
         if($scope.fixedTitle.length > maxSize)
         	$scope.fixedTitle = $scope.fixedTitle.substring(0, maxSize) + '...';
 		$.colorbox({        	            
-            html : $compile($('#delete-work-modal').html())($scope)           
+            html : $compile($('#delete-work-modal').html())($scope),
+            onComplete: function() {$.colorbox.resize();}
         });
-		$.colorbox.resize();        
+		
+		        
 	};
 	
 	$scope.deleteByIndex = function() {		
