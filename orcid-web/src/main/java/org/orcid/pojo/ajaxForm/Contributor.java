@@ -51,7 +51,7 @@ public class Contributor implements ErrorsInterface, Serializable {
                 contributor.getContributorAttributes();
                 if (contributor.getContributorAttributes().getContributorRole() != null)
                     c.setContributorRole(Text.valueOf(contributor.getContributorAttributes().getContributorRole().value()));
-                if (contributor.getContributorAttributes().getContributorRole() != null)
+                if (contributor.getContributorAttributes().getContributorSequence() != null)
                     c.setContributorSequence(Text.valueOf(contributor.getContributorAttributes().getContributorSequence().value()));
             }
             if (contributor.getContributorEmail() != null)
