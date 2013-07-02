@@ -36,22 +36,22 @@ public class Date implements ErrorsInterface, Required {
 
     public static Date valueOf(PublicationDate publicationDate) {
         Date d = new Date();
-        if (publicationDate.getDay() != null)
+        if (publicationDate.getDay() != null && publicationDate.getDay().getValue() !=null)
             d.setDay(publicationDate.getDay().getValue());
-        if (d.getMonth() != null)
+        if (d.getMonth() != null && publicationDate.getMonth().getValue() !=null)
             d.setMonth(publicationDate.getMonth().getValue());
-        if (publicationDate.getYear() != null)
+        if (publicationDate.getYear() != null && publicationDate.getYear().getValue() !=null)
             d.setYear(publicationDate.getYear().getValue());
         return d;
     }
 
     public PublicationDate toPublicationDate() {
         PublicationDate pd = new PublicationDate();
-        if (this.getDay() != null || !this.getDay().trim().isEmpty())
+        if (this.getDay() != null && !this.getDay().trim().isEmpty())
             pd.setDay(new Day(new Integer(this.getDay())));
-        if (this.getMonth() != null || !this.getMonth().trim().isEmpty())
+        if (this.getMonth() != null && !this.getMonth().trim().isEmpty())
             pd.setMonth(new Month(new Integer(this.getMonth())));
-        if (this.getYear() != null || !this.getYear().trim().isEmpty())
+        if (this.getYear() != null && !this.getYear().trim().isEmpty())
             pd.setYear(new Year(new Integer(this.getYear())));
         return pd;
     }
