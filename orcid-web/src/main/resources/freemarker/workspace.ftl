@@ -160,7 +160,7 @@
         				<h3 class="workspace-accordion-header"><a href="#"><@orcid.msg 'workspace.Works'/></a></h3>
         				<div style="margin-left: 20px;">
 							<a href="#third-parties" class="colorbox-modal label btn-primary"><@orcid.msg 'workspace.ImportResearchActivities'/></a>
-							<a href="#" class="label btn-primary" ng-click="addWorkModal()">Add Work Manually</a>
+							<a href="#" class="label btn-primary" ng-click="addWorkModal()"><@orcid.msg 'manual_work_form_contents.add_work_manually'/></a>
 						</div>
             		<#else>
         				<h3 class="workspace-accordion-header"><a href="#"><@orcid.msg 'workspace.Works'/></a> <a href="<@spring.url '/works-update'/>" class="btn-update"><@orcid.msg 'workspace.Update'/></a></h3>
@@ -234,14 +234,14 @@
 	<div class="row">
 		
 		<div class="span12">
-			<h3>Add Work</h3>
+			<h3><@orcid.msg 'manual_work_form_contents.add_work'/></h3>
 		</div>
 		
 		<div class="span6">	
 			<div class="control-group">
 				<label class="control-label"><@orcid.msg 'manual_work_form_contents.labeltitle'/></label>
 			    <div class="relative">
-					<input name="familyNames" type="text" class="input-xlarge"  ng-model="editWork.workTitle.title.value" placeholder="Add <@orcid.msg 'manual_work_form_contents.labeltitle'/>" ng-change="serverValidate('my-orcid/work/workTitle/titleValidate.json')" ng-model-onblur/>
+					<input name="familyNames" type="text" class="input-xlarge"  ng-model="editWork.workTitle.title.value" placeholder="<@orcid.msg 'manual_work_form_contents.add_title'/>" ng-change="serverValidate('my-orcid/work/workTitle/titleValidate.json')" ng-model-onblur/>
 					<span class="required" ng-class="isValidClass(editWork.workTitle.title)">*</span>
 					<span class="orcid-error" ng-show="editWork.workTitle.title.errors.length > 0">
 						<div ng-repeat='error in editWork.workTitle.title.errors' ng-bind-html-unsafe="error"></div>
@@ -251,7 +251,7 @@
 			<div class="control-group">
 				<label class="control-label"><@orcid.msg 'manual_work_form_contents.labelsubtitle'/></label>
 			    <div class="relative">
-					<input name="familyNames" type="text" class="input-xlarge"  ng-model="editWork.workTitle.subtitle.value" placeholder="Add <@orcid.msg 'manual_work_form_contents.labelsubtitle'/>" ng-model-onblur/>
+					<input name="familyNames" type="text" class="input-xlarge"  ng-model="editWork.workTitle.subtitle.value" placeholder="<@orcid.msg 'manual_work_form_contents.add_subtitle'/>" ng-model-onblur/>
 					<span class="orcid-error" ng-show="editWork.workTitle.subtitle.errors.length > 0">
 						<div ng-repeat='error in editWork.workTitlesub.title.errors' ng-bind-html-unsafe="error"></div>
 					</span>
@@ -261,7 +261,7 @@
 			<div class="control-group">
 				<label class="control-label"><@orcid.msg 'manual_work_form_contents.labelcitation'/></label>
 			    <div class="relative">
-					<textarea name="familyNames" type="text" class="input-xlarge"  ng-model="editWork.citation.citation.value" placeholder="Add <@orcid.msg 'manual_work_form_contents.labelcitation'/>" ng-change="serverValidate('my-orcid/work/citationValidate.json')" ng-model-onblur/>
+					<textarea name="familyNames" type="text" class="input-xlarge"  ng-model="editWork.citation.citation.value" placeholder="<@orcid.msg 'manual_work_form_contents.add_citation'/>" ng-change="serverValidate('my-orcid/work/citationValidate.json')" ng-model-onblur/>
 					<span class="orcid-error" ng-show="editWork.citation.citation.errors.length > 0">
 						<div ng-repeat='error in editWork.citation.citation.errors' ng-bind-html-unsafe="error"></div>
 					</span>
@@ -325,7 +325,7 @@
 	   		<div class="control-group" ng-repeat="workExternalIdentifier in editWork.workExternalIdentifiers">
 				<label class="control-label"><@orcid.msg 'manual_work_form_contents.labelID'/></label>
 			    <div class="relative">
-					<input name="currentWorkExternalIds" type="text" class="input-xlarge"  ng-model="workExternalIdentifier.workExternalIdentifierId.value" placeholder="Add <@orcid.msg 'manual_work_form_contents.labelID'/>"  ng-change="serverValidate('my-orcid/work/workExternalIdentifiersValidate.json')" ng-model-onblur/>
+					<input name="currentWorkExternalIds" type="text" class="input-xlarge"  ng-model="workExternalIdentifier.workExternalIdentifierId.value" placeholder="<@orcid.msg 'manual_work_form_contents.add_ID'/>"  ng-change="serverValidate('my-orcid/work/workExternalIdentifiersValidate.json')" ng-model-onblur/>
 						<span class="orcid-error" ng-show="workExternalIdentifier.workExternalIdentifierId.errors.length > 0">
 							<div ng-repeat='error in workExternalIdentifier.workExternalIdentifierId.errors' ng-bind-html-unsafe="error"></div>
 						</span>
@@ -345,7 +345,7 @@
 			<div class="control-group">
 	    		<label class="relative"><@orcid.msg 'manual_work_form_contents.labelURL'/></label>
 	    		<div class="relative">
-					<input name="url" type="text" class="input-xlarge"  ng-model="editWork.url.value" placeholder="Add <@orcid.msg 'manual_work_form_contents.labelURL'/>" ng-model-onblur/>
+					<input name="url" type="text" class="input-xlarge"  ng-model="editWork.url.value" placeholder="<@orcid.msg 'manual_work_form_contents.add_URL'/>" ng-model-onblur/>
 					<span class="orcid-error" ng-show="editWork.url.errors.length > 0">
 						<div ng-repeat='error in editWork.url.errors' ng-bind-html-unsafe="error"></div>
 					</span>
@@ -383,7 +383,7 @@
 			<div class="control-group">
 				<label class="control-label"><@orcid.msg 'manual_work_form_contents.labeldescription'/></label>
 			    <div class="relative">
-					<textarea name="familyNames" type="text" class="input-xlarge"  ng-model="editWork.shortDescription.value" placeholder="Add <@orcid.msg 'manual_work_form_contents.labeldescription'/>" ng-model-onblur/>
+					<textarea name="familyNames" type="text" class="input-xlarge"  ng-model="editWork.shortDescription.value" placeholder="<@orcid.msg 'manual_work_form_contents.add_description'/>" ng-model-onblur/>
 					<span class="orcid-error" ng-show="editWork.shortDescription.errors.length > 0">
 						<div ng-repeat='error in editWork.shortDescription.errors' ng-bind-html-unsafe="error"></div>
 					</span>
