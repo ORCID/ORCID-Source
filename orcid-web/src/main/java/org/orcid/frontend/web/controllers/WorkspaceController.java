@@ -19,27 +19,47 @@ package org.orcid.frontend.web.controllers;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
+import org.jbibtex.ParseException;
 import org.orcid.core.manager.ExternalIdentifierManager;
 import org.orcid.core.manager.ProfileWorkManager;
 import org.orcid.core.manager.ThirdPartyImportManager;
 import org.orcid.frontend.web.forms.CurrentWork;
+import org.orcid.frontend.web.util.NumberList;
+import org.orcid.frontend.web.util.YearsList;
 import org.orcid.jaxb.model.clientgroup.OrcidClient;
 import org.orcid.jaxb.model.clientgroup.RedirectUri;
+import org.orcid.jaxb.model.message.CitationType;
+import org.orcid.jaxb.model.message.ContributorRole;
 import org.orcid.jaxb.model.message.ExternalIdentifier;
 import org.orcid.jaxb.model.message.ExternalIdentifiers;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidWork;
 import org.orcid.jaxb.model.message.OrcidWorks;
+import org.orcid.jaxb.model.message.SequenceType;
 import org.orcid.jaxb.model.message.SourceOrcid;
+import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
+import org.orcid.jaxb.model.message.WorkType;
 import org.orcid.persistence.adapter.Jpa2JaxbAdapter;
 import org.orcid.pojo.ThirdPartyRedirect;
-import org.orcid.pojo.Work;
+import org.orcid.pojo.ajaxForm.Citation;
+import org.orcid.pojo.ajaxForm.Contributor;
+import org.orcid.pojo.ajaxForm.Date;
+import org.orcid.pojo.ajaxForm.ErrorsInterface;
+import org.orcid.pojo.ajaxForm.Registration;
+import org.orcid.pojo.ajaxForm.Text;
+import org.orcid.pojo.ajaxForm.Work;
+import org.orcid.pojo.ajaxForm.WorkExternalIdentifier;
+import org.orcid.pojo.ajaxForm.WorkTitle;
+import org.orcid.utils.BibtexUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -49,6 +69,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.multiaction.NoSuchRequestHandlingMethodException;
+import org.springframework.web.util.HtmlUtils;
 
 /**
  * @author Will Simpson
@@ -75,6 +96,92 @@ public class WorkspaceController extends BaseWorkspaceController {
     public List<OrcidClient> retrieveThirdPartiesForImport() {
         return thirdPartyImportManager.findOrcidClientsWithPredefinedOauthScopeWorksImport();
     }
+    
+    @ModelAttribute("workTypes")
+    public Map<String, String> retrieveWorkTypesAsMap() {
+        Map<String, String> workTypes = new TreeMap<String, String>();
+        workTypes.put("", "Pick a publication type");
+        for (WorkType workType : WorkType.values()) {
+            workTypes.put(workType.value(), StringUtils.capitalize(workType.value().replace('-', ' ')));
+        }
+
+        workTypes.remove(WorkType.BIBLE.value());
+        return workTypes;
+    }
+
+    @ModelAttribute("citationTypes")
+    public Map<String, String> retrieveTypesAsMap() {
+        Map<String, String> citationTypes = new TreeMap<String, String>();
+        citationTypes.put("", "Pick a citation type");
+        for (CitationType citationType : CitationType.values()) {
+            String value = citationType.value().replace("formatted-", "");
+            citationTypes.put(citationType.value(), StringUtils.upperCase(value));
+        }
+        return citationTypes;
+    }
+
+    @ModelAttribute("years")
+    public Map<String, String> retrieveYearsAsMap() {
+        Map<String, String> map = new LinkedHashMap<String, String>();
+        List<String> list = YearsList.createList();
+        map.put("", "Year");
+        for (String year : list) {
+            map.put(year, year);
+        }
+        return map;
+    }
+
+    @ModelAttribute("months")
+    public Map<String, String> retrieveMonthsAsMap() {
+        Map<String, String> map = new LinkedHashMap<String, String>();
+        List<String> list = NumberList.createList(12);
+        map.put("", "Month");
+        for (String month : list) {
+            map.put(month, month);
+        }
+        return map;
+    }
+
+    @ModelAttribute("days")
+    public Map<String, String> retrieveDaysAsMap() {
+        Map<String, String> map = new LinkedHashMap<String, String>();
+        List<String> list = NumberList.createList(31);
+        map.put("", "Day");
+        for (String day : list) {
+            map.put(day, day);
+        }
+        return map;
+    }
+
+    @ModelAttribute("idTypes")
+    public Map<String, String> retrieveIdTypesAsMap() {
+        Map<String, String> map = new TreeMap<String, String>();
+        map.put("", "What type of external ID?");
+        for (WorkExternalIdentifierType type : WorkExternalIdentifierType.values()) {
+            map.put(type.value(), type.description());
+        }
+        return map;
+    }
+
+    @ModelAttribute("roles")
+    public Map<String, String> retrieveRolesAsMap() {
+        Map<String, String> map = new TreeMap<String, String>();
+        map.put("", "What was your role?");
+        for (ContributorRole contributorRole : ContributorRole.values()) {
+            map.put(contributorRole.value(), StringUtils.capitalize(contributorRole.value().replaceAll("[-_]", " ")));
+        }
+        return map;
+    }
+
+    @ModelAttribute("sequences")
+    public Map<String, String> retrieveSequencesAsMap() {
+        Map<String, String> map = new LinkedHashMap<String, String>();
+        for (SequenceType sequenceType : SequenceType.values()) {
+            map.put(sequenceType.value(), StringUtils.capitalize(sequenceType.value().replaceAll("[-]", " ")));
+        }
+        return map;
+    }
+
 
     @RequestMapping
     public ModelAndView viewWorkspace(HttpServletRequest request, @RequestParam(value = "page", defaultValue = "1") int pageNo,
@@ -195,7 +302,7 @@ public class WorkspaceController extends BaseWorkspaceController {
             }
             works.setOrcidWork(workList);
             currentProfile.getOrcidActivities().setOrcidWorks(works);
-            profileWorkManager.removeWork(currentProfile.getOrcid().getValue(), work.getPutCode());
+            profileWorkManager.removeWork(currentProfile.getOrcid().getValue(), work.getPutCode().getValue());
         }
 
         return deletedWork;
@@ -205,7 +312,7 @@ public class WorkspaceController extends BaseWorkspaceController {
      * List works associated with a profile
      * */
     @SuppressWarnings("unchecked")
-    @RequestMapping(value = "/work.json", method = RequestMethod.GET)
+    @RequestMapping(value = "/works.json", method = RequestMethod.GET)
     public @ResponseBody List<Work> getWorkJson(HttpServletRequest request, @RequestParam(value = "workIds") String workIdsStr) {
         List<Work> workList = new ArrayList<>();
         Work work = null;
@@ -228,9 +335,202 @@ public class WorkspaceController extends BaseWorkspaceController {
     }
 
     /**
+     * Returns a blank work
+     * */
+    @RequestMapping(value = "/work.json", method = RequestMethod.GET)
+    public @ResponseBody
+    Work getWork(HttpServletRequest request) {
+        Work w = new Work();
+        
+        // work title and subtitle
+        Text wtt = new Text();
+        wtt.setRequired(true);
+        WorkTitle wt = new WorkTitle();
+        wt.setTitle(wtt);
+        Text wst = new Text();
+        wt.setSubtitle(wst);
+        w.setWorkTitle(wt);
+        
+        // set citation text and type
+        Citation c = new Citation();
+        Text ctText = new Text();
+        ctText.setValue(CitationType.FORMATTED_UNSPECIFIED.value());       
+        c.setCitationType(ctText);
+        Text cText = new Text();
+        c.setCitation(cText);
+        w.setCitation(c);
+      
+        Text wTypeText = new Text();
+        wTypeText.setRequired(true);
+        w.setWorkType(wTypeText);
+        
+        Date d = new Date();
+        w.setPublicationDate(d);
+        
+        WorkExternalIdentifier wdi = new WorkExternalIdentifier();
+        Text wdiT = new Text();
+        Text wdiType = new Text();
+        wdi.setWorkExternalIdentifierId(wdiT);
+        wdi.setWorkExternalIdentifierType(wdiType);
+        List<WorkExternalIdentifier> wdiL = new ArrayList<WorkExternalIdentifier>();
+        wdiL.add(wdi);
+        w.setWorkExternalIdentifiers(wdiL);
+        
+        Text uText = new Text();
+        w.setUrl(uText);
+        
+        Contributor contr = new Contributor();
+        List<Contributor> contrList = new ArrayList<Contributor>();
+        Text rText = new Text();
+        contr.setContributorRole(rText);
+        
+        Text sText= new Text();
+        contr.setContributorSequence(sText);
+        contrList.add(contr);
+        w.setContributors(contrList);
+        
+        Text disText= new Text();
+        
+        w.setShortDescription(disText);
+        
+        return w;
+    }
+
+    
+    /**
+     * Returns a blank work
+     * */
+    @RequestMapping(value = "/work.json", method = RequestMethod.POST)
+    public @ResponseBody
+    Work postWork(HttpServletRequest request,  @RequestBody Work work) {
+        work.setErrors(new ArrayList<String>());
+        
+        workCitationValidate(work);
+        workWorkTitleTitleValidate(work);
+        workWorkTypeValidate(work);
+        workWorkExternalIdentifiersValidate(work);
+        
+        copyErrors(work.getCitation().getCitation(), work);
+        copyErrors(work.getCitation().getCitationType(), work);
+        copyErrors(work.getWorkTitle().getTitle(), work);
+        copyErrors(work.getWorkType(), work);
+        for (WorkExternalIdentifier wId:work.getWorkExternalIdentifiers()) {
+            copyErrors(wId.getWorkExternalIdentifierId(), work);
+            copyErrors(wId.getWorkExternalIdentifierType(), work);
+        }
+        
+        if (work.getErrors().size() == 0) {
+            OrcidWork newOw = work.toOrcidWork();
+            // Why do we have to save all the works?
+            OrcidProfile profile = getCurrentUser().getEffectiveProfile();
+            List<OrcidWork> owList = profile.getOrcidActivities().getOrcidWorks().getOrcidWork();
+            owList.add(newOw);
+            profile.getOrcidActivities().getOrcidWorks().setOrcidWork(owList);
+            OrcidProfile updatedProfile = orcidProfileManager.updateOrcidWorks(profile);
+            getCurrentUser().setEffectiveProfile(updatedProfile);
+        }
+        
+        return work;
+    }
+
+    @RequestMapping(value = "/work/workTitle/titleValidate.json", method = RequestMethod.POST)
+    public @ResponseBody
+    Work workWorkTitleTitleValidate(@RequestBody Work work) {
+        work.getWorkTitle().getTitle().setErrors(new ArrayList<String>());
+        if (work.getWorkTitle().getTitle().getValue() == null || work.getWorkTitle().getTitle().getValue().trim().length() == 0) {
+            setError(work.getWorkTitle().getTitle(), "NotBlank.manualWork.title");
+        }
+
+        return work;
+    }
+
+    
+    @RequestMapping(value = "/work/workTypeValidate.json", method = RequestMethod.POST)
+    public @ResponseBody
+    Work workWorkTypeValidate(@RequestBody Work work) {
+        work.getWorkType().setErrors(new ArrayList<String>());
+        if (work.getWorkType().getValue() == null || work.getWorkType().getValue().trim().length() == 0) {
+            setError(work.getWorkType(), "NotBlank.manualWork.workType");
+        }
+
+        return work;
+    }
+
+
+    @RequestMapping(value = "/work/workExternalIdentifiersValidate.json", method = RequestMethod.POST)
+    public @ResponseBody
+    Work workWorkExternalIdentifiersValidate(@RequestBody Work work) {
+        for (WorkExternalIdentifier wId:work.getWorkExternalIdentifiers()) {
+            wId.getWorkExternalIdentifierId().setErrors(new ArrayList<String>());
+            wId.getWorkExternalIdentifierType().setErrors(new ArrayList<String>());
+            // if has id type must be specified 
+            if (wId.getWorkExternalIdentifierId().getValue() != null
+                    && !wId.getWorkExternalIdentifierId().getValue().trim().equals("")
+                    && (wId.getWorkExternalIdentifierType().getValue() == null
+                        || wId.getWorkExternalIdentifierType().getValue().equals(""))) {
+                setError(wId.getWorkExternalIdentifierType(), "NotBlank.currentWorkExternalIds.idType"); 
+            }
+            // if type is set a id must set
+            if (wId.getWorkExternalIdentifierType().getValue() != null
+                    && !wId.getWorkExternalIdentifierType().getValue().trim().equals("")
+                    && (wId.getWorkExternalIdentifierId().getValue() == null
+                         || wId.getWorkExternalIdentifierId().getValue().trim().equals(""))) {
+                setError(wId.getWorkExternalIdentifierId(), "NotBlank.currentWorkExternalIds.id");
+            }
+        }
+         
+        return work;
+    }
+
+    
+    @RequestMapping(value = "/work/citationValidate.json", method = RequestMethod.POST)
+    public @ResponseBody
+    Work workCitationValidate(@RequestBody Work work) {
+        work.getCitation().getCitation().setErrors(new ArrayList<String>());
+        work.getCitation().getCitationType().setErrors(new ArrayList<String>());
+        
+        // Citations must have a type
+        if (work.getCitation().getCitationType() == null 
+                || work.getCitation().getCitationType().getValue() == null
+                || work.getCitation().getCitationType().getValue().trim().equals("")) {
+            setError(work.getCitation().getCitationType(), "NotBlank.manualWork.citationType");
+        } else if (!work.getCitation().getCitationType().getValue().trim().equals(CitationType.FORMATTED_UNSPECIFIED.value())) {
+            // citation should not be blank if citation type is set 
+            if (work.getCitation().getCitation() == null || 
+                     work.getCitation().getCitation().getValue().trim().equals("")) {
+                setError(work.getCitation().getCitation(), "NotBlank.manualWork.citation");
+            }
+            
+            // if bibtext must be valid
+            if (work.getCitation().getCitationType().getValue().equals(CitationType.BIBTEX.value())) {
+                try {
+                    BibtexUtils.toCitation(HtmlUtils.htmlUnescape(work.getCitation().getCitationType().getValue()));
+                } catch (ParseException e) {
+                    setError(work.getCitation().getCitation(), "manualWork.bibtext.notValid");
+                }
+            }
+        
+        }
+        
+        return work;
+    }
+
+    
+    private static void copyErrors(ErrorsInterface from, ErrorsInterface into) {
+        for (String s : from.getErrors()) {
+            into.getErrors().add(s);
+        }
+    }
+
+    private void setError(ErrorsInterface ei, String msg) {
+        ei.getErrors().add(getMessage(msg));
+    }
+
+    
+    /**
      * List works associated with a profile
      * */
-    @RequestMapping(value = "/works.json", method = RequestMethod.GET)
+    @RequestMapping(value = "/workIds.json", method = RequestMethod.GET)
     public @ResponseBody
     List<String> getWorksJson(HttpServletRequest request) {
         //Get cached profile
@@ -247,11 +547,11 @@ public class WorkspaceController extends BaseWorkspaceController {
         OrcidProfile currentProfile = getCurrentUser().getEffectiveProfile();
         OrcidWorks orcidWorks = currentProfile.getOrcidActivities() == null ? null : currentProfile.getOrcidActivities().getOrcidWorks();
 
-        HashMap<String, OrcidWork> worksMap = new HashMap<String, OrcidWork>();
+        HashMap<String, Work> worksMap = new HashMap<String, Work>();
         List<String> workIds = new ArrayList<String>();
         if (orcidWorks != null) {
             for (OrcidWork work : orcidWorks.getOrcidWork()) {
-                worksMap.put(work.getPutCode(), new Work(work));
+                worksMap.put(work.getPutCode(), Work.valueOf(work));
                 workIds.add(work.getPutCode());
             }
             request.getSession().setAttribute(WORKS_MAP, worksMap);
@@ -266,6 +566,7 @@ public class WorkspaceController extends BaseWorkspaceController {
     public @ResponseBody
     Work updateProfileWorkJson(HttpServletRequest request, @RequestBody Work work) {
         //Get cached profile
+        OrcidWork ow = work.toOrcidWork();
         OrcidProfile currentProfile = getCurrentUser().getEffectiveProfile();
         OrcidWorks orcidWorks = currentProfile.getOrcidActivities() == null ? null : currentProfile.getOrcidActivities().getOrcidWorks();
         if (orcidWorks != null) {
@@ -273,9 +574,9 @@ public class WorkspaceController extends BaseWorkspaceController {
             if (orcidWorksList != null) {
                 for (OrcidWork orcidWork : orcidWorksList) {
                     //If the put codes are equal, we know that they are the same work
-                    if (orcidWork.getPutCode().equals(work.getPutCode())) {
+                    if (orcidWork.getPutCode().equals(ow.getPutCode())) {
                         //Update the privacy of the work
-                        profileWorkManager.updateWork(currentProfile.getOrcid().getValue(), work.getPutCode(), work.getVisibility());
+                        profileWorkManager.updateWork(currentProfile.getOrcid().getValue(), ow.getPutCode(), ow.getVisibility());
                     }
                 }
             }

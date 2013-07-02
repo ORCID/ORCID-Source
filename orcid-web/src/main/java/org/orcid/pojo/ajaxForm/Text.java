@@ -16,15 +16,24 @@
  */
 package org.orcid.pojo.ajaxForm;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Text implements ErrorsInterface, Required {
+public class Text implements ErrorsInterface, Required, Serializable {
+    
+    private static final long serialVersionUID = 1L;
 
     private List<String> errors = new ArrayList<String>();
     private String value;
     private boolean required = true;
     private String getRequiredMessage;
+
+    public static Text valueOf(String value) {
+        Text t = new Text();
+        t.setValue(value);
+       return t;
+    }
 
     public List<String> getErrors() {
         return errors;
