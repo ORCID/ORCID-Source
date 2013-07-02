@@ -950,6 +950,8 @@ function WorkCtrl($scope, $compile){
 
 
 	$scope.addWork = function(){
+		if ($scope.addingWork) return; // don't process if adding work
+		$scope.addingWork = true;
 		$.ajax({
 			url: $('body').data('baseurl') + 'my-orcid/work.json',	        
 	        contentType: 'application/json;charset=UTF-8',
@@ -959,21 +961,24 @@ function WorkCtrl($scope, $compile){
 	        success: function(data) {
 	        	if (data.errors.length == 0){
 	        		$.colorbox.close(); 
+	        		$scope.addingWork = false;
 	        		$scope.getWorks();
 	        	} else {
 		        	$scope.editWork = data;
 		        	$scope.copyErrorsLeft($scope.editWork, data);
+		        	$scope.addingWork = false;
 		        	$scope.$apply();
 	        	}
 	        }
 		}).fail(function(){
 			// something bad is happening!
+			$scope.addingWork = false;
 	    	console.log("error fetching works");
 		});
 	};
 	
 	
-	$scope.addWorkToScope = function(){
+	$scope.addWorkToScope = function() {
 		if($scope.worksToAddIds.length != 0 ) {
 			var workIds = $scope.worksToAddIds.splice(0,20).join();
 			$.ajax({

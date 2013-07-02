@@ -398,7 +398,7 @@
 		   &nbsp;
 		</div>
 		<div class="span3">
-			<button class="btn btn-primary" ng-click="addWork()">${springMacroRequestContext.getMessage("manual_work_form_contents.btnaddtolist")}</button> 
+			<button class="btn btn-primary" ng-click="addWork()" ng-disabled="addingWork" ng-class="{disabled:addingWork}">${springMacroRequestContext.getMessage("manual_work_form_contents.btnaddtolist")}</button> 
 			<a href="" ng-click="closeModal()">${springMacroRequestContext.getMessage("manage.deleteExternalIdentifier.cancel")}</a>
 		</div>
 		<div class="span3">
