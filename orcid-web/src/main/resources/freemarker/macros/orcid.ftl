@@ -109,9 +109,9 @@
 <#macro privacyToggle angularModel publicClick limitedClick privateClick>
 	<div class="relative">
 		<ul class="privacyToggle">
-			<li class="publicActive" ng-class="{publicInActive: ${angularModel} != 'PUBLIC'}"><a href="" title="PUBLIC" ng-click="${publicClick}"></a></li>
-			<li class="limitedActive" ng-class="{limitedInActive: ${angularModel} != 'LIMITED'}"><a href="" title="LIMITED" ng-click="${limitedClick}"></a></li>
-			<li class="privateActive" ng-class="{privateInActive: ${angularModel} != 'PRIVATE'}"><a href="" title="PRIVATE" ng-click="${privateClick}"></a></li>
+			<li class="publicActive" ng-class="{publicInActive: ${angularModel} != 'PUBLIC'}"><a href="" title="<@orcid.msg 'manage.lipublic' />" ng-click="${publicClick}"></a></li>
+			<li class="limitedActive" ng-class="{limitedInActive: ${angularModel} != 'LIMITED'}"><a href="" title="<@orcid.msg 'manage.lilimited' />" ng-click="${limitedClick}"></a></li>
+			<li class="privateActive" ng-class="{privateInActive: ${angularModel} != 'PRIVATE'}"><a href="" title="<@orcid.msg 'manage.liprivate' />" ng-click="${privateClick}"></a></li>
 		</ul>
 		<div class="popover-help-container" style="position: absolute; left: 110px; top: 5px;">
         	<a href="javascript:void(0);"><i class="icon-question-sign"style="width: 14px;"></i></a>
@@ -241,6 +241,11 @@ kind of variable. This temp value is only used in this macro lib -->
       ${number}
    </#attempt>
 </#compress></#macro>
+
+<#--
+	Make is easy to get properties.
+-->
+<#macro msg key, htmlEscape=false>${springMacroRequestContext.getMessage(key, [], "", htmlEscape)}</#macro>
 
 <#--
  * unescapedMessage

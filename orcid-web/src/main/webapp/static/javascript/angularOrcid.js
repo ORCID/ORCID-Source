@@ -516,11 +516,13 @@ function RegistrationCtrl($scope, $compile) {
 	        // make sure inputs stayed trimmed
 	    	$scope.$watch('register.email.value', function() {
 	    		trimAjaxFormText($scope.register.email);
+	    		$scope.serverValidate('Email');
 	    	}); // initialize the watch
 	    	
 	    	// make sure email is trimmed
 	    	$scope.$watch('register.emailConfirm.value', function() {
 	    		 trimAjaxFormText($scope.register.emailConfirm);
+	    		 $scope.serverValidate('EmailConfirm');
 	    	}); // initialize the watch
 	    	
 	    	$scope.$watch('register.givenNames.value', function() {

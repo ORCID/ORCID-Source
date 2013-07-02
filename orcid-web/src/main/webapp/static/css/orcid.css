@@ -1849,14 +1849,6 @@ input.error {
      left: 368px;
 }
 
-.form-sign-in .control-label {
-     width: 66px;
-}
-
-.form-sign-in .controls {
-     margin-left: 86px;
-}
-
 .popover-frame .password-info {
     left: 438px;
 }
@@ -1865,15 +1857,6 @@ input.error {
      z-index:10000;
      top: 425px;
      left: 823px;
-}
-
-.control-links {
-     width: 284px;
-}
-
-.control-links .reg {
-     position: absolute;
-     right:0;
 }
 
 .bg-white {
@@ -2128,11 +2111,6 @@ header overrides
 }
 
 .relative {
-     position: relative;
-}
-
-.control-links {
-     width: 354px;
      position: relative;
 }
 
