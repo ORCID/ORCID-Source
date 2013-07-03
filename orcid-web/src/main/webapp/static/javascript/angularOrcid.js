@@ -1010,9 +1010,9 @@ function WorkCtrl($scope, $compile){
 	        	$scope.worksToAddIds = data;
 	        	if (data.length > 0 ) { 
 	        		$scope.addWorkToScope();
-	        		$scope.noWorks = false;
+	        		$scope.hasWorks = false;
 	        	} else {
-	        		$scope.noWorks = true;
+	        		$scope.hasWorks = true;
 	        	}
 	        }
 		}).fail(function(){
