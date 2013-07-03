@@ -16,10 +16,11 @@
  */
 package org.orcid.pojo.ajaxForm;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Visibility implements ErrorsInterface, Required {
+public class Visibility implements ErrorsInterface, Required, Serializable {
     /**
      * 
      */
@@ -32,9 +33,15 @@ public class Visibility implements ErrorsInterface, Required {
     private String getRequiredMessage;
 
     private org.orcid.jaxb.model.message.Visibility visibility;
-
+    
     public Visibility() {
         visibility = org.orcid.jaxb.model.message.Visibility.PUBLIC;
+    }
+    
+    public static Visibility valueOf(org.orcid.jaxb.model.message.Visibility visibility) {
+        Visibility v = new Visibility();
+        v.setVisibility(visibility);
+      return v;
     }
 
     public List<String> getErrors() {

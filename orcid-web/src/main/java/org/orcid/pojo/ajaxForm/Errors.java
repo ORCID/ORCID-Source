@@ -14,17 +14,13 @@
  *
  * =============================================================================
  */
-package org.orcid.pojo;
+package org.orcid.pojo.ajaxForm;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.orcid.pojo.ajaxForm.ErrorsInterface;
 
-public class Emails implements ErrorsInterface {
-    private List<Email> emails = null;
-    @SuppressWarnings("unused")
-    private static final long serialVersionUID = 1L;
+public class Errors implements ErrorsInterface {
 
     private List<String> errors = new ArrayList<String>();
 
@@ -34,14 +30,6 @@ public class Emails implements ErrorsInterface {
 
     public void setErrors(List<String> errors) {
         this.errors = errors;
-    }
-
-    public List<Email> getEmails() {
-        return emails;
-    }
-
-    public void setEmails(List<Email> emails) {
-        this.emails = emails;
     }
 
 }

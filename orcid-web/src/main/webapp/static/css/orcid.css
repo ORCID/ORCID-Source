@@ -1244,6 +1244,11 @@ a:hover {
 .workspace-accordion-header {
     position: relative;
     line-height: 1;
+    font-size: 20px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    font-weight: bold;
+    font-family: 'Gill Sans W01 Bold', 'Gill Sans', sans-serif;
 }
 
 .workspace-accordion-header a,
@@ -1252,6 +1257,10 @@ a:hover {
 .workspace-header-public {
     font-weight: bold;
     color: #939597;    
+}
+
+.workspace-accordion-header a.btn-primary {
+	color: #FFFFFF;
 }
         
 .workspace-accordion-header:after {
@@ -2029,6 +2038,14 @@ header overrides
      margin-bottom: 5px;
 }
 
+
+.edit-work label,
+.edit-work input,
+.edit-work textarea,
+.edit-work select {
+     margin-bottom: 0;
+}
+
 .manage-bio label,
 .manage-bio input,
 .manage-bio textarea,
@@ -2175,9 +2192,9 @@ header overrides
 }
 
 
-#workspace-grants h3:after,
-#workspace-patents h3:after,
-#workspace-affiliations h3:after {
+#workspace-grants div:after,
+#workspace-patents div:after,
+#workspace-affiliations div:after {
      border: 0 !important;
      content: '';
 }
@@ -2226,4 +2243,10 @@ header overrides
 
 .search-result-orcid-id {
 	white-space:nowrap;
+}
+
+a.btn-primary:hover {
+     background: #a6ce39;
+     color: #ffffff !important;
+     text-shadow:none;    
 }
