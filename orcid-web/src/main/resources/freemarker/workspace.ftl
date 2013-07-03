@@ -155,10 +155,10 @@
                     <h3 class="workspace-accordion-header"><a href="#"><@orcid.msg 'workspace_bio.Affiliations'/></a></h3>
                 </div>
                 
-                <div id="workspace-publications" class="workspace-accordion-item workspace-accordion-active" ng-controller="WorkCtrl">
+                <div id="workspace-publications" style="position: relative;" class="workspace-accordion-item workspace-accordion-active" ng-controller="WorkCtrl">
                 	<#if RequestParameters['addWorks']??>
         				<h3 class="workspace-accordion-header"><a href="#"><@orcid.msg 'workspace.Works'/></a></h3>
-        				<div style="margin-left: 20px;">
+        				<div style="position: absolute; left: 100px; top: 0px;">
 							<a href="#third-parties" class="colorbox-modal label btn-primary"><@orcid.msg 'workspace.ImportResearchActivities'/></a>
 							<a href="#" class="label btn-primary" ng-click="addWorkModal()"><@orcid.msg 'manual_work_form_contents.add_work_manually'/></a>
 						</div>
