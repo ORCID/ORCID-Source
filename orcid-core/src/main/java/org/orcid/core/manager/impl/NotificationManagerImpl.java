@@ -167,6 +167,8 @@ public class NotificationManagerImpl implements NotificationManager {
         templateParams.put("baseUri", baseUri);
         templateParams.put("deactivateUrlEndpoint", "/account/confirm-deactivate-orcid");
 
+        addMessageParams(templateParams);
+        
         // Generate body from template
         String body = templateManager.processTemplate("deactivate_orcid_email.ftl", templateParams);
         // Create email message
@@ -192,10 +194,8 @@ public class NotificationManagerImpl implements NotificationManager {
         templateParams.put("orcid", orcidProfile.getOrcid().getValue());
         templateParams.put("baseUri", baseUri);
       
-        // ${messages.getMessage($key,$messageArgs,$locale)} 
-        templateParams.put("messages", this.messages);
-        templateParams.put("messageArgs", new Object[0]);
-        templateParams.put("locale",  new Locale("en"));
+        addMessageParams(templateParams);
+
         // Generate body from template
         String body = templateManager.processTemplate("verification_email.ftl", templateParams);
         // Create email message
@@ -206,6 +206,13 @@ public class NotificationManagerImpl implements NotificationManager {
         message.setText(body);
         // Send message
         sendAndLogMessage(message);
+    }
+
+    private void addMessageParams(Map<String, Object> templateParams) {
+        // ${messages.getMessage($key,$messageArgs,$locale)} 
+        templateParams.put("messages", this.messages);
+        templateParams.put("messageArgs", new Object[0]);
+        templateParams.put("locale",  new Locale("en"));
     }
 
     public void sendVerificationReminderEmail(OrcidProfile orcidProfile, URI baseUri, String email) {

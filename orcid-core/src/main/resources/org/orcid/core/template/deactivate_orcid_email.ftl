@@ -16,28 +16,20 @@
     =============================================================================
 
 -->
-Dear ${emailName},
+<#import "email_macros.ftl" as emailMacros />
+<@emailMacros.msg "email.common.dear" /> ${emailName}<@emailMacros.msg "email.common.dear.comma" />
 
-You have requested that your ORCID Account associated with ORCID ID 
-${baseUri}/${orcid} be deactivated. Please click on the following link 
-to complete the deactivation process:
 
+<@emailMacros.msg "email.deactivate.you_have_requested.1" /> 
+${baseUri}/${orcid} <@emailMacros.msg "email.deactivate.you_have_requested.2" />
 ${baseUri}${deactivateUrlEndpoint}
 
-Once an account is closed, you will not be able to create a new one using the email 
-address associated with this closed account. So as not to assign the same 
-identifier to another person, ORCID will maintain in a private data file your 
-ORCID ID, name, and email address; all other data in your record will be removed.
-You may contact ORCID if you later wish to re-claim your identifier and reactivate 
-your account. 
 
-If you did not request account deactivation, please contact the ORCID Help Desk at 
-support@orcid.org. 
+<@emailMacros.msg "email.deactivate.once_an_account" />
 
-Kind Regards,
-The ORCID Team
-support@orcid.org 
+<@emailMacros.msg "email.deactivate.if_you_did" />
+
+<@emailMacros.msg "email.common.kind_regards" />
 ${baseUri}
 
-You have received this email as a service announcement related to your 
-ORCID Account.
+<@emailMacros.msg "email.common.you_have_received_this_email" />
