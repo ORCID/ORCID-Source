@@ -514,6 +514,16 @@ $(function () {
 		}
 	});
 	
+	$('#upate-personal-modal-link').colorbox({
+		iframe: true,
+		height: 600,
+		width: 990,
+		close: '',
+		onClosed: function () {
+			top.location = top.colorOnCloseBoxDest;
+		}
+	});
+	
 	$('.colorbox-modal').colorbox({
 		inline: true,
 		close: 'x'
