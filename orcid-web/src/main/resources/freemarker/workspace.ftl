@@ -251,9 +251,9 @@
 			<div class="control-group">
 				<label class="control-label"><@orcid.msg 'manual_work_form_contents.labelsubtitle'/></label>
 			    <div class="relative">
-					<input name="familyNames" type="text" class="input-xlarge"  ng-model="editWork.workTitle.subtitle.value" placeholder="<@orcid.msg 'manual_work_form_contents.add_subtitle'/>" ng-model-onblur/>
+					<input name="familyNames" type="text" class="input-xlarge"  ng-model="editWork.workTitle.subtitle.value" placeholder="<@orcid.msg 'manual_work_form_contents.add_subtitle'/>" ng-change="serverValidate('my-orcid/work/workTitle/subtitleValidate.json')" ng-model-onblur/>
 					<span class="orcid-error" ng-show="editWork.workTitle.subtitle.errors.length > 0">
-						<div ng-repeat='error in editWork.workTitlesub.title.errors' ng-bind-html-unsafe="error"></div>
+						<div ng-repeat='error in editWork.workTitle.subtitle.errors' ng-bind-html-unsafe="error"></div>
 					</span>
 				</div>
 			</div>
@@ -345,7 +345,7 @@
 			<div class="control-group">
 	    		<label class="relative"><@orcid.msg 'manual_work_form_contents.labelURL'/></label>
 	    		<div class="relative">
-					<input name="url" type="text" class="input-xlarge"  ng-model="editWork.url.value" placeholder="<@orcid.msg 'manual_work_form_contents.add_URL'/>" ng-model-onblur/>
+					<input name="url" type="text" class="input-xlarge"  ng-model="editWork.url.value" placeholder="<@orcid.msg 'manual_work_form_contents.add_URL'/>" ng-change="serverValidate('my-orcid/work/urlValidate.json')" ng-model-onblur/>
 					<span class="orcid-error" ng-show="editWork.url.errors.length > 0">
 						<div ng-repeat='error in editWork.url.errors' ng-bind-html-unsafe="error"></div>
 					</span>
@@ -383,7 +383,7 @@
 			<div class="control-group">
 				<label class="control-label"><@orcid.msg 'manual_work_form_contents.labeldescription'/></label>
 			    <div class="relative">
-					<textarea name="familyNames" type="text" class="input-xlarge"  ng-model="editWork.shortDescription.value" placeholder="<@orcid.msg 'manual_work_form_contents.add_description'/>" ng-model-onblur/>
+					<textarea name="familyNames" type="text" class="input-xlarge"  ng-model="editWork.shortDescription.value" placeholder="<@orcid.msg 'manual_work_form_contents.add_description'/>" ng-change="serverValidate('my-orcid/work/descriptionValidate.json')" ng-model-onblur/>
 					<span class="orcid-error" ng-show="editWork.shortDescription.errors.length > 0">
 						<div ng-repeat='error in editWork.shortDescription.errors' ng-bind-html-unsafe="error"></div>
 					</span>
