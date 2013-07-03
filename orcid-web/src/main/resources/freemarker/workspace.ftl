@@ -231,15 +231,14 @@
 </script>
 
 <script type="text/ng-template" id="add-work-modal">
-	<div class="row">
-		
+	<div class="row edit-work" >
 		<div class="span12">
 			<h3><@orcid.msg 'manual_work_form_contents.add_work'/></h3>
 		</div>
 		
 		<div class="span6">	
 			<div class="control-group">
-				<label class="control-label"><@orcid.msg 'manual_work_form_contents.labeltitle'/></label>
+				<label><@orcid.msg 'manual_work_form_contents.labeltitle'/></label>
 			    <div class="relative">
 					<input name="familyNames" type="text" class="input-xlarge"  ng-model="editWork.workTitle.title.value" placeholder="<@orcid.msg 'manual_work_form_contents.add_title'/>" ng-change="serverValidate('my-orcid/work/workTitle/titleValidate.json')" ng-model-onblur/>
 					<span class="required" ng-class="isValidClass(editWork.workTitle.title)">*</span>
@@ -249,7 +248,7 @@
 				</div>
 			</div>
 			<div class="control-group">
-				<label class="control-label"><@orcid.msg 'manual_work_form_contents.labelsubtitle'/></label>
+				<label><@orcid.msg 'manual_work_form_contents.labelsubtitle'/></label>
 			    <div class="relative">
 					<input name="familyNames" type="text" class="input-xlarge"  ng-model="editWork.workTitle.subtitle.value" placeholder="<@orcid.msg 'manual_work_form_contents.add_subtitle'/>" ng-model-onblur/>
 					<span class="orcid-error" ng-show="editWork.workTitle.subtitle.errors.length > 0">
@@ -259,7 +258,7 @@
 			</div>
 			
 			<div class="control-group">
-				<label class="control-label"><@orcid.msg 'manual_work_form_contents.labelcitation'/></label>
+				<label><@orcid.msg 'manual_work_form_contents.labelcitation'/></label>
 			    <div class="relative">
 					<textarea name="familyNames" type="text" class="input-xlarge"  ng-model="editWork.citation.citation.value" placeholder="<@orcid.msg 'manual_work_form_contents.add_citation'/>" ng-change="serverValidate('my-orcid/work/citationValidate.json')" ng-model-onblur/>
 					<span class="orcid-error" ng-show="editWork.citation.citation.errors.length > 0">
@@ -323,7 +322,7 @@
 	    	</div>
 	    	
 	   		<div class="control-group" ng-repeat="workExternalIdentifier in editWork.workExternalIdentifiers">
-				<label class="control-label"><@orcid.msg 'manual_work_form_contents.labelID'/></label>
+				<label><@orcid.msg 'manual_work_form_contents.labelID'/></label>
 			    <div class="relative">
 					<input name="currentWorkExternalIds" type="text" class="input-xlarge"  ng-model="workExternalIdentifier.workExternalIdentifierId.value" placeholder="<@orcid.msg 'manual_work_form_contents.add_ID'/>"  ng-change="serverValidate('my-orcid/work/workExternalIdentifiersValidate.json')" ng-model-onblur/>
 						<span class="orcid-error" ng-show="workExternalIdentifier.workExternalIdentifierId.errors.length > 0">
@@ -381,7 +380,7 @@
 			</div>
 			
 			<div class="control-group">
-				<label class="control-label"><@orcid.msg 'manual_work_form_contents.labeldescription'/></label>
+				<label><@orcid.msg 'manual_work_form_contents.labeldescription'/></label>
 			    <div class="relative">
 					<textarea name="familyNames" type="text" class="input-xlarge"  ng-model="editWork.shortDescription.value" placeholder="<@orcid.msg 'manual_work_form_contents.add_description'/>" ng-model-onblur/>
 					<span class="orcid-error" ng-show="editWork.shortDescription.errors.length > 0">

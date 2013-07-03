@@ -2029,6 +2029,14 @@ header overrides
      margin-bottom: 5px;
 }
 
+
+.edit-work label,
+.edit-work input,
+.edit-work textarea,
+.edit-work select {
+     margin-bottom: 0;
+}
+
 .manage-bio label,
 .manage-bio input,
 .manage-bio textarea,
