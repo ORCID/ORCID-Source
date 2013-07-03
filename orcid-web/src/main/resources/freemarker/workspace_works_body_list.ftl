@@ -57,7 +57,7 @@
             </li>           
 	</ul>
 	
-    <div ng-hide="works.length" class="alert alert-info">
+    <div ng-show="hasWorks==false" class="alert alert-info" ng-cloak>
         <strong><#if (publicProfile)?? && publicProfile == true>${springMacroRequestContext.getMessage("workspace_works_body_list.Nopublicationsaddedyet")}<#else>${springMacroRequestContext.getMessage("workspace_works_body_list.havenotaddedanyworks")} <a href="<@spring.url '/works-update'/>" class="update">${springMacroRequestContext.getMessage("workspace_works_body_list.addsomenow")}</a></#if></strong>
     </div>
     
