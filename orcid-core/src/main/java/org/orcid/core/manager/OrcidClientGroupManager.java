@@ -19,6 +19,7 @@ package org.orcid.core.manager;
 import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.clientgroup.OrcidClient;
 import org.orcid.jaxb.model.clientgroup.OrcidClientGroup;
+import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 
 /**
  * 
@@ -60,7 +61,12 @@ public interface OrcidClientGroupManager {
     OrcidClient createOrUpdateOrcidClientGroup(String groupOrcid, OrcidClient orcidClient, ClientType clientType);
 
     OrcidClientGroup retrieveOrcidClientGroup(String groupOrcid);
-
+    
+    /**
+     * TODO
+     * */
+    OrcidClient createAndPersistClientProfile(String groupOrcid, OrcidClient client);
+    
     void removeOrcidClientGroup(String groupOrcid);
 
 }

@@ -39,7 +39,6 @@ import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.clientgroup.OrcidClient;
 import org.orcid.jaxb.model.clientgroup.OrcidClientGroup;
 import org.orcid.jaxb.model.clientgroup.RedirectUri;
-import org.orcid.jaxb.model.clientgroup.RedirectUris;
 import org.orcid.jaxb.model.message.Biography;
 import org.orcid.jaxb.model.message.Claimed;
 import org.orcid.jaxb.model.message.ContactDetails;
@@ -185,6 +184,38 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
         return retrieveOrcidClientGroup(groupOrcid);
     }
 
+    /**
+     * 
+     * */
+    public OrcidClient createAndPersistClientProfile(String groupOrcid, OrcidClient client){
+        // Create a new client profile for the orcidClient.
+        OrcidProfile clientProfile = createClientProfile(client);
+        clientProfile = orcidProfileManager.createOrcidProfile(clientProfile);
+        // Now the client profile has been created, use the profile DAO
+        // to link it to the group.
+        ProfileEntity clientProfileEntity = profileDao.find(clientProfile.getOrcid().getValue());
+        clientProfileEntity.setGroupOrcid(groupOrcid);
+        profileDao.merge(clientProfileEntity);
+        // And link the client to the copy of the profile cached in
+        // memory by Hibernate
+        // Use the profile DAO to link the clients to the group, so get the
+        // group profile entity.
+        ProfileEntity groupProfileEntity = profileDao.find(groupOrcid);
+        SortedSet<ProfileEntity> clientProfileEntities = groupProfileEntity.getClientProfiles();
+        if (clientProfileEntities == null) {
+            clientProfileEntities = new TreeSet<ProfileEntity>(new OrcidEntityIdComparator<String>());
+            groupProfileEntity.setClientProfiles(clientProfileEntities);
+        }
+        clientProfileEntities.add(clientProfileEntity);
+        // Use the client details service to create the client details
+        ClientDetailsEntity clientDetailsEntity = createClientDetails(clientProfile.getOrcid().getValue(), client, client.getType());
+        // And put the client details into the copy of the profile
+        // entity cached in memory by Hibernate.
+        clientProfileEntity.setClientDetails(clientDetailsEntity);
+        
+        return adapter.toOrcidClient(clientProfileEntity);
+    }
+    
     private void processClient(String groupOrcid, SortedSet<ProfileEntity> clientProfileEntities, OrcidClient client, ClientType clientType) {
         if (client.getClientId() == null) {
             // If the client ID in the incoming client is null, then create
@@ -234,7 +265,7 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
             }
         }
     }
-
+    
     private void updateProfileEntityFromClient(OrcidClient client, ProfileEntity clientProfileEntity) {
         clientProfileEntity.setCreditName(client.getDisplayName());
         clientProfileEntity.setBiography(client.getShortDescription());

@@ -121,6 +121,37 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
     }
 
     @Override
+    public OrcidClient toOrcidClient(ProfileEntity profileEntity){
+        OrcidClient client = new OrcidClient();
+        client.setDisplayName(profileEntity.getCreditName());
+        client.setClientId(profileEntity.getId());
+        client.setShortDescription(profileEntity.getBiography());        
+        Set<ResearcherUrlEntity> researcherUrls = profileEntity.getResearcherUrls();
+        if (researcherUrls != null && !researcherUrls.isEmpty()) {
+            client.setWebsite(researcherUrls.iterator().next().getUrl());
+        }
+        ClientDetailsEntity clientDetailsEntity = profileEntity.getClientDetails();
+        if (clientDetailsEntity != null) {
+            client.setClientSecret(clientDetailsEntity.getClientSecretForJpa());
+            Set<ClientRedirectUriEntity> redirectUriEntities = clientDetailsEntity.getClientRegisteredRedirectUris();
+            RedirectUris redirectUris = new RedirectUris();
+            client.setRedirectUris(redirectUris);
+            for (ClientRedirectUriEntity redirectUriEntity : redirectUriEntities) {
+                RedirectUri redirectUri = new RedirectUri(redirectUriEntity.getRedirectUri());
+                redirectUri.setType(RedirectUriType.fromValue(redirectUriEntity.getRedirectUriType()));
+                String predefinedScope = redirectUriEntity.getPredefinedClientScope();
+                if (StringUtils.isNotBlank(predefinedScope)) {
+                    List<ScopePathType> scopePathType = new ArrayList<ScopePathType>(ScopePathType.getScopesFromSpaceSeparatedString(predefinedScope));
+                    redirectUri.setScope(scopePathType);
+                }
+                redirectUris.getRedirectUri().add(redirectUri);
+            }
+        }
+        
+        return client;
+    }
+    
+    @Override
     public OrcidClientGroup toOrcidClientGroup(ProfileEntity profileEntity) {
         OrcidClientGroup group = new OrcidClientGroup();
         group.setGroupOrcid(profileEntity.getId());
@@ -130,32 +161,8 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
             group.setEmail(emailEntity.getId());
         }
         for (ProfileEntity clientProfileEntity : profileEntity.getClientProfiles()) {
-            OrcidClient client = new OrcidClient();
-            group.getOrcidClient().add(client);
-            client.setDisplayName(clientProfileEntity.getCreditName());
-            client.setClientId(clientProfileEntity.getId());
-            client.setShortDescription(clientProfileEntity.getBiography());
-            Set<ResearcherUrlEntity> researcherUrls = clientProfileEntity.getResearcherUrls();
-            if (researcherUrls != null && !researcherUrls.isEmpty()) {
-                client.setWebsite(researcherUrls.iterator().next().getUrl());
-            }
-            ClientDetailsEntity clientDetailsEntity = clientProfileEntity.getClientDetails();
-            if (clientDetailsEntity != null) {
-                client.setClientSecret(clientDetailsEntity.getClientSecretForJpa());
-                Set<ClientRedirectUriEntity> redirectUriEntities = clientDetailsEntity.getClientRegisteredRedirectUris();
-                RedirectUris redirectUris = new RedirectUris();
-                client.setRedirectUris(redirectUris);
-                for (ClientRedirectUriEntity redirectUriEntity : redirectUriEntities) {
-                    RedirectUri redirectUri = new RedirectUri(redirectUriEntity.getRedirectUri());
-                    redirectUri.setType(RedirectUriType.fromValue(redirectUriEntity.getRedirectUriType()));
-                    String predefinedScope = redirectUriEntity.getPredefinedClientScope();
-                    if (StringUtils.isNotBlank(predefinedScope)) {
-                        List<ScopePathType> scopePathType = new ArrayList<ScopePathType>(ScopePathType.getScopesFromSpaceSeparatedString(predefinedScope));
-                        redirectUri.setScope(scopePathType);
-                    }
-                    redirectUris.getRedirectUri().add(redirectUri);
-                }
-            }
+            OrcidClient client = toOrcidClient(clientProfileEntity);
+            group.getOrcidClient().add(client);                        
         }
         return group;
     }

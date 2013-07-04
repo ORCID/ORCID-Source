@@ -1,5 +1,7 @@
 package org.orcid.frontend.web.controllers;
 
+import java.util.List;
+
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Produces;
@@ -7,10 +9,10 @@ import javax.ws.rs.core.MediaType;
 
 import org.orcid.core.manager.OrcidClientGroupManager;
 import org.orcid.jaxb.model.clientgroup.ClientType;
+import org.orcid.jaxb.model.clientgroup.OrcidClient;
 import org.orcid.jaxb.model.clientgroup.OrcidClientGroup;
 import org.orcid.jaxb.model.clientgroup.RedirectUriType;
 import org.orcid.jaxb.model.message.OrcidProfile;
-import org.orcid.pojo.ajaxForm.Client;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -43,9 +45,27 @@ public class GroupAdministratorController extends BaseWorkspaceController {
     
     @RequestMapping(value = "/add-client.json", method = RequestMethod.POST)
     @Produces(value = { MediaType.APPLICATION_JSON })
-    public @ResponseBody Client createClient(HttpServletRequest request, @RequestBody Client client) {        
+    public @ResponseBody OrcidClient createClient(HttpServletRequest request, @RequestBody OrcidClient orcidClient) {        
+        OrcidProfile profile = getCurrentUserAndRefreshIfNecessary().getEffectiveProfile();
+        String groupOrcid = profile.getOrcid().getValue();
         
+        return orcidClientGroupManager.createAndPersistClientProfile(groupOrcid, orcidClient);
+    }
+    
+    @RequestMapping(value = "/get-clients.json", method = RequestMethod.GET)
+    @Produces(value = { MediaType.APPLICATION_JSON })
+    public @ResponseBody List<OrcidClient> getClients(){
+        OrcidProfile profile = getCurrentUserAndRefreshIfNecessary().getEffectiveProfile();
+        String groupOrcid = profile.getOrcid().getValue();
         
-        return null;
-    }            
+        OrcidClientGroup group = orcidClientGroupManager.retrieveOrcidClientGroup(groupOrcid);
+                                
+        return group.getOrcidClient();
+    }
 }
+
+
+
+
+
+

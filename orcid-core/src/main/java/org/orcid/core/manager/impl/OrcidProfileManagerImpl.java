@@ -1182,6 +1182,8 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         authority.setProfileEntity(profileEntity);
         if(profileEntity.getOrcidType() == null || profileEntity.getOrcidType().equals(OrcidType.USER))
             authority.setAuthority(OrcidWebRole.ROLE_USER.getAuthority());
+        else if(profileEntity.getOrcidType().equals(OrcidType.CLIENT))
+            authority.setAuthority(OrcidWebRole.ROLE_CLIENT.getAuthority());
         else if(profileEntity.getOrcidType().equals(OrcidType.GROUP))
             authority.setAuthority(OrcidWebRole.ROLE_GROUP.getAuthority());
         else if(profileEntity.getOrcidType().equals(OrcidType.PREMIUM_GROUP))

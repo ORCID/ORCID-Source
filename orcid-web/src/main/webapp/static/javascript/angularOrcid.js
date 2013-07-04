@@ -1108,25 +1108,51 @@ function QuickSearchCtrl($scope, $compile){
 }
 
 function ClientEditCtrl($scope, $compile){
-	$scope.client = {
+	$scope.newClient = {
 			type: '',
 			displayName: '',
 			website: '',
 			shortDescription: '',
-			redirectUri: [
-			              {type: 'DEFAULT', value:''}
-			             ]
+			clientId:'',
+			clientSecret:'',
+			redirectUris: {
+				redirectUri:[
+				             {
+				            	value: '',
+				            	type: 'DEFAULT'
+				             }
+				            ]
+			}
+	};
+	
+	$scope.clients = new Array();
+	$scope.clientToEdit = {};
+	
+	$scope.getClients = function(){
+		$.ajax({
+	        url: $('body').data('baseurl') + 'manage-clients/get-clients.json',
+	        dataType: 'json',
+	        success: function(data) {
+	        	$scope.$apply(function(){ 
+					for (i in data)
+					$scope.clients.push(data[i]);
+				});
+	        }
+	    }).fail(function() { 
+	    	alert("Error fetching clients.");
+	    	console.log("Error fetching clients.");
+	    });
 	};
 	
 	$scope.submitCredentials = function(){	
-		alert(angular.toJson($scope.client));
 		$.ajax({
 	        url: $('body').data('baseurl') + 'manage-clients/add-client.json',
 	        type: 'POST',
 	        data: angular.toJson($scope.client),
 	        contentType: 'application/json;charset=UTF-8',
 	        dataType: 'json',
-	        success: function(data) {	        	
+	        success: function(data) {
+	        	alert(angular.toJson(data));
 	        	if(data.errors.length != 0){
 	        		console.log("Unable to create client information.");
 	        	} 
@@ -1136,10 +1162,22 @@ function ClientEditCtrl($scope, $compile){
 	    });
 	};
 	
-	$scope.addRowToClientTable = function(){
-		$('#client-table').find('tr:last > td:last').html('&nbsp;');
-		
-		this.client.redirectUri.push({type: 'DEFAULT', value: ''});
-	
+	$scope.addRowToClientTable = function(tableId){
+		var id = '#' + tableId; 
+		$(id).find('tr:last > td:last').html('&nbsp;');		
+		this.newClient.redirectUris.redirectUri.push({type: 'DEFAULT', value: ''});
 	};	
+	
+	
+	$scope.editClient = function(idx) {		
+		$scope.clientToEdit = $scope.clients[idx];
+		$.colorbox({        	            
+            html : $compile($('#edit-client-modal').html())($scope)           
+        });
+		$scope.$apply(); 
+        $.colorbox.resize();        
+	};
+	
+	//init
+	$scope.getClients();
 }
