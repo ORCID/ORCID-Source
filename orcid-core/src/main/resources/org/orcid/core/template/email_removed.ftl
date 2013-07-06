@@ -18,14 +18,22 @@
 -->
 Dear ${emailName},
 
-The primary email associated with your ORCID Account has been changed. You may use any email address associated with your ORCID iD when logging into http://orcid.org.
+The primary email associated with your ORCID Account has been changed. 
 
-Please click the following URL to see your updated record: ${baseUri}/account
+While the address where you are receiving this note is no longer your primary 
+email for your Account, you may use any email address associated with your 
+ORCID iD when logging into ${baseUri}.
 
-IMPORTANT: If you did not request this change, please contact ORCID Support immediately at support@orcid.org
+Please click the following URL to see your updated record: 
+${baseUri}/account
+
+IMPORTANT: If you did not request this change, please contact ORCID Support 
+immediately at support@orcid.org.
 
 Kind Regards,
 The ORCID Team
 support@orcid.org
 ${baseUri}
 
+You have received this email as a service announcement related to your 
+ORCID Account.

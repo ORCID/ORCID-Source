@@ -67,7 +67,7 @@ public class NotificationManagerImpl implements NotificationManager {
 
     private String supportAddress;
 
-    private String LAST_RESORT_ORCID_USER_EMAIL_NAME = "Orcid User";
+    private String LAST_RESORT_ORCID_USER_EMAIL_NAME = "ORCID Registry User";
 
     private URI baseUri;
 
@@ -191,6 +191,28 @@ public class NotificationManagerImpl implements NotificationManager {
         sendAndLogMessage(message);
     }
 
+    public void sendVerificationReminderEmail(OrcidProfile orcidProfile, URI baseUri, String email) {
+        Map<String, Object> templateParams = new HashMap<String, Object>();
+
+        String emailFriendlyName = deriveEmailFriendlyName(orcidProfile);
+        templateParams.put("emailName", emailFriendlyName);
+        String verificationUrl = createVerificationUrl(email, baseUri);
+        templateParams.put("verificationUrl", verificationUrl);
+        templateParams.put("orcid", orcidProfile.getOrcid().getValue());
+        templateParams.put("baseUri", baseUri);
+        // Generate body from template
+        String body = templateManager.processTemplate("verification_reminder_email.ftl", templateParams);
+        // Create email message
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setFrom(fromAddress);
+        message.setTo(email);
+        message.setSubject(emailSubjects.getProperty("verify_reminder"));
+        message.setText(body);
+        // Send message
+        sendAndLogMessage(message);
+    }
+
+
     public String deriveEmailFriendlyName(OrcidProfile orcidProfile) {
         if (orcidProfile.getOrcidBio() != null && orcidProfile.getOrcidBio().getPersonalDetails() != null) {
             PersonalDetails personalDetails = orcidProfile.getOrcidBio().getPersonalDetails();
@@ -274,10 +296,19 @@ public class NotificationManagerImpl implements NotificationManager {
         // Create map of template params
         Map<String, Object> templateParams = new HashMap<String, Object>();
         SimpleMailMessage message = new SimpleMailMessage();
+        // LADP, Please Check, can't test yet
+        // Would prefer if this email came from ORCID user granting permission - parameter also needed for the body of the email
+        // Add parameter to get the email address of the ORCID user granting permssion
+        // String grantingOrcidEmail = orcidUserGrantingPermission.getEmail();
+
+        // message.setFrom(grantingOrcidEmail);
         message.setFrom(fromAddress);
         message.setSubject(emailSubjects.getProperty("added_as_delegate"));
 
         for (DelegationDetails newDelegation : delegatesGrantedByUser) {
+            // LADP, suggest swapping out this statement to use the deriveEmailFriendlyName() function instead
+            // (pretty sure the line below won't work...)
+            // String emailNameForDelegate = deriveEmailFriendlyName(newDelegation.getDelegateSummary());
             String emailNameForDelegate = newDelegation.getDelegateSummary() != null && newDelegation.getDelegateSummary().getCreditName() != null ? newDelegation
                     .getDelegateSummary().getCreditName().getContent() : LAST_RESORT_ORCID_USER_EMAIL_NAME;
 
@@ -285,6 +316,7 @@ public class NotificationManagerImpl implements NotificationManager {
             templateParams.put("grantingOrcidValue", orcidUserGrantingPermission.getOrcid().getValue());
             templateParams.put("grantingOrcidName", deriveEmailFriendlyName(orcidUserGrantingPermission));
             templateParams.put("baseUri", baseUri);
+            // templateParams.put("grantingOrcidEmail", grantingOrcidEmail);
             String body = templateManager.processTemplate("added_as_delegate_email.ftl", templateParams);
             String toAddress = orcidUserGrantingPermission.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue();
             message.setTo(toAddress);
@@ -330,7 +362,6 @@ public class NotificationManagerImpl implements NotificationManager {
         Source source = createdProfile.getOrcidHistory().getSource();
         templateParams.put("creatorName", source == null ? "" : source.getSourceName().getContent());
         templateParams.put("baseUri", baseUri);
-        templateParams.put("orcid", createdProfile.getOrcid().getValue());
         String verificationUrl = createClaimVerificationUrl(createdProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue(), baseUri);
         templateParams.put("verificationUrl", verificationUrl);
         // Generate body from template
@@ -359,7 +390,6 @@ public class NotificationManagerImpl implements NotificationManager {
         Source source = orcidProfile.getOrcidHistory().getSource();
         templateParams.put("creatorName", source == null ? "" : source.getSourceName().getContent());
         templateParams.put("baseUri", baseUri);
-        templateParams.put("orcid", orcid);
         templateParams.put("daysUntilActivation", daysUntilActivation);
         Email primaryEmail = orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail();
         if (primaryEmail == null) {

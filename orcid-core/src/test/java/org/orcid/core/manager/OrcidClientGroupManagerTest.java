@@ -40,6 +40,7 @@ import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.clientgroup.OrcidClient;
 import org.orcid.jaxb.model.clientgroup.OrcidClientGroup;
 import org.orcid.jaxb.model.clientgroup.RedirectUri;
+import org.orcid.jaxb.model.message.OrcidType;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.persistence.dao.ClientDetailsDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
@@ -86,7 +87,7 @@ public class OrcidClientGroupManagerTest extends BaseTest {
     public void testCreateOrcidClientGroup() {
         OrcidClientGroup group = OrcidClientGroup.unmarshall(getClass().getResourceAsStream(CLIENT_GROUP));
 
-        OrcidClientGroup createdGroup = orcidClientGroupManager.createOrUpdateOrcidClientGroup(group, ClientType.UPDATER);
+        OrcidClientGroup createdGroup = orcidClientGroupManager.createOrUpdateOrcidClientGroup(group, OrcidType.UPDATER);
         assertNotNull(createdGroup);
 
         assertEquals("Elsevier", createdGroup.getGroupName());
@@ -134,7 +135,7 @@ public class OrcidClientGroupManagerTest extends BaseTest {
     public void testCreateOrcidCreatorClientGroup() {
         OrcidClientGroup group = OrcidClientGroup.unmarshall(getClass().getResourceAsStream(CLIENT_GROUP));
 
-        OrcidClientGroup createdGroup = orcidClientGroupManager.createOrUpdateOrcidClientGroup(group, ClientType.CREATOR);
+        OrcidClientGroup createdGroup = orcidClientGroupManager.createOrUpdateOrcidClientGroup(group, OrcidType.CREATOR);
         assertNotNull(createdGroup);
 
         assertEquals("Elsevier", createdGroup.getGroupName());
@@ -174,7 +175,7 @@ public class OrcidClientGroupManagerTest extends BaseTest {
         final OrcidClientGroup group = OrcidClientGroup.unmarshall(getClass().getResourceAsStream(CLIENT_GROUP));
         OrcidClientGroup createdGroup = transactionTemplate.execute(new TransactionCallback<OrcidClientGroup>() {
             public OrcidClientGroup doInTransaction(TransactionStatus status) {
-                return orcidClientGroupManager.createOrUpdateOrcidClientGroup(group, ClientType.UPDATER);
+                return orcidClientGroupManager.createOrUpdateOrcidClientGroup(group, OrcidType.UPDATER);
             }
         });
 
@@ -184,7 +185,7 @@ public class OrcidClientGroupManagerTest extends BaseTest {
                 createdClient.setWebsite("wwww.ecologicalcomplexity.com");
             }
         }
-        OrcidClientGroup updatedGroup = orcidClientGroupManager.createOrUpdateOrcidClientGroup(createdGroup, ClientType.UPDATER);
+        OrcidClientGroup updatedGroup = orcidClientGroupManager.createOrUpdateOrcidClientGroup(createdGroup, OrcidType.UPDATER);
 
         assertNotNull(updatedGroup);
         assertEquals("Elsevier", updatedGroup.getGroupName());

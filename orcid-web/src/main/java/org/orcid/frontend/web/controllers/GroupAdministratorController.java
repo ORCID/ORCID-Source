@@ -37,9 +37,7 @@ public class GroupAdministratorController extends BaseWorkspaceController {
         ModelAndView mav = new ModelAndView("manage-clients");
         OrcidProfile profile = getCurrentUserAndRefreshIfNecessary().getEffectiveProfile();
         OrcidClientGroup group = orcidClientGroupManager.retrieveOrcidClientGroup(profile.getOrcid().getValue());
-        mav.addObject("group", group);
-        mav.addObject("redirectUriTypes", RedirectUriType.values());
-        mav.addObject("clientTypes", ClientType.values());
+        mav.addObject("group", group);        
         return mav;
     }
     

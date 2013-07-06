@@ -75,9 +75,9 @@ import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
 import org.orcid.password.constants.OrcidPasswordConstants;
 import org.orcid.persistence.jpa.entities.ResearcherUrlEntity;
 import org.orcid.pojo.ChangePassword;
-import org.orcid.pojo.Emails;
-import org.orcid.pojo.Errors;
 import org.orcid.pojo.SecurityQuestion;
+import org.orcid.pojo.ajaxForm.Emails;
+import org.orcid.pojo.ajaxForm.Errors;
 import org.orcid.utils.OrcidWebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -766,9 +766,9 @@ public class ManageProfileController extends BaseWorkspaceController {
     @SuppressWarnings("unchecked")
     @RequestMapping(value = "/emails.json", method = RequestMethod.GET)
     public @ResponseBody
-    org.orcid.pojo.Emails getEmailsJson(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {
+    org.orcid.pojo.ajaxForm.Emails getEmailsJson(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {
         OrcidProfile currentProfile = getCurrentUser().getEffectiveProfile();
-        Emails emails = new org.orcid.pojo.Emails();
+        Emails emails = new org.orcid.pojo.ajaxForm.Emails();
         emails.setEmails((List<org.orcid.pojo.Email>) (Object) currentProfile.getOrcidBio().getContactDetails().getEmail());
         return emails;
     }
@@ -865,7 +865,7 @@ public class ManageProfileController extends BaseWorkspaceController {
 
     @RequestMapping(value = "/emails.json", method = RequestMethod.POST)
     public @ResponseBody
-    org.orcid.pojo.Emails postEmailsJson(HttpServletRequest request, @RequestBody org.orcid.pojo.Emails emails) {
+    org.orcid.pojo.ajaxForm.Emails postEmailsJson(HttpServletRequest request, @RequestBody org.orcid.pojo.ajaxForm.Emails emails) {
         org.orcid.pojo.Email newPrime = null;
         org.orcid.pojo.Email oldPrime = null;
         List<String> allErrors = new ArrayList<String>();

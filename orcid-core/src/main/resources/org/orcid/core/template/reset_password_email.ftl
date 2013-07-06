@@ -23,7 +23,8 @@ below to reset your password. If you have set up a security question, you
 will need to correctly answer this question before being able to reset your 
 password.
 
-To reset your password follow the link below. If you can't click on the link, copy and paste it into your browser:
+To reset your password follow the link below. If you can't click on the link, 
+copy and paste it into your browser:
 
 ${passwordResetUrl}
 
@@ -37,3 +38,6 @@ Kind Regards,
 The ORCID Team
 support@orcid.org
 ${baseUri}
+
+You have received this email as a service announcement related to your 
+ORCID Account.

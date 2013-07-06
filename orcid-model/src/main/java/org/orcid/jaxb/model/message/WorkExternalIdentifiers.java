@@ -66,6 +66,14 @@ public class WorkExternalIdentifiers implements Serializable {
     protected List<WorkExternalIdentifier> workExternalIdentifier;
     @XmlAttribute
     protected Scope scope;
+    
+    public WorkExternalIdentifiers() {
+        
+    }
+    
+    public WorkExternalIdentifiers(List<WorkExternalIdentifier> workExternalIdentifier) {
+        this.workExternalIdentifier = workExternalIdentifier;
+    }
 
     /**
      * Gets the value of the workExternalIdentifier property.

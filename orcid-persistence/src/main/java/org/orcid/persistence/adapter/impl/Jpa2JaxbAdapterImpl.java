@@ -125,7 +125,8 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         OrcidClient client = new OrcidClient();
         client.setDisplayName(profileEntity.getCreditName());
         client.setClientId(profileEntity.getId());
-        client.setShortDescription(profileEntity.getBiography());        
+        client.setShortDescription(profileEntity.getBiography());
+        client.setType(profileEntity.getOrcidType());
         Set<ResearcherUrlEntity> researcherUrls = profileEntity.getResearcherUrls();
         if (researcherUrls != null && !researcherUrls.isEmpty()) {
             client.setWebsite(researcherUrls.iterator().next().getUrl());

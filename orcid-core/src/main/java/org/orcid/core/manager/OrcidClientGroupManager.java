@@ -19,7 +19,7 @@ package org.orcid.core.manager;
 import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.clientgroup.OrcidClient;
 import org.orcid.jaxb.model.clientgroup.OrcidClientGroup;
-import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
+import org.orcid.jaxb.model.message.OrcidType;
 
 /**
  * 
@@ -39,26 +39,26 @@ public interface OrcidClientGroupManager {
      * 
      * @param orcidClientGroup
      *            The ORCID client group to be ingested.
-     * @param clientType
+     * @param orcidType
      *            The client scopes are set based on the client type.
      * @return The ORCID client group that was ingested, populated with IDs and
      *         secrets.
      */
-    OrcidClientGroup createOrUpdateOrcidClientGroup(OrcidClientGroup orcidClientGroup, ClientType clientType);
+    OrcidClientGroup createOrUpdateOrcidClientGroup(OrcidClientGroup orcidClientGroup, OrcidType clientType);
 
     /**
      * Creates a new orcidClient and assign it to the specified group
      * 
      * @param orcidClient
      *            The ORCID client to be created.
-     * @param clientType
+     * @param orcidType
      *            The client scopes are set based on the client type.
      * @param groupOrcid
      *            The group owner for this client
      * @return The ORCID client that was processed, populated with IDs and
      *         secrets.
      */
-    OrcidClient createOrUpdateOrcidClientGroup(String groupOrcid, OrcidClient orcidClient, ClientType clientType);
+    OrcidClient createOrUpdateOrcidClientGroup(String groupOrcid, OrcidClient orcidClient, OrcidType orcidType);
 
     OrcidClientGroup retrieveOrcidClientGroup(String groupOrcid);
     

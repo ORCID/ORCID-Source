@@ -1181,13 +1181,19 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         OrcidGrantedAuthority authority = new OrcidGrantedAuthority();
         authority.setProfileEntity(profileEntity);
         if(profileEntity.getOrcidType() == null || profileEntity.getOrcidType().equals(OrcidType.USER))
-            authority.setAuthority(OrcidWebRole.ROLE_USER.getAuthority());
-        else if(profileEntity.getOrcidType().equals(OrcidType.CLIENT))
-            authority.setAuthority(OrcidWebRole.ROLE_CLIENT.getAuthority());
+            authority.setAuthority(OrcidWebRole.ROLE_USER.getAuthority());        
         else if(profileEntity.getOrcidType().equals(OrcidType.GROUP))
             authority.setAuthority(OrcidWebRole.ROLE_GROUP.getAuthority());
+        else if(profileEntity.getOrcidType().equals(OrcidType.CREATOR))
+            authority.setAuthority(OrcidWebRole.ROLE_CREATOR.getAuthority());
+        else if(profileEntity.getOrcidType().equals(OrcidType.UPDATER))
+            authority.setAuthority(OrcidWebRole.ROLE_UPDATER.getAuthority());
         else if(profileEntity.getOrcidType().equals(OrcidType.PREMIUM_GROUP))
             authority.setAuthority(OrcidWebRole.ROLE_PREMIUM_GROUP.getAuthority());
+        else if(profileEntity.getOrcidType().equals(OrcidType.PREMIUM_CREATOR))
+            authority.setAuthority(OrcidWebRole.ROLE_PREMIUM_CREATOR.getAuthority());
+        else if(profileEntity.getOrcidType().equals(OrcidType.PREMIUM_UPDATER))
+            authority.setAuthority(OrcidWebRole.ROLE_PREMIUM_UPDATER.getAuthority());
         Set<OrcidGrantedAuthority> authorities = new HashSet<OrcidGrantedAuthority>(1);
         authorities.add(authority);
         return authorities;

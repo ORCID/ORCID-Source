@@ -56,7 +56,11 @@ public enum OrcidType implements Serializable {
     USER("user"), @XmlEnumValue("group")
     GROUP("group"), @XmlEnumValue("premium_group")
     PREMIUM_GROUP("premium_group"), @XmlEnumValue("client")
-    CLIENT("client");
+    CLIENT("client"),@XmlEnumValue("creator")
+    CREATOR("creator"), @XmlEnumValue("premium-creator")
+    PREMIUM_CREATOR("premium-creator"), @XmlEnumValue("updater")
+    UPDATER("updater"), @XmlEnumValue("premium-updater")
+    PREMIUM_UPDATER("premium-updater");;
     private final String value;
 
     OrcidType(String v) {

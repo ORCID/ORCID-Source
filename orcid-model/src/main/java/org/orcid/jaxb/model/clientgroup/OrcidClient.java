@@ -24,6 +24,7 @@
 package org.orcid.jaxb.model.clientgroup;
 
 import java.io.Serializable;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -31,6 +32,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+
+import org.orcid.jaxb.model.message.OrcidType;
 
 /**
  * <p>
@@ -80,7 +83,7 @@ public class OrcidClient implements Serializable {
     @XmlElement(name = "client-secret")
     protected String clientSecret;
     @XmlAttribute
-    protected ClientType type;
+    protected OrcidType type;
 
     /**
      * Gets the value of the displayName property.
@@ -214,7 +217,7 @@ public class OrcidClient implements Serializable {
      * @return possible object is {@link ClientType }
      * 
      */
-    public ClientType getType() {
+    public OrcidType getType() {
         return type;
     }
 
@@ -225,7 +228,7 @@ public class OrcidClient implements Serializable {
      *            allowed object is {@link ClientType }
      * 
      */
-    public void setType(ClientType value) {
+    public void setType(OrcidType value) {
         this.type = value;
     }
 

@@ -104,7 +104,7 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
 
     @Override
     @Transactional
-    public OrcidClient createOrUpdateOrcidClientGroup(String groupOrcid, OrcidClient orcidClient, ClientType clientType) {
+    public OrcidClient createOrUpdateOrcidClientGroup(String groupOrcid, OrcidClient orcidClient, OrcidType orcidType) {
         OrcidClient result = null;
         //Use the profile DAO to link the clients to the group, so get the
         // group profile entity.
@@ -115,7 +115,7 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
             groupProfileEntity.setClientProfiles(clientProfileEntities);
         }
         
-        processClient(groupOrcid, clientProfileEntities, orcidClient, clientType);
+        processClient(groupOrcid, clientProfileEntities, orcidClient, orcidType);
         
         OrcidClientGroup group = retrieveOrcidClientGroup(groupOrcid);
         
@@ -130,7 +130,7 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
     
     @Override
     @Transactional
-    public OrcidClientGroup createOrUpdateOrcidClientGroup(OrcidClientGroup orcidClientGroup, ClientType clientType) {
+    public OrcidClientGroup createOrUpdateOrcidClientGroup(OrcidClientGroup orcidClientGroup, OrcidType orcidType) {
         String groupOrcid = orcidClientGroup.getGroupOrcid();
         if (groupOrcid == null) {
             // If the incoming client group ORCID is null, then create a new
@@ -178,7 +178,7 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
         }
         // For each client in the client group
         for (OrcidClient client : orcidClientGroup.getOrcidClient()) {
-            processClient(groupOrcid, clientProfileEntities, client, clientType);
+            processClient(groupOrcid, clientProfileEntities, client, orcidType);
         }
         // Regenerate client group and return.
         return retrieveOrcidClientGroup(groupOrcid);
@@ -216,7 +216,7 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
         return adapter.toOrcidClient(clientProfileEntity);
     }
     
-    private void processClient(String groupOrcid, SortedSet<ProfileEntity> clientProfileEntities, OrcidClient client, ClientType clientType) {
+    private void processClient(String groupOrcid, SortedSet<ProfileEntity> clientProfileEntities, OrcidClient client, OrcidType orcidType) {
         if (client.getClientId() == null) {
             // If the client ID in the incoming client is null, then create
             // a new client profile.
@@ -231,7 +231,7 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
             // memory by Hibernate
             clientProfileEntities.add(clientProfileEntity);
             // Use the client details service to create the client details
-            ClientDetailsEntity clientDetailsEntity = createClientDetails(clientProfile.getOrcid().getValue(), client, clientType);
+            ClientDetailsEntity clientDetailsEntity = createClientDetails(clientProfile.getOrcid().getValue(), client, orcidType);
             // And put the client details into the copy of the profile
             // entity cached in memory by Hibernate.
             clientProfileEntity.setClientDetails(clientDetailsEntity);
@@ -305,11 +305,11 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
         }
         OrcidClientGroup group = adapter.toOrcidClientGroup(profileEntity);
         for (OrcidClient client : group.getOrcidClient()) {
-            client.setClientSecret(encryptionManager.decryptForInternalUse(client.getClientSecret()));
+            client.setClientSecret(encryptionManager.decryptForInternalUse(client.getClientSecret()));            
         }
         return group;
     }
-
+    
     private OrcidProfile createGroupProfile(OrcidClientGroup orcidClientGroup) {
         OrcidProfile orcidProfile = new OrcidProfile();
         orcidProfile.setType(OrcidType.GROUP);
@@ -332,7 +332,7 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
 
     private OrcidProfile createClientProfile(OrcidClient orcidClient) {
         OrcidProfile orcidProfile = new OrcidProfile();
-        orcidProfile.setType(OrcidType.CLIENT);
+        orcidProfile.setType(orcidClient.getType());
         OrcidBio orcidBio = new OrcidBio();
         orcidProfile.setOrcidBio(orcidBio);
         PersonalDetails personalDetails = new PersonalDetails();
@@ -348,7 +348,7 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
         return orcidProfile;
     }
 
-    private ClientDetailsEntity createClientDetails(String orcid, OrcidClient orcidClient, ClientType clientType) {
+    private ClientDetailsEntity createClientDetails(String orcid, OrcidClient orcidClient, OrcidType orcidType) {
         Set<String> clientResourceIds = new HashSet<String>();
         clientResourceIds.add("orcid");
         Set<String> clientAuthorizedGrantTypes = new HashSet<String>();
@@ -361,13 +361,13 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
         List<String> clientGrantedAuthorities = new ArrayList<String>();
         clientGrantedAuthorities.add("ROLE_CLIENT");
 
-        ClientDetailsEntity clientDetails = orcidClientDetailsService.createClientDetails(orcid, createScopes(clientType), clientResourceIds, clientAuthorizedGrantTypes,
+        ClientDetailsEntity clientDetails = orcidClientDetailsService.createClientDetails(orcid, createScopes(orcidType), clientResourceIds, clientAuthorizedGrantTypes,
                 redirectUrisToAdd, clientGrantedAuthorities);
         return clientDetails;
     }
 
-    private Set<String> createScopes(ClientType clientType) {
-        switch (clientType) {
+    private Set<String> createScopes(OrcidType orcidType) {
+        switch (orcidType) {
         case PREMIUM_CREATOR:
             return premiumCreatorScopes();
         case CREATOR:
@@ -377,7 +377,7 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
         case UPDATER:
             return updaterScopes();
         default:
-            throw new IllegalArgumentException("Unsupported client type: " + clientType);
+            throw new IllegalArgumentException("Unsupported client type: " + orcidType);
         }
     }
 

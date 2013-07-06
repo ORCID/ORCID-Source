@@ -25,7 +25,7 @@ import org.springframework.security.core.GrantedAuthority;
  */
 public enum OrcidWebRole implements GrantedAuthority {
 
-    ROLE_USER, ROLE_CLIENT, ROLE_GROUP, ROLE_PREMIUM_GROUP;
+    ROLE_USER, ROLE_GROUP, ROLE_CREATOR, ROLE_UPDATER, ROLE_PREMIUM_GROUP, ROLE_PREMIUM_CREATOR, ROLE_PREMIUM_UPDATER;
 
     public String getAuthority() {
         return this.toString();

@@ -19,13 +19,9 @@ package org.orcid.api.t2.integration;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-
-import java.util.List;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.orcid.jaxb.model.message.Email;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -52,13 +48,7 @@ public class T2OrcidOAuthApiClientReadOnlyIntegrationTest extends BaseT2OrcidOAu
         assertNotNull(orcidMessage);
         assertEquals(this.orcid, orcidMessage.getOrcidProfile().getOrcid().getValue());
         assertNotNull(orcidMessage.getOrcidProfile().getOrcidBio());
-        assertNull(orcidMessage.getOrcidProfile().retrieveOrcidWorks());
-        List<Email> emails = orcidMessage.getOrcidProfile().getOrcidBio().getContactDetails().getEmail();
-        assertTrue(emails.contains(new Email("test1@email.com")));
-        assertTrue(emails.contains(new Email("test2@email.com")));
-        assertTrue(emails.contains(new Email("test3@email.com")));
-        assertTrue(emails.contains(new Email("test4@email.com")));
-        assertTrue(emails.contains(new Email("test5@email.com")));
+        assertNull(orcidMessage.getOrcidProfile().retrieveOrcidWorks());       
         orcidClientDataHelper.deleteOrcidProfile(this.orcid);
     }
 
@@ -77,13 +67,7 @@ public class T2OrcidOAuthApiClientReadOnlyIntegrationTest extends BaseT2OrcidOAu
         OrcidMessage orcidMessage = clientResponse.getEntity(OrcidMessage.class);
         assertEquals(this.orcid, orcidMessage.getOrcidProfile().getOrcid().getValue());
         assertNotNull(orcidMessage.getOrcidProfile().getOrcidBio());
-        assertNull(orcidMessage.getOrcidProfile().retrieveOrcidWorks());
-        List<Email> emails = orcidMessage.getOrcidProfile().getOrcidBio().getContactDetails().getEmail();
-        assertTrue(emails.contains(new Email("test1@email.com")));
-        assertTrue(emails.contains(new Email("test2@email.com")));
-        assertTrue(emails.contains(new Email("test3@email.com")));
-        assertTrue(emails.contains(new Email("test4@email.com")));
-        assertTrue(emails.contains(new Email("test5@email.com")));
+        assertNull(orcidMessage.getOrcidProfile().retrieveOrcidWorks());        
         orcidClientDataHelper.deleteOrcidProfile(this.orcid);
     }
 

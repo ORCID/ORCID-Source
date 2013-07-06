@@ -515,11 +515,13 @@ function RegistrationCtrl($scope, $compile) {
 	        // make sure inputs stayed trimmed
 	    	$scope.$watch('register.email.value', function() {
 	    		trimAjaxFormText($scope.register.email);
+	    		$scope.serverValidate('Email');
 	    	}); // initialize the watch
 	    	
 	    	// make sure email is trimmed
 	    	$scope.$watch('register.emailConfirm.value', function() {
 	    		 trimAjaxFormText($scope.register.emailConfirm);
+	    		 $scope.serverValidate('EmailConfirm');
 	    	}); // initialize the watch
 	    	
 	    	$scope.$watch('register.givenNames.value', function() {
@@ -922,11 +924,64 @@ function ClaimThanks($scope, $compile) {
 function WorkCtrl($scope, $compile){
 	$scope.works = new Array();
 	
-	$scope.addWorkToScope = function(){
+	$scope.showAddModal = function(){;
+	    $.colorbox({        	
+	        html: $compile($('#add-work-modal').html())($scope)
+	    });
+	    $.colorbox.resize();
+	};
+	
+	
+	$scope.addWorkModal = function(){;
+		$.ajax({
+			url: $('body').data('baseurl') + 'my-orcid/work.json',
+			dataType: 'json',
+			success: function(data) {
+				$scope.editWork = data;
+				$scope.$apply(function() {
+					$scope.showAddModal();
+				});
+			}
+		}).fail(function() { 
+	    	console.log("Error fetching work: " + value);
+	    });
+	};
+
+
+	$scope.addWork = function(){
+		if ($scope.addingWork) return; // don't process if adding work
+		$scope.addingWork = true;
+		$.ajax({
+			url: $('body').data('baseurl') + 'my-orcid/work.json',	        
+	        contentType: 'application/json;charset=UTF-8',
+	        dataType: 'json',
+	        type: 'POST',
+	        data:  angular.toJson($scope.editWork),
+	        success: function(data) {
+	        	if (data.errors.length == 0){
+	        		$.colorbox.close(); 
+	        		$scope.addingWork = false;
+	        		$scope.getWorks();
+	        	} else {
+		        	$scope.editWork = data;
+		        	$scope.copyErrorsLeft($scope.editWork, data);
+		        	$scope.addingWork = false;
+		        	$scope.$apply();
+	        	}
+	        }
+		}).fail(function(){
+			// something bad is happening!
+			$scope.addingWork = false;
+	    	console.log("error fetching works");
+		});
+	};
+	
+	
+	$scope.addWorkToScope = function() {
 		if($scope.worksToAddIds.length != 0 ) {
 			var workIds = $scope.worksToAddIds.splice(0,20).join();
 			$.ajax({
-				url: $('body').data('baseurl') + 'my-orcid/work.json?workIds=' + workIds,
+				url: $('body').data('baseurl') + 'my-orcid/works.json?workIds=' + workIds,
 				dataType: 'json',
 				success: function(data) {
 					$scope.$apply(function(){ 
@@ -941,14 +996,23 @@ function WorkCtrl($scope, $compile){
 		}
 	}; 
 	
-	
-	$scope.getWorks = function(){
+
+	$scope.getWorks = function() {
+		//clear out current works
+		$scope.worksToAddIds = null;
+		$scope.works.length = 0;
+		//get work ids
 		$.ajax({
-			url: $('body').data('baseurl') + 'my-orcid/works.json',	        
+			url: $('body').data('baseurl') + 'my-orcid/workIds.json',	        
 	        dataType: 'json',
 	        success: function(data) {
 	        	$scope.worksToAddIds = data;
-	        	if (data.length > 0 ) $scope.addWorkToScope();	        	
+	        	if (data.length > 0 ) { 
+	        		$scope.addWorkToScope();
+	        		$scope.hasWorks = true;
+	        	} else {
+	        		$scope.hasWorks = false;
+	        	}
 	        }
 		}).fail(function(){
 			// something bad is happening!
@@ -961,17 +1025,18 @@ function WorkCtrl($scope, $compile){
 	
 	$scope.deleteWork = function(idx) {		
 		$scope.deleteIndex = idx;
-		if ($scope.works[idx].workTitle) 
-			$scope.fixedTitle = $scope.works[idx].workTitle.title.content;
-		else $scope.fixedTitle = ''
+		if ($scope.works[idx].workTitle && $scope.works[idx].workTitle.title) 
+			$scope.fixedTitle = $scope.works[idx].workTitle.title.value;
+		else $scope.fixedTitle = '';
         var maxSize = 100;
         if($scope.fixedTitle.length > maxSize)
         	$scope.fixedTitle = $scope.fixedTitle.substring(0, maxSize) + '...';
 		$.colorbox({        	            
-            html : $compile($('#delete-work-modal').html())($scope)           
+            html : $compile($('#delete-work-modal').html())($scope),
+            onComplete: function() {$.colorbox.resize();}
         });
-		$scope.$apply(); 
-        $.colorbox.resize();        
+		
+		        
 	};
 	
 	$scope.deleteByIndex = function() {		
@@ -981,7 +1046,6 @@ function WorkCtrl($scope, $compile){
 		// remove the work from the UI
     	$scope.works.splice($scope.deleteIndex, 1);
     	// apply changes on scope
-		$scope.$apply();
 		// close box
 		$.colorbox.close(); 
 	};
@@ -1009,10 +1073,52 @@ function WorkCtrl($scope, $compile){
 		
 	$scope.setPrivacy = function(idx, priv, $event) {
 		$event.preventDefault();
-		$scope.works[idx].visibility = priv;
+		$scope.works[idx].visibility.visibility = priv;
 		$scope.curPrivToggle = null;
 		$scope.updateProfileWork(idx);
 	};
+	
+	$scope.serverValidate = function (relativePath) {
+		$.ajax({
+	        url: $('body').data('baseurl') + relativePath,
+	        type: 'POST',
+	        data:  angular.toJson($scope.editWork),
+	        contentType: 'application/json;charset=UTF-8',
+	        dataType: 'json',
+	        success: function(data) {
+	        	$scope.copyErrorsLeft($scope.editWork, data);
+	        	$scope.$apply();
+	        }
+	    }).fail(function() { 
+	    	// something bad is happening!
+	    	console.log("RegistrationCtrl.serverValidate() error");
+	    });
+	};
+	
+	// in the case of slow network connection
+	// we don't want to overwrite  values while
+	// user is typing
+	$scope.copyErrorsLeft = function (data1, data2) {
+		for (var key in data1) {
+			if (key == null) continue;
+			if (key == 'errors') {
+				data1.errors = data2.errors;
+			} else {
+				if (typeof(data1[key])=="object") {
+					$scope.copyErrorsLeft(data1[key], data2[key]);
+				}
+			};
+		};
+	};
+
+	$scope.isValidClass = function (cur) {
+		if (cur === undefined) return '';
+		var valid = true;
+		if (cur.required && (cur.value == null || cur.value.trim() == '')) valid = false;
+		if (cur.errors !== undefined && cur.errors.length > 0) valid = false;
+		return valid ? '' : 'text-error';
+	};
+
 	
 	$scope.updateProfileWork = function(idx) {
 		var work = $scope.works[idx];
@@ -1053,22 +1159,20 @@ function QuickSearchCtrl($scope, $compile){
 				else{
 					$('#no-results-alert').fadeIn(1200);
 				}
+				$scope.areMoreResults = $scope.numFound >= ($scope.start + $scope.rows);
 				$scope.$apply();
 				$('#ajax-loader').hide();
 				var newSearchResults = $('.new-search-result');
 				newSearchResults.fadeIn(1200);
 				newSearchResults.removeClass('new-search-result');
 				var newSearchResultsTop = newSearchResults.offset().top;
-				console.log("search results top = " + newSearchResultsTop);
-				var showMoreButtonTop = $('#show-more-button').offset().top;
-				console.log("show more button top = " + showMoreButtonTop);
+				var showMoreButtonTop = $('#show-more-button-container').offset().top;
 				var bottom = $(window).height();
-				console.log("bottom = " + bottom);
 				if(showMoreButtonTop > bottom){
 					$('html, body').animate(
 						{ 
 							scrollTop: newSearchResultsTop
-						}, 
+						},
 						1000, 
 						'easeOutQuint'
 					);
@@ -1095,10 +1199,6 @@ function QuickSearchCtrl($scope, $compile){
 		}
 	};
 	
-	$scope.areMoreResults = function(){
-		return $scope.numFound > $scope.rows;
-	};
-	
 	$scope.areResults = function(){
 		return $scope.numFound != 0;
 	};
@@ -1108,25 +1208,17 @@ function QuickSearchCtrl($scope, $compile){
 }
 
 function ClientEditCtrl($scope, $compile){
-	$scope.newClient = {
-			type: '',
+	$scope.newClient = {			
 			displayName: '',
 			website: '',
-			shortDescription: '',
+			shortDescription: '',			
+			redirectUris: {
+				redirectUri:[{value: '',type: 'DEFAULT'}]
+			},			
 			clientId:'',
 			clientSecret:'',
-			redirectUris: {
-				redirectUri:[
-				             {
-				            	value: '',
-				            	type: 'DEFAULT'
-				             }
-				            ]
-			}
-	};
-	
-	$scope.clients = new Array();
-	$scope.clientToEdit = {};
+			type: ''
+	};		
 	
 	$scope.getClients = function(){
 		$.ajax({
@@ -1134,8 +1226,8 @@ function ClientEditCtrl($scope, $compile){
 	        dataType: 'json',
 	        success: function(data) {
 	        	$scope.$apply(function(){ 
-					for (i in data)
-					$scope.clients.push(data[i]);
+					for (i in data)						
+						$scope.clients.push(data[i]);
 				});
 	        }
 	    }).fail(function() { 
@@ -1144,38 +1236,68 @@ function ClientEditCtrl($scope, $compile){
 	    });
 	};
 	
-	$scope.submitCredentials = function(){	
+	$scope.submitCredentials = function(){		
 		$.ajax({
 	        url: $('body').data('baseurl') + 'manage-clients/add-client.json',
 	        type: 'POST',
-	        data: angular.toJson($scope.client),
+	        data: angular.toJson($scope.newClient),
 	        contentType: 'application/json;charset=UTF-8',
 	        dataType: 'json',
-	        success: function(data) {
-	        	alert(angular.toJson(data));
-	        	if(data.errors.length != 0){
+	        success: function(data) {	        		        		        
+	        	if(data.errors != null && data.errors.length > 0){
 	        		console.log("Unable to create client information.");
+	        	} else {
+	        		console.log(angular.toJson(data));
+	        		if(data.redirectUris != null && data.redirectUris.redirectUri.length > 0){
+	        			console.log('Redirect Uris: ');
+		        		for(var i = 0; i < data.redirectUris.redirectUri.length; i++){			        		
+		        			delete data.redirectUris.redirectUri[i].scopeAsSingleString;
+		        			delete data.redirectUris.redirectUri[i].scope;		        			
+		        		}
+	        		}
+	        		
+		        	$scope.$apply(function() {
+		        		$scope.clients.push(data);
+		        	});	        		
 	        	} 
 	        }
 	    }).fail(function() { 
+	    	alert("An error occured creating the client");
 	    	console.log("Error creating client information.");
+	    	$.colorbox.close();
 	    });
+		$.colorbox.close();
 	};
 	
-	$scope.addRowToClientTable = function(tableId){
-		var id = '#' + tableId; 
-		$(id).find('tr:last > td:last').html('&nbsp;');		
+	$scope.addUriToNewClientTable = function(){		
+		$('#client-table').find('tr:last > td:last').html('&nbsp;');		
 		this.newClient.redirectUris.redirectUri.push({type: 'DEFAULT', value: ''});
-	};	
+	};
+	
+	$scope.addUriToExistingClientTable = function(){
+		$this.clientToEdit.redirectUris.redirectUri.push({type: 'DEFAULT', value: ''});
+	};
 	
 	
 	$scope.editClient = function(idx) {		
-		$scope.clientToEdit = $scope.clients[idx];
+		$scope.clientToEdit = $scope.clients[idx];		
 		$.colorbox({        	            
-            html : $compile($('#edit-client-modal').html())($scope)           
+            html : $compile($('#edit-client-modal').html())($scope), 
+            transition: 'fade',
+	        close: '',
+	        scrolling: false
+        });		
+        $.colorbox.resize({width:"550px" , height:"600px"});   
+	};
+	
+	$scope.addClient = function(){		
+		$.colorbox({        	            
+            html : $compile($('#new-client-modal').html())($scope), 
+            transition: 'fade',
+	        close: '',
+	        scrolling: true
         });
-		$scope.$apply(); 
-        $.colorbox.resize();        
+        $.colorbox.resize({width:"550px" , height:"360px"});
 	};
 	
 	//init

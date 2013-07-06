@@ -32,8 +32,8 @@ import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
 import org.orcid.core.manager.OrcidClientGroupManager;
-import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.clientgroup.OrcidClientGroup;
+import org.orcid.jaxb.model.message.OrcidType;
 import org.orcid.utils.NullUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -56,7 +56,7 @@ public class ManageClientGroup {
     private File fileToLoad;
 
     @Option(name = "-t", usage = "The type of clients that will be created")
-    private ClientType clientType;
+    private OrcidType orcidType;
 
     public static void main(String[] args) {
         ManageClientGroup manageClientGroup = new ManageClientGroup();
@@ -75,7 +75,7 @@ public class ManageClientGroup {
         if (NullUtils.allNull(orcid, fileToValidate, fileToLoad)) {
             throw new CmdLineException(parser, "At least one of -f | -r | -s must be specificed");
         }
-        if (fileToLoad != null && clientType == null) {
+        if (fileToLoad != null && orcidType == null) {
             throw new CmdLineException(parser, "If -f is specificed then -t must also be specified");
         }
     }
@@ -86,11 +86,11 @@ public class ManageClientGroup {
         } else if (fileToValidate != null) {
             isValidAgainstSchema(fileToValidate);
         } else if (fileToLoad != null) {
-            load(fileToLoad, clientType);
+            load(fileToLoad, orcidType);
         }
     }
 
-    private void load(File fileToLoad, ClientType clientType) {
+    private void load(File fileToLoad, OrcidType orcidType) {
         if (isValidAgainstSchema(fileToLoad)) {
             OrcidClientGroupManager manager = createOrcidClientGroupManager();
             FileInputStream fis = null;
@@ -108,7 +108,7 @@ public class ManageClientGroup {
                 System.err.println("Unable to read input file: " + fileToLoad + "\n" + e);
             }
             try {
-                OrcidClientGroup result = manager.createOrUpdateOrcidClientGroup(OrcidClientGroup.unmarshall(fis), clientType);
+                OrcidClientGroup result = manager.createOrUpdateOrcidClientGroup(OrcidClientGroup.unmarshall(fis), orcidType);
                 System.out.println(result);
             } finally {
                 IOUtils.closeQuietly(fis);
