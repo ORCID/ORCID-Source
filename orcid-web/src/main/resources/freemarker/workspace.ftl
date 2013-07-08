@@ -45,7 +45,9 @@
             </h2>
             <p><small id="orcid-id" class="orcid-id">${(profile.orcid.value)!}</small></p>
 	        <p class="hoover-white-fonts"><a href="<@spring.url "/" + (profile.orcid.value)!"my-orcid/public" />" class="label btn-primary"><@orcid.msg 'workspace.ViewPublicORCIDRecord'/></a></p>
-	        <p><a href="<@spring.url '/account/manage-bio-settings'/>" class="btn-update"><@orcid.msg 'workspace.Update'/></a></p>
+	        <#if !RequestParameters['addWorks']??>
+	            <p><a href="<@spring.url '/account/manage-bio-settings'/>" class="btn-update"><@orcid.msg 'workspace.Update'/></a></p>
+	        </#if>
 	        <#if ((profile.orcidBio.personalDetails.otherNames.otherName)?size != 0)>
 	        	<p><strong><@orcid.msg 'workspace.Alsoknownas'/></strong><br />
 		       		<#list profile.orcidBio.personalDetails.otherNames.otherName as otherName>
@@ -83,14 +85,17 @@
 		        	</tr>
 		        </table>
 			</div>
+			
 		    <#if ((thirdPartiesForImport)?? && (thirdPartiesForImport)?size &gt; 0)>
-    	        <ul class="workspace-help">
-    	        	<li><a href="#third-parties" class="colorbox-modal"><@orcid.msg 'workspace.ImportResearchActivities'/></a></li>
-    	        </ul>
+    	        <#if !RequestParameters['addWorks']??>
+	    	        <ul class="workspace-help">
+	    	        	<li><a href="#third-parties" class="colorbox-modal"><@orcid.msg 'workspace.import_works'/></a></li>
+	    	        </ul>
+	    	    </#if>
     	        <div class="inline-modal" id="third-parties">					
 					<div class="span9">
 						<a class="btn pull-right close-button">X</a>
-	           			<h1 class="lightbox-title" style="text-transform: uppercase;"><@orcid.msg 'workspace.ImportResearchActivities'/></h1>
+	           			<h1 class="lightbox-title" style="text-transform: uppercase;"><@orcid.msg 'workspace.import_works'/></h1>
 	           		
 	           		</div>
 	           		<br />          		
@@ -127,7 +132,12 @@
         		<div class="workspace-overview">
         			<a href="#workspace-publications" class="overview-count">${(profile.orcidActivities.orcidWorks.orcidWork?size)!0}</a>
         			<a href="#workspace-publications" class="overview-title"><@orcid.msg 'workspace.Works'/></a>
-                    <div><a href="<@spring.url '/works-update'/>" class="btn-update"><@orcid.msg 'workspace.Update'/></a></div>
+        			<#if RequestParameters['addWorks']??>
+                    	<br />
+                    	<a href="#workspace-publications" class="btn-update no-icon"><@orcid.msg 'workspace.view'/></a>
+        			<#else>
+                    	<div><a href="<@spring.url '/works-update'/>" class="btn-update"><@orcid.msg 'workspace.Update'/></a></div>
+                   	</#if>
         		</div>
         		<div class="workspace-overview">
         			<a href="#workspace-grants" class="overview-count">${(profile.orcidActivities.orcidGrants.orcidGrant?size)!0}</a>
@@ -145,21 +155,29 @@
         	<div class="workspace-accordion" id="workspace-accordion">
         	
         	   <div id="workspace-personal" class="workspace-accordion-item workspace-accordion-active">
-        			<h3 class="workspace-accordion-header"><a href="#"><@orcid.msg 'workspace.personal_information'/></a> <a href="<@spring.url '/account/manage-bio-settings'/>" class="btn-update"><@orcid.msg 'workspace.Update'/></a></h3>
+        			<div class="workspace-accordion-header">
+        			   <a href="#"><@orcid.msg 'workspace.personal_information'/></a> 
+        			   <#if RequestParameters['addWorks']??>
+        			   	   <a href="<@spring.url '/account/manage-bio-settings'/>" id="upate-personal-modal-link" class="label btn-primary"><@orcid.msg 'workspace.Update'/></a>
+        			   <#else>
+        			       <a href="<@spring.url '/account/manage-bio-settings'/>" class="label btn-update"><@orcid.msg 'workspace.Update'/></a>
+        			   </#if>
+        			</div>
             		<div class="workspace-accordion-content">
             			<#include "workspace_personal.ftl"/>
         			</div>
             	</div>
             	
         		<div id="workspace-affiliations" class="workspace-accordion-item${(!(profile.orcidBio.affiliations)?? || (profile.orcidBio.affiliations?size = 0))?string(" workspace-accordion-active", "")}">
-                    <h3 class="workspace-accordion-header"><a href="#"><@orcid.msg 'workspace_bio.Affiliations'/></a></h3>
+                    <div class="workspace-accordion-header">
+                    	<a href="#"><@orcid.msg 'workspace_bio.Affiliations'/></a>
+                    </div>
                 </div>
                 
-                <div id="workspace-publications" class="workspace-accordion-item workspace-accordion-active" ng-controller="WorkCtrl">
+                <div id="workspace-publications" style="position: relative;" class="workspace-accordion-item workspace-accordion-active" ng-controller="WorkCtrl">
                 	<#if RequestParameters['addWorks']??>
-        				<h3 class="workspace-accordion-header"><a href="#"><@orcid.msg 'workspace.Works'/></a></h3>
-        				<div style="margin-left: 20px;">
-							<a href="#third-parties" class="colorbox-modal label btn-primary"><@orcid.msg 'workspace.ImportResearchActivities'/></a>
+        				<div class="workspace-accordion-header"><a href="#"><@orcid.msg 'workspace.Works'/></a>
+							<a href="#third-parties" class="colorbox-modal label btn-primary"><@orcid.msg 'workspace.import_works'/></a>
 							<a href="#" class="label btn-primary" ng-click="addWorkModal()"><@orcid.msg 'manual_work_form_contents.add_work_manually'/></a>
 						</div>
             		<#else>
@@ -171,11 +189,11 @@
             	</div>
             	
         		<div id="workspace-grants" class="workspace-accordion-item<#--${(!(profile.orcidActivities.orcidGrants)??)?string(" workspace-accordion-active", "")}-->">
-        			<h3 class="workspace-accordion-header"><a href="#"><@orcid.msg 'workspace.Grants'/></a></h3>
+        			<div class="workspace-accordion-header"><a href="#"><@orcid.msg 'workspace.Grants'/></a></div>
             	</div>
             	
         		<div id="workspace-patents" class="workspace-accordion-item<#--${(!(profile.orcidActivities.orcidPatents)??)?string(" workspace-accordion-active", "")}-->">
-        			<h3 class="workspace-accordion-header"><a href="#"><@orcid.msg 'workspace.Patents'/></a></h3>
+        			<div class="workspace-accordion-header"><a href="#"><@orcid.msg 'workspace.Patents'/></a></div>
             	</div>
             	
             </div>
@@ -231,15 +249,14 @@
 </script>
 
 <script type="text/ng-template" id="add-work-modal">
-	<div class="row">
-		
+	<div class="row edit-work" >
 		<div class="span12">
 			<h3><@orcid.msg 'manual_work_form_contents.add_work'/></h3>
 		</div>
 		
 		<div class="span6">	
 			<div class="control-group">
-				<label class="control-label"><@orcid.msg 'manual_work_form_contents.labeltitle'/></label>
+				<label><@orcid.msg 'manual_work_form_contents.labeltitle'/></label>
 			    <div class="relative">
 					<input name="familyNames" type="text" class="input-xlarge"  ng-model="editWork.workTitle.title.value" placeholder="<@orcid.msg 'manual_work_form_contents.add_title'/>" ng-change="serverValidate('my-orcid/work/workTitle/titleValidate.json')" ng-model-onblur/>
 					<span class="required" ng-class="isValidClass(editWork.workTitle.title)">*</span>
@@ -249,7 +266,7 @@
 				</div>
 			</div>
 			<div class="control-group">
-				<label class="control-label"><@orcid.msg 'manual_work_form_contents.labelsubtitle'/></label>
+				<label><@orcid.msg 'manual_work_form_contents.labelsubtitle'/></label>
 			    <div class="relative">
 					<input name="familyNames" type="text" class="input-xlarge"  ng-model="editWork.workTitle.subtitle.value" placeholder="<@orcid.msg 'manual_work_form_contents.add_subtitle'/>" ng-model-onblur/>
 					<span class="orcid-error" ng-show="editWork.workTitle.subtitle.errors.length > 0">
@@ -259,7 +276,7 @@
 			</div>
 			
 			<div class="control-group">
-				<label class="control-label"><@orcid.msg 'manual_work_form_contents.labelcitation'/></label>
+				<label><@orcid.msg 'manual_work_form_contents.labelcitation'/></label>
 			    <div class="relative">
 					<textarea name="familyNames" type="text" class="input-xlarge"  ng-model="editWork.citation.citation.value" placeholder="<@orcid.msg 'manual_work_form_contents.add_citation'/>" ng-change="serverValidate('my-orcid/work/citationValidate.json')" ng-model-onblur/>
 					<span class="orcid-error" ng-show="editWork.citation.citation.errors.length > 0">
@@ -323,7 +340,7 @@
 	    	</div>
 	    	
 	   		<div class="control-group" ng-repeat="workExternalIdentifier in editWork.workExternalIdentifiers">
-				<label class="control-label"><@orcid.msg 'manual_work_form_contents.labelID'/></label>
+				<label><@orcid.msg 'manual_work_form_contents.labelID'/></label>
 			    <div class="relative">
 					<input name="currentWorkExternalIds" type="text" class="input-xlarge"  ng-model="workExternalIdentifier.workExternalIdentifierId.value" placeholder="<@orcid.msg 'manual_work_form_contents.add_ID'/>"  ng-change="serverValidate('my-orcid/work/workExternalIdentifiersValidate.json')" ng-model-onblur/>
 						<span class="orcid-error" ng-show="workExternalIdentifier.workExternalIdentifierId.errors.length > 0">
@@ -381,7 +398,7 @@
 			</div>
 			
 			<div class="control-group">
-				<label class="control-label"><@orcid.msg 'manual_work_form_contents.labeldescription'/></label>
+				<label><@orcid.msg 'manual_work_form_contents.labeldescription'/></label>
 			    <div class="relative">
 					<textarea name="familyNames" type="text" class="input-xlarge"  ng-model="editWork.shortDescription.value" placeholder="<@orcid.msg 'manual_work_form_contents.add_description'/>" ng-model-onblur/>
 					<span class="orcid-error" ng-show="editWork.shortDescription.errors.length > 0">
