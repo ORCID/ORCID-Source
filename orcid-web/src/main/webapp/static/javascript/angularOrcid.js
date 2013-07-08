@@ -1225,6 +1225,7 @@ function ClientEditCtrl($scope, $compile){
 	        url: $('body').data('baseurl') + 'manage-clients/get-clients.json',
 	        dataType: 'json',
 	        success: function(data) {
+	        	$scope.clients = new Array();
 	        	$scope.$apply(function(){ 
 					for (i in data)						
 						$scope.clients.push(data[i]);
@@ -1298,6 +1299,17 @@ function ClientEditCtrl($scope, $compile){
 	        scrolling: true
         });
         $.colorbox.resize({width:"550px" , height:"360px"});
+	};
+	
+	$scope.viewDetails = function(idx){
+		$scope.clientDetails = $scope.clients[idx];
+		$.colorbox({        	            
+            html : $compile($('#view-details-modal').html())($scope), 
+            transition: 'fade',
+	        close: '',
+	        scrolling: true
+        });
+        $.colorbox.resize({width:"550px" , height:"150px"});
 	};
 	
 	//init

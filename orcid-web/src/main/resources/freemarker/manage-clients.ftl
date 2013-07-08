@@ -18,15 +18,19 @@
 -->
 <@public >
 
+<script type="text/ng-template" id="view-details-modal">
+	<div style="padding: 20px;" class="colorbox-modal">
+		<h1><@orcid.msg 'manage_clients.client_information'/></h1>
+		<div id="client-information">
+			<span><strong><@orcid.msg 'manage_clients.client_id'/>:</strong>{{clientDetails.clientId}}</span><br />
+			<span><strong><@orcid.msg 'manage_clients.client_secret'/>:</strong>{{clientDetails.clientSecret}}</span><br />
+		</div>
+	</div>
+</script>
+
 <script type="text/ng-template" id="edit-client-modal">
 	<div style="padding: 20px;" class="colorbox-modal">
 		<h1><@orcid.msg 'manage_clients.edit_client'/></h1>		
-		<h3><@orcid.msg 'manage_clients.client_information'/></h3>
-		<div id="client-information">
-			<span><strong><@orcid.msg 'manage_clients.client_id'/>:</strong>{{clientToEdit.clientId}}</span><br />
-    		<span><strong><@orcid.msg 'manage_clients.client_secret'/>:</strong>{{clientToEdit.clientSecret}}</span><br />
-    	</div>
-		
 		<h3><@orcid.msg 'manage_clients.client_details'/></h3>
 		
 		<@orcid.msg 'manage_clients.client_type'/>:
@@ -136,7 +140,7 @@
 			<div ng-hide="!clients.length" ng-cloak>
 				<ul>
 					<li class="bottom-margin-small" ng-repeat='client in clients'>
-						<div class="pull-right" style="right: 145px; top: 20px; width: 15px;"><a href="#" ng-click="deleteClient($index)" class="icon-trash grey"></a></div>
+						<div class="pull-right" style="right: 145px; top: 20px; width: 15px;"><a href="#" ng-click="viewDetails($index)" class="grey">details</a></div>
 						<div class="pull-right" style="right: 145px; top: 20px; width: 15px;"><a href="#" ng-click="editClient($index)" class="btn-update  display-inline"></a></div>
 						<div style="width: 530px;">
 							<span><strong><@orcid.msg 'manage_clients.client_id'/>:</strong>{{client.clientId}}</span><br />
