@@ -1248,18 +1248,8 @@ function ClientEditCtrl($scope, $compile){
 	        	if(data.errors != null && data.errors.length > 0){
 	        		console.log("Unable to create client information.");
 	        	} else {
-	        		console.log(angular.toJson(data));
-	        		if(data.redirectUris != null && data.redirectUris.redirectUri.length > 0){
-	        			console.log('Redirect Uris: ');
-		        		for(var i = 0; i < data.redirectUris.redirectUri.length; i++){			        		
-		        			delete data.redirectUris.redirectUri[i].scopeAsSingleString;
-		        			delete data.redirectUris.redirectUri[i].scope;		        			
-		        		}
-	        		}
-	        		
-		        	$scope.$apply(function() {
-		        		$scope.clients.push(data);
-		        	});	        		
+	        		$scope.getClients();
+		        	$scope.$apply();
 	        	} 
 	        }
 	    }).fail(function() { 
