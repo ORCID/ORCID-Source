@@ -267,6 +267,9 @@ public class NotificationManagerImpl implements NotificationManager {
         // Generate body from template
         String resetUrl = createResetEmail(orcidProfile, baseUri);
         templateParams.put("passwordResetUrl", resetUrl);
+        
+        addMessageParams(templateParams);
+        
         String body = templateManager.processTemplate("reset_password_email.ftl", templateParams);
 
         // Create email message
@@ -305,6 +308,9 @@ public class NotificationManagerImpl implements NotificationManager {
         templateParams.put("orcid", amendedProfile.getOrcid().getValue());
         templateParams.put("amenderName", extractAmenderName(amendedProfile, amenderOrcid));
         templateParams.put("baseUri", baseUri);
+        
+        addMessageParams(templateParams);
+        
         // Generate body from template
         String body = templateManager.processTemplate("amend_email.ftl", templateParams);
         // Create email message
@@ -343,7 +349,9 @@ public class NotificationManagerImpl implements NotificationManager {
             templateParams.put("grantingOrcidValue", orcidUserGrantingPermission.getOrcid().getValue());
             templateParams.put("grantingOrcidName", deriveEmailFriendlyName(orcidUserGrantingPermission));
             templateParams.put("baseUri", baseUri);
-            // templateParams.put("grantingOrcidEmail", grantingOrcidEmail);
+            
+            addMessageParams(templateParams);
+            
             String body = templateManager.processTemplate("added_as_delegate_email.ftl", templateParams);
             String toAddress = orcidUserGrantingPermission.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue();
             message.setTo(toAddress);

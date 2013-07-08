@@ -16,7 +16,6 @@
     =============================================================================
 
 -->
-
 <#-- 
     NOTE from LADP
     In the original email there was what was supposed to be placeholder text for 
@@ -27,26 +26,17 @@
     usersEmail@domain.com in the last paragraph below should be changed to 
     something like ${grantingOrcidEmail}
 -->
+<#import "email_macros.ftl" as emailMacros />
+<@emailMacros.msg "email.common.dear" /> ${emailNameForDelegate}<@emailMacros.msg "email.common.dear.comma" />
 
-Dear ${emailNameForDelegate},
+<@emailMacros.msg "email.added_as_delegate.you_have.1" />${grantingOrcidName}<@emailMacros.msg "email.added_as_delegate.you_have.2" />${baseUri}/${grantingOrcidValue}<@emailMacros.msg "email.added_as_delegate.you_have.3" />${grantingOrcidName}<@emailMacros.msg "email.added_as_delegate.you_have.4" />
 
-You have been made an Account Delegate by ${grantingOrcidName} with the ORCID iD 
-${baseUri}/${grantingOrcidValue}. Being made an Account Delegate means 
-that this user has included you in their trusted relationships. As a result you 
-may update and make additions to ${grantingOrcidName}'s ORCID Record.
+<@emailMacros.msg "email.added_as_delegate.for_a_tutorial" />
 
-For a tutorial on the functions that you can perform as an Account Delegate please 
-view http://support.orcid.org/knowledgebase/articles/217659.
-
-If you have questions or concerns about being an Account Delegate, please contact 
-${grantingOrcidName} at usersEmail@domain.com, or the ORCID Help Desk 
-at support@orcid.org.
+<@emailMacros.msg "email.added_as_delegate.if_you_have.1" />${grantingOrcidName}<@emailMacros.msg "email.added_as_delegate.if_you_have.2" />
 
 
-Kind Regards,
-The ORCID Team
-support@orcid.org 
+<@emailMacros.msg "email.common.kind_regards" />
 ${baseUri}
 
-You have received this email as a service announcement related to your 
-ORCID Account. 
+<@emailMacros.msg "email.common.you_have_received_this_email" />

@@ -16,28 +16,20 @@
     =============================================================================
 
 -->
-Dear ${emailName},
+<#import "email_macros.ftl" as emailMacros />
+<@emailMacros.msg "email.common.dear" /> ${emailName}<@emailMacros.msg "email.common.dear.comma" />
 
-Sorry that you are having problems logging in. Please click or copy the link 
-below to reset your password. If you have set up a security question, you 
-will need to correctly answer this question before being able to reset your 
-password.
+<@emailMacros.msg "email.reset_password.sorry" />
 
-To reset your password follow the link below. If you can't click on the link, 
-copy and paste it into your browser:
+<@emailMacros.msg "email.reset_password.to_reset" />
 
 ${passwordResetUrl}
 
-After changing your password you will be asked to sign in with your email 
-address/ORCID iD and new password.
+<@emailMacros.msg "email.reset_password.after" />
 
-If you have any questions or concerns about this password reset request, 
-please contact ORCID Support at support@orcid.org.
+<@emailMacros.msg "email.common.if_you_have_any" />
 
-Kind Regards,
-The ORCID Team
-support@orcid.org
+<@emailMacros.msg "email.common.kind_regards" />
 ${baseUri}
 
-You have received this email as a service announcement related to your 
-ORCID Account.
+<@emailMacros.msg "email.common.you_have_received_this_email" />
