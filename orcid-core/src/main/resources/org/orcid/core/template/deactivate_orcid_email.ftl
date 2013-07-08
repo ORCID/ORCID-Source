@@ -19,7 +19,6 @@
 <#import "email_macros.ftl" as emailMacros />
 <@emailMacros.msg "email.common.dear" /> ${emailName}<@emailMacros.msg "email.common.dear.comma" />
 
-
 <@emailMacros.msg "email.deactivate.you_have_requested.1" /> 
 ${baseUri}/${orcid} <@emailMacros.msg "email.deactivate.you_have_requested.2" />
 ${baseUri}${deactivateUrlEndpoint}

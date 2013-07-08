@@ -224,6 +224,9 @@ public class NotificationManagerImpl implements NotificationManager {
         templateParams.put("verificationUrl", verificationUrl);
         templateParams.put("orcid", orcidProfile.getOrcid().getValue());
         templateParams.put("baseUri", baseUri);
+        
+        addMessageParams(templateParams);
+        
         // Generate body from template
         String body = templateManager.processTemplate("verification_reminder_email.ftl", templateParams);
         // Create email message
