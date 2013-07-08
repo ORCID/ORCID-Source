@@ -1,176 +1,220 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-
-    =============================================================================
-
-    ORCID (R) Open Source
-    http://orcid.org
-
-    Copyright (c) 2012-2013 ORCID, Inc.
-    Licensed under an MIT-Style License (MIT)
-    http://orcid.org/open-source-license
-
-    This copyright and license information (including a link to the full license)
-    shall be included in its entirety in all copies or substantial portion of
-    the software.
-
-    =============================================================================
-
--->
+<!-- ============================================================================= 
+	ORCID (R) Open Source http://orcid.org Copyright (c) 2012-2013 ORCID, Inc. 
+	Licensed under an MIT-Style License (MIT) http://orcid.org/open-source-license 
+	This copyright and license information (including a link to the full license) 
+	shall be included in its entirety in all copies or substantial portion of 
+	the software. ============================================================================= -->
 <beans xmlns:sec="http://www.springframework.org/schema/security"
-       xmlns="http://www.springframework.org/schema/beans"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:context="http://www.springframework.org/schema/context"
-       xmlns:oauth2="http://www.springframework.org/schema/security/oauth2"
-       xsi:schemaLocation="http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.1.xsd
+	xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:oauth2="http://www.springframework.org/schema/security/oauth2"
+	xsi:schemaLocation="http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.1.xsd
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd
        http://www.springframework.org/schema/security/oauth2 http://www.springframework.org/schema/security/spring-security-oauth2-1.0.xsd">
 
-    <context:annotation-config/>
+	<context:annotation-config />
 
-    <bean id="authorizationEndpoint" class="org.orcid.core.oauth.service.OrcidAuthorizationEndpoint">
-        <property name="authorizationCodeServices" ref="orcidAuthorizationCodeService"/>
-        <property name="clientDetailsService" ref="orcidClientDetailsService"/>
-        <property name="tokenGranter" ref="authorizationCodeTokenGranter"/>
-    </bean>
-
-    <bean id="userDetailsService" class="org.orcid.core.security.OrcidUserDetailsService"/>
-
-    <bean id="accessDecisionManager" class="org.springframework.security.access.vote.UnanimousBased"
-          xmlns="http://www.springframework.org/schema/beans">
-        <constructor-arg>
-            <list>
-                <bean class="org.springframework.security.oauth2.provider.vote.ScopeVoter"/>
-                <bean class="org.springframework.security.access.vote.RoleVoter"/>
-                <bean class="org.springframework.security.access.vote.AuthenticatedVoter"/>
-            </list>
-        </constructor-arg>
-    </bean>
-
-    <bean id="sessionRegistry" class="org.springframework.security.core.session.SessionRegistryImpl"/>
-
-	<bean id="ajaxAuthenticationSuccessHandler" class="org.orcid.frontend.spring.AjaxAuthenticationSuccessHandler">
-	    <property name="defaultTargetUrl" value="/my-orcid" />
+	<bean id="authorizationEndpoint" class="org.orcid.core.oauth.service.OrcidAuthorizationEndpoint">
+		<property name="authorizationCodeServices" ref="orcidAuthorizationCodeService" />
+		<property name="clientDetailsService" ref="orcidClientDetailsService" />
+		<property name="tokenGranter" ref="authorizationCodeTokenGranter" />
 	</bean>
-	<bean id="ajaxAuthenticationFailureHandler" class="org.orcid.frontend.spring.AjaxAuthenticationFailureHandler"/>
 
-    <sec:authentication-manager alias="authenticationManager">
-        <sec:authentication-provider user-service-ref="userDetailsService">
-            <sec:password-encoder ref="encryptionManager"/>
-        </sec:authentication-provider>
-    </sec:authentication-manager>
+	<bean id="userDetailsService" class="org.orcid.core.security.OrcidUserDetailsService" />
+
+	<bean id="accessDecisionManager" class="org.springframework.security.access.vote.UnanimousBased"
+		xmlns="http://www.springframework.org/schema/beans">
+		<constructor-arg>
+			<list>
+				<bean class="org.springframework.security.oauth2.provider.vote.ScopeVoter" />
+				<bean class="org.springframework.security.access.vote.RoleVoter" />
+				<bean class="org.springframework.security.access.vote.AuthenticatedVoter" />
+			</list>
+		</constructor-arg>
+	</bean>
+
+	<bean id="sessionRegistry"
+		class="org.springframework.security.core.session.SessionRegistryImpl" />
+
+	<bean id="ajaxAuthenticationSuccessHandler"
+		class="org.orcid.frontend.spring.AjaxAuthenticationSuccessHandler">
+		<property name="defaultTargetUrl" value="/my-orcid" />
+	</bean>
+	<bean id="ajaxAuthenticationFailureHandler"
+		class="org.orcid.frontend.spring.AjaxAuthenticationFailureHandler" />
+
+	<sec:authentication-manager alias="authenticationManager">
+		<sec:authentication-provider
+			user-service-ref="userDetailsService">
+			<sec:password-encoder ref="encryptionManager" />
+		</sec:authentication-provider>
+	</sec:authentication-manager>
 
 
-    <sec:http pattern="/" security="none"/>
-    <sec:http pattern="/robots.txt" security="none"/>
-    <sec:http pattern="/home" security="none"/>
-    <sec:http pattern="/error" security="none"/>
-    <sec:http pattern="/not-found" security="none"/>
-    <sec:http pattern="/favicon.ico" security="none"/>
-    <sec:http pattern="/statistics" security="none"/>
-    <sec:http pattern="/static/**" security="none"/>
-    
-    <sec:http pattern="/oauth/.*" access-denied-page="/oauth/signin" access-decision-manager-ref="accessDecisionManager" create-session="ifRequired" path-type="regex">
-        <sec:intercept-url pattern="/oauth/login(\?.*)?" access="IS_AUTHENTICATED_ANONYMOUSLY"/>
-        <sec:intercept-url pattern="/oauth/signin(\?.*)?" access="IS_AUTHENTICATED_ANONYMOUSLY"/>
-        <sec:intercept-url pattern="/oauth/playground(\?.*)?" access="IS_AUTHENTICATED_ANONYMOUSLY"/>
-        <sec:intercept-url pattern="/oauth/confirm_access(\?.*)?" access="DENY_OAUTH,ROLE_USER"/>                  
-        <sec:intercept-url pattern="/oauth/.*" access="ROLE_USER"/>
-        <sec:form-login authentication-failure-url="/oauth/signin" login-page="/oauth/signin" login-processing-url="/signin/auth"
-                        username-parameter="userId" password-parameter="password" default-target-url="/my-orcid"/>
-    </sec:http>    
+	<sec:http pattern="/" security="none" />
+	<sec:http pattern="/robots.txt" security="none" />
+	<sec:http pattern="/home" security="none" />
+	<sec:http pattern="/error" security="none" />
+	<sec:http pattern="/not-found" security="none" />
+	<sec:http pattern="/favicon.ico" security="none" />
+	<sec:http pattern="/statistics/liveids.json" security="none" />
+	<sec:http pattern="/statistics/public/" security="none" />
+	<sec:http pattern="/static/**" security="none" />
 
-    <sec:http access-denied-page="/signin" access-decision-manager-ref="accessDecisionManager" create-session="ifRequired" path-type="regex">
-        <sec:intercept-url pattern="/(\d{4}-){3,}\d{3}[\dX](\?.*)?" access="IS_AUTHENTICATED_ANONYMOUSLY"/>
-        <sec:intercept-url pattern="/lang.json(.*)?" access="IS_AUTHENTICATED_ANONYMOUSLY"/>
-        <sec:intercept-url pattern="/login(\?.*)?" access="IS_AUTHENTICATED_ANONYMOUSLY"/>
-        <sec:intercept-url pattern="/signin(\?.*)?" access="IS_AUTHENTICATED_ANONYMOUSLY"/>
-        <sec:intercept-url pattern="/userStatus.json(\?.*)?" access="IS_AUTHENTICATED_ANONYMOUSLY"/>
-        <sec:intercept-url pattern="/session-expired(\?.*)?" access="IS_AUTHENTICATED_ANONYMOUSLY"/>
-        <sec:intercept-url pattern="/progress-to-confirm-registration-details(\?.*)?" access="IS_AUTHENTICATED_ANONYMOUSLY"/>
-        <sec:intercept-url pattern="/confirm-registration-details(\?.*)?" access="IS_AUTHENTICATED_ANONYMOUSLY"/>
-        <sec:intercept-url pattern="/orcid-search/.*" access="IS_AUTHENTICATED_ANONYMOUSLY"/>
-        <sec:intercept-url pattern="/register(\?.*)?" access="IS_AUTHENTICATED_ANONYMOUSLY"/>
-        <sec:intercept-url pattern="/register.json(\?.*)?" access="IS_AUTHENTICATED_ANONYMOUSLY"/>
-        <sec:intercept-url pattern="/register(.*)Validate.json(\?.*)?" access="IS_AUTHENTICATED_ANONYMOUSLY"/>
-        <sec:intercept-url pattern="/claim(.*)Validate.json(\?.*)?" access="IS_AUTHENTICATED_ANONYMOUSLY"/>
-        <sec:intercept-url pattern="/registerConfirm.json(\?.*)?" access="IS_AUTHENTICATED_ANONYMOUSLY"/>
-        <sec:intercept-url pattern="/dupicateResearcher.json(\?.*)?" access="IS_AUTHENTICATED_ANONYMOUSLY"/>
-        <sec:intercept-url pattern="/claim/.*" access="IS_AUTHENTICATED_ANONYMOUSLY"/>
-        <sec:intercept-url pattern="/resend-claim(\?.*)?" access="IS_AUTHENTICATED_ANONYMOUSLY"/>
-        <sec:intercept-url pattern="/reset-password(\?.*)?" access="IS_AUTHENTICATED_ANONYMOUSLY"/>
-        <sec:intercept-url pattern="/reset-password-email/.*" access="IS_AUTHENTICATED_ANONYMOUSLY"/>
-        <sec:intercept-url pattern="/one-time-password/.*" access="IS_AUTHENTICATED_ANONYMOUSLY"/>
-        <sec:intercept-url pattern="/answer-security-question/.*" access="IS_AUTHENTICATED_ANONYMOUSLY"/>
-        <sec:intercept-url pattern="/verify(\?.*)?" access="IS_AUTHENTICATED_ANONYMOUSLY"/>        
-        <sec:intercept-url pattern="/oauth/confirm_access(\?.*)?" access="DENY_OAUTH,ROLE_USER"/>
-        <sec:intercept-url pattern="/oauth-signup(\?.*)?" access="IS_AUTHENTICATED_ANONYMOUSLY"/>
-        <sec:intercept-url pattern="/oauth-complete-signup(\?.*)?" access="IS_AUTHENTICATED_ANONYMOUSLY"/>  
-        <sec:intercept-url pattern="/oauth/.*" access="ROLE_USER"/>        
-        <sec:intercept-url pattern="/eula/accept(\?.*)?" method="POST" access="DENY_OAUTH,ROLE_USER"/>
-        <sec:intercept-url pattern="/.*" access="ROLE_USER"/>        
+	<sec:http pattern="/oauth/.*" access-denied-page="/oauth/signin"
+		access-decision-manager-ref="accessDecisionManager" create-session="ifRequired"
+		path-type="regex">
+		<sec:intercept-url pattern="/oauth/login(\?.*)?"
+			access="IS_AUTHENTICATED_ANONYMOUSLY" />
+		<sec:intercept-url pattern="/oauth/signin(\?.*)?"
+			access="IS_AUTHENTICATED_ANONYMOUSLY" />
+		<sec:intercept-url pattern="/oauth/playground(\?.*)?"
+			access="IS_AUTHENTICATED_ANONYMOUSLY" />
+		<sec:intercept-url pattern="/oauth/confirm_access(\?.*)?"
+			access="DENY_OAUTH,ROLE_USER" />
+		<sec:intercept-url pattern="/oauth/.*" access="ROLE_USER" />
+		<sec:form-login authentication-failure-url="/oauth/signin"
+			login-page="/oauth/signin" login-processing-url="/signin/auth"
+			username-parameter="userId" password-parameter="password"
+			default-target-url="/my-orcid" />
+	</sec:http>
 
-<!--         <sec:form-login authentication-failure-url="/signin" login-page="/signin" login-processing-url="/signin/auth" -->
-<!--                         username-parameter="userId" password-parameter="password" default-target-url="/my-orcid"/> -->
+	<sec:http access-denied-page="/signin"
+		access-decision-manager-ref="accessDecisionManager" create-session="ifRequired"
+		path-type="regex">
+		<sec:intercept-url pattern="/(\d{4}-){3,}\d{3}[\dX](\?.*)?"
+			access="IS_AUTHENTICATED_ANONYMOUSLY" />
+		<sec:intercept-url pattern="/lang.json(.*)?"
+			access="IS_AUTHENTICATED_ANONYMOUSLY" />
+		<sec:intercept-url pattern="/login(\?.*)?"
+			access="IS_AUTHENTICATED_ANONYMOUSLY" />
+		<sec:intercept-url pattern="/signin(\?.*)?"
+			access="IS_AUTHENTICATED_ANONYMOUSLY" />
+		<sec:intercept-url pattern="/userStatus.json(\?.*)?"
+			access="IS_AUTHENTICATED_ANONYMOUSLY" />
+		<sec:intercept-url pattern="/session-expired(\?.*)?"
+			access="IS_AUTHENTICATED_ANONYMOUSLY" />
+		<sec:intercept-url pattern="/progress-to-confirm-registration-details(\?.*)?"
+			access="IS_AUTHENTICATED_ANONYMOUSLY" />
+		<sec:intercept-url pattern="/confirm-registration-details(\?.*)?"
+			access="IS_AUTHENTICATED_ANONYMOUSLY" />
+		<sec:intercept-url pattern="/orcid-search/.*"
+			access="IS_AUTHENTICATED_ANONYMOUSLY" />
+		<sec:intercept-url pattern="/register(\?.*)?"
+			access="IS_AUTHENTICATED_ANONYMOUSLY" />
+		<sec:intercept-url pattern="/register.json(\?.*)?"
+			access="IS_AUTHENTICATED_ANONYMOUSLY" />
+		<sec:intercept-url pattern="/register(.*)Validate.json(\?.*)?"
+			access="IS_AUTHENTICATED_ANONYMOUSLY" />
+		<sec:intercept-url pattern="/claim(.*)Validate.json(\?.*)?"
+			access="IS_AUTHENTICATED_ANONYMOUSLY" />
+		<sec:intercept-url pattern="/registerConfirm.json(\?.*)?"
+			access="IS_AUTHENTICATED_ANONYMOUSLY" />
+		<sec:intercept-url pattern="/dupicateResearcher.json(\?.*)?"
+			access="IS_AUTHENTICATED_ANONYMOUSLY" />
+		<sec:intercept-url pattern="/claim/.*"
+			access="IS_AUTHENTICATED_ANONYMOUSLY" />
+		<sec:intercept-url pattern="/resend-claim(\?.*)?"
+			access="IS_AUTHENTICATED_ANONYMOUSLY" />
+		<sec:intercept-url pattern="/reset-password(\?.*)?"
+			access="IS_AUTHENTICATED_ANONYMOUSLY" />
+		<sec:intercept-url pattern="/reset-password-email/.*"
+			access="IS_AUTHENTICATED_ANONYMOUSLY" />
+		<sec:intercept-url pattern="/one-time-password/.*"
+			access="IS_AUTHENTICATED_ANONYMOUSLY" />
+		<sec:intercept-url pattern="/answer-security-question/.*"
+			access="IS_AUTHENTICATED_ANONYMOUSLY" />
+		<sec:intercept-url pattern="/verify(\?.*)?"
+			access="IS_AUTHENTICATED_ANONYMOUSLY" />
+		<sec:intercept-url pattern="/oauth/confirm_access(\?.*)?"
+			access="DENY_OAUTH,ROLE_USER" />
+		<sec:intercept-url pattern="/oauth-signup(\?.*)?"
+			access="IS_AUTHENTICATED_ANONYMOUSLY" />
+		<sec:intercept-url pattern="/oauth-complete-signup(\?.*)?"
+			access="IS_AUTHENTICATED_ANONYMOUSLY" />
+		<sec:intercept-url pattern="/oauth/.*" access="ROLE_USER" />
+		<sec:intercept-url pattern="/eula/accept(\?.*)?"
+			method="POST" access="DENY_OAUTH,ROLE_USER" />
+		<sec:intercept-url pattern="/.*" access="ROLE_USER" />
 
-         <sec:logout logout-success-url="/signin" logout-url="/signout" invalidate-session="true"/>
+		<!-- <sec:form-login authentication-failure-url="/signin" login-page="/signin" 
+			login-processing-url="/signin/auth" -->
+		<!-- username-parameter="userId" password-parameter="password" default-target-url="/my-orcid"/> -->
 
-         <sec:form-login login-processing-url="/signin/auth.json" login-page="/signin"
-        	authentication-success-handler-ref="ajaxAuthenticationSuccessHandler"
-            authentication-failure-handler-ref="ajaxAuthenticationFailureHandler"
-            username-parameter="userId" password-parameter="password" />
+		<sec:logout logout-success-url="/signin" logout-url="/signout"
+			invalidate-session="true" />
 
-    </sec:http>
+		<sec:form-login login-processing-url="/signin/auth.json"
+			login-page="/signin" authentication-success-handler-ref="ajaxAuthenticationSuccessHandler"
+			authentication-failure-handler-ref="ajaxAuthenticationFailureHandler"
+			username-parameter="userId" password-parameter="password" />
 
-    <oauth2:web-expression-handler id="oauthWebExpressionHandler" />
+	</sec:http>
 
-    <bean id="orcidClientDetailsService" class="org.orcid.core.oauth.service.OrcidClientDetailsServiceImpl"/>
+	<oauth2:web-expression-handler id="oauthWebExpressionHandler" />
 
-    <bean id="oauthAuthenticationEntryPoint" class="org.springframework.security.oauth2.provider.error.OAuth2AuthenticationEntryPoint">
-        <property name="realmName" value="orcid" />
-    </bean>
+	<bean id="orcidClientDetailsService"
+		class="org.orcid.core.oauth.service.OrcidClientDetailsServiceImpl" />
 
-<!--     <bean id="termsAndConditionsAcceptanceCheckFilter" class="org.orcid.frontend.web.filters.TermsAndConditionsAcceptanceCheckFilter"/> -->
+	<bean id="oauthAuthenticationEntryPoint"
+		class="org.springframework.security.oauth2.provider.error.OAuth2AuthenticationEntryPoint">
+		<property name="realmName" value="orcid" />
+	</bean>
 
-    <bean  id="jsonpCallbackFilter" class="org.orcid.core.web.filters.JsonpCallbackFilter" />
+	<!-- <bean id="termsAndConditionsAcceptanceCheckFilter" class="org.orcid.frontend.web.filters.TermsAndConditionsAcceptanceCheckFilter"/> -->
 
-    <bean id="oauthAccessDeniedHandler" class="org.springframework.security.oauth2.provider.error.OAuth2AccessDeniedHandler" />
+	<bean id="jsonpCallbackFilter" class="org.orcid.core.web.filters.JsonpCallbackFilter" />
 
-    <bean id="authorizationCodeTokenGranter" class="org.springframework.security.oauth2.provider.code.AuthorizationCodeTokenGranter">
-        <constructor-arg ref="orcidAuthorizationCodeService"/>
-        <constructor-arg ref="randomValueTokenServices"/>
-        <constructor-arg ref="orcidClientDetailsService"/>
-    </bean>
+	<bean id="oauthAccessDeniedHandler"
+		class="org.springframework.security.oauth2.provider.error.OAuth2AccessDeniedHandler" />
 
-    <bean id="orcidAuthorizationCodeService" class="org.orcid.core.oauth.service.OrcidAuthorizationCodeServiceImpl"/>
+	<bean id="authorizationCodeTokenGranter"
+		class="org.springframework.security.oauth2.provider.code.AuthorizationCodeTokenGranter">
+		<constructor-arg ref="orcidAuthorizationCodeService" />
+		<constructor-arg ref="randomValueTokenServices" />
+		<constructor-arg ref="orcidClientDetailsService" />
+	</bean>
 
-    <bean id="orcidTokenStore" class="org.orcid.core.oauth.service.OrcidTokenStoreServiceImpl"/>
+	<bean id="orcidAuthorizationCodeService"
+		class="org.orcid.core.oauth.service.OrcidAuthorizationCodeServiceImpl" />
 
-    <bean id="randomValueTokenServices" class="org.springframework.security.oauth2.provider.token.RandomValueTokenServices">
-        <property name="tokenStore" ref="orcidTokenStore"/>
-    </bean>
+	<bean id="orcidTokenStore" class="org.orcid.core.oauth.service.OrcidTokenStoreServiceImpl" />
 
-    <oauth2:resource-server id="resourceServerFilter" resource-id="orcid" token-services-ref="tokenServices" />
+	<bean id="randomValueTokenServices"
+		class="org.springframework.security.oauth2.provider.token.RandomValueTokenServices">
+		<property name="tokenStore" ref="orcidTokenStore" />
+	</bean>
 
-    <oauth2:authorization-server token-granter-ref="authorizationCodeTokenGranter" client-details-service-ref="orcidClientDetailsService" token-services-ref="tokenServices">
-        <oauth2:client-credentials />
-    </oauth2:authorization-server>
+	<oauth2:resource-server id="resourceServerFilter"
+		resource-id="orcid" token-services-ref="tokenServices" />
 
-    <sec:authentication-manager id="clientAuthenticationManager">
-        <sec:authentication-provider user-service-ref="clientDetailsUserService" />
-    </sec:authentication-manager>
+	<oauth2:authorization-server
+		token-granter-ref="authorizationCodeTokenGranter"
+		client-details-service-ref="orcidClientDetailsService"
+		token-services-ref="tokenServices">
+		<oauth2:client-credentials />
+	</oauth2:authorization-server>
 
-    <bean id="clientDetailsUserService" class="org.springframework.security.oauth2.provider.client.ClientDetailsUserDetailsService">
-        <constructor-arg ref="orcidClientDetailsService" />
-    </bean>
+	<sec:authentication-manager id="clientAuthenticationManager">
+		<sec:authentication-provider
+			user-service-ref="clientDetailsUserService" />
+	</sec:authentication-manager>
 
-    <bean id="tokenServices" class="org.springframework.security.oauth2.provider.token.RandomValueTokenServices">
-        <property name="tokenStore" ref="orcidTokenStore" />
-        <property name="supportRefreshToken" value="false" />
-    </bean>
+	<bean id="clientDetailsUserService"
+		class="org.springframework.security.oauth2.provider.client.ClientDetailsUserDetailsService">
+		<constructor-arg ref="orcidClientDetailsService" />
+	</bean>
 
-    <!-- Simple listener that gets fired when successful login occurs -->
-    <bean id="loginApplicationListener" class="org.orcid.frontend.web.listener.LoginApplicationListener"/>
+	<bean id="tokenServices"
+		class="org.springframework.security.oauth2.provider.token.RandomValueTokenServices">
+		<property name="tokenStore" ref="orcidTokenStore" />
+		<property name="supportRefreshToken" value="false" />
+	</bean>
+
+	<!-- Simple listener that gets fired when successful login occurs -->
+	<bean id="loginApplicationListener"
+		class="org.orcid.frontend.web.listener.LoginApplicationListener" />
 
 </beans>
