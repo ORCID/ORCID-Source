@@ -1237,7 +1237,7 @@ function ClientEditCtrl($scope, $compile){
 	    });
 	};
 	
-	$scope.submitCredentials = function(){		
+	$scope.submitAddClient = function(){		
 		$.ajax({
 	        url: $('body').data('baseurl') + 'manage-clients/add-client.json',
 	        type: 'POST',
@@ -1255,7 +1255,6 @@ function ClientEditCtrl($scope, $compile){
 	    }).fail(function() { 
 	    	alert("An error occured creating the client");
 	    	console.log("Error creating client information.");
-	    	$.colorbox.close();
 	    });
 		$.colorbox.close();
 	};
@@ -1266,7 +1265,7 @@ function ClientEditCtrl($scope, $compile){
 	};
 	
 	$scope.addUriToExistingClientTable = function(){
-		$this.clientToEdit.redirectUris.redirectUri.push({type: 'DEFAULT', value: ''});
+		$scope.clientToEdit.redirectUris.redirectUri.push({type: 'DEFAULT', value: ''});
 	};
 	
 	
@@ -1276,9 +1275,9 @@ function ClientEditCtrl($scope, $compile){
             html : $compile($('#edit-client-modal').html())($scope), 
             transition: 'fade',
 	        close: '',
-	        scrolling: false
+	        scrolling: true
         });		
-        $.colorbox.resize({width:"550px" , height:"600px"});   
+        $.colorbox.resize({width:"500px" , height:"500px"});   
 	};
 	
 	$scope.addClient = function(){		
@@ -1302,6 +1301,60 @@ function ClientEditCtrl($scope, $compile){
         $.colorbox.resize({width:"550px" , height:"150px"});
 	};
 	
+	$scope.deleteUri = function(idx){
+		$scope.clientToEdit.redirectUris.redirectUri.splice(idx, 1);
+		$scope.$apply();
+	};
+	
+	$scope.submitEditClient = function(){
+		$.ajax({
+	        url: $('body').data('baseurl') + 'manage-clients/edit-client.json',
+	        type: 'POST',
+	        data: angular.toJson($scope.clientToEdit),
+	        contentType: 'application/json;charset=UTF-8',
+	        dataType: 'json',
+	        success: function(data) {	        		        		        
+	        	if(data.errors != null && data.errors.length > 0){
+	        		console.log("Unable to update client information.");
+	        	} else {
+	        		$scope.getClients();
+		        	$scope.$apply();
+	        	} 
+	        }
+	    }).fail(function() { 
+	    	alert("An error occured updating the client");
+	    	console.log("Error updating client information.");
+	    });
+	};
+	
 	//init
 	$scope.getClients();
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

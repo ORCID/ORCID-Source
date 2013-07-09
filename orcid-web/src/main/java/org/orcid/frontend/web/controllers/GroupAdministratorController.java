@@ -8,10 +8,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import org.orcid.core.manager.OrcidClientGroupManager;
-import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.clientgroup.OrcidClient;
 import org.orcid.jaxb.model.clientgroup.OrcidClientGroup;
-import org.orcid.jaxb.model.clientgroup.RedirectUriType;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -57,8 +55,20 @@ public class GroupAdministratorController extends BaseWorkspaceController {
         String groupOrcid = profile.getOrcid().getValue();
         
         OrcidClientGroup group = orcidClientGroupManager.retrieveOrcidClientGroup(groupOrcid);
-                                
+        
+        System.out.println("---------------------------------------------------------------------------------------------------------------------");
+        System.out.println("Number of clients: " + group.getOrcidClient().size());
+        System.out.println("---------------------------------------------------------------------------------------------------------------------");
+        
         return group.getOrcidClient();
+    }
+    
+    @RequestMapping(value = "/edit-client.json", method = RequestMethod.POST)
+    @Produces(value = { MediaType.APPLICATION_JSON })
+    public @ResponseBody OrcidClient editClient(HttpServletRequest request, @RequestBody OrcidClient orcidClient){
+        OrcidProfile profile = getCurrentUserAndRefreshIfNecessary().getEffectiveProfile();
+        String groupOrcid = profile.getOrcid().getValue();
+        return orcidClient;        
     }
 }
 

@@ -33,25 +33,7 @@
 		<h1><@orcid.msg 'manage_clients.edit_client'/></h1>		
 		<h3><@orcid.msg 'manage_clients.client_details'/></h3>
 		
-		<@orcid.msg 'manage_clients.client_type'/>:
-		<span ng-switch on="clientToEdit.type">
-			<select ng-switch-when="CREATOR" ng-model="clientToEdit.type">
-				<option value="CREATOR" selected>CREATOR</option>
-				<option value="UPDATER">UPDATER</option>
-			</select>
-			<select ng-switch-when="UPDATER" ng-model="clientToEdit.type">
-				<option value="CREATOR">CREATOR</option>
-				<option value="UPDATER" selected>UPDATER</option>
-			</select>
-			<select ng-switch-when="PREMIUM_CREATOR" ng-model="clientToEdit.type">
-				<option value="PREMIUM_CREATOR" selected>PREMIUM_CREATOR</option>
-				<option value="PREMIUM_UPDATER">PREMIUM_UPDATER</option>
-			</select>
-			<select ng-switch-when="PREMIUM_UPDATER" ng-model="clientToEdit.type">
-				<option value="PREMIUM_CREATOR">PREMIUM_CREATOR</option>
-				<option value="PREMIUM_UPDATER" selected>PREMIUM_UPDATER</option>
-			</select>
-		</span>
+		<@orcid.msg 'manage_clients.client_type'/>:&nbsp;<span>{{clientToEdit.type}}</span>		
 		<br />		
     	<@orcid.msg 'manage_clients.display_name'/><input type="text" ng-model="clientToEdit.displayName" required />
     	<br />
@@ -64,13 +46,16 @@
     		<tr ng-repeat='rUri in clientToEdit.redirectUris.redirectUri'>
 				<td><@orcid.msg 'manage_clients.redirect_uri'/>:</td>
 				<td><input type="url" placeholder="Redirect Uri" class="input-xlarge" ng-model="rUri.value"></td>			 		
-				<td><span ng-click="deleteUri($index)" class="btn btn-primary"><@orcid.msg 'manage_clients.delete'/></span></td>
+				<td>
+					<a href ng-click="deleteUri($index)" class="icon-trash blue"></a>
+					<a ng-show="$last" href ng-click="addUriToExistingClientTable()" class="icon-plus-sign blue"></a>
+				</td>
 			</tr>			
     	</table>
     	   	
-    	<div class="controls save-btns pull-left bottom-margin-small">			
-			<span id="add-uri" ng-click="addUriToExistingClientTable()" class="btn btn-primary"><@orcid.msg 'manage_clients.add'/></span>				
-		</div>  	    	
+		<div class="controls save-btns pull-left bottom-margin-small">
+			<span id="bottom-submit-update-credential-request" ng-click="submitEditClient($index)" class="btn btn-primary"><@orcid.msg 'manage_clients.update'/></span>				
+		</div> 	    	
     <div> 
 </script>
 
@@ -118,7 +103,7 @@
 			 	</tbody>			 	
 			</table>
 			<div class="controls save-btns pull-left bottom-margin-small">
-				<span id="bottom-submit-credential-request" ng-click="submitCredentials()" class="btn btn-primary"><@orcid.msg 'manage_clients.submit'/></span>				
+				<span id="bottom-submit-credential-request" ng-click="submitAddClient()" class="btn btn-primary"><@orcid.msg 'manage_clients.submit'/></span>				
 			</div>
 		</div>
 	</div>
@@ -140,8 +125,8 @@
 			<div ng-hide="!clients.length" ng-cloak>
 				<ul>
 					<li class="bottom-margin-small" ng-repeat='client in clients'>
-						<div class="pull-right" style="right: 145px; top: 20px; width: 15px;"><a href="#" ng-click="viewDetails($index)" class="grey">details</a></div>
-						<div class="pull-right" style="right: 145px; top: 20px; width: 15px;"><a href="#" ng-click="editClient($index)" class="btn-update  display-inline"></a></div>
+						<div class="pull-right" style="right: 145px; top: 20px; width: 15px; margin-right:5px;"><a href="#" ng-click="viewDetails($index)" class="icon-zoom-in blue"></a></div>
+						<div class="pull-right" style="right: 145px; top: 20px; width: 15px; margin-right:5px;"><a href="#" ng-click="editClient($index)" class="icon-pencil  blue"></a></div>
 						<div style="width: 530px;">
 							<span><strong><@orcid.msg 'manage_clients.client_id'/>:</strong>{{client.clientId}}</span><br />
 			                <span><strong><@orcid.msg 'manage_clients.display_name'/>:</strong>{{client.displayName}}</span><br />	                
