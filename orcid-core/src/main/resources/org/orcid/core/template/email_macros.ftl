@@ -16,16 +16,10 @@
     =============================================================================
 
 -->
-<#import "email_macros.ftl" as emailMacros />
-<@emailMacros.msg "email.common.dear" /> ${emailName}<@emailMacros.msg "email.common.dear.comma" />
 
-<@emailMacros.msg "email.amend.thought_you.1" /> ${amenderName} <@emailMacros.msg "email.amend.thought_you.2" />
 
-<@emailMacros.msg "email.amend.please_click" />
+<#--
+	Make is easy to get properties.
+-->
+<#macro msg key, htmlEscape=false>${messages.getMessage(key ,messageArgs, locale)}</#macro>
 
-    ${baseUri}/my-orcid
-
-<@emailMacros.msg "email.common.kind_regards" />
-${baseUri}
-
-<@emailMacros.msg "email.common.you_have_received_this_email_opt_out" />
