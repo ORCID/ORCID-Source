@@ -24,21 +24,13 @@
     <div class="span9">
     	<span class="page-header"><@orcid.msg 'statistics.header'/>
     	</span>
-    	<hr>
-	
-		<span class="stat-name"><@orcid.msg 'statistics.statistics_generation_date_label'/>&nbsp;<#if (statistics_date)??>${statistics_date}<#else>NA</#if></span>
+		
 		<hr>
 		
         <span class="stat-name"><@orcid.msg 'statistics.live_ids'/></span>
 		<div class="pull-right">
 	        <#if statistics['liveIds']??>${statistics['liveIds']}<#else>Calculating</#if>
 	    </div>
-  		<hr>        
-        
-        <span class="stat-name"><@orcid.msg 'statistics.ids_with_verified_emails'/></span>
-  		<div class="pull-right">
-	        <#if statistics['idsWithVerifiedEmail']??>${statistics['idsWithVerifiedEmail']}<#else>Calculating</#if>
-		</div>  		
   		<hr>
   		        
 		<span class="stat-name"><@orcid.msg 'statistics.ids_with_works'/></span>
@@ -58,6 +50,7 @@
 	        <#if statistics['worksWithDois']??>${statistics['worksWithDois']}<#else>Calculating</#if>
 		</div>
   		<hr>
+  		<span class="stat-date"><@orcid.msg 'statistics.statistics_generation_date_label'/>&nbsp;<#if (statistics_date)??>${statistics_date}<#else>NA</#if></span>
     </div>
 </div>
 </#escape>

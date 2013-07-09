@@ -29,7 +29,7 @@
 			<h1 id="account-settings">${springMacroRequestContext.getMessage("manage.account_settings")}</h1>
 			<#assign open = "" />
 			
-			<table class="table table-bordered settings-table" id="ng-app" ng-app="orcidApp" ng-controller="EditTableCtrl" style="margin: 0px, padding: 0px;">
+			<table class="table table-bordered settings-table" id="ng-app" ng-controller="EditTableCtrl" style="margin: 0px, padding: 0px;">
 				<tbody>
 					<tr>
 						<th>${springMacroRequestContext.getMessage("public_profile.h3PersonalInformation")}</th>

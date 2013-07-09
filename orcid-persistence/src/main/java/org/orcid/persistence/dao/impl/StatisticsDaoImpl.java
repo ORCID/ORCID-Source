@@ -123,7 +123,7 @@ public class StatisticsDaoImpl implements StatisticsDao {
     @Transactional
     public StatisticValuesEntity getStatistic(long id, String name) {
         TypedQuery<StatisticValuesEntity> query = entityManager
-                .createQuery("FROM StatisticValuesEntity WHERE key.id = :id AND name = :name", StatisticValuesEntity.class);
+                .createQuery("FROM StatisticValuesEntity WHERE key.id = :id AND statisticName = :name", StatisticValuesEntity.class);
         query.setParameter("id", id);
         query.setParameter("name", name);
         List<StatisticValuesEntity> results = query.getResultList();
