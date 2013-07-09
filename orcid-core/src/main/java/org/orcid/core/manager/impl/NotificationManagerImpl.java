@@ -349,6 +349,7 @@ public class NotificationManagerImpl implements NotificationManager {
             templateParams.put("grantingOrcidValue", orcidUserGrantingPermission.getOrcid().getValue());
             templateParams.put("grantingOrcidName", deriveEmailFriendlyName(orcidUserGrantingPermission));
             templateParams.put("baseUri", baseUri);
+            // templateParams.put("grantingOrcidEmail", grantingOrcidEmail);
             
             addMessageParams(templateParams);
             
@@ -380,6 +381,9 @@ public class NotificationManagerImpl implements NotificationManager {
         templateParams.put("newEmail", updatedProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue());
         templateParams.put("orcid", updatedProfile.getOrcid().getValue());
         templateParams.put("baseUri", baseUri);
+        
+        addMessageParams(templateParams);
+        
         // Generate body from template
         String body = templateManager.processTemplate("email_removed.ftl", templateParams);
         // Create email message
@@ -399,6 +403,9 @@ public class NotificationManagerImpl implements NotificationManager {
         templateParams.put("baseUri", baseUri);
         String verificationUrl = createClaimVerificationUrl(createdProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue(), baseUri);
         templateParams.put("verificationUrl", verificationUrl);
+        
+        addMessageParams(templateParams);
+        
         // Generate body from template
         String body = templateManager.processTemplate("api_record_creation_email.ftl", templateParams);
         // Create email message
