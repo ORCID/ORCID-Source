@@ -411,13 +411,20 @@ public class WorkspaceController extends BaseWorkspaceController {
         
         workCitationValidate(work);
         workWorkTitleTitleValidate(work);
+        workWorkTitleSubtitleValidate(work);
+        workdescriptionValidate(work);
         workWorkTypeValidate(work);
         workWorkExternalIdentifiersValidate(work);
+        workUrlValidate(work);
         
         copyErrors(work.getCitation().getCitation(), work);
         copyErrors(work.getCitation().getCitationType(), work);
         copyErrors(work.getWorkTitle().getTitle(), work);
+        copyErrors(work.getShortDescription(), work);
+        copyErrors(work.getWorkTitle().getSubtitle(), work);
         copyErrors(work.getWorkType(), work);
+        copyErrors(work.getUrl(), work);
+        
         for (WorkExternalIdentifier wId:work.getWorkExternalIdentifiers()) {
             copyErrors(wId.getWorkExternalIdentifierId(), work);
             copyErrors(wId.getWorkExternalIdentifierType(), work);
@@ -437,18 +444,58 @@ public class WorkspaceController extends BaseWorkspaceController {
         return work;
     }
 
+    
     @RequestMapping(value = "/work/workTitle/titleValidate.json", method = RequestMethod.POST)
     public @ResponseBody
     Work workWorkTitleTitleValidate(@RequestBody Work work) {
         work.getWorkTitle().getTitle().setErrors(new ArrayList<String>());
         if (work.getWorkTitle().getTitle().getValue() == null || work.getWorkTitle().getTitle().getValue().trim().length() == 0) {
             setError(work.getWorkTitle().getTitle(), "NotBlank.manualWork.title");
+        } else {
+            if (work.getWorkTitle().getTitle().getValue().trim().length() > 1000) {
+                setError(work.getWorkTitle().getTitle(), "manualWork.length_less_1000");
+            }
         }
-
         return work;
     }
 
     
+    @RequestMapping(value = "/work/workTitle/subtitleValidate.json", method = RequestMethod.POST)
+    public @ResponseBody
+    Work workWorkTitleSubtitleValidate(@RequestBody Work work) {
+        work.getWorkTitle().getSubtitle().setErrors(new ArrayList<String>());
+        if (work.getWorkTitle().getSubtitle().getValue() != null 
+                && work.getWorkTitle().getSubtitle().getValue().length() > 1000) {
+            setError(work.getWorkTitle().getSubtitle(), "manualWork.length_less_1000");
+        }
+        return work;
+    }
+
+
+    @RequestMapping(value = "/work/urlValidate.json", method = RequestMethod.POST)
+    public @ResponseBody
+    Work workUrlValidate(@RequestBody Work work) {
+        work.getUrl().setErrors(new ArrayList<String>());
+        if (work.getUrl().getValue() != null 
+                && work.getUrl().getValue().length() > 350) {
+            setError(work.getUrl(), "manualWork.length_less_350");
+        }
+        return work;
+    }
+
+
+    @RequestMapping(value = "/work/descriptionValidate.json", method = RequestMethod.POST)
+    public @ResponseBody
+    Work workdescriptionValidate(@RequestBody Work work) {
+        work.getShortDescription().setErrors(new ArrayList<String>());
+        if (work.getShortDescription().getValue() != null 
+                && work.getShortDescription().getValue().length() > 5000) {
+            setError(work.getShortDescription(), "manualWork.length_less_5000");
+        }
+        return work;
+    }
+
+
     @RequestMapping(value = "/work/workTypeValidate.json", method = RequestMethod.POST)
     public @ResponseBody
     Work workWorkTypeValidate(@RequestBody Work work) {
@@ -459,6 +506,7 @@ public class WorkspaceController extends BaseWorkspaceController {
 
         return work;
     }
+    
 
 
     @RequestMapping(value = "/work/workExternalIdentifiersValidate.json", method = RequestMethod.POST)
@@ -473,6 +521,9 @@ public class WorkspaceController extends BaseWorkspaceController {
                     && (wId.getWorkExternalIdentifierType().getValue() == null
                         || wId.getWorkExternalIdentifierType().getValue().equals(""))) {
                 setError(wId.getWorkExternalIdentifierType(), "NotBlank.currentWorkExternalIds.idType"); 
+            } else if (wId.getWorkExternalIdentifierId().getValue() != null 
+                    && wId.getWorkExternalIdentifierId().getValue().length() > 2084) {
+                setError(wId.getWorkExternalIdentifierId(), "manualWork.length_less_2084");
             }
             // if type is set a id must set
             if (wId.getWorkExternalIdentifierType().getValue() != null
