@@ -16,24 +16,18 @@
     =============================================================================
 
 -->
-Dear ${emailName},
+<#import "email_macros.ftl" as emailMacros />
+<@emailMacros.msg "email.common.dear" /> ${emailName}<@emailMacros.msg "email.common.dear.comma" />
 
-We're just sending a quick reminder to verify the primary email address that 
-you set on your ORCID Account last week. Doing so will help us to maintain the 
-accuracy and security of your information. To help us in this effort, please 
-click on the link below (or paste it into your browser), and then sign into your 
-ORCID account. 
+<@emailMacros.msg "email.verify_reminder" />
 
 ${verificationUrl}
 
-DID YOU KNOW?
-The ORCID Registry has new releases often, sometimes weekly! Keep up-to-date on 
-the latest at our blog ${baseUri}/about/news.
+<@emailMacros.msg "email.common.did_you_know" />${baseUri}/about/news
 
-Regards,
-The ORCID Team
-support@orcid.org
+<@emailMacros.msg "email.common.if_you_have_any" />
+
+<@emailMacros.msg "email.common.kind_regards" />
 ${baseUri}
 
-You have received this email as a service announcement related to your 
-ORCID Account.
+<@emailMacros.msg "email.common.you_have_received_this_email" />

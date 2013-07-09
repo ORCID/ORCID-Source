@@ -23,8 +23,10 @@ import java.text.MessageFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
+import java.util.ResourceBundle;
 
 import javax.annotation.Resource;
 import javax.xml.datatype.XMLGregorianCalendar;
@@ -50,9 +52,11 @@ import org.orcid.persistence.jpa.entities.ProfileEventEntity;
 import org.orcid.persistence.jpa.entities.ProfileEventType;
 import org.orcid.persistence.jpa.entities.SecurityQuestionEntity;
 import org.orcid.utils.DateUtils;
+import org.orcid.utils.UTF8Control;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Required;
+import org.springframework.context.MessageSource;
 import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
 
@@ -60,7 +64,12 @@ import org.springframework.mail.SimpleMailMessage;
  * @author Will Simpson
  */
 public class NotificationManagerImpl implements NotificationManager {
+    
+    //ResourceBundle resources = ResourceBundle.getBundle("i18n/email", new Locale("en"), new UTF8Control());
 
+    @Resource
+    private MessageSource messages;
+    
     private MailSender mailSender;
 
     private String fromAddress;
@@ -149,7 +158,7 @@ public class NotificationManagerImpl implements NotificationManager {
     @Override
     public void sendOrcidDeactivateEmail(OrcidProfile orcidToDeactivate, URI baseUri) {
         // Create verification url
-
+        
         Map<String, Object> templateParams = new HashMap<String, Object>();
 
         String emailFriendlyName = deriveEmailFriendlyName(orcidToDeactivate);
@@ -158,6 +167,8 @@ public class NotificationManagerImpl implements NotificationManager {
         templateParams.put("baseUri", baseUri);
         templateParams.put("deactivateUrlEndpoint", "/account/confirm-deactivate-orcid");
 
+        addMessageParams(templateParams);
+        
         // Generate body from template
         String body = templateManager.processTemplate("deactivate_orcid_email.ftl", templateParams);
         // Create email message
@@ -170,6 +181,9 @@ public class NotificationManagerImpl implements NotificationManager {
         sendAndLogMessage(message);
     }
 
+    
+    // looka like the following is our best best for i18n emails
+    // http://stackoverflow.com/questions/9605828/email-internationalization-using-velocity-freemarker-templates
     public void sendVerificationEmail(OrcidProfile orcidProfile, URI baseUri, String email) {
         Map<String, Object> templateParams = new HashMap<String, Object>();
 
@@ -179,6 +193,9 @@ public class NotificationManagerImpl implements NotificationManager {
         templateParams.put("verificationUrl", verificationUrl);
         templateParams.put("orcid", orcidProfile.getOrcid().getValue());
         templateParams.put("baseUri", baseUri);
+      
+        addMessageParams(templateParams);
+
         // Generate body from template
         String body = templateManager.processTemplate("verification_email.ftl", templateParams);
         // Create email message
@@ -191,6 +208,13 @@ public class NotificationManagerImpl implements NotificationManager {
         sendAndLogMessage(message);
     }
 
+    private void addMessageParams(Map<String, Object> templateParams) {
+        // ${messages.getMessage($key,$messageArgs,$locale)} 
+        templateParams.put("messages", this.messages);
+        templateParams.put("messageArgs", new Object[0]);
+        templateParams.put("locale",  new Locale("en"));
+    }
+
     public void sendVerificationReminderEmail(OrcidProfile orcidProfile, URI baseUri, String email) {
         Map<String, Object> templateParams = new HashMap<String, Object>();
 
@@ -200,6 +224,9 @@ public class NotificationManagerImpl implements NotificationManager {
         templateParams.put("verificationUrl", verificationUrl);
         templateParams.put("orcid", orcidProfile.getOrcid().getValue());
         templateParams.put("baseUri", baseUri);
+        
+        addMessageParams(templateParams);
+        
         // Generate body from template
         String body = templateManager.processTemplate("verification_reminder_email.ftl", templateParams);
         // Create email message
@@ -240,6 +267,9 @@ public class NotificationManagerImpl implements NotificationManager {
         // Generate body from template
         String resetUrl = createResetEmail(orcidProfile, baseUri);
         templateParams.put("passwordResetUrl", resetUrl);
+        
+        addMessageParams(templateParams);
+        
         String body = templateManager.processTemplate("reset_password_email.ftl", templateParams);
 
         // Create email message
@@ -278,6 +308,9 @@ public class NotificationManagerImpl implements NotificationManager {
         templateParams.put("orcid", amendedProfile.getOrcid().getValue());
         templateParams.put("amenderName", extractAmenderName(amendedProfile, amenderOrcid));
         templateParams.put("baseUri", baseUri);
+        
+        addMessageParams(templateParams);
+        
         // Generate body from template
         String body = templateManager.processTemplate("amend_email.ftl", templateParams);
         // Create email message
@@ -317,6 +350,9 @@ public class NotificationManagerImpl implements NotificationManager {
             templateParams.put("grantingOrcidName", deriveEmailFriendlyName(orcidUserGrantingPermission));
             templateParams.put("baseUri", baseUri);
             // templateParams.put("grantingOrcidEmail", grantingOrcidEmail);
+            
+            addMessageParams(templateParams);
+            
             String body = templateManager.processTemplate("added_as_delegate_email.ftl", templateParams);
             String toAddress = orcidUserGrantingPermission.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue();
             message.setTo(toAddress);
@@ -345,6 +381,9 @@ public class NotificationManagerImpl implements NotificationManager {
         templateParams.put("newEmail", updatedProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue());
         templateParams.put("orcid", updatedProfile.getOrcid().getValue());
         templateParams.put("baseUri", baseUri);
+        
+        addMessageParams(templateParams);
+        
         // Generate body from template
         String body = templateManager.processTemplate("email_removed.ftl", templateParams);
         // Create email message
@@ -364,6 +403,9 @@ public class NotificationManagerImpl implements NotificationManager {
         templateParams.put("baseUri", baseUri);
         String verificationUrl = createClaimVerificationUrl(createdProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue(), baseUri);
         templateParams.put("verificationUrl", verificationUrl);
+        
+        addMessageParams(templateParams);
+        
         // Generate body from template
         String body = templateManager.processTemplate("api_record_creation_email.ftl", templateParams);
         // Create email message
@@ -398,6 +440,9 @@ public class NotificationManagerImpl implements NotificationManager {
         }
         String verificationUrl = createClaimVerificationUrl(primaryEmail.getValue(), baseUri);
         templateParams.put("verificationUrl", verificationUrl);
+        
+        addMessageParams(templateParams);
+        
         // Generate body from template
         String body = templateManager.processTemplate("claim_reminder_email.ftl", templateParams);
         // Create email message
