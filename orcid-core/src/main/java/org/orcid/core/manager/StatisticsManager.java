@@ -59,6 +59,14 @@ public interface StatisticsManager {
     public List<StatisticValuesEntity> getLatestStatistics();
     
     /**
+     * Get the the latest statistics value for the statistics name parameter
+     * @param statisticName
+     * @return the latest statistics value for the statistics name parameter
+     * */
+    public StatisticValuesEntity getLatestStatistics(String statisticName);
+    
+    
+    /**
      * Get the last statistics key
      * 
      * @return the last statistics key

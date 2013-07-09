@@ -17,7 +17,7 @@
 
 -->
 <@public classes=['home']>
-<div class="row-fluid" id="ng-app" ng-app="orcidApp" data-search-query-url="${searchQueryUrl}">
+<div class="row-fluid" id="ng-app" data-search-query-url="${searchQueryUrl}">
     <div class="row">
         <div class="span12">
             <div ng-controller="QuickSearchCtrl">

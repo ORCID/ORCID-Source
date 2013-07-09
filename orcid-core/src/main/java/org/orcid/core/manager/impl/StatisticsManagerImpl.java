@@ -86,6 +86,20 @@ public class StatisticsManagerImpl implements StatisticsManager {
     }
     
     /**
+     * Get the the latest statistics value for the statistics name parameter
+     * @param statisticName
+     * @return the latest statistics value for the statistics name parameter
+     * */
+    public StatisticValuesEntity getLatestStatistics(String statisticName){
+        StatisticKeyEntity latestKey = statisticsDao.getLatestKey();
+        if(latestKey != null)
+            return statisticsDao.getStatistic(latestKey.getId(), statisticName);
+        return null;
+    }
+    
+    
+    
+    /**
      * Get the last statistics key
      * 
      * @return the last statistics key
