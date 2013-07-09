@@ -922,8 +922,20 @@ function ClaimThanks($scope, $compile) {
 	
 };
 
+function PersonalInfoCtrl($scope, $compile){
+	$scope.displayInfo = true;
+	$scope.toggleDisplayInfo = function () {
+		$scope.displayInfo = !$scope.displayInfo;
+	};
+};
+
 function WorkCtrl($scope, $compile){
+	$scope.displayWorks = true;
 	$scope.works = new Array();
+	
+	$scope.toggleDisplayWorks = function () {
+		$scope.displayWorks = !$scope.displayWorks;
+	};
 	
 	$scope.showAddModal = function(){;
 	    $.colorbox({        	
