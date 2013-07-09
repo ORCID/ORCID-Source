@@ -56,6 +56,7 @@ import org.orcid.pojo.ajaxForm.Date;
 import org.orcid.pojo.ajaxForm.ErrorsInterface;
 import org.orcid.pojo.ajaxForm.Registration;
 import org.orcid.pojo.ajaxForm.Text;
+import org.orcid.pojo.ajaxForm.Visibility;
 import org.orcid.pojo.ajaxForm.Work;
 import org.orcid.pojo.ajaxForm.WorkExternalIdentifier;
 import org.orcid.pojo.ajaxForm.WorkTitle;
@@ -394,8 +395,11 @@ public class WorkspaceController extends BaseWorkspaceController {
         w.setContributors(contrList);
         
         Text disText= new Text();
-        
         w.setShortDescription(disText);
+        
+        OrcidProfile profile = getCurrentUser().getEffectiveProfile();
+        Visibility v = Visibility.valueOf(profile.getOrcidInternal().getPreferences().getWorkVisibilityDefault().getValue());
+        w.setVisibility(v);
         
         return w;
     }

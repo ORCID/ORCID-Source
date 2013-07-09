@@ -922,8 +922,20 @@ function ClaimThanks($scope, $compile) {
 	
 };
 
+function PersonalInfoCtrl($scope, $compile){
+	$scope.displayInfo = true;
+	$scope.toggleDisplayInfo = function () {
+		$scope.displayInfo = !$scope.displayInfo;
+	};
+};
+
 function WorkCtrl($scope, $compile){
+	$scope.displayWorks = true;
 	$scope.works = new Array();
+	
+	$scope.toggleDisplayWorks = function () {
+		$scope.displayWorks = !$scope.displayWorks;
+	};
 	
 	$scope.showAddModal = function(){;
 	    $.colorbox({        	
@@ -1071,6 +1083,13 @@ function WorkCtrl($scope, $compile){
 	    	console.log("Error deleting work.");
 	    });
 	};
+
+	$scope.setAddWorkPrivacy = function(priv, $event) {
+		$event.preventDefault();
+		$scope.editWork.visibility.visibility = priv;
+	};
+
+	
 		
 	$scope.setPrivacy = function(idx, priv, $event) {
 		$event.preventDefault();
