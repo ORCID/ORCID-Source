@@ -316,7 +316,12 @@
 						</span>
 					</div>
 				</div>
-		 
+		 		
+		 		<div class="control-group">
+		 			<label class="relative"><@orcid.msg 'privacyToggle.help.who_can_see'/></label>
+		 				<@orcid.privacyToggle "editWork.visibility.visibility" "setAddWorkPrivacy('PUBLIC', $event)" 
+		                    	  "setAddWorkPrivacy('LIMITED', $event)" "setAddWorkPrivacy('PRIVATE', $event)" />
+		 		</div>
 			</div>
 			
 			<div class="span6">
@@ -352,7 +357,6 @@
 						</span>
 					</div>
 				</div>
-				
 		    	
 		   		<div class="control-group" ng-repeat="workExternalIdentifier in editWork.workExternalIdentifiers">
 					<label><@orcid.msg 'manual_work_form_contents.labelID'/></label>
@@ -374,6 +378,7 @@
 						</span>
 					</div>	
 				</div>
+				
 				<div class="control-group">
 		    		<label class="relative"><@orcid.msg 'manual_work_form_contents.labelURL'/></label>
 		    		<div class="relative">

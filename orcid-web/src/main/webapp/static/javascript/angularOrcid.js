@@ -1071,6 +1071,13 @@ function WorkCtrl($scope, $compile){
 	    	console.log("Error deleting work.");
 	    });
 	};
+
+	$scope.setAddWorkPrivacy = function(priv, $event) {
+		$event.preventDefault();
+		$scope.editWork.visibility.visibility = priv;
+	};
+
+	
 		
 	$scope.setPrivacy = function(idx, priv, $event) {
 		$event.preventDefault();
