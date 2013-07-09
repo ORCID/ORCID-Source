@@ -16,48 +16,28 @@
     =============================================================================
 
 -->
-Dear ${emailName},
+<#import "email_macros.ftl" as emailMacros />
+<@emailMacros.msg "email.common.dear" /> ${emailName}<@emailMacros.msg "email.common.dear.comma" />
 
-${creatorName} created an ORCID Account for you. 
-This account provides you with a unique research identifier (an ORCID iD) that you 
-can use in your publications and grants, and a place (an ORCID Record) to list 
-information about your professional research activities.
+<@emailMacros.msg "email.api_record_creation.creaded_an_account.1" />${creatorName}<@emailMacros.msg "email.api_record_creation.creaded_an_account.2" />
 
-WAHT DO YOU NEED TO DO?
+<@emailMacros.msg "email.api_record_creation.what" />
 
-Within the next 10 days, please review the information that ${creatorName} entered 
-as a courtesy on your behalf. Once you have logged in the first time, your account 
-will become active, and you will have complete control over the privacy of your 
-record and the information it contains. To review your record and make changes, 
-click your unique link below, or copy and paste it into your browser:
+<@emailMacros.msg "email.api_record_creation.within" />
 
 ${verificationUrl}
 
-WHAT HAPPENS IF YOU DO NOTHING?
+<@emailMacros.msg "email.api_record_creation.what_happens" />
 
-If you take no action, your account will become active after the 10-day period. When 
-your account becomes active, any information ${creatorName} may have marked as 
-"viewable by all" will be viewable in the ORCID Registry and freely available to 
-the public.
+<@emailMacros.msg "email.api_record_creation.if_you_take_no.1" />${creatorName}<@emailMacros.msg "email.api_record_creation.if_you_take_no.2" />
 
-WHAT IS ORCID?
+<@emailMacros.msg "email.api_record_creation.what_is_orcid" />
 
-Launched in October 2013, the ORCID Registry contains unique identifiers (ORCID iDs) 
-for researchers and scholars. Many publishers and granting agencies have started to 
-ask for ORCID iDs with submissions to better link researchers with their research 
-activities. ORCID iD holders control what is in the Records and who can see this 
-information. Learn more about ORCID at ${baseUri}.
+<@emailMacros.msg "email.api_record_creation.launched.1" />${baseUri}<@emailMacros.msg "email.api_record_creation.launched.2" />
 
-Read ORCID's Privacy Policy at ${baseUri}/privacy-policy.
-Get help or ask questions by emailing support@orcid.org or visiting 
-http://support.orcid.org
+<@emailMacros.msg "email.api_record_creation.read_privacy.1" />${baseUri}<@emailMacros.msg "email.api_record_creation.read_privacy.1" />
 
-Kind Regards,
-The ORCID Team
-support@orcid.org
+<@emailMacros.msg "email.common.kind_regards" />
 ${baseUri}
 
-You have received this email as a service announcement related to your ORCID Account.
-To opt-out of messages from ORCID please go to your Account Settings page at 
-${baseUri}/account. You'll need to sign-in to your Account for the first 
-time before you can take this action.
+<@emailMacros.msg "email.api_record_creation.you_have_received.1" />${baseUri}<@emailMacros.msg "email.api_record_creation.you_have_received.2" />
