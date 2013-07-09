@@ -343,7 +343,7 @@
 						</#list>
 		    		</select>
 		
-				    <select id="year" name="month" ng-model="editWork.publicationDate.year" class="span1">
+				    <select id="year" name="month" ng-model="editWork.publicationDate.year" class="span2">
 						<#list years?keys as key>
 							<option value="${key}">${years[key]}</option>
 						</#list>
