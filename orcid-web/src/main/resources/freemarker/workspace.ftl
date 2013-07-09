@@ -329,7 +329,7 @@
 			
 			<div class="span6">
 		 		<div class="control-group">
-		    		<label class="relative" for="manualWork.day">Pub Date</label>
+		    		<label class="relative" for="manualWork.day"><@orcid.msg 'manual_work_form_contents.labelPubDate'/></label>
 		    		<div class="relative">
 				    <select id="day" name="day" ng-model="editWork.publicationDate.day" class="span1">
 						<#list days?keys as key>
