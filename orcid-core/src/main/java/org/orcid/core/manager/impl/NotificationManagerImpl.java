@@ -440,6 +440,9 @@ public class NotificationManagerImpl implements NotificationManager {
         }
         String verificationUrl = createClaimVerificationUrl(primaryEmail.getValue(), baseUri);
         templateParams.put("verificationUrl", verificationUrl);
+        
+        addMessageParams(templateParams);
+        
         // Generate body from template
         String body = templateManager.processTemplate("claim_reminder_email.ftl", templateParams);
         // Create email message
