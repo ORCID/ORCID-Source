@@ -291,6 +291,8 @@ public class WorkspaceController extends BaseWorkspaceController {
     @RequestMapping(value = "/works.json", method = RequestMethod.DELETE)
     public @ResponseBody
     Work removeWorkJson(HttpServletRequest request, @RequestBody Work work) {
+        OrcidWork delWork = work.toOrcidWork();
+         
         //Get cached profile
         OrcidProfile currentProfile = getCurrentUser().getEffectiveProfile();
         OrcidWorks works = currentProfile.getOrcidActivities() == null ? null : currentProfile.getOrcidActivities().getOrcidWorks();
@@ -300,7 +302,7 @@ public class WorkspaceController extends BaseWorkspaceController {
             Iterator<OrcidWork> workIterator = workList.iterator();
             while (workIterator.hasNext()) {
                 OrcidWork orcidWork = workIterator.next();
-                if (work.equals(orcidWork)) {
+                if (delWork.equals(orcidWork)) {
                     workIterator.remove();
                     deletedWork = work;
                 }
