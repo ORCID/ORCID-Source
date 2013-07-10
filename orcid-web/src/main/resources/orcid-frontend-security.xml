@@ -71,8 +71,6 @@
 	<sec:http pattern="/error" security="none" />
 	<sec:http pattern="/not-found" security="none" />
 	<sec:http pattern="/favicon.ico" security="none" />
-	<sec:http pattern="/statistics/liveids.json" security="none" />
-	<sec:http pattern="/statistics/public" security="none" />
 	<sec:http pattern="/static/**" security="none" />
 
 	<sec:http pattern="/oauth/.*" access-denied-page="/oauth/signin"
@@ -96,6 +94,11 @@
 	<sec:http access-denied-page="/signin"
 		access-decision-manager-ref="accessDecisionManager" create-session="ifRequired"
 		path-type="regex">
+		<sec:intercept-url pattern="/statistics/liveids.json(\?.*)?"
+			access="IS_AUTHENTICATED_ANONYMOUSLY" />
+		<sec:intercept-url pattern="/statistics(/)?$"
+			access="IS_AUTHENTICATED_ANONYMOUSLY" />
+
 		<sec:intercept-url pattern="/(\d{4}-){3,}\d{3}[\dX](\?.*)?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/lang.json(.*)?"
