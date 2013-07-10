@@ -127,12 +127,7 @@
                     
                 </div>
             </div>
-            <@security.authorize ifNotGranted="ROLE_USER">
-				<span ng-controller="statisticCtrl" class="see-more ng-cloak">{{liveIds|number}} <@orcid.msg 'public-layout.amount_ids'/> <a href="<@spring.url "/statistics/public" />" title=""><@orcid.msg 'public-layout.see_more'/></a></span>
-			</@security.authorize>            
-			<@security.authorize ifAnyGranted="ROLE_USER">
-				<span ng-controller="statisticCtrl" class="see-more ng-cloak">{{liveIds|number}} <@orcid.msg 'public-layout.amount_ids'/> <a href="<@spring.url "/statistics" />" title=""><@orcid.msg 'public-layout.see_more'/></a></span>
-			</@security.authorize>
+			<span ng-controller="statisticCtrl" class="see-more ng-cloak">{{liveIds|number}} <@orcid.msg 'public-layout.amount_ids'/> <a href="<@spring.url "/statistics" />" title=""><@orcid.msg 'public-layout.see_more'/></a></span>
         </div>
         
         <#include '../common/maintenance_header.ftl'/>
