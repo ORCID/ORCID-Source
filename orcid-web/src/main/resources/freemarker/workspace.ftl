@@ -155,9 +155,10 @@
         	<div class="workspace-accordion" id="workspace-accordion">
         	
         	   <div id="workspace-personal" class="workspace-accordion-item workspace-accordion-active" ng-controller="PersonalInfoCtrl">
-        			<div class="workspace-accordion-header">
-        			   <a href="" ng-click="toggleDisplayInfo()"><@orcid.msg 'workspace.personal_information'/>
-        			       <i class="icon-collapse" ng-class="{'icon-collapse-top':displayInfo==false}"></i></a>
+        			<div class="workspace-accordion-header" style="position: relative;">
+        			   <a href="" ng-click="toggleDisplayInfo()"><@orcid.msg 'workspace.personal_information'/></a> 
+        			   <a href="" ng-click="toggleDisplayInfo()" style="position: absolute; right: 15px; top: -15px; color: #338caf;">
+        			       <i class="icon-caret-down icon-2x" ng-class="{'icon-caret-left':displayInfo==false}"></i></a>
         			   </a> 
         			   <#if RequestParameters['addWorks']??>
         			   	   <a href="<@spring.url '/account/manage-bio-settings'/>" id="upate-personal-modal-link" class="label btn-primary"><@orcid.msg 'workspace.Update'/></a>
@@ -178,12 +179,14 @@
                 
                 <div id="workspace-publications" style="position: relative;" class="workspace-accordion-item workspace-accordion-active" ng-controller="WorkCtrl">
                 	<div class="workspace-accordion-header">
-        				<a href="" ng-click="toggleDisplayWorks()"><@orcid.msg 'workspace.Works'/>
-        				<i class="icon-collapse" ng-class="{'icon-collapse-top':displayWorks==false}"></i></a>
+        				<a href="" ng-click="toggleDisplayWorks()"><@orcid.msg 'workspace.Works'/></a>
 						<#if RequestParameters['addWorks']??>
 							<a href="#third-parties" class="colorbox-modal label btn-primary"><@orcid.msg 'workspace.import_works'/></a>
 							<a href="" class="label btn-primary" ng-click="addWorkModal()"><@orcid.msg 'manual_work_form_contents.add_work_manually'/></a>
 						</#if>
+						<a href="" ng-click="toggleDisplayWorks()" style="position: absolute; right: 15px; top: -15px; color: #338caf;">
+        			       <i class="icon-caret-down icon-2x" ng-class="{'icon-caret-left':displayWorks==false}"></i></a>
+        			    </a> 
 					</div>
       	            <div ng-show="displayWorks" class="workspace-accordion-content">
 	            		<#include "workspace_works_body_list.ftl"/>
