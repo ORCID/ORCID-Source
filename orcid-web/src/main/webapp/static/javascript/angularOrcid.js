@@ -930,9 +930,10 @@ function PersonalInfoCtrl($scope, $compile){
 };
 
 function WorkCtrl($scope, $compile){
-	$scope.displayWorks = true;
-	$scope.works = new Array();
-	$scope.hasWorks = null;
+	$scope.displayWorks = true; // toggles work accordian
+	$scope.works = new Array(); // holds works
+	$scope.hasWorks = null; // true if user has works, false if they don't, null until we know
+	$scope.numOfWorksToLoad = 0; // keeps track of the number of works to load
 	
 	$scope.toggleDisplayWorks = function () {
 		$scope.displayWorks = !$scope.displayWorks;
@@ -1022,8 +1023,9 @@ function WorkCtrl($scope, $compile){
 	        dataType: 'json',
 	        success: function(data) {
 	        	$scope.worksToAddIds = data;
+	        	$scope.numOfWorksToLoad = data.length;
 	        	if (data.length > 0 ) { 
-	        		$scope.addWorkToScope();
+	        		$scope.addWorkToScope(); 
 	        		$scope.hasWorks = true;
 	        	} else {
 	        		$scope.hasWorks = false;
