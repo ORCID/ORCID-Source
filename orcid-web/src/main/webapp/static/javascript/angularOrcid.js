@@ -932,6 +932,7 @@ function PersonalInfoCtrl($scope, $compile){
 function WorkCtrl($scope, $compile){
 	$scope.displayWorks = true;
 	$scope.works = new Array();
+	$scope.hasWorks = null;
 	
 	$scope.toggleDisplayWorks = function () {
 		$scope.displayWorks = !$scope.displayWorks;
@@ -1013,6 +1014,7 @@ function WorkCtrl($scope, $compile){
 	$scope.getWorks = function() {
 		//clear out current works
 		$scope.worksToAddIds = null;
+		$scope.hasWorks = null;
 		$scope.works.length = 0;
 		//get work ids
 		$.ajax({
