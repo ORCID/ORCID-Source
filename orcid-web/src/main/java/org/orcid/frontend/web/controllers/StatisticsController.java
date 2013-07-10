@@ -66,11 +66,6 @@ public class StatisticsController extends BaseController {
         return mav;
     }
     
-    @RequestMapping(value = "/public")
-    public ModelAndView getPublicStatistics(){
-        return getStatistics();
-    }
-    
     /**
      * Formats the date when the statistic was added
      * */
