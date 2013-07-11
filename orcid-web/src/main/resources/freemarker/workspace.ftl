@@ -101,7 +101,7 @@
 	           		<br />          		
     	           	<div class="justify"><@orcid.msg 'workspace.ImportResearchActivities.description'/></div>
     	           	<br />    	           	
-    	           	<#list thirdPartiesForImport as thirdPartyDetails>
+    	           	<#list thirdPartiesForImport?sort_by("displayName") as thirdPartyDetails>
                         <#assign redirect = (thirdPartyDetails.redirectUris.redirectUri[0].value) >
                         <#assign predefScopes = (thirdPartyDetails.redirectUris.redirectUri[0].scopeAsSingleString) >
                         <strong><a class="third-party-colorbox" href="<@spring.url '/oauth/authorize?client_id=${thirdPartyDetails.clientId}&response_type=code&scope=${predefScopes}&redirect_uri=${redirect}'/>">${thirdPartyDetails.displayName}</a></strong><br />

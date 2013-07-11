@@ -1033,10 +1033,20 @@ function WorkCtrl($scope, $compile, worksService){
 	        dataType: 'json',
 	        success: function(data) {
 	        	$scope.worksToAddIds = data;
+<<<<<<< HEAD
 	        	$scope.numOfWorksToAdd = data.length;
 	 
 	        	if (data.length > 0 ) $scope.addWorkToScope();
 	        	$scope.$apply();
+=======
+	        	$scope.numOfWorksToLoad = data.length;
+	        	if (data.length > 0 ) { 
+	        		$scope.addWorkToScope(); 
+	        		$scope.hasWorks = true;
+	        	} else {
+	        		$scope.hasWorks = false;
+	        	}
+>>>>>>> master
 	        }
 		}).fail(function(){
 			// something bad is happening!
