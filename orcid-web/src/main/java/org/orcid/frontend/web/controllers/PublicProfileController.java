@@ -43,6 +43,7 @@ public class PublicProfileController extends BaseWorkspaceController {
             mav.addObject("currentWorks", currentWorks);
         }
         mav.addObject("profile", profile);
+        mav.addObject("baseUri",getBaseUri());
         return mav;
     }
 
