@@ -124,13 +124,8 @@
         <div class="workspace-right">
         	<div class="workspace-inner workspace-header">
                 <div class="alert alert-info"><strong><@orcid.msg 'workspace.addinformationaboutyou'/></strong></div>
-                <div class="workspace-overview">
-                    <a href="#workspace-affiliations" class="overview-count">${(profile.orcidBio.affiliations?size)!0}</a>
-                    <a href="#workspace-affiliations" class="overview-title"><@orcid.msg 'workspace_bio.Affiliations'/></a>
-                    <div><a target="_blank" href="http://support.orcid.org/forums/179657-coming-soon" class="btn-update no-icon"><@orcid.msg 'workspace.ComingSoon'/></a></div>
-                </div>
-        		<div class="workspace-overview">
-        			<a href="#workspace-publications" class="overview-count">${(profile.orcidActivities.orcidWorks.orcidWork?size)!0}</a>
+        		<div class="workspace-overview" id="works-overview" ng-controller="WorkOverviewCtrl">
+        			<a href="#workspace-publications" class="overview-count"><span ng-bind="works.length"></span></a>
         			<a href="#workspace-publications" class="overview-title"><@orcid.msg 'workspace.Works'/></a>
         			<#if RequestParameters['addWorks']??>
                     	<br />
@@ -139,6 +134,11 @@
                     	<div><a href="<@spring.url '/works-update'/>" class="btn-update"><@orcid.msg 'workspace.Update'/></a></div>
                    	</#if>
         		</div>
+                <div class="workspace-overview">
+                    <a href="#workspace-affiliations" class="overview-count">${(profile.orcidBio.affiliations?size)!0}</a>
+                    <a href="#workspace-affiliations" class="overview-title"><@orcid.msg 'workspace_bio.Affiliations'/></a>
+                    <div><a target="_blank" href="http://support.orcid.org/forums/179657-coming-soon" class="btn-update no-icon"><@orcid.msg 'workspace.ComingSoon'/></a></div>
+                </div>
         		<div class="workspace-overview">
         			<a href="#workspace-grants" class="overview-count">${(profile.orcidActivities.orcidGrants.orcidGrant?size)!0}</a>
         			<a href="#workspace-grants" class="overview-title"><@orcid.msg 'workspace.Grants'/></a>
@@ -155,10 +155,11 @@
         	<div class="workspace-accordion" id="workspace-accordion">
         	
         	   <div id="workspace-personal" class="workspace-accordion-item workspace-accordion-active" ng-controller="PersonalInfoCtrl">
-        			<div class="workspace-accordion-header">
-        			   <a href="" ng-click="toggleDisplayInfo()"><@orcid.msg 'workspace.personal_information'/>
-        			       <i class="icon-collapse" ng-class="{'icon-collapse-top':displayInfo==false}"></i></a>
+        			<div class="workspace-accordion-header" style="position: relative;">
+        			   <a href="" ng-click="toggleDisplayInfo()" style="color: #338caf;">
+        			       <i class="icon-caret-down" ng-class="{'icon-caret-right':displayInfo==false}"></i></a>
         			   </a> 
+        			   <a href="" ng-click="toggleDisplayInfo()"><@orcid.msg 'workspace.personal_information'/></a> 
         			   <#if RequestParameters['addWorks']??>
         			   	   <a href="<@spring.url '/account/manage-bio-settings'/>" id="upate-personal-modal-link" class="label btn-primary"><@orcid.msg 'workspace.Update'/></a>
         			   <#else>
@@ -170,16 +171,20 @@
         			</div>
             	</div>
             	
+            	<#--
         		<div id="workspace-affiliations" class="workspace-accordion-item${(!(profile.orcidBio.affiliations)?? || (profile.orcidBio.affiliations?size = 0))?string(" workspace-accordion-active", "")}">
                     <div class="workspace-accordion-header">
                     	<a href="#"><@orcid.msg 'workspace_bio.Affiliations'/></a>
                     </div>
                 </div>
+                -->
                 
                 <div id="workspace-publications" style="position: relative;" class="workspace-accordion-item workspace-accordion-active" ng-controller="WorkCtrl">
                 	<div class="workspace-accordion-header">
-        				<a href="" ng-click="toggleDisplayWorks()"><@orcid.msg 'workspace.Works'/>
-        				<i class="icon-collapse" ng-class="{'icon-collapse-top':displayWorks==false}"></i></a>
+        				<a href="" ng-click="toggleDisplayWorks()" style="color: #338caf;">
+        			       <i class="icon-caret-down icon" ng-class="{'icon-caret-right':displayWorks==false}"></i></a>
+        			    </a> 
+        				<a href="" ng-click="toggleDisplayWorks()"><@orcid.msg 'workspace.Works'/></a>
 						<#if RequestParameters['addWorks']??>
 							<a href="#third-parties" class="colorbox-modal label btn-primary"><@orcid.msg 'workspace.import_works'/></a>
 							<a href="" class="label btn-primary" ng-click="addWorkModal()"><@orcid.msg 'manual_work_form_contents.add_work_manually'/></a>
@@ -190,13 +195,15 @@
 	            	</div>
             	</div>
             	
-        		<div id="workspace-grants" class="workspace-accordion-item<#--${(!(profile.orcidActivities.orcidGrants)??)?string(" workspace-accordion-active", "")}-->">
+            	<#--
+        		<div id="workspace-grants" class="workspace-accordion-item">
         			<div class="workspace-accordion-header"><a href="#"><@orcid.msg 'workspace.Grants'/></a></div>
             	</div>
             	
-        		<div id="workspace-patents" class="workspace-accordion-item<#--${(!(profile.orcidActivities.orcidPatents)??)?string(" workspace-accordion-active", "")}-->">
+        		<div id="workspace-patents" class="workspace-accordion-item">
         			<div class="workspace-accordion-header"><a href="#"><@orcid.msg 'workspace.Patents'/></a></div>
             	</div>
+            	-->
             	
             </div>
         </div>
@@ -324,10 +331,7 @@
 						</span>
 					</div>
 				</div>
-		 		
-			</div>
-			
-			<div class="span6">
+
 		 		<div class="control-group">
 		    		<label class="relative" for="manualWork.day"><@orcid.msg 'manual_work_form_contents.labelPubDate'/></label>
 		    		<div class="relative">
@@ -350,6 +354,10 @@
 		    		</select>
 		    		</div>
 		    	</div>
+		 		
+			</div>
+			
+			<div class="span6">
 		    	
 		    	<div class="control-group">
 					<label><@orcid.msg 'manual_work_form_contents.labeldescription'/></label>
@@ -431,11 +439,14 @@
 			<div class="span6">
 			   &nbsp;
 			</div>
-			<div class="span3">
+			<div class="span2">
 				<button class="btn btn-primary" ng-click="addWork()" ng-disabled="addingWork" ng-class="{disabled:addingWork}"><@orcid.msg 'manual_work_form_contents.btnaddtolist'/></button> 
 				<a href="" ng-click="closeModal()"><@orcid.msg 'manage.deleteExternalIdentifier.cancel'/></a>
 			</div>
-			<div class="span3">
+			<div class="span4">
+				<span ng-show="addingWork">
+					<i class="icon-spinner icon-2x icon-spin  green"></i>
+				</span>
 				<span ng-show="editWork.errors.length > 0" class="alert" style>Please fix above errors</span>
 			</div>
 		</div>
