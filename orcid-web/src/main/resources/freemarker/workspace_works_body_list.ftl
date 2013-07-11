@@ -56,10 +56,10 @@
                 <div ng-show="work.citationForDisplay" class="citation {{work.workCitation.workCitationType.toLowerCase()}}" ng-bind-html-unsafe="work.citationForDisplay" style="width: 680px;"></div>
             </li>           
 	</ul>
-	<div ng-show="hasWorks==null || (hasWorks==true && works.length ==0)" class="text-center">
+	<div ng-show="numOfWorksToAdd==null || (numOfWorksToAdd > works.length)" class="text-center">
 	    <i class="icon-spinner icon-4x icon-spin  green"></i>
 	</div>
-    <div ng-show="hasWorks==false" class="alert alert-info" ng-cloak>
+    <div ng-show="numOfWorksToAdd==0" class="alert alert-info" ng-cloak>
         <strong><#if (publicProfile)?? && publicProfile == true>${springMacroRequestContext.getMessage("workspace_works_body_list.Nopublicationsaddedyet")}<#else>${springMacroRequestContext.getMessage("workspace_works_body_list.havenotaddedanyworks")} <a href="<@spring.url '/works-update'/>" class="update">${springMacroRequestContext.getMessage("workspace_works_body_list.addsomenow")}</a></#if></strong>
     </div>
     

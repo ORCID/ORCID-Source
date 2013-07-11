@@ -41,6 +41,7 @@ import org.orcid.jaxb.model.message.CitationType;
 import org.orcid.jaxb.model.message.ContributorRole;
 import org.orcid.jaxb.model.message.ExternalIdentifier;
 import org.orcid.jaxb.model.message.ExternalIdentifiers;
+import org.orcid.jaxb.model.message.OrcidActivities;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidWork;
 import org.orcid.jaxb.model.message.OrcidWorks;
@@ -440,6 +441,10 @@ public class WorkspaceController extends BaseWorkspaceController {
             OrcidWork newOw = work.toOrcidWork();
             // Why do we have to save all the works?
             OrcidProfile profile = getCurrentUser().getEffectiveProfile();
+            if (profile.getOrcidActivities() == null) 
+                profile.setOrcidActivities(new OrcidActivities());
+            if (profile.getOrcidActivities().getOrcidWorks() ==null)
+                profile.getOrcidActivities().setOrcidWorks(new OrcidWorks());
             List<OrcidWork> owList = profile.getOrcidActivities().getOrcidWorks().getOrcidWork();
             owList.add(newOw);
             profile.getOrcidActivities().getOrcidWorks().setOrcidWork(owList);

@@ -15,7 +15,9 @@
  * =============================================================================
  */
 
-var orcidNgModule = angular.module('orcidApp', []).directive('ngModelOnblur', function() {
+var orcidNgModule = angular.module('orcidApp', []);
+
+orcidNgModule.directive('ngModelOnblur', function() {
     return {
         restrict: 'A',
         require: 'ngModel',
@@ -39,6 +41,10 @@ var orcidNgModule = angular.module('orcidApp', []).directive('ngModelOnblur', fu
             });
         }
     };
+});
+
+orcidNgModule.factory("worksService", function () {
+	return {works: new Array()};
 });
 
 
@@ -929,10 +935,14 @@ function PersonalInfoCtrl($scope, $compile){
 	};
 };
 
-function WorkCtrl($scope, $compile){
+function WorkOverviewCtrl($scope, $compile, worksService){
+	$scope.works = worksService.works;
+}
+
+function WorkCtrl($scope, $compile, worksService){
 	$scope.displayWorks = true;
-	$scope.works = new Array();
-	$scope.hasWorks = null;
+	$scope.works = worksService.works;
+	$scope.numOfWorksToAdd = null;
 	
 	$scope.toggleDisplayWorks = function () {
 		$scope.displayWorks = !$scope.displayWorks;
@@ -965,6 +975,7 @@ function WorkCtrl($scope, $compile){
 	$scope.addWork = function(){
 		if ($scope.addingWork) return; // don't process if adding work
 		$scope.addingWork = true;
+		$scope.editWork.errors.length = 0;
 		$.ajax({
 			url: $('body').data('baseurl') + 'my-orcid/work.json',	        
 	        contentType: 'application/json;charset=UTF-8',
@@ -1014,7 +1025,7 @@ function WorkCtrl($scope, $compile){
 	$scope.getWorks = function() {
 		//clear out current works
 		$scope.worksToAddIds = null;
-		$scope.hasWorks = null;
+		$scope.numOfWorksToAdd = null;
 		$scope.works.length = 0;
 		//get work ids
 		$.ajax({
@@ -1022,12 +1033,10 @@ function WorkCtrl($scope, $compile){
 	        dataType: 'json',
 	        success: function(data) {
 	        	$scope.worksToAddIds = data;
-	        	if (data.length > 0 ) { 
-	        		$scope.addWorkToScope();
-	        		$scope.hasWorks = true;
-	        	} else {
-	        		$scope.hasWorks = false;
-	        	}
+	        	$scope.numOfWorksToAdd = data.length;
+	 
+	        	if (data.length > 0 ) $scope.addWorkToScope();
+	        	$scope.$apply();
 	        }
 		}).fail(function(){
 			// something bad is happening!
@@ -1060,6 +1069,7 @@ function WorkCtrl($scope, $compile){
 		$scope.removeWork(work);
 		// remove the work from the UI
     	$scope.works.splice($scope.deleteIndex, 1);
+    	$scope.numOfWorksToAdd--; // keep this number matching
     	// apply changes on scope
 		// close box
 		$.colorbox.close(); 
