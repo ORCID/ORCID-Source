@@ -20,10 +20,10 @@ import java.util.Locale;
 
 public enum LocaleEnum {
     en("English", "English", new Locale("en")),
-    es("Español", "Spanish", new Locale("xes")), // change to es when we go live
-    fr("Français", "French", new Locale("xfr")), // change to fr when when go live
-    zh_TW("中国传统", "Traditional Chinese", new Locale("xzh_TW")), // change to zh_TW when we go live
-    zh_CH("简体中文版","Simplified Chinese", new Locale("xzh_CN")); // change to xzh_CN when we go live
+    es("Español", "Spanish", new Locale("es")),
+    fr("Français", "French", new Locale("fr")),
+    zh_TW("中国传统", "Traditional Chinese", new Locale("zh_TW")),
+    zh_CH("简体中文版","Simplified Chinese", new Locale("zh_CN"));
     
     private String displayName;
     private String displayName_en;

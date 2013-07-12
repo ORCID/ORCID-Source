@@ -66,6 +66,7 @@ import org.orcid.jaxb.model.message.GrantExternalIdentifier;
 import org.orcid.jaxb.model.message.GrantSources;
 import org.orcid.jaxb.model.message.Keyword;
 import org.orcid.jaxb.model.message.Keywords;
+import org.orcid.jaxb.model.message.Locale;
 import org.orcid.jaxb.model.message.OrcidActivities;
 import org.orcid.jaxb.model.message.OrcidBio;
 import org.orcid.jaxb.model.message.OrcidGrant;
@@ -808,6 +809,8 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             }
             Preferences preferences = orcidInternal.getPreferences();
             if (preferences != null) {
+                if (preferences.getLocale() == null)
+                profileEntity.setLocale(Locale.EN.value());
                 profileEntity.setSendChangeNotifications(preferences.getSendChangeNotifications() == null ? null : preferences.getSendChangeNotifications().isValue());
                 profileEntity.setSendOrcidNews(preferences.getSendOrcidNews() == null ? null : preferences.getSendOrcidNews().isValue());
                 // Use the default value in the ProfileEntity class if work
