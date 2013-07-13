@@ -44,7 +44,10 @@ orcidNgModule.directive('ngModelOnblur', function() {
 });
 
 orcidNgModule.factory("worksSrvc", function () {
-	return {works: new Array()};
+	var serv = {
+			works: new Array()
+	}; 
+	return serv;
 });
 
 orcidNgModule.factory("prefsSrvc", function ($rootScope) {
@@ -72,6 +75,7 @@ orcidNgModule.factory("prefsSrvc", function ($rootScope) {
 			        dataType: 'json',
 			        success: function(data) {
 			        	serv.prefs = data;
+			        	$rootScope.$apply;
 			        }
 			    }).fail(function() { 
 			    	// something bad is happening!
