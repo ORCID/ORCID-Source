@@ -43,9 +43,49 @@ orcidNgModule.directive('ngModelOnblur', function() {
     };
 });
 
-orcidNgModule.factory("worksService", function () {
+orcidNgModule.factory("worksSrvc", function () {
 	return {works: new Array()};
 });
+
+orcidNgModule.factory("prefsSrvc", function ($rootScope) {
+	var serv = {
+			prefs: null,
+			getPrivacyPreferences: function() {
+				$.ajax({
+			        url: $('body').data('baseurl') + 'account/preferences.json',
+			        dataType: 'json',
+			        success: function(data) {
+			        	serv.prefs = data;
+			        	$rootScope.$apply;
+			        }
+			    }).fail(function() { 
+			    	// something bad is happening!
+			    	console.log("error with multi email");
+			    });
+			},
+			savePrivacyPreferences: function() {
+				$.ajax({
+			        url: $('body').data('baseurl') + 'account/preferences.json',
+			        type: 'POST',
+			        data: angular.toJson(serv.prefs),
+			        contentType: 'application/json;charset=UTF-8',
+			        dataType: 'json',
+			        success: function(data) {
+			        	serv.prefs = data;
+			        }
+			    }).fail(function() { 
+			    	// something bad is happening!
+			    	console.log("error with multi email");
+			    });
+			}
+		};
+	    
+	    // populate the prefs
+		serv.getPrivacyPreferences();
+
+	return serv; 
+});
+
 
 
 function EditTableCtrl($scope) {
@@ -143,49 +183,19 @@ function EditTableCtrl($scope) {
 	
 };
 
-function PrivacyPreferencesCtrl($scope, $http) {
-	$scope.getPrivacyPreferences = function() {	
-		$.ajax({
-	        url: $('body').data('baseurl') + 'account/default-privacy-preferences.json',
-	        dataType: 'json',
-	        success: function(data) {
-	        	$scope.privacyPreferences = data;
-	        	$scope.$apply();
-	        	//alert($scope.privacyPreferences.workVisibilityDefault.value);
-	        }
-	    }).fail(function() { 
-	    	// something bad is happening!
-	    	console.log("error with multi email");
-	    });
-	};
-	
-	$scope.savePrivacyPreferences = function() {
-		$.ajax({
-	        url: $('body').data('baseurl') + 'account/default-privacy-preferences.json',
-	        type: 'POST',
-	        data: angular.toJson($scope.privacyPreferences),
-	        contentType: 'application/json;charset=UTF-8',
-	        dataType: 'json',
-	        success: function(data) {
-	        	$scope.privacyPreferences = data;
-	        	$scope.$apply();
-	         	//alert($scope.privacyPreferences.workVisibilityDefault.value);
-	 	       
-	        }
-	    }).fail(function() { 
-	    	// something bad is happening!
-	    	console.log("error with multi email");
-	    });
-	};
 
+function WorksPrivacyPreferencesCtrl($scope, prefsSrvc) {
+	$scope.prefsSrvc = prefsSrvc;
+	
 	$scope.updateWorkVisibilityDefault = function(priv, $event) {
-		$scope.privacyPreferences.workVisibilityDefault.value = priv;
-		$scope.savePrivacyPreferences();
-	};
-	
-	//init
-	$scope.privacyPreferences = $scope.getPrivacyPreferences();
-	
+		$scope.prefsSrvc.prefs.workVisibilityDefault.value = priv;
+		$scope.prefsSrvc.savePrivacyPreferences();
+	};	
+};
+
+
+function EmailPreferencesCtrl($scope, prefsSrvc) {
+	$scope.prefsSrvc = prefsSrvc;
 };
 
 
@@ -935,13 +945,13 @@ function PersonalInfoCtrl($scope, $compile){
 	};
 };
 
-function WorkOverviewCtrl($scope, $compile, worksService){
-	$scope.works = worksService.works;
+function WorkOverviewCtrl($scope, $compile, worksSrvc){
+	$scope.works = worksSrvc.works;
 }
 
-function WorkCtrl($scope, $compile, worksService){
+function WorkCtrl($scope, $compile, worksSrvc){
 	$scope.displayWorks = true;
-	$scope.works = worksService.works;
+	$scope.works = worksSrvc.works;
 	$scope.numOfWorksToAdd = null;
 	
 	$scope.toggleDisplayWorks = function () {

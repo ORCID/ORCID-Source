@@ -614,7 +614,7 @@ public class ManageProfileController extends BaseWorkspaceController {
         return securityQuestion;
     }
 
-    @RequestMapping(value = "/default-privacy-preferences.json", method = RequestMethod.GET)
+    @RequestMapping(value = "/preferences.json", method = RequestMethod.GET)
     public @ResponseBody
     Preferences getDefaultPreference(HttpServletRequest request) {
         OrcidProfile profile = getCurrentUserAndRefreshIfNecessary().getEffectiveProfile();
@@ -622,7 +622,7 @@ public class ManageProfileController extends BaseWorkspaceController {
         return profile.getOrcidInternal().getPreferences() != null ? profile.getOrcidInternal().getPreferences() : new Preferences();
     }
 
-    @RequestMapping(value = "/default-privacy-preferences.json", method = RequestMethod.POST)
+    @RequestMapping(value = "/preferences.json", method = RequestMethod.POST)
     public @ResponseBody
     Preferences setDefaultPreference(HttpServletRequest request, @RequestBody Preferences preferences) {
         OrcidProfile profile = orcidProfileManager.retrieveOrcidProfile(getCurrentUserOrcid());
