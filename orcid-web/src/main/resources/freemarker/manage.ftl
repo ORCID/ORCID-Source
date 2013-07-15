@@ -132,11 +132,11 @@
 							<a href="" ng-click="togglePrivacyPreferencesEdit()" ng-bind="privacyPreferencesToggleText"></a>
 						</td>
 					</tr>
-					<tr ng-controller="PrivacyPreferencesCtrl" ng-show="showEditPrivacyPreferences" ng-cloak>
+					<tr ng-controller="WorksPrivacyPreferencesCtrl" ng-show="showEditPrivacyPreferences" ng-cloak>
 						<td colspan="2">
 						<div class="editTablePadCell35">
 							${springMacroRequestContext.getMessage("privacy_preferences.labelDefaultprivacyfornewWorks")}<br />
-							<@orcid.privacyToggle "privacyPreferences.workVisibilityDefault.value" "updateWorkVisibilityDefault('PUBLIC', $event)" "updateWorkVisibilityDefault('LIMITED', $event)" "updateWorkVisibilityDefault('PRIVATE', $event)" />
+							<@orcid.privacyToggle "prefsSrvc.prefs.workVisibilityDefault.value" "updateWorkVisibilityDefault('PUBLIC', $event)" "updateWorkVisibilityDefault('LIMITED', $event)" "updateWorkVisibilityDefault('PRIVATE', $event)" />
 						</div>
 						</td>
 					</tr>
@@ -172,15 +172,15 @@
 							<a href="" ng-click="toggleEmailPreferencesEdit()" ng-bind="emailPreferencesToggleText"></a>
 						</td>
 					</tr>
-					<tr ng-controller="PrivacyPreferencesCtrl" ng-show="showEditEmailPreferences" ng-cloak>
+					<tr ng-controller="EmailPreferencesCtrl" ng-show="showEditEmailPreferences" ng-cloak>
 						<td colspan="2">
 						<div class="editTablePadCell35">
 							    <label class="checkbox">
-				                <input type="checkbox" id="sendOrcidChangeNotifcations" name="sendOrcidChangeNotifcations" ng-model="privacyPreferences.sendChangeNotifications.value" ng-click="savePrivacyPreferences()" />
+				                <input type="checkbox" id="sendOrcidChangeNotifcations" name="sendOrcidChangeNotifcations" ng-model="prefsSrvc.prefs.sendChangeNotifications.value" ng-click="prefsSrvc.savePrivacyPreferences()" />
 				                    ${springMacroRequestContext.getMessage("change_email_preferences.sendnotification")}
 				                </label>
 				                <label class="checkbox">
-				                <input type="checkbox" id="sendOrcidNews" name="sendOrcidNews" ng-model="privacyPreferences.sendOrcidNews.value" ng-click="savePrivacyPreferences()" />
+				                <input type="checkbox" id="sendOrcidNews" name="sendOrcidNews" ng-model="prefsSrvc.prefs.sendOrcidNews.value" ng-click="prefsSrvc.savePrivacyPreferences()" />
 				                    ${springMacroRequestContext.getMessage("change_email_preferences.sendinformation")}
 				                </label>
 				                <br />
@@ -238,11 +238,11 @@
                 	       <tr>       	       		
                                 <form action="manage/revoke-application" method="post" class="revokeApplicationForm" id="revokeApplicationForm${applicationSummary_index}">
                                     <td class="revokeApplicationName">${(applicationSummary.applicationName.content)!}<br /><a href="<@orcid.absUrl applicationSummary.applicationWebsite/>">${applicationSummary.applicationWebsite.value}</a></td>
-                                    <input type="hidden" name="applicationOrcid" value="${applicationSummary.applicationOrcid.value}"/>
-                                    <input type="hidden" name="confirmed" value="no"/>
-                                    <input type="hidden" name="revokeApplicationName" value="${applicationSummary.applicationName.content}"/>
                                     <td width="35%">${applicationSummary.approvalDate.value.toGregorianCalendar().time?date}</td>
                                     <td width="5%">
+                                    	<input type="hidden" name="applicationOrcid" value="${applicationSummary.applicationOrcid.value}"/>
+                                    	<input type="hidden" name="confirmed" value="no"/>
+                                    	<input type="hidden" name="revokeApplicationName" value="${applicationSummary.applicationName.content}"/>
                                         <#if applicationSummary.scopePaths??>
                                             <#list applicationSummary.scopePaths.scopePath as scopePath>
                                                 <input type="hidden" name="scopePaths" value="${scopePath.value.value()}"/>
@@ -251,7 +251,7 @@
                                             </#list>
                                         </#if>
                                     </td width="35%">                                    
-                                    <td width="5%"><button class="btn btn-link" onclick="orcidGA.gaPush(['_trackEvent', 'Disengagement', 'Revoke_Access', 'OAuth ${applicationSummary.applicationName.content}']);">${springMacroRequestContext.getMessage("manage.revokeaccess")}</button></td>
+                                    <td width="5%"><button class="btn btn-link" onclick="orcidGA.gaPush(['_trackEvent', 'Disengagement', 'Revoke_Access', 'OAuth ${applicationSummary.applicationName.content}']);"><i class="icon-trash grey" title="${springMacroRequestContext.getMessage("manage.revokeaccess")}"></i></button></td>
                                 </form>
                             </tr>
                         </#list>
