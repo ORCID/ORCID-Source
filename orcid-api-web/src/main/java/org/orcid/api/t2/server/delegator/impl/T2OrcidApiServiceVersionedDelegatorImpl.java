@@ -194,7 +194,7 @@ public class T2OrcidApiServiceVersionedDelegatorImpl implements T2OrcidApiServic
     }
 
     private OrcidMessage upgradeMessage(OrcidMessage orcidMessage) {
-        return orcidMessageVersionConverterChain.upgradeMessage(orcidMessage, externalVersion);
+        return orcidMessageVersionConverterChain.upgradeMessage(orcidMessage, OrcidMessage.DEFAULT_VERSION);
     }
 
     private Response downgradeResponse(Response response) {
