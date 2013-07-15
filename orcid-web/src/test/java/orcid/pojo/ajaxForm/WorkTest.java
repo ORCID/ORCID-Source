@@ -16,8 +16,6 @@
  */
 package orcid.pojo.ajaxForm;
 
-import static org.junit.Assert.*;
-
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,9 +27,7 @@ import javax.xml.bind.Unmarshaller;
 
 import org.custommonkey.xmlunit.XMLTestCase;
 import org.junit.Test;
-import org.orcid.api.common.security.filter.impl.VisibilityFilterImplTest;
 import org.orcid.jaxb.model.message.OrcidMessage;
-import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidWork;
 import org.orcid.pojo.ajaxForm.Work;
 import org.slf4j.Logger;
