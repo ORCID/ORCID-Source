@@ -20,6 +20,8 @@ import org.orcid.core.version.OrcidMessageVersionConverter;
 import org.orcid.jaxb.model.message.Orcid;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidProfile;
+import org.orcid.jaxb.model.message.OrcidSearchResult;
+import org.orcid.jaxb.model.message.OrcidSearchResults;
 
 /**
  * 
@@ -56,11 +58,23 @@ public class OrcidMessageVersionConverterImplV1_0_15ToV1_0_16 implements OrcidMe
             return null;
         }
         orcidMessage.setMessageVersion(TARGET_VERSION);
-        OrcidProfile orcidProfile = orcidMessage.getOrcidProfile();
+        upgradeProfile(orcidMessage.getOrcidProfile());
+        upgradeSearchResults(orcidMessage.getOrcidSearchResults());
+        return orcidMessage;
+    }
+
+    private void upgradeSearchResults(OrcidSearchResults orcidSearchResults) {
+        if (orcidSearchResults != null) {
+            for (OrcidSearchResult searchResult : orcidSearchResults.getOrcidSearchResult()) {
+                upgradeProfile(searchResult.getOrcidProfile());
+            }
+        }
+    }
+
+    private void upgradeProfile(OrcidProfile orcidProfile) {
         if (orcidProfile != null) {
             orcidProfile.setOrcid((Orcid) null);
         }
-        return orcidMessage;
     }
 
 }
