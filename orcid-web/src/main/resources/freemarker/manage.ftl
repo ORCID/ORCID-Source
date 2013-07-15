@@ -238,11 +238,11 @@
                 	       <tr>       	       		
                                 <form action="manage/revoke-application" method="post" class="revokeApplicationForm" id="revokeApplicationForm${applicationSummary_index}">
                                     <td class="revokeApplicationName">${(applicationSummary.applicationName.content)!}<br /><a href="<@orcid.absUrl applicationSummary.applicationWebsite/>">${applicationSummary.applicationWebsite.value}</a></td>
-                                    <input type="hidden" name="applicationOrcid" value="${applicationSummary.applicationOrcid.value}"/>
-                                    <input type="hidden" name="confirmed" value="no"/>
-                                    <input type="hidden" name="revokeApplicationName" value="${applicationSummary.applicationName.content}"/>
                                     <td width="35%">${applicationSummary.approvalDate.value.toGregorianCalendar().time?date}</td>
                                     <td width="5%">
+                                    	<input type="hidden" name="applicationOrcid" value="${applicationSummary.applicationOrcid.value}"/>
+                                    	<input type="hidden" name="confirmed" value="no"/>
+                                    	<input type="hidden" name="revokeApplicationName" value="${applicationSummary.applicationName.content}"/>
                                         <#if applicationSummary.scopePaths??>
                                             <#list applicationSummary.scopePaths.scopePath as scopePath>
                                                 <input type="hidden" name="scopePaths" value="${scopePath.value.value()}"/>
@@ -251,7 +251,7 @@
                                             </#list>
                                         </#if>
                                     </td width="35%">                                    
-                                    <td width="5%"><button class="btn btn-link" onclick="orcidGA.gaPush(['_trackEvent', 'Disengagement', 'Revoke_Access', 'OAuth ${applicationSummary.applicationName.content}']);">${springMacroRequestContext.getMessage("manage.revokeaccess")}</button></td>
+                                    <td width="5%"><button class="btn btn-link" onclick="orcidGA.gaPush(['_trackEvent', 'Disengagement', 'Revoke_Access', 'OAuth ${applicationSummary.applicationName.content}']);"><i class="icon-trash grey" title="${springMacroRequestContext.getMessage("manage.revokeaccess")}"></i></button></td>
                                 </form>
                             </tr>
                         </#list>
