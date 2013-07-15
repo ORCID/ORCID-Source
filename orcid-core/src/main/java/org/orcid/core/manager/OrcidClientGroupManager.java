@@ -16,7 +16,6 @@
  */
 package org.orcid.core.manager;
 
-import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.clientgroup.OrcidClient;
 import org.orcid.jaxb.model.clientgroup.OrcidClientGroup;
 import org.orcid.jaxb.model.message.OrcidType;
@@ -61,6 +60,11 @@ public interface OrcidClientGroupManager {
     OrcidClient createOrUpdateOrcidClientGroup(String groupOrcid, OrcidClient orcidClient, OrcidType orcidType);
 
     OrcidClientGroup retrieveOrcidClientGroup(String groupOrcid);
+    
+    /**
+     * TODO
+     * */
+    OrcidClient updateClientProfile(String groupOrcid, OrcidClient client);
     
     /**
      * TODO

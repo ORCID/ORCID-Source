@@ -32,7 +32,7 @@ public class GroupAdministratorController extends BaseWorkspaceController {
     
     @RequestMapping
     public ModelAndView manageClients() {
-        ModelAndView mav = new ModelAndView("manage-clients");
+        ModelAndView mav = new ModelAndView("manage_clients");
         OrcidProfile profile = getCurrentUserAndRefreshIfNecessary().getEffectiveProfile();
         OrcidClientGroup group = orcidClientGroupManager.retrieveOrcidClientGroup(profile.getOrcid().getValue());
         mav.addObject("group", group);        
@@ -55,11 +55,7 @@ public class GroupAdministratorController extends BaseWorkspaceController {
         String groupOrcid = profile.getOrcid().getValue();
         
         OrcidClientGroup group = orcidClientGroupManager.retrieveOrcidClientGroup(groupOrcid);
-        
-        System.out.println("---------------------------------------------------------------------------------------------------------------------");
-        System.out.println("Number of clients: " + group.getOrcidClient().size());
-        System.out.println("---------------------------------------------------------------------------------------------------------------------");
-        
+                
         return group.getOrcidClient();
     }
     
@@ -68,6 +64,9 @@ public class GroupAdministratorController extends BaseWorkspaceController {
     public @ResponseBody OrcidClient editClient(HttpServletRequest request, @RequestBody OrcidClient orcidClient){
         OrcidProfile profile = getCurrentUserAndRefreshIfNecessary().getEffectiveProfile();
         String groupOrcid = profile.getOrcid().getValue();
+        
+        orcidClient = orcidClientGroupManager.updateClientProfile(groupOrcid, orcidClient);
+        
         return orcidClient;        
     }
 }

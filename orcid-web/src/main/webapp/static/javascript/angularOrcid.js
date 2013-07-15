@@ -1208,6 +1208,8 @@ function QuickSearchCtrl($scope, $compile){
 }
 
 function ClientEditCtrl($scope, $compile){
+	$scope.errors = [];
+	$scope.clients = [];
 	$scope.newClient = {			
 			displayName: '',
 			website: '',
@@ -1220,61 +1222,52 @@ function ClientEditCtrl($scope, $compile){
 			type: ''
 	};		
 	
+	$scope.premiumClientOptions = [{ name: 'PREMIUM_CREATOR', value: 'PREMIUM_CREATOR' },{ name: 'PREMIUM_UPDATER', value: 'PREMIUM_UPDATER' }];
+	$scope.clientOptions = [{ name: 'CREATOR', value: 'CREATOR' },{ name: 'UPDATER', value: 'UPDATER' }];
+	
 	$scope.getClients = function(){
 		$.ajax({
 	        url: $('body').data('baseurl') + 'manage-clients/get-clients.json',
 	        dataType: 'json',
-	        success: function(data) {
-	        	$scope.clients = new Array();
-	        	$scope.$apply(function(){ 
-					for (i in data)						
-						$scope.clients.push(data[i]);
+	        success: function(data) {	        	        					
+				$scope.$apply(function(){
+					
+					$scope.clients.splice(0, $scope.clients.length);        		
+					for (i in data)	{
+						var client = data[i];
+						for(var j = 0; j < client.redirectUris.redirectUri.length; j++)	{						
+							delete client.redirectUris.redirectUri[j].scopeAsSingleString;
+							delete client.redirectUris.redirectUri[j].scope;							
+						}
+						$scope.clients.push(client);					
+					}
+					console.log($scope.clients.length);
+					console.log(angular.toJson(data));
+					
 				});
 	        }
 	    }).fail(function() { 
 	    	alert("Error fetching clients.");
 	    	console.log("Error fetching clients.");
-	    });
-	};
-	
-	$scope.submitAddClient = function(){		
-		$.ajax({
-	        url: $('body').data('baseurl') + 'manage-clients/add-client.json',
-	        type: 'POST',
-	        data: angular.toJson($scope.newClient),
-	        contentType: 'application/json;charset=UTF-8',
-	        dataType: 'json',
-	        success: function(data) {	        		        		        
-	        	if(data.errors != null && data.errors.length > 0){
-	        		console.log("Unable to create client information.");
-	        	} else {
-	        		$scope.getClients();
-		        	$scope.$apply();
-	        	} 
-	        }
-	    }).fail(function() { 
-	    	alert("An error occured creating the client");
-	    	console.log("Error creating client information.");
-	    });
-		$.colorbox.close();
-	};
+	    });				
+	};		
 	
 	$scope.addUriToNewClientTable = function(){		
 		$('#client-table').find('tr:last > td:last').html('&nbsp;');		
-		this.newClient.redirectUris.redirectUri.push({type: 'DEFAULT', value: ''});
+		this.newClient.redirectUris.redirectUri.push({value: '',type: 'DEFAULT'});
 	};
 	
 	$scope.addUriToExistingClientTable = function(){
-		$scope.clientToEdit.redirectUris.redirectUri.push({type: 'DEFAULT', value: ''});
+		$scope.clientToEdit.redirectUris.redirectUri.push({value: '',type: 'DEFAULT'});
 	};
 	
 	
 	$scope.editClient = function(idx) {		
-		$scope.clientToEdit = $scope.clients[idx];		
+		$scope.clientToEdit = angular.copy($scope.clients[idx]);		
 		$.colorbox({        	            
             html : $compile($('#edit-client-modal').html())($scope), 
             transition: 'fade',
-	        close: '',
+            close: 'Close',
 	        scrolling: true
         });		
         $.colorbox.resize({width:"500px" , height:"500px"});   
@@ -1284,7 +1277,7 @@ function ClientEditCtrl($scope, $compile){
 		$.colorbox({        	            
             html : $compile($('#new-client-modal').html())($scope), 
             transition: 'fade',
-	        close: '',
+            close: 'Close',
 	        scrolling: true
         });
         $.colorbox.resize({width:"550px" , height:"360px"});
@@ -1295,7 +1288,7 @@ function ClientEditCtrl($scope, $compile){
 		$.colorbox({        	            
             html : $compile($('#view-details-modal').html())($scope), 
             transition: 'fade',
-	        close: '',
+	        close: 'Close',
 	        scrolling: true
         });
         $.colorbox.resize({width:"550px" , height:"150px"});
@@ -1303,10 +1296,16 @@ function ClientEditCtrl($scope, $compile){
 	
 	$scope.deleteUri = function(idx){
 		$scope.clientToEdit.redirectUris.redirectUri.splice(idx, 1);
-		$scope.$apply();
 	};
 	
-	$scope.submitEditClient = function(){
+	$scope.submitEditClient = function(){		
+		// Check which redirect uris are empty strings and remove them from the array
+		for(var j = $scope.clientToEdit.redirectUris.redirectUri.length - 1; j >= 0 ; j--)	{
+			if(!$scope.clientToEdit.redirectUris.redirectUri[j].value){
+				$scope.clientToEdit.redirectUris.redirectUri.splice(j, 1);
+			}
+		}				
+		
 		$.ajax({
 	        url: $('body').data('baseurl') + 'manage-clients/edit-client.json',
 	        type: 'POST',
@@ -1317,16 +1316,66 @@ function ClientEditCtrl($scope, $compile){
 	        	if(data.errors != null && data.errors.length > 0){
 	        		console.log("Unable to update client information.");
 	        	} else {
-	        		$scope.getClients();
-		        	$scope.$apply();
+        			$scope.getClients();
 	        	} 
 	        }
 	    }).fail(function() { 
 	    	alert("An error occured updating the client");
 	    	console.log("Error updating client information.");
-	    });
+	    });		
+		$.colorbox.close();
 	};
 	
+	$scope.submitAddClient = function(){
+		$scope.errors.splice(0, $scope.errors.length);
+		
+		console.log(angular.toJson($scope.errors));
+		
+		if(!$scope.newClient.type){
+			$scope.errors.push("Please select the client type");
+		}
+		
+		if(!$scope.newClient.shortDescription){
+			$scope.errors.push("Please enter a description");
+		}
+		
+		if(!$scope.newClient.website){
+			$scope.errors.push("Please enter a website");
+		}
+		
+		console.log(angular.toJson($scope.errors));
+		
+		if($scope.errors.length != 0){
+			return;
+		}
+		
+		// Check which redirect uris are empty strings and remove them from the array
+		for(var j = $scope.newClient.redirectUris.redirectUri.length - 1; j >= 0 ; j--)	{
+			if(!$scope.newClient.redirectUris.redirectUri[j].value){
+				$scope.newClient.redirectUris.redirectUri.splice(j, 1);
+			}
+		}
+		
+		$.ajax({
+	        url: $('body').data('baseurl') + 'manage-clients/add-client.json',
+	        type: 'POST',
+	        data: angular.toJson($scope.newClient),
+	        contentType: 'application/json;charset=UTF-8',
+	        dataType: 'json',
+	        success: function(data) {	        		        		        
+	        	if(data.errors != null && data.errors.length > 0){
+	        		console.log("Unable to create client information.");
+	        	} else {
+        			$scope.getClients();
+	        	} 
+	        }
+	    }).fail(function() { 
+	    	alert("An error occured creating the client");
+	    	console.log("Error creating client information.");
+	    });
+		$.colorbox.close();
+	};
+	    
 	//init
 	$scope.getClients();
 }
