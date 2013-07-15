@@ -132,11 +132,11 @@
 							<a href="" ng-click="togglePrivacyPreferencesEdit()" ng-bind="privacyPreferencesToggleText"></a>
 						</td>
 					</tr>
-					<tr ng-controller="PrivacyPreferencesCtrl" ng-show="showEditPrivacyPreferences" ng-cloak>
+					<tr ng-controller="WorksPrivacyPreferencesCtrl" ng-show="showEditPrivacyPreferences" ng-cloak>
 						<td colspan="2">
 						<div class="editTablePadCell35">
 							${springMacroRequestContext.getMessage("privacy_preferences.labelDefaultprivacyfornewWorks")}<br />
-							<@orcid.privacyToggle "privacyPreferences.workVisibilityDefault.value" "updateWorkVisibilityDefault('PUBLIC', $event)" "updateWorkVisibilityDefault('LIMITED', $event)" "updateWorkVisibilityDefault('PRIVATE', $event)" />
+							<@orcid.privacyToggle "prefsSrvc.prefs.workVisibilityDefault.value" "updateWorkVisibilityDefault('PUBLIC', $event)" "updateWorkVisibilityDefault('LIMITED', $event)" "updateWorkVisibilityDefault('PRIVATE', $event)" />
 						</div>
 						</td>
 					</tr>
@@ -172,15 +172,15 @@
 							<a href="" ng-click="toggleEmailPreferencesEdit()" ng-bind="emailPreferencesToggleText"></a>
 						</td>
 					</tr>
-					<tr ng-controller="PrivacyPreferencesCtrl" ng-show="showEditEmailPreferences" ng-cloak>
+					<tr ng-controller="EmailPreferencesCtrl" ng-show="showEditEmailPreferences" ng-cloak>
 						<td colspan="2">
 						<div class="editTablePadCell35">
 							    <label class="checkbox">
-				                <input type="checkbox" id="sendOrcidChangeNotifcations" name="sendOrcidChangeNotifcations" ng-model="privacyPreferences.sendChangeNotifications.value" ng-click="savePrivacyPreferences()" />
+				                <input type="checkbox" id="sendOrcidChangeNotifcations" name="sendOrcidChangeNotifcations" ng-model="prefsSrvc.prefs.sendChangeNotifications.value" ng-click="prefsSrvc.savePrivacyPreferences()" />
 				                    ${springMacroRequestContext.getMessage("change_email_preferences.sendnotification")}
 				                </label>
 				                <label class="checkbox">
-				                <input type="checkbox" id="sendOrcidNews" name="sendOrcidNews" ng-model="privacyPreferences.sendOrcidNews.value" ng-click="savePrivacyPreferences()" />
+				                <input type="checkbox" id="sendOrcidNews" name="sendOrcidNews" ng-model="prefsSrvc.prefs.sendOrcidNews.value" ng-click="prefsSrvc.savePrivacyPreferences()" />
 				                    ${springMacroRequestContext.getMessage("change_email_preferences.sendinformation")}
 				                </label>
 				                <br />
