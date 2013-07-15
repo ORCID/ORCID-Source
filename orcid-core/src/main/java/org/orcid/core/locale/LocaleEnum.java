@@ -19,11 +19,11 @@ package org.orcid.core.locale;
 import java.util.Locale;
 
 public enum LocaleEnum {
-    en("English", "English", new Locale("en")),
-    es("Español", "Spanish", new Locale("es")),
-    fr("Français", "French", new Locale("fr")),
-    zh_TW("繁體中文", "Traditional Chinese", new Locale("zh_TW")),
-    zh_CH("简体中文","Simplified Chinese", new Locale("zh_CN"));
+    EN("English", "English", new Locale("en")),
+    ES("Español", "Spanish", new Locale("es")),
+    FR("Français", "French", new Locale("fr")),
+    ZH_TW("繁體中文", "Traditional Chinese", new Locale("zh_TW")),
+    ZH_CH("简体中文","Simplified Chinese", new Locale("zh_CN"));
     
     private String displayName;
     private String displayName_en;

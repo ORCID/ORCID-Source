@@ -57,13 +57,16 @@ public enum Locale implements Serializable {
     EN("en"),
 
     @XmlEnumValue("es")
-    FR("es"),
+    ES("es"),
 
     @XmlEnumValue("fr")
-    ZH_TW("zh_TW"),
+    FR("fr"),
 
     @XmlEnumValue("zh_CN")
-    ZH_CN("zh_CN"); 
+    ZH_CN("zh_CN"),
+
+    @XmlEnumValue("zh_TW")
+    ZH_TW("zh_TW"); 
 
     private final String value;
 
