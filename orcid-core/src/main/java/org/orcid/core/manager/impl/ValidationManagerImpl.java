@@ -56,6 +56,8 @@ public class ValidationManagerImpl implements ValidationManager {
 
     private boolean requireOrcidProfile;
 
+    private boolean validateBibtex = true;
+
     private Schema schema;
 
     private static final Logger LOG = LoggerFactory.getLogger(ValidationManagerImpl.class);
@@ -71,6 +73,10 @@ public class ValidationManagerImpl implements ValidationManager {
 
     public void setRequireOrcidProfile(boolean requireOrcidProfile) {
         this.requireOrcidProfile = requireOrcidProfile;
+    }
+
+    public void setValidateBibtex(boolean validateBibtex) {
+        this.validateBibtex = validateBibtex;
     }
 
     @Override
@@ -142,7 +148,7 @@ public class ValidationManagerImpl implements ValidationManager {
     }
 
     public void checkWork(OrcidWork orcidWork) {
-        if (orcidWork.getWorkCitation() != null) {
+        if (validateBibtex && orcidWork.getWorkCitation() != null) {
             Citation workCitation = orcidWork.getWorkCitation();
             if (CitationType.BIBTEX.equals(workCitation.getWorkCitationType())) {
                 try {
