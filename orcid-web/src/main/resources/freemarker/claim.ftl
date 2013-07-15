@@ -23,7 +23,7 @@
  
 <h2>${springMacroRequestContext.getMessage("claim.claimyourrecord")}</h2>
 				<#include "/common/browser-checks.ftl" />
-				<div ng-app="orcidApp" ng-controller="ClaimCtrl">
+				<div ng-controller="ClaimCtrl">
 					<div>
 						<!-- span class="orcid-error" ng-show="register.errors.length > 0">
 							<div ng-repeat='error in register.errors' ng-bind-html-unsafe="error"></div>

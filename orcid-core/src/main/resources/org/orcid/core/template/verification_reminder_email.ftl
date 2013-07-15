@@ -16,21 +16,18 @@
     =============================================================================
 
 -->
-Dear ${emailName},
+<#import "email_macros.ftl" as emailMacros />
+<@emailMacros.msg "email.common.dear" /> ${emailName}<@emailMacros.msg "email.common.dear.comma" />
 
-Thank you for confirming your registration with Open Researcher & Contributor ID.
+<@emailMacros.msg "email.verify_reminder" />
 
-To update your profile information and create a publication list, login at
-${baseUri}/signin
+${verificationUrl}
 
-If you cannot click on the url above, you can cut-and-paste (or type) the url into your browser.
+<@emailMacros.msg "email.common.did_you_know" />${baseUri}/about/news
 
-Please keep the following information for your reference.
-ORCID ID : ${orcid}
-Profile URL : ${baseUri}/${orcid}
-Security Question : ${securityQuestion}
-Answer : ${securityAnswer}
+<@emailMacros.msg "email.common.if_you_have_any" />
 
-Thank you,
-Open Researcher & Contributor ID
+<@emailMacros.msg "email.common.kind_regards" />
 ${baseUri}
+
+<@emailMacros.msg "email.common.you_have_received_this_email" />

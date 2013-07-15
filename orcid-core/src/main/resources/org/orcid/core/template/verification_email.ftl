@@ -16,27 +16,20 @@
     =============================================================================
 
 -->
-Dear ${emailName},
+<#import "email_macros.ftl" as emailMacros />
+<@emailMacros.msg "email.common.dear" /> ${emailName}<@emailMacros.msg "email.common.dear.comma" />
 
-Thank you for adding this email address to your ORCID record.
+<@emailMacros.msg "email.verify.thank_you" /> 
+${baseUri}/${orcid}.
 
-You can manage your ORCID record at http://orcid.org/${orcid}
-
-To confirm your email address follow this link and log in to the ORCID system. If you can't click on the link, copy and paste it into your browser:
-
+<@emailMacros.msg "email.verify.to_verify" />
 ${verificationUrl}
 
-The ORCID identifier is intended to help link you with your research works and activities. You 
-may include your ORCID ID in processes such as manuscript submission and grant applications
-and synchronize the data in your ORCID record with other identifiers and external systems.
-You may add or edit data in your ORCID record, adjust privacy settings, and select trusted 
-parties with whom to share your data. 
+<@emailMacros.msg "email.common.did_you_know" />${baseUri}/about/news
 
-If you have any questions about the registration process, please contact the ORCID support 
-team at support@orcid.org.
+<@emailMacros.msg "email.common.if_you_have_any" />
 
-=======
-Kind Regards,
-The ORCID Team
-support@orcid.org 
+<@emailMacros.msg "email.common.kind_regards" />
 ${baseUri}
+
+<@emailMacros.msg "email.common.you_have_received_this_email" />

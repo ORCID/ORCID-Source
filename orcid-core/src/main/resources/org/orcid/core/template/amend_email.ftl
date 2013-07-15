@@ -16,18 +16,16 @@
     =============================================================================
 
 -->
-Dear ${emailName},
+<#import "email_macros.ftl" as emailMacros />
+<@emailMacros.msg "email.common.dear" /> ${emailName}<@emailMacros.msg "email.common.dear.comma" />
 
-${amenderName} has updated your ORCID record.
+<@emailMacros.msg "email.amend.thought_you.1" /> ${amenderName} <@emailMacros.msg "email.amend.thought_you.2" />
 
-Please click the following URL to see your updated record: ${baseUri}/${orcid}
+<@emailMacros.msg "email.amend.please_click" />
 
-You may opt-out of Amend notices in your ORCID Account settings page.  If you want to revoke 
-permission for this organization to update your record in the future, please go to the following
-URL: ${baseUri}/account
+    ${baseUri}/my-orcid
 
-Kind Regards,
-The ORCID Team
-support@orcid.org
+<@emailMacros.msg "email.common.kind_regards" />
 ${baseUri}
 
+<@emailMacros.msg "email.common.you_have_received_this_email_opt_out" />

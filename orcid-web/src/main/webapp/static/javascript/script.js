@@ -514,6 +514,16 @@ $(function () {
 		}
 	});
 	
+	$('#upate-personal-modal-link').colorbox({
+		iframe: true,
+		height: 600,
+		width: 990,
+		close: '',
+		onClosed: function () {
+			top.location = top.colorOnCloseBoxDest;
+		}
+	});
+	
 	$('.colorbox-modal').colorbox({
 		inline: true,
 		close: 'x'
@@ -551,11 +561,11 @@ $(function () {
 	
 	// Fake accordion:
 	
-	$('.workspace-accordion-header').on('click', function (e) {
-		var $this = $(this);
-		$this.next().slideToggle(150);
-		$this.closest('.workspace-accordion-item').toggleClass('workspace-accordion-active');
-	});
+//	$('.workspace-accordion-header').on('click', function (e) {
+//		var $this = $(this);
+//		$this.next().slideToggle(150);
+//		$this.closest('.workspace-accordion-item').toggleClass('workspace-accordion-active');
+//	});
 	
 	$('.workspace-header').on('click', '.overview-title,.overview-count', function (e) {
 		e.preventDefault();

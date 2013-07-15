@@ -16,16 +16,19 @@
     =============================================================================
 
 -->
-Dear ${emailName},
+<#import "email_macros.ftl" as emailMacros />
+<@emailMacros.msg "email.common.dear" /> ${emailName}<@emailMacros.msg "email.common.dear.comma" />
 
-The primary email associated with your ORCID Account has been changed. You may use any email address associated with your ORCID iD when logging into http://orcid.org.
+<@emailMacros.msg "email.email_removed.the_primary" /> 
 
-Please click the following URL to see your updated record: ${baseUri}/account
+<@emailMacros.msg "email.email_removed.while.1" />${baseUri}<@emailMacros.msg "email.email_removed.while.2" />
 
-IMPORTANT: If you did not request this change, please contact ORCID Support immediately at support@orcid.org
+<@emailMacros.msg "email.email_removed.please_click" />
+${baseUri}/account
 
-Kind Regards,
-The ORCID Team
-support@orcid.org
+<@emailMacros.msg "email.email_removed.important" />
+
+<@emailMacros.msg "email.common.kind_regards" />
 ${baseUri}
 
+<@emailMacros.msg "email.common.you_have_received_this_email" />

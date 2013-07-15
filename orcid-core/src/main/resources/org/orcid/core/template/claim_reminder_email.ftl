@@ -16,28 +16,24 @@
     =============================================================================
 
 -->
-Dear ${emailName},
+<#import "email_macros.ftl" as emailMacros />
+<@emailMacros.msg "email.common.dear" /> ${emailName}<@emailMacros.msg "email.common.dear.comma" />
 
-This is a reminder message that ${creatorName} has registered for an ORCID iD on your behalf. If you take no further action, your ORCID iD and record will become active in ${daysUntilActivation} days.
+<@emailMacros.msg "email.claim_reminder.this_is_a_reminder.1" />${creatorName}<@emailMacros.msg "email.claim_reminder.this_is_a_reminder.2" />${daysUntilActivation}<@emailMacros.msg "email.claim_reminder.this_is_a_reminder.3" />${creatorName}<@emailMacros.msg "email.claim_reminder.this_is_a_reminder.4" />
 
-When your record becomes active, any information ${creatorName} marked as "public" will be viewable in the ORCID Registry and freely available to the public for use, unless you change the privacy settings.
+<@emailMacros.msg "email.claim_reminder.what_do_you" />
 
-CLAIMING YOUR iD
+<@emailMacros.msg "email.claim_reminder.within_the_next.1" />${daysUntilActivation}<@emailMacros.msg "email.claim_reminder.within_the_next.2" />${creatorName}<@emailMacros.msg "email.claim_reminder.within_the_next.3" />
 
-Claim your iD to take full advantage of the ORCID Registry, including privacy settings, and selection of trusted parties. To claim your account follow this link to set a password and access your record. If you can't click on the link, copy and paste it into your browser:
 ${verificationUrl}
 
-WHAT IS ORCID?
+<@emailMacros.msg "email.api_record_creation.what_is_orcid" />
 
-ORCID is a registry of unique identifiers for researchers. The ORCID iD helps link you with your research works and activities. You may include it in processes such as manuscript submission and grant applications, and synchronize the data in your ORCID record with other systems. You also may add or edit data in your ORCID record, adjust privacy settings, and select trusted parties with whom to share your data. Read more about ORCID at our Webpage: http://orcid.org. More on ORCID's Privacy Policy: http://orcid.org/privacy-policy.
+<@emailMacros.msg "email.api_record_creation.launched.1" />${baseUri}<@emailMacros.msg "email.api_record_creation.launched.2" />
 
-QUESTIONS?
+<@emailMacros.msg "email.api_record_creation.read_privacy.1" />${baseUri}<@emailMacros.msg "email.api_record_creation.read_privacy.1" />
 
-If you have any questions about the registration process, please contact the ORCID support team at support@orcid.org.
-
-Kind Regards,
-The ORCID Team
-support@orcid.org
+<@emailMacros.msg "email.common.kind_regards" />
 ${baseUri}
 
-You have received this e-mail in the genuine belief that its contents would be of interest to you. To opt-out of messages from ORCID please go to your Account Settings page at ${baseUri}/manage - you'll need to claim your record before you can do this.
+<@emailMacros.msg "email.api_record_creation.you_have_received.1" />${baseUri}<@emailMacros.msg "email.api_record_creation.you_have_received.2" />
