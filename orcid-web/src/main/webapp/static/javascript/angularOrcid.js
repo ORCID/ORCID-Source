@@ -1280,7 +1280,7 @@ function ClientEditCtrl($scope, $compile){
             close: 'Close',
 	        scrolling: true
         });
-        $.colorbox.resize({width:"550px" , height:"360px"});
+        $.colorbox.resize({width:"580px" , height:"380px"});
 	};
 	
 	$scope.viewDetails = function(idx){
@@ -1299,6 +1299,28 @@ function ClientEditCtrl($scope, $compile){
 	};
 	
 	$scope.submitEditClient = function(){		
+		$scope.errors.splice(0, $scope.errors.length);
+		
+		if(!$scope.clientToEdit.type){
+			$scope.errors.push("Please select the client type");
+		}
+		
+		if(!$scope.clientToEdit.displayName){
+			$scope.errors.push("Please enter the name");
+		}
+		
+		if(!$scope.clientToEdit.website){
+			$scope.errors.push("Please enter a website");
+		}
+		
+		if(!$scope.clientToEdit.shortDescription){
+			$scope.errors.push("Please enter a description");
+		}
+		
+		if($scope.errors.length != 0){
+			return;
+		}
+		
 		// Check which redirect uris are empty strings and remove them from the array
 		for(var j = $scope.clientToEdit.redirectUris.redirectUri.length - 1; j >= 0 ; j--)	{
 			if(!$scope.clientToEdit.redirectUris.redirectUri[j].value){
@@ -1335,12 +1357,16 @@ function ClientEditCtrl($scope, $compile){
 			$scope.errors.push("Please select the client type");
 		}
 		
-		if(!$scope.newClient.shortDescription){
-			$scope.errors.push("Please enter a description");
+		if(!$scope.newClient.displayName){
+			$scope.errors.push("Please enter the name");
 		}
 		
 		if(!$scope.newClient.website){
 			$scope.errors.push("Please enter a website");
+		}
+		
+		if(!$scope.newClient.shortDescription){
+			$scope.errors.push("Please enter a description");
 		}
 		
 		console.log(angular.toJson($scope.errors));

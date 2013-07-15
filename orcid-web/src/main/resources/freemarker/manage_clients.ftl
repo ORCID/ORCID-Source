@@ -20,7 +20,7 @@
 
 <script type="text/ng-template" id="view-details-modal">
 	<div style="padding: 20px;" class="colorbox-modal">
-		<h1><@orcid.msg 'manage_clients.client_information'/></h1>
+		<h1><@orcid.msg 'manage_clients.client_information'/></h1><a id="cboxClose" class="btn pull-right close-button">X</a>
 		<div id="client-information">
 			<span><strong><@orcid.msg 'manage_clients.client_id'/>:</strong>{{clientDetails.clientId}}</span><br />
 			<span><strong><@orcid.msg 'manage_clients.client_secret'/>:</strong>{{clientDetails.clientSecret}}</span><br />
@@ -30,7 +30,7 @@
 
 <script type="text/ng-template" id="edit-client-modal">
 	<div style="padding: 20px;" class="colorbox-modal">
-		<h1><@orcid.msg 'manage_clients.edit_client'/></h1>		
+		<h1><@orcid.msg 'manage_clients.edit_client'/></h1><a id="cboxClose" class="btn pull-right close-button">X</a>		
 		<h3><@orcid.msg 'manage_clients.client_details'/></h3>
 		
 		<@orcid.msg 'manage_clients.client_type'/>:&nbsp;<span>{{clientToEdit.type}}</span>		
@@ -41,17 +41,23 @@
     	<br />
     	<@orcid.msg 'manage_clients.description'/><input type="text" ng-model="clientToEdit.shortDescription" required />
     	<br />
-    	
-    	<table id="edit-client-table">
-    		<tr ng-repeat='rUri in clientToEdit.redirectUris.redirectUri'>
-				<td><@orcid.msg 'manage_clients.redirect_uri'/>:</td>
-				<td><input type="url" placeholder="Redirect Uri" class="input-xlarge" ng-model="rUri.value"></td>			 		
-				<td>
-					<a href ng-click="deleteUri($index)" class="icon-trash blue"></a>
-					<a ng-show="$last" href ng-click="addUriToExistingClientTable()" class="icon-plus-sign blue"></a>
-				</td>
-			</tr>			
-    	</table>
+    	    	
+    	<div ng-show="clientToEdit.redirectUris.redirectUri.length">
+	    	<table id="edit-client-table">
+	    		<tr ng-repeat='rUri in clientToEdit.redirectUris.redirectUri'>
+					<td><@orcid.msg 'manage_clients.redirect_uri'/>:</td>
+					<td><input type="url" placeholder="Redirect Uri" class="input-xlarge" ng-model="rUri.value"></td>			 		
+					<td>
+						<a href ng-click="deleteUri($index)" class="icon-trash blue"></a>
+						<a ng-show="$last" href ng-click="addUriToExistingClientTable()" class="icon-plus-sign blue"></a>
+					</td>
+				</tr>			
+	    	</table>
+    	</div>
+		<div ng-show="!clientToEdit.redirectUris.redirectUri.length">			
+			<a href ng-click="addUriToExistingClientTable()" class="icon-plus-sign blue"></a>
+		</div>
+		    	     	 
     	   	
 		<div class="controls save-btns pull-left bottom-margin-small">
 			<span id="bottom-submit-update-credential-request" ng-click="submitEditClient($index)" class="btn btn-primary"><@orcid.msg 'manage_clients.update'/></span>				
@@ -61,7 +67,7 @@
 
 <script type="text/ng-template" id="new-client-modal">
 	<div style="padding: 20px;" class="colorbox-modal">
-		<h1>Add new client</h1>
+		<h1>Add new client</h1><a id="cboxClose" class="btn pull-right close-button">X</a>
 		<div ng-controller="ClientEditCtrl">
 			<div id="errors" ng-repeat="error in errors">
 				<ul>
