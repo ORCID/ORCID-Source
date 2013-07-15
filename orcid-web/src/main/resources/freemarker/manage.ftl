@@ -37,53 +37,53 @@
 							<div><a href="<@spring.url '/account/manage-bio-settings'/>" class="update">${springMacroRequestContext.getMessage("settings.tdEdit")}</a></div>
 						</td>
 					</tr>
-						<tr>
-							<th><a name="editEmail"></a>${springMacroRequestContext.getMessage("manage.thEmail")}</th>
-							<td>
-								<a href="" ng-click="toggleEmailEdit()" ng-bind="emailToggleText"></a>
-							</td>
-						</tr>
-						<tr ng-controller="EmailEditCtrl" ng-show="showEditEmail" ng-cloak>
-							<td colspan="2">
-							<div class="editTablePadCell35">
-								<!-- we should never see errors here, but just to be safe -->
-								<span class="orcid-error" ng-show="emailsPojo.errors.length > 0">
-			   						<span ng-repeat='error in emailsPojo.errors' ng-bind-html-unsafe="error"></span>
-			   					</span>	
-			   					<table id="emailTable">
-			   						<tr ng-repeat='email in emailsPojo.emails'>
-			   						  <td class="padRgt" ng-class="{primaryEmail:email.primary}" ng-bind="email.value">
-			   						  </td>
-			   						  <td class="padRgt">
-			   						  		<span ng-hide="email.primary" ><a href="" ng-click="setPrimary($index)">${springMacroRequestContext.getMessage("manage.email.set_primary")}</a></span>
-			   							    <span ng-show="email.primary" class="muted" style="color: #bd362f;">${springMacroRequestContext.getMessage("manage.email.primary_email")}</span>
-			   						  </td> 
-			   						  <td class="padRgt">
-			   						  	<select style="width: 100px; margin: 0px;" ng-change="saveEmail()" ng-model="email.current">
-              							    <option value="true" ng-selected="email.current == true">Current</option>
-              							    <option value="false" ng-selected="email.current == false">Past</option>              
-            						    </select>
-			   						  </td>
-			   						  <td class="padRgt">
-			   						      <span ng-hide="email.verified"><a href="" ng-click="verifyEmail($index)">${springMacroRequestContext.getMessage("manage.email.verify")}</a></span>
-		   							      <span ng-show="email.verified">${springMacroRequestContext.getMessage("manage.email.verified")}</span>		
-			   						  </td>
-			   						  <td class="padRgt">
-			   						  	<a href="" class="icon-trash grey" ng-show="email.primary == false" ng-click="confirmDeleteEmail($index)"></a>
-			   						  </td>
-			   						  <td class="padRgt">
-			   						  	<@orcid.privacyToggle "email.visibility" "setPrivacy($index, 'PUBLIC', $event)" "setPrivacy($index, 'LIMITED', $event)" "setPrivacy($index, 'PRIVATE', $event)" />
-                               	      </td>
-			   						</tr>
-				   					</table>
-				   					<div>
-			   							<input type="email" placeholder="Add Another Email" class="input-xlarge" ng-model="inputEmail.value" style="margin: 0px;" required/> <span ng-click="addEmail()" class="btn btn-primary">${springMacroRequestContext.getMessage("manage.spanadd")}</span>
-			   							<span class="orcid-error" ng-show="inputEmail.errors.length > 0">
-				   							<span ng-repeat='error in inputEmail.errors' ng-bind-html-unsafe="error"></span>
-				   						</span>
-				   					</div>	
-			   					</div>
-							</td>
+					<tr>
+						<th><a name="editEmail"></a>${springMacroRequestContext.getMessage("manage.thEmail")}</th>
+						<td>
+							<a href="" ng-click="toggleEmailEdit()" ng-bind="emailToggleText"></a>
+						</td>
+					</tr>
+					<tr ng-controller="EmailEditCtrl" ng-show="showEditEmail" ng-cloak>
+						<td colspan="2">
+						<div class="editTablePadCell35">
+							<!-- we should never see errors here, but just to be safe -->
+							<span class="orcid-error" ng-show="emailsPojo.errors.length > 0">
+		   						<span ng-repeat='error in emailsPojo.errors' ng-bind-html-unsafe="error"></span>
+		   					</span>	
+		   					<table id="emailTable">
+		   						<tr ng-repeat='email in emailsPojo.emails'>
+		   						  <td class="padRgt" ng-class="{primaryEmail:email.primary}" ng-bind="email.value">
+		   						  </td>
+		   						  <td class="padRgt">
+		   						  		<span ng-hide="email.primary" ><a href="" ng-click="setPrimary($index)">${springMacroRequestContext.getMessage("manage.email.set_primary")}</a></span>
+		   							    <span ng-show="email.primary" class="muted" style="color: #bd362f;">${springMacroRequestContext.getMessage("manage.email.primary_email")}</span>
+		   						  </td> 
+		   						  <td class="padRgt">
+		   						  	<select style="width: 100px; margin: 0px;" ng-change="saveEmail()" ng-model="email.current">
+          							    <option value="true" ng-selected="email.current == true">Current</option>
+          							    <option value="false" ng-selected="email.current == false">Past</option>              
+        						    </select>
+		   						  </td>
+		   						  <td class="padRgt">
+		   						      <span ng-hide="email.verified"><a href="" ng-click="verifyEmail($index)">${springMacroRequestContext.getMessage("manage.email.verify")}</a></span>
+	   							      <span ng-show="email.verified">${springMacroRequestContext.getMessage("manage.email.verified")}</span>		
+		   						  </td>
+		   						  <td class="padRgt">
+		   						  	<a href="" class="icon-trash grey" ng-show="email.primary == false" ng-click="confirmDeleteEmail($index)"></a>
+		   						  </td>
+		   						  <td class="padRgt">
+		   						  	<@orcid.privacyToggle "email.visibility" "setPrivacy($index, 'PUBLIC', $event)" "setPrivacy($index, 'LIMITED', $event)" "setPrivacy($index, 'PRIVATE', $event)" />
+                           	      </td>
+		   						</tr>
+			   					</table>
+			   					<div>
+		   							<input type="email" placeholder="Add Another Email" class="input-xlarge" ng-model="inputEmail.value" style="margin: 0px;" required/> <span ng-click="addEmail()" class="btn btn-primary">${springMacroRequestContext.getMessage("manage.spanadd")}</span>
+		   							<span class="orcid-error" ng-show="inputEmail.errors.length > 0">
+			   							<span ng-repeat='error in inputEmail.errors' ng-bind-html-unsafe="error"></span>
+			   						</span>
+			   					</div>	
+		   					</div>
+						</td>
 					</tr>
 					<tr>
 						<th><a name="editPassword"></a>${springMacroRequestContext.getMessage("manage.password")}</th>
