@@ -36,8 +36,8 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
+import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.EmailManager;
-import org.orcid.core.manager.LocaleManager;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.frontend.web.forms.LoginForm;

@@ -159,7 +159,7 @@
         <property name="version" value="1.0.15" />
     </bean>
 
-	<bean id="localeManager" class="org.orcid.core.manager.impl.LocaleManagerImpl" />
+	<bean id="localeManager" class="org.orcid.core.locale.LocaleManagerImpl" />
 
 	<!-- Statistics Generator Manager -->
 	<bean id="statisticsGeneratorManager" class="org.orcid.core.manager.impl.StatisticsGeneratorManagerImpl" />
