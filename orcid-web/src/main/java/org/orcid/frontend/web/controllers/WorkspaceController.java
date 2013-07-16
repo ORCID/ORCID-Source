@@ -434,6 +434,10 @@ public class WorkspaceController extends BaseWorkspaceController {
         copyErrors(work.getWorkTitle().getSubtitle(), work);
         copyErrors(work.getWorkType(), work);
         copyErrors(work.getUrl(), work);
+        for (Contributor c:work.getContributors()) {
+            copyErrors(c.getContributorRole(), work);
+            copyErrors(c.getContributorSequence(), work);
+        }
         
         for (WorkExternalIdentifier wId:work.getWorkExternalIdentifiers()) {
             copyErrors(wId.getWorkExternalIdentifierId(), work);
@@ -508,6 +512,25 @@ public class WorkspaceController extends BaseWorkspaceController {
         }
         return work;
     }
+    
+    @RequestMapping(value = {"/work/roleValidate.json","/work/sequenceValidate.json"}, method = RequestMethod.POST)
+    public @ResponseBody
+    Work workRoleCreditedValidate(@RequestBody Work work) {
+        for (Contributor c:work.getContributors()) {
+            c.getContributorSequence().setErrors(new ArrayList<String>());
+            c.getContributorRole().setErrors(new ArrayList<String>());
+            boolean emptyRole = c.getContributorRole()==null || c.getContributorRole().getValue()==null || c.getContributorRole().getValue().trim().isEmpty();
+            boolean emptySequence = c.getContributorSequence()==null || c.getContributorSequence().getValue()==null || c.getContributorSequence().getValue().trim().isEmpty();
+            if (emptyRole && !emptySequence) {
+                setError(c.getContributorRole(), "NotBlank.currentWorkContributors.role");
+            }
+            if (emptySequence && !emptyRole) {
+                setError(c.getContributorSequence(), "NotBlank.currentWorkContributors.sequence");
+            }
+        }
+        return work;
+    }
+
 
 
     @RequestMapping(value = "/work/workTypeValidate.json", method = RequestMethod.POST)
