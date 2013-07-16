@@ -124,7 +124,7 @@
 			<li><a href="#manage-permissions"><@orcid.msg 'manage.managepermission'/></a></li>
 		</ul>
 	</div>
-	<div class="span9" id="ng-app" ng-app="orcidApp">			
+	<div class="span9">			
 		<div ng-controller="ClientEditCtrl"> 
 			<div ng-show="!clients.length" ng-cloak>
 				<span><@orcid.msg 'manage_clients.no_clients'/></span>

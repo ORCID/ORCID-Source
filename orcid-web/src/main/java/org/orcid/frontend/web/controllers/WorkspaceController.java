@@ -41,6 +41,7 @@ import org.orcid.jaxb.model.message.CitationType;
 import org.orcid.jaxb.model.message.ContributorRole;
 import org.orcid.jaxb.model.message.ExternalIdentifier;
 import org.orcid.jaxb.model.message.ExternalIdentifiers;
+import org.orcid.jaxb.model.message.OrcidActivities;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidWork;
 import org.orcid.jaxb.model.message.OrcidWorks;
@@ -56,6 +57,7 @@ import org.orcid.pojo.ajaxForm.Date;
 import org.orcid.pojo.ajaxForm.ErrorsInterface;
 import org.orcid.pojo.ajaxForm.Registration;
 import org.orcid.pojo.ajaxForm.Text;
+import org.orcid.pojo.ajaxForm.Visibility;
 import org.orcid.pojo.ajaxForm.Work;
 import org.orcid.pojo.ajaxForm.WorkExternalIdentifier;
 import org.orcid.pojo.ajaxForm.WorkTitle;
@@ -290,6 +292,8 @@ public class WorkspaceController extends BaseWorkspaceController {
     @RequestMapping(value = "/works.json", method = RequestMethod.DELETE)
     public @ResponseBody
     Work removeWorkJson(HttpServletRequest request, @RequestBody Work work) {
+        OrcidWork delWork = work.toOrcidWork();
+         
         //Get cached profile
         OrcidProfile currentProfile = getCurrentUser().getEffectiveProfile();
         OrcidWorks works = currentProfile.getOrcidActivities() == null ? null : currentProfile.getOrcidActivities().getOrcidWorks();
@@ -299,7 +303,7 @@ public class WorkspaceController extends BaseWorkspaceController {
             Iterator<OrcidWork> workIterator = workList.iterator();
             while (workIterator.hasNext()) {
                 OrcidWork orcidWork = workIterator.next();
-                if (work.equals(orcidWork)) {
+                if (delWork.equals(orcidWork)) {
                     workIterator.remove();
                     deletedWork = work;
                 }
@@ -394,8 +398,11 @@ public class WorkspaceController extends BaseWorkspaceController {
         w.setContributors(contrList);
         
         Text disText= new Text();
-        
         w.setShortDescription(disText);
+        
+        OrcidProfile profile = getCurrentUser().getEffectiveProfile();
+        Visibility v = Visibility.valueOf(profile.getOrcidInternal().getPreferences().getWorkVisibilityDefault().getValue());
+        w.setVisibility(v);
         
         return w;
     }
@@ -411,13 +418,20 @@ public class WorkspaceController extends BaseWorkspaceController {
         
         workCitationValidate(work);
         workWorkTitleTitleValidate(work);
+        workWorkTitleSubtitleValidate(work);
+        workdescriptionValidate(work);
         workWorkTypeValidate(work);
         workWorkExternalIdentifiersValidate(work);
+        workUrlValidate(work);
         
         copyErrors(work.getCitation().getCitation(), work);
         copyErrors(work.getCitation().getCitationType(), work);
         copyErrors(work.getWorkTitle().getTitle(), work);
+        copyErrors(work.getShortDescription(), work);
+        copyErrors(work.getWorkTitle().getSubtitle(), work);
         copyErrors(work.getWorkType(), work);
+        copyErrors(work.getUrl(), work);
+        
         for (WorkExternalIdentifier wId:work.getWorkExternalIdentifiers()) {
             copyErrors(wId.getWorkExternalIdentifierId(), work);
             copyErrors(wId.getWorkExternalIdentifierType(), work);
@@ -427,6 +441,10 @@ public class WorkspaceController extends BaseWorkspaceController {
             OrcidWork newOw = work.toOrcidWork();
             // Why do we have to save all the works?
             OrcidProfile profile = getCurrentUser().getEffectiveProfile();
+            if (profile.getOrcidActivities() == null) 
+                profile.setOrcidActivities(new OrcidActivities());
+            if (profile.getOrcidActivities().getOrcidWorks() ==null)
+                profile.getOrcidActivities().setOrcidWorks(new OrcidWorks());
             List<OrcidWork> owList = profile.getOrcidActivities().getOrcidWorks().getOrcidWork();
             owList.add(newOw);
             profile.getOrcidActivities().getOrcidWorks().setOrcidWork(owList);
@@ -437,18 +455,58 @@ public class WorkspaceController extends BaseWorkspaceController {
         return work;
     }
 
+    
     @RequestMapping(value = "/work/workTitle/titleValidate.json", method = RequestMethod.POST)
     public @ResponseBody
     Work workWorkTitleTitleValidate(@RequestBody Work work) {
         work.getWorkTitle().getTitle().setErrors(new ArrayList<String>());
         if (work.getWorkTitle().getTitle().getValue() == null || work.getWorkTitle().getTitle().getValue().trim().length() == 0) {
             setError(work.getWorkTitle().getTitle(), "NotBlank.manualWork.title");
+        } else {
+            if (work.getWorkTitle().getTitle().getValue().trim().length() > 1000) {
+                setError(work.getWorkTitle().getTitle(), "manualWork.length_less_1000");
+            }
         }
-
         return work;
     }
 
     
+    @RequestMapping(value = "/work/workTitle/subtitleValidate.json", method = RequestMethod.POST)
+    public @ResponseBody
+    Work workWorkTitleSubtitleValidate(@RequestBody Work work) {
+        work.getWorkTitle().getSubtitle().setErrors(new ArrayList<String>());
+        if (work.getWorkTitle().getSubtitle().getValue() != null 
+                && work.getWorkTitle().getSubtitle().getValue().length() > 1000) {
+            setError(work.getWorkTitle().getSubtitle(), "manualWork.length_less_1000");
+        }
+        return work;
+    }
+
+
+    @RequestMapping(value = "/work/urlValidate.json", method = RequestMethod.POST)
+    public @ResponseBody
+    Work workUrlValidate(@RequestBody Work work) {
+        work.getUrl().setErrors(new ArrayList<String>());
+        if (work.getUrl().getValue() != null 
+                && work.getUrl().getValue().length() > 350) {
+            setError(work.getUrl(), "manualWork.length_less_350");
+        }
+        return work;
+    }
+
+
+    @RequestMapping(value = "/work/descriptionValidate.json", method = RequestMethod.POST)
+    public @ResponseBody
+    Work workdescriptionValidate(@RequestBody Work work) {
+        work.getShortDescription().setErrors(new ArrayList<String>());
+        if (work.getShortDescription().getValue() != null 
+                && work.getShortDescription().getValue().length() > 5000) {
+            setError(work.getShortDescription(), "manualWork.length_less_5000");
+        }
+        return work;
+    }
+
+
     @RequestMapping(value = "/work/workTypeValidate.json", method = RequestMethod.POST)
     public @ResponseBody
     Work workWorkTypeValidate(@RequestBody Work work) {
@@ -459,6 +517,7 @@ public class WorkspaceController extends BaseWorkspaceController {
 
         return work;
     }
+    
 
 
     @RequestMapping(value = "/work/workExternalIdentifiersValidate.json", method = RequestMethod.POST)
@@ -473,6 +532,9 @@ public class WorkspaceController extends BaseWorkspaceController {
                     && (wId.getWorkExternalIdentifierType().getValue() == null
                         || wId.getWorkExternalIdentifierType().getValue().equals(""))) {
                 setError(wId.getWorkExternalIdentifierType(), "NotBlank.currentWorkExternalIds.idType"); 
+            } else if (wId.getWorkExternalIdentifierId().getValue() != null 
+                    && wId.getWorkExternalIdentifierId().getValue().length() > 2084) {
+                setError(wId.getWorkExternalIdentifierId(), "manualWork.length_less_2084");
             }
             // if type is set a id must set
             if (wId.getWorkExternalIdentifierType().getValue() != null

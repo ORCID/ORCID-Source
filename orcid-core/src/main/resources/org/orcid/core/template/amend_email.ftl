@@ -16,19 +16,16 @@
     =============================================================================
 
 -->
-Dear ${emailName},
+<#import "email_macros.ftl" as emailMacros />
+<@emailMacros.msg "email.common.dear" /> ${emailName}<@emailMacros.msg "email.common.dear.comma" />
 
-Thought you'd like to know... ${amenderName} has updated your ORCID record.
+<@emailMacros.msg "email.amend.thought_you.1" /> ${amenderName} <@emailMacros.msg "email.amend.thought_you.2" />
 
-Please click the following URL to log in and see your updated record: 
+<@emailMacros.msg "email.amend.please_click" />
 
     ${baseUri}/my-orcid
 
-Kind Regards,
-The ORCID Team
-support@orcid.org
+<@emailMacros.msg "email.common.kind_regards" />
 ${baseUri}
 
-You have received this email in the genuine belief that its contents would be of 
-interest to you. To opt-out of messages from ORCID please go to your Account 
-Settings page at ${baseUri}/account.
+<@emailMacros.msg "email.common.you_have_received_this_email_opt_out" />

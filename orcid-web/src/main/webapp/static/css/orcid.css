@@ -906,12 +906,18 @@ ul.privacyHelp li.private {
 	font-size: 2em;
 	font-weight: bolder;
 	color: #A6CE39;
+	border: none;	
 }
 
 #statistics .stat-name {
 	font-size: 1.5em;
 	font-weight: bold;
-	color: #338CAF;
+	color: #939498;
+}
+
+#statistics .stat-date {
+	font-size: 1em;	
+	color: #939498;	
 }
 
 #statistics .pull-right {
@@ -1243,12 +1249,11 @@ a:hover {
 
 .workspace-accordion-header {
     position: relative;
-    line-height: 1;
     font-size: 20px;
     margin-top: 10px;
     margin-bottom: 10px;
     font-weight: bold;
-    font-family: 'Gill Sans W01 Bold', 'Gill Sans', sans-serif;
+    font-family: 'Gill Sans W01 Bold', 'Gill Sans', sans-serif;   
 }
 
 .workspace-accordion-header a,
@@ -1261,22 +1266,27 @@ a:hover {
 
 .workspace-accordion-header a.btn-primary {
 	color: #FFFFFF;
+	vertical-align: text-top;
+	margin-top: 2px;
 }
-        
+/*       
 .workspace-accordion-header:after {
     content: "";
     position: absolute;
     top: 5px;
     right: 10px;
 }
-
+*/
 .workspace-accordion-header .btn-update {
-    display: none;
+    display:
+    
+     none;
 }
 
 .workspace-accordion-active .btn-update {
     display: inline-block;
 }
+/*
 .js .workspace-accordion-active .workspace-accordion-header:after {
     border: 10px solid transparent;
     border-bottom-color: #31789B;
@@ -1286,6 +1296,7 @@ a:hover {
     border: 10px solid transparent;
     border-top-color: #31789B;    
 }
+*/
     
 .workspace-accordion-active .workspace-accordion-header,
 .workspace-header-public {
@@ -1304,6 +1315,7 @@ a:hover {
      margin-bottom: 10px;
 }
 
+/*
 .js .workspace-accordion-content {
     display: none;
 }
@@ -1312,6 +1324,7 @@ a:hover {
 .workspace-header-public {
     display: block;
 }
+*/
 
 .workspace-help {
     margin: 0;
@@ -2253,4 +2266,11 @@ a.btn-primary:hover {
 
 .display-inline {
 	display: inline;
+}
+
+.see-more{
+	display: block;
+	float: right;
+	margin: 30px 0 0;
+	font-size: 12px;
 }

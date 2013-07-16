@@ -15,7 +15,9 @@
  * =============================================================================
  */
 
-var orcidNgModule = angular.module('orcidApp', []).directive('ngModelOnblur', function() {
+var orcidNgModule = angular.module('orcidApp', []);
+
+orcidNgModule.directive('ngModelOnblur', function() {
     return {
         restrict: 'A',
         require: 'ngModel',
@@ -40,6 +42,54 @@ var orcidNgModule = angular.module('orcidApp', []).directive('ngModelOnblur', fu
         }
     };
 });
+
+orcidNgModule.factory("worksSrvc", function () {
+	var serv = {
+			works: new Array()
+	}; 
+	return serv;
+});
+
+orcidNgModule.factory("prefsSrvc", function ($rootScope) {
+	var serv = {
+			prefs: null,
+			getPrivacyPreferences: function() {
+				$.ajax({
+			        url: $('body').data('baseurl') + 'account/preferences.json',
+			        dataType: 'json',
+			        success: function(data) {
+			        	serv.prefs = data;
+			        	$rootScope.$apply;
+			        }
+			    }).fail(function() { 
+			    	// something bad is happening!
+			    	console.log("error with multi email");
+			    });
+			},
+			savePrivacyPreferences: function() {
+				$.ajax({
+			        url: $('body').data('baseurl') + 'account/preferences.json',
+			        type: 'POST',
+			        data: angular.toJson(serv.prefs),
+			        contentType: 'application/json;charset=UTF-8',
+			        dataType: 'json',
+			        success: function(data) {
+			        	serv.prefs = data;
+			        	$rootScope.$apply;
+			        }
+			    }).fail(function() { 
+			    	// something bad is happening!
+			    	console.log("error with multi email");
+			    });
+			}
+		};
+	    
+	    // populate the prefs
+		serv.getPrivacyPreferences();
+
+	return serv; 
+});
+
 
 
 function EditTableCtrl($scope) {
@@ -137,49 +187,19 @@ function EditTableCtrl($scope) {
 	
 };
 
-function PrivacyPreferencesCtrl($scope, $http) {
-	$scope.getPrivacyPreferences = function() {	
-		$.ajax({
-	        url: $('body').data('baseurl') + 'account/default-privacy-preferences.json',
-	        dataType: 'json',
-	        success: function(data) {
-	        	$scope.privacyPreferences = data;
-	        	$scope.$apply();
-	        	//alert($scope.privacyPreferences.workVisibilityDefault.value);
-	        }
-	    }).fail(function() { 
-	    	// something bad is happening!
-	    	console.log("error with multi email");
-	    });
-	};
-	
-	$scope.savePrivacyPreferences = function() {
-		$.ajax({
-	        url: $('body').data('baseurl') + 'account/default-privacy-preferences.json',
-	        type: 'POST',
-	        data: angular.toJson($scope.privacyPreferences),
-	        contentType: 'application/json;charset=UTF-8',
-	        dataType: 'json',
-	        success: function(data) {
-	        	$scope.privacyPreferences = data;
-	        	$scope.$apply();
-	         	//alert($scope.privacyPreferences.workVisibilityDefault.value);
-	 	       
-	        }
-	    }).fail(function() { 
-	    	// something bad is happening!
-	    	console.log("error with multi email");
-	    });
-	};
 
+function WorksPrivacyPreferencesCtrl($scope, prefsSrvc) {
+	$scope.prefsSrvc = prefsSrvc;
+	
 	$scope.updateWorkVisibilityDefault = function(priv, $event) {
-		$scope.privacyPreferences.workVisibilityDefault.value = priv;
-		$scope.savePrivacyPreferences();
-	};
-	
-	//init
-	$scope.privacyPreferences = $scope.getPrivacyPreferences();
-	
+		$scope.prefsSrvc.prefs.workVisibilityDefault.value = priv;
+		$scope.prefsSrvc.savePrivacyPreferences();
+	};	
+};
+
+
+function EmailPreferencesCtrl($scope, prefsSrvc) {
+	$scope.prefsSrvc = prefsSrvc;
 };
 
 
@@ -921,8 +941,25 @@ function ClaimThanks($scope, $compile) {
 	
 };
 
-function WorkCtrl($scope, $compile){
-	$scope.works = new Array();
+function PersonalInfoCtrl($scope, $compile){
+	$scope.displayInfo = true;
+	$scope.toggleDisplayInfo = function () {
+		$scope.displayInfo = !$scope.displayInfo;
+	};
+};
+
+function WorkOverviewCtrl($scope, $compile, worksSrvc){
+	$scope.works = worksSrvc.works;
+}
+
+function WorkCtrl($scope, $compile, worksSrvc){
+	$scope.displayWorks = true;
+	$scope.works = worksSrvc.works;
+	$scope.numOfWorksToAdd = null;
+	
+	$scope.toggleDisplayWorks = function () {
+		$scope.displayWorks = !$scope.displayWorks;
+	};
 	
 	$scope.showAddModal = function(){;
 	    $.colorbox({        	
@@ -951,6 +988,7 @@ function WorkCtrl($scope, $compile){
 	$scope.addWork = function(){
 		if ($scope.addingWork) return; // don't process if adding work
 		$scope.addingWork = true;
+		$scope.editWork.errors.length = 0;
 		$.ajax({
 			url: $('body').data('baseurl') + 'my-orcid/work.json',	        
 	        contentType: 'application/json;charset=UTF-8',
@@ -1000,6 +1038,7 @@ function WorkCtrl($scope, $compile){
 	$scope.getWorks = function() {
 		//clear out current works
 		$scope.worksToAddIds = null;
+		$scope.numOfWorksToAdd = null;
 		$scope.works.length = 0;
 		//get work ids
 		$.ajax({
@@ -1007,12 +1046,10 @@ function WorkCtrl($scope, $compile){
 	        dataType: 'json',
 	        success: function(data) {
 	        	$scope.worksToAddIds = data;
-	        	if (data.length > 0 ) { 
-	        		$scope.addWorkToScope();
-	        		$scope.hasWorks = true;
-	        	} else {
-	        		$scope.hasWorks = false;
-	        	}
+	        	$scope.numOfWorksToAdd = data.length;
+	 
+	        	if (data.length > 0 ) $scope.addWorkToScope();
+	        	$scope.$apply();
 	        }
 		}).fail(function(){
 			// something bad is happening!
@@ -1045,6 +1082,7 @@ function WorkCtrl($scope, $compile){
 		$scope.removeWork(work);
 		// remove the work from the UI
     	$scope.works.splice($scope.deleteIndex, 1);
+    	$scope.numOfWorksToAdd--; // keep this number matching
     	// apply changes on scope
 		// close box
 		$.colorbox.close(); 
@@ -1070,6 +1108,13 @@ function WorkCtrl($scope, $compile){
 	    	console.log("Error deleting work.");
 	    });
 	};
+
+	$scope.setAddWorkPrivacy = function(priv, $event) {
+		$event.preventDefault();
+		$scope.editWork.visibility.visibility = priv;
+	};
+
+	
 		
 	$scope.setPrivacy = function(idx, priv, $event) {
 		$event.preventDefault();
@@ -1414,3 +1459,24 @@ function ClientEditCtrl($scope, $compile){
 	//init
 	$scope.getClients();
 }
+
+function statisticCtrl($scope){	
+	$scope.liveIds = 0;	
+	$scope.getLiveIds = function(){
+		$.ajax({
+	        url: $('body').data('baseurl')+'statistics/liveids.json',	        
+	        type: 'GET',
+	        dataType: 'html',
+	        success: function(data){
+	        	$scope.liveIds = data;
+	        	$scope.$apply($scope.liveIds);	        		        	
+	        }
+	    }).fail(function(error) { 
+	    	// something bad is happening!	    	
+	    	console.log("Error getting statistics Live iDs total amount");	    	
+	    });
+	};
+	
+	$scope.getLiveIds();
+}
+

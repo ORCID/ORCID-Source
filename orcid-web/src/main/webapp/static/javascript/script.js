@@ -561,11 +561,11 @@ $(function () {
 	
 	// Fake accordion:
 	
-	$('.workspace-accordion-header').on('click', function (e) {
-		var $this = $(this);
-		$this.next().slideToggle(150);
-		$this.closest('.workspace-accordion-item').toggleClass('workspace-accordion-active');
-	});
+//	$('.workspace-accordion-header').on('click', function (e) {
+//		var $this = $(this);
+//		$this.next().slideToggle(150);
+//		$this.closest('.workspace-accordion-item').toggleClass('workspace-accordion-active');
+//	});
 	
 	$('.workspace-header').on('click', '.overview-title,.overview-count', function (e) {
 		e.preventDefault();
