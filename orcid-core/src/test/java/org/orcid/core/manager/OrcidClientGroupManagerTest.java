@@ -220,4 +220,19 @@ public class OrcidClientGroupManagerTest extends BaseTest {
         assertNull(updatedRedirectUris.get(1).getScope());
     }
 
+    @Test
+    @Rollback(true)
+    @Transactional
+    public void testGetOrcidClientList() {
+        OrcidClientGroup group = OrcidClientGroup.unmarshall(getClass().getResourceAsStream(CLIENT_GROUP));
+
+        OrcidClientGroup createdGroup = orcidClientGroupManager.createOrUpdateOrcidClientGroup(group, OrcidType.CREATOR);
+        
+        createdGroup = orcidClientGroupManager.retrieveOrcidClientGroup(createdGroup.getGroupOrcid());
+        
+        assertNotNull(createdGroup);
+        assertNotNull(createdGroup.getOrcidClient());
+        assertEquals(createdGroup.getOrcidClient().size(), 2);
+    }
+    
 }
