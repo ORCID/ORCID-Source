@@ -43,7 +43,7 @@
                     ${(profile.orcidBio.personalDetails.givenNames.content)!} ${(profile.orcidBio.personalDetails.familyName.content)!}
                 </#if>
             </h2>
-            <p><small id="orcid-id" class="orcid-id">${(profile.orcid.value)!}</small></p>
+            <p><small id="orcid-id" class="orcid-id">${baseUri}/${(profile.orcid.value)!}</small></p>
 	        <p class="hoover-white-fonts"><a href="<@spring.url "/" + (profile.orcid.value)!"my-orcid/public" />" class="label btn-primary"><@orcid.msg 'workspace.ViewPublicORCIDRecord'/></a></p>
 	        <#if !RequestParameters['addWorks']??>
 	            <p><a href="<@spring.url '/account/manage-bio-settings'/>" class="btn-update"><@orcid.msg 'workspace.Update'/></a></p>
