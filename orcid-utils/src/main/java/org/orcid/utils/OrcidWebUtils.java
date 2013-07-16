@@ -50,7 +50,8 @@ public class OrcidWebUtils {
     }
 
     public static String getServerString(HttpServletRequest request) {
-        String scheme = request.getScheme();
+        String forwardedProto = request.getHeader("X-Forwarded-Proto");
+        String scheme = forwardedProto != null ? forwardedProto : request.getScheme();
         int serverPort = request.getServerPort();
         String serverName = request.getServerName();
 
