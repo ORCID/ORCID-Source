@@ -84,22 +84,32 @@ public class ValidationManagerImpl implements ValidationManager {
         if (ValidationBehaviour.IGNORE.equals(validationBehaviour)) {
             return;
         }
+        doSchemaValidation(orcidMessage);
+        doCustomValidation(orcidMessage);
+    }
+
+    protected void doSchemaValidation(OrcidMessage orcidMessage) {
         Validator validator = createValidator();
         if (validator != null) {
             try {
                 validator.validate(orcidMessage.toSource());
-                doCustomValidation(orcidMessage);
             } catch (SAXException e) {
                 handleError("ORCID message is invalid", e, orcidMessage);
             } catch (IOException e) {
                 handleError("Unable to read ORCID message", e, orcidMessage);
-            } catch (OrcidValidationException e) {
-                handleError("Custom validation found a problem", e, orcidMessage);
             }
         }
     }
 
     public void doCustomValidation(OrcidMessage orcidMessage) {
+        try {
+            checkMessage(orcidMessage);
+        } catch (OrcidValidationException e) {
+            handleError("Custom validation found a problem", e, orcidMessage);
+        }
+    }
+
+    private void checkMessage(OrcidMessage orcidMessage) {
         OrcidProfile orcidProfile = orcidMessage != null ? orcidMessage.getOrcidProfile() : null;
         if (orcidProfile == null) {
             if (requireOrcidProfile) {
