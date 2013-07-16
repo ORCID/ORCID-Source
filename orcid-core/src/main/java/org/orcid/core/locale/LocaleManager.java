@@ -14,7 +14,7 @@
  *
  * =============================================================================
  */
-package org.orcid.core.manager;
+package org.orcid.core.locale;
 
 import java.util.Locale;
 

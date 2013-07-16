@@ -192,6 +192,7 @@ public class WorkspaceController extends BaseWorkspaceController {
     @RequestMapping
     public ModelAndView viewWorkspace(HttpServletRequest request, @RequestParam(value = "page", defaultValue = "1") int pageNo,
             @RequestParam(value = "maxResults", defaultValue = "200") int maxResults) {
+        
         ModelAndView mav = new ModelAndView("workspace");
         mav.addObject("showPrivacy", true);
 

@@ -45,8 +45,8 @@ import net.sf.ehcache.Cache;
 import net.sf.ehcache.Element;
 
 import org.apache.commons.lang3.StringUtils;
+import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.EncryptionManager;
-import org.orcid.core.manager.LocaleManager;
 import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.OrcidGenerationManager;
 import org.orcid.core.manager.OrcidIndexManager;

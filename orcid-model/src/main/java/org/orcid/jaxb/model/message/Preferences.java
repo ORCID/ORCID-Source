@@ -55,18 +55,21 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "sendChangeNotifications", "sendOrcidNews", "workVisibilityDefault" })
+@XmlType(name = "", propOrder = { "locale","sendChangeNotifications", "sendOrcidNews", "workVisibilityDefault" })
 @XmlRootElement(name = "preferences")
 public class Preferences implements Serializable {
 
     private final static long serialVersionUID = 1L;
+    @XmlElement(name = "locale", required = false)
+    private Locale locale;
     @XmlElement(name = "send-change-notifications", required = true)
     protected SendChangeNotifications sendChangeNotifications;
     @XmlElement(name = "send-orcid-news", required = true)
     protected SendOrcidNews sendOrcidNews;
     @XmlElement(name = "work-visibility-default", required = true)
     protected WorkVisibilityDefault workVisibilityDefault;
-
+ 
+    
     /**
      * Gets the value of the sendChangeNotifications property.
      * 
@@ -165,6 +168,14 @@ public class Preferences implements Serializable {
         } else if (!workVisibilityDefault.equals(other.workVisibilityDefault))
             return false;
         return true;
+    }
+
+    public Locale getLocale() {
+        return locale;
+    }
+
+    public void setLocale(Locale locale) {
+        this.locale = locale;
     }
 
 }

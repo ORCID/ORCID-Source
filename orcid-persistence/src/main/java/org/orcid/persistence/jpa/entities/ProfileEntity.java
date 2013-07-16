@@ -115,6 +115,7 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
     private SortedSet<ProfileGrantEntity> profileGrants;
     private SortedSet<ProfilePatentEntity> profilePatents;
     private SortedSet<ProfileWorkEntity> profileWorks;
+    private String locale;
     private Boolean sendChangeNotifications;
     private Boolean sendOrcidNews;
     private String groupOrcid;
@@ -883,6 +884,15 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
         } else if (!orcid.equals(other.orcid))
             return false;
         return true;
+    }
+
+    @Column(name = "locale")
+    public String getLocale() {
+        return locale;
+    }
+
+    public void setLocale(String locale) {
+        this.locale = locale;
     }
 
 }
