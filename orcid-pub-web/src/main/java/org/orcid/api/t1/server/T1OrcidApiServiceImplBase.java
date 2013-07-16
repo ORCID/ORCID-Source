@@ -19,6 +19,7 @@ package org.orcid.api.t1.server;
 import static org.orcid.api.common.OrcidApiConstants.APPLICATION_RDFXML;
 import static org.orcid.api.common.OrcidApiConstants.BIO_PATH;
 import static org.orcid.api.common.OrcidApiConstants.BIO_SEARCH_PATH;
+import static org.orcid.api.common.OrcidApiConstants.EXPERIMENTAL_RDF_V1;
 import static org.orcid.api.common.OrcidApiConstants.EXTERNAL_IDENTIFIER_PATH;
 import static org.orcid.api.common.OrcidApiConstants.ORCID_JSON;
 import static org.orcid.api.common.OrcidApiConstants.ORCID_XML;
@@ -29,14 +30,12 @@ import static org.orcid.api.common.OrcidApiConstants.TEXT_TURTLE;
 import static org.orcid.api.common.OrcidApiConstants.VND_ORCID_JSON;
 import static org.orcid.api.common.OrcidApiConstants.VND_ORCID_XML;
 import static org.orcid.api.common.OrcidApiConstants.WORKS_PATH;
-import static org.orcid.api.common.OrcidApiConstants.EXPERIMENTAL_RDF_V1;
 
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Resource;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -50,41 +49,37 @@ import org.orcid.api.common.OrcidApiService;
 import org.orcid.api.common.delegator.OrcidApiServiceDelegator;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 
 import com.yammer.metrics.Metrics;
 import com.yammer.metrics.core.Counter;
 
 /**
  * Copyright 2011-2012 ORCID
- *
+ * 
  * @author Declan Newman (declan) Date: 01/03/2012
  */
-@Component
-@Path("/")
-public class T1OrcidApiServiceImpl implements OrcidApiService<Response> {
+abstract public class T1OrcidApiServiceImplBase implements OrcidApiService<Response> {
 
     @Value("${org.orcid.core.pubBaseUri:http://orcid.org}")
     private String pubBaseUri;
 
-    final static Counter T1_GET_REQUESTS = Metrics.newCounter(T1OrcidApiServiceImpl.class, "T1-GET-REQUESTS");
-    final static Counter T1_SEARCH_REQUESTS = Metrics.newCounter(T1OrcidApiServiceImpl.class, "T1-SEARCH-REQUESTS");
+    final static Counter T1_GET_REQUESTS = Metrics.newCounter(T1OrcidApiServiceImplBase.class, "T1-GET-REQUESTS");
+    final static Counter T1_SEARCH_REQUESTS = Metrics.newCounter(T1OrcidApiServiceImplBase.class, "T1-SEARCH-REQUESTS");
 
-    final static Counter T1_SEARCH_RESULTS_NONE_FOUND = Metrics.newCounter(T1OrcidApiServiceImpl.class, "T1-SEARCH-RESULTS-NONE-FOUND");
-    final static Counter T1_SEARCH_RESULTS_FOUND = Metrics.newCounter(T1OrcidApiServiceImpl.class, "T1-SEARCH-RESULTS-FOUND");
+    final static Counter T1_SEARCH_RESULTS_NONE_FOUND = Metrics.newCounter(T1OrcidApiServiceImplBase.class, "T1-SEARCH-RESULTS-NONE-FOUND");
+    final static Counter T1_SEARCH_RESULTS_FOUND = Metrics.newCounter(T1OrcidApiServiceImplBase.class, "T1-SEARCH-RESULTS-FOUND");
 
     @Context
     private UriInfo uriInfo;
+
+    private OrcidApiServiceDelegator orcidApiServiceDelegator;
 
     public void setUriInfo(UriInfo uriInfo) {
         this.uriInfo = uriInfo;
     }
 
-    @Resource(name = "orcidServiceDelegator")
-    private OrcidApiServiceDelegator serviceDelegator;
-
-    public void setServiceDelegator(OrcidApiServiceDelegator serviceDelegator) {
-        this.serviceDelegator = serviceDelegator;
+    public void setOrcidApiServiceDelegator(OrcidApiServiceDelegator orcidApiServiceDelegator) {
+        this.orcidApiServiceDelegator = orcidApiServiceDelegator;
     }
 
     /**
@@ -94,14 +89,14 @@ public class T1OrcidApiServiceImpl implements OrcidApiService<Response> {
     @Produces(value = { MediaType.TEXT_PLAIN })
     @Path(STATUS_PATH)
     public Response viewStatusText() {
-        return serviceDelegator.viewStatusText();
+        return orcidApiServiceDelegator.viewStatusText();
     }
 
     /**
      * GETs the HTML representation of the ORCID record
-     *
+     * 
      * @param orcid
-     *         the ORCID that corresponds to the user's record
+     *            the ORCID that corresponds to the user's record
      * @return the HTML representation of the ORCID record
      */
     @Override
@@ -110,16 +105,16 @@ public class T1OrcidApiServiceImpl implements OrcidApiService<Response> {
     @Path(BIO_PATH)
     public Response viewBioDetailsHtml(@PathParam("orcid") String orcid) {
         T1_GET_REQUESTS.inc();
-        Response response = serviceDelegator.findBioDetailsFromPublicCache(orcid);
+        Response response = orcidApiServiceDelegator.findBioDetailsFromPublicCache(orcid);
         return Response.fromResponse(response).header("Content-Disposition", "attachment; filename=\"" + orcid + "-bio.xml\"").build();
     }
 
     /**
      * GETs the XML representation of the ORCID record containing only the
      * Biography details
-     *
+     * 
      * @param orcid
-     *         the ORCID that corresponds to the user's record
+     *            the ORCID that corresponds to the user's record
      * @return the XML representation of the ORCID record
      */
     @Override
@@ -128,12 +123,12 @@ public class T1OrcidApiServiceImpl implements OrcidApiService<Response> {
     @Path(BIO_PATH)
     public Response viewBioDetailsXml(@PathParam("orcid") String orcid) {
         T1_GET_REQUESTS.inc();
-        return serviceDelegator.findBioDetailsFromPublicCache(orcid);
+        return orcidApiServiceDelegator.findBioDetailsFromPublicCache(orcid);
     }
 
     /**
-     *  returns a redirect to experimental rdf api
-     *        
+     * returns a redirect to experimental rdf api
+     * 
      * @param orcid
      *            the ORCID that corresponds to the user's record
      * @return A 307 redirect
@@ -166,12 +161,12 @@ public class T1OrcidApiServiceImpl implements OrcidApiService<Response> {
     @Path(EXPERIMENTAL_RDF_V1 + BIO_PATH)
     public Response viewBioDetailsRdf(@PathParam("orcid") String orcid) {
         T1_GET_REQUESTS.inc();
-        return serviceDelegator.findBioDetails(orcid);
+        return orcidApiServiceDelegator.findBioDetails(orcid);
     }
 
     /**
-     *  returns a redirect to experimental rdf api
-     *        
+     * returns a redirect to experimental rdf api
+     * 
      * @param orcid
      *            the ORCID that corresponds to the user's record
      * @return A 307 redirect
@@ -191,8 +186,8 @@ public class T1OrcidApiServiceImpl implements OrcidApiService<Response> {
     }
 
     /**
-     * GETs the RDF Turtle representation of the ORCID record containing only the
-     * Biography details
+     * GETs the RDF Turtle representation of the ORCID record containing only
+     * the Biography details
      * 
      * @param orcid
      *            the ORCID that corresponds to the user's record
@@ -203,15 +198,15 @@ public class T1OrcidApiServiceImpl implements OrcidApiService<Response> {
     @Path(EXPERIMENTAL_RDF_V1 + BIO_PATH)
     public Response viewBioDetailsTurtle(@PathParam("orcid") String orcid) {
         T1_GET_REQUESTS.inc();
-        return serviceDelegator.findBioDetails(orcid);
+        return orcidApiServiceDelegator.findBioDetails(orcid);
     }
 
     /**
      * GETs the JSON representation of the ORCID record containing only the
      * Biography details
-     *
+     * 
      * @param orcid
-     *         the ORCID that corresponds to the user's record
+     *            the ORCID that corresponds to the user's record
      * @return the JSON representation of the ORCID record
      */
     @Override
@@ -220,14 +215,14 @@ public class T1OrcidApiServiceImpl implements OrcidApiService<Response> {
     @Path(BIO_PATH)
     public Response viewBioDetailsJson(@PathParam("orcid") String orcid) {
         T1_GET_REQUESTS.inc();
-        return serviceDelegator.findBioDetailsFromPublicCache(orcid);
+        return orcidApiServiceDelegator.findBioDetailsFromPublicCache(orcid);
     }
 
     /**
      * GETs the HTML representation of the ORCID external identifiers
-     *
+     * 
      * @param orcid
-     *         the ORCID that corresponds to the user's record
+     *            the ORCID that corresponds to the user's record
      * @return the HTML representation of the ORCID record
      */
     @Override
@@ -236,16 +231,16 @@ public class T1OrcidApiServiceImpl implements OrcidApiService<Response> {
     @Path(EXTERNAL_IDENTIFIER_PATH)
     public Response viewExternalIdentifiersHtml(@PathParam("orcid") String orcid) {
         T1_GET_REQUESTS.inc();
-        Response response = serviceDelegator.findExternalIdentifiersFromPublicCache(orcid);
+        Response response = orcidApiServiceDelegator.findExternalIdentifiersFromPublicCache(orcid);
         return Response.fromResponse(response).header("Content-Disposition", "attachment; filename=\"" + orcid + "-external-ids.xml\"").build();
     }
 
     /**
      * GETs the XML representation of the ORCID record containing only the
      * external identifiers
-     *
+     * 
      * @param orcid
-     *         the ORCID that corresponds to the user's record
+     *            the ORCID that corresponds to the user's record
      * @return the XML representation of the ORCID record
      */
     @Override
@@ -254,15 +249,15 @@ public class T1OrcidApiServiceImpl implements OrcidApiService<Response> {
     @Path(EXTERNAL_IDENTIFIER_PATH)
     public Response viewExternalIdentifiersXml(@PathParam("orcid") String orcid) {
         T1_GET_REQUESTS.inc();
-        return serviceDelegator.findExternalIdentifiersFromPublicCache(orcid);
+        return orcidApiServiceDelegator.findExternalIdentifiersFromPublicCache(orcid);
     }
 
     /**
      * GETs the JSON representation of the ORCID record containing only the
      * external identifiers
-     *
+     * 
      * @param orcid
-     *         the ORCID that corresponds to the user's record
+     *            the ORCID that corresponds to the user's record
      * @return the JSON representation of the ORCID record
      */
     @Override
@@ -271,14 +266,14 @@ public class T1OrcidApiServiceImpl implements OrcidApiService<Response> {
     @Path(EXTERNAL_IDENTIFIER_PATH)
     public Response viewExternalIdentifiersJson(@PathParam("orcid") String orcid) {
         T1_GET_REQUESTS.inc();
-        return serviceDelegator.findExternalIdentifiersFromPublicCache(orcid);
+        return orcidApiServiceDelegator.findExternalIdentifiersFromPublicCache(orcid);
     }
 
     /**
      * GETs the HTML representation of the ORCID record containing all details
-     *
+     * 
      * @param orcid
-     *         the ORCID that corresponds to the user's record
+     *            the ORCID that corresponds to the user's record
      * @return the HTML representation of the ORCID record
      */
     @Override
@@ -287,15 +282,15 @@ public class T1OrcidApiServiceImpl implements OrcidApiService<Response> {
     @Path(PROFILE_GET_PATH)
     public Response viewFullDetailsHtml(@PathParam("orcid") String orcid) {
         T1_GET_REQUESTS.inc();
-        Response response = serviceDelegator.findFullDetailsFromPublicCache(orcid);
+        Response response = orcidApiServiceDelegator.findFullDetailsFromPublicCache(orcid);
         return Response.fromResponse(response).header("Content-Disposition", "attachment; filename=\"" + orcid + "-profile.xml\"").build();
     }
 
     /**
      * GETs the XML representation of the ORCID record containing all details
-     *
+     * 
      * @param orcid
-     *         the ORCID that corresponds to the user's record
+     *            the ORCID that corresponds to the user's record
      * @return the XML representation of the ORCID record
      */
     @Override
@@ -304,14 +299,14 @@ public class T1OrcidApiServiceImpl implements OrcidApiService<Response> {
     @Path(PROFILE_GET_PATH)
     public Response viewFullDetailsXml(@PathParam("orcid") String orcid) {
         T1_GET_REQUESTS.inc();
-        return serviceDelegator.findFullDetailsFromPublicCache(orcid);
+        return orcidApiServiceDelegator.findFullDetailsFromPublicCache(orcid);
     }
 
     /**
      * GETs the JSON representation of the ORCID record containing all details
-     *
+     * 
      * @param orcid
-     *         the ORCID that corresponds to the user's record
+     *            the ORCID that corresponds to the user's record
      * @return the JSON representation of the ORCID record
      */
     @Override
@@ -320,15 +315,15 @@ public class T1OrcidApiServiceImpl implements OrcidApiService<Response> {
     @Path(PROFILE_GET_PATH)
     public Response viewFullDetailsJson(@PathParam("orcid") String orcid) {
         T1_GET_REQUESTS.inc();
-        return serviceDelegator.findFullDetailsFromPublicCache(orcid);
+        return orcidApiServiceDelegator.findFullDetailsFromPublicCache(orcid);
     }
 
     /**
      * GETs the HTML representation of the ORCID record containing only work
      * details
-     *
+     * 
      * @param orcid
-     *         the ORCID that corresponds to the user's record
+     *            the ORCID that corresponds to the user's record
      * @return the HTML representation of the ORCID record
      */
     @Override
@@ -337,16 +332,16 @@ public class T1OrcidApiServiceImpl implements OrcidApiService<Response> {
     @Path(WORKS_PATH)
     public Response viewWorksDetailsHtml(@PathParam("orcid") String orcid) {
         T1_GET_REQUESTS.inc();
-        Response response = serviceDelegator.findWorksDetailsFromPublicCache(orcid);
+        Response response = orcidApiServiceDelegator.findWorksDetailsFromPublicCache(orcid);
         return Response.fromResponse(response).header("Content-Disposition", "attachment; filename=\"" + orcid + "-works.xml\"").build();
     }
 
     /**
      * GETs the XML representation of the ORCID record containing only work
      * details
-     *
+     * 
      * @param orcid
-     *         the ORCID that corresponds to the user's record
+     *            the ORCID that corresponds to the user's record
      * @return the XML representation of the ORCID record
      */
     @GET
@@ -354,15 +349,15 @@ public class T1OrcidApiServiceImpl implements OrcidApiService<Response> {
     @Path(WORKS_PATH)
     public Response viewWorksDetailsXml(@PathParam("orcid") String orcid) {
         T1_GET_REQUESTS.inc();
-        return serviceDelegator.findWorksDetailsFromPublicCache(orcid);
+        return orcidApiServiceDelegator.findWorksDetailsFromPublicCache(orcid);
     }
 
     /**
      * GETs the JSON representation of the ORCID record containing only work
      * details
-     *
+     * 
      * @param orcid
-     *         the ORCID that corresponds to the user's record
+     *            the ORCID that corresponds to the user's record
      * @return the JSON representation of the ORCID record
      */
     @Override
@@ -371,13 +366,13 @@ public class T1OrcidApiServiceImpl implements OrcidApiService<Response> {
     @Path(WORKS_PATH)
     public Response viewWorksDetailsJson(@PathParam("orcid") String orcid) {
         T1_GET_REQUESTS.inc();
-        return serviceDelegator.findWorksDetailsFromPublicCache(orcid);
+        return orcidApiServiceDelegator.findWorksDetailsFromPublicCache(orcid);
     }
 
     /**
      * Gets the JSON representation any Orcid Profiles (BIO) only relevant to
      * the given query
-     *
+     * 
      * @param query
      * @return
      */
@@ -388,7 +383,7 @@ public class T1OrcidApiServiceImpl implements OrcidApiService<Response> {
     public Response searchByQueryJSON(String query) {
         T1_SEARCH_REQUESTS.inc();
         Map<String, List<String>> queryParams = uriInfo.getQueryParameters();
-        Response jsonQueryResults = serviceDelegator.searchByQuery(queryParams);
+        Response jsonQueryResults = orcidApiServiceDelegator.searchByQuery(queryParams);
         registerSearchMetrics(jsonQueryResults);
         return jsonQueryResults;
     }
@@ -396,7 +391,7 @@ public class T1OrcidApiServiceImpl implements OrcidApiService<Response> {
     /**
      * Gets the XML representation any Orcid Profiles (BIO) only relevant to the
      * given query
-     *
+     * 
      * @param query
      * @return
      */
@@ -407,7 +402,7 @@ public class T1OrcidApiServiceImpl implements OrcidApiService<Response> {
     public Response searchByQueryXML(String query) {
         T1_SEARCH_REQUESTS.inc();
         Map<String, List<String>> queryParams = uriInfo.getQueryParameters();
-        Response xmlQueryResults = serviceDelegator.searchByQuery(queryParams);
+        Response xmlQueryResults = orcidApiServiceDelegator.searchByQuery(queryParams);
         registerSearchMetrics(xmlQueryResults);
         return xmlQueryResults;
     }

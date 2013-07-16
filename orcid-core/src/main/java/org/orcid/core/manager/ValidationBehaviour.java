@@ -23,6 +23,6 @@ package org.orcid.core.manager;
  */
 public enum ValidationBehaviour {
 
-    IGNORE, LOG_INFO, LOG_WARNING, LOG_ERROR, THROW_RUNTIME_EXCEPTION;
+    IGNORE, LOG_INFO, LOG_WARNING, LOG_ERROR, THROW_VALIDATION_EXCEPTION;
 
 }

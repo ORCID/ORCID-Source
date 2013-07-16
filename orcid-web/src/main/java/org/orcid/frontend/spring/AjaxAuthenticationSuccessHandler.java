@@ -17,16 +17,25 @@
 package org.orcid.frontend.spring;
 
 import java.io.IOException;
+import java.security.Principal;
 
+import javax.annotation.Resource;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.orcid.core.manager.OrcidProfileManager;
+import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.utils.OrcidWebUtils;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
 import org.springframework.security.web.savedrequest.SavedRequest;
+import org.springframework.util.StringUtils;
+import org.springframework.web.servlet.LocaleResolver;
+import org.springframework.web.servlet.i18n.CookieLocaleResolver;
+import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
+import org.springframework.web.servlet.support.RequestContextUtils;
 
 /*
  * Trying to make spring login for
@@ -35,14 +44,39 @@ import org.springframework.security.web.savedrequest.SavedRequest;
  * @author Robert Peters (rcpeters)
  */
 public class AjaxAuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
+    @Resource
+    protected OrcidProfileManager orcidProfileManager;
+
 
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
         String targetUrl = determineFullTargetUrlFromSavedRequest(request, response);
+        if (authentication != null) {
+            String orcidId = authentication.getName();
+            checkLocale(request,response, orcidId);
+        }
         if (targetUrl == null) {
             targetUrl = determineFullTargetUrl(request, response);
         }
         response.setContentType("application/json");
         response.getWriter().println("{\"success\": true, \"url\": \"" + targetUrl.replaceAll("^/", "") + "\"}");
+    }
+    
+    private void checkLocale(HttpServletRequest request, HttpServletResponse response, String orcidId) {
+        OrcidProfile op = orcidProfileManager.retrieveOrcidProfile(orcidId);
+        if (op != null) {
+            if (op.getOrcidInternal() != null 
+                    && op.getOrcidInternal().getPreferences() != null
+                    && op.getOrcidInternal().getPreferences().getLocale() != null 
+                    && op.getOrcidInternal().getPreferences().getLocale().value() != null) {
+                String preferedLocale = op.getOrcidInternal().getPreferences().getLocale().value();
+                // hack to write/rewrite correct locale cookie on login.
+                CookieLocaleResolver clr = new CookieLocaleResolver();
+                clr.setCookieName("locale_v2"); /* must match <property name="cookieName" value="locale_v2" /> */
+                clr.setLocale(request, response, StringUtils.parseLocaleString(preferedLocale));
+            }
+            
+        }
+        
     }
 
     private String determineFullTargetUrlFromSavedRequest(HttpServletRequest request, HttpServletResponse response) {

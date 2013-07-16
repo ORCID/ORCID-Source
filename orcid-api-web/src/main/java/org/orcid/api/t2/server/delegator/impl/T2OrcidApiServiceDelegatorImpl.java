@@ -39,12 +39,10 @@ import org.orcid.api.common.delegator.impl.OrcidApiServiceDelegatorImpl;
 import org.orcid.api.common.exception.OrcidBadRequestException;
 import org.orcid.api.common.exception.OrcidForbiddenException;
 import org.orcid.api.common.exception.OrcidNotFoundException;
-import org.orcid.api.common.validation.ValidOrcidMessage;
 import org.orcid.api.t2.server.delegator.T2OrcidApiServiceDelegator;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.manager.OrcidSearchManager;
 import org.orcid.core.manager.ProfileEntityManager;
-import org.orcid.core.manager.ValidationManager;
 import org.orcid.core.security.visibility.aop.AccessControl;
 import org.orcid.core.security.visibility.aop.VisibilityControl;
 import org.orcid.jaxb.model.message.CreationMethod;
@@ -94,9 +92,6 @@ public class T2OrcidApiServiceDelegatorImpl extends OrcidApiServiceDelegatorImpl
 
     @Resource(name = "orcidSearchManager")
     private OrcidSearchManager orcidSearchManager;
-
-    @Resource
-    private ValidationManager validationManager;
 
     @Resource
     private ProfileEntityManager profileEntityManager;
@@ -178,7 +173,6 @@ public class T2OrcidApiServiceDelegatorImpl extends OrcidApiServiceDelegatorImpl
      */
     @Override
     @AccessControl(requiredScope = ScopePathType.ORCID_BIO_UPDATE)
-    @ValidOrcidMessage
     public Response updateBioDetails(UriInfo uriInfo, String orcid, OrcidMessage orcidMessage) {
         OrcidProfile orcidProfile = orcidMessage.getOrcidProfile();
         try {
@@ -221,7 +215,6 @@ public class T2OrcidApiServiceDelegatorImpl extends OrcidApiServiceDelegatorImpl
      *         response describing the problem
      */
     @Override
-    @ValidOrcidMessage
     @AccessControl(requiredScope = ScopePathType.ORCID_PROFILE_CREATE)
     public Response createProfile(UriInfo uriInfo, OrcidMessage orcidMessage) {
         OrcidProfile orcidProfile = orcidMessage.getOrcidProfile();
@@ -256,7 +249,6 @@ public class T2OrcidApiServiceDelegatorImpl extends OrcidApiServiceDelegatorImpl
      */
     @Override
     @AccessControl(requiredScope = ScopePathType.ORCID_WORKS_CREATE)
-    @ValidOrcidMessage
     public Response addWorks(UriInfo uriInfo, String orcid, OrcidMessage orcidMessage) {
         OrcidProfile orcidProfile = orcidMessage.getOrcidProfile();
         try {
@@ -284,7 +276,6 @@ public class T2OrcidApiServiceDelegatorImpl extends OrcidApiServiceDelegatorImpl
      */
     @Override
     @AccessControl(requiredScope = ScopePathType.ORCID_WORKS_UPDATE)
-    @ValidOrcidMessage
     public Response updateWorks(UriInfo uriInfo, String orcid, OrcidMessage orcidMessage) {
         OrcidProfile orcidProfile = orcidMessage.getOrcidProfile();
         try {
@@ -305,7 +296,6 @@ public class T2OrcidApiServiceDelegatorImpl extends OrcidApiServiceDelegatorImpl
      */
     @Override
     @AccessControl(requiredScope = ScopePathType.ORCID_BIO_EXTERNAL_IDENTIFIERS_CREATE)
-    @ValidOrcidMessage
     public Response addExternalIdentifiers(UriInfo uriInfo, String orcid, OrcidMessage orcidMessage) {
         OrcidProfile orcidProfile = orcidMessage.getOrcidProfile();
         try {
@@ -412,7 +402,6 @@ public class T2OrcidApiServiceDelegatorImpl extends OrcidApiServiceDelegatorImpl
         if (orcidSearchResults != null) {
             OrcidMessage orcidMessage = new OrcidMessage();
             orcidMessage.setOrcidSearchResults(orcidSearchResults);
-            validationManager.validateMessage(orcidMessage);
             return Response.ok(orcidMessage).build();
         } else {
             throw new OrcidNotFoundException("No search results found using query " + query);

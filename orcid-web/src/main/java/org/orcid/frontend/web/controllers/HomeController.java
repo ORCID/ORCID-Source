@@ -17,9 +17,13 @@
 package org.orcid.frontend.web.controllers;
 
 import org.orcid.core.oauth.OrcidProfileUserDetails;
+import org.orcid.jaxb.model.message.OrcidProfile;
+import org.orcid.jaxb.model.message.Preferences;
 import org.orcid.pojo.UserStatus;
 import org.orcid.utils.OrcidStringUtils;
 import org.orcid.utils.UTF8Control;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -39,6 +43,8 @@ import org.springframework.web.servlet.support.RequestContextUtils;
 
 @Controller
 public class HomeController extends BaseController {
+    private static final Logger LOGGER = LoggerFactory.getLogger(HomeController.class);
+
 
     @RequestMapping(value = "/")
     public ModelAndView homeHandler(HttpServletRequest request) {
@@ -60,8 +66,27 @@ public class HomeController extends BaseController {
     @RequestMapping(value = "/lang.json")
     @Produces(value = { MediaType.APPLICATION_JSON })
     public @ResponseBody
-    org.orcid.pojo.Local langJson(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {
-
+    org.orcid.pojo.Local langJson(HttpServletRequest request, @RequestParam(value = "lang", required = false) String lang) throws NoSuchRequestHandlingMethodException {
+        if (lang != null) { 
+            String orcid = getCurrentUserOrcid();
+            if (orcid != null) {
+                OrcidProfile existingProfile = orcidProfileManager.retrieveOrcidProfile(orcid);
+                Preferences prefs =  existingProfile.getOrcidInternal().getPreferences();
+                org.orcid.jaxb.model.message.Locale locale = existingProfile.getOrcidInternal().getPreferences().getLocale();
+                if (!locale.value().equals(lang)) {
+                    try {
+                        prefs.setLocale(org.orcid.jaxb.model.message.Locale.fromValue(lang));
+                        existingProfile.getOrcidInternal().setPreferences(prefs);
+                        orcidProfileManager.updatePreferences(existingProfile);
+                    } catch (Exception e) {
+                        LOGGER.error("langJson exception", e);
+                    } catch (Throwable t) {
+                        LOGGER.error("langJson Throwable", t);
+                    }
+                }
+            }
+        }
+        
         Locale locale = RequestContextUtils.getLocale(request);
         org.orcid.pojo.Local lPojo = new org.orcid.pojo.Local();
         lPojo.setLocale(locale.toString());

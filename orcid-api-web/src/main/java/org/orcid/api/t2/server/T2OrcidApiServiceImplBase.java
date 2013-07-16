@@ -62,7 +62,6 @@ import org.orcid.api.t2.server.delegator.OrcidClientCredentialEndPointDelegator;
 import org.orcid.api.t2.server.delegator.T2OrcidApiServiceDelegator;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.springframework.security.oauth2.common.util.OAuth2Utils;
-import org.springframework.stereotype.Component;
 
 import com.yammer.metrics.Metrics;
 import com.yammer.metrics.core.Counter;
@@ -72,22 +71,20 @@ import com.yammer.metrics.core.Counter;
  * 
  * @author Declan Newman (declan) Date: 07/03/2012
  */
-@Component
-@Path("/")
-public class T2OrcidApiServiceImpl implements T2OrcidApiService<Response> {
+abstract public class T2OrcidApiServiceImplBase implements T2OrcidApiService<Response> {
 
     @Context
     private UriInfo uriInfo;
 
-    final static Counter T2_GET_REQUESTS = Metrics.newCounter(T2OrcidApiServiceImpl.class, "T2-GET-REQUESTS");
-    final static Counter T2_SEARCH_REQUESTS = Metrics.newCounter(T2OrcidApiServiceImpl.class, "T2-SEARCH-REQUESTS");
-    final static Counter T2_PUT_REQUESTS = Metrics.newCounter(T2OrcidApiServiceImpl.class, "T2-PUT-REQUESTS");
-    final static Counter T2_POST_REQUESTS = Metrics.newCounter(T2OrcidApiServiceImpl.class, "T2-POST-REQUESTS");
+    final static Counter T2_GET_REQUESTS = Metrics.newCounter(T2OrcidApiServiceImplBase.class, "T2-GET-REQUESTS");
+    final static Counter T2_SEARCH_REQUESTS = Metrics.newCounter(T2OrcidApiServiceImplBase.class, "T2-SEARCH-REQUESTS");
+    final static Counter T2_PUT_REQUESTS = Metrics.newCounter(T2OrcidApiServiceImplBase.class, "T2-PUT-REQUESTS");
+    final static Counter T2_POST_REQUESTS = Metrics.newCounter(T2OrcidApiServiceImplBase.class, "T2-POST-REQUESTS");
 
-    final static Counter T2_SEARCH_RESULTS_NONE_FOUND = Metrics.newCounter(T2OrcidApiServiceImpl.class, "T2-SEARCH-RESULTS-NONE-FOUND");
-    final static Counter T2_SEARCH_RESULTS_FOUND = Metrics.newCounter(T2OrcidApiServiceImpl.class, "T2-SEARCH-RESULTS-FOUND");
+    final static Counter T2_SEARCH_RESULTS_NONE_FOUND = Metrics.newCounter(T2OrcidApiServiceImplBase.class, "T2-SEARCH-RESULTS-NONE-FOUND");
+    final static Counter T2_SEARCH_RESULTS_FOUND = Metrics.newCounter(T2OrcidApiServiceImplBase.class, "T2-SEARCH-RESULTS-FOUND");
 
-    @Resource
+    @Resource(name="orcidT2ServiceDelegator")
     private T2OrcidApiServiceDelegator serviceDelegator;
 
     @Resource
@@ -163,8 +160,8 @@ public class T2OrcidApiServiceImpl implements T2OrcidApiService<Response> {
     }
 
     /**
-     * GETs the RDF Turtle representation of the ORCID record containing only the
-     * Biography details
+     * GETs the RDF Turtle representation of the ORCID record containing only
+     * the Biography details
      * 
      * @param orcid
      *            the ORCID that corresponds to the user's record
