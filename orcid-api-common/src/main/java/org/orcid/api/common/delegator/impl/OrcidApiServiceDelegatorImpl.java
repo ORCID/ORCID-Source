@@ -30,7 +30,6 @@ import org.orcid.api.common.exception.OrcidNotFoundException;
 import org.orcid.core.exception.OrcidSearchException;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.manager.OrcidSearchManager;
-import org.orcid.core.manager.ValidationManager;
 import org.orcid.core.security.visibility.aop.VisibilityControl;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidProfile;
@@ -50,7 +49,7 @@ import org.springframework.stereotype.Component;
  * 
  * @author Declan Newman (declan) Date: 02/03/2012
  */
-@Component("orcidServiceDelegator")
+@Component("orcidApiServiceDelegator")
 public class OrcidApiServiceDelegatorImpl implements OrcidApiServiceDelegator {
 
     @Resource(name = "orcidProfileManager")

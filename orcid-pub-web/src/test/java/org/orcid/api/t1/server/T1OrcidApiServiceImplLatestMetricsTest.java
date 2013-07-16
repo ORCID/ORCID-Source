@@ -63,7 +63,7 @@ public class T1OrcidApiServiceImplLatestMetricsTest {
         mockServiceDelegator = mock(OrcidApiServiceDelegator.class);
         // view status is always fine
         when(mockServiceDelegator.viewStatusText()).thenReturn(successResponse);
-        t1OrcidApiService.setServiceDelegator(mockServiceDelegator);
+        t1OrcidApiService.setOrcidApiServiceDelegator(mockServiceDelegator);
     }
 
     @After

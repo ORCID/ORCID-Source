@@ -34,6 +34,7 @@ import org.orcid.jaxb.model.message.OrcidMessage;
  */
 public class OrcidApiServiceVersionedDelegatorImpl implements OrcidApiServiceDelegator {
 
+    @Resource(name = "orcidApiServiceDelegator")
     private OrcidApiServiceDelegator orcidApiServiceDelegator;
 
     @Resource
@@ -42,10 +43,6 @@ public class OrcidApiServiceVersionedDelegatorImpl implements OrcidApiServiceDel
     private ValidationManager outgoingValidationManager;
 
     private String externalVersion;
-
-    public String getExternalVersion() {
-        return externalVersion;
-    }
 
     public void setExternalVersion(String externalVersion) {
         this.externalVersion = externalVersion;

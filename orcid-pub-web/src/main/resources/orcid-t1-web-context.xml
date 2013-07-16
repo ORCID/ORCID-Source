@@ -34,11 +34,11 @@
     <alias name="t1OrcidApiServiceDelegatorV1_0_15" alias="t1OrcidApiServiceDelegatorLatest"/>
     
     <bean id="t1OrcidApiServiceImplLatest" class="org.orcid.api.t1.server.T1OrcidApiServiceImplLatest">
-        <property name="serviceDelegator" ref="t1OrcidApiServiceDelegatorLatest"/>
+        <property name="orcidApiServiceDelegator" ref="t1OrcidApiServiceDelegatorLatest"/>
     </bean>
     
     <bean id="t1OrcidApiServiceImplV1_0_14" class="org.orcid.api.t1.server.T1OrcidApiServiceImplV1_0_14">
-        <property name="serviceDelegator" ref="t1OrcidApiServiceDelegatorV1_0_14"/>
+        <property name="orcidApiServiceDelegator" ref="t1OrcidApiServiceDelegatorV1_0_14"/>
     </bean>
     <bean id="t1OrcidApiServiceDelegatorV1_0_14" class="org.orcid.api.common.delegator.impl.OrcidApiServiceVersionedDelegatorImpl">
         <property name="externalVersion" value="1.0.14"/>
@@ -46,7 +46,7 @@
     </bean>
     
     <bean id="t1OrcidApiServiceImplV1_0_15" class="org.orcid.api.t1.server.T1OrcidApiServiceImplV1_0_15">
-        <property name="serviceDelegator" ref="t1OrcidApiServiceDelegatorV1_0_15"/>
+        <property name="orcidApiServiceDelegator" ref="t1OrcidApiServiceDelegatorV1_0_15"/>
     </bean>
     <bean id="t1OrcidApiServiceDelegatorV1_0_15" class="org.orcid.api.common.delegator.impl.OrcidApiServiceVersionedDelegatorImpl">
         <property name="externalVersion" value="1.0.15"/>
