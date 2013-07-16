@@ -1242,8 +1242,6 @@ function ClientEditCtrl($scope, $compile){
 						}
 						$scope.clients.push(client);					
 					}
-					console.log($scope.clients.length);
-					console.log(angular.toJson(data));
 					
 				});
 	        }

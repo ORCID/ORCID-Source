@@ -67,53 +67,51 @@
 
 <script type="text/ng-template" id="new-client-modal">
 	<div style="padding: 20px;" class="colorbox-modal">
-		<h1>Add new client</h1><a id="cboxClose" class="btn pull-right close-button">X</a>
-		<div ng-controller="ClientEditCtrl">
-			<div id="errors" ng-repeat="error in errors">
-				<ul>
-					<li>{{error}}</li>				
-				</ul>
-			</div>
-			<table id="client-table">
-				<tbody>
-				<tr>
-					<td><@orcid.msg 'manage_clients.client_type'/>:</td>
-					<td>						
-						<@security.authorize ifAnyGranted="ROLE_PREMIUM_GROUP">
-							<select ng-model="newClient.type" ng-options='option.value as option.name for option in premiumClientOptions' required>								
-							</select>
-						</@security.authorize>
-						<@security.authorize ifAnyGranted="ROLE_GROUP">
-							<select ng-model="newClient.type" ng-options='option.value as option.name for option in clientOptions' required>
-							</select>
-						</@security.authorize>						
-					</td>
-				</tr>
-				<tr>
-					<td><@orcid.msg 'manage_clients.display_name'/>:</td>
-					<td><input type="text" placeholder="Display name" class="input-xlarge" ng-model="newClient.displayName"></td>
-					<td>&nbsp;</td>
-				</tr>
-			 	<tr>
-			 		<td><@orcid.msg 'manage_clients.website'/>:</td>
-			 		<td><input type="url" placeholder="Website" class="input-xlarge" ng-model="newClient.website" required></td>
-			 		<td>&nbsp;</td>
-			 	</tr>
-			 	<tr>
-			 		<td><@orcid.msg 'manage_clients.description'/>:</td>
-			 		<td><input type="text" placeholder="Description" class="input-xlarge" ng-model="newClient.shortDescription"></td>
-			 		<td>&nbsp;</td>
-			 	</tr>
-			 	<tr ng-repeat='rUri in newClient.redirectUris.redirectUri'>
-			 		<td><@orcid.msg 'manage_clients.redirect_uri'/>:</td>
-			 		<td><input type="url" placeholder="Redirect Uri" class="input-xlarge" ng-model="rUri.value" required></td>			 		
-			 		<td><span id="add-uri" ng-click="addUriToNewClientTable()" class="btn btn-primary"><@orcid.msg 'manage_clients.add'/></span></td>
-			 	</tr>
-			 	</tbody>			 	
-			</table>
-			<div class="controls save-btns pull-left bottom-margin-small">
-				<span id="bottom-submit-credential-request" ng-click="submitAddClient()" class="btn btn-primary"><@orcid.msg 'manage_clients.submit'/></span>				
-			</div>
+		<h1>Add new client</h1><a id="cboxClose" class="btn pull-right close-button">X</a>		
+		<div id="errors" ng-repeat="error in errors">
+			<ul>
+				<li>{{error}}</li>				
+			</ul>
+		</div>
+		<table id="client-table">
+			<tbody>
+			<tr>
+				<td><@orcid.msg 'manage_clients.client_type'/>:</td>
+				<td>						
+					<@security.authorize ifAnyGranted="ROLE_PREMIUM_GROUP">
+						<select ng-model="newClient.type" ng-options='option.value as option.name for option in premiumClientOptions' required>								
+						</select>
+					</@security.authorize>
+					<@security.authorize ifAnyGranted="ROLE_GROUP">
+						<select ng-model="newClient.type" ng-options='option.value as option.name for option in clientOptions' required>
+						</select>
+					</@security.authorize>						
+				</td>
+			</tr>
+			<tr>
+				<td><@orcid.msg 'manage_clients.display_name'/>:</td>
+				<td><input type="text" placeholder="Display name" class="input-xlarge" ng-model="newClient.displayName"></td>
+				<td>&nbsp;</td>
+			</tr>
+		 	<tr>
+		 		<td><@orcid.msg 'manage_clients.website'/>:</td>
+		 		<td><input type="url" placeholder="Website" class="input-xlarge" ng-model="newClient.website" required></td>
+		 		<td>&nbsp;</td>
+		 	</tr>
+		 	<tr>
+		 		<td><@orcid.msg 'manage_clients.description'/>:</td>
+		 		<td><input type="text" placeholder="Description" class="input-xlarge" ng-model="newClient.shortDescription"></td>
+		 		<td>&nbsp;</td>
+		 	</tr>
+		 	<tr ng-repeat='rUri in newClient.redirectUris.redirectUri'>
+		 		<td><@orcid.msg 'manage_clients.redirect_uri'/>:</td>
+		 		<td><input type="url" placeholder="Redirect Uri" class="input-xlarge" ng-model="rUri.value" required></td>			 		
+		 		<td><span id="add-uri" ng-click="addUriToNewClientTable()" class="btn btn-primary"><@orcid.msg 'manage_clients.add'/></span></td>
+		 	</tr>
+		 	</tbody>			 	
+		</table>
+		<div class="controls save-btns pull-left bottom-margin-small">
+			<span id="bottom-submit-credential-request" ng-click="submitAddClient()" class="btn btn-primary"><@orcid.msg 'manage_clients.submit'/></span>				
 		</div>
 	</div>
 </script>
