@@ -30,8 +30,8 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
     List<ProfileEntity> retrieveSelectableSponsors();
 
     List<String> findOrcidsByName(String name);
-    
-    List<String> findByEventTypes(int maxResults, List<ProfileEventType> pet, Collection<String> orcidsToExclude ,boolean not);
+
+    List<String> findByEventTypes(int maxResults, List<ProfileEventType> pet, Collection<String> orcidsToExclude, boolean not);
 
     List<String> findOrcidsByIndexingStatus(IndexingStatus indexingStatus, int maxResults);
 
@@ -70,5 +70,7 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
     void updateLastModifiedDateAndIndexingStatus(String orcid);
 
     OrcidType retrieveOrcidType(String orcid);
+
+    List<Object[]> findInfoForDecryptionAnalysis();
 
 }

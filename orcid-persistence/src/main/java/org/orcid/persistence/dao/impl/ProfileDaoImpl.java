@@ -381,4 +381,12 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
         List<OrcidType> results = query.getResultList();
         return results.isEmpty() ? null : results.get(0);
     }
+
+    @Override
+    public List<Object[]> findInfoForDecryptionAnalysis() {
+        Query query = entityManager.createQuery("select id, encryptedSecurityAnswer from ProfileEntity");
+        @SuppressWarnings("unchecked")
+        List<Object[]> results = query.getResultList();
+        return results;
+    }
 }
