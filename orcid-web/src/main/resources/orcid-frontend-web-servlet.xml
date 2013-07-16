@@ -82,7 +82,7 @@
     </bean>
 
 	<bean id="localeChangeInterceptor"
-        class="org.springframework.web.servlet.i18n.LocaleChangeInterceptor">
+        class="org.orcid.core.locale.LocaleChangeInterceptor">
         <property name="paramName" value="lang" />
     </bean>
 
