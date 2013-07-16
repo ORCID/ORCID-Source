@@ -18,32 +18,29 @@ package org.orcid.core.manager;
 
 import javax.annotation.Resource;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.orcid.core.BaseTest;
+import org.orcid.core.exception.OrcidValidationException;
 import org.orcid.jaxb.model.message.OrcidMessage;
 
 public class ValidationManagerTest extends BaseTest {
 
-    @Resource
-    ValidationManager validationManager;
+    @Resource(name = "incomingValidationManagerLatest")
+    private ValidationManager incomingValidationManager;
 
-    @Before
-    public void before() {
-        validationManager.setValidationBehaviour(ValidationBehaviour.THROW_RUNTIME_EXCEPTION);
-    }
+    @Resource(name = "outgoingValidationManagerLatest")
+    private ValidationManager outgoingValidationManager;
 
-    @Test(expected = RuntimeException.class)
+    @Test(expected = OrcidValidationException.class)
     public void testEmptyMessage() {
         OrcidMessage message = new OrcidMessage();
-        validationManager.validateMessage(message);
+        incomingValidationManager.validateMessage(message);
     }
 
     @Test
     public void testEmptyMessageWhenLoggingOnly() {
-        validationManager.setValidationBehaviour(ValidationBehaviour.LOG_WARNING);
         OrcidMessage message = new OrcidMessage();
-        validationManager.validateMessage(message);
+        outgoingValidationManager.validateMessage(message);
     }
 
 }

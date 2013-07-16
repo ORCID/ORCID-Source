@@ -27,12 +27,13 @@ import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.orcid.core.exception.OrcidValidationException;
 import org.orcid.core.manager.ValidationBehaviour;
 import org.orcid.core.manager.ValidationManager;
+import org.orcid.core.manager.impl.ValidationManagerImpl;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 
@@ -43,8 +44,8 @@ import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
  */
 public class TestXmlValidity extends BaseTest {
 
-    @Autowired
     private ValidationManager validationManager;
+
     private Unmarshaller unmarshaller;
 
     private static final Logger LOG = LoggerFactory.getLogger(TestXmlValidity.class);
@@ -53,7 +54,10 @@ public class TestXmlValidity extends BaseTest {
     public void before() throws JAXBException {
         JAXBContext context = JAXBContext.newInstance(OrcidMessage.class);
         unmarshaller = context.createUnmarshaller();
-        validationManager.setValidationBehaviour(ValidationBehaviour.THROW_RUNTIME_EXCEPTION);
+        ValidationManagerImpl validationManagerImpl = new ValidationManagerImpl();
+        validationManagerImpl.setRequireOrcidProfile(false);
+        validationManagerImpl.setValidationBehaviour(ValidationBehaviour.THROW_VALIDATION_EXCEPTION);
+        validationManager = validationManagerImpl;
     }
 
     @Test
@@ -70,7 +74,7 @@ public class TestXmlValidity extends BaseTest {
                 Assert.fail("Unable to read resource: " + resource + "\n" + e);
             } catch (JAXBException e) {
                 Assert.fail("ORCID message is not well formed: " + resource + "\n" + e);
-            } catch (RuntimeException e) {
+            } catch (OrcidValidationException e) {
                 Assert.fail("Validation failed: " + resource + "\n" + e.getCause());
             } finally {
                 IOUtils.closeQuietly(is);

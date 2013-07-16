@@ -66,12 +66,12 @@ import com.sun.jersey.api.uri.UriBuilderImpl;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:orcid-t2-web-context.xml", "classpath:orcid-t2-security-context.xml" })
-public class T2OrcidApiServiceDelegatorTest extends DBUnitTest {
+public class T2OrcidApiServiceVersionedDelegatorTest extends DBUnitTest {
 
     private static final List<String> DATA_FILES = Arrays.asList("/data/EmptyEntityData.xml", "/data/SecurityQuestionEntityData.xml", "/data/ProfileEntityData.xml",
             "/data/WorksEntityData.xml", "/data/ProfileWorksEntityData.xml", "/data/ClientDetailsEntityData.xml", "/data/Oauth2TokenDetailsData.xml");
 
-    @Resource(name = "t2OrcidApiServiceDelegatorLatest")
+    @Resource(name = "t2OrcidApiServiceDelegatorV1_0_14")
     private T2OrcidApiServiceDelegator t2OrcidApiServiceDelegator;
 
     @Mock
@@ -168,6 +168,28 @@ public class T2OrcidApiServiceDelegatorTest extends DBUnitTest {
         OrcidMessage retrievedMessage = (OrcidMessage) readResponse.getEntity();
         assertEquals(orcid, retrievedMessage.getOrcidProfile().getOrcid().getValue());
         assertEquals("Test credit name", retrievedMessage.getOrcidProfile().getOrcidBio().getPersonalDetails().getCreditName().getContent());
+    }
+
+    @Test(expected = OrcidBadRequestException.class)
+    public void testAttemptCreateWithLaterButOtherwiseValidVersion() {
+        setUpSecurityContextForClientOnly();
+        OrcidMessage orcidMessage = createStubOrcidMessage();
+        orcidMessage.setMessageVersion("1.0.15");
+        Email email = new Email("madeupemail3@semantico.com");
+        orcidMessage.getOrcidProfile().getOrcidBio().getContactDetails().getEmail().add(email);
+
+        t2OrcidApiServiceDelegator.createProfile(mockedUriInfo, orcidMessage);
+    }
+
+    @Test(expected = OrcidBadRequestException.class)
+    public void testAttemptCreateWithTotallyIncorrectVersion() {
+        setUpSecurityContextForClientOnly();
+        OrcidMessage orcidMessage = createStubOrcidMessage();
+        orcidMessage.setMessageVersion("abc");
+        Email email = new Email("madeupemail4@semantico.com");
+        orcidMessage.getOrcidProfile().getOrcidBio().getContactDetails().getEmail().add(email);
+
+        t2OrcidApiServiceDelegator.createProfile(mockedUriInfo, orcidMessage);
     }
 
     @Test
