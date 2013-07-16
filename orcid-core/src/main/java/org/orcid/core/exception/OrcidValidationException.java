@@ -14,26 +14,30 @@
  *
  * =============================================================================
  */
-package org.orcid.api.common.validation;
-
-import java.lang.annotation.Documented;
-import java.lang.annotation.Inherited;
-import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
-
-import static java.lang.annotation.ElementType.METHOD;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
+package org.orcid.core.exception;
 
 /**
- * 2011-2012 - Semantico Ltd.
- *
- * @author Declan Newman (declan)
- *         Date: 08/10/2012
+ * 
+ * @author Will Simpson
+ * 
  */
-@Target( { METHOD })
-@Retention(RUNTIME)
-@Inherited
-@Documented
-public @interface ValidOrcidMessage {
+public class OrcidValidationException extends ApplicationException {
+
+    private static final long serialVersionUID = 1L;
+
+    public OrcidValidationException() {
+    }
+
+    public OrcidValidationException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
+    public OrcidValidationException(String message) {
+        super(message);
+    }
+
+    public OrcidValidationException(Throwable cause) {
+        super(cause);
+    }
 
 }
