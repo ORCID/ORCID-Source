@@ -61,6 +61,7 @@ import org.orcid.pojo.ajaxForm.Visibility;
 import org.orcid.pojo.ajaxForm.Work;
 import org.orcid.pojo.ajaxForm.WorkExternalIdentifier;
 import org.orcid.pojo.ajaxForm.WorkTitle;
+import org.orcid.utils.BibtexException;
 import org.orcid.utils.BibtexUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -572,8 +573,8 @@ public class WorkspaceController extends BaseWorkspaceController {
             // if bibtext must be valid
             if (work.getCitation().getCitationType().getValue().equals(CitationType.BIBTEX.value())) {
                 try {
-                    BibtexUtils.toCitation(HtmlUtils.htmlUnescape(work.getCitation().getCitationType().getValue()));
-                } catch (ParseException e) {
+                    BibtexUtils.validate(HtmlUtils.htmlUnescape(work.getCitation().getCitationType().getValue()));
+                } catch (BibtexException e) {
                     setError(work.getCitation().getCitation(), "manualWork.bibtext.notValid");
                 }
             }
