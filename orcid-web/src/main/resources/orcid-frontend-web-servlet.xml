@@ -82,13 +82,13 @@
     </bean>
 
 	<bean id="localeChangeInterceptor"
-        class="org.orcid.core.locale.LocaleChangeInterceptor">
+        class="org.springframework.web.servlet.i18n.LocaleChangeInterceptor">
         <property name="paramName" value="lang" />
     </bean>
 
     <bean id="localeResolver"
         class="org.springframework.web.servlet.i18n.CookieLocaleResolver">
-        <property name="cookieName" value="locale_v2" />
+        <property name="cookieName" value="locale_v2" /><!-- must match value in AjaxAuthenticationSuccessHandler -->
     </bean>
 
 </beans>
