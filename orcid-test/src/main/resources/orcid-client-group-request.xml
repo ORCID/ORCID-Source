@@ -27,7 +27,7 @@
  xmlns="http://www.orcid.org/ns/orcid">
     <group-name>Elsevier</group-name>
     <email>orcid-admin@elsevier.com</email>
-    <orcid-client>
+    <orcid-client type="creator">    	
         <display-name>Ecological Complexity</display-name>
         <website>http://www.journals.elsevier.com/ecological-complexity</website>
         <short-description>An International Journal on Biocomplexity in the Environment and Theoretical Ecology</short-description>
@@ -35,7 +35,7 @@
             <redirect-uri scope="/orcid-profile/create /orcid-bio/read-limited" type="grant-read-wizard">http://www.journals.elsevier.com/ecological-complexity/orcid-callback</redirect-uri>
         </redirect-uris>
     </orcid-client>
-    <orcid-client>
+    <orcid-client type="premium-creator">
         <display-name>Ecological Economics</display-name>
         <website>http://www.journals.elsevier.com/ecological-economics</website>
         <short-description>The Transdisciplinary Journal of the International Society for Ecological Economics (ISEE)</short-description>

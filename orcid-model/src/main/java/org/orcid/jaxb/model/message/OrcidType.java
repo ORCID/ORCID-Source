@@ -60,7 +60,7 @@ public enum OrcidType implements Serializable {
     CREATOR("creator"), @XmlEnumValue("premium-creator")
     PREMIUM_CREATOR("premium-creator"), @XmlEnumValue("updater")
     UPDATER("updater"), @XmlEnumValue("premium-updater")
-    PREMIUM_UPDATER("premium-updater");;
+    PREMIUM_UPDATER("premium-updater");
     private final String value;
 
     OrcidType(String v) {
