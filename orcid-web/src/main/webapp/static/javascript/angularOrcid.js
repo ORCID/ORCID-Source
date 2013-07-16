@@ -1225,6 +1225,7 @@ function ClientEditCtrl($scope, $compile){
 	$scope.premiumClientOptions = [{ name: 'PREMIUM_CREATOR', value: 'PREMIUM_CREATOR' },{ name: 'PREMIUM_UPDATER', value: 'PREMIUM_UPDATER' }];
 	$scope.clientOptions = [{ name: 'CREATOR', value: 'CREATOR' },{ name: 'UPDATER', value: 'UPDATER' }];
 	
+	// Get the list of clients associated with this user
 	$scope.getClients = function(){
 		$.ajax({
 	        url: $('body').data('baseurl') + 'manage-clients/get-clients.json',
@@ -1252,16 +1253,18 @@ function ClientEditCtrl($scope, $compile){
 	    });				
 	};		
 	
+	// Add a new uri input field to a new client
 	$scope.addUriToNewClientTable = function(){		
 		$('#client-table').find('tr:last > td:last').html('&nbsp;');		
 		this.newClient.redirectUris.redirectUri.push({value: '',type: 'DEFAULT'});
 	};
 	
+	// Add a new uri input field to a existing client
 	$scope.addUriToExistingClientTable = function(){
 		$scope.clientToEdit.redirectUris.redirectUri.push({value: '',type: 'DEFAULT'});
 	};
 	
-	
+	// Display the modal to edit a client
 	$scope.editClient = function(idx) {		
 		$scope.clientToEdit = angular.copy($scope.clients[idx]);		
 		$.colorbox({        	            
@@ -1273,6 +1276,7 @@ function ClientEditCtrl($scope, $compile){
         $.colorbox.resize({width:"500px" , height:"500px"});   
 	};
 	
+	// Display the modal to add a new client
 	$scope.addClient = function(){		
 		$.colorbox({        	            
             html : $compile($('#new-client-modal').html())($scope), 
@@ -1283,6 +1287,7 @@ function ClientEditCtrl($scope, $compile){
         $.colorbox.resize({width:"580px" , height:"380px"});
 	};
 	
+	// Display client details: Client ID and Client secret
 	$scope.viewDetails = function(idx){
 		$scope.clientDetails = $scope.clients[idx];
 		$.colorbox({        	            
@@ -1294,11 +1299,14 @@ function ClientEditCtrl($scope, $compile){
         $.colorbox.resize({width:"550px" , height:"150px"});
 	};
 	
+	// Delete an uri input field 
 	$scope.deleteUri = function(idx){
 		$scope.clientToEdit.redirectUris.redirectUri.splice(idx, 1);
 	};
 	
-	$scope.submitEditClient = function(){		
+	//Submits the client update request
+	$scope.submitEditClient = function(){
+		//Check for errors
 		$scope.errors.splice(0, $scope.errors.length);
 		
 		if(!$scope.clientToEdit.type){
@@ -1317,6 +1325,7 @@ function ClientEditCtrl($scope, $compile){
 			$scope.errors.push("Please enter a description");
 		}
 		
+		//If there is any error, return
 		if($scope.errors.length != 0){
 			return;
 		}
@@ -1328,6 +1337,7 @@ function ClientEditCtrl($scope, $compile){
 			}
 		}				
 		
+		//Submit the update request
 		$.ajax({
 	        url: $('body').data('baseurl') + 'manage-clients/edit-client.json',
 	        type: 'POST',
@@ -1338,6 +1348,7 @@ function ClientEditCtrl($scope, $compile){
 	        	if(data.errors != null && data.errors.length > 0){
 	        		console.log("Unable to update client information.");
 	        	} else {
+	        		//If everything worked fine, reload the list of clients
         			$scope.getClients();
 	        	} 
 	        }
@@ -1348,10 +1359,10 @@ function ClientEditCtrl($scope, $compile){
 		$.colorbox.close();
 	};
 	
+	//Submits the new client request
 	$scope.submitAddClient = function(){
+		//Check for errors
 		$scope.errors.splice(0, $scope.errors.length);
-		
-		console.log(angular.toJson($scope.errors));
 		
 		if(!$scope.newClient.type){
 			$scope.errors.push("Please select the client type");
@@ -1369,8 +1380,7 @@ function ClientEditCtrl($scope, $compile){
 			$scope.errors.push("Please enter a description");
 		}
 		
-		console.log(angular.toJson($scope.errors));
-		
+		//If there is any error, return
 		if($scope.errors.length != 0){
 			return;
 		}
@@ -1382,6 +1392,7 @@ function ClientEditCtrl($scope, $compile){
 			}
 		}
 		
+		//Submit the new client request
 		$.ajax({
 	        url: $('body').data('baseurl') + 'manage-clients/add-client.json',
 	        type: 'POST',
@@ -1392,11 +1403,11 @@ function ClientEditCtrl($scope, $compile){
 	        	if(data.errors != null && data.errors.length > 0){
 	        		console.log("Unable to create client information.");
 	        	} else {
+	        		//If everything worked fine, reload the list of clients
         			$scope.getClients();
 	        	} 
 	        }
 	    }).fail(function() { 
-	    	alert("An error occured creating the client");
 	    	console.log("Error creating client information.");
 	    });
 		$.colorbox.close();
@@ -1405,31 +1416,3 @@ function ClientEditCtrl($scope, $compile){
 	//init
 	$scope.getClients();
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
