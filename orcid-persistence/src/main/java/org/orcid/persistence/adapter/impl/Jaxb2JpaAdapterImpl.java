@@ -810,9 +810,9 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             Preferences preferences = orcidInternal.getPreferences();
             if (preferences != null) {
                 if (preferences.getLocale() == null)
-                    profileEntity.setLocale(Locale.EN.value());
+                    profileEntity.setLocale(Locale.EN);
                 else 
-                    profileEntity.setLocale(preferences.getLocale().value());
+                    profileEntity.setLocale(preferences.getLocale());
                 profileEntity.setSendChangeNotifications(preferences.getSendChangeNotifications() == null ? null : preferences.getSendChangeNotifications().isValue());
                 profileEntity.setSendOrcidNews(preferences.getSendOrcidNews() == null ? null : preferences.getSendOrcidNews().isValue());
                 // Use the default value in the ProfileEntity class if work
