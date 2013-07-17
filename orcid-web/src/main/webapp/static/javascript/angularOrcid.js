@@ -737,7 +737,6 @@ function ClaimCtrl($scope, $compile) {
 	        dataType: 'json',
 	        success: function(data) {
 	        	$scope.register = data;
-	        	alert($scope.register.errors.length);
 	        	
 	        	if ($scope.register.errors.length == 0) {
 	        		if ($scope.register.url != null) {

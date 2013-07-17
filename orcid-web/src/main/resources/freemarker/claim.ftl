@@ -21,7 +21,7 @@
         <div class="span3"></div>
         <div class="span9">
  
-<h2>${springMacroRequestContext.getMessage("claim.claimyourrecord")}</h2>
+		<h2>${springMacroRequestContext.getMessage("claim.claimyourrecord")}</h2>
 				<#include "/common/browser-checks.ftl" />
 				<div ng-controller="ClaimCtrl">
 					<div>
