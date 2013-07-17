@@ -224,7 +224,7 @@ public class WorkEntity extends BaseEntity<Long> implements Comparable<WorkEntit
         if (title == null) {
             return -1;
         }
-        return title.compareTo(other.getTitle());
+        return title.compareToIgnoreCase(other.getTitle());
     }
 
     private int compareIds(WorkEntity other) {
