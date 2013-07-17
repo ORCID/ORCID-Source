@@ -1267,9 +1267,6 @@ function ClientEditCtrl($scope, $compile){
 			type: ''
 	};		
 	
-	$scope.premiumClientOptions = [{ name: 'PREMIUM_CREATOR', value: 'PREMIUM_CREATOR' },{ name: 'PREMIUM_UPDATER', value: 'PREMIUM_UPDATER' }];
-	$scope.clientOptions = [{ name: 'CREATOR', value: 'CREATOR' },{ name: 'UPDATER', value: 'UPDATER' }];
-	
 	// Get the list of clients associated with this user
 	$scope.getClients = function(){
 		$.ajax({
@@ -1281,9 +1278,11 @@ function ClientEditCtrl($scope, $compile){
 					$scope.clients.splice(0, $scope.clients.length);        		
 					for (i in data)	{
 						var client = data[i];
-						for(var j = 0; j < client.redirectUris.redirectUri.length; j++)	{						
-							delete client.redirectUris.redirectUri[j].scopeAsSingleString;
-							delete client.redirectUris.redirectUri[j].scope;							
+						if(client.redirectUris != null && client.redirectUris.redirectUri.length > 0){
+							for(var j = 0; j < client.redirectUris.redirectUri.length; j++)	{						
+								delete client.redirectUris.redirectUri[j].scopeAsSingleString;
+								delete client.redirectUris.redirectUri[j].scope;							
+							}
 						}
 						$scope.clients.push(client);					
 					}
@@ -1352,10 +1351,6 @@ function ClientEditCtrl($scope, $compile){
 		//Check for errors
 		$scope.errors.splice(0, $scope.errors.length);
 		
-		if(!$scope.clientToEdit.type){
-			$scope.errors.push("Please select the client type");
-		}
-		
 		if(!$scope.clientToEdit.displayName){
 			$scope.errors.push("Please enter the name");
 		}
@@ -1379,6 +1374,8 @@ function ClientEditCtrl($scope, $compile){
 				$scope.clientToEdit.redirectUris.redirectUri.splice(j, 1);
 			}
 		}				
+		
+		console.log(angular.toJson($scope.clientToEdit));
 		
 		//Submit the update request
 		$.ajax({
@@ -1407,10 +1404,6 @@ function ClientEditCtrl($scope, $compile){
 		//Check for errors
 		$scope.errors.splice(0, $scope.errors.length);
 		
-		if(!$scope.newClient.type){
-			$scope.errors.push("Please select the client type");
-		}
-		
 		if(!$scope.newClient.displayName){
 			$scope.errors.push("Please enter the name");
 		}
@@ -1434,6 +1427,10 @@ function ClientEditCtrl($scope, $compile){
 				$scope.newClient.redirectUris.redirectUri.splice(j, 1);
 			}
 		}
+		
+		var type = $("#client_type").val();
+		$scope.newClient.type = type;
+		console.log(angular.toJson($scope.newClient));
 		
 		//Submit the new client request
 		$.ajax({

@@ -52,14 +52,26 @@ import java.io.Serializable;
 @XmlEnum
 public enum OrcidType implements Serializable {
     @XmlEnumValue("admin")
-    ADMIN("admin"), @XmlEnumValue("user")
-    USER("user"), @XmlEnumValue("group")
-    GROUP("group"), @XmlEnumValue("premium_group")
-    PREMIUM_GROUP("premium_group"), @XmlEnumValue("client")
-    CLIENT("client"),@XmlEnumValue("creator")
-    CREATOR("creator"), @XmlEnumValue("premium-creator")
-    PREMIUM_CREATOR("premium-creator"), @XmlEnumValue("updater")
-    UPDATER("updater"), @XmlEnumValue("premium-updater")
+    ADMIN("admin"), 
+    @XmlEnumValue("user")
+    USER("user"), 
+    @XmlEnumValue("basic")
+    BASIC("basic"), 
+    @XmlEnumValue("premium")
+    PREMIUM("premium"), 
+    @XmlEnumValue("basic-institution")
+    BASIC_INSTITUTION("basic-institution"),
+    @XmlEnumValue("premium-institution")
+    PREMIUM_INSTITUTION("premium-institution"),    
+    @XmlEnumValue("client")
+    CLIENT("client"),
+    @XmlEnumValue("creator")
+    CREATOR("creator"), 
+    @XmlEnumValue("premium-creator")
+    PREMIUM_CREATOR("premium-creator"), 
+    @XmlEnumValue("updater")
+    UPDATER("updater"), 
+    @XmlEnumValue("premium-updater")
     PREMIUM_UPDATER("premium-updater");
     private final String value;
 

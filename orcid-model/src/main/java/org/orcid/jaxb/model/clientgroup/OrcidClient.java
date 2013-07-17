@@ -214,7 +214,7 @@ public class OrcidClient implements Serializable {
     /**
      * Gets the value of the type property.
      * 
-     * @return possible object is {@link ClientType }
+     * @return possible object is {@link OrcidType }
      * 
      */
     public OrcidType getType() {

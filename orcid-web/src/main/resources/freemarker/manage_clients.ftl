@@ -32,9 +32,7 @@
 	<div style="padding: 20px;" class="colorbox-modal">
 		<h1><@orcid.msg 'manage_clients.edit_client'/></h1><a id="cboxClose" class="btn pull-right close-button">X</a>		
 		<h3><@orcid.msg 'manage_clients.client_details'/></h3>
-		
-		<@orcid.msg 'manage_clients.client_type'/>:&nbsp;<span>{{clientToEdit.type}}</span>		
-		<br />		
+				
     	<@orcid.msg 'manage_clients.display_name'/><input type="text" ng-model="clientToEdit.displayName" required />
     	<br />
     	<@orcid.msg 'manage_clients.website'/><input type="url" ng-model="clientToEdit.website" required />
@@ -73,21 +71,26 @@
 				<li>{{error}}</li>				
 			</ul>
 		</div>
+		
+		
+		<@security.authorize ifAnyGranted="ROLE_BASIC">
+			<input type="hidden" id="client_type" value="UPDATER" />
+		</@security.authorize>
+		
+		<@security.authorize ifAnyGranted="ROLE_INSTITUTION">
+			<input type="hidden" id="client_type" value="CREATOR" />
+		</@security.authorize>
+		
+		<@security.authorize ifAnyGranted="ROLE_PREMIUM">
+			<input type="hidden" id="client_type" value="UPDATER" />
+		</@security.authorize>
+		
+		<@security.authorize ifAnyGranted="ROLE_PREMIUM_INSTITUTION">
+			<input type="hidden" id="client_type" value="CREATOR" />
+		</@security.authorize>
+		
 		<table id="client-table">
-			<tbody>
-			<tr>
-				<td><@orcid.msg 'manage_clients.client_type'/>:</td>
-				<td>						
-					<@security.authorize ifAnyGranted="ROLE_PREMIUM_GROUP">
-						<select ng-model="newClient.type" ng-options='option.value as option.name for option in premiumClientOptions' required>								
-						</select>
-					</@security.authorize>
-					<@security.authorize ifAnyGranted="ROLE_GROUP">
-						<select ng-model="newClient.type" ng-options='option.value as option.name for option in clientOptions' required>
-						</select>
-					</@security.authorize>						
-				</td>
-			</tr>
+			<tbody>			
 			<tr>
 				<td><@orcid.msg 'manage_clients.display_name'/>:</td>
 				<td><input type="text" placeholder="Display name" class="input-xlarge" ng-model="newClient.displayName"></td>
@@ -149,14 +152,14 @@
 				</ul>
 			</div>
 			
-			<@security.authorize ifAnyGranted="ROLE_PREMIUM_GROUP">
+			<@security.authorize ifAnyGranted="ROLE_PREMIUM_INSTITUTION, ROLE_PREMIUM">
 				<div class="controls save-btns pull-left">
 					<span id="bottom-create-new-client-premium" ng-click="addClient()" class="btn btn-primary"><@orcid.msg 'manage_clients.add'/></span>				
 				</div>
 			</@security.authorize>
-			<@security.authorize ifAnyGranted="ROLE_GROUP">
+			<@security.authorize ifAnyGranted="ROLE_INSTITUTION, ROLE_BASIC">
 				<#if (group)?? && (group.orcidClient)?? && !(group.orcidClient?has_content)> 
-					<div class="controls save-btns pull-left">
+					<div class="controls save-btns pull-left" ng-show="!clients.length">
 						<span id="bottom-create-new-client" ng-click="addClient()" class="btn btn-primary"><@orcid.msg 'manage_clients.add'/></span>				
 					</div>
 				</#if>

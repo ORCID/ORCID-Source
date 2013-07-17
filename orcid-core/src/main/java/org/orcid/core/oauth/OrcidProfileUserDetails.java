@@ -62,10 +62,14 @@ public class OrcidProfileUserDetails implements UserDetails {
         Collection<OrcidWebRole> result = null;
         if(realProfile == null || realProfile.getType() == null || realProfile.getType().equals(OrcidType.USER)) 
             result = Arrays.asList(OrcidWebRole.ROLE_USER);
-        else if (realProfile.getType().equals(OrcidType.GROUP))
-            result = Arrays.asList(OrcidWebRole.ROLE_GROUP);
-        else if (realProfile.getType().equals(OrcidType.PREMIUM_GROUP))
-            result = Arrays.asList(OrcidWebRole.ROLE_PREMIUM_GROUP);
+        else if (realProfile.getType().equals(OrcidType.BASIC))
+            result = Arrays.asList(OrcidWebRole.ROLE_BASIC);
+        else if (realProfile.getType().equals(OrcidType.PREMIUM))
+            result = Arrays.asList(OrcidWebRole.ROLE_PREMIUM);
+        else if (realProfile.getType().equals(OrcidType.BASIC_INSTITUTION))
+            result = Arrays.asList(OrcidWebRole.ROLE_BASIC_INSTITUTION);
+        else if (realProfile.getType().equals(OrcidType.PREMIUM_INSTITUTION))
+            result = Arrays.asList(OrcidWebRole.ROLE_PREMIUM_INSTITUTION);
         return result;
     }
 
