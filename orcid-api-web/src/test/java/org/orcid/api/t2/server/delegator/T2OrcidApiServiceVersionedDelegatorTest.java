@@ -174,7 +174,7 @@ public class T2OrcidApiServiceVersionedDelegatorTest extends DBUnitTest {
     public void testAttemptCreateWithLaterButOtherwiseValidVersion() {
         setUpSecurityContextForClientOnly();
         OrcidMessage orcidMessage = createStubOrcidMessage();
-        orcidMessage.setMessageVersion("1.0.15");
+        orcidMessage.setMessageVersion("1.0.16");
         Email email = new Email("madeupemail3@semantico.com");
         orcidMessage.getOrcidProfile().getOrcidBio().getContactDetails().getEmail().add(email);
 

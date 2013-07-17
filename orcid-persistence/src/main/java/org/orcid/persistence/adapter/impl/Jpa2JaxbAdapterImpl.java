@@ -867,7 +867,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         if (profileEntity.getLocale() == null) 
             preferences.setLocale(Locale.EN);
         else
-            preferences.setLocale(Locale.fromValue(profileEntity.getLocale()));
+            preferences.setLocale(profileEntity.getLocale());
         preferences.setSendChangeNotifications(profileEntity.getSendChangeNotifications() == null ? null : new SendChangeNotifications(profileEntity
                 .getSendChangeNotifications()));
         preferences.setSendOrcidNews(profileEntity.getSendOrcidNews() == null ? null : new SendOrcidNews(profileEntity.getSendOrcidNews()));

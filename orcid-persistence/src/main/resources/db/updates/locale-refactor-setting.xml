@@ -1,0 +1,51 @@
+<!--
+
+    =============================================================================
+
+    ORCID (R) Open Source
+    http://orcid.org
+
+    Copyright (c) 2012-2013 ORCID, Inc.
+    Licensed under an MIT-Style License (MIT)
+    http://orcid.org/open-source-license
+
+    This copyright and license information (including a link to the full license)
+    shall be included in its entirety in all copies or substantial portion of
+    the software.
+
+    =============================================================================
+
+-->
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+    <changeSet id="REFACTOR_LOCALE_DROP_DEFAULT" author="RCPETERS">
+         <dropDefaultValue tableName="profile" columnName="locale"/>
+    </changeSet>
+    
+ 	<changeSet id="REFACTOR_LOCALE_ADD_DEFAULT" author="RCPETERS">
+         <addDefaultValue tableName="profile" columnName="locale" defaultValue="EN" />
+    </changeSet>
+ 
+       
+    <changeSet id="REFACTOR_LOCALE_EN" author="RCPETERS">
+        <sql>update profile set locale ='EN' where locale='en';</sql>
+    </changeSet>
+     
+    <changeSet id="REFACTOR_LOCALE_FR" author="RCPETERS">
+        <sql>update profile set locale ='FR' where locale='fr';</sql>
+    </changeSet>
+     
+    <changeSet id="REFACTOR_LOCALE_ES" author="RCPETERS">
+        <sql>update profile set locale ='ES' where locale='es';</sql>
+    </changeSet>
+     
+    <changeSet id="REFACTOR_LOCAL_ZH_CN" author="RCPETERS">
+        <sql>update profile set locale ='ZH_CN' where locale='zh_CN';</sql>
+    </changeSet>
+     
+    <changeSet id="REFACTOR_LOCAL_ZH_TW" author="RCPETERS">
+        <sql>update profile set locale ='ZH_TW' where locale='zh_TW';</sql>
+    </changeSet>
+     
+</databaseChangeLog>
