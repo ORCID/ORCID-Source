@@ -101,6 +101,9 @@
 	                	</div>   
 		                <div class="relative">
 		                      <button type="submit" class="btn btn-primary" ng-click="postClaim()">${springMacroRequestContext.getMessage("claim.btnClaim")}</button>
+		                      <span ng-show="postingClaim" ng-cloak>
+		                      	<i class="icon-spinner icon-2x icon-spin  green"></i>
+		                      </span>
 		                </div>  
 	                </div> 
 				</div>

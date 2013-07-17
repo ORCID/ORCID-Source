@@ -711,6 +711,7 @@ function RegistrationCtrl($scope, $compile) {
 		
 
 function ClaimCtrl($scope, $compile) {
+	$scope.postingClaim = false;
 	$scope.getClaim = function(){
 		$.ajax({
 			url: window.location + '.json',	        
@@ -726,6 +727,8 @@ function ClaimCtrl($scope, $compile) {
 	};
 		
 	$scope.postClaim = function () {
+		if ($scope.postingClaim) return;
+		$scope.postingClaim = true;
 		$.ajax({
 	        url: window.location + '.json',
 	        type: 'POST',
@@ -734,17 +737,21 @@ function ClaimCtrl($scope, $compile) {
 	        dataType: 'json',
 	        success: function(data) {
 	        	$scope.register = data;
-	        	$scope.$apply();
+	        	alert($scope.register.errors.length);
+	        	
 	        	if ($scope.register.errors.length == 0) {
 	        		if ($scope.register.url != null) {
 		    	    	orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'New-Registration', 'Website']);
 			    		orcidGA.windowLocationHrefDelay($scope.register.url);
 	        		}
 	        	}
+	        	$scope.postingClaim = false;
+	        	$scope.$apply();
 	        }
 	    }).fail(function() { 
 	    	// something bad is happening!
 	    	console.log("RegistrationCtrl.postRegister() error");
+	    	$scope.postingClaim = false;
 	    });
 	};
 	
