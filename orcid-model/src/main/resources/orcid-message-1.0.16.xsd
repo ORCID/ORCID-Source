@@ -747,18 +747,24 @@
             </xs:restriction>
         </xs:simpleType>
     </xs:element>
-    <xs:element name="work-external-identifier-id">
+    <xs:element name="work-external-identifier-id" type="orcid:non-empty-string">
         <xs:annotation>
             <xs:documentation>Value for the identifier</xs:documentation>
         </xs:annotation>
-        <xs:complexType mixed="true"/>
     </xs:element>
     <xs:element name="work-source">
         <xs:annotation>
             <xs:documentation>Container for the source of a work.</xs:documentation>
         </xs:annotation>
-        <xs:complexType mixed="true"/>
     </xs:element>
+	<xs:simpleType name="non-empty-string">
+		<xs:annotation>
+        	<xs:documentation>Must contain one or more charaters that are not a space, carage return or linefeed</xs:documentation>
+      	</xs:annotation>
+      	<xs:restriction base="xs:string">
+      		<xs:pattern value="[\s\S]*[^\s\n\r]+[\s\S]*" />
+      	</xs:restriction>
+	</xs:simpleType>    
     <xs:element name="work-contributors">
         <xs:annotation>
             <xs:documentation>Container for the contributors of a patent.</xs:documentation>

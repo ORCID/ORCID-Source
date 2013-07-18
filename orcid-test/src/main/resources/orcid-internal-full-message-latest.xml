@@ -172,7 +172,7 @@
                     <work-external-identifiers>
                         <work-external-identifier>
                             <work-external-identifier-type>doi</work-external-identifier-type>
-                            <work-external-identifier-id>10.5555/12345ABCDE</work-external-identifier-id>
+                            <work-external-identifier-id>http://10.5555/12345ABCDE</work-external-identifier-id>
                         </work-external-identifier>
                     </work-external-identifiers>
                     <work-contributors>
