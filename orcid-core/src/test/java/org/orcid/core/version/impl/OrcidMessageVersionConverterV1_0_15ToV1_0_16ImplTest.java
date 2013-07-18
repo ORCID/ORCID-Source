@@ -41,7 +41,7 @@ public class OrcidMessageVersionConverterV1_0_15ToV1_0_16ImplTest {
         OrcidMessage newMessage = converter.upgradeMessage(oldMessage);
         assertNotNull(newMessage);
         assertEquals("1.0.16", newMessage.getMessageVersion());
-        assertNull(newMessage.getOrcidProfile().getOrcid());
+        assertEquals("4444-4444-4444-4446", newMessage.getOrcidProfile().getOrcid().getValue());
         assertEquals("http://orcid.org/4444-4444-4444-4446", newMessage.getOrcidProfile().getOrcidId());
     }
 
