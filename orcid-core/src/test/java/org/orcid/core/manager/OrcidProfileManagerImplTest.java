@@ -44,6 +44,7 @@ import org.orcid.core.manager.impl.OrcidProfileManagerImpl;
 import org.orcid.jaxb.model.message.Affiliation;
 import org.orcid.jaxb.model.message.AffiliationType;
 import org.orcid.jaxb.model.message.ApprovalDate;
+import org.orcid.jaxb.model.message.Claimed;
 import org.orcid.jaxb.model.message.Contributor;
 import org.orcid.jaxb.model.message.CreditName;
 import org.orcid.jaxb.model.message.DelegateSummary;
@@ -52,6 +53,7 @@ import org.orcid.jaxb.model.message.DelegationDetails;
 import org.orcid.jaxb.model.message.GivenPermissionTo;
 import org.orcid.jaxb.model.message.Orcid;
 import org.orcid.jaxb.model.message.OrcidBio;
+import org.orcid.jaxb.model.message.OrcidHistory;
 import org.orcid.jaxb.model.message.OrcidInternal;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidWork;
@@ -64,6 +66,7 @@ import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.message.SendChangeNotifications;
 import org.orcid.jaxb.model.message.SendOrcidNews;
 import org.orcid.jaxb.model.message.SequenceType;
+import org.orcid.jaxb.model.message.SubmissionDate;
 import org.orcid.jaxb.model.message.Subtitle;
 import org.orcid.jaxb.model.message.Title;
 import org.orcid.jaxb.model.message.Visibility;
@@ -437,6 +440,10 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
     public void testAddOrcidWorks() {
 
         OrcidProfile profile1 = createBasicProfile();
+        OrcidHistory history = new OrcidHistory();
+        history.setSubmissionDate(new SubmissionDate(DateUtils.convertToXMLGregorianCalendar(new Date())));
+        profile1.setOrcidHistory(history);
+        history.setClaimed(new Claimed(true));
         profile1 = orcidProfileManager.createOrcidProfile(profile1);
         String originalPutCode = profile1.getOrcidActivities().getOrcidWorks().getOrcidWork().get(0).getPutCode();
 
@@ -460,7 +467,9 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
         WorkTitle workTitle3 = new WorkTitle();
         workTitle3.setTitle(new Title("New Title"));
         workTitle3.setSubtitle(new Subtitle("Another New subtitle"));
+
         OrcidWork work3 = createWork2(workTitle3);
+        work3.setVisibility(Visibility.LIMITED);
         orcidWorks.getOrcidWork().add(work3);
 
         orcidProfileManager.addOrcidWorks(profile2);
@@ -484,6 +493,10 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
     public void testAddOrcidWorksWhenDefaultVisibilityIsPublic() {
 
         OrcidProfile profile1 = createBasicProfile();
+        OrcidHistory history = new OrcidHistory();
+        history.setSubmissionDate(new SubmissionDate(DateUtils.convertToXMLGregorianCalendar(new Date())));
+        profile1.setOrcidHistory(history);
+        history.setClaimed(new Claimed(true));
         profile1.getOrcidInternal().getPreferences().setWorkVisibilityDefault(new WorkVisibilityDefault(Visibility.PUBLIC));
         orcidProfileManager.createOrcidProfile(profile1);
 
@@ -508,6 +521,7 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
         workTitle3.setTitle(new Title("Further Title"));
         workTitle3.setSubtitle(new Subtitle("Further subtitle"));
         OrcidWork work3 = createWork3(workTitle3);
+        work3.setVisibility(Visibility.LIMITED);
         orcidWorks.getOrcidWork().add(work3);
 
         orcidProfileManager.addOrcidWorks(profile2);
@@ -522,8 +536,60 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
         for (OrcidWork work : works) {
             if ("Test Title".equals(work.getWorkTitle().getTitle().getContent())) {
                 assertEquals(Visibility.PRIVATE, work.getVisibility());
+            } else if ("Further Title".equals(work.getWorkTitle().getTitle().getContent())) {
+                assertEquals(Visibility.LIMITED, work.getVisibility());
             } else {
                 assertEquals(Visibility.PUBLIC, work.getVisibility());
+            }
+        }
+    }
+
+    @Test
+    @Transactional
+    @Rollback(true)
+    public void testAddOrcidWorkToUnclaimedProfile() {
+
+        OrcidProfile profile1 = createBasicProfile();
+        orcidProfileManager.createOrcidProfile(profile1);
+
+        OrcidProfile profile2 = new OrcidProfile();
+        profile2.setOrcid(TEST_ORCID);
+        OrcidWorks orcidWorks = new OrcidWorks();
+        profile2.setOrcidWorks(orcidWorks);
+
+        WorkTitle workTitle1 = new WorkTitle();
+        workTitle1.setTitle(new Title("Another Title"));
+        workTitle1.setSubtitle(new Subtitle("Journal of Cloud Spotting"));
+        OrcidWork work1 = createWork1(workTitle1);
+        orcidWorks.getOrcidWork().add(work1);
+
+        WorkTitle workTitle2 = new WorkTitle();
+        workTitle2.setTitle(new Title("New Title"));
+        workTitle2.setSubtitle(new Subtitle("Another New subtitle"));
+        OrcidWork work2 = createWork2(workTitle2);
+        orcidWorks.getOrcidWork().add(work2);
+        // Try to add a duplicate
+        WorkTitle workTitle3 = new WorkTitle();
+        workTitle3.setTitle(new Title("Further Title"));
+        workTitle3.setSubtitle(new Subtitle("Further subtitle"));
+        OrcidWork work3 = createWork3(workTitle3);
+        work3.setVisibility(Visibility.LIMITED);
+        orcidWorks.getOrcidWork().add(work3);
+
+        orcidProfileManager.addOrcidWorks(profile2);
+
+        OrcidProfile resultProfile = orcidProfileManager.retrieveOrcidProfile(TEST_ORCID);
+        assertEquals("Will", resultProfile.getOrcidBio().getPersonalDetails().getGivenNames().getContent());
+        List<OrcidWork> works = resultProfile.retrieveOrcidWorks().getOrcidWork();
+        assertEquals(4, works.size());
+
+        assertEquals("Another Title", works.get(0).getWorkTitle().getTitle().getContent());
+        assertEquals("Journal of Cloud Spotting", works.get(0).getWorkTitle().getSubtitle().getContent());
+        for (OrcidWork work : works) {
+            if ("Further Title".equals(work.getWorkTitle().getTitle().getContent())) {
+                assertEquals(Visibility.LIMITED, work.getVisibility());
+            } else {
+                assertEquals(Visibility.PRIVATE, work.getVisibility());
             }
         }
     }
@@ -588,8 +654,8 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
         assertNotNull(userProfile.getOrcidBio().getApplications());
         assertEquals(1, userProfile.getOrcidBio().getApplications().getApplicationSummary().size());
 
-        orcidProfileManager.revokeApplication(DELEGATE_ORCID, APPLICATION_ORCID, Arrays.asList(new ScopePathType[] { ScopePathType.ORCID_BIO_READ_LIMITED,
-                ScopePathType.ORCID_BIO_UPDATE }));
+        orcidProfileManager.revokeApplication(DELEGATE_ORCID, APPLICATION_ORCID,
+                Arrays.asList(new ScopePathType[] { ScopePathType.ORCID_BIO_READ_LIMITED, ScopePathType.ORCID_BIO_UPDATE }));
 
         OrcidProfile retrievedProfile = orcidProfileManager.retrieveOrcidProfile(DELEGATE_ORCID);
         assertNotNull(retrievedProfile);
