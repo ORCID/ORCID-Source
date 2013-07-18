@@ -18,7 +18,6 @@ package org.orcid.core.version;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 
 import java.io.InputStreamReader;
 import java.io.Reader;
@@ -46,7 +45,7 @@ public class OrcidMessageVersionConverterChainTest extends BaseTest {
         OrcidMessage newMessage = orcidMessageVersionConverterChain.upgradeMessage(oldMessage, "1.0.16");
         assertNotNull(newMessage);
         assertEquals("1.0.16", newMessage.getMessageVersion());
-        assertNull(newMessage.getOrcidProfile().getOrcid());
+        assertEquals("4444-4444-4444-4446", newMessage.getOrcidProfile().getOrcid().getValue());
         assertEquals("http://orcid.org/4444-4444-4444-4446", newMessage.getOrcidProfile().getOrcidId());
     }
 
