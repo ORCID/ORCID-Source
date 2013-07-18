@@ -1254,18 +1254,7 @@ function QuickSearchCtrl($scope, $compile){
 
 function ClientEditCtrl($scope, $compile){
 	$scope.errors = [];
-	$scope.clients = [];
-	$scope.newClient = {			
-			displayName: '',
-			website: '',
-			shortDescription: '',			
-			redirectUris: {
-				redirectUri:[{value: '',type: 'DEFAULT'}]
-			},			
-			clientId:'',
-			clientSecret:'',
-			type: ''
-	};		
+	$scope.clients = [];	
 	
 	// Get the list of clients associated with this user
 	$scope.getClients = function(){
@@ -1298,7 +1287,7 @@ function ClientEditCtrl($scope, $compile){
 	// Add a new uri input field to a new client
 	$scope.addUriToNewClientTable = function(){		
 		$('#client-table').find('tr:last > td:last').html('&nbsp;');		
-		this.newClient.redirectUris.redirectUri.push({value: '',type: 'DEFAULT'});
+		$scope.newClient.redirectUris.redirectUri.push({value: '',type: 'DEFAULT'});
 	};
 	
 	// Add a new uri input field to a existing client
@@ -1319,7 +1308,18 @@ function ClientEditCtrl($scope, $compile){
 	};
 	
 	// Display the modal to add a new client
-	$scope.addClient = function(){		
+	$scope.addClient = function(){
+		$scope.newClient = {			
+				displayName: '',
+				website: '',
+				shortDescription: '',			
+				redirectUris: {
+					redirectUri:[{value: '',type: 'DEFAULT'}]
+				},			
+				clientId:'',
+				clientSecret:'',
+				type: ''
+		};	
 		$.colorbox({        	            
             html : $compile($('#new-client-modal').html())($scope), 
             transition: 'fade',

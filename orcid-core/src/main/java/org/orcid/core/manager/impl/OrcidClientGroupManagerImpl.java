@@ -199,11 +199,13 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
     }
 
     /**
-     * 
+     * TODO
      * */
     public OrcidClient createAndPersistClientProfile(String groupOrcid, OrcidClient client){
         if(!isAllowedToAddNewClient(groupOrcid))
-            throw new OrcidClientGroupManagementException("Your contract allow you to have only 1 client"); 
+            throw new OrcidClientGroupManagementException("Your contract allow you to have only 1 client."); 
+        if(!isAllowedToAddThatKindOfClient(groupOrcid, client.getType()))
+            throw new OrcidClientGroupManagementException("You cannot create that kind of client.");
         // Create a new client profile for the orcidClient.
         OrcidProfile clientProfile = createClientProfile(client);
         clientProfile = orcidProfileManager.createOrcidProfile(clientProfile);
@@ -234,20 +236,55 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
     
     
     /**
-     * 
+     * Check if the group can add more clients.
+     * Rules: 
+     *          BASIC and BASIC_INSTITUTION can have only one client
+     * @param groupOrcid
+     * @return true if the group matches the rules described above        
      * */
     private boolean isAllowedToAddNewClient(String groupOrcid){
         OrcidClientGroup group = retrieveOrcidClientGroup(groupOrcid);
-        //If this is a basic group or a basic institution group, it should be allowed to have only one client
-        if(group.getType().equals(OrcidType.BASIC) || group.getType().equals(OrcidType.BASIC_INSTITUTION)){
-            if(!group.getOrcidClient().isEmpty())
-                return false;
+        if(group.getType().equals(OrcidType.BASIC) || group.getType().equals(OrcidType.PREMIUM) || group.getType().equals(OrcidType.BASIC_INSTITUTION) || group.getType().equals(OrcidType.PREMIUM_INSTITUTION)){            
+            //If this is a basic group or a basic institution group, it should be allowed to have only one client
+            if(group.getType().equals(OrcidType.BASIC) || group.getType().equals(OrcidType.BASIC_INSTITUTION)){
+                if(!group.getOrcidClient().isEmpty())
+                    return false;
+            }
+        } else {
+            throw new OrcidClientGroupManagementException("Invalid group type: " + group.getType().value() + " for group: " + groupOrcid); 
         }
         return true;
     }
     
     /**
-     * 
+     * Check if the group type is allowed to add a specific client type.
+     * Rules are: 
+     *          BASIC or PREMIUM can create UPDATER's
+     *          BASIC_INSTITUTION or PREMIUM_INSTITUTION can create CREATOR's
+     * @param groupOrcid
+     * @param clientType
+     * @return true if the group type and the client type matches the above rules.
+     * */
+    private boolean isAllowedToAddThatKindOfClient(String groupOrcid, OrcidType clientType){
+        OrcidClientGroup group = retrieveOrcidClientGroup(groupOrcid);
+        if(group.getType().equals(OrcidType.BASIC) || group.getType().equals(OrcidType.PREMIUM) || group.getType().equals(OrcidType.BASIC_INSTITUTION) || group.getType().equals(OrcidType.PREMIUM_INSTITUTION)){                        
+            //Basic and premium can only create UPDATER's
+            if(group.getType().equals(OrcidType.BASIC) || group.getType().equals(OrcidType.PREMIUM)){
+                if(clientType.equals(OrcidType.CREATOR))
+                    return false;
+            } else if(group.getType().equals(OrcidType.BASIC_INSTITUTION) || group.getType().equals(OrcidType.PREMIUM_INSTITUTION)){
+                //Basic Institutions and premium Institutions can only create CREATORS's
+                if(clientType.equals(OrcidType.UPDATER))
+                    return false;
+            }
+        } else {
+            throw new OrcidClientGroupManagementException("Invalid group type: " + group.getType().value() + " for group: " + groupOrcid); 
+        }
+        return true;
+    }
+    
+    /**
+     * TODO
      * */
     public OrcidClient updateClientProfile(String groupOrcid, OrcidClient client){
         ProfileEntity clientProfileEntity = null;

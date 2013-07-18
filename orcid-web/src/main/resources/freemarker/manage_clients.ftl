@@ -31,6 +31,13 @@
 <script type="text/ng-template" id="edit-client-modal">
 	<div style="padding: 20px;" class="colorbox-modal">
 		<h1><@orcid.msg 'manage_clients.edit_client'/></h1><a id="cboxClose" class="btn pull-right close-button">X</a>		
+		
+		<div id="errors" ng-repeat="error in errors">
+			<ul>
+				<li>{{error}}</li>				
+			</ul>
+		</div>
+		
 		<h3><@orcid.msg 'manage_clients.client_details'/></h3>
 				
     	<@orcid.msg 'manage_clients.display_name'/><input type="text" ng-model="clientToEdit.displayName" required />
@@ -77,7 +84,7 @@
 			<input type="hidden" id="client_type" value="UPDATER" />
 		</@security.authorize>
 		
-		<@security.authorize ifAnyGranted="ROLE_INSTITUTION">
+		<@security.authorize ifAnyGranted="ROLE_BASIC_INSTITUTION">
 			<input type="hidden" id="client_type" value="CREATOR" />
 		</@security.authorize>
 		
@@ -157,7 +164,7 @@
 					<span id="bottom-create-new-client-premium" ng-click="addClient()" class="btn btn-primary"><@orcid.msg 'manage_clients.add'/></span>				
 				</div>
 			</@security.authorize>
-			<@security.authorize ifAnyGranted="ROLE_INSTITUTION, ROLE_BASIC">
+			<@security.authorize ifAnyGranted="ROLE_BASIC_INSTITUTION, ROLE_BASIC">
 				<#if (group)?? && (group.orcidClient)?? && !(group.orcidClient?has_content)> 
 					<div class="controls save-btns pull-left" ng-show="!clients.length">
 						<span id="bottom-create-new-client" ng-click="addClient()" class="btn btn-primary"><@orcid.msg 'manage_clients.add'/></span>				
