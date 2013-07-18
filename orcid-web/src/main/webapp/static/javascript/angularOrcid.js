@@ -668,7 +668,7 @@ function RegistrationCtrl($scope, $compile) {
 	
 	$scope.showProcessingColorBox = function () {
 	    $.colorbox({
-	        html : $('<div style="font-size: 50px; line-height: 60px; padding: 20px; text-align:center">Processing <i id="ajax-loader" class="icon-spinner icon-spin green"></i></div>'),
+	        html : $('<div style="font-size: 50px; line-height: 60px; padding: 20px; text-align:center">' + OM.getInstance().get('common.processing') + '&nbsp;<i id="ajax-loader" class="icon-spinner icon-spin green"></i></div>'),
 	        width: '400px', 
 	        close: '',
 	        escKey:false, 
@@ -676,7 +676,7 @@ function RegistrationCtrl($scope, $compile) {
 	    });
 	    $.colorbox.resize({width:"400px" , height:"100px"});
 	};
-
+	
 	$scope.showDuplicatesColorBox = function () {
 	    $.colorbox({
 	        html : $compile($('#duplicates').html())($scope),
