@@ -738,6 +738,7 @@ public class RegistrationController extends BaseController {
     public @ResponseBody
     Claim submitClaimJson(HttpServletRequest request, @PathVariable("encryptedEmail") String encryptedEmail, @RequestBody Claim claim)
             throws NoSuchRequestHandlingMethodException, UnsupportedEncodingException {
+        claim.setErrors(new ArrayList<String>());
         String decryptedEmail = encryptionManager.decryptForExternalUse(new String(Base64.decodeBase64(encryptedEmail), "UTF-8"));
         if (!isEmailOkForCurrentUser(decryptedEmail)) {
             claim.setUrl(getBaseUri() + "/claim/wrong_user");
