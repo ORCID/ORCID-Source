@@ -60,17 +60,36 @@ public interface OrcidClientGroupManager {
     OrcidClient createOrUpdateOrcidClientGroup(String groupOrcid, OrcidClient orcidClient, OrcidType orcidType);
 
     OrcidClientGroup retrieveOrcidClientGroup(String groupOrcid);
-    
+
     /**
-     * TODO
+     * Updates a client profile, updates can be adding or removing redirect uris
+     * or updating the client fields
+     * 
+     * @param groupOrcid
+     *            The group owner for this client
+     * @param client
+     *            The updated client
+     * @return the updated OrcidClient
      * */
     OrcidClient updateClientProfile(String groupOrcid, OrcidClient client);
-    
+
     /**
-     * TODO
+     * Creates a new client and set the group orcid as the owner of that client
+     * 
+     * @param groupOrcid
+     *            The group owner for this client
+     * @param client
+     *            The new client
+     * @return the new OrcidClient
      * */
     OrcidClient createAndPersistClientProfile(String groupOrcid, OrcidClient client);
-    
+
+    /**
+     * Deletes a group
+     * 
+     * @param groupOrcid
+     *            The orcid of the group that wants to be deleted
+     * */
     void removeOrcidClientGroup(String groupOrcid);
 
 }
