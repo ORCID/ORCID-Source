@@ -69,7 +69,7 @@
 	   							      <span ng-show="email.verified">${springMacroRequestContext.getMessage("manage.email.verified")}</span>		
 		   						  </td>
 		   						  <td class="padRgt">
-		   						  	<a href="" class="icon-trash grey" ng-show="email.primary == false" ng-click="confirmDeleteEmail($index)"></a>
+		   						  	<a href="" class="icon-trash orcid-icon-trash grey" ng-show="email.primary == false" ng-click="confirmDeleteEmail($index)"></a>
 		   						  </td>
 		   						  <td class="padRgt">
 		   						  	<@orcid.privacyToggle "email.visibility" "setPrivacy($index, 'PUBLIC', $event)" "setPrivacy($index, 'LIMITED', $event)" "setPrivacy($index, 'PRIVATE', $event)" />
@@ -251,7 +251,7 @@
                                             </#list>
                                         </#if>
                                     </td width="35%">                                    
-                                    <td width="5%"><button class="btn btn-link" onclick="orcidGA.gaPush(['_trackEvent', 'Disengagement', 'Revoke_Access', 'OAuth ${applicationSummary.applicationName.content}']);"><i class="icon-trash grey" title="${springMacroRequestContext.getMessage("manage.revokeaccess")}"></i></button></td>
+                                    <td width="5%"><button class="btn btn-link" onclick="orcidGA.gaPush(['_trackEvent', 'Disengagement', 'Revoke_Access', 'OAuth ${applicationSummary.applicationName.content}']);"><i class="icon-trash orcid-icon-trash grey" title="${springMacroRequestContext.getMessage("manage.revokeaccess")}"></i></button></td>
                                 </form>
                             </tr>
                         </#list>
