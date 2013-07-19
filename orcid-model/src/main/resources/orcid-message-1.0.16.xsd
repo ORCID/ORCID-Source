@@ -1,0 +1,1458 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:sch="http://purl.oclc.org/dsdl/schematron" elementFormDefault="qualified"
+           targetNamespace="http://www.orcid.org/ns/orcid" xmlns:orcid="http://www.orcid.org/ns/orcid">
+    <xs:annotation>
+        <xs:documentation>
+			=============================================================================
+			
+            ORCID (R) Open Source
+            http://orcid.org
+
+            Copyright (c) 2012-2013 ORCID, Inc.
+            Licensed under an MIT-Style License (MIT)
+            http://orcid.org/open-source-license
+            
+            This copyright and license information (including a link to the full license)
+            shall be included in its entirety in all copies or substantial portion of 
+            the software.
+			
+			=============================================================================
+			The schema describes the message format used for ORCID API requests and responses.
+			The top level element is orcid-message.
+        </xs:documentation>
+            <xs:appinfo>
+                <sch:title>Schematron validation</sch:title>
+                <sch:ns prefix="orcid" uri="http://www.orcid.org/ns/orcid"/>
+            </xs:appinfo>
+    </xs:annotation>
+    <xs:element name="orcid-message">
+        <xs:annotation>
+            <xs:documentation>The overall container for all ORCID requests and responses.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="orcid:message-version"/>
+                <xs:choice>
+                    <xs:element ref="orcid:orcid-profile"/>
+                    <xs:element ref="orcid:orcid-search-results"/>
+                    <xs:element ref="orcid:error-desc"/>
+                </xs:choice>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="message-version">
+        <xs:annotation>
+            <xs:documentation>The version of ORCID message schema that the orcid-message
+                uses.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+            <xs:annotation>
+                <xs:documentation>The highest value is the latest version of the schema. If lower
+                    values are shown, this means that documents that are valid against the older
+                    version are also valid against the later version of the schema.
+                </xs:documentation>
+            </xs:annotation>
+            <xs:restriction base="xs:string">
+                <xs:enumeration value="1.0.3"/>
+                <xs:enumeration value="1.0.4"/>
+                <xs:enumeration value="1.0.5"/>
+                <xs:enumeration value="1.0.6"/>
+                <xs:enumeration value="1.0.7"/>
+                <xs:enumeration value="1.0.8"/>
+                <xs:enumeration value="1.0.9"/>
+                <xs:enumeration value="1.0.10"/>
+                <xs:enumeration value="1.0.11"/>
+                <xs:enumeration value="1.0.12"/>
+                <xs:enumeration value="1.0.13"/>
+                <xs:enumeration value="1.0.14"/>
+                <xs:enumeration value="1.0.15"/>
+                <xs:enumeration value="1.0.16"/>
+            </xs:restriction>
+        </xs:simpleType>
+    </xs:element>
+    <xs:element name="error-desc">
+        <xs:annotation>
+            <xs:documentation>A human readable error message, when the request was unsuccessful.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:complexType mixed="true"/>
+    </xs:element>
+    <xs:element name="orcid-profile">
+        <xs:annotation>
+            <xs:documentation>The container element for a researcher or contributor profile.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="orcid:orcid" minOccurs="0"/>
+                <xs:element ref="orcid:orcid-id" minOccurs="0"/>
+                <xs:element ref="orcid:orcid-history" minOccurs="0"/>
+                <xs:element ref="orcid:orcid-bio" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="orcid:orcid-activities" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="orcid:orcid-internal" minOccurs="0" maxOccurs="1"/>
+            </xs:sequence>
+            <xs:attribute name="type" type="orcid:orcid-type" default="user"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="orcid-search-results">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="orcid:orcid-search-result" minOccurs="0" maxOccurs="unbounded"/>
+            </xs:sequence>
+            <xs:attribute name="num-found" type="xs:integer" default="0"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="orcid-search-result">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="orcid:relevancy-score" maxOccurs="1"/>
+                <xs:element ref="orcid:orcid-profile" maxOccurs="1"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="relevancy-score">
+        <xs:complexType mixed="true">
+            <xs:simpleContent>
+                <xs:extension base="xs:float"/>
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="orcid-history">
+        <xs:annotation>
+            <xs:documentation>A simple history of the researcher or contributor's ORCID profile.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="orcid:creation-method" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="orcid:completion-date" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="orcid:submission-date" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="orcid:last-modified-date" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="orcid:claimed" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="orcid:source" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="orcid:deactivation-date" minOccurs="0" maxOccurs="1"/>
+            </xs:sequence>
+            <xs:attributeGroup ref="orcid:visibility"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="creation-method" type="orcid:creation-method">
+        <xs:annotation>
+            <xs:documentation>The method used to create the profile.</xs:documentation>
+        </xs:annotation>
+    </xs:element>
+    <xs:element name="completion-date">
+        <xs:annotation>
+            <xs:documentation>The date and time when the profile set up was completed.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:simpleContent>
+                <xs:extension base="xs:dateTime"/>
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="submission-date">
+        <xs:annotation>
+            <xs:documentation>The date time when the profile was first submitted to ORCID.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:simpleContent>
+                <xs:extension base="xs:dateTime"/>
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="last-modified-date">
+        <xs:annotation>
+            <xs:documentation>The date time when the profile was last modified.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:simpleContent>
+                <xs:extension base="xs:dateTime"/>
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="claimed">
+        <xs:annotation>
+            <xs:documentation>True if the researcher or contributor has confirmed that their profile
+                is correct, after bulk creation by their institution.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:simpleContent>
+                <xs:extension base="xs:boolean"/>
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="deactivation-date">
+        <xs:annotation>
+            <xs:documentation>The date and time when the profile was deactivated</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:simpleContent>
+                <xs:extension base="xs:dateTime"/>
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="source">
+        <xs:annotation>
+            <xs:documentation>The client application that created the profile via the API (if any).
+            </xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="orcid:source-orcid" minOccurs="0"/>
+                <xs:element ref="orcid:source-name" minOccurs="0"/>
+                <xs:element ref="orcid:source-date" minOccurs="0"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="source-name">
+        <xs:annotation>
+            <xs:documentation>The name of the client application that created the profile.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:complexType mixed="true"/>
+    </xs:element>
+    <xs:element name="source-orcid">
+        <xs:annotation>
+            <xs:documentation>The ORCID identifier for the client application that created the
+                profile. Note this is a normal ORCID identifier, so can be used to look up the full
+                details of the client application.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:simpleContent>
+                <xs:extension base="orcid:orcid"/>
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="source-reference">
+        <xs:annotation>
+            <xs:documentation>The identifier of the researcher or contributor in a source's
+                system.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:complexType mixed="true"/>
+    </xs:element>
+    <xs:element name="source-date">
+        <xs:annotation>
+            <xs:documentation>The date time that the source created/attempted to create the ORCID.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:simpleContent>
+                <xs:extension base="xs:dateTime"/>
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="orcid-bio">
+        <xs:annotation>
+            <xs:documentation>The biographical details of the researcher or contributor.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="orcid:personal-details" minOccurs="0"/>
+                <xs:element ref="orcid:biography" minOccurs="0"/>
+                <xs:element ref="orcid:researcher-urls" minOccurs="0"/>
+                <xs:element ref="orcid:contact-details" minOccurs="0"/>
+                <xs:element ref="orcid:keywords" minOccurs="0"/>
+                <xs:element ref="orcid:external-identifiers" minOccurs="0"/>
+                <xs:element ref="orcid:affiliations" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="orcid:delegation" minOccurs="0"/>
+                <xs:element ref="orcid:applications" minOccurs="0"/>
+            </xs:sequence>
+            <xs:attributeGroup ref="orcid:scope"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="personal-details">
+        <xs:annotation>
+            <xs:documentation>Container for the personal details of the researcher or contributor.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="orcid:given-names" minOccurs="1"/>
+                <xs:element ref="orcid:family-name" minOccurs="0"/>
+                <xs:element ref="orcid:credit-name" minOccurs="0"/>
+                <xs:element ref="orcid:other-names" minOccurs="0"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="biography">
+    	<xs:annotation>
+    		<xs:documentation>Description of the researcher's professional career</xs:documentation>
+    	</xs:annotation>
+        <xs:complexType>
+            <xs:simpleContent>
+                <xs:extension base="orcid:bio-text">
+                    <xs:attribute name="visibility" type="orcid:visibility" />
+                </xs:extension>
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:simpleType name="bio-text">
+        <xs:restriction base="xs:string">
+            <xs:maxLength value="1000"></xs:maxLength>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:element name="researcher-urls">
+        <xs:annotation>
+            <xs:documentation>Container for URLs of the researcher or contributor's sites.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" maxOccurs="unbounded" ref="orcid:researcher-url"/>
+            </xs:sequence>
+            <xs:attributeGroup ref="orcid:visibility"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="researcher-url">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" maxOccurs="1" ref="orcid:url-name"/>
+                <xs:element minOccurs="0" maxOccurs="1" ref="orcid:url"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="contact-details">
+        <xs:annotation>
+            <xs:documentation>Container for details of how to contact the researcher or contributor.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:annotation>
+                <xs:appinfo>
+                    <sch:pattern name="Test of number of primary emails">
+                        <sch:rule context="orcid:contact-details">
+                            <sch:assert test="if(count(orcid:email) &lt;= 1) then true() else count(orcid:email[@primary=true()]) = 1">Wrong number of primary emails</sch:assert>
+                        </sch:rule>
+                    </sch:pattern>
+                </xs:appinfo>
+            </xs:annotation>
+            <xs:sequence>
+                <xs:element ref="orcid:email" minOccurs="0" maxOccurs="unbounded"/>
+                <xs:element ref="orcid:address" minOccurs="0"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="email">
+        <xs:complexType>
+            <xs:simpleContent>
+                <xs:extension base="orcid:email">
+                    <xs:attributeGroup ref="orcid:visibility"/>
+                    <xs:attribute name="primary" type="xs:boolean" default="true"/>
+                    <xs:attribute name="current" type="xs:boolean" default="true"/>
+                    <xs:attribute name="verified" type="xs:boolean" default="false"/>
+                    <xs:attribute name="source" type="orcid:orcid"/>
+                </xs:extension>
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="keywords">
+    	<xs:annotation>
+    		<xs:documentation>Contain for words or phrases describing areas of research</xs:documentation>
+    	</xs:annotation>
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="orcid:keyword" minOccurs="0" maxOccurs="unbounded"/>
+            </xs:sequence>
+            <xs:attributeGroup ref="orcid:visibility"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="keyword">
+        <xs:complexType mixed="true"/>
+    </xs:element>
+    <xs:element name="short-description">
+        <xs:annotation>
+            <xs:documentation>A few sentences describing the element in question</xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+            <xs:restriction base="xs:string"/>
+        </xs:simpleType>
+    </xs:element>
+    <xs:element name="affiliations">
+        <xs:annotation>
+            <xs:documentation>Container for the list of affiliations associated with the researcher or contributor
+            </xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element maxOccurs="unbounded" minOccurs="0" ref="orcid:affiliation"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="affiliation">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="orcid:affiliation-name" minOccurs="0"/>
+                <xs:element ref="orcid:affiliation-type" minOccurs="0"/>
+                <xs:element ref="orcid:address" minOccurs="0"/>
+                <xs:element ref="orcid:department-name" minOccurs="0"/>
+                <xs:element ref="orcid:role-title" minOccurs="0"/>
+                <xs:element ref="orcid:start-date" minOccurs="0"/>
+                <xs:element ref="orcid:end-date" minOccurs="0"/>
+            </xs:sequence>
+            <xs:attributeGroup ref="orcid:visibility"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="affiliation-type">
+        <xs:simpleType>
+            <xs:restriction base="xs:string">
+                <xs:enumeration value="current-primary-institution"/>
+                <xs:enumeration value="current-institution"/>
+                <xs:enumeration value="published-here"/>
+                <xs:enumeration value="funded-by"/>
+                <xs:enumeration value="past-institution"/>
+                <xs:enumeration value="educated-here"/>
+            </xs:restriction>
+        </xs:simpleType>
+    </xs:element>
+    <xs:element name="external-identifiers">
+        <xs:annotation>
+            <xs:documentation>Container for links to the reasearcher or contributor in other
+                systems.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element maxOccurs="unbounded" minOccurs="0" ref="orcid:external-identifier"/>
+            </xs:sequence>
+            <xs:attributeGroup ref="orcid:visibility"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="external-identifier">
+        <xs:annotation>
+            <xs:documentation>A link to an external system</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:sequence>
+            	<xs:element ref="orcid:orcid" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="orcid:external-id-orcid" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="orcid:external-id-common-name" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="orcid:external-id-reference" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="orcid:external-id-url" minOccurs="0" maxOccurs="1"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="external-id-orcid">
+        <xs:annotation>
+            <xs:documentation>ORCID identifier used for external</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:simpleContent>
+                <xs:extension base="orcid:orcid"/>
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="external-id-common-name">
+        <xs:complexType mixed="true"/>
+    </xs:element>
+    <xs:element name="external-id-reference">
+        <xs:complexType mixed="true"/>
+    </xs:element>
+    <xs:element name="external-id-url">
+        <xs:complexType>
+            <xs:simpleContent>
+                <xs:extension base="xs:anyURI"/>
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="delegation">
+    	<xs:annotation>
+    		<xs:documentation>Contain for functionality that has not yet been built</xs:documentation>
+    	</xs:annotation>
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" ref="orcid:given-permission-to"/>
+                <xs:element minOccurs="0" ref="orcid:given-permission-by"/>
+            </xs:sequence>
+            <xs:attributeGroup ref="orcid:visibility"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="given-permission-to">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element maxOccurs="unbounded" ref="orcid:delegation-details"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="given-permission-by">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element maxOccurs="unbounded" ref="orcid:delegation-details"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="delegation-details">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="orcid:approval-date"/>
+                <xs:element ref="orcid:delegate-summary"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="approval-date">
+        <xs:complexType>
+            <xs:simpleContent>
+                <xs:extension base="xs:dateTime"/>
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="delegate-summary">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="orcid:orcid"/>
+                <xs:element minOccurs="0" ref="orcid:credit-name"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="applications">
+    	<xs:annotation>
+    		<xs:documentation>Container for Authorizations. Not used by the API.</xs:documentation>
+    	</xs:annotation>
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element maxOccurs="unbounded" ref="orcid:application-summary"/>
+            </xs:sequence>
+            <xs:attributeGroup ref="orcid:visibility"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="application-summary">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="orcid:application-orcid"/>
+                <xs:element ref="orcid:application-name"/>
+                <xs:element ref="orcid:application-website"/>
+                <xs:element ref="orcid:approval-date"/>
+                <xs:element ref="orcid:scope-paths"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="application-orcid">
+        <xs:complexType>
+            <xs:simpleContent>
+                <xs:extension base="orcid:orcid"/>
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="application-name">
+        <xs:complexType mixed="true"/>
+    </xs:element>
+    <xs:element name="application-website">
+        <xs:complexType>
+            <xs:simpleContent>
+                <xs:extension base="xs:anyURI"/>
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="scope-paths">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element maxOccurs="unbounded" ref="orcid:scope-path"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="scope-path">
+        <xs:complexType mixed="true">
+            <xs:simpleContent>
+                <xs:extension base="orcid:scope-path-type"/>
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="orcid-activities">
+        <xs:annotation>
+            <xs:documentation>Container for the works, grants and patents published by the researcher or contributor.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" maxOccurs="1" ref="orcid:orcid-works"/>
+                <xs:element minOccurs="0" maxOccurs="1" ref="orcid:orcid-grants"/>
+                <xs:element minOccurs="0" maxOccurs="1" ref="orcid:orcid-patents"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="orcid-works">
+        <xs:annotation>
+            <xs:documentation>Container for the works published by the researcher or contributor.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element maxOccurs="unbounded" minOccurs="0" ref="orcid:orcid-work"/>
+            </xs:sequence>
+            <xs:attributeGroup ref="orcid:scope"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="orcid-work">
+        <xs:annotation>
+            <xs:documentation>A work published by the researcher or contributor.</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="orcid:work-title" minOccurs="0"/>
+                <xs:element ref="orcid:short-description" minOccurs="0"/>
+                <xs:element ref="orcid:work-citation" minOccurs="0"/>
+                <xs:element ref="orcid:work-type" minOccurs="0"/>
+                <xs:element ref="orcid:publication-date" minOccurs="0"/>
+                <xs:element ref="orcid:work-external-identifiers" minOccurs="0"/>
+                <xs:element ref="orcid:url" minOccurs="0"/>
+                <xs:element ref="orcid:work-contributors" minOccurs="0"/>
+                <xs:element ref="orcid:work-source" minOccurs="0"/>
+            </xs:sequence>
+            <xs:attributeGroup ref="orcid:visibility"/>
+            <xs:attributeGroup ref="orcid:put-code"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="work-citation" type="orcid:citation">
+        <xs:annotation>
+            <xs:documentation>Element containing the type and content of the citation for this work</xs:documentation>
+        </xs:annotation>
+    </xs:element>
+    <xs:element name="work-type">
+        <xs:simpleType>
+            <xs:restriction base="xs:string">
+                <xs:enumeration value="advertisement"/>
+                <xs:enumeration value="audiovisual"/>
+                <xs:enumeration value="bible"/>
+                <xs:enumeration value="book"/>
+                <xs:enumeration value="brochure"/>
+                <xs:enumeration value="cartoon-comic"/>
+                <xs:enumeration value="chapter-anthology"/>
+                <xs:enumeration value="components"/>
+                <xs:enumeration value="conference-proceedings"/>
+                <xs:enumeration value="congressional-publication"/>
+                <xs:enumeration value="court-case"/>
+                <xs:enumeration value="database"/>
+                <xs:enumeration value="dictionary-entry"/>
+                <xs:enumeration value="digital-image"/>
+                <xs:enumeration value="dissertation-abstract"/>
+                <xs:enumeration value="dissertation"/>
+                <xs:enumeration value="e-mail"/>
+                <xs:enumeration value="editorial"/>
+                <xs:enumeration value="electronic-only"/>
+                <xs:enumeration value="encyclopedia-article"/>
+                <xs:enumeration value="executive-order"/>
+                <xs:enumeration value="federal-bill"/>
+                <xs:enumeration value="federal-report"/>
+                <xs:enumeration value="federal-rule"/>
+                <xs:enumeration value="federalstatute"/>
+                <xs:enumeration value="federal-testimony"/>
+                <xs:enumeration value="film-movie"/>
+                <xs:enumeration value="government-publication"/>
+                <xs:enumeration value="interview"/>
+                <xs:enumeration value="journal-article"/>
+                <xs:enumeration value="lecture-speech"/>
+                <xs:enumeration value="legal"/>
+                <xs:enumeration value="letter"/>
+                <xs:enumeration value="live-performance"/>
+                <xs:enumeration value="magazine-article"/>
+                <xs:enumeration value="mailing-list"/>
+                <xs:enumeration value="manuscript"/>
+                <xs:enumeration value="map-chart"/>
+                <xs:enumeration value="musical-recording"/>
+                <xs:enumeration value="newsgroup"/>
+                <xs:enumeration value="newsletter"/>
+                <xs:enumeration value="newspaper-article"/>
+                <xs:enumeration value="non-periodicals"/>
+                <xs:enumeration value="other"/>
+                <xs:enumeration value="painting"/>
+                <xs:enumeration value="pamphlet"/>
+                <xs:enumeration value="patent"/>
+                <xs:enumeration value="periodicals"/>
+                <xs:enumeration value="photograph"/>
+                <xs:enumeration value="press-release"/>
+                <xs:enumeration value="raw-data"/>
+                <xs:enumeration value="religious-text"/>
+                <xs:enumeration value="report"/>
+                <xs:enumeration value="reports-working-papers"/>
+                <xs:enumeration value="review"/>
+                <xs:enumeration value="scholarly-project"/>
+                <xs:enumeration value="software"/>
+                <xs:enumeration value="standards"/>
+                <xs:enumeration value="television-radio"/>
+                <xs:enumeration value="thesis"/>
+                <xs:enumeration value="web-site"/>
+            </xs:restriction>
+        </xs:simpleType>
+    </xs:element>
+    <xs:element name="work-external-identifiers">
+        <xs:annotation>
+            <xs:documentation>Container for storing the external references to the work.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element maxOccurs="unbounded" minOccurs="0" ref="orcid:work-external-identifier"/>
+            </xs:sequence>
+            <xs:attributeGroup ref="orcid:scope"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="work-external-identifier">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="orcid:work-external-identifier-type" maxOccurs="1"/>
+                <xs:element ref="orcid:work-external-identifier-id" maxOccurs="1"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="locale">
+        <xs:annotation>
+            <xs:documentation>Supported locales</xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+            <xs:restriction base="xs:string">
+                <xs:enumeration value="en"/>
+                <xs:enumeration value="es"/>
+                <xs:enumeration value="fr"/>
+                <xs:enumeration value="zh_CN"/>
+                <xs:enumeration value="zh_TW"/>
+ 			</xs:restriction>
+ 		</xs:simpleType>
+ 	</xs:element>
+    <xs:element name="work-external-identifier-type">
+        <xs:annotation>
+            <xs:documentation>The type of work, e.g DOI, PMID etc.</xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+            <xs:restriction base="xs:string">
+                <xs:enumeration value="other-id"/>
+                <xs:enumeration value="asin"/>
+                <xs:enumeration value="asin-tld"/>
+                <xs:enumeration value="arxiv"/>
+                <xs:enumeration value="bibcode"/>
+                <xs:enumeration value="doi"/>
+                <xs:enumeration value="eid"/>
+                <xs:enumeration value="isbn"/>
+                <xs:enumeration value="issn"/>
+                <xs:enumeration value="jfm"/>
+                <xs:enumeration value="jstor"/>
+                <xs:enumeration value="lccn"/>
+                <xs:enumeration value="mr"/>
+                <xs:enumeration value="oclc"/>
+                <xs:enumeration value="ol"/>
+                <xs:enumeration value="osti"/>
+                <xs:enumeration value="pmc"/>
+                <xs:enumeration value="pmid"/>
+                <xs:enumeration value="rfc"/>
+                <xs:enumeration value="ssrn"/>
+                <xs:enumeration value="zbl"/>
+            </xs:restriction>
+        </xs:simpleType>
+    </xs:element>
+    <xs:element name="work-external-identifier-id" type="orcid:non-empty-string">
+        <xs:annotation>
+            <xs:documentation>Value for the identifier</xs:documentation>
+        </xs:annotation>
+    </xs:element>
+    <xs:element name="work-source">
+        <xs:annotation>
+            <xs:documentation>Container for the source of a work.</xs:documentation>
+        </xs:annotation>
+    </xs:element>
+	<xs:simpleType name="non-empty-string">
+		<xs:annotation>
+        	<xs:documentation>Must contain one or more charaters that are not a space, carage return or linefeed</xs:documentation>
+      	</xs:annotation>
+      	<xs:restriction base="xs:string">
+      		<xs:pattern value="[\s\S]*[^\s\n\r]+[\s\S]*" />
+      	</xs:restriction>
+	</xs:simpleType>    
+    <xs:element name="work-contributors">
+        <xs:annotation>
+            <xs:documentation>Container for the contributors of a patent.</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element maxOccurs="unbounded" minOccurs="0" ref="orcid:contributor"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="orcid-grants">
+        <xs:annotation>
+            <xs:documentation>Container for the grants received by the researcher or contributor
+            </xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element maxOccurs="unbounded" minOccurs="0" ref="orcid:orcid-grant"/>
+            </xs:sequence>
+            <xs:attributeGroup ref="orcid:scope"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="orcid-grant">
+        <xs:annotation>
+            <xs:documentation>A grant received by the researcher or contributor.</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="orcid:funding-agency" minOccurs="0"/>
+                <xs:element ref="orcid:grant-external-identifier" minOccurs="0"/>
+                <xs:element ref="orcid:grant-number" minOccurs="0"/>
+                <xs:element ref="orcid:short-description" minOccurs="0"/>
+                <xs:element ref="orcid:grant-date" minOccurs="0"/>
+                <xs:element ref="orcid:grant-contributors" minOccurs="0"/>
+                <xs:element ref="orcid:grant-sources" minOccurs="0"/>
+            </xs:sequence>
+            <xs:attributeGroup ref="orcid:visibility"/>
+            <xs:attributeGroup ref="orcid:put-code"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="funding-agency">
+        <xs:annotation>
+            <xs:documentation>Agency providing the funding</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="orcid:agency-orcid" minOccurs="0"/>
+                <xs:element ref="orcid:agency-name" minOccurs="0"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="agency-name">
+        <xs:annotation>
+            <xs:documentation>Name of funding agency</xs:documentation>
+        </xs:annotation>
+        <xs:complexType mixed="true"/>
+    </xs:element>
+    <xs:element name="agency-orcid">
+        <xs:annotation>
+            <xs:documentation>The ORCID identifier for the agency providing the funding associated with this
+                profile. Note this is a normal ORCID identifier, so can be used to look up the full
+                details of the client application.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:simpleContent>
+                <xs:extension base="orcid:orcid"/>
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="grant-external-identifier">
+        <xs:annotation>
+            <xs:documentation>A link to an external system</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="orcid:grant-external-program" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="orcid:grant-external-id" minOccurs="0" maxOccurs="1"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="grant-external-program">
+        <xs:annotation>
+            <xs:documentation>The program that created the id</xs:documentation>
+        </xs:annotation>
+        <xs:complexType mixed="true"/>
+    </xs:element>
+    <xs:element name="grant-external-id">
+        <xs:annotation>
+            <xs:documentation>Value for the identifier</xs:documentation>
+        </xs:annotation>
+        <xs:complexType mixed="true"/>
+    </xs:element>
+    <xs:element name="grant-number">
+        <xs:annotation>
+            <xs:documentation>Grant number</xs:documentation>
+        </xs:annotation>
+        <xs:complexType mixed="true"/>
+    </xs:element>
+    <xs:element name="grant-date">
+        <xs:annotation>
+            <xs:documentation>The date the grant was provided.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:simpleContent>
+                <xs:extension base="xs:dateTime"/>
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="grant-contributors">
+        <xs:annotation>
+            <xs:documentation>Container for the contributors of a grant.</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element maxOccurs="unbounded" minOccurs="0" ref="orcid:contributor"/>
+            </xs:sequence>
+            <xs:attributeGroup ref="orcid:scope"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="contributor">
+        <xs:annotation>
+            <xs:documentation>A link to an external system</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="orcid:contributor-orcid" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="orcid:credit-name" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="orcid:contributor-email" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="orcid:contributor-attributes" minOccurs="0" maxOccurs="1"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="contributor-orcid">
+        <xs:complexType>
+            <xs:simpleContent>
+                <xs:extension base="orcid:orcid"/>
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="contributor-email">
+        <xs:complexType>
+            <xs:simpleContent>
+                <xs:extension base="orcid:email"/>
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="contributor-attributes">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="orcid:contributor-sequence"/>
+                <xs:element ref="orcid:contributor-role"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="contributor-sequence">
+        <xs:simpleType>
+            <xs:restriction base="xs:string">
+                <xs:enumeration value="first"/>
+                <xs:enumeration value="additional"/>
+            </xs:restriction>
+        </xs:simpleType>
+    </xs:element>
+    <xs:element name="contributor-role">
+        <xs:simpleType>
+            <xs:restriction base="xs:string">
+                <xs:enumeration value="author"/>
+                <xs:enumeration value="assignee"/>
+                <xs:enumeration value="editor"/>
+                <xs:enumeration value="chair-or-translator"/>
+                <xs:enumeration value="co-investigator"/>
+                <xs:enumeration value="co-inventor"/>
+                <xs:enumeration value="graduate-student"/>
+                <xs:enumeration value="other-inventor"/>
+                <xs:enumeration value="principal-investigator"/>
+                <xs:enumeration value="postdoctoral-researcher"/>
+                <xs:enumeration value="support-staff"/>
+            </xs:restriction>
+        </xs:simpleType>
+    </xs:element>
+    <xs:element name="grant-sources">
+        <xs:annotation>
+            <xs:documentation>Container for the sources of a grant.</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element maxOccurs="unbounded" minOccurs="0" ref="orcid:source"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="orcid-patents">
+        <xs:annotation>
+            <xs:documentation>Container for the patents invented by the researcher or contributor
+            </xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element maxOccurs="unbounded" minOccurs="0" ref="orcid:orcid-patent"/>
+            </xs:sequence>
+            <xs:attributeGroup ref="orcid:scope"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="orcid-patent">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="orcid:country" minOccurs="0"/>
+                <xs:element ref="orcid:patent-number" minOccurs="0"/>
+                <xs:element ref="orcid:short-description" minOccurs="0"/>
+                <xs:element ref="orcid:patent-issue-date" minOccurs="0"/>
+                <xs:element ref="orcid:assignee" minOccurs="0" maxOccurs="unbounded"/>
+                <xs:element ref="orcid:patent-contributors" minOccurs="0"/>
+                <xs:element ref="orcid:patent-sources" minOccurs="0"/>
+            </xs:sequence>
+            <xs:attributeGroup ref="orcid:visibility"/>
+            <xs:attributeGroup ref="orcid:put-code"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="patent-number">
+        <xs:complexType mixed="true"/>
+    </xs:element>
+    <xs:element name="patent-issue-date">
+        <xs:annotation>
+            <xs:documentation>The date the patent was issued.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:simpleContent>
+                <xs:extension base="xs:dateTime"/>
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="assignee">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="orcid:assignee-orcid" minOccurs="0"/>
+                <xs:element ref="orcid:assignee-name" minOccurs="0"/>
+            </xs:sequence>
+            <xs:attributeGroup ref="orcid:visibility"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="assignee-name">
+        <xs:complexType mixed="true"/>
+    </xs:element>
+    <xs:element name="assignee-orcid">
+        <xs:complexType>
+            <xs:simpleContent>
+                <xs:extension base="orcid:orcid"/>
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="patent-contributors">
+        <xs:annotation>
+            <xs:documentation>Container for the contributors of a patent.</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element maxOccurs="unbounded" minOccurs="0" ref="orcid:contributor"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="patent-sources">
+        <xs:annotation>
+            <xs:documentation>Container for the sources of a patent.</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element maxOccurs="unbounded" minOccurs="0" ref="orcid:source"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="publication-date">
+        <xs:annotation>
+            <xs:documentation>The date that the work was first published.</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="orcid:year"/>
+                <xs:sequence minOccurs="0">
+                    <xs:element ref="orcid:month"/>
+                    <xs:element ref="orcid:day" minOccurs="0"/>
+                </xs:sequence>
+            </xs:sequence>
+            <xs:attribute name="media-type" type="orcid:media-type"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="year">
+        <xs:complexType mixed="true">
+            <xs:simpleContent>
+                <xs:extension base="orcid:year"/>
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="month">
+        <xs:complexType mixed="true">
+            <xs:simpleContent>
+                <xs:extension base="orcid:month"/>
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="day">
+        <xs:complexType mixed="true">
+            <xs:simpleContent>
+                <xs:extension base="orcid:day"/>
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="work-title">
+        <xs:annotation>
+            <xs:documentation>Container for titles of the work.</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="orcid:title" minOccurs="0"/>
+                <xs:element ref="orcid:subtitle" minOccurs="0"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="role-title">
+        <xs:annotation>
+            <xs:documentation>Text field for the individual's title.</xs:documentation>
+        </xs:annotation>
+        <xs:complexType mixed="true"/>
+    </xs:element>
+    <xs:element name="title">
+        <xs:annotation>
+            <xs:documentation>The main title of the work.</xs:documentation>
+        </xs:annotation>
+        <xs:complexType mixed="true"/>
+    </xs:element>
+    <xs:element name="subtitle">
+        <xs:annotation>
+            <xs:documentation>The book title if the work is a chapter, or the journal title if the
+                work is a journal article.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:complexType mixed="true"/>
+    </xs:element>
+    <xs:element name="orcid">
+        <xs:annotation>
+            <xs:documentation>The identifier of the researcher or contributor in ORCID.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:simpleContent>
+                <xs:extension base="orcid:orcid"/>
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="orcid-id">
+        <xs:annotation>
+            <xs:documentation>The identifier of the researcher or contributor in ORCID.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:simpleContent>
+                <xs:extension base="orcid:orcid-id"/>
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="given-names">
+        <xs:annotation>
+            <xs:documentation>The given name(s) of the researcher or contributor as it generally
+                appears on their published works.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:complexType mixed="true"/>
+    </xs:element>
+    <xs:element name="family-name">
+        <xs:annotation>
+            <xs:documentation>The family name of the researcher or contributor as it generally
+                appears on their published works. This element is optional, because some cultures
+                only use given names.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:complexType mixed="true"/>
+    </xs:element>
+    <xs:element name="credit-name">
+        <xs:annotation>
+            <xs:documentation>The name by which to when credited or cited, for example, in an article or index, or as a
+                grant contributor.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:complexType mixed="true">
+            <xs:attributeGroup ref="orcid:visibility"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="other-names">
+        <xs:annotation>
+            <xs:documentation>Container for variations of the researcher or contributor's name, that
+                may have appeared on their published works. This could include variations because of
+                transliterations of their names into different alphabets.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" maxOccurs="unbounded" ref="orcid:other-name"/>
+            </xs:sequence>
+            <xs:attributeGroup ref="orcid:visibility"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="other-name">
+        <xs:complexType mixed="true"/>
+    </xs:element>
+    <xs:element name="url">
+        <xs:complexType>
+            <xs:simpleContent>
+                <xs:extension base="xs:anyURI"/>
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="url-name">
+        <xs:complexType mixed="true"/>
+    </xs:element>
+    <xs:element name="address">
+    	<xs:annotation>
+    		<xs:documentation>Container for location information</xs:documentation>
+    	</xs:annotation>
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" ref="orcid:country"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="country">
+        <xs:complexType mixed="true">
+            <xs:annotation>
+                <xs:documentation>Country of the Institution</xs:documentation>
+            </xs:annotation>
+            <xs:attributeGroup ref="orcid:visibility"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="affiliation-name">
+        <xs:complexType mixed="true"/>
+    </xs:element>
+    <xs:element name="department-name">
+        <xs:complexType mixed="true"/>
+    </xs:element>
+    <xs:element name="end-date">
+        <xs:complexType>
+            <xs:simpleContent>
+                <xs:extension base="xs:date"/>
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="start-date">
+        <xs:complexType>
+            <xs:simpleContent>
+                <xs:extension base="xs:date"/>
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="orcid-internal">
+        <xs:annotation>
+            <xs:documentation>Container for data that are strictly for internal use only.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" ref="orcid:security-details"/>
+                <xs:element minOccurs="0" ref="orcid:preferences"/>
+            </xs:sequence>
+            <xs:attributeGroup ref="orcid:scope"/>
+            <xs:attributeGroup ref="orcid:visibility"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="security-details">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="orcid:encrypted-password"/>
+                <xs:element ref="orcid:security-question-id" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="orcid:encrypted-security-answer" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="orcid:encrypted-verification-code" minOccurs="1" maxOccurs="1"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="preferences">
+        <xs:complexType>
+            <xs:sequence>
+            	<xs:element ref="orcid:locale" minOccurs="0" />
+                <xs:element ref="orcid:send-change-notifications"/>
+                <xs:element ref="orcid:send-orcid-news"/>
+                <xs:element ref="orcid:work-visibility-default"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="encrypted-password">
+        <xs:complexType mixed="true"/>
+    </xs:element>
+    <xs:element name="security-question-id">
+        <xs:complexType>
+            <xs:simpleContent>
+                <xs:extension base="xs:integer"/>
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="encrypted-security-answer">
+        <xs:complexType mixed="true"/>
+    </xs:element>
+    <xs:element name="send-change-notifications">
+        <xs:complexType>
+            <xs:simpleContent>
+                <xs:extension base="xs:boolean"/>
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="send-orcid-news">
+        <xs:complexType>
+            <xs:simpleContent>
+                <xs:extension base="xs:boolean"/>
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="work-visibility-default">
+        <xs:complexType mixed="true">
+            <xs:simpleContent>
+                <xs:extension base="orcid:visibility"/>
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="encrypted-verification-code">
+        <xs:complexType mixed="true"/>
+    </xs:element>
+    <xs:simpleType name="orcid">
+        <xs:restriction base="xs:string">
+            <xs:pattern value="(\d{4}-){3,}\d{3}[\dX]"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="orcid-id">
+        <xs:restriction base="xs:string">
+            <xs:pattern value="http://([^/]*orcid\.org|localhost.*/orcid-web)/(\d{4}-){3,}\d{3}[\dX]"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="orcid-type">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="admin"/>
+            <xs:enumeration value="user"/>
+            <xs:enumeration value="group"/>
+            <xs:enumeration value="client"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:attributeGroup name="scope">
+        <xs:attribute name="scope" use="optional" type="orcid:scope">
+            <xs:annotation>
+                <xs:documentation>The authorization scope that the API client has on this section of
+                    data.
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+    </xs:attributeGroup>
+    <xs:simpleType name="scope">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="read-limited"/>
+            <xs:enumeration value="update"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:attributeGroup name="visibility">
+        <xs:attribute name="visibility" use="optional" type="orcid:visibility">
+            <xs:annotation>
+                <xs:documentation>The visiblity that the researcher or contributor has assigned to
+                    this section of data.
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+    </xs:attributeGroup>
+    <xs:attributeGroup name="put-code">
+        <xs:attribute name="put-code" use="optional" type="xs:integer">
+            <xs:annotation>
+                <xs:documentation>The code to be used when PUTing a collection of works, grants or patents to ensure
+                    that the existing item's history is retained
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+    </xs:attributeGroup>
+    <xs:simpleType name="visibility">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="private">
+                <xs:annotation>
+                    <xs:documentation>The data should only be used internally by ORCID.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="limited">
+                <xs:annotation>
+                    <xs:documentation>The data should only be shared with systems that the
+                        researcher or contributor has specifically granted authorization (using
+                        OAuth).
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="public">
+                <xs:annotation>
+                    <xs:documentation>The data should be publically available.</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="registered-only">
+                <xs:annotation>
+                    <xs:documentation>The data should be shared only with registered users.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="email">
+        <xs:restriction base="xs:string">
+            <xs:pattern value="[^@]+@[^\.]+\..+"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="creation-method">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="API">
+                <xs:annotation>
+                    <xs:documentation>The profile was created using the Tier 2 API.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="website">
+                <xs:annotation>
+                    <xs:documentation>The profile was created manually using the ORCID web user
+                        interface.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="media-type">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="print"/>
+            <xs:enumeration value="online"/>
+            <xs:enumeration value="other"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="year">
+        <xs:restriction base="xs:string">
+            <xs:pattern value="\d{4}"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="month">
+        <xs:restriction base="xs:string">
+            <xs:pattern value="\d{2}"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="day">
+        <xs:restriction base="xs:string">
+            <xs:pattern value="\d{2}"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="scope-path-type">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="/authenticate"/>
+            <xs:enumeration value="/orcid-bio/read-limited"/>
+            <xs:enumeration value="/orcid-profile/read-limited"/>
+            <xs:enumeration value="/orcid-works/read-limited"/>
+            <xs:enumeration value="/orcid-grants/read-limited"/>
+            <xs:enumeration value="/orcid-patents/read-limited"/>
+            <xs:enumeration value="/orcid-works/update"/>
+            <xs:enumeration value="/orcid-grants/update"/>
+            <xs:enumeration value="/orcid-patents/update"/>
+            <xs:enumeration value="/orcid-bio/external-identifiers/create"/>
+            <xs:enumeration value="/orcid-bio/update"/>
+            <xs:enumeration value="/orcid-works/create"/>
+            <xs:enumeration value="/orcid-grants/create"/>
+            <xs:enumeration value="/orcid-patents/create"/>
+            <xs:enumeration value="/orcid-profile/create"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:complexType name="citation">
+        <xs:annotation>
+            <xs:documentation>Element to contain a citation of a given type</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="work-citation-type" default="formatted-unspecified" type="orcid:citation-type" maxOccurs="1" minOccurs="1"/>
+            <xs:element name="citation" type="xs:string" maxOccurs="1" minOccurs="1"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:simpleType name="citation-type">
+        <xs:annotation>
+            <xs:documentation>The types of citation allowed in this element. Note that this must be selected</xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="formatted-unspecified"/>
+            <xs:enumeration value="bibtex"/>
+            <xs:enumeration value="formatted-apa"/>
+            <xs:enumeration value="formatted-harvard"/>
+            <xs:enumeration value="formatted-ieee"/>
+            <xs:enumeration value="formatted-mla"/>
+            <xs:enumeration value="formatted-vancouver"/>
+            <xs:enumeration value="formatted-chicago"/>
+        </xs:restriction>
+    </xs:simpleType>
+</xs:schema>

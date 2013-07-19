@@ -667,7 +667,7 @@ function RegistrationCtrl($scope, $compile) {
 	
 	$scope.showProcessingColorBox = function () {
 	    $.colorbox({
-	        html : $('<div style="font-size: 50px; line-height: 60px; padding: 20px; text-align:center">Processing <i id="ajax-loader" class="icon-spinner icon-spin green"></i></div>'),
+	        html : $('<div style="font-size: 50px; line-height: 60px; padding: 20px; text-align:center">' + OM.getInstance().get('common.processing') + '&nbsp;<i id="ajax-loader" class="icon-spinner icon-spin green"></i></div>'),
 	        width: '400px', 
 	        close: '',
 	        escKey:false, 
@@ -675,7 +675,7 @@ function RegistrationCtrl($scope, $compile) {
 	    });
 	    $.colorbox.resize({width:"400px" , height:"100px"});
 	};
-
+	
 	$scope.showDuplicatesColorBox = function () {
 	    $.colorbox({
 	        html : $compile($('#duplicates').html())($scope),
@@ -710,6 +710,7 @@ function RegistrationCtrl($scope, $compile) {
 		
 
 function ClaimCtrl($scope, $compile) {
+	$scope.postingClaim = false;
 	$scope.getClaim = function(){
 		$.ajax({
 			url: window.location + '.json',	        
@@ -725,6 +726,8 @@ function ClaimCtrl($scope, $compile) {
 	};
 		
 	$scope.postClaim = function () {
+		if ($scope.postingClaim) return;
+		$scope.postingClaim = true;
 		$.ajax({
 	        url: window.location + '.json',
 	        type: 'POST',
@@ -733,17 +736,20 @@ function ClaimCtrl($scope, $compile) {
 	        dataType: 'json',
 	        success: function(data) {
 	        	$scope.register = data;
-	        	$scope.$apply();
+	        	
 	        	if ($scope.register.errors.length == 0) {
 	        		if ($scope.register.url != null) {
 		    	    	orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'New-Registration', 'Website']);
 			    		orcidGA.windowLocationHrefDelay($scope.register.url);
 	        		}
 	        	}
+	        	$scope.postingClaim = false;
+	        	$scope.$apply();
 	        }
 	    }).fail(function() { 
 	    	// something bad is happening!
 	    	console.log("RegistrationCtrl.postRegister() error");
+	    	$scope.postingClaim = false;
 	    });
 	};
 	

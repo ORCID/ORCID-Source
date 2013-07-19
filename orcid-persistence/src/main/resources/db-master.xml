@@ -61,4 +61,6 @@
 	<include file="/db/updates/add_client_redir_type.xml"/>
 	<include file="/db/updates/define-import-works-wizard.xml"/>
 	<include file="/db/updates/remove-old-way-of-doing-emails.xml"/>
+	<include file="/db/updates/locale-setting.xml"/>
+	<include file="/db/updates/locale-refactor-setting.xml"/>
 </databaseChangeLog>

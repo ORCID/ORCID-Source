@@ -23,7 +23,7 @@
 
 <@emailMacros.msg "email.api_record_creation.what" />
 
-<@emailMacros.msg "email.api_record_creation.within" />
+<@emailMacros.msg "email.api_record_creation.within.1" />${creatorName}<@emailMacros.msg "email.api_record_creation.within.2" />
 
 ${verificationUrl}
 

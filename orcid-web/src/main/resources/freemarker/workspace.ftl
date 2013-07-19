@@ -43,7 +43,7 @@
                     ${(profile.orcidBio.personalDetails.givenNames.content)!} ${(profile.orcidBio.personalDetails.familyName.content)!}
                 </#if>
             </h2>
-            <p><small id="orcid-id" class="orcid-id">${(profile.orcid.value)!}</small></p>
+            <p><small id="orcid-id" class="orcid-id">${baseUri}/${(profile.orcid.value)!}</small></p>
 	        <p class="hoover-white-fonts"><a href="<@spring.url "/" + (profile.orcid.value)!"my-orcid/public" />" class="label btn-primary"><@orcid.msg 'workspace.ViewPublicORCIDRecord'/></a></p>
 	        <#if !RequestParameters['addWorks']??>
 	            <p><a href="<@spring.url '/account/manage-bio-settings'/>" class="btn-update"><@orcid.msg 'workspace.Update'/></a></p>
@@ -409,7 +409,7 @@
 				<div class="control-group" ng-repeat="contributor in editWork.contributors">
 				    <label class="relative"><@orcid.msg 'manual_work_form_contents.labelRole'/></label>
 				    <div class="relative">    
-						<select id="role" name="role" ng-model="contributor.contributorRole.value">
+						<select id="role" name="role" ng-model="contributor.contributorRole.value" ng-change="serverValidate('my-orcid/work/roleValidate.json')">
 							<#list roles?keys as key>
 								<option value="${key}">${roles[key]}</option>
 							</#list>
@@ -423,7 +423,7 @@
 				<div class="control-group" ng-repeat="contributor in editWork.contributors">
 				    <label class="relative"><@orcid.msg 'manual_work_form_contents.labelcredited'/></label>
 				    <div class="relative">    
-						<select id="role" name="role" ng-model="contributor.contributorSequence.value">
+						<select id="role" name="role" ng-model="contributor.contributorSequence.value" ng-change="serverValidate('my-orcid/work/sequenceValidate.json')">
 							<#list sequences?keys as key>
 								<option value="${key}">${sequences[key]}</option>
 							</#list>

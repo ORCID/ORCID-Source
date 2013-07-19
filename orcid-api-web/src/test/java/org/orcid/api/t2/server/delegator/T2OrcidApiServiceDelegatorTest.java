@@ -68,10 +68,10 @@ import com.sun.jersey.api.uri.UriBuilderImpl;
 @ContextConfiguration(locations = { "classpath:orcid-t2-web-context.xml", "classpath:orcid-t2-security-context.xml" })
 public class T2OrcidApiServiceDelegatorTest extends DBUnitTest {
 
-    private static final List<String> DATA_FILES = Arrays.asList("/data/SecurityQuestionEntityData.xml", "/data/SubjectEntityData.xml", "/data/ProfileEntityData.xml",
-            "/data/ClientDetailsEntityData.xml");
+    private static final List<String> DATA_FILES = Arrays.asList("/data/EmptyEntityData.xml", "/data/SecurityQuestionEntityData.xml", "/data/ProfileEntityData.xml",
+            "/data/WorksEntityData.xml", "/data/ProfileWorksEntityData.xml", "/data/ClientDetailsEntityData.xml", "/data/Oauth2TokenDetailsData.xml");
 
-    @Resource
+    @Resource(name = "t2OrcidApiServiceDelegatorLatest")
     private T2OrcidApiServiceDelegator t2OrcidApiServiceDelegator;
 
     @Mock
@@ -104,6 +104,7 @@ public class T2OrcidApiServiceDelegatorTest extends DBUnitTest {
     public void testAddWorks() {
         setUpSecurityContext();
         OrcidMessage orcidMessage = new OrcidMessage();
+        orcidMessage.setMessageVersion("1.0.14");
         OrcidProfile orcidProfile = new OrcidProfile();
         orcidMessage.setOrcidProfile(orcidProfile);
         orcidProfile.setOrcid("4444-4444-4444-4441");
@@ -198,12 +199,15 @@ public class T2OrcidApiServiceDelegatorTest extends DBUnitTest {
 
     private OrcidMessage createStubOrcidMessage() {
         OrcidMessage orcidMessage = new OrcidMessage();
+        orcidMessage.setMessageVersion("1.0.14");
         OrcidProfile orcidProfile = new OrcidProfile();
         orcidMessage.setOrcidProfile(orcidProfile);
         OrcidBio orcidBio = new OrcidBio();
         orcidProfile.setOrcidBio(orcidBio);
         PersonalDetails personalDetails = new PersonalDetails();
         orcidBio.setPersonalDetails(personalDetails);
+        GivenNames givenNames = new GivenNames("Test given names");
+        personalDetails.setGivenNames(givenNames);
         CreditName creditName = new CreditName("Test credit name");
         personalDetails.setCreditName(creditName);
         creditName.setVisibility(Visibility.LIMITED);

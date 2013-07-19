@@ -40,6 +40,7 @@ import javax.persistence.Transient;
 
 import org.hibernate.annotations.Sort;
 import org.hibernate.annotations.SortType;
+import org.orcid.jaxb.model.message.Locale;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidType;
 import org.orcid.jaxb.model.message.Visibility;
@@ -115,6 +116,7 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
     private SortedSet<ProfileGrantEntity> profileGrants;
     private SortedSet<ProfilePatentEntity> profilePatents;
     private SortedSet<ProfileWorkEntity> profileWorks;
+    private Locale locale = Locale.EN;
     private Boolean sendChangeNotifications;
     private Boolean sendOrcidNews;
     private String groupOrcid;
@@ -883,6 +885,17 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
         } else if (!orcid.equals(other.orcid))
             return false;
         return true;
+    }
+
+    @Basic
+    @Enumerated(EnumType.STRING)
+    @Column(name = "locale")
+    public Locale getLocale() {
+        return locale;
+    }
+
+    public void setLocale(Locale locale) {
+        this.locale = locale;
     }
 
 }

@@ -29,5 +29,41 @@
 
     <context:component-scan base-package="org.orcid.api.t2, org.orcid.api.common, org.orcid.core.security"/>
     <aop:aspectj-autoproxy />
-
+    
+    <alias name="t2OrcidApiServiceDelegatorV1_0_16" alias="t2OrcidApiServiceDelegatorLatest"/>
+    
+    <bean id="t2OrcidApiServiceImplLatest" class="org.orcid.api.t2.server.T2OrcidApiServiceImplLatest">
+        <property name="serviceDelegator" ref="t2OrcidApiServiceDelegatorLatest"/>
+    </bean>
+    <bean id="t2OrcidApiServiceDelegatorLatest" class="org.orcid.api.t2.server.delegator.impl.T2OrcidApiServiceVersionedDelegatorImpl">
+        <property name="externalVersion" value="1.0.14"/>
+        <property name="incomingValidationManager" ref="incomingValidationManagerLatest"/>
+        <property name="outgoingValidationManager" ref="outgoingValidationManagerLatest"/>
+    </bean>
+    
+    <bean id="t2OrcidApiServiceImplV1_0_14" class="org.orcid.api.t2.server.T2OrcidApiServiceImplV1_0_14">
+        <property name="serviceDelegator" ref="t2OrcidApiServiceDelegatorV1_0_14"/>
+    </bean>
+    <bean id="t2OrcidApiServiceDelegatorV1_0_14" class="org.orcid.api.t2.server.delegator.impl.T2OrcidApiServiceVersionedDelegatorImpl">
+        <property name="externalVersion" value="1.0.14"/>
+        <property name="incomingValidationManager" ref="incomingValidationManagerV1_0_14"/>
+        <property name="outgoingValidationManager" ref="outgoingValidationManagerV1_0_14"/>
+    </bean>
+    
+    <bean id="t2OrcidApiServiceImplV1_0_15" class="org.orcid.api.t2.server.T2OrcidApiServiceImplV1_0_15">
+        <property name="serviceDelegator" ref="t2OrcidApiServiceDelegatorV1_0_15"/>
+    </bean>
+    
+    <bean id="t2OrcidApiServiceDelegatorV1_0_15" class="org.orcid.api.t2.server.delegator.impl.T2OrcidApiServiceVersionedDelegatorImpl">
+        <property name="externalVersion" value="1.0.15"/>
+        <property name="incomingValidationManager" ref="incomingValidationManagerV1_0_15"/>
+        <property name="outgoingValidationManager" ref="outgoingValidationManagerV1_0_15"/>
+    </bean>
+    
+    <bean id="t2OrcidApiServiceDelegatorV1_0_16" class="org.orcid.api.t2.server.delegator.impl.T2OrcidApiServiceVersionedDelegatorImpl">
+        <property name="externalVersion" value="1.0.16"/>
+        <property name="incomingValidationManager" ref="incomingValidationManagerV1_0_16"/>
+        <property name="outgoingValidationManager" ref="outgoingValidationManagerV1_0_16"/>
+    </bean>
+    
 </beans>

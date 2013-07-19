@@ -23,8 +23,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.persistence.NoResultException;
-import javax.persistence.NonUniqueResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
@@ -380,5 +378,13 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
         query.setParameter("orcid", orcid);
         List<OrcidType> results = query.getResultList();
         return results.isEmpty() ? null : results.get(0);
-    }    
+    }
+
+    @Override
+    public List<Object[]> findInfoForDecryptionAnalysis() {
+        Query query = entityManager.createQuery("select id, encryptedSecurityAnswer from ProfileEntity");
+        @SuppressWarnings("unchecked")
+        List<Object[]> results = query.getResultList();
+        return results;
+    }
 }
