@@ -49,7 +49,7 @@ public class StatisticsGeneratorDaoImpl implements StatisticsGeneratorDao {
     }
 
     public long getNumberOfWorks() {
-        Query query = entityManager.createNativeQuery("select count(work_id) from profile_work");
+        Query query = entityManager.createNativeQuery("select count(*) from profile_work");
         BigInteger numberOfWorks = (BigInteger) query.getSingleResult();
         return numberOfWorks.longValue();
     }
