@@ -923,6 +923,20 @@ public class ManageProfileController extends BaseWorkspaceController {
 
         if (bindingResult.hasErrors()) {
             ModelAndView erroredView = new ModelAndView("manage_bio_settings");
+
+            // If an error happens and the user doesnt have any website,
+            // the privacy selector for websites dissapears.
+            // In order to fix this, if the ChangePersonalInfoForm doesnt have
+            // any researcher url, we add a new one with an empty list, which
+            // is different than null ResearcherUrls
+            Map<String, Object> model = bindingResult.getModel();
+
+            if (changePersonalInfoForm.getSavedResearcherUrls() == null) {
+                changePersonalInfoForm.setSavedResearcherUrls(new ResearcherUrls());
+            }
+
+            model.put("changePersonalInfoForm", changePersonalInfoForm);
+
             erroredView.addAllObjects(bindingResult.getModel());
             return erroredView;
         }
