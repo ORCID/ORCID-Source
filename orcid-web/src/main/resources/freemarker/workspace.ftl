@@ -25,7 +25,7 @@
     </div>
 </#if>
 
-<div id="ng-app" class="row workspace-top public-profile">
+<div class="row workspace-top public-profile">
 
 	<#-- hidden divs that trigger angular -->
 	<#if RequestParameters['recordClaimed']??>
