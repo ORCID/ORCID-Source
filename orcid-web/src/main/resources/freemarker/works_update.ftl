@@ -61,7 +61,7 @@
                                             <h4>${(work.title)!}</h4>
                                             <label class="work-delete-lbl hide">
                                                 <div class="delete-group">
-                                                    <a href="#" class="icon-trash grey delete-work" title="${springMacroRequestContext.getMessage("current_works_list.delete")}"></a>
+                                                    <a href="#" class="icon-trash orcid-icon-trash grey delete-work" title="${springMacroRequestContext.getMessage("current_works_list.delete")}"></a>
                                                     <span class="alert hide form-change-alert deleted-alert">
                                                         <a href="#" class="confirm-link">${springMacroRequestContext.getMessage("current_works_list.confirmrequiressave")} </a> |
                                                         <a href="#" class="deny-link">${springMacroRequestContext.getMessage("current_works_list.Abandon")}</a></span>

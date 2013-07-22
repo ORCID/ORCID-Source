@@ -2270,3 +2270,8 @@ a.btn-primary:hover {
 	margin: 30px 0 0;
 	font-size: 12px;
 }
+
+
+.orcid-icon-trash {
+	background-color: white;
+}
