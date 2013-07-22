@@ -914,6 +914,13 @@ public class ManageProfileController extends BaseWorkspaceController {
             BindingResult bindingResult, RedirectAttributes redirectAttributes) {
         ModelAndView manageBioView = new ModelAndView("redirect:manage-bio-settings");
 
+        for (String keyword : changePersonalInfoForm.getKeywordsAsList()) {
+            if (keyword.length() > ChangePersonalInfoForm.KEYWORD_MAX_LEN) {
+                bindingResult.rejectValue("keywordsDelimited", "Length.changePersonalInfoForm.keywordsDelimited");
+                break;
+            }
+        }
+
         if (bindingResult.hasErrors()) {
             ModelAndView erroredView = new ModelAndView("manage_bio_settings");
             erroredView.addAllObjects(bindingResult.getModel());

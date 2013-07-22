@@ -52,6 +52,7 @@ import org.orcid.jaxb.model.message.Visibility;
 public class ChangePersonalInfoForm {
 
     private static final String DELIMITER = ";";
+    public static final int KEYWORD_MAX_LEN = 255;
 
     private String firstName;
     private String lastName;
