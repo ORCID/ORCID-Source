@@ -334,6 +334,8 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
     }
 
     private void setWorkPrivacy(OrcidProfile updatedOrcidProfile, Visibility defaultWorkVisibility) {
+        OrcidHistory orcidHistory = updatedOrcidProfile.getOrcidHistory();
+        boolean isClaimed = orcidHistory != null ? orcidHistory.getClaimed().isValue() : false;
         OrcidActivities incomingActivities = updatedOrcidProfile.getOrcidActivities();
         if (incomingActivities != null) {
             OrcidWorks incomingWorks = incomingActivities.getOrcidWorks();
@@ -341,8 +343,12 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
                 for (OrcidWork incomingWork : incomingWorks.getOrcidWork()) {
                     if (StringUtils.isBlank(incomingWork.getPutCode())) {
                         Visibility incomingWorkVisibility = incomingWork.getVisibility();
-                        if (defaultWorkVisibility.isMoreRestrictiveThan(incomingWorkVisibility)) {
-                            incomingWork.setVisibility(defaultWorkVisibility);
+                        if (isClaimed) {
+                            if (defaultWorkVisibility.isMoreRestrictiveThan(incomingWorkVisibility)) {
+                                incomingWork.setVisibility(defaultWorkVisibility);
+                            }
+                        } else if (incomingWorkVisibility == null) {
+                            incomingWork.setVisibility(Visibility.PRIVATE);
                         }
                     }
                 }
