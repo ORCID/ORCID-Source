@@ -1199,7 +1199,7 @@ function QuickSearchCtrl($scope, $compile){
 	
 	$scope.getResults = function(rows){
 		$.ajax({
-			url: $('#ng-app').data('search-query-url') + '&start=' + $scope.start + '&rows=' + $scope.rows,      
+			url: $('#QuickSearchCtrl').data('search-query-url') + '&start=' + $scope.start + '&rows=' + $scope.rows,      
 			dataType: 'json',
 			headers: { Accept: 'application/json'},
 			success: function(data) {

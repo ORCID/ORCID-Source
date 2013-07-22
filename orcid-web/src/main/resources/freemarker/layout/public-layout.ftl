@@ -22,7 +22,7 @@
 <!--[if lt IE 9]><html class="no-js oldie" lang="en"><![endif]-->
 <!--[if gt IE 9]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <#include "/common/html-head.ftl" />
-<body data-baseurl="<@spring.url '/'/>">
+<body data-baseurl="<@spring.url '/'/>" ng-app="orcidApp">
 <#nested />
 <#include "/common/scripts.ftl" />
 </body>
@@ -35,7 +35,7 @@
 <#if devSandboxUrl != ''>
     <div class="dev-watermark"></div>
 </#if>
-<div class="container" ng-app="orcidApp">
+<div class="container">
     <header class="header center">
         <div class="row">
             <div class="span11 offset1">
