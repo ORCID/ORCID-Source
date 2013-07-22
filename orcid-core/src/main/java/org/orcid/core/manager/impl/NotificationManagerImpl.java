@@ -167,7 +167,7 @@ public class NotificationManagerImpl implements NotificationManager {
         templateParams.put("baseUri", baseUri);
         templateParams.put("deactivateUrlEndpoint", "/account/confirm-deactivate-orcid");
 
-        addMessageParams(templateParams);
+        addMessageParams(templateParams, orcidToDeactivate);
         
         // Generate body from template
         String body = templateManager.processTemplate("deactivate_orcid_email.ftl", templateParams);
@@ -194,7 +194,7 @@ public class NotificationManagerImpl implements NotificationManager {
         templateParams.put("orcid", orcidProfile.getOrcid().getValue());
         templateParams.put("baseUri", baseUri);
       
-        addMessageParams(templateParams);
+        addMessageParams(templateParams, orcidProfile);
 
         // Generate body from template
         String body = templateManager.processTemplate("verification_email.ftl", templateParams);
@@ -208,11 +208,20 @@ public class NotificationManagerImpl implements NotificationManager {
         sendAndLogMessage(message);
     }
 
-    private void addMessageParams(Map<String, Object> templateParams) {
-        // ${messages.getMessage($key,$messageArgs,$locale)} 
+    private void addMessageParams(Map<String, Object> templateParams, OrcidProfile orcidProfile) {
+        Locale locale = null; new Locale("en");
+        if ( orcidProfile.getOrcidInternal() != null 
+                && orcidProfile.getOrcidInternal().getPreferences() != null
+                && orcidProfile.getOrcidInternal().getPreferences().getLocale() != null
+                && orcidProfile.getOrcidInternal().getPreferences().getLocale().value() != null) {
+            orcidProfile.getOrcidInternal().getPreferences().getLocale().value();
+            locale = new Locale(orcidProfile.getOrcidInternal().getPreferences().getLocale().value());
+        } else {
+            locale = new Locale("en");
+        }
         templateParams.put("messages", this.messages);
         templateParams.put("messageArgs", new Object[0]);
-        templateParams.put("locale",  new Locale("en"));
+        templateParams.put("locale",  locale);
     }
 
     public void sendVerificationReminderEmail(OrcidProfile orcidProfile, URI baseUri, String email) {
@@ -225,7 +234,7 @@ public class NotificationManagerImpl implements NotificationManager {
         templateParams.put("orcid", orcidProfile.getOrcid().getValue());
         templateParams.put("baseUri", baseUri);
         
-        addMessageParams(templateParams);
+        addMessageParams(templateParams, orcidProfile);
         
         // Generate body from template
         String body = templateManager.processTemplate("verification_reminder_email.ftl", templateParams);
@@ -268,7 +277,7 @@ public class NotificationManagerImpl implements NotificationManager {
         String resetUrl = createResetEmail(orcidProfile, baseUri);
         templateParams.put("passwordResetUrl", resetUrl);
         
-        addMessageParams(templateParams);
+        addMessageParams(templateParams, orcidProfile);
         
         String body = templateManager.processTemplate("reset_password_email.ftl", templateParams);
 
@@ -309,7 +318,7 @@ public class NotificationManagerImpl implements NotificationManager {
         templateParams.put("amenderName", extractAmenderName(amendedProfile, amenderOrcid));
         templateParams.put("baseUri", baseUri);
         
-        addMessageParams(templateParams);
+        addMessageParams(templateParams, amendedProfile);
         
         // Generate body from template
         String body = templateManager.processTemplate("amend_email.ftl", templateParams);
@@ -351,7 +360,7 @@ public class NotificationManagerImpl implements NotificationManager {
             templateParams.put("baseUri", baseUri);
             // templateParams.put("grantingOrcidEmail", grantingOrcidEmail);
             
-            addMessageParams(templateParams);
+            addMessageParams(templateParams, orcidUserGrantingPermission);
             
             String body = templateManager.processTemplate("added_as_delegate_email.ftl", templateParams);
             String toAddress = orcidUserGrantingPermission.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue();
@@ -382,7 +391,7 @@ public class NotificationManagerImpl implements NotificationManager {
         templateParams.put("orcid", updatedProfile.getOrcid().getValue());
         templateParams.put("baseUri", baseUri);
         
-        addMessageParams(templateParams);
+        addMessageParams(templateParams, updatedProfile);
         
         // Generate body from template
         String body = templateManager.processTemplate("email_removed.ftl", templateParams);
@@ -404,7 +413,7 @@ public class NotificationManagerImpl implements NotificationManager {
         String verificationUrl = createClaimVerificationUrl(createdProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue(), baseUri);
         templateParams.put("verificationUrl", verificationUrl);
         
-        addMessageParams(templateParams);
+        addMessageParams(templateParams, createdProfile);
         
         // Generate body from template
         String body = templateManager.processTemplate("api_record_creation_email.ftl", templateParams);
@@ -441,7 +450,7 @@ public class NotificationManagerImpl implements NotificationManager {
         String verificationUrl = createClaimVerificationUrl(primaryEmail.getValue(), baseUri);
         templateParams.put("verificationUrl", verificationUrl);
         
-        addMessageParams(templateParams);
+        addMessageParams(templateParams, orcidProfile);
         
         // Generate body from template
         String body = templateManager.processTemplate("claim_reminder_email.ftl", templateParams);
