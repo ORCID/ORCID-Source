@@ -19,54 +19,61 @@
 <@public >
 
 <script type="text/ng-template" id="view-details-modal">
-	<div style="padding: 20px;" class="colorbox-modal">
-		<h1><@orcid.msg 'manage_clients.client_information'/></h1><a id="cboxClose" class="btn pull-right close-button">X</a>
-		<div id="client-information">
-			<span><strong><@orcid.msg 'manage_clients.client_id'/>:</strong>{{clientDetails.clientId}}</span><br />
-			<span><strong><@orcid.msg 'manage_clients.client_secret'/>:</strong>{{clientDetails.clientSecret}}</span><br />
-		</div>
+	<div style="padding:20px">
+		<a id="cboxClose" class="btn pull-right close-button" ng-click="closeColorBox()">X</a>
+		<h1><@orcid.msg 'manage_clients.client_information'/></h1>
+		<table class="table table-bordered">
+			<tr>
+				<td><@orcid.msg 'manage_clients.client_id'/></td>
+				<td>{{clientDetails.clientId}}</td>
+			<tr>
+			<tr>
+				<td><@orcid.msg 'manage_clients.client_secret'/></td>
+				<td>{{clientDetails.clientSecret}}</td>
+			<tr>
+		</table>		
 	</div>
 </script>
 
 <script type="text/ng-template" id="edit-client-modal">
 	<div style="padding: 20px;" class="colorbox-modal">
-		<h1><@orcid.msg 'manage_clients.edit_client'/></h1><a id="cboxClose" class="btn pull-right close-button">X</a>		
-		
-		<div id="errors" ng-repeat="error in errors">
+		<a id="cboxClose" class="btn pull-right close-button" ng-click="closeColorBox()">X</a>
+		<h1><@orcid.msg 'manage_clients.edit_client'/></h1>
+		<div id="errors" ng-repeat="error in errors" class="alert">
 			<ul>
-				<li>{{error}}</li>				
+				<li>{{error}}</li>
 			</ul>
-		</div>
-		
-		<h3><@orcid.msg 'manage_clients.client_details'/></h3>
-				
-    	<@orcid.msg 'manage_clients.display_name'/><input type="text" ng-model="clientToEdit.displayName" required />
-    	<br />
-    	<@orcid.msg 'manage_clients.website'/><input type="url" ng-model="clientToEdit.website" required />
-    	<br />
-    	<@orcid.msg 'manage_clients.description'/><input type="text" ng-model="clientToEdit.shortDescription" required />
-    	<br />
-    	    	
-    	<div ng-show="clientToEdit.redirectUris.redirectUri.length">
-	    	<table id="edit-client-table">
-	    		<tr ng-repeat='rUri in clientToEdit.redirectUris.redirectUri'>
-					<td><@orcid.msg 'manage_clients.redirect_uri'/>:</td>
-					<td><input type="url" placeholder="Redirect Uri" class="input-xlarge" ng-model="rUri.value"></td>			 		
-					<td>
+		</div>		
+		<form class="form-horizontal">
+			<div class="control-group">
+				<label class="control-label" for="clientname" style="margin-right:10px; text-align:left; width:90px"><@orcid.msg 'manage_clients.display_name'/>: </label>
+		    	<input id="clientname" type="text" ng-model="clientToEdit.displayName" required />
+		    </div>
+		    <div class="control-group">
+				<label class="control-label" for="website" style="margin-right:10px; text-align:left; width:90px"><@orcid.msg 'manage_clients.website'/>: </label>
+		    	<input id="website" type="url" ng-model="clientToEdit.website" required />	
+		    </div>
+		    <div class="control-group">
+				<label class="control-label" for="description" style="margin-right:10px; text-align:left; width:90px"><@orcid.msg 'manage_clients.description'/>: </label>
+		    	<input id="description" type="text" ng-model="clientToEdit.shortDescription" required />	
+		    </div>		    	    	    	
+	    	<div ng-show="clientToEdit.redirectUris.redirectUri.length">
+	    		<div id="edit-client-table">
+		    		<div class="control-group" ng-repeat='rUri in clientToEdit.redirectUris.redirectUri'>						
+						<label class="control-label" style="margin-right:10px; text-align:left; width:90px"><@orcid.msg 'manage_clients.redirect_uri'/>:</label>
+						<input type="url" placeholder="Redirect Uri"  ng-model="rUri.value">						
 						<a href ng-click="deleteUri($index)" class="icon-trash blue"></a>
-						<a ng-show="$last" href ng-click="addUriToExistingClientTable()" class="icon-plus-sign blue"></a>
-					</td>
-				</tr>			
-	    	</table>
-    	</div>
-		<div ng-show="!clientToEdit.redirectUris.redirectUri.length">			
-			<a href ng-click="addUriToExistingClientTable()" class="icon-plus-sign blue"></a>
-		</div>
-		    	     	 
-    	   	
-		<div class="controls save-btns pull-left bottom-margin-small">
-			<span id="bottom-submit-update-credential-request" ng-click="submitEditClient($index)" class="btn btn-primary"><@orcid.msg 'manage_clients.update'/></span>				
-		</div> 	    	
+						<a ng-show="$last" href ng-click="addUriToExistingClientTable()" class="icon-plus-sign blue"></a>						
+					</div>
+		    	</div>
+	    	</div>
+	    	<div ng-show="!clientToEdit.redirectUris.redirectUri.length">			
+				<a href ng-click="addUriToExistingClientTable()" class="icon-plus-sign blue"></a>
+			</div>
+			<div class="controls save-btns pull-right bottom-margin-small">
+				<span id="bottom-submit-update-credential-request" ng-click="submitEditClient($index)" class="btn btn-primary"><@orcid.msg 'manage_clients.update'/></span>				
+			</div> 	    	
+		</form>
     <div> 
 </script>
 
@@ -135,28 +142,55 @@
 		</ul>
 	</div>
 	<div class="span9">			
-		<div ng-controller="ClientEditCtrl"> 
+		<div ng-controller="ClientEditCtrl" class="clients"> 
 			<div ng-show="!clients.length" ng-cloak>
 				<span><@orcid.msg 'manage_clients.no_clients'/></span>
-			</div>	
+			</div>
+			<!--
 			<div ng-hide="!clients.length" ng-cloak>
-				<ul>
-					<li class="bottom-margin-small" ng-repeat='client in clients'>
-						<div class="pull-right" style="right: 145px; top: 20px; width: 15px; margin-right:5px;"><a href="#" ng-click="viewDetails($index)" class="icon-zoom-in blue"></a></div>
-						<div class="pull-right" style="right: 145px; top: 20px; width: 15px; margin-right:5px;"><a href="#" ng-click="editClient($index)" class="icon-pencil  blue"></a></div>
-						<div style="width: 530px;">
-							<span><strong><@orcid.msg 'manage_clients.client_id'/>:</strong>{{client.clientId}}</span><br />
-			                <span><strong><@orcid.msg 'manage_clients.display_name'/>:</strong>{{client.displayName}}</span><br />	                
-			                <span><strong><@orcid.msg 'manage_clients.website'/>:</strong>{{client.website}}</span><br />
-			                <span><strong><@orcid.msg 'manage_clients.type'/>:</strong>{{client.type}}</span><br />
-			                <span><strong><@orcid.msg 'manage_clients.description'/>:</strong>{{client.shortDescription}}</span><br />	                
+					<table class="table table-bordered" ng-repeat='client in clients'>
+						<caption>
+							<@orcid.msg 'manage_clients.client_id'/>: {{client.clientId}}
+							<div class="pull-right"><a href="#" ng-click="viewDetails($index)" class="icon-zoom-in blue"></a></div>
+							<div class="pull-right"><a href="#" ng-click="editClient($index)" class="icon-pencil  blue"></a></div>
+						</caption>
+						<tr>
+							<td><@orcid.msg 'manage_clients.display_name'/></td>
+							<td>{{client.displayName}}</td>							
+						</tr>
+						<tr>
+							<td><@orcid.msg 'manage_clients.website'/></td>
+							<td><a href="{{client.website}}" target="_blank">{{client.website}}</a></td>	
+						</tr>
+						<tr>
+							<td><@orcid.msg 'manage_clients.description'/></td>
+							<td>{{client.shortDescription}}</td>
+						</tr>
+						<tr ng-repeat='rUri in client.redirectUris.redirectUri'>
+							<td><@orcid.msg 'manage_clients.redirect_uri'/></td>
+							<td><a href="{{rUri.value}}" target="_blank">{{rUri.value}}</td>   	
+						</tr>	
+					</table>
+			-->						
+			
+			<div ng-hide="!clients.length" ng-cloak>				
+					<div class="bottom-margin-small" ng-repeat='client in clients'>
+						<div class="pull-right"><a href="#" ng-click="viewDetails($index)" class="icon-zoom-in blue"></a></div>
+						<div class="pull-right"><a href="#" ng-click="editClient($index)" class="icon-pencil  blue"></a></div>
+						<div>							
+							<h4><@orcid.msg 'manage_clients.client_id'/>: {{client.clientId}}</h4>
+							<ul>
+								<li><span><@orcid.msg 'manage_clients.display_name'/></span>: {{client.displayName}}</li>
+								<li><span><@orcid.msg 'manage_clients.website'/>:</span> <a href="{{client.website}}" target="_blank">{{client.website}}</a></li>
+								<li><span><@orcid.msg 'manage_clients.description'/>:</span> {{client.shortDescription}}</li>
+								<li>
+									<div ng-repeat='rUri in client.redirectUris.redirectUri'>			                	
+					                	<span><@orcid.msg 'manage_clients.redirect_uri'/></span>: <a href="{{rUri.value}}" target="_blank">{{rUri.value}}</a>
+									</div>
+								</li>
+							</ul>
 		                </div>
-		                <div class="bottom-margin-small" ng-repeat='rUri in client.redirectUris.redirectUri'>
-		                	<span><strong><@orcid.msg 'manage_clients.type'/></strong>:{{rUri.type}}</span>
-		                	<span><strong><@orcid.msg 'manage_clients.redirect_uri'/></strong>:{{rUri.value}}</span>
-						</div>
-					</li>
-				</ul>
+					</div>
 			</div>
 			
 			<@security.authorize ifAnyGranted="ROLE_PREMIUM_INSTITUTION, ROLE_PREMIUM">

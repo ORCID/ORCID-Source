@@ -1306,11 +1306,13 @@ function ClientEditCtrl($scope, $compile){
 		$scope.clientToEdit = angular.copy($scope.clients[idx]);		
 		$.colorbox({        	            
             html : $compile($('#edit-client-modal').html())($scope), 
-            transition: 'fade',
-            close: 'Close',
+            transition: 'fade',            
+	        onLoad: function() {
+			    $('#cboxClose').remove();
+			},
 	        scrolling: true
         });		
-        $.colorbox.resize({width:"500px" , height:"500px"});   
+        $.colorbox.resize({width:"450px" , height:"420px"});   
 	};
 	
 	// Display the modal to add a new client
@@ -1339,13 +1341,22 @@ function ClientEditCtrl($scope, $compile){
 	$scope.viewDetails = function(idx){
 		$scope.clientDetails = $scope.clients[idx];
 		$.colorbox({        	            
-            html : $compile($('#view-details-modal').html())($scope), 
-            transition: 'fade',
-	        close: 'Close',
-	        scrolling: true
+            html : $compile($('#view-details-modal').html())($scope),
+	        scrolling: true,
+	        onLoad: function() {
+			    $('#cboxClose').remove();
+			},
+			scrolling: true
         });
-        $.colorbox.resize({width:"550px" , height:"150px"});
+		
+        $.colorbox.resize({width:"550px" , height:"200px"});
+        
 	};
+	
+	$scope.closeColorBox = function(){
+		$.colorbox.close();	
+	};
+	
 	
 	// Delete an uri input field 
 	$scope.deleteUri = function(idx){
