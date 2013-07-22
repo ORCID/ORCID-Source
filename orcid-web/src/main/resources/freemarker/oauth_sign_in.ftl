@@ -40,7 +40,7 @@
             </div>
             <div id="buttons">
                 <div class="relative">
-                    <button class="btn-large btn-primary" type="submit">${springMacroRequestContext.getMessage("oauth_sign_in.h3signin")}</button>
+                    <button class="btn btn-primary" type="submit">${springMacroRequestContext.getMessage("oauth_sign_in.h3signin")}</button>
                     <span id="ajax-loader" class="hide"><i id="ajax-loader" class="icon-spinner icon-large icon-spin green"></i></span>
                 </div>
                 <div class="relative">
