@@ -26,11 +26,11 @@
 			<tr>
 				<td><@orcid.msg 'manage_clients.client_id'/></td>
 				<td>{{clientDetails.clientId}}</td>
-			<tr>
+			</tr>
 			<tr>
 				<td><@orcid.msg 'manage_clients.client_secret'/></td>
 				<td>{{clientDetails.clientSecret}}</td>
-			<tr>
+			</tr>
 		</table>		
 	</div>
 </script>
