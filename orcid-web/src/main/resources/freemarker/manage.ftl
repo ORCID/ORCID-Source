@@ -251,7 +251,7 @@
                                             </#list>
                                         </#if>
                                     </td width="35%">                                    
-                                    <td width="5%"><a onclick="orcidGA.gaPush(['_trackEvent', 'Disengagement', 'Revoke_Access', 'OAuth ${applicationSummary.applicationName.content}']); orcidGA.gaFormSumbitDelay($('#revokeApplicationForm${applicationSummary_index}')); return false;" class="icon-trash orcid-icon-trash grey" title="${springMacroRequestContext.getMessage("manage.revokeaccess")}"></a></td>
+                                    <td width="5%"><a onclick="orcidGA.gaPush(['_trackEvent', 'Disengagement', 'Revoke_Access', 'OAuth ${applicationSummary.applicationName.content?js_string}']); orcidGA.gaFormSumbitDelay($('#revokeApplicationForm${applicationSummary_index}')); return false;" class="icon-trash orcid-icon-trash grey" title="${springMacroRequestContext.getMessage("manage.revokeaccess")}"></a></td>
                                 </form>
                             </tr>
                         </#list>
