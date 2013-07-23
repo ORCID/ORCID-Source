@@ -205,6 +205,7 @@ public class WorkspaceController extends BaseWorkspaceController {
         }
         mav.addObject("profile", profile);
         mav.addObject("baseUri",getBaseUri());
+        mav.addObject("baseUriHttp",getBaseUriHttp());
         return mav;
     }
 
