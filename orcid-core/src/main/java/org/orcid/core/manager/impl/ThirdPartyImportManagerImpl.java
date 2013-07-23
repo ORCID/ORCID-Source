@@ -30,14 +30,18 @@ import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.persistence.dao.ClientRedirectDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ClientRedirectUriEntity;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 
 public class ThirdPartyImportManagerImpl implements ThirdPartyImportManager {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ThirdPartyImportManagerImpl.class);
+
 
     @Resource(name = "clientRedirectDao")
     private ClientRedirectDao clientRedirectDao;
 
-    @Override
     @Cacheable("import-works-clients")
     public List<OrcidClient> findOrcidClientsWithPredefinedOauthScopeWorksImport() {
 
@@ -48,6 +52,12 @@ public class ThirdPartyImportManagerImpl implements ThirdPartyImportManager {
     @Cacheable("read-access-clients")
     public List<OrcidClient> findOrcidClientsWithPredefinedOauthScopeReadAccess() {
         return getClients(RedirectUriType.GRANT_READ_WIZARD);
+    }
+    
+    @Override
+    @CacheEvict(value = {"read-access-clients","import-works-clients"}, allEntries=true)    
+    public void evictAll() {
+        LOGGER.debug("read-access-clients and import-works-clients all keys  evicted");
     }
 
     private List<OrcidClient> getClients(RedirectUriType rut) {

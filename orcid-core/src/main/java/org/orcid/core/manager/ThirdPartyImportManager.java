@@ -31,4 +31,6 @@ public interface ThirdPartyImportManager {
 
     public List<OrcidClient> findOrcidClientsWithPredefinedOauthScopeReadAccess();
 
+    void evictAll();
+
 }
