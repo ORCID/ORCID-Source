@@ -440,4 +440,9 @@ public class BaseController {
             this.staticCdnPath = this.getStaticContentPath();
         return staticCdnPath;
     }
+
+    public String getBaseUriHttp() {
+        return baseUri.replace("https", "http");
+    }
+
 }
