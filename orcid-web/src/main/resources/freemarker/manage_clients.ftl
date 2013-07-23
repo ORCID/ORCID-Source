@@ -79,7 +79,8 @@
 
 <script type="text/ng-template" id="new-client-modal">
 	<div style="padding: 20px;" class="colorbox-modal">
-		<h1>Add new client</h1><a id="cboxClose" class="btn pull-right close-button">X</a>		
+		<a id="cboxClose" class="btn pull-right close-button" ng-click="closeColorBox()">X</a>
+		<h1>Add new client</h1>
 		<div id="errors" ng-repeat="error in errors">
 			<ul>
 				<li>{{error}}</li>				
