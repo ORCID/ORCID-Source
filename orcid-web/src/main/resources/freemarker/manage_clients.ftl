@@ -81,9 +81,9 @@
 	<div style="padding: 20px;" class="colorbox-modal">
 		<a id="cboxClose" class="btn pull-right close-button" ng-click="closeColorBox()">X</a>
 		<h1>Add new client</h1>
-		<div id="errors" ng-repeat="error in errors">
+		<div id="errors" ng-repeat="error in errors" class="alert">
 			<ul>
-				<li>{{error}}</li>				
+				<li>{{error}}</li>
 			</ul>
 		</div>
 		
@@ -97,11 +97,11 @@
 		</@security.authorize>
 		
 		<@security.authorize ifAnyGranted="ROLE_PREMIUM">
-			<input type="hidden" id="client_type" value="UPDATER" />
+			<input type="hidden" id="client_type" value="PREMIUM_UPDATER" />
 		</@security.authorize>
 		
 		<@security.authorize ifAnyGranted="ROLE_PREMIUM_INSTITUTION">
-			<input type="hidden" id="client_type" value="CREATOR" />
+			<input type="hidden" id="client_type" value="PREMIUM_CREATOR" />
 		</@security.authorize>
 		
 		<table id="client-table">

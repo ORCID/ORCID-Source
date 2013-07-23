@@ -1302,7 +1302,10 @@ function ClientEditCtrl($scope, $compile){
 	};
 	
 	// Display the modal to edit a client
-	$scope.editClient = function(idx) {		
+	$scope.editClient = function(idx) {
+		// Clean error list
+		$scope.errors.splice(0, $scope.errors.length);
+		// Copy the client to edit to a scope variable 
 		$scope.clientToEdit = angular.copy($scope.clients[idx]);		
 		$.colorbox({        	            
             html : $compile($('#edit-client-modal').html())($scope), 
@@ -1317,6 +1320,8 @@ function ClientEditCtrl($scope, $compile){
 	
 	// Display the modal to add a new client
 	$scope.addClient = function(){
+		// Clean error list
+		$scope.errors.splice(0, $scope.errors.length);
 		$scope.newClient = {			
 				displayName: '',
 				website: '',
@@ -1331,7 +1336,9 @@ function ClientEditCtrl($scope, $compile){
 		$.colorbox({        	            
             html : $compile($('#new-client-modal').html())($scope), 
             transition: 'fade',
-            close: 'Close',
+            onLoad: function() {
+			    $('#cboxClose').remove();
+			},
 	        scrolling: true
         });
         $.colorbox.resize({width:"580px" , height:"380px"});

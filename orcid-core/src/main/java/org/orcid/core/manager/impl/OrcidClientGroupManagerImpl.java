@@ -154,7 +154,7 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
                         groupProfileEntity.setOrcidType(OrcidType.UPDATER);
                         break;
                     case BASIC_INSTITUTION:
-                        groupProfileEntity.setOrcidType(OrcidType.UPDATER);
+                        groupProfileEntity.setOrcidType(OrcidType.CREATOR);
                         break;
                     case PREMIUM:
                         groupProfileEntity.setOrcidType(OrcidType.PREMIUM_UPDATER);
