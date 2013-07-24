@@ -1278,3 +1278,68 @@ function statisticCtrl($scope){
 	
 	$scope.getLiveIds();
 }
+
+function languageCtrl($scope){		
+	$scope.languages = 
+	    [
+	        {	            
+	            "value": "en",
+	            "label": "English"
+	        },
+	        {
+	        	"value": 'xes',
+	    		"label": 'Spanish'
+	        },
+	        {
+	        	"value": 'xfr',
+	    		"label": 'French'
+	        },	        
+	        {
+		        "value": 'xzh_CN',
+			    "label": 'Traditional Chinese'
+	        },
+	        {
+		        "value": 'xzh_TW',
+			    "label": 'Simplified Chinese'
+	        },	        
+	    ];	
+	
+	//Load Language that is set in the cookie or set default language to english
+	$scope.getCurrentLanguage = function(){		
+		$.ajax({
+	        url: $('body').data('baseurl')+'lang.json',	        
+	        type: 'GET',
+	        dataType: 'json',
+	        success: function(data){        	
+	        	angular.forEach($scope.languages, function(value, key){
+	        		value.value == data.locale ? $scope.language = $scope.languages[key] : $scope.languages[0];	        		
+	        	});	        		        	
+	        }
+	    }).fail(function(error) { 
+	    	// something bad is happening!	    	
+	    	console.log("Error getting language current value");	    	
+	    });		
+	};
+	
+	$scope.getCurrentLanguage(); //Checking for the current language value
+	
+			
+	$scope.selectedLanguage = function(){		
+		$.ajax({
+	        url: $('body').data('baseurl')+'lang.json?lang='+$scope.language.value,	        
+	        type: 'POST',
+	        dataType: 'json',
+	        success: function(data){
+	        	angular.forEach($scope.languages, function(value, key){
+	        		if(value.value == data.locale){
+	        			$scope.language = $scope.languages[key];
+	        			window.location.reload(true);
+	        		}
+	        	});	        
+	        }
+	    }).fail(function(error) { 
+	    	// something bad is happening!	    	
+	    	console.log("Error setting up language cookie");	    	
+	    });		
+	};
+}

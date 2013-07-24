@@ -392,25 +392,25 @@ input[type=submit] .caret {
 .header .search {
   height: 30px;
   width: 860px;
-  float: right;
+  float: left;
   background: #939598;
   margin-bottom: 0;
   text-align: right;
   line-height: 30px;
   position: relative;
 }
-.header .search form {
+.header .search form#form-search {
   float: left;
-  width: 100%;
+  width: 620px;
   position: relative;
 }
-.header .search form input[type="search"] {
+.header .search form#form-search input[type="search"] {
   height: 20px;
   margin-top: 5px;
   background: #C9CACB;
   border: 0;
   padding: 0 330px 0 10px;
-  width: 450px;
+  width: 280px;
   border-radius: 0;
   font-weight: bold;
   font-size: 12px;
@@ -439,7 +439,7 @@ input[type=submit] .caret {
   background: #939598;
   height: 0px;
   overflow: hidden;
-  width: 850px;
+  width: 655px;
   text-align: left;
   line-height: 23px;
 }
@@ -452,7 +452,7 @@ input[type=submit] .caret {
 }
 .header .search form .search_options {
   position: absolute;
-  right: 75px;
+  right: 5px;
   top: 5px;
   display: none;
 }
@@ -482,7 +482,7 @@ input[type=submit] .caret {
   width: 22px;
 }
 .header .search .settings-button {
-  right: 8px;
+  left: 646px;
   top: 1px;
 }
 .header .search .settings-button:hover {
@@ -491,7 +491,7 @@ input[type=submit] .caret {
 .header .search .search-button {
   width: 26px;
   height: 26px;
-  right: 45px;
+  left: 618px;
   top: 3px;
   border: 0;
   background: transparent;
@@ -504,6 +504,36 @@ input[type=submit] .caret {
 }
 .header .search .search-button .icon-orcid-search:hover {
   background: transparent url(../img/all-icons.png) -23px 0px no-repeat;
+}
+
+/*Language combobox */
+
+.header .language-selector{
+  float: right;
+  width: 180px;
+  height: 29px;
+  overflow: hidden;
+}
+
+.header form#language-form{
+  line-height: 0;
+  margin: 0;
+  padding: 0;
+}
+
+.header .language-selector select#language-codes{
+  width: 165px;
+  height: 24px;
+  border: none;  
+  border-radius: 0;
+  -moz-border-radius: 0;
+  -webkit-border-radius: 0;
+  margin: 3px;
+  color: #FFF;
+  font-size: 12px;
+  font-weight: bold;
+  font-family: 'Gill Sans W01 Medium', 'Gill Sans', sans-serif;
+  background: #A6CE39;
 }
 .header .logo {
   float: left;
