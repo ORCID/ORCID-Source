@@ -40,6 +40,7 @@ import org.orcid.frontend.web.util.YearsList;
 import org.orcid.jaxb.model.clientgroup.OrcidClient;
 import org.orcid.jaxb.model.clientgroup.RedirectUri;
 import org.orcid.jaxb.model.message.CitationType;
+import org.orcid.jaxb.model.message.ContributorAttributes;
 import org.orcid.jaxb.model.message.ContributorRole;
 import org.orcid.jaxb.model.message.ExternalIdentifier;
 import org.orcid.jaxb.model.message.ExternalIdentifiers;
@@ -54,6 +55,7 @@ import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
 import org.orcid.jaxb.model.message.WorkType;
 import org.orcid.persistence.adapter.Jpa2JaxbAdapter;
 import org.orcid.persistence.jpa.entities.FuzzyDate;
+import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.WorkContributorEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.pojo.ThirdPartyRedirect;
@@ -453,7 +455,18 @@ public class WorkspaceController extends BaseWorkspaceController {
         }
         
         if (work.getErrors().size() == 0) {
-            OrcidWork newOw = work.toOrcidWork();
+        	OrcidWork newOw = work.toOrcidWork();
+            // Why do we have to save all the works?
+            OrcidProfile profile = getCurrentUser().getEffectiveProfile();
+            if (profile.getOrcidActivities() == null)
+                profile.setOrcidActivities(new OrcidActivities());
+            if (profile.getOrcidActivities().getOrcidWorks() ==null)
+                profile.getOrcidActivities().setOrcidWorks(new OrcidWorks());
+            List<OrcidWork> owList = profile.getOrcidActivities().getOrcidWorks().getOrcidWork();
+            owList.add(newOw);
+            profile.getOrcidActivities().getOrcidWorks().setOrcidWork(owList);
+            OrcidProfile updatedProfile = orcidProfileManager.updateOrcidWorks(profile);
+            getCurrentUser().setEffectiveProfile(updatedProfile);
             System.out.println(newOw);
             
         }
@@ -476,7 +489,7 @@ public class WorkspaceController extends BaseWorkspaceController {
     	workEntity.setWorkType(orcidWork.getWorkType());
     	workEntity.setWorkUrl(orcidWork.getUrl().getValue());
     	return workEntity;
-    }
+    }        
     
     private Set<WorkContributorEntity> toWorkContributorEntityList(WorkContributors workContributors){
     	if(workContributors == null || workContributors.getContributor() == null)
@@ -485,6 +498,32 @@ public class WorkspaceController extends BaseWorkspaceController {
     	TreeSet<WorkContributorEntity> result = new TreeSet();
     	
     	for(org.orcid.jaxb.model.message.Contributor contributor : workContributors.getContributor()){
+    		
+    		
+    		
+    		
+    		
+    		
+    		/**
+    		 * if (workContributors != null && workContributors.getContributor() != null && !workContributors.getContributor().isEmpty()) {
+            List<Contributor> contributorList = workContributors.getContributor();
+            for (Contributor contributor : contributorList) {
+                WorkContributorEntity workContributorEntity = new WorkContributorEntity();
+                workContributorEntity.setContributorEmail(contributor.getContributorEmail() != null ? contributor.getContributorEmail().getValue() : null);
+                workContributorEntity.setProfile(contributor.getContributorOrcid() != null ? new ProfileEntity(contributor.getContributorOrcid().getValue()) : null);
+                workContributorEntity.setWork(workEntity);
+                ContributorAttributes contributorAttributes = contributor.getContributorAttributes();
+                if (contributorAttributes != null) {
+                    ContributorRole contributorRole = contributorAttributes.getContributorRole();
+                    SequenceType contributorSequence = contributorAttributes.getContributorSequence();
+                    workContributorEntity.setContributorRole(contributorRole);
+                    workContributorEntity.setSequence(contributorSequence);
+                }
+                workContributorEntity.setCreditName(contributor.getCreditName() != null ? contributor.getCreditName().getContent() : null);
+                workContributorEntities.add(workContributorEntity);
+            }
+        }
+    		 * */
     		
     	}
     	
