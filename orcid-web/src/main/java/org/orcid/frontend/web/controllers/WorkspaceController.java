@@ -22,16 +22,18 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
-import org.jbibtex.ParseException;
 import org.orcid.core.manager.ExternalIdentifierManager;
 import org.orcid.core.manager.ProfileWorkManager;
 import org.orcid.core.manager.ThirdPartyImportManager;
+import org.orcid.core.manager.WorkManager;
 import org.orcid.frontend.web.forms.CurrentWork;
 import org.orcid.frontend.web.util.NumberList;
 import org.orcid.frontend.web.util.YearsList;
@@ -41,21 +43,24 @@ import org.orcid.jaxb.model.message.CitationType;
 import org.orcid.jaxb.model.message.ContributorRole;
 import org.orcid.jaxb.model.message.ExternalIdentifier;
 import org.orcid.jaxb.model.message.ExternalIdentifiers;
-import org.orcid.jaxb.model.message.OrcidActivities;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidWork;
 import org.orcid.jaxb.model.message.OrcidWorks;
+import org.orcid.jaxb.model.message.PublicationDate;
 import org.orcid.jaxb.model.message.SequenceType;
 import org.orcid.jaxb.model.message.SourceOrcid;
+import org.orcid.jaxb.model.message.WorkContributors;
 import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
 import org.orcid.jaxb.model.message.WorkType;
 import org.orcid.persistence.adapter.Jpa2JaxbAdapter;
+import org.orcid.persistence.jpa.entities.FuzzyDate;
+import org.orcid.persistence.jpa.entities.WorkContributorEntity;
+import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.pojo.ThirdPartyRedirect;
 import org.orcid.pojo.ajaxForm.Citation;
 import org.orcid.pojo.ajaxForm.Contributor;
 import org.orcid.pojo.ajaxForm.Date;
 import org.orcid.pojo.ajaxForm.ErrorsInterface;
-import org.orcid.pojo.ajaxForm.Registration;
 import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.pojo.ajaxForm.Visibility;
 import org.orcid.pojo.ajaxForm.Work;
@@ -99,6 +104,9 @@ public class WorkspaceController extends BaseWorkspaceController {
     @Resource
     private Jpa2JaxbAdapter jpa2JaxbAdapter;
 
+    @Resource 
+    private WorkManager workManager;
+    
     @ModelAttribute("thirdPartiesForImport")
     public List<OrcidClient> retrieveThirdPartiesForImport() {
         return thirdPartyImportManager.findOrcidClientsWithPredefinedOauthScopeWorksImport();
@@ -446,22 +454,56 @@ public class WorkspaceController extends BaseWorkspaceController {
         
         if (work.getErrors().size() == 0) {
             OrcidWork newOw = work.toOrcidWork();
-            // Why do we have to save all the works?
-            OrcidProfile profile = getCurrentUser().getEffectiveProfile();
-            if (profile.getOrcidActivities() == null) 
-                profile.setOrcidActivities(new OrcidActivities());
-            if (profile.getOrcidActivities().getOrcidWorks() ==null)
-                profile.getOrcidActivities().setOrcidWorks(new OrcidWorks());
-            List<OrcidWork> owList = profile.getOrcidActivities().getOrcidWorks().getOrcidWork();
-            owList.add(newOw);
-            profile.getOrcidActivities().getOrcidWorks().setOrcidWork(owList);
-            OrcidProfile updatedProfile = orcidProfileManager.updateOrcidWorks(profile);
-            getCurrentUser().setEffectiveProfile(updatedProfile);
+            System.out.println(newOw);
+            
         }
         
         return work;
     }
 
+    private WorkEntity toWorkEntity(OrcidWork orcidWork){
+    	WorkEntity workEntity = new WorkEntity();
+    	workEntity.setCitation(orcidWork.getWorkCitation().getCitation());
+    	workEntity.setCitationType(orcidWork.getWorkCitation().getWorkCitationType());
+    	workEntity.setDateCreated(new java.util.Date());
+    	workEntity.setDescription(orcidWork.getShortDescription());
+    	//workEntity.setContributors(orcidWork.getWorkContributors());
+    	//workEntity.setExternalIdentifiers();
+    	workEntity.setLastModified(new java.util.Date());
+    	workEntity.setPublicationDate(toFuzzyDate(orcidWork.getPublicationDate()));
+    	workEntity.setSubtitle(orcidWork.getWorkTitle().getSubtitle().getContent());
+    	workEntity.setTitle(orcidWork.getWorkTitle().getTitle().getContent());
+    	workEntity.setWorkType(orcidWork.getWorkType());
+    	workEntity.setWorkUrl(orcidWork.getUrl().getValue());
+    	return workEntity;
+    }
+    
+    private Set<WorkContributorEntity> toWorkContributorEntityList(WorkContributors workContributors){
+    	if(workContributors == null || workContributors.getContributor() == null)
+    		return new TreeSet();
+    	
+    	TreeSet<WorkContributorEntity> result = new TreeSet();
+    	
+    	for(org.orcid.jaxb.model.message.Contributor contributor : workContributors.getContributor()){
+    		
+    	}
+    	
+    	return result;
+    }
+    
+    private FuzzyDate toFuzzyDate(PublicationDate publicationDate){
+    	FuzzyDate fuzzyDate = new FuzzyDate();
+    	String year = publicationDate.getYear() == null ? null : publicationDate.getYear().getValue();
+    	String month = publicationDate.getMonth() == null ? null : publicationDate.getMonth().getValue();
+    	String day = publicationDate.getDay() == null ? null : publicationDate.getDay().getValue();
+    	if(year != null)
+    		fuzzyDate.setYear(Integer.valueOf(year));
+    	if(month != null)
+    		fuzzyDate.setMonth(Integer.valueOf(month));
+    	if(day != null)
+    		fuzzyDate.setDay(Integer.valueOf(day));
+    	return fuzzyDate;
+    }
     
     @RequestMapping(value = "/work/workTitle/titleValidate.json", method = RequestMethod.POST)
     public @ResponseBody

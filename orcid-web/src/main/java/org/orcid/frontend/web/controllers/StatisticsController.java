@@ -79,9 +79,11 @@ public class StatisticsController extends BaseController {
      * */
     @RequestMapping(value = "/liveids.json")    
     public @ResponseBody String getLiveIdsAmount(HttpServletRequest request) {        
-        StatisticValuesEntity entity = statisticsManager.getLatestStatistics(StatisticsEnum.KEY_LIVE_IDS.value());
-        double amount = Double.parseDouble(String.valueOf(entity.getStatisticValue()));        
-        DecimalFormat formatter = new DecimalFormat(messageSource.getMessage("public-layout.number_format",null, request.getLocale()));        
+    	DecimalFormat formatter = new DecimalFormat(messageSource.getMessage("public-layout.number_format",null, request.getLocale()));
+    	StatisticValuesEntity entity = statisticsManager.getLatestStatistics(StatisticsEnum.KEY_LIVE_IDS.value());
+        if(entity == null)
+        	return formatter.format(0);
+        double amount = Double.parseDouble(String.valueOf(entity.getStatisticValue()));                
         return formatter.format(amount);
     }
     

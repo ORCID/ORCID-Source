@@ -203,6 +203,8 @@
 	
 	<bean id="profileEventManager" class="org.orcid.core.profileEvent.ProfileEventManager" />
 	
+	<bean id="workManager" class="org.orcid.core.manager.impl.WorkManagerImpl" />
+	
 	<bean id="crossRefEmail" class="org.orcid.core.profileEvent.CrossRefEmail" scope="prototype"/>
 
 	<bean id="messageSource"

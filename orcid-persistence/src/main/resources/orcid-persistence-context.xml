@@ -78,9 +78,7 @@
         <constructor-arg value="org.orcid.persistence.jpa.entities.SubjectEntity" />
     </bean>
 
-    <bean id="workDao" class="org.orcid.persistence.dao.impl.GenericDaoImpl">
-        <constructor-arg value="org.orcid.persistence.jpa.entities.WorkEntity" />
-    </bean>
+    <bean id="workDao" class="org.orcid.persistence.dao.impl.WorkDaoImpl" />
 
     <bean id="clientDetailsDao" class="org.orcid.persistence.dao.impl.ClientDetailsDaoImpl" />
 
