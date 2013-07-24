@@ -54,11 +54,13 @@
                         <button type="submit" class="search-button"><i class="icon-orcid-search"></i></button>
                         <a href="<@spring.url "/orcid-search/search" />" class="settings-button" title="<@orcid.msg 'public-layout.search.advanced'/>"><i class="icon-cog"></i></a>
                     </form>
-                    <div class="language-selector" ng-controller="languageCtrl">
-					    <form id="language-form" action="#">
-					    	<select name="language-codes" id="language-codes" ng-model="language" ng-options="language.label for language in languages" ng-change="selectedLanguage()"></select>
-					    </form>
-					</div>     
+                    <#if (RequestParameters['showLangSelector'])??>
+	                    <div class="language-selector" ng-controller="languageCtrl">
+						    <form id="language-form" action="#">
+						    	<select name="language-codes" id="language-codes" ng-model="language" ng-options="language.label for language in languages" ng-change="selectedLanguage()"></select>
+						    </form>
+						</div>     
+					</#if>
                 </div>
             </div>
         </div>
