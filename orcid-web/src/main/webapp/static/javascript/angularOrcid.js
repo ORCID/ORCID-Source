@@ -15,7 +15,7 @@
  * =============================================================================
  */
 
-var orcidNgModule = angular.module('orcidApp', []);
+var orcidNgModule = angular.module('orcidApp', ["ngCookies"]);
 
 orcidNgModule.directive('ngModelOnblur', function() {
     return {
@@ -1279,7 +1279,7 @@ function statisticCtrl($scope){
 	$scope.getLiveIds();
 }
 
-function languageCtrl($scope){		
+function languageCtrl($scope, $cookies){		
 	$scope.languages = 
 	    [
 	        {	            
@@ -1288,37 +1288,29 @@ function languageCtrl($scope){
 	        },
 	        {
 	        	"value": 'xes',
-	    		"label": 'Spanish'
+	    		"label": 'Español'
 	        },
 	        {
 	        	"value": 'xfr',
-	    		"label": 'French'
+	    		"label": 'Français'
 	        },	        
 	        {
 		        "value": 'xzh_CN',
-			    "label": 'Traditional Chinese'
+			    "label": '簡體中文'
 	        },
 	        {
 		        "value": 'xzh_TW',
-			    "label": 'Simplified Chinese'
+			    "label": '简体中文'
 	        },	        
 	    ];	
 	
 	//Load Language that is set in the cookie or set default language to english
-	$scope.getCurrentLanguage = function(){		
-		$.ajax({
-	        url: $('body').data('baseurl')+'lang.json',	        
-	        type: 'GET',
-	        dataType: 'json',
-	        success: function(data){        	
-	        	angular.forEach($scope.languages, function(value, key){
-	        		value.value == data.locale ? $scope.language = $scope.languages[key] : $scope.languages[0];	        		
-	        	});	        		        	
-	        }
-	    }).fail(function(error) { 
-	    	// something bad is happening!	    	
-	    	console.log("Error getting language current value");	    	
-	    });		
+	$scope.getCurrentLanguage = function(){
+		$scope.language = $scope.languages[0]; //Default
+		$cookies.locale_v2 !== 'undefined' ? locale_v2 = $cookies.locale_v2 : locale_v2 = "en"; //If cookie exists we get the language value from it		
+    	angular.forEach($scope.languages, function(value, key){ //angular.forEach doesn't support break
+    		if (value.value == locale_v2) $scope.language = $scope.languages[key];    		
+    	});
 	};
 	
 	$scope.getCurrentLanguage(); //Checking for the current language value
