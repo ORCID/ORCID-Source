@@ -39,11 +39,13 @@ import org.apache.commons.lang.StringUtils;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.EmailManager;
 import org.orcid.core.manager.OrcidProfileManager;
+import org.orcid.core.manager.StatisticsManager;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.frontend.web.forms.LoginForm;
 import org.orcid.jaxb.model.message.Email;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.Visibility;
+import org.orcid.persistence.dao.StatisticsDao;
 import org.orcid.utils.OrcidWebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -99,6 +101,9 @@ public class BaseController {
 
     @Resource
     protected EmailManager emailManager;
+    
+    @Resource
+    private StatisticsManager statisticsManager;
 
     public OrcidProfileManager getOrcidProfileManager() {
         return orcidProfileManager;
@@ -375,6 +380,11 @@ public class BaseController {
     @ModelAttribute("locale")
     public String getLocale() {
         return localeManager.getLocale().toString();
+    }
+
+    @ModelAttribute("liveIds")
+    public String getLiveIds() {
+        return statisticsManager.getLiveIds(localeManager.getLocale());
     }
 
     public String getBaseUri() {
