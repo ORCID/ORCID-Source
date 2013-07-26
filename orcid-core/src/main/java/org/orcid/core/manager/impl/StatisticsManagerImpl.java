@@ -24,6 +24,7 @@ import org.orcid.core.manager.StatisticsManager;
 import org.orcid.persistence.dao.StatisticsDao;
 import org.orcid.persistence.jpa.entities.StatisticValuesEntity;
 import org.orcid.persistence.jpa.entities.StatisticKeyEntity;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.transaction.annotation.Transactional;
 
 public class StatisticsManagerImpl implements StatisticsManager {
@@ -68,6 +69,7 @@ public class StatisticsManagerImpl implements StatisticsManager {
      *         parameters
      * */
     @Override
+    @Cacheable("statistics")
     public StatisticValuesEntity getStatistic(StatisticKeyEntity id, String name) {
         return statisticsDao.getStatistic(id.getId(), name);
     }
@@ -78,6 +80,7 @@ public class StatisticsManagerImpl implements StatisticsManager {
      * @return a list that contains the latest set of statistics
      * */
     @Override
+    @Cacheable("statistics")
     public List<StatisticValuesEntity> getLatestStatistics() {
         StatisticKeyEntity latestKey = statisticsDao.getLatestKey();
         if(latestKey != null)
@@ -90,6 +93,7 @@ public class StatisticsManagerImpl implements StatisticsManager {
      * @param statisticName
      * @return the latest statistics value for the statistics name parameter
      * */
+    @Cacheable("statistics")
     public StatisticValuesEntity getLatestStatistics(String statisticName){
         StatisticKeyEntity latestKey = statisticsDao.getLatestKey();
         if(latestKey != null)
