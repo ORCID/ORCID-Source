@@ -482,7 +482,7 @@ input[type=submit] .caret {
   width: 22px;
 }
 .header .search .settings-button {
-  left: 646px;
+  left: 649px;
   top: 1px;
 }
 .header .search .settings-button:hover {
@@ -491,7 +491,7 @@ input[type=submit] .caret {
 .header .search .search-button {
   width: 26px;
   height: 26px;
-  left: 618px;
+  left: 621px;
   top: 3px;
   border: 0;
   background: transparent;
@@ -534,6 +534,7 @@ input[type=submit] .caret {
   font-weight: bold;
   font-family: 'Gill Sans W01 Medium', 'Gill Sans', sans-serif;
   background: #A6CE39;
+  line-height: 20px;
 }
 .header .logo {
   float: left;
