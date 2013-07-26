@@ -50,14 +50,16 @@ public class StatisticsController extends BaseController {
         ModelAndView mav = new ModelAndView("statistics");
         Map<String, Long> statisticsMap = new HashMap<String, Long>();
                 
-        StatisticKeyEntity latestKey = statisticsManager.getLatestKey();
+        StatisticKeyEntity latestKey = null; //statisticsManager.getLatestKey();
         List<StatisticValuesEntity> statistics = statisticsManager.getLatestStatistics();
         
         if(statistics != null)
-            for(StatisticValuesEntity statistic : statistics){
+            for(StatisticValuesEntity statistic : statistics) {
                 statisticsMap.put(statistic.getStatisticName(), statistic.getStatisticValue());
+                if (latestKey == null) 
+                    latestKey = statistic.getKey();
             }        
-        
+            
         mav.addObject("statistics", statisticsMap);
         
         if(latestKey != null)
