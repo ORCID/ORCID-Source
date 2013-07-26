@@ -1259,22 +1259,22 @@ function QuickSearchCtrl($scope, $compile){
 	$scope.getResults(10);
 }
 
-function statisticCtrl($scope){	
-	$scope.liveIds = 0;	
-	$scope.getLiveIds = function(){
-		$.ajax({
-	        url: $('body').data('baseurl')+'statistics/liveids.json',	        
-	        type: 'GET',
-	        dataType: 'html',
-	        success: function(data){
-	        	$scope.liveIds = data;
-	        	$scope.$apply($scope.liveIds);	        		        	
-	        }
-	    }).fail(function(error) { 
-	    	// something bad is happening!	    	
-	    	console.log("Error getting statistics Live iDs total amount");	    	
-	    });
-	};
-	
-	$scope.getLiveIds();
-}
+//function statisticCtrl($scope){	
+//	$scope.liveIds = 0;	
+//	$scope.getLiveIds = function(){
+//		$.ajax({
+//	        url: $('body').data('baseurl')+'statistics/liveids.json',	        
+//	        type: 'GET',
+//	        dataType: 'html',
+//	        success: function(data){
+//	        	$scope.liveIds = data;
+//	        	$scope.$apply($scope.liveIds);	        		        	
+//	        }
+//	    }).fail(function(error) { 
+//	    	// something bad is happening!	    	
+//	    	console.log("Error getting statistics Live iDs total amount");	    	
+//	    });
+//	};
+//	
+//	$scope.getLiveIds();
+//}
