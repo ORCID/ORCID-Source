@@ -52,7 +52,7 @@ public class Citation implements ErrorsInterface, Required, Serializable {
         org.orcid.jaxb.model.message.Citation c = new org.orcid.jaxb.model.message.Citation();
         if (this.getCitation() != null)
             c.setCitation(this.getCitation().getValue());
-        if (this.getCitationType() != null)
+        if (!PojoUtil.isEmpty(this.getCitationType()))
             c.setWorkCitationType(CitationType.fromValue(this.getCitationType().getValue()));
         return c;
     }
