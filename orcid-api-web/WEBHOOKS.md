@@ -1,6 +1,11 @@
 # Webhooks (Member API)
 
-[Webhooks](http://en.wikipedia.org/wiki/Webhook) enable your application to get notified when there are changes that you care about. You'll register a callback URL for each ORCID iD that you are watching, and we'll notify that URL when there are changes to that record.
+Released in Summer of 2013, [Webhooks](http://en.wikipedia.org/wiki/Webhook) Change Notifications are an [ORCID Premium Member feature](http://orcid.org/about/membership) that enable their applications to be informed when data within an ORCID Record changes. This feature is a great way for premium members to stay up-to-date on new information, or even trigger events in their own systems based on an activity. _(Note: Actual data exchange is based on privacy levels set by the ORCID iD holder, and permissions this individual has granted to the member organization.)_
+ 
+
+Using this API and your Member Client Credentials, you'll register a callback URL for each ORCID iD that you are watching, and we'll notify that URL when there are changes to that record.
+
+---
 
 ## Get an access token for webhooks
 
