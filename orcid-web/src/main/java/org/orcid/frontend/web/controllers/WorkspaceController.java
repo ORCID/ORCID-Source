@@ -598,7 +598,7 @@ public class WorkspaceController extends BaseWorkspaceController {
             // if bibtext must be valid
             if (work.getCitation().getCitationType().getValue().equals(CitationType.BIBTEX.value())) {
                 try {
-                    BibtexUtils.validate(HtmlUtils.htmlUnescape(work.getCitation().getCitationType().getValue()));
+                    BibtexUtils.validate(work.getCitation().getCitation().getValue());
                 } catch (BibtexException e) {
                     setError(work.getCitation().getCitation(), "manualWork.bibtext.notValid");
                 }
