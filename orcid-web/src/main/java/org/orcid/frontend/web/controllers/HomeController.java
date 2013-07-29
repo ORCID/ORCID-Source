@@ -17,6 +17,7 @@
 package org.orcid.frontend.web.controllers;
 
 import org.orcid.core.oauth.OrcidProfileUserDetails;
+import org.orcid.jaxb.model.message.OrcidPreferences;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.Preferences;
 import org.orcid.pojo.UserStatus;
@@ -71,13 +72,11 @@ public class HomeController extends BaseController {
             String orcid = getCurrentUserOrcid();
             if (orcid != null) {
                 OrcidProfile existingProfile = orcidProfileManager.retrieveOrcidProfile(orcid);
-                Preferences prefs =  existingProfile.getOrcidInternal().getPreferences();
-                org.orcid.jaxb.model.message.Locale locale = existingProfile.getOrcidInternal().getPreferences().getLocale();
+                org.orcid.jaxb.model.message.Locale locale = existingProfile.getOrcidPreferences().getLocale();
                 if (!locale.value().equals(lang)) {
                     try {
-                        prefs.setLocale(org.orcid.jaxb.model.message.Locale.fromValue(lang));
-                        existingProfile.getOrcidInternal().setPreferences(prefs);
-                        orcidProfileManager.updatePreferences(existingProfile);
+                        existingProfile.getOrcidPreferences().setLocale(org.orcid.jaxb.model.message.Locale.fromValue(lang));
+                        orcidProfileManager.updateOrcidPreferences(existingProfile);
                     } catch (Exception e) {
                         LOGGER.error("langJson exception", e);
                     } catch (Throwable t) {
