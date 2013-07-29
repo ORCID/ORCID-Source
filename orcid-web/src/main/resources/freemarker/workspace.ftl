@@ -387,7 +387,7 @@
 				    <div class="relative">    
 						<select id="role" name="role" ng-model="contributor.contributorRole.value" ng-change="serverValidate('my-orcid/work/roleValidate.json')">
 							<#list roles?keys as key>
-								<option value="${key}">${roles[key]}</option>
+							    <option value="${key}">${roles[key]}</option>
 							</#list>
 			    		</select>
 						<span class="orcid-error" ng-show="contributor.contributorRole.errors.length > 0">

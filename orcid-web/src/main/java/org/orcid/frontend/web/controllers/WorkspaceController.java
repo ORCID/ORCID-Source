@@ -183,6 +183,7 @@ public class WorkspaceController extends BaseWorkspaceController {
     @ModelAttribute("sequences")
     public Map<String, String> retrieveSequencesAsMap() {
         Map<String, String> map = new LinkedHashMap<String, String>();
+        map.put("", "");
         for (SequenceType sequenceType : SequenceType.values()) {
             map.put(sequenceType.value(), StringUtils.capitalize(sequenceType.value().replaceAll("[-]", " ")));
         }
@@ -373,15 +374,20 @@ public class WorkspaceController extends BaseWorkspaceController {
         w.setCitation(c);
       
         Text wTypeText = new Text();
+        wTypeText.setValue("");
         wTypeText.setRequired(true);
         w.setWorkType(wTypeText);
         
         Date d = new Date();
+        d.setDay("");
+        d.setMonth("");
+        d.setYear("");
         w.setPublicationDate(d);
         
         WorkExternalIdentifier wdi = new WorkExternalIdentifier();
         Text wdiT = new Text();
         Text wdiType = new Text();
+        wdiType.setValue("");
         wdi.setWorkExternalIdentifierId(wdiT);
         wdi.setWorkExternalIdentifierType(wdiType);
         List<WorkExternalIdentifier> wdiL = new ArrayList<WorkExternalIdentifier>();
@@ -394,9 +400,11 @@ public class WorkspaceController extends BaseWorkspaceController {
         Contributor contr = new Contributor();
         List<Contributor> contrList = new ArrayList<Contributor>();
         Text rText = new Text();
+        rText.setValue("");
         contr.setContributorRole(rText);
         
         Text sText= new Text();
+        sText.setValue("");
         contr.setContributorSequence(sText);
         contrList.add(contr);
         w.setContributors(contrList);
