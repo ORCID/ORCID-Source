@@ -45,9 +45,6 @@
             </h2>
             <p><small id="orcid-id" class="orcid-id">${baseUriHttp}/${(profile.orcid.value)!}</small></p>
 	        <p class="hoover-white-fonts"><a href="${baseUriHttp}/${(profile.orcid.value)!}" class="label btn-primary"><@orcid.msg 'workspace.ViewPublicORCIDRecord'/></a></p>
-	        <#if !RequestParameters['addWorks']??>
-	            <p><a href="<@spring.url '/account/manage-bio-settings'/>" class="btn-update"><@orcid.msg 'workspace.Update'/></a></p>
-	        </#if>
 	        <#if ((profile.orcidBio.personalDetails.otherNames.otherName)?size != 0)>
 	        	<p><strong><@orcid.msg 'workspace.Alsoknownas'/></strong><br />
 		       		<#list profile.orcidBio.personalDetails.otherNames.otherName as otherName>
@@ -87,12 +84,7 @@
 			</div>
 			
 		    <#if ((thirdPartiesForImport)?? && (thirdPartiesForImport)?size &gt; 0)>
-    	        <#if !RequestParameters['addWorks']??>
-	    	        <ul class="workspace-help">
-	    	        	<li><a href="#third-parties" class="colorbox-modal"><@orcid.msg 'workspace.import_works'/></a></li>
-	    	        </ul>
-	    	    </#if>
-    	        <div class="inline-modal" id="third-parties">					
+     	        <div class="inline-modal" id="third-parties">					
 					<div class="span9">
 						<a class="btn pull-right close-button">X</a>
 	           			<h1 class="lightbox-title" style="text-transform: uppercase;"><@orcid.msg 'workspace.import_works'/></h1>
@@ -127,12 +119,8 @@
         		<div class="workspace-overview" id="works-overview" ng-controller="WorkOverviewCtrl">
         			<a href="#workspace-publications" class="overview-count"><span ng-bind="works.length"></span></a>
         			<a href="#workspace-publications" class="overview-title"><@orcid.msg 'workspace.Works'/></a>
-        			<#if RequestParameters['addWorks']??>
-                    	<br />
-                    	<a href="#workspace-publications" class="btn-update no-icon"><@orcid.msg 'workspace.view'/></a>
-        			<#else>
-                    	<div><a href="<@spring.url '/works-update'/>" class="btn-update"><@orcid.msg 'workspace.Update'/></a></div>
-                   	</#if>
+                    <br />
+                    <a href="#workspace-publications" class="btn-update no-icon"><@orcid.msg 'workspace.view'/></a>
         		</div>
                 <div class="workspace-overview">
                     <a href="#workspace-affiliations" class="overview-count">${(profile.orcidBio.affiliations?size)!0}</a>
@@ -160,11 +148,7 @@
         			       <i class="icon-caret-down" ng-class="{'icon-caret-right':displayInfo==false}"></i></a>
         			   </a> 
         			   <a href="" ng-click="toggleDisplayInfo()"><@orcid.msg 'workspace.personal_information'/></a> 
-        			   <#if RequestParameters['addWorks']??>
-        			   	   <a href="<@spring.url '/account/manage-bio-settings'/>" id="upate-personal-modal-link" class="label btn-primary"><@orcid.msg 'workspace.Update'/></a>
-        			   <#else>
-        			       <a href="<@spring.url '/account/manage-bio-settings'/>" class="label btn-update"><@orcid.msg 'workspace.Update'/></a>
-        			   </#if>
+        			   <a href="<@spring.url '/account/manage-bio-settings'/>" id="upate-personal-modal-link" class="label btn-primary"><@orcid.msg 'workspace.Update'/></a>
         			</div>
             		<div class="workspace-accordion-content" ng-show="displayInfo">
             			<#include "workspace_personal.ftl"/>
@@ -185,10 +169,8 @@
         			       <i class="icon-caret-down icon" ng-class="{'icon-caret-right':displayWorks==false}"></i></a>
         			    </a> 
         				<a href="" ng-click="toggleDisplayWorks()"><@orcid.msg 'workspace.Works'/></a>
-						<#if RequestParameters['addWorks']??>
-							<a href="#third-parties" class="colorbox-modal label btn-primary"><@orcid.msg 'workspace.import_works'/></a>
-							<a href="" class="label btn-primary" ng-click="addWorkModal()"><@orcid.msg 'manual_work_form_contents.add_work_manually'/></a>
-						</#if>
+						<a href="#third-parties" class="colorbox-modal label btn-primary"><@orcid.msg 'workspace.import_works'/></a>
+						<a href="" class="label btn-primary" ng-click="addWorkModal()"><@orcid.msg 'manual_work_form_contents.add_work_manually'/></a>
 					</div>
       	            <div ng-show="displayWorks" class="workspace-accordion-content">
 	            		<#include "workspace_works_body_list.ftl"/>

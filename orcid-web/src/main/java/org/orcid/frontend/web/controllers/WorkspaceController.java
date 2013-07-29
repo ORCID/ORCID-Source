@@ -447,6 +447,7 @@ public class WorkspaceController extends BaseWorkspaceController {
         
         if (work.getErrors().size() == 0) {
             OrcidWork newOw = work.toOrcidWork();
+            newOw.setPutCode("-1"); // put codes of -1 override new works visibility filtering settings.
             // Why do we have to save all the works?
             OrcidProfile profile = getCurrentUser().getEffectiveProfile();
             if (profile.getOrcidActivities() == null) 
