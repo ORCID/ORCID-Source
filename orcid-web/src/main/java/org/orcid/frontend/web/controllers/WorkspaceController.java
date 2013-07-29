@@ -55,6 +55,7 @@ import org.orcid.pojo.ajaxForm.Citation;
 import org.orcid.pojo.ajaxForm.Contributor;
 import org.orcid.pojo.ajaxForm.Date;
 import org.orcid.pojo.ajaxForm.ErrorsInterface;
+import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Registration;
 import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.pojo.ajaxForm.Visibility;
@@ -591,12 +592,12 @@ public class WorkspaceController extends BaseWorkspaceController {
         work.getCitation().getCitation().setErrors(new ArrayList<String>());
         work.getCitation().getCitationType().setErrors(new ArrayList<String>());
         
-        // Citations must have a type
-        if (work.getCitation().getCitationType() == null 
-                || work.getCitation().getCitationType().getValue() == null
-                || work.getCitation().getCitationType().getValue().trim().equals("")) {
+        // Citations must have a type if citation text has a vale
+        if (PojoUtil.isEmpty(work.getCitation().getCitationType())
+                && !PojoUtil.isEmpty(work.getCitation().getCitation())) {
             setError(work.getCitation().getCitationType(), "NotBlank.manualWork.citationType");
-        } else if (!work.getCitation().getCitationType().getValue().trim().equals(CitationType.FORMATTED_UNSPECIFIED.value())) {
+        } else if (!work.getCitation().getCitationType().getValue().trim().equals(CitationType.FORMATTED_UNSPECIFIED.value()) 
+                && !PojoUtil.isEmpty(work.getCitation().getCitationType())) {
             // citation should not be blank if citation type is set 
             if (work.getCitation().getCitation() == null || 
                      work.getCitation().getCitation().getValue().trim().equals("")) {
