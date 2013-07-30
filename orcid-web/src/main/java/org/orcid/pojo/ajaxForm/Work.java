@@ -121,7 +121,6 @@ public class Work implements ErrorsInterface, Serializable {
             List<org.orcid.jaxb.model.message.Contributor> cList =  new ArrayList<org.orcid.jaxb.model.message.Contributor>();
             for (Contributor c: this.getContributors()) {
                 cList.add(c.toContributor());
-                
             }
             ow.setWorkContributors(new WorkContributors(cList));
         }

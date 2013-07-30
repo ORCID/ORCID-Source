@@ -47,11 +47,11 @@ public class Date implements ErrorsInterface, Required {
 
     public PublicationDate toPublicationDate() {
         PublicationDate pd = new PublicationDate();
-        if (this.getDay() != null && !this.getDay().trim().isEmpty())
+        if (!PojoUtil.isEmpty(this.getDay()))
             pd.setDay(new Day(new Integer(this.getDay())));
-        if (this.getMonth() != null && !this.getMonth().trim().isEmpty())
+        if (!PojoUtil.isEmpty(this.getMonth()))
             pd.setMonth(new Month(new Integer(this.getMonth())));
-        if (this.getYear() != null && !this.getYear().trim().isEmpty())
+        if (!PojoUtil.isEmpty(this.getYear()))
             pd.setYear(new Year(new Integer(this.getYear())));
         return pd;
     }
