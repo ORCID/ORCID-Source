@@ -823,10 +823,10 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
         }
     }
 
-    private void setPreferencesDetails(ProfileEntity profileEntity, OrcidPreferences orcidPerferences) {
-        if (orcidPerferences != null) {
-            if (orcidPerferences.getLocale() != null) 
-                profileEntity.setLocale(orcidPerferences.getLocale());
+    private void setPreferencesDetails(ProfileEntity profileEntity, OrcidPreferences orcidPreferences) {
+        if (orcidPreferences != null) {
+            if (orcidPreferences.getLocale() != null) 
+                profileEntity.setLocale(orcidPreferences.getLocale());
                 else
                     profileEntity.setLocale(Locale.EN);
         }
