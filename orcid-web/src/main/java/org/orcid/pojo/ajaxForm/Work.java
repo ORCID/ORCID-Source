@@ -157,7 +157,7 @@ public class Work implements ErrorsInterface, Serializable {
                 LOGGER.info("Invalid BibTeX. Sending back as a string");
             }
         }
-        if (this.citation != null && this.getCitation() != null) {
+        if (this.citation != null && this.citation.getCitation() != null) {
             return this.citation.getCitation().getValue();
         }
         return null;

@@ -79,6 +79,8 @@
     </bean>
 
     <bean id="workDao" class="org.orcid.persistence.dao.impl.WorkDaoImpl" />
+    
+    <bean id="workContributorDao" class="org.orcid.persistence.dao.impl.WorkContributorDaoImpl" />
 
     <bean id="clientDetailsDao" class="org.orcid.persistence.dao.impl.ClientDetailsDaoImpl" />
 

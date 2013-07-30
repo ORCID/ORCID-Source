@@ -33,6 +33,7 @@ import org.apache.commons.lang.StringUtils;
 import org.orcid.core.manager.ExternalIdentifierManager;
 import org.orcid.core.manager.ProfileWorkManager;
 import org.orcid.core.manager.ThirdPartyImportManager;
+import org.orcid.core.manager.WorkContributorManager;
 import org.orcid.core.manager.WorkManager;
 import org.orcid.frontend.web.forms.CurrentWork;
 import org.orcid.frontend.web.util.NumberList;
@@ -44,6 +45,7 @@ import org.orcid.jaxb.model.message.ContributorAttributes;
 import org.orcid.jaxb.model.message.ContributorRole;
 import org.orcid.jaxb.model.message.ExternalIdentifier;
 import org.orcid.jaxb.model.message.ExternalIdentifiers;
+import org.orcid.jaxb.model.message.OrcidActivities;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidWork;
 import org.orcid.jaxb.model.message.OrcidWorks;
@@ -53,6 +55,7 @@ import org.orcid.jaxb.model.message.SourceOrcid;
 import org.orcid.jaxb.model.message.WorkContributors;
 import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
 import org.orcid.jaxb.model.message.WorkType;
+import org.orcid.persistence.adapter.Jaxb2JpaAdapter;
 import org.orcid.persistence.adapter.Jpa2JaxbAdapter;
 import org.orcid.persistence.jpa.entities.FuzzyDate;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -89,7 +92,7 @@ import org.springframework.web.util.HtmlUtils;
 @Controller("workspaceController")
 @RequestMapping(value = { "/my-orcid", "/workspace" })
 public class WorkspaceController extends BaseWorkspaceController {
-    
+
     private static final Logger LOGGER = LoggerFactory.getLogger(WorkspaceController.class);
 
     private static final String WORKS_MAP = "WORKS_MAP";
@@ -106,14 +109,20 @@ public class WorkspaceController extends BaseWorkspaceController {
     @Resource
     private Jpa2JaxbAdapter jpa2JaxbAdapter;
 
-    @Resource 
+    @Resource
+    private Jaxb2JpaAdapter jaxb2JpaAdapter;
+
+    @Resource
     private WorkManager workManager;
-    
+
+    @Resource
+    private WorkContributorManager workContributorManager;
+
     @ModelAttribute("thirdPartiesForImport")
     public List<OrcidClient> retrieveThirdPartiesForImport() {
         return thirdPartyImportManager.findOrcidClientsWithPredefinedOauthScopeWorksImport();
     }
-    
+
     @ModelAttribute("workTypes")
     public Map<String, String> retrieveWorkTypesAsMap() {
         Map<String, String> workTypes = new TreeMap<String, String>();
@@ -199,11 +208,10 @@ public class WorkspaceController extends BaseWorkspaceController {
         return map;
     }
 
-
     @RequestMapping
     public ModelAndView viewWorkspace(HttpServletRequest request, @RequestParam(value = "page", defaultValue = "1") int pageNo,
             @RequestParam(value = "maxResults", defaultValue = "200") int maxResults) {
-        
+
         ModelAndView mav = new ModelAndView("workspace");
         mav.addObject("showPrivacy", true);
 
@@ -214,7 +222,7 @@ public class WorkspaceController extends BaseWorkspaceController {
             mav.addObject("currentWorks", currentWorks);
         }
         mav.addObject("profile", profile);
-        mav.addObject("baseUri",getBaseUri());
+        mav.addObject("baseUri", getBaseUri());
         return mav;
     }
 
@@ -274,25 +282,25 @@ public class WorkspaceController extends BaseWorkspaceController {
         if (externalIdentifier.getExternalIdReference() == null || StringUtils.isBlank(externalIdentifier.getExternalIdReference().getContent())) {
             errors.add(getMessage("ExternalIdentifier.externalIdReference"));
         }
-        // Set errors to the external 
+        // Set errors to the external
         externalIdentifier.setErrors(errors);
 
         if (errors.isEmpty()) {
-            //Get cached profile
+            // Get cached profile
             OrcidProfile currentProfile = getCurrentUser().getEffectiveProfile();
             ExternalIdentifiers externalIdentifiers = currentProfile.getOrcidBio().getExternalIdentifiers();
             List<ExternalIdentifier> externalIdentifiersList = externalIdentifiers.getExternalIdentifier();
             Iterator<ExternalIdentifier> externalIdentifierIterator = externalIdentifiersList.iterator();
-            //Remove external identifier from the cached profile
+            // Remove external identifier from the cached profile
             while (externalIdentifierIterator.hasNext()) {
                 ExternalIdentifier existingExternalIdentifier = externalIdentifierIterator.next();
                 if (existingExternalIdentifier.equals(externalIdentifier)) {
                     externalIdentifierIterator.remove();
                 }
             }
-            //Update cached profile
+            // Update cached profile
             currentProfile.getOrcidBio().setExternalIdentifiers(externalIdentifiers);
-            //Remove external identifier
+            // Remove external identifier
             externalIdentifierManager.removeExternalIdentifier(externalIdentifier.getOrcid().getValue(), externalIdentifier.getExternalIdReference().getContent());
         }
 
@@ -306,8 +314,8 @@ public class WorkspaceController extends BaseWorkspaceController {
     public @ResponseBody
     Work removeWorkJson(HttpServletRequest request, @RequestBody Work work) {
         OrcidWork delWork = work.toOrcidWork();
-         
-        //Get cached profile
+
+        // Get cached profile
         OrcidProfile currentProfile = getCurrentUser().getEffectiveProfile();
         OrcidWorks works = currentProfile.getOrcidActivities() == null ? null : currentProfile.getOrcidActivities().getOrcidWorks();
         Work deletedWork = new Work();
@@ -334,24 +342,25 @@ public class WorkspaceController extends BaseWorkspaceController {
      * */
     @SuppressWarnings("unchecked")
     @RequestMapping(value = "/works.json", method = RequestMethod.GET)
-    public @ResponseBody List<Work> getWorkJson(HttpServletRequest request, @RequestParam(value = "workIds") String workIdsStr) {
+    public @ResponseBody
+    List<Work> getWorkJson(HttpServletRequest request, @RequestParam(value = "workIds") String workIdsStr) {
         List<Work> workList = new ArrayList<>();
         Work work = null;
         String[] workIds = workIdsStr.split(",");
-        
-        if(workIds != null){
-            HashMap<String,Work> worksMap = (HashMap<String,Work>)request.getSession().getAttribute(WORKS_MAP);
+
+        if (workIds != null) {
+            HashMap<String, Work> worksMap = (HashMap<String, Work>) request.getSession().getAttribute(WORKS_MAP);
             // this should never happen, but just in case.
             if (worksMap == null) {
                 createWorksIdList(request);
-                worksMap = (HashMap<String,Work>)request.getSession().getAttribute(WORKS_MAP);
+                worksMap = (HashMap<String, Work>) request.getSession().getAttribute(WORKS_MAP);
             }
-            for (String workId: workIds) {
+            for (String workId : workIds) {
                 work = worksMap.get(workId);
                 workList.add(work);
             }
         }
-        
+
         return workList;
     }
 
@@ -362,7 +371,7 @@ public class WorkspaceController extends BaseWorkspaceController {
     public @ResponseBody
     Work getWork(HttpServletRequest request) {
         Work w = new Work();
-        
+
         // work title and subtitle
         Text wtt = new Text();
         wtt.setRequired(true);
@@ -371,23 +380,23 @@ public class WorkspaceController extends BaseWorkspaceController {
         Text wst = new Text();
         wt.setSubtitle(wst);
         w.setWorkTitle(wt);
-        
+
         // set citation text and type
         Citation c = new Citation();
         Text ctText = new Text();
-        ctText.setValue(CitationType.FORMATTED_UNSPECIFIED.value());       
+        ctText.setValue(CitationType.FORMATTED_UNSPECIFIED.value());
         c.setCitationType(ctText);
         Text cText = new Text();
         c.setCitation(cText);
         w.setCitation(c);
-      
+
         Text wTypeText = new Text();
         wTypeText.setRequired(true);
         w.setWorkType(wTypeText);
-        
+
         Date d = new Date();
         w.setPublicationDate(d);
-        
+
         WorkExternalIdentifier wdi = new WorkExternalIdentifier();
         Text wdiT = new Text();
         Text wdiType = new Text();
@@ -396,39 +405,38 @@ public class WorkspaceController extends BaseWorkspaceController {
         List<WorkExternalIdentifier> wdiL = new ArrayList<WorkExternalIdentifier>();
         wdiL.add(wdi);
         w.setWorkExternalIdentifiers(wdiL);
-        
+
         Text uText = new Text();
         w.setUrl(uText);
-        
+
         Contributor contr = new Contributor();
         List<Contributor> contrList = new ArrayList<Contributor>();
         Text rText = new Text();
         contr.setContributorRole(rText);
-        
-        Text sText= new Text();
+
+        Text sText = new Text();
         contr.setContributorSequence(sText);
         contrList.add(contr);
         w.setContributors(contrList);
-        
-        Text disText= new Text();
+
+        Text disText = new Text();
         w.setShortDescription(disText);
-        
+
         OrcidProfile profile = getCurrentUser().getEffectiveProfile();
         Visibility v = Visibility.valueOf(profile.getOrcidInternal().getPreferences().getWorkVisibilityDefault().getValue());
         w.setVisibility(v);
-        
+
         return w;
     }
 
-    
     /**
      * Returns a blank work
      * */
     @RequestMapping(value = "/work.json", method = RequestMethod.POST)
     public @ResponseBody
-    Work postWork(HttpServletRequest request,  @RequestBody Work work) {
+    Work postWork(HttpServletRequest request, @RequestBody Work work) {
         work.setErrors(new ArrayList<String>());
-        
+
         workCitationValidate(work);
         workWorkTitleTitleValidate(work);
         workWorkTitleSubtitleValidate(work);
@@ -436,7 +444,7 @@ public class WorkspaceController extends BaseWorkspaceController {
         workWorkTypeValidate(work);
         workWorkExternalIdentifiersValidate(work);
         workUrlValidate(work);
-        
+
         copyErrors(work.getCitation().getCitation(), work);
         copyErrors(work.getCitation().getCitationType(), work);
         copyErrors(work.getWorkTitle().getTitle(), work);
@@ -444,93 +452,143 @@ public class WorkspaceController extends BaseWorkspaceController {
         copyErrors(work.getWorkTitle().getSubtitle(), work);
         copyErrors(work.getWorkType(), work);
         copyErrors(work.getUrl(), work);
-        for (Contributor c:work.getContributors()) {
+        for (Contributor c : work.getContributors()) {
             copyErrors(c.getContributorRole(), work);
             copyErrors(c.getContributorSequence(), work);
         }
-        
-        for (WorkExternalIdentifier wId:work.getWorkExternalIdentifiers()) {
+
+        for (WorkExternalIdentifier wId : work.getWorkExternalIdentifiers()) {
             copyErrors(wId.getWorkExternalIdentifierId(), work);
             copyErrors(wId.getWorkExternalIdentifierType(), work);
         }
-        
+
         if (work.getErrors().size() == 0) {
+            // Get current profile
+            OrcidProfile currentProfile = getCurrentUser().getEffectiveProfile();
             OrcidWork newOw = work.toOrcidWork();
             WorkEntity workEntity = toWorkEntity(newOw);
+            // Create work
             workEntity = workManager.addWork(workEntity);
-            Set<WorkContributorEntity> workContributors = toWorkContributorEntityList(newOw.getWorkContributors(), workEntity);
-            
+            Set<WorkContributorEntity> workContributors = toWorkContributorEntityList(currentProfile, newOw.getWorkContributors(), workEntity);
+
+            // Create work contributors
+            if (workContributors != null && !workContributors.isEmpty()) {
+                for (WorkContributorEntity workContributorEntity : workContributors) {
+                    workContributorManager.addWorkContributor(workContributorEntity);
+                }
+            }
+
+            // Create profile work relationship
+            profileWorkManager.addProfileWork(currentProfile.getOrcid().getValue(), workEntity.getId(), newOw.getVisibility());
+
+            // Set the id (put-code) to the new work
+            newOw.setPutCode(String.valueOf(workEntity.getId()));
+
+            // Check if the user have orcid activities, if not, initialize them
+            if (currentProfile.getOrcidActivities() == null)
+                currentProfile.setOrcidActivities(new OrcidActivities());
+            // Check if the user have works, if not, initialize them
+            if (currentProfile.getOrcidActivities().getOrcidWorks() == null)
+                currentProfile.getOrcidActivities().setOrcidWorks(new OrcidWorks());
+
+            // Add the new work to the list of works
+            currentProfile.getOrcidActivities().getOrcidWorks().getOrcidWork().add(newOw);
         }
-        
+
         return work;
     }
 
     /**
-     * TODO
+     * Gets an orcidWork and generates a workEntity
+     * 
+     * @param orcidWork
+     *            The orcid work used to generate the work entity
+     * @return a workEntity populated with the information from the workEntity
      * */
-    private WorkEntity toWorkEntity(OrcidWork orcidWork){
-    	WorkEntity workEntity = new WorkEntity();
-    	workEntity.setCitation(orcidWork.getWorkCitation().getCitation());
-    	workEntity.setCitationType(orcidWork.getWorkCitation().getWorkCitationType());
-    	workEntity.setDateCreated(new java.util.Date());
-    	workEntity.setDescription(orcidWork.getShortDescription());
-    	//workEntity.setContributors(orcidWork.getWorkContributors());
-    	//workEntity.setExternalIdentifiers();
-    	workEntity.setLastModified(new java.util.Date());
-    	workEntity.setPublicationDate(toFuzzyDate(orcidWork.getPublicationDate()));
-    	workEntity.setSubtitle(orcidWork.getWorkTitle().getSubtitle().getContent());
-    	workEntity.setTitle(orcidWork.getWorkTitle().getTitle().getContent());
-    	workEntity.setWorkType(orcidWork.getWorkType());
-    	workEntity.setWorkUrl(orcidWork.getUrl().getValue());
-    	return workEntity;
-    }        
-    
+    private WorkEntity toWorkEntity(OrcidWork orcidWork) {
+        WorkEntity workEntity = new WorkEntity();
+        workEntity.setCitation(orcidWork.getWorkCitation().getCitation());
+        workEntity.setCitationType(orcidWork.getWorkCitation().getWorkCitationType());
+        workEntity.setDateCreated(new java.util.Date());
+        workEntity.setDescription(orcidWork.getShortDescription());
+        workEntity.setLastModified(new java.util.Date());
+        workEntity.setPublicationDate(toFuzzyDate(orcidWork.getPublicationDate()));
+        workEntity.setSubtitle(orcidWork.getWorkTitle().getSubtitle().getContent());
+        workEntity.setTitle(orcidWork.getWorkTitle().getTitle().getContent());
+        workEntity.setWorkType(orcidWork.getWorkType());
+        workEntity.setWorkUrl(orcidWork.getUrl().getValue());
+        return workEntity;
+    }
+
     /**
-     * TODO
+     * Generate a list of work contributors entities based on the current
+     * profile and the list of work contributors that comes from the user
+     * request.
+     * 
+     * @param currentProfile
+     *            The current logged in user
+     * @param workContributors
+     *            The work contributors that comes from the user request
+     * @param workEntity
+     *            The work is just created as part of the request
+     * 
+     * @return a list of work contributor entities
      * */
-    private Set<WorkContributorEntity> toWorkContributorEntityList(WorkContributors workContributors, WorkEntity workEntity){
-    	if(workContributors == null || workContributors.getContributor() == null)
-    		return new TreeSet<WorkContributorEntity>();
-    	
-    	TreeSet<WorkContributorEntity> result = new TreeSet<WorkContributorEntity>();
-    	
-    	for(org.orcid.jaxb.model.message.Contributor contributor : workContributors.getContributor()){
-        	WorkContributorEntity workContributorEntity = new WorkContributorEntity();
-            workContributorEntity.setContributorEmail(contributor.getContributorEmail() != null ? contributor.getContributorEmail().getValue() : null);
-            workContributorEntity.setProfile(contributor.getContributorOrcid() != null ? new ProfileEntity(contributor.getContributorOrcid().getValue()) : null);
-            workContributorEntity.setWork(workEntity);
-    		
-            ContributorAttributes contributorAttributes = contributor.getContributorAttributes();
-            if (contributorAttributes != null) {
-                ContributorRole contributorRole = contributorAttributes.getContributorRole();
-                SequenceType contributorSequence = contributorAttributes.getContributorSequence();
-                workContributorEntity.setContributorRole(contributorRole);
-                workContributorEntity.setSequence(contributorSequence);
+    private Set<WorkContributorEntity> toWorkContributorEntityList(OrcidProfile currentProfile, WorkContributors workContributors, WorkEntity workEntity) {
+        if (workContributors == null || workContributors.getContributor() == null)
+            return new TreeSet<WorkContributorEntity>();
+
+        TreeSet<WorkContributorEntity> result = new TreeSet<WorkContributorEntity>();
+
+        ContributorAttributes emptyContributorAttributes = new ContributorAttributes();
+        org.orcid.jaxb.model.message.Contributor emptyContributor = new org.orcid.jaxb.model.message.Contributor();
+        emptyContributor.setContributorAttributes(emptyContributorAttributes);
+
+        for (org.orcid.jaxb.model.message.Contributor contributor : workContributors.getContributor()) {
+            if (!contributor.equals(emptyContributor)) {
+                WorkContributorEntity workContributorEntity = new WorkContributorEntity();
+                workContributorEntity.setContributorEmail(currentProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail() != null ? currentProfile.getOrcidBio()
+                        .getContactDetails().retrievePrimaryEmail().getValue() : null);
+                workContributorEntity.setProfile(new ProfileEntity(currentProfile.getOrcid().getValue()));
+                workContributorEntity.setWork(workEntity);
+                workContributorEntity.setCreditName(currentProfile.getOrcidBio().getPersonalDetails().getCreditName() != null ? currentProfile.getOrcidBio()
+                        .getPersonalDetails().getCreditName().getContent() : null);
+
+                ContributorAttributes contributorAttributes = contributor.getContributorAttributes();
+                if (contributorAttributes != null) {
+                    ContributorRole contributorRole = contributorAttributes.getContributorRole();
+                    SequenceType contributorSequence = contributorAttributes.getContributorSequence();
+                    workContributorEntity.setContributorRole(contributorRole);
+                    workContributorEntity.setSequence(contributorSequence);
+                }
+                result.add(workContributorEntity);
             }
-            workContributorEntity.setCreditName(contributor.getCreditName() != null ? contributor.getCreditName().getContent() : null);
-            result.add(workContributorEntity);    		    		    		    		
-    	}
-    	
-    	return result;
+        }
+
+        return result;
     }
-        
+
     /**
-     * TODO
+     * Transform a PublicationDate into a PuzzyDate
+     * 
+     * @param publicationDate
+     * 
+     * @return a fuzzy date
      * */
-    private FuzzyDate toFuzzyDate(PublicationDate publicationDate){
-    	FuzzyDate fuzzyDate = new FuzzyDate();
-    	String year = publicationDate.getYear() == null ? null : publicationDate.getYear().getValue();
-    	String month = publicationDate.getMonth() == null ? null : publicationDate.getMonth().getValue();
-    	String day = publicationDate.getDay() == null ? null : publicationDate.getDay().getValue();
-    	if(year != null)
-    		fuzzyDate.setYear(Integer.valueOf(year));
-    	if(month != null)
-    		fuzzyDate.setMonth(Integer.valueOf(month));
-    	if(day != null)
-    		fuzzyDate.setDay(Integer.valueOf(day));
-    	return fuzzyDate;
+    private FuzzyDate toFuzzyDate(PublicationDate publicationDate) {
+        FuzzyDate fuzzyDate = new FuzzyDate();
+        String year = publicationDate.getYear() == null ? null : publicationDate.getYear().getValue();
+        String month = publicationDate.getMonth() == null ? null : publicationDate.getMonth().getValue();
+        String day = publicationDate.getDay() == null ? null : publicationDate.getDay().getValue();
+        if (year != null)
+            fuzzyDate.setYear(Integer.valueOf(year));
+        if (month != null)
+            fuzzyDate.setMonth(Integer.valueOf(month));
+        if (day != null)
+            fuzzyDate.setDay(Integer.valueOf(day));
+        return fuzzyDate;
     }
-    
+
     @RequestMapping(value = "/work/workTitle/titleValidate.json", method = RequestMethod.POST)
     public @ResponseBody
     Work workWorkTitleTitleValidate(@RequestBody Work work) {
@@ -545,50 +603,45 @@ public class WorkspaceController extends BaseWorkspaceController {
         return work;
     }
 
-    
     @RequestMapping(value = "/work/workTitle/subtitleValidate.json", method = RequestMethod.POST)
     public @ResponseBody
     Work workWorkTitleSubtitleValidate(@RequestBody Work work) {
         work.getWorkTitle().getSubtitle().setErrors(new ArrayList<String>());
-        if (work.getWorkTitle().getSubtitle().getValue() != null 
-                && work.getWorkTitle().getSubtitle().getValue().length() > 1000) {
+        if (work.getWorkTitle().getSubtitle().getValue() != null && work.getWorkTitle().getSubtitle().getValue().length() > 1000) {
             setError(work.getWorkTitle().getSubtitle(), "manualWork.length_less_1000");
         }
         return work;
     }
 
-
     @RequestMapping(value = "/work/urlValidate.json", method = RequestMethod.POST)
     public @ResponseBody
     Work workUrlValidate(@RequestBody Work work) {
         work.getUrl().setErrors(new ArrayList<String>());
-        if (work.getUrl().getValue() != null 
-                && work.getUrl().getValue().length() > 350) {
+        if (work.getUrl().getValue() != null && work.getUrl().getValue().length() > 350) {
             setError(work.getUrl(), "manualWork.length_less_350");
         }
         return work;
     }
 
-
     @RequestMapping(value = "/work/descriptionValidate.json", method = RequestMethod.POST)
     public @ResponseBody
     Work workdescriptionValidate(@RequestBody Work work) {
         work.getShortDescription().setErrors(new ArrayList<String>());
-        if (work.getShortDescription().getValue() != null 
-                && work.getShortDescription().getValue().length() > 5000) {
+        if (work.getShortDescription().getValue() != null && work.getShortDescription().getValue().length() > 5000) {
             setError(work.getShortDescription(), "manualWork.length_less_5000");
         }
         return work;
     }
-    
-    @RequestMapping(value = {"/work/roleValidate.json","/work/sequenceValidate.json"}, method = RequestMethod.POST)
+
+    @RequestMapping(value = { "/work/roleValidate.json", "/work/sequenceValidate.json" }, method = RequestMethod.POST)
     public @ResponseBody
     Work workRoleCreditedValidate(@RequestBody Work work) {
-        for (Contributor c:work.getContributors()) {
+        for (Contributor c : work.getContributors()) {
             c.getContributorSequence().setErrors(new ArrayList<String>());
             c.getContributorRole().setErrors(new ArrayList<String>());
-            boolean emptyRole = c.getContributorRole()==null || c.getContributorRole().getValue()==null || c.getContributorRole().getValue().trim().isEmpty();
-            boolean emptySequence = c.getContributorSequence()==null || c.getContributorSequence().getValue()==null || c.getContributorSequence().getValue().trim().isEmpty();
+            boolean emptyRole = c.getContributorRole() == null || c.getContributorRole().getValue() == null || c.getContributorRole().getValue().trim().isEmpty();
+            boolean emptySequence = c.getContributorSequence() == null || c.getContributorSequence().getValue() == null
+                    || c.getContributorSequence().getValue().trim().isEmpty();
             if (emptyRole && !emptySequence) {
                 setError(c.getContributorRole(), "NotBlank.currentWorkContributors.role");
             }
@@ -598,8 +651,6 @@ public class WorkspaceController extends BaseWorkspaceController {
         }
         return work;
     }
-
-
 
     @RequestMapping(value = "/work/workTypeValidate.json", method = RequestMethod.POST)
     public @ResponseBody
@@ -611,56 +662,46 @@ public class WorkspaceController extends BaseWorkspaceController {
 
         return work;
     }
-    
-
 
     @RequestMapping(value = "/work/workExternalIdentifiersValidate.json", method = RequestMethod.POST)
     public @ResponseBody
     Work workWorkExternalIdentifiersValidate(@RequestBody Work work) {
-        for (WorkExternalIdentifier wId:work.getWorkExternalIdentifiers()) {
+        for (WorkExternalIdentifier wId : work.getWorkExternalIdentifiers()) {
             wId.getWorkExternalIdentifierId().setErrors(new ArrayList<String>());
             wId.getWorkExternalIdentifierType().setErrors(new ArrayList<String>());
-            // if has id type must be specified 
-            if (wId.getWorkExternalIdentifierId().getValue() != null
-                    && !wId.getWorkExternalIdentifierId().getValue().trim().equals("")
-                    && (wId.getWorkExternalIdentifierType().getValue() == null
-                        || wId.getWorkExternalIdentifierType().getValue().equals(""))) {
-                setError(wId.getWorkExternalIdentifierType(), "NotBlank.currentWorkExternalIds.idType"); 
-            } else if (wId.getWorkExternalIdentifierId().getValue() != null 
-                    && wId.getWorkExternalIdentifierId().getValue().length() > 2084) {
+            // if has id type must be specified
+            if (wId.getWorkExternalIdentifierId().getValue() != null && !wId.getWorkExternalIdentifierId().getValue().trim().equals("")
+                    && (wId.getWorkExternalIdentifierType().getValue() == null || wId.getWorkExternalIdentifierType().getValue().equals(""))) {
+                setError(wId.getWorkExternalIdentifierType(), "NotBlank.currentWorkExternalIds.idType");
+            } else if (wId.getWorkExternalIdentifierId().getValue() != null && wId.getWorkExternalIdentifierId().getValue().length() > 2084) {
                 setError(wId.getWorkExternalIdentifierId(), "manualWork.length_less_2084");
             }
             // if type is set a id must set
-            if (wId.getWorkExternalIdentifierType().getValue() != null
-                    && !wId.getWorkExternalIdentifierType().getValue().trim().equals("")
-                    && (wId.getWorkExternalIdentifierId().getValue() == null
-                         || wId.getWorkExternalIdentifierId().getValue().trim().equals(""))) {
+            if (wId.getWorkExternalIdentifierType().getValue() != null && !wId.getWorkExternalIdentifierType().getValue().trim().equals("")
+                    && (wId.getWorkExternalIdentifierId().getValue() == null || wId.getWorkExternalIdentifierId().getValue().trim().equals(""))) {
                 setError(wId.getWorkExternalIdentifierId(), "NotBlank.currentWorkExternalIds.id");
             }
         }
-         
+
         return work;
     }
 
-    
     @RequestMapping(value = "/work/citationValidate.json", method = RequestMethod.POST)
     public @ResponseBody
     Work workCitationValidate(@RequestBody Work work) {
         work.getCitation().getCitation().setErrors(new ArrayList<String>());
         work.getCitation().getCitationType().setErrors(new ArrayList<String>());
-        
+
         // Citations must have a type
-        if (work.getCitation().getCitationType() == null 
-                || work.getCitation().getCitationType().getValue() == null
+        if (work.getCitation().getCitationType() == null || work.getCitation().getCitationType().getValue() == null
                 || work.getCitation().getCitationType().getValue().trim().equals("")) {
             setError(work.getCitation().getCitationType(), "NotBlank.manualWork.citationType");
         } else if (!work.getCitation().getCitationType().getValue().trim().equals(CitationType.FORMATTED_UNSPECIFIED.value())) {
-            // citation should not be blank if citation type is set 
-            if (work.getCitation().getCitation() == null || 
-                     work.getCitation().getCitation().getValue().trim().equals("")) {
+            // citation should not be blank if citation type is set
+            if (work.getCitation().getCitation() == null || work.getCitation().getCitation().getValue().trim().equals("")) {
                 setError(work.getCitation().getCitation(), "NotBlank.manualWork.citation");
             }
-            
+
             // if bibtext must be valid
             if (work.getCitation().getCitationType().getValue().equals(CitationType.BIBTEX.value())) {
                 try {
@@ -669,13 +710,12 @@ public class WorkspaceController extends BaseWorkspaceController {
                     setError(work.getCitation().getCitation(), "manualWork.bibtext.notValid");
                 }
             }
-        
+
         }
-        
+
         return work;
     }
 
-    
     private static void copyErrors(ErrorsInterface from, ErrorsInterface into) {
         for (String s : from.getErrors()) {
             into.getErrors().add(s);
@@ -686,22 +726,21 @@ public class WorkspaceController extends BaseWorkspaceController {
         ei.getErrors().add(getMessage(msg));
     }
 
-    
     /**
      * List works associated with a profile
      * */
     @RequestMapping(value = "/workIds.json", method = RequestMethod.GET)
     public @ResponseBody
     List<String> getWorksJson(HttpServletRequest request) {
-        //Get cached profile
+        // Get cached profile
         List<String> workIds = createWorksIdList(request);
         return workIds;
     }
 
     /**
-     * created a work id list and sorts a map associated with the list in
-     * in the session
-     *
+     * created a work id list and sorts a map associated with the list in in the
+     * session
+     * 
      */
     private List<String> createWorksIdList(HttpServletRequest request) {
         OrcidProfile currentProfile = getCurrentUser().getEffectiveProfile();
@@ -729,7 +768,7 @@ public class WorkspaceController extends BaseWorkspaceController {
     @RequestMapping(value = "/profileWork.json", method = RequestMethod.PUT)
     public @ResponseBody
     Work updateProfileWorkJson(HttpServletRequest request, @RequestBody Work work) {
-        //Get cached profile
+        // Get cached profile
         OrcidWork ow = work.toOrcidWork();
         OrcidProfile currentProfile = getCurrentUser().getEffectiveProfile();
         OrcidWorks orcidWorks = currentProfile.getOrcidActivities() == null ? null : currentProfile.getOrcidActivities().getOrcidWorks();
@@ -737,9 +776,10 @@ public class WorkspaceController extends BaseWorkspaceController {
             List<OrcidWork> orcidWorksList = orcidWorks.getOrcidWork();
             if (orcidWorksList != null) {
                 for (OrcidWork orcidWork : orcidWorksList) {
-                    //If the put codes are equal, we know that they are the same work
+                    // If the put codes are equal, we know that they are the
+                    // same work
                     if (orcidWork.getPutCode().equals(ow.getPutCode())) {
-                        //Update the privacy of the work
+                        // Update the privacy of the work
                         profileWorkManager.updateWork(currentProfile.getOrcid().getValue(), ow.getPutCode(), ow.getVisibility());
                     }
                 }
