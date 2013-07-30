@@ -16,7 +16,6 @@
  */
 package org.orcid.frontend.web.controllers;
 
-import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -27,7 +26,6 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 import org.orcid.core.manager.StatisticsManager;
-import org.orcid.core.utils.statistics.StatisticsEnum;
 import org.orcid.persistence.jpa.entities.StatisticKeyEntity;
 import org.orcid.persistence.jpa.entities.StatisticValuesEntity;
 import org.springframework.context.MessageSource;
@@ -50,14 +48,16 @@ public class StatisticsController extends BaseController {
         ModelAndView mav = new ModelAndView("statistics");
         Map<String, Long> statisticsMap = new HashMap<String, Long>();
                 
-        StatisticKeyEntity latestKey = statisticsManager.getLatestKey();
+        StatisticKeyEntity latestKey = null; //statisticsManager.getLatestKey();
         List<StatisticValuesEntity> statistics = statisticsManager.getLatestStatistics();
         
         if(statistics != null)
-            for(StatisticValuesEntity statistic : statistics){
+            for(StatisticValuesEntity statistic : statistics) {
                 statisticsMap.put(statistic.getStatisticName(), statistic.getStatisticValue());
+                if (latestKey == null) 
+                    latestKey = statistic.getKey();
             }        
-        
+            
         mav.addObject("statistics", statisticsMap);
         
         if(latestKey != null)
@@ -79,12 +79,7 @@ public class StatisticsController extends BaseController {
      * */
     @RequestMapping(value = "/liveids.json")    
     public @ResponseBody String getLiveIdsAmount(HttpServletRequest request) {        
-    	DecimalFormat formatter = new DecimalFormat(messageSource.getMessage("public-layout.number_format",null, request.getLocale()));
-    	StatisticValuesEntity entity = statisticsManager.getLatestStatistics(StatisticsEnum.KEY_LIVE_IDS.value());
-        if(entity == null)
-        	return formatter.format(0);
-        double amount = Double.parseDouble(String.valueOf(entity.getStatisticValue()));                
-        return formatter.format(amount);
+        return statisticsManager.getLiveIds(request.getLocale());
     }
     
 }

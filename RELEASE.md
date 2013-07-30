@@ -4,6 +4,23 @@ We release updates to the Registry regularly. Below is a list of the improvement
 * [2013 Releases](https://trello.com/b/ZgYVAlel)
 * [2012 Releases](https://trello.com/b/vyCDYdvR)
 
+## release-1.1.26.23
+(2013-07-26)
+
+* Versioned API
+
+* Locale is persisted
+
+* Improved work-external-identifier-id validation
+
+* Rework statistics page
+
+* Put email text in properties files
+
+* Public launch of statistics page
+
+
+
 ## release-1.1.24.10
 (2013-06-27)
 

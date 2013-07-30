@@ -66,6 +66,7 @@ import org.orcid.pojo.ajaxForm.Citation;
 import org.orcid.pojo.ajaxForm.Contributor;
 import org.orcid.pojo.ajaxForm.Date;
 import org.orcid.pojo.ajaxForm.ErrorsInterface;
+import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.pojo.ajaxForm.Visibility;
 import org.orcid.pojo.ajaxForm.Work;
@@ -84,7 +85,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.multiaction.NoSuchRequestHandlingMethodException;
-import org.springframework.web.util.HtmlUtils;
 
 /**
  * @author Will Simpson
@@ -202,6 +202,7 @@ public class WorkspaceController extends BaseWorkspaceController {
     @ModelAttribute("sequences")
     public Map<String, String> retrieveSequencesAsMap() {
         Map<String, String> map = new LinkedHashMap<String, String>();
+        map.put("", "");
         for (SequenceType sequenceType : SequenceType.values()) {
             map.put(sequenceType.value(), StringUtils.capitalize(sequenceType.value().replaceAll("[-]", " ")));
         }
@@ -222,7 +223,8 @@ public class WorkspaceController extends BaseWorkspaceController {
             mav.addObject("currentWorks", currentWorks);
         }
         mav.addObject("profile", profile);
-        mav.addObject("baseUri", getBaseUri());
+        mav.addObject("baseUri",getBaseUri());
+        mav.addObject("baseUriHttp",getBaseUriHttp());
         return mav;
     }
 
@@ -391,15 +393,20 @@ public class WorkspaceController extends BaseWorkspaceController {
         w.setCitation(c);
 
         Text wTypeText = new Text();
+        wTypeText.setValue("");
         wTypeText.setRequired(true);
         w.setWorkType(wTypeText);
 
         Date d = new Date();
+        d.setDay("");
+        d.setMonth("");
+        d.setYear("");
         w.setPublicationDate(d);
 
         WorkExternalIdentifier wdi = new WorkExternalIdentifier();
         Text wdiT = new Text();
         Text wdiType = new Text();
+        wdiType.setValue("");
         wdi.setWorkExternalIdentifierId(wdiT);
         wdi.setWorkExternalIdentifierType(wdiType);
         List<WorkExternalIdentifier> wdiL = new ArrayList<WorkExternalIdentifier>();
@@ -412,9 +419,11 @@ public class WorkspaceController extends BaseWorkspaceController {
         Contributor contr = new Contributor();
         List<Contributor> contrList = new ArrayList<Contributor>();
         Text rText = new Text();
+        rText.setValue("");
         contr.setContributorRole(rText);
 
-        Text sText = new Text();
+        Text sText= new Text();
+        sText.setValue("");
         contr.setContributorSequence(sText);
         contrList.add(contr);
         w.setContributors(contrList);
@@ -466,6 +475,8 @@ public class WorkspaceController extends BaseWorkspaceController {
             // Get current profile
             OrcidProfile currentProfile = getCurrentUser().getEffectiveProfile();
             OrcidWork newOw = work.toOrcidWork();
+            newOw.setPutCode("-1"); // put codes of -1 override new works visibility filtering settings.
+
             WorkEntity workEntity = toWorkEntity(newOw);
             // Create work
             workEntity = workManager.addWork(workEntity);
@@ -493,6 +504,7 @@ public class WorkspaceController extends BaseWorkspaceController {
 
             // Add the new work to the list of works
             currentProfile.getOrcidActivities().getOrcidWorks().getOrcidWork().add(newOw);
+
         }
 
         return work;
@@ -691,21 +703,23 @@ public class WorkspaceController extends BaseWorkspaceController {
     Work workCitationValidate(@RequestBody Work work) {
         work.getCitation().getCitation().setErrors(new ArrayList<String>());
         work.getCitation().getCitationType().setErrors(new ArrayList<String>());
-
-        // Citations must have a type
-        if (work.getCitation().getCitationType() == null || work.getCitation().getCitationType().getValue() == null
-                || work.getCitation().getCitationType().getValue().trim().equals("")) {
+        
+        // Citations must have a type if citation text has a vale
+        if (PojoUtil.isEmpty(work.getCitation().getCitationType())
+                && !PojoUtil.isEmpty(work.getCitation().getCitation())) {
             setError(work.getCitation().getCitationType(), "NotBlank.manualWork.citationType");
-        } else if (!work.getCitation().getCitationType().getValue().trim().equals(CitationType.FORMATTED_UNSPECIFIED.value())) {
-            // citation should not be blank if citation type is set
-            if (work.getCitation().getCitation() == null || work.getCitation().getCitation().getValue().trim().equals("")) {
+        } else if (!work.getCitation().getCitationType().getValue().trim().equals(CitationType.FORMATTED_UNSPECIFIED.value()) 
+                && !PojoUtil.isEmpty(work.getCitation().getCitationType())) {
+            // citation should not be blank if citation type is set 
+            if (work.getCitation().getCitation() == null || 
+                     work.getCitation().getCitation().getValue().trim().equals("")) {
                 setError(work.getCitation().getCitation(), "NotBlank.manualWork.citation");
             }
 
             // if bibtext must be valid
             if (work.getCitation().getCitationType().getValue().equals(CitationType.BIBTEX.value())) {
                 try {
-                    BibtexUtils.validate(HtmlUtils.htmlUnescape(work.getCitation().getCitationType().getValue()));
+                    BibtexUtils.validate(work.getCitation().getCitation().getValue());
                 } catch (BibtexException e) {
                     setError(work.getCitation().getCitation(), "manualWork.bibtext.notValid");
                 }
