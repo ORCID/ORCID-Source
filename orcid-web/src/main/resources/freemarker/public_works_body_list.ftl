@@ -30,9 +30,9 @@
                         <#if (ei.type = 'doi') && (ei.id)??>
                              <span class="work-metadata">${springMacroRequestContext.getMessage("workspace_works_body_list.DOI")} 
                             	<#if ei.id?starts_with('http://dx.doi.org/')>
-                            		<a href="http://dx.doi.org/${ei.id?replace('http://dx.doi.org/','')}">
+                            		<a href="http://dx.doi.org/${ei.id?replace('http://dx.doi.org/','')}" target="_blank">
                             	<#else>
-                            		<a href="http://dx.doi.org/${ei.id}">
+                            		<a href="http://dx.doi.org/${ei.id}" target="_blank">
                             	</#if>
                             		${ei.id}
                             	</a>
