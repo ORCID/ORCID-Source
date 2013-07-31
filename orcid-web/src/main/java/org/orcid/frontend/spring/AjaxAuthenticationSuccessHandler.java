@@ -92,14 +92,18 @@ public class AjaxAuthenticationSuccessHandler extends SimpleUrlAuthenticationSuc
                 if (prefs.getLocale() != null 
                         && prefs.getLocale().value() != null) {
                     String localeStr = request.getLocale().toString(); 
+                    
+                    // have to read the cookie directly since spring has populated the request locale yet
                     CookieLocaleResolver clr = new CookieLocaleResolver();
-                    clr.resolveLocale(request);
+                    clr.setCookieName("locale_v2"); /* must match <property name="cookieName" value="locale_v2" /> */
+                    Locale cookieLocale = org.orcid.jaxb.model.message.Locale.fromValue(clr.resolveLocale(request).toString());
                     
                     Locale lastKnownLocale = op.getOrcidInternal().getPreferences().getLocale();
-                    Locale currentLocal = org.orcid.jaxb.model.message.Locale.fromValue(localeStr);
-                     
-                    if (!lastKnownLocale.equals(currentLocal)) {
-                        prefs.setLocale(currentLocal);
+                    
+                    // update the users preferences, so that
+                    // send out emails in their last chosen language 
+                    if (!lastKnownLocale.equals(cookieLocale)) {
+                        prefs.setLocale(cookieLocale);
                         op.getOrcidInternal().setPreferences(prefs);
                         orcidProfileManager.updatePreferences(op);
                     }
