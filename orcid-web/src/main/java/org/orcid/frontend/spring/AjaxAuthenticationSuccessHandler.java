@@ -25,7 +25,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.orcid.core.manager.OrcidProfileManager;
+import org.orcid.jaxb.model.message.Locale;
 import org.orcid.jaxb.model.message.OrcidProfile;
+import org.orcid.jaxb.model.message.Preferences;
 import org.orcid.utils.OrcidWebUtils;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
@@ -61,23 +63,51 @@ public class AjaxAuthenticationSuccessHandler extends SimpleUrlAuthenticationSuc
         response.getWriter().println("{\"success\": true, \"url\": \"" + targetUrl.replaceAll("^/", "") + "\"}");
     }
     
+    
+    
+//    old method would switch the current locale to user's preferred locale
+//    private void checkLocale(HttpServletRequest request, HttpServletResponse response, String orcidId) {
+//        OrcidProfile op = orcidProfileManager.retrieveOrcidProfile(orcidId);
+//        if (op != null) {
+//            if (op.getOrcidInternal() != null 
+//                    && op.getOrcidInternal().getPreferences() != null
+//                    && op.getOrcidInternal().getPreferences().getLocale() != null 
+//                    && op.getOrcidInternal().getPreferences().getLocale().value() != null) {
+//                String preferedLocale = op.getOrcidInternal().getPreferences().getLocale().value();
+//                // hack to write/rewrite correct locale cookie on login.
+//                CookieLocaleResolver clr = new CookieLocaleResolver();
+//                clr.setCookieName("locale_v2"); /* must match <property name="cookieName" value="locale_v2" /> */
+//                clr.setLocale(request, response, StringUtils.parseLocaleString(preferedLocale));
+//            }            
+//        }
+//    }
+    
+    // new method - persist which ever local they logged in with
     private void checkLocale(HttpServletRequest request, HttpServletResponse response, String orcidId) {
         OrcidProfile op = orcidProfileManager.retrieveOrcidProfile(orcidId);
         if (op != null) {
             if (op.getOrcidInternal() != null 
-                    && op.getOrcidInternal().getPreferences() != null
-                    && op.getOrcidInternal().getPreferences().getLocale() != null 
-                    && op.getOrcidInternal().getPreferences().getLocale().value() != null) {
-                String preferedLocale = op.getOrcidInternal().getPreferences().getLocale().value();
-                // hack to write/rewrite correct locale cookie on login.
-                CookieLocaleResolver clr = new CookieLocaleResolver();
-                clr.setCookieName("locale_v2"); /* must match <property name="cookieName" value="locale_v2" /> */
-                clr.setLocale(request, response, StringUtils.parseLocaleString(preferedLocale));
+                    && op.getOrcidInternal().getPreferences() != null) {
+                Preferences prefs = op.getOrcidInternal().getPreferences();
+                if (prefs.getLocale() != null 
+                        && prefs.getLocale().value() != null) {
+                    String localeStr = request.getLocale().toString(); 
+                    CookieLocaleResolver clr = new CookieLocaleResolver();
+                    clr.resolveLocale(request);
+                    
+                    Locale lastKnownLocale = op.getOrcidInternal().getPreferences().getLocale();
+                    Locale currentLocal = org.orcid.jaxb.model.message.Locale.fromValue(localeStr);
+                     
+                    if (!lastKnownLocale.equals(currentLocal)) {
+                        prefs.setLocale(currentLocal);
+                        op.getOrcidInternal().setPreferences(prefs);
+                        orcidProfileManager.updatePreferences(op);
+                    }
+                }
             }
-            
         }
-        
     }
+
 
     private String determineFullTargetUrlFromSavedRequest(HttpServletRequest request, HttpServletResponse response) {
         SavedRequest savedRequest = new HttpSessionRequestCache().getRequest(request, response);
