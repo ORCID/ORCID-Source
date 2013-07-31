@@ -20,6 +20,11 @@
 
 <#include "sandbox_warning.ftl"/>
 <div class="row">
+		<#if invalidVerifyUrl?? && invalidVerifyUrl>
+		    <div class="alert alert-success">
+		        <strong><@spring.message "orcid.frontend.web.invalid_verify_link"/></strong>
+		    </div>
+		</#if>
         <form class="form-sign-in" id="loginForm" action="<@spring.url '/signin/auth'/>" method="post">
             <@spring.bind "loginForm" />
             <@spring.showErrors "<br/>" "error" />

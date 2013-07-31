@@ -33,6 +33,7 @@ import javax.validation.Valid;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
+import org.jasypt.exceptions.EncryptionOperationNotPossibleException;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.OrcidProfileManager;
@@ -777,13 +778,17 @@ public class RegistrationController extends BaseController {
 
     private ModelAndView buildVerificationView(HttpServletRequest request, String encryptedEmail, RedirectAttributes redirectAttributes)
             throws UnsupportedEncodingException, NoSuchRequestHandlingMethodException {
-        String decryptedEmail = encryptionManager.decryptForExternalUse(new String(Base64.decodeBase64(encryptedEmail), "UTF-8"));
-        if (!isEmailOkForCurrentUser(decryptedEmail)) {
-            return new ModelAndView("wrong_user");
-        }
-        OrcidProfile orcidProfile = orcidProfileManager.retrieveOrcidProfileByEmail(decryptedEmail);
-        confirmEmailAndClaim(decryptedEmail, orcidProfile, null, request);
-        redirectAttributes.addFlashAttribute("emailVerified", true);
+    	try {
+	        String decryptedEmail = encryptionManager.decryptForExternalUse(new String(Base64.decodeBase64(encryptedEmail), "UTF-8"));
+	        if (!isEmailOkForCurrentUser(decryptedEmail)) {
+	            return new ModelAndView("wrong_user");
+	        }
+	        OrcidProfile orcidProfile = orcidProfileManager.retrieveOrcidProfileByEmail(decryptedEmail);
+	        confirmEmailAndClaim(decryptedEmail, orcidProfile, null, request);
+	        redirectAttributes.addFlashAttribute("emailVerified", true);
+    	} catch (EncryptionOperationNotPossibleException eonpe){
+    		
+    	}
         return new ModelAndView("redirect:/my-orcid");
     }
 
