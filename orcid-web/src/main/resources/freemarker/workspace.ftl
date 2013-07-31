@@ -64,8 +64,8 @@
 	       	</#if>
 	       	<#if (profile.orcidBio.researcherUrls)?? && (profile.orcidBio.researcherUrls.researcherUrl?size != 0)>
 	        	<p><strong><@orcid.msg 'public_profile.labelWebsites'/></strong> <br/>
-		       		<#list profile.orcidBio.researcherUrls.researcherUrl as url>		       		
-		       		   <a href="<@orcid.absUrl url.url/>"><#if (url.urlName.content)! != "">${url.urlName.content}<#else>${url.url.value}</#if></a><#if url_has_next><br/></#if>
+		       		<#list profile.orcidBio.researcherUrls.researcherUrl as url>
+		       		   <a href="<@orcid.absUrl url.url/>" target="_blank"><#if (url.urlName.content)! != "">${url.urlName.content}<#else>${url.url.value}</#if></a><#if url_has_next><br/></#if>
 		       		</#list></p>
 	       	</#if>
        		<div ng-controller="ExternalIdentifierCtrl" ng-hide="!externalIdentifiersPojo.externalIdentifiers.length" ng-cloak>	       			
