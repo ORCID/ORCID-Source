@@ -787,6 +787,7 @@ public class RegistrationController extends BaseController {
 	        confirmEmailAndClaim(decryptedEmail, orcidProfile, null, request);
 	        redirectAttributes.addFlashAttribute("emailVerified", true);
     	} catch (EncryptionOperationNotPossibleException eonpe){
+    		LOGGER.warn("Error decypting verify email from the verify email link");
     		redirectAttributes.addFlashAttribute("invalidVerifyUrl", true);    		
     	}
         return new ModelAndView("redirect:/my-orcid");
