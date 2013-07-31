@@ -42,7 +42,11 @@
                     </#list>
                 </#if>
                 <#if (work.url)??>
-                    <div><a href="${work.url}">${work.url}</a></div>
+                	<#assign curUrl = work.url> 
+                	<#if !work.url?starts_with('http')>
+                		<#assign curUrl = 'http://' + work.url>
+                	</#if>
+                    <div><a href="${curUrl}" target="_blank">${work.url}</a></div>
                 </#if>
                 <#if (work.description)?? && work.description?has_content>
                     <div>${work.description}</div>

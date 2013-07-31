@@ -49,7 +49,7 @@
 	                		<span>${springMacroRequestContext.getMessage("workspace_works_body_list.DOI")} <a href="http://dx.doi.org/{{ie.workExternalIdentifierId.value.replace('http://dx.doi.org/','')}}">{{ie.workExternalIdentifierId.value}}</a></span>	          
 	                	</span>                	             
 	                </span>
-	                <span ng-show="work.url.value" style=" display: inline-block;">URL: <a href="{{work.url.value}}">{{work.url.value}}</a></span>
+	                <span ng-show="work.url.value" style=" display: inline-block;">URL: <a href="{{work.url.value | urlWithHttp}}" target="_blank">{{work.url.value}}</a></span>
 	            </div>
                 
                 <div ng-show="work.shortDescription" ng-bind-html-unsafe="work.shortDescription.value" style="width: 680px;"></div>
