@@ -16,6 +16,7 @@
  */
 package org.orcid.core.cron.impl;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Map;
 
@@ -38,29 +39,36 @@ public class StatisticsGeneratorCronJobImpl implements StatisticsGeneratorCronJo
     @Resource
     private StatisticsManager statisticsManager;
 
-    // 30 Minutes in millis
-    private long offset = 30 * 60 * 1000;
+    private long halfHourInMillis = 30 * 60 * 1000;
     
-    public StatisticsGeneratorCronJobImpl(){
-    }
+    private long hourInMillis = halfHourInMillis * 2;
+    
+    private long dayInMillis = 24 * hourInMillis;
+    
+    private long weekInMillis = dayInMillis * 7;        
     
     /**
      * Cron job that will generate statistics and store them on database
      * */
     @Override
-    public void generateStatistics() {        
+    public void generateStatistics() {
         LOG.debug("About to run statistics generator thread");
-        boolean run = true;
+        boolean run = false;
         StatisticKeyEntity lastStatisticsKey = statisticsManager.getLatestKey();
         
         if(lastStatisticsKey != null && lastStatisticsKey.getGenerationDate() != null){
-            LOG.info("Last time the statistics were generated: {}", lastStatisticsKey.getGenerationDate());
+        	Date lastTimeJobRuns = lastStatisticsKey.getGenerationDate();        	
+        	boolean isTimeToRun = isFridayNearMidnight();
+        	long offset = System.currentTimeMillis() - lastTimeJobRuns.getTime();
+        	LOG.info("Last time the statistics were generated: {}", lastTimeJobRuns);            
+            LOG.info("Is time to run the scheduler? {}", isTimeToRun);
             
-            long currentTime = System.currentTimeMillis();
-            long lastRunInMillis = lastStatisticsKey.getGenerationDate().getTime();
+            if(offset > weekInMillis || (isTimeToRun && offset > halfHourInMillis) ){
+            	run = true;
+            }
             
-            if(currentTime - lastRunInMillis < offset)
-                run = false;
+        } else {
+        	LOG.warn("There are no statistics generated yet.");
         }                                
         
         if(run){
@@ -73,5 +81,25 @@ public class StatisticsGeneratorCronJobImpl implements StatisticsGeneratorCronJo
                 statisticsManager.saveStatistic(statisticKey, key, statistics.get(key));
             }
         }
-    }        
+    }
+    
+    /**
+     * @return true if it is Friday 11:30 PM or later, false otherwise. 
+     * */
+    public boolean isFridayNearMidnight(){
+    	Calendar c = Calendar.getInstance();
+    	int dayOfWeek = c.get(Calendar.DAY_OF_WEEK);
+    	// If it is friday
+    	if(dayOfWeek == Calendar.FRIDAY){
+    		// And it is 11 PM
+    		if(c.get(Calendar.HOUR_OF_DAY) == 23){
+    			// And it is later than 11:30 pm
+    			if(c.get(Calendar.MINUTE) >= 30){
+    				return true;
+    			}
+    		}
+    	}
+    	
+    	return false;
+    }
 }
