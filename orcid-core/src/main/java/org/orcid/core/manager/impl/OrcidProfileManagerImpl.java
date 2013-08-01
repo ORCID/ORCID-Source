@@ -722,6 +722,19 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         existingProfile.getOrcidInternal().setPreferences(preferences);
         return updateOrcidProfile(existingProfile);
     }
+    
+    @Override
+    @Transactional
+    public OrcidProfile updateOrcidPreferences(OrcidProfile updatedOrcidProfile) {
+        OrcidProfile existingProfile = retrieveOrcidProfile(updatedOrcidProfile.getOrcid().getValue());
+        if (existingProfile == null) {
+            return null;
+        }
+        
+        existingProfile.setOrcidPreferences(updatedOrcidProfile.getOrcidPreferences());
+        return updateOrcidProfile(existingProfile);
+    }
+
 
     @Override
     @Transactional

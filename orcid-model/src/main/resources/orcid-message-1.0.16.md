@@ -1,4 +1,4 @@
-# Summary of API Changes from 1.0.14 to 1.0.15
+# Summary of API Changes from 1.0.15 to 1.0.16
 
 * Added Locale to Preferences
 

@@ -38,15 +38,12 @@ public class Preferences extends org.orcid.jaxb.model.message.Preferences implem
         this.setSendChangeNotifications(new SendChangeNotifications());
         this.setSendOrcidNews(new SendOrcidNews());
         this.setWorkVisibilityDefault(new WorkVisibilityDefault());
-        this.setLocale(Locale.EN);
-
     }
 
     public Preferences(org.orcid.jaxb.model.message.Preferences castPreferences) {
         this.setSendChangeNotifications(castPreferences.getSendChangeNotifications());
         this.setSendOrcidNews(castPreferences.getSendOrcidNews());
         this.setWorkVisibilityDefault(castPreferences.getWorkVisibilityDefault());
-        this.setLocale(castPreferences.getLocale());
     }
 
     public List<String> getErrors() {

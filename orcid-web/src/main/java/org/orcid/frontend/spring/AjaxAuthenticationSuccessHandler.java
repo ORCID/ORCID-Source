@@ -64,11 +64,9 @@ public class AjaxAuthenticationSuccessHandler extends SimpleUrlAuthenticationSuc
     private void checkLocale(HttpServletRequest request, HttpServletResponse response, String orcidId) {
         OrcidProfile op = orcidProfileManager.retrieveOrcidProfile(orcidId);
         if (op != null) {
-            if (op.getOrcidInternal() != null 
-                    && op.getOrcidInternal().getPreferences() != null
-                    && op.getOrcidInternal().getPreferences().getLocale() != null 
-                    && op.getOrcidInternal().getPreferences().getLocale().value() != null) {
-                String preferedLocale = op.getOrcidInternal().getPreferences().getLocale().value();
+            if (op.getOrcidPreferences() != null
+                    && op.getOrcidPreferences().getLocale() != null) {
+                String preferedLocale = op.getOrcidPreferences().getLocale().value();
                 // hack to write/rewrite correct locale cookie on login.
                 CookieLocaleResolver clr = new CookieLocaleResolver();
                 clr.setCookieName("locale_v2"); /* must match <property name="cookieName" value="locale_v2" /> */
