@@ -91,6 +91,14 @@ orcidNgModule.factory("prefsSrvc", function ($rootScope) {
 });
 
 
+orcidNgModule.filter('urlWithHttp', function(){
+	return function(input, output){
+		if (input == null) return input;
+		if (!input.startsWith('http')) return 'http://' + input; 
+	    return input;
+	};
+});
+
 
 function EditTableCtrl($scope) {
 	
