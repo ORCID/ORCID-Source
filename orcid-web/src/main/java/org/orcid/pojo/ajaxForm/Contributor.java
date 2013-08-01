@@ -71,9 +71,9 @@ public class Contributor implements ErrorsInterface, Serializable {
         org.orcid.jaxb.model.message.Contributor c = new org.orcid.jaxb.model.message.Contributor();
         if (this.getContributorRole() != null || this.getContributorSequence() != null) {
             org.orcid.jaxb.model.message.ContributorAttributes ca = new org.orcid.jaxb.model.message.ContributorAttributes();
-            if (this.getContributorRole() != null && this.getContributorRole().getValue() != null)
+            if (!PojoUtil.isEmpty(this.getContributorRole()))
                 ca.setContributorRole(ContributorRole.fromValue(this.getContributorRole().getValue()));
-            if (this.getContributorSequence() != null && this.getContributorSequence().getValue() != null)
+            if (!PojoUtil.isEmpty(this.getContributorSequence()))
                 ca.setContributorSequence(SequenceType.fromValue(this.getContributorSequence().getValue()));
             c.setContributorAttributes(ca);
         }

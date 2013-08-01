@@ -1259,25 +1259,6 @@ function QuickSearchCtrl($scope, $compile){
 	$scope.getResults(10);
 }
 
-function statisticCtrl($scope){	
-	$scope.liveIds = 0;	
-	$scope.getLiveIds = function(){
-		$.ajax({
-	        url: $('body').data('baseurl')+'statistics/liveids.json',	        
-	        type: 'GET',
-	        dataType: 'html',
-	        success: function(data){
-	        	$scope.liveIds = data;
-	        	$scope.$apply($scope.liveIds);	        		        	
-	        }
-	    }).fail(function(error) { 
-	    	// something bad is happening!	    	
-	    	console.log("Error getting statistics Live iDs total amount");	    	
-	    });
-	};
-	
-	$scope.getLiveIds();
-}
 
 function languageCtrl($scope, $cookies){		
 	$scope.languages = 
@@ -1334,4 +1315,4 @@ function languageCtrl($scope, $cookies){
 	    	console.log("Error setting up language cookie");	    	
 	    });		
 	};
-}
+};
