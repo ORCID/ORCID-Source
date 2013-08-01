@@ -26,6 +26,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.jaxb.model.message.Locale;
+import org.orcid.jaxb.model.message.OrcidPreferences;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.Preferences;
 import org.orcid.utils.OrcidWebUtils;
@@ -86,9 +87,8 @@ public class AjaxAuthenticationSuccessHandler extends SimpleUrlAuthenticationSuc
     private void checkLocale(HttpServletRequest request, HttpServletResponse response, String orcidId) {
         OrcidProfile op = orcidProfileManager.retrieveOrcidProfile(orcidId);
         if (op != null) {
-            if (op.getOrcidInternal() != null 
-                    && op.getOrcidInternal().getPreferences() != null) {
-                Preferences prefs = op.getOrcidInternal().getPreferences();
+            if (op.getOrcidPreferences() != null) {
+                OrcidPreferences prefs = op.getOrcidPreferences();
                 if (prefs.getLocale() != null 
                         && prefs.getLocale().value() != null) {
                     String localeStr = request.getLocale().toString(); 
@@ -98,13 +98,13 @@ public class AjaxAuthenticationSuccessHandler extends SimpleUrlAuthenticationSuc
                     clr.setCookieName("locale_v2"); /* must match <property name="cookieName" value="locale_v2" /> */
                     Locale cookieLocale = org.orcid.jaxb.model.message.Locale.fromValue(clr.resolveLocale(request).toString());
                     
-                    Locale lastKnownLocale = op.getOrcidInternal().getPreferences().getLocale();
+                    Locale lastKnownLocale = prefs.getLocale();
                     
                     // update the users preferences, so that
                     // send out emails in their last chosen language 
                     if (!lastKnownLocale.equals(cookieLocale)) {
                         prefs.setLocale(cookieLocale);
-                        op.getOrcidInternal().setPreferences(prefs);
+                        op.setOrcidPreferences(prefs);
                         orcidProfileManager.updatePreferences(op);
                     }
                 }

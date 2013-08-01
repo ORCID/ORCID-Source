@@ -172,6 +172,19 @@
         <property name="version" value="1.0.16" />
     </bean>
     
+    <bean id="incomingValidationManagerV1_0_17" class="org.orcid.core.manager.impl.ValidationManagerForLegacyApiVersionsImpl">
+        <property name="validationBehaviour"
+            value="${org.orcid.core.manager.validationBehaviour:THROW_VALIDATION_EXCEPTION}" />
+        <property name="version" value="1.0.17" />
+        <property name="requireOrcidProfile" value="true"/>
+    </bean>
+    <bean id="outgoingValidationManagerV1_0_17" class="org.orcid.core.manager.impl.ValidationManagerImpl">
+        <property name="validationBehaviour"
+            value="${org.orcid.core.manager.validationBehaviour:LOG_WARNING}" />
+        <property name="validateBibtex" value="false"/>
+        <property name="version" value="1.0.17" />
+    </bean>
+
 
 	<bean id="localeManager" class="org.orcid.core.locale.LocaleManagerImpl" />
 
@@ -182,9 +195,7 @@
 	<bean id="statisticsManager" class="org.orcid.core.manager.impl.StatisticsManagerImpl" />
 	
 	<!-- Statistics Cron Job -->
-	<bean id="statisticsCronJob" class="org.orcid.core.cron.impl.StatisticsGeneratorCronJobImpl">
-		<constructor-arg value="5"></constructor-arg>
-	</bean>
+	<bean id="statisticsCronJob" class="org.orcid.core.cron.impl.StatisticsGeneratorCronJobImpl" />
 	
 	<bean id="emailManager" class="org.orcid.core.manager.impl.EmailManagerImpl" />
 	
@@ -203,6 +214,10 @@
 	
 	<bean id="profileEventManager" class="org.orcid.core.profileEvent.ProfileEventManager" />
 	
+	<bean id="workManager" class="org.orcid.core.manager.impl.WorkManagerImpl" />
+	
+	<bean id="workContributorManager" class="org.orcid.core.manager.impl.WorkContributorManagerImpl" />
+	
 	<bean id="crossRefEmail" class="org.orcid.core.profileEvent.CrossRefEmail" scope="prototype"/>
 
 	<bean id="messageSource"
@@ -217,6 +232,7 @@
 	        <list>
 	            <bean class="org.orcid.core.version.impl.OrcidMessageVersionConverterImplV1_0_14ToV1_0_15"/>
 	            <bean class="org.orcid.core.version.impl.OrcidMessageVersionConverterImplV1_0_15ToV1_0_16"/>
+	            <bean class="org.orcid.core.version.impl.OrcidMessageVersionConverterImplV1_0_16ToV1_0_17"/>
 	        </list>
 	    </property>
 	</bean>

@@ -115,6 +115,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         profile.setOrcidBio(getOrcidBio(profileEntity));
         profile.setOrcidHistory(getOrcidHistory(profileEntity));
         profile.setOrcidInternal(getOrcidInternal(profileEntity));
+        profile.setOrcidPreferences(getOrcidPreferences(profileEntity));
         profile.setPassword(profileEntity.getEncryptedPassword());
         profile.setSecurityQuestionAnswer(profileEntity.getEncryptedSecurityAnswer());
         profile.setType(type == null ? OrcidType.USER : type);
@@ -652,8 +653,10 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
                             }
 
                             applicationSummary.setScopePaths(scopePaths);
+                            // Only add to list if there is a scope (if no
+                            // scopes then has been used and is defunct)
+                            applications.getApplicationSummary().add(applicationSummary);
                         }
-                        applications.getApplicationSummary().add(applicationSummary);
                     }
 
                 }
@@ -849,6 +852,15 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         }
         return null;
     }
+    
+    private OrcidPreferences getOrcidPreferences(ProfileEntity profileEntity) {
+        OrcidPreferences orcidPreferences = new OrcidPreferences();
+        if (profileEntity.getLocale() == null) 
+            orcidPreferences.setLocale(Locale.EN);
+        else
+            orcidPreferences.setLocale(profileEntity.getLocale());
+        return orcidPreferences;
+    }
 
     private OrcidInternal getOrcidInternal(ProfileEntity profileEntity) {
         OrcidInternal orcidInternal = new OrcidInternal();
@@ -860,14 +872,10 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         securityDetails.setEncryptedSecurityAnswer(profileEntity.getEncryptedSecurityAnswer() != null ? new EncryptedSecurityAnswer(profileEntity
                 .getEncryptedSecurityAnswer()) : null);
         securityDetails.setEncryptedVerificationCode(profileEntity.getEncryptedVerificationCode() != null ? new EncryptedVerificationCode(profileEntity
-                .getEncryptedVerificationCode()) : null);
-
+                .getEncryptedVerificationCode()) : null);        
+        
         Preferences preferences = new Preferences();
         orcidInternal.setPreferences(preferences);
-        if (profileEntity.getLocale() == null) 
-            preferences.setLocale(Locale.EN);
-        else
-            preferences.setLocale(profileEntity.getLocale());
         preferences.setSendChangeNotifications(profileEntity.getSendChangeNotifications() == null ? null : new SendChangeNotifications(profileEntity
                 .getSendChangeNotifications()));
         preferences.setSendOrcidNews(profileEntity.getSendOrcidNews() == null ? null : new SendOrcidNews(profileEntity.getSendOrcidNews()));

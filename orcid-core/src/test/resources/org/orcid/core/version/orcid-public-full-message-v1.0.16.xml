@@ -18,20 +18,23 @@
 
 -->
 <orcid-message xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-               xsi:schemaLocation="http://www.orcid.org/ns/orcid ../../../../orcid-model/src/main/resources/orcid-message-1.0.17.xsd"
+               xsi:schemaLocation="http://www.orcid.org/ns/orcid ../../../../orcid-model/src/main/resources/orcid-message-1.0.16.xsd"
                xmlns="http://www.orcid.org/ns/orcid">
-    <message-version>1.0.17</message-version>
+    <message-version>1.0.15</message-version>
+    <!-- Error message, if applicable -->
+    <!-- Unable to connect to ORCID, no matching researchers, etc. -->
+    <!-- <error-desc>No researcher found.</error-desc> -->
     <orcid-profile>
         <orcid>4444-4444-4444-4446</orcid>
         <orcid-id>http://orcid.org/4444-4444-4444-4446</orcid-id>
-        <orcid-preferences>
-        	<locale>zh_CN</locale>
-        </orcid-preferences>
         <orcid-history>
             <creation-method>API</creation-method>
             <completion-date>2012-10-09T15:50:07</completion-date>
             <submission-date>2012-10-09T15:50:07</submission-date>
+            <!-- In short, researcher has claimed the profile if confirmed=true -->
             <claimed>true</claimed>
+            <!-- The name of the institution that invited the researcher 
+                to register with ORCID -->
             <source>
                 <source-orcid>8888-8888-8888-8880</source-orcid>
                 <source-name>Brown University Library</source-name>
@@ -44,7 +47,7 @@
                 <family-name>Carberry</family-name>
             </personal-details>
             <researcher-urls>
-                <researcher-url>
+                <researcher-url >
                     <url-name>Carberry-Hay</url-name>
                     <url>http://library.brown.edu/about/hay/carberry.php</url>
                 </researcher-url>
@@ -57,6 +60,11 @@
                     <url>http://www.brown.edu/Administration/News_Bureau/Databases/Encyclopedia/search.php?serial=C0070</url>
                 </researcher-url>
             </researcher-urls>
+            <contact-details>
+                <address>
+                    <country>US</country>
+                </address>
+            </contact-details>
             <keywords>
                 <keyword>Bilocation</keyword>
             </keywords>
@@ -70,12 +78,18 @@
                 <affiliation>
                     <affiliation-name>Brown University</affiliation-name>
                     <affiliation-type>funded-by</affiliation-type>
+                    <address>
+                        <country>United States</country>
+                    </address>
                     <department-name>Psychoceramics</department-name>
                     <role-title>Researcher (Academic)</role-title>
                 </affiliation>
                 <affiliation>
                     <affiliation-name>Yale University</affiliation-name>
                     <affiliation-type>current-primary-institution</affiliation-type>
+                    <address>
+                        <country visibility="limited">United States</country>
+                    </address>
                     <department-name>Law</department-name>
                     <role-title>Researcher (Academic)</role-title>
                 </affiliation>
@@ -89,22 +103,23 @@
                         <subtitle>Work subtitle 1</subtitle>
                     </work-title>
                     <work-citation>
-                        <work-citation-type>formatted-apa</work-citation-type>
-                        <citation>Carberry, Josiah S., John W. Spaeth, and Paulo Di Fillipo. "Neanderthal Man." Book of Prehistory. N.p.: Brown UP, 2012. 450-70. 09 Oct. 2012. Web.</citation>
+                        <work-citation-type>bibtex</work-citation-type>
+                        <citation>@article{anarticle, title = {Example title from bibtex} }</citation>
                     </work-citation>
+                </orcid-work>
+                <orcid-work>
+                    <work-title>
+                        <title>Work title 2</title>
+                        <subtitle>Work subtitle 2</subtitle>
+                    </work-title>
+                    <work-type>bible</work-type>
+                </orcid-work>
+                <orcid-work>
+                    <work-title>
+                        <title>Work Title 3</title>
+                        <subtitle>Work subtitle 3</subtitle>
+                    </work-title>
                     <work-type>religious-text</work-type>
-                    <work-contributors>
-                        <contributor>
-                            <contributor-orcid>4444-4444-4444-4446</contributor-orcid>
-                            <contributor-attributes>
-                                <contributor-sequence>first</contributor-sequence>
-                                <contributor-role>author</contributor-role>
-                            </contributor-attributes>
-                        </contributor>
-                        <contributor>
-                            <credit-name>John W. Spaeth</credit-name>
-                        </contributor>
-                    </work-contributors>
                 </orcid-work>
             </orcid-works>
             <orcid-grants>
@@ -123,6 +138,7 @@
                     <grant-contributors>
                         <contributor>
                             <contributor-orcid>2111-1111-1111-1103</contributor-orcid>
+                            <credit-name>Credit Name</credit-name>
                             <contributor-attributes>
                                 <contributor-sequence>first</contributor-sequence>
                                 <contributor-role>postdoctoral-researcher</contributor-role>
@@ -130,6 +146,7 @@
                         </contributor>
                         <contributor>
                             <contributor-orcid>2111-1111-1111-1104</contributor-orcid>
+                            <credit-name>Credit Name</credit-name>
                             <contributor-attributes>
                                 <contributor-sequence>additional</contributor-sequence>
                                 <contributor-role>graduate-student</contributor-role>
@@ -152,12 +169,18 @@
             </orcid-grants>
             <orcid-patents>
                 <orcid-patent put-code="3">
+                    <country>Great Britain</country>
                     <patent-number>GB2447776</patent-number>
                     <short-description>POLYCRYSTALLINE DIAMOND CONSTRUCTIONS HAVING IMPROVED THERMAL STABILITY</short-description>
                     <patent-issue-date>2012-03-20T00:00:00</patent-issue-date>
+                    <assignee>
+                        <assignee-orcid>0000-8928-9282-9282</assignee-orcid>
+                        <assignee-name>MADAPUSI K KESHAVAN</assignee-name>
+                    </assignee>
                     <patent-contributors>
                         <contributor>
                             <contributor-orcid>2111-1111-1111-1123</contributor-orcid>
+                            <credit-name>Francis Rossi</credit-name>
                             <contributor-attributes>
                                 <contributor-sequence>first</contributor-sequence>
                                 <contributor-role>principal-investigator</contributor-role>
@@ -165,6 +188,7 @@
                         </contributor>
                         <contributor>
                             <contributor-orcid>2111-1111-1111-1124</contributor-orcid>
+                            <credit-name>Rick Parfitt</credit-name>
                             <contributor-attributes>
                                 <contributor-sequence>additional</contributor-sequence>
                                 <contributor-role>support-staff</contributor-role>

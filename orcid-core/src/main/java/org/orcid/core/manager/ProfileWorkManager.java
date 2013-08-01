@@ -62,4 +62,21 @@ public interface ProfileWorkManager {
      * @return the profileWork object
      * */
     ProfileWorkEntity getProfileWork(String clientOrcid, String workId);
+    
+    /**
+     * Creates a new profile entity relationship between the provided work and
+     * the given profile.
+     * 
+     * @param orcid
+     *            The profile id
+     * 
+     * @param workId
+     *            The work id
+     * 
+     * @param visibility
+     *            The work visibility
+     * 
+     * @return true if the profile work relationship was created
+     * */
+    boolean addProfileWork(String orcid, long workId, Visibility visibility);
 }

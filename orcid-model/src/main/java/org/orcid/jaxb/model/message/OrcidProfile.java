@@ -55,7 +55,7 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "orcid", "orcidId", "orcidHistory", "orcidBio", "orcidActivities", "orcidInternal" })
+@XmlType(name = "", propOrder = { "orcid", "orcidId", "orcidPreferences", "orcidHistory", "orcidBio", "orcidActivities", "orcidInternal" })
 @XmlRootElement(name = "orcid-profile")
 public class OrcidProfile implements Serializable {
 
@@ -64,6 +64,9 @@ public class OrcidProfile implements Serializable {
 
     @XmlElement(name = "orcid-id")
     protected String orcidId;
+
+    @XmlElement(name = "orcid-preferences")
+    private OrcidPreferences orcidPreferences;
 
     @XmlElement(name = "orcid-history")
     protected OrcidHistory orcidHistory;
@@ -421,6 +424,14 @@ public class OrcidProfile implements Serializable {
         } else if (!verificationCode.equals(other.verificationCode))
             return false;
         return true;
+    }
+
+    public OrcidPreferences getOrcidPreferences() {
+        return orcidPreferences;
+    }
+
+    public void setOrcidPreferences(OrcidPreferences orcidPreferences) {
+        this.orcidPreferences = orcidPreferences;
     }
 
 }

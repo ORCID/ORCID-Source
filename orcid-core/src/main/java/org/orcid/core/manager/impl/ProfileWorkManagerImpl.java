@@ -32,9 +32,10 @@ public class ProfileWorkManagerImpl implements ProfileWorkManager {
      * Removes the relationship that exists between a work and a profile.
      * 
      * @param clientOrcid
-     *          The client orcid 
+     *            The client orcid
      * @param workId
-     *          The id of the work that will be removed from the client profile     
+     *            The id of the work that will be removed from the client
+     *            profile
      * @return true if the relationship was deleted
      * */
     @Override
@@ -46,14 +47,14 @@ public class ProfileWorkManagerImpl implements ProfileWorkManager {
      * Updates the visibility of an existing profile work relationship
      * 
      * @param clientOrcid
-     *          The client orcid
-     *          
+     *            The client orcid
+     * 
      * @param workId
-     *          The id of the work that will be updated
-     *          
+     *            The id of the work that will be updated
+     * 
      * @param visibility
-     *          The new visibility value for the profile work relationship         
-     *                     
+     *            The new visibility value for the profile work relationship
+     * 
      * @return true if the relationship was updated
      * */
     public boolean updateWork(String clientOrcid, String workId, Visibility visibility) {
@@ -61,17 +62,36 @@ public class ProfileWorkManagerImpl implements ProfileWorkManager {
     }
 
     /**
-     * Get the profile work associated with the client orcid and the workId 
+     * Get the profile work associated with the client orcid and the workId
      * 
      * @param clientOrcid
-     *          The client orcid
-     *          
+     *            The client orcid
+     * 
      * @param workId
-     *          The id of the work that will be updated
-     *          
+     *            The id of the work that will be updated
+     * 
      * @return the profileWork object
      * */
     public ProfileWorkEntity getProfileWork(String clientOrcid, String workId) {
         return profileWorkDao.getProfileWork(clientOrcid, workId);
+    }
+
+    /**
+     * Creates a new profile entity relationship between the provided work and
+     * the given profile.
+     * 
+     * @param orcid
+     *            The profile id
+     * 
+     * @param workId
+     *            The work id
+     * 
+     * @param visibility
+     *            The work visibility
+     * 
+     * @return true if the profile work relationship was created
+     * */
+    public boolean addProfileWork(String orcid, long workId, Visibility visibility) {
+        return profileWorkDao.addProfileWork(orcid, workId, visibility);
     }
 }

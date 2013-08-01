@@ -84,7 +84,8 @@ public enum Locale implements Serializable {
                 return c;
             }
         }
-        throw new IllegalArgumentException(v);
+        // if we don't support the specified language return english
+        return Locale.EN;
     }
 
     @Override

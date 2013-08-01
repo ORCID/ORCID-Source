@@ -15,7 +15,7 @@
  * =============================================================================
  */
 
-var orcidNgModule = angular.module('orcidApp', []);
+var orcidNgModule = angular.module('orcidApp', ["ngCookies"]);
 
 orcidNgModule.directive('ngModelOnblur', function() {
     return {
@@ -1259,22 +1259,60 @@ function QuickSearchCtrl($scope, $compile){
 	$scope.getResults(10);
 }
 
-//function statisticCtrl($scope){	
-//	$scope.liveIds = 0;	
-//	$scope.getLiveIds = function(){
-//		$.ajax({
-//	        url: $('body').data('baseurl')+'statistics/liveids.json',	        
-//	        type: 'GET',
-//	        dataType: 'html',
-//	        success: function(data){
-//	        	$scope.liveIds = data;
-//	        	$scope.$apply($scope.liveIds);	        		        	
-//	        }
-//	    }).fail(function(error) { 
-//	    	// something bad is happening!	    	
-//	    	console.log("Error getting statistics Live iDs total amount");	    	
-//	    });
-//	};
-//	
-//	$scope.getLiveIds();
-//}
+
+function languageCtrl($scope, $cookies){		
+	$scope.languages = 
+	    [
+	        {	            
+	            "value": "en",
+	            "label": "English"
+	        },
+	        {
+	        	"value": 'xes',
+	    		"label": 'Español'
+	        },
+	        {
+	        	"value": 'xfr',
+	    		"label": 'Français'
+	        },	        
+	        {
+		        "value": 'xzh_CN',
+			    "label": '簡體中文'
+	        },
+	        {
+		        "value": 'xzh_TW',
+			    "label": '简体中文'
+	        },	        
+	    ];	
+	
+	//Load Language that is set in the cookie or set default language to english
+	$scope.getCurrentLanguage = function(){
+		$scope.language = $scope.languages[0]; //Default
+		typeof($cookies.locale_v2) !== 'undefined' ? locale_v2 = $cookies.locale_v2 : locale_v2 = "en"; //If cookie exists we get the language value from it		
+    	angular.forEach($scope.languages, function(value, key){ //angular.forEach doesn't support break
+    		if (value.value == locale_v2) $scope.language = $scope.languages[key];    		
+    	});
+	};
+	
+	$scope.getCurrentLanguage(); //Checking for the current language value
+	
+			
+	$scope.selectedLanguage = function(){		
+		$.ajax({
+	        url: $('body').data('baseurl')+'lang.json?lang='+$scope.language.value,	        
+	        type: 'POST',
+	        dataType: 'json',
+	        success: function(data){
+	        	angular.forEach($scope.languages, function(value, key){
+	        		if(value.value == data.locale){
+	        			$scope.language = $scope.languages[key];
+	        			window.location.reload(true);
+	        		}
+	        	});	        
+	        }
+	    }).fail(function(error) { 
+	    	// something bad is happening!	    	
+	    	console.log("Error setting up language cookie");	    	
+	    });		
+	};
+};
