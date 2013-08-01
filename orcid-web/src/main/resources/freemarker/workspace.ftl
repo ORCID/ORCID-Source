@@ -25,6 +25,12 @@
     </div>
 </#if>
 
+<#if invalidVerifyUrl?? && invalidVerifyUrl>
+    <div class="alert alert-success">
+        <strong><@spring.message "orcid.frontend.web.invalid_verify_link"/></strong>
+    </div>
+</#if>
+
 <div class="row workspace-top public-profile">
 
 	<#-- hidden divs that trigger angular -->
