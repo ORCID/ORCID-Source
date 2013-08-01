@@ -80,7 +80,7 @@ public enum Locale implements Serializable {
 
     public static Locale fromValue(String v) {
         for (Locale c : Locale.values()) {
-            if (c.value.equals(v.toLowerCase())) {
+            if (v.startsWith(c.value)) {
                 return c;
             }
         }
