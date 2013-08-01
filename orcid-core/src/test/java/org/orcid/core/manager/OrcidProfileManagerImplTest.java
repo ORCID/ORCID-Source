@@ -31,6 +31,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import javax.annotation.Resource;
 import javax.xml.datatype.DatatypeConfigurationException;
@@ -168,7 +170,7 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
         token.setClientDetailsEntity(clientDetails);
         token.setProfile(profileDao.find(delegateProfile.getOrcid().getValue()));
         token.setScope(StringUtils.join(new String[] { ScopePathType.ORCID_BIO_READ_LIMITED.value(), ScopePathType.ORCID_BIO_UPDATE.value() }, " "));
-        Set<OrcidOauth2TokenDetail> tokens = new HashSet<>();
+        SortedSet<OrcidOauth2TokenDetail> tokens = new TreeSet<>();
         tokens.add(token);
         ProfileEntity delegateProfileEntity = profileDao.find(delegateProfile.getOrcid().getValue());
         delegateProfileEntity.setTokenDetails(tokens);

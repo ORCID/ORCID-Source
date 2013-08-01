@@ -653,8 +653,10 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
                             }
 
                             applicationSummary.setScopePaths(scopePaths);
+                            // Only add to list if there is a scope (if no
+                            // scopes then has been used and is defunct)
+                            applications.getApplicationSummary().add(applicationSummary);
                         }
-                        applications.getApplicationSummary().add(applicationSummary);
                     }
 
                 }
@@ -870,10 +872,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         securityDetails.setEncryptedSecurityAnswer(profileEntity.getEncryptedSecurityAnswer() != null ? new EncryptedSecurityAnswer(profileEntity
                 .getEncryptedSecurityAnswer()) : null);
         securityDetails.setEncryptedVerificationCode(profileEntity.getEncryptedVerificationCode() != null ? new EncryptedVerificationCode(profileEntity
-                .getEncryptedVerificationCode()) : null);
- 
-        OrcidPreferences orcidPreferences = new OrcidPreferences();
-        
+                .getEncryptedVerificationCode()) : null);        
         
         Preferences preferences = new Preferences();
         orcidInternal.setPreferences(preferences);

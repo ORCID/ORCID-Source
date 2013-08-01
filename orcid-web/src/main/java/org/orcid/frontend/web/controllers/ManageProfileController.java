@@ -516,19 +516,9 @@ public class ManageProfileController extends BaseWorkspaceController {
     }
 
     @RequestMapping(value = "/view-account-settings", method = RequestMethod.GET)
-    public ModelAndView viewAccountSettings() {
-
-        ModelAndView accountSettings = new ModelAndView("view_account_settings");
-        OrcidProfile profile = orcidProfileManager.retrieveOrcidProfile(getCurrentUserOrcid());
-        Preferences preferences = profile.getOrcidInternal().getPreferences();
-        boolean sendChangeNotications = preferences != null && preferences.getSendChangeNotifications() != null ? preferences.getSendChangeNotifications().isValue()
-                : false;
-
-        boolean sendOrcidNews = preferences != null && preferences.getSendOrcidNews() != null ? preferences.getSendOrcidNews().isValue() : false;
-        accountSettings.addObject("sendChangeNotications", sendChangeNotications);
-        accountSettings.addObject("sendOrcidNews", sendOrcidNews);
-        accountSettings.addObject("profile", profile);
-        return accountSettings;
+    public String viewAccountSettings() {
+        // Defunct page, redirect to main account page in case of bookmarks.
+        return "redirect:/account";
     }
 
     @RequestMapping(value = { "/password", "/change-password" }, method = RequestMethod.GET)
