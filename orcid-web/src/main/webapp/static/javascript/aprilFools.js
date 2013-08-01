@@ -76,7 +76,7 @@ jQuery(function () {
     
     function pingJavaAppAndDrupal(lang) {
  		//hack in case there are multipule locale cookies
-		OrcidCookie.setCookie("locale_v2",lang);
+		OrcidCookie.setCookie("locale_v3",lang);
 
 		
 		//set drupal side
@@ -114,7 +114,7 @@ jQuery(function () {
     if (isParent && (isAprilFools || hasAprilFoolsFlag || afCookie)){ 
 
         var locale = 'en';
-    	var localeCookie = OrcidCookie.getCookie("locale_v2");
+    	var localeCookie = OrcidCookie.getCookie("locale_v3");
     	if (localeCookie) locale = localeCookie;
     	
     	console.log(afCookie);

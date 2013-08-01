@@ -77,7 +77,7 @@ public class AjaxAuthenticationSuccessHandler extends SimpleUrlAuthenticationSuc
 //                String preferedLocale = op.getOrcidInternal().getPreferences().getLocale().value();
 //                // hack to write/rewrite correct locale cookie on login.
 //                CookieLocaleResolver clr = new CookieLocaleResolver();
-//                clr.setCookieName("locale_v2"); /* must match <property name="cookieName" value="locale_v2" /> */
+//                clr.setCookieName("locale_v3"); /* must match <property name="cookieName" value="locale_v3" /> */
 //                clr.setLocale(request, response, StringUtils.parseLocaleString(preferedLocale));
 //            }            
 //        }
@@ -95,7 +95,7 @@ public class AjaxAuthenticationSuccessHandler extends SimpleUrlAuthenticationSuc
                     
                     // have to read the cookie directly since spring has populated the request locale yet
                     CookieLocaleResolver clr = new CookieLocaleResolver();
-                    clr.setCookieName("locale_v2"); /* must match <property name="cookieName" value="locale_v2" /> */
+                    clr.setCookieName("locale_v3"); /* must match <property name="cookieName" value="locale_v3" /> */
                     Locale cookieLocale = org.orcid.jaxb.model.message.Locale.fromValue(clr.resolveLocale(request).toString());
                     
                     Locale lastKnownLocale = prefs.getLocale();
