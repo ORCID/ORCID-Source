@@ -581,11 +581,13 @@ public class ManageProfileController extends BaseWorkspaceController {
     public @ResponseBody
     SecurityQuestion setSecurityQuestionJson(HttpServletRequest request, @RequestBody SecurityQuestion securityQuestion) {
         List<String> errors = new ArrayList<String>();
-        if (securityQuestion.getSecurityAnswer() == null || securityQuestion.getSecurityAnswer().trim() == "")
+        if (securityQuestion.getSecurityQuestionId() != 0 && (securityQuestion.getSecurityAnswer() == null || securityQuestion.getSecurityAnswer().trim() == ""))
             errors.add(getMessage("manage.pleaseProvideAnAnswer"));
-        if (securityQuestion.getSecurityQuestionId() == 0)
-            errors.add(getMessage("manage.pleaseChooseAQuestion"));
-
+        
+        // If the security question is empty, clean the security answer field
+        if(securityQuestion.getSecurityQuestionId() == 0)
+        	securityQuestion.setSecurityAnswer(new String());
+        
         if (errors.size() == 0) {
             OrcidProfile profile = getCurrentUser().getEffectiveProfile();
             if (profile.getOrcidInternal().getSecurityDetails().getSecurityQuestionId() == null)
