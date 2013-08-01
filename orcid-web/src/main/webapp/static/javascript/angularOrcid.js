@@ -1276,19 +1276,19 @@ function languageCtrl($scope, $cookies){
 	            "label": "English"
 	        },
 	        {
-	        	"value": 'xes',
+	        	"value": 'es',
 	    		"label": 'Español'
 	        },
 	        {
-	        	"value": 'xfr',
+	        	"value": 'fr',
 	    		"label": 'Français'
 	        },	        
 	        {
-		        "value": 'xzh_CN',
+		        "value": 'zh_CN',
 			    "label": '簡體中文'
 	        },
 	        {
-		        "value": 'xzh_TW',
+		        "value": 'zh_TW',
 			    "label": '简体中文'
 	        },	        
 	    ];	
@@ -1296,9 +1296,9 @@ function languageCtrl($scope, $cookies){
 	//Load Language that is set in the cookie or set default language to english
 	$scope.getCurrentLanguage = function(){
 		$scope.language = $scope.languages[0]; //Default
-		typeof($cookies.locale_v2) !== 'undefined' ? locale_v2 = $cookies.locale_v2 : locale_v2 = "en"; //If cookie exists we get the language value from it		
+		typeof($cookies.locale_v3) !== 'undefined' ? locale_v3 = $cookies.locale_v3 : locale_v3 = "en"; //If cookie exists we get the language value from it		
     	angular.forEach($scope.languages, function(value, key){ //angular.forEach doesn't support break
-    		if (value.value == locale_v2) $scope.language = $scope.languages[key];    		
+    		if (value.value == locale_v3) $scope.language = $scope.languages[key];    		
     	});
 	};
 	
