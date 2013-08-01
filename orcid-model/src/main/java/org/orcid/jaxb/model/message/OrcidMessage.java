@@ -76,7 +76,7 @@ import java.io.StringWriter;
 public class OrcidMessage implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    public static final String DEFAULT_VERSION = "1.0.16";
+    public static final String DEFAULT_VERSION = "1.0.17";
 
     @XmlElement(name = "message-version", required = true)
     protected String messageVersion;

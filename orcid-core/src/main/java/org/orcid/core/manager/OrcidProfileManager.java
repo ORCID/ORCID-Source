@@ -166,6 +166,11 @@ public interface OrcidProfileManager {
     OrcidProfile updatePreferences(OrcidProfile updatedOrcidProfile);
 
     /**
+     * Overwrites preferences in the DB with the values in updatedProfile.
+     */
+    OrcidProfile updateOrcidPreferences(OrcidProfile updatedOrcidProfile);
+
+    /**
      * Adds the works from orcidProfile to the existing profile in the DB
      * (without removing existing works, and without any attempt at
      * de-duplication).

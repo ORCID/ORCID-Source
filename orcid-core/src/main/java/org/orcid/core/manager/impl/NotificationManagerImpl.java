@@ -211,11 +211,10 @@ public class NotificationManagerImpl implements NotificationManager {
     private void addMessageParams(Map<String, Object> templateParams, OrcidProfile orcidProfile) {
         Locale locale = null; new Locale("en");
         if ( orcidProfile.getOrcidInternal() != null 
-                && orcidProfile.getOrcidInternal().getPreferences() != null
-                && orcidProfile.getOrcidInternal().getPreferences().getLocale() != null
-                && orcidProfile.getOrcidInternal().getPreferences().getLocale().value() != null) {
-            orcidProfile.getOrcidInternal().getPreferences().getLocale().value();
-            locale = new Locale(orcidProfile.getOrcidInternal().getPreferences().getLocale().value());
+                && orcidProfile.getOrcidPreferences() != null
+                && orcidProfile.getOrcidPreferences().getLocale() != null) {
+            orcidProfile.getOrcidPreferences().getLocale().value();
+            locale = new Locale(orcidProfile.getOrcidPreferences().getLocale().value());
         } else {
             locale = new Locale("en");
         }
