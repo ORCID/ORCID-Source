@@ -272,7 +272,7 @@ $(function () {
     	oldBrowserFlag = true;
     }
 	
-	if (oldBrowserFlag) {
+	if (oldBrowserFlag && location == parent.location) {
 		var wHtml = '<div class="alert" id="browser-warn-div">';
 			wHtml = wHtml + '<strong>'; 
 			wHtml = wHtml + OM.getInstance().get('common.old.browser');
