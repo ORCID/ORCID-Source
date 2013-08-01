@@ -93,4 +93,31 @@ public class ProfileWorkDaoImpl extends GenericDaoImpl<ProfileWorkEntity, Profil
         return (ProfileWorkEntity) query.getSingleResult();
     }
 
+    /**
+     * Creates a new profile entity relationship between the provided work and
+     * the given profile.
+     * 
+     * @param orcid
+     *            The profile id
+     * 
+     * @param workId
+     *            The work id
+     * 
+     * @param visibility
+     *            The work visibility
+     * 
+     * @return true if the profile work relationship was created
+     * */
+    @Override
+    @Transactional
+    public boolean addProfileWork(String clientOrcid, long workId, Visibility visibility){
+        Query query = entityManager.createNativeQuery("INSERT INTO profile_work(orcid, work_id, date_created, last_modified, added_to_profile_date, visibility, source_id) values(:orcid, :workId, now(), now(), now(), :visibility, :sourceId)");
+        query.setParameter("orcid", clientOrcid);
+        query.setParameter("workId", workId);
+        query.setParameter("visibility", visibility.name());
+        query.setParameter("sourceId", clientOrcid);
+        
+        return query.executeUpdate() > 0 ? true : false;
+    }
+    
 }

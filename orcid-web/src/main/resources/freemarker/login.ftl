@@ -51,7 +51,7 @@
             <div class="span3">
                	<a class="reg" href="<@spring.url '/register'/>">${springMacroRequestContext.getMessage("login.register")}</a>
             <div>
-        </form>
+        </form>  
     
 </div>
 </@public>
