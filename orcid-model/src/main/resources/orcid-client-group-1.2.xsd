@@ -46,12 +46,12 @@ the software.
     </xs:annotation>
     <xs:complexType>
       <xs:sequence>
-      	<xs:element ref="orcid:type"/>
         <xs:element ref="orcid:group-orcid" minOccurs="0"/>
         <xs:element ref="orcid:group-name"/>
         <xs:element ref="orcid:email"/>
         <xs:element ref="orcid:orcid-client" maxOccurs="unbounded"/>
       </xs:sequence>
+      <xs:attribute name="type" type="orcid:group-type" use="required"/>
     </xs:complexType>
   </xs:element>
   <xs:element name="group-orcid" type="orcid:orcid">

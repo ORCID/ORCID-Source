@@ -23,7 +23,7 @@
 			<ul class="settings-nav">
 				<li><a href="#account-settings">${springMacroRequestContext.getMessage("manage.accountsettings")}</a></li>
 				<li><a href="#manage-permissions">${springMacroRequestContext.getMessage("manage.managepermission")}</a></li>
-				<#if (profile.type)?? && ((profile.type) = "BASIC" || (profile.type) = "PREMIUM" || (profile.type) = "BASIC_INSTITUTION" || (profile.type) = "PREMIUM_INSTITUTION")>
+				<#if (profile.groupType)?? && ((profile.groupType) = "BASIC" || (profile.groupType) = "PREMIUM" || (profile.groupType) = "BASIC_INSTITUTION" || (profile.groupType) = "PREMIUM_INSTITUTION")>
 	        		<li><a href="<@spring.url "/manage-clients" />">${springMacroRequestContext.getMessage("workspace.ManageClientCredentials")}</a></li>	        	 
 	        	</#if>
 			</ul>

@@ -35,11 +35,10 @@ import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-
-import org.orcid.jaxb.model.message.OrcidType;
 
 /**
  * <p>
@@ -73,8 +72,8 @@ import org.orcid.jaxb.model.message.OrcidType;
 public class OrcidClientGroup implements Serializable {
 
     private final static long serialVersionUID = 1L;
-    @XmlElement(name = "type")
-    OrcidType type;
+    @XmlAttribute(name = "type")
+    GroupType type;
     @XmlElement(name = "group-orcid")
     protected String groupOrcid;
     @XmlElement(name = "group-name", required = true)
@@ -88,10 +87,10 @@ public class OrcidClientGroup implements Serializable {
     /**
      * Gets the value of the type property.
      * 
-     * @return possible object is {@link String }
+     * @return possible object is {@link GroupType }
      * 
      */
-    public OrcidType getType() {
+    public GroupType getType() {
         return type;
     }
 
@@ -99,13 +98,13 @@ public class OrcidClientGroup implements Serializable {
      * Sets the value of the type property.
      * 
      * @param value
-     *            allowed object is {@link OrcidType }
+     *            allowed object is {@link GroupType }
      * 
      */
-    public void setType(OrcidType type) {
+    public void setType(GroupType type) {
         this.type = type;
     }
-
+           
     /**
      * Gets the value of the groupOrcid property.
      * 

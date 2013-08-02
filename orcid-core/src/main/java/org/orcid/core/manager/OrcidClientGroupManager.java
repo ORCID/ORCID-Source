@@ -37,27 +37,23 @@ public interface OrcidClientGroupManager {
      * client in orcidClientGroup for which orcidClient.clientId is not null.
      * 
      * @param orcidClientGroup
-     *            The ORCID client group to be ingested.
-     * @param orcidType
-     *            The client scopes are set based on the client type.
+     *            The ORCID client group to be ingested. The client scopes are set based on the group type.
      * @return The ORCID client group that was ingested, populated with IDs and
      *         secrets.
      */
-    OrcidClientGroup createOrUpdateOrcidClientGroup(OrcidClientGroup orcidClientGroup, OrcidType clientType);
+    OrcidClientGroup createOrUpdateOrcidClientGroup(OrcidClientGroup orcidClientGroup);
 
     /**
      * Creates a new orcidClient and assign it to the specified group
      * 
      * @param orcidClient
-     *            The ORCID client to be created.
-     * @param orcidType
-     *            The client scopes are set based on the client type.
+     *            The ORCID client to be created. The client scopes are set based on the group type.
      * @param groupOrcid
      *            The group owner for this client
      * @return The ORCID client that was processed, populated with IDs and
      *         secrets.
      */
-    OrcidClient createOrUpdateOrcidClientGroup(String groupOrcid, OrcidClient orcidClient, OrcidType orcidType);
+    OrcidClient createOrUpdateOrcidClientGroup(String groupOrcid, OrcidClient orcidClient);
 
     OrcidClientGroup retrieveOrcidClientGroup(String groupOrcid);
 

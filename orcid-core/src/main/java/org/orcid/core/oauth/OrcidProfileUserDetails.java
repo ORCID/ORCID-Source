@@ -62,14 +62,38 @@ public class OrcidProfileUserDetails implements UserDetails {
         Collection<OrcidWebRole> result = null;
         if(realProfile == null || realProfile.getType() == null || realProfile.getType().equals(OrcidType.USER)) 
             result = Arrays.asList(OrcidWebRole.ROLE_USER);
-        else if (realProfile.getType().equals(OrcidType.BASIC))
-            result = Arrays.asList(OrcidWebRole.ROLE_BASIC);
-        else if (realProfile.getType().equals(OrcidType.PREMIUM))
-            result = Arrays.asList(OrcidWebRole.ROLE_PREMIUM);
-        else if (realProfile.getType().equals(OrcidType.BASIC_INSTITUTION))
-            result = Arrays.asList(OrcidWebRole.ROLE_BASIC_INSTITUTION);
-        else if (realProfile.getType().equals(OrcidType.PREMIUM_INSTITUTION))
-            result = Arrays.asList(OrcidWebRole.ROLE_PREMIUM_INSTITUTION);
+        else if(realProfile.getType().equals(OrcidType.GROUP)){
+            switch(realProfile.getGroupType()){
+            case BASIC:  
+                result = Arrays.asList(OrcidWebRole.ROLE_BASIC);
+                break;
+            case PREMIUM:
+                result = Arrays.asList(OrcidWebRole.ROLE_PREMIUM);
+                break;
+            case BASIC_INSTITUTION:
+                result = Arrays.asList(OrcidWebRole.ROLE_BASIC_INSTITUTION);
+                break;
+            case PREMIUM_INSTITUTION:
+                result = Arrays.asList(OrcidWebRole.ROLE_PREMIUM_INSTITUTION);
+                break;
+            }
+        } else if(realProfile.getType().equals(OrcidType.CLIENT)){
+            switch(realProfile.getClientType()){
+            case CREATOR:
+                result = Arrays.asList(OrcidWebRole.ROLE_CREATOR);
+                break;
+            case UPDATER:
+                result = Arrays.asList(OrcidWebRole.ROLE_UPDATER);
+                break;
+            case PREMIUM_CREATOR:
+                result = Arrays.asList(OrcidWebRole.ROLE_PREMIUM_CREATOR);
+                break;
+            case PREMIUM_UPDATER:
+                result = Arrays.asList(OrcidWebRole.ROLE_PREMIUM_UPDATER);
+                break;
+            }
+        }
+        
         return result;
     }
 

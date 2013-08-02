@@ -31,13 +31,13 @@ import javax.xml.bind.Unmarshaller;
 import org.apache.commons.lang.StringUtils;
 import org.orcid.core.manager.OrcidClientGroupManager;
 import org.orcid.core.manager.OrcidProfileManager;
+import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.clientgroup.OrcidClient;
 import org.orcid.jaxb.model.clientgroup.OrcidClientGroup;
 import org.orcid.jaxb.model.clientgroup.RedirectUri;
 import org.orcid.jaxb.model.message.Email;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidProfile;
-import org.orcid.jaxb.model.message.OrcidType;
 import org.orcid.jaxb.model.message.OrcidWork;
 import org.orcid.jaxb.model.message.Title;
 import org.orcid.jaxb.model.message.Visibility;
@@ -114,7 +114,7 @@ public class OrcidClientDataHelper implements InitializingBean {
     protected OrcidClientGroup createAndPersistClientGroupSingle() {
         OrcidClientGroup unmarshalledGroup = getOrcidClientGroup();
         unmarshalledGroup.setEmail("orcid.integration.test.client+" + System.currentTimeMillis() + "@semantico.com");
-        OrcidClientGroup createdGroup = orcidClientGroupManager.createOrUpdateOrcidClientGroup(unmarshalledGroup, OrcidType.PREMIUM_CREATOR);
+        OrcidClientGroup createdGroup = orcidClientGroupManager.createOrUpdateOrcidClientGroup(unmarshalledGroup);
         return createdGroup;
     }
 

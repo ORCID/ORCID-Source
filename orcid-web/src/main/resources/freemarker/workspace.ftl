@@ -119,7 +119,7 @@
     	        </div>
 	        </#if>
 	        
-	        <#if (profile.type)?? && ((profile.type) = "BASIC" || (profile.type) = "PREMIUM" || (profile.type) = "BASIC_INSTITUTION" || (profile.type) = "PREMIUM_INSTITUTION")>
+	        <#if (profile.groupType)?? && ((profile.groupType) = "BASIC" || (profile.groupType) = "PREMIUM" || (profile.groupType) = "BASIC_INSTITUTION" || (profile.groupType) = "PREMIUM_INSTITUTION")>
 	        	 <p><a href="<@spring.url "/manage-clients" />">${springMacroRequestContext.getMessage("workspace.ManageClientCredentials")}</a></p>	        	 
 	        </#if>
 	        

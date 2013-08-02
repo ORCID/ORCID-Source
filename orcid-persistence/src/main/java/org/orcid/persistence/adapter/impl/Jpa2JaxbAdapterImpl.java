@@ -118,6 +118,8 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         profile.setPassword(profileEntity.getEncryptedPassword());
         profile.setSecurityQuestionAnswer(profileEntity.getEncryptedSecurityAnswer());
         profile.setType(type == null ? OrcidType.USER : type);
+        profile.setClientType(profileEntity.getClientType());
+        profile.setGroupType(profileEntity.getGroupType());
         profile.setVerificationCode(profileEntity.getEncryptedVerificationCode());
         return profile;
     }
@@ -128,7 +130,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         client.setDisplayName(profileEntity.getCreditName());
         client.setClientId(profileEntity.getId());
         client.setShortDescription(profileEntity.getBiography());
-        client.setType(profileEntity.getOrcidType());
+        client.setType(profileEntity.getClientType());
         Set<ResearcherUrlEntity> researcherUrls = profileEntity.getResearcherUrls();
         if (researcherUrls != null && !researcherUrls.isEmpty()) {
             client.setWebsite(researcherUrls.iterator().next().getUrl());
@@ -159,7 +161,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         OrcidClientGroup group = new OrcidClientGroup();
         group.setGroupOrcid(profileEntity.getId());
         group.setGroupName(profileEntity.getCreditName());
-        group.setType(profileEntity.getOrcidType());
+        group.setType(profileEntity.getGroupType());
         Set<EmailEntity> emailEntities = profileEntity.getEmails();
         for (EmailEntity emailEntity : emailEntities) {
             group.setEmail(emailEntity.getId());

@@ -83,7 +83,7 @@ public class OrcidClient implements Serializable {
     @XmlElement(name = "client-secret")
     protected String clientSecret;
     @XmlAttribute
-    protected OrcidType type;
+    protected ClientType type;    
 
     /**
      * Gets the value of the displayName property.
@@ -214,10 +214,10 @@ public class OrcidClient implements Serializable {
     /**
      * Gets the value of the type property.
      * 
-     * @return possible object is {@link OrcidType }
+     * @return possible object is {@link ClientType }
      * 
      */
-    public OrcidType getType() {
+    public ClientType getType() {
         return type;
     }
 
@@ -225,11 +225,10 @@ public class OrcidClient implements Serializable {
      * Sets the value of the type property.
      * 
      * @param value
-     *            allowed object is {@link ClientType }
+     *            allowed object is {@link OrcidType }
      * 
      */
-    public void setType(OrcidType value) {
+    public void setType(ClientType value) {
         this.type = value;
-    }
-
+    }        
 }

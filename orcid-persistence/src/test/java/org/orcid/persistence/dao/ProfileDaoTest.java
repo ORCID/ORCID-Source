@@ -40,6 +40,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.orcid.jaxb.model.clientgroup.GroupType;
 import org.orcid.jaxb.model.message.OrcidType;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.persistence.jpa.entities.IndexingStatus;
@@ -254,7 +255,8 @@ public class ProfileDaoTest extends DBUnitTest {
         String groupOrcid = "4444-1111-6666-4444";
         ProfileEntity groupProfile = new ProfileEntity();
         groupProfile.setId(groupOrcid);
-        groupProfile.setOrcidType(OrcidType.BASIC);
+        groupProfile.setOrcidType(OrcidType.GROUP);
+        groupProfile.setGroupType(GroupType.BASIC);
 
         SortedSet<ProfileEntity> clientProfiles = new TreeSet<ProfileEntity>(new OrcidEntityIdComparator<String>());
         String clientOrcid1 = "4444-4444-4444-4441";
@@ -274,7 +276,7 @@ public class ProfileDaoTest extends DBUnitTest {
 
         assertNotNull(groupProfile);
         assertEquals(groupOrcid, groupProfile.getId());
-        assertEquals(OrcidType.BASIC, groupProfile.getOrcidType());
+        assertEquals(GroupType.BASIC, groupProfile.getGroupType());
         assertNotNull(groupProfile.getClientProfiles());
         assertEquals(2, groupProfile.getClientProfiles().size());
         Map<String, ProfileEntity> map = ProfileEntity.mapById(groupProfile.getClientProfiles());

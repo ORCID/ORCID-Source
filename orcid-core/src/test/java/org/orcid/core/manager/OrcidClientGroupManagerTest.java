@@ -38,6 +38,7 @@ import org.mockito.Mock;
 import org.orcid.core.BaseTest;
 import org.orcid.core.exception.OrcidClientGroupManagementException;
 import org.orcid.core.manager.impl.OrcidProfileManagerImpl;
+import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.clientgroup.OrcidClient;
 import org.orcid.jaxb.model.clientgroup.OrcidClientGroup;
 import org.orcid.jaxb.model.clientgroup.RedirectUri;
@@ -93,7 +94,7 @@ public class OrcidClientGroupManagerTest extends BaseTest {
     public void testCreateOrcidClientGroup() {
         OrcidClientGroup group = OrcidClientGroup.unmarshall(getClass().getResourceAsStream(CLIENT_GROUP));
 
-        OrcidClientGroup createdGroup = orcidClientGroupManager.createOrUpdateOrcidClientGroup(group, OrcidType.UPDATER);
+        OrcidClientGroup createdGroup = orcidClientGroupManager.createOrUpdateOrcidClientGroup(group);
         assertNotNull(createdGroup);
 
         assertEquals("Elsevier", createdGroup.getGroupName());
@@ -141,7 +142,7 @@ public class OrcidClientGroupManagerTest extends BaseTest {
     public void testCreateOrcidCreatorClientGroup() {
         OrcidClientGroup group = OrcidClientGroup.unmarshall(getClass().getResourceAsStream(CLIENT_GROUP));
 
-        OrcidClientGroup createdGroup = orcidClientGroupManager.createOrUpdateOrcidClientGroup(group, OrcidType.CREATOR);
+        OrcidClientGroup createdGroup = orcidClientGroupManager.createOrUpdateOrcidClientGroup(group);
         assertNotNull(createdGroup);
 
         assertEquals("Elsevier", createdGroup.getGroupName());
@@ -169,7 +170,7 @@ public class OrcidClientGroupManagerTest extends BaseTest {
         ClientDetailsEntity complexityEntity = clientDetailsDao.find(complexityClient.getClientId());
         Set<String> clientScopeTypes = complexityEntity.getScope();
         assertNotNull(clientScopeTypes);
-        assertTrue(clientScopeTypes.contains("/orcid-profile/create"));
+        assertTrue(clientScopeTypes.contains("/orcid-profile/read-limited"));
         assertTrue(clientScopeTypes.contains("/orcid-bio/read-limited"));
         assertTrue(clientScopeTypes.contains("/orcid-works/read-limited"));
     }
@@ -181,7 +182,7 @@ public class OrcidClientGroupManagerTest extends BaseTest {
         final OrcidClientGroup group = OrcidClientGroup.unmarshall(getClass().getResourceAsStream(CLIENT_GROUP));
         OrcidClientGroup createdGroup = transactionTemplate.execute(new TransactionCallback<OrcidClientGroup>() {
             public OrcidClientGroup doInTransaction(TransactionStatus status) {
-                return orcidClientGroupManager.createOrUpdateOrcidClientGroup(group, OrcidType.UPDATER);
+                return orcidClientGroupManager.createOrUpdateOrcidClientGroup(group);
             }
         });
 
@@ -191,7 +192,7 @@ public class OrcidClientGroupManagerTest extends BaseTest {
                 createdClient.setWebsite("wwww.ecologicalcomplexity.com");
             }
         }
-        OrcidClientGroup updatedGroup = orcidClientGroupManager.createOrUpdateOrcidClientGroup(createdGroup, OrcidType.UPDATER);
+        OrcidClientGroup updatedGroup = orcidClientGroupManager.createOrUpdateOrcidClientGroup(createdGroup);
 
         assertNotNull(updatedGroup);
         assertEquals("Elsevier", updatedGroup.getGroupName());
@@ -233,7 +234,7 @@ public class OrcidClientGroupManagerTest extends BaseTest {
     public void testGetOrcidClientList() {
         OrcidClientGroup group = OrcidClientGroup.unmarshall(getClass().getResourceAsStream(CLIENT_GROUP));
 
-        OrcidClientGroup createdGroup = orcidClientGroupManager.createOrUpdateOrcidClientGroup(group, OrcidType.CREATOR);
+        OrcidClientGroup createdGroup = orcidClientGroupManager.createOrUpdateOrcidClientGroup(group);
         
         createdGroup = orcidClientGroupManager.retrieveOrcidClientGroup(createdGroup.getGroupOrcid());
         
@@ -249,7 +250,7 @@ public class OrcidClientGroupManagerTest extends BaseTest {
         final OrcidClientGroup group = OrcidClientGroup.unmarshall(getClass().getResourceAsStream(BASIC_CLIENT_GROUP_NO_CLIENT));
         OrcidClientGroup createdGroup = transactionTemplate.execute(new TransactionCallback<OrcidClientGroup>() {
             public OrcidClientGroup doInTransaction(TransactionStatus status) {
-                return orcidClientGroupManager.createOrUpdateOrcidClientGroup(group, OrcidType.UPDATER);
+                return orcidClientGroupManager.createOrUpdateOrcidClientGroup(group);
             }
         });
         
@@ -261,7 +262,7 @@ public class OrcidClientGroupManagerTest extends BaseTest {
         client1.setDisplayName("Name");
         client1.setRedirectUris(redirectUris);
         client1.setShortDescription("Description");
-        client1.setType(OrcidType.UPDATER);
+        client1.setType(ClientType.UPDATER);
         client1.setWebsite("http://site.com");
         
         //Add one client
@@ -275,7 +276,7 @@ public class OrcidClientGroupManagerTest extends BaseTest {
         client2.setDisplayName("Name");
         client2.setRedirectUris(redirectUris);
         client2.setShortDescription("Description");
-        client2.setType(OrcidType.UPDATER);
+        client2.setType(ClientType.UPDATER);
         client2.setWebsite("http://site.com");
         
         //Add other client should fail
@@ -293,7 +294,7 @@ public class OrcidClientGroupManagerTest extends BaseTest {
         final OrcidClientGroup group = OrcidClientGroup.unmarshall(getClass().getResourceAsStream(BASIC_CLIENT_GROUP_NO_CLIENT));
         OrcidClientGroup createdGroup = transactionTemplate.execute(new TransactionCallback<OrcidClientGroup>() {
             public OrcidClientGroup doInTransaction(TransactionStatus status) {
-                return orcidClientGroupManager.createOrUpdateOrcidClientGroup(group, OrcidType.UPDATER);
+                return orcidClientGroupManager.createOrUpdateOrcidClientGroup(group);
             }
         });
         
@@ -305,7 +306,7 @@ public class OrcidClientGroupManagerTest extends BaseTest {
         client1.setDisplayName("Name");
         client1.setRedirectUris(redirectUris);
         client1.setShortDescription("Description");
-        client1.setType(OrcidType.CREATOR);
+        client1.setType(ClientType.CREATOR);
         client1.setWebsite("http://site.com");
         
         //Add one creator client to a basic group should fail
@@ -324,7 +325,7 @@ public class OrcidClientGroupManagerTest extends BaseTest {
         final OrcidClientGroup group = OrcidClientGroup.unmarshall(getClass().getResourceAsStream(BASIC_INSTITUTION_CLIENT_GROUP_NO_CLIENT));
         OrcidClientGroup createdGroup = transactionTemplate.execute(new TransactionCallback<OrcidClientGroup>() {
             public OrcidClientGroup doInTransaction(TransactionStatus status) {
-                return orcidClientGroupManager.createOrUpdateOrcidClientGroup(group, OrcidType.CREATOR);
+                return orcidClientGroupManager.createOrUpdateOrcidClientGroup(group);
             }
         });
         
@@ -336,7 +337,7 @@ public class OrcidClientGroupManagerTest extends BaseTest {
         client1.setDisplayName("Name");
         client1.setRedirectUris(redirectUris);
         client1.setShortDescription("Description");
-        client1.setType(OrcidType.CREATOR);
+        client1.setType(ClientType.CREATOR);
         client1.setWebsite("http://site.com");
         
         //Add one client
@@ -350,7 +351,7 @@ public class OrcidClientGroupManagerTest extends BaseTest {
         client2.setDisplayName("Name");
         client2.setRedirectUris(redirectUris);
         client2.setShortDescription("Description");
-        client2.setType(OrcidType.CREATOR);
+        client2.setType(ClientType.CREATOR);
         client2.setWebsite("http://site.com");
         
         //Add other client should fail
@@ -368,7 +369,7 @@ public class OrcidClientGroupManagerTest extends BaseTest {
         final OrcidClientGroup group = OrcidClientGroup.unmarshall(getClass().getResourceAsStream(BASIC_INSTITUTION_CLIENT_GROUP_NO_CLIENT));
         OrcidClientGroup createdGroup = transactionTemplate.execute(new TransactionCallback<OrcidClientGroup>() {
             public OrcidClientGroup doInTransaction(TransactionStatus status) {
-                return orcidClientGroupManager.createOrUpdateOrcidClientGroup(group, OrcidType.CREATOR);
+                return orcidClientGroupManager.createOrUpdateOrcidClientGroup(group);
             }
         });
         
@@ -380,7 +381,7 @@ public class OrcidClientGroupManagerTest extends BaseTest {
         client1.setDisplayName("Name");
         client1.setRedirectUris(redirectUris);
         client1.setShortDescription("Description");
-        client1.setType(OrcidType.UPDATER);
+        client1.setType(ClientType.UPDATER);
         client1.setWebsite("http://site.com");
         
         //Add one creator client to a basic group should fail
@@ -399,7 +400,7 @@ public class OrcidClientGroupManagerTest extends BaseTest {
         final OrcidClientGroup group = OrcidClientGroup.unmarshall(getClass().getResourceAsStream(PREMIUM_CLIENT_GROUP_NO_CLIENT));
         OrcidClientGroup createdGroup = transactionTemplate.execute(new TransactionCallback<OrcidClientGroup>() {
             public OrcidClientGroup doInTransaction(TransactionStatus status) {
-                return orcidClientGroupManager.createOrUpdateOrcidClientGroup(group, OrcidType.UPDATER);
+                return orcidClientGroupManager.createOrUpdateOrcidClientGroup(group);
             }
         });
         
@@ -411,7 +412,7 @@ public class OrcidClientGroupManagerTest extends BaseTest {
         client1.setDisplayName("Name");
         client1.setRedirectUris(redirectUris);
         client1.setShortDescription("Description");
-        client1.setType(OrcidType.CREATOR);
+        client1.setType(ClientType.CREATOR);
         client1.setWebsite("http://site.com");
         
         //Add one creator client to a premium group should fail
@@ -430,7 +431,7 @@ public class OrcidClientGroupManagerTest extends BaseTest {
         final OrcidClientGroup group = OrcidClientGroup.unmarshall(getClass().getResourceAsStream(PREMIUM_INSTITUTION_CLIENT_GROUP_NO_CLIENT));
         OrcidClientGroup createdGroup = transactionTemplate.execute(new TransactionCallback<OrcidClientGroup>() {
             public OrcidClientGroup doInTransaction(TransactionStatus status) {
-                return orcidClientGroupManager.createOrUpdateOrcidClientGroup(group, OrcidType.CREATOR);
+                return orcidClientGroupManager.createOrUpdateOrcidClientGroup(group);
             }
         });
         
@@ -442,7 +443,7 @@ public class OrcidClientGroupManagerTest extends BaseTest {
         client1.setDisplayName("Name");
         client1.setRedirectUris(redirectUris);
         client1.setShortDescription("Description");
-        client1.setType(OrcidType.UPDATER);
+        client1.setType(ClientType.UPDATER);
         client1.setWebsite("http://site.com");
         
         //Add one creator client to a premium group should fail

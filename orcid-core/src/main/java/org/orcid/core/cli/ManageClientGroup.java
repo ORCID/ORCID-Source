@@ -55,9 +55,6 @@ public class ManageClientGroup {
     @Option(name = "-f", usage = "Path to file to load into DB")
     private File fileToLoad;
 
-    @Option(name = "-t", usage = "The type of clients that will be created")
-    private OrcidType orcidType;
-
     public static void main(String[] args) {
         ManageClientGroup manageClientGroup = new ManageClientGroup();
         CmdLineParser parser = new CmdLineParser(manageClientGroup);
@@ -74,10 +71,7 @@ public class ManageClientGroup {
     private void validateArgs(CmdLineParser parser) throws CmdLineException {
         if (NullUtils.allNull(orcid, fileToValidate, fileToLoad)) {
             throw new CmdLineException(parser, "At least one of -f | -r | -s must be specificed");
-        }
-        if (fileToLoad != null && orcidType == null) {
-            throw new CmdLineException(parser, "If -f is specificed then -t must also be specified");
-        }
+        }        
     }
 
     public void execute() {
@@ -86,11 +80,11 @@ public class ManageClientGroup {
         } else if (fileToValidate != null) {
             isValidAgainstSchema(fileToValidate);
         } else if (fileToLoad != null) {
-            load(fileToLoad, orcidType);
+            load(fileToLoad);
         }
     }
 
-    private void load(File fileToLoad, OrcidType orcidType) {
+    private void load(File fileToLoad) {
         if (isValidAgainstSchema(fileToLoad)) {
             OrcidClientGroupManager manager = createOrcidClientGroupManager();
             FileInputStream fis = null;
@@ -108,7 +102,7 @@ public class ManageClientGroup {
                 System.err.println("Unable to read input file: " + fileToLoad + "\n" + e);
             }
             try {
-                OrcidClientGroup result = manager.createOrUpdateOrcidClientGroup(OrcidClientGroup.unmarshall(fis), orcidType);
+                OrcidClientGroup result = manager.createOrUpdateOrcidClientGroup(OrcidClientGroup.unmarshall(fis));
                 System.out.println(result);
             } finally {
                 IOUtils.closeQuietly(fis);
