@@ -722,7 +722,7 @@ function ClaimCtrl($scope, $compile) {
 	$scope.postingClaim = false;
 	$scope.getClaim = function(){
 		$.ajax({
-			url: window.location + '.json',	        
+			url: $scope.getClaimAjaxUrl(),	        
 	        dataType: 'json',
 	        success: function(data) {
 	       	$scope.register = data;
@@ -738,7 +738,7 @@ function ClaimCtrl($scope, $compile) {
 		if ($scope.postingClaim) return;
 		$scope.postingClaim = true;
 		$.ajax({
-	        url: window.location + '.json',
+	        url: $scope.getClaimAjaxUrl(),
 	        type: 'POST',
 	        data:  angular.toJson($scope.register),
 	        contentType: 'application/json;charset=UTF-8',
@@ -762,6 +762,10 @@ function ClaimCtrl($scope, $compile) {
 	    });
 	};
 	
+	
+	$scope.getClaimAjaxUrl = function () {
+		return window.location.href.split("?")[0]+".json";
+	} 
 	
 	$scope.updateWorkVisibilityDefault = function(priv, $event) {
 		$scope.register.workVisibilityDefault.visibility = priv;
