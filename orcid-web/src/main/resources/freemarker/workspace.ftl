@@ -391,7 +391,7 @@
 				<div class="control-group" ng-repeat="contributor in editWork.contributors">
 				    <label class="relative"><@orcid.msg 'manual_work_form_contents.labelRole'/></label>
 				    <div class="relative">    
-						<select id="role" name="role" ng-model="contributor.contributorRole.value" ng-change="serverValidate('my-orcid/work/roleValidate.json')">
+						<select id="role" name="role" ng-model="contributor.contributorRole.value">
 							<#list roles?keys as key>
 							    <option value="${key}">${roles[key]}</option>
 							</#list>
@@ -405,7 +405,7 @@
 				<div class="control-group" ng-repeat="contributor in editWork.contributors">
 				    <label class="relative"><@orcid.msg 'manual_work_form_contents.labelcredited'/></label>
 				    <div class="relative">    
-						<select id="role" name="role" ng-model="contributor.contributorSequence.value" ng-change="serverValidate('my-orcid/work/sequenceValidate.json')">
+						<select id="role" name="role" ng-model="contributor.contributorSequence.value">
 							<#list sequences?keys as key>
 								<option value="${key}">${sequences[key]}</option>
 							</#list>
