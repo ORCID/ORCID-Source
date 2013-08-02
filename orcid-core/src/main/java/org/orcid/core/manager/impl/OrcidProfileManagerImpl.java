@@ -26,6 +26,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
@@ -82,6 +83,7 @@ import org.orcid.jaxb.model.message.OrcidActivities;
 import org.orcid.jaxb.model.message.OrcidBio;
 import org.orcid.jaxb.model.message.OrcidHistory;
 import org.orcid.jaxb.model.message.OrcidInternal;
+import org.orcid.jaxb.model.message.OrcidPreferences;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidWork;
 import org.orcid.jaxb.model.message.OrcidWorks;
@@ -1271,6 +1273,13 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
     @Override
     public void clearOrcidProfileCache() {
         profileCache.removeAll();
+    }
+    
+    public void addLocale(OrcidProfile orcidProfile, Locale locale) {
+        if (orcidProfile.getOrcidPreferences() == null) 
+            orcidProfile.setOrcidPreferences(new OrcidPreferences());
+        orcidProfile.getOrcidPreferences()
+            .setLocale(org.orcid.jaxb.model.message.Locale.fromValue(locale.toString()));
     }
 
 }
