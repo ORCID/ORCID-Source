@@ -476,7 +476,7 @@ function EmailEditCtrl($scope, $compile) {
 function ExternalIdentifierCtrl($scope, $compile){		
 	$scope.getExternalIdentifiers = function(){
 		$.ajax({
-			url: $('body').data('baseurl') + 'my-orcid/externalIdentifiers.json',	        
+			url: $('body').data('baseurl') + 'works/externalIdentifiers.json',	        
 	        dataType: 'json',
 	        success: function(data) {
 	        	$scope.externalIdentifiersPojo = data;
@@ -508,7 +508,7 @@ function ExternalIdentifierCtrl($scope, $compile){
 		$scope.externalIdentifiersPojo.externalIdentifiers.splice($scope.removeExternalIdentifierIndex, 1);
 		$scope.removeExternalIdentifierIndex = null;
 		$.ajax({
-	        url: $('body').data('baseurl') + 'my-orcid/externalIdentifiers.json',
+	        url: $('body').data('baseurl') + 'works/externalIdentifiers.json',
 	        type: 'DELETE',
 	        data: angular.toJson(externalIdentifier),
 	        contentType: 'application/json;charset=UTF-8',
@@ -926,7 +926,7 @@ function ClaimThanks($scope, $compile) {
 	
 	$scope.getSourceGrantReadWizard = function(){
 		$.ajax({
-			url: $('body').data('baseurl') + 'my-orcid/sourceGrantReadWizard.json',	        
+			url: $('body').data('baseurl') + 'works/sourceGrantReadWizard.json',	        
 	        dataType: 'json',
 	        success: function(data) {
 	        	$scope.sourceGrantReadWizard = data;
@@ -986,7 +986,7 @@ function WorkCtrl($scope, $compile, worksSrvc){
 	
 	$scope.addWorkModal = function(){;
 		$.ajax({
-			url: $('body').data('baseurl') + 'my-orcid/work.json',
+			url: $('body').data('baseurl') + 'works/work.json',
 			dataType: 'json',
 			success: function(data) {
 				$scope.editWork = data;
@@ -1005,7 +1005,7 @@ function WorkCtrl($scope, $compile, worksSrvc){
 		$scope.addingWork = true;
 		$scope.editWork.errors.length = 0;
 		$.ajax({
-			url: $('body').data('baseurl') + 'my-orcid/work.json',	        
+			url: $('body').data('baseurl') + 'works/work.json',	        
 	        contentType: 'application/json;charset=UTF-8',
 	        dataType: 'json',
 	        type: 'POST',
@@ -1034,7 +1034,7 @@ function WorkCtrl($scope, $compile, worksSrvc){
 		if($scope.worksToAddIds.length != 0 ) {
 			var workIds = $scope.worksToAddIds.splice(0,20).join();
 			$.ajax({
-				url: $('body').data('baseurl') + 'my-orcid/works.json?workIds=' + workIds,
+				url: $('body').data('baseurl') + 'works/works.json?workIds=' + workIds,
 				dataType: 'json',
 				success: function(data) {
 					$scope.$apply(function(){ 
@@ -1057,7 +1057,7 @@ function WorkCtrl($scope, $compile, worksSrvc){
 		$scope.works.length = 0;
 		//get work ids
 		$.ajax({
-			url: $('body').data('baseurl') + 'my-orcid/workIds.json',	        
+			url: $('body').data('baseurl') + 'works/workIds.json',	        
 	        dataType: 'json',
 	        success: function(data) {
 	        	$scope.worksToAddIds = data;
@@ -1109,7 +1109,7 @@ function WorkCtrl($scope, $compile, worksSrvc){
 	
 	$scope.removeWork = function(work) {
 		$.ajax({
-	        url: $('body').data('baseurl') + 'my-orcid/works.json',
+	        url: $('body').data('baseurl') + 'works/works.json',
 	        type: 'DELETE',
 	        data: angular.toJson(work),
 	        contentType: 'application/json;charset=UTF-8',
@@ -1183,7 +1183,7 @@ function WorkCtrl($scope, $compile, worksSrvc){
 	$scope.updateProfileWork = function(idx) {
 		var work = $scope.works[idx];
 		$.ajax({
-	        url: $('body').data('baseurl') + 'my-orcid/profileWork.json',
+	        url: $('body').data('baseurl') + 'works/profileWork.json',
 	        type: 'PUT',
 	        data: angular.toJson(work),
 	        contentType: 'application/json;charset=UTF-8',
