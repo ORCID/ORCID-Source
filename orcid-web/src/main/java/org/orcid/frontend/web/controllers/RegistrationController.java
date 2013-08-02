@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -103,6 +104,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.multiaction.NoSuchRequestHandlingMethodException;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.servlet.support.RequestContextUtils;
 
 /**
  * @author Will Simpson
@@ -798,6 +800,7 @@ public class RegistrationController extends BaseController {
         if (orcidProfile == null) {
             throw new NoSuchRequestHandlingMethodException(request);
         }
+        orcidProfileManager.addLocale(orcidProfile, RequestContextUtils.getLocale(request));
         Email email = orcidProfile.getOrcidBio().getContactDetails().getEmailByString(decryptedEmail);
         email.setVerified(true);
         email.setCurrent(true);
@@ -840,6 +843,7 @@ public class RegistrationController extends BaseController {
     }
 
     private void createMinimalRegistrationAndLogUserIn(HttpServletRequest request, OrcidProfile profileToSave) {
+        orcidProfileManager.addLocale(profileToSave, RequestContextUtils.getLocale(request));
         URI uri = OrcidWebUtils.getServerUriWithContextPath(request);
         String password = profileToSave.getPassword();
         String sessionId = request.getSession() == null ? null : request.getSession().getId();
