@@ -2,3 +2,4 @@
 
 * Added Locale to Preferences
 
+* Make make contributor-sequence and contributor-role independent 
