@@ -63,17 +63,17 @@
 						<label class="control-label" style="margin-right:10px; text-align:left; width:90px"><@orcid.msg 'manage_clients.redirect_uri'/>:</label>
 						<input type="url" placeholder="Redirect Uri"  ng-model="rUri.value">						
 						<a href ng-click="deleteUri($index)" class="icon-trash blue"></a>
-						<a ng-show="$last" href ng-click="addUriToExistingClientTable()" class="icon-plus-sign blue"></a>						
+						<a ng-show="$last" href ng-click="addUriToExistingClientTable()" class="icon-plus-sign blue"></a>	
 					</div>
 		    	</div>
 	    	</div>
 	    	<div ng-show="!clientToEdit.redirectUris.redirectUri.length">			
-				<a href ng-click="addUriToExistingClientTable()" class="icon-plus-sign blue"></a>
+				<a href ng-click="addUriToExistingClientTable()" class="icon-plus-sign blue"> Add Redirect Uri</a>
 			</div>
 			<div class="controls save-btns pull-right bottom-margin-small">
 				<span id="bottom-submit-update-credential-request" ng-click="submitEditClient($index)" class="btn btn-primary"><@orcid.msg 'manage_clients.update'/></span>				
 			</div> 	    	
-		</form>
+		</form>		
     <div> 
 </script>
 
