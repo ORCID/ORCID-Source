@@ -258,7 +258,7 @@
 				<div class="control-group">
 					<label><@orcid.msg 'manual_work_form_contents.labeltitle'/></label>
 				    <div class="relative">
-						<input name="familyNames" type="text" class="input-xlarge"  ng-model="editWork.workTitle.title.value" placeholder="<@orcid.msg 'manual_work_form_contents.add_title'/>" ng-change="serverValidate('my-orcid/work/workTitle/titleValidate.json')" ng-model-onblur/>
+						<input name="familyNames" type="text" class="input-xlarge"  ng-model="editWork.workTitle.title.value" placeholder="<@orcid.msg 'manual_work_form_contents.add_title'/>" ng-change="serverValidate('works/work/workTitle/titleValidate.json')" ng-model-onblur/>
 						<span class="required" ng-class="isValidClass(editWork.workTitle.title)">*</span>
 						<span class="orcid-error" ng-show="editWork.workTitle.title.errors.length > 0">
 							<div ng-repeat='error in editWork.workTitle.title.errors' ng-bind-html-unsafe="error"></div>
@@ -268,7 +268,7 @@
 				<div class="control-group">
 					<label><@orcid.msg 'manual_work_form_contents.labelsubtitle'/></label>
 				    <div class="relative">
-						<input name="familyNames" type="text" class="input-xlarge"  ng-model="editWork.workTitle.subtitle.value" placeholder="<@orcid.msg 'manual_work_form_contents.add_subtitle'/>" ng-change="serverValidate('my-orcid/work/workTitle/subtitleValidate.json')" ng-model-onblur/>
+						<input name="familyNames" type="text" class="input-xlarge"  ng-model="editWork.workTitle.subtitle.value" placeholder="<@orcid.msg 'manual_work_form_contents.add_subtitle'/>" ng-change="serverValidate('works/work/workTitle/subtitleValidate.json')" ng-model-onblur/>
 						<span class="orcid-error" ng-show="editWork.workTitle.subtitle.errors.length > 0">
 							<div ng-repeat='error in editWork.workTitle.subtitle.errors' ng-bind-html-unsafe="error"></div>
 						</span>
@@ -278,7 +278,7 @@
 				<div class="control-group">
 		    		<label class="relative"><@orcid.msg 'manual_work_form_contents.labelworktype'/></label>
 		    		<div class="relative">
-			    		<select id="workType" name="workType" class="input-xlarge" ng-model="editWork.workType.value" ng-change="serverValidate('my-orcid/work/workTypeValidate.json')">
+			    		<select id="workType" name="workType" class="input-xlarge" ng-model="editWork.workType.value" ng-change="serverValidate('works/work/workTypeValidate.json')">
 							<#list workTypes?keys as key>
 								<option value="${key}">${workTypes[key]}</option>
 							</#list>
@@ -299,7 +299,7 @@
 				<div class="control-group">
 					<label><@orcid.msg 'manual_work_form_contents.labelcitation'/></label>
 				    <div class="relative">
-						<textarea name="familyNames" type="text" class="input-xlarge"  ng-model="editWork.citation.citation.value" placeholder="<@orcid.msg 'manual_work_form_contents.add_citation'/>" ng-change="serverValidate('my-orcid/work/citationValidate.json')" ng-model-onblur/>
+						<textarea name="familyNames" type="text" class="input-xlarge"  ng-model="editWork.citation.citation.value" placeholder="<@orcid.msg 'manual_work_form_contents.add_citation'/>" ng-change="serverValidate('works/work/citationValidate.json')" ng-model-onblur/>
 						<span class="orcid-error" ng-show="editWork.citation.citation.errors.length > 0">
 							<div ng-repeat='error in editWork.citation.citation.errors' ng-bind-html-unsafe="error"></div>
 						</span>
@@ -309,7 +309,7 @@
 				<div class="control-group">
 		    		<label class="relative"><@orcid.msg 'manual_work_form_contents.labelcitationtype'/></label>
 		    		<div class="relative">
-			    		<select id="citationType" name="citationType" class="input-xlarge" ng-model="editWork.citation.citationType.value" ng-change="serverValidate('my-orcid/work/citationValidate.json')">
+			    		<select id="citationType" name="citationType" class="input-xlarge" ng-model="editWork.citation.citationType.value" ng-change="serverValidate('works/work/citationValidate.json')">
 							<#list citationTypes?keys as key>
 								<option value="${key}">${citationTypes[key]}</option>
 							</#list>
@@ -350,7 +350,7 @@
 		    	<div class="control-group">
 					<label><@orcid.msg 'manual_work_form_contents.labeldescription'/></label>
 				    <div class="relative">
-						<textarea name="familyNames" type="text" class="input-xlarge"  ng-model="editWork.shortDescription.value" placeholder="<@orcid.msg 'manual_work_form_contents.add_description'/>" ng-change="serverValidate('my-orcid/work/descriptionValidate.json')" ng-model-onblur/>
+						<textarea name="familyNames" type="text" class="input-xlarge"  ng-model="editWork.shortDescription.value" placeholder="<@orcid.msg 'manual_work_form_contents.add_description'/>" ng-change="serverValidate('works/work/descriptionValidate.json')" ng-model-onblur/>
 						<span class="orcid-error" ng-show="editWork.shortDescription.errors.length > 0">
 							<div ng-repeat='error in editWork.shortDescription.errors' ng-bind-html-unsafe="error"></div>
 						</span>
@@ -360,14 +360,14 @@
 		   		<div class="control-group" ng-repeat="workExternalIdentifier in editWork.workExternalIdentifiers">
 					<label><@orcid.msg 'manual_work_form_contents.labelID'/></label>
 				    <div class="relative">
-						<input name="currentWorkExternalIds" type="text" class="input-xlarge"  ng-model="workExternalIdentifier.workExternalIdentifierId.value" placeholder="<@orcid.msg 'manual_work_form_contents.add_ID'/>"  ng-change="serverValidate('my-orcid/work/workExternalIdentifiersValidate.json')" ng-model-onblur/>
+						<input name="currentWorkExternalIds" type="text" class="input-xlarge"  ng-model="workExternalIdentifier.workExternalIdentifierId.value" placeholder="<@orcid.msg 'manual_work_form_contents.add_ID'/>"  ng-change="serverValidate('works/work/workExternalIdentifiersValidate.json')" ng-model-onblur/>
 							<span class="orcid-error" ng-show="workExternalIdentifier.workExternalIdentifierId.errors.length > 0">
 								<div ng-repeat='error in workExternalIdentifier.workExternalIdentifierId.errors' ng-bind-html-unsafe="error"></div>
 							</span>
 					</div>
 					<label class="relative">ID type</label>
 					<div class="relative">
-			    		<select id="workType" name="workType" class="input-xlarge" ng-model="workExternalIdentifier.workExternalIdentifierType.value" ng-change="serverValidate('my-orcid/work/workExternalIdentifiersValidate.json')">
+			    		<select id="workType" name="workType" class="input-xlarge" ng-model="workExternalIdentifier.workExternalIdentifierType.value" ng-change="serverValidate('works/work/workExternalIdentifiersValidate.json')">
 							<#list idTypes?keys as key>
 								<option value="${key}">${idTypes[key]}</option>
 							</#list>
@@ -381,7 +381,7 @@
 				<div class="control-group">
 		    		<label class="relative"><@orcid.msg 'manual_work_form_contents.labelURL'/></label>
 		    		<div class="relative">
-						<input name="url" type="text" class="input-xlarge"  ng-model="editWork.url.value" placeholder="<@orcid.msg 'manual_work_form_contents.add_URL'/>" ng-change="serverValidate('my-orcid/work/urlValidate.json')" ng-model-onblur/>
+						<input name="url" type="text" class="input-xlarge"  ng-model="editWork.url.value" placeholder="<@orcid.msg 'manual_work_form_contents.add_URL'/>" ng-change="serverValidate('works/work/urlValidate.json')" ng-model-onblur/>
 						<span class="orcid-error" ng-show="editWork.url.errors.length > 0">
 							<div ng-repeat='error in editWork.url.errors' ng-bind-html-unsafe="error"></div>
 						</span>
