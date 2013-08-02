@@ -476,7 +476,7 @@ function EmailEditCtrl($scope, $compile) {
 function ExternalIdentifierCtrl($scope, $compile){		
 	$scope.getExternalIdentifiers = function(){
 		$.ajax({
-			url: $('body').data('baseurl') + 'works/externalIdentifiers.json',	        
+			url: $('body').data('baseurl') + 'my-orcid/externalIdentifiers.json',	        
 	        dataType: 'json',
 	        success: function(data) {
 	        	$scope.externalIdentifiersPojo = data;
@@ -930,7 +930,7 @@ function ClaimThanks($scope, $compile) {
 	
 	$scope.getSourceGrantReadWizard = function(){
 		$.ajax({
-			url: $('body').data('baseurl') + 'works/sourceGrantReadWizard.json',	        
+			url: $('body').data('baseurl') + 'my-orcid/sourceGrantReadWizard.json',	        
 	        dataType: 'json',
 	        success: function(data) {
 	        	$scope.sourceGrantReadWizard = data;
