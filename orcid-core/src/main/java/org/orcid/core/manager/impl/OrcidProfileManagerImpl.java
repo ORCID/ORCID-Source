@@ -888,6 +888,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
 
         minimalBio.setPersonalDetails(minimalPersonalDetails);
         minimalBio.setContactDetails(minimalContactDetails);
+        minimalBio.setExternalIdentifiers(new ExternalIdentifiers());
         blankedOrcidProfile.setOrcidBio(minimalBio);
         blankedOrcidProfile.setOrcid(existingOrcidProfile.getOrcid().getValue());
 
