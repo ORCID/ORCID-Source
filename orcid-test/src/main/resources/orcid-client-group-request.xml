@@ -35,7 +35,7 @@
             <redirect-uri scope="/orcid-profile/create /orcid-bio/read-limited" type="grant-read-wizard">http://www.journals.elsevier.com/ecological-complexity/orcid-callback</redirect-uri>
         </redirect-uris>
     </orcid-client>
-    <orcid-client type="premium-updater">
+    <orcid-client type="updater">
         <display-name>Ecological Economics</display-name>
         <website>http://www.journals.elsevier.com/ecological-economics</website>
         <short-description>The Transdisciplinary Journal of the International Society for Ecological Economics (ISEE)</short-description>

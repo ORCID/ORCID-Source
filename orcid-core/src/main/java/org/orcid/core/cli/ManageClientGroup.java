@@ -102,7 +102,7 @@ public class ManageClientGroup {
                 System.err.println("Unable to read input file: " + fileToLoad + "\n" + e);
             }
             try {
-                OrcidClientGroup result = manager.createOrUpdateOrcidClientGroup(OrcidClientGroup.unmarshall(fis));
+                OrcidClientGroup result = manager.createOrUpdateOrcidClientGroupForAPIRequest(OrcidClientGroup.unmarshall(fis));
                 System.out.println(result);
             } finally {
                 IOUtils.closeQuietly(fis);

@@ -44,6 +44,25 @@ public interface OrcidClientGroupManager {
     OrcidClientGroup createOrUpdateOrcidClientGroup(OrcidClientGroup orcidClientGroup);
 
     /**
+     * Creates a new orcidClientGroup if orcidClientGroup.groupOrcid is null.
+     * Updates an existing orcidClientGroup if orcidClientGroup.groupOrcid is
+     * not null.
+     * 
+     * Creates a new orcidClient for each client in orcidClientGroup for which
+     * orcidClient.clientId is null. Updates an existing orcidClient for each
+     * client in orcidClientGroup for which orcidClient.clientId is not null.
+     * 
+     * Update the resulting client types, so, the types will be only creator or updater, removing the "premium-" 
+     * from the type filed
+     * 
+     * @param orcidClientGroup
+     *            The ORCID client group to be ingested. The client scopes are set based on the group type.
+     * @return The ORCID client group that was ingested, populated with IDs and
+     *         secrets.
+     */
+    OrcidClientGroup createOrUpdateOrcidClientGroupForAPIRequest(OrcidClientGroup orcidClientGroup);
+    
+    /**
      * Creates a new orcidClient and assign it to the specified group
      * 
      * @param orcidClient

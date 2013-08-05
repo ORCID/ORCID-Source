@@ -159,9 +159,7 @@ the software.
   <xs:simpleType name="client-type">
     <xs:restriction base="xs:string">
       <xs:enumeration value="creator"/>
-      <xs:enumeration value="updater"/>
-      <xs:enumeration value="premium-creator"/>
-      <xs:enumeration value="premium-updater"/>
+      <xs:enumeration value="updater"/>      
     </xs:restriction>
   </xs:simpleType>
   <xs:simpleType name="group-type">

@@ -27,7 +27,7 @@
  xmlns="http://www.orcid.org/ns/orcid" type="premium-institution">
     <group-name>Elsevier</group-name>
     <email>orcid-admin@elsevier.com</email>
-    <orcid-client type="premium-creator">
+    <orcid-client type="creator">
         <display-name>Ecological Complexity</display-name>
         <website>http://www.journals.elsevier.com/ecological-complexity</website>
         <short-description>An International Journal on Biocomplexity in the Environment and Theoretical Ecology</short-description>
