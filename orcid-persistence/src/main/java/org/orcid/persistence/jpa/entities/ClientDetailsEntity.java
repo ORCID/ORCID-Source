@@ -21,6 +21,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
 
@@ -324,7 +325,7 @@ public class ClientDetailsEntity extends BaseEntity<String> implements ClientDet
      */
     @Override
     @Transient
-    public int getAccessTokenValiditySeconds() {
+    public Integer getAccessTokenValiditySeconds() {
         return accessTokenValiditySeconds;
     }
 
@@ -347,4 +348,19 @@ public class ClientDetailsEntity extends BaseEntity<String> implements ClientDet
     public int hashCode() {
         return clientId.hashCode();
     }
+
+    @Override
+    @Transient
+    public Integer getRefreshTokenValiditySeconds() {
+        // Not currently required
+        return null;
+    }
+
+    @Override
+    @Transient
+    public Map<String, Object> getAdditionalInformation() {
+        // Not currently required
+        return null;
+    }
+
 }

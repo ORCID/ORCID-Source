@@ -16,6 +16,16 @@
  */
 package org.orcid.core.oauth.service;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.annotation.Resource;
+
 import org.apache.commons.lang.StringUtils;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.oauth.OrcidOAuth2Authentication;
@@ -26,27 +36,22 @@ import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.oauth2.common.DefaultExpiringOAuth2RefreshToken;
+import org.springframework.security.oauth2.common.DefaultOAuth2AccessToken;
+import org.springframework.security.oauth2.common.DefaultOAuth2RefreshToken;
 import org.springframework.security.oauth2.common.ExpiringOAuth2RefreshToken;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.common.OAuth2RefreshToken;
 import org.springframework.security.oauth2.common.exceptions.InvalidTokenException;
 import org.springframework.security.oauth2.common.util.OAuth2Utils;
 import org.springframework.security.oauth2.provider.AuthorizationRequest;
+import org.springframework.security.oauth2.provider.DefaultAuthorizationRequest;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.security.oauth2.provider.token.AuthenticationKeyGenerator;
 import org.springframework.security.oauth2.provider.token.DefaultAuthenticationKeyGenerator;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * 2011-2012 ORCID
@@ -81,6 +86,11 @@ public class OrcidTokenStoreServiceImpl implements TokenStore {
         return getOAuth2AuthenticationFromDetails(detail);
     }
 
+    @Override
+    public OAuth2Authentication readAuthentication(OAuth2AccessToken token) {
+        return readAuthentication(token.getValue());
+    }
+
     /**
      * Store an access token.
      * 
@@ -92,12 +102,6 @@ public class OrcidTokenStoreServiceImpl implements TokenStore {
     @Override
     public void storeAccessToken(OAuth2AccessToken token, OAuth2Authentication authentication) {
         OrcidOauth2TokenDetail detail = populatePropertiesFromTokenAndAuthentication(token, authentication, null);
-        if (!authentication.isClientOnly() && ProfileEntity.class.isAssignableFrom(authentication.getUserAuthentication().getPrincipal().getClass())) {
-            Map<String, Object> additionalInformation = new HashMap<String, Object>();
-            ProfileEntity principal = (ProfileEntity) authentication.getUserAuthentication().getPrincipal();
-            additionalInformation.put("orcid", principal.getId());
-            token.setAdditionalInformation(additionalInformation);
-        }
         orcidOauthTokenDetailService.removeConflictsAndCreateNew(detail);
     }
 
@@ -126,8 +130,8 @@ public class OrcidTokenStoreServiceImpl implements TokenStore {
      */
     @Override
     @Transactional
-    public void removeAccessToken(String tokenValue) {
-        orcidOauthTokenDetailService.disableAccessToken(tokenValue);
+    public void removeAccessToken(OAuth2AccessToken accessToken) {
+        orcidOauthTokenDetailService.disableAccessToken(accessToken.getValue());
     }
 
     /**
@@ -139,7 +143,7 @@ public class OrcidTokenStoreServiceImpl implements TokenStore {
      *            The authentication associated with the refresh token.
      */
     @Override
-    public void storeRefreshToken(ExpiringOAuth2RefreshToken refreshToken, OAuth2Authentication authentication) {
+    public void storeRefreshToken(OAuth2RefreshToken refreshToken, OAuth2Authentication authentication) {
         // The refresh token will be stored during the token creation. We don't
         // want to create it beforehand
     }
@@ -155,7 +159,7 @@ public class OrcidTokenStoreServiceImpl implements TokenStore {
     public ExpiringOAuth2RefreshToken readRefreshToken(String refreshTokenValue) {
         OrcidOauth2TokenDetail detail = orcidOauthTokenDetailService.findByRefreshTokenValue(refreshTokenValue);
         if (detail != null && StringUtils.isNotBlank(detail.getTokenValue())) {
-            return new ExpiringOAuth2RefreshToken(detail.getRefreshTokenValue(), detail.getRefreshTokenExpiration());
+            return new DefaultExpiringOAuth2RefreshToken(detail.getRefreshTokenValue(), detail.getRefreshTokenExpiration());
         }
         return null;
     }
@@ -166,8 +170,8 @@ public class OrcidTokenStoreServiceImpl implements TokenStore {
      * @return the authentication originally used to grant the refresh token
      */
     @Override
-    public OAuth2Authentication readAuthenticationForRefreshToken(String refreshTokenValue) {
-        OrcidOauth2TokenDetail detail = orcidOauthTokenDetailService.findByRefreshTokenValue(refreshTokenValue);
+    public OAuth2Authentication readAuthenticationForRefreshToken(OAuth2RefreshToken refreshToken) {
+        OrcidOauth2TokenDetail detail = orcidOauthTokenDetailService.findByRefreshTokenValue(refreshToken.getValue());
         return getOAuth2AuthenticationFromDetails(detail);
     }
 
@@ -179,8 +183,8 @@ public class OrcidTokenStoreServiceImpl implements TokenStore {
      */
     @Override
     @Transactional
-    public void removeRefreshToken(String refreshTokenValue) {
-        orcidOauthTokenDetailService.removeByRefreshTokenValue(refreshTokenValue);
+    public void removeRefreshToken(OAuth2RefreshToken refreshToken) {
+        orcidOauthTokenDetailService.removeByRefreshTokenValue(refreshToken.getValue());
     }
 
     /**
@@ -193,8 +197,8 @@ public class OrcidTokenStoreServiceImpl implements TokenStore {
      */
     @Override
     @Transactional
-    public void removeAccessTokenUsingRefreshToken(String refreshTokenValue) {
-        orcidOauthTokenDetailService.disableAccessTokenByRefreshToken(refreshTokenValue);
+    public void removeAccessTokenUsingRefreshToken(OAuth2RefreshToken refreshToken) {
+        orcidOauthTokenDetailService.disableAccessTokenByRefreshToken(refreshToken.getValue());
     }
 
     /**
@@ -247,9 +251,9 @@ public class OrcidTokenStoreServiceImpl implements TokenStore {
     }
 
     private OAuth2AccessToken getOauth2AccessTokenFromDetails(OrcidOauth2TokenDetail detail) {
-        OAuth2AccessToken token = null;
+        DefaultOAuth2AccessToken token = null;
         if (detail != null && StringUtils.isNotBlank(detail.getTokenValue())) {
-            token = new OAuth2AccessToken(detail.getTokenValue());
+            token = new DefaultOAuth2AccessToken(detail.getTokenValue());
             token.setExpiration(detail.getTokenExpiration());
             token.setScope(OAuth2Utils.parseParameterList(detail.getScope()));
             token.setTokenType(detail.getTokenType());
@@ -257,9 +261,9 @@ public class OrcidTokenStoreServiceImpl implements TokenStore {
             OAuth2RefreshToken rt;
             if (StringUtils.isNotBlank(refreshToken)) {
                 if (detail.getRefreshTokenExpiration() != null) {
-                    rt = new ExpiringOAuth2RefreshToken(detail.getRefreshTokenValue(), detail.getRefreshTokenExpiration());
+                    rt = new DefaultExpiringOAuth2RefreshToken(detail.getRefreshTokenValue(), detail.getRefreshTokenExpiration());
                 } else {
-                    rt = new OAuth2RefreshToken(detail.getRefreshTokenValue());
+                    rt = new DefaultOAuth2RefreshToken(detail.getRefreshTokenValue());
                 }
                 token.setRefreshToken(rt);
             }
@@ -278,12 +282,15 @@ public class OrcidTokenStoreServiceImpl implements TokenStore {
         if (details != null) {
             ClientDetailsEntity clientDetailsEntity = details.getClientDetailsEntity();
             Authentication authentication = null;
-            AuthorizationRequest request = null;
+            DefaultAuthorizationRequest request = null;
             if (clientDetailsEntity != null) {
                 Set<String> scopes = OAuth2Utils.parseParameterList(details.getScope());
-                request = new AuthorizationRequest(clientDetailsEntity.getClientId(), scopes, clientDetailsEntity.getAuthorities(), Arrays
-                        .asList(details.getResourceId()));
-                request = request.approved(details.isApproved());
+                request = new DefaultAuthorizationRequest(clientDetailsEntity.getClientId(), scopes);
+                request.setAuthorities(clientDetailsEntity.getAuthorities());
+                Set<String> resourceIds = new HashSet<>();
+                resourceIds.add(details.getResourceId());
+                request.setResourceIds(resourceIds);
+                request.setApproved(details.isApproved());
                 ProfileEntity profile = details.getProfile();
                 if (profile != null) {
                     authentication = new OrcidOauth2UserAuthentication(profile, details.isApproved());

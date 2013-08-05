@@ -17,6 +17,8 @@
 package org.orcid.core.oauth.service;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.Resource;
@@ -26,12 +28,12 @@ import org.orcid.jaxb.model.message.ScopePathType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.oauth2.common.ExpiringOAuth2RefreshToken;
+import org.springframework.security.oauth2.common.DefaultOAuth2AccessToken;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.provider.AuthorizationRequest;
 import org.springframework.security.oauth2.provider.ClientDetailsService;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
-import org.springframework.security.oauth2.provider.token.RandomValueTokenServices;
+import org.springframework.security.oauth2.provider.token.DefaultTokenServices;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 
 /**
@@ -39,7 +41,7 @@ import org.springframework.security.oauth2.provider.token.TokenStore;
  * 
  * @author Declan Newman (declan) Date: 11/05/2012
  */
-public class OrcidRandomValueTokenServices extends RandomValueTokenServices {
+public class OrcidRandomValueTokenServices extends DefaultTokenServices {
 
     private final int writeValiditySeconds;
     private final int readValiditySeconds;
@@ -60,13 +62,14 @@ public class OrcidRandomValueTokenServices extends RandomValueTokenServices {
         OAuth2AccessToken existingAccessToken = tokenStore.getAccessToken(authentication);
         if (existingAccessToken != null) {
             if (existingAccessToken.isExpired()) {
-                tokenStore.removeAccessToken(existingAccessToken.getValue());
+                tokenStore.removeAccessToken(existingAccessToken);
                 LOGGER.info("Existing but expired access token found: clientId={}, scopes={}, userOrcid={}", new Object[] { authInfo.getClientId(), authInfo.getScopes(),
                         authInfo.getUserOrcid() });
             } else {
+                DefaultOAuth2AccessToken updatedAccessToken = new DefaultOAuth2AccessToken(existingAccessToken);
                 int validitySeconds = getAccessTokenValiditySeconds(authentication.getAuthorizationRequest());
                 if (validitySeconds > 0) {
-                    existingAccessToken.setExpiration(new Date(System.currentTimeMillis() + (validitySeconds * 1000L)));
+                    updatedAccessToken.setExpiration(new Date(System.currentTimeMillis() + (validitySeconds * 1000L)));
                 }
                 tokenStore.storeAccessToken(existingAccessToken, authentication);
                 LOGGER.info("Existing reusable access token found: clientId={}, scopes={}, userOrcid={}", new Object[] { authInfo.getClientId(), authInfo.getScopes(),
@@ -75,13 +78,13 @@ public class OrcidRandomValueTokenServices extends RandomValueTokenServices {
             }
         }
 
-        ExpiringOAuth2RefreshToken refreshToken = null;
-        refreshToken = createRefreshToken(authentication);
-
-        OAuth2AccessToken accessToken = createAccessToken(authentication, refreshToken);
+        DefaultOAuth2AccessToken accessToken = new DefaultOAuth2AccessToken(super.createAccessToken(authentication));
+        Map<String, Object> additionalInfo = new HashMap<>();
+        additionalInfo.put("orcid", authInfo.getUserOrcid());
+        accessToken.setAdditionalInformation(additionalInfo);
         tokenStore.storeAccessToken(accessToken, authentication);
-        LOGGER.info("Creating new access token: clientId={}, scopes={}, userOrcid={}", new Object[] { authInfo.getClientId(), authInfo.getScopes(),
-                authInfo.getUserOrcid() });
+        LOGGER.info("Creating new access token: clientId={}, scopes={}, userOrcid={}",
+                new Object[] { authInfo.getClientId(), authInfo.getScopes(), authInfo.getUserOrcid() });
         return accessToken;
     }
 
