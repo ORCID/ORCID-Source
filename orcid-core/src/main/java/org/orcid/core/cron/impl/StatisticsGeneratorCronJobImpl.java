@@ -39,17 +39,13 @@ public class StatisticsGeneratorCronJobImpl implements StatisticsGeneratorCronJo
     @Resource
     private StatisticsManager statisticsManager;
 
-    private long dayInMillis = 24 * 60 * 60 * 1000;
+    private long halfHourInMillis = 30 * 60 * 1000;
     
-    private int daysOffset;
+    private long hourInMillis = halfHourInMillis * 2;
     
-    public StatisticsGeneratorCronJobImpl(){
-        this.daysOffset = 1;
-    }
+    private long dayInMillis = 24 * hourInMillis;
     
-    public StatisticsGeneratorCronJobImpl(int daysOffset){
-        this.daysOffset = daysOffset;
-    }
+    private long weekInMillis = dayInMillis * 7;        
     
     /**
      * Cron job that will generate statistics and store them on database
@@ -57,15 +53,22 @@ public class StatisticsGeneratorCronJobImpl implements StatisticsGeneratorCronJo
     @Override
     public void generateStatistics() {
         LOG.debug("About to run statistics generator thread");
-        boolean run = true;
+        boolean run = false;
         StatisticKeyEntity lastStatisticsKey = statisticsManager.getLatestKey();
         
         if(lastStatisticsKey != null && lastStatisticsKey.getGenerationDate() != null){
-            LOG.info("Last time the statistics were generated: {}", lastStatisticsKey.getGenerationDate());
-            long currentDaysOffset = this.getDaysOffset(lastStatisticsKey.getGenerationDate());
-            LOG.info("Days since the last time the statistics were generated: {}", currentDaysOffset);
-            if(currentDaysOffset < this.daysOffset)
-                run = false;
+        	Date lastTimeJobRuns = lastStatisticsKey.getGenerationDate();        	
+        	boolean isTimeToRun = isFridayNearMidnight();
+        	long offset = System.currentTimeMillis() - lastTimeJobRuns.getTime();
+        	LOG.info("Last time the statistics were generated: {}", lastTimeJobRuns);            
+            LOG.info("Is time to run the scheduler? {}", isTimeToRun);
+            
+            if(offset > weekInMillis || (isTimeToRun && offset > halfHourInMillis) ){
+            	run = true;
+            }
+            
+        } else {
+        	LOG.warn("There are no statistics generated yet.");
         }                                
         
         if(run){
@@ -81,21 +84,22 @@ public class StatisticsGeneratorCronJobImpl implements StatisticsGeneratorCronJo
     }
     
     /**
-     * Get the number of days since the last time the cron job ran
-     * @param lastRun The last time the cron ran
-     * @return the number of days since the last time the cron ran
+     * @return true if it is Friday 11:30 PM or later, false otherwise. 
      * */
-    private long getDaysOffset(Date lastRun){
-        Calendar lastRunCalendar = Calendar.getInstance();
-        lastRunCalendar.setTime(lastRun);
-        lastRunCalendar.set(Calendar.HOUR_OF_DAY, 0);
-        lastRunCalendar.set(Calendar.MINUTE, 0);
-        lastRunCalendar.set(Calendar.SECOND, 0);
-        lastRunCalendar.set(Calendar.MILLISECOND, 0);
-        
-        long lastRunMillis = lastRunCalendar.getTimeInMillis();
-        long todayMillis = System.currentTimeMillis();        
-        return (todayMillis - lastRunMillis) / dayInMillis;
+    public boolean isFridayNearMidnight(){
+    	Calendar c = Calendar.getInstance();
+    	int dayOfWeek = c.get(Calendar.DAY_OF_WEEK);
+    	// If it is friday
+    	if(dayOfWeek == Calendar.FRIDAY){
+    		// And it is 11 PM
+    		if(c.get(Calendar.HOUR_OF_DAY) == 23){
+    			// And it is later than 11:30 pm
+    			if(c.get(Calendar.MINUTE) >= 30){
+    				return true;
+    			}
+    		}
+    	}
+    	
+    	return false;
     }
-
 }

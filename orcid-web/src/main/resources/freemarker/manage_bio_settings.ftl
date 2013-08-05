@@ -125,7 +125,7 @@
                       		<#else> 
                       		    ${savedResearcherUrl.urlName.content} (<a href="${savedResearcherUrl.url.value}">${savedResearcherUrl.url.value}</a>)
                       		</#if>
-                      		<a href="" class="icon-trash grey delete-url" ng-show="email.primary == false" ng-click="deleteEmail($index)" title="remove url"></a>
+                      		<a href="" class="icon-trash orcid-icon-trash grey delete-url" ng-click="deleteEmail($index)" title="remove url"></a>
                       		</p>     		    
                     </#list>
              	</#if>

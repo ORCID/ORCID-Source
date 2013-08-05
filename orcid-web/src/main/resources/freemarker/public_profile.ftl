@@ -29,7 +29,7 @@
                     ${(profile.orcidBio.personalDetails.givenNames.content)!} ${(profile.orcidBio.personalDetails.familyName.content)!}
                 </#if>
             </h2>
-            <p><small id="orcid-id" class="orcid-id">${baseUri}/${(profile.orcid.value)!}</small></p>
+            <p><small id="orcid-id" class="orcid-id">${baseUriHttp}/${(profile.orcid.value)!}</small></p>
             <#if (profile.orcidBio.personalDetails.otherNames)?? && (profile.orcidBio.personalDetails.otherNames.otherName?size != 0)>
                 <p><strong>${springMacroRequestContext.getMessage("public_profile.labelAlsoknownas")}</strong><br />
                   <#list profile.orcidBio.personalDetails.otherNames.otherName as otherName>
@@ -50,7 +50,7 @@
             <#if (profile.orcidBio.researcherUrls)?? && (profile.orcidBio.researcherUrls.researcherUrl?size != 0)>
                 <p><strong>${springMacroRequestContext.getMessage("public_profile.labelWebsites")}</strong><br/>
                     <#list profile.orcidBio.researcherUrls.researcherUrl as url>
-                        <a href="${url.url.value}"><#if (url.urlName.content)! != "">${url.urlName.content}<#else>${url.url.value}</#if></a><#if url_has_next><br/></#if>
+                        <a href="<@orcid.absUrl url.url/>" target="_blank"><#if (url.urlName.content)! != "">${url.urlName.content}<#else>${url.url.value}</#if></a><#if url_has_next><br/></#if>
                     </#list></p>
             </#if>
             <#if (profile.orcidBio.externalIdentifiers)?? && (profile.orcidBio.externalIdentifiers.externalIdentifier?size != 0)>

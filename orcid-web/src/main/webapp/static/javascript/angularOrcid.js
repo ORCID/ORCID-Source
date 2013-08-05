@@ -15,7 +15,7 @@
  * =============================================================================
  */
 
-var orcidNgModule = angular.module('orcidApp', []);
+var orcidNgModule = angular.module('orcidApp', ["ngCookies"]);
 
 orcidNgModule.directive('ngModelOnblur', function() {
     return {
@@ -90,6 +90,14 @@ orcidNgModule.factory("prefsSrvc", function ($rootScope) {
 	return serv; 
 });
 
+
+orcidNgModule.filter('urlWithHttp', function(){
+	return function(input, output){
+		if (input == null) return input;
+		if (!input.startsWith('http')) return 'http://' + input; 
+	    return input;
+	};
+});
 
 
 function EditTableCtrl($scope) {
@@ -467,7 +475,7 @@ function EmailEditCtrl($scope, $compile) {
 function ExternalIdentifierCtrl($scope, $compile){		
 	$scope.getExternalIdentifiers = function(){
 		$.ajax({
-			url: $('body').data('baseurl') + 'my-orcid/externalIdentifiers.json',	        
+			url: $('body').data('baseurl') + 'works/externalIdentifiers.json',	        
 	        dataType: 'json',
 	        success: function(data) {
 	        	$scope.externalIdentifiersPojo = data;
@@ -499,7 +507,7 @@ function ExternalIdentifierCtrl($scope, $compile){
 		$scope.externalIdentifiersPojo.externalIdentifiers.splice($scope.removeExternalIdentifierIndex, 1);
 		$scope.removeExternalIdentifierIndex = null;
 		$.ajax({
-	        url: $('body').data('baseurl') + 'my-orcid/externalIdentifiers.json',
+	        url: $('body').data('baseurl') + 'works/externalIdentifiers.json',
 	        type: 'DELETE',
 	        data: angular.toJson(externalIdentifier),
 	        contentType: 'application/json;charset=UTF-8',
@@ -713,7 +721,7 @@ function ClaimCtrl($scope, $compile) {
 	$scope.postingClaim = false;
 	$scope.getClaim = function(){
 		$.ajax({
-			url: window.location + '.json',	        
+			url: $scope.getClaimAjaxUrl(),	        
 	        dataType: 'json',
 	        success: function(data) {
 	       	$scope.register = data;
@@ -729,7 +737,7 @@ function ClaimCtrl($scope, $compile) {
 		if ($scope.postingClaim) return;
 		$scope.postingClaim = true;
 		$.ajax({
-	        url: window.location + '.json',
+	        url: $scope.getClaimAjaxUrl(),
 	        type: 'POST',
 	        data:  angular.toJson($scope.register),
 	        contentType: 'application/json;charset=UTF-8',
@@ -753,6 +761,10 @@ function ClaimCtrl($scope, $compile) {
 	    });
 	};
 	
+	
+	$scope.getClaimAjaxUrl = function () {
+		return window.location.href.split("?")[0]+".json";
+	} 
 	
 	$scope.updateWorkVisibilityDefault = function(priv, $event) {
 		$scope.register.workVisibilityDefault.visibility = priv;
@@ -917,7 +929,7 @@ function ClaimThanks($scope, $compile) {
 	
 	$scope.getSourceGrantReadWizard = function(){
 		$.ajax({
-			url: $('body').data('baseurl') + 'my-orcid/sourceGrantReadWizard.json',	        
+			url: $('body').data('baseurl') + 'works/sourceGrantReadWizard.json',	        
 	        dataType: 'json',
 	        success: function(data) {
 	        	$scope.sourceGrantReadWizard = data;
@@ -977,7 +989,7 @@ function WorkCtrl($scope, $compile, worksSrvc){
 	
 	$scope.addWorkModal = function(){;
 		$.ajax({
-			url: $('body').data('baseurl') + 'my-orcid/work.json',
+			url: $('body').data('baseurl') + 'works/work.json',
 			dataType: 'json',
 			success: function(data) {
 				$scope.editWork = data;
@@ -996,7 +1008,7 @@ function WorkCtrl($scope, $compile, worksSrvc){
 		$scope.addingWork = true;
 		$scope.editWork.errors.length = 0;
 		$.ajax({
-			url: $('body').data('baseurl') + 'my-orcid/work.json',	        
+			url: $('body').data('baseurl') + 'works/work.json',	        
 	        contentType: 'application/json;charset=UTF-8',
 	        dataType: 'json',
 	        type: 'POST',
@@ -1025,7 +1037,7 @@ function WorkCtrl($scope, $compile, worksSrvc){
 		if($scope.worksToAddIds.length != 0 ) {
 			var workIds = $scope.worksToAddIds.splice(0,20).join();
 			$.ajax({
-				url: $('body').data('baseurl') + 'my-orcid/works.json?workIds=' + workIds,
+				url: $('body').data('baseurl') + 'works/works.json?workIds=' + workIds,
 				dataType: 'json',
 				success: function(data) {
 					$scope.$apply(function(){ 
@@ -1048,7 +1060,7 @@ function WorkCtrl($scope, $compile, worksSrvc){
 		$scope.works.length = 0;
 		//get work ids
 		$.ajax({
-			url: $('body').data('baseurl') + 'my-orcid/workIds.json',	        
+			url: $('body').data('baseurl') + 'works/workIds.json',	        
 	        dataType: 'json',
 	        success: function(data) {
 	        	$scope.worksToAddIds = data;
@@ -1100,7 +1112,7 @@ function WorkCtrl($scope, $compile, worksSrvc){
 	
 	$scope.removeWork = function(work) {
 		$.ajax({
-	        url: $('body').data('baseurl') + 'my-orcid/works.json',
+	        url: $('body').data('baseurl') + 'works/works.json',
 	        type: 'DELETE',
 	        data: angular.toJson(work),
 	        contentType: 'application/json;charset=UTF-8',
@@ -1174,7 +1186,7 @@ function WorkCtrl($scope, $compile, worksSrvc){
 	$scope.updateProfileWork = function(idx) {
 		var work = $scope.works[idx];
 		$.ajax({
-	        url: $('body').data('baseurl') + 'my-orcid/profileWork.json',
+	        url: $('body').data('baseurl') + 'works/profileWork.json',
 	        type: 'PUT',
 	        data: angular.toJson(work),
 	        contentType: 'application/json;charset=UTF-8',
@@ -1198,7 +1210,7 @@ function QuickSearchCtrl($scope, $compile){
 	
 	$scope.getResults = function(rows){
 		$.ajax({
-			url: $('#ng-app').data('search-query-url') + '&start=' + $scope.start + '&rows=' + $scope.rows,      
+			url: $('#QuickSearchCtrl').data('search-query-url') + '&start=' + $scope.start + '&rows=' + $scope.rows,      
 			dataType: 'json',
 			headers: { Accept: 'application/json'},
 			success: function(data) {
@@ -1256,7 +1268,7 @@ function QuickSearchCtrl($scope, $compile){
 	
 	// init
 	$scope.getResults(10);
-}
+};
 
 function ClientEditCtrl($scope, $compile){
 	$scope.errors = [];
@@ -1479,7 +1491,7 @@ function ClientEditCtrl($scope, $compile){
 	    
 	//init
 	$scope.getClients();
-}
+};
 
 function statisticCtrl($scope){	
 	$scope.liveIds = 0;	
@@ -1497,7 +1509,63 @@ function statisticCtrl($scope){
 	    	console.log("Error getting statistics Live iDs total amount");	    	
 	    });
 	};
-	
-	$scope.getLiveIds();
-}
 
+	$scope.getLiveIds();
+};
+
+function languageCtrl($scope, $cookies){		
+	$scope.languages = 
+	    [
+	        {	            
+	            "value": "en",
+	            "label": "English"
+	        },
+	        {
+	        	"value": 'es',
+	    		"label": 'Español'
+	        },
+	        {
+	        	"value": 'fr',
+	    		"label": 'Français'
+	        },	        
+	        {
+		        "value": 'zh_CN',
+			    "label": '簡體中文'
+	        },
+	        {
+		        "value": 'zh_TW',
+			    "label": '简体中文'
+	        },	        
+	    ];	
+
+	//Load Language that is set in the cookie or set default language to english
+	$scope.getCurrentLanguage = function(){
+		$scope.language = $scope.languages[0]; //Default
+		typeof($cookies.locale_v3) !== 'undefined' ? locale_v3 = $cookies.locale_v3 : locale_v3 = "en"; //If cookie exists we get the language value from it		
+    	angular.forEach($scope.languages, function(value, key){ //angular.forEach doesn't support break
+    		if (value.value == locale_v3) $scope.language = $scope.languages[key];    		
+    	});
+	};
+
+	$scope.getCurrentLanguage(); //Checking for the current language value
+
+
+	$scope.selectedLanguage = function(){		
+		$.ajax({
+	        url: $('body').data('baseurl')+'lang.json?lang='+$scope.language.value,	        
+	        type: 'POST',
+	        dataType: 'json',
+	        success: function(data){
+	        	angular.forEach($scope.languages, function(value, key){
+	        		if(value.value == data.locale){
+	        			$scope.language = $scope.languages[key];
+	        			window.location.reload(true);
+	        		}
+	        	});	        
+	        }
+	    }).fail(function(error) { 
+	    	// something bad is happening!	    	
+	    	console.log("Error setting up language cookie");	    	
+	    });		
+	};
+};

@@ -516,19 +516,9 @@ public class ManageProfileController extends BaseWorkspaceController {
     }
 
     @RequestMapping(value = "/view-account-settings", method = RequestMethod.GET)
-    public ModelAndView viewAccountSettings() {
-
-        ModelAndView accountSettings = new ModelAndView("view_account_settings");
-        OrcidProfile profile = orcidProfileManager.retrieveOrcidProfile(getCurrentUserOrcid());
-        Preferences preferences = profile.getOrcidInternal().getPreferences();
-        boolean sendChangeNotications = preferences != null && preferences.getSendChangeNotifications() != null ? preferences.getSendChangeNotifications().isValue()
-                : false;
-
-        boolean sendOrcidNews = preferences != null && preferences.getSendOrcidNews() != null ? preferences.getSendOrcidNews().isValue() : false;
-        accountSettings.addObject("sendChangeNotications", sendChangeNotications);
-        accountSettings.addObject("sendOrcidNews", sendOrcidNews);
-        accountSettings.addObject("profile", profile);
-        return accountSettings;
+    public String viewAccountSettings() {
+        // Defunct page, redirect to main account page in case of bookmarks.
+        return "redirect:/account";
     }
 
     @RequestMapping(value = { "/password", "/change-password" }, method = RequestMethod.GET)
@@ -591,11 +581,13 @@ public class ManageProfileController extends BaseWorkspaceController {
     public @ResponseBody
     SecurityQuestion setSecurityQuestionJson(HttpServletRequest request, @RequestBody SecurityQuestion securityQuestion) {
         List<String> errors = new ArrayList<String>();
-        if (securityQuestion.getSecurityAnswer() == null || securityQuestion.getSecurityAnswer().trim() == "")
+        if (securityQuestion.getSecurityQuestionId() != 0 && (securityQuestion.getSecurityAnswer() == null || securityQuestion.getSecurityAnswer().trim() == ""))
             errors.add(getMessage("manage.pleaseProvideAnAnswer"));
-        if (securityQuestion.getSecurityQuestionId() == 0)
-            errors.add(getMessage("manage.pleaseChooseAQuestion"));
-
+        
+        // If the security question is empty, clean the security answer field
+        if(securityQuestion.getSecurityQuestionId() == 0)
+        	securityQuestion.setSecurityAnswer(new String());
+        
         if (errors.size() == 0) {
             OrcidProfile profile = getCurrentUser().getEffectiveProfile();
             if (profile.getOrcidInternal().getSecurityDetails().getSecurityQuestionId() == null)
@@ -914,8 +906,29 @@ public class ManageProfileController extends BaseWorkspaceController {
             BindingResult bindingResult, RedirectAttributes redirectAttributes) {
         ModelAndView manageBioView = new ModelAndView("redirect:manage-bio-settings");
 
+        for (String keyword : changePersonalInfoForm.getKeywordsAsList()) {
+            if (keyword.length() > ChangePersonalInfoForm.KEYWORD_MAX_LEN) {
+                bindingResult.rejectValue("keywordsDelimited", "Length.changePersonalInfoForm.keywordsDelimited");
+                break;
+            }
+        }
+
         if (bindingResult.hasErrors()) {
             ModelAndView erroredView = new ModelAndView("manage_bio_settings");
+
+            // If an error happens and the user doesnt have any website,
+            // the privacy selector for websites dissapears.
+            // In order to fix this, if the ChangePersonalInfoForm doesnt have
+            // any researcher url, we add a new one with an empty list, which
+            // is different than null ResearcherUrls
+            Map<String, Object> model = bindingResult.getModel();
+
+            if (changePersonalInfoForm.getSavedResearcherUrls() == null) {
+                changePersonalInfoForm.setSavedResearcherUrls(new ResearcherUrls());
+            }
+
+            model.put("changePersonalInfoForm", changePersonalInfoForm);
+
             erroredView.addAllObjects(bindingResult.getModel());
             return erroredView;
         }

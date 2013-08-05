@@ -16,17 +16,25 @@
  */
 package org.orcid.core.manager.impl;
 
+import java.text.DecimalFormat;
 import java.util.List;
+import java.util.Locale;
 
 import javax.annotation.Resource;
 
 import org.orcid.core.manager.StatisticsManager;
+import org.orcid.core.utils.statistics.StatisticsEnum;
 import org.orcid.persistence.dao.StatisticsDao;
 import org.orcid.persistence.jpa.entities.StatisticValuesEntity;
 import org.orcid.persistence.jpa.entities.StatisticKeyEntity;
+import org.springframework.context.MessageSource;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.transaction.annotation.Transactional;
 
 public class StatisticsManagerImpl implements StatisticsManager {
+
+    @Resource
+    MessageSource messageSource;
 
     @Resource
     StatisticsDao statisticsDao;
@@ -68,6 +76,7 @@ public class StatisticsManagerImpl implements StatisticsManager {
      *         parameters
      * */
     @Override
+    @Cacheable("statistics")
     public StatisticValuesEntity getStatistic(StatisticKeyEntity id, String name) {
         return statisticsDao.getStatistic(id.getId(), name);
     }
@@ -78,6 +87,7 @@ public class StatisticsManagerImpl implements StatisticsManager {
      * @return a list that contains the latest set of statistics
      * */
     @Override
+    @Cacheable("statistics")
     public List<StatisticValuesEntity> getLatestStatistics() {
         StatisticKeyEntity latestKey = statisticsDao.getLatestKey();
         if(latestKey != null)
@@ -90,14 +100,26 @@ public class StatisticsManagerImpl implements StatisticsManager {
      * @param statisticName
      * @return the latest statistics value for the statistics name parameter
      * */
+    @Cacheable("statistics")
     public StatisticValuesEntity getLatestStatistics(String statisticName){
         StatisticKeyEntity latestKey = statisticsDao.getLatestKey();
         if(latestKey != null)
             return statisticsDao.getStatistic(latestKey.getId(), statisticName);
         return null;
     }
-    
-    
+
+    /**
+     * Get the the latest live ids statistics 
+     * @param locale
+     * @return the latest statistics live ids statistics
+     * */
+    public String getLiveIds(Locale locale) {
+        StatisticValuesEntity entity = getLatestStatistics(StatisticsEnum.KEY_LIVE_IDS.value());
+        double amount = Double.parseDouble(String.valueOf(entity.getStatisticValue()));        
+        DecimalFormat formatter = new DecimalFormat(messageSource.getMessage("public-layout.number_format",null, locale));        
+        return formatter.format(amount);
+    }
+
     
     /**
      * Get the last statistics key

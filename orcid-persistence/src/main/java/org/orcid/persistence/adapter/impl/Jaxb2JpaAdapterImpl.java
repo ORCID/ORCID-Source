@@ -75,6 +75,7 @@ import org.orcid.jaxb.model.message.OrcidHistory;
 import org.orcid.jaxb.model.message.OrcidInternal;
 import org.orcid.jaxb.model.message.OrcidPatent;
 import org.orcid.jaxb.model.message.OrcidPatents;
+import org.orcid.jaxb.model.message.OrcidPreferences;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidWork;
 import org.orcid.jaxb.model.message.OrcidWorks;
@@ -162,6 +163,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
         setHistoryDetails(profileEntity, profile.getOrcidHistory());
         setActivityDetails(profileEntity, profile.getOrcidActivities());
         setInternalDetails(profileEntity, profile.getOrcidInternal());
+        setPreferencesDetails(profileEntity, profile.getOrcidPreferences());
 
         return profileEntity;
     }
@@ -811,10 +813,6 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             }
             Preferences preferences = orcidInternal.getPreferences();
             if (preferences != null) {
-                if (preferences.getLocale() == null)
-                    profileEntity.setLocale(Locale.EN);
-                else 
-                    profileEntity.setLocale(preferences.getLocale());
                 profileEntity.setSendChangeNotifications(preferences.getSendChangeNotifications() == null ? null : preferences.getSendChangeNotifications().isValue());
                 profileEntity.setSendOrcidNews(preferences.getSendOrcidNews() == null ? null : preferences.getSendOrcidNews().isValue());
                 // Use the default value in the ProfileEntity class if work
@@ -823,6 +821,16 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
                     profileEntity.setWorkVisibilityDefault(preferences.getWorkVisibilityDefault().getValue());
                 }
             }
+            
+        }
+    }
+
+    private void setPreferencesDetails(ProfileEntity profileEntity, OrcidPreferences orcidPreferences) {
+        if (orcidPreferences != null) {
+            if (orcidPreferences.getLocale() != null) 
+                profileEntity.setLocale(orcidPreferences.getLocale());
+                else
+                    profileEntity.setLocale(Locale.EN);
         }
     }
 

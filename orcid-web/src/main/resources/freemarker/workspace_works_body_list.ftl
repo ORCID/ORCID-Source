@@ -32,7 +32,7 @@
 	 
 	<ul ng-hide="!works.length" class="workspace-publications workspace-body-list bottom-margin-medium" ng-cloak>        
             <li class="bottom-margin-small" ng-repeat='work in works'>            	
-                <div class="pull-right" style="right: 145px; top: 20px; width: 15px;"><a href ng-click="deleteWork($index)" class="icon-trash grey"></a></div>
+                <div class="pull-right" style="right: 145px; top: 20px; width: 15px;"><a href ng-click="deleteWork($index)" class="icon-trash orcid-icon-trash grey"></a></div>
 				<div style="width: 530px;">
                 <h3 class="work-title">
                 	<strong ng-bind="work.workTitle.title.value"></strong><span class="work-subtitle" ng-show="work.workTitle.subtitle.value" ng-bind-html-unsafe="':&nbsp;'.concat(work.workTitle.subtitle.value)"></span>
@@ -46,10 +46,10 @@
 				<div  style="width: 680px;" class="work-metadata">
 	                <span ng-repeat='ie in work.workExternalIdentifiers'>
 	                	<span ng-show="ie.workExternalIdentifierType.value=='doi' && ie.workExternalIdentifierId.value">
-	                		<span>${springMacroRequestContext.getMessage("workspace_works_body_list.DOI")} <a href="http://dx.doi.org/{{ie.workExternalIdentifierId.value.replace('http://dx.doi.org/','')}}">{{ie.workExternalIdentifierId.value}}</a></span>	          
+	                		<span>${springMacroRequestContext.getMessage("workspace_works_body_list.DOI")} <a href="http://dx.doi.org/{{ie.workExternalIdentifierId.value.replace('http://dx.doi.org/','')}}" target="_blank">{{ie.workExternalIdentifierId.value}}</a></span>	          
 	                	</span>                	             
 	                </span>
-	                <span ng-show="work.url.value" style=" display: inline-block;">URL: <a href="{{work.url.value}}">{{work.url.value}}</a></span>
+	                <span ng-show="work.url.value" style=" display: inline-block;">URL: <a href="{{work.url.value | urlWithHttp}}" target="_blank">{{work.url.value}}</a></span>
 	            </div>
                 
                 <div ng-show="work.shortDescription" ng-bind-html-unsafe="work.shortDescription.value" style="width: 680px;"></div>
@@ -60,6 +60,6 @@
 	    <i class="icon-spinner icon-4x icon-spin  green"></i>
 	</div>
     <div ng-show="numOfWorksToAdd==0" class="alert alert-info" ng-cloak>
-        <strong><#if (publicProfile)?? && publicProfile == true>${springMacroRequestContext.getMessage("workspace_works_body_list.Nopublicationsaddedyet")}<#else>${springMacroRequestContext.getMessage("workspace_works_body_list.havenotaddedanyworks")} <a href="<@spring.url '/works-update'/>" class="update">${springMacroRequestContext.getMessage("workspace_works_body_list.addsomenow")}</a></#if></strong>
+        <strong><#if (publicProfile)?? && publicProfile == true>${springMacroRequestContext.getMessage("workspace_works_body_list.Nopublicationsaddedyet")}<#else>${springMacroRequestContext.getMessage("workspace_works_body_list.havenotaddedanyworks")} <a ng-click="addWorkModal()">${springMacroRequestContext.getMessage("workspace_works_body_list.addsomenow")}</a></#if></strong>
     </div>
     

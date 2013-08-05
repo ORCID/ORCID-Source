@@ -1,7 +1,7 @@
-# Summary of API Changes for 1.0.17
+# Summary of API Changes from 1.0.16 to 1.0.17
 
 * Added Locale to Preferences
 
-* Added type "non-empty-string" and "non-empty-string" restriction to work-external-identifier-id
+* Make make contributor-sequence and contributor-role independent 
 
 * Added group-type and client-type fields 

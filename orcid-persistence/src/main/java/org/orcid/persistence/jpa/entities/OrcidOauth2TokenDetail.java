@@ -35,7 +35,7 @@ import java.util.Date;
  */
 @Entity
 @Table(name = "oauth2_token_detail")
-public class OrcidOauth2TokenDetail extends BaseEntity<Long> implements ProfileAware {
+public class OrcidOauth2TokenDetail extends BaseEntity<Long> implements ProfileAware, Comparable<OrcidOauth2TokenDetail> {
 
     /**
      * 
@@ -214,4 +214,25 @@ public class OrcidOauth2TokenDetail extends BaseEntity<Long> implements ProfileA
     public void setTokenDisabled(Boolean tokenDisabled) {
         this.tokenDisabled = tokenDisabled;
     }
+
+    @Override
+    public int compareTo(OrcidOauth2TokenDetail other) {
+        ProfileEntity otherProfileEntity = other.getProfile();
+        int compareName = profile.getCreditName().compareTo(otherProfileEntity.getCreditName());
+        if (compareName != 0) {
+            return compareName;
+        }
+        Date thisDateCreated = getDateCreated();
+        if (thisDateCreated != null) {
+            Date otherDateCreated = other.getDateCreated();
+            if (otherDateCreated != null) {
+                int compareDateCreated = thisDateCreated.compareTo(otherDateCreated);
+                if (compareDateCreated != 0) {
+                    return compareDateCreated;
+                }
+            }
+        }
+        return tokenValue.compareTo(other.tokenValue);
+    }
+
 }

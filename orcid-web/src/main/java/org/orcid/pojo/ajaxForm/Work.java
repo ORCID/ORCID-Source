@@ -121,7 +121,6 @@ public class Work implements ErrorsInterface, Serializable {
             List<org.orcid.jaxb.model.message.Contributor> cList =  new ArrayList<org.orcid.jaxb.model.message.Contributor>();
             for (Contributor c: this.getContributors()) {
                 cList.add(c.toContributor());
-                
             }
             ow.setWorkContributors(new WorkContributors(cList));
         }
@@ -157,7 +156,7 @@ public class Work implements ErrorsInterface, Serializable {
                 LOGGER.info("Invalid BibTeX. Sending back as a string");
             }
         }
-        if (this.citation != null && this.getCitation() != null) {
+        if (this.citation != null && this.citation.getCitation() != null) {
             return this.citation.getCitation().getValue();
         }
         return null;

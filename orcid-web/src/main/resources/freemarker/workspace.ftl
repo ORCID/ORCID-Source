@@ -25,7 +25,13 @@
     </div>
 </#if>
 
-<div id="ng-app" class="row workspace-top public-profile">
+<#if invalidVerifyUrl?? && invalidVerifyUrl>
+    <div class="alert alert-success">
+        <strong><@spring.message "orcid.frontend.web.invalid_verify_link"/></strong>
+    </div>
+</#if>
+
+<div class="row workspace-top public-profile">
 
 	<#-- hidden divs that trigger angular -->
 	<#if RequestParameters['recordClaimed']??>
@@ -43,11 +49,8 @@
                     ${(profile.orcidBio.personalDetails.givenNames.content)!} ${(profile.orcidBio.personalDetails.familyName.content)!}
                 </#if>
             </h2>
-            <p><small id="orcid-id" class="orcid-id">${baseUri}/${(profile.orcid.value)!}</small></p>
-	        <p class="hoover-white-fonts"><a href="<@spring.url "/" + (profile.orcid.value)!"my-orcid/public" />" class="label btn-primary"><@orcid.msg 'workspace.ViewPublicORCIDRecord'/></a></p>
-	        <#if !RequestParameters['addWorks']??>
-	            <p><a href="<@spring.url '/account/manage-bio-settings'/>" class="btn-update"><@orcid.msg 'workspace.Update'/></a></p>
-	        </#if>
+            <p><small id="orcid-id" class="orcid-id">${baseUriHttp}/${(profile.orcid.value)!}</small></p>
+	        <p class="hoover-white-fonts"><a href="${baseUriHttp}/${(profile.orcid.value)!}" class="label btn-primary"><@orcid.msg 'workspace.ViewPublicORCIDRecord'/></a></p>
 	        <#if ((profile.orcidBio.personalDetails.otherNames.otherName)?size != 0)>
 	        	<p><strong><@orcid.msg 'workspace.Alsoknownas'/></strong><br />
 		       		<#list profile.orcidBio.personalDetails.otherNames.otherName as otherName>
@@ -67,8 +70,8 @@
 	       	</#if>
 	       	<#if (profile.orcidBio.researcherUrls)?? && (profile.orcidBio.researcherUrls.researcherUrl?size != 0)>
 	        	<p><strong><@orcid.msg 'public_profile.labelWebsites'/></strong> <br/>
-		       		<#list profile.orcidBio.researcherUrls.researcherUrl as url>		       		
-		       		   <a href="<@orcid.absUrl url.url/>"><#if (url.urlName.content)! != "">${url.urlName.content}<#else>${url.url.value}</#if></a><#if url_has_next><br/></#if>
+		       		<#list profile.orcidBio.researcherUrls.researcherUrl as url>
+		       		   <a href="<@orcid.absUrl url.url/>" target="_blank"><#if (url.urlName.content)! != "">${url.urlName.content}<#else>${url.url.value}</#if></a><#if url_has_next><br/></#if>
 		       		</#list></p>
 	       	</#if>
        		<div ng-controller="ExternalIdentifierCtrl" ng-hide="!externalIdentifiersPojo.externalIdentifiers.length" ng-cloak>	       			
@@ -80,19 +83,14 @@
 		        			<p ng-show="externalIdentifier.externalIdUrl"><a ng-href="{{externalIdentifier.externalIdUrl.value}}">{{externalIdentifier.externalIdCommonName.content}} {{externalIdentifier.externalIdReference.content}}</a></p>
 		     			</td>
 			   			<td class="padRgt">
-			   				<p><a href ng-click="deleteExternalIdentifier($index)" class="icon-trash grey"></a></p>
+			   				<p><a href ng-click="deleteExternalIdentifier($index)" class="icon-trash orcid-icon-trash grey"></a></p>
 			   			</td>		        		
 		        	</tr>
 		        </table>
 			</div>
 			
 		    <#if ((thirdPartiesForImport)?? && (thirdPartiesForImport)?size &gt; 0)>
-    	        <#if !RequestParameters['addWorks']??>
-	    	        <ul class="workspace-help">
-	    	        	<li><a href="#third-parties" class="colorbox-modal"><@orcid.msg 'workspace.import_works'/></a></li>
-	    	        </ul>
-	    	    </#if>
-    	        <div class="inline-modal" id="third-parties">					
+     	        <div class="inline-modal" id="third-parties">					
 					<div class="span9">
 						<a class="btn pull-right close-button">X</a>
 	           			<h1 class="lightbox-title" style="text-transform: uppercase;"><@orcid.msg 'workspace.import_works'/></h1>
@@ -133,12 +131,8 @@
         		<div class="workspace-overview" id="works-overview" ng-controller="WorkOverviewCtrl">
         			<a href="#workspace-publications" class="overview-count"><span ng-bind="works.length"></span></a>
         			<a href="#workspace-publications" class="overview-title"><@orcid.msg 'workspace.Works'/></a>
-        			<#if RequestParameters['addWorks']??>
-                    	<br />
-                    	<a href="#workspace-publications" class="btn-update no-icon"><@orcid.msg 'workspace.view'/></a>
-        			<#else>
-                    	<div><a href="<@spring.url '/works-update'/>" class="btn-update"><@orcid.msg 'workspace.Update'/></a></div>
-                   	</#if>
+                    <br />
+                    <a href="#workspace-publications" class="btn-update no-icon"><@orcid.msg 'workspace.view'/></a>
         		</div>
                 <div class="workspace-overview">
                     <a href="#workspace-affiliations" class="overview-count">${(profile.orcidBio.affiliations?size)!0}</a>
@@ -166,11 +160,7 @@
         			       <i class="icon-caret-down" ng-class="{'icon-caret-right':displayInfo==false}"></i></a>
         			   </a> 
         			   <a href="" ng-click="toggleDisplayInfo()"><@orcid.msg 'workspace.personal_information'/></a> 
-        			   <#if RequestParameters['addWorks']??>
-        			   	   <a href="<@spring.url '/account/manage-bio-settings'/>" id="upate-personal-modal-link" class="label btn-primary"><@orcid.msg 'workspace.Update'/></a>
-        			   <#else>
-        			       <a href="<@spring.url '/account/manage-bio-settings'/>" class="label btn-update"><@orcid.msg 'workspace.Update'/></a>
-        			   </#if>
+        			   <a href="<@spring.url '/account/manage-bio-settings'/>" id="upate-personal-modal-link" class="label btn-primary"><@orcid.msg 'workspace.Update'/></a>
         			</div>
             		<div class="workspace-accordion-content" ng-show="displayInfo">
             			<#include "workspace_personal.ftl"/>
@@ -191,10 +181,8 @@
         			       <i class="icon-caret-down icon" ng-class="{'icon-caret-right':displayWorks==false}"></i></a>
         			    </a> 
         				<a href="" ng-click="toggleDisplayWorks()"><@orcid.msg 'workspace.Works'/></a>
-						<#if RequestParameters['addWorks']??>
-							<a href="#third-parties" class="colorbox-modal label btn-primary"><@orcid.msg 'workspace.import_works'/></a>
-							<a href="" class="label btn-primary" ng-click="addWorkModal()"><@orcid.msg 'manual_work_form_contents.add_work_manually'/></a>
-						</#if>
+						<a href="#third-parties" class="colorbox-modal label btn-primary"><@orcid.msg 'workspace.import_works'/></a>
+						<a href="" class="label btn-primary" ng-click="addWorkModal()"><@orcid.msg 'manual_work_form_contents.add_work_manually'/></a>
 					</div>
       	            <div ng-show="displayWorks" class="workspace-accordion-content">
 	            		<#include "workspace_works_body_list.ftl"/>
@@ -276,7 +264,7 @@
 				<div class="control-group">
 					<label><@orcid.msg 'manual_work_form_contents.labeltitle'/></label>
 				    <div class="relative">
-						<input name="familyNames" type="text" class="input-xlarge"  ng-model="editWork.workTitle.title.value" placeholder="<@orcid.msg 'manual_work_form_contents.add_title'/>" ng-change="serverValidate('my-orcid/work/workTitle/titleValidate.json')" ng-model-onblur/>
+						<input name="familyNames" type="text" class="input-xlarge"  ng-model="editWork.workTitle.title.value" placeholder="<@orcid.msg 'manual_work_form_contents.add_title'/>" ng-change="serverValidate('works/work/workTitle/titleValidate.json')" ng-model-onblur/>
 						<span class="required" ng-class="isValidClass(editWork.workTitle.title)">*</span>
 						<span class="orcid-error" ng-show="editWork.workTitle.title.errors.length > 0">
 							<div ng-repeat='error in editWork.workTitle.title.errors' ng-bind-html-unsafe="error"></div>
@@ -286,7 +274,7 @@
 				<div class="control-group">
 					<label><@orcid.msg 'manual_work_form_contents.labelsubtitle'/></label>
 				    <div class="relative">
-						<input name="familyNames" type="text" class="input-xlarge"  ng-model="editWork.workTitle.subtitle.value" placeholder="<@orcid.msg 'manual_work_form_contents.add_subtitle'/>" ng-change="serverValidate('my-orcid/work/workTitle/subtitleValidate.json')" ng-model-onblur/>
+						<input name="familyNames" type="text" class="input-xlarge"  ng-model="editWork.workTitle.subtitle.value" placeholder="<@orcid.msg 'manual_work_form_contents.add_subtitle'/>" ng-change="serverValidate('works/work/workTitle/subtitleValidate.json')" ng-model-onblur/>
 						<span class="orcid-error" ng-show="editWork.workTitle.subtitle.errors.length > 0">
 							<div ng-repeat='error in editWork.workTitle.subtitle.errors' ng-bind-html-unsafe="error"></div>
 						</span>
@@ -296,7 +284,7 @@
 				<div class="control-group">
 		    		<label class="relative"><@orcid.msg 'manual_work_form_contents.labelworktype'/></label>
 		    		<div class="relative">
-			    		<select id="workType" name="workType" class="input-xlarge" ng-model="editWork.workType.value" ng-change="serverValidate('my-orcid/work/workTypeValidate.json')">
+			    		<select id="workType" name="workType" class="input-xlarge" ng-model="editWork.workType.value" ng-change="serverValidate('works/work/workTypeValidate.json')">
 							<#list workTypes?keys as key>
 								<option value="${key}">${workTypes[key]}</option>
 							</#list>
@@ -317,7 +305,7 @@
 				<div class="control-group">
 					<label><@orcid.msg 'manual_work_form_contents.labelcitation'/></label>
 				    <div class="relative">
-						<textarea name="familyNames" type="text" class="input-xlarge"  ng-model="editWork.citation.citation.value" placeholder="<@orcid.msg 'manual_work_form_contents.add_citation'/>" ng-change="serverValidate('my-orcid/work/citationValidate.json')" ng-model-onblur/>
+						<textarea name="familyNames" type="text" class="input-xlarge"  ng-model="editWork.citation.citation.value" placeholder="<@orcid.msg 'manual_work_form_contents.add_citation'/>" ng-change="serverValidate('works/work/citationValidate.json')" ng-model-onblur/>
 						<span class="orcid-error" ng-show="editWork.citation.citation.errors.length > 0">
 							<div ng-repeat='error in editWork.citation.citation.errors' ng-bind-html-unsafe="error"></div>
 						</span>
@@ -327,7 +315,7 @@
 				<div class="control-group">
 		    		<label class="relative"><@orcid.msg 'manual_work_form_contents.labelcitationtype'/></label>
 		    		<div class="relative">
-			    		<select id="citationType" name="citationType" class="input-xlarge" ng-model="editWork.citation.citationType.value" ng-change="serverValidate('my-orcid/work/citationValidate.json')">
+			    		<select id="citationType" name="citationType" class="input-xlarge" ng-model="editWork.citation.citationType.value" ng-change="serverValidate('works/work/citationValidate.json')">
 							<#list citationTypes?keys as key>
 								<option value="${key}">${citationTypes[key]}</option>
 							</#list>
@@ -368,7 +356,7 @@
 		    	<div class="control-group">
 					<label><@orcid.msg 'manual_work_form_contents.labeldescription'/></label>
 				    <div class="relative">
-						<textarea name="familyNames" type="text" class="input-xlarge"  ng-model="editWork.shortDescription.value" placeholder="<@orcid.msg 'manual_work_form_contents.add_description'/>" ng-change="serverValidate('my-orcid/work/descriptionValidate.json')" ng-model-onblur/>
+						<textarea name="familyNames" type="text" class="input-xlarge"  ng-model="editWork.shortDescription.value" placeholder="<@orcid.msg 'manual_work_form_contents.add_description'/>" ng-change="serverValidate('works/work/descriptionValidate.json')" ng-model-onblur/>
 						<span class="orcid-error" ng-show="editWork.shortDescription.errors.length > 0">
 							<div ng-repeat='error in editWork.shortDescription.errors' ng-bind-html-unsafe="error"></div>
 						</span>
@@ -378,14 +366,14 @@
 		   		<div class="control-group" ng-repeat="workExternalIdentifier in editWork.workExternalIdentifiers">
 					<label><@orcid.msg 'manual_work_form_contents.labelID'/></label>
 				    <div class="relative">
-						<input name="currentWorkExternalIds" type="text" class="input-xlarge"  ng-model="workExternalIdentifier.workExternalIdentifierId.value" placeholder="<@orcid.msg 'manual_work_form_contents.add_ID'/>"  ng-change="serverValidate('my-orcid/work/workExternalIdentifiersValidate.json')" ng-model-onblur/>
+						<input name="currentWorkExternalIds" type="text" class="input-xlarge"  ng-model="workExternalIdentifier.workExternalIdentifierId.value" placeholder="<@orcid.msg 'manual_work_form_contents.add_ID'/>"  ng-change="serverValidate('works/work/workExternalIdentifiersValidate.json')" ng-model-onblur/>
 							<span class="orcid-error" ng-show="workExternalIdentifier.workExternalIdentifierId.errors.length > 0">
 								<div ng-repeat='error in workExternalIdentifier.workExternalIdentifierId.errors' ng-bind-html-unsafe="error"></div>
 							</span>
 					</div>
 					<label class="relative">ID type</label>
 					<div class="relative">
-			    		<select id="workType" name="workType" class="input-xlarge" ng-model="workExternalIdentifier.workExternalIdentifierType.value" ng-change="serverValidate('my-orcid/work/workExternalIdentifiersValidate.json')">
+			    		<select id="workType" name="workType" class="input-xlarge" ng-model="workExternalIdentifier.workExternalIdentifierType.value" ng-change="serverValidate('works/work/workExternalIdentifiersValidate.json')">
 							<#list idTypes?keys as key>
 								<option value="${key}">${idTypes[key]}</option>
 							</#list>
@@ -399,7 +387,7 @@
 				<div class="control-group">
 		    		<label class="relative"><@orcid.msg 'manual_work_form_contents.labelURL'/></label>
 		    		<div class="relative">
-						<input name="url" type="text" class="input-xlarge"  ng-model="editWork.url.value" placeholder="<@orcid.msg 'manual_work_form_contents.add_URL'/>" ng-change="serverValidate('my-orcid/work/urlValidate.json')" ng-model-onblur/>
+						<input name="url" type="text" class="input-xlarge"  ng-model="editWork.url.value" placeholder="<@orcid.msg 'manual_work_form_contents.add_URL'/>" ng-change="serverValidate('works/work/urlValidate.json')" ng-model-onblur/>
 						<span class="orcid-error" ng-show="editWork.url.errors.length > 0">
 							<div ng-repeat='error in editWork.url.errors' ng-bind-html-unsafe="error"></div>
 						</span>
@@ -409,9 +397,9 @@
 				<div class="control-group" ng-repeat="contributor in editWork.contributors">
 				    <label class="relative"><@orcid.msg 'manual_work_form_contents.labelRole'/></label>
 				    <div class="relative">    
-						<select id="role" name="role" ng-model="contributor.contributorRole.value" ng-change="serverValidate('my-orcid/work/roleValidate.json')">
+						<select id="role" name="role" ng-model="contributor.contributorRole.value">
 							<#list roles?keys as key>
-								<option value="${key}">${roles[key]}</option>
+							    <option value="${key}">${roles[key]}</option>
 							</#list>
 			    		</select>
 						<span class="orcid-error" ng-show="contributor.contributorRole.errors.length > 0">
@@ -423,7 +411,7 @@
 				<div class="control-group" ng-repeat="contributor in editWork.contributors">
 				    <label class="relative"><@orcid.msg 'manual_work_form_contents.labelcredited'/></label>
 				    <div class="relative">    
-						<select id="role" name="role" ng-model="contributor.contributorSequence.value" ng-change="serverValidate('my-orcid/work/sequenceValidate.json')">
+						<select id="role" name="role" ng-model="contributor.contributorSequence.value">
 							<#list sequences?keys as key>
 								<option value="${key}">${sequences[key]}</option>
 							</#list>

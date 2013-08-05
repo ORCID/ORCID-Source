@@ -18,6 +18,7 @@ package org.orcid.core.manager;
 
 import java.util.Collection;
 import java.util.Date;
+import java.util.Locale;
 
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidWorks;
@@ -166,6 +167,11 @@ public interface OrcidProfileManager {
     OrcidProfile updatePreferences(OrcidProfile updatedOrcidProfile);
 
     /**
+     * Overwrites preferences in the DB with the values in updatedProfile.
+     */
+    OrcidProfile updateOrcidPreferences(OrcidProfile updatedOrcidProfile);
+
+    /**
      * Adds the works from orcidProfile to the existing profile in the DB
      * (without removing existing works, and without any attempt at
      * de-duplication).
@@ -309,5 +315,7 @@ public interface OrcidProfileManager {
     Date updateLastModifiedDate(String orcid);
 
     void clearOrcidProfileCache();
+    
+    public void addLocale(OrcidProfile orcidProfile, Locale locale);
 
 }

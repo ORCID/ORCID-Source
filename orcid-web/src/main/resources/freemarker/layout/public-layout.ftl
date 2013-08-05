@@ -22,7 +22,7 @@
 <!--[if lt IE 9]><html class="no-js oldie" lang="en"><![endif]-->
 <!--[if gt IE 9]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <#include "/common/html-head.ftl" />
-<body data-baseurl="<@spring.url '/'/>">
+<body data-baseurl="<@spring.url '/'/>" ng-app="orcidApp">
 <#nested />
 <#include "/common/scripts.ftl" />
 </body>
@@ -35,7 +35,7 @@
 <#if devSandboxUrl != ''>
     <div class="dev-watermark"></div>
 </#if>
-<div class="container" ng-app="orcidApp">
+<div class="container">
     <header class="header center">
         <div class="row">
             <div class="span11 offset1">
@@ -54,6 +54,13 @@
                         <button type="submit" class="search-button"><i class="icon-orcid-search"></i></button>
                         <a href="<@spring.url "/orcid-search/search" />" class="settings-button" title="<@orcid.msg 'public-layout.search.advanced'/>"><i class="icon-cog"></i></a>
                     </form>
+                    <#if (RequestParameters['showLangSelector'])??>
+	                    <div class="language-selector" ng-controller="languageCtrl">
+						    <form id="language-form" action="#">
+						    	<select name="language-codes" id="language-codes" ng-model="language" ng-options="language.label for language in languages" ng-change="selectedLanguage()"></select>
+						    </form>
+						</div>     
+					</#if>
                 </div>
             </div>
         </div>
@@ -125,7 +132,7 @@
                     
                 </div>
             </div>
-			<span ng-controller="statisticCtrl" class="see-more ng-cloak">{{liveIds|number}} <@orcid.msg 'public-layout.amount_ids'/> <a href="<@spring.url "/statistics" />" title=""><@orcid.msg 'public-layout.see_more'/></a></span>
+			<span class="see-more">${liveIds} <@orcid.msg 'public-layout.amount_ids'/> <a href="<@spring.url "/statistics" />" title=""><@orcid.msg 'public-layout.see_more'/></a></span>
         </div>
         
         <#include '../common/maintenance_header.ftl'/>

@@ -26,6 +26,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
@@ -82,6 +83,7 @@ import org.orcid.jaxb.model.message.OrcidActivities;
 import org.orcid.jaxb.model.message.OrcidBio;
 import org.orcid.jaxb.model.message.OrcidHistory;
 import org.orcid.jaxb.model.message.OrcidInternal;
+import org.orcid.jaxb.model.message.OrcidPreferences;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidType;
 import org.orcid.jaxb.model.message.OrcidWork;
@@ -335,6 +337,8 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
     }
 
     private void setWorkPrivacy(OrcidProfile updatedOrcidProfile, Visibility defaultWorkVisibility) {
+        OrcidHistory orcidHistory = updatedOrcidProfile.getOrcidHistory();
+        boolean isClaimed = orcidHistory != null ? orcidHistory.getClaimed().isValue() : false;
         OrcidActivities incomingActivities = updatedOrcidProfile.getOrcidActivities();
         if (incomingActivities != null) {
             OrcidWorks incomingWorks = incomingActivities.getOrcidWorks();
@@ -342,8 +346,12 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
                 for (OrcidWork incomingWork : incomingWorks.getOrcidWork()) {
                     if (StringUtils.isBlank(incomingWork.getPutCode())) {
                         Visibility incomingWorkVisibility = incomingWork.getVisibility();
-                        if (defaultWorkVisibility.isMoreRestrictiveThan(incomingWorkVisibility)) {
-                            incomingWork.setVisibility(defaultWorkVisibility);
+                        if (isClaimed) {
+                            if (defaultWorkVisibility.isMoreRestrictiveThan(incomingWorkVisibility)) {
+                                incomingWork.setVisibility(defaultWorkVisibility);
+                            }
+                        } else if (incomingWorkVisibility == null) {
+                            incomingWork.setVisibility(Visibility.PRIVATE);
                         }
                     }
                 }
@@ -717,6 +725,19 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         existingProfile.getOrcidInternal().setPreferences(preferences);
         return updateOrcidProfile(existingProfile);
     }
+    
+    @Override
+    @Transactional
+    public OrcidProfile updateOrcidPreferences(OrcidProfile updatedOrcidProfile) {
+        OrcidProfile existingProfile = retrieveOrcidProfile(updatedOrcidProfile.getOrcid().getValue());
+        if (existingProfile == null) {
+            return null;
+        }
+        
+        existingProfile.setOrcidPreferences(updatedOrcidProfile.getOrcidPreferences());
+        return updateOrcidProfile(existingProfile);
+    }
+
 
     @Override
     @Transactional
@@ -1286,6 +1307,13 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
     @Override
     public void clearOrcidProfileCache() {
         profileCache.removeAll();
+    }
+    
+    public void addLocale(OrcidProfile orcidProfile, Locale locale) {
+        if (orcidProfile.getOrcidPreferences() == null) 
+            orcidProfile.setOrcidPreferences(new OrcidPreferences());
+        orcidProfile.getOrcidPreferences()
+            .setLocale(org.orcid.jaxb.model.message.Locale.fromValue(locale.toString()));
     }
 
 }

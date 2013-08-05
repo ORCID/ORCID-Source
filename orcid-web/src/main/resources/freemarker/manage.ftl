@@ -32,7 +32,7 @@
 			<h1 id="account-settings">${springMacroRequestContext.getMessage("manage.account_settings")}</h1>
 			<#assign open = "" />
 			
-			<table class="table table-bordered settings-table" id="ng-app" ng-controller="EditTableCtrl" style="margin: 0px, padding: 0px;">
+			<table class="table table-bordered settings-table" ng-controller="EditTableCtrl" style="margin: 0px, padding: 0px;">
 				<tbody>
 					<tr>
 						<th>${springMacroRequestContext.getMessage("public_profile.h3PersonalInformation")}</th>
@@ -72,7 +72,7 @@
 	   							      <span ng-show="email.verified">${springMacroRequestContext.getMessage("manage.email.verified")}</span>		
 		   						  </td>
 		   						  <td class="padRgt">
-		   						  	<a href="" class="icon-trash grey" ng-show="email.primary == false" ng-click="confirmDeleteEmail($index)"></a>
+		   						  	<a href="" class="icon-trash orcid-icon-trash grey" ng-show="email.primary == false" ng-click="confirmDeleteEmail($index)"></a>
 		   						  </td>
 		   						  <td class="padRgt">
 		   						  	<@orcid.privacyToggle "email.visibility" "setPrivacy($index, 'PUBLIC', $event)" "setPrivacy($index, 'LIMITED', $event)" "setPrivacy($index, 'PRIVATE', $event)" />
@@ -254,7 +254,7 @@
                                             </#list>
                                         </#if>
                                     </td width="35%">                                    
-                                    <td width="5%"><button class="btn btn-link" onclick="orcidGA.gaPush(['_trackEvent', 'Disengagement', 'Revoke_Access', 'OAuth ${applicationSummary.applicationName.content}']);"><i class="icon-trash grey" title="${springMacroRequestContext.getMessage("manage.revokeaccess")}"></i></button></td>
+                                    <td width="5%"><a onclick="orcidGA.gaPush(['_trackEvent', 'Disengagement', 'Revoke_Access', 'OAuth ${applicationSummary.applicationName.content?js_string}']); orcidGA.gaFormSumbitDelay($('#revokeApplicationForm${applicationSummary_index}')); return false;" class="icon-trash orcid-icon-trash grey" title="${springMacroRequestContext.getMessage("manage.revokeaccess")}"></a></td>
                                 </form>
                             </tr>
                         </#list>

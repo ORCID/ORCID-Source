@@ -17,6 +17,7 @@
 package org.orcid.core.manager;
 
 import java.util.List;
+import java.util.Locale;
 
 import org.orcid.persistence.jpa.entities.StatisticKeyEntity;
 import org.orcid.persistence.jpa.entities.StatisticValuesEntity;
@@ -65,6 +66,12 @@ public interface StatisticsManager {
      * */
     public StatisticValuesEntity getLatestStatistics(String statisticName);
     
+    /**
+     * Get the the latest live ids statistics 
+     * @param locale
+     * @return the latest statistics live ids statistics
+     * */
+    public String getLiveIds(Locale locale);
     
     /**
      * Get the last statistics key

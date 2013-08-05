@@ -19,7 +19,7 @@
 <@public classes=['home'] nav="signin">
 
 <#include "sandbox_warning.ftl"/>
-<div class="row">
+<div class="row">		
         <form class="form-sign-in" id="loginForm" action="<@spring.url '/signin/auth'/>" method="post">
             <@spring.bind "loginForm" />
             <@spring.showErrors "<br/>" "error" />
@@ -51,7 +51,7 @@
             <div class="span3">
                	<a class="reg" href="<@spring.url '/register'/>">${springMacroRequestContext.getMessage("login.register")}</a>
             <div>
-        </form>
+        </form>  
     
 </div>
 </@public>

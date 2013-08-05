@@ -126,7 +126,7 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
     private String groupOrcid;
     private SortedSet<ProfileEntity> clientProfiles;
     private ClientDetailsEntity clientDetails;
-    private Set<OrcidOauth2TokenDetail> tokenDetails;
+    private SortedSet<OrcidOauth2TokenDetail> tokenDetails;
     private IndexingStatus indexingStatus = IndexingStatus.PENDING;
     private Set<ProfileEventEntity> profileEvents;
 
@@ -763,11 +763,12 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
     }
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = PROFILE)
-    public Set<OrcidOauth2TokenDetail> getTokenDetails() {
+    @Sort(type=SortType.NATURAL)
+    public SortedSet<OrcidOauth2TokenDetail> getTokenDetails() {
         return tokenDetails;
     }
 
-    public void setTokenDetails(Set<OrcidOauth2TokenDetail> tokenDetails) {
+    public void setTokenDetails(SortedSet<OrcidOauth2TokenDetail> tokenDetails) {
         this.tokenDetails = tokenDetails;
     }
 

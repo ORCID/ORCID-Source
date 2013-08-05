@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -33,6 +34,7 @@ import javax.validation.Valid;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
+import org.jasypt.exceptions.EncryptionOperationNotPossibleException;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.OrcidProfileManager;
@@ -102,6 +104,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.multiaction.NoSuchRequestHandlingMethodException;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.servlet.support.RequestContextUtils;
 
 /**
  * @author Will Simpson
@@ -777,13 +780,18 @@ public class RegistrationController extends BaseController {
 
     private ModelAndView buildVerificationView(HttpServletRequest request, String encryptedEmail, RedirectAttributes redirectAttributes)
             throws UnsupportedEncodingException, NoSuchRequestHandlingMethodException {
-        String decryptedEmail = encryptionManager.decryptForExternalUse(new String(Base64.decodeBase64(encryptedEmail), "UTF-8"));
-        if (!isEmailOkForCurrentUser(decryptedEmail)) {
-            return new ModelAndView("wrong_user");
-        }
-        OrcidProfile orcidProfile = orcidProfileManager.retrieveOrcidProfileByEmail(decryptedEmail);
-        confirmEmailAndClaim(decryptedEmail, orcidProfile, null, request);
-        redirectAttributes.addFlashAttribute("emailVerified", true);
+    	try {
+	        String decryptedEmail = encryptionManager.decryptForExternalUse(new String(Base64.decodeBase64(encryptedEmail), "UTF-8"));
+	        if (!isEmailOkForCurrentUser(decryptedEmail)) {
+	            return new ModelAndView("wrong_user");
+	        }
+	        OrcidProfile orcidProfile = orcidProfileManager.retrieveOrcidProfileByEmail(decryptedEmail);
+	        confirmEmailAndClaim(decryptedEmail, orcidProfile, null, request);
+	        redirectAttributes.addFlashAttribute("emailVerified", true);
+    	} catch (EncryptionOperationNotPossibleException eonpe){
+    		LOGGER.warn("Error decypting verify email from the verify email link");
+    		redirectAttributes.addFlashAttribute("invalidVerifyUrl", true);    		
+    	}
         return new ModelAndView("redirect:/my-orcid");
     }
 
@@ -792,6 +800,7 @@ public class RegistrationController extends BaseController {
         if (orcidProfile == null) {
             throw new NoSuchRequestHandlingMethodException(request);
         }
+        orcidProfileManager.addLocale(orcidProfile, RequestContextUtils.getLocale(request));
         Email email = orcidProfile.getOrcidBio().getContactDetails().getEmailByString(decryptedEmail);
         email.setVerified(true);
         email.setCurrent(true);
@@ -834,6 +843,7 @@ public class RegistrationController extends BaseController {
     }
 
     private void createMinimalRegistrationAndLogUserIn(HttpServletRequest request, OrcidProfile profileToSave) {
+        orcidProfileManager.addLocale(profileToSave, RequestContextUtils.getLocale(request));
         URI uri = OrcidWebUtils.getServerUriWithContextPath(request);
         String password = profileToSave.getPassword();
         String sessionId = request.getSession() == null ? null : request.getSession().getId();

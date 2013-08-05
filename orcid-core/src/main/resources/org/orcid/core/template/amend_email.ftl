@@ -28,4 +28,4 @@
 <@emailMacros.msg "email.common.kind_regards" />
 ${baseUri}
 
-<@emailMacros.msg "email.common.you_have_received_this_email_opt_out" />
+<@emailMacros.msg "email.common.you_have_received_this_email_opt_out.1" />${baseUri}<@emailMacros.msg "email.common.you_have_received_this_email_opt_out.2" />
