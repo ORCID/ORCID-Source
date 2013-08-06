@@ -201,7 +201,7 @@ public class WorkspaceController extends BaseWorkspaceController {
         Map<String, String> map = new LinkedHashMap<String, String>();
         map.put("", "");
         for (SequenceType sequenceType : SequenceType.values()) {
-            map.put(sequenceType.value(), StringUtils.capitalize(sequenceType.value().replaceAll("[-]", " ")));
+            map.put(sequenceType.value(), buildInternationalizationKey(SequenceType.class, sequenceType.value()));
         }
         return map;
     }
