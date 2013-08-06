@@ -41,9 +41,4 @@
 		<property name="OrcidClientGroupManager" ref="orcidClientGroupManager" />
 	</bean>
 	
-	<!--  Web driver, for emulating the web interface user -->
-	<bean name="webDriver" class="org.openqa.selenium.htmlunit.HtmlUnitDriver">
-	    <property name="javascriptEnabled" value="true" />
-	</bean>
-
 </beans>
