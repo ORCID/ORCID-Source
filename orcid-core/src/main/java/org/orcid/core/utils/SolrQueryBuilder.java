@@ -40,12 +40,11 @@ public class SolrQueryBuilder {
     private static final String NOT_CONDITION = " -";
     private static final String OPEN_BRACKET = "(";
     private static final String CLOSE_BRACKET = ")";
-    private static final String WILDCARD_OPERATOR = "*";
     private static final String OPEN_EDISMAX = "{!edismax qf='";
     private static final String CLOSE_EDISMAX = "'}";
 
-    // Need to escape + - && || ! ( ) { } [ ] ^ " ~ * ? : \ and any white space
-    private static final Pattern SPECIAL_CHARACTER_PATTERN = Pattern.compile("([+\\-&|!(){}\\[\\]^\"~*?:\\\\])");
+    // Need to escape + - && || ! ( ) { } [ ] ^ " ~ : \ and any white space
+    private static final Pattern SPECIAL_CHARACTER_PATTERN = Pattern.compile("([+\\-&|!(){}\\[\\]^\"~:\\\\])");
 
     public SolrQueryBuilder(String firstQuery) {
         queryString = new StringBuilder(firstQuery);
@@ -72,7 +71,7 @@ public class SolrQueryBuilder {
 
         String basicQueryExpression = safelyFormatFieldValue(field, value);
         if (!StringUtils.isBlank(basicQueryExpression)) {
-            queryString.append(basicQueryExpression.toLowerCase()).append(WILDCARD_OPERATOR);
+            queryString.append(basicQueryExpression.toLowerCase());
         }
     }
 
@@ -80,7 +79,7 @@ public class SolrQueryBuilder {
 
         String basicQueryExpression = safelyFormatFieldValue(field, value);
         if (!StringUtils.isBlank(basicQueryExpression)) {
-            queryString.append(AND_CONDITION).append(basicQueryExpression.toLowerCase()).append(WILDCARD_OPERATOR);
+            queryString.append(AND_CONDITION).append(basicQueryExpression.toLowerCase());
         }
 
     }
@@ -96,7 +95,7 @@ public class SolrQueryBuilder {
     public void appendLowercaseWildcardORCondition(String field, String value) {
         String basicQueryExpression = safelyFormatFieldValue(field, value);
         if (!StringUtils.isBlank(basicQueryExpression)) {
-            queryString.append(OR_CONDITION).append(basicQueryExpression.toLowerCase()).append(WILDCARD_OPERATOR);
+            queryString.append(OR_CONDITION).append(basicQueryExpression.toLowerCase());
         }
     }
 
