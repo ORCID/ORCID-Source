@@ -61,7 +61,7 @@ public class SearchOrcidFormToQueryMapperTest {
         form.setKeyword("orcid");
         String derivedQueryString = setupQuery().deriveQueryString();
         assertEquals(
-                "given-names:donald* AND family-name:logan* OR other-names:donald* AND current-primary-institution-affiliation-name:university of portsmouth* OR past-institution-affiliation-name:university of portsmouth* AND keyword:orcid*",
+                "given-names:donald AND family-name:logan OR other-names:donald AND current-primary-institution-affiliation-name:university of portsmouth OR past-institution-affiliation-name:university of portsmouth AND keyword:orcid",
                 derivedQueryString);
 
     }
@@ -74,7 +74,7 @@ public class SearchOrcidFormToQueryMapperTest {
         form.setPastInstitutionsSearchable(false);
         form.setOtherNamesSearchable(false);
         String derivedQueryString = setupQuery().deriveQueryString();
-        assertEquals("given-names:donald* AND family-name:logan* AND current-primary-institution-affiliation-name:university of portsmouth*", derivedQueryString);
+        assertEquals("given-names:donald AND family-name:logan AND current-primary-institution-affiliation-name:university of portsmouth", derivedQueryString);
 
     }
 
@@ -82,35 +82,35 @@ public class SearchOrcidFormToQueryMapperTest {
     public void whenFamilyNameOnlyProvidedOnlyFamilyNameDisplayed() {
         form.setFamilyName("Logan");
         String derivedQueryString = setupQuery().deriveQueryString();
-        assertEquals("family-name:logan*", derivedQueryString);
+        assertEquals("family-name:logan", derivedQueryString);
     }
 
     @Test
     public void whenGivenNameOnlyProvidedOnlyGivenNameDisplayed() {
         form.setGivenName("Donald");
         String derivedQueryString = setupQuery().deriveQueryString();
-        assertEquals("given-names:donald*", derivedQueryString);
+        assertEquals("given-names:donald", derivedQueryString);
     }
 
     @Test
     public void whenGivenNameAndOtherNameProvidedOtherNamesAlsoDisplayed() {
         form.setGivenName("Donald");
         String derivedQueryString = setupQuery().deriveQueryString();
-        assertEquals("given-names:donald*", derivedQueryString);
+        assertEquals("given-names:donald", derivedQueryString);
     }
 
     @Test
     public void whenPrimaryInstitutionNameOnlyProvidedOnlyPrimaryInstitutionDisplayed() {
         form.setInstitutionName("University of Portsmouth");
         String derivedQueryString = setupQuery().deriveQueryString();
-        assertEquals("current-primary-institution-affiliation-name:university of portsmouth*", derivedQueryString);
+        assertEquals("current-primary-institution-affiliation-name:university of portsmouth", derivedQueryString);
     }
 
     @Test
     public void whenKeywordOnlyProvidedOnlyKeywordsDisplayed() {
         form.setKeyword("Orcid");
         String derivedQueryString = setupQuery().deriveQueryString();
-        assertEquals("keyword:orcid*", derivedQueryString);
+        assertEquals("keyword:orcid", derivedQueryString);
     }
 
     @Test
@@ -118,7 +118,7 @@ public class SearchOrcidFormToQueryMapperTest {
         form.setInstitutionName("University of Portsmouth");
         form.setPastInstitutionsSearchable(true);
         String derivedQueryString = setupQuery().deriveQueryString();
-        assertEquals("current-primary-institution-affiliation-name:university of portsmouth* OR past-institution-affiliation-name:university of portsmouth*",
+        assertEquals("current-primary-institution-affiliation-name:university of portsmouth OR past-institution-affiliation-name:university of portsmouth",
                 derivedQueryString);
     }
 
@@ -129,21 +129,21 @@ public class SearchOrcidFormToQueryMapperTest {
         form.setOtherNamesSearchable(false);
         SearchOrcidSolrCriteria solrQuery = setupQuery();
         String derivedQueryString = solrQuery.deriveQueryString();
-        assertEquals("given-names:donald* AND family-name:logan*", derivedQueryString);
+        assertEquals("given-names:donald AND family-name:logan", derivedQueryString);
     }
 
     @Test
     public void whenTextProvidedOnlyTextDisplayed() {
         form.setText("will");
         String derivedQueryString = setupQuery().deriveQueryString();
-        assertEquals("text:will*", derivedQueryString);
+        assertEquals("text:will", derivedQueryString);
     }
 
     @Test
     public void whenTextProvidedWithSpecialCharacterOnlyTextDisplayed() {
         form.setText("will:");
         String derivedQueryString = setupQuery().deriveQueryString();
-        assertEquals("text:will\\:*", derivedQueryString);
+        assertEquals("text:will\\:", derivedQueryString);
     }
 
     private SearchOrcidSolrCriteria setupQuery() {
