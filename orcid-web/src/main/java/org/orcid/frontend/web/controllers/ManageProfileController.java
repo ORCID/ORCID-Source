@@ -174,7 +174,8 @@ public class ManageProfileController extends BaseWorkspaceController {
     public Map<String, String> retrieveExternalIdentifierRefData() {
         Map<String, String> types = new HashMap<String, String>();
         for (WorkExternalIdentifierType type : WorkExternalIdentifierType.values()) {
-            types.put(type.value(), type.description());
+            //TODO-------------------------------------------------------------------------------------------
+            types.put(type.value(), type.value());
         }
         return types;
     }

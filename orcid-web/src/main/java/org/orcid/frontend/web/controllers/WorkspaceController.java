@@ -182,7 +182,8 @@ public class WorkspaceController extends BaseWorkspaceController {
         Map<String, String> map = new TreeMap<String, String>();
         map.put("", "What type of external ID?");
         for (WorkExternalIdentifierType type : WorkExternalIdentifierType.values()) {
-            map.put(type.value(), type.description());
+            //TODO----------------------------------------------------------------------------------------------------------
+            map.put(type.value(), type.value());
         }
         return map;
     }
