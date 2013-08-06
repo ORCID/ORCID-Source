@@ -126,7 +126,7 @@ public class WorkspaceController extends BaseWorkspaceController {
         Map<String, String> workTypes = new TreeMap<String, String>();
         workTypes.put("", "Pick a publication type");
         for (WorkType workType : WorkType.values()) {
-            workTypes.put(workType.value(), StringUtils.capitalize(workType.value().replace('-', ' ')));
+            workTypes.put(workType.value(), buildInternationalizationKey(WorkType.class, workType.value()));
         }
 
         workTypes.remove(WorkType.BIBLE.value());
@@ -138,8 +138,7 @@ public class WorkspaceController extends BaseWorkspaceController {
         Map<String, String> citationTypes = new TreeMap<String, String>();
         citationTypes.put("", "Pick a citation type");
         for (CitationType citationType : CitationType.values()) {
-            String value = citationType.value().replace("formatted-", "");
-            citationTypes.put(citationType.value(), StringUtils.upperCase(value));
+            citationTypes.put(citationType.value(), buildInternationalizationKey(CitationType.class, citationType.value()));
         }
         return citationTypes;
     }
@@ -181,9 +180,8 @@ public class WorkspaceController extends BaseWorkspaceController {
     public Map<String, String> retrieveIdTypesAsMap() {
         Map<String, String> map = new TreeMap<String, String>();
         map.put("", "What type of external ID?");
-        for (WorkExternalIdentifierType type : WorkExternalIdentifierType.values()) {
-            //TODO----------------------------------------------------------------------------------------------------------
-            map.put(type.value(), type.value());
+        for (WorkExternalIdentifierType type : WorkExternalIdentifierType.values()) {            
+            map.put(type.value(), buildInternationalizationKey(WorkExternalIdentifierType.class, type.value()));
         }
         return map;
     }
@@ -193,7 +191,7 @@ public class WorkspaceController extends BaseWorkspaceController {
         Map<String, String> map = new TreeMap<String, String>();
         map.put("", "What was your role?");
         for (ContributorRole contributorRole : ContributorRole.values()) {
-            map.put(contributorRole.value(), StringUtils.capitalize(contributorRole.value().replaceAll("[-_]", " ")));
+            map.put(contributorRole.value(), buildInternationalizationKey(ContributorRole.class, contributorRole.value()));
         }
         return map;
     }
