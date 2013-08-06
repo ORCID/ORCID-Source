@@ -27,10 +27,8 @@ import static org.mockito.Mockito.verify;
 
 import java.util.Arrays;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -52,6 +50,10 @@ import org.orcid.jaxb.model.message.CreditName;
 import org.orcid.jaxb.model.message.DelegateSummary;
 import org.orcid.jaxb.model.message.Delegation;
 import org.orcid.jaxb.model.message.DelegationDetails;
+import org.orcid.jaxb.model.message.ExternalIdCommonName;
+import org.orcid.jaxb.model.message.ExternalIdReference;
+import org.orcid.jaxb.model.message.ExternalIdentifier;
+import org.orcid.jaxb.model.message.ExternalIdentifiers;
 import org.orcid.jaxb.model.message.GivenPermissionTo;
 import org.orcid.jaxb.model.message.Orcid;
 import org.orcid.jaxb.model.message.OrcidBio;
@@ -891,6 +893,26 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
         OrcidProfile profile2 = orcidProfileManager.retrieveOrcidProfile(TEST_ORCID);
         Date profile2LastModified = profile2.getOrcidHistory().getLastModifiedDate().getValue().toGregorianCalendar().getTime();
         assertTrue(profile2LastModified.after(profile1LastModified));
+    }
+
+    @Test
+    @Transactional
+    @Rollback(true)
+    public void testDeactivateProfile() {
+        OrcidProfile profile1 = createBasicProfile();
+        ExternalIdentifiers extIds = new ExternalIdentifiers();
+        ExternalIdentifier extId = new ExternalIdentifier();
+        extId.setExternalIdCommonName(new ExternalIdCommonName("External body"));
+        extId.setExternalIdReference(new ExternalIdReference("abc123"));
+        extIds.getExternalIdentifier().add(extId);
+        profile1.getOrcidBio().setExternalIdentifiers(extIds);
+        profile1 = orcidProfileManager.createOrcidProfile(profile1);
+        assertEquals(1, profile1.getOrcidBio().getExternalIdentifiers().getExternalIdentifier().size());
+
+        orcidProfileManager.deactivateOrcidProfile(profile1);
+
+        OrcidProfile retrievedProfile = orcidProfileManager.retrieveOrcidProfile(profile1.getOrcid().getValue());
+        assertTrue(retrievedProfile.getOrcidBio().getExternalIdentifiers().getExternalIdentifier().isEmpty());
     }
 
 }
