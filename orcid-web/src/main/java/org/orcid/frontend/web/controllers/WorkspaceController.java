@@ -124,7 +124,7 @@ public class WorkspaceController extends BaseWorkspaceController {
     @ModelAttribute("workTypes")
     public Map<String, String> retrieveWorkTypesAsMap() {
         Map<String, String> workTypes = new TreeMap<String, String>();
-        workTypes.put("", "Pick a publication type");
+        workTypes.put("", buildInternationalizationKey(WorkType.class, EMPTY));
         for (WorkType workType : WorkType.values()) {
             workTypes.put(workType.value(), buildInternationalizationKey(WorkType.class, workType.value()));
         }
@@ -136,7 +136,7 @@ public class WorkspaceController extends BaseWorkspaceController {
     @ModelAttribute("citationTypes")
     public Map<String, String> retrieveTypesAsMap() {
         Map<String, String> citationTypes = new TreeMap<String, String>();
-        citationTypes.put("", "Pick a citation type");
+        citationTypes.put("", buildInternationalizationKey(CitationType.class, EMPTY));
         for (CitationType citationType : CitationType.values()) {
             citationTypes.put(citationType.value(), buildInternationalizationKey(CitationType.class, citationType.value()));
         }
@@ -179,7 +179,7 @@ public class WorkspaceController extends BaseWorkspaceController {
     @ModelAttribute("idTypes")
     public Map<String, String> retrieveIdTypesAsMap() {
         Map<String, String> map = new TreeMap<String, String>();
-        map.put("", "What type of external ID?");
+        map.put("", buildInternationalizationKey(WorkExternalIdentifierType.class, EMPTY));
         for (WorkExternalIdentifierType type : WorkExternalIdentifierType.values()) {            
             map.put(type.value(), buildInternationalizationKey(WorkExternalIdentifierType.class, type.value()));
         }
@@ -189,7 +189,7 @@ public class WorkspaceController extends BaseWorkspaceController {
     @ModelAttribute("roles")
     public Map<String, String> retrieveRolesAsMap() {
         Map<String, String> map = new TreeMap<String, String>();
-        map.put("", "What was your role?");
+        map.put("", buildInternationalizationKey(ContributorRole.class, EMPTY));
         for (ContributorRole contributorRole : ContributorRole.values()) {
             map.put(contributorRole.value(), buildInternationalizationKey(ContributorRole.class, contributorRole.value()));
         }

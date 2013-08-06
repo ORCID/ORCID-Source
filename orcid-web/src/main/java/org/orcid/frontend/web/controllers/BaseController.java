@@ -105,6 +105,8 @@ public class BaseController {
     @Resource
     private StatisticsManager statisticsManager;
 
+    protected static final String EMPTY = "empty";
+    
     public OrcidProfileManager getOrcidProfileManager() {
         return orcidProfileManager;
     }
