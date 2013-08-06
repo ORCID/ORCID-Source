@@ -36,6 +36,7 @@ import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidWork;
 import org.orcid.jaxb.model.message.OrcidWorks;
 import org.orcid.jaxb.model.message.Visibility;
+import org.orcid.persistence.jpa.entities.CountryIsoEntity;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
 /**
@@ -82,9 +83,14 @@ public class BaseWorkspaceController extends BaseController {
 
     @ModelAttribute("isoCountries")
     public Map<String, String> retrieveIsoCountries() {
+        Map<String, String> dbCountries = countryManager.retrieveCountriesAndIsoCodes(); 
         Map<String, String> countries = new LinkedHashMap<String, String>();
-        countries.put("", "Select a country");
-        countries.putAll(countryManager.retrieveCountriesAndIsoCodes());
+        countries.put("", buildInternationalizationKey(CountryIsoEntity.class, EMPTY));
+        
+        for(String key : dbCountries.keySet()){
+            String normalizedCountryName = dbCountries.get(key).replaceAll(",' ", "");
+            countries.put(key, buildInternationalizationKey(CountryIsoEntity.class, normalizedCountryName));
+        }
         return countries;
     }
 
