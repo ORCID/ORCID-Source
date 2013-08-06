@@ -217,8 +217,9 @@ public class OrcidOauth2TokenDetail extends BaseEntity<Long> implements ProfileA
 
     @Override
     public int compareTo(OrcidOauth2TokenDetail other) {
-        ProfileEntity otherProfileEntity = other.getProfile();
-        int compareName = profile.getCreditName().compareTo(otherProfileEntity.getCreditName());
+        ProfileEntity clientProfileEntity = clientDetailsEntity.getProfile();
+        ProfileEntity otherClientProfileEntity = other.getClientDetailsEntity().getProfile();
+        int compareName = clientProfileEntity.getCreditName().compareTo(otherClientProfileEntity.getCreditName());
         if (compareName != 0) {
             return compareName;
         }
