@@ -20,8 +20,8 @@
 <@emailMacros.msg "email.common.dear" /> ${emailName}<@emailMacros.msg "email.common.dear.comma" />
 
 <@emailMacros.msg "email.deactivate.you_have_requested.1" /> 
-${baseUri}/${orcid} <@emailMacros.msg "email.deactivate.you_have_requested.2" />
-${baseUri}${deactivateUrlEndpoint}
+${baseUri}/${orcid}?lang=${locale} <@emailMacros.msg "email.deactivate.you_have_requested.2" />
+${baseUri}${deactivateUrlEndpoint}?lang=${locale}
 
 
 <@emailMacros.msg "email.deactivate.once_an_account" />
@@ -29,6 +29,6 @@ ${baseUri}${deactivateUrlEndpoint}
 <@emailMacros.msg "email.deactivate.if_you_did" />
 
 <@emailMacros.msg "email.common.kind_regards" />
-${baseUri}
+${baseUri}?lang=${locale}
 
 <@emailMacros.msg "email.common.you_have_received_this_email" />

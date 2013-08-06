@@ -20,16 +20,16 @@
 <@emailMacros.msg "email.common.dear" /> ${emailName}<@emailMacros.msg "email.common.dear.comma" />
 
 <@emailMacros.msg "email.verify.thank_you" /> 
-${baseUri}/${orcid}.
+${baseUri}/${orcid}?lang=${locale}.
 
 <@emailMacros.msg "email.verify.to_verify" />
-${verificationUrl}
+${verificationUrl}?lang=${locale}
 
 <@emailMacros.msg "email.common.did_you_know" />${baseUri}/about/news
 
 <@emailMacros.msg "email.common.if_you_have_any" />
 
 <@emailMacros.msg "email.common.kind_regards" />
-${baseUri}
+${baseUri}?lang=${locale}
 
 <@emailMacros.msg "email.common.you_have_received_this_email" />
