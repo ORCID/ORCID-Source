@@ -47,14 +47,21 @@ public class HomeController extends BaseController {
     private static final Logger LOGGER = LoggerFactory.getLogger(HomeController.class);
 
 
-    @RequestMapping(value = "/")
-    public ModelAndView homeHandler(HttpServletRequest request) {
-        StringBuilder newUri = new StringBuilder(request.getRequestURL());
-        newUri.insert(newUri.indexOf("://") + 3, "about.");
-        newUri.insert(0, "redirect:");
-        return new ModelAndView(newUri.toString());
+//    @RequestMapping(value = "/")
+//    public ModelAndView homeHandler(HttpServletRequest request) {
+//        StringBuilder newUri = new StringBuilder(request.getRequestURL());
+//        newUri.insert(newUri.indexOf("://") + 3, "about.");
+//        newUri.insert(0, "redirect:");
+//        return new ModelAndView(newUri.toString());
+//    }
+
+    //freindly link to allow language switching
+    @RequestMapping(value = "/home")
+    public ModelAndView homeRedirect(HttpServletRequest request) {
+        return new ModelAndView("redirect:/");
     }
 
+    
     @RequestMapping(value = "/robots.txt")
     public String dynamicRobots(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {
         String requestedDomain = request.getServerName();
