@@ -724,7 +724,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         existingProfile.getOrcidInternal().setPreferences(preferences);
         return updateOrcidProfile(existingProfile);
     }
-    
+
     @Override
     @Transactional
     public OrcidProfile updateOrcidPreferences(OrcidProfile updatedOrcidProfile) {
@@ -732,11 +732,10 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         if (existingProfile == null) {
             return null;
         }
-        
+
         existingProfile.setOrcidPreferences(updatedOrcidProfile.getOrcidPreferences());
         return updateOrcidProfile(existingProfile);
     }
-
 
     @Override
     @Transactional
@@ -889,6 +888,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
 
         minimalBio.setPersonalDetails(minimalPersonalDetails);
         minimalBio.setContactDetails(minimalContactDetails);
+        minimalBio.setExternalIdentifiers(new ExternalIdentifiers());
         blankedOrcidProfile.setOrcidBio(minimalBio);
         blankedOrcidProfile.setOrcid(existingOrcidProfile.getOrcid().getValue());
 
@@ -1274,12 +1274,11 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
     public void clearOrcidProfileCache() {
         profileCache.removeAll();
     }
-    
+
     public void addLocale(OrcidProfile orcidProfile, Locale locale) {
-        if (orcidProfile.getOrcidPreferences() == null) 
+        if (orcidProfile.getOrcidPreferences() == null)
             orcidProfile.setOrcidPreferences(new OrcidPreferences());
-        orcidProfile.getOrcidPreferences()
-            .setLocale(org.orcid.jaxb.model.message.Locale.fromValue(locale.toString()));
+        orcidProfile.getOrcidPreferences().setLocale(org.orcid.jaxb.model.message.Locale.fromValue(locale.toString()));
     }
 
 }
