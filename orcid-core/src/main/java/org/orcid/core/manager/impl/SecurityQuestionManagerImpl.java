@@ -48,4 +48,15 @@ public class SecurityQuestionManagerImpl implements SecurityQuestionManager {
         return map;
     }
 
+    @Override
+    @Cacheable("security-questions")
+    public Map<String, String> retrieveSecurityQuestionsAsInternationalizedMap() {
+        List<SecurityQuestionEntity> questions = securityQuestionDao.getAll();
+        Map<String, String> map = new TreeMap<String, String>();
+        for (SecurityQuestionEntity question : questions) {
+            map.put(String.valueOf(question.getId()), question.getKey());
+        }
+        return map;
+    }
+    
 }

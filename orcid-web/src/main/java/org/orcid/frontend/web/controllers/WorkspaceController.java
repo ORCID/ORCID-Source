@@ -124,9 +124,9 @@ public class WorkspaceController extends BaseWorkspaceController {
     @ModelAttribute("workTypes")
     public Map<String, String> retrieveWorkTypesAsMap() {
         Map<String, String> workTypes = new TreeMap<String, String>();
-        workTypes.put("", "Pick a publication type");
+        workTypes.put("", buildInternationalizationKey(WorkType.class, EMPTY));
         for (WorkType workType : WorkType.values()) {
-            workTypes.put(workType.value(), StringUtils.capitalize(workType.value().replace('-', ' ')));
+            workTypes.put(workType.value(), buildInternationalizationKey(WorkType.class, workType.value()));
         }
 
         workTypes.remove(WorkType.BIBLE.value());
@@ -136,10 +136,9 @@ public class WorkspaceController extends BaseWorkspaceController {
     @ModelAttribute("citationTypes")
     public Map<String, String> retrieveTypesAsMap() {
         Map<String, String> citationTypes = new TreeMap<String, String>();
-        citationTypes.put("", "Pick a citation type");
+        citationTypes.put("", buildInternationalizationKey(CitationType.class, EMPTY));
         for (CitationType citationType : CitationType.values()) {
-            String value = citationType.value().replace("formatted-", "");
-            citationTypes.put(citationType.value(), StringUtils.upperCase(value));
+            citationTypes.put(citationType.value(), buildInternationalizationKey(CitationType.class, citationType.value()));
         }
         return citationTypes;
     }
@@ -180,9 +179,9 @@ public class WorkspaceController extends BaseWorkspaceController {
     @ModelAttribute("idTypes")
     public Map<String, String> retrieveIdTypesAsMap() {
         Map<String, String> map = new TreeMap<String, String>();
-        map.put("", "What type of external ID?");
-        for (WorkExternalIdentifierType type : WorkExternalIdentifierType.values()) {
-            map.put(type.value(), type.description());
+        map.put("", buildInternationalizationKey(WorkExternalIdentifierType.class, EMPTY));
+        for (WorkExternalIdentifierType type : WorkExternalIdentifierType.values()) {            
+            map.put(type.value(), buildInternationalizationKey(WorkExternalIdentifierType.class, type.value()));
         }
         return map;
     }
@@ -190,9 +189,9 @@ public class WorkspaceController extends BaseWorkspaceController {
     @ModelAttribute("roles")
     public Map<String, String> retrieveRolesAsMap() {
         Map<String, String> map = new TreeMap<String, String>();
-        map.put("", "What was your role?");
+        map.put("", buildInternationalizationKey(ContributorRole.class, EMPTY));
         for (ContributorRole contributorRole : ContributorRole.values()) {
-            map.put(contributorRole.value(), StringUtils.capitalize(contributorRole.value().replaceAll("[-_]", " ")));
+            map.put(contributorRole.value(), buildInternationalizationKey(ContributorRole.class, contributorRole.value()));
         }
         return map;
     }
@@ -202,7 +201,7 @@ public class WorkspaceController extends BaseWorkspaceController {
         Map<String, String> map = new LinkedHashMap<String, String>();
         map.put("", "");
         for (SequenceType sequenceType : SequenceType.values()) {
-            map.put(sequenceType.value(), StringUtils.capitalize(sequenceType.value().replaceAll("[-]", " ")));
+            map.put(sequenceType.value(), buildInternationalizationKey(SequenceType.class, sequenceType.value()));
         }
         return map;
     }
