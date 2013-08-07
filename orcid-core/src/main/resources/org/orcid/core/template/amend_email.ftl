@@ -23,9 +23,9 @@
 
 <@emailMacros.msg "email.amend.please_click" />
 
-    ${baseUri}/my-orcid
+    ${baseUri}/my-orcid?lang=${locale}
 
 <@emailMacros.msg "email.common.kind_regards" />
-${baseUri}
+${baseUri}/home?lang=${locale}
 
-<@emailMacros.msg "email.common.you_have_received_this_email_opt_out.1" />${baseUri}<@emailMacros.msg "email.common.you_have_received_this_email_opt_out.2" />
+<@emailMacros.msg "email.common.you_have_received_this_email_opt_out.1" />${baseUri}/home?lang=${locale}<@emailMacros.msg "email.common.you_have_received_this_email_opt_out.2" />
