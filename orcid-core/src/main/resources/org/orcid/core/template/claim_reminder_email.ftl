@@ -29,11 +29,11 @@ ${verificationUrl}?lang=${locale}
 
 <@emailMacros.msg "email.api_record_creation.what_is_orcid" />
 
-<@emailMacros.msg "email.api_record_creation.launched.1" />${baseUri}?lang=${locale}<@emailMacros.msg "email.api_record_creation.launched.2" />
+<@emailMacros.msg "email.api_record_creation.launched.1" />${baseUri}/home?lang=${locale}<@emailMacros.msg "email.api_record_creation.launched.2" />
 
-<@emailMacros.msg "email.api_record_creation.read_privacy.1" />${baseUri}?lang=${locale}<@emailMacros.msg "email.api_record_creation.read_privacy.1" />
+<@emailMacros.msg "email.api_record_creation.read_privacy.1" />${baseUri}/home?lang=${locale}<@emailMacros.msg "email.api_record_creation.read_privacy.1" />
 
 <@emailMacros.msg "email.common.kind_regards" />
-${baseUri}?lang=${locale}
+${baseUri}/home?lang=${locale}
 
-<@emailMacros.msg "email.api_record_creation.you_have_received.1" />${baseUri}?lang=${locale}S<@emailMacros.msg "email.api_record_creation.you_have_received.2" />
+<@emailMacros.msg "email.api_record_creation.you_have_received.1" />${baseUri}/home?lang=${locale}S<@emailMacros.msg "email.api_record_creation.you_have_received.2" />

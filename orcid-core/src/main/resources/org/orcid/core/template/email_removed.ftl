@@ -21,7 +21,7 @@
 
 <@emailMacros.msg "email.email_removed.the_primary" /> 
 
-<@emailMacros.msg "email.email_removed.while.1" />${baseUri}?lang=${locale}<@emailMacros.msg "email.email_removed.while.2" />
+<@emailMacros.msg "email.email_removed.while.1" />${baseUri}/home?lang=${locale}<@emailMacros.msg "email.email_removed.while.2" />
 
 <@emailMacros.msg "email.email_removed.please_click" />
 ${baseUri}/account?lang=${locale}
@@ -29,6 +29,6 @@ ${baseUri}/account?lang=${locale}
 <@emailMacros.msg "email.email_removed.important" />
 
 <@emailMacros.msg "email.common.kind_regards" />
-${baseUri}?lang=${locale}
+${baseUri}/home?lang=${locale}
 
 <@emailMacros.msg "email.common.you_have_received_this_email" />
