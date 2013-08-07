@@ -21,13 +21,13 @@
 
 <@emailMacros.msg "email.verify_reminder" />
 
-${verificationUrl}
+${verificationUrl}?lang=${locale}
 
-<@emailMacros.msg "email.common.did_you_know" />${baseUri}/about/news
+<@emailMacros.msg "email.common.did_you_know" />${baseUri}/about/news?lang=${locale}
 
 <@emailMacros.msg "email.common.if_you_have_any" />
 
 <@emailMacros.msg "email.common.kind_regards" />
-${baseUri}
+${baseUri}/home?lang=${locale}
 
 <@emailMacros.msg "email.common.you_have_received_this_email" />

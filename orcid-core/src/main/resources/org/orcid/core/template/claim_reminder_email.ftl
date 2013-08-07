@@ -25,15 +25,15 @@
 
 <@emailMacros.msg "email.claim_reminder.within_the_next.1" />${daysUntilActivation}<@emailMacros.msg "email.claim_reminder.within_the_next.2" />${creatorName}<@emailMacros.msg "email.claim_reminder.within_the_next.3" />
 
-${verificationUrl}
+${verificationUrl}?lang=${locale}
 
 <@emailMacros.msg "email.api_record_creation.what_is_orcid" />
 
-<@emailMacros.msg "email.api_record_creation.launched.1" />${baseUri}<@emailMacros.msg "email.api_record_creation.launched.2" />
+<@emailMacros.msg "email.api_record_creation.launched.1" />${baseUri}/home?lang=${locale}<@emailMacros.msg "email.api_record_creation.launched.2" />
 
-<@emailMacros.msg "email.api_record_creation.read_privacy.1" />${baseUri}<@emailMacros.msg "email.api_record_creation.read_privacy.1" />
+<@emailMacros.msg "email.api_record_creation.read_privacy.1" />${baseUri}/home?lang=${locale}<@emailMacros.msg "email.api_record_creation.read_privacy.1" />
 
 <@emailMacros.msg "email.common.kind_regards" />
-${baseUri}
+${baseUri}/home?lang=${locale}
 
-<@emailMacros.msg "email.api_record_creation.you_have_received.1" />${baseUri}<@emailMacros.msg "email.api_record_creation.you_have_received.2" />
+<@emailMacros.msg "email.api_record_creation.you_have_received.1" />${baseUri}/home?lang=${locale}S<@emailMacros.msg "email.api_record_creation.you_have_received.2" />
