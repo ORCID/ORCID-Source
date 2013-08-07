@@ -60,6 +60,7 @@ import org.orcid.core.security.visibility.aop.VisibilityControl;
 import org.orcid.core.utils.OrcidJaxbCopyUtils;
 import org.orcid.core.utils.ReleaseNameUtils;
 import org.orcid.jaxb.model.message.Affiliation;
+import org.orcid.jaxb.model.message.Biography;
 import org.orcid.jaxb.model.message.Claimed;
 import org.orcid.jaxb.model.message.ContactDetails;
 import org.orcid.jaxb.model.message.Contributor;
@@ -888,6 +889,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
 
         minimalBio.setPersonalDetails(minimalPersonalDetails);
         minimalBio.setContactDetails(minimalContactDetails);
+        minimalBio.setBiography(new Biography());
         minimalBio.setExternalIdentifiers(new ExternalIdentifiers());
         blankedOrcidProfile.setOrcidBio(minimalBio);
         blankedOrcidProfile.setOrcid(existingOrcidProfile.getOrcid().getValue());
