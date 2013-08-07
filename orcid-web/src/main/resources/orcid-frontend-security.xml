@@ -89,6 +89,7 @@
 			login-page="/oauth/signin" login-processing-url="/signin/auth"
 			username-parameter="userId" password-parameter="password"
 			default-target-url="/my-orcid" />
+		<sec:session-management session-fixation-protection="migrateSession"/>
 	</sec:http>
 
 	<sec:http access-denied-page="/signin"
@@ -165,7 +166,7 @@
 			login-page="/signin" authentication-success-handler-ref="ajaxAuthenticationSuccessHandler"
 			authentication-failure-handler-ref="ajaxAuthenticationFailureHandler"
 			username-parameter="userId" password-parameter="password" />
-
+		<sec:session-management session-fixation-protection="migrateSession"/>
 	</sec:http>
 
 	<oauth2:web-expression-handler id="oauthWebExpressionHandler" />
