@@ -34,6 +34,8 @@ public class SecurityQuestionEntity extends BaseEntity<Integer> {
     private int id;
 
     private String question;
+    
+    private String key;
 
     @Override
     @Id
@@ -53,4 +55,11 @@ public class SecurityQuestionEntity extends BaseEntity<Integer> {
         this.question = question;
     }
 
+	public String getKey() {
+		return key;
+	}
+
+	public void setKey(String key) {
+		this.key = key;
+	}  
 }

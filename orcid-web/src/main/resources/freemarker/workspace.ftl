@@ -280,7 +280,7 @@
 		    		<div class="relative">
 			    		<select id="workType" name="workType" class="input-xlarge" ng-model="editWork.workType.value" ng-change="serverValidate('works/work/workTypeValidate.json')">
 							<#list workTypes?keys as key>
-								<option value="${key}">${workTypes[key]}</option>
+								<option value="${key}"><@orcid.msg '${workTypes[key]}' /></option>
 							</#list>
 						</select> 
 						<span class="required" ng-class="isValidClass(editWork.workType)">*</span>
@@ -311,7 +311,7 @@
 		    		<div class="relative">
 			    		<select id="citationType" name="citationType" class="input-xlarge" ng-model="editWork.citation.citationType.value" ng-change="serverValidate('works/work/citationValidate.json')">
 							<#list citationTypes?keys as key>
-								<option value="${key}">${citationTypes[key]}</option>
+								<option value="${key}"><@orcid.msg '${citationTypes[key]}' /></option>
 							</#list>
 						</select> 
 						<span class="orcid-error" ng-show="editWork.citation.citationType.errors.length > 0">
@@ -369,7 +369,7 @@
 					<div class="relative">
 			    		<select id="workType" name="workType" class="input-xlarge" ng-model="workExternalIdentifier.workExternalIdentifierType.value" ng-change="serverValidate('works/work/workExternalIdentifiersValidate.json')">
 							<#list idTypes?keys as key>
-								<option value="${key}">${idTypes[key]}</option>
+								<option value="${key}"><@orcid.msg '${idTypes[key]}' /></option>
 							</#list>
 						</select> 
 						<span class="orcid-error" ng-show="workExternalIdentifier.workExternalIdentifierType.errors.length > 0">
@@ -393,7 +393,7 @@
 				    <div class="relative">    
 						<select id="role" name="role" ng-model="contributor.contributorRole.value">
 							<#list roles?keys as key>
-							    <option value="${key}">${roles[key]}</option>
+							    <option value="${key}"><@orcid.msg '${roles[key]}' /></option>
 							</#list>
 			    		</select>
 						<span class="orcid-error" ng-show="contributor.contributorRole.errors.length > 0">
@@ -407,7 +407,7 @@
 				    <div class="relative">    
 						<select id="role" name="role" ng-model="contributor.contributorSequence.value">
 							<#list sequences?keys as key>
-								<option value="${key}">${sequences[key]}</option>
+								<option value="${key}"><@orcid.msg '${sequences[key]}'/></option>
 							</#list>
 			    		</select>
 						<span class="orcid-error" ng-show="contributor.contributorSequence.errors.length > 0">

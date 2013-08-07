@@ -36,7 +36,7 @@
         		<fieldset>
         			<div class="control-group">            			
         				<div class="controls">
-        				    <label for="changeSecurityQuestionForm.securityQuestionAnswer" class="control-label">${securityQuestionText}</label>
+        				    <label for="changeSecurityQuestionForm.securityQuestionAnswer" class="control-label"><@orcid.msg '${securityQuestionText}'/></label>
             				<@spring.formInput "changeSecurityQuestionForm.securityQuestionAnswer", 'class="span5"' />
                 			<span class="required">*</span>
             			</div>

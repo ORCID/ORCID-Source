@@ -26,5 +26,7 @@ import java.util.Map;
 public interface SecurityQuestionManager {
 
     Map<String, String> retrieveSecurityQuestionsAsMap();
+    
+    Map<String, String> retrieveSecurityQuestionsAsInternationalizedMap();
 
 }

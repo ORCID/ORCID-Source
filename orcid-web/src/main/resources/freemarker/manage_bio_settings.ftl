@@ -95,7 +95,11 @@
              	<div class="control-group">
                     <label for="biography">${springMacroRequestContext.getMessage("manage_bio_settings.labelcountry")}</label>
                     <div class="relative">
-                        <@spring.formSingleSelect "changePersonalInfoForm.isoCountryCode", isoCountries />
+                    	<select id="isoCountryCode" name="isoCountryCode">
+	                    	<#list isoCountries?keys as key>
+								<option value="${key}"><@orcid.msg '${isoCountries[key]}' /></option>
+							</#list>
+						</select>                        
                         <label class="visibility-lbl">
                             ${springMacroRequestContext.getMessage("manage_bio_settings.labelvisibility")}
                             <@spring.formSingleSelect "changePersonalInfoForm.isoCountryVisibility", visibilities />

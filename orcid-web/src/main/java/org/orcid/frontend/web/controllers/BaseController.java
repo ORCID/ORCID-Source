@@ -105,6 +105,8 @@ public class BaseController {
     @Resource
     private StatisticsManager statisticsManager;
 
+    protected static final String EMPTY = "empty";
+    
     public OrcidProfileManager getOrcidProfileManager() {
         return orcidProfileManager;
     }
@@ -454,5 +456,17 @@ public class BaseController {
     public String getBaseUriHttp() {
         return baseUri.replace("https", "http");
     }
+    
+    /**
+     * A method that will help us to internationalize enums
+     * For each enum, the value can be internationalized by adding a key of the form full.class.name.key and then
+     * using this method to build the string for that key.
+     * @param theClass
+     * @param key
+     * @return a String of the form full.class.name.with.package.key
+     * */
+    protected String buildInternationalizationKey(Class theClass, String key){
+        return theClass.getName() + '.' + key;
+    } 
 
 }

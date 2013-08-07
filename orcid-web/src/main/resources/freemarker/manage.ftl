@@ -60,8 +60,8 @@
 		   						  </td> 
 		   						  <td class="padRgt">
 		   						  	<select style="width: 100px; margin: 0px;" ng-change="saveEmail()" ng-model="email.current">
-          							    <option value="true" ng-selected="email.current == true">Current</option>
-          							    <option value="false" ng-selected="email.current == false">Past</option>              
+          							    <option value="true" ng-selected="email.current == true"><@orcid.msg 'manage.email.current.true' /></option>
+          							    <option value="false" ng-selected="email.current == false"><@orcid.msg 'manage.email.current.false' /></option>              
         						    </select>
 		   						  </td>
 		   						  <td class="padRgt">
@@ -155,7 +155,7 @@
 							<label for="changeSecurityQuestionForm.securityQuestionAnswer" class="">${springMacroRequestContext.getMessage("manage.security_question")}</label>
 							<select id="securityQuestionId" name="securityQuestionId" class="input-xlarge" ng-model="securityQuestionPojo.securityQuestionId">
 								<#list securityQuestions?keys as key>
-								   <option value="${key}" ng-selected="securityQuestionPojo.securityQuestionId == ${key}">${securityQuestions[key]}</option>
+								   <option value="${key}" ng-selected="securityQuestionPojo.securityQuestionId == ${key}"><@orcid.msg '${securityQuestions[key]}' /></option>
 								</#list>
 	    					</select> 
 	    					<label for="changeSecurityQuestionForm.securityQuestionAnswer" class="">${springMacroRequestContext.getMessage("manage.securityAnswer")}</label>
