@@ -456,7 +456,7 @@ public class ManageProfileController extends BaseWorkspaceController {
         mav.addObject("preferencesForm", new PreferencesForm(profile));
         mav.addObject("profile", profile);
         mav.addObject("activeTab", activeTab);
-        mav.addObject("securityQuestions", securityQuestionManager.retrieveSecurityQuestionsAsMap());
+        mav.addObject("securityQuestions", securityQuestionManager.retrieveSecurityQuestionsAsInternationalizedMap());
         CurrentAffiliationsForm currentAffiliationsForm = new CurrentAffiliationsForm(profile);
         mav.addObject("pastInstitutionsForm", new PastInstitutionsForm(profile));
         mav.addObject("currentAffiliationsForm", currentAffiliationsForm);
@@ -510,9 +510,8 @@ public class ManageProfileController extends BaseWorkspaceController {
     }
 
     @ModelAttribute("securityQuestions")
-    public Map<String, String> getSecurityQuestions() {
-        securityQuestionManager.retrieveSecurityQuestionsAsMap();//
-        return securityQuestionManager.retrieveSecurityQuestionsAsMap();
+    public Map<String, String> getSecurityQuestions() {        	    		  
+        return securityQuestionManager.retrieveSecurityQuestionsAsInternationalizedMap();
     }
 
     @RequestMapping(value = "/view-account-settings", method = RequestMethod.GET)

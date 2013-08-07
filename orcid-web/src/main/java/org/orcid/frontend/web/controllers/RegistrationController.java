@@ -164,7 +164,7 @@ public class RegistrationController extends BaseController {
 
     @ModelAttribute("securityQuestions")
     public Map<String, String> retrieveSecurityQuestionsAsMap() {
-        return securityQuestionManager.retrieveSecurityQuestionsAsMap();
+        return securityQuestionManager.retrieveSecurityQuestionsAsInternationalizedMap();
     }
 
     @RequestMapping(value = "/register.json", method = RequestMethod.GET)

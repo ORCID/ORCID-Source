@@ -1,0 +1,104 @@
+<!--
+
+    =============================================================================
+
+    ORCID (R) Open Source
+    http://orcid.org
+
+    Copyright (c) 2012-2013 ORCID, Inc.
+    Licensed under an MIT-Style License (MIT)
+    http://orcid.org/open-source-license
+
+    This copyright and license information (including a link to the full license)
+    shall be included in its entirety in all copies or substantial portion of
+    the software.
+
+    =============================================================================
+
+-->
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+	
+	<changeSet id="ADD-KEY-TO-SECURITY-QUESTION" author="Angel Montenegro">
+		<addColumn tableName="security_question">
+			<column name="key" type="VARCHAR(100)" />
+		</addColumn>
+		<update tableName="security_question">
+			<column name="key" value="manage.security_question.id.0" />
+            <where>id = 0</where>
+		</update>	
+		<update tableName="security_question">
+			<column name="key" value="manage.security_question.id.1" />
+            <where>id = 1</where>
+		</update>
+		<update tableName="security_question">
+			<column name="key" value="manage.security_question.id.2" />
+            <where>id = 2</where>
+		</update>
+		<update tableName="security_question">
+			<column name="key" value="manage.security_question.id.3" />
+            <where>id = 3</where>
+		</update>	
+		<update tableName="security_question">
+			<column name="key" value="manage.security_question.id.4" />
+            <where>id = 4</where>
+		</update>
+		<update tableName="security_question">
+			<column name="key" value="manage.security_question.id.5" />
+            <where>id = 5</where>
+		</update>
+		<update tableName="security_question">
+			<column name="key" value="manage.security_question.id.6" />
+            <where>id = 6</where>
+		</update>	
+		<update tableName="security_question">
+			<column name="key" value="manage.security_question.id.7" />
+            <where>id = 7</where>
+		</update>
+		<update tableName="security_question">
+			<column name="key" value="manage.security_question.id.8" />
+            <where>id = 8</where>
+		</update>
+		<update tableName="security_question">
+			<column name="key" value="manage.security_question.id.9" />
+            <where>id = 9</where>
+		</update>	
+		<update tableName="security_question">
+			<column name="key" value="manage.security_question.id.10" />
+            <where>id = 10</where>
+		</update>
+		<update tableName="security_question">
+			<column name="key" value="manage.security_question.id.11" />
+            <where>id = 11</where>
+		</update>
+		<update tableName="security_question">
+			<column name="key" value="manage.security_question.id.12" />
+            <where>id = 12</where>
+		</update>	
+		<update tableName="security_question">
+			<column name="key" value="manage.security_question.id.13" />
+            <where>id = 13</where>
+		</update>
+		<update tableName="security_question">
+			<column name="key" value="manage.security_question.id.14" />
+            <where>id = 14</where>
+		</update>
+		<update tableName="security_question">
+			<column name="key" value="manage.security_question.id.15" />
+            <where>id = 15</where>
+		</update>	
+		<update tableName="security_question">
+			<column name="key" value="manage.security_question.id.16" />
+            <where>id = 16</where>
+		</update>
+		<update tableName="security_question">
+			<column name="key" value="manage.security_question.id.17" />
+            <where>id = 17</where>
+		</update>	
+		<update tableName="security_question">
+			<column name="key" value="manage.security_question.id.18" />
+            <where>id = 18</where>
+		</update>
+	</changeSet>
+</databaseChangeLog>
