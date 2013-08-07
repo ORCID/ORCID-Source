@@ -676,7 +676,7 @@ public class RegistrationController extends BaseController {
     private ModelAndView updatePasswordAndGoToAccountsPage(OrcidProfile updatedProfile) {
 
         orcidProfileManager.updatePasswordInformation(updatedProfile);
-        return new ModelAndView("redirect:/account");
+        return new ModelAndView("redirect:/my-orcid");
     }
 
     private Integer deriveSecurityIdByEmailForUser(String email) {
