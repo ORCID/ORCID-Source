@@ -87,9 +87,8 @@ public class BaseWorkspaceController extends BaseController {
         Map<String, String> countries = new LinkedHashMap<String, String>();
         countries.put("", buildInternationalizationKey(CountryIsoEntity.class, EMPTY));
         
-        for(String key : dbCountries.keySet()){
-            String normalizedCountryName = dbCountries.get(key).replaceAll(",' ", "");
-            countries.put(key, buildInternationalizationKey(CountryIsoEntity.class, normalizedCountryName));
+        for(String key : dbCountries.keySet()){            
+            countries.put(key, buildInternationalizationKey(CountryIsoEntity.class, key));
         }
         return countries;
     }

@@ -60,8 +60,8 @@
 		   						  </td> 
 		   						  <td class="padRgt">
 		   						  	<select style="width: 100px; margin: 0px;" ng-change="saveEmail()" ng-model="email.current">
-          							    <option value="true" ng-selected="email.current == true">Current</option>
-          							    <option value="false" ng-selected="email.current == false">Past</option>              
+          							    <option value="true" ng-selected="email.current == true"><@orcid.msg 'manage.email.current.true' /></option>
+          							    <option value="false" ng-selected="email.current == false"><@orcid.msg 'manage.email.current.false' /></option>              
         						    </select>
 		   						  </td>
 		   						  <td class="padRgt">
