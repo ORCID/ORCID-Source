@@ -28,6 +28,6 @@ ${verificationUrl}?lang=${locale}
 <@emailMacros.msg "email.common.if_you_have_any" />
 
 <@emailMacros.msg "email.common.kind_regards" />
-${baseUri}?lang=${locale}
+${baseUri}/home?lang=${locale}
 
 <@emailMacros.msg "email.common.you_have_received_this_email" />
