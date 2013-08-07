@@ -167,6 +167,7 @@ public class OrcidProfileManagerBaseTest extends BaseTest {
         PersonalDetails personalDetails = new PersonalDetails();
         bio.setPersonalDetails(personalDetails);
         personalDetails.setGivenNames(new GivenNames("Will"));
+        bio.setBiography(new Biography("Will is a software developer"));
         ResearcherUrls researcherUrls = new ResearcherUrls();
         bio.setResearcherUrls(researcherUrls);
         researcherUrls.getResearcherUrl().add(new ResearcherUrl(new Url("http://www.wjrs.co.uk")));
