@@ -94,15 +94,6 @@ public class NotificationManagerImpl implements NotificationManager {
     @Resource
     private ProfileDao profileDao;
 
-    private Properties emailSubjects = new Properties();
-    {
-        try {
-            emailSubjects.load(getClass().getResourceAsStream("/org/orcid/core/template/email_subjects.properties"));
-        } catch (IOException e) {
-            throw new IllegalArgumentException(e);
-        }
-    }
-
     private static final Logger LOGGER = LoggerFactory.getLogger(NotificationManagerImpl.class);
 
     @Required
@@ -175,7 +166,7 @@ public class NotificationManagerImpl implements NotificationManager {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setFrom(fromAddress);
         message.setTo(orcidToDeactivate.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue());
-        message.setSubject(emailSubjects.getProperty("deactivate"));
+        message.setSubject(getSubject("email.subject.deactivate", orcidToDeactivate));
         message.setText(body);
         // Send message
         sendAndLogMessage(message);
@@ -202,7 +193,7 @@ public class NotificationManagerImpl implements NotificationManager {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setFrom(fromAddress);
         message.setTo(email);
-        message.setSubject(emailSubjects.getProperty("verification"));
+        message.setSubject(getSubject("email.subject.verification", orcidProfile));
         message.setText(body);
         // Send message
         sendAndLogMessage(message);
@@ -222,6 +213,20 @@ public class NotificationManagerImpl implements NotificationManager {
         templateParams.put("messageArgs", new Object[0]);
         templateParams.put("locale",  locale);
     }
+    
+    private String getSubject(String code, OrcidProfile orcidProfile) {
+        Locale locale = null; new Locale("en");
+        if ( orcidProfile.getOrcidInternal() != null 
+                && orcidProfile.getOrcidPreferences() != null
+                && orcidProfile.getOrcidPreferences().getLocale() != null) {
+            orcidProfile.getOrcidPreferences().getLocale().value();
+            locale = new Locale(orcidProfile.getOrcidPreferences().getLocale().value());
+        } else {
+            locale = new Locale("en");
+        }
+        return messages.getMessage(code, null, locale);
+    }
+
 
     public void sendVerificationReminderEmail(OrcidProfile orcidProfile, URI baseUri, String email) {
         Map<String, Object> templateParams = new HashMap<String, Object>();
@@ -241,7 +246,7 @@ public class NotificationManagerImpl implements NotificationManager {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setFrom(fromAddress);
         message.setTo(email);
-        message.setSubject(emailSubjects.getProperty("verify_reminder"));
+        message.setSubject(getSubject("email.subject.verify_reminder", orcidProfile));
         message.setText(body);
         // Send message
         sendAndLogMessage(message);
@@ -285,7 +290,7 @@ public class NotificationManagerImpl implements NotificationManager {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setFrom(fromAddress);
         message.setTo(orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue());
-        message.setSubject(emailSubjects.getProperty("reset"));
+        message.setSubject(getSubject("email.subject.reset", orcidProfile));
         message.setText(body);
         sendAndLogMessage(message);
 
@@ -325,7 +330,7 @@ public class NotificationManagerImpl implements NotificationManager {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setFrom(fromAddress);
         message.setTo(amendedProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue());
-        message.setSubject(emailSubjects.getProperty("amend"));
+        message.setSubject(getSubject("email.subject.amend", amendedProfile));
         message.setText(body);
         // Send message
         sendAndLogMessage(message);
@@ -344,7 +349,7 @@ public class NotificationManagerImpl implements NotificationManager {
 
         // message.setFrom(grantingOrcidEmail);
         message.setFrom(fromAddress);
-        message.setSubject(emailSubjects.getProperty("added_as_delegate"));
+        message.setSubject(getSubject("email.subject.added_as_delegate", orcidUserGrantingPermission));
 
         for (DelegationDetails newDelegation : delegatesGrantedByUser) {
             // LADP, suggest swapping out this statement to use the deriveEmailFriendlyName() function instead
@@ -379,7 +384,7 @@ public class NotificationManagerImpl implements NotificationManager {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setFrom(supportAddress);
         message.setTo(oldEmail.getValue());
-        message.setSubject(emailSubjects.getProperty("email_removed"));
+        message.setSubject(getSubject("email.subject.email_removed", updatedProfile));
 
         String emailFriendlyName = deriveEmailFriendlyName(updatedProfile);
         templateParams.put("emailName", emailFriendlyName);
@@ -420,7 +425,7 @@ public class NotificationManagerImpl implements NotificationManager {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setFrom(fromAddress);
         message.setTo(createdProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue());
-        message.setSubject(emailSubjects.getProperty("api_record_creation"));
+        message.setSubject(getSubject("email.subject.api_record_creation", createdProfile));
         message.setText(body);
         // Send message
         if (apiRecordCreationEmailEnabled) {
@@ -457,7 +462,7 @@ public class NotificationManagerImpl implements NotificationManager {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setFrom(fromAddress);
         message.setTo(primaryEmail.getValue());
-        message.setSubject(emailSubjects.getProperty("claim_reminder"));
+        message.setSubject(getSubject("email.subject.claim_reminder", orcidProfile));
         message.setText(body);
         // Send message
         if (apiRecordCreationEmailEnabled) {
