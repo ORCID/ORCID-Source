@@ -154,13 +154,16 @@ public class OrcidAuthorizationCodeServiceImpl extends RandomValueAuthorizationC
         detail.setId(code);
         detail.setApproved(authenticationRequest.isApproved());
         Authentication userAuthentication = authentication.getUserAuthentication();
-        Object profile = userAuthentication.getPrincipal();
+        Object principal = userAuthentication.getPrincipal();
 
         ProfileEntity entity = null;
 
-        if (profile instanceof OrcidProfileUserDetails && ((OrcidProfileUserDetails) profile).getEffectiveProfile() != null) {
-            OrcidProfile orcidProfile = ((OrcidProfileUserDetails) profile).getEffectiveProfile();
-            entity = profileEntityManager.findByOrcid(orcidProfile.getOrcid().getValue());
+        if (principal instanceof OrcidProfileUserDetails) {
+            OrcidProfileUserDetails userDetails = (OrcidProfileUserDetails) principal;
+            String effectiveOrcid = userDetails.getEffectiveOrcid();
+            if (effectiveOrcid != null) {
+                entity = profileEntityManager.findByOrcid(effectiveOrcid);
+            }
         }
 
         if (entity == null) {

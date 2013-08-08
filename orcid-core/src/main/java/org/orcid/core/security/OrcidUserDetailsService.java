@@ -16,9 +16,13 @@
  */
 package org.orcid.core.security;
 
-import org.orcid.core.manager.OrcidProfileManager;
+import javax.annotation.Resource;
+
 import org.orcid.core.oauth.OrcidProfileUserDetails;
-import org.orcid.jaxb.model.message.OrcidProfile;
+import org.orcid.persistence.dao.EmailDao;
+import org.orcid.persistence.dao.ProfileDao;
+import org.orcid.persistence.jpa.entities.EmailEntity;
+import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.utils.OrcidStringUtils;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -26,8 +30,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.annotation.Resource;
 
 /**
  * 2011-2012 ORCID
@@ -37,7 +39,10 @@ import javax.annotation.Resource;
 public class OrcidUserDetailsService implements UserDetailsService {
 
     @Resource
-    private OrcidProfileManager orcidProfileManager;
+    private ProfileDao profileDao;
+
+    @Resource
+    private EmailDao emailDao;
 
     /**
      * Locates the user based on the username. In the actual implementation, the
@@ -56,26 +61,30 @@ public class OrcidUserDetailsService implements UserDetailsService {
     @Override
     @Transactional(propagation = Propagation.REQUIRED)
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        OrcidProfile profile = obtainEntity(username);
+        ProfileEntity profile = obtainEntity(username);
 
         if (profile == null) {
             throw new UsernameNotFoundException("Bad username or password");
         }
-        if (!profile.getOrcidHistory().isClaimed()) {
+        if (!profile.getClaimed()) {
             throw new UnclaimedProfileExistsException("orcid.frontend.security.unclaimed_exists");
         }
-        if (profile.isDeactivated()) {
+        if (profile.getDeactivationDate() != null) {
             throw new DisabledException("Account not active, please call helpdesk");
         }
-        return new OrcidProfileUserDetails(profile);
+        String primaryEmail = profile.getPrimaryEmail().getId();
+        return new OrcidProfileUserDetails(profile.getId(), primaryEmail, profile.getEncryptedPassword());
     }
 
-    private OrcidProfile obtainEntity(String username) {
-        OrcidProfile profile = null;
+    private ProfileEntity obtainEntity(String username) {
+        ProfileEntity profile = null;
         if (OrcidStringUtils.isValidOrcid(username)) {
-            profile = orcidProfileManager.retrieveOrcidProfile(username);
+            profile = profileDao.find(username);
         } else {
-            profile = orcidProfileManager.retrieveOrcidProfileByEmail(username);
+            EmailEntity emailEntity = emailDao.find(username);
+            if (emailEntity != null) {
+                profile = emailEntity.getProfile();
+            }
         }
         return profile;
     }

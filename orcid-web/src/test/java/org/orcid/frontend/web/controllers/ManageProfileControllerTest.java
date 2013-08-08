@@ -51,7 +51,6 @@ import org.orcid.core.manager.OtherNameManager;
 import org.orcid.core.manager.ProfileKeywordManager;
 import org.orcid.core.manager.ResearcherUrlManager;
 import org.orcid.core.manager.impl.OrcidProfileManagerImpl;
-import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.frontend.web.forms.AddDelegateForm;
 import org.orcid.frontend.web.forms.ChangePasswordForm;
 import org.orcid.frontend.web.forms.ChangePersonalInfoForm;
@@ -160,7 +159,6 @@ public class ManageProfileControllerTest extends BaseControllerTest {
     public void testUnchangedEmailDoesNotInvokeNotificationManager() throws Exception {
 
         controller.setNotificationManager(mockNotificationManager);
-        controller.setOrcidProfileManager(mock(OrcidProfileManager.class));
         controller.setProfileKeywordManager(mock(ProfileKeywordManager.class));
         controller.setOtherNameManager(mock(OtherNameManager.class));
         controller.setResearcherUrlManager(mock(ResearcherUrlManager.class));
@@ -178,8 +176,7 @@ public class ManageProfileControllerTest extends BaseControllerTest {
     public void testUpdateAffiliations() throws Exception {
         Map<String, String> map = new HashMap<String, String>();
         MapBindingResult bindingResult = new MapBindingResult(map, "currentAffiliationsForm");
-        OrcidProfileUserDetails profileUserDetails = controller.getCurrentUser();
-        CurrentAffiliationsForm currentAffiliationsForm = new CurrentAffiliationsForm(profileUserDetails.getEffectiveProfile());
+        CurrentAffiliationsForm currentAffiliationsForm = new CurrentAffiliationsForm(controller.getEffectiveProfile());
         ModelAndView mav = controller.updateAffiliations(currentAffiliationsForm, bindingResult);
         assertNotNull(mav);
 

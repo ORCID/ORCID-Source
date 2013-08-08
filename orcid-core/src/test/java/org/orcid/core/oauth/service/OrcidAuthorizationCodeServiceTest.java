@@ -107,7 +107,7 @@ public class OrcidAuthorizationCodeServiceTest extends DBUnitTest {
         authorizationRequest.setResourceIds(resourceIds);
         OrcidProfile profile = new OrcidProfile();
         profile.setOrcid(new Orcid("4444-4444-4444-4445"));
-        OrcidProfileUserDetails details = new OrcidProfileUserDetails(profile);
+        OrcidProfileUserDetails details = new OrcidProfileUserDetails("4444-4444-4444-4445", "test123@semantico.com", "encrypted_password");
         Authentication userAuthentication = new UsernamePasswordAuthenticationToken(details, "password");
 
         return new AuthorizationRequestHolder(authorizationRequest, userAuthentication);

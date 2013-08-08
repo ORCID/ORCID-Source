@@ -23,10 +23,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.jaxb.model.message.Locale;
-import org.orcid.jaxb.model.message.OrcidPreferences;
-import org.orcid.jaxb.model.message.OrcidProfile;
+import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.utils.OrcidWebUtils;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
@@ -41,8 +39,9 @@ import org.springframework.web.servlet.i18n.CookieLocaleResolver;
  * @author Robert Peters (rcpeters)
  */
 public class AjaxAuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
+
     @Resource
-    protected OrcidProfileManager orcidProfileManager;
+    private ProfileDao profileDao;
 
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
         String targetUrl = determineFullTargetUrlFromSavedRequest(request, response);
@@ -78,31 +77,21 @@ public class AjaxAuthenticationSuccessHandler extends SimpleUrlAuthenticationSuc
 
     // new method - persist which ever local they logged in with
     private void checkLocale(HttpServletRequest request, HttpServletResponse response, String orcidId) {
-        OrcidProfile op = orcidProfileManager.retrieveOrcidProfile(orcidId);
-        if (op != null) {
-            if (op.getOrcidPreferences() != null) {
-                OrcidPreferences prefs = op.getOrcidPreferences();
-                if (prefs.getLocale() != null && prefs.getLocale().value() != null) {
-                    String localeStr = request.getLocale().toString();
+        Locale lastKnownLocale = profileDao.retrieveLocale(orcidId);
+        if (lastKnownLocale != null) {
 
-                    // have to read the cookie directly since spring has
-                    // populated the request locale yet
-                    CookieLocaleResolver clr = new CookieLocaleResolver();
-                    // must match <property name="cookieName" value="locale_v3"
-                    // />
-                    clr.setCookieName("locale_v3");
-                    Locale cookieLocale = org.orcid.jaxb.model.message.Locale.fromValue(clr.resolveLocale(request).toString());
+            // have to read the cookie directly since spring has
+            // populated the request locale yet
+            CookieLocaleResolver clr = new CookieLocaleResolver();
+            // must match <property name="cookieName" value="locale_v3"
+            // />
+            clr.setCookieName("locale_v3");
+            Locale cookieLocale = org.orcid.jaxb.model.message.Locale.fromValue(clr.resolveLocale(request).toString());
 
-                    Locale lastKnownLocale = prefs.getLocale();
-
-                    // update the users preferences, so that
-                    // send out emails in their last chosen language
-                    if (!lastKnownLocale.equals(cookieLocale)) {
-                        prefs.setLocale(cookieLocale);
-                        op.setOrcidPreferences(prefs);
-                        orcidProfileManager.updatePreferences(op);
-                    }
-                }
+            // update the users preferences, so that
+            // send out emails in their last chosen language
+            if (!lastKnownLocale.equals(cookieLocale)) {
+                profileDao.updateLocale(orcidId, cookieLocale);
             }
         }
     }

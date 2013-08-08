@@ -17,14 +17,11 @@
 package org.orcid.frontend.web.controllers;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.TreeMap;
-import java.util.TreeSet;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -41,39 +38,17 @@ import org.orcid.frontend.web.util.YearsList;
 import org.orcid.jaxb.model.clientgroup.OrcidClient;
 import org.orcid.jaxb.model.clientgroup.RedirectUri;
 import org.orcid.jaxb.model.message.CitationType;
-import org.orcid.jaxb.model.message.ContributorAttributes;
 import org.orcid.jaxb.model.message.ContributorRole;
 import org.orcid.jaxb.model.message.ExternalIdentifier;
 import org.orcid.jaxb.model.message.ExternalIdentifiers;
-import org.orcid.jaxb.model.message.OrcidActivities;
 import org.orcid.jaxb.model.message.OrcidProfile;
-import org.orcid.jaxb.model.message.OrcidWork;
-import org.orcid.jaxb.model.message.OrcidWorks;
-import org.orcid.jaxb.model.message.PublicationDate;
 import org.orcid.jaxb.model.message.SequenceType;
 import org.orcid.jaxb.model.message.SourceOrcid;
-import org.orcid.jaxb.model.message.WorkContributors;
 import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
 import org.orcid.jaxb.model.message.WorkType;
 import org.orcid.persistence.adapter.Jaxb2JpaAdapter;
 import org.orcid.persistence.adapter.Jpa2JaxbAdapter;
-import org.orcid.persistence.jpa.entities.FuzzyDate;
-import org.orcid.persistence.jpa.entities.ProfileEntity;
-import org.orcid.persistence.jpa.entities.WorkContributorEntity;
-import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.pojo.ThirdPartyRedirect;
-import org.orcid.pojo.ajaxForm.Citation;
-import org.orcid.pojo.ajaxForm.Contributor;
-import org.orcid.pojo.ajaxForm.Date;
-import org.orcid.pojo.ajaxForm.ErrorsInterface;
-import org.orcid.pojo.ajaxForm.PojoUtil;
-import org.orcid.pojo.ajaxForm.Text;
-import org.orcid.pojo.ajaxForm.Visibility;
-import org.orcid.pojo.ajaxForm.Work;
-import org.orcid.pojo.ajaxForm.WorkExternalIdentifier;
-import org.orcid.pojo.ajaxForm.WorkTitle;
-import org.orcid.utils.BibtexException;
-import org.orcid.utils.BibtexUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -213,15 +188,14 @@ public class WorkspaceController extends BaseWorkspaceController {
         ModelAndView mav = new ModelAndView("workspace");
         mav.addObject("showPrivacy", true);
 
-        OrcidProfile profile = getCurrentUserAndRefreshIfNecessary().getEffectiveProfile();
-        getCurrentUser().setEffectiveProfile(profile);
+        OrcidProfile profile = getEffectiveProfile();
         List<CurrentWork> currentWorks = getCurrentWorksFromProfile(profile);
         if (currentWorks != null && !currentWorks.isEmpty()) {
             mav.addObject("currentWorks", currentWorks);
         }
         mav.addObject("profile", profile);
-        mav.addObject("baseUri",getBaseUri());
-        mav.addObject("baseUriHttp",getBaseUriHttp());
+        mav.addObject("baseUri", getBaseUri());
+        mav.addObject("baseUriHttp", getBaseUriHttp());
         return mav;
     }
 
@@ -232,7 +206,7 @@ public class WorkspaceController extends BaseWorkspaceController {
     @RequestMapping(value = "/externalIdentifiers.json", method = RequestMethod.GET)
     public @ResponseBody
     org.orcid.pojo.ExternalIdentifiers getExternalIdentifiersJson(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {
-        OrcidProfile currentProfile = getCurrentUser().getEffectiveProfile();
+        OrcidProfile currentProfile = getEffectiveProfile();
         org.orcid.pojo.ExternalIdentifiers externalIdentifiers = new org.orcid.pojo.ExternalIdentifiers();
         externalIdentifiers.setExternalIdentifiers((List<org.orcid.pojo.ExternalIdentifier>) (Object) currentProfile.getOrcidBio().getExternalIdentifiers()
                 .getExternalIdentifier());
@@ -244,7 +218,7 @@ public class WorkspaceController extends BaseWorkspaceController {
     ThirdPartyRedirect getSourceGrantReadWizard() {
         ThirdPartyRedirect tpr = new ThirdPartyRedirect();
 
-        OrcidProfile currentProfile = getCurrentUser().getEffectiveProfile();
+        OrcidProfile currentProfile = getEffectiveProfile();
         if (currentProfile.getOrcidHistory().getSource() == null)
             return tpr;
         SourceOrcid sourceOrcid = currentProfile.getOrcidHistory().getSource().getSourceOrcid();
@@ -286,7 +260,7 @@ public class WorkspaceController extends BaseWorkspaceController {
 
         if (errors.isEmpty()) {
             // Get cached profile
-            OrcidProfile currentProfile = getCurrentUser().getEffectiveProfile();
+            OrcidProfile currentProfile = getEffectiveProfile();
             ExternalIdentifiers externalIdentifiers = currentProfile.getOrcidBio().getExternalIdentifiers();
             List<ExternalIdentifier> externalIdentifiersList = externalIdentifiers.getExternalIdentifier();
             Iterator<ExternalIdentifier> externalIdentifierIterator = externalIdentifiersList.iterator();

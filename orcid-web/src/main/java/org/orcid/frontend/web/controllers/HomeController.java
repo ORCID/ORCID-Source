@@ -16,18 +16,6 @@
  */
 package org.orcid.frontend.web.controllers;
 
-import org.orcid.core.oauth.OrcidProfileUserDetails;
-import org.orcid.jaxb.model.message.OrcidPreferences;
-import org.orcid.jaxb.model.message.OrcidProfile;
-import org.orcid.jaxb.model.message.Preferences;
-import org.orcid.pojo.UserStatus;
-import org.orcid.utils.OrcidStringUtils;
-import org.orcid.utils.UTF8Control;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-
 import java.util.Locale;
 import java.util.ResourceBundle;
 
@@ -35,9 +23,17 @@ import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import org.orcid.jaxb.model.message.OrcidProfile;
+import org.orcid.pojo.UserStatus;
+import org.orcid.utils.OrcidStringUtils;
+import org.orcid.utils.UTF8Control;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.multiaction.NoSuchRequestHandlingMethodException;
 import org.springframework.web.servlet.support.RequestContextUtils;
@@ -46,7 +42,7 @@ import org.springframework.web.servlet.support.RequestContextUtils;
 public class HomeController extends BaseController {
     private static final Logger LOGGER = LoggerFactory.getLogger(HomeController.class);
 
-
+// @formatter:off
 //    @RequestMapping(value = "/")
 //    public ModelAndView homeHandler(HttpServletRequest request) {
 //        StringBuilder newUri = new StringBuilder(request.getRequestURL());
@@ -54,14 +50,15 @@ public class HomeController extends BaseController {
 //        newUri.insert(0, "redirect:");
 //        return new ModelAndView(newUri.toString());
 //    }
+// @formatter:on
 
-    //freindly link to allow language switching
+    // freindly link to allow language switching
     @RequestMapping(value = "/home")
     public ModelAndView homeRedirect(HttpServletRequest request) {
         return new ModelAndView("redirect:/");
+
     }
 
-    
     @RequestMapping(value = "/robots.txt")
     public String dynamicRobots(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {
         String requestedDomain = request.getServerName();
@@ -75,7 +72,7 @@ public class HomeController extends BaseController {
     @Produces(value = { MediaType.APPLICATION_JSON })
     public @ResponseBody
     org.orcid.pojo.Local langJson(HttpServletRequest request, @RequestParam(value = "lang", required = false) String lang) throws NoSuchRequestHandlingMethodException {
-        if (lang != null) { 
+        if (lang != null) {
             String orcid = getCurrentUserOrcid();
             if (orcid != null) {
                 OrcidProfile existingProfile = orcidProfileManager.retrieveOrcidProfile(orcid);
@@ -92,7 +89,7 @@ public class HomeController extends BaseController {
                 }
             }
         }
-        
+
         Locale locale = RequestContextUtils.getLocale(request);
         org.orcid.pojo.Local lPojo = new org.orcid.pojo.Local();
         lPojo.setLocale(locale.toString());
@@ -115,9 +112,9 @@ public class HomeController extends BaseController {
             request.getSession().invalidate();
         }
 
-        OrcidProfileUserDetails opd = getCurrentUser();
+        String orcid = getCurrentUserOrcid();
         UserStatus us = new UserStatus();
-        us.setLoggedIn((opd != null));
+        us.setLoggedIn((orcid != null));
         return us;
     }
 

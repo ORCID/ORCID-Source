@@ -274,7 +274,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
             return authorizationRequest.getClientId();
         }
         if (OrcidProfileUserDetails.class.isAssignableFrom(authentication.getPrincipal().getClass())) {
-            return ((OrcidProfileUserDetails) authentication.getPrincipal()).getRealProfile().getOrcid().getValue();
+            return ((OrcidProfileUserDetails) authentication.getPrincipal()).getRealOrcid();
         }
         return null;
     }

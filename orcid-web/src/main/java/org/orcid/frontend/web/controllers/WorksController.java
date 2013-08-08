@@ -127,7 +127,7 @@ public class WorksController extends BaseWorkspaceController {
         OrcidWork delWork = work.toOrcidWork();
 
         // Get cached profile
-        OrcidProfile currentProfile = getCurrentUser().getEffectiveProfile();
+        OrcidProfile currentProfile = getEffectiveProfile();
         OrcidWorks works = currentProfile.getOrcidActivities() == null ? null : currentProfile.getOrcidActivities().getOrcidWorks();
         Work deletedWork = new Work();
         if (works != null) {
@@ -240,7 +240,7 @@ public class WorksController extends BaseWorkspaceController {
         Text disText = new Text();
         w.setShortDescription(disText);
 
-        OrcidProfile profile = getCurrentUser().getEffectiveProfile();
+        OrcidProfile profile = getEffectiveProfile();
         Visibility v = Visibility.valueOf(profile.getOrcidInternal().getPreferences().getWorkVisibilityDefault().getValue());
         w.setVisibility(v);
 
@@ -282,7 +282,7 @@ public class WorksController extends BaseWorkspaceController {
 
         if (work.getErrors().size() == 0) {
             // Get current profile
-            OrcidProfile currentProfile = getCurrentUser().getEffectiveProfile();
+            OrcidProfile currentProfile = getEffectiveProfile();
             OrcidWork newOw = work.toOrcidWork();
             newOw.setPutCode("-1"); // put codes of -1 override new works
                                     // visibility filtering settings.
@@ -546,7 +546,7 @@ public class WorksController extends BaseWorkspaceController {
      * 
      */
     private List<String> createWorksIdList(HttpServletRequest request) {
-        OrcidProfile currentProfile = getCurrentUser().getEffectiveProfile();
+        OrcidProfile currentProfile = getEffectiveProfile();
         OrcidWorks orcidWorks = currentProfile.getOrcidActivities() == null ? null : currentProfile.getOrcidActivities().getOrcidWorks();
 
         HashMap<String, Work> worksMap = new HashMap<String, Work>();
@@ -573,7 +573,7 @@ public class WorksController extends BaseWorkspaceController {
     Work updateProfileWorkJson(HttpServletRequest request, @RequestBody Work work) {
         // Get cached profile
         OrcidWork ow = work.toOrcidWork();
-        OrcidProfile currentProfile = getCurrentUser().getEffectiveProfile();
+        OrcidProfile currentProfile = getEffectiveProfile();
         OrcidWorks orcidWorks = currentProfile.getOrcidActivities() == null ? null : currentProfile.getOrcidActivities().getOrcidWorks();
         if (orcidWorks != null) {
             List<OrcidWork> orcidWorksList = orcidWorks.getOrcidWork();
