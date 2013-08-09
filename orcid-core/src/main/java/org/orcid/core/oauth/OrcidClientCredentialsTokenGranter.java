@@ -18,12 +18,10 @@ package org.orcid.core.oauth;
 
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.provider.AuthorizationRequest;
+import org.springframework.security.oauth2.provider.DefaultAuthorizationRequest;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.security.oauth2.provider.TokenGranter;
 import org.springframework.security.oauth2.provider.token.AuthorizationServerTokenServices;
-
-import java.util.Map;
-import java.util.Set;
 
 /**
  * 2011-2012 ORCID
@@ -44,13 +42,12 @@ public class OrcidClientCredentialsTokenGranter implements TokenGranter {
     }
 
     @Override
-    public OAuth2AccessToken grant(String grantType, Map<String, String> parameters, String clientId, Set<String> scopes) {
+    public OAuth2AccessToken grant(String grantType, AuthorizationRequest authorizationRequest) {
         if (!CLIENT_CREDENTIALS.equals(grantType)) {
             return null;
         }
 
-        AuthorizationRequest clientToken = clientCredentialsChecker.validateCredentials(grantType, clientId, scopes);
-
+        AuthorizationRequest clientToken = clientCredentialsChecker.validateCredentials(grantType, authorizationRequest.getClientId(), authorizationRequest.getScope());
         return tokenServices.createAccessToken(new OAuth2Authentication(clientToken, null));
     }
 

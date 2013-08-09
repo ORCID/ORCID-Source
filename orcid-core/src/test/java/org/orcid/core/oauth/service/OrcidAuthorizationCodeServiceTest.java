@@ -31,6 +31,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.common.exceptions.InvalidGrantException;
 import org.springframework.security.oauth2.provider.AuthorizationRequest;
+import org.springframework.security.oauth2.provider.DefaultAuthorizationRequest;
 import org.springframework.security.oauth2.provider.code.AuthorizationCodeServices;
 import org.springframework.security.oauth2.provider.code.AuthorizationRequestHolder;
 import org.springframework.test.annotation.Rollback;
@@ -42,6 +43,7 @@ import javax.annotation.Resource;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Set;
 
 import static org.junit.Assert.assertNotNull;
 
@@ -97,9 +99,12 @@ public class OrcidAuthorizationCodeServiceTest extends DBUnitTest {
     }
 
     public AuthorizationRequestHolder getAuthorizationRequestHolder(String clientId) {
-        Collection<GrantedAuthority> grantedAuthorities = new HashSet<GrantedAuthority>(Arrays.asList(new SimpleGrantedAuthority("ROLE_USER")));
-
-        AuthorizationRequest authorizationRequest = new AuthorizationRequest(clientId, Arrays.asList("a-scope"), grantedAuthorities, Arrays.asList("orcid"));
+        Set<GrantedAuthority> grantedAuthorities = new HashSet<GrantedAuthority>(Arrays.asList(new SimpleGrantedAuthority("ROLE_USER")));
+        Set<String> resourceIds = new HashSet<>();
+        resourceIds.add("orcid");
+        DefaultAuthorizationRequest authorizationRequest = new DefaultAuthorizationRequest(clientId, Arrays.asList("a-scope"));
+        authorizationRequest.setAuthorities(grantedAuthorities);
+        authorizationRequest.setResourceIds(resourceIds);
         OrcidProfile profile = new OrcidProfile();
         profile.setOrcid(new Orcid("4444-4444-4444-4445"));
         OrcidProfileUserDetails details = new OrcidProfileUserDetails(profile);

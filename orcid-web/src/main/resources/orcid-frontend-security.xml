@@ -189,7 +189,7 @@
 	<bean id="authorizationCodeTokenGranter"
 		class="org.springframework.security.oauth2.provider.code.AuthorizationCodeTokenGranter">
 		<constructor-arg ref="orcidAuthorizationCodeService" />
-		<constructor-arg ref="randomValueTokenServices" />
+		<constructor-arg ref="tokenServices" />
 		<constructor-arg ref="orcidClientDetailsService" />
 	</bean>
 
@@ -198,8 +198,8 @@
 
 	<bean id="orcidTokenStore" class="org.orcid.core.oauth.service.OrcidTokenStoreServiceImpl" />
 
-	<bean id="randomValueTokenServices"
-		class="org.springframework.security.oauth2.provider.token.RandomValueTokenServices">
+	<bean id="tokenServices"
+		class="org.springframework.security.oauth2.provider.token.DefaultTokenServices">
 		<property name="tokenStore" ref="orcidTokenStore" />
 	</bean>
 
@@ -221,12 +221,6 @@
 	<bean id="clientDetailsUserService"
 		class="org.springframework.security.oauth2.provider.client.ClientDetailsUserDetailsService">
 		<constructor-arg ref="orcidClientDetailsService" />
-	</bean>
-
-	<bean id="tokenServices"
-		class="org.springframework.security.oauth2.provider.token.RandomValueTokenServices">
-		<property name="tokenStore" ref="orcidTokenStore" />
-		<property name="supportRefreshToken" value="false" />
 	</bean>
 
 	<!-- Simple listener that gets fired when successful login occurs -->

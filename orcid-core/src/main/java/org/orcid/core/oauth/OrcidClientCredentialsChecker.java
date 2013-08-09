@@ -23,6 +23,7 @@ import org.springframework.security.oauth2.common.util.OAuth2Utils;
 import org.springframework.security.oauth2.provider.AuthorizationRequest;
 import org.springframework.security.oauth2.provider.ClientDetails;
 import org.springframework.security.oauth2.provider.ClientDetailsService;
+import org.springframework.security.oauth2.provider.DefaultAuthorizationRequest;
 
 import java.util.Collection;
 import java.util.Set;
@@ -47,8 +48,11 @@ public class OrcidClientCredentialsChecker {
         if (scopes != null) {
             validateScope(clientDetails, scopes);
         }
-        return new AuthorizationRequest(clientId, scopes, clientDetails.getAuthorities(), clientDetails.getResourceIds());
-
+        DefaultAuthorizationRequest authorizationRequest = new DefaultAuthorizationRequest(clientId, scopes);
+        authorizationRequest.setAuthorities(clientDetails.getAuthorities());
+        authorizationRequest.setResourceIds(clientDetails.getResourceIds());
+        authorizationRequest.setApproved(true);
+        return authorizationRequest;
     }
 
     private void validateScope(ClientDetails clientDetails, Set<String> scopes) {

@@ -19,24 +19,18 @@ package org.orcid.core.oauth.service;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.oauth2.provider.endpoint.AuthorizationEndpoint;
 import org.springframework.web.HttpSessionRequiredException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.ServletWebRequest;
+import org.springframework.web.servlet.ModelAndView;
 
 public class OrcidAuthorizationEndpoint extends AuthorizationEndpoint {
 
     @Override
     @ExceptionHandler(HttpSessionRequiredException.class)
-    @SuppressWarnings( { "unchecked", "rawtypes" })
-    public HttpEntity handleException(HttpSessionRequiredException e, ServletWebRequest webRequest) throws Exception {
-        HttpHeaders headers = new HttpHeaders();
-        headers.setLocation(buildRedirectUri(webRequest));
-        return new ResponseEntity(headers, HttpStatus.MOVED_TEMPORARILY);
+    public ModelAndView handleHttpSessionRequiredException(HttpSessionRequiredException e, ServletWebRequest webRequest) throws Exception {
+        return new ModelAndView("redirect:" + buildRedirectUri(webRequest).toString());
     }
 
     private URI buildRedirectUri(ServletWebRequest webRequest) throws URISyntaxException {

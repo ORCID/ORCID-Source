@@ -170,7 +170,30 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
 
         ClientResponse clientResponse = oauthT2Client.addWorksJson("4444-4444-4444-4442", orcidMessage, accessToken);
         assertEquals(201, clientResponse.getStatus());
-        // XXX Should also check that can't add works other people's profile!
+    }
+
+    @Test
+    public void testAddWorkToWrongProfile() throws InterruptedException, JSONException {
+        String scopes = "/orcid-works/create";
+        String authorizationCode = obtainAuthorizationCode(scopes);
+        String accessToken = obtainAccessToken(authorizationCode, scopes);
+
+        OrcidMessage orcidMessage = new OrcidMessage();
+        orcidMessage.setMessageVersion(OrcidMessage.DEFAULT_VERSION);
+        OrcidProfile orcidProfile = new OrcidProfile();
+        orcidMessage.setOrcidProfile(orcidProfile);
+        OrcidActivities orcidActivities = new OrcidActivities();
+        orcidProfile.setOrcidActivities(orcidActivities);
+        OrcidWorks orcidWorks = new OrcidWorks();
+        orcidActivities.setOrcidWorks(orcidWorks);
+        OrcidWork orcidWork = new OrcidWork();
+        orcidWorks.getOrcidWork().add(orcidWork);
+        WorkTitle workTitle = new WorkTitle();
+        orcidWork.setWorkTitle(workTitle);
+        workTitle.setTitle(new Title("Work added by integration test"));
+
+        ClientResponse clientResponse = oauthT2Client.addWorksJson("4444-4444-4444-4443", orcidMessage, accessToken);
+        assertEquals(403, clientResponse.getStatus());
     }
 
     private String obtainAccessToken(String authorizationCode, String scopes) throws JSONException {
