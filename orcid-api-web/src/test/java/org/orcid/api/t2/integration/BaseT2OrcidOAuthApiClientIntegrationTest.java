@@ -120,13 +120,10 @@ public abstract class BaseT2OrcidOAuthApiClientIntegrationTest {
     }
 
     protected void assertClientResponse401Details(ClientResponse clientResponse) throws Exception {
-
         // we've created client details but not tied them to an access token
         assertEquals(401, clientResponse.getStatus());
         assertTrue(clientResponse.getHeaders().containsKey("WWW-Authenticate"));
         List<String> authHeaders = clientResponse.getHeaders().get("WWW-Authenticate");
-        assertTrue(authHeaders.contains("Bearer, error=\"invalid_token\", error_description=\"Invalid access token: null\""));
         assertTrue(authHeaders.contains("Bearer realm=\"ORCID T2 API\", error=\"invalid_token\", error_description=\"Invalid access token: null\""));
-
     }
 }

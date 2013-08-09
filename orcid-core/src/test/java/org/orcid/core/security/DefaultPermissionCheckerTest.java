@@ -29,6 +29,7 @@ import org.orcid.test.DBUnitTest;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.provider.AuthorizationRequest;
+import org.springframework.security.oauth2.provider.DefaultAuthorizationRequest;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
@@ -44,6 +45,7 @@ import java.security.AccessControlException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Set;
 
 /**
  * 2011-2012 ORCID
@@ -74,10 +76,11 @@ public class DefaultPermissionCheckerTest extends DBUnitTest {
     @Transactional
     @Rollback
     public void testCheckUserPermissionsAuthenticationScopesOrcidAndOrcidMessage() throws Exception {
-        Collection<String> resourceIds = new HashSet<String>(Arrays.asList("orcid"));
+        Set<String> resourceIds = new HashSet<String>(Arrays.asList("orcid"));
         HashSet<GrantedAuthority> grantedAuthorities = new HashSet<GrantedAuthority>(Arrays.asList(new SimpleGrantedAuthority("ROLE_CLIENT")));
-        AuthorizationRequest request = new AuthorizationRequest("4444-4444-4444-4441", Arrays.asList("/orcid-bio/external-identifiers/create"), grantedAuthorities,
-                resourceIds);
+        DefaultAuthorizationRequest request = new DefaultAuthorizationRequest("4444-4444-4444-4441", Arrays.asList("/orcid-bio/external-identifiers/create"));
+        request.setAuthorities(grantedAuthorities);
+        request.setResourceIds(resourceIds);
         ProfileEntity entity = profileEntityManager.findByOrcid("4444-4444-4444-4446");
         OrcidOauth2UserAuthentication oauth2UserAuthentication = new OrcidOauth2UserAuthentication(entity, true);
         OAuth2Authentication oAuth2Authentication = new OAuth2Authentication(request, oauth2UserAuthentication);
@@ -91,10 +94,11 @@ public class DefaultPermissionCheckerTest extends DBUnitTest {
     @Transactional
     @Rollback
     public void testCheckUserPermissionsAuthenticationScopesOrcidAndOrcidMessageWhenWrongUser() throws Exception {
-        Collection<String> resourceIds = new HashSet<String>(Arrays.asList("orcid"));
+        Set<String> resourceIds = new HashSet<String>(Arrays.asList("orcid"));
         HashSet<GrantedAuthority> grantedAuthorities = new HashSet<GrantedAuthority>(Arrays.asList(new SimpleGrantedAuthority("ROLE_CLIENT")));
-        AuthorizationRequest request = new AuthorizationRequest("4444-4444-4444-4441", Arrays.asList("/orcid-bio/external-identifiers/create"), grantedAuthorities,
-                resourceIds);
+        DefaultAuthorizationRequest request = new DefaultAuthorizationRequest("4444-4444-4444-4441", Arrays.asList("/orcid-bio/external-identifiers/create"));
+        request.setAuthorities(grantedAuthorities);
+        request.setResourceIds(resourceIds);
         ProfileEntity entity = profileEntityManager.findByOrcid("4444-4444-4444-4445");
         OrcidOauth2UserAuthentication oauth2UserAuthentication = new OrcidOauth2UserAuthentication(entity, true);
         OAuth2Authentication oAuth2Authentication = new OAuth2Authentication(request, oauth2UserAuthentication);
@@ -108,10 +112,11 @@ public class DefaultPermissionCheckerTest extends DBUnitTest {
     @Transactional
     @Rollback
     public void testCheckClientPermissionsAuthenticationScopesOrcidAndOrcidMessage() throws Exception {
-        Collection<String> resourceIds = new HashSet<String>(Arrays.asList("orcid"));
+        Set<String> resourceIds = new HashSet<String>(Arrays.asList("orcid"));
         HashSet<GrantedAuthority> grantedAuthorities = new HashSet<GrantedAuthority>(Arrays.asList(new SimpleGrantedAuthority("ROLE_CLIENT")));
-        AuthorizationRequest request = new AuthorizationRequest("4444-4444-4444-4441", Arrays.asList("/orcid-bio/external-identifiers/create"), grantedAuthorities,
-                resourceIds);
+        DefaultAuthorizationRequest request = new DefaultAuthorizationRequest("4444-4444-4444-4441", Arrays.asList("/orcid-bio/external-identifiers/create"));
+        request.setAuthorities(grantedAuthorities);
+        request.setResourceIds(resourceIds);
         OAuth2Authentication oAuth2Authentication = new OAuth2Authentication(request, null);
         ScopePathType requiredScope = ScopePathType.ORCID_BIO_EXTERNAL_IDENTIFIERS_CREATE;
         OrcidMessage orcidMessage = getOrcidMessage();
@@ -122,10 +127,11 @@ public class DefaultPermissionCheckerTest extends DBUnitTest {
 
     @Test
     public void testCheckPermissionsAuthenticationScopesAndOrcidMessage() throws Exception {
-        Collection<String> resourceIds = new HashSet<String>(Arrays.asList("orcid"));
+        Set<String> resourceIds = new HashSet<String>(Arrays.asList("orcid"));
         HashSet<GrantedAuthority> grantedAuthorities = new HashSet<GrantedAuthority>(Arrays.asList(new SimpleGrantedAuthority("ROLE_CLIENT")));
-        AuthorizationRequest request = new AuthorizationRequest("4444-4444-4444-4441", Arrays.asList(ScopePathType.ORCID_WORKS_CREATE.value()), grantedAuthorities,
-                resourceIds);
+        DefaultAuthorizationRequest request = new DefaultAuthorizationRequest("4444-4444-4444-4441", Arrays.asList(ScopePathType.ORCID_WORKS_CREATE.value()));
+        request.setAuthorities(grantedAuthorities);
+        request.setResourceIds(resourceIds);
         OAuth2Authentication oAuth2Authentication = new OAuth2Authentication(request, null);
         ScopePathType requiredScope = ScopePathType.ORCID_WORKS_CREATE;
         OrcidMessage orcidMessage = getOrcidMessage();
@@ -134,10 +140,11 @@ public class DefaultPermissionCheckerTest extends DBUnitTest {
 
     @Test
     public void testCheckPermissionsAuthenticationScopePathTypesAndOrcid() throws Exception {
-        Collection<String> resourceIds = new HashSet<String>(Arrays.asList("orcid"));
+        Set<String> resourceIds = new HashSet<String>(Arrays.asList("orcid"));
         HashSet<GrantedAuthority> grantedAuthorities = new HashSet<GrantedAuthority>(Arrays.asList(new SimpleGrantedAuthority("ROLE_CLIENT")));
-        AuthorizationRequest request = new AuthorizationRequest("4444-4444-4444-4441", Arrays.asList(ScopePathType.ORCID_BIO_READ_LIMITED.value()), grantedAuthorities,
-                resourceIds);
+        DefaultAuthorizationRequest request = new DefaultAuthorizationRequest("4444-4444-4444-4441", Arrays.asList(ScopePathType.ORCID_BIO_READ_LIMITED.value()));
+        request.setAuthorities(grantedAuthorities);
+        request.setResourceIds(resourceIds);
         OAuth2Authentication oAuth2Authentication = new OAuth2Authentication(request, null);
         ScopePathType requiredScope = ScopePathType.ORCID_BIO_READ_LIMITED;
         defaultPermissionChecker.checkPermissions(oAuth2Authentication, requiredScope, "4444-4444-4444-4447");
