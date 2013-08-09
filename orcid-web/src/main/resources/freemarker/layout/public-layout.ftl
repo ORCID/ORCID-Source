@@ -36,7 +36,7 @@
     <div class="dev-watermark"></div>
 </#if>
 <div class="container">
-    <header class="header center">
+    <div class="header center">
         <div class="row">
             <div class="span11 offset1">
                 <div class="search">
@@ -66,17 +66,15 @@
         </div>
         <div class="row">
             <div class="span3 override">
-           		<aside class="logo">
+           		<div class="logo">
                     <h1><a href="${aboutUri}?lang=${locale}"><img src="${staticCdn}/img/orcid-logo.png" alt="ORCID logo" /></a></h1>
                     <p><@orcid.msg 'public-layout.logo.tagline'/></p>
-                </aside>
+                </div>
             </div>
             <div class="span9">
-                <div class="alignment clearfix">
-                
-                    <nav class="main">
-                        <ul class="menu"><li class="first expanded active-trail"><a href="<@spring.url "/" />" title=""><@orcid.msg 'public-layout.for_researchers'/></a><ul class="menu">
-                            
+                <div class="alignment clearfix">                
+                    <div class="main">
+                        <ul class="menu"><li class="first expanded active-trail"><a href="<@spring.url "/" />" title=""><@orcid.msg 'public-layout.for_researchers'/></a><ul class="menu">                            
                             <@security.authorize ifNotGranted="ROLE_USER">
                                 <li class="leaf last"><a ${(nav=="signin")?string('class="active" ', '')} href="<@spring.url "/signin" />"><@orcid.msg 'public-layout.sign_in'/></a></li>
                                 <li class="leaf first"><a ${(nav=="register")?string('class="active" ', '')}href="<@spring.url "/register" />"><@orcid.msg 'public-layout.register'/></a></li>
@@ -128,7 +126,7 @@
 						    <@security.authorize ifAnyGranted="ROLE_USER"><a href="<@spring.url '/signout'/>"><@orcid.msg 'public-layout.sign_out'/></a></@security.authorize>
 						</li>
 					</ul>
-				</nav>
+				</div>
     <#--<#if isProxy><#include "/common/change_proxy.ftl" /></#if>-->
 
                     
@@ -138,12 +136,12 @@
         </div>
         
         <#include '../common/maintenance_header.ftl'/>
-    </header>
+    </div>
     <div id="main" role="main" class="main">
         <#nested>
     <#-- wtf --></div>
     </div>
-    <footer class="footer">
+    <div class="footer">
         <div class="row">
             <div class="span11 offset1">
                 <ul class="span11 offset1">
@@ -154,7 +152,7 @@
                 </ul>
             </div>
         </div>
-    </footer>
+    </div>
 <form action="<@spring.url '/'/>">
     <input id="imageUrl" type="hidden" value="${staticCdn}/images">
 </form>
