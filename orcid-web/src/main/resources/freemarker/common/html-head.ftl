@@ -34,8 +34,7 @@
 	    <link rel="stylesheet" href="${staticLoc}/font-awesome/3.2.1/css/font-awesome.css"/>
 	    <!--[if IE 7]>
 	    	<link href="${staticLoc}/font-awesome/3.0.2/css/font-awesome-ie7.css" rel="stylesheet">
-		<![endif]-->
-		<script src="${staticCdn}/javascript/modernizr.js?v=${ver}"></script>
+		<![endif]-->		
     </#if>
 	<style type="text/css">
 		/* 
