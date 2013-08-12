@@ -28,6 +28,8 @@ public class SecurityQuestion implements ErrorsInterface {
 
     private long securityQuestionId;
 
+    private String password;
+    
     public List<String> getErrors() {
         return errors;
     }
@@ -52,4 +54,12 @@ public class SecurityQuestion implements ErrorsInterface {
         this.securityAnswer = securityAnswer;
     }
 
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+    
 }

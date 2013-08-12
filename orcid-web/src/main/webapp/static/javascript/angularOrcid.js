@@ -237,7 +237,9 @@ function DeactivateAccountCtrl($scope, $compile) {
 };
 
 
-function SecurityQuestionEditCtrl($scope, $http) {
+function SecurityQuestionEditCtrl($scope, $compile) {
+	$scope.errors=null;
+	
 	$scope.getSecurityQuestion = function() {
 		$.ajax({
 	        url: $('body').data('baseurl') + 'account/security-question.json',
@@ -254,7 +256,14 @@ function SecurityQuestionEditCtrl($scope, $http) {
 	
 	$scope.getSecurityQuestion();
 	
-	$scope.saveSecurityQuestion = function() {
+	$scope.checkCredentials = function() {		
+		 $.colorbox({        	
+		        html: $compile($('#check-password-modal').html())($scope)
+		    });
+		    $.colorbox.resize();
+	};
+	
+	$scope.saveSecurityQuestion = function() {		
 		$.ajax({
 	        url: $('body').data('baseurl') + 'account/security-question.json',
 	        type: 'POST',
@@ -263,13 +272,23 @@ function SecurityQuestionEditCtrl($scope, $http) {
 	        dataType: 'json',
 	        success: function(data) {
 	        	//alert(angular.toJson($scope.securityQuestionPojo));
-	        	$scope.securityQuestionPojo = data;
+	        	if(data.errors.length != 0) {
+	        		$scope.errors=data.errors;
+	        	} else {
+	        		$scope.errors=null;
+	        	}
+	        	$scope.getSecurityQuestion();
 	        	$scope.$apply();
 	        }
 	    }).fail(function() { 
 	    	// something bad is happening!
 	    	console.log("error with security question");
 	    });
+		$.colorbox.close();
+	};
+	
+	$scope.closeModal = function() {
+		$.colorbox.close();
 	};
 };
 
