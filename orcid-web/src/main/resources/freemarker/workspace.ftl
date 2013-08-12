@@ -87,35 +87,7 @@
 			   			</td>		        		
 		        	</tr>
 		        </table>
-			</div>
-			
-		    <#if ((thirdPartiesForImport)?? && (thirdPartiesForImport)?size &gt; 0)>
-     	        <div class="inline-modal" id="third-parties">					
-					<div class="span9">
-						<a class="btn pull-right close-button">X</a>
-	           			<h1 class="lightbox-title" style="text-transform: uppercase;"><@orcid.msg 'workspace.import_works'/></h1>
-	           		
-	           		</div>
-	           		<br />          		
-    	           	<div class="justify"><@orcid.msg 'workspace.ImportResearchActivities.description'/></div>
-    	           	<br />    	           	
-    	           	<#list thirdPartiesForImport?sort_by("displayName") as thirdPartyDetails>
-                        <#assign redirect = (thirdPartyDetails.redirectUris.redirectUri[0].value) >
-                        <#assign predefScopes = (thirdPartyDetails.redirectUris.redirectUri[0].scopeAsSingleString) >
-                        <strong><a class="third-party-colorbox" href="<@spring.url '/oauth/authorize?client_id=${thirdPartyDetails.clientId}&response_type=code&scope=${predefScopes}&redirect_uri=${redirect}'/>">${thirdPartyDetails.displayName}</a></strong><br />
-                        <div class="justify">${(thirdPartyDetails.shortDescription)!}</div>
-                        <#if (thirdPartyDetails_has_next)><hr /></#if>
-                    </#list>
-                    <br />
-                    <div class="footer">
-	                    <#noescape>
-	                    	<strong><@orcid.msg 'workspace.ImportResearchActivities.footer.title'/></strong>
-	                    </#noescape>
-	                    <br />
-	                    <@orcid.msg 'workspace.ImportResearchActivities.footer.description1'/> <a href="<@orcid.msg 'workspace.ImportResearchActivities.footer.description.url'/>"><@orcid.msg 'workspace.ImportResearchActivities.footer.description.link'/></a> <@orcid.msg 'workspace.ImportResearchActivities.footer.description2'/>
-                    </div>
-    	        </div>
-	        </#if>
+			</div>			
         </div>
     </div>
     <div class="span9">
@@ -175,7 +147,7 @@
         			       <i class="icon-caret-down icon" ng-class="{'icon-caret-right':displayWorks==false}"></i></a>
         			    </a> 
         				<a href="" ng-click="toggleDisplayWorks()"><@orcid.msg 'workspace.Works'/></a>
-						<a href="#third-parties" class="colorbox-modal label btn-primary"><@orcid.msg 'workspace.import_works'/></a>
+						<a href="#third-parties" class="label btn-primary" ng-click="showWorkImportWizard()"><@orcid.msg 'workspace.import_works'/></a>
 						<a href="" class="label btn-primary" ng-click="addWorkModal()"><@orcid.msg 'manual_work_form_contents.add_work_manually'/></a>
 					</div>
       	            <div ng-show="displayWorks" class="workspace-accordion-content">
@@ -243,6 +215,34 @@
 		<button class="btn btn-danger" ng-click="removeExternalIdentifier()"><@orcid.msg 'manage.deleteExternalIdentifier.delete'/></button> 
 		<a href="" ng-click="closeModal()"><@orcid.msg 'manage.deleteExternalIdentifier.cancel'/></a>
 	<div>
+</script>
+
+<script type="text/ng-template" id="import-wizard-modal">
+    <#if ((thirdPartiesForImport)??)>
+    	<div id="third-parties">	
+			<div class="span9">
+				<a class="btn pull-right close-button" ng-click="closeModal()">X</a>
+	           	<h1 class="lightbox-title" style="text-transform: uppercase;"><@orcid.msg 'workspace.import_works'/></h1>
+	           		
+	           	</div>
+	           	<br />          		
+    	       	<div class="justify"><@orcid.msg 'workspace.ImportResearchActivities.description'/></div>
+            	<br />    	           	
+    	       	<#list thirdPartiesForImport?sort_by("displayName") as thirdPartyDetails>
+                     <#assign redirect = (thirdPartyDetails.redirectUris.redirectUri[0].value) >
+                     <#assign predefScopes = (thirdPartyDetails.redirectUris.redirectUri[0].scopeAsSingleString) >
+                     <strong><a href="<@spring.url '/oauth/authorize?client_id=${thirdPartyDetails.clientId}&response_type=code&scope=${predefScopes}&redirect_uri=${redirect}'/>" ng-click="closeModal()" target="_blank">${thirdPartyDetails.displayName}</a></strong><br />
+                     <div class="justify">${(thirdPartyDetails.shortDescription)!}</div>
+                     <#if (thirdPartyDetails_has_next)><hr /></#if>
+                 </#list>
+                 <br />
+                 <div class="footer">
+	               	<strong><@orcid.msg 'workspace.ImportResearchActivities.footer.title'/></strong>
+	                <br />
+	                <@orcid.msg 'workspace.ImportResearchActivities.footer.description1'/> <a href="<@orcid.msg 'workspace.ImportResearchActivities.footer.description.url'/>"><@orcid.msg 'workspace.ImportResearchActivities.footer.description.link'/></a> <@orcid.msg 'workspace.ImportResearchActivities.footer.description2'/>
+                 </div>
+		</div>
+	</#if>
 </script>
 
 <script type="text/ng-template" id="add-work-modal">

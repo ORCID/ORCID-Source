@@ -22,6 +22,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -46,6 +47,7 @@ import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.provider.AuthorizationRequest;
+import org.springframework.security.oauth2.provider.DefaultAuthorizationRequest;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -71,13 +73,15 @@ public class DefaultOAuthClientVisibilityTest extends BaseTest {
     @Transactional
     @Rollback
     public void testCheckClientPermissionsAllowOnlyPublicAndLimitedVisibility() throws Exception {
-        Collection<String> resourceIds = new HashSet<String>(Arrays.asList("orcid"));
+        Set<String> resourceIds = new HashSet<String>(Arrays.asList("orcid"));
         HashSet<GrantedAuthority> grantedAuthorities = new HashSet<GrantedAuthority>(Arrays.asList(new SimpleGrantedAuthority("ROLE_CLIENT")));
-        AuthorizationRequest request = new AuthorizationRequest("4444-4444-4444-4446", Arrays.asList("/orcid-bio/external-identifiers/create"), grantedAuthorities,
-                resourceIds);
+        DefaultAuthorizationRequest request = new DefaultAuthorizationRequest("4444-4444-4444-4446", Arrays.asList("/orcid-bio/external-identifiers/create"));
+        request.setAuthorities(grantedAuthorities);
+        request.setResourceIds(resourceIds);
         ProfileEntity entity = new ProfileEntity("4444-4444-4444-4446");
         OrcidOauth2UserAuthentication oauth2UserAuthentication = new OrcidOauth2UserAuthentication(entity, true);
-        //we care only that an OAuth client request results in the correct visibilities 
+        // we care only that an OAuth client request results in the correct
+        // visibilities
         OrcidOAuth2Authentication oAuth2Authentication = new OrcidOAuth2Authentication(request, oauth2UserAuthentication, "made-up-token");
 
         when(orcidOauth2TokenDetailService.findNonDisabledByTokenValue(any(String.class))).thenReturn(new OrcidOauth2TokenDetail());

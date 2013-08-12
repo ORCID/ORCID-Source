@@ -589,9 +589,13 @@ public class ManageProfileController extends BaseWorkspaceController {
         if (securityQuestion.getSecurityQuestionId() != 0 && (securityQuestion.getSecurityAnswer() == null || securityQuestion.getSecurityAnswer().trim() == ""))
             errors.add(getMessage("manage.pleaseProvideAnAnswer"));
         
+        if (securityQuestion.getPassword() == null || !encryptionManager.hashMatches(securityQuestion.getPassword(), getCurrentUser().getPassword())) {
+            errors.add(getMessage("change_security_question.incorrect_password"));
+        }
+        
         // If the security question is empty, clean the security answer field
         if(securityQuestion.getSecurityQuestionId() == 0)
-        	securityQuestion.setSecurityAnswer(new String());
+        	securityQuestion.setSecurityAnswer(new String());               
         
         if (errors.size() == 0) {
             OrcidProfile profile = getCurrentUser().getEffectiveProfile();

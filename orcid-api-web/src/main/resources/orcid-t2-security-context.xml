@@ -26,7 +26,7 @@
        http://www.springframework.org/schema/security/oauth2 http://www.springframework.org/schema/security/spring-security-oauth2-1.0.xsd">
 
     <!-- Authenticate the client before reaching the token endpoint -->
-    <sec:http pattern="/oauth/token" create-session="stateless" authentication-manager-ref="clientAuthenticationManager" entry-point-ref="oauthAuthenticationEntryPoint">
+    <sec:http pattern="/oauth/token" create-session="stateless" authentication-manager-ref="clientAuthenticationManager">
         <sec:intercept-url pattern="/oauth/token" access="IS_AUTHENTICATED_FULLY" />
         <sec:anonymous enabled="false" />
         <sec:http-basic entry-point-ref="oauthAuthenticationEntryPoint" />
@@ -36,10 +36,10 @@
     </sec:http>
 
     <!-- All other authentication will come through this. If a certificate is not found, it will attempt OAuth2 auth -->
-    <sec:http authentication-manager-ref="clientAuthenticationManager" entry-point-ref="oauthAuthenticationEntryPoint" use-expressions="true" create-session="stateless">
+    <sec:http use-expressions="true" create-session="stateless">
         <sec:anonymous enabled="false" />
         <sec:x509 subject-principal-regex="CN=(.*?)," user-service-ref="x509UserService"/>
-        <sec:intercept-url pattern="/**" access="oauthClientHasRole('ROLE_CLIENT') or hasRole('ROLE_SYSTEM') or hasRole('ROLE_USER')"/>
+        <sec:intercept-url pattern="/**" access="#oauth2.clientHasRole('ROLE_CLIENT') or hasRole('ROLE_SYSTEM') or hasRole('ROLE_USER')"/>
         <sec:custom-filter ref="resourceServerFilter" before="PRE_AUTH_FILTER" />
         <sec:access-denied-handler ref="oauthAccessDeniedHandler" />
         <sec:expression-handler ref="oauthWebExpressionHandler" />
@@ -61,12 +61,12 @@
     </sec:authentication-manager>
 
     <!-- Create for the filtering of Oauth2 resources -->
-    <oauth2:resource-server id="resourceServerFilter" resource-id="orcid" token-services-ref="tokenServices"/>
+    <oauth2:resource-server id="resourceServerFilter" resource-id="orcid" token-services-ref="tokenServices" entry-point-ref="oauthAuthenticationEntryPoint"/>
 
     <!-- User web expressions to aid the syntax of protection -->
     <oauth2:web-expression-handler id="oauthWebExpressionHandler" />
     
-    <bean  id="jsonpCallbackFilter" class="org.orcid.core.web.filters.JsonpCallbackFilter" />
+    <bean id="jsonpCallbackFilter" class="org.orcid.core.web.filters.JsonpCallbackFilter" />
     
      <bean id="oauthAccessDeniedHandler" class="org.springframework.security.oauth2.provider.error.OAuth2AccessDeniedHandler">
         <property name ="exceptionRenderer" ref="oauthExceptionRenderer"/>
@@ -142,13 +142,13 @@
         <property name="tokenStore" ref="orcidTokenStore" />
         <property name="supportRefreshToken" value="true" />
     </bean>
-
-    <bean id="oauthAuthenticationEntryPoint" class="org.orcid.api.common.security.oauth.T2EntryPoint">
+    
+    <bean id="oauthAuthenticationEntryPoint" class="org.springframework.security.oauth2.provider.error.OAuth2AuthenticationEntryPoint">
         <property name="realmName" value="ORCID T2 API" />
         <property name="typeName" value="Bearer"/>
         <property name="exceptionRenderer" ref="oauthExceptionRenderer"/>
-    </bean>    
-
+    </bean>
+    
     <!-- Use the composite granter to enable granting of tokens for both client credentials and auth codes -->
     <bean id="tokenGranter" class="org.springframework.security.oauth2.provider.CompositeTokenGranter">
         <constructor-arg>
@@ -188,10 +188,11 @@
     <!-- As we have a Jersey endpoint, we need to create an extension to the Spring MVC, so we use a delegator -->
     <bean id="orcidClientCredentialEndPointDelegator" class="org.orcid.api.t2.server.delegator.impl.OrcidClientCredentialEndPointDelegatorImpl">
         <property name="tokenGranter" ref="tokenGranter"/>
+        <property name="clientDetailsService" ref="orcidClientDetailsService"/>
     </bean>
 
     <bean id="userApprovalHandler" class="org.springframework.security.oauth2.provider.approval.TokenServicesUserApprovalHandler">
         <property name="tokenServices" ref="tokenServices" />
     </bean>
-
+    
 </beans>

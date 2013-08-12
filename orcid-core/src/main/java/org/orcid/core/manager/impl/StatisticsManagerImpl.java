@@ -113,6 +113,7 @@ public class StatisticsManagerImpl implements StatisticsManager {
      * @param locale
      * @return the latest statistics live ids statistics
      * */
+    @Cacheable("statistics")
     public String getLiveIds(Locale locale) {
         StatisticValuesEntity entity = getLatestStatistics(StatisticsEnum.KEY_LIVE_IDS.value());
         double amount = Double.parseDouble(String.valueOf(entity.getStatisticValue()));        

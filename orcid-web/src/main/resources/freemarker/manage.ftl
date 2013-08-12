@@ -149,8 +149,8 @@
 					<tr ng-controller="SecurityQuestionEditCtrl" ng-show="showEditSecurityQuestion" ng-cloak>
 						<td colspan="2">
 						<div class="editTablePadCell35">
-							<span class="orcid-error" ng-show="securityQuestionPojo.errors.length > 0">
-			   					<span ng-repeat='error in securityQuestionPojo.errors' ng-bind-html-unsafe="error"></span><br />
+							<span class="orcid-error" ng-show="errors.length > 0">
+			   					<span ng-repeat='error in errors' ng-bind-html-unsafe="error"></span><br />
 			   				</span>	
 							<label for="changeSecurityQuestionForm.securityQuestionAnswer" class="">${springMacroRequestContext.getMessage("manage.security_question")}</label>
 							<select id="securityQuestionId" name="securityQuestionId" class="input-xlarge" ng-model="securityQuestionPojo.securityQuestionId">								
@@ -161,7 +161,7 @@
 	    					<label for="changeSecurityQuestionForm.securityQuestionAnswer" class="">${springMacroRequestContext.getMessage("manage.securityAnswer")}</label>
 	    					<input type="text" id="securityQuestionAnswer" name="securityQuestionAnswer" class="input-xlarge" ng-model="securityQuestionPojo.securityAnswer"><br />
 	    					<br />
-	    					<button id="bottom-submit-security-question" class="btn btn-primary" ng-click="saveSecurityQuestion()">Save changes</button>
+	    					<button id="bottom-submit-security-question" class="btn btn-primary" ng-click="checkCredentials()">Save changes</button>
 	    					<button id="bottom-reset-security-question" class="btn close-parent-popover" ng-click="getSecurityQuestion()">Cancel</button>
 						</div>
 						</td>
@@ -278,5 +278,18 @@
 		<a href="" ng-click="closeModal()">${springMacroRequestContext.getMessage("manage.email.cancel")}</a><div>
 	</script>            
 
+	<script type="text/ng-template" id="check-password-modal">
+		<div style="padding: 20px;"><h2><@orcid.msg 'change_security_question.confirm_password' /></h2>		
+		<label for="security_question.password" class=""><@orcid.msg 'change_security_question.password' /></label>
+	    <input id="security_question.password" type="password" name="security_question.password" ng-model="securityQuestionPojo.password" class="input-xlarge"/>
+	    <button id="bottom-submit-security-question" class="btn btn-primary" ng-click="saveSecurityQuestion()"><@orcid.msg 'change_security_question.submit'/></button>				
+		<button class="btn" ng-click="closeModal()"><@orcid.msg 'change_security_question.close'/></button>
+	</script>
 
 </@protected>
+
+
+
+
+
+

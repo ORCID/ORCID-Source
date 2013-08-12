@@ -4,6 +4,32 @@ We release updates to the Registry regularly. Below is a list of the improvement
 * [2013 Releases](https://trello.com/b/ZgYVAlel)
 * [2012 Releases](https://trello.com/b/vyCDYdvR)
 
+## release-1.1.28.6
+(2013-07-26)
+
+* Show better error message for incomplete verify links
+
+* Remove external ids and biography when profile is deactivated
+
+* Fix missing trash can on website urls
+
+* Save an individual work, instead of all works when adding a work
+
+* Do not display bowser version error messages in modals
+
+* Persist locale when user registers or claims a profile 
+
+
+
+## release-1.1.27.4
+(2013-07-31)
+
+* Make new add works modal live
+
+* Fix revoke token list to display newly added clients
+
+
+
 ## release-1.1.26.23
 (2013-07-26)
 
