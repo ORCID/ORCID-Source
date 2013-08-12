@@ -1006,6 +1006,12 @@ function WorkCtrl($scope, $compile, worksSrvc){
 	    $.colorbox.resize();
 	};
 	
+	$scope.showWorkImportWizard =  function() {
+		$.colorbox({        	            
+            html : $compile($('#import-wizard-modal').html())($scope),
+            onComplete: function() {$.colorbox.resize();}
+        })
+	};
 	
 	$scope.addWorkModal = function(){;
 		$.ajax({
