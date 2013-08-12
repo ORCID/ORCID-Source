@@ -266,7 +266,6 @@
                 <xs:element ref="orcid:contact-details" minOccurs="0"/>
                 <xs:element ref="orcid:keywords" minOccurs="0"/>
                 <xs:element ref="orcid:external-identifiers" minOccurs="0"/>
-                <xs:element ref="orcid:affiliations" minOccurs="0" maxOccurs="1"/>
                 <xs:element ref="orcid:delegation" minOccurs="0"/>
                 <xs:element ref="orcid:applications" minOccurs="0"/>
             </xs:sequence>
@@ -301,7 +300,7 @@
     </xs:element>
     <xs:simpleType name="bio-text">
         <xs:restriction base="xs:string">
-            <xs:maxLength value="5000"></xs:maxLength>
+            <xs:maxLength value="1000"></xs:maxLength>
         </xs:restriction>
     </xs:simpleType>
     <xs:element name="researcher-urls">
@@ -394,13 +393,15 @@
     <xs:element name="affiliation">
         <xs:complexType>
             <xs:sequence>
-                <xs:element ref="orcid:affiliation-name" minOccurs="0"/>
+                <xs:element ref="orcid:affiliation-name"/>
                 <xs:element ref="orcid:affiliation-type" minOccurs="0"/>
-                <xs:element ref="orcid:address" minOccurs="0"/>
+                <xs:element ref="orcid:affiliation-address"/>
                 <xs:element ref="orcid:department-name" minOccurs="0"/>
                 <xs:element ref="orcid:role-title" minOccurs="0"/>
                 <xs:element ref="orcid:start-date" minOccurs="0"/>
                 <xs:element ref="orcid:end-date" minOccurs="0"/>
+                <xs:element ref="orcid:source" minOccurs="0"/>
+                <xs:element ref="orcid:disambiguated-affiliation" minOccurs="0"/>
             </xs:sequence>
             <xs:attributeGroup ref="orcid:visibility"/>
         </xs:complexType>
@@ -417,6 +418,16 @@
             </xs:restriction>
         </xs:simpleType>
     </xs:element>
+    <xs:element name="disambiguated-affiliation">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="orcid:disambiguated-affiliation-identifier"/>
+                <xs:element ref="orcid:disambiguation-source"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="disambiguated-affiliation-identifier" type="orcid:short-text"/>
+    <xs:element name="disambiguation-source" type="orcid:short-text"/>
     <xs:element name="external-identifiers">
         <xs:annotation>
             <xs:documentation>Container for links to the reasearcher or contributor in other
@@ -576,6 +587,7 @@
         </xs:annotation>
         <xs:complexType>
             <xs:sequence>
+                <xs:element ref="orcid:affiliations" minOccurs="0" maxOccurs="1"/>
                 <xs:element minOccurs="0" maxOccurs="1" ref="orcid:orcid-works"/>
                 <xs:element minOccurs="0" maxOccurs="1" ref="orcid:orcid-grants"/>
                 <xs:element minOccurs="0" maxOccurs="1" ref="orcid:orcid-patents"/>
@@ -603,7 +615,7 @@
                 <xs:element ref="orcid:work-title" minOccurs="0"/>
                 <xs:element ref="orcid:short-description" minOccurs="0"/>
                 <xs:element ref="orcid:work-citation" minOccurs="0"/>
-                <xs:element ref="orcid:work-type" />
+                <xs:element ref="orcid:work-type" minOccurs="0"/>
                 <xs:element ref="orcid:publication-date" minOccurs="0"/>
                 <xs:element ref="orcid:work-external-identifiers" minOccurs="0"/>
                 <xs:element ref="orcid:url" minOccurs="0"/>
@@ -1044,14 +1056,11 @@
             <xs:documentation>The date that the work was first published.</xs:documentation>
         </xs:annotation>
         <xs:complexType>
-            <xs:sequence>
-                <xs:element ref="orcid:year"/>
-                <xs:sequence minOccurs="0">
-                    <xs:element ref="orcid:month"/>
-                    <xs:element ref="orcid:day" minOccurs="0"/>
-                </xs:sequence>
-            </xs:sequence>
-            <xs:attribute name="media-type" type="orcid:media-type"/>
+            <xs:complexContent>
+                <xs:extension base="orcid:fuzzy-date">
+                    <xs:attribute name="media-type" type="orcid:media-type"/>
+                </xs:extension>
+            </xs:complexContent>
         </xs:complexType>
     </xs:element>
     <xs:element name="year">
@@ -1081,7 +1090,7 @@
         </xs:annotation>
         <xs:complexType>
             <xs:sequence>
-                <xs:element ref="orcid:title"/>
+                <xs:element ref="orcid:title" minOccurs="0"/>
                 <xs:element ref="orcid:subtitle" minOccurs="0"/>
             </xs:sequence>
         </xs:complexType>
@@ -1192,12 +1201,43 @@
             </xs:sequence>
         </xs:complexType>
     </xs:element>
-    <xs:element name="country">
+    <xs:element name="affiliation-address">
+        <xs:annotation>
+            <xs:documentation>Container for affiliation location information</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="1" ref="orcid:city"/>
+                <xs:element minOccurs="0" ref="orcid:region"/>
+                <xs:element minOccurs="1" ref="orcid:country"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="city">
         <xs:complexType mixed="true">
             <xs:annotation>
-                <xs:documentation>Country of the Institution</xs:documentation>
+                <xs:documentation>City</xs:documentation>
             </xs:annotation>
             <xs:attributeGroup ref="orcid:visibility"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="region">
+        <xs:complexType mixed="true">
+            <xs:annotation>
+                <xs:documentation>Region within a country</xs:documentation>
+            </xs:annotation>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="country">
+        <xs:complexType>
+            <xs:annotation>
+                <xs:documentation>ISO 3611 country</xs:documentation>
+            </xs:annotation>
+            <xs:simpleContent>
+                <xs:extension base="orcid:country">
+                    <xs:attributeGroup ref="orcid:visibility"/>
+                </xs:extension>
+            </xs:simpleContent>
         </xs:complexType>
     </xs:element>
     <xs:element name="affiliation-name">
@@ -1206,20 +1246,8 @@
     <xs:element name="department-name">
         <xs:complexType mixed="true"/>
     </xs:element>
-    <xs:element name="end-date">
-        <xs:complexType>
-            <xs:simpleContent>
-                <xs:extension base="xs:date"/>
-            </xs:simpleContent>
-        </xs:complexType>
-    </xs:element>
-    <xs:element name="start-date">
-        <xs:complexType>
-            <xs:simpleContent>
-                <xs:extension base="xs:date"/>
-            </xs:simpleContent>
-        </xs:complexType>
-    </xs:element>
+    <xs:element name="end-date" type="orcid:fuzzy-date"/>
+    <xs:element name="start-date" type="orcid:fuzzy-date"/>
     <xs:element name="orcid-internal">
         <xs:annotation>
             <xs:documentation>Container for data that are strictly for internal use only.
@@ -1427,6 +1455,15 @@
             <xs:pattern value="\d{2}"/>
         </xs:restriction>
     </xs:simpleType>
+    <xs:complexType name="fuzzy-date">
+        <xs:sequence>
+            <xs:element ref="orcid:year"/>
+            <xs:sequence minOccurs="0">
+                <xs:element ref="orcid:month"/>
+                <xs:element ref="orcid:day" minOccurs="0"/>
+            </xs:sequence>
+        </xs:sequence>
+    </xs:complexType>
     <xs:simpleType name="scope-path-type">
         <xs:restriction base="xs:string">
             <xs:enumeration value="/authenticate"/>
@@ -1468,6 +1505,267 @@
             <xs:enumeration value="formatted-mla"/>
             <xs:enumeration value="formatted-vancouver"/>
             <xs:enumeration value="formatted-chicago"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="country">
+        <xs:annotation>
+            <xs:documentation>ISO 3166 country codes</xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="AF"/>
+            <xs:enumeration value="AX"/>
+            <xs:enumeration value="AL"/>
+            <xs:enumeration value="DZ"/>
+            <xs:enumeration value="AS"/>
+            <xs:enumeration value="AD"/>
+            <xs:enumeration value="AO"/>
+            <xs:enumeration value="AI"/>
+            <xs:enumeration value="AQ"/>
+            <xs:enumeration value="AG"/>
+            <xs:enumeration value="AR"/>
+            <xs:enumeration value="AM"/>
+            <xs:enumeration value="AW"/>
+            <xs:enumeration value="AU"/>
+            <xs:enumeration value="AT"/>
+            <xs:enumeration value="AZ"/>
+            <xs:enumeration value="BS"/>
+            <xs:enumeration value="BH"/>
+            <xs:enumeration value="BD"/>
+            <xs:enumeration value="BB"/>
+            <xs:enumeration value="BY"/>
+            <xs:enumeration value="BE"/>
+            <xs:enumeration value="BZ"/>
+            <xs:enumeration value="BJ"/>
+            <xs:enumeration value="BM"/>
+            <xs:enumeration value="BT"/>
+            <xs:enumeration value="BO"/>
+            <xs:enumeration value="BQ"/>
+            <xs:enumeration value="BA"/>
+            <xs:enumeration value="BW"/>
+            <xs:enumeration value="BV"/>
+            <xs:enumeration value="BR"/>
+            <xs:enumeration value="IO"/>
+            <xs:enumeration value="BN"/>
+            <xs:enumeration value="BG"/>
+            <xs:enumeration value="BF"/>
+            <xs:enumeration value="BI"/>
+            <xs:enumeration value="KH"/>
+            <xs:enumeration value="CM"/>
+            <xs:enumeration value="CA"/>
+            <xs:enumeration value="CV"/>
+            <xs:enumeration value="KY"/>
+            <xs:enumeration value="CF"/>
+            <xs:enumeration value="TD"/>
+            <xs:enumeration value="CL"/>
+            <xs:enumeration value="CN"/>
+            <xs:enumeration value="CX"/>
+            <xs:enumeration value="CC"/>
+            <xs:enumeration value="CO"/>
+            <xs:enumeration value="KM"/>
+            <xs:enumeration value="CG"/>
+            <xs:enumeration value="CD"/>
+            <xs:enumeration value="CK"/>
+            <xs:enumeration value="CR"/>
+            <xs:enumeration value="CI"/>
+            <xs:enumeration value="HR"/>
+            <xs:enumeration value="CU"/>
+            <xs:enumeration value="CW"/>
+            <xs:enumeration value="CY"/>
+            <xs:enumeration value="CZ"/>
+            <xs:enumeration value="DK"/>
+            <xs:enumeration value="DJ"/>
+            <xs:enumeration value="DM"/>
+            <xs:enumeration value="DO"/>
+            <xs:enumeration value="EC"/>
+            <xs:enumeration value="EG"/>
+            <xs:enumeration value="SV"/>
+            <xs:enumeration value="GQ"/>
+            <xs:enumeration value="ER"/>
+            <xs:enumeration value="EE"/>
+            <xs:enumeration value="ET"/>
+            <xs:enumeration value="FK"/>
+            <xs:enumeration value="FO"/>
+            <xs:enumeration value="FJ"/>
+            <xs:enumeration value="FI"/>
+            <xs:enumeration value="FR"/>
+            <xs:enumeration value="GF"/>
+            <xs:enumeration value="PF"/>
+            <xs:enumeration value="TF"/>
+            <xs:enumeration value="GA"/>
+            <xs:enumeration value="GM"/>
+            <xs:enumeration value="GE"/>
+            <xs:enumeration value="DE"/>
+            <xs:enumeration value="GH"/>
+            <xs:enumeration value="GI"/>
+            <xs:enumeration value="GR"/>
+            <xs:enumeration value="GL"/>
+            <xs:enumeration value="GD"/>
+            <xs:enumeration value="GP"/>
+            <xs:enumeration value="GU"/>
+            <xs:enumeration value="GT"/>
+            <xs:enumeration value="GG"/>
+            <xs:enumeration value="GN"/>
+            <xs:enumeration value="GW"/>
+            <xs:enumeration value="GY"/>
+            <xs:enumeration value="HT"/>
+            <xs:enumeration value="HM"/>
+            <xs:enumeration value="VA"/>
+            <xs:enumeration value="HN"/>
+            <xs:enumeration value="HK"/>
+            <xs:enumeration value="HU"/>
+            <xs:enumeration value="IS"/>
+            <xs:enumeration value="IN"/>
+            <xs:enumeration value="ID"/>
+            <xs:enumeration value="IR"/>
+            <xs:enumeration value="IQ"/>
+            <xs:enumeration value="IE"/>
+            <xs:enumeration value="IM"/>
+            <xs:enumeration value="IL"/>
+            <xs:enumeration value="IT"/>
+            <xs:enumeration value="JM"/>
+            <xs:enumeration value="JP"/>
+            <xs:enumeration value="JE"/>
+            <xs:enumeration value="JO"/>
+            <xs:enumeration value="KZ"/>
+            <xs:enumeration value="KE"/>
+            <xs:enumeration value="KI"/>
+            <xs:enumeration value="KP"/>
+            <xs:enumeration value="KR"/>
+            <xs:enumeration value="KW"/>
+            <xs:enumeration value="KG"/>
+            <xs:enumeration value="LA"/>
+            <xs:enumeration value="LV"/>
+            <xs:enumeration value="LB"/>
+            <xs:enumeration value="LS"/>
+            <xs:enumeration value="LR"/>
+            <xs:enumeration value="LY"/>
+            <xs:enumeration value="LI"/>
+            <xs:enumeration value="LT"/>
+            <xs:enumeration value="LU"/>
+            <xs:enumeration value="MO"/>
+            <xs:enumeration value="MK"/>
+            <xs:enumeration value="MG"/>
+            <xs:enumeration value="MW"/>
+            <xs:enumeration value="MY"/>
+            <xs:enumeration value="MV"/>
+            <xs:enumeration value="ML"/>
+            <xs:enumeration value="MT"/>
+            <xs:enumeration value="MH"/>
+            <xs:enumeration value="MQ"/>
+            <xs:enumeration value="MR"/>
+            <xs:enumeration value="MU"/>
+            <xs:enumeration value="YT"/>
+            <xs:enumeration value="MX"/>
+            <xs:enumeration value="FM"/>
+            <xs:enumeration value="MD"/>
+            <xs:enumeration value="MC"/>
+            <xs:enumeration value="MN"/>
+            <xs:enumeration value="ME"/>
+            <xs:enumeration value="MS"/>
+            <xs:enumeration value="MA"/>
+            <xs:enumeration value="MZ"/>
+            <xs:enumeration value="MM"/>
+            <xs:enumeration value="NA"/>
+            <xs:enumeration value="NR"/>
+            <xs:enumeration value="NP"/>
+            <xs:enumeration value="NL"/>
+            <xs:enumeration value="NC"/>
+            <xs:enumeration value="NZ"/>
+            <xs:enumeration value="NI"/>
+            <xs:enumeration value="NE"/>
+            <xs:enumeration value="NG"/>
+            <xs:enumeration value="NU"/>
+            <xs:enumeration value="NF"/>
+            <xs:enumeration value="MP"/>
+            <xs:enumeration value="NO"/>
+            <xs:enumeration value="OM"/>
+            <xs:enumeration value="PK"/>
+            <xs:enumeration value="PW"/>
+            <xs:enumeration value="PS"/>
+            <xs:enumeration value="PA"/>
+            <xs:enumeration value="PG"/>
+            <xs:enumeration value="PY"/>
+            <xs:enumeration value="PE"/>
+            <xs:enumeration value="PH"/>
+            <xs:enumeration value="PN"/>
+            <xs:enumeration value="PL"/>
+            <xs:enumeration value="PT"/>
+            <xs:enumeration value="PR"/>
+            <xs:enumeration value="QA"/>
+            <xs:enumeration value="RE"/>
+            <xs:enumeration value="RO"/>
+            <xs:enumeration value="RU"/>
+            <xs:enumeration value="RW"/>
+            <xs:enumeration value="BL"/>
+            <xs:enumeration value="SH"/>
+            <xs:enumeration value="KN"/>
+            <xs:enumeration value="LC"/>
+            <xs:enumeration value="MF"/>
+            <xs:enumeration value="PM"/>
+            <xs:enumeration value="VC"/>
+            <xs:enumeration value="WS"/>
+            <xs:enumeration value="SM"/>
+            <xs:enumeration value="ST"/>
+            <xs:enumeration value="SA"/>
+            <xs:enumeration value="SN"/>
+            <xs:enumeration value="RS"/>
+            <xs:enumeration value="SC"/>
+            <xs:enumeration value="SL"/>
+            <xs:enumeration value="SG"/>
+            <xs:enumeration value="SX"/>
+            <xs:enumeration value="SK"/>
+            <xs:enumeration value="SI"/>
+            <xs:enumeration value="SB"/>
+            <xs:enumeration value="SO"/>
+            <xs:enumeration value="ZA"/>
+            <xs:enumeration value="GS"/>
+            <xs:enumeration value="SS"/>
+            <xs:enumeration value="ES"/>
+            <xs:enumeration value="LK"/>
+            <xs:enumeration value="SD"/>
+            <xs:enumeration value="SR"/>
+            <xs:enumeration value="SJ"/>
+            <xs:enumeration value="SZ"/>
+            <xs:enumeration value="SE"/>
+            <xs:enumeration value="CH"/>
+            <xs:enumeration value="SY"/>
+            <xs:enumeration value="TJ"/>
+            <xs:enumeration value="TZ"/>
+            <xs:enumeration value="TH"/>
+            <xs:enumeration value="TL"/>
+            <xs:enumeration value="TG"/>
+            <xs:enumeration value="TK"/>
+            <xs:enumeration value="TO"/>
+            <xs:enumeration value="TT"/>
+            <xs:enumeration value="TN"/>
+            <xs:enumeration value="TR"/>
+            <xs:enumeration value="TM"/>
+            <xs:enumeration value="TC"/>
+            <xs:enumeration value="TV"/>
+            <xs:enumeration value="UG"/>
+            <xs:enumeration value="UA"/>
+            <xs:enumeration value="AE"/>
+            <xs:enumeration value="GB"/>
+            <xs:enumeration value="US"/>
+            <xs:enumeration value="UM"/>
+            <xs:enumeration value="UY"/>
+            <xs:enumeration value="UZ"/>
+            <xs:enumeration value="VU"/>
+            <xs:enumeration value="VE"/>
+            <xs:enumeration value="VN"/>
+            <xs:enumeration value="VG"/>
+            <xs:enumeration value="VI"/>
+            <xs:enumeration value="WF"/>
+            <xs:enumeration value="EH"/>
+            <xs:enumeration value="YE"/>
+            <xs:enumeration value="ZM"/>
+            <xs:enumeration value="ZW"/>
+            <xs:enumeration value="TW"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="short-text">
+        <xs:restriction base="xs:string">
+            <xs:maxLength value="500"></xs:maxLength>
         </xs:restriction>
     </xs:simpleType>
 </xs:schema>
