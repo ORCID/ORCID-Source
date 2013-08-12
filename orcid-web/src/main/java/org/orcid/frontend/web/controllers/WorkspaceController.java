@@ -30,6 +30,7 @@ import org.apache.commons.lang.StringUtils;
 import org.orcid.core.adapter.Jaxb2JpaAdapter;
 import org.orcid.core.adapter.Jpa2JaxbAdapter;
 import org.orcid.core.manager.ExternalIdentifierManager;
+import org.orcid.core.manager.LoadOptions;
 import org.orcid.core.manager.ProfileWorkManager;
 import org.orcid.core.manager.ThirdPartyImportManager;
 import org.orcid.core.manager.WorkContributorManager;
@@ -155,7 +156,7 @@ public class WorkspaceController extends BaseWorkspaceController {
     public Map<String, String> retrieveIdTypesAsMap() {
         Map<String, String> map = new TreeMap<String, String>();
         map.put("", buildInternationalizationKey(WorkExternalIdentifierType.class, EMPTY));
-        for (WorkExternalIdentifierType type : WorkExternalIdentifierType.values()) {            
+        for (WorkExternalIdentifierType type : WorkExternalIdentifierType.values()) {
             map.put(type.value(), buildInternationalizationKey(WorkExternalIdentifierType.class, type.value()));
         }
         return map;
@@ -188,7 +189,7 @@ public class WorkspaceController extends BaseWorkspaceController {
         ModelAndView mav = new ModelAndView("workspace");
         mav.addObject("showPrivacy", true);
 
-        OrcidProfile profile = getEffectiveProfile();
+        OrcidProfile profile = orcidProfileManager.retrieveOrcidProfile(getCurrentUserOrcid(), LoadOptions.BIO_ONLY);
         List<CurrentWork> currentWorks = getCurrentWorksFromProfile(profile);
         if (currentWorks != null && !currentWorks.isEmpty()) {
             mav.addObject("currentWorks", currentWorks);

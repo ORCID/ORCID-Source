@@ -49,6 +49,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.adapter.JpaJaxbEntityAdapter;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.EncryptionManager;
+import org.orcid.core.manager.LoadOptions;
 import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.OrcidGenerationManager;
 import org.orcid.core.manager.OrcidIndexManager;
@@ -258,7 +259,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         ProfileEntity updatedProfileEntity = profileDao.merge(profileEntity);
         profileDao.flush();
         profileDao.refresh(updatedProfileEntity);
-        OrcidProfile updatedOrcidProfile = convertToOrcidProfile(updatedProfileEntity);
+        OrcidProfile updatedOrcidProfile = convertToOrcidProfile(updatedProfileEntity, LoadOptions.ALL);
         putInCache(updatedOrcidProfile);
         notificationManager.sendAmendEmail(updatedOrcidProfile, amenderOrcid);
         return updatedOrcidProfile;
@@ -413,33 +414,41 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
     @Override
     @Transactional
     public OrcidProfile retrieveOrcidProfile(String orcid) {
+        return retrieveOrcidProfile(orcid, LoadOptions.ALL);
+    }
+
+    @Override
+    @Transactional
+    public OrcidProfile retrieveOrcidProfile(String orcid, LoadOptions loadOptions) {
         Element element = getFromCache(orcid);
         if (element == null) {
-            OrcidProfile freshOrcidProfile = retrieveFreshOrcidProfile(orcid);
+            OrcidProfile freshOrcidProfile = retrieveFreshOrcidProfile(orcid, loadOptions);
             return freshOrcidProfile;
         } else {
             OrcidProfile cachedProfile = (OrcidProfile) element.getObjectValue();
             Date cachedProfileLastModified = extractLastModifiedDateFromObject(cachedProfile);
             if (cachedProfileLastModified == null) {
-                return retrieveFreshOrcidProfile(orcid);
+                return retrieveFreshOrcidProfile(orcid, loadOptions);
             }
             Date actualLastModified = retrieveLastModifiedDate(orcid);
             if (actualLastModified == null) {
-                return retrieveFreshOrcidProfile(orcid);
+                return retrieveFreshOrcidProfile(orcid, loadOptions);
             }
             if (actualLastModified.after(cachedProfileLastModified)) {
-                return retrieveFreshOrcidProfile(orcid);
+                return retrieveFreshOrcidProfile(orcid, loadOptions);
             }
             return cachedProfile;
         }
     }
 
-    private OrcidProfile retrieveFreshOrcidProfile(String orcid) {
+    private OrcidProfile retrieveFreshOrcidProfile(String orcid, LoadOptions loadOptions) {
         profileDao.flush();
         ProfileEntity profileEntity = profileDao.find(orcid);
         if (profileEntity != null) {
-            OrcidProfile freshOrcidProfile = convertToOrcidProfile(profileEntity);
-            putInCache(orcid, freshOrcidProfile);
+            OrcidProfile freshOrcidProfile = convertToOrcidProfile(profileEntity, loadOptions);
+            if (LoadOptions.ALL.equals(loadOptions)) {
+                putInCache(orcid, freshOrcidProfile);
+            }
             return freshOrcidProfile;
         }
         return null;
@@ -512,9 +521,9 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         return op;
     }
 
-    private OrcidProfile convertToOrcidProfile(ProfileEntity profileEntity) {
+    private OrcidProfile convertToOrcidProfile(ProfileEntity profileEntity, LoadOptions loadOptions) {
         profileDao.refresh(profileEntity);
-        OrcidProfile orcidProfile = adapter.toOrcidProfile(profileEntity);
+        OrcidProfile orcidProfile = adapter.toOrcidProfile(profileEntity, loadOptions);
         String verificationCode = profileEntity.getEncryptedVerificationCode();
         String securityAnswer = profileEntity.getEncryptedSecurityAnswer();
         orcidProfile.setVerificationCode(decrypt(verificationCode));
@@ -930,7 +939,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
             }
         }
         orcidOauth2TokenDetailDao.flush();
-        OrcidProfile updatedOrcidProfile = convertToOrcidProfile(existingProfile);
+        OrcidProfile updatedOrcidProfile = convertToOrcidProfile(existingProfile, LoadOptions.ALL);
         putInCache(userOrcid, updatedOrcidProfile);
         return updatedOrcidProfile;
     }

@@ -29,10 +29,9 @@ import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 
-import net.sf.cglib.core.Local;
-
 import org.apache.commons.lang.StringUtils;
 import org.orcid.core.adapter.Jpa2JaxbAdapter;
+import org.orcid.core.manager.LoadOptions;
 import org.orcid.jaxb.model.clientgroup.OrcidClient;
 import org.orcid.jaxb.model.clientgroup.OrcidClientGroup;
 import org.orcid.jaxb.model.clientgroup.RedirectUri;
@@ -102,6 +101,11 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
 
     @Override
     public OrcidProfile toOrcidProfile(ProfileEntity profileEntity) {
+        return toOrcidProfile(profileEntity, LoadOptions.ALL);
+    }
+
+    @Override
+    public OrcidProfile toOrcidProfile(ProfileEntity profileEntity, LoadOptions loadOptions) {
         if (profileEntity == null) {
             throw new IllegalArgumentException("Cannot convert a null profileEntity");
         }
@@ -111,10 +115,16 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         profile.setOrcid(profileEntity.getId());
         // we may just want an other property entry instead of baseUri
         profile.setOrcidId(baseUri.replace("https", "http") + "/" + profileEntity.getId());
-        profile.setOrcidActivities(getOrcidActivities(profileEntity));
-        profile.setOrcidBio(getOrcidBio(profileEntity));
+        if (loadOptions.isLoadActivities()) {
+            profile.setOrcidActivities(getOrcidActivities(profileEntity));
+        }
+        if (loadOptions.isLoadBio()) {
+            profile.setOrcidBio(getOrcidBio(profileEntity));
+        }
         profile.setOrcidHistory(getOrcidHistory(profileEntity));
-        profile.setOrcidInternal(getOrcidInternal(profileEntity));
+        if (loadOptions.isLoadInternal()) {
+            profile.setOrcidInternal(getOrcidInternal(profileEntity));
+        }
         profile.setOrcidPreferences(getOrcidPreferences(profileEntity));
         profile.setPassword(profileEntity.getEncryptedPassword());
         profile.setSecurityQuestionAnswer(profileEntity.getEncryptedSecurityAnswer());
@@ -852,10 +862,10 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         }
         return null;
     }
-    
+
     private OrcidPreferences getOrcidPreferences(ProfileEntity profileEntity) {
         OrcidPreferences orcidPreferences = new OrcidPreferences();
-        if (profileEntity.getLocale() == null) 
+        if (profileEntity.getLocale() == null)
             orcidPreferences.setLocale(Locale.EN);
         else
             orcidPreferences.setLocale(profileEntity.getLocale());
@@ -872,8 +882,8 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         securityDetails.setEncryptedSecurityAnswer(profileEntity.getEncryptedSecurityAnswer() != null ? new EncryptedSecurityAnswer(profileEntity
                 .getEncryptedSecurityAnswer()) : null);
         securityDetails.setEncryptedVerificationCode(profileEntity.getEncryptedVerificationCode() != null ? new EncryptedVerificationCode(profileEntity
-                .getEncryptedVerificationCode()) : null);        
-        
+                .getEncryptedVerificationCode()) : null);
+
         Preferences preferences = new Preferences();
         orcidInternal.setPreferences(preferences);
         preferences.setSendChangeNotifications(profileEntity.getSendChangeNotifications() == null ? null : new SendChangeNotifications(profileEntity
