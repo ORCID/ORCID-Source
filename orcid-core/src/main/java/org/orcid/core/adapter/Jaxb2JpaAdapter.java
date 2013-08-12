@@ -14,7 +14,7 @@
  *
  * =============================================================================
  */
-package org.orcid.persistence.adapter;
+package org.orcid.core.adapter;
 
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.persistence.jpa.entities.ProfileEntity;

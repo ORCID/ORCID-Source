@@ -14,13 +14,13 @@
  *
  * =============================================================================
  */
-package org.orcid.persistence.adapter.impl;
+package org.orcid.core.adapter.impl;
 
+import org.orcid.core.adapter.Jaxb2JpaAdapter;
+import org.orcid.core.adapter.Jpa2JaxbAdapter;
+import org.orcid.core.adapter.JpaJaxbEntityAdapter;
 import org.orcid.jaxb.model.clientgroup.OrcidClientGroup;
 import org.orcid.jaxb.model.message.OrcidProfile;
-import org.orcid.persistence.adapter.Jaxb2JpaAdapter;
-import org.orcid.persistence.adapter.Jpa2JaxbAdapter;
-import org.orcid.persistence.adapter.JpaJaxbEntityAdapter;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.springframework.transaction.annotation.Transactional;
 

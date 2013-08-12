@@ -14,7 +14,7 @@
  *
  * =============================================================================
  */
-package org.orcid.persistence.adapter.impl;
+package org.orcid.core.adapter.impl;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -32,13 +32,13 @@ import javax.xml.datatype.XMLGregorianCalendar;
 import net.sf.cglib.core.Local;
 
 import org.apache.commons.lang.StringUtils;
+import org.orcid.core.adapter.Jpa2JaxbAdapter;
 import org.orcid.jaxb.model.clientgroup.OrcidClient;
 import org.orcid.jaxb.model.clientgroup.OrcidClientGroup;
 import org.orcid.jaxb.model.clientgroup.RedirectUri;
 import org.orcid.jaxb.model.clientgroup.RedirectUriType;
 import org.orcid.jaxb.model.clientgroup.RedirectUris;
 import org.orcid.jaxb.model.message.*;
-import org.orcid.persistence.adapter.Jpa2JaxbAdapter;
 import org.orcid.persistence.jpa.entities.AddressEntity;
 import org.orcid.persistence.jpa.entities.AffiliationEntity;
 import org.orcid.persistence.jpa.entities.BaseContributorEntity;

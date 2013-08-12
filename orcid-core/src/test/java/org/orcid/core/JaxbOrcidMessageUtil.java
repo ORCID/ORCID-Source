@@ -14,7 +14,7 @@
  *
  * =============================================================================
  */
-package org.orcid.persistence;
+package org.orcid.core;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;

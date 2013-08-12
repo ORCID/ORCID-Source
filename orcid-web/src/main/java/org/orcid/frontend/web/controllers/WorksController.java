@@ -30,6 +30,8 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
+import org.orcid.core.adapter.Jaxb2JpaAdapter;
+import org.orcid.core.adapter.Jpa2JaxbAdapter;
 import org.orcid.core.manager.ExternalIdentifierManager;
 import org.orcid.core.manager.ProfileWorkManager;
 import org.orcid.core.manager.ThirdPartyImportManager;
@@ -55,8 +57,6 @@ import org.orcid.jaxb.model.message.SourceOrcid;
 import org.orcid.jaxb.model.message.WorkContributors;
 import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
 import org.orcid.jaxb.model.message.WorkType;
-import org.orcid.persistence.adapter.Jaxb2JpaAdapter;
-import org.orcid.persistence.adapter.Jpa2JaxbAdapter;
 import org.orcid.persistence.jpa.entities.FuzzyDate;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.WorkContributorEntity;

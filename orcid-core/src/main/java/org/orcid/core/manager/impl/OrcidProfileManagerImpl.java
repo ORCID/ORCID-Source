@@ -46,6 +46,7 @@ import net.sf.ehcache.Cache;
 import net.sf.ehcache.Element;
 
 import org.apache.commons.lang3.StringUtils;
+import org.orcid.core.adapter.JpaJaxbEntityAdapter;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.NotificationManager;
@@ -96,7 +97,6 @@ import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.message.VisibilityType;
 import org.orcid.jaxb.model.message.WorkContributors;
 import org.orcid.jaxb.model.message.WorkSource;
-import org.orcid.persistence.adapter.JpaJaxbEntityAdapter;
 import org.orcid.persistence.dao.EmailDao;
 import org.orcid.persistence.dao.GivenPermissionToDao;
 import org.orcid.persistence.dao.OrcidOauth2TokenDetailDao;
