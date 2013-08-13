@@ -4,8 +4,21 @@ We release updates to the Registry regularly. Below is a list of the improvement
 * [2013 Releases](https://trello.com/b/ZgYVAlel)
 * [2012 Releases](https://trello.com/b/vyCDYdvR)
 
+## release-1.1.29.2
+(2013-08-13)
+
+* Upgrade spring security
+
+* Remove modernizr.js (except the old style personal info page)
+
+* Add ORCID researcher id count caching.
+
+* Require password to change security question.
+
+
+
 ## release-1.1.28.6
-(2013-07-26)
+(2013-08-09)
 
 * Show better error message for incomplete verify links
 
