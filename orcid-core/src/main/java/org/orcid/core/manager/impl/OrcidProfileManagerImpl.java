@@ -31,6 +31,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -182,6 +183,8 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
     private int claimReminderAfterDays = 8;
 
     private String releaseName = ReleaseNameUtils.getReleaseName();
+
+    private ConcurrentMap<String, Object> readLocks = new ConcurrentHashMap<>();
 
     public NotificationManager getNotificationManager() {
         return notificationManager;
@@ -420,25 +423,55 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
     @Override
     @Transactional
     public OrcidProfile retrieveOrcidProfile(String orcid, LoadOptions loadOptions) {
+        OrcidProfile cachedProfile = lockAndRetrieveFromCache(orcid, loadOptions);
+        Date cachedProfileLastModified = extractLastModifiedDateFromObject(cachedProfile);
+        if (cachedProfileLastModified == null) {
+            return clearCacheAndRetrieve(orcid, loadOptions);
+        }
+        Date actualLastModified = retrieveLastModifiedDate(orcid);
+        if (actualLastModified == null) {
+            return clearCacheAndRetrieve(orcid, loadOptions);
+        }
+        if (actualLastModified.after(cachedProfileLastModified)) {
+            return clearCacheAndRetrieve(orcid, loadOptions);
+        }
+        return cachedProfile;
+    }
+
+    private OrcidProfile lockAndRetrieveFromCache(String orcid, LoadOptions loadOptions) {
         Element element = getFromCache(orcid);
         if (element == null) {
-            OrcidProfile freshOrcidProfile = retrieveFreshOrcidProfile(orcid, loadOptions);
-            return freshOrcidProfile;
-        } else {
-            OrcidProfile cachedProfile = (OrcidProfile) element.getObjectValue();
-            Date cachedProfileLastModified = extractLastModifiedDateFromObject(cachedProfile);
-            if (cachedProfileLastModified == null) {
-                return retrieveFreshOrcidProfile(orcid, loadOptions);
+            try {
+                Object lock = obtainReadLock(orcid);
+                synchronized (lock) {
+                    // Might be in the cache by now!
+                    element = getFromCache(orcid);
+                    if (element == null) {
+                        OrcidProfile freshOrcidProfile = retrieveFreshOrcidProfile(orcid, loadOptions);
+                        return freshOrcidProfile;
+                    }
+                }
+            } finally {
+                releaseReadLock(orcid);
             }
-            Date actualLastModified = retrieveLastModifiedDate(orcid);
-            if (actualLastModified == null) {
-                return retrieveFreshOrcidProfile(orcid, loadOptions);
-            }
-            if (actualLastModified.after(cachedProfileLastModified)) {
-                return retrieveFreshOrcidProfile(orcid, loadOptions);
-            }
-            return cachedProfile;
         }
+        OrcidProfile cachedProfile = (OrcidProfile) element.getObjectValue();
+        return cachedProfile;
+    }
+
+    private Object obtainReadLock(String orcid) {
+        Object newLock = new Object();
+        Object existingLock = readLocks.putIfAbsent(orcid, newLock);
+        return existingLock == null ? newLock : existingLock;
+    }
+
+    private void releaseReadLock(String orcid) {
+        readLocks.remove(orcid);
+    }
+
+    private OrcidProfile clearCacheAndRetrieve(String orcid, LoadOptions loadOptions) {
+        profileCache.remove(createCacheKey(orcid));
+        return lockAndRetrieveFromCache(orcid, loadOptions);
     }
 
     private OrcidProfile retrieveFreshOrcidProfile(String orcid, LoadOptions loadOptions) {
