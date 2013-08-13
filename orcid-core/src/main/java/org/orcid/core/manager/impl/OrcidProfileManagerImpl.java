@@ -561,7 +561,6 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         String securityAnswer = profileEntity.getEncryptedSecurityAnswer();
         orcidProfile.setVerificationCode(decrypt(verificationCode));
         orcidProfile.setSecurityQuestionAnswer(decrypt(securityAnswer));
-        dedupeProfileWorks(orcidProfile);
         return orcidProfile;
     }
 
