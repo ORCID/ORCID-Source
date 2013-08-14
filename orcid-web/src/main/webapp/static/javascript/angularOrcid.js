@@ -527,7 +527,7 @@ function ExternalIdentifierCtrl($scope, $compile){
 		$scope.externalIdentifiersPojo.externalIdentifiers.splice($scope.removeExternalIdentifierIndex, 1);
 		$scope.removeExternalIdentifierIndex = null;
 		$.ajax({
-	        url: $('body').data('baseurl') + 'works/externalIdentifiers.json',
+	        url: $('body').data('baseurl') + 'my-orcid/externalIdentifiers.json',
 	        type: 'DELETE',
 	        data: angular.toJson(externalIdentifier),
 	        contentType: 'application/json;charset=UTF-8',
