@@ -153,9 +153,9 @@
 			   					<span ng-repeat='error in errors' ng-bind-html-unsafe="error"></span><br />
 			   				</span>	
 							<label for="changeSecurityQuestionForm.securityQuestionAnswer" class="">${springMacroRequestContext.getMessage("manage.security_question")}</label>
-							<select id="securityQuestionId" name="securityQuestionId" class="input-xlarge" ng-model="securityQuestionPojo.securityQuestionId">
+							<select id="securityQuestionId" name="securityQuestionId" class="input-xlarge" ng-model="securityQuestionPojo.securityQuestionId">								
 								<#list securityQuestions?keys as key>
-								   <option value="${key}" ng-selected="securityQuestionPojo.securityQuestionId == ${key}"><@orcid.msg '${securityQuestions[key]}' /></option>
+								   <option value="${key}" ng-selected="securityQuestionPojo.securityQuestionId == ${key}">${securityQuestions[key]}</option>
 								</#list>
 	    					</select> 
 	    					<label for="changeSecurityQuestionForm.securityQuestionAnswer" class="">${springMacroRequestContext.getMessage("manage.securityAnswer")}</label>

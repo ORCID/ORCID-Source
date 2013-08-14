@@ -51,7 +51,7 @@
 	            	 	<label for="oneTimeResetPasswordForm.securityQuestionId" class="control-label">${springMacroRequestContext.getMessage("password_one_time_reset_optional_security_questions.challengequestion")}</label>
             			<select id="securityQuestionId" name="securityQuestionId" class="span5">
             				<#list securityQuestions?keys as key>
-							   <option value="${key}"><@orcid.msg '${securityQuestions[key]}' /></option>
+							   <option value="${key}">${securityQuestions[key]}</option>
 							</#list>
             			</select>
             			<label for="oneTimeResetPasswordForm.securityQuestionAnswer" class="control-label">${springMacroRequestContext.getMessage("password_one_time_reset_optional_security_questions.challengeanswer")}</label>            	
