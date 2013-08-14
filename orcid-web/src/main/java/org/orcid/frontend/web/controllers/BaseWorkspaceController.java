@@ -23,14 +23,15 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 
 import org.orcid.core.manager.CountryManager;
 import org.orcid.core.manager.CrossRefManager;
 import org.orcid.core.manager.SecurityQuestionManager;
 import org.orcid.core.manager.SponsorManager;
-import org.orcid.core.manager.SubjectManager;
 import org.orcid.core.security.visibility.filter.VisibilityFilter;
 import org.orcid.frontend.web.forms.CurrentWork;
+import org.orcid.frontend.web.util.FunctionsOverCollections;
 import org.orcid.frontend.web.util.YearsList;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidWork;
@@ -84,13 +85,13 @@ public class BaseWorkspaceController extends BaseController {
     @ModelAttribute("isoCountries")
     public Map<String, String> retrieveIsoCountries() {
         Map<String, String> dbCountries = countryManager.retrieveCountriesAndIsoCodes(); 
-        Map<String, String> countries = new LinkedHashMap<String, String>();
-        countries.put("", buildInternationalizationKey(CountryIsoEntity.class, EMPTY));
+        Map<String, String> countries = new LinkedHashMap<String, String>();        
         
         for(String key : dbCountries.keySet()){            
-            countries.put(key, buildInternationalizationKey(CountryIsoEntity.class, key));
+            countries.put(key, getMessage(buildInternationalizationKey(CountryIsoEntity.class, key)));
         }
-        return countries;
+                
+        return FunctionsOverCollections.sortMapsByValues(countries);
     }
 
     @ModelAttribute("emailVisibilities")
