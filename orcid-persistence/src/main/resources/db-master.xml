@@ -64,4 +64,5 @@
 	<include file="/db/updates/locale-setting.xml"/>
 	<include file="/db/updates/locale-refactor-setting.xml"/>
 	<include file="/db/updates/add-key-to-security-questions.xml"/>
+    <include file="/db/updates/increase-bio-text-size-limit.xml"/>
 </databaseChangeLog>
