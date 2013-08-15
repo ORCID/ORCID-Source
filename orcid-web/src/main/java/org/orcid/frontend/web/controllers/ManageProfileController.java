@@ -49,6 +49,7 @@ import org.orcid.frontend.web.forms.ManagePasswordOptionsForm;
 import org.orcid.frontend.web.forms.PastInstitutionsForm;
 import org.orcid.frontend.web.forms.PreferencesForm;
 import org.orcid.frontend.web.forms.SearchForDelegatesForm;
+import org.orcid.frontend.web.util.FunctionsOverCollections;
 import org.orcid.jaxb.model.message.Delegation;
 import org.orcid.jaxb.model.message.DelegationDetails;
 import org.orcid.jaxb.model.message.Email;
@@ -456,7 +457,7 @@ public class ManageProfileController extends BaseWorkspaceController {
         mav.addObject("preferencesForm", new PreferencesForm(profile));
         mav.addObject("profile", profile);
         mav.addObject("activeTab", activeTab);
-        mav.addObject("securityQuestions", securityQuestionManager.retrieveSecurityQuestionsAsInternationalizedMap());
+        mav.addObject("securityQuestions", getSecurityQuestions());
         CurrentAffiliationsForm currentAffiliationsForm = new CurrentAffiliationsForm(profile);
         mav.addObject("pastInstitutionsForm", new PastInstitutionsForm(profile));
         mav.addObject("currentAffiliationsForm", currentAffiliationsForm);
@@ -511,7 +512,12 @@ public class ManageProfileController extends BaseWorkspaceController {
 
     @ModelAttribute("securityQuestions")
     public Map<String, String> getSecurityQuestions() {        	    		  
-        return securityQuestionManager.retrieveSecurityQuestionsAsInternationalizedMap();
+        Map<String, String> securityQuestions = securityQuestionManager.retrieveSecurityQuestionsAsInternationalizedMap();
+        Map<String, String> securityQuestionsWithMessages = new LinkedHashMap<String, String>(); 
+        for(String key : securityQuestions.keySet()){
+            securityQuestionsWithMessages.put(key, getMessage(securityQuestions.get(key)));
+        }
+        return securityQuestionsWithMessages;
     }
 
     @RequestMapping(value = "/view-account-settings", method = RequestMethod.GET)
@@ -583,9 +589,13 @@ public class ManageProfileController extends BaseWorkspaceController {
         if (securityQuestion.getSecurityQuestionId() != 0 && (securityQuestion.getSecurityAnswer() == null || securityQuestion.getSecurityAnswer().trim() == ""))
             errors.add(getMessage("manage.pleaseProvideAnAnswer"));
         
+        if (securityQuestion.getPassword() == null || !encryptionManager.hashMatches(securityQuestion.getPassword(), getCurrentUser().getPassword())) {
+            errors.add(getMessage("change_security_question.incorrect_password"));
+        }
+        
         // If the security question is empty, clean the security answer field
         if(securityQuestion.getSecurityQuestionId() == 0)
-        	securityQuestion.setSecurityAnswer(new String());
+        	securityQuestion.setSecurityAnswer(new String());               
         
         if (errors.size() == 0) {
             OrcidProfile profile = getCurrentUser().getEffectiveProfile();

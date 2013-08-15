@@ -22,21 +22,19 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <link rel="stylesheet" href="${staticLoc}/ORCID-Fonts-Dot-Com/style.css?v=${ver}"/>
-    
-	<#if (RequestParameters['lemur'])??>
+    <link rel="stylesheet" href="${staticLoc}/ORCID-Fonts-Dot-Com/style.css?v=${ver}"/>    
+    <link rel="stylesheet" href="${staticCdn}/twitter-bootstrap/2.3.1/css/bootstrap.css?v=${ver}"/>
+    <link rel="stylesheet" href="${staticCdn}/css/orcid.css?v=${ver}"/>
+    <link rel="stylesheet" href="${staticCdn}/css/jquery-ui-1.10.0.custom.min.css?v=${ver}"/>
+    <link rel="stylesheet" href="${staticLoc}/font-awesome/3.2.1/css/font-awesome.css"/>
+    <!--[if IE 7]>
+    	<link href="${staticLoc}/font-awesome/3.0.2/css/font-awesome-ie7.css" rel="stylesheet">
+	<![endif]-->		
 	
-	<#else>
-		
-	    <link rel="stylesheet" href="${staticCdn}/twitter-bootstrap/2.3.1/css/bootstrap.css?v=${ver}"/>
-	    <link rel="stylesheet" href="${staticCdn}/css/orcid.css?v=${ver}"/>
-	    <link rel="stylesheet" href="${staticCdn}/css/jquery-ui-1.10.0.custom.min.css?v=${ver}"/>
-	    <link rel="stylesheet" href="${staticLoc}/font-awesome/3.2.1/css/font-awesome.css"/>
-	    <!--[if IE 7]>
-	    	<link href="${staticLoc}/font-awesome/3.0.2/css/font-awesome-ie7.css" rel="stylesheet">
-		<![endif]-->
-		<script src="${staticCdn}/javascript/modernizr.js?v=${ver}"></script>
-    </#if>
+	<#-- manage bio settings still requires modernizr :-( -->
+    <#if request.requestURI?ends_with("account/manage-bio-settings")>
+        <script src="${staticCdn}/javascript/modernizr.js?v=${ver}"></script>
+	</#if>
 	<style type="text/css">
 		/* 
 	  	Allow angular.js to be loaded in body, hiding cloaked elements until 

@@ -240,22 +240,7 @@ $(function () {
 			$('#cookie-check-msg').css("display","inline");	
 		}
     }
-	
-	$('.third-party-colorbox').click(function(e) {
-		e.preventDefault();
-		var href = $(this).attr('href');
-		if (window.location != window.parent.location) {
-			parent.$.colorbox.close();
-		} else {
-			//alert('here 2');
-			$.colorbox.close();
-		}
-		var newWin = window.open(href);
-		if (!newWin) window.location.href = href;
-		else newWin.focus();
-		return false;
-	});
-	
+		
 	// jquery browser is deprecated, when you upgrade 
 	// to 1.9 or higher you will need to use the pluggin
 	var oldBrowserFlag =  false;
@@ -528,14 +513,7 @@ $(function () {
 		inline: true,
 		close: 'x'
 	});
-	
-	$('.third-party-colorbox').colorbox({
-		iframe: true,
-		height: 600,
-		width: 990,
-		close: ''
-	});
-	
+		
 	$('body').on('click', '.colorbox-close', function (e){
 		$.colorbox.close();
 	});
@@ -711,11 +689,6 @@ $(function () {
 		$.post(baseUrl + 'manage/search-for-delegates', $(this).serialize(), function(data) {
 			$('#searchResults').html(data);
 		});
-	});
-	    	
-	$('.parent-import').on('click', function(e) {
-		e.preventDefault();
-		parent.$('a[href="#third-parties"]').click();
 	});
 	
 });

@@ -16,6 +16,20 @@
  */
 package org.orcid.core.oauth.service;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+
+import javax.annotation.Resource;
+
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -24,10 +38,15 @@ import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.oauth.OrcidOauth2UserAuthentication;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.test.DBUnitTest;
+import org.springframework.security.oauth2.common.DefaultExpiringOAuth2RefreshToken;
+import org.springframework.security.oauth2.common.DefaultOAuth2AccessToken;
+import org.springframework.security.oauth2.common.DefaultOAuth2RefreshToken;
 import org.springframework.security.oauth2.common.ExpiringOAuth2RefreshToken;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
+import org.springframework.security.oauth2.common.OAuth2RefreshToken;
 import org.springframework.security.oauth2.common.util.OAuth2Utils;
 import org.springframework.security.oauth2.provider.AuthorizationRequest;
+import org.springframework.security.oauth2.provider.DefaultAuthorizationRequest;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.test.annotation.Rollback;
@@ -35,19 +54,9 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.Resource;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-
-import static org.junit.Assert.*;
-
 /**
  * 2011-2012 ORCID
- *
+ * 
  * @author Declan Newman (declan) Date: 20/04/2012
  */
 @Transactional
@@ -90,8 +99,8 @@ public class OrcidTokenStoreServiceTest extends DBUnitTest {
     @Transactional
     @Rollback
     public void testStoreAccessToken() throws Exception {
-        OAuth2AccessToken token = new OAuth2AccessToken("some-long-oauth2-token-value-9");
-        ExpiringOAuth2RefreshToken refreshToken = new ExpiringOAuth2RefreshToken("some-long-oauth2-refresh-value-9", new Date());
+        DefaultOAuth2AccessToken token = new DefaultOAuth2AccessToken("some-long-oauth2-token-value-9");
+        ExpiringOAuth2RefreshToken refreshToken = new DefaultExpiringOAuth2RefreshToken("some-long-oauth2-refresh-value-9", new Date());
         token.setRefreshToken(refreshToken);
         token.setScope(new HashSet<String>(Arrays.asList("/orcid-bio/read", "/orcid-works/read")));
         token.setTokenType("bearer");
@@ -103,8 +112,8 @@ public class OrcidTokenStoreServiceTest extends DBUnitTest {
         parameters.put("scope", "/orcid-profile/write");
         parameters.put("redirect_uri", "http://www.google.com/");
         parameters.put("response_type", "bearer");
-        AuthorizationRequest request = new AuthorizationRequest(parameters);
-        request = request.approved(true);
+        DefaultAuthorizationRequest request = new DefaultAuthorizationRequest(parameters);
+        request.setApproved(true);
 
         ProfileEntity profileEntity = profileEntityManager.findByOrcid("4444-4444-4444-4444");
         OrcidOauth2UserAuthentication userAuthentication = new OrcidOauth2UserAuthentication(profileEntity, true);
@@ -128,7 +137,8 @@ public class OrcidTokenStoreServiceTest extends DBUnitTest {
     @Transactional
     @Rollback
     public void testRemoveAccessToken() throws Exception {
-        orcidTokenStoreService.removeAccessToken("some-long-oauth2-token-value-1");
+        OAuth2AccessToken accessToken = new DefaultOAuth2AccessToken("some-long-oauth2-token-value-1");
+        orcidTokenStoreService.removeAccessToken(accessToken);
         OAuth2AccessToken oAuth2AccessToken = orcidTokenStoreService.readAccessToken("some-long-oauth2-token-value-1");
         assertNull(oAuth2AccessToken);
     }
@@ -137,7 +147,8 @@ public class OrcidTokenStoreServiceTest extends DBUnitTest {
     @Transactional
     @Rollback
     public void testReadAuthenticationForRefreshToken() throws Exception {
-        OAuth2Authentication oAuth2Authentication = orcidTokenStoreService.readAuthenticationForRefreshToken("some-long-oauth2-refresh-value-1");
+        OAuth2RefreshToken refreshToken = new DefaultOAuth2RefreshToken("some-long-oauth2-refresh-value-1");
+        OAuth2Authentication oAuth2Authentication = orcidTokenStoreService.readAuthenticationForRefreshToken(refreshToken);
         assertNotNull(oAuth2Authentication);
     }
 
@@ -146,8 +157,8 @@ public class OrcidTokenStoreServiceTest extends DBUnitTest {
     @Rollback
     public void testRemoveRefreshToken() throws Exception {
         OAuth2AccessToken token = orcidTokenStoreService.readAccessToken("some-long-oauth2-token-value-1");
-        orcidTokenStoreService.removeRefreshToken(token.getRefreshToken().getValue());
-        ExpiringOAuth2RefreshToken refreshToken = orcidTokenStoreService.readRefreshToken("some-long-oauth2-refresh-value-1");
+        orcidTokenStoreService.removeRefreshToken(token.getRefreshToken());
+        OAuth2RefreshToken refreshToken = orcidTokenStoreService.readRefreshToken("some-long-oauth2-refresh-value-1");
         assertNull(refreshToken);
     }
 
@@ -156,7 +167,7 @@ public class OrcidTokenStoreServiceTest extends DBUnitTest {
     @Rollback
     public void testRemoveAccessTokenUsingRefreshToken() throws Exception {
         OAuth2AccessToken token = orcidTokenStoreService.readAccessToken("some-long-oauth2-token-value-1");
-        orcidTokenStoreService.removeAccessTokenUsingRefreshToken(token.getRefreshToken().getValue());
+        orcidTokenStoreService.removeAccessTokenUsingRefreshToken(token.getRefreshToken());
         token = orcidTokenStoreService.readAccessToken("some-long-oauth2-token-value-1");
         assertNull(token);
     }
@@ -171,19 +182,19 @@ public class OrcidTokenStoreServiceTest extends DBUnitTest {
         parameters.put("scope", "/orcid-profile/write");
         parameters.put("redirect_uri", "http://www.google.com/");
         parameters.put("response_type", "bearer");
-        AuthorizationRequest request = new AuthorizationRequest(parameters);
-        request = request.approved(true);
+        DefaultAuthorizationRequest request = new DefaultAuthorizationRequest(parameters);
+        request.setApproved(true);
 
         ProfileEntity profileEntity = profileEntityManager.findByOrcid("4444-4444-4444-4444");
         OrcidOauth2UserAuthentication userAuthentication = new OrcidOauth2UserAuthentication(profileEntity, true);
 
         OAuth2Authentication authentication = new OAuth2Authentication(request, userAuthentication);
 
-        OAuth2AccessToken token = new OAuth2AccessToken("4444-4444-4444-4441");
+        DefaultOAuth2AccessToken token = new DefaultOAuth2AccessToken("4444-4444-4444-4441");
         token.setExpiration(new Date());
         token.setScope(OAuth2Utils.parseParameterList("/orcid-profile/read,/orcid-profile/write"));
         token.setTokenType("bearer");
-        token.setRefreshToken(new ExpiringOAuth2RefreshToken("a-refresh-token", new Date()));
+        token.setRefreshToken(new DefaultExpiringOAuth2RefreshToken("a-refresh-token", new Date()));
 
         orcidTokenStoreService.storeAccessToken(token, authentication);
 

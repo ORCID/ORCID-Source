@@ -23,8 +23,8 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -164,7 +164,14 @@ public class RegistrationController extends BaseController {
 
     @ModelAttribute("securityQuestions")
     public Map<String, String> retrieveSecurityQuestionsAsMap() {
-        return securityQuestionManager.retrieveSecurityQuestionsAsInternationalizedMap();
+        Map<String, String> securityQuestions = securityQuestionManager.retrieveSecurityQuestionsAsInternationalizedMap();
+        Map<String, String> securityQuestionsWithMessages = new LinkedHashMap<String, String>();
+        
+        for(String key : securityQuestions.keySet()){
+            securityQuestionsWithMessages.put(key, getMessage(securityQuestions.get(key)));
+        }
+        
+        return securityQuestionsWithMessages;
     }
 
     @RequestMapping(value = "/register.json", method = RequestMethod.GET)

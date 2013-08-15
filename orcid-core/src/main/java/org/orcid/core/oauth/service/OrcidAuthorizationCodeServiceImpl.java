@@ -33,6 +33,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.common.util.OAuth2Utils;
 import org.springframework.security.oauth2.provider.AuthorizationRequest;
+import org.springframework.security.oauth2.provider.DefaultAuthorizationRequest;
 import org.springframework.security.oauth2.provider.code.AuthorizationRequestHolder;
 import org.springframework.security.oauth2.provider.code.RandomValueAuthorizationCodeServices;
 import org.springframework.stereotype.Service;
@@ -91,8 +92,8 @@ public class OrcidAuthorizationCodeServiceImpl extends RandomValueAuthorizationC
         AuthorizationRequestHolder authorizationRequestHolder = getAuthorizationRequestHolderFromDetail(detail);
         OrcidOauth2AuthInfo authInfo = new OrcidOauth2AuthInfo(authorizationRequestHolder);
         if (detail == null) {
-            LOGGER.info("No such authorization code to remove: code={}, clientId={}, scopes={}, userOrcid={}", new Object[] { code, authInfo.getClientId(),
-                    authInfo.getScopes(), authInfo.getUserOrcid() });
+            LOGGER.info("No such authorization code to remove: code={}, clientId={}, scopes={}, userOrcid={}",
+                    new Object[] { code, authInfo.getClientId(), authInfo.getScopes(), authInfo.getUserOrcid() });
         } else {
             LOGGER.info("Removed authorization code: code={}, clientId={}, scopes={}, userOrcid={}", new Object[] { code, authInfo.getClientId(), authInfo.getScopes(),
                     authInfo.getUserOrcid() });
@@ -105,16 +106,21 @@ public class OrcidAuthorizationCodeServiceImpl extends RandomValueAuthorizationC
             return null;
         }
         ClientDetailsEntity clientDetailsEntity = detail.getClientDetailsEntity();
-        Collection<GrantedAuthority> grantedAuthorities = getGrantedAuthoritiesFromStrings(detail.getAuthorities());
+        Set<GrantedAuthority> grantedAuthorities = getGrantedAuthoritiesFromStrings(detail.getAuthorities());
         Set<String> scopes = detail.getScopes();
-        AuthorizationRequest authorizationRequest = new AuthorizationRequest(clientDetailsEntity.getClientId(), scopes, grantedAuthorities, detail.getResourceIds());
-        authorizationRequest = authorizationRequest.resolveRedirectUri(detail.getRedirectUri());
+        DefaultAuthorizationRequest authorizationRequest = new DefaultAuthorizationRequest(clientDetailsEntity.getClientId(), scopes);
+        authorizationRequest.setAuthorities(grantedAuthorities);
+        Set<String> resourceIds = new HashSet<>();
+        resourceIds.add("orcid");
+        authorizationRequest.setResourceIds(resourceIds);
+        authorizationRequest.setRedirectUri(detail.getRedirectUri());
+        authorizationRequest.setApproved(detail.getApproved());
 
         Authentication userAuthentication = new OrcidOauth2UserAuthentication(detail.getProfileEntity(), detail.getAuthenticated());
         return new AuthorizationRequestHolder(authorizationRequest, userAuthentication);
     }
 
-    private Collection<GrantedAuthority> getGrantedAuthoritiesFromStrings(Set<String> authorities) {
+    private Set<GrantedAuthority> getGrantedAuthoritiesFromStrings(Set<String> authorities) {
         Set<GrantedAuthority> grantedAuthorities = null;
         if (authorities != null && !authorities.isEmpty()) {
             grantedAuthorities = new HashSet<GrantedAuthority>(authorities.size());
@@ -129,7 +135,7 @@ public class OrcidAuthorizationCodeServiceImpl extends RandomValueAuthorizationC
 
         AuthorizationRequest authenticationRequest = authentication.getAuthenticationRequest();
         OrcidOauth2AuthoriziationCodeDetail detail = new OrcidOauth2AuthoriziationCodeDetail();
-        Map<String, String> parameters = authenticationRequest.getParameters();
+        Map<String, String> parameters = authenticationRequest.getAuthorizationParameters();
         if (parameters != null && !parameters.isEmpty()) {
             String clientId = parameters.get(CLIENT_ID);
             ClientDetailsEntity clientDetails = getClientDetails(clientId);

@@ -28,10 +28,10 @@
             </div>
         </#if>
         
-        <aside class="logo">
+        <div class="logo">
             <h1><img src="${staticCdn}/img/orcid-logo.png" alt="ORCID logo"></h1>
             <p>${springMacroRequestContext.getMessage("confirm-oauth-access.connectingresearchandresearchers")}</p>
-        </aside>
+        </div>
         
         <br />
         <h2 class="oauth-title">${springMacroRequestContext.getMessage("confirm-oauth-access.connecting")}<br /> <span>${clientProfile.orcidBio.personalDetails.creditName.content}</span><br /> ${springMacroRequestContext.getMessage("confirm-oauth-access.withyourrecord")}</h2>

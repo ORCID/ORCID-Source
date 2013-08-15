@@ -24,11 +24,16 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.common.exceptions.UnsupportedGrantTypeException;
+import org.springframework.security.oauth2.provider.AuthorizationRequest;
+import org.springframework.security.oauth2.provider.DefaultAuthorizationRequest;
 import org.springframework.security.oauth2.provider.endpoint.AbstractEndpoint;
 import org.springframework.stereotype.Component;
 
 import javax.ws.rs.core.Response;
+
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -57,11 +62,21 @@ public class OrcidClientCredentialEndPointDelegatorImpl extends AbstractEndpoint
 
         clientId = client.getName();
         Map<String, String> parameters = new HashMap<String, String>();
-        parameters.put("code", code);
-        parameters.put("redirect_uri", redirectUri);
-        parameters.put("refresh_token", refreshToken);
+        if (code != null) {
+            parameters.put("code", code);
+        }
+        if (redirectUri != null) {
+            parameters.put("redirect_uri", redirectUri);
+        }
+        if (refreshToken != null) {
+            parameters.put("refresh_token", refreshToken);
+        }
 
-        OAuth2AccessToken token = getTokenGranter().grant(grantType, parameters, clientId, scopes);
+        DefaultAuthorizationRequest authorizationRequest = new DefaultAuthorizationRequest(parameters, Collections.<String, String> emptyMap(), clientId, scopes);
+        Set<String> resourceIds = new HashSet<>();
+        resourceIds.add("orcid");
+        authorizationRequest.setResourceIds(resourceIds);
+        OAuth2AccessToken token = getTokenGranter().grant(grantType, authorizationRequest);
         if (token == null) {
             LOGGER.info("Unsupported grant type for OAuth2: clientId={}, grantType={}, refreshToken={}, code={}, scopes={}, state={}, redirectUri={}", new Object[] {
                     clientId, grantType, refreshToken, code, scopes, state, redirectUri });

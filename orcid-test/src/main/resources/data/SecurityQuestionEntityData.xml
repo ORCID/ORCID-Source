@@ -18,6 +18,6 @@
 
 -->
 <dataset>
-	<security_question id="0" question="Select a question:"/>
-	<security_question id="1" question="What was the name of your first school?"/>
+	<security_question id="0" question="Select a question:" key="manage.security_question.id.0"/>
+	<security_question id="1" question="What was the name of your first school?" key="manage.security_question.id.1"/>
 </dataset>

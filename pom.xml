@@ -26,8 +26,8 @@ the software.
     <description>The parent ORCID pom that all sub-projects reside under</description>
 
     <properties>
-        <spring.version>3.1.1.RELEASE</spring.version>
-        <security.version>3.1.0.RELEASE</security.version>
+        <spring.version>3.1.3.RELEASE</spring.version>
+        <security.version>3.1.3.RELEASE</security.version>
         <jersey.version>1.14</jersey.version>
         <solr.version>4.3.0</solr.version>
         <aspectj.version>1.6.12</aspectj.version>
@@ -554,7 +554,7 @@ the software.
             <dependency>
                 <groupId>org.springframework.security.oauth</groupId>
                 <artifactId>spring-security-oauth2</artifactId>
-                <version>1.0.0.SEMANTICO-BUILD-RC1</version>
+                <version>1.0.5.RELEASE</version>
                 <scope>compile</scope>
             </dependency>
             <dependency>

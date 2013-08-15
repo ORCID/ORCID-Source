@@ -87,35 +87,7 @@
 			   			</td>		        		
 		        	</tr>
 		        </table>
-			</div>
-			
-		    <#if ((thirdPartiesForImport)?? && (thirdPartiesForImport)?size &gt; 0)>
-     	        <div class="inline-modal" id="third-parties">					
-					<div class="span9">
-						<a class="btn pull-right close-button">X</a>
-	           			<h1 class="lightbox-title" style="text-transform: uppercase;"><@orcid.msg 'workspace.import_works'/></h1>
-	           		
-	           		</div>
-	           		<br />          		
-    	           	<div class="justify"><@orcid.msg 'workspace.ImportResearchActivities.description'/></div>
-    	           	<br />    	           	
-    	           	<#list thirdPartiesForImport?sort_by("displayName") as thirdPartyDetails>
-                        <#assign redirect = (thirdPartyDetails.redirectUris.redirectUri[0].value) >
-                        <#assign predefScopes = (thirdPartyDetails.redirectUris.redirectUri[0].scopeAsSingleString) >
-                        <strong><a class="third-party-colorbox" href="<@spring.url '/oauth/authorize?client_id=${thirdPartyDetails.clientId}&response_type=code&scope=${predefScopes}&redirect_uri=${redirect}'/>">${thirdPartyDetails.displayName}</a></strong><br />
-                        <div class="justify">${(thirdPartyDetails.shortDescription)!}</div>
-                        <#if (thirdPartyDetails_has_next)><hr /></#if>
-                    </#list>
-                    <br />
-                    <div class="footer">
-	                    <#noescape>
-	                    	<strong><@orcid.msg 'workspace.ImportResearchActivities.footer.title'/></strong>
-	                    </#noescape>
-	                    <br />
-	                    <@orcid.msg 'workspace.ImportResearchActivities.footer.description1'/> <a href="<@orcid.msg 'workspace.ImportResearchActivities.footer.description.url'/>"><@orcid.msg 'workspace.ImportResearchActivities.footer.description.link'/></a> <@orcid.msg 'workspace.ImportResearchActivities.footer.description2'/>
-                    </div>
-    	        </div>
-	        </#if>
+			</div>			
         </div>
     </div>
     <div class="span9">
@@ -175,7 +147,7 @@
         			       <i class="icon-caret-down icon" ng-class="{'icon-caret-right':displayWorks==false}"></i></a>
         			    </a> 
         				<a href="" ng-click="toggleDisplayWorks()"><@orcid.msg 'workspace.Works'/></a>
-						<a href="#third-parties" class="colorbox-modal label btn-primary"><@orcid.msg 'workspace.import_works'/></a>
+						<a href="#third-parties" class="label btn-primary" ng-click="showWorkImportWizard()"><@orcid.msg 'workspace.import_works'/></a>
 						<a href="" class="label btn-primary" ng-click="addWorkModal()"><@orcid.msg 'manual_work_form_contents.add_work_manually'/></a>
 					</div>
       	            <div ng-show="displayWorks" class="workspace-accordion-content">
@@ -245,6 +217,34 @@
 	<div>
 </script>
 
+<script type="text/ng-template" id="import-wizard-modal">
+    <#if ((thirdPartiesForImport)??)>
+    	<div id="third-parties">	
+			<div class="span9">
+				<a class="btn pull-right close-button" ng-click="closeModal()">X</a>
+	           	<h1 class="lightbox-title" style="text-transform: uppercase;"><@orcid.msg 'workspace.import_works'/></h1>
+	           		
+	           	</div>
+	           	<br />          		
+    	       	<div class="justify"><@orcid.msg 'workspace.ImportResearchActivities.description'/></div>
+            	<br />    	           	
+    	       	<#list thirdPartiesForImport?sort_by("displayName") as thirdPartyDetails>
+                     <#assign redirect = (thirdPartyDetails.redirectUris.redirectUri[0].value) >
+                     <#assign predefScopes = (thirdPartyDetails.redirectUris.redirectUri[0].scopeAsSingleString) >
+                     <strong><a href="<@spring.url '/oauth/authorize?client_id=${thirdPartyDetails.clientId}&response_type=code&scope=${predefScopes}&redirect_uri=${redirect}'/>" ng-click="closeModal()" target="_blank">${thirdPartyDetails.displayName}</a></strong><br />
+                     <div class="justify">${(thirdPartyDetails.shortDescription)!}</div>
+                     <#if (thirdPartyDetails_has_next)><hr /></#if>
+                 </#list>
+                 <br />
+                 <div class="footer">
+	               	<strong><@orcid.msg 'workspace.ImportResearchActivities.footer.title'/></strong>
+	                <br />
+	                <@orcid.msg 'workspace.ImportResearchActivities.footer.description1'/> <a href="<@orcid.msg 'workspace.ImportResearchActivities.footer.description.url'/>"><@orcid.msg 'workspace.ImportResearchActivities.footer.description.link'/></a> <@orcid.msg 'workspace.ImportResearchActivities.footer.description2'/>
+                 </div>
+		</div>
+	</#if>
+</script>
+
 <script type="text/ng-template" id="add-work-modal">
 	<div class="edit-work colorbox-content">
 		<div class="row">
@@ -279,8 +279,9 @@
 		    		<label class="relative"><@orcid.msg 'manual_work_form_contents.labelworktype'/></label>
 		    		<div class="relative">
 			    		<select id="workType" name="workType" class="input-xlarge" ng-model="editWork.workType.value" ng-change="serverValidate('works/work/workTypeValidate.json')">
+			    			<option value=""><@orcid.msg 'org.orcid.jaxb.model.message.WorkType.empty' /></option>
 							<#list workTypes?keys as key>
-								<option value="${key}"><@orcid.msg '${workTypes[key]}' /></option>
+								<option value="${key}">${workTypes[key]}</option>
 							</#list>
 						</select> 
 						<span class="required" ng-class="isValidClass(editWork.workType)">*</span>
@@ -310,8 +311,9 @@
 		    		<label class="relative"><@orcid.msg 'manual_work_form_contents.labelcitationtype'/></label>
 		    		<div class="relative">
 			    		<select id="citationType" name="citationType" class="input-xlarge" ng-model="editWork.citation.citationType.value" ng-change="serverValidate('works/work/citationValidate.json')">
+							<option value=""><@orcid.msg 'org.orcid.jaxb.model.message.CitationType.empty' /></option>
 							<#list citationTypes?keys as key>
-								<option value="${key}"><@orcid.msg '${citationTypes[key]}' /></option>
+								<option value="${key}">${citationTypes[key]}</option>
 							</#list>
 						</select> 
 						<span class="orcid-error" ng-show="editWork.citation.citationType.errors.length > 0">
@@ -367,9 +369,10 @@
 					</div>
 					<label class="relative">ID type</label>
 					<div class="relative">
-			    		<select id="workType" name="workType" class="input-xlarge" ng-model="workExternalIdentifier.workExternalIdentifierType.value" ng-change="serverValidate('works/work/workExternalIdentifiersValidate.json')">
+			    		<select id="idType" name="idType" class="input-xlarge" ng-model="workExternalIdentifier.workExternalIdentifierType.value" ng-change="serverValidate('works/work/workExternalIdentifiersValidate.json')">
+							<option value=""><@orcid.msg 'org.orcid.jaxb.model.message.WorkExternalIdentifierType.empty' /></option>
 							<#list idTypes?keys as key>
-								<option value="${key}"><@orcid.msg '${idTypes[key]}' /></option>
+								<option value="${key}">${idTypes[key]}</option>
 							</#list>
 						</select> 
 						<span class="orcid-error" ng-show="workExternalIdentifier.workExternalIdentifierType.errors.length > 0">
@@ -392,8 +395,9 @@
 				    <label class="relative"><@orcid.msg 'manual_work_form_contents.labelRole'/></label>
 				    <div class="relative">    
 						<select id="role" name="role" ng-model="contributor.contributorRole.value">
+							<option value=""><@orcid.msg 'org.orcid.jaxb.model.message.ContributorRole.empty' /></option>
 							<#list roles?keys as key>
-							    <option value="${key}"><@orcid.msg '${roles[key]}' /></option>
+							    <option value="${key}">${roles[key]}</option>
 							</#list>
 			    		</select>
 						<span class="orcid-error" ng-show="contributor.contributorRole.errors.length > 0">
@@ -405,9 +409,10 @@
 				<div class="control-group" ng-repeat="contributor in editWork.contributors">
 				    <label class="relative"><@orcid.msg 'manual_work_form_contents.labelcredited'/></label>
 				    <div class="relative">    
-						<select id="role" name="role" ng-model="contributor.contributorSequence.value">
+						<select id="sequence" name="sequence" ng-model="contributor.contributorSequence.value">
+							<option value=""><@orcid.msg 'org.orcid.jaxb.model.message.SequenceType.empty'/></option>
 							<#list sequences?keys as key>
-								<option value="${key}"><@orcid.msg '${sequences[key]}'/></option>
+								<option value="${key}">${sequences[key]}</option>
 							</#list>
 			    		</select>
 						<span class="orcid-error" ng-show="contributor.contributorSequence.errors.length > 0">
