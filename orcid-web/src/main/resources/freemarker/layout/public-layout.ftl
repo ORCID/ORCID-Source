@@ -104,7 +104,7 @@
 						<li class="leaf"><a href="${aboutUri}/about/community/members" title=""><@orcid.msg 'public-layout.members'/></a></li>
 						<li class="last leaf"><a href="${aboutUri}/about/community/launch-partners" title=""><@orcid.msg 'public-layout.launch_partners'/></a></li>
 						</ul></li>
-						<li class="expanded"><a href="${aboutUri}/about/membership" title=""><@orcid.msg 'public-layout.standard_member_agreement'/></a><ul class="menu"><li class="first leaf"><a href="${aboutUri}/about/membership" title=""><@orcid.msg 'public-layout.membership_and_subscription'/></a></li>
+						<li class="expanded"><a href="${aboutUri}/about/membership" title=""><@orcid.msg 'public-layout.membership'/></a><ul class="menu"><li class="first leaf"><a href="${aboutUri}/about/membership" title=""><@orcid.msg 'public-layout.membership_and_subscription'/></a></li>
 						<li class="leaf"><a href="${aboutUri}/about/membership/standard-member-agreement" title=""><@orcid.msg 'public-layout.standard_member_agreement'/></a></li>
 						<li class="last leaf"><a href="${aboutUri}/about/community/members" title=""><@orcid.msg 'public-layout.our_members'/></a></li>
 						</ul></li>
