@@ -21,6 +21,11 @@
     <title>${title!"ORCID"}</title>
     <meta name="description" content="">
     <meta name="author" content="">
+    <script type="application/javascript">
+    	var orcidVar = {};
+    	orcidVar.baseUri = '${baseUri}';
+    	orcidVar.baseUriHttp = '${baseUriHttp}';
+    </script>
 
     <link rel="stylesheet" href="${staticLoc}/ORCID-Fonts-Dot-Com/style.css?v=${ver}"/>    
     <link rel="stylesheet" href="${staticCdn}/twitter-bootstrap/2.3.1/css/bootstrap.css?v=${ver}"/>

@@ -1336,7 +1336,7 @@ function languageCtrl($scope, $cookies){
 			
 	$scope.selectedLanguage = function(){		
 		$.ajax({
-	        url: $('body').data('baseurl')+'lang.json?lang='+$scope.language.value,	        
+	        url: orcidVar.baseUri+'/lang.json?lang='+$scope.language.value,	        
 	        type: 'POST',
 	        dataType: 'json',
 	        success: function(data){
