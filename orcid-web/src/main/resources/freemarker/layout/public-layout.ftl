@@ -40,7 +40,7 @@
         <div class="row">
             <div class="span11 offset1">
                 <div class="search">
-                    <form id="form-search" action="${aboutUri}/search/node?lang=${locale}" method="POST">
+                    <form id="form-search" action="${aboutUri}/search/node" method="POST">
                         <input type="search" name="keys" placeholder="<@orcid.msg 'public-layout.search'/>" />
                         <fieldset class="search_options">
                             <input type="radio" name="huh_radio" id="filter_registry" value="registry" checked />
@@ -49,7 +49,7 @@
                             <label for="filter_website"><@orcid.msg 'public-layout.search.choice.website'/></label>
                         </fieldset>
                         <div class="conditions">
-                            <p><@orcid.msg 'public-layout.search.terms1'/><a href="${aboutUri}/legal?lang=${locale}"><@orcid.msg 'public-layout.search.terms2'/></a><@orcid.msg 'public-layout.search.terms3'/></p>
+                            <p><@orcid.msg 'public-layout.search.terms1'/><a href="${aboutUri}/legal"><@orcid.msg 'public-layout.search.terms2'/></a><@orcid.msg 'public-layout.search.terms3'/></p>
                         </div>
                         <button type="submit" class="search-button"><i class="icon-orcid-search"></i></button>
                         <a href="<@spring.url "/orcid-search/search" />" class="settings-button" title="<@orcid.msg 'public-layout.search.advanced'/>"><i class="icon-cog"></i></a>
@@ -65,7 +65,7 @@
         <div class="row">
             <div class="span3 override">
            		<div class="logo">
-                    <h1><a href="${aboutUri}?lang=${locale}"><img src="${staticCdn}/img/orcid-logo.png" alt="ORCID logo" /></a></h1>
+                    <h1><a href="${aboutUri}"><img src="${staticCdn}/img/orcid-logo.png" alt="ORCID logo" /></a></h1>
                     <p><@orcid.msg 'public-layout.logo.tagline'/></p>
                 </div>
             </div>
@@ -89,33 +89,33 @@
                                 <li><a href="<@spring.url '/signout'/>"><@orcid.msg 'public-layout.sign_out'/></a></li>
                             </@security.authorize>
 						</ul></li>
-						<li class="expanded"><a href="${aboutUri}/organizations?lang=${locale}"><@orcid.msg 'public-layout.for_organizations'/></a><ul class="menu"><li class="first leaf"><a href="${aboutUri}/organizations/funders?lang=${locale}"><@orcid.msg 'public-layout.funders'/></a></li>
-						<li class="leaf"><a href="${aboutUri}/organizations/institutions?lang=${locale}" title=""><@orcid.msg 'public-layout.research_organizations'/></a></li>
-						<li class="leaf"><a href="${aboutUri}/organizations/publishers?lang=${locale}"><@orcid.msg 'public-layout.publishers'/></a></li>
-						<li class="last leaf"><a href="${aboutUri}/organizations/integrators?lang=${locale}"><@orcid.msg 'public-layout.integrators'/></a></li>
+						<li class="expanded"><a href="${aboutUri}/organizations"><@orcid.msg 'public-layout.for_organizations'/></a><ul class="menu"><li class="first leaf"><a href="${aboutUri}/organizations/funders"><@orcid.msg 'public-layout.funders'/></a></li>
+						<li class="leaf"><a href="${aboutUri}/organizations/institutions" title=""><@orcid.msg 'public-layout.research_organizations'/></a></li>
+						<li class="leaf"><a href="${aboutUri}/organizations/publishers"><@orcid.msg 'public-layout.publishers'/></a></li>
+						<li class="last leaf"><a href="${aboutUri}/organizations/integrators"><@orcid.msg 'public-layout.integrators'/></a></li>
 						</ul></li>
-						<li class="expanded"><a href="${aboutUri}/about?lang=${locale}"><@orcid.msg 'public-layout.about'/></a><ul class="menu"><li class="first expanded"><a href="${aboutUri}/about/what-is-orcid?lang=${locale}" title=""><@orcid.msg 'public-layout.what_is_orcid'/></a><ul class="menu"><li class="first leaf"><a href="${aboutUri}/about/what-is-orcid/mission?lang=${locale}" title=""><@orcid.msg 'public-layout.our_mission'/></a></li>
-						<li class="last leaf"><a href="${aboutUri}/about/what-is-orcid/our-principles?lang=${locale}" title=""><@orcid.msg 'public-layout.our_principles'/></a></li>
+						<li class="expanded"><a href="${aboutUri}/about"><@orcid.msg 'public-layout.about'/></a><ul class="menu"><li class="first expanded"><a href="${aboutUri}/about/what-is-orcid" title=""><@orcid.msg 'public-layout.what_is_orcid'/></a><ul class="menu"><li class="first leaf"><a href="${aboutUri}/about/what-is-orcid/mission" title=""><@orcid.msg 'public-layout.our_mission'/></a></li>
+						<li class="last leaf"><a href="${aboutUri}/about/what-is-orcid/our-principles" title=""><@orcid.msg 'public-layout.our_principles'/></a></li>
 						</ul></li>
-						<li class="leaf"><a href="${aboutUri}/about/team?lang=${locale}" title=""><@orcid.msg 'public-layout.the_orcid_team'/></a></li>
-						<li class="expanded"><a href="${aboutUri}/about/community?lang=${locale}" title=""><@orcid.msg 'public-layout.the_orcid_community'/></a><ul class="menu"><li class="first leaf"><a href="${aboutUri}/about/community?lang=${locale}" title=""><@orcid.msg 'public-layout.working_groups'/></a></li>
-						<li class="leaf"><a href="${aboutUri}/about/community/participants?lang=${locale}" title=""><@orcid.msg 'public-layout.participants'/></a></li>
-						<li class="leaf"><a href="${aboutUri}/about/community/sponsors?lang=${locale}" title=""><@orcid.msg 'public-layout.sponsors'/></a></li>
-						<li class="leaf"><a href="${aboutUri}/about/community/members?lang=${locale}" title=""><@orcid.msg 'public-layout.members'/></a></li>
-						<li class="last leaf"><a href="${aboutUri}/about/community/launch-partners?lang=${locale}" title=""><@orcid.msg 'public-layout.launch_partners'/></a></li>
+						<li class="leaf"><a href="${aboutUri}/about/team" title=""><@orcid.msg 'public-layout.the_orcid_team'/></a></li>
+						<li class="expanded"><a href="${aboutUri}/about/community" title=""><@orcid.msg 'public-layout.the_orcid_community'/></a><ul class="menu"><li class="first leaf"><a href="${aboutUri}/about/community" title=""><@orcid.msg 'public-layout.working_groups'/></a></li>
+						<li class="leaf"><a href="${aboutUri}/about/community/participants" title=""><@orcid.msg 'public-layout.participants'/></a></li>
+						<li class="leaf"><a href="${aboutUri}/about/community/sponsors" title=""><@orcid.msg 'public-layout.sponsors'/></a></li>
+						<li class="leaf"><a href="${aboutUri}/about/community/members" title=""><@orcid.msg 'public-layout.members'/></a></li>
+						<li class="last leaf"><a href="${aboutUri}/about/community/launch-partners" title=""><@orcid.msg 'public-layout.launch_partners'/></a></li>
 						</ul></li>
-						<li class="expanded"><a href="${aboutUri}/about/membership?lang=${locale}" title=""><@orcid.msg 'public-layout.standard_member_agreement'/></a><ul class="menu"><li class="first leaf"><a href="${aboutUri}/about/membership?lang=${locale}" title=""><@orcid.msg 'public-layout.membership_and_subscription'/></a></li>
-						<li class="leaf"><a href="${aboutUri}/about/membership/standard-member-agreement?lang=${locale}" title=""><@orcid.msg 'public-layout.standard_member_agreement'/></a></li>
-						<li class="last leaf"><a href="${aboutUri}/about/community/members?lang=${locale}" title=""><@orcid.msg 'public-layout.our_members'/></a></li>
+						<li class="expanded"><a href="${aboutUri}/about/membership" title=""><@orcid.msg 'public-layout.standard_member_agreement'/></a><ul class="menu"><li class="first leaf"><a href="${aboutUri}/about/membership" title=""><@orcid.msg 'public-layout.membership_and_subscription'/></a></li>
+						<li class="leaf"><a href="${aboutUri}/about/membership/standard-member-agreement" title=""><@orcid.msg 'public-layout.standard_member_agreement'/></a></li>
+						<li class="last leaf"><a href="${aboutUri}/about/community/members" title=""><@orcid.msg 'public-layout.our_members'/></a></li>
 						</ul></li>
-						<li class="leaf"><a href="${aboutUri}/about/news/news?lang=${locale}" title=""><@orcid.msg 'public-layout.news'/></a>
-						<li class="last expanded"><a href="${aboutUri}/about/events?lang=${locale}" title=""><@orcid.msg 'public-layout.events'/></a>
-						<ul class="menu"><li class="first leaf"><a href="${aboutUri}/about/news/news?lang=${locale}" title=""><@orcid.msg 'public-layout.news'/></a></li>
-						<li class="last leaf"><a href="${aboutUri}/about/news/docs?lang=${locale}" title=""><@orcid.msg 'public-layout.documentation'/></a></li>
+						<li class="leaf"><a href="${aboutUri}/about/news/news" title=""><@orcid.msg 'public-layout.news'/></a>
+						<li class="last expanded"><a href="${aboutUri}/about/events" title=""><@orcid.msg 'public-layout.events'/></a>
+						<ul class="menu"><li class="first leaf"><a href="${aboutUri}/about/news/news" title=""><@orcid.msg 'public-layout.news'/></a></li>
+						<li class="last leaf"><a href="${aboutUri}/about/news/docs" title=""><@orcid.msg 'public-layout.documentation'/></a></li>
 						</ul></li>
 						</ul></li>
-						<li class="expanded"><a href="${aboutUri}/help?lang=${locale}"><@orcid.msg 'public-layout.help'/></a><ul class="menu"><li class="first leaf"><a href="${aboutUri}/faq-page?lang=${locale}" title=""><@orcid.msg 'public-layout.faq'/></a></li>
-						<li class="leaf"><a href="${aboutUri}/help/contact-us?lang=${locale}" title=""><@orcid.msg 'public-layout.contact_us'/></a></li>
+						<li class="expanded"><a href="${aboutUri}/help"><@orcid.msg 'public-layout.help'/></a><ul class="menu"><li class="first leaf"><a href="${aboutUri}/faq-page" title=""><@orcid.msg 'public-layout.faq'/></a></li>
+						<li class="leaf"><a href="${aboutUri}/help/contact-us" title=""><@orcid.msg 'public-layout.contact_us'/></a></li>
 						<li class="leaf"><a href="http://orcid.uservoice.com/forums/175591-general" title=""><@orcid.msg 'public-layout.give_feedback'/></a></li>
 						<li class="last leaf"><a href="http://orcid.uservoice.com/knowledgebase" title=""><@orcid.msg 'public-layout.knowledge_base'/></a></li>
 						</ul></li>
@@ -143,10 +143,10 @@
         <div class="row">
             <div class="span11 offset1">
                 <ul class="span11 offset1">
-                    <li class=""><a href="${aboutUri}/help/contact-us?lang=${locale}"><@orcid.msg 'public-layout.contact_us'/></a></li>
-				    <li class=""><a href="${aboutUri}/footer/privacy-policy?lang=${locale}"><@orcid.msg 'public-layout.privacy_policy'/></a></li>
-				    <li class=""><a href="${aboutUri}/content/orcid-terms-use?lang=${locale}"><@orcid.msg 'public-layout.terms_of_use'/></a></li>
-				    <li class=""><a href="${aboutUri}/open-source-license?lang=${locale}"><@orcid.msg 'footer.openSource'/></a></li>
+                    <li class=""><a href="${aboutUri}/help/contact-us"><@orcid.msg 'public-layout.contact_us'/></a></li>
+				    <li class=""><a href="${aboutUri}/footer/privacy-policy"><@orcid.msg 'public-layout.privacy_policy'/></a></li>
+				    <li class=""><a href="${aboutUri}/content/orcid-terms-use"><@orcid.msg 'public-layout.terms_of_use'/></a></li>
+				    <li class=""><a href="${aboutUri}/open-source-license"><@orcid.msg 'footer.openSource'/></a></li>
                 </ul>
             </div>
         </div>

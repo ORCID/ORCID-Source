@@ -187,9 +187,9 @@
 				                <p>
 				                	<strong>${springMacroRequestContext.getMessage("change_email_preferences.privacy")}</strong> 
 				                	${springMacroRequestContext.getMessage("change_email_preferences.yourregistrationinfo")}
-				                	<a href="${aboutUri}/footer/privacy-policy?lang=${locale}" target="_blank">${springMacroRequestContext.getMessage("change_email_preferences.privacyPolicy")}</a>
+				                	<a href="${aboutUri}/footer/privacy-policy" target="_blank">${springMacroRequestContext.getMessage("change_email_preferences.privacyPolicy")}</a>
 				                	${springMacroRequestContext.getMessage("change_email_preferences.and")}
-				                	<a href="${aboutUri}/content/orcid-terms-use?lang=${locale}" target="_blank">${springMacroRequestContext.getMessage("change_email_preferences.termsAnd")}</a>.
+				                	<a href="${aboutUri}/content/orcid-terms-use" target="_blank">${springMacroRequestContext.getMessage("change_email_preferences.termsAnd")}</a>.
 				                </p>
 						</div>
 						</td>
