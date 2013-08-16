@@ -1314,11 +1314,11 @@ function languageCtrl($scope, $cookies){
 	        },	        
 	        {
 		        "value": 'zh_CN',
-			    "label": '簡體中文'
+			    "label": '简体中文'
 	        },
 	        {
 		        "value": 'zh_TW',
-			    "label": '简体中文'
+			    "label": '繁體中文'
 	        },	        
 	    ];	
 	
