@@ -143,7 +143,7 @@ OrcidMessage.getInstance = function() {
  */
 function checkOrcidLoggedIn() {
 	$.ajax({
-		url: orcidVar.baseUri + '/userStatus.json',
+		url: orcidVar.baseUri + '/userStatus.json?callback=?',
         type: 'GET',
         dataType: 'json',
         success: function(data) {
