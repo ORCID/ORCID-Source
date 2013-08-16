@@ -392,6 +392,7 @@ public class BaseController {
         return statisticsManager.getLiveIds(localeManager.getLocale());
     }
 
+    @ModelAttribute("baseUri")
     public String getBaseUri() {
         return baseUri;
     }
@@ -456,6 +457,7 @@ public class BaseController {
         return staticCdnPath;
     }
 
+    @ModelAttribute("baseUriHttp")
     public String getBaseUriHttp() {
         return baseUri.replace("https", "http");
     }
