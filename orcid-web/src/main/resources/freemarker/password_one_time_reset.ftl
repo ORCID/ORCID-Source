@@ -23,7 +23,7 @@
         	<p>${springMacroRequestContext.getMessage("password_one_time_reset.ptypenewpassword")}</p>
         	<#if spring.status.error>
     			<div class="alert alert-error">        			
-        			<#list spring.status.errorMessages?sort as error>${error}<#if error_has_next><br/></#if></#list>        			
+        			<#list spring.status.errorMessages?sort as error><@orcid.msg '${error}'/><#if error_has_next><br/></#if></#list>        			
     			</div>
     		</#if>               
             <form id="reset-password-one-time" name="oneTimeResetForm" action="<@spring.url '/one-time-password/${encryptedEmail}'/>" method="post" autocomplete="off">

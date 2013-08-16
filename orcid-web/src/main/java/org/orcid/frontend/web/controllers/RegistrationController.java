@@ -629,6 +629,24 @@ public class RegistrationController extends BaseController {
         return mav;
     }
 
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     @RequestMapping(value = "/one-time-password/{encryptedEmail}", method = RequestMethod.POST)
     public ModelAndView confirmPasswordOneTimeResetView(@PathVariable("encryptedEmail") String encryptedEmail,
             @Valid PasswordTypeAndConfirmForm passwordTypeAndConfirmForm, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
@@ -680,6 +698,28 @@ public class RegistrationController extends BaseController {
 
     }
 
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     private ModelAndView updatePasswordAndGoToAccountsPage(OrcidProfile updatedProfile) {
 
         orcidProfileManager.updatePasswordInformation(updatedProfile);

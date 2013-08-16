@@ -24,7 +24,7 @@
 			<div class="alert alert-error">
 	    		<#if spring.status.error>
     				<div class="alert alert-error">        			
-	    	    		<#list spring.status.errorMessages?sort as error>${error}<#if error_has_next><br/></#if></#list>        			
+	    	    		<#list spring.status.errorMessages?sort as error><@orcid.msg '${error}' /><#if error_has_next><br/></#if></#list>        			
     				</div>
     			</#if>    
 			</div>

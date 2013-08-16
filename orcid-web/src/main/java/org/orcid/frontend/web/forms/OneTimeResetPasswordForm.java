@@ -23,8 +23,8 @@ import org.orcid.frontend.web.forms.validate.FieldMatch;
 import org.orcid.frontend.web.forms.validate.IntegerStringCrossField;
 import org.orcid.password.constants.OrcidPasswordConstants;
 
-@IntegerStringCrossField(indexToIgnoreValidation = 0, theFieldToIgnoreValidation = "securityQuestionAnswer", theFieldToIndex = "securityQuestionId", message = "Please provide an answer to your challenge question.")
-@FieldMatch.List( { @FieldMatch(first = "password", second = "retypedPassword", message = "Your password values do not match. Please try again.") })
+@IntegerStringCrossField(indexToIgnoreValidation = 0, theFieldToIgnoreValidation = "securityQuestionAnswer", theFieldToIndex = "securityQuestionId", message = "password_one_time_reset_optional_security_questions.answer_not_null")
+@FieldMatch.List( { @FieldMatch(first = "password", second = "retypedPassword", message = "password_one_time_reset.password_donesnt_match") })
 public class OneTimeResetPasswordForm {
 
     private PasswordTypeAndConfirmForm passwordTypeAndConfirmForm;
@@ -43,7 +43,7 @@ public class OneTimeResetPasswordForm {
         return passwordTypeAndConfirmForm;
     }
 
-    @Pattern(regexp = OrcidPasswordConstants.ORCID_PASSWORD_REGEX, message = OrcidPasswordConstants.PASSWORD_REGEX_MESSAGE)
+    @Pattern(regexp = OrcidPasswordConstants.ORCID_PASSWORD_REGEX, message = "password_one_time_reset.password_regex_error")
     public String getPassword() {
         return passwordTypeAndConfirmForm.getPassword();
     }
@@ -52,7 +52,6 @@ public class OneTimeResetPasswordForm {
         passwordTypeAndConfirmForm.setPassword(password);
     }
 
-    @Pattern(regexp = OrcidPasswordConstants.ORCID_PASSWORD_REGEX, message = OrcidPasswordConstants.PASSWORD_REGEX_MESSAGE)
     public String getRetypedPassword() {
         return passwordTypeAndConfirmForm.getRetypedPassword();
     }

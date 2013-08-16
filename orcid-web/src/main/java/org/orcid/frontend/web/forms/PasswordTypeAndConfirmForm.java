@@ -21,13 +21,13 @@ import javax.validation.constraints.Pattern;
 import org.orcid.frontend.web.forms.validate.FieldMatch;
 import org.orcid.password.constants.OrcidPasswordConstants;
 
-@FieldMatch.List( { @FieldMatch(first = "password", second = "retypedPassword", message = "Your password values do not match. Please try again") })
+@FieldMatch.List( { @FieldMatch(first = "password", second = "retypedPassword", message = "password_one_time_reset.password_donesnt_match") })
 public class PasswordTypeAndConfirmForm {
 
     private String password;
     private String retypedPassword;
 
-    @Pattern(regexp = OrcidPasswordConstants.ORCID_PASSWORD_REGEX, message = OrcidPasswordConstants.PASSWORD_REGEX_MESSAGE)
+    @Pattern(regexp = OrcidPasswordConstants.ORCID_PASSWORD_REGEX, message = "password_one_time_reset.password_regex_error")
     public String getPassword() {
         return password;
     }
@@ -36,7 +36,6 @@ public class PasswordTypeAndConfirmForm {
         this.password = password;
     }
 
-    @Pattern(regexp = OrcidPasswordConstants.ORCID_PASSWORD_REGEX, message = OrcidPasswordConstants.PASSWORD_REGEX_MESSAGE)
     public String getRetypedPassword() {
         return retypedPassword;
     }
