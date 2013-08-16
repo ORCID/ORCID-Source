@@ -1336,8 +1336,8 @@ function languageCtrl($scope, $cookies){
 			
 	$scope.selectedLanguage = function(){		
 		$.ajax({
-	        url: orcidVar.baseUri+'/lang.json?lang='+$scope.language.value,	        
-	        type: 'POST',
+	        url: orcidVar.baseUri+'/lang.json?lang=' + $scope.language.value + "&callback=?",	        
+	        type: 'GET',
 	        dataType: 'json',
 	        success: function(data){
 	        	angular.forEach($scope.languages, function(value, key){
