@@ -306,15 +306,16 @@ public class WorksController extends BaseWorkspaceController {
             
             if (work.getWorkExternalIdentifiers() != null) {
                 for (WorkExternalIdentifier wei: work.getWorkExternalIdentifiers()) {
-                    
-                    org.orcid.persistence.jpa.entities.WorkExternalIdentifierEntity newWeiJpa = new org.orcid.persistence.jpa.entities.WorkExternalIdentifierEntity();
-                    newWeiJpa.setIdentifier(wei.getWorkExternalIdentifierId().getValue());
-                    newWeiJpa.setDateCreated(new java.util.Date());
-                    newWeiJpa.setIdentifierType(wei.toWorkExternalIdentifier().getWorkExternalIdentifierType());
-                    newWeiJpa.setLastModified(new java.util.Date());
-                    newWeiJpa.setWork(workEntity);                    
-                    
-                    workExternalIdentifierManager.addWorkExternalIdentifier(newWeiJpa);
+                    if (!PojoUtil.isEmpty(wei.getWorkExternalIdentifierId())) {
+                        org.orcid.persistence.jpa.entities.WorkExternalIdentifierEntity newWeiJpa = new org.orcid.persistence.jpa.entities.WorkExternalIdentifierEntity();
+                        newWeiJpa.setIdentifier(wei.getWorkExternalIdentifierId().getValue());
+                        newWeiJpa.setDateCreated(new java.util.Date());
+                        newWeiJpa.setIdentifierType(wei.toWorkExternalIdentifier().getWorkExternalIdentifierType());
+                        newWeiJpa.setLastModified(new java.util.Date());
+                        newWeiJpa.setWork(workEntity);                    
+                        
+                        workExternalIdentifierManager.addWorkExternalIdentifier(newWeiJpa);
+                    }
                 }
              
             }
