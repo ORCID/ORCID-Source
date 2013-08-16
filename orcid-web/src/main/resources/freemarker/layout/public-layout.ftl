@@ -104,7 +104,7 @@
 						<li class="leaf"><a href="${aboutUri}/about/community/members?lang=${locale}" title=""><@orcid.msg 'public-layout.members'/></a></li>
 						<li class="last leaf"><a href="${aboutUri}/about/community/launch-partners?lang=${locale}" title=""><@orcid.msg 'public-layout.launch_partners'/></a></li>
 						</ul></li>
-						<li class="expanded"><a href="${aboutUri}/about/membership?lang=${locale}" title="">Membership</a><ul class="menu"><li class="first leaf"><a href="${aboutUri}/about/membership?lang=${locale}" title=""><@orcid.msg 'public-layout.membership_and_subscription'/></a></li>
+						<li class="expanded"><a href="${aboutUri}/about/membership?lang=${locale}" title=""><@orcid.msg 'public-layout.standard_member_agreement'/></a><ul class="menu"><li class="first leaf"><a href="${aboutUri}/about/membership?lang=${locale}" title=""><@orcid.msg 'public-layout.membership_and_subscription'/></a></li>
 						<li class="leaf"><a href="${aboutUri}/about/membership/standard-member-agreement?lang=${locale}" title=""><@orcid.msg 'public-layout.standard_member_agreement'/></a></li>
 						<li class="last leaf"><a href="${aboutUri}/about/community/members?lang=${locale}" title=""><@orcid.msg 'public-layout.our_members'/></a></li>
 						</ul></li>
@@ -117,7 +117,7 @@
 						<li class="expanded"><a href="${aboutUri}/help?lang=${locale}"><@orcid.msg 'public-layout.help'/></a><ul class="menu"><li class="first leaf"><a href="${aboutUri}/faq-page?lang=${locale}" title=""><@orcid.msg 'public-layout.faq'/></a></li>
 						<li class="leaf"><a href="${aboutUri}/help/contact-us?lang=${locale}" title=""><@orcid.msg 'public-layout.contact_us'/></a></li>
 						<li class="leaf"><a href="http://orcid.uservoice.com/forums/175591-general" title=""><@orcid.msg 'public-layout.give_feedback'/></a></li>
-						<li class="last leaf"><a href="http://orcid.uservoice.com/knowledgebase" title=""><@orcid.msg 'public-layout.knowledge_base'/>Knowledge Base</a></li>
+						<li class="last leaf"><a href="http://orcid.uservoice.com/knowledgebase" title=""><@orcid.msg 'public-layout.knowledge_base'/></a></li>
 						</ul></li>
 						<li class="last leaf">
 						    <@security.authorize ifNotGranted="ROLE_USER"><a href="<@spring.url "/signin" />" title=""><@orcid.msg 'public-layout.sign_in'/></a></@security.authorize>
