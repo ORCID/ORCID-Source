@@ -50,9 +50,8 @@
                 </#if>
                 <#if (work.description)?? && work.description?has_content>
                     <div>${work.description}</div>
-                <#else>
-                    <#if (work.citationForDisplay)??><div class="citation ${work.citationType}">${work.citationForDisplay}</div></#if>
                 </#if>
+                <#if (work.citationForDisplay)??><div class="citation ${work.citationType}">${work.citationForDisplay}</div></#if>
             </li>           
         </#list>
 	</ul>
