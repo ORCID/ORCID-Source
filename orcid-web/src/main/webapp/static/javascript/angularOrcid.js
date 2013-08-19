@@ -100,6 +100,26 @@ orcidNgModule.filter('urlWithHttp', function(){
 });
 
 
+orcidNgModule.filter('workExternalIdentifierHtml', function(){
+	return function(workExternalIdentifier, first, last, length){
+		var output = '';
+		
+		if (workExternalIdentifier == null) return output;
+		var id = workExternalIdentifier.workExternalIdentifierId.value;
+		var type;
+		if (workExternalIdentifier.workExternalIdentifierType != null)
+			type = workExternalIdentifier.workExternalIdentifierType.value;
+		if (type != null) output = output + type + ": ";
+		if (type == 'doi' && !id.startsWith("http")) id = 'http://dx.doi.org/' + id;
+		if (id.startsWith("http")) output = output + '<a href="' + id + '" target="_blank">' + id + '</a>';
+		else output = output + id;
+		
+		if (length > 1 && !last) output = output + ',';
+	    return output;
+	};
+});
+
+
 function EditTableCtrl($scope) {
 	
 	// email edit row
