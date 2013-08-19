@@ -297,7 +297,7 @@ public class RegistrationController extends BaseController {
         passwordConfirmValidate(reg.getPasswordConfirm(), reg.getPassword());
         return reg;
     }
-
+   
     @RequestMapping(value = "/registerPasswordValidate.json", method = RequestMethod.POST)
     public @ResponseBody
     Registration registerPasswordValidate(@RequestBody Registration reg) {
@@ -571,7 +571,39 @@ public class RegistrationController extends BaseController {
         // otherwise, straight to the screen with the option to set a security
         // question
         return buildPasswordScreenWithOptionalSecurityQuestion(form);
+    }    
+    
+    @RequestMapping(value = "/reset-password-form-validate.json", method = RequestMethod.POST)
+    public @ResponseBody
+    PasswordTypeAndConfirmForm resetPasswordConfirmValidate(@RequestBody PasswordTypeAndConfirmForm resetPasswordForm) {
+        resetPasswordValidateFields(resetPasswordForm.getPassword(), resetPasswordForm.getRetypedPassword());
+        return resetPasswordForm;
     }
+    
+    
+    private void resetPasswordValidateFields(Text password, Text retypedPassword) {
+        password.setErrors(new ArrayList<String>());
+        retypedPassword.setErrors(new ArrayList<String>());        
+        
+        // validate password regex
+        if (password.getValue() == null || !password.getValue().matches(OrcidPasswordConstants.ORCID_PASSWORD_REGEX)) {
+            setError(password, "Pattern.registrationForm.password");
+        }
+        
+        // validate passwords match
+        if (retypedPassword.getValue() != null && !retypedPassword.getValue().equals(password.getValue())) {
+            setError(retypedPassword, "FieldMatch.registrationForm");
+        }                        
+    }
+    
+    @RequestMapping(value = "/password-reset.json", method = RequestMethod.GET)
+    public @ResponseBody
+    PasswordTypeAndConfirmForm getResetPassword(HttpServletRequest request) {
+        PasswordTypeAndConfirmForm form = new PasswordTypeAndConfirmForm();
+        form.setPassword(new Text());
+        form.setRetypedPassword(new Text());
+        return form;
+    }    
 
     private ModelAndView buildPasswordScreenWithOptionalSecurityQuestion(OneTimeResetPasswordForm oneTimeResetPasswordForm) {
         ModelAndView combinedView = new ModelAndView("password_one_time_reset_optional_security_questions");
@@ -629,24 +661,6 @@ public class RegistrationController extends BaseController {
         return mav;
     }
 
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     @RequestMapping(value = "/one-time-password/{encryptedEmail}", method = RequestMethod.POST)
     public ModelAndView confirmPasswordOneTimeResetView(@PathVariable("encryptedEmail") String encryptedEmail,
             @Valid PasswordTypeAndConfirmForm passwordTypeAndConfirmForm, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
@@ -664,7 +678,7 @@ public class RegistrationController extends BaseController {
         }
 
         OrcidProfile passwordOnlyProfileUpdate = orcidProfileManager.retrieveOrcidProfileByEmail(passwordResetToken.getEmail());
-        passwordOnlyProfileUpdate.setPassword(passwordTypeAndConfirmForm.getPassword());
+        passwordOnlyProfileUpdate.setPassword(passwordTypeAndConfirmForm.getPassword().getValue());
         return updatePasswordAndGoToAccountsPage(passwordOnlyProfileUpdate);
     }
 
@@ -688,7 +702,7 @@ public class RegistrationController extends BaseController {
         }
         // update password, and optionally question and answer
         OrcidProfile profileToUpdate = orcidProfileManager.retrieveOrcidProfileByEmail(passwordResetToken.getEmail());
-        profileToUpdate.setPassword(oneTimeResetPasswordForm.getPassword());
+        profileToUpdate.setPassword(oneTimeResetPasswordForm.getPassword().getValue());
         if (oneTimeResetPasswordForm.isSecurityDetailsPopulated()) {
             profileToUpdate.getOrcidInternal().getSecurityDetails().setSecurityQuestionId(new SecurityQuestionId(oneTimeResetPasswordForm.getSecurityQuestionId()));
             profileToUpdate.setSecurityQuestionAnswer(oneTimeResetPasswordForm.getSecurityQuestionAnswer());
@@ -698,28 +712,6 @@ public class RegistrationController extends BaseController {
 
     }
 
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     private ModelAndView updatePasswordAndGoToAccountsPage(OrcidProfile updatedProfile) {
 
         orcidProfileManager.updatePasswordInformation(updatedProfile);
@@ -735,7 +727,6 @@ public class RegistrationController extends BaseController {
 
         }
         return securityQuestionVal;
-
     }
 
     private PasswordResetToken buildResetTokenFromEncryptedLink(String encryptedLink) {

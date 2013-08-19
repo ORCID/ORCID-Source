@@ -67,4 +67,8 @@ public class Text implements ErrorsInterface, Required, Serializable {
         this.getRequiredMessage = getRequiredMessage;
     }
 
+    @Override
+    public String toString(){
+        return this.value;
+    }    
 }

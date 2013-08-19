@@ -29,39 +29,47 @@
     			</#if>    
 			</div>
 		</#if>
-		<form id="reg-form-password" action="<@spring.url '/reset-password-email/${encryptedEmail}'/>" method="post" autocomplete="off">
-    		<div class="control-group">
-    			<label for="passwordField" class="control-label">${springMacroRequestContext.getMessage("password_one_time_reset_optional_security_questions.pleaseenternewpassword")}</label>
-    			<div class="controls">
-        			<input id="passwordField" type="password" name="password" value="${(oneTimeResetPasswordForm.password)!}" class="input-xlarge password-strength"/>
-        			<span class="required">*</span>
-        			<@orcid.passwordHelpPopup />   
-    			</div>
-			</div>
-			<div class="control-group">
-	    		<label for="retypedPassword" class="control-label">${springMacroRequestContext.getMessage("password_one_time_reset_optional_security_questions.confirmyournewpassword")}</label>
-    			<div class="controls">
-	    			<input id="retypedPassword" type="password" name="retypedPassword" value="${(oneTimeResetPasswordForm.retypedPassword)!}" class="input-xlarge"/>
-    	    		<span class="required">*</span>
-    			</div>        
-			</div>
-			<p><small>${springMacroRequestContext.getMessage("password_one_time_reset_optional_security_questions.optionalconsidersetting")}<small></p>			
-			<div class="control-group">        		   
-	            	<div class="controls">
-	            	 	<label for="oneTimeResetPasswordForm.securityQuestionId" class="control-label">${springMacroRequestContext.getMessage("password_one_time_reset_optional_security_questions.challengequestion")}</label>
-            			<select id="securityQuestionId" name="securityQuestionId" class="span5">
-            				<#list securityQuestions?keys as key>
-							   <option value="${key}">${securityQuestions[key]}</option>
-							</#list>
-            			</select>
-            			<label for="oneTimeResetPasswordForm.securityQuestionAnswer" class="control-label">${springMacroRequestContext.getMessage("password_one_time_reset_optional_security_questions.challengeanswer")}</label>            	
-            			<@spring.formInput "oneTimeResetPasswordForm.securityQuestionAnswer", 'class="span5"' />	                	
-	                </div>
-        		</div>
-    			<div class="controls">
-        			<button id="bottom-submit-password-change" class="btn btn-primary" type="submit">${springMacroRequestContext.getMessage("freemarker.btnsavechanges")}</button>      
-    			</div>    
-		</form>
+		<div ng-controller="ResetPasswordCtrl">
+			<form id="reg-form-password" action="<@spring.url '/reset-password-email/${encryptedEmail}'/>" method="post" autocomplete="off">
+	    		<div class="control-group">
+	    			<label for="passwordField" class="control-label">${springMacroRequestContext.getMessage("password_one_time_reset_optional_security_questions.pleaseenternewpassword")}</label>
+	    			<div class="controls">
+	        			<input id="passwordField" type="password" name="password" value="${(oneTimeResetPasswordForm.password)!}" class="input-xlarge" ng-model="resetPasswordForm.password.value" ng-change="serverValidate()"/>
+	        			<span class="required">*</span>
+	        			<@orcid.passwordHelpPopup /> 
+	        			<span class="orcid-error" ng-show="resetPasswordForm.password.errors.length > 0">
+							<div ng-repeat='error in resetPasswordForm.password.errors' ng-bind-html-unsafe="error"></div>
+						</span>   
+	    			</div>
+				</div>
+				<div class="control-group">
+		    		<label for="retypedPassword" class="control-label">${springMacroRequestContext.getMessage("password_one_time_reset_optional_security_questions.confirmyournewpassword")}</label>
+	    			<div class="controls">
+		    			<input id="retypedPassword" type="password" name="retypedPassword" value="${(oneTimeResetPasswordForm.retypedPassword)!}" class="input-xlarge" ng-model="resetPasswordForm.retypedPassword.value" ng-change="serverValidate()"/>
+	    	    		<span class="required">*</span>
+	    	    		<span class="orcid-error" ng-show="resetPasswordForm.retypedPassword.errors.length > 0">
+							<div ng-repeat='error in resetPasswordForm.retypedPassword.errors' ng-bind-html-unsafe="error"></div>
+						</span>   
+	    			</div>        
+				</div>
+				<p><small>${springMacroRequestContext.getMessage("password_one_time_reset_optional_security_questions.optionalconsidersetting")}<small></p>			
+				<div class="control-group">        		   
+		            	<div class="controls">
+		            	 	<label for="oneTimeResetPasswordForm.securityQuestionId" class="control-label">${springMacroRequestContext.getMessage("password_one_time_reset_optional_security_questions.challengequestion")}</label>
+	            			<select id="securityQuestionId" name="securityQuestionId" class="span5">
+	            				<#list securityQuestions?keys as key>
+								   <option value="${key}">${securityQuestions[key]}</option>
+								</#list>
+	            			</select>
+	            			<label for="oneTimeResetPasswordForm.securityQuestionAnswer" class="control-label">${springMacroRequestContext.getMessage("password_one_time_reset_optional_security_questions.challengeanswer")}</label>            	
+	            			<@spring.formInput "oneTimeResetPasswordForm.securityQuestionAnswer", 'class="span5"' />	                	
+		                </div>
+	        		</div>
+	    			<div class="controls">
+	        			<button id="bottom-submit-password-change" class="btn btn-primary" type="submit">${springMacroRequestContext.getMessage("freemarker.btnsavechanges")}</button>      
+	    			</div>    
+			</form>
+		</div>
 	</div>
 </div>
 </@public>
