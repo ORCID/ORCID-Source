@@ -57,7 +57,7 @@
                 <p><strong>${springMacroRequestContext.getMessage("public_profile.labelOtherIDs")}</strong> <br/>
                     <#list profile.orcidBio.externalIdentifiers.externalIdentifier as external>
                         <#if (external.externalIdUrl.value)??>
-                            <a href="${external.externalIdUrl.value}">${(external.externalIdCommonName.content)!}: ${(external.externalIdReference.content)!}</a><#if external_has_next><br/></#if>
+                            <a href="${external.externalIdUrl.value}" target="_blank">${(external.externalIdCommonName.content)!}: ${(external.externalIdReference.content)!}</a><#if external_has_next><br/></#if>
                         <#else>
                             ${(external.externalIdCommonName.content)!}: ${(external.externalIdReference.content)!}<#if external_has_next><br/></#if>
                         </#if>    
