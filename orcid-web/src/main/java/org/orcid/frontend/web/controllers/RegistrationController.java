@@ -678,7 +678,7 @@ public class RegistrationController extends BaseController {
         }
 
         OrcidProfile passwordOnlyProfileUpdate = orcidProfileManager.retrieveOrcidProfileByEmail(passwordResetToken.getEmail());
-        passwordOnlyProfileUpdate.setPassword(passwordTypeAndConfirmForm.getPassword().getValue());
+        passwordOnlyProfileUpdate.setPassword(passwordTypeAndConfirmForm.getPassword() == null ? null : passwordTypeAndConfirmForm.getPassword().getValue());
         return updatePasswordAndGoToAccountsPage(passwordOnlyProfileUpdate);
     }
 
