@@ -14,7 +14,7 @@
  *
  * =============================================================================
  */
-package org.orcid.persistence.adapter;
+package org.orcid.core.adapter;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
@@ -97,7 +97,7 @@ import com.google.common.collect.Maps;
  * @author Declan Newman (declan)
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:orcid-persistence-context.xml" })
+@ContextConfiguration(locations = { "classpath:orcid-core-context.xml" })
 public class JpaJaxbEntityAdapterToOrcidProfileTest extends DBUnitTest {
 
     private static final List<String> DATA_FILES = Arrays.asList("/data/SecurityQuestionEntityData.xml", "/data/ProfileEntityData.xml", "/data/WorksEntityData.xml",

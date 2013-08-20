@@ -42,14 +42,6 @@
     <context:property-placeholder location="classpath:${org.orcid.persistence.properties}" ignore-resource-not-found="true"
         ignore-unresolvable="true" />
 
-    <bean id="jpaJaxbEntityAdapter" class="org.orcid.persistence.adapter.impl.JpaJaxbEntityAdapterImpl">
-        <constructor-arg ref="jpa2JaxbAdapter" />
-        <constructor-arg ref="jaxb2JpaAdapter" />
-    </bean>
-
-    <bean id="jpa2JaxbAdapter" class="org.orcid.persistence.adapter.impl.Jpa2JaxbAdapterImpl" />
-    <bean id="jaxb2JpaAdapter" class="org.orcid.persistence.adapter.impl.Jaxb2JpaAdapterImpl" />
-
     <bean id="profileDao" class="org.orcid.persistence.dao.impl.ProfileDaoImpl" />
     
     <bean id="profileKeywordDao" class="org.orcid.persistence.dao.impl.ProfileKeywordDaoImpl" />

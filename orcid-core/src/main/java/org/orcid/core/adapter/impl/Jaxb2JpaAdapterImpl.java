@@ -14,7 +14,7 @@
  *
  * =============================================================================
  */
-package org.orcid.persistence.adapter.impl;
+package org.orcid.core.adapter.impl;
 
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -30,6 +30,7 @@ import javax.annotation.Resource;
 import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.apache.commons.lang.StringUtils;
+import org.orcid.core.adapter.Jaxb2JpaAdapter;
 import org.orcid.jaxb.model.message.Address;
 import org.orcid.jaxb.model.message.Affiliation;
 import org.orcid.jaxb.model.message.AgencyName;
@@ -100,7 +101,6 @@ import org.orcid.jaxb.model.message.WorkExternalIdentifiers;
 import org.orcid.jaxb.model.message.WorkSource;
 import org.orcid.jaxb.model.message.WorkTitle;
 import org.orcid.jaxb.model.message.WorkType;
-import org.orcid.persistence.adapter.Jaxb2JpaAdapter;
 import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.jpa.entities.AddressEntity;
 import org.orcid.persistence.jpa.entities.AffiliationEntity;

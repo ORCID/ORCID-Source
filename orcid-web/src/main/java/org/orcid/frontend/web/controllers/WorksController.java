@@ -30,6 +30,8 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
+import org.orcid.core.adapter.Jaxb2JpaAdapter;
+import org.orcid.core.adapter.Jpa2JaxbAdapter;
 import org.orcid.core.manager.ExternalIdentifierManager;
 import org.orcid.core.manager.ProfileWorkManager;
 import org.orcid.core.manager.ThirdPartyImportManager;
@@ -56,8 +58,6 @@ import org.orcid.jaxb.model.message.SourceOrcid;
 import org.orcid.jaxb.model.message.WorkContributors;
 import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
 import org.orcid.jaxb.model.message.WorkType;
-import org.orcid.persistence.adapter.Jaxb2JpaAdapter;
-import org.orcid.persistence.adapter.Jpa2JaxbAdapter;
 import org.orcid.persistence.jpa.entities.FuzzyDate;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.WorkContributorEntity;
@@ -132,7 +132,7 @@ public class WorksController extends BaseWorkspaceController {
         OrcidWork delWork = work.toOrcidWork();
 
         // Get cached profile
-        OrcidProfile currentProfile = getCurrentUser().getEffectiveProfile();
+        OrcidProfile currentProfile = getEffectiveProfile();
         OrcidWorks works = currentProfile.getOrcidActivities() == null ? null : currentProfile.getOrcidActivities().getOrcidWorks();
         Work deletedWork = new Work();
         if (works != null) {
@@ -245,7 +245,7 @@ public class WorksController extends BaseWorkspaceController {
         Text disText = new Text();
         w.setShortDescription(disText);
 
-        OrcidProfile profile = getCurrentUser().getEffectiveProfile();
+        OrcidProfile profile = getEffectiveProfile();
         Visibility v = Visibility.valueOf(profile.getOrcidInternal().getPreferences().getWorkVisibilityDefault().getValue());
         w.setVisibility(v);
 
@@ -287,7 +287,7 @@ public class WorksController extends BaseWorkspaceController {
 
         if (work.getErrors().size() == 0) {
             // Get current profile
-            OrcidProfile currentProfile = getCurrentUser().getEffectiveProfile();
+            OrcidProfile currentProfile = getEffectiveProfile();
             OrcidWork newOw = work.toOrcidWork();
             newOw.setPutCode("-1"); // put codes of -1 override new works
                                     // visibility filtering settings.
@@ -569,7 +569,7 @@ public class WorksController extends BaseWorkspaceController {
      * 
      */
     private List<String> createWorksIdList(HttpServletRequest request) {
-        OrcidProfile currentProfile = getCurrentUser().getEffectiveProfile();
+        OrcidProfile currentProfile = getEffectiveProfile();
         OrcidWorks orcidWorks = currentProfile.getOrcidActivities() == null ? null : currentProfile.getOrcidActivities().getOrcidWorks();
 
         HashMap<String, Work> worksMap = new HashMap<String, Work>();
@@ -596,7 +596,7 @@ public class WorksController extends BaseWorkspaceController {
     Work updateProfileWorkJson(HttpServletRequest request, @RequestBody Work work) {
         // Get cached profile
         OrcidWork ow = work.toOrcidWork();
-        OrcidProfile currentProfile = getCurrentUser().getEffectiveProfile();
+        OrcidProfile currentProfile = getEffectiveProfile();
         OrcidWorks orcidWorks = currentProfile.getOrcidActivities() == null ? null : currentProfile.getOrcidActivities().getOrcidWorks();
         if (orcidWorks != null) {
             List<OrcidWork> orcidWorksList = orcidWorks.getOrcidWork();
