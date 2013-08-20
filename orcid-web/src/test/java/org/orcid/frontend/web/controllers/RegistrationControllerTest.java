@@ -17,7 +17,6 @@
 package org.orcid.frontend.web.controllers;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
@@ -33,8 +32,6 @@ import java.util.List;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import org.apache.commons.codec.binary.Base64;
 import org.junit.Before;
@@ -48,10 +45,8 @@ import org.orcid.core.manager.OrcidSearchManager;
 import org.orcid.core.manager.RegistrationManager;
 import org.orcid.frontend.web.forms.ChangeSecurityQuestionForm;
 import org.orcid.frontend.web.forms.EmailAddressForm;
-import org.orcid.frontend.web.forms.LoginForm;
 import org.orcid.frontend.web.forms.OneTimeResetPasswordForm;
 import org.orcid.frontend.web.forms.PasswordTypeAndConfirmForm;
-import org.orcid.frontend.web.forms.RegistrationForm;
 import org.orcid.jaxb.model.message.OrcidInternal;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidProfile;
@@ -59,7 +54,7 @@ import org.orcid.jaxb.model.message.OrcidSearchResult;
 import org.orcid.jaxb.model.message.OrcidSearchResults;
 import org.orcid.jaxb.model.message.SecurityDetails;
 import org.orcid.jaxb.model.message.SecurityQuestionId;
-import org.springframework.mock.web.MockHttpSession;
+import org.orcid.pojo.ajaxForm.Text;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.validation.BindingResult;
@@ -271,7 +266,7 @@ public class RegistrationControllerTest {
         verify(redirectAttributes, never()).addFlashAttribute("passwordResetLinkExpired", true);
 
         // check success flow
-        oneTimeResetPasswordForm.setPassword("password");
+        oneTimeResetPasswordForm.setPassword(Text.valueOf("password"));
         when(bindingResult.hasErrors()).thenReturn(false);
         when(orcidProfileManager.retrieveOrcidProfileByEmail("any@orcid.org")).thenReturn(orcidWithSecurityQuestion());
         ModelAndView successView = registrationController

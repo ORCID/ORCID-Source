@@ -16,15 +16,15 @@
  */
 package org.orcid.frontend.web.forms;
 
-import javax.validation.constraints.Pattern;
-
 import org.apache.commons.lang.StringUtils;
 import org.orcid.frontend.web.forms.validate.FieldMatch;
 import org.orcid.frontend.web.forms.validate.IntegerStringCrossField;
+import org.orcid.frontend.web.forms.validate.TextPattern;
 import org.orcid.password.constants.OrcidPasswordConstants;
+import org.orcid.pojo.ajaxForm.Text;
 
-@IntegerStringCrossField(indexToIgnoreValidation = 0, theFieldToIgnoreValidation = "securityQuestionAnswer", theFieldToIndex = "securityQuestionId", message = "Please provide an answer to your challenge question.")
-@FieldMatch.List( { @FieldMatch(first = "password", second = "retypedPassword", message = "Your password values do not match. Please try again.") })
+@IntegerStringCrossField(indexToIgnoreValidation = 0, theFieldToIgnoreValidation = "securityQuestionAnswer", theFieldToIndex = "securityQuestionId", message = "password_one_time_reset_optional_security_questions.answer_not_null")
+@FieldMatch.List( { @FieldMatch(first = "password", second = "retypedPassword", message = "password_one_time_reset.password_doesnt_match") })
 public class OneTimeResetPasswordForm {
 
     private PasswordTypeAndConfirmForm passwordTypeAndConfirmForm;
@@ -33,7 +33,7 @@ public class OneTimeResetPasswordForm {
     public ChangeSecurityQuestionForm getChangeSecurityQuestionForm() {
         return changeSecurityQuestionForm;
     }
-
+ 
     public OneTimeResetPasswordForm() {
         passwordTypeAndConfirmForm = new PasswordTypeAndConfirmForm();
         changeSecurityQuestionForm = new ChangeSecurityQuestionForm();
@@ -43,21 +43,20 @@ public class OneTimeResetPasswordForm {
         return passwordTypeAndConfirmForm;
     }
 
-    @Pattern(regexp = OrcidPasswordConstants.ORCID_PASSWORD_REGEX, message = OrcidPasswordConstants.PASSWORD_REGEX_MESSAGE)
-    public String getPassword() {
+    @TextPattern(regexp = OrcidPasswordConstants.ORCID_PASSWORD_REGEX, message = "password_one_time_reset.password_regex_error")
+    public Text getPassword() {
         return passwordTypeAndConfirmForm.getPassword();
     }
 
-    public void setPassword(String password) {
+    public void setPassword(Text password) {
         passwordTypeAndConfirmForm.setPassword(password);
     }
 
-    @Pattern(regexp = OrcidPasswordConstants.ORCID_PASSWORD_REGEX, message = OrcidPasswordConstants.PASSWORD_REGEX_MESSAGE)
-    public String getRetypedPassword() {
+    public Text getRetypedPassword() {
         return passwordTypeAndConfirmForm.getRetypedPassword();
     }
 
-    public void setRetypedPassword(String retypedPassword) {
+    public void setRetypedPassword(Text retypedPassword) {
         passwordTypeAndConfirmForm.setRetypedPassword(retypedPassword);
     }
 

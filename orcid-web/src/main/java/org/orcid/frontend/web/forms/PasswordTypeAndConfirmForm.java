@@ -16,31 +16,31 @@
  */
 package org.orcid.frontend.web.forms;
 
-import javax.validation.constraints.Pattern;
-
 import org.orcid.frontend.web.forms.validate.FieldMatch;
+import org.orcid.frontend.web.forms.validate.TextPattern;
 import org.orcid.password.constants.OrcidPasswordConstants;
+import org.orcid.pojo.ajaxForm.Text;
 
-@FieldMatch.List( { @FieldMatch(first = "password", second = "retypedPassword", message = "Your password values do not match. Please try again") })
+@FieldMatch.List( { @FieldMatch(first = "password", second = "retypedPassword", message = "password_one_time_reset.password_doesnt_match") })
 public class PasswordTypeAndConfirmForm {
 
-    private String password;
-    private String retypedPassword;
+    private Text password;
+    private Text retypedPassword;
 
-    @Pattern(regexp = OrcidPasswordConstants.ORCID_PASSWORD_REGEX, message = OrcidPasswordConstants.PASSWORD_REGEX_MESSAGE)
-    public String getPassword() {
+    @TextPattern(regexp = OrcidPasswordConstants.ORCID_PASSWORD_REGEX, message = "password_one_time_reset.password_regex_error")
+    public Text getPassword() {
         return password;
     }
 
-    public void setPassword(String password) {
+    public void setPassword(Text password) {
         this.password = password;
     }
 
-    public String getRetypedPassword() {
+    public Text getRetypedPassword() {
         return retypedPassword;
     }
 
-    public void setRetypedPassword(String retypedPassword) {
+    public void setRetypedPassword(Text retypedPassword) {
         this.retypedPassword = retypedPassword;
     }
 }
