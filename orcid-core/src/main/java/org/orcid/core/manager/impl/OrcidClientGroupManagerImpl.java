@@ -30,6 +30,7 @@ import java.util.TreeSet;
 import javax.annotation.Resource;
 
 import org.apache.commons.lang.StringUtils;
+import org.orcid.core.adapter.JpaJaxbEntityAdapter;
 import org.orcid.core.exception.OrcidClientGroupManagementException;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.OrcidClientDetailsService;
@@ -56,7 +57,6 @@ import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.message.SubmissionDate;
 import org.orcid.jaxb.model.message.Url;
 import org.orcid.jaxb.model.message.Visibility;
-import org.orcid.persistence.adapter.JpaJaxbEntityAdapter;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ClientRedirectUriEntity;

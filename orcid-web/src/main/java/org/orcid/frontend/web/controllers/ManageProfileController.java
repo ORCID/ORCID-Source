@@ -182,7 +182,6 @@ public class ManageProfileController extends BaseWorkspaceController {
 
     @RequestMapping
     public ModelAndView manageProfile(@RequestParam(value = "activeTab", required = false) String activeTab) {
-        // XXX Use T2 API
         String tab = activeTab == null ? "profile-tab" : activeTab;
         ModelAndView mav = rebuildManageView(tab);
         return mav;
@@ -192,9 +191,7 @@ public class ManageProfileController extends BaseWorkspaceController {
     public ModelAndView updatePreferences(@ModelAttribute("preferencesForm") PreferencesForm preferencesForm, RedirectAttributes redirectAttributes) {
         ModelAndView mav = new ModelAndView("redirect:/account?activeTab=options-tab");
         LOGGER.debug("Got preferences: {}", preferencesForm);
-        // XXX Use T2 API
-        OrcidProfile updatedProfile = orcidProfileManager.updatePreferences(preferencesForm.getOrcidProfile());
-        getCurrentUser().setEffectiveProfile(updatedProfile);
+        orcidProfileManager.updatePreferences(preferencesForm.getOrcidProfile());
         redirectAttributes.addFlashAttribute("optionsSaved", true);
         return mav;
     }
@@ -259,10 +256,7 @@ public class ManageProfileController extends BaseWorkspaceController {
         }
 
         LOGGER.debug("Got current affiliations: {}", currentAffiliationsForm);
-        // XXX Use T2 API
         orcidProfileManager.updateAffiliations(currentAffiliationsForm.getOrcidProfile());
-        OrcidProfile profile = orcidProfileManager.retrieveOrcidProfile(currentAffiliationsForm.getOrcid());
-        getCurrentUser().setEffectiveProfile(profile);
         ModelAndView affiliationsView = manageProfile("affiliations-tab");
         affiliationsView.addObject("affiliationsSuccessfullyUpdated", true);
         return affiliationsView;
@@ -289,7 +283,7 @@ public class ManageProfileController extends BaseWorkspaceController {
 
         // if not retrieve the user credentials, and set the new security
         // details
-        OrcidProfile profile = getCurrentUser().getEffectiveProfile();
+        OrcidProfile profile = getEffectiveProfile();
         profile.setPassword(passwordOptionsForm.getPassword());
         profile.setVerificationCode(passwordOptionsForm.getVerificationNumber());
         profile.setSecurityQuestionAnswer(passwordOptionsForm.getSecurityQuestionAnswer());
@@ -321,7 +315,7 @@ public class ManageProfileController extends BaseWorkspaceController {
         fields.add(new SolrFieldWeight(SolrConstants.AFFILIATE_PRIMARY_INSTITUTION_NAMES, 1.0f));
         queryBuilder.appendEDisMaxQuery(fields);
         queryBuilder.appendValue(searchTerms);
-        OrcidProfile orcidProfile = getCurrentUser().getEffectiveProfile();
+        OrcidProfile orcidProfile = getEffectiveProfile();
         List<String> orcidsToExclude = new ArrayList<String>();
         // Exclude myself
         orcidsToExclude.add(orcidProfile.getOrcid().getValue());
@@ -356,8 +350,7 @@ public class ManageProfileController extends BaseWorkspaceController {
     @RequestMapping(value = "/add-delegate")
     public ModelAndView addDelegate(@ModelAttribute AddDelegateForm addDelegateForm) {
         OrcidProfile profile = addDelegateForm.getOrcidProfile(getCurrentUserOrcid());
-        // XXX User T2 API
-        getCurrentUser().setEffectiveProfile(orcidProfileManager.addDelegates(profile));
+        orcidProfileManager.addDelegates(profile);
         ModelAndView mav = new ModelAndView("redirect:/account?activeTab=delegation-tab");
         return mav;
     }
@@ -365,7 +358,7 @@ public class ManageProfileController extends BaseWorkspaceController {
     @RequestMapping(value = "/revoke-delegate", method = RequestMethod.POST)
     public ModelAndView revokeDelegate(@RequestParam String receiverOrcid) {
         String giverOrcid = getCurrentUserOrcid();
-        getCurrentUser().setEffectiveProfile(orcidProfileManager.revokeDelegate(giverOrcid, receiverOrcid));
+        orcidProfileManager.revokeDelegate(giverOrcid, receiverOrcid);
         ModelAndView mav = new ModelAndView("redirect:/account?activeTab=delegation-tab");
         return mav;
     }
@@ -373,7 +366,7 @@ public class ManageProfileController extends BaseWorkspaceController {
     @RequestMapping(value = "/revoke-delegate-from-summary-view", method = RequestMethod.GET)
     public ModelAndView revokeDelegateFromSummaryView(@RequestParam("orcid") String receiverOrcid) {
         String giverOrcid = getCurrentUserOrcid();
-        getCurrentUser().setEffectiveProfile(orcidProfileManager.revokeDelegate(giverOrcid, receiverOrcid));
+        orcidProfileManager.revokeDelegate(giverOrcid, receiverOrcid);
         ModelAndView mav = new ModelAndView("redirect:/account/view-account-settings");
         return mav;
     }
@@ -382,8 +375,7 @@ public class ManageProfileController extends BaseWorkspaceController {
     public ModelAndView revokeApplication(@RequestParam("applicationOrcid") String applicationOrcid,
             @RequestParam(value = "scopePaths", required = false, defaultValue = "") String[] scopePaths) {
         String userOrcid = getCurrentUserOrcid();
-        getCurrentUser().setEffectiveProfile(
-                orcidProfileManager.revokeApplication(userOrcid, applicationOrcid, ScopePathType.getScopesFromStrings(Arrays.asList(scopePaths))));
+        orcidProfileManager.revokeApplication(userOrcid, applicationOrcid, ScopePathType.getScopesFromStrings(Arrays.asList(scopePaths)));
         ModelAndView mav = new ModelAndView("redirect:/account?activeTab=application-tab");
         return mav;
     }
@@ -398,7 +390,6 @@ public class ManageProfileController extends BaseWorkspaceController {
 
     @RequestMapping(value = "/switch-user", method = RequestMethod.POST)
     public ModelAndView switchUser(HttpServletRequest request, @RequestParam("giverOrcid") String giverOrcid) {
-        refreshCurrentUserProfile();
         OrcidProfileUserDetails userDetails = getCurrentUser();
         // Check permissions!
         if (isInDelegationMode()) {
@@ -414,7 +405,7 @@ public class ManageProfileController extends BaseWorkspaceController {
                 throw new AccessDeniedException("You are not allowed to switch to that user");
             }
         }
-        getCurrentUser().switchDelegationMode(orcidProfileManager.retrieveOrcidProfile(giverOrcid));
+        getCurrentUser().switchDelegationMode(giverOrcid);
         request.getSession().removeAttribute(WORKS_RESULTS_ATTRIBUTE);
         ModelAndView mav = new ModelAndView("redirect:/my-orcid");
         return mav;
@@ -422,20 +413,18 @@ public class ManageProfileController extends BaseWorkspaceController {
 
     @RequestMapping(value = "/admin-switch-user", method = RequestMethod.GET)
     public ModelAndView adminSwitchUser(HttpServletRequest request, @RequestParam("orcid") String targetOrcid) {
-        refreshCurrentUserProfile();
-        OrcidProfileUserDetails userDetails = getCurrentUser();
         // Check permissions!
-        if (!OrcidType.ADMIN.equals(userDetails.getRealProfile().getType())) {
+        if (!OrcidType.ADMIN.equals(getRealProfile().getType())) {
             throw new AccessDeniedException("You are not allowed to switch to that user");
         }
-        getCurrentUser().switchDelegationMode(orcidProfileManager.retrieveOrcidProfile(targetOrcid));
+        getCurrentUser().switchDelegationMode(targetOrcid);
         request.getSession().removeAttribute(WORKS_RESULTS_ATTRIBUTE);
         ModelAndView mav = new ModelAndView("redirect:/my-orcid");
         return mav;
     }
 
     private boolean hasDelegatePermission(OrcidProfileUserDetails userDetails, String giverOrcid) {
-        Delegation delegation = userDetails.getRealProfile().getOrcidBio().getDelegation();
+        Delegation delegation = getRealProfile().getOrcidBio().getDelegation();
         if (delegation != null) {
             GivenPermissionBy givenPermissionBy = delegation.getGivenPermissionBy();
             if (givenPermissionBy != null) {
@@ -452,7 +441,7 @@ public class ManageProfileController extends BaseWorkspaceController {
     protected ModelAndView rebuildManageView(String activeTab) {
         ModelAndView mav = new ModelAndView("manage");
         mav.addObject("showPrivacy", true);
-        OrcidProfile profile = getCurrentUserAndRefreshIfNecessary().getEffectiveProfile();
+        OrcidProfile profile = getEffectiveProfile();
         mav.addObject("managePasswordOptionsForm", populateManagePasswordFormFromUserInfo());
         mav.addObject("preferencesForm", new PreferencesForm(profile));
         mav.addObject("profile", profile);
@@ -465,8 +454,7 @@ public class ManageProfileController extends BaseWorkspaceController {
     }
 
     private ManagePasswordOptionsForm populateManagePasswordFormFromUserInfo() {
-        OrcidProfileUserDetails currentUserDetails = getCurrentUser();
-        OrcidProfile profile = currentUserDetails.getEffectiveProfile();
+        OrcidProfile profile = getEffectiveProfile();
 
         // TODO - placeholder just to test the retrieve etc..replace with only
         // fields that we will populate
@@ -549,7 +537,7 @@ public class ManageProfileController extends BaseWorkspaceController {
             changeSecurityDetailsView.addObject(changeSecurityQuestionForm);
             return changeSecurityDetailsView;
         }
-        OrcidProfile profile = getCurrentUser().getEffectiveProfile();
+        OrcidProfile profile = getEffectiveProfile();
         profile.setSecurityQuestionAnswer(changeSecurityQuestionForm.getSecurityQuestionAnswer());
         profile.getOrcidInternal().getSecurityDetails().setSecurityQuestionId(new SecurityQuestionId(changeSecurityQuestionForm.getSecurityQuestionId()));
         orcidProfileManager.updatePasswordSecurityQuestionsInformation(profile);
@@ -562,7 +550,7 @@ public class ManageProfileController extends BaseWorkspaceController {
     @RequestMapping(value = "/security-question.json", method = RequestMethod.GET)
     public @ResponseBody
     SecurityQuestion getSecurityQuestionJson(HttpServletRequest request) {
-        OrcidProfile profile = getCurrentUser().getEffectiveProfile();
+        OrcidProfile profile = getEffectiveProfile();
         SecurityDetails sd = profile.getOrcidInternal().getSecurityDetails();
         SecurityQuestionId securityQuestionId = sd.getSecurityQuestionId();
         EncryptedSecurityAnswer encryptedSecurityAnswer = sd.getEncryptedSecurityAnswer();
@@ -598,7 +586,7 @@ public class ManageProfileController extends BaseWorkspaceController {
         	securityQuestion.setSecurityAnswer(new String());               
         
         if (errors.size() == 0) {
-            OrcidProfile profile = getCurrentUser().getEffectiveProfile();
+            OrcidProfile profile = getEffectiveProfile();
             if (profile.getOrcidInternal().getSecurityDetails().getSecurityQuestionId() == null)
                 profile.getOrcidInternal().getSecurityDetails().setSecurityQuestionId(new SecurityQuestionId());
             profile.getOrcidInternal().getSecurityDetails().getSecurityQuestionId().setValue(securityQuestion.getSecurityQuestionId());
@@ -607,7 +595,6 @@ public class ManageProfileController extends BaseWorkspaceController {
                 profile.getOrcidInternal().getSecurityDetails().setEncryptedSecurityAnswer(new EncryptedSecurityAnswer());
             profile.setSecurityQuestionAnswer(securityQuestion.getSecurityAnswer());
             orcidProfileManager.updatePasswordSecurityQuestionsInformation(profile);
-            getCurrentUser().setEffectiveProfile(profile);
             errors.add(getMessage("manage.securityQuestionUpdated"));
         }
 
@@ -618,7 +605,7 @@ public class ManageProfileController extends BaseWorkspaceController {
     @RequestMapping(value = "/preferences.json", method = RequestMethod.GET)
     public @ResponseBody
     Preferences getDefaultPreference(HttpServletRequest request) {
-        OrcidProfile profile = getCurrentUserAndRefreshIfNecessary().getEffectiveProfile();
+        OrcidProfile profile = getEffectiveProfile();
         profile.getOrcidInternal().getPreferences();
         return profile.getOrcidInternal().getPreferences() != null ? profile.getOrcidInternal().getPreferences() : new Preferences();
     }
@@ -637,7 +624,7 @@ public class ManageProfileController extends BaseWorkspaceController {
 
         Integer securityQuestionId = null;
 
-        SecurityDetails securityDetails = getCurrentUser().getEffectiveProfile().getOrcidInternal().getSecurityDetails();
+        SecurityDetails securityDetails = getEffectiveProfile().getOrcidInternal().getSecurityDetails();
         if (securityDetails != null) {
             securityQuestionId = securityDetails.getSecurityQuestionId() != null ? new Integer((int) securityDetails.getSecurityQuestionId().getValue()) : null;
 
@@ -671,7 +658,7 @@ public class ManageProfileController extends BaseWorkspaceController {
 
         }
 
-        OrcidProfile profile = getCurrentUser().getEffectiveProfile();
+        OrcidProfile profile = getEffectiveProfile();
         profile.setPassword(passwordOptionsForm.getPassword());
         orcidProfileManager.updatePasswordInformation(profile);
         // return the view as if an HTTP get now that the info has persisted ok
@@ -702,7 +689,7 @@ public class ManageProfileController extends BaseWorkspaceController {
         }
 
         if (errors.size() == 0) {
-            OrcidProfile profile = getCurrentUser().getEffectiveProfile();
+            OrcidProfile profile = getEffectiveProfile();
             profile.setPassword(cp.getPassword());
             orcidProfileManager.updatePasswordInformation(profile);
             cp = new ChangePassword();
@@ -720,7 +707,7 @@ public class ManageProfileController extends BaseWorkspaceController {
 
     @RequestMapping(value = "/confirm-deactivate-orcid", method = RequestMethod.GET)
     public ModelAndView confirmDeactivateOrcidAccount(HttpServletRequest request) {
-        getCurrentUser().setRealProfile(orcidProfileManager.deactivateOrcidProfile(getCurrentUser().getEffectiveProfile()));
+        orcidProfileManager.deactivateOrcidProfile(getEffectiveProfile());
         ModelAndView deactivateOrcidView = new ModelAndView("redirect:/signout#deactivated");
         return deactivateOrcidView;
     }
@@ -728,7 +715,7 @@ public class ManageProfileController extends BaseWorkspaceController {
     @RequestMapping(value = "/manage-bio-settings", method = RequestMethod.GET)
     public ModelAndView viewEditBio(HttpServletRequest request) {
         ModelAndView manageBioView = new ModelAndView("manage_bio_settings");
-        OrcidProfile profile = getCurrentUserAndRefreshIfNecessary().getEffectiveProfile();
+        OrcidProfile profile = getEffectiveProfile();
         ChangePersonalInfoForm changePersonalInfoForm = new ChangePersonalInfoForm(profile);
         manageBioView.addObject("changePersonalInfoForm", changePersonalInfoForm);
         return manageBioView;
@@ -737,7 +724,7 @@ public class ManageProfileController extends BaseWorkspaceController {
     @RequestMapping(value = "/verifyEmail.json", method = RequestMethod.GET)
     public @ResponseBody
     Errors verifyEmailJson(HttpServletRequest request, @RequestParam("email") String email) {
-        OrcidProfile currentProfile = getCurrentUser().getEffectiveProfile();
+        OrcidProfile currentProfile = getEffectiveProfile();
         String primaryEmail = currentProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue();
         if (primaryEmail.equals(email))
             request.getSession().setAttribute(ManageProfileController.CHECK_EMAIL_VALIDATED, false);
@@ -758,7 +745,7 @@ public class ManageProfileController extends BaseWorkspaceController {
     public @ResponseBody
     Email startDeactivateOrcidAccountJson(HttpServletRequest request) {
         URI uri = OrcidWebUtils.getServerUriWithContextPath(request);
-        OrcidProfile currentProfile = getCurrentUser().getEffectiveProfile();
+        OrcidProfile currentProfile = getEffectiveProfile();
         Email email = currentProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail();
         notificationManager.sendOrcidDeactivateEmail(currentProfile, uri);
         return email;
@@ -768,7 +755,7 @@ public class ManageProfileController extends BaseWorkspaceController {
     @RequestMapping(value = "/emails.json", method = RequestMethod.GET)
     public @ResponseBody
     org.orcid.pojo.ajaxForm.Emails getEmailsJson(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {
-        OrcidProfile currentProfile = getCurrentUser().getEffectiveProfile();
+        OrcidProfile currentProfile = getEffectiveProfile();
         Emails emails = new org.orcid.pojo.ajaxForm.Emails();
         emails.setEmails((List<org.orcid.pojo.Email>) (Object) currentProfile.getOrcidBio().getContactDetails().getEmail());
         return emails;
@@ -788,7 +775,7 @@ public class ManageProfileController extends BaseWorkspaceController {
         if (email.getValue() == null || email.getValue().trim().equals("")) {
             emailErrors.add(getMessage("Email.personalInfoForm.email"));
         }
-        OrcidProfile currentProfile = getCurrentUser().getEffectiveProfile();
+        OrcidProfile currentProfile = getEffectiveProfile();
         List<Email> emails = currentProfile.getOrcidBio().getContactDetails().getEmail();
 
         MapBindingResult mbr = new MapBindingResult(new HashMap<String, String>(), "Email");
@@ -841,7 +828,7 @@ public class ManageProfileController extends BaseWorkspaceController {
         if (email.getValue() == null || email.getValue().trim().equals("")) {
             emailErrors.add(getMessage("Email.personalInfoForm.email"));
         }
-        OrcidProfile currentProfile = getCurrentUser().getEffectiveProfile();
+        OrcidProfile currentProfile = getEffectiveProfile();
         List<Email> emails = currentProfile.getOrcidBio().getContactDetails().getEmail();
 
         if (email.isPrimary()) {
@@ -890,7 +877,7 @@ public class ManageProfileController extends BaseWorkspaceController {
             allErrors.add("A Primary Email Must be selected");
         }
 
-        OrcidProfile currentProfile = getCurrentUser().getEffectiveProfile();
+        OrcidProfile currentProfile = getEffectiveProfile();
         if (currentProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail() != null)
             oldPrime = new org.orcid.pojo.Email(currentProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail());
 
@@ -942,7 +929,7 @@ public class ManageProfileController extends BaseWorkspaceController {
             return erroredView;
         }
 
-        OrcidProfile profile = getCurrentUser().getEffectiveProfile();
+        OrcidProfile profile = getEffectiveProfile();
         // Update profile with values that comes from user request
         changePersonalInfoForm.mergeOrcidBioDetails(profile);
 
@@ -973,9 +960,6 @@ public class ManageProfileController extends BaseWorkspaceController {
             ResearcherUrls upToDateResearcherUrls = getUpToDateResearcherUrls(orcid, researcherUrls.getVisibility());
             profile.getOrcidBio().setResearcherUrls(upToDateResearcherUrls);
         }
-
-        // Update cached profile
-        getCurrentUser().setEffectiveProfile(profile);
 
         redirectAttributes.addFlashAttribute("changesSaved", true);
         return manageBioView;

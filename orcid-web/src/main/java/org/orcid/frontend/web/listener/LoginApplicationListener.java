@@ -17,7 +17,6 @@
 package org.orcid.frontend.web.listener;
 
 import org.orcid.core.oauth.OrcidProfileUserDetails;
-import org.orcid.jaxb.model.message.OrcidProfile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEvent;
@@ -55,9 +54,8 @@ public class LoginApplicationListener implements ApplicationListener<Application
                 Object principal = token.getPrincipal();
                 if (principal instanceof OrcidProfileUserDetails) {
                     OrcidProfileUserDetails userDetails = (OrcidProfileUserDetails) principal;
-                    OrcidProfile profile = userDetails.getRealProfile();
-                    String orcid = profile.getOrcid().getValue();
-                    String email = profile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue();
+                    String orcid = userDetails.getRealOrcid();
+                    String email = userDetails.getPrimaryEmail();
                     String sessionId = RequestContextHolder.currentRequestAttributes().getSessionId();
                     LOGGER.info("User logged in with orcid={}, email={}, sessionid={}", new Object[] { orcid, email, sessionId });
                 }
@@ -65,5 +63,4 @@ public class LoginApplicationListener implements ApplicationListener<Application
             LOGIN_COUNTER.inc();
         }
     }
-
 }

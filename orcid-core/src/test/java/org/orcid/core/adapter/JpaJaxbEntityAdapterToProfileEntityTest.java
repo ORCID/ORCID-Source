@@ -14,7 +14,7 @@
  *
  * =============================================================================
  */
-package org.orcid.persistence.adapter;
+package org.orcid.core.adapter;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
@@ -34,11 +34,11 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.orcid.core.JaxbOrcidMessageUtil;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidWork;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.message.WorkType;
-import org.orcid.persistence.JaxbOrcidMessageUtil;
 import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.GivenPermissionByEntity;
@@ -61,7 +61,7 @@ import org.springframework.transaction.annotation.Transactional;
  * @author Declan Newman (declan)
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:orcid-persistence-context.xml" })
+@ContextConfiguration(locations = { "classpath:orcid-core-context.xml" })
 public class JpaJaxbEntityAdapterToProfileEntityTest extends DBUnitTest {
 
     public static final String ORCID_PROTECTED_FULL_XML = "/orcid-protected-full-message-latest.xml";
