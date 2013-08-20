@@ -274,16 +274,6 @@ $(function () {
 		e.preventDefault();
 		$(this).toggleClass('open');
 	});
-
-//	$('#self-reg-form').submit(function() {
-//		if (basePath.startsWith(baseUrl + 'oauth')) 
-//		    orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'New-Registration-Submit', 'OAuth']);
-//	    else if (basePath.startsWith(baseUrl + 'claim/'))
-//	    	orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'New-Registration-Submit', 'Claim']);
-//	    else
-//	    	orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'New-Registration-Submit', 'Website']);	
-//		return true;
-//	});
 	
 	$('form#loginForm').submit(function() {
 		if($('form#loginForm').attr('disabled')){
@@ -342,79 +332,7 @@ $(function () {
 		return false;
 	});
 	
-	
-	// Privacy toggle
-	
-	var btnClassR = /(btn-\w+)/;
-	
-	var getBtnClass = function (el) {
-		var r = btnClassR.exec(el.className);
-		return (r ? r[0]: "");
-	};
-	
-	function privacyBind() {
-	
-		$('.privacy-group').each(function (i, el) {
-			var $el = $(el),
-				current = "",
-				toggle = $el.find('.privacy-toggle');
-			$el.on('click', '.privacy-toggle', function (e) {
-				e.preventDefault();
-				if ($el.hasClass('open')) {
-					return $el.removeClass('open');
-				}
-				$('.privacy-group.open').removeClass('open');
-				current = getBtnClass(this);
-				$el.toggleClass('open');
-			});
-			$el.on('click', '.btn-privacy', function (e) {
-				e.preventDefault();
-				var f = toggle.closest('form');
-				var s;
-				var priAct = $(this).attr('href').replace("#","");
-				if (f.length && (f.attr('action') == 'save-current-works')) {
-					s = $('select', toggle.closest('label'));
-					s.val(priAct);
-                    showChangeMessage();
-                    $el.removeClass('open');
-                    toggle.removeClass(current).addClass(getBtnClass(this));
-                    toggle.html($(this).html());
-				} else {
-					var s = toggle.closest('.privacy-tool').prev('.visibility-lbl').find('select');
-					if (s.length) {
-						s.val(priAct);
-					}
-					toggle.removeClass(current).addClass(getBtnClass(this));
-					toggle.html($(this).html());
-					$el.removeClass('open');
-				}
-			});
-		});
-		
-	}
-	
-	privacyBind();
-
-    function showChangeMessage() {
-        $('#changed-alert').fadeIn('fast');
-    }
-
-    $('.delete-work').live('click', function(e) {
-        e.preventDefault();
-        $(this).parent().children(".deleted-alert").fadeIn(300);
-    });
-
-    $('.deleted-alert .confirm-link').live('click', function(e) {
-        e.preventDefault();
-        showChangeMessage();
-        $(this).closest('li').fadeOut(300, function() { $(this).closest('li').remove(); });
-    });
-    
-    $('.deleted-alert .deny-link').live('click', function(e) {
-        e.preventDefault();
-        $(this).parents('.deleted-alert').fadeOut(300);
-    });
-    
+	    
     $('.delete-url').live('click', function (e) {
         e.preventDefault();
         $(this).closest('p').fadeOut(300, function() { $(this).closest('p').remove(); });
@@ -522,10 +440,6 @@ $(function () {
 		window.parent.location.reload();
 	}
 	
-	$('#works-list-save').on('click', function (e){
-        $('#save-works-form').submit();
-	});
-
     $('.close-button').on('click', function(e) {
         parent.location.reload();
     });
@@ -535,15 +449,6 @@ $(function () {
 		href: baseUrl + "account/search-for-delegates #add-an-individual"
 	});
 	
-	
-	
-	// Fake accordion:
-	
-//	$('.workspace-accordion-header').on('click', function (e) {
-//		var $this = $(this);
-//		$this.next().slideToggle(150);
-//		$this.closest('.workspace-accordion-item').toggleClass('workspace-accordion-active');
-//	});
 	
 	$('.workspace-header').on('click', '.overview-title,.overview-count', function (e) {
 		e.preventDefault();
@@ -564,123 +469,8 @@ $(function () {
 			window.location = baseUrl + "orcid-search/quick-search/?searchQuery=" + $('[type="search"]', this).val();
 		}
 	});
+			
 	
-	
-	
-	// Edit works
-	
-	// Tabs
-	
-	var tabs = $('#works-tabs li');
-	var tabContent = $('.tab-content');
-	
-	$('#works-tabs').on('click', 'a', function (e) {
-		var $this = $(this);
-		tabs.removeClass('selected');
-		$this.parent().addClass('selected');
-		tabContent.removeClass('open');
-		$( $this.attr('href') ).addClass('open');
-		e.preventDefault();
-	});
-	
-	// Search and Works
-	
-	var searchUrl = "search-and-add-works";
-	var searchForm = $('[action="' + searchUrl + '"]');
-	var workList = $('#current-work-list');
-	var workDiv = workList.closest('.selector-scroller');
-	
-
-	function addToCurrentWorks(li) {
-		var workCount = $('#left-selector-panel').attr('data-work-count');
-		var newLi = li.clone();
-		var privacyTemplate = $('#privacy-template');
-		var newPrivacy = privacyTemplate.clone();
-		newPrivacy.removeAttr('id');
-		newLi.append(newPrivacy);
-		newLi.find('.work-delete-lbl').show();
-		newLi.find(':input:not(:button)').each(function(index, value) {
-		if ($(value).attr('name')) {
-			var newVal = $(value).attr('name').replace(/\[(\d+)\]/, '[' + workCount + ']');
-			$(value).attr('name', newVal);
-		}
-		if ($(value).attr('id')) {
-			var newVal = $(value).attr('id').replace(/\[(\d+)\]/, '[' + workCount + ']');
-			$(value).attr('id', newVal);
-		}
-		});
-		
-		var priv = newLi.find('.privacy-group');
-
-		priv.on('click', '.privacy-toggle', function (e) {
-			e.preventDefault();
-			if (priv.hasClass('open')) {
-				return priv.removeClass('open');
-			}
-			$('.privacy-group.open').removeClass('open');
-			current = getBtnClass(this);
-			priv.toggleClass('open');
-		});
-
-		priv.on('click', '.btn-privacy', function (e) {
-			e.preventDefault();
-			var toggle = priv.find('.privacy-toggle');
-			var f = toggle.closest('form');
-			var s;
-			if (f.length && (f.attr('action') == 'save-current-works')) {
-				s = $('select', toggle.closest('label'));
-				s.val($(this).attr('href').replace("#",""));
-				showChangeMessage();
-				priv.removeClass('open');
-				toggle.removeClass(current).addClass(getBtnClass(this));
-				toggle.html($(this).html());
-			} else {
-				var s = toggle.closest('.privacy-tool').prev('.visibility-lbl').find('select');
-				if (s.length) {
-					s.val($.trim($(this).text().toLowerCase()));
-				}
-				toggle.removeClass(current).addClass(getBtnClass(this));
-				toggle.html($(this).html());
-				priv.removeClass('open');
-			}
-		});
-
-		workList.prepend(newLi);
-		$('#left-selector-panel').attr('data-work-count', Number(workCount) + 1);
-		showChangeMessage();
-	}
-	
-	$('#xref-search-results li').live('click', function (e) {
-		var li = $(this);
-		addToCurrentWorks(li);
-        li.remove();
-	});
-	
-	$('#xref-search-results a').on('click', function (e) {
-		e.stopPropagation();
-	});
-	
-	var save = $('#save-work-manually').on('submit', saveWorkManually);
-	
-	function saveWorkManually(e){
-		e.preventDefault();
-		var $this = $(this);
-		var ajax = $.ajax({
-			url: $this.attr('action'),
-			type: 'post',
-			data: $this.serialize()
-		});
-		ajax.success(function (data) {
-			var result = $(data);
-			if(result.is("li")){
-				addToCurrentWorks(result);
-			}
-			else{
-				$('#save-work-manually').html(result);
-			}
-			$('#save-work-manually')[0].reset();
-		});
-	}
 	
 	// delgates
 	$('#searchForDelegatesForm').live('submit', function(e){
