@@ -104,13 +104,13 @@ public class RegistrationManagerImpl implements RegistrationManager {
     }
 
     @Override
-    public void resetUserPassword(OrcidProfile orcidProfile, URI baseUri) {
+    public void resetUserPassword(String toEmail, OrcidProfile orcidProfile, URI baseUri) {
         LOGGER.debug("Resetting password for Orcid: {}", orcidProfile.getOrcid().getValue());
         if (!orcidProfile.getOrcidHistory().isClaimed()) {
             LOGGER.debug("Profile is not claimed so re-sending claim email instead of password reset: {}", orcidProfile.getOrcid().getValue());
-            notificationManager.sendApiRecordCreationEmail(orcidProfile);
+            notificationManager.sendApiRecordCreationEmail(toEmail,orcidProfile);
         } else {
-            notificationManager.sendPasswordResetEmail(orcidProfile, baseUri);
+            notificationManager.sendPasswordResetEmail(toEmail, orcidProfile, baseUri);
         }
     }
 
