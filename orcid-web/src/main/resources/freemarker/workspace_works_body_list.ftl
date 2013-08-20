@@ -31,7 +31,7 @@
 	
 	 
 	<ul ng-hide="!works.length" class="workspace-publications workspace-body-list bottom-margin-medium" ng-cloak>        
-            <li class="bottom-margin-small" ng-repeat='work in works'>            	
+            <li class="bottom-margin-small" ng-repeat="work in works | orderBy:['-publicationDate.year', '-publicationDate.month', '-publicationDate.day']">            	
                 <div class="pull-right" style="right: 145px; top: 20px; width: 15px;"><a href ng-click="deleteWork($index)" class="icon-trash orcid-icon-trash grey"></a></div>
 				<div style="width: 530px;">
                 <h3 class="work-title">
