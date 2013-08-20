@@ -36,7 +36,6 @@ public class PasswordTypeAndConfirmForm {
         this.password = password;
     }
 
-    @Pattern(regexp = OrcidPasswordConstants.ORCID_PASSWORD_REGEX, message = OrcidPasswordConstants.PASSWORD_REGEX_MESSAGE)
     public String getRetypedPassword() {
         return retypedPassword;
     }
