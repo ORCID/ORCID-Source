@@ -153,9 +153,9 @@
 			   					<span ng-repeat='error in errors' ng-bind-html-unsafe="error"></span><br />
 			   				</span>	
 							<label for="changeSecurityQuestionForm.securityQuestionAnswer" class="">${springMacroRequestContext.getMessage("manage.security_question")}</label>
-							<select id="securityQuestionId" name="securityQuestionId" class="input-xlarge" ng-model="securityQuestionPojo.securityQuestionId">
+							<select id="securityQuestionId" name="securityQuestionId" class="input-xlarge" ng-model="securityQuestionPojo.securityQuestionId">								
 								<#list securityQuestions?keys as key>
-								   <option value="${key}" ng-selected="securityQuestionPojo.securityQuestionId == ${key}"><@orcid.msg '${securityQuestions[key]}' /></option>
+								   <option value="${key}" ng-selected="securityQuestionPojo.securityQuestionId == ${key}">${securityQuestions[key]}</option>
 								</#list>
 	    					</select> 
 	    					<label for="changeSecurityQuestionForm.securityQuestionAnswer" class="">${springMacroRequestContext.getMessage("manage.securityAnswer")}</label>
@@ -187,9 +187,9 @@
 				                <p>
 				                	<strong>${springMacroRequestContext.getMessage("change_email_preferences.privacy")}</strong> 
 				                	${springMacroRequestContext.getMessage("change_email_preferences.yourregistrationinfo")}
-				                	<a href="${aboutUri}/footer/privacy-policy?lang=${locale}" target="_blank">${springMacroRequestContext.getMessage("change_email_preferences.privacyPolicy")}</a>
+				                	<a href="${aboutUri}/footer/privacy-policy" target="_blank">${springMacroRequestContext.getMessage("change_email_preferences.privacyPolicy")}</a>
 				                	${springMacroRequestContext.getMessage("change_email_preferences.and")}
-				                	<a href="${aboutUri}/content/orcid-terms-use?lang=${locale}" target="_blank">${springMacroRequestContext.getMessage("change_email_preferences.termsAnd")}</a>.
+				                	<a href="${aboutUri}/content/orcid-terms-use" target="_blank">${springMacroRequestContext.getMessage("change_email_preferences.termsAnd")}</a>.
 				                </p>
 						</div>
 						</td>

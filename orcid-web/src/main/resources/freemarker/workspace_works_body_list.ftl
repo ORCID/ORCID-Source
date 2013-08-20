@@ -18,7 +18,7 @@
 -->
 
 	<script type="text/ng-template" id="delete-work-modal">
-		<div style="padding: 20px;" class="colorbox-modal">
+		<div style="padding: 20px;">
 			<h3 style="margin-bottom: 0px;">${springMacroRequestContext.getMessage("manage.deleteWork.pleaseConfirm")}</h3>
 			{{fixedTitle}}<br />
 			<br />
@@ -31,7 +31,7 @@
 	
 	 
 	<ul ng-hide="!works.length" class="workspace-publications workspace-body-list bottom-margin-medium" ng-cloak>        
-            <li class="bottom-margin-small" ng-repeat='work in works'>            	
+            <li class="bottom-margin-small" ng-repeat="work in works | orderBy:['-publicationDate.year', '-publicationDate.month', '-publicationDate.day']">            	
                 <div class="pull-right" style="right: 145px; top: 20px; width: 15px;"><a href ng-click="deleteWork($index)" class="icon-trash orcid-icon-trash grey"></a></div>
 				<div style="width: 530px;">
                 <h3 class="work-title">
@@ -45,9 +45,7 @@
 				</div>
 				<div  style="width: 680px;" class="work-metadata">
 	                <span ng-repeat='ie in work.workExternalIdentifiers'>
-	                	<span ng-show="ie.workExternalIdentifierType.value=='doi' && ie.workExternalIdentifierId.value">
-	                		<span>${springMacroRequestContext.getMessage("workspace_works_body_list.DOI")} <a href="http://dx.doi.org/{{ie.workExternalIdentifierId.value.replace('http://dx.doi.org/','')}}" target="_blank">{{ie.workExternalIdentifierId.value}}</a></span>	          
-	                	</span>                	             
+	                	<span ng-bind-html-unsafe='ie | workExternalIdentifierHtml:$first:$last:work.workExternalIdentifiers.length'></span>
 	                </span>
 	                <span ng-show="work.url.value" style=" display: inline-block;">URL: <a href="{{work.url.value | urlWithHttp}}" target="_blank">{{work.url.value}}</a></span>
 	            </div>

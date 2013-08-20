@@ -96,8 +96,9 @@
                     <label for="biography">${springMacroRequestContext.getMessage("manage_bio_settings.labelcountry")}</label>
                     <div class="relative">
                     	<select id="isoCountryCode" name="isoCountryCode">
+                    		<option value=""><@orcid.msg 'org.orcid.persistence.jpa.entities.CountryIsoEntity.empty' /></option>
 	                    	<#list isoCountries?keys as key>
-								<option value="${key}"><@orcid.msg '${isoCountries[key]}' /></option>
+								<option value="${key}">${isoCountries[key]}</option>
 							</#list>
 						</select>                        
                         <label class="visibility-lbl">

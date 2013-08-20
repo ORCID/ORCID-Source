@@ -27,7 +27,9 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.ResourceBundle;
 
 import javax.annotation.Resource;
 import javax.mail.internet.AddressException;
@@ -46,6 +48,7 @@ import org.orcid.jaxb.model.message.Email;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.utils.OrcidWebUtils;
+import org.orcid.utils.UTF8Control;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -370,6 +373,7 @@ public class BaseController {
         return statisticsManager.getLiveIds(localeManager.getLocale());
     }
 
+    @ModelAttribute("baseUri")
     public String getBaseUri() {
         return baseUri;
     }
@@ -434,6 +438,7 @@ public class BaseController {
         return staticCdnPath;
     }
 
+    @ModelAttribute("baseUriHttp")
     public String getBaseUriHttp() {
         return baseUri.replace("https", "http");
     }
@@ -448,6 +453,5 @@ public class BaseController {
      * */
     protected String buildInternationalizationKey(Class theClass, String key){
         return theClass.getName() + '.' + key;
-    } 
-
+    }         
 }

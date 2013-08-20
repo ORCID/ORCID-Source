@@ -100,6 +100,26 @@ orcidNgModule.filter('urlWithHttp', function(){
 });
 
 
+orcidNgModule.filter('workExternalIdentifierHtml', function(){
+	return function(workExternalIdentifier, first, last, length){
+		var output = '';
+		
+		if (workExternalIdentifier == null) return output;
+		var id = workExternalIdentifier.workExternalIdentifierId.value;
+		var type;
+		if (workExternalIdentifier.workExternalIdentifierType != null)
+			type = workExternalIdentifier.workExternalIdentifierType.value;
+		if (type != null) output = output + type.toUpperCase() + ": ";
+		if (type == 'doi' && !id.startsWith("http")) id = 'http://dx.doi.org/' + id;
+		if (id.startsWith("http")) output = output + '<a href="' + id + '" target="_blank">' + id + '</a>';
+		else output = output + id;
+		
+		if (length > 1 && !last) output = output + ',';
+	    return output;
+	};
+});
+
+
 function EditTableCtrl($scope) {
 	
 	// email edit row
@@ -527,7 +547,7 @@ function ExternalIdentifierCtrl($scope, $compile){
 		$scope.externalIdentifiersPojo.externalIdentifiers.splice($scope.removeExternalIdentifierIndex, 1);
 		$scope.removeExternalIdentifierIndex = null;
 		$.ajax({
-	        url: $('body').data('baseurl') + 'works/externalIdentifiers.json',
+	        url: $('body').data('baseurl') + 'my-orcid/externalIdentifiers.json',
 	        type: 'DELETE',
 	        data: angular.toJson(externalIdentifier),
 	        contentType: 'application/json;charset=UTF-8',
@@ -1314,11 +1334,11 @@ function languageCtrl($scope, $cookies){
 	        },	        
 	        {
 		        "value": 'zh_CN',
-			    "label": '簡體中文'
+			    "label": '简体中文'
 	        },
 	        {
 		        "value": 'zh_TW',
-			    "label": '简体中文'
+			    "label": '繁體中文'
 	        },	        
 	    ];	
 	
@@ -1336,8 +1356,8 @@ function languageCtrl($scope, $cookies){
 			
 	$scope.selectedLanguage = function(){		
 		$.ajax({
-	        url: $('body').data('baseurl')+'lang.json?lang='+$scope.language.value,	        
-	        type: 'POST',
+	        url: orcidVar.baseUri+'/lang.json?lang=' + $scope.language.value + "&callback=?",	        
+	        type: 'GET',
 	        dataType: 'json',
 	        success: function(data){
 	        	angular.forEach($scope.languages, function(value, key){

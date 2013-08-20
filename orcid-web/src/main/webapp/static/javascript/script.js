@@ -128,7 +128,7 @@ OrcidMessage.instance = null;
 OrcidMessage.getInstance = function() {
 	console.log("OrcidMessage singleton"); 
 	if (this.instance == null) {
-		messageUrl = $('body').data('baseurl') + "lang.json";	
+		messageUrl = orcidVar.baseUri + "/lang.json";	
 		return this.instance = new OrcidMessage(messageUrl);
 	}
 	return this.instance;
@@ -143,7 +143,7 @@ OrcidMessage.getInstance = function() {
  */
 function checkOrcidLoggedIn() {
 	$.ajax({
-        url: baseUrl + 'userStatus.json',
+		url: orcidVar.baseUri + '/userStatus.json?callback=?',
         type: 'GET',
         dataType: 'json',
         success: function(data) {

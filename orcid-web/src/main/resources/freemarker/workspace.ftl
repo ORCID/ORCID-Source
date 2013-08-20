@@ -279,8 +279,9 @@
 		    		<label class="relative"><@orcid.msg 'manual_work_form_contents.labelworktype'/></label>
 		    		<div class="relative">
 			    		<select id="workType" name="workType" class="input-xlarge" ng-model="editWork.workType.value" ng-change="serverValidate('works/work/workTypeValidate.json')">
+			    			<option value=""><@orcid.msg 'org.orcid.jaxb.model.message.WorkType.empty' /></option>
 							<#list workTypes?keys as key>
-								<option value="${key}"><@orcid.msg '${workTypes[key]}' /></option>
+								<option value="${key}">${workTypes[key]}</option>
 							</#list>
 						</select> 
 						<span class="required" ng-class="isValidClass(editWork.workType)">*</span>
@@ -310,8 +311,9 @@
 		    		<label class="relative"><@orcid.msg 'manual_work_form_contents.labelcitationtype'/></label>
 		    		<div class="relative">
 			    		<select id="citationType" name="citationType" class="input-xlarge" ng-model="editWork.citation.citationType.value" ng-change="serverValidate('works/work/citationValidate.json')">
+							<option value=""><@orcid.msg 'org.orcid.jaxb.model.message.CitationType.empty' /></option>
 							<#list citationTypes?keys as key>
-								<option value="${key}"><@orcid.msg '${citationTypes[key]}' /></option>
+								<option value="${key}">${citationTypes[key]}</option>
 							</#list>
 						</select> 
 						<span class="orcid-error" ng-show="editWork.citation.citationType.errors.length > 0">
@@ -367,9 +369,10 @@
 					</div>
 					<label class="relative">ID type</label>
 					<div class="relative">
-			    		<select id="workType" name="workType" class="input-xlarge" ng-model="workExternalIdentifier.workExternalIdentifierType.value" ng-change="serverValidate('works/work/workExternalIdentifiersValidate.json')">
+			    		<select id="idType" name="idType" class="input-xlarge" ng-model="workExternalIdentifier.workExternalIdentifierType.value" ng-change="serverValidate('works/work/workExternalIdentifiersValidate.json')">
+							<option value=""><@orcid.msg 'org.orcid.jaxb.model.message.WorkExternalIdentifierType.empty' /></option>
 							<#list idTypes?keys as key>
-								<option value="${key}"><@orcid.msg '${idTypes[key]}' /></option>
+								<option value="${key}">${idTypes[key]}</option>
 							</#list>
 						</select> 
 						<span class="orcid-error" ng-show="workExternalIdentifier.workExternalIdentifierType.errors.length > 0">
@@ -392,8 +395,9 @@
 				    <label class="relative"><@orcid.msg 'manual_work_form_contents.labelRole'/></label>
 				    <div class="relative">    
 						<select id="role" name="role" ng-model="contributor.contributorRole.value">
+							<option value=""><@orcid.msg 'org.orcid.jaxb.model.message.ContributorRole.empty' /></option>
 							<#list roles?keys as key>
-							    <option value="${key}"><@orcid.msg '${roles[key]}' /></option>
+							    <option value="${key}">${roles[key]}</option>
 							</#list>
 			    		</select>
 						<span class="orcid-error" ng-show="contributor.contributorRole.errors.length > 0">
@@ -405,9 +409,10 @@
 				<div class="control-group" ng-repeat="contributor in editWork.contributors">
 				    <label class="relative"><@orcid.msg 'manual_work_form_contents.labelcredited'/></label>
 				    <div class="relative">    
-						<select id="role" name="role" ng-model="contributor.contributorSequence.value">
+						<select id="sequence" name="sequence" ng-model="contributor.contributorSequence.value">
+							<option value=""><@orcid.msg 'org.orcid.jaxb.model.message.SequenceType.empty'/></option>
 							<#list sequences?keys as key>
-								<option value="${key}"><@orcid.msg '${sequences[key]}'/></option>
+								<option value="${key}">${sequences[key]}</option>
 							</#list>
 			    		</select>
 						<span class="orcid-error" ng-show="contributor.contributorSequence.errors.length > 0">

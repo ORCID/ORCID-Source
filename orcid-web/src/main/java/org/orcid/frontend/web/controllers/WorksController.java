@@ -36,6 +36,7 @@ import org.orcid.core.manager.ExternalIdentifierManager;
 import org.orcid.core.manager.ProfileWorkManager;
 import org.orcid.core.manager.ThirdPartyImportManager;
 import org.orcid.core.manager.WorkContributorManager;
+import org.orcid.core.manager.WorkExternalIdentifierManager;
 import org.orcid.core.manager.WorkManager;
 import org.orcid.frontend.web.forms.CurrentWork;
 import org.orcid.frontend.web.util.NumberList;
@@ -118,6 +119,10 @@ public class WorksController extends BaseWorkspaceController {
     @Resource
     private WorkContributorManager workContributorManager;
 
+    @Resource
+    private WorkExternalIdentifierManager workExternalIdentifierManager;
+
+    
     /**
      * Removes a work from a profile
      * */
@@ -298,6 +303,24 @@ public class WorksController extends BaseWorkspaceController {
                     workContributorManager.addWorkContributor(workContributorEntity);
                 }
             }
+            
+            if (work.getWorkExternalIdentifiers() != null) {
+                for (WorkExternalIdentifier wei: work.getWorkExternalIdentifiers()) {
+                    if (!PojoUtil.isEmpty(wei.getWorkExternalIdentifierId())) {
+                        org.orcid.persistence.jpa.entities.WorkExternalIdentifierEntity newWeiJpa = new org.orcid.persistence.jpa.entities.WorkExternalIdentifierEntity();
+                        newWeiJpa.setIdentifier(wei.getWorkExternalIdentifierId().getValue());
+                        newWeiJpa.setDateCreated(new java.util.Date());
+                        newWeiJpa.setIdentifierType(wei.toWorkExternalIdentifier().getWorkExternalIdentifierType());
+                        newWeiJpa.setLastModified(new java.util.Date());
+                        newWeiJpa.setWork(workEntity);                    
+                        
+                        workExternalIdentifierManager.addWorkExternalIdentifier(newWeiJpa);
+                    }
+                }
+             
+            }
+            
+            
 
             // Create profile work relationship
             profileWorkManager.addProfileWork(currentProfile.getOrcid().getValue(), workEntity.getId(), newOw.getVisibility());

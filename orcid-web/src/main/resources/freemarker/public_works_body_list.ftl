@@ -25,20 +25,25 @@
              	<span class="pull-right"><@orcid.privacyLabel work.visibility /></span>             
                 <h3 class="work-title"><b>${(work.title)!}</b><#if (work.subtitle)??>: <span class="work-subtitle">${(work.subtitle)!""}</span></#if><#if (work.year)??> <#if (work.month)??><@orcid.month work.month />-</#if>${work.year}</#if></h3>
                 <#if (work.currentWorkExternalIds)??>
+                	<#assign eiSize = work.currentWorkExternalIds?size />
                     <#list work.currentWorkExternalIds as ei>
-                    <#-- @ftlvariable name="ei" type="org.orcid.frontend.web.forms.CurrentWorkExternalId" -->
-                        <#if (ei.type = 'doi') && (ei.id)??>
-                             <span class="work-metadata">${springMacroRequestContext.getMessage("workspace_works_body_list.DOI")} 
-                            	<#if ei.id?starts_with('http://dx.doi.org/')>
-                            		<a href="http://dx.doi.org/${ei.id?replace('http://dx.doi.org/','')}" target="_blank">
-                            	<#else>
-                            		<a href="http://dx.doi.org/${ei.id}" target="_blank">
-                            	</#if>
-                            		${ei.id}
-                            	</a>
-                            </span>
-                            <img onclick="javascript:window.open(&quot;http://dx.doi.org/${ei.id}&quot;)" style="cursor:pointer;" src="${staticCdn}/img/view_full_text.gif"><input type="hidden" value="null" name="artifacts[0].destApp"><input type="hidden" value="JOUR" name="artifacts[0].type"><input type="hidden" value="W" name="artifacts[0].uploadedBy">
+                        <#assign id = ei.id />
+                        <#if (ei.type = 'doi') && !id?starts_with('http')>
+                            <#assign id = 'http://dx.doi.org/' + ei.id />
                         </#if>
+                        <span class="work-metadata">
+                        ${ei.type?upper_case}: 
+                        <#assign output = '' />
+                        <#if id?starts_with('http')>
+                           <#assign output = '<a href="' + id +' target="_blank">' + id + '</a>' />
+                        <#else>
+                           <#assign output = id />
+                        </#if>
+                        <#if eiSize &gt; 1 && ei_index + 1 != eiSize>
+                           <#assign output = output + ',' />
+                        </#if>
+                        ${output}
+                        </span>
                     </#list>
                 </#if>
                 <#if (work.url)??>
@@ -50,9 +55,8 @@
                 </#if>
                 <#if (work.description)?? && work.description?has_content>
                     <div>${work.description}</div>
-                <#else>
-                    <#if (work.citationForDisplay)??><div class="citation ${work.citationType}">${work.citationForDisplay}</div></#if>
                 </#if>
+                <#if (work.citationForDisplay)??><div class="citation ${work.citationType}">${work.citationForDisplay}</div></#if>
             </li>           
         </#list>
 	</ul>

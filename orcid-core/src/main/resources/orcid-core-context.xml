@@ -218,6 +218,8 @@
 	
 	<bean id="workContributorManager" class="org.orcid.core.manager.impl.WorkContributorManagerImpl" />
 	
+	<bean id="workExternalIdentifierManager" class="org.orcid.core.manager.impl.WorkExternalIdentifierManagerImpl" />
+	
 	<bean id="crossRefEmail" class="org.orcid.core.profileEvent.CrossRefEmail" scope="prototype"/>
 
 	<bean id="messageSource"

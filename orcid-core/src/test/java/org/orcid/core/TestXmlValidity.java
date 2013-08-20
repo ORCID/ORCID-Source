@@ -54,10 +54,6 @@ public class TestXmlValidity extends BaseTest {
     public void before() throws JAXBException {
         JAXBContext context = JAXBContext.newInstance(OrcidMessage.class);
         unmarshaller = context.createUnmarshaller();
-        ValidationManagerImpl validationManagerImpl = new ValidationManagerImpl();
-        validationManagerImpl.setRequireOrcidProfile(false);
-        validationManagerImpl.setValidationBehaviour(ValidationBehaviour.THROW_VALIDATION_EXCEPTION);
-        validationManager = validationManagerImpl;
     }
 
     @Test
@@ -69,7 +65,9 @@ public class TestXmlValidity extends BaseTest {
             InputStream is = null;
             try {
                 is = resource.getInputStream();
-                validationManager.validateMessage((OrcidMessage) unmarshaller.unmarshal(is));
+                OrcidMessage message = (OrcidMessage) unmarshaller.unmarshal(is);                
+                validationManager = getValidationManager(message.getMessageVersion());
+                validationManager.validateMessage(message);
             } catch (IOException e) {
                 Assert.fail("Unable to read resource: " + resource + "\n" + e);
             } catch (JAXBException e) {
@@ -80,6 +78,15 @@ public class TestXmlValidity extends BaseTest {
                 IOUtils.closeQuietly(is);
             }
         }
+    }
+    
+    private ValidationManagerImpl getValidationManager(String version){        
+        ValidationManagerImpl validationManagerImpl = new ValidationManagerImpl();
+        validationManagerImpl.setRequireOrcidProfile(false);
+        validationManagerImpl.setValidationBehaviour(ValidationBehaviour.THROW_VALIDATION_EXCEPTION);
+        if(version != null) 
+            validationManagerImpl.setVersion(version);
+        return validationManagerImpl;
     }
 
 }
