@@ -298,7 +298,7 @@ public class ChangePersonalInfoForm {
         this.keywordsVisibility = keywordsVisibility;
     }
 
-    @Length(max = 1000)
+    @Length(max = 5000)
     public String getBiography() {
         return biography;
     }

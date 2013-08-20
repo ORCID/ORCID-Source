@@ -300,7 +300,7 @@
     </xs:element>
     <xs:simpleType name="bio-text">
         <xs:restriction base="xs:string">
-            <xs:maxLength value="1000"></xs:maxLength>
+            <xs:maxLength value="5000"></xs:maxLength>
         </xs:restriction>
     </xs:simpleType>
     <xs:element name="researcher-urls">
