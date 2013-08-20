@@ -259,6 +259,7 @@ function DeactivateAccountCtrl($scope, $compile) {
 
 function SecurityQuestionEditCtrl($scope, $compile) {
 	$scope.errors=null;
+	$scope.password=null;
 	
 	$scope.getSecurityQuestion = function() {
 		$.ajax({
@@ -276,14 +277,17 @@ function SecurityQuestionEditCtrl($scope, $compile) {
 	
 	$scope.getSecurityQuestion();
 	
-	$scope.checkCredentials = function() {		
-		 $.colorbox({        	
-		        html: $compile($('#check-password-modal').html())($scope)
-		    });
-		    $.colorbox.resize();
+	$scope.checkCredentials = function() {
+		$scope.password=null;
+		$.colorbox({        	
+			html: $compile($('#check-password-modal').html())($scope)
+		});
+		$.colorbox.resize();
 	};
 	
-	$scope.saveSecurityQuestion = function() {		
+	$scope.submitModal = function() {	
+		$scope.securityQuestionPojo.password=$scope.password;		
+		console.log(angular.toJson($scope.securityQuestionPojo));		
 		$.ajax({
 	        url: $('body').data('baseurl') + 'account/security-question.json',
 	        type: 'POST',
@@ -297,13 +301,14 @@ function SecurityQuestionEditCtrl($scope, $compile) {
 	        	} else {
 	        		$scope.errors=null;
 	        	}
-	        	$scope.getSecurityQuestion();
+	        	$scope.getSecurityQuestion();	        	
 	        	$scope.$apply();
 	        }
 	    }).fail(function() { 
 	    	// something bad is happening!
 	    	console.log("error with security question");
 	    });
+		$scope.password=null;
 		$.colorbox.close();
 	};
 	
@@ -370,6 +375,7 @@ function EmailEditCtrl($scope, $compile) {
 	};
 	
 	//init
+	$scope.password = null;
 	$scope.curPrivToggle = null;
 	$scope.getEmails();
 	$scope.initInputEmail();
@@ -453,7 +459,9 @@ function EmailEditCtrl($scope, $compile) {
 	    });
 	};
 
-	$scope.addEmail = function (obj, $event) {
+	$scope.submitModal = function (obj, $event) {
+		$scope.inputEmail.password = $scope.password;
+		
 		$.ajax({
 	        url: $('body').data('baseurl') + 'account/addEmail.json',
 	        type: 'POST',
@@ -473,6 +481,8 @@ function EmailEditCtrl($scope, $compile) {
 	    	// something bad is happening!
 	    	console.log("$EmailEditCtrl.addEmail() error");
 	    });
+		
+		$.colorbox.close();
 	};
 	
 	$scope.confirmDeleteEmail = function(idx) {
@@ -507,6 +517,14 @@ function EmailEditCtrl($scope, $compile) {
 	    	// something bad is happening!
 	    	console.log("$EmailEditCtrl.deleteEmail() error");
 	    });
+	};
+	
+	$scope.checkCredentials = function() {
+		$scope.password=null;
+		$.colorbox({        	
+			html: $compile($('#check-password-modal').html())($scope)
+		});
+		$.colorbox.resize();
 	};
 	
 };
