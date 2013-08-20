@@ -47,7 +47,6 @@ import org.orcid.frontend.web.forms.LoginForm;
 import org.orcid.jaxb.model.message.Email;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.Visibility;
-import org.orcid.persistence.dao.StatisticsDao;
 import org.orcid.utils.OrcidWebUtils;
 import org.orcid.utils.UTF8Control;
 import org.slf4j.Logger;
@@ -104,7 +103,7 @@ public class BaseController {
 
     @Resource
     protected EmailManager emailManager;
-    
+
     @Resource
     private StatisticsManager statisticsManager;
 
@@ -225,19 +224,6 @@ public class BaseController {
         return startupDate;
     }
 
-    protected OrcidProfileUserDetails getCurrentUserAndRefreshIfNecessary() {
-        OrcidProfileUserDetails currentUser = getCurrentUser();
-        OrcidProfile effectiveProfile = currentUser.getEffectiveProfile();
-        String effectiveOrcid = effectiveProfile.getOrcid().getValue();
-        Date actualLastModified = orcidProfileManager.retrieveLastModifiedDate(effectiveOrcid);
-        Date cachedEffectiveProfileLastModified = currentUser.getEffectiveProfileLastModified();
-        if (cachedEffectiveProfileLastModified == null || actualLastModified.after(cachedEffectiveProfileLastModified)) {
-            currentUser.setEffectiveProfile(orcidProfileManager.retrieveOrcidProfile(effectiveOrcid));
-            currentUser.setEffectiveProfileLastModified(actualLastModified);
-        }
-        return currentUser;
-    }
-
     protected OrcidProfileUserDetails getCurrentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication instanceof UsernamePasswordAuthenticationToken && authentication.getPrincipal() instanceof OrcidProfileUserDetails) {
@@ -248,21 +234,11 @@ public class BaseController {
     }
 
     protected String getCurrentUserOrcid() {
-        OrcidProfileUserDetails currentUser = getCurrentUser();
-        if (currentUser != null && currentUser.getEffectiveProfile() != null && currentUser.getEffectiveProfile().getOrcid() != null) {
-            return currentUser.getEffectiveProfile().getOrcid().getValue();
-        } else {
-            return null;
-        }
+        return getEffectiveUserOrcid();
     }
 
     protected void logoutCurrentUser() {
         SecurityContextHolder.getContext().getAuthentication().setAuthenticated(false);
-    }
-
-    protected void refreshCurrentUserProfile() {
-        OrcidProfileUserDetails userDetails = getCurrentUser();
-        userDetails.setEffectiveProfile(orcidProfileManager.retrieveOrcidProfile(getCurrentUserOrcid()));
     }
 
     protected boolean isEmailOkForCurrentUser(String decryptedEmail) {
@@ -270,7 +246,7 @@ public class BaseController {
         if (userDetails == null) {
             return true;
         }
-        OrcidProfile orcidProfile = userDetails.getEffectiveProfile();
+        OrcidProfile orcidProfile = getEffectiveProfile();
         if (orcidProfile == null) {
             return true;
         }
@@ -286,11 +262,12 @@ public class BaseController {
     @ModelAttribute("realUserOrcid")
     public String getRealUserOrcid() {
         OrcidProfileUserDetails currentUser = getCurrentUser();
-        if (currentUser != null && currentUser.getRealProfile() != null && currentUser.getRealProfile().getOrcid() != null) {
-            return currentUser.getRealProfile().getOrcid().getValue();
-        } else {
-            return null;
-        }
+        return currentUser == null ? null : currentUser.getRealOrcid();
+    }
+
+    public String getEffectiveUserOrcid() {
+        OrcidProfileUserDetails currentUser = getCurrentUser();
+        return currentUser == null ? null : currentUser.getEffectiveOrcid();
     }
 
     @ModelAttribute("inDelegationMode")
@@ -365,17 +342,21 @@ public class BaseController {
             return false;
         }
         boolean match = false;
-        for (Email cuEmail : currentUser.getEffectiveProfile().getOrcidBio().getContactDetails().getEmail()) {
+        for (Email cuEmail : getEffectiveProfile().getOrcidBio().getContactDetails().getEmail()) {
             if (cuEmail.getValue() != null && cuEmail.getValue().equalsIgnoreCase(email))
                 match = true;
         }
         return match;
     }
 
-    @ModelAttribute("profile")
-    public OrcidProfile getOrcidProfile() {
-        OrcidProfileUserDetails currentUser = getCurrentUser();
-        return currentUser == null ? null : currentUser.getEffectiveProfile();
+    public OrcidProfile getEffectiveProfile() {
+        String effectiveOrcid = getEffectiveUserOrcid();
+        return effectiveOrcid == null ? null : orcidProfileManager.retrieveOrcidProfile(effectiveOrcid);
+    }
+
+    public OrcidProfile getRealProfile() {
+        String realOrcid = getRealUserOrcid();
+        return realOrcid == null ? null : orcidProfileManager.retrieveOrcidProfile(realOrcid);
     }
 
     public String getMessage(String messageCode, Object... messageParams) {
@@ -436,14 +417,14 @@ public class BaseController {
      * */
     @ModelAttribute("staticCdn")
     @Cacheable("staticContent")
-    public String getStaticCdnPath() {        
+    public String getStaticCdnPath() {
         if (StringUtils.isEmpty(this.cdnConfigFile)) {
             return getStaticContentPath();
         }
 
         ClassPathResource configFile = new ClassPathResource(this.cdnConfigFile);
         if (configFile.exists()) {
-            try (InputStream is = configFile.getInputStream(); BufferedReader br = new BufferedReader(new InputStreamReader(is))) {                
+            try (InputStream is = configFile.getInputStream(); BufferedReader br = new BufferedReader(new InputStreamReader(is))) {
                 String uri = br.readLine();
                 if (uri != null)
                     this.staticCdnPath = uri;

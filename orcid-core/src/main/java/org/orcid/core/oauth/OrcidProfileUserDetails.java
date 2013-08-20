@@ -16,15 +16,12 @@
  */
 package org.orcid.core.oauth;
 
-import org.apache.commons.lang.StringUtils;
-import org.orcid.core.security.OrcidWebRole;
-import org.orcid.jaxb.model.message.OrcidProfile;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Date;
+
+import org.orcid.core.security.OrcidWebRole;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 /**
  * 2011-2012 ORCID
@@ -35,19 +32,24 @@ public class OrcidProfileUserDetails implements UserDetails {
 
     private static final long serialVersionUID = 1L;
 
-    private OrcidProfile realProfile;
+    private String realOrcid;
 
-    private OrcidProfile effectiveProfile;
+    private String primaryEmail;
 
-    private Date effectiveProfileLastModified;
+    private String password;
+
+    private String effectiveOrcid;
 
     private boolean inDelegationMode;
 
     public OrcidProfileUserDetails() {
     }
 
-    public OrcidProfileUserDetails(OrcidProfile profile) {
-        setRealProfile(profile);
+    public OrcidProfileUserDetails(String orcid, String primaryEmail, String password) {
+        this.realOrcid = orcid;
+        this.effectiveOrcid = orcid;
+        this.primaryEmail = primaryEmail;
+        this.password = password;
     }
 
     /**
@@ -69,8 +71,7 @@ public class OrcidProfileUserDetails implements UserDetails {
      */
     @Override
     public String getPassword() {
-        return (realProfile.getOrcidInternal() != null && realProfile.getOrcidInternal().getSecurityDetails() != null && realProfile.getOrcidInternal()
-                .getSecurityDetails().getEncryptedPassword() != null) ? realProfile.getOrcidInternal().getSecurityDetails().getEncryptedPassword().getContent() : "";
+        return password;
     }
 
     /**
@@ -81,7 +82,7 @@ public class OrcidProfileUserDetails implements UserDetails {
      */
     @Override
     public String getUsername() {
-        return (realProfile.getOrcid() != null && StringUtils.isNotBlank(realProfile.getOrcid().getValue())) ? realProfile.getOrcid().getValue() : "";
+        return realOrcid;
     }
 
     /**
@@ -132,39 +133,9 @@ public class OrcidProfileUserDetails implements UserDetails {
         return true;
     }
 
-    public OrcidProfile getRealProfile() {
-        return realProfile;
-    }
-
-    public void setRealProfile(OrcidProfile profile) {
-        this.realProfile = profile;
-        if (!inDelegationMode) {
-            this.effectiveProfile = profile;
-        }
-    }
-
-    public OrcidProfile getEffectiveProfile() {
-        return effectiveProfile;
-    }
-
-    public void setEffectiveProfile(OrcidProfile profile) {
-        this.effectiveProfile = profile;
-        if (!inDelegationMode) {
-            this.realProfile = profile;
-        }
-    }
-
-    public Date getEffectiveProfileLastModified() {
-        return effectiveProfileLastModified;
-    }
-
-    public void setEffectiveProfileLastModified(Date effectiveProfileLastModified) {
-        this.effectiveProfileLastModified = effectiveProfileLastModified;
-    }
-
-    public void switchDelegationMode(OrcidProfile profile) {
-        inDelegationMode = !profile.getOrcid().getValue().equals(realProfile.getOrcid().getValue());
-        setEffectiveProfile(profile);
+    public void switchDelegationMode(String effectiveOrcid) {
+        inDelegationMode = !effectiveOrcid.equals(realOrcid);
+        this.effectiveOrcid = effectiveOrcid;
     }
 
     public boolean isInDelegationMode() {
@@ -175,35 +146,56 @@ public class OrcidProfileUserDetails implements UserDetails {
         this.inDelegationMode = inDelegationMode;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof OrcidProfileUserDetails)) {
-            return false;
-        }
+    public String getRealOrcid() {
+        return realOrcid;
+    }
 
-        OrcidProfileUserDetails that = (OrcidProfileUserDetails) o;
+    public String getPrimaryEmail() {
+        return primaryEmail;
+    }
 
-        if (inDelegationMode != that.inDelegationMode) {
-            return false;
-        }
-        if (effectiveProfile != null ? !effectiveProfile.equals(that.effectiveProfile) : that.effectiveProfile != null) {
-            return false;
-        }
-        if (realProfile != null ? !realProfile.equals(that.realProfile) : that.realProfile != null) {
-            return false;
-        }
-
-        return true;
+    public String getEffectiveOrcid() {
+        return effectiveOrcid;
     }
 
     @Override
     public int hashCode() {
-        int result = realProfile != null ? realProfile.hashCode() : 0;
-        result = 31 * result + (effectiveProfile != null ? effectiveProfile.hashCode() : 0);
-        result = 31 * result + (inDelegationMode ? 1 : 0);
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((effectiveOrcid == null) ? 0 : effectiveOrcid.hashCode());
+        result = prime * result + (inDelegationMode ? 1231 : 1237);
+        result = prime * result + ((password == null) ? 0 : password.hashCode());
+        result = prime * result + ((realOrcid == null) ? 0 : realOrcid.hashCode());
         return result;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        OrcidProfileUserDetails other = (OrcidProfileUserDetails) obj;
+        if (effectiveOrcid == null) {
+            if (other.effectiveOrcid != null)
+                return false;
+        } else if (!effectiveOrcid.equals(other.effectiveOrcid))
+            return false;
+        if (inDelegationMode != other.inDelegationMode)
+            return false;
+        if (password == null) {
+            if (other.password != null)
+                return false;
+        } else if (!password.equals(other.password))
+            return false;
+        if (realOrcid == null) {
+            if (other.realOrcid != null)
+                return false;
+        } else if (!realOrcid.equals(other.realOrcid))
+            return false;
+        return true;
+    }
+
 }

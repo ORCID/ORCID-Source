@@ -97,6 +97,8 @@ public interface OrcidProfileManager {
      */
     OrcidProfile retrieveOrcidProfile(String orcid);
 
+    OrcidProfile retrieveOrcidProfile(String orcid, LoadOptions loadOptions);
+
     OrcidProfile retrievePublicOrcidProfile(String orcid);
 
     /**
@@ -315,7 +317,7 @@ public interface OrcidProfileManager {
     Date updateLastModifiedDate(String orcid);
 
     void clearOrcidProfileCache();
-    
+
     public void addLocale(OrcidProfile orcidProfile, Locale locale);
 
 }

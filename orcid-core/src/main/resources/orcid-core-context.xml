@@ -354,5 +354,13 @@
 	<bean id="cdnConfigFile" class="java.lang.String">
 		<constructor-arg value="cdn_url.txt"/>
 	</bean>
+	
+	<bean id="jpaJaxbEntityAdapter" class="org.orcid.core.adapter.impl.JpaJaxbEntityAdapterImpl">
+        <constructor-arg ref="jpa2JaxbAdapter" />
+        <constructor-arg ref="jaxb2JpaAdapter" />
+    </bean>
+
+    <bean id="jpa2JaxbAdapter" class="org.orcid.core.adapter.impl.Jpa2JaxbAdapterImpl" />
+    <bean id="jaxb2JpaAdapter" class="org.orcid.core.adapter.impl.Jaxb2JpaAdapterImpl" />
 
 </beans>

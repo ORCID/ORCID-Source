@@ -20,16 +20,17 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
-import java.util.ResourceBundle;
 import java.util.TreeMap;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
+import org.orcid.core.adapter.Jaxb2JpaAdapter;
+import org.orcid.core.adapter.Jpa2JaxbAdapter;
 import org.orcid.core.manager.ExternalIdentifierManager;
+import org.orcid.core.manager.LoadOptions;
 import org.orcid.core.manager.ProfileWorkManager;
 import org.orcid.core.manager.ThirdPartyImportManager;
 import org.orcid.core.manager.WorkContributorManager;
@@ -49,10 +50,7 @@ import org.orcid.jaxb.model.message.SequenceType;
 import org.orcid.jaxb.model.message.SourceOrcid;
 import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
 import org.orcid.jaxb.model.message.WorkType;
-import org.orcid.persistence.adapter.Jaxb2JpaAdapter;
-import org.orcid.persistence.adapter.Jpa2JaxbAdapter;
 import org.orcid.pojo.ThirdPartyRedirect;
-import org.orcid.utils.UTF8Control;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -102,24 +100,24 @@ public class WorkspaceController extends BaseWorkspaceController {
 
     @ModelAttribute("workTypes")
     public Map<String, String> retrieveWorkTypesAsMap() {
-        Map<String, String> workTypes = new LinkedHashMap<String, String>();        
+        Map<String, String> workTypes = new LinkedHashMap<String, String>();
 
         for (WorkType workType : WorkType.values()) {
             workTypes.put(workType.value(), getMessage(buildInternationalizationKey(WorkType.class, workType.value())));
         }
 
         workTypes.remove(WorkType.BIBLE.value());
-        return FunctionsOverCollections.sortMapsByValues(workTypes);        
+        return FunctionsOverCollections.sortMapsByValues(workTypes);
     }
 
     @ModelAttribute("citationTypes")
     public Map<String, String> retrieveTypesAsMap() {
         Map<String, String> citationTypes = new LinkedHashMap<String, String>();
-        
+
         for (CitationType citationType : CitationType.values()) {
             citationTypes.put(citationType.value(), getMessage(buildInternationalizationKey(CitationType.class, citationType.value())));
-        }        
-        
+        }
+
         return FunctionsOverCollections.sortMapsByValues(citationTypes);
     }
 
@@ -159,18 +157,18 @@ public class WorkspaceController extends BaseWorkspaceController {
     @ModelAttribute("idTypes")
     public Map<String, String> retrieveIdTypesAsMap() {
         Map<String, String> map = new TreeMap<String, String>();
-        
-        for (WorkExternalIdentifierType type : WorkExternalIdentifierType.values()) {            
+
+        for (WorkExternalIdentifierType type : WorkExternalIdentifierType.values()) {
             map.put(type.value(), getMessage(buildInternationalizationKey(WorkExternalIdentifierType.class, type.value())));
         }
-        
+
         return FunctionsOverCollections.sortMapsByValues(map);
     }
 
     @ModelAttribute("roles")
     public Map<String, String> retrieveRolesAsMap() {
         Map<String, String> map = new TreeMap<String, String>();
-        
+
         for (ContributorRole contributorRole : ContributorRole.values()) {
             map.put(contributorRole.value(), getMessage(buildInternationalizationKey(ContributorRole.class, contributorRole.value())));
         }
@@ -180,11 +178,11 @@ public class WorkspaceController extends BaseWorkspaceController {
     @ModelAttribute("sequences")
     public Map<String, String> retrieveSequencesAsMap() {
         Map<String, String> map = new LinkedHashMap<String, String>();
-        
+
         for (SequenceType sequenceType : SequenceType.values()) {
             map.put(sequenceType.value(), getMessage(buildInternationalizationKey(SequenceType.class, sequenceType.value())));
         }
-        
+
         return FunctionsOverCollections.sortMapsByValues(map);
     }
 
@@ -195,8 +193,7 @@ public class WorkspaceController extends BaseWorkspaceController {
         ModelAndView mav = new ModelAndView("workspace");
         mav.addObject("showPrivacy", true);
 
-        OrcidProfile profile = getCurrentUserAndRefreshIfNecessary().getEffectiveProfile();
-        getCurrentUser().setEffectiveProfile(profile);
+        OrcidProfile profile = orcidProfileManager.retrieveOrcidProfile(getCurrentUserOrcid(), LoadOptions.BIO_ONLY);
         List<CurrentWork> currentWorks = getCurrentWorksFromProfile(profile);
         if (currentWorks != null && !currentWorks.isEmpty()) {
             mav.addObject("currentWorks", currentWorks);
@@ -212,7 +209,7 @@ public class WorkspaceController extends BaseWorkspaceController {
     @RequestMapping(value = "/externalIdentifiers.json", method = RequestMethod.GET)
     public @ResponseBody
     org.orcid.pojo.ExternalIdentifiers getExternalIdentifiersJson(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {
-        OrcidProfile currentProfile = getCurrentUser().getEffectiveProfile();
+        OrcidProfile currentProfile = getEffectiveProfile();
         org.orcid.pojo.ExternalIdentifiers externalIdentifiers = new org.orcid.pojo.ExternalIdentifiers();
         externalIdentifiers.setExternalIdentifiers((List<org.orcid.pojo.ExternalIdentifier>) (Object) currentProfile.getOrcidBio().getExternalIdentifiers()
                 .getExternalIdentifier());
@@ -224,7 +221,7 @@ public class WorkspaceController extends BaseWorkspaceController {
     ThirdPartyRedirect getSourceGrantReadWizard() {
         ThirdPartyRedirect tpr = new ThirdPartyRedirect();
 
-        OrcidProfile currentProfile = getCurrentUser().getEffectiveProfile();
+        OrcidProfile currentProfile = getEffectiveProfile();
         if (currentProfile.getOrcidHistory().getSource() == null)
             return tpr;
         SourceOrcid sourceOrcid = currentProfile.getOrcidHistory().getSource().getSourceOrcid();
@@ -266,7 +263,7 @@ public class WorkspaceController extends BaseWorkspaceController {
 
         if (errors.isEmpty()) {
             // Get cached profile
-            OrcidProfile currentProfile = getCurrentUser().getEffectiveProfile();
+            OrcidProfile currentProfile = getEffectiveProfile();
             ExternalIdentifiers externalIdentifiers = currentProfile.getOrcidBio().getExternalIdentifiers();
             List<ExternalIdentifier> externalIdentifiersList = externalIdentifiers.getExternalIdentifier();
             Iterator<ExternalIdentifier> externalIdentifierIterator = externalIdentifiersList.iterator();

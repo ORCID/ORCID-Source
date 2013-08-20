@@ -108,7 +108,8 @@ public class NotificationManagerTest extends BaseTest {
         getTargetObject(notificationManager, NotificationManagerImpl.class).setEncryptionManager(mockEncypter);
         when(mockEncypter.encryptForExternalUse(any(String.class)))
                 .thenReturn("Ey+qsh7G2BFGEuqqkzlYRidL4NokGkIgDE+1KOv6aLTmIyrppdVA6WXFIaQ3KsQpKEb9FGUFRqiWorOfhbB2ww==");
-        notificationManager.sendPasswordResetEmail(orcidProfile, baseUri);
+        notificationManager.sendPasswordResetEmail(
+                orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue(),orcidProfile, baseUri);
     }
 
     @Test
@@ -152,7 +153,8 @@ public class NotificationManagerTest extends BaseTest {
 
         OrcidMessage orcidMessage = (OrcidMessage) unmarshaller.unmarshal(getClass().getResourceAsStream(ORCID_INTERNAL_FULL_XML));
         OrcidProfile orcidProfile = orcidMessage.getOrcidProfile();
-        notificationManager.sendApiRecordCreationEmail(orcidProfile);
+        notificationManager.sendApiRecordCreationEmail(
+                orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue(),orcidProfile);
     }
 
     

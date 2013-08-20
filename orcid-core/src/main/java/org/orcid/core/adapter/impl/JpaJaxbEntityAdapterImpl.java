@@ -14,13 +14,14 @@
  *
  * =============================================================================
  */
-package org.orcid.persistence.adapter.impl;
+package org.orcid.core.adapter.impl;
 
+import org.orcid.core.adapter.Jaxb2JpaAdapter;
+import org.orcid.core.adapter.Jpa2JaxbAdapter;
+import org.orcid.core.adapter.JpaJaxbEntityAdapter;
+import org.orcid.core.manager.LoadOptions;
 import org.orcid.jaxb.model.clientgroup.OrcidClientGroup;
 import org.orcid.jaxb.model.message.OrcidProfile;
-import org.orcid.persistence.adapter.Jaxb2JpaAdapter;
-import org.orcid.persistence.adapter.Jpa2JaxbAdapter;
-import org.orcid.persistence.adapter.JpaJaxbEntityAdapter;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -43,7 +44,13 @@ public class JpaJaxbEntityAdapterImpl implements JpaJaxbEntityAdapter {
     @Override
     @Transactional
     public OrcidProfile toOrcidProfile(ProfileEntity profileEntity) {
-        return jpa2JaxbAdapter.toOrcidProfile(profileEntity);
+        return toOrcidProfile(profileEntity, LoadOptions.ALL);
+    }
+
+    @Override
+    @Transactional
+    public OrcidProfile toOrcidProfile(ProfileEntity profileEntity, LoadOptions loadOptions) {
+        return jpa2JaxbAdapter.toOrcidProfile(profileEntity, loadOptions);
 
     }
 

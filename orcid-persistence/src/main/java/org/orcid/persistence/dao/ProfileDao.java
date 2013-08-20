@@ -20,6 +20,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
+import org.orcid.jaxb.model.message.Locale;
 import org.orcid.jaxb.model.message.OrcidType;
 import org.orcid.persistence.jpa.entities.IndexingStatus;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -72,5 +73,9 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
     OrcidType retrieveOrcidType(String orcid);
 
     List<Object[]> findInfoForDecryptionAnalysis();
+
+    Locale retrieveLocale(String orcid);
+
+    void updateLocale(String orcid, Locale locale);
 
 }
