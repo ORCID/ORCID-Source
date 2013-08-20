@@ -344,30 +344,7 @@ $(function () {
 		hideThing(e, '.privacy-group', 'open');
 		hideThing(e, '.popover', 'show');
 	});
-	
-	
-	// Verify registration
-	
-	$('#add-other-name').click(function(e) {
-		e.preventDefault();
-        var val = $('#other-name').val();
-        if (val != '') {
-            $('#otherNames').append( new Option(val ,val) );
-            $('#other-name').val('');
-        }
-    });
-	
-    $('#remove-other-name').click(function(e) {
-    	e.preventDefault();
-        var selected = $('#otherNames option:selected');
-        $('#other-name').val(selected.val());
-        $('#otherNames option:selected').remove();
-    });
-
-    $('#regForm').submit(function() {
-		$('#otherNames option').attr('selected','selected');
-    	$('#departments option').attr('selected','selected');
-    });
+		
 	
 	var ps = $(".password-strength").passStrength();
 	ps.on('keyup', function (e) {
