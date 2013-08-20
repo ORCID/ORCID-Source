@@ -38,7 +38,7 @@ public interface NotificationManager {
     
     public void sendVerificationReminderEmail(OrcidProfile orcidProfile, URI baseUri, String email);
 
-    void sendPasswordResetEmail(OrcidProfile orcidProfile, URI baseUri);
+    void sendPasswordResetEmail(String toEmail, OrcidProfile orcidProfile, URI baseUri);
     
     public String createVerificationUrl(String email, URI baseUri); 
 
@@ -50,7 +50,7 @@ public interface NotificationManager {
 
     void sendOrcidDeactivateEmail(OrcidProfile orcidToDeactivate, URI baseUri);
 
-    void sendApiRecordCreationEmail(OrcidProfile createdProfile);
+    void sendApiRecordCreationEmail(String toEmail, OrcidProfile createdProfile);
 
     void sendEmailAddressChangedNotification(OrcidProfile updatedProfile, Email oldEmail, URI baseUri);
 

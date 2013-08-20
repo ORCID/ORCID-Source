@@ -110,7 +110,7 @@ public class RegistrationControllerTest {
         // return a mocked profile -
         ModelAndView modelAndView = registrationController.issuePasswordResetRequest(servletRequest, resetPasswordForm, bindingResult);
         assertEquals("reset_password", modelAndView.getViewName());
-        verify(registrationManager, times(0)).resetUserPassword(any(OrcidProfile.class), any(URI.class));
+        verify(registrationManager, times(0)).resetUserPassword(any(String.class),any(OrcidProfile.class), any(URI.class));
 
     }
 
@@ -126,7 +126,7 @@ public class RegistrationControllerTest {
         // return a mocked profile -
         ModelAndView modelAndView = registrationController.issuePasswordResetRequest(servletRequest, resetPasswordForm, bindingResult);
         assertEquals("reset_password", modelAndView.getViewName());
-        verify(registrationManager, times(0)).resetUserPassword(any(OrcidProfile.class), any(URI.class));
+        verify(registrationManager, times(0)).resetUserPassword(any(String.class),any(OrcidProfile.class), any(URI.class));
     }
 
     @Test

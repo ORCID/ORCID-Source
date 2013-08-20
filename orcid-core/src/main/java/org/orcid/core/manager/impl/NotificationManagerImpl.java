@@ -270,7 +270,7 @@ public class NotificationManagerImpl implements NotificationManager {
     }
 
     @Override
-    public void sendPasswordResetEmail(OrcidProfile orcidProfile, URI baseUri) {
+    public void sendPasswordResetEmail(String submittedEmail, OrcidProfile orcidProfile, URI baseUri) {
 
         // Create map of template params
         Map<String, Object> templateParams = new HashMap<String, Object>();
@@ -289,7 +289,7 @@ public class NotificationManagerImpl implements NotificationManager {
 
         SimpleMailMessage message = new SimpleMailMessage();
         message.setFrom(fromAddress);
-        message.setTo(orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue());
+        message.setTo(submittedEmail);
         message.setSubject(getSubject("email.subject.reset", orcidProfile));
         message.setText(body);
         sendAndLogMessage(message);
@@ -406,7 +406,7 @@ public class NotificationManagerImpl implements NotificationManager {
     }
 
     @Override
-    public void sendApiRecordCreationEmail(OrcidProfile createdProfile) {
+    public void sendApiRecordCreationEmail(String toEmail, OrcidProfile createdProfile) {
         // Create map of template params
         Map<String, Object> templateParams = new HashMap<String, Object>();
         templateParams.put("emailName", deriveEmailFriendlyName(createdProfile));
@@ -424,7 +424,7 @@ public class NotificationManagerImpl implements NotificationManager {
         // Create email message
         SimpleMailMessage message = new SimpleMailMessage();
         message.setFrom(fromAddress);
-        message.setTo(createdProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue());
+        message.setTo(toEmail);
         message.setSubject(getSubject("email.subject.api_record_creation", createdProfile));
         message.setText(body);
         // Send message
