@@ -266,14 +266,6 @@ $(function () {
 			$('body').prepend(wHtml);
 	}
 	
-	// Nav dropdown
-	
-	$('.nav-dd > a').attr('href', '#').on('click', function (e) { e.preventDefault(); });
-	
-	$('.nav-dd').on('mouseenter mouseleave',function (e) {
-		e.preventDefault();
-		$(this).toggleClass('open');
-	});
 	
 	$('form#loginForm').submit(function() {
 		if($('form#loginForm').attr('disabled')){
