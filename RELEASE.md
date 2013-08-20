@@ -4,6 +4,13 @@ We release updates to the Registry regularly. Below is a list of the improvement
 * [2013 Releases](https://trello.com/b/ZgYVAlel)
 * [2012 Releases](https://trello.com/b/vyCDYdvR)
 
+## release-1.1.30.11
+(2013-08-19)
+
+* Release Simplified Chinese, Traditional Chinese, Spanish and French
+
+
+
 ## release-1.1.29.2
 (2013-08-13)
 
