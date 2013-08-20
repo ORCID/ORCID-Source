@@ -76,40 +76,12 @@
                            	      </td>
 		   						</tr>
 			   					</table>
-			   					
-			   					
-			   					
-			   					
-			   					
-			   					
-			   					
-			   					
-			   					
 			   					<div>
 		   							<input type="email" placeholder="Add Another Email" class="input-xlarge" ng-model="inputEmail.value" style="margin: 0px;" required/> <span ng-click="checkCredentials()" class="btn btn-primary">${springMacroRequestContext.getMessage("manage.spanadd")}</span>
 		   							<span class="orcid-error" ng-show="inputEmail.errors.length > 0">
 			   							<span ng-repeat='error in inputEmail.errors' ng-bind-html-unsafe="error"></span>
 			   						</span>
 			   					</div>	
-			   					
-			   					
-			   					
-			   					
-			   					
-			   					
-			   					
-			   					
-			   					
-			   					
-			   					
-			   					
-			   					
-			   					
-			   					
-			   					
-			   					
-			   					
-			   					
 		   					</div>
 						</td>
 					</tr>
