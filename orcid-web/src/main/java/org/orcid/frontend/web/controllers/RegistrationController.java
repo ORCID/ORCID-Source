@@ -460,7 +460,7 @@ public class RegistrationController extends BaseController {
     @RequestMapping(value = "/reset-password", method = RequestMethod.POST)
     public ModelAndView issuePasswordResetRequest(HttpServletRequest request, @ModelAttribute @Valid EmailAddressForm resetPasswordForm, BindingResult bindingResult) {
 
-        String userEmailAddress = resetPasswordForm.getUserEmailAddress();
+        String submittedEmail = resetPasswordForm.getUserEmailAddress();
 
         ModelAndView mav = new ModelAndView("reset_password");
 
@@ -471,13 +471,13 @@ public class RegistrationController extends BaseController {
             return mav;
         }
 
-        OrcidProfile profile = orcidProfileManager.retrieveOrcidProfileByEmail(userEmailAddress);
+        OrcidProfile profile = orcidProfileManager.retrieveOrcidProfileByEmail(submittedEmail);
         // if the email can't be found on the system, then add to errors
         if (profile == null) {
 
             String[] codes = { "orcid.frontend.reset.password.email_not_found" };
-            String[] args = { userEmailAddress };
-            bindingResult.addError(new FieldError("userEmailAddress", "userEmailAddress", userEmailAddress, false, codes, args, "Email not found"));
+            String[] args = { submittedEmail };
+            bindingResult.addError(new FieldError("userEmailAddress", "userEmailAddress", submittedEmail, false, codes, args, "Email not found"));
             mav.addAllObjects(bindingResult.getModel());
             return mav;
         }
@@ -488,7 +488,7 @@ public class RegistrationController extends BaseController {
                 return mav;
             } else {
                 URI uri = OrcidWebUtils.getServerUriWithContextPath(request);
-                registrationManager.resetUserPassword(profile, uri);
+                registrationManager.resetUserPassword(submittedEmail, profile, uri);
                 mav.addObject("passwordResetSuccessful", true);
                 return mav;
             }
@@ -524,7 +524,7 @@ public class RegistrationController extends BaseController {
             mav.addAllObjects(bindingResult.getModel());
             return mav;
         } else {
-            notificationManager.sendApiRecordCreationEmail(profile);
+            notificationManager.sendApiRecordCreationEmail(userEmailAddress, profile);
             mav.addObject("claimResendSuccessful", true);
             return mav;
         }

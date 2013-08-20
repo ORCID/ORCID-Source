@@ -236,7 +236,8 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
     @Override
     public OrcidProfile createOrcidProfileAndNotify(OrcidProfile orcidProfile) {
         OrcidProfile createdOrcidProfile = createOrcidProfile(orcidProfile);
-        notificationManager.sendApiRecordCreationEmail(orcidProfile);
+        notificationManager.sendApiRecordCreationEmail(
+                orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue(), orcidProfile);
         return createdOrcidProfile;
     }
 
