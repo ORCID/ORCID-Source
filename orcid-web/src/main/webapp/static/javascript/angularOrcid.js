@@ -569,6 +569,56 @@ function ExternalIdentifierCtrl($scope, $compile){
 	
 };	
 
+function ResetPasswordCtrl($scope, $compile) {
+	$scope.getResetPasswordForm = function(){
+		$.ajax({
+			url: $('body').data('baseurl') + 'password-reset.json',	        
+	        dataType: 'json',
+	        success: function(data) {
+	        	console.log(angular.toJson(data));
+	        	$scope.resetPasswordForm = data;
+	        	$scope.$apply();
+	        }
+		}).fail(function(){
+		// something bad is happening!
+			console.log("error fetching password-reset.json");
+		});		
+	};
+				
+	$scope.serverValidate = function () {
+		$.ajax({
+	        url: $('body').data('baseurl') + 'reset-password-form-validate.json',
+	        type: 'POST',
+	        data:  angular.toJson($scope.resetPasswordForm),
+	        contentType: 'application/json;charset=UTF-8',
+	        dataType: 'json',
+	        success: function(data) {
+	        	$scope.copyErrorsLeft($scope.resetPasswordForm, data);
+	        	$scope.$apply();
+	        }
+	    }).fail(function() { 
+	    	// something bad is happening!
+	    	console.log("ResetPasswordCtrl.serverValidate() error");
+	    });
+	};
+	
+	// in the case of slow network connection
+	// we don't want to overwrite  values while
+	// user is typing
+	$scope.copyErrorsLeft = function (data1, data2) {
+		for (var key in data1) {
+			if (key == 'errors') {
+				data1.errors = data2.errors;
+			} else {
+				if (data1[key].errors !== undefined)
+				data1[key].errors = data2[key].errors;
+			};
+		};
+	};
+	
+	//init
+	$scope.getResetPasswordForm();	
+}
 
 function RegistrationCtrl($scope, $compile) {
 		
