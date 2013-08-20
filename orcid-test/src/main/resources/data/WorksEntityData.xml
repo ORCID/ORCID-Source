@@ -25,6 +25,7 @@
           title="A day in the life"
           subtitle="Life in a day"
           description="Very interesting book about days and life"
+          work_type="BOOK"
           citation="Bobby Ewing, "
           citation_type="FORMATTED_IEEE"
             />
@@ -35,6 +36,7 @@
           title="A day in the life"
           citation="Sue Ellen ewing"
           citation_type="FORMATTED_IEEE"
+          work_type="BOOK"
             />
 
     <patent patent_id="1"
