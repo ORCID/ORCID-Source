@@ -150,7 +150,19 @@
 	
 	<filter-mapping>
 		<filter-name>jsonpCallbackFilter</filter-name>
-		<url-pattern>*.json</url-pattern>
+		<url-pattern>/lang.json</url-pattern>
+		<url-pattern>/userStatus.json</url-pattern>
+	</filter-mapping>
+
+	<filter>
+		<filter-name>corsFilter</filter-name>
+		<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+	</filter>
+	
+	<filter-mapping>
+		<filter-name>corsFilter</filter-name>
+		<url-pattern>/lang.json</url-pattern>
+		<url-pattern>/userStatus.json</url-pattern>
 	</filter-mapping>
 
 

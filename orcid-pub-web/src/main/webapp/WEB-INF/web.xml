@@ -58,6 +58,17 @@
 		<url-pattern>*</url-pattern>
 	</filter-mapping>
 
+	<filter>
+		<filter-name>corsFilter</filter-name>
+		<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+	</filter>
+
+	<filter-mapping>
+		<filter-name>corsFilter</filter-name>
+		<url-pattern>*</url-pattern>
+	</filter-mapping>
+
+
     <filter>
         <filter-name>jersey</filter-name>
         <filter-class>com.sun.jersey.spi.spring.container.servlet.SpringServlet</filter-class>

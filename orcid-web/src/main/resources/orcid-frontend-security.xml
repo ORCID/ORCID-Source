@@ -181,7 +181,9 @@
 
 	<!-- <bean id="termsAndConditionsAcceptanceCheckFilter" class="org.orcid.frontend.web.filters.TermsAndConditionsAcceptanceCheckFilter"/> -->
 
-	<bean id="jsonpCallbackFilter" class="org.orcid.core.web.filters.JsonpCallbackFilter" />
+	<bean id="corsFilter" class="org.orcid.core.web.filters.CorsFilter" />
+
+    <bean id="jsonpCallbackFilter" class="org.orcid.core.web.filters.JsonpCallbackFilter" />
 
 	<bean id="oauthAccessDeniedHandler"
 		class="org.springframework.security.oauth2.provider.error.OAuth2AccessDeniedHandler" />
