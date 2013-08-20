@@ -24,7 +24,7 @@ import org.orcid.password.constants.OrcidPasswordConstants;
 import org.orcid.pojo.ajaxForm.Text;
 
 @IntegerStringCrossField(indexToIgnoreValidation = 0, theFieldToIgnoreValidation = "securityQuestionAnswer", theFieldToIndex = "securityQuestionId", message = "password_one_time_reset_optional_security_questions.answer_not_null")
-@FieldMatch.List( { @FieldMatch(first = "password", second = "retypedPassword", message = "password_one_time_reset.password_donesnt_match") })
+@FieldMatch.List( { @FieldMatch(first = "password", second = "retypedPassword", message = "password_one_time_reset.password_doesnt_match") })
 public class OneTimeResetPasswordForm {
 
     private PasswordTypeAndConfirmForm passwordTypeAndConfirmForm;

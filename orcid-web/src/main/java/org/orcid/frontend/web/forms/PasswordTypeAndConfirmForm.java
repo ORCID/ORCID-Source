@@ -21,7 +21,7 @@ import org.orcid.frontend.web.forms.validate.TextPattern;
 import org.orcid.password.constants.OrcidPasswordConstants;
 import org.orcid.pojo.ajaxForm.Text;
 
-@FieldMatch.List( { @FieldMatch(first = "password", second = "retypedPassword", message = "password_one_time_reset.password_donesnt_match") })
+@FieldMatch.List( { @FieldMatch(first = "password", second = "retypedPassword", message = "password_one_time_reset.password_doesnt_match") })
 public class PasswordTypeAndConfirmForm {
 
     private Text password;
