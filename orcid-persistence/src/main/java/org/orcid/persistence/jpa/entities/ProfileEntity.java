@@ -40,6 +40,7 @@ import javax.persistence.Transient;
 
 import org.hibernate.annotations.Sort;
 import org.hibernate.annotations.SortType;
+import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.jaxb.model.message.Locale;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidType;
@@ -82,10 +83,10 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
     private SortedSet<OtherNameEntity> otherNames;
     private SortedSet<ResearcherUrlEntity> researcherUrls;
     private String biography;
-    private String iso2Country;
+    private Iso3166Country iso2Country;
     private SortedSet<ProfileKeywordEntity> keywords;
     private Set<ExternalIdentifierEntity> externalIdentifiers;
-    private SortedSet<AffiliationEntity> affiliations;
+    private SortedSet<OrgAffiliationRelationEntity> orgAffiliationRelations;
     private Set<EmailEntity> emails;
 
     // Poor old vocative name :-(
@@ -383,16 +384,16 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
      */
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = PROFILE)
     @Sort(type = SortType.NATURAL)
-    public SortedSet<AffiliationEntity> getAffiliations() {
-        return affiliations;
+    public SortedSet<OrgAffiliationRelationEntity> getOrgAffiliationRelations() {
+        return orgAffiliationRelations;
     }
 
     /**
      * @param affiliations
      *            the affiliations to set
      */
-    public void setAffiliations(SortedSet<AffiliationEntity> affiliations) {
-        this.affiliations = affiliations;
+    public void setOrgAffiliationRelations(SortedSet<OrgAffiliationRelationEntity> affiliations) {
+        this.orgAffiliationRelations = affiliations;
     }
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = PROFILE, orphanRemoval = true)
@@ -578,12 +579,14 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
         return accountExpiry;
     }
 
+    @Basic
+    @Enumerated(EnumType.STRING)
     @Column(name = "iso2_country", length = 2)
-    public String getIso2Country() {
+    public Iso3166Country getIso2Country() {
         return iso2Country;
     }
 
-    public void setIso2Country(String iso2Country) {
+    public void setIso2Country(Iso3166Country iso2Country) {
         this.iso2Country = iso2Country;
     }
 
@@ -737,7 +740,7 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
     }
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = PROFILE)
-    @Sort(type=SortType.NATURAL)
+    @Sort(type = SortType.NATURAL)
     public SortedSet<OrcidOauth2TokenDetail> getTokenDetails() {
         return tokenDetails;
     }

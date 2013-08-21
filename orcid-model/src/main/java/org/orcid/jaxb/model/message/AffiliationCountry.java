@@ -24,13 +24,16 @@
 package org.orcid.jaxb.model.message;
 
 import java.io.Serializable;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.XmlValue;
 
 /**
+ * ISO 3611 country
+ * 
  * <p>
  * Java class for anonymous complex type.
  * 
@@ -40,58 +43,60 @@ import javax.xml.bind.annotation.XmlType;
  * 
  * <pre>
  * &lt;complexType>
- *   &lt;complexContent>
- *     &lt;extension base="{http://www.orcid.org/ns/orcid}fuzzy-date">
- *       &lt;attribute name="media-type" type="{http://www.orcid.org/ns/orcid}media-type" />
+ *   &lt;simpleContent>
+ *     &lt;extension base="&lt;http://www.orcid.org/ns/orcid>iso-3166-country">
+ *       &lt;attGroup ref="{http://www.orcid.org/ns/orcid}visibility"/>
  *     &lt;/extension>
- *   &lt;/complexContent>
+ *   &lt;/simpleContent>
  * &lt;/complexType>
  * </pre>
  * 
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "")
-@XmlRootElement(name = "publication-date")
-public class PublicationDate extends FuzzyDate implements Serializable {
-
-    public PublicationDate() {
-    }
-
-    public PublicationDate(Year year, Month month, Day day) {
-        super(year, month, day);
-    }
+@XmlType(name = "", propOrder = { "value" })
+@XmlRootElement(name = "affiliation-country")
+public class AffiliationCountry implements Serializable {
 
     private final static long serialVersionUID = 1L;
-    @XmlAttribute(name = "media-type")
-    protected MediaType mediaType;
+    @XmlValue
+    protected Iso3166Country value;
 
-    /**
-     * Gets the value of the mediaType property.
-     * 
-     * @return possible object is {@link MediaType }
-     * 
-     */
-    public MediaType getMediaType() {
-        return mediaType;
+    public AffiliationCountry() {
+        super();
+    }
+
+    public AffiliationCountry(Iso3166Country value) {
+        super();
+        this.value = value;
     }
 
     /**
-     * Sets the value of the mediaType property.
+     * ISO 3166 country codes
      * 
-     * @param value
-     *            allowed object is {@link MediaType }
+     * @return possible object is {@link Iso3166Country }
      * 
      */
-    public void setMediaType(MediaType value) {
-        this.mediaType = value;
+    public Iso3166Country getValue() {
+        return value;
+    }
+
+    /**
+     * Sets the value of the value property.
+     * 
+     * @param value
+     *            allowed object is {@link Iso3166Country }
+     * 
+     */
+    public void setValue(Iso3166Country value) {
+        this.value = value;
     }
 
     @Override
     public int hashCode() {
         final int prime = 31;
-        int result = super.hashCode();
-        result = prime * result + ((mediaType == null) ? 0 : mediaType.hashCode());
+        int result = 1;
+        result = prime * result + ((value == null) ? 0 : value.hashCode());
         return result;
     }
 
@@ -99,12 +104,12 @@ public class PublicationDate extends FuzzyDate implements Serializable {
     public boolean equals(Object obj) {
         if (this == obj)
             return true;
-        if (!super.equals(obj))
+        if (obj == null)
             return false;
         if (getClass() != obj.getClass())
             return false;
-        PublicationDate other = (PublicationDate) obj;
-        if (mediaType != other.mediaType)
+        AffiliationCountry other = (AffiliationCountry) obj;
+        if (value != other.value)
             return false;
         return true;
     }

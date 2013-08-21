@@ -19,17 +19,13 @@ package org.orcid.frontend.web.controllers;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
 import java.util.TreeSet;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.lang.StringUtils;
 import org.orcid.core.adapter.Jaxb2JpaAdapter;
 import org.orcid.core.adapter.Jpa2JaxbAdapter;
 import org.orcid.core.manager.ExternalIdentifierManager;
@@ -38,31 +34,20 @@ import org.orcid.core.manager.ThirdPartyImportManager;
 import org.orcid.core.manager.WorkContributorManager;
 import org.orcid.core.manager.WorkExternalIdentifierManager;
 import org.orcid.core.manager.WorkManager;
-import org.orcid.frontend.web.forms.CurrentWork;
-import org.orcid.frontend.web.util.NumberList;
-import org.orcid.frontend.web.util.YearsList;
-import org.orcid.jaxb.model.clientgroup.OrcidClient;
-import org.orcid.jaxb.model.clientgroup.RedirectUri;
 import org.orcid.jaxb.model.message.CitationType;
 import org.orcid.jaxb.model.message.ContributorAttributes;
 import org.orcid.jaxb.model.message.ContributorRole;
-import org.orcid.jaxb.model.message.ExternalIdentifier;
-import org.orcid.jaxb.model.message.ExternalIdentifiers;
 import org.orcid.jaxb.model.message.OrcidActivities;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidWork;
 import org.orcid.jaxb.model.message.OrcidWorks;
 import org.orcid.jaxb.model.message.PublicationDate;
 import org.orcid.jaxb.model.message.SequenceType;
-import org.orcid.jaxb.model.message.SourceOrcid;
 import org.orcid.jaxb.model.message.WorkContributors;
-import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
-import org.orcid.jaxb.model.message.WorkType;
-import org.orcid.persistence.jpa.entities.FuzzyDate;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.orcid.persistence.jpa.entities.PublicationDateEntity;
 import org.orcid.persistence.jpa.entities.WorkContributorEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
-import org.orcid.pojo.ThirdPartyRedirect;
 import org.orcid.pojo.ajaxForm.Citation;
 import org.orcid.pojo.ajaxForm.Contributor;
 import org.orcid.pojo.ajaxForm.Date;
@@ -78,14 +63,11 @@ import org.orcid.utils.BibtexUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.multiaction.NoSuchRequestHandlingMethodException;
 
 /**
  * @author rcpeters
@@ -420,8 +402,8 @@ public class WorksController extends BaseWorkspaceController {
      * 
      * @return a fuzzy date
      * */
-    private FuzzyDate toFuzzyDate(PublicationDate publicationDate) {
-        FuzzyDate fuzzyDate = new FuzzyDate();
+    private PublicationDateEntity toFuzzyDate(PublicationDate publicationDate) {
+        PublicationDateEntity fuzzyDate = new PublicationDateEntity();
         String year = publicationDate.getYear() == null ? null : publicationDate.getYear().getValue();
         String month = publicationDate.getMonth() == null ? null : publicationDate.getMonth().getValue();
         String day = publicationDate.getDay() == null ? null : publicationDate.getDay().getValue();

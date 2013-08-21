@@ -37,5 +37,10 @@
     <other_name/>
     <profile_keyword/>
     <profile_patent/>
-    <webhook/>    
+    <webhook/>
+	<org/>
+	<org_affiliation_relation/>
+	<address/>
+	<institution/>
+	<affiliation/>
 </dataset>

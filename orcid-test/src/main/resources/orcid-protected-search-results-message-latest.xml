@@ -18,9 +18,9 @@
 
 -->
 <orcid-message xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.orcid.org/ns/orcid ../../../../orcid-model/src/main/resources/orcid-message-1.0.17.xsd"
+	xsi:schemaLocation="http://www.orcid.org/ns/orcid ../../../../orcid-model/src/main/resources/orcid-message-1.0.19.xsd"
 	xmlns="http://www.orcid.org/ns/orcid">
-	<message-version>1.0.17</message-version>
+	<message-version>1.0.19</message-version>
 	<!-- Error message, if applicable -->
 	<!-- Unable to connect to ORCID, no matching researchers, etc. -->
 	<!-- <error-desc>No researcher found.</error-desc> -->
@@ -59,7 +59,7 @@
                         University, and to be known for his work in "psychoceramics", the supposed
                         study of "cracked pots". </biography>
 					<contact-details>
-						<email primary="true" visibility="limited" verfied="true">josiah_carberry@brown.edu</email>
+						<email primary="true" visibility="limited" verified="true">josiah_carberry@brown.edu</email>
                         <email primary="false" visibility="limited">josiah_carberry_1@brown.edu</email>
                         <email primary="false" visibility="limited">josiah_carberry_2@brown.edu</email>
 					</contact-details>
@@ -75,26 +75,6 @@
                             <external-id-url>http://www.facebook.com/12344</external-id-url>
                         </external-identifier>
                     </external-identifiers>
-                    <affiliations>
-                        <affiliation visibility="public">
-                            <affiliation-name>Brown University</affiliation-name>
-                            <affiliation-type>funded-by</affiliation-type>
-                            <address>
-                                <country>United States</country>
-                            </address>
-                            <department-name>Psychoceramics</department-name>
-                            <role-title>Researcher (Academic)</role-title>
-                        </affiliation>
-                        <affiliation visibility="public">
-                            <affiliation-name>Yale University</affiliation-name>
-                            <affiliation-type>current-primary-institution</affiliation-type>
-                            <address>
-                                <country>United States</country>
-                            </address>
-                            <department-name>Law</department-name>
-                            <role-title>Researcher (Academic)</role-title>
-                        </affiliation>
-                    </affiliations>
 					<delegation visibility="limited">
 						<given-permission-to>
 							<delegation-details>

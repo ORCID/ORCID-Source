@@ -40,10 +40,10 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.jaxb.model.message.OrcidType;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.persistence.jpa.entities.IndexingStatus;
-import org.orcid.persistence.jpa.entities.InstitutionEntity;
 import org.orcid.persistence.jpa.entities.OrcidEntityIdComparator;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileEventEntity;
@@ -181,27 +181,6 @@ public class ProfileDaoTest extends DBUnitTest {
         String newOrcid = "4444-1111-6666-4443";
         ProfileEntity profile = new ProfileEntity();
         profile.setId(newOrcid);
-
-        Set<InstitutionEntity> institutionEntities = new HashSet<InstitutionEntity>();
-        InstitutionEntity institutionEntity = new InstitutionEntity();
-        institutionEntities.add(institutionEntity);
-        institutionEntity.setName("Semantico");
-
-        // List<InstitutionDepartmentEntity> departmentEntities = new
-        // ArrayList<InstitutionDepartmentEntity>();
-        // InstitutionDepartmentEntity departmentEntity1 = new
-        // InstitutionDepartmentEntity();
-        // departmentEntities.add(departmentEntity1);
-        // institutionEntity.setDepartments(departmentEntities);
-        // departmentEntity1.setInstitution(institutionEntity);
-        // departmentEntity1.setName("Development Team");
-        //
-        // InstitutionDepartmentEntity departmentEntity2 = new
-        // InstitutionDepartmentEntity();
-        // departmentEntities.add(departmentEntity2);
-        // institutionEntity.setDepartments(departmentEntities);
-        // departmentEntity2.setInstitution(institutionEntity);
-        // departmentEntity2.setName("Declan's Crew");
 
         profileDao.persist(profile);
 
@@ -444,7 +423,7 @@ public class ProfileDaoTest extends DBUnitTest {
         profile.setCreditNameVisibility(Visibility.PRIVATE);
         profile.setGivenNames("Updated Give Name");
         profile.setFamilyName("Updated Last Name");
-        profile.setIso2Country("US");
+        profile.setIso2Country(Iso3166Country.US);
         profile.setKeywordsVisibility(Visibility.PRIVATE);
         profile.setResearcherUrlsVisibility(Visibility.PRIVATE);
         profile.setOtherNamesVisibility(Visibility.PRIVATE);
@@ -458,7 +437,7 @@ public class ProfileDaoTest extends DBUnitTest {
         assertEquals(Visibility.PRIVATE.value(), profile.getCreditNameVisibility().value());
         assertEquals("Updated Give Name", profile.getGivenNames());
         assertEquals("Updated Last Name", profile.getFamilyName());
-        assertEquals("US", profile.getIso2Country());
+        assertEquals(Iso3166Country.US, profile.getIso2Country());
         assertEquals(Visibility.PRIVATE.value(), profile.getKeywordsVisibility().value());
         assertEquals(Visibility.PRIVATE.value(), profile.getResearcherUrlsVisibility().value());
         assertEquals(Visibility.PRIVATE.value(), profile.getOtherNamesVisibility().value());

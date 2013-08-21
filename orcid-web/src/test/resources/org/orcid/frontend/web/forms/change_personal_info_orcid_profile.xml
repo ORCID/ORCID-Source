@@ -22,7 +22,7 @@
         <contact-details>
             <email primary="true" visibility="limited"/>
             <address>
-                <country visibility="limited">UK</country>
+                <country visibility="limited">GB</country>
             </address>
         </contact-details>
         <keywords visibility="public">

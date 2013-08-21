@@ -31,8 +31,12 @@ import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.apache.commons.lang.StringUtils;
 import org.orcid.core.adapter.Jaxb2JpaAdapter;
-import org.orcid.jaxb.model.message.Address;
 import org.orcid.jaxb.model.message.Affiliation;
+import org.orcid.jaxb.model.message.AffiliationAddress;
+import org.orcid.jaxb.model.message.AffiliationCity;
+import org.orcid.jaxb.model.message.AffiliationCountry;
+import org.orcid.jaxb.model.message.AffiliationRegion;
+import org.orcid.jaxb.model.message.Affiliations;
 import org.orcid.jaxb.model.message.AgencyName;
 import org.orcid.jaxb.model.message.AgencyOrcid;
 import org.orcid.jaxb.model.message.ApprovalDate;
@@ -51,7 +55,6 @@ import org.orcid.jaxb.model.message.DelegateSummary;
 import org.orcid.jaxb.model.message.Delegation;
 import org.orcid.jaxb.model.message.DelegationDetails;
 import org.orcid.jaxb.model.message.Email;
-import org.orcid.jaxb.model.message.EndDate;
 import org.orcid.jaxb.model.message.ExternalIdCommonName;
 import org.orcid.jaxb.model.message.ExternalIdOrcid;
 import org.orcid.jaxb.model.message.ExternalIdReference;
@@ -65,6 +68,7 @@ import org.orcid.jaxb.model.message.GivenPermissionBy;
 import org.orcid.jaxb.model.message.GivenPermissionTo;
 import org.orcid.jaxb.model.message.GrantExternalIdentifier;
 import org.orcid.jaxb.model.message.GrantSources;
+import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.jaxb.model.message.Keyword;
 import org.orcid.jaxb.model.message.Keywords;
 import org.orcid.jaxb.model.message.Locale;
@@ -92,7 +96,6 @@ import org.orcid.jaxb.model.message.ResearcherUrls;
 import org.orcid.jaxb.model.message.SecurityDetails;
 import org.orcid.jaxb.model.message.SequenceType;
 import org.orcid.jaxb.model.message.Source;
-import org.orcid.jaxb.model.message.StartDate;
 import org.orcid.jaxb.model.message.SubmissionDate;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.message.WorkContributors;
@@ -102,17 +105,16 @@ import org.orcid.jaxb.model.message.WorkSource;
 import org.orcid.jaxb.model.message.WorkTitle;
 import org.orcid.jaxb.model.message.WorkType;
 import org.orcid.persistence.dao.GenericDao;
-import org.orcid.persistence.jpa.entities.AddressEntity;
-import org.orcid.persistence.jpa.entities.AffiliationEntity;
 import org.orcid.persistence.jpa.entities.EmailEntity;
+import org.orcid.persistence.jpa.entities.EndDateEntity;
 import org.orcid.persistence.jpa.entities.ExternalIdentifierEntity;
-import org.orcid.persistence.jpa.entities.FuzzyDate;
 import org.orcid.persistence.jpa.entities.GivenPermissionByEntity;
 import org.orcid.persistence.jpa.entities.GivenPermissionToEntity;
 import org.orcid.persistence.jpa.entities.GrantContributorEntity;
 import org.orcid.persistence.jpa.entities.GrantEntity;
 import org.orcid.persistence.jpa.entities.GrantSourceEntity;
-import org.orcid.persistence.jpa.entities.InstitutionEntity;
+import org.orcid.persistence.jpa.entities.OrgEntity;
+import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
 import org.orcid.persistence.jpa.entities.OtherNameEntity;
 import org.orcid.persistence.jpa.entities.PatentContributorEntity;
 import org.orcid.persistence.jpa.entities.PatentEntity;
@@ -123,8 +125,10 @@ import org.orcid.persistence.jpa.entities.ProfileKeywordEntity;
 import org.orcid.persistence.jpa.entities.ProfilePatentEntity;
 import org.orcid.persistence.jpa.entities.ProfileSummaryEntity;
 import org.orcid.persistence.jpa.entities.ProfileWorkEntity;
+import org.orcid.persistence.jpa.entities.PublicationDateEntity;
 import org.orcid.persistence.jpa.entities.ResearcherUrlEntity;
 import org.orcid.persistence.jpa.entities.SecurityQuestionEntity;
+import org.orcid.persistence.jpa.entities.StartDateEntity;
 import org.orcid.persistence.jpa.entities.WorkContributorEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.persistence.jpa.entities.WorkExternalIdentifierEntity;
@@ -167,14 +171,17 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
     }
 
     private void setActivityDetails(ProfileEntity profileEntity, OrcidActivities orcidActivities) {
+        Affiliations affiliations = null;
         OrcidPatents orcidPatents = null;
         OrcidGrants orcidGrants = null;
         OrcidWorks orcidWorks = null;
         if (orcidActivities != null) {
+            affiliations = orcidActivities.getAffiliations();
             orcidPatents = orcidActivities.getOrcidPatents();
             orcidGrants = orcidActivities.getOrcidGrants();
             orcidWorks = orcidActivities.getOrcidWorks();
         }
+        setOrgAffiliationRelations(profileEntity, affiliations);
         setPatents(profileEntity, orcidPatents);
         setGrants(profileEntity, orcidGrants);
         setWorks(profileEntity, orcidWorks);
@@ -323,13 +330,13 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
         return map;
     }
 
-    private FuzzyDate getWorkPublicationDate(OrcidWork orcidWork) {
+    private PublicationDateEntity getWorkPublicationDate(OrcidWork orcidWork) {
         if (orcidWork != null && orcidWork.getPublicationDate() != null) {
             PublicationDate publicationDate = orcidWork.getPublicationDate();
             Integer year = publicationDate.getYear() != null ? toInteger(publicationDate.getYear().getValue()) : null;
             Integer month = publicationDate.getMonth() != null ? toInteger(publicationDate.getMonth().getValue()) : null;
             Integer day = publicationDate.getDay() != null ? toInteger(publicationDate.getDay().getValue()) : null;
-            return new FuzzyDate(year, month, day);
+            return new PublicationDateEntity(year, month, day);
         }
         return null;
     }
@@ -508,7 +515,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
         if (orcidPatent != null) {
             PatentEntity patentEntity = new PatentEntity();
             patentEntity.setContributors(getPatentContributors(patentEntity, orcidPatent.getPatentContributors()));
-            patentEntity.setCountryOfIssue(orcidPatent.getCountry() != null ? orcidPatent.getCountry().getContent() : null);
+            patentEntity.setCountryOfIssue(orcidPatent.getCountry() != null ? orcidPatent.getCountry().getValue() : null);
             patentEntity.setIssueDate(orcidPatent.getPatentIssueDate() != null ? toDate(orcidPatent.getPatentIssueDate().getValue()) : null);
             patentEntity.setPatentNo(orcidPatent.getPatentNumber() != null ? orcidPatent.getPatentNumber().getContent() : null);
             patentEntity.setShortDescription(orcidPatent.getShortDescription() != null ? orcidPatent.getShortDescription() : null);
@@ -556,7 +563,6 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
 
     private void setBioDetails(ProfileEntity profileEntity, OrcidBio orcidBio) {
         if (orcidBio != null) {
-            setAffiliations(profileEntity, orcidBio.getAffiliations());
             setBiographyDetails(profileEntity, orcidBio.getBiography());
             setContactDetails(profileEntity, orcidBio.getContactDetails());
             setDelegations(profileEntity, orcidBio.getDelegation());
@@ -717,7 +723,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
     private void setCountry(ProfileEntity profileEntity, ContactDetails contactDetails) {
         Country contactCountry = contactDetails.getAddress() != null && contactDetails.getAddress().getCountry() != null ? contactDetails.getAddress().getCountry()
                 : null;
-        String country = contactCountry != null ? contactCountry.getContent() : null;
+        Iso3166Country country = contactCountry != null ? contactCountry.getValue() : null;
         profileEntity.setProfileAddressVisibility(contactCountry != null ? contactCountry.getVisibility() : null);
         profileEntity.setIso2Country(country);
     }
@@ -782,15 +788,15 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
         }
     }
 
-    private void setAffiliations(ProfileEntity profileEntity, List<Affiliation> affiliations) {
-        if (affiliations != null && !affiliations.isEmpty()) {
-            SortedSet<AffiliationEntity> affiliationEntities = new TreeSet<AffiliationEntity>();
-            for (Affiliation affiliation : affiliations) {
-                AffiliationEntity affiliationEntity = getAffiliationEntity(affiliation);
-                affiliationEntity.setProfile(profileEntity);
-                affiliationEntities.add(affiliationEntity);
+    private void setOrgAffiliationRelations(ProfileEntity profileEntity, Affiliations affiliations) {
+        if (affiliations != null && !affiliations.getAffiliation().isEmpty()) {
+            SortedSet<OrgAffiliationRelationEntity> orgRelationEntities = new TreeSet<>();
+            for (Affiliation affiliation : affiliations.getAffiliation()) {
+                OrgAffiliationRelationEntity orgRelationEntity = getOrgAffiliationRelationEntity(affiliation);
+                orgRelationEntity.setProfile(profileEntity);
+                orgRelationEntities.add(orgRelationEntity);
             }
-            profileEntity.setAffiliations(affiliationEntities);
+            profileEntity.setOrgAffiliationRelations(orgRelationEntities);
         }
     }
 
@@ -819,16 +825,16 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
                     profileEntity.setWorkVisibilityDefault(preferences.getWorkVisibilityDefault().getValue());
                 }
             }
-            
+
         }
     }
 
     private void setPreferencesDetails(ProfileEntity profileEntity, OrcidPreferences orcidPreferences) {
         if (orcidPreferences != null) {
-            if (orcidPreferences.getLocale() != null) 
+            if (orcidPreferences.getLocale() != null)
                 profileEntity.setLocale(orcidPreferences.getLocale());
-                else
-                    profileEntity.setLocale(Locale.EN);
+            else
+                profileEntity.setLocale(Locale.EN);
         }
     }
 
@@ -884,45 +890,35 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
         return null;
     }
 
-    private AffiliationEntity getAffiliationEntity(Affiliation affiliation) {
+    private OrgAffiliationRelationEntity getOrgAffiliationRelationEntity(Affiliation affiliation) {
         if (affiliation != null) {
-            AffiliationEntity affiliationEntity = new AffiliationEntity();
-            StartDate startDate = affiliation.getStartDate();
-            EndDate endDate = affiliation.getEndDate();
-
-            affiliationEntity.setAffiliationType(affiliation.getAffiliationType());
-            affiliationEntity.setAffiliationVisibility(affiliation.getVisibility());
-            affiliationEntity.setDepartmentName(affiliation.getDepartmentName());
-            affiliationEntity.setEndDate(endDate != null ? toDate(endDate.getValue()) : null);
-            affiliationEntity.setInstitutionEntity(getInstitutionEntity(affiliation));
-            affiliationEntity.setRoleTitle(affiliation.getRoleTitle());
-            affiliationEntity.setStartDate(startDate != null ? toDate(startDate.getValue()) : null);
-
-            if (affiliation.getAddress() != null && affiliation.getAddress().getCountry() != null) {
-                affiliationEntity.setAffiliationAddressVisibility(affiliation.getAddress().getCountry().getVisibility());
-            }
-
-            return affiliationEntity;
+            OrgAffiliationRelationEntity orgRelationEntity = new OrgAffiliationRelationEntity();
+            org.orcid.jaxb.model.message.FuzzyDate startDate = affiliation.getStartDate();
+            org.orcid.jaxb.model.message.FuzzyDate endDate = affiliation.getEndDate();
+            orgRelationEntity.setAffiliationType(affiliation.getAffiliationType());
+            orgRelationEntity.setVisibility(affiliation.getVisibility());
+            orgRelationEntity.setDepartment(affiliation.getDepartmentName());
+            orgRelationEntity.setEndDate(endDate != null ? new EndDateEntity(endDate) : null);
+            orgRelationEntity.setOrg(getOrgEntity(affiliation));
+            orgRelationEntity.setTitle(affiliation.getRoleTitle());
+            orgRelationEntity.setStartDate(startDate != null ? new StartDateEntity(startDate) : null);
+            return orgRelationEntity;
         }
         return null;
     }
 
-    private InstitutionEntity getInstitutionEntity(Affiliation affiliation) {
+    private OrgEntity getOrgEntity(Affiliation affiliation) {
         if (affiliation != null) {
-            InstitutionEntity institutionEntity = new InstitutionEntity();
-            institutionEntity.setAddress(getInstitutionAddressEntity(affiliation.getAddress()));
-            institutionEntity.setName(affiliation.getAffiliationName());
-            return institutionEntity;
-        }
-        return null;
-    }
-
-    private AddressEntity getInstitutionAddressEntity(Address address) {
-        if (address != null) {
-            AddressEntity addressEntity = new AddressEntity();
-            Country country = address.getCountry();
-            addressEntity.setCountry(country == null ? null : country.getContent());
-            return addressEntity;
+            OrgEntity orgEntity = new OrgEntity();
+            orgEntity.setName(affiliation.getAffiliationName());
+            AffiliationAddress address = affiliation.getAffiliationAddress();
+            AffiliationCity city = address.getAffiliationCity();
+            orgEntity.setCity(city != null ? city.getContent() : null);
+            AffiliationRegion region = address.getAffiliationRegion();
+            orgEntity.setRegion(region != null ? region.getContent() : null);
+            AffiliationCountry country = address.getAffiliationCountry();
+            orgEntity.setCountry(country != null ? country.getValue() : null);
+            return orgEntity;
         }
         return null;
     }

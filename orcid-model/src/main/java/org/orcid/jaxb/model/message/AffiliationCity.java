@@ -29,8 +29,11 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.XmlValue;
 
 /**
+ * City
+ * 
  * <p>
  * Java class for anonymous complex type.
  * 
@@ -41,9 +44,9 @@ import javax.xml.bind.annotation.XmlType;
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
- *     &lt;extension base="{http://www.orcid.org/ns/orcid}fuzzy-date">
- *       &lt;attribute name="media-type" type="{http://www.orcid.org/ns/orcid}media-type" />
- *     &lt;/extension>
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+ *       &lt;attGroup ref="{http://www.orcid.org/ns/orcid}visibility"/>
+ *     &lt;/restriction>
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
@@ -51,47 +54,71 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "")
-@XmlRootElement(name = "publication-date")
-public class PublicationDate extends FuzzyDate implements Serializable {
-
-    public PublicationDate() {
-    }
-
-    public PublicationDate(Year year, Month month, Day day) {
-        super(year, month, day);
-    }
+@XmlType(name = "", propOrder = { "content" })
+@XmlRootElement(name = "affiliation-city")
+public class AffiliationCity implements Serializable {
 
     private final static long serialVersionUID = 1L;
-    @XmlAttribute(name = "media-type")
-    protected MediaType mediaType;
+    @XmlValue
+    protected String content;
+    @XmlAttribute(name = "visibility")
+    protected Visibility visibility;
 
-    /**
-     * Gets the value of the mediaType property.
-     * 
-     * @return possible object is {@link MediaType }
-     * 
-     */
-    public MediaType getMediaType() {
-        return mediaType;
+    public AffiliationCity() {
+    }
+
+    public AffiliationCity(String city) {
+        this.content = city;
     }
 
     /**
-     * Sets the value of the mediaType property.
+     * City
      * 
-     * @param value
-     *            allowed object is {@link MediaType }
+     * @return possible object is {@link String }
      * 
      */
-    public void setMediaType(MediaType value) {
-        this.mediaType = value;
+    public String getContent() {
+        return content;
+    }
+
+    /**
+     * Sets the value of the content property.
+     * 
+     * @param value
+     *            allowed object is {@link String }
+     * 
+     */
+    public void setContent(String value) {
+        this.content = value;
+    }
+
+    /**
+     * Gets the value of the visibility property.
+     * 
+     * @return possible object is {@link Visibility }
+     * 
+     */
+    public Visibility getVisibility() {
+        return visibility;
+    }
+
+    /**
+     * Sets the value of the visibility property.
+     * 
+     * @param value
+     *            allowed object is {@link Visibility }
+     * 
+     */
+    public void setVisibility(Visibility value) {
+        this.visibility = value;
     }
 
     @Override
     public int hashCode() {
         final int prime = 31;
-        int result = super.hashCode();
-        result = prime * result + ((mediaType == null) ? 0 : mediaType.hashCode());
+        int result = 1;
+        result = prime * result + ((content == null) ? 0 : content.hashCode());
+        result = prime * result + ((visibility == null) ? 0 : visibility.hashCode());
         return result;
     }
 
@@ -99,12 +126,17 @@ public class PublicationDate extends FuzzyDate implements Serializable {
     public boolean equals(Object obj) {
         if (this == obj)
             return true;
-        if (!super.equals(obj))
+        if (obj == null)
             return false;
         if (getClass() != obj.getClass())
             return false;
-        PublicationDate other = (PublicationDate) obj;
-        if (mediaType != other.mediaType)
+        AffiliationCity other = (AffiliationCity) obj;
+        if (content == null) {
+            if (other.content != null)
+                return false;
+        } else if (!content.equals(other.content))
+            return false;
+        if (visibility != other.visibility)
             return false;
         return true;
     }

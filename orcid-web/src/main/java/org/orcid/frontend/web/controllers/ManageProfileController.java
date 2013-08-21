@@ -44,9 +44,7 @@ import org.orcid.frontend.web.forms.AddDelegateForm;
 import org.orcid.frontend.web.forms.ChangePasswordForm;
 import org.orcid.frontend.web.forms.ChangePersonalInfoForm;
 import org.orcid.frontend.web.forms.ChangeSecurityQuestionForm;
-import org.orcid.frontend.web.forms.CurrentAffiliationsForm;
 import org.orcid.frontend.web.forms.ManagePasswordOptionsForm;
-import org.orcid.frontend.web.forms.PastInstitutionsForm;
 import org.orcid.frontend.web.forms.PreferencesForm;
 import org.orcid.frontend.web.forms.SearchForDelegatesForm;
 import org.orcid.jaxb.model.message.Delegation;
@@ -56,7 +54,6 @@ import org.orcid.jaxb.model.message.EncryptedSecurityAnswer;
 import org.orcid.jaxb.model.message.GivenPermissionBy;
 import org.orcid.jaxb.model.message.GivenPermissionTo;
 import org.orcid.jaxb.model.message.Keywords;
-import org.orcid.jaxb.model.message.Orcid;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidSearchResults;
@@ -193,72 +190,6 @@ public class ManageProfileController extends BaseWorkspaceController {
         orcidProfileManager.updatePreferences(preferencesForm.getOrcidProfile());
         redirectAttributes.addFlashAttribute("optionsSaved", true);
         return mav;
-    }
-
-    @RequestMapping(value = "/affiliations", method = RequestMethod.POST)
-    public ModelAndView updateAffiliations(@ModelAttribute("currentAffiliationsForm") @Valid CurrentAffiliationsForm currentAffiliationsForm, BindingResult bindingResult) {
-
-        return buildAffiliationsViewFromUpdate(currentAffiliationsForm, bindingResult);
-    }
-
-    @RequestMapping(value = "/delete-affiliations", method = RequestMethod.POST)
-    public ModelAndView deleteAffiliations(ModelAndView mav) {
-        orcidProfileManager.retrieveOrcidProfile(getCurrentUserOrcid());
-
-        mav.setViewName("redirect:/account?activeTab=affiliations-tab");
-        return mav;
-    }
-
-    @RequestMapping(value = "/add-past-institution", method = RequestMethod.POST)
-    public ModelAndView addPastAffiliations(@ModelAttribute("pastInstitutionsForm") @Valid PastInstitutionsForm pastInstitutionsForm, BindingResult bindingResult,
-            ModelAndView mav, RedirectAttributes redirectAttributes) {
-        if (bindingResult.hasErrors()) {
-            mav = rebuildManageView("affiliations-tab");
-            mav.addAllObjects(bindingResult.getModel());
-            mav.setViewName("manage");
-        } else {
-            OrcidProfile profile = pastInstitutionsForm.getOrcidProfile();
-            profile.setOrcid(new Orcid(getCurrentUserOrcid()));
-
-            mav.setViewName("redirect:/account?activeTab=affiliations-tab");
-        }
-        return mav;
-    }
-
-    @RequestMapping(value = "/update-past-institution-information", method = RequestMethod.POST)
-    public ModelAndView updatePastAffiliationInformation(@ModelAttribute("pastInstitutionsForm") PastInstitutionsForm pastInstitutionsForm, @RequestParam String action) {
-        ModelAndView mav = new ModelAndView("redirect:/account?activeTab=affiliations-tab");
-
-        if ("remove".equals(action)) {
-            deletePastAffiliations(pastInstitutionsForm);
-        } else if ("update-past-visiblility".equals(action)) {
-            updatePastAffiliationsVisibility(pastInstitutionsForm);
-        }
-
-        return mav;
-    }
-
-    private void deletePastAffiliations(PastInstitutionsForm pastInstitutionsForm) {
-
-    }
-
-    private void updatePastAffiliationsVisibility(PastInstitutionsForm pastInstitutionsForm) {
-
-    }
-
-    private ModelAndView buildAffiliationsViewFromUpdate(@ModelAttribute @Valid CurrentAffiliationsForm currentAffiliationsForm, BindingResult bindingResult) {
-
-        if (bindingResult.hasErrors()) {
-            ModelAndView defaultView = rebuildManageView("affiliations-tab");
-            defaultView.addAllObjects(bindingResult.getModel());
-            return defaultView;
-        }
-
-        LOGGER.debug("Got current affiliations: {}", currentAffiliationsForm);
-        orcidProfileManager.updateAffiliations(currentAffiliationsForm.getOrcidProfile());
-        ModelAndView affiliationsView = manageProfile("affiliations-tab");
-        affiliationsView.addObject("affiliationsSuccessfullyUpdated", true);
-        return affiliationsView;
     }
 
     @RequestMapping(value = "/manage-password-info", method = RequestMethod.GET)
@@ -446,9 +377,6 @@ public class ManageProfileController extends BaseWorkspaceController {
         mav.addObject("profile", profile);
         mav.addObject("activeTab", activeTab);
         mav.addObject("securityQuestions", getSecurityQuestions());
-        CurrentAffiliationsForm currentAffiliationsForm = new CurrentAffiliationsForm(profile);
-        mav.addObject("pastInstitutionsForm", new PastInstitutionsForm(profile));
-        mav.addObject("currentAffiliationsForm", currentAffiliationsForm);
         return mav;
     }
 
@@ -498,10 +426,10 @@ public class ManageProfileController extends BaseWorkspaceController {
     }
 
     @ModelAttribute("securityQuestions")
-    public Map<String, String> getSecurityQuestions() {        	    		  
+    public Map<String, String> getSecurityQuestions() {
         Map<String, String> securityQuestions = securityQuestionManager.retrieveSecurityQuestionsAsInternationalizedMap();
-        Map<String, String> securityQuestionsWithMessages = new LinkedHashMap<String, String>(); 
-        for(String key : securityQuestions.keySet()){
+        Map<String, String> securityQuestionsWithMessages = new LinkedHashMap<String, String>();
+        for (String key : securityQuestions.keySet()) {
             securityQuestionsWithMessages.put(key, getMessage(securityQuestions.get(key)));
         }
         return securityQuestionsWithMessages;
@@ -575,15 +503,15 @@ public class ManageProfileController extends BaseWorkspaceController {
         List<String> errors = new ArrayList<String>();
         if (securityQuestion.getSecurityQuestionId() != 0 && (securityQuestion.getSecurityAnswer() == null || securityQuestion.getSecurityAnswer().trim() == ""))
             errors.add(getMessage("manage.pleaseProvideAnAnswer"));
-        
+
         if (securityQuestion.getPassword() == null || !encryptionManager.hashMatches(securityQuestion.getPassword(), getCurrentUser().getPassword())) {
             errors.add(getMessage("check_password_modal.incorrect_password"));
         }
-        
+
         // If the security question is empty, clean the security answer field
-        if(securityQuestion.getSecurityQuestionId() == 0)
-        	securityQuestion.setSecurityAnswer(new String());               
-        
+        if (securityQuestion.getSecurityQuestionId() == 0)
+            securityQuestion.setSecurityAnswer(new String());
+
         if (errors.size() == 0) {
             OrcidProfile profile = getEffectiveProfile();
             if (profile.getOrcidInternal().getSecurityDetails().getSecurityQuestionId() == null)

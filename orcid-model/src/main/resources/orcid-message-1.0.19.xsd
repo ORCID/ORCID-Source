@@ -71,6 +71,7 @@
                 <xs:enumeration value="1.0.16"/>
                 <xs:enumeration value="1.0.17"/>
                 <xs:enumeration value="1.0.18"/>
+                <xs:enumeration value="1.0.19"/>
             </xs:restriction>
         </xs:simpleType>
     </xs:element>
@@ -1207,7 +1208,7 @@
                 <xs:documentation>ISO 3611 country</xs:documentation>
             </xs:annotation>
             <xs:simpleContent>
-                <xs:extension base="orcid:iso-3166-country">
+                <xs:extension base="orcid:iso-3166-country-or-empty">
                     <xs:attributeGroup ref="orcid:visibility"/>
                 </xs:extension>
             </xs:simpleContent>
@@ -1762,6 +1763,14 @@
             <xs:enumeration value="ZM"/>
             <xs:enumeration value="ZW"/>
             <xs:enumeration value="TW"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="iso-3166-country-or-empty">
+        <xs:union memberTypes="orcid:iso-3166-country orcid:empty"/>
+    </xs:simpleType>
+    <xs:simpleType name="empty">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value=""/>
         </xs:restriction>
     </xs:simpleType>
     <xs:simpleType name="short-text">

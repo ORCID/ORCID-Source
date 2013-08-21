@@ -43,6 +43,7 @@ import org.mockito.Mock;
 import org.orcid.core.manager.impl.OrcidProfileManagerImpl;
 import org.orcid.jaxb.model.message.Affiliation;
 import org.orcid.jaxb.model.message.AffiliationType;
+import org.orcid.jaxb.model.message.Affiliations;
 import org.orcid.jaxb.model.message.ApprovalDate;
 import org.orcid.jaxb.model.message.Claimed;
 import org.orcid.jaxb.model.message.Contributor;
@@ -56,6 +57,7 @@ import org.orcid.jaxb.model.message.ExternalIdentifier;
 import org.orcid.jaxb.model.message.ExternalIdentifiers;
 import org.orcid.jaxb.model.message.GivenPermissionTo;
 import org.orcid.jaxb.model.message.Orcid;
+import org.orcid.jaxb.model.message.OrcidActivities;
 import org.orcid.jaxb.model.message.OrcidBio;
 import org.orcid.jaxb.model.message.OrcidHistory;
 import org.orcid.jaxb.model.message.OrcidInternal;
@@ -433,7 +435,7 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
         negatedProfile.getOrcidBio().getPersonalDetails().setGivenNames(null);
         negatedProfile.getOrcidBio().getPersonalDetails().setCreditName(null);
         negatedProfile.getOrcidBio().getPersonalDetails().setOtherNames(null);
-        negatedProfile.getOrcidBio().getAffiliations().clear();
+        negatedProfile.getOrcidActivities().setAffiliations(null);
         orcidProfileManager.updateOrcidBio(negatedProfile);
         assertEquals(IndexingStatus.PENDING, profileDao.find(TEST_ORCID).getIndexingStatus());
     }
@@ -738,25 +740,31 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
         OrcidBio orcidBio = new OrcidBio();
         orcidBio.setPersonalDetails(new PersonalDetails());
 
+        OrcidActivities orcidActivities = new OrcidActivities();
+        profile2.setOrcidActivities(orcidActivities);
+        Affiliations affiliations = new Affiliations();
+        orcidActivities.setAffiliations(affiliations);
+
         Affiliation affiliation1 = getAffiliation();
         Affiliation affiliation2 = getAffiliation();
         affiliation2.setAffiliationName("Past Institution 2");
         affiliation2.setAffiliationType(AffiliationType.CURRENT_PRIMARY_INSTITUTION);
 
-        orcidBio.getAffiliations().add(affiliation1);
-        orcidBio.getAffiliations().add(affiliation2);
+        affiliations.getAffiliation().add(affiliation1);
+        affiliations.getAffiliation().add(affiliation2);
 
         profile2.setOrcidBio(orcidBio);
         OrcidProfile profile = orcidProfileManager.addAffiliations(profile2);
 
         assertNotNull(profile);
-        assertEquals(2, profile.getOrcidBio().getAffiliations().size());
+        assertEquals(2, profile.getOrcidActivities().getAffiliations().getAffiliation().size());
 
         // simulate the ManageProfileController#deletePastAffiliations by
         // creating single past inst
         profile2 = createFullOrcidProfile();
-        profile2.getOrcidBio().getAffiliations().clear();
-        profile2.getOrcidBio().getAffiliations().add(affiliation1);
+        affiliations.getAffiliation().clear();
+        affiliations.getAffiliation().add(affiliation1);
+        profile2.setOrcidActivities(orcidActivities);
 
         orcidProfileManager.updateOrcidBio(profile2);
 

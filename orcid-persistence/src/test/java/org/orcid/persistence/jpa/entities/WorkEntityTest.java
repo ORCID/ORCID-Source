@@ -48,7 +48,7 @@ public class WorkEntityTest {
         assertEquals(one.compareTo(two), 1);
         assertEquals(two.compareTo(one), -1);
 
-        one.setPublicationDate(new FuzzyDate(2013, 2, 1));
+        one.setPublicationDate(new PublicationDateEntity(2013, 2, 1));
         assertEquals(one.compareTo(two), 1);
         assertEquals(two.compareTo(one), -1);
 
@@ -56,11 +56,11 @@ public class WorkEntityTest {
         assertEquals(one.compareTo(one), 0);
 
         //Compare with object
-        two.setPublicationDate(new FuzzyDate(2013, 1, 1));
+        two.setPublicationDate(new PublicationDateEntity(2013, 1, 1));
         assertEquals(one.compareTo(two), 1);
         assertEquals(two.compareTo(one), -1);
 
-        two.setPublicationDate(new FuzzyDate(2013, 2, 1));
+        two.setPublicationDate(new PublicationDateEntity(2013, 2, 1));
         two.setTitle("Title 0");
         assertEquals(one.compareTo(two), 1);
         assertEquals(two.compareTo(one), -1);
@@ -97,7 +97,7 @@ public class WorkEntityTest {
         assertEquals(comparator.compare(one, two), 1);
         assertEquals(comparator.compare(two, one), -1);
 
-        one.setPublicationDate(new FuzzyDate(2013, 2, 1));
+        one.setPublicationDate(new PublicationDateEntity(2013, 2, 1));
         assertEquals(comparator.compare(one, two), -1);
         assertEquals(comparator.compare(two, one), 1);
 
@@ -105,11 +105,11 @@ public class WorkEntityTest {
         assertEquals(comparator.compare(one, one), 0);
 
         //Compare with object
-        two.setPublicationDate(new FuzzyDate(2013, 1, 1));
+        two.setPublicationDate(new PublicationDateEntity(2013, 1, 1));
         assertEquals(comparator.compare(one, two), -1);
         assertEquals(comparator.compare(two, one), 1);
 
-        two.setPublicationDate(new FuzzyDate(2013, 2, 1));
+        two.setPublicationDate(new PublicationDateEntity(2013, 2, 1));
         two.setTitle("Title 0");
         assertEquals(comparator.compare(one, two), 1);
         assertEquals(comparator.compare(two, one), -1);

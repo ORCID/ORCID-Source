@@ -43,13 +43,13 @@
             patent_no="GB9283949348"
             short_description="Telephone thing"
             issue_date="2011-01-02"
-            issuing_country="UK"
+            issuing_country="GB"
             />
     <patent patent_id="2"
             patent_no="GB9283949349"
             short_description="Computer thing"
             issue_date="2011-01-04"
-            issuing_country="UK"
+            issuing_country="GB"
             />
 
     <funding_grant grant_id="1"

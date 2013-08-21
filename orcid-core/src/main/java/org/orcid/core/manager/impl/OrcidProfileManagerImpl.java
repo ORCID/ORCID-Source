@@ -63,6 +63,7 @@ import org.orcid.core.security.visibility.aop.VisibilityControl;
 import org.orcid.core.utils.OrcidJaxbCopyUtils;
 import org.orcid.core.utils.ReleaseNameUtils;
 import org.orcid.jaxb.model.message.Affiliation;
+import org.orcid.jaxb.model.message.Affiliations;
 import org.orcid.jaxb.model.message.Biography;
 import org.orcid.jaxb.model.message.Claimed;
 import org.orcid.jaxb.model.message.ContactDetails;
@@ -716,7 +717,26 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         if (existingProfile == null) {
             return null;
         }
-        OrcidJaxbCopyUtils.copyUpdatedBioToExistingWithVisibility(existingProfile.getOrcidBio(), updatedOrcidProfile.getOrcidBio());
+        OrcidActivities updatedActivities = updatedOrcidProfile.getOrcidActivities();
+        if (updatedActivities == null) {
+            return null;
+        }
+        Affiliations updatedAffiliations = updatedActivities.getAffiliations();
+        if (updatedAffiliations == null) {
+            return null;
+        }
+        OrcidActivities existingActivities = existingProfile.getOrcidActivities();
+        if (existingActivities == null) {
+            existingActivities = new OrcidActivities();
+            existingProfile.setOrcidActivities(existingActivities);
+        }
+        Affiliations existingAffiliations = existingActivities.getAffiliations();
+        if (existingAffiliations == null) {
+            existingAffiliations = new Affiliations();
+            existingActivities.setAffiliations(existingAffiliations);
+        }
+
+        OrcidJaxbCopyUtils.copyAffiliationsToExistingPreservingVisibility(existingAffiliations, updatedAffiliations);
         return updateOrcidProfile(existingProfile);
     }
 
@@ -998,8 +1018,8 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
     @Override
     @Transactional
     public OrcidProfile addAffiliations(OrcidProfile updatedOrcidProfile) {
-        if (updatedOrcidProfile.getOrcidBio() == null || updatedOrcidProfile.getOrcidBio().getAffiliations() == null
-                || updatedOrcidProfile.getOrcidBio().getAffiliations().isEmpty()) {
+        OrcidActivities updatedOrcidActivities = updatedOrcidProfile.getOrcidActivities();
+        if (updatedOrcidActivities == null || updatedOrcidActivities.getAffiliations() == null || updatedOrcidActivities.getAffiliations().getAffiliation().isEmpty()) {
             return null;
         }
         String orcid = updatedOrcidProfile.getOrcid().getValue();
@@ -1007,13 +1027,22 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         if (existingProfile == null) {
             return null;
         }
-        OrcidBio orcidBio = existingProfile.getOrcidBio();
-        List<Affiliation> affiliations = updatedOrcidProfile.getOrcidBio().getAffiliations();
-        for (Affiliation affiliation : affiliations) {
-            affiliation.setVisibility(OrcidVisibilityDefaults.AFFILIATE_DETAIL_DEFAULT.getVisibility());
-            orcidBio.getAffiliations().add(affiliation);
+        OrcidActivities existingOrcidActivities = existingProfile.getOrcidActivities();
+        if (existingOrcidActivities == null) {
+            existingOrcidActivities = new OrcidActivities();
+            existingProfile.setOrcidActivities(existingOrcidActivities);
         }
-        updatedOrcidProfile.getOrcidBio();
+        Affiliations existingAffiliations = existingOrcidActivities.getAffiliations();
+        if (existingAffiliations == null) {
+            existingAffiliations = new Affiliations();
+            existingOrcidActivities.setAffiliations(existingAffiliations);
+        }
+        List<Affiliation> updatedAffiliationsList = updatedOrcidActivities.getAffiliations().getAffiliation();
+        List<Affiliation> exisitingAffiliationList = existingAffiliations.getAffiliation();
+        for (Affiliation affiliation : updatedAffiliationsList) {
+            affiliation.setVisibility(OrcidVisibilityDefaults.AFFILIATE_DETAIL_DEFAULT.getVisibility());
+            exisitingAffiliationList.add(affiliation);
+        }
         OrcidProfile persistedProfile = updateOrcidProfile(existingProfile);
         return persistedProfile;
     }

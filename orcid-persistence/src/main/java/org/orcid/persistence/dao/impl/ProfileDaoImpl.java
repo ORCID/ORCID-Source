@@ -28,6 +28,7 @@ import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
 import org.apache.commons.lang.StringUtils;
+import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.jaxb.model.message.Locale;
 import org.orcid.jaxb.model.message.OrcidType;
 import org.orcid.persistence.dao.ProfileDao;
@@ -335,7 +336,8 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
         query.setParameter("family_name", profile.getFamilyName());
         query.setParameter("given_names", profile.getGivenNames());
         query.setParameter("biography", profile.getBiography());
-        query.setParameter("iso2_country", profile.getIso2Country());
+        Iso3166Country iso2Country = profile.getIso2Country();
+        query.setParameter("iso2_country", iso2Country != null ? iso2Country.value() : null);
         query.setParameter("biography_visibility", StringUtils.upperCase(profile.getBiographyVisibility().value()));
         query.setParameter("keywords_visibility", StringUtils.upperCase(profile.getKeywordsVisibility().value()));
         query.setParameter("researcher_urls_visibility", StringUtils.upperCase(profile.getResearcherUrlsVisibility().value()));

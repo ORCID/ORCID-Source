@@ -18,9 +18,9 @@
 
 -->
 <orcid-message xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-               xsi:schemaLocation="http://www.orcid.org/ns/orcid ../../../../orcid-model/src/main/resources/orcid-message-1.0.18.xsd"
+               xsi:schemaLocation="http://www.orcid.org/ns/orcid ../../../../orcid-model/src/main/resources/orcid-message-1.0.19.xsd"
                xmlns="http://www.orcid.org/ns/orcid">
-    <message-version>1.0.18</message-version>
+    <message-version>1.0.19</message-version>
     <!-- Error message, if applicable -->
     <!-- Unable to connect to ORCID, no matching researchers, etc. -->
     <!-- <error-desc>No researcher found.</error-desc> -->
@@ -115,9 +115,9 @@
                     <affiliation-name>New College</affiliation-name>
                     <affiliation-type>current-institution</affiliation-type>
                     <affiliation-address>
-                        <city>Some City</city>
-                        <region>CT</region>
-                        <country>US</country>
+                        <affiliation-city>Some City</affiliation-city>
+                        <affiliation-region>CT</affiliation-region>
+                        <affiliation-country>US</affiliation-country>
                     </affiliation-address>
                     <role-title>Researcher (Academic)</role-title>
                     <start-date>
@@ -129,9 +129,9 @@
                     <affiliation-name>Brown University</affiliation-name>
                     <affiliation-type>funded-by</affiliation-type>
                     <affiliation-address>
-                        <city>Providence</city>
-                        <region>RI</region>
-                        <country>US</country>
+                        <affiliation-city>Providence</affiliation-city>
+                        <affiliation-region>RI</affiliation-region>
+                        <affiliation-country>US</affiliation-country>
                     </affiliation-address>
                     <department-name>Psychoceramics</department-name>
                     <role-title>Researcher (Academic)</role-title>
@@ -148,9 +148,9 @@
                     <affiliation-name>Yale University</affiliation-name>
                     <affiliation-type>current-primary-institution</affiliation-type>
                     <affiliation-address>
-                        <city>New Haven</city>
-                        <region>CT</region>
-                        <country>US</country>
+                        <affiliation-city>New Haven</affiliation-city>
+                        <affiliation-region>CT</affiliation-region>
+                        <affiliation-country>US</affiliation-country>
                     </affiliation-address>
                     <department-name>Law</department-name>
                     <role-title>Researcher (Academic)</role-title>
@@ -166,8 +166,8 @@
                     <affiliation-name>Slightly Obscure College</affiliation-name>
                     <affiliation-type>educated-here</affiliation-type>
                     <affiliation-address>
-                        <city>London</city>
-                        <country>GB</country>
+                        <affiliation-city>London</affiliation-city>
+                        <affiliation-country>GB</affiliation-country>
                     </affiliation-address>
                     <role-title>Student</role-title>
                     <start-date>

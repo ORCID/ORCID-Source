@@ -27,7 +27,6 @@ import static org.mockito.Mockito.when;
 import static org.mockito.internal.verification.VerificationModeFactory.times;
 
 import java.net.URI;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -55,8 +54,6 @@ import org.orcid.frontend.web.forms.AddDelegateForm;
 import org.orcid.frontend.web.forms.ChangePasswordForm;
 import org.orcid.frontend.web.forms.ChangePersonalInfoForm;
 import org.orcid.frontend.web.forms.ChangeSecurityQuestionForm;
-import org.orcid.frontend.web.forms.CurrentAffiliationsForm;
-import org.orcid.frontend.web.forms.ManagePasswordOptionsForm;
 import org.orcid.frontend.web.util.BaseControllerTest;
 import org.orcid.jaxb.model.message.DelegationDetails;
 import org.orcid.jaxb.model.message.Email;
@@ -70,7 +67,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.MapBindingResult;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -152,7 +148,6 @@ public class ManageProfileControllerTest extends BaseControllerTest {
         assertNotNull(activeTab);
         assertEquals("ManagePersonalInfo", activeTab);
         assertNotNull(model.get("securityQuestions"));
-        assertNotNull(model.get("currentAffiliationsForm"));
     }
 
     @Test
@@ -170,33 +165,6 @@ public class ManageProfileControllerTest extends BaseControllerTest {
         ModelAndView successView = controller.saveEditedBio(request, changePersonalInfoForm, bindingResult, mock(RedirectAttributes.class));
         verify(mockNotificationManager, times(0)).sendEmailAddressChangedNotification(any(OrcidProfile.class), any(Email.class), any(URI.class));
         assertEquals("redirect:manage-bio-settings", successView.getViewName());
-    }
-
-    @Test
-    public void testUpdateAffiliations() throws Exception {
-        Map<String, String> map = new HashMap<String, String>();
-        MapBindingResult bindingResult = new MapBindingResult(map, "currentAffiliationsForm");
-        CurrentAffiliationsForm currentAffiliationsForm = new CurrentAffiliationsForm(controller.getEffectiveProfile());
-        ModelAndView mav = controller.updateAffiliations(currentAffiliationsForm, bindingResult);
-        assertNotNull(mav);
-
-        Map<String, Object> model = mav.getModel();
-
-        ManagePasswordOptionsForm passwordOptionsForm = (ManagePasswordOptionsForm) model.get("managePasswordOptionsForm");
-        OrcidProfile profile = (OrcidProfile) model.get("profile");
-        model.get("startYears");
-        String activeTab = (String) model.get("activeTab");
-        Map<String, String> securityQuestions = (Map<String, String>) model.get("securityQuestions");
-        currentAffiliationsForm = (CurrentAffiliationsForm) model.get("currentAffiliationsForm");
-
-        assertEquals("manage", mav.getViewName());
-        assertNotNull(passwordOptionsForm);
-        assertNotNull(profile);
-        assertEquals("4444-4444-4444-4446", profile.getOrcid().getValue());
-        assertEquals("affiliations-tab", activeTab);
-        assertEquals(2, securityQuestions.size());
-        assertNotNull(currentAffiliationsForm);
-
     }
 
     @Test
