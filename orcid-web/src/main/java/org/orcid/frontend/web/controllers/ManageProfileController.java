@@ -49,7 +49,6 @@ import org.orcid.frontend.web.forms.ManagePasswordOptionsForm;
 import org.orcid.frontend.web.forms.PastInstitutionsForm;
 import org.orcid.frontend.web.forms.PreferencesForm;
 import org.orcid.frontend.web.forms.SearchForDelegatesForm;
-import org.orcid.frontend.web.util.FunctionsOverCollections;
 import org.orcid.jaxb.model.message.Delegation;
 import org.orcid.jaxb.model.message.DelegationDetails;
 import org.orcid.jaxb.model.message.Email;
@@ -763,56 +762,67 @@ public class ManageProfileController extends BaseWorkspaceController {
 
     @RequestMapping(value = "/addEmail.json", method = RequestMethod.POST)
     public @ResponseBody
-    org.orcid.pojo.Email addEmailsJson(HttpServletRequest request, @RequestBody org.orcid.pojo.Email email) {
-        String newPrime = null;
-        String oldPrime = null;
-        List<String> emailErrors = new ArrayList<String>();
-
-        // clear errros
-        email.setErrors(new ArrayList<String>());
-
-        // if blank
-        if (email.getValue() == null || email.getValue().trim().equals("")) {
-            emailErrors.add(getMessage("Email.personalInfoForm.email"));
+    org.orcid.pojo.Email addEmailsJson(HttpServletRequest request, @RequestBody org.orcid.pojo.AddEmail email) {
+        List<String> errors = new ArrayList<String>();
+        //Check password
+        if (email.getPassword() == null || !encryptionManager.hashMatches(email.getPassword(), getCurrentUser().getPassword())) {
+            errors.add(getMessage("change_security_question.incorrect_password"));
         }
-        OrcidProfile currentProfile = getEffectiveProfile();
-        List<Email> emails = currentProfile.getOrcidBio().getContactDetails().getEmail();
-
-        MapBindingResult mbr = new MapBindingResult(new HashMap<String, String>(), "Email");
-        // make sure there are no dups
-        validateEmailAddress(email.getValue(), false, request, mbr);
-
-        for (ObjectError oe : mbr.getAllErrors()) {
-            emailErrors.add(getMessage(oe.getCode(), email.getValue()));
-        }
-        email.setErrors(emailErrors);
-
-        if (emailErrors.size() == 0) {
-            if (email.isPrimary()) {
-                for (Email curEmail : emails) {
-                    if (curEmail.isPrimary())
-                        oldPrime = curEmail.getValue();
-                    curEmail.setPrimary(false);
+              
+        if(errors.isEmpty()) {
+            String newPrime = null;
+            String oldPrime = null;
+            List<String> emailErrors = new ArrayList<String>();
+    
+            // clear errros
+            email.setErrors(new ArrayList<String>());
+    
+            // if blank
+            if (email.getValue() == null || email.getValue().trim().equals("")) {
+                emailErrors.add(getMessage("Email.personalInfoForm.email"));
+            }
+            OrcidProfile currentProfile = getEffectiveProfile();
+            List<Email> emails = currentProfile.getOrcidBio().getContactDetails().getEmail();
+    
+            MapBindingResult mbr = new MapBindingResult(new HashMap<String, String>(), "Email");
+            // make sure there are no dups
+            validateEmailAddress(email.getValue(), false, request, mbr);
+    
+            for (ObjectError oe : mbr.getAllErrors()) {
+                emailErrors.add(getMessage(oe.getCode(), email.getValue()));
+            }
+            email.setErrors(emailErrors);
+    
+            if (emailErrors.size() == 0) {
+                if (email.isPrimary()) {
+                    for (Email curEmail : emails) {
+                        if (curEmail.isPrimary())
+                            oldPrime = curEmail.getValue();
+                        curEmail.setPrimary(false);
+                    }
+                    newPrime = email.getValue();
                 }
-                newPrime = email.getValue();
+    
+                emails.add(email);
+                currentProfile.getOrcidBio().getContactDetails().setEmail(emails);
+                email.setSource(getRealUserOrcid());
+                emailManager.addEmail(currentProfile.getOrcid().getValue(), email);
+    
+                // send verifcation email for new address
+                URI baseUri = OrcidWebUtils.getServerUriWithContextPath(request);
+                notificationManager.sendVerificationEmail(currentProfile, baseUri, email.getValue());
+    
+                // if primary also send change notification.
+                if (newPrime != null && !newPrime.equalsIgnoreCase(oldPrime)) {
+                    request.getSession().setAttribute(ManageProfileController.CHECK_EMAIL_VALIDATED, false);
+                    notificationManager.sendEmailAddressChangedNotification(currentProfile, new Email(oldPrime), baseUri);
+                }
+    
             }
-
-            emails.add(email);
-            currentProfile.getOrcidBio().getContactDetails().setEmail(emails);
-            email.setSource(getRealUserOrcid());
-            emailManager.addEmail(currentProfile.getOrcid().getValue(), email);
-
-            // send verifcation email for new address
-            URI baseUri = OrcidWebUtils.getServerUriWithContextPath(request);
-            notificationManager.sendVerificationEmail(currentProfile, baseUri, email.getValue());
-
-            // if primary also send change notification.
-            if (newPrime != null && !newPrime.equalsIgnoreCase(oldPrime)) {
-                request.getSession().setAttribute(ManageProfileController.CHECK_EMAIL_VALIDATED, false);
-                notificationManager.sendEmailAddressChangedNotification(currentProfile, new Email(oldPrime), baseUri);
-            }
-
+        } else {
+            email.setErrors(errors);
         }
+        
         return email;
     }
 
