@@ -344,11 +344,70 @@ $(function () {
 		}
 	};
 	
+	// Privacy toggle
+
 	$('body').on('mousedown', function (e) {
 		hideThing(e, '.privacy-group', 'open');
 		hideThing(e, '.popover', 'show');
 	});
 		
+	$('body').on('mousedown', function (e) {
+		hideThing(e, '.privacy-group', 'open');
+		hideThing(e, '.popover', 'show');
+	});
+	
+	
+	var btnClassR = /(btn-\w+)/;
+	
+	var getBtnClass = function (el) {
+		var r = btnClassR.exec(el.className);
+		return (r ? r[0]: "");
+	};
+
+	function privacyBind() {
+		
+		$('.privacy-group').each(function (i, el) {
+			var $el = $(el),
+				current = "",
+				toggle = $el.find('.privacy-toggle');
+			$el.on('click', '.privacy-toggle', function (e) {
+				e.preventDefault();
+				if ($el.hasClass('open')) {
+					return $el.removeClass('open');
+				}
+				$('.privacy-group.open').removeClass('open');
+				current = getBtnClass(this);
+				$el.toggleClass('open');
+			});
+			$el.on('click', '.btn-privacy', function (e) {
+				e.preventDefault();
+				var f = toggle.closest('form');
+				var s;
+				var priAct = $(this).attr('href').replace("#","");
+				if (f.length && (f.attr('action') == 'save-current-works')) {
+					s = $('select', toggle.closest('label'));
+					s.val(priAct);
+                    showChangeMessage();
+                    $el.removeClass('open');
+                    toggle.removeClass(current).addClass(getBtnClass(this));
+                    toggle.html($(this).html());
+				} else {
+					var s = toggle.closest('.privacy-tool').prev('.visibility-lbl').find('select');
+					if (s.length) {
+						s.val(priAct);
+					}
+					toggle.removeClass(current).addClass(getBtnClass(this));
+					toggle.html($(this).html());
+					$el.removeClass('open');
+				}
+			});
+		});
+		
+	}
+	
+	privacyBind();
+
+
 	
 	var ps = $(".password-strength").passStrength();
 	ps.on('keyup', function (e) {
