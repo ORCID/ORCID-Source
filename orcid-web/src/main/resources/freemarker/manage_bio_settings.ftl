@@ -77,7 +77,7 @@
                 <h3>${springMacroRequestContext.getMessage("manage_bio_settings.h3aboutme")}</h3>
                 <div class="control-group">
                     <label for="biography">${springMacroRequestContext.getMessage("manage_bio_settings.labelbiography")}</label>
-                    <div class="relative"><@spring.formTextarea "changePersonalInfoForm.biography" 'class="input-xlarge" maxlength="1000"'/></div>
+                    <div class="relative"><@spring.formTextarea "changePersonalInfoForm.biography" 'class="input-xlarge" maxlength="5000"'/></div>
                 </div>
              			
              	<div class="control-group">
