@@ -21,7 +21,7 @@
     <title>${title!"ORCID"}</title>
     <meta name="description" content="">
     <meta name="author" content="">
-    <script type="application/javascript">
+    <script type="text/javascript">
     	var orcidVar = {};
     	orcidVar.baseUri = '${baseUri}';
     	orcidVar.baseUriHttp = '${baseUriHttp}';
