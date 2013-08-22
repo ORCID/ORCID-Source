@@ -60,7 +60,7 @@
     <!--[if IE 7]>
     	<script src="//cdnjs.cloudflare.com/ajax/libs/json3/3.2.4/json3.min.js" type="text/javascript"></script>
      <![endif]-->
-     <script type="application/javascript">
+     <script type="text/javascript">
 		  var _prum={id:"51682c74abe53d6049000000"};
 		  var PRUM_EPISODES=PRUM_EPISODES||{};
 		  PRUM_EPISODES.q=[];
