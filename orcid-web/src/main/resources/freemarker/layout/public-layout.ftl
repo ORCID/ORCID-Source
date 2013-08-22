@@ -19,10 +19,9 @@
 <#assign verDateTime = startupDate?datetime>
 <#macro base ver="${verDateTime?iso_utc}">
 <!DOCTYPE html>
-<!--[if lt IE 9]><html class="no-js oldie" lang="en"><![endif]-->
-<!--[if gt IE 9]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<html class="no-js oldie ng-app:orcidApp"  ng-app="orcidApp" id="ng-app" lang="en">
 <#include "/common/html-head.ftl" />
-<body data-baseurl="<@spring.url '/'/>" ng-app="orcidApp">
+<body data-baseurl="<@spring.url '/'/>">
 <#nested />
 <#include "/common/scripts.ftl" />
 </body>
@@ -54,7 +53,7 @@
                         <button type="submit" class="search-button"><i class="icon-orcid-search"></i></button>
                         <a href="<@spring.url "/orcid-search/search" />" class="settings-button" title="<@orcid.msg 'public-layout.search.advanced'/>"><i class="icon-cog"></i></a>
                     </form>
-	                <div class="language-selector" ng-controller="languageCtrl">
+	                <div class="language-selector" ng-controller="languageCtrl" id="languageCtrl">
 					    <form id="language-form" action="#">
 					    	<select name="language-codes" id="language-codes" ng-model="language" ng-options="language.label for language in languages" ng-change="selectedLanguage()"></select>
 					    </form>
