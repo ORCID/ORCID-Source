@@ -28,7 +28,7 @@
         <orcid>4444-4444-4444-4446</orcid>
         <orcid-id>http://orcid.org/4444-4444-4444-4446</orcid-id>
         <orcid-preferences>
-        	<locale>zh_CN</locale>
+        	<locale>en</locale>
         </orcid-preferences>
         <orcid-history>
             <creation-method>API</creation-method>
