@@ -14,6 +14,10 @@
  *
  * =============================================================================
  */
+
+//IE7 hack
+if ( ! window.console ) console = { log: function(){} };
+
 // add new method to string
 if (typeof String.prototype.startsWith != 'function') {
   String.prototype.startsWith = function (str){
