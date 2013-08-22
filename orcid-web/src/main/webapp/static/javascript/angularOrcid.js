@@ -1319,7 +1319,7 @@ function languageCtrl($scope, $cookies){
 	        {
 		        "value": 'zh_TW',
 			    "label": '繁體中文'
-	        },	        
+	        }	        
 	    ];	
 	
 	//Load Language that is set in the cookie or set default language to english
