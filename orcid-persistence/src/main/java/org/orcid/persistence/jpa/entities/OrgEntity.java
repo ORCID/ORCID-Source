@@ -16,6 +16,8 @@
  */
 package org.orcid.persistence.jpa.entities;
 
+import java.io.Serializable;
+
 import javax.persistence.Basic;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -38,7 +40,7 @@ import org.orcid.jaxb.model.message.Iso3166Country;
 
 @Entity
 @Table(name = "org")
-public class OrgEntity extends BaseEntity<Long> {
+public class OrgEntity extends BaseEntity<Long> implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -67,12 +69,26 @@ public class OrgEntity extends BaseEntity<Long> {
         return name;
     }
 
+    public String resolveName() {
+        if (orgDisambiguated == null) {
+            return name;
+        }
+        return orgDisambiguated.getName();
+    }
+
     public void setName(String name) {
         this.name = name;
     }
 
     public String getCity() {
         return city;
+    }
+
+    public String resolveCity() {
+        if (orgDisambiguated == null) {
+            return city;
+        }
+        return orgDisambiguated.getCity();
     }
 
     public void setCity(String city) {
@@ -83,6 +99,13 @@ public class OrgEntity extends BaseEntity<Long> {
         return region;
     }
 
+    public String resolveRegion() {
+        if (orgDisambiguated == null) {
+            return region;
+        }
+        return orgDisambiguated.getRegion();
+    }
+
     public void setRegion(String region) {
         this.region = region;
     }
@@ -91,6 +114,13 @@ public class OrgEntity extends BaseEntity<Long> {
     @Enumerated(EnumType.STRING)
     public Iso3166Country getCountry() {
         return country;
+    }
+
+    public Iso3166Country resolveCountry() {
+        if (orgDisambiguated == null) {
+            return country;
+        }
+        return orgDisambiguated.getCountry();
     }
 
     public void setCountry(Iso3166Country country) {
@@ -116,7 +146,7 @@ public class OrgEntity extends BaseEntity<Long> {
     }
 
     @ManyToOne
-    @JoinColumn(name="org_disambiguated_id")
+    @JoinColumn(name = "org_disambiguated_id")
     public OrgDisambiguatedEntity getOrgDisambiguated() {
         return orgDisambiguated;
     }

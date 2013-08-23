@@ -371,6 +371,20 @@
             country="GB"
             org_disambiguated_id="1"
             />
+            
+    <org
+            id="2"
+            name="Another Institution"
+            city="Glasgow"
+            country="GB"
+            />
+            
+    <org
+            id="3"
+            name="Eine Institution"
+            city="Berlin"
+            country="DE"
+            />
 
     <org_affiliation_relation
             id="1"
