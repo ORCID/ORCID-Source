@@ -35,7 +35,7 @@ ${verificationUrl}?lang=${locale}
 
 <@emailMacros.msg "email.api_record_creation.launched.1" />${baseUri}/home?lang=${locale}<@emailMacros.msg "email.api_record_creation.launched.2" />
 
-<@emailMacros.msg "email.api_record_creation.read_privacy.1" />${baseUri}/home?lang=${locale}<@emailMacros.msg "email.api_record_creation.read_privacy.1" />
+<@emailMacros.msg "email.api_record_creation.read_privacy.1" />${baseUri}/home?lang=${locale}<@emailMacros.msg "email.api_record_creation.read_privacy.2" />
 
 <@emailMacros.msg "email.common.kind_regards" />
 ${baseUri}
