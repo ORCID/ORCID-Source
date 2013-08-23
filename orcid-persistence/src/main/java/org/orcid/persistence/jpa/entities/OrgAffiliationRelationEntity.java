@@ -42,7 +42,7 @@ import org.orcid.utils.NullUtils;
  */
 @Entity
 @Table(name = "org_affiliation_relation")
-public class OrgAffiliationRelationEntity extends BaseEntity<Long> implements Comparable<OrgAffiliationRelationEntity> {
+public class OrgAffiliationRelationEntity extends BaseEntity<Long> implements Comparable<OrgAffiliationRelationEntity>, ProfileAware {
 
     private static final long serialVersionUID = 1L;
 
@@ -79,6 +79,7 @@ public class OrgAffiliationRelationEntity extends BaseEntity<Long> implements Co
         this.org = org;
     }
 
+    @Override
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "orcid", nullable = false, updatable = false, insertable = true)
     public ProfileEntity getProfile() {
