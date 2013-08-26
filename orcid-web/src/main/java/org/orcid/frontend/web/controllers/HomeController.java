@@ -94,7 +94,7 @@ public class HomeController extends BaseController {
         org.orcid.pojo.Local lPojo = new org.orcid.pojo.Local();
         lPojo.setLocale(locale.toString());
 
-        ResourceBundle resources = ResourceBundle.getBundle("i18n/messages", locale, new UTF8Control());
+        ResourceBundle resources = ResourceBundle.getBundle("i18n/javascript", locale, new UTF8Control());
         lPojo.setMessages(OrcidStringUtils.resourceBundleToMap(resources));
 
         return lPojo;

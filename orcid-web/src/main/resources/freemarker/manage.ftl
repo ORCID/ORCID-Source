@@ -77,7 +77,7 @@
 		   						</tr>
 			   					</table>
 			   					<div>
-		   							<input type="email" placeholder="Add Another Email" class="input-xlarge" ng-model="inputEmail.value" style="margin: 0px;" required/> <span ng-click="addEmail()" class="btn btn-primary">${springMacroRequestContext.getMessage("manage.spanadd")}</span>
+		   							<input type="email" placeholder="Add Another Email" class="input-xlarge" ng-model="inputEmail.value" style="margin: 0px;" required/> <span ng-click="checkCredentials()" class="btn btn-primary">${springMacroRequestContext.getMessage("manage.spanadd")}</span>
 		   							<span class="orcid-error" ng-show="inputEmail.errors.length > 0">
 			   							<span ng-repeat='error in inputEmail.errors' ng-bind-html-unsafe="error"></span>
 			   						</span>
@@ -277,13 +277,18 @@
 		<button class="btn btn-danger" ng-click="deleteEmail()">${springMacroRequestContext.getMessage("manage.email.deleteEmail")}</button> 
 		<a href="" ng-click="closeModal()">${springMacroRequestContext.getMessage("manage.email.cancel")}</a><div>
 	</script>            
-
+	
+	<#-- Script that will display a modal to ask for user password 												-->
+	<#-- If someone wants to use this modal, it should consider the following: 									-->
+	<#-- 1) There should be a password variable in his scope, there we be saved the value of this input.		-->
+	<#-- 2) There should be a function submitModal() to submit the form with the desired info and the password.	-->
+	<#-- 3) There should be a function closeModal() to close the the modal.										-->
 	<script type="text/ng-template" id="check-password-modal">
-		<div style="padding: 20px;"><h2><@orcid.msg 'change_security_question.confirm_password' /></h2>		
-		<label for="security_question.password" class=""><@orcid.msg 'change_security_question.password' /></label>
-	    <input id="security_question.password" type="password" name="security_question.password" ng-model="securityQuestionPojo.password" class="input-xlarge"/>
-	    <button id="bottom-submit-security-question" class="btn btn-primary" ng-click="saveSecurityQuestion()"><@orcid.msg 'change_security_question.submit'/></button>				
-		<button class="btn" ng-click="closeModal()"><@orcid.msg 'change_security_question.close'/></button>
+		<div style="padding: 20px;"><h2><@orcid.msg 'check_password_modal.confirm_password' /></h2>		
+		<label for="check_password_modal.password" class=""><@orcid.msg 'check_password_modal.password' /></label>
+	    <input id="check_password_modal.password" type="password" name="check_password_modal.password" ng-model="password" class="input-xlarge"/>
+	    <button id="bottom-submit" class="btn btn-primary" ng-click="submitModal()"><@orcid.msg 'check_password_modal.submit'/></button>				
+		<button class="btn" ng-click="closeModal()"><@orcid.msg 'check_password_modal.close'/></button>
 	</script>
 
 </@protected>
