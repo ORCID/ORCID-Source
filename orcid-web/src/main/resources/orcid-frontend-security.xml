@@ -38,14 +38,25 @@
 
 	<bean id="accessDecisionManager" class="org.springframework.security.access.vote.UnanimousBased"
 		xmlns="http://www.springframework.org/schema/beans">
-		<constructor-arg>
-			<list>
-				<bean class="org.springframework.security.oauth2.provider.vote.ScopeVoter" />
-				<bean class="org.springframework.security.access.vote.RoleVoter" />
-				<bean class="org.springframework.security.access.vote.AuthenticatedVoter" />
-			</list>
-		</constructor-arg>
+		 <constructor-arg>
+            <list>
+                <bean class="org.springframework.security.oauth2.provider.vote.ScopeVoter"/>
+                <bean class="org.springframework.security.access.vote.RoleHierarchyVoter">
+                  <constructor-arg ref="roleHierarchy" />
+                </bean>
+                <bean class="org.springframework.security.access.vote.AuthenticatedVoter"/>
+            </list>
+        </constructor-arg>
 	</bean>
+
+	<bean id="roleHierarchy"
+       class="org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl">
+     <property name="hierarchy">
+          <value>
+				ROLE_ADMIN > ROLE_USER  
+          </value>
+     </property>
+   </bean>
 
 	<bean id="sessionRegistry"
 		class="org.springframework.security.core.session.SessionRegistryImpl" />
@@ -84,7 +95,7 @@
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/oauth/confirm_access(\?.*)?"
 			access="DENY_OAUTH,ROLE_USER" />
-		<sec:intercept-url pattern="/oauth/.*" access="ROLE_USER" />
+		<sec:intercept-url pattern="/oauth/.*" access="ROLE_USER" />		
 		<sec:form-login authentication-failure-url="/oauth/signin"
 			login-page="/oauth/signin" login-processing-url="/signin/auth"
 			username-parameter="userId" password-parameter="password"
@@ -157,6 +168,8 @@
 		<sec:intercept-url pattern="/oauth/.*" access="ROLE_USER" />
 		<sec:intercept-url pattern="/eula/accept(\?.*)?"
 			method="POST" access="DENY_OAUTH,ROLE_USER" />
+		<sec:intercept-url pattern="/deprecate-profiles(\?.*)" 
+			access="ROLE_ADMIN"/>
 		<sec:intercept-url pattern="/.*" access="ROLE_USER" />
 
 		<!-- <sec:form-login authentication-failure-url="/signin" login-page="/signin" 

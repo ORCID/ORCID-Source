@@ -87,7 +87,27 @@
 			   			</td>		        		
 		        	</tr>
 		        </table>
-			</div>			
+			</div>	
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			<@security.authorize ifAnyGranted="ROLE_ADMIN">
+				<p><a href="<@spring.url "/deprecate-profile" />"><@orcid.msg 'admin.profile_deprecation.workspace_link' /></a></p>
+			</@security.authorize>
+			
+					
+					
+					
+					
+					
+					
+					
         </div>
     </div>
     <div class="span9">

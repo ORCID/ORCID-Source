@@ -20,6 +20,7 @@ import java.util.Arrays;
 import java.util.Collection;
 
 import org.orcid.core.security.OrcidWebRole;
+import org.orcid.jaxb.model.message.OrcidType;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -42,14 +43,17 @@ public class OrcidProfileUserDetails implements UserDetails {
 
     private boolean inDelegationMode;
 
+    private OrcidType orcidType;
+    
     public OrcidProfileUserDetails() {
     }
 
-    public OrcidProfileUserDetails(String orcid, String primaryEmail, String password) {
+    public OrcidProfileUserDetails(String orcid, String primaryEmail, String password, OrcidType orcidType) {
         this.realOrcid = orcid;
         this.effectiveOrcid = orcid;
         this.primaryEmail = primaryEmail;
         this.password = password;
+        this.orcidType = orcidType;
     }
 
     /**
@@ -60,6 +64,13 @@ public class OrcidProfileUserDetails implements UserDetails {
      */
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
+        if(orcidType != null)            
+            switch(orcidType){
+                case ADMIN:
+                    return Arrays.asList(OrcidWebRole.ROLE_ADMIN);
+                default: 
+                    return Arrays.asList(OrcidWebRole.ROLE_USER);
+            }
         return Arrays.asList(OrcidWebRole.ROLE_USER);
     }
 

@@ -38,7 +38,7 @@ orcidNgModule.directive('ngModelOnblur', function() {
                 scope.$apply(function() {
                     ngModelCtrl.$setViewValue(elm.val());
                 });
-            });
+            });	
         }
     };
 });
@@ -659,23 +659,7 @@ function RegistrationCtrl($scope, $compile) {
 	};
 	
 	$scope.getDuplicates = function(){
-		$.ajax({
-			//url: $('body').data('baseurl') + 'dupicateResearcher.json?familyNames=test&givenNames=test',	        
-			url: $('body').data('baseurl') + 'dupicateResearcher.json?familyNames=' + $scope.register.familyNames.value + '&givenNames=' + $scope.register.givenNames.value,	        
-	        dataType: 'json',
-	        success: function(data) {
-		       	$scope.duplicates = data;
-		        $scope.$apply();
-		        if ($scope.duplicates.length > 0 ) {
-		        	$scope.showDuplicatesColorBox();
-		        } else {
-		        	$scope.postRegisterConfirm();
-		        }
-	        }
-		}).fail(function(){
-		// something bad is happening!
-			console.log("error fetching register.json");
-		});
+		$scope.postRegisterConfirm();
 	};
 
 	
@@ -1423,3 +1407,115 @@ function languageCtrl($scope, $cookies){
 	    });		
 	};
 };
+
+function profileDeprecationCtrl($scope,$compile){	
+	$scope.showDeprecateAccountModal = function(){
+		$.colorbox({                      
+				html : $compile($('#deprecate-account-modal').html())($scope),
+					scrolling: true,
+					onLoad: function() {
+					$('#cboxClose').remove();
+				},
+				scrolling: true
+			});
+			
+			$.colorbox.resize({width:"600px" , height:"250px"});
+	};
+	
+	$scope.showSuccessModal = function(deprecated, primary){		
+		var successMessage = angular.element("success-message").text();
+		successMessage = successMessage.replace("{0}", deprecated);
+		successMessage = successMessage.replace("{1}", primary);
+		angular.element("success-message").text(successMessage);
+		$.colorbox({                      
+			html : $compile($('#success-modal').html())($scope),
+				scrolling: true,
+				onLoad: function() {
+				$('#cboxClose').remove();
+			},
+			scrolling: true
+		});
+		
+		$.colorbox.resize({width:"300px" , height:"300px"});
+	};
+	
+	$scope.findAccountDetails = function(orcid_type){		
+		var orcid;
+		if(orcid_type == 'deprecated') {
+			orcid = $scope.deprecatedAccount.orcid;
+			$scope.deprecatedAccount.errors = null;
+		} else { 
+			orcid = $scope.primaryAccount.orcid;
+			$scope.primaryAccount.errors = null;
+		}
+		$.ajax({
+	        url: orcidVar.baseUri+'/deprecate-profile/check-orcid.json?orcid=' + orcid,	        
+	        type: 'GET',
+	        dataType: 'json',
+	        success: function(data){
+	        	$scope.$apply(function(){ 
+	        		if(orcid_type == 'deprecated') {
+	        			if(data.errors.length != 0){
+	        				$scope.deprecatedAccount.errors = data.errors; 
+	        			} else {
+	        				$scope.deprecatedAccount.givenNames = data.givenNames;
+	        				$scope.deprecatedAccount.familyName = data.familyName;
+	        			}
+	        		} else {
+	        			if(data.errors.length != 0){
+	        				$scope.primaryAccount.errors = data.errors;
+	        			} else {
+	        				$scope.primaryAccount.givenNames = data.givenNames;
+	        				$scope.primaryAccount.familyName = data.familyName;
+	        			}
+	        		}
+				});
+	        }
+	    }).fail(function(error) { 
+	    	// something bad is happening!	    	
+	    	console.log("Error getting deprecation list");	    	
+	    });
+	};
+	
+	$scope.deprecateAccount = function(){
+		var deprecatedOrcid = $scope.deprecatedAccount.orcid;
+		var primaryOrcid = $scope.primaryAccount.orcid;
+		$.ajax({
+	        url: orcidVar.baseUri+'/deprecate-profile/deprecate-profile.json?deprecate=' + deprecatedOrcid + '&primary=' + primaryOrcid,	        
+	        type: 'GET',
+	        dataType: 'json',
+	        success: function(data){
+	        	$scope.$apply(function(){ 
+	        		if(data.errors.length != 0){
+	        			console.log(data.errors);
+	        		} else {
+	        			
+	        		}
+				});
+	        }
+	    }).fail(function(error) { 
+	    	// something bad is happening!	    	
+	    	console.log("Error deprecating the account");	    	
+	    });			
+	};
+	
+	$scope.closeModal = function() {
+		$.colorbox.close();
+	};
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
