@@ -94,7 +94,7 @@
                 <#list profile.orcidBio.externalIdentifiers.externalIdentifier as externalIdentifier>
                     ${(externalIdentifier.externalIdCommonName.content)!'Source unknown'}:
                     <#if externalIdentifier.externalIdUrl??>
-                        <a href="${externalIdentifier.externalIdUrl.value}">${externalIdentifier.externalIdReference.content}</a>
+                        <a href="${externalIdentifier.externalIdUrl.value}" target="_blank">${externalIdentifier.externalIdReference.content}</a>
                     <#else>
                         ${externalIdentifier.externalIdReference.content}
                     </#if>
