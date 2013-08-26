@@ -577,7 +577,7 @@ public class ManageProfileController extends BaseWorkspaceController {
             errors.add(getMessage("manage.pleaseProvideAnAnswer"));
         
         if (securityQuestion.getPassword() == null || !encryptionManager.hashMatches(securityQuestion.getPassword(), getCurrentUser().getPassword())) {
-            errors.add(getMessage("change_security_question.incorrect_password"));
+            errors.add(getMessage("check_password_modal.incorrect_password"));
         }
         
         // If the security question is empty, clean the security answer field
@@ -766,7 +766,7 @@ public class ManageProfileController extends BaseWorkspaceController {
         List<String> errors = new ArrayList<String>();
         //Check password
         if (email.getPassword() == null || !encryptionManager.hashMatches(email.getPassword(), getCurrentUser().getPassword())) {
-            errors.add(getMessage("change_security_question.incorrect_password"));
+            errors.add(getMessage("check_password_modal.incorrect_password"));
         }
               
         if(errors.isEmpty()) {
