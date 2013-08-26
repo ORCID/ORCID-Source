@@ -69,6 +69,17 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
         ProfileEntity profile = generateProfileEntityWithBio(orcidProfile);
         return profileDao.updateProfile(profile);
     }
+    
+    /**
+     * Updates a profile entity object on database.
+     * @param profile
+     *          The profile object to update
+     * @return true if the profile was successfully updated.        
+     * */
+    @Override
+    public boolean updateProfile(ProfileEntity profile) {        
+        return profileDao.updateProfile(profile);
+    }
 
     /**
      * Generate a ProfileEntity object with the bio information populated from the info that comes from the

@@ -1499,7 +1499,7 @@ function profileDeprecationCtrl($scope,$compile){
 		var deprecatedOrcid = $scope.deprecatedAccount.orcid;
 		var primaryOrcid = $scope.primaryAccount.orcid;
 		$.ajax({
-	        url: orcidVar.baseUri+'/deprecate-profile/deprecate-profile.json?deprecate=' + deprecatedOrcid + '&primary=' + primaryOrcid,	        
+	        url: orcidVar.baseUri+'/deprecate-profile/deprecate-profile.json?deprecated=' + deprecatedOrcid + '&primary=' + primaryOrcid,	        
 	        type: 'GET',
 	        dataType: 'json',
 	        success: function(data){

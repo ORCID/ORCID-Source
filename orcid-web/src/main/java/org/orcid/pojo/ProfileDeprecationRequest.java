@@ -1,8 +1,13 @@
 package org.orcid.pojo;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
-public class ProfileDeprecationRequest {
+import org.orcid.pojo.ajaxForm.ErrorsInterface;
+
+public class ProfileDeprecationRequest implements ErrorsInterface {
+    private List<String> errors = new ArrayList<String>();
     private ProfileDetails deprecatedAccount;
     private ProfileDetails primaryAccount;
     private Date deprecatedDate;    
@@ -31,5 +36,15 @@ public class ProfileDeprecationRequest {
     }
     public void setDeprecatedDate(Date deprecatedDate) {
         this.deprecatedDate = deprecatedDate;
-    }           
+    }
+
+    @Override
+    public List<String> getErrors() {
+        return this.errors;
+    }
+
+    @Override
+    public void setErrors(List<String> errors) {
+        this.errors = errors;
+    }              
 }

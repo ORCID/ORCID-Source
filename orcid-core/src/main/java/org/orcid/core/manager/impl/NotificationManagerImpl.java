@@ -36,6 +36,7 @@ import org.apache.commons.lang.StringUtils;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.TemplateManager;
+import org.orcid.core.profileEvent.ProfileEventConstants;
 import org.orcid.jaxb.model.message.ApplicationSummary;
 import org.orcid.jaxb.model.message.Applications;
 import org.orcid.jaxb.model.message.Delegation;
@@ -48,6 +49,7 @@ import org.orcid.jaxb.model.message.SendChangeNotifications;
 import org.orcid.jaxb.model.message.Source;
 import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.dao.ProfileDao;
+import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileEventEntity;
 import org.orcid.persistence.jpa.entities.ProfileEventType;
 import org.orcid.persistence.jpa.entities.SecurityQuestionEntity;
@@ -474,6 +476,98 @@ public class NotificationManagerImpl implements NotificationManager {
 
     }
 
+    /**
+     * 
+     * 
+     * */
+    public String deriveEmailFriendlyName(ProfileEntity profileEntity) {
+        String result = LAST_RESORT_ORCID_USER_EMAIL_NAME;
+        if(profileEntity.getGivenNames() != null){
+            result = profileEntity.getGivenNames(); 
+            if(!StringUtils.isBlank(profileEntity.getFamilyName())){
+                result += " " + profileEntity.getFamilyName();
+            }
+        }            
+        return result;
+    }
+    
+    /**
+     * 
+     * */
+    private String getSubject(String code, ProfileEntity profileEntity) {
+        Locale locale = null;
+        if (profileEntity.getLocale() != null) {
+            locale = new Locale(profileEntity.getLocale().value());
+        } else {
+            locale = new Locale("en");
+        }
+        return messages.getMessage(code, null, locale);
+    }
+    
+    @Override
+    public void sendProfileDeprecationEmail(ProfileEntity deprecatedProfile, ProfileEntity primaryProfile){
+        // Send email to deprecated account
+        sendProfileDeprecationEmailToDeprecatedAccount(deprecatedProfile, primaryProfile);
+        // Send email to primary account
+        sendProfileDeprecationEmailToPrimaryAccount(deprecatedProfile, primaryProfile);
+        // Store deprecation message
+        profileEventDao.persist(new ProfileEventEntity(deprecatedProfile.getId(), ProfileEventType.PROFILE_DEPRECATED, String.format(ProfileEventConstants.ADMIN_DEPRECATE_ACCOUNT, deprecatedProfile.getId(), primaryProfile.getId())));
+    }
+      
+    /**
+     * 
+     * */
+    private void sendProfileDeprecationEmailToDeprecatedAccount(ProfileEntity deprecatedProfile, ProfileEntity primaryProfile){
+        // Create map of template params
+        Map<String, Object> templateParams = new HashMap<String, Object>();
+        templateParams.put("emailName", deriveEmailFriendlyName(deprecatedProfile));
+        templateParams.put("deprecatedAccount", deprecatedProfile.getId());
+        templateParams.put("primaryAccount", deprecatedProfile.getId());
+        // Generate body from template
+        String body = templateManager.processTemplate("profile_deprecation_deprecated_profile_email.ftl", templateParams);
+        // Create email message
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setFrom(fromAddress);
+        message.setTo(deprecatedProfile.getPrimaryEmail().getId());
+        message.setSubject(getSubject("email.subject.deprecated_profile", deprecatedProfile));
+        message.setText(body);
+        
+        // Send message
+        if (apiRecordCreationEmailEnabled) {
+            sendAndLogMessage(message);
+            profileEventDao.persist(new ProfileEventEntity(deprecatedProfile.getId(), ProfileEventType.PROFILE_DEPRECATED));
+        } else {
+            LOGGER.debug("Not sending profile deprecated email, because API record creation email option is disabled. Message would have been: {}", message);
+        }
+    }
+    
+    /**
+     * 
+     * */
+    private void sendProfileDeprecationEmailToPrimaryAccount(ProfileEntity deprecatedProfile, ProfileEntity primaryProfile){
+        // Create map of template params
+        Map<String, Object> templateParams = new HashMap<String, Object>();
+        templateParams.put("emailName", deriveEmailFriendlyName(primaryProfile));
+        templateParams.put("deprecatedAccount", deprecatedProfile.getId());
+        templateParams.put("primaryAccount", deprecatedProfile.getId());
+        // Generate body from template
+        String body = templateManager.processTemplate("profile_deprecation_primary_profile_email.ftl", templateParams);
+        // Create email message
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setFrom(fromAddress);
+        message.setTo(primaryProfile.getPrimaryEmail().getId());
+        message.setSubject(getSubject("email.subject.deprecated_profile_primary", primaryProfile));
+        message.setText(body);
+        
+        // Send message
+        if (apiRecordCreationEmailEnabled) {
+            sendAndLogMessage(message);
+            profileEventDao.persist(new ProfileEventEntity(deprecatedProfile.getId(), ProfileEventType.PROFILE_DEPRECATION));
+        } else {
+            LOGGER.debug("Not sending profile deprecated email, because API record creation email option is disabled. Message would have been: {}", message);
+        }
+    }
+    
     private String extractAmenderName(OrcidProfile orcidProfile, String amenderOrcid) {
         Delegation delegation = orcidProfile.getOrcidBio().getDelegation();
         if (delegation != null && delegation.getGivenPermissionTo() != null && !delegation.getGivenPermissionTo().getDelegationDetails().isEmpty()) {

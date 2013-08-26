@@ -49,6 +49,12 @@ public class ProfileEventEntity extends BaseEntity<Long> {
         this.orcid = orcid;
         this.type = type;
     }
+    
+    public ProfileEventEntity(String orcid, ProfileEventType type, String comment) {
+        this.orcid = orcid;
+        this.type = type;
+        this.comment = comment;        
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "profile_event_seq")
@@ -80,7 +86,9 @@ public class ProfileEventEntity extends BaseEntity<Long> {
     public void setType(ProfileEventType type) {
         this.type = type;
     }
-        
+    
+    @Basic    
+    @Column(name = "comment")
     public String getComment() {
         return comment;
     }

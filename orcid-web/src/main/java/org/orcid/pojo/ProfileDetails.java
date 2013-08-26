@@ -11,6 +11,17 @@ public class ProfileDetails implements ErrorsInterface {
     String orcid;
     String givenNames;
     String familyName;
+    
+    public ProfileDetails(){
+        
+    }
+    
+    public ProfileDetails(String orcid, String givenNames, String familyName){
+        this.orcid = orcid;
+        this.givenNames = givenNames;
+        this.familyName = familyName;
+    }
+    
     public String getOrcid() {
         return orcid;
     }

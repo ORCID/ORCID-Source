@@ -330,7 +330,7 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
     @Transactional
     public boolean updateProfile(ProfileEntity profile) {
         Query query = entityManager
-                .createNativeQuery("update profile set last_modified=now(), credit_name=:credit_name, family_name=:family_name, given_names=:given_names, biography=:biography, iso2_country=:iso2_country, biography_visibility=:biography_visibility, keywords_visibility=:keywords_visibility, researcher_urls_visibility=:researcher_urls_visibility, other_names_visibility=:other_names_visibility, credit_name_visibility=:credit_name_visibility, profile_address_visibility=:profile_address_visibility, indexing_status='PENDING' where orcid=:orcid");
+                .createNativeQuery("update profile set last_modified=now(), credit_name=:credit_name, family_name=:family_name, given_names=:given_names, biography=:biography, iso2_country=:iso2_country, biography_visibility=:biography_visibility, keywords_visibility=:keywords_visibility, researcher_urls_visibility=:researcher_urls_visibility, other_names_visibility=:other_names_visibility, credit_name_visibility=:credit_name_visibility, profile_address_visibility=:profile_address_visibility, indexing_status='PENDING', primary_record=:primary_record, deprecated_date=:deprecated_date where orcid=:orcid");
         query.setParameter("credit_name", profile.getCreditName());
         query.setParameter("family_name", profile.getFamilyName());
         query.setParameter("given_names", profile.getGivenNames());
@@ -343,6 +343,9 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
         query.setParameter("credit_name_visibility", StringUtils.upperCase(profile.getCreditNameVisibility().value()));
         query.setParameter("profile_address_visibility", StringUtils.upperCase(profile.getProfileAddressVisibility().value()));
         query.setParameter("orcid", profile.getId());
+        query.setParameter("primary_record", profile.getPrimaryRecord() == null ? null : profile.getPrimaryRecord().getId());
+        query.setParameter("deprecated_date", profile.getPrimaryRecord() == null ? null : new Date());
+        
         return query.executeUpdate() > 0 ? true : false;
     }
 

@@ -101,6 +101,10 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
     private Date credentialsExpiry;
     private Boolean enabled = Boolean.TRUE;
 
+    // Deprecation fields
+    private ProfileEntity primaryRecord;
+    private Date deprecatedDate;
+    
     // Internally used fields
     private String creationMethod;
     private Date completedDate;
@@ -863,6 +867,39 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
         this.deactivationDate = deactivationDate;
     }
 
+    /**
+     * @return the primary profile for this deprecated account
+     */
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "primary_record")
+    public ProfileEntity getPrimaryRecord(){
+        return this.primaryRecord;
+    }
+    
+    /**
+     * @param primaryRecord
+     *            the primary profile to set
+     */
+    public void setPrimaryRecord(ProfileEntity primaryRecord) {
+        this.primaryRecord = primaryRecord;
+    }
+    
+    /**
+     * @return the deprecation date for this record
+     * */
+    @Column(name = "deprecation_date")
+    public Date getDeprecationDate() {
+        return deprecatedDate;
+    }
+
+    /**
+     * @param deprecationDate
+     *          The deprecation date for this record
+     * */
+    public void setDeprecationDate(Date deprecationDate) {
+        this.deprecatedDate = deprecationDate;
+    }
+    
     @Override
     public int hashCode() {
         final int prime = 31;

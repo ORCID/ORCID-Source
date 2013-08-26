@@ -41,4 +41,6 @@ public interface ProfileEntityManager {
     Long getConfirmedProfileCount();
 
     public boolean updateProfile(OrcidProfile profile);
+    
+    public boolean updateProfile(ProfileEntity profile);
 }
