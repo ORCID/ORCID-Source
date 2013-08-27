@@ -41,19 +41,20 @@ public class PrimaryRecord implements Serializable {
 	private static final long serialVersionUID = 8691353462048542411L;
 	
 	@XmlElement(name = "orcid")
-    protected String orcid;
+    protected Orcid orcid;
 	@XmlElement(name = "orcid-id")
-    protected String orcidId;
-	public String getOrcid() {
+    protected Url orcidId;
+	
+	public Orcid getOrcid() {
 		return orcid;
 	}
-	public void setOrcid(String orcid) {
+	public void setOrcid(Orcid orcid) {
 		this.orcid = orcid;
 	}
-	public String getOrcidId() {
+	public Url getOrcidId() {
 		return orcidId;
 	}
-	public void setOrcidId(String orcidId) {
+	public void setOrcidId(Url orcidId) {
 		this.orcidId = orcidId;
 	}	
 	@Override

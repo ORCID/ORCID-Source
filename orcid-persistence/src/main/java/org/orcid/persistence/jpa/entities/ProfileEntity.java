@@ -887,8 +887,8 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
     /**
      * @return the deprecation date for this record
      * */
-    @Column(name = "deprecation_date")
-    public Date getDeprecationDate() {
+    @Column(name = "deprecated_date")
+    public Date getDeprecatedDate() {
         return deprecatedDate;
     }
 
@@ -896,8 +896,8 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
      * @param deprecationDate
      *          The deprecation date for this record
      * */
-    public void setDeprecationDate(Date deprecationDate) {
-        this.deprecatedDate = deprecationDate;
+    public void setDeprecatedDate(Date deprecatedDate) {
+        this.deprecatedDate = deprecatedDate;
     }
     
     @Override

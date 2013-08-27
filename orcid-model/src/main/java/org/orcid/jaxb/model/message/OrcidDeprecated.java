@@ -8,7 +8,6 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
-import javax.xml.bind.annotation.XmlValue;
 import javax.xml.datatype.XMLGregorianCalendar;
 
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -19,16 +18,16 @@ public class OrcidDeprecated implements Serializable {
      * 
      */
     private static final long serialVersionUID = 1L;
-    @XmlValue
+    @XmlElement
     @XmlSchemaType(name = "dateTime")
-    protected XMLGregorianCalendar date;
+    protected DeprecatedDate date;
     @XmlElement(name = "primary-record")
     protected PrimaryRecord primaryRecord;
     
-	public XMLGregorianCalendar getDate() {
+	public DeprecatedDate getDate() {
 		return date;
 	}
-	public void setDate(XMLGregorianCalendar date) {
+	public void setDate(DeprecatedDate date) {
 		this.date = date;
 	}
 	public PrimaryRecord getPrimaryRecord() {

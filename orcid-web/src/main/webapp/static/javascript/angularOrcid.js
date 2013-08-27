@@ -1459,6 +1459,7 @@ function profileDeprecationCtrl($scope,$compile){
 	
 	$scope.findAccountDetails = function(orcid_type){		
 		var orcid;
+		var orcidRegex=new RegExp("(\d{4}-){3,}\d{3}[\dX]");
 		if(orcid_type == 'deprecated') {
 			orcid = $scope.deprecatedAccount.orcid;
 			$scope.deprecatedAccount.errors = null;
@@ -1466,33 +1467,35 @@ function profileDeprecationCtrl($scope,$compile){
 			orcid = $scope.primaryAccount.orcid;
 			$scope.primaryAccount.errors = null;
 		}
-		$.ajax({
-	        url: orcidVar.baseUri+'/deprecate-profile/check-orcid.json?orcid=' + orcid,	        
-	        type: 'GET',
-	        dataType: 'json',
-	        success: function(data){
-	        	$scope.$apply(function(){ 
-	        		if(orcid_type == 'deprecated') {
-	        			if(data.errors.length != 0){
-	        				$scope.deprecatedAccount.errors = data.errors; 
-	        			} else {
-	        				$scope.deprecatedAccount.givenNames = data.givenNames;
-	        				$scope.deprecatedAccount.familyName = data.familyName;
-	        			}
-	        		} else {
-	        			if(data.errors.length != 0){
-	        				$scope.primaryAccount.errors = data.errors;
-	        			} else {
-	        				$scope.primaryAccount.givenNames = data.givenNames;
-	        				$scope.primaryAccount.familyName = data.familyName;
-	        			}
-	        		}
-				});
-	        }
-	    }).fail(function(error) { 
-	    	// something bad is happening!	    	
-	    	console.log("Error getting deprecation list");	    	
-	    });
+		if(orcidRegex.test(orcid)){
+			$.ajax({
+		        url: orcidVar.baseUri+'/deprecate-profile/check-orcid.json?orcid=' + orcid,	        
+		        type: 'GET',
+		        dataType: 'json',
+		        success: function(data){
+		        	$scope.$apply(function(){ 
+		        		if(orcid_type == 'deprecated') {
+		        			if(data.errors.length != 0){
+		        				$scope.deprecatedAccount.errors = data.errors; 
+		        			} else {
+		        				$scope.deprecatedAccount.givenNames = data.givenNames;
+		        				$scope.deprecatedAccount.familyName = data.familyName;
+		        			}
+		        		} else {
+		        			if(data.errors.length != 0){
+		        				$scope.primaryAccount.errors = data.errors;
+		        			} else {
+		        				$scope.primaryAccount.givenNames = data.givenNames;
+		        				$scope.primaryAccount.familyName = data.familyName;
+		        			}
+		        		}
+					});
+		        }
+		    }).fail(function(error) { 
+		    	// something bad is happening!	    	
+		    	console.log("Error getting deprecation list");	    	
+		    });
+		}
 	};
 	
 	$scope.deprecateAccount = function(){

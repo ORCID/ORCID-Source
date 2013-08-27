@@ -31,9 +31,9 @@
 	    <a id="cboxClose" class="btn pull-right close-button" ng-click="closeModal()">X</a>
 	    <h1><@orcid.msg 'admin.profile_deprecation.deprecate_account.title'/></h1>
 		<div>
-			<input type="text" placeholder="Display name" class="input-xlarge" ng-model="deprecatedAccount.orcid"><div class="pull-right"><a href="#" ng-click="findAccountDetails('deprecated')" class="icon-zoom-in blue"></a></div>
+			<input type="text" placeholder="<@orcid.msg 'admin.profile_deprecation.placeholder.account_to_deprecate' />" class="input-xlarge" ng-model="deprecatedAccount.orcid" ng-change="findAccountDetails('deprecated')">
 			<span class="orcid-error" ng-show="deprecatedAccount.errors.length > 0">
-				<span ng-repeat='error in deprecatedAccount.errors' ng-bind-html-unsafe="error">{{</span><br />
+				<span ng-repeat='error in deprecatedAccount.errors' ng-bind-html-unsafe="error"></span><br />
 			</span>	
 			<div ng-show="deprecatedAccount.givenNames.length">
 				<span><@orcid.msg 'admin.profile_deprecation.given_names'/>:{{deprecatedAccount.givenNames}}</span>
@@ -41,7 +41,7 @@
 			</div>
 		</div>
 		<div>
-			<input type="text" placeholder="Display name" class="input-xlarge" ng-model="primaryAccount.orcid"><div class="pull-right"><a href="#" ng-click="findAccountDetails('primary')" class="icon-zoom-in blue"></a></div>
+			<input type="text" placeholder="<@orcid.msg 'admin.profile_deprecation.placeholder.primary_account' />" class="input-xlarge" ng-model="primaryAccount.orcid" ng-change="findAccountDetails('primary')">
 			<span class="orcid-error" ng-show="primaryAccount.errors.length > 0">
 				<span ng-repeat='error in primaryAccount.errors' ng-bind-html-unsafe="error"></span><br />
 			</span>

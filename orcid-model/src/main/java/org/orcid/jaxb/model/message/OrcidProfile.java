@@ -56,7 +56,7 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "orcid", "orcidId", "orcidPreferences", "orcidHistory", "orcidBio", "orcidActivities", "orcidInternal" })
+@XmlType(name = "", propOrder = { "orcid", "orcidId", "orcidDeprecated", "orcidPreferences", "orcidHistory", "orcidBio", "orcidActivities", "orcidInternal" })
 @XmlRootElement(name = "orcid-profile")
 public class OrcidProfile implements Serializable {
 
