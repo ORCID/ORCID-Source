@@ -11,15 +11,17 @@ public class ProfileDetails implements ErrorsInterface {
     String orcid;
     String givenNames;
     String familyName;
+    String email;
     
     public ProfileDetails(){
         
     }
     
-    public ProfileDetails(String orcid, String givenNames, String familyName){
+    public ProfileDetails(String orcid, String givenNames, String familyName, String email){
         this.orcid = orcid;
         this.givenNames = givenNames;
         this.familyName = familyName;
+        this.email = email;
     }
     
     public String getOrcid() {
@@ -40,8 +42,14 @@ public class ProfileDetails implements ErrorsInterface {
     public void setFamilyName(String familyName) {
         this.familyName = familyName;
     }
-    
-    @Override
+    public String getEmail() {
+		return email;
+	}
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	@Override
     public List<String> getErrors() {
         return errors;
     }

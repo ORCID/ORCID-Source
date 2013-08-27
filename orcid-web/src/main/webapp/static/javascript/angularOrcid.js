@@ -1427,19 +1427,6 @@ function languageCtrl($scope, $cookies){
 };
 
 function profileDeprecationCtrl($scope,$compile){	
-	$scope.showDeprecateAccountModal = function(){
-		$.colorbox({                      
-				html : $compile($('#deprecate-account-modal').html())($scope),
-					scrolling: true,
-					onLoad: function() {
-					$('#cboxClose').remove();
-				},
-				scrolling: true
-			});
-			
-			$.colorbox.resize({width:"600px" , height:"250px"});
-	};
-	
 	$scope.showSuccessModal = function(deprecated, primary){		
 		var successMessage = angular.element("success-message").text();
 		successMessage = successMessage.replace("{0}", deprecated);
@@ -1457,9 +1444,23 @@ function profileDeprecationCtrl($scope,$compile){
 		$.colorbox.resize({width:"300px" , height:"300px"});
 	};
 	
+	$scope.getAccountDetails = function(orcid){
+		$.ajax({
+	        url: orcidVar.baseUri+'/deprecate-profile/check-orcid.json?orcid=' + orcid,	        
+	        type: 'GET',
+	        dataType: 'json',
+	        success: function(data){
+	        	return data;
+	        	}
+	        }).fail(function(error) { 
+		    	// something bad is happening!	    	
+		    	console.log("Error getting account details for: " + orcid);	    	
+		    });
+	};
+	
 	$scope.findAccountDetails = function(orcid_type){		
 		var orcid;
-		var orcidRegex=new RegExp("(\d{4}-){3,}\d{3}[\dX]");
+		var orcidRegex=new RegExp("(\\d{4}-){3,}\\d{3}[\\dX]");
 		if(orcid_type == 'deprecated') {
 			orcid = $scope.deprecatedAccount.orcid;
 			$scope.deprecatedAccount.errors = null;
@@ -1468,33 +1469,36 @@ function profileDeprecationCtrl($scope,$compile){
 			$scope.primaryAccount.errors = null;
 		}
 		if(orcidRegex.test(orcid)){
-			$.ajax({
-		        url: orcidVar.baseUri+'/deprecate-profile/check-orcid.json?orcid=' + orcid,	        
-		        type: 'GET',
-		        dataType: 'json',
-		        success: function(data){
-		        	$scope.$apply(function(){ 
-		        		if(orcid_type == 'deprecated') {
-		        			if(data.errors.length != 0){
-		        				$scope.deprecatedAccount.errors = data.errors; 
-		        			} else {
-		        				$scope.deprecatedAccount.givenNames = data.givenNames;
-		        				$scope.deprecatedAccount.familyName = data.familyName;
-		        			}
-		        		} else {
-		        			if(data.errors.length != 0){
-		        				$scope.primaryAccount.errors = data.errors;
-		        			} else {
-		        				$scope.primaryAccount.givenNames = data.givenNames;
-		        				$scope.primaryAccount.familyName = data.familyName;
-		        			}
-		        		}
-					});
-		        }
-		    }).fail(function(error) { 
-		    	// something bad is happening!	    	
-		    	console.log("Error getting deprecation list");	    	
-		    });
+			var data = $scope.getAccountDetails(orcid);
+        	$scope.$apply(function(){ 
+        		if(orcid_type == 'deprecated') {
+        			if(data.errors.length != 0){
+        				$scope.deprecatedAccount.errors = data.errors;
+        				$scope.deprecatedAccount.givenNames = null;
+        				$scope.deprecatedAccount.familyName = null;
+        				$scope.deprecatedAccount.primaryEmail = null;
+        			} else {
+        				$scope.deprecatedAccount.givenNames = data.givenNames;
+        				$scope.deprecatedAccount.familyName = data.familyName;
+        				$scope.deprecatedAccount.primaryEmail = data.email;
+        			}
+        		} else {
+        			if(data.errors.length != 0){
+        				$scope.primaryAccount.errors = data.errors;
+        				$scope.primaryAccount.givenNames = null;
+        				$scope.primaryAccount.familyName = null;
+        				$scope.primaryAccount.primaryEmail = null;
+        			} else {
+        				$scope.primaryAccount.givenNames = data.givenNames;
+        				$scope.primaryAccount.familyName = data.familyName;
+        				$scope.primaryAccount.primaryEmail = data.email;
+        			}
+        		}
+			});		       		    
+		} else {
+			console.log("Orcid: " + orcid + " doesnt match regex");
+			$scope.deprecatedAccount.errors = null;
+			$scope.primaryAccount.errors = null;
 		}
 	};
 	
@@ -1518,6 +1522,20 @@ function profileDeprecationCtrl($scope,$compile){
 	    	// something bad is happening!	    	
 	    	console.log("Error deprecating the account");	    	
 	    });			
+	};
+	
+	$scope.confirmDeprecateAccount = function(){
+		var deprecatedOrcid = $scope.deprecatedAccount.orcid;		
+		var deprecatedAccountData = $scope.getAccountDetails(deprecatedOrcid);
+		$scope.deprecatedAccount.givenNames = deprecatedAccountData.givenNames;
+		$scope.deprecatedAccount.familyName = deprecatedAccountData.familyName;
+		$scope.deprecatedAccount.primaryEmail = deprecatedAccountData.email;
+		
+		var primaryOrcid = $scope.primaryAccount.orcid;
+		var primaryAccountData = $scope.getAccountDetails(primaryOrcid);
+		$scope.primaryAccount.givenNames = primaryAccountData.givenNames;
+		$scope.primaryAccount.familyName = primaryAccountData.familyName;
+		$scope.primaryAccount.primaryEmail = primaryAccountData.email;
 	};
 	
 	$scope.closeModal = function() {
