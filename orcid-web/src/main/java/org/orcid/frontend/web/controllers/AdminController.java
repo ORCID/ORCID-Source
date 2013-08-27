@@ -1,11 +1,13 @@
 package org.orcid.frontend.web.controllers;
 
 import java.util.Date;
+import java.util.Set;
 
 import javax.annotation.Resource;
 
 import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.ProfileEntityManager;
+import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.ProfileDeprecationRequest;
 import org.orcid.pojo.ProfileDetails;
@@ -49,7 +51,7 @@ public class AdminController extends BaseController {
     @RequestMapping(value = { "/deprecate-profile/deprecate-profile.json" }, method = RequestMethod.GET)
     public @ResponseBody ProfileDeprecationRequest deprecateProfile(@RequestParam("deprecated") String deprecatedOrcid, @RequestParam("primary") String primaryOrcid) {
         ProfileDeprecationRequest result = new ProfileDeprecationRequest();
-        
+        //Check for errors
         if(deprecatedOrcid == null || !OrcidStringUtils.isValidOrcid(deprecatedOrcid)){
             result.getDeprecatedAccount().getErrors().add(getMessage("admin.profile_deprecation.errors.invalid_orcid", deprecatedOrcid));
         } else if(primaryOrcid == null || !OrcidStringUtils.isValidOrcid(primaryOrcid)) {
@@ -57,14 +59,27 @@ public class AdminController extends BaseController {
         } else if(deprecatedOrcid.equals(primaryOrcid)){
             result.getErrors().add(getMessage("admin.profile_deprecation.errors.deprecated_equals_primary"));
         } else {         
-            ProfileEntity deprecated = profileEntityManager.findByOrcid(deprecatedOrcid);
+        	//If there are no errros, process with the deprecation
+            //Get deprecated profile
+        	ProfileEntity deprecated = profileEntityManager.findByOrcid(deprecatedOrcid);
+        	//Get primary profile
             ProfileEntity primary = profileEntityManager.findByOrcid(primaryOrcid);
+            //Get the list of emails from the deprecated account            
+            Set<EmailEntity> deprecatedAccountEmails = deprecated.getEmails();
+            // For each email in the deprecated profile
+            for(EmailEntity email : deprecatedAccountEmails){
+            	// Delete each email from the deprecated profile
+            	emailManager.removeEmail(email.getProfile().getId(), email.getId());
+                // Copy that email to the primary profile
+            	emailManager.addEmail(primary.getId(), email.getId(), email.getVisibility(), email.getSource().getId());
+            }
+            //Update the deprecated profile            
             deprecated.setPrimaryRecord(primary);
             deprecated.setDeprecationDate(new Date());            
-            profileEntityManager.updateProfile(deprecated);            
+            profileEntityManager.updateProfile(deprecated);
+            //Send notifications
             notificationManager.sendProfileDeprecationEmail(deprecated, primary);
-                        
-            
+            //Update the deprecation request object that will be returned 
             result.setDeprecatedAccount(new ProfileDetails(deprecated.getId(), deprecated.getGivenNames(), deprecated.getFamilyName()));                        
             result.setPrimaryAccount(new ProfileDetails(primary.getId(), primary.getGivenNames(), primary.getFamilyName()));
             result.setDeprecatedDate(new Date());

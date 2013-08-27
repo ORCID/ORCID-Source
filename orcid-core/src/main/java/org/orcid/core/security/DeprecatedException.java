@@ -14,28 +14,23 @@
  *
  * =============================================================================
  */
-package org.orcid.core.manager;
+package org.orcid.core.security;
 
-import java.util.Collection;
-
-import org.orcid.jaxb.model.message.Email;
-import org.orcid.jaxb.model.message.Visibility;
+import org.springframework.security.authentication.BadCredentialsException;
 
 /**
  * 
- * @author Will Simpson
+ * @author Angel Montenegro
  *
  */
-public interface EmailManager {
+public class DeprecatedException extends BadCredentialsException {
+	private static final long serialVersionUID = 1L;
 
-    boolean emailExists(String email);
+    public DeprecatedException(String msg) {
+        super(msg);
+    }
 
-    void updateEmails(String orcid, Collection<Email> emails);
-
-    void addEmail(String orcid, Email email);
-    
-    void addEmail(String orcid, String email, Visibility visibility, String sourceId);
-
-    void removeEmail(String orcid, String email);
-
+    public DeprecatedException(String msg, Throwable t) {
+        super(msg, t);
+    }
 }

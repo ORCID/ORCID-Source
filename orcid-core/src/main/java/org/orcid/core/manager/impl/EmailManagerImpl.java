@@ -22,6 +22,7 @@ import javax.annotation.Resource;
 
 import org.orcid.core.manager.EmailManager;
 import org.orcid.jaxb.model.message.Email;
+import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.persistence.dao.EmailDao;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -46,6 +47,12 @@ public class EmailManagerImpl implements EmailManager {
         emailDao.addEmail(orcid, email.getValue(), email.getVisibility(), email.getSource());
     }
 
+    @Override
+    @Transactional
+    public void addEmail(String orcid, String email, Visibility visibility, String sourceId){
+    	emailDao.addEmail(orcid, email, visibility, sourceId);
+    }
+    
     @Override
     @Transactional
     public void updateEmails(String orcid, Collection<Email> emails) {

@@ -68,7 +68,11 @@
     </div>
     <div class="span9">
         <div class="workspace-right">
-            <div class="workspace-inner workspace-public">
+        	<#if (deprecated)??>
+        	<div class="alert alert-error readme">
+        	</div>
+        	</#if>
+            <div class="workspace-inner workspace-public">            	
                 <#if (profile.orcidBio.biography.content)??>
                     <h3 class="workspace-header-public no-border">${springMacroRequestContext.getMessage("public_profile.h3PersonalInformation")}</h3>
                     <p><b>${springMacroRequestContext.getMessage("public_profile.labelBiography")}</b><br />${(profile.orcidBio.biography.content)!}</p>

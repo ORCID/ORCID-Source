@@ -43,6 +43,13 @@ public class PublicProfileController extends BaseWorkspaceController {
             mav.addObject("currentWorks", currentWorks);
         }
         mav.addObject("profile", profile);
+        
+        if(profile.getOrcidDeprecated() != null){
+        	String primaryRecord = profile.getOrcidDeprecated().getPrimaryRecord().getOrcid();
+        	mav.addObject("deprecated", true);
+        	mav.addObject("primaryRecord", primaryRecord);
+        } 
+        
         return mav;
     }
 

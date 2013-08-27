@@ -72,6 +72,9 @@ public class OrcidUserDetailsService implements UserDetailsService {
         if (profile.getDeactivationDate() != null) {
             throw new DisabledException("Account not active, please call helpdesk");
         }
+        if (profile.getPrimaryRecord() != null) {
+        	throw new DeprecatedException("This account has been deprecated. Please refere to account: " + profile.getPrimaryRecord().getId());
+        }
         String primaryEmail = profile.getPrimaryEmail().getId();
         return new OrcidProfileUserDetails(profile.getId(), primaryEmail, profile.getEncryptedPassword(), profile.getOrcidType());
     }
