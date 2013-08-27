@@ -735,6 +735,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         orcidInternal.getSecurityDetails().setEncryptedPassword(new EncryptedPassword(hash(updatedOrcidProfile.getPassword())));
         existingProfile = updatePasswordSecurityQuestionsInformation(updatedOrcidProfile);
         existingProfile.setOrcidInternal(orcidInternal);
+        // issue must be here
         return updateOrcidProfile(existingProfile);
     }
 

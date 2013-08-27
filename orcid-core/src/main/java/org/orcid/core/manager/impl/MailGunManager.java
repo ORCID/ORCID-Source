@@ -49,7 +49,10 @@ public class MailGunManager {
     
     @Value("${com.mailgun.apiUrl}")
     private String apiUrl;
-    
+
+    @Value("${com.mailgun.verify.apiUrl}")
+    private String verifyApiUrl;
+
     @Value("${com.mailgun.testmode}")
     private String testmode;
     
@@ -58,7 +61,7 @@ public class MailGunManager {
     
     private static final Logger LOGGER = LoggerFactory.getLogger(MailGunManager.class);
 
-    public boolean sendEmail(String from,String to, String subject, String text, String html) {
+    public boolean sendVerifyEmail(String from,String to, String subject, String text, String html) {
         
         Client client = Client.create();
         client.addFilter(new HTTPBasicAuthFilter("api",
@@ -100,6 +103,14 @@ public class MailGunManager {
 
     public void setApiUrl(String apiUrl) {
         this.apiUrl = apiUrl;
+    }
+
+    public String getVerifyApiUrl() {
+        return verifyApiUrl;
+    }
+
+    public void setVerifyApiUrl(String verifyApiUrl) {
+        this.verifyApiUrl = verifyApiUrl;
     }
 
 }
