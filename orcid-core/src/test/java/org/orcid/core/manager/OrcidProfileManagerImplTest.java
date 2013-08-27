@@ -758,17 +758,29 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
 
         assertNotNull(profile);
         assertEquals(2, profile.getOrcidActivities().getAffiliations().getAffiliation().size());
+        for (Affiliation affiliation : profile.getOrcidActivities().getAffiliations().getAffiliation()) {
+            assertNotNull(affiliation.getPutCode());
+        }
 
-        // simulate the ManageProfileController#deletePastAffiliations by
-        // creating single past inst
+        // Remove an affiliation
         profile2 = createFullOrcidProfile();
         affiliations.getAffiliation().clear();
         affiliations.getAffiliation().add(affiliation1);
         profile2.setOrcidActivities(orcidActivities);
 
-        orcidProfileManager.updateOrcidBio(profile2);
+        orcidProfileManager.updateOrcidProfile(profile2);
+
+        OrcidProfile profile3 = orcidProfileManager.retrieveOrcidProfile(TEST_ORCID);
+        assertEquals(1, profile3.getOrcidActivities().getAffiliations().getAffiliation().size());
 
         assertEquals(IndexingStatus.PENDING, profileDao.find(TEST_ORCID).getIndexingStatus());
+    }
+
+    @Test
+    @Transactional
+    @Rollback(true)
+    public void testAddAffiliations() {
+
     }
 
     @SuppressWarnings("unchecked")

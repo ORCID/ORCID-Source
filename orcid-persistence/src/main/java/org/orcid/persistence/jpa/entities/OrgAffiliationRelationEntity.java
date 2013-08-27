@@ -191,4 +191,16 @@ public class OrgAffiliationRelationEntity extends BaseEntity<Long> implements Co
         return name.compareTo(otherName);
     }
 
+    /**
+     * Clean simple fields so that entity can be reused.
+     */
+    public void clean() {
+        affiliationType = null;
+        title = null;
+        department = null;
+        startDate = null;
+        endDate = null;
+        visibility = null;
+    }
+
 }

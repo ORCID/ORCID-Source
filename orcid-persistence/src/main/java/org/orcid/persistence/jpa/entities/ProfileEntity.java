@@ -382,7 +382,7 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
     /**
      * @return the affiliations
      */
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = PROFILE)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = PROFILE, orphanRemoval = true)
     @Sort(type = SortType.NATURAL)
     public SortedSet<OrgAffiliationRelationEntity> getOrgAffiliationRelations() {
         return orgAffiliationRelations;

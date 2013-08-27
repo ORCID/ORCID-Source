@@ -404,6 +404,7 @@
                 <xs:element ref="orcid:source" minOccurs="0"/>
                 <xs:element ref="orcid:disambiguated-affiliation" minOccurs="0"/>
             </xs:sequence>
+            <xs:attributeGroup ref="orcid:put-code"/>
             <xs:attributeGroup ref="orcid:visibility"/>
         </xs:complexType>
     </xs:element>

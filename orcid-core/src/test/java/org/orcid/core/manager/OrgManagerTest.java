@@ -29,11 +29,12 @@ import org.junit.Test;
 import org.orcid.core.BaseTest;
 import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.persistence.jpa.entities.OrgEntity;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * 
  * @author Will Simpson
- *
+ * 
  */
 public class OrgManagerTest extends BaseTest {
 
@@ -70,6 +71,7 @@ public class OrgManagerTest extends BaseTest {
     }
 
     @Test
+    @Transactional
     public void testCreateUpdateWhenAlreadyExists() {
         OrgEntity inputOrg = new OrgEntity();
         inputOrg.setName("An institution");
@@ -87,6 +89,7 @@ public class OrgManagerTest extends BaseTest {
     }
 
     @Test
+    @Transactional
     public void testCreateUpdateWhenDoesNotAlreadyExists() {
         OrgEntity inputOrg = new OrgEntity();
         inputOrg.setName("Le Institution");

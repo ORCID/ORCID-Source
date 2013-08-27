@@ -445,6 +445,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
 
     private Affiliation getAffiliation(OrgAffiliationRelationEntity orgAffiliationRelationEntity) {
         Affiliation affiliation = new Affiliation();
+        affiliation.setPutCode(Long.toString(orgAffiliationRelationEntity.getId()));
         affiliation.setAffiliationType(orgAffiliationRelationEntity.getAffiliationType());
         affiliation.setRoleTitle(orgAffiliationRelationEntity.getTitle());
 

@@ -54,6 +54,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element ref="{http://www.orcid.org/ns/orcid}source" minOccurs="0"/>
  *         &lt;element ref="{http://www.orcid.org/ns/orcid}disambiguated-affiliation" minOccurs="0"/>
  *       &lt;/sequence>
+ *       &lt;attGroup ref="{http://www.orcid.org/ns/orcid}put-code"/>
  *       &lt;attGroup ref="{http://www.orcid.org/ns/orcid}visibility"/>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -63,7 +64,7 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "affiliationName", "affiliationType", "affiliationAddress", "departmentName", "roleTitle", "startDate", "endDate", "source",
+@XmlType(name = "", propOrder = { "putCode", "affiliationName", "affiliationType", "affiliationAddress", "departmentName", "roleTitle", "startDate", "endDate", "source",
         "disambiguatedAffiliation" })
 @XmlRootElement(name = "affiliation")
 public class Affiliation implements Serializable, VisibilityType {
@@ -86,6 +87,8 @@ public class Affiliation implements Serializable, VisibilityType {
     protected Source source;
     @XmlElement(name = "disambiguated-affiliation")
     protected DisambiguatedAffiliation disambiguatedAffiliation;
+    @XmlAttribute(name = "put-code")
+    protected String putCode;
     @XmlAttribute(name = "visibility")
     protected Visibility visibility;
 
@@ -276,6 +279,27 @@ public class Affiliation implements Serializable, VisibilityType {
      */
     public void setDisambiguatedAffiliation(DisambiguatedAffiliation value) {
         this.disambiguatedAffiliation = value;
+    }
+
+    /**
+     * Gets the value of the putCode property.
+     * 
+     * @return possible object is {@link Object }
+     * 
+     */
+    public String getPutCode() {
+        return putCode;
+    }
+
+    /**
+     * Sets the value of the putCode property.
+     * 
+     * @param value
+     *            allowed object is {@link Object }
+     * 
+     */
+    public void setPutCode(String value) {
+        this.putCode = value;
     }
 
     /**

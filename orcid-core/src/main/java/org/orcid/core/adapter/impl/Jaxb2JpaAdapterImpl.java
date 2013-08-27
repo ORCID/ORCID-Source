@@ -63,6 +63,7 @@ import org.orcid.jaxb.model.message.ExternalIdentifier;
 import org.orcid.jaxb.model.message.ExternalIdentifiers;
 import org.orcid.jaxb.model.message.FamilyName;
 import org.orcid.jaxb.model.message.FundingAgency;
+import org.orcid.jaxb.model.message.FuzzyDate;
 import org.orcid.jaxb.model.message.GivenNames;
 import org.orcid.jaxb.model.message.GivenPermissionBy;
 import org.orcid.jaxb.model.message.GivenPermissionTo;
@@ -789,15 +790,36 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
     }
 
     private void setOrgAffiliationRelations(ProfileEntity profileEntity, Affiliations affiliations) {
-        if (affiliations != null && !affiliations.getAffiliation().isEmpty()) {
-            SortedSet<OrgAffiliationRelationEntity> orgRelationEntities = new TreeSet<>();
-            for (Affiliation affiliation : affiliations.getAffiliation()) {
-                OrgAffiliationRelationEntity orgRelationEntity = getOrgAffiliationRelationEntity(affiliation);
-                orgRelationEntity.setProfile(profileEntity);
-                orgRelationEntities.add(orgRelationEntity);
-            }
-            profileEntity.setOrgAffiliationRelations(orgRelationEntities);
+        SortedSet<OrgAffiliationRelationEntity> existingOrgAffiliationEntities = profileEntity.getOrgAffiliationRelations();
+        Map<String, OrgAffiliationRelationEntity> existingOrgAffiliationsEntitiesMap = createOrgAffiliationEntitiesMap(existingOrgAffiliationEntities);
+        SortedSet<OrgAffiliationRelationEntity> orgAffiliationEntities = null;
+        if (existingOrgAffiliationEntities == null) {
+            orgAffiliationEntities = new TreeSet<>();
+        } else {
+            // To allow for orphan deletion
+            existingOrgAffiliationEntities.clear();
+            orgAffiliationEntities = existingOrgAffiliationEntities;
         }
+        if (affiliations != null && !affiliations.getAffiliation().isEmpty()) {
+            for (Affiliation affiliation : affiliations.getAffiliation()) {
+                OrgAffiliationRelationEntity orgRelationEntity = getOrgAffiliationRelationEntity(affiliation,
+                        existingOrgAffiliationsEntitiesMap.get(affiliation.getPutCode()));
+                orgRelationEntity.setProfile(profileEntity);
+                orgAffiliationEntities.add(orgRelationEntity);
+            }
+            profileEntity.setOrgAffiliationRelations(orgAffiliationEntities);
+        }
+    }
+
+    private Map<String, OrgAffiliationRelationEntity> createOrgAffiliationEntitiesMap(Set<OrgAffiliationRelationEntity> orgAffiliationEntities) {
+        Map<String, OrgAffiliationRelationEntity> map = new HashMap<>();
+        if (orgAffiliationEntities != null) {
+            for (OrgAffiliationRelationEntity orgAffiliationEntity : orgAffiliationEntities) {
+                map.put(String.valueOf(orgAffiliationEntity.getId()), orgAffiliationEntity);
+            }
+        }
+        return map;
+
     }
 
     private void setInternalDetails(ProfileEntity profileEntity, OrcidInternal orcidInternal) {
@@ -890,11 +912,21 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
         return null;
     }
 
-    private OrgAffiliationRelationEntity getOrgAffiliationRelationEntity(Affiliation affiliation) {
+    private OrgAffiliationRelationEntity getOrgAffiliationRelationEntity(Affiliation affiliation, OrgAffiliationRelationEntity exisitingOrgAffiliationEntity) {
         if (affiliation != null) {
-            OrgAffiliationRelationEntity orgRelationEntity = new OrgAffiliationRelationEntity();
-            org.orcid.jaxb.model.message.FuzzyDate startDate = affiliation.getStartDate();
-            org.orcid.jaxb.model.message.FuzzyDate endDate = affiliation.getEndDate();
+            OrgAffiliationRelationEntity orgRelationEntity = null;
+            if (exisitingOrgAffiliationEntity == null) {
+                String putCode = affiliation.getPutCode();
+                if (StringUtils.isNotBlank(putCode) && !"-1".equals(putCode)) {
+                    throw new IllegalArgumentException("Invalid put-code was supplied for an affiliation: " + putCode);
+                }
+                orgRelationEntity = new OrgAffiliationRelationEntity();
+            } else {
+                orgRelationEntity = exisitingOrgAffiliationEntity;
+                orgRelationEntity.clean();
+            }
+            FuzzyDate startDate = affiliation.getStartDate();
+            FuzzyDate endDate = affiliation.getEndDate();
             orgRelationEntity.setAffiliationType(affiliation.getAffiliationType());
             orgRelationEntity.setVisibility(affiliation.getVisibility());
             orgRelationEntity.setDepartment(affiliation.getDepartmentName());
