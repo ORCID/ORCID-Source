@@ -29,43 +29,79 @@
 	  <div style="padding:20px">
 	    <a id="cboxClose" class="btn pull-right close-button" ng-click="closeModal()">X</a>
 	    <h1><@orcid.msg 'admin.profile_deprecation.deprecate_account.confirm'/></h1>
-	    <p><@orcid.msg 'admin.profile_deprecation.deprecate_account.confirm.message.1'/></p>
-	    <span>{{deprecatedAccount.orcid}}</span>        
-	    <span>{{deprecatedAccount.givenNames}}</span>
-	    <span>{{deprecatedAccount.familyName}}</span>
-	    <span>{{deprecatedAccount.primaryEmail}}</span>
-	    <p><@orcid.msg 'admin.profile_deprecation.deprecate_account.confirm.message.2'/></p>
-	    <span>{{primaryAccount.orcid}}</span>        
-	    <span>{{primaryAccount.givenNames}}</span>
-	    <span>{{primaryAccount.familyName}}</span>
-	    <span>{{primaryAccount.primaryEmail}}</span>
+	    
+	    <div ng-show="errors.length">
+			<span class="orcid-error" ng-repeat='error in errors' ng-bind-html-unsafe="error"></span><br />
+		</div>
+	    
+	    
+	    <div class="bottom-margin-small">
+		    <p><@orcid.msg 'admin.profile_deprecation.deprecate_account.confirm.message.1'/></p>
+		    <table border="0">
+			    <tr>
+			    	<td><strong><@orcid.msg 'admin.profile_deprecation.orcid'/></strong></td>
+			    	<td>{{deprecatedAccount.orcid}}</td>
+			    </tr>
+			    <tr>
+			    	<td><strong><@orcid.msg 'admin.profile_deprecation.name'/></strong></td>
+			    	<td>{{deprecatedAccount.givenNames}}&nbsp;{{deprecatedAccount.familyName}}</td>
+			    </tr>
+			    <tr>
+			    	<td><strong><@orcid.msg 'admin.profile_deprecation.email'/></strong></td>
+			    	<td>{{deprecatedAccount.primaryEmail}}</td>
+			    </tr>		    
+		    </table>
+		</div>
+		<div class="bottom-margin-small">	    
+		    <p><@orcid.msg 'admin.profile_deprecation.deprecate_account.confirm.message.2'/></p>
+		    <table>
+			    <tr>
+			    	<td><strong><@orcid.msg 'admin.profile_deprecation.orcid'/></strong></td>
+			    	<td>{{primaryAccount.orcid}}</td>
+			    </tr>
+			    <tr>
+			    	<td><strong><@orcid.msg 'admin.profile_deprecation.name'/></strong></td>
+			    	<td>{{primaryAccount.givenNames}}&nbsp;{{primaryAccount.familyName}}</td>
+			    </tr>
+			    <tr>
+			    	<td><strong><@orcid.msg 'admin.profile_deprecation.email'/></strong></td>
+			    	<td>{{primaryAccount.primaryEmail}}</td>
+			    </tr>	    
+		    </table>
+		</div>		   	
+	    <div class="controls save-btns pull-right bottom-margin-small">
+        	<span id="bottom-deprecate-profile" ng-click="deprecateAccount()" class="btn btn-primary"><@orcid.msg 'admin.profile_deprecation.deprecate_account'/></span>
+		</div>
 	  </div>
 	</script>
 
 	<div ng-controller="profileDeprecationCtrl">
 		<div style="padding:20px">
-	    	<a id="cboxClose" class="btn pull-right close-button" ng-click="closeModal()">X</a>
 	    	<h1><@orcid.msg 'admin.profile_deprecation.deprecate_account.title'/></h1>
 			<div>
-				<input type="text" placeholder="<@orcid.msg 'admin.profile_deprecation.placeholder.account_to_deprecate' />" class="input-xlarge" ng-model="deprecatedAccount.orcid" ng-change="findAccountDetails('deprecated')">				
-				<span ng-repeat='error in deprecatedAccount.errors' ng-bind-html-unsafe="error"></span><br />
-				<div ng-show="deprecatedAccount.givenNames.length">
-					<span><@orcid.msg 'admin.profile_deprecation.given_names'/>:{{deprecatedAccount.givenNames}}</span><br />
-					<span><@orcid.msg 'admin.profile_deprecation.family_name'/>:{{deprecatedAccount.familyName}}</span><br />
-					<span><@orcid.msg 'admin.profile_deprecation.email'/>:{{deprecatedAccount.primaryEmail}}</span>
+				<input type="text" id="deprecated_orcid" placeholder="<@orcid.msg 'admin.profile_deprecation.placeholder.account_to_deprecate' />" class="input-xlarge" ng-model="deprecatedAccount.orcid" ng-change="findAccountDetails('deprecated')">
+				<a href class="icon-ok green" ng-show="deprecated_verified"></a>
+				<a href class="icon-remove red" ng-show="deprecated_verified == false"></a>
+				<div id="invalid-regex-deprecated" ng-show="invalid_regex_deprecated">
+					<span><@orcid.msg 'admin.profile_deprecation.errors.invalid_regex' /></span>
+				</div>
+				<div ng-show="deprecatedAccount.errors.length">
+					<span ng-repeat='error in deprecatedAccount.errors' ng-bind-html-unsafe="error"></span><br />	
 				</div>
 			</div>
 			<div>
-				<input type="text" placeholder="<@orcid.msg 'admin.profile_deprecation.placeholder.primary_account' />" class="input-xlarge" ng-model="primaryAccount.orcid" ng-change="findAccountDetails('primary')">		
-				<span ng-repeat='error in primaryAccount.errors' ng-bind-html-unsafe="error"></span><br />			
-				<div ng-show="primaryAccount.givenNames.length">
-					<span><@orcid.msg 'admin.profile_deprecation.given_names'/>:{{primaryAccount.givenNames}}</span><br />
-					<span><@orcid.msg 'admin.profile_deprecation.family_name'/>:{{primaryAccount.familyName}}</span><br />
-					<span><@orcid.msg 'admin.profile_deprecation.email'/>:{{primaryAccount.primaryEmail}}</span>
+				<input type="text" id="primary_orcid" placeholder="<@orcid.msg 'admin.profile_deprecation.placeholder.primary_account' />" class="input-xlarge" ng-model="primaryAccount.orcid" ng-change="findAccountDetails('primary')">				
+				<a href class="icon-ok green" ng-show="primary_verified"></a>
+				<a href class="icon-remove red" ng-show="primary_verified == false"></a>
+				<div id="invalid-regex-primary" ng-show="invalid_regex_primary">
+					<span><@orcid.msg 'admin.profile_deprecation.errors.invalid_regex' /></span>
 				</div>
+				<div ng-show="primaryAccount.errors.length">
+					<span ng-repeat='error in primaryAccount.errors' ng-bind-html-unsafe="error"></span><br />
+				</div>				
 			</div>
 			<div class="controls save-btns pull-right bottom-margin-small">
-        		<span id="bottom-deprecate-profile" ng-click="confirmDeprecateAccount()" class="btn btn-primary"><@orcid.msg 'admin.profile_deprecation.deprecate_account'/></span>
+        		<span id="bottom-confirm-deprecate-profile" ng-click="confirmDeprecateAccount()" class="btn btn-primary"><@orcid.msg 'admin.profile_deprecation.deprecate_account'/></span>
 			</div>	    	        
 	  	</div>
 	</div>

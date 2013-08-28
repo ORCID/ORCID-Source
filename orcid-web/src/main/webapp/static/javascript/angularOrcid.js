@@ -1427,6 +1427,201 @@ function languageCtrl($scope, $cookies){
 };
 
 function profileDeprecationCtrl($scope,$compile){	
+	$scope.deprecated_verified = false;
+	$scope.primary_verified = false;
+	
+	$scope.cleanup = function(orcid_type){
+		$("#deprecated_orcid").removeClass("orcid-red-background-input");
+		$("#primary_orcid").removeClass("orcid-red-background-input");
+		if(orcid_type == 'deprecated'){
+			if($scope.deprecated_verified == false)
+				$("#deprecated_orcid").addClass("error");
+			else 
+				$("#deprecated_orcid").removeClass("error");
+		} else {					
+			if($scope.primary_verified == false)
+				$("#primary_orcid").addClass("error");
+			else 
+				$("#primary_orcid").removeClass("error");
+		}
+	};
+	
+	$scope.getAccountDetails = function (orcid, callback){
+		$.ajax({
+	        url: orcidVar.baseUri+'/deprecate-profile/check-orcid.json?orcid=' + orcid,	        
+	        type: 'GET',
+	        dataType: 'json',
+	        success: function(data){
+	        	console.log(data);
+	        	callback(data);
+	        	$scope.$apply();
+	        	}
+	        }).fail(function(error) { 
+		    	// something bad is happening!	    	
+		    	console.log("Error getting account details for: " + orcid);	    	
+		    });
+	};
+				
+	$scope.findAccountDetails = function(orcid_type){						
+		var orcid;
+		var orcidRegex=new RegExp("(\\d{4}-){3,}\\d{3}[\\dX]");
+		if(orcid_type == 'deprecated') {
+			orcid = $scope.deprecatedAccount.orcid;					
+		} else { 
+			orcid = $scope.primaryAccount.orcid;			
+		}
+		//Reset styles
+		$scope.cleanup(orcid_type);
+		if(orcidRegex.test(orcid)){			
+			$scope.getAccountDetails(orcid, function(data){				
+				if(orcid_type == 'deprecated') {
+					$scope.invalid_regex_deprecated = false;
+	    			if(data.errors.length != 0){
+	    				$scope.deprecatedAccount.errors = data.errors;
+	    				$scope.deprecatedAccount.givenNames = null;
+	    				$scope.deprecatedAccount.familyName = null;
+	    				$scope.deprecatedAccount.primaryEmail = null;
+	    				$scope.deprecated_verified = false;	    				
+	    			} else {
+	    				$scope.deprecatedAccount.errors = null;
+	    				$scope.deprecatedAccount.givenNames = data.givenNames;
+	    				$scope.deprecatedAccount.familyName = data.familyName;
+	    				$scope.deprecatedAccount.primaryEmail = data.email;
+	    				$scope.deprecated_verified = true;
+	    				$scope.cleanup(orcid_type);
+	    			}
+	    		} else {
+	    			$scope.invalid_regex_primary = false;
+	    			if(data.errors.length != 0){
+	    				$scope.primaryAccount.errors = data.errors;
+	    				$scope.primaryAccount.givenNames = null;
+	    				$scope.primaryAccount.familyName = null;
+	    				$scope.primaryAccount.primaryEmail = null;
+	    				$scope.primary_verified = false;
+	    			} else {
+	    				$scope.primaryAccount.errors = null;
+	    				$scope.primaryAccount.givenNames = data.givenNames;
+	    				$scope.primaryAccount.familyName = data.familyName;
+	    				$scope.primaryAccount.primaryEmail = data.email;
+	    				$scope.primary_verified = true;
+	    				$scope.cleanup(orcid_type);
+	    			}
+	        	}
+			});				
+		} else {
+			console.log("Orcid: " + orcid + " doesnt match regex");			
+			if(orcid_type == 'deprecated') {
+				if(!($scope.deprecatedAccount === undefined)){					
+					$scope.invalid_regex_deprecated = true;
+					$scope.deprecatedAccount.errors = null;
+					$scope.deprecatedAccount.givenNames = null;
+					$scope.deprecatedAccount.familyName = null;
+					$scope.deprecatedAccount.primaryEmail = null;
+					$scope.deprecated_verified = false;
+				}
+			} else {
+				if(!($scope.primaryAccount === undefined)){
+					$scope.invalid_regex_primary = true;
+					$scope.primaryAccount.errors = null;
+					$scope.primaryAccount.givenNames = null;
+					$scope.primaryAccount.familyName = null;
+					$scope.primaryAccount.primaryEmail = null;
+					$scope.primary_verified = false;
+				}
+			}
+		}		
+	};		
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	$scope.confirmDeprecateAccount = function(){
+		var isOk = true;
+		$scope.errors = null;
+		if($scope.deprecated_verified === undefined || $scope.deprecated_verified == false){
+			$("#deprecated_orcid").addClass("error");
+			$("#deprecated_orcid").addClass("orcid-red-background-input");
+			isOk = false;
+		} 
+		
+		if($scope.primary_verified === undefined || $scope.primary_verified == false){
+			$("#primary_orcid").addClass("error");
+			$("#primary_orcid").addClass("orcid-red-background-input");
+			isOk = false;
+		}
+		
+		if(isOk){				
+			if(isOk){
+				$.colorbox({                      
+					html : $compile($('#confirm-deprecation-modal').html())($scope),
+						scrolling: true,
+						onLoad: function() {
+						$('#cboxClose').remove();
+					},
+					scrolling: true
+				});
+				
+				$.colorbox.resize({width:"625px" , height:"400px"});
+			}
+		}
+	};
+		
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	$scope.deprecateAccount = function(){
+		var deprecatedOrcid = $scope.deprecatedAccount.orcid;
+		var primaryOrcid = $scope.primaryAccount.orcid;		
+		$.ajax({
+	        url: orcidVar.baseUri+'/deprecate-profile/deprecate-profile.json?deprecated=' + deprecatedOrcid + '&primary=' + primaryOrcid,	        
+	        type: 'GET',
+	        dataType: 'json',
+	        success: function(data){
+	        	$scope.$apply(function(){ 
+	        		if(data.errors.length != 0){
+	        			$scope.errors = data.errors;
+	        		} else {
+	        			$scope.showSuccessModal(deprecatedOrcid, primaryOrcid);
+	        		}
+				});
+	        }
+	    }).fail(function(error) { 
+	    	// something bad is happening!	    	
+	    	console.log("Error deprecating the account");	    	
+	    });			
+	};
+	
 	$scope.showSuccessModal = function(deprecated, primary){		
 		var successMessage = angular.element("success-message").text();
 		successMessage = successMessage.replace("{0}", deprecated);
@@ -1442,119 +1637,9 @@ function profileDeprecationCtrl($scope,$compile){
 		});
 		
 		$.colorbox.resize({width:"300px" , height:"300px"});
-	};
-	
-	$scope.getAccountDetails = function(orcid){
-		$.ajax({
-	        url: orcidVar.baseUri+'/deprecate-profile/check-orcid.json?orcid=' + orcid,	        
-	        type: 'GET',
-	        dataType: 'json',
-	        success: function(data){
-	        	return data;
-	        	}
-	        }).fail(function(error) { 
-		    	// something bad is happening!	    	
-		    	console.log("Error getting account details for: " + orcid);	    	
-		    });
-	};
-	
-	$scope.findAccountDetails = function(orcid_type){		
-		var orcid;
-		var orcidRegex=new RegExp("(\\d{4}-){3,}\\d{3}[\\dX]");
-		if(orcid_type == 'deprecated') {
-			orcid = $scope.deprecatedAccount.orcid;
-			$scope.deprecatedAccount.errors = null;
-		} else { 
-			orcid = $scope.primaryAccount.orcid;
-			$scope.primaryAccount.errors = null;
-		}
-		if(orcidRegex.test(orcid)){
-			var data = $scope.getAccountDetails(orcid);
-        	$scope.$apply(function(){ 
-        		if(orcid_type == 'deprecated') {
-        			if(data.errors.length != 0){
-        				$scope.deprecatedAccount.errors = data.errors;
-        				$scope.deprecatedAccount.givenNames = null;
-        				$scope.deprecatedAccount.familyName = null;
-        				$scope.deprecatedAccount.primaryEmail = null;
-        			} else {
-        				$scope.deprecatedAccount.givenNames = data.givenNames;
-        				$scope.deprecatedAccount.familyName = data.familyName;
-        				$scope.deprecatedAccount.primaryEmail = data.email;
-        			}
-        		} else {
-        			if(data.errors.length != 0){
-        				$scope.primaryAccount.errors = data.errors;
-        				$scope.primaryAccount.givenNames = null;
-        				$scope.primaryAccount.familyName = null;
-        				$scope.primaryAccount.primaryEmail = null;
-        			} else {
-        				$scope.primaryAccount.givenNames = data.givenNames;
-        				$scope.primaryAccount.familyName = data.familyName;
-        				$scope.primaryAccount.primaryEmail = data.email;
-        			}
-        		}
-			});		       		    
-		} else {
-			console.log("Orcid: " + orcid + " doesnt match regex");
-			$scope.deprecatedAccount.errors = null;
-			$scope.primaryAccount.errors = null;
-		}
-	};
-	
-	$scope.deprecateAccount = function(){
-		var deprecatedOrcid = $scope.deprecatedAccount.orcid;
-		var primaryOrcid = $scope.primaryAccount.orcid;
-		$.ajax({
-	        url: orcidVar.baseUri+'/deprecate-profile/deprecate-profile.json?deprecated=' + deprecatedOrcid + '&primary=' + primaryOrcid,	        
-	        type: 'GET',
-	        dataType: 'json',
-	        success: function(data){
-	        	$scope.$apply(function(){ 
-	        		if(data.errors.length != 0){
-	        			console.log(data.errors);
-	        		} else {
-	        			
-	        		}
-				});
-	        }
-	    }).fail(function(error) { 
-	    	// something bad is happening!	    	
-	    	console.log("Error deprecating the account");	    	
-	    });			
-	};
-	
-	$scope.confirmDeprecateAccount = function(){
-		var deprecatedOrcid = $scope.deprecatedAccount.orcid;		
-		var deprecatedAccountData = $scope.getAccountDetails(deprecatedOrcid);
-		$scope.deprecatedAccount.givenNames = deprecatedAccountData.givenNames;
-		$scope.deprecatedAccount.familyName = deprecatedAccountData.familyName;
-		$scope.deprecatedAccount.primaryEmail = deprecatedAccountData.email;
-		
-		var primaryOrcid = $scope.primaryAccount.orcid;
-		var primaryAccountData = $scope.getAccountDetails(primaryOrcid);
-		$scope.primaryAccount.givenNames = primaryAccountData.givenNames;
-		$scope.primaryAccount.familyName = primaryAccountData.familyName;
-		$scope.primaryAccount.primaryEmail = primaryAccountData.email;
-	};
+	};	
 	
 	$scope.closeModal = function() {
 		$.colorbox.close();
 	};
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

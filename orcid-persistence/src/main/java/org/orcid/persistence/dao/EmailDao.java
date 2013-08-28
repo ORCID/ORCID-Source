@@ -37,5 +37,6 @@ public interface EmailDao extends GenericDao<EmailEntity, String> {
     void addEmail(String orcid, String email, Visibility visibility, String sourceOrcid);
 
     void removeEmail(String orcid, String email);
-
+    
+    void removeEmail(String orcid, String email, boolean removeIfPrimary);
 }

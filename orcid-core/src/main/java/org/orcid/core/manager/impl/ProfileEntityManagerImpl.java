@@ -104,5 +104,17 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
         profile.setId(orcidProfile.getOrcid().getValue());
         return profile;
     }
+    
+    /**
+     * Deprecates a profile
+     * @param deprecatedProfile
+     *          The profile that want to be deprecated
+     * @param primaryProfile
+     *          The primary profile for the deprecated profile
+     * @return true if the account was successfully deprecated, false otherwise
+     * */
+    public boolean deprecateProfile(ProfileEntity deprecatedProfile, ProfileEntity primaryProfile) {
+        return profileDao.deprecateProfile(deprecatedProfile.getId(), primaryProfile.getId());
+    }
 
 }

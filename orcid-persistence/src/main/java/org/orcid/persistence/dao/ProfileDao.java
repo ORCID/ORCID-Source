@@ -77,5 +77,7 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
     Locale retrieveLocale(String orcid);
 
     void updateLocale(String orcid, Locale locale);
+    
+    boolean deprecateProfile(String deprecatedOrcid, String primaryOrcid);
 
 }

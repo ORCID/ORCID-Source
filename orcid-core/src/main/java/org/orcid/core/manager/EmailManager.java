@@ -38,4 +38,5 @@ public interface EmailManager {
 
     void removeEmail(String orcid, String email);
 
+    void removeEmail(String orcid, String email, boolean removeIfPrimary);
 }

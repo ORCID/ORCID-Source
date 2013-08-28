@@ -19,7 +19,6 @@
 <#import "email_macros.ftl" as emailMacros />
 <@emailMacros.msg "email.common.dear" />${emailName}<@emailMacros.msg "email.common.dear.comma" />
 
-<@emailMacros.msg "email.deprecated_account.primary_account.message.1" />${deprecatedAccount}<@emailMacros.msg "email.deprecated_account.primary_account.message.2" />
-<@emailMacros.msg "email.deprecated_account.primary_account.message.3" />${primaryAccount}<@emailMacros.msg "email.deprecated_account.primary_account.message.4" />
+<@emailMacros.msg "admin.profile_deprecation.email.primary_account.message.1" />${primaryAccount}<@emailMacros.msg "admin.profile_deprecation.email.primary_account.message.2" />${deprecatedAccount}<@emailMacros.msg "admin.profile_deprecation.email.primary_account.message.3" />
 
 <@emailMacros.msg "email.common.you_have_received_this_email" />
