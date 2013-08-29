@@ -4,6 +4,20 @@ We release updates to the Registry regularly. Below is a list of the improvement
 * [2013 Releases](https://trello.com/b/ZgYVAlel)
 * [2012 Releases](https://trello.com/b/vyCDYdvR)
 
+
+## release-1.1.31.8
+(2013-08-27)
+
+* Speed up logins by not loading works
+
+* Allow CORS json request to public API
+
+* Display other external ids in user interface
+
+* Increase bio field
+
+
+
 ## release-1.1.30.11
 (2013-08-19)
 
