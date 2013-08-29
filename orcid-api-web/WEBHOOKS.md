@@ -19,7 +19,7 @@ curl -i -L -H 'Accept: application/json'
   -d 'client_secret=fd1a5e75-713a-4ca3-b9c3-a23164e6a263' 
   -d 'scope=/webhook' 
   -d 'grant_type=client_credentials' 
-  'http://localhost:8080/orcid-api-web/oauth/token
+  'http://api.orcid.org/oauth/token'
 ```
 
 Example access token response:
@@ -74,7 +74,7 @@ Use your webhook access token to register your webhook against the user's ORCID 
 curl -v -H 'Accept: application/json' 
   -H 'Authorization: Bearer 5eb23750-1e19-47a3-b6f6-26635c34e8ee' 
   -H 'Content-Length: 0' 
-  -X PUT 'http://localhost:8080/orcid-api-web/0000-0002-7253-3645/webhook/http%3A%2F%2Fnowhere2.com%2F0000-0002-7253-3645%2Fupdated'
+  -X PUT 'http://api.orcid.org/0000-0002-7253-3645/webhook/http%3A%2F%2Fnowhere2.com%2F0000-0002-7253-3645%2Fupdated'
 ```
 
 You need to use an HTTP PUT request, but you should not include anything in the body of the request.
@@ -84,7 +84,7 @@ The response should be a `201 Created`.
 ```http
 HTTP/1.1 201 Created
 Server: Apache-Coyote/1.1
-Location: http://localhost:8080/orcid-api-web/0000-0001-5775-9892/webhook/http%3A%2F%2Fnowhere2.com%2F0000-0002-7253-3645%2Fupdated
+Location: http://api.orcid.org/0000-0001-5775-9892/webhook/http%3A%2F%2Fnowhere2.com%2F0000-0002-7253-3645%2Fupdated
 Content-Type: application/json;charset=UTF-8
 Content-Length: 0
 Date: Fri, 05 Apr 2013 12:43:00 GMT
@@ -100,7 +100,7 @@ The URL for unregistering a webhook is the same as for registering. However, you
 curl -v -H 'Accept: application/json' 
   -H 'Authorization: Bearer 5eb23750-1e19-47a3-b6f6-26635c34e8ee' 
   -H 'Content-Length: 0' 
-  -X DELETE 'http://localhost:8080/orcid-api-web/0000-0002-7253-3645/webhook/http%3A%2F%2Fnowhere2.com%2F0000-0002-7253-3645%2Fupdated'
+  -X DELETE 'http://api.orcid.org/0000-0002-7253-3645/webhook/http%3A%2F%2Fnowhere2.com%2F0000-0002-7253-3645%2Fupdated'
 ```
 
 The response should be `204 No Content`.
