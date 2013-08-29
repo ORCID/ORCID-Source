@@ -253,6 +253,40 @@
             indexing_status="DONE"
             />
 
+	<profile
+            orcid="4444-4444-4444-4448"
+            creation_method="API"
+            completed_date="2011-07-02 15:31:00.00"
+            date_created="2011-06-29 15:31:00.00"
+            submission_date="2011-06-29 15:31:00.00"
+            last_indexed_date="2011-07-02 15:31:00.00"
+            last_modified="2011-07-02 15:31:00.00"
+            claimed="true"
+            given_names="User"
+            family_name="Name"
+            vocative_name="User Name"
+            credit_name="U. Name"
+            external_identifiers_visibility="LIMITED"
+            biography_visibility="PUBLIC"
+            keywords_visibility="REGISTERED_ONLY"
+            other_names_visibility="PRIVATE"
+            researcher_urls_visibility="PUBLIC"
+            source_id="4444-4444-4444-4448"
+            is_selectable_sponsor="true"
+            encrypted_password="e9adO9I4UpBwqI5tGR+qDodvAZ7mlcISn+T+kyqXPf2Z6PPevg7JijqYr6KGO8VOskOYqVOEK2FEDwebxWKGDrV/TQ9gRfKWZlzxssxsOnA="
+            security_question_id="1"
+            encrypted_security_answer="iTlIoR2JsFl5guE56cazmg=="
+            encrypted_verification_code="1vLkD2Lm8c24TyALcW0Brg=="
+            send_change_notifications="false"
+            send_orcid_news="false"
+            work_visibility_default='PRIVATE'
+            credentials_expiry="2013-02-01"
+            biography="Otis Ray Redding, Jr. (September 9, 1941 – December 10, 1967) was an American soul singer-songwriter, record producer, arranger, and talent scout."
+            indexing_status="DONE"
+            primary_record="4444-4444-4444-4441"
+            deprecated_date="2013-08-29 15:31:00.00"
+            />
+
     <granted_authority
             authority="USER_ROLE"
             orcid="4444-4444-4444-4441"
@@ -282,6 +316,11 @@
     <granted_authority
             authority="USER_ROLE"
             orcid="4444-4444-4444-4447"
+            />
+	
+	<granted_authority
+            authority="USER_ROLE"
+            orcid="4444-4444-4444-4448"
             />
 
     <external_identifier
@@ -541,6 +580,16 @@
         is_verified="true"
         visibility="PRIVATE"
         source_id="4444-4444-4444-4447"
+    />
+      
+	<email
+        orcid="4444-4444-4444-4448"
+        email="user@email.com"
+        is_primary="true"
+        is_current="true"
+        is_verified="true"
+        visibility="PRIVATE"
+        source_id="4444-4444-4444-4448"
     />
       
     <profile_keyword 

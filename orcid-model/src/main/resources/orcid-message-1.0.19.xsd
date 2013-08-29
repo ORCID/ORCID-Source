@@ -1267,9 +1267,6 @@
             </xs:simpleContent>
         </xs:complexType>
     </xs:element>
-    
-    
-    
     <xs:element name="primary-record">
         <xs:annotation>
             <xs:documentation>Element to containe the primary record information of a deprecated account.</xs:documentation>
@@ -1277,35 +1274,10 @@
         <xs:complexType>
             <xs:sequence>
                 <xs:element ref="orcid:orcid"/>
-                <xs:element ref="orcid:url"/>
+                <xs:element ref="orcid:orcid-id"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     <xs:element name="orcid-preferences">
     	<xs:annotation>
                 <xs:documentation>Preferences externally exposed</xs:documentation>

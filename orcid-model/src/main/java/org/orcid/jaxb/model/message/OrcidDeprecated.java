@@ -24,7 +24,6 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
-import javax.xml.datatype.XMLGregorianCalendar;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = { "date", "primaryRecord"})
@@ -34,7 +33,7 @@ public class OrcidDeprecated implements Serializable {
      * 
      */
     private static final long serialVersionUID = 1L;
-    @XmlElement
+    @XmlElement(name = "deprecated-date")
     @XmlSchemaType(name = "dateTime")
     protected DeprecatedDate date;
     @XmlElement(name = "primary-record")
