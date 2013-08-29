@@ -412,6 +412,26 @@
         source_id="4444-4444-4444-4441"
     />
     
+    <email
+        orcid="4444-4444-4444-4441"
+        email="1@deprecate.com"
+        is_primary="false"
+        is_current="false"
+        is_verified="true"
+        visibility="PRIVATE"
+        source_id="4444-4444-4444-4441"
+    />
+    
+    <email
+        orcid="4444-4444-4444-4441"
+        email="2@deprecate.com"
+        is_primary="false"
+        is_current="false"
+        is_verified="true"
+        visibility="PRIVATE"
+        source_id="4444-4444-4444-4441"
+    />
+    
      <email
         orcid="4444-4444-4444-4442"
         email="michael@bentine.com"

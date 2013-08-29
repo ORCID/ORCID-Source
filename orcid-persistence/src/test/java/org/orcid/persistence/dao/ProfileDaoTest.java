@@ -465,4 +465,16 @@ public class ProfileDaoTest extends DBUnitTest {
         assertEquals(Visibility.PRIVATE.value(), profile.getProfileAddressVisibility().value());
     }
 
+    @Test    
+    @Rollback(true)
+    public void testDeprecateProfile(){
+        ProfileEntity profileToDeprecate = profileDao.find("4444-4444-4444-4441");
+        assertNull(profileToDeprecate.getPrimaryRecord());        
+        boolean result = profileDao.deprecateProfile("4444-4444-4444-4441", "4444-4444-4444-4442");
+        assertTrue(result);
+        profileToDeprecate = profileDao.find("4444-4444-4444-4441");
+        assertNotNull(profileToDeprecate.getPrimaryRecord());
+        ProfileEntity primaryRecord = profileToDeprecate.getPrimaryRecord();
+        assertEquals("4444-4444-4444-4442", primaryRecord.getId());
+    }
 }

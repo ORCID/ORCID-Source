@@ -342,9 +342,7 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
         query.setParameter("other_names_visibility", StringUtils.upperCase(profile.getOtherNamesVisibility().value()));
         query.setParameter("credit_name_visibility", StringUtils.upperCase(profile.getCreditNameVisibility().value()));
         query.setParameter("profile_address_visibility", StringUtils.upperCase(profile.getProfileAddressVisibility().value()));
-        query.setParameter("orcid", profile.getId());
-        query.setParameter("primary_record", profile.getPrimaryRecord() == null ? null : profile.getPrimaryRecord().getId());
-        query.setParameter("deprecated_date", profile.getPrimaryRecord() == null ? null : new Date());
+        query.setParameter("orcid", profile.getId());        
         
         return query.executeUpdate() > 0 ? true : false;
     }

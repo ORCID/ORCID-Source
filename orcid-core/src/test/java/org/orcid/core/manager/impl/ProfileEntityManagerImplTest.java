@@ -16,6 +16,15 @@
  */
 package org.orcid.core.manager.impl;
 
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertNotNull;
+import static junit.framework.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
+import java.util.Arrays;
+
+import javax.annotation.Resource;
+
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -28,12 +37,6 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.annotation.Resource;
-import java.util.Arrays;
-
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNotNull;
 
 /**
  * 2011-2012 ORCID
@@ -72,6 +75,18 @@ public class ProfileEntityManagerImplTest extends DBUnitTest {
         assertEquals("Harry", profileEntity.getGivenNames());
         assertEquals("Secombe", profileEntity.getFamilyName());
         assertEquals(harrysOrcid, profileEntity.getId());
+    }
+    
+    @Test
+    public void testDeprecateProfile() throws Exception {
+        ProfileEntity profileEntityToDeprecate = profileEntityManager.findByOrcid("4444-4444-4444-4441");
+        ProfileEntity primaryProfileEntity = profileEntityManager.findByOrcid("4444-4444-4444-4442");        
+        assertNull(profileEntityToDeprecate.getPrimaryRecord());        
+        boolean result = profileEntityManager.deprecateProfile(profileEntityToDeprecate, primaryProfileEntity);
+        assertTrue(result);
+        profileEntityToDeprecate = profileEntityManager.findByOrcid("4444-4444-4444-4441");        
+        assertNotNull(profileEntityToDeprecate.getPrimaryRecord());
+        assertEquals("4444-4444-4444-4442", profileEntityToDeprecate.getPrimaryRecord().getId());
     }
 
 }

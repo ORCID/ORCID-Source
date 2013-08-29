@@ -1,3 +1,19 @@
+/**
+ * =============================================================================
+ *
+ * ORCID (R) Open Source
+ * http://orcid.org
+ *
+ * Copyright (c) 2012-2013 ORCID, Inc.
+ * Licensed under an MIT-Style License (MIT)
+ * http://orcid.org/open-source-license
+ *
+ * This copyright and license information (including a link to the full license)
+ * shall be included in its entirety in all copies or substantial portion of
+ * the software.
+ *
+ * =============================================================================
+ */
 package org.orcid.frontend.web.controllers;
 
 import java.util.Date;
@@ -37,6 +53,22 @@ public class AdminController extends BaseController {
     @Resource
     NotificationManager notificationManager;
 
+    public ProfileEntityManager getProfileEntityManager() {
+        return profileEntityManager;
+    }
+
+    public void setProfileEntityManager(ProfileEntityManager profileEntityManager) {
+        this.profileEntityManager = profileEntityManager;
+    }
+
+    public NotificationManager getNotificationManager() {
+        return notificationManager;
+    }
+
+    public void setNotificationManager(NotificationManager notificationManager) {
+        this.notificationManager = notificationManager;
+    }
+
     @RequestMapping(value = "/deprecate-profile")
     public ModelAndView getDeprecatedProfilesPage() {
         return new ModelAndView("profile_deprecation");
@@ -48,13 +80,7 @@ public class AdminController extends BaseController {
         return new ProfileDeprecationRequest();
     }
 
-    @RequestMapping(value = { "/deprecate-profile/verify-deprecation-request.json" }, method = RequestMethod.GET)
-    public @ResponseBody
-    ProfileDeprecationRequest verifyDeprecationRequest(@RequestBody ProfileDeprecationRequest profileDeprecationRequest) {
-        return null;
-    }
-
-    /**
+   /**
      * TODO
      * */
     @RequestMapping(value = { "/deprecate-profile/deprecate-profile.json" }, method = RequestMethod.GET)
