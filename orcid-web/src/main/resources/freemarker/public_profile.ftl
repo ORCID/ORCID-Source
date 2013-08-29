@@ -70,7 +70,7 @@
         <div class="workspace-right">
         	<#if (deprecated)??>
 	        	<div class="alert alert-error readme">
-	        		<p><b><@orcid.msg 'public_profile.deprecated_account.1'/>&nbsp;${primaryRecord}&nbsp;<@orcid.msg 'public_profile.deprecated_account.2'/></b></p>
+	        		<p><b><@orcid.msg 'public_profile.deprecated_account.1'/>&nbsp;<a href="${baseUriHttp}/${primaryRecord}">${baseUriHttp}/${primaryRecord}</a>&nbsp;<@orcid.msg 'public_profile.deprecated_account.2'/></b></p>
 	        	</div>
         	</#if>
             <div class="workspace-inner workspace-public">            	
