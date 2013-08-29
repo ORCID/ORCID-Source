@@ -492,7 +492,22 @@ public class NotificationManagerImpl implements NotificationManager {
     }
     
     /**
-     * 
+     * TODO
+     * */
+    private void addMessageParams(Map<String, Object> templateParams, ProfileEntity profileEntity) {
+        Locale locale = null; new Locale("en");
+        if ( profileEntity.getLocale() != null) {            
+            locale = new Locale(profileEntity.getLocale().value());
+        } else {
+            locale = new Locale("en");
+        }
+        templateParams.put("messages", this.messages);
+        templateParams.put("messageArgs", new Object[0]);
+        templateParams.put("locale",  locale);
+    }
+    
+    /**
+     * TODO
      * */
     private String getSubject(String code, ProfileEntity profileEntity) {
         Locale locale = null;
@@ -515,7 +530,7 @@ public class NotificationManagerImpl implements NotificationManager {
     }
       
     /**
-     * 
+     * TODO
      * */
     private void sendProfileDeprecationEmailToDeprecatedAccount(ProfileEntity deprecatedProfile, ProfileEntity primaryProfile){
         // Create map of template params
@@ -523,6 +538,9 @@ public class NotificationManagerImpl implements NotificationManager {
         templateParams.put("emailName", deriveEmailFriendlyName(deprecatedProfile));
         templateParams.put("deprecatedAccount", deprecatedProfile.getId());
         templateParams.put("primaryAccount", deprecatedProfile.getId());
+        
+        addMessageParams(templateParams, deprecatedProfile);
+        
         // Generate body from template
         String body = templateManager.processTemplate("profile_deprecation_deprecated_profile_email.ftl", templateParams);
         // Create email message
@@ -542,7 +560,7 @@ public class NotificationManagerImpl implements NotificationManager {
     }
     
     /**
-     * 
+     * TODO
      * */
     private void sendProfileDeprecationEmailToPrimaryAccount(ProfileEntity deprecatedProfile, ProfileEntity primaryProfile){
         // Create map of template params
@@ -550,6 +568,9 @@ public class NotificationManagerImpl implements NotificationManager {
         templateParams.put("emailName", deriveEmailFriendlyName(primaryProfile));
         templateParams.put("deprecatedAccount", deprecatedProfile.getId());
         templateParams.put("primaryAccount", deprecatedProfile.getId());
+        
+        addMessageParams(templateParams, primaryProfile);
+        
         // Generate body from template
         String body = templateManager.processTemplate("profile_deprecation_primary_profile_email.ftl", templateParams);
         // Create email message
