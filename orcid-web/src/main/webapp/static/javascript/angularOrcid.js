@@ -1429,6 +1429,8 @@ function languageCtrl($scope, $cookies){
 function profileDeprecationCtrl($scope,$compile){	
 	$scope.deprecated_verified = false;
 	$scope.primary_verified = false;
+	$scope.deprecatedAccount = null;
+	$scope.primaryAccount = null;
 	
 	$scope.cleanup = function(orcid_type){
 		$("#deprecated_orcid").removeClass("orcid-red-background-input");
@@ -1585,11 +1587,16 @@ function profileDeprecationCtrl($scope,$compile){
 	    });			
 	};
 	
-	$scope.showSuccessModal = function(deprecated, primary){		
-		var successMessage = $("#success-message").text();
-		successMessage = successMessage.replace("{0}", deprecated);
-		successMessage = successMessage.replace("{1}", primary);
-		$("#success-message").text(successMessage);
+	$scope.showSuccessModal = function(deprecated, primary){
+		console.log(OM.getInstance().get('admin.profile_deprecation.deprecate_account.success_message'));
+		$scope.successMessage = OM.getInstance().get('admin.profile_deprecation.deprecate_account.success_message').replace("{{0}}", deprecated).replace("{{1}}", primary);
+		
+		//Clean fields
+		$scope.deprecated_verified = false;
+		$scope.primary_verified = false;
+		$scope.deprecatedAccount = null;
+		$scope.primaryAccount = null;
+		
 		$.colorbox({                      
 			html : $compile($('#success-modal').html())($scope),
 				scrolling: true,
@@ -1599,7 +1606,7 @@ function profileDeprecationCtrl($scope,$compile){
 			scrolling: true
 		});
 		
-		$.colorbox.resize({width:"300px" , height:"300px"});
+		$.colorbox.resize({width:"450px" , height:"150px"});
 	};	
 	
 	$scope.closeModal = function() {

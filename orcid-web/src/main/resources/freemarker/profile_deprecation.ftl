@@ -21,7 +21,7 @@
   <div style="padding:20px">
     <a id="cboxClose" class="btn pull-right close-button" ng-click="closeModal()">X</a>
     <h1><@orcid.msg 'admin.profile_deprecation.deprecate_account.success'/></h1>
-    <p id="success-message"><@orcid.msg 'admin.profile_deprecation.deprecate_account.success_message'/></p>	        
+    <p id="success-message">{{successMessage}}</p>	        
   </div>
 </script>
 
@@ -89,7 +89,7 @@
 			<input type="text" id="deprecated_orcid" placeholder="<@orcid.msg 'admin.profile_deprecation.placeholder.account_to_deprecate' />" class="input-xlarge" ng-model="deprecatedAccount.orcid" ng-change="findAccountDetails('deprecated')">
 			<a href class="icon-ok green" ng-show="deprecated_verified"></a>
 			<a href class="icon-remove red" ng-show="deprecated_verified == false"></a>
-			<div id="invalid-regex-deprecated" ng-show="invalid_regex_deprecated">
+			<div id="invalid-regex-deprecated" ng-show="invalid_regex_deprecated" ng-cloak>
 				<span class="orcid-error"><@orcid.msg 'admin.profile_deprecation.errors.invalid_regex' /></span><br />
 			</div>
 			<div ng-show="deprecatedAccount.errors.length">
@@ -101,7 +101,7 @@
 			<input type="text" id="primary_orcid" placeholder="<@orcid.msg 'admin.profile_deprecation.placeholder.primary_account' />" class="input-xlarge" ng-model="primaryAccount.orcid" ng-change="findAccountDetails('primary')">				
 			<a href class="icon-ok green" ng-show="primary_verified"></a>
 			<a href class="icon-remove red" ng-show="primary_verified == false"></a>
-			<div id="invalid-regex-primary" ng-show="invalid_regex_primary">
+			<div id="invalid-regex-primary" ng-show="invalid_regex_primary" ng-cloak>
 				<span class="orcid-error"><@orcid.msg 'admin.profile_deprecation.errors.invalid_regex' /></span><br />
 			</div>
 			<div ng-show="primaryAccount.errors.length">
