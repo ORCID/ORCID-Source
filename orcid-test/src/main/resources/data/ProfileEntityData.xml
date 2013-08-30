@@ -254,7 +254,7 @@
             />
 
 	<profile
-            orcid="4444-4444-4444-4448"
+            orcid="4444-4444-4444-444X"
             creation_method="API"
             completed_date="2011-07-02 15:31:00.00"
             date_created="2011-06-29 15:31:00.00"
@@ -271,7 +271,7 @@
             keywords_visibility="REGISTERED_ONLY"
             other_names_visibility="PRIVATE"
             researcher_urls_visibility="PUBLIC"
-            source_id="4444-4444-4444-4448"
+            source_id="4444-4444-4444-444X"
             is_selectable_sponsor="true"
             encrypted_password="e9adO9I4UpBwqI5tGR+qDodvAZ7mlcISn+T+kyqXPf2Z6PPevg7JijqYr6KGO8VOskOYqVOEK2FEDwebxWKGDrV/TQ9gRfKWZlzxssxsOnA="
             security_question_id="1"
@@ -320,7 +320,7 @@
 	
 	<granted_authority
             authority="USER_ROLE"
-            orcid="4444-4444-4444-4448"
+            orcid="4444-4444-4444-444X"
             />
 
     <external_identifier
@@ -583,13 +583,13 @@
     />
       
 	<email
-        orcid="4444-4444-4444-4448"
+        orcid="4444-4444-4444-444X"
         email="user@email.com"
         is_primary="true"
         is_current="true"
         is_verified="true"
         visibility="PRIVATE"
-        source_id="4444-4444-4444-4448"
+        source_id="4444-4444-4444-444X"
     />
       
     <profile_keyword 

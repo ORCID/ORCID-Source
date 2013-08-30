@@ -170,7 +170,7 @@ public class JpaJaxbEntityAdapterToOrcidProfileTest extends DBUnitTest {
     @Test
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void testToOrcidProfileWithDeprecationMessage() throws SAXException, IOException {
-        ProfileEntity profileEntity = profileDao.find("4444-4444-4444-4448");
+        ProfileEntity profileEntity = profileDao.find("4444-4444-4444-444X");
         long start = System.currentTimeMillis();
         OrcidProfile orcidProfile = adapter.toOrcidProfile(profileEntity);
         System.out.println("Took: " + Long.toString(System.currentTimeMillis() - start));
