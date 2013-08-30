@@ -113,27 +113,27 @@ public class AdminController extends BaseController {
                         result.getErrors().add(getMessage("admin.profile_deprecation.errors.primary_account_is_deactivated", primaryOrcid));
                     } else {                    
                         // Deprecates the account
-                        LOGGER.info("About to deprecate account %s to primary account: %s", deprecated.getId(), primary.getId());
+                        LOGGER.info("About to deprecate account {} to primary account: {}", deprecated.getId(), primary.getId());
                         boolean wasDeprecated = profileEntityManager.deprecateProfile(deprecated, primary);                    
                         // If it was successfully deprecated
                         if(wasDeprecated) {
-                            LOGGER.info("Account %s was deprecated to primary account: %s", deprecated.getId(), primary.getId());
+                            LOGGER.info("Account {} was deprecated to primary account: {}", deprecated.getId(), primary.getId());
                             // Get the list of emails from the deprecated account
                             Set<EmailEntity> deprecatedAccountEmails = deprecated.getEmails();
                             if(deprecatedAccountEmails != null) {
                                 // For each email in the deprecated profile
                                 for (EmailEntity email : deprecatedAccountEmails) {
                                     // Delete each email from the deprecated profile
-                                    LOGGER.info("About to delete email %s from profile %s", email.getId(), email.getProfile().getId());
+                                    LOGGER.info("About to delete email {} from profile {}", email.getId(), email.getProfile().getId());
                                     emailManager.removeEmail(email.getProfile().getId(), email.getId(), true);
                                     // Copy that email to the primary profile                        
-                                    LOGGER.info("About to add email %s to profile %s", email.getId(), primary.getId());
+                                    LOGGER.info("About to add email {} to profile {}", email.getId(), primary.getId());
                                     emailManager.addEmail(primary.getId(), email.getId(), email.getVisibility(), email.getSource() == null ? null : email.getSource().getId());
                                 }                    
                             }
                                             
                             // Send notifications
-                            LOGGER.info("Sending deprecation notifications to %s and %s", deprecated.getId(), primary.getId());
+                            LOGGER.info("Sending deprecation notifications to {} and {}", deprecated.getId(), primary.getId());
                             notificationManager.sendProfileDeprecationEmail(deprecated, primary);
                             // Update the deprecation request object that will be
                             // returned

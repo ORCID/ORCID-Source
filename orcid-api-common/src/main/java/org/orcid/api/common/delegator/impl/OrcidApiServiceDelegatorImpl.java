@@ -39,6 +39,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import com.sun.jersey.api.client.ClientResponse.Status;
+
 /**
  * This class will retrieve {@link OrcidProfile}s and return them for use in the
  * Tier 1 API. Its is worth noting that this will not return
@@ -158,7 +160,7 @@ public class OrcidApiServiceDelegatorImpl implements OrcidApiServiceDelegator {
     @VisibilityControl
     public Response findFullDetailsFromPublicCache(String orcid) {
         try {
-            OrcidMessage orcidMessage = orcidSearchManager.findPublicProfileById(orcid);
+            OrcidMessage orcidMessage = orcidSearchManager.findPublicProfileById(orcid);            
             return getOrcidMessageResponse(orcidMessage, orcid);
         } catch (OrcidSearchException e) {
             LOGGER.warn("Error searching, so falling back to DB", e);
@@ -249,14 +251,28 @@ public class OrcidApiServiceDelegatorImpl implements OrcidApiServiceDelegator {
     }
 
     private Response getOrcidMessageResponse(OrcidMessage orcidMessage, String requestedOrcid) {
+        boolean isProfileDeprecated = false;
         if (orcidMessage == null) {
             throw new OrcidNotFoundException("ORCID " + requestedOrcid + " not found");
         }
         OrcidProfile orcidProfile = orcidMessage.getOrcidProfile();
         if (orcidProfile != null) {
             orcidProfile.setOrcidInternal(null);
+            //If profile is deprecated
+            if(orcidMessage.getOrcidProfile().getOrcidDeprecated() != null){
+                isProfileDeprecated = true;
+            }
+        }                
+        
+        Response response = null; 
+        
+        if(isProfileDeprecated){
+            response = Response.status(Status.MOVED_PERMANENTLY).entity(orcidMessage).build();            
+        } else {
+            response = Response.ok(orcidMessage).build();
         }
-        return Response.ok(orcidMessage).build();
+        
+        return response;
     }
 
     private Response getOrcidSearchResultsResponse(OrcidSearchResults orcidSearchResults, String query) {
