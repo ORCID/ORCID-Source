@@ -25,7 +25,9 @@ import org.springframework.security.authentication.BadCredentialsException;
  */
 public class DeprecatedException extends BadCredentialsException {
 	private static final long serialVersionUID = 1L;
-
+	private String primary; 
+	private String deprecated;
+	
     public DeprecatedException(String msg) {
         super(msg);
     }
@@ -33,4 +35,32 @@ public class DeprecatedException extends BadCredentialsException {
     public DeprecatedException(String msg, Throwable t) {
         super(msg, t);
     }
+    
+    public DeprecatedException(String msg, String primary, String deprecated) {       
+        super(msg);
+        this.primary = primary;
+        this.deprecated = deprecated;
+    }
+
+    public DeprecatedException(String msg, Throwable t, String primary, String deprecated) {       
+        super(msg, t);
+        this.primary = primary;
+        this.deprecated = deprecated;
+    }
+    
+    public String getPrimary() {
+        return primary;
+    }
+
+    public void setPrimary(String primary) {
+        this.primary = primary;
+    }
+
+    public String getDeprecated() {
+        return deprecated;
+    }
+
+    public void setDeprecated(String deprecated) {
+        this.deprecated = deprecated;
+    }        
 }

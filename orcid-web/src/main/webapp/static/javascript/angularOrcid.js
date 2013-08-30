@@ -1532,15 +1532,6 @@ function profileDeprecationCtrl($scope,$compile){
 		}		
 	};		
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	$scope.confirmDeprecateAccount = function(){
 		var isOk = true;
 		$scope.errors = null;
@@ -1571,34 +1562,6 @@ function profileDeprecationCtrl($scope,$compile){
 			}
 		}
 	};
-		
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	
 	$scope.deprecateAccount = function(){
 		var deprecatedOrcid = $scope.deprecatedAccount.orcid;
@@ -1623,10 +1586,10 @@ function profileDeprecationCtrl($scope,$compile){
 	};
 	
 	$scope.showSuccessModal = function(deprecated, primary){		
-		var successMessage = angular.element("success-message").text();
+		var successMessage = $("#success-message").text();
 		successMessage = successMessage.replace("{0}", deprecated);
 		successMessage = successMessage.replace("{1}", primary);
-		angular.element("success-message").text(successMessage);
+		$("#success-message").text(successMessage);
 		$.colorbox({                      
 			html : $compile($('#success-modal').html())($scope),
 				scrolling: true,
