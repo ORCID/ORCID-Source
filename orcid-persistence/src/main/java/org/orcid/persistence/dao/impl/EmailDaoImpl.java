@@ -96,14 +96,14 @@ public class EmailDaoImpl extends GenericDaoImpl<EmailEntity, String> implements
     public void removeEmail(String orcid, String email) {
         removeEmail(orcid, email, false);
     }
-    
+
     @Override
     @Transactional
     public void removeEmail(String orcid, String email, boolean removeIfPrimary) {
         Query query = null;
-        if(removeIfPrimary)
+        if (removeIfPrimary)
             query = entityManager.createQuery("delete from EmailEntity where orcid = :orcid and email = :email");
-        else 
+        else
             query = entityManager.createQuery("delete from EmailEntity where orcid = :orcid and email = :email and primary != 'true'");
         query.setParameter("orcid", orcid);
         query.setParameter("email", email);

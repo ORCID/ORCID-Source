@@ -63,14 +63,12 @@ public class OrcidProfile implements Serializable {
     private static final long serialVersionUID = 1L;
     protected Orcid orcid;
 
-    
-    
     @XmlElement(name = "orcid-id")
     protected String orcidId;
 
     @XmlElement(name = "orcid-deprecated")
     private OrcidDeprecated orcidDeprecated;
-    
+
     @XmlElement(name = "orcid-preferences")
     private OrcidPreferences orcidPreferences;
 
@@ -338,15 +336,15 @@ public class OrcidProfile implements Serializable {
     public void setType(OrcidType value) {
         this.type = value;
     }
-    
+
     /**
      * Gets the value of the orcidDeprecated property.
      * 
      * @return possible object is {@link OrcidDeprecated }
      * */
     public OrcidDeprecated getOrcidDeprecated() {
-		return orcidDeprecated;
-	}
+        return orcidDeprecated;
+    }
 
     /**
      * Sets the value of the orcidDeprecated property.
@@ -354,11 +352,11 @@ public class OrcidProfile implements Serializable {
      * @param orcidDeprecated
      *            allowed object is {@link orcidDeprecated }
      * */
-	public void setOrcidDeprecated(OrcidDeprecated orcidDeprecated) {
-		this.orcidDeprecated = orcidDeprecated;
-	}
+    public void setOrcidDeprecated(OrcidDeprecated orcidDeprecated) {
+        this.orcidDeprecated = orcidDeprecated;
+    }
 
-	public void downgradeToBioOnly() {
+    public void downgradeToBioOnly() {
         setOrcidActivities(null);
     }
 
@@ -449,12 +447,12 @@ public class OrcidProfile implements Serializable {
                 return false;
         } else if (!verificationCode.equals(other.verificationCode))
             return false;
-        if(orcidDeprecated == null){
-        	if(other.getOrcidDeprecated() != null)
-        		return false;
-        } else if(!orcidDeprecated.equals(other.getOrcidDeprecated()))
-        	return false;
-        
+        if (orcidDeprecated == null) {
+            if (other.getOrcidDeprecated() != null)
+                return false;
+        } else if (!orcidDeprecated.equals(other.getOrcidDeprecated()))
+            return false;
+
         return true;
     }
 

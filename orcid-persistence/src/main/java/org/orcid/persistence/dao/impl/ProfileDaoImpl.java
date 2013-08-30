@@ -342,8 +342,8 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
         query.setParameter("other_names_visibility", StringUtils.upperCase(profile.getOtherNamesVisibility().value()));
         query.setParameter("credit_name_visibility", StringUtils.upperCase(profile.getCreditNameVisibility().value()));
         query.setParameter("profile_address_visibility", StringUtils.upperCase(profile.getProfileAddressVisibility().value()));
-        query.setParameter("orcid", profile.getId());        
-        
+        query.setParameter("orcid", profile.getId());
+
         return query.executeUpdate() > 0 ? true : false;
     }
 
@@ -408,22 +408,15 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
         updateQuery.executeUpdate();
 
     }
-    
+
     @Override
     @Transactional
-    public boolean deprecateProfile(String deprecatedOrcid, String primaryOrcid){        
+    public boolean deprecateProfile(String deprecatedOrcid, String primaryOrcid) {
         Query query = entityManager
                 .createNativeQuery("update profile set last_modified=now(), indexing_status='PENDING', primary_record=:primary_record, deprecated_date=now() where orcid=:orcid");
         query.setParameter("orcid", deprecatedOrcid);
         query.setParameter("primary_record", primaryOrcid);
-        
-        return query.executeUpdate() > 0 ? true : false;        
+
+        return query.executeUpdate() > 0 ? true : false;
     }
 }
-
-
-
-
-
-
-

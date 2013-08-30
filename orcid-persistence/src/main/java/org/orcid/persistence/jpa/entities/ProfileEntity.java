@@ -104,7 +104,7 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
     // Deprecation fields
     private ProfileEntity primaryRecord;
     private Date deprecatedDate;
-    
+
     // Internally used fields
     private String creationMethod;
     private Date completedDate;
@@ -741,7 +741,7 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
     }
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = PROFILE)
-    @Sort(type=SortType.NATURAL)
+    @Sort(type = SortType.NATURAL)
     public SortedSet<OrcidOauth2TokenDetail> getTokenDetails() {
         return tokenDetails;
     }
@@ -872,10 +872,10 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
      */
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "primary_record")
-    public ProfileEntity getPrimaryRecord(){
+    public ProfileEntity getPrimaryRecord() {
         return this.primaryRecord;
     }
-    
+
     /**
      * @param primaryRecord
      *            the primary profile to set
@@ -883,7 +883,7 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
     public void setPrimaryRecord(ProfileEntity primaryRecord) {
         this.primaryRecord = primaryRecord;
     }
-    
+
     /**
      * @return the deprecation date for this record
      * */
@@ -894,12 +894,12 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
 
     /**
      * @param deprecationDate
-     *          The deprecation date for this record
+     *            The deprecation date for this record
      * */
     public void setDeprecatedDate(Date deprecatedDate) {
         this.deprecatedDate = deprecatedDate;
     }
-    
+
     @Override
     public int hashCode() {
         final int prime = 31;
