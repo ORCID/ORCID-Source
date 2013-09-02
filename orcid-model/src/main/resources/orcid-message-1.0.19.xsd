@@ -685,6 +685,7 @@
                 <xs:enumeration value="television-radio"/>
                 <xs:enumeration value="thesis"/>
                 <xs:enumeration value="web-site"/>
+                <xs:enumeration value="undefined"/>
             </xs:restriction>
         </xs:simpleType>
     </xs:element>

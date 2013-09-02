@@ -79,7 +79,8 @@ public enum WorkType implements Serializable {
     STANDARDS("standards"), @XmlEnumValue("television-radio")
     TELEVISION_RADIO("television-radio"), @XmlEnumValue("thesis")
     THESIS("thesis"), @XmlEnumValue("web-site")
-    WEBSITE("web-site");
+    WEBSITE("web-site"), @XmlEnumValue("undefined")
+    UNDEFINED("undefined");
 
     private final String value;
 
