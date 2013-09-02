@@ -419,4 +419,16 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
 
         return query.executeUpdate() > 0 ? true : false;
     }
+    
+    @Override
+    public boolean isProfileDeprecated(String orcid){       
+        return retrievePrimaryAccountOrcid(orcid) != null;
+    }
+    
+    @Override 
+    public String retrievePrimaryAccountOrcid(String deprecatedOrcid){
+        Query query = entityManager.createNativeQuery("select primary_record from profile where orcid = :orcid");
+        query.setParameter("orcid", deprecatedOrcid);
+        return (String)query.getSingleResult();
+    }
 }

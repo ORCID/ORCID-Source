@@ -30,7 +30,8 @@ import org.orcid.core.manager.ValidationManager;
 import org.orcid.core.security.DeprecatedException;
 import org.orcid.core.version.OrcidMessageVersionConverterChain;
 import org.orcid.jaxb.model.message.OrcidMessage;
-import org.orcid.jaxb.model.message.OrcidProfile;
+import org.orcid.persistence.dao.ProfileDao;
+
 import com.sun.jersey.api.client.ClientResponse.Status;
 
 /**
@@ -52,6 +53,9 @@ public class T2OrcidApiServiceVersionedDelegatorImpl implements T2OrcidApiServic
 
     private String externalVersion;
 
+    @Resource
+    private ProfileDao profileDao;
+    
     public void setExternalVersion(String externalVersion) {
         this.externalVersion = externalVersion;
     }
@@ -126,37 +130,67 @@ public class T2OrcidApiServiceVersionedDelegatorImpl implements T2OrcidApiServic
     @Override
     public Response createProfile(UriInfo uriInfo, OrcidMessage orcidMessage) {
         OrcidMessage upgradedMessage = upgradeMessage(orcidMessage);
-        validateIncomingMessage(upgradedMessage);        
-        return t2OrcidApiServiceDelegator.createProfile(uriInfo, upgradedMessage);
+        Response response = null;
+        try {
+            validateIncomingMessage(upgradedMessage);
+            response = t2OrcidApiServiceDelegator.createProfile(uriInfo, upgradedMessage); 
+        } catch(DeprecatedException de){
+            response = Response.status(Status.MOVED_PERMANENTLY).entity(de).build();
+        }
+        return response;
     }
 
     @Override
     public Response updateBioDetails(UriInfo uriInfo, String orcid, OrcidMessage orcidMessage) {
-        validateIncomingMessage(orcidMessage);
-        OrcidMessage upgradedMessage = upgradeMessage(orcidMessage);
-        Response response = t2OrcidApiServiceDelegator.updateBioDetails(uriInfo, orcid, upgradedMessage);
-        return downgradeAndValidateResponse(response);
+        Response response = null;
+        try {
+            validateIncomingMessage(orcidMessage);
+            OrcidMessage upgradedMessage = upgradeMessage(orcidMessage);
+            response = t2OrcidApiServiceDelegator.updateBioDetails(uriInfo, orcid, upgradedMessage);
+            response = downgradeAndValidateResponse(response);
+        } catch(DeprecatedException de){
+            response = Response.status(Status.MOVED_PERMANENTLY).entity(de).build();
+        }
+        return response;
     }
 
     @Override
     public Response addWorks(UriInfo uriInfo, String orcid, OrcidMessage orcidMessage) {
-        validateIncomingMessage(orcidMessage);
-        OrcidMessage upgradedMessage = upgradeMessage(orcidMessage);
-        return t2OrcidApiServiceDelegator.addWorks(uriInfo, orcid, upgradedMessage);
+        Response response = null;
+        try {
+            validateIncomingMessage(orcidMessage);
+            OrcidMessage upgradedMessage = upgradeMessage(orcidMessage);
+            response = t2OrcidApiServiceDelegator.addWorks(uriInfo, orcid, upgradedMessage);
+        } catch(DeprecatedException de){
+            response = Response.status(Status.MOVED_PERMANENTLY).entity(de).build();
+        }
+        return response;
     }
 
     @Override
     public Response updateWorks(UriInfo uriInfo, String orcid, OrcidMessage orcidMessage) {
-        validateIncomingMessage(orcidMessage);
-        OrcidMessage upgradedMessage = upgradeMessage(orcidMessage);
-        return t2OrcidApiServiceDelegator.updateWorks(uriInfo, orcid, upgradedMessage);
+        Response response = null;
+        try {
+            validateIncomingMessage(orcidMessage);
+            OrcidMessage upgradedMessage = upgradeMessage(orcidMessage);
+            response = t2OrcidApiServiceDelegator.updateWorks(uriInfo, orcid, upgradedMessage);
+        } catch(DeprecatedException de){
+            response = Response.status(Status.MOVED_PERMANENTLY).entity(de).build();
+        }
+        return response;
     }
 
     @Override
     public Response addExternalIdentifiers(UriInfo uriInfo, String orcid, OrcidMessage orcidMessage) {
-        validateIncomingMessage(orcidMessage);
-        OrcidMessage upgradedMessage = upgradeMessage(orcidMessage);
-        return t2OrcidApiServiceDelegator.addExternalIdentifiers(uriInfo, orcid, upgradedMessage);
+        Response response = null;
+        try {
+            validateIncomingMessage(orcidMessage);
+            OrcidMessage upgradedMessage = upgradeMessage(orcidMessage);
+            response = t2OrcidApiServiceDelegator.addExternalIdentifiers(uriInfo, orcid, upgradedMessage);
+        } catch(DeprecatedException de){
+            response = Response.status(Status.MOVED_PERMANENTLY).entity(de).build();
+        }
+        return response;
     }
 
     @Override
@@ -175,8 +209,9 @@ public class T2OrcidApiServiceVersionedDelegatorImpl implements T2OrcidApiServic
     }
 
     private void validateIncomingMessage(OrcidMessage orcidMessage) {
-        try {
+        try {            
             incomingValidationManager.validateMessage(orcidMessage);
+            checkDeprecation(orcidMessage);
         } catch (OrcidValidationException e) {
             Throwable cause = e.getCause();
             if (cause == null) {
@@ -190,6 +225,22 @@ public class T2OrcidApiServiceVersionedDelegatorImpl implements T2OrcidApiServic
             throw new OrcidBadRequestException("Invalid incoming message: " + cause.toString());
         }
     }    
+    
+    /**
+     * Checks if an account is deprecated
+     * @param orcidMessage
+     *          OrcidMessage, for it we can get the orcid to check for deprecation
+     * @throws DeprecatedException if the account is deprecated
+     * */
+    private void checkDeprecation(OrcidMessage orcidMessage){
+        if(orcidMessage != null && orcidMessage.getOrcidProfile() != null && orcidMessage.getOrcidProfile().getOrcid() != null){
+            String orcid = orcidMessage.getOrcidProfile().getOrcid().getValue();
+            String primaryOrcid = this.profileDao.retrievePrimaryAccountOrcid(orcid); 
+            if(primaryOrcid != null){
+                throw new DeprecatedException("orcid.frontend.security.deprecated_with_primary", primaryOrcid, orcid);
+            }
+        }
+    }
     
     /**
      * Verify if the orcid message is deprecated, if so, builds a reponse object with 301 status
