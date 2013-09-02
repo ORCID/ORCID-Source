@@ -78,4 +78,8 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
 
     void updateLocale(String orcid, Locale locale);
 
+    void updateEncryptedPassword(String orcid, String encryptedPassword);
+
+    void updateSecurityQuestion(String orcid, Integer securityQuestionId, String encryptedSecurityAnswer);
+
 }

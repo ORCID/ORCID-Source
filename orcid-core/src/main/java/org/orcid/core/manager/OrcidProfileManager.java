@@ -152,7 +152,7 @@ public interface OrcidProfileManager {
      * 
      * @param updatedOrcidProfile
      */
-    OrcidProfile updatePasswordInformation(OrcidProfile updatedOrcidProfile);
+    void updatePasswordInformation(OrcidProfile updatedOrcidProfile);
 
     /**
      * Overwrites security details ONLY in the DB with the values in the
@@ -161,7 +161,7 @@ public interface OrcidProfileManager {
      * @param updatedOrcidProfile
      * @return
      */
-    OrcidProfile updatePasswordSecurityQuestionsInformation(OrcidProfile updatedOrcidProfile);
+    void updateSecurityQuestionInformation(OrcidProfile updatedOrcidProfile);
 
     /**
      * Overwrites preferences in the DB with the values in updatedProfile.
@@ -254,6 +254,8 @@ public interface OrcidProfileManager {
      * @return
      */
     OrcidProfile retrieveOrcidProfileByEmail(String email);
+
+    OrcidProfile retrieveOrcidProfileByEmail(String email, LoadOptions loadOptions);
 
     /**
      * Updates the ORCID bio data

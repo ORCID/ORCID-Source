@@ -36,6 +36,7 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
 import org.jasypt.exceptions.EncryptionOperationNotPossibleException;
 import org.orcid.core.manager.EncryptionManager;
+import org.orcid.core.manager.LoadOptions;
 import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.manager.OrcidSearchManager;
@@ -471,7 +472,7 @@ public class RegistrationController extends BaseController {
             return mav;
         }
 
-        OrcidProfile profile = orcidProfileManager.retrieveOrcidProfileByEmail(submittedEmail);
+        OrcidProfile profile = orcidProfileManager.retrieveOrcidProfileByEmail(submittedEmail, LoadOptions.BIO_ONLY);
         // if the email can't be found on the system, then add to errors
         if (profile == null) {
 
@@ -559,7 +560,7 @@ public class RegistrationController extends BaseController {
             return new ModelAndView("redirect:/reset-password");
         }
 
-        OrcidProfile retrievedProfile = orcidProfileManager.retrieveOrcidProfileByEmail(passwordResetToken.getEmail());
+        OrcidProfile retrievedProfile = orcidProfileManager.retrieveOrcidProfileByEmail(passwordResetToken.getEmail(), LoadOptions.INTERNAL_ONLY);
         if (StringUtils.isNotBlank(retrievedProfile.getSecurityQuestionAnswer())) {
 
             // if have a answer without a question something has gone wrong
@@ -634,7 +635,7 @@ public class RegistrationController extends BaseController {
             BindingResult bindingResult, RedirectAttributes redirectAttributes) {
 
         PasswordResetToken passwordResetToken = buildResetTokenFromEncryptedLink(encryptedEmail);
-        OrcidProfile retrievedProfile = orcidProfileManager.retrieveOrcidProfileByEmail(passwordResetToken.getEmail());
+        OrcidProfile retrievedProfile = orcidProfileManager.retrieveOrcidProfileByEmail(passwordResetToken.getEmail(), LoadOptions.INTERNAL_ONLY);
 
         if (bindingResult.hasErrors()) {
             ModelAndView errorView = buildAnswerSecurityQuestionView(encryptedEmail, redirectAttributes);
@@ -676,7 +677,7 @@ public class RegistrationController extends BaseController {
             return errorView;
         }
 
-        OrcidProfile passwordOnlyProfileUpdate = orcidProfileManager.retrieveOrcidProfileByEmail(passwordResetToken.getEmail());
+        OrcidProfile passwordOnlyProfileUpdate = orcidProfileManager.retrieveOrcidProfileByEmail(passwordResetToken.getEmail(), LoadOptions.INTERNAL_ONLY);
         passwordOnlyProfileUpdate.setPassword(passwordTypeAndConfirmForm.getPassword() == null ? null : passwordTypeAndConfirmForm.getPassword().getValue());
         return updatePasswordAndGoToAccountsPage(passwordOnlyProfileUpdate);
     }
@@ -700,7 +701,7 @@ public class RegistrationController extends BaseController {
 
         }
         // update password, and optionally question and answer
-        OrcidProfile profileToUpdate = orcidProfileManager.retrieveOrcidProfileByEmail(passwordResetToken.getEmail());
+        OrcidProfile profileToUpdate = orcidProfileManager.retrieveOrcidProfileByEmail(passwordResetToken.getEmail(), LoadOptions.INTERNAL_ONLY);
         profileToUpdate.setPassword(oneTimeResetPasswordForm.getPassword().getValue());
         if (oneTimeResetPasswordForm.isSecurityDetailsPopulated()) {
             profileToUpdate.getOrcidInternal().getSecurityDetails().setSecurityQuestionId(new SecurityQuestionId(oneTimeResetPasswordForm.getSecurityQuestionId()));
@@ -719,7 +720,7 @@ public class RegistrationController extends BaseController {
 
     private Integer deriveSecurityIdByEmailForUser(String email) {
         Integer securityQuestionVal = null;
-        OrcidProfile retrievedProfile = orcidProfileManager.retrieveOrcidProfileByEmail(email);
+        OrcidProfile retrievedProfile = orcidProfileManager.retrieveOrcidProfileByEmail(email, LoadOptions.INTERNAL_ONLY);
         if (retrievedProfile != null) {
             SecurityQuestionId securityQuestion = retrievedProfile.getOrcidInternal().getSecurityDetails().getSecurityQuestionId();
             securityQuestionVal = securityQuestion != null ? (int) retrievedProfile.getOrcidInternal().getSecurityDetails().getSecurityQuestionId().getValue() : null;
