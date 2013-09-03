@@ -71,6 +71,9 @@ import org.orcid.jaxb.model.message.SubmissionDate;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.message.WorkVisibilityDefault;
 import org.orcid.password.constants.OrcidPasswordConstants;
+import org.orcid.persistence.dao.EmailDao;
+import org.orcid.persistence.dao.ProfileDao;
+import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.pojo.DupicateResearcher;
 import org.orcid.pojo.Redirect;
 import org.orcid.pojo.ajaxForm.Checkbox;
@@ -142,6 +145,12 @@ public class RegistrationController extends BaseController {
 
     @Resource
     private NotificationManager notificationManager;
+
+    @Resource
+    private ProfileDao profileDao;
+
+    @Resource
+    private EmailDao emailDao;
 
     public void setEncryptionManager(EncryptionManager encryptionManager) {
         this.encryptionManager = encryptionManager;
@@ -820,11 +829,15 @@ public class RegistrationController extends BaseController {
             throws UnsupportedEncodingException, NoSuchRequestHandlingMethodException {
         try {
             String decryptedEmail = encryptionManager.decryptForExternalUse(new String(Base64.decodeBase64(encryptedEmail), "UTF-8"));
-            if (!isEmailOkForCurrentUser(decryptedEmail)) {
+            EmailEntity emailEntity = emailDao.find(decryptedEmail);
+            String emailOrcid = emailEntity.getProfile().getId();
+            if (!getCurrentUserOrcid().equals(emailOrcid)) {
                 return new ModelAndView("wrong_user");
             }
-            OrcidProfile orcidProfile = orcidProfileManager.retrieveOrcidProfileByEmail(decryptedEmail);
-            confirmEmailAndClaim(decryptedEmail, orcidProfile, null, request);
+            emailEntity.setVerified(true);
+            emailEntity.setCurrent(true);
+            emailDao.merge(emailEntity);
+            profileDao.updateLocale(emailOrcid, org.orcid.jaxb.model.message.Locale.fromValue(RequestContextUtils.getLocale(request).toString()));
             redirectAttributes.addFlashAttribute("emailVerified", true);
         } catch (EncryptionOperationNotPossibleException eonpe) {
             LOGGER.warn("Error decypting verify email from the verify email link");
