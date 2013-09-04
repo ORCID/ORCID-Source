@@ -529,7 +529,6 @@ function EmailEditCtrl($scope, $compile) {
 	
 };
 
-
 function ExternalIdentifierCtrl($scope, $compile){		
 	$scope.getExternalIdentifiers = function(){
 		$.ajax({
@@ -1382,8 +1381,250 @@ function QuickSearchCtrl($scope, $compile){
 	
 	// init
 	$scope.getResults(10);
-}
+};
 
+function ClientEditCtrl($scope, $compile){
+	$scope.errors = [];
+	$scope.clients = [];	
+	
+	// Get the list of clients associated with this user
+	$scope.getClients = function(){
+		$.ajax({
+	        url: $('body').data('baseurl') + 'manage-clients/get-clients.json',
+	        dataType: 'json',
+	        success: function(data) {	        	        					
+				$scope.$apply(function(){
+					
+					$scope.clients.splice(0, $scope.clients.length);        		
+					for (i in data)	{
+						var client = data[i];
+						if(client.redirectUris != null && client.redirectUris.redirectUri.length > 0){
+							for(var j = 0; j < client.redirectUris.redirectUri.length; j++)	{						
+								delete client.redirectUris.redirectUri[j].scopeAsSingleString;
+								delete client.redirectUris.redirectUri[j].scope;							
+							}
+						}
+						$scope.clients.push(client);					
+					}
+					
+				});
+	        }
+	    }).fail(function() { 
+	    	alert("Error fetching clients.");
+	    	console.log("Error fetching clients.");
+	    });				
+	};		
+	
+	// Add a new uri input field to a new client
+	$scope.addUriToNewClientTable = function(){		
+		$('#client-table').find('tr:last > td:last').html('&nbsp;');		
+		$scope.newClient.redirectUris.redirectUri.push({value: '',type: 'DEFAULT'});
+	};
+	
+	// Add a new uri input field to a existing client
+	$scope.addUriToExistingClientTable = function(){
+		$scope.clientToEdit.redirectUris.redirectUri.push({value: '',type: 'DEFAULT'});
+	};
+	
+	// Display the modal to edit a client
+	$scope.editClient = function(idx) {
+		// Clean error list
+		$scope.errors.splice(0, $scope.errors.length);
+		// Copy the client to edit to a scope variable 
+		$scope.clientToEdit = angular.copy($scope.clients[idx]);		
+		$.colorbox({        	            
+            html : $compile($('#edit-client-modal').html())($scope), 
+            transition: 'fade',            
+	        onLoad: function() {
+			    $('#cboxClose').remove();
+			},
+	        scrolling: true
+        });		
+        $.colorbox.resize({width:"450px" , height:"420px"});   
+	};
+	
+	// Display the modal to add a new client
+	$scope.addClient = function(){
+		// Clean error list
+		$scope.errors.splice(0, $scope.errors.length);
+		$scope.newClient = {			
+				displayName: '',
+				website: '',
+				shortDescription: '',			
+				redirectUris: {
+					redirectUri:[{value: '',type: 'DEFAULT'}]
+				},			
+				clientId:'',
+				clientSecret:'',
+				type: ''
+		};	
+		$.colorbox({        	            
+            html : $compile($('#new-client-modal').html())($scope), 
+            transition: 'fade',
+            onLoad: function() {
+			    $('#cboxClose').remove();
+			},
+	        scrolling: true
+        });
+        $.colorbox.resize({width:"580px" , height:"380px"});
+	};
+	
+	// Display client details: Client ID and Client secret
+	$scope.viewDetails = function(idx){
+		$scope.clientDetails = $scope.clients[idx];
+		$.colorbox({        	            
+            html : $compile($('#view-details-modal').html())($scope),
+	        scrolling: true,
+	        onLoad: function() {
+			    $('#cboxClose').remove();
+			},
+			scrolling: true
+        });
+		
+        $.colorbox.resize({width:"550px" , height:"200px"});
+        
+	};
+	
+	$scope.closeColorBox = function(){
+		$.colorbox.close();	
+	};
+	
+	
+	// Delete an uri input field 
+	$scope.deleteUri = function(idx){
+		$scope.clientToEdit.redirectUris.redirectUri.splice(idx, 1);
+	};
+	
+	//Submits the client update request
+	$scope.submitEditClient = function(){
+		//Check for errors
+		$scope.errors.splice(0, $scope.errors.length);
+		
+		if(!$scope.clientToEdit.displayName){
+			$scope.errors.push("Please enter the name");
+		}
+		
+		if(!$scope.clientToEdit.website){
+			$scope.errors.push("Please enter a website");
+		}
+		
+		if(!$scope.clientToEdit.shortDescription){
+			$scope.errors.push("Please enter a description");
+		}
+		
+		//If there is any error, return
+		if($scope.errors.length != 0){
+			return;
+		}
+		
+		// Check which redirect uris are empty strings and remove them from the array
+		for(var j = $scope.clientToEdit.redirectUris.redirectUri.length - 1; j >= 0 ; j--)	{
+			if(!$scope.clientToEdit.redirectUris.redirectUri[j].value){
+				$scope.clientToEdit.redirectUris.redirectUri.splice(j, 1);
+			}
+		}				
+		
+		console.log(angular.toJson($scope.clientToEdit));
+		
+		//Submit the update request
+		$.ajax({
+	        url: $('body').data('baseurl') + 'manage-clients/edit-client.json',
+	        type: 'POST',
+	        data: angular.toJson($scope.clientToEdit),
+	        contentType: 'application/json;charset=UTF-8',
+	        dataType: 'json',
+	        success: function(data) {	        		        		        
+	        	if(data.errors != null && data.errors.length > 0){
+	        		console.log("Unable to update client information.");
+	        	} else {
+	        		//If everything worked fine, reload the list of clients
+        			$scope.getClients();
+	        	} 
+	        }
+	    }).fail(function() { 
+	    	alert("An error occured updating the client");
+	    	console.log("Error updating client information.");
+	    });		
+		$.colorbox.close();
+	};
+	
+	//Submits the new client request
+	$scope.submitAddClient = function(){
+		//Check for errors
+		$scope.errors.splice(0, $scope.errors.length);
+		
+		if(!$scope.newClient.displayName){
+			$scope.errors.push("Please enter the name");
+		}
+		
+		if(!$scope.newClient.website){
+			$scope.errors.push("Please enter a website");
+		}
+		
+		if(!$scope.newClient.shortDescription){
+			$scope.errors.push("Please enter a description");
+		}
+		
+		//If there is any error, return
+		if($scope.errors.length != 0){
+			return;
+		}
+		
+		// Check which redirect uris are empty strings and remove them from the array
+		for(var j = $scope.newClient.redirectUris.redirectUri.length - 1; j >= 0 ; j--)	{
+			if(!$scope.newClient.redirectUris.redirectUri[j].value){
+				$scope.newClient.redirectUris.redirectUri.splice(j, 1);
+			}
+		}
+		
+		var type = $("#client_type").val();
+		$scope.newClient.type = type;
+		console.log(angular.toJson($scope.newClient));
+		
+		//Submit the new client request
+		$.ajax({
+	        url: $('body').data('baseurl') + 'manage-clients/add-client.json',
+	        type: 'POST',
+	        data: angular.toJson($scope.newClient),
+	        contentType: 'application/json;charset=UTF-8',
+	        dataType: 'json',
+	        success: function(data) {	        		        		        
+	        	if(data.errors != null && data.errors.length > 0){
+	        		console.log("Unable to create client information.");
+	        	} else {
+	        		//If everything worked fine, reload the list of clients
+        			$scope.getClients();
+	        	} 
+	        }
+	    }).fail(function() { 
+	    	console.log("Error creating client information.");
+	    });
+		$.colorbox.close();
+	};
+	    
+	//init
+	$scope.getClients();
+};
+
+function statisticCtrl($scope){	
+	$scope.liveIds = 0;	
+	$scope.getLiveIds = function(){
+		$.ajax({
+	        url: $('body').data('baseurl')+'statistics/liveids.json',	        
+	        type: 'GET',
+	        dataType: 'html',
+	        success: function(data){
+	        	$scope.liveIds = data;
+	        	$scope.$apply($scope.liveIds);	        		        	
+	        }
+	    }).fail(function(error) { 
+	    	// something bad is happening!	    	
+	    	console.log("Error getting statistics Live iDs total amount");	    	
+	    });
+	};
+
+	$scope.getLiveIds();
+};
 
 function languageCtrl($scope, $cookies){		
 	$scope.languages = 
@@ -1409,7 +1650,7 @@ function languageCtrl($scope, $cookies){
 			    "label": '繁體中文'
 	        }	        
 	    ];	
-	
+
 	//Load Language that is set in the cookie or set default language to english
 	$scope.getCurrentLanguage = function(){
 		$scope.language = $scope.languages[0]; //Default
@@ -1418,10 +1659,10 @@ function languageCtrl($scope, $cookies){
     		if (value.value == locale_v3) $scope.language = $scope.languages[key];    		
     	});
 	};
-	
+
 	$scope.getCurrentLanguage(); //Checking for the current language value
-	
-			
+
+
 	$scope.selectedLanguage = function(){		
 		$.ajax({
 	        url: orcidVar.baseUri+'/lang.json?lang=' + $scope.language.value + "&callback=?",	        

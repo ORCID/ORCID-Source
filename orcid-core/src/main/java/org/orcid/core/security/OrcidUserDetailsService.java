@@ -73,7 +73,16 @@ public class OrcidUserDetailsService implements UserDetailsService {
             throw new DisabledException("Account not active, please call helpdesk");
         }
         String primaryEmail = profile.getPrimaryEmail().getId();
-        return new OrcidProfileUserDetails(profile.getId(), primaryEmail, profile.getEncryptedPassword());
+        
+        OrcidProfileUserDetails userDetails = null;
+        
+        if(profile.getOrcidType() != null){
+        	userDetails = new OrcidProfileUserDetails(profile.getId(), primaryEmail, profile.getEncryptedPassword(), profile.getOrcidType(), profile.getClientType(), profile.getGroupType());
+        } else {
+        	userDetails = new OrcidProfileUserDetails(profile.getId(), primaryEmail, profile.getEncryptedPassword());
+        }
+        
+        return userDetails;
     }
 
     private ProfileEntity obtainEntity(String username) {

@@ -157,6 +157,8 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
 
         profileEntity.setId(orcidString);
         profileEntity.setOrcidType(profile.getType());
+        profileEntity.setGroupType(profile.getGroupType());
+        profileEntity.setClientType(profile.getClientType());
         setBioDetails(profileEntity, profile.getOrcidBio());
         setHistoryDetails(profileEntity, profile.getOrcidHistory());
         setActivityDetails(profileEntity, profile.getOrcidActivities());

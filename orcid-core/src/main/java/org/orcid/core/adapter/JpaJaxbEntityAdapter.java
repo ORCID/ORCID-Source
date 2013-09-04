@@ -17,6 +17,7 @@
 package org.orcid.core.adapter;
 
 import org.orcid.core.manager.LoadOptions;
+import org.orcid.jaxb.model.clientgroup.OrcidClient;
 import org.orcid.jaxb.model.clientgroup.OrcidClientGroup;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -39,6 +40,8 @@ public interface JpaJaxbEntityAdapter {
 
     ProfileEntity toProfileEntity(OrcidProfile profile, ProfileEntity existingProfileEntity);
 
+    OrcidClient toOrcidClient(ProfileEntity profileEntity);
+    
     OrcidClientGroup toOrcidClientGroup(ProfileEntity profileEntity);
 
     ProfileEntity toProfileEntity(OrcidClientGroup orcidClientGroup);

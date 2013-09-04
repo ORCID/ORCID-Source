@@ -20,6 +20,9 @@ import java.util.Arrays;
 import java.util.Collection;
 
 import org.orcid.core.security.OrcidWebRole;
+import org.orcid.jaxb.model.clientgroup.ClientType;
+import org.orcid.jaxb.model.clientgroup.GroupType;
+import org.orcid.jaxb.model.message.OrcidType;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -42,14 +45,30 @@ public class OrcidProfileUserDetails implements UserDetails {
 
     private boolean inDelegationMode;
 
+    private OrcidType orcidType;
+    
+    private ClientType clientType;
+    
+    private GroupType groupType;
+    
     public OrcidProfileUserDetails() {
     }
-
+    
     public OrcidProfileUserDetails(String orcid, String primaryEmail, String password) {
         this.realOrcid = orcid;
         this.effectiveOrcid = orcid;
         this.primaryEmail = primaryEmail;
         this.password = password;
+    }
+    
+    public OrcidProfileUserDetails(String orcid, String primaryEmail, String password, OrcidType orcidType, ClientType clientType, GroupType groupType) {
+        this.realOrcid = orcid;
+        this.effectiveOrcid = orcid;
+        this.primaryEmail = primaryEmail;
+        this.password = password;
+        this.orcidType = orcidType;
+        this.clientType = clientType;
+        this.groupType = groupType;
     }
 
     /**
@@ -60,7 +79,43 @@ public class OrcidProfileUserDetails implements UserDetails {
      */
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Arrays.asList(OrcidWebRole.ROLE_USER);
+        Collection<OrcidWebRole> result = null;
+        //If the orcid type is null, assume it is a normal user
+        if(orcidType == null) 
+            result = Arrays.asList(OrcidWebRole.ROLE_USER);
+        else if(orcidType.equals(OrcidType.GROUP)){
+            switch(groupType){
+            case BASIC:  
+                result = Arrays.asList(OrcidWebRole.ROLE_BASIC);
+                break;
+            case PREMIUM:
+                result = Arrays.asList(OrcidWebRole.ROLE_PREMIUM);
+                break;
+            case BASIC_INSTITUTION:
+                result = Arrays.asList(OrcidWebRole.ROLE_BASIC_INSTITUTION);
+                break;
+            case PREMIUM_INSTITUTION:
+                result = Arrays.asList(OrcidWebRole.ROLE_PREMIUM_INSTITUTION);
+                break;
+            }
+        } else if(orcidType.equals(OrcidType.CLIENT)){
+            switch(clientType){
+            case CREATOR:
+                result = Arrays.asList(OrcidWebRole.ROLE_CREATOR);
+                break;
+            case UPDATER:
+                result = Arrays.asList(OrcidWebRole.ROLE_UPDATER);
+                break;
+            case PREMIUM_CREATOR:
+                result = Arrays.asList(OrcidWebRole.ROLE_PREMIUM_CREATOR);
+                break;
+            case PREMIUM_UPDATER:
+                result = Arrays.asList(OrcidWebRole.ROLE_PREMIUM_UPDATER);
+                break;
+            }
+        }
+        
+        return result;
     }
 
     /**
@@ -158,7 +213,31 @@ public class OrcidProfileUserDetails implements UserDetails {
         return effectiveOrcid;
     }
 
-    @Override
+    public OrcidType getOrcidType() {
+		return orcidType;
+	}
+
+	public void setOrcidType(OrcidType orcidType) {
+		this.orcidType = orcidType;
+	}
+
+	public ClientType getClientType() {
+		return clientType;
+	}
+
+	public void setClientType(ClientType clientType) {
+		this.clientType = clientType;
+	}
+
+	public GroupType getGroupType() {
+		return groupType;
+	}
+
+	public void setGroupType(GroupType groupType) {
+		this.groupType = groupType;
+	}
+
+	@Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
