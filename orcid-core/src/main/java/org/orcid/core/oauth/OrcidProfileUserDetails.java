@@ -113,6 +113,8 @@ public class OrcidProfileUserDetails implements UserDetails {
                 result = Arrays.asList(OrcidWebRole.ROLE_PREMIUM_UPDATER);
                 break;
             }
+        } else {
+        	result = Arrays.asList(OrcidWebRole.ROLE_USER);
         }
         
         return result;

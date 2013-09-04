@@ -36,7 +36,7 @@
 </script>
 
 <script type="text/ng-template" id="edit-client-modal">
-	<div style="padding: 20px;" class="colorbox-modal">
+	<div style="padding: 20px;">
 		<a id="cboxClose" class="btn pull-right close-button" ng-click="closeColorBox()">X</a>
 		<h1><@orcid.msg 'manage_clients.edit_client'/></h1>
 		<div id="errors" ng-repeat="error in errors" class="alert">
@@ -78,7 +78,7 @@
 </script>
 
 <script type="text/ng-template" id="new-client-modal">
-	<div style="padding: 20px;" class="colorbox-modal">
+	<div style="padding: 20px;">
 		<a id="cboxClose" class="btn pull-right close-button" ng-click="closeColorBox()">X</a>
 		<h1>Add new client</h1>
 		<div id="errors" ng-repeat="error in errors" class="alert">
