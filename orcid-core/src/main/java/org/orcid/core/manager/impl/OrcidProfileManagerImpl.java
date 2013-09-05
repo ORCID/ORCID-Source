@@ -1247,7 +1247,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         authority.setProfileEntity(profileEntity);
         if(profileEntity.getOrcidType() == null || profileEntity.getOrcidType().equals(OrcidType.USER))
             authority.setAuthority(OrcidWebRole.ROLE_USER.getAuthority());        
-        else if(profileEntity.getOrcidType() == null || profileEntity.getOrcidType().equals(OrcidType.GROUP)){
+        else if(profileEntity.getOrcidType().equals(OrcidType.GROUP)){
             switch(profileEntity.getGroupType()){
             case BASIC:
                 authority.setAuthority(OrcidWebRole.ROLE_BASIC.getAuthority());
@@ -1262,7 +1262,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
                 authority.setAuthority(OrcidWebRole.ROLE_PREMIUM_INSTITUTION.getAuthority());
                 break;
             }            
-        } else if(profileEntity.getOrcidType() == null || profileEntity.getOrcidType().equals(OrcidType.CLIENT)){
+        } else if(profileEntity.getOrcidType().equals(OrcidType.CLIENT)){
             switch(profileEntity.getClientType()){
             case CREATOR:
                 authority.setAuthority(OrcidWebRole.ROLE_CREATOR.getAuthority());

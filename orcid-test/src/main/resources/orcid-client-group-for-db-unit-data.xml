@@ -14,15 +14,6 @@
         <client-secret>DhkFj5EI0qp6GsUKi55Vja+h+bsaKpBx</client-secret>
     </orcid-client>
     <orcid-client type="premium-creator">
-        <display-name>M. Bentine</display-name>
-        <short-description>Michael Bentine CBE (26 January 1922[1] – 26 November 1996[2]) was a British comedian, comic actor and founding member of the Goons.</short-description>
-        <redirect-uris>
-            <redirect-uri type="default">http:://www.4444-4444-4444-4442.com/redirect/oauth</redirect-uri>
-        </redirect-uris>
-        <client-id>4444-4444-4444-4442</client-id>
-        <client-secret>DhkFj5EI0qp6GsUKi55Vja+h+bsaKpBx</client-secret>
-    </orcid-client>
-    <orcid-client type="premium-creator">
         <display-name>P. Sellers III</display-name>
         <website>http://www.researcherurl2.com?id=1</website>
         <short-description>Richard Henry Sellers, CBE (8 September 1925 – 24 July 1980), known as Peter Sellers, was a British film actor, comedian and singer.</short-description>
