@@ -81,7 +81,7 @@ public class OrcidUserDetailsService implements UserDetailsService {
         if (OrcidStringUtils.isValidOrcid(username)) {
             profile = profileDao.find(username);
         } else {
-            EmailEntity emailEntity = emailDao.find(username);
+            EmailEntity emailEntity = emailDao.findCaseInsensitive(username);
             if (emailEntity != null) {
                 profile = emailEntity.getProfile();
             }

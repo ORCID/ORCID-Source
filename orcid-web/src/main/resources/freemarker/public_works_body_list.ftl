@@ -35,7 +35,7 @@
                         ${ei.type?upper_case}: 
                         <#assign output = '' />
                         <#if id?starts_with('http')>
-                           <#assign output = '<a href="' + id +' target="_blank">' + id + '</a>' />
+                           <#assign output = '<a href="' + id +'" target="_blank">' + id + '</a>' />
                         <#else>
                            <#assign output = id />
                         </#if>
