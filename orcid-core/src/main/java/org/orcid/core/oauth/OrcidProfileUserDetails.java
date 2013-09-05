@@ -247,6 +247,9 @@ public class OrcidProfileUserDetails implements UserDetails {
         result = prime * result + (inDelegationMode ? 1231 : 1237);
         result = prime * result + ((password == null) ? 0 : password.hashCode());
         result = prime * result + ((realOrcid == null) ? 0 : realOrcid.hashCode());
+        result = prime * result + ((orcidType == null) ? 0 : orcidType.hashCode());
+        result = prime * result + ((clientType == null) ? 0 : clientType.hashCode());
+        result = prime * result + ((groupType == null) ? 0 : groupType.hashCode());
         return result;
     }
 
@@ -276,7 +279,23 @@ public class OrcidProfileUserDetails implements UserDetails {
                 return false;
         } else if (!realOrcid.equals(other.realOrcid))
             return false;
+        if(orcidType == null){
+            if(other.orcidType != null)
+                return false;
+        } else if(!orcidType.equals(other.orcidType))
+            return false;
+        
+        if(clientType == null){
+            if(other.clientType != null)
+                return false;
+        } else if(!clientType.equals(other.clientType))
+            return false;
+     
+        if(groupType == null){
+            if(other.groupType != null)
+                return false;
+        } else if (!groupType.equals(other.groupType))
+            return false;
         return true;
     }
-
 }
