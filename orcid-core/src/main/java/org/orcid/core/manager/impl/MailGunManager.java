@@ -67,7 +67,7 @@ public class MailGunManager {
         client.addFilter(new HTTPBasicAuthFilter("api",
                 getApiKey()));
         WebResource webResource =
-                client.resource(getApiUrl());
+                client.resource(getVerifyApiUrl());
         MultivaluedMapImpl formData = new MultivaluedMapImpl();
         formData.add("from", from);
         formData.add("to", to);
