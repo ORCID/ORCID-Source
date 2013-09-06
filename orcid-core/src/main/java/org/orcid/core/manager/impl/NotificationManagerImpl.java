@@ -234,7 +234,7 @@ public class NotificationManagerImpl implements NotificationManager {
     }
 
 
-    public void sendVerificationReminderEmail(OrcidProfile orcidProfile, URI baseUri, String email) {
+    public void sendVerificationReminderEmail(OrcidProfile orcidProfile, String email) {
         Map<String, Object> templateParams = new HashMap<String, Object>();
 
         String emailFriendlyName = deriveEmailFriendlyName(orcidProfile);

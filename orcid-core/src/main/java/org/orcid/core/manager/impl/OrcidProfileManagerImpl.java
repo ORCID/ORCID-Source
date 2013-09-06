@@ -100,14 +100,18 @@ import org.orcid.jaxb.model.message.VisibilityType;
 import org.orcid.jaxb.model.message.WorkContributors;
 import org.orcid.jaxb.model.message.WorkSource;
 import org.orcid.persistence.dao.EmailDao;
+import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.dao.GivenPermissionToDao;
 import org.orcid.persistence.dao.OrcidOauth2TokenDetailDao;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.EmailEntity;
+import org.orcid.persistence.jpa.entities.EmailEventEntity;
+import org.orcid.persistence.jpa.entities.EmailEventType;
 import org.orcid.persistence.jpa.entities.IndexingStatus;
 import org.orcid.persistence.jpa.entities.OrcidGrantedAuthority;
 import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.orcid.persistence.jpa.entities.ProfileEventEntity;
 import org.orcid.utils.DateUtils;
 import org.orcid.utils.NullUtils;
 import org.slf4j.Logger;
@@ -177,10 +181,15 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
 
     @Resource(name = "profileCache")
     private Cache profileCache;
+    
+    @Resource
+    private GenericDao<EmailEventEntity, Long> emailEventDao;
 
     private int claimWaitPeriodDays = 10;
 
     private int claimReminderAfterDays = 8;
+    
+    private int verifyReminderAfterDays = 7;
 
     private String releaseName = ReleaseNameUtils.getReleaseName();
 
@@ -1226,6 +1235,32 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         } while (!orcidsToRemind.isEmpty());
     }
 
+    @Override
+    synchronized public void processUnverifiedEmails7Days() {
+        LOG.info("About to process unclaimed profiles for reminder");
+        List<String> emails = Collections.<String> emptyList();
+        do {
+            emails = profileDao.findEmailsUnverfiedDays(verifyReminderAfterDays, INDEXING_BATCH_SIZE, EmailEventType.VERIFY_EMAIL_7_DAYS_SENT);
+            LOG.info("Got batch of {} unclaimed profiles for reminder", emails.size());
+            for (String email : emails) {
+                processUnverifiedEmails7DaysInTransaction(email);
+            }
+        } while (!emails.isEmpty());
+    }
+    
+    private void processUnverifiedEmails7DaysInTransaction(final String email) {
+        transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+            @Override
+            @Transactional
+            protected void doInTransactionWithoutResult(TransactionStatus status) {
+                OrcidProfile orcidProfile = retrieveOrcidProfileByEmail(email);
+                notificationManager.sendVerificationReminderEmail(orcidProfile, email);
+                emailEventDao.persist(new EmailEventEntity(email, EmailEventType.VERIFY_EMAIL_7_DAYS_SENT));
+                emailEventDao.flush();
+            }
+        });
+    }
+    
     private void processUnclaimedProfileForReminderInTransaction(final String orcid) {
         transactionTemplate.execute(new TransactionCallbackWithoutResult() {
             @Override
