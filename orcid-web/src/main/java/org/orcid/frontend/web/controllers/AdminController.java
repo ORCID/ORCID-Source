@@ -81,10 +81,11 @@ public class AdminController extends BaseController {
 
     /**
      * Get a deprecate profile request and process it.
+     * 
      * @param deprecatedOrcid
-     *          Orcid to deprecate
+     *            Orcid to deprecate
      * @param primaryOrcid
-     *          Orcid to use as a primary account
+     *            Orcid to use as a primary account
      * */
     @RequestMapping(value = { "/deprecate-profile/deprecate-profile.json" }, method = RequestMethod.GET)
     public @ResponseBody
@@ -134,8 +135,7 @@ public class AdminController extends BaseController {
                                     emailManager.removeEmail(email.getProfile().getId(), email.getId(), true);
                                     // Copy that email to the primary profile
                                     LOGGER.info("About to add email {} to profile {}", email.getId(), primary.getId());
-                                    emailManager.addEmail(primary.getId(), email.getId(), email.getVisibility(), email.getSource() == null ? null : email.getSource()
-                                            .getId());
+                                    emailManager.addEmail(primary.getId(), email);
                                 }
                             }
 
@@ -161,9 +161,11 @@ public class AdminController extends BaseController {
 
     /**
      * Check an orcid on database to see if it exists
+     * 
      * @param orcid
-     *          The orcid string to check on database
-     * @return a ProfileDetails object with the details of the profile or an error message.
+     *            The orcid string to check on database
+     * @return a ProfileDetails object with the details of the profile or an
+     *         error message.
      * */
     @RequestMapping(value = { "/deprecate-profile/check-orcid.json" }, method = RequestMethod.GET)
     public @ResponseBody

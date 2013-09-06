@@ -24,6 +24,7 @@ package org.orcid.frontend.web.controllers;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Date;
 import java.util.Set;
@@ -84,11 +85,40 @@ public class AdminControllerTest extends BaseControllerTest {
         ProfileEntity toDeprecate = profileDao.find("4444-4444-4444-4441");
         ProfileEntity primary = profileDao.find("4444-4444-4444-4442");
 
+        boolean containsEmail = false;
+        
         assertNull(toDeprecate.getPrimaryRecord());
 
         Set<EmailEntity> emails1 = toDeprecate.getEmails();
         assertNotNull(emails1);
         assertEquals(3, emails1.size());
+        
+        for(EmailEntity email : emails1){
+            if(email.getId().equals("1@deprecate.com")){
+                if(email.getCurrent() == false && email.getVerified() == true) {
+                    containsEmail = true;
+                } else {
+                    containsEmail = false;
+                    break;
+                }
+            } else if(email.getId().equals("2@deprecate.com")){
+                if(email.getCurrent() == false && email.getVerified() == false) {
+                    containsEmail = true;             
+                } else {
+                    containsEmail = false;
+                    break;
+                }
+            } else if (email.getId().equals("spike@milligan.com")){
+                if(email.getCurrent() == true && email.getVerified() == true && email.getPrimary() == true) {
+                    containsEmail = true;
+                } else {
+                    containsEmail = false;
+                    break;
+                }
+            }
+        }
+        
+        assertTrue(containsEmail);
 
         Set<EmailEntity> emails2 = primary.getEmails();
         assertNotNull(emails2);
@@ -110,6 +140,42 @@ public class AdminControllerTest extends BaseControllerTest {
         emails2 = primary.getEmails();
         assertNotNull(emails2);
         assertEquals(4, emails2.size());
+        
+        containsEmail = false;
+        
+        for(EmailEntity email : emails2){
+            if(email.getId().equals("1@deprecate.com")){
+                if(email.getCurrent() == false && email.getVerified() == true) {
+                    containsEmail = true;
+                } else {
+                    containsEmail = false;
+                    break;
+                }
+            } else if(email.getId().equals("2@deprecate.com")){
+                if(email.getCurrent() == false && email.getVerified() == false) {
+                    containsEmail = true;             
+                } else {
+                    containsEmail = false;
+                    break;
+                }
+            } else if (email.getId().equals("spike@milligan.com")){
+                if(email.getCurrent() == true && email.getVerified() == true && email.getPrimary() == false) {
+                    containsEmail = true;
+                } else {
+                    containsEmail = false;
+                    break;
+                }
+            } else if (email.getId().equals("michael@bentine.com")){
+                if(email.getCurrent() == true && email.getVerified() == true && email.getPrimary() == true) {
+                    containsEmail = true;
+                } else {
+                    containsEmail = false;
+                    break;
+                }
+            }
+        }
+        
+        assertTrue(containsEmail);
     }
 
     @Test

@@ -24,6 +24,7 @@ import org.orcid.core.manager.EmailManager;
 import org.orcid.jaxb.model.message.Email;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.persistence.dao.EmailDao;
+import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -49,8 +50,8 @@ public class EmailManagerImpl implements EmailManager {
 
     @Override
     @Transactional
-    public void addEmail(String orcid, String email, Visibility visibility, String sourceId){
-    	emailDao.addEmail(orcid, email, visibility, sourceId);
+    public void addEmail(String orcid, EmailEntity email){
+    	emailDao.addEmail(orcid, email.getId(), email.getVisibility(), email.getSource() == null ? null : email.getSource().getId(), email.getVerified(), email.getCurrent());
     }
     
     @Override
