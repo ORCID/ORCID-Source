@@ -26,10 +26,12 @@ import javax.annotation.Resource;
 import javax.ws.rs.core.Response;
 
 import org.orcid.api.common.delegator.OrcidApiServiceDelegator;
+import org.orcid.api.common.exception.OrcidDeprecatedException;
 import org.orcid.api.common.exception.OrcidNotFoundException;
 import org.orcid.core.exception.OrcidSearchException;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.manager.OrcidSearchManager;
+import org.orcid.core.security.DeprecatedException;
 import org.orcid.core.security.visibility.aop.VisibilityControl;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidProfile;
@@ -267,7 +269,8 @@ public class OrcidApiServiceDelegatorImpl implements OrcidApiServiceDelegator {
         Response response = null; 
         
         if(isProfileDeprecated){
-            response = Response.status(Status.MOVED_PERMANENTLY).entity(orcidMessage).build();            
+            //TODO: internationalize these messages
+            throw new DeprecatedException("This account is deprecated. Please refer to account: " + orcidProfile.getOrcidDeprecated().getPrimaryRecord().getOrcid().getValue());            
         } else {
             response = Response.ok(orcidMessage).build();
         }

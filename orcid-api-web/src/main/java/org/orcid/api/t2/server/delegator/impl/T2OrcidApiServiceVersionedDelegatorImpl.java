@@ -24,6 +24,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import org.orcid.api.common.exception.OrcidBadRequestException;
+import org.orcid.api.common.exception.OrcidDeprecatedException;
 import org.orcid.api.t2.server.delegator.T2OrcidApiServiceDelegator;
 import org.orcid.core.exception.OrcidValidationException;
 import org.orcid.core.manager.ValidationManager;
@@ -31,8 +32,6 @@ import org.orcid.core.security.DeprecatedException;
 import org.orcid.core.version.OrcidMessageVersionConverterChain;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.persistence.dao.ProfileDao;
-
-import com.sun.jersey.api.client.ClientResponse.Status;
 
 /**
  * 
@@ -135,7 +134,7 @@ public class T2OrcidApiServiceVersionedDelegatorImpl implements T2OrcidApiServic
             validateIncomingMessage(upgradedMessage);
             response = t2OrcidApiServiceDelegator.createProfile(uriInfo, upgradedMessage); 
         } catch(DeprecatedException de){
-            response = Response.status(Status.MOVED_PERMANENTLY).entity(de).build();
+            throw new OrcidDeprecatedException(de.getMessage(), de);
         }
         return response;
     }
@@ -149,7 +148,7 @@ public class T2OrcidApiServiceVersionedDelegatorImpl implements T2OrcidApiServic
             response = t2OrcidApiServiceDelegator.updateBioDetails(uriInfo, orcid, upgradedMessage);
             response = downgradeAndValidateResponse(response);
         } catch(DeprecatedException de){
-            response = Response.status(Status.MOVED_PERMANENTLY).entity(de).build();
+            throw new OrcidDeprecatedException(de.getMessage(), de);
         }
         return response;
     }
@@ -162,7 +161,7 @@ public class T2OrcidApiServiceVersionedDelegatorImpl implements T2OrcidApiServic
             OrcidMessage upgradedMessage = upgradeMessage(orcidMessage);
             response = t2OrcidApiServiceDelegator.addWorks(uriInfo, orcid, upgradedMessage);
         } catch(DeprecatedException de){
-            response = Response.status(Status.MOVED_PERMANENTLY).entity(de).build();
+            throw new OrcidDeprecatedException(de.getMessage(), de);
         }
         return response;
     }
@@ -175,7 +174,7 @@ public class T2OrcidApiServiceVersionedDelegatorImpl implements T2OrcidApiServic
             OrcidMessage upgradedMessage = upgradeMessage(orcidMessage);
             response = t2OrcidApiServiceDelegator.updateWorks(uriInfo, orcid, upgradedMessage);
         } catch(DeprecatedException de){
-            response = Response.status(Status.MOVED_PERMANENTLY).entity(de).build();
+            throw new OrcidDeprecatedException(de.getMessage(), de);
         }
         return response;
     }
@@ -188,7 +187,7 @@ public class T2OrcidApiServiceVersionedDelegatorImpl implements T2OrcidApiServic
             OrcidMessage upgradedMessage = upgradeMessage(orcidMessage);
             response = t2OrcidApiServiceDelegator.addExternalIdentifiers(uriInfo, orcid, upgradedMessage);
         } catch(DeprecatedException de){
-            response = Response.status(Status.MOVED_PERMANENTLY).entity(de).build();
+            throw new OrcidDeprecatedException(de.getMessage(), de);
         }
         return response;
     }
@@ -237,7 +236,8 @@ public class T2OrcidApiServiceVersionedDelegatorImpl implements T2OrcidApiServic
             String orcid = orcidMessage.getOrcidProfile().getOrcid().getValue();
             String primaryOrcid = this.profileDao.retrievePrimaryAccountOrcid(orcid); 
             if(primaryOrcid != null){
-                throw new DeprecatedException("orcid.frontend.security.deprecated_with_primary", primaryOrcid, orcid);
+                //TODO: Internationalize these messages
+                throw new DeprecatedException("This account is deprecated. Please refer to account:"  + primaryOrcid);
             }
         }
     }
@@ -251,7 +251,8 @@ public class T2OrcidApiServiceVersionedDelegatorImpl implements T2OrcidApiServic
     protected Response checkProfileStatus(Response response){        
         OrcidMessage orcidMessage = (OrcidMessage) response.getEntity();        
         if(orcidMessage != null && orcidMessage.getOrcidProfile() != null && orcidMessage.getOrcidProfile().getOrcidDeprecated() != null){
-            return Response.fromResponse(response).status(Status.MOVED_PERMANENTLY).build();   
+            //TODO: Internationalize these messages
+            throw new DeprecatedException("This account is deprecated. Please refer to account:"  + orcidMessage.getOrcidProfile().getOrcidDeprecated().getPrimaryRecord().getOrcid().getValue()); 
         }
         
         return response;
