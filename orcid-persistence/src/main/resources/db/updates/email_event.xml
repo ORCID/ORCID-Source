@@ -34,7 +34,7 @@
                 <constraints nullable="false"/>
             </column>
         </createTable>
-        <addForeignKeyConstraint constraintName="email_event_orcid"
+        <addForeignKeyConstraint constraintName="email_event_email"
                                  baseTableName="email_event" baseColumnNames="email" 
                                  referencedTableName="email" referencedColumnNames="email"/>
     </changeSet>
@@ -46,5 +46,10 @@
     <changeSet id="CREATE-EMAIL-EVENT-AUTO-INCREMENT" author="RCPETERS" dbms="hsqldb">
          <addAutoIncrement tableName="email_event" columnName="id" columnDataType="bigint"/>
     </changeSet>
+    
+    <changeSet id="MARK_EMAILS_TO_SKIP" author="RCPETERS"  dbms="postgresql">
+        <sql>insert into email_event select nextval('email_event_seq'), now(), now(), email, 'VERIFY_EMAIL_7_DAYS_SENT_SKIPPED' from email;</sql>
+    </changeSet>
+    
 
 </databaseChangeLog>

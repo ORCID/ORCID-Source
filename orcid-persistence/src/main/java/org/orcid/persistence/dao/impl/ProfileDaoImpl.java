@@ -122,7 +122,8 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
     public List<String> findEmailsUnverfiedDays(int daysUnverified, int maxResults, EmailEventType ev) {
         String queryStr = 
                   "SELECT e.email FROM email e "
-                + "LEFT JOIN email_event ev ON e.email = ev.email AND ev.email_event_type = :evt "
+                + "LEFT JOIN email_event ev ON e.email = ev.email "
+                + "AND (ev.email_event_type = :evt or ev.email_event_type='VERIFY_EMAIL_7_DAYS_SENT_SKIPPED') "
                 + "JOIN profile p on p.orcid = e.orcid and p.claimed = true and p.account_expiry is null "
                 + "where ev.email IS NULL "
                 +    "and e.is_verified = false "
