@@ -29,9 +29,9 @@ import org.orcid.jaxb.model.message.WorkType;
  * @author Will Simpson
  * 
  */
-public class OrcidMessageVersionConverterImplV1_0_16ToV1_0_19 implements OrcidMessageVersionConverter {
+public class OrcidMessageVersionConverterImplV1_0_18ToV1_0_19 implements OrcidMessageVersionConverter {
 
-    private static final String FROM_VERSION = "1.0.16";
+    private static final String FROM_VERSION = "1.0.18";
     private static final String TARGET_VERSION = "1.0.19";
 
     @Override

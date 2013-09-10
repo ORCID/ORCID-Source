@@ -24,7 +24,6 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import org.orcid.api.common.exception.OrcidBadRequestException;
-import org.orcid.api.common.exception.OrcidDeprecatedException;
 import org.orcid.api.t2.server.delegator.T2OrcidApiServiceDelegator;
 import org.orcid.core.exception.OrcidValidationException;
 import org.orcid.core.manager.ValidationManager;
@@ -130,65 +129,45 @@ public class T2OrcidApiServiceVersionedDelegatorImpl implements T2OrcidApiServic
     public Response createProfile(UriInfo uriInfo, OrcidMessage orcidMessage) {
         OrcidMessage upgradedMessage = upgradeMessage(orcidMessage);
         Response response = null;
-        try {
-            validateIncomingMessage(upgradedMessage);
-            response = t2OrcidApiServiceDelegator.createProfile(uriInfo, upgradedMessage); 
-        } catch(DeprecatedException de){
-            throw new OrcidDeprecatedException(de.getMessage(), de);
-        }
+        validateIncomingMessage(upgradedMessage);
+        response = t2OrcidApiServiceDelegator.createProfile(uriInfo, upgradedMessage);         
         return response;
     }
 
     @Override
     public Response updateBioDetails(UriInfo uriInfo, String orcid, OrcidMessage orcidMessage) {
         Response response = null;
-        try {
-            validateIncomingMessage(orcidMessage);
-            OrcidMessage upgradedMessage = upgradeMessage(orcidMessage);
-            response = t2OrcidApiServiceDelegator.updateBioDetails(uriInfo, orcid, upgradedMessage);
-            response = downgradeAndValidateResponse(response);
-        } catch(DeprecatedException de){
-            throw new OrcidDeprecatedException(de.getMessage(), de);
-        }
+        validateIncomingMessage(orcidMessage);
+        OrcidMessage upgradedMessage = upgradeMessage(orcidMessage);
+        response = t2OrcidApiServiceDelegator.updateBioDetails(uriInfo, orcid, upgradedMessage);
+        response = downgradeAndValidateResponse(response);        
         return response;
     }
 
     @Override
     public Response addWorks(UriInfo uriInfo, String orcid, OrcidMessage orcidMessage) {
         Response response = null;
-        try {
-            validateIncomingMessage(orcidMessage);
-            OrcidMessage upgradedMessage = upgradeMessage(orcidMessage);
-            response = t2OrcidApiServiceDelegator.addWorks(uriInfo, orcid, upgradedMessage);
-        } catch(DeprecatedException de){
-            throw new OrcidDeprecatedException(de.getMessage(), de);
-        }
+        validateIncomingMessage(orcidMessage);
+        OrcidMessage upgradedMessage = upgradeMessage(orcidMessage);
+        response = t2OrcidApiServiceDelegator.addWorks(uriInfo, orcid, upgradedMessage);        
         return response;
     }
 
     @Override
     public Response updateWorks(UriInfo uriInfo, String orcid, OrcidMessage orcidMessage) {
         Response response = null;
-        try {
-            validateIncomingMessage(orcidMessage);
-            OrcidMessage upgradedMessage = upgradeMessage(orcidMessage);
-            response = t2OrcidApiServiceDelegator.updateWorks(uriInfo, orcid, upgradedMessage);
-        } catch(DeprecatedException de){
-            throw new OrcidDeprecatedException(de.getMessage(), de);
-        }
+        validateIncomingMessage(orcidMessage);
+        OrcidMessage upgradedMessage = upgradeMessage(orcidMessage);
+        response = t2OrcidApiServiceDelegator.updateWorks(uriInfo, orcid, upgradedMessage);        
         return response;
     }
 
     @Override
     public Response addExternalIdentifiers(UriInfo uriInfo, String orcid, OrcidMessage orcidMessage) {
         Response response = null;
-        try {
-            validateIncomingMessage(orcidMessage);
-            OrcidMessage upgradedMessage = upgradeMessage(orcidMessage);
-            response = t2OrcidApiServiceDelegator.addExternalIdentifiers(uriInfo, orcid, upgradedMessage);
-        } catch(DeprecatedException de){
-            throw new OrcidDeprecatedException(de.getMessage(), de);
-        }
+        validateIncomingMessage(orcidMessage);
+        OrcidMessage upgradedMessage = upgradeMessage(orcidMessage);
+        response = t2OrcidApiServiceDelegator.addExternalIdentifiers(uriInfo, orcid, upgradedMessage);        
         return response;
     }
 

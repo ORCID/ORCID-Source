@@ -27,6 +27,7 @@ import javax.ws.rs.ext.Provider;
 import org.apache.commons.lang.StringUtils;
 import org.orcid.api.common.OrcidApiConstants;
 import org.orcid.api.common.exception.OrcidApiException;
+import org.orcid.core.security.DeprecatedException;
 import org.orcid.jaxb.model.message.ErrorDesc;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.slf4j.Logger;
@@ -69,6 +70,9 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
         } else if (IllegalArgumentException.class.isAssignableFrom(e.getClass())) {
             OrcidMessage entity = getOrcidEntity("Bad Request", e);
             return Response.status(Response.Status.BAD_REQUEST).entity(entity).build();
+        } else if (DeprecatedException.class.isAssignableFrom(e.getClass())) {
+            OrcidMessage entity = getOrcidEntity("Bad Request", e);
+            return Response.status(Response.Status.MOVED_PERMANENTLY).entity(entity).build();
         } else {
             OrcidMessage entity = get500OrcidEntity(e);
             return Response.serverError().entity(entity).build();

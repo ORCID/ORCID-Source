@@ -185,6 +185,19 @@
         <property name="version" value="1.0.17" />
     </bean>
     
+    <bean id="incomingValidationManagerV1_0_18" class="org.orcid.core.manager.impl.ValidationManagerForLegacyApiVersionsImpl">
+        <property name="validationBehaviour"
+            value="${org.orcid.core.manager.validationBehaviour:THROW_VALIDATION_EXCEPTION}" />
+        <property name="version" value="1.0.18" />
+        <property name="requireOrcidProfile" value="true"/>
+    </bean>
+    <bean id="outgoingValidationManagerV1_0_18" class="org.orcid.core.manager.impl.ValidationManagerImpl">
+        <property name="validationBehaviour"
+            value="${org.orcid.core.manager.validationBehaviour:LOG_WARNING}" />
+        <property name="validateBibtex" value="false"/>
+        <property name="version" value="1.0.18" />
+    </bean>
+    
     <bean id="incomingValidationManagerV1_0_19" class="org.orcid.core.manager.impl.ValidationManagerForLegacyApiVersionsImpl">
         <property name="validationBehaviour"
             value="${org.orcid.core.manager.validationBehaviour:THROW_VALIDATION_EXCEPTION}" />
@@ -248,7 +261,8 @@
 	            <bean class="org.orcid.core.version.impl.OrcidMessageVersionConverterImplV1_0_14ToV1_0_15"/>
 	            <bean class="org.orcid.core.version.impl.OrcidMessageVersionConverterImplV1_0_15ToV1_0_16"/>
 	            <bean class="org.orcid.core.version.impl.OrcidMessageVersionConverterImplV1_0_16ToV1_0_17"/>
-	            <bean class="org.orcid.core.version.impl.OrcidMessageVersionConverterImplV1_0_16ToV1_0_19"/>
+	            <bean class="org.orcid.core.version.impl.OrcidMessageVersionConverterImplV1_0_17ToV1_0_18"/>
+	            <bean class="org.orcid.core.version.impl.OrcidMessageVersionConverterImplV1_0_18ToV1_0_19"/>
 	        </list>
 	    </property>
 	</bean>

@@ -138,6 +138,8 @@ public class AdminController extends BaseController {
                                     emailManager.addEmail(primary.getId(), email);
                                 }
                             }
+                            // Update the profile
+                            //TODO
 
                             // Send notifications
                             LOGGER.info("Sending deprecation notifications to {} and {}", deprecated.getId(), primary.getId());

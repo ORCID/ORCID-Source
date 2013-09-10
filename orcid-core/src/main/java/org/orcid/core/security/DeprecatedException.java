@@ -16,14 +16,14 @@
  */
 package org.orcid.core.security;
 
-import org.springframework.security.authentication.BadCredentialsException;
+import org.orcid.core.exception.ApplicationException;
 
 /**
  * 
  * @author Angel Montenegro
  *
  */
-public class DeprecatedException extends BadCredentialsException {
+public class DeprecatedException extends ApplicationException {
 	private static final long serialVersionUID = 1L;
 	private String primary; 
 	private String deprecated;
