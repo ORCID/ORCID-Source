@@ -44,19 +44,19 @@ public class MailGunManager {
      *    
       */
     
-    @Value("${com.mailgun.apiKey}")
+    @Value("${com.mailgun.apiKey:key-3ax6xnjp29jd6fds4gc373sgvjxteol0}")
     private String apiKey;
     
-    @Value("${com.mailgun.apiUrl}")
+    @Value("${com.mailgun.apiUrl::https://api.mailgun.net/v2}")
     private String apiUrl;
 
-    @Value("${com.mailgun.verify.apiUrl}")
+    @Value("${com.mailgun.verify.apiUrl:https://api.mailgun.net/v2/samples.mailgun.org/messages}")
     private String verifyApiUrl;
 
-    @Value("${com.mailgun.testmode}")
+    @Value("${com.mailgun.testmode:yes}")
     private String testmode;
     
-    @Value("${com.mailgun.regexFilter}")
+    @Value("${com.mailgun.regexFilter:.*(orcid\\.org|mailinator\\.com|rcpeters\\.com)$}")
     private String filter;
     
     private static final Logger LOGGER = LoggerFactory.getLogger(MailGunManager.class);
