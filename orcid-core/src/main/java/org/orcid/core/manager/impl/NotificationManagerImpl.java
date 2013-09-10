@@ -242,6 +242,7 @@ public class NotificationManagerImpl implements NotificationManager {
         String verificationUrl = createVerificationUrl(email, baseUri);
         templateParams.put("verificationUrl", verificationUrl);
         templateParams.put("orcid", orcidProfile.getOrcid().getValue());
+        templateParams.put("email", email);
         templateParams.put("baseUri", baseUri);
         
         addMessageParams(templateParams, orcidProfile);
