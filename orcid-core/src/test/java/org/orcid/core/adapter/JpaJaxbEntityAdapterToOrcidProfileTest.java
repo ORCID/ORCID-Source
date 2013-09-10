@@ -136,7 +136,6 @@ public class JpaJaxbEntityAdapterToOrcidProfileTest extends DBUnitTest {
     @Test
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void testToOrcidProfileWithNewWayOfDoingEmails() throws SAXException, IOException {
-        // XXX Set up new way of doing email in test data
         ProfileEntity profileEntity = profileDao.find("4444-4444-4444-4445");
         long start = System.currentTimeMillis();
         OrcidProfile orcidProfile = adapter.toOrcidProfile(profileEntity);
@@ -165,6 +164,25 @@ public class JpaJaxbEntityAdapterToOrcidProfileTest extends DBUnitTest {
         assertEquals(2, contactDetails.getEmail().size());
 
         validateAgainstSchema(new OrcidMessage(orcidProfile));
+    }
+
+    @Test
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void testToOrcidProfileWithNewWayOfDoingWorkContributors() {
+        ProfileEntity profileEntity = profileDao.find("4444-4444-4444-4445");
+        long start = System.currentTimeMillis();
+        OrcidProfile orcidProfile = adapter.toOrcidProfile(profileEntity);
+        System.out.println("Took: " + Long.toString(System.currentTimeMillis() - start));
+
+        List<OrcidWork> worksList = orcidProfile.getOrcidActivities().getOrcidWorks().getOrcidWork();
+        assertEquals(1, worksList.size());
+        OrcidWork orcidWork = worksList.get(0);
+        WorkContributors contributors = orcidWork.getWorkContributors();
+        assertNotNull(contributors);
+        List<Contributor> contributorList = contributors.getContributor();
+        assertEquals(1, contributorList.size());
+        Contributor contributor = contributorList.get(0);
+        assertEquals("Jason Contributor", contributor.getCreditName().getContent());
     }
 
     private void checkOrcidProfile(OrcidProfile orcidProfile) {

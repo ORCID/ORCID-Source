@@ -61,6 +61,7 @@ public class WorkEntity extends BaseEntity<Long> implements Comparable<WorkEntit
     private CitationType citationType;
     private WorkType workType;
     private FuzzyDate publicationDate;
+    private String contributorsJson;
     private SortedSet<WorkContributorEntity> contributors;
     private SortedSet<WorkExternalIdentifierEntity> externalIdentifiers;
 
@@ -164,6 +165,15 @@ public class WorkEntity extends BaseEntity<Long> implements Comparable<WorkEntit
 
     public void setWorkType(WorkType workType) {
         this.workType = workType;
+    }
+
+    @Column(name = "contributors_json")
+    public String getContributorsJson() {
+        return contributorsJson;
+    }
+
+    public void setContributorsJson(String contributorsJson) {
+        this.contributorsJson = contributorsJson;
     }
 
     /**

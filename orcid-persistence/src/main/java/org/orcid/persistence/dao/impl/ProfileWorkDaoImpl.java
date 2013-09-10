@@ -16,6 +16,8 @@
  */
 package org.orcid.persistence.dao.impl;
 
+import java.util.List;
+
 import javax.persistence.Query;
 
 import org.orcid.jaxb.model.message.Visibility;
@@ -120,6 +122,16 @@ public class ProfileWorkDaoImpl extends GenericDaoImpl<ProfileWorkEntity, Profil
         query.setParameter("sourceId", clientOrcid);
 
         return query.executeUpdate() > 0 ? true : false;
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<String> findOrcidsNeedingWorkContributorMigration(int chunkSize) {
+        StringBuilder builder = new StringBuilder("SELECT pw.orcid FROM profile_work pw");
+        builder.append(" JOIN work w ON w.work_id = pw.work_id AND w.contributor_json IS NULL");
+        builder.append(" JOIN work_contributor wc ON wc.work_id = pw.work_id");
+        Query query = entityManager.createNativeQuery(builder.toString());
+        return query.getResultList();
     }
 
 }
