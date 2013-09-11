@@ -19,6 +19,7 @@ package org.orcid.core.manager;
 import java.util.Collection;
 
 import org.orcid.jaxb.model.message.Email;
+import org.orcid.persistence.jpa.entities.EmailEntity;
 
 /**
  * 
@@ -32,7 +33,10 @@ public interface EmailManager {
     void updateEmails(String orcid, Collection<Email> emails);
 
     void addEmail(String orcid, Email email);
+    
+    void addEmail(String orcid, EmailEntity email);
 
     void removeEmail(String orcid, String email);
 
+    void removeEmail(String orcid, String email, boolean removeIfPrimary);
 }

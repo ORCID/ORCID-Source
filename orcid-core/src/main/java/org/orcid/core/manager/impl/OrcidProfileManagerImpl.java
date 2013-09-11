@@ -1301,7 +1301,20 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
     private Set<OrcidGrantedAuthority> getGrantedAuthorities(ProfileEntity profileEntity) {
         OrcidGrantedAuthority authority = new OrcidGrantedAuthority();
         authority.setProfileEntity(profileEntity);
-        authority.setAuthority(OrcidWebRole.ROLE_USER.getAuthority());
+        
+        if(profileEntity.getOrcidType() == null)        
+            authority.setAuthority(OrcidWebRole.ROLE_USER.getAuthority());
+        else {
+            switch(profileEntity.getOrcidType()){            
+            case ADMIN:
+                authority.setAuthority(OrcidWebRole.ROLE_ADMIN.getAuthority());
+                break;               
+            default: 
+                authority.setAuthority(OrcidWebRole.ROLE_USER.getAuthority());
+                break;
+            }
+        }
+        
         Set<OrcidGrantedAuthority> authorities = new HashSet<OrcidGrantedAuthority>(1);
         authorities.add(authority);
         return authorities;

@@ -23,6 +23,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.orcid.core.security.DeprecatedException;
 import org.orcid.core.security.UnclaimedProfileExistsException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
@@ -43,6 +44,14 @@ public class AjaxAuthenticationFailureHandler extends SimpleUrlAuthenticationFai
         if (exception.getCause() instanceof UnclaimedProfileExistsException) {
             writer.println(",");
             writer.println("\"unclaimed\": true");
+        } else if(exception.getCause() instanceof DeprecatedException){
+            writer.println(",");
+            writer.println("\"deprecated\": true");
+            DeprecatedException exc = (DeprecatedException)exception.getCause();
+            if(exc != null && exc.getPrimary() != null){
+                writer.println(",");
+                writer.println("\"primary\":\"" + exc.getPrimary() + "\"");
+            }
         }
         writer.println("}");
     }

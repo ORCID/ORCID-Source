@@ -69,6 +69,17 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
         ProfileEntity profile = generateProfileEntityWithBio(orcidProfile);
         return profileDao.updateProfile(profile);
     }
+    
+    /**
+     * Updates a profile entity object on database.
+     * @param profile
+     *          The profile object to update
+     * @return true if the profile was successfully updated.        
+     * */
+    @Override
+    public boolean updateProfile(ProfileEntity profile) {        
+        return profileDao.updateProfile(profile);
+    }
 
     /**
      * Generate a ProfileEntity object with the bio information populated from the info that comes from the
@@ -92,6 +103,18 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
         profile.setProfileAddressVisibility(orcidProfile.getOrcidBio().getContactDetails().getAddress().getCountry().getVisibility());
         profile.setId(orcidProfile.getOrcid().getValue());
         return profile;
+    }
+    
+    /**
+     * Deprecates a profile
+     * @param deprecatedProfile
+     *          The profile that want to be deprecated
+     * @param primaryProfile
+     *          The primary profile for the deprecated profile
+     * @return true if the account was successfully deprecated, false otherwise
+     * */
+    public boolean deprecateProfile(ProfileEntity deprecatedProfile, ProfileEntity primaryProfile) {
+        return profileDao.deprecateProfile(deprecatedProfile.getId(), primaryProfile.getId());
     }
 
 }

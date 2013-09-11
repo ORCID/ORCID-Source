@@ -45,6 +45,7 @@ import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidSearchResult;
 import org.orcid.jaxb.model.message.OrcidWork;
 import org.orcid.jaxb.model.message.OrcidWorks;
+import org.orcid.jaxb.model.message.WorkType;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -274,6 +275,7 @@ public class T2OrcidApiClientIntegrationTest extends AbstractT2ClientIntegration
         assertTrue(orcidWorks != null && orcidWorks.getOrcidWork() != null && orcidWorks.getOrcidWork().size() == 3);
 
         OrcidWork orcidWork = createWork("Single works");
+        orcidWork.setWorkType(WorkType.UNDEFINED);
 
         orcidWorks = new OrcidWorks();
         // TODO JB electronic resource num

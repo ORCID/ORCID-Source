@@ -29,6 +29,7 @@ import org.orcid.jaxb.model.message.ExternalIdentifier;
 import org.orcid.jaxb.model.message.ExternalIdentifiers;
 import org.orcid.jaxb.model.message.Keyword;
 import org.orcid.jaxb.model.message.OrcidBio;
+import org.orcid.jaxb.model.message.OrcidDeprecated;
 import org.orcid.jaxb.model.message.OrcidGrant;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidPatent;
@@ -73,6 +74,12 @@ public class OrcidIndexManagerImpl implements OrcidIndexManager {
 
         OrcidSolrDocument profileIndexDocument = new OrcidSolrDocument();
         profileIndexDocument.setOrcid(filteredProfile.getOrcid().getValue());
+        
+        OrcidDeprecated orcidDeprecated = filteredProfile.getOrcidDeprecated();
+        if(orcidDeprecated != null){
+            profileIndexDocument.setPrimaryRecord(orcidDeprecated.getPrimaryRecord() != null ? orcidDeprecated.getPrimaryRecord().getOrcid().getValue() : null);
+        }
+        
         OrcidBio orcidBio = filteredProfile.getOrcidBio();
         if (orcidBio != null) {
             PersonalDetails personalDetails = orcidBio.getPersonalDetails();

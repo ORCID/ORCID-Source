@@ -363,6 +363,7 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
         query.setParameter("credit_name_visibility", StringUtils.upperCase(profile.getCreditNameVisibility().value()));
         query.setParameter("profile_address_visibility", StringUtils.upperCase(profile.getProfileAddressVisibility().value()));
         query.setParameter("orcid", profile.getId());
+
         return query.executeUpdate() > 0 ? true : false;
     }
 
@@ -430,6 +431,27 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
 
     @Override
     @Transactional
+    public boolean deprecateProfile(String deprecatedOrcid, String primaryOrcid) {
+        Query query = entityManager
+                .createNativeQuery("update profile set last_modified=now(), indexing_status='PENDING', primary_record=:primary_record, deprecated_date=now() where orcid=:orcid");
+        query.setParameter("orcid", deprecatedOrcid);
+        query.setParameter("primary_record", primaryOrcid);
+
+        return query.executeUpdate() > 0 ? true : false;
+    }
+    
+    @Override
+    public boolean isProfileDeprecated(String orcid){       
+        return retrievePrimaryAccountOrcid(orcid) != null;
+    }
+    
+    @Override 
+    public String retrievePrimaryAccountOrcid(String deprecatedOrcid){
+        Query query = entityManager.createNativeQuery("select primary_record from profile where orcid = :orcid");
+        query.setParameter("orcid", deprecatedOrcid);
+        return (String)query.getSingleResult();
+    }
+
     public void updateEncryptedPassword(String orcid, String encryptedPassword) {
         Query updateQuery = entityManager.createQuery("update ProfileEntity set lastModified = now(), encryptedPassword = :encryptedPassword where orcid = :orcid");
         updateQuery.setParameter("orcid", orcid);

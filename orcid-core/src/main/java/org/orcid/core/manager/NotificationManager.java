@@ -23,6 +23,7 @@ import org.orcid.jaxb.model.message.DelegationDetails;
 import org.orcid.jaxb.model.message.Email;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.persistence.dao.GenericDao;
+import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.SecurityQuestionEntity;
 import org.springframework.mail.MailSender;
 
@@ -55,5 +56,7 @@ public interface NotificationManager {
     void sendEmailAddressChangedNotification(OrcidProfile updatedProfile, Email oldEmail, URI baseUri);
 
     void sendClaimReminderEmail(OrcidProfile orcidProfile, int daysUntilActivation);
+    
+    void sendProfileDeprecationEmail(ProfileEntity deprecatedProfile, ProfileEntity primaryProfile);
 
 }

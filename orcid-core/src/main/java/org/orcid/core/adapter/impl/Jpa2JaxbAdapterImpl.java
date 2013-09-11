@@ -116,6 +116,9 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         profile.setOrcid(profileEntity.getId());
         // we may just want an other property entry instead of baseUri
         profile.setOrcidId(baseUri.replace("https", "http") + "/" + profileEntity.getId());
+        // load deprecation info
+        profile.setOrcidDeprecated(getOrcidDeprecated(profileEntity));
+        
         if (loadOptions.isLoadActivities()) {
             profile.setOrcidActivities(getOrcidActivities(profileEntity));
         }
@@ -201,6 +204,19 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         return history;
     }
 
+    private OrcidDeprecated getOrcidDeprecated(ProfileEntity profileEntity) {
+        OrcidDeprecated orcidDeprecated = null;        
+        if(profileEntity.getPrimaryRecord() != null){        
+            orcidDeprecated = new OrcidDeprecated();        
+            orcidDeprecated.setDate(new DeprecatedDate(toXMLGregorianCalendar(profileEntity.getDeprecatedDate())));        
+            PrimaryRecord primaryRecord = new PrimaryRecord();
+            primaryRecord.setOrcid(new Orcid(profileEntity.getPrimaryRecord().getId()));
+            primaryRecord.setOrcidId(new Url(baseUri.replace("https", "http") + "/" + profileEntity.getPrimaryRecord().getId()));        
+            orcidDeprecated.setPrimaryRecord(primaryRecord);
+        }
+        return orcidDeprecated;        
+    }
+    
     private OrcidActivities getOrcidActivities(ProfileEntity profileEntity) {
         OrcidGrants orcidGrants = getOrcidGrants(profileEntity);
         OrcidPatents orcidPatents = getOrcidPatents(profileEntity);

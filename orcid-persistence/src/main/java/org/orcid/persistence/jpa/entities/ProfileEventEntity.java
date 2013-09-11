@@ -40,6 +40,7 @@ public class ProfileEventEntity extends BaseEntity<Long> {
     private Long id;
     private String orcid;
     private ProfileEventType type;
+    private String comment;
 
     public ProfileEventEntity() {
     }
@@ -47,6 +48,12 @@ public class ProfileEventEntity extends BaseEntity<Long> {
     public ProfileEventEntity(String orcid, ProfileEventType type) {
         this.orcid = orcid;
         this.type = type;
+    }
+
+    public ProfileEventEntity(String orcid, ProfileEventType type, String comment) {
+        this.orcid = orcid;
+        this.type = type;
+        this.comment = comment;
     }
 
     @Id
@@ -80,4 +87,13 @@ public class ProfileEventEntity extends BaseEntity<Long> {
         this.type = type;
     }
 
+    @Basic
+    @Column(name = "comment")
+    public String getComment() {
+        return comment;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
 }

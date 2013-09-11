@@ -27,6 +27,7 @@ import org.orcid.core.cli.ValidateOrcidMessage;
 import org.orcid.core.exception.OrcidValidationException;
 import org.orcid.core.manager.ValidationBehaviour;
 import org.orcid.core.manager.ValidationManager;
+import org.orcid.core.security.DeprecatedException;
 import org.orcid.jaxb.model.message.Citation;
 import org.orcid.jaxb.model.message.CitationType;
 import org.orcid.jaxb.model.message.ContactDetails;
@@ -83,11 +84,11 @@ public class ValidationManagerImpl implements ValidationManager {
     public void validateMessage(OrcidMessage orcidMessage) {
         if (ValidationBehaviour.IGNORE.equals(validationBehaviour)) {
             return;
-        }
+        }        
         doSchemaValidation(orcidMessage);
         doCustomValidation(orcidMessage);
     }
-
+    
     protected void doSchemaValidation(OrcidMessage orcidMessage) {
         Validator validator = createValidator();
         if (validator != null) {

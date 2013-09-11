@@ -185,6 +185,22 @@ public class JpaJaxbEntityAdapterToOrcidProfileTest extends DBUnitTest {
         assertEquals("Jason Contributor", contributor.getCreditName().getContent());
     }
 
+    public void testToOrcidProfileWithDeprecationMessage() throws SAXException, IOException {
+        ProfileEntity profileEntity = profileDao.find("4444-4444-4444-444X");
+        long start = System.currentTimeMillis();
+        OrcidProfile orcidProfile = adapter.toOrcidProfile(profileEntity);
+        System.out.println("Took: " + Long.toString(System.currentTimeMillis() - start));
+
+        assertNotNull(orcidProfile.getOrcidDeprecated());
+        assertNotNull(orcidProfile.getOrcidDeprecated().getDate());
+        assertNotNull(orcidProfile.getOrcidDeprecated().getPrimaryRecord());
+        assertNotNull(orcidProfile.getOrcidDeprecated().getPrimaryRecord().getOrcid());
+        assertNotNull(orcidProfile.getOrcidDeprecated().getPrimaryRecord().getOrcidId());
+        assertEquals("4444-4444-4444-4441", orcidProfile.getOrcidDeprecated().getPrimaryRecord().getOrcid().getValue());
+        assertTrue(orcidProfile.getOrcidDeprecated().getPrimaryRecord().getOrcidId().getValue().endsWith("/4444-4444-4444-4441"));
+        validateAgainstSchema(new OrcidMessage(orcidProfile));
+    }
+
     private void checkOrcidProfile(OrcidProfile orcidProfile) {
         assertNotNull(orcidProfile);
         assertNotNull(orcidProfile.getOrcidBio());
