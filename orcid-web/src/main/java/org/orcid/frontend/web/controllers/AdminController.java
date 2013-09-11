@@ -21,10 +21,15 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 
+import org.orcid.core.manager.ExternalIdentifierManager;
 import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.ProfileEntityManager;
+import org.orcid.core.manager.ProfileWorkManager;
+import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.persistence.jpa.entities.EmailEntity;
+import org.orcid.persistence.jpa.entities.ExternalIdentifierEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.orcid.persistence.jpa.entities.ProfileWorkEntity;
 import org.orcid.pojo.ProfileDeprecationRequest;
 import org.orcid.pojo.ProfileDetails;
 import org.orcid.utils.OrcidStringUtils;
@@ -48,6 +53,12 @@ public class AdminController extends BaseController {
 
     @Resource
     ProfileEntityManager profileEntityManager;
+    
+    @Resource
+    ProfileWorkManager profileWorkManager;
+    
+    @Resource
+    ExternalIdentifierManager externalIdentifierManager;
 
     @Resource
     NotificationManager notificationManager;
@@ -138,14 +149,40 @@ public class AdminController extends BaseController {
                                     emailManager.addEmail(primary.getId(), email);
                                 }
                             }
-                            // Update the profile
-                            //TODO
-
+                            // Delete all information from deprecated profile
+                            //1. Update profile
+                            deprecated.setDeactivationDate(new Date());
+                            deprecated.setGivenNames("Given Names Deactivated");
+                            deprecated.setFamilyName("Family Name Deactivated");
+                            deprecated.setOtherNamesVisibility(Visibility.PRIVATE);
+                            deprecated.setCreditNameVisibility(Visibility.PRIVATE);
+                            deprecated.setExternalIdentifiersVisibility(Visibility.PRIVATE);
+                            deprecated.setBiographyVisibility(Visibility.PRIVATE);
+                            deprecated.setKeywordsVisibility(Visibility.PRIVATE);
+                            deprecated.setResearcherUrlsVisibility(Visibility.PRIVATE);
+                            deprecated.setProfileAddressVisibility(Visibility.PRIVATE);
+                            deprecated.setBiography(new String());
+                            deprecated.setIso2Country(new String());                            
+                            profileEntityManager.updateProfile(deprecated);
+                            
+                            //2. Remove works
+                            if(deprecated.getProfileWorks() != null){
+	                            for(ProfileWorkEntity profileWork : deprecated.getProfileWorks()){
+	                            	profileWorkManager.removeWork(deprecated.getId(), String.valueOf(profileWork.getWork().getId()));
+	                            }
+                            }
+                            
+                            //3. Remove external identifiers
+                            if(deprecated.getExternalIdentifiers() != null) {
+	                            for(ExternalIdentifierEntity externalIdentifier : deprecated.getExternalIdentifiers()){
+	                            	externalIdentifierManager.removeExternalIdentifier(deprecated.getId(), externalIdentifier.getExternalIdReference());
+	                            }
+                            }
+                            
                             // Send notifications
                             LOGGER.info("Sending deprecation notifications to {} and {}", deprecated.getId(), primary.getId());
                             notificationManager.sendProfileDeprecationEmail(deprecated, primary);
-                            // Update the deprecation request object that will
-                            // be
+                            // Update the deprecation request object that will be
                             // returned
                             result.setDeprecatedAccount(new ProfileDetails(deprecated.getId(), deprecated.getGivenNames(), deprecated.getFamilyName(), deprecated
                                     .getPrimaryEmail().getId()));
