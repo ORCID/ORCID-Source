@@ -76,7 +76,6 @@ import org.orcid.jaxb.model.message.DelegationDetails;
 import org.orcid.jaxb.model.message.Email;
 import org.orcid.jaxb.model.message.EncryptedPassword;
 import org.orcid.jaxb.model.message.EncryptedSecurityAnswer;
-import org.orcid.jaxb.model.message.EncryptedVerificationCode;
 import org.orcid.jaxb.model.message.ExternalIdentifier;
 import org.orcid.jaxb.model.message.ExternalIdentifiers;
 import org.orcid.jaxb.model.message.FamilyName;
@@ -94,20 +93,25 @@ import org.orcid.jaxb.model.message.OrcidWorks;
 import org.orcid.jaxb.model.message.PersonalDetails;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.message.SecurityDetails;
+import org.orcid.jaxb.model.message.SecurityQuestionId;
 import org.orcid.jaxb.model.message.Source;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.message.VisibilityType;
 import org.orcid.jaxb.model.message.WorkContributors;
 import org.orcid.jaxb.model.message.WorkSource;
 import org.orcid.persistence.dao.EmailDao;
+import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.dao.GivenPermissionToDao;
 import org.orcid.persistence.dao.OrcidOauth2TokenDetailDao;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.EmailEntity;
+import org.orcid.persistence.jpa.entities.EmailEventEntity;
+import org.orcid.persistence.jpa.entities.EmailEventType;
 import org.orcid.persistence.jpa.entities.IndexingStatus;
 import org.orcid.persistence.jpa.entities.OrcidGrantedAuthority;
 import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.orcid.persistence.jpa.entities.ProfileEventEntity;
 import org.orcid.utils.DateUtils;
 import org.orcid.utils.NullUtils;
 import org.slf4j.Logger;
@@ -177,10 +181,15 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
 
     @Resource(name = "profileCache")
     private Cache profileCache;
+    
+    @Resource
+    private GenericDao<EmailEventEntity, Long> emailEventDao;
 
     private int claimWaitPeriodDays = 10;
 
     private int claimReminderAfterDays = 8;
+    
+    private int verifyReminderAfterDays = 7;
 
     private String releaseName = ReleaseNameUtils.getReleaseName();
 
@@ -240,8 +249,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
     @Override
     public OrcidProfile createOrcidProfileAndNotify(OrcidProfile orcidProfile) {
         OrcidProfile createdOrcidProfile = createOrcidProfile(orcidProfile);
-        notificationManager.sendApiRecordCreationEmail(
-                orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue(), orcidProfile);
+        notificationManager.sendApiRecordCreationEmail(orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue(), orcidProfile);
         return createdOrcidProfile;
     }
 
@@ -574,10 +582,16 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
     @Override
     @Transactional
     public OrcidProfile retrieveOrcidProfileByEmail(String email) {
+        return retrieveOrcidProfileByEmail(email, LoadOptions.ALL);
+    }
+
+    @Override
+    @Transactional
+    public OrcidProfile retrieveOrcidProfileByEmail(String email, LoadOptions loadOptions) {
         EmailEntity emailEntity = emailDao.findCaseInsensitive(email);
         if (emailEntity != null) {
             ProfileEntity profileEntity = emailEntity.getProfile();
-            OrcidProfile orcidProfile = adapter.toOrcidProfile(profileEntity);
+            OrcidProfile orcidProfile = adapter.toOrcidProfile(profileEntity, loadOptions);
             String verificationCode = profileEntity.getEncryptedVerificationCode();
             String securityAnswer = profileEntity.getEncryptedSecurityAnswer();
             orcidProfile.setVerificationCode(decrypt(verificationCode));
@@ -722,38 +736,55 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
 
     @Override
     @Transactional
-    public OrcidProfile updatePasswordInformation(OrcidProfile updatedOrcidProfile) {
-        OrcidProfile existingProfile = retrieveOrcidProfile(updatedOrcidProfile.getOrcid().getValue());
-        if (existingProfile == null || existingProfile.getOrcidInternal() == null) {
-            // Nothing we can do with this. Just return null
-            return null;
+    public void updatePasswordInformation(OrcidProfile updatedOrcidProfile) {
+        String orcid = updatedOrcidProfile.getOrcid().getValue();
+        String hashedPassword = hash(updatedOrcidProfile.getPassword());
+        profileDao.updateEncryptedPassword(orcid, hashedPassword);
+        OrcidProfile cachedProfile = getOrcidProfileFromCache(orcid);
+        if (cachedProfile != null) {
+            profileDao.flush();
+            SecurityDetails securityDetails = initSecurityDetails(cachedProfile);
+            securityDetails.setEncryptedPassword(new EncryptedPassword(hashedPassword));
+            cachedProfile.setPassword(hashedPassword);
+            putInCache(cachedProfile);
         }
-        OrcidInternal orcidInternal = updatedOrcidProfile.getOrcidInternal();
-        if (orcidInternal.getSecurityDetails() == null) {
-            orcidInternal.setSecurityDetails(new SecurityDetails());
+        updateSecurityQuestionInformation(updatedOrcidProfile);
+    }
+
+    private SecurityDetails initSecurityDetails(OrcidProfile cachedProfile) {
+        OrcidInternal internal = cachedProfile.getOrcidInternal();
+        if (internal == null) {
+            internal = new OrcidInternal();
+            cachedProfile.setOrcidInternal(internal);
         }
-        orcidInternal.getSecurityDetails().setEncryptedPassword(new EncryptedPassword(hash(updatedOrcidProfile.getPassword())));
-        existingProfile = updatePasswordSecurityQuestionsInformation(updatedOrcidProfile);
-        existingProfile.setOrcidInternal(orcidInternal);
-        return updateOrcidProfile(existingProfile);
+        SecurityDetails securityDetails = internal.getSecurityDetails();
+        if (securityDetails == null) {
+            securityDetails = new SecurityDetails();
+            internal.setSecurityDetails(securityDetails);
+        }
+        return securityDetails;
     }
 
     @Override
-    public OrcidProfile updatePasswordSecurityQuestionsInformation(OrcidProfile updatedOrcidProfile) {
-        OrcidProfile existingProfile = retrieveOrcidProfile(updatedOrcidProfile.getOrcid().getValue());
-        if (existingProfile == null || existingProfile.getOrcidInternal() == null) {
-            // Nothing we can do with this. Just return null
-            return null;
+    public void updateSecurityQuestionInformation(OrcidProfile updatedOrcidProfile) {
+        String orcid = updatedOrcidProfile.getOrcid().getValue();
+        SecurityQuestionId securityQuestionId = updatedOrcidProfile.getOrcidInternal().getSecurityDetails().getSecurityQuestionId();
+        Integer questionId = null;
+        if (securityQuestionId != null) {
+            questionId = new Long(securityQuestionId.getValue()).intValue();
         }
-        OrcidInternal orcidInternal = updatedOrcidProfile.getOrcidInternal();
-        if (orcidInternal.getSecurityDetails() == null) {
-            orcidInternal.setSecurityDetails(new SecurityDetails());
+        String unencryptedAnswer = updatedOrcidProfile.getSecurityQuestionAnswer();
+        String encryptedAnswer = encrypt(unencryptedAnswer);
+        profileDao.updateSecurityQuestion(orcid, questionId, questionId != null ? encryptedAnswer : null);
+        OrcidProfile cachedProfile = getOrcidProfileFromCache(orcid);
+        if (cachedProfile != null) {
+            profileDao.flush();
+            SecurityDetails securityDetails = initSecurityDetails(cachedProfile);
+            securityDetails.setSecurityQuestionId(questionId != null ? new SecurityQuestionId(questionId) : null);
+            securityDetails.setEncryptedSecurityAnswer(encryptedAnswer != null ? new EncryptedSecurityAnswer(encryptedAnswer) : null);
+            cachedProfile.setSecurityQuestionAnswer(encryptedAnswer != null ? unencryptedAnswer : null);
+            putInCache(cachedProfile);
         }
-
-        orcidInternal.getSecurityDetails().setEncryptedSecurityAnswer(new EncryptedSecurityAnswer(encrypt(updatedOrcidProfile.getSecurityQuestionAnswer())));
-        orcidInternal.getSecurityDetails().setEncryptedVerificationCode(new EncryptedVerificationCode(encrypt(updatedOrcidProfile.getVerificationCode())));
-        existingProfile.setOrcidInternal(orcidInternal);
-        return updateOrcidProfile(existingProfile);
     }
 
     @Override
@@ -1226,6 +1257,32 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         } while (!orcidsToRemind.isEmpty());
     }
 
+    @Override
+    synchronized public void processUnverifiedEmails7Days() {
+        LOG.info("About to process unclaimed profiles for reminder");
+        List<String> emails = Collections.<String> emptyList();
+        do {
+            emails = profileDao.findEmailsUnverfiedDays(verifyReminderAfterDays, INDEXING_BATCH_SIZE, EmailEventType.VERIFY_EMAIL_7_DAYS_SENT);
+            LOG.info("Got batch of {} unclaimed profiles for reminder", emails.size());
+            for (String email : emails) {
+                processUnverifiedEmails7DaysInTransaction(email);
+            }
+        } while (!emails.isEmpty());
+    }
+    
+    private void processUnverifiedEmails7DaysInTransaction(final String email) {
+        transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+            @Override
+            @Transactional
+            protected void doInTransactionWithoutResult(TransactionStatus status) {
+                OrcidProfile orcidProfile = retrieveOrcidProfileByEmail(email);
+                notificationManager.sendVerificationReminderEmail(orcidProfile, email);
+                emailEventDao.persist(new EmailEventEntity(email, EmailEventType.VERIFY_EMAIL_7_DAYS_SENT));
+                emailEventDao.flush();
+            }
+        });
+    }
+    
     private void processUnclaimedProfileForReminderInTransaction(final String orcid) {
         transactionTemplate.execute(new TransactionCallbackWithoutResult() {
             @Override
@@ -1309,6 +1366,11 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
     private Element getFromCache(String orcid) {
         Element element = profileCache.get(createCacheKey(orcid));
         return element;
+    }
+
+    private OrcidProfile getOrcidProfileFromCache(String orcid) {
+        Element element = profileCache.get(createCacheKey(orcid));
+        return (OrcidProfile) (element != null ? element.getObjectValue() : null);
     }
 
     private void putInCache(OrcidProfile orcidProfile) {

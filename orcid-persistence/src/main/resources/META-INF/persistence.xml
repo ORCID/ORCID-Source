@@ -45,6 +45,7 @@
         <class>org.orcid.persistence.jpa.entities.PatentSourceEntity</class>
         <class>org.orcid.persistence.jpa.entities.ProfileEntity</class>
         <class>org.orcid.persistence.jpa.entities.ProfileEventEntity</class>
+        <class>org.orcid.persistence.jpa.entities.EmailEventEntity</class>
         <class>org.orcid.persistence.jpa.entities.ProfileGrantEntity</class>
         <class>org.orcid.persistence.jpa.entities.ProfileKeywordEntity</class>
         <class>org.orcid.persistence.jpa.entities.ProfilePatentEntity</class>

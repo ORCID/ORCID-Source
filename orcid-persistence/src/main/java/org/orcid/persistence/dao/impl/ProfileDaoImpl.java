@@ -32,6 +32,7 @@ import org.orcid.jaxb.model.message.Locale;
 import org.orcid.jaxb.model.message.OrcidType;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.BaseEntity;
+import org.orcid.persistence.jpa.entities.EmailEventType;
 import org.orcid.persistence.jpa.entities.GivenPermissionToEntity;
 import org.orcid.persistence.jpa.entities.IndexingStatus;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -116,6 +117,25 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
         return query.getResultList();
     }
 
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<String> findEmailsUnverfiedDays(int daysUnverified, int maxResults, EmailEventType ev) {
+        String queryStr = 
+                  "SELECT e.email FROM email e "
+                + "LEFT JOIN email_event ev ON e.email = ev.email "
+                + "AND (ev.email_event_type = :evt or ev.email_event_type='VERIFY_EMAIL_7_DAYS_SENT_SKIPPED') "
+                + "JOIN profile p on p.orcid = e.orcid and p.claimed = true and p.account_expiry is null "
+                + "where ev.email IS NULL "
+                +    "and e.is_verified = false "
+                +    "and e.date_created < (now() - CAST('" + daysUnverified + "' AS INTERVAL DAY)) "
+                +    " ORDER BY e.last_modified";        		
+        Query query = entityManager.createNativeQuery(queryStr);
+        query.setParameter("evt", ev.name());
+        query.setMaxResults(maxResults);
+        return query.getResultList();
+    }
+
+    
     @SuppressWarnings("unchecked")
     @Override
     public List<String> findUnclaimedNeedingReminder(int remindAfterDays, int maxResults, Collection<String> orcidsToExclude) {
@@ -431,4 +451,23 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
         query.setParameter("orcid", deprecatedOrcid);
         return (String)query.getSingleResult();
     }
+
+    public void updateEncryptedPassword(String orcid, String encryptedPassword) {
+        Query updateQuery = entityManager.createQuery("update ProfileEntity set lastModified = now(), encryptedPassword = :encryptedPassword where orcid = :orcid");
+        updateQuery.setParameter("orcid", orcid);
+        updateQuery.setParameter("encryptedPassword", encryptedPassword);
+        updateQuery.executeUpdate();
+    }
+
+    @Override
+    @Transactional
+    public void updateSecurityQuestion(String orcid, Integer securityQuestionId, String encryptedSecurityAnswer) {
+        Query updateQuery = entityManager
+                .createQuery("update ProfileEntity set lastModified = now(), securityQuestion.id = :securityQuestionId, encryptedSecurityAnswer = :encryptedSecurityAnswer where orcid = :orcid");
+        updateQuery.setParameter("orcid", orcid);
+        updateQuery.setParameter("securityQuestionId", securityQuestionId);
+        updateQuery.setParameter("encryptedSecurityAnswer", encryptedSecurityAnswer);
+        updateQuery.executeUpdate();
+    }
+
 }

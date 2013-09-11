@@ -21,12 +21,9 @@ package org.orcid.persistence.jpa.entities;
  * @author Will Simpson
  * 
  */
-public enum ProfileEventType {
-
-    CLAIM_REMINDER_SENT, 
-    EMAIL_VERIFY_CROSSREF_MARKETING_FAIL, EMAIL_VERIFY_CROSSREF_MARKETING_SENT, EMAIL_VERIFY_CROSSREF_MARKETING_SKIPPED, 
-    //Indicates that the account is deprecated
-    PROFILE_DEPRECATED, 
-    //Indicates that an account has been deprecated and you are the primary account
-    PROFILE_DEPRECATION;    
+public enum EmailEventType {
+    
+    VERIFY_EMAIL_7_DAYS_SENT,
+    VERIFY_EMAIL_7_DAYS_SENT_SKIPPED /* we are going to skip notifying email address that where already in the system before launching this */
+    ;
 }
