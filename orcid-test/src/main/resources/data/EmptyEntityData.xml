@@ -30,6 +30,7 @@
     <oauth2_token_detail/>
     <external_identifier/>
     <email/>
+    <email_event/>
     <affiliation/>
     <funding_grant/>
     <profile_grant/>
