@@ -46,6 +46,7 @@ import org.orcid.persistence.jpa.entities.GivenPermissionToEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileGrantEntity;
 import org.orcid.persistence.jpa.entities.ProfileWorkEntity;
+import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.test.DBUnitTest;
 import org.orcid.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -150,6 +151,21 @@ public class JpaJaxbEntityAdapterToProfileEntityTest extends DBUnitTest {
         assertFalse(nonPrimaryEmail2.getCurrent());
         assertTrue(nonPrimaryEmail2.getVerified());
         assertEquals("1111-1111-1111-1115", nonPrimaryEmail1.getSource().getId());
+
+        Set<ProfileWorkEntity> profileWorkEntities = profileEntity.getProfileWorks();
+        assertEquals(3, profileWorkEntities.size());
+
+        for (ProfileWorkEntity profileWorkEntity : profileWorkEntities) {
+            WorkEntity workEntity = profileWorkEntity.getWork();
+            String contributorsJson = workEntity.getContributorsJson();
+            if ("Work title 1".equals(workEntity.getTitle())) {
+                assertEquals(
+                        "{\"contributor\":[{\"contributorOrcid\":{\"value\":\"4444-4444-4444-4446\"},\"creditName\":null,\"contributorEmail\":null,\"contributorAttributes\":{\"contributorSequence\":\"FIRST\",\"contributorRole\":\"AUTHOR\"}},{\"contributorOrcid\":null,\"creditName\":{\"content\":\"John W. Spaeth\",\"visibility\":\"PUBLIC\"},\"contributorEmail\":null,\"contributorAttributes\":null}]}",
+                        contributorsJson);
+            } else {
+                assertNull(contributorsJson);
+            }
+        }
 
         assertEquals(2, profileEntity.getProfileGrants().size());
         for (ProfileGrantEntity profileGrantEntity : profileEntity.getProfileGrants()) {
