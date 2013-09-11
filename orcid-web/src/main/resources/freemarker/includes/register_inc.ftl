@@ -153,7 +153,7 @@
 		            			</thead>
 		            			<tbody>
 		            				 <tr ng-repeat='dup in duplicates'>
-		            				 	<td><a href="<@spring.url '/account'/>">{{dup.orcid}}</a></td>
+		            				 	<td><a href="<@spring.url '/'/>{{dup.orcid}}" target="_blank">{{dup.orcid}}</a></td>
 		                    			<td>{{dup.email}}</td>
 		                    			<td>{{dup.givenNames}}</td>
 		                    			<td>{{dup.familyNames}}</td>
