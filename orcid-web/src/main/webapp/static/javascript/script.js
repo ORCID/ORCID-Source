@@ -298,18 +298,18 @@ $(function () {
 	            } else {
 	            	if ($('form#loginForm #login-error-mess').length == 0) {
 	            		var message;
-	            		if(data.unclaimed){
+	            		if(data.deprecated){
+	            			if(data.primary)
+	            				message = OM.getInstance().get('orcid.frontend.security.deprecated_with_primary').replace("{{primary}}", data.primary);	            				
+	            			else
+	            				message = OM.getInstance().get('orcid.frontend.security.deprecated');
+	            		} else if(data.unclaimed){
 	            			var resendClaimUrl = window.location + "/../resend-claim";
 	            			var userId = $('#userId').val();
                             if(userId.indexOf('@') != -1){
 	            		        resendClaimUrl += '?email=' + encodeURIComponent(userId);	
 	            		    }
 	            		    message = OM.getInstance().get('orcid.frontend.security.unclaimed_exists').replace("{{resendClaimUrl}}",resendClaimUrl);  
-	            		} else if(data.deprecated){
-	            			if(data.primary)
-	            				message = OM.getInstance().get('orcid.frontend.security.deprecated_with_primary').replace("{{primary}}", data.primary);	            				
-	            			else
-	            				message = OM.getInstance().get('orcid.frontend.security.deprecated');
 	            		} else{
 	            			message = OM.getInstance().get('orcid.frontend.security.bad_credentials'); 
 	            		}

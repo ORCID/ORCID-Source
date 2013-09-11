@@ -66,15 +66,15 @@ public class OrcidUserDetailsService implements UserDetailsService {
         if (profile == null) {
             throw new UsernameNotFoundException("Bad username or password");
         }
+        if (profile.getPrimaryRecord() != null) {
+        	throw new DeprecatedException("orcid.frontend.security.deprecated_with_primary", profile.getPrimaryRecord().getId(), profile.getId());
+        }
         if (!profile.getClaimed()) {
             throw new UnclaimedProfileExistsException("orcid.frontend.security.unclaimed_exists");
         }
         if (profile.getDeactivationDate() != null) {
             throw new DisabledException("Account not active, please call helpdesk");
-        }
-        if (profile.getPrimaryRecord() != null) {
-        	throw new DeprecatedException("orcid.frontend.security.deprecated_with_primary", profile.getPrimaryRecord().getId(), profile.getId());
-        }
+        }        
         String primaryEmail = profile.getPrimaryEmail().getId();
         return new OrcidProfileUserDetails(profile.getId(), primaryEmail, profile.getEncryptedPassword(), profile.getOrcidType());
     }
