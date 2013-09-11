@@ -307,6 +307,8 @@ public interface OrcidProfileManager {
      * @param orcidProfile
      * @return
      */
+    
+    public void processUnverifiedEmails7Days();
 
     OrcidProfile deactivateOrcidProfile(OrcidProfile orcidProfile);
 
