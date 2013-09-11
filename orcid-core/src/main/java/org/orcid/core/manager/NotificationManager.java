@@ -36,7 +36,7 @@ public interface NotificationManager {
 
     void sendVerificationEmail(OrcidProfile orcidProfile, URI baseUri, String email);
     
-    public void sendVerificationReminderEmail(OrcidProfile orcidProfile, URI baseUri, String email);
+    public void sendVerificationReminderEmail(OrcidProfile orcidProfile, String email);
 
     void sendPasswordResetEmail(String toEmail, OrcidProfile orcidProfile, URI baseUri);
     

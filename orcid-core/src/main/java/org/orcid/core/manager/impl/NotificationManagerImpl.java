@@ -69,10 +69,15 @@ public class NotificationManagerImpl implements NotificationManager {
 
     @Resource
     private MessageSource messages;
-    
+
+    @Resource
+    private MailGunManager mailGunManager;
+
     private MailSender mailSender;
 
     private String fromAddress;
+    
+    private String verifyFromAddress = "support@verify.orcid.org";
 
     private String supportAddress;
 
@@ -189,14 +194,15 @@ public class NotificationManagerImpl implements NotificationManager {
 
         // Generate body from template
         String body = templateManager.processTemplate("verification_email.ftl", templateParams);
-        // Create email message
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom(fromAddress);
-        message.setTo(email);
-        message.setSubject(getSubject("email.subject.verification", orcidProfile));
-        message.setText(body);
-        // Send message
-        sendAndLogMessage(message);
+//        // Create email message
+//        SimpleMailMessage message = new SimpleMailMessage();
+//        message.setFrom(fromAddress);
+//        message.setTo(email);
+//        message.setSubject(getSubject("email.subject.verification", orcidProfile));
+//        message.setText(body);
+//        // Send message
+//        sendAndLogMessage(message);
+        mailGunManager.sendVerifyEmail(verifyFromAddress, email, getSubject("email.subject.verify_reminder", orcidProfile), body, null);       
     }
 
     private void addMessageParams(Map<String, Object> templateParams, OrcidProfile orcidProfile) {
@@ -228,7 +234,7 @@ public class NotificationManagerImpl implements NotificationManager {
     }
 
 
-    public void sendVerificationReminderEmail(OrcidProfile orcidProfile, URI baseUri, String email) {
+    public void sendVerificationReminderEmail(OrcidProfile orcidProfile, String email) {
         Map<String, Object> templateParams = new HashMap<String, Object>();
 
         String emailFriendlyName = deriveEmailFriendlyName(orcidProfile);
@@ -236,6 +242,7 @@ public class NotificationManagerImpl implements NotificationManager {
         String verificationUrl = createVerificationUrl(email, baseUri);
         templateParams.put("verificationUrl", verificationUrl);
         templateParams.put("orcid", orcidProfile.getOrcid().getValue());
+        templateParams.put("email", email);
         templateParams.put("baseUri", baseUri);
         
         addMessageParams(templateParams, orcidProfile);
@@ -243,13 +250,14 @@ public class NotificationManagerImpl implements NotificationManager {
         // Generate body from template
         String body = templateManager.processTemplate("verification_reminder_email.ftl", templateParams);
         // Create email message
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom(fromAddress);
-        message.setTo(email);
-        message.setSubject(getSubject("email.subject.verify_reminder", orcidProfile));
-        message.setText(body);
-        // Send message
-        sendAndLogMessage(message);
+//        SimpleMailMessage message = new SimpleMailMessage();
+//        message.setFrom(fromAddress);
+//        message.setTo(email);
+//        message.setSubject(getSubject("email.subject.verify_reminder", orcidProfile));
+//        message.setText(body);
+//        // Send message
+//        sendAndLogMessage(message);
+        mailGunManager.sendVerifyEmail(verifyFromAddress, email, getSubject("email.subject.verify_reminder", orcidProfile), body, null);        
     }
 
 
