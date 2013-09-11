@@ -839,14 +839,14 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
 
         retrievedProfile.setPassword("A new password");
 
-        OrcidProfile updatedProfile = orcidProfileManager.updatePasswordInformation(retrievedProfile);
-        updatedProfile = orcidProfileManager.retrieveOrcidProfile(updatedProfile.getOrcid().getValue());
-        // retrieve orcid so as to decrypt
+        orcidProfileManager.updatePasswordInformation(retrievedProfile);
 
-        OrcidProfile retrieved = orcidProfileManager.retrieveOrcidProfile(updatedProfile.getOrcid().getValue());
-        assertTrue("Password should have changed and be hashed", 108 == hashedPasswordValue.length() && !hashedPasswordValue.equals(retrieved.getPassword()));
-        assertTrue("Should have decrypted security answer", "random answer".equals(retrievedProfile.getSecurityQuestionAnswer()));
+        OrcidProfile updatedProfile = orcidProfileManager.retrieveOrcidProfile(profile1.getOrcid().getValue());
 
+        String updatedPassword = updatedProfile.getPassword();
+        assertEquals("Password should be hashed", 108, updatedPassword.length());
+        assertFalse("Password should have changed but was still: " + updatedPassword, hashedPasswordValue.equals(updatedPassword));
+        assertEquals("Should have decrypted security answer", "random answer", updatedProfile.getSecurityQuestionAnswer());
     }
 
     @Test
@@ -866,14 +866,12 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
 
         retrievedProfile.setSecurityQuestionAnswer("A new random answer");
 
-        OrcidProfile updatedProfile = orcidProfileManager.updatePasswordSecurityQuestionsInformation(retrievedProfile);
-        updatedProfile = orcidProfileManager.retrieveOrcidProfile(updatedProfile.getOrcid().getValue());
-        // retrieve orcid so as to decrypt
+        orcidProfileManager.updateSecurityQuestionInformation(retrievedProfile);
 
-        OrcidProfile retrieved = orcidProfileManager.retrieveOrcidProfile(updatedProfile.getOrcid().getValue());
-        assertTrue("Password should not have changed", hashedPasswordValue.equals(retrieved.getPassword()));
-        assertEquals("A new random answer", retrieved.getSecurityQuestionAnswer());
+        OrcidProfile updatedProfile = orcidProfileManager.retrieveOrcidProfile(profile1.getOrcid().getValue());
 
+        assertTrue("Password should not have changed", hashedPasswordValue.equals(updatedProfile.getPassword()));
+        assertEquals("A new random answer", updatedProfile.getSecurityQuestionAnswer());
     }
 
     @Test
