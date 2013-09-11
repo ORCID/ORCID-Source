@@ -101,6 +101,10 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
     private Date credentialsExpiry;
     private Boolean enabled = Boolean.TRUE;
 
+    // Deprecation fields
+    private ProfileEntity primaryRecord;
+    private Date deprecatedDate;
+
     // Internally used fields
     private String creationMethod;
     private Date completedDate;
@@ -737,7 +741,7 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
     }
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = PROFILE)
-    @Sort(type=SortType.NATURAL)
+    @Sort(type = SortType.NATURAL)
     public SortedSet<OrcidOauth2TokenDetail> getTokenDetails() {
         return tokenDetails;
     }
@@ -861,6 +865,39 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
 
     public void setDeactivationDate(Date deactivationDate) {
         this.deactivationDate = deactivationDate;
+    }
+
+    /**
+     * @return the primary profile for this deprecated account
+     */
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "primary_record")
+    public ProfileEntity getPrimaryRecord() {
+        return this.primaryRecord;
+    }
+
+    /**
+     * @param primaryRecord
+     *            the primary profile to set
+     */
+    public void setPrimaryRecord(ProfileEntity primaryRecord) {
+        this.primaryRecord = primaryRecord;
+    }
+
+    /**
+     * @return the deprecation date for this record
+     * */
+    @Column(name = "deprecated_date")
+    public Date getDeprecatedDate() {
+        return deprecatedDate;
+    }
+
+    /**
+     * @param deprecationDate
+     *            The deprecation date for this record
+     * */
+    public void setDeprecatedDate(Date deprecatedDate) {
+        this.deprecatedDate = deprecatedDate;
     }
 
     @Override

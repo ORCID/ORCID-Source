@@ -305,8 +305,12 @@ $(function () {
 	            		        resendClaimUrl += '?email=' + encodeURIComponent(userId);	
 	            		    }
 	            		    message = OM.getInstance().get('orcid.frontend.security.unclaimed_exists').replace("{{resendClaimUrl}}",resendClaimUrl);  
-	            		}
-	            		else{
+	            		} else if(data.deprecated){
+	            			if(data.primary)
+	            				message = OM.getInstance().get('orcid.frontend.security.deprecated_with_primary').replace("{{primary}}", data.primary);	            				
+	            			else
+	            				message = OM.getInstance().get('orcid.frontend.security.deprecated');
+	            		} else{
 	            			message = OM.getInstance().get('orcid.frontend.security.bad_credentials'); 
 	            		}
 		            	$("<div class='alert' id='login-error-mess'>"+ message + "</div>")

@@ -49,6 +49,7 @@ import org.orcid.jaxb.model.message.Subtitle;
 import org.orcid.jaxb.model.message.Title;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.message.WorkTitle;
+import org.orcid.jaxb.model.message.WorkType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -230,7 +231,8 @@ public class T2OrcidOAuthApiClientIntegrationTest extends BaseT2OrcidOAuthApiCli
 
         orcidWorks = new OrcidWorks();
         OrcidWork orcidWork = orcidClientDataHelper.createWork("Single works");
-        orcidWorks.getOrcidWork().add(orcidWork);
+        orcidWork.setWorkType(WorkType.UNDEFINED);
+        orcidWorks.getOrcidWork().add(orcidWork);        
         message.getOrcidProfile().setOrcidWorks(orcidWorks);
 
         assertClientResponse401Details(oauthT2Client.addWorksXml(orcid, message, null));
@@ -319,6 +321,16 @@ public class T2OrcidOAuthApiClientIntegrationTest extends BaseT2OrcidOAuthApiCli
         message.getOrcidProfile().getOrcidInternal().setSecurityDetails(null);
         assertClientResponse401Details(oauthT2Client.updateWorksXml(this.orcid, message, null));
 
+        if(work1.getWorkType() == null)
+            work1.setWorkType(WorkType.UNDEFINED);
+        
+        if(workToUpdate.getWorkType() == null){
+            workToUpdate.setWorkType(WorkType.UNDEFINED);
+        }
+        
+        if(work3.getWorkType() == null)
+            work3.setWorkType(WorkType.UNDEFINED);
+        
         ClientResponse updatedWorksResponse = oauthT2Client.updateWorksXml(this.orcid, message, accessToken);
 
         assertEquals(200, updatedWorksResponse.getStatus());
