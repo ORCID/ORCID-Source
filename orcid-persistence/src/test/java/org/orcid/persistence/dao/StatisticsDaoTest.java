@@ -82,9 +82,9 @@ public class StatisticsDaoTest extends DBUnitTest {
         long s7 = 0;
 
         assertEquals(6, s1);
-        assertEquals(1, s2);
+        assertEquals(2, s2);
         assertEquals(7, s3);
-        assertEquals(2, s4);
+        assertEquals(3, s4);
         assertEquals(0, s5);
 
         StatisticKeyEntity key = statisticsDao.createKey();
@@ -96,8 +96,6 @@ public class StatisticsDaoTest extends DBUnitTest {
         StatisticValuesEntity os5 = new StatisticValuesEntity(key, "s5", s5);
         StatisticValuesEntity os6 = new StatisticValuesEntity(key, "s6", s6);
         StatisticValuesEntity os7 = new StatisticValuesEntity(null, "s7", s7);
-        
-        
 
         statisticsDao.saveStatistic(os1);
         statisticsDao.saveStatistic(os2);

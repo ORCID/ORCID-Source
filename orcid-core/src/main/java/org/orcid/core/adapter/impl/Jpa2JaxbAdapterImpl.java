@@ -32,6 +32,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
 import org.apache.commons.lang.StringUtils;
 import org.orcid.core.adapter.Jpa2JaxbAdapter;
 import org.orcid.core.manager.LoadOptions;
+import org.orcid.core.utils.JsonUtils;
 import org.orcid.jaxb.model.clientgroup.OrcidClient;
 import org.orcid.jaxb.model.clientgroup.OrcidClientGroup;
 import org.orcid.jaxb.model.clientgroup.RedirectUri;
@@ -774,7 +775,25 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
 
     private WorkContributors getWorkContributors(ProfileWorkEntity profileWorkEntity) {
         WorkEntity work = profileWorkEntity.getWork();
-        if (work == null || work.getContributors() == null || work.getContributors().isEmpty()) {
+        if (work == null) {
+            return null;
+        }
+        // New way of doing work contributors
+        String jsonString = work.getContributorsJson();
+        if (jsonString != null) {
+            WorkContributors workContributors = JsonUtils.readObjectFromJsonString(jsonString, WorkContributors.class);
+            for (Contributor contributor : workContributors.getContributor()) {
+                // Make sure contributor credit name has the same visibility as
+                // the work
+                CreditName creditName = contributor.getCreditName();
+                if (creditName != null) {
+                    creditName.setVisibility(profileWorkEntity.getVisibility());
+                }
+            }
+            return workContributors;
+        }
+        // Old way of doing contributors
+        if (work.getContributors() == null || work.getContributors().isEmpty()) {
             return null;
         }
         Set<WorkContributorEntity> contributorEntities = work.getContributors();
@@ -827,15 +846,6 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         Day day = fuzzyDate.getDay() != null ? new Day(fuzzyDate.getDay()) : null;
 
         return new PublicationDate(year, month, day);
-    }
-
-    private CreditName getAuthorCreditName(WorkContributorEntity contributorEntity) {
-        if (contributorEntity != null && StringUtils.isNotBlank(contributorEntity.getCreditName())) {
-            CreditName creditName = new CreditName();
-            creditName.setContent(contributorEntity.getCreditName());
-            return creditName;
-        }
-        return null;
     }
 
     private OtherNames getOtherNames(ProfileEntity profile) {

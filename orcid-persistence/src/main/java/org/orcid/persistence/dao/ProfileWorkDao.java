@@ -16,10 +16,10 @@
  */
 package org.orcid.persistence.dao;
 
+import java.util.List;
+
 import org.orcid.jaxb.model.message.Visibility;
-import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileWorkEntity;
-import org.orcid.persistence.jpa.entities.WorkEntity;
 
 public interface ProfileWorkDao {
 
@@ -80,4 +80,6 @@ public interface ProfileWorkDao {
      * @return true if the profile work relationship was created
      * */
     boolean addProfileWork(String clientOrcid, long workId, Visibility visibility);
+
+    List<String> findOrcidsNeedingWorkContributorMigration(int chunkSize);
 }

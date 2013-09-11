@@ -16,6 +16,8 @@
  */
 package org.orcid.persistence.dao.impl;
 
+import java.util.List;
+
 import javax.persistence.Query;
 
 import org.orcid.jaxb.model.message.Visibility;
@@ -34,9 +36,10 @@ public class ProfileWorkDaoImpl extends GenericDaoImpl<ProfileWorkEntity, Profil
      * Removes the relationship that exists between a work and a profile.
      * 
      * @param workId
-     *          The id of the work that will be removed from the client profile
+     *            The id of the work that will be removed from the client
+     *            profile
      * @param clientOrcid
-     *          The client orcid 
+     *            The client orcid
      * @return true if the relationship was deleted
      * */
     @Override
@@ -52,14 +55,14 @@ public class ProfileWorkDaoImpl extends GenericDaoImpl<ProfileWorkEntity, Profil
      * Updates the visibility of an existing profile work relationship
      * 
      * @param clientOrcid
-     *          The client orcid
-     *          
+     *            The client orcid
+     * 
      * @param workId
-     *          The id of the work that will be updated
-     *          
+     *            The id of the work that will be updated
+     * 
      * @param visibility
-     *          The new visibility value for the profile work relationship         
-     *                     
+     *            The new visibility value for the profile work relationship
+     * 
      * @return true if the relationship was updated
      * */
     @Override
@@ -74,14 +77,14 @@ public class ProfileWorkDaoImpl extends GenericDaoImpl<ProfileWorkEntity, Profil
     }
 
     /**
-     * Get the profile work associated with the client orcid and the workId 
+     * Get the profile work associated with the client orcid and the workId
      * 
      * @param clientOrcid
-     *          The client orcid
-     *          
+     *            The client orcid
+     * 
      * @param workId
-     *          The id of the work that will be updated
-     *          
+     *            The id of the work that will be updated
+     * 
      * @return the profileWork object
      * */
     @Override
@@ -110,14 +113,26 @@ public class ProfileWorkDaoImpl extends GenericDaoImpl<ProfileWorkEntity, Profil
      * */
     @Override
     @Transactional
-    public boolean addProfileWork(String clientOrcid, long workId, Visibility visibility){
-        Query query = entityManager.createNativeQuery("INSERT INTO profile_work(orcid, work_id, date_created, last_modified, added_to_profile_date, visibility, source_id) values(:orcid, :workId, now(), now(), now(), :visibility, :sourceId)");
+    public boolean addProfileWork(String clientOrcid, long workId, Visibility visibility) {
+        Query query = entityManager
+                .createNativeQuery("INSERT INTO profile_work(orcid, work_id, date_created, last_modified, added_to_profile_date, visibility, source_id) values(:orcid, :workId, now(), now(), now(), :visibility, :sourceId)");
         query.setParameter("orcid", clientOrcid);
         query.setParameter("workId", workId);
         query.setParameter("visibility", visibility.name());
         query.setParameter("sourceId", clientOrcid);
-        
+
         return query.executeUpdate() > 0 ? true : false;
     }
-    
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<String> findOrcidsNeedingWorkContributorMigration(int chunkSize) {
+        StringBuilder builder = new StringBuilder("SELECT DISTINCT pw.orcid FROM profile_work pw");
+        builder.append(" JOIN work w ON w.work_id = pw.work_id AND w.contributors_json IS NULL");
+        builder.append(" JOIN work_contributor wc ON wc.work_id = pw.work_id");
+        Query query = entityManager.createNativeQuery(builder.toString());
+        query.setMaxResults(chunkSize);
+        return query.getResultList();
+    }
+
 }

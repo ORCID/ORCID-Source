@@ -31,6 +31,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.apache.commons.lang.StringUtils;
 import org.orcid.core.adapter.Jaxb2JpaAdapter;
+import org.orcid.core.utils.JsonUtils;
 import org.orcid.jaxb.model.message.Address;
 import org.orcid.jaxb.model.message.Affiliation;
 import org.orcid.jaxb.model.message.AgencyName;
@@ -252,7 +253,11 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
                 workEntity.setCitation(workCitation.getCitation());
                 workEntity.setCitationType(workCitation.getWorkCitationType());
             }
-            workEntity.setContributors(getWorkContributors(workEntity, orcidWork.getWorkContributors()));
+            // New way of doing work contributors
+            workEntity.setContributorsJson(getWorkContributorsJson(orcidWork.getWorkContributors()));
+            // Old way of doing work contributors
+            // workEntity.setContributors(getWorkContributors(workEntity,
+            // orcidWork.getWorkContributors()));
             workEntity.setDescription(orcidWork.getShortDescription() != null ? orcidWork.getShortDescription() : null);
             workEntity.setExternalIdentifiers(getWorkExternalIdentifiers(workEntity, orcidWork.getWorkExternalIdentifiers()));
             workEntity.setPublicationDate(getWorkPublicationDate(orcidWork));
@@ -342,6 +347,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
         }
     }
 
+    // Old way of doing work contributors
     private SortedSet<WorkContributorEntity> getWorkContributors(WorkEntity workEntity, WorkContributors workContributors) {
         SortedSet<WorkContributorEntity> workContributorEntities = workEntity.getContributors();
         if (workContributorEntities == null) {
@@ -369,6 +375,13 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             }
         }
         return workContributorEntities;
+    }
+
+    private String getWorkContributorsJson(WorkContributors workContributors) {
+        if (workContributors == null) {
+            return null;
+        }
+        return JsonUtils.convertToJsonString(workContributors);
     }
 
     private void setGrants(ProfileEntity profileEntity, OrcidGrants orcidGrants) {
@@ -819,16 +832,16 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
                     profileEntity.setWorkVisibilityDefault(preferences.getWorkVisibilityDefault().getValue());
                 }
             }
-            
+
         }
     }
 
     private void setPreferencesDetails(ProfileEntity profileEntity, OrcidPreferences orcidPreferences) {
         if (orcidPreferences != null) {
-            if (orcidPreferences.getLocale() != null) 
+            if (orcidPreferences.getLocale() != null)
                 profileEntity.setLocale(orcidPreferences.getLocale());
-                else
-                    profileEntity.setLocale(Locale.EN);
+            else
+                profileEntity.setLocale(Locale.EN);
         }
     }
 

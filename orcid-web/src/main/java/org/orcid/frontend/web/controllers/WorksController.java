@@ -38,6 +38,7 @@ import org.orcid.core.manager.ThirdPartyImportManager;
 import org.orcid.core.manager.WorkContributorManager;
 import org.orcid.core.manager.WorkExternalIdentifierManager;
 import org.orcid.core.manager.WorkManager;
+import org.orcid.core.utils.JsonUtils;
 import org.orcid.frontend.web.forms.CurrentWork;
 import org.orcid.frontend.web.util.NumberList;
 import org.orcid.frontend.web.util.YearsList;
@@ -122,7 +123,6 @@ public class WorksController extends BaseWorkspaceController {
     @Resource
     private WorkExternalIdentifierManager workExternalIdentifierManager;
 
-    
     /**
      * Removes a work from a profile
      * */
@@ -295,32 +295,22 @@ public class WorksController extends BaseWorkspaceController {
             WorkEntity workEntity = toWorkEntity(newOw);
             // Create work
             workEntity = workManager.addWork(workEntity);
-            Set<WorkContributorEntity> workContributors = toWorkContributorEntityList(currentProfile, newOw.getWorkContributors(), workEntity);
 
-            // Create work contributors
-            if (workContributors != null && !workContributors.isEmpty()) {
-                for (WorkContributorEntity workContributorEntity : workContributors) {
-                    workContributorManager.addWorkContributor(workContributorEntity);
-                }
-            }
-            
             if (work.getWorkExternalIdentifiers() != null) {
-                for (WorkExternalIdentifier wei: work.getWorkExternalIdentifiers()) {
+                for (WorkExternalIdentifier wei : work.getWorkExternalIdentifiers()) {
                     if (!PojoUtil.isEmpty(wei.getWorkExternalIdentifierId())) {
                         org.orcid.persistence.jpa.entities.WorkExternalIdentifierEntity newWeiJpa = new org.orcid.persistence.jpa.entities.WorkExternalIdentifierEntity();
                         newWeiJpa.setIdentifier(wei.getWorkExternalIdentifierId().getValue());
                         newWeiJpa.setDateCreated(new java.util.Date());
                         newWeiJpa.setIdentifierType(wei.toWorkExternalIdentifier().getWorkExternalIdentifierType());
                         newWeiJpa.setLastModified(new java.util.Date());
-                        newWeiJpa.setWork(workEntity);                    
-                        
+                        newWeiJpa.setWork(workEntity);
+
                         workExternalIdentifierManager.addWorkExternalIdentifier(newWeiJpa);
                     }
                 }
-             
+
             }
-            
-            
 
             // Create profile work relationship
             profileWorkManager.addProfileWork(currentProfile.getOrcid().getValue(), workEntity.getId(), newOw.getVisibility());
@@ -362,10 +352,16 @@ public class WorksController extends BaseWorkspaceController {
         workEntity.setTitle(orcidWork.getWorkTitle().getTitle().getContent());
         workEntity.setWorkType(orcidWork.getWorkType());
         workEntity.setWorkUrl(orcidWork.getUrl().getValue());
+        WorkContributors workContributors = orcidWork.getWorkContributors();
+        if (workContributors != null) {
+            workEntity.setContributorsJson(JsonUtils.convertToJsonString(workContributors));
+        }
         return workEntity;
     }
 
     /**
+     * Old way of doing work contributors
+     * 
      * Generate a list of work contributors entities based on the current
      * profile and the list of work contributors that comes from the user
      * request.
