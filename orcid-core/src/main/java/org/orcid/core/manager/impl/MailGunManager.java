@@ -44,27 +44,30 @@ public class MailGunManager {
      *    
       */
     
-    @Value("${com.mailgun.apiKey}")
+    @Value("${com.mailgun.apiKey:key-3ax6xnjp29jd6fds4gc373sgvjxteol0}")
     private String apiKey;
     
-    @Value("${com.mailgun.apiUrl}")
+    @Value("${com.mailgun.apiUrl::https://api.mailgun.net/v2}")
     private String apiUrl;
-    
-    @Value("${com.mailgun.testmode}")
+
+    @Value("${com.mailgun.verify.apiUrl:https://api.mailgun.net/v2/samples.mailgun.org/messages}")
+    private String verifyApiUrl;
+
+    @Value("${com.mailgun.testmode:yes}")
     private String testmode;
     
-    @Value("${com.mailgun.regexFilter}")
+    @Value("${com.mailgun.regexFilter:.*(orcid\\.org|mailinator\\.com|rcpeters\\.com)$}")
     private String filter;
     
     private static final Logger LOGGER = LoggerFactory.getLogger(MailGunManager.class);
 
-    public boolean sendEmail(String from,String to, String subject, String text, String html) {
+    public boolean sendVerifyEmail(String from,String to, String subject, String text, String html) {
         
         Client client = Client.create();
         client.addFilter(new HTTPBasicAuthFilter("api",
                 getApiKey()));
         WebResource webResource =
-                client.resource(getApiUrl());
+                client.resource(getVerifyApiUrl());
         MultivaluedMapImpl formData = new MultivaluedMapImpl();
         formData.add("from", from);
         formData.add("to", to);
@@ -100,6 +103,14 @@ public class MailGunManager {
 
     public void setApiUrl(String apiUrl) {
         this.apiUrl = apiUrl;
+    }
+
+    public String getVerifyApiUrl() {
+        return verifyApiUrl;
+    }
+
+    public void setVerifyApiUrl(String verifyApiUrl) {
+        this.verifyApiUrl = verifyApiUrl;
     }
 
 }

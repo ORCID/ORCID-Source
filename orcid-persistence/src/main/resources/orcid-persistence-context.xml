@@ -114,6 +114,10 @@
     <bean id="profileEventDao" class="org.orcid.persistence.dao.impl.GenericDaoImpl">
         <constructor-arg value="org.orcid.persistence.jpa.entities.ProfileEventEntity" />
     </bean>    
+
+    <bean id="emailEventDao" class="org.orcid.persistence.dao.impl.GenericDaoImpl">
+        <constructor-arg value="org.orcid.persistence.jpa.entities.EmailEventEntity" />
+    </bean>    
     
     <bean id="webhookDao" class="org.orcid.persistence.dao.impl.WebhookDaoImpl" />
      

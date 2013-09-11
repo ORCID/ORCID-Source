@@ -22,6 +22,7 @@ import java.util.List;
 
 import org.orcid.jaxb.model.message.Locale;
 import org.orcid.jaxb.model.message.OrcidType;
+import org.orcid.persistence.jpa.entities.EmailEventType;
 import org.orcid.persistence.jpa.entities.IndexingStatus;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileEventType;
@@ -69,6 +70,8 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
     void updateLastModifiedDateWithoutResult(String orcid);
 
     void updateLastModifiedDateAndIndexingStatus(String orcid);
+    
+    public List<String> findEmailsUnverfiedDays(int daysUnverified, int maxResults, EmailEventType ev);
 
     OrcidType retrieveOrcidType(String orcid);
 
@@ -77,5 +80,9 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
     Locale retrieveLocale(String orcid);
 
     void updateLocale(String orcid, Locale locale);
+
+    void updateEncryptedPassword(String orcid, String encryptedPassword);
+
+    void updateSecurityQuestion(String orcid, Integer securityQuestionId, String encryptedSecurityAnswer);
 
 }

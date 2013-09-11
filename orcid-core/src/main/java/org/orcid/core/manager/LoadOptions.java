@@ -19,8 +19,9 @@ package org.orcid.core.manager;
 public class LoadOptions {
 
     public static final LoadOptions ALL = new LoadOptions(true, true, true);
-
     public static final LoadOptions BIO_ONLY = new LoadOptions(true, false, false);
+    public static final LoadOptions BIO_AND_INTERNAL_ONLY = new LoadOptions(true, false, true);
+    public static final LoadOptions INTERNAL_ONLY = new LoadOptions(false, false, true);
 
     private boolean loadBio;
     private boolean loadActivities;
