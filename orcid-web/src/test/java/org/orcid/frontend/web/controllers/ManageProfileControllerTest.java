@@ -61,10 +61,12 @@ import org.orcid.frontend.web.util.BaseControllerTest;
 import org.orcid.jaxb.model.message.DelegationDetails;
 import org.orcid.jaxb.model.message.Email;
 import org.orcid.jaxb.model.message.OrcidProfile;
+import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.GivenPermissionToEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileSummaryEntity;
+import org.orcid.persistence.jpa.entities.SecurityQuestionEntity;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Propagation;
@@ -89,6 +91,12 @@ public class ManageProfileControllerTest extends BaseControllerTest {
 
     @Resource
     private OrcidProfileManager orcidProfileManager;
+
+    @Resource
+    private ProfileDao profileDao;
+
+    @Resource
+    private GenericDao<SecurityQuestionEntity, Integer> securityQuestionDao;
 
     @Mock
     private OrcidIndexManager mockOrcidIndexManager;
@@ -133,6 +141,29 @@ public class ManageProfileControllerTest extends BaseControllerTest {
     @Before
     public void init() {
         assertNotNull(controller);
+    }
+
+    @Before
+    public void setUpTestProfile() {
+        String testOrcid = "4444-4444-4444-4446";
+        ProfileEntity existing = profileDao.find(testOrcid);
+        if (existing == null) {
+            ProfileEntity testProfile = new ProfileEntity();
+            testProfile.setId(testOrcid);
+            profileDao.persist(testProfile);
+        }
+    }
+
+    @Before
+    public void setUpSecurityQuestion() {
+        Integer testQuestionId = 1;
+        SecurityQuestionEntity existing = securityQuestionDao.find(testQuestionId);
+        if (existing == null) {
+            SecurityQuestionEntity question = new SecurityQuestionEntity();
+            question.setId(testQuestionId);
+            question.setQuestion("What?");
+            securityQuestionDao.persist(question);
+        }
     }
 
     @After
@@ -249,7 +280,7 @@ public class ManageProfileControllerTest extends BaseControllerTest {
 
         BindingResult bindingResult = mock(BindingResult.class);
         ChangeSecurityQuestionForm changeSecurityQuestionForm = new ChangeSecurityQuestionForm();
-        changeSecurityQuestionForm.setSecurityQuestionId(9);
+        changeSecurityQuestionForm.setSecurityQuestionId(1);
         changeSecurityQuestionForm.setSecurityQuestionAnswer("securityQuestionAnswer");
 
         when(bindingResult.hasErrors()).thenReturn(false);
@@ -265,7 +296,7 @@ public class ManageProfileControllerTest extends BaseControllerTest {
 
         BindingResult bindingResult = mock(BindingResult.class);
         ChangeSecurityQuestionForm changeSecurityQuestionForm = new ChangeSecurityQuestionForm();
-        changeSecurityQuestionForm.setSecurityQuestionId(9);
+        changeSecurityQuestionForm.setSecurityQuestionId(1);
         changeSecurityQuestionForm.setSecurityQuestionAnswer("securityQuestionAnswer");
 
         when(bindingResult.hasErrors()).thenReturn(true);

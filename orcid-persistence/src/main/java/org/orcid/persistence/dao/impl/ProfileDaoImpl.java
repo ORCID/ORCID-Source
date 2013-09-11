@@ -407,4 +407,25 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
         updateQuery.executeUpdate();
 
     }
+
+    @Override
+    @Transactional
+    public void updateEncryptedPassword(String orcid, String encryptedPassword) {
+        Query updateQuery = entityManager.createQuery("update ProfileEntity set lastModified = now(), encryptedPassword = :encryptedPassword where orcid = :orcid");
+        updateQuery.setParameter("orcid", orcid);
+        updateQuery.setParameter("encryptedPassword", encryptedPassword);
+        updateQuery.executeUpdate();
+    }
+
+    @Override
+    @Transactional
+    public void updateSecurityQuestion(String orcid, Integer securityQuestionId, String encryptedSecurityAnswer) {
+        Query updateQuery = entityManager
+                .createQuery("update ProfileEntity set lastModified = now(), securityQuestion.id = :securityQuestionId, encryptedSecurityAnswer = :encryptedSecurityAnswer where orcid = :orcid");
+        updateQuery.setParameter("orcid", orcid);
+        updateQuery.setParameter("securityQuestionId", securityQuestionId);
+        updateQuery.setParameter("encryptedSecurityAnswer", encryptedSecurityAnswer);
+        updateQuery.executeUpdate();
+    }
+
 }

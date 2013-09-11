@@ -539,7 +539,7 @@ public class ManageProfileController extends BaseWorkspaceController {
         OrcidProfile profile = getEffectiveProfile();
         profile.setSecurityQuestionAnswer(changeSecurityQuestionForm.getSecurityQuestionAnswer());
         profile.getOrcidInternal().getSecurityDetails().setSecurityQuestionId(new SecurityQuestionId(changeSecurityQuestionForm.getSecurityQuestionId()));
-        orcidProfileManager.updatePasswordSecurityQuestionsInformation(profile);
+        orcidProfileManager.updateSecurityQuestionInformation(profile);
         ModelAndView changeSecurityDetailsView = populateChangeSecurityDetailsViewFromUserProfile(changeSecurityQuestionForm);
         changeSecurityDetailsView.addObject("securityQuestionSaved", true);
         return changeSecurityDetailsView;
@@ -593,7 +593,7 @@ public class ManageProfileController extends BaseWorkspaceController {
             if (profile.getOrcidInternal().getSecurityDetails().getEncryptedSecurityAnswer() == null)
                 profile.getOrcidInternal().getSecurityDetails().setEncryptedSecurityAnswer(new EncryptedSecurityAnswer());
             profile.setSecurityQuestionAnswer(securityQuestion.getSecurityAnswer());
-            orcidProfileManager.updatePasswordSecurityQuestionsInformation(profile);
+            orcidProfileManager.updateSecurityQuestionInformation(profile);
             errors.add(getMessage("manage.securityQuestionUpdated"));
         }
 

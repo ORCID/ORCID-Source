@@ -27,8 +27,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -37,9 +35,11 @@ import org.apache.commons.codec.binary.Base64;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.orcid.core.manager.EncryptionManager;
+import org.orcid.core.manager.LoadOptions;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.manager.OrcidSearchManager;
 import org.orcid.core.manager.RegistrationManager;
@@ -48,10 +48,7 @@ import org.orcid.frontend.web.forms.EmailAddressForm;
 import org.orcid.frontend.web.forms.OneTimeResetPasswordForm;
 import org.orcid.frontend.web.forms.PasswordTypeAndConfirmForm;
 import org.orcid.jaxb.model.message.OrcidInternal;
-import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidProfile;
-import org.orcid.jaxb.model.message.OrcidSearchResult;
-import org.orcid.jaxb.model.message.OrcidSearchResults;
 import org.orcid.jaxb.model.message.SecurityDetails;
 import org.orcid.jaxb.model.message.SecurityQuestionId;
 import org.orcid.pojo.ajaxForm.Text;
@@ -89,13 +86,6 @@ public class RegistrationControllerTest {
         registrationController.setEncryptionManager(encryptionManager);
     }
 
-    private OrcidProfile orcidWithIdentifierOnly() {
-        OrcidProfile orcidProfile = new OrcidProfile();
-        orcidProfile.setOrcid("orcid");
-        return orcidProfile;
-
-    }
-
     @Test
     public void testPasswordResetInvalidEmailDataProvidedToForm() {
         HttpServletRequest servletRequest = mock(HttpServletRequest.class);
@@ -105,7 +95,7 @@ public class RegistrationControllerTest {
         // return a mocked profile -
         ModelAndView modelAndView = registrationController.issuePasswordResetRequest(servletRequest, resetPasswordForm, bindingResult);
         assertEquals("reset_password", modelAndView.getViewName());
-        verify(registrationManager, times(0)).resetUserPassword(any(String.class),any(OrcidProfile.class), any(URI.class));
+        verify(registrationManager, times(0)).resetUserPassword(any(String.class), any(OrcidProfile.class), any(URI.class));
 
     }
 
@@ -121,7 +111,7 @@ public class RegistrationControllerTest {
         // return a mocked profile -
         ModelAndView modelAndView = registrationController.issuePasswordResetRequest(servletRequest, resetPasswordForm, bindingResult);
         assertEquals("reset_password", modelAndView.getViewName());
-        verify(registrationManager, times(0)).resetUserPassword(any(String.class),any(OrcidProfile.class), any(URI.class));
+        verify(registrationManager, times(0)).resetUserPassword(any(String.class), any(OrcidProfile.class), any(URI.class));
     }
 
     @Test
@@ -144,7 +134,7 @@ public class RegistrationControllerTest {
         RedirectAttributes redirectAttributes = mock(RedirectAttributes.class);
 
         when(encryptionManager.decryptForExternalUse(any(String.class))).thenReturn("email=any@orcid.org&issueDate=2070-05-29T17:04:27");
-        when(orcidProfileManager.retrieveOrcidProfileByEmail("any@orcid.org")).thenReturn(new OrcidProfile());
+        when(orcidProfileManager.retrieveOrcidProfileByEmail(eq("any@orcid.org"), Matchers.<LoadOptions> any())).thenReturn(new OrcidProfile());
         ModelAndView modelAndView = registrationController.resetPasswordEmail(servletRequest, "randomString", redirectAttributes);
 
         assertEquals("password_one_time_reset_optional_security_questions", modelAndView.getViewName());
@@ -158,7 +148,7 @@ public class RegistrationControllerTest {
         RedirectAttributes redirectAttributes = mock(RedirectAttributes.class);
 
         when(encryptionManager.decryptForExternalUse(any(String.class))).thenReturn("email=any@orcid.org&issueDate=2070-05-29T17:04:27");
-        when(orcidProfileManager.retrieveOrcidProfileByEmail("any@orcid.org")).thenReturn(orcidWithSecurityQuestion());
+        when(orcidProfileManager.retrieveOrcidProfileByEmail(eq("any@orcid.org"), Matchers.<LoadOptions> any())).thenReturn(orcidWithSecurityQuestion());
         ModelAndView modelAndView = registrationController.resetPasswordEmail(servletRequest, "randomString", redirectAttributes);
 
         assertEquals("redirect:/answer-security-question/randomString", modelAndView.getViewName());
@@ -177,7 +167,7 @@ public class RegistrationControllerTest {
         when(encryptionManager.decryptForExternalUse(eq(new String(Base64.decodeBase64(expiredLink), "UTF-8")))).thenReturn(
                 "email=any@orcid.org&issueDate=1970-05-29T17:04:27");
 
-        when(orcidProfileManager.retrieveOrcidProfileByEmail("any@orcid.org")).thenReturn(orcidWithSecurityQuestion());
+        when(orcidProfileManager.retrieveOrcidProfileByEmail(eq("any@orcid.org"), Matchers.<LoadOptions> any())).thenReturn(orcidWithSecurityQuestion());
 
         ModelAndView modelAndView = registrationController.buildAnswerSecurityQuestionView(encryptedLink, redirectAttributes);
         assertEquals("answer_security_question", modelAndView.getViewName());
@@ -196,7 +186,7 @@ public class RegistrationControllerTest {
         BindingResult bindingResult = mock(BindingResult.class);
         when(encryptionManager.decryptForExternalUse(any(String.class))).thenReturn("email=any@orcid.org&issueDate=2070-05-29T17:04:27");
 
-        when(orcidProfileManager.retrieveOrcidProfileByEmail("any@orcid.org")).thenReturn(orcidWithSecurityQuestion());
+        when(orcidProfileManager.retrieveOrcidProfileByEmail(eq("any@orcid.org"), Matchers.<LoadOptions> any())).thenReturn(orcidWithSecurityQuestion());
         when(bindingResult.hasErrors()).thenReturn(true);
 
         ChangeSecurityQuestionForm changeSecurityQuestionForm = new ChangeSecurityQuestionForm();
@@ -239,7 +229,7 @@ public class RegistrationControllerTest {
 
         when(bindingResult.hasErrors()).thenReturn(false);
         when(encryptionManager.decryptForExternalUse(any(String.class))).thenReturn("email=any@orcid.org&issueDate=2070-05-29T17:04:27");
-        when(orcidProfileManager.retrieveOrcidProfileByEmail("any@orcid.org")).thenReturn(orcidWithSecurityQuestion());
+        when(orcidProfileManager.retrieveOrcidProfileByEmail(eq("any@orcid.org"), Matchers.<LoadOptions> any())).thenReturn(orcidWithSecurityQuestion());
         passwordTypeAndConfirmForm = new PasswordTypeAndConfirmForm();
         ModelAndView successView = registrationController
                 .confirmPasswordOneTimeResetView("encrypted link", passwordTypeAndConfirmForm, bindingResult, redirectAttributes);
@@ -268,7 +258,7 @@ public class RegistrationControllerTest {
         // check success flow
         oneTimeResetPasswordForm.setPassword(Text.valueOf("password"));
         when(bindingResult.hasErrors()).thenReturn(false);
-        when(orcidProfileManager.retrieveOrcidProfileByEmail("any@orcid.org")).thenReturn(orcidWithSecurityQuestion());
+        when(orcidProfileManager.retrieveOrcidProfileByEmail(eq("any@orcid.org"), Matchers.<LoadOptions> any())).thenReturn(orcidWithSecurityQuestion());
         ModelAndView successView = registrationController
                 .submitPasswordReset("encrypted string not expired", oneTimeResetPasswordForm, bindingResult, redirectAttributes);
         assertEquals("redirect:/my-orcid", successView.getViewName());
@@ -293,21 +283,6 @@ public class RegistrationControllerTest {
         orcidInternal.setSecurityDetails(securityDetails);
         orcidProfile.setOrcidInternal(orcidInternal);
         return orcidProfile;
-    }
-
-    private OrcidMessage orcidMessageDetailingRecordsFoundForTeddyBass() {
-        OrcidMessage orcidMessage = new OrcidMessage();
-        List<OrcidProfile> orcids = new ArrayList<OrcidProfile>();
-        OrcidProfile orcidProfile1 = new OrcidProfile();
-        orcidProfile1.setOrcid("1234X");
-
-        orcids.add(orcidProfile1);
-        OrcidSearchResult orcidSearchResult = new OrcidSearchResult();
-        orcidSearchResult.setOrcidProfile(orcidProfile1);
-        OrcidSearchResults searchResults = new OrcidSearchResults();
-        searchResults.getOrcidSearchResult().add(orcidSearchResult);
-        orcidMessage.setOrcidSearchResults(searchResults);
-        return orcidMessage;
     }
 
 }
