@@ -71,7 +71,7 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
             OrcidMessage entity = getOrcidEntity("Bad Request", e);
             return Response.status(Response.Status.BAD_REQUEST).entity(entity).build();
         } else if (DeprecatedException.class.isAssignableFrom(e.getClass())) {
-            OrcidMessage entity = getOrcidEntity("Bad Request", e);
+            OrcidMessage entity = getOrcidEntity("Account Deprecated", e);
             return Response.status(Response.Status.MOVED_PERMANENTLY).entity(entity).build();
         } else {
             OrcidMessage entity = get500OrcidEntity(e);
