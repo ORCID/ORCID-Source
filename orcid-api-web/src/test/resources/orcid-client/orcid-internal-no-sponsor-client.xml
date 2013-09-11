@@ -112,7 +112,7 @@ v
                         <title>Work title 1</title>
                         <subtitle>Work subtitle 1</subtitle>
                     </work-title>
-                    <work-source>NOT_DEFINED</work-source>
+                    <work-source>NOT_DEFINED</work-source>                    
                 </orcid-work>
                 <orcid-work visibility="public">
                     <work-title>

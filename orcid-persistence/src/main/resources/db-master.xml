@@ -65,5 +65,6 @@
 	<include file="/db/updates/locale-refactor-setting.xml"/>
 	<include file="/db/updates/add-key-to-security-questions.xml"/>
     <include file="/db/updates/increase-bio-text-size-limit.xml"/>
+    <include file="/db/updates/profile_deprecation_project.xml"/>    
     <include file="/db/updates/email_event.xml" />
 </databaseChangeLog>

@@ -41,6 +41,7 @@ import javax.xml.bind.annotation.XmlType;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
  *         &lt;element ref="{http://www.orcid.org/ns/orcid}orcid" minOccurs="0"/>
+ *         &lt;element ref="{http://www.orcid.org/ns/orcid}orcid-deprecated" minOccurs="0"/>
  *         &lt;element ref="{http://www.orcid.org/ns/orcid}orcid-history" minOccurs="0"/>
  *         &lt;element ref="{http://www.orcid.org/ns/orcid}orcid-bio" minOccurs="0"/>
  *         &lt;element ref="{http://www.orcid.org/ns/orcid}orcid-activities" minOccurs="0"/>
@@ -55,7 +56,7 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "orcid", "orcidId", "orcidPreferences", "orcidHistory", "orcidBio", "orcidActivities", "orcidInternal" })
+@XmlType(name = "", propOrder = { "orcid", "orcidId", "orcidDeprecated", "orcidPreferences", "orcidHistory", "orcidBio", "orcidActivities", "orcidInternal" })
 @XmlRootElement(name = "orcid-profile")
 public class OrcidProfile implements Serializable {
 
@@ -64,6 +65,9 @@ public class OrcidProfile implements Serializable {
 
     @XmlElement(name = "orcid-id")
     protected String orcidId;
+
+    @XmlElement(name = "orcid-deprecated")
+    private OrcidDeprecated orcidDeprecated;
 
     @XmlElement(name = "orcid-preferences")
     private OrcidPreferences orcidPreferences;
@@ -333,6 +337,25 @@ public class OrcidProfile implements Serializable {
         this.type = value;
     }
 
+    /**
+     * Gets the value of the orcidDeprecated property.
+     * 
+     * @return possible object is {@link OrcidDeprecated }
+     * */
+    public OrcidDeprecated getOrcidDeprecated() {
+        return orcidDeprecated;
+    }
+
+    /**
+     * Sets the value of the orcidDeprecated property.
+     * 
+     * @param orcidDeprecated
+     *            allowed object is {@link orcidDeprecated }
+     * */
+    public void setOrcidDeprecated(OrcidDeprecated orcidDeprecated) {
+        this.orcidDeprecated = orcidDeprecated;
+    }
+
     public void downgradeToBioOnly() {
         setOrcidActivities(null);
     }
@@ -369,6 +392,7 @@ public class OrcidProfile implements Serializable {
         result = prime * result + ((securityQuestionAnswer == null) ? 0 : securityQuestionAnswer.hashCode());
         result = prime * result + ((type == null) ? 0 : type.hashCode());
         result = prime * result + ((verificationCode == null) ? 0 : verificationCode.hashCode());
+        result = prime * result + ((orcidDeprecated == null) ? 0 : orcidDeprecated.hashCode());
         return result;
     }
 
@@ -423,6 +447,12 @@ public class OrcidProfile implements Serializable {
                 return false;
         } else if (!verificationCode.equals(other.verificationCode))
             return false;
+        if (orcidDeprecated == null) {
+            if (other.getOrcidDeprecated() != null)
+                return false;
+        } else if (!orcidDeprecated.equals(other.getOrcidDeprecated()))
+            return false;
+
         return true;
     }
 

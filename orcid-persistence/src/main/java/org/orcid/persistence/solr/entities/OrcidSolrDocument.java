@@ -92,6 +92,9 @@ public class OrcidSolrDocument {
 
     @Field(SolrConstants.GIVEN_AND_FAMILY_NAMES)
     private String givenAndFamilyNames;
+    
+    @Field(SolrConstants.PRIMARY_RECORD)
+    private String primaryRecord;
 
     public String getOrcid() {
         return orcid;
@@ -246,6 +249,14 @@ public class OrcidSolrDocument {
         this.publicProfileMessage = publicProfileMessage;
     }
 
+    public String getPrimaryRecord() {
+        return primaryRecord;
+    }
+
+    public void setPrimaryRecord(String primaryRecord) {
+        this.primaryRecord = primaryRecord;
+    }
+
     @Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this);
@@ -274,6 +285,7 @@ public class OrcidSolrDocument {
         result = prime * result + ((patentNumbers == null) ? 0 : patentNumbers.hashCode());
         result = prime * result + ((publicProfileMessage == null) ? 0 : publicProfileMessage.hashCode());
         result = prime * result + ((workTitles == null) ? 0 : workTitles.hashCode());
+        result = prime * result + ((primaryRecord == null) ? 0 : primaryRecord.hashCode());
         return result;
     }
 
@@ -380,6 +392,11 @@ public class OrcidSolrDocument {
             if (other.workTitles != null)
                 return false;
         } else if (!workTitles.equals(other.workTitles))
+            return false;
+        if(primaryRecord == null){
+            if(other.primaryRecord != null)
+                return false;
+        } else if(!primaryRecord.equals(other.primaryRecord))
             return false;
         return true;
     }
