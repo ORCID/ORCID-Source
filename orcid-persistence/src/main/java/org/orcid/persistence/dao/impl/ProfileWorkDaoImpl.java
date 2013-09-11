@@ -127,10 +127,11 @@ public class ProfileWorkDaoImpl extends GenericDaoImpl<ProfileWorkEntity, Profil
     @SuppressWarnings("unchecked")
     @Override
     public List<String> findOrcidsNeedingWorkContributorMigration(int chunkSize) {
-        StringBuilder builder = new StringBuilder("SELECT pw.orcid FROM profile_work pw");
-        builder.append(" JOIN work w ON w.work_id = pw.work_id AND w.contributor_json IS NULL");
+        StringBuilder builder = new StringBuilder("SELECT DISTINCT pw.orcid FROM profile_work pw");
+        builder.append(" JOIN work w ON w.work_id = pw.work_id AND w.contributors_json IS NULL");
         builder.append(" JOIN work_contributor wc ON wc.work_id = pw.work_id");
         Query query = entityManager.createNativeQuery(builder.toString());
+        query.setMaxResults(chunkSize);
         return query.getResultList();
     }
 
