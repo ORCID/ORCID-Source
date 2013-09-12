@@ -134,23 +134,7 @@ public class AdminController extends BaseController {
                         // If it was successfully deprecated
                         if (wasDeprecated) {
                             LOGGER.info("Account {} was deprecated to primary account: {}", deprecated.getId(), primary.getId());
-                            // Get the list of emails from the deprecated
-                            // account
-                            Set<EmailEntity> deprecatedAccountEmails = deprecated.getEmails();
-                            if (deprecatedAccountEmails != null) {
-                                // For each email in the deprecated profile
-                                for (EmailEntity email : deprecatedAccountEmails) {
-                                    // Delete each email from the deprecated
-                                    // profile
-                                    LOGGER.info("About to delete email {} from profile {}", email.getId(), email.getProfile().getId());
-                                    emailManager.removeEmail(email.getProfile().getId(), email.getId(), true);
-                                    // Copy that email to the primary profile
-                                    LOGGER.info("About to add email {} to profile {}", email.getId(), primary.getId());
-                                    emailManager.addEmail(primary.getId(), email);
-                                }
-                            }
-                            // Delete all information from deprecated profile
-                            //1. Update profile
+                            //1. Update deprecated profile
                             deprecated.setDeactivationDate(new Date());
                             deprecated.setGivenNames("Given Names Deactivated");
                             deprecated.setFamilyName("Family Name Deactivated");
@@ -164,7 +148,7 @@ public class AdminController extends BaseController {
                             deprecated.setBiography(new String());
                             deprecated.setIso2Country(new String());                            
                             profileEntityManager.updateProfile(deprecated);
-                            
+                                                                                    
                             //2. Remove works
                             if(deprecated.getProfileWorks() != null){
 	                            for(ProfileWorkEntity profileWork : deprecated.getProfileWorks()){
@@ -178,6 +162,21 @@ public class AdminController extends BaseController {
 	                            	externalIdentifierManager.removeExternalIdentifier(deprecated.getId(), externalIdentifier.getExternalIdReference());
 	                            }
                             }
+                            
+                            //4. Move all emails to the primary email
+                            Set<EmailEntity> deprecatedAccountEmails = deprecated.getEmails();
+                            if (deprecatedAccountEmails != null) {
+                                // For each email in the deprecated profile
+                                for (EmailEntity email : deprecatedAccountEmails) {
+                                    // Delete each email from the deprecated
+                                    // profile
+                                    LOGGER.info("About to delete email {} from profile {}", email.getId(), email.getProfile().getId());
+                                    emailManager.removeEmail(email.getProfile().getId(), email.getId(), true);
+                                    // Copy that email to the primary profile
+                                    LOGGER.info("About to add email {} to profile {}", email.getId(), primary.getId());
+                                    emailManager.addEmail(primary.getId(), email);
+                                }
+                            }                                                        
                             
                             // Send notifications
                             LOGGER.info("Sending deprecation notifications to {} and {}", deprecated.getId(), primary.getId());
@@ -218,7 +217,8 @@ public class AdminController extends BaseController {
                 profileDetails.setOrcid(profile.getId());
                 profileDetails.setFamilyName(profile.getFamilyName());
                 profileDetails.setGivenNames(profile.getGivenNames());
-                profileDetails.setEmail(profile.getPrimaryEmail().getId());
+                if(profile.getPrimaryEmail() != null)
+                    profileDetails.setEmail(profile.getPrimaryEmail().getId());
             }
         } else {
             profileDetails.getErrors().add(getMessage("admin.profile_deprecation.errors.inexisting_orcid", orcid));
