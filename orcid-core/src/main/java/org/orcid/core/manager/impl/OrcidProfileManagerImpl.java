@@ -520,7 +520,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
                 if(orcidProfile.getOrcidDeprecated() != null && orcidProfile.getOrcidDeprecated().getPrimaryRecord() != null)
                     return createReservedForClaimOrcidProfile(orcid, orcidProfile.getOrcidDeprecated());
                 else 
-                    return createReservedForClaimOrcidProfile(orcid, null);
+                    return createReservedForClaimOrcidProfile(orcid);
             }
         }
         return null;
@@ -550,6 +550,10 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         return false;
     }
 
+    private OrcidProfile createReservedForClaimOrcidProfile(String orcid) {
+        return createReservedForClaimOrcidProfile(orcid, null);
+    }
+    
     private OrcidProfile createReservedForClaimOrcidProfile(String orcid, OrcidDeprecated deprecatedInfo) {
         OrcidProfile op = new OrcidProfile();
         op.setOrcid(orcid);
