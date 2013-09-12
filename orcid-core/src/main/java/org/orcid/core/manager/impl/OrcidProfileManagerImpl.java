@@ -84,6 +84,7 @@ import org.orcid.jaxb.model.message.GivenPermissionTo;
 import org.orcid.jaxb.model.message.LastModifiedDate;
 import org.orcid.jaxb.model.message.OrcidActivities;
 import org.orcid.jaxb.model.message.OrcidBio;
+import org.orcid.jaxb.model.message.OrcidDeprecated;
 import org.orcid.jaxb.model.message.OrcidHistory;
 import org.orcid.jaxb.model.message.OrcidInternal;
 import org.orcid.jaxb.model.message.OrcidPreferences;
@@ -111,7 +112,6 @@ import org.orcid.persistence.jpa.entities.IndexingStatus;
 import org.orcid.persistence.jpa.entities.OrcidGrantedAuthority;
 import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
-import org.orcid.persistence.jpa.entities.ProfileEventEntity;
 import org.orcid.utils.DateUtils;
 import org.orcid.utils.NullUtils;
 import org.slf4j.Logger;
@@ -517,7 +517,10 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
                     || haveSystemRole()) {
                 return orcidProfile;
             } else {
-                return createReservedForClaimOrcidProfile(orcid);
+                if(orcidProfile.getOrcidDeprecated() != null && orcidProfile.getOrcidDeprecated().getPrimaryRecord() != null)
+                    return createReservedForClaimOrcidProfile(orcid, orcidProfile.getOrcidDeprecated());
+                else 
+                    return createReservedForClaimOrcidProfile(orcid);
             }
         }
         return null;
@@ -548,8 +551,16 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
     }
 
     private OrcidProfile createReservedForClaimOrcidProfile(String orcid) {
+        return createReservedForClaimOrcidProfile(orcid, null);
+    }
+    
+    private OrcidProfile createReservedForClaimOrcidProfile(String orcid, OrcidDeprecated deprecatedInfo) {
         OrcidProfile op = new OrcidProfile();
         op.setOrcid(orcid);
+        
+        if(deprecatedInfo != null)
+            op.setOrcidDeprecated(deprecatedInfo);
+        
         OrcidHistory oh = new OrcidHistory();
         oh.setClaimed(new Claimed(false));
         op.setOrcidHistory(oh);
