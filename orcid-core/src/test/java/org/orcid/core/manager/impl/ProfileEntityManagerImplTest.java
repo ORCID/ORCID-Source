@@ -31,6 +31,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.core.manager.ProfileEntityManager;
+import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.test.DBUnitTest;
 import org.springframework.test.annotation.Rollback;
@@ -78,9 +79,11 @@ public class ProfileEntityManagerImplTest extends DBUnitTest {
     }
     
     @Test
+    @Transactional("transactionManager")
+    @Rollback(true)
     public void testDeprecateProfile() throws Exception {
         ProfileEntity profileEntityToDeprecate = profileEntityManager.findByOrcid("4444-4444-4444-4441");
-        ProfileEntity primaryProfileEntity = profileEntityManager.findByOrcid("4444-4444-4444-4442");        
+        ProfileEntity primaryProfileEntity = profileEntityManager.findByOrcid("4444-4444-4444-4442");
         assertNull(profileEntityToDeprecate.getPrimaryRecord());        
         boolean result = profileEntityManager.deprecateProfile(profileEntityToDeprecate, primaryProfileEntity);
         assertTrue(result);

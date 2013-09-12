@@ -113,8 +113,12 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
      *          The primary profile for the deprecated profile
      * @return true if the account was successfully deprecated, false otherwise
      * */
+    @Override
     public boolean deprecateProfile(ProfileEntity deprecatedProfile, ProfileEntity primaryProfile) {
-        return profileDao.deprecateProfile(deprecatedProfile.getId(), primaryProfile.getId());
+        boolean result = profileDao.deprecateProfile(deprecatedProfile.getId(), primaryProfile.getId());
+        if(result)
+            profileDao.refresh(deprecatedProfile);
+        return result;
     }
 
 }
