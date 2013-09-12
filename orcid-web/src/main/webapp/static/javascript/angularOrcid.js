@@ -677,7 +677,23 @@ function RegistrationCtrl($scope, $compile) {
 	};
 	
 	$scope.getDuplicates = function(){
-		$scope.postRegisterConfirm();
+		$.ajax({
+			//url: $('body').data('baseurl') + 'dupicateResearcher.json?familyNames=test&givenNames=test',	        
+			url: $('body').data('baseurl') + 'dupicateResearcher.json?familyNames=' + $scope.register.familyNames.value + '&givenNames=' + $scope.register.givenNames.value,	        
+	        dataType: 'json',
+	        success: function(data) {
+		       	$scope.duplicates = data;
+		        $scope.$apply();
+		        if ($scope.duplicates.length > 0 ) {
+		        	$scope.showDuplicatesColorBox();
+		        } else {
+		        	$scope.postRegisterConfirm();
+		        }
+	        }
+		}).fail(function(){
+		// something bad is happening!
+			console.log("error fetching register.json");
+		});
 	};
 
 	
