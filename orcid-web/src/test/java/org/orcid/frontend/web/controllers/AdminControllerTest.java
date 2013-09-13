@@ -64,6 +64,7 @@ public class AdminControllerTest extends BaseControllerTest {
     }
 
     @Test
+    @Transactional("transactionManager")
     public void testCheckOrcid() throws Exception {
         ProfileDetails profileDetails = adminController.checkOrcid("4444-4444-4444-4441");
         assertNotNull(profileDetails);
@@ -80,6 +81,7 @@ public class AdminControllerTest extends BaseControllerTest {
     }
 
     @Test
+    @Transactional("transactionManager")
     @Rollback(true)
     public void testDeprecateProfile() throws Exception {
         ProfileEntity toDeprecate = profileDao.find("4444-4444-4444-4441");
@@ -179,6 +181,7 @@ public class AdminControllerTest extends BaseControllerTest {
     }
 
     @Test
+    @Transactional("transactionManager")
     @Rollback(true)
     public void tryToDeprecateDeprecatedProfile() throws Exception {
         ProfileDeprecationRequest result = adminController.deprecateProfile("4444-4444-4444-4441", "4444-4444-4444-4442");
