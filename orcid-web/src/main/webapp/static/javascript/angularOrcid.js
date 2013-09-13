@@ -109,6 +109,7 @@ orcidNgModule.filter('workExternalIdentifierHtml', function(){
 		var type;
 		if (workExternalIdentifier.workExternalIdentifierType != null)
 			type = workExternalIdentifier.workExternalIdentifierType.value;
+		if (type != null) output = output + type.toUpperCase() + ": ";
 		var link = workIdLinkJs.getLink(id,type);
 		if (link != null) 
 		    output = output + "<a href='" + link + "' target='_blank'>" + id + "</a>";
