@@ -7,3 +7,4 @@
 * Restricted contents of &lt;country> to ISO 3611 values. This has always been enforced by the API, but was not explicitly enforced by the XML schema until now.
 * Made <affiliation-name> required.
 * Added &lt;source> to &lt;affiliation>.
+* Added scopes for affiliations (read-limited, update, create).

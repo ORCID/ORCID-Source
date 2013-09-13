@@ -41,11 +41,19 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.orcid.api.common.exception.OrcidBadRequestException;
+import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.oauth.OrcidOAuth2Authentication;
+import org.orcid.jaxb.model.message.Affiliation;
+import org.orcid.jaxb.model.message.AffiliationAddress;
+import org.orcid.jaxb.model.message.AffiliationCity;
+import org.orcid.jaxb.model.message.AffiliationCountry;
+import org.orcid.jaxb.model.message.AffiliationType;
+import org.orcid.jaxb.model.message.Affiliations;
 import org.orcid.jaxb.model.message.ContactDetails;
 import org.orcid.jaxb.model.message.CreditName;
 import org.orcid.jaxb.model.message.Email;
 import org.orcid.jaxb.model.message.GivenNames;
+import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.jaxb.model.message.OrcidActivities;
 import org.orcid.jaxb.model.message.OrcidBio;
 import org.orcid.jaxb.model.message.OrcidMessage;
@@ -74,6 +82,9 @@ public class T2OrcidApiServiceDelegatorTest extends DBUnitTest {
     @Resource(name = "t2OrcidApiServiceDelegatorLatest")
     private T2OrcidApiServiceDelegator t2OrcidApiServiceDelegator;
 
+    @Resource
+    private OrcidProfileManager orcidProfileManager;
+
     @Mock
     private UriInfo mockedUriInfo;
 
@@ -91,6 +102,7 @@ public class T2OrcidApiServiceDelegatorTest extends DBUnitTest {
     @After
     public void after() {
         SecurityContextHolder.clearContext();
+        orcidProfileManager.clearOrcidProfileCache();
     }
 
     @Test
@@ -197,6 +209,33 @@ public class T2OrcidApiServiceDelegatorTest extends DBUnitTest {
         assertEquals("Reserved For Claim", givenNames.getContent());
     }
 
+    @Test
+    public void testAddAffilliations() {
+        setUpSecurityContext(ScopePathType.AFFILIATIONS_CREATE);
+        OrcidMessage orcidMessage = new OrcidMessage();
+        orcidMessage.setMessageVersion("1.0.19");
+        OrcidProfile orcidProfile = new OrcidProfile();
+        orcidMessage.setOrcidProfile(orcidProfile);
+        orcidProfile.setOrcid("4444-4444-4444-4441");
+        OrcidActivities orcidActivities = new OrcidActivities();
+        orcidProfile.setOrcidActivities(orcidActivities);
+        Affiliations affiliations = new Affiliations();
+        orcidActivities.setAffiliations(affiliations);
+        Affiliation affiliation1 = new Affiliation();
+        affiliations.getAffiliation().add(affiliation1);
+        affiliation1.setAffiliationName("A new affilaition");
+        affiliation1.setAffiliationType(AffiliationType.CURRENT_INSTITUTION);
+        AffiliationAddress affiliationAddress = new AffiliationAddress();
+        affiliation1.setAffiliationAddress(affiliationAddress);
+        affiliationAddress.setAffiliationCity(new AffiliationCity("Edinburgh"));
+        affiliationAddress.setAffiliationCountry(new AffiliationCountry(Iso3166Country.GB));
+        Response response = t2OrcidApiServiceDelegator.addAffiliations(mockedUriInfo, "4444-4444-4444-4441", orcidMessage);
+        assertNotNull(response);
+        assertEquals(HttpStatus.SC_CREATED, response.getStatus());
+        String location = ((URI) response.getMetadata().getFirst("Location")).getPath();
+        assertNotNull(location);
+    }
+
     private OrcidMessage createStubOrcidMessage() {
         OrcidMessage orcidMessage = new OrcidMessage();
         orcidMessage.setMessageVersion("1.0.14");
@@ -217,6 +256,10 @@ public class T2OrcidApiServiceDelegatorTest extends DBUnitTest {
     }
 
     private void setUpSecurityContext() {
+        setUpSecurityContext(ScopePathType.ORCID_WORKS_CREATE);
+    }
+
+    private void setUpSecurityContext(ScopePathType... scopePathTypes) {
         SecurityContextImpl securityContext = new SecurityContextImpl();
         OrcidOAuth2Authentication mockedAuthentication = mock(OrcidOAuth2Authentication.class);
         securityContext.setAuthentication(mockedAuthentication);
@@ -224,7 +267,9 @@ public class T2OrcidApiServiceDelegatorTest extends DBUnitTest {
         when(mockedAuthentication.getPrincipal()).thenReturn(new ProfileEntity("4444-4444-4444-4441"));
         AuthorizationRequest authorizationRequest = mock(AuthorizationRequest.class);
         Set<String> scopes = new HashSet<String>();
-        scopes.add(ScopePathType.ORCID_WORKS_CREATE.value());
+        for (ScopePathType scopePathType : scopePathTypes) {
+            scopes.add(scopePathType.value());
+        }
         when(authorizationRequest.getScope()).thenReturn(scopes);
         when(mockedAuthentication.getAuthorizationRequest()).thenReturn(authorizationRequest);
     }

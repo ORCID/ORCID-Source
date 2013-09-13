@@ -30,7 +30,7 @@
     <context:component-scan base-package="org.orcid.api.t2, org.orcid.api.common, org.orcid.core.security"/>
     <aop:aspectj-autoproxy />
     
-    <alias name="t2OrcidApiServiceDelegatorV1_0_17" alias="t2OrcidApiServiceDelegatorLatest"/>
+    <alias name="t2OrcidApiServiceDelegatorV1_0_19" alias="t2OrcidApiServiceDelegatorLatest"/>
     
     <bean id="t2OrcidApiServiceImplLatest" class="org.orcid.api.t2.server.T2OrcidApiServiceImplLatest">
         <property name="serviceDelegator" ref="t2OrcidApiServiceDelegatorLatest"/>
@@ -70,6 +70,12 @@
         <property name="externalVersion" value="1.0.17"/>
         <property name="incomingValidationManager" ref="incomingValidationManagerV1_0_17"/>
         <property name="outgoingValidationManager" ref="outgoingValidationManagerV1_0_17"/>
+    </bean>
+    
+    <bean id="t2OrcidApiServiceDelegatorV1_0_19" class="org.orcid.api.t2.server.delegator.impl.T2OrcidApiServiceVersionedDelegatorImpl">
+        <property name="externalVersion" value="1.0.19"/>
+        <property name="incomingValidationManager" ref="incomingValidationManagerV1_0_19"/>
+        <property name="outgoingValidationManager" ref="outgoingValidationManagerV1_0_19"/>
     </bean>
 
     

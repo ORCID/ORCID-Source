@@ -41,6 +41,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.orcid.api.common.exception.OrcidBadRequestException;
+import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.oauth.OrcidOAuth2Authentication;
 import org.orcid.jaxb.model.message.ContactDetails;
 import org.orcid.jaxb.model.message.CreditName;
@@ -74,6 +75,9 @@ public class T2OrcidApiServiceVersionedDelegatorTest extends DBUnitTest {
     @Resource(name = "t2OrcidApiServiceDelegatorV1_0_14")
     private T2OrcidApiServiceDelegator t2OrcidApiServiceDelegator;
 
+    @Resource
+    private OrcidProfileManager orcidProfileManager;
+
     @Mock
     private UriInfo mockedUriInfo;
 
@@ -91,6 +95,7 @@ public class T2OrcidApiServiceVersionedDelegatorTest extends DBUnitTest {
     @After
     public void after() {
         SecurityContextHolder.clearContext();
+        orcidProfileManager.clearOrcidProfileCache();
     }
 
     @Test
