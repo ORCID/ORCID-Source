@@ -108,14 +108,18 @@ public class EmailDaoImpl extends GenericDaoImpl<EmailEntity, String> implements
     @Override
     @Transactional
     public void removeEmail(String orcid, String email, boolean removeIfPrimary) {
-        String queryStr  = "delete from email_event where email = :email ;"
-               + "delete from email where orcid = :orcid and email = :email ";
-        if (removeIfPrimary) queryStr +=" ;";
-        else  queryStr +="and is_primary != true ;";
-        Query query = entityManager
-                .createNativeQuery(queryStr);
-        query.setParameter("orcid", orcid);
+        String deleteEmailEvent  = "delete from email_event where email = :email ;";
+        String deleteEmail = "delete from email where orcid = :orcid and email = :email";
+        if (removeIfPrimary) deleteEmail +=" ;";
+        else  deleteEmail +=" and is_primary != true ;";
+        
+        Query query = entityManager.createNativeQuery(deleteEmailEvent);        
+        query.setParameter("email", email);                
+        query.executeUpdate();
+        
+        query = entityManager.createNativeQuery(deleteEmail);
         query.setParameter("email", email);
+        query.setParameter("orcid", orcid);
         query.executeUpdate();
     }
 
