@@ -92,7 +92,7 @@ orcidNgModule.factory("prefsSrvc", function ($rootScope) {
 
 
 orcidNgModule.filter('urlWithHttp', function(){
-	return function(input, output){
+	return function(input){
 		if (input == null) return input;
 		if (!input.startsWith('http')) return 'http://' + input; 
 	    return input;
@@ -109,10 +109,11 @@ orcidNgModule.filter('workExternalIdentifierHtml', function(){
 		var type;
 		if (workExternalIdentifier.workExternalIdentifierType != null)
 			type = workExternalIdentifier.workExternalIdentifierType.value;
-		if (type != null) output = output + type.toUpperCase() + ": ";
-		if (type == 'doi' && !id.startsWith("http")) id = 'http://dx.doi.org/' + id;
-		if (id.startsWith("http")) output = output + '<a href="' + id + '" target="_blank">' + id + '</a>';
-		else output = output + id;
+		var link = workIdLinkJs.getLink(id,type);
+		if (link != null) 
+		    output = output + "<a href='" + link + "' target='_blank'>" + id + "</a>";
+		else
+			output = output + id;
 		
 		if (length > 1 && !last) output = output + ',';
 	    return output;
