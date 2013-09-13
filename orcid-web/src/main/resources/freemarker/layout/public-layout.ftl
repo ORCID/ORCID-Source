@@ -24,6 +24,9 @@
 <body data-baseurl="<@spring.url '/'/>">
 <#nested />
 <#include "/common/scripts.ftl" />
+<#if !hideUserVoiceScript??> 
+	<#include "/common/user_voice_script.ftl" />
+</#if>
 </body>
 </html>
 </#macro>
