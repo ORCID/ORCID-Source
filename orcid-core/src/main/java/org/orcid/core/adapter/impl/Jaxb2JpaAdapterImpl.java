@@ -182,6 +182,11 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
     }
 
     private void setWorks(ProfileEntity profileEntity, OrcidWorks orcidWorks) {
+        SortedSet<ProfileWorkEntity> profileWorkEntities = getProfileWorkEntities(profileEntity, orcidWorks);
+        profileEntity.setProfileWorks(profileWorkEntities);
+    }
+
+    private SortedSet<ProfileWorkEntity> getProfileWorkEntities(ProfileEntity profileEntity, OrcidWorks orcidWorks) {
         SortedSet<ProfileWorkEntity> existingProfileWorkEntities = profileEntity.getProfileWorks();
         Map<String, ProfileWorkEntity> existingProfileWorkEntitiesMap = createProfileWorkEntitiesMap(existingProfileWorkEntities);
         SortedSet<ProfileWorkEntity> profileWorkEntities = null;
@@ -202,7 +207,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
                 }
             }
         }
-        profileEntity.setProfileWorks(profileWorkEntities);
+        return profileWorkEntities;
     }
 
     private Map<String, ProfileWorkEntity> createProfileWorkEntitiesMap(SortedSet<ProfileWorkEntity> profileWorkEntities) {
@@ -213,6 +218,13 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             }
         }
         return map;
+    }
+
+    @Override
+    public ProfileWorkEntity getNewProfileWorkEntity(OrcidWork orcidWork, ProfileEntity profileEntity) {
+        ProfileWorkEntity profileWorkEntity = getProfileWorkEntity(orcidWork, null);
+        profileWorkEntity.setProfile(profileEntity);
+        return profileWorkEntity;
     }
 
     private ProfileWorkEntity getProfileWorkEntity(OrcidWork orcidWork, ProfileWorkEntity existingProfileWorkEntity) {

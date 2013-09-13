@@ -181,7 +181,7 @@ public interface OrcidProfileManager {
      * @param orcidProfile
      *            The works to add to the profile.
      */
-    OrcidProfile addOrcidWorks(OrcidProfile orcidProfile);
+    void addOrcidWorks(OrcidProfile orcidProfile);
 
     /**
      * Deletes an ORCID works for the ORCID supplied as a parameter
