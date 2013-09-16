@@ -100,7 +100,7 @@ var OrcidGA = function () {
 				}, 100); 
 		});
 		return false;
-	};
+	};		
 };
 
 var orcidGA = new OrcidGA();

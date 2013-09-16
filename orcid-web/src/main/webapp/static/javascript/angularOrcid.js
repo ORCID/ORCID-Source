@@ -1631,3 +1631,30 @@ function profileDeprecationCtrl($scope,$compile){
 		$.colorbox.close();
 	};
 };
+
+function revokeApplicationFormCtrl($scope,$compile){
+	
+	$scope.confirmRevoke = function(appName, appIndex){
+		$scope.appName = appName;
+		$scope.appIndex = appIndex;
+		$.colorbox({                      
+			html : $compile($('#confirm-revoke-access-modal').html())($scope),
+				transition: 'fade',
+	        	close: '',
+				onLoad: function() {
+				$('#cboxClose').remove();
+			},
+			scrolling: true
+		});
+		$.colorbox.resize({width:"600px" , height:"165px"});
+	};
+	
+	$scope.revokeAccess = function(){
+		orcidGA.gaPush(['_trackEvent', 'Disengagement', 'Revoke_Access', 'OAuth ' + $scope.appName]);
+		orcidGA.gaFormSumbitDelay($('#revokeApplicationForm' + $scope.appIndex));
+	};
+	
+	$scope.closeModal = function() {
+		$.colorbox.close();
+	};
+};

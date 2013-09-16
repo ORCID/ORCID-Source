@@ -227,7 +227,7 @@
 			<h3><b>${springMacroRequestContext.getMessage("manage.trusted_organisations")}</b></h3>
 			<p>${springMacroRequestContext.getMessage("manage.youcanallowpermission")}<br /> <a href="http://support.orcid.org/knowledgebase/articles/131598">${springMacroRequestContext.getMessage("manage.findoutmore")}</a></p>
 			<#if (profile.orcidBio.applications.applicationSummary)??>
-    			<table class="table table-bordered settings-table normal-width">
+    			<table ng-controller="revokeApplicationFormCtrl" class="table table-bordered settings-table normal-width">
     				<thead>
     					<tr>
     						<th width="35%">${springMacroRequestContext.getMessage("manage.thproxy")}</th>
@@ -254,7 +254,7 @@
                                             </#list>
                                         </#if>
                                     </td width="35%">                                    
-                                    <td width="5%"><a onclick="orcidGA.gaPush(['_trackEvent', 'Disengagement', 'Revoke_Access', 'OAuth ${applicationSummary.applicationName.content?js_string}']); orcidGA.gaFormSumbitDelay($('#revokeApplicationForm${applicationSummary_index}')); return false;" class="icon-trash orcid-icon-trash grey" title="${springMacroRequestContext.getMessage("manage.revokeaccess")}"></a></td>
+                                    <td width="5%"><a a href="#" ng-click="confirmRevoke('${applicationSummary.applicationName.content}', '${applicationSummary_index}')" class="icon-trash orcid-icon-trash grey" title="${springMacroRequestContext.getMessage("manage.revokeaccess")}"></a></td>
                                 </form>
                             </tr>
                         </#list>
@@ -263,8 +263,8 @@
 			</#if>
 						
 		</div>
-	</div>
-	
+	</div>	
+			
 	<script type="text/ng-template" id="deactivate-account-modal">
 		<div style="padding: 20px;"><h3>${springMacroRequestContext.getMessage("manage.deactivateSend")} {{primaryEmail}}</h3>
 		<button class="btn" ng-click="closeModal()">${springMacroRequestContext.getMessage("manage.deactivateSend.close")}</button>
@@ -279,7 +279,7 @@
 		<div style="padding: 20px;"><h3>${springMacroRequestContext.getMessage("manage.email.pleaseConfirmDeletion")} {{emailsPojo.emails[deleteEmailIdx].value}}</h3>
 		<button class="btn btn-danger" ng-click="deleteEmail()">${springMacroRequestContext.getMessage("manage.email.deleteEmail")}</button> 
 		<a href="" ng-click="closeModal()">${springMacroRequestContext.getMessage("manage.email.cancel")}</a><div>
-	</script>            
+	</script>		
 	
 	<#-- Script that will display a modal to ask for user password 												-->
 	<#-- If someone wants to use this modal, it should consider the following: 									-->
@@ -293,11 +293,10 @@
 	    <button id="bottom-submit" class="btn btn-primary" ng-click="submitModal()"><@orcid.msg 'check_password_modal.submit'/></button>				
 		<button class="btn" ng-click="closeModal()"><@orcid.msg 'check_password_modal.close'/></button>
 	</script>
-
+	
+	<script type="text/ng-template" id="confirm-revoke-access-modal">
+		<div style="padding: 20px;"><h3>${springMacroRequestContext.getMessage("manage.application_access.revoke.confirm_revoke")} {{appName}}</h3>
+		<button class="btn btn-danger" ng-click="revokeAccess()">${springMacroRequestContext.getMessage("manage.application_access.revoke.confirm")}</button> 
+		<a href="" ng-click="closeModal()">${springMacroRequestContext.getMessage("manage.application_access.revoke.cancel")}</a><div>
+	</script>
 </@protected>
-
-
-
-
-
-
