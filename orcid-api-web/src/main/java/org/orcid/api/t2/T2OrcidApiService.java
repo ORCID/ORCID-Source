@@ -101,7 +101,7 @@ public interface T2OrcidApiService<T> extends OrcidApiService<T> {
     T updateBioDetailsJson(@PathParam("orcid") String orcid, OrcidMessage orcidMessage);
 
     /**
-     * POST an XML representation of the ORCID work containing only works
+     * POST an XML representation of the ORCID record containing only works
      * details
      * 
      * @param orcid
@@ -116,7 +116,7 @@ public interface T2OrcidApiService<T> extends OrcidApiService<T> {
     T addWorksXml(@PathParam("orcid") String orcid, OrcidMessage orcidMessage);
 
     /**
-     * POST a JSON representation of the ORCID work containing only works
+     * POST a JSON representation of the ORCID record containing only works
      * details
      * 
      * @param orcid
@@ -131,7 +131,8 @@ public interface T2OrcidApiService<T> extends OrcidApiService<T> {
     T addWorksJson(@PathParam("orcid") String orcid, OrcidMessage orcidMessage);
 
     /**
-     * PUT an XML representation of the ORCID work containing only works details
+     * PUT an XML representation of the ORCID record containing only works
+     * details
      * 
      * @param orcid
      *            the ORCID that corresponds to the user's record
@@ -145,7 +146,8 @@ public interface T2OrcidApiService<T> extends OrcidApiService<T> {
     T updateWorksXml(@PathParam("orcid") String orcid, OrcidMessage orcidMessage);
 
     /**
-     * PUT a JSON representation of the ORCID work containing only works details
+     * PUT a JSON representation of the ORCID record containing only works
+     * details
      * 
      * @param orcid
      *            the ORCID that corresponds to the user's record
@@ -157,6 +159,66 @@ public interface T2OrcidApiService<T> extends OrcidApiService<T> {
     @Consumes(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(WORKS_PATH)
     T updateWorksJson(@PathParam("orcid") String orcid, OrcidMessage orcidMessage);
+
+    /**
+     * POST an XML representation of the ORCID record containing only
+     * affiliations details
+     * 
+     * @param orcid
+     *            the ORCID that corresponds to the user's record
+     * @return the XML representation of the ORCID record including the added
+     *         affiliations(s)
+     */
+    @POST
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
+    @Consumes(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, MediaType.WILDCARD })
+    @Path(AFFILIATIONS_PATH)
+    T addAffiliationsXml(@PathParam("orcid") String orcid, OrcidMessage orcidMessage);
+
+    /**
+     * POST a JSON representation of the ORCID record containing only
+     * affiliations details
+     * 
+     * @param orcid
+     *            the ORCID that corresponds to the user's record
+     * @return the JSON representation of the ORCID record including the added
+     *         affiliations(s)
+     */
+    @POST
+    @Produces(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Consumes(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(AFFILIATIONS_PATH)
+    T addAffiliationsJson(@PathParam("orcid") String orcid, OrcidMessage orcidMessage);
+
+    /**
+     * PUT an XML representation of the ORCID record containing only
+     * affiliations details
+     * 
+     * @param orcid
+     *            the ORCID that corresponds to the user's record
+     * @return the XML representation of the ORCID record including the added
+     *         affiliations(s)
+     */
+    @PUT
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
+    @Consumes(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, MediaType.WILDCARD })
+    @Path(AFFILIATIONS_PATH)
+    T updateAffiliationsXml(@PathParam("orcid") String orcid, OrcidMessage orcidMessage);
+
+    /**
+     * PUT a JSON representation of the ORCID record containing only
+     * affiliations details
+     * 
+     * @param orcid
+     *            the ORCID that corresponds to the user's record
+     * @return the JSON representation of the ORCID record including the added
+     *         affiliations(s)
+     */
+    @PUT
+    @Produces(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Consumes(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(AFFILIATIONS_PATH)
+    T updateAffiliationsJson(@PathParam("orcid") String orcid, OrcidMessage orcidMessage);
 
     /**
      * POST an XML representation of the ORCID external identifiers containing
@@ -216,10 +278,11 @@ public interface T2OrcidApiService<T> extends OrcidApiService<T> {
 
     /**
      * Register a new webhook to a specific client.
+     * 
      * @param orcid
      *            the ORCID that corresponds to the user's record
      * @param webhook_uri
-     *            the webhook that will be added to the user                    
+     *            the webhook that will be added to the user
      * @return
      * */
     @PUT
@@ -230,10 +293,11 @@ public interface T2OrcidApiService<T> extends OrcidApiService<T> {
 
     /**
      * Register a new webhook to a specific client.
+     * 
      * @param orcid
      *            the ORCID that corresponds to the user's record
      * @param webhook_uri
-     *            the webhook that will be added to the user                    
+     *            the webhook that will be added to the user
      * @return
      * */
     @PUT
@@ -244,10 +308,11 @@ public interface T2OrcidApiService<T> extends OrcidApiService<T> {
 
     /**
      * Unregister a webhook from specific client.
+     * 
      * @param orcid
      *            the ORCID that corresponds to the user's record
      * @param webhook_uri
-     *            the webhook that will be deleted from the user                    
+     *            the webhook that will be deleted from the user
      * @return
      * */
     @DELETE
@@ -258,10 +323,11 @@ public interface T2OrcidApiService<T> extends OrcidApiService<T> {
 
     /**
      * Unregister a webhook from specific client.
+     * 
      * @param orcid
      *            the ORCID that corresponds to the user's record
      * @param webhook_uri
-     *            the webhook that will be deleted from the user                    
+     *            the webhook that will be deleted from the user
      * @return
      * */
     @DELETE

@@ -249,6 +249,8 @@
 	            <bean class="org.orcid.core.version.impl.OrcidMessageVersionConverterImplV1_0_14ToV1_0_15"/>
 	            <bean class="org.orcid.core.version.impl.OrcidMessageVersionConverterImplV1_0_15ToV1_0_16"/>
 	            <bean class="org.orcid.core.version.impl.OrcidMessageVersionConverterImplV1_0_16ToV1_0_17"/>
+                <bean class="org.orcid.core.version.impl.OrcidMessageVersionConverterImplV1_0_17ToV1_0_18"/>
+                <bean class="org.orcid.core.version.impl.OrcidMessageVersionConverterImplV1_0_18ToV1_0_19"/>
 	        </list>
 	    </property>
 	</bean>
