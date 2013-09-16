@@ -131,5 +131,10 @@
         <addAutoIncrement tableName="org_disambiguated" columnName="id" columnDataType="bigint"/>
         <addAutoIncrement tableName="org_disambiguated_external_identifier" columnName="id" columnDataType="bigint"/>
     </changeSet>
+    
+    <changeSet id="ADD-AFFILIATION-SCOPES-TO-EXISTING-CLIENTS" author="Will Simpson">
+        <sql>INSERT INTO client_scope SELECT client_details_id, '/affiliations/update', now(), now() FROM client_scope WHERE scope_type = '/orcid-works/update' AND client_details_id NOT IN (SELECT client_details_id FROM client_scope WHERE scope_type = '/affiliations/update')</sql>
+        <sql>INSERT INTO client_scope SELECT client_details_id, '/affiliations/create', now(), now() FROM client_scope WHERE scope_type = '/orcid-works/create' AND client_details_id NOT IN (SELECT client_details_id FROM client_scope WHERE scope_type = '/affiliations/create')</sql>
+    </changeSet>
 
 </databaseChangeLog>
