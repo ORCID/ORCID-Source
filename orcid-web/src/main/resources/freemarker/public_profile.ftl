@@ -18,7 +18,6 @@
 -->
 <#-- @ftlvariable name="profile" type="org.orcid.jaxb.model.message.OrcidProfile" -->
 <@public >
-<#escape x as x?html>
 <div class="row workspace-top public-profile">
     <div class="span3">
         <div class="workspace-left workspace-profile">
@@ -84,5 +83,4 @@
         </div>
     </div>
 </div>
-</#escape>
 </@public>

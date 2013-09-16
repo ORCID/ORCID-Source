@@ -44,6 +44,7 @@ import org.orcid.jaxb.model.message.Locale;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidType;
 import org.orcid.jaxb.model.message.Visibility;
+import org.orcid.utils.OrcidStringUtils;
 import org.springframework.security.core.userdetails.UserDetails;
 
 /**
@@ -81,6 +82,7 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
     private String creditName;
     private SortedSet<OtherNameEntity> otherNames;
     private SortedSet<ResearcherUrlEntity> researcherUrls;
+    @Column(name = "biography", length = 5000)
     private String biography;
     private String iso2Country;
     private SortedSet<ProfileKeywordEntity> keywords;
@@ -190,13 +192,12 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
         this.creditName = creditName;
     }
 
-    @Column(name = "biography", length = 5000)
     public String getBiography() {
-        return biography;
+        return OrcidStringUtils.stripHtml(biography);
     }
 
     public void setBiography(String biography) {
-        this.biography = biography;
+        this.biography = OrcidStringUtils.stripHtml(biography);
     }
 
     /**
