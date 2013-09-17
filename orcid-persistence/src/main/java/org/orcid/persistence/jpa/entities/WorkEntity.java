@@ -58,6 +58,7 @@ public class WorkEntity extends BaseEntity<Long> implements Comparable<WorkEntit
     private String description;
     private String workUrl;
     private String citation;
+    private String journalTitle;
     private CitationType citationType;
     private WorkType workType;
     private FuzzyDate publicationDate;
@@ -143,6 +144,15 @@ public class WorkEntity extends BaseEntity<Long> implements Comparable<WorkEntit
 
     public void setCitation(String citation) {
         this.citation = citation;
+    }
+
+    @Column(name = "journalTitle", length = 1000)
+    public String getJournalTitle() {
+        return journalTitle;
+    }
+
+    public void setJournalTitle(String journalTitle) {
+        this.journalTitle = journalTitle;
     }
 
     @Basic
@@ -303,6 +313,7 @@ public class WorkEntity extends BaseEntity<Long> implements Comparable<WorkEntit
         citationType = null;
         workType = null;
         publicationDate = null;
+        journalTitle = null;
     }
 
 }
