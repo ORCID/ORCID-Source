@@ -15,7 +15,7 @@
  * =============================================================================
  */
 
-var orcidNgModule = angular.module('orcidApp', ["ngCookies"]);
+var orcidNgModule = angular.module('orcidApp', ['ngCookies','ngSanitize']);
 
 orcidNgModule.directive('ngModelOnblur', function() {
     return {
