@@ -670,7 +670,9 @@ $(function (){
 		var type = $this.attr('wiJs-data');
 		var link = workIdLinkJs.getLink(id,type);
 		if (link != null) 
-		$this.html("<a href='" + link + "' target='_blank'>" + id + "</a>")
+		/* using native element innerHtml to prevent script injection, as innerHTML ignores 
+		 * script tags */
+		$this.get(0).innerHTML = "<a href='" + link + "' target='_blank'>" + id + "</a>";
 	});
 });
 
