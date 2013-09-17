@@ -35,7 +35,7 @@
                 <div class="pull-right" style="right: 145px; top: 20px; width: 15px;"><a href ng-click="deleteWork($index)" class="icon-trash orcid-icon-trash grey"></a></div>
 				<div style="width: 530px;">
                 <h3 class="work-title">
-                	<strong ng-bind="work.workTitle.title.value"></strong><span class="work-subtitle" ng-show="work.workTitle.subtitle.value" ng-bind-html-unsafe="':&nbsp;'.concat(work.workTitle.subtitle.value)"></span>
+                	<strong ng-bind-html="work.workTitle.title.value"></strong><span class="work-subtitle" ng-show="work.workTitle.subtitle.value" ng-bind-html="':&nbsp;'.concat(work.workTitle.subtitle.value)"></span>
                 	<span ng-show="work.publicationDate.month">{{work.publicationDate.month}}-</span><span ng-show="work.publicationDate.year">{{work.publicationDate.year}}</span>
                 </h3>
                 </div>
@@ -45,13 +45,13 @@
 				</div>
 				<div  style="width: 680px;" class="work-metadata">
 	                <span ng-repeat='ie in work.workExternalIdentifiers'>
-	                	<span ng-bind-html-unsafe='ie | workExternalIdentifierHtml:$first:$last:work.workExternalIdentifiers.length'></span>
+	                	<span ng-bind-html='ie | workExternalIdentifierHtml:$first:$last:work.workExternalIdentifiers.length'></span>
 	                </span>
 	                <span ng-show="work.url.value" style=" display: inline-block;">URL: <a href="{{work.url.value | urlWithHttp}}" target="_blank">{{work.url.value}}</a></span>
 	            </div>
                 
-                <div ng-show="work.shortDescription" ng-bind-html-unsafe="work.shortDescription.value" style="width: 680px;"></div>
-                <div ng-show="work.citationForDisplay" class="citation {{work.workCitation.workCitationType.toLowerCase()}}" ng-bind-html-unsafe="work.citationForDisplay" style="width: 680px;"></div>
+                <div ng-show="work.shortDescription" ng-bind-html="work.shortDescription.value" style="width: 680px;"></div>
+                <div ng-show="work.citationForDisplay" class="citation {{work.workCitation.workCitationType.toLowerCase()}}" ng-bind-html="work.citationForDisplay" style="width: 680px;"></div>
             </li>           
 	</ul>
 	<div ng-show="numOfWorksToAdd==null || (numOfWorksToAdd > works.length)" class="text-center">
