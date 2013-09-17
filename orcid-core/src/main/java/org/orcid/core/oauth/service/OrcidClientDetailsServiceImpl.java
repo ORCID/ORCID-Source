@@ -242,7 +242,6 @@ public class OrcidClientDetailsServiceImpl implements OrcidClientDetailsService 
             grantTypeEntity.setClientDetailsEntity(clientDetailsEntity);
             grantTypeEntity.setGrantType(clientAuthorisedGrantType);
             clientAuthorisedGrantTypeEntities.add(grantTypeEntity);
-
         }
         return clientAuthorisedGrantTypeEntities;
     }

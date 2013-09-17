@@ -27,6 +27,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
+import org.orcid.jaxb.model.clientgroup.ClientType;
+import org.orcid.jaxb.model.clientgroup.GroupType;
+
 /**
  * <p>
  * Java class for anonymous complex type.
@@ -48,6 +51,8 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element ref="{http://www.orcid.org/ns/orcid}orcid-internal" minOccurs="0"/>
  *       &lt;/sequence>
  *       &lt;attribute name="type" type="{http://www.orcid.org/ns/orcid}orcid-type" default="user" />
+ *       &lt;attribute name="groupType" type="{http://www.orcid.org/ns/orcid}client-type" default="user" />
+ *       &lt;attribute name="clientType" type="{http://www.orcid.org/ns/orcid}group-type" default="user" />
  *     &lt;/restriction>
  *   &lt;/complexContent>
  * &lt;/complexType>
@@ -87,6 +92,12 @@ public class OrcidProfile implements Serializable {
     @XmlAttribute
     protected OrcidType type;
 
+    @XmlAttribute(name = "group-type")
+    protected GroupType groupType;
+    
+    @XmlAttribute(name = "client-type")
+    protected ClientType clientType;
+    
     // TODO: Look into where this should be
     @XmlTransient
     private String password;
@@ -338,6 +349,48 @@ public class OrcidProfile implements Serializable {
     }
 
     /**
+     * Gets the value of the groupType property.
+     * 
+     * @return possible object is {@link GroupType }
+     * 
+     */
+    public GroupType getGroupType() {
+        return groupType;
+    }
+
+    /**
+     * Sets the value of the groupType property.
+     * 
+     * @param value
+     *            allowed object is {@link GroupType }
+     * 
+     */
+    public void setGroupType(GroupType value) {
+        this.groupType = value;
+    }
+    
+    /**
+     * Gets the value of the clientType property.
+     * 
+     * @return possible object is {@link ClientType }
+     * 
+     */
+    public ClientType getClientType() {
+        return clientType;
+    }
+
+    /**
+     * Sets the value of the clientType property.
+     * 
+     * @param value
+     *            allowed object is {@link ClientType }
+     * 
+     */
+    public void setClientType(ClientType value) {
+        this.clientType = value;
+    }
+    
+    /*
      * Gets the value of the orcidDeprecated property.
      * 
      * @return possible object is {@link OrcidDeprecated }
@@ -355,6 +408,7 @@ public class OrcidProfile implements Serializable {
     public void setOrcidDeprecated(OrcidDeprecated orcidDeprecated) {
         this.orcidDeprecated = orcidDeprecated;
     }
+
 
     public void downgradeToBioOnly() {
         setOrcidActivities(null);
@@ -391,6 +445,8 @@ public class OrcidProfile implements Serializable {
         result = prime * result + ((password == null) ? 0 : password.hashCode());
         result = prime * result + ((securityQuestionAnswer == null) ? 0 : securityQuestionAnswer.hashCode());
         result = prime * result + ((type == null) ? 0 : type.hashCode());
+        result = prime * result + ((groupType == null) ? 0 : groupType.hashCode());
+        result = prime * result + ((clientType == null) ? 0 : clientType.hashCode());
         result = prime * result + ((verificationCode == null) ? 0 : verificationCode.hashCode());
         result = prime * result + ((orcidDeprecated == null) ? 0 : orcidDeprecated.hashCode());
         return result;
@@ -441,6 +497,10 @@ public class OrcidProfile implements Serializable {
         } else if (!securityQuestionAnswer.equals(other.securityQuestionAnswer))
             return false;
         if (type != other.type)
+            return false;
+        if(groupType != other.groupType)
+            return false;
+        if(clientType != other.clientType)
             return false;
         if (verificationCode == null) {
             if (other.verificationCode != null)

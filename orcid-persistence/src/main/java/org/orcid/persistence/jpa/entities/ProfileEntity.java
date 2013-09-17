@@ -40,6 +40,8 @@ import javax.persistence.Transient;
 
 import org.hibernate.annotations.Sort;
 import org.hibernate.annotations.SortType;
+import org.orcid.jaxb.model.clientgroup.ClientType;
+import org.orcid.jaxb.model.clientgroup.GroupType;
 import org.orcid.jaxb.model.message.Locale;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidType;
@@ -76,6 +78,8 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
     // Main fields for publishing
     private String orcid;
     private OrcidType orcidType;
+    private ClientType clientType;
+    private GroupType groupType;
     private String givenNames;
     private String familyName;
     private String creditName;
@@ -163,6 +167,28 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
         this.orcidType = orcidType;
     }
 
+    @Basic
+    @Enumerated(EnumType.STRING)
+    @Column(name = "group_type")
+    public GroupType getGroupType() {
+        return groupType;
+    }
+
+    public void setGroupType(GroupType groupType) {
+        this.groupType = groupType;
+    }
+    
+    @Basic
+    @Enumerated(EnumType.STRING)
+    @Column(name = "client_type")
+    public ClientType getClientType() {
+        return clientType;
+    }
+
+    public void setClientType(ClientType clientType) {
+        this.clientType = clientType;
+    }
+    
     @Column(name = "given_names", length = 150)
     public String getGivenNames() {
         return givenNames;

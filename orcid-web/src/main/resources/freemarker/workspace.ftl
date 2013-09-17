@@ -87,7 +87,38 @@
 			   			</td>		        		
 		        	</tr>
 		        </table>
-			</div>	
+			</div>
+			
+		    <#if ((thirdPartiesForImport)?? && (thirdPartiesForImport)?size &gt; 0)>
+     	        <div class="inline-modal" id="third-parties">					
+					<div class="span9">
+						<a class="btn pull-right close-button">X</a>
+	           			<h1 class="lightbox-title" style="text-transform: uppercase;"><@orcid.msg 'workspace.import_works'/></h1>
+	           		
+	           		</div>
+	           		<br />          		
+    	           	<div class="justify"><@orcid.msg 'workspace.ImportResearchActivities.description'/></div>
+    	           	<br />    	           	
+    	           	<#list thirdPartiesForImport?sort_by("displayName") as thirdPartyDetails>
+                        <#assign redirect = (thirdPartyDetails.redirectUris.redirectUri[0].value) >
+                        <#assign predefScopes = (thirdPartyDetails.redirectUris.redirectUri[0].scopeAsSingleString) >
+                        <strong><a class="third-party-colorbox" href="<@spring.url '/oauth/authorize?client_id=${thirdPartyDetails.clientId}&response_type=code&scope=${predefScopes}&redirect_uri=${redirect}'/>">${thirdPartyDetails.displayName}</a></strong><br />
+                        <div class="justify">${(thirdPartyDetails.shortDescription)!}</div>
+                        <#if (thirdPartyDetails_has_next)><hr /></#if>
+                    </#list>
+                    <br />
+                    <div class="footer">
+	                    <#noescape>
+	                    	<strong><@orcid.msg 'workspace.ImportResearchActivities.footer.title'/></strong>
+	                    </#noescape>
+	                    <br />
+	                    <@orcid.msg 'workspace.ImportResearchActivities.footer.description1'/> <a href="<@orcid.msg 'workspace.ImportResearchActivities.footer.description.url'/>"><@orcid.msg 'workspace.ImportResearchActivities.footer.description.link'/></a> <@orcid.msg 'workspace.ImportResearchActivities.footer.description2'/>
+                    </div>
+    	        </div>
+	        </#if>
+	        <#if (profile.groupType)?? && ((profile.groupType) = "BASIC" || (profile.groupType) = "PREMIUM" || (profile.groupType) = "BASIC_INSTITUTION" || (profile.groupType) = "PREMIUM_INSTITUTION")>
+	        	 <p><a href="<@spring.url "/manage-clients" />">${springMacroRequestContext.getMessage("workspace.ManageClientCredentials")}</a></p>	        	 
+	        </#if>
 			<@security.authorize ifAnyGranted="ROLE_ADMIN">
 				<p><a href="<@spring.url "/deprecate-profile" />"><@orcid.msg 'admin.profile_deprecation.workspace_link' /></a></p>
 			</@security.authorize>

@@ -3,3 +3,5 @@
 * Added Locale to Preferences
 
 * Make make contributor-sequence and contributor-role independent 
+
+* Added group-type and client-type fields 
