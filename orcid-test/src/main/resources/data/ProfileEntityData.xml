@@ -52,6 +52,8 @@
             biography="Terence Alan Patrick Seán 'Spike' Milligan KBE (16 April 1918 – 27 February 2002) was a comedian, writer, musician, poet, playwright, soldier and actor."
             indexing_status="DONE"
             iso2_country="UK"
+            orcid_type="CLIENT"
+            client_type="PREMIUM_CREATOR"
             />
 
     <profile
@@ -82,9 +84,9 @@
             send_orcid_news="false"
             work_visibility_default='PRIVATE'
             credentials_expiry="2013-02-01"
-            group_orcid="4444-4444-4444-4446"
             biography="Michael Bentine CBE (26 January 1922[1] – 26 November 1996[2]) was a British comedian, comic actor and founding member of the Goons."
             indexing_status="DONE"
+            orcid_type="USER"            
             />
 
     <profile
@@ -122,6 +124,8 @@
             biography="Richard Henry Sellers, CBE (8 September 1925 – 24 July 1980), known as Peter Sellers, was a British film actor, comedian and singer."
             indexing_status="DONE"
             iso2_country="UK"
+            orcid_type="CLIENT"
+            client_type="PREMIUM_CREATOR"
             />
 
     <profile
@@ -154,6 +158,8 @@
             group_orcid="4444-4444-4444-4446"
             biography="Sir Harry Donald Secombe, CBE (8 September 1921 – 11 April 2001) was a Welsh entertainer with a talent for comedy and a noted fine tenor singing voice."
             indexing_status="DONE"
+            orcid_type="CLIENT"
+            client_type="PREMIUM_CREATOR"
             />
 
     <profile
@@ -187,6 +193,8 @@
             group_orcid="4444-4444-4444-4446"
             biography="Andrew Timothy (1912–9 December 1990) was an Anglican priest and BBC Radio announcer, who is best remembered for being the original announcer of the comedy series The Goon Show."
             indexing_status="PENDING"
+            orcid_type="CLIENT"
+            client_type="PREMIUM_CREATOR"
             />
 
     <profile
@@ -219,6 +227,8 @@
             credentials_expiry="2013-02-01"
             biography="Billie Holiday (born Eleanora Harris[1][4] April 7, 1915 – July 17, 1959) was an American jazz singer and songwriter."
             indexing_status="PENDING"
+            orcid_type="GROUP"
+            group_type="PREMIUM_INSTITUTION"
             />
 
     <profile

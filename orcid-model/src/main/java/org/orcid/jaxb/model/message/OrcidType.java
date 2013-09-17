@@ -52,10 +52,13 @@ import java.io.Serializable;
 @XmlEnum
 public enum OrcidType implements Serializable {
     @XmlEnumValue("admin")
-    ADMIN("admin"), @XmlEnumValue("user")
-    USER("user"), @XmlEnumValue("group")
-    GROUP("group"), @XmlEnumValue("client")
-    CLIENT("client");
+    ADMIN("admin"), 
+    @XmlEnumValue("user")
+    USER("user"), 
+    @XmlEnumValue("client")
+    CLIENT("client"),
+    @XmlEnumValue("group")
+    GROUP("group");
     private final String value;
 
     OrcidType(String v) {
@@ -65,7 +68,7 @@ public enum OrcidType implements Serializable {
     public String value() {
         return value;
     }
-
+    
     public static OrcidType fromValue(String v) {
         for (OrcidType c : OrcidType.values()) {
             if (c.value.equals(v)) {

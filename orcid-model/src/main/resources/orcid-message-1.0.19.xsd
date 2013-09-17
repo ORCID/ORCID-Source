@@ -99,6 +99,8 @@
                 <xs:element ref="orcid:orcid-internal" minOccurs="0" maxOccurs="1"/>
             </xs:sequence>
             <xs:attribute name="type" type="orcid:orcid-type" default="user"/>
+            <xs:attribute name="client-type" type="orcid:client-type" use="optional"/>
+            <xs:attribute name="group-type" type="orcid:group-type" use="optional"/>
         </xs:complexType>
     </xs:element>
     <xs:element name="orcid-search-results">
@@ -1354,6 +1356,22 @@
             <xs:enumeration value="user"/>
             <xs:enumeration value="group"/>
             <xs:enumeration value="client"/>
+        </xs:restriction>
+    </xs:simpleType>
+     <xs:simpleType name="client-type">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="creator"/>
+            <xs:enumeration value="premium-creator"/>
+            <xs:enumeration value="updater"/>
+            <xs:enumeration value="premium-updater"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="group-type">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="basic"/>
+            <xs:enumeration value="premium"/>
+            <xs:enumeration value="basic-institution"/>
+            <xs:enumeration value="premium-institution"/>
         </xs:restriction>
     </xs:simpleType>
     <xs:attributeGroup name="scope">

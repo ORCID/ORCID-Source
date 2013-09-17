@@ -54,9 +54,12 @@ public enum ClientType {
 
     //@formatter:off
     @XmlEnumValue("creator")
-    CREATOR("creator"), @XmlEnumValue("premium-creator")
-    PREMIUM_CREATOR("premium-creator"), @XmlEnumValue("updater")
-    UPDATER("updater"), @XmlEnumValue("premium-updater")
+    CREATOR("creator"), 
+    @XmlEnumValue("premium-creator")
+    PREMIUM_CREATOR("premium-creator"), 
+    @XmlEnumValue("updater")
+    UPDATER("updater"), 
+    @XmlEnumValue("premium-updater")
     PREMIUM_UPDATER("premium-updater");
     //@formatter:on
 

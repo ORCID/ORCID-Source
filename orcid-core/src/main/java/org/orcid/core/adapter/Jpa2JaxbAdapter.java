@@ -17,6 +17,7 @@
 package org.orcid.core.adapter;
 
 import org.orcid.core.manager.LoadOptions;
+import org.orcid.jaxb.model.clientgroup.OrcidClient;
 import org.orcid.jaxb.model.clientgroup.OrcidClientGroup;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidWork;
@@ -37,6 +38,8 @@ public interface Jpa2JaxbAdapter {
 
     OrcidClientGroup toOrcidClientGroup(ProfileEntity profileEntity);
 
+    OrcidClient toOrcidClient(ProfileEntity profileEntity);
+    
     OrcidWork getOrcidWork(ProfileWorkEntity profileWorkEntity);
 
 }

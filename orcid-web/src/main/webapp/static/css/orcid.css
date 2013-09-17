@@ -2256,6 +2256,10 @@ a.btn-primary:hover {
      text-shadow:none;    
 }
 
+.display-inline {
+	display: inline;
+}
+
 .see-more{
 	display: block;
 	float: right;
@@ -2263,6 +2267,45 @@ a.btn-primary:hover {
 	font-size: 12px;
 }
 
+/*Manage Clients table*/
+
+.clients h4{
+	margin-bottom:0;	
+	padding-bottom:0;
+	color: #A6CE39;
+}
+
+.clients .pull-right{
+	margin-right:5px;	
+}
+
+.clients span{
+	font-weight: bold;	
+}
+
+.clients ul{
+	margin-left:0;
+	padding-left:0;
+}
+
+/* Table proposal */
+.clients table.table caption{
+	text-align: left;
+	color: #A6CE39;
+	font-weight: bold;
+} 
+
+#view-details-modal #cboxClose{
+	float: right;
+	display: block;
+	top: 10px;
+	right: 29px;
+	position: absolute;	
+}
+
+#edit-client-modal .control-group{
+	margin-bottom:0px;
+}
 
 .orcid-icon-trash {
 	background-color: white;

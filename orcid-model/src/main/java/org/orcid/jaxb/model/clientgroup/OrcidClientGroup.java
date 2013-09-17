@@ -35,6 +35,7 @@ import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
@@ -52,6 +53,7 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
+ *         &lt;element ref="{http://www.orcid.org/ns/orcid}type"/>
  *         &lt;element ref="{http://www.orcid.org/ns/orcid}group-orcid" minOccurs="0"/>
  *         &lt;element ref="{http://www.orcid.org/ns/orcid}group-name"/>
  *         &lt;element ref="{http://www.orcid.org/ns/orcid}email"/>
@@ -65,11 +67,13 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "groupOrcid", "groupName", "email", "orcidClient" })
+@XmlType(name = "", propOrder = { "groupOrcid", "type", "groupName", "email", "orcidClient" })
 @XmlRootElement(name = "orcid-client-group")
 public class OrcidClientGroup implements Serializable {
 
     private final static long serialVersionUID = 1L;
+    @XmlAttribute(name = "type")
+    GroupType type;
     @XmlElement(name = "group-orcid")
     protected String groupOrcid;
     @XmlElement(name = "group-name", required = true)
@@ -79,6 +83,28 @@ public class OrcidClientGroup implements Serializable {
     @XmlElement(name = "orcid-client", required = true)
     protected List<OrcidClient> orcidClient;
 
+    
+    /**
+     * Gets the value of the type property.
+     * 
+     * @return possible object is {@link GroupType }
+     * 
+     */
+    public GroupType getType() {
+        return type;
+    }
+
+    /**
+     * Sets the value of the type property.
+     * 
+     * @param value
+     *            allowed object is {@link GroupType }
+     * 
+     */
+    public void setType(GroupType type) {
+        this.type = type;
+    }
+           
     /**
      * Gets the value of the groupOrcid property.
      * 
