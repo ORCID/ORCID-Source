@@ -429,6 +429,20 @@
 		<sql>UPDATE profile SET group_type='PREMIUM_INSTITUTION' where orcid='0000-0003-4293-0137' AND orcid_type in ('CLIENT','GROUP');</sql>
 		<sql>UPDATE profile SET client_type='CREATOR' where orcid='0000-0002-5471-7088' AND orcid_type in ('CLIENT','GROUP');</sql>
 		<sql>UPDATE profile SET group_type='BASIC_INSTITUTION' where orcid='0000-0003-4516-3332' AND orcid_type in ('CLIENT','GROUP');</sql>
+		<sql>UPDATE profile SET client_type='CREATOR' where orcid='0000-0001-5600-7840' AND orcid_type in ('CLIENT','GROUP');</sql>
+		<sql>UPDATE profile SET group_type='BASIC_INSTITUTION' where orcid='0000-0001-8598-3584' AND orcid_type in ('CLIENT','GROUP');</sql>
+		<sql>UPDATE profile SET client_type='CREATOR' where orcid='0000-0002-1929-7970' AND orcid_type in ('CLIENT','GROUP');</sql>
+		<sql>UPDATE profile SET group_type='BASIC_INSTITUTION' where orcid='0000-0002-8090-5066' AND orcid_type in ('CLIENT','GROUP');</sql>
+		<sql>UPDATE profile SET client_type='CREATOR' where orcid='0000-0002-8848-1560' AND orcid_type in ('CLIENT','GROUP');</sql>
+		<sql>UPDATE profile SET group_type='BASIC_INSTITUTION' where orcid='0000-0001-6915-0435' AND orcid_type in ('CLIENT','GROUP');</sql>
+		<sql>UPDATE profile SET client_type='CREATOR' where orcid='0000-0003-0158-5613' AND orcid_type in ('CLIENT','GROUP');</sql>
+		<sql>UPDATE profile SET group_type='BASIC_INSTITUTION' where orcid='0000-0003-3774-3986' AND orcid_type in ('CLIENT','GROUP');</sql>
+		<sql>UPDATE profile SET client_type='UPDATER' where orcid='0000-0001-7954-6302' AND orcid_type in ('CLIENT','GROUP');</sql>
+		<sql>UPDATE profile SET group_type='BASIC' where orcid='0000-0001-6725-664X' AND orcid_type in ('CLIENT','GROUP');</sql>
+		<sql>UPDATE profile SET client_type='UPDATER' where orcid='0000-0002-3289-9028' AND orcid_type in ('CLIENT','GROUP');</sql>
+		<sql>UPDATE profile SET group_type='BASIC' where orcid='0000-0003-3653-5501' AND orcid_type in ('CLIENT','GROUP');</sql>
+		<sql>UPDATE profile SET client_type='CREATOR' where orcid='0000-0002-5314-0686' AND orcid_type in ('CLIENT','GROUP');</sql>
+		<sql>UPDATE profile SET group_type='BASIC_INSTITUTION' where orcid='0000-0002-7836-5486' AND orcid_type in ('CLIENT','GROUP');</sql>
 	</changeSet>
     
     <changeSet id="MERGE-CrossRef-GROUPS" author="Angel Montenegro">
