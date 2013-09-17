@@ -32,6 +32,7 @@ import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.jaxb.model.message.Orcid;
 import org.orcid.jaxb.model.message.OrcidProfile;
+import org.orcid.jaxb.model.message.OrcidType;
 import org.orcid.test.DBUnitTest;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -106,7 +107,7 @@ public class OrcidAuthorizationCodeServiceTest extends DBUnitTest {
         authorizationRequest.setResourceIds(resourceIds);
         OrcidProfile profile = new OrcidProfile();
         profile.setOrcid(new Orcid("4444-4444-4444-4445"));
-        OrcidProfileUserDetails details = new OrcidProfileUserDetails("4444-4444-4444-4445", "test123@semantico.com", "encrypted_password");
+        OrcidProfileUserDetails details = new OrcidProfileUserDetails("4444-4444-4444-4445", "test123@semantico.com", "encrypted_password", OrcidType.USER);
         Authentication userAuthentication = new UsernamePasswordAuthenticationToken(details, "password");
 
         return new AuthorizationRequestHolder(authorizationRequest, userAuthentication);

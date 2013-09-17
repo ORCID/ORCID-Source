@@ -26,10 +26,12 @@ import javax.annotation.Resource;
 import javax.ws.rs.core.Response;
 
 import org.orcid.api.common.delegator.OrcidApiServiceDelegator;
+import org.orcid.api.common.exception.OrcidDeprecatedException;
 import org.orcid.api.common.exception.OrcidNotFoundException;
 import org.orcid.core.exception.OrcidSearchException;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.manager.OrcidSearchManager;
+import org.orcid.core.security.DeprecatedException;
 import org.orcid.core.security.visibility.aop.VisibilityControl;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidProfile;
@@ -38,6 +40,8 @@ import org.orcid.jaxb.model.message.OrcidSearchResults;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+
+import com.sun.jersey.api.client.ClientResponse.Status;
 
 /**
  * This class will retrieve {@link OrcidProfile}s and return them for use in the
@@ -158,7 +162,7 @@ public class OrcidApiServiceDelegatorImpl implements OrcidApiServiceDelegator {
     @VisibilityControl
     public Response findFullDetailsFromPublicCache(String orcid) {
         try {
-            OrcidMessage orcidMessage = orcidSearchManager.findPublicProfileById(orcid);
+            OrcidMessage orcidMessage = orcidSearchManager.findPublicProfileById(orcid);            
             return getOrcidMessageResponse(orcidMessage, orcid);
         } catch (OrcidSearchException e) {
             LOGGER.warn("Error searching, so falling back to DB", e);
@@ -249,14 +253,29 @@ public class OrcidApiServiceDelegatorImpl implements OrcidApiServiceDelegator {
     }
 
     private Response getOrcidMessageResponse(OrcidMessage orcidMessage, String requestedOrcid) {
+        boolean isProfileDeprecated = false;
         if (orcidMessage == null) {
             throw new OrcidNotFoundException("ORCID " + requestedOrcid + " not found");
         }
         OrcidProfile orcidProfile = orcidMessage.getOrcidProfile();
         if (orcidProfile != null) {
             orcidProfile.setOrcidInternal(null);
+            //If profile is deprecated
+            if(orcidMessage.getOrcidProfile().getOrcidDeprecated() != null){
+                isProfileDeprecated = true;
+            }
+        }                
+        
+        Response response = null; 
+        
+        if(isProfileDeprecated){
+            //TODO: internationalize these messages
+            throw new DeprecatedException("This account is deprecated. Please refer to account: " + orcidProfile.getOrcidDeprecated().getPrimaryRecord().getOrcid().getValue());            
+        } else {
+            response = Response.ok(orcidMessage).build();
         }
-        return Response.ok(orcidMessage).build();
+        
+        return response;
     }
 
     private Response getOrcidSearchResultsResponse(OrcidSearchResults orcidSearchResults, String query) {

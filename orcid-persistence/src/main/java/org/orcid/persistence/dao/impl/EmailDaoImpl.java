@@ -82,21 +82,44 @@ public class EmailDaoImpl extends GenericDaoImpl<EmailEntity, String> implements
     @Override
     @Transactional
     public void addEmail(String orcid, String email, Visibility visibility, String sourceOrcid) {
+        addEmail(orcid, email, visibility, sourceOrcid, false, false);
+    }
+
+    @Override
+    @Transactional
+    public void addEmail(String orcid, String email, Visibility visibility, String sourceOrcid, boolean isVerified, boolean isCurrent) {
         Query query = entityManager
-                .createNativeQuery("INSERT INTO email (date_created, last_modified, orcid, email, is_primary, visibility, source_id) VALUES (now(), now(), :orcid, :email, 'false', :visibility, :sourceOrcid)");
+                .createNativeQuery("INSERT INTO email (date_created, last_modified, orcid, email, is_primary, is_verified, is_current, visibility, source_id) VALUES (now(), now(), :orcid, :email, false, :isVerified, :isCurrent, :visibility, :sourceOrcid)");
         query.setParameter("orcid", orcid);
         query.setParameter("email", email);
         query.setParameter("visibility", visibility.name());
         query.setParameter("sourceOrcid", sourceOrcid);
+        query.setParameter("isVerified", isVerified);
+        query.setParameter("isCurrent", isCurrent);
         query.executeUpdate();
     }
 
     @Override
     @Transactional
     public void removeEmail(String orcid, String email) {
-        Query query = entityManager.createQuery("delete from EmailEntity where orcid = :orcid and email = :email and primary != 'true'");
-        query.setParameter("orcid", orcid);
+        removeEmail(orcid, email, false);
+    }
+
+    @Override
+    @Transactional
+    public void removeEmail(String orcid, String email, boolean removeIfPrimary) {
+        String deleteEmailEvent  = "delete from email_event where email = :email ;";
+        String deleteEmail = "delete from email where orcid = :orcid and email = :email";
+        if (removeIfPrimary) deleteEmail +=" ;";
+        else  deleteEmail +=" and is_primary != true ;";
+        
+        Query query = entityManager.createNativeQuery(deleteEmailEvent);        
+        query.setParameter("email", email);                
+        query.executeUpdate();
+        
+        query = entityManager.createNativeQuery(deleteEmail);
         query.setParameter("email", email);
+        query.setParameter("orcid", orcid);
         query.executeUpdate();
     }
 

@@ -22,7 +22,9 @@ import javax.annotation.Resource;
 
 import org.orcid.core.manager.EmailManager;
 import org.orcid.jaxb.model.message.Email;
+import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.persistence.dao.EmailDao;
+import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -48,6 +50,12 @@ public class EmailManagerImpl implements EmailManager {
 
     @Override
     @Transactional
+    public void addEmail(String orcid, EmailEntity email){
+    	emailDao.addEmail(orcid, email.getId(), email.getVisibility(), email.getSource() == null ? null : email.getSource().getId(), email.getVerified(), email.getCurrent());
+    }
+    
+    @Override
+    @Transactional
     public void updateEmails(String orcid, Collection<Email> emails) {
         int primaryCount = 0;
         for (Email email : emails) {
@@ -68,4 +76,9 @@ public class EmailManagerImpl implements EmailManager {
         emailDao.removeEmail(orcid, email);
     }
 
+    @Override
+    @Transactional
+    public void removeEmail(String orcid, String email, boolean removeIfPrimary) {
+        emailDao.removeEmail(orcid, email, removeIfPrimary);
+    }
 }

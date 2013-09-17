@@ -86,6 +86,7 @@ import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.IndexingStatus;
 import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.orcid.persistence.jpa.entities.SecurityQuestionEntity;
 import org.orcid.persistence.jpa.entities.SubjectEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.utils.DateUtils;
@@ -126,6 +127,9 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
     @Resource
     private GenericDao<WorkEntity, Long> workDao;
 
+    @Resource(name = "securityQuestionDao")
+    private GenericDao<SecurityQuestionEntity, Integer> securityQuestionDao;
+
     @Mock
     private NotificationManager notificationManager;
 
@@ -133,6 +137,7 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
     @Transactional
     @Rollback
     public void before() throws Exception {
+
         OrcidProfileManagerImpl orcidProfileManagerImpl = getTargetObject(orcidProfileManager, OrcidProfileManagerImpl.class);
         orcidProfileManagerImpl.setNotificationManager(notificationManager);
 
@@ -177,6 +182,14 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
         ProfileEntity delegateProfileEntity = profileDao.find(delegateProfile.getOrcid().getValue());
         delegateProfileEntity.setTokenDetails(tokens);
         profileDao.merge(delegateProfileEntity);
+
+        SecurityQuestionEntity existingSecurityQuestionEntity = securityQuestionDao.find(3);
+        if (existingSecurityQuestionEntity == null) {
+            SecurityQuestionEntity securityQuestionEntity = new SecurityQuestionEntity();
+            securityQuestionEntity.setId(3);
+            securityQuestionEntity.setQuestion("What?");
+            securityQuestionDao.persist(securityQuestionEntity);
+        }
     }
 
     @After
@@ -835,18 +848,20 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
 
         String hashedPasswordValue = retrievedProfile.getPassword();
         assertTrue("Should have hashed password", 108 == hashedPasswordValue.length() && !"password".equals(hashedPasswordValue));
-        assertTrue("Should have decrypted security answer", "random answer".equals(retrievedProfile.getSecurityQuestionAnswer()));
+        assertEquals("Should have security question", 3, retrievedProfile.getOrcidInternal().getSecurityDetails().getSecurityQuestionId().getValue());
+        assertEquals("Should have decrypted security answer", "random answer", retrievedProfile.getSecurityQuestionAnswer());
 
         retrievedProfile.setPassword("A new password");
 
-        OrcidProfile updatedProfile = orcidProfileManager.updatePasswordInformation(retrievedProfile);
-        updatedProfile = orcidProfileManager.retrieveOrcidProfile(updatedProfile.getOrcid().getValue());
-        // retrieve orcid so as to decrypt
+        orcidProfileManager.updatePasswordInformation(retrievedProfile);
 
-        OrcidProfile retrieved = orcidProfileManager.retrieveOrcidProfile(updatedProfile.getOrcid().getValue());
-        assertTrue("Password should have changed and be hashed", 108 == hashedPasswordValue.length() && !hashedPasswordValue.equals(retrieved.getPassword()));
-        assertTrue("Should have decrypted security answer", "random answer".equals(retrievedProfile.getSecurityQuestionAnswer()));
+        OrcidProfile updatedProfile = orcidProfileManager.retrieveOrcidProfile(profile1.getOrcid().getValue());
 
+        String updatedPassword = updatedProfile.getPassword();
+        assertEquals("Password should be hashed", 108, updatedPassword.length());
+        assertFalse("Password should have changed but was still: " + updatedPassword, hashedPasswordValue.equals(updatedPassword));
+        assertEquals("Should have security question", 3, updatedProfile.getOrcidInternal().getSecurityDetails().getSecurityQuestionId().getValue());
+        assertEquals("Should have decrypted security answer", "random answer", updatedProfile.getSecurityQuestionAnswer());
     }
 
     @Test
@@ -862,18 +877,18 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
 
         String hashedPasswordValue = retrievedProfile.getPassword();
         assertTrue("Should have hashed password", 108 == hashedPasswordValue.length() && !"password".equals(hashedPasswordValue));
+        assertEquals("Should have security question", 3, retrievedProfile.getOrcidInternal().getSecurityDetails().getSecurityQuestionId().getValue());
         assertTrue("Should have decrypted security answer", "random answer".equals(retrievedProfile.getSecurityQuestionAnswer()));
 
         retrievedProfile.setSecurityQuestionAnswer("A new random answer");
 
-        OrcidProfile updatedProfile = orcidProfileManager.updatePasswordSecurityQuestionsInformation(retrievedProfile);
-        updatedProfile = orcidProfileManager.retrieveOrcidProfile(updatedProfile.getOrcid().getValue());
-        // retrieve orcid so as to decrypt
+        orcidProfileManager.updateSecurityQuestionInformation(retrievedProfile);
 
-        OrcidProfile retrieved = orcidProfileManager.retrieveOrcidProfile(updatedProfile.getOrcid().getValue());
-        assertTrue("Password should not have changed", hashedPasswordValue.equals(retrieved.getPassword()));
-        assertEquals("A new random answer", retrieved.getSecurityQuestionAnswer());
+        OrcidProfile updatedProfile = orcidProfileManager.retrieveOrcidProfile(profile1.getOrcid().getValue());
 
+        assertTrue("Password should not have changed", hashedPasswordValue.equals(updatedProfile.getPassword()));
+        assertEquals("Should have security question", 3, updatedProfile.getOrcidInternal().getSecurityDetails().getSecurityQuestionId().getValue());
+        assertEquals("A new random answer", updatedProfile.getSecurityQuestionAnswer());
     }
 
     @Test

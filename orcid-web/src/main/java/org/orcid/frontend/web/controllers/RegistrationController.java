@@ -36,6 +36,7 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
 import org.jasypt.exceptions.EncryptionOperationNotPossibleException;
 import org.orcid.core.manager.EncryptionManager;
+import org.orcid.core.manager.LoadOptions;
 import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.manager.OrcidSearchManager;
@@ -70,6 +71,9 @@ import org.orcid.jaxb.model.message.SubmissionDate;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.message.WorkVisibilityDefault;
 import org.orcid.password.constants.OrcidPasswordConstants;
+import org.orcid.persistence.dao.EmailDao;
+import org.orcid.persistence.dao.ProfileDao;
+import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.pojo.DupicateResearcher;
 import org.orcid.pojo.Redirect;
 import org.orcid.pojo.ajaxForm.Checkbox;
@@ -142,6 +146,12 @@ public class RegistrationController extends BaseController {
     @Resource
     private NotificationManager notificationManager;
 
+    @Resource
+    private ProfileDao profileDao;
+
+    @Resource
+    private EmailDao emailDao;
+
     public void setEncryptionManager(EncryptionManager encryptionManager) {
         this.encryptionManager = encryptionManager;
     }
@@ -166,11 +176,11 @@ public class RegistrationController extends BaseController {
     public Map<String, String> retrieveSecurityQuestionsAsMap() {
         Map<String, String> securityQuestions = securityQuestionManager.retrieveSecurityQuestionsAsInternationalizedMap();
         Map<String, String> securityQuestionsWithMessages = new LinkedHashMap<String, String>();
-        
-        for(String key : securityQuestions.keySet()){
+
+        for (String key : securityQuestions.keySet()) {
             securityQuestionsWithMessages.put(key, getMessage(securityQuestions.get(key)));
         }
-        
+
         return securityQuestionsWithMessages;
     }
 
@@ -297,7 +307,7 @@ public class RegistrationController extends BaseController {
         passwordConfirmValidate(reg.getPasswordConfirm(), reg.getPassword());
         return reg;
     }
-   
+
     @RequestMapping(value = "/registerPasswordValidate.json", method = RequestMethod.POST)
     public @ResponseBody
     Registration registerPasswordValidate(@RequestBody Registration reg) {
@@ -471,7 +481,7 @@ public class RegistrationController extends BaseController {
             return mav;
         }
 
-        OrcidProfile profile = orcidProfileManager.retrieveOrcidProfileByEmail(submittedEmail);
+        OrcidProfile profile = orcidProfileManager.retrieveOrcidProfileByEmail(submittedEmail, LoadOptions.BIO_ONLY);
         // if the email can't be found on the system, then add to errors
         if (profile == null) {
 
@@ -559,7 +569,7 @@ public class RegistrationController extends BaseController {
             return new ModelAndView("redirect:/reset-password");
         }
 
-        OrcidProfile retrievedProfile = orcidProfileManager.retrieveOrcidProfileByEmail(passwordResetToken.getEmail());
+        OrcidProfile retrievedProfile = orcidProfileManager.retrieveOrcidProfileByEmail(passwordResetToken.getEmail(), LoadOptions.INTERNAL_ONLY);
         if (StringUtils.isNotBlank(retrievedProfile.getSecurityQuestionAnswer())) {
 
             // if have a answer without a question something has gone wrong
@@ -571,31 +581,30 @@ public class RegistrationController extends BaseController {
         // otherwise, straight to the screen with the option to set a security
         // question
         return buildPasswordScreenWithOptionalSecurityQuestion(form);
-    }    
-    
+    }
+
     @RequestMapping(value = "/reset-password-form-validate.json", method = RequestMethod.POST)
     public @ResponseBody
     PasswordTypeAndConfirmForm resetPasswordConfirmValidate(@RequestBody PasswordTypeAndConfirmForm resetPasswordForm) {
         resetPasswordValidateFields(resetPasswordForm.getPassword(), resetPasswordForm.getRetypedPassword());
         return resetPasswordForm;
     }
-    
-    
+
     private void resetPasswordValidateFields(Text password, Text retypedPassword) {
         password.setErrors(new ArrayList<String>());
-        retypedPassword.setErrors(new ArrayList<String>());        
-        
+        retypedPassword.setErrors(new ArrayList<String>());
+
         // validate password regex
         if (password.getValue() == null || !password.getValue().matches(OrcidPasswordConstants.ORCID_PASSWORD_REGEX)) {
             setError(password, "Pattern.registrationForm.password");
         }
-        
+
         // validate passwords match
         if (retypedPassword.getValue() != null && !retypedPassword.getValue().equals(password.getValue())) {
             setError(retypedPassword, "FieldMatch.registrationForm");
-        }                        
+        }
     }
-    
+
     @RequestMapping(value = "/password-reset.json", method = RequestMethod.GET)
     public @ResponseBody
     PasswordTypeAndConfirmForm getResetPassword(HttpServletRequest request) {
@@ -603,7 +612,7 @@ public class RegistrationController extends BaseController {
         form.setPassword(new Text());
         form.setRetypedPassword(new Text());
         return form;
-    }    
+    }
 
     private ModelAndView buildPasswordScreenWithOptionalSecurityQuestion(OneTimeResetPasswordForm oneTimeResetPasswordForm) {
         ModelAndView combinedView = new ModelAndView("password_one_time_reset_optional_security_questions");
@@ -635,7 +644,7 @@ public class RegistrationController extends BaseController {
             BindingResult bindingResult, RedirectAttributes redirectAttributes) {
 
         PasswordResetToken passwordResetToken = buildResetTokenFromEncryptedLink(encryptedEmail);
-        OrcidProfile retrievedProfile = orcidProfileManager.retrieveOrcidProfileByEmail(passwordResetToken.getEmail());
+        OrcidProfile retrievedProfile = orcidProfileManager.retrieveOrcidProfileByEmail(passwordResetToken.getEmail(), LoadOptions.INTERNAL_ONLY);
 
         if (bindingResult.hasErrors()) {
             ModelAndView errorView = buildAnswerSecurityQuestionView(encryptedEmail, redirectAttributes);
@@ -677,7 +686,7 @@ public class RegistrationController extends BaseController {
             return errorView;
         }
 
-        OrcidProfile passwordOnlyProfileUpdate = orcidProfileManager.retrieveOrcidProfileByEmail(passwordResetToken.getEmail());
+        OrcidProfile passwordOnlyProfileUpdate = orcidProfileManager.retrieveOrcidProfileByEmail(passwordResetToken.getEmail(), LoadOptions.INTERNAL_ONLY);
         passwordOnlyProfileUpdate.setPassword(passwordTypeAndConfirmForm.getPassword() == null ? null : passwordTypeAndConfirmForm.getPassword().getValue());
         return updatePasswordAndGoToAccountsPage(passwordOnlyProfileUpdate);
     }
@@ -701,7 +710,7 @@ public class RegistrationController extends BaseController {
 
         }
         // update password, and optionally question and answer
-        OrcidProfile profileToUpdate = orcidProfileManager.retrieveOrcidProfileByEmail(passwordResetToken.getEmail());
+        OrcidProfile profileToUpdate = orcidProfileManager.retrieveOrcidProfileByEmail(passwordResetToken.getEmail(), LoadOptions.INTERNAL_ONLY);
         profileToUpdate.setPassword(oneTimeResetPasswordForm.getPassword().getValue());
         if (oneTimeResetPasswordForm.isSecurityDetailsPopulated()) {
             profileToUpdate.getOrcidInternal().getSecurityDetails().setSecurityQuestionId(new SecurityQuestionId(oneTimeResetPasswordForm.getSecurityQuestionId()));
@@ -720,7 +729,7 @@ public class RegistrationController extends BaseController {
 
     private Integer deriveSecurityIdByEmailForUser(String email) {
         Integer securityQuestionVal = null;
-        OrcidProfile retrievedProfile = orcidProfileManager.retrieveOrcidProfileByEmail(email);
+        OrcidProfile retrievedProfile = orcidProfileManager.retrieveOrcidProfileByEmail(email, LoadOptions.INTERNAL_ONLY);
         if (retrievedProfile != null) {
             SecurityQuestionId securityQuestion = retrievedProfile.getOrcidInternal().getSecurityDetails().getSecurityQuestionId();
             securityQuestionVal = securityQuestion != null ? (int) retrievedProfile.getOrcidInternal().getSecurityDetails().getSecurityQuestionId().getValue() : null;
@@ -818,18 +827,22 @@ public class RegistrationController extends BaseController {
 
     private ModelAndView buildVerificationView(HttpServletRequest request, String encryptedEmail, RedirectAttributes redirectAttributes)
             throws UnsupportedEncodingException, NoSuchRequestHandlingMethodException {
-    	try {
-	        String decryptedEmail = encryptionManager.decryptForExternalUse(new String(Base64.decodeBase64(encryptedEmail), "UTF-8"));
-	        if (!isEmailOkForCurrentUser(decryptedEmail)) {
-	            return new ModelAndView("wrong_user");
-	        }
-	        OrcidProfile orcidProfile = orcidProfileManager.retrieveOrcidProfileByEmail(decryptedEmail);
-	        confirmEmailAndClaim(decryptedEmail, orcidProfile, null, request);
-	        redirectAttributes.addFlashAttribute("emailVerified", true);
-    	} catch (EncryptionOperationNotPossibleException eonpe){
-    		LOGGER.warn("Error decypting verify email from the verify email link");
-    		redirectAttributes.addFlashAttribute("invalidVerifyUrl", true);    		
-    	}
+        try {
+            String decryptedEmail = encryptionManager.decryptForExternalUse(new String(Base64.decodeBase64(encryptedEmail), "UTF-8"));
+            EmailEntity emailEntity = emailDao.find(decryptedEmail);
+            String emailOrcid = emailEntity.getProfile().getId();
+            if (!getCurrentUserOrcid().equals(emailOrcid)) {
+                return new ModelAndView("wrong_user");
+            }
+            emailEntity.setVerified(true);
+            emailEntity.setCurrent(true);
+            emailDao.merge(emailEntity);
+            profileDao.updateLocale(emailOrcid, org.orcid.jaxb.model.message.Locale.fromValue(RequestContextUtils.getLocale(request).toString()));
+            redirectAttributes.addFlashAttribute("emailVerified", true);
+        } catch (EncryptionOperationNotPossibleException eonpe) {
+            LOGGER.warn("Error decypting verify email from the verify email link");
+            redirectAttributes.addFlashAttribute("invalidVerifyUrl", true);
+        }
         return new ModelAndView("redirect:/my-orcid");
     }
 

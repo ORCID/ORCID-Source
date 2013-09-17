@@ -68,6 +68,7 @@ public class BaseControllerTest extends DBUnitTest {
         if (orcidProfile == null) {
             orcidProfile = getOrcidProfile();
         }
+
         OrcidProfileUserDetails details = null;
         if(orcidProfile.getType() != null){        	
         	details = new OrcidProfileUserDetails(orcidProfile.getOrcid().getValue(), orcidProfile.getOrcidBio().getContactDetails().getEmail()

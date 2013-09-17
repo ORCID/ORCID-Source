@@ -38,11 +38,20 @@ public class PublicProfileController extends BaseWorkspaceController {
 
         request.getSession().removeAttribute(PUBLIC_WORKS_RESULTS_ATTRIBUTE);
         OrcidProfile profile = orcidProfileManager.retrievePublicOrcidProfile(orcid);
-        List<CurrentWork> currentWorks = getCurrentWorksFromProfile(profile);
-        if (currentWorks != null && !currentWorks.isEmpty()) {
-            mav.addObject("currentWorks", currentWorks);
-        }
+        
         mav.addObject("profile", profile);
+        
+        if(profile.getOrcidDeprecated() != null){
+            String primaryRecord = profile.getOrcidDeprecated().getPrimaryRecord().getOrcid().getValue();
+            mav.addObject("deprecated", true);
+            mav.addObject("primaryRecord", primaryRecord);
+        } else {             
+            List<CurrentWork> currentWorks = getCurrentWorksFromProfile(profile);
+            if (currentWorks != null && !currentWorks.isEmpty()) {
+                mav.addObject("currentWorks", currentWorks);
+            }
+        }        
+        
         return mav;
     }
 

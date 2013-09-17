@@ -118,9 +118,9 @@ public class ProfileDaoTest extends DBUnitTest {
     public void testFindAll() {
         List<ProfileEntity> all = profileDao.getAll();
         assertNotNull(all);
-        assertEquals(7, all.size());
+        assertEquals(8, all.size());
         Long count = profileDao.countAll();
-        assertEquals(Long.valueOf(7), count);
+        assertEquals(Long.valueOf(8), count);
     }
 
     @Test
@@ -142,7 +142,7 @@ public class ProfileDaoTest extends DBUnitTest {
         assertEquals(dateCreated.getTime(), profile.getDateCreated().getTime());
 
         Long count = profileDao.countAll();
-        assertEquals(Long.valueOf(8), count);
+        assertEquals(Long.valueOf(9), count);
         profile = profileDao.find(newOrcid);
 
         assertNotNull(profile);
@@ -168,7 +168,7 @@ public class ProfileDaoTest extends DBUnitTest {
         assertEquals(dateCreated.getTime(), profile.getDateCreated().getTime());
 
         Long count = profileDao.countAll();
-        assertEquals(Long.valueOf(8), count);
+        assertEquals(Long.valueOf(9), count);
         profile = profileDao.find(newOrcid);
 
         assertNotNull(profile);
@@ -217,7 +217,7 @@ public class ProfileDaoTest extends DBUnitTest {
         assertEquals(dateCreated.getTime(), retrievedProfile.getDateCreated().getTime());
 
         Long count = profileDao.countAll();
-        assertEquals(Long.valueOf(8), count);
+        assertEquals(Long.valueOf(9), count);
     }
 
     @Test
@@ -323,13 +323,13 @@ public class ProfileDaoTest extends DBUnitTest {
         profile = profileDao.find("4444-4444-4444-4443");
         assertNotNull(profile);
         profileDao.remove(profile.getId());
-        profile = profileDao.find("4444-4444-4444-4443");
-        assertNull(profile);
-
         profileDao.flush();
+        
+        profile = profileDao.find("4444-4444-4444-4443");
+        assertNull(profile);       
 
         List<ProfileEntity> all = profileDao.getAll();
-        assertEquals(5, all.size());
+        assertEquals(6, all.size());
     }
 
     @Test
@@ -345,7 +345,7 @@ public class ProfileDaoTest extends DBUnitTest {
     public void testRetrieveSelectableSponsors() {
         List<ProfileEntity> results = profileDao.retrieveSelectableSponsors();
         assertNotNull(results);
-        assertEquals(3, results.size());
+        assertEquals(4, results.size());
         assertEquals("Billie Holiday", results.get(0).getVocativeName());
     }
 
@@ -366,7 +366,7 @@ public class ProfileDaoTest extends DBUnitTest {
         assertEquals("4444-4444-4444-4446", results.get(1));
 
         results = profileDao.findOrcidsByIndexingStatus(IndexingStatus.DONE, Integer.MAX_VALUE);
-        assertEquals(5, results.size());
+        assertEquals(6, results.size());
 
         results = profileDao.findOrcidsByIndexingStatus(IndexingStatus.DONE, 3);
         assertEquals(3, results.size());
@@ -427,12 +427,12 @@ public class ProfileDaoTest extends DBUnitTest {
     public void testGetConfirmedProfileCount() {
         String orcid = "4444-4444-4444-4446";
         Long confirmedProfileCount = profileDao.getConfirmedProfileCount();
-        assertEquals(Long.valueOf(7), confirmedProfileCount);
+        assertEquals(Long.valueOf(8), confirmedProfileCount);
         ProfileEntity profileEntity = profileDao.find(orcid);
         profileEntity.setCompletedDate(null);
         profileDao.persist(profileEntity);
         confirmedProfileCount = profileDao.getConfirmedProfileCount();
-        assertEquals(Long.valueOf(6), confirmedProfileCount);
+        assertEquals(Long.valueOf(7), confirmedProfileCount);
     }
 
     @Test
@@ -467,4 +467,18 @@ public class ProfileDaoTest extends DBUnitTest {
         assertEquals(Visibility.PRIVATE.value(), profile.getProfileAddressVisibility().value());
     }
 
+    @Test    
+    @Rollback(true)
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void testDeprecateProfile(){
+        ProfileEntity profileToDeprecate = profileDao.find("4444-4444-4444-4441");
+        assertNull(profileToDeprecate.getPrimaryRecord());        
+        boolean result = profileDao.deprecateProfile("4444-4444-4444-4441", "4444-4444-4444-4442");
+        assertTrue(result);                       
+        profileToDeprecate = profileDao.find("4444-4444-4444-4441");
+        profileDao.refresh(profileToDeprecate);
+        assertNotNull(profileToDeprecate.getPrimaryRecord());
+        ProfileEntity primaryRecord = profileToDeprecate.getPrimaryRecord();
+        assertEquals("4444-4444-4444-4442", primaryRecord.getId());
+    }
 }

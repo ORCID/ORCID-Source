@@ -32,6 +32,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
 import org.apache.commons.lang.StringUtils;
 import org.orcid.core.adapter.Jpa2JaxbAdapter;
 import org.orcid.core.manager.LoadOptions;
+import org.orcid.core.utils.JsonUtils;
 import org.orcid.jaxb.model.clientgroup.OrcidClient;
 import org.orcid.jaxb.model.clientgroup.OrcidClientGroup;
 import org.orcid.jaxb.model.clientgroup.RedirectUri;
@@ -115,6 +116,9 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         profile.setOrcid(profileEntity.getId());
         // we may just want an other property entry instead of baseUri
         profile.setOrcidId(baseUri.replace("https", "http") + "/" + profileEntity.getId());
+        // load deprecation info
+        profile.setOrcidDeprecated(getOrcidDeprecated(profileEntity));
+        
         if (loadOptions.isLoadActivities()) {
             profile.setOrcidActivities(getOrcidActivities(profileEntity));
         }
@@ -211,6 +215,19 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         return history;
     }
 
+    private OrcidDeprecated getOrcidDeprecated(ProfileEntity profileEntity) {
+        OrcidDeprecated orcidDeprecated = null;        
+        if(profileEntity.getPrimaryRecord() != null){        
+            orcidDeprecated = new OrcidDeprecated();        
+            orcidDeprecated.setDate(new DeprecatedDate(toXMLGregorianCalendar(profileEntity.getDeprecatedDate())));        
+            PrimaryRecord primaryRecord = new PrimaryRecord();
+            primaryRecord.setOrcid(new Orcid(profileEntity.getPrimaryRecord().getId()));
+            primaryRecord.setOrcidId(new Url(baseUri.replace("https", "http") + "/" + profileEntity.getPrimaryRecord().getId()));        
+            orcidDeprecated.setPrimaryRecord(primaryRecord);
+        }
+        return orcidDeprecated;        
+    }
+    
     private OrcidActivities getOrcidActivities(ProfileEntity profileEntity) {
         OrcidGrants orcidGrants = getOrcidGrants(profileEntity);
         OrcidPatents orcidPatents = getOrcidPatents(profileEntity);
@@ -769,7 +786,25 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
 
     private WorkContributors getWorkContributors(ProfileWorkEntity profileWorkEntity) {
         WorkEntity work = profileWorkEntity.getWork();
-        if (work == null || work.getContributors() == null || work.getContributors().isEmpty()) {
+        if (work == null) {
+            return null;
+        }
+        // New way of doing work contributors
+        String jsonString = work.getContributorsJson();
+        if (jsonString != null) {
+            WorkContributors workContributors = JsonUtils.readObjectFromJsonString(jsonString, WorkContributors.class);
+            for (Contributor contributor : workContributors.getContributor()) {
+                // Make sure contributor credit name has the same visibility as
+                // the work
+                CreditName creditName = contributor.getCreditName();
+                if (creditName != null) {
+                    creditName.setVisibility(profileWorkEntity.getVisibility());
+                }
+            }
+            return workContributors;
+        }
+        // Old way of doing contributors
+        if (work.getContributors() == null || work.getContributors().isEmpty()) {
             return null;
         }
         Set<WorkContributorEntity> contributorEntities = work.getContributors();
@@ -822,15 +857,6 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         Day day = fuzzyDate.getDay() != null ? new Day(fuzzyDate.getDay()) : null;
 
         return new PublicationDate(year, month, day);
-    }
-
-    private CreditName getAuthorCreditName(WorkContributorEntity contributorEntity) {
-        if (contributorEntity != null && StringUtils.isNotBlank(contributorEntity.getCreditName())) {
-            CreditName creditName = new CreditName();
-            creditName.setContent(contributorEntity.getCreditName());
-            return creditName;
-        }
-        return null;
     }
 
     private OtherNames getOtherNames(ProfileEntity profile) {

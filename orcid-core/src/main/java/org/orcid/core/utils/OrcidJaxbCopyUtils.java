@@ -24,6 +24,7 @@ import org.orcid.jaxb.model.message.Affiliation;
 import org.orcid.jaxb.model.message.Biography;
 import org.orcid.jaxb.model.message.Claimed;
 import org.orcid.jaxb.model.message.ContactDetails;
+import org.orcid.jaxb.model.message.Contributor;
 import org.orcid.jaxb.model.message.Country;
 import org.orcid.jaxb.model.message.CreditName;
 import org.orcid.jaxb.model.message.Email;
@@ -39,6 +40,7 @@ import org.orcid.jaxb.model.message.OtherNames;
 import org.orcid.jaxb.model.message.PersonalDetails;
 import org.orcid.jaxb.model.message.ResearcherUrls;
 import org.orcid.jaxb.model.message.Visibility;
+import org.orcid.jaxb.model.message.WorkContributors;
 import org.springframework.util.Assert;
 
 /**
@@ -318,6 +320,15 @@ public class OrcidJaxbCopyUtils {
         for (OrcidWork orcidWork : orcidWorkToUpdate) {
             if (orcidWork.getVisibility() == null) {
                 orcidWork.setVisibility(OrcidVisibilityDefaults.WORKS_DEFAULT.getVisibility());
+            }
+            WorkContributors workContributors = orcidWork.getWorkContributors();
+            if (workContributors != null) {
+                for (Contributor contributor : workContributors.getContributor()) {
+                    CreditName creditName = contributor.getCreditName();
+                    if (creditName != null) {
+                        creditName.setVisibility(orcidWork.getVisibility());
+                    }
+                }
             }
         }
 

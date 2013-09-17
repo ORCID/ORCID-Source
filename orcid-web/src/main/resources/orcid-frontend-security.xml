@@ -62,6 +62,15 @@
 		</property>
 	</bean>
 
+	<bean id="roleHierarchy"
+       class="org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl">
+     <property name="hierarchy">
+          <value>
+				ROLE_ADMIN > ROLE_USER  
+          </value>
+     </property>
+   </bean>
+
 	<bean id="sessionRegistry"
 		class="org.springframework.security.core.session.SessionRegistryImpl" />
 
@@ -98,7 +107,7 @@
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/oauth/confirm_access(\?.*)?"
 			access="DENY_OAUTH,ROLE_USER" />
-		<sec:intercept-url pattern="/oauth/.*" access="ROLE_USER" />
+		<sec:intercept-url pattern="/oauth/.*" access="ROLE_USER" />		
 		<sec:form-login authentication-failure-url="/oauth/signin"
 			login-page="/oauth/signin" login-processing-url="/signin/auth"
 			username-parameter="userId" password-parameter="password"
@@ -173,6 +182,10 @@
 			method="POST" access="DENY_OAUTH,ROLE_USER" />
 		<sec:intercept-url pattern="/manage-clients" 
 			access="ROLE_GROUP"/>
+		<sec:intercept-url pattern="/deprecate-profile" 
+			access="ROLE_ADMIN"/>
+		<sec:intercept-url pattern="/deprecate-profile/.*" 
+			access="ROLE_ADMIN"/>			
 		<sec:intercept-url pattern="/.*" access="ROLE_USER" />
 
 		<!-- <sec:form-login authentication-failure-url="/signin" login-page="/signin" 

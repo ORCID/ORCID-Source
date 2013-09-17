@@ -1422,6 +1422,9 @@ a:hover {
    color: #a6ce39
 }
 
+.red {
+   color: #ee0000;
+}
 
 .privacy-menu li {
     margin-bottom: 5px !important; 
@@ -2306,4 +2309,8 @@ a.btn-primary:hover {
 
 .orcid-icon-trash {
 	background-color: white;
+}
+
+.orcid-red-background-input {
+	background-color: #ffcccc !important;
 }

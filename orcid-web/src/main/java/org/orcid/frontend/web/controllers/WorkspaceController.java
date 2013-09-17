@@ -107,6 +107,7 @@ public class WorkspaceController extends BaseWorkspaceController {
         }
 
         workTypes.remove(WorkType.BIBLE.value());
+        workTypes.remove(WorkType.UNDEFINED.value());
         return FunctionsOverCollections.sortMapsByValues(workTypes);
     }
 
