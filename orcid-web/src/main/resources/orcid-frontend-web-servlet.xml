@@ -49,6 +49,8 @@
         <property name="defaultEncoding" value="UTF-8"/>
         <property name="freemarkerSettings">
             <props>
+            	<prop key="default_encoding">UTF-8</prop>
+            	<prop key="output_encoding">UTF-8</prop>
                 <prop key="auto_include">/common/includes.ftl</prop>
                 <prop key="whitespace_stripping">true</prop>
                 <prop key="cache_storage">${org.orcid.frontend.freemarker.cache:freemarker.cache.StrongCacheStorage}</prop>
