@@ -223,7 +223,7 @@ public class T2OrcidApiServiceDelegatorTest extends DBUnitTest {
         orcidActivities.setAffiliations(affiliations);
         Affiliation affiliation1 = new Affiliation();
         affiliations.getAffiliation().add(affiliation1);
-        affiliation1.setAffiliationName("A new affilaition");
+        affiliation1.setAffiliationName("A new affiliation");
         affiliation1.setAffiliationType(AffiliationType.CURRENT_INSTITUTION);
         AffiliationAddress affiliationAddress = new AffiliationAddress();
         affiliation1.setAffiliationAddress(affiliationAddress);
@@ -234,6 +234,13 @@ public class T2OrcidApiServiceDelegatorTest extends DBUnitTest {
         assertEquals(HttpStatus.SC_CREATED, response.getStatus());
         String location = ((URI) response.getMetadata().getFirst("Location")).getPath();
         assertNotNull(location);
+        
+        OrcidProfile retrievedProfile = orcidProfileManager.retrieveOrcidProfile("4444-4444-4444-4441");
+        List<Affiliation> affiliationsList = retrievedProfile.getOrcidActivities().getAffiliations().getAffiliation();
+        assertEquals(1, affiliationsList.size());
+        Affiliation affiliation = affiliationsList.get(0);
+        assertEquals("A new affiliation", affiliation.getAffiliationName());
+        assertEquals("4444-4444-4444-4447", affiliation.getSource().getSourceOrcid().getValue());
     }
 
     private OrcidMessage createStubOrcidMessage() {
@@ -270,6 +277,7 @@ public class T2OrcidApiServiceDelegatorTest extends DBUnitTest {
         for (ScopePathType scopePathType : scopePathTypes) {
             scopes.add(scopePathType.value());
         }
+        when(authorizationRequest.getClientId()).thenReturn("4444-4444-4444-4447");
         when(authorizationRequest.getScope()).thenReturn(scopes);
         when(mockedAuthentication.getAuthorizationRequest()).thenReturn(authorizationRequest);
     }

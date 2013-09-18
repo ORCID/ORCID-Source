@@ -103,6 +103,8 @@ public class JpaJaxbEntityAdapterToProfileEntityTest extends DBUnitTest {
     }
 
     @Test
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    @Rollback(true)
     public void testMarshalling() throws JAXBException {
         OrcidMessage orcidMessage = getOrcidMessage(ORCID_INTERNAL_FULL_XML);
         System.out.println(orcidMessage);

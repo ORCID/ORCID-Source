@@ -258,6 +258,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         dedupeProfileWorks(orcidProfile);
         addSourceToEmails(orcidProfile, existingProfileEntity, amenderOrcid);
         addSourceToWorks(orcidProfile, amenderOrcid);
+        addSourceToAffiliations(orcidProfile, amenderOrcid);
         ProfileEntity profileEntity = adapter.toProfileEntity(orcidProfile, existingProfileEntity);
         profileEntity.setLastModified(new Date());
         profileEntity.setIndexingStatus(IndexingStatus.PENDING);
@@ -337,6 +338,27 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
             for (OrcidWork orcidWork : orcidWorks.getOrcidWork()) {
                 if (orcidWork.getWorkSource() == null || StringUtils.isEmpty(orcidWork.getWorkSource().getContent()))
                     orcidWork.setWorkSource(new WorkSource(amenderOrcid));
+            }
+        }
+
+    }
+    
+    /**
+     * Add source to the affiliations
+     * 
+     * @param orcidProfile
+     *            The profile
+     * @param amenderOrcid
+     *            The orcid of the user or client that is adding the affiliation to the
+     *            profile user
+     * */
+    private void addSourceToAffiliations(OrcidProfile orcidProfile, String amenderOrcid) {
+        Affiliations affiliations = orcidProfile.getOrcidActivities() == null ? null : orcidProfile.getOrcidActivities().getAffiliations();
+
+        if (affiliations != null && !affiliations.getAffiliation().isEmpty()) {
+            for (Affiliation affiliation : affiliations.getAffiliation()) {
+                if (affiliation.getSource() == null || StringUtils.isEmpty(affiliation.getSource().getSourceOrcid().getValue()))
+                    affiliation.setSource(new Source(amenderOrcid));
             }
         }
 

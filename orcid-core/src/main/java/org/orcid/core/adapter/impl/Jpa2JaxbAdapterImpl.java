@@ -455,6 +455,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         affiliation.setEndDate(endDate != null ? new FuzzyDate(endDate.getYear(), endDate.getMonth(), endDate.getDay()) : null);
         affiliation.setVisibility(orgAffiliationRelationEntity.getVisibility());
         affiliation.setDepartmentName(orgAffiliationRelationEntity.getDepartment());
+        affiliation.setSource(getSource(orgAffiliationRelationEntity));
 
         OrgDisambiguatedEntity orgDisambiguatedEntity = orgAffiliationRelationEntity.getOrg().getOrgDisambiguated();
         if (orgDisambiguatedEntity == null) {
@@ -468,6 +469,17 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         }
 
         return affiliation;
+    }
+
+    private Source getSource(OrgAffiliationRelationEntity orgAffiliationRelationEntity) {
+        ProfileEntity sourceEntity = orgAffiliationRelationEntity.getSource();
+        if (sourceEntity == null) {
+            return null;
+        }
+        Source source = new Source(sourceEntity.getId());
+        source.setSourceName(new SourceName(sourceEntity.getCreditName()));
+        source.setSourceDate(new SourceDate(DateUtils.convertToXMLGregorianCalendar(orgAffiliationRelationEntity.getDateCreated())));
+        return source;
     }
 
     private DisambiguatedAffiliation getDisambiguatedAffiliation(OrgDisambiguatedEntity orgDisambiguatedEntity) {

@@ -69,7 +69,7 @@ public class OrgAffiliationRelationEntity extends BaseEntity<Long> implements Co
         this.id = id;
     }
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.DETACH })
+    @ManyToOne(fetch = FetchType.LAZY, cascade = { CascadeType.DETACH, CascadeType.REFRESH })
     @JoinColumn(name = "org_id", nullable = false)
     public OrgEntity getOrg() {
         return org;
