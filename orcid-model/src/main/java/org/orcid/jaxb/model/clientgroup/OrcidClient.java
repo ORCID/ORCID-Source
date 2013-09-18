@@ -33,6 +33,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 
+import org.orcid.jaxb.model.message.ErrorDesc;
 import org.orcid.jaxb.model.message.OrcidType;
 
 /**
@@ -64,7 +65,7 @@ import org.orcid.jaxb.model.message.OrcidType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "displayName", "website", "shortDescription", "redirectUris", "clientId", "clientSecret" })
+@XmlType(name = "", propOrder = { "displayName", "website", "shortDescription", "redirectUris", "clientId", "clientSecret", "errorDesc" })
 @XmlRootElement(name = "orcid-client")
 public class OrcidClient implements Serializable {
 
@@ -82,6 +83,8 @@ public class OrcidClient implements Serializable {
     protected String clientId;
     @XmlElement(name = "client-secret")
     protected String clientSecret;
+    @XmlElement(name = "error-desc")
+    protected ErrorDesc errors;
     @XmlAttribute
     protected ClientType type;    
 
@@ -230,5 +233,29 @@ public class OrcidClient implements Serializable {
      */
     public void setType(ClientType value) {
         this.type = value;
-    }        
+    }
+
+    /**
+     * Gets the value of the errors property.
+     * 
+     * @param value
+     *            allowed object is {@link ErrorDesc }
+     * 
+     */
+	public ErrorDesc getErrors() {
+		return errors;
+	}
+
+	/**
+     * Sets the value of the errors property.
+     * 
+     * @param value
+     *            allowed object is {@link ErrorDesc }
+     * 
+     */
+	public void setErrors(ErrorDesc errors) {
+		this.errors = errors;
+	}        
+    
+    
 }
