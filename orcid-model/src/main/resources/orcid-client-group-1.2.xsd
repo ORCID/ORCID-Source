@@ -51,6 +51,7 @@ the software.
         <xs:element ref="orcid:email"/>
         <xs:element ref="orcid:orcid-client" maxOccurs="unbounded"/>
       </xs:sequence>
+      <xs:attribute name="type" type="orcid:group-type" use="required"/>
     </xs:complexType>
   </xs:element>
   <xs:element name="group-orcid" type="orcid:orcid">
@@ -80,6 +81,11 @@ the software.
       </xs:sequence>
       <xs:attribute name="type" type="orcid:client-type"/>
     </xs:complexType>
+  </xs:element>
+  <xs:element name="type" type="orcid:group-type">
+    <xs:annotation>
+      <xs:documentation>The group type.</xs:documentation>
+    </xs:annotation>
   </xs:element>
   <xs:element name="display-name" type="orcid:short-text">
     <xs:annotation>
@@ -153,7 +159,15 @@ the software.
   <xs:simpleType name="client-type">
     <xs:restriction base="xs:string">
       <xs:enumeration value="creator"/>
-      <xs:enumeration value="updater"/>
+      <xs:enumeration value="updater"/>      
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="group-type">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="basic"/>
+      <xs:enumeration value="premium"/>
+      <xs:enumeration value="basic-institution"/>
+      <xs:enumeration value="premium-institution"/>
     </xs:restriction>
   </xs:simpleType>
   <xs:simpleType name="redirect-uri-type">

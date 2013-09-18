@@ -90,6 +90,7 @@ import org.orcid.jaxb.model.message.OrcidHistory;
 import org.orcid.jaxb.model.message.OrcidInternal;
 import org.orcid.jaxb.model.message.OrcidPreferences;
 import org.orcid.jaxb.model.message.OrcidProfile;
+import org.orcid.jaxb.model.message.OrcidType;
 import org.orcid.jaxb.model.message.OrcidWork;
 import org.orcid.jaxb.model.message.OrcidWorks;
 import org.orcid.jaxb.model.message.PersonalDetails;
@@ -1356,19 +1357,41 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         OrcidGrantedAuthority authority = new OrcidGrantedAuthority();
         authority.setProfileEntity(profileEntity);
 
-        if (profileEntity.getOrcidType() == null)
+        if (profileEntity.getOrcidType() == null || profileEntity.getOrcidType().equals(OrcidType.USER))
             authority.setAuthority(OrcidWebRole.ROLE_USER.getAuthority());
-        else {
-            switch (profileEntity.getOrcidType()) {
-            case ADMIN:
-                authority.setAuthority(OrcidWebRole.ROLE_ADMIN.getAuthority());
+        else if (profileEntity.getOrcidType().equals(OrcidType.ADMIN))
+            authority.setAuthority(OrcidWebRole.ROLE_ADMIN.getAuthority());
+        else if (profileEntity.getOrcidType().equals(OrcidType.GROUP)) {
+            switch (profileEntity.getGroupType()) {
+            case BASIC:
+                authority.setAuthority(OrcidWebRole.ROLE_BASIC.getAuthority());
                 break;
-            default:
-                authority.setAuthority(OrcidWebRole.ROLE_USER.getAuthority());
+            case PREMIUM:
+                authority.setAuthority(OrcidWebRole.ROLE_PREMIUM.getAuthority());
+                break;
+            case BASIC_INSTITUTION:
+                authority.setAuthority(OrcidWebRole.ROLE_BASIC_INSTITUTION.getAuthority());
+                break;
+            case PREMIUM_INSTITUTION:
+                authority.setAuthority(OrcidWebRole.ROLE_PREMIUM_INSTITUTION.getAuthority());
+                break;
+            }
+        } else if (profileEntity.getOrcidType().equals(OrcidType.CLIENT)) {
+            switch (profileEntity.getClientType()) {
+            case CREATOR:
+                authority.setAuthority(OrcidWebRole.ROLE_CREATOR.getAuthority());
+                break;
+            case UPDATER:
+                authority.setAuthority(OrcidWebRole.ROLE_UPDATER.getAuthority());
+                break;
+            case PREMIUM_CREATOR:
+                authority.setAuthority(OrcidWebRole.ROLE_PREMIUM_CREATOR.getAuthority());
+                break;
+            case PREMIUM_UPDATER:
+                authority.setAuthority(OrcidWebRole.ROLE_PREMIUM_UPDATER.getAuthority());
                 break;
             }
         }
-
         Set<OrcidGrantedAuthority> authorities = new HashSet<OrcidGrantedAuthority>(1);
         authorities.add(authority);
         return authorities;

@@ -17,8 +17,8 @@
 (function($) {
 
     var searchFilterChanged = false;
-    var showingTemplateMenu = false;
-
+    var showingTemplateMenu = false;    
+    
     var footerPlacement = function() {
         if (window.innerHeight > $("body").height()) {
             $(".footer").addClass("fixed");

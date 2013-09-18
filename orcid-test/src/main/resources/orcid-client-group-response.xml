@@ -24,7 +24,7 @@
 -->
 <orcid-client-group xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
  xsi:schemaLocation="http://www.orcid.org/ns/orcid ../../../../orcid-model/src/main/resources/orcid-client-group-1.0.2.xsd"
- xmlns="http://www.orcid.org/ns/orcid">
+ xmlns="http://www.orcid.org/ns/orcid" type="premium">
     <group-orcid>1111-1111-1111-1117</group-orcid>
     <group-name>Elsevier</group-name>
     <email>orcid-admin@elsevier.com</email>

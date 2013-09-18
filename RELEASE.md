@@ -5,6 +5,21 @@ We release updates to the Registry regularly. Below is a list of the improvement
 * [2012 Releases](https://trello.com/b/vyCDYdvR)
 
 
+## release-1.1.32.9
+(2013-09-16)
+
+* Refactor "Is this you" to open the public profile in a new window.
+
+* Refactor work contributor Database persistence.
+
+* Release profile depreciation.
+
+* Autolink external work ids.
+
+* Release email verification reminder, 7 days after adding email.
+
+
+
 ## release-1.1.31.8
 (2013-08-27)
 
