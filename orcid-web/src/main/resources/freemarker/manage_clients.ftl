@@ -86,23 +86,8 @@
 				<li>{{error}}</li>
 			</ul>
 		</div>
-		
-		
-		<@security.authorize ifAnyGranted="ROLE_BASIC">
-			<input type="hidden" id="client_type" value="UPDATER" />
-		</@security.authorize>
-		
-		<@security.authorize ifAnyGranted="ROLE_BASIC_INSTITUTION">
-			<input type="hidden" id="client_type" value="CREATOR" />
-		</@security.authorize>
-		
-		<@security.authorize ifAnyGranted="ROLE_PREMIUM">
-			<input type="hidden" id="client_type" value="PREMIUM_UPDATER" />
-		</@security.authorize>
-		
-		<@security.authorize ifAnyGranted="ROLE_PREMIUM_INSTITUTION">
-			<input type="hidden" id="client_type" value="PREMIUM_CREATOR" />
-		</@security.authorize>
+				
+		<input type="hidden" id="client_type" value="${clientType}" />		
 		
 		<table id="client-table">
 			<tbody>			
@@ -138,41 +123,20 @@
 <div class="row">
 	<div class="span3 lhs override">
 		<ul class="settings-nav">
-			<li><a href="#account-settings"><@orcid.msg 'manage.accountsettings'/></a></li>
-			<li><a href="#manage-permissions"><@orcid.msg 'manage.managepermission'/></a></li>
+			<li><a href="<@spring.url '/account' />#account-settings"><@orcid.msg 'manage.accountsettings'/></a></li>
+			<li><a href="<@spring.url '/account' />#manage-permissions"><@orcid.msg 'manage.managepermission'/></a></li>
 		</ul>
 	</div>
 	<div class="span9">			
-		<div ng-controller="ClientEditCtrl" class="clients"> 
+		<div ng-controller="ClientEditCtrl" class="clients">
+			<div id="errors" ng-show="error" class="alert">
+				<ul>
+					<li>{{error}}</li>
+				</ul>
+			</div> 
 			<div ng-show="!clients.length" ng-cloak>
 				<span><@orcid.msg 'manage_clients.no_clients'/></span>
-			</div>
-			<!--
-			<div ng-hide="!clients.length" ng-cloak>
-					<table class="table table-bordered" ng-repeat='client in clients'>
-						<caption>
-							<@orcid.msg 'manage_clients.client_id'/>: {{client.clientId}}
-							<div class="pull-right"><a href="#" ng-click="viewDetails($index)" class="icon-zoom-in blue"></a></div>
-							<div class="pull-right"><a href="#" ng-click="editClient($index)" class="icon-pencil  blue"></a></div>
-						</caption>
-						<tr>
-							<td><@orcid.msg 'manage_clients.display_name'/></td>
-							<td>{{client.displayName}}</td>							
-						</tr>
-						<tr>
-							<td><@orcid.msg 'manage_clients.website'/></td>
-							<td><a href="{{client.website}}" target="_blank">{{client.website}}</a></td>	
-						</tr>
-						<tr>
-							<td><@orcid.msg 'manage_clients.description'/></td>
-							<td>{{client.shortDescription}}</td>
-						</tr>
-						<tr ng-repeat='rUri in client.redirectUris.redirectUri'>
-							<td><@orcid.msg 'manage_clients.redirect_uri'/></td>
-							<td><a href="{{rUri.value}}" target="_blank">{{rUri.value}}</td>   	
-						</tr>	
-					</table>
-			-->						
+			</div>							
 			
 			<div ng-hide="!clients.length" ng-cloak>				
 					<div class="bottom-margin-small" ng-repeat='client in clients'>
@@ -194,7 +158,7 @@
 					</div>
 			</div>
 			
-			<@security.authorize ifAnyGranted="ROLE_PREMIUM_INSTITUTION, ROLE_PREMIUM">
+			<@security.authorize ifAnyGranted="ROLE_PREMIUM_INSTITUTION, ROLE_PREMIUM, ROLE_ADMIN">
 				<div class="controls save-btns pull-left">
 					<span id="bottom-create-new-client-premium" ng-click="addClient()" class="btn btn-primary"><@orcid.msg 'manage_clients.add'/></span>				
 				</div>

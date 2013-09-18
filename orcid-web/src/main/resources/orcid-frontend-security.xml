@@ -53,12 +53,13 @@
     	class="org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl">
 		<property name="hierarchy">
    			<value>
+   				ROLE_ADMIN > ROLE_PREMIUM_INSTITUTION 
+   				ROLE_ADMIN > ROLE_PREMIUM
    				ROLE_PREMIUM_INSTITUTION > ROLE_BASIC_INSTITUTION   				
    				ROLE_PREMIUM > ROLE_BASIC		
    				ROLE_BASIC_INSTITUTION > ROLE_GROUP
       			ROLE_BASIC > ROLE_GROUP  
 				ROLE_GROUP > ROLE_USER
-				ROLE_ADMIN > ROLE_USER 	
    			</value>
 		</property>
 	</bean>
