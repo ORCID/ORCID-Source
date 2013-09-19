@@ -43,7 +43,6 @@ import org.orcid.jaxb.model.clientgroup.OrcidClient;
 import org.orcid.jaxb.model.clientgroup.OrcidClientGroup;
 import org.orcid.jaxb.model.clientgroup.RedirectUri;
 import org.orcid.jaxb.model.clientgroup.RedirectUris;
-import org.orcid.jaxb.model.message.OrcidType;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.persistence.dao.ClientDetailsDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;

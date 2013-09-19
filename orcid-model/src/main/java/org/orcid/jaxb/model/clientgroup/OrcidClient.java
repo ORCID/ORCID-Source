@@ -33,6 +33,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 
+import org.orcid.jaxb.model.message.ErrorDesc;
 import org.orcid.jaxb.model.message.OrcidType;
 
 /**
@@ -54,6 +55,7 @@ import org.orcid.jaxb.model.message.OrcidType;
  *         &lt;element ref="{http://www.orcid.org/ns/orcid}redirect-uris"/>
  *         &lt;element ref="{http://www.orcid.org/ns/orcid}client-id" minOccurs="0"/>
  *         &lt;element ref="{http://www.orcid.org/ns/orcid}client-secret" minOccurs="0"/>
+ *         &lt;element ref="{http://www.orcid.org/ns/orcid}error-desc"/>
  *       &lt;/sequence>
  *       &lt;attribute name="type" type="{http://www.orcid.org/ns/orcid}client-type" />
  *     &lt;/restriction>
@@ -64,7 +66,7 @@ import org.orcid.jaxb.model.message.OrcidType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "displayName", "website", "shortDescription", "redirectUris", "clientId", "clientSecret" })
+@XmlType(name = "", propOrder = { "displayName", "website", "shortDescription", "redirectUris", "clientId", "clientSecret", "errors" })
 @XmlRootElement(name = "orcid-client")
 public class OrcidClient implements Serializable {
 
@@ -82,6 +84,8 @@ public class OrcidClient implements Serializable {
     protected String clientId;
     @XmlElement(name = "client-secret")
     protected String clientSecret;
+    @XmlElement(name = "error-desc", required=false)
+    protected ErrorDesc errors;
     @XmlAttribute
     protected ClientType type;    
 
@@ -230,5 +234,29 @@ public class OrcidClient implements Serializable {
      */
     public void setType(ClientType value) {
         this.type = value;
-    }        
+    }
+
+    /**
+     * Gets the value of the errors property.
+     * 
+     * @param value
+     *            allowed object is {@link ErrorDesc }
+     * 
+     */
+	public ErrorDesc getErrors() {
+		return errors;
+	}
+
+	/**
+     * Sets the value of the errors property.
+     * 
+     * @param value
+     *            allowed object is {@link ErrorDesc }
+     * 
+     */
+	public void setErrors(ErrorDesc errors) {
+		this.errors = errors;
+	}        
+    
+    
 }
