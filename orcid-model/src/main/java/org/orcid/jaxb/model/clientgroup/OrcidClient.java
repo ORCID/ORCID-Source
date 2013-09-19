@@ -55,6 +55,7 @@ import org.orcid.jaxb.model.message.OrcidType;
  *         &lt;element ref="{http://www.orcid.org/ns/orcid}redirect-uris"/>
  *         &lt;element ref="{http://www.orcid.org/ns/orcid}client-id" minOccurs="0"/>
  *         &lt;element ref="{http://www.orcid.org/ns/orcid}client-secret" minOccurs="0"/>
+ *         &lt;element ref="{http://www.orcid.org/ns/orcid}error-desc"/>
  *       &lt;/sequence>
  *       &lt;attribute name="type" type="{http://www.orcid.org/ns/orcid}client-type" />
  *     &lt;/restriction>
@@ -65,7 +66,7 @@ import org.orcid.jaxb.model.message.OrcidType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "displayName", "website", "shortDescription", "redirectUris", "clientId", "clientSecret", "errorDesc" })
+@XmlType(name = "", propOrder = { "displayName", "website", "shortDescription", "redirectUris", "clientId", "clientSecret", "errors" })
 @XmlRootElement(name = "orcid-client")
 public class OrcidClient implements Serializable {
 
@@ -83,7 +84,7 @@ public class OrcidClient implements Serializable {
     protected String clientId;
     @XmlElement(name = "client-secret")
     protected String clientSecret;
-    @XmlElement(name = "error-desc")
+    @XmlElement(name = "error-desc", required=false)
     protected ErrorDesc errors;
     @XmlAttribute
     protected ClientType type;    

@@ -51,7 +51,7 @@
 		    </div>
 		    <div class="control-group">
 				<label class="control-label" for="website" style="margin-right:10px; text-align:left; width:90px"><@orcid.msg 'manage_clients.website'/>: </label>
-		    	<input id="website" type="url" ng-model="clientToEdit.website" required />	
+		    	<input id="website" type="text" ng-model="clientToEdit.website" required />	
 		    </div>
 		    <div class="control-group">
 				<label class="control-label" for="description" style="margin-right:10px; text-align:left; width:90px"><@orcid.msg 'manage_clients.description'/>: </label>
@@ -61,7 +61,7 @@
 	    		<div id="edit-client-table">
 		    		<div class="control-group" ng-repeat='rUri in clientToEdit.redirectUris.redirectUri'>						
 						<label class="control-label" style="margin-right:10px; text-align:left; width:90px"><@orcid.msg 'manage_clients.redirect_uri'/>:</label>
-						<input type="url" placeholder="Redirect Uri"  ng-model="rUri.value">						
+						<input type="text" placeholder="Redirect Uri"  ng-model="rUri.value">						
 						<a href ng-click="deleteUri($index)" class="icon-trash blue"></a>
 						<a ng-show="$last" href ng-click="addUriToExistingClientTable()" class="icon-plus-sign blue"></a>	
 					</div>
@@ -98,7 +98,7 @@
 			</tr>
 		 	<tr>
 		 		<td><@orcid.msg 'manage_clients.website'/>:</td>
-		 		<td><input type="url" placeholder="Website" class="input-xlarge" ng-model="newClient.website" required></td>
+		 		<td><input type="text" placeholder="Website" class="input-xlarge" ng-model="newClient.website" required></td>
 		 		<td>&nbsp;</td>
 		 	</tr>
 		 	<tr>
@@ -108,7 +108,7 @@
 		 	</tr>
 		 	<tr ng-repeat='rUri in newClient.redirectUris.redirectUri'>
 		 		<td><@orcid.msg 'manage_clients.redirect_uri'/>:</td>
-		 		<td><input type="url" placeholder="Redirect Uri" class="input-xlarge" ng-model="rUri.value" required></td>			 		
+		 		<td><input type="text" placeholder="Redirect Uri" class="input-xlarge" ng-model="rUri.value" required></td>			 		
 		 		<td><span id="add-uri" ng-click="addUriToNewClientTable()" class="btn btn-primary"><@orcid.msg 'manage_clients.add'/></span></td>
 		 	</tr>
 		 	</tbody>			 	
