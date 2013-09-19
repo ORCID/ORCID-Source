@@ -1597,10 +1597,9 @@ function ClientEditCtrl($scope, $compile){
 	        	if(data.errors != null && data.errors.content){
 	        		$scope.error = data.errors.content;
 	        		console.log("Unable to create client information.");
-	        	} else {
-	        		//If everything worked fine, reload the list of clients
-        			$scope.getClients();
 	        	} 
+	        	//If everything worked fine, reload the list of clients
+        		$scope.getClients();
 	        }
 	    }).fail(function() { 
 	    	console.log("Error creating client information.");

@@ -129,7 +129,7 @@
 	</div>
 	<div class="span9">			
 		<div ng-controller="ClientEditCtrl" class="clients">
-			<div id="errors" ng-show="error" class="alert">
+			<div id="errors" ng-show="error" class="alert" ng-cloak>
 				<ul>
 					<li>{{error}}</li>
 				</ul>
