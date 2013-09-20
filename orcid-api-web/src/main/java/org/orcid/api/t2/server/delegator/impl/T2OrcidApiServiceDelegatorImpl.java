@@ -252,11 +252,8 @@ public class T2OrcidApiServiceDelegatorImpl extends OrcidApiServiceDelegatorImpl
     public Response addWorks(UriInfo uriInfo, String orcid, OrcidMessage orcidMessage) {
         OrcidProfile orcidProfile = orcidMessage.getOrcidProfile();
         try {
-            orcidProfile = orcidProfileManager.addOrcidWorks(orcidProfile);
-            if (orcidProfile != null) {
-                orcidProfile.setOrcidBio(null);
-            }
-            return getCreatedResponse(uriInfo, WORKS_PATH, orcidProfile);
+            orcidProfileManager.addOrcidWorks(orcidProfile);
+            return getCreatedResponse(uriInfo, WORKS_PATH, orcid);
         } catch (DataAccessException e) {
             throw new OrcidBadRequestException("Cannot create ORCID");
         } catch (PersistenceException pe) {
@@ -344,8 +341,16 @@ public class T2OrcidApiServiceDelegatorImpl extends OrcidApiServiceDelegatorImpl
     }
 
     private Response getCreatedResponse(UriInfo uriInfo, String requested, OrcidProfile profile) {
-        if (profile != null && profile.getOrcid() != null && StringUtils.isNotBlank(profile.getOrcid().getValue())) {
-            URI uri = uriInfo.getBaseUriBuilder().path("/").path(requested).build(profile.getOrcid().getValue());
+        if (profile != null && profile.getOrcid() != null) {
+            return getCreatedResponse(uriInfo, requested, profile.getOrcid().getValue());
+        } else {
+            throw new OrcidNotFoundException("Cannot find ORCID");
+        }
+    }
+
+    private Response getCreatedResponse(UriInfo uriInfo, String requested, String orcid) {
+        if (StringUtils.isNotBlank(orcid)) {
+            URI uri = uriInfo.getBaseUriBuilder().path("/").path(requested).build(orcid);
             return Response.created(uri).build();
         } else {
             throw new OrcidNotFoundException("Cannot find ORCID");
