@@ -1458,7 +1458,8 @@ function ClientEditCtrl($scope, $compile){
 				},			
 				clientId:'',
 				clientSecret:'',
-				type: ''
+				type: '', 
+				errors: ''
 		};	
 		$.colorbox({        	            
             html : $compile($('#new-client-modal').html())($scope), 
@@ -1473,6 +1474,7 @@ function ClientEditCtrl($scope, $compile){
 	
 	// Display client details: Client ID and Client secret
 	$scope.viewDetails = function(idx){
+		$scope.error = null;
 		$scope.clientDetails = $scope.clients[idx];
 		$.colorbox({        	            
             html : $compile($('#view-details-modal').html())($scope),
@@ -1499,6 +1501,7 @@ function ClientEditCtrl($scope, $compile){
 	
 	//Submits the client update request
 	$scope.submitEditClient = function(){
+		$scope.error = null;
 		//Check for errors
 		$scope.errors.splice(0, $scope.errors.length);
 		
@@ -1526,8 +1529,6 @@ function ClientEditCtrl($scope, $compile){
 			}
 		}				
 		
-		console.log(angular.toJson($scope.clientToEdit));
-		
 		//Submit the update request
 		$.ajax({
 	        url: $('body').data('baseurl') + 'manage-clients/edit-client.json',
@@ -1535,8 +1536,9 @@ function ClientEditCtrl($scope, $compile){
 	        data: angular.toJson($scope.clientToEdit),
 	        contentType: 'application/json;charset=UTF-8',
 	        dataType: 'json',
-	        success: function(data) {	        		        		        
+	        success: function(data) {
 	        	if(data.errors != null && data.errors.length > 0){
+	        		$scope.error = data.errors.content;
 	        		console.log("Unable to update client information.");
 	        	} else {
 	        		//If everything worked fine, reload the list of clients
@@ -1552,6 +1554,7 @@ function ClientEditCtrl($scope, $compile){
 	
 	//Submits the new client request
 	$scope.submitAddClient = function(){
+		$scope.error = null;
 		//Check for errors
 		$scope.errors.splice(0, $scope.errors.length);
 		
@@ -1590,13 +1593,13 @@ function ClientEditCtrl($scope, $compile){
 	        data: angular.toJson($scope.newClient),
 	        contentType: 'application/json;charset=UTF-8',
 	        dataType: 'json',
-	        success: function(data) {	        		        		        
-	        	if(data.errors != null && data.errors.length > 0){
+	        success: function(data) {
+	        	if(data.errors != null && data.errors.content){
+	        		$scope.error = data.errors.content;
 	        		console.log("Unable to create client information.");
-	        	} else {
-	        		//If everything worked fine, reload the list of clients
-        			$scope.getClients();
 	        	} 
+	        	//If everything worked fine, reload the list of clients
+        		$scope.getClients();
 	        }
 	    }).fail(function() { 
 	    	console.log("Error creating client information.");

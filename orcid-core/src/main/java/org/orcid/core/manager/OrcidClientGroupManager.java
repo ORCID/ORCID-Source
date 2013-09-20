@@ -16,6 +16,7 @@
  */
 package org.orcid.core.manager;
 
+import org.orcid.core.exception.OrcidClientGroupManagementException;
 import org.orcid.jaxb.model.clientgroup.OrcidClient;
 import org.orcid.jaxb.model.clientgroup.OrcidClientGroup;
 import org.orcid.jaxb.model.message.OrcidType;
@@ -97,7 +98,7 @@ public interface OrcidClientGroupManager {
      *            The new client
      * @return the new OrcidClient
      * */
-    OrcidClient createAndPersistClientProfile(String groupOrcid, OrcidClient client);
+    OrcidClient createAndPersistClientProfile(String groupOrcid, OrcidClient client) throws OrcidClientGroupManagementException;
 
     /**
      * Deletes a group

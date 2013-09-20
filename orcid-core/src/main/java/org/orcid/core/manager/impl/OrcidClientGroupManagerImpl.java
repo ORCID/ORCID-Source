@@ -239,7 +239,7 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
      *            The new client
      * @return the new OrcidClient
      * */
-    public OrcidClient createAndPersistClientProfile(String groupOrcid, OrcidClient client) {
+    public OrcidClient createAndPersistClientProfile(String groupOrcid, OrcidClient client) throws OrcidClientGroupManagementException {
         if (!isAllowedToAddNewClient(groupOrcid))
             throw new OrcidClientGroupManagementException("Your contract allow you to have only 1 client.");
         if (!isAllowedToAddThatKindOfClient(groupOrcid, client.getType()))
