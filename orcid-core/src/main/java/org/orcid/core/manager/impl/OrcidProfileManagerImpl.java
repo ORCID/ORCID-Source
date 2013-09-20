@@ -498,6 +498,9 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
     }
 
     private Date extractLastModifiedDateFromObject(OrcidProfile orcidProfile) {
+        if (orcidProfile == null) {
+            return null;
+        }
         OrcidHistory orcidHistory = orcidProfile.getOrcidHistory();
         if (orcidHistory == null) {
             return null;
