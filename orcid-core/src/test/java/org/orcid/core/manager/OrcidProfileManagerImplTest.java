@@ -932,4 +932,12 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
         assertNull(retrievedProfile.getOrcidBio().getBiography());
     }
 
+    @Test
+    @Transactional
+    @Rollback(true)
+    public void testRetrieveProfileWhenNonExistant() {
+        OrcidProfile orcidProfile = orcidProfileManager.retrievePublicOrcidProfile("1234-5678-8765-4321");
+        assertNull(orcidProfile);
+    }
+
 }
