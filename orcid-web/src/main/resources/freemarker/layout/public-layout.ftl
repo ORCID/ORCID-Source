@@ -24,6 +24,9 @@
 <body data-baseurl="<@spring.url '/'/>">
 <#nested />
 <#include "/common/scripts.ftl" />
+<#if !hideUserVoiceScript??> 
+	<#include "/common/user_voice_script.ftl" />
+</#if>
 </body>
 </html>
 </#macro>
@@ -72,16 +75,15 @@
                 <div class="alignment clearfix">                
                     <div class="main">
                         <ul class="menu"><li class="first expanded active-trail"><a href="<@spring.url "/" />" title=""><@orcid.msg 'public-layout.for_researchers'/></a><ul class="menu">                            
-                            <@security.authorize ifNotGranted="ROLE_USER, ROLE_ADMIN">
+                            <@security.authorize ifNotGranted="ROLE_USER, ROLE_ADMIN, ROLE_BASIC, ROLE_PREMIUM, ROLE_BASIC_INSTITUTION, ROLE_PREMIUM_INSTITUTION">
                                 <li class="leaf last"><a ${(nav=="signin")?string('class="active" ', '')} href="<@spring.url "/signin" />"><@orcid.msg 'public-layout.sign_in'/></a></li>
                                 <li class="leaf first"><a ${(nav=="register")?string('class="active" ', '')}href="<@spring.url "/register" />"><@orcid.msg 'public-layout.register'/></a></li>
                             </@security.authorize>
                             
                             <#assign isProxy = (profile.orcidBio.delegation.givenPermissionBy)?? && profile.orcidBio.delegation.givenPermissionBy.delegationDetails?size != 0>
-                            <@security.authorize ifAnyGranted="ROLE_USER, ROLE_ADMIN">
+                            <@security.authorize ifAnyGranted="ROLE_USER, ROLE_ADMIN, ROLE_BASIC, ROLE_PREMIUM, ROLE_BASIC_INSTITUTION, ROLE_PREMIUM_INSTITUTION">
                                 <li><a ${(nav=="record")?string('class="active" ', '')}href="<@spring.url '/my-orcid'/>"><@orcid.msg 'public-layout.my_orcid_record'/></a></li>
                                 <li><a ${(nav=="settings")?string('class="active" ', '')}href="<@spring.url '/account'/>"><@orcid.msg 'public-layout.account_setting'/></a></li>
-                                
                                 <#--<#if isProxy>
                                     <li><a href="#proxy" class="colorbox-modal"><@orcid.msg 'public-layout.manage_proxy_account'/></a></li>
                                 </#if>-->
@@ -119,8 +121,8 @@
 						<li class="last leaf"><a href="http://orcid.uservoice.com/knowledgebase" title=""><@orcid.msg 'public-layout.knowledge_base'/></a></li>
 						</ul></li>
 						<li class="last leaf">
-						    <@security.authorize ifNotGranted="ROLE_USER, ROLE_ADMIN"><a href="<@spring.url "/signin" />" title=""><@orcid.msg 'public-layout.sign_in'/></a></@security.authorize>
-						    <@security.authorize ifAnyGranted="ROLE_USER, ROLE_ADMIN"><a href="<@spring.url '/signout'/>"><@orcid.msg 'public-layout.sign_out'/></a></@security.authorize>
+						    <@security.authorize ifNotGranted="ROLE_USER, ROLE_ADMIN, ROLE_BASIC, ROLE_PREMIUM, ROLE_BASIC_INSTITUTION, ROLE_PREMIUM_INSTITUTION"><a href="<@spring.url "/signin" />" title=""><@orcid.msg 'public-layout.sign_in'/></a></@security.authorize>
+						    <@security.authorize ifAnyGranted="ROLE_USER, ROLE_ADMIN, ROLE_BASIC, ROLE_PREMIUM, ROLE_BASIC_INSTITUTION, ROLE_PREMIUM_INSTITUTION"><a href="<@spring.url '/signout'/>"><@orcid.msg 'public-layout.sign_out'/></a></@security.authorize>
 						</li>
 					</ul>
 				</div>

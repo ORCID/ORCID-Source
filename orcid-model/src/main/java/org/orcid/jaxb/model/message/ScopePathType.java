@@ -116,7 +116,7 @@ public enum ScopePathType implements Serializable {
     public String value() {
         return value;
     }
-
+    
     public String getContent() {
         return value;
     }

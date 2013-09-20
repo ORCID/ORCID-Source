@@ -180,7 +180,10 @@ public class AdminController extends BaseController {
                             
                             // Send notifications
                             LOGGER.info("Sending deprecation notifications to {} and {}", deprecated.getId(), primary.getId());
-                            notificationManager.sendProfileDeprecationEmail(deprecated, primary);
+                            
+                            //TODO: Currently we dont want to send the notifications, but in a near future, when we want to send them, just uncomment the following line: 
+                            //notificationManager.sendProfileDeprecationEmail(deprecated, primary);
+                            
                             // Update the deprecation request object that will be
                             // returned
                             result.setDeprecatedAccount(new ProfileDetails(deprecated.getId(), deprecated.getGivenNames(), deprecated.getFamilyName(), deprecated

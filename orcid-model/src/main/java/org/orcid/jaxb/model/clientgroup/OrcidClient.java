@@ -24,6 +24,7 @@
 package org.orcid.jaxb.model.clientgroup;
 
 import java.io.Serializable;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -31,6 +32,9 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+
+import org.orcid.jaxb.model.message.ErrorDesc;
+import org.orcid.jaxb.model.message.OrcidType;
 
 /**
  * <p>
@@ -51,6 +55,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element ref="{http://www.orcid.org/ns/orcid}redirect-uris"/>
  *         &lt;element ref="{http://www.orcid.org/ns/orcid}client-id" minOccurs="0"/>
  *         &lt;element ref="{http://www.orcid.org/ns/orcid}client-secret" minOccurs="0"/>
+ *         &lt;element ref="{http://www.orcid.org/ns/orcid}error-desc"/>
  *       &lt;/sequence>
  *       &lt;attribute name="type" type="{http://www.orcid.org/ns/orcid}client-type" />
  *     &lt;/restriction>
@@ -61,7 +66,7 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "displayName", "website", "shortDescription", "redirectUris", "clientId", "clientSecret" })
+@XmlType(name = "", propOrder = { "displayName", "website", "shortDescription", "redirectUris", "clientId", "clientSecret", "errors" })
 @XmlRootElement(name = "orcid-client")
 public class OrcidClient implements Serializable {
 
@@ -79,8 +84,10 @@ public class OrcidClient implements Serializable {
     protected String clientId;
     @XmlElement(name = "client-secret")
     protected String clientSecret;
+    @XmlElement(name = "error-desc", required=false)
+    protected ErrorDesc errors;
     @XmlAttribute
-    protected ClientType type;
+    protected ClientType type;    
 
     /**
      * Gets the value of the displayName property.
@@ -222,11 +229,34 @@ public class OrcidClient implements Serializable {
      * Sets the value of the type property.
      * 
      * @param value
-     *            allowed object is {@link ClientType }
+     *            allowed object is {@link OrcidType }
      * 
      */
     public void setType(ClientType value) {
         this.type = value;
     }
 
+    /**
+     * Gets the value of the errors property.
+     * 
+     * @param value
+     *            allowed object is {@link ErrorDesc }
+     * 
+     */
+	public ErrorDesc getErrors() {
+		return errors;
+	}
+
+	/**
+     * Sets the value of the errors property.
+     * 
+     * @param value
+     *            allowed object is {@link ErrorDesc }
+     * 
+     */
+	public void setErrors(ErrorDesc errors) {
+		this.errors = errors;
+	}        
+    
+    
 }

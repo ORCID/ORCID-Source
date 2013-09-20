@@ -114,7 +114,7 @@ public class OrcidClientDataHelper implements InitializingBean {
     protected OrcidClientGroup createAndPersistClientGroupSingle() {
         OrcidClientGroup unmarshalledGroup = getOrcidClientGroup();
         unmarshalledGroup.setEmail("orcid.integration.test.client+" + System.currentTimeMillis() + "@semantico.com");
-        OrcidClientGroup createdGroup = orcidClientGroupManager.createOrUpdateOrcidClientGroup(unmarshalledGroup, ClientType.PREMIUM_CREATOR);
+        OrcidClientGroup createdGroup = orcidClientGroupManager.createOrUpdateOrcidClientGroup(unmarshalledGroup);
         return createdGroup;
     }
 

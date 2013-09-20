@@ -52,6 +52,7 @@ public class OauthConfirmAccessController extends BaseController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         mav.addObject("auth", authentication);
         mav.setViewName("confirm-oauth-access");
+        mav.addObject("hideUserVoiceScript", true);
         return mav;
     }
 

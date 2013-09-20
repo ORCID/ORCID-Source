@@ -49,7 +49,7 @@ public class ExternalIdentifierEntity extends BaseEntity<ExternalIdentifierEntit
     @Override
     @Transient
     public ExternalIdentifierEntityPk getId() {
-        return null;
+        return new ExternalIdentifierEntityPk(externalIdReference, owner);
     }
 
     @Id
@@ -156,4 +156,13 @@ public class ExternalIdentifierEntity extends BaseEntity<ExternalIdentifierEntit
 
         return result;
     }
+
+    /**
+     * Clean simple properties to allow entity to be reused.
+     */
+    public void clean() {
+        externalIdCommonName = null;
+        externalIdUrl = null;
+    }
+
 }

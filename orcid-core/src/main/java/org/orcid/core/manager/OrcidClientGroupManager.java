@@ -16,8 +16,10 @@
  */
 package org.orcid.core.manager;
 
-import org.orcid.jaxb.model.clientgroup.ClientType;
+import org.orcid.core.exception.OrcidClientGroupManagementException;
+import org.orcid.jaxb.model.clientgroup.OrcidClient;
 import org.orcid.jaxb.model.clientgroup.OrcidClientGroup;
+import org.orcid.jaxb.model.message.OrcidType;
 
 /**
  * 
@@ -36,16 +38,74 @@ public interface OrcidClientGroupManager {
      * client in orcidClientGroup for which orcidClient.clientId is not null.
      * 
      * @param orcidClientGroup
-     *            The ORCID client group to be ingested.
-     * @param clientType
-     *            The client scopes are set based on the client type.
+     *            The ORCID client group to be ingested. The client scopes are set based on the group type.
      * @return The ORCID client group that was ingested, populated with IDs and
      *         secrets.
      */
-    OrcidClientGroup createOrUpdateOrcidClientGroup(OrcidClientGroup orcidClientGroup, ClientType clientType);
+    OrcidClientGroup createOrUpdateOrcidClientGroup(OrcidClientGroup orcidClientGroup);
+
+    /**
+     * Creates a new orcidClientGroup if orcidClientGroup.groupOrcid is null.
+     * Updates an existing orcidClientGroup if orcidClientGroup.groupOrcid is
+     * not null.
+     * 
+     * Creates a new orcidClient for each client in orcidClientGroup for which
+     * orcidClient.clientId is null. Updates an existing orcidClient for each
+     * client in orcidClientGroup for which orcidClient.clientId is not null.
+     * 
+     * Update the resulting client types, so, the types will be only creator or updater, removing the "premium-" 
+     * from the type filed
+     * 
+     * @param orcidClientGroup
+     *            The ORCID client group to be ingested. The client scopes are set based on the group type.
+     * @return The ORCID client group that was ingested, populated with IDs and
+     *         secrets.
+     */
+    OrcidClientGroup createOrUpdateOrcidClientGroupForAPIRequest(OrcidClientGroup orcidClientGroup);
+    
+    /**
+     * Creates a new orcidClient and assign it to the specified group
+     * 
+     * @param orcidClient
+     *            The ORCID client to be created. The client scopes are set based on the group type.
+     * @param groupOrcid
+     *            The group owner for this client
+     * @return The ORCID client that was processed, populated with IDs and
+     *         secrets.
+     */
+    OrcidClient createOrUpdateOrcidClientGroup(String groupOrcid, OrcidClient orcidClient);
 
     OrcidClientGroup retrieveOrcidClientGroup(String groupOrcid);
 
+    /**
+     * Updates a client profile, updates can be adding or removing redirect uris
+     * or updating the client fields
+     * 
+     * @param groupOrcid
+     *            The group owner for this client
+     * @param client
+     *            The updated client
+     * @return the updated OrcidClient
+     * */
+    OrcidClient updateClientProfile(String groupOrcid, OrcidClient client);
+
+    /**
+     * Creates a new client and set the group orcid as the owner of that client
+     * 
+     * @param groupOrcid
+     *            The group owner for this client
+     * @param client
+     *            The new client
+     * @return the new OrcidClient
+     * */
+    OrcidClient createAndPersistClientProfile(String groupOrcid, OrcidClient client) throws OrcidClientGroupManagementException;
+
+    /**
+     * Deletes a group
+     * 
+     * @param groupOrcid
+     *            The orcid of the group that wants to be deleted
+     * */
     void removeOrcidClientGroup(String groupOrcid);
 
 }

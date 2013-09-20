@@ -37,26 +37,32 @@
 	<bean id="userDetailsService" class="org.orcid.core.security.OrcidUserDetailsService" />
 
 	<bean id="accessDecisionManager" class="org.springframework.security.access.vote.UnanimousBased"
-		xmlns="http://www.springframework.org/schema/beans">
-		 <constructor-arg>
+          xmlns="http://www.springframework.org/schema/beans">
+        <constructor-arg>
             <list>
                 <bean class="org.springframework.security.oauth2.provider.vote.ScopeVoter"/>
                 <bean class="org.springframework.security.access.vote.RoleHierarchyVoter">
-                  <constructor-arg ref="roleHierarchy" />
+                	<constructor-arg ref="roleHierarchy" />
                 </bean>
                 <bean class="org.springframework.security.access.vote.AuthenticatedVoter"/>
             </list>
         </constructor-arg>
-	</bean>
+    </bean>
 
 	<bean id="roleHierarchy"
-       class="org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl">
-     <property name="hierarchy">
-          <value>
-				ROLE_ADMIN > ROLE_USER  
-          </value>
-     </property>
-   </bean>
+    	class="org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl">
+		<property name="hierarchy">
+   			<value>
+   				ROLE_ADMIN > ROLE_PREMIUM_INSTITUTION 
+   				ROLE_ADMIN > ROLE_PREMIUM
+   				ROLE_PREMIUM_INSTITUTION > ROLE_BASIC_INSTITUTION   				
+   				ROLE_PREMIUM > ROLE_BASIC		
+   				ROLE_BASIC_INSTITUTION > ROLE_GROUP
+      			ROLE_BASIC > ROLE_GROUP  
+				ROLE_GROUP > ROLE_USER
+   			</value>
+		</property>
+	</bean>
 
 	<bean id="sessionRegistry"
 		class="org.springframework.security.core.session.SessionRegistryImpl" />
@@ -74,7 +80,6 @@
 			<sec:password-encoder ref="encryptionManager" />
 		</sec:authentication-provider>
 	</sec:authentication-manager>
-
 
 	<sec:http pattern="/" security="none" />
 	<sec:http pattern="/robots.txt" security="none" />
@@ -168,6 +173,8 @@
 		<sec:intercept-url pattern="/oauth/.*" access="ROLE_USER" />
 		<sec:intercept-url pattern="/eula/accept(\?.*)?"
 			method="POST" access="DENY_OAUTH,ROLE_USER" />
+		<sec:intercept-url pattern="/manage-clients" 
+			access="ROLE_GROUP"/>
 		<sec:intercept-url pattern="/deprecate-profile" 
 			access="ROLE_ADMIN"/>
 		<sec:intercept-url pattern="/deprecate-profile/.*" 
@@ -203,10 +210,9 @@
 	<bean id="corsFilter" class="org.orcid.core.web.filters.CorsFilter" />
 
     <bean id="jsonpCallbackFilter" class="org.orcid.core.web.filters.JsonpCallbackFilter" />
-
-	<bean id="oauthAccessDeniedHandler"
-		class="org.springframework.security.oauth2.provider.error.OAuth2AccessDeniedHandler" />
-
+		
+	<bean id="oauthAccessDeniedHandler" class="org.springframework.security.oauth2.provider.error.OAuth2AccessDeniedHandler" />
+		
 	<bean id="authorizationCodeTokenGranter"
 		class="org.springframework.security.oauth2.provider.code.AuthorizationCodeTokenGranter">
 		<constructor-arg ref="orcidAuthorizationCodeService" />
@@ -247,5 +253,4 @@
 	<!-- Simple listener that gets fired when successful login occurs -->
 	<bean id="loginApplicationListener"
 		class="org.orcid.frontend.web.listener.LoginApplicationListener" />
-
 </beans>

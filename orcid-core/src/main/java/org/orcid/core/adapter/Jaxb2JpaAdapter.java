@@ -17,7 +17,9 @@
 package org.orcid.core.adapter;
 
 import org.orcid.jaxb.model.message.OrcidProfile;
+import org.orcid.jaxb.model.message.OrcidWork;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.orcid.persistence.jpa.entities.ProfileWorkEntity;
 
 /**
  * orcid-persistence - Dec 7, 2011 - Jaxb2JpaAdapter
@@ -28,4 +30,6 @@ import org.orcid.persistence.jpa.entities.ProfileEntity;
 public interface Jaxb2JpaAdapter {
 
     ProfileEntity toProfileEntity(OrcidProfile profile, ProfileEntity existingProfileEntity);
+
+    ProfileWorkEntity getNewProfileWorkEntity(OrcidWork orcidWork, ProfileEntity profileEntity);
 }

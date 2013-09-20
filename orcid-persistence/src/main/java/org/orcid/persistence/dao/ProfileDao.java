@@ -76,7 +76,6 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
     OrcidType retrieveOrcidType(String orcid);
 
     List<Object[]> findInfoForDecryptionAnalysis();
-
     Locale retrieveLocale(String orcid);
 
     void updateLocale(String orcid, Locale locale);
