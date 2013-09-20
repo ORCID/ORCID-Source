@@ -47,6 +47,18 @@
           contributors_json="{&quot;contributor&quot;:[{&quot;contributorOrcid&quot;:null,&quot;creditName&quot;:{&quot;content&quot;:&quot;Jason Contributor&quot;,&quot;visibility&quot;:null},&quot;contributorEmail&quot;:null,&quot;contributorAttributes&quot;:null}]}"
           work_type="BOOK"
             />
+            
+    
+    <work work_id="4"
+          publication_year="2011"
+          publication_month="2"
+          publication_day="1"
+          title="A book with a Journal Title"
+          journal_title="My Journal Title"
+          citation="Sue Ellen ewing"
+          citation_type="FORMATTED_IEEE"
+          work_type="BOOK"
+            />        
 
     <patent patent_id="1"
             patent_no="GB9283949348"

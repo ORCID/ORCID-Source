@@ -282,6 +282,13 @@
 				</div>
 
 				<div class="control-group">
+					<label><@orcid.msg 'manual_work_form_contents.journalTitle'/></label>
+				    <div class="relative">
+						<input name="journalTitle" type="text" class="input-xlarge"  ng-model="editWork.journalTitle.value" placeholder="<@orcid.msg 'manual_work_form_contents.add_journalTitle'/>" ng-model-onblur/>						
+					</div>
+				</div>
+
+				<div class="control-group">
 		    		<label class="relative"><@orcid.msg 'manual_work_form_contents.labelworktype'/></label>
 		    		<div class="relative">
 			    		<select id="workType" name="workType" class="input-xlarge" ng-model="editWork.workType.value" ng-change="serverValidate('works/work/workTypeValidate.json')">

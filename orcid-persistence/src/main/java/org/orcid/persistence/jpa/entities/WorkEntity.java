@@ -146,7 +146,7 @@ public class WorkEntity extends BaseEntity<Long> implements Comparable<WorkEntit
         this.citation = citation;
     }
 
-    @Column(name = "journalTitle", length = 1000)
+    @Column(name = "journal_title", length = 1000)
     public String getJournalTitle() {
         return journalTitle;
     }

@@ -69,4 +69,5 @@
     <include file="/db/updates/work-contributors-as-json.xml"/>
     <include file="/db/updates/profile_deprecation_project.xml"/>    
     <include file="/db/updates/email_event.xml" />
+    <include file="/db/updates/add_journal_title_to_works.xml" />
 </databaseChangeLog>

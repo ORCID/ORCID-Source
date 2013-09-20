@@ -68,7 +68,7 @@ public class StatisticsGeneratorDaoTest extends DBUnitTest {
         assertEquals(6, statisticsGeneratorDao.getAccountsWithVerifiedEmails());
         assertEquals(2, statisticsGeneratorDao.getAccountsWithWorks());
         assertEquals(7, statisticsGeneratorDao.getLiveIds());
-        assertEquals(3, statisticsGeneratorDao.getNumberOfWorks());
+        assertEquals(4, statisticsGeneratorDao.getNumberOfWorks());
         assertEquals(0, statisticsGeneratorDao.getNumberOfWorksWithDOIs());
     }
 }

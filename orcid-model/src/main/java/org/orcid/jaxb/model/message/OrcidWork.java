@@ -46,6 +46,7 @@ import javax.xml.bind.annotation.XmlType;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
  *         &lt;element ref="{http://www.orcid.org/ns/orcid}work-title" minOccurs="0"/>
+ *         &lt;element ref="{http://www.orcid.org/ns/orcid}journal-title minOccurs="0"/>
  *         &lt;element ref="{http://www.orcid.org/ns/orcid}short-description" minOccurs="0"/>
  *         &lt;element ref="{http://www.orcid.org/ns/orcid}work-citation" minOccurs="0"/>
  *         &lt;element ref="{http://www.orcid.org/ns/orcid}work-type" minOccurs="0"/>
@@ -66,7 +67,7 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "putCode", "workTitle", "shortDescription", "workCitation", "workType", "publicationDate", "workExternalIdentifiers", "url",
+@XmlType(name = "", propOrder = { "putCode", "workTitle", "journalTitle", "shortDescription", "workCitation", "workType", "publicationDate", "workExternalIdentifiers", "url",
         "workContributors", "workSource" })
 @XmlRootElement(name = "orcid-work")
 public class OrcidWork implements VisibilityType, Serializable {

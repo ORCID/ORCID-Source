@@ -719,7 +719,8 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         orcidWork.setWorkContributors(getWorkContributors(profileWorkEntity));
         orcidWork.setWorkExternalIdentifiers(getWorkExternalIdentifiers(work));
         orcidWork.setWorkSource(getWorkSource(profileWorkEntity));
-        orcidWork.setWorkTitle(getWorkTitle(work));
+        orcidWork.setWorkTitle(getWorkTitle(work));        
+        orcidWork.setJournalTitle(StringUtils.isNotBlank(work.getJournalTitle()) ? new Title(work.getJournalTitle()) : null);        
         orcidWork.setWorkType(work.getWorkType());
         orcidWork.setVisibility(profileWorkEntity.getVisibility());
         return orcidWork;
