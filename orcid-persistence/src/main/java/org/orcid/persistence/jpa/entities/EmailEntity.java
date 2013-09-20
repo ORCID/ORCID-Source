@@ -125,4 +125,15 @@ public class EmailEntity extends BaseEntity<String> implements ProfileAware {
         }
         return map;
     }
+
+    /**
+     * Clean simple fields to allow entity to be reused
+     */
+    public void clean() {
+        primary = null;
+        current = null;
+        verified = null;
+        visibility = null;
+    }
+
 }
