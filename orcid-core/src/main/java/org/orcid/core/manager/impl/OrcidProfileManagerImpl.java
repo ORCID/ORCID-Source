@@ -182,14 +182,14 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
 
     @Resource(name = "profileCache")
     private Cache profileCache;
-    
+
     @Resource
     private GenericDao<EmailEventEntity, Long> emailEventDao;
 
     private int claimWaitPeriodDays = 10;
 
     private int claimReminderAfterDays = 8;
-    
+
     private int verifyReminderAfterDays = 7;
 
     private String releaseName = ReleaseNameUtils.getReleaseName();
@@ -518,9 +518,9 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
                     || haveSystemRole()) {
                 return orcidProfile;
             } else {
-                if(orcidProfile.getOrcidDeprecated() != null && orcidProfile.getOrcidDeprecated().getPrimaryRecord() != null)
+                if (orcidProfile.getOrcidDeprecated() != null && orcidProfile.getOrcidDeprecated().getPrimaryRecord() != null)
                     return createReservedForClaimOrcidProfile(orcid, orcidProfile.getOrcidDeprecated());
-                else 
+                else
                     return createReservedForClaimOrcidProfile(orcid);
             }
         }
@@ -554,14 +554,14 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
     private OrcidProfile createReservedForClaimOrcidProfile(String orcid) {
         return createReservedForClaimOrcidProfile(orcid, null);
     }
-    
+
     private OrcidProfile createReservedForClaimOrcidProfile(String orcid, OrcidDeprecated deprecatedInfo) {
         OrcidProfile op = new OrcidProfile();
         op.setOrcid(orcid);
-        
-        if(deprecatedInfo != null)
+
+        if (deprecatedInfo != null)
             op.setOrcidDeprecated(deprecatedInfo);
-        
+
         OrcidHistory oh = new OrcidHistory();
         oh.setClaimed(new Claimed(false));
         op.setOrcidHistory(oh);
@@ -1281,7 +1281,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
             }
         } while (!emails.isEmpty());
     }
-    
+
     private void processUnverifiedEmails7DaysInTransaction(final String email) {
         transactionTemplate.execute(new TransactionCallbackWithoutResult() {
             @Override
@@ -1294,7 +1294,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
             }
         });
     }
-    
+
     private void processUnclaimedProfileForReminderInTransaction(final String orcid) {
         transactionTemplate.execute(new TransactionCallbackWithoutResult() {
             @Override
@@ -1314,12 +1314,12 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         OrcidGrantedAuthority authority = new OrcidGrantedAuthority();
         authority.setProfileEntity(profileEntity);
 
-        if(profileEntity.getOrcidType() == null || profileEntity.getOrcidType().equals(OrcidType.USER))
-            authority.setAuthority(OrcidWebRole.ROLE_USER.getAuthority());     
-        else if(profileEntity.getOrcidType().equals(OrcidType.ADMIN))
+        if (profileEntity.getOrcidType() == null || profileEntity.getOrcidType().equals(OrcidType.USER))
+            authority.setAuthority(OrcidWebRole.ROLE_USER.getAuthority());
+        else if (profileEntity.getOrcidType().equals(OrcidType.ADMIN))
             authority.setAuthority(OrcidWebRole.ROLE_ADMIN.getAuthority());
-        else if(profileEntity.getOrcidType().equals(OrcidType.GROUP)){
-            switch(profileEntity.getGroupType()){
+        else if (profileEntity.getOrcidType().equals(OrcidType.GROUP)) {
+            switch (profileEntity.getGroupType()) {
             case BASIC:
                 authority.setAuthority(OrcidWebRole.ROLE_BASIC.getAuthority());
                 break;
@@ -1328,13 +1328,13 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
                 break;
             case BASIC_INSTITUTION:
                 authority.setAuthority(OrcidWebRole.ROLE_BASIC_INSTITUTION.getAuthority());
-                break;            
+                break;
             case PREMIUM_INSTITUTION:
                 authority.setAuthority(OrcidWebRole.ROLE_PREMIUM_INSTITUTION.getAuthority());
                 break;
-            }            
-        } else if(profileEntity.getOrcidType().equals(OrcidType.CLIENT)){
-            switch(profileEntity.getClientType()){
+            }
+        } else if (profileEntity.getOrcidType().equals(OrcidType.CLIENT)) {
+            switch (profileEntity.getClientType()) {
             case CREATOR:
                 authority.setAuthority(OrcidWebRole.ROLE_CREATOR.getAuthority());
                 break;
@@ -1346,9 +1346,9 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
                 break;
             case PREMIUM_UPDATER:
                 authority.setAuthority(OrcidWebRole.ROLE_PREMIUM_UPDATER.getAuthority());
-                break;            
+                break;
             }
-        }                
+        }
         Set<OrcidGrantedAuthority> authorities = new HashSet<OrcidGrantedAuthority>(1);
         authorities.add(authority);
         return authorities;
