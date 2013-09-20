@@ -58,7 +58,7 @@
 			</div>
 		</div>
 		<div class="row" ng-show="detailWork.workType.value" ng-cloak>
-			<div class="span2 ">
+			<div class="span2">
 				<div class="label">
 					<@orcid.msg 'manual_work_form_contents.labelworktype'/>
 				</div>
@@ -68,17 +68,33 @@
 			</div>
 		</div>
 		<div class="row" ng-show="detailWork.citation.citation.value" ng-cloak>
-			<div class="span2 ">
+			<div class="span2">
 				<div class="label">
 					<@orcid.msg 'manual_work_form_contents.labelcitation'/>
 				</div>
+				<div ng-show="showBibtex && detailWork.citation.citationType.value == 'bibtex'"><a ng-click="bibtexShowToggle()">show raw</a></div>
+				<div ng-show="showBibtex == false && detailWork.citation.citationType.value == 'bibtex'"><a ng-click="bibtexShowToggle()">hide raw</a></div>
 			</div>
-			<div class="span10">
+			<div class="span10" ng-hide="showBibtex" ng-cloak>
 				<div ng-bind="detailWork.citation.citation.value"></div>
+			</div>
+			<div class="span10" ng-show="showBibtex" ng-cloak>
+				<div ng-repeat='bibJSON in detailWork.bibtexCitation'>
+					<div class="row"> 
+						<div class="span10">
+							{{bibJSON.entryType}} : {{bibJSON.citationKey}}
+						</div>
+					</div>
+					<div ng-repeat="(entKey,entVal) in bibJSON.entryTags" class="row">
+						<div class="span1"></div>
+						<div class="span3">{{entKey}}</div>
+						<div class="span6">{{entVal}}</div>
+					</div>
+				</div>
 			</div>
 		</div>
 		<div class="row" ng-show="detailWork.citation.citationType.value" ng-cloak>
-			<div class="span2 ">
+			<div class="span2">
 				<div class="label">
 					<@orcid.msg 'manual_work_form_contents.labelcitationtype'/>
 				</div>
@@ -88,7 +104,7 @@
 			</div>
 		</div>
 		<div class="row" ng-show="detailWork.publicationDate.year" ng-cloak>
-			<div class="span2 ">
+			<div class="span2">
 				<div class="label">
 					<@orcid.msg 'manual_work_form_contents.labelPubDate'/>
 				</div>
@@ -98,7 +114,7 @@
 			</div>
 		</div>
 		<div class="row" ng-show="detailWork.shortDescription.value" ng-cloak>
-			<div class="span2 ">
+			<div class="span2">
 				<div class="label">
 					<@orcid.msg 'manual_work_form_contents.labeldescription'/>
 				</div>
@@ -108,7 +124,7 @@
 			</div>
 		</div>
 		<div class="row" ng-show="detailWork.workExternalIdentifiers.length > 0" ng-cloak>
-			<div class="span2 ">
+			<div class="span2">
 				<div class="label">
 					<@orcid.msg 'manual_work_form_contents.labelID'/>
 				</div>
@@ -122,7 +138,7 @@
 			</div>
 		</div>
 		<div class="row" ng-show="detailWork.url.value" ng-cloak>
-			<div class="span2 ">
+			<div class="span2">
 				<div class="label">
 					<@orcid.msg 'manual_work_form_contents.labelURL'/>
 				</div>
@@ -132,15 +148,64 @@
 			</div>
 		</div>
 		<div class="row" ng-show="detailWork.contributors.length > 0" ng-cloak>
-			<div class="span2 ">
+			<div class="span2">
 				<div class="label">
-					<@orcid.msg 'manual_work_form_contents.labelcredited'/>
+					Contributor
 				</div>
 			</div>
 			<div class="span10">
 				<div ng-repeat="contributor in detailWork.contributors">
-				    {{contributor.contributorRole.value}},{{contributor.contributorSequence.value}}
+					<div class="row" ng-show="contributor.contributorRole.value">
+						<div class="span2">
+							Role:
+						</div>
+						<div class="span8">
+							{{contributor.contributorRole.value}}
+						</div>
+					</div>
+					<div class="row" ng-show="contributor.contributorSequence.value">
+						<div class="span2">
+							Credited:
+						</div>
+						<div class="span8">
+							{{contributor.contributorSequence.value}}
+						</div>
+					</div>
+					<div class="row" ng-show="contributor.email.value">
+						<div class="span2">
+							Email:
+						</div>
+						<div class="span8">
+							{{contributor.email.value}}
+						</div>
+					</div>
+					<div class="row" ng-show="contributor.orcid.value">
+						<div class="span2">
+							ORCID:
+						</div>
+						<div class="span8">
+							{{contributor.orcid.value}}
+						</div>
+					</div>
+					<div class="row" ng-show="contributor.email.value">
+						<div class="span2">
+							Credited:
+						</div>
+						<div class="span8">
+							{{contributor.email.value}}
+						</div>
+					</div>
+					<div class="row" ng-show="contributor.creditName.value">
+						<div class="span2">
+							Credit Name:
+						</div>
+						<div class="span8">
+							{{contributor.creditName.value}}
+						</div>
+					</div>
 				</div>
+				    
+				
 			</div>
 		</div>		
 	</div>

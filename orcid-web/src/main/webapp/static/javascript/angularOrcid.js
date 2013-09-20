@@ -1097,7 +1097,16 @@ function WorkCtrl($scope, $compile, worksSrvc){
 
 	$scope.showDetailModal = function(idx){
 		$scope.detailWork = $scope.works[idx];
-		//alert($scope.detailWork.workTitle.title.value);
+		$scope.showBibtex = false;
+		if ($scope.detailWork.citation && $scope.detailWork.citation.citationType.value == 'bibtex') {
+			try {
+				$scope.detailWork.bibtexCitation = bibtexParse.toJSON($scope.detailWork.citation.citation.value);
+				console.log($scope.detailWork.bibtexCitation);
+				$scope.showBibtex = true;
+			} catch (err) {
+				console.log("couldn't parse bibtex: " + $scope.detailWork.citation.citation.value);
+			}
+		}
 	    $.colorbox({        	
 	        html: $compile($('#detail-work-modal').html())($scope),
 	        scrolling: true,
@@ -1106,6 +1115,11 @@ function WorkCtrl($scope, $compile, worksSrvc){
 	        }
 	    });  
     };
+    
+    $scope.bibtexShowToggle = function () {
+    	$scope.showBibtex = !($scope.showBibtex);
+    };
+    
     setTimeout(function() {$scope.showDetailModal(0); $scope.$apply();}, 1000);
 
 	$scope.showWorkImportWizard =  function() {
