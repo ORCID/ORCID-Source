@@ -873,7 +873,7 @@ function ClaimCtrl($scope, $compile) {
 	
 	$scope.getClaimAjaxUrl = function () {
 		return window.location.href.split("?")[0]+".json";
-	} 
+	}; 
 	
 	$scope.updateWorkVisibilityDefault = function(priv, $event) {
 		$scope.register.workVisibilityDefault.visibility = priv;
@@ -1120,13 +1120,13 @@ function WorkCtrl($scope, $compile, worksSrvc){
     	$scope.showBibtex = !($scope.showBibtex);
     };
     
-    setTimeout(function() {$scope.showDetailModal(0); $scope.$apply();}, 1000);
+    //setTimeout(function() {$scope.showDetailModal(0); $scope.$apply();}, 1000);
 
 	$scope.showWorkImportWizard =  function() {
 		$.colorbox({        	            
             html : $compile($('#import-wizard-modal').html())($scope),
             onComplete: function() {$.colorbox.resize();}
-        })
+        });
 	};
 	
 	$scope.addWorkModal = function(){
@@ -1232,8 +1232,6 @@ function WorkCtrl($scope, $compile, worksSrvc){
             html : $compile($('#delete-work-modal').html())($scope),
             onComplete: function() {$.colorbox.resize();}
         });
-		
-		        
 	};
 	
 	$scope.deleteByIndex = function() {		
