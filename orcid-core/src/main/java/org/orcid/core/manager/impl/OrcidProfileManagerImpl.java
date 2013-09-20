@@ -47,6 +47,7 @@ import net.sf.ehcache.Cache;
 import net.sf.ehcache.Element;
 
 import org.apache.commons.lang3.StringUtils;
+import org.orcid.core.adapter.Jaxb2JpaAdapter;
 import org.orcid.core.adapter.JpaJaxbEntityAdapter;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.EncryptionManager;
@@ -106,6 +107,7 @@ import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.dao.GivenPermissionToDao;
 import org.orcid.persistence.dao.OrcidOauth2TokenDetailDao;
 import org.orcid.persistence.dao.ProfileDao;
+import org.orcid.persistence.dao.ProfileWorkDao;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.EmailEventEntity;
 import org.orcid.persistence.jpa.entities.EmailEventType;
@@ -113,6 +115,7 @@ import org.orcid.persistence.jpa.entities.IndexingStatus;
 import org.orcid.persistence.jpa.entities.OrcidGrantedAuthority;
 import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.orcid.persistence.jpa.entities.ProfileWorkEntity;
 import org.orcid.utils.DateUtils;
 import org.orcid.utils.NullUtils;
 import org.slf4j.Logger;
@@ -154,6 +157,9 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
     private ProfileDao profileDao;
 
     @Resource
+    private ProfileWorkDao profileWorkDao;
+
+    @Resource
     private EmailDao emailDao;
 
     @Resource
@@ -164,6 +170,9 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
 
     @Resource
     private JpaJaxbEntityAdapter adapter;
+
+    @Resource
+    private Jaxb2JpaAdapter jaxb2JpaAdapter;
 
     @Resource
     private OrcidIndexManager orcidIndexManager;
@@ -182,14 +191,14 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
 
     @Resource(name = "profileCache")
     private Cache profileCache;
-    
+
     @Resource
     private GenericDao<EmailEventEntity, Long> emailEventDao;
 
     private int claimWaitPeriodDays = 10;
 
     private int claimReminderAfterDays = 8;
-    
+
     private int verifyReminderAfterDays = 7;
 
     private String releaseName = ReleaseNameUtils.getReleaseName();
@@ -340,14 +349,16 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
      * */
     private void addSourceToWorks(OrcidProfile orcidProfile, String amenderOrcid) {
         OrcidWorks orcidWorks = orcidProfile.getOrcidActivities() == null ? null : orcidProfile.getOrcidActivities().getOrcidWorks();
+        addSourceToWorks(orcidWorks, amenderOrcid);
+    }
 
+    private void addSourceToWorks(OrcidWorks orcidWorks, String amenderOrcid) {
         if (orcidWorks != null && !orcidWorks.getOrcidWork().isEmpty()) {
             for (OrcidWork orcidWork : orcidWorks.getOrcidWork()) {
                 if (orcidWork.getWorkSource() == null || StringUtils.isEmpty(orcidWork.getWorkSource().getContent()))
                     orcidWork.setWorkSource(new WorkSource(amenderOrcid));
             }
         }
-
     }
 
     private void setWorkPrivacy(OrcidProfile updatedOrcidProfile, Visibility defaultWorkVisibility) {
@@ -357,17 +368,21 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         if (incomingActivities != null) {
             OrcidWorks incomingWorks = incomingActivities.getOrcidWorks();
             if (incomingWorks != null) {
-                for (OrcidWork incomingWork : incomingWorks.getOrcidWork()) {
-                    if (StringUtils.isBlank(incomingWork.getPutCode())) {
-                        Visibility incomingWorkVisibility = incomingWork.getVisibility();
-                        if (isClaimed) {
-                            if (defaultWorkVisibility.isMoreRestrictiveThan(incomingWorkVisibility)) {
-                                incomingWork.setVisibility(defaultWorkVisibility);
-                            }
-                        } else if (incomingWorkVisibility == null) {
-                            incomingWork.setVisibility(Visibility.PRIVATE);
-                        }
+                setWorkPrivacy(incomingWorks, defaultWorkVisibility, isClaimed);
+            }
+        }
+    }
+
+    private void setWorkPrivacy(OrcidWorks incomingWorks, Visibility defaultWorkVisibility, boolean isClaimed) {
+        for (OrcidWork incomingWork : incomingWorks.getOrcidWork()) {
+            if (StringUtils.isBlank(incomingWork.getPutCode())) {
+                Visibility incomingWorkVisibility = incomingWork.getVisibility();
+                if (isClaimed) {
+                    if (defaultWorkVisibility.isMoreRestrictiveThan(incomingWorkVisibility)) {
+                        incomingWork.setVisibility(defaultWorkVisibility);
                     }
+                } else if (incomingWorkVisibility == null) {
+                    incomingWork.setVisibility(Visibility.PRIVATE);
                 }
             }
         }
@@ -518,9 +533,9 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
                     || haveSystemRole()) {
                 return orcidProfile;
             } else {
-                if(orcidProfile.getOrcidDeprecated() != null && orcidProfile.getOrcidDeprecated().getPrimaryRecord() != null)
+                if (orcidProfile.getOrcidDeprecated() != null && orcidProfile.getOrcidDeprecated().getPrimaryRecord() != null)
                     return createReservedForClaimOrcidProfile(orcid, orcidProfile.getOrcidDeprecated());
-                else 
+                else
                     return createReservedForClaimOrcidProfile(orcid);
             }
         }
@@ -554,14 +569,14 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
     private OrcidProfile createReservedForClaimOrcidProfile(String orcid) {
         return createReservedForClaimOrcidProfile(orcid, null);
     }
-    
+
     private OrcidProfile createReservedForClaimOrcidProfile(String orcid, OrcidDeprecated deprecatedInfo) {
         OrcidProfile op = new OrcidProfile();
         op.setOrcid(orcid);
-        
-        if(deprecatedInfo != null)
+
+        if (deprecatedInfo != null)
             op.setOrcidDeprecated(deprecatedInfo);
-        
+
         OrcidHistory oh = new OrcidHistory();
         oh.setClaimed(new Claimed(false));
         op.setOrcidHistory(oh);
@@ -825,52 +840,80 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
 
     @Override
     @Transactional
-    public OrcidProfile addOrcidWorks(OrcidProfile updatedOrcidProfile) {
-        OrcidProfile existingProfile = retrieveOrcidProfile(updatedOrcidProfile.getOrcid().getValue());
+    public void addOrcidWorks(OrcidProfile updatedOrcidProfile) {
+        String orcid = updatedOrcidProfile.getOrcid().getValue();
+        OrcidProfile existingProfile = retrieveOrcidProfile(orcid);
         if (existingProfile == null) {
-            return null;
+            throw new IllegalArgumentException("No record found for " + orcid);
         }
         OrcidWorks existingOrcidWorks = existingProfile.retrieveOrcidWorks();
         OrcidWorks updatedOrcidWorks = updatedOrcidProfile.retrieveOrcidWorks();
+        Visibility workVisibilityDefault = existingProfile.getOrcidInternal().getPreferences().getWorkVisibilityDefault().getValue();
+        Boolean claimed = existingProfile.getOrcidHistory().isClaimed();
+        setWorkPrivacy(updatedOrcidWorks, workVisibilityDefault, claimed == null ? false : claimed);
+        updatedOrcidWorks = dedupeWorks(updatedOrcidWorks);
+        String amenderOrcid = retrieveAmenderOrcid();
+        addSourceToWorks(updatedOrcidWorks, amenderOrcid);
+        List<OrcidWork> updatedOrcidWorksList = updatedOrcidWorks.getOrcidWork();
+        checkForAlreadyExistingWorks(existingOrcidWorks, updatedOrcidWorksList);
+        persistAddedWorks(orcid, updatedOrcidWorksList);
+    }
 
-        // Get each of the works and check the orcid and email parameters
-        // against existing profile information.
-        for (OrcidWork work : updatedOrcidWorks.getOrcidWork()) {
-            WorkContributors contributors = work.getWorkContributors();
+    private void checkForAlreadyExistingWorks(OrcidWorks existingOrcidWorks, List<OrcidWork> updatedOrcidWorksList) {
+        if (existingOrcidWorks != null) {
+            Set<OrcidWork> existingOrcidWorksSet = new HashSet<>();
+            for (OrcidWork existingWork : existingOrcidWorks.getOrcidWork()) {
+                existingOrcidWorksSet.add(existingWork);
+            }
+            for (Iterator<OrcidWork> updatedWorkIterator = updatedOrcidWorksList.iterator(); updatedWorkIterator.hasNext();) {
+                OrcidWork updatedWork = updatedWorkIterator.next();
+                if (existingOrcidWorksSet.contains(updatedWork)) {
+                    updatedWorkIterator.remove();
+                }
+            }
+        }
+    }
 
-            if (contributors != null) {
-                for (Contributor contributor : contributors.getContributor()) {
-                    // If contributor orcid is available, look for the profile
-                    // associated with that orcid
-                    if (contributor.getContributorOrcid() != null) {
-                        ProfileEntity profile = profileDao.find(contributor.getContributorOrcid().getValue());
-                        if (profile != null) {
-                            contributor.setContributorEmail(new ContributorEmail(profile.getPrimaryEmail().getId()));
-                            contributor.setCreditName(new CreditName(profile.getCreditName()));
-                        }
-                    } else if (contributor.getContributorEmail() != null) {
-                        // Else, if email is available, get the profile
-                        // associated with that email
-                        String email = contributor.getContributorEmail().getValue();
+    private void persistAddedWorks(String orcid, List<OrcidWork> updatedOrcidWorksList) {
+        ProfileEntity profileEntity = profileDao.find(orcid);
+        for (OrcidWork updatedOrcidWork : updatedOrcidWorksList) {
+            populateContributorInfo(updatedOrcidWork);
+            ProfileWorkEntity profileWorkEntity = jaxb2JpaAdapter.getNewProfileWorkEntity(updatedOrcidWork, profileEntity);
+            profileWorkDao.persist(profileWorkEntity);
+        }
+        removeFromCache(orcid);
+    }
 
-                        EmailEntity emailEntity = emailDao.findCaseInsensitive(email);
-                        if (emailEntity != null) {
-                            ProfileEntity profileEntity = emailEntity.getProfile();
-                            contributor.setContributorOrcid(new ContributorOrcid(profileEntity.getId()));
-                            contributor.setCreditName(new CreditName(profileEntity.getCreditName()));
-                        }
+    /**
+     * Get each of the work and check the orcid and email parameters against
+     * existing profile information.
+     */
+    private void populateContributorInfo(OrcidWork work) {
+        WorkContributors contributors = work.getWorkContributors();
+        if (contributors != null) {
+            for (Contributor contributor : contributors.getContributor()) {
+                // If contributor orcid is available, look for the profile
+                // associated with that orcid
+                if (contributor.getContributorOrcid() != null) {
+                    ProfileEntity profile = profileDao.find(contributor.getContributorOrcid().getValue());
+                    if (profile != null) {
+                        contributor.setContributorEmail(new ContributorEmail(profile.getPrimaryEmail().getId()));
+                        contributor.setCreditName(new CreditName(profile.getCreditName()));
+                    }
+                } else if (contributor.getContributorEmail() != null) {
+                    // Else, if email is available, get the profile
+                    // associated with that email
+                    String email = contributor.getContributorEmail().getValue();
+
+                    EmailEntity emailEntity = emailDao.findCaseInsensitive(email);
+                    if (emailEntity != null) {
+                        ProfileEntity profileEntity = emailEntity.getProfile();
+                        contributor.setContributorOrcid(new ContributorOrcid(profileEntity.getId()));
+                        contributor.setCreditName(new CreditName(profileEntity.getCreditName()));
                     }
                 }
             }
         }
-
-        if (existingOrcidWorks == null) {
-            existingProfile.setOrcidWorks(updatedOrcidWorks);
-        } else {
-            existingOrcidWorks.getOrcidWork().addAll(updatedOrcidWorks.getOrcidWork());
-            existingProfile.setOrcidWorks(existingOrcidWorks);
-        }
-        return updateOrcidProfile(existingProfile);
     }
 
     private void dedupeProfileWorks(OrcidProfile orcidProfile) {
@@ -1281,7 +1324,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
             }
         } while (!emails.isEmpty());
     }
-    
+
     private void processUnverifiedEmails7DaysInTransaction(final String email) {
         transactionTemplate.execute(new TransactionCallbackWithoutResult() {
             @Override
@@ -1294,7 +1337,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
             }
         });
     }
-    
+
     private void processUnclaimedProfileForReminderInTransaction(final String orcid) {
         transactionTemplate.execute(new TransactionCallbackWithoutResult() {
             @Override
@@ -1314,12 +1357,12 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         OrcidGrantedAuthority authority = new OrcidGrantedAuthority();
         authority.setProfileEntity(profileEntity);
 
-        if(profileEntity.getOrcidType() == null || profileEntity.getOrcidType().equals(OrcidType.USER))
-            authority.setAuthority(OrcidWebRole.ROLE_USER.getAuthority());     
-        else if(profileEntity.getOrcidType().equals(OrcidType.ADMIN))
+        if (profileEntity.getOrcidType() == null || profileEntity.getOrcidType().equals(OrcidType.USER))
+            authority.setAuthority(OrcidWebRole.ROLE_USER.getAuthority());
+        else if (profileEntity.getOrcidType().equals(OrcidType.ADMIN))
             authority.setAuthority(OrcidWebRole.ROLE_ADMIN.getAuthority());
-        else if(profileEntity.getOrcidType().equals(OrcidType.GROUP)){
-            switch(profileEntity.getGroupType()){
+        else if (profileEntity.getOrcidType().equals(OrcidType.GROUP)) {
+            switch (profileEntity.getGroupType()) {
             case BASIC:
                 authority.setAuthority(OrcidWebRole.ROLE_BASIC.getAuthority());
                 break;
@@ -1328,13 +1371,13 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
                 break;
             case BASIC_INSTITUTION:
                 authority.setAuthority(OrcidWebRole.ROLE_BASIC_INSTITUTION.getAuthority());
-                break;            
+                break;
             case PREMIUM_INSTITUTION:
                 authority.setAuthority(OrcidWebRole.ROLE_PREMIUM_INSTITUTION.getAuthority());
                 break;
-            }            
-        } else if(profileEntity.getOrcidType().equals(OrcidType.CLIENT)){
-            switch(profileEntity.getClientType()){
+            }
+        } else if (profileEntity.getOrcidType().equals(OrcidType.CLIENT)) {
+            switch (profileEntity.getClientType()) {
             case CREATOR:
                 authority.setAuthority(OrcidWebRole.ROLE_CREATOR.getAuthority());
                 break;
@@ -1346,9 +1389,9 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
                 break;
             case PREMIUM_UPDATER:
                 authority.setAuthority(OrcidWebRole.ROLE_PREMIUM_UPDATER.getAuthority());
-                break;            
+                break;
             }
-        }                
+        }
         Set<OrcidGrantedAuthority> authorities = new HashSet<OrcidGrantedAuthority>(1);
         authorities.add(authority);
         return authorities;
