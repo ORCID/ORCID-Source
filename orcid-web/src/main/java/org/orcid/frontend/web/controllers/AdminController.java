@@ -146,7 +146,7 @@ public class AdminController extends BaseController {
                             deprecated.setResearcherUrlsVisibility(Visibility.PRIVATE);
                             deprecated.setProfileAddressVisibility(Visibility.PRIVATE);
                             deprecated.setBiography(new String());
-                            deprecated.setIso2Country(new String());                            
+                            deprecated.setIso2Country(null);                            
                             profileEntityManager.updateProfile(deprecated);
                                                                                     
                             //2. Remove works

@@ -128,7 +128,9 @@
      
 	<bean id="externalIdentifierDao" class="org.orcid.persistence.dao.impl.ExternalIdentifierDaoImpl" />
 	
-	<bean id="profileWorkDao" class="org.orcid.persistence.dao.impl.ProfileWorkDaoImpl" />          
+	<bean id="profileWorkDao" class="org.orcid.persistence.dao.impl.ProfileWorkDaoImpl" />
+	
+	<bean id="orgDao" class="org.orcid.persistence.dao.impl.OrgDaoImpl" />
      
     <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean" depends-on="liquibase">
         <property name="jpaVendorAdapter" ref="jpaVendorAdapter" />

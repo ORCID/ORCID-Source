@@ -130,4 +130,26 @@ public interface T2OrcidApiServiceDelegator extends OrcidApiServiceDelegator {
      * @return If successful, returns a 204 No content.
      * */
     Response unregisterWebhook(UriInfo uriInfo, String orcid, String webhookUri);
+
+    /**
+     * Add affiliations to an existing ORCID profile.
+     * 
+     * @param orcidMessage
+     *            the message containing the affiliations to be added
+     * @return if the affiliations were all added successfully, a 201 with a
+     *         location should be returned
+     */
+    Response addAffiliations(UriInfo uriInfo, String orcid, OrcidMessage orcidMessage);
+
+    /**
+     * Update the affiliations for a given ORCID profile. This will cause all
+     * content to be overwritten
+     * 
+     * @param orcidMessage
+     *            the message containing all affiliations to overwritten. If any
+     *            other elements outside of the works are present, a 400 Bad
+     *            Request is returned
+     * @return
+     */
+    Response updateAffiliations(UriInfo uriInfo, String orcid, OrcidMessage orcidMessage);
 }

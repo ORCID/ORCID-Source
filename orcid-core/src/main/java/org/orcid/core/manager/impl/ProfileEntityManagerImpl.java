@@ -94,7 +94,7 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
         profile.setFamilyName(orcidProfile.getOrcidBio().getPersonalDetails().getFamilyName().getContent());
         profile.setGivenNames(orcidProfile.getOrcidBio().getPersonalDetails().getGivenNames().getContent());
         profile.setBiography(orcidProfile.getOrcidBio().getBiography().getContent());
-        profile.setIso2Country(orcidProfile.getOrcidBio().getContactDetails().getAddress().getCountry().getContent());
+        profile.setIso2Country(orcidProfile.getOrcidBio().getContactDetails().getAddress().getCountry().getValue());
         profile.setBiographyVisibility(orcidProfile.getOrcidBio().getBiography().getVisibility());
         profile.setKeywordsVisibility(orcidProfile.getOrcidBio().getKeywords().getVisibility());
         profile.setResearcherUrlsVisibility(orcidProfile.getOrcidBio().getResearcherUrls().getVisibility());

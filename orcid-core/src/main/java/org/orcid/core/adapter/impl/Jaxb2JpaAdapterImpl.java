@@ -20,6 +20,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -30,10 +31,17 @@ import javax.annotation.Resource;
 import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.orcid.core.adapter.Jaxb2JpaAdapter;
+import org.orcid.core.manager.OrgManager;
 import org.orcid.core.utils.JsonUtils;
-import org.orcid.jaxb.model.message.Address;
 import org.orcid.jaxb.model.message.Affiliation;
+import org.orcid.jaxb.model.message.AffiliationAddress;
+import org.orcid.jaxb.model.message.AffiliationCity;
+import org.orcid.jaxb.model.message.AffiliationCountry;
+import org.orcid.jaxb.model.message.AffiliationRegion;
+import org.orcid.jaxb.model.message.Affiliations;
 import org.orcid.jaxb.model.message.AgencyName;
 import org.orcid.jaxb.model.message.AgencyOrcid;
 import org.orcid.jaxb.model.message.ApprovalDate;
@@ -52,7 +60,6 @@ import org.orcid.jaxb.model.message.DelegateSummary;
 import org.orcid.jaxb.model.message.Delegation;
 import org.orcid.jaxb.model.message.DelegationDetails;
 import org.orcid.jaxb.model.message.Email;
-import org.orcid.jaxb.model.message.EndDate;
 import org.orcid.jaxb.model.message.ExternalIdCommonName;
 import org.orcid.jaxb.model.message.ExternalIdOrcid;
 import org.orcid.jaxb.model.message.ExternalIdReference;
@@ -61,11 +68,13 @@ import org.orcid.jaxb.model.message.ExternalIdentifier;
 import org.orcid.jaxb.model.message.ExternalIdentifiers;
 import org.orcid.jaxb.model.message.FamilyName;
 import org.orcid.jaxb.model.message.FundingAgency;
+import org.orcid.jaxb.model.message.FuzzyDate;
 import org.orcid.jaxb.model.message.GivenNames;
 import org.orcid.jaxb.model.message.GivenPermissionBy;
 import org.orcid.jaxb.model.message.GivenPermissionTo;
 import org.orcid.jaxb.model.message.GrantExternalIdentifier;
 import org.orcid.jaxb.model.message.GrantSources;
+import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.jaxb.model.message.Keyword;
 import org.orcid.jaxb.model.message.Keywords;
 import org.orcid.jaxb.model.message.Locale;
@@ -93,7 +102,6 @@ import org.orcid.jaxb.model.message.ResearcherUrls;
 import org.orcid.jaxb.model.message.SecurityDetails;
 import org.orcid.jaxb.model.message.SequenceType;
 import org.orcid.jaxb.model.message.Source;
-import org.orcid.jaxb.model.message.StartDate;
 import org.orcid.jaxb.model.message.SubmissionDate;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.message.WorkContributors;
@@ -103,17 +111,16 @@ import org.orcid.jaxb.model.message.WorkSource;
 import org.orcid.jaxb.model.message.WorkTitle;
 import org.orcid.jaxb.model.message.WorkType;
 import org.orcid.persistence.dao.GenericDao;
-import org.orcid.persistence.jpa.entities.AddressEntity;
-import org.orcid.persistence.jpa.entities.AffiliationEntity;
 import org.orcid.persistence.jpa.entities.EmailEntity;
+import org.orcid.persistence.jpa.entities.EndDateEntity;
 import org.orcid.persistence.jpa.entities.ExternalIdentifierEntity;
-import org.orcid.persistence.jpa.entities.FuzzyDate;
 import org.orcid.persistence.jpa.entities.GivenPermissionByEntity;
 import org.orcid.persistence.jpa.entities.GivenPermissionToEntity;
 import org.orcid.persistence.jpa.entities.GrantContributorEntity;
 import org.orcid.persistence.jpa.entities.GrantEntity;
 import org.orcid.persistence.jpa.entities.GrantSourceEntity;
-import org.orcid.persistence.jpa.entities.InstitutionEntity;
+import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
+import org.orcid.persistence.jpa.entities.OrgEntity;
 import org.orcid.persistence.jpa.entities.OtherNameEntity;
 import org.orcid.persistence.jpa.entities.PatentContributorEntity;
 import org.orcid.persistence.jpa.entities.PatentEntity;
@@ -124,8 +131,10 @@ import org.orcid.persistence.jpa.entities.ProfileKeywordEntity;
 import org.orcid.persistence.jpa.entities.ProfilePatentEntity;
 import org.orcid.persistence.jpa.entities.ProfileSummaryEntity;
 import org.orcid.persistence.jpa.entities.ProfileWorkEntity;
+import org.orcid.persistence.jpa.entities.PublicationDateEntity;
 import org.orcid.persistence.jpa.entities.ResearcherUrlEntity;
 import org.orcid.persistence.jpa.entities.SecurityQuestionEntity;
+import org.orcid.persistence.jpa.entities.StartDateEntity;
 import org.orcid.persistence.jpa.entities.WorkContributorEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.persistence.jpa.entities.WorkExternalIdentifierEntity;
@@ -144,6 +153,9 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
 
     @Resource(name = "securityQuestionDao")
     private GenericDao<SecurityQuestionEntity, Integer> securityQuestionDao;
+
+    @Resource
+    private OrgManager orgManager;
 
     @Override
     public ProfileEntity toProfileEntity(OrcidProfile profile, ProfileEntity existingProfileEntity) {
@@ -170,14 +182,17 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
     }
 
     private void setActivityDetails(ProfileEntity profileEntity, OrcidActivities orcidActivities) {
+        Affiliations affiliations = null;
         OrcidPatents orcidPatents = null;
         OrcidGrants orcidGrants = null;
         OrcidWorks orcidWorks = null;
         if (orcidActivities != null) {
+            affiliations = orcidActivities.getAffiliations();
             orcidPatents = orcidActivities.getOrcidPatents();
             orcidGrants = orcidActivities.getOrcidGrants();
             orcidWorks = orcidActivities.getOrcidWorks();
         }
+        setOrgAffiliationRelations(profileEntity, affiliations);
         setPatents(profileEntity, orcidPatents);
         setGrants(profileEntity, orcidGrants);
         setWorks(profileEntity, orcidWorks);
@@ -330,13 +345,13 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
         return map;
     }
 
-    private FuzzyDate getWorkPublicationDate(OrcidWork orcidWork) {
+    private PublicationDateEntity getWorkPublicationDate(OrcidWork orcidWork) {
         if (orcidWork != null && orcidWork.getPublicationDate() != null) {
             PublicationDate publicationDate = orcidWork.getPublicationDate();
             Integer year = publicationDate.getYear() != null ? toInteger(publicationDate.getYear().getValue()) : null;
             Integer month = publicationDate.getMonth() != null ? toInteger(publicationDate.getMonth().getValue()) : null;
             Integer day = publicationDate.getDay() != null ? toInteger(publicationDate.getDay().getValue()) : null;
-            return new FuzzyDate(year, month, day);
+            return new PublicationDateEntity(year, month, day);
         }
         return null;
     }
@@ -523,7 +538,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
         if (orcidPatent != null) {
             PatentEntity patentEntity = new PatentEntity();
             patentEntity.setContributors(getPatentContributors(patentEntity, orcidPatent.getPatentContributors()));
-            patentEntity.setCountryOfIssue(orcidPatent.getCountry() != null ? orcidPatent.getCountry().getContent() : null);
+            patentEntity.setCountryOfIssue(orcidPatent.getCountry() != null ? orcidPatent.getCountry().getValue() : null);
             patentEntity.setIssueDate(orcidPatent.getPatentIssueDate() != null ? toDate(orcidPatent.getPatentIssueDate().getValue()) : null);
             patentEntity.setPatentNo(orcidPatent.getPatentNumber() != null ? orcidPatent.getPatentNumber().getContent() : null);
             patentEntity.setShortDescription(orcidPatent.getShortDescription() != null ? orcidPatent.getShortDescription() : null);
@@ -571,7 +586,6 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
 
     private void setBioDetails(ProfileEntity profileEntity, OrcidBio orcidBio) {
         if (orcidBio != null) {
-            setAffiliations(profileEntity, orcidBio.getAffiliations());
             setBiographyDetails(profileEntity, orcidBio.getBiography());
             setContactDetails(profileEntity, orcidBio.getContactDetails());
             setDelegations(profileEntity, orcidBio.getDelegation());
@@ -674,6 +688,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             profileEntity.setExternalIdentifiersVisibility(externalIdentifiers.getVisibility());
 
             Set<ExternalIdentifierEntity> existingExternalIdentifiers = profileEntity.getExternalIdentifiers();
+            Map<Pair<String, String>, ExternalIdentifierEntity> existingExternalIdentifiersMap = createExternalIdentifiersMap(existingExternalIdentifiers);
             Set<ExternalIdentifierEntity> externalIdentifierEntities = null;
 
             if (existingExternalIdentifiers == null) {
@@ -688,7 +703,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
 
             if (externalIdentifierList != null && !externalIdentifierList.isEmpty()) {
                 for (ExternalIdentifier externalIdentifier : externalIdentifierList) {
-                    ExternalIdentifierEntity externalIdentifierEntity = getExternalIdentifierEntity(externalIdentifier);
+                    ExternalIdentifierEntity externalIdentifierEntity = getExternalIdentifierEntity(externalIdentifier, existingExternalIdentifiersMap);
                     if (externalIdentifierEntity != null) {
                         externalIdentifierEntity.setOwner(profileEntity);
                         externalIdentifierEntities.add(externalIdentifierEntity);
@@ -700,17 +715,52 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
         }
     }
 
-    private ExternalIdentifierEntity getExternalIdentifierEntity(ExternalIdentifier externalIdentifier) {
+    private Map<Pair<String, String>, ExternalIdentifierEntity> createExternalIdentifiersMap(Set<ExternalIdentifierEntity> existingExternalIdentifiers) {
+        Map<Pair<String, String>, ExternalIdentifierEntity> map = new HashMap<>();
+        if (existingExternalIdentifiers != null) {
+            for (ExternalIdentifierEntity entity : existingExternalIdentifiers) {
+                Pair<String, String> pair = createPairForKey(entity);
+                map.put(pair, entity);
+            }
+        }
+        return map;
+    }
+
+    private Pair<String, String> createPairForKey(ExternalIdentifierEntity entity) {
+        ProfileEntity profileEntity = entity.getExternalIdOrcid();
+        String id = null;
+        if (profileEntity != null) {
+            id = profileEntity.getId();
+        }
+        Pair<String, String> pair = new ImmutablePair<>(entity.getExternalIdReference(), id);
+        return pair;
+    }
+
+    private ExternalIdentifierEntity getExternalIdentifierEntity(ExternalIdentifier externalIdentifier,
+            Map<Pair<String, String>, ExternalIdentifierEntity> existingExternalIdentifiersMap) {
         if (externalIdentifier != null && externalIdentifier.getExternalIdReference() != null) {
-            ExternalIdentifierEntity externalIdentifierEntity = new ExternalIdentifierEntity();
             ExternalIdCommonName externalIdCommonName = externalIdentifier.getExternalIdCommonName();
             ExternalIdOrcid externalIdOrcid = externalIdentifier.getExternalIdOrcid();
+            String externalIdOrcidValue = externalIdOrcid != null ? externalIdOrcid.getValue() : null;
             ExternalIdReference externalIdReference = externalIdentifier.getExternalIdReference();
             ExternalIdUrl externalIdUrl = externalIdentifier.getExternalIdUrl();
 
+            String referenceValue = externalIdReference != null ? externalIdReference.getContent() : null;
+            Pair<String, String> key = new ImmutablePair<>(referenceValue, externalIdOrcidValue);
+            ExternalIdentifierEntity existingExternalIdentifierEntity = existingExternalIdentifiersMap.get(key);
+
+            ExternalIdentifierEntity externalIdentifierEntity = null;
+            if (existingExternalIdentifierEntity == null) {
+                externalIdentifierEntity = new ExternalIdentifierEntity();
+                ProfileEntity profileEntity = externalIdOrcid != null ? new ProfileEntity(externalIdOrcidValue) : null;
+                externalIdentifierEntity.setExternalIdOrcid(profileEntity);
+                externalIdentifierEntity.setExternalIdReference(referenceValue);
+            } else {
+                existingExternalIdentifierEntity.clean();
+                externalIdentifierEntity = existingExternalIdentifierEntity;
+            }
+
             externalIdentifierEntity.setExternalIdCommonName(externalIdCommonName != null ? externalIdCommonName.getContent() : null);
-            externalIdentifierEntity.setExternalIdOrcid(externalIdOrcid != null ? new ProfileEntity(externalIdOrcid.getValue()) : null);
-            externalIdentifierEntity.setExternalIdReference(externalIdReference != null ? externalIdReference.getContent() : null);
             externalIdentifierEntity.setExternalIdUrl(externalIdUrl != null ? externalIdUrl.getValue() : null);
             return externalIdentifierEntity;
         }
@@ -732,24 +782,39 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
     private void setCountry(ProfileEntity profileEntity, ContactDetails contactDetails) {
         Country contactCountry = contactDetails.getAddress() != null && contactDetails.getAddress().getCountry() != null ? contactDetails.getAddress().getCountry()
                 : null;
-        String country = contactCountry != null ? contactCountry.getContent() : null;
+        Iso3166Country country = contactCountry != null ? contactCountry.getValue() : null;
         profileEntity.setProfileAddressVisibility(contactCountry != null ? contactCountry.getVisibility() : null);
         profileEntity.setIso2Country(country);
     }
 
     private void setEmails(ProfileEntity profileEntity, ContactDetails contactDetails) {
-        Set<EmailEntity> existingEmailsEntities = profileEntity.getEmails();
+        Set<EmailEntity> existingEmailEntities = profileEntity.getEmails();
+        Map<String, EmailEntity> existingEmailEntitiesMap = createEmailEntitiesMap(existingEmailEntities);
         Set<EmailEntity> emailEntities = null;
-        if (existingEmailsEntities == null) {
+        if (existingEmailEntities == null) {
             emailEntities = new HashSet<>();
         } else {
             // To allow for orphan deletion
-            existingEmailsEntities.clear();
-            emailEntities = existingEmailsEntities;
+            existingEmailEntities.clear();
+            emailEntities = existingEmailEntities;
         }
         for (Email email : contactDetails.getEmail()) {
-            EmailEntity emailEntity = new EmailEntity();
-            emailEntity.setId(email.getValue().trim());
+            String emailId = email.getValue().trim();
+            EmailEntity emailEntity = null;
+            EmailEntity existingEmailEntity = existingEmailEntitiesMap.get(emailId);
+            if (existingEmailEntity == null) {
+                emailEntity = new EmailEntity();
+                emailEntity.setId(emailId);
+                emailEntity.setProfile(profileEntity);
+                if (email.getSource() != null) {
+                    ProfileEntity source = new ProfileEntity();
+                    source.setId(email.getSource());
+                    emailEntity.setSource(source);
+                }
+            } else {
+                existingEmailEntity.clean();
+                emailEntity = existingEmailEntity;
+            }
             emailEntity.setPrimary(email.isPrimary());
             emailEntity.setCurrent(email.isCurrent());
             emailEntity.setVerified(email.isVerified());
@@ -758,15 +823,16 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             } else {
                 emailEntity.setVisibility(email.getVisibility());
             }
-            emailEntity.setProfile(profileEntity);
-            if (email.getSource() != null) {
-                ProfileEntity source = new ProfileEntity();
-                source.setId(email.getSource());
-                emailEntity.setSource(source);
-            }
             emailEntities.add(emailEntity);
         }
         profileEntity.setEmails(emailEntities);
+    }
+
+    private Map<String, EmailEntity> createEmailEntitiesMap(Set<EmailEntity> existingEmailsEntities) {
+        if (existingEmailsEntities == null) {
+            return new HashMap<>();
+        }
+        return EmailEntity.mapById(existingEmailsEntities);
     }
 
     private void setHistoryDetails(ProfileEntity profileEntity, OrcidHistory orcidHistory) {
@@ -797,16 +863,47 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
         }
     }
 
-    private void setAffiliations(ProfileEntity profileEntity, List<Affiliation> affiliations) {
-        if (affiliations != null && !affiliations.isEmpty()) {
-            SortedSet<AffiliationEntity> affiliationEntities = new TreeSet<AffiliationEntity>();
-            for (Affiliation affiliation : affiliations) {
-                AffiliationEntity affiliationEntity = getAffiliationEntity(affiliation);
-                affiliationEntity.setProfile(profileEntity);
-                affiliationEntities.add(affiliationEntity);
-            }
-            profileEntity.setAffiliations(affiliationEntities);
+    private void setOrgAffiliationRelations(ProfileEntity profileEntity, Affiliations affiliations) {
+        SortedSet<OrgAffiliationRelationEntity> existingOrgAffiliationEntities = profileEntity.getOrgAffiliationRelations();
+        if (existingOrgAffiliationEntities == null) {
+            existingOrgAffiliationEntities = new TreeSet<>();
         }
+        Map<String, OrgAffiliationRelationEntity> existingOrgAffiliationsEntitiesMap = createOrgAffiliationEntitiesMap(existingOrgAffiliationEntities);
+        SortedSet<OrgAffiliationRelationEntity> updatedOrgAffiliationEntities = new TreeSet<>();
+        if (affiliations != null && !affiliations.getAffiliation().isEmpty()) {
+            for (Affiliation affiliation : affiliations.getAffiliation()) {
+                OrgAffiliationRelationEntity orgRelationEntity = getOrgAffiliationRelationEntity(affiliation,
+                        existingOrgAffiliationsEntitiesMap.get(affiliation.getPutCode()));
+                orgRelationEntity.setProfile(profileEntity);
+                updatedOrgAffiliationEntities.add(orgRelationEntity);
+            }
+        }
+        Map<String, OrgAffiliationRelationEntity> updatedOrgAffiliationEntitiesMap = createOrgAffiliationEntitiesMap(updatedOrgAffiliationEntities);
+        // Remove orphans
+        for (Iterator<OrgAffiliationRelationEntity> iterator = existingOrgAffiliationEntities.iterator(); iterator.hasNext();) {
+            OrgAffiliationRelationEntity existingEntity = iterator.next();
+            if (!updatedOrgAffiliationEntitiesMap.containsKey(String.valueOf(existingEntity.getId()))) {
+                iterator.remove();
+            }
+        }
+        // Add new
+        for (OrgAffiliationRelationEntity updatedEntity : updatedOrgAffiliationEntities) {
+            if (updatedEntity.getId() == null) {
+                existingOrgAffiliationEntities.add(updatedEntity);
+            }
+        }
+        profileEntity.setOrgAffiliationRelations(existingOrgAffiliationEntities);
+    }
+
+    private Map<String, OrgAffiliationRelationEntity> createOrgAffiliationEntitiesMap(Set<OrgAffiliationRelationEntity> orgAffiliationEntities) {
+        Map<String, OrgAffiliationRelationEntity> map = new HashMap<>();
+        if (orgAffiliationEntities != null) {
+            for (OrgAffiliationRelationEntity orgAffiliationEntity : orgAffiliationEntities) {
+                map.put(String.valueOf(orgAffiliationEntity.getId()), orgAffiliationEntity);
+            }
+        }
+        return map;
+
     }
 
     private void setInternalDetails(ProfileEntity profileEntity, OrcidInternal orcidInternal) {
@@ -899,45 +996,53 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
         return null;
     }
 
-    private AffiliationEntity getAffiliationEntity(Affiliation affiliation) {
+    private OrgAffiliationRelationEntity getOrgAffiliationRelationEntity(Affiliation affiliation, OrgAffiliationRelationEntity exisitingOrgAffiliationEntity) {
         if (affiliation != null) {
-            AffiliationEntity affiliationEntity = new AffiliationEntity();
-            StartDate startDate = affiliation.getStartDate();
-            EndDate endDate = affiliation.getEndDate();
-
-            affiliationEntity.setAffiliationType(affiliation.getAffiliationType());
-            affiliationEntity.setAffiliationVisibility(affiliation.getVisibility());
-            affiliationEntity.setDepartmentName(affiliation.getDepartmentName());
-            affiliationEntity.setEndDate(endDate != null ? toDate(endDate.getValue()) : null);
-            affiliationEntity.setInstitutionEntity(getInstitutionEntity(affiliation));
-            affiliationEntity.setRoleTitle(affiliation.getRoleTitle());
-            affiliationEntity.setStartDate(startDate != null ? toDate(startDate.getValue()) : null);
-
-            if (affiliation.getAddress() != null && affiliation.getAddress().getCountry() != null) {
-                affiliationEntity.setAffiliationAddressVisibility(affiliation.getAddress().getCountry().getVisibility());
+            OrgAffiliationRelationEntity orgRelationEntity = null;
+            if (exisitingOrgAffiliationEntity == null) {
+                String putCode = affiliation.getPutCode();
+                if (StringUtils.isNotBlank(putCode) && !"-1".equals(putCode)) {
+                    throw new IllegalArgumentException("Invalid put-code was supplied for an affiliation: " + putCode);
+                }
+                orgRelationEntity = new OrgAffiliationRelationEntity();
+                orgRelationEntity.setSource(getSource(affiliation.getSource()));
+            } else {
+                orgRelationEntity = exisitingOrgAffiliationEntity;
+                orgRelationEntity.clean();
             }
-
-            return affiliationEntity;
+            FuzzyDate startDate = affiliation.getStartDate();
+            FuzzyDate endDate = affiliation.getEndDate();
+            orgRelationEntity.setAffiliationType(affiliation.getAffiliationType());
+            orgRelationEntity.setVisibility(affiliation.getVisibility());
+            orgRelationEntity.setDepartment(affiliation.getDepartmentName());
+            orgRelationEntity.setEndDate(endDate != null ? new EndDateEntity(endDate) : null);
+            orgRelationEntity.setOrg(getOrgEntity(affiliation));
+            orgRelationEntity.setTitle(affiliation.getRoleTitle());
+            orgRelationEntity.setStartDate(startDate != null ? new StartDateEntity(startDate) : null);
+            return orgRelationEntity;
         }
         return null;
     }
 
-    private InstitutionEntity getInstitutionEntity(Affiliation affiliation) {
+    private OrgEntity getOrgEntity(Affiliation affiliation) {
         if (affiliation != null) {
-            InstitutionEntity institutionEntity = new InstitutionEntity();
-            institutionEntity.setAddress(getInstitutionAddressEntity(affiliation.getAddress()));
-            institutionEntity.setName(affiliation.getAffiliationName());
-            return institutionEntity;
+            OrgEntity orgEntity = new OrgEntity();
+            orgEntity.setName(affiliation.getAffiliationName());
+            AffiliationAddress address = affiliation.getAffiliationAddress();
+            AffiliationCity city = address.getAffiliationCity();
+            orgEntity.setCity(city != null ? city.getContent() : null);
+            AffiliationRegion region = address.getAffiliationRegion();
+            orgEntity.setRegion(region != null ? region.getContent() : null);
+            AffiliationCountry country = address.getAffiliationCountry();
+            orgEntity.setCountry(country != null ? country.getValue() : null);
+            return orgManager.createUpdate(orgEntity);
         }
         return null;
     }
 
-    private AddressEntity getInstitutionAddressEntity(Address address) {
-        if (address != null) {
-            AddressEntity addressEntity = new AddressEntity();
-            Country country = address.getCountry();
-            addressEntity.setCountry(country == null ? null : country.getContent());
-            return addressEntity;
+    private ProfileEntity getSource(Source source) {
+        if (source != null && StringUtils.isNotEmpty(source.getSourceOrcid().getValue()) && !source.getSourceOrcid().getValue().equals(WorkSource.NULL_SOURCE_PROFILE)) {
+            return new ProfileEntity(source.getSourceOrcid().getValue());
         }
         return null;
     }

@@ -32,9 +32,12 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 /**
- * <p>Java class for anonymous complex type.
+ * <p>
+ * Java class for anonymous complex type.
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p>
+ * The following schema fragment specifies the expected content contained within
+ * this class.
  * 
  * <pre>
  * &lt;complexType>
@@ -65,15 +68,16 @@ public class Affiliations implements Serializable {
      * Gets the value of the affiliation property.
      * 
      * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the affiliation property.
+     * This accessor method returns a reference to the live list, not a
+     * snapshot. Therefore any modification you make to the returned list will
+     * be present inside the JAXB object. This is why there is not a
+     * <CODE>set</CODE> method for the affiliation property.
      * 
      * <p>
      * For example, to add a new item, do as follows:
+     * 
      * <pre>
-     *    getAffiliation().add(newItem);
+     * getAffiliation().add(newItem);
      * </pre>
      * 
      * 
@@ -88,6 +92,18 @@ public class Affiliations implements Serializable {
             affiliation = new ArrayList<Affiliation>();
         }
         return this.affiliation;
+    }
+
+    public List<Affiliation> getAffiliationsByType(AffiliationType affiliationType) {
+        List<Affiliation> filteredAffilations = new ArrayList<Affiliation>();
+        if (affiliation != null && affiliationType != null) {
+            for (Affiliation aff : affiliation) {
+                if (affiliationType.equals(aff.getAffiliationType())) {
+                    filteredAffilations.add(aff);
+                }
+            }
+        }
+        return filteredAffilations;
     }
 
     @Override
