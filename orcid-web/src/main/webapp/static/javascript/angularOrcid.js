@@ -15,7 +15,7 @@
  * =============================================================================
  */
 
-var orcidNgModule = angular.module('orcidApp', ["ngCookies"]);
+var orcidNgModule = angular.module('orcidApp', ['ngCookies','ngSanitize']);
 
 orcidNgModule.directive('ngModelOnblur', function() {
     return {
@@ -1090,11 +1090,38 @@ function WorkCtrl($scope, $compile, worksSrvc){
 	
 	$scope.showAddModal = function(){;
 	    $.colorbox({        	
-	        html: $compile($('#add-work-modal').html())($scope)
+	        html: $compile($('#add-work-modal').html())($scope),
+	        onComplete: function() {$.colorbox.resize();}
 	    });
-	    $.colorbox.resize();
 	};
-	
+
+	$scope.showDetailModal = function(idx){
+		$scope.detailWork = $scope.works[idx];
+		$scope.showBibtex = false;
+		if ($scope.detailWork.citation && $scope.detailWork.citation.citationType.value == 'bibtex') {
+			try {
+				$scope.detailWork.bibtexCitation = bibtexParse.toJSON($scope.detailWork.citation.citation.value);
+				console.log($scope.detailWork.bibtexCitation);
+				$scope.showBibtex = true;
+			} catch (err) {
+				console.log("couldn't parse bibtex: " + $scope.detailWork.citation.citation.value);
+			}
+		}
+	    $.colorbox({        	
+	        html: $compile($('#detail-work-modal').html())($scope),
+	        scrolling: true,
+	        onComplete: function() {
+	        	$.colorbox.resize();
+	        }
+	    });  
+    };
+    
+    $scope.bibtexShowToggle = function () {
+    	$scope.showBibtex = !($scope.showBibtex);
+    };
+    
+    setTimeout(function() {$scope.showDetailModal(0); $scope.$apply();}, 1000);
+
 	$scope.showWorkImportWizard =  function() {
 		$.colorbox({        	            
             html : $compile($('#import-wizard-modal').html())($scope),
@@ -1102,7 +1129,7 @@ function WorkCtrl($scope, $compile, worksSrvc){
         })
 	};
 	
-	$scope.addWorkModal = function(){;
+	$scope.addWorkModal = function(){
 		$.ajax({
 			url: $('body').data('baseurl') + 'works/work.json',
 			dataType: 'json',

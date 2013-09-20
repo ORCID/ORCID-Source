@@ -16,6 +16,7 @@
     =============================================================================
 
 -->
+<#escape x as x?html>
 <#if (currentWorks)??>
 
 	<ul class="workspace-publications workspace-body-list">
@@ -56,3 +57,4 @@
         <strong><#if (publicProfile)?? && publicProfile == true>${springMacroRequestContext.getMessage("workspace_works_body_list.Nopublicationsaddedyet")}<#else>${springMacroRequestContext.getMessage("workspace_works_body_list.havenotaddedanyworks")} <a href="<@spring.url '/works-update'/>" class="update">${springMacroRequestContext.getMessage("workspace_works_body_list.addsomenow")}</a></#if></strong>
     </div>
 </#if>
+</#escape>

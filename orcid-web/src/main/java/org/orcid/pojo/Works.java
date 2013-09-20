@@ -23,7 +23,7 @@ import org.orcid.jaxb.model.message.OrcidWorks;
 import org.orcid.pojo.ajaxForm.ErrorsInterface;
 import org.orcid.pojo.ajaxForm.Work;
 
-public class Works extends OrcidWorks implements ErrorsInterface {
+public class Works implements ErrorsInterface {
     private List<Work> works = null;
     @SuppressWarnings("unused")
     private static final long serialVersionUID = 1L;

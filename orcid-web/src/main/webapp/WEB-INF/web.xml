@@ -58,10 +58,6 @@
             classpath*:/orcid-frontend-security.xml
         </param-value>
     </context-param>
-    <context-param>
-        <param-name>defaultHtmlEscape</param-name>
-        <param-value>true</param-value>
-    </context-param>
     
     <context-param>
         <param-name>log4jExposeWebAppRoot</param-name>
