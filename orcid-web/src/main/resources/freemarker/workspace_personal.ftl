@@ -18,5 +18,5 @@
 -->
 <#escape x as x?html>
    <p><strong>${springMacroRequestContext.getMessage("manage_bio_settings.labelbiography")}</strong><br />
-   ${(profile.orcidBio.biography.content)!"${springMacroRequestContext.getMessage('workspace_personal.Nobiographyaddedyet')}"}</p>
+   <div style="white-space: pre-wrap">${(profile.orcidBio.biography.content)!"${springMacroRequestContext.getMessage('workspace_personal.Nobiographyaddedyet')}"}</div></p>
 </#escape>
