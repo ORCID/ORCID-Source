@@ -20,8 +20,9 @@ import java.util.List;
 
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.persistence.jpa.entities.ProfileWorkEntity;
+import org.orcid.persistence.jpa.entities.keys.ProfileWorkEntityPk;
 
-public interface ProfileWorkDao {
+public interface ProfileWorkDao extends GenericDao<ProfileWorkEntity, ProfileWorkEntityPk> {
 
     /**
      * Removes the relationship that exists between a work and a profile.

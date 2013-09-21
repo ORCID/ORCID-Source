@@ -30,6 +30,8 @@ import javax.annotation.Resource;
 import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.orcid.core.adapter.Jaxb2JpaAdapter;
 import org.orcid.core.utils.JsonUtils;
 import org.orcid.jaxb.model.message.Address;
@@ -184,6 +186,11 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
     }
 
     private void setWorks(ProfileEntity profileEntity, OrcidWorks orcidWorks) {
+        SortedSet<ProfileWorkEntity> profileWorkEntities = getProfileWorkEntities(profileEntity, orcidWorks);
+        profileEntity.setProfileWorks(profileWorkEntities);
+    }
+
+    private SortedSet<ProfileWorkEntity> getProfileWorkEntities(ProfileEntity profileEntity, OrcidWorks orcidWorks) {
         SortedSet<ProfileWorkEntity> existingProfileWorkEntities = profileEntity.getProfileWorks();
         Map<String, ProfileWorkEntity> existingProfileWorkEntitiesMap = createProfileWorkEntitiesMap(existingProfileWorkEntities);
         SortedSet<ProfileWorkEntity> profileWorkEntities = null;
@@ -204,7 +211,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
                 }
             }
         }
-        profileEntity.setProfileWorks(profileWorkEntities);
+        return profileWorkEntities;
     }
 
     private Map<String, ProfileWorkEntity> createProfileWorkEntitiesMap(SortedSet<ProfileWorkEntity> profileWorkEntities) {
@@ -215,6 +222,13 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             }
         }
         return map;
+    }
+
+    @Override
+    public ProfileWorkEntity getNewProfileWorkEntity(OrcidWork orcidWork, ProfileEntity profileEntity) {
+        ProfileWorkEntity profileWorkEntity = getProfileWorkEntity(orcidWork, null);
+        profileWorkEntity.setProfile(profileEntity);
+        return profileWorkEntity;
     }
 
     private ProfileWorkEntity getProfileWorkEntity(OrcidWork orcidWork, ProfileWorkEntity existingProfileWorkEntity) {
@@ -675,6 +689,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             profileEntity.setExternalIdentifiersVisibility(externalIdentifiers.getVisibility());
 
             Set<ExternalIdentifierEntity> existingExternalIdentifiers = profileEntity.getExternalIdentifiers();
+            Map<Pair<String, String>, ExternalIdentifierEntity> existingExternalIdentifiersMap = createExternalIdentifiersMap(existingExternalIdentifiers);
             Set<ExternalIdentifierEntity> externalIdentifierEntities = null;
 
             if (existingExternalIdentifiers == null) {
@@ -689,7 +704,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
 
             if (externalIdentifierList != null && !externalIdentifierList.isEmpty()) {
                 for (ExternalIdentifier externalIdentifier : externalIdentifierList) {
-                    ExternalIdentifierEntity externalIdentifierEntity = getExternalIdentifierEntity(externalIdentifier);
+                    ExternalIdentifierEntity externalIdentifierEntity = getExternalIdentifierEntity(externalIdentifier, existingExternalIdentifiersMap);
                     if (externalIdentifierEntity != null) {
                         externalIdentifierEntity.setOwner(profileEntity);
                         externalIdentifierEntities.add(externalIdentifierEntity);
@@ -701,17 +716,52 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
         }
     }
 
-    private ExternalIdentifierEntity getExternalIdentifierEntity(ExternalIdentifier externalIdentifier) {
+    private Map<Pair<String, String>, ExternalIdentifierEntity> createExternalIdentifiersMap(Set<ExternalIdentifierEntity> existingExternalIdentifiers) {
+        Map<Pair<String, String>, ExternalIdentifierEntity> map = new HashMap<>();
+        if (existingExternalIdentifiers != null) {
+            for (ExternalIdentifierEntity entity : existingExternalIdentifiers) {
+                Pair<String, String> pair = createPairForKey(entity);
+                map.put(pair, entity);
+            }
+        }
+        return map;
+    }
+
+    private Pair<String, String> createPairForKey(ExternalIdentifierEntity entity) {
+        ProfileEntity profileEntity = entity.getExternalIdOrcid();
+        String id = null;
+        if (profileEntity != null) {
+            id = profileEntity.getId();
+        }
+        Pair<String, String> pair = new ImmutablePair<>(entity.getExternalIdReference(), id);
+        return pair;
+    }
+
+    private ExternalIdentifierEntity getExternalIdentifierEntity(ExternalIdentifier externalIdentifier,
+            Map<Pair<String, String>, ExternalIdentifierEntity> existingExternalIdentifiersMap) {
         if (externalIdentifier != null && externalIdentifier.getExternalIdReference() != null) {
-            ExternalIdentifierEntity externalIdentifierEntity = new ExternalIdentifierEntity();
             ExternalIdCommonName externalIdCommonName = externalIdentifier.getExternalIdCommonName();
             ExternalIdOrcid externalIdOrcid = externalIdentifier.getExternalIdOrcid();
+            String externalIdOrcidValue = externalIdOrcid != null ? externalIdOrcid.getValue() : null;
             ExternalIdReference externalIdReference = externalIdentifier.getExternalIdReference();
+            String referenceValue = externalIdReference != null ? externalIdReference.getContent() : null;
             ExternalIdUrl externalIdUrl = externalIdentifier.getExternalIdUrl();
+            
+            Pair<String, String> key = new ImmutablePair<>(referenceValue, externalIdOrcidValue);
+            ExternalIdentifierEntity existingExternalIdentifierEntity = existingExternalIdentifiersMap.get(key);
+
+            ExternalIdentifierEntity externalIdentifierEntity = null;
+            if (existingExternalIdentifierEntity == null) {
+                externalIdentifierEntity = new ExternalIdentifierEntity();
+                ProfileEntity profileEntity = externalIdOrcid != null ? new ProfileEntity(externalIdOrcidValue) : null;
+                externalIdentifierEntity.setExternalIdOrcid(profileEntity);
+                externalIdentifierEntity.setExternalIdReference(referenceValue);
+            } else {
+                existingExternalIdentifierEntity.clean();
+                externalIdentifierEntity = existingExternalIdentifierEntity;
+            }
 
             externalIdentifierEntity.setExternalIdCommonName(externalIdCommonName != null ? externalIdCommonName.getContent() : null);
-            externalIdentifierEntity.setExternalIdOrcid(externalIdOrcid != null ? new ProfileEntity(externalIdOrcid.getValue()) : null);
-            externalIdentifierEntity.setExternalIdReference(externalIdReference != null ? externalIdReference.getContent() : null);
             externalIdentifierEntity.setExternalIdUrl(externalIdUrl != null ? externalIdUrl.getValue() : null);
             return externalIdentifierEntity;
         }
@@ -739,18 +789,33 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
     }
 
     private void setEmails(ProfileEntity profileEntity, ContactDetails contactDetails) {
-        Set<EmailEntity> existingEmailsEntities = profileEntity.getEmails();
+        Set<EmailEntity> existingEmailEntities = profileEntity.getEmails();
+        Map<String, EmailEntity> existingEmailEntitiesMap = createEmailEntitiesMap(existingEmailEntities);
         Set<EmailEntity> emailEntities = null;
-        if (existingEmailsEntities == null) {
+        if (existingEmailEntities == null) {
             emailEntities = new HashSet<>();
         } else {
             // To allow for orphan deletion
-            existingEmailsEntities.clear();
-            emailEntities = existingEmailsEntities;
+            existingEmailEntities.clear();
+            emailEntities = existingEmailEntities;
         }
         for (Email email : contactDetails.getEmail()) {
-            EmailEntity emailEntity = new EmailEntity();
-            emailEntity.setId(email.getValue().trim());
+            String emailId = email.getValue().trim();
+            EmailEntity emailEntity = null;
+            EmailEntity existingEmailEntity = existingEmailEntitiesMap.get(emailId);
+            if (existingEmailEntity == null) {
+                emailEntity = new EmailEntity();
+                emailEntity.setId(emailId);
+                emailEntity.setProfile(profileEntity);
+                if (email.getSource() != null) {
+                    ProfileEntity source = new ProfileEntity();
+                    source.setId(email.getSource());
+                    emailEntity.setSource(source);
+                }
+            } else {
+                existingEmailEntity.clean();
+                emailEntity = existingEmailEntity;
+            }
             emailEntity.setPrimary(email.isPrimary());
             emailEntity.setCurrent(email.isCurrent());
             emailEntity.setVerified(email.isVerified());
@@ -759,15 +824,16 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             } else {
                 emailEntity.setVisibility(email.getVisibility());
             }
-            emailEntity.setProfile(profileEntity);
-            if (email.getSource() != null) {
-                ProfileEntity source = new ProfileEntity();
-                source.setId(email.getSource());
-                emailEntity.setSource(source);
-            }
             emailEntities.add(emailEntity);
         }
         profileEntity.setEmails(emailEntities);
+    }
+
+    private Map<String, EmailEntity> createEmailEntitiesMap(Set<EmailEntity> existingEmailsEntities) {
+        if (existingEmailsEntities == null) {
+            return new HashMap<>();
+        }
+        return EmailEntity.mapById(existingEmailsEntities);
     }
 
     private void setHistoryDetails(ProfileEntity profileEntity, OrcidHistory orcidHistory) {

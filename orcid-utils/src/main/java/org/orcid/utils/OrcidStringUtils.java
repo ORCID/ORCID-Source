@@ -17,6 +17,10 @@
 package org.orcid.utils;
 
 import org.apache.commons.lang.StringUtils;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Entities.EscapeMode;
+import org.jsoup.safety.Whitelist;
 
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -37,6 +41,8 @@ public class OrcidStringUtils {
 
     private static final Pattern pattern = Pattern.compile("(\\d{4}-){3,}\\d{3}[\\dX]");
 
+    private static final Document.OutputSettings outputSettings = new Document.OutputSettings().prettyPrint(false).charset("UTF-8").escapeMode(EscapeMode.xhtml);
+    
     public static boolean isValidOrcid(String orcid) {
         if (StringUtils.isNotBlank(orcid)) {
             return pattern.matcher(orcid).matches();
@@ -64,6 +70,13 @@ public class OrcidStringUtils {
         }
 
         return map;
+    }
+    
+    
+    /* http://stackoverflow.com/questions/14453047/jsoup-to-strip-only-html-tagsnot-new-line-character */
+    public static String stripHtml(String s) {
+          String output = Jsoup.clean(s, "", Whitelist.simpleText(), outputSettings);
+          return output;
     }
 
 }

@@ -15,7 +15,7 @@
  * =============================================================================
  */
 
-var orcidNgModule = angular.module('orcidApp', ["ngCookies"]);
+var orcidNgModule = angular.module('orcidApp', ['ngCookies','ngSanitize']);
 
 orcidNgModule.directive('ngModelOnblur', function() {
     return {
@@ -873,7 +873,7 @@ function ClaimCtrl($scope, $compile) {
 	
 	$scope.getClaimAjaxUrl = function () {
 		return window.location.href.split("?")[0]+".json";
-	} 
+	}; 
 	
 	$scope.updateWorkVisibilityDefault = function(priv, $event) {
 		$scope.register.workVisibilityDefault.visibility = priv;
@@ -1090,19 +1090,46 @@ function WorkCtrl($scope, $compile, worksSrvc){
 	
 	$scope.showAddModal = function(){;
 	    $.colorbox({        	
-	        html: $compile($('#add-work-modal').html())($scope)
+	        html: $compile($('#add-work-modal').html())($scope),
+	        onComplete: function() {$.colorbox.resize();}
 	    });
-	    $.colorbox.resize();
 	};
-	
+
+	$scope.showDetailModal = function(idx){
+		$scope.detailWork = $scope.works[idx];
+		$scope.showBibtex = false;
+		if ($scope.detailWork.citation && $scope.detailWork.citation.citationType.value == 'bibtex') {
+			try {
+				$scope.detailWork.bibtexCitation = bibtexParse.toJSON($scope.detailWork.citation.citation.value);
+				console.log($scope.detailWork.bibtexCitation);
+				$scope.showBibtex = true;
+			} catch (err) {
+				console.log("couldn't parse bibtex: " + $scope.detailWork.citation.citation.value);
+			}
+		}
+	    $.colorbox({        	
+	        html: $compile($('#detail-work-modal').html())($scope),
+	        scrolling: true,
+	        onComplete: function() {
+	        	$.colorbox.resize();
+	        }
+	    });  
+    };
+    
+    $scope.bibtexShowToggle = function () {
+    	$scope.showBibtex = !($scope.showBibtex);
+    };
+    
+    //setTimeout(function() {$scope.showDetailModal(0); $scope.$apply();}, 1000);
+
 	$scope.showWorkImportWizard =  function() {
 		$.colorbox({        	            
             html : $compile($('#import-wizard-modal').html())($scope),
             onComplete: function() {$.colorbox.resize();}
-        })
+        });
 	};
 	
-	$scope.addWorkModal = function(){;
+	$scope.addWorkModal = function(){
 		$.ajax({
 			url: $('body').data('baseurl') + 'works/work.json',
 			dataType: 'json',
@@ -1205,8 +1232,6 @@ function WorkCtrl($scope, $compile, worksSrvc){
             html : $compile($('#delete-work-modal').html())($scope),
             onComplete: function() {$.colorbox.resize();}
         });
-		
-		        
 	};
 	
 	$scope.deleteByIndex = function() {		
@@ -1458,7 +1483,8 @@ function ClientEditCtrl($scope, $compile){
 				},			
 				clientId:'',
 				clientSecret:'',
-				type: ''
+				type: '', 
+				errors: ''
 		};	
 		$.colorbox({        	            
             html : $compile($('#new-client-modal').html())($scope), 
@@ -1473,6 +1499,7 @@ function ClientEditCtrl($scope, $compile){
 	
 	// Display client details: Client ID and Client secret
 	$scope.viewDetails = function(idx){
+		$scope.error = null;
 		$scope.clientDetails = $scope.clients[idx];
 		$.colorbox({        	            
             html : $compile($('#view-details-modal').html())($scope),
@@ -1499,6 +1526,7 @@ function ClientEditCtrl($scope, $compile){
 	
 	//Submits the client update request
 	$scope.submitEditClient = function(){
+		$scope.error = null;
 		//Check for errors
 		$scope.errors.splice(0, $scope.errors.length);
 		
@@ -1526,8 +1554,6 @@ function ClientEditCtrl($scope, $compile){
 			}
 		}				
 		
-		console.log(angular.toJson($scope.clientToEdit));
-		
 		//Submit the update request
 		$.ajax({
 	        url: $('body').data('baseurl') + 'manage-clients/edit-client.json',
@@ -1535,8 +1561,9 @@ function ClientEditCtrl($scope, $compile){
 	        data: angular.toJson($scope.clientToEdit),
 	        contentType: 'application/json;charset=UTF-8',
 	        dataType: 'json',
-	        success: function(data) {	        		        		        
+	        success: function(data) {
 	        	if(data.errors != null && data.errors.length > 0){
+	        		$scope.error = data.errors.content;
 	        		console.log("Unable to update client information.");
 	        	} else {
 	        		//If everything worked fine, reload the list of clients
@@ -1552,6 +1579,7 @@ function ClientEditCtrl($scope, $compile){
 	
 	//Submits the new client request
 	$scope.submitAddClient = function(){
+		$scope.error = null;
 		//Check for errors
 		$scope.errors.splice(0, $scope.errors.length);
 		
@@ -1590,13 +1618,13 @@ function ClientEditCtrl($scope, $compile){
 	        data: angular.toJson($scope.newClient),
 	        contentType: 'application/json;charset=UTF-8',
 	        dataType: 'json',
-	        success: function(data) {	        		        		        
-	        	if(data.errors != null && data.errors.length > 0){
+	        success: function(data) {
+	        	if(data.errors != null && data.errors.content){
+	        		$scope.error = data.errors.content;
 	        		console.log("Unable to create client information.");
-	        	} else {
-	        		//If everything worked fine, reload the list of clients
-        			$scope.getClients();
 	        	} 
+	        	//If everything worked fine, reload the list of clients
+        		$scope.getClients();
 	        }
 	    }).fail(function() { 
 	    	console.log("Error creating client information.");
@@ -1867,6 +1895,33 @@ function profileDeprecationCtrl($scope,$compile){
 		
 		$.colorbox.resize({width:"450px" , height:"150px"});
 	};	
+	
+	$scope.closeModal = function() {
+		$.colorbox.close();
+	};
+};
+
+function revokeApplicationFormCtrl($scope,$compile){
+	
+	$scope.confirmRevoke = function(appName, appIndex){
+		$scope.appName = appName;
+		$scope.appIndex = appIndex;
+		$.colorbox({                      
+			html : $compile($('#confirm-revoke-access-modal').html())($scope),
+				transition: 'fade',
+	        	close: '',
+				onLoad: function() {
+				$('#cboxClose').remove();
+			},
+			scrolling: true
+		});
+		$.colorbox.resize({width:"600px" , height:"165px"});
+	};
+	
+	$scope.revokeAccess = function(){
+		orcidGA.gaPush(['_trackEvent', 'Disengagement', 'Revoke_Access', 'OAuth ' + $scope.appName]);
+		orcidGA.gaFormSumbitDelay($('#revokeApplicationForm' + $scope.appIndex));
+	};
 	
 	$scope.closeModal = function() {
 		$.colorbox.close();

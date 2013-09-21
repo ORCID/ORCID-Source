@@ -480,11 +480,11 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
         workTitle2.setSubtitle(new Subtitle("Another New subtitle"));
         OrcidWork work2 = createWork2(workTitle2);
         orcidWorks.getOrcidWork().add(work2);
+
         // Try to add a duplicate
         WorkTitle workTitle3 = new WorkTitle();
         workTitle3.setTitle(new Title("New Title"));
         workTitle3.setSubtitle(new Subtitle("Another New subtitle"));
-
         OrcidWork work3 = createWork2(workTitle3);
         work3.setVisibility(Visibility.LIMITED);
         orcidWorks.getOrcidWork().add(work3);
@@ -585,6 +585,7 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
         workTitle2.setSubtitle(new Subtitle("Another New subtitle"));
         OrcidWork work2 = createWork2(workTitle2);
         orcidWorks.getOrcidWork().add(work2);
+
         // Try to add a duplicate
         WorkTitle workTitle3 = new WorkTitle();
         workTitle3.setTitle(new Title("Further Title"));
@@ -929,6 +930,14 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
         OrcidProfile retrievedProfile = orcidProfileManager.retrieveOrcidProfile(profile1.getOrcid().getValue());
         assertTrue(retrievedProfile.getOrcidBio().getExternalIdentifiers().getExternalIdentifier().isEmpty());
         assertNull(retrievedProfile.getOrcidBio().getBiography());
+    }
+
+    @Test
+    @Transactional
+    @Rollback(true)
+    public void testRetrieveProfileWhenNonExistant() {
+        OrcidProfile orcidProfile = orcidProfileManager.retrievePublicOrcidProfile("1234-5678-8765-4321");
+        assertNull(orcidProfile);
     }
 
 }
