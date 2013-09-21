@@ -606,7 +606,7 @@
         <xs:complexType>
             <xs:sequence>
                 <xs:element ref="orcid:work-title" minOccurs="0"/>
-                <xs:element ref="orcid:journal-title" minOccurs="0"/>
+                <xs:element ref="orcid:journal-title" minOccurs="0" maxOccurs="1"/>
                 <xs:element ref="orcid:short-description" minOccurs="0"/>
                 <xs:element ref="orcid:work-citation" minOccurs="0"/>
                 <xs:element ref="orcid:work-type" />
