@@ -1,0 +1,35 @@
+<!--
+
+    =============================================================================
+
+    ORCID (R) Open Source
+    http://orcid.org
+
+    Copyright (c) 2012-2013 ORCID, Inc.
+    Licensed under an MIT-Style License (MIT)
+    http://orcid.org/open-source-license
+
+    This copyright and license information (including a link to the full license)
+    shall be included in its entirety in all copies or substantial portion of
+    the software.
+
+    =============================================================================
+
+-->
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+        
+    <changeSet id="CREATE_PROFILE_SECURITY_TABLE" author="rcpeters">
+        <sql>
+			ALTER TABLE webhook
+            ADD profile_last_modified timestamp without time zone;			
+			
+			/* on my local machine this insert was only a few seconds 
+			   with production data */
+			INSERT INTO webhook 
+			   SELECT profile_last FROM profile;
+        </sql>
+
+    </changeSet>
+
+</databaseChangeLog>
