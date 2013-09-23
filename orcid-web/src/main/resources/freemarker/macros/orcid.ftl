@@ -24,24 +24,6 @@
  * @author Will Simpson
  -->
 
-<#macro grantDetails grant>
-    <li>
-        <#if (grant.fundingAgency.agencyOrcid)??><div><b>${springMacroRequestContext.getMessage("macros.orcid.AgencyORCID")}</b>: ${grant.fundingAgency.agencyOrcid.content}</div></#if>
-        <#if (grant.fundingAgency.agencyName)??><div><b>${springMacroRequestContext.getMessage("macros.orcid.Agencyname")}</b>: ${grant.fundingAgency.agencyName.content}</div></#if>
-        <#if (grant.grantExternalIdentifier.grantExternalProgram)??><div><b>${springMacroRequestContext.getMessage("macros.orcid.Externalprogram")}</b>: ${grant.grantExternalIdentifier.grantExternalProgram.content}</div></#if>
-        <#if (grant.grantExternalIdentifier.grantExternalId)??><div><b>${springMacroRequestContext.getMessage("macros.orcid.ExternalID")}</b>: ${grant.grantExternalIdentifier.grantExternalId.content}</div></#if>
-        <#if grant.grantNumber??><div><b>${springMacroRequestContext.getMessage("macros.orcid.Grantnumber")}</b>: ${grant.grantNumber.content}</div></#if>
-        <#if grant.shortDescription??><div><b>${springMacroRequestContext.getMessage("macros.orcid.Description")}</b>: ${grant.shortDescription}</div></#if>
-        <#if (grant.grantContributors.contributor)??>
-            <div>
-                <b>${springMacroRequestContext.getMessage("macros.orcid.Contributor")}</b>: <@contributorList grant.grantContributors.contributor/>
-            </div>
-        </#if>
-        <#if showPrivacy!false>
-            <@privacy "" grant.visibility! />
-        </#if>
-    </li>
-</#macro>
 
 <#macro privacyToggle angularModel publicClick limitedClick privateClick>
 	<div class="relative">
@@ -68,32 +50,6 @@
 	</div>
 </#macro>
 
-
-<#macro patentDetails patent>
-    <li>
-        <#if (patent.shortDescription)??><h4>${patent.shortDescription}</h4></#if>
-        <#if (patent.country)??><div><b>${springMacroRequestContext.getMessage("macros.orcid.Country")}</b>: ${patent.country.content}</div></#if>
-        <#if (patent.patentNumber)??><div><b>${springMacroRequestContext.getMessage("macros.orcid.Patentnumber")}</b>: ${patent.patentNumber.content}</div></#if>
-        <#if (patent.shortDescription)??><div><b>${springMacroRequestContext.getMessage("macros.orcid.Description")}</b>: ${patent.shortDescription}</div></#if>
-        <#if (patent.patentIssueDate)??><div><b>${springMacroRequestContext.getMessage("macros.orcid.Patentissuedate")}</b>: ${patent.patentIssueDate.value.toGregorianCalendar().time?date}</div></#if>
-        <#if (patent.assignee)?? && patent.assignee?size &gt; 0>
-            <div>
-                <b>${springMacroRequestContext.getMessage("macros.orcid.Assignee")}</b>:
-                <#list patent.assignee as assignee>
-                    ${assignee} <#if assignee_has_next >, </#if>
-                </#list>
-            </div>
-        </#if>
-        <#if (patent.patentContributors.contributor)??>
-            <div>
-                <b>${springMacroRequestContext.getMessage("macros.orcid.Contributor")}</b>: <@contributorList patent.patentContributors.contributor/>
-            </div>
-        </#if>
-        <#if showPrivacy!false>
-            <@privacy "" patent.visibility! />
-        </#if>
-    </li>
-</#macro>
 
 <#macro itemDetails item="" field="" tag="div">
     <#if item != "">
