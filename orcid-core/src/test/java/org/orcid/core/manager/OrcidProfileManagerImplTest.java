@@ -774,11 +774,13 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
         affiliations.getAffiliation().add(affiliation2);
 
         profile2.setOrcidBio(orcidBio);
-        OrcidProfile profile = orcidProfileManager.addAffiliations(profile2);
+        orcidProfileManager.addAffiliations(profile2);
 
-        assertNotNull(profile);
-        assertEquals(2, profile.getOrcidActivities().getAffiliations().getAffiliation().size());
-        for (Affiliation affiliation : profile.getOrcidActivities().getAffiliations().getAffiliation()) {
+        OrcidProfile retrievedProfile = orcidProfileManager.retrieveOrcidProfile(TEST_ORCID);
+
+        assertNotNull(retrievedProfile);
+        assertEquals(2, retrievedProfile.getOrcidActivities().getAffiliations().getAffiliation().size());
+        for (Affiliation affiliation : retrievedProfile.getOrcidActivities().getAffiliations().getAffiliation()) {
             assertNotNull(affiliation.getPutCode());
         }
 

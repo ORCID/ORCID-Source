@@ -1007,6 +1007,13 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
         }
         return null;
     }
+    
+    @Override
+    public OrgAffiliationRelationEntity getNewOrgAffiliationRelationEntity(Affiliation affiliation, ProfileEntity profileEntity) {
+        OrgAffiliationRelationEntity orgAffiliationRelationEntity = getOrgAffiliationRelationEntity(affiliation, null);
+        orgAffiliationRelationEntity.setProfile(profileEntity);
+        return orgAffiliationRelationEntity;
+    }
 
     private OrgAffiliationRelationEntity getOrgAffiliationRelationEntity(Affiliation affiliation, OrgAffiliationRelationEntity exisitingOrgAffiliationEntity) {
         if (affiliation != null) {

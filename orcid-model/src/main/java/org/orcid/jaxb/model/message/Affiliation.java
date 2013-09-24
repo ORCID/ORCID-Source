@@ -323,6 +323,12 @@ public class Affiliation implements Serializable, VisibilityType {
         this.visibility = value;
     }
 
+    /**
+     * 
+     * Note that put-code is not part of hashCode or equals! This is to allow
+     * better de-duplication.
+     * 
+     */
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -340,6 +346,12 @@ public class Affiliation implements Serializable, VisibilityType {
         return result;
     }
 
+    /**
+     * 
+     * Note that put-code is not part of hashCode or equals! This is to allow
+     * better de-duplication.
+     * 
+     */
     @Override
     public boolean equals(Object obj) {
         if (this == obj)
