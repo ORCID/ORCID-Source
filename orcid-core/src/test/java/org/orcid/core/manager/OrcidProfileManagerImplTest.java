@@ -42,7 +42,11 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.orcid.core.manager.impl.OrcidProfileManagerImpl;
 import org.orcid.jaxb.model.message.Affiliation;
+import org.orcid.jaxb.model.message.AffiliationAddress;
+import org.orcid.jaxb.model.message.AffiliationCity;
+import org.orcid.jaxb.model.message.AffiliationCountry;
 import org.orcid.jaxb.model.message.AffiliationType;
+import org.orcid.jaxb.model.message.Affiliations;
 import org.orcid.jaxb.model.message.ApprovalDate;
 import org.orcid.jaxb.model.message.Claimed;
 import org.orcid.jaxb.model.message.Contributor;
@@ -50,12 +54,15 @@ import org.orcid.jaxb.model.message.CreditName;
 import org.orcid.jaxb.model.message.DelegateSummary;
 import org.orcid.jaxb.model.message.Delegation;
 import org.orcid.jaxb.model.message.DelegationDetails;
+import org.orcid.jaxb.model.message.Email;
 import org.orcid.jaxb.model.message.ExternalIdCommonName;
 import org.orcid.jaxb.model.message.ExternalIdReference;
 import org.orcid.jaxb.model.message.ExternalIdentifier;
 import org.orcid.jaxb.model.message.ExternalIdentifiers;
 import org.orcid.jaxb.model.message.GivenPermissionTo;
+import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.jaxb.model.message.Orcid;
+import org.orcid.jaxb.model.message.OrcidActivities;
 import org.orcid.jaxb.model.message.OrcidBio;
 import org.orcid.jaxb.model.message.OrcidHistory;
 import org.orcid.jaxb.model.message.OrcidInternal;
@@ -85,6 +92,7 @@ import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.IndexingStatus;
 import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
+import org.orcid.persistence.jpa.entities.OrgEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.SecurityQuestionEntity;
 import org.orcid.persistence.jpa.entities.SubjectEntity;
@@ -446,7 +454,7 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
         negatedProfile.getOrcidBio().getPersonalDetails().setGivenNames(null);
         negatedProfile.getOrcidBio().getPersonalDetails().setCreditName(null);
         negatedProfile.getOrcidBio().getPersonalDetails().setOtherNames(null);
-        negatedProfile.getOrcidBio().getAffiliations().clear();
+        negatedProfile.getOrcidActivities().setAffiliations(null);
         orcidProfileManager.updateOrcidBio(negatedProfile);
         assertEquals(IndexingStatus.PENDING, profileDao.find(TEST_ORCID).getIndexingStatus());
     }
@@ -752,29 +760,87 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
         OrcidBio orcidBio = new OrcidBio();
         orcidBio.setPersonalDetails(new PersonalDetails());
 
+        OrcidActivities orcidActivities = new OrcidActivities();
+        profile2.setOrcidActivities(orcidActivities);
+        Affiliations affiliations = new Affiliations();
+        orcidActivities.setAffiliations(affiliations);
+
         Affiliation affiliation1 = getAffiliation();
         Affiliation affiliation2 = getAffiliation();
         affiliation2.setAffiliationName("Past Institution 2");
         affiliation2.setAffiliationType(AffiliationType.CURRENT_PRIMARY_INSTITUTION);
 
-        orcidBio.getAffiliations().add(affiliation1);
-        orcidBio.getAffiliations().add(affiliation2);
+        affiliations.getAffiliation().add(affiliation1);
+        affiliations.getAffiliation().add(affiliation2);
 
         profile2.setOrcidBio(orcidBio);
         OrcidProfile profile = orcidProfileManager.addAffiliations(profile2);
 
         assertNotNull(profile);
-        assertEquals(2, profile.getOrcidBio().getAffiliations().size());
+        assertEquals(2, profile.getOrcidActivities().getAffiliations().getAffiliation().size());
+        for (Affiliation affiliation : profile.getOrcidActivities().getAffiliations().getAffiliation()) {
+            assertNotNull(affiliation.getPutCode());
+        }
 
-        // simulate the ManageProfileController#deletePastAffiliations by
-        // creating single past inst
+        // Remove an affiliation
         profile2 = createFullOrcidProfile();
-        profile2.getOrcidBio().getAffiliations().clear();
-        profile2.getOrcidBio().getAffiliations().add(affiliation1);
+        affiliations.getAffiliation().clear();
+        affiliations.getAffiliation().add(affiliation1);
+        profile2.setOrcidActivities(orcidActivities);
 
-        orcidProfileManager.updateOrcidBio(profile2);
+        orcidProfileManager.updateOrcidProfile(profile2);
+
+        OrcidProfile profile3 = orcidProfileManager.retrieveOrcidProfile(TEST_ORCID);
+        assertEquals(1, profile3.getOrcidActivities().getAffiliations().getAffiliation().size());
 
         assertEquals(IndexingStatus.PENDING, profileDao.find(TEST_ORCID).getIndexingStatus());
+    }
+
+    @Test
+    @Transactional
+    @Rollback(true)
+    public void testOrgReuse() {
+        OrcidProfile profile1 = createBasicProfile();
+        OrcidHistory history = new OrcidHistory();
+        history.setSubmissionDate(new SubmissionDate(DateUtils.convertToXMLGregorianCalendar(new Date())));
+        profile1.setOrcidHistory(history);
+        history.setClaimed(new Claimed(true));
+        OrcidActivities orcidActivities = profile1.getOrcidActivities();
+        Affiliations affiliations = new Affiliations();
+        orcidActivities.setAffiliations(affiliations);
+        Affiliation affiliation = new Affiliation();
+        affiliations.getAffiliation().add(affiliation);
+        affiliation.setAffiliationName("New College");
+        AffiliationAddress affiliationAddress = new AffiliationAddress();
+        affiliation.setAffiliationAddress(affiliationAddress);
+        affiliationAddress.setAffiliationCity(new AffiliationCity("Edinburgh"));
+        affiliationAddress.setAffiliationCountry(new AffiliationCountry(Iso3166Country.GB));
+
+        orcidProfileManager.createOrcidProfile(profile1);
+
+        ProfileEntity profileEntity = profileDao.find(TEST_ORCID);
+        assertEquals(1, profileEntity.getOrgAffiliationRelations().size());
+        OrgEntity orgEntity = profileEntity.getOrgAffiliationRelations().iterator().next().getOrg();
+        assertNotNull(orgEntity);
+
+        // Now create another profile with the same affiliation and check that
+        // the org is reused;
+
+        String otherOrcid = "4444-4444-4444-4448";
+        OrcidProfile profile2 = createBasicProfile();
+        profile2.setOrcid(otherOrcid);
+        List<Email> emailList2 = profile2.getOrcidBio().getContactDetails().getEmail();
+        emailList2.clear();
+        emailList2.add(new Email("another@semantico.com"));
+        profile2.getOrcidActivities().setAffiliations(affiliations);
+        orcidProfileManager.createOrcidProfile(profile2);
+
+        ProfileEntity profileEntity2 = profileDao.find(otherOrcid);
+        assertEquals(1, profileEntity2.getOrgAffiliationRelations().size());
+        OrgEntity orgEntity2 = profileEntity2.getOrgAffiliationRelations().iterator().next().getOrg();
+        assertNotNull(orgEntity);
+
+        assertEquals(orgEntity.getId(), orgEntity2.getId());
     }
 
     @SuppressWarnings("unchecked")

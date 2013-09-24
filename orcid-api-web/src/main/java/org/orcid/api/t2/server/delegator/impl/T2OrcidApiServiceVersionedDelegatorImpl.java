@@ -260,4 +260,18 @@ public class T2OrcidApiServiceVersionedDelegatorImpl implements T2OrcidApiServic
         return checkProfileStatus(downgradedResponse);        
     }
 
+    @Override
+    public Response addAffiliations(UriInfo uriInfo, String orcid, OrcidMessage orcidMessage) {
+        validateIncomingMessage(orcidMessage);
+        OrcidMessage upgradedMessage = upgradeMessage(orcidMessage);
+        return t2OrcidApiServiceDelegator.addAffiliations(uriInfo, orcid, upgradedMessage);
+    }
+
+    @Override
+    public Response updateAffiliations(UriInfo uriInfo, String orcid, OrcidMessage orcidMessage) {
+        validateIncomingMessage(orcidMessage);
+        OrcidMessage upgradedMessage = upgradeMessage(orcidMessage);
+        return t2OrcidApiServiceDelegator.updateAffiliations(uriInfo, orcid, upgradedMessage);
+    }
+
 }

@@ -59,7 +59,7 @@ public class TestXmlValidity extends BaseTest {
     @Test
     public void testAllOrcidMessages() throws IOException {
         PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
-        Resource[] resources = resolver.getResources("classpath*:**/*message*.xml");
+        Resource[] resources = resolver.getResources("classpath*:**/*message-latest.xml");
         for (Resource resource : resources) {
             LOG.info("Found resource: {}", resource);
             InputStream is = null;

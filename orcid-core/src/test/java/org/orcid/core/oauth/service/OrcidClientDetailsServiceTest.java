@@ -182,7 +182,7 @@ public class OrcidClientDetailsServiceTest extends DBUnitTest {
         assertEquals(1, resourceIds.size());
         Set<String> scope = clientDetails.getScope();
         assertNotNull(scope);
-        int expectedNumberOfScopes = "4444-4444-4444-4445".equals(clientDetails.getClientId()) ? 2 : 1;
+        int expectedNumberOfScopes = "4444-4444-4444-4445".equals(clientDetails.getClientId()) ? 3 : 1;
         assertEquals(expectedNumberOfScopes, scope.size());
     }
 

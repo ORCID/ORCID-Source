@@ -65,6 +65,7 @@
 	<include file="/db/updates/locale-refactor-setting.xml"/>
 	<include file="/db/updates/add-key-to-security-questions.xml"/>
     <include file="/db/updates/increase-bio-text-size-limit.xml"/>
+	<include file="/db/updates/disambiguated_affiliations.xml"/>
 	<include file="/db/updates/add-client-type-and-group-type-to-profile-table.xml"/>
     <include file="/db/updates/work-contributors-as-json.xml"/>
     <include file="/db/updates/profile_deprecation_project.xml"/>    

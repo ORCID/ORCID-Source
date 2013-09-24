@@ -24,14 +24,11 @@
 package org.orcid.jaxb.model.message;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlType;
 
 /**
@@ -66,8 +63,7 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "personalDetails", "biography", "researcherUrls", "contactDetails", "keywords", "externalIdentifiers", "affiliations", "delegation",
-        "applications" })
+@XmlType(name = "", propOrder = { "personalDetails", "biography", "researcherUrls", "contactDetails", "keywords", "externalIdentifiers", "delegation", "applications" })
 public class OrcidBio implements Serializable {
 
     private final static long serialVersionUID = 1L;
@@ -80,9 +76,6 @@ public class OrcidBio implements Serializable {
     @XmlElement(name = "contact-details")
     protected ContactDetails contactDetails;
     protected Keywords keywords;
-    @XmlElementWrapper(name = "affiliations")
-    @XmlElement(name = "affiliation")
-    protected List<Affiliation> affiliations;
     @XmlElement(name = "external-identifiers")
     protected ExternalIdentifiers externalIdentifiers;
     protected Delegation delegation;
@@ -170,33 +163,6 @@ public class OrcidBio implements Serializable {
     }
 
     /**
-     * Gets the value of the affiliations property.
-     * 
-     * @return possible object is {@link List<Affiliation> }
-     * 
-     */
-    public List<Affiliation> getAffiliations() {
-        if (affiliations == null) {
-            affiliations = new ArrayList<Affiliation>();
-        }
-        return affiliations;
-    }
-
-    public List<Affiliation> getAffiliationsByType(AffiliationType affiliationType) {
-        List<Affiliation> filteredAffilations = new ArrayList<Affiliation>();
-        if (affiliations != null && affiliationType != null) {
-            for (Affiliation affiliation : affiliations) {
-                if (affiliationType.equals(affiliation.getAffiliationType())) {
-                    filteredAffilations.add(affiliation);
-                }
-            }
-
-        }
-
-        return filteredAffilations;
-    }
-
-    /**
      * Gets the value of the externalIdentifiers property.
      * 
      * @return possible object is {@link ExternalIdentifiers }
@@ -281,12 +247,27 @@ public class OrcidBio implements Serializable {
     }
 
     public void downGradeToExternalIdentifiersOnly() {
-        getAffiliations().clear();
         setContactDetails(null);
         setKeywords(null);
         setPersonalDetails(null);
         setScope(null);
         setBiography(null);
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((applications == null) ? 0 : applications.hashCode());
+        result = prime * result + ((biography == null) ? 0 : biography.hashCode());
+        result = prime * result + ((contactDetails == null) ? 0 : contactDetails.hashCode());
+        result = prime * result + ((delegation == null) ? 0 : delegation.hashCode());
+        result = prime * result + ((externalIdentifiers == null) ? 0 : externalIdentifiers.hashCode());
+        result = prime * result + ((keywords == null) ? 0 : keywords.hashCode());
+        result = prime * result + ((personalDetails == null) ? 0 : personalDetails.hashCode());
+        result = prime * result + ((researcherUrls == null) ? 0 : researcherUrls.hashCode());
+        result = prime * result + ((scope == null) ? 0 : scope.hashCode());
+        return result;
     }
 
     @Override
@@ -298,11 +279,6 @@ public class OrcidBio implements Serializable {
         if (getClass() != obj.getClass())
             return false;
         OrcidBio other = (OrcidBio) obj;
-        if (affiliations == null) {
-            if (other.affiliations != null)
-                return false;
-        } else if (!affiliations.equals(other.affiliations))
-            return false;
         if (applications == null) {
             if (other.applications != null)
                 return false;
@@ -348,20 +324,4 @@ public class OrcidBio implements Serializable {
         return true;
     }
 
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((affiliations == null) ? 0 : affiliations.hashCode());
-        result = prime * result + ((applications == null) ? 0 : applications.hashCode());
-        result = prime * result + ((biography == null) ? 0 : biography.hashCode());
-        result = prime * result + ((contactDetails == null) ? 0 : contactDetails.hashCode());
-        result = prime * result + ((delegation == null) ? 0 : delegation.hashCode());
-        result = prime * result + ((externalIdentifiers == null) ? 0 : externalIdentifiers.hashCode());
-        result = prime * result + ((keywords == null) ? 0 : keywords.hashCode());
-        result = prime * result + ((personalDetails == null) ? 0 : personalDetails.hashCode());
-        result = prime * result + ((researcherUrls == null) ? 0 : researcherUrls.hashCode());
-        result = prime * result + ((scope == null) ? 0 : scope.hashCode());
-        return result;
-    }
 }

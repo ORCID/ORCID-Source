@@ -31,12 +31,16 @@
     <external_identifier/>
     <email/>
     <email_event/>
-    <affiliation/>
     <funding_grant/>
     <profile_grant/>
     <grant_contributor/>
     <other_name/>
     <profile_keyword/>
     <profile_patent/>
-    <webhook/>    
+    <webhook/>
+	<org/>
+	<org_affiliation_relation/>
+	<address/>
+	<institution/>
+	<affiliation/>
 </dataset>
