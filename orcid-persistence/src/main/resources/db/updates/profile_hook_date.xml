@@ -19,15 +19,15 @@
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
         
-    <changeSet id="CREATE_PROFILE_SECURITY_TABLE" author="rcpeters">
+    <changeSet id="WEBHOOKS_PROFILE_MODIFIED" author="rcpeters"  dbms="postgresql">
         <sql>
-			ALTER TABLE webhook
-            ADD profile_last_modified timestamp without time zone;			
-			
-			/* on my local machine this insert was only a few seconds 
-			   with production data */
-			INSERT INTO webhook 
-			   SELECT profile_last FROM profile;
+			ALTER TABLE webhook ADD profile_last_modified timestamp without time zone;			
+			update webhook as w set profile_last_modified=p.last_modified from profile as p where p.orcid = w.orcid;
+        </sql>
+    </changeSet>
+    <changeSet id="WEBHOOKS_PROFILE_MODIFIED_HSQL" author="rcpeters"  dbms="hsqldb">
+        <sql>
+			ALTER TABLE webhook ADD profile_last_modified timestamp without time zone;			
         </sql>
 
     </changeSet>

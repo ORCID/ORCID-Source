@@ -364,7 +364,11 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
         query.setParameter("profile_address_visibility", StringUtils.upperCase(profile.getProfileAddressVisibility().value()));
         query.setParameter("orcid", profile.getId());
 
-        return query.executeUpdate() > 0 ? true : false;
+        boolean result = query.executeUpdate() > 0 ? true : false; 
+        
+        updateWebhookProfileLastUpdate(profile.getId());
+        
+        return result;        
     }
 
     public Date retrieveLastModifiedDate(String orcid) {
@@ -385,9 +389,18 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
     public void updateLastModifiedDateWithoutResult(String orcid) {
         Query query = entityManager
                 .createNativeQuery(
-                        "update profile set last_modified = now() where orcid = :orcid;" 
-                      + "update webhooks set profile_last_modified = (select last_modified from profile where orcid = :orcid) "
-                      +  "    where orcid = :orcid;");
+                        "update profile set last_modified = now() where orcid = :orcid ");
+        query.setParameter("orcid", orcid);   
+        query.executeUpdate();
+
+        updateWebhookProfileLastUpdate(orcid);
+    }
+    
+    private void updateWebhookProfileLastUpdate(String orcid) {
+        Query query = entityManager
+                .createNativeQuery(
+                        "update webhook set profile_last_modified = (select last_modified from profile where orcid = :orcid ) "
+                      + "where orcid = :orcid "    );
         query.setParameter("orcid", orcid);        
         query.executeUpdate();
     }
@@ -398,6 +411,7 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
         Query updateQuery = entityManager.createQuery("update ProfileEntity set lastModified = now(), indexingStatus = 'PENDING' where orcid = :orcid");
         updateQuery.setParameter("orcid", orcid);
         updateQuery.executeUpdate();
+        updateWebhookProfileLastUpdate(orcid);
     }
 
     @Override
@@ -440,8 +454,12 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
                 .createNativeQuery("update profile set last_modified=now(), indexing_status='PENDING', primary_record=:primary_record, deprecated_date=now() where orcid=:orcid");
         query.setParameter("orcid", deprecatedOrcid);
         query.setParameter("primary_record", primaryOrcid);
-
-        return query.executeUpdate() > 0 ? true : false;
+        
+        boolean result = query.executeUpdate() > 0 ? true : false; 
+        
+        updateWebhookProfileLastUpdate(primaryOrcid);
+        
+        return result;
     }
     
     @Override
