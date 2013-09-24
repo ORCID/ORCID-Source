@@ -120,7 +120,7 @@
 				</div>
 			</div>
 			<div class="span10">
-				<div ng-bind="detailWork.shortDescription.value"></div>
+				<div ng-bind="detailWork.shortDescription.value" style="white-space: pre-wrap;"></div>
 			</div>
 		</div>
 		<div class="row" ng-show="detailWork.workExternalIdentifiers.length > 0" ng-cloak>
@@ -443,7 +443,7 @@
             <span ng-show="work.url.value" style=" display: inline-block;">URL: <a href="{{work.url.value | urlWithHttp}}" target="_blank">{{work.url.value}}</a></span>
         </div>
         
-        <div ng-show="work.shortDescription" ng-bind-html="work.shortDescription.value" style="width: 680px;"></div>
+        <div ng-show="work.shortDescription" ng-bind-html="work.shortDescription.value" style="width: 680px; white-space: pre-wrap;"></div>
         <div ng-show="work.citationForDisplay" class="citation {{work.workCitation.workCitationType.toLowerCase()}}" ng-bind-html="work.citationForDisplay" style="width: 680px;"></div>
     </li>           
 </ul>

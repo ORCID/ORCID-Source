@@ -650,7 +650,7 @@
                 <xs:enumeration value="federal-bill"/>
                 <xs:enumeration value="federal-report"/>
                 <xs:enumeration value="federal-rule"/>
-                <xs:enumeration value="federalstatute"/>
+                <xs:enumeration value="federal-statute"/>
                 <xs:enumeration value="federal-testimony"/>
                 <xs:enumeration value="film-movie"/>
                 <xs:enumeration value="government-publication"/>
