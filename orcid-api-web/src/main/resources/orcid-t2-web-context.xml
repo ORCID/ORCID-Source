@@ -36,7 +36,7 @@
         <property name="serviceDelegator" ref="t2OrcidApiServiceDelegatorLatest"/>
     </bean>
     <bean id="t2OrcidApiServiceDelegatorLatest" class="org.orcid.api.t2.server.delegator.impl.T2OrcidApiServiceVersionedDelegatorImpl">
-        <property name="externalVersion" value="1.0.14"/>
+        <property name="externalVersion" value="1.0.19"/>
         <property name="incomingValidationManager" ref="incomingValidationManagerLatest"/>
         <property name="outgoingValidationManager" ref="outgoingValidationManagerLatest"/>
     </bean>

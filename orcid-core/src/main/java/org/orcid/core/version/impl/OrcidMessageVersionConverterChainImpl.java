@@ -51,7 +51,7 @@ public class OrcidMessageVersionConverterChainImpl implements OrcidMessageVersio
             if (requiredVersion.equals(oldVersion)) {
                 return orcidMessage;
             }
-            if (converter.getFromVersion().compareTo(requiredVersion) <= 0) {
+            if (converter.getFromVersion().compareTo(requiredVersion) >= 0) {
                 orcidMessage = converter.downgradeMessage(orcidMessage);
             }
         }
@@ -68,7 +68,7 @@ public class OrcidMessageVersionConverterChainImpl implements OrcidMessageVersio
             if (requiredVersion.equals(oldVersion)) {
                 return orcidMessage;
             }
-            if (converter.getToVersion().compareTo(requiredVersion) >= 0) {
+            if (converter.getToVersion().compareTo(requiredVersion) <= 0) {
                 orcidMessage = converter.upgradeMessage(orcidMessage);
             }
         }
