@@ -180,9 +180,9 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
                 // profile DAO
                 if (!orcidClientGroup.getEmail().equals(groupProfileEntity.getPrimaryEmail().getId())) {
                     EmailEntity primaryEmailEntity = new EmailEntity();
-                    primaryEmailEntity.setId(orcidClientGroup.getEmail());
+                    primaryEmailEntity.setId(orcidClientGroup.getEmail().toLowerCase().trim());
                     primaryEmailEntity.setCurrent(true);
-                    primaryEmailEntity.setVerified(false);
+                    primaryEmailEntity.setVerified(true);
                     primaryEmailEntity.setVisibility(Visibility.PRIVATE);
                     groupProfileEntity.setPrimaryEmail(primaryEmailEntity);
                 }
