@@ -257,7 +257,7 @@
                                             </#list>
                                         </#if>
                                     </td width="35%">                                    
-                                    <td width="5%"><a a href="#" ng-click="confirmRevoke('${applicationSummary.applicationName.content}', '${applicationSummary_index}')" class="icon-trash orcid-icon-trash grey" title="${springMacroRequestContext.getMessage("manage.revokeaccess")}"></a></td>
+                                    <td width="5%"><a a href="#" ng-click="confirmRevoke('${applicationSummary.applicationName.content?js_string}', '${applicationSummary_index}')" class="icon-trash orcid-icon-trash grey" title="${springMacroRequestContext.getMessage("manage.revokeaccess")}"></a></td>
                                 </form>
                             </tr>
                         </#list>
