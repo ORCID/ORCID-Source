@@ -333,7 +333,7 @@ public class ChangePersonalInfoForm {
         orcidProfile.getOrcidBio().getPersonalDetails().getOtherNames().setVisibility(Visibility.fromValue(otherNamesVisibility));
         orcidProfile.getOrcidBio().setKeywords(buildKeywordsFromDelimitedString(keywordsDelimited));
         orcidProfile.getOrcidBio().getKeywords().setVisibility(Visibility.fromValue(keywordsVisibility));
-        orcidProfile.getOrcidBio().getContactDetails().getAddress().getCountry().setContent(isoCountryCode);
+        orcidProfile.getOrcidBio().getContactDetails().getAddress().getCountry().setContent(StringUtils.isBlank(isoCountryCode) ? null : isoCountryCode);
         orcidProfile.getOrcidBio().getContactDetails().getAddress().getCountry().setVisibility(Visibility.fromValue(isoCountryVisibility));
         orcidProfile.getOrcidBio().getBiography().setContent(biography);
         orcidProfile.getOrcidBio().setResearcherUrls(getUpToDateResearcherUrls());
