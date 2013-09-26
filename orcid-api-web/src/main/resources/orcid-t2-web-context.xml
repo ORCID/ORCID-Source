@@ -100,6 +100,10 @@
         <property name="outgoingValidationManager" ref="outgoingValidationManagerV1_0_19"/>
     </bean>
 
+    <bean id="t2OrcidApiServiceImplV1_0_20" class="org.orcid.api.t2.server.T2OrcidApiServiceImplV1_0_20">
+        <property name="serviceDelegator" ref="t2OrcidApiServiceDelegatorV1_0_20"/>
+    </bean>
+
 	<bean id="t2OrcidApiServiceDelegatorV1_0_20" class="org.orcid.api.t2.server.delegator.impl.T2OrcidApiServiceVersionedDelegatorImpl">
         <property name="externalVersion" value="1.0.20"/>
         <property name="incomingValidationManager" ref="incomingValidationManagerV1_0_20"/>
