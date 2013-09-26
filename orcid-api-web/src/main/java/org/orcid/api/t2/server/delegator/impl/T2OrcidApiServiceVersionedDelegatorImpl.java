@@ -24,6 +24,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import org.orcid.api.common.exception.OrcidBadRequestException;
+import org.orcid.api.common.exception.OrcidNotFoundException;
 import org.orcid.api.t2.server.delegator.T2OrcidApiServiceDelegator;
 import org.orcid.core.exception.OrcidValidationException;
 import org.orcid.core.manager.ValidationManager;
@@ -51,6 +52,8 @@ public class T2OrcidApiServiceVersionedDelegatorImpl implements T2OrcidApiServic
 
     private String externalVersion;
 
+    private boolean supportsAffiliations = true;
+
     @Resource
     private ProfileDao profileDao;
 
@@ -64,6 +67,10 @@ public class T2OrcidApiServiceVersionedDelegatorImpl implements T2OrcidApiServic
 
     public void setOutgoingValidationManager(ValidationManager outgoingValidationManager) {
         this.outgoingValidationManager = outgoingValidationManager;
+    }
+
+    public void setSupportsAffiliations(boolean supportsAffiliations) {
+        this.supportsAffiliations = supportsAffiliations;
     }
 
     @Override
@@ -268,6 +275,7 @@ public class T2OrcidApiServiceVersionedDelegatorImpl implements T2OrcidApiServic
 
     @Override
     public Response addAffiliations(UriInfo uriInfo, String orcid, OrcidMessage orcidMessage) {
+        checkAffiliationsSupport();
         validateIncomingMessage(orcidMessage);
         OrcidMessage upgradedMessage = upgradeMessage(orcidMessage);
         return t2OrcidApiServiceDelegator.addAffiliations(uriInfo, orcid, upgradedMessage);
@@ -275,9 +283,16 @@ public class T2OrcidApiServiceVersionedDelegatorImpl implements T2OrcidApiServic
 
     @Override
     public Response updateAffiliations(UriInfo uriInfo, String orcid, OrcidMessage orcidMessage) {
+        checkAffiliationsSupport();
         validateIncomingMessage(orcidMessage);
         OrcidMessage upgradedMessage = upgradeMessage(orcidMessage);
         return t2OrcidApiServiceDelegator.updateAffiliations(uriInfo, orcid, upgradedMessage);
+    }
+
+    private void checkAffiliationsSupport() {
+        if (!supportsAffiliations) {
+            throw new OrcidNotFoundException("Affiliations are not supported in this version of the API");
+        }
     }
 
 }
