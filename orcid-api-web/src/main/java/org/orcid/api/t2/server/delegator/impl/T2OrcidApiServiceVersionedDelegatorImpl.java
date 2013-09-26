@@ -53,7 +53,7 @@ public class T2OrcidApiServiceVersionedDelegatorImpl implements T2OrcidApiServic
 
     @Resource
     private ProfileDao profileDao;
-    
+
     public void setExternalVersion(String externalVersion) {
         this.externalVersion = externalVersion;
     }
@@ -130,7 +130,7 @@ public class T2OrcidApiServiceVersionedDelegatorImpl implements T2OrcidApiServic
         OrcidMessage upgradedMessage = upgradeMessage(orcidMessage);
         Response response = null;
         validateIncomingMessage(upgradedMessage);
-        response = t2OrcidApiServiceDelegator.createProfile(uriInfo, upgradedMessage);         
+        response = t2OrcidApiServiceDelegator.createProfile(uriInfo, upgradedMessage);
         return response;
     }
 
@@ -140,7 +140,7 @@ public class T2OrcidApiServiceVersionedDelegatorImpl implements T2OrcidApiServic
         validateIncomingMessage(orcidMessage);
         OrcidMessage upgradedMessage = upgradeMessage(orcidMessage);
         response = t2OrcidApiServiceDelegator.updateBioDetails(uriInfo, orcid, upgradedMessage);
-        response = downgradeAndValidateResponse(response);        
+        response = downgradeAndValidateResponse(response);
         return response;
     }
 
@@ -149,7 +149,7 @@ public class T2OrcidApiServiceVersionedDelegatorImpl implements T2OrcidApiServic
         Response response = null;
         validateIncomingMessage(orcidMessage);
         OrcidMessage upgradedMessage = upgradeMessage(orcidMessage);
-        response = t2OrcidApiServiceDelegator.addWorks(uriInfo, orcid, upgradedMessage);        
+        response = t2OrcidApiServiceDelegator.addWorks(uriInfo, orcid, upgradedMessage);
         return response;
     }
 
@@ -158,7 +158,7 @@ public class T2OrcidApiServiceVersionedDelegatorImpl implements T2OrcidApiServic
         Response response = null;
         validateIncomingMessage(orcidMessage);
         OrcidMessage upgradedMessage = upgradeMessage(orcidMessage);
-        response = t2OrcidApiServiceDelegator.updateWorks(uriInfo, orcid, upgradedMessage);        
+        response = t2OrcidApiServiceDelegator.updateWorks(uriInfo, orcid, upgradedMessage);
         return response;
     }
 
@@ -167,7 +167,7 @@ public class T2OrcidApiServiceVersionedDelegatorImpl implements T2OrcidApiServic
         Response response = null;
         validateIncomingMessage(orcidMessage);
         OrcidMessage upgradedMessage = upgradeMessage(orcidMessage);
-        response = t2OrcidApiServiceDelegator.addExternalIdentifiers(uriInfo, orcid, upgradedMessage);        
+        response = t2OrcidApiServiceDelegator.addExternalIdentifiers(uriInfo, orcid, upgradedMessage);
         return response;
     }
 
@@ -187,7 +187,7 @@ public class T2OrcidApiServiceVersionedDelegatorImpl implements T2OrcidApiServic
     }
 
     private void validateIncomingMessage(OrcidMessage orcidMessage) {
-        try {            
+        try {
             incomingValidationManager.validateMessage(orcidMessage);
             checkDeprecation(orcidMessage);
         } catch (OrcidValidationException e) {
@@ -202,41 +202,47 @@ public class T2OrcidApiServiceVersionedDelegatorImpl implements T2OrcidApiServic
             }
             throw new OrcidBadRequestException("Invalid incoming message: " + cause.toString());
         }
-    }    
-    
+    }
+
     /**
      * Checks if an account is deprecated
+     * 
      * @param orcidMessage
-     *          OrcidMessage, for it we can get the orcid to check for deprecation
-     * @throws DeprecatedException if the account is deprecated
+     *            OrcidMessage, for it we can get the orcid to check for
+     *            deprecation
+     * @throws DeprecatedException
+     *             if the account is deprecated
      * */
-    private void checkDeprecation(OrcidMessage orcidMessage){
-        if(orcidMessage != null && orcidMessage.getOrcidProfile() != null && orcidMessage.getOrcidProfile().getOrcid() != null){
+    private void checkDeprecation(OrcidMessage orcidMessage) {
+        if (orcidMessage != null && orcidMessage.getOrcidProfile() != null && orcidMessage.getOrcidProfile().getOrcid() != null) {
             String orcid = orcidMessage.getOrcidProfile().getOrcid().getValue();
-            String primaryOrcid = this.profileDao.retrievePrimaryAccountOrcid(orcid); 
-            if(primaryOrcid != null){
-                //TODO: Internationalize these messages
-                throw new DeprecatedException("This account is deprecated. Please refer to account:"  + primaryOrcid);
+            String primaryOrcid = this.profileDao.retrievePrimaryAccountOrcid(orcid);
+            if (primaryOrcid != null) {
+                // TODO: Internationalize these messages
+                throw new DeprecatedException("This account is deprecated. Please refer to account:" + primaryOrcid);
             }
         }
     }
-    
+
     /**
-     * Verify if the orcid message is deprecated, if so, builds a reponse object with 301 status
+     * Verify if the orcid message is deprecated, if so, builds a reponse object
+     * with 301 status
+     * 
      * @param response
-     *          The current response object.
-     * @return a response object.         
+     *            The current response object.
+     * @return a response object.
      * */
-    protected Response checkProfileStatus(Response response){        
-        OrcidMessage orcidMessage = (OrcidMessage) response.getEntity();        
-        if(orcidMessage != null && orcidMessage.getOrcidProfile() != null && orcidMessage.getOrcidProfile().getOrcidDeprecated() != null){
-            //TODO: Internationalize these messages
-            throw new DeprecatedException("This account is deprecated. Please refer to account:"  + orcidMessage.getOrcidProfile().getOrcidDeprecated().getPrimaryRecord().getOrcid().getValue()); 
+    protected Response checkProfileStatus(Response response) {
+        OrcidMessage orcidMessage = (OrcidMessage) response.getEntity();
+        if (orcidMessage != null && orcidMessage.getOrcidProfile() != null && orcidMessage.getOrcidProfile().getOrcidDeprecated() != null) {
+            // TODO: Internationalize these messages
+            throw new DeprecatedException("This account is deprecated. Please refer to account:"
+                    + orcidMessage.getOrcidProfile().getOrcidDeprecated().getPrimaryRecord().getOrcid().getValue());
         }
-        
+
         return response;
-    }        
-    
+    }
+
     private void validateOutgoingResponse(Response response) {
         OrcidMessage orcidMessage = (OrcidMessage) response.getEntity();
         outgoingValidationManager.validateMessage(orcidMessage);
@@ -257,7 +263,7 @@ public class T2OrcidApiServiceVersionedDelegatorImpl implements T2OrcidApiServic
     private Response downgradeAndValidateResponse(Response response) {
         Response downgradedResponse = downgradeResponse(response);
         validateOutgoingResponse(downgradedResponse);
-        return checkProfileStatus(downgradedResponse);        
+        return checkProfileStatus(downgradedResponse);
     }
 
     @Override
