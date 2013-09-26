@@ -60,10 +60,18 @@
         <property name="outgoingValidationManager" ref="outgoingValidationManagerV1_0_15"/>
     </bean>
     
+    <bean id="t2OrcidApiServiceImplV1_0_16" class="org.orcid.api.t2.server.T2OrcidApiServiceImplV1_0_16">
+        <property name="serviceDelegator" ref="t2OrcidApiServiceDelegatorV1_0_16"/>
+    </bean>
+    
     <bean id="t2OrcidApiServiceDelegatorV1_0_16" class="org.orcid.api.t2.server.delegator.impl.T2OrcidApiServiceVersionedDelegatorImpl">
         <property name="externalVersion" value="1.0.16"/>
         <property name="incomingValidationManager" ref="incomingValidationManagerV1_0_16"/>
         <property name="outgoingValidationManager" ref="outgoingValidationManagerV1_0_16"/>
+    </bean>
+    
+    <bean id="t2OrcidApiServiceImplV1_0_17" class="org.orcid.api.t2.server.T2OrcidApiServiceImplV1_0_17">
+        <property name="serviceDelegator" ref="t2OrcidApiServiceDelegatorV1_0_17"/>
     </bean>
 
     <bean id="t2OrcidApiServiceDelegatorV1_0_17" class="org.orcid.api.t2.server.delegator.impl.T2OrcidApiServiceVersionedDelegatorImpl">
@@ -72,7 +80,21 @@
         <property name="outgoingValidationManager" ref="outgoingValidationManagerV1_0_17"/>
     </bean>
     
-    <bean id="t2OrcidApiServiceDelegatorV1_0_19" class="org.orcid.api.t2.server.delegator.impl.T2OrcidApiServiceVersionedDelegatorImpl">
+    <bean id="t2OrcidApiServiceImplV1_0_18" class="org.orcid.api.t2.server.T2OrcidApiServiceImplV1_0_18">
+        <property name="serviceDelegator" ref="t2OrcidApiServiceDelegatorV1_0_18"/>
+    </bean>
+
+    <bean id="t2OrcidApiServiceDelegatorV1_0_18" class="org.orcid.api.t2.server.delegator.impl.T2OrcidApiServiceVersionedDelegatorImpl">
+        <property name="externalVersion" value="1.0.18"/>
+        <property name="incomingValidationManager" ref="incomingValidationManagerV1_0_18"/>
+        <property name="outgoingValidationManager" ref="outgoingValidationManagerV1_0_18"/>
+    </bean>
+    
+    <bean id="t2OrcidApiServiceImplV1_0_19" class="org.orcid.api.t2.server.T2OrcidApiServiceImplV1_0_19">
+        <property name="serviceDelegator" ref="t2OrcidApiServiceDelegatorV1_0_19"/>
+    </bean>
+
+	<bean id="t2OrcidApiServiceDelegatorV1_0_19" class="org.orcid.api.t2.server.delegator.impl.T2OrcidApiServiceVersionedDelegatorImpl">
         <property name="externalVersion" value="1.0.19"/>
         <property name="incomingValidationManager" ref="incomingValidationManagerV1_0_19"/>
         <property name="outgoingValidationManager" ref="outgoingValidationManagerV1_0_19"/>
