@@ -671,22 +671,22 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
 
     private void setKeywords(ProfileEntity profileEntity, Keywords keywords) {
         SortedSet<ProfileKeywordEntity> profileKeywordEntities = null;
-        if (profileEntity != null) {
-            profileKeywordEntities = profileEntity.getKeywords();
-            if (profileKeywordEntities != null) {
-                profileKeywordEntities.clear();
-            }
+        SortedSet<ProfileKeywordEntity> existingProfileKeywordEntities = profileEntity.getKeywords();
+        Map<String, ProfileKeywordEntity> existingProfileKeywordEntitiesMap = createProfileKeyworkEntitiesMap(existingProfileKeywordEntities);
+        if (existingProfileKeywordEntities == null) {
+            profileKeywordEntities = new TreeSet<>();
+        } else {
+            // To allow for orphan deletion
+            existingProfileKeywordEntities.clear();
+            profileKeywordEntities = existingProfileKeywordEntities;
         }
-        if (keywords != null && keywords.getKeyword() != null && !keywords.getKeyword().isEmpty()) {
+        if (keywords != null) {
             profileEntity.setKeywordsVisibility(keywords.getVisibility());
             List<Keyword> keywordList = keywords.getKeyword();
             if (keywordList != null && !keywordList.isEmpty()) {
-                if (profileKeywordEntities == null) {
-                    profileKeywordEntities = new TreeSet<ProfileKeywordEntity>();
-                }
                 for (Keyword keyword : keywordList) {
                     if (StringUtils.isNotBlank(keyword.getContent())) {
-                        profileKeywordEntities.add(new ProfileKeywordEntity(profileEntity, keyword.getContent()));
+                        profileKeywordEntities.add(getProfileKeywordEntity(keyword, profileEntity, existingProfileKeywordEntitiesMap));
                     }
                 }
 
@@ -695,6 +695,26 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
         profileEntity.setKeywords(profileKeywordEntities);
     }
 
+    private Map<String, ProfileKeywordEntity> createProfileKeyworkEntitiesMap(SortedSet<ProfileKeywordEntity> profileKeywordEntities) {
+        Map<String, ProfileKeywordEntity> map = new HashMap<>();
+        if (profileKeywordEntities != null) {
+            for (ProfileKeywordEntity entity : profileKeywordEntities) {
+                String keyword = entity.getKeyword();
+                map.put(keyword, entity);
+            }
+        }
+        return map;
+    }
+
+    private ProfileKeywordEntity getProfileKeywordEntity(Keyword keyword, ProfileEntity profileEntity, Map<String, ProfileKeywordEntity> existingProfileKeywordEntitiesMap) {
+        String keywordContent = keyword.getContent();
+        ProfileKeywordEntity existingProfileKeywordEntity = existingProfileKeywordEntitiesMap.get(keywordContent);
+        if (existingProfileKeywordEntity != null) {
+            return existingProfileKeywordEntity;
+        }
+        return new ProfileKeywordEntity(profileEntity, keywordContent);
+    }
+    
     private void setExternalIdentifiers(ProfileEntity profileEntity, ExternalIdentifiers externalIdentifiers) {
         if (externalIdentifiers != null) {
             profileEntity.setExternalIdentifiersVisibility(externalIdentifiers.getVisibility());
