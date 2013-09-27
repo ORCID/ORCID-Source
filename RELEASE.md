@@ -4,6 +4,28 @@ We release updates to the Registry regularly. Below is a list of the improvement
 * [2013 Releases](https://trello.com/b/ZgYVAlel)
 * [2012 Releases](https://trello.com/b/vyCDYdvR)
 
+
+## release-1.1.39.9
+(2013-09-27)
+
+* Fix for issue with solr record not being found in Postgres.
+
+* Confirm message for revoking client authorization.
+
+* Make our website more XSS resistant.
+
+* Make our email hibernate mappings reuse cached emails objects.
+
+* Update to newest stable version of AngularJs.
+
+* Update to remove user voice from OAuth page.
+
+* Sync Java and XSD work types
+
+* Display line breaks in bio & work descriptions
+
+
+
 ## release-1.1.33.3
 (2013-09-19)
 
