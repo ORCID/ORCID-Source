@@ -1916,7 +1916,6 @@ function revokeApplicationFormCtrl($scope,$compile){
 			onComplete: function() {$.colorbox.resize();},
 			scrolling: true
 		});
-		$.colorbox.resize({width:"600px" , height:"165px"});
 	};
 	
 	$scope.revokeAccess = function(){
