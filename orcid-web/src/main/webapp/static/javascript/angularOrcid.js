@@ -1909,7 +1909,7 @@ function revokeApplicationFormCtrl($scope,$compile){
 		$.colorbox({                      
 			html : $compile($('#confirm-revoke-access-modal').html())($scope),
 			transition: 'fade',
-	        close: '',
+			close: '',
 			onLoad: function() {
 				$('#cboxClose').remove();
 			},
