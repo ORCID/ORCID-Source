@@ -257,7 +257,7 @@
                                             </#list>
                                         </#if>
                                     </td width="35%">                                    
-                                    <td width="5%"><a a href="#" ng-click="confirmRevoke('${applicationSummary.applicationName.content?js_string}', '${applicationSummary_index}')" class="icon-trash orcid-icon-trash grey" title="${springMacroRequestContext.getMessage("manage.revokeaccess")}"></a></td>
+                                    <td width="5%"><a ng-click="confirmRevoke('${applicationSummary.applicationName.content?js_string}', '${applicationSummary_index}')" class="icon-trash orcid-icon-trash grey" title="${springMacroRequestContext.getMessage("manage.revokeaccess")}"></a></td>
                                 </form>
                             </tr>
                         </#list>
@@ -291,16 +291,19 @@
 	<#-- 3) There should be a function closeModal() to close the the modal.										-->
 	<script type="text/ng-template" id="check-password-modal">
 		<div style="padding: 20px;"><h2><@orcid.msg 'check_password_modal.confirm_password' /></h2>		
-		<label for="check_password_modal.password" class=""><@orcid.msg 'check_password_modal.password' /></label>
-	    <input id="check_password_modal.password" type="password" name="check_password_modal.password" ng-model="password" class="input-xlarge"/>
-	    <br />
-	    <button id="bottom-submit" class="btn btn-primary" ng-click="submitModal()"><@orcid.msg 'check_password_modal.submit'/></button>				
-		<button class="btn" ng-click="closeModal()"><@orcid.msg 'check_password_modal.close'/></button>
+		   <label for="check_password_modal.password" class=""><@orcid.msg 'check_password_modal.password' /></label>
+	       <input id="check_password_modal.password" type="password" name="check_password_modal.password" ng-model="password" class="input-xlarge"/>
+	       <br />
+	       <button id="bottom-submit" class="btn btn-primary" ng-click="submitModal()"><@orcid.msg 'check_password_modal.submit'/></button>				
+		   <button class="btn" ng-click="closeModal()"><@orcid.msg 'check_password_modal.close'/></button>
+		</div>
 	</script>
 	
 	<script type="text/ng-template" id="confirm-revoke-access-modal">
-		<div style="padding: 20px;"><h3>${springMacroRequestContext.getMessage("manage.application_access.revoke.confirm_revoke")} {{appName}}</h3>
-		<button class="btn btn-danger" ng-click="revokeAccess()">${springMacroRequestContext.getMessage("manage.application_access.revoke.confirm")}</button> 
-		<a href="" ng-click="closeModal()">${springMacroRequestContext.getMessage("manage.application_access.revoke.cancel")}</a><div>
+		<div style="padding: 20px;">
+		   <h3>${springMacroRequestContext.getMessage("manage.application_access.revoke.confirm_revoke")} {{appName}}</h3>
+		   <button class="btn btn-danger" ng-click="revokeAccess()">${springMacroRequestContext.getMessage("manage.application_access.revoke.confirm")}</button> 
+		   <a href="" ng-click="closeModal()">${springMacroRequestContext.getMessage("manage.application_access.revoke.cancel")}</a>
+		</div>
 	</script>
 </@protected>
