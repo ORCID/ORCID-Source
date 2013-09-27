@@ -293,6 +293,7 @@
 		<div style="padding: 20px;"><h2><@orcid.msg 'check_password_modal.confirm_password' /></h2>		
 		<label for="check_password_modal.password" class=""><@orcid.msg 'check_password_modal.password' /></label>
 	    <input id="check_password_modal.password" type="password" name="check_password_modal.password" ng-model="password" class="input-xlarge"/>
+	    <br />
 	    <button id="bottom-submit" class="btn btn-primary" ng-click="submitModal()"><@orcid.msg 'check_password_modal.submit'/></button>				
 		<button class="btn" ng-click="closeModal()"><@orcid.msg 'check_password_modal.close'/></button>
 	</script>
