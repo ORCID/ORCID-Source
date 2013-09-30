@@ -44,7 +44,7 @@ import org.orcid.persistence.jpa.entities.keys.WebhookEntityPk;
         @NamedNativeQuery(name = WebhookEntity.COUNT_WEBHOOKS_READY_TO_PROCESS, query = "SELECT COUNT(*) webhook_count "
                 + WebhookEntity.WEBHOOKS_READY_TO_PROCESS_FROM_CLAUSE, resultSetMapping = "countMapping"),
         @NamedNativeQuery(name = WebhookEntity.FIND_WEBHOOKS_READY_TO_PROCESS, query = "SELECT *  " + WebhookEntity.WEBHOOKS_READY_TO_PROCESS_FROM_CLAUSE
-                + " ORDER BY p.last_modified", resultClass = WebhookEntity.class) })
+                + " ORDER BY w.profile_last_modified", resultClass = WebhookEntity.class) })
 @SqlResultSetMapping(name = "countMapping", columns = @ColumnResult(name = "webhook_count"))
 public class WebhookEntity extends BaseEntity<WebhookEntityPk> implements ProfileAware {
 
@@ -52,6 +52,7 @@ public class WebhookEntity extends BaseEntity<WebhookEntityPk> implements Profil
     private String uri;
     private ClientDetailsEntity clientDetails;
     private Date lastSent;
+    private Date profileLastModified;
     private Date lastFailed;
     private int failedAttemptCount;
     private boolean enabled = true;
@@ -62,9 +63,10 @@ public class WebhookEntity extends BaseEntity<WebhookEntityPk> implements Profil
     public static final String FIND_WEBHOOKS_READY_TO_PROCESS = "findWebhooksReadyToProcess";
     public static final String COUNT_WEBHOOKS_READY_TO_PROCESS = "countWebhooksReadyToProcess";
     public static final String WEBHOOKS_READY_TO_PROCESS_FROM_CLAUSE = "FROM webhook w "
-            + "JOIN profile p ON p.orcid = w.orcid AND (p.last_modified >= w.last_sent OR (w.last_sent IS NULL AND p.last_modified >= w.date_created)) "
-            + "JOIN client_details c ON c.client_details_id = w.client_details_id AND c.webhooks_enabled = 'true' WHERE w.enabled = 'true' "
-            + "AND (w.failed_attempt_count = 0 OR unix_timestamp(w.last_failed) + w.failed_attempt_count * :retryDelayMinutes * 60 < unix_timestamp(now()))";
+            + "JOIN client_details c ON c.client_details_id = w.client_details_id AND c.webhooks_enabled = 'true'" 
+            + "   WHERE w.enabled = 'true' "
+            + "   AND (w.profile_last_modified >= w.last_sent OR (w.last_sent IS NULL AND w.profile_last_modified >= w.date_created))"
+            + "   AND (w.failed_attempt_count = 0 OR unix_timestamp(w.last_failed) + w.failed_attempt_count * :retryDelayMinutes * 60 < unix_timestamp(now()))";
 
     @Override
     @Transient
@@ -80,6 +82,7 @@ public class WebhookEntity extends BaseEntity<WebhookEntityPk> implements Profil
     }
 
     public void setProfile(ProfileEntity profile) {
+        if (profile != null) this.profileLastModified = profile.getLastModified();
         this.profile = profile;
     }
 
@@ -153,6 +156,15 @@ public class WebhookEntity extends BaseEntity<WebhookEntityPk> implements Profil
 
     public void setDisabledComments(String disabledComments) {
         this.disabledComments = disabledComments;
+    }
+
+    @Column(name = "profile_last_modified")
+    public Date getProfileLastModified() {
+        return profileLastModified;
+    }
+
+    public void setProfileLastModified(Date profileLastModified) {
+        this.profileLastModified = profileLastModified;
     }
 
 }
