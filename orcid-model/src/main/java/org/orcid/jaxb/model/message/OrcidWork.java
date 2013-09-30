@@ -46,6 +46,7 @@ import javax.xml.bind.annotation.XmlType;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
  *         &lt;element ref="{http://www.orcid.org/ns/orcid}work-title" minOccurs="0"/>
+ *         &lt;element ref="{http://www.orcid.org/ns/orcid}journal-title minOccurs="0"/>
  *         &lt;element ref="{http://www.orcid.org/ns/orcid}short-description" minOccurs="0"/>
  *         &lt;element ref="{http://www.orcid.org/ns/orcid}work-citation" minOccurs="0"/>
  *         &lt;element ref="{http://www.orcid.org/ns/orcid}work-type" minOccurs="0"/>
@@ -66,7 +67,7 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "putCode", "workTitle", "shortDescription", "workCitation", "workType", "publicationDate", "workExternalIdentifiers", "url",
+@XmlType(name = "", propOrder = { "putCode", "workTitle", "journalTitle", "shortDescription", "workCitation", "workType", "publicationDate", "workExternalIdentifiers", "url",
         "workContributors", "workSource" })
 @XmlRootElement(name = "orcid-work")
 public class OrcidWork implements VisibilityType, Serializable {
@@ -74,6 +75,8 @@ public class OrcidWork implements VisibilityType, Serializable {
     private static final long serialVersionUID = 1L;
     @XmlElement(name = "work-title")
     protected WorkTitle workTitle;
+    @XmlElement(name = "journal-title")
+    protected Title journalTitle;
     @XmlElement(name = "short-description")
     protected String shortDescription;
     @XmlElement(name = "work-citation")
@@ -324,7 +327,29 @@ public class OrcidWork implements VisibilityType, Serializable {
     public void setVisibility(Visibility value) {
         this.visibility = value;
     }
+    
+    
+    /**
+     * Gets the value of the journalTitle property.
+     * 
+     * @return possible object is {@link Title }
+     * 
+     */
+    public Title getJournalTitle() {
+        return journalTitle;
+    }
 
+    /**
+     * Sets the value of the journalTitle property.
+     * 
+     * @param value
+     *            allowed object is {@link Title }
+     * 
+     */
+    public void setJournalTitle(Title value) {
+        this.journalTitle = value;
+    }
+    
     @Override
     public String toString() {
         return OrcidMessage.convertToString(this);
@@ -348,6 +373,7 @@ public class OrcidWork implements VisibilityType, Serializable {
         result = prime * result + ((workSource == null) ? 0 : workSource.hashCode());
         result = prime * result + ((workTitle == null) ? 0 : workTitle.hashCode());
         result = prime * result + ((workType == null) ? 0 : workType.hashCode());
+        result = prime * result + ((journalTitle == null) ? 0 : journalTitle.hashCode());
         return result;
     }
 
@@ -408,6 +434,13 @@ public class OrcidWork implements VisibilityType, Serializable {
             return false;
         if (workType != other.workType)
             return false;
+        
+        if(journalTitle == null){
+            if(other.journalTitle !=null)
+                return false;
+        } else if(!journalTitle.equals(other.journalTitle))
+            return false;
+            
         return true;
     }
 

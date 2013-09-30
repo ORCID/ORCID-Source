@@ -77,6 +77,7 @@ import org.orcid.jaxb.model.message.Source;
 import org.orcid.jaxb.model.message.Url;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.message.WorkContributors;
+import org.orcid.jaxb.model.message.WorkType;
 import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.test.DBUnitTest;
@@ -222,19 +223,51 @@ public class JpaJaxbEntityAdapterToOrcidProfileTest extends DBUnitTest {
     private void checkOrcidWorks(OrcidWorks orcidWorks) {
         assertNotNull(orcidWorks);
         List<OrcidWork> orcidWorkList = orcidWorks.getOrcidWork();
-        assertEquals(2, orcidWorkList.size());
-        OrcidWork orcidWork = orcidWorkList.get(0);
-        assertEquals(Visibility.LIMITED, orcidWork.getVisibility());
-        assertEquals("1", orcidWork.getPutCode());
-        Citation workCitation = orcidWork.getWorkCitation();
-        assertNotNull(workCitation);
-        assertEquals("Bobby Ewing, ", workCitation.getCitation());
-        assertEquals(CitationType.FORMATTED_IEEE, workCitation.getWorkCitationType());
-        WorkContributors contributors = orcidWork.getWorkContributors();
-        assertNotNull(contributors);
-        assertEquals(2, contributors.getContributor().size());
-        assertEquals("Jaylen Kessler", contributors.getContributor().get(0).getCreditName().getContent());
-        assertEquals(Visibility.LIMITED, contributors.getContributor().get(0).getCreditName().getVisibility());
+        assertEquals(3, orcidWorkList.size());
+        
+        boolean putCode1Found = false;
+        boolean putCode4Found = false;
+        
+        for(OrcidWork orcidWork : orcidWorkList){
+            if(orcidWork.getPutCode().equals("1")){
+                putCode1Found = true;
+                assertEquals("1", orcidWork.getPutCode());
+                Citation workCitation = orcidWork.getWorkCitation();
+                assertNotNull(workCitation);
+                assertEquals("Bobby Ewing, ", workCitation.getCitation());
+                assertEquals(CitationType.FORMATTED_IEEE, workCitation.getWorkCitationType());
+                WorkContributors contributors = orcidWork.getWorkContributors();
+                assertNotNull(contributors);
+                assertEquals(2, contributors.getContributor().size());
+                assertEquals("Jaylen Kessler", contributors.getContributor().get(0).getCreditName().getContent());
+                assertEquals(Visibility.LIMITED, contributors.getContributor().get(0).getCreditName().getVisibility());
+                assertEquals(Visibility.LIMITED, orcidWork.getVisibility());  
+                assertNull(orcidWork.getJournalTitle());
+            } else if(orcidWork.getPutCode().equals("4")){
+                putCode4Found = true;
+                assertNotNull(orcidWork.getWorkTitle());
+                assertNotNull(orcidWork.getWorkTitle().getTitle());
+                assertEquals("A book with a Journal Title", orcidWork.getWorkTitle().getTitle().getContent());
+                assertNotNull(orcidWork.getJournalTitle());
+                assertEquals("My Journal Title", orcidWork.getJournalTitle().getContent());
+                assertNotNull(orcidWork.getPublicationDate());
+                assertNotNull(orcidWork.getPublicationDate().getDay());
+                assertNotNull(orcidWork.getPublicationDate().getMonth());
+                assertNotNull(orcidWork.getPublicationDate().getYear());
+                assertEquals("01", orcidWork.getPublicationDate().getDay().getValue());
+                assertEquals("02", orcidWork.getPublicationDate().getMonth().getValue());
+                assertEquals("2011", orcidWork.getPublicationDate().getYear().getValue());
+                assertNotNull(orcidWork.getWorkCitation());
+                assertEquals("Sue Ellen ewing", orcidWork.getWorkCitation().getCitation());
+                assertEquals(CitationType.FORMATTED_IEEE, orcidWork.getWorkCitation().getWorkCitationType());
+                assertNotNull(orcidWork.getWorkType());
+                assertEquals(WorkType.BOOK, orcidWork.getWorkType());
+                
+            }
+        }
+        
+        assertTrue(putCode1Found);
+        assertTrue(putCode4Found);        
     }
 
     private void checkOrcidGrants(OrcidGrants orcidGrants) {

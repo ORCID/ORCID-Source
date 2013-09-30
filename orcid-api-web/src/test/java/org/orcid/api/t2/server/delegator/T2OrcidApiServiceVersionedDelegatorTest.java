@@ -74,8 +74,8 @@ public class T2OrcidApiServiceVersionedDelegatorTest extends DBUnitTest {
     @Resource(name = "t2OrcidApiServiceDelegatorV1_0_14")
     private T2OrcidApiServiceDelegator t2OrcidApiServiceDelegator;
 
-    @Resource(name = "t2OrcidApiServiceDelegatorV1_0_19")
-    private T2OrcidApiServiceDelegator t2OrcidApiServiceDelegatorV19;
+    @Resource(name = "t2OrcidApiServiceDelegatorV1_0_20")
+    private T2OrcidApiServiceDelegator t2OrcidApiServiceDelegatorV20;
     
     @Mock
     private UriInfo mockedUriInfo;
@@ -157,7 +157,7 @@ public class T2OrcidApiServiceVersionedDelegatorTest extends DBUnitTest {
         Email email = new Email("madeupemail@semantico.com");
         orcidMessage.getOrcidProfile().getOrcidBio().getContactDetails().getEmail().add(email);
 
-        Response createResponse = t2OrcidApiServiceDelegatorV19.createProfile(mockedUriInfo, orcidMessage);
+        Response createResponse = t2OrcidApiServiceDelegatorV20.createProfile(mockedUriInfo, orcidMessage);
 
         assertNotNull(createResponse);
         assertEquals(HttpStatus.SC_CREATED, createResponse.getStatus());
@@ -202,7 +202,7 @@ public class T2OrcidApiServiceVersionedDelegatorTest extends DBUnitTest {
         Email email = new Email("madeupemail2@semantico.com");
         orcidMessage.getOrcidProfile().getOrcidBio().getContactDetails().getEmail().add(email);
 
-        Response createResponse = t2OrcidApiServiceDelegatorV19.createProfile(mockedUriInfo, orcidMessage);
+        Response createResponse = t2OrcidApiServiceDelegatorV20.createProfile(mockedUriInfo, orcidMessage);
 
         assertNotNull(createResponse);
         assertEquals(HttpStatus.SC_CREATED, createResponse.getStatus());
@@ -212,7 +212,7 @@ public class T2OrcidApiServiceVersionedDelegatorTest extends DBUnitTest {
 
         setUpSecurityContextForClientOnly("4444-4444-4444-4448");
 
-        Response readResponse = t2OrcidApiServiceDelegatorV19.findFullDetails(orcid);
+        Response readResponse = t2OrcidApiServiceDelegatorV20.findFullDetails(orcid);
         assertNotNull(readResponse);
         assertEquals(HttpStatus.SC_OK, readResponse.getStatus());
         OrcidMessage retrievedMessage = (OrcidMessage) readResponse.getEntity();
