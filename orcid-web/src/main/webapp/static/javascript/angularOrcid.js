@@ -1908,14 +1908,14 @@ function revokeApplicationFormCtrl($scope,$compile){
 		$scope.appIndex = appIndex;
 		$.colorbox({                      
 			html : $compile($('#confirm-revoke-access-modal').html())($scope),
-				transition: 'fade',
-	        	close: '',
-				onLoad: function() {
+			transition: 'fade',
+			close: '',
+			onLoad: function() {
 				$('#cboxClose').remove();
 			},
+			onComplete: function() {$.colorbox.resize();},
 			scrolling: true
 		});
-		$.colorbox.resize({width:"600px" , height:"165px"});
 	};
 	
 	$scope.revokeAccess = function(){

@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    =============================================================================
+
+    ORCID (R) Open Source
+    http://orcid.org
+
+    Copyright (c) 2012-2013 ORCID, Inc.
+    Licensed under an MIT-Style License (MIT)
+    http://orcid.org/open-source-license
+
+    This copyright and license information (including a link to the full license)
+    shall be included in its entirety in all copies or substantial portion of 
+    the software.
+
+    =============================================================================
+
+-->
+<orcid-message xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+               xsi:schemaLocation="http://www.orcid.org/ns/orcid ../../../../orcid-model/src/main/resources/orcid-message-1.0.20.xsd"
+               xmlns="http://www.orcid.org/ns/orcid">
+    <message-version>1.0.20</message-version>
+    <!-- Error message, if applicable -->
+    <!-- Unable to connect to ORCID, no matching researchers, etc. -->
+    <!-- <error-desc>No researcher found.</error-desc> -->
+    <orcid-profile>
+        <orcid>4444-4444-4444-4446</orcid>
+        <orcid-id>http://orcid.org/4444-4444-4444-4446</orcid-id>
+        <orcid-history>
+            <creation-method>API</creation-method>
+            <completion-date>2012-10-09T15:50:07</completion-date>
+            <submission-date>2012-10-09T15:50:07</submission-date>
+            <!-- In short, researcher has claimed the profile if confirmed=true -->
+            <claimed>true</claimed>
+            <!-- The name of the institution that invited the researcher 
+                to register with ORCID -->
+            <source>
+                <source-orcid>8888-8888-8888-8880</source-orcid>
+                <source-name>Brown University Library</source-name>
+                <source-date>2012-10-09T15:50:07</source-date>
+            </source>
+        </orcid-history>
+        <orcid-bio scope="update">
+            <personal-details>
+                <given-names>Josiah</given-names>
+                <family-name>Carberry</family-name>
+            </personal-details>
+            <researcher-urls>
+                <researcher-url >
+                    <url-name>Carberry-Hay</url-name>
+                    <url>http://library.brown.edu/about/hay/carberry.php</url>
+                </researcher-url>
+                <researcher-url>
+                    <url-name>Carberry 2</url-name>
+                    <url>http://en.wikipedia.org/wiki/Josiah_S._Carberry</url>
+                </researcher-url>
+                <researcher-url>
+                    <url-name>Carberry work 3</url-name>
+                    <url>http://www.brown.edu/Administration/News_Bureau/Databases/Encyclopedia/search.php?serial=C0070</url>
+                </researcher-url>
+            </researcher-urls>
+            <contact-details>
+                <address>
+                    <country>US</country>
+                </address>
+            </contact-details>
+            <keywords>
+                <keyword>Bilocation</keyword>
+            </keywords>
+            <external-identifiers>
+                <external-identifier>
+                    <external-id-orcid>8888-8888-8888-8880</external-id-orcid>
+                    <external-id-reference>YH0923</external-id-reference>
+                </external-identifier>
+            </external-identifiers>
+            <affiliations>
+                <affiliation>
+                    <affiliation-name>Brown University</affiliation-name>
+                    <affiliation-type>funded-by</affiliation-type>
+                    <address>
+                        <country>United States</country>
+                    </address>
+                    <department-name>Psychoceramics</department-name>
+                    <role-title>Researcher (Academic)</role-title>
+                </affiliation>
+                <affiliation>
+                    <affiliation-name>Yale University</affiliation-name>
+                    <affiliation-type>current-primary-institution</affiliation-type>
+                    <address>
+                        <country visibility="limited">United States</country>
+                    </address>
+                    <department-name>Law</department-name>
+                    <role-title>Researcher (Academic)</role-title>
+                </affiliation>
+            </affiliations>
+        </orcid-bio>
+        <orcid-activities>
+            <orcid-works>
+                <orcid-work>
+                    <work-title>
+                        <title>Work title 1</title>
+                        <subtitle>Work subtitle 1</subtitle>
+                    </work-title>
+                    <journal-title>Journal Title # 1</journal-title>
+                    <work-citation>
+                        <work-citation-type>bibtex</work-citation-type>
+                        <citation>@article{anarticle, title = {Example title from bibtex} }</citation>
+                    </work-citation>
+                    <work-type>bible</work-type>                    
+                </orcid-work>
+                <orcid-work>
+                    <work-title>
+                        <title>Work title 2</title>
+                        <subtitle>Work subtitle 2</subtitle>
+                    </work-title>
+                    <journal-title>Journal Title # 2</journal-title>
+                    <work-type>bible</work-type>
+                </orcid-work>
+                <orcid-work>
+                    <work-title>
+                        <title>Work Title 3</title>
+                        <subtitle>Work subtitle 3</subtitle>
+                    </work-title>
+                    <work-type>religious-text</work-type>
+                </orcid-work>
+            </orcid-works>
+            <orcid-grants>
+                <orcid-grant put-code="1">
+                    <funding-agency>
+                        <agency-orcid>1111-1111-1111-1102</agency-orcid>
+                        <agency-name>Agency name</agency-name>
+                    </funding-agency>
+                    <grant-external-identifier>
+                        <grant-external-program>_REF</grant-external-program>
+                        <grant-external-id>extId</grant-external-id>
+                    </grant-external-identifier>
+                    <grant-number>1</grant-number>
+                    <short-description>A short description</short-description>
+                    <grant-date>2012-11-21T08:56:32</grant-date>
+                    <grant-contributors>
+                        <contributor>
+                            <contributor-orcid>2111-1111-1111-1103</contributor-orcid>
+                            <credit-name>Credit Name</credit-name>
+                            <contributor-attributes>
+                                <contributor-sequence>first</contributor-sequence>
+                                <contributor-role>postdoctoral-researcher</contributor-role>
+                            </contributor-attributes>
+                        </contributor>
+                        <contributor>
+                            <contributor-orcid>2111-1111-1111-1104</contributor-orcid>
+                            <credit-name>Credit Name</credit-name>
+                            <contributor-attributes>
+                                <contributor-sequence>additional</contributor-sequence>
+                                <contributor-role>graduate-student</contributor-role>
+                            </contributor-attributes>
+                        </contributor>
+                    </grant-contributors>
+                    <grant-sources>
+                        <source>
+                            <source-orcid>2111-1111-1111-1105</source-orcid>
+                            <source-name>Sponsor 1</source-name>
+                            <source-date>2012-11-21T08:56:33</source-date>
+                        </source>
+                        <source>
+                            <source-orcid>2111-1111-1111-1115</source-orcid>
+                            <source-name>Sponsor 2</source-name>
+                            <source-date>2012-11-21T08:56:33</source-date>
+                        </source>
+                    </grant-sources>
+                </orcid-grant>
+            </orcid-grants>
+            <orcid-patents>
+                <orcid-patent put-code="3">
+                    <country>Great Britain</country>
+                    <patent-number>GB2447776</patent-number>
+                    <short-description>POLYCRYSTALLINE DIAMOND CONSTRUCTIONS HAVING IMPROVED THERMAL STABILITY</short-description>
+                    <patent-issue-date>2012-03-20T00:00:00</patent-issue-date>
+                    <assignee>
+                        <assignee-orcid>0000-8928-9282-9282</assignee-orcid>
+                        <assignee-name>MADAPUSI K KESHAVAN</assignee-name>
+                    </assignee>
+                    <patent-contributors>
+                        <contributor>
+                            <contributor-orcid>2111-1111-1111-1123</contributor-orcid>
+                            <credit-name>Francis Rossi</credit-name>
+                            <contributor-attributes>
+                                <contributor-sequence>first</contributor-sequence>
+                                <contributor-role>principal-investigator</contributor-role>
+                            </contributor-attributes>
+                        </contributor>
+                        <contributor>
+                            <contributor-orcid>2111-1111-1111-1124</contributor-orcid>
+                            <credit-name>Rick Parfitt</credit-name>
+                            <contributor-attributes>
+                                <contributor-sequence>additional</contributor-sequence>
+                                <contributor-role>support-staff</contributor-role>
+                            </contributor-attributes>
+                        </contributor>
+                    </patent-contributors>
+                    <patent-sources>
+                        <source>
+                            <source-orcid>0000-8928-9282-9282</source-orcid>
+                            <source-name>Peter Gabriel</source-name>
+                            <source-date>2012-03-20T00:00:00</source-date>
+                        </source>
+                        <source>
+                            <source-orcid>0000-8273-9282-9282</source-orcid>
+                            <source-name>Tony Banks</source-name>
+                            <source-date>2012-01-20T00:00:00</source-date>
+                        </source>
+                        <source>
+                            <source-orcid>0000-3273-2239-1293</source-orcid>
+                            <source-name>Anthony Phillips</source-name>
+                            <source-date>2012-01-20T00:00:00</source-date>
+                        </source>
+                        <source>
+                            <source-orcid>0000-3273-2239-1294</source-orcid>
+                            <source-name>Mike Rutherford</source-name>
+                            <source-date>2012-01-20T00:00:00</source-date>
+                        </source>
+                        <source>
+                            <source-orcid>0000-3273-2239-2733</source-orcid>
+                            <source-name>Chris Stewart</source-name>
+                            <source-date>2012-01-20T00:00:00</source-date>
+                        </source>
+                    </patent-sources>
+                </orcid-patent>
+            </orcid-patents>
+        </orcid-activities>
+    </orcid-profile>
+</orcid-message>

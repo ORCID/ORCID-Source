@@ -72,6 +72,7 @@
                 <xs:enumeration value="1.0.17"/>
                 <xs:enumeration value="1.0.18"/>
                 <xs:enumeration value="1.0.19"/>
+                <xs:enumeration value="1.0.20"/>
             </xs:restriction>
         </xs:simpleType>
     </xs:element>
@@ -605,6 +606,7 @@
         <xs:complexType>
             <xs:sequence>
                 <xs:element ref="orcid:work-title" minOccurs="0"/>
+                <xs:element ref="orcid:journal-title" minOccurs="0" maxOccurs="1"/>
                 <xs:element ref="orcid:short-description" minOccurs="0"/>
                 <xs:element ref="orcid:work-citation" minOccurs="0"/>
                 <xs:element ref="orcid:work-type" />
@@ -650,7 +652,7 @@
                 <xs:enumeration value="federal-bill"/>
                 <xs:enumeration value="federal-report"/>
                 <xs:enumeration value="federal-rule"/>
-                <xs:enumeration value="federal-statute"/>
+                <xs:enumeration value="federalstatute"/>
                 <xs:enumeration value="federal-testimony"/>
                 <xs:enumeration value="film-movie"/>
                 <xs:enumeration value="government-publication"/>
@@ -1090,7 +1092,13 @@
                 <xs:element ref="orcid:subtitle" minOccurs="0"/>
             </xs:sequence>
         </xs:complexType>
-    </xs:element>    
+    </xs:element>
+    <xs:element name="journal-title">
+        <xs:annotation>
+            <xs:documentation>Container for journal title of the work.</xs:documentation>
+        </xs:annotation>
+        <xs:complexType mixed="true"/>
+    </xs:element>
     <xs:element name="role-title">
         <xs:annotation>
             <xs:documentation>Text field for the individual's title.</xs:documentation>

@@ -23,6 +23,7 @@ import java.util.List;
 import org.jbibtex.ParseException;
 import org.orcid.jaxb.model.message.CitationType;
 import org.orcid.jaxb.model.message.OrcidWork;
+import org.orcid.jaxb.model.message.Title;
 import org.orcid.jaxb.model.message.Url;
 import org.orcid.jaxb.model.message.WorkContributors;
 import org.orcid.jaxb.model.message.WorkExternalIdentifiers;
@@ -48,6 +49,8 @@ public class Work implements ErrorsInterface, Serializable {
     private Text shortDescription;
 
     private Text url;
+    
+    private Text journalTitle;
 
     private Citation citation;
 
@@ -100,6 +103,10 @@ public class Work implements ErrorsInterface, Serializable {
             w.setWorkTitle(WorkTitle.valueOf(orcidWork.getWorkTitle()));
         if (orcidWork.getWorkType() != null)
             w.setWorkType(Text.valueOf(orcidWork.getWorkType().value()));
+        
+        if(orcidWork.getJournalTitle() != null)
+            w.setJournalTitle(Text.valueOf(orcidWork.getJournalTitle().getContent()));
+        
         return w;
     }
     
@@ -138,6 +145,11 @@ public class Work implements ErrorsInterface, Serializable {
         if (this.getWorkType() != null) {
             ow.setWorkType(WorkType.fromValue(this.getWorkType().getValue()));
         }
+        
+        if(this.getJournalTitle() != null){
+            ow.setJournalTitle(new Title(this.getJournalTitle().getValue()));
+        }
+            
         return ow;
     }
 
@@ -261,4 +273,12 @@ public class Work implements ErrorsInterface, Serializable {
     public void setWorkType(Text workType) {
         this.workType = workType;
     }
+
+    public Text getJournalTitle() {
+        return journalTitle;
+    }
+
+    public void setJournalTitle(Text journalTitle) {
+        this.journalTitle = journalTitle;
+    }        
 }

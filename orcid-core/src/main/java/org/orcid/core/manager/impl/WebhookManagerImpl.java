@@ -62,6 +62,8 @@ public class WebhookManagerImpl implements WebhookManager {
 
     private Map<String, Integer> clientWebhooks = new HashMap<String, Integer>();
 
+    private Object mainWebhooksLock = new Object();
+
     private static final Logger LOGGER = LoggerFactory.getLogger(WebhookManagerImpl.class);
     private static final int WEBHOOKS_BATCH_SIZE = 1000;
 
@@ -91,6 +93,18 @@ public class WebhookManagerImpl implements WebhookManager {
 
     @Override
     public void processWebhooks() {
+        // Only want one of these running at a time, otherwise we will
+        // potentially have two threads retrieving the same stuff from the DB
+        // for processing.
+        LOGGER.info("Waiting for main webhooks lock");
+        synchronized (mainWebhooksLock) {
+            LOGGER.info("Obtained main webhooks lock");
+            processWebhooksInternal();
+        }
+        LOGGER.info("Released main webhooks lock");
+    }
+
+    private void processWebhooksInternal() {
         // Log start time
         LOGGER.info("About to process webhooks");
         Date startTime = new Date();
@@ -108,6 +122,7 @@ public class WebhookManagerImpl implements WebhookManager {
             webhooks = webhookDao.findWebhooksReadyToProcess(startTime, retryDelayMinutes, WEBHOOKS_BATCH_SIZE);
             // Log the chunk size
             LOGGER.info("Found batch of {} webhooks to process", webhooks.size());
+            int executedCountAtStartOfChunk = executedCount;
             // For each callback in chunk
             for (final WebhookEntity webhook : webhooks) {
                 if (executedCount == maxPerRun) {
@@ -127,11 +142,15 @@ public class WebhookManagerImpl implements WebhookManager {
                 });
                 executedCount++;
             }
+            if (executedCount == executedCountAtStartOfChunk) {
+                LOGGER.info("No more webhooks added to pool, because all were in previous chunk");
+                break;
+            }
         } while (!webhooks.isEmpty());
-        // Shutdown thread pool
         executorService.shutdown();
         try {
-            executorService.awaitTermination(30, TimeUnit.SECONDS);
+            LOGGER.info("Waiting for webhooks thread pool to finish");
+            executorService.awaitTermination(120, TimeUnit.SECONDS);
         } catch (InterruptedException e) {
             LOGGER.warn("Received an interupt exception whilst waiting for the webhook processing complete", e);
         }
@@ -139,8 +158,10 @@ public class WebhookManagerImpl implements WebhookManager {
     }
 
     private ExecutorService createThreadPoolForWebhooks() {
-        return new ThreadPoolExecutor(numberOfWebhookThreads, numberOfWebhookThreads, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>(WEBHOOKS_BATCH_SIZE),
-                Executors.defaultThreadFactory(), new ThreadPoolExecutor.CallerRunsPolicy());
+        // The queue size is half the batch size, to make sure the thread pool
+        // has a chance to do some stuff before we go back to the DB for more,
+        return new ThreadPoolExecutor(numberOfWebhookThreads, numberOfWebhookThreads, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>(
+                WEBHOOKS_BATCH_SIZE / 2), Executors.defaultThreadFactory(), new ThreadPoolExecutor.CallerRunsPolicy());
     }
 
     private void processWebhookInTransaction(final WebhookEntity webhook) {
