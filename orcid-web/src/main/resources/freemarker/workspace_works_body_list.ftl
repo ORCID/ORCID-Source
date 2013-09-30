@@ -144,7 +144,7 @@
 				</div>
 			</div>
 			<div class="span10">
-				<div ng-bind="detailWork.url.value"></div>
+				<div ng-bind="detailWork.url.value"><a href="{{work.url.value | urlWithHttp}}" target="_blank">{{work.url.value}}</a></div>
 			</div>
 		</div>
 		<div class="row" ng-show="detailWork.contributors.length > 0" ng-cloak>
