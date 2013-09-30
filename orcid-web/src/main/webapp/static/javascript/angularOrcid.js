@@ -1096,7 +1096,20 @@ function WorkCtrl($scope, $compile, worksSrvc){
 	};
 
 	$scope.showDetailModal = function(idx){
-		$scope.detailWork = $scope.works[idx];
+		var dw = $scope.works[idx];
+		
+		// filter out blank contributors 
+		for (idx in dw.contributors) {
+			if (dw.contributors[idx].contributorSequence == null
+				&& dw.contributors[idx].email == null
+				&& dw.contributors[idx].orcid == null
+				&& dw.contributors[idx].creditName == null
+				&& dw.contributors[idx].contributorRole == null
+				&& dw.contributors[idx].creditNameVisibility == null)
+				delete dw.contributors.splice(idx,1);
+		}
+		
+		$scope.detailWork = dw;
 		$scope.showBibtex = false;
 		if ($scope.detailWork.citation && $scope.detailWork.citation.citationType.value == 'bibtex') {
 			try {
