@@ -197,6 +197,11 @@ public class WorksController extends BaseWorkspaceController {
         wt.setSubtitle(wst);
         w.setWorkTitle(wt);
 
+        // work journal title
+        Text jt = new Text();
+        jt.setRequired(false);
+        w.setJournalTitle(jt);
+        
         // set citation text and type
         Citation c = new Citation();
         Text ctText = new Text();
@@ -350,6 +355,7 @@ public class WorksController extends BaseWorkspaceController {
         workEntity.setPublicationDate(toFuzzyDate(orcidWork.getPublicationDate()));
         workEntity.setSubtitle(orcidWork.getWorkTitle().getSubtitle().getContent());
         workEntity.setTitle(orcidWork.getWorkTitle().getTitle().getContent());
+        workEntity.setJournalTitle(orcidWork.getJournalTitle() != null ? orcidWork.getJournalTitle().getContent() : null);
         workEntity.setWorkType(orcidWork.getWorkType());
         workEntity.setWorkUrl(orcidWork.getUrl().getValue());
         WorkContributors workContributors = orcidWork.getWorkContributors();
@@ -443,6 +449,8 @@ public class WorksController extends BaseWorkspaceController {
         }
         return work;
     }
+    
+    
 
     @RequestMapping(value = "/work/workTitle/subtitleValidate.json", method = RequestMethod.POST)
     public @ResponseBody

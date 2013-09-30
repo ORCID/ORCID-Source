@@ -18,18 +18,30 @@ package org.orcid.core.adapter;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Arrays;
+import java.util.Set;
+
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
 
 import org.apache.commons.io.IOUtils;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.orcid.core.utils.OrcidJaxbCopyUtilsTest;
 import org.orcid.jaxb.model.clientgroup.OrcidClientGroup;
+import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.orcid.persistence.jpa.entities.ProfileWorkEntity;
+import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.test.DBUnitTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -54,6 +66,15 @@ public class JpaJaxbEntityAdapterToOrcidClientGroupTest extends DBUnitTest {
     @Autowired
     private JpaJaxbEntityAdapter adapter;
 
+    private Unmarshaller unmarshaller;
+    private OrcidMessage orcidMessageV20;   
+    
+    public JpaJaxbEntityAdapterToOrcidClientGroupTest() throws JAXBException {
+        JAXBContext context = JAXBContext.newInstance(OrcidMessage.class);
+        unmarshaller = context.createUnmarshaller();
+        orcidMessageV20 = getOrcidMessage("/orcid-public-full-v20.xml");        
+    }
+    
     @BeforeClass
     public static void initDBUnitData() throws Exception {
         initDBUnitData(Arrays.asList("/data/SecurityQuestionEntityData.xml", "/data/ProfileEntityData.xml", "/data/WorksEntityData.xml",
@@ -75,5 +96,34 @@ public class JpaJaxbEntityAdapterToOrcidClientGroupTest extends DBUnitTest {
         String expected = IOUtils.toString(getClass().getResourceAsStream(CLIENT_GROUP), "UTF-8");
         assertEquals(expected, orcidClientGroup.toString());
     }
-
+    
+    @Test
+    public void testToProfileEntity() throws Exception {        
+        ProfileEntity profileEntity = adapter.toProfileEntity(orcidMessageV20.getOrcidProfile(), new ProfileEntity());
+        assertNotNull(profileEntity);
+        assertNotNull(profileEntity.getSource());
+        assertEquals("8888-8888-8888-8880", profileEntity.getSource().getId());
+        assertEquals("Josiah",profileEntity.getGivenNames());
+        assertEquals(3, profileEntity.getResearcherUrls().size());
+        assertEquals(3, profileEntity.getProfileWorks().size());
+        Set<ProfileWorkEntity> profileWorks = profileEntity.getProfileWorks();        
+        for(ProfileWorkEntity profileWork : profileWorks){
+            WorkEntity work = profileWork.getWork();
+            if(work.getTitle().equals("Work title 1")){
+                assertEquals("Journal Title # 1", work.getJournalTitle());
+            } else if(work.getTitle().equals("Work title 2")){
+                assertEquals("Journal Title # 2", work.getJournalTitle());
+            } else if(work.getTitle().equals("Work Title 3")){
+                assertNull(work.getJournalTitle());
+            } else {
+                fail();
+            }
+        }
+        
+    }
+    
+    private OrcidMessage getOrcidMessage(String s) throws JAXBException {
+        InputStream inputStream = OrcidJaxbCopyUtilsTest.class.getResourceAsStream(s);
+        return (OrcidMessage) unmarshaller.unmarshal(inputStream);
+    }
 }
