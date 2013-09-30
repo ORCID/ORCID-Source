@@ -98,7 +98,11 @@
                     	<select id="isoCountryCode" name="isoCountryCode">
                     		<option value=""><@orcid.msg 'org.orcid.persistence.jpa.entities.CountryIsoEntity.empty' /></option>
 	                    	<#list isoCountries?keys as key>
-								<option value="${key}">${isoCountries[key]}</option>
+	                    		<#if (changePersonalInfoForm.isoCountryCode)! = key>
+								    <option value="${key}" selected>${isoCountries[key]}</option>
+								<#else>
+								    <option value="${key}">${isoCountries[key]}</option>
+								</#if>
 							</#list>
 						</select>                        
                         <label class="visibility-lbl">

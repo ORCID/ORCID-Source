@@ -41,7 +41,7 @@
                     <div><a href="${curUrl}" target="_blank">${work.url}</a></div>
                 </#if>
                 <#if (work.description)?? && work.description?has_content>
-                    <div>${work.description}</div>
+                    <div style="white-space: pre-wrap;">${work.description}</div>
                 </#if>
                 <#if (work.citationForDisplay)??><div class="citation ${work.citationType}">${work.citationForDisplay}</div></#if>
             </li>           
