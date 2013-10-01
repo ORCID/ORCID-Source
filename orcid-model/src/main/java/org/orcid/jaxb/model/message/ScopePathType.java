@@ -155,6 +155,10 @@ public enum ScopePathType implements Serializable {
 
     public boolean isWriteOperationScope() {
         switch (this) {
+        case AFFILIATIONS_UPDATE:
+            return true;
+        case AFFILIATIONS_CREATE:
+            return true;
         case ORCID_WORKS_UPDATE:
             return true;
         case ORCID_WORKS_CREATE:
