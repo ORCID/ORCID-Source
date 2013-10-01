@@ -26,6 +26,7 @@ import java.util.TreeSet;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.adapter.Jaxb2JpaAdapter;
 import org.orcid.core.adapter.Jpa2JaxbAdapter;
 import org.orcid.core.manager.ExternalIdentifierManager;
@@ -236,6 +237,11 @@ public class WorksController extends BaseWorkspaceController {
         Visibility v = Visibility.valueOf(profile.getOrcidInternal().getPreferences().getWorkVisibilityDefault().getValue());
         w.setVisibility(v);
 
+        // Language code
+        Text lc = new Text();
+        lc.setRequired(false);
+        w.setLanguageCode(lc);
+        
         return w;
     }
 
@@ -340,6 +346,7 @@ public class WorksController extends BaseWorkspaceController {
         workEntity.setJournalTitle(orcidWork.getJournalTitle() != null ? orcidWork.getJournalTitle().getContent() : null);
         workEntity.setWorkType(orcidWork.getWorkType());
         workEntity.setWorkUrl(orcidWork.getUrl().getValue());
+        workEntity.setLanguageCode(StringUtils.isEmpty(orcidWork.getLanguageCode()) ? null : orcidWork.getLanguageCode());
         WorkContributors workContributors = orcidWork.getWorkContributors();
         if (workContributors != null) {
             workEntity.setContributorsJson(JsonUtils.convertToJsonString(workContributors));

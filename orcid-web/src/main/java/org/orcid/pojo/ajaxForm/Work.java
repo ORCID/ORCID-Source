@@ -51,6 +51,8 @@ public class Work implements ErrorsInterface, Serializable {
     private Text url;
     
     private Text journalTitle;
+    
+    private Text languageCode;
 
     private Citation citation;
 
@@ -107,6 +109,9 @@ public class Work implements ErrorsInterface, Serializable {
         if(orcidWork.getJournalTitle() != null)
             w.setJournalTitle(Text.valueOf(orcidWork.getJournalTitle().getContent()));
         
+        if(orcidWork.getJournalTitle() != null)
+            w.setLanguageCode(Text.valueOf(orcidWork.getJournalTitle().getContent()));
+        
         return w;
     }
     
@@ -150,6 +155,10 @@ public class Work implements ErrorsInterface, Serializable {
             ow.setJournalTitle(new Title(this.getJournalTitle().getValue()));
         }
             
+        if(this.getLanguageCode() != null){
+            ow.setLanguageCode(this.getLanguageCode().getValue());
+        }
+        
         return ow;
     }
 
@@ -280,5 +289,13 @@ public class Work implements ErrorsInterface, Serializable {
 
     public void setJournalTitle(Text journalTitle) {
         this.journalTitle = journalTitle;
-    }        
+    }
+
+    public Text getLanguageCode() {
+        return languageCode;
+    }
+
+    public void setLanguageCode(Text languageCode) {
+        this.languageCode = languageCode;
+    }              
 }

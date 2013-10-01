@@ -55,6 +55,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element ref="{http://www.orcid.org/ns/orcid}url" minOccurs="0"/>
  *         &lt;element ref="{http://www.orcid.org/ns/orcid}work-contributors" minOccurs="0"/>
  *         &lt;element ref="{http://www.orcid.org/ns/orcid}work-source" minOccurs="0"/>
+ *         &lt;element ref="{http://www.orcid.org/ns/orcid}language-code" minOccurs="0" maxOccurs="1"/>
  *       &lt;/sequence>
  *       &lt;attGroup ref="{http://www.orcid.org/ns/orcid}put-code"/>
  *       &lt;attGroup ref="{http://www.orcid.org/ns/orcid}visibility"/>
@@ -68,7 +69,7 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = { "putCode", "workTitle", "journalTitle", "shortDescription", "workCitation", "workType", "publicationDate", "workExternalIdentifiers", "url",
-        "workContributors", "workSource" })
+        "workContributors", "workSource", "languageCode" })
 @XmlRootElement(name = "orcid-work")
 public class OrcidWork implements VisibilityType, Serializable {
 
@@ -90,6 +91,8 @@ public class OrcidWork implements VisibilityType, Serializable {
     protected Url url;
     @XmlElement(name = "work-contributors")
     protected WorkContributors workContributors;
+    @XmlElement(name = "language-code")
+    protected String languageCode;
     @XmlElement(name = "work-source")
     protected WorkSource workSource;
     @XmlAttribute(name = "put-code")
@@ -327,8 +330,7 @@ public class OrcidWork implements VisibilityType, Serializable {
     public void setVisibility(Visibility value) {
         this.visibility = value;
     }
-    
-    
+        
     /**
      * Gets the value of the journalTitle property.
      * 
@@ -348,6 +350,27 @@ public class OrcidWork implements VisibilityType, Serializable {
      */
     public void setJournalTitle(Title value) {
         this.journalTitle = value;
+    }
+    
+    /**
+     * Gets the value of the languageCode property.
+     * 
+     * @return possible object is {@link Title }
+     * 
+     */
+    public String getLanguageCode() {
+        return languageCode;
+    }
+
+    /**
+     * Sets the value of the languageCode property.
+     * 
+     * @param value
+     *            allowed object is {@link String }
+     * 
+     */
+    public void setLanguageCode(String languageCode) {
+        this.languageCode = languageCode;
     }
     
     @Override
@@ -374,6 +397,7 @@ public class OrcidWork implements VisibilityType, Serializable {
         result = prime * result + ((workTitle == null) ? 0 : workTitle.hashCode());
         result = prime * result + ((workType == null) ? 0 : workType.hashCode());
         result = prime * result + ((journalTitle == null) ? 0 : journalTitle.hashCode());
+        result = prime * result + ((languageCode == null) ? 0 : languageCode.hashCode());
         return result;
     }
 
@@ -439,6 +463,12 @@ public class OrcidWork implements VisibilityType, Serializable {
             if(other.journalTitle !=null)
                 return false;
         } else if(!journalTitle.equals(other.journalTitle))
+            return false;
+        
+        if(languageCode == null){
+            if(other.languageCode != null)
+                return false;
+        } else if(!languageCode.equals(other.languageCode))
             return false;
             
         return true;

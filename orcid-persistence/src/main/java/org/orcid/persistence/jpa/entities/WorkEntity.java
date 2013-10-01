@@ -59,6 +59,7 @@ public class WorkEntity extends BaseEntity<Long> implements Comparable<WorkEntit
     private String workUrl;
     private String citation;
     private String journalTitle;
+    private String languageCode;
     private CitationType citationType;
     private WorkType workType;
     private PublicationDateEntity publicationDate;
@@ -153,6 +154,16 @@ public class WorkEntity extends BaseEntity<Long> implements Comparable<WorkEntit
 
     public void setJournalTitle(String journalTitle) {
         this.journalTitle = journalTitle;
+    }
+
+    
+    @Column(name = "language_code", length = 25)
+    public String getLanguageCode() {
+        return languageCode;
+    }
+
+    public void setLanguageCode(String languageCode) {
+        this.languageCode = languageCode;
     }
 
     @Basic
@@ -314,6 +325,7 @@ public class WorkEntity extends BaseEntity<Long> implements Comparable<WorkEntit
         workType = null;
         publicationDate = null;
         journalTitle = null;
+        languageCode = null;
     }
 
 }
