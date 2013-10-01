@@ -18,9 +18,9 @@
 
 -->
 <orcid-message xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-               xsi:schemaLocation="http://www.orcid.org/ns/orcid ../../../../orcid-model/src/main/resources/orcid-message-1.0.17.xsd"
+               xsi:schemaLocation="http://www.orcid.org/ns/orcid ../../../../orcid-model/src/main/resources/orcid-message-1.0.21.xsd"
                xmlns="http://www.orcid.org/ns/orcid">
-    <message-version>1.0.17</message-version>
+    <message-version>1.0.21</message-version>
     <orcid-profile>
         <orcid>4444-4444-4444-4446</orcid>
         <orcid-id>http://orcid.org/4444-4444-4444-4446</orcid-id>
@@ -66,22 +66,80 @@
                     <external-id-reference>YH0923</external-id-reference>
                 </external-identifier>
             </external-identifiers>
+        </orcid-bio>
+        <orcid-activities>
             <affiliations>
+                <affiliation visibility="public">
+                    <affiliation-name>New College</affiliation-name>
+                    <affiliation-type>current-institution</affiliation-type>
+                    <affiliation-address>
+                        <affiliation-city>Some City</affiliation-city>
+                        <affiliation-region>CT</affiliation-region>
+                        <affiliation-country>US</affiliation-country>
+                    </affiliation-address>
+                    <role-title>Researcher (Academic)</role-title>
+                    <start-date>
+                        <year>2012</year>
+                        <month>04</month>
+                    </start-date>
+                </affiliation>
                 <affiliation visibility="public">
                     <affiliation-name>Brown University</affiliation-name>
                     <affiliation-type>funded-by</affiliation-type>
+                    <affiliation-address>
+                        <affiliation-city>Providence</affiliation-city>
+                        <affiliation-region>RI</affiliation-region>
+                        <affiliation-country>US</affiliation-country>
+                    </affiliation-address>
                     <department-name>Psychoceramics</department-name>
                     <role-title>Researcher (Academic)</role-title>
+                    <start-date>
+                        <year>2008</year>
+                        <month>02</month>
+                    </start-date>
+                    <disambiguated-affiliation>
+                        <disambiguated-affiliation-identifier>12345</disambiguated-affiliation-identifier>
+                        <disambiguation-source>RINGGOLD</disambiguation-source>
+                    </disambiguated-affiliation>
                 </affiliation>
                 <affiliation visibility="public">
                     <affiliation-name>Yale University</affiliation-name>
                     <affiliation-type>current-primary-institution</affiliation-type>
+                    <affiliation-address>
+                        <affiliation-city>New Haven</affiliation-city>
+                        <affiliation-region>CT</affiliation-region>
+                        <affiliation-country>US</affiliation-country>
+                    </affiliation-address>
                     <department-name>Law</department-name>
                     <role-title>Researcher (Academic)</role-title>
+                    <start-date>
+                        <year>2005</year>
+                    </start-date>
+                    <disambiguated-affiliation>
+                        <disambiguated-affiliation-identifier>67890</disambiguated-affiliation-identifier>
+                        <disambiguation-source>RINGGOLD</disambiguation-source>
+                    </disambiguated-affiliation>
+                </affiliation>
+                <affiliation visibility="public">
+                    <affiliation-name>Slightly Obscure College</affiliation-name>
+                    <affiliation-type>educated-here</affiliation-type>
+                    <affiliation-address>
+                        <affiliation-city>London</affiliation-city>
+                        <affiliation-country>GB</affiliation-country>
+                    </affiliation-address>
+                    <role-title>Student</role-title>
+                    <start-date>
+                        <year>1993</year>
+                    </start-date>
+                    <end-date>
+                        <year>1996</year>
+                    </end-date>
+                    <disambiguated-affiliation>
+                        <disambiguated-affiliation-identifier>abc123</disambiguated-affiliation-identifier>
+                        <disambiguation-source>ORCID</disambiguation-source>
+                    </disambiguated-affiliation>
                 </affiliation>
             </affiliations>
-        </orcid-bio>
-        <orcid-activities>
             <orcid-works>
                 <orcid-work visibility="public">
                     <work-title>

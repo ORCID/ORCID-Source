@@ -18,9 +18,9 @@
 
 -->
 <orcid-message xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-               xsi:schemaLocation="http://www.orcid.org/ns/orcid ../../../../orcid-model/src/main/resources/orcid-message-1.0.17.xsd"
+               xsi:schemaLocation="http://www.orcid.org/ns/orcid ../../../../orcid-model/src/main/resources/orcid-message-1.0.21.xsd"
                xmlns="http://www.orcid.org/ns/orcid">
-    <message-version>1.0.17</message-version>
+    <message-version>1.0.21</message-version>
     <!-- Error message, if applicable -->
     <!-- Unable to connect to ORCID, no matching researchers, etc. -->
     <!-- <error-desc>No researcher found.</error-desc> -->
@@ -68,65 +68,115 @@
                     <external-id-url>http://www.facebook.com/d3clan</external-id-url>
                 </external-identifier>
             </external-identifiers>
+        </orcid-bio>
+        <orcid-activities>
             <affiliations>
                 <affiliation>
                     <affiliation-name>Brown University</affiliation-name>
                     <affiliation-type>current-primary-institution</affiliation-type>
-                    <address>
-                        <country>US</country>
-                    </address>
+                    <affiliation-address>
+                        <affiliation-city>Providence</affiliation-city>
+                        <affiliation-region>RI</affiliation-region>
+                        <affiliation-country>US</affiliation-country>
+                    </affiliation-address>
                     <department-name>Psychoceramics</department-name>
                     <role-title>Researcher (Academic)</role-title>
-                    <start-date>1929-01-01</start-date>
-                    <end-date>1999-01-01</end-date>
+                    <start-date>
+                        <year>1929</year>
+                        <month>01</month>
+                        <day>01</day>
+                    </start-date>
+                    <end-date>
+                        <year>1999</year>
+                        <month>01</month>
+                        <day>01</day>
+                    </end-date>
                 </affiliation>
                 <affiliation>
                     <affiliation-name>Staffordshire University</affiliation-name>
                     <affiliation-type>current-institution</affiliation-type>
-                    <address>
-                        <country>GB</country>
-                    </address>
+                    <affiliation-address>
+                        <affiliation-city>Stoke-on-Trent</affiliation-city>
+                        <affiliation-region>Staffordshire</affiliation-region>
+                        <affiliation-country>GB</affiliation-country>
+                    </affiliation-address>
                     <department-name>Psychoceramics</department-name>
                     <role-title>Researcher (Academic)</role-title>
-                    <start-date>1929-01-01</start-date>
-                    <end-date>1999-01-01</end-date>
+                    <start-date>
+                        <year>1929</year>
+                        <month>01</month>
+                        <day>01</day>
+                    </start-date>
+                    <end-date>
+                        <year>1999</year>
+                        <month>01</month>
+                        <day>01</day>
+                    </end-date>
                 </affiliation>
                 <affiliation>
                     <affiliation-name>Jiangxi Normal University (JXNU)</affiliation-name>
                     <affiliation-type>current-institution</affiliation-type>
-                    <address>
-                        <country>CH</country>
-                    </address>
+                    <affiliation-address>
+                        <affiliation-city>Nanchang</affiliation-city>
+                        <affiliation-region>Jiangxi</affiliation-region>
+                        <affiliation-country>CH</affiliation-country>
+                    </affiliation-address>
                     <department-name>Ancient Psychoceramics</department-name>
                     <role-title>Researcher (Academic)</role-title>
-                    <start-date>1929-01-01</start-date>
-                    <end-date>1999-01-01</end-date>
+                    <start-date>
+                        <year>1929</year>
+                        <month>01</month>
+                        <day>01</day>
+                    </start-date>
+                    <end-date>
+                        <year>1999</year>
+                        <month>01</month>
+                        <day>01</day>
+                    </end-date>
                 </affiliation>
                 <affiliation>
                     <affiliation-name>Bowdoin College</affiliation-name>
                     <affiliation-type>past-institution</affiliation-type>
-                    <address>
-                        <country>US</country>
-                    </address>
+                    <affiliation-address>
+                        <affiliation-city>Brunswick</affiliation-city>
+                        <affiliation-region>ME</affiliation-region>
+                        <affiliation-country>US</affiliation-country>
+                    </affiliation-address>
                     <department-name>Psychoceramics</department-name>
                     <role-title>Researcher (Academic)</role-title>
-                    <start-date>1929-01-01</start-date>
-                    <end-date>1999-01-01</end-date>
+                    <start-date>
+                        <year>1929</year>
+                        <month>01</month>
+                        <day>01</day>
+                    </start-date>
+                    <end-date>
+                        <year>1999</year>
+                        <month>01</month>
+                        <day>01</day>
+                    </end-date>
                 </affiliation>
                 <affiliation>
                     <affiliation-name>Universtät Wien</affiliation-name>
                     <affiliation-type>past-institution</affiliation-type>
-                    <address>
-                        <country>AT</country>
-                    </address>
+                    <affiliation-address>
+                        <affiliation-city>Vienna</affiliation-city>
+                        <affiliation-region>Vienna</affiliation-region>
+                        <affiliation-country>AT</affiliation-country>
+                    </affiliation-address>
                     <department-name>Psychoceramics</department-name>
                     <role-title>Researcher (Academic)</role-title>
-                    <start-date>1929-01-01</start-date>
-                    <end-date>1999-01-01</end-date>
+                    <start-date>
+                        <year>1929</year>
+                        <month>01</month>
+                        <day>01</day>
+                    </start-date>
+                    <end-date>
+                        <year>1999</year>
+                        <month>01</month>
+                        <day>01</day>
+                    </end-date>
                 </affiliation>
             </affiliations>
-        </orcid-bio>
-        <orcid-activities>
             <orcid-works>
                 <orcid-work>
                     <work-type>book</work-type>

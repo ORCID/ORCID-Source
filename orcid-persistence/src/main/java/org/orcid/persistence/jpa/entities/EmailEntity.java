@@ -132,6 +132,8 @@ public class EmailEntity extends BaseEntity<String> implements ProfileAware {
     public void clean() {
         primary = null;
         current = null;
+        verified= null;
+        visibility= null;
         verified = null;
         visibility = null;
     }

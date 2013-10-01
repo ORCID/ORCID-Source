@@ -135,4 +135,28 @@ public class StubT2ServiceDelegator implements T2OrcidApiServiceDelegator {
         return null;
     }
 
+    @Override
+    public Response addAffiliations(UriInfo uriInfo, String orcid, OrcidMessage orcidMessage) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Response updateAffiliations(UriInfo uriInfo, String orcid, OrcidMessage orcidMessage) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Response findAffiliationsDetails(String orcid) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Response findAffiliationsDetailsFromPublicCache(String orcid) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
 }

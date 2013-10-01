@@ -16,6 +16,7 @@
  */
 package org.orcid.api.t2.server.delegator.impl;
 
+import static org.orcid.api.common.OrcidApiConstants.AFFILIATIONS_PATH;
 import static org.orcid.api.common.OrcidApiConstants.PROFILE_GET_PATH;
 import static org.orcid.api.common.OrcidApiConstants.STATUS_OK_MESSAGE;
 import static org.orcid.api.common.OrcidApiConstants.WORKS_PATH;
@@ -201,6 +202,22 @@ public class T2OrcidApiServiceDelegatorImpl extends OrcidApiServiceDelegatorImpl
         OrcidProfile profile = orcidProfileManager.retrieveClaimedOrcidWorks(orcid);
         return getOrcidMessageResponse(profile, orcid);
     }
+    
+    /**
+     * finds and returns the {@link org.orcid.jaxb.model.message.OrcidMessage}
+     * wrapped in a {@link javax.xml.ws.Response} with only the affiliation details
+     * 
+     * @param orcid
+     *            the ORCID to be used to identify the record
+     * @return the {@link javax.xml.ws.Response} with the
+     *         {@link org.orcid.jaxb.model.message.OrcidMessage} within it
+     */
+    @Override
+    @AccessControl(requiredScope = ScopePathType.AFFILIATIONS_READ_LIMITED)
+    public Response findAffiliationsDetails(String orcid) {
+        OrcidProfile profile = orcidProfileManager.retrieveClaimedAffiliations(orcid);
+        return getOrcidMessageResponse(profile, orcid);
+    }
 
     /**
      * Creates a new profile and returns the saved representation of it. The
@@ -255,7 +272,7 @@ public class T2OrcidApiServiceDelegatorImpl extends OrcidApiServiceDelegatorImpl
             orcidProfileManager.addOrcidWorks(orcidProfile);
             return getCreatedResponse(uriInfo, WORKS_PATH, orcid);
         } catch (DataAccessException e) {
-            throw new OrcidBadRequestException("Cannot create ORCID");
+            throw new OrcidBadRequestException("Cannot update ORCID");
         } catch (PersistenceException pe) {
             throw new OrcidBadRequestException("One of the parameters passed in the request is either too big or invalid.");
         }
@@ -279,7 +296,7 @@ public class T2OrcidApiServiceDelegatorImpl extends OrcidApiServiceDelegatorImpl
             orcidProfile = orcidProfileManager.updateOrcidWorks(orcidProfile);
             return getOrcidMessageResponse(orcidProfile, orcid);
         } catch (DataAccessException e) {
-            throw new OrcidBadRequestException("Cannot create ORCID");
+            throw new OrcidBadRequestException("Cannot update ORCID");
         }
     }
 
@@ -524,6 +541,32 @@ public class T2OrcidApiServiceDelegatorImpl extends OrcidApiServiceDelegatorImpl
             }
         } else {
             throw new OrcidNotFoundException("Unable to find profile associated with orcid:" + orcid);
+        }
+    }
+
+    @Override
+    @AccessControl(requiredScope = ScopePathType.AFFILIATIONS_CREATE)
+    public Response addAffiliations(UriInfo uriInfo, String orcid, OrcidMessage orcidMessage) {
+        OrcidProfile orcidProfile = orcidMessage.getOrcidProfile();
+        try {
+            orcidProfileManager.addAffiliations(orcidProfile);
+            return getCreatedResponse(uriInfo, AFFILIATIONS_PATH, orcidProfile);
+        } catch (DataAccessException e) {
+            throw new OrcidBadRequestException("Cannot update ORCID");
+        } catch (PersistenceException pe) {
+            throw new OrcidBadRequestException("One of the parameters passed in the request is either too big or invalid.");
+        }
+    }
+
+    @Override
+    @AccessControl(requiredScope = ScopePathType.AFFILIATIONS_UPDATE)
+    public Response updateAffiliations(UriInfo uriInfo, String orcid, OrcidMessage orcidMessage) {
+        OrcidProfile orcidProfile = orcidMessage.getOrcidProfile();
+        try {
+            orcidProfile = orcidProfileManager.updateAffiliations(orcidProfile);
+            return getOrcidMessageResponse(orcidProfile, orcid);
+        } catch (DataAccessException e) {
+            throw new OrcidBadRequestException("Cannot update ORCID");
         }
     }
 

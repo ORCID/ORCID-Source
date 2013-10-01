@@ -26,7 +26,6 @@ import javax.annotation.Resource;
 import javax.ws.rs.core.Response;
 
 import org.orcid.api.common.delegator.OrcidApiServiceDelegator;
-import org.orcid.api.common.exception.OrcidDeprecatedException;
 import org.orcid.api.common.exception.OrcidNotFoundException;
 import org.orcid.core.exception.OrcidSearchException;
 import org.orcid.core.manager.OrcidProfileManager;
@@ -40,8 +39,6 @@ import org.orcid.jaxb.model.message.OrcidSearchResults;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-
-import com.sun.jersey.api.client.ClientResponse.Status;
 
 /**
  * This class will retrieve {@link OrcidProfile}s and return them for use in the
@@ -162,11 +159,46 @@ public class OrcidApiServiceDelegatorImpl implements OrcidApiServiceDelegator {
     @VisibilityControl
     public Response findFullDetailsFromPublicCache(String orcid) {
         try {
-            OrcidMessage orcidMessage = orcidSearchManager.findPublicProfileById(orcid);            
+            OrcidMessage orcidMessage = orcidSearchManager.findPublicProfileById(orcid);
             return getOrcidMessageResponse(orcidMessage, orcid);
         } catch (OrcidSearchException e) {
             LOGGER.warn("Error searching, so falling back to DB", e);
             return findFullDetails(orcid);
+        }
+    }
+
+    /**
+     * finds and returns the {@link org.orcid.jaxb.model.message.OrcidMessage}
+     * wrapped in a {@link javax.xml.ws.Response} with only the affiiation
+     * details
+     * 
+     * @param orcid
+     *            the ORCID to be used to identify the record
+     * @return the {@link javax.xml.ws.Response} with the
+     *         {@link org.orcid.jaxb.model.message.OrcidMessage} within it
+     */
+    @Override
+    @VisibilityControl
+    public Response findAffiliationsDetails(String orcid) {
+        OrcidProfile profile = orcidProfileManager.retrieveClaimedAffiliations(orcid);
+        return getOrcidMessageResponse(profile, orcid);
+    }
+
+    @Override
+    @VisibilityControl
+    public Response findAffiliationsDetailsFromPublicCache(String orcid) {
+        try {
+            OrcidMessage orcidMessage = orcidSearchManager.findPublicProfileById(orcid);
+            if (orcidMessage != null) {
+                OrcidProfile orcidProfile = orcidMessage.getOrcidProfile();
+                if (orcidProfile != null) {
+                    orcidProfile.downgradeToAffiliationsOnly();
+                }
+            }
+            return getOrcidMessageResponse(orcidMessage, orcid);
+        } catch (OrcidSearchException e) {
+            LOGGER.warn("Error searching, so falling back to DB", e);
+            return findAffiliationsDetails(orcid);
         }
     }
 
@@ -260,21 +292,22 @@ public class OrcidApiServiceDelegatorImpl implements OrcidApiServiceDelegator {
         OrcidProfile orcidProfile = orcidMessage.getOrcidProfile();
         if (orcidProfile != null) {
             orcidProfile.setOrcidInternal(null);
-            //If profile is deprecated
-            if(orcidMessage.getOrcidProfile().getOrcidDeprecated() != null){
+            // If profile is deprecated
+            if (orcidMessage.getOrcidProfile().getOrcidDeprecated() != null) {
                 isProfileDeprecated = true;
             }
-        }                
-        
-        Response response = null; 
-        
-        if(isProfileDeprecated){
-            //TODO: internationalize these messages
-            throw new DeprecatedException("This account is deprecated. Please refer to account: " + orcidProfile.getOrcidDeprecated().getPrimaryRecord().getOrcid().getValue());            
+        }
+
+        Response response = null;
+
+        if (isProfileDeprecated) {
+            // TODO: internationalize these messages
+            throw new DeprecatedException("This account is deprecated. Please refer to account: "
+                    + orcidProfile.getOrcidDeprecated().getPrimaryRecord().getOrcid().getValue());
         } else {
             response = Response.ok(orcidMessage).build();
         }
-        
+
         return response;
     }
 

@@ -67,6 +67,13 @@ public class Source implements Serializable {
     @XmlElement(name = "source-date")
     protected SourceDate sourceDate;
 
+    public Source() {
+    }
+
+    public Source(String amenderOrcid) {
+        this.sourceOrcid = new SourceOrcid(amenderOrcid);
+    }
+
     /**
      * Gets the value of the sourceOrcid property.
      * 

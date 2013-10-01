@@ -20,9 +20,14 @@ import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.Sort;
 import org.hibernate.annotations.SortType;
+import org.orcid.jaxb.model.message.Iso3166Country;
+
+import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -46,7 +51,7 @@ public class PatentEntity extends BaseEntity<Long> implements Comparable<PatentE
     private static final String PATENT = "patent";
 
     private Long id;
-    private String countryOfIssue;
+    private Iso3166Country countryOfIssue;
     private String patentNo;
     private String shortDescription;
     private Date issueDate;
@@ -64,12 +69,14 @@ public class PatentEntity extends BaseEntity<Long> implements Comparable<PatentE
         this.id = id;
     }
 
+    @Basic
+    @Enumerated(EnumType.STRING)
     @Column(name = "issuing_country", length = 155)
-    public String getCountryOfIssue() {
+    public Iso3166Country getCountryOfIssue() {
         return countryOfIssue;
     }
 
-    public void setCountryOfIssue(String countryOfIssue) {
+    public void setCountryOfIssue(Iso3166Country countryOfIssue) {
         this.countryOfIssue = countryOfIssue;
     }
 

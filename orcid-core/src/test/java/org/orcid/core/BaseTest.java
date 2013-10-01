@@ -19,13 +19,14 @@ package org.orcid.core;
 import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.mockito.MockitoAnnotations;
+import org.orcid.test.DBUnitTest;
 import org.orcid.test.TargetProxyHelper;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "/orcid-core-context.xml" })
-public class BaseTest {
+public class BaseTest extends DBUnitTest {
 
     @Before
     public void beforeClass() {

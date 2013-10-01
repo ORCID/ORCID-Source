@@ -32,14 +32,17 @@ import org.junit.Before;
 import org.junit.Test;
 import org.orcid.jaxb.model.message.Address;
 import org.orcid.jaxb.model.message.Affiliation;
+import org.orcid.jaxb.model.message.Affiliations;
 import org.orcid.jaxb.model.message.Biography;
 import org.orcid.jaxb.model.message.ContactDetails;
 import org.orcid.jaxb.model.message.Country;
 import org.orcid.jaxb.model.message.CreditName;
 import org.orcid.jaxb.model.message.Email;
+import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.jaxb.model.message.Keywords;
 import org.orcid.jaxb.model.message.OrcidBio;
 import org.orcid.jaxb.model.message.OrcidMessage;
+import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidWork;
 import org.orcid.jaxb.model.message.OrcidWorks;
 import org.orcid.jaxb.model.message.OtherNames;
@@ -96,11 +99,11 @@ public class OrcidJaxbCopyUtilsTest {
         updatedOrcidPersonalDetails.setOtherNames(updatedOtherNames);
 
         Address existingContactDetailsAddress = existingOrcidBioProtected.getContactDetails().getAddress();
-        assertEquals("US", existingContactDetailsAddress.getCountry().getContent());
+        assertEquals(Iso3166Country.US, existingContactDetailsAddress.getCountry().getValue());
         existingContactDetailsAddress.getCountry().setVisibility(Visibility.LIMITED);
 
         Address nullVisibilityContactAddress = new Address();
-        nullVisibilityContactAddress.setCountry(new Country("Updated Country"));
+        nullVisibilityContactAddress.setCountry(new Country(Iso3166Country.BM));
         nullVisibilityContactAddress.getCountry().setVisibility(null);
         updatedOrcidBioPublic.getContactDetails().setAddress(nullVisibilityContactAddress);
 
@@ -127,7 +130,7 @@ public class OrcidJaxbCopyUtilsTest {
         assertEquals(Visibility.PRIVATE, existingOtherNames.getVisibility());
         existingContactDetailsAddress = existingOrcidBioProtected.getContactDetails().getAddress();
         assertEquals(Visibility.LIMITED, existingContactDetailsAddress.getCountry().getVisibility());
-        assertEquals("Updated Country", existingContactDetailsAddress.getCountry().getContent());
+        assertEquals(Iso3166Country.BM, existingContactDetailsAddress.getCountry().getValue());
 
     }
 
@@ -231,61 +234,54 @@ public class OrcidJaxbCopyUtilsTest {
     @Test
     public void testUpdatedAffilationsToExistingPreservingVisibility() throws Exception {
 
-        OrcidBio existingOrcidBioProtected = protectedOrcidMessage.getOrcidProfile().getOrcidBio();
-        // create a copy of the bio data for doing a merge
-        OrcidBio updatedOrcidBioPublic = getOrcidMessage("/orcid-public-full-message-latest.xml").getOrcidProfile().getOrcidBio();
+        OrcidProfile existingOrcidProfile = protectedOrcidMessage.getOrcidProfile();
+        // create a copy of the profile data for doing a merge
+        OrcidProfile updatedOrcidProfile = getOrcidMessage("/orcid-public-full-message-latest.xml").getOrcidProfile();
 
-        List<Affiliation> existingAffilations = existingOrcidBioProtected.getAffiliations();
-        List<Affiliation> updatedAffilations = updatedOrcidBioPublic.getAffiliations();
+        Affiliations existingAffiliations = existingOrcidProfile.getOrcidActivities().getAffiliations();
+        List<Affiliation> existingAffilationsList = existingAffiliations.getAffiliation();
+        Affiliations updatedAffiliations = updatedOrcidProfile.getOrcidActivities().getAffiliations();
+        List<Affiliation> updatedAffilationsList = updatedAffiliations.getAffiliation();
 
-        assertEquals("Brown University", existingAffilations.get(0).getAffiliationName());
-        assertEquals("Yale University", existingAffilations.get(1).getAffiliationName());
-        assertEquals(Visibility.PUBLIC, existingAffilations.get(0).getVisibility());
-        assertNull(existingAffilations.get(1).getAddress().getCountry().getVisibility());
-        assertEquals(Visibility.PUBLIC, existingAffilations.get(1).getVisibility());
-        assertEquals(Visibility.LIMITED, updatedAffilations.get(1).getAddress().getCountry().getVisibility());
-        assertTrue(existingAffilations.size() == 2);
-        assertTrue(updatedAffilations.size() == 2);
+        assertEquals("New College", existingAffilationsList.get(0).getAffiliationName());
+        assertEquals("Brown University", existingAffilationsList.get(1).getAffiliationName());
+        assertEquals(Visibility.PUBLIC, existingAffilationsList.get(0).getVisibility());
+        assertEquals(Visibility.PUBLIC, existingAffilationsList.get(1).getVisibility());
+        assertEquals(4, existingAffilationsList.size());
+        assertEquals(4, updatedAffilationsList.size());
 
         // to test:
         // updating affiliations retains visibility when null - changes content
-        updatedAffilations.get(0).setAffiliationName("new affiliation name");
-        updatedAffilations.get(0).setVisibility(null);
-        OrcidJaxbCopyUtils.copyUpdatedBioToExistingWithVisibility(existingOrcidBioProtected, updatedOrcidBioPublic);
-        updatedAffilations = updatedOrcidBioPublic.getAffiliations();
-        assertEquals("new affiliation name", existingAffilations.get(0).getAffiliationName());
-        assertEquals(Visibility.LIMITED, existingAffilations.get(1).getAddress().getCountry().getVisibility());
-        assertEquals(Visibility.PUBLIC, existingAffilations.get(0).getVisibility());
+        updatedAffilationsList.get(0).setAffiliationName("new affiliation name");
+        updatedAffilationsList.get(0).setVisibility(null);
+        OrcidJaxbCopyUtils.copyAffiliationsToExistingPreservingVisibility(existingAffiliations, updatedAffiliations);
+        assertEquals("new affiliation name", existingAffilationsList.get(0).getAffiliationName());
+        assertEquals(Visibility.PUBLIC, existingAffilationsList.get(0).getVisibility());
 
         // updating affiliations changes visibility when populated - changes
         // content
-        updatedAffilations.get(0).setAffiliationName("a seperate affiliation name");
-        updatedAffilations.get(0).setVisibility(Visibility.PRIVATE);
-        updatedAffilations.get(0).getAddress().getCountry().setVisibility(null);
-        OrcidJaxbCopyUtils.copyUpdatedBioToExistingWithVisibility(existingOrcidBioProtected, updatedOrcidBioPublic);
-        existingAffilations = existingOrcidBioProtected.getAffiliations();
-        assertEquals("a seperate affiliation name", existingAffilations.get(0).getAffiliationName());
-        assertEquals(Visibility.LIMITED, existingAffilations.get(0).getAddress().getCountry().getVisibility());
-        assertEquals(Visibility.PRIVATE, existingAffilations.get(0).getVisibility());
+        updatedAffilationsList.get(0).setAffiliationName("a seperate affiliation name");
+        updatedAffilationsList.get(0).setVisibility(Visibility.PRIVATE);
+        OrcidJaxbCopyUtils.copyAffiliationsToExistingPreservingVisibility(existingAffiliations, updatedAffiliations);
+        assertEquals("a seperate affiliation name", existingAffilationsList.get(0).getAffiliationName());
+        assertEquals(Visibility.PRIVATE, existingAffilationsList.get(0).getVisibility());
+
         // adding new affiliations with a null visibility adds an extra element
         // with the def
-
         Affiliation extraAffiliation = new Affiliation();
         extraAffiliation.setAffiliationName("extra affiliation");
-        updatedAffilations.add(extraAffiliation);
+        updatedAffilationsList.add(extraAffiliation);
 
-        OrcidJaxbCopyUtils.copyUpdatedBioToExistingWithVisibility(existingOrcidBioProtected, updatedOrcidBioPublic);
-        existingAffilations = existingOrcidBioProtected.getAffiliations();
-        assertTrue(existingAffilations.size() == 3);
+        OrcidJaxbCopyUtils.copyAffiliationsToExistingPreservingVisibility(existingAffiliations, updatedAffiliations);
+        assertEquals(5, existingAffilationsList.size());
 
-        assertEquals("a seperate affiliation name", existingAffilations.get(0).getAffiliationName());
-        assertEquals("Yale University", existingAffilations.get(1).getAffiliationName());
-        assertEquals("extra affiliation", existingAffilations.get(2).getAffiliationName());
+        assertEquals("a seperate affiliation name", existingAffilationsList.get(0).getAffiliationName());
+        assertEquals("Brown University", existingAffilationsList.get(1).getAffiliationName());
+        assertEquals("extra affiliation", existingAffilationsList.get(4).getAffiliationName());
 
-        assertEquals(Visibility.PRIVATE, existingAffilations.get(0).getVisibility());
-        assertEquals(Visibility.PUBLIC, existingAffilations.get(1).getVisibility());
-        assertEquals(Visibility.PUBLIC, existingAffilations.get(2).getVisibility());
-
+        assertEquals(Visibility.PRIVATE, existingAffilationsList.get(0).getVisibility());
+        assertEquals(Visibility.PUBLIC, existingAffilationsList.get(1).getVisibility());
+        assertEquals(Visibility.PUBLIC, existingAffilationsList.get(4).getVisibility());
     }
 
     @Test
@@ -308,10 +304,10 @@ public class OrcidJaxbCopyUtilsTest {
         assertEquals(3, existingContactDetails.getEmail().size());
 
         Address existingAddress = existingContactDetails.getAddress();
-        assertTrue("US".equals(existingAddress.getCountry().getContent()) && existingAddress.getCountry().getVisibility() == null);
+        assertTrue(Iso3166Country.US.equals(existingAddress.getCountry().getValue()) && existingAddress.getCountry().getVisibility() == null);
 
         Address updatedAddress = new Address();
-        Country country = new Country("UK");
+        Country country = new Country(Iso3166Country.GB);
         country.setVisibility(Visibility.LIMITED);
         updatedAddress.setCountry(country);
         updatedOrcidBioPublic.getContactDetails().setAddress(updatedAddress);
@@ -344,13 +340,13 @@ public class OrcidJaxbCopyUtilsTest {
             assertEquals(Visibility.PRIVATE, email.getVisibility());
         }
         assertEquals(3, existingContactDetails.getEmail().size());
-        assertEquals("UK", existingContactDetails.getAddress().getCountry().getContent());
+        assertEquals(Iso3166Country.GB, existingContactDetails.getAddress().getCountry().getValue());
         assertEquals(Visibility.LIMITED, existingContactDetails.getAddress().getCountry().getVisibility());
 
         updatedContactDetails = new ContactDetails();
         updatedOrcidBioPublic.setContactDetails(updatedContactDetails);
         updatedAddress = new Address();
-        country = new Country("AU");
+        country = new Country(Iso3166Country.AU);
         country.setVisibility(null);
         updatedAddress.setCountry(country);
         updatedContactDetails.setAddress(updatedAddress);
@@ -384,7 +380,7 @@ public class OrcidJaxbCopyUtilsTest {
         // There's now 4 because can't remove private emails
         assertEquals(4, existingContactDetails.getEmail().size());
 
-        assertEquals("AU", existingContactDetails.getAddress().getCountry().getContent());
+        assertEquals(Iso3166Country.AU, existingContactDetails.getAddress().getCountry().getValue());
     }
 
     @Test
