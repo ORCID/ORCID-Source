@@ -244,7 +244,7 @@ public interface OrcidProfileManager {
      * @param orcidProfile
      * @return
      */
-    OrcidProfile addAffiliations(OrcidProfile orcidProfile);
+    void addAffiliations(OrcidProfile orcidProfile);
 
     /**
      * Attempt to locate a profile with the email address. This is for internal

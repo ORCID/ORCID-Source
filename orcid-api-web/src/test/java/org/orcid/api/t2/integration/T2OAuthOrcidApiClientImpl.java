@@ -160,6 +160,46 @@ public class T2OAuthOrcidApiClientImpl implements T2OAuthAPIService<ClientRespon
     @POST
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
     @Consumes(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, MediaType.WILDCARD })
+    @Path(AFFILIATIONS_PATH)
+    public ClientResponse addAffiliationsXml(String orcid, OrcidMessage orcidMessage, String token) {
+        URI affiliationsPathWithOrcidUrl = orcidClientHelper.deriveUriFromRestPath(AFFILIATIONS_PATH, orcid);
+        return postClientResponseWithToken(affiliationsPathWithOrcidUrl, VND_ORCID_XML, orcidMessage, token);
+    }
+
+    @Override
+    @POST
+    @Produces(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Consumes(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(AFFILIATIONS_PATH)
+    public ClientResponse addAffiliationsJson(String orcid, OrcidMessage orcidMessage, String token) {
+        URI affiliationsPathWithOrcidUrl = orcidClientHelper.deriveUriFromRestPath(AFFILIATIONS_PATH, orcid);
+        return postClientResponseWithToken(affiliationsPathWithOrcidUrl, VND_ORCID_JSON, orcidMessage, token);
+    }
+
+    @Override
+    @PUT
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
+    @Consumes(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, MediaType.WILDCARD })
+    @Path(AFFILIATIONS_PATH)
+    public ClientResponse updateAffiliationsXml(String orcid, OrcidMessage orcidMessage, String token) {
+        URI affiliationsPathWithOrcidUrl = orcidClientHelper.deriveUriFromRestPath(AFFILIATIONS_PATH, orcid);
+        return putClientResponseWithToken(affiliationsPathWithOrcidUrl, VND_ORCID_XML, orcidMessage, token);
+    }
+
+    @Override
+    @PUT
+    @Produces(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Consumes(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(AFFILIATIONS_PATH)
+    public ClientResponse updateAffiliationsJson(String orcid, OrcidMessage orcidMessage, String token) {
+        URI affiliationsPathWithOrcidUrl = orcidClientHelper.deriveUriFromRestPath(AFFILIATIONS_PATH, orcid);
+        return putClientResponseWithToken(affiliationsPathWithOrcidUrl, VND_ORCID_JSON, orcidMessage, token);
+    }
+
+    @Override
+    @POST
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
+    @Consumes(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, MediaType.WILDCARD })
     @Path(EXTERNAL_IDENTIFIER_PATH)
     public ClientResponse addExternalIdentifiersXml(String orcid, OrcidMessage orcidMessage, String token) {
         URI worksPathWithOrcidUrl = orcidClientHelper.deriveUriFromRestPath(EXTERNAL_IDENTIFIER_PATH, orcid);

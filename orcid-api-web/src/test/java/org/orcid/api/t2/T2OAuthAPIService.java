@@ -16,6 +16,7 @@
  */
 package org.orcid.api.t2;
 
+import static org.orcid.api.common.OrcidApiConstants.AFFILIATIONS_PATH;
 import static org.orcid.api.common.OrcidApiConstants.BIO_PATH;
 import static org.orcid.api.common.OrcidApiConstants.EXTERNAL_IDENTIFIER_PATH;
 import static org.orcid.api.common.OrcidApiConstants.ORCID_JSON;
@@ -101,7 +102,7 @@ public interface T2OAuthAPIService<T> extends OAuthOrcidApiService<T> {
     T updateBioDetailsJson(@PathParam("orcid") String orcid, OrcidMessage orcidMessage, String token);
 
     /**
-     * POST an XML representation of the ORCID work containing only works
+     * POST an XML representation of the ORCID record containing only works
      * details
      * 
      * @param orcid
@@ -116,7 +117,7 @@ public interface T2OAuthAPIService<T> extends OAuthOrcidApiService<T> {
     T addWorksXml(@PathParam("orcid") String orcid, OrcidMessage orcidMessage, String token);
 
     /**
-     * POST a JSON representation of the ORCID work containing only works
+     * POST a JSON representation of the ORCID record containing only works
      * details
      * 
      * @param orcid
@@ -131,7 +132,8 @@ public interface T2OAuthAPIService<T> extends OAuthOrcidApiService<T> {
     T addWorksJson(@PathParam("orcid") String orcid, OrcidMessage orcidMessage, String token);
 
     /**
-     * PUT an XML representation of the ORCID work containing only works details
+     * PUT an XML representation of the ORCID record containing only works
+     * details
      * 
      * @param orcid
      *            the ORCID that corresponds to the user's record
@@ -145,7 +147,8 @@ public interface T2OAuthAPIService<T> extends OAuthOrcidApiService<T> {
     T updateWorksXml(@PathParam("orcid") String orcid, OrcidMessage orcidMessage, String token);
 
     /**
-     * PUT a JSON representation of the ORCID work containing only works details
+     * PUT a JSON representation of the ORCID record containing only works
+     * details
      * 
      * @param orcid
      *            the ORCID that corresponds to the user's record
@@ -157,6 +160,66 @@ public interface T2OAuthAPIService<T> extends OAuthOrcidApiService<T> {
     @Consumes(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(WORKS_PATH)
     T updateWorksJson(@PathParam("orcid") String orcid, OrcidMessage orcidMessage, String token);
+
+    /**
+     * POST an XML representation of the ORCID record containing only
+     * affiliations details
+     * 
+     * @param orcid
+     *            the ORCID that corresponds to the user's record
+     * @return the XML representation of the ORCID record including the added
+     *         affiliation(s)
+     */
+    @POST
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
+    @Consumes(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, MediaType.WILDCARD })
+    @Path(AFFILIATIONS_PATH)
+    T addAffiliationsXml(@PathParam("orcid") String orcid, OrcidMessage orcidMessage, String token);
+
+    /**
+     * POST a JSON representation of the ORCID record containing only
+     * affiliations details
+     * 
+     * @param orcid
+     *            the ORCID that corresponds to the user's record
+     * @return the JSON representation of the ORCID record including the added
+     *         affiliation(s)
+     */
+    @POST
+    @Produces(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Consumes(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(AFFILIATIONS_PATH)
+    T addAffiliationsJson(@PathParam("orcid") String orcid, OrcidMessage orcidMessage, String token);
+
+    /**
+     * PUT an XML representation of the ORCID record containing only
+     * affiliations details
+     * 
+     * @param orcid
+     *            the ORCID that corresponds to the user's record
+     * @return the XML representation of the ORCID record including the added
+     *         affiliation(s)
+     */
+    @PUT
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
+    @Consumes(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, MediaType.WILDCARD })
+    @Path(AFFILIATIONS_PATH)
+    T updateAffiliationsXml(@PathParam("orcid") String orcid, OrcidMessage orcidMessage, String token);
+
+    /**
+     * PUT a JSON representation of the ORCID record containing only
+     * affiliations details
+     * 
+     * @param orcid
+     *            the ORCID that corresponds to the user's record
+     * @return the JSON representation of the ORCID record including the added
+     *         affiliation(s)
+     */
+    @PUT
+    @Produces(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Consumes(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(AFFILIATIONS_PATH)
+    T updateAffiliationsJson(@PathParam("orcid") String orcid, OrcidMessage orcidMessage, String token);
 
     /**
      * POST an XML representation of the ORCID external identifiers containing

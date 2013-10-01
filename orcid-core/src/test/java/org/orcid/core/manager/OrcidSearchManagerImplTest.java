@@ -33,16 +33,19 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.orcid.core.BaseTest;
 import org.orcid.core.manager.impl.OrcidSearchManagerImpl;
-import org.orcid.jaxb.model.message.Address;
 import org.orcid.jaxb.model.message.Affiliation;
+import org.orcid.jaxb.model.message.AffiliationAddress;
+import org.orcid.jaxb.model.message.AffiliationCountry;
 import org.orcid.jaxb.model.message.AffiliationType;
+import org.orcid.jaxb.model.message.Affiliations;
 import org.orcid.jaxb.model.message.ContactDetails;
-import org.orcid.jaxb.model.message.Country;
 import org.orcid.jaxb.model.message.CreditName;
 import org.orcid.jaxb.model.message.Email;
 import org.orcid.jaxb.model.message.FamilyName;
 import org.orcid.jaxb.model.message.GivenNames;
 import org.orcid.jaxb.model.message.GrantNumber;
+import org.orcid.jaxb.model.message.Iso3166Country;
+import org.orcid.jaxb.model.message.OrcidActivities;
 import org.orcid.jaxb.model.message.OrcidBio;
 import org.orcid.jaxb.model.message.OrcidGrant;
 import org.orcid.jaxb.model.message.OrcidGrants;
@@ -126,9 +129,9 @@ public class OrcidSearchManagerImplTest extends BaseTest {
         assertTrue(otherNames.contains("Edward Bass"));
         assertTrue(otherNames.contains("Gareth Dove"));
 
-        Affiliation primary = orcidBio.getAffiliationsByType(AffiliationType.CURRENT_PRIMARY_INSTITUTION).get(0);
-        Affiliation current = orcidBio.getAffiliationsByType(AffiliationType.CURRENT_INSTITUTION).get(0);
-        Affiliation past = orcidBio.getAffiliationsByType(AffiliationType.PAST_INSTITUTION).get(0);
+        Affiliation primary = retrievedProfile.getOrcidActivities().getAffiliations().getAffiliationsByType(AffiliationType.CURRENT_PRIMARY_INSTITUTION).get(0);
+        Affiliation current = retrievedProfile.getOrcidActivities().getAffiliations().getAffiliationsByType(AffiliationType.CURRENT_INSTITUTION).get(0);
+        Affiliation past = retrievedProfile.getOrcidActivities().getAffiliations().getAffiliationsByType(AffiliationType.PAST_INSTITUTION).get(0);
 
         assertEquals("Primary Institution", primary.getAffiliationName());
         assertEquals("Current Institution", current.getAffiliationName());
@@ -236,17 +239,22 @@ public class OrcidSearchManagerImplTest extends BaseTest {
         OrcidProfile orcidProfile = new OrcidProfile();
         orcidProfile.setOrcid("6789");
         OrcidBio orcidBio = new OrcidBio();
+        orcidProfile.setOrcidBio(orcidBio);
         ContactDetails contactDetails = new ContactDetails();
         contactDetails.addOrReplacePrimaryEmail(new Email("don@semantico.com"));
         orcidBio.setContactDetails(contactDetails);
-        PersonalDetails personalDetails = new PersonalDetails();
 
+        PersonalDetails personalDetails = new PersonalDetails();
+        orcidBio.setPersonalDetails(personalDetails);
         personalDetails.setFamilyName(new FamilyName("Thomson"));
         personalDetails.setGivenNames(new GivenNames("Homer J"));
 
-        orcidBio.getAffiliations().add(createPastAffiliation());
-        orcidBio.setPersonalDetails(personalDetails);
-        orcidProfile.setOrcidBio(orcidBio);
+        OrcidActivities orcidActivities = new OrcidActivities();
+        orcidProfile.setOrcidActivities(orcidActivities);
+        Affiliations affiliations = new Affiliations();
+        orcidActivities.setAffiliations(affiliations);
+        affiliations.getAffiliation().add(createPastAffiliation());
+
         return orcidProfile;
     }
 
@@ -321,11 +329,16 @@ public class OrcidSearchManagerImplTest extends BaseTest {
         orcidBio.setPersonalDetails(personalDetails);
         orcidProfile.setOrcidBio(orcidBio);
 
-        orcidBio.getAffiliations().add(createPastAffiliation());
-        orcidBio.getAffiliations().add(createCurrentAffiliation());
-        orcidBio.getAffiliations().add(createCurrentPrimaryAffiliation());
+        OrcidActivities orcidActivities = new OrcidActivities();
+        orcidProfile.setOrcidActivities(orcidActivities);
+        Affiliations affiliations = new Affiliations();
+        orcidActivities.setAffiliations(affiliations);
+        affiliations.getAffiliation().add(createPastAffiliation());
+        affiliations.getAffiliation().add(createCurrentAffiliation());
+        affiliations.getAffiliation().add(createCurrentPrimaryAffiliation());
 
         OrcidWorks orcidWorks = new OrcidWorks();
+        orcidProfile.setOrcidWorks(orcidWorks);
         OrcidWork orcidWork1 = new OrcidWork();
         OrcidWork orcidWork2 = new OrcidWork();
         assignWorkIdentifers(orcidWork1, orcidWork2);
@@ -350,6 +363,7 @@ public class OrcidSearchManagerImplTest extends BaseTest {
         orcidProfile.setOrcidWorks(orcidWorks);
 
         OrcidGrants orcidGrants = new OrcidGrants();
+        orcidProfile.setOrcidGrants(orcidGrants);
         OrcidGrant orcidGrant1 = new OrcidGrant();
         orcidGrant1.setGrantNumber(new GrantNumber("grant1"));
         orcidGrant1.setShortDescription("Grant 1 - a short description");
@@ -362,8 +376,6 @@ public class OrcidSearchManagerImplTest extends BaseTest {
 
         orcidGrants.getOrcidGrant().add(orcidGrant1);
         orcidGrants.getOrcidGrant().add(orcidGrant2);
-        orcidProfile.setOrcidGrants(orcidGrants);
-        orcidProfile.setOrcidWorks(orcidWorks);
 
         return orcidProfile;
     }
@@ -406,9 +418,9 @@ public class OrcidSearchManagerImplTest extends BaseTest {
         affiliation.setAffiliationType(affiliationType);
         affiliation.setAffiliationName(instName);
         affiliation.setRoleTitle("A Role");
-        Address address = new Address();
-        address.setCountry(new Country("United Kingdom"));
-        affiliation.setAddress(address);
+        AffiliationAddress address = new AffiliationAddress();
+        address.setAffiliationCountry(new AffiliationCountry(Iso3166Country.GB));
+        affiliation.setAffiliationAddress(address);
         return affiliation;
     }
 }

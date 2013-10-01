@@ -41,6 +41,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.orcid.api.common.exception.OrcidBadRequestException;
+import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.oauth.OrcidOAuth2Authentication;
 import org.orcid.jaxb.model.message.ContactDetails;
 import org.orcid.jaxb.model.message.CreditName;
@@ -74,9 +75,12 @@ public class T2OrcidApiServiceVersionedDelegatorTest extends DBUnitTest {
     @Resource(name = "t2OrcidApiServiceDelegatorV1_0_14")
     private T2OrcidApiServiceDelegator t2OrcidApiServiceDelegator;
 
-    @Resource(name = "t2OrcidApiServiceDelegatorV1_0_20")
-    private T2OrcidApiServiceDelegator t2OrcidApiServiceDelegatorV20;
-    
+    @Resource
+    private OrcidProfileManager orcidProfileManager;
+   
+    @Resource(name = "t2OrcidApiServiceDelegatorV1_0_21")
+    private T2OrcidApiServiceDelegator t2OrcidApiServiceDelegatorV21;
+
     @Mock
     private UriInfo mockedUriInfo;
 
@@ -94,6 +98,7 @@ public class T2OrcidApiServiceVersionedDelegatorTest extends DBUnitTest {
     @After
     public void after() {
         SecurityContextHolder.clearContext();
+        orcidProfileManager.clearOrcidProfileCache();
     }
 
     @Test
@@ -157,7 +162,7 @@ public class T2OrcidApiServiceVersionedDelegatorTest extends DBUnitTest {
         Email email = new Email("madeupemail@semantico.com");
         orcidMessage.getOrcidProfile().getOrcidBio().getContactDetails().getEmail().add(email);
 
-        Response createResponse = t2OrcidApiServiceDelegatorV20.createProfile(mockedUriInfo, orcidMessage);
+        Response createResponse = t2OrcidApiServiceDelegatorV21.createProfile(mockedUriInfo, orcidMessage);
 
         assertNotNull(createResponse);
         assertEquals(HttpStatus.SC_CREATED, createResponse.getStatus());
@@ -202,7 +207,7 @@ public class T2OrcidApiServiceVersionedDelegatorTest extends DBUnitTest {
         Email email = new Email("madeupemail2@semantico.com");
         orcidMessage.getOrcidProfile().getOrcidBio().getContactDetails().getEmail().add(email);
 
-        Response createResponse = t2OrcidApiServiceDelegatorV20.createProfile(mockedUriInfo, orcidMessage);
+        Response createResponse = t2OrcidApiServiceDelegatorV21.createProfile(mockedUriInfo, orcidMessage);
 
         assertNotNull(createResponse);
         assertEquals(HttpStatus.SC_CREATED, createResponse.getStatus());
@@ -212,7 +217,7 @@ public class T2OrcidApiServiceVersionedDelegatorTest extends DBUnitTest {
 
         setUpSecurityContextForClientOnly("4444-4444-4444-4448");
 
-        Response readResponse = t2OrcidApiServiceDelegatorV20.findFullDetails(orcid);
+        Response readResponse = t2OrcidApiServiceDelegatorV21.findFullDetails(orcid);
         assertNotNull(readResponse);
         assertEquals(HttpStatus.SC_OK, readResponse.getStatus());
         OrcidMessage retrievedMessage = (OrcidMessage) readResponse.getEntity();

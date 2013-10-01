@@ -94,10 +94,10 @@ public class OrcidProfile implements Serializable {
 
     @XmlAttribute(name = "group-type")
     protected GroupType groupType;
-    
+
     @XmlAttribute(name = "client-type")
     protected ClientType clientType;
-    
+
     // TODO: Look into where this should be
     @XmlTransient
     private String password;
@@ -250,6 +250,25 @@ public class OrcidProfile implements Serializable {
 
     /**
      * 
+     * @return affiliations
+     */
+    public Affiliations retrieveAffiliations() {
+        return orcidActivities != null ? orcidActivities.getAffiliations() : null;
+    }
+
+    /**
+     * 
+     * @param affiliations
+     */
+    public void setAffiliations(Affiliations affiliations) {
+        if (orcidActivities == null) {
+            orcidActivities = new OrcidActivities();
+        }
+        this.orcidActivities.setAffiliations(affiliations);
+    }
+
+    /**
+     * 
      * @return
      */
     public OrcidWorks retrieveOrcidWorks() {
@@ -368,7 +387,7 @@ public class OrcidProfile implements Serializable {
     public void setGroupType(GroupType value) {
         this.groupType = value;
     }
-    
+
     /**
      * Gets the value of the clientType property.
      * 
@@ -389,12 +408,12 @@ public class OrcidProfile implements Serializable {
     public void setClientType(ClientType value) {
         this.clientType = value;
     }
-    
+
     /*
      * Gets the value of the orcidDeprecated property.
      * 
      * @return possible object is {@link OrcidDeprecated }
-     * */
+     */
     public OrcidDeprecated getOrcidDeprecated() {
         return orcidDeprecated;
     }
@@ -408,7 +427,6 @@ public class OrcidProfile implements Serializable {
     public void setOrcidDeprecated(OrcidDeprecated orcidDeprecated) {
         this.orcidDeprecated = orcidDeprecated;
     }
-
 
     public void downgradeToBioOnly() {
         setOrcidActivities(null);
@@ -498,9 +516,9 @@ public class OrcidProfile implements Serializable {
             return false;
         if (type != other.type)
             return false;
-        if(groupType != other.groupType)
+        if (groupType != other.groupType)
             return false;
-        if(clientType != other.clientType)
+        if (clientType != other.clientType)
             return false;
         if (verificationCode == null) {
             if (other.verificationCode != null)

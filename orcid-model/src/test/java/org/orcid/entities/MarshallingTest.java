@@ -31,7 +31,6 @@ import javax.xml.bind.Unmarshaller;
 
 import org.junit.Test;
 import org.orcid.jaxb.model.message.OrcidActivities;
-import org.orcid.jaxb.model.message.OrcidBio;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidPatent;
 import org.orcid.jaxb.model.message.OrcidPatents;
@@ -43,14 +42,14 @@ import org.orcid.jaxb.model.message.SourceName;
 
 /**
  * orcid-core - Oct 28, 2011 - PlaceholderTest
- *
+ * 
  * @author Declan Newman (declan)
  */
 
 public class MarshallingTest {
 
-    private static final List<String> GENESIS = new ArrayList<String>(Arrays
-            .asList("Peter Gabriel", "Tony Banks", "Anthony Phillips", "Mike Rutherford", "Chris Stewart"));
+    private static final List<String> GENESIS = new ArrayList<String>(
+            Arrays.asList("Peter Gabriel", "Tony Banks", "Anthony Phillips", "Mike Rutherford", "Chris Stewart"));
 
     @Test
     public void testMarshallingFullMessage() throws JAXBException {
@@ -59,10 +58,9 @@ public class MarshallingTest {
         OrcidProfile orcidProfile = orcidMessage.getOrcidProfile();
         assertNotNull(orcidProfile);
         assertEquals("4444-4444-4444-4446", orcidProfile.getOrcid().getValue());
-        OrcidBio orcidBio = orcidProfile.getOrcidBio();
-        assertEquals(2, orcidBio.getAffiliations().size());
         OrcidActivities orcidActivities = orcidProfile.getOrcidActivities();
         assertNotNull(orcidActivities);
+        assertEquals(4, orcidActivities.getAffiliations().getAffiliation().size());
         OrcidPatents orcidPatent = orcidActivities.getOrcidPatents();
         assertNotNull(orcidPatent);
         List<OrcidPatent> orcidPatents = orcidPatent.getOrcidPatent();

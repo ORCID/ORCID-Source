@@ -40,6 +40,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.jaxb.model.message.Address;
 import org.orcid.jaxb.model.message.Affiliation;
+import org.orcid.jaxb.model.message.AffiliationAddress;
 import org.orcid.jaxb.model.message.ApplicationSummary;
 import org.orcid.jaxb.model.message.Applications;
 import org.orcid.jaxb.model.message.Citation;
@@ -49,11 +50,13 @@ import org.orcid.jaxb.model.message.Contributor;
 import org.orcid.jaxb.model.message.CreditName;
 import org.orcid.jaxb.model.message.Delegation;
 import org.orcid.jaxb.model.message.DelegationDetails;
+import org.orcid.jaxb.model.message.DisambiguatedAffiliation;
 import org.orcid.jaxb.model.message.Email;
 import org.orcid.jaxb.model.message.ExternalIdentifier;
 import org.orcid.jaxb.model.message.ExternalIdentifiers;
 import org.orcid.jaxb.model.message.FamilyName;
 import org.orcid.jaxb.model.message.GivenNames;
+import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.jaxb.model.message.Keywords;
 import org.orcid.jaxb.model.message.OrcidBio;
 import org.orcid.jaxb.model.message.OrcidGrant;
@@ -210,6 +213,7 @@ public class JpaJaxbEntityAdapterToOrcidProfileTest extends DBUnitTest {
         assertNotNull(orcidProfile.getOrcidHistory());
         checkOrcidHistory(orcidProfile.getOrcidHistory());
 
+        checkAffiliations(orcidProfile.getOrcidActivities().getAffiliations().getAffiliation());
         assertNotNull(orcidProfile.retrieveOrcidWorks());
         checkOrcidWorks(orcidProfile.retrieveOrcidWorks());
         checkOrcidGrants(orcidProfile.retrieveOrcidGrants());
@@ -302,8 +306,6 @@ public class JpaJaxbEntityAdapterToOrcidProfileTest extends DBUnitTest {
     }
 
     private void checkOrcidProfile(OrcidBio orcidBio) {
-        assertNotNull(orcidBio.getAffiliations());
-        checkAffiliations(orcidBio.getAffiliations());
 
         checkPersonalDetails(orcidBio.getPersonalDetails());
         assertNotNull(orcidBio.getContactDetails());
@@ -373,12 +375,17 @@ public class JpaJaxbEntityAdapterToOrcidProfileTest extends DBUnitTest {
         assertEquals(1, affiliations.size());
         Affiliation affiliation = affiliations.get(0);
         assertEquals(Visibility.LIMITED, affiliation.getVisibility());
-        assertEquals("An institution", affiliation.getAffiliationName());
+        assertEquals("An Institution", affiliation.getAffiliationName());
         assertEquals("A Department", affiliation.getDepartmentName());
-        assertEquals("2010-07-02", affiliation.getStartDate().getValue().toXMLFormat());
-        assertEquals("2011-07-02", affiliation.getEndDate().getValue().toXMLFormat());
+        assertEquals("2010-07-02", affiliation.getStartDate().toString());
+        assertEquals("2011-07-02", affiliation.getEndDate().toString());
         assertEquals("Primary Researcher", affiliation.getRoleTitle());
-        checkAddress(affiliation.getAddress());
+        DisambiguatedAffiliation disambiguatedAffiliation = affiliation.getDisambiguatedAffiliation();
+        assertNotNull(disambiguatedAffiliation);
+        assertEquals("abc456", disambiguatedAffiliation.getDisambiguatedAffiliationIdentifier());
+        assertEquals("WDB", disambiguatedAffiliation.getDisambiguationSource());
+
+        checkAddress(affiliation.getAffiliationAddress());
 
     }
 
@@ -437,9 +444,9 @@ public class JpaJaxbEntityAdapterToOrcidProfileTest extends DBUnitTest {
 
     }
 
-    private void checkAddress(Address address) {
+    private void checkAddress(AffiliationAddress address) {
         assertNotNull(address);
-        assertEquals("England", address.getCountry().getContent());
+        assertEquals(Iso3166Country.GB, address.getAffiliationCountry().getValue());
     }
 
     private void checkApplications(Applications applications) {

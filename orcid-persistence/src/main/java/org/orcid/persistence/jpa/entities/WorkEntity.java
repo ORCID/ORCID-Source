@@ -61,7 +61,7 @@ public class WorkEntity extends BaseEntity<Long> implements Comparable<WorkEntit
     private String journalTitle;
     private CitationType citationType;
     private WorkType workType;
-    private FuzzyDate publicationDate;
+    private PublicationDateEntity publicationDate;
     private String contributorsJson;
     private SortedSet<WorkContributorEntity> contributors;
     private SortedSet<WorkExternalIdentifierEntity> externalIdentifiers;
@@ -82,7 +82,7 @@ public class WorkEntity extends BaseEntity<Long> implements Comparable<WorkEntit
      * @return the publicationDate
      */
     @Column(name = "publication_date")
-    public FuzzyDate getPublicationDate() {
+    public PublicationDateEntity getPublicationDate() {
         return publicationDate;
     }
 
@@ -90,7 +90,7 @@ public class WorkEntity extends BaseEntity<Long> implements Comparable<WorkEntit
      * @param publicationDate
      *            the publicationDate to set
      */
-    public void setPublicationDate(FuzzyDate publicationDate) {
+    public void setPublicationDate(PublicationDateEntity publicationDate) {
         this.publicationDate = publicationDate;
     }
 

@@ -21,11 +21,11 @@ import java.util.List;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
 import org.orcid.jaxb.model.message.Address;
 import org.orcid.jaxb.model.message.Affiliation;
+import org.orcid.jaxb.model.message.Affiliations;
 import org.orcid.jaxb.model.message.Biography;
 import org.orcid.jaxb.model.message.Claimed;
 import org.orcid.jaxb.model.message.ContactDetails;
 import org.orcid.jaxb.model.message.Contributor;
-import org.orcid.jaxb.model.message.Country;
 import org.orcid.jaxb.model.message.CreditName;
 import org.orcid.jaxb.model.message.Email;
 import org.orcid.jaxb.model.message.ExternalIdentifiers;
@@ -85,24 +85,22 @@ public class OrcidJaxbCopyUtils {
         copyUpdatedKeywordsToExistingPreservingVisibility(existing, updated);
         copyUpdatedShortDescriptionToExistingPreservingVisibility(existing, updated);
         copyUpdatedExternalIdentifiersToExistingPreservingVisibility(existing, updated);
-        copyAffiliationsToExistingPreservingVisibility(existing, updated);
-
     }
 
-    public static void copyAffiliationsToExistingPreservingVisibility(OrcidBio existing, OrcidBio updated) {
-        if (updated.getAffiliations() == null || updated.getAffiliations().isEmpty()) {
+    public static void copyAffiliationsToExistingPreservingVisibility(Affiliations existingAffiliations, Affiliations updatedAffiliations) {
+        if (updatedAffiliations == null) {
             return;
         }
-        List<Affiliation> existingAffiliations = existing.getAffiliations();
-        List<Affiliation> updatedAffiliations = updated.getAffiliations();
-
-        if (updatedAffiliations != null && !updatedAffiliations.isEmpty()) {
-            for (Affiliation updatedAffiliation : updatedAffiliations) {
-                mergeAffiliations(existingAffiliations, updatedAffiliation);
-            }
+        List<Affiliation> updatedAffiliationsList = updatedAffiliations.getAffiliation();
+        if (updatedAffiliationsList.isEmpty()) {
+            return;
         }
-        existing.getAffiliations().clear();
-        existing.getAffiliations().addAll(updatedAffiliations);
+        List<Affiliation> existingAffiliationsList = existingAffiliations.getAffiliation();
+        for (Affiliation updatedAffiliation : updatedAffiliationsList) {
+            mergeAffiliations(existingAffiliationsList, updatedAffiliation);
+        }
+        existingAffiliationsList.clear();
+        existingAffiliationsList.addAll(updatedAffiliationsList);
     }
 
     public static void copyUpdatedExternalIdentifiersToExistingPreservingVisibility(OrcidBio existing, OrcidBio updated) {
@@ -365,54 +363,11 @@ public class OrcidJaxbCopyUtils {
             } else if (updatedAffiliation.getVisibility() == null && likelyExistingAffiliateInstitutionNameVisibility != null) {
                 updatedAffiliation.setVisibility(likelyExistingAffiliateInstitutionNameVisibility);
             }
-            updatedAffiliation.setAddress(addressWithPreservedCountryVisibility(likelyExisting.getAddress(), updatedAffiliation.getAddress()));
-
         } else {
             // if you can't match this type, default its value if null
             updatedAffiliation.setVisibility(updatedAffiliation.getVisibility() != null ? updatedAffiliation.getVisibility()
                     : OrcidVisibilityDefaults.AFFILIATE_NAME_DEFAULT.getVisibility());
-            if (updatedAffiliation.getAddress() != null && updatedAffiliation.getAddress().getCountry() != null) {
-                Visibility resolvedVisibility = updatedAffiliation.getAddress().getCountry().getVisibility() != null ? updatedAffiliation.getAddress().getCountry()
-                        .getVisibility() : OrcidVisibilityDefaults.COUNTRY_DEFAULT.getVisibility();
-
-                updatedAffiliation.getAddress().getCountry().setVisibility(resolvedVisibility);
-            }
         }
-
-    }
-
-    private static Address addressWithPreservedCountryVisibility(Address existing, Address updated) {
-
-        if (updated == null) {
-
-            updated = existing;
-            // can't be sure that existing wasn't also null..
-            Country updatedCountry = updated != null && updated.getCountry() != null ? updated.getCountry() : null;
-            if (updatedCountry != null && updatedCountry.getVisibility() == null) {
-                updatedCountry.setVisibility(OrcidVisibilityDefaults.COUNTRY_DEFAULT.getVisibility());
-                // return updated;
-            }
-        } else if (updated != null && updated.getCountry() == null) {
-
-            if (existing.getCountry() != null) {
-                updated.setCountry(existing.getCountry());
-                // either way find a default for the updated country visibility
-                if (updated.getCountry().getVisibility() == null) {
-                    updated.getCountry().setVisibility(OrcidVisibilityDefaults.COUNTRY_DEFAULT.getVisibility());
-                }
-                // return updated;
-            }
-        } else if (updated.getCountry() != null && updated.getCountry().getVisibility() == null) {
-
-            if (existing != null && existing.getCountry().getVisibility() != null) {
-                updated.getCountry().setVisibility(existing.getCountry().getVisibility());
-            } else {
-                updated.getCountry().setVisibility(OrcidVisibilityDefaults.COUNTRY_DEFAULT.getVisibility());
-            }
-
-        }
-
-        return updated;
     }
 
 }
