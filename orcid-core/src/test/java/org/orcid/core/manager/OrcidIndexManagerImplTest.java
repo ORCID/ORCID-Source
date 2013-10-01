@@ -32,11 +32,12 @@ import org.mockito.Mock;
 import org.orcid.core.BaseTest;
 import org.orcid.core.manager.impl.OrcidIndexManagerImpl;
 import org.orcid.core.security.visibility.filter.VisibilityFilter;
-import org.orcid.jaxb.model.message.Address;
 import org.orcid.jaxb.model.message.Affiliation;
+import org.orcid.jaxb.model.message.AffiliationAddress;
+import org.orcid.jaxb.model.message.AffiliationCountry;
 import org.orcid.jaxb.model.message.AffiliationType;
+import org.orcid.jaxb.model.message.Affiliations;
 import org.orcid.jaxb.model.message.ContactDetails;
-import org.orcid.jaxb.model.message.Country;
 import org.orcid.jaxb.model.message.CreditName;
 import org.orcid.jaxb.model.message.Email;
 import org.orcid.jaxb.model.message.ExternalIdOrcid;
@@ -46,8 +47,10 @@ import org.orcid.jaxb.model.message.ExternalIdentifiers;
 import org.orcid.jaxb.model.message.FamilyName;
 import org.orcid.jaxb.model.message.GivenNames;
 import org.orcid.jaxb.model.message.GrantNumber;
+import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.jaxb.model.message.Keyword;
 import org.orcid.jaxb.model.message.Keywords;
+import org.orcid.jaxb.model.message.OrcidActivities;
 import org.orcid.jaxb.model.message.OrcidBio;
 import org.orcid.jaxb.model.message.OrcidGrant;
 import org.orcid.jaxb.model.message.OrcidGrants;
@@ -249,7 +252,7 @@ public class OrcidIndexManagerImplTest extends BaseTest {
 
     private OrcidProfile orcidProfileLimitedVisiblityAffiliations() {
         OrcidProfile limitedOrcid = getStandardOrcid();
-        List<Affiliation> affiliations = limitedOrcid.getOrcidBio().getAffiliations();
+        List<Affiliation> affiliations = limitedOrcid.getOrcidActivities().getAffiliations().getAffiliation();
         for (Affiliation affiliation : affiliations) {
             affiliation.setVisibility(Visibility.LIMITED);
         }
@@ -268,17 +271,22 @@ public class OrcidIndexManagerImplTest extends BaseTest {
         OrcidProfile orcidProfile = new OrcidProfile();
         orcidProfile.setOrcid("5678");
         OrcidBio orcidBio = new OrcidBio();
+        orcidProfile.setOrcidBio(orcidBio);
         ContactDetails contactDetails = new ContactDetails();
         contactDetails.addOrReplacePrimaryEmail(new Email("stan@test.com"));
         orcidBio.setContactDetails(contactDetails);
         PersonalDetails personalDetails = new PersonalDetails();
         personalDetails.setFamilyName(new FamilyName("Logan"));
         personalDetails.setGivenNames(new GivenNames("Donald Edward"));
-
-        Affiliation affiliation = createPrimaryAffiliation("University of Portsmouth");
-        orcidBio.getAffiliations().add(affiliation);
         orcidBio.setPersonalDetails(personalDetails);
-        orcidProfile.setOrcidBio(orcidBio);
+
+        OrcidActivities orcidActivities = new OrcidActivities();
+        orcidProfile.setOrcidActivities(orcidActivities);
+        Affiliations affiliations = new Affiliations();
+        orcidActivities.setAffiliations(affiliations);
+        Affiliation affiliation = createPrimaryAffiliation("University of Portsmouth");
+        affiliations.getAffiliation().add(affiliation);
+
         return orcidProfile;
     }
 
@@ -425,14 +433,6 @@ public class OrcidIndexManagerImplTest extends BaseTest {
         personalDetails.setGivenNames(new GivenNames("givenNames"));
         orcidBio.setPersonalDetails(personalDetails);
 
-        Affiliation pastInst1 = createPastAffiliation("Past Inst 1");
-        Affiliation pastInst2 = createPastAffiliation("Past Inst 2");
-        Affiliation primaryInst1 = createPrimaryAffiliation("Primary Inst1");
-
-        Affiliation currentAffiliation1 = createCurrentNonPrimaryAffiliation("Current Inst1");
-        currentAffiliation1.setVisibility(Visibility.LIMITED);
-        Affiliation currentAffiliation2 = createCurrentNonPrimaryAffiliation("Current Inst2");
-
         ExternalIdentifiers externalIdentifiers = new ExternalIdentifiers();
         externalIdentifiers.setVisibility(Visibility.PUBLIC);
         orcidBio.setExternalIdentifiers(externalIdentifiers);
@@ -441,11 +441,24 @@ public class OrcidIndexManagerImplTest extends BaseTest {
         ExternalIdentifier externalIdentifier2 = createExternalIdentifier("54321", "abc123");
         externalIdentifiers.getExternalIdentifier().add(externalIdentifier2);
 
-        orcidBio.getAffiliations().add(pastInst1);
-        orcidBio.getAffiliations().add(pastInst2);
-        orcidBio.getAffiliations().add(primaryInst1);
-        orcidBio.getAffiliations().add(currentAffiliation1);
-        orcidBio.getAffiliations().add(currentAffiliation2);
+        OrcidActivities orcidActivities = new OrcidActivities();
+        orcidProfile.setOrcidActivities(orcidActivities);
+        Affiliations affiliations = new Affiliations();
+        orcidActivities.setAffiliations(affiliations);
+
+        Affiliation pastInst1 = createPastAffiliation("Past Inst 1");
+        Affiliation pastInst2 = createPastAffiliation("Past Inst 2");
+        Affiliation primaryInst1 = createPrimaryAffiliation("Primary Inst1");
+
+        Affiliation currentAffiliation1 = createCurrentNonPrimaryAffiliation("Current Inst1");
+        currentAffiliation1.setVisibility(Visibility.LIMITED);
+        Affiliation currentAffiliation2 = createCurrentNonPrimaryAffiliation("Current Inst2");
+
+        affiliations.getAffiliation().add(pastInst1);
+        affiliations.getAffiliation().add(pastInst2);
+        affiliations.getAffiliation().add(primaryInst1);
+        affiliations.getAffiliation().add(currentAffiliation1);
+        affiliations.getAffiliation().add(currentAffiliation2);
 
         OrcidWorks orcidWorks = new OrcidWorks();
         OrcidWork orcidWork1 = new OrcidWork();
@@ -586,9 +599,9 @@ public class OrcidIndexManagerImplTest extends BaseTest {
         affiliation.setAffiliationType(affiliationType);
         affiliation.setAffiliationName(instName);
         affiliation.setRoleTitle("A Role");
-        Address address = new Address();
-        address.setCountry(new Country("United Kingdom"));
-        affiliation.setAddress(address);
+        AffiliationAddress address = new AffiliationAddress();
+        address.setAffiliationCountry(new AffiliationCountry(Iso3166Country.GB));
+        affiliation.setAffiliationAddress(address);
         affiliation.setVisibility(Visibility.PUBLIC);
         return affiliation;
     }

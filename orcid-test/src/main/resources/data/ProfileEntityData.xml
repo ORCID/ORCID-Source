@@ -51,7 +51,7 @@
             group_orcid="4444-4444-4444-4446"
             biography="Terence Alan Patrick Seán 'Spike' Milligan KBE (16 April 1918 – 27 February 2002) was a comedian, writer, musician, poet, playwright, soldier and actor."
             indexing_status="DONE"
-            iso2_country="UK"
+            iso2_country="GB"
             orcid_type="CLIENT"
             client_type="PREMIUM_CREATOR"
             />
@@ -123,7 +123,7 @@
             group_orcid="4444-4444-4444-4446"
             biography="Richard Henry Sellers, CBE (8 September 1925 – 24 July 1980), known as Peter Sellers, was a British film actor, comedian and singer."
             indexing_status="DONE"
-            iso2_country="UK"
+            iso2_country="GB"
             orcid_type="CLIENT"
             client_type="PREMIUM_CREATOR"
             />
@@ -404,37 +404,71 @@
             country="England"
             />
 
-    <institution
+    <org_disambiguated
             id="1"
-            institution_name="An institution"
-            address_id="1"
+            name="An Institution"
+            city="London"
+            country="GB"
+            source_id="abc456"
+            source_type="WDB"
+            />
+    
+    <org
+            id="1"
+            name="An institution"
+            city="London"
+            country="GB"
+            org_disambiguated_id="1"
+            />
+            
+    <org
+            id="2"
+            name="Another Institution"
+            city="Glasgow"
+            country="GB"
+            />
+            
+    <org
+            id="3"
+            name="Eine Institution"
+            city="Berlin"
+            country="DE"
             />
 
-    <affiliation
-            institution_id="1"
+    <org_affiliation_relation
+            id="1"
+            org_id="1"
             orcid="4444-4444-4444-4442"
-            role_title="Primary Researcher"
-            department_name="A Department"
+            org_affiliation_relation_role="CURRENT_PRIMARY_INSTITUTION"
+            org_affiliation_relation_title="Primary Researcher"
+            department="A Department"
             date_created="2010-07-02 15:31:00.00"
             last_modified="2010-07-02 15:31:00.00"
-            start_date="2010-07-02 15:31:00.00"
-            end_date="2011-07-02 15:31:00.00"
-            affiliation_details_visibility="PUBLIC"
-            affiliation_type="CURRENT_PRIMARY_INSTITUTION"
-            affiliation_address_visibility="PUBLIC"
+            start_year="2010"
+            start_month="07"
+            start_day="02"
+            end_year="2011"
+            end_month="07"
+            end_day="02"
+            visibility="PUBLIC"
             />
 
-    <affiliation
-            institution_id="1"
+    <org_affiliation_relation
+            id="2"
+            org_id="1"
             orcid="4444-4444-4444-4443"
-            role_title="Primary Researcher"
-            department_name="A Department"
+            org_affiliation_relation_role="CURRENT_PRIMARY_INSTITUTION"
+            org_affiliation_relation_title="Primary Researcher"
+            department="A Department"
             date_created="2010-07-02 15:31:00.00"
             last_modified="2010-07-02 15:31:00.00"
-            start_date="2010-07-02 15:31:00.00"
-            end_date="2011-07-02 15:31:00.00"
-            affiliation_details_visibility="LIMITED"
-            affiliation_type="CURRENT_PRIMARY_INSTITUTION"
+            start_year="2010"
+            start_month="07"
+            start_day="02"
+            end_year="2011"
+            end_month="07"
+            end_day="02"
+            visibility="LIMITED"
             />
 
     <given_permission_to

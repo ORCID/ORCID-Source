@@ -429,7 +429,7 @@ public class RDFMessageBodyWriter implements MessageBodyWriter<OrcidMessage> {
         Address addr = contactDetails.getAddress();
         if (addr != null) {
             if (addr.getCountry() != null) {
-                String country = addr.getCountry().getContent();
+                String country = addr.getCountry().getValue().name();
                 // TODO: Add a proper 'country' property
                 Individual position = m.createIndividual(null, null);
                 position.addLabel(country, null);

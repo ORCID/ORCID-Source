@@ -16,6 +16,7 @@
  */
 package org.orcid.api.t2.server;
 
+import static org.orcid.api.common.OrcidApiConstants.AFFILIATIONS_PATH;
 import static org.orcid.api.common.OrcidApiConstants.APPLICATION_RDFXML;
 import static org.orcid.api.common.OrcidApiConstants.BIO_PATH;
 import static org.orcid.api.common.OrcidApiConstants.BIO_SEARCH_PATH;
@@ -84,7 +85,7 @@ abstract public class T2OrcidApiServiceImplBase implements T2OrcidApiService<Res
     final static Counter T2_SEARCH_RESULTS_NONE_FOUND = Metrics.newCounter(T2OrcidApiServiceImplBase.class, "T2-SEARCH-RESULTS-NONE-FOUND");
     final static Counter T2_SEARCH_RESULTS_FOUND = Metrics.newCounter(T2OrcidApiServiceImplBase.class, "T2-SEARCH-RESULTS-FOUND");
 
-    @Resource(name="orcidT2ServiceDelegator")
+    @Resource(name = "orcidT2ServiceDelegator")
     private T2OrcidApiServiceDelegator serviceDelegator;
 
     @Resource
@@ -294,6 +295,57 @@ abstract public class T2OrcidApiServiceImplBase implements T2OrcidApiService<Res
     }
 
     /**
+     * GETs the HTML representation of the ORCID record containing only
+     * affiliation details
+     * 
+     * @param orcid
+     *            the ORCID that corresponds to the user's record
+     * @return the HTML representation of the ORCID record
+     */
+    @Override
+    @GET
+    @Produces(value = { MediaType.TEXT_HTML })
+    @Path(AFFILIATIONS_PATH)
+    public Response viewAffiliationsDetailsHtml(@PathParam("orcid") String orcid) {
+        T2_GET_REQUESTS.inc();
+        Response response = serviceDelegator.findAffiliationsDetails(orcid);
+        return Response.fromResponse(response).header("Content-Disposition", "attachment; filename=\"" + orcid + "-affiliations.xml\"").build();
+    }
+
+    /**
+     * GETs the XML representation of the ORCID record containing only
+     * affiliation details
+     * 
+     * @param orcid
+     *            the ORCID that corresponds to the user's record
+     * @return the XML representation of the ORCID record
+     */
+    @GET
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
+    @Path(AFFILIATIONS_PATH)
+    public Response viewAffiliationsDetailsXml(@PathParam("orcid") String orcid) {
+        T2_GET_REQUESTS.inc();
+        return serviceDelegator.findAffiliationsDetails(orcid);
+    }
+
+    /**
+     * GETs the JSON representation of the ORCID record containing only
+     * affiliation details
+     * 
+     * @param orcid
+     *            the ORCID that corresponds to the user's record
+     * @return the JSON representation of the ORCID record
+     */
+    @Override
+    @GET
+    @Produces(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(AFFILIATIONS_PATH)
+    public Response viewAffiliationsDetailsJson(@PathParam("orcid") String orcid) {
+        T2_GET_REQUESTS.inc();
+        return serviceDelegator.findAffiliationsDetails(orcid);
+    }
+
+    /**
      * GETs the HTML representation of the ORCID record containing only work
      * details
      * 
@@ -308,7 +360,7 @@ abstract public class T2OrcidApiServiceImplBase implements T2OrcidApiService<Res
     public Response viewWorksDetailsHtml(@PathParam("orcid") String orcid) {
         T2_GET_REQUESTS.inc();
         Response response = serviceDelegator.findWorksDetails(orcid);
-        return Response.fromResponse(response).header("Content-Disposition", "attachment; filename=\"" + orcid + "-bio.xml\"").build();
+        return Response.fromResponse(response).header("Content-Disposition", "attachment; filename=\"" + orcid + "-works.xml\"").build();
     }
 
     /**
@@ -412,7 +464,7 @@ abstract public class T2OrcidApiServiceImplBase implements T2OrcidApiService<Res
     }
 
     /**
-     * POST an XML representation of the ORCID work containing only works
+     * POST an XML representation of the ORCID record containing only works
      * details
      * 
      * @param orcid
@@ -430,7 +482,7 @@ abstract public class T2OrcidApiServiceImplBase implements T2OrcidApiService<Res
     }
 
     /**
-     * POST a JSON representation of the ORCID work containing only works
+     * POST a JSON representation of the ORCID record containing only works
      * details
      * 
      * @param orcid
@@ -448,7 +500,8 @@ abstract public class T2OrcidApiServiceImplBase implements T2OrcidApiService<Res
     }
 
     /**
-     * PUT an XML representation of the ORCID work containing only works details
+     * PUT an XML representation of the ORCID record containing only works
+     * details
      * 
      * @param orcid
      *            the ORCID that corresponds to the user's record
@@ -465,7 +518,8 @@ abstract public class T2OrcidApiServiceImplBase implements T2OrcidApiService<Res
     }
 
     /**
-     * PUT a JSON representation of the ORCID work containing only works details
+     * PUT a JSON representation of the ORCID record containing only works
+     * details
      * 
      * @param orcid
      *            the ORCID that corresponds to the user's record
@@ -479,6 +533,78 @@ abstract public class T2OrcidApiServiceImplBase implements T2OrcidApiService<Res
     public Response updateWorksJson(@PathParam("orcid") String orcid, OrcidMessage orcidMessage) {
         T2_PUT_REQUESTS.inc();
         return serviceDelegator.updateWorks(uriInfo, orcid, orcidMessage);
+    }
+
+    /**
+     * POST an XML representation of the ORCID record containing only
+     * affiliations details
+     * 
+     * @param orcid
+     *            the ORCID that corresponds to the user's record
+     * @return the XML representation of the ORCID record including the added
+     *         affiliation(s)
+     */
+    @POST
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
+    @Consumes(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, MediaType.WILDCARD })
+    @Path(AFFILIATIONS_PATH)
+    public Response addAffiliationsXml(@PathParam("orcid") String orcid, OrcidMessage orcidMessage) {
+        T2_POST_REQUESTS.inc();
+        return serviceDelegator.addAffiliations(uriInfo, orcid, orcidMessage);
+    }
+
+    /**
+     * POST a JSON representation of the ORCID record containing only
+     * affiliations details
+     * 
+     * @param orcid
+     *            the ORCID that corresponds to the user's record
+     * @return the JSON representation of the ORCID record including the added
+     *         affiliation(s)
+     */
+    @POST
+    @Produces(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Consumes(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(AFFILIATIONS_PATH)
+    public Response addAffiliationsJson(@PathParam("orcid") String orcid, OrcidMessage orcidMessage) {
+        T2_POST_REQUESTS.inc();
+        return serviceDelegator.addAffiliations(uriInfo, orcid, orcidMessage);
+    }
+
+    /**
+     * PUT an XML representation of the ORCID record containing only
+     * affiliations details
+     * 
+     * @param orcid
+     *            the ORCID that corresponds to the user's record
+     * @return the XML representation of the ORCID record including the added
+     *         affiliation(s)
+     */
+    @PUT
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
+    @Consumes(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, MediaType.WILDCARD })
+    @Path(AFFILIATIONS_PATH)
+    public Response updateAffiliationsXml(@PathParam("orcid") String orcid, OrcidMessage orcidMessage) {
+        T2_PUT_REQUESTS.inc();
+        return serviceDelegator.updateAffiliations(uriInfo, orcid, orcidMessage);
+    }
+
+    /**
+     * PUT a JSON representation of the ORCID record containing only
+     * affiliations details
+     * 
+     * @param orcid
+     *            the ORCID that corresponds to the user's record
+     * @return the JSON representation of the ORCID record including the added
+     *         affiliation(s)
+     */
+    @PUT
+    @Produces(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Consumes(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(AFFILIATIONS_PATH)
+    public Response updateAffiliationsJson(@PathParam("orcid") String orcid, OrcidMessage orcidMessage) {
+        T2_PUT_REQUESTS.inc();
+        return serviceDelegator.updateAffiliations(uriInfo, orcid, orcidMessage);
     }
 
     /**

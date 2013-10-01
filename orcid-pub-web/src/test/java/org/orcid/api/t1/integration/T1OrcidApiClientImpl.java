@@ -87,8 +87,8 @@ public class T1OrcidApiClientImpl implements OrcidApiService<ClientResponse> {
     }
 
     /**
-     * GETs the RDF Turtle representation of the ORCID record containing only the
-     * Biography details
+     * GETs the RDF Turtle representation of the ORCID record containing only
+     * the Biography details
      * 
      * @param orcid
      *            the ORCID that corresponds to the user's record
@@ -184,6 +184,45 @@ public class T1OrcidApiClientImpl implements OrcidApiService<ClientResponse> {
     @Override
     public ClientResponse viewFullDetailsJson(@PathParam("orcid") String orcid) {
         return orcidClientHelper.getClientResponse(UriBuilder.fromPath(PROFILE_GET_PATH).build(orcid), VND_ORCID_JSON);
+    }
+
+    /**
+     * GETs the HTML representation of the ORCID record containing only affiliation
+     * details
+     * 
+     * @param orcid
+     *            the ORCID that corresponds to the user's record
+     * @return the HTML representation of the ORCID record
+     */
+    @Override
+    public ClientResponse viewAffiliationsDetailsHtml(@PathParam("orcid") String orcid) {
+        return orcidClientHelper.getClientResponse(UriBuilder.fromPath(AFFILIATIONS_PATH).build(orcid), MediaType.TEXT_HTML);
+    }
+
+    /**
+     * GETs the XML representation of the ORCID record containing only affiliation
+     * details
+     * 
+     * @param orcid
+     *            the ORCID that corresponds to the user's record
+     * @return the XML representation of the ORCID record
+     */
+    @Override
+    public ClientResponse viewAffiliationsDetailsXml(@PathParam("orcid") String orcid) {
+        return orcidClientHelper.getClientResponse(UriBuilder.fromPath(AFFILIATIONS_PATH).build(orcid), VND_ORCID_XML);
+    }
+
+    /**
+     * GETs the JSON representation of the ORCID record containing only affiliation
+     * details
+     * 
+     * @param orcid
+     *            the ORCID that corresponds to the user's record
+     * @return the JSON representation of the ORCID record
+     */
+    @Override
+    public ClientResponse viewAffiliationsDetailsJson(@PathParam("orcid") String orcid) {
+        return orcidClientHelper.getClientResponse(UriBuilder.fromPath(AFFILIATIONS_PATH).build(orcid), VND_ORCID_JSON);
     }
 
     /**

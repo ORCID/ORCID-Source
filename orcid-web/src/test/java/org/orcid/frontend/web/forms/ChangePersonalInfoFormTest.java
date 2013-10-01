@@ -37,7 +37,7 @@ public class ChangePersonalInfoFormTest {
         changePersonalInfoForm.setOtherNamesVisibility("limited");
         changePersonalInfoForm.setBiography("my biography");
         changePersonalInfoForm.setKeywordsDelimited("The;Wicker;Fudd");
-        changePersonalInfoForm.setIsoCountryCode("UK");
+        changePersonalInfoForm.setIsoCountryCode("GB");
         changePersonalInfoForm.setWebsiteUrl("www.bbc.co.uk");
         changePersonalInfoForm.setWebsiteUrlText("Ok this might not be my site");
         changePersonalInfoForm.mergeOrcidBioDetails(profile);
@@ -60,7 +60,7 @@ public class ChangePersonalInfoFormTest {
         changePersonalInfoForm.setOtherNamesVisibility("limited");
         changePersonalInfoForm.setBiography("my biography");
         changePersonalInfoForm.setKeywordsDelimited("The;Wicker;Fudd");
-        changePersonalInfoForm.setIsoCountryCode("UK");
+        changePersonalInfoForm.setIsoCountryCode("GB");
         changePersonalInfoForm.setWebsiteUrl("www.bbc.co.uk");
         changePersonalInfoForm.setWebsiteUrlText("Ok this might not be my site");
         changePersonalInfoForm.mergeOrcidBioDetails(profile);
@@ -83,7 +83,7 @@ public class ChangePersonalInfoFormTest {
         changePersonalInfoForm.setOtherNamesVisibility("limited");
         changePersonalInfoForm.setBiography("my biography");
         changePersonalInfoForm.setKeywordsDelimited("The;Wicker;Fudd;Fudd;Wicker;The");
-        changePersonalInfoForm.setIsoCountryCode("UK");
+        changePersonalInfoForm.setIsoCountryCode("GB");
         changePersonalInfoForm.setWebsiteUrl("www.bbc.co.uk");
         changePersonalInfoForm.setWebsiteUrlText("Ok this might not be my site");
         changePersonalInfoForm.mergeOrcidBioDetails(profile);

@@ -59,11 +59,11 @@ import org.orcid.core.manager.OrcidProfileCleaner;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.security.OrcidWebRole;
-import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
 import org.orcid.core.security.visibility.aop.VisibilityControl;
 import org.orcid.core.utils.OrcidJaxbCopyUtils;
 import org.orcid.core.utils.ReleaseNameUtils;
 import org.orcid.jaxb.model.message.Affiliation;
+import org.orcid.jaxb.model.message.Affiliations;
 import org.orcid.jaxb.model.message.Biography;
 import org.orcid.jaxb.model.message.Claimed;
 import org.orcid.jaxb.model.message.ContactDetails;
@@ -114,6 +114,7 @@ import org.orcid.persistence.jpa.entities.EmailEventType;
 import org.orcid.persistence.jpa.entities.IndexingStatus;
 import org.orcid.persistence.jpa.entities.OrcidGrantedAuthority;
 import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
+import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileWorkEntity;
 import org.orcid.utils.DateUtils;
@@ -158,6 +159,9 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
 
     @Resource
     private ProfileWorkDao profileWorkDao;
+
+    @Resource
+    private GenericDao<OrgAffiliationRelationEntity, Long> orgAffilationRelationDao;
 
     @Resource
     private EmailDao emailDao;
@@ -271,10 +275,13 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         if (existingProfileEntity != null) {
             profileDao.removeChildrenWithGeneratedIds(existingProfileEntity);
             setWorkPrivacy(orcidProfile, existingProfileEntity.getWorkVisibilityDefault());
+            setAffiliationPrivacy(orcidProfile, existingProfileEntity.getWorkVisibilityDefault());
         }
         dedupeProfileWorks(orcidProfile);
+        dedupeAffiliations(orcidProfile);
         addSourceToEmails(orcidProfile, existingProfileEntity, amenderOrcid);
         addSourceToWorks(orcidProfile, amenderOrcid);
+        addSourceToAffiliations(orcidProfile, amenderOrcid);
         ProfileEntity profileEntity = adapter.toProfileEntity(orcidProfile, existingProfileEntity);
         profileEntity.setLastModified(new Date());
         profileEntity.setIndexingStatus(IndexingStatus.PENDING);
@@ -361,6 +368,27 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         }
     }
 
+    /**
+     * Add source to the affiliations
+     * 
+     * @param orcidProfile
+     *            The profile
+     * @param amenderOrcid
+     *            The orcid of the user or client that is adding the affiliation
+     *            to the profile user
+     * */
+    private void addSourceToAffiliations(OrcidProfile orcidProfile, String amenderOrcid) {
+        Affiliations affiliations = orcidProfile.getOrcidActivities() == null ? null : orcidProfile.getOrcidActivities().getAffiliations();
+
+        if (affiliations != null && !affiliations.getAffiliation().isEmpty()) {
+            for (Affiliation affiliation : affiliations.getAffiliation()) {
+                if (affiliation.getSource() == null || StringUtils.isEmpty(affiliation.getSource().getSourceOrcid().getValue()))
+                    affiliation.setSource(new Source(amenderOrcid));
+            }
+        }
+
+    }
+
     private void setWorkPrivacy(OrcidProfile updatedOrcidProfile, Visibility defaultWorkVisibility) {
         OrcidHistory orcidHistory = updatedOrcidProfile.getOrcidHistory();
         boolean isClaimed = orcidHistory != null ? orcidHistory.getClaimed().isValue() : false;
@@ -421,6 +449,24 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         }
         return profile;
     }
+    
+    /**
+     * Retrieves the orcid affiliations given an identifier
+     * 
+     * @param orcid
+     *            the identifier
+     * @return the orcid profile with only the affiliations populated
+     */
+    @Override
+    @Transactional
+    public OrcidProfile retrieveClaimedAffiliations(String orcid) {
+        OrcidProfile profile = retrieveClaimedOrcidProfile(orcid);
+        if (profile != null) {
+            profile.downgradeToAffiliationsOnly();
+        }
+        return profile;
+    }
+
 
     /**
      * Retrieves the orcid works given an identifier
@@ -760,7 +806,26 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         if (existingProfile == null) {
             return null;
         }
-        OrcidJaxbCopyUtils.copyUpdatedBioToExistingWithVisibility(existingProfile.getOrcidBio(), updatedOrcidProfile.getOrcidBio());
+        OrcidActivities updatedActivities = updatedOrcidProfile.getOrcidActivities();
+        if (updatedActivities == null) {
+            return null;
+        }
+        Affiliations updatedAffiliations = updatedActivities.getAffiliations();
+        if (updatedAffiliations == null) {
+            return null;
+        }
+        OrcidActivities existingActivities = existingProfile.getOrcidActivities();
+        if (existingActivities == null) {
+            existingActivities = new OrcidActivities();
+            existingProfile.setOrcidActivities(existingActivities);
+        }
+        Affiliations existingAffiliations = existingActivities.getAffiliations();
+        if (existingAffiliations == null) {
+            existingAffiliations = new Affiliations();
+            existingActivities.setAffiliations(existingAffiliations);
+        }
+
+        OrcidJaxbCopyUtils.copyAffiliationsToExistingPreservingVisibility(existingAffiliations, updatedAffiliations);
         return updateOrcidProfile(existingProfile);
     }
 
@@ -1086,25 +1151,106 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
      */
     @Override
     @Transactional
-    public OrcidProfile addAffiliations(OrcidProfile updatedOrcidProfile) {
-        if (updatedOrcidProfile.getOrcidBio() == null || updatedOrcidProfile.getOrcidBio().getAffiliations() == null
-                || updatedOrcidProfile.getOrcidBio().getAffiliations().isEmpty()) {
-            return null;
-        }
+    public void addAffiliations(OrcidProfile updatedOrcidProfile) {
         String orcid = updatedOrcidProfile.getOrcid().getValue();
         OrcidProfile existingProfile = retrieveOrcidProfile(orcid);
         if (existingProfile == null) {
-            return null;
+            throw new IllegalArgumentException("No record found for " + orcid);
         }
-        OrcidBio orcidBio = existingProfile.getOrcidBio();
-        List<Affiliation> affiliations = updatedOrcidProfile.getOrcidBio().getAffiliations();
-        for (Affiliation affiliation : affiliations) {
-            affiliation.setVisibility(OrcidVisibilityDefaults.AFFILIATE_DETAIL_DEFAULT.getVisibility());
-            orcidBio.getAffiliations().add(affiliation);
+        Affiliations existingAffiliations = existingProfile.retrieveAffiliations();
+        Affiliations updatedAffiliations = updatedOrcidProfile.retrieveAffiliations();
+        Visibility workVisibilityDefault = existingProfile.getOrcidInternal().getPreferences().getWorkVisibilityDefault().getValue();
+        Boolean claimed = existingProfile.getOrcidHistory().isClaimed();
+        setAffiliationPrivacy(updatedAffiliations, workVisibilityDefault, claimed == null ? false : claimed);
+        updatedAffiliations = dedupeAffiliations(updatedAffiliations);
+        String amenderOrcid = retrieveAmenderOrcid();
+        addSourceToAffiliations(updatedAffiliations, amenderOrcid);
+        List<Affiliation> updatedAffiliationsList = updatedAffiliations.getAffiliation();
+        checkForAlreadyExistingAffiliations(existingAffiliations, updatedAffiliationsList);
+        persistAddedAffiliations(orcid, updatedAffiliationsList);
+    }
+
+    private void setAffiliationPrivacy(OrcidProfile updatedOrcidProfile, Visibility defaultAffiliationVisibility) {
+        OrcidHistory orcidHistory = updatedOrcidProfile.getOrcidHistory();
+        boolean isClaimed = orcidHistory != null ? orcidHistory.getClaimed().isValue() : false;
+        OrcidActivities incomingActivities = updatedOrcidProfile.getOrcidActivities();
+        if (incomingActivities != null) {
+            Affiliations incomingWorks = incomingActivities.getAffiliations();
+            if (incomingWorks != null) {
+                setAffiliationPrivacy(incomingWorks, defaultAffiliationVisibility, isClaimed);
+            }
         }
-        updatedOrcidProfile.getOrcidBio();
-        OrcidProfile persistedProfile = updateOrcidProfile(existingProfile);
-        return persistedProfile;
+    }
+    
+    private void setAffiliationPrivacy(Affiliations incomingAffiliations, Visibility defaultAffiliationVisibility, boolean isClaimed) {
+        for (Affiliation incomingAffiliation : incomingAffiliations.getAffiliation()) {
+            if (StringUtils.isBlank(incomingAffiliation.getPutCode())) {
+                Visibility incomingAffiliationVisibility = incomingAffiliation.getVisibility();
+                if (isClaimed) {
+                    if (defaultAffiliationVisibility.isMoreRestrictiveThan(incomingAffiliationVisibility)) {
+                        incomingAffiliation.setVisibility(defaultAffiliationVisibility);
+                    }
+                } else if (incomingAffiliationVisibility == null) {
+                    incomingAffiliation.setVisibility(Visibility.PRIVATE);
+                }
+            }
+        }
+    }
+
+    private void addSourceToAffiliations(Affiliations affiliations, String amenderOrcid) {
+        if (affiliations != null && !affiliations.getAffiliation().isEmpty()) {
+            for (Affiliation affiliation : affiliations.getAffiliation()) {
+                if (affiliation.getSource() == null || affiliation.getSource().getSourceOrcid() == null
+                        || StringUtils.isEmpty(affiliation.getSource().getSourceOrcid().getValue()))
+                    affiliation.setSource(new Source(amenderOrcid));
+            }
+        }
+    }
+    
+    private void dedupeAffiliations(OrcidProfile orcidProfile) {
+        OrcidActivities orcidActivities = orcidProfile.getOrcidActivities();
+        if (orcidActivities != null) {
+            Affiliations affiliations = orcidActivities.getAffiliations();
+            if (affiliations != null) {
+                Affiliations dedupedAffiliations = dedupeAffiliations(affiliations);
+                orcidActivities.setAffiliations(dedupedAffiliations);
+            }
+        }
+    }
+
+    private Affiliations dedupeAffiliations(Affiliations affiliations) {
+        Set<Affiliation> affiliationSet = new LinkedHashSet<Affiliation>();
+        for (Affiliation affiliation : affiliations.getAffiliation()) {
+            orcidProfileCleaner.clean(affiliation);
+            affiliationSet.add(affiliation);
+        }
+        Affiliations dedupedAffiliations = new Affiliations();
+        dedupedAffiliations.getAffiliation().addAll(affiliationSet);
+        return dedupedAffiliations;
+    }
+
+    private void checkForAlreadyExistingAffiliations(Affiliations existingAffiliations, List<Affiliation> updatedAffiliationsList) {
+        if (existingAffiliations != null) {
+            Set<Affiliation> existingAffiliationsSet = new HashSet<>();
+            for (Affiliation existingAffiliation : existingAffiliations.getAffiliation()) {
+                existingAffiliationsSet.add(existingAffiliation);
+            }
+            for (Iterator<Affiliation> updatedAffiliationIterator = updatedAffiliationsList.iterator(); updatedAffiliationIterator.hasNext();) {
+                Affiliation updatedAffiliation = updatedAffiliationIterator.next();
+                if (existingAffiliationsSet.contains(updatedAffiliation)) {
+                    updatedAffiliationIterator.remove();
+                }
+            }
+        }
+    }
+
+    private void persistAddedAffiliations(String orcid, List<Affiliation> updatedAffiliationsList) {
+        ProfileEntity profileEntity = profileDao.find(orcid);
+        for (Affiliation updatedAffiliation : updatedAffiliationsList) {
+            OrgAffiliationRelationEntity orgAffiliationRelationEntity = jaxb2JpaAdapter.getNewOrgAffiliationRelationEntity(updatedAffiliation, profileEntity);
+            orgAffilationRelationDao.persist(orgAffiliationRelationEntity);
+        }
+        removeFromCache(orcid);
     }
 
     @Override
