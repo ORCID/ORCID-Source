@@ -158,6 +158,13 @@ public class OrcidActivities implements Serializable {
         setOrcidGrants(null);
         setOrcidPatents(null);
     }
+    
+    public void downgradeToAffiliationsOnly() {
+        setOrcidWorks(null);
+        setOrcidGrants(null);
+        setOrcidPatents(null);
+    }
+
 
     @Override
     public int hashCode() {

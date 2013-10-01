@@ -202,6 +202,22 @@ public class T2OrcidApiServiceDelegatorImpl extends OrcidApiServiceDelegatorImpl
         OrcidProfile profile = orcidProfileManager.retrieveClaimedOrcidWorks(orcid);
         return getOrcidMessageResponse(profile, orcid);
     }
+    
+    /**
+     * finds and returns the {@link org.orcid.jaxb.model.message.OrcidMessage}
+     * wrapped in a {@link javax.xml.ws.Response} with only the affiliation details
+     * 
+     * @param orcid
+     *            the ORCID to be used to identify the record
+     * @return the {@link javax.xml.ws.Response} with the
+     *         {@link org.orcid.jaxb.model.message.OrcidMessage} within it
+     */
+    @Override
+    @AccessControl(requiredScope = ScopePathType.AFFILIATIONS_READ_LIMITED)
+    public Response findAffiliationsDetails(String orcid) {
+        OrcidProfile profile = orcidProfileManager.retrieveClaimedAffiliations(orcid);
+        return getOrcidMessageResponse(profile, orcid);
+    }
 
     /**
      * Creates a new profile and returns the saved representation of it. The

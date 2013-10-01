@@ -449,6 +449,24 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         }
         return profile;
     }
+    
+    /**
+     * Retrieves the orcid affiliations given an identifier
+     * 
+     * @param orcid
+     *            the identifier
+     * @return the orcid profile with only the affiliations populated
+     */
+    @Override
+    @Transactional
+    public OrcidProfile retrieveClaimedAffiliations(String orcid) {
+        OrcidProfile profile = retrieveClaimedOrcidProfile(orcid);
+        if (profile != null) {
+            profile.downgradeToAffiliationsOnly();
+        }
+        return profile;
+    }
+
 
     /**
      * Retrieves the orcid works given an identifier

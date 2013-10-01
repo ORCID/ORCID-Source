@@ -115,6 +115,18 @@ public class T2OrcidApiServiceVersionedDelegatorImpl implements T2OrcidApiServic
     }
 
     @Override
+    public Response findAffiliationsDetails(String orcid) {
+        Response response = t2OrcidApiServiceDelegator.findAffiliationsDetails(orcid);
+        return downgradeAndValidateResponse(response);
+    }
+
+    @Override
+    public Response findAffiliationsDetailsFromPublicCache(String orcid) {
+        Response response = t2OrcidApiServiceDelegator.findAffiliationsDetailsFromPublicCache(orcid);
+        return downgradeAndValidateResponse(response);
+    }
+
+    @Override
     public Response findWorksDetails(String orcid) {
         Response response = t2OrcidApiServiceDelegator.findWorksDetails(orcid);
         return downgradeAndValidateResponse(response);

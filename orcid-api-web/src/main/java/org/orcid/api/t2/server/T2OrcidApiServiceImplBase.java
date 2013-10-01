@@ -295,6 +295,57 @@ abstract public class T2OrcidApiServiceImplBase implements T2OrcidApiService<Res
     }
 
     /**
+     * GETs the HTML representation of the ORCID record containing only
+     * affiliation details
+     * 
+     * @param orcid
+     *            the ORCID that corresponds to the user's record
+     * @return the HTML representation of the ORCID record
+     */
+    @Override
+    @GET
+    @Produces(value = { MediaType.TEXT_HTML })
+    @Path(AFFILIATIONS_PATH)
+    public Response viewAffiliationsDetailsHtml(@PathParam("orcid") String orcid) {
+        T2_GET_REQUESTS.inc();
+        Response response = serviceDelegator.findAffiliationsDetails(orcid);
+        return Response.fromResponse(response).header("Content-Disposition", "attachment; filename=\"" + orcid + "-affiliations.xml\"").build();
+    }
+
+    /**
+     * GETs the XML representation of the ORCID record containing only
+     * affiliation details
+     * 
+     * @param orcid
+     *            the ORCID that corresponds to the user's record
+     * @return the XML representation of the ORCID record
+     */
+    @GET
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
+    @Path(AFFILIATIONS_PATH)
+    public Response viewAffiliationsDetailsXml(@PathParam("orcid") String orcid) {
+        T2_GET_REQUESTS.inc();
+        return serviceDelegator.findAffiliationsDetails(orcid);
+    }
+
+    /**
+     * GETs the JSON representation of the ORCID record containing only
+     * affiliation details
+     * 
+     * @param orcid
+     *            the ORCID that corresponds to the user's record
+     * @return the JSON representation of the ORCID record
+     */
+    @Override
+    @GET
+    @Produces(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(AFFILIATIONS_PATH)
+    public Response viewAffiliationsDetailsJson(@PathParam("orcid") String orcid) {
+        T2_GET_REQUESTS.inc();
+        return serviceDelegator.findAffiliationsDetails(orcid);
+    }
+
+    /**
      * GETs the HTML representation of the ORCID record containing only work
      * details
      * 
@@ -309,7 +360,7 @@ abstract public class T2OrcidApiServiceImplBase implements T2OrcidApiService<Res
     public Response viewWorksDetailsHtml(@PathParam("orcid") String orcid) {
         T2_GET_REQUESTS.inc();
         Response response = serviceDelegator.findWorksDetails(orcid);
-        return Response.fromResponse(response).header("Content-Disposition", "attachment; filename=\"" + orcid + "-bio.xml\"").build();
+        return Response.fromResponse(response).header("Content-Disposition", "attachment; filename=\"" + orcid + "-works.xml\"").build();
     }
 
     /**

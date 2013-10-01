@@ -446,6 +446,13 @@ public class OrcidProfile implements Serializable {
         }
     }
 
+    public void downgradeToAffiliationsOnly() {
+        setOrcidBio(null);
+        if (orcidActivities != null) {
+            orcidActivities.downgradeToAffiliationsOnly();
+        }
+    }
+    
     @Override
     public String toString() {
         return OrcidMessage.convertToString(this);
