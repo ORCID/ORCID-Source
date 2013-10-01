@@ -38,7 +38,7 @@ public class Date implements ErrorsInterface, Required {
         Date d = new Date();
         if (publicationDate.getDay() != null && publicationDate.getDay().getValue() !=null)
             d.setDay(publicationDate.getDay().getValue());
-        if (d.getMonth() != null && publicationDate.getMonth().getValue() !=null)
+        if (publicationDate.getMonth() != null && publicationDate.getMonth().getValue() !=null)
             d.setMonth(publicationDate.getMonth().getValue());
         if (publicationDate.getYear() != null && publicationDate.getYear().getValue() !=null)
             d.setYear(publicationDate.getYear().getValue());
