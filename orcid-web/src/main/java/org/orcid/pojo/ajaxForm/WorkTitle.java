@@ -33,6 +33,8 @@ public class WorkTitle implements ErrorsInterface, Serializable {
 
     private Text subtitle;
     
+    private TranslatedTitle translatedTitle;
+    
     public static WorkTitle valueOf(org.orcid.jaxb.model.message.WorkTitle workTitle) {
         WorkTitle wt = new WorkTitle(); 
         if (workTitle != null) {
@@ -41,6 +43,12 @@ public class WorkTitle implements ErrorsInterface, Serializable {
             }
             if (workTitle.getSubtitle() != null) {
                 wt.setSubtitle(Text.valueOf(workTitle.getSubtitle().getContent()));
+            }
+            if(workTitle.getTranslatedTitle() != null){
+                TranslatedTitle translatedTitle = new TranslatedTitle();
+                translatedTitle.setContent((workTitle.getTranslatedTitle() == null) ? null : Text.valueOf(workTitle.getTranslatedTitle().getContent()));
+                translatedTitle.setLanguageCode((workTitle.getTranslatedTitle() == null || workTitle.getTranslatedTitle().getLanguageCode() == null) ? null : Text.valueOf(workTitle.getTranslatedTitle().getLanguageCode()));
+                wt.setTranslatedTitle(translatedTitle);
             }
 
         }
@@ -54,6 +62,9 @@ public class WorkTitle implements ErrorsInterface, Serializable {
             wt.setTitle(new Title(this.getTitle().getValue()));
         if (this.getSubtitle() != null)
             wt.setSubtitle(new Subtitle(this.getSubtitle().getValue()));
+        if(this.getTranslatedTitle() != null)
+            wt.setTranslatedTitle(this.getTranslatedTitle().toTranslatedTitle());
+                
         return wt;
     }
     
@@ -81,4 +92,11 @@ public class WorkTitle implements ErrorsInterface, Serializable {
         this.subtitle = subtitle;
     }
 
+    public TranslatedTitle getTranslatedTitle() {
+        return translatedTitle;
+    }
+
+    public void setTranslatedTitle(TranslatedTitle translatedTitle) {
+        this.translatedTitle = translatedTitle;
+    }   
 }

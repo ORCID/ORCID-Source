@@ -108,10 +108,7 @@ public class Work implements ErrorsInterface, Serializable {
         
         if(orcidWork.getJournalTitle() != null)
             w.setJournalTitle(Text.valueOf(orcidWork.getJournalTitle().getContent()));
-        
-        if(orcidWork.getJournalTitle() != null)
-            w.setLanguageCode(Text.valueOf(orcidWork.getJournalTitle().getContent()));
-        
+                
         return w;
     }
     

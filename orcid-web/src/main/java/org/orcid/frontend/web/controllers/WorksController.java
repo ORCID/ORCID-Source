@@ -56,6 +56,7 @@ import org.orcid.pojo.ajaxForm.Date;
 import org.orcid.pojo.ajaxForm.ErrorsInterface;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Text;
+import org.orcid.pojo.ajaxForm.TranslatedTitle;
 import org.orcid.pojo.ajaxForm.Visibility;
 import org.orcid.pojo.ajaxForm.Work;
 import org.orcid.pojo.ajaxForm.WorkExternalIdentifier;
@@ -177,9 +178,13 @@ public class WorksController extends BaseWorkspaceController {
         WorkTitle wt = new WorkTitle();
         wt.setTitle(wtt);
         Text wst = new Text();
-        wt.setSubtitle(wst);
+        wt.setSubtitle(wst);        
+        TranslatedTitle tt = new TranslatedTitle();
+        tt.setContent(new Text());
+        tt.setLanguageCode(new Text());
+        wt.setTranslatedTitle(tt);
         w.setWorkTitle(wt);
-
+        
         // work journal title
         Text jt = new Text();
         jt.setRequired(false);

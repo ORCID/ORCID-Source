@@ -54,12 +54,14 @@ public class WorkEntity extends BaseEntity<Long> implements Comparable<WorkEntit
 
     private Long id;
     private String title;
+    private String translatedTitle;
     private String subtitle;
     private String description;
     private String workUrl;
     private String citation;
     private String journalTitle;
     private String languageCode;
+    private String translatedTitleLanguageCode;
     private CitationType citationType;
     private WorkType workType;
     private PublicationDateEntity publicationDate;
@@ -166,6 +168,24 @@ public class WorkEntity extends BaseEntity<Long> implements Comparable<WorkEntit
         this.languageCode = languageCode;
     }
 
+    @Column(name = "translated_title", length = 25)
+    public String getTranslatedTitle() {
+        return translatedTitle;
+    }
+
+    public void setTranslatedTitle(String translatedTitle) {
+        this.translatedTitle = translatedTitle;
+    }
+
+    @Column(name = "translated_title_language_code", length = 25)
+    public String getTranslatedTitleLanguageCode() {
+        return translatedTitleLanguageCode;
+    }
+
+    public void setTranslatedTitleLanguageCode(String translatedTitleLanguageCode) {
+        this.translatedTitleLanguageCode = translatedTitleLanguageCode;
+    }
+    
     @Basic
     @Enumerated(EnumType.STRING)
     @Column(name = "citation_type", length = 100)

@@ -20,9 +20,11 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
 
-	<changeSet author="Angel Montenegro" id="ADD-LANGUAGE-CODE-COLUMN-TO-WORK-TABLE">
+	<changeSet author="Angel Montenegro" id="ADD-FIELDS-TO-WORK-TABLE">
 	    <addColumn tableName="work">
 				<column name="language_code" type="VARCHAR(20)" />
+				<column name="translated_title" type="VARCHAR(1000)" />
+				<column name="translated_title_language_code" type="VARCHAR(20)" />
 		</addColumn>
     </changeSet>
 </databaseChangeLog>	
