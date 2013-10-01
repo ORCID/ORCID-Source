@@ -23,6 +23,11 @@
 
 package org.orcid.jaxb.model.message;
 
+import java.io.Reader;
+import java.io.Serializable;
+import java.io.StringReader;
+import java.io.StringWriter;
+
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
@@ -34,14 +39,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.util.JAXBSource;
 import javax.xml.transform.Source;
-
-import org.orcid.jaxb.model.clientgroup.OrcidClientGroup;
-
-import java.io.InputStream;
-import java.io.Reader;
-import java.io.Serializable;
-import java.io.StringReader;
-import java.io.StringWriter;
 
 /**
  * <p>
@@ -76,7 +73,7 @@ import java.io.StringWriter;
 public class OrcidMessage implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    public static final String DEFAULT_VERSION = "1.0.20";
+    public static final String DEFAULT_VERSION = "1.0.21";
 
     @XmlElement(name = "message-version", required = true)
     protected String messageVersion;

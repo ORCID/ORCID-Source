@@ -1,0 +1,144 @@
+<!--
+
+    =============================================================================
+
+    ORCID (R) Open Source
+    http://orcid.org
+
+    Copyright (c) 2012-2013 ORCID, Inc.
+    Licensed under an MIT-Style License (MIT)
+    http://orcid.org/open-source-license
+
+    This copyright and license information (including a link to the full license)
+    shall be included in its entirety in all copies or substantial portion of
+    the software.
+
+    =============================================================================
+
+-->
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+        
+    <changeSet id="CREATE-ORG-TABLES" author="Will Simpson">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="org_affiliation_relation"/>
+            </not>
+        </preConditions>
+        <createTable tableName="org_affiliation_relation">
+            <column name="id" type="bigint">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="org_affiliation_relation_pkey"/>
+            </column>
+            <column name="org_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="orcid" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="org_affiliation_relation_role" type="VARCHAR(200)"/>
+            <column name="org_affiliation_relation_title" type="VARCHAR(4000)"/>
+            <column name="department" type="VARCHAR(4000)"/>
+            <column name="start_day" type="integer"/>
+            <column name="start_month" type="integer"/>
+            <column name="start_year" type="integer"/>
+            <column name="end_day" type="integer"/>
+            <column name="end_month" type="integer"/>
+            <column name="end_year" type="integer"/>
+            <column name="visibility" type="VARCHAR(20)"/>
+            <column name="source_id" type="VARCHAR(255)"/>
+            <column name="date_created" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="last_modified" type="TIMESTAMP WITH TIME ZONE"/>
+        </createTable>
+        <createTable tableName="org">
+            <column name="id" type="bigint">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="org_pkey"/>
+            </column>
+            <column name="name" type="VARCHAR(4000)"/>
+            <column name="city" type="VARCHAR(4000)"/>
+            <column name="region" type="VARCHAR(4000)"/>
+            <column name="country" type="VARCHAR(2)"/>
+            <column name="url" type="VARCHAR(2000)"/>
+            <column name="source_id" type="VARCHAR(255)"/>
+            <column name="date_created" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="last_modified" type="TIMESTAMP WITH TIME ZONE"/>
+        </createTable>
+        <addUniqueConstraint constraintName="org_unique_constraints" tableName="org" columnNames="name,city,region,country"/>
+        <addForeignKeyConstraint constraintName="org_affiliation_relation_org_id_fk" baseTableName="org_affiliation_relation" baseColumnNames="org_id" referencedTableName="org" referencedColumnNames="id" />
+        <addForeignKeyConstraint constraintName="org_affiliation_relation_orcid_fk" baseTableName="org_affiliation_relation" baseColumnNames="orcid" referencedTableName="profile" referencedColumnNames="orcid" />
+    </changeSet>
+    
+    <changeSet id="CREATE-ORG-SEQUENCES" author="Will Simpson" dbms="postgresql">
+        <createSequence sequenceName="org_affiliation_relation_seq" startValue="1000"/>
+        <createSequence sequenceName="org_seq" startValue="1000"/>
+    </changeSet>
+    
+    <changeSet id="CREATE-ORG-AUTOCOLS" author="Will Simpson" dbms="hsqldb">
+        <addAutoIncrement tableName="org_affiliation_relation" columnName="id" columnDataType="bigint"/>
+        <addAutoIncrement tableName="org" columnName="id" columnDataType="bigint"/>
+    </changeSet>
+    
+    <changeSet id="MAKE-SURE-COUNTRY-IS-NULL-NOT-EMPTY-STRING" author="Will Simpson">
+        <sql>UPDATE profile SET iso2_country = NULL WHERE iso2_country = ''</sql>
+    </changeSet>
+    
+    <changeSet id="CREATE-DISAMBIGUATED-ORG-TABLES" author="Will Simpson">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="org_disambiguated"/>
+            </not>
+        </preConditions>
+        <createTable tableName="org_disambiguated">
+            <column name="id" type="bigint">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="org_disambiguated_pkey"/>
+            </column>
+            <column name="source_id" type="VARCHAR(255)"/>
+            <column name="source_url" type="VARCHAR(2000)"/>
+            <column name="source_type" type="VARCHAR(255)"/>
+            <column name="org_type" type="VARCHAR(4000)"/>
+            <column name="name" type="VARCHAR(4000)"/>
+            <column name="city" type="VARCHAR(4000)"/>
+            <column name="region" type="VARCHAR(4000)"/>
+            <column name="country" type="VARCHAR(2)"/>
+            <column name="url" type="VARCHAR(2000)"/>
+            <column name="status" type="VARCHAR(255)"/>
+            <column name="date_created" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="last_modified" type="TIMESTAMP WITH TIME ZONE"/>
+        </createTable>
+        <addUniqueConstraint constraintName="org_disambiguated_unique_constraints" tableName="org_disambiguated" columnNames="name,city,region,country,source_type"/>
+        <createTable tableName="org_disambiguated_external_identifier">
+            <column name="id" type="bigint">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="org_disambiguated_external_identifier_pkey"/>
+            </column>
+            <column name="org_disambiguated_id" type="bigint"/>
+            <column name="identifier" type="VARCHAR(4000)"/>
+            <column name="identifier_type" type="VARCHAR(4000)"/>
+            <column name="date_created" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="last_modified" type="TIMESTAMP WITH TIME ZONE"/>
+        </createTable>
+        <addForeignKeyConstraint constraintName="org_disambiguated_external_identifier_org_disambiguated_fk" baseTableName="org_disambiguated_external_identifier" baseColumnNames="org_disambiguated_id" referencedTableName="org_disambiguated" referencedColumnNames="id"/>
+        <addColumn tableName="org">
+            <column name="org_disambiguated_id" type="bigint"/>
+        </addColumn>
+        <addForeignKeyConstraint constraintName="org_org_disambiguated_fk" baseTableName="org" baseColumnNames="org_disambiguated_id" referencedTableName="org_disambiguated" referencedColumnNames="id"/>
+    </changeSet>
+    
+    <changeSet id="CREATE-ORG-DISAMBIGUATED-SEQUENCES" author="Will Simpson" dbms="postgresql">
+        <createSequence sequenceName="org_disambiguated_seq" startValue="1000"/>
+        <createSequence sequenceName="org_disambiguated_external_identifier_seq" startValue="1000"/>
+    </changeSet>
+    
+    <changeSet id="CREATE-DISAMBIGUATED-ORG-AUTOCOLS" author="Will Simpson" dbms="hsqldb">
+        <addAutoIncrement tableName="org_disambiguated" columnName="id" columnDataType="bigint"/>
+        <addAutoIncrement tableName="org_disambiguated_external_identifier" columnName="id" columnDataType="bigint"/>
+    </changeSet>
+    
+    <changeSet id="ADD-AFFILIATION-SCOPES-TO-EXISTING-CLIENTS" author="Will Simpson">
+        <sql>INSERT INTO client_scope SELECT client_details_id, '/affiliations/update', now(), now() FROM client_scope WHERE scope_type = '/orcid-works/update' AND client_details_id NOT IN (SELECT client_details_id FROM client_scope WHERE scope_type = '/affiliations/update')</sql>
+        <sql>INSERT INTO client_scope SELECT client_details_id, '/affiliations/create', now(), now() FROM client_scope WHERE scope_type = '/orcid-works/create' AND client_details_id NOT IN (SELECT client_details_id FROM client_scope WHERE scope_type = '/affiliations/create')</sql>
+    </changeSet>
+
+    <changeSet id="ADD-AFFILIATION-READ-LIMITED-SCOPE-TO-EXISTING-CLIENTS" author="Will Simpson">
+        <sql>INSERT INTO client_scope SELECT client_details_id, '/affiliations/read-limited', now(), now() FROM client_scope WHERE scope_type = '/orcid-works/read-limited' AND client_details_id NOT IN (SELECT client_details_id FROM client_scope WHERE scope_type = '/affiliations/read-limited')</sql>
+    </changeSet>
+
+</databaseChangeLog>

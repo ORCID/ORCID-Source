@@ -80,6 +80,15 @@ public interface OrcidProfileManager {
     OrcidProfile retrieveClaimedOrcidBio(String orcid);
 
     /**
+     * Retrieves the orcid affiliations given an identifier
+     * 
+     * @param orcid
+     *            the identifier
+     * @return the orcid profile with only the affiliations populated
+     */
+    OrcidProfile retrieveClaimedAffiliations(String orcid);
+    
+    /**
      * Retrieves the orcid works given an identifier
      * 
      * @param orcid
@@ -244,7 +253,7 @@ public interface OrcidProfileManager {
      * @param orcidProfile
      * @return
      */
-    OrcidProfile addAffiliations(OrcidProfile orcidProfile);
+    void addAffiliations(OrcidProfile orcidProfile);
 
     /**
      * Attempt to locate a profile with the email address. This is for internal
