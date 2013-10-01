@@ -394,6 +394,16 @@
 				    </div>
 				</div>
 				
+				<div class="control-group">
+					<label class="relative"><@orcid.msg 'manual_work_form_contents.labellanguage'/></label>
+					<select id="language" name="language" ng-model="editWork.language">
+						<option value="${currentLocaleKey}" selected>${currentLocaleValue}</option>
+						<#list languages?keys as key>
+							<option value="${languages[key]}">${key}</option>
+						</#list>
+					</select>
+				</div>
+				
 			</div>
 		</div>
 		<div class="row">	
