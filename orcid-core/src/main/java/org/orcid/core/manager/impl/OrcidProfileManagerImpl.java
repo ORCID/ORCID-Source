@@ -59,7 +59,6 @@ import org.orcid.core.manager.OrcidProfileCleaner;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.security.OrcidWebRole;
-import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
 import org.orcid.core.security.visibility.aop.VisibilityControl;
 import org.orcid.core.utils.OrcidJaxbCopyUtils;
 import org.orcid.core.utils.ReleaseNameUtils;
@@ -276,8 +275,10 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         if (existingProfileEntity != null) {
             profileDao.removeChildrenWithGeneratedIds(existingProfileEntity);
             setWorkPrivacy(orcidProfile, existingProfileEntity.getWorkVisibilityDefault());
+            setAffiliationPrivacy(orcidProfile, existingProfileEntity.getWorkVisibilityDefault());
         }
         dedupeProfileWorks(orcidProfile);
+        dedupeAffiliations(orcidProfile);
         addSourceToEmails(orcidProfile, existingProfileEntity, amenderOrcid);
         addSourceToWorks(orcidProfile, amenderOrcid);
         addSourceToAffiliations(orcidProfile, amenderOrcid);
@@ -1151,6 +1152,18 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         persistAddedAffiliations(orcid, updatedAffiliationsList);
     }
 
+    private void setAffiliationPrivacy(OrcidProfile updatedOrcidProfile, Visibility defaultAffiliationVisibility) {
+        OrcidHistory orcidHistory = updatedOrcidProfile.getOrcidHistory();
+        boolean isClaimed = orcidHistory != null ? orcidHistory.getClaimed().isValue() : false;
+        OrcidActivities incomingActivities = updatedOrcidProfile.getOrcidActivities();
+        if (incomingActivities != null) {
+            Affiliations incomingWorks = incomingActivities.getAffiliations();
+            if (incomingWorks != null) {
+                setAffiliationPrivacy(incomingWorks, defaultAffiliationVisibility, isClaimed);
+            }
+        }
+    }
+    
     private void setAffiliationPrivacy(Affiliations incomingAffiliations, Visibility defaultAffiliationVisibility, boolean isClaimed) {
         for (Affiliation incomingAffiliation : incomingAffiliations.getAffiliation()) {
             if (StringUtils.isBlank(incomingAffiliation.getPutCode())) {
@@ -1172,6 +1185,17 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
                 if (affiliation.getSource() == null || affiliation.getSource().getSourceOrcid() == null
                         || StringUtils.isEmpty(affiliation.getSource().getSourceOrcid().getValue()))
                     affiliation.setSource(new Source(amenderOrcid));
+            }
+        }
+    }
+    
+    private void dedupeAffiliations(OrcidProfile orcidProfile) {
+        OrcidActivities orcidActivities = orcidProfile.getOrcidActivities();
+        if (orcidActivities != null) {
+            Affiliations affiliations = orcidActivities.getAffiliations();
+            if (affiliations != null) {
+                Affiliations dedupedAffiliations = dedupeAffiliations(affiliations);
+                orcidActivities.setAffiliations(dedupedAffiliations);
             }
         }
     }
