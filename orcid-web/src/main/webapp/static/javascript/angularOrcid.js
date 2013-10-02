@@ -1094,6 +1094,23 @@ function WorkCtrl($scope, $compile, worksSrvc){
 	        onComplete: function() {$.colorbox.resize();}
 	    });
 	};
+	
+	
+	
+	
+	
+	$scope.showTranslatedTitleModal = function(){;
+    	$scope.editTranslatedTitle = true;
+	};
+	
+	$scope.hideTranslatedTitleModal = function(){;
+		$scope.editTranslatedTitle = false;
+	};
+	
+	
+	
+	
+	
 
 	$scope.showDetailModal = function(idx){
 		var dw = $scope.works[idx];

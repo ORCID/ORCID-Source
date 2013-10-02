@@ -68,7 +68,7 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "putCode", "workTitle", "translatedTitle", "journalTitle", "shortDescription", "workCitation", "workType", "publicationDate", "workExternalIdentifiers", "url",
+@XmlType(name = "", propOrder = { "putCode", "workTitle", "journalTitle", "shortDescription", "workCitation", "workType", "publicationDate", "workExternalIdentifiers", "url",
         "workContributors", "workSource", "languageCode" })
 @XmlRootElement(name = "orcid-work")
 public class OrcidWork implements VisibilityType, Serializable {
@@ -140,27 +140,6 @@ public class OrcidWork implements VisibilityType, Serializable {
      */
     public void setWorkTitle(WorkTitle value) {
         this.workTitle = value;
-    }
-
-    /**
-     * Gets the value of the translatedTitle property.
-     * 
-     * @return possible object is {@link translatedTitle }
-     * 
-     */
-    public TranslatedTitle getTranslatedTitle() {
-        return translatedTitle;
-    }
-
-    /**
-     * Sets the value of the translatedTitle property.
-     * 
-     * @param value
-     *            allowed object is {@link translatedTitle }
-     * 
-     */
-    public void setTranslatedTitle(TranslatedTitle translatedTitle) {
-        this.translatedTitle = translatedTitle;
     }
 
     /**

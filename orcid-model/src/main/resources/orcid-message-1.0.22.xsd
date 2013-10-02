@@ -1103,6 +1103,7 @@
             <xs:sequence>
                 <xs:element ref="orcid:title"/>
                 <xs:element ref="orcid:subtitle" minOccurs="0"/>
+                <xs:element ref="orcid:translated-title" minOccurs="0"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>
@@ -1142,6 +1143,31 @@
         </xs:annotation>
         <xs:complexType mixed="true"/>
     </xs:element>
+    
+    
+    
+    
+    
+    <xs:element name="translated-title">
+        <xs:annotation>
+            <xs:documentation>The main title of the work translated into another language.</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+    		<xs:simpleContent>
+      			<xs:extension base="xs:string">
+        			<xs:attribute name="language-code" type="xs:string"></xs:attribute>
+      			</xs:extension>
+    		</xs:simpleContent>
+  		</xs:complexType>
+    </xs:element>
+    
+    
+    
+    
+    
+    
+    
+    
     <xs:element name="orcid">
         <xs:annotation>
             <xs:documentation>The identifier of the researcher or contributor in ORCID.

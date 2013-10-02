@@ -224,23 +224,23 @@
 	<div class="control-group">
 		<label><@orcid.msg 'manual_work_form_contents.labeltranslatedtitle'/></label>
 		<div class="relative">
-			<input name="translatedTitle" type="text" class="input-xlarge" ng-model="editWork.workTitle.translatedTitle.content" placeholder="<@orcid.msg 'manual_work_form_contents.add_title'/>" ng-change="serverValidate('works/work/workTitle/titleValidate.json')" ng-model-onblur/>
-			<span class="required" ng-class="isValidClass(editWork.workTitle.title)">*</span>
-			<span class="orcid-error" ng-show="editWork.workTitle.title.errors.length > 0">
-				<div ng-repeat='error in editWork.workTitle.title.errors' ng-bind-html-unsafe="error"></div>
+			<input name="translatedTitle" type="text" class="input-xlarge" ng-model="editWork.workTitle.translatedTitle.content.value" placeholder="<@orcid.msg 'manual_work_form_contents.add_translated_title'/>" ng-change="serverValidate('works/work/workTitle/translatedTitleValidate.json')" ng-model-onblur/>
+			<span class="required" ng-class="isValidClass(editWork.workTitle.translatedTitle.content)">*</span>
+			<span class="orcid-error" ng-show="editWork.workTitle.translatedTitle.content.errors.length > 0">
+				<div ng-repeat='error in eeditWork.workTitle.translatedTitle.content.errors' ng-bind-html-unsafe="error"></div>
 			</span>
 		</div>
 	</div>
 
 	<div class="control-group">
 		<label class="relative"><@orcid.msg 'manual_work_form_contents.labellanguage'/></label>
-		<select id="language" name="language" ng-model="editWork.languageCode.value">			
+		<span class="required" ng-class="isValidClass(editWork.workTitle.translatedTitle.languageCode)">*</span>
+		<select id="language" name="language" ng-model="editWork.workTitle.translatedTitle.languageCode.value">			
 			<#list languages?keys as key>
 				<option value="${languages[key]}">${key}</option>
 			</#list>
 		</select>
 	</div>
-
 </script>	
 	
 	
@@ -265,13 +265,53 @@
 				<div class="control-group">
 					<label><@orcid.msg 'manual_work_form_contents.labeltitle'/></label>
 				    <div class="relative">
-						<input name="familyNames" type="text" class="input-xlarge"  ng-model="editWork.workTitle.title.value" placeholder="<@orcid.msg 'manual_work_form_contents.add_title'/>" ng-change="serverValidate('works/work/workTitle/titleValidate.json')" ng-model-onblur/>
+						<input name="familyNames" type="text" class="input-xlarge"  ng-model="editWork.workTitle.title.value" placeholder="<@orcid.msg 'manual_work_form_contents.add_title'/>" ng-change="serverValidate('works/work/workTitle/titleValidate.json')" ng-model-onblur/>						
 						<span class="required" ng-class="isValidClass(editWork.workTitle.title)">*</span>
+						<a ng-click="showTranslatedTitleModal()" class="icon-plus-sign blue"></a>
 						<span class="orcid-error" ng-show="editWork.workTitle.title.errors.length > 0">
 							<div ng-repeat='error in editWork.workTitle.title.errors' ng-bind-html-unsafe="error"></div>
 						</span>
 					</div>
 				</div>
+
+				<div ng-show="editTranslatedTitle">
+					<div class="control-group">
+						<label><@orcid.msg 'manual_work_form_contents.labeltranslatedtitle'/></label>
+						<div class="relative">
+							<input name="translatedTitle" type="text" class="input-xlarge" ng-model="editWork.workTitle.translatedTitle.content.value" placeholder="<@orcid.msg 'manual_work_form_contents.add_translated_title'/>" ng-change="serverValidate('works/work/workTitle/translatedTitleValidate.json')" ng-model-onblur/>
+							<span class="required" ng-class="isValidClass(editWork.workTitle.translatedTitle.content)">*</span>
+							<span class="orcid-error" ng-show="editWork.workTitle.translatedTitle.content.errors.length > 0">
+								<div ng-repeat='error in eeditWork.workTitle.translatedTitle.content.errors' ng-bind-html-unsafe="error"></div>
+							</span>
+						</div>
+					</div>
+
+					<div class="control-group">
+						<label class="relative"><@orcid.msg 'manual_work_form_contents.labellanguage'/></label>						
+						<select id="language" name="language" ng-model="editWork.workTitle.translatedTitle.languageCode.value">			
+							<#list languages?keys as key>
+								<option value="${languages[key]}">${key}</option>
+							</#list>
+						</select>
+						<span class="required" ng-class="isValidClass(editWork.workTitle.translatedTitle.languageCode)">*</span>
+						<a ng-click="hideTranslatedTitleModal()" class="icon-minus-sign blue"></a>
+					</div>					
+				</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 				<div class="control-group">
 					<label><@orcid.msg 'manual_work_form_contents.labelsubtitle'/></label>
