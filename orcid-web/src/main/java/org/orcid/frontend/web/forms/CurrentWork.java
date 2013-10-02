@@ -44,6 +44,7 @@ import org.orcid.jaxb.model.message.PublicationDate;
 import org.orcid.jaxb.model.message.SequenceType;
 import org.orcid.jaxb.model.message.Subtitle;
 import org.orcid.jaxb.model.message.Title;
+import org.orcid.jaxb.model.message.TranslatedTitle;
 import org.orcid.jaxb.model.message.Url;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.message.WorkContributors;
@@ -73,6 +74,12 @@ public class CurrentWork {
     private String visibility;
 
     private String title;
+    
+    private String translatedTitle;
+    
+    private String translatedTitleLanguageCode;
+    
+    private String journalTitle;
 
     private String subtitle;
 
@@ -101,6 +108,8 @@ public class CurrentWork {
     private boolean selected;
 
     private String source;
+    
+    private String languageCode;
 
     public CurrentWork() {
     }
@@ -121,7 +130,18 @@ public class CurrentWork {
         if (workTitle != null) {
             title = workTitle.getTitle() == null ? null : workTitle.getTitle().getContent();
             subtitle = workTitle.getSubtitle() == null ? null : workTitle.getSubtitle().getContent();
+            TranslatedTitle orcidTranslatedTitle = workTitle.getTranslatedTitle();
+            if(orcidTranslatedTitle != null){
+            	translatedTitle = (orcidTranslatedTitle.getContent() == null) ? null : orcidTranslatedTitle.getContent(); 
+            	translatedTitleLanguageCode = (orcidTranslatedTitle.getLanguageCode() == null) ? null : orcidTranslatedTitle.getLanguageCode();
+            }
         }
+        
+        Title orcidJournalTitle = orcidWork.getJournalTitle();
+        if(orcidJournalTitle != null){
+        	journalTitle = orcidJournalTitle.getContent();
+        }
+        
         WorkType orcidWorkType = orcidWork.getWorkType();
         if (orcidWorkType != null) {
             workType = orcidWorkType.value();
@@ -152,10 +172,12 @@ public class CurrentWork {
                 currentWorkExternalIds.add(new CurrentWorkExternalId(workExternalIdentifier));
             }
             setCurrentWorkExternalIds(currentWorkExternalIds);
-        }
-
+        }        
+        
         if (orcidWork.getWorkSource() != null)
             source = orcidWork.getWorkSource().getContent();
+        
+        languageCode = orcidWork.getLanguageCode();
     }
 
     private void setCitationDetails(OrcidWork orcidWork) {
@@ -360,8 +382,40 @@ public class CurrentWork {
     public String getSource() {
         return this.source;
     }
+    
+    public String getTranslatedTitle() {
+		return translatedTitle;
+	}
 
-    public OrcidWork getOrcidWork() {
+	public void setTranslatedTitle(String translatedTitle) {
+		this.translatedTitle = translatedTitle;
+	}
+
+	public String getTranslatedTitleLanguageCode() {
+		return translatedTitleLanguageCode;
+	}
+
+	public void setTranslatedTitleLanguageCode(String translatedTitleLanguageCode) {
+		this.translatedTitleLanguageCode = translatedTitleLanguageCode;
+	}
+
+	public String getJournalTitle() {
+		return journalTitle;
+	}
+
+	public void setJournalTitle(String journalTitle) {
+		this.journalTitle = journalTitle;
+	}
+
+	public String getLanguageCode() {
+		return languageCode;
+	}
+
+	public void setLanguageCode(String languageCode) {
+		this.languageCode = languageCode;
+	}
+
+	public OrcidWork getOrcidWork() {
         OrcidWork orcidWork = new OrcidWork();
         Citation workCitation = getConvertedCitation();
         orcidWork.setWorkCitation(workCitation);
@@ -373,6 +427,20 @@ public class CurrentWork {
             orcidWork.setWorkTitle(workTitle);
             workTitle.setTitle(new Title(title));
         }
+        
+        if(StringUtils.isNotBlank(translatedTitle)){
+        	WorkTitle workTitle = orcidWork.getWorkTitle();
+            if (workTitle == null) {
+                workTitle = new WorkTitle();
+                orcidWork.setWorkTitle(workTitle);
+            }
+            TranslatedTitle translatedTitle = new TranslatedTitle();
+            translatedTitle.setContent(this.translatedTitle);
+            translatedTitle.setLanguageCode(this.translatedTitleLanguageCode);
+            workTitle.setTranslatedTitle(translatedTitle);
+        }
+        	
+        
         if (StringUtils.isNotBlank(subtitle)) {
             WorkTitle workTitle = orcidWork.getWorkTitle();
             if (workTitle == null) {
@@ -380,6 +448,10 @@ public class CurrentWork {
                 orcidWork.setWorkTitle(workTitle);
             }
             workTitle.setSubtitle(new Subtitle(subtitle));
+        }
+        
+        if(StringUtils.isNotBlank(journalTitle)){
+        	orcidWork.setJournalTitle(new Title(journalTitle));        	
         }
         if (StringUtils.isNotBlank(description)) {
             orcidWork.setShortDescription(description);
@@ -420,6 +492,10 @@ public class CurrentWork {
             }
         }
 
+        if(StringUtils.isNotBlank(this.languageCode)){
+        	orcidWork.setLanguageCode(this.languageCode);
+        }
+        
         if (StringUtils.isNotBlank(putCode)) {
             orcidWork.setPutCode(putCode);
         }
@@ -428,6 +504,8 @@ public class CurrentWork {
             orcidWork.setWorkSource(new WorkSource(source));
         }
 
+        
+        
         return orcidWork;
     }
 

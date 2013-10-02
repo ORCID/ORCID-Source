@@ -298,21 +298,6 @@
 					</div>					
 				</div>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 				<div class="control-group">
 					<label><@orcid.msg 'manual_work_form_contents.labelsubtitle'/></label>
 				    <div class="relative">

@@ -60,7 +60,7 @@ public class TranslatedTitle implements Serializable {
     private static final long serialVersionUID = 1L;
     @XmlValue
     protected String content;
-    @XmlAttribute
+    @XmlAttribute(name = "language-code", required=true)
     protected String languageCode;
     
     public TranslatedTitle(){
