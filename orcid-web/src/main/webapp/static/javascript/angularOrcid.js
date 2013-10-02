@@ -1276,6 +1276,21 @@ function WorkCtrl($scope, $compile, worksSrvc){
 		$.colorbox.close();
 	};
 	
+
+	$scope.openImportWizardUrl = function(url) {
+		var win = window.open(url, "_target"); 
+		setTimeout( function() {
+		    if(!win || win.outerHeight === 0) {
+		        //First Checking Condition Works For IE & Firefox
+		        //Second Checking Condition Works For Chrome
+		        window.location.href = url;
+		    } 
+		}, 25);
+		$.colorbox.close();
+		
+	};
+
+	
 	$scope.removeWork = function(work) {
 		$.ajax({
 	        url: $('body').data('baseurl') + 'works/works.json',
