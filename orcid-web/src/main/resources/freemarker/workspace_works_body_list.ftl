@@ -211,47 +211,6 @@
 	</div>
 </script>
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-<script type="text/ng-template" id="translated-title-modal">
-	<div class="control-group">
-		<label><@orcid.msg 'manual_work_form_contents.labeltranslatedtitle'/></label>
-		<div class="relative">
-			<input name="translatedTitle" type="text" class="input-xlarge" ng-model="editWork.workTitle.translatedTitle.content.value" placeholder="<@orcid.msg 'manual_work_form_contents.add_translated_title'/>" ng-change="serverValidate('works/work/workTitle/translatedTitleValidate.json')" ng-model-onblur/>
-			<span class="required" ng-class="isValidClass(editWork.workTitle.translatedTitle.content)">*</span>
-			<span class="orcid-error" ng-show="editWork.workTitle.translatedTitle.content.errors.length > 0">
-				<div ng-repeat='error in eeditWork.workTitle.translatedTitle.content.errors' ng-bind-html-unsafe="error"></div>
-			</span>
-		</div>
-	</div>
-
-	<div class="control-group">
-		<label class="relative"><@orcid.msg 'manual_work_form_contents.labellanguage'/></label>
-		<span class="required" ng-class="isValidClass(editWork.workTitle.translatedTitle.languageCode)">*</span>
-		<select id="language" name="language" ng-model="editWork.workTitle.translatedTitle.languageCode.value">			
-			<#list languages?keys as key>
-				<option value="${languages[key]}">${key}</option>
-			</#list>
-		</select>
-	</div>
-</script>	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 <script type="text/ng-template" id="add-work-modal">
 	<div class="edit-work colorbox-content">
 		<div class="row">
@@ -282,7 +241,7 @@
 							<input name="translatedTitle" type="text" class="input-xlarge" ng-model="editWork.workTitle.translatedTitle.content.value" placeholder="<@orcid.msg 'manual_work_form_contents.add_translated_title'/>" ng-change="serverValidate('works/work/workTitle/translatedTitleValidate.json')" ng-model-onblur/>
 							<span class="required" ng-class="isValidClass(editWork.workTitle.translatedTitle.content)">*</span>
 							<span class="orcid-error" ng-show="editWork.workTitle.translatedTitle.content.errors.length > 0">
-								<div ng-repeat='error in eeditWork.workTitle.translatedTitle.content.errors' ng-bind-html-unsafe="error"></div>
+								<div ng-repeat='error in editWork.workTitle.translatedTitle.content.errors' ng-bind-html-unsafe="error"></div>
 							</span>
 						</div>
 					</div>
@@ -311,7 +270,10 @@
 				<div class="control-group">
 					<label><@orcid.msg 'manual_work_form_contents.journalTitle'/></label>
 				    <div class="relative">
-						<input name="journalTitle" type="text" class="input-xlarge"  ng-model="editWork.journalTitle.value" placeholder="<@orcid.msg 'manual_work_form_contents.add_journalTitle'/>" ng-model-onblur/>						
+						<input name="journalTitle" type="text" class="input-xlarge"  ng-model="editWork.journalTitle.value" placeholder="<@orcid.msg 'manual_work_form_contents.add_journalTitle'/>"   ng-change="serverValidate('works/work/journalTitleValidate.json')"    ng-model-onblur/>
+						<span class="orcid-error" ng-show="editWork.journalTitle.errors.length > 0">
+							<div ng-repeat='error in editWork.journalTitle.errors' ng-bind-html-unsafe="error"></div>
+						</span>						
 					</div>
 				</div>
 

@@ -22,6 +22,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -82,6 +83,8 @@ public class WorksController extends BaseWorkspaceController {
     private static final Logger LOGGER = LoggerFactory.getLogger(WorksController.class);
 
     private static final String WORKS_MAP = "WORKS_MAP";
+    
+    private static final Pattern LANGUAGE_CODE = Pattern.compile("([a-zA-Z]{2})(_[a-zA-Z]{2}){0,2}");
 
     @Resource
     private ThirdPartyImportManager thirdPartyImportManager;
@@ -180,8 +183,8 @@ public class WorksController extends BaseWorkspaceController {
         Text wst = new Text();
         wt.setSubtitle(wst);        
         TranslatedTitle tt = new TranslatedTitle();
-        tt.setContent(new Text());
-        tt.setLanguageCode(new Text());
+        tt.setContent(new String());
+        tt.setLanguageCode(new String());
         wt.setTranslatedTitle(tt);
         w.setWorkTitle(wt);
         
@@ -261,18 +264,24 @@ public class WorksController extends BaseWorkspaceController {
         workCitationValidate(work);
         workWorkTitleTitleValidate(work);
         workWorkTitleSubtitleValidate(work);
+        workWorkTitleTranslatedTitleValidate(work);        
         workdescriptionValidate(work);
         workWorkTypeValidate(work);
         workWorkExternalIdentifiersValidate(work);
         workUrlValidate(work);
+        workJournalTitleValidate(work);
+        workLanguageCodeValidate(work);
 
         copyErrors(work.getCitation().getCitation(), work);
         copyErrors(work.getCitation().getCitationType(), work);
         copyErrors(work.getWorkTitle().getTitle(), work);
+        copyErrors(work.getWorkTitle().getTranslatedTitle(), work);
         copyErrors(work.getShortDescription(), work);
         copyErrors(work.getWorkTitle().getSubtitle(), work);
         copyErrors(work.getWorkType(), work);
         copyErrors(work.getUrl(), work);
+        copyErrors(work.getJournalTitle(), work);
+        
         for (Contributor c : work.getContributors()) {
             copyErrors(c.getContributorRole(), work);
             copyErrors(c.getContributorSequence(), work);
@@ -356,8 +365,8 @@ public class WorksController extends BaseWorkspaceController {
         TranslatedTitle translatedTitle = TranslatedTitle.valueOf(orcidWork.getWorkTitle().getTranslatedTitle());
         
         if(translatedTitle != null) {
-        	workEntity.setTranslatedTitle(translatedTitle.getContent() == null ? null : translatedTitle.getContent().getValue());
-        	workEntity.setTranslatedTitleLanguageCode(translatedTitle.getLanguageCode() == null ? null : translatedTitle.getLanguageCode().getValue() );
+        	workEntity.setTranslatedTitle(translatedTitle.getContent());
+        	workEntity.setTranslatedTitleLanguageCode(translatedTitle.getLanguageCode());
         }
         
         WorkContributors workContributors = orcidWork.getWorkContributors();
@@ -464,12 +473,48 @@ public class WorksController extends BaseWorkspaceController {
         return work;
     }
 
+    @RequestMapping(value = "/work/workTitle/translatedTitleValidate.json", method = RequestMethod.POST)
+    public @ResponseBody
+    Work workWorkTitleTranslatedTitleValidate(@RequestBody Work work) {    	
+    	work.getWorkTitle().getTranslatedTitle().setErrors(new ArrayList<String>());
+    	if (work.getWorkTitle().getTranslatedTitle() != null && work.getWorkTitle().getTranslatedTitle().getContent() != null && work.getWorkTitle().getTranslatedTitle().getContent().length() > 1000) {
+            setError(work.getWorkTitle().getTranslatedTitle(), "manualWork.length_less_1000");
+        }
+    	if(work.getWorkTitle().getTranslatedTitle() != null && work.getWorkTitle().getTranslatedTitle().getLanguageCode() != null){
+	    	if(!LANGUAGE_CODE.matcher(work.getWorkTitle().getTranslatedTitle().getLanguageCode()).matches()) { 
+				setError(work.getWorkTitle().getTranslatedTitle(), "manualWork.invalid_language_code");
+	    	}
+    	}
+    	return work;
+    }
+        
     @RequestMapping(value = "/work/urlValidate.json", method = RequestMethod.POST)
     public @ResponseBody
     Work workUrlValidate(@RequestBody Work work) {
         work.getUrl().setErrors(new ArrayList<String>());
         if (work.getUrl().getValue() != null && work.getUrl().getValue().length() > 350) {
             setError(work.getUrl(), "manualWork.length_less_350");
+        }
+        return work;
+    }
+    
+    @RequestMapping(value = "/work/journalTitleValidate.json", method = RequestMethod.POST)
+    public @ResponseBody
+    Work workJournalTitleValidate(@RequestBody Work work) {
+        work.getJournalTitle().setErrors(new ArrayList<String>());
+        if (work.getJournalTitle().getValue() != null && work.getJournalTitle().getValue().length() > 1000) {
+            setError(work.getUrl(), "manualWork.length_less_1000");
+        }
+        return work;
+    }
+    
+    @RequestMapping(value = "/work/languageCodeValidate.json", method = RequestMethod.POST)
+    public @ResponseBody
+    Work workLanguageCodeValidate(@RequestBody Work work) {
+        work.getLanguageCode().setErrors(new ArrayList<String>());
+        if (work.getLanguageCode().getValue() != null) {
+        	if(!LANGUAGE_CODE.matcher(work.getLanguageCode().getValue()).matches())
+        		setError(work.getLanguageCode(), "manualWork.invalid_language_code");
         }
         return work;
     }

@@ -145,8 +145,8 @@ public class CurrentWorkTest {
         assertEquals("en_US", currentWork.getLanguageCode());
         assertEquals("Neanderthal Man - The journal title", currentWork.getJournalTitle());
         assertEquals("Hombre neandertal", currentWork.getTranslatedTitle());
-        assertEquals("es_CR", currentWork.getTranslatedTitleLanguageCode());
-    }
+        assertEquals("es_CR", currentWork.getTranslatedTitleLanguageCode());                
+    }        
 
     @Test
     public void testCreateFromCrossRefMetaData() throws JsonParseException, JsonMappingException, IOException {

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<orcid-work put-code="-1" visibility="public" xmlns="http://www.orcid.org/ns/orcid">
+    <work-title>
+        <title>Neanderthal Man</title>
+        <subtitle>Being oldfashioned</subtitle>
+        <translated-title language-code="es_CR">Hombre neandertal</translated-title>
+    </work-title>
+    <journal-title>Neanderthal Man - The journal title</journal-title>
+    <short-description>A book about neanderthal men</short-description>
+    <work-citation>
+        <work-citation-type>formatted-unspecified</work-citation-type>
+        <citation>Carberry, Josiah S., John W. Spaeth, and Paulo Di Fillipo. "Neanderthal Man." Book of Prehistory. N.p.: Brown UP, 2012. 450-70. 09 Oct. 2012. Web.</citation>
+    </work-citation>
+    <work-type>book</work-type>
+    <publication-date>
+        <year>2012</year>
+        <month>10</month>
+        <day>09</day>
+    </publication-date>
+    <work-external-identifiers>
+        <work-external-identifier>
+            <work-external-identifier-type>doi</work-external-identifier-type>
+            <work-external-identifier-id>10.5555/12345ABCDE</work-external-identifier-id>
+        </work-external-identifier>
+    </work-external-identifiers>
+    <url>http://neanderthalmen.com</url>
+    <work-contributors>
+        <contributor>
+            <contributor-orcid>4444-4444-4444-4449</contributor-orcid>
+            <credit-name>J. S. Carberry</credit-name>
+            <contributor-email>jscarberry@semantico.com</contributor-email>
+            <contributor-attributes>
+                <contributor-sequence>first</contributor-sequence>
+                <contributor-role>author</contributor-role>
+            </contributor-attributes>
+        </contributor>
+    </work-contributors>
+    <language-code>en_US</language-code>
+</orcid-work>

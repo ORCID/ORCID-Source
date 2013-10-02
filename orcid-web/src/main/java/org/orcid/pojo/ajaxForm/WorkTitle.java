@@ -46,8 +46,8 @@ public class WorkTitle implements ErrorsInterface, Serializable {
             }
             if(workTitle.getTranslatedTitle() != null){
                 TranslatedTitle translatedTitle = new TranslatedTitle();
-                translatedTitle.setContent((workTitle.getTranslatedTitle() == null) ? null : Text.valueOf(workTitle.getTranslatedTitle().getContent()));
-                translatedTitle.setLanguageCode((workTitle.getTranslatedTitle() == null || workTitle.getTranslatedTitle().getLanguageCode() == null) ? null : Text.valueOf(workTitle.getTranslatedTitle().getLanguageCode()));
+                translatedTitle.setContent((workTitle.getTranslatedTitle() == null) ? null : workTitle.getTranslatedTitle().getContent());
+                translatedTitle.setLanguageCode((workTitle.getTranslatedTitle() == null || workTitle.getTranslatedTitle().getLanguageCode() == null) ? null : workTitle.getTranslatedTitle().getLanguageCode());
                 wt.setTranslatedTitle(translatedTitle);
             }
 

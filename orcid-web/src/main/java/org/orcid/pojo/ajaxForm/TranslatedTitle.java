@@ -9,23 +9,23 @@ public class TranslatedTitle implements ErrorsInterface, Serializable {
 
     private List<String> errors = new ArrayList<String>();
     
-    private Text content;
+    private String content;
 
-    private Text languageCode;
+    private String languageCode;
     
     public static TranslatedTitle valueOf(org.orcid.jaxb.model.message.TranslatedTitle translatedTitle){
     	if(translatedTitle == null)
     		return null;
         TranslatedTitle result = new TranslatedTitle();
-        result.setContent((translatedTitle.getContent() == null) ? null : Text.valueOf(translatedTitle.getContent()));
-        result.setLanguageCode((translatedTitle.getLanguageCode() == null) ? null : Text.valueOf(translatedTitle.getLanguageCode()));
+        result.setContent(translatedTitle.getContent());
+        result.setLanguageCode(translatedTitle.getLanguageCode());
         return result;
     }
     
     public org.orcid.jaxb.model.message.TranslatedTitle toTranslatedTitle(){
         org.orcid.jaxb.model.message.TranslatedTitle result = new org.orcid.jaxb.model.message.TranslatedTitle();
-        result.setContent((content == null) ? null : content.getValue());
-        result.setLanguageCode((languageCode == null) ? null : languageCode.getValue());        
+        result.setContent((content == null) ? null : content);
+        result.setLanguageCode((languageCode == null) ? null : languageCode);        
         return result;
     }
 
@@ -37,19 +37,19 @@ public class TranslatedTitle implements ErrorsInterface, Serializable {
         this.errors = errors;
     }
 
-    public Text getContent() {
+    public String getContent() {
         return content;
     }
 
-    public void setContent(Text content) {
+    public void setContent(String content) {
         this.content = content;
     }
 
-    public Text getLanguageCode() {
+    public String getLanguageCode() {
         return languageCode;
     }
 
-    public void setLanguageCode(Text languageCode) {
+    public void setLanguageCode(String languageCode) {
         this.languageCode = languageCode;
     }
     
