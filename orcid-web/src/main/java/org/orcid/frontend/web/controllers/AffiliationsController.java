@@ -26,13 +26,14 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.orcid.core.adapter.Jaxb2JpaAdapter;
 import org.orcid.core.adapter.Jpa2JaxbAdapter;
-import org.orcid.core.manager.ExternalIdentifierManager;
-import org.orcid.core.manager.ThirdPartyImportManager;
+import org.orcid.core.manager.OrgAffiliationRelationManager;
 import org.orcid.jaxb.model.message.Affiliation;
 import org.orcid.jaxb.model.message.Affiliations;
 import org.orcid.jaxb.model.message.OrcidProfile;
-import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.persistence.dao.OrgAffiliationRelationDao;
+import org.orcid.persistence.dao.ProfileDao;
+import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
+import org.orcid.pojo.ajaxForm.Text;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -54,12 +55,6 @@ public class AffiliationsController extends BaseWorkspaceController {
     private static final String AFFILIATIONS_MAP = "AFFILIATIONS_MAP";
 
     @Resource
-    private ThirdPartyImportManager thirdPartyImportManager;
-
-    @Resource
-    private ExternalIdentifierManager externalIdentifierManager;
-
-    @Resource
     private Jpa2JaxbAdapter jpa2JaxbAdapter;
 
     @Resource
@@ -67,6 +62,15 @@ public class AffiliationsController extends BaseWorkspaceController {
 
     @Resource
     private OrgAffiliationRelationDao orgRelationAffiliationDao;
+
+    @Resource
+    private OrgAffiliationRelationManager orgAffiliationRelationManager;
+
+    @Resource
+    private ProfileDao profileDao;
+
+    @Resource
+    private OrgAffiliationRelationDao orgAffiliationRelationDao;
 
     /**
      * Removes a affiliation from a profile
@@ -124,18 +128,63 @@ public class AffiliationsController extends BaseWorkspaceController {
     }
 
     /**
-     * Returns a blank affiliation
+     * Returns a blank affiliation form
      * */
     @RequestMapping(value = "/affiliation.json", method = RequestMethod.GET)
     public @ResponseBody
-    Affiliation getAffiliation(HttpServletRequest request) {
-        Affiliation w = new Affiliation();
+    org.orcid.pojo.ajaxForm.Affiliation getAffiliation(HttpServletRequest request) {
+        org.orcid.pojo.ajaxForm.Affiliation affiliationForm = new org.orcid.pojo.ajaxForm.Affiliation();
 
         OrcidProfile profile = getEffectiveProfile();
-        Visibility v = profile.getOrcidInternal().getPreferences().getWorkVisibilityDefault().getValue();
-        w.setVisibility(v);
+        org.orcid.pojo.ajaxForm.Visibility v = org.orcid.pojo.ajaxForm.Visibility.valueOf(profile.getOrcidInternal().getPreferences().getWorkVisibilityDefault()
+                .getValue());
+        affiliationForm.setVisibility(v);
 
-        return w;
+        Text affiliationName = new Text();
+        affiliationForm.setAffiliationName(affiliationName);
+        affiliationName.setRequired(true);
+
+        Text city = new Text();
+        affiliationForm.setCity(city);
+
+        Text region = new Text();
+        affiliationForm.setRegion(region);
+
+        Text country = new Text();
+        affiliationForm.setCountry(country);
+        country.setValue("");
+        country.setRequired(true);
+
+        Text department = new Text();
+        affiliationForm.setDepartment(department);
+
+        return affiliationForm;
+    }
+
+    @RequestMapping(value = "/affiliation.json", method = RequestMethod.POST)
+    public @ResponseBody
+    org.orcid.pojo.ajaxForm.Affiliation postAffiliation(HttpServletRequest request, @RequestBody org.orcid.pojo.ajaxForm.Affiliation affiliationForm) {
+        // Validate
+        affiliationNameValidate(affiliationForm);
+        cityValidate(affiliationForm);
+        regionValidate(affiliationForm);
+        countryValidate(affiliationForm);
+        departmentValidate(affiliationForm);
+
+        copyErrors(affiliationForm.getAffiliationName(), affiliationForm);
+        copyErrors(affiliationForm.getCity(), affiliationForm);
+        copyErrors(affiliationForm.getRegion(), affiliationForm);
+        copyErrors(affiliationForm.getCountry(), affiliationForm);
+        copyErrors(affiliationForm.getDepartment(), affiliationForm);
+
+        if (affiliationForm.getErrors().isEmpty()) {
+            // Persist to DB
+            OrgAffiliationRelationEntity orgAffiliationRelationEntity = jaxb2JpaAdapter.getNewOrgAffiliationRelationEntity(affiliationForm.toAffiliation(),
+                    profileDao.find(getEffectiveUserOrcid()));
+            orgAffiliationRelationDao.persist(orgAffiliationRelationEntity);
+        }
+
+        return affiliationForm;
     }
 
     /**
@@ -150,7 +199,7 @@ public class AffiliationsController extends BaseWorkspaceController {
     }
 
     /**
-     * created a affiliation id list and sorts a map associated with the list in
+     * Create an affiliation id list and sorts a map associated with the list in
      * in the session
      * 
      */
@@ -198,6 +247,64 @@ public class AffiliationsController extends BaseWorkspaceController {
             }
         }
         return affiliation;
+    }
+
+    @RequestMapping(value = "/affiliation/affiliationNameValidate.json", method = RequestMethod.POST)
+    public @ResponseBody
+    org.orcid.pojo.ajaxForm.Affiliation affiliationNameValidate(@RequestBody org.orcid.pojo.ajaxForm.Affiliation affiliationForm) {
+        affiliationForm.getAffiliationName().setErrors(new ArrayList<String>());
+        if (affiliationForm.getAffiliationName().getValue() == null || affiliationForm.getAffiliationName().getValue().trim().length() == 0) {
+            setError(affiliationForm.getAffiliationName(), "NotBlank.manualAffiliation.name");
+        } else {
+            if (affiliationForm.getAffiliationName().getValue().trim().length() > 1000) {
+                setError(affiliationForm.getAffiliationName(), "manualAffiliation.length_less_1000");
+            }
+        }
+        return affiliationForm;
+    }
+
+    @RequestMapping(value = "/affiliation/cityValidate.json", method = RequestMethod.POST)
+    public @ResponseBody
+    org.orcid.pojo.ajaxForm.Affiliation cityValidate(@RequestBody org.orcid.pojo.ajaxForm.Affiliation affiliationForm) {
+        affiliationForm.getCity().setErrors(new ArrayList<String>());
+        if (affiliationForm.getCity().getValue() == null || affiliationForm.getCity().getValue().trim().length() == 0) {
+            setError(affiliationForm.getCity(), "NotBlank.manualAffiliation.city");
+        } else {
+            if (affiliationForm.getCity().getValue().trim().length() > 1000) {
+                setError(affiliationForm.getCity(), "manualAffiliation.length_less_1000");
+            }
+        }
+        return affiliationForm;
+    }
+
+    @RequestMapping(value = "/affiliation/regionValidate.json", method = RequestMethod.POST)
+    public @ResponseBody
+    org.orcid.pojo.ajaxForm.Affiliation regionValidate(@RequestBody org.orcid.pojo.ajaxForm.Affiliation affiliationForm) {
+        affiliationForm.getRegion().setErrors(new ArrayList<String>());
+        if (affiliationForm.getRegion().getValue() != null && affiliationForm.getRegion().getValue().trim().length() > 1000) {
+            setError(affiliationForm.getRegion(), "manualAffiliation.length_less_1000");
+        }
+        return affiliationForm;
+    }
+
+    @RequestMapping(value = "/affiliation/countryValidate.json", method = RequestMethod.POST)
+    public @ResponseBody
+    org.orcid.pojo.ajaxForm.Affiliation countryValidate(@RequestBody org.orcid.pojo.ajaxForm.Affiliation affiliationForm) {
+        affiliationForm.getCountry().setErrors(new ArrayList<String>());
+        if (affiliationForm.getCountry().getValue() == null || affiliationForm.getCountry().getValue().trim().length() == 0) {
+            setError(affiliationForm.getCountry(), "NotBlank.manualAffiliation.country");
+        }
+        return affiliationForm;
+    }
+
+    @RequestMapping(value = "/affiliation/departmentValidate.json", method = RequestMethod.POST)
+    public @ResponseBody
+    org.orcid.pojo.ajaxForm.Affiliation departmentValidate(@RequestBody org.orcid.pojo.ajaxForm.Affiliation affiliationForm) {
+        affiliationForm.getDepartment().setErrors(new ArrayList<String>());
+        if (affiliationForm.getDepartment().getValue() != null && affiliationForm.getDepartment().getValue().trim().length() > 1000) {
+            setError(affiliationForm.getDepartment(), "manualAffiliation.length_less_1000");
+        }
+        return affiliationForm;
     }
 
 }

@@ -45,6 +45,7 @@ import org.orcid.frontend.web.forms.LoginForm;
 import org.orcid.jaxb.model.message.Email;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.Visibility;
+import org.orcid.pojo.ajaxForm.ErrorsInterface;
 import org.orcid.utils.OrcidWebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -450,5 +451,16 @@ public class BaseController {
      * */
     protected String buildInternationalizationKey(Class theClass, String key){
         return theClass.getName() + '.' + key;
-    }         
+    }
+    
+    protected static void copyErrors(ErrorsInterface from, ErrorsInterface into) {
+        for (String s : from.getErrors()) {
+            into.getErrors().add(s);
+        }
+    }
+
+    protected void setError(ErrorsInterface ei, String msg) {
+        ei.getErrors().add(getMessage(msg));
+    }
+    
 }

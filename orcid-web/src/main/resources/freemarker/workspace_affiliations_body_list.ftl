@@ -29,13 +29,108 @@
     <div>
 </script>
 
+<script type="text/ng-template" id="add-affiliation-modal">
+	<div class="edit-affiliation colorbox-content">
+		<div class="row">
+			<div class="span12">
+				<h1 class="lightbox-title pull-left"><@orcid.msg 'manual_affiliation_form_contents.add_affiliation'/></h1>
+				<a class="btn pull-right close-button" ng-click="closeModal()">X</a>
+			</div>
+		</div>
+		<div class="row">
+			<div class="span6">	
+				<div class="control-group">
+					<label><@orcid.msg 'manual_affiliation_form_contents.labelname'/></label>
+				    <div class="relative">
+						<input name="name" type="text" class="input-xlarge"  ng-model="editAffiliation.affiliationName.value" placeholder="<@orcid.msg 'manual_affiliation_form_contents.add_name'/>" ng-change="serverValidate('affiliations/affiliation/affiliationNameValidate.json')" ng-model-onblur/>
+						<span class="required" ng-class="isValidClass(editAffiliation.affiliationName)">*</span>
+						<span class="orcid-error" ng-show="editAffiliation.affiliationName.errors.length > 0">
+							<div ng-repeat='error in editAffiliation.affiliationName.errors' ng-bind-html-unsafe="error"></div>
+						</span>
+					</div>
+				</div>
+				<div class="control-group">
+					<label><@orcid.msg 'manual_affiliation_form_contents.labelcity'/></label>
+				    <div class="relative">
+						<input name="name" type="text" class="input-xlarge"  ng-model="editAffiliation.city.value" placeholder="<@orcid.msg 'manual_affiliation_form_contents.add_city'/>" ng-change="serverValidate('affiliations/affiliation/cityValidate.json')" ng-model-onblur/>
+						<span class="required" ng-class="isValidClass(editAffiliation.city)">*</span>
+						<span class="orcid-error" ng-show="editAffiliation.affiliationName.errors.length > 0">
+							<div ng-repeat='error in editAffiliation.city.errors' ng-bind-html-unsafe="error"></div>
+						</span>
+					</div>
+				</div>
+				<div class="control-group">
+					<label><@orcid.msg 'manual_affiliation_form_contents.labelregion'/></label>
+				    <div class="relative">
+						<input name="name" type="text" class="input-xlarge"  ng-model="editAffiliation.region.value" placeholder="<@orcid.msg 'manual_affiliation_form_contents.add_region'/>" ng-change="serverValidate('affiliations/affiliation/regionValidate.json')" ng-model-onblur/>
+						<span class="orcid-error" ng-show="editAffiliation.affiliationName.errors.length > 0">
+							<div ng-repeat='error in editAffiliation.region.errors' ng-bind-html-unsafe="error"></div>
+						</span>
+					</div>
+				</div>
+                <div class="control-group">
+		    		<label class="relative"><@orcid.msg 'manage_bio_settings.labelcountry'/></label>
+		    		<div class="relative">
+			    		<select id="country" name="country" ng-model="editAffiliation.country.value" ng-change="serverValidate('affiliations/affiliation/countryValidate.json')">
+			    			<option value=""><@orcid.msg 'org.orcid.persistence.jpa.entities.CountryIsoEntity.empty' /></option>
+							<#list isoCountries?keys as key>
+								    <option value="${key}">${isoCountries[key]}</option>
+							</#list>
+						</select> 
+						<span class="required" ng-class="isValidClass(editAffiliation.country)">*</span>
+						<span class="orcid-error" ng-show="editAffiliation.country.errors.length > 0">
+							<div ng-repeat='error in editAffiliation.country.errors' ng-bind-html-unsafe="error"></div>
+						</span>
+					</div>
+				</div>
+				<div class="control-group">
+					<label><@orcid.msg 'manual_affiliation_form_contents.labeldepartment'/></label>
+				    <div class="relative">
+						<input name="name" type="text" class="input-xlarge"  ng-model="editAffiliation.department.value" placeholder="<@orcid.msg 'manual_affiliation_form_contents.add_department'/>" ng-change="serverValidate('affiliations/affiliation/departmentValidate.json')" ng-model-onblur/>
+						<span class="orcid-error" ng-show="editAffiliation.affiliationName.errors.length > 0">
+							<div ng-repeat='error in editAffiliation.department.errors' ng-bind-html-unsafe="error"></div>
+						</span>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="span6">
+			   &nbsp;
+			</div>
+			<div class="span2">
+				<button class="btn btn-primary" ng-click="addAffiliation()" ng-disabled="addingAffiliation" ng-class="{disabled:addingAffiliation}"><@orcid.msg 'manual_affiliation_form_contents.btnaddtolist'/></button> 
+				<a href="" ng-click="closeModal()"><@orcid.msg 'manage.deleteExternalIdentifier.cancel'/></a>
+			</div>
+			<div class="span4">
+				<span ng-show="addingAffiliation">
+					<i class="icon-spinner icon-2x icon-spin  green"></i>
+				</span>
+				<span ng-show="editWork.errors.length > 0" class="alert" style>Please fix above errors</span>
+			</div>
+		</div>
+		<div class="row">
+			<div class="span12">
+			   &nbsp;
+			</div>
+		</div>
+	<div>
+</script>
+
 <ul ng-hide="!affiliations.length" class="workspace-publications workspace-body-list bottom-margin-medium" ng-cloak>        
     <li class="bottom-margin-small" ng-repeat="affiliation in affiliations">            	
         <div class="pull-right" style="right: 145px; top: 20px; width: 15px;"><a href ng-click="deleteAffiliation($index)" class="icon-trash orcid-icon-trash grey"></a></div>
 		<div style="width: 530px;">
-        <h3 class="affiliation-title">
-        	<strong ng-bind-html="affiliation.affiliationName"></strong>
-        </h3>
+	        <h3 class="affiliation-title">
+	        	<strong ng-bind-html="affiliation.affiliationName"></strong>
+	        </h3>
+	        <div ng-show="affiliation.departmentName">
+	            <span ng-bind-html="affiliation.departmentName"></span>
+	        </div>
+	        <div>
+	            <span ng-bind-html="affiliation.affiliationAddress.affiliationCity.content"></span>,
+	            <span ng-bind-html="affiliation.affiliationAddress.affiliationCountry.value"></span>
+	        </div>
         </div>
         <div class="pull-right" style="width: 130px;">
 		<@orcid.privacyToggle "affiliation.visibility" "setPrivacy($index, 'PUBLIC', $event)" 
