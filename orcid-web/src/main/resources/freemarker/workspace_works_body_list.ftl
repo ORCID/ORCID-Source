@@ -28,188 +28,6 @@
     	<a href="" ng-click="closeModal()">${springMacroRequestContext.getMessage("manage.deleteWork.cancel")}</a>
     <div>
 </script>
-
-<script type="text/ng-template" id="detail-work-modal">
-	<div class="edit-work colorbox-content">
-		<div class="row">
-			<div class="span12">
-				<h1 class="lightbox-title pull-left">Work Details</h1>
-				<a class="btn pull-right close-button" ng-click="closeModal()">X</a>
-			</div>
-		</div>
-		<div class="row" ng-show="detailWork.workTitle.title.value" ng-cloak>
-			<div class="span2">
-				<div class="label">
-					<@orcid.msg 'manual_work_form_contents.labeltitle'/>
-				</div>
-			</div>
-			<div class="span10">
-				<div ng-bind="detailWork.workTitle.title.value"></div>
-			</div>
-		</div>
-		<div class="row" ng-show="detailWork.workTitle.subtitle.value" ng-cloak>
-			<div class="span2">
-				<div class="label">
-					<@orcid.msg 'manual_work_form_contents.labelsubtitle'/>
-				</div>
-			</div>
-			<div class="span10">
-				<div ng-bind="detailWork.workTitle.subtitle.value"></div>
-			</div>
-		</div>
-		<div class="row" ng-show="detailWork.workType.value" ng-cloak>
-			<div class="span2">
-				<div class="label">
-					<@orcid.msg 'manual_work_form_contents.labelworktype'/>
-				</div>
-			</div>
-			<div class="span10">
-				<div ng-bind="detailWork.workType.value"></div>
-			</div>
-		</div>
-		<div class="row" ng-show="detailWork.citation.citation.value" ng-cloak>
-			<div class="span2">
-				<div class="label">
-					<@orcid.msg 'manual_work_form_contents.labelcitation'/>
-				</div>
-				<div ng-show="showBibtex && detailWork.citation.citationType.value == 'bibtex'"><a ng-click="bibtexShowToggle()">show raw</a></div>
-				<div ng-show="showBibtex == false && detailWork.citation.citationType.value == 'bibtex'"><a ng-click="bibtexShowToggle()">hide raw</a></div>
-			</div>
-			<div class="span10" ng-hide="showBibtex" ng-cloak>
-				<div ng-bind="detailWork.citation.citation.value"></div>
-			</div>
-			<div class="span10" ng-show="showBibtex" ng-cloak>
-				<div ng-repeat='bibJSON in detailWork.bibtexCitation'>
-					<div class="row"> 
-						<div class="span10">
-							{{bibJSON.entryType}} : {{bibJSON.citationKey}}
-						</div>
-					</div>
-					<div ng-repeat="(entKey,entVal) in bibJSON.entryTags" class="row">
-						<div class="span1"></div>
-						<div class="span3">{{entKey}}</div>
-						<div class="span6">{{entVal}}</div>
-					</div>
-				</div>
-			</div>
-		</div>
-		<div class="row" ng-show="detailWork.citation.citationType.value" ng-cloak>
-			<div class="span2">
-				<div class="label">
-					<@orcid.msg 'manual_work_form_contents.labelcitationtype'/>
-				</div>
-			</div>
-			<div class="span10">
-				<div ng-bind="detailWork.citation.citationType.value"></div>
-			</div>
-		</div>
-		<div class="row" ng-show="detailWork.publicationDate.year" ng-cloak>
-			<div class="span2">
-				<div class="label">
-					<@orcid.msg 'manual_work_form_contents.labelPubDate'/>
-				</div>
-			</div>
-			<div class="span10">
-				<div><span ng-show="detailWork.publicationDate.day && detailWork.publicationDate.month">{{detailWork.publicationDate.day}}-</span><span ng-show="detailWork.publicationDate.month">{{detailWork.publicationDate.month}}-</span><span ng-show="detailWork.publicationDate.year">{{detailWork.publicationDate.year}}</span></div>
-			</div>
-		</div>
-		<div class="row" ng-show="detailWork.shortDescription.value" ng-cloak>
-			<div class="span2">
-				<div class="label">
-					<@orcid.msg 'manual_work_form_contents.labeldescription'/>
-				</div>
-			</div>
-			<div class="span10">
-				<div ng-bind="detailWork.shortDescription.value" style="white-space: pre-wrap;"></div>
-			</div>
-		</div>
-		<div class="row" ng-show="detailWork.workExternalIdentifiers.length > 0" ng-cloak>
-			<div class="span2">
-				<div class="label">
-					<@orcid.msg 'manual_work_form_contents.labelID'/>
-				</div>
-			</div>
-			<div class="span10">
-				<div>
-					<span ng-repeat='ie in detailWork.workExternalIdentifiers'>
-            	    	<span ng-bind-html='ie | workExternalIdentifierHtml:$first:$last:work.workExternalIdentifiers.length'></span>
-                    </span>
-				</div>
-			</div>
-		</div>
-		<div class="row" ng-show="detailWork.url.value" ng-cloak>
-			<div class="span2">
-				<div class="label">
-					<@orcid.msg 'manual_work_form_contents.labelURL'/>
-				</div>
-			</div>
-			<div class="span10">
-				<div ng-bind="detailWork.url.value"><a href="{{work.url.value | urlWithHttp}}" target="_blank">{{work.url.value}}</a></div>
-			</div>
-		</div>
-		<div class="row" ng-show="detailWork.contributors.length > 0" ng-cloak>
-			<div class="span2">
-				<div class="label">
-					Contributor
-				</div>
-			</div>
-			<div class="span10">
-				<div ng-repeat="contributor in detailWork.contributors">
-					<div class="row" ng-show="contributor.contributorRole.value">
-						<div class="span2">
-							Role:
-						</div>
-						<div class="span8">
-							{{contributor.contributorRole.value}}
-						</div>
-					</div>
-					<div class="row" ng-show="contributor.contributorSequence.value">
-						<div class="span2">
-							Credited:
-						</div>
-						<div class="span8">
-							{{contributor.contributorSequence.value}}
-						</div>
-					</div>
-					<div class="row" ng-show="contributor.email.value">
-						<div class="span2">
-							Email:
-						</div>
-						<div class="span8">
-							{{contributor.email.value}}
-						</div>
-					</div>
-					<div class="row" ng-show="contributor.orcid.value">
-						<div class="span2">
-							ORCID:
-						</div>
-						<div class="span8">
-							{{contributor.orcid.value}}
-						</div>
-					</div>
-					<div class="row" ng-show="contributor.email.value">
-						<div class="span2">
-							Credited:
-						</div>
-						<div class="span8">
-							{{contributor.email.value}}
-						</div>
-					</div>
-					<div class="row" ng-show="contributor.creditName.value">
-						<div class="span2">
-							Credit Name:
-						</div>
-						<div class="span8">
-							{{contributor.creditName.value}}
-						</div>
-					</div>
-				</div>
-				    
-				
-			</div>
-		</div>		
-	</div>
-</script>
 	
 <script type="text/ng-template" id="add-work-modal">
 	<div class="edit-work colorbox-content">
@@ -428,7 +246,115 @@
 <ul ng-hide="!works.length" class="workspace-publications workspace-body-list bottom-margin-medium" ng-cloak>        
     <li class="bottom-margin-small" ng-repeat="work in works | orderBy:['-publicationDate.year', '-publicationDate.month', '-publicationDate.day']">            	
     	<#if RequestParameters['worksInfo']??>
-    	   <div class="pull-right" style="right: 160px; top: 20px; width: 15px;"><a href ng-click="showDetailModal($index)" class="icon-resize-full grey"></a></div>
+    	   <div class="pull-right show-work-info" style="right: 160px; top: 20px; width: 15px;"><a href ng-click="showDetailModal($index)" class="icon-book grey"></a>
+    	       <div class="popover bottom popover-work-container"><div class="arrow" style="left: 520px;"></div>
+    	       
+			    	<div class="row bottomBuffer">
+			    	</div>       
+			 		<div class="row bottomBuffer" ng-show="work.workTitle.title.value" ng-cloak>
+						<div class="span8">
+							<strong><@orcid.msg 'manual_work_form_contents.labeltitle'/></strong>
+							<div ng-bind="work.workTitle.title.value"></div>
+						</div>
+					</div>
+					<div class="row bottomBuffer" ng-show="work.workTitle.subtitle.value" ng-cloak>
+						<div class="span8">
+							<strong>
+								<@orcid.msg 'manual_work_form_contents.labelsubtitle'/>
+							</strong>
+							<div ng-bind="work.workTitle.subtitle.value"></div>
+						</div>
+					</div>
+					<div class="row bottomBuffer" ng-show="work.workType.value" ng-cloak>
+						<div class="span8">
+							<strong>
+								<@orcid.msg 'manual_work_form_contents.labelworktype'/>
+							</strong>
+							<div ng-bind="work.workType.value"></div>
+						</div>
+					</div>
+					<div class="row bottomBuffer" ng-show="work.citation.citation.value" ng-cloak>
+						<div class="span8">
+							<strong>
+								<@orcid.msg 'manual_work_form_contents.labelcitation'/>
+							</strong>
+							<span ng-show="showBibtex && work.citation.citationType.value == 'bibtex'"><a ng-click="bibtexShowToggle()">Show in Bibtex</a></span>
+							<span ng-show="showBibtex == false && work.citation.citationType.value == 'bibtex'"><a ng-click="bibtexShowToggle()">Show in HTML</a></span>
+							<div ng-hide="showBibtex" ng-bind="work.citation.citation.value"></div>
+							<div ng-show="showBibtex" ng-repeat='bibJSON in bibtexCitations[work.putCode]'>
+								<div class="row"> 
+									<div class="span2">TYPE</div>
+									<div class="span6">{{bibJSON.entryType}}</div>
+								</div>
+								<div class="row bottomBuffer"> 
+									<div class="span2">CITATION KEY</div>
+									<div class="span6">{{bibJSON.citationKey}}</div>
+								</div>
+								<div ng-repeat="(entKey,entVal) in bibJSON.entryTags" class="row">
+									<div class="span2">{{entKey}}</div>
+									<div class="span6">{{entVal}}</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="row bottomBuffer" ng-show="work.citation.citationType.value" ng-cloak>
+						<div class="span8">
+							<strong>
+								<@orcid.msg 'manual_work_form_contents.labelcitationtype'/>
+							</strong>
+							<div ng-bind="work.citation.citationType.value"></div>
+						</div>
+					</div>
+					<div class="row bottomBuffer" ng-show="work.publicationDate.year" ng-cloak>
+						<div class="span8">
+							<strong>
+								<@orcid.msg 'manual_work_form_contents.labelPubDate'/>
+							</strong>
+							<div><span ng-show="work.publicationDate.day && work.publicationDate.month">{{work.publicationDate.day}}-</span><span ng-show="work.publicationDate.month">{{work.publicationDate.month}}-</span><span ng-show="work.publicationDate.year">{{work.publicationDate.year}}</span></div>
+						</div>
+					</div>
+					<div class="row bottomBuffer" ng-show="work.shortDescription.value" ng-cloak>
+						<div class="span8">
+							<strong>
+								<@orcid.msg 'manual_work_form_contents.labeldescription'/>
+							</strong>
+							<div ng-bind="work.shortDescription.value" style="white-space: pre-wrap;"></div>
+						</div>
+					</div>
+					<div class="row bottomBuffer" ng-show="work.workExternalIdentifiers.length > 0" ng-cloak>
+						<div class="span8">
+							<strong>
+								<@orcid.msg 'manual_work_form_contents.labelID'/>
+							</strong>
+							<div>
+								<span ng-repeat='ie in work.workExternalIdentifiers'>
+			            	    	<span ng-bind-html='ie | workExternalIdentifierHtml:$first:$last:work.workExternalIdentifiers.length'></span>
+			                    </span>
+							</div>
+						</div>
+					</div>
+					<div class="row bottomBuffer" ng-show="work.url.value" ng-cloak>
+						<div class="span8">
+							<strong>
+								<@orcid.msg 'manual_work_form_contents.labelURL'/>
+							</strong>
+							<div ng-bind="work.url.value"><a href="{{work.url.value | urlWithHttp}}" target="_blank">{{work.url.value}}</a></div>
+						</div>
+					</div>
+					<div class="row bottomBuffer" ng-show="work.contributors.length > 0" ng-cloak>
+						<div class="span8">
+							<strong>
+								Contributor
+							</strong>
+							<div ng-repeat="contributor in work.contributors">
+								{{contributor.creditName.value}} (<span ng-bind='contributor | contributorFilter'></span>)
+							</div>
+						</div>
+					</div>	
+    	       
+    	       
+    	       </div>
+    	   </div>
            <div class="pull-right" style="right: 140px; top: 20px; width: 15px;"><a href ng-click="deleteWork($index)" class="icon-trash orcid-icon-trash grey"></a></div>
     	<#else>
            <div class="pull-right" style="right: 145px; top: 20px; width: 15px;"><a href ng-click="deleteWork($index)" class="icon-trash orcid-icon-trash grey"></a></div>
