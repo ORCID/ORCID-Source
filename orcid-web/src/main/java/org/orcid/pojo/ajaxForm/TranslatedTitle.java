@@ -14,6 +14,8 @@ public class TranslatedTitle implements ErrorsInterface, Serializable {
     private Text languageCode;
     
     public static TranslatedTitle valueOf(org.orcid.jaxb.model.message.TranslatedTitle translatedTitle){
+    	if(translatedTitle == null)
+    		return null;
         TranslatedTitle result = new TranslatedTitle();
         result.setContent((translatedTitle.getContent() == null) ? null : Text.valueOf(translatedTitle.getContent()));
         result.setLanguageCode((translatedTitle.getLanguageCode() == null) ? null : Text.valueOf(translatedTitle.getLanguageCode()));

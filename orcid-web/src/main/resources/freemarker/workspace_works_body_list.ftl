@@ -267,7 +267,8 @@
 				    <div class="relative">
 						<input name="familyNames" type="text" class="input-xlarge"  ng-model="editWork.workTitle.title.value" placeholder="<@orcid.msg 'manual_work_form_contents.add_title'/>" ng-change="serverValidate('works/work/workTitle/titleValidate.json')" ng-model-onblur/>						
 						<span class="required" ng-class="isValidClass(editWork.workTitle.title)">*</span>
-						<a ng-click="showTranslatedTitleModal()" class="icon-plus-sign blue"></a>
+						<a ng-click="showTranslatedTitleModal()" class="icon-plus-sign blue" ng-hide="editTranslatedTitle"></a>
+						<a ng-click="hideTranslatedTitleModal()" class="icon-minus-sign blue" ng-show="editTranslatedTitle"></a>
 						<span class="orcid-error" ng-show="editWork.workTitle.title.errors.length > 0">
 							<div ng-repeat='error in editWork.workTitle.title.errors' ng-bind-html-unsafe="error"></div>
 						</span>
@@ -293,8 +294,7 @@
 								<option value="${languages[key]}">${key}</option>
 							</#list>
 						</select>
-						<span class="required" ng-class="isValidClass(editWork.workTitle.translatedTitle.languageCode)">*</span>
-						<a ng-click="hideTranslatedTitleModal()" class="icon-minus-sign blue"></a>
+						<span class="required" ng-class="isValidClass(editWork.workTitle.translatedTitle.languageCode)">*</span>						
 					</div>					
 				</div>
 

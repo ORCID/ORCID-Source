@@ -352,6 +352,14 @@ public class WorksController extends BaseWorkspaceController {
         workEntity.setWorkType(orcidWork.getWorkType());
         workEntity.setWorkUrl(orcidWork.getUrl().getValue());
         workEntity.setLanguageCode(StringUtils.isEmpty(orcidWork.getLanguageCode()) ? null : orcidWork.getLanguageCode());
+        
+        TranslatedTitle translatedTitle = TranslatedTitle.valueOf(orcidWork.getWorkTitle().getTranslatedTitle());
+        
+        if(translatedTitle != null) {
+        	workEntity.setTranslatedTitle(translatedTitle.getContent() == null ? null : translatedTitle.getContent().getValue());
+        	workEntity.setTranslatedTitleLanguageCode(translatedTitle.getLanguageCode() == null ? null : translatedTitle.getLanguageCode().getValue() );
+        }
+        
         WorkContributors workContributors = orcidWork.getWorkContributors();
         if (workContributors != null) {
             workEntity.setContributorsJson(JsonUtils.convertToJsonString(workContributors));
