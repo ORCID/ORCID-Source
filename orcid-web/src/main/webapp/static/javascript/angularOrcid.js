@@ -99,6 +99,29 @@ orcidNgModule.filter('urlWithHttp', function(){
 	};
 });
 
+function emptyTextField(field) {
+	if (field != null 
+			&& field.value != null
+			&& field.value.trim() != '') return false;
+	return true;
+}
+
+function addComma(str) {
+	if (str.length > 0) return str + ', ';
+	return str;
+}
+
+orcidNgModule.filter('contributorFilter', function(){
+	return function(ctrb){
+		var out = '';
+		if (!emptyTextField(ctrb.contributorRole)) out = out + ctrb.contributorRole.value;
+		if (!emptyTextField(ctrb.contributorSequence)) out = addComma(out) + ctrb.contributorSequence.value; 
+		if (!emptyTextField(ctrb.orcid)) out = addComma(out) + ctrb.orcid.value; 
+		if (!emptyTextField(ctrb.email)) out = addComma(out) + ctrb.email.value;
+	    return out;
+	};
+});
+
 
 orcidNgModule.filter('workExternalIdentifierHtml', function(){
 	return function(workExternalIdentifier, first, last, length){
@@ -1083,6 +1106,8 @@ function WorkCtrl($scope, $compile, worksSrvc){
 	$scope.displayWorks = true;
 	$scope.works = worksSrvc.works;
 	$scope.numOfWorksToAdd = null;
+	$scope.showBibtex = true;
+	$scope.bibtexCitations = {};
 	
 	$scope.toggleDisplayWorks = function () {
 		$scope.displayWorks = !$scope.displayWorks;
@@ -1094,40 +1119,6 @@ function WorkCtrl($scope, $compile, worksSrvc){
 	        onComplete: function() {$.colorbox.resize();}
 	    });
 	};
-
-	$scope.showDetailModal = function(idx){
-		var dw = $scope.works[idx];
-		
-		// filter out blank contributors 
-		for (idx in dw.contributors) {
-			if (dw.contributors[idx].contributorSequence == null
-				&& dw.contributors[idx].email == null
-				&& dw.contributors[idx].orcid == null
-				&& dw.contributors[idx].creditName == null
-				&& dw.contributors[idx].contributorRole == null
-				&& dw.contributors[idx].creditNameVisibility == null)
-				delete dw.contributors.splice(idx,1);
-		}
-		
-		$scope.detailWork = dw;
-		$scope.showBibtex = false;
-		if ($scope.detailWork.citation && $scope.detailWork.citation.citationType.value == 'bibtex') {
-			try {
-				$scope.detailWork.bibtexCitation = bibtexParse.toJSON($scope.detailWork.citation.citation.value);
-				console.log($scope.detailWork.bibtexCitation);
-				$scope.showBibtex = true;
-			} catch (err) {
-				console.log("couldn't parse bibtex: " + $scope.detailWork.citation.citation.value);
-			}
-		}
-	    $.colorbox({        	
-	        html: $compile($('#detail-work-modal').html())($scope),
-	        scrolling: true,
-	        onComplete: function() {
-	        	$.colorbox.resize();
-	        }
-	    });  
-    };
     
     $scope.bibtexShowToggle = function () {
     	$scope.showBibtex = !($scope.showBibtex);
@@ -1196,8 +1187,30 @@ function WorkCtrl($scope, $compile, worksSrvc){
 				dataType: 'json',
 				success: function(data) {
 					$scope.$apply(function(){ 
-						for (i in data)
-						$scope.works.push(data[i]);
+						for (i in data) {
+							var dw = data[i];
+							for (idx in data[i].contributors) {
+								if (dw.contributors[idx].contributorSequence == null
+									&& dw.contributors[idx].email == null
+									&& dw.contributors[idx].orcid == null
+									&& dw.contributors[idx].creditName == null
+									&& dw.contributors[idx].contributorRole == null
+									&& dw.contributors[idx].creditNameVisibility == null)
+									delete dw.contributors.splice(idx,1);
+								
+								if (dw.citation && dw.citation.citationType.value == 'bibtex') {
+									try {
+										$scope.bibtexCitations[dw.putCode] = bibtexParse.toJSON(dw.citation.citation.value);
+										console.log(dw.bibtexCitation);
+									} catch (err) {
+										console.log("couldn't parse bibtex: " + dw.citation.citation.value);
+									}
+								}
+
+							}
+
+							$scope.works.push(dw);
+						}
 					});
 					setTimeout(function () {$scope.addWorkToScope();},50);
 				}
