@@ -775,6 +775,9 @@ strong,
      font-weight: normal !important;
 }
 
+.bottomBuffer {
+	margin-bottom: 1em;
+}
 
 .primaryEmail{
 	font-weight: bold;
@@ -1734,6 +1737,20 @@ a:hover {
 
 .popover-content {
      overflow: hidden;
+}
+
+.popover-work-container {
+	display: none;
+	position: absolute; 
+	left: -514px; 
+	top: 17px;
+	width: 686px !important;
+	max-width: 686px !important;
+	background-color: #ffffff;
+}
+
+.show-work-info:hover .popover-work-container {
+	display: inline;
 }
 
 .popover-iframe {

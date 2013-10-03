@@ -23,9 +23,8 @@ import java.io.Serializable;
 
 /**
  * 2011-2012 - ORCID
- *
- * @author Declan Newman (declan)
- *         Date: 31/07/2012
+ * 
+ * @author Declan Newman (declan) Date: 31/07/2012
  */
 @XmlType(name = "affiliation-type")
 @XmlEnum
@@ -33,45 +32,45 @@ public enum AffiliationType implements Serializable {
 
     /**
      * Current primary institution
-     *
+     * 
      */
     @XmlEnumValue("current-primary-institution")
-    CURRENT_PRIMARY_INSTITUTION("current_primary_institution"),
+    CURRENT_PRIMARY_INSTITUTION("current-primary-institution"),
 
     /**
      * Past institution
-     *
+     * 
      */
     @XmlEnumValue("past-institution")
-    PAST_INSTITUTION("past_institution"),
+    PAST_INSTITUTION("past-institution"),
 
     /**
      * Published here
-     *
+     * 
      */
     @XmlEnumValue("published-here")
-    PUBLISHED_HERE("published_here"),
+    PUBLISHED_HERE("published-here"),
 
     /**
      * Current institution
-     *
+     * 
      */
     @XmlEnumValue("current-institution")
-    CURRENT_INSTITUTION("current_institution"),
+    CURRENT_INSTITUTION("current-institution"),
 
     /**
      * Funded by
-     *
+     * 
      */
     @XmlEnumValue("funded-by")
     FUNDED_BY("funded-by"),
 
     /**
      * Educated here
-     *
+     * 
      */
     @XmlEnumValue("educated-here")
-    EDUCATED_HERE("educated_here");
+    EDUCATED_HERE("educated-here");
 
     private final String value;
 

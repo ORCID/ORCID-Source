@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.orcid.jaxb.model.message.Day;
+import org.orcid.jaxb.model.message.FuzzyDate;
 import org.orcid.jaxb.model.message.Month;
 import org.orcid.jaxb.model.message.PublicationDate;
 import org.orcid.jaxb.model.message.Year;
@@ -34,18 +35,18 @@ public class Date implements ErrorsInterface, Required {
     private boolean required = true;
     private String getRequiredMessage;
 
-    public static Date valueOf(PublicationDate publicationDate) {
+    public static Date valueOf(FuzzyDate fuzzyDate) {
         Date d = new Date();
-        if (publicationDate.getDay() != null && publicationDate.getDay().getValue() !=null)
-            d.setDay(publicationDate.getDay().getValue());
-        if (publicationDate.getMonth() != null && publicationDate.getMonth().getValue() !=null)
-            d.setMonth(publicationDate.getMonth().getValue());
-        if (publicationDate.getYear() != null && publicationDate.getYear().getValue() !=null)
-            d.setYear(publicationDate.getYear().getValue());
+        if (fuzzyDate.getDay() != null && fuzzyDate.getDay().getValue() !=null)
+            d.setDay(fuzzyDate.getDay().getValue());
+        if (fuzzyDate.getMonth() != null && fuzzyDate.getMonth().getValue() !=null)
+            d.setMonth(fuzzyDate.getMonth().getValue());
+        if (fuzzyDate.getYear() != null && fuzzyDate.getYear().getValue() !=null)
+            d.setYear(fuzzyDate.getYear().getValue());
         return d;
     }
 
-    public PublicationDate toPublicationDate() {
+    public FuzzyDate toFuzzyDate() {
         PublicationDate pd = new PublicationDate();
         if (!PojoUtil.isEmpty(this.getDay()))
             pd.setDay(new Day(new Integer(this.getDay())));

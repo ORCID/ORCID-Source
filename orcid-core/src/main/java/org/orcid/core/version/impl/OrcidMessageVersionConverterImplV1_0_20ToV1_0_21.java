@@ -55,13 +55,14 @@ public class OrcidMessageVersionConverterImplV1_0_20ToV1_0_21 implements OrcidMe
             OrcidActivities orcidActivities = orcidProfile.getOrcidActivities();
             if (orcidActivities != null) {
                 orcidActivities.setAffiliations(null);
-            }
-            // Remove journal title from each work
-            OrcidWorks orcidWorks = orcidActivities.getOrcidWorks();
-            if(orcidWorks != null){
-            	for(OrcidWork orcidWork : orcidWorks.getOrcidWork()){
-            		orcidWork.setJournalTitle(null);
-            	}
+            
+                // Remove journal title from each work
+                OrcidWorks orcidWorks = orcidActivities.getOrcidWorks();
+                if(orcidWorks != null){
+                    for(OrcidWork orcidWork : orcidWorks.getOrcidWork()) {
+                        orcidWork.setJournalTitle(null);
+                    }
+                }
             }
             
         }

@@ -593,16 +593,6 @@ public class WorksController extends BaseWorkspaceController {
         return work;
     }
 
-    private static void copyErrors(ErrorsInterface from, ErrorsInterface into) {
-        for (String s : from.getErrors()) {
-            into.getErrors().add(s);
-        }
-    }
-
-    private void setError(ErrorsInterface ei, String msg) {
-        ei.getErrors().add(getMessage(msg));
-    }
-
     /**
      * List works associated with a profile
      * */
