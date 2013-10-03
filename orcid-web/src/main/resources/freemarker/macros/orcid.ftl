@@ -25,7 +25,7 @@
  -->
 
 
-<#macro privacyToggle angularModel publicClick limitedClick privateClick>
+<#macro privacyToggle angularModel publicClick limitedClick privateClick popoverStyle="" arrowStyle="">
 	<div class="relative">
 		<ul class="privacyToggle">
 			<li class="publicActive" ng-class="{publicInActive: ${angularModel} != 'PUBLIC'}"><a href="" title="<@orcid.msg 'manage.lipublic' />" ng-click="${publicClick}"></a></li>
@@ -34,8 +34,8 @@
 		</ul>
 		<div class="popover-help-container" style="position: absolute; left: 110px; top: 5px;">
         	<a href="javascript:void(0);"><i class="icon-question-sign"style="width: 14px;"></i></a>
-            <div class="popover bottom">
-		        <div class="arrow"></div>
+            <div class="popover bottom" style="${popoverStyle}">
+		        <div class="arrow" style="${arrowStyle}"></div>
 		        <div class="popover-content">
 		        	<strong>${springMacroRequestContext.getMessage("privacyToggle.help.who_can_see")}</strong>
 			        <ul class="privacyHelp">
