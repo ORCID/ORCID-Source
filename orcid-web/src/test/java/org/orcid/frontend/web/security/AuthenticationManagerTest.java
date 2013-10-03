@@ -78,7 +78,7 @@ public class AuthenticationManagerTest extends DBUnitTest {
         Authentication authentication = authenticationManager.authenticate(token);
         assertNotNull(authentication);
         Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
-        assertEquals(1, authorities.size());
+        assertEquals(2, authorities.size());
     }
 
 }
