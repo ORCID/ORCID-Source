@@ -26,7 +26,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.orcid.core.adapter.Jaxb2JpaAdapter;
 import org.orcid.core.adapter.Jpa2JaxbAdapter;
-import org.orcid.core.manager.OrgAffiliationRelationManager;
 import org.orcid.jaxb.model.message.Affiliation;
 import org.orcid.jaxb.model.message.Affiliations;
 import org.orcid.jaxb.model.message.OrcidProfile;
@@ -63,9 +62,6 @@ public class AffiliationsController extends BaseWorkspaceController {
 
     @Resource
     private OrgAffiliationRelationDao orgRelationAffiliationDao;
-
-    @Resource
-    private OrgAffiliationRelationManager orgAffiliationRelationManager;
 
     @Resource
     private ProfileDao profileDao;
