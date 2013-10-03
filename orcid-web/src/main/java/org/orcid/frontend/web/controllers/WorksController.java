@@ -503,7 +503,7 @@ public class WorksController extends BaseWorkspaceController {
     Work workJournalTitleValidate(@RequestBody Work work) {
         work.getJournalTitle().setErrors(new ArrayList<String>());
         if (work.getJournalTitle().getValue() != null && work.getJournalTitle().getValue().length() > 1000) {
-            setError(work.getUrl(), "manualWork.length_less_1000");
+            setError(work.getJournalTitle(), "manualWork.length_less_1000");
         }
         return work;
     }

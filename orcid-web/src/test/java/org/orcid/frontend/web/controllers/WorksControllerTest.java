@@ -14,6 +14,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.frontend.web.util.BaseControllerTest;
 import org.orcid.jaxb.model.message.OrcidWork;
+import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.pojo.ajaxForm.Work;
 import org.orcid.pojo.ajaxForm.WorkExternalIdentifier;
 import org.springframework.test.context.ContextConfiguration;
@@ -29,7 +30,7 @@ public class WorksControllerTest extends BaseControllerTest {
 	@Resource
     WorksController worksController;
 		
-	private String _1000chars = null;
+	private String _5000chars = null;
 	
 	
 	@Before
@@ -78,16 +79,52 @@ public class WorksControllerTest extends BaseControllerTest {
 		
 		worksController.workCitationValidate(work);
 		assertEquals(0, work.getCitation().getCitation().getErrors().size());
-		assertEquals(0, work.getCitation().getCitationType().getErrors().size());				
+		assertEquals(0, work.getCitation().getCitationType().getErrors().size());	
+		
+		//Set wrong values to each field
+		work.getWorkTitle().setTitle(Text.valueOf(buildLongWord()));
+		work.getWorkTitle().setSubtitle(Text.valueOf(buildLongWord()));
+		work.getWorkTitle().getTranslatedTitle().setContent(buildLongWord());
+		work.getWorkTitle().getTranslatedTitle().setLanguageCode(buildLongWord());
+		work.getUrl().setValue(buildLongWord());
+		work.getJournalTitle().setValue(buildLongWord());
+		work.getLanguageCode().setValue(buildLongWord());
+		work.getShortDescription().setValue(buildLongWord());
+		work.getWorkType().setValue(new String());
+		
+		worksController.workWorkTitleTitleValidate(work);		
+		assertEquals(1, work.getWorkTitle().getTitle().getErrors().size());
+		
+		worksController.workWorkTitleSubtitleValidate(work);
+		assertEquals(1, work.getWorkTitle().getSubtitle().getErrors().size());
+		
+		worksController.workWorkTitleTranslatedTitleValidate(work);
+		assertEquals(2, work.getWorkTitle().getTranslatedTitle().getErrors().size());
+		
+		worksController.workUrlValidate(work);
+		assertEquals(1, work.getUrl().getErrors().size());
+		
+		worksController.workJournalTitleValidate(work);
+		assertEquals(1, work.getJournalTitle().getErrors().size());
+		
+		worksController.workLanguageCodeValidate(work);
+		assertEquals(1, work.getLanguageCode().getErrors().size());
+						
+		worksController.workdescriptionValidate(work);
+		assertEquals(1, work.getShortDescription().getErrors().size());
+		
+		worksController.workWorkTypeValidate(work);
+		assertEquals(1, work.getWorkType().getErrors().size());
+		
 	}
 	
-	private String buildLongWork(){
-		if(_1000chars == null){
-			_1000chars = new String();
-			for(int i = 0; i < 1000; i++)
-				_1000chars += 'a';
+	private String buildLongWord(){
+		if(_5000chars == null){
+			_5000chars = new String();
+			for(int i = 0; i < 5001; i++)
+				_5000chars += 'a';
 		}
-		return _1000chars;
+		return _5000chars;
 	}
 }
 
