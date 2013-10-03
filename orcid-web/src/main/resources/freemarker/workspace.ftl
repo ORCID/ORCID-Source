@@ -83,7 +83,7 @@
 		        			<p ng-show="externalIdentifier.externalIdUrl"><a href="{{externalIdentifier.externalIdUrl.value}}" target="_blank">{{externalIdentifier.externalIdCommonName.content}} {{externalIdentifier.externalIdReference.content}}</a></p>
 		     			</td>
 			   			<td class="padRgt">
-			   				<p><a href ng-click="deleteExternalIdentifier($index)" class="icon-trash orcid-icon-trash grey"></a></p>
+			   				<p><a ng-click="deleteExternalIdentifier($index)" class="icon-trash orcid-icon-trash grey"></a></p>
 			   			</td>		        		
 		        	</tr>
 		        </table>
@@ -136,7 +136,7 @@
         			   <a href="" ng-click="toggleDisplayInfo()" style="color: #338caf;">
         			       <i class="icon-caret-down" ng-class="{'icon-caret-right':displayInfo==false}"></i></a>
         			   </a> 
-        			   <a href="" ng-click="toggleDisplayInfo()"><@orcid.msg 'workspace.personal_information'/></a> 
+        			   <a ng-click="toggleDisplayInfo()"><@orcid.msg 'workspace.personal_information'/></a> 
         			   <a href="<@spring.url '/account/manage-bio-settings'/>" id="upate-personal-modal-link" class="label btn-primary"><@orcid.msg 'workspace.Update'/></a>
         			</div>
             		<div class="workspace-accordion-content" ng-show="displayInfo">
@@ -168,12 +168,12 @@
                 
                 <div id="workspace-publications" style="position: relative;" class="workspace-accordion-item workspace-accordion-active" ng-controller="WorkCtrl">
                 	<div class="workspace-accordion-header">
-        				<a href="" ng-click="toggleDisplayWorks()" style="color: #338caf;">
+        				<a ng-click="toggleDisplayWorks()" style="color: #338caf;">
         			       <i class="icon-caret-down icon" ng-class="{'icon-caret-right':displayWorks==false}"></i></a>
         			    </a> 
-        				<a href="" ng-click="toggleDisplayWorks()"><@orcid.msg 'workspace.Works'/></a>
-						<a href="#third-parties" class="label btn-primary" ng-click="showWorkImportWizard()"><@orcid.msg 'workspace.import_works'/></a>
-						<a href="" class="label btn-primary" ng-click="addWorkModal()"><@orcid.msg 'manual_work_form_contents.add_work_manually'/></a>
+        				<a ng-click="toggleDisplayWorks()"><@orcid.msg 'workspace.Works'/></a>
+						<a class="label btn-primary" ng-click="showWorkImportWizard()"><@orcid.msg 'workspace.import_works'/></a>
+						<a class="label btn-primary" ng-click="addWorkModal()"><@orcid.msg 'manual_work_form_contents.add_work_manually'/></a>
 					</div>
       	            <div ng-show="displayWorks" class="workspace-accordion-content">
 	            		<#include "workspace_works_body_list.ftl"/>
@@ -238,7 +238,7 @@
 	<div style="padding: 20px;">
 		<h3><@orcid.msg 'manage.deleteExternalIdentifier.pleaseConfirm'/> {{removeExternalModalText}} </h3>
 		<button class="btn btn-danger" ng-click="removeExternalIdentifier()"><@orcid.msg 'manage.deleteExternalIdentifier.delete'/></button> 
-		<a href="" ng-click="closeModal()"><@orcid.msg 'manage.deleteExternalIdentifier.cancel'/></a>
+		<a ng-click="closeModal()"><@orcid.msg 'manage.deleteExternalIdentifier.cancel'/></a>
 	<div>
 </script>
 
@@ -256,7 +256,7 @@
     	       	<#list thirdPartiesForImport?sort_by("displayName") as thirdPartyDetails>
                      <#assign redirect = (thirdPartyDetails.redirectUris.redirectUri[0].value) >
                      <#assign predefScopes = (thirdPartyDetails.redirectUris.redirectUri[0].scopeAsSingleString) >
-                     <strong><a href="<@spring.url '/oauth/authorize?client_id=${thirdPartyDetails.clientId}&response_type=code&scope=${predefScopes}&redirect_uri=${redirect}'/>" ng-click="closeModal()" target="_blank">${thirdPartyDetails.displayName}</a></strong><br />
+                     <strong><a ng-click="openImportWizardUrl('<@spring.url '/oauth/authorize?client_id=${thirdPartyDetails.clientId}&response_type=code&scope=${predefScopes}&redirect_uri=${redirect}'/>')">${thirdPartyDetails.displayName}</a></strong><br />
                      <div class="justify">${(thirdPartyDetails.shortDescription)!}</div>
                      <#if (thirdPartyDetails_has_next)><hr /></#if>
                  </#list>
