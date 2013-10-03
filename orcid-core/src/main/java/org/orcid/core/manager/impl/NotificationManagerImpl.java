@@ -223,8 +223,7 @@ public class NotificationManagerImpl implements NotificationManager {
     
     private String getSubject(String code, OrcidProfile orcidProfile) {
         Locale locale = null; new Locale("en");
-        if ( orcidProfile.getOrcidInternal() != null 
-                && orcidProfile.getOrcidPreferences() != null
+        if ( orcidProfile.getOrcidPreferences() != null
                 && orcidProfile.getOrcidPreferences().getLocale() != null) {
             orcidProfile.getOrcidPreferences().getLocale().value();
             locale = new Locale(orcidProfile.getOrcidPreferences().getLocale().value());
