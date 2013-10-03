@@ -93,6 +93,17 @@
 					</div>
 				</div>
 				<div class="control-group">
+		    		<label class="relative"><@orcid.msg 'manual_affiliation_form_contents.labelaffiliationtype'/></label>
+		    		<div class="relative">
+			    		<select id="affiliationType" name="affiliationType" class="input-xlarge" ng-model="editAffiliation.affiliationType.value">
+			    			<option value=""><@orcid.msg 'org.orcid.jaxb.model.message.AffiliationType.empty' /></option>
+							<#list affiliationTypes?keys as key>
+								<option value="${key}">${affiliationTypes[key]}</option>
+							</#list>
+						</select> 
+					</div>
+				</div>
+				<div class="control-group">
 		    		<label class="relative" for="manualAffiliation.startDay"><@orcid.msg 'manual_affiliation_form_contents.labelStartDate'/></label>
 		    		<div class="relative">
 				    <select id="startDay" name="startDay" ng-model="editAffiliation.startDate.day" class="span1">
@@ -161,6 +172,7 @@
     <li class="bottom-margin-small" ng-repeat="affiliation in affiliations">            	
         <div class="pull-right" style="right: 145px; top: 20px; width: 15px;"><a href ng-click="deleteAffiliation($index)" class="icon-trash orcid-icon-trash grey"></a></div>
 		<div style="width: 530px;">
+		    <div ng-bind-html="affiliation.affiliationType"></div>
 	        <h3 class="affiliation-title">
 	        	<strong ng-bind-html="affiliation.affiliationName"></strong>
 	        	<span ng-show="affiliation.startDate">

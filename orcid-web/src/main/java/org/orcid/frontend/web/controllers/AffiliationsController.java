@@ -158,13 +158,17 @@ public class AffiliationsController extends BaseWorkspaceController {
 
         Text department = new Text();
         affiliationForm.setDepartment(department);
-        
+
+        Text affiliationType = new Text();
+        affiliationForm.setAffiliationType(affiliationType);
+        affiliationType.setValue("");
+
         Date startDate = new Date();
         affiliationForm.setStartDate(startDate);
         startDate.setDay("");
         startDate.setMonth("");
         startDate.setYear("");
-        
+
         Date endDate = new Date();
         affiliationForm.setEndDate(endDate);
         endDate.setDay("");

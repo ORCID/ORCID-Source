@@ -23,6 +23,7 @@ import java.util.List;
 import org.orcid.jaxb.model.message.AffiliationAddress;
 import org.orcid.jaxb.model.message.AffiliationCity;
 import org.orcid.jaxb.model.message.AffiliationCountry;
+import org.orcid.jaxb.model.message.AffiliationType;
 import org.orcid.jaxb.model.message.Iso3166Country;
 
 public class Affiliation implements ErrorsInterface, Serializable {
@@ -42,6 +43,8 @@ public class Affiliation implements ErrorsInterface, Serializable {
     private Text country;
 
     private Text department;
+
+    private Text affiliationType;
 
     private Date startDate;
 
@@ -103,6 +106,14 @@ public class Affiliation implements ErrorsInterface, Serializable {
         this.department = department;
     }
 
+    public Text getAffiliationType() {
+        return affiliationType;
+    }
+
+    public void setAffiliationType(Text affiliationType) {
+        this.affiliationType = affiliationType;
+    }
+
     public Date getStartDate() {
         return startDate;
     }
@@ -129,6 +140,9 @@ public class Affiliation implements ErrorsInterface, Serializable {
         affiliationAddress.setAffiliationCountry(new AffiliationCountry(Iso3166Country.fromValue(country.getValue())));
         if (department != null) {
             affiliation.setDepartmentName(department.getValue());
+        }
+        if (affiliationType != null) {
+            affiliation.setAffiliationType(AffiliationType.fromValue(affiliationType.getValue()));
         }
         if (startDate != null) {
             affiliation.setStartDate(startDate.toFuzzyDate());
