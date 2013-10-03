@@ -20,26 +20,58 @@
     <meta charset="utf-8" />
     <title>${title!"ORCID"}</title>
     <meta name="description" content="">
-    <meta name="author" content="">
+    <meta name="author" content="ORCID">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <#-- Comment for Overwriting Variables for testing from non localhost -->
+    <#--         
+    	<#assign myLocalIp = '192.168.24.92:8080'>    	
+	    <#assign staticCdn = '//'+ myLocalIp + '/orcid-web/static'>
+	    <#assign staticLoc = '//'+ myLocalIp + '/orcid-web/static'>
+	    <#assign baseUri = 'http://'+ myLocalIp + '/orcid-web'>
+	    <#assign baseUriHttp = 'http://'+ myLocalIp + '/orcid-web'>	    
+	 -->
+	 
+	 <#assign local_folder = '/orcid-web'> <!-- QA vs Local environment, leave empty for QA submittion -->	
+	
+     
     <script type="text/javascript">
     	var orcidVar = {};
     	orcidVar.baseUri = '${baseUri}';
     	orcidVar.baseUriHttp = '${baseUriHttp}';
-    </script>
-
-    <link rel="stylesheet" href="${staticLoc}/ORCID-Fonts-Dot-Com/style.css?v=${ver}"/>    
-    <link rel="stylesheet" href="${staticCdn}/twitter-bootstrap/2.3.1/css/bootstrap.css?v=${ver}"/>
-    <link rel="stylesheet" href="${staticCdn}/css/orcid.css?v=${ver}"/>
-    <link rel="stylesheet" href="${staticCdn}/css/jquery-ui-1.10.0.custom.min.css?v=${ver}"/>
-    <link rel="stylesheet" href="${staticLoc}/font-awesome/3.2.1/css/font-awesome.css"/>
-    <!--[if IE 7]>
-    	<link href="${staticLoc}/font-awesome/3.0.2/css/font-awesome-ie7.css" rel="stylesheet">
-	<![endif]-->		
+    </script>    
+    <#if request.requestURI?ends_with("${local_folder}/signin")>    	
+	    <link rel="stylesheet" href="${staticCdn}/twitter-bootstrap/3.0.0/css/bootstrap.min.css?v=${ver}"/>
+	    <!--[if lt IE 8]>
+	        <link rel="stylesheet" href="${staticCdn}/twitter-bootstrap/3.0.0/css/bootstrap-ie7.css?v=${ver}"/>
+	        <link rel="stylesheet" href="${staticCdn}/css/orcid-ie7.css?v=${ver}"/>        
+	    <![endif]-->
+	    
+	    <link rel="stylesheet" href="${staticCdn}/css/orcid.css?v=${ver}"/> <!-- Fonts already included here -->
+	    <link rel="stylesheet" href="${staticCdn}/css/jquery-ui-1.10.0.custom.min.css?v=${ver}"/>
+	    <link rel="stylesheet" href="${staticLoc}/font-awesome/3.2.1/css/font-awesome.css"/>
+	    <!--[if IE 7]>
+	    	<link href="${staticLoc}/font-awesome/3.0.2/css/font-awesome-ie7.css" rel="stylesheet">
+		<![endif]-->	
+		
+	    <script src="${staticCdn}/javascript/respond.min.js?v=${ver}"></script>
+    
+    <#else>		
+		<link rel="stylesheet" href="${staticLoc}/ORCID-Fonts-Dot-Com/style.css?v=${ver}"/>    
+	    <link rel="stylesheet" href="${staticCdn}/twitter-bootstrap/2.3.1/css/bootstrap.css?v=${ver}"/>
+	    <link rel="stylesheet" href="${staticCdn}/css/orcid.old.css?v=${ver}"/>
+	    <link rel="stylesheet" href="${staticCdn}/css/jquery-ui-1.10.0.custom.min.css?v=${ver}"/>
+	    <link rel="stylesheet" href="${staticLoc}/font-awesome/3.2.1/css/font-awesome.css"/>
+	    <!--[if IE 7]>
+	    	<link href="${staticLoc}/font-awesome/3.0.2/css/font-awesome-ie7.css" rel="stylesheet">
+		<![endif]-->
+    </#if>
+    
+    <#-- manage bio settings still requires modernizr :-( -->
+	    <#if request.requestURI?ends_with("account/manage-bio-settings")>
+	        <script src="${staticCdn}/javascript/modernizr.js?v=${ver}"></script>
+	</#if>	
 	
-	<#-- manage bio settings still requires modernizr :-( -->
-    <#if request.requestURI?ends_with("account/manage-bio-settings")>
-        <script src="${staticCdn}/javascript/modernizr.js?v=${ver}"></script>
-	</#if>
 	<style type="text/css">
 		/* 
 	  	Allow angular.js to be loaded in body, hiding cloaked elements until 
