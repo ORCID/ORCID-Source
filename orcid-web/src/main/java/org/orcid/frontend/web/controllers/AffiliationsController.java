@@ -33,6 +33,7 @@ import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.persistence.dao.OrgAffiliationRelationDao;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
+import org.orcid.pojo.ajaxForm.Date;
 import org.orcid.pojo.ajaxForm.Text;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -157,6 +158,18 @@ public class AffiliationsController extends BaseWorkspaceController {
 
         Text department = new Text();
         affiliationForm.setDepartment(department);
+        
+        Date startDate = new Date();
+        affiliationForm.setStartDate(startDate);
+        startDate.setDay("");
+        startDate.setMonth("");
+        startDate.setYear("");
+        
+        Date endDate = new Date();
+        affiliationForm.setEndDate(endDate);
+        endDate.setDay("");
+        endDate.setMonth("");
+        endDate.setYear("");
 
         return affiliationForm;
     }

@@ -92,6 +92,46 @@
 						</span>
 					</div>
 				</div>
+				<div class="control-group">
+		    		<label class="relative" for="manualAffiliation.startDay"><@orcid.msg 'manual_affiliation_form_contents.labelStartDate'/></label>
+		    		<div class="relative">
+				    <select id="startDay" name="startDay" ng-model="editAffiliation.startDate.day" class="span1">
+						<#list days?keys as key>
+							<option value="${key}">${days[key]}</option>
+						</#list>
+		    		</select>
+				    <select id="startMonth" name="startMonth" ng-model="editAffiliation.startDate.month" class="span1">
+						<#list months?keys as key>
+							<option value="${key}">${months[key]}</option>
+						</#list>
+		    		</select>
+				    <select id="startYear" name="startMonth" ng-model="editAffiliation.startDate.year" class="span2">
+						<#list years?keys as key>
+							<option value="${key}">${years[key]}</option>
+						</#list>
+		    		</select>
+		    		</div>
+		    	</div>
+		    	<div class="control-group">
+		    		<label class="relative" for="manualAffiliation.endDay"><@orcid.msg 'manual_affiliation_form_contents.labelEndDate'/></label>
+		    		<div class="relative">
+				    <select id="endDay" name="endDay" ng-model="editAffiliation.endDate.day" class="span1">
+						<#list days?keys as key>
+							<option value="${key}">${days[key]}</option>
+						</#list>
+		    		</select>
+				    <select id="endMonth" name="endMonth" ng-model="editAffiliation.endDate.month" class="span1">
+						<#list months?keys as key>
+							<option value="${key}">${months[key]}</option>
+						</#list>
+		    		</select>
+				    <select id="endYear" name="endMonth" ng-model="editAffiliation.endDate.year" class="span2">
+						<#list years?keys as key>
+							<option value="${key}">${years[key]}</option>
+						</#list>
+		    		</select>
+		    		</div>
+		    	</div>
 			</div>
 		</div>
 		<div class="row">
@@ -117,12 +157,22 @@
 	<div>
 </script>
 
-<ul ng-hide="!affiliations.length" class="workspace-publications workspace-body-list bottom-margin-medium" ng-cloak>        
+<ul ng-hide="!affiliations.length" class="workspace-affiliations workspace-body-list bottom-margin-medium" ng-cloak>        
     <li class="bottom-margin-small" ng-repeat="affiliation in affiliations">            	
         <div class="pull-right" style="right: 145px; top: 20px; width: 15px;"><a href ng-click="deleteAffiliation($index)" class="icon-trash orcid-icon-trash grey"></a></div>
 		<div style="width: 530px;">
 	        <h3 class="affiliation-title">
 	        	<strong ng-bind-html="affiliation.affiliationName"></strong>
+	        	<span ng-show="affiliation.startDate">
+	        	    (<span ng-show="affiliation.startDate.month">{{affiliation.startDate.month.value}}-</span><span ng-show="affiliation.startDate.year.value">{{affiliation.startDate.year.value}}</span>
+	        	    <@orcid.msg 'workspace_affiliations.dateSeparator'/>
+	        	    <span ng-show="affiliation.endDate">
+	        	        <span ng-show="affiliation.endDate.month">{{affiliation.endDate.month.value}}-</span><span ng-show="affiliation.endDate.year.value">{{affiliation.endDate.year.value}}</span>)
+	        	    </span>
+	        	    <span ng-hide="affiliation.endDate">
+	        	        <@orcid.msg 'workspace_affiliations.present'/>)
+	        	    </span>
+	        	</span>
 	        </h3>
 	        <div ng-show="affiliation.departmentName">
 	            <span ng-bind-html="affiliation.departmentName"></span>

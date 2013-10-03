@@ -43,6 +43,10 @@ public class Affiliation implements ErrorsInterface, Serializable {
 
     private Text department;
 
+    private Date startDate;
+
+    private Date endDate;
+
     public List<String> getErrors() {
         return errors;
     }
@@ -99,6 +103,22 @@ public class Affiliation implements ErrorsInterface, Serializable {
         this.department = department;
     }
 
+    public Date getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(Date startDate) {
+        this.startDate = startDate;
+    }
+
+    public Date getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(Date endDate) {
+        this.endDate = endDate;
+    }
+
     public org.orcid.jaxb.model.message.Affiliation toAffiliation() {
         org.orcid.jaxb.model.message.Affiliation affiliation = new org.orcid.jaxb.model.message.Affiliation();
         affiliation.setVisibility(visibility.getVisibility());
@@ -109,6 +129,12 @@ public class Affiliation implements ErrorsInterface, Serializable {
         affiliationAddress.setAffiliationCountry(new AffiliationCountry(Iso3166Country.fromValue(country.getValue())));
         if (department != null) {
             affiliation.setDepartmentName(department.getValue());
+        }
+        if (startDate != null) {
+            affiliation.setStartDate(startDate.toFuzzyDate());
+        }
+        if (endDate != null) {
+            affiliation.setEndDate(endDate.toFuzzyDate());
         }
         return affiliation;
     }
