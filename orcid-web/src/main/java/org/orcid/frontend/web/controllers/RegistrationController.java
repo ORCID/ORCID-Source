@@ -416,16 +416,6 @@ public class RegistrationController extends BaseController {
         return reg;
     }
 
-    private static void copyErrors(ErrorsInterface from, ErrorsInterface into) {
-        for (String s : from.getErrors()) {
-            into.getErrors().add(s);
-        }
-    }
-
-    private void setError(ErrorsInterface ei, String msg) {
-        ei.getErrors().add(getMessage(msg));
-    }
-
     @RequestMapping(value = "/register", method = RequestMethod.GET)
     public ModelAndView register(HttpServletRequest request, HttpServletResponse response) {
         ModelAndView mav = new ModelAndView("register");

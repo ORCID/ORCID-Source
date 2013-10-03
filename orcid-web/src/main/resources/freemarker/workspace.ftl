@@ -107,9 +107,14 @@
                     <a href="#workspace-publications" class="btn-update no-icon"><@orcid.msg 'workspace.view'/></a>
         		</div>
                 <div class="workspace-overview">
-                    <a href="#workspace-affiliations" class="overview-count">${(profile.orcidBio.affiliations?size)!0}</a>
+                    <a href="#workspace-affiliations" class="overview-count">${(profile.orcidActivities.affiliations.affiliation?size)!0}</a>
                     <a href="#workspace-affiliations" class="overview-title"><@orcid.msg 'workspace_bio.Affiliations'/></a>
-                    <div><a target="_blank" href="http://support.orcid.org/forums/179657-coming-soon" class="btn-update no-icon"><@orcid.msg 'workspace.ComingSoon'/></a></div>
+                    <br />
+                    <#if RequestParameters['affiliations']??>
+                        <a href="#workspace-affiliations" class="btn-update no-icon"><@orcid.msg 'workspace.view'/></a>
+                    <#else>
+                        <div><a target="_blank" href="http://support.orcid.org/forums/179657-coming-soon" class="btn-update no-icon"><@orcid.msg 'workspace.ComingSoon'/></a></div>
+                    </#if>
                 </div>
         		<div class="workspace-overview">
         			<a href="#workspace-grants" class="overview-count">${(profile.orcidActivities.orcidGrants.orcidGrant?size)!0}</a>
@@ -146,6 +151,20 @@
                     </div>
                 </div>
                 -->
+                <#if RequestParameters['affiliations']??>
+	                <div id="workspace-affiliations" style="position: relative;" class="workspace-accordion-item workspace-accordion-active" ng-controller="AffiliationCtrl">
+	                	<div class="workspace-accordion-header">
+	        				<a href="" ng-click="toggleDisplayAffiliations()" style="color: #338caf;">
+	        			       <i class="icon-caret-down icon" ng-class="{'icon-caret-right':displayAffiliations==false}"></i></a>
+	        			    </a> 
+	        				<a href="" ng-click="toggleDisplayAffiliations()"><@orcid.msg 'workspace_bio.Affiliations'/></a>
+							<a href="" class="label btn-primary" ng-click="addAffiliationModal()"><@orcid.msg 'manual_affiliation_form_contents.add_affiliation_manually'/></a>
+						</div>
+	      	            <div ng-show="displayAffiliations" class="workspace-accordion-content">
+		            		<#include "workspace_affiliations_body_list.ftl"/>
+		            	</div>
+	            	</div>
+            	</#if>
                 
                 <div id="workspace-publications" style="position: relative;" class="workspace-accordion-item workspace-accordion-active" ng-controller="WorkCtrl">
                 	<div class="workspace-accordion-header">

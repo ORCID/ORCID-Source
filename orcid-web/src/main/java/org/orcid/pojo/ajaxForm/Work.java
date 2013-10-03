@@ -23,6 +23,7 @@ import java.util.List;
 import org.jbibtex.ParseException;
 import org.orcid.jaxb.model.message.CitationType;
 import org.orcid.jaxb.model.message.OrcidWork;
+import org.orcid.jaxb.model.message.PublicationDate;
 import org.orcid.jaxb.model.message.Title;
 import org.orcid.jaxb.model.message.Url;
 import org.orcid.jaxb.model.message.WorkContributors;
@@ -35,7 +36,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.web.util.HtmlUtils;
 
 public class Work implements ErrorsInterface, Serializable {
-    
+
     private static final long serialVersionUID = 1L;
 
     private List<String> errors = new ArrayList<String>();
@@ -49,7 +50,7 @@ public class Work implements ErrorsInterface, Serializable {
     private Text shortDescription;
 
     private Text url;
-    
+
     private Text journalTitle;
 
     private Citation citation;
@@ -57,22 +58,22 @@ public class Work implements ErrorsInterface, Serializable {
     private List<Contributor> contributors;
 
     private List<WorkExternalIdentifier> workExternalIdentifiers;
-    
+
     private Text workSource;
-    
+
     private WorkTitle workTitle;
 
     private static Logger LOGGER = LoggerFactory.getLogger(Work.class);
-    
+
     private Text workType;
 
     protected String citationForDisplay;
 
     public static Work valueOf(OrcidWork orcidWork) {
         Work w = new Work();
-        if (orcidWork.getPublicationDate() != null) 
+        if (orcidWork.getPublicationDate() != null)
             w.setPublicationDate(Date.valueOf(orcidWork.getPublicationDate()));
-        if (orcidWork.getPutCode() !=null)
+        if (orcidWork.getPutCode() != null)
             w.setPutCode(Text.valueOf(orcidWork.getPutCode()));
         if (orcidWork.getShortDescription() != null)
             w.setShortDescription(Text.valueOf(orcidWork.getShortDescription()));
@@ -82,58 +83,58 @@ public class Work implements ErrorsInterface, Serializable {
             w.setVisibility(Visibility.valueOf(orcidWork.getVisibility()));
         if (orcidWork.getWorkCitation() != null)
             w.setCitation(Citation.valueOf(orcidWork.getWorkCitation()));
-        
+
         if (orcidWork.getWorkContributors() != null && orcidWork.getWorkContributors().getContributor() != null) {
             List<Contributor> contributors = new ArrayList<Contributor>();
-            for ( org.orcid.jaxb.model.message.Contributor owContributor:orcidWork.getWorkContributors().getContributor()) {
+            for (org.orcid.jaxb.model.message.Contributor owContributor : orcidWork.getWorkContributors().getContributor()) {
                 contributors.add(Contributor.valueOf(owContributor));
             }
             w.setContributors(contributors);
         }
         if (orcidWork.getWorkExternalIdentifiers() != null && orcidWork.getWorkExternalIdentifiers().getWorkExternalIdentifier() != null) {
-            List<WorkExternalIdentifier> workExternalIdentifiers =  new ArrayList<WorkExternalIdentifier>();
-            for (org.orcid.jaxb.model.message.WorkExternalIdentifier owWorkExternalIdentifier: orcidWork.getWorkExternalIdentifiers().getWorkExternalIdentifier()) {
+            List<WorkExternalIdentifier> workExternalIdentifiers = new ArrayList<WorkExternalIdentifier>();
+            for (org.orcid.jaxb.model.message.WorkExternalIdentifier owWorkExternalIdentifier : orcidWork.getWorkExternalIdentifiers().getWorkExternalIdentifier()) {
                 workExternalIdentifiers.add(WorkExternalIdentifier.valueOf(owWorkExternalIdentifier));
             }
             w.setWorkExternalIdentifiers(workExternalIdentifiers);
         }
-        if (orcidWork.getWorkSource() != null) 
+        if (orcidWork.getWorkSource() != null)
             w.setWorkSource(Text.valueOf(orcidWork.getWorkSource().getContent()));
         if (orcidWork.getWorkTitle() != null)
             w.setWorkTitle(WorkTitle.valueOf(orcidWork.getWorkTitle()));
         if (orcidWork.getWorkType() != null)
             w.setWorkType(Text.valueOf(orcidWork.getWorkType().value()));
-        
-        if(orcidWork.getJournalTitle() != null)
+
+        if (orcidWork.getJournalTitle() != null)
             w.setJournalTitle(Text.valueOf(orcidWork.getJournalTitle().getContent()));
-        
+
         return w;
     }
-    
+
     public OrcidWork toOrcidWork() {
         OrcidWork ow = new OrcidWork();
         if (this.getPublicationDate() != null)
-            ow.setPublicationDate(this.getPublicationDate().toPublicationDate());
+            ow.setPublicationDate(new PublicationDate(this.getPublicationDate().toFuzzyDate()));
         if (this.getPutCode() != null)
             ow.setPutCode(this.getPutCode().getValue());
         if (this.getShortDescription() != null)
             ow.setShortDescription(this.shortDescription.getValue());
-        if (this.getUrl() != null) 
+        if (this.getUrl() != null)
             ow.setUrl(new Url(this.url.getValue()));
         if (this.getVisibility() != null)
             ow.setVisibility(this.getVisibility().getVisibility());
-        if (this.getCitation() != null) 
+        if (this.getCitation() != null)
             ow.setWorkCitation(this.citation.toCitiation());
         if (this.getContributors() != null) {
-            List<org.orcid.jaxb.model.message.Contributor> cList =  new ArrayList<org.orcid.jaxb.model.message.Contributor>();
-            for (Contributor c: this.getContributors()) {
+            List<org.orcid.jaxb.model.message.Contributor> cList = new ArrayList<org.orcid.jaxb.model.message.Contributor>();
+            for (Contributor c : this.getContributors()) {
                 cList.add(c.toContributor());
             }
             ow.setWorkContributors(new WorkContributors(cList));
         }
         if (this.getWorkExternalIdentifiers() != null) {
             List<org.orcid.jaxb.model.message.WorkExternalIdentifier> wiList = new ArrayList<org.orcid.jaxb.model.message.WorkExternalIdentifier>();
-            for (WorkExternalIdentifier wi:this.getWorkExternalIdentifiers()) {
+            for (WorkExternalIdentifier wi : this.getWorkExternalIdentifiers()) {
                 wiList.add(wi.toWorkExternalIdentifier());
             }
             ow.setWorkExternalIdentifiers(new WorkExternalIdentifiers(wiList));
@@ -145,11 +146,11 @@ public class Work implements ErrorsInterface, Serializable {
         if (this.getWorkType() != null) {
             ow.setWorkType(WorkType.fromValue(this.getWorkType().getValue()));
         }
-        
-        if(this.getJournalTitle() != null){
+
+        if (this.getJournalTitle() != null) {
             ow.setJournalTitle(new Title(this.getJournalTitle().getValue()));
         }
-            
+
         return ow;
     }
 
@@ -280,5 +281,5 @@ public class Work implements ErrorsInterface, Serializable {
 
     public void setJournalTitle(Text journalTitle) {
         this.journalTitle = journalTitle;
-    }        
+    }
 }

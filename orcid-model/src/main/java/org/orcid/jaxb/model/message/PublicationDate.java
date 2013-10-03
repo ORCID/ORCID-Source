@@ -62,6 +62,10 @@ public class PublicationDate extends FuzzyDate implements Serializable {
         super(year, month, day);
     }
 
+    public PublicationDate(FuzzyDate other) {
+        super(other);
+    }
+
     private final static long serialVersionUID = 1L;
     @XmlAttribute(name = "media-type")
     protected MediaType mediaType;
