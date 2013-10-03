@@ -281,17 +281,13 @@
 							<span ng-show="showBibtex && work.citation.citationType.value == 'bibtex'"><a ng-click="bibtexShowToggle()">Show in Bibtex</a></span>
 							<span ng-show="showBibtex == false && work.citation.citationType.value == 'bibtex'"><a ng-click="bibtexShowToggle()">Show in HTML</a></span>
 							<div ng-hide="showBibtex" ng-bind="work.citation.citation.value"></div>
-							<div ng-show="showBibtex" ng-repeat='bibJSON in bibtexCitations[work.putCode]'>
+							<div class="row" ng-show="showBibtex" ng-repeat='bibJSON in bibtexCitations[work.putCode]'>
 								<div class="row"> 
-									<div class="span2">TYPE</div>
-									<div class="span6">{{bibJSON.entryType}}</div>
-								</div>
-								<div class="row bottomBuffer"> 
-									<div class="span2">CITATION KEY</div>
+									<div class="span2" style="margin-left: 0px;">{{bibJSON.entryType}}</div>
 									<div class="span6">{{bibJSON.citationKey}}</div>
 								</div>
 								<div ng-repeat="(entKey,entVal) in bibJSON.entryTags" class="row">
-									<div class="span2">{{entKey}}</div>
+									<div class="span2" style="margin-left: 0px;">{{entKey}}</div>
 									<div class="span6">{{entVal}}</div>
 								</div>
 							</div>
@@ -366,8 +362,12 @@
         </h3>
         </div>
         <div class="pull-right" style="width: 130px;">
-		<@orcid.privacyToggle "work.visibility.visibility" "setPrivacy($index, 'PUBLIC', $event)" 
-                    	  "setPrivacy($index, 'LIMITED', $event)" "setPrivacy($index, 'PRIVATE', $event)" />
+		<@orcid.privacyToggle angularModel="work.visibility.visibility" 
+				publicClick="setPrivacy($index, 'PUBLIC', $event)" 
+                limitedClick="setPrivacy($index, 'LIMITED', $event)" 
+                privateClick="setPrivacy($index, 'PRIVATE', $event)"
+                popoverStyle="left: -255px;"
+                arrowStyle="left: 261px;" />
 		</div>
 		<div  style="width: 680px;" class="work-metadata">
             <span ng-repeat='ie in work.workExternalIdentifiers'>
