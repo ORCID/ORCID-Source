@@ -41,6 +41,7 @@ import org.orcid.frontend.web.util.NumberList;
 import org.orcid.frontend.web.util.YearsList;
 import org.orcid.jaxb.model.clientgroup.OrcidClient;
 import org.orcid.jaxb.model.clientgroup.RedirectUri;
+import org.orcid.jaxb.model.message.AffiliationType;
 import org.orcid.jaxb.model.message.CitationType;
 import org.orcid.jaxb.model.message.ContributorRole;
 import org.orcid.jaxb.model.message.ExternalIdentifier;
@@ -98,6 +99,15 @@ public class WorkspaceController extends BaseWorkspaceController {
         return thirdPartyImportManager.findOrcidClientsWithPredefinedOauthScopeWorksImport();
     }
 
+    @ModelAttribute("affiliationTypes")
+    public Map<String, String> retrieveAffiliationTypesAsMap() {
+        Map<String, String> affiliationTypes = new LinkedHashMap<String, String>();
+        for (AffiliationType affiliationType : AffiliationType.values()) {
+            affiliationTypes.put(affiliationType.value(), getMessage(buildInternationalizationKey(AffiliationType.class, affiliationType.value())));
+        }
+        return FunctionsOverCollections.sortMapsByValues(affiliationTypes);
+    }
+    
     @ModelAttribute("workTypes")
     public Map<String, String> retrieveWorkTypesAsMap() {
         Map<String, String> workTypes = new LinkedHashMap<String, String>();
