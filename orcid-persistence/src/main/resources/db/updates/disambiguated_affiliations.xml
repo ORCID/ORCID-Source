@@ -140,5 +140,36 @@
     <changeSet id="ADD-AFFILIATION-READ-LIMITED-SCOPE-TO-EXISTING-CLIENTS" author="Will Simpson">
         <sql>INSERT INTO client_scope SELECT client_details_id, '/affiliations/read-limited', now(), now() FROM client_scope WHERE scope_type = '/orcid-works/read-limited' AND client_details_id NOT IN (SELECT client_details_id FROM client_scope WHERE scope_type = '/affiliations/read-limited')</sql>
     </changeSet>
+    
+    <changeSet id="INSERT-DUMMY-DISAMBIGUATED-VALUES-FOR-TESTING" author="Will Simpson" dbms="postgresql">
+        <sql>
+            INSERT INTO org_disambiguated(id, source_id, source_url, source_type, name, city, country, date_created, last_modified) VALUES (nextval('org_disambiguated_seq'), 'A', 'http://orcid.org', 'TEST', 'A affiliation', 'A town', 'BM', now(), now());
+            INSERT INTO org_disambiguated(id, source_id, source_url, source_type, name, city, country, date_created, last_modified) VALUES (nextval('org_disambiguated_seq'), 'B', 'http://orcid.org', 'TEST', 'B affiliation', 'B town', 'BM', now(), now());
+            INSERT INTO org_disambiguated(id, source_id, source_url, source_type, name, city, country, date_created, last_modified) VALUES (nextval('org_disambiguated_seq'), 'C', 'http://orcid.org', 'TEST', 'C affiliation', 'C town', 'BM', now(), now());
+            INSERT INTO org_disambiguated(id, source_id, source_url, source_type, name, city, country, date_created, last_modified) VALUES (nextval('org_disambiguated_seq'), 'D', 'http://orcid.org', 'TEST', 'D affiliation', 'D town', 'BM', now(), now());
+            INSERT INTO org_disambiguated(id, source_id, source_url, source_type, name, city, country, date_created, last_modified) VALUES (nextval('org_disambiguated_seq'), 'E', 'http://orcid.org', 'TEST', 'E affiliation', 'E town', 'BM', now(), now());
+            INSERT INTO org_disambiguated(id, source_id, source_url, source_type, name, city, country, date_created, last_modified) VALUES (nextval('org_disambiguated_seq'), 'F', 'http://orcid.org', 'TEST', 'F affiliation', 'F town', 'BM', now(), now());
+            INSERT INTO org_disambiguated(id, source_id, source_url, source_type, name, city, country, date_created, last_modified) VALUES (nextval('org_disambiguated_seq'), 'G', 'http://orcid.org', 'TEST', 'G affiliation', 'G town', 'BM', now(), now());
+            INSERT INTO org_disambiguated(id, source_id, source_url, source_type, name, city, country, date_created, last_modified) VALUES (nextval('org_disambiguated_seq'), 'H', 'http://orcid.org', 'TEST', 'H affiliation', 'H town', 'BM', now(), now());
+            INSERT INTO org_disambiguated(id, source_id, source_url, source_type, name, city, country, date_created, last_modified) VALUES (nextval('org_disambiguated_seq'), 'I', 'http://orcid.org', 'TEST', 'I affiliation', 'I town', 'BM', now(), now());
+            INSERT INTO org_disambiguated(id, source_id, source_url, source_type, name, city, country, date_created, last_modified) VALUES (nextval('org_disambiguated_seq'), 'J', 'http://orcid.org', 'TEST', 'J affiliation', 'J town', 'BM', now(), now());
+            INSERT INTO org_disambiguated(id, source_id, source_url, source_type, name, city, country, date_created, last_modified) VALUES (nextval('org_disambiguated_seq'), 'K', 'http://orcid.org', 'TEST', 'K affiliation', 'K town', 'BM', now(), now());
+            INSERT INTO org_disambiguated(id, source_id, source_url, source_type, name, city, country, date_created, last_modified) VALUES (nextval('org_disambiguated_seq'), 'L', 'http://orcid.org', 'TEST', 'L affiliation', 'L town', 'BM', now(), now());
+            INSERT INTO org_disambiguated(id, source_id, source_url, source_type, name, city, country, date_created, last_modified) VALUES (nextval('org_disambiguated_seq'), 'M', 'http://orcid.org', 'TEST', 'M affiliation', 'M town', 'BM', now(), now());
+            INSERT INTO org_disambiguated(id, source_id, source_url, source_type, name, city, country, date_created, last_modified) VALUES (nextval('org_disambiguated_seq'), 'N', 'http://orcid.org', 'TEST', 'N affiliation', 'N town', 'BM', now(), now());
+            INSERT INTO org_disambiguated(id, source_id, source_url, source_type, name, city, country, date_created, last_modified) VALUES (nextval('org_disambiguated_seq'), 'O', 'http://orcid.org', 'TEST', 'O affiliation', 'O town', 'BM', now(), now());
+            INSERT INTO org_disambiguated(id, source_id, source_url, source_type, name, city, country, date_created, last_modified) VALUES (nextval('org_disambiguated_seq'), 'P', 'http://orcid.org', 'TEST', 'P affiliation', 'P town', 'BM', now(), now());
+            INSERT INTO org_disambiguated(id, source_id, source_url, source_type, name, city, country, date_created, last_modified) VALUES (nextval('org_disambiguated_seq'), 'Q', 'http://orcid.org', 'TEST', 'Q affiliation', 'Q town', 'BM', now(), now());
+            INSERT INTO org_disambiguated(id, source_id, source_url, source_type, name, city, country, date_created, last_modified) VALUES (nextval('org_disambiguated_seq'), 'R', 'http://orcid.org', 'TEST', 'R affiliation', 'R town', 'BM', now(), now());
+            INSERT INTO org_disambiguated(id, source_id, source_url, source_type, name, city, country, date_created, last_modified) VALUES (nextval('org_disambiguated_seq'), 'S', 'http://orcid.org', 'TEST', 'S affiliation', 'S town', 'BM', now(), now());
+            INSERT INTO org_disambiguated(id, source_id, source_url, source_type, name, city, country, date_created, last_modified) VALUES (nextval('org_disambiguated_seq'), 'T', 'http://orcid.org', 'TEST', 'T affiliation', 'T town', 'BM', now(), now());
+            INSERT INTO org_disambiguated(id, source_id, source_url, source_type, name, city, country, date_created, last_modified) VALUES (nextval('org_disambiguated_seq'), 'U', 'http://orcid.org', 'TEST', 'U affiliation', 'U town', 'BM', now(), now());
+            INSERT INTO org_disambiguated(id, source_id, source_url, source_type, name, city, country, date_created, last_modified) VALUES (nextval('org_disambiguated_seq'), 'V', 'http://orcid.org', 'TEST', 'V affiliation', 'V town', 'BM', now(), now());
+            INSERT INTO org_disambiguated(id, source_id, source_url, source_type, name, city, country, date_created, last_modified) VALUES (nextval('org_disambiguated_seq'), 'W', 'http://orcid.org', 'TEST', 'W affiliation', 'W town', 'BM', now(), now());
+            INSERT INTO org_disambiguated(id, source_id, source_url, source_type, name, city, country, date_created, last_modified) VALUES (nextval('org_disambiguated_seq'), 'X', 'http://orcid.org', 'TEST', 'X affiliation', 'X town', 'BM', now(), now());
+            INSERT INTO org_disambiguated(id, source_id, source_url, source_type, name, city, country, date_created, last_modified) VALUES (nextval('org_disambiguated_seq'), 'Y', 'http://orcid.org', 'TEST', 'Y affiliation', 'Y town', 'BM', now(), now());
+            INSERT INTO org_disambiguated(id, source_id, source_url, source_type, name, city, country, date_created, last_modified) VALUES (nextval('org_disambiguated_seq'), 'Z', 'http://orcid.org', 'TEST', 'Z affiliation', 'Z town', 'BM', now(), now());
+        </sql>
+    </changeSet>
 
 </databaseChangeLog>
