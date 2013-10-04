@@ -22,7 +22,7 @@
 		<h3 style="margin-bottom: 0px;">${springMacroRequestContext.getMessage("manage.deleteWork.pleaseConfirm")}</h3>
 		{{fixedTitle}}<br />
 		<br />
-    	<div class="btn btn-danger" ng-click="deleteByIndex()">
+    	<div class="btn btn-danger" ng-click="deleteByPutCode()">
     		${springMacroRequestContext.getMessage("manage.deleteWork.delete")}
     	</div>
     	<a href="" ng-click="closeModal()">${springMacroRequestContext.getMessage("manage.deleteWork.cancel")}</a>
@@ -359,9 +359,9 @@
     	       
     	       </div>
     	   </div>
-           <div class="pull-right" style="right: 140px; top: 20px; width: 15px;"><a href ng-click="deleteWork($index)" class="icon-trash orcid-icon-trash grey"></a></div>
+           <div class="pull-right" style="right: 140px; top: 20px; width: 15px;"><a href ng-click="deleteWork(work.putCode.value)" class="icon-trash orcid-icon-trash grey"></a></div>
     	<#else>
-           <div class="pull-right" style="right: 145px; top: 20px; width: 15px;"><a href ng-click="deleteWork($index)" class="icon-trash orcid-icon-trash grey"></a></div>
+           <div class="pull-right" style="right: 145px; top: 20px; width: 15px;"><a href ng-click="deleteWork(work.putCode.value)" class="icon-trash orcid-icon-trash grey"></a></div>
 		</#if>
 		<div style="width: 530px;">
         <h3 class="work-title">
@@ -371,9 +371,9 @@
         </div>
         <div class="pull-right" style="width: 130px;">
 		<@orcid.privacyToggle angularModel="work.visibility.visibility" 
-				publicClick="setPrivacy($index, 'PUBLIC', $event)" 
-                limitedClick="setPrivacy($index, 'LIMITED', $event)" 
-                privateClick="setPrivacy($index, 'PRIVATE', $event)"
+				publicClick="setPrivacy(work.putCode.value, 'PUBLIC', $event)" 
+                limitedClick="setPrivacy(work.putCode.value, 'LIMITED', $event)" 
+                privateClick="setPrivacy(work.putCode.value, 'PRIVATE', $event)"
                 popoverStyle="left: -255px;"
                 arrowStyle="left: 261px;" />
 		</div>
