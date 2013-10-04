@@ -1129,6 +1129,14 @@ function AffiliationCtrl($scope, $compile, affiliationsSrvc){
 								remote: {
 									url: 'http://localhost:8080/orcid-web/affiliations/disambiguated/%QUERY',
 								},
+								template: function (datum) {
+									var forDisplay = datum.value + ', ' + datum.city;
+									if(datum.region){
+										forDisplay += ", " + datum.region;
+									}
+									forDisplay += ", " + datum.country;
+									return forDisplay;
+								}
 							});
 							$("#affiliationName").bind("typeahead:selected", function(obj, datum) {        
 								$("input[name=city]").val(datum.city);
