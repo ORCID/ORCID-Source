@@ -125,6 +125,7 @@ orcidNgModule.filter('contributorFilter', function(){
 		if (!emptyTextField(ctrb.contributorSequence)) out = addComma(out) + ctrb.contributorSequence.value; 
 		if (!emptyTextField(ctrb.orcid)) out = addComma(out) + ctrb.orcid.value; 
 		if (!emptyTextField(ctrb.email)) out = addComma(out) + ctrb.email.value;
+		if (out.length > 0) out = '(' + out + ')';
 	    return out;
 	};
 });
@@ -1434,9 +1435,10 @@ function WorkCtrl($scope, $compile, worksSrvc){
 								
 								if (dw.citation && dw.citation.citationType.value == 'bibtex') {
 									try {
-										$scope.bibtexCitations[dw.putCode] = bibtexParse.toJSON(dw.citation.citation.value);
+										$scope.bibtexCitations[dw.putCode.value] = bibtexParse.toJSON(dw.citation.citation.value);
 										console.log(dw.bibtexCitation);
 									} catch (err) {
+										$scope.bibtexCitations[dw.putCode.value] = 'Error Parsing Bibtex';
 										console.log("couldn't parse bibtex: " + dw.citation.citation.value);
 									}
 								}
