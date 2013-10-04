@@ -146,7 +146,7 @@ public class OrgDisambiguatedEntity extends BaseEntity<Long> {
         this.url = url;
     }
 
-    @OneToMany
+    @OneToMany(mappedBy = "orgDisambiguated")
     public Set<OrgDisambiguatedExternalIdentifierEntity> getExternalIdentifiers() {
         return externalIdentifiers;
     }
@@ -155,7 +155,7 @@ public class OrgDisambiguatedEntity extends BaseEntity<Long> {
         this.externalIdentifiers = externalIdentifiers;
     }
 
-    @OneToMany
+    @OneToMany(mappedBy = "orgDisambiguated")
     public Set<OrgEntity> getOrgs() {
         return orgs;
     }

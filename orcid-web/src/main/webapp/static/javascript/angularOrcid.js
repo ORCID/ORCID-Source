@@ -1111,6 +1111,7 @@ function WorkOverviewCtrl($scope, $compile, worksSrvc){
 }
 
 function AffiliationCtrl($scope, $compile, affiliationsSrvc){
+	
 	$scope.displayAffiliations = true;
 	$scope.affiliations = affiliationsSrvc.affiliations;
 	$scope.numOfAffiliationsToAdd = null;
@@ -1120,9 +1121,33 @@ function AffiliationCtrl($scope, $compile, affiliationsSrvc){
 	};
 	
 	$scope.showAddModal = function(){;
-	    $.colorbox({        	
-	        html: $compile($('#add-affiliation-modal').html())($scope),
-	        onComplete: function() {$.colorbox.resize();}
+		$.colorbox({        	
+			html: $compile($('#add-affiliation-modal').html())($scope),
+			onComplete: function() {
+							$.colorbox.resize();
+							$("#affiliationName").typeahead({
+								name: 'affiliationName',
+								remote: {
+									url: 'http://localhost:8080/orcid-web/affiliations/disambiguated/%QUERY',
+								},
+								template: function (datum) {
+									var forDisplay = datum.value + ', ' + datum.city;
+									if(datum.region){
+										forDisplay += ", " + datum.region;
+									}
+									forDisplay += ", " + datum.countryForDisplay;
+									return forDisplay;
+								}
+							});
+							$("#affiliationName").bind("typeahead:selected", function(obj, datum) {        
+								$("input[name=city]").val(datum.city);
+								$("input[name=region]").val(datum.region);
+								$("select[name=country]").val(datum.country);
+								$scope.editAffiliation.city.value = datum.city;
+								$scope.editAffiliation.region.value = datum.region;
+								$scope.editAffiliation.country.value = datum.country;
+							});
+						}
 	    });
 	};
 
@@ -1219,7 +1244,7 @@ function AffiliationCtrl($scope, $compile, affiliationsSrvc){
 	
 	$scope.deleteAffiliation = function(idx) {		
 		$scope.deleteIndex = idx;
-		$scope.fixedTitle = $scope.affiliations[idx].affiliationName;
+		$scope.fixedTitle = $scope.affiliations[idx].affiliationName.value;
         var maxSize = 100;
         if($scope.fixedTitle.length > maxSize)
         	$scope.fixedTitle = $scope.fixedTitle.substring(0, maxSize) + '...';
@@ -1271,7 +1296,7 @@ function AffiliationCtrl($scope, $compile, affiliationsSrvc){
 		
 	$scope.setPrivacy = function(idx, priv, $event) {
 		$event.preventDefault();
-		$scope.affiliations[idx].visibility = priv;
+		$scope.affiliations[idx].visibility.visibility = priv;
 		$scope.curPrivToggle = null;
 		$scope.updateProfileAffiliation(idx);
 	};
@@ -1334,7 +1359,8 @@ function AffiliationCtrl($scope, $compile, affiliationsSrvc){
 	    }).fail(function() { 
 	    	console.log("Error updating profile affiliation.");
 	    });
-	};		
+	};
+	
 }
 
 function WorkCtrl($scope, $compile, worksSrvc){

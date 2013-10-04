@@ -38,11 +38,11 @@
 			</div>
 		</div>
 		<div class="row">
-			<div class="span6">	
+			<div class="span6">
 				<div class="control-group">
 					<label><@orcid.msg 'manual_affiliation_form_contents.labelname'/></label>
 				    <div class="relative">
-						<input name="name" type="text" class="input-xlarge"  ng-model="editAffiliation.affiliationName.value" placeholder="<@orcid.msg 'manual_affiliation_form_contents.add_name'/>" ng-change="serverValidate('affiliations/affiliation/affiliationNameValidate.json')" ng-model-onblur/>
+						<input id="affiliationName" name="affiliationName" type="text" ng-model="editAffiliation.affiliationName.value" placeholder="<@orcid.msg 'manual_affiliation_form_contents.add_name'/>" ng-change="serverValidate('affiliations/affiliation/affiliationNameValidate.json')" ng-model-onblur/>
 						<span class="required" ng-class="isValidClass(editAffiliation.affiliationName)">*</span>
 						<span class="orcid-error" ng-show="editAffiliation.affiliationName.errors.length > 0">
 							<div ng-repeat='error in editAffiliation.affiliationName.errors' ng-bind-html-unsafe="error"></div>
@@ -52,9 +52,9 @@
 				<div class="control-group">
 					<label><@orcid.msg 'manual_affiliation_form_contents.labelcity'/></label>
 				    <div class="relative">
-						<input name="name" type="text" class="input-xlarge"  ng-model="editAffiliation.city.value" placeholder="<@orcid.msg 'manual_affiliation_form_contents.add_city'/>" ng-change="serverValidate('affiliations/affiliation/cityValidate.json')" ng-model-onblur/>
+						<input name="city" type="text" class="input-xlarge"  ng-model="editAffiliation.city.value" placeholder="<@orcid.msg 'manual_affiliation_form_contents.add_city'/>" ng-change="serverValidate('affiliations/affiliation/cityValidate.json')" ng-model-onblur/>
 						<span class="required" ng-class="isValidClass(editAffiliation.city)">*</span>
-						<span class="orcid-error" ng-show="editAffiliation.affiliationName.errors.length > 0">
+						<span class="orcid-error" ng-show="editAffiliation.city.errors.length > 0">
 							<div ng-repeat='error in editAffiliation.city.errors' ng-bind-html-unsafe="error"></div>
 						</span>
 					</div>
@@ -62,7 +62,7 @@
 				<div class="control-group">
 					<label><@orcid.msg 'manual_affiliation_form_contents.labelregion'/></label>
 				    <div class="relative">
-						<input name="name" type="text" class="input-xlarge"  ng-model="editAffiliation.region.value" placeholder="<@orcid.msg 'manual_affiliation_form_contents.add_region'/>" ng-change="serverValidate('affiliations/affiliation/regionValidate.json')" ng-model-onblur/>
+						<input name="region" type="text" class="input-xlarge"  ng-model="editAffiliation.region.value" placeholder="<@orcid.msg 'manual_affiliation_form_contents.add_region'/>" ng-change="serverValidate('affiliations/affiliation/regionValidate.json')" ng-model-onblur/>
 						<span class="orcid-error" ng-show="editAffiliation.affiliationName.errors.length > 0">
 							<div ng-repeat='error in editAffiliation.region.errors' ng-bind-html-unsafe="error"></div>
 						</span>
@@ -86,9 +86,9 @@
 				<div class="control-group">
 					<label><@orcid.msg 'manual_affiliation_form_contents.labeldepartment'/></label>
 				    <div class="relative">
-						<input name="name" type="text" class="input-xlarge"  ng-model="editAffiliation.department.value" placeholder="<@orcid.msg 'manual_affiliation_form_contents.add_department'/>" ng-change="serverValidate('affiliations/affiliation/departmentValidate.json')" ng-model-onblur/>
-						<span class="orcid-error" ng-show="editAffiliation.affiliationName.errors.length > 0">
-							<div ng-repeat='error in editAffiliation.department.errors' ng-bind-html-unsafe="error"></div>
+						<input name="department" type="text" class="input-xlarge"  ng-model="editAffiliation.departmentName.value" placeholder="<@orcid.msg 'manual_affiliation_form_contents.add_department'/>" ng-change="serverValidate('affiliations/affiliation/departmentValidate.json')" ng-model-onblur/>
+						<span class="orcid-error" ng-show="editAffiliation.departmentName.errors.length > 0">
+							<div ng-repeat='error in editAffiliation.departmentName.errors' ng-bind-html-unsafe="error"></div>
 						</span>
 					</div>
 				</div>
@@ -143,6 +143,11 @@
 		    		</select>
 		    		</div>
 		    	</div>
+		    	<div class="control-group">
+		 			<label class="relative"><@orcid.msg 'privacyToggle.help.who_can_see'/></label>
+		 				<@orcid.privacyToggle "editAffiliation.visibility.visibility" "setAddAffiliationPrivacy('PUBLIC', $event)" 
+		                    	  "setAddAffiliationPrivacy('LIMITED', $event)" "setAddAffiliationPrivacy('PRIVATE', $event)" />
+		 		</div>
 			</div>
 		</div>
 		<div class="row">
@@ -172,14 +177,14 @@
     <li class="bottom-margin-small" ng-repeat="affiliation in affiliations">            	
         <div class="pull-right" style="right: 145px; top: 20px; width: 15px;"><a href ng-click="deleteAffiliation($index)" class="icon-trash orcid-icon-trash grey"></a></div>
 		<div style="width: 530px;">
-		    <div ng-bind-html="affiliation.affiliationType"></div>
+		    <div ng-bind-html="affiliation.affiliationTypeForDisplay"></div>
 	        <h3 class="affiliation-title">
-	        	<strong ng-bind-html="affiliation.affiliationName"></strong>
+	        	<strong ng-bind-html="affiliation.affiliationName.value"></strong>
 	        	<span ng-show="affiliation.startDate">
-	        	    (<span ng-show="affiliation.startDate.month">{{affiliation.startDate.month.value}}-</span><span ng-show="affiliation.startDate.year.value">{{affiliation.startDate.year.value}}</span>
+	        	    (<span ng-show="affiliation.startDate.month">{{affiliation.startDate.month}}-</span><span ng-show="affiliation.startDate.year">{{affiliation.startDate.year}}</span>
 	        	    <@orcid.msg 'workspace_affiliations.dateSeparator'/>
 	        	    <span ng-show="affiliation.endDate">
-	        	        <span ng-show="affiliation.endDate.month">{{affiliation.endDate.month.value}}-</span><span ng-show="affiliation.endDate.year.value">{{affiliation.endDate.year.value}}</span>)
+	        	        <span ng-show="affiliation.endDate.month">{{affiliation.endDate.month}}-</span><span ng-show="affiliation.endDate.year">{{affiliation.endDate.year}}</span>)
 	        	    </span>
 	        	    <span ng-hide="affiliation.endDate">
 	        	        <@orcid.msg 'workspace_affiliations.present'/>)
@@ -187,15 +192,14 @@
 	        	</span>
 	        </h3>
 	        <div ng-show="affiliation.departmentName">
-	            <span ng-bind-html="affiliation.departmentName"></span>
+	            <span ng-bind-html="affiliation.departmentName.value"></span>
 	        </div>
 	        <div>
-	            <span ng-bind-html="affiliation.affiliationAddress.affiliationCity.content"></span>,
-	            <span ng-bind-html="affiliation.affiliationAddress.affiliationCountry.value"></span>
+	            <span ng-bind-html="affiliation.city.value"></span><span ng-show="affiliation.region">, <span ng-bind-html="affiliation.region.value"></span></span>, <span ng-bind-html="affiliation.countryForDisplay"></span>
 	        </div>
         </div>
         <div class="pull-right" style="width: 130px;">
-		<@orcid.privacyToggle "affiliation.visibility" "setPrivacy($index, 'PUBLIC', $event)" 
+		<@orcid.privacyToggle "affiliation.visibility.visibility" "setPrivacy($index, 'PUBLIC', $event)" 
                     	  "setPrivacy($index, 'LIMITED', $event)" "setPrivacy($index, 'PRIVATE', $event)" />
 		</div>
     </li>           
