@@ -47,6 +47,7 @@ import org.orcid.jaxb.model.message.AffiliationAddress;
 import org.orcid.jaxb.model.message.AffiliationCity;
 import org.orcid.jaxb.model.message.AffiliationCountry;
 import org.orcid.jaxb.model.message.Affiliations;
+import org.orcid.jaxb.model.message.Country;
 import org.orcid.jaxb.model.message.ExternalIdentifiers;
 import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.jaxb.model.message.OrcidActivities;
@@ -195,21 +196,24 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
         orcidActivities.setOrcidWorks(orcidWorks);
         OrcidWork orcidWork = new OrcidWork();
         orcidWorks.getOrcidWork().add(orcidWork);
-        WorkTitle workTitle = new WorkTitle();               
-        workTitle.setTitle(new Title("Work added by integration test - Version 22"));        
+        WorkTitle workTitle = new WorkTitle();
+        workTitle.setTitle(new Title("Work added by integration test - Version 22"));
         TranslatedTitle translatedTitle = new TranslatedTitle();
         translatedTitle.setContent("Trabajo añadido por una prueba de integración");
         translatedTitle.setLanguageCode("es_CR");
         workTitle.setTranslatedTitle(translatedTitle);
-        
-        orcidWork.setWorkTitle(workTitle);        
+
+        orcidWork.setWorkTitle(workTitle);
         orcidWork.setJournalTitle(new Title("Journal Title"));
         orcidWork.setLanguageCode("en_US");
+
+        Country country = new Country(Iso3166Country.US);
+        orcidWork.setCountry(country);
 
         ClientResponse clientResponse = oauthT2Client.addWorksJson("4444-4444-4444-4442", orcidMessage, accessToken);
         assertEquals(201, clientResponse.getStatus());
     }
-    
+
     @Test
     public void testAddAffiliation() throws InterruptedException, JSONException {
         String scopes = "/affiliations/create";

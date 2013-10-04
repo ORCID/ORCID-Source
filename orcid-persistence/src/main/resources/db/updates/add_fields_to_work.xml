@@ -25,6 +25,7 @@
 				<column name="language_code" type="VARCHAR(20)" />
 				<column name="translated_title" type="VARCHAR(1000)" />
 				<column name="translated_title_language_code" type="VARCHAR(20)" />
+				<column name="iso2_country" type="VARCHAR(2)" />
 		</addColumn>
     </changeSet>
 </databaseChangeLog>	

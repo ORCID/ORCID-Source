@@ -22,6 +22,8 @@ import java.util.List;
 
 import org.jbibtex.ParseException;
 import org.orcid.jaxb.model.message.CitationType;
+import org.orcid.jaxb.model.message.Country;
+import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.jaxb.model.message.OrcidWork;
 import org.orcid.jaxb.model.message.PublicationDate;
 import org.orcid.jaxb.model.message.Title;
@@ -57,6 +59,8 @@ public class Work implements ErrorsInterface, Serializable {
 
     private Citation citation;
 
+    private Text country;
+    
     private List<Contributor> contributors;
 
     private List<WorkExternalIdentifier> workExternalIdentifiers;
@@ -111,7 +115,10 @@ public class Work implements ErrorsInterface, Serializable {
             w.setJournalTitle(Text.valueOf(orcidWork.getJournalTitle().getContent()));
                 
         if(orcidWork.getLanguageCode() != null)
-        	w.setLanguageCode(Text.valueOf(orcidWork.getLanguageCode()));
+            w.setLanguageCode(Text.valueOf(orcidWork.getLanguageCode()));
+        
+        if(orcidWork.getCountry() != null)
+            w.setCountry((orcidWork.getCountry().getValue() == null) ? null :  Text.valueOf(orcidWork.getCountry().getValue().value()));
         return w;
     }
 
@@ -158,6 +165,11 @@ public class Work implements ErrorsInterface, Serializable {
             
         if(this.getLanguageCode() != null){
             ow.setLanguageCode(this.getLanguageCode().getValue());
+        }
+        
+        if(this.getCountry() != null) {
+            Country country = new Country(Iso3166Country.fromValue(this.getCountry().getValue()));
+            ow.setCountry(country);
         }
         
         return ow;
@@ -298,5 +310,13 @@ public class Work implements ErrorsInterface, Serializable {
 
     public void setLanguageCode(Text languageCode) {
         this.languageCode = languageCode;
-    }              
+    }
+
+    public Text getCountry() {
+        return country;
+    }
+
+    public void setCountry(Text country) {
+        this.country = country;
+    }            
 }

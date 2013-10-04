@@ -95,7 +95,7 @@ public class WorkspaceController extends BaseWorkspaceController {
 
     @Resource
     private WorkContributorManager workContributorManager;
-    
+
     @Resource
     private LocaleManager localeManager;
 
@@ -112,7 +112,7 @@ public class WorkspaceController extends BaseWorkspaceController {
         }
         return FunctionsOverCollections.sortMapsByValues(affiliationTypes);
     }
-    
+
     @ModelAttribute("workTypes")
     public Map<String, String> retrieveWorkTypesAsMap() {
         Map<String, String> workTypes = new LinkedHashMap<String, String>();
@@ -203,10 +203,10 @@ public class WorkspaceController extends BaseWorkspaceController {
     }
 
     @ModelAttribute("languages")
-    public Map<String, String> retrieveLocalesAsMap(){
+    public Map<String, String> retrieveLocalesAsMap() {
         return LanguagesMap.getLanguagesMap(localeManager.getLocale());
     }
-    
+
     @RequestMapping
     public ModelAndView viewWorkspace(HttpServletRequest request, @RequestParam(value = "page", defaultValue = "1") int pageNo,
             @RequestParam(value = "maxResults", defaultValue = "200") int maxResults) {

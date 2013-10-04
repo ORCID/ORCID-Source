@@ -631,6 +631,7 @@
                 <xs:element ref="orcid:work-contributors" minOccurs="0"/>
                 <xs:element ref="orcid:work-source" minOccurs="0"/>
                 <xs:element ref="orcid:language-code" minOccurs="0" maxOccurs="1"/>
+				<xs:element ref="orcid:country" minOccurs="0"/>                
             </xs:sequence>
             <xs:attributeGroup ref="orcid:visibility"/>
             <xs:attributeGroup ref="orcid:put-code"/>
@@ -1143,11 +1144,6 @@
         </xs:annotation>
         <xs:complexType mixed="true"/>
     </xs:element>
-    
-    
-    
-    
-    
     <xs:element name="translated-title">
         <xs:annotation>
             <xs:documentation>The main title of the work translated into another language.</xs:documentation>
@@ -1160,14 +1156,6 @@
     		</xs:simpleContent>
   		</xs:complexType>
     </xs:element>
-    
-    
-    
-    
-    
-    
-    
-    
     <xs:element name="orcid">
         <xs:annotation>
             <xs:documentation>The identifier of the researcher or contributor in ORCID.

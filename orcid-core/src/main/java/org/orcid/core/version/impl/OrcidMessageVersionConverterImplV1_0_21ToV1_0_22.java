@@ -64,6 +64,9 @@ public class OrcidMessageVersionConverterImplV1_0_21ToV1_0_22 implements OrcidMe
 
                         // Remove the language code
                         orcidWork.setLanguageCode(null);
+
+                        // Remove the location
+                        orcidWork.setCountry(null);
                     }
                 }
             }

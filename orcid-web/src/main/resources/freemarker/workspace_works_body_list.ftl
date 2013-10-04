@@ -248,6 +248,18 @@
 						</#list>
 					</select>
 				</div>
+
+				<div class="control-group">
+                    <label for="country"><@orcid.msg 'manual_work_form_contents.labelcountry'/></label>
+                    <div class="relative">
+                    	<select id="isoCountryCode" name="isoCountryCode" ng-model="editWork.country.value">
+                    		<option value=""><@orcid.msg 'org.orcid.persistence.jpa.entities.CountryIsoEntity.empty' /></option>
+	                    	<#list isoCountries?keys as key>
+								<option value="${key}">${isoCountries[key]}</option>								
+							</#list>
+						</select>                        
+                    </div>
+                </div>
 				
 			</div>
 		</div>

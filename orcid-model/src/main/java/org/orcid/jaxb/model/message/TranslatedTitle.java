@@ -60,18 +60,18 @@ public class TranslatedTitle implements Serializable {
     private static final long serialVersionUID = 1L;
     @XmlValue
     protected String content;
-    @XmlAttribute(name = "language-code", required=true)
+    @XmlAttribute(name = "language-code", required = true)
     protected String languageCode;
-    
-    public TranslatedTitle(){
-        
+
+    public TranslatedTitle() {
+
     }
 
-    public TranslatedTitle(String content){
+    public TranslatedTitle(String content) {
         this.content = content;
     }
 
-    public TranslatedTitle(String content, String languageCode){
+    public TranslatedTitle(String content, String languageCode) {
         this.content = content;
         this.languageCode = languageCode;
     }
@@ -91,16 +91,16 @@ public class TranslatedTitle implements Serializable {
     public void setLanguageCode(String languageCode) {
         this.languageCode = languageCode;
     }
-        
+
     @Override
     public int hashCode() {
         final int prime = 37;
         int result = 1;
         result = prime * result + (StringUtils.isEmpty(this.content) ? 0 : this.content.hashCode());
-        result = prime * result + (StringUtils.isEmpty(this.languageCode) ? 0 : this.languageCode.hashCode()); 
+        result = prime * result + (StringUtils.isEmpty(this.languageCode) ? 0 : this.languageCode.hashCode());
         return result;
     }
-    
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj)
@@ -110,54 +110,18 @@ public class TranslatedTitle implements Serializable {
         if (getClass() != obj.getClass())
             return false;
         TranslatedTitle other = (TranslatedTitle) obj;
-        if(this.content == null){
-            if(other.content != null)
+        if (this.content == null) {
+            if (other.content != null)
                 return false;
-        } else if(!this.content.equals(other.content))
+        } else if (!this.content.equals(other.content))
             return false;
-        
-        if(this.languageCode == null){
-            if(other.languageCode != null)
+
+        if (this.languageCode == null) {
+            if (other.languageCode != null)
                 return false;
-        } else if(!this.languageCode.equals(other.languageCode))
-            return false;            
-        
+        } else if (!this.languageCode.equals(other.languageCode))
+            return false;
+
         return true;
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

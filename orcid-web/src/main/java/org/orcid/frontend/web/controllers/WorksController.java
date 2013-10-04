@@ -250,6 +250,8 @@ public class WorksController extends BaseWorkspaceController {
         lc.setRequired(false);
         w.setLanguageCode(lc);
 
+        w.setCountry(new Text());
+
         return w;
     }
 
@@ -373,6 +375,10 @@ public class WorksController extends BaseWorkspaceController {
         if (workContributors != null) {
             workEntity.setContributorsJson(JsonUtils.convertToJsonString(workContributors));
         }
+
+        if (orcidWork.getCountry() != null)
+            workEntity.setIso2Country(orcidWork.getCountry().getValue());
+
         return workEntity;
     }
 
@@ -474,27 +480,27 @@ public class WorksController extends BaseWorkspaceController {
     @RequestMapping(value = "/work/workTitle/translatedTitleValidate.json", method = RequestMethod.POST)
     public @ResponseBody
     Work workWorkTitleTranslatedTitleValidate(@RequestBody Work work) {
-        work.getWorkTitle().getTranslatedTitle().setErrors(new ArrayList<String>());               
-        
+        work.getWorkTitle().getTranslatedTitle().setErrors(new ArrayList<String>());
+
         if (work.getWorkTitle().getTranslatedTitle() != null) {
-            
+
             String content = work.getWorkTitle().getTranslatedTitle().getContent();
             String code = work.getWorkTitle().getTranslatedTitle().getLanguageCode();
-                                    
+
             if (!StringUtils.isEmpty(content)) {
                 if (!StringUtils.isEmpty(code)) {
                     if (!LANGUAGE_CODE.matcher(work.getWorkTitle().getTranslatedTitle().getLanguageCode()).matches()) {
                         setError(work.getWorkTitle().getTranslatedTitle(), "manualWork.invalid_language_code");
                     }
                 }
-                if(content.length() > 1000) {
+                if (content.length() > 1000) {
                     setError(work.getWorkTitle().getTranslatedTitle(), "manualWork.length_less_1000");
                 }
             } else {
-                if (!StringUtils.isEmpty(code)){
+                if (!StringUtils.isEmpty(code)) {
                     setError(work.getWorkTitle().getTranslatedTitle(), "manualWork.empty_translation");
                 }
-            }           
+            }
         }
         return work;
     }

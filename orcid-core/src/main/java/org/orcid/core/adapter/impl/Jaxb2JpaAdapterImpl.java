@@ -296,13 +296,14 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
                 workEntity.setSubtitle(workTitle.getSubtitle() != null ? workTitle.getSubtitle().getContent() : null);
                 workEntity.setTitle(workTitle.getTitle() != null ? workTitle.getTitle().getContent() : null);
                 TranslatedTitle translatedTitle = workTitle.getTranslatedTitle();
-                if(translatedTitle != null) {
+                if (translatedTitle != null) {
                     workEntity.setTranslatedTitle(StringUtils.isEmpty(translatedTitle.getContent()) ? null : translatedTitle.getContent());
                     workEntity.setTranslatedTitleLanguageCode(StringUtils.isEmpty(translatedTitle.getLanguageCode()) ? null : translatedTitle.getLanguageCode());
                 }
             }
             workEntity.setJournalTitle(orcidWork.getJournalTitle() != null ? orcidWork.getJournalTitle().getContent() : null);
             workEntity.setLanguageCode(orcidWork.getLanguageCode() != null ? orcidWork.getLanguageCode() : null);
+            workEntity.setIso2Country(orcidWork.getCountry() == null ? null : orcidWork.getCountry().getValue());
             // TODO this code will be phased out when schema 1.0.6.XSD is
             workEntity.setWorkType(WorkType.BIBLE.equals(orcidWork.getWorkType()) ? WorkType.RELIGIOUS_TEXT : orcidWork.getWorkType());
             workEntity.setWorkUrl(orcidWork.getUrl() != null ? orcidWork.getUrl().getValue() : null);
@@ -722,7 +723,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
         }
         return new ProfileKeywordEntity(profileEntity, keywordContent);
     }
-    
+
     private void setExternalIdentifiers(ProfileEntity profileEntity, ExternalIdentifiers externalIdentifiers) {
         if (externalIdentifiers != null) {
             profileEntity.setExternalIdentifiersVisibility(externalIdentifiers.getVisibility());
@@ -785,7 +786,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             ExternalIdReference externalIdReference = externalIdentifier.getExternalIdReference();
             String referenceValue = externalIdReference != null ? externalIdReference.getContent() : null;
             ExternalIdUrl externalIdUrl = externalIdentifier.getExternalIdUrl();
-            
+
             Pair<String, String> key = new ImmutablePair<>(referenceValue, externalIdOrcidValue);
             ExternalIdentifierEntity existingExternalIdentifierEntity = existingExternalIdentifiersMap.get(key);
 
@@ -1035,7 +1036,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
         }
         return null;
     }
-    
+
     @Override
     public OrgAffiliationRelationEntity getNewOrgAffiliationRelationEntity(Affiliation affiliation, ProfileEntity profileEntity) {
         OrgAffiliationRelationEntity orgAffiliationRelationEntity = getOrgAffiliationRelationEntity(affiliation, null);

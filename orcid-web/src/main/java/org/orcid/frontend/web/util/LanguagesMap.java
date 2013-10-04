@@ -38,9 +38,14 @@ public class LanguagesMap {
     private static Map<String, Map<String, String>> i18nLanguagesMap = new TreeMap<String, Map<String, String>>();
 
     private static final Locale[] locales = Locale.getAvailableLocales();
-    
+
     /**
-     * TODO
+     * Return a map that contains the list of available languages
+     * 
+     * @param locale
+     *            The current locale
+     * @return A map that contains the list of available languages in the
+     *         current locale
      * */
     public static Map<String, String> getLanguagesMap(Locale locale) {
         if (locale == null)
@@ -54,63 +59,76 @@ public class LanguagesMap {
             return newLanguageMap;
         }
     }
-    
+
     /**
-     * TODO
+     * Builds a map that contains the available languages for the given locale
+     * 
+     * @param userLocale
+     *            the current locale
+     * @return A map containing the available languages for the given locale
      * */
     private static Map<String, String> buildLanguageMap(Locale userLocale) {
-        Map<String, String> languagesMap = new TreeMap<String, String>();                         
-        
-        for(Locale locale : locales){
-            //It is ordered backwards to keep it sorted by language and country 
+        Map<String, String> languagesMap = new TreeMap<String, String>();
+
+        for (Locale locale : locales) {
+            // It is ordered backwards to keep it sorted by language and country
             languagesMap.put(buildLanguageValue(locale, userLocale), buildLanguageKey(locale));
         }
-        
+
         return languagesMap;
     }
 
     /**
-     * TODO
+     * Returns the language translated in the given user locale
+     * 
+     * @param locale
+     * @param userLocal
+     * 
+     * @return The language translated to the given locale.
      * */
     public static String buildLanguageValue(Locale locale, Locale userLocale) {
         String variant = locale.getVariant();
-        String displayVariant = locale.getDisplayVariant(userLocale);        
+        String displayVariant = locale.getDisplayVariant(userLocale);
         String language = WordUtils.capitalize(locale.getDisplayLanguage(userLocale));
-        
+
         if (StringUtils.isEmpty(variant))
-            if(StringUtils.isEmpty(locale.getDisplayCountry(userLocale)))
+            if (StringUtils.isEmpty(locale.getDisplayCountry(userLocale)))
                 return language;
             else
                 return language + " (" + locale.getDisplayCountry(userLocale) + ')';
-        else 
-            if(StringUtils.isEmpty(locale.getDisplayCountry(userLocale)))
-                return language + ' ' + displayVariant;
-            else
-                return language + ' ' + displayVariant + " (" + locale.getDisplayCountry(userLocale) + ')';
+        else if (StringUtils.isEmpty(locale.getDisplayCountry(userLocale)))
+            return language + ' ' + displayVariant;
+        else
+            return language + ' ' + displayVariant + " (" + locale.getDisplayCountry(userLocale) + ')';
     }
 
     /**
-     * TODO
+     * Builds a language key for the given locale
+     * 
+     * @param locale
+     * @return a language key
      * */
     public static String buildLanguageKey(Locale locale) {
         String variant = locale.getVariant();
         if (StringUtils.isEmpty(variant))
-            if(StringUtils.isEmpty(locale.getCountry()))
+            if (StringUtils.isEmpty(locale.getCountry()))
                 return locale.getLanguage();
             else
                 return locale.getLanguage() + '_' + locale.getCountry();
-        else 
-            if(StringUtils.isEmpty(locale.getCountry()))
-                return locale.getLanguage() + '_' + variant;
-            else
-                return locale.getLanguage() + '_' + locale.getCountry() + '_' + variant;
+        else if (StringUtils.isEmpty(locale.getCountry()))
+            return locale.getLanguage() + '_' + variant;
+        else
+            return locale.getLanguage() + '_' + locale.getCountry() + '_' + variant;
     }
-    
+
     /**
-     * TODO
+     * Builds a locale key
+     * 
+     * @param locale
+     * @return a locale key
      * */
-    private static String buildLocaleKey(Locale locale){
-        if(StringUtils.isEmpty(locale.getVariant()))
+    private static String buildLocaleKey(Locale locale) {
+        if (StringUtils.isEmpty(locale.getVariant()))
             return locale.getLanguage() + '-' + locale.getCountry();
         else
             return locale.getLanguage() + '-' + locale.getCountry() + '-' + locale.getVariant();
