@@ -1134,7 +1134,7 @@ function AffiliationCtrl($scope, $compile, affiliationsSrvc){
 									if(datum.region){
 										forDisplay += ", " + datum.region;
 									}
-									forDisplay += ", " + datum.country;
+									forDisplay += ", " + datum.countryForDisplay;
 									return forDisplay;
 								}
 							});

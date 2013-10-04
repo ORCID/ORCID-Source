@@ -46,6 +46,8 @@ public class AffiliationForm implements ErrorsInterface, Serializable {
     private Text region;
 
     private Text country;
+    
+    private String countryForDisplay;
 
     private Text departmentName;
 
@@ -111,6 +113,14 @@ public class AffiliationForm implements ErrorsInterface, Serializable {
 
     public void setCountry(Text country) {
         this.country = country;
+    }
+
+    public String getCountryForDisplay() {
+        return countryForDisplay;
+    }
+
+    public void setCountryForDisplay(String countryForDisplay) {
+        this.countryForDisplay = countryForDisplay;
     }
 
     public Text getDepartmentName() {

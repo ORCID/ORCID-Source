@@ -195,7 +195,7 @@
 	            <span ng-bind-html="affiliation.departmentName.value"></span>
 	        </div>
 	        <div>
-	            <span ng-bind-html="affiliation.city.value"></span><span ng-show="affiliation.region">, <span ng-bind-html="affiliation.region.value"></span></span>, <span ng-bind-html="affiliation.country.value"></span>
+	            <span ng-bind-html="affiliation.city.value"></span><span ng-show="affiliation.region">, <span ng-bind-html="affiliation.region.value"></span></span>, <span ng-bind-html="affiliation.countryForDisplay"></span>
 	        </div>
         </div>
         <div class="pull-right" style="width: 130px;">

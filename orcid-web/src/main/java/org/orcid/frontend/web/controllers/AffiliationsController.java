@@ -34,6 +34,7 @@ import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.persistence.dao.OrgAffiliationRelationDao;
 import org.orcid.persistence.dao.OrgDisambiguatedDao;
 import org.orcid.persistence.dao.ProfileDao;
+import org.orcid.persistence.jpa.entities.CountryIsoEntity;
 import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
 import org.orcid.persistence.jpa.entities.OrgDisambiguatedEntity;
 import org.orcid.pojo.ajaxForm.AffiliationForm;
@@ -236,6 +237,8 @@ public class AffiliationsController extends BaseWorkspaceController {
                     if (affiliation.getAffiliationType() != null) {
                         form.setAffiliationTypeForDisplay(getMessage(buildInternationalizationKey(AffiliationType.class, affiliation.getAffiliationType().value())));
                     }
+                    form.setCountryForDisplay(getMessage(buildInternationalizationKey(CountryIsoEntity.class, affiliation.getAffiliationAddress().getAffiliationCountry()
+                            .getValue().name())));
                     affiliationsMap.put(affiliation.getPutCode(), form);
                     affiliationIds.add(affiliation.getPutCode());
                 } catch (Exception e) {
@@ -286,6 +289,7 @@ public class AffiliationsController extends BaseWorkspaceController {
             datum.put("city", orgDisambiguatedEntity.getCity());
             datum.put("region", orgDisambiguatedEntity.getRegion());
             datum.put("country", orgDisambiguatedEntity.getCountry().value());
+            datum.put("countryForDisplay", getMessage(buildInternationalizationKey(CountryIsoEntity.class, orgDisambiguatedEntity.getCountry().name())));
             datums.add(datum);
         }
         return datums;
