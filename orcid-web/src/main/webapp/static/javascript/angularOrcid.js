@@ -1110,6 +1110,7 @@ function WorkOverviewCtrl($scope, $compile, worksSrvc){
 }
 
 function AffiliationCtrl($scope, $compile, affiliationsSrvc){
+	
 	$scope.displayAffiliations = true;
 	$scope.affiliations = affiliationsSrvc.affiliations;
 	$scope.numOfAffiliationsToAdd = null;
@@ -1119,9 +1120,17 @@ function AffiliationCtrl($scope, $compile, affiliationsSrvc){
 	};
 	
 	$scope.showAddModal = function(){;
-	    $.colorbox({        	
-	        html: $compile($('#add-affiliation-modal').html())($scope),
-	        onComplete: function() {$.colorbox.resize();}
+		$.colorbox({        	
+			html: $compile($('#add-affiliation-modal').html())($scope),
+			onComplete: function() {
+							$.colorbox.resize();
+							$("#affiliationName").typeahead({
+								name: 'affiliationName',
+								remote: {
+									url: 'http://localhost:8080/orcid-web/affiliations/disambiguated/%QUERY',
+								},
+							});
+						}
 	    });
 	};
 
@@ -1333,7 +1342,8 @@ function AffiliationCtrl($scope, $compile, affiliationsSrvc){
 	    }).fail(function() { 
 	    	console.log("Error updating profile affiliation.");
 	    });
-	};		
+	};
+	
 }
 
 function WorkCtrl($scope, $compile, worksSrvc){

@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -30,13 +31,16 @@ import org.orcid.jaxb.model.message.Affiliation;
 import org.orcid.jaxb.model.message.Affiliations;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.persistence.dao.OrgAffiliationRelationDao;
+import org.orcid.persistence.dao.OrgDisambiguatedDao;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
+import org.orcid.persistence.jpa.entities.OrgDisambiguatedEntity;
 import org.orcid.pojo.ajaxForm.Date;
 import org.orcid.pojo.ajaxForm.Text;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -68,6 +72,9 @@ public class AffiliationsController extends BaseWorkspaceController {
 
     @Resource
     private OrgAffiliationRelationDao orgAffiliationRelationDao;
+
+    @Resource
+    private OrgDisambiguatedDao orgDisambiguatedDao;
 
     /**
      * Removes a affiliation from a profile
@@ -260,6 +267,21 @@ public class AffiliationsController extends BaseWorkspaceController {
             }
         }
         return affiliation;
+    }
+
+    /**
+     * Search DB for disambiguated affiliations to suggest to user
+     */
+    @RequestMapping(value = "/disambiguated/{query}", method = RequestMethod.GET)
+    public @ResponseBody
+    List<Map<String, String>> searchDisambiguated(@PathVariable("query") String query) {
+        List<Map<String, String>> datums = new ArrayList<>();
+        for (OrgDisambiguatedEntity orgDisambiguatedEntity : orgDisambiguatedDao.getOrgs(query, 0, 10)) {
+            Map<String, String> datum = new HashMap<>();
+            datum.put("value", orgDisambiguatedEntity.getName());
+            datums.add(datum);
+        }
+        return datums;
     }
 
     @RequestMapping(value = "/affiliation/affiliationNameValidate.json", method = RequestMethod.POST)
