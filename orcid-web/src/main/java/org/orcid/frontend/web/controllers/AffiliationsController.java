@@ -28,6 +28,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.orcid.core.adapter.Jaxb2JpaAdapter;
 import org.orcid.core.adapter.Jpa2JaxbAdapter;
 import org.orcid.jaxb.model.message.Affiliation;
+import org.orcid.jaxb.model.message.AffiliationType;
 import org.orcid.jaxb.model.message.Affiliations;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.persistence.dao.OrgAffiliationRelationDao;
@@ -231,7 +232,11 @@ public class AffiliationsController extends BaseWorkspaceController {
         if (affiliations != null) {
             for (Affiliation affiliation : affiliations.getAffiliation()) {
                 try {
-                    affiliationsMap.put(affiliation.getPutCode(), AffiliationForm.valueOf(affiliation));
+                    AffiliationForm form = AffiliationForm.valueOf(affiliation);
+                    if (affiliation.getAffiliationType() != null) {
+                        form.setAffiliationTypeForDisplay(getMessage(buildInternationalizationKey(AffiliationType.class, affiliation.getAffiliationType().value())));
+                    }
+                    affiliationsMap.put(affiliation.getPutCode(), form);
                     affiliationIds.add(affiliation.getPutCode());
                 } catch (Exception e) {
                     LOGGER.error("Failed to parse as Affiliation. Put code" + affiliation.getPutCode());

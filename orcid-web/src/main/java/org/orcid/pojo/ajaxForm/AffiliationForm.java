@@ -51,6 +51,8 @@ public class AffiliationForm implements ErrorsInterface, Serializable {
 
     private Text affiliationType;
 
+    private String affiliationTypeForDisplay;
+
     private Date startDate;
 
     private Date endDate;
@@ -127,6 +129,14 @@ public class AffiliationForm implements ErrorsInterface, Serializable {
         this.affiliationType = affiliationType;
     }
 
+    public String getAffiliationTypeForDisplay() {
+        return affiliationTypeForDisplay;
+    }
+
+    public void setAffiliationTypeForDisplay(String affiliationTypeForDisplay) {
+        this.affiliationTypeForDisplay = affiliationTypeForDisplay;
+    }
+
     public Date getStartDate() {
         return startDate;
     }
@@ -153,7 +163,7 @@ public class AffiliationForm implements ErrorsInterface, Serializable {
         if (address.getAffiliationRegion() != null) {
             form.setRegion(Text.valueOf(address.getAffiliationRegion().getContent()));
         }
-        form.setCountry(Text.valueOf(address.getAffiliationCity().getContent()));
+        form.setCountry(Text.valueOf(address.getAffiliationCountry().getValue().value()));
         if (affiliation.getDepartmentName() != null) {
             form.setDepartmentName(Text.valueOf(affiliation.getDepartmentName()));
         }

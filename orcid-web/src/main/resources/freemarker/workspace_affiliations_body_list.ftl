@@ -86,9 +86,9 @@
 				<div class="control-group">
 					<label><@orcid.msg 'manual_affiliation_form_contents.labeldepartment'/></label>
 				    <div class="relative">
-						<input name="department" type="text" class="input-xlarge"  ng-model="editAffiliation.department.value" placeholder="<@orcid.msg 'manual_affiliation_form_contents.add_department'/>" ng-change="serverValidate('affiliations/affiliation/departmentValidate.json')" ng-model-onblur/>
-						<span class="orcid-error" ng-show="editAffiliation.affiliationName.errors.length > 0">
-							<div ng-repeat='error in editAffiliation.department.errors' ng-bind-html-unsafe="error"></div>
+						<input name="department" type="text" class="input-xlarge"  ng-model="editAffiliation.departmentName.value" placeholder="<@orcid.msg 'manual_affiliation_form_contents.add_department'/>" ng-change="serverValidate('affiliations/affiliation/departmentValidate.json')" ng-model-onblur/>
+						<span class="orcid-error" ng-show="editAffiliation.departmentName.errors.length > 0">
+							<div ng-repeat='error in editAffiliation.departmentName.errors' ng-bind-html-unsafe="error"></div>
 						</span>
 					</div>
 				</div>
@@ -177,7 +177,7 @@
     <li class="bottom-margin-small" ng-repeat="affiliation in affiliations">            	
         <div class="pull-right" style="right: 145px; top: 20px; width: 15px;"><a href ng-click="deleteAffiliation($index)" class="icon-trash orcid-icon-trash grey"></a></div>
 		<div style="width: 530px;">
-		    <div ng-bind-html="affiliation.affiliationType.value"></div>
+		    <div ng-bind-html="affiliation.affiliationTypeForDisplay"></div>
 	        <h3 class="affiliation-title">
 	        	<strong ng-bind-html="affiliation.affiliationName.value"></strong>
 	        	<span ng-show="affiliation.startDate">
@@ -192,7 +192,7 @@
 	        	</span>
 	        </h3>
 	        <div ng-show="affiliation.departmentName">
-	            <span ng-bind-html="affiliation.departmentName"></span>
+	            <span ng-bind-html="affiliation.departmentName.value"></span>
 	        </div>
 	        <div>
 	            <span ng-bind-html="affiliation.city.value"></span><span ng-show="affiliation.region">, <span ng-bind-html="affiliation.region.value"></span></span>, <span ng-bind-html="affiliation.country.value"></span>
