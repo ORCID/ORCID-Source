@@ -1128,7 +1128,7 @@ function AffiliationCtrl($scope, $compile, affiliationsSrvc){
 							$("#affiliationName").typeahead({
 								name: 'affiliationName',
 								remote: {
-									url: 'http://localhost:8080/orcid-web/affiliations/disambiguated/%QUERY',
+									url: $('body').data('baseurl')+'affiliations/disambiguated/%QUERY',
 								},
 								template: function (datum) {
 									var forDisplay = datum.value + ', ' + datum.city;
