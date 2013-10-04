@@ -143,6 +143,11 @@
 		    		</select>
 		    		</div>
 		    	</div>
+		    	<div class="control-group">
+		 			<label class="relative"><@orcid.msg 'privacyToggle.help.who_can_see'/></label>
+		 				<@orcid.privacyToggle "editAffiliation.visibility.visibility" "setAddAffiliationPrivacy('PUBLIC', $event)" 
+		                    	  "setAddAffiliationPrivacy('LIMITED', $event)" "setAddAffiliationPrivacy('PRIVATE', $event)" />
+		 		</div>
 			</div>
 		</div>
 		<div class="row">
