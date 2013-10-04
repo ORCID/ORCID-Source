@@ -206,6 +206,7 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
         orcidWork.setWorkTitle(workTitle);
         orcidWork.setJournalTitle(new Title("Journal Title"));
         orcidWork.setLanguageCode("en_US");
+        orcidWork.setCountry(new Country(Iso3166Country.US));
 
         Country country = new Country(Iso3166Country.US);
         orcidWork.setCountry(country);
