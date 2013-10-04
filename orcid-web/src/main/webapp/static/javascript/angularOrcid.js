@@ -1462,7 +1462,6 @@ function WorkCtrl($scope, $compile, worksSrvc){
 								if (dw.citation && dw.citation.citationType.value == 'bibtex') {
 									try {
 										$scope.bibtexCitations[dw.putCode.value] = bibtexParse.toJSON(dw.citation.citation.value);
-										console.log(dw.bibtexCitation);
 									} catch (err) {
 										$scope.bibtexCitations[dw.putCode.value] = 'Error Parsing Bibtex';
 										console.log("couldn't parse bibtex: " + dw.citation.citation.value);
@@ -1508,10 +1507,17 @@ function WorkCtrl($scope, $compile, worksSrvc){
 	//init
 	$scope.getWorks();
 	
-	$scope.deleteWork = function(idx) {		
-		$scope.deleteIndex = idx;
-		if ($scope.works[idx].workTitle && $scope.works[idx].workTitle.title) 
-			$scope.fixedTitle = $scope.works[idx].workTitle.title.value;
+	$scope.deleteWork = function(putCode) {
+		$scope.deletePutCode = putCode;
+		var work;
+		for (idx in $scope.works) {
+			if ($scope.works[idx].putCode.value == putCode) {
+				work = $scope.works[idx];
+				break;
+			}
+		}
+		if (work.workTitle && work.workTitle.title) 
+			$scope.fixedTitle = work.workTitle.title.value;
 		else $scope.fixedTitle = '';
         var maxSize = 100;
         if($scope.fixedTitle.length > maxSize)
@@ -1522,12 +1528,19 @@ function WorkCtrl($scope, $compile, worksSrvc){
         });
 	};
 	
-	$scope.deleteByIndex = function() {		
-		var work = $scope.works[$scope.deleteIndex];
-    	// remove work on server
+	$scope.deleteByPutCode = function() {		
+		var work;
+		var idx;
+		for (idx in $scope.works) {
+			if ($scope.works[idx].putCode.value == $scope.deletePutCode) {
+				work = $scope.works[idx];
+				break;
+			}
+		}
+		// remove work on server
 		$scope.removeWork(work);
 		// remove the work from the UI
-    	$scope.works.splice($scope.deleteIndex, 1);
+    	$scope.works.splice(idx, 1);
     	$scope.numOfWorksToAdd--; // keep this number matching
     	// apply changes on scope
 		// close box
@@ -1577,11 +1590,16 @@ function WorkCtrl($scope, $compile, worksSrvc){
 
 	
 		
-	$scope.setPrivacy = function(idx, priv, $event) {
+	$scope.setPrivacy = function(putCode, priv, $event) {
 		$event.preventDefault();
+		var idx;
+		for (idx in $scope.works) {
+			if ($scope.works[idx].putCode.value == putCode)
+				break;
+		}
 		$scope.works[idx].visibility.visibility = priv;
 		$scope.curPrivToggle = null;
-		$scope.updateProfileWork(idx);
+		$scope.updateProfileWork(putCode);
 	};
 	
 	$scope.serverValidate = function (relativePath) {
@@ -1626,8 +1644,14 @@ function WorkCtrl($scope, $compile, worksSrvc){
 	};
 
 	
-	$scope.updateProfileWork = function(idx) {
-		var work = $scope.works[idx];
+	$scope.updateProfileWork = function(putCode) {
+		var work;
+		for (idx in $scope.works) {
+			if ($scope.works[idx].putCode.value == putCode) {
+				work = $scope.works[idx];
+				break;
+			}
+		}
 		$.ajax({
 	        url: $('body').data('baseurl') + 'works/profileWork.json',
 	        type: 'PUT',
