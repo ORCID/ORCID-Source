@@ -20,7 +20,9 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TranslatedTitle implements ErrorsInterface, Serializable {
+import org.apache.commons.lang3.StringUtils;
+
+public class TranslatedTitle implements ErrorsInterface, Required, Serializable {
     private static final long serialVersionUID = 1L;
 
     private List<String> errors = new ArrayList<String>();
@@ -28,6 +30,10 @@ public class TranslatedTitle implements ErrorsInterface, Serializable {
     private String content;
 
     private String languageCode;
+    
+    private boolean required = false;
+    
+    private String getRequiredMessage;
     
     public static TranslatedTitle valueOf(org.orcid.jaxb.model.message.TranslatedTitle translatedTitle){
     	if(translatedTitle == null)
@@ -40,8 +46,8 @@ public class TranslatedTitle implements ErrorsInterface, Serializable {
     
     public org.orcid.jaxb.model.message.TranslatedTitle toTranslatedTitle(){
         org.orcid.jaxb.model.message.TranslatedTitle result = new org.orcid.jaxb.model.message.TranslatedTitle();
-        result.setContent((content == null) ? null : content);
-        result.setLanguageCode((languageCode == null) ? null : languageCode);        
+        result.setContent(StringUtils.isEmpty(content) ? null : content);
+        result.setLanguageCode(StringUtils.isEmpty(languageCode) ? null : languageCode);        
         return result;
     }
 
@@ -69,5 +75,19 @@ public class TranslatedTitle implements ErrorsInterface, Serializable {
         this.languageCode = languageCode;
     }
     
-    
+    public boolean isRequired() {
+        return required;
+    }
+
+    public void setRequired(boolean required) {
+        this.required = required;
+    }
+
+    public String getGetRequiredMessage() {
+        return getRequiredMessage;
+    }
+
+    public void setGetRequiredMessage(String getRequiredMessage) {
+        this.getRequiredMessage = getRequiredMessage;
+    }
 }

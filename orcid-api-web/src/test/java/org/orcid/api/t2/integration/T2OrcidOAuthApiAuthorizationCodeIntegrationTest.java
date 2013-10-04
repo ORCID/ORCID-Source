@@ -55,6 +55,7 @@ import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidWork;
 import org.orcid.jaxb.model.message.OrcidWorks;
 import org.orcid.jaxb.model.message.Title;
+import org.orcid.jaxb.model.message.TranslatedTitle;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.message.WorkTitle;
 import org.orcid.persistence.dao.ClientRedirectDao;
@@ -178,6 +179,37 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
         assertEquals(201, clientResponse.getStatus());
     }
 
+    @Test
+    public void testAddWorkV22() throws InterruptedException, JSONException {
+        String scopes = "/orcid-works/create";
+        String authorizationCode = obtainAuthorizationCode(scopes);
+        String accessToken = obtainAccessToken(authorizationCode, scopes);
+
+        OrcidMessage orcidMessage = new OrcidMessage();
+        orcidMessage.setMessageVersion(OrcidMessage.DEFAULT_VERSION);
+        OrcidProfile orcidProfile = new OrcidProfile();
+        orcidMessage.setOrcidProfile(orcidProfile);
+        OrcidActivities orcidActivities = new OrcidActivities();
+        orcidProfile.setOrcidActivities(orcidActivities);
+        OrcidWorks orcidWorks = new OrcidWorks();
+        orcidActivities.setOrcidWorks(orcidWorks);
+        OrcidWork orcidWork = new OrcidWork();
+        orcidWorks.getOrcidWork().add(orcidWork);
+        WorkTitle workTitle = new WorkTitle();               
+        workTitle.setTitle(new Title("Work added by integration test - Version 22"));        
+        TranslatedTitle translatedTitle = new TranslatedTitle();
+        translatedTitle.setContent("Trabajo añadido por una prueba de integración");
+        translatedTitle.setLanguageCode("es_CR");
+        workTitle.setTranslatedTitle(translatedTitle);
+        
+        orcidWork.setWorkTitle(workTitle);        
+        orcidWork.setJournalTitle(new Title("Journal Title"));
+        orcidWork.setLanguageCode("en_US");
+
+        ClientResponse clientResponse = oauthT2Client.addWorksJson("4444-4444-4444-4442", orcidMessage, accessToken);
+        assertEquals(201, clientResponse.getStatus());
+    }
+    
     @Test
     public void testAddAffiliation() throws InterruptedException, JSONException {
         String scopes = "/affiliations/create";

@@ -103,6 +103,7 @@ import org.orcid.jaxb.model.message.SecurityDetails;
 import org.orcid.jaxb.model.message.SequenceType;
 import org.orcid.jaxb.model.message.Source;
 import org.orcid.jaxb.model.message.SubmissionDate;
+import org.orcid.jaxb.model.message.TranslatedTitle;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.message.WorkContributors;
 import org.orcid.jaxb.model.message.WorkExternalIdentifier;
@@ -294,6 +295,11 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             if (workTitle != null) {
                 workEntity.setSubtitle(workTitle.getSubtitle() != null ? workTitle.getSubtitle().getContent() : null);
                 workEntity.setTitle(workTitle.getTitle() != null ? workTitle.getTitle().getContent() : null);
+                TranslatedTitle translatedTitle = workTitle.getTranslatedTitle();
+                if(translatedTitle != null) {
+                    workEntity.setTranslatedTitle(StringUtils.isEmpty(translatedTitle.getContent()) ? null : translatedTitle.getContent());
+                    workEntity.setTranslatedTitleLanguageCode(StringUtils.isEmpty(translatedTitle.getLanguageCode()) ? null : translatedTitle.getLanguageCode());
+                }
             }
             workEntity.setJournalTitle(orcidWork.getJournalTitle() != null ? orcidWork.getJournalTitle().getContent() : null);
             workEntity.setLanguageCode(orcidWork.getLanguageCode() != null ? orcidWork.getLanguageCode() : null);

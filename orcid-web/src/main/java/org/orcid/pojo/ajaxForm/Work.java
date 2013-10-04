@@ -145,8 +145,9 @@ public class Work implements ErrorsInterface, Serializable {
         }
         if (this.getWorkSource() != null)
             ow.setWorkSource(new WorkSource(this.getWorkSource().getValue()));
-        if (this.getWorkTitle() != null)
+        if (this.getWorkTitle() != null){
             ow.setWorkTitle(this.workTitle.toWorkTitle());
+        }
         if (this.getWorkType() != null) {
             ow.setWorkType(WorkType.fromValue(this.getWorkType().getValue()));
         }
