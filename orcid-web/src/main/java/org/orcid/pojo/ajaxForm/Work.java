@@ -20,6 +20,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.jbibtex.ParseException;
 import org.orcid.jaxb.model.message.CitationType;
 import org.orcid.jaxb.model.message.Country;
@@ -168,7 +169,7 @@ public class Work implements ErrorsInterface, Serializable {
         }
         
         if(this.getCountry() != null) {
-            Country country = new Country(Iso3166Country.fromValue(this.getCountry().getValue()));
+            Country country = new Country(StringUtils.isEmpty(this.getCountry().getValue()) ? null : Iso3166Country.fromValue(this.getCountry().getValue()));
             ow.setCountry(country);
         }
         
