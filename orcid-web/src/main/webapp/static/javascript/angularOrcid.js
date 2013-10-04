@@ -1243,7 +1243,7 @@ function AffiliationCtrl($scope, $compile, affiliationsSrvc){
 	
 	$scope.deleteAffiliation = function(idx) {		
 		$scope.deleteIndex = idx;
-		$scope.fixedTitle = $scope.affiliations[idx].affiliationName;
+		$scope.fixedTitle = $scope.affiliations[idx].affiliationName.value;
         var maxSize = 100;
         if($scope.fixedTitle.length > maxSize)
         	$scope.fixedTitle = $scope.fixedTitle.substring(0, maxSize) + '...';
@@ -1295,7 +1295,7 @@ function AffiliationCtrl($scope, $compile, affiliationsSrvc){
 		
 	$scope.setPrivacy = function(idx, priv, $event) {
 		$event.preventDefault();
-		$scope.affiliations[idx].visibility = priv;
+		$scope.affiliations[idx].visibility.visibility = priv;
 		$scope.curPrivToggle = null;
 		$scope.updateProfileAffiliation(idx);
 	};

@@ -38,7 +38,7 @@
 			</div>
 		</div>
 		<div class="row">
-			<div class="span6">	
+			<div class="span6">
 				<div class="control-group">
 					<label><@orcid.msg 'manual_affiliation_form_contents.labelname'/></label>
 				    <div class="relative">
@@ -177,14 +177,14 @@
     <li class="bottom-margin-small" ng-repeat="affiliation in affiliations">            	
         <div class="pull-right" style="right: 145px; top: 20px; width: 15px;"><a href ng-click="deleteAffiliation($index)" class="icon-trash orcid-icon-trash grey"></a></div>
 		<div style="width: 530px;">
-		    <div ng-bind-html="affiliation.affiliationType"></div>
+		    <div ng-bind-html="affiliation.affiliationType.value"></div>
 	        <h3 class="affiliation-title">
-	        	<strong ng-bind-html="affiliation.affiliationName"></strong>
+	        	<strong ng-bind-html="affiliation.affiliationName.value"></strong>
 	        	<span ng-show="affiliation.startDate">
-	        	    (<span ng-show="affiliation.startDate.month">{{affiliation.startDate.month.value}}-</span><span ng-show="affiliation.startDate.year.value">{{affiliation.startDate.year.value}}</span>
+	        	    (<span ng-show="affiliation.startDate.month">{{affiliation.startDate.month}}-</span><span ng-show="affiliation.startDate.year">{{affiliation.startDate.year}}</span>
 	        	    <@orcid.msg 'workspace_affiliations.dateSeparator'/>
 	        	    <span ng-show="affiliation.endDate">
-	        	        <span ng-show="affiliation.endDate.month">{{affiliation.endDate.month.value}}-</span><span ng-show="affiliation.endDate.year.value">{{affiliation.endDate.year.value}}</span>)
+	        	        <span ng-show="affiliation.endDate.month">{{affiliation.endDate.month}}-</span><span ng-show="affiliation.endDate.year">{{affiliation.endDate.year}}</span>)
 	        	    </span>
 	        	    <span ng-hide="affiliation.endDate">
 	        	        <@orcid.msg 'workspace_affiliations.present'/>)
@@ -195,12 +195,11 @@
 	            <span ng-bind-html="affiliation.departmentName"></span>
 	        </div>
 	        <div>
-	            <span ng-bind-html="affiliation.affiliationAddress.affiliationCity.content"></span>,
-	            <span ng-bind-html="affiliation.affiliationAddress.affiliationCountry.value"></span>
+	            <span ng-bind-html="affiliation.city.value"></span><span ng-show="affiliation.region">, <span ng-bind-html="affiliation.region.value"></span></span>, <span ng-bind-html="affiliation.country.value"></span>
 	        </div>
         </div>
         <div class="pull-right" style="width: 130px;">
-		<@orcid.privacyToggle "affiliation.visibility" "setPrivacy($index, 'PUBLIC', $event)" 
+		<@orcid.privacyToggle "affiliation.visibility.visibility" "setPrivacy($index, 'PUBLIC', $event)" 
                     	  "setPrivacy($index, 'LIMITED', $event)" "setPrivacy($index, 'PRIVATE', $event)" />
 		</div>
     </li>           

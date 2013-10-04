@@ -21,17 +21,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+import org.orcid.jaxb.model.message.Affiliation;
 import org.orcid.jaxb.model.message.AffiliationAddress;
 import org.orcid.jaxb.model.message.AffiliationCity;
 import org.orcid.jaxb.model.message.AffiliationCountry;
+import org.orcid.jaxb.model.message.AffiliationRegion;
 import org.orcid.jaxb.model.message.AffiliationType;
 import org.orcid.jaxb.model.message.Iso3166Country;
 
-public class Affiliation implements ErrorsInterface, Serializable {
+public class AffiliationForm implements ErrorsInterface, Serializable {
 
     private static final long serialVersionUID = 1L;
 
     private List<String> errors = new ArrayList<String>();
+
+    private Text putCode;
 
     private Visibility visibility;
 
@@ -43,7 +47,7 @@ public class Affiliation implements ErrorsInterface, Serializable {
 
     private Text country;
 
-    private Text department;
+    private Text departmentName;
 
     private Text affiliationType;
 
@@ -57,6 +61,14 @@ public class Affiliation implements ErrorsInterface, Serializable {
 
     public void setErrors(List<String> errors) {
         this.errors = errors;
+    }
+
+    public Text getPutCode() {
+        return putCode;
+    }
+
+    public void setPutCode(Text putCode) {
+        this.putCode = putCode;
     }
 
     public Visibility getVisibility() {
@@ -99,12 +111,12 @@ public class Affiliation implements ErrorsInterface, Serializable {
         this.country = country;
     }
 
-    public Text getDepartment() {
-        return department;
+    public Text getDepartmentName() {
+        return departmentName;
     }
 
-    public void setDepartment(Text department) {
-        this.department = department;
+    public void setDepartmentName(Text departmentName) {
+        this.departmentName = departmentName;
     }
 
     public Text getAffiliationType() {
@@ -131,16 +143,48 @@ public class Affiliation implements ErrorsInterface, Serializable {
         this.endDate = endDate;
     }
 
+    public static AffiliationForm valueOf(Affiliation affiliation) {
+        AffiliationForm form = new AffiliationForm();
+        form.setPutCode(Text.valueOf(affiliation.getPutCode()));
+        form.setVisibility(Visibility.valueOf(affiliation.getVisibility()));
+        form.setAffiliationName(Text.valueOf(affiliation.getAffiliationName()));
+        AffiliationAddress address = affiliation.getAffiliationAddress();
+        form.setCity(Text.valueOf(address.getAffiliationCity().getContent()));
+        if (address.getAffiliationRegion() != null) {
+            form.setRegion(Text.valueOf(address.getAffiliationRegion().getContent()));
+        }
+        form.setCountry(Text.valueOf(address.getAffiliationCity().getContent()));
+        if (affiliation.getDepartmentName() != null) {
+            form.setDepartmentName(Text.valueOf(affiliation.getDepartmentName()));
+        }
+        if (affiliation.getAffiliationType() != null) {
+            form.setAffiliationType(Text.valueOf(affiliation.getAffiliationType().value()));
+        }
+        if (affiliation.getStartDate() != null) {
+            form.setStartDate(Date.valueOf(affiliation.getStartDate()));
+        }
+        if (affiliation.getEndDate() != null) {
+            form.setEndDate(Date.valueOf(affiliation.getEndDate()));
+        }
+        return form;
+    }
+
     public org.orcid.jaxb.model.message.Affiliation toAffiliation() {
         org.orcid.jaxb.model.message.Affiliation affiliation = new org.orcid.jaxb.model.message.Affiliation();
+        if (putCode != null && StringUtils.isNotBlank(putCode.getValue())) {
+            affiliation.setPutCode(putCode.getValue());
+        }
         affiliation.setVisibility(visibility.getVisibility());
         affiliation.setAffiliationName(affiliationName.getValue());
         AffiliationAddress affiliationAddress = new AffiliationAddress();
         affiliation.setAffiliationAddress(affiliationAddress);
         affiliationAddress.setAffiliationCity(new AffiliationCity(city.getValue()));
+        if (region != null && StringUtils.isNotBlank(region.getValue())) {
+            affiliationAddress.setAffiliationRegion(new AffiliationRegion(region.getValue()));
+        }
         affiliationAddress.setAffiliationCountry(new AffiliationCountry(Iso3166Country.fromValue(country.getValue())));
-        if (department != null) {
-            affiliation.setDepartmentName(department.getValue());
+        if (departmentName != null) {
+            affiliation.setDepartmentName(departmentName.getValue());
         }
         if (affiliationType != null && StringUtils.isNotBlank(affiliationType.getValue())) {
             affiliation.setAffiliationType(AffiliationType.fromValue(affiliationType.getValue()));
