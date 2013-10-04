@@ -279,6 +279,9 @@ public class AffiliationsController extends BaseWorkspaceController {
         for (OrgDisambiguatedEntity orgDisambiguatedEntity : orgDisambiguatedDao.getOrgs(query, 0, 10)) {
             Map<String, String> datum = new HashMap<>();
             datum.put("value", orgDisambiguatedEntity.getName());
+            datum.put("city", orgDisambiguatedEntity.getCity());
+            datum.put("region", orgDisambiguatedEntity.getRegion());
+            datum.put("country", orgDisambiguatedEntity.getCountry().value());
             datums.add(datum);
         }
         return datums;

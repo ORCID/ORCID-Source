@@ -1130,6 +1130,14 @@ function AffiliationCtrl($scope, $compile, affiliationsSrvc){
 									url: 'http://localhost:8080/orcid-web/affiliations/disambiguated/%QUERY',
 								},
 							});
+							$("#affiliationName").bind("typeahead:selected", function(obj, datum) {        
+								$("input[name=city]").val(datum.city);
+								$("input[name=region]").val(datum.region);
+								$("select[name=country]").val(datum.country);
+								$scope.editAffiliation.city.value = datum.city;
+								$scope.editAffiliation.region.value = datum.region;
+								$scope.editAffiliation.country.value = datum.country;
+							});
 						}
 	    });
 	};
