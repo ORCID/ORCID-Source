@@ -20,6 +20,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.orcid.jaxb.model.message.AffiliationAddress;
 import org.orcid.jaxb.model.message.AffiliationCity;
 import org.orcid.jaxb.model.message.AffiliationCountry;
@@ -141,7 +142,7 @@ public class Affiliation implements ErrorsInterface, Serializable {
         if (department != null) {
             affiliation.setDepartmentName(department.getValue());
         }
-        if (affiliationType != null) {
+        if (affiliationType != null && StringUtils.isNotBlank(affiliationType.getValue())) {
             affiliation.setAffiliationType(AffiliationType.fromValue(affiliationType.getValue()));
         }
         if (startDate != null) {

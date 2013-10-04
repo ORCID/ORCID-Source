@@ -54,7 +54,7 @@
 				    <div class="relative">
 						<input name="city" type="text" class="input-xlarge"  ng-model="editAffiliation.city.value" placeholder="<@orcid.msg 'manual_affiliation_form_contents.add_city'/>" ng-change="serverValidate('affiliations/affiliation/cityValidate.json')" ng-model-onblur/>
 						<span class="required" ng-class="isValidClass(editAffiliation.city)">*</span>
-						<span class="orcid-error" ng-show="editAffiliation.affiliationName.errors.length > 0">
+						<span class="orcid-error" ng-show="editAffiliation.city.errors.length > 0">
 							<div ng-repeat='error in editAffiliation.city.errors' ng-bind-html-unsafe="error"></div>
 						</span>
 					</div>
