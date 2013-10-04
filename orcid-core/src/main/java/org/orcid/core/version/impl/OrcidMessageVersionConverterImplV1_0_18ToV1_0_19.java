@@ -50,6 +50,28 @@ public class OrcidMessageVersionConverterImplV1_0_18ToV1_0_19 implements OrcidMe
             return null;
         }
         orcidMessage.setMessageVersion(FROM_VERSION);
+                
+        OrcidProfile profile = orcidMessage.getOrcidProfile();
+        if(profile != null){
+            // Remove the work type
+            OrcidActivities activites = profile.getOrcidActivities();
+            if(activites != null){
+                OrcidWorks works = activites.getOrcidWorks();
+                if(works != null){
+                    for(OrcidWork work : works.getOrcidWork()){
+                        if(work.getWorkType() != null){
+                            work.setWorkType(null);
+                        }
+                    }
+                }
+            }
+            
+            // Remove the deprecated message if exists
+            if(profile.getOrcidDeprecated() != null) {
+                profile.setOrcidDeprecated(null);
+            }
+        }                
+                
         return orcidMessage;
     }
 

@@ -25,7 +25,7 @@ import org.orcid.jaxb.model.message.OrcidWorks;
 
 /**
  * 
- * @author Will Simpson
+ * @author Angel Montenegro
  * 
  */
 public class OrcidMessageVersionConverterImplV1_0_21ToV1_0_22 implements OrcidMessageVersionConverter {
@@ -49,27 +49,26 @@ public class OrcidMessageVersionConverterImplV1_0_21ToV1_0_22 implements OrcidMe
             return null;
         }
         orcidMessage.setMessageVersion(FROM_VERSION);
-        // Remove affiliations from new place
+
         OrcidProfile orcidProfile = orcidMessage.getOrcidProfile();
-        if(orcidProfile != null){
-	        OrcidActivities orcidActivities = orcidProfile.getOrcidActivities();	        
-	        if(orcidActivities != null){
-	        	OrcidWorks orcidWorks = orcidActivities.getOrcidWorks();
-	        	if(orcidWorks != null){
-	        		for(OrcidWork orcidWork : orcidWorks.getOrcidWork()){
-	        			// Remove the translated title
-	        			if(orcidWork.getWorkTitle() != null){
-	        				orcidWork.getWorkTitle().setTranslatedTitle(null);
-	        			}
-	        			
-	        			// Remove the language
-	        			orcidWork.setLanguageCode(null);
-	        		}
-	        	}
-	        }
+        if (orcidProfile != null) {
+            OrcidActivities orcidActivities = orcidProfile.getOrcidActivities();
+            if (orcidActivities != null) {
+                OrcidWorks orcidWorks = orcidActivities.getOrcidWorks();
+                if (orcidWorks != null) {
+                    for (OrcidWork orcidWork : orcidWorks.getOrcidWork()) {
+                        // Remove the translated title
+                        if (orcidWork.getWorkTitle() != null) {
+                            orcidWork.getWorkTitle().setTranslatedTitle(null);
+                        }
+
+                        // Remove the language code
+                        orcidWork.setLanguageCode(null);
+                    }
+                }
+            }
         }
-        
-        
+
         return orcidMessage;
     }
 
