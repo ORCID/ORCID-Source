@@ -241,12 +241,13 @@
         <property name="validationBehaviour"
             value="${org.orcid.core.manager.validationBehaviour:THROW_VALIDATION_EXCEPTION}" />
         <property name="version" value="1.0.22" />
-        <property name="requireOrcidProfile" value="true"/>
+        <property name="requireOrcidProfile" value="true"/>        
+        <property name="validateTitle" value="true"/>
     </bean>
     <bean id="outgoingValidationManagerV1_0_22" class="org.orcid.core.manager.impl.ValidationManagerImpl">
         <property name="validationBehaviour"
             value="${org.orcid.core.manager.validationBehaviour:LOG_WARNING}" />
-        <property name="validateBibtex" value="false"/>
+        <property name="validateBibtex" value="false"/>        
         <property name="version" value="1.0.22" />
     </bean>
 
@@ -305,6 +306,7 @@
 	            <bean class="org.orcid.core.version.impl.OrcidMessageVersionConverterImplV1_0_18ToV1_0_19"/>
 	            <bean class="org.orcid.core.version.impl.OrcidMessageVersionConverterImplV1_0_19ToV1_0_20"/>
                 <bean class="org.orcid.core.version.impl.OrcidMessageVersionConverterImplV1_0_20ToV1_0_21"/>
+                <bean class="org.orcid.core.version.impl.OrcidMessageVersionConverterImplV1_0_21ToV1_0_22"/>
 	        </list>
 	    </property>
 	</bean>

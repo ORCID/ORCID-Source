@@ -28,6 +28,8 @@ import org.orcid.api.t2.T2OrcidApiService;
 import org.orcid.jaxb.model.message.Email;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidWork;
+import org.orcid.jaxb.model.message.Title;
+import org.orcid.jaxb.model.message.WorkTitle;
 
 import com.sun.jersey.api.client.ClientResponse;
 
@@ -107,8 +109,12 @@ public abstract class AbstractT2ClientIntegrationTest {
         return orcidFromLocation;
     }
 
-    protected OrcidWork createWork(String title) {
+    protected OrcidWork createWork(String titleParam) {
         OrcidWork orcidWork = new OrcidWork();
+        WorkTitle workTitle = new WorkTitle();
+        Title title = new Title(titleParam);
+        workTitle.setTitle(title);
+        orcidWork.setWorkTitle(workTitle);
         return orcidWork;
     }
 }
