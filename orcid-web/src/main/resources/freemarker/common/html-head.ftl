@@ -23,14 +23,15 @@
     <meta name="author" content="ORCID">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
-    <#-- Comment for Overwriting Variables for testing from non localhost -->
-    <#--         
+    <#-- Uncomment for Overwriting Variables for testing from non localhost -->
+    <#--
+    -->             
     	<#assign myLocalIp = '192.168.24.92:8080'>    	
 	    <#assign staticCdn = '//'+ myLocalIp + '/orcid-web/static'>
 	    <#assign staticLoc = '//'+ myLocalIp + '/orcid-web/static'>
 	    <#assign baseUri = 'http://'+ myLocalIp + '/orcid-web'>
 	    <#assign baseUriHttp = 'http://'+ myLocalIp + '/orcid-web'>	    
-	 -->
+	 
 	 
 	 <#assign local_folder = '/orcid-web'> <!-- QA vs Local environment, leave empty for QA submittion -->	
 	
@@ -40,7 +41,10 @@
     	orcidVar.baseUri = '${baseUri}';
     	orcidVar.baseUriHttp = '${baseUriHttp}';
     </script>    
-    <#if request.requestURI?ends_with("${local_folder}/signin")>    	
+    <#if
+		request.requestURI?ends_with("${local_folder}/signin")||
+		request.requestURI?ends_with("${local_folder}/register")
+	>    	
 	    <link rel="stylesheet" href="${staticCdn}/twitter-bootstrap/3.0.0/css/bootstrap.min.css?v=${ver}"/>
 	    <!--[if lt IE 8]>
 	        <link rel="stylesheet" href="${staticCdn}/twitter-bootstrap/3.0.0/css/bootstrap-ie7.css?v=${ver}"/>

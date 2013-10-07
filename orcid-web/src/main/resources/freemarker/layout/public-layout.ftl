@@ -38,7 +38,10 @@
     <div class="dev-watermark"></div>
 </#if>
 
-<#if request.requestURI?ends_with("${local_folder}/signin")>
+<#if
+	request.requestURI?ends_with("${local_folder}/signin")||
+	request.requestURI?ends_with("${local_folder}/register")
+>
 <div class="container">
     <div class="header center">
         <div class="row">
