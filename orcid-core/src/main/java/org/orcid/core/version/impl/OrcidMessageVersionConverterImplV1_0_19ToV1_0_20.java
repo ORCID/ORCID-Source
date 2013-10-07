@@ -49,25 +49,7 @@ public class OrcidMessageVersionConverterImplV1_0_19ToV1_0_20 implements OrcidMe
         if (orcidMessage == null) {
             return null;
         }
-        orcidMessage.setMessageVersion(FROM_VERSION);
-        
-        //TODO: Remove this from here.
-        //This process should be done when downgrading a message from version 19 to version 18, however, for some reason, this is never done.
-        //Add work type to each work
-        OrcidProfile profile = orcidMessage.getOrcidProfile();
-        if(profile != null){
-            OrcidActivities activites = profile.getOrcidActivities();
-            if(activites != null){
-                OrcidWorks works = activites.getOrcidWorks();
-                if(works != null){
-                    for(OrcidWork work : works.getOrcidWork()){
-                        if(work.getWorkType() != null){
-                            work.setWorkType(null);
-                        }
-                    }
-                }
-            }
-        }
+        orcidMessage.setMessageVersion(FROM_VERSION);                
         
         return orcidMessage;
     }
@@ -78,23 +60,7 @@ public class OrcidMessageVersionConverterImplV1_0_19ToV1_0_20 implements OrcidMe
             return null;
         }
         orcidMessage.setMessageVersion(TARGET_VERSION);
-        //TODO: Remove this from here.
-        //This process should be done when upgrading a message from version 18 to version 19, however, for some reason, this is never done.
-        //Add work type to each work
-        OrcidProfile profile = orcidMessage.getOrcidProfile();
-        if(profile != null){
-            OrcidActivities activites = profile.getOrcidActivities();
-            if(activites != null){
-                OrcidWorks works = activites.getOrcidWorks();
-                if(works != null){
-                    for(OrcidWork work : works.getOrcidWork()){
-                        if(work.getWorkType() == null){
-                            work.setWorkType(WorkType.UNDEFINED);
-                        }
-                    }
-                }
-            }
-        }
+        
         return orcidMessage;
     }
 

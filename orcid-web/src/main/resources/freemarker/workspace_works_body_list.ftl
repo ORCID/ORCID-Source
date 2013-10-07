@@ -42,13 +42,37 @@
 				<div class="control-group">
 					<label><@orcid.msg 'manual_work_form_contents.labeltitle'/></label>
 				    <div class="relative">
-						<input name="familyNames" type="text" class="input-xlarge"  ng-model="editWork.workTitle.title.value" placeholder="<@orcid.msg 'manual_work_form_contents.add_title'/>" ng-change="serverValidate('works/work/workTitle/titleValidate.json')" ng-model-onblur/>
+						<input name="familyNames" type="text" class="input-xlarge"  ng-model="editWork.workTitle.title.value" placeholder="<@orcid.msg 'manual_work_form_contents.add_title'/>" ng-change="serverValidate('works/work/workTitle/titleValidate.json')" ng-model-onblur/>						
 						<span class="required" ng-class="isValidClass(editWork.workTitle.title)">*</span>
+						<a ng-click="toggleTranslatedTitleModal()" class="icon-plus-sign blue" ng-hide="editTranslatedTitle"></a>
+						<a ng-click="toggleTranslatedTitleModal()" class="icon-minus-sign blue" ng-show="editTranslatedTitle"></a>
 						<span class="orcid-error" ng-show="editWork.workTitle.title.errors.length > 0">
 							<div ng-repeat='error in editWork.workTitle.title.errors' ng-bind-html-unsafe="error"></div>
 						</span>
 					</div>
 				</div>
+
+				<div id="translatedTitle" style="display:none;">
+					<span class="orcid-error" ng-show="editWork.workTitle.translatedTitle.errors.length > 0">
+						<div ng-repeat='error in editWork.workTitle.translatedTitle.errors' ng-bind-html-unsafe="error"></div>
+					</span>
+					<div class="control-group">
+						<label><@orcid.msg 'manual_work_form_contents.labeltranslatedtitle'/></label>
+						<div class="relative">
+							<input name="translatedTitle" type="text" class="input-xlarge" ng-model="editWork.workTitle.translatedTitle.content" placeholder="<@orcid.msg 'manual_work_form_contents.add_translated_title'/>" ng-change="serverValidate('works/work/workTitle/translatedTitleValidate.json')" ng-model-onblur/>														
+						</div>						
+					</div>
+
+					<div class="control-group">
+						<label class="relative"><@orcid.msg 'manual_work_form_contents.labellanguage'/></label>						
+						<select id="language" name="language" ng-model="editWork.workTitle.translatedTitle.languageCode">			
+							<#list languages?keys as key>
+								<option value="${languages[key]}">${key}</option>
+							</#list>
+						</select>						
+					</div>					
+				</div>
+
 				<div class="control-group">
 					<label><@orcid.msg 'manual_work_form_contents.labelsubtitle'/></label>
 				    <div class="relative">
@@ -62,7 +86,10 @@
 				<div class="control-group">
 					<label><@orcid.msg 'manual_work_form_contents.journalTitle'/></label>
 				    <div class="relative">
-						<input name="journalTitle" type="text" class="input-xlarge"  ng-model="editWork.journalTitle.value" placeholder="<@orcid.msg 'manual_work_form_contents.add_journalTitle'/>" ng-model-onblur/>						
+						<input name="journalTitle" type="text" class="input-xlarge"  ng-model="editWork.journalTitle.value" placeholder="<@orcid.msg 'manual_work_form_contents.add_journalTitle'/>"   ng-change="serverValidate('works/work/journalTitleValidate.json')"    ng-model-onblur/>
+						<span class="orcid-error" ng-show="editWork.journalTitle.errors.length > 0">
+							<div ng-repeat='error in editWork.journalTitle.errors' ng-bind-html-unsafe="error"></div>
+						</span>						
 					</div>
 				</div>
 
@@ -211,6 +238,28 @@
 						</span>
 				    </div>
 				</div>
+				
+				<div class="control-group">
+					<label class="relative"><@orcid.msg 'manual_work_form_contents.labellanguage'/></label>
+					<select id="language" name="language" ng-model="editWork.languageCode.value">
+						<option value="${currentLocaleKey}">${currentLocaleValue}</option>
+						<#list languages?keys as key>
+							<option value="${languages[key]}">${key}</option>
+						</#list>
+					</select>
+				</div>
+
+				<div class="control-group">
+                    <label for="country"><@orcid.msg 'manual_work_form_contents.labelcountry'/></label>
+                    <div class="relative">
+                    	<select id="isoCountryCode" name="isoCountryCode" ng-model="editWork.country.value">
+                    		<option value=""><@orcid.msg 'org.orcid.persistence.jpa.entities.CountryIsoEntity.empty' /></option>
+	                    	<#list isoCountries?keys as key>
+								<option value="${key}">${isoCountries[key]}</option>								
+							</#list>
+						</select>                        
+                    </div>
+                </div>
 				
 			</div>
 		</div>

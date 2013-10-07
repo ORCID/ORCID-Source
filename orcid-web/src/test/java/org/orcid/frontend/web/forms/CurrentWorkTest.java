@@ -53,6 +53,9 @@ public class CurrentWorkTest {
         currentWork.setVisibility(Visibility.PUBLIC.value());
         currentWork.setTitle("Neanderthal Man");
         currentWork.setSubtitle("Being oldfashioned");
+        currentWork.setTranslatedTitle("El hombre neandertal");
+        currentWork.setTranslatedTitleLanguageCode("es_CR");
+        currentWork.setJournalTitle("Neanderthal Man - The journal title");
         currentWork.setDescription("A book about neanderthal men");
         currentWork.setCitation("Carberry, Josiah S., John W. Spaeth, and Paulo Di Fillipo. \"Neanderthal Man.\" Book of Prehistory. N.p.: Brown UP, "
                 + "2012. 450-70. 09 Oct. 2012. Web.");
@@ -77,6 +80,8 @@ public class CurrentWorkTest {
         List<CurrentWorkContributor> currentWorkContributors = new ArrayList<CurrentWorkContributor>();
         currentWorkContributors.add(currentWorkContributor);
         currentWork.setCurrentWorkContributors(currentWorkContributors);
+        currentWork.setLanguageCode("en_US");
+        currentWork.setCountry("US");
 
         OrcidWork orcidWork = currentWork.getOrcidWork();
 
@@ -86,6 +91,7 @@ public class CurrentWorkTest {
 
     @Test
     public void testCreateFromOrcidWork() throws JAXBException {
+        // Test work without language fields
         JAXBContext context = JAXBContext.newInstance(OrcidWork.class);
         Unmarshaller unmarshaller = context.createUnmarshaller();
         OrcidWork orcidWork = (OrcidWork) unmarshaller.unmarshal(getClass().getResourceAsStream("example_current_work.xml"));
@@ -113,6 +119,11 @@ public class CurrentWorkTest {
         assertEquals("J. S. Carberry", currentWork.getCurrentWorkContributors().get(0).getCreditName());
         assertEquals("first", currentWork.getCurrentWorkContributors().get(0).getSequence());
         assertEquals("author", currentWork.getCurrentWorkContributors().get(0).getRole());
+        assertEquals("en_US", currentWork.getLanguageCode());
+        assertEquals("Neanderthal Man - The journal title", currentWork.getJournalTitle());
+        assertEquals("El hombre neandertal", currentWork.getTranslatedTitle());
+        assertEquals("es_CR", currentWork.getTranslatedTitleLanguageCode());
+        assertEquals("US", currentWork.getCountry());
     }
 
     @Test

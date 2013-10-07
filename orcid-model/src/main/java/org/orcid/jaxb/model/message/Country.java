@@ -95,6 +95,17 @@ public class Country implements Serializable, VisibilityType {
     }
 
     /**
+     * Sets the value of the value property.
+     * 
+     * @param value
+     *            allowed object is {@link String }
+     * 
+     */
+    public void setValue(String value) {
+        this.value = Iso3166Country.fromValue(value);
+    }
+
+    /**
      * Gets the value of the visibility property.
      * 
      * @return possible object is {@link Visibility }
