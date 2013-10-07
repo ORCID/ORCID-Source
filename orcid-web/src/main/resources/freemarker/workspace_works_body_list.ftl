@@ -52,7 +52,7 @@
 					</div>
 				</div>
 
-				<div ng-show="editTranslatedTitle" ng-cloak>
+				<div id="translatedTitle" style="display:none;">
 					<span class="orcid-error" ng-show="editWork.workTitle.translatedTitle.errors.length > 0">
 						<div ng-repeat='error in editWork.workTitle.translatedTitle.errors' ng-bind-html-unsafe="error"></div>
 					</span>

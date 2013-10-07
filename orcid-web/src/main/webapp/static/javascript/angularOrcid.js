@@ -1356,10 +1356,8 @@ function WorkCtrl($scope, $compile, worksSrvc){
 	};
 
 	$scope.toggleTranslatedTitleModal = function(){;
-    	if($scope.editTranslatedTitle)
-    		$scope.editTranslatedTitle = false;
-    	else 
-    		$scope.editTranslatedTitle = true;
+    	$('#translatedTitle').toggle();
+    	$.colorbox.resize();
 	};		
 
 	$scope.showDetailModal = function(idx){
