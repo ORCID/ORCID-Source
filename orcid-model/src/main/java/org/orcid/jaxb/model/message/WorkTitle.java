@@ -25,6 +25,7 @@ package org.orcid.jaxb.model.message;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import java.io.Serializable;
@@ -41,6 +42,7 @@ import java.io.Serializable;
  *       &lt;sequence>
  *         &lt;element ref="{http://www.orcid.org/ns/orcid}title" minOccurs="0"/>
  *         &lt;element ref="{http://www.orcid.org/ns/orcid}subtitle" minOccurs="0"/>
+ *         &lt;element ref="{http://www.orcid.org/ns/orcid}translated-title" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -50,7 +52,7 @@ import java.io.Serializable;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "title", "subtitle" })
+@XmlType(name = "", propOrder = { "title", "subtitle", "translatedTitle" })
 @XmlRootElement(name = "work-title")
 public class WorkTitle implements Serializable {
 
@@ -60,6 +62,8 @@ public class WorkTitle implements Serializable {
     private static final long serialVersionUID = 1L;
     protected Title title;
     protected Subtitle subtitle;
+    @XmlElement(name = "translated-title")
+    protected TranslatedTitle translatedTitle;
 
     /**
      * Gets the value of the title property.
@@ -109,12 +113,38 @@ public class WorkTitle implements Serializable {
         this.subtitle = value;
     }
 
+    
+    /**
+     * Gets the value of the translatedTitle property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link translatedTitle }
+     *     
+     */
+    public TranslatedTitle getTranslatedTitle() {
+        return translatedTitle;
+    }
+
+    /**
+     * Sets the value of the translatedTitle property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link translatedTitle }
+     *     
+     */
+    public void setTranslatedTitle(TranslatedTitle translatedTitle) {
+        this.translatedTitle = translatedTitle;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((subtitle == null) ? 0 : subtitle.hashCode());
         result = prime * result + ((title == null) ? 0 : title.hashCode());
+        result = prime * result + ((translatedTitle == null) ? 0 : translatedTitle.hashCode());
         return result;
     }
 
@@ -137,6 +167,13 @@ public class WorkTitle implements Serializable {
                 return false;
         } else if (!title.equals(other.title))
             return false;
+        
+        if(translatedTitle == null){
+            if(other.translatedTitle != null)
+                return false;
+        } else if(!translatedTitle.equals(other.translatedTitle))
+            return false;
+        
         return true;
     }
 

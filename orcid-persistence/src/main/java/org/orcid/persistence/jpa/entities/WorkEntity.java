@@ -35,6 +35,7 @@ import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.Sort;
 import org.hibernate.annotations.SortType;
 import org.orcid.jaxb.model.message.CitationType;
+import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.jaxb.model.message.WorkType;
 
 import java.util.Comparator;
@@ -54,11 +55,15 @@ public class WorkEntity extends BaseEntity<Long> implements Comparable<WorkEntit
 
     private Long id;
     private String title;
+    private String translatedTitle;
     private String subtitle;
     private String description;
     private String workUrl;
     private String citation;
     private String journalTitle;
+    private String languageCode;
+    private String translatedTitleLanguageCode;
+    private Iso3166Country iso2Country;
     private CitationType citationType;
     private WorkType workType;
     private PublicationDateEntity publicationDate;
@@ -155,6 +160,34 @@ public class WorkEntity extends BaseEntity<Long> implements Comparable<WorkEntit
         this.journalTitle = journalTitle;
     }
 
+    
+    @Column(name = "language_code", length = 25)
+    public String getLanguageCode() {
+        return languageCode;
+    }
+
+    public void setLanguageCode(String languageCode) {
+        this.languageCode = languageCode;
+    }
+
+    @Column(name = "translated_title", length = 25)
+    public String getTranslatedTitle() {
+        return translatedTitle;
+    }
+
+    public void setTranslatedTitle(String translatedTitle) {
+        this.translatedTitle = translatedTitle;
+    }
+
+    @Column(name = "translated_title_language_code", length = 25)
+    public String getTranslatedTitleLanguageCode() {
+        return translatedTitleLanguageCode;
+    }
+
+    public void setTranslatedTitleLanguageCode(String translatedTitleLanguageCode) {
+        this.translatedTitleLanguageCode = translatedTitleLanguageCode;
+    }
+    
     @Basic
     @Enumerated(EnumType.STRING)
     @Column(name = "citation_type", length = 100)
@@ -213,6 +246,17 @@ public class WorkEntity extends BaseEntity<Long> implements Comparable<WorkEntit
 
     public void setExternalIdentifiers(SortedSet<WorkExternalIdentifierEntity> externalIdentifiers) {
         this.externalIdentifiers = externalIdentifiers;
+    }
+    
+    @Basic
+    @Enumerated(EnumType.STRING)
+    @Column(name = "iso2_country", length = 2)
+    public Iso3166Country getIso2Country() {
+        return iso2Country;
+    }
+
+    public void setIso2Country(Iso3166Country iso2Country) {
+        this.iso2Country = iso2Country;
     }
 
     @Override
@@ -314,6 +358,8 @@ public class WorkEntity extends BaseEntity<Long> implements Comparable<WorkEntit
         workType = null;
         publicationDate = null;
         journalTitle = null;
+        languageCode = null;
+        iso2Country = null;
     }
 
 }

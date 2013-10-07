@@ -20,6 +20,8 @@ import org.orcid.core.version.OrcidMessageVersionConverter;
 import org.orcid.jaxb.model.message.OrcidActivities;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidProfile;
+import org.orcid.jaxb.model.message.OrcidWork;
+import org.orcid.jaxb.model.message.OrcidWorks;
 
 /**
  * 
@@ -53,7 +55,16 @@ public class OrcidMessageVersionConverterImplV1_0_20ToV1_0_21 implements OrcidMe
             OrcidActivities orcidActivities = orcidProfile.getOrcidActivities();
             if (orcidActivities != null) {
                 orcidActivities.setAffiliations(null);
+            
+                // Remove journal title from each work
+                OrcidWorks orcidWorks = orcidActivities.getOrcidWorks();
+                if(orcidWorks != null){
+                    for(OrcidWork orcidWork : orcidWorks.getOrcidWork()) {
+                        orcidWork.setJournalTitle(null);
+                    }
+                }
             }
+            
         }
         return orcidMessage;
     }

@@ -117,7 +117,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         profile.setOrcidId(baseUri.replace("https", "http") + "/" + profileEntity.getId());
         // load deprecation info
         profile.setOrcidDeprecated(getOrcidDeprecated(profileEntity));
-        
+
         if (loadOptions.isLoadActivities()) {
             profile.setOrcidActivities(getOrcidActivities(profileEntity));
         }
@@ -139,7 +139,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
     }
 
     @Override
-    public OrcidClient toOrcidClient(ProfileEntity profileEntity){
+    public OrcidClient toOrcidClient(ProfileEntity profileEntity) {
         OrcidClient client = new OrcidClient();
         client.setDisplayName(profileEntity.getCreditName());
         client.setClientId(profileEntity.getId());
@@ -166,10 +166,10 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
                 redirectUris.getRedirectUri().add(redirectUri);
             }
         }
-        
+
         return client;
     }
-    
+
     @Override
     public OrcidClientGroup toOrcidClientGroup(ProfileEntity profileEntity) {
         OrcidClientGroup group = new OrcidClientGroup();
@@ -182,7 +182,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         }
         for (ProfileEntity clientProfileEntity : profileEntity.getClientProfiles()) {
             OrcidClient client = toOrcidClient(clientProfileEntity);
-            group.getOrcidClient().add(client);                        
+            group.getOrcidClient().add(client);
         }
         return group;
     }
@@ -215,18 +215,18 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
     }
 
     private OrcidDeprecated getOrcidDeprecated(ProfileEntity profileEntity) {
-        OrcidDeprecated orcidDeprecated = null;        
-        if(profileEntity.getPrimaryRecord() != null){        
-            orcidDeprecated = new OrcidDeprecated();        
-            orcidDeprecated.setDate(new DeprecatedDate(toXMLGregorianCalendar(profileEntity.getDeprecatedDate())));        
+        OrcidDeprecated orcidDeprecated = null;
+        if (profileEntity.getPrimaryRecord() != null) {
+            orcidDeprecated = new OrcidDeprecated();
+            orcidDeprecated.setDate(new DeprecatedDate(toXMLGregorianCalendar(profileEntity.getDeprecatedDate())));
             PrimaryRecord primaryRecord = new PrimaryRecord();
             primaryRecord.setOrcid(new Orcid(profileEntity.getPrimaryRecord().getId()));
-            primaryRecord.setOrcidId(new Url(baseUri.replace("https", "http") + "/" + profileEntity.getPrimaryRecord().getId()));        
+            primaryRecord.setOrcidId(new Url(baseUri.replace("https", "http") + "/" + profileEntity.getPrimaryRecord().getId()));
             orcidDeprecated.setPrimaryRecord(primaryRecord);
         }
-        return orcidDeprecated;        
+        return orcidDeprecated;
     }
-    
+
     private OrcidActivities getOrcidActivities(ProfileEntity profileEntity) {
         Affiliations affiliations = getAffiliations(profileEntity);
         OrcidGrants orcidGrants = getOrcidGrants(profileEntity);
@@ -765,8 +765,10 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         orcidWork.setWorkContributors(getWorkContributors(profileWorkEntity));
         orcidWork.setWorkExternalIdentifiers(getWorkExternalIdentifiers(work));
         orcidWork.setWorkSource(getWorkSource(profileWorkEntity));
-        orcidWork.setWorkTitle(getWorkTitle(work));        
-        orcidWork.setJournalTitle(StringUtils.isNotBlank(work.getJournalTitle()) ? new Title(work.getJournalTitle()) : null);        
+        orcidWork.setWorkTitle(getWorkTitle(work));
+        orcidWork.setJournalTitle(StringUtils.isNotBlank(work.getJournalTitle()) ? new Title(work.getJournalTitle()) : null);
+        orcidWork.setLanguageCode(StringUtils.isNotBlank(work.getLanguageCode()) ? work.getLanguageCode() : null);
+        orcidWork.setCountry(work.getIso2Country() == null ? null : new Country(work.getIso2Country()));
         orcidWork.setWorkType(work.getWorkType());
         orcidWork.setVisibility(profileWorkEntity.getVisibility());
         return orcidWork;
