@@ -391,7 +391,7 @@
 							<strong>
 								<@orcid.msg 'manual_work_form_contents.labelURL'/>
 							</strong>
-							<div ng-bind="work.url.value"><a href="{{work.url.value | urlWithHttp}}" target="_blank">{{work.url.value}}</a></div>
+							<div><a href="{{work.url.value | urlWithHttp}}" target="_blank">{{work.url.value}}</a></div>
 						</div>
 					</div>
 					<div class="row bottomBuffer" ng-show="work.contributors.length > 0" ng-cloak>
