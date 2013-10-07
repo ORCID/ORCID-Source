@@ -295,7 +295,7 @@
 <ul ng-hide="!works.length" class="workspace-publications workspace-body-list bottom-margin-medium" ng-cloak>        
     <li class="bottom-margin-small" ng-repeat="work in works | orderBy:['-publicationDate.year', '-publicationDate.month', '-publicationDate.day']">            	
     	<#if RequestParameters['worksInfo']??>
-    	   <div class="pull-right show-work-info" style="right: 160px; top: 20px; width: 15px;"><a href ng-click="showDetailModal($index)" class="icon-plus-sign grey"></a>
+    	   <div class="pull-right show-work-info" style="right: 160px; top: 20px; width: 15px;"><a class="icon-plus-sign grey"></a>
     	       <div class="popover bottom popover-work-container"><div class="arrow" style="left: 520px;"></div>
     	       
 			    	<div class="row bottomBuffer">
