@@ -394,7 +394,7 @@ public class RegistrationController extends BaseController {
         validateEmailAddress(reg.getEmail().getValue(), false, request, mbr);
 
         for (ObjectError oe : mbr.getAllErrors()) {
-            reg.getEmail().getErrors().add(getMessage(oe.getCode(), reg.getEmail().getValue()));
+            reg.getEmail().getErrors().add(getMessage(oe.getCode(), oe.getArguments()));
         }
 
         // validate confirm if already field out
