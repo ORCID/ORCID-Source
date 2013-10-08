@@ -787,7 +787,9 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         }
         WorkTitle workTitle = new WorkTitle();
         workTitle.setTitle(StringUtils.isNotBlank(work.getTitle()) ? new Title(work.getTitle()) : null);
-        workTitle.setSubtitle(StringUtils.isNotBlank(work.getSubtitle()) ? new Subtitle(work.getSubtitle()) : null);
+        workTitle.setSubtitle(StringUtils.isNotBlank(work.getSubtitle()) ? new Subtitle(work.getSubtitle()) : null);        
+        if(work.getTranslatedTitle() != null)
+            workTitle.setTranslatedTitle(new TranslatedTitle(work.getTranslatedTitle(), work.getTranslatedTitleLanguageCode()));
         return workTitle;
     }
 

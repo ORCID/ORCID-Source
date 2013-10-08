@@ -306,6 +306,27 @@
 							<div ng-bind="work.workTitle.title.value"></div>
 						</div>
 					</div>
+					
+					
+					
+					
+					
+					
+					<div class="row bottomBuffer" ng-cloak>
+						<div class="span8">
+							<strong><@orcid.msg 'manual_work_form_contents.labeltranslatedtitle'/></strong>
+							<div ng-bind="renderTranslatedTitleInfo($index)"></div>
+						</div>
+					</div>
+					
+					
+					
+					
+					
+					
+					
+					
+					
 					<div class="row bottomBuffer" ng-show="work.workTitle.subtitle.value" ng-cloak>
 						<div class="span8">
 							<strong>

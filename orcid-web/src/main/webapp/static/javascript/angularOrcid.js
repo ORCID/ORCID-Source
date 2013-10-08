@@ -1369,6 +1369,7 @@ function WorkCtrl($scope, $compile, worksSrvc){
 	$scope.numOfWorksToAdd = null;
 	$scope.showBibtex = true;
 	$scope.bibtexCitations = {};
+	$scope.languages = null;
 	
 	$scope.toggleDisplayWorks = function () {
 		$scope.displayWorks = !$scope.displayWorks;
@@ -1510,8 +1511,59 @@ function WorkCtrl($scope, $compile, worksSrvc){
 		});
 	};
 	
+	$scope.getLanguages = function() {
+		$.ajax({
+			url: $('body').data('baseurl') + 'works/languages.json',	        
+	        dataType: 'json',
+	        success: function(data) {
+	        	$scope.languages = data;
+	        	console.log($scope.languages);
+	        }
+		}).fail(function(){
+			// something bad is happening!
+	    	console.log("error fetching languages");
+		});
+	};
+	
+	
+	
+	
+	$scope.renderTranslatedTitleInfo = function(workIdx) {
+		if($scope.languages == null)
+			$scope.getLanguages;
+		
+		var info = null; 
+		
+		console.log();
+		console.log($scope.works[workIdx]);
+		
+		if($scope.works[workIdx].workTitle != null && $scope.works[workIdx].workTitle.translatedTitle != null) {
+			info = $scope.works[workIdx].workTitle.translatedTitle.content;
+			if($scope.languages[$scope.works[workIdx].workTitle.translatedTitle.languageCode])
+				info += ' - ' + $scope.languages[$scope.works[workIdx].workTitle.translatedTitle.languageCode];		
+		}
+		console.log(info);
+		
+		return info;
+	};
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	//init
 	$scope.getWorks();
+	$scope.getLanguages();
 	
 	$scope.deleteWork = function(putCode) {
 		$scope.deletePutCode = putCode;
