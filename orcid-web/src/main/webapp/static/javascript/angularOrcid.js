@@ -1539,9 +1539,6 @@ function WorkCtrl($scope, $compile, worksSrvc){
 		});
 	};
 	
-	
-	
-	
 	$scope.renderTranslatedTitleInfo = function(workIdx) {
 		if($scope.languages == null)
 			$scope.getLanguages;
@@ -1584,20 +1581,6 @@ function WorkCtrl($scope, $compile, worksSrvc){
 		
 		return country;
 	};
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	
 	//init
 	$scope.getWorks();
