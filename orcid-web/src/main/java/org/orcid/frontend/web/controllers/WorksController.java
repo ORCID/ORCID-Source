@@ -114,7 +114,7 @@ public class WorksController extends BaseWorkspaceController {
 
     @Resource
     private LocaleManager localeManager;
-    
+
     /**
      * Removes a work from a profile
      * */
@@ -347,32 +347,32 @@ public class WorksController extends BaseWorkspaceController {
         return work;
     }
 
-    
     /**
-     * Returns a map containing the language code and name for each language supported.
-     * @return A map of the form [language_code, language_name] containing all supported languages
+     * Returns a map containing the language code and name for each language
+     * supported.
+     * 
+     * @return A map of the form [language_code, language_name] containing all
+     *         supported languages
      * */
     @RequestMapping(value = "/languages.json", method = RequestMethod.GET)
     public @ResponseBody
     Map<String, String> getLanguageMap(HttpServletRequest request) {
-        return LanguagesMap.buildLanguageMap(localeManager.getLocale(), false);        
+        return LanguagesMap.buildLanguageMap(localeManager.getLocale(), false);
     }
-    
+
     /**
-     * Returns a map containing the iso country code and the name for each country.\
-     * @return A map of the form [iso_code, country_name] containing all existing countries. 
+     * Returns a map containing the iso country code and the name for each
+     * country.\
+     * 
+     * @return A map of the form [iso_code, country_name] containing all
+     *         existing countries.
      * */
     @RequestMapping(value = "/countries.json", method = RequestMethod.GET)
     public @ResponseBody
     Map<String, String> getCountriesMap(HttpServletRequest request) {
         return retrieveIsoCountries();
     }
-    
-    
-    
-    
-    
-    
+
     /**
      * Gets an orcidWork and generates a workEntity
      * 
