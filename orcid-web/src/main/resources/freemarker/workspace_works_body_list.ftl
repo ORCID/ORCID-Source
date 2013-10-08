@@ -305,7 +305,13 @@
 							<strong><@orcid.msg 'manual_work_form_contents.labeltitle'/></strong>
 							<div ng-bind="work.workTitle.title.value"></div>
 						</div>
-					</div>
+					</div>					
+					<div class="row bottomBuffer" ng-show="work.workTitle.translatedTitle.content" ng-cloak>
+						<div class="span8">
+							<strong><@orcid.msg 'manual_work_form_contents.labeltranslatedtitle'/></strong>
+							<div ng-bind="renderTranslatedTitleInfo($index)"></div>
+						</div>
+					</div>					
 					<div class="row bottomBuffer" ng-show="work.workTitle.subtitle.value" ng-cloak>
 						<div class="span8">
 							<strong>
@@ -404,7 +410,18 @@
 							</div>
 						</div>
 					</div>	
-    	       
+					<div class="row bottomBuffer" ng-show="work.languageCode.value" ng-cloak>
+						<div class="span8">
+							<strong><@orcid.msg 'manual_work_form_contents.labellanguage'/></strong>
+							<div ng-bind="renderLanguageName($index)"></div>
+						</div>
+					</div>
+    	       		<div class="row bottomBuffer" ng-show="work.country.value" ng-cloak>
+						<div class="span8">
+							<strong><@orcid.msg 'manual_work_form_contents.labelcountry'/></strong>
+							<div ng-bind="renderCountryName($index)"></div>
+						</div>
+					</div>
     	       
     	       </div>
     	   </div>
