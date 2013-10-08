@@ -1525,6 +1525,20 @@ function WorkCtrl($scope, $compile, worksSrvc){
 		});
 	};
 	
+	$scope.getCountries = function() {
+		$.ajax({
+			url: $('body').data('baseurl') + 'works/countries.json',	        
+	        dataType: 'json',
+	        success: function(data) {
+	        	$scope.countries = data;
+	        	console.log($scope.countries);
+	        }
+		}).fail(function(){
+			// something bad is happening!
+	    	console.log("error fetching countries");
+		});
+	};
+	
 	
 	
 	
@@ -1547,6 +1561,30 @@ function WorkCtrl($scope, $compile, worksSrvc){
 		return info;
 	};
 	
+	$scope.renderLanguageName = function(workIdx){
+		if($scope.languages == null)
+			$scope.getLanguages();
+		
+		var language = null;
+		if($scope.works[workIdx].languageCode != null) {
+			language = $scope.languages[$scope.works[workIdx].languageCode.value];
+		}
+		
+		return language;
+	};
+	
+	$scope.renderCountryName = function(workIdx){
+		if($scope.countries == null)
+			$scope.getCountries();
+		
+		var country = null;
+		if($scope.works[workIdx].country != null){
+			country = $scope.countries[$scope.works[workIdx].country.value];
+		}
+		
+		return country;
+	};
+	
 	
 	
 	
@@ -1564,6 +1602,7 @@ function WorkCtrl($scope, $compile, worksSrvc){
 	//init
 	$scope.getWorks();
 	$scope.getLanguages();
+	$scope.getCountries();
 	
 	$scope.deleteWork = function(putCode) {
 		$scope.deletePutCode = putCode;
