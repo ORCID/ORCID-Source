@@ -17,10 +17,10 @@
 
 -->
     <#include "/common/browser-checks.ftl" />
-    <div class="span6">
-    <div class="page-header">
-	    <h3>${springMacroRequestContext.getMessage("oauth_sign_in.h3signin")}</h3>
-	</div>
+    <div class="col-md-6 col-sm-12 margin-top-bottom-box">
+	    <div class="page-header">
+		    <h3>${springMacroRequestContext.getMessage("oauth_sign_in.h3signin")}</h3>
+		</div>
         <form id="loginForm" action="<@spring.url '/signin/auth'/>" method="post">
             
             <@spring.bind "loginForm" />
@@ -43,7 +43,7 @@
                     <button class="btn btn-primary" type="submit">${springMacroRequestContext.getMessage("oauth_sign_in.h3signin")}</button>
                     <span id="ajax-loader" class="hide"><i id="ajax-loader" class="icon-spinner icon-large icon-spin green"></i></span>
                 </div>
-                <div class="relative">
+                <div class="relative margin-top-box">
                 	<a href="<@spring.url '/reset-password'/>">${springMacroRequestContext.getMessage("oauth_sign_in.forgottenpassword")}</a>
                 </div>
             </div>

@@ -38,13 +38,22 @@
     <div class="dev-watermark"></div>
 </#if>
 
+
+
 <#if
 	request.requestURI?ends_with("${local_folder}/signin")||
-	request.requestURI?ends_with("${local_folder}/register")
+	request.requestURI?ends_with("${local_folder}/register")||
+	request.requestURI?ends_with("${local_folder}/reset-password")||
+	request.requestURI?ends_with("${local_folder}/error")||
+	request.requestURI?ends_with("${local_folder}/oauth/signin")||
+	request.requestURI?ends_with("${local_folder}/oauth/confirm_access")
+	
 >
+
+
 <div class="container">
     <div class="header center">
-        <div class="row">
+        <div class="row">        	
             <div class="search col-md-11 col-md-offset-1 col-sm-12 col-xs-12" id="search">
                 <form id="form-search" action="${aboutUri}/search/node" method="POST">
                 	<div id="search-box">

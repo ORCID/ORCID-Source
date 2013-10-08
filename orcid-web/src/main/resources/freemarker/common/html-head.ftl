@@ -24,14 +24,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
     <#-- Uncomment for Overwriting Variables for testing from non localhost -->
+    
     <#--
-    -->             
-    	<#assign myLocalIp = '192.168.24.92:8080'>    	
+                 
+    	<#assign myLocalIp = '192.168.24.92:8082'>    	
 	    <#assign staticCdn = '//'+ myLocalIp + '/orcid-web/static'>
 	    <#assign staticLoc = '//'+ myLocalIp + '/orcid-web/static'>
 	    <#assign baseUri = 'http://'+ myLocalIp + '/orcid-web'>
 	    <#assign baseUriHttp = 'http://'+ myLocalIp + '/orcid-web'>	    
-	 
+	--> 
 	 
 	 <#assign local_folder = '/orcid-web'> <!-- QA vs Local environment, leave empty for QA submittion -->	
 	
@@ -43,7 +44,11 @@
     </script>    
     <#if
 		request.requestURI?ends_with("${local_folder}/signin")||
-		request.requestURI?ends_with("${local_folder}/register")
+		request.requestURI?ends_with("${local_folder}/register")||
+		request.requestURI?ends_with("${local_folder}/reset-password")||
+		request.requestURI?ends_with("${local_folder}/error")||
+		request.requestURI?ends_with("${local_folder}/oauth/signin")||		
+		request.requestURI?ends_with("${local_folder}/oauth/confirm_access")
 	>    	
 	    <link rel="stylesheet" href="${staticCdn}/twitter-bootstrap/3.0.0/css/bootstrap.min.css?v=${ver}"/>
 	    <!--[if lt IE 8]>
