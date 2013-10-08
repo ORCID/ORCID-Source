@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
@@ -30,6 +31,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.adapter.Jaxb2JpaAdapter;
 import org.orcid.core.adapter.Jpa2JaxbAdapter;
+import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.ExternalIdentifierManager;
 import org.orcid.core.manager.ProfileWorkManager;
 import org.orcid.core.manager.ThirdPartyImportManager;
@@ -37,6 +39,7 @@ import org.orcid.core.manager.WorkContributorManager;
 import org.orcid.core.manager.WorkExternalIdentifierManager;
 import org.orcid.core.manager.WorkManager;
 import org.orcid.core.utils.JsonUtils;
+import org.orcid.frontend.web.util.LanguagesMap;
 import org.orcid.jaxb.model.message.CitationType;
 import org.orcid.jaxb.model.message.ContributorAttributes;
 import org.orcid.jaxb.model.message.ContributorRole;
@@ -54,7 +57,6 @@ import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.pojo.ajaxForm.Citation;
 import org.orcid.pojo.ajaxForm.Contributor;
 import org.orcid.pojo.ajaxForm.Date;
-import org.orcid.pojo.ajaxForm.ErrorsInterface;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.pojo.ajaxForm.TranslatedTitle;
@@ -109,6 +111,9 @@ public class WorksController extends BaseWorkspaceController {
 
     @Resource
     private WorkExternalIdentifierManager workExternalIdentifierManager;
+
+    @Resource
+    private LocaleManager localeManager;
 
     /**
      * Removes a work from a profile
@@ -340,6 +345,32 @@ public class WorksController extends BaseWorkspaceController {
         }
 
         return work;
+    }
+
+    /**
+     * Returns a map containing the language code and name for each language
+     * supported.
+     * 
+     * @return A map of the form [language_code, language_name] containing all
+     *         supported languages
+     * */
+    @RequestMapping(value = "/languages.json", method = RequestMethod.GET)
+    public @ResponseBody
+    Map<String, String> getLanguageMap(HttpServletRequest request) {
+        return LanguagesMap.buildLanguageMap(localeManager.getLocale(), false);
+    }
+
+    /**
+     * Returns a map containing the iso country code and the name for each
+     * country.\
+     * 
+     * @return A map of the form [iso_code, country_name] containing all
+     *         existing countries.
+     * */
+    @RequestMapping(value = "/countries.json", method = RequestMethod.GET)
+    public @ResponseBody
+    Map<String, String> getCountriesMap(HttpServletRequest request) {
+        return retrieveIsoCountries();
     }
 
     /**

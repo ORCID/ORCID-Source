@@ -62,17 +62,32 @@ public class LanguagesMap {
 
     /**
      * Builds a map that contains the available languages for the given locale
+     * Sorted by default
      * 
      * @param userLocale
      *            the current locale
      * @return A map containing the available languages for the given locale
      * */
     private static Map<String, String> buildLanguageMap(Locale userLocale) {
+        return buildLanguageMap(userLocale, true);
+    }
+    
+    /**
+     * Builds a map that contains the available languages for the given locale
+     * 
+     * @param userLocale
+     *            the current locale
+     * @return A map containing the available languages for the given locale
+     * */
+    public static Map<String, String> buildLanguageMap(Locale userLocale, boolean sorted) {
         Map<String, String> languagesMap = new TreeMap<String, String>();
 
         for (Locale locale : locales) {
-            // It is ordered backwards to keep it sorted by language and country
-            languagesMap.put(buildLanguageValue(locale, userLocale), buildLanguageKey(locale));
+            if(sorted)
+                // It is ordered backwards to keep it sorted by language and country
+                languagesMap.put(buildLanguageValue(locale, userLocale), buildLanguageKey(locale));
+            else 
+                languagesMap.put(buildLanguageKey(locale), buildLanguageValue(locale, userLocale));
         }
 
         return languagesMap;
