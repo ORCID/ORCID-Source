@@ -59,6 +59,12 @@ public class HomeController extends BaseController {
 
     }
 
+    @RequestMapping(value = "/tomcatUp.json")
+    @Produces(value = { MediaType.APPLICATION_JSON })
+    public @ResponseBody String tomcatUp(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {
+        return "{tomcatUp:true}";
+    }
+    
     @RequestMapping(value = "/robots.txt")
     public String dynamicRobots(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {
         String requestedDomain = request.getServerName();
