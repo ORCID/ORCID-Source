@@ -1369,6 +1369,7 @@ function WorkCtrl($scope, $compile, worksSrvc){
 	$scope.numOfWorksToAdd = null;
 	$scope.showBibtex = true;
 	$scope.bibtexCitations = {};
+	$scope.languages = null;
 	
 	$scope.toggleDisplayWorks = function () {
 		$scope.displayWorks = !$scope.displayWorks;
@@ -1464,18 +1465,17 @@ function WorkCtrl($scope, $compile, worksSrvc){
 									&& dw.contributors[idx].contributorRole == null
 									&& dw.contributors[idx].creditNameVisibility == null)
 									delete dw.contributors.splice(idx,1);
-								
-								if (dw.citation && dw.citation.citationType.value == 'bibtex') {
-									try {
-										$scope.bibtexCitations[dw.putCode.value] = bibtexParse.toJSON(dw.citation.citation.value);
-									} catch (err) {
-										$scope.bibtexCitations[dw.putCode.value] = 'Error Parsing Bibtex';
-										console.log("couldn't parse bibtex: " + dw.citation.citation.value);
-									}
-								}
-
 							}
 
+							if (dw.citation && dw.citation.citationType.value == 'bibtex') {
+								try {
+									$scope.bibtexCitations[dw.putCode.value] = bibtexParse.toJSON(dw.citation.citation.value);
+								} catch (err) {
+									$scope.bibtexCitations[dw.putCode.value] = 'Error Parsing Bibtex';
+									console.log("couldn't parse bibtex: " + dw.citation.citation.value);
+								}
+							}
+							
 							$scope.works.push(dw);
 						}
 					});
@@ -1510,8 +1510,76 @@ function WorkCtrl($scope, $compile, worksSrvc){
 		});
 	};
 	
+	$scope.getLanguages = function() {
+		$.ajax({
+			url: $('body').data('baseurl') + 'works/languages.json',	        
+	        dataType: 'json',
+	        success: function(data) {
+	        	$scope.languages = data;
+	        	console.log($scope.languages);
+	        }
+		}).fail(function(){
+			// something bad is happening!
+	    	console.log("error fetching languages");
+		});
+	};
+	
+	$scope.getCountries = function() {
+		$.ajax({
+			url: $('body').data('baseurl') + 'works/countries.json',	        
+	        dataType: 'json',
+	        success: function(data) {
+	        	$scope.countries = data;
+	        }
+		}).fail(function(){
+			// something bad is happening!
+	    	console.log("error fetching countries");
+		});
+	};
+	
+	$scope.renderTranslatedTitleInfo = function(workIdx) {
+		if($scope.languages == null)
+			$scope.getLanguages;
+		
+		var info = null; 
+		
+		if($scope.works[workIdx].workTitle != null && $scope.works[workIdx].workTitle.translatedTitle != null) {
+			info = $scope.works[workIdx].workTitle.translatedTitle.content;
+			if($scope.languages[$scope.works[workIdx].workTitle.translatedTitle.languageCode])
+				info += ' - ' + $scope.languages[$scope.works[workIdx].workTitle.translatedTitle.languageCode];		
+		}
+		
+		return info;
+	};
+	
+	$scope.renderLanguageName = function(workIdx){
+		if($scope.languages == null)
+			$scope.getLanguages();
+		
+		var language = null;
+		if($scope.works[workIdx].languageCode != null) {
+			language = $scope.languages[$scope.works[workIdx].languageCode.value];
+		}
+		
+		return language;
+	};
+	
+	$scope.renderCountryName = function(workIdx){
+		if($scope.countries == null)
+			$scope.getCountries();
+		
+		var country = null;
+		if($scope.works[workIdx].country != null){
+			country = $scope.countries[$scope.works[workIdx].country.value];
+		}
+		
+		return country;
+	};
+	
 	//init
 	$scope.getWorks();
+	$scope.getLanguages();
+	$scope.getCountries();
 	
 	$scope.deleteWork = function(putCode) {
 		$scope.deletePutCode = putCode;
