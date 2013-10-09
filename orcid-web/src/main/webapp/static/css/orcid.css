@@ -142,6 +142,10 @@ img {
 	display: none;
 }
 
+.centered{
+	text-align:center;
+}
+
 #map_canvas img {
 	max-width: none;
 }
@@ -1450,10 +1454,6 @@ a:hover {
 	min-height: 500px;
 }
 
-.workspace-left {
-	margin-left: -20px;
-}
-
 .workspace-header {
 	border-bottom: 1px solid #c9c9c9;
 	padding-left: 10px;
@@ -1502,17 +1502,24 @@ a:hover {
 
 .workspace-accordion-header {
 	position: relative;
-	font-size: 20px;
+	/*font-size: 20px;*/
 	margin-top: 10px;
 	margin-bottom: 10px;
 	font-weight: bold;
 	font-family: 'Gill Sans W01 Bold', 'Gill Sans', sans-serif;
 }
 
+.toggle-text{	
+	font-size: 20px;	
+}
+ 
+.toggle-text:hover{
+	color:#A6CE39;
+}
+
 .workspace-accordion-header a,.workspace-accordion-header a:visited,.workspace-accordion-header a:hover,.workspace-header-public
 	{
 	font-weight: bold;
-	color: #939597;
 }
 
 .workspace-accordion-header a.btn-primary {
@@ -1596,22 +1603,41 @@ a:hover {
 
 .privacy-list,.workspace-body-list {
 	margin: 0;
+	padding: 0;
 }
 
 .workspace-body-list {
 	margin-top: -10px;
 }
-
+/*
 .workspace-body-list .pull-right {
 	position: absolute;
 	right: 0;
 	top: 15px;
 	float: none;
 }
+*/
+
+.workspace-body-list ul.workspace-controls{
+	margin-top: 15px;
+}
+
+.workspace-body-list ul.workspace-controls li{
+	display: inline-block;
+}
+
+.workspace-body-list ul.workspace-controls li a.icon-trash{
+	font-size: 20px;
+	vertical-align: 7px;
+}
+
+.workspace-body-list ul.workspace-controls li a i{
+	vertical-align:10px;
+	line-height: 16px;
+}
 
 .workspace-body-list .pull-right-level-two {
-	position: absolute;
-	right: 0;
+	position: absolute;	right: 0;
 	top: 50px;
 	float: none;
 }
@@ -1620,9 +1646,7 @@ a:hover {
 	position: relative;
 }
 
-.workspace-body-list>li {
-	position: relative;
-	padding: 10px 90px 0 0;
+.workspace-body-list>li {	
 	min-height: 30px;
 }
 
@@ -2578,6 +2602,17 @@ a.btn-primary:hover {
 	overflow: hidden;
 }
 
+/* Personal Profile */
+
+ul.personal-inf-display{
+	margin:0;
+	padding:0;
+}
+
+ul.personal-inf-display li{
+	display: inline;
+}
+
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */
 	.alert .small {
@@ -2936,6 +2971,10 @@ a.btn-primary:hover {
 		height: 50px;
 		font-size: 16px;
 	}
+	
+	.input-xlarge{
+		width:100%;
+	}
 
 	/* Registration */
 	#RegistrationCtr input[type="text"],#RegistrationCtr input[type="password"]
@@ -2963,6 +3002,8 @@ a.btn-primary:hover {
 		width: 95%;
 	}
 	
+	/* oAuth */
+	
 	.oauth-login #loginForm #userId,
 	.oauth-login #loginForm #password {
 		width: 100%;
@@ -2978,6 +3019,67 @@ a.btn-primary:hover {
 	    width: 100%;
 	    z-index: -1;
 	}
+	
+	/* Public Profile */
+	
+	.public-profile .workspace-inner .alert{
+		margin-left: 0;
+	}
+	
+	.workspace-top{
+		border-top:none;
+	}
+	
+	.public-profile .workspace-inner > .workspace-overview{
+		padding-left:0;
+	}
+	
+	.workspace-right{
+		border-left:none;
+	}
+	
+	.workspace-accordion-header, .workspace-accordion-content{
+		padding-left:0;
+	}
+	
+	ul.personal-inf-display li{
+		display: block;		
+		margin-top:10px;
+	}
+	
+	.workspace-body-list ul.workspace-controls {
+	    margin-left: 0;
+	    margin-top: 10px;
+	    padding-left: 0;
+	    padding-right: 40px;
+	}
+	
+	.workspace-body-list ul.workspace-controls li a.icon-trash{
+		font-size: 28px;
+		margin-right:8px;
+	}
+	
+	.public-profile .popover-help-container .popover{
+		left:-193px;		
+	}
+	
+	.public-profile .popover-help-container .popover.bottom .arrow{
+		left:75%;
+	}
+	
+	
+	/* Lightboxes */
+	
+	/*, #cboxWrapper, #cboxMiddleLeft, #cboxContent*/
+	
+	#colorbox, #cboxWrapper, #edit-work, #colorbox-content, #cboxContent, #cboxLoadedContent{
+		width: 100% !important;
+		box-shadow: none;
+		left:0 !important;
+		
+	}	
+	
+	
 	
 }
 

@@ -40,8 +40,8 @@
     	<div ng-controller="VerifyEmailCtrl" style="display: hidden;"></div>
 	</#if>
 
-    <div class="span3 lhs">
-    	<div class="workspace-left workspace-profile">
+    <div class="col-md-3 lhs">
+    	<div class="workspace-profile">
             <h2 class="full-name">
                 <#if (profile.orcidBio.personalDetails.creditName.content)??>
                     ${(profile.orcidBio.personalDetails.creditName.content)!}
@@ -96,43 +96,49 @@
 			</@security.authorize>
         </div>
     </div>
-    <div class="span9">
+    <div class="col-md-9">
         <div class="workspace-right">
         	<div class="workspace-inner workspace-header">
                 <div class="alert alert-info"><strong><@orcid.msg 'workspace.addinformationaboutyou'/></strong></div>
-        		<div class="workspace-overview" id="works-overview" ng-controller="WorkOverviewCtrl">
-        			<a href="#workspace-publications" class="overview-count"><span ng-bind="works.length"></span></a>
-        			<a href="#workspace-publications" class="overview-title"><@orcid.msg 'workspace.Works'/></a>
-                    <br />
-                    <a href="#workspace-publications" class="btn-update no-icon"><@orcid.msg 'workspace.view'/></a>
-        		</div>
-                <div class="workspace-overview">
-                    <a href="#workspace-affiliations" class="overview-count">${(profile.orcidBio.affiliations?size)!0}</a>
-                    <a href="#workspace-affiliations" class="overview-title"><@orcid.msg 'workspace_bio.Affiliations'/></a>
-                    <div><a target="_blank" href="http://support.orcid.org/forums/179657-coming-soon" class="btn-update no-icon"><@orcid.msg 'workspace.ComingSoon'/></a></div>
-                </div>
-        		<div class="workspace-overview">
-        			<a href="#workspace-grants" class="overview-count">${(profile.orcidActivities.orcidGrants.orcidGrant?size)!0}</a>
-        			<a href="#workspace-grants" class="overview-title"><@orcid.msg 'workspace.Grants'/></a>
-        			<br />
-        			<a target="_blank" href="http://support.orcid.org/forums/179657-coming-soon" class="btn-update no-icon"><@orcid.msg 'workspace.ComingSoon'/></a>
-        		</div>
-        		<div class="workspace-overview">
-        			<a href="#workspace-patents" class="overview-count">${(profile.orcidActivities.orcidPatents.orcidPatent?size)!0}</a>
-        			<a href="#workspace-patents" class="overview-title"><@orcid.msg 'workspace.Patents'/></a>
-        			<br />
-        			<a target="_blank" href="http://support.orcid.org/forums/179657-coming-soon" class="btn-update no-icon"><@orcid.msg 'workspace.ComingSoon'/></a>
-        		</div>
+        		<div class="row">
+	        		<div class="workspace-overview col-md-2 col-sm-6" id="works-overview" ng-controller="WorkOverviewCtrl">
+	        			<a href="#workspace-publications" class="overview-count"><span ng-bind="works.length"></span></a>
+	        			<a href="#workspace-publications" class="overview-title"><@orcid.msg 'workspace.Works'/></a>
+	                    <br />
+	                    <a href="#workspace-publications" class="btn-update no-icon"><@orcid.msg 'workspace.view'/></a>
+	        		</div>	                
+	                <div class="workspace-overview  col-md-2 col-sm-6">
+	                    <a href="#workspace-affiliations" class="overview-count">${(profile.orcidBio.affiliations?size)!0}</a>
+	                    <a href="#workspace-affiliations" class="overview-title"><@orcid.msg 'workspace_bio.Affiliations'/></a>
+	                    <div><a target="_blank" href="http://support.orcid.org/forums/179657-coming-soon" class="btn-update no-icon"><@orcid.msg 'workspace.ComingSoon'/></a></div>
+	                </div>                
+	        		<div class="workspace-overview  col-md-2 col-sm-6">
+	        			<a href="#workspace-grants" class="overview-count">${(profile.orcidActivities.orcidGrants.orcidGrant?size)!0}</a>
+	        			<a href="#workspace-grants" class="overview-title"><@orcid.msg 'workspace.Grants'/></a>
+	        			<br />
+	        			<a target="_blank" href="http://support.orcid.org/forums/179657-coming-soon" class="btn-update no-icon"><@orcid.msg 'workspace.ComingSoon'/></a>
+	        		</div>
+	        		
+	        		<div class="workspace-overview  col-md-2 col-sm-6">
+	        			<a href="#workspace-patents" class="overview-count">${(profile.orcidActivities.orcidPatents.orcidPatent?size)!0}</a>
+	        			<a href="#workspace-patents" class="overview-title"><@orcid.msg 'workspace.Patents'/></a>
+	        			<br />
+	        			<a target="_blank" href="http://support.orcid.org/forums/179657-coming-soon" class="btn-update no-icon"><@orcid.msg 'workspace.ComingSoon'/></a>
+	        		</div>
+	        	</div>
         	</div>
         	<div class="workspace-accordion" id="workspace-accordion">
         	
         	   <div id="workspace-personal" class="workspace-accordion-item workspace-accordion-active" ng-controller="PersonalInfoCtrl">
         			<div class="workspace-accordion-header" style="position: relative;">
-        			   <a href="" ng-click="toggleDisplayInfo()" style="color: #338caf;">
-        			       <i class="icon-caret-down" ng-class="{'icon-caret-right':displayInfo==false}"></i></a>
-        			   </a> 
-        			   <a href="" ng-click="toggleDisplayInfo()"><@orcid.msg 'workspace.personal_information'/></a> 
-        			   <a href="<@spring.url '/account/manage-bio-settings'/>" id="upate-personal-modal-link" class="label btn-primary"><@orcid.msg 'workspace.Update'/></a>
+        			   <ul class="personal-inf-display">        			   		
+        			   		<li>
+        			   			<a href="" ng-click="toggleDisplayInfo()" style="color: #338caf;">
+	        			   			<i class="icon-caret-down" ng-class="{'icon-caret-right':displayInfo==false}"></i>
+	        			   		</a>
+        			   			<a href="" ng-click="toggleDisplayInfo()" class="toggle-text"><@orcid.msg 'workspace.personal_information'/></a></li>
+        			   		<li><a href="<@spring.url '/account/manage-bio-settings'/>" id="upate-personal-modal-link" class="label btn-primary"><@orcid.msg 'workspace.Update'/></a></li>        			   		
+        			   </ul>
         			</div>
             		<div class="workspace-accordion-content" ng-show="displayInfo">
             			<#include "workspace_personal.ftl"/>
@@ -149,12 +155,20 @@
                 
                 <div id="workspace-publications" style="position: relative;" class="workspace-accordion-item workspace-accordion-active" ng-controller="WorkCtrl">
                 	<div class="workspace-accordion-header">
-        				<a href="" ng-click="toggleDisplayWorks()" style="color: #338caf;">
-        			       <i class="icon-caret-down icon" ng-class="{'icon-caret-right':displayWorks==false}"></i></a>
-        			    </a> 
-        				<a href="" ng-click="toggleDisplayWorks()"><@orcid.msg 'workspace.Works'/></a>
-						<a href="#third-parties" class="label btn-primary" ng-click="showWorkImportWizard()"><@orcid.msg 'workspace.import_works'/></a>
-						<a href="" class="label btn-primary" ng-click="addWorkModal()"><@orcid.msg 'manual_work_form_contents.add_work_manually'/></a>
+                		<ul class="personal-inf-display">
+                			<li>
+		        				<a href="" ng-click="toggleDisplayWorks()" class="toggle-text">
+		        			       <i class="icon-caret-down icon" ng-class="{'icon-caret-right':displayWorks==false}"></i></a>
+		        			    </a> 
+		        				<a href="" ng-click="toggleDisplayWorks()" class="toggle-text"><@orcid.msg 'workspace.Works'/></a>
+		        			</li>
+		        			<li>
+								<a href="#third-parties" class="label btn-primary" ng-click="showWorkImportWizard()"><@orcid.msg 'workspace.import_works'/></a>
+							</li>
+							<li>
+								<a href="" class="label btn-primary" ng-click="addWorkModal()"><@orcid.msg 'manual_work_form_contents.add_work_manually'/></a>
+							</li>	
+						</ul>
 					</div>
       	            <div ng-show="displayWorks" class="workspace-accordion-content">
 	            		<#include "workspace_works_body_list.ftl"/>
@@ -226,7 +240,7 @@
 <script type="text/ng-template" id="import-wizard-modal">
     <#if ((thirdPartiesForImport)??)>
     	<div id="third-parties">	
-			<div class="span9">
+			<div class="col-md-9 col-sm-12">
 				<a class="btn pull-right close-button" ng-click="closeModal()">X</a>
 	           	<h1 class="lightbox-title" style="text-transform: uppercase;"><@orcid.msg 'workspace.import_works'/></h1>
 	           		

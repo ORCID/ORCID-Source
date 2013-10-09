@@ -212,15 +212,16 @@
 </script>
 	
 <script type="text/ng-template" id="add-work-modal">
-	<div class="edit-work colorbox-content">
+	<div class="edit-work colorbox-content container">
 		<div class="row">
-			<div class="span12">
+			<div class="col-md-12 col-sm-12">
 				<h1 class="lightbox-title pull-left"><@orcid.msg 'manual_work_form_contents.add_work'/></h1>
 				<a class="btn pull-right close-button" ng-click="closeModal()">X</a>
 			</div>
 		</div>
+
 		<div class="row">
-			<div class="span6">	
+			<div class="col-md-6 col-sm-12">	
 				<div class="control-group">
 					<label><@orcid.msg 'manual_work_form_contents.labeltitle'/></label>
 				    <div class="relative">
@@ -313,7 +314,7 @@
 		 		
 			</div>
 			
-			<div class="span6">
+			<div class="col-md-6 col-sm-12">
 		    	
 		    	<div class="control-group">
 					<label><@orcid.msg 'manual_work_form_contents.labeldescription'/></label>
@@ -390,19 +391,19 @@
 			</div>
 		</div>
 		<div class="row">	
-			<div class="span12">
+			<div class="col-md-12 col-sm-12">
 			   &nbsp;
 			</div>
 		</div>
 		<div class="row">
-			<div class="span6">
+			<div class="col-md-6 col-sm-6">
 			   &nbsp;
 			</div>
-			<div class="span2">
+			<div class="col-md-2 col-sm-2">
 				<button class="btn btn-primary" ng-click="addWork()" ng-disabled="addingWork" ng-class="{disabled:addingWork}"><@orcid.msg 'manual_work_form_contents.btnaddtolist'/></button> 
 				<a href="" ng-click="closeModal()"><@orcid.msg 'manage.deleteExternalIdentifier.cancel'/></a>
 			</div>
-			<div class="span4">
+			<div class="col-md-4 col-sm-4">
 				<span ng-show="addingWork">
 					<i class="icon-spinner icon-2x icon-spin  green"></i>
 				</span>
@@ -410,7 +411,7 @@
 			</div>
 		</div>
 		<div class="row">
-			<div class="span12">
+			<div class="col-md-12 col-sm-12">
 			   &nbsp;
 			</div>
 		</div>
@@ -420,31 +421,42 @@
 	 
 <ul ng-hide="!works.length" class="workspace-publications workspace-body-list bottom-margin-medium" ng-cloak>        
     <li class="bottom-margin-small" ng-repeat="work in works | orderBy:['-publicationDate.year', '-publicationDate.month', '-publicationDate.day']">            	
-    	<#if RequestParameters['worksInfo']??>
-    	   <div class="pull-right" style="right: 160px; top: 20px; width: 15px;"><a href ng-click="showDetailModal($index)" class="icon-resize-full grey"></a></div>
-           <div class="pull-right" style="right: 140px; top: 20px; width: 15px;"><a href ng-click="deleteWork($index)" class="icon-trash orcid-icon-trash grey"></a></div>
-    	<#else>
-           <div class="pull-right" style="right: 145px; top: 20px; width: 15px;"><a href ng-click="deleteWork($index)" class="icon-trash orcid-icon-trash grey"></a></div>
-		</#if>
-		<div style="width: 530px;">
-        <h3 class="work-title">
-        	<strong ng-bind-html="work.workTitle.title.value"></strong><span class="work-subtitle" ng-show="work.workTitle.subtitle.value" ng-bind-html="':&nbsp;'.concat(work.workTitle.subtitle.value)"></span>
-        	<span ng-show="work.publicationDate.month">{{work.publicationDate.month}}-</span><span ng-show="work.publicationDate.year">{{work.publicationDate.year}}</span>
-        </h3>
+    	<div class="row">		
+			<div class="col-md-8 col-sm-12">
+				<div>
+			        <h3 class="work-title">
+			        	<strong ng-bind-html="work.workTitle.title.value"></strong><span class="work-subtitle" ng-show="work.workTitle.subtitle.value" ng-bind-html="':&nbsp;'.concat(work.workTitle.subtitle.value)"></span>
+			        	<span ng-show="work.publicationDate.month">{{work.publicationDate.month}}-</span><span ng-show="work.publicationDate.year">{{work.publicationDate.year}}</span>
+			        </h3>
+		        </div>        
+		        
+				
+				<div class="work-metadata">
+		            <span ng-repeat='ie in work.workExternalIdentifiers'>
+		            	<span ng-bind-html='ie | workExternalIdentifierHtml:$first:$last:work.workExternalIdentifiers.length'></span>
+		            </span>
+		            <span ng-show="work.url.value">URL: <a href="{{work.url.value | urlWithHttp}}" target="_blank">{{work.url.value}}</a></span>
+		        </div>
+		        
+		        <div ng-show="work.shortDescription" ng-bind-html="work.shortDescription.value"></div>
+		        <div ng-show="work.citationForDisplay" class="citation {{work.workCitation.workCitationType.toLowerCase()}}" ng-bind-html="work.citationForDisplay"></div>
+		    </div>
+		    
+		    <div class="col-md-4 col-sm-12"> 
+		    	<ul class="workspace-controls centered">    		 
+			    	<#if RequestParameters['worksInfo']??>
+			    		<li><a href ng-click="showDetailModal($index)" class="icon-resize-full grey"></a></li>
+			            <li><a href ng-click="deleteWork($index)" class="icon-trash orcid-icon-trash grey"></a></li>
+			    	<#else>
+			           <li><a href ng-click="deleteWork($index)" class="icon-trash orcid-icon-trash grey"></a></li>
+					</#if>			
+					<li>
+						<@orcid.privacyToggle "work.visibility.visibility" "setPrivacy($index, 'PUBLIC', $event)" 
+		                    	  "setPrivacy($index, 'LIMITED', $event)" "setPrivacy($index, 'PRIVATE', $event)" />
+		            </li>				
+				</ul>
+			</div>
         </div>
-        <div class="pull-right" style="width: 130px;">
-		<@orcid.privacyToggle "work.visibility.visibility" "setPrivacy($index, 'PUBLIC', $event)" 
-                    	  "setPrivacy($index, 'LIMITED', $event)" "setPrivacy($index, 'PRIVATE', $event)" />
-		</div>
-		<div  style="width: 680px;" class="work-metadata">
-            <span ng-repeat='ie in work.workExternalIdentifiers'>
-            	<span ng-bind-html='ie | workExternalIdentifierHtml:$first:$last:work.workExternalIdentifiers.length'></span>
-            </span>
-            <span ng-show="work.url.value" style=" display: inline-block;">URL: <a href="{{work.url.value | urlWithHttp}}" target="_blank">{{work.url.value}}</a></span>
-        </div>
-        
-        <div ng-show="work.shortDescription" ng-bind-html="work.shortDescription.value" style="width: 680px; white-space: pre-wrap;"></div>
-        <div ng-show="work.citationForDisplay" class="citation {{work.workCitation.workCitationType.toLowerCase()}}" ng-bind-html="work.citationForDisplay" style="width: 680px;"></div>
     </li>           
 </ul>
 <div ng-show="numOfWorksToAdd==null || (numOfWorksToAdd > works.length)" class="text-center">
