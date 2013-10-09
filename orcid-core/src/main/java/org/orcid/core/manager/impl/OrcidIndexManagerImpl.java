@@ -16,6 +16,12 @@
  */
 package org.orcid.core.manager.impl;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import javax.annotation.Resource;
+
 import org.apache.commons.lang.StringUtils;
 import org.orcid.core.manager.OrcidIndexManager;
 import org.orcid.core.security.visibility.filter.VisibilityFilter;
@@ -41,6 +47,7 @@ import org.orcid.jaxb.model.message.OtherName;
 import org.orcid.jaxb.model.message.PersonalDetails;
 import org.orcid.jaxb.model.message.Subtitle;
 import org.orcid.jaxb.model.message.Title;
+import org.orcid.jaxb.model.message.TranslatedTitle;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.message.WorkExternalIdentifier;
 import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
@@ -48,11 +55,6 @@ import org.orcid.persistence.dao.SolrDao;
 import org.orcid.persistence.solr.entities.OrcidSolrDocument;
 import org.orcid.utils.NullUtils;
 import org.springframework.stereotype.Service;
-
-import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 @Service
 public class OrcidIndexManagerImpl implements OrcidIndexManager {
@@ -196,12 +198,17 @@ public class OrcidIndexManagerImpl implements OrcidIndexManager {
                     if (orcidWork.getWorkTitle() != null) {
                         Title workMainTitle = orcidWork.getWorkTitle().getTitle();
                         Subtitle worksubTitle = orcidWork.getWorkTitle().getSubtitle();
+                        TranslatedTitle translatedTitle = orcidWork.getWorkTitle().getTranslatedTitle();
                         if (workMainTitle != null && !StringUtils.isBlank(workMainTitle.getContent())) {
                             workTitles.add(workMainTitle.getContent());
                         }
 
                         if (worksubTitle != null && !StringUtils.isBlank(worksubTitle.getContent())) {
                             workTitles.add(worksubTitle.getContent());
+                        }
+                        
+                        if(translatedTitle != null && !StringUtils.isBlank(translatedTitle.getContent())){
+                            workTitles.add(translatedTitle.getContent());
                         }
                     }
                 }
