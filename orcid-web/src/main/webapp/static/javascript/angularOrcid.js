@@ -1465,18 +1465,17 @@ function WorkCtrl($scope, $compile, worksSrvc){
 									&& dw.contributors[idx].contributorRole == null
 									&& dw.contributors[idx].creditNameVisibility == null)
 									delete dw.contributors.splice(idx,1);
-								
-								if (dw.citation && dw.citation.citationType.value == 'bibtex') {
-									try {
-										$scope.bibtexCitations[dw.putCode.value] = bibtexParse.toJSON(dw.citation.citation.value);
-									} catch (err) {
-										$scope.bibtexCitations[dw.putCode.value] = 'Error Parsing Bibtex';
-										console.log("couldn't parse bibtex: " + dw.citation.citation.value);
-									}
-								}
-
 							}
 
+							if (dw.citation && dw.citation.citationType.value == 'bibtex') {
+								try {
+									$scope.bibtexCitations[dw.putCode.value] = bibtexParse.toJSON(dw.citation.citation.value);
+								} catch (err) {
+									$scope.bibtexCitations[dw.putCode.value] = 'Error Parsing Bibtex';
+									console.log("couldn't parse bibtex: " + dw.citation.citation.value);
+								}
+							}
+							
 							$scope.works.push(dw);
 						}
 					});
@@ -1531,7 +1530,6 @@ function WorkCtrl($scope, $compile, worksSrvc){
 	        dataType: 'json',
 	        success: function(data) {
 	        	$scope.countries = data;
-	        	console.log($scope.countries);
 	        }
 		}).fail(function(){
 			// something bad is happening!
@@ -1545,15 +1543,11 @@ function WorkCtrl($scope, $compile, worksSrvc){
 		
 		var info = null; 
 		
-		console.log();
-		console.log($scope.works[workIdx]);
-		
 		if($scope.works[workIdx].workTitle != null && $scope.works[workIdx].workTitle.translatedTitle != null) {
 			info = $scope.works[workIdx].workTitle.translatedTitle.content;
 			if($scope.languages[$scope.works[workIdx].workTitle.translatedTitle.languageCode])
 				info += ' - ' + $scope.languages[$scope.works[workIdx].workTitle.translatedTitle.languageCode];		
 		}
-		console.log(info);
 		
 		return info;
 	};
