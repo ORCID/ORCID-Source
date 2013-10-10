@@ -29,6 +29,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang.StringUtils;
 import org.orcid.core.adapter.Jaxb2JpaAdapter;
 import org.orcid.core.adapter.Jpa2JaxbAdapter;
+import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.ExternalIdentifierManager;
 import org.orcid.core.manager.LoadOptions;
 import org.orcid.core.manager.ProfileWorkManager;
@@ -37,10 +38,12 @@ import org.orcid.core.manager.WorkContributorManager;
 import org.orcid.core.manager.WorkManager;
 import org.orcid.frontend.web.forms.CurrentWork;
 import org.orcid.frontend.web.util.FunctionsOverCollections;
+import org.orcid.frontend.web.util.LanguagesMap;
 import org.orcid.frontend.web.util.NumberList;
 import org.orcid.frontend.web.util.YearsList;
 import org.orcid.jaxb.model.clientgroup.OrcidClient;
 import org.orcid.jaxb.model.clientgroup.RedirectUri;
+import org.orcid.jaxb.model.message.AffiliationType;
 import org.orcid.jaxb.model.message.CitationType;
 import org.orcid.jaxb.model.message.ContributorRole;
 import org.orcid.jaxb.model.message.ExternalIdentifier;
@@ -93,9 +96,21 @@ public class WorkspaceController extends BaseWorkspaceController {
     @Resource
     private WorkContributorManager workContributorManager;
 
+    @Resource
+    private LocaleManager localeManager;
+
     @ModelAttribute("thirdPartiesForImport")
     public List<OrcidClient> retrieveThirdPartiesForImport() {
         return thirdPartyImportManager.findOrcidClientsWithPredefinedOauthScopeWorksImport();
+    }
+
+    @ModelAttribute("affiliationTypes")
+    public Map<String, String> retrieveAffiliationTypesAsMap() {
+        Map<String, String> affiliationTypes = new LinkedHashMap<String, String>();
+        for (AffiliationType affiliationType : AffiliationType.values()) {
+            affiliationTypes.put(affiliationType.value(), getMessage(buildInternationalizationKey(AffiliationType.class, affiliationType.value())));
+        }
+        return FunctionsOverCollections.sortMapsByValues(affiliationTypes);
     }
 
     @ModelAttribute("workTypes")
@@ -187,6 +202,11 @@ public class WorkspaceController extends BaseWorkspaceController {
         return FunctionsOverCollections.sortMapsByValues(map);
     }
 
+    @ModelAttribute("languages")
+    public Map<String, String> retrieveLocalesAsMap() {
+        return LanguagesMap.getLanguagesMap(localeManager.getLocale());
+    }
+
     @RequestMapping
     public ModelAndView viewWorkspace(HttpServletRequest request, @RequestParam(value = "page", defaultValue = "1") int pageNo,
             @RequestParam(value = "maxResults", defaultValue = "200") int maxResults) {
@@ -200,6 +220,8 @@ public class WorkspaceController extends BaseWorkspaceController {
             mav.addObject("currentWorks", currentWorks);
         }
         mav.addObject("profile", profile);
+        mav.addObject("currentLocaleKey", LanguagesMap.buildLanguageKey(localeManager.getLocale()));
+        mav.addObject("currentLocaleValue", LanguagesMap.buildLanguageValue(localeManager.getLocale(), localeManager.getLocale()));
         return mav;
     }
 

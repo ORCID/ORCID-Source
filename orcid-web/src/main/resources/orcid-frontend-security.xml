@@ -82,7 +82,8 @@
 	</sec:authentication-manager>
 
 	<sec:http pattern="/" security="none" />
-	<sec:http pattern="/robots.txt" security="none" />
+	<sec:http pattern="/robots.txt" security="none" create-session="stateless" />
+	<sec:http pattern="/tomcatUp.json" security="none" create-session="stateless" />
 	<sec:http pattern="/home" security="none" />
 	<sec:http pattern="/error" security="none" />
 	<sec:http pattern="/not-found" security="none" />

@@ -1090,7 +1090,7 @@
                 <xs:element ref="orcid:subtitle" minOccurs="0"/>
             </xs:sequence>
         </xs:complexType>
-    </xs:element>
+    </xs:element>    
     <xs:element name="role-title">
         <xs:annotation>
             <xs:documentation>Text field for the individual's title.</xs:documentation>

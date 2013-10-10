@@ -394,7 +394,7 @@ public class RegistrationController extends BaseController {
         validateEmailAddress(reg.getEmail().getValue(), false, request, mbr);
 
         for (ObjectError oe : mbr.getAllErrors()) {
-            reg.getEmail().getErrors().add(getMessage(oe.getCode(), reg.getEmail().getValue()));
+            reg.getEmail().getErrors().add(getMessage(oe.getCode(), oe.getArguments()));
         }
 
         // validate confirm if already field out
@@ -414,16 +414,6 @@ public class RegistrationController extends BaseController {
         }
 
         return reg;
-    }
-
-    private static void copyErrors(ErrorsInterface from, ErrorsInterface into) {
-        for (String s : from.getErrors()) {
-            into.getErrors().add(s);
-        }
-    }
-
-    private void setError(ErrorsInterface ei, String msg) {
-        ei.getErrors().add(getMessage(msg));
     }
 
     @RequestMapping(value = "/register", method = RequestMethod.GET)

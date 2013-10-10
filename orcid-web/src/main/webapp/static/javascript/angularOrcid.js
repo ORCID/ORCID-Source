@@ -43,6 +43,13 @@ orcidNgModule.directive('ngModelOnblur', function() {
     };
 });
 
+orcidNgModule.factory("affiliationsSrvc", function () {
+	var serv = {
+			affiliations: new Array()
+	}; 
+	return serv;
+});
+
 orcidNgModule.factory("worksSrvc", function () {
 	var serv = {
 			works: new Array()
@@ -96,6 +103,30 @@ orcidNgModule.filter('urlWithHttp', function(){
 		if (input == null) return input;
 		if (!input.startsWith('http')) return 'http://' + input; 
 	    return input;
+	};
+});
+
+function emptyTextField(field) {
+	if (field != null 
+			&& field.value != null
+			&& field.value.trim() != '') return false;
+	return true;
+}
+
+function addComma(str) {
+	if (str.length > 0) return str + ', ';
+	return str;
+}
+
+orcidNgModule.filter('contributorFilter', function(){
+	return function(ctrb){
+		var out = '';
+		if (!emptyTextField(ctrb.contributorRole)) out = out + ctrb.contributorRole.value;
+		if (!emptyTextField(ctrb.contributorSequence)) out = addComma(out) + ctrb.contributorSequence.value; 
+		if (!emptyTextField(ctrb.orcid)) out = addComma(out) + ctrb.orcid.value; 
+		if (!emptyTextField(ctrb.email)) out = addComma(out) + ctrb.email.value;
+		if (out.length > 0) out = '(' + out + ')';
+	    return out;
 	};
 });
 
@@ -1079,10 +1110,266 @@ function WorkOverviewCtrl($scope, $compile, worksSrvc){
 	$scope.works = worksSrvc.works;
 }
 
+function AffiliationCtrl($scope, $compile, affiliationsSrvc){
+	
+	$scope.displayAffiliations = true;
+	$scope.affiliations = affiliationsSrvc.affiliations;
+	$scope.numOfAffiliationsToAdd = null;
+	
+	$scope.toggleDisplayAffiliations = function () {
+		$scope.displayAffiliations = !$scope.displayAffiliations;
+	};
+	
+	$scope.showAddModal = function(){;
+		$.colorbox({        	
+			html: $compile($('#add-affiliation-modal').html())($scope),
+			onComplete: function() {
+							$.colorbox.resize();
+							$("#affiliationName").typeahead({
+								name: 'affiliationName',
+								remote: {
+									url: $('body').data('baseurl')+'affiliations/disambiguated/%QUERY',
+								},
+								template: function (datum) {
+									var forDisplay = datum.value + ', ' + datum.city;
+									if(datum.region){
+										forDisplay += ", " + datum.region;
+									}
+									forDisplay += ", " + datum.countryForDisplay;
+									return forDisplay;
+								}
+							});
+							$("#affiliationName").bind("typeahead:selected", function(obj, datum) {        
+								$("input[name=city]").val(datum.city);
+								$("input[name=region]").val(datum.region);
+								$("select[name=country]").val(datum.country);
+								$scope.editAffiliation.city.value = datum.city;
+								$scope.editAffiliation.region.value = datum.region;
+								$scope.editAffiliation.country.value = datum.country;
+							});
+						}
+	    });
+	};
+
+	$scope.addAffiliationModal = function(){
+		$.ajax({
+			url: $('body').data('baseurl') + 'affiliations/affiliation.json',
+			dataType: 'json',
+			success: function(data) {
+				$scope.editAffiliation = data;
+				$scope.$apply(function() {
+					$scope.showAddModal();
+				});
+			}
+		}).fail(function() { 
+	    	console.log("Error fetching affiliation: " + value);
+	    });
+	};
+
+
+	$scope.addAffiliation = function(){
+		if ($scope.addingAffiliation) return; // don't process if adding affiliation
+		$scope.addingAffiliation = true;
+		$scope.editAffiliation.errors.length = 0;
+		$.ajax({
+			url: $('body').data('baseurl') + 'affiliations/affiliation.json',
+	        contentType: 'application/json;charset=UTF-8',
+	        dataType: 'json',
+	        type: 'POST',
+	        data:  angular.toJson($scope.editAffiliation),
+	        success: function(data) {
+	        	if (data.errors.length == 0){
+	        		$.colorbox.close(); 
+	        		$scope.addingAffiliation = false;
+	        		$scope.getAffiliations();
+	        	} else {
+		        	$scope.editAffiliation = data;
+		        	$scope.copyErrorsLeft($scope.editAffiliation, data);
+		        	$scope.addingAffiliation = false;
+		        	$scope.$apply();
+	        	}
+	        }
+		}).fail(function(){
+			// something bad is happening!
+			$scope.addingAffiliation = false;
+	    	console.log("error fetching affiliations");
+		});
+	};
+	
+	
+	$scope.addAffiliationToScope = function() {
+		if($scope.affiliationsToAddIds.length != 0 ) {
+			var affiliationIds = $scope.affiliationsToAddIds.splice(0,20).join();
+			$.ajax({
+				url: $('body').data('baseurl') + 'affiliations/affiliations.json?affiliationIds=' + affiliationIds,
+				dataType: 'json',
+				success: function(data) {
+					$scope.$apply(function(){ 
+						for (i in data)
+						$scope.affiliations.push(data[i]);
+					});
+					setTimeout(function () {$scope.addAffiliationToScope();},50);
+				}
+			}).fail(function() { 
+		    	console.log("Error fetching affiliation: " + value);
+		    });
+		}
+	}; 
+	
+
+	$scope.getAffiliations = function() {
+		//clear out current affiliations
+		$scope.affiliationsToAddIds = null;
+		$scope.numOfAffiliationsToAdd = null;
+		$scope.affiliations.length = 0;
+		//get affiliation ids
+		$.ajax({
+			url: $('body').data('baseurl') + 'affiliations/affiliationIds.json',	        
+	        dataType: 'json',
+	        success: function(data) {
+	        	$scope.affiliationsToAddIds = data;
+	        	$scope.numOfAffiliationsToAdd = data.length;
+	 
+	        	if (data.length > 0 ) $scope.addAffiliationToScope();
+	        	$scope.$apply();
+	        }
+		}).fail(function(){
+			// something bad is happening!
+	    	console.log("error fetching affiliations");
+		});
+	};
+	
+	//init
+	$scope.getAffiliations();
+	
+	$scope.deleteAffiliation = function(idx) {		
+		$scope.deleteIndex = idx;
+		$scope.fixedTitle = $scope.affiliations[idx].affiliationName.value;
+        var maxSize = 100;
+        if($scope.fixedTitle.length > maxSize)
+        	$scope.fixedTitle = $scope.fixedTitle.substring(0, maxSize) + '...';
+		$.colorbox({        	            
+            html : $compile($('#delete-affiliation-modal').html())($scope),
+            onComplete: function() {$.colorbox.resize();}
+        });
+	};
+	
+	$scope.deleteByIndex = function() {		
+		var affiliation = $scope.affiliations[$scope.deleteIndex];
+    	// remove affiliation on server
+		$scope.removeAffiliation(affiliation);
+		// remove the affiliation from the UI
+    	$scope.affiliations.splice($scope.deleteIndex, 1);
+    	$scope.numOfAffiliationsToAdd--; // keep this number matching
+    	// apply changes on scope
+		// close box
+		$.colorbox.close(); 
+	};
+	
+	$scope.closeModal = function() {
+		$.colorbox.close();
+	};
+	
+	$scope.removeAffiliation = function(affiliation) {
+		$.ajax({
+	        url: $('body').data('baseurl') + 'affiliations/affiliations.json',
+	        type: 'DELETE',
+	        data: angular.toJson(affiliation),
+	        contentType: 'application/json;charset=UTF-8',
+	        dataType: 'json',
+	        success: function(data) {	        	
+	        	if(data.errors.length != 0){
+	        		console.log("Unable to delete affiliation.");
+	        	} 
+	        }
+	    }).fail(function() { 
+	    	console.log("Error deleting affiliation.");
+	    });
+	};
+
+	$scope.setAddAffiliationPrivacy = function(priv, $event) {
+		$event.preventDefault();
+		$scope.editAffiliation.visibility.visibility = priv;
+	};
+
+	
+		
+	$scope.setPrivacy = function(idx, priv, $event) {
+		$event.preventDefault();
+		$scope.affiliations[idx].visibility.visibility = priv;
+		$scope.curPrivToggle = null;
+		$scope.updateProfileAffiliation(idx);
+	};
+	
+	$scope.serverValidate = function (relativePath) {
+		$.ajax({
+	        url: $('body').data('baseurl') + relativePath,
+	        type: 'POST',
+	        data:  angular.toJson($scope.editAffiliation),
+	        contentType: 'application/json;charset=UTF-8',
+	        dataType: 'json',
+	        success: function(data) {
+	        	$scope.copyErrorsLeft($scope.editAffiliation, data);
+	        	$scope.$apply();
+	        }
+	    }).fail(function() { 
+	    	// something bad is happening!
+	    	console.log("RegistrationCtrl.serverValidate() error");
+	    });
+	};
+	
+	// in the case of slow network connection
+	// we don't want to overwrite  values while
+	// user is typing
+	$scope.copyErrorsLeft = function (data1, data2) {
+		for (var key in data1) {
+			if (key == null) continue;
+			if (key == 'errors') {
+				data1.errors = data2.errors;
+			} else {
+				if (typeof(data1[key])=="object") {
+					$scope.copyErrorsLeft(data1[key], data2[key]);
+				}
+			};
+		};
+	};
+
+	$scope.isValidClass = function (cur) {
+		if (cur === undefined) return '';
+		var valid = true;
+		if (cur.required && (cur.value == null || cur.value.trim() == '')) valid = false;
+		if (cur.errors !== undefined && cur.errors.length > 0) valid = false;
+		return valid ? '' : 'text-error';
+	};
+
+	
+	$scope.updateProfileAffiliation = function(idx) {
+		var affiliation = $scope.affiliations[idx];
+		$.ajax({
+	        url: $('body').data('baseurl') + 'affiliations/affiliation.json',
+	        type: 'PUT',
+	        data: angular.toJson(affiliation),
+	        contentType: 'application/json;charset=UTF-8',
+	        dataType: 'json',
+	        success: function(data) {	        	
+	        	if(data.errors.length != 0){
+	        		console.log("Unable to update profile affiliation.");
+	        	} 
+	        }
+	    }).fail(function() { 
+	    	console.log("Error updating profile affiliation.");
+	    });
+	};
+	
+}
+
 function WorkCtrl($scope, $compile, worksSrvc){
 	$scope.displayWorks = true;
 	$scope.works = worksSrvc.works;
 	$scope.numOfWorksToAdd = null;
+	$scope.showBibtex = true;
+	$scope.bibtexCitations = {};
+	$scope.languages = null;
 	
 	$scope.toggleDisplayWorks = function () {
 		$scope.displayWorks = !$scope.displayWorks;
@@ -1090,31 +1377,16 @@ function WorkCtrl($scope, $compile, worksSrvc){
 	
 	$scope.showAddModal = function(){;
 	    $.colorbox({        	
-	        html: $compile($('#add-work-modal').html())($scope),
+	        html: $compile($('#add-work-modal').html())($scope),	        
+	        onLoad: function() {$('#cboxClose').remove();},
 	        onComplete: function() {$.colorbox.resize();}
 	    });
 	};
 
-	$scope.showDetailModal = function(idx){
-		$scope.detailWork = $scope.works[idx];
-		$scope.showBibtex = false;
-		if ($scope.detailWork.citation && $scope.detailWork.citation.citationType.value == 'bibtex') {
-			try {
-				$scope.detailWork.bibtexCitation = bibtexParse.toJSON($scope.detailWork.citation.citation.value);
-				console.log($scope.detailWork.bibtexCitation);
-				$scope.showBibtex = true;
-			} catch (err) {
-				console.log("couldn't parse bibtex: " + $scope.detailWork.citation.citation.value);
-			}
-		}
-	    $.colorbox({        	
-	        html: $compile($('#detail-work-modal').html())($scope),
-	        scrolling: true,
-	        onComplete: function() {
-	        	$.colorbox.resize();
-	        }
-	    });  
-    };
+	$scope.toggleTranslatedTitleModal = function(){;
+    	$('#translatedTitle').toggle();
+    	$.colorbox.resize();
+	};		
     
     $scope.bibtexShowToggle = function () {
     	$scope.showBibtex = !($scope.showBibtex);
@@ -1183,8 +1455,29 @@ function WorkCtrl($scope, $compile, worksSrvc){
 				dataType: 'json',
 				success: function(data) {
 					$scope.$apply(function(){ 
-						for (i in data)
-						$scope.works.push(data[i]);
+						for (i in data) {
+							var dw = data[i];
+							for (idx in data[i].contributors) {
+								if (dw.contributors[idx].contributorSequence == null
+									&& dw.contributors[idx].email == null
+									&& dw.contributors[idx].orcid == null
+									&& dw.contributors[idx].creditName == null
+									&& dw.contributors[idx].contributorRole == null
+									&& dw.contributors[idx].creditNameVisibility == null)
+									delete dw.contributors.splice(idx,1);
+							}
+
+							if (dw.citation && dw.citation.citationType.value == 'bibtex') {
+								try {
+									$scope.bibtexCitations[dw.putCode.value] = bibtexParse.toJSON(dw.citation.citation.value);
+								} catch (err) {
+									$scope.bibtexCitations[dw.putCode.value] = 'Error Parsing Bibtex';
+									console.log("couldn't parse bibtex: " + dw.citation.citation.value);
+								}
+							}
+							
+							$scope.works.push(dw);
+						}
 					});
 					setTimeout(function () {$scope.addWorkToScope();},50);
 				}
@@ -1217,13 +1510,88 @@ function WorkCtrl($scope, $compile, worksSrvc){
 		});
 	};
 	
+	$scope.getLanguages = function() {
+		$.ajax({
+			url: $('body').data('baseurl') + 'works/languages.json',	        
+	        dataType: 'json',
+	        success: function(data) {
+	        	$scope.languages = data;
+	        	console.log($scope.languages);
+	        }
+		}).fail(function(){
+			// something bad is happening!
+	    	console.log("error fetching languages");
+		});
+	};
+	
+	$scope.getCountries = function() {
+		$.ajax({
+			url: $('body').data('baseurl') + 'works/countries.json',	        
+	        dataType: 'json',
+	        success: function(data) {
+	        	$scope.countries = data;
+	        }
+		}).fail(function(){
+			// something bad is happening!
+	    	console.log("error fetching countries");
+		});
+	};
+	
+	$scope.renderTranslatedTitleInfo = function(workIdx) {
+		if($scope.languages == null)
+			$scope.getLanguages;
+		
+		var info = null; 
+		
+		if($scope.works[workIdx].workTitle != null && $scope.works[workIdx].workTitle.translatedTitle != null) {
+			info = $scope.works[workIdx].workTitle.translatedTitle.content;
+			if($scope.languages[$scope.works[workIdx].workTitle.translatedTitle.languageCode])
+				info += ' - ' + $scope.languages[$scope.works[workIdx].workTitle.translatedTitle.languageCode];		
+		}
+		
+		return info;
+	};
+	
+	$scope.renderLanguageName = function(workIdx){
+		if($scope.languages == null)
+			$scope.getLanguages();
+		
+		var language = null;
+		if($scope.works[workIdx].languageCode != null) {
+			language = $scope.languages[$scope.works[workIdx].languageCode.value];
+		}
+		
+		return language;
+	};
+	
+	$scope.renderCountryName = function(workIdx){
+		if($scope.countries == null)
+			$scope.getCountries();
+		
+		var country = null;
+		if($scope.works[workIdx].country != null){
+			country = $scope.countries[$scope.works[workIdx].country.value];
+		}
+		
+		return country;
+	};
+	
 	//init
 	$scope.getWorks();
+	$scope.getLanguages();
+	$scope.getCountries();
 	
-	$scope.deleteWork = function(idx) {		
-		$scope.deleteIndex = idx;
-		if ($scope.works[idx].workTitle && $scope.works[idx].workTitle.title) 
-			$scope.fixedTitle = $scope.works[idx].workTitle.title.value;
+	$scope.deleteWork = function(putCode) {
+		$scope.deletePutCode = putCode;
+		var work;
+		for (idx in $scope.works) {
+			if ($scope.works[idx].putCode.value == putCode) {
+				work = $scope.works[idx];
+				break;
+			}
+		}
+		if (work.workTitle && work.workTitle.title) 
+			$scope.fixedTitle = work.workTitle.title.value;
 		else $scope.fixedTitle = '';
         var maxSize = 100;
         if($scope.fixedTitle.length > maxSize)
@@ -1234,12 +1602,19 @@ function WorkCtrl($scope, $compile, worksSrvc){
         });
 	};
 	
-	$scope.deleteByIndex = function() {		
-		var work = $scope.works[$scope.deleteIndex];
-    	// remove work on server
+	$scope.deleteByPutCode = function() {		
+		var work;
+		var idx;
+		for (idx in $scope.works) {
+			if ($scope.works[idx].putCode.value == $scope.deletePutCode) {
+				work = $scope.works[idx];
+				break;
+			}
+		}
+		// remove work on server
 		$scope.removeWork(work);
 		// remove the work from the UI
-    	$scope.works.splice($scope.deleteIndex, 1);
+    	$scope.works.splice(idx, 1);
     	$scope.numOfWorksToAdd--; // keep this number matching
     	// apply changes on scope
 		// close box
@@ -1249,6 +1624,21 @@ function WorkCtrl($scope, $compile, worksSrvc){
 	$scope.closeModal = function() {
 		$.colorbox.close();
 	};
+	
+
+	$scope.openImportWizardUrl = function(url) {
+		var win = window.open(url, "_target"); 
+		setTimeout( function() {
+		    if(!win || win.outerHeight === 0) {
+		        //First Checking Condition Works For IE & Firefox
+		        //Second Checking Condition Works For Chrome
+		        window.location.href = url;
+		    } 
+		}, 25);
+		$.colorbox.close();
+		
+	};
+
 	
 	$scope.removeWork = function(work) {
 		$.ajax({
@@ -1274,11 +1664,16 @@ function WorkCtrl($scope, $compile, worksSrvc){
 
 	
 		
-	$scope.setPrivacy = function(idx, priv, $event) {
+	$scope.setPrivacy = function(putCode, priv, $event) {
 		$event.preventDefault();
+		var idx;
+		for (idx in $scope.works) {
+			if ($scope.works[idx].putCode.value == putCode)
+				break;
+		}
 		$scope.works[idx].visibility.visibility = priv;
 		$scope.curPrivToggle = null;
-		$scope.updateProfileWork(idx);
+		$scope.updateProfileWork(putCode);
 	};
 	
 	$scope.serverValidate = function (relativePath) {
@@ -1323,8 +1718,14 @@ function WorkCtrl($scope, $compile, worksSrvc){
 	};
 
 	
-	$scope.updateProfileWork = function(idx) {
-		var work = $scope.works[idx];
+	$scope.updateProfileWork = function(putCode) {
+		var work;
+		for (idx in $scope.works) {
+			if ($scope.works[idx].putCode.value == putCode) {
+				work = $scope.works[idx];
+				break;
+			}
+		}
 		$.ajax({
 	        url: $('body').data('baseurl') + 'works/profileWork.json',
 	        type: 'PUT',
@@ -1908,14 +2309,14 @@ function revokeApplicationFormCtrl($scope,$compile){
 		$scope.appIndex = appIndex;
 		$.colorbox({                      
 			html : $compile($('#confirm-revoke-access-modal').html())($scope),
-				transition: 'fade',
-	        	close: '',
-				onLoad: function() {
+			transition: 'fade',
+			close: '',
+			onLoad: function() {
 				$('#cboxClose').remove();
 			},
+			onComplete: function() {$.colorbox.resize();},
 			scrolling: true
 		});
-		$.colorbox.resize({width:"600px" , height:"165px"});
 	};
 	
 	$scope.revokeAccess = function(){

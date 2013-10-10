@@ -19,19 +19,19 @@ package org.orcid.frontend.web.controllers;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
 import java.util.TreeSet;
+import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.adapter.Jaxb2JpaAdapter;
 import org.orcid.core.adapter.Jpa2JaxbAdapter;
+import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.ExternalIdentifierManager;
 import org.orcid.core.manager.ProfileWorkManager;
 import org.orcid.core.manager.ThirdPartyImportManager;
@@ -39,37 +39,27 @@ import org.orcid.core.manager.WorkContributorManager;
 import org.orcid.core.manager.WorkExternalIdentifierManager;
 import org.orcid.core.manager.WorkManager;
 import org.orcid.core.utils.JsonUtils;
-import org.orcid.frontend.web.forms.CurrentWork;
-import org.orcid.frontend.web.util.NumberList;
-import org.orcid.frontend.web.util.YearsList;
-import org.orcid.jaxb.model.clientgroup.OrcidClient;
-import org.orcid.jaxb.model.clientgroup.RedirectUri;
+import org.orcid.frontend.web.util.LanguagesMap;
 import org.orcid.jaxb.model.message.CitationType;
 import org.orcid.jaxb.model.message.ContributorAttributes;
 import org.orcid.jaxb.model.message.ContributorRole;
-import org.orcid.jaxb.model.message.ExternalIdentifier;
-import org.orcid.jaxb.model.message.ExternalIdentifiers;
 import org.orcid.jaxb.model.message.OrcidActivities;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidWork;
 import org.orcid.jaxb.model.message.OrcidWorks;
 import org.orcid.jaxb.model.message.PublicationDate;
 import org.orcid.jaxb.model.message.SequenceType;
-import org.orcid.jaxb.model.message.SourceOrcid;
 import org.orcid.jaxb.model.message.WorkContributors;
-import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
-import org.orcid.jaxb.model.message.WorkType;
-import org.orcid.persistence.jpa.entities.FuzzyDate;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.orcid.persistence.jpa.entities.PublicationDateEntity;
 import org.orcid.persistence.jpa.entities.WorkContributorEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
-import org.orcid.pojo.ThirdPartyRedirect;
 import org.orcid.pojo.ajaxForm.Citation;
 import org.orcid.pojo.ajaxForm.Contributor;
 import org.orcid.pojo.ajaxForm.Date;
-import org.orcid.pojo.ajaxForm.ErrorsInterface;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Text;
+import org.orcid.pojo.ajaxForm.TranslatedTitle;
 import org.orcid.pojo.ajaxForm.Visibility;
 import org.orcid.pojo.ajaxForm.Work;
 import org.orcid.pojo.ajaxForm.WorkExternalIdentifier;
@@ -79,14 +69,11 @@ import org.orcid.utils.BibtexUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.multiaction.NoSuchRequestHandlingMethodException;
 
 /**
  * @author rcpeters
@@ -98,6 +85,8 @@ public class WorksController extends BaseWorkspaceController {
     private static final Logger LOGGER = LoggerFactory.getLogger(WorksController.class);
 
     private static final String WORKS_MAP = "WORKS_MAP";
+
+    private static final Pattern LANGUAGE_CODE = Pattern.compile("([a-zA-Z]{2})(_[a-zA-Z]{2}){0,2}");
 
     @Resource
     private ThirdPartyImportManager thirdPartyImportManager;
@@ -122,6 +111,9 @@ public class WorksController extends BaseWorkspaceController {
 
     @Resource
     private WorkExternalIdentifierManager workExternalIdentifierManager;
+
+    @Resource
+    private LocaleManager localeManager;
 
     /**
      * Removes a work from a profile
@@ -195,7 +187,16 @@ public class WorksController extends BaseWorkspaceController {
         wt.setTitle(wtt);
         Text wst = new Text();
         wt.setSubtitle(wst);
+        TranslatedTitle tt = new TranslatedTitle();
+        tt.setContent(new String());
+        tt.setLanguageCode(new String());
+        wt.setTranslatedTitle(tt);
         w.setWorkTitle(wt);
+
+        // work journal title
+        Text jt = new Text();
+        jt.setRequired(false);
+        w.setJournalTitle(jt);
 
         // set citation text and type
         Citation c = new Citation();
@@ -249,6 +250,13 @@ public class WorksController extends BaseWorkspaceController {
         Visibility v = Visibility.valueOf(profile.getOrcidInternal().getPreferences().getWorkVisibilityDefault().getValue());
         w.setVisibility(v);
 
+        // Language code
+        Text lc = new Text();
+        lc.setRequired(false);
+        w.setLanguageCode(lc);
+
+        w.setCountry(new Text());
+
         return w;
     }
 
@@ -263,18 +271,24 @@ public class WorksController extends BaseWorkspaceController {
         workCitationValidate(work);
         workWorkTitleTitleValidate(work);
         workWorkTitleSubtitleValidate(work);
+        workWorkTitleTranslatedTitleValidate(work);
         workdescriptionValidate(work);
         workWorkTypeValidate(work);
         workWorkExternalIdentifiersValidate(work);
         workUrlValidate(work);
+        workJournalTitleValidate(work);
+        workLanguageCodeValidate(work);
 
         copyErrors(work.getCitation().getCitation(), work);
         copyErrors(work.getCitation().getCitationType(), work);
         copyErrors(work.getWorkTitle().getTitle(), work);
+        copyErrors(work.getWorkTitle().getTranslatedTitle(), work);
         copyErrors(work.getShortDescription(), work);
         copyErrors(work.getWorkTitle().getSubtitle(), work);
         copyErrors(work.getWorkType(), work);
         copyErrors(work.getUrl(), work);
+        copyErrors(work.getJournalTitle(), work);
+
         for (Contributor c : work.getContributors()) {
             copyErrors(c.getContributorRole(), work);
             copyErrors(c.getContributorSequence(), work);
@@ -334,6 +348,32 @@ public class WorksController extends BaseWorkspaceController {
     }
 
     /**
+     * Returns a map containing the language code and name for each language
+     * supported.
+     * 
+     * @return A map of the form [language_code, language_name] containing all
+     *         supported languages
+     * */
+    @RequestMapping(value = "/languages.json", method = RequestMethod.GET)
+    public @ResponseBody
+    Map<String, String> getLanguageMap(HttpServletRequest request) {
+        return LanguagesMap.buildLanguageMap(localeManager.getLocale(), false);
+    }
+
+    /**
+     * Returns a map containing the iso country code and the name for each
+     * country.\
+     * 
+     * @return A map of the form [iso_code, country_name] containing all
+     *         existing countries.
+     * */
+    @RequestMapping(value = "/countries.json", method = RequestMethod.GET)
+    public @ResponseBody
+    Map<String, String> getCountriesMap(HttpServletRequest request) {
+        return retrieveIsoCountries();
+    }
+
+    /**
      * Gets an orcidWork and generates a workEntity
      * 
      * @param orcidWork
@@ -350,12 +390,26 @@ public class WorksController extends BaseWorkspaceController {
         workEntity.setPublicationDate(toFuzzyDate(orcidWork.getPublicationDate()));
         workEntity.setSubtitle(orcidWork.getWorkTitle().getSubtitle().getContent());
         workEntity.setTitle(orcidWork.getWorkTitle().getTitle().getContent());
+        workEntity.setJournalTitle(orcidWork.getJournalTitle() != null ? orcidWork.getJournalTitle().getContent() : null);
         workEntity.setWorkType(orcidWork.getWorkType());
         workEntity.setWorkUrl(orcidWork.getUrl().getValue());
+        workEntity.setLanguageCode(StringUtils.isEmpty(orcidWork.getLanguageCode()) ? null : orcidWork.getLanguageCode());
+
+        TranslatedTitle translatedTitle = TranslatedTitle.valueOf(orcidWork.getWorkTitle().getTranslatedTitle());
+
+        if (translatedTitle != null) {
+            workEntity.setTranslatedTitle(translatedTitle.getContent());
+            workEntity.setTranslatedTitleLanguageCode(translatedTitle.getLanguageCode());
+        }
+
         WorkContributors workContributors = orcidWork.getWorkContributors();
         if (workContributors != null) {
             workEntity.setContributorsJson(JsonUtils.convertToJsonString(workContributors));
         }
+
+        if (orcidWork.getCountry() != null)
+            workEntity.setIso2Country(orcidWork.getCountry().getValue());
+
         return workEntity;
     }
 
@@ -416,8 +470,8 @@ public class WorksController extends BaseWorkspaceController {
      * 
      * @return a fuzzy date
      * */
-    private FuzzyDate toFuzzyDate(PublicationDate publicationDate) {
-        FuzzyDate fuzzyDate = new FuzzyDate();
+    private PublicationDateEntity toFuzzyDate(PublicationDate publicationDate) {
+        PublicationDateEntity fuzzyDate = new PublicationDateEntity();
         String year = publicationDate.getYear() == null ? null : publicationDate.getYear().getValue();
         String month = publicationDate.getMonth() == null ? null : publicationDate.getMonth().getValue();
         String day = publicationDate.getDay() == null ? null : publicationDate.getDay().getValue();
@@ -454,12 +508,61 @@ public class WorksController extends BaseWorkspaceController {
         return work;
     }
 
+    @RequestMapping(value = "/work/workTitle/translatedTitleValidate.json", method = RequestMethod.POST)
+    public @ResponseBody
+    Work workWorkTitleTranslatedTitleValidate(@RequestBody Work work) {
+        work.getWorkTitle().getTranslatedTitle().setErrors(new ArrayList<String>());
+
+        if (work.getWorkTitle().getTranslatedTitle() != null) {
+
+            String content = work.getWorkTitle().getTranslatedTitle().getContent();
+            String code = work.getWorkTitle().getTranslatedTitle().getLanguageCode();
+
+            if (!StringUtils.isEmpty(content)) {
+                if (!StringUtils.isEmpty(code)) {
+                    if (!LANGUAGE_CODE.matcher(work.getWorkTitle().getTranslatedTitle().getLanguageCode()).matches()) {
+                        setError(work.getWorkTitle().getTranslatedTitle(), "manualWork.invalid_language_code");
+                    }
+                }
+                if (content.length() > 1000) {
+                    setError(work.getWorkTitle().getTranslatedTitle(), "manualWork.length_less_1000");
+                }
+            } else {
+                if (!StringUtils.isEmpty(code)) {
+                    setError(work.getWorkTitle().getTranslatedTitle(), "manualWork.empty_translation");
+                }
+            }
+        }
+        return work;
+    }
+
     @RequestMapping(value = "/work/urlValidate.json", method = RequestMethod.POST)
     public @ResponseBody
     Work workUrlValidate(@RequestBody Work work) {
         work.getUrl().setErrors(new ArrayList<String>());
         if (work.getUrl().getValue() != null && work.getUrl().getValue().length() > 350) {
             setError(work.getUrl(), "manualWork.length_less_350");
+        }
+        return work;
+    }
+
+    @RequestMapping(value = "/work/journalTitleValidate.json", method = RequestMethod.POST)
+    public @ResponseBody
+    Work workJournalTitleValidate(@RequestBody Work work) {
+        work.getJournalTitle().setErrors(new ArrayList<String>());
+        if (work.getJournalTitle().getValue() != null && work.getJournalTitle().getValue().length() > 1000) {
+            setError(work.getJournalTitle(), "manualWork.length_less_1000");
+        }
+        return work;
+    }
+
+    @RequestMapping(value = "/work/languageCodeValidate.json", method = RequestMethod.POST)
+    public @ResponseBody
+    Work workLanguageCodeValidate(@RequestBody Work work) {
+        work.getLanguageCode().setErrors(new ArrayList<String>());
+        if (work.getLanguageCode().getValue() != null) {
+            if (!LANGUAGE_CODE.matcher(work.getLanguageCode().getValue()).matches())
+                setError(work.getLanguageCode(), "manualWork.invalid_language_code");
         }
         return work;
     }
@@ -536,16 +639,6 @@ public class WorksController extends BaseWorkspaceController {
         }
 
         return work;
-    }
-
-    private static void copyErrors(ErrorsInterface from, ErrorsInterface into) {
-        for (String s : from.getErrors()) {
-            into.getErrors().add(s);
-        }
-    }
-
-    private void setError(ErrorsInterface ei, String msg) {
-        ei.getErrors().add(getMessage(msg));
     }
 
     /**

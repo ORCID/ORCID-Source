@@ -208,6 +208,7 @@ the software.
                         	<exclude>**/src/main/webapp/static/javascript/jquery/**</exclude>
                         	<exclude>**/src/main/webapp/static/javascript/jqueryui/**</exclude>
                         	<exclude>**/src/main/webapp/static/javascript/angularjs/**</exclude>
+                        	<exclude>**/src/main/webapp/static/javascript/typeahead/**</exclude>
                         	<exclude>**/src/main/webapp/static/css/jquery-*.css</exclude>
                         	<exclude>**/src/main/webapp/static/css/bootstrap*</exclude>
                         	<exclude>**/src/main/webapp/static/twitter-bootstrap/**</exclude>
@@ -323,7 +324,7 @@ the software.
                 <plugin>
 					<groupId>org.zeroturnaround</groupId>
 					<artifactId>jrebel-maven-plugin</artifactId>
-					<version>1.1.3</version>
+					<version>1.1.5</version>
 					<executions>
 						<execution>
 							<id>generate-rebel-xml</id>

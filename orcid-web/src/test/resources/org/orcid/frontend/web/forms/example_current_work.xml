@@ -3,7 +3,9 @@
     <work-title>
         <title>Neanderthal Man</title>
         <subtitle>Being oldfashioned</subtitle>
+        <translated-title language-code="es_CR">El hombre neandertal</translated-title>
     </work-title>
+    <journal-title>Neanderthal Man - The journal title</journal-title>
     <short-description>A book about neanderthal men</short-description>
     <work-citation>
         <work-citation-type>formatted-unspecified</work-citation-type>
@@ -33,4 +35,6 @@
             </contributor-attributes>
         </contributor>
     </work-contributors>
+    <language-code>en_US</language-code>
+    <country>US</country>
 </orcid-work>

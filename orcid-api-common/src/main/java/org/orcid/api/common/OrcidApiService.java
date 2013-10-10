@@ -178,6 +178,47 @@ public interface OrcidApiService<T> {
     T viewFullDetailsJson(@PathParam("orcid") String orcid);
 
     /**
+     * GETs the HTML representation of the ORCID record containing only affiliations
+     * details
+     * 
+     * @param orcid
+     *            the ORCID that corresponds to the user's record
+     * @return the HTML representation of the ORCID record
+     */
+    @GET
+    @Produces(value = { MediaType.TEXT_HTML })
+    @Path(AFFILIATIONS_PATH)
+    T viewAffiliationsDetailsHtml(@PathParam("orcid") String orcid);
+
+    /**
+     * GETs the XML representation of the ORCID record containing only affiliations
+     * details
+     * 
+     * @param orcid
+     *            the ORCID that corresponds to the user's record
+     * @return the XML representation of the ORCID record
+     */
+    @GET
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
+    @Path(AFFILIATIONS_PATH)
+    T viewAffiliationsDetailsXml(@PathParam("orcid") String orcid);
+
+    /**
+     * GETs the JSON representation of the ORCID record containing only affiliations
+     * details
+     * 
+     * @param orcid
+     *            the ORCID that corresponds to the user's record
+     * @return the JSON representation of the ORCID record
+     */
+    @GET
+    @Produces(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(AFFILIATIONS_PATH)
+    T viewAffiliationsDetailsJson(@PathParam("orcid") String orcid);
+
+    
+    
+    /**
      * GETs the HTML representation of the ORCID record containing only work
      * details
      * 

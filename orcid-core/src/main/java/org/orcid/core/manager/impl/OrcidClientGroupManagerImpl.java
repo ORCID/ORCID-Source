@@ -603,8 +603,8 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
 
     private Set<String> updaterScopes() {
         return new HashSet<>(ScopePathType.getScopesAsStrings(ScopePathType.AUTHENTICATE, ScopePathType.ORCID_BIO_READ_LIMITED, ScopePathType.ORCID_WORKS_READ_LIMITED,
-                ScopePathType.ORCID_PROFILE_READ_LIMITED, ScopePathType.ORCID_WORKS_UPDATE, ScopePathType.ORCID_BIO_EXTERNAL_IDENTIFIERS_CREATE,
-                ScopePathType.ORCID_BIO_UPDATE, ScopePathType.ORCID_WORKS_CREATE));
+                ScopePathType.ORCID_PROFILE_READ_LIMITED, ScopePathType.ORCID_WORKS_UPDATE, ScopePathType.AFFILIATIONS_UPDATE,
+                ScopePathType.ORCID_BIO_EXTERNAL_IDENTIFIERS_CREATE, ScopePathType.ORCID_BIO_UPDATE, ScopePathType.ORCID_WORKS_CREATE, ScopePathType.AFFILIATIONS_CREATE));
     }
 
     /**

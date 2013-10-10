@@ -24,8 +24,8 @@ public class FuzzyDateTest {
 
     @Test
     public void testFuzzyDateComparison() {
-        FuzzyDate one = new FuzzyDate();
-        FuzzyDate two = null;
+        PublicationDateEntity one = new PublicationDateEntity();
+        PublicationDateEntity two = null;
         //Test compare with null
         try {
             one.compareTo(two);
@@ -38,7 +38,7 @@ public class FuzzyDateTest {
         assertEquals(one.compareTo(one), 0);
 
         //Compare empty objects
-        two = new FuzzyDate();
+        two = new PublicationDateEntity();
         assertEquals(one.compareTo(two), 0);
         assertEquals(two.compareTo(one), 0);
 

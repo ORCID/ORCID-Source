@@ -1003,13 +1003,18 @@ select,textarea,input[type="text"],input[type="password"],input[type="datetime"]
 /*
     bold fonts
 */
+
 h1,h2,h3,h4,h5,h6,b,strong,.table th,.close,.nav-header,.label,.badge,.header .search form input[type="search"],.header .main>.menu>li>a,.btn-update,.btn-update:visited,.overview-count,.overview-count:visited,.overview-title,.workspace-accordion-header a,.workspace-accordion-header a:visited,.workspace-accordion-header a:hover,.workspace-header-public,.workspace-help a,.full-name,.tabs a,.tabs a:visited
 	{
 	font-family: 'Gill Sans W01 Bold', 'Gill Sans', sans-serif;
 	font-weight: normal !important;
 }
 
-.primaryEmail {
+.bottomBuffer {
+	margin-bottom: 1em;
+}
+
+.primaryEmail{
 	font-weight: bold;
 }
 
@@ -1989,6 +1994,20 @@ a:hover {
 	overflow: hidden;
 }
 
+.popover-work-container {
+	display: none;
+	position: absolute; 
+	left: -514px; 
+	top: 17px;
+	width: 686px !important;
+	max-width: 686px !important;
+	background-color: #ffffff;
+}
+
+.show-work-info:hover .popover-work-container {
+	display: inline;
+}
+
 .popover-iframe {
 	border: 0;
 	width: 452px;
@@ -2612,6 +2631,55 @@ ul.personal-inf-display{
 ul.personal-inf-display li{
 	display: inline;
 }
+
+.twitter-typeahead .tt-query,
+.twitter-typeahead .tt-hint {
+  margin-bottom: 0;
+}
+
+.tt-dropdown-menu {
+  min-width: 160px;
+  margin-top: 2px;
+  padding: 5px 0;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border: 1px solid rgba(0,0,0,.2);
+  *border-right-width: 2px;
+  *border-bottom-width: 2px;
+  -webkit-border-radius: 6px;
+     -moz-border-radius: 6px;
+          border-radius: 6px;
+  -webkit-box-shadow: 0 5px 10px rgba(0,0,0,.2);
+     -moz-box-shadow: 0 5px 10px rgba(0,0,0,.2);
+          box-shadow: 0 5px 10px rgba(0,0,0,.2);
+  -webkit-background-clip: padding-box;
+     -moz-background-clip: padding;
+          background-clip: padding-box;
+}
+
+.tt-suggestion {
+  display: block;
+  padding: 3px 20px;
+}
+
+.tt-suggestion.tt-is-under-cursor {
+  color: #fff;
+  background-color: #0081c2;
+  background-image: -moz-linear-gradient(top, #0088cc, #0077b3);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#0088cc), to(#0077b3));
+  background-image: -webkit-linear-gradient(top, #0088cc, #0077b3);
+  background-image: -o-linear-gradient(top, #0088cc, #0077b3);
+  background-image: linear-gradient(to bottom, #0088cc, #0077b3);
+  background-repeat: repeat-x;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff0088cc', endColorstr='#ff0077b3', GradientType=0)
+}
+
+.tt-suggestion.tt-is-under-cursor a {
+  color: #fff;
+}
+
+.tt-suggestion p {
+  margin: 0;
 
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */

@@ -23,11 +23,11 @@ import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
 
+import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.cli.ValidateOrcidMessage;
 import org.orcid.core.exception.OrcidValidationException;
 import org.orcid.core.manager.ValidationBehaviour;
 import org.orcid.core.manager.ValidationManager;
-import org.orcid.core.security.DeprecatedException;
 import org.orcid.jaxb.model.message.Citation;
 import org.orcid.jaxb.model.message.CitationType;
 import org.orcid.jaxb.model.message.ContactDetails;
@@ -38,6 +38,7 @@ import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidWork;
 import org.orcid.jaxb.model.message.OrcidWorks;
+import org.orcid.jaxb.model.message.WorkTitle;
 import org.orcid.utils.BibtexException;
 import org.orcid.utils.BibtexUtils;
 import org.slf4j.Logger;
@@ -58,11 +59,13 @@ public class ValidationManagerImpl implements ValidationManager {
     private boolean requireOrcidProfile;
 
     private boolean validateBibtex = true;
+    
+    private boolean validateTitle = false;
 
     private Schema schema;
 
     private static final Logger LOG = LoggerFactory.getLogger(ValidationManagerImpl.class);
-
+    
     @Override
     public void setValidationBehaviour(ValidationBehaviour validationBehaviour) {
         this.validationBehaviour = validationBehaviour;
@@ -78,6 +81,10 @@ public class ValidationManagerImpl implements ValidationManager {
 
     public void setValidateBibtex(boolean validateBibtex) {
         this.validateBibtex = validateBibtex;
+    }
+    
+    public void setValidateTitle(boolean validateTitle) {
+        this.validateTitle = validateTitle;
     }
 
     @Override
@@ -167,6 +174,13 @@ public class ValidationManagerImpl implements ValidationManager {
                 } catch (BibtexException e) {
                     throw new OrcidValidationException("Invalid BibTeX citation: " + workCitation.getCitation() + "\n", e);
                 }
+            }
+        }
+        
+        if(validateTitle){
+            WorkTitle title = orcidWork.getWorkTitle();
+            if(title == null || title.getTitle() == null || StringUtils.isEmpty(title.getTitle().getContent())){
+                throw new OrcidValidationException("Invalid Title: title cannot be null nor emtpy");
             }
         }
     }

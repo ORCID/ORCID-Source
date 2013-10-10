@@ -42,13 +42,21 @@ import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.orcid.api.t2.T2OAuthAPIService;
+import org.orcid.jaxb.model.message.Affiliation;
+import org.orcid.jaxb.model.message.AffiliationAddress;
+import org.orcid.jaxb.model.message.AffiliationCity;
+import org.orcid.jaxb.model.message.AffiliationCountry;
+import org.orcid.jaxb.model.message.Affiliations;
+import org.orcid.jaxb.model.message.Country;
 import org.orcid.jaxb.model.message.ExternalIdentifiers;
+import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.jaxb.model.message.OrcidActivities;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidWork;
 import org.orcid.jaxb.model.message.OrcidWorks;
 import org.orcid.jaxb.model.message.Title;
+import org.orcid.jaxb.model.message.TranslatedTitle;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.message.WorkTitle;
 import org.orcid.persistence.dao.ClientRedirectDao;
@@ -169,6 +177,98 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
         workTitle.setTitle(new Title("Work added by integration test"));
 
         ClientResponse clientResponse = oauthT2Client.addWorksJson("4444-4444-4444-4442", orcidMessage, accessToken);
+        assertEquals(201, clientResponse.getStatus());
+    }
+
+    @Test
+    public void testAddWorkV22() throws InterruptedException, JSONException {
+        String scopes = "/orcid-works/create";
+        String authorizationCode = obtainAuthorizationCode(scopes);
+        String accessToken = obtainAccessToken(authorizationCode, scopes);
+
+        OrcidMessage orcidMessage = new OrcidMessage();
+        orcidMessage.setMessageVersion(OrcidMessage.DEFAULT_VERSION);
+        OrcidProfile orcidProfile = new OrcidProfile();
+        orcidMessage.setOrcidProfile(orcidProfile);
+        OrcidActivities orcidActivities = new OrcidActivities();
+        orcidProfile.setOrcidActivities(orcidActivities);
+        OrcidWorks orcidWorks = new OrcidWorks();
+        orcidActivities.setOrcidWorks(orcidWorks);
+        OrcidWork orcidWork = new OrcidWork();
+        orcidWorks.getOrcidWork().add(orcidWork);
+        WorkTitle workTitle = new WorkTitle();
+        workTitle.setTitle(new Title("Work added by integration test - Version 22"));
+        TranslatedTitle translatedTitle = new TranslatedTitle();
+        translatedTitle.setContent("Trabajo añadido por una prueba de integración");
+        translatedTitle.setLanguageCode("es_CR");
+        workTitle.setTranslatedTitle(translatedTitle);
+
+        orcidWork.setWorkTitle(workTitle);
+        orcidWork.setJournalTitle(new Title("Journal Title"));
+        orcidWork.setLanguageCode("en_US");
+        orcidWork.setCountry(new Country(Iso3166Country.US));
+
+        Country country = new Country(Iso3166Country.US);
+        orcidWork.setCountry(country);
+
+        ClientResponse clientResponse = oauthT2Client.addWorksJson("4444-4444-4444-4442", orcidMessage, accessToken);
+        assertEquals(201, clientResponse.getStatus());
+    }
+    
+    @Test
+    public void testAddWorkWithEmptyTitle() throws InterruptedException, JSONException {
+        String scopes = "/orcid-works/create";
+        String authorizationCode = obtainAuthorizationCode(scopes);
+        String accessToken = obtainAccessToken(authorizationCode, scopes);
+        
+        OrcidMessage orcidMessage = new OrcidMessage();
+        orcidMessage.setMessageVersion(OrcidMessage.DEFAULT_VERSION);
+        OrcidProfile orcidProfile = new OrcidProfile();
+        orcidMessage.setOrcidProfile(orcidProfile);
+        OrcidActivities orcidActivities = new OrcidActivities();
+        orcidProfile.setOrcidActivities(orcidActivities);
+        OrcidWorks orcidWorks = new OrcidWorks();
+        orcidActivities.setOrcidWorks(orcidWorks);
+        OrcidWork orcidWork = new OrcidWork();
+        
+        orcidWorks.getOrcidWork().add(orcidWork);
+        WorkTitle workTitle = new WorkTitle();
+        workTitle.setTitle(new Title(""));
+        
+        orcidWork.setWorkTitle(workTitle);
+        
+        ClientResponse clientResponse = oauthT2Client.addWorksJson("4444-4444-4444-4442", orcidMessage, accessToken);
+        assertEquals(400, clientResponse.getStatus());
+        OrcidMessage errorMessage = clientResponse.getEntity(OrcidMessage.class);
+        assertNotNull(errorMessage);
+        assertNotNull(errorMessage.getErrorDesc());
+        assertEquals("Invalid incoming message: org.orcid.core.exception.OrcidValidationException: Invalid Title: title cannot be null nor emtpy", errorMessage.getErrorDesc().getContent());                        
+    }
+    
+
+    @Test
+    public void testAddAffiliation() throws InterruptedException, JSONException {
+        String scopes = "/affiliations/create";
+        String authorizationCode = obtainAuthorizationCode(scopes);
+        String accessToken = obtainAccessToken(authorizationCode, scopes);
+
+        OrcidMessage orcidMessage = new OrcidMessage();
+        orcidMessage.setMessageVersion(OrcidMessage.DEFAULT_VERSION);
+        OrcidProfile orcidProfile = new OrcidProfile();
+        orcidMessage.setOrcidProfile(orcidProfile);
+        OrcidActivities orcidActivities = new OrcidActivities();
+        orcidProfile.setOrcidActivities(orcidActivities);
+        Affiliations affiliations = new Affiliations();
+        orcidActivities.setAffiliations(affiliations);
+        Affiliation affiliation = new Affiliation();
+        affiliations.getAffiliation().add(affiliation);
+        affiliation.setAffiliationName("Affiliation added by integration test");
+        AffiliationAddress affiliationAddress = new AffiliationAddress();
+        affiliation.setAffiliationAddress(affiliationAddress);
+        affiliationAddress.setAffiliationCity(new AffiliationCity("Edinburgh"));
+        affiliationAddress.setAffiliationCountry(new AffiliationCountry(Iso3166Country.GB));
+
+        ClientResponse clientResponse = oauthT2Client.addAffiliationsXml("4444-4444-4444-4442", orcidMessage, accessToken);
         assertEquals(201, clientResponse.getStatus());
     }
 

@@ -89,7 +89,7 @@ public class T2OrcidApiClientImpl implements T2OrcidApiService<ClientResponse> {
     }
 
     /**
-     * POST an XML representation of the ORCID work containing only works
+     * POST an XML representation of the ORCID record containing only works
      * details
      * 
      * @param orcid
@@ -103,7 +103,7 @@ public class T2OrcidApiClientImpl implements T2OrcidApiService<ClientResponse> {
     }
 
     /**
-     * POST a JSON representation of the ORCID work containing only works
+     * POST a JSON representation of the ORCID record containing only works
      * details
      * 
      * @param orcid
@@ -117,7 +117,8 @@ public class T2OrcidApiClientImpl implements T2OrcidApiService<ClientResponse> {
     }
 
     /**
-     * PUT an XML representation of the ORCID work containing only works details
+     * PUT an XML representation of the ORCID record containing only works
+     * details
      * 
      * @param orcid
      *            the ORCID that corresponds to the user's record
@@ -130,7 +131,8 @@ public class T2OrcidApiClientImpl implements T2OrcidApiService<ClientResponse> {
     }
 
     /**
-     * PUT a JSON representation of the ORCID work containing only works details
+     * PUT a JSON representation of the ORCID record containing only works
+     * details
      * 
      * @param orcid
      *            the ORCID that corresponds to the user's record
@@ -140,6 +142,62 @@ public class T2OrcidApiClientImpl implements T2OrcidApiService<ClientResponse> {
     @Override
     public ClientResponse updateWorksJson(@PathParam("orcid") String orcid, OrcidMessage orcidMessage) {
         return putClientResponse(UriBuilder.fromPath(WORKS_PATH).build(orcid), VND_ORCID_JSON, orcidMessage);
+    }
+
+    /**
+     * POST an XML representation of the ORCID record containing only
+     * affiliations details
+     * 
+     * @param orcid
+     *            the ORCID that corresponds to the user's record
+     * @return the XML representation of the ORCID record including the added
+     *         affiliation(s)
+     */
+    @Override
+    public ClientResponse addAffiliationsXml(@PathParam("orcid") String orcid, OrcidMessage orcidMessage) {
+        return postClientResponse(UriBuilder.fromPath(AFFILIATIONS_PATH).build(orcid), VND_ORCID_XML, orcidMessage);
+    }
+
+    /**
+     * POST a JSON representation of the ORCID record containing only
+     * affiliations details
+     * 
+     * @param orcid
+     *            the ORCID that corresponds to the user's record
+     * @return the JSON representation of the ORCID record including the added
+     *         affiliation(s)
+     */
+    @Override
+    public ClientResponse addAffiliationsJson(@PathParam("orcid") String orcid, OrcidMessage orcidMessage) {
+        return postClientResponse(UriBuilder.fromPath(AFFILIATIONS_PATH).build(orcid), VND_ORCID_JSON, orcidMessage);
+    }
+
+    /**
+     * PUT an XML representation of the ORCID record containing only
+     * affiliations details
+     * 
+     * @param orcid
+     *            the ORCID that corresponds to the user's record
+     * @return the XML representation of the ORCID record including the added
+     *         affiliation(s)
+     */
+    @Override
+    public ClientResponse updateAffiliationsXml(@PathParam("orcid") String orcid, OrcidMessage orcidMessage) {
+        return putClientResponse(UriBuilder.fromPath(AFFILIATIONS_PATH).build(orcid), VND_ORCID_XML, orcidMessage);
+    }
+
+    /**
+     * PUT a JSON representation of the ORCID record containing only
+     * affiliations details
+     * 
+     * @param orcid
+     *            the ORCID that corresponds to the user's record
+     * @return the JSON representation of the ORCID record including the added
+     *         affiliation(s)
+     */
+    @Override
+    public ClientResponse updateAffiliationsJson(@PathParam("orcid") String orcid, OrcidMessage orcidMessage) {
+        return putClientResponse(UriBuilder.fromPath(AFFILIATIONS_PATH).build(orcid), VND_ORCID_JSON, orcidMessage);
     }
 
     /**
@@ -263,8 +321,8 @@ public class T2OrcidApiClientImpl implements T2OrcidApiService<ClientResponse> {
     }
 
     /**
-     * GETs the RDF Turtle representation of the ORCID record containing only the
-     * Biography details
+     * GETs the RDF Turtle representation of the ORCID record containing only
+     * the Biography details
      * 
      * @param orcid
      *            the ORCID that corresponds to the user's record
@@ -350,6 +408,46 @@ public class T2OrcidApiClientImpl implements T2OrcidApiService<ClientResponse> {
     }
 
     /**
+     * GETs the HTML representation of the ORCID record containing only affiliation
+     * details
+     * 
+     * @param orcid
+     *            the ORCID that corresponds to the user's record
+     * @return the HTML representation of the ORCID record
+     */
+    @Override
+    public ClientResponse viewAffiliationsDetailsHtml(@PathParam("orcid") String orcid) {
+        return orcidClientHelper.getClientResponse(UriBuilder.fromPath(AFFILIATIONS_PATH).build(orcid), MediaType.TEXT_HTML);
+    }
+
+    /**
+     * GETs the XML representation of the ORCID record containing only affiliation
+     * details
+     * 
+     * @param orcid
+     *            the ORCID that corresponds to the user's record
+     * @return the XML representation of the ORCID record
+     */
+    @Override
+    public ClientResponse viewAffiliationsDetailsXml(@PathParam("orcid") String orcid) {
+        return orcidClientHelper.getClientResponse(UriBuilder.fromPath(AFFILIATIONS_PATH).build(orcid), VND_ORCID_XML);
+    }
+
+    /**
+     * GETs the JSON representation of the ORCID record containing only affiliation
+     * details
+     * 
+     * @param orcid
+     *            the ORCID that corresponds to the user's record
+     * @return the JSON representation of the ORCID record
+     */
+    @Override
+    public ClientResponse viewAffiliationsDetailsJson(@PathParam("orcid") String orcid) {
+        return orcidClientHelper.getClientResponse(UriBuilder.fromPath(AFFILIATIONS_PATH).build(orcid), VND_ORCID_JSON);
+    }
+
+    
+    /**
      * GETs the HTML representation of the ORCID record containing only work
      * details
      * 
@@ -405,7 +503,7 @@ public class T2OrcidApiClientImpl implements T2OrcidApiService<ClientResponse> {
     }
 
     /**
-     * TODO 
+     * TODO
      * */
     @Override
     public ClientResponse registerWebhookXML(@PathParam("orcid") String orcid, @PathParam("webhook_uri") String webhook_uri) {
@@ -413,7 +511,7 @@ public class T2OrcidApiClientImpl implements T2OrcidApiService<ClientResponse> {
     }
 
     /**
-     * TODO 
+     * TODO
      * */
     @Override
     public ClientResponse registerWebhookJson(@PathParam("orcid") String orcid, @PathParam("webhook_uri") String webhook_uri) {
@@ -421,7 +519,7 @@ public class T2OrcidApiClientImpl implements T2OrcidApiService<ClientResponse> {
     }
 
     /**
-     * TODO 
+     * TODO
      * */
     @Override
     public ClientResponse unregisterWebhookXML(@PathParam("orcid") String orcid, @PathParam("webhook_uri") String webhook_uri) {
@@ -429,7 +527,7 @@ public class T2OrcidApiClientImpl implements T2OrcidApiService<ClientResponse> {
     }
 
     /**
-     * TODO 
+     * TODO
      * */
     @Override
     public ClientResponse unregisterWebhookJson(@PathParam("orcid") String orcid, @PathParam("webhook_uri") String webhook_uri) {

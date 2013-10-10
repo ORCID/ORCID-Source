@@ -35,6 +35,7 @@ import org.orcid.jaxb.model.message.CreditName;
 import org.orcid.jaxb.model.message.ExternalIdentifiers;
 import org.orcid.jaxb.model.message.FamilyName;
 import org.orcid.jaxb.model.message.GivenNames;
+import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.jaxb.model.message.Keyword;
 import org.orcid.jaxb.model.message.Keywords;
 import org.orcid.jaxb.model.message.OrcidBio;
@@ -88,8 +89,10 @@ public class ChangePersonalInfoForm {
         setKeywordsDelimited(buildKeywordsAsDelimitedString(orcidProfile.getOrcidBio().getKeywords()));
         setKeywordsVisibility(orcidProfile.getOrcidBio().getKeywords().getVisibility().value());
         setBiography(orcidProfile.getOrcidBio().getBiography().getContent());
-        setIsoCountryCode(orcidProfile.getOrcidBio().getContactDetails().getAddress().getCountry().getContent());
-        setIsoCountryVisibility(orcidProfile.getOrcidBio().getContactDetails().getAddress().getCountry().getVisibility().value());
+        Country country = orcidProfile.getOrcidBio().getContactDetails().getAddress().getCountry();
+        Iso3166Country isoCountry = country.getValue();
+        setIsoCountryCode(isoCountry != null ? isoCountry.name() : null);
+        setIsoCountryVisibility(country.getVisibility().value());
         setSavedResearcherUrls(orcidProfile.getOrcidBio().getResearcherUrls());
         setWebsiteUrlVisibility(orcidProfile.getOrcidBio().getResearcherUrls().getVisibility().value());
     }
@@ -333,7 +336,8 @@ public class ChangePersonalInfoForm {
         orcidProfile.getOrcidBio().getPersonalDetails().getOtherNames().setVisibility(Visibility.fromValue(otherNamesVisibility));
         orcidProfile.getOrcidBio().setKeywords(buildKeywordsFromDelimitedString(keywordsDelimited));
         orcidProfile.getOrcidBio().getKeywords().setVisibility(Visibility.fromValue(keywordsVisibility));
-        orcidProfile.getOrcidBio().getContactDetails().getAddress().getCountry().setContent(StringUtils.isBlank(isoCountryCode) ? null : isoCountryCode);
+        orcidProfile.getOrcidBio().getContactDetails().getAddress().getCountry()
+                .setValue(StringUtils.isBlank(isoCountryCode) ? null : Iso3166Country.valueOf(isoCountryCode));
         orcidProfile.getOrcidBio().getContactDetails().getAddress().getCountry().setVisibility(Visibility.fromValue(isoCountryVisibility));
         orcidProfile.getOrcidBio().getBiography().setContent(biography);
         orcidProfile.getOrcidBio().setResearcherUrls(getUpToDateResearcherUrls());

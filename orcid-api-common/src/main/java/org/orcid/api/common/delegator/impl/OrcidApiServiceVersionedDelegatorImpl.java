@@ -94,6 +94,18 @@ public class OrcidApiServiceVersionedDelegatorImpl implements OrcidApiServiceDel
     }
 
     @Override
+    public Response findAffiliationsDetails(String orcid) {
+        Response response = orcidApiServiceDelegator.findAffiliationsDetails(orcid);
+        return downgradeAndValidateResponse(response);
+    }
+
+    @Override
+    public Response findAffiliationsDetailsFromPublicCache(String orcid) {
+        Response response = orcidApiServiceDelegator.findFullDetailsFromPublicCache(orcid);
+        return downgradeAndValidateResponse(response);
+    }
+
+    @Override
     public Response findWorksDetails(String orcid) {
         Response response = orcidApiServiceDelegator.findWorksDetails(orcid);
         return downgradeAndValidateResponse(response);

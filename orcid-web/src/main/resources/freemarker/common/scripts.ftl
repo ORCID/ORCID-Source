@@ -30,6 +30,8 @@ if (typeof jQuery.ui == 'undefined') {
 }
 </script>
 
+<script type="text/javascript" src="${staticCdn}/javascript/typeahead/0.9.3/typeahead.min.js"></script>
+
 <script type="text/javascript" src="${staticCdn}/javascript/plugins.js?v=${ver}"></script>
 
 <script type="text/javascript" src="${staticCdn}/javascript/orcid.js?v=${ver}"></script>

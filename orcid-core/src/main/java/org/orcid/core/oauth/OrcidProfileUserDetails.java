@@ -92,35 +92,35 @@ public class OrcidProfileUserDetails implements UserDetails {
         if(orcidType == null) 
             result = Arrays.asList(OrcidWebRole.ROLE_USER);
         else if(orcidType == OrcidType.ADMIN)
-            result = Arrays.asList(OrcidWebRole.ROLE_ADMIN);
+            result = Arrays.asList(OrcidWebRole.ROLE_ADMIN, OrcidWebRole.ROLE_USER);
         else if(orcidType.equals(OrcidType.GROUP)){
             switch(groupType){
             case BASIC:  
-                result = Arrays.asList(OrcidWebRole.ROLE_BASIC);
+                result = Arrays.asList(OrcidWebRole.ROLE_BASIC, OrcidWebRole.ROLE_USER);
                 break;
             case PREMIUM:
-                result = Arrays.asList(OrcidWebRole.ROLE_PREMIUM);
+                result = Arrays.asList(OrcidWebRole.ROLE_PREMIUM, OrcidWebRole.ROLE_USER);
                 break;
             case BASIC_INSTITUTION:
-                result = Arrays.asList(OrcidWebRole.ROLE_BASIC_INSTITUTION);
+                result = Arrays.asList(OrcidWebRole.ROLE_BASIC_INSTITUTION, OrcidWebRole.ROLE_USER);
                 break;
             case PREMIUM_INSTITUTION:
-                result = Arrays.asList(OrcidWebRole.ROLE_PREMIUM_INSTITUTION);
+                result = Arrays.asList(OrcidWebRole.ROLE_PREMIUM_INSTITUTION, OrcidWebRole.ROLE_USER);
                 break;
             }
         } else if(orcidType.equals(OrcidType.CLIENT)){
             switch(clientType){
             case CREATOR:
-                result = Arrays.asList(OrcidWebRole.ROLE_CREATOR);
+                result = Arrays.asList(OrcidWebRole.ROLE_CREATOR, OrcidWebRole.ROLE_USER);
                 break;
             case UPDATER:
-                result = Arrays.asList(OrcidWebRole.ROLE_UPDATER);
+                result = Arrays.asList(OrcidWebRole.ROLE_UPDATER, OrcidWebRole.ROLE_USER);
                 break;
             case PREMIUM_CREATOR:
-                result = Arrays.asList(OrcidWebRole.ROLE_PREMIUM_CREATOR);
+                result = Arrays.asList(OrcidWebRole.ROLE_PREMIUM_CREATOR, OrcidWebRole.ROLE_USER);
                 break;
             case PREMIUM_UPDATER:
-                result = Arrays.asList(OrcidWebRole.ROLE_PREMIUM_UPDATER);
+                result = Arrays.asList(OrcidWebRole.ROLE_PREMIUM_UPDATER, OrcidWebRole.ROLE_USER);
                 break;
             }
         } else {
