@@ -1370,6 +1370,7 @@ function WorkCtrl($scope, $compile, worksSrvc){
 	$scope.showBibtex = true;
 	$scope.bibtexCitations = {};
 	$scope.languages = null;
+	$scope.editTranslatedTitle = false;
 	
 	$scope.toggleDisplayWorks = function () {
 		$scope.displayWorks = !$scope.displayWorks;
@@ -1383,7 +1384,8 @@ function WorkCtrl($scope, $compile, worksSrvc){
 	    });
 	};
 
-	$scope.toggleTranslatedTitleModal = function(){;
+	$scope.toggleTranslatedTitleModal = function(){
+		$scope.editTranslatedTitle = !$scope.editTranslatedTitle;
     	$('#translatedTitle').toggle();
     	$.colorbox.resize();
 	};		
