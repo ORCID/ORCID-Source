@@ -98,7 +98,7 @@
 			    		<select id="affiliationType" name="affiliationType" class="input-xlarge" ng-model="editAffiliation.affiliationType.value">
 			    			<option value=""><@orcid.msg 'org.orcid.jaxb.model.message.AffiliationType.empty' /></option>
 							<#list affiliationTypes?keys as key>
-								<option value="${key}">${affiliationTypes[key]}</option>
+								<option value="${key}">${affiliationLongDescriptionTypes[key]}</option>
 							</#list>
 						</select> 
 					</div>
