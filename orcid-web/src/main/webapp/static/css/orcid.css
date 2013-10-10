@@ -2069,6 +2069,20 @@ header overrides
      margin-bottom: 0;
 }
 
+.edit-work .row {
+	width: 800px;
+	margin: 0 auto;
+	*zoom: 1;
+}
+
+.edit-work .popover-help-container .popover {
+	left: -175px; 
+}
+
+.edit-work .popover.bottom .arrow{
+	margin-left: 30px;
+}
+
 .manage-bio label,
 .manage-bio input,
 .manage-bio textarea,
@@ -2380,4 +2394,18 @@ a.btn-primary:hover {
 
 .tt-suggestion p {
   margin: 0;
+}
+
+.translated-title-section {
+	float: right;
+	padding-right: 26px;
+	color: #2dc0ce;
+	font-size: 13px;
+	margin-top: 5px;
+	margin-bottom: 5px;
+}
+
+.small-row {	
+	display: inline-block;
+	float: left;	
 }
