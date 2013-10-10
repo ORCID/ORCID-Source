@@ -289,7 +289,7 @@ public class OrcidProfileManagerBaseTest extends BaseTest {
         Affiliation affiliation = new Affiliation();
         affiliation.setStartDate(new FuzzyDate(calendar.getYear(), calendar.getMonth(), calendar.getDay()));
         affiliation.setEndDate(new FuzzyDate(calendar.getYear(), calendar.getMonth(), calendar.getDay()));
-        affiliation.setAffiliationType(AffiliationType.CURRENT_INSTITUTION);
+        affiliation.setAffiliationType(AffiliationType.EDUCATION);
         affiliation.setAffiliationName("Past Institution");
         affiliation.setRoleTitle("A Role");
         affiliation.setDepartmentName("A Department");

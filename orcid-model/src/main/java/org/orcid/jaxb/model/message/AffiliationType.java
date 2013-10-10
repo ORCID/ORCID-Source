@@ -34,44 +34,37 @@ public enum AffiliationType implements Serializable {
      * Current primary institution
      * 
      */
-    @XmlEnumValue("current-primary-institution")
-    CURRENT_PRIMARY_INSTITUTION("current-primary-institution"),
+    @XmlEnumValue("education")
+    EDUCATION("education"),
 
     /**
      * Past institution
      * 
      */
-    @XmlEnumValue("past-institution")
-    PAST_INSTITUTION("past-institution"),
+    @XmlEnumValue("employment")
+    EMPLOYMENT("employment"),
 
     /**
      * Published here
      * 
      */
-    @XmlEnumValue("published-here")
-    PUBLISHED_HERE("published-here"),
+    @XmlEnumValue("distinction")
+    DISTINCTION("distinction"),
 
     /**
      * Current institution
      * 
      */
-    @XmlEnumValue("current-institution")
-    CURRENT_INSTITUTION("current-institution"),
+    @XmlEnumValue("funding")
+    FUNDING("funding"),
 
     /**
      * Funded by
      * 
      */
-    @XmlEnumValue("funded-by")
-    FUNDED_BY("funded-by"),
-
-    /**
-     * Educated here
-     * 
-     */
-    @XmlEnumValue("educated-here")
-    EDUCATED_HERE("educated-here");
-
+    @XmlEnumValue("contribution")
+    FCONTRIBUTION("contribution");
+    
     private final String value;
 
     AffiliationType(String v) {

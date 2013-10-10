@@ -311,19 +311,6 @@ public class SolrDaoTest {
         solrResults = solrDao.findByDocumentCriteria(familyNameQueryString, null, null).getResults();
         assertTrue(solrResults.size() == 1 && solrResults.get(0).getOrcid().equals(firstOrcid));
 
-        String pastInstitutionsQueryString = "text=Brown";
-        solrResults = solrDao.findByDocumentCriteria(pastInstitutionsQueryString, null, null).getResults();
-        assertTrue(solrResults.size() == 1 && solrResults.get(0).getOrcid().equals(firstOrcid));
-
-        String currentInstitutionsQueryString = "text=Current";
-        solrResults = solrDao.findByDocumentCriteria(currentInstitutionsQueryString, null, null).getResults();
-        assertTrue(solrResults.size() == 2 && solrResults.get(0).getOrcid().equals(firstOrcid));
-        assertEquals(solrResults.get(1).getOrcid(), secondOrcid);
-
-        String primaryInstitutionsQueryString = "text=Primary";
-        solrResults = solrDao.findByDocumentCriteria(primaryInstitutionsQueryString, null, null).getResults();
-        assertTrue(solrResults.size() == 1 && solrResults.get(0).getOrcid().equals(secondOrcid));
-
         String patentsQueryString = "text=Elec-hammer01X%3A";
         solrResults = solrDao.findByDocumentCriteria(patentsQueryString, null, null).getResults();
         assertTrue(solrResults.size() == 1 && solrResults.get(0).getOrcid().equals(firstOrcid));
@@ -390,9 +377,9 @@ public class SolrDaoTest {
         secondOrcidDoc.setGivenNames("Given Names");
         secondOrcidDoc.setDigitalObjectIds(Arrays.asList(new String[] { "id1", "id2" }));
         secondOrcidDoc.setOtherNames(Arrays.asList(new String[] { "Other Name 1", "Other Name 2" }));
-        secondOrcidDoc.setPastInstitutionNames(Arrays.asList(new String[] { "Past Inst 1", "Past Inst 2" }));
-        secondOrcidDoc.setAffiliateInstitutionNames(Arrays.asList(new String[] { "Current Inst 1" }));
-        secondOrcidDoc.setAffiliatePrimaryInstitutionNames(Arrays.asList(new String[] { "Primary Institution Name" }));
+        secondOrcidDoc.setPastInstitutionNames(null);
+        secondOrcidDoc.setAffiliateInstitutionNames(null);
+        secondOrcidDoc.setAffiliatePrimaryInstitutionNames(null);
         secondOrcidDoc.setWorkTitles(Arrays.asList(new String[] { "Work Title 1", "Work Title 2" }));
         secondOrcidDoc.setGrantNumbers(Arrays.asList(new String[] { "Grant-number02X:" }));
         return secondOrcidDoc;

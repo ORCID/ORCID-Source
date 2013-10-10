@@ -1131,12 +1131,16 @@ function AffiliationCtrl($scope, $compile, affiliationsSrvc){
 									url: $('body').data('baseurl')+'affiliations/disambiguated/%QUERY',
 								},
 								template: function (datum) {
-									var forDisplay = datum.value + ', ' + datum.city;
-									if(datum.region){
-										forDisplay += ", " + datum.region;
-									}
-									forDisplay += ", " + datum.countryForDisplay;
-									return forDisplay;
+									   var forDisplay = 
+									       '<span style=\'white-space: nowrap; font-weight: bold;\'>' + datum.value+ '</span>'
+									      +'<span style=\'font-size: 80%;\'>'
+									      + ' <br />' + datum.city;
+									   if(datum.region){
+										   forDisplay += ", " + datum.region;
+									   }
+									   forDisplay += ", " + datum.countryForDisplay;
+									   forDisplay += '</span><hr />';
+									   return forDisplay;
 								}
 							});
 							$("#affiliationName").bind("typeahead:selected", function(obj, datum) {        

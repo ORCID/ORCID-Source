@@ -768,7 +768,7 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
         Affiliation affiliation1 = getAffiliation();
         Affiliation affiliation2 = getAffiliation();
         affiliation2.setAffiliationName("Past Institution 2");
-        affiliation2.setAffiliationType(AffiliationType.CURRENT_PRIMARY_INSTITUTION);
+        affiliation2.setAffiliationType(AffiliationType.EDUCATION);
 
         affiliations.getAffiliation().add(affiliation1);
         affiliations.getAffiliation().add(affiliation2);
