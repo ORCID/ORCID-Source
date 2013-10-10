@@ -47,7 +47,8 @@
 	request.requestURI?ends_with("${local_folder}/error")||
 	request.requestURI?ends_with("${local_folder}/oauth/signin")||
 	request.requestURI?ends_with("${local_folder}/oauth/confirm_access")||
-	request.requestURI?ends_with("${local_folder}/my-orcid")
+	request.requestURI?ends_with("${local_folder}/my-orcid")||
+	request.requestURI?ends_with("${local_folder}/statistics")
 	
 >
 

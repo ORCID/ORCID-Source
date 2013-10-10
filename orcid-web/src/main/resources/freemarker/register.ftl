@@ -17,9 +17,8 @@
 
 -->
 <@public classes=['home'] nav="register">
-    <div class="row">
-        <div class="col-md-3"></div>
-        <div class="col-md-9 col-sm-12">
+    <div class="row">        
+        <div class="col-md-9 col-md-offset-3 col-sm-12 col-xs-12">
             <h2>${springMacroRequestContext.getMessage("register.labelRegisterforanORCIDiD")}</h2>
             <p>${springMacroRequestContext.getMessage("register.labelORCIDprovides")}<br /><br /></p>
     		<#include "/includes/register_inc.ftl" />

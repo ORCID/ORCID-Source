@@ -32,13 +32,13 @@
 <script type="text/ng-template" id="add-work-modal">
 	<div class="edit-work colorbox-content">
 		<div class="row">
-			<div class="span12">
+			<div class="col-md-12">
 				<h1 class="lightbox-title pull-left"><@orcid.msg 'manual_work_form_contents.add_work'/></h1>
 				<a class="btn pull-right close-button" ng-click="closeModal()">X</a>
 			</div>
 		</div>
 		<div class="row">
-			<div class="span6">	
+			<div class="col-md-6">	
 				<div class="control-group">
 					<label><@orcid.msg 'manual_work_form_contents.labeltitle'/></label>
 				    <div class="relative">
@@ -264,19 +264,19 @@
 			</div>
 		</div>
 		<div class="row">	
-			<div class="span12">
+			<div class="col-md-12">
 			   &nbsp;
 			</div>
 		</div>
 		<div class="row">
-			<div class="span6">
+			<div class="col-md-6">
 			   &nbsp;
 			</div>
-			<div class="span2">
+			<div class="col-md-2">
 				<button class="btn btn-primary" ng-click="addWork()" ng-disabled="addingWork" ng-class="{disabled:addingWork}"><@orcid.msg 'manual_work_form_contents.btnaddtolist'/></button> 
 				<a href="" ng-click="closeModal()"><@orcid.msg 'manage.deleteExternalIdentifier.cancel'/></a>
 			</div>
-			<div class="span4">
+			<div class="col-md-4">
 				<span ng-show="addingWork">
 					<i class="icon-spinner icon-2x icon-spin  green"></i>
 				</span>
@@ -284,7 +284,7 @@
 			</div>
 		</div>
 		<div class="row">
-			<div class="span12">
+			<div class="col-md-12">
 			   &nbsp;
 			</div>
 		</div>
@@ -301,19 +301,19 @@
 			    	<div class="row bottomBuffer">
 			    	</div>       
 			 		<div class="row bottomBuffer" ng-show="work.workTitle.title.value" ng-cloak>
-						<div class="span8">
+						<div class="col-md-8">
 							<strong><@orcid.msg 'manual_work_form_contents.labeltitle'/></strong>
 							<div ng-bind="work.workTitle.title.value"></div>
 						</div>
 					</div>					
 					<div class="row bottomBuffer" ng-show="work.workTitle.translatedTitle.content" ng-cloak>
-						<div class="span8">
+						<div class="col-md-8">
 							<strong><@orcid.msg 'manual_work_form_contents.labeltranslatedtitle'/></strong>
 							<div ng-bind="renderTranslatedTitleInfo($index)"></div>
 						</div>
 					</div>					
 					<div class="row bottomBuffer" ng-show="work.workTitle.subtitle.value" ng-cloak>
-						<div class="span8">
+						<div class="col-md-8">
 							<strong>
 								<@orcid.msg 'manual_work_form_contents.labelsubtitle'/>
 							</strong>
@@ -321,7 +321,7 @@
 						</div>
 					</div>
 					<div class="row bottomBuffer" ng-show="work.journalTitle.value" ng-cloak>
-						<div class="span8">
+						<div class="col-md-8">
 							<strong>
 								<@orcid.msg 'manual_work_form_contents.journalTitle'/>
 							</strong>

@@ -49,7 +49,8 @@
 		request.requestURI?ends_with("${local_folder}/error")||
 		request.requestURI?ends_with("${local_folder}/oauth/signin")||		
 		request.requestURI?ends_with("${local_folder}/oauth/confirm_access")||
-		request.requestURI?ends_with("${local_folder}/my-orcid")
+		request.requestURI?ends_with("${local_folder}/my-orcid")||
+		request.requestURI?ends_with("${local_folder}/statistics")
 	>    	
 	    <link rel="stylesheet" href="${staticCdn}/twitter-bootstrap/3.0.0/css/bootstrap.min.css?v=${ver}"/>
 	    <!--[if lt IE 8]>
@@ -57,7 +58,7 @@
 	        <link rel="stylesheet" href="${staticCdn}/css/orcid-ie7.css?v=${ver}"/>        
 	    <![endif]-->
 	    
-	    <link rel="stylesheet" href="${staticCdn}/css/orcid.css?v=${ver}"/> <!-- Fonts already included here -->
+	    <link rel="stylesheet" href="${staticCdn}/css/orcid.resp.css?v=${ver}"/> <!-- Fonts already included here -->
 	    <link rel="stylesheet" href="${staticCdn}/css/jquery-ui-1.10.0.custom.min.css?v=${ver}"/>
 	    <link rel="stylesheet" href="${staticLoc}/font-awesome/3.2.1/css/font-awesome.css"/>
 	    <!--[if IE 7]>
@@ -68,8 +69,8 @@
     
     <#else>		
 		<link rel="stylesheet" href="${staticLoc}/ORCID-Fonts-Dot-Com/style.css?v=${ver}"/>    
-	    <link rel="stylesheet" href="${staticCdn}/twitter-bootstrap/2.3.1/css/bootstrap.css?v=${ver}"/>
-	    <link rel="stylesheet" href="${staticCdn}/css/orcid.old.css?v=${ver}"/>
+	    <link rel="stylesheet" href="${staticCdn}/twitter-bootstrap/2.3.1/css/bootstrap.min.css?v=${ver}"/>
+	    <link rel="stylesheet" href="${staticCdn}/css/orcid.css?v=${ver}"/>
 	    <link rel="stylesheet" href="${staticCdn}/css/jquery-ui-1.10.0.custom.min.css?v=${ver}"/>
 	    <link rel="stylesheet" href="${staticLoc}/font-awesome/3.2.1/css/font-awesome.css"/>
 	    <!--[if IE 7]>
