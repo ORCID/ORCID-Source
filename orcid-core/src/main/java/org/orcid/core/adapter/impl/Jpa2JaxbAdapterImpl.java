@@ -30,6 +30,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
 import org.apache.commons.lang.StringUtils;
 import org.orcid.core.adapter.Jpa2JaxbAdapter;
 import org.orcid.core.manager.LoadOptions;
+import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
 import org.orcid.core.utils.JsonUtils;
 import org.orcid.jaxb.model.clientgroup.OrcidClient;
 import org.orcid.jaxb.model.clientgroup.OrcidClientGroup;
@@ -49,9 +50,9 @@ import org.orcid.persistence.jpa.entities.GrantContributorEntity;
 import org.orcid.persistence.jpa.entities.GrantEntity;
 import org.orcid.persistence.jpa.entities.GrantSourceEntity;
 import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
+import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
 import org.orcid.persistence.jpa.entities.OrgDisambiguatedEntity;
 import org.orcid.persistence.jpa.entities.OrgEntity;
-import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
 import org.orcid.persistence.jpa.entities.OtherNameEntity;
 import org.orcid.persistence.jpa.entities.PatentContributorEntity;
 import org.orcid.persistence.jpa.entities.PatentEntity;
@@ -768,7 +769,12 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         orcidWork.setWorkTitle(getWorkTitle(work));
         orcidWork.setJournalTitle(StringUtils.isNotBlank(work.getJournalTitle()) ? new Title(work.getJournalTitle()) : null);
         orcidWork.setLanguageCode(StringUtils.isNotBlank(work.getLanguageCode()) ? work.getLanguageCode() : null);
-        orcidWork.setCountry(work.getIso2Country() == null ? null : new Country(work.getIso2Country()));
+        
+        if(work.getIso2Country() != null){
+            Country country = new Country(work.getIso2Country());
+            country.setVisibility(OrcidVisibilityDefaults.WORKS_COUNTRY_DEFAULT.getVisibility());
+            orcidWork.setCountry(country);
+        }
         orcidWork.setWorkType(work.getWorkType());
         orcidWork.setVisibility(profileWorkEntity.getVisibility());
         return orcidWork;

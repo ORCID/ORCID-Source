@@ -33,7 +33,7 @@
 
     <bean id="jsonpCallbackFilter" class="org.orcid.core.web.filters.JsonpCallbackFilter" />
     
-    <alias name="t1OrcidApiServiceDelegatorV1_0_15" alias="t1OrcidApiServiceDelegatorLatest"/>
+    <alias name="t1OrcidApiServiceDelegatorV1_0_22" alias="t1OrcidApiServiceDelegatorLatest"/>
     
     <bean id="t1OrcidApiServiceImplLatest" class="org.orcid.api.t1.server.T1OrcidApiServiceImplLatest">
         <property name="orcidApiServiceDelegator" ref="t1OrcidApiServiceDelegatorLatest"/>
@@ -55,4 +55,59 @@
         <property name="outgoingValidationManager" ref="outgoingValidationManagerV1_0_15"/>
     </bean>
 
+	<bean id="t1OrcidApiServiceImplV1_0_16" class="org.orcid.api.t1.server.T1OrcidApiServiceImplV1_0_16">
+        <property name="orcidApiServiceDelegator" ref="t1OrcidApiServiceDelegatorV1_0_16"/>
+    </bean>
+    <bean id="t1OrcidApiServiceDelegatorV1_0_16" class="org.orcid.api.common.delegator.impl.OrcidApiServiceVersionedDelegatorImpl">
+        <property name="externalVersion" value="1.0.16"/>
+        <property name="outgoingValidationManager" ref="outgoingValidationManagerV1_0_16"/>
+    </bean>
+
+	<bean id="t1OrcidApiServiceImplV1_0_17" class="org.orcid.api.t1.server.T1OrcidApiServiceImplV1_0_17">
+        <property name="orcidApiServiceDelegator" ref="t1OrcidApiServiceDelegatorV1_0_17"/>
+    </bean>
+    <bean id="t1OrcidApiServiceDelegatorV1_0_17" class="org.orcid.api.common.delegator.impl.OrcidApiServiceVersionedDelegatorImpl">
+        <property name="externalVersion" value="1.0.17"/>
+        <property name="outgoingValidationManager" ref="outgoingValidationManagerV1_0_17"/>
+    </bean>
+
+	<bean id="t1OrcidApiServiceImplV1_0_18" class="org.orcid.api.t1.server.T1OrcidApiServiceImplV1_0_18">
+        <property name="orcidApiServiceDelegator" ref="t1OrcidApiServiceDelegatorV1_0_18"/>
+    </bean>
+    <bean id="t1OrcidApiServiceDelegatorV1_0_18" class="org.orcid.api.common.delegator.impl.OrcidApiServiceVersionedDelegatorImpl">
+        <property name="externalVersion" value="1.0.18"/>
+        <property name="outgoingValidationManager" ref="outgoingValidationManagerV1_0_18"/>
+    </bean>
+
+	<bean id="t1OrcidApiServiceImplV1_0_19" class="org.orcid.api.t1.server.T1OrcidApiServiceImplV1_0_19">
+        <property name="orcidApiServiceDelegator" ref="t1OrcidApiServiceDelegatorV1_0_19"/>
+    </bean>
+    <bean id="t1OrcidApiServiceDelegatorV1_0_19" class="org.orcid.api.common.delegator.impl.OrcidApiServiceVersionedDelegatorImpl">
+        <property name="externalVersion" value="1.0.19"/>
+        <property name="outgoingValidationManager" ref="outgoingValidationManagerV1_0_19"/>
+    </bean>
+
+	<bean id="t1OrcidApiServiceImplV1_0_20" class="org.orcid.api.t1.server.T1OrcidApiServiceImplV1_0_20">
+        <property name="orcidApiServiceDelegator" ref="t1OrcidApiServiceDelegatorV1_0_20"/>
+    </bean>
+    <bean id="t1OrcidApiServiceDelegatorV1_0_20" class="org.orcid.api.common.delegator.impl.OrcidApiServiceVersionedDelegatorImpl">
+        <property name="externalVersion" value="1.0.20"/>
+        <property name="outgoingValidationManager" ref="outgoingValidationManagerV1_0_20"/>
+    </bean>
+
+	<bean id="t1OrcidApiServiceImplV1_0_21" class="org.orcid.api.t1.server.T1OrcidApiServiceImplV1_0_21">
+        <property name="orcidApiServiceDelegator" ref="t1OrcidApiServiceDelegatorV1_0_21"/>
+    </bean>
+    <bean id="t1OrcidApiServiceDelegatorV1_0_21" class="org.orcid.api.common.delegator.impl.OrcidApiServiceVersionedDelegatorImpl">
+        <property name="externalVersion" value="1.0.21"/>
+        <property name="outgoingValidationManager" ref="outgoingValidationManagerV1_0_21"/>
+    </bean>
+
+	<bean id="t1OrcidApiServiceImplV1_0_22" class="org.orcid.api.t1.server.T1OrcidApiServiceImplV1_0_22">
+        <property name="orcidApiServiceDelegator" ref="t1OrcidApiServiceDelegatorV1_0_22"/>
+    </bean>
+    <bean id="t1OrcidApiServiceDelegatorV1_0_22" class="org.orcid.api.common.delegator.impl.OrcidApiServiceVersionedDelegatorImpl">
+        <property name="externalVersion" value="1.0.22"/>
+        <property name="outgoingValidationManager" ref="outgoingValidationManagerV1_0_22"/>
+    </bean>
 </beans>
