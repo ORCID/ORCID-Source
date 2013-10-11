@@ -50,6 +50,15 @@
 					</div>
 				</div>
 				<div class="control-group">
+					<label><@orcid.msg 'manual_affiliation_form_contents.labeldepartment'/></label>
+				    <div class="relative">
+						<input name="department" type="text" class="input-xlarge"  ng-model="editAffiliation.departmentName.value" placeholder="<@orcid.msg 'manual_affiliation_form_contents.add_department'/>" ng-change="serverValidate('affiliations/affiliation/departmentValidate.json')" ng-model-onblur/>
+						<span class="orcid-error" ng-show="editAffiliation.departmentName.errors.length > 0">
+							<div ng-repeat='error in editAffiliation.departmentName.errors' ng-bind-html-unsafe="error"></div>
+						</span>
+					</div>
+				</div>
+				<div class="control-group">
 					<label><@orcid.msg 'manual_affiliation_form_contents.labelcity'/></label>
 				    <div class="relative">
 						<input name="city" type="text" class="input-xlarge"  ng-model="editAffiliation.city.value" placeholder="<@orcid.msg 'manual_affiliation_form_contents.add_city'/>" ng-change="serverValidate('affiliations/affiliation/cityValidate.json')" ng-model-onblur/>
@@ -83,15 +92,8 @@
 						</span>
 					</div>
 				</div>
-				<div class="control-group">
-					<label><@orcid.msg 'manual_affiliation_form_contents.labeldepartment'/></label>
-				    <div class="relative">
-						<input name="department" type="text" class="input-xlarge"  ng-model="editAffiliation.departmentName.value" placeholder="<@orcid.msg 'manual_affiliation_form_contents.add_department'/>" ng-change="serverValidate('affiliations/affiliation/departmentValidate.json')" ng-model-onblur/>
-						<span class="orcid-error" ng-show="editAffiliation.departmentName.errors.length > 0">
-							<div ng-repeat='error in editAffiliation.departmentName.errors' ng-bind-html-unsafe="error"></div>
-						</span>
-					</div>
-				</div>
+			</div>
+			<div class="span6">
 				<div class="control-group">
 		    		<label class="relative"><@orcid.msg 'manual_affiliation_form_contents.labelaffiliationtype'/></label>
 		    		<div class="relative">
