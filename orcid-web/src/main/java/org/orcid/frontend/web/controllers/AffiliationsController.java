@@ -39,6 +39,7 @@ import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
 import org.orcid.persistence.jpa.entities.OrgDisambiguatedEntity;
 import org.orcid.pojo.ajaxForm.AffiliationForm;
 import org.orcid.pojo.ajaxForm.Date;
+import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.pojo.ajaxForm.Visibility;
 import org.slf4j.Logger;
@@ -191,6 +192,7 @@ public class AffiliationsController extends BaseWorkspaceController {
         regionValidate(affiliationForm);
         countryValidate(affiliationForm);
         departmentValidate(affiliationForm);
+        datesValidate(affiliationForm);
 
         copyErrors(affiliationForm.getAffiliationName(), affiliationForm);
         copyErrors(affiliationForm.getCity(), affiliationForm);
@@ -352,5 +354,18 @@ public class AffiliationsController extends BaseWorkspaceController {
         }
         return affiliationForm;
     }
+    
+    @RequestMapping(value = "/affiliation/datesValidate.json", method = RequestMethod.POST)
+    public @ResponseBody
+    AffiliationForm datesValidate(@RequestBody AffiliationForm affiliationForm) {
+        affiliationForm.getStartDate().setErrors(new ArrayList<String>());
+        affiliationForm.getEndDate().setErrors(new ArrayList<String>());
+        if (!PojoUtil.isEmply(affiliationForm.getStartDate()) && !PojoUtil.isEmply(affiliationForm.getEndDate())) {
+            if (affiliationForm.getStartDate().toJavaDate().after(affiliationForm.getEndDate().toJavaDate())) 
+                setError(affiliationForm.getEndDate(), "manualAffiliation.endDate.after");
+        }
+        return affiliationForm;
+    }
+
 
 }

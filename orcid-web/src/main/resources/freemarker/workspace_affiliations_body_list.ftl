@@ -142,6 +142,9 @@
 						</#list>
 		    		</select>
 		    		</div>
+		    		<span class="orcid-error" ng-show="editAffiliation.endDate.errors.length > 0">
+						<div ng-repeat='error in editAffiliation.endDate.errors' ng-bind-html-unsafe="error"></div>
+					</span>
 		    	</div>
 		    	<div class="control-group">
 		 			<label class="relative"><@orcid.msg 'privacyToggle.help.who_can_see'/></label>
