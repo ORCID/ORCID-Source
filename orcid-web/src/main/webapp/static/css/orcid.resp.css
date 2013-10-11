@@ -213,6 +213,7 @@ label,input,button,select,textarea {
 
 .control-group {
 	padding-left: 0;
+	margin-bottom: 10px;
 }
 .margin-top-box{
 	margin-top: 15px;
@@ -547,6 +548,14 @@ select,textarea,input[type="text"],input[type="password"],input[type="datetime"]
 	vertical-align: middle;
 }
 
+
+select {
+    background-color: #FFFFFF;
+    border: 1px solid #CCCCCC;
+    width: 220px;
+}
+
+
 /*
     Header
 */
@@ -731,8 +740,7 @@ select,textarea,input[type="text"],input[type="password"],input[type="datetime"]
 }
 
 .header .logo {
-	float: left;
-	width: inherit;
+	float: left;	
 }
 
 .header .logo h1 {
@@ -815,8 +823,8 @@ select,textarea,input[type="text"],input[type="password"],input[type="datetime"]
 	position: absolute;
 	top: 60px;
 	left: -1px;
-	display: none;
-	width: 700px;
+	display: none;	
+	width: 100%;
 	padding: 0;
 	margin-left: 2px;
 	list-style: none;
@@ -2307,6 +2315,10 @@ header overrides
 	margin-bottom: 5px;
 }
 
+.edit-work{
+	width: 600px; 
+}
+
 .edit-work label,.edit-work input,.edit-work textarea,.edit-work select
 	{
 	margin-bottom: 0;
@@ -2471,6 +2483,7 @@ header overrides
 	background: none;
 	border-top: 1px solid #CACACA;
 	font-size: 13px;
+	margin-top:0;
 }
 
 #add-manually .span2 {
@@ -3095,6 +3108,15 @@ ul.personal-inf-display li{
 		font-size: 1em;
 	}
 	
+	#third-parties{
+		width: 100%;
+	}
+	
+	#third-parties .footer .col-sm-12,
+	#third-parties .footer .col-xs-12{
+		padding: 0;
+	}
+	
 }
 
 @media ( max-width : 980px) { /* Tablet */
@@ -3150,6 +3172,7 @@ ul.personal-inf-display li{
 	iframe {
 		width: 100%;
 	}
+	
 }
 
 @media(min-width:1200px){

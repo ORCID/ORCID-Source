@@ -107,7 +107,7 @@
 	                    <br />
 	                    <a href="#workspace-publications" class="btn-update no-icon"><@orcid.msg 'workspace.view'/></a>
 	        		</div>	                
-	                <div class="workspace-overview  col-md-2 col-sm-6">
+	                <div class="workspace-overview col-md-2 col-sm-6">
 		                <a href="#workspace-affiliations" class="overview-count">${(profile.orcidActivities.affiliations.affiliation?size)!0}</a>
 	                    <a href="#workspace-affiliations" class="overview-title"><@orcid.msg 'workspace_bio.Affiliations'/></a>
 	                    <br />
@@ -256,29 +256,42 @@
 </script>
 
 <script type="text/ng-template" id="import-wizard-modal">
-    <#if ((thirdPartiesForImport)??)>
-    	<div id="third-parties">	
-			<div class="col-md-9 col-sm-12">
-				<a class="btn pull-right close-button" ng-click="closeModal()">X</a>
-	           	<h1 class="lightbox-title" style="text-transform: uppercase;"><@orcid.msg 'workspace.import_works'/></h1>
-	           		
-	           	</div>
-	           	<br />          		
-    	       	<div class="justify"><@orcid.msg 'workspace.ImportResearchActivities.description'/></div>
-            	<br />    	           	
-    	       	<#list thirdPartiesForImport?sort_by("displayName") as thirdPartyDetails>
-                     <#assign redirect = (thirdPartyDetails.redirectUris.redirectUri[0].value) >
-                     <#assign predefScopes = (thirdPartyDetails.redirectUris.redirectUri[0].scopeAsSingleString) >
-                     <strong><a ng-click="openImportWizardUrl('<@spring.url '/oauth/authorize?client_id=${thirdPartyDetails.clientId}&response_type=code&scope=${predefScopes}&redirect_uri=${redirect}'/>')">${thirdPartyDetails.displayName}</a></strong><br />
-                     <div class="justify">${(thirdPartyDetails.shortDescription)!}</div>
-                     <#if (thirdPartyDetails_has_next)><hr /></#if>
-                 </#list>
-                 <br />
-                 <div class="footer">
-	               	<strong><@orcid.msg 'workspace.ImportResearchActivities.footer.title'/></strong>
-	                <br />
-	                <@orcid.msg 'workspace.ImportResearchActivities.footer.description1'/> <a href="<@orcid.msg 'workspace.ImportResearchActivities.footer.description.url'/>"><@orcid.msg 'workspace.ImportResearchActivities.footer.description.link'/></a> <@orcid.msg 'workspace.ImportResearchActivities.footer.description2'/>
-                 </div>
+    <#if ((thirdPartiesForImport)??)>		
+    	<div id="third-parties">
+			<div class="row">	
+				<div class="col-md-12 col-sm-12 col-xs-12">					
+					<a class="btn pull-right close-button" ng-click="closeModal()">X</a>
+	           		<h1 class="lightbox-title" style="text-transform: uppercase;"><@orcid.msg 'workspace.import_works'/></h1>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-12 col-sm-12 col-xs-12">
+	    	    	<div class="justify">
+						<p><@orcid.msg 'workspace.ImportResearchActivities.description'/></p>
+					</div>            	    	           	
+    		    	<#list thirdPartiesForImport?sort_by("displayName") as thirdPartyDetails>
+	        	       	<#assign redirect = (thirdPartyDetails.redirectUris.redirectUri[0].value) >
+            	   		<#assign predefScopes = (thirdPartyDetails.redirectUris.redirectUri[0].scopeAsSingleString) >
+                   		<strong><a ng-click="openImportWizardUrl('<@spring.url '/oauth/authorize?client_id=${thirdPartyDetails.clientId}&response_type=code&scope=${predefScopes}&redirect_uri=${redirect}'/>')">${thirdPartyDetails.displayName}</a></strong><br />
+                 		<div class="justify">
+							<p>
+								${(thirdPartyDetails.shortDescription)!}
+							</p>
+						</div>
+                   		<#if (thirdPartyDetails_has_next)>
+	                      	<hr/>
+						</#if>
+                		</#list>
+				</div>
+			</div>                 
+            <div class="row footer">
+				<div class="col-md-12 col-sm-12 col-xs-12">
+					<p>
+				   		<strong><@orcid.msg 'workspace.ImportResearchActivities.footer.title'/></strong>	    
+	        			<@orcid.msg 'workspace.ImportResearchActivities.footer.description1'/> <a href="<@orcid.msg 'workspace.ImportResearchActivities.footer.description.url'/>"><@orcid.msg 'workspace.ImportResearchActivities.footer.description.link'/></a> <@orcid.msg 'workspace.ImportResearchActivities.footer.description2'/>
+			    	</p>
+				</div>
+	        </div>
 		</div>
 	</#if>
 </script>
