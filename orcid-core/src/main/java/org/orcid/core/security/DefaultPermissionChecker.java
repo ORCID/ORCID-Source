@@ -141,8 +141,11 @@ public class DefaultPermissionChecker implements PermissionChecker {
 
             if (requiredScope.isWriteOperationScope() && orcidMessage.getOrcidProfile().getOrcidHistory().isClaimed()) {
                 OrcidOauth2TokenDetail tokenDetail = orcidOauthTokenDetailService.findNonDisabledByTokenValue(auth2Authentication.getActiveToken());
-                tokenDetail.setTokenExpiration(EXPIRES_DATE);
                 removeWriteScopes(tokenDetail);
+                // Token shouldn't be backdated expired if scopes are left, like the read scope!
+                if (tokenDetail.getScope() == null || tokenDetail.getScope().trim().isEmpty()) {
+                    tokenDetail.setTokenExpiration(EXPIRES_DATE);                    
+                }
                 orcidOauthTokenDetailService.saveOrUpdate(tokenDetail);
             }
 
