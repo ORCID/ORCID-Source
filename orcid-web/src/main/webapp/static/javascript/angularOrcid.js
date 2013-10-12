@@ -1138,7 +1138,8 @@ function AffiliationCtrl($scope, $compile, affiliationsSrvc){
 									   if(datum.region){
 										   forDisplay += ", " + datum.region;
 									   }
-									   forDisplay += ", " + datum.countryForDisplay;
+									   if (datum.orgType.trim() != '')
+									      forDisplay += ", " + datum.orgType;
 									   forDisplay += '</span><hr />';
 									   return forDisplay;
 								}

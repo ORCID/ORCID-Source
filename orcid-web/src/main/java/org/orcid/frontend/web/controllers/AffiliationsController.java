@@ -291,6 +291,7 @@ public class AffiliationsController extends BaseWorkspaceController {
             datum.put("city", orgDisambiguatedEntity.getCity());
             datum.put("region", orgDisambiguatedEntity.getRegion());
             datum.put("country", orgDisambiguatedEntity.getCountry().value());
+            datum.put("orgType", orgDisambiguatedEntity.getOrgType());
             datum.put("countryForDisplay", getMessage(buildInternationalizationKey(CountryIsoEntity.class, orgDisambiguatedEntity.getCountry().name())));
             datums.add(datum);
         }
