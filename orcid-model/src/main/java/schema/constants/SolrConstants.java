@@ -39,4 +39,24 @@ public class SolrConstants {
     public static final String TEXT = "text";
     public static final String PUBLIC_PROFILE = "public-profile-message";
     public static final String PRIMARY_RECORD = "primary-record";
+    public static final String ARXIV = "arxiv";
+    public static final String ASIN = "asin";
+    public static final String ASIN_TLD = "asin-tld";
+    public static final String BIBCODE = "bibcode";
+    public static final String EID = "eid";
+    public static final String ISBN = "isbn";
+    public static final String ISSN = "issn";
+    public static final String JFM = "jfm";
+    public static final String JSTOR = "jstor";
+    public static final String LCCN = "lccn";
+    public static final String MR = "mr";
+    public static final String OCLC = "oclc";
+    public static final String OL = "ol";
+    public static final String OSTI = "osti";
+    public static final String PMC = "pmc";
+    public static final String PMID = "pmid";
+    public static final String RFC = "rfc";
+    public static final String SSRN = "ssrn";
+    public static final String ZBL = "zbl";
+    public static final String OTHER_IDENTIFIER_TYPE = "other-identifier-type";
 }

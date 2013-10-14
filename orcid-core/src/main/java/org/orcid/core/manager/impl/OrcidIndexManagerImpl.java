@@ -18,7 +18,11 @@ package org.orcid.core.manager.impl;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.annotation.Resource;
 
@@ -78,12 +82,12 @@ public class OrcidIndexManagerImpl implements OrcidIndexManager {
 
         OrcidSolrDocument profileIndexDocument = new OrcidSolrDocument();
         profileIndexDocument.setOrcid(filteredProfile.getOrcid().getValue());
-        
+
         OrcidDeprecated orcidDeprecated = filteredProfile.getOrcidDeprecated();
-        if(orcidDeprecated != null){
+        if (orcidDeprecated != null) {
             profileIndexDocument.setPrimaryRecord(orcidDeprecated.getPrimaryRecord() != null ? orcidDeprecated.getPrimaryRecord().getOrcid().getValue() : null);
         }
-        
+
         OrcidBio orcidBio = filteredProfile.getOrcidBio();
         if (orcidBio != null) {
             PersonalDetails personalDetails = orcidBio.getPersonalDetails();
@@ -181,15 +185,26 @@ public class OrcidIndexManagerImpl implements OrcidIndexManager {
             List<OrcidWork> orcidWorks = filteredProfile.retrieveOrcidWorks() != null ? filteredProfile.retrieveOrcidWorks().getOrcidWork() : null;
             if (orcidWorks != null) {
                 List<String> workTitles = new ArrayList<String>();
-                List<String> workIdentifiers = new ArrayList<String>();
+                Map<WorkExternalIdentifierType, List<String>> allExternalIdentifiers = new HashMap<WorkExternalIdentifierType, List<String>>();
                 for (OrcidWork orcidWork : orcidWorks) {
 
                     if (orcidWork.getWorkExternalIdentifiers() != null) {
 
                         for (WorkExternalIdentifier workExternalIdentifier : orcidWork.getWorkExternalIdentifiers().getWorkExternalIdentifier()) {
 
-                            if (nullSafeCheckWorkForDoi(workExternalIdentifier)) {
-                                workIdentifiers.add(workExternalIdentifier.getWorkExternalIdentifierId().getContent());
+                            /**
+                             * Creates a map that contains all different
+                             * external identifiers for the current work
+                             * */
+                            if (nullSafeCheckForWorkExternalIdentifier(workExternalIdentifier)) {
+                                WorkExternalIdentifierType type = workExternalIdentifier.getWorkExternalIdentifierType();
+                                if (!allExternalIdentifiers.containsKey(type)) {
+                                    List<String> content = new ArrayList<String>();
+                                    content.add(workExternalIdentifier.getWorkExternalIdentifierId().getContent());
+                                    allExternalIdentifiers.put(type, content);
+                                } else {
+                                    allExternalIdentifiers.get(type).add(workExternalIdentifier.getWorkExternalIdentifierId().getContent());
+                                }
                             }
 
                         }
@@ -206,15 +221,17 @@ public class OrcidIndexManagerImpl implements OrcidIndexManager {
                         if (worksubTitle != null && !StringUtils.isBlank(worksubTitle.getContent())) {
                             workTitles.add(worksubTitle.getContent());
                         }
-                        
-                        if(translatedTitle != null && !StringUtils.isBlank(translatedTitle.getContent())){
+
+                        if (translatedTitle != null && !StringUtils.isBlank(translatedTitle.getContent())) {
                             workTitles.add(translatedTitle.getContent());
                         }
                     }
                 }
 
                 profileIndexDocument.setWorkTitles(workTitles);
-                profileIndexDocument.setDigitalObjectIds(workIdentifiers);
+
+                // Set the list of external identifiers to the document list
+                addExternalIdentifiersToIndexDocument(profileIndexDocument, allExternalIdentifiers);
             }
 
             List<OrcidGrant> orcidGrants = filteredProfile.retrieveOrcidGrants() != null ? filteredProfile.retrieveOrcidGrants().getOrcidGrant() : null;
@@ -276,17 +293,91 @@ public class OrcidIndexManagerImpl implements OrcidIndexManager {
         solrDao.removeOrcids(Arrays.asList(orcid));
     }
 
-    private boolean nullSafeCheckWorkForDoi(WorkExternalIdentifier workExternalIdentifier) {
-        // need to check that the identifier isn't null, of type doi and has a
-        // value in its id field..
-        if (workExternalIdentifier != null) {
-            boolean doiType = WorkExternalIdentifierType.DOI.equals(workExternalIdentifier.getWorkExternalIdentifierType());
-            return doiType && workExternalIdentifier.getWorkExternalIdentifierId() != null
-                    && !StringUtils.isBlank(workExternalIdentifier.getWorkExternalIdentifierId().getContent());
+    private boolean nullSafeCheckForWorkExternalIdentifier(WorkExternalIdentifier workExternalIdentifier) {
+        return workExternalIdentifier.getWorkExternalIdentifierId() != null && !StringUtils.isBlank(workExternalIdentifier.getWorkExternalIdentifierId().getContent());
+    }
+
+    /**
+     * Fill all the different external identifiers in the profile index
+     * document.
+     * 
+     * @param profileIndexDocument
+     *            The document that will be indexed by solr
+     * @param externalIdentifiers
+     *            The list of external identifiers
+     * */
+    private void addExternalIdentifiersToIndexDocument(OrcidSolrDocument profileIndexDocument, Map<WorkExternalIdentifierType, List<String>> externalIdentifiers) {
+        Iterator<Entry<WorkExternalIdentifierType, List<String>>> it = externalIdentifiers.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry<WorkExternalIdentifierType, List<String>> entry = (Map.Entry<WorkExternalIdentifierType, List<String>>) it.next();
+            if (entry.getKey() != null && entry.getValue() != null && !entry.getValue().isEmpty()) {
+                switch (entry.getKey()) {
+                case ARXIV:
+                    profileIndexDocument.setArxiv(entry.getValue());
+                    break;
+                case ASIN:
+                    profileIndexDocument.setAsin(entry.getValue());
+                    break;
+                case ASIN_TLD:
+                    profileIndexDocument.setAsintld(entry.getValue());
+                    break;
+                case BIBCODE:
+                    profileIndexDocument.setBibcode(entry.getValue());
+                    break;
+                case DOI:
+                    profileIndexDocument.setDigitalObjectIds(entry.getValue());
+                    break;
+                case EID:
+                    profileIndexDocument.setEid(entry.getValue());
+                    break;
+                case ISBN:
+                    profileIndexDocument.setIsbn(entry.getValue());
+                    break;
+                case ISSN:
+                    profileIndexDocument.setIssn(entry.getValue());
+                    break;
+                case JFM:
+                    profileIndexDocument.setJfm(entry.getValue());
+                    break;
+                case JSTOR:
+                    profileIndexDocument.setJstor(entry.getValue());
+                    break;
+                case LCCN:
+                    profileIndexDocument.setLccn(entry.getValue());
+                    break;
+                case MR:
+                    profileIndexDocument.setMr(entry.getValue());
+                    break;
+                case OCLC:
+                    profileIndexDocument.setOclc(entry.getValue());
+                    break;
+                case OL:
+                    profileIndexDocument.setOl(entry.getValue());
+                    break;
+                case OSTI:
+                    profileIndexDocument.setOsti(entry.getValue());
+                    break;
+                case OTHER_ID:
+                    profileIndexDocument.setOtherIdentifierType(entry.getValue());
+                    break;
+                case PMC:
+                    profileIndexDocument.setPmc(entry.getValue());
+                    break;
+                case PMID:
+                    profileIndexDocument.setPmid(entry.getValue());
+                    break;
+                case RFC:
+                    profileIndexDocument.setRfc(entry.getValue());
+                    break;
+                case SSRN:
+                    profileIndexDocument.setSsrn(entry.getValue());
+                    break;
+                case XBL:
+                    profileIndexDocument.setZbl(entry.getValue());
+                    break;
+                }
+            }
         }
-
-        return false;
-
     }
 
 }
