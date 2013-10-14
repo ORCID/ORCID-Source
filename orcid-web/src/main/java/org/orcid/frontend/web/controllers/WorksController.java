@@ -523,6 +523,8 @@ public class WorksController extends BaseWorkspaceController {
                     if (!LANGUAGE_CODE.matcher(work.getWorkTitle().getTranslatedTitle().getLanguageCode()).matches()) {
                         setError(work.getWorkTitle().getTranslatedTitle(), "manualWork.invalid_language_code");
                     }
+                } else {
+                    setError(work.getWorkTitle().getTranslatedTitle(), "manualWork.empty_code");
                 }
                 if (content.length() > 1000) {
                     setError(work.getWorkTitle().getTranslatedTitle(), "manualWork.length_less_1000");
