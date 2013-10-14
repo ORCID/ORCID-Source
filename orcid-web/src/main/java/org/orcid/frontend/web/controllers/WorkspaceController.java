@@ -170,12 +170,16 @@ public class WorkspaceController extends BaseWorkspaceController {
         return map;
     }
 
+    /**
+     * Generate a map with ID types.
+     * The map is different from the rest, because it will be ordered in the form: value -> key, to keep the map alpha ordered in UI. 
+     * */
     @ModelAttribute("idTypes")
     public Map<String, String> retrieveIdTypesAsMap() {
         Map<String, String> map = new TreeMap<String, String>();
 
         for (WorkExternalIdentifierType type : WorkExternalIdentifierType.values()) {
-            map.put(type.value(), getMessage(buildInternationalizationKey(WorkExternalIdentifierType.class, type.value())));
+            map.put(getMessage(buildInternationalizationKey(WorkExternalIdentifierType.class, type.value())), type.value());
         }
 
         return FunctionsOverCollections.sortMapsByValues(map);
