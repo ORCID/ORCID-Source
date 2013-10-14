@@ -237,7 +237,7 @@
 			    		<select id="idType" name="idType" class="input-xlarge" ng-model="workExternalIdentifier.workExternalIdentifierType.value" ng-change="serverValidate('works/work/workExternalIdentifiersValidate.json')">
 							<option value=""><@orcid.msg 'org.orcid.jaxb.model.message.WorkExternalIdentifierType.empty' /></option>
 							<#list idTypes?keys as key>
-								<option value="${key}">${idTypes[key]}</option>
+								<option value="${idTypes[key]}">${key}</option>
 							</#list>
 						</select> 
 						<span class="orcid-error" ng-show="workExternalIdentifier.workExternalIdentifierType.errors.length > 0">
