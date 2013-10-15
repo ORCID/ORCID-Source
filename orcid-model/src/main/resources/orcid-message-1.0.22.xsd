@@ -400,22 +400,21 @@
     <xs:element name="affiliation">
         <xs:complexType>
             <xs:sequence>
-                <xs:element ref="orcid:affiliation-name"/>
-                <xs:element ref="orcid:affiliation-type" minOccurs="0"/>
-                <xs:element ref="orcid:affiliation-address"/>
-                <xs:element ref="orcid:department-name" minOccurs="0"/>
-                <xs:element ref="orcid:role-title" minOccurs="0"/>
-                <xs:element ref="orcid:start-date" minOccurs="0"/>
-                <xs:element ref="orcid:end-date" minOccurs="0"/>
+                <xs:element name="name" type="orcid:non-empty-string" />
+                <xs:element name="type" type="orcid:affiliation-type" minOccurs="0"/>
+                <xs:element name="address" type="orcid:affiliation-address"/>
+                <xs:element name="department-name" type="orcid:non-empty-string" minOccurs="0"/>
+                <xs:element name="role-title" type="orcid:non-empty-string" minOccurs="0"/>
+                <xs:element name="start-date" type="orcid:fuzzy-date" minOccurs="0"/>
+                <xs:element name="end-date" minOccurs="0"/>
                 <xs:element ref="orcid:source" minOccurs="0"/>
-                <xs:element ref="orcid:disambiguated-affiliation" minOccurs="0"/>
+                <xs:element name="disambiguated-affiliation" type="orcid:disambiguated-affiliation" minOccurs="0"/>
             </xs:sequence>
             <xs:attributeGroup ref="orcid:put-code"/>
             <xs:attributeGroup ref="orcid:visibility"/>
         </xs:complexType>
     </xs:element>
-    <xs:element name="affiliation-type">
-        <xs:simpleType>
+    <xs:simpleType  name="affiliation-type">
             <xs:restriction base="xs:string">
                 <xs:enumeration value="education"/>
                 <xs:enumeration value="employment"/>
@@ -423,16 +422,13 @@
                 <xs:enumeration value="funding"/>
                 <xs:enumeration value="contribution"/>
             </xs:restriction>
-        </xs:simpleType>
-    </xs:element>
-    <xs:element name="disambiguated-affiliation">
-        <xs:complexType>
-            <xs:sequence>
-                <xs:element ref="orcid:disambiguated-affiliation-identifier"/>
-                <xs:element ref="orcid:disambiguation-source"/>
-            </xs:sequence>
-        </xs:complexType>
-    </xs:element>
+    </xs:simpleType>
+    <xs:complexType name="disambiguated-affiliation">
+         <xs:sequence>
+             <xs:element ref="orcid:disambiguated-affiliation-identifier"/>
+             <xs:element ref="orcid:disambiguation-source"/>
+         </xs:sequence>
+    </xs:complexType>
     <xs:element name="disambiguated-affiliation-identifier" type="orcid:short-text"/>
     <xs:element name="disambiguation-source" type="orcid:short-text"/>
     <xs:element name="external-identifiers">
@@ -594,7 +590,7 @@
         </xs:annotation>
         <xs:complexType>
             <xs:sequence>
-                <xs:element ref="orcid:affiliations" minOccurs="0" maxOccurs="1"/>
+                <xs:element minOccurs="0" maxOccurs="1" ref="orcid:affiliations"/>
                 <xs:element minOccurs="0" maxOccurs="1" ref="orcid:orcid-works"/>
                 <xs:element minOccurs="0" maxOccurs="1" ref="orcid:orcid-grants"/>
                 <xs:element minOccurs="0" maxOccurs="1" ref="orcid:orcid-patents"/>
@@ -1121,14 +1117,7 @@
         <xs:simpleType>
             <xs:restriction base="xs:string"/>
         </xs:simpleType>
-    </xs:element>
-    
-    <xs:element name="role-title">
-        <xs:annotation>
-            <xs:documentation>Text field for the individual's title.</xs:documentation>
-        </xs:annotation>
-        <xs:complexType mixed="true"/>
-    </xs:element>
+    </xs:element>    
     <xs:element name="title">
         <xs:annotation>
             <xs:documentation>The main title of the work.</xs:documentation>
@@ -1253,42 +1242,24 @@
             </xs:simpleContent>
         </xs:complexType>
     </xs:element>
-    <xs:element name="affiliation-address">
-        <xs:annotation>
-            <xs:documentation>Container for affiliation location information</xs:documentation>
-        </xs:annotation>
-        <xs:complexType>
-            <xs:sequence>
-                <xs:element minOccurs="1" ref="orcid:affiliation-city"/>
-                <xs:element minOccurs="0" ref="orcid:affiliation-region"/>
-                <xs:element minOccurs="1" ref="orcid:affiliation-country"/>
-            </xs:sequence>
-        </xs:complexType>
-    </xs:element>
-    <xs:element name="affiliation-city">
-        <xs:complexType mixed="true">
-            <xs:annotation>
-                <xs:documentation>City</xs:documentation>
-            </xs:annotation>
-            <xs:attributeGroup ref="orcid:visibility"/>
-        </xs:complexType>
-    </xs:element>
-    <xs:element name="affiliation-region">
-        <xs:complexType mixed="true">
-            <xs:annotation>
-                <xs:documentation>Region within a country</xs:documentation>
-            </xs:annotation>
-        </xs:complexType>
-    </xs:element>
-    <xs:element name="affiliation-country" type="orcid:iso-3166-country"/>
-    <xs:element name="affiliation-name">
-        <xs:complexType mixed="true"/>
-    </xs:element>
-    <xs:element name="department-name">
-        <xs:complexType mixed="true"/>
-    </xs:element>
-    <xs:element name="end-date" type="orcid:fuzzy-date"/>
-    <xs:element name="start-date" type="orcid:fuzzy-date"/>
+    <xs:complexType name="affiliation-address">
+ 	    <xs:annotation>
+        	    <xs:documentation>Container for affiliation location information</xs:documentation>
+    	</xs:annotation>
+        <xs:sequence>
+            <xs:element minOccurs="1" name="city" type="orcid:non-empty-string">
+                <xs:annotation>
+                    <xs:documentation>City</xs:documentation>
+            	</xs:annotation>
+            </xs:element>
+            <xs:element minOccurs="0" name="region" type="orcid:non-empty-string">
+	            <xs:annotation>
+	                <xs:documentation>Region within a country</xs:documentation>
+	            </xs:annotation>
+            </xs:element>
+            <xs:element minOccurs="1" name="country" type="orcid:iso-3166-country"/>
+       </xs:sequence>
+    </xs:complexType>
     <xs:element name="orcid-internal">
         <xs:annotation>
             <xs:documentation>Container for data that are strictly for internal use only.

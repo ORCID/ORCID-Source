@@ -44,9 +44,9 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element ref="{http://www.orcid.org/ns/orcid}affiliation-name"/>
- *         &lt;element ref="{http://www.orcid.org/ns/orcid}affiliation-type" minOccurs="0"/>
- *         &lt;element ref="{http://www.orcid.org/ns/orcid}affiliation-address"/>
+ *         &lt;element ref="{http://www.orcid.org/ns/orcid}name"/>
+ *         &lt;element ref="{http://www.orcid.org/ns/orcid}type" minOccurs="0"/>
+ *         &lt;element ref="{http://www.orcid.org/ns/orcid}address"/>
  *         &lt;element ref="{http://www.orcid.org/ns/orcid}department-name" minOccurs="0"/>
  *         &lt;element ref="{http://www.orcid.org/ns/orcid}role-title" minOccurs="0"/>
  *         &lt;element ref="{http://www.orcid.org/ns/orcid}start-date" minOccurs="0"/>
@@ -70,11 +70,11 @@ import javax.xml.bind.annotation.XmlType;
 public class Affiliation implements Serializable, VisibilityType {
 
     private final static long serialVersionUID = 1L;
-    @XmlElement(name = "affiliation-name", required = true)
+    @XmlElement(name = "name", required = true)
     protected String affiliationName;
-    @XmlElement(name = "affiliation-type")
+    @XmlElement(name = "type")
     protected AffiliationType affiliationType;
-    @XmlElement(name = "affiliation-address", required = true)
+    @XmlElement(name = "address", required = true)
     protected AffiliationAddress affiliationAddress;
     @XmlElement(name = "department-name")
     protected String departmentName;

@@ -120,14 +120,6 @@ Sample Create XML (note: email used must not already exist)
       			<contact-details>
       				<email>l.paglione+createemailtest+rob4@orcid.org</email>
       			</contact-details>
-      			<affiliations>
-      				<affiliation visibility="public">
-      					<affiliation-name>PUBLIC: Harvard Medical School</affiliation-name>
-      					<affiliation-type>current-primary-institution</affiliation-type>
-      					<department-name>IT</department-name>
-      					<role-title>Chief Technology Officer</role-title>
-      				</affiliation>
-      			</affiliations>
       		</orcid-bio>		
       		<orcid-activities>
       			<orcid-works>
