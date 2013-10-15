@@ -55,7 +55,7 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = { "affiliation" })
-@XmlRootElement(name = "affiliations")
+@XmlRootElement(name = "orcid-affiliations")
 public class Affiliations implements Serializable {
 
     /**

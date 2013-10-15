@@ -18,9 +18,9 @@
 
 -->
 <orcid-message xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-               xsi:schemaLocation="http://www.orcid.org/ns/orcid ../../../../orcid-model/src/main/resources/orcid-message-1.0.21.xsd"
+               xsi:schemaLocation="http://www.orcid.org/ns/orcid ../../../../orcid-model/src/main/resources/orcid-message-1.0.22.xsd"
                xmlns="http://www.orcid.org/ns/orcid">
-    <message-version>1.0.21</message-version>
+    <message-version>1.0.22</message-version>
     <orcid-profile>
         <orcid>4444-4444-4444-4446</orcid>
         <orcid-id>http://orcid.org/4444-4444-4444-4446</orcid-id>
@@ -70,13 +70,13 @@
         <orcid-activities>
             <affiliations>
                 <affiliation>
-                    <affiliation-name>New College</affiliation-name>
-                    <affiliation-type>current-institution</affiliation-type>
-                    <affiliation-address>
-                        <affiliation-city>Some City</affiliation-city>
-                        <affiliation-region>CT</affiliation-region>
-                        <affiliation-country>US</affiliation-country>
-                    </affiliation-address>
+                    <name>New College</name>
+                    <type>employment</type>
+                    <address>
+                        <city>Some City</city>
+                        <region>CT</region>
+                        <country>US</country>
+                    </address>
                     <role-title>Researcher (Academic)</role-title>
                     <start-date>
                         <year>2012</year>
@@ -84,13 +84,13 @@
                     </start-date>
                 </affiliation>
                 <affiliation>
-                    <affiliation-name>Brown University</affiliation-name>
-                    <affiliation-type>funded-by</affiliation-type>
-                    <affiliation-address>
-                        <affiliation-city>Providence</affiliation-city>
-                        <affiliation-region>RI</affiliation-region>
-                        <affiliation-country>US</affiliation-country>
-                    </affiliation-address>
+                    <name>Brown University</name>
+                    <type>funding</type>
+                    <address>
+                        <city>Providence</city>
+                        <region>RI</region>
+                        <country>US</country>
+                    </address>
                     <department-name>Psychoceramics</department-name>
                     <role-title>Researcher (Academic)</role-title>
                     <start-date>
@@ -103,13 +103,13 @@
                     </disambiguated-affiliation>
                 </affiliation>
                 <affiliation>
-                    <affiliation-name>Yale University</affiliation-name>
-                    <affiliation-type>current-primary-institution</affiliation-type>
-                    <affiliation-address>
-                        <affiliation-city>New Haven</affiliation-city>
-                        <affiliation-region>CT</affiliation-region>
-                        <affiliation-country>US</affiliation-country>
-                    </affiliation-address>
+                    <name>Yale University</name>
+                    <type>employment</type>
+                    <address>
+                        <city>New Haven</city>
+                        <region>CT</region>
+                        <country>US</country>
+                    </address>
                     <department-name>Law</department-name>
                     <role-title>Researcher (Academic)</role-title>
                     <start-date>
@@ -121,12 +121,12 @@
                     </disambiguated-affiliation>
                 </affiliation>
                 <affiliation>
-                    <affiliation-name>Slightly Obscure College</affiliation-name>
-                    <affiliation-type>educated-here</affiliation-type>
-                    <affiliation-address>
-                        <affiliation-city>London</affiliation-city>
-                        <affiliation-country>GB</affiliation-country>
-                    </affiliation-address>
+                    <name>Slightly Obscure College</name>
+                    <type>education</type>
+                    <address>
+                        <city>London</city>
+                        <country>GB</country>
+                    </address>
                     <role-title>Student</role-title>
                     <start-date>
                         <year>1993</year>
