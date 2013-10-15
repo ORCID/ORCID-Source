@@ -38,15 +38,16 @@ public class OrgDisambiguatedDaoImpl extends GenericDaoImpl<OrgDisambiguatedEnti
     @SuppressWarnings("unchecked")
     @Override
     public List<OrgDisambiguatedEntity> getOrgs(String searchTerm, int firstResult, int maxResults) {
-//        We might want to sort by popularity 
-//                Query query = entityManager.createNativeQuery(
-//                "select od.* from org_disambiguated od join org_affiliation_relation oa on od.id = oa.org_id" +
-//                "  where lower(name) like '%' || lower(:searchTerm) || '%'" +
-//                "  group by od.id order by count(*) DESC" 
-//               , OrgDisambiguatedEntity.class);
+        String qStr =                
+                "select od.*, COUNT(*) as countAll from org_disambiguated od left join org_affiliation_relation oa on od.id = oa.org_id" +
+                "  where lower(name) like '%' || lower(:searchTerm) || '%'" +
+                "  group by od.id order by countAll DESC, od.name" ;
+ 
+        Query query = entityManager.createNativeQuery(qStr
+               , OrgDisambiguatedEntity.class);
 
-        TypedQuery<OrgDisambiguatedEntity> query = entityManager.createQuery(
-                "from OrgDisambiguatedEntity where lower(name) like '%' || lower(:searchTerm) || '%' order by name", OrgDisambiguatedEntity.class);
+//        TypedQuery<OrgDisambiguatedEntity> query = entityManager.createQuery(
+//                "from OrgDisambiguatedEntity where lower(name) like '%' || lower(:searchTerm) || '%' order by name", OrgDisambiguatedEntity.class);
         query.setParameter("searchTerm", searchTerm);
         query.setFirstResult(firstResult);
         query.setMaxResults(maxResults);

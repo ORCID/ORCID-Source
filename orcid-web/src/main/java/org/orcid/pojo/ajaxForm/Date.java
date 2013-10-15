@@ -17,6 +17,8 @@
 package org.orcid.pojo.ajaxForm;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 import org.orcid.jaxb.model.message.Day;
@@ -56,7 +58,19 @@ public class Date implements ErrorsInterface, Required {
             pd.setYear(new Year(new Integer(this.getYear())));
         return pd;
     }
+    
+    public java.util.Date toJavaDate() {
+        Calendar gc = GregorianCalendar.getInstance();
+        if (!PojoUtil.isEmpty(this.getDay()))
+            gc.set(Calendar.DAY_OF_MONTH, Integer.parseInt(this.getDay()));
+        if (!PojoUtil.isEmpty(this.getMonth()))
+            gc.set(Calendar.MONTH, Integer.parseInt(this.getMonth()) - 1);
+        if (!PojoUtil.isEmpty(this.getYear()))
+            gc.set(Calendar.YEAR, Integer.parseInt(this.getYear()));
+        return gc.getTime();
+    }
 
+  
     public List<String> getErrors() {
         return errors;
     }
