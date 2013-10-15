@@ -56,15 +56,15 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = { "affiliationCity", "affiliationRegion", "affiliationCountry" })
-@XmlRootElement(name = "affiliation-address")
+@XmlRootElement(name = "address")
 public class AffiliationAddress implements Serializable {
 
     private final static long serialVersionUID = 1L;
-    @XmlElement(name = "affiliation-city", required = true)
+    @XmlElement(name = "city", required = true)
     protected AffiliationCity affiliationCity;
-    @XmlElement(name = "affiliation-region")
+    @XmlElement(name = "region")
     protected AffiliationRegion affiliationRegion;
-    @XmlElement(name = "affiliation-country", required = true)
+    @XmlElement(name = "country", required = true)
     protected AffiliationCountry affiliationCountry;
 
     /**
