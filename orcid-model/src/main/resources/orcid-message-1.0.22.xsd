@@ -417,12 +417,11 @@
     <xs:element name="affiliation-type">
         <xs:simpleType>
             <xs:restriction base="xs:string">
-                <xs:enumeration value="current-primary-institution"/>
-                <xs:enumeration value="current-institution"/>
-                <xs:enumeration value="published-here"/>
-                <xs:enumeration value="funded-by"/>
-                <xs:enumeration value="past-institution"/>
-                <xs:enumeration value="educated-here"/>
+                <xs:enumeration value="education"/>
+                <xs:enumeration value="employment"/>
+                <xs:enumeration value="distinction"/>
+                <xs:enumeration value="funding"/>
+                <xs:enumeration value="contribution"/>
             </xs:restriction>
         </xs:simpleType>
     </xs:element>

@@ -129,14 +129,6 @@ public class OrcidSearchManagerImplTest extends BaseTest {
         assertTrue(otherNames.contains("Edward Bass"));
         assertTrue(otherNames.contains("Gareth Dove"));
 
-        Affiliation primary = retrievedProfile.getOrcidActivities().getAffiliations().getAffiliationsByType(AffiliationType.CURRENT_PRIMARY_INSTITUTION).get(0);
-        Affiliation current = retrievedProfile.getOrcidActivities().getAffiliations().getAffiliationsByType(AffiliationType.CURRENT_INSTITUTION).get(0);
-        Affiliation past = retrievedProfile.getOrcidActivities().getAffiliations().getAffiliationsByType(AffiliationType.PAST_INSTITUTION).get(0);
-
-        assertEquals("Primary Institution", primary.getAffiliationName());
-        assertEquals("Current Institution", current.getAffiliationName());
-        assertEquals("Past Institution", past.getAffiliationName());
-
         OrcidWorks orcidWorks = retrievedProfile.retrieveOrcidWorks();
         OrcidWork orcidWork1 = orcidWorks.getOrcidWork().get(0);
         OrcidWork orcidWork2 = orcidWorks.getOrcidWork().get(1);
@@ -253,7 +245,6 @@ public class OrcidSearchManagerImplTest extends BaseTest {
         orcidProfile.setOrcidActivities(orcidActivities);
         Affiliations affiliations = new Affiliations();
         orcidActivities.setAffiliations(affiliations);
-        affiliations.getAffiliation().add(createPastAffiliation());
 
         return orcidProfile;
     }
@@ -333,9 +324,6 @@ public class OrcidSearchManagerImplTest extends BaseTest {
         orcidProfile.setOrcidActivities(orcidActivities);
         Affiliations affiliations = new Affiliations();
         orcidActivities.setAffiliations(affiliations);
-        affiliations.getAffiliation().add(createPastAffiliation());
-        affiliations.getAffiliation().add(createCurrentAffiliation());
-        affiliations.getAffiliation().add(createCurrentPrimaryAffiliation());
 
         OrcidWorks orcidWorks = new OrcidWorks();
         orcidProfile.setOrcidWorks(orcidWorks);
@@ -399,18 +387,6 @@ public class OrcidSearchManagerImplTest extends BaseTest {
         work2ExternalIdentifiers.getWorkExternalIdentifier().add(work2ExternalIdentifier2);
         orcidWork2.setWorkExternalIdentifiers(work2ExternalIdentifiers);
 
-    }
-
-    private Affiliation createPastAffiliation() {
-        return createAffiliation(AffiliationType.PAST_INSTITUTION, "Past Institution");
-    }
-
-    private Affiliation createCurrentAffiliation() {
-        return createAffiliation(AffiliationType.CURRENT_INSTITUTION, "Current Institution");
-    }
-
-    private Affiliation createCurrentPrimaryAffiliation() {
-        return createAffiliation(AffiliationType.CURRENT_PRIMARY_INSTITUTION, "Primary Institution");
     }
 
     private Affiliation createAffiliation(AffiliationType affiliationType, String instName) {

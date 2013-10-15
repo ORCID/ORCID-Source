@@ -62,48 +62,6 @@ v
                 <keyword>Pavement Studies</keyword>
                 <keyword>Advanced Tea Making</keyword>
             </keywords>
-            <affiliations>
-                <affiliation>
-                    <affiliation-name>Past Inst 1</affiliation-name>
-                    <affiliation-type>past-institution</affiliation-type>
-                    <address>
-                        <country>United Kingdom</country>
-                    </address>
-                    <role-title>A Role</role-title>
-                </affiliation>
-                <affiliation>
-                    <affiliation-name>Past Inst 2</affiliation-name>
-                    <affiliation-type>past-institution</affiliation-type>
-                    <address>
-                        <country>United Kingdom</country>
-                    </address>
-                    <role-title>A Role</role-title>
-                </affiliation>
-                <affiliation>
-                    <affiliation-name>Primary Inst1</affiliation-name>
-                    <affiliation-type>current-primary-institution</affiliation-type>
-                    <address>
-                        <country>United Kingdom</country>
-                    </address>
-                    <role-title>A Role</role-title>
-                </affiliation>
-                <affiliation>
-                    <affiliation-name>Current Inst1</affiliation-name>
-                    <affiliation-type>current-institution</affiliation-type>
-                    <address>
-                        <country>United Kingdom</country>
-                    </address>
-                    <role-title>A Role</role-title>
-                </affiliation>
-                <affiliation>
-                    <affiliation-name>Current Inst2</affiliation-name>
-                    <affiliation-type>current-institution</affiliation-type>
-                    <address>
-                        <country>United Kingdom</country>
-                    </address>
-                    <role-title>A Role</role-title>
-                </affiliation>
-            </affiliations>
         </orcid-bio>
         <orcid-activities>
             <orcid-works>

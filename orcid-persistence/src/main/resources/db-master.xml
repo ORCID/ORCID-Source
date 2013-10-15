@@ -73,4 +73,5 @@
     <include file="/db/updates/profile_hook_date.xml" />
     <include file="/db/updates/add_journal_title_to_works.xml" />
     <include file="/db/updates/add_fields_to_work.xml" />
+    <include file="/db/updates/disambiguated_affiliations_migrate_types.xml"/>
 </databaseChangeLog>

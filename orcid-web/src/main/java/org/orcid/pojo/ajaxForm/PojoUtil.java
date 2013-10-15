@@ -27,5 +27,17 @@ public class PojoUtil {
         if (string == null || string.trim().isEmpty()) return true;
         return false;
     }
+    
+    public static boolean isEmply(Date date) {
+        if (date == null) return true;
+        if (!PojoUtil.isEmpty(date.getDay()))
+            return false;
+        if (!PojoUtil.isEmpty(date.getMonth()))
+            return false;
+        if (!PojoUtil.isEmpty(date.getYear()))
+            return false;
+        return true;
+    }
+
 
 }
