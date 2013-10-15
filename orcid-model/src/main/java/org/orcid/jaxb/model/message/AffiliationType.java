@@ -63,7 +63,7 @@ public enum AffiliationType implements Serializable {
      * 
      */
     @XmlEnumValue("contribution")
-    FCONTRIBUTION("contribution");
+    CONTRIBUTION("contribution");
     
     private final String value;
 
