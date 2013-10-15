@@ -386,7 +386,7 @@
             <xs:restriction base="xs:string"/>
         </xs:simpleType>
     </xs:element>
-    <xs:element name="orcid-affiliations">
+    <xs:element name="affiliations">
         <xs:annotation>
             <xs:documentation>Container for the list of affiliations associated with the researcher or contributor
             </xs:documentation>
@@ -590,7 +590,7 @@
         </xs:annotation>
         <xs:complexType>
             <xs:sequence>
-                <xs:element minOccurs="0" maxOccurs="1" ref="orcid:orcid-affiliations"/>
+                <xs:element ref="orcid:affiliations" minOccurs="0" maxOccurs="1"/>
                 <xs:element minOccurs="0" maxOccurs="1" ref="orcid:orcid-works"/>
                 <xs:element minOccurs="0" maxOccurs="1" ref="orcid:orcid-grants"/>
                 <xs:element minOccurs="0" maxOccurs="1" ref="orcid:orcid-patents"/>
