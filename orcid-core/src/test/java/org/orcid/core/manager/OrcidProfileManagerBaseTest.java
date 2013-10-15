@@ -58,6 +58,7 @@ import org.orcid.jaxb.model.message.SecurityQuestionId;
 import org.orcid.jaxb.model.message.SequenceType;
 import org.orcid.jaxb.model.message.Subtitle;
 import org.orcid.jaxb.model.message.Title;
+import org.orcid.jaxb.model.message.TranslatedTitle;
 import org.orcid.jaxb.model.message.Url;
 import org.orcid.jaxb.model.message.WorkContributors;
 import org.orcid.jaxb.model.message.WorkExternalIdentifier;
@@ -199,10 +200,36 @@ public class OrcidProfileManagerBaseTest extends BaseTest {
     protected OrcidWork createWork1() {
         WorkTitle workTitle = new WorkTitle();
         workTitle.setTitle(new Title("Test Title"));
-        workTitle.setSubtitle(new Subtitle(""));
+        workTitle.setSubtitle(new Subtitle("Subtitle # 1"));
+        TranslatedTitle tt = new TranslatedTitle();
+        tt.setContent("Titulo prueba");
+        tt.setLanguageCode("es_CR");
+        workTitle.setTranslatedTitle(tt);
         return createWork1(workTitle);
     }
+    
+    protected OrcidWork createWork2() {
+        WorkTitle workTitle = new WorkTitle();
+        workTitle.setTitle(new Title("Test Title # 2"));
+        workTitle.setSubtitle(new Subtitle("Subtitle # 2"));
+        TranslatedTitle tt = new TranslatedTitle();
+        tt.setContent("Titulo prueba # 2");
+        tt.setLanguageCode("es_MX");
+        workTitle.setTranslatedTitle(tt);
+        return createWork2(workTitle);
+    }
 
+    protected OrcidWork createWork3() {
+        WorkTitle workTitle = new WorkTitle();
+        workTitle.setTitle(new Title("Test Title # 3"));
+        workTitle.setSubtitle(new Subtitle("Subtitle # 3"));
+        TranslatedTitle tt = new TranslatedTitle();
+        tt.setContent("Titulo prueba # 3");
+        tt.setLanguageCode("es");
+        workTitle.setTranslatedTitle(tt);
+        return createWork3(workTitle);
+    }
+    
     protected OrcidWork createWork1(WorkTitle workTitle) {
         return createWork(workTitle, createWork1Identifiers(), createWork1Contributors());
     }
@@ -234,8 +261,8 @@ public class OrcidProfileManagerBaseTest extends BaseTest {
         work2ExternalIdentifier1.setWorkExternalIdentifierType(WorkExternalIdentifierType.DOI);
         work2ExternalIdentifier1.setWorkExternalIdentifierId(new WorkExternalIdentifierId("work2-doi1"));
         WorkExternalIdentifier work2ExternalIdentifier2 = new WorkExternalIdentifier();
-        work2ExternalIdentifier2.setWorkExternalIdentifierType(WorkExternalIdentifierType.DOI);
-        work2ExternalIdentifier2.setWorkExternalIdentifierId(new WorkExternalIdentifierId("work2-doi2"));
+        work2ExternalIdentifier2.setWorkExternalIdentifierType(WorkExternalIdentifierType.PMID);
+        work2ExternalIdentifier2.setWorkExternalIdentifierId(new WorkExternalIdentifierId("work2-pmid"));
         work2ExternalIdentifiers.getWorkExternalIdentifier().add(work2ExternalIdentifier1);
         work2ExternalIdentifiers.getWorkExternalIdentifier().add(work2ExternalIdentifier2);
         return work2ExternalIdentifiers;
@@ -247,7 +274,7 @@ public class OrcidProfileManagerBaseTest extends BaseTest {
         work3ExternalIdentifier1.setWorkExternalIdentifierType(WorkExternalIdentifierType.DOI);
         work3ExternalIdentifier1.setWorkExternalIdentifierId(new WorkExternalIdentifierId("work3-doi1"));
         WorkExternalIdentifier work3ExternalIdentifier2 = new WorkExternalIdentifier();
-        work3ExternalIdentifier2.setWorkExternalIdentifierType(WorkExternalIdentifierType.DOI);
+        work3ExternalIdentifier2.setWorkExternalIdentifierType(WorkExternalIdentifierType.PMID);
         work3ExternalIdentifier2.setWorkExternalIdentifierId(new WorkExternalIdentifierId("work3-doi2"));
         work3ExternalIdentifiers.getWorkExternalIdentifier().add(work3ExternalIdentifier1);
         work3ExternalIdentifiers.getWorkExternalIdentifier().add(work3ExternalIdentifier2);

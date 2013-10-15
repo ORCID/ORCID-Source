@@ -1382,6 +1382,7 @@ function WorkCtrl($scope, $compile, worksSrvc){
 	};
 	
 	$scope.showAddModal = function(){;
+		$scope.editTranslatedTitle = false;
 	    $.colorbox({        	
 	        html: $compile($('#add-work-modal').html())($scope),	        
 	        onLoad: function() {$('#cboxClose').remove();},

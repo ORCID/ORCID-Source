@@ -69,14 +69,14 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "putCode", "workTitle", "journalTitle", "shortDescription", "workCitation", "workType", "publicationDate", "workExternalIdentifiers", "url",
-        "workContributors", "workSource", "languageCode", "country" })
+@XmlType(name = "", propOrder = { "putCode", "workTitle", "journalTitle", "shortDescription", "workCitation", "workType", "publicationDate", "workExternalIdentifiers",
+        "url", "workContributors", "workSource", "languageCode", "country" })
 @XmlRootElement(name = "orcid-work")
 public class OrcidWork implements VisibilityType, Serializable {
 
     private static final long serialVersionUID = 1L;
     @XmlElement(name = "work-title")
-    protected WorkTitle workTitle;    
+    protected WorkTitle workTitle;
     @XmlElement(name = "journal-title")
     protected Title journalTitle;
     @XmlElement(name = "short-description")
@@ -333,7 +333,7 @@ public class OrcidWork implements VisibilityType, Serializable {
     public void setVisibility(Visibility value) {
         this.visibility = value;
     }
-        
+
     /**
      * Gets the value of the journalTitle property.
      * 
@@ -354,7 +354,7 @@ public class OrcidWork implements VisibilityType, Serializable {
     public void setJournalTitle(Title value) {
         this.journalTitle = value;
     }
-    
+
     /**
      * Gets the value of the languageCode property.
      * 
@@ -375,7 +375,7 @@ public class OrcidWork implements VisibilityType, Serializable {
     public void setLanguageCode(String languageCode) {
         this.languageCode = languageCode;
     }
-    
+
     /**
      * Gets the value of the country property.
      * 
@@ -403,6 +403,50 @@ public class OrcidWork implements VisibilityType, Serializable {
     }
 
     /**
+     * Indicates if two works are ORCID duplicated.
+     * Two works will be duplicated if they have the same title, type, external identifiers and source.
+     * 
+     * @return true if the two works are duplicated according to ORCID
+     *         requirements
+     * */
+    public boolean isDuplicated(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        OrcidWork other = (OrcidWork) obj;
+
+        if (this.getWorkTitle() == null) {
+            if (other.getWorkTitle() != null)
+                return false;
+        } else if (!this.getWorkTitle().equals(other.getWorkTitle()))
+            return false;
+
+        if (this.getWorkType() == null) {
+            if (other.getWorkType() != null)
+                return false;
+        } else if (!this.getWorkType().equals(other.getWorkType()))
+            return false;
+
+        if (this.getWorkExternalIdentifiers() == null) {
+            if (other.getWorkExternalIdentifiers() != null)
+                return false;
+        } else if (!this.getWorkExternalIdentifiers().equals(other.getWorkExternalIdentifiers()))
+            return false;
+
+        if (this.getWorkSource() == null) {
+            if (other.getWorkSource() != null)
+                return false;
+        }
+        if (!this.getWorkSource().equals(other.getWorkSource()))
+            return false;
+
+        return true;
+    }
+
+    /**
      * Note that put-code is not part of hashcode. This is important for avoid
      * creation of duplication works.
      */
@@ -422,7 +466,7 @@ public class OrcidWork implements VisibilityType, Serializable {
         result = prime * result + ((workType == null) ? 0 : workType.hashCode());
         result = prime * result + ((journalTitle == null) ? 0 : journalTitle.hashCode());
         result = prime * result + ((languageCode == null) ? 0 : languageCode.hashCode());
-        result = prime * result +((country == null) ? 0 : country.hashCode());
+        result = prime * result + ((country == null) ? 0 : country.hashCode());
         return result;
     }
 
@@ -483,23 +527,23 @@ public class OrcidWork implements VisibilityType, Serializable {
             return false;
         if (workType != other.workType)
             return false;
-        
-        if(journalTitle == null){
-            if(other.journalTitle !=null)
+
+        if (journalTitle == null) {
+            if (other.journalTitle != null)
                 return false;
-        } else if(!journalTitle.equals(other.journalTitle))
+        } else if (!journalTitle.equals(other.journalTitle))
             return false;
-        
-        if(languageCode == null){
-            if(other.languageCode != null)
+
+        if (languageCode == null) {
+            if (other.languageCode != null)
                 return false;
-        } else if(!languageCode.equals(other.languageCode))
+        } else if (!languageCode.equals(other.languageCode))
             return false;
-            
-        if(country == null) {
-            if(other.country != null)
+
+        if (country == null) {
+            if (other.country != null)
                 return false;
-        } else if(!country.equals(other.country))
+        } else if (!country.equals(other.country))
             return false;
         return true;
     }

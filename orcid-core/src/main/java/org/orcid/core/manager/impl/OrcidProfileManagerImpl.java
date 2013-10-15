@@ -934,10 +934,13 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
                 existingOrcidWorksSet.add(existingWork);
             }
             for (Iterator<OrcidWork> updatedWorkIterator = updatedOrcidWorksList.iterator(); updatedWorkIterator.hasNext();) {
-                OrcidWork updatedWork = updatedWorkIterator.next();
-                if (existingOrcidWorksSet.contains(updatedWork)) {
-                    updatedWorkIterator.remove();
-                }
+                OrcidWork updatedWork = updatedWorkIterator.next();                                
+                for(OrcidWork orcidWork : existingOrcidWorksSet) {
+                    if(orcidWork.isDuplicated(updatedWork)){
+                        updatedWorkIterator.remove();
+                        break;
+                    }
+                }                
             }
         }
     }
