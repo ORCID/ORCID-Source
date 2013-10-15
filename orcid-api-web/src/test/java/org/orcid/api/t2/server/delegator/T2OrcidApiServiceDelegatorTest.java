@@ -224,7 +224,7 @@ public class T2OrcidApiServiceDelegatorTest extends DBUnitTest {
         Affiliation affiliation1 = new Affiliation();
         affiliations.getAffiliation().add(affiliation1);
         affiliation1.setAffiliationName("A new affiliation");
-        affiliation1.setAffiliationType(AffiliationType.CURRENT_INSTITUTION);
+        affiliation1.setAffiliationType(AffiliationType.EDUCATION);
         AffiliationAddress affiliationAddress = new AffiliationAddress();
         affiliation1.setAffiliationAddress(affiliationAddress);
         affiliationAddress.setAffiliationCity(new AffiliationCity("Edinburgh"));

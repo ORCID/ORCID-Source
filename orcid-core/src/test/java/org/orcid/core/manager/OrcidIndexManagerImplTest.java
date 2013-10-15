@@ -284,8 +284,6 @@ public class OrcidIndexManagerImplTest extends BaseTest {
         orcidProfile.setOrcidActivities(orcidActivities);
         Affiliations affiliations = new Affiliations();
         orcidActivities.setAffiliations(affiliations);
-        Affiliation affiliation = createPrimaryAffiliation("University of Portsmouth");
-        affiliations.getAffiliation().add(affiliation);
 
         return orcidProfile;
     }
@@ -301,7 +299,7 @@ public class OrcidIndexManagerImplTest extends BaseTest {
         orcidSolrDocument.setOrcid("5678");
         orcidSolrDocument.setFamilyName("Logan");
         orcidSolrDocument.setGivenNames("Donald Edward");
-        orcidSolrDocument.setAffiliatePrimaryInstitutionNames(Arrays.asList(new String[] { "University of Portsmouth" }));
+        //orcidSolrDocument.setAffiliatePrimaryInstitutionNames(Arrays.asList(new String[] { "University of Portsmouth" }));
         OrcidProfile orcidProfile = getOrcidProfileMandatoryOnly();
         OrcidMessage orcidMessage = createFilteredOrcidMessage(orcidProfile);
         orcidSolrDocument.setPublicProfileMessage(orcidMessage.toString());
@@ -446,20 +444,6 @@ public class OrcidIndexManagerImplTest extends BaseTest {
         Affiliations affiliations = new Affiliations();
         orcidActivities.setAffiliations(affiliations);
 
-        Affiliation pastInst1 = createPastAffiliation("Past Inst 1");
-        Affiliation pastInst2 = createPastAffiliation("Past Inst 2");
-        Affiliation primaryInst1 = createPrimaryAffiliation("Primary Inst1");
-
-        Affiliation currentAffiliation1 = createCurrentNonPrimaryAffiliation("Current Inst1");
-        currentAffiliation1.setVisibility(Visibility.LIMITED);
-        Affiliation currentAffiliation2 = createCurrentNonPrimaryAffiliation("Current Inst2");
-
-        affiliations.getAffiliation().add(pastInst1);
-        affiliations.getAffiliation().add(pastInst2);
-        affiliations.getAffiliation().add(primaryInst1);
-        affiliations.getAffiliation().add(currentAffiliation1);
-        affiliations.getAffiliation().add(currentAffiliation2);
-
         OrcidWorks orcidWorks = new OrcidWorks();
         OrcidWork orcidWork1 = new OrcidWork();
         orcidWork1.setVisibility(Visibility.PUBLIC);
@@ -573,14 +557,14 @@ public class OrcidIndexManagerImplTest extends BaseTest {
         orcidSolrDocument.setFamilyName("familyName");
         orcidSolrDocument.setGivenNames("givenNames");
         orcidSolrDocument.addEmailAddress("email");
-        orcidSolrDocument.setAffiliatePrimaryInstitutionNames(Arrays.asList(new String[] { "Primary Inst1" }));
-        orcidSolrDocument.setAffiliateInstitutionNames(Arrays.asList(new String[] { "Current Inst2" }));
+        //orcidSolrDocument.setAffiliatePrimaryInstitutionNames(Arrays.asList(new String[] { "Primary Inst1" }));
+        //orcidSolrDocument.setAffiliateInstitutionNames(Arrays.asList(new String[] { "Current Inst2" }));
         orcidSolrDocument.setOtherNames(Arrays.asList(new String[] { "Other 1", "Other 2" }));
         orcidSolrDocument.setPmid(Arrays.asList(new String[] {"work1-pmid"}));
         orcidSolrDocument.setExternalIdOrcids(Arrays.asList(new String[] { "45678", "54321" }));
         orcidSolrDocument.setExternalIdReferences(Arrays.asList(new String[] { "defghi", "abc123" }));
         orcidSolrDocument.setExternalIdOrcidsAndReferences(Arrays.asList(new String[] { "45678=defghi", "54321=abc123" }));
-        orcidSolrDocument.setPastInstitutionNames(Arrays.asList(new String[] { "Past Inst 1", "Past Inst 2" }));
+       // orcidSolrDocument.setPastInstitutionNames(Arrays.asList(new String[] { "Past Inst 1", "Past Inst 2" }));
         orcidSolrDocument.setWorkTitles(Arrays.asList(new String[] { "Work title 1", "Work title 2" }));
         orcidSolrDocument.setKeywords(Arrays.asList(new String[] { "Pavement Studies", "Advanced Tea Making" }));
         OrcidProfile orcidProfile = getStandardOrcid();
@@ -604,18 +588,6 @@ public class OrcidIndexManagerImplTest extends BaseTest {
         OrcidMessage orcidMessage = createFilteredOrcidMessage(orcidProfile);
         orcidSolrDocument.setPublicProfileMessage(orcidMessage.toString());
         return orcidSolrDocument;
-    }
-
-    private Affiliation createPastAffiliation(String instName) {
-        return createAffiliation(instName, AffiliationType.PAST_INSTITUTION);
-    }
-
-    private Affiliation createCurrentNonPrimaryAffiliation(String instName) {
-        return createAffiliation(instName, AffiliationType.CURRENT_INSTITUTION);
-    }
-
-    private Affiliation createPrimaryAffiliation(String instName) {
-        return createAffiliation(instName, AffiliationType.CURRENT_PRIMARY_INSTITUTION);
     }
 
     private Affiliation createAffiliation(String instName, AffiliationType affiliationType) {

@@ -42,10 +42,19 @@
 				<div class="control-group">
 					<label><@orcid.msg 'manual_affiliation_form_contents.labelname'/></label>
 				    <div class="relative">
-						<input id="affiliationName" name="affiliationName" type="text" ng-model="editAffiliation.affiliationName.value" placeholder="<@orcid.msg 'manual_affiliation_form_contents.add_name'/>" ng-change="serverValidate('affiliations/affiliation/affiliationNameValidate.json')" ng-model-onblur/>
+						<input id="affiliationName" class="input-xlarge" name="affiliationName" type="text" ng-model="editAffiliation.affiliationName.value" placeholder="<@orcid.msg 'manual_affiliation_form_contents.add_name'/>" ng-change="serverValidate('affiliations/affiliation/affiliationNameValidate.json')" ng-model-onblur/>
 						<span class="required" ng-class="isValidClass(editAffiliation.affiliationName)">*</span>
 						<span class="orcid-error" ng-show="editAffiliation.affiliationName.errors.length > 0">
 							<div ng-repeat='error in editAffiliation.affiliationName.errors' ng-bind-html-unsafe="error"></div>
+						</span>
+					</div>
+				</div>
+				<div class="control-group">
+					<label><@orcid.msg 'manual_affiliation_form_contents.labeldepartment'/></label>
+				    <div class="relative">
+						<input name="department" type="text" class="input-xlarge"  ng-model="editAffiliation.departmentName.value" placeholder="<@orcid.msg 'manual_affiliation_form_contents.add_department'/>" ng-change="serverValidate('affiliations/affiliation/departmentValidate.json')" ng-model-onblur/>
+						<span class="orcid-error" ng-show="editAffiliation.departmentName.errors.length > 0">
+							<div ng-repeat='error in editAffiliation.departmentName.errors' ng-bind-html-unsafe="error"></div>
 						</span>
 					</div>
 				</div>
@@ -83,22 +92,15 @@
 						</span>
 					</div>
 				</div>
-				<div class="control-group">
-					<label><@orcid.msg 'manual_affiliation_form_contents.labeldepartment'/></label>
-				    <div class="relative">
-						<input name="department" type="text" class="input-xlarge"  ng-model="editAffiliation.departmentName.value" placeholder="<@orcid.msg 'manual_affiliation_form_contents.add_department'/>" ng-change="serverValidate('affiliations/affiliation/departmentValidate.json')" ng-model-onblur/>
-						<span class="orcid-error" ng-show="editAffiliation.departmentName.errors.length > 0">
-							<div ng-repeat='error in editAffiliation.departmentName.errors' ng-bind-html-unsafe="error"></div>
-						</span>
-					</div>
-				</div>
+			</div>
+			<div class="span6">
 				<div class="control-group">
 		    		<label class="relative"><@orcid.msg 'manual_affiliation_form_contents.labelaffiliationtype'/></label>
 		    		<div class="relative">
 			    		<select id="affiliationType" name="affiliationType" class="input-xlarge" ng-model="editAffiliation.affiliationType.value">
 			    			<option value=""><@orcid.msg 'org.orcid.jaxb.model.message.AffiliationType.empty' /></option>
 							<#list affiliationTypes?keys as key>
-								<option value="${key}">${affiliationTypes[key]}</option>
+								<option value="${key}">${affiliationLongDescriptionTypes[key]}</option>
 							</#list>
 						</select> 
 					</div>
@@ -142,6 +144,9 @@
 						</#list>
 		    		</select>
 		    		</div>
+		    		<span class="orcid-error" ng-show="editAffiliation.endDate.errors.length > 0">
+						<div ng-repeat='error in editAffiliation.endDate.errors' ng-bind-html-unsafe="error"></div>
+					</span>
 		    	</div>
 		    	<div class="control-group">
 		 			<label class="relative"><@orcid.msg 'privacyToggle.help.who_can_see'/></label>
