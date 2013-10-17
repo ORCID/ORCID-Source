@@ -92,7 +92,7 @@
 	        	 <p><a href="<@spring.url "/manage-clients" />">${springMacroRequestContext.getMessage("workspace.ManageClientCredentials")}</a></p>	        	 
 	        </@security.authorize>
 			<@security.authorize ifAnyGranted="ROLE_ADMIN">
-				<p><a href="<@spring.url "/deprecate-profile" />"><@orcid.msg 'admin.profile_deprecation.workspace_link' /></a></p>
+				<p><a href="<@spring.url "/admin/deprecate-profile" />"><@orcid.msg 'admin.profile_deprecation.workspace_link' /></a></p>
 			</@security.authorize>
         </div>
     </div>

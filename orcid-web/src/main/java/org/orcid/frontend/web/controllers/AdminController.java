@@ -20,6 +20,7 @@ import java.util.Date;
 import java.util.Set;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 
 import org.orcid.core.manager.ExternalIdentifierManager;
 import org.orcid.core.manager.NotificationManager;
@@ -47,6 +48,7 @@ import org.springframework.web.servlet.ModelAndView;
  */
 
 @Controller
+@RequestMapping(value = { "/admin" })
 public class AdminController extends BaseController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AdminController.class);
@@ -227,5 +229,13 @@ public class AdminController extends BaseController {
             profileDetails.getErrors().add(getMessage("admin.profile_deprecation.errors.inexisting_orcid", orcid));
         }
         return profileDetails;
+    }
+    
+    
+    @RequestMapping(value = "/admin-deactivate-orcid", method = RequestMethod.GET)
+    public ModelAndView confirmDeactivateOrcidAccount(HttpServletRequest request) {
+        orcidProfileManager.deactivateOrcidProfile(getEffectiveProfile());
+        ModelAndView deactivateOrcidView = new ModelAndView("redirect:/signout#deactivated");
+        return deactivateOrcidView;
     }
 }

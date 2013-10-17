@@ -73,13 +73,37 @@
   </div>
 </script>
 
+<script type="text/ng-template" id="confirm-deactivation-modal">
+	<div style="padding:20px">
+    	<a id="cboxClose" class="btn pull-right close-button" ng-click="closeModal()">X</a>
+    	<h1><@orcid.msg 'admin.profile_deactivation.confirm'/></h1>
+		<div class="bottom-margin-small">
+	    	<p><@orcid.msg 'admin.profile_deactivation.confirm.message'/></p>
+	    	<table border="0">
+		    	<tr>
+			    	<td><strong><@orcid.msg 'admin.profile_deprecation.orcid'/></strong></td>
+			    	<td>{{deprecatedAccount.orcid}}</td>
+			    </tr>
+		    	<tr>
+			    	<td><strong><@orcid.msg 'admin.profile_deprecation.name'/></strong></td>
+			    	<td>{{deprecatedAccount.givenNames}}&nbsp;{{deprecatedAccount.familyName}}</td>
+			    </tr>
+		    	<tr>
+			    	<td><strong><@orcid.msg 'admin.profile_deprecation.email'/></strong></td>
+			    	<td>{{deprecatedAccount.primaryEmail}}</td>
+			    </tr>		    
+	    	</table>
+		</div>
+	</div>
+</script>
+
 <div class="row">
 	<div class="span3 lhs override">
 		<ul class="settings-nav">
 			<li><a href="#account-settings">${springMacroRequestContext.getMessage("manage.accountsettings")}</a></li>
 			<li><a href="#manage-permissions">${springMacroRequestContext.getMessage("manage.managepermission")}</a></li>
 			<@security.authorize ifAnyGranted="ROLE_ADMIN">
-				<li><a href="<@spring.url "/deprecate-profile" />"><@orcid.msg 'admin.profile_deprecation.workspace_link' /></a></li>
+				<li><a href="<@spring.url "/admin/deprecate-profile" />"><@orcid.msg 'admin.profile_deprecation.workspace_link' /></a></li>
 			</@security.authorize>				
 		</ul>
 	</div>
@@ -113,6 +137,11 @@
 		<div class="controls save-btns pull-left bottom-margin-small">
     		<span id="bottom-confirm-deprecate-profile" ng-click="confirmDeprecateAccount()" class="btn btn-primary"><@orcid.msg 'admin.profile_deprecation.deprecate_account'/></span>
 		</div>	  	
+	</div>
+	
+	<div class="span9" ng-controller="profileDeactivationCtrl">
+		<label for="orcid_to_deactivate"><@orcid.msg 'admin.profile_deactivation.to_deactivate' /></label>
+		<input type="text" id="orcid_to_deactivate" placeholder="<@orcid.msg 'admin.profile_deactivation.placeholder.to_deactivate' />" class="input-xlarge" />
 	</div>
 </div>
 </@public >
