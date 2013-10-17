@@ -153,6 +153,29 @@ orcidNgModule.filter('workExternalIdentifierHtml', function(){
 });
 
 
+function addBibtexCitation($scope, dw) {
+	if (dw.citation && dw.citation.citationType.value == 'bibtex') {
+		try {
+			$scope.bibtexCitations[dw.putCode.value] = bibtexParse.toJSON(dw.citation.citation.value);
+		} catch (err) {
+			$scope.bibtexCitations[dw.putCode.value] = 'Error Parsing Bibtex';
+			console.log("couldn't parse bibtex: " + dw.citation.citation.value);
+		}
+	}
+}
+
+function removeBadContributors(dw) {
+	for (idx in dw.contributors) {
+		if (dw.contributors[idx].contributorSequence == null
+			&& dw.contributors[idx].email == null
+			&& dw.contributors[idx].orcid == null
+			&& dw.contributors[idx].creditName == null
+			&& dw.contributors[idx].contributorRole == null
+			&& dw.contributors[idx].creditNameVisibility == null)
+			delete dw.contributors.splice(idx,1);
+	}
+}
+
 function EditTableCtrl($scope) {
 	
 	// email edit row
@@ -1368,7 +1391,27 @@ function AffiliationCtrl($scope, $compile, affiliationsSrvc){
 	
 }
 
-function WorkCtrl($scope, $compile, worksSrvc){
+function PublicWorkCtrl($scope, $compile, worksSrvc) {
+	$scope.works = worksSrvc.works;
+	$scope.numOfWorksToAdd = null;
+	$scope.showBibtex = true;
+	$scope.bibtexCitations = {};
+
+    $scope.bibtexShowToggle = function () {
+    	$scope.showBibtex = !($scope.showBibtex);
+    };   
+
+	for (idx in publicWorks) {
+		var dw = publicWorks[idx];        
+		removeBadContributors(dw);
+		addBibtexCitation($scope,dw);
+		$scope.works.push(dw);
+	}
+	
+	$scope.numOfWorksToAdd = 0;
+}
+
+function WorkCtrl($scope, $compile, worksSrvc) {
 	$scope.displayWorks = true;
 	$scope.works = worksSrvc.works;
 	$scope.numOfWorksToAdd = null;
@@ -1465,24 +1508,10 @@ function WorkCtrl($scope, $compile, worksSrvc){
 					$scope.$apply(function(){ 
 						for (i in data) {
 							var dw = data[i];
-							for (idx in data[i].contributors) {
-								if (dw.contributors[idx].contributorSequence == null
-									&& dw.contributors[idx].email == null
-									&& dw.contributors[idx].orcid == null
-									&& dw.contributors[idx].creditName == null
-									&& dw.contributors[idx].contributorRole == null
-									&& dw.contributors[idx].creditNameVisibility == null)
-									delete dw.contributors.splice(idx,1);
-							}
-
-							if (dw.citation && dw.citation.citationType.value == 'bibtex') {
-								try {
-									$scope.bibtexCitations[dw.putCode.value] = bibtexParse.toJSON(dw.citation.citation.value);
-								} catch (err) {
-									$scope.bibtexCitations[dw.putCode.value] = 'Error Parsing Bibtex';
-									console.log("couldn't parse bibtex: " + dw.citation.citation.value);
-								}
-							}
+                            
+							removeBadContributors(dw);
+							
+							addBibtexCitation($scope,dw);
 							
 							$scope.works.push(dw);
 						}
