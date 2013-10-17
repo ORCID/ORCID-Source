@@ -199,6 +199,7 @@ public class AffiliationsController extends BaseWorkspaceController {
         copyErrors(affiliationForm.getRegion(), affiliationForm);
         copyErrors(affiliationForm.getCountry(), affiliationForm);
         copyErrors(affiliationForm.getDepartmentName(), affiliationForm);
+        copyErrors(affiliationForm.getEndDate(), affiliationForm);
 
         if (affiliationForm.getErrors().isEmpty()) {
             // Persist to DB
