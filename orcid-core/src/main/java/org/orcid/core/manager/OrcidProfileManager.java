@@ -320,6 +320,13 @@ public interface OrcidProfileManager {
     public void processUnverifiedEmails7Days();
 
     OrcidProfile deactivateOrcidProfile(OrcidProfile orcidProfile);
+    
+    /**
+     * Reactivate a deactivated profile
+     * @param orcidProfile
+     * @return 
+     * */
+    OrcidProfile reactivateOrcidProfile(OrcidProfile orcidProfile);
 
     OrcidWorks dedupeWorks(OrcidWorks orcidWorks);
 

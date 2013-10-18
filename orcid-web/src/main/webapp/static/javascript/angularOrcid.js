@@ -2122,8 +2122,129 @@ function languageCtrl($scope, $cookies){
 	};
 };
 
-function profileDeactivationCtrl($scope,$compile){
+
+
+
+
+
+
+
+
+function profileDeactivationAndReactivationCtrl($scope,$compile){
+	$scope.orcidToDeactivate = null;
+	$scope.orcidToReactivate = null;
+	$scope.deactivatedAccount = null;
+	$scope.reactivatedAccount = null;
 	
+	$scope.showSuccessModal = function(){
+		$scope.successMessage = OM.getInstance().get('admin.profile_deprecation.deprecate_account.success_message');
+		$.colorbox({                      
+			html : $compile($('#success-modal').html())($scope),
+				scrolling: true,
+				onLoad: function() {
+				$('#cboxClose').remove();
+			},
+			scrolling: true
+		});
+		
+		$.colorbox.resize({width:"450px" , height:"150px"});
+	};
+	
+	$scope.deactivateAccount = function() {
+		$.ajax({
+	        url: orcidVar.baseUri+'/admin/deactivate-profile?orcid=' + $scope.orcid,	        
+	        type: 'GET',
+	        dataType: 'json',
+	        success: function(data){
+	        	$scope.$apply(function(){ 
+	        		$scope.deactivatedAccount = data;
+	        		if($scope.deactivatedAccount != null && $scope.deactivatedAccount.length != 0){	        				        			
+	        			$scope.closeModal();
+	        		} else {
+	        			$scope.showSuccessModal();
+	        		}
+	        		$scope.apply();
+				});
+	        }
+	    }).fail(function(error) { 
+	    	// something bad is happening!	    	
+	    	console.log("Error deprecating the account");	    	
+	    });		
+	};
+	
+	
+	$scope.reactivateAccount = function() {
+		$.ajax({
+	        url: orcidVar.baseUri+'/admin/reactivate-profile?orcid=' + $scope.orcidToReactivate,	        
+	        type: 'GET',
+	        dataType: 'json',
+	        success: function(data){
+	        	$scope.$apply(function(){ 
+	        		$scope.reactivatedAccount = data;
+	        		if($scope.reactivatedAccount.errors != null && $scope.reactivatedAccount.errors.length != 0){	        				        			
+	        			$scope.closeModal();
+	        		} else {
+	        			$scope.showSuccessModal();
+	        		}
+	        		$scope.apply();
+				});
+	        }
+	    }).fail(function(error) { 
+	    	// something bad is happening!	    	
+	    	console.log("Error reactivating the account");	    	
+	    });		
+	};
+	
+	$scope.confirmDeactivateAccount = function() {		
+		$.ajax({
+	        url: orcidVar.baseUri+'/admin/deactivate-profile/check-orcid.json?orcid=' + $scope.orcidToDeactivate,	        
+	        type: 'GET',
+	        dataType: 'json',
+	        success: function(data){
+	        	console.log(data);
+	        	$scope.deactivatedAccount = data;
+	        	if(data.errors != null && data.errors.length != 0){
+	        		console.log(data.errors);	        		
+	        	} else {
+	        		$scope.showConfirmModal();
+	        	}
+	        	$scope.$apply();
+	        }
+	        }).fail(function(error) { 
+		    	// something bad is happening!	    	
+		    	console.log("Error deactivating the account");	    	
+		    });
+	};
+	
+	$scope.confirmReactivateAccount = function() {		
+		$.colorbox({                      
+			html : $compile($('#confirm-reactivation-modal').html())($scope),
+				scrolling: true,
+				onLoad: function() {
+				$('#cboxClose').remove();
+			},
+			scrolling: true
+		});
+		
+		$.colorbox.resize({width:"525px" , height:"300px"});
+	};
+	
+	$scope.showConfirmModal = function() {
+		$.colorbox({                      
+			html : $compile($('#confirm-deactivation-modal').html())($scope),
+				scrolling: true,
+				onLoad: function() {
+				$('#cboxClose').remove();
+			},
+			scrolling: true
+		});
+		
+		$.colorbox.resize({width:"525px" , height:"300px"});
+	};
+	
+	$scope.closeModal = function() {
+		$.colorbox.close();
+	};
 };
 
 function profileDeprecationCtrl($scope,$compile){	
@@ -2249,19 +2370,17 @@ function profileDeprecationCtrl($scope,$compile){
 			isOk = false;
 		}
 		
-		if(isOk){				
-			if(isOk){
-				$.colorbox({                      
-					html : $compile($('#confirm-deprecation-modal').html())($scope),
-						scrolling: true,
-						onLoad: function() {
-						$('#cboxClose').remove();
-					},
-					scrolling: true
-				});
-				
-				$.colorbox.resize({width:"625px" , height:"400px"});
-			}
+		if(isOk){
+			$.colorbox({                      
+				html : $compile($('#confirm-deprecation-modal').html())($scope),
+					scrolling: true,
+					onLoad: function() {
+					$('#cboxClose').remove();
+				},
+				scrolling: true
+			});
+			
+			$.colorbox.resize({width:"625px" , height:"400px"});
 		}
 	};
 	
