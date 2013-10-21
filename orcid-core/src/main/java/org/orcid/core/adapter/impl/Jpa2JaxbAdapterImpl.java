@@ -557,8 +557,8 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
             researcherUrls.setVisibility(profileEntity.getResearcherUrlsVisibility());
             for (ResearcherUrlEntity researcherUrl : researcherUrlEntities) {
                 ResearcherUrl url = new ResearcherUrl(new Url(researcherUrl.getUrl()));
-                String urlName = !(StringUtils.isBlank(researcherUrl.getUrlName())) ? researcherUrl.getUrlName() : "";
-                url.setUrlName(new UrlName(urlName));
+                if (!StringUtils.isBlank(researcherUrl.getUrlName()))
+                    url.setUrlName(new UrlName(researcherUrl.getUrlName()));
                 researcherUrls.getResearcherUrl().add(url);
             }
             return researcherUrls;
