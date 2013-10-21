@@ -4,6 +4,29 @@ We release updates to the Registry regularly. Below is a list of the improvement
 * [2013 Releases](https://trello.com/b/ZgYVAlel)
 * [2012 Releases](https://trello.com/b/vyCDYdvR)
 
+## release-1.1.35.42 
+(2013-10-18)
+Stop importing duplicated works
+
+* Added abbreviations to external identifiers types
+
+* Reorders the new works ui screen
+
+* Refactor webhooks to also have a profile_last_modified column
+
+* Journal title to work
+
+* Add Language to work
+
+* Add Translated title to work
+
+* Affiliations API - Beta
+
+* Update to show all work info screen - feature hidden
+
+* New page to help load balancers detect tomcat outage
+
+
 
 ## release-1.1.39.9
 (2013-09-27)

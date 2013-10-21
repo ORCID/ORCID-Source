@@ -104,6 +104,16 @@ public class WorkExternalIdentifierEntity extends BaseEntity<WorkExternalIdentif
         if (other == null) {
             return -1;
         }
+        if(identifier == null){
+            if(other.identifier != null)
+                return -1;
+        }
+        
+        int compareIdentifier = identifier.compareTo(other.identifier);
+        
+        if(compareIdentifier != 0)
+            return compareIdentifier;
+            
         return compareTypes(identifierType, other.getIdentifierType());
     }
 
