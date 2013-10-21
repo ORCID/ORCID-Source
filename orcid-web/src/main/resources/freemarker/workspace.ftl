@@ -189,7 +189,9 @@
 							</li>	
 						</ul>					</div>
       	            <div ng-show="displayWorks" class="workspace-accordion-content">
-	            		<#include "workspace_works_body_list.ftl"/>
+	            		<#include "includes/work/add_work_modal_inc.ftl"/>
+						<#include "includes/work/del_work_modal_inc.ftl"/>
+						<#include "includes/work/body_work_inc.ftl"/>
 	            	</div>
             	</div>
             	

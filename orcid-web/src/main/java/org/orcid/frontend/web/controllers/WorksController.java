@@ -644,7 +644,7 @@ public class WorksController extends BaseWorkspaceController {
     }
 
     /**
-     * List works associated with a profile
+     * List works ids associated with a profile
      * */
     @RequestMapping(value = "/workIds.json", method = RequestMethod.GET)
     public @ResponseBody
