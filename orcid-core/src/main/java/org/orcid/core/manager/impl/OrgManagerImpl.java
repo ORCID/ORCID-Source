@@ -22,6 +22,8 @@ import javax.annotation.Resource;
 
 import org.orcid.core.manager.OrgManager;
 import org.orcid.persistence.dao.OrgDao;
+import org.orcid.persistence.dao.OrgDisambiguatedDao;
+import org.orcid.persistence.jpa.entities.OrgDisambiguatedEntity;
 import org.orcid.persistence.jpa.entities.OrgEntity;
 
 /**
@@ -33,6 +35,9 @@ public class OrgManagerImpl implements OrgManager {
 
     @Resource
     private OrgDao orgDao;
+
+    @Resource
+    private OrgDisambiguatedDao orgDisambiguatedDao;
 
     @Override
     public List<OrgEntity> getAmbiguousOrgs() {
@@ -55,9 +60,19 @@ public class OrgManagerImpl implements OrgManager {
     }
 
     @Override
-    public OrgEntity createUpdate(OrgEntity org, Integer orgDisambiguatedId) {
-        // XXX
-        return null;
+    public OrgEntity createUpdate(OrgEntity org, Long orgDisambiguatedId) {
+        OrgEntity existingOrg = orgDao.findByNameCityRegionAndCountry(org.getName(), org.getCity(), org.getRegion(), org.getCountry());
+        if (existingOrg != null) {
+            org = existingOrg;
+        }
+        if (org.getOrgDisambiguated() == null) {
+            OrgDisambiguatedEntity disambiguatedOrg = orgDisambiguatedDao.find(orgDisambiguatedId);
+            if (disambiguatedOrg == null) {
+                throw new IllegalArgumentException("No such disambiguated org with id=" + orgDisambiguatedId);
+            }
+            org.setOrgDisambiguated(disambiguatedOrg);
+        }
+        return orgDao.merge(org);
     }
 
 }
