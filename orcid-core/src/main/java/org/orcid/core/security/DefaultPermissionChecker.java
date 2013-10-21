@@ -139,17 +139,6 @@ public class DefaultPermissionChecker implements PermissionChecker {
             OrcidOAuth2Authentication auth2Authentication = (OrcidOAuth2Authentication) authentication;
             Set<Visibility> visibilities = getVisibilitiesForOauth2Authentication(auth2Authentication, orcidMessage, requiredScope);
 
-            if (requiredScope.isWriteOperationScope() && orcidMessage.getOrcidProfile().getOrcidHistory().isClaimed()) {
-                OrcidOauth2TokenDetail tokenDetail = orcidOauthTokenDetailService.findNonDisabledByTokenValue(auth2Authentication.getActiveToken());
-                // why are we removing all the write scopes and not just the used scope?
-                removeWriteScopes(tokenDetail);
-                // Token shouldn't be backdated expired if scopes are left, like the read scope!
-                if (tokenDetail.getScope() == null || tokenDetail.getScope().trim().isEmpty()) {
-                    tokenDetail.setTokenExpiration(EXPIRES_DATE);                    
-                }
-                orcidOauthTokenDetailService.saveOrUpdate(tokenDetail);
-            }
-
             return visibilities;
         } else {
             throw new IllegalArgumentException("Cannot obtain authentication details from " + authentication);

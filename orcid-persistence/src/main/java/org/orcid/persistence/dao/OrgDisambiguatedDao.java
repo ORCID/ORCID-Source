@@ -18,15 +18,20 @@ package org.orcid.persistence.dao;
 
 import java.util.List;
 
+import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.persistence.jpa.entities.OrgDisambiguatedEntity;
 
 /**
  * 
  * @author Will Simpson
- *
+ * 
  */
 public interface OrgDisambiguatedDao extends GenericDao<OrgDisambiguatedEntity, Long> {
 
     List<OrgDisambiguatedEntity> getOrgs(String searchTerm, int firstResult, int maxResults);
+
+    OrgDisambiguatedEntity findBySourceIdAndSourceType(String sourceId, String sourceType);
+
+    OrgDisambiguatedEntity findByNameCityRegionCountryAndSourceType(String name, String city, String region, Iso3166Country country, String sourceType);
 
 }

@@ -23,16 +23,16 @@ import org.orcid.persistence.jpa.entities.OrgEntity;
 /**
  * 
  * @author Will Simpson
- *
+ * 
  */
 public interface OrgManager {
 
     List<OrgEntity> getAmbiguousOrgs();
-    
+
     List<OrgEntity> getOrgs(String searchTerm, int firstResult, int maxResults);
-    
+
     OrgEntity createUpdate(OrgEntity org);
-    
-    OrgEntity createUpdate(OrgEntity org, Integer orgDisambiguatedId);
-    
+
+    OrgEntity createUpdate(OrgEntity org, Long orgDisambiguatedId);
+
 }

@@ -21,6 +21,7 @@ import java.util.List;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
+import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.persistence.dao.OrgDisambiguatedDao;
 import org.orcid.persistence.jpa.entities.OrgDisambiguatedEntity;
 
@@ -35,23 +36,45 @@ public class OrgDisambiguatedDaoImpl extends GenericDaoImpl<OrgDisambiguatedEnti
         super(OrgDisambiguatedEntity.class);
     }
 
+    @Override
+    public OrgDisambiguatedEntity findBySourceIdAndSourceType(String sourceId, String sourceType) {
+        TypedQuery<OrgDisambiguatedEntity> query = entityManager.createQuery("from OrgDisambiguatedEntity where sourceId = :sourceId and sourceType = :sourceType",
+                OrgDisambiguatedEntity.class);
+        query.setParameter("sourceId", sourceId);
+        query.setParameter("sourceType", sourceType);
+        List<OrgDisambiguatedEntity> results = query.getResultList();
+        return results.isEmpty() ? null : results.get(0);
+    }
+
+    @Override
+    public OrgDisambiguatedEntity findByNameCityRegionCountryAndSourceType(String name, String city, String region, Iso3166Country country, String sourceType) {
+        TypedQuery<OrgDisambiguatedEntity> query = entityManager.createQuery(
+                "from OrgDisambiguatedEntity where name = :name and city = :city and region = :region and country = :country and sourceType = :sourceType",
+                OrgDisambiguatedEntity.class);
+        query.setParameter("name", name);
+        query.setParameter("city", city);
+        query.setParameter("region", region);
+        query.setParameter("country", country);
+        query.setParameter("sourceType", sourceType);
+        List<OrgDisambiguatedEntity> results = query.getResultList();
+        return results.isEmpty() ? null : results.get(0);
+    }
+
     @SuppressWarnings("unchecked")
     @Override
     public List<OrgDisambiguatedEntity> getOrgs(String searchTerm, int firstResult, int maxResults) {
-        String qStr =                
-                "select od.*, COUNT(*) as countAll from org_disambiguated od left join org_affiliation_relation oa on od.id = oa.org_id" +
-                "  where lower(name) like '%' || lower(:searchTerm) || '%'" +
-                "  group by od.id order by countAll DESC, od.name" ;
- 
-        Query query = entityManager.createNativeQuery(qStr
-               , OrgDisambiguatedEntity.class);
+        String qStr = "select od.*, COUNT(*) as countAll from org_disambiguated od left join org_affiliation_relation oa on od.id = oa.org_id"
+                + "  where lower(name) like '%' || lower(:searchTerm) || '%'" + "  group by od.id order by countAll DESC, od.name";
 
-//        TypedQuery<OrgDisambiguatedEntity> query = entityManager.createQuery(
-//                "from OrgDisambiguatedEntity where lower(name) like '%' || lower(:searchTerm) || '%' order by name", OrgDisambiguatedEntity.class);
+        Query query = entityManager.createNativeQuery(qStr, OrgDisambiguatedEntity.class);
+
+        // TypedQuery<OrgDisambiguatedEntity> query = entityManager.createQuery(
+        // "from OrgDisambiguatedEntity where lower(name) like '%' || lower(:searchTerm) || '%' order by name",
+        // OrgDisambiguatedEntity.class);
         query.setParameter("searchTerm", searchTerm);
         query.setFirstResult(firstResult);
         query.setMaxResults(maxResults);
-         
+
         return query.getResultList();
     }
 

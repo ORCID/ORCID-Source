@@ -536,6 +536,49 @@
             multiValued="true" />
         <field name="digital-object-ids" type="text_general" indexed="true" stored="false"
             multiValued="true" />
+            
+		<!-- Indexing all possible external identifier types -->
+		<field name="arxiv" type="text_general" indexed="true" stored="false"
+			multiValued="true" />
+		<field name="asin" type="text_general" indexed="true" stored="false"
+			multiValued="true" />
+		<field name="asin-tld" type="text_general" indexed="true"
+			stored="false" multiValued="true" />
+		<field name="bibcode" type="text_general" indexed="true" stored="false"
+			multiValued="true" />
+		<field name="eid" type="text_general" indexed="true" stored="false"
+			multiValued="true" />
+		<field name="isbn" type="text_general" indexed="true" stored="false"
+			multiValued="true" />
+		<field name="issn" type="text_general" indexed="true" stored="false"
+			multiValued="true" />
+		<field name="jfm" type="text_general" indexed="true" stored="false"
+			multiValued="true" />
+		<field name="jstor" type="text_general" indexed="true" stored="false"
+			multiValued="true" />
+		<field name="lccn" type="text_general" indexed="true" stored="false"
+			multiValued="true" />
+		<field name="mr" type="text_general" indexed="true" stored="false"
+			multiValued="true" />
+		<field name="oclc" type="text_general" indexed="true" stored="false"
+			multiValued="true" />
+		<field name="ol" type="text_general" indexed="true" stored="false"
+			multiValued="true" />
+		<field name="osti" type="text_general" indexed="true" stored="false"
+			multiValued="true" />
+		<field name="pmc" type="text_general" indexed="true" stored="false"
+			multiValued="true" />
+		<field name="pmid" type="text_general" indexed="true" stored="false"
+			multiValued="true" />
+		<field name="rfc" type="text_general" indexed="true" stored="false"
+			multiValued="true" />
+		<field name="ssrn" type="text_general" indexed="true" stored="false"
+			multiValued="true" />
+		<field name="zbl" type="text_general" indexed="true" stored="false"
+			multiValued="true" />
+		<field name="other-identifier-type" type="text_general" indexed="true"
+			stored="false" multiValued="true" />
+            
         <field name="work-titles" type="text_general" indexed="true"
             stored="false" multiValued="true" />
         <field name="grant-numbers" type="text_general" indexed="true"
