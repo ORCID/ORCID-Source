@@ -127,62 +127,75 @@
 			</@security.authorize>				
 		</ul>
 	</div>
-	<div class="span9">		
-		<div class="collapsible"  ng-controller="profileDeprecationCtrl">
-	    	<h2><@orcid.msg 'admin.profile_deprecation.deprecate_account.title'/></h2>
-	    	<br />
-			<div>
-				<label for="deprecated_orcid"><@orcid.msg 'admin.profile_deprecation.to_deprecate' /></label>
-				<input type="text" id="deprecated_orcid" placeholder="<@orcid.msg 'admin.profile_deprecation.placeholder.account_to_deprecate' />" class="input-xlarge" ng-model="deprecatedAccount.orcid" ng-change="findAccountDetails('deprecated')">
-				<a href class="icon-ok green" ng-show="deprecated_verified"></a>
-				<a href class="icon-remove red" ng-show="deprecated_verified == false"></a>
-				<div id="invalid-regex-deprecated" ng-show="invalid_regex_deprecated" ng-cloak>
-					<span class="orcid-error"><@orcid.msg 'admin.profile_deprecation.errors.invalid_regex' /></span><br />
+	<div class="span9">
+		<div ng-controller="profileDeprecationCtrl" class="workspace-accordion-item" ng-cloak>
+			<p>
+				<@orcid.msg 'admin.profile_deprecation' />&nbsp;
+				<a ng-hide="showModal" ng-click="toggleDeprecationModal()" class="icon-plus-sign blue"></a>
+				<a ng-show="showModal" ng-click="toggleDeprecationModal()" class="icon-minus-sign blue"></a>
+			</p>		
+			<div class="collapsible" id="deprecation_modal" style="display:none;">
+		    	<h2><@orcid.msg 'admin.profile_deprecation.deprecate_account.title'/></h2>
+		    	<br />
+				<div>
+					<label for="deprecated_orcid"><@orcid.msg 'admin.profile_deprecation.to_deprecate' /></label>
+					<input type="text" id="deprecated_orcid" placeholder="<@orcid.msg 'admin.profile_deprecation.placeholder.account_to_deprecate' />" class="input-xlarge" ng-model="deprecatedAccount.orcid" ng-change="findAccountDetails('deprecated')">
+					<a href class="icon-ok green" ng-show="deprecated_verified"></a>
+					<a href class="icon-remove red" ng-show="deprecated_verified == false"></a>
+					<div id="invalid-regex-deprecated" ng-show="invalid_regex_deprecated" ng-cloak>
+						<span class="orcid-error"><@orcid.msg 'admin.profile_deprecation.errors.invalid_regex' /></span><br />
+					</div>
+					<div ng-show="deprecatedAccount.errors.length">
+						<span class="orcid-error" ng-repeat='error in deprecatedAccount.errors' ng-bind-html-unsafe="error"></span><br />	
+					</div>
 				</div>
-				<div ng-show="deprecatedAccount.errors.length">
-					<span class="orcid-error" ng-repeat='error in deprecatedAccount.errors' ng-bind-html-unsafe="error"></span><br />	
+				<div>
+					<label for="deprecated_orcid"><@orcid.msg 'admin.profile_deprecation.primary' /></label>
+					<input type="text" id="primary_orcid" placeholder="<@orcid.msg 'admin.profile_deprecation.placeholder.primary_account' />" class="input-xlarge" ng-model="primaryAccount.orcid" ng-change="findAccountDetails('primary')">				
+					<a href class="icon-ok green" ng-show="primary_verified"></a>
+					<a href class="icon-remove red" ng-show="primary_verified == false"></a>
+					<div id="invalid-regex-primary" ng-show="invalid_regex_primary" ng-cloak>
+						<span class="orcid-error"><@orcid.msg 'admin.profile_deprecation.errors.invalid_regex' /></span><br />
+					</div>
+					<div ng-show="primaryAccount.errors.length">
+						<span class="orcid-error" ng-repeat='error in primaryAccount.errors' ng-bind-html-unsafe="error"></span><br />
+					</div>				
+				</div>
+				<div class="controls save-btns pull-left bottom-margin-small">
+		    		<span id="bottom-confirm-deprecate-profile" ng-click="confirmDeprecateAccount()" class="btn btn-primary"><@orcid.msg 'admin.profile_deprecation.deprecate_account'/></span>
 				</div>
 			</div>
-			<div>
-				<label for="deprecated_orcid"><@orcid.msg 'admin.profile_deprecation.primary' /></label>
-				<input type="text" id="primary_orcid" placeholder="<@orcid.msg 'admin.profile_deprecation.placeholder.primary_account' />" class="input-xlarge" ng-model="primaryAccount.orcid" ng-change="findAccountDetails('primary')">				
-				<a href class="icon-ok green" ng-show="primary_verified"></a>
-				<a href class="icon-remove red" ng-show="primary_verified == false"></a>
-				<div id="invalid-regex-primary" ng-show="invalid_regex_primary" ng-cloak>
-					<span class="orcid-error"><@orcid.msg 'admin.profile_deprecation.errors.invalid_regex' /></span><br />
+		</div>		
+		<br />			  
+		<div ng-controller="profileDeactivationAndReactivationCtrl" class="workspace-accordion-item" ng-cloak>
+			<p><@orcid.msg 'admin.profile_deactivation' />&nbsp;<a ng-click="toggleDeactivationModal()" class="icon-plus-sign blue"></a></p>			  	
+			<div class="collapsible" id="deactivation_modal" style="display:none;">
+				<h2><@orcid.msg 'admin.profile_deactivation.deactivate_account.title'/></h2>
+	    		<br />
+	    		<div>
+					<label for="orcid_to_deactivate"><@orcid.msg 'admin.profile_deactivation.to_deactivate' /></label>
+					<input type="text" id="orcid_to_deactivate" ng-model="orcidToDeactivate" placeholder="<@orcid.msg 'admin.profile_deactivation.placeholder.to_deactivate' />" class="input-xlarge" />
+					<span id="bottom-confirm-deactivate-profile" ng-click="confirmDeactivateAccount()" class="btn btn-primary"><@orcid.msg 'admin.profile_deactivation.deactivate_account'/></span>				
+					<div ng-show="deactivatedAccount.errors.length">
+						<span class="orcid-error" ng-repeat='error in deactivatedAccount.errors' ng-bind-html-unsafe="error"></span><br />
+					</div>		
 				</div>
-				<div ng-show="primaryAccount.errors.length">
-					<span class="orcid-error" ng-repeat='error in primaryAccount.errors' ng-bind-html-unsafe="error"></span><br />
-				</div>				
-			</div>
-			<div class="controls save-btns pull-left bottom-margin-small">
-	    		<span id="bottom-confirm-deprecate-profile" ng-click="confirmDeprecateAccount()" class="btn btn-primary"><@orcid.msg 'admin.profile_deprecation.deprecate_account'/></span>
 			</div>
 		</div>
-			  	
-		<div class="collapsible"  ng-controller="profileDeactivationAndReactivationCtrl">
-			<h2><@orcid.msg 'admin.profile_deactivation.deactivate_account.title'/></h2>
-    		<br />
-    		<div>
-				<label for="orcid_to_deactivate"><@orcid.msg 'admin.profile_deactivation.to_deactivate' /></label>
-				<input type="text" id="orcid_to_deactivate" ng-model="orcidToDeactivate" placeholder="<@orcid.msg 'admin.profile_deactivation.placeholder.to_deactivate' />" class="input-xlarge" />
-				<span id="bottom-confirm-deactivate-profile" ng-click="confirmDeactivateAccount()" class="btn btn-primary"><@orcid.msg 'admin.profile_deactivation.deactivate_account'/></span>				
-				<div ng-show="deactivatedAccount.errors.length">
-					<span class="orcid-error" ng-repeat='error in deactivatedAccount.errors' ng-bind-html-unsafe="error"></span><br />
-				</div>		
-			</div>
-		</div>
-		
-		<div class="collapsible"  ng-controller="profileDeactivationAndReactivationCtrl">
-			<h2><@orcid.msg 'admin.profile_reactivation.reactivate_account.title'/></h2>
-    		<br />
-    		<div>
-				<label for="orcid_to_reactivate"><@orcid.msg 'admin.profile_reactivation.to_reactivate' /></label>
-				<input type="text" id="orcid_to_reactivate" ng-model="orcidToReactivate" placeholder="<@orcid.msg 'admin.profile_reactivation.placeholder.to_reactivate' />" class="input-xlarge" />
-				<span id="bottom-confirm-reactivate-profile" ng-click="confirmReactivateAccount()" class="btn btn-primary"><@orcid.msg 'admin.profile_reactivation.reactivate_account'/></span>			
-				<div ng-show="reactivatedAccount.errors.length">
-					<span class="orcid-error" ng-repeat='error in reactivatedAccount.errors' ng-bind-html-unsafe="error"></span><br />
-				</div>		
+		<br />
+		<div ng-controller="profileDeactivationAndReactivationCtrl" class="workspace-accordion-item" ng-cloak>
+			<p><@orcid.msg 'admin.profile_reactivation' />&nbsp;<a ng-click="toggleReactivationModal()" class="icon-plus-sign blue"></a></p>
+			<div class="collapsible" id="reactivation_modal" style="display:none;">
+				<h2><@orcid.msg 'admin.profile_reactivation.reactivate_account.title'/></h2>
+	    		<br />
+	    		<div>
+					<label for="orcid_to_reactivate"><@orcid.msg 'admin.profile_reactivation.to_reactivate' /></label>
+					<input type="text" id="orcid_to_reactivate" ng-model="orcidToReactivate" placeholder="<@orcid.msg 'admin.profile_reactivation.placeholder.to_reactivate' />" class="input-xlarge" />
+					<span id="bottom-confirm-reactivate-profile" ng-click="confirmReactivateAccount()" class="btn btn-primary"><@orcid.msg 'admin.profile_reactivation.reactivate_account'/></span>			
+					<div ng-show="reactivatedAccount.errors.length">
+						<span class="orcid-error" ng-repeat='error in reactivatedAccount.errors' ng-bind-html-unsafe="error"></span><br />
+					</div>		
+				</div>
 			</div>
 		</div>
 	</div>

@@ -2130,6 +2130,18 @@ function profileDeactivationAndReactivationCtrl($scope,$compile){
 	$scope.successMessage = null;
 	$scope.deactivateMessage = OM.getInstance().get('admin.profile_deactivation.success');
 	$scope.reactivateMessage = OM.getInstance().get('admin.profile_reactivation.success');
+	$scope.showDeactivateModal = false;
+	$scope.showReactivateModal = false;
+
+	$scope.toggleDeactivationModal = function(){
+		$scope.showDeactivateModal = !$scope.showDeactivateModal;
+    	$('#deactivation_modal').toggle();
+	};
+	
+	$scope.toggleReactivationModal = function(){
+		$scope.showReactivateModal = !$scope.showReactivateModal;
+    	$('#reactivation_modal').toggle();
+	};
 	
 	$scope.deactivateAccount = function() {
 		$.ajax({
@@ -2249,6 +2261,12 @@ function profileDeprecationCtrl($scope,$compile){
 	$scope.primary_verified = false;
 	$scope.deprecatedAccount = null;
 	$scope.primaryAccount = null;
+	$scope.showModal = false;
+	
+	$scope.toggleDeprecationModal = function(){
+		$scope.showModal = !$scope.showModal;
+    	$('#deprecation_modal').toggle();
+	};
 	
 	$scope.cleanup = function(orcid_type){
 		$("#deprecated_orcid").removeClass("orcid-red-background-input");

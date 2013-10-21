@@ -262,7 +262,8 @@ public class AdminController extends BaseController {
         else if(toReactivate.getOrcidDeprecated() != null)
             result.getErrors().add(getMessage("admin.errors.deprecated_account"));
         
-        orcidProfileManager.reactivateOrcidProfile(toReactivate);        
+        if(result.getErrors() == null || result.getErrors().size() == 0)
+            orcidProfileManager.reactivateOrcidProfile(toReactivate);        
         return result;
     }
 }
