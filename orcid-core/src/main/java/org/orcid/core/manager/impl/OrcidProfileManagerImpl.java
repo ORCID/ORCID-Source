@@ -1095,6 +1095,15 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
 
         return this.updateOrcidProfile(blankedOrcidProfile);
     }
+    
+    /**
+     * Reactivate an inactive profile
+     * */
+    public OrcidProfile reactivateOrcidProfile(OrcidProfile deactivatedOrcidProfile){
+        OrcidHistory deactivatedOrcidHistory = deactivatedOrcidProfile.getOrcidHistory();
+        deactivatedOrcidHistory.setDeactivationDate(null);
+        return this.updateOrcidProfile(deactivatedOrcidProfile);
+    }
 
     private void setVisibilityToPrivate(VisibilityType visibilityType) {
         if (visibilityType != null) {
