@@ -42,7 +42,7 @@
 				        	    <#if work.publicationDate??>
 				        	    	<#assign date = '' >
 				        	    	<#if work.publicationDate.month??>
-				        	    		 <#if work.publicationDate.year??>
+				        	    		 <#if work.publicationDate.day??>
 				        	       			<#assign date = date + work.publicationDate.day + '-'>
 				        	    		</#if>
 				        	       		<#assign date = date + work.publicationDate.month + '-'>
