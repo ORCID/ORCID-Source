@@ -34,9 +34,12 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 /**
- * <p>Java class for anonymous complex type.
+ * <p>
+ * Java class for anonymous complex type.
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p>
+ * The following schema fragment specifies the expected content contained within
+ * this class.
  * 
  * <pre>
  * &lt;complexType>
@@ -66,11 +69,11 @@ public class WorkExternalIdentifiers implements Serializable {
     protected List<WorkExternalIdentifier> workExternalIdentifier;
     @XmlAttribute
     protected Scope scope;
-    
+
     public WorkExternalIdentifiers() {
-        
+
     }
-    
+
     public WorkExternalIdentifiers(List<WorkExternalIdentifier> workExternalIdentifier) {
         this.workExternalIdentifier = workExternalIdentifier;
     }
@@ -79,15 +82,16 @@ public class WorkExternalIdentifiers implements Serializable {
      * Gets the value of the workExternalIdentifier property.
      * 
      * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the workExternalIdentifier property.
+     * This accessor method returns a reference to the live list, not a
+     * snapshot. Therefore any modification you make to the returned list will
+     * be present inside the JAXB object. This is why there is not a
+     * <CODE>set</CODE> method for the workExternalIdentifier property.
      * 
      * <p>
      * For example, to add a new item, do as follows:
+     * 
      * <pre>
-     *    getWorkExternalIdentifier().add(newItem);
+     * getWorkExternalIdentifier().add(newItem);
      * </pre>
      * 
      * 
@@ -107,10 +111,8 @@ public class WorkExternalIdentifiers implements Serializable {
     /**
      * Gets the value of the scope property.
      * 
-     * @return
-     *     possible object is
-     *     {@link Scope }
-     *     
+     * @return possible object is {@link Scope }
+     * 
      */
     public Scope getScope() {
         return scope;
@@ -120,9 +122,8 @@ public class WorkExternalIdentifiers implements Serializable {
      * Sets the value of the scope property.
      * 
      * @param value
-     *     allowed object is
-     *     {@link Scope }
-     *     
+     *            allowed object is {@link Scope }
+     * 
      */
     public void setScope(Scope value) {
         this.scope = value;
@@ -142,8 +143,16 @@ public class WorkExternalIdentifiers implements Serializable {
         if (scope != that.scope) {
             return false;
         }
-        if (workExternalIdentifier != null ? !workExternalIdentifier.equals(that.workExternalIdentifier) : that.workExternalIdentifier != null) {
-            return false;
+        if (workExternalIdentifier == null) {
+            if (that.workExternalIdentifier != null)
+                return false;
+        } else {
+            if (that.workExternalIdentifier == null)
+                return false;
+            else if (!(workExternalIdentifier.containsAll(that.workExternalIdentifier) && that.workExternalIdentifier.containsAll(workExternalIdentifier) && 
+                    that.workExternalIdentifier.size() == workExternalIdentifier.size())) {
+                return false;
+            }
         }
 
         return true;

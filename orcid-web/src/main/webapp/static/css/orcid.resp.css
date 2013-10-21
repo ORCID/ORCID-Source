@@ -14,6 +14,8 @@
  *
  * =============================================================================
  */
+ 
+ 
 
 /* Fonts */
 @font-face {
@@ -147,6 +149,7 @@ img {
 }
 .right{
 	text-align:right;
+	float: right;	
 }
 
 #map_canvas img {
@@ -560,7 +563,7 @@ select {
     Header
 */
 .header {
-	margin: 0 auto 40px;
+	margin: 0 auto 15px;
 }
 
 .header .search {
@@ -590,7 +593,7 @@ select {
 	float: left;
 	background: #C9CACB;
 	border: none;
-	width: 220px;
+	width: 210px;
 	height: 22px;
 	padding: 0 0 0 10px;
 	margin: 0;
@@ -684,6 +687,8 @@ select {
 
 .header .search .settings-button i,.header .search .search-button i {
 	width: 22px;
+	float: right;
+    margin-right: 9px;
 }
 
 .header .search .settings-button:hover {
@@ -695,7 +700,7 @@ select {
 	height: 26px;
 	border: 0;
 	background: transparent;
-	padding: 0 0 30px 10px;
+	padding: 0 0 30px 0;
 }
 
 .header .search .search-button .icon-orcid-search {
@@ -740,7 +745,8 @@ select {
 }
 
 .header .logo {
-	float: left;	
+	float: left;
+	margin-top: 11px;	
 }
 
 .header .logo h1 {
@@ -1137,16 +1143,23 @@ ul.privacyHelp li.private {
 	background-position: -0px -45px;
 }
 
-.editTablePadCell35 {
-	margin: 0px;
+.editTablePadCell35{	
 	padding: 0px;
-	margin-left: 35px;
+	margin: 0 30px;
 }
 
+
 #emailTable {
-	width: 655px;
-	padding: 0px;
-	margin: 0px;
+	width: 100%;
+	padding: 0px;	
+}
+
+.editTablePadCell35 .row{
+	margin-top: 10px;
+}
+
+.editTablePadCell35 .add-email span.btn{
+	margin-top:0;
 }
 
 #emailTable td {
@@ -1204,8 +1217,6 @@ ul.privacyHelp li.private {
 	padding:15px;	 
 }
 
-
-
 .dropup,.dropdown {
 	position: relative;
 }
@@ -1216,22 +1227,6 @@ ul.privacyHelp li.private {
 
 .dropdown-toggle:active,.open .dropdown-toggle {
 	outline: 0;
-}
-
-.caret {
-	display: inline-block;
-	width: 0;
-	height: 0;
-	vertical-align: top;
-	border-top: 4px solid #000000;
-	border-right: 4px solid transparent;
-	border-left: 4px solid transparent;
-	content: "";
-}
-
-.dropdown .caret {
-	margin-top: 8px;
-	margin-left: 2px;
 }
 
 .dropdown-menu {
@@ -1261,6 +1256,7 @@ ul.privacyHelp li.private {
 	background-clip: padding-box;
 }
 
+
 .dropdown-menu.pull-right {
 	right: 0;
 	left: auto;
@@ -1284,6 +1280,7 @@ ul.privacyHelp li.private {
 	line-height: 20px;
 	color: #333333;
 	white-space: nowrap;
+	margin-left: 2px;
 }
 
 .dropdown-menu .disabled>a,.dropdown-menu .disabled>a:hover {
@@ -1303,6 +1300,8 @@ ul.privacyHelp li.private {
 .open>.dropdown-menu {
 	display: block;
 }
+
+
 
 .pull-right>.dropdown-menu {
 	right: 0;
@@ -1583,6 +1582,10 @@ a:hover {
 	border-top: 1px solid #c9c9c9
 }
 
+.workspace-header-public:first-of-type{
+	border-top: medium none;
+}
+
 .workspace-accordion-item {
 	border-bottom: 1px solid #c9c9c9;
 }
@@ -1698,13 +1701,6 @@ a:hover {
 	margin-right: 90px;
 }
 
-.privacy-menu {
-	width: 80px;
-	min-width: 0;
-	padding: 5px 5px 0;
-	margin: 0 !important;
-}
-
 .grey {
 	color: #949599;
 }
@@ -1717,20 +1713,26 @@ a:hover {
 	color: #ee0000;
 }
 
+.privacy-menu{
+	min-width: 91px;
+}
+
 .privacy-menu li {
 	margin-bottom: 5px !important;
 }
 
 .privacy-menu a {
-	width: 38px;
+	width: 85px;
+	border: 1px solid #CACACA;
 }
 
 .privacy-menu .caret {
 	display: none;
 }
 
-.privacy-menu .btn-success,.privacy-menu .btn-warning,.privacy-menu .btn-danger
-	{
+.privacy-menu .btn-success,
+.privacy-menu .btn-warning,
+.privacy-menu .btn-danger {
 	color: #fff;
 }
 
@@ -1935,9 +1937,15 @@ a:hover {
 	right: 10px;
 }
 
-.settings-table td,.settings-table th {
+.settings-table .settings-table td,.settings-table th {
 	width: 50%;
 	position: relative;
+}
+
+.settings-table, .settings-table th, .settings-table td {
+    border-left: 0 none !important;
+    border-right: 0 none !important;
+    padding-left: 0;
 }
 
 .normal-width td,.normal-width th {
@@ -2315,6 +2323,10 @@ header overrides
 	margin-bottom: 5px;
 }
 
+.manage-bio #biography{
+	height: 80px;
+}
+
 .edit-work{
 	width: 600px; 
 }
@@ -2628,6 +2640,10 @@ a.btn-primary:hover {
 	overflow: hidden;
 }
 
+#loginForm #login-register{
+	padding-left: 0;
+}
+
 /* Personal Profile */
 
 ul.personal-inf-display{
@@ -2638,6 +2654,7 @@ ul.personal-inf-display{
 ul.personal-inf-display li{
 	display: inline;
 }
+
 
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */
@@ -2729,6 +2746,8 @@ ul.personal-inf-display li{
 		background-color: #939598;
 		color: #FFF;
 		display: block !important;
+		float: left;
+		margin-left:5px;
 	}
 	.container .header .search form fieldset.search_options input,.container .header .search form fieldset.search_options label
 		{
@@ -2953,12 +2972,13 @@ ul.personal-inf-display li{
 	/* Login Form */
 	#loginForm #login-reset{
 		margin-top: 50px;
+		padding-left: 15px;
 	}
 	
 	#loginForm #login-register{
 		margin-top: 20px;
+		padding-left: 15px;
 	}
-	
 	
 	#loginForm .btn {
 		margin-top: 10px;
@@ -2967,10 +2987,8 @@ ul.personal-inf-display li{
 	#loginForm #userId,
 	#loginForm #password {
 		width: 100%;
-	}
-	#loginForm  #login-reset {
-		padding-left: 15px;
-	}
+	}	
+	
 	#loginForm #form-sign-in-button {
 		font-size: 18px;
 		height: 50px;
@@ -2985,12 +3003,12 @@ ul.personal-inf-display li{
 		min-height: 30px;
 		height: 30px;
 		text-align: center;
-		top: 240px;
+		top: 260px; /* Login layout top */
 	}
 	#loginForm #ajax-loader {
 		width: 100%;
 		text-align: center;
-	}
+	}	
 
 	/* Forms */
 	input[type="text"],input[type="password"] {
@@ -3095,10 +3113,27 @@ ul.personal-inf-display li{
 	
 	
 	/* Lightboxes */	
-	#colorbox, #cboxWrapper, #edit-work, #colorbox-content, #cboxContent, #cboxLoadedContent{
+	#colorbox, 
+	#cboxWrapper, 
+	#edit-work, 
+	#colorbox-content, 
+	#cboxContent, 
+	#cboxLoadedContent{
 		width: 100% !important;
 		box-shadow: none;
-		left:0 !important;		
+		left:0 !important;
+		top: 0 !important;
+		
+	}
+	
+	.close-button {
+	    background-color: #CD5C5C;
+	    border: 1px solid #DDDDDD;
+	    color: #FFFFFF;
+	}
+	
+	.close-button:hover{
+		color: #FFFFFF;		
 	}
 	
 	/* Statistics */
@@ -3117,14 +3152,89 @@ ul.personal-inf-display li{
 		padding: 0;
 	}
 	
+	/* Account Settings */
+	
+	.editTablePadCell35{
+		margin: 0 !important;
+	}
+	
+	.settings-table .icon-question-sign{
+		line-height: 18px;
+	}
+	
+	.settings-table .email{
+		padding-left:30px;
+	}
+	
+	.settings-table .icon-trash{
+		font-size: 24px;
+	}
+	
+	.settings-table .input-xlarge{
+		width: 80%;
+	}
+	
+	.settings-table .add-email{
+		margin-left:15px;
+	}
+	
+	.manage-bio .input-xlarge{
+		width: 90%;
+	}
+	
+	.manage-bio #creditName,
+	.manage-bio #otherNamesDelimited,
+	.manage-bio #keywordsDelimited,
+	.manage-bio #isoCountryCode{
+		width: 65%;
+	}
+	
+	.manage-bio .abs-left-top{
+		top: -10px;
+	}
+	
+	.manage-bio #websiteUrl,
+	.manage-bio  #websiteUrlText{
+		margin-top: 15px;
+	}
+	
+	.manage-bio .websites-vis .privacy-group{
+		left: 210px;
+	}
+	
+	.manage-bio .websites-vis{
+		margin-top: 35px;
+	}
+	
+	.manage-bio #biography{
+		width: 100%; 
+	}
+	
+	/* review
+	.manage-bio .right{
+		float: none !important;
+	}		
+	
+	.manage-bio .controls{
+		margin-left: 0 !important;
+	}
+	*/
+	
+	#cboxOverlay{
+		height: auto;		
+	}
+    	
+	
 }
 
 @media ( max-width : 980px) { /* Tablet */
+	/*Header*/
+	
 	.container .header .search form input[type='search'] {
 		width: 185px;
 	}
 	.container .header .search form .bar {
-		width: 315px;
+		width: 305px;
 		margin-right: 0;
 	}
 	.container .header .search form fieldset {
@@ -3167,10 +3277,47 @@ ul.personal-inf-display li{
 	.header .navigation>.menu>li>.menu>li.active-trail>.menu>li {
 		display: inline;
 	}
+	
+	/* Search bar */
+	
+	.container .header #form-search{
+		width: 545px;
+	}
+	
+	.header .search form#form-search input[type="search"]{
+		width: 160px;
+	}
+	
+	.header .search form .conditions {
+	    left: 0;
+	    width: 100%;
+	}
+	
+	.container .header .search form fieldset label{
+		font-size: 13px;
+	}
 
 	/* Contact Form */
 	iframe {
 		width: 100%;
+	}
+	
+	.workspace-right{
+		border-left: 0;		
+	}
+	
+	.workspace-left {
+    	margin-left: 15px;
+	}
+	
+	.workspace-top{
+		border-top: 0;
+	}
+	
+	/* Login */
+	
+	#login-register{
+		padding-left: 0;
 	}
 	
 }
@@ -3179,4 +3326,6 @@ ul.personal-inf-display li{
 	.container{
 		max-width:960px;
 	}
+	
+	
 }

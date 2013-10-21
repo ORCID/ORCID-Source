@@ -18,9 +18,9 @@
 
 -->
 <orcid-message xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-               xsi:schemaLocation="http://www.orcid.org/ns/orcid ../../../../orcid-model/src/main/resources/orcid-message-1.0.21.xsd"
+               xsi:schemaLocation="http://www.orcid.org/ns/orcid ../../../../orcid-model/src/main/resources/orcid-message-1.0.22.xsd"
                xmlns="http://www.orcid.org/ns/orcid">
-    <message-version>1.0.21</message-version>
+    <message-version>1.0.22</message-version>
     <!-- Error message, if applicable -->
     <!-- Unable to connect to ORCID, no matching researchers, etc. -->
     <!-- <error-desc>No researcher found.</error-desc> -->
@@ -72,13 +72,13 @@
         <orcid-activities>
             <affiliations>
                 <affiliation>
-                    <affiliation-name>Brown University</affiliation-name>
-                    <affiliation-type>current-primary-institution</affiliation-type>
-                    <affiliation-address>
-                        <affiliation-city>Providence</affiliation-city>
-                        <affiliation-region>RI</affiliation-region>
-                        <affiliation-country>US</affiliation-country>
-                    </affiliation-address>
+                    <name>Brown University</name>
+                    <type>employment</type>
+                    <address>
+                        <city>Providence</city>
+                        <region>RI</region>
+                        <country>US</country>
+                    </address>
                     <department-name>Psychoceramics</department-name>
                     <role-title>Researcher (Academic)</role-title>
                     <start-date>
@@ -93,13 +93,13 @@
                     </end-date>
                 </affiliation>
                 <affiliation>
-                    <affiliation-name>Staffordshire University</affiliation-name>
-                    <affiliation-type>current-institution</affiliation-type>
-                    <affiliation-address>
-                        <affiliation-city>Stoke-on-Trent</affiliation-city>
-                        <affiliation-region>Staffordshire</affiliation-region>
-                        <affiliation-country>GB</affiliation-country>
-                    </affiliation-address>
+                    <name>Staffordshire University</name>
+                    <type>employment</type>
+                    <address>
+                        <city>Stoke-on-Trent</city>
+                        <region>Staffordshire</region>
+                        <country>GB</country>
+                    </address>
                     <department-name>Psychoceramics</department-name>
                     <role-title>Researcher (Academic)</role-title>
                     <start-date>
@@ -114,13 +114,13 @@
                     </end-date>
                 </affiliation>
                 <affiliation>
-                    <affiliation-name>Jiangxi Normal University (JXNU)</affiliation-name>
-                    <affiliation-type>current-institution</affiliation-type>
-                    <affiliation-address>
-                        <affiliation-city>Nanchang</affiliation-city>
-                        <affiliation-region>Jiangxi</affiliation-region>
-                        <affiliation-country>CH</affiliation-country>
-                    </affiliation-address>
+                    <name>Jiangxi Normal University (JXNU)</name>
+                    <type>employment</type>
+                    <address>
+                        <city>Nanchang</city>
+                        <region>Jiangxi</region>
+                        <country>CH</country>
+                    </address>
                     <department-name>Ancient Psychoceramics</department-name>
                     <role-title>Researcher (Academic)</role-title>
                     <start-date>
@@ -135,13 +135,13 @@
                     </end-date>
                 </affiliation>
                 <affiliation>
-                    <affiliation-name>Bowdoin College</affiliation-name>
-                    <affiliation-type>past-institution</affiliation-type>
-                    <affiliation-address>
-                        <affiliation-city>Brunswick</affiliation-city>
-                        <affiliation-region>ME</affiliation-region>
-                        <affiliation-country>US</affiliation-country>
-                    </affiliation-address>
+                    <name>Bowdoin College</name>
+                    <type>employment</type>
+                    <address>
+                        <city>Brunswick</city>
+                        <region>ME</region>
+                        <country>US</country>
+                    </address>
                     <department-name>Psychoceramics</department-name>
                     <role-title>Researcher (Academic)</role-title>
                     <start-date>
@@ -156,13 +156,13 @@
                     </end-date>
                 </affiliation>
                 <affiliation>
-                    <affiliation-name>Universtät Wien</affiliation-name>
-                    <affiliation-type>past-institution</affiliation-type>
-                    <affiliation-address>
-                        <affiliation-city>Vienna</affiliation-city>
-                        <affiliation-region>Vienna</affiliation-region>
-                        <affiliation-country>AT</affiliation-country>
-                    </affiliation-address>
+                    <name>Universtät Wien</name>
+                    <type>employment</type>
+                    <address>
+                        <city>Vienna</city>
+                        <region>Vienna</region>
+                        <country>AT</country>
+                    </address>
                     <department-name>Psychoceramics</department-name>
                     <role-title>Researcher (Academic)</role-title>
                     <start-date>

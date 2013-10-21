@@ -140,38 +140,38 @@ public class OrcidIndexManagerImpl implements OrcidIndexManager {
 
             OrcidActivities orcidActivities = filteredProfile.getOrcidActivities();
             if (orcidActivities != null) {
-                Affiliations affiliations = orcidActivities.getAffiliations();
-                if (affiliations != null) {
-                    List<Affiliation> pastInsts = affiliations.getAffiliationsByType(AffiliationType.PAST_INSTITUTION);
-                    if (pastInsts != null && !pastInsts.isEmpty()) {
-                        List<String> pastInstNames = new ArrayList<String>();
-                        for (Affiliation pastAffiliation : pastInsts) {
-                            pastInstNames.add(pastAffiliation.getAffiliationName());
-                        }
-
-                        profileIndexDocument.setAffiliatePastInstitutionNames(pastInstNames);
-                    }
-
-                    List<Affiliation> primaryInsts = affiliations.getAffiliationsByType(AffiliationType.CURRENT_PRIMARY_INSTITUTION);
-                    if (primaryInsts != null && !primaryInsts.isEmpty()) {
-                        List<String> primaryInstNames = new ArrayList<String>();
-                        for (Affiliation primaryAffiliation : primaryInsts) {
-                            primaryInstNames.add(primaryAffiliation.getAffiliationName());
-                        }
-
-                        profileIndexDocument.setAffiliatePrimaryInstitutionNames(primaryInstNames);
-                    }
-
-                    List<Affiliation> currentNonPrimaryInsts = affiliations.getAffiliationsByType(AffiliationType.CURRENT_INSTITUTION);
-                    if (currentNonPrimaryInsts != null && !currentNonPrimaryInsts.isEmpty()) {
-                        List<String> affiliateInstNames = new ArrayList<String>();
-                        for (Affiliation currentAffiliation : currentNonPrimaryInsts) {
-                            affiliateInstNames.add(currentAffiliation.getAffiliationName());
-                        }
-
-                        profileIndexDocument.setAffiliateInstitutionNames(affiliateInstNames);
-                    }
-                }
+//                Affiliations affiliations = orcidActivities.getAffiliations();
+//                if (affiliations != null) {
+//                    List<Affiliation> pastInsts = affiliations.getAffiliationsByType(AffiliationType.PAST_INSTITUTION);
+//                    if (pastInsts != null && !pastInsts.isEmpty()) {
+//                        List<String> pastInstNames = new ArrayList<String>();
+//                        for (Affiliation pastAffiliation : pastInsts) {
+//                            pastInstNames.add(pastAffiliation.getAffiliationName());
+//                        }
+//
+//                        profileIndexDocument.setAffiliatePastInstitutionNames(pastInstNames);
+//                    }
+//
+//                    List<Affiliation> primaryInsts = affiliations.getAffiliationsByType(AffiliationType.CURRENT_PRIMARY_INSTITUTION);
+//                    if (primaryInsts != null && !primaryInsts.isEmpty()) {
+//                        List<String> primaryInstNames = new ArrayList<String>();
+//                        for (Affiliation primaryAffiliation : primaryInsts) {
+//                            primaryInstNames.add(primaryAffiliation.getAffiliationName());
+//                        }
+//
+//                        profileIndexDocument.setAffiliatePrimaryInstitutionNames(primaryInstNames);
+//                    }
+//
+//                    List<Affiliation> currentNonPrimaryInsts = affiliations.getAffiliationsByType(AffiliationType.CURRENT_INSTITUTION);
+//                    if (currentNonPrimaryInsts != null && !currentNonPrimaryInsts.isEmpty()) {
+//                        List<String> affiliateInstNames = new ArrayList<String>();
+//                        for (Affiliation currentAffiliation : currentNonPrimaryInsts) {
+//                            affiliateInstNames.add(currentAffiliation.getAffiliationName());
+//                        }
+//
+//                        profileIndexDocument.setAffiliateInstitutionNames(affiliateInstNames);
+//                    }
+//                }
 
                 List<String> keywords = extractKeywordsAsStringFromBio(orcidBio);
                 if (keywords != null) {

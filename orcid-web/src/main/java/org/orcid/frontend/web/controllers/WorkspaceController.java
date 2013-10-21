@@ -112,6 +112,16 @@ public class WorkspaceController extends BaseWorkspaceController {
         }
         return FunctionsOverCollections.sortMapsByValues(affiliationTypes);
     }
+    
+    @ModelAttribute("affiliationLongDescriptionTypes")
+    public Map<String, String> retrieveAffiliationLongDescriptionTypesAsMap() {
+        Map<String, String> affiliationTypes = new LinkedHashMap<String, String>();
+        for (AffiliationType affiliationType : AffiliationType.values()) {
+            affiliationTypes.put(affiliationType.value(), getMessage(AffiliationType.class.getName() + '.' + "longDescription" + '.' + affiliationType.value()));
+        }
+        return FunctionsOverCollections.sortMapsByValues(affiliationTypes);
+    }
+
 
     @ModelAttribute("workTypes")
     public Map<String, String> retrieveWorkTypesAsMap() {
@@ -170,12 +180,16 @@ public class WorkspaceController extends BaseWorkspaceController {
         return map;
     }
 
+    /**
+     * Generate a map with ID types.
+     * The map is different from the rest, because it will be ordered in the form: value -> key, to keep the map alpha ordered in UI. 
+     * */
     @ModelAttribute("idTypes")
     public Map<String, String> retrieveIdTypesAsMap() {
         Map<String, String> map = new TreeMap<String, String>();
 
         for (WorkExternalIdentifierType type : WorkExternalIdentifierType.values()) {
-            map.put(type.value(), getMessage(buildInternationalizationKey(WorkExternalIdentifierType.class, type.value())));
+            map.put(getMessage(buildInternationalizationKey(WorkExternalIdentifierType.class, type.value())), type.value());
         }
 
         return FunctionsOverCollections.sortMapsByValues(map);

@@ -20,7 +20,7 @@
 <@public >
 <#escape x as x?html>
 <div class="row workspace-top public-profile">
-    <div class="span3">
+    <div class="col-md-3">
         <div class="workspace-left workspace-profile">
             <h2 class="full-name">
                 <#if (profile.orcidBio.personalDetails.creditName.content)??>
@@ -66,7 +66,7 @@
             </#if>
         </div>
     </div>
-    <div class="span9">
+    <div class="col-md-9">
         <div class="workspace-right">
         	<#if (deprecated)??>
 	        	<div class="alert alert-error readme">

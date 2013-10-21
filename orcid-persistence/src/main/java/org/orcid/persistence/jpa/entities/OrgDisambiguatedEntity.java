@@ -48,6 +48,7 @@ public class OrgDisambiguatedEntity extends BaseEntity<Long> {
     private String sourceId;
     private String sourceUrl;
     private String sourceType;
+    private String orgType;
     private String name;
     private String city;
     private String region;
@@ -162,6 +163,15 @@ public class OrgDisambiguatedEntity extends BaseEntity<Long> {
 
     public void setOrgs(Set<OrgEntity> orgs) {
         this.orgs = orgs;
+    }
+
+    @Column(name = "org_type")
+    public String getOrgType() {
+        return orgType;
+    }
+
+    public void setOrgType(String orgType) {
+        this.orgType = orgType;
     }
 
 }
