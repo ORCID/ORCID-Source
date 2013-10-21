@@ -24,16 +24,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
     <#-- Uncomment for Overwriting Variables for testing from non localhost -->
-    
+    <!-- 196.40.47.129:8082 -->
     <#--
-                 
+                   
     	<#assign myLocalIp = '192.168.24.92:8080'>    	
 	    <#assign staticCdn = '//'+ myLocalIp + '/orcid-web/static'>
 	    <#assign staticLoc = '//'+ myLocalIp + '/orcid-web/static'>
 	    <#assign baseUri = 'http://'+ myLocalIp + '/orcid-web'>
-	    <#assign baseUriHttp = 'http://'+ myLocalIp + '/orcid-web'>	    
-	--> 
-	 
+	    <#assign baseUriHttp = 'http://'+ myLocalIp + '/orcid-web'>
+    -->	 
+    
 	 <#assign local_folder = '/orcid-web'> <!-- QA vs Local environment, leave empty for QA submittion -->	
 	
      
@@ -50,7 +50,10 @@
 		request.requestURI?ends_with("${local_folder}/oauth/signin")||		
 		request.requestURI?ends_with("${local_folder}/oauth/confirm_access")||
 		request.requestURI?ends_with("${local_folder}/my-orcid")||
-		request.requestURI?ends_with("${local_folder}/statistics")
+		request.requestURI?ends_with("${local_folder}/statistics")||
+		request.requestURI?ends_with("${local_folder}/account")||	
+		request.requestURI?matches("(.+)/(?:\\d{4}-){3,}\\d{3}[\\dX]")||
+		request.requestURI?ends_with("${local_folder}/account/manage-bio-settings")
 	>    	
 	    <link rel="stylesheet" href="${staticCdn}/twitter-bootstrap/3.0.0/css/bootstrap.min.css?v=${ver}"/>
 	    <!--[if lt IE 8]>
@@ -58,7 +61,7 @@
 	        <link rel="stylesheet" href="${staticCdn}/css/orcid-ie7.css?v=${ver}"/>        
 	    <![endif]-->
 	    
-	    <link rel="stylesheet" href="${staticCdn}/css/orcid.resp.css?v=${ver}"/> <!-- Fonts already included here -->
+	    <link rel="stylesheet" href="${staticCdn}/css/orcid.resp.css?v=${ver}"/><!-- Fonts references included -->
 	    <link rel="stylesheet" href="${staticCdn}/css/jquery-ui-1.10.0.custom.min.css?v=${ver}"/>
 	    <link rel="stylesheet" href="${staticLoc}/font-awesome/3.2.1/css/font-awesome.css"/>
 	    <!--[if IE 7]>

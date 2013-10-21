@@ -19,7 +19,7 @@
 <@protected classes=['manage'] nav="settings">
 
     <div class="row">
-		<div class="span3 lhs override">
+		<div class="col-md-3 lhs override">
 			<ul class="settings-nav">
 				<li><a href="#account-settings">${springMacroRequestContext.getMessage("manage.accountsettings")}</a></li>
 				<li><a href="#manage-permissions">${springMacroRequestContext.getMessage("manage.managepermission")}</a></li>
@@ -31,64 +31,123 @@
 				</@security.authorize>					
 			</ul>
 		</div>
-		<div class="span9">
+		<div class="col-md-9">
 			<h1 id="account-settings">${springMacroRequestContext.getMessage("manage.account_settings")}</h1>
 			<#assign open = "" />
 			
 			<table class="table table-bordered settings-table" ng-controller="EditTableCtrl" style="margin: 0px, padding: 0px;">
 				<tbody>
-					<tr>
+					<tr><!-- Personal Information -->
 						<th>${springMacroRequestContext.getMessage("public_profile.h3PersonalInformation")}</th>
 						<td>
 							<div><a href="<@spring.url '/account/manage-bio-settings'/>" class="update">${springMacroRequestContext.getMessage("settings.tdEdit")}</a></div>
 						</td>
 					</tr>
-					<tr>
+					<tr><!-- Email header -->
 						<th><a name="editEmail"></a>${springMacroRequestContext.getMessage("manage.thEmail")}</th>
 						<td>
 							<a href="" ng-click="toggleEmailEdit()" ng-bind="emailToggleText"></a>
 						</td>
 					</tr>
-					<tr ng-controller="EmailEditCtrl" ng-show="showEditEmail" ng-cloak>
+					<tr ng-controller="EmailEditCtrl" ng-show="showEditEmail" ng-cloak><!-- Email edit -->
 						<td colspan="2">
-						<div class="editTablePadCell35">
-							<!-- we should never see errors here, but just to be safe -->
-							<span class="orcid-error" ng-show="emailsPojo.errors.length > 0">
-		   						<span ng-repeat='error in emailsPojo.errors' ng-bind-html-unsafe="error"></span>
-		   					</span>	
-		   					<table id="emailTable">
-		   						<tr ng-repeat='email in emailsPojo.emails'>
-		   						  <td class="padRgt" ng-class="{primaryEmail:email.primary}" ng-bind="email.value">
-		   						  </td>
-		   						  <td class="padRgt">
-		   						  		<span ng-hide="email.primary" ><a href="" ng-click="setPrimary($index)">${springMacroRequestContext.getMessage("manage.email.set_primary")}</a></span>
-		   							    <span ng-show="email.primary" class="muted" style="color: #bd362f;">${springMacroRequestContext.getMessage("manage.email.primary_email")}</span>
-		   						  </td> 
-		   						  <td class="padRgt">
-		   						  	<select style="width: 100px; margin: 0px;" ng-change="saveEmail()" ng-model="email.current">
-          							    <option value="true" ng-selected="email.current == true"><@orcid.msg 'manage.email.current.true' /></option>
-          							    <option value="false" ng-selected="email.current == false"><@orcid.msg 'manage.email.current.false' /></option>              
-        						    </select>
-		   						  </td>
-		   						  <td class="padRgt">
-		   						      <span ng-hide="email.verified"><a href="" ng-click="verifyEmail($index)">${springMacroRequestContext.getMessage("manage.email.verify")}</a></span>
-	   							      <span ng-show="email.verified">${springMacroRequestContext.getMessage("manage.email.verified")}</span>		
-		   						  </td>
-		   						  <td class="padRgt">
-		   						  	<a href="" class="icon-trash orcid-icon-trash grey" ng-show="email.primary == false" ng-click="confirmDeleteEmail($index)"></a>
-		   						  </td>
-		   						  <td class="padRgt">
-		   						  	<@orcid.privacyToggle "email.visibility" "setPrivacy($index, 'PUBLIC', $event)" "setPrivacy($index, 'LIMITED', $event)" "setPrivacy($index, 'PRIVATE', $event)" />
-                           	      </td>
-		   						</tr>
-			   					</table>
+							<div class="editTablePadCell35">
+								<!-- we should never see errors here, but just to be safe -->
+								<span class="orcid-error" ng-show="emailsPojo.errors.length > 0">
+			   						<span ng-repeat='error in emailsPojo.errors' ng-bind-html-unsafe="error"></span>
+			   					</span>
+			   					<!-- Start -->
+			   					<div class="row">
+			   						<div ng-repeat='email in emailsPojo.emails' class="row">
+			   							
+			   							<div class="col-md-7 row">
+			   								<!-- Primary Email -->			   							
+				   							<div ng-class="{primaryEmail:email.primary}" ng-bind="email.value" class="col-md-7 col-xs-7 email"></div>
+				   							<!-- Set Primary options -->			   							
+				   							<div class="col-md-5 col-xs-5">	
+					   							<span ng-hide="email.primary" >
+					   								<a href="" ng-click="setPrimary($index)">${springMacroRequestContext.getMessage("manage.email.set_primary")}</a>
+					   							</span>
+				   							    <span ng-show="email.primary" class="muted" style="color: #bd362f;">
+				   							    	${springMacroRequestContext.getMessage("manage.email.primary_email")}
+				   							    </span>
+				   							</div>				   							
+				   						</div>
+				   						
+				   						
+				   						<div class="col-md-5 col-xs-12 row">				   							
+				   							<div class="col-md-6 col-xs-6">
+				   								<!-- Email verify -->
+				   								<div class="col-md-8 col-xs-7">				   												   								
+					   								<span ng-hide="email.verified" class="left"><a href="" ng-click="verifyEmail($index)">${springMacroRequestContext.getMessage("manage.email.verify")}</a></span>				   							
+				   							      	<span ng-show="email.verified" class="left">${springMacroRequestContext.getMessage("manage.email.verified")}</span>
+				   							    </div>
+			   							      	<!-- Icon Trash / Privacy Settings -->
+			   							      	<div class="col-md-4 col-xs-3">	
+				   							      	<a href="" class="icon-trash orcid-icon-trash grey left" ng-show="email.primary == false" ng-click="confirmDeleteEmail($index)"></a>
+			   							      	</div>			   							      	
+			   							    </div>
+			   							    <div class="col-md-6 col-xs-6">
+			   							      	<div class="">
+			   							      		<@orcid.privacyToggle "email.visibility" "setPrivacy($index, 'PUBLIC', $event)" "setPrivacy($index, 'LIMITED', $event)" "setPrivacy($index, 'PRIVATE', $event)" />
+			   							      	</div>	
+				   							</div>
+				   						</div>
+			   						</div>
+			   						<div class="row">		
+				   						<div class="col-md-12 add-email">			   							
+						   					<input type="email" placeholder="Add Another Email" class="input-xlarge" ng-model="inputEmail.value" style="margin: 0px;" required/> <span ng-click="checkCredentials()" class="btn btn-primary">${springMacroRequestContext.getMessage("manage.spanadd")}</span>
+				   							<span class="orcid-error" ng-show="inputEmail.errors.length > 0">
+					   							<span ng-repeat='error in inputEmail.errors' ng-bind-html-unsafe="error"></span>						   							
+					   						</span>
+			   							</div>			 
+		   							</div>
+			   					</div>
+			   					<!-- End -->	
+			   					<!-- 
+			   					<table id="emailTable" class="table-responsive">
+			   						<tr ng-repeat='email in emailsPojo.emails'>
+			   						  
+			   						  <td class="padRgt" ng-class="{primaryEmail:email.primary}" ng-bind="email.value"></td>
+			   						  
+			   						  <td class="padRgt">
+			   						  		<span ng-hide="email.primary" ><a href="" ng-click="setPrimary($index)">${springMacroRequestContext.getMessage("manage.email.set_primary")}</a></span>
+			   							    <span ng-show="email.primary" class="muted" style="color: #bd362f;">${springMacroRequestContext.getMessage("manage.email.primary_email")}</span>
+			   						  </td>
+			   						  
+			   						  
+			   						   
+			   						  <td class="padRgt">
+			   						  	<select style="width: 100px; margin: 0px;" ng-change="saveEmail()" ng-model="email.current">
+	          							    <option value="true" ng-selected="email.current == true"><@orcid.msg 'manage.email.current.true' /></option>
+	          							    <option value="false" ng-selected="email.current == false"><@orcid.msg 'manage.email.current.false' /></option>              
+	        						    </select>
+			   						  </td>
+			   						  
+			   						  <td class="padRgt">
+			   						      <span ng-hide="email.verified"><a href="" ng-click="verifyEmail($index)">${springMacroRequestContext.getMessage("manage.email.verify")}</a></span>
+		   							      <span ng-show="email.verified">${springMacroRequestContext.getMessage("manage.email.verified")}</span>		
+			   						  </td>
+			   						  
+			   						  <td class="padRgt">
+			   						  	<a href="" class="icon-trash orcid-icon-trash grey" ng-show="email.primary == false" ng-click="confirmDeleteEmail($index)"></a>
+			   						  </td>
+			   						  
+			   						  <td class="padRgt">
+			   						  	<@orcid.privacyToggle "email.visibility" "setPrivacy($index, 'PUBLIC', $event)" "setPrivacy($index, 'LIMITED', $event)" "setPrivacy($index, 'PRIVATE', $event)" />
+	                           	      </td>
+	                           	      
+			   						</tr>			   						 
+				   				</table>
+				   				
 			   					<div>
 		   							<input type="email" placeholder="Add Another Email" class="input-xlarge" ng-model="inputEmail.value" style="margin: 0px;" required/> <span ng-click="checkCredentials()" class="btn btn-primary">${springMacroRequestContext.getMessage("manage.spanadd")}</span>
 		   							<span class="orcid-error" ng-show="inputEmail.errors.length > 0">
 			   							<span ng-repeat='error in inputEmail.errors' ng-bind-html-unsafe="error"></span>
 			   						</span>
-			   					</div>	
-		   					</div>
+			   					</div>
+			   					-->	
+			   				</div>
 						</td>
 					</tr>
 					<tr>
@@ -228,7 +287,7 @@
 			            
             <h1 id="manage-permissions">${springMacroRequestContext.getMessage("manage.manage_permissions")}</h1>
 			<h3><b>${springMacroRequestContext.getMessage("manage.trusted_organisations")}</b></h3>
-			<p>${springMacroRequestContext.getMessage("manage.youcanallowpermission")}<br /> <a href="http://support.orcid.org/knowledgebase/articles/131598">${springMacroRequestContext.getMessage("manage.findoutmore")}</a></p>
+			<p>${springMacroRequestContext.getMessage("manage.youcanallowpermission")}<br /> <a href="http://support.orcid.org/knowledgebase/articles/131598" target=_blank"">${springMacroRequestContext.getMessage("manage.findoutmore")}</a></p>
 			<#if (profile.orcidBio.applications.applicationSummary)??>
     			<table ng-controller="revokeApplicationFormCtrl" class="table table-bordered settings-table normal-width">
     				<thead>

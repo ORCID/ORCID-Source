@@ -250,15 +250,14 @@
         menuAdjustment(); //Trigger menu adjustment
 
         /* Menu icon */
-        $('#mobile-menu-icon').live('click', function(event){            
+        $('#mobile-menu-icon').live('click', function(event){        	
             event.preventDefault();
             tap('.container .header .navigation > .menu', this);            
         });        
 
         /* Search */ 
-        $('#mobile-search').live('click', function(event){
-        	console.log('SEARCH');
-            event.preventDefault();
+        $('#mobile-search').live('click', function(event){        	
+            event.preventDefault();            
             tap('.container .header #form-search', this);            
         });
 
@@ -270,16 +269,14 @@
         
 
         var tap = function(menuObject, menuButton){            
-            var display = $(menuObject).css('display');
-            console.log(display);
+            var display = $(menuObject).css('display');            
             if(display == 'none'){
             	hideMenuItems(menuObject);
             	if($(menuButton).attr('id') == 'mobile-search' || $(menuButton).attr('id') == 'mobile-settings'){
             		$('.container .header #search').css('display', 'block');
             	}
                 $(menuObject).css('display','block');
-                $(menuButton).css('background','#939598'); 
-                console.log('pass');
+                $(menuButton).css('background','#939598');
             }else{
             	if($(menuButton).attr('id') == 'mobile-search' || $(menuButton).attr('id') == 'mobile-settings'){
             		$('.container .header #search').css('display', 'none');

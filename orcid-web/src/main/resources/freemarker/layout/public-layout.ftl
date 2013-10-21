@@ -48,10 +48,11 @@
 	request.requestURI?ends_with("${local_folder}/oauth/signin")||
 	request.requestURI?ends_with("${local_folder}/oauth/confirm_access")||
 	request.requestURI?ends_with("${local_folder}/my-orcid")||
-	request.requestURI?ends_with("${local_folder}/statistics")
-	
+	request.requestURI?ends_with("${local_folder}/statistics")||
+	request.requestURI?ends_with("${local_folder}/account")||	
+	request.requestURI?matches("(.+)/(?:\\d{4}-){3,}\\d{3}[\\dX]")||
+	request.requestURI?ends_with("${local_folder}/account/manage-bio-settings")
 >
-
 
 <div class="container">
     <div class="header center">
@@ -88,7 +89,7 @@
             <div class="col-md-9 col-sm-9 col-sm-push-3 col-md-push-3 navigation">
             	<!--  Mobile menu -->
 				<a href="#" id="mobile-menu-icon" class="mobile-button mobile-menu-icon"><span class="glyphicon glyphicon-align-justify"></span></a>
-				<a href="<?php echo $base_path; ?>" id="logo-mini" class="pull-left"><img src="${staticCdn}/img/logo-orcid-mini.png" alt="ORCID logo" /></a>
+				<a href="${aboutUri}" id="logo-mini" class="pull-left"><img src="${staticCdn}/img/logo-orcid-mini.png" alt="ORCID logo" /></a>
 				<a href="#" id="mobile-settings" class="mobile-button mobile-settings"><span class="glyphicon glyphicon-cog"></span></a>                  
 				<a href="#" id="mobile-search" class="mobile-button mobile-search"><span class="glyphicon glyphicon-search"></span></a>
 				<a href="https://orcid.org/signin" id="mobile-sign-in" class="mobile-button mobile-sign-in"><span class="glyphicon glyphicon-user"></span></a>
