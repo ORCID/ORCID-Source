@@ -34,7 +34,7 @@
 	    <#assign baseUriHttp = 'http://'+ myLocalIp + '/orcid-web'>
     -->	 
     
-	 <#assign local_folder = '/orcid-web'> <!-- QA vs Local environment, leave empty for QA submittion -->	
+	 <#assign local_folder = ''> <!-- QA vs Local environment, leave empty for QA submittion -->	
 	
      
     <script type="text/javascript">

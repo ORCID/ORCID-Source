@@ -2640,6 +2640,10 @@ a.btn-primary:hover {
 	overflow: hidden;
 }
 
+#loginForm #login-register{
+	padding-left: 0;
+}
+
 /* Personal Profile */
 
 ul.personal-inf-display{
@@ -2968,10 +2972,12 @@ ul.personal-inf-display li{
 	/* Login Form */
 	#loginForm #login-reset{
 		margin-top: 50px;
+		padding-left: 15px;
 	}
 	
 	#loginForm #login-register{
 		margin-top: 20px;
+		padding-left: 15px;
 	}
 	
 	
@@ -2982,10 +2988,8 @@ ul.personal-inf-display li{
 	#loginForm #userId,
 	#loginForm #password {
 		width: 100%;
-	}
-	#loginForm  #login-reset {
-		padding-left: 15px;
-	}
+	}	
+	
 	#loginForm #form-sign-in-button {
 		font-size: 18px;
 		height: 50px;
@@ -3005,7 +3009,7 @@ ul.personal-inf-display li{
 	#loginForm #ajax-loader {
 		width: 100%;
 		text-align: center;
-	}
+	}	
 
 	/* Forms */
 	input[type="text"],input[type="password"] {
@@ -3307,6 +3311,12 @@ ul.personal-inf-display li{
 	
 	.workspace-top{
 		border-top: 0;
+	}
+	
+	/* Login */
+	
+	#login-register{
+		padding-left: 0;
 	}
 	
 }
