@@ -2980,7 +2980,6 @@ ul.personal-inf-display li{
 		padding-left: 15px;
 	}
 	
-	
 	#loginForm .btn {
 		margin-top: 10px;
 	}	
@@ -3229,11 +3228,13 @@ ul.personal-inf-display li{
 }
 
 @media ( max-width : 980px) { /* Tablet */
+	/*Header*/
+	
 	.container .header .search form input[type='search'] {
 		width: 185px;
 	}
 	.container .header .search form .bar {
-		width: 315px;
+		width: 305px;
 		margin-right: 0;
 	}
 	.container .header .search form fieldset {
