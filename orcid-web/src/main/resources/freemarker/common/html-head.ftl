@@ -24,18 +24,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
     <#-- Uncomment for Overwriting Variables for testing from non localhost -->
-    
-    <#--
-                 
-    	<#assign myLocalIp = '192.168.24.92:8080'>    	
-	    <#assign staticCdn = '//'+ myLocalIp + '/orcid-web/static'>
-	    <#assign staticLoc = '//'+ myLocalIp + '/orcid-web/static'>
-	    <#assign baseUri = 'http://'+ myLocalIp + '/orcid-web'>
-	    <#assign baseUriHttp = 'http://'+ myLocalIp + '/orcid-web'>	    
-	--> 
-	 
-	 <#assign local_folder = '/orcid-web'> <!-- QA vs Local environment, leave empty for QA submittion -->	
-	
+    	 
      
     <script type="text/javascript">
     	var orcidVar = {};
@@ -43,14 +32,14 @@
     	orcidVar.baseUriHttp = '${baseUriHttp}';
     </script>    
     <#if
-		request.requestURI?ends_with("${local_folder}/signin")||
-		request.requestURI?ends_with("${local_folder}/register")||
-		request.requestURI?ends_with("${local_folder}/reset-password")||
-		request.requestURI?ends_with("${local_folder}/error")||
-		request.requestURI?ends_with("${local_folder}/oauth/signin")||		
-		request.requestURI?ends_with("${local_folder}/oauth/confirm_access")||
-		request.requestURI?ends_with("${local_folder}/my-orcid")||
-		request.requestURI?ends_with("${local_folder}/statistics")
+		request.requestURI?ends_with("${basePath}signin")||
+		request.requestURI?ends_with("${basePath}register")||
+		request.requestURI?ends_with("${basePath}reset-password")||
+		request.requestURI?ends_with("${basePath}error")||
+		request.requestURI?ends_with("${basePath}oauth/signin")||		
+		request.requestURI?ends_with("${basePath}oauth/confirm_access")||
+		request.requestURI?ends_with("${basePath}my-orcid")||
+		request.requestURI?ends_with("${basePath}statistics")
 	>    	
 	    <link rel="stylesheet" href="${staticCdn}/twitter-bootstrap/3.0.0/css/bootstrap.min.css?v=${ver}"/>
 	    <!--[if lt IE 8]>
