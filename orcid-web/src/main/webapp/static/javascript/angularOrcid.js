@@ -2122,48 +2122,30 @@ function languageCtrl($scope, $cookies){
 	};
 };
 
-
-
-
-
-
-
-
-
 function profileDeactivationAndReactivationCtrl($scope,$compile){
 	$scope.orcidToDeactivate = null;
 	$scope.orcidToReactivate = null;
 	$scope.deactivatedAccount = null;
 	$scope.reactivatedAccount = null;
-	
-	$scope.showSuccessModal = function(){
-		$scope.successMessage = OM.getInstance().get('admin.profile_deprecation.deprecate_account.success_message');
-		$.colorbox({                      
-			html : $compile($('#success-modal').html())($scope),
-				scrolling: true,
-				onLoad: function() {
-				$('#cboxClose').remove();
-			},
-			scrolling: true
-		});
-		
-		$.colorbox.resize({width:"450px" , height:"150px"});
-	};
+	$scope.successMessage = null;
+	$scope.deactivateMessage = OM.getInstance().get('admin.profile_deactivation.success');
+	$scope.reactivateMessage = OM.getInstance().get('admin.profile_reactivation.success');
 	
 	$scope.deactivateAccount = function() {
 		$.ajax({
-	        url: orcidVar.baseUri+'/admin/deactivate-profile?orcid=' + $scope.orcid,	        
+	        url: orcidVar.baseUri+'/admin/deactivate-profile?orcid=' + $scope.orcidToDeactivate,	        
 	        type: 'GET',
 	        dataType: 'json',
 	        success: function(data){
 	        	$scope.$apply(function(){ 
 	        		$scope.deactivatedAccount = data;
-	        		if($scope.deactivatedAccount != null && $scope.deactivatedAccount.length != 0){	        				        			
+	        		if($scope.deactivatedAccount.errors != null && $scope.deactivatedAccount.errors.length != 0){	        				        			
+	        			console.log($scope.deactivatedAccount.errors);
 	        			$scope.closeModal();
 	        		} else {
-	        			$scope.showSuccessModal();
-	        		}
-	        		$scope.apply();
+	        			$scope.orcidToDeactivate = null;
+	        			$scope.showSuccessMessage($scope.deactivateMessage);
+	        		}	        		
 				});
 	        }
 	    }).fail(function(error) { 
@@ -2182,11 +2164,12 @@ function profileDeactivationAndReactivationCtrl($scope,$compile){
 	        	$scope.$apply(function(){ 
 	        		$scope.reactivatedAccount = data;
 	        		if($scope.reactivatedAccount.errors != null && $scope.reactivatedAccount.errors.length != 0){	        				        			
+	        			console.log($scope.reactivatedAccount.errors);
 	        			$scope.closeModal();
-	        		} else {
-	        			$scope.showSuccessModal();
+	        		} else {	        			
+	        			$scope.orcidToReactivate = null;
+	        			$scope.showSuccessMessage($scope.reactivateMessage);
 	        		}
-	        		$scope.apply();
 				});
 	        }
 	    }).fail(function(error) { 
@@ -2201,10 +2184,9 @@ function profileDeactivationAndReactivationCtrl($scope,$compile){
 	        type: 'GET',
 	        dataType: 'json',
 	        success: function(data){
-	        	console.log(data);
 	        	$scope.deactivatedAccount = data;
-	        	if(data.errors != null && data.errors.length != 0){
-	        		console.log(data.errors);	        		
+	        	if($scope.deactivatedAccount.errors != null && $scope.deactivatedAccount.errors.length != 0){
+	        		console.log($scope.deactivatedAccount.errors);	        		
 	        	} else {
 	        		$scope.showConfirmModal();
 	        	}
@@ -2226,7 +2208,7 @@ function profileDeactivationAndReactivationCtrl($scope,$compile){
 			scrolling: true
 		});
 		
-		$.colorbox.resize({width:"525px" , height:"300px"});
+		$.colorbox.resize({width:"450px" , height:"225px"});
 	};
 	
 	$scope.showConfirmModal = function() {
@@ -2239,7 +2221,22 @@ function profileDeactivationAndReactivationCtrl($scope,$compile){
 			scrolling: true
 		});
 		
-		$.colorbox.resize({width:"525px" , height:"300px"});
+		$.colorbox.resize({width:"525px" , height:"275px"});
+	};		
+	
+	$scope.showSuccessMessage = function(message){		
+		console.log(message);
+		$scope.successMessage = message;		
+		$.colorbox({                      
+			html : $compile($('#success-modal').html())($scope),
+				scrolling: true,
+				onLoad: function() {
+				$('#cboxClose').remove();
+			},
+			scrolling: true
+		});
+		
+		$.colorbox.resize({width:"425px" , height:"225px"});
 	};
 	
 	$scope.closeModal = function() {

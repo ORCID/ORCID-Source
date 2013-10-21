@@ -21,7 +21,7 @@
   <div style="padding:20px">
     <a id="cboxClose" class="btn pull-right close-button" ng-click="closeModal()">X</a>
     <h1><@orcid.msg 'admin.success'/></h1>
-    <p id="success-message">{{successMessage}}</p>	        
+    <p id="success-message">{{successMessage}}</p>    
   </div>
 </script>
 
@@ -106,7 +106,9 @@
     	<a id="cboxClose" class="btn pull-right close-button" ng-click="closeModal()">X</a>
     	<h1><@orcid.msg 'admin.profile_reactivation.confirm'/></h1>
 		<div class="bottom-margin-small">
-	    	<p><@orcid.msg 'admin.profile_reactivation.confirm.message'/>:{{orcidToReactivate}}</p>	    	
+	    	<span><@orcid.msg 'admin.profile_reactivation.confirm.message'/></span>
+			<br />
+			<span>{{orcidToReactivate}}</span>				    	
 		</div>
 		<div class="controls save-btns pull-right bottom-margin-small">
 	    	<span id="bottom-deactivate-profile" ng-click="reactivateAccount()" class="btn btn-primary"><@orcid.msg 'admin.profile_reactivation.reactivate_account'/></span>
@@ -164,7 +166,7 @@
     		<div>
 				<label for="orcid_to_deactivate"><@orcid.msg 'admin.profile_deactivation.to_deactivate' /></label>
 				<input type="text" id="orcid_to_deactivate" ng-model="orcidToDeactivate" placeholder="<@orcid.msg 'admin.profile_deactivation.placeholder.to_deactivate' />" class="input-xlarge" />
-				<span id="bottom-confirm-deactivate-profile" ng-click="confirmDeactivateAccount()" class="btn btn-primary"><@orcid.msg 'admin.profile_deactivation.deactivate_account'/></span>
+				<span id="bottom-confirm-deactivate-profile" ng-click="confirmDeactivateAccount()" class="btn btn-primary"><@orcid.msg 'admin.profile_deactivation.deactivate_account'/></span>				
 				<div ng-show="deactivatedAccount.errors.length">
 					<span class="orcid-error" ng-repeat='error in deactivatedAccount.errors' ng-bind-html-unsafe="error"></span><br />
 				</div>		
@@ -175,9 +177,9 @@
 			<h2><@orcid.msg 'admin.profile_reactivation.reactivate_account.title'/></h2>
     		<br />
     		<div>
-				<label for="orcid_to_reactivate"><@orcid.msg 'admin.profile_deactivation.to_reactivate' /></label>
+				<label for="orcid_to_reactivate"><@orcid.msg 'admin.profile_reactivation.to_reactivate' /></label>
 				<input type="text" id="orcid_to_reactivate" ng-model="orcidToReactivate" placeholder="<@orcid.msg 'admin.profile_reactivation.placeholder.to_reactivate' />" class="input-xlarge" />
-				<span id="bottom-confirm-reactivate-profile" ng-click="confirmReactivateAccount()" class="btn btn-primary"><@orcid.msg 'admin.profile_reactivation.reactivate_account'/></span>
+				<span id="bottom-confirm-reactivate-profile" ng-click="confirmReactivateAccount()" class="btn btn-primary"><@orcid.msg 'admin.profile_reactivation.reactivate_account'/></span>			
 				<div ng-show="reactivatedAccount.errors.length">
 					<span class="orcid-error" ng-repeat='error in reactivatedAccount.errors' ng-bind-html-unsafe="error"></span><br />
 				</div>		
