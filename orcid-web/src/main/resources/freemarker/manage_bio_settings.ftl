@@ -129,7 +129,7 @@
              			<p>
              		  		<@spring.formHiddenInput "changePersonalInfoForm.savedResearcherUrls.researcherUrl[${savedResearcherUrl_index}].urlName.content"/>
              		  		<@spring.formHiddenInput "changePersonalInfoForm.savedResearcherUrls.researcherUrl[${savedResearcherUrl_index}].url.value"/>
-                      		<#if savedResearcherUrl.urlName.content = ''>
+                      		<#if savedResearcherUrl.urlName?? || savedResearcherUrl.urlName.content = ''>
                       		    <a href="${savedResearcherUrl.url.value}">${savedResearcherUrl.url.value}</a>
                       		<#else> 
                       		    ${savedResearcherUrl.urlName.content} (<a href="${savedResearcherUrl.url.value}">${savedResearcherUrl.url.value}</a>)
