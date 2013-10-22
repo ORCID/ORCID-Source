@@ -176,9 +176,9 @@
 			method="POST" access="DENY_OAUTH,ROLE_USER" />
 		<sec:intercept-url pattern="/manage-clients" 
 			access="ROLE_GROUP"/>
-		<sec:intercept-url pattern="/admin" 
+		<sec:intercept-url pattern="/admin-actions" 
 			access="ROLE_ADMIN"/>
-		<sec:intercept-url pattern="/admin/.*" 
+		<sec:intercept-url pattern="/admin-actions/.*" 
 			access="ROLE_ADMIN"/>		
 
 		<!-- <sec:form-login authentication-failure-url="/signin" login-page="/signin" 

@@ -120,10 +120,10 @@
 <div class="row">
 	<div class="span3 lhs override">
 		<ul class="settings-nav">
-			<li><a href="#account-settings">${springMacroRequestContext.getMessage("manage.accountsettings")}</a></li>
-			<li><a href="#manage-permissions">${springMacroRequestContext.getMessage("manage.managepermission")}</a></li>
+			<li><a href="<@spring.url "/account" />#account-settings">${springMacroRequestContext.getMessage("manage.accountsettings")}</a></li>
+			<li><a href="<@spring.url "/account" />#manage-permissions">${springMacroRequestContext.getMessage("manage.managepermission")}</a></li>
 			<@security.authorize ifAnyGranted="ROLE_ADMIN">
-				<li><a href="<@spring.url "/admin" />"><@orcid.msg 'admin.workspace_link' /></a></li>
+				<li><a href="<@spring.url "/admin-actions" />"><@orcid.msg 'admin.workspace_link' /></a></li>
 			</@security.authorize>				
 		</ul>
 	</div>
