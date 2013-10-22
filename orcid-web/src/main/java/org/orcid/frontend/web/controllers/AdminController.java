@@ -25,6 +25,7 @@ import org.orcid.core.manager.ExternalIdentifierManager;
 import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.ProfileWorkManager;
+import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.ExternalIdentifierEntity;
@@ -47,6 +48,7 @@ import org.springframework.web.servlet.ModelAndView;
  */
 
 @Controller
+@RequestMapping(value = { "/admin" })
 public class AdminController extends BaseController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AdminController.class);
@@ -79,9 +81,9 @@ public class AdminController extends BaseController {
         this.notificationManager = notificationManager;
     }
 
-    @RequestMapping(value = "/deprecate-profile")
+    @RequestMapping
     public ModelAndView getDeprecatedProfilesPage() {
-        return new ModelAndView("profile_deprecation");
+        return new ModelAndView("admin_actions");
     }
 
     @RequestMapping(value = { "/deprecate-profile/get-empty-deprecation-request.json" }, method = RequestMethod.GET)
@@ -208,7 +210,7 @@ public class AdminController extends BaseController {
      * @return a ProfileDetails object with the details of the profile or an
      *         error message.
      * */
-    @RequestMapping(value = { "/deprecate-profile/check-orcid.json" }, method = RequestMethod.GET)
+    @RequestMapping(value = { "/deprecate-profile/check-orcid.json", "/deactivate-profile/check-orcid.json" }, method = RequestMethod.GET)
     public @ResponseBody
     ProfileDetails checkOrcid(@RequestParam("orcid") String orcid) {
         ProfileEntity profile = profileEntityManager.findByOrcid(orcid);
@@ -216,6 +218,8 @@ public class AdminController extends BaseController {
         if (profile != null) {
             if (profile.getPrimaryRecord() != null) {
                 profileDetails.getErrors().add(getMessage("admin.profile_deprecation.errors.already_deprecated", orcid));
+            } else if(profile.getDeactivationDate() != null) {
+                profileDetails.getErrors().add(getMessage("admin.profile_deactivation.errors.already_deactivated", orcid));
             } else {
                 profileDetails.setOrcid(profile.getId());
                 profileDetails.setFamilyName(profile.getFamilyName());
@@ -227,5 +231,39 @@ public class AdminController extends BaseController {
             profileDetails.getErrors().add(getMessage("admin.profile_deprecation.errors.inexisting_orcid", orcid));
         }
         return profileDetails;
+    }
+    
+    @RequestMapping(value = "/deactivate-profile", method = RequestMethod.GET)
+    public @ResponseBody
+    ProfileDetails confirmDeactivateOrcidAccount(@RequestParam("orcid") String orcid) {
+        OrcidProfile toDeactivate = orcidProfileManager.retrieveOrcidProfile(orcid);
+        ProfileDetails result = new ProfileDetails();
+        if(toDeactivate == null)
+            result.getErrors().add(getMessage("admin.errors.unexisting_orcid"));
+        else if(toDeactivate.isDeactivated())
+            result.getErrors().add(getMessage("admin.profile_deactivation.errors.already_deactivated"));
+        else if(toDeactivate.getOrcidDeprecated() != null)
+            result.getErrors().add(getMessage("admin.errors.deprecated_account"));
+        
+        if(result.getErrors() == null || result.getErrors().size() == 0)
+            orcidProfileManager.deactivateOrcidProfile(toDeactivate);        
+        return result;
+    }
+    
+    @RequestMapping(value = "/reactivate-profile", method = RequestMethod.GET)
+    public @ResponseBody
+    ProfileDetails confirmReactivateOrcidAccount(@RequestParam("orcid") String orcid) {
+        OrcidProfile toReactivate = orcidProfileManager.retrieveOrcidProfile(orcid);
+        ProfileDetails result = new ProfileDetails();
+        if(toReactivate == null)
+            result.getErrors().add(getMessage("admin.errors.unexisting_orcid"));
+        else if(!toReactivate.isDeactivated())
+            result.getErrors().add(getMessage("admin.profile_reactivation.errors.already_active"));
+        else if(toReactivate.getOrcidDeprecated() != null)
+            result.getErrors().add(getMessage("admin.errors.deprecated_account"));
+        
+        if(result.getErrors() == null || result.getErrors().size() == 0)
+            orcidProfileManager.reactivateOrcidProfile(toReactivate);        
+        return result;
     }
 }

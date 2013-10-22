@@ -41,17 +41,17 @@
 
 
 <#if
-	request.requestURI?ends_with("${local_folder}/signin")||
-	request.requestURI?ends_with("${local_folder}/register")||
-	request.requestURI?ends_with("${local_folder}/reset-password")||
-	request.requestURI?ends_with("${local_folder}/error")||
-	request.requestURI?ends_with("${local_folder}/oauth/signin")||
-	request.requestURI?ends_with("${local_folder}/oauth/confirm_access")||
-	request.requestURI?ends_with("${local_folder}/my-orcid")||
-	request.requestURI?ends_with("${local_folder}/statistics")||
-	request.requestURI?ends_with("${local_folder}/account")||	
+	request.requestURI?ends_with("${basePath}signin")||
+	request.requestURI?ends_with("${basePath}register")||
+	request.requestURI?ends_with("${basePath}reset-password")||
+	request.requestURI?ends_with("${basePath}error")||
+	request.requestURI?ends_with("${basePath}oauth/signin")||
+	request.requestURI?ends_with("${basePath}oauth/confirm_access")||
+	request.requestURI?ends_with("${basePath}my-orcid")||
+	request.requestURI?ends_with("${basePath}statistics")||
+	request.requestURI?ends_with("${basePath}account")||	
 	request.requestURI?matches("(.+)/(?:\\d{4}-){3,}\\d{3}[\\dX]")||
-	request.requestURI?ends_with("${local_folder}/account/manage-bio-settings")
+	request.requestURI?ends_with("${basePath}account/manage-bio-settings")
 >
 
 <div class="container">

@@ -1466,6 +1466,8 @@ a:hover {
 	background: none;
 }
 
+/* Workspace */
+
 .workspace-top {
 	border-top: 1px solid #c9c9c9;
 }
@@ -1478,6 +1480,26 @@ a:hover {
 .workspace-header {
 	border-bottom: 1px solid #c9c9c9;
 	padding-left: 10px;
+}
+
+.show-work-info{
+	float: left;
+    line-height: 30px;
+    width: 33px;
+}
+
+.workspace-toolbar{
+	margin-top: 15px;	
+}
+
+.workspace-private-toolbar{
+	margin:0;
+	padding:0;
+}
+
+.workspace-private-toolbar li a.icon-trash{
+	margin-right: 15px;
+    vertical-align: 8px;
 }
 
 .orcid-id {
@@ -2474,10 +2496,9 @@ header overrides
 .work-title {
 	font-weight: normal;
 	font-family: 'Gill Sans W01 Medium', 'Gill Sans', sans-serif;
-	margin-left: 15px;
 }
 
-ul.workspace-toolbar li{
+ul.workspace-private-toolbar > li{
 	display: inline-block;
 	padding: 0;
 	margin: 0;
@@ -2666,6 +2687,8 @@ ul.personal-inf-display{
 ul.personal-inf-display li{
 	display: inline;
 }
+
+
 
 
 /* Media Queries */
@@ -3045,7 +3068,7 @@ ul.personal-inf-display li{
 		width: 250px;
 	}
 	.popover-help-container a i {
-		font-size: 35px;
+		font-size: 32px;
 	}
 	#RegistrationCtr .popover-help-container .popover {
 		left: -109px;
@@ -3103,6 +3126,43 @@ ul.personal-inf-display li{
 		margin-top:10px;
 	}
 	
+	.workspace-top .icon-plus-sign.grey,
+	.workspace-private-toolbar li a.icon-trash{
+		font-size: 30px;
+	}
+	
+	.workspace-private-toolbar .icon-question-sign{
+		line-height: 20px;
+	}	
+	
+	.workspace-toolbar .icon-plus-sign.grey{
+		line-height: 32px;
+	}
+	
+	.workspace-private-toolbar li a.icon-trash{
+		vertical-align: 4px;
+		margin-left: 7px;
+	}
+	
+	.workspace-private-toolbar{
+		border-bottom: 1px solid #CACACA;
+    	padding-bottom: 15px;
+	}
+	
+	.workspace-accordion-item{
+		border-bottom: none;
+	}
+	
+	.popover-help-container .popover{
+		left:-190px !important;
+	} 
+	
+	.popover-help-container .arrow{
+		left: 203px !important;
+	}
+	
+	 	
+	/*
 	.workspace-body-list ul.workspace-controls {
 	    margin-left: 0;
 	    margin-top: 15px;
@@ -3114,6 +3174,7 @@ ul.personal-inf-display li{
 		font-size: 28px;
 		margin-right:8px;
 	}
+	*/
 	
 	.public-profile .popover-help-container .popover{
 		left:-193px;		

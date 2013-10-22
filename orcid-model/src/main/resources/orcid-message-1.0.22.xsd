@@ -286,10 +286,23 @@
         </xs:annotation>
         <xs:complexType>
             <xs:sequence>
-                <xs:element ref="orcid:given-names" minOccurs="1"/>
-                <xs:element ref="orcid:family-name" minOccurs="0"/>
-                <xs:element ref="orcid:credit-name" minOccurs="0"/>
-                <xs:element ref="orcid:other-names" minOccurs="0"/>
+                <xs:element name="given-names" minOccurs="1" type="orcid:non-empty-string">
+                    <xs:annotation>
+                        <xs:documentation>The given name(s) of the researcher or contributor as it generally
+                        appears on their published works.
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:element>
+                <xs:element name="family-name" minOccurs="0" type="orcid:non-empty-string">
+                    <xs:annotation>
+                        <xs:documentation>The family name of the researcher or contributor as it generally
+                        appears on their published works. This element is optional, because some cultures
+                        only use given names.
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:element>
+                <xs:element ref="orcid:credit-name" minOccurs="0" />
+                <xs:element ref="orcid:other-names" minOccurs="0" />
             </xs:sequence>
         </xs:complexType>
     </xs:element>
@@ -325,7 +338,7 @@
     <xs:element name="researcher-url">
         <xs:complexType>
             <xs:sequence>
-                <xs:element minOccurs="0" maxOccurs="1" ref="orcid:url-name"/>
+                <xs:element minOccurs="0" maxOccurs="1" name="url-name" type="orcid:non-empty-string"/>
                 <xs:element minOccurs="0" maxOccurs="1" ref="orcid:url"/>
             </xs:sequence>
         </xs:complexType>
@@ -1166,31 +1179,18 @@
             </xs:simpleContent>
         </xs:complexType>
     </xs:element>
-    <xs:element name="given-names">
-        <xs:annotation>
-            <xs:documentation>The given name(s) of the researcher or contributor as it generally
-                appears on their published works.
-            </xs:documentation>
-        </xs:annotation>
-        <xs:complexType mixed="true"/>
-    </xs:element>
-    <xs:element name="family-name">
-        <xs:annotation>
-            <xs:documentation>The family name of the researcher or contributor as it generally
-                appears on their published works. This element is optional, because some cultures
-                only use given names.
-            </xs:documentation>
-        </xs:annotation>
-        <xs:complexType mixed="true"/>
-    </xs:element>
     <xs:element name="credit-name">
         <xs:annotation>
             <xs:documentation>The name by which to when credited or cited, for example, in an article or index, or as a
                 grant contributor.
             </xs:documentation>
         </xs:annotation>
-        <xs:complexType mixed="true">
-            <xs:attributeGroup ref="orcid:visibility"/>
+        <xs:complexType>
+            <xs:simpleContent>
+                  <xs:extension base="orcid:non-empty-string">
+                  		<xs:attributeGroup ref="orcid:visibility"/>
+                  </xs:extension>
+            </xs:simpleContent>
         </xs:complexType>
     </xs:element>
     <xs:element name="other-names">
@@ -1202,13 +1202,10 @@
         </xs:annotation>
         <xs:complexType>
             <xs:sequence>
-                <xs:element minOccurs="0" maxOccurs="unbounded" ref="orcid:other-name"/>
+                <xs:element minOccurs="0" maxOccurs="unbounded" name="other-name" type="orcid:non-empty-string" />
             </xs:sequence>
             <xs:attributeGroup ref="orcid:visibility"/>
         </xs:complexType>
-    </xs:element>
-    <xs:element name="other-name">
-        <xs:complexType mixed="true"/>
     </xs:element>
     <xs:element name="url">
         <xs:complexType>
@@ -1216,9 +1213,6 @@
                 <xs:extension base="xs:anyURI"/>
             </xs:simpleContent>
         </xs:complexType>
-    </xs:element>
-    <xs:element name="url-name">
-        <xs:complexType mixed="true"/>
     </xs:element>
     <xs:element name="address">
     	<xs:annotation>

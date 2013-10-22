@@ -1133,6 +1133,10 @@ function WorkOverviewCtrl($scope, $compile, worksSrvc){
 	$scope.works = worksSrvc.works;
 }
 
+function AffiliationOverviewCtrl($scope, $compile, affiliationsSrvc){
+	$scope.affiliations = affiliationsSrvc.affiliations;
+}
+
 function AffiliationCtrl($scope, $compile, affiliationsSrvc){
 	
 	$scope.displayAffiliations = true;
@@ -1270,9 +1274,18 @@ function AffiliationCtrl($scope, $compile, affiliationsSrvc){
 	//init
 	$scope.getAffiliations();
 	
-	$scope.deleteAffiliation = function(idx) {		
-		$scope.deleteIndex = idx;
-		$scope.fixedTitle = $scope.affiliations[idx].affiliationName.value;
+	$scope.deleteAffiliation = function(putCode) {
+		$scope.deletePutCode = putCode;
+		var affiliation;
+		for (idx in $scope.affiliations) {
+			if ($scope.affiliations[idx].putCode.value == putCode) {
+				affiliation = $scope.affiliations[idx];
+				break;
+			}
+		}
+		if (affiliation.affiliationName && affiliation.affiliationName.value) 
+			$scope.fixedTitle = affiliation.affiliationName.value;
+		else $scope.fixedTitle = '';
         var maxSize = 100;
         if($scope.fixedTitle.length > maxSize)
         	$scope.fixedTitle = $scope.fixedTitle.substring(0, maxSize) + '...';
@@ -1282,12 +1295,19 @@ function AffiliationCtrl($scope, $compile, affiliationsSrvc){
         });
 	};
 	
-	$scope.deleteByIndex = function() {		
-		var affiliation = $scope.affiliations[$scope.deleteIndex];
-    	// remove affiliation on server
+	$scope.deleteByPutCode = function() {		
+		var affiliation;
+		var idx;
+		for (idx in $scope.affiliations) {
+			if ($scope.affiliations[idx].putCode.value == $scope.deletePutCode) {
+				affiliation = $scope.affiliations[idx];
+				break;
+			}
+		}
+		// remove affiliation on server
 		$scope.removeAffiliation(affiliation);
 		// remove the affiliation from the UI
-    	$scope.affiliations.splice($scope.deleteIndex, 1);
+    	$scope.affiliations.splice(idx, 1);
     	$scope.numOfAffiliationsToAdd--; // keep this number matching
     	// apply changes on scope
 		// close box
@@ -2151,11 +2171,151 @@ function languageCtrl($scope, $cookies){
 	};
 };
 
+function profileDeactivationAndReactivationCtrl($scope,$compile){
+	$scope.orcidToDeactivate = null;
+	$scope.orcidToReactivate = null;
+	$scope.deactivatedAccount = null;
+	$scope.reactivatedAccount = null;
+	$scope.successMessage = null;
+	$scope.deactivateMessage = OM.getInstance().get('admin.profile_deactivation.success');
+	$scope.reactivateMessage = OM.getInstance().get('admin.profile_reactivation.success');
+	$scope.showDeactivateModal = false;
+	$scope.showReactivateModal = false;
+
+	$scope.toggleDeactivationModal = function(){
+		$scope.showDeactivateModal = !$scope.showDeactivateModal;
+    	$('#deactivation_modal').toggle();
+	};
+	
+	$scope.toggleReactivationModal = function(){
+		$scope.showReactivateModal = !$scope.showReactivateModal;
+    	$('#reactivation_modal').toggle();
+	};
+	
+	$scope.deactivateAccount = function() {
+		$.ajax({
+	        url: orcidVar.baseUri+'/admin/deactivate-profile?orcid=' + $scope.orcidToDeactivate,	        
+	        type: 'GET',
+	        dataType: 'json',
+	        success: function(data){
+	        	$scope.$apply(function(){ 
+	        		$scope.deactivatedAccount = data;
+	        		if($scope.deactivatedAccount.errors != null && $scope.deactivatedAccount.errors.length != 0){	        				        			
+	        			console.log($scope.deactivatedAccount.errors);
+	        			$scope.closeModal();
+	        		} else {
+	        			$scope.orcidToDeactivate = null;
+	        			$scope.showSuccessMessage($scope.deactivateMessage);
+	        		}	        		
+				});
+	        }
+	    }).fail(function(error) { 
+	    	// something bad is happening!	    	
+	    	console.log("Error deprecating the account");	    	
+	    });		
+	};
+	
+	
+	$scope.reactivateAccount = function() {
+		$.ajax({
+	        url: orcidVar.baseUri+'/admin/reactivate-profile?orcid=' + $scope.orcidToReactivate,	        
+	        type: 'GET',
+	        dataType: 'json',
+	        success: function(data){
+	        	$scope.$apply(function(){ 
+	        		$scope.reactivatedAccount = data;
+	        		if($scope.reactivatedAccount.errors != null && $scope.reactivatedAccount.errors.length != 0){	        				        			
+	        			console.log($scope.reactivatedAccount.errors);
+	        			$scope.closeModal();
+	        		} else {	        			
+	        			$scope.orcidToReactivate = null;
+	        			$scope.showSuccessMessage($scope.reactivateMessage);
+	        		}
+				});
+	        }
+	    }).fail(function(error) { 
+	    	// something bad is happening!	    	
+	    	console.log("Error reactivating the account");	    	
+	    });		
+	};
+	
+	$scope.confirmDeactivateAccount = function() {		
+		$.ajax({
+	        url: orcidVar.baseUri+'/admin/deactivate-profile/check-orcid.json?orcid=' + $scope.orcidToDeactivate,	        
+	        type: 'GET',
+	        dataType: 'json',
+	        success: function(data){
+	        	$scope.deactivatedAccount = data;
+	        	if($scope.deactivatedAccount.errors != null && $scope.deactivatedAccount.errors.length != 0){
+	        		console.log($scope.deactivatedAccount.errors);	        		
+	        	} else {
+	        		$scope.showConfirmModal();
+	        	}
+	        	$scope.$apply();
+	        }
+	        }).fail(function(error) { 
+		    	// something bad is happening!	    	
+		    	console.log("Error deactivating the account");	    	
+		    });
+	};
+	
+	$scope.confirmReactivateAccount = function() {		
+		$.colorbox({                      
+			html : $compile($('#confirm-reactivation-modal').html())($scope),
+				scrolling: true,
+				onLoad: function() {
+				$('#cboxClose').remove();
+			},
+			scrolling: true
+		});
+		
+		$.colorbox.resize({width:"450px" , height:"225px"});
+	};
+	
+	$scope.showConfirmModal = function() {
+		$.colorbox({                      
+			html : $compile($('#confirm-deactivation-modal').html())($scope),
+				scrolling: true,
+				onLoad: function() {
+				$('#cboxClose').remove();
+			},
+			scrolling: true
+		});
+		
+		$.colorbox.resize({width:"525px" , height:"275px"});
+	};		
+	
+	$scope.showSuccessMessage = function(message){		
+		console.log(message);
+		$scope.successMessage = message;		
+		$.colorbox({                      
+			html : $compile($('#success-modal').html())($scope),
+				scrolling: true,
+				onLoad: function() {
+				$('#cboxClose').remove();
+			},
+			scrolling: true
+		});
+		
+		$.colorbox.resize({width:"425px" , height:"225px"});
+	};
+	
+	$scope.closeModal = function() {
+		$.colorbox.close();
+	};
+};
+
 function profileDeprecationCtrl($scope,$compile){	
 	$scope.deprecated_verified = false;
 	$scope.primary_verified = false;
 	$scope.deprecatedAccount = null;
 	$scope.primaryAccount = null;
+	$scope.showModal = false;
+	
+	$scope.toggleDeprecationModal = function(){
+		$scope.showModal = !$scope.showModal;
+    	$('#deprecation_modal').toggle();
+	};
 	
 	$scope.cleanup = function(orcid_type){
 		$("#deprecated_orcid").removeClass("orcid-red-background-input");
@@ -2175,7 +2335,7 @@ function profileDeprecationCtrl($scope,$compile){
 	
 	$scope.getAccountDetails = function (orcid, callback){
 		$.ajax({
-	        url: orcidVar.baseUri+'/deprecate-profile/check-orcid.json?orcid=' + orcid,	        
+	        url: orcidVar.baseUri+'/admin/deprecate-profile/check-orcid.json?orcid=' + orcid,	        
 	        type: 'GET',
 	        dataType: 'json',
 	        success: function(data){
@@ -2274,19 +2434,17 @@ function profileDeprecationCtrl($scope,$compile){
 			isOk = false;
 		}
 		
-		if(isOk){				
-			if(isOk){
-				$.colorbox({                      
-					html : $compile($('#confirm-deprecation-modal').html())($scope),
-						scrolling: true,
-						onLoad: function() {
-						$('#cboxClose').remove();
-					},
-					scrolling: true
-				});
-				
-				$.colorbox.resize({width:"625px" , height:"400px"});
-			}
+		if(isOk){
+			$.colorbox({                      
+				html : $compile($('#confirm-deprecation-modal').html())($scope),
+					scrolling: true,
+					onLoad: function() {
+					$('#cboxClose').remove();
+				},
+				scrolling: true
+			});
+			
+			$.colorbox.resize({width:"625px" , height:"400px"});
 		}
 	};
 	
@@ -2294,7 +2452,7 @@ function profileDeprecationCtrl($scope,$compile){
 		var deprecatedOrcid = $scope.deprecatedAccount.orcid;
 		var primaryOrcid = $scope.primaryAccount.orcid;		
 		$.ajax({
-	        url: orcidVar.baseUri+'/deprecate-profile/deprecate-profile.json?deprecated=' + deprecatedOrcid + '&primary=' + primaryOrcid,	        
+	        url: orcidVar.baseUri+'/admin/deprecate-profile/deprecate-profile.json?deprecated=' + deprecatedOrcid + '&primary=' + primaryOrcid,	        
 	        type: 'GET',
 	        dataType: 'json',
 	        success: function(data){

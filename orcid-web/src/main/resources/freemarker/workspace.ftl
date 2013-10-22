@@ -92,7 +92,7 @@
 	        	 <p><a href="<@spring.url "/manage-clients" />">${springMacroRequestContext.getMessage("workspace.ManageClientCredentials")}</a></p>	        	 
 	        </@security.authorize>
 			<@security.authorize ifAnyGranted="ROLE_ADMIN">
-				<p><a href="<@spring.url "/deprecate-profile" />"><@orcid.msg 'admin.profile_deprecation.workspace_link' /></a></p>
+				<p><a href="<@spring.url "/admin" />"><@orcid.msg 'admin.workspace_link' /></a></p>
 			</@security.authorize>
         </div>
     </div>
@@ -106,9 +106,9 @@
 	        			<a href="#workspace-publications" class="overview-title"><@orcid.msg 'workspace.Works'/></a>
 	                    <br />
 	                    <a href="#workspace-publications" class="btn-update no-icon"><@orcid.msg 'workspace.view'/></a>
-	        		</div>	                
-	                <div class="workspace-overview col-md-2 col-sm-5">
-		                <a href="#workspace-affiliations" class="overview-count">${(profile.orcidActivities.affiliations.affiliation?size)!0}</a>
+	        		</div>
+	                <div class="workspace-overview col-md-2 col-sm-5" id="affiliations-overview" ng-controller="AffiliationOverviewCtrl">
+	                    <a href="#workspace-affiliations" class="overview-count"><span ng-bind="affiliations.length"></span></a>
 	                    <a href="#workspace-affiliations" class="overview-title"><@orcid.msg 'workspace_bio.Affiliations'/></a>
 	                    <br />
 	                    <#if RequestParameters['affiliations']??>
@@ -130,7 +130,7 @@
 	        			<br />
 	        			<a target="_blank" href="http://support.orcid.org/forums/179657-coming-soon" class="btn-update no-icon"><@orcid.msg 'workspace.ComingSoon'/></a>
 	        		</div>
-	        	</div>	        	
+	        	</div>
         	</div>
         	<div class="workspace-accordion" id="workspace-accordion">
         		<!-- Personal Information -->
