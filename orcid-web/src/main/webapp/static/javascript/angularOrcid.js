@@ -1133,6 +1133,10 @@ function WorkOverviewCtrl($scope, $compile, worksSrvc){
 	$scope.works = worksSrvc.works;
 }
 
+function AffiliationOverviewCtrl($scope, $compile, affiliationsSrvc){
+	$scope.affiliations = affiliationsSrvc.affiliations;
+}
+
 function AffiliationCtrl($scope, $compile, affiliationsSrvc){
 	
 	$scope.displayAffiliations = true;
@@ -1270,9 +1274,18 @@ function AffiliationCtrl($scope, $compile, affiliationsSrvc){
 	//init
 	$scope.getAffiliations();
 	
-	$scope.deleteAffiliation = function(idx) {		
-		$scope.deleteIndex = idx;
-		$scope.fixedTitle = $scope.affiliations[idx].affiliationName.value;
+	$scope.deleteAffiliation = function(putCode) {
+		$scope.deletePutCode = putCode;
+		var affiliation;
+		for (idx in $scope.affiliations) {
+			if ($scope.affiliations[idx].putCode.value == putCode) {
+				affiliation = $scope.affiliations[idx];
+				break;
+			}
+		}
+		if (affiliation.affiliationName && affiliation.affiliationName.value) 
+			$scope.fixedTitle = affiliation.affiliationName.value;
+		else $scope.fixedTitle = '';
         var maxSize = 100;
         if($scope.fixedTitle.length > maxSize)
         	$scope.fixedTitle = $scope.fixedTitle.substring(0, maxSize) + '...';
@@ -1282,12 +1295,19 @@ function AffiliationCtrl($scope, $compile, affiliationsSrvc){
         });
 	};
 	
-	$scope.deleteByIndex = function() {		
-		var affiliation = $scope.affiliations[$scope.deleteIndex];
-    	// remove affiliation on server
+	$scope.deleteByPutCode = function() {		
+		var affiliation;
+		var idx;
+		for (idx in $scope.affiliations) {
+			if ($scope.affiliations[idx].putCode.value == $scope.deletePutCode) {
+				affiliation = $scope.affiliations[idx];
+				break;
+			}
+		}
+		// remove affiliation on server
 		$scope.removeAffiliation(affiliation);
 		// remove the affiliation from the UI
-    	$scope.affiliations.splice($scope.deleteIndex, 1);
+    	$scope.affiliations.splice(idx, 1);
     	$scope.numOfAffiliationsToAdd--; // keep this number matching
     	// apply changes on scope
 		// close box
