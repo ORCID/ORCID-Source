@@ -218,7 +218,7 @@ public class AffiliationForm implements ErrorsInterface, Serializable {
             affiliationAddress.setAffiliationRegion(new AffiliationRegion(region.getValue()));
         }
         affiliationAddress.setAffiliationCountry(new AffiliationCountry(Iso3166Country.fromValue(country.getValue())));
-        if (departmentName != null) {
+        if (departmentName != null && StringUtils.isNotBlank(departmentName.getValue())) {
             affiliation.setDepartmentName(departmentName.getValue());
         }
         if (affiliationType != null && StringUtils.isNotBlank(affiliationType.getValue())) {
