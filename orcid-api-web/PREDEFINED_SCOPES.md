@@ -18,10 +18,10 @@ For import-works-wizard common associated scopes
 | /orcid-profile/read-limited             |
 
 ### Grant Read Wizard
-When the user claims a profile said user will get propmted for read acces if the clients 
-also oringiated the file.
+When the user claims a profile said user will get prompted for read access if the clients 
+originated the record.
 
-For grant-read-wizard common assciated scopes
+For grant-read-wizard common associated scopes
 
 | predefined_client_redirect_scope |
 |----------------------------------|
