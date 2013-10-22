@@ -182,10 +182,10 @@
     <li class="bottom-margin-small" ng-repeat="affiliation in affiliations">            	
         <div class="pull-right" style="right: 145px; top: 20px; width: 15px;"><a href ng-click="deleteAffiliation($index)" class="icon-trash orcid-icon-trash grey"></a></div>
 		<div style="width: 530px;">
-		    <div ng-bind-html="affiliation.affiliationTypeForDisplay"></div>
+		    <div class="affiliation-type" ng-bind-html="affiliation.affiliationTypeForDisplay"></div>
 	        <h3 class="affiliation-title">
 	        	<strong ng-bind-html="affiliation.affiliationName.value"></strong>
-	        	<span ng-show="affiliation.startDate">
+	        	<span class="affiliation-date" ng-show="affiliation.startDate">
 	        	    (<span ng-show="affiliation.startDate.month">{{affiliation.startDate.month}}-</span><span ng-show="affiliation.startDate.year">{{affiliation.startDate.year}}</span>
 	        	    <@orcid.msg 'workspace_affiliations.dateSeparator'/>
 	        	    <span ng-show="affiliation.endDate">
@@ -196,11 +196,8 @@
 	        	    </span>
 	        	</span>
 	        </h3>
-	        <div ng-show="affiliation.departmentName">
-	            <span ng-bind-html="affiliation.departmentName.value"></span>
-	        </div>
-	        <div>
-	            <span ng-bind-html="affiliation.city.value"></span><span ng-show="affiliation.region">, <span ng-bind-html="affiliation.region.value"></span></span>, <span ng-bind-html="affiliation.countryForDisplay"></span>
+	        <div class="affiliation-details">
+	            <span ng-show="affiliation.departmentName"><span ng-bind-html="affiliation.departmentName.value"></span> | </span><span ng-bind-html="affiliation.city.value"></span><span ng-show="affiliation.region">, <span ng-bind-html="affiliation.region.value"></span></span>, <span ng-bind-html="affiliation.countryForDisplay"></span>
 	        </div>
         </div>
         <div class="pull-right" style="width: 130px;">
