@@ -199,6 +199,9 @@
 	        <div class="affiliation-details">
 	            <span ng-show="affiliation.departmentName"><span ng-bind-html="affiliation.departmentName.value"></span> | </span><span ng-bind-html="affiliation.city.value"></span><span ng-show="affiliation.region">, <span ng-bind-html="affiliation.region.value"></span></span>, <span ng-bind-html="affiliation.countryForDisplay"></span>
 	        </div>
+	        <div ng-show="affiliation.sourceName">
+	            <span class="affiliation-source">SOURCE: <span ng-bind-html="affiliation.sourceName"></span></span>
+	        </div>
         </div>
         <div class="pull-right" style="width: 130px;">
 		<@orcid.privacyToggle "affiliation.visibility.visibility" "setPrivacy($index, 'PUBLIC', $event)" 
