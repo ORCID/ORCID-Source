@@ -2409,3 +2409,27 @@ a.btn-primary:hover {
 	display: inline-block;
 	float: left;	
 }
+
+.affiliation-type {
+	font-style: italic;
+	font-size: 16px;
+}
+
+.affiliation-title {
+	margin-top: 0;
+	font-weight: normal;
+    font-family: 'Gill Sans W01 Medium', 'Gill Sans', sans-serif;
+}
+
+.affiliation-date {
+	font-weight: normal;
+	font-style: italic;
+}
+
+.affiliation-details {
+	font-size: 16px;
+}
+
+.affiliation-source {
+	font-size: 18px;
+}

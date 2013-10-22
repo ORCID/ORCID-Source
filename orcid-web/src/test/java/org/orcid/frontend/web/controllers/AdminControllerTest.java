@@ -226,4 +226,37 @@ public class AdminControllerTest extends BaseControllerTest {
         assertEquals(1, result.getErrors().size());
         assertEquals(adminController.getMessage("admin.profile_deprecation.errors.primary_account_is_deactivated", "4444-4444-4444-4443"), result.getErrors().get(0));
     }
+    
+    @Test
+    @Transactional("transactionManager")
+    @Rollback(true)
+    public void deactivateAndReactivateProfileTest() throws Exception {
+        //Test deactivate 
+        ProfileDetails result = adminController.confirmDeactivateOrcidAccount("4444-4444-4444-4441");
+        assertEquals(0, result.getErrors().size());
+        
+        profileDao.refresh(profileDao.find("4444-4444-4444-4441"));
+        ProfileEntity deactivated = profileDao.find("4444-4444-4444-4441");
+        assertNotNull(deactivated.getDeactivationDate());
+        assertEquals(deactivated.getFamilyName(), "Family Name Deactivated");
+        assertEquals(deactivated.getGivenNames(), "Given Names Deactivated");
+        
+        // Test try to deactivate an already deactive account
+        result = adminController.confirmDeactivateOrcidAccount("4444-4444-4444-4441");
+        assertEquals(1, result.getErrors().size());
+        assertEquals(adminController.getMessage("admin.profile_deactivation.errors.already_deactivated", null), result.getErrors().get(0));
+        
+        //Test reactivate
+        result = adminController.confirmReactivateOrcidAccount("4444-4444-4444-4441");
+        assertEquals(0, result.getErrors().size());
+        
+        profileDao.refresh(profileDao.find("4444-4444-4444-4441"));
+        deactivated = profileDao.find("4444-4444-4444-4441");
+        assertNull(deactivated.getDeactivationDate());
+        
+        // Try to reactivate an already active account
+        result = adminController.confirmReactivateOrcidAccount("4444-4444-4444-4441");
+        assertEquals(1, result.getErrors().size());
+        assertEquals(adminController.getMessage("admin.profile_reactivation.errors.already_active", null), result.getErrors().get(0));
+    }
 }

@@ -92,7 +92,7 @@
 	        	 <p><a href="<@spring.url "/manage-clients" />">${springMacroRequestContext.getMessage("workspace.ManageClientCredentials")}</a></p>	        	 
 	        </@security.authorize>
 			<@security.authorize ifAnyGranted="ROLE_ADMIN">
-				<p><a href="<@spring.url "/deprecate-profile" />"><@orcid.msg 'admin.profile_deprecation.workspace_link' /></a></p>
+				<p><a href="<@spring.url "/admin" />"><@orcid.msg 'admin.workspace_link' /></a></p>
 			</@security.authorize>
         </div>
     </div>
@@ -100,15 +100,15 @@
         <div class="workspace-right">
         	<div class="workspace-inner workspace-header">
                 <div class="alert alert-info"><strong><@orcid.msg 'workspace.addinformationaboutyou'/></strong></div>
-        		<div class="row">
+				<div class="row">
 	        		<div class="workspace-overview col-md-2 col-sm-6" id="works-overview" ng-controller="WorkOverviewCtrl">
 	        			<a href="#workspace-publications" class="overview-count"><span ng-bind="works.length"></span></a>
 	        			<a href="#workspace-publications" class="overview-title"><@orcid.msg 'workspace.Works'/></a>
 	                    <br />
 	                    <a href="#workspace-publications" class="btn-update no-icon"><@orcid.msg 'workspace.view'/></a>
-	        		</div>	                
-	                <div class="workspace-overview col-md-2 col-sm-6">
-		                <a href="#workspace-affiliations" class="overview-count">${(profile.orcidActivities.affiliations.affiliation?size)!0}</a>
+	        		</div>
+	                <div class="workspace-overview col-md-2 col-sm-6" id="affiliations-overview" ng-controller="AffiliationOverviewCtrl">
+	                    <a href="#workspace-affiliations" class="overview-count"><span ng-bind="affiliations.length"></span></a>
 	                    <a href="#workspace-affiliations" class="overview-title"><@orcid.msg 'workspace_bio.Affiliations'/></a>
 	                    <br />
 	                    <#if RequestParameters['affiliations']??>
@@ -116,21 +116,20 @@
 	                    <#else>
 	                        <div><a target="_blank" href="http://support.orcid.org/forums/179657-coming-soon" class="btn-update no-icon"><@orcid.msg 'workspace.ComingSoon'/></a></div>
 	                    </#if>
-	                </div>                
-	        		<div class="workspace-overview  col-md-2 col-sm-6">
+	                </div>
+	        		<div class="workspace-overview col-md-2 col-sm-6">
 	        			<a href="#workspace-grants" class="overview-count">${(profile.orcidActivities.orcidGrants.orcidGrant?size)!0}</a>
 	        			<a href="#workspace-grants" class="overview-title"><@orcid.msg 'workspace.Grants'/></a>
 	        			<br />
 	        			<a target="_blank" href="http://support.orcid.org/forums/179657-coming-soon" class="btn-update no-icon"><@orcid.msg 'workspace.ComingSoon'/></a>
 	        		</div>
-	        		
-	        		<div class="workspace-overview  col-md-2 col-sm-6">
-		        		<a href="#workspace-patents" class="overview-count">${(profile.orcidActivities.orcidPatents.orcidPatent?size)!0}</a>
+	        		<div class="workspace-overview col-md-2 col-sm-6">
+	        			<a href="#workspace-patents" class="overview-count">${(profile.orcidActivities.orcidPatents.orcidPatent?size)!0}</a>
 	        			<a href="#workspace-patents" class="overview-title"><@orcid.msg 'workspace.Patents'/></a>
 	        			<br />
 	        			<a target="_blank" href="http://support.orcid.org/forums/179657-coming-soon" class="btn-update no-icon"><@orcid.msg 'workspace.ComingSoon'/></a>
 	        		</div>
-	        	</div>	        	
+	        	</div>
         	</div>
         	<div class="workspace-accordion" id="workspace-accordion">
         	
