@@ -49,7 +49,7 @@ public class OrgDisambiguatedDaoImpl extends GenericDaoImpl<OrgDisambiguatedEnti
     @Override
     public OrgDisambiguatedEntity findByNameCityRegionCountryAndSourceType(String name, String city, String region, Iso3166Country country, String sourceType) {
         TypedQuery<OrgDisambiguatedEntity> query = entityManager.createQuery(
-                "from OrgDisambiguatedEntity where name = :name and city = :city and region = :region and country = :country and sourceType = :sourceType",
+                "from OrgDisambiguatedEntity where name = :name and city = :city and (region = :region or (region is null and :region is null)) and country = :country and sourceType = :sourceType",
                 OrgDisambiguatedEntity.class);
         query.setParameter("name", name);
         query.setParameter("city", city);
