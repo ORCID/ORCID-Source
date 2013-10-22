@@ -2194,7 +2194,7 @@ function profileDeactivationAndReactivationCtrl($scope,$compile){
 	
 	$scope.deactivateAccount = function() {
 		$.ajax({
-	        url: orcidVar.baseUri+'/admin/deactivate-profile?orcid=' + $scope.orcidToDeactivate,	        
+	        url: orcidVar.baseUri+'/admin-actions/deactivate-profile?orcid=' + $scope.orcidToDeactivate,	        
 	        type: 'GET',
 	        dataType: 'json',
 	        success: function(data){
@@ -2218,7 +2218,7 @@ function profileDeactivationAndReactivationCtrl($scope,$compile){
 	
 	$scope.reactivateAccount = function() {
 		$.ajax({
-	        url: orcidVar.baseUri+'/admin/reactivate-profile?orcid=' + $scope.orcidToReactivate,	        
+	        url: orcidVar.baseUri+'/admin-actions/reactivate-profile?orcid=' + $scope.orcidToReactivate,	        
 	        type: 'GET',
 	        dataType: 'json',
 	        success: function(data){
@@ -2241,7 +2241,7 @@ function profileDeactivationAndReactivationCtrl($scope,$compile){
 	
 	$scope.confirmDeactivateAccount = function() {		
 		$.ajax({
-	        url: orcidVar.baseUri+'/admin/deactivate-profile/check-orcid.json?orcid=' + $scope.orcidToDeactivate,	        
+	        url: orcidVar.baseUri+'/admin-actions/deactivate-profile/check-orcid.json?orcid=' + $scope.orcidToDeactivate,	        
 	        type: 'GET',
 	        dataType: 'json',
 	        success: function(data){
@@ -2335,7 +2335,7 @@ function profileDeprecationCtrl($scope,$compile){
 	
 	$scope.getAccountDetails = function (orcid, callback){
 		$.ajax({
-	        url: orcidVar.baseUri+'/admin/deprecate-profile/check-orcid.json?orcid=' + orcid,	        
+	        url: orcidVar.baseUri+'/admin-actions/deprecate-profile/check-orcid.json?orcid=' + orcid,	        
 	        type: 'GET',
 	        dataType: 'json',
 	        success: function(data){
@@ -2452,7 +2452,7 @@ function profileDeprecationCtrl($scope,$compile){
 		var deprecatedOrcid = $scope.deprecatedAccount.orcid;
 		var primaryOrcid = $scope.primaryAccount.orcid;		
 		$.ajax({
-	        url: orcidVar.baseUri+'/admin/deprecate-profile/deprecate-profile.json?deprecated=' + deprecatedOrcid + '&primary=' + primaryOrcid,	        
+	        url: orcidVar.baseUri+'/admin-actions/deprecate-profile/deprecate-profile.json?deprecated=' + deprecatedOrcid + '&primary=' + primaryOrcid,	        
 	        type: 'GET',
 	        dataType: 'json',
 	        success: function(data){
