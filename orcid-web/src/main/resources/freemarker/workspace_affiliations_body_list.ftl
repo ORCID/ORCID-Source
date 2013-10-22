@@ -22,7 +22,7 @@
 		<h3 style="margin-bottom: 0px;">${springMacroRequestContext.getMessage("manage.deleteAffiliation.pleaseConfirm")}</h3>
 		{{fixedTitle}}<br />
 		<br />
-    	<div class="btn btn-danger" ng-click="deleteByIndex()">
+    	<div class="btn btn-danger" ng-click="deleteByPutCode()">
     		${springMacroRequestContext.getMessage("manage.deleteAffiliation.delete")}
     	</div>
     	<a href="" ng-click="closeModal()">${springMacroRequestContext.getMessage("manage.deleteAffiliation.cancel")}</a>
@@ -179,8 +179,8 @@
 </script>
 
 <ul ng-hide="!affiliations.length" class="workspace-affiliations workspace-body-list bottom-margin-medium" ng-cloak>        
-    <li class="bottom-margin-small" ng-repeat="affiliation in affiliations">            	
-        <div class="pull-right" style="right: 145px; top: 20px; width: 15px;"><a href ng-click="deleteAffiliation($index)" class="icon-trash orcid-icon-trash grey"></a></div>
+    <li class="bottom-margin-small" ng-repeat="affiliation in affiliations | orderBy:['-startDate.year', '-startDate.month', '-startDate.day', '-endDate.year', '-endDate.month', '-endDate.day', 'affiliationName.value']">            	
+        <div class="pull-right" style="right: 145px; top: 20px; width: 15px;"><a href ng-click="deleteAffiliation(affiliation.putCode.value)" class="icon-trash orcid-icon-trash grey"></a></div>
 		<div style="width: 530px;">
 		    <div class="affiliation-type" ng-bind-html="affiliation.affiliationTypeForDisplay"></div>
 	        <h3 class="affiliation-title">
