@@ -18,23 +18,23 @@
 -->
 <script type="text/ng-template" id="add-work-modal">
 	<div class="edit-work colorbox-content">
+		<!-- Title -->
 		<div class="row">
-			<div class="span10">
+			<div class="col-md-9">
 				<h1 class="lightbox-title pull-left"><@orcid.msg 'manual_work_form_contents.add_work'/></h1>
-				<div class="pull-right">
-					<div class="control-group span2">
-		 				<label class="relative"><@orcid.msg 'privacyToggle.help.who_can_see'/></label>
-		 				<@orcid.privacyToggle "editWork.visibility.visibility" "setAddWorkPrivacy('PUBLIC', $event)" 
-		                    	  "setAddWorkPrivacy('LIMITED', $event)" "setAddWorkPrivacy('PRIVATE', $event)" />					
-		 			</div>				
-					<div class="pull-right span1">
-						<a class="btn close-button" ng-click="closeModal()">X</a>
-					</div>
-				</div>
+			</div>
+			<div class="control-group col-md-2">
+		 		<label class="relative"><@orcid.msg 'privacyToggle.help.who_can_see'/></label>
+		 		<@orcid.privacyToggle "editWork.visibility.visibility" "setAddWorkPrivacy('PUBLIC', $event)" 
+		        "setAddWorkPrivacy('LIMITED', $event)" "setAddWorkPrivacy('PRIVATE', $event)" />					
+		 	</div>				
+			<div class="pull-right col-md-1">
+				<a class="btn close-button" ng-click="closeModal()">X</a>
 			</div>
 		</div>
+
 		<div class="row">
-			<div class="span5">	
+			<div class="col-md-6">	
 				<div class="control-group">
 		    		<label class="relative"><@orcid.msg 'manual_work_form_contents.labelworktype'/></label>
 		    		<div class="relative">
@@ -110,19 +110,19 @@
 		 		<div class="control-group">
 		    		<label class="relative" for="manualWork.day"><@orcid.msg 'manual_work_form_contents.labelPubDate'/></label>
 		    		<div class="relative">
-				    <select id="day" name="day" ng-model="editWork.publicationDate.day" class="span1">
+				    <select id="day" name="day" ng-model="editWork.publicationDate.day" class="col-md-3">
 						<#list days?keys as key>
 							<option value="${key}">${days[key]}</option>
 						</#list>
 		    		</select>
 		
-				    <select id="month" name="month" ng-model="editWork.publicationDate.month" class="span1">
+				    <select id="month" name="month" ng-model="editWork.publicationDate.month" class="col-md-3">
 						<#list months?keys as key>
 							<option value="${key}">${months[key]}</option>
 						</#list>
 		    		</select>
 		
-				    <select id="year" name="month" ng-model="editWork.publicationDate.year" class="span2">
+				    <select id="year" name="month" ng-model="editWork.publicationDate.year" class="col-md-4">
 						<#list years?keys as key>
 							<option value="${key}">${years[key]}</option>
 						</#list>
@@ -130,7 +130,7 @@
 		    		</div>
 		    	</div>		 		
 
-				<div class="span5">&nbsp;</div>
+				<div class="col-md-6">&nbsp;</div>
 
 				<div class="control-group">
 					<span><strong><@orcid.msg 'manual_work_form_contents.titlecitation'/></strong></span>
@@ -159,7 +159,7 @@
 					</div>
 				</div>
 
-				<div class="span5">&nbsp;</div>
+				<div class="col-md-5">&nbsp;</div>
 			
 				<div class="control-group">
 					<label><@orcid.msg 'manual_work_form_contents.labeldescription'/></label>
@@ -172,7 +172,7 @@
 				</div>
 			</div>
 
-			<div class="span5">
+			<div class="col-md-5">
 				<div class="control-group" ng-repeat="contributor in editWork.contributors">
 				    <label class="relative"><@orcid.msg 'manual_work_form_contents.labelRole'/></label>
 				    <div class="relative">    
@@ -202,7 +202,7 @@
 				    </div>
 				</div>				
 
-		    	<div class="span5">&nbsp;</div>
+		    	<div class="col-md-6">&nbsp;</div>
 
 				<div class="control-group">
 					<span><strong><@orcid.msg 'manual_work_form_contents.titlecitationexternalidentifier'/></strong></span>
@@ -234,7 +234,7 @@
 					</div>				
 				</div>		
 
-				<div class="span5">&nbsp;</div>
+				<div class="col-md-5">&nbsp;</div>
 				
 				<div class="control-group">
 		    		<label class="relative"><@orcid.msg 'manual_work_form_contents.labelURL'/></label>
@@ -268,7 +268,7 @@
                     </div>
                 </div>
 				
-				<div class="span5">&nbsp;</div>
+				<div class="col-md-5">&nbsp;</div>
 
 				<div class="small-row"> 
 					<div>
@@ -285,171 +285,3 @@
 		</div>				
 	<div>
 </script>
-<ul ng-hide="!works.length" class="workspace-publications workspace-body-list bottom-margin-medium" ng-cloak>        
-    <li class="bottom-margin-small" ng-repeat="work in works | orderBy:['-publicationDate.year', '-publicationDate.month', '-publicationDate.day']">            	
-    	<#if RequestParameters['worksInfo']??>
-    	   <div class="pull-right show-work-info" style="right: 160px; top: 20px; width: 15px;"><a class="icon-plus-sign grey"></a>
-    	       <div class="popover bottom popover-work-container"><div class="arrow" style="left: 520px;"></div>
-    	       
-			    	<div class="row bottomBuffer">
-			    	</div>       
-			 		<div class="row bottomBuffer" ng-show="work.workTitle.title.value" ng-cloak>
-						<div class="span8">
-							<strong><@orcid.msg 'manual_work_form_contents.labeltitle'/></strong>
-							<div ng-bind="work.workTitle.title.value"></div>
-						</div>
-					</div>					
-					<div class="row bottomBuffer" ng-show="work.workTitle.translatedTitle.content" ng-cloak>
-						<div class="span8">
-							<strong><@orcid.msg 'manual_work_form_contents.labeltranslatedtitle'/></strong>
-							<div ng-bind="renderTranslatedTitleInfo($index)"></div>
-						</div>
-					</div>					
-					<div class="row bottomBuffer" ng-show="work.workTitle.subtitle.value" ng-cloak>
-						<div class="span8">
-							<strong>
-								<@orcid.msg 'manual_work_form_contents.labelsubtitle'/>
-							</strong>
-							<div ng-bind="work.workTitle.subtitle.value"></div>
-						</div>
-					</div>
-					<div class="row bottomBuffer" ng-show="work.journalTitle.value" ng-cloak>
-						<div class="span8">
-							<strong>
-								<@orcid.msg 'manual_work_form_contents.journalTitle'/>
-							</strong>
-							<div ng-bind="work.journalTitle.value"></div>
-						</div>
-					</div>
-					<div class="row bottomBuffer" ng-show="work.workType.value" ng-cloak>
-						<div class="span8">
-							<strong>
-								<@orcid.msg 'manual_work_form_contents.labelworktype'/>
-							</strong>
-							<div ng-bind="work.workType.value"></div>
-						</div>
-					</div>
-					<div class="row bottomBuffer" ng-show="work.citation.citation.value" ng-cloak>
-						<div class="span8">
-							<strong>
-								<@orcid.msg 'manual_work_form_contents.labelcitation'/>
-							</strong>
-							<span ng-show="showBibtex && work.citation.citationType.value == 'bibtex'"><a ng-click="bibtexShowToggle()">Show in Bibtex</a></span>
-							<span ng-show="showBibtex == false && work.citation.citationType.value == 'bibtex'"><a ng-click="bibtexShowToggle()">Show in HTML</a></span>
-							<div ng-hide="showBibtex && work.citation.citationType.value == 'bibtex'" ng-bind="work.citation.citation.value"></div>
-							<div class="row" ng-show="showBibtex" ng-repeat='bibJSON in bibtexCitations[work.putCode.value]'>
-								<div class="row"> 
-									<div class="span2" style="margin-left: 0px;">{{bibJSON.entryType}}</div>
-									<div class="span6">{{bibJSON.citationKey}}</div>
-								</div>
-								<div ng-repeat="(entKey,entVal) in bibJSON.entryTags" class="row">
-									<div class="span2" style="margin-left: 0px;">{{entKey}}</div>
-									<div class="span6">{{entVal}}</div>
-								</div>
-							</div>
-						</div>
-					</div>
-					<div class="row bottomBuffer" ng-show="work.citation.citationType.value" ng-cloak>
-						<div class="span8">
-							<strong>
-								<@orcid.msg 'manual_work_form_contents.labelcitationtype'/>
-							</strong>
-							<div ng-bind="work.citation.citationType.value"></div>
-						</div>
-					</div>
-					<div class="row bottomBuffer" ng-show="work.publicationDate.year" ng-cloak>
-						<div class="span8">
-							<strong>
-								<@orcid.msg 'manual_work_form_contents.labelPubDate'/>
-							</strong>
-							<div><span ng-show="work.publicationDate.day && work.publicationDate.month">{{work.publicationDate.day}}-</span><span ng-show="work.publicationDate.month">{{work.publicationDate.month}}-</span><span ng-show="work.publicationDate.year">{{work.publicationDate.year}}</span></div>
-						</div>
-					</div>
-					<div class="row bottomBuffer" ng-show="work.shortDescription.value" ng-cloak>
-						<div class="span8">
-							<strong>
-								<@orcid.msg 'manual_work_form_contents.labeldescription'/>
-							</strong>
-							<div ng-bind="work.shortDescription.value" style="white-space: pre-wrap;"></div>
-						</div>
-					</div>
-					<div class="row bottomBuffer" ng-show="work.workExternalIdentifiers.length > 0" ng-cloak>
-						<div class="span8">
-							<strong>
-								<@orcid.msg 'manual_work_form_contents.labelID'/>
-							</strong>
-							<div>
-								<span ng-repeat='ie in work.workExternalIdentifiers'>
-			            	    	<span ng-bind-html='ie | workExternalIdentifierHtml:$first:$last:work.workExternalIdentifiers.length'></span>
-			                    </span>
-							</div>
-						</div>
-					</div>
-					<div class="row bottomBuffer" ng-show="work.url.value" ng-cloak>
-						<div class="span8">
-							<strong>
-								<@orcid.msg 'manual_work_form_contents.labelURL'/>
-							</strong>
-							<div><a href="{{work.url.value | urlWithHttp}}" target="_blank">{{work.url.value}}</a></div>
-						</div>
-					</div>
-					<div class="row bottomBuffer" ng-show="work.contributors.length > 0" ng-cloak>
-						<div class="span8">
-							<strong>
-								Contributor
-							</strong>
-							<div ng-repeat="contributor in work.contributors">
-								{{contributor.creditName.value}} <span ng-bind='contributor | contributorFilter'></span>
-							</div>
-						</div>
-					</div>	
-					<div class="row bottomBuffer" ng-show="work.languageCode.value" ng-cloak>
-						<div class="span8">
-							<strong><@orcid.msg 'manual_work_form_contents.labellanguage'/></strong>
-							<div ng-bind="renderLanguageName($index)"></div>
-						</div>
-					</div>
-    	       		<div class="row bottomBuffer" ng-show="work.country.value" ng-cloak>
-						<div class="span8">
-							<strong><@orcid.msg 'manual_work_form_contents.labelcountry'/></strong>
-							<div ng-bind="renderCountryName($index)"></div>
-						</div>
-					</div>
-    	       
-    	       </div>
-    	   </div>
-           <div class="pull-right" style="right: 140px; top: 20px; width: 15px;"><a href ng-click="deleteWork(work.putCode.value)" class="icon-trash orcid-icon-trash grey"></a></div>
-    	<#else>
-           <div class="pull-right" style="right: 145px; top: 20px; width: 15px;"><a href ng-click="deleteWork(work.putCode.value)" class="icon-trash orcid-icon-trash grey"></a></div>
-		</#if>
-		<div style="width: 530px;">
-        <h3 class="work-title">
-        	<strong ng-bind-html="work.workTitle.title.value"></strong><span class="work-subtitle" ng-show="work.workTitle.subtitle.value" ng-bind-html="':&nbsp;'.concat(work.workTitle.subtitle.value)"></span>
-        	<span ng-show="work.publicationDate.month">{{work.publicationDate.month}}-</span><span ng-show="work.publicationDate.year">{{work.publicationDate.year}}</span>
-        </h3>
-        </div>
-        <div class="pull-right" style="width: 130px;">
-		<@orcid.privacyToggle angularModel="work.visibility.visibility" 
-				publicClick="setPrivacy(work.putCode.value, 'PUBLIC', $event)" 
-                limitedClick="setPrivacy(work.putCode.value, 'LIMITED', $event)" 
-                privateClick="setPrivacy(work.putCode.value, 'PRIVATE', $event)"
-                popoverStyle="left: -255px;"
-                arrowStyle="left: 261px;" />
-		</div>
-		<div  style="width: 680px;" class="work-metadata">
-            <span ng-repeat='ie in work.workExternalIdentifiers'>
-            	<span ng-bind-html='ie | workExternalIdentifierHtml:$first:$last:work.workExternalIdentifiers.length'></span>
-            </span>
-            <span ng-show="work.url.value" style=" display: inline-block;">URL: <a href="{{work.url.value | urlWithHttp}}" target="_blank">{{work.url.value}}</a></span>
-        </div>
-        
-        <div ng-show="work.shortDescription" ng-bind-html="work.shortDescription.value" style="width: 680px; white-space: pre-wrap;"></div>
-        <div ng-show="work.citationForDisplay" class="citation {{work.workCitation.workCitationType.toLowerCase()}}" ng-bind-html="work.citationForDisplay" style="width: 680px;"></div>
-    </li>           
-</ul>
-<div ng-show="numOfWorksToAdd==null || (numOfWorksToAdd > works.length)" class="text-center">
-    <i class="icon-spinner icon-4x icon-spin  green"></i>
-</div>
-<div ng-show="numOfWorksToAdd==0" class="alert alert-info" ng-cloak>
-    <strong><#if (publicProfile)?? && publicProfile == true>${springMacroRequestContext.getMessage("workspace_works_body_list.Nopublicationsaddedyet")}<#else>${springMacroRequestContext.getMessage("workspace_works_body_list.havenotaddedanyworks")} <a ng-click="addWorkModal()">${springMacroRequestContext.getMessage("workspace_works_body_list.addsomenow")}</a></#if></strong>
-</div>

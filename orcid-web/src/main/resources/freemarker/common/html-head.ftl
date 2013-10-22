@@ -53,7 +53,7 @@
 		request.requestURI?ends_with("${local_folder}/statistics")||
 		request.requestURI?ends_with("${local_folder}/account")||	
 		request.requestURI?matches("(.+)/(?:\\d{4}-){3,}\\d{3}[\\dX]")||
-		request.requestURI?ends_with("${local_folder}/account/manage-bio-settings")
+		request.requestURI?ends_with("${local_folder}/account/manage-bio-settings")		
 	>    	
 	    <link rel="stylesheet" href="${staticCdn}/twitter-bootstrap/3.0.0/css/bootstrap.min.css?v=${ver}"/>
 	    <!--[if lt IE 8]>

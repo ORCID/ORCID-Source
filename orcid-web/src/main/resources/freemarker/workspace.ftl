@@ -101,13 +101,13 @@
         	<div class="workspace-inner workspace-header">
                 <div class="alert alert-info"><strong><@orcid.msg 'workspace.addinformationaboutyou'/></strong></div>
         		<div class="row">
-	        		<div class="workspace-overview col-md-2 col-sm-6" id="works-overview" ng-controller="WorkOverviewCtrl">
+	        		<div class="workspace-overview col-md-2 col-sm-5" id="works-overview" ng-controller="WorkOverviewCtrl">
 	        			<a href="#workspace-publications" class="overview-count"><span ng-bind="works.length"></span></a>
 	        			<a href="#workspace-publications" class="overview-title"><@orcid.msg 'workspace.Works'/></a>
 	                    <br />
 	                    <a href="#workspace-publications" class="btn-update no-icon"><@orcid.msg 'workspace.view'/></a>
 	        		</div>	                
-	                <div class="workspace-overview col-md-2 col-sm-6">
+	                <div class="workspace-overview col-md-2 col-sm-5">
 		                <a href="#workspace-affiliations" class="overview-count">${(profile.orcidActivities.affiliations.affiliation?size)!0}</a>
 	                    <a href="#workspace-affiliations" class="overview-title"><@orcid.msg 'workspace_bio.Affiliations'/></a>
 	                    <br />
@@ -117,14 +117,14 @@
 	                        <div><a target="_blank" href="http://support.orcid.org/forums/179657-coming-soon" class="btn-update no-icon"><@orcid.msg 'workspace.ComingSoon'/></a></div>
 	                    </#if>
 	                </div>                
-	        		<div class="workspace-overview  col-md-2 col-sm-6">
+	        		<div class="workspace-overview  col-md-2 col-sm-5">
 	        			<a href="#workspace-grants" class="overview-count">${(profile.orcidActivities.orcidGrants.orcidGrant?size)!0}</a>
 	        			<a href="#workspace-grants" class="overview-title"><@orcid.msg 'workspace.Grants'/></a>
 	        			<br />
 	        			<a target="_blank" href="http://support.orcid.org/forums/179657-coming-soon" class="btn-update no-icon"><@orcid.msg 'workspace.ComingSoon'/></a>
 	        		</div>
 	        		
-	        		<div class="workspace-overview  col-md-2 col-sm-6">
+	        		<div class="workspace-overview  col-md-2 col-sm-5">
 		        		<a href="#workspace-patents" class="overview-count">${(profile.orcidActivities.orcidPatents.orcidPatent?size)!0}</a>
 	        			<a href="#workspace-patents" class="overview-title"><@orcid.msg 'workspace.Patents'/></a>
 	        			<br />
@@ -133,7 +133,7 @@
 	        	</div>	        	
         	</div>
         	<div class="workspace-accordion" id="workspace-accordion">
-        	
+        		<!-- Personal Information -->
         	   <div id="workspace-personal" class="workspace-accordion-item workspace-accordion-active" ng-controller="PersonalInfoCtrl">
         			<div class="workspace-accordion-header" style="position: relative;">
         			   <ul class="personal-inf-display">        			   		
@@ -142,14 +142,14 @@
 	        			   			<i class="icon-caret-down" ng-class="{'icon-caret-right':displayInfo==false}"></i></a>
 	        			   		</a>
         			   			<a href="" ng-click="toggleDisplayInfo()" class="toggle-text"><@orcid.msg 'workspace.personal_information'/></a></li>
-        			   		<li><a href="<@spring.url '/account/manage-bio-settings'/>" id="upate-personal-modal-link" class="label btn-primary"><@orcid.msg 'workspace.Update'/></a></li>        			   		
+        			   		<li><a href="<@spring.url '/account/manage-bio-settings'/>" id="update-personal-modal-link" class="label btn-primary"><@orcid.msg 'workspace.Update'/></a></li>        			   		
         			   </ul>
         			</div>
             		<div class="workspace-accordion-content" ng-show="displayInfo">
             			<#include "workspace_personal.ftl"/>
         			</div>
             	</div>
-            	
+            	<!-- Affiliations -->
             	<#--
         		<div id="workspace-affiliations" class="workspace-accordion-item${(!(profile.orcidBio.affiliations)?? || (profile.orcidBio.affiliations?size = 0))?string(" workspace-accordion-active", "")}">
                     <div class="workspace-accordion-header">
@@ -171,7 +171,7 @@
 		            	</div>
 	            	</div>
             	</#if>
-                
+                <!-- Works -->                
                 <div id="workspace-publications" style="position: relative;" class="workspace-accordion-item workspace-accordion-active" ng-controller="WorkCtrl">
                 	<div class="workspace-accordion-header">
                 		<ul class="personal-inf-display">
@@ -187,12 +187,15 @@
 							<li>
 								<a href="" class="label btn-primary" ng-click="addWorkModal()"><@orcid.msg 'manual_work_form_contents.add_work_manually'/></a>
 							</li>	
-						</ul>					</div>
+						</ul>					
+					</div>
+					
       	            <div ng-show="displayWorks" class="workspace-accordion-content">
 	            		<#include "includes/work/add_work_modal_inc.ftl"/>
 						<#include "includes/work/del_work_modal_inc.ftl"/>
 						<#include "includes/work/body_work_inc.ftl"/>
 	            	</div>
+	            	
             	</div>
             	
             	<#--
@@ -212,7 +215,7 @@
 </#escape>
 
 <script type="text/ng-template" id="verify-email-modal">
-	<div style="padding: 20px">
+	<div>
 			<h4><@orcid.msg 'workspace.your_primary_email'/></h4>
 			<@orcid.msg 'workspace.ensure_future_access'/><br />
 			<br />
@@ -222,7 +225,7 @@
 </script>
 
 <script type="text/ng-template" id="verify-email-modal-sent">
-	<div style="padding: 20px; width: 400px;">
+	<div>
 		<h4><@orcid.msg 'workspace.sent'/></h4>
 		<@orcid.msg 'workspace.check_your_email'/><br />
 		<br />
@@ -231,7 +234,7 @@
 </script>
 
 <script type="text/ng-template" id="claimed-record-thanks">
-	<div style="padding: 20px;">
+	<div>
 		<strong><@spring.message "orcid.frontend.web.record_claimed"/></strong><br />
 		<br />
 		<button class="btn" ng-click="close()"><@spring.message "freemarker.btnclose"/></button>
@@ -239,7 +242,7 @@
 </script>
 	
 <script type="text/ng-template" id="claimed-record-thanks-source-grand-read">
-	<div style="padding: 20px;">
+	<div>
 		<strong><@spring.message "orcid.frontend.web.record_claimed"/></strong><br />
 		<br />
 		<strong ng-bind="sourceGrantReadWizard.displayName"></strong> <@spring.message "orcid.frontend.web.record_claimed.would_like"/><br />
@@ -250,7 +253,7 @@
 </script>
 
 <script type="text/ng-template" id="delete-external-id-modal">
-	<div style="padding: 20px;">
+	<div>
 		<h3><@orcid.msg 'manage.deleteExternalIdentifier.pleaseConfirm'/> {{removeExternalModalText}} </h3>
 		<button class="btn btn-danger" ng-click="removeExternalIdentifier()"><@orcid.msg 'manage.deleteExternalIdentifier.delete'/></button> 
 		<a ng-click="closeModal()"><@orcid.msg 'manage.deleteExternalIdentifier.cancel'/></a>

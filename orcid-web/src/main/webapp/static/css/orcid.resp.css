@@ -280,6 +280,7 @@ h4 {
 a {
 	text-decoration: none;
 	color: #338caf;
+	cursor: pointer;
 }
 
 a:hover {
@@ -2327,8 +2328,10 @@ header overrides
 	height: 80px;
 }
 
+/* Edit Works */
+
 .edit-work{
-	width: 600px; 
+	width: 840px; 
 }
 
 .edit-work label,.edit-work input,.edit-work textarea,.edit-work select
@@ -2462,6 +2465,8 @@ header overrides
 	padding-top: 5px !important;
 }
 
+/* Workspace */
+
 .workspace-profile p {
 	margin-bottom: 5px;
 }
@@ -2469,6 +2474,13 @@ header overrides
 .work-title {
 	font-weight: normal;
 	font-family: 'Gill Sans W01 Medium', 'Gill Sans', sans-serif;
+	margin-left: 15px;
+}
+
+ul.workspace-toolbar li{
+	display: inline-block;
+	padding: 0;
+	margin: 0;
 }
 
 .popover-form .input-xlarge {
@@ -3318,6 +3330,10 @@ ul.personal-inf-display li{
 	
 	#login-register{
 		padding-left: 0;
+	}
+	
+	.workspace-profile{	
+		margin-left: 15px;
 	}
 	
 }

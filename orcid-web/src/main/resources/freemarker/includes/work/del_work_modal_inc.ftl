@@ -17,8 +17,8 @@
 
 -->
 <script type="text/ng-template" id="delete-work-modal">
-	<div style="padding: 20px;">
-		<h3 style="margin-bottom: 0px;">${springMacroRequestContext.getMessage("manage.deleteWork.pleaseConfirm")}</h3>
+	<div>
+		<h3>${springMacroRequestContext.getMessage("manage.deleteWork.pleaseConfirm")}</h3>
 		{{fixedTitle}}<br />
 		<br />
     	<div class="btn btn-danger" ng-click="deleteByPutCode()">
