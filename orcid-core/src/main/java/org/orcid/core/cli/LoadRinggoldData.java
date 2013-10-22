@@ -99,7 +99,8 @@ public class LoadRinggoldData {
         }
         if (deletedIdsFile != null) {
             processDeletedIds();
-        } else {
+        }
+        if (zipFile != null) {
             processZip();
         }
         LOGGER.info("Finished loading Ringgold data");
