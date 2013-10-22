@@ -36,7 +36,8 @@ import org.hibernate.annotations.Sort;
 import org.hibernate.annotations.SortType;
 import org.orcid.jaxb.model.message.CitationType;
 import org.orcid.jaxb.model.message.Iso3166Country;
-import org.orcid.jaxb.model.message.WorkType;
+import org.orcid.jaxb.model.message.NewWorkType;
+import org.orcid.jaxb.model.message.WorkSubtype;
 
 import java.util.Comparator;
 import java.util.SortedSet;
@@ -65,7 +66,8 @@ public class WorkEntity extends BaseEntity<Long> implements Comparable<WorkEntit
     private String translatedTitleLanguageCode;
     private Iso3166Country iso2Country;
     private CitationType citationType;
-    private WorkType workType;
+    private NewWorkType workType;
+    private WorkSubtype workSubtype;
     private PublicationDateEntity publicationDate;
     private String contributorsJson;
     private SortedSet<WorkContributorEntity> contributors;
@@ -202,14 +204,25 @@ public class WorkEntity extends BaseEntity<Long> implements Comparable<WorkEntit
     @Basic
     @Enumerated(EnumType.STRING)
     @Column(name = "work_type", length = 100)
-    public WorkType getWorkType() {
+    public NewWorkType getWorkType() {
         return workType;
     }
 
-    public void setWorkType(WorkType workType) {
+    public void setWorkType(NewWorkType workType) {
         this.workType = workType;
     }
+            
+    @Basic
+    @Enumerated(EnumType.STRING)
+    @Column(name = "work_subtype", length = 100)
+    public WorkSubtype getWorkSubType() {
+        return workSubtype;
+    }
 
+    public void setWorkSubType(WorkSubtype workSubtype) {
+        this.workSubtype = workSubtype;
+    }
+    
     @Column(name = "contributors_json")
     public String getContributorsJson() {
         return contributorsJson;

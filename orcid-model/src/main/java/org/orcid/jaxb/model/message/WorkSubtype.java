@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 import javax.xml.bind.annotation.XmlEnumValue;
 
-public enum WorkSubType implements Serializable {
+public enum WorkSubtype implements Serializable {
     @XmlEnumValue("artistic-performance")ARTISTIC_PERFORMANCE("artistic-performance"),
     @XmlEnumValue("book-chapter")BOOK_CHAPTER("book-chapter"),
     @XmlEnumValue("book")BOOK("book"),
@@ -44,7 +44,7 @@ public enum WorkSubType implements Serializable {
     
     private final String value;
 
-    WorkSubType(String v) {
+    WorkSubtype(String v) {
         value = v;
     }
     
@@ -52,8 +52,8 @@ public enum WorkSubType implements Serializable {
         return value;
     }
     
-    public static WorkSubType fromValue(String v) {
-        for (WorkSubType c : WorkSubType.values()) {
+    public static WorkSubtype fromValue(String v) {
+        for (WorkSubtype c : WorkSubtype.values()) {
             if (c.value.equals(v)) {
                 return c;
             }

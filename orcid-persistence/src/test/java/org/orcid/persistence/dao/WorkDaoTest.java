@@ -29,7 +29,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.jaxb.model.message.CitationType;
-import org.orcid.jaxb.model.message.WorkType;
+import org.orcid.jaxb.model.message.NewWorkType;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.test.DBUnitTest;
 import org.springframework.test.annotation.Rollback;

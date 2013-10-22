@@ -38,7 +38,7 @@ import org.orcid.jaxb.model.message.OrcidWork;
 import org.orcid.jaxb.model.message.SequenceType;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
-import org.orcid.jaxb.model.message.WorkType;
+import org.orcid.jaxb.model.message.NewWorkType;
 
 /**
  * 

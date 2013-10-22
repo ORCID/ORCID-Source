@@ -1,0 +1,81 @@
+<!--
+
+    =============================================================================
+
+    ORCID (R) Open Source
+    http://orcid.org
+
+    Copyright (c) 2012-2013 ORCID, Inc.
+    Licensed under an MIT-Style License (MIT)
+    http://orcid.org/open-source-license
+
+    This copyright and license information (including a link to the full license)
+    shall be included in its entirety in all copies or substantial portion of
+    the software.
+
+    =============================================================================
+
+-->
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+	<changeSet author="Angel Montenegro" id="ADD-SUBTYPE-TO-WORK-TABLE">
+	    <addColumn tableName="work">
+				<column name="work_subtype" type="VARCHAR(100)" />				
+		</addColumn>
+    </changeSet>
+    
+    <changeSet id="UPDATE_WORK_TYPES_AND_SUBTYPES" author="Angel Montenegro">
+        <sql>update work set work_type = 'PUBLICATION', work_subtype='JOURNAL_ARTICLE' where work_type in('JOURNAL_ARTICLE');</sql>
+        <sql>update work set work_type = 'PUBLICATION', work_subtype='BOOK' where work_type in('BOOK');</sql>
+        <sql>update work set work_type = 'PUBLICATION', work_subtype='BOOK_CHAPTER' where work_type in('CHAPTER_ANTHOLOGY');</sql>
+        <sql>update work set work_type = 'PUBLICATION', work_subtype='DISSERTATION' where work_type in('DISSERTATON_ABSTRACT', 'DISSERTATION');</sql>
+        <sql>update work set work_type = 'PUBLICATION', work_subtype='SUPERVISED_STUDENT_PUBLICATION' where work_type in('THESIS');</sql>
+        <sql>update work set work_type = 'PUBLICATION', work_subtype='NEWSPAPER_ARTICLE' where work_type in('NEWSPAPER_ARTICLE');</sql>
+        <sql>update work set work_type = 'PUBLICATION', work_subtype='NEWSLETTER_ARTICLE' where work_type in('NEWSLETTER');</sql>
+        <sql>update work set work_type = 'PUBLICATION', work_subtype='ENCYCLOPEDIA_ENTRY' where work_type in('ENCYCLOPEDIA_ARTICLE');</sql>
+        <sql>update work set work_type = 'PUBLICATION', work_subtype='MAGAZINE_ARTICLE' where work_type in('EDITORIAL','MAGAZINE_ARTICLE');</sql>
+        <sql>update work set work_type = 'PUBLICATION', work_subtype='DICTIONARY_ENTRY' where work_type in('DICTIONARY_ENTRY');</sql>
+        <sql>update work set work_type = 'PUBLICATION', work_subtype='REPORT' where work_type in('REPORT');</sql>
+        <sql>update work set work_type = 'PUBLICATION', work_subtype='ONLINE_RESOURCE' where work_type in('DIGITAL_IMAGE','ELECTRONIC_ONLY','SOFTWARE');</sql>
+        <sql>update work set work_type = 'PUBLICATION', work_subtype='WEBSITE' where work_type in('WEBSITE');</sql>
+        <sql>update work set work_type = 'PUBLICATION', work_subtype='WORKING_PAPER' where work_type in('REPORTS_WORKING_PAPERS');</sql>                
+        <sql>update work set work_type = 'CONFERENCE', work_subtype='CONFERENCE_PAPER' where work_type in('CONFERENCE_PROCEEDINGS');</sql>        
+        <sql>update work set work_type = 'INTELLECTUAL_PROPERTY', work_subtype='PATENT' where work_type in('PATENT');</sql>        
+        <sql>update work set work_type = 'OTHER_OUTPUT', work_subtype='STANDARDS_AND_POLICY' where work_type in('CONGRESSIONAL_PUBLICATION','EXECUTIVE_ORDER','FEDERAL_BILL','FEDERAL_REPORT','FEDERAL_RULE','FEDERAL_STATUTE','GOVERNMENT_PUBLICATION','STANDARDS');</sql>
+        <sql>update work set work_type = 'OTHER_OUTPUT', work_subtype='DATA_SET' where work_type in('DATABASE','MAP_CHART','RAW_DATA');</sql>
+        <sql>update work set work_type = 'OTHER_OUTPUT', work_subtype='LECTURE_SPEECH' where work_type in('LECTURE_SPEECH');</sql>
+        <sql>update work set work_type = 'OTHER_OUTPUT', work_subtype='ARTISTIC_PERFORMANCE' where work_type in('CARTOON_COMIC','FILM_MOVIE','LIVE_PERFORMANCE','MUSICAL_RECORDING','PAINTING','PHOTOGRAPH','TELEVISION_RADIO');</sql>
+        <sql>update work set work_type = 'OTHER_OUTPUT', work_subtype='OTHER' where work_type in('ADVERTISEMENT','AUDIOVISUAL','BIBLE','BROCHURE','COURT_CASE','EMAIL','FEDERAL_TESTIMONY','INTERVIEW','LEGAL','LETTER','MAILING_LIST','MANUSCRIPT','NEWSGROUP','OTHER','PAMPHLET','PRESSRELEASE','RELIGIOUS_TEXT','UNDEFINED');</sql>
+        <sql>update work set work_type = 'OTHER_OUTPUT', work_subtype='UNDEFINED' where work_type is NULL;</sql>
+    </changeSet>
+</databaseChangeLog>	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

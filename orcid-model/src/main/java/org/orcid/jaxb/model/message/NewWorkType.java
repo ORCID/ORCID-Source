@@ -8,24 +8,24 @@ import javax.xml.bind.annotation.XmlEnumValue;
 
 public enum NewWorkType {
     @XmlEnumValue("publication")
-    PUBLICATION("publication", WorkSubType.BOOK_CHAPTER, WorkSubType.BOOK, WorkSubType.DICTIONARY_ENTRY, WorkSubType.DISSERTATION, WorkSubType.EDITED_BOOK,
-            WorkSubType.ENCYCLOPEDIA_ENTRY, WorkSubType.JOURNAL_ARTICLE, WorkSubType.JOURNAL_ISSUE, WorkSubType.MAGAZINE_ARTICLE, WorkSubType.MANUAL,
-            WorkSubType.NEWSLETTER_ARTICLE, WorkSubType.NEWSPAPER_ARTICLE, WorkSubType.ONLINE_RESOURCE, WorkSubType.REPORT, WorkSubType.RESEARCH_TOOL,
-            WorkSubType.SUPERVISED_STUDENT_PUBLICATION, WorkSubType.TRANSLATION, WorkSubType.WEBSITE, WorkSubType.WORKING_PAPER),             
+    PUBLICATION("publication", WorkSubtype.BOOK_CHAPTER, WorkSubtype.BOOK, WorkSubtype.DICTIONARY_ENTRY, WorkSubtype.DISSERTATION, WorkSubtype.EDITED_BOOK,
+            WorkSubtype.ENCYCLOPEDIA_ENTRY, WorkSubtype.JOURNAL_ARTICLE, WorkSubtype.JOURNAL_ISSUE, WorkSubtype.MAGAZINE_ARTICLE, WorkSubtype.MANUAL,
+            WorkSubtype.NEWSLETTER_ARTICLE, WorkSubtype.NEWSPAPER_ARTICLE, WorkSubtype.ONLINE_RESOURCE, WorkSubtype.REPORT, WorkSubtype.RESEARCH_TOOL,
+            WorkSubtype.SUPERVISED_STUDENT_PUBLICATION, WorkSubtype.TRANSLATION, WorkSubtype.WEBSITE, WorkSubtype.WORKING_PAPER),             
     @XmlEnumValue("conference")
-    CONFERENCE("conference", WorkSubType.CONFERENCE_ABSTRACT, WorkSubType.CONFERENCE_PAPER, WorkSubType.CONFERENCE_POSTER), 
+    CONFERENCE("conference", WorkSubtype.CONFERENCE_ABSTRACT, WorkSubtype.CONFERENCE_PAPER, WorkSubtype.CONFERENCE_POSTER), 
     @XmlEnumValue("intellectual_property")
-    INTELLECTUAL_PROPERTY("intellectual_property", WorkSubType.DISCLOSURE, WorkSubType.LICENSE, WorkSubType.PATENT, WorkSubType.REGISTERED_COPYRIGHT), 
+    INTELLECTUAL_PROPERTY("intellectual_property", WorkSubtype.DISCLOSURE, WorkSubtype.LICENSE, WorkSubtype.PATENT, WorkSubtype.REGISTERED_COPYRIGHT), 
     @XmlEnumValue("other_output")
-    OTHER_OUTPUT("other_output", WorkSubType.ARTISTIC_PERFORMANCE, WorkSubType.DATA_SET, WorkSubType.INVENTION, WorkSubType.LECTURE_SPEECH, WorkSubType.OTHER,
-            WorkSubType.RESEARCH_TECHNIQUE, WorkSubType.SPIN_OFF_COMPANY, WorkSubType.STANDARDS_AND_POLICY, WorkSubType.TECHNICAL_STANDARD, WorkSubType.UNDEFINED);
+    OTHER_OUTPUT("other_output", WorkSubtype.ARTISTIC_PERFORMANCE, WorkSubtype.DATA_SET, WorkSubtype.INVENTION, WorkSubtype.LECTURE_SPEECH, WorkSubtype.OTHER,
+            WorkSubtype.RESEARCH_TECHNIQUE, WorkSubtype.SPIN_OFF_COMPANY, WorkSubtype.STANDARDS_AND_POLICY, WorkSubtype.TECHNICAL_STANDARD, WorkSubtype.UNDEFINED);
 
-    private List<WorkSubType> subTypes = new ArrayList<WorkSubType>();
+    private List<WorkSubtype> subTypes = new ArrayList<WorkSubtype>();
     private String value;
 
-    private NewWorkType(String value, WorkSubType... subTypes) {
+    private NewWorkType(String value, WorkSubtype... subTypes) {
         this.value = value;
-        for (WorkSubType subType : subTypes) {
+        for (WorkSubtype subType : subTypes) {
             this.subTypes.add(subType);
         }
     }
@@ -34,7 +34,7 @@ public enum NewWorkType {
         return value;
     }
 
-    public List<WorkSubType> getSubTypes() {
+    public List<WorkSubtype> getSubTypes() {
         return Collections.unmodifiableList(subTypes);
     }
     

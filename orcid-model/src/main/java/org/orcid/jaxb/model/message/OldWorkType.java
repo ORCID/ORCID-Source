@@ -20,7 +20,7 @@ import java.io.Serializable;
 
 import javax.xml.bind.annotation.XmlEnumValue;
 
-public enum WorkType implements Serializable {
+public enum OldWorkType implements Serializable {
 
     @XmlEnumValue("advertisement")
     ADVERTISEMENT("advertisement"), @XmlEnumValue("audiovisual")
@@ -88,7 +88,7 @@ public enum WorkType implements Serializable {
 
     private final String value;
 
-    WorkType(String v) {
+    OldWorkType(String v) {
         value = v;
     }
 
@@ -96,8 +96,8 @@ public enum WorkType implements Serializable {
         return value;
     }
 
-    public static WorkType fromValue(String v) {
-        for (WorkType c : WorkType.values()) {
+    public static OldWorkType fromValue(String v) {
+        for (OldWorkType c : OldWorkType.values()) {
             if (c.value.equals(v)) {
                 return c;
             }

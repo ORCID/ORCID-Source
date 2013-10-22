@@ -50,6 +50,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element ref="{http://www.orcid.org/ns/orcid}short-description" minOccurs="0"/>
  *         &lt;element ref="{http://www.orcid.org/ns/orcid}work-citation" minOccurs="0"/>
  *         &lt;element ref="{http://www.orcid.org/ns/orcid}work-type" minOccurs="0"/>
+ *         &lt;element ref="{http://www.orcid.org/ns/orcid}work-subtype" minOccurs="0"/>
  *         &lt;element ref="{http://www.orcid.org/ns/orcid}publication-date" minOccurs="0"/>
  *         &lt;element ref="{http://www.orcid.org/ns/orcid}work-external-identifiers" minOccurs="0"/>
  *         &lt;element ref="{http://www.orcid.org/ns/orcid}url" minOccurs="0"/>
@@ -69,7 +70,7 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "putCode", "workTitle", "journalTitle", "shortDescription", "workCitation", "workType", "publicationDate", "workExternalIdentifiers",
+@XmlType(name = "", propOrder = { "putCode", "workTitle", "journalTitle", "shortDescription", "workCitation", "workType", "workSubtype", "publicationDate", "workExternalIdentifiers",
         "url", "workContributors", "workSource", "languageCode", "country" })
 @XmlRootElement(name = "orcid-work")
 public class OrcidWork implements VisibilityType, Serializable {
@@ -84,7 +85,9 @@ public class OrcidWork implements VisibilityType, Serializable {
     @XmlElement(name = "work-citation")
     protected Citation workCitation;
     @XmlElement(name = "work-type")
-    protected WorkType workType;
+    protected NewWorkType workType;
+    @XmlElement(name = "work-subtype")
+    protected WorkSubtype workSubtype;
     @XmlElement(name = "publication-date")
     protected PublicationDate publicationDate;
     @XmlElement(name = "work-external-identifiers")
@@ -193,7 +196,7 @@ public class OrcidWork implements VisibilityType, Serializable {
      * @return possible object is {@link WorkType }
      * 
      */
-    public WorkType getWorkType() {
+    public NewWorkType getWorkType() {
         return workType;
     }
 
@@ -204,10 +207,32 @@ public class OrcidWork implements VisibilityType, Serializable {
      *            allowed object is {@link WorkType }
      * 
      */
-    public void setWorkType(WorkType value) {
+    public void setWorkType(NewWorkType value) {
         this.workType = value;
     }
 
+    
+    /**
+     * Gets the value of the workSubtype property.
+     * 
+     * @return possible object is {@link WorkSubtype }
+     * 
+     */
+    public WorkSubtype getWorkSubtype() {
+        return workSubtype;
+    }
+
+    /**
+     * Sets the value of the workSubtype property.
+     * 
+     * @param value
+     *            allowed object is {@link WorkType }
+     * 
+     */
+    public void setWorkSubtype(WorkSubtype value) {
+        this.workSubtype = value;
+    }
+    
     /**
      * Gets the value of the publicationDate property.
      * 
@@ -404,7 +429,7 @@ public class OrcidWork implements VisibilityType, Serializable {
 
     /**
      * Indicates if two works are ORCID duplicated.
-     * Two works will be duplicated if they have the same title, type, external identifiers and source.
+     * Two works will be duplicated if they have the same title, type, subtype, external identifiers and source.
      * 
      * @return true if the two works are duplicated according to ORCID
      *         requirements
@@ -430,6 +455,12 @@ public class OrcidWork implements VisibilityType, Serializable {
         } else if (!this.getWorkType().equals(other.getWorkType()))
             return false;
 
+        if(this.getWorkSubtype() == null){
+            if(other.getWorkSubtype() != null)
+                return false;
+        } else if(!this.getWorkSubtype().equals(other.getWorkSubtype()))
+            return false;
+        
         if (this.getWorkExternalIdentifiers() == null) {
             if (other.getWorkExternalIdentifiers() != null)
                 return false;
@@ -464,6 +495,7 @@ public class OrcidWork implements VisibilityType, Serializable {
         result = prime * result + ((workSource == null) ? 0 : workSource.hashCode());
         result = prime * result + ((workTitle == null) ? 0 : workTitle.hashCode());
         result = prime * result + ((workType == null) ? 0 : workType.hashCode());
+        result = prime * result + ((workSubtype == null) ? 0 : workSubtype.hashCode());
         result = prime * result + ((journalTitle == null) ? 0 : journalTitle.hashCode());
         result = prime * result + ((languageCode == null) ? 0 : languageCode.hashCode());
         result = prime * result + ((country == null) ? 0 : country.hashCode());
@@ -526,6 +558,12 @@ public class OrcidWork implements VisibilityType, Serializable {
         } else if (!workTitle.equals(other.workTitle))
             return false;
         if (workType != other.workType)
+            return false;
+        
+        if(workSubtype == null){
+            if(other.workSubtype != null)
+                return false;
+        } else if(!workSubtype.equals(other.workSubtype))
             return false;
 
         if (journalTitle == null) {
