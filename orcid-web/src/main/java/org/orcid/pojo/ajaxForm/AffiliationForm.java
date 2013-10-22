@@ -28,6 +28,7 @@ import org.orcid.jaxb.model.message.AffiliationCountry;
 import org.orcid.jaxb.model.message.AffiliationRegion;
 import org.orcid.jaxb.model.message.AffiliationType;
 import org.orcid.jaxb.model.message.Iso3166Country;
+import org.orcid.jaxb.model.message.Source;
 
 public class AffiliationForm implements ErrorsInterface, Serializable {
 
@@ -46,7 +47,7 @@ public class AffiliationForm implements ErrorsInterface, Serializable {
     private Text region;
 
     private Text country;
-    
+
     private String countryForDisplay;
 
     private Text departmentName;
@@ -58,6 +59,8 @@ public class AffiliationForm implements ErrorsInterface, Serializable {
     private Date startDate;
 
     private Date endDate;
+
+    private String sourceName;
 
     public List<String> getErrors() {
         return errors;
@@ -163,6 +166,14 @@ public class AffiliationForm implements ErrorsInterface, Serializable {
         this.endDate = endDate;
     }
 
+    public String getSourceName() {
+        return sourceName;
+    }
+
+    public void setSourceName(String sourceName) {
+        this.sourceName = sourceName;
+    }
+
     public static AffiliationForm valueOf(Affiliation affiliation) {
         AffiliationForm form = new AffiliationForm();
         form.setPutCode(Text.valueOf(affiliation.getPutCode()));
@@ -186,6 +197,10 @@ public class AffiliationForm implements ErrorsInterface, Serializable {
         if (affiliation.getEndDate() != null) {
             form.setEndDate(Date.valueOf(affiliation.getEndDate()));
         }
+        Source source = affiliation.getSource();
+        if (source != null) {
+            form.setSourceName(source.getSourceName().getContent());
+        }
         return form;
     }
 
@@ -203,7 +218,7 @@ public class AffiliationForm implements ErrorsInterface, Serializable {
             affiliationAddress.setAffiliationRegion(new AffiliationRegion(region.getValue()));
         }
         affiliationAddress.setAffiliationCountry(new AffiliationCountry(Iso3166Country.fromValue(country.getValue())));
-        if (departmentName != null) {
+        if (departmentName != null && StringUtils.isNotBlank(departmentName.getValue())) {
             affiliation.setDepartmentName(departmentName.getValue());
         }
         if (affiliationType != null && StringUtils.isNotBlank(affiliationType.getValue())) {

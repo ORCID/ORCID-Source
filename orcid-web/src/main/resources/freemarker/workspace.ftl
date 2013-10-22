@@ -106,8 +106,8 @@
                     <br />
                     <a href="#workspace-publications" class="btn-update no-icon"><@orcid.msg 'workspace.view'/></a>
         		</div>
-                <div class="workspace-overview">
-                    <a href="#workspace-affiliations" class="overview-count">${(profile.orcidActivities.affiliations.affiliation?size)!0}</a>
+                <div class="workspace-overview" id="affiliations-overview" ng-controller="AffiliationOverviewCtrl">
+                    <a href="#workspace-affiliations" class="overview-count"><span ng-bind="affiliations.length"></span></a>
                     <a href="#workspace-affiliations" class="overview-title"><@orcid.msg 'workspace_bio.Affiliations'/></a>
                     <br />
                     <#if RequestParameters['affiliations']??>

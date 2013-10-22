@@ -37,6 +37,7 @@ import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.CountryIsoEntity;
 import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
 import org.orcid.persistence.jpa.entities.OrgDisambiguatedEntity;
+import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.ajaxForm.AffiliationForm;
 import org.orcid.pojo.ajaxForm.Date;
 import org.orcid.pojo.ajaxForm.PojoUtil;
@@ -203,8 +204,9 @@ public class AffiliationsController extends BaseWorkspaceController {
 
         if (affiliationForm.getErrors().isEmpty()) {
             // Persist to DB
-            OrgAffiliationRelationEntity orgAffiliationRelationEntity = jaxb2JpaAdapter.getNewOrgAffiliationRelationEntity(affiliationForm.toAffiliation(),
-                    profileDao.find(getEffectiveUserOrcid()));
+            ProfileEntity userProfile = profileDao.find(getEffectiveUserOrcid());
+            OrgAffiliationRelationEntity orgAffiliationRelationEntity = jaxb2JpaAdapter.getNewOrgAffiliationRelationEntity(affiliationForm.toAffiliation(), userProfile);
+            orgAffiliationRelationEntity.setSource(userProfile);
             orgAffiliationRelationDao.persist(orgAffiliationRelationEntity);
         }
 
@@ -356,18 +358,17 @@ public class AffiliationsController extends BaseWorkspaceController {
         }
         return affiliationForm;
     }
-    
+
     @RequestMapping(value = "/affiliation/datesValidate.json", method = RequestMethod.POST)
     public @ResponseBody
     AffiliationForm datesValidate(@RequestBody AffiliationForm affiliationForm) {
         affiliationForm.getStartDate().setErrors(new ArrayList<String>());
         affiliationForm.getEndDate().setErrors(new ArrayList<String>());
         if (!PojoUtil.isEmply(affiliationForm.getStartDate()) && !PojoUtil.isEmply(affiliationForm.getEndDate())) {
-            if (affiliationForm.getStartDate().toJavaDate().after(affiliationForm.getEndDate().toJavaDate())) 
+            if (affiliationForm.getStartDate().toJavaDate().after(affiliationForm.getEndDate().toJavaDate()))
                 setError(affiliationForm.getEndDate(), "manualAffiliation.endDate.after");
         }
         return affiliationForm;
     }
-
 
 }
