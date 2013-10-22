@@ -1128,7 +1128,7 @@ function AffiliationCtrl($scope, $compile, affiliationsSrvc){
 							$("#affiliationName").typeahead({
 								name: 'affiliationName',
 								remote: {
-									url: $('body').data('baseurl')+'affiliations/disambiguated/%QUERY',
+									url: $('body').data('baseurl')+'affiliations/disambiguated/%QUERY'
 								},
 								template: function (datum) {
 									   var forDisplay = 
