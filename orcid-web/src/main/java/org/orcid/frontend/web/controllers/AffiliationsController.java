@@ -165,6 +165,9 @@ public class AffiliationsController extends BaseWorkspaceController {
         Text department = new Text();
         affiliationForm.setDepartmentName(department);
 
+        Text roleTitle = new Text();
+        affiliationForm.setRoleTitle(roleTitle);
+
         Text affiliationType = new Text();
         affiliationForm.setAffiliationType(affiliationType);
         affiliationType.setValue("");
@@ -193,6 +196,7 @@ public class AffiliationsController extends BaseWorkspaceController {
         regionValidate(affiliationForm);
         countryValidate(affiliationForm);
         departmentValidate(affiliationForm);
+        roleTitleValidate(affiliationForm);
         datesValidate(affiliationForm);
 
         copyErrors(affiliationForm.getAffiliationName(), affiliationForm);
@@ -200,6 +204,7 @@ public class AffiliationsController extends BaseWorkspaceController {
         copyErrors(affiliationForm.getRegion(), affiliationForm);
         copyErrors(affiliationForm.getCountry(), affiliationForm);
         copyErrors(affiliationForm.getDepartmentName(), affiliationForm);
+        copyErrors(affiliationForm.getRoleTitle(), affiliationForm);
         copyErrors(affiliationForm.getEndDate(), affiliationForm);
 
         if (affiliationForm.getErrors().isEmpty()) {
@@ -355,6 +360,16 @@ public class AffiliationsController extends BaseWorkspaceController {
         affiliationForm.getDepartmentName().setErrors(new ArrayList<String>());
         if (affiliationForm.getDepartmentName().getValue() != null && affiliationForm.getDepartmentName().getValue().trim().length() > 1000) {
             setError(affiliationForm.getDepartmentName(), "manualAffiliation.length_less_1000");
+        }
+        return affiliationForm;
+    }
+
+    @RequestMapping(value = "/affiliation/roleTitleValidate.json", method = RequestMethod.POST)
+    public @ResponseBody
+    AffiliationForm roleTitleValidate(@RequestBody AffiliationForm affiliationForm) {
+        affiliationForm.getRoleTitle().setErrors(new ArrayList<String>());
+        if (!PojoUtil.isEmpty(affiliationForm.getRoleTitle()) && affiliationForm.getRoleTitle().getValue().trim().length() > 1000) {
+            setError(affiliationForm.getRoleTitle(), "manualAffiliation.length_less_1000");
         }
         return affiliationForm;
     }
