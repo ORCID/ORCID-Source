@@ -21,7 +21,7 @@
     <li class="bottom-margin-small" ng-repeat="work in works | orderBy:['-publicationDate.year', '-publicationDate.month', '-publicationDate.day']">        
 		<div class="row">
 			<!-- Info -->
-			<div class="col-md-8">
+			<div class="col-md-8 col-sm-8">
 		        <h3 class="work-title">
 		        	<strong ng-bind-html="work.workTitle.title.value"></strong><span class="work-subtitle" ng-show="work.workTitle.subtitle.value" ng-bind-html="':&nbsp;'.concat(work.workTitle.subtitle.value)"></span>
 		        	<span ng-show="work.publicationDate.month">{{work.publicationDate.month}}-</span><span ng-show="work.publicationDate.year">{{work.publicationDate.year}}</span>
@@ -37,7 +37,7 @@
 		        <div ng-show="work.citationForDisplay" class="citation {{work.workCitation.workCitationType.toLowerCase()}}" ng-bind-html="work.citationForDisplay"></div>
 	        </div>
 	        <!-- Settings -->
-	        <div class="col-md-4 workspace-toolbar">
+	        <div class="col-md-4 col-sm-4 workspace-toolbar">
 	        	<#include "all_info_work_inc.ftl"/>
 		        <#if !(isPublicProfile??)>
 					<ul class="workspace-private-toolbar">

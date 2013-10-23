@@ -18,8 +18,8 @@
 -->
 
 <script type="text/ng-template" id="delete-affiliation-modal">
-	<div style="padding: 20px;">
-		<h3 style="margin-bottom: 0px;">${springMacroRequestContext.getMessage("manage.deleteAffiliation.pleaseConfirm")}</h3>
+	<div>
+		<h3>${springMacroRequestContext.getMessage("manage.deleteAffiliation.pleaseConfirm")}</h3>
 		{{fixedTitle}}<br />
 		<br />
     	<div class="btn btn-danger" ng-click="deleteByPutCode()">
@@ -167,7 +167,7 @@
 				<span ng-show="addingAffiliation">
 					<i class="icon-spinner icon-2x icon-spin  green"></i>
 				</span>
-				<span ng-show="editWork.errors.length > 0" class="alert" style>Please fix above errors</span>
+				<span ng-show="editWork.errors.length > 0" class="alert">Please fix above errors</span>
 			</div>
 		</div>
 		<div class="row">
@@ -180,32 +180,42 @@
 
 <ul ng-hide="!affiliations.length" class="workspace-affiliations workspace-body-list bottom-margin-medium" ng-cloak>        
     <li class="bottom-margin-small" ng-repeat="affiliation in affiliations | orderBy:['-startDate.year', '-startDate.month', '-startDate.day', '-endDate.year', '-endDate.month', '-endDate.day', 'affiliationName.value']">            	
-        <div class="pull-right" style="right: 145px; top: 20px; width: 15px;"><a href ng-click="deleteAffiliation(affiliation.putCode.value)" class="icon-trash orcid-icon-trash grey"></a></div>
-		<div style="width: 530px;">
-		    <div class="affiliation-type" ng-bind-html="affiliation.affiliationTypeForDisplay"></div>
-	        <h3 class="affiliation-title">
-	        	<strong ng-bind-html="affiliation.affiliationName.value"></strong>
-	        	<span class="affiliation-date" ng-show="affiliation.startDate">
-	        	    (<span ng-show="affiliation.startDate.month">{{affiliation.startDate.month}}-</span><span ng-show="affiliation.startDate.year">{{affiliation.startDate.year}}</span>
-	        	    <@orcid.msg 'workspace_affiliations.dateSeparator'/>
-	        	    <span ng-show="affiliation.endDate">
-	        	        <span ng-show="affiliation.endDate.month">{{affiliation.endDate.month}}-</span><span ng-show="affiliation.endDate.year">{{affiliation.endDate.year}}</span>)
-	        	    </span>
-	        	    <span ng-hide="affiliation.endDate">
-	        	        <@orcid.msg 'workspace_affiliations.present'/>)
-	        	    </span>
-	        	</span>
-	        </h3>
-	        <div class="affiliation-details">
-	            <span ng-show="affiliation.departmentName"><span ng-bind-html="affiliation.departmentName.value"></span> | </span><span ng-bind-html="affiliation.city.value"></span><span ng-show="affiliation.region">, <span ng-bind-html="affiliation.region.value"></span></span>, <span ng-bind-html="affiliation.countryForDisplay"></span>
+        <div class="row">        
+        	<!-- Information -->
+			<div class="col-md-8 col-sm-8">
+			    <div class="affiliation-type" ng-bind-html="affiliation.affiliationTypeForDisplay"></div>
+		        <h3 class="affiliation-title">
+		        	<strong ng-bind-html="affiliation.affiliationName.value"></strong>
+		        	<span class="affiliation-date" ng-show="affiliation.startDate">
+		        	    (<span ng-show="affiliation.startDate.month">{{affiliation.startDate.month}}-</span><span ng-show="affiliation.startDate.year">{{affiliation.startDate.year}}</span>
+		        	    <@orcid.msg 'workspace_affiliations.dateSeparator'/>
+		        	    <span ng-show="affiliation.endDate">
+		        	        <span ng-show="affiliation.endDate.month">{{affiliation.endDate.month}}-</span><span ng-show="affiliation.endDate.year">{{affiliation.endDate.year}}</span>)
+		        	    </span>
+		        	    <span ng-hide="affiliation.endDate">
+		        	        <@orcid.msg 'workspace_affiliations.present'/>)
+		        	    </span>
+		        	</span>
+		        </h3>
+		        <div class="affiliation-details">
+		            <span ng-show="affiliation.departmentName"><span ng-bind-html="affiliation.departmentName.value"></span> | </span><span ng-bind-html="affiliation.city.value"></span><span ng-show="affiliation.region">, <span ng-bind-html="affiliation.region.value"></span></span>, <span ng-bind-html="affiliation.countryForDisplay"></span>
+		        </div>
+		        <div ng-show="affiliation.sourceName">
+		            <span class="affiliation-source">SOURCE: <span ng-bind-html="affiliation.sourceName"></span></span>
+		        </div>
 	        </div>
-	        <div ng-show="affiliation.sourceName">
-	            <span class="affiliation-source">SOURCE: <span ng-bind-html="affiliation.sourceName"></span></span>
-	        </div>
-        </div>
-        <div class="pull-right" style="width: 130px;">
-		<@orcid.privacyToggle "affiliation.visibility.visibility" "setPrivacy($index, 'PUBLIC', $event)" 
-                    	  "setPrivacy($index, 'LIMITED', $event)" "setPrivacy($index, 'PRIVATE', $event)" />
+	        <!-- Privacy Settings -->
+	        <div class="col-md-4 col-sm-4 workspace-toolbar">
+	        	<ul class="workspace-private-toolbar">
+	        		<li>	
+			        	<a href ng-click="deleteAffiliation(affiliation.putCode.value)" class="icon-trash orcid-icon-trash grey"></a>
+			        </li>
+			        <li>
+						<@orcid.privacyToggle "affiliation.visibility.visibility" "setPrivacy($index, 'PUBLIC', $event)" 
+			                    	  "setPrivacy($index, 'LIMITED', $event)" "setPrivacy($index, 'PRIVATE', $event)" />
+			        </li>
+		        </ul>
+			</div>
 		</div>
     </li>           
 </ul>

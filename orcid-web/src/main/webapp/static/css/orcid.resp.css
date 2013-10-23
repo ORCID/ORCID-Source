@@ -1493,8 +1493,9 @@ a:hover {
 }
 
 .workspace-private-toolbar{
-	margin:0;
+	margin:0 40px 0 0;
 	padding:0;
+	float:right;
 }
 
 .workspace-private-toolbar li a.icon-trash{
@@ -1699,13 +1700,30 @@ a:hover {
 
 .workspace-body-list h3 {
 	line-height: 24px;
-	margin-bottom: 0;
-	margin-right: 15px;
+	margin: 15px 15px 0 0;	
 }
 
 .workspace-header-public {
 	padding-top: 10px;
 	line-height: 1.2;
+}
+
+/* Affiliations*/
+
+
+.affiliation-date {
+    font-style: italic;
+    font-weight: normal !important;
+}
+
+.affiliation-type {
+    font-size: 16px;
+    font-style: italic;
+    margin: 10px 0 0 0;
+}
+
+.affiliation-title{
+	margin-top: 0 !important;	
 }
 
 .grant-title {
@@ -2508,8 +2526,9 @@ ul.workspace-private-toolbar > li{
 	width: 410px;
 }
 
-#workspace-grants div:after,#workspace-patents div:after,#workspace-affiliations div:after
-	{
+#workspace-grants > div:after,
+#workspace-patents > div:after,
+#workspace-affiliations > div:after{
 	border: 0 !important;
 	content: '';
 }
@@ -3131,6 +3150,13 @@ ul.personal-inf-display li{
 		font-size: 30px;
 	}
 	
+	.workspace-toolbar{
+		border-bottom: 1px solid #CACACA;
+	    height: 50px;
+	    margin-top: 15px;
+	    width: 100%;
+	}
+	
 	.workspace-private-toolbar .icon-question-sign{
 		line-height: 20px;
 	}	
@@ -3144,21 +3170,29 @@ ul.personal-inf-display li{
 		margin-left: 7px;
 	}
 	
-	.workspace-private-toolbar{
-		border-bottom: 1px solid #CACACA;
+	.workspace-private-toolbar{		
     	padding-bottom: 15px;
+    	float:left !important;    	    	
 	}
 	
 	.workspace-accordion-item{
 		border-bottom: none;
 	}
 	
-	.popover-help-container .popover{
+	#workspace-publications .popover-help-container .popover{
 		left:-190px !important;
-	} 
+	}
 	
-	.popover-help-container .arrow{
+	#workspace-publications .popover-help-container .arrow{
 		left: 203px !important;
+	}
+	/* Affiliations Pop over */
+	#workspace-affiliations .popover-help-container .popover{
+		left:-155px !important;
+	}
+	
+	#workspace-affiliations .popover-help-container .arrow{
+		left: 167px !important;
 	}
 	
 	 	
@@ -3395,6 +3429,15 @@ ul.personal-inf-display li{
 	
 	.workspace-profile{	
 		margin-left: 15px;
+	}
+	
+	/* Workspace Affiliations */	
+	.popover-help-container .popover{
+		left: -255px;
+	}
+	
+	.popover.bottom .arrow{
+		left: 260px;
 	}
 	
 }
