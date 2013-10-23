@@ -112,6 +112,10 @@ a:hover,a:active {
 	outline: 0;
 }
 
+.btn{
+	border: none;
+}
+
 sub,sup {
 	position: relative;
 	font-size: 75%;
@@ -206,6 +210,10 @@ textarea {
 .reset {
 	padding: 0;
 	margin: 0;
+}
+
+#cboxClose{
+	display: none !important;
 }
 
 label,input,button,select,textarea {
@@ -1371,8 +1379,10 @@ ul.privacyHelp li.private {
 	top: 0;
 	left: 0;
 	z-index: 9999;
-	overflow: hidden;
+	/*overflow: hidden;*/
 }
+
+
 
 #cboxOverlay {
 	position: fixed;
@@ -1709,8 +1719,6 @@ a:hover {
 }
 
 /* Affiliations*/
-
-
 .affiliation-date {
     font-style: italic;
     font-weight: normal !important;
@@ -1725,6 +1733,30 @@ a:hover {
 .affiliation-title{
 	margin-top: 0 !important;	
 }
+
+#edit-affiliation #startDay,
+#edit-affiliation #startMonth,
+#edit-affiliation #endDay,
+#edit-affiliation #endMonth
+{
+	width: 80px;	
+}
+
+#edit-affiliation #startYear,
+#edit-affiliation #endYear
+{
+	width: 100px;
+}
+
+#edit-affiliation .input-xlarge{
+	width: 95%;
+}
+
+#edit-affiliation .twitter-typeahead{
+	display:block !important;	
+}
+
+/**/
 
 .grant-title {
 	margin-right: 80px;
@@ -2229,7 +2261,6 @@ TODO: fix up button colours in less
 */
 .btn-primary {
 	background: #31789B;
-	margin-top: 10px;
 }
 
 .btn-primary:hover {
@@ -3227,7 +3258,6 @@ ul.personal-inf-display li{
 	#cboxContent, 
 	#cboxLoadedContent{
 		width: 100% !important;
-		box-shadow: none;
 		left:0 !important;
 		top: 0 !important;
 		

@@ -1147,11 +1147,13 @@ function AffiliationCtrl($scope, $compile, affiliationsSrvc){
 		$scope.displayAffiliations = !$scope.displayAffiliations;
 	};
 	
-	$scope.showAddModal = function(){;
+	$scope.showAddModal = function(){
+		isMobile() ? w = '100%' : w = '800px';
+		isMobile() ? h = '100%' : h = '550px';
 		$.colorbox({        	
 			html: $compile($('#add-affiliation-modal').html())($scope),
 			onComplete: function() {
-							$.colorbox.resize();
+							$.colorbox.resize({width:w, height:y});
 							$("#affiliationName").typeahead({
 								name: 'affiliationName',
 								remote: {

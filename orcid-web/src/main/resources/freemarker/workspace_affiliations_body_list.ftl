@@ -20,8 +20,7 @@
 <script type="text/ng-template" id="delete-affiliation-modal">
 	<div>
 		<h3>${springMacroRequestContext.getMessage("manage.deleteAffiliation.pleaseConfirm")}</h3>
-		{{fixedTitle}}<br />
-		<br />
+		<p>{{fixedTitle}}</p>		
     	<div class="btn btn-danger" ng-click="deleteByPutCode()">
     		${springMacroRequestContext.getMessage("manage.deleteAffiliation.delete")}
     	</div>
@@ -30,15 +29,18 @@
 </script>
 
 <script type="text/ng-template" id="add-affiliation-modal">
-	<div class="edit-affiliation colorbox-content">
+	<div id="edit-affiliation" class="edit-affiliation colorbox-content">
 		<div class="row">
-			<div class="span12">
-				<h1 class="lightbox-title pull-left"><@orcid.msg 'manual_affiliation_form_contents.add_affiliation'/></h1>
+			<div class="col-md-11 col-sm-11 col-xs-10">
+				<h1 class="lightbox-title pull-left"><@orcid.msg 'manual_affiliation_form_contents.add_affiliation'/></h1>				
+			</div>
+			<div class="col-md-1 col-sm-1 col-xs-2">
 				<a class="btn pull-right close-button" ng-click="closeModal()">X</a>
 			</div>
 		</div>
+
 		<div class="row">
-			<div class="span6">
+			<div class="col-md-6">
 				<div class="control-group">
 					<label><@orcid.msg 'manual_affiliation_form_contents.labelname'/></label>
 				    <div class="relative">
@@ -93,7 +95,7 @@
 					</div>
 				</div>
 			</div>
-			<div class="span6">
+			<div class="col-md-6">
 				<div class="control-group">
 		    		<label class="relative"><@orcid.msg 'manual_affiliation_form_contents.labelaffiliationtype'/></label>
 		    		<div class="relative">
@@ -108,17 +110,17 @@
 				<div class="control-group">
 		    		<label class="relative" for="manualAffiliation.startDay"><@orcid.msg 'manual_affiliation_form_contents.labelStartDate'/></label>
 		    		<div class="relative">
-				    <select id="startDay" name="startDay" ng-model="editAffiliation.startDate.day" class="span1">
+				    <select id="startDay" name="startDay" ng-model="editAffiliation.startDate.day">
 						<#list days?keys as key>
 							<option value="${key}">${days[key]}</option>
 						</#list>
 		    		</select>
-				    <select id="startMonth" name="startMonth" ng-model="editAffiliation.startDate.month" class="span1">
+				    <select id="startMonth" name="startMonth" ng-model="editAffiliation.startDate.month">
 						<#list months?keys as key>
 							<option value="${key}">${months[key]}</option>
 						</#list>
 		    		</select>
-				    <select id="startYear" name="startMonth" ng-model="editAffiliation.startDate.year" class="span2">
+				    <select id="startYear" name="startMonth" ng-model="editAffiliation.startDate.year">
 						<#list years?keys as key>
 							<option value="${key}">${years[key]}</option>
 						</#list>
@@ -128,17 +130,17 @@
 		    	<div class="control-group">
 		    		<label class="relative" for="manualAffiliation.endDay"><@orcid.msg 'manual_affiliation_form_contents.labelEndDate'/></label>
 		    		<div class="relative">
-				    <select id="endDay" name="endDay" ng-model="editAffiliation.endDate.day" class="span1">
+				    <select id="endDay" name="endDay" ng-model="editAffiliation.endDate.day">
 						<#list days?keys as key>
 							<option value="${key}">${days[key]}</option>
 						</#list>
 		    		</select>
-				    <select id="endMonth" name="endMonth" ng-model="editAffiliation.endDate.month" class="span1">
+				    <select id="endMonth" name="endMonth" ng-model="editAffiliation.endDate.month">
 						<#list months?keys as key>
 							<option value="${key}">${months[key]}</option>
 						</#list>
 		    		</select>
-				    <select id="endYear" name="endMonth" ng-model="editAffiliation.endDate.year" class="span2">
+				    <select id="endYear" name="endMonth" ng-model="editAffiliation.endDate.year">
 						<#list years?keys as key>
 							<option value="${key}">${years[key]}</option>
 						</#list>
@@ -155,26 +157,22 @@
 		 		</div>
 			</div>
 		</div>
-		<div class="row">
-			<div class="span6">
-			   &nbsp;
-			</div>
-			<div class="span2">
+		<div class="row">			
+			<div class="col-md-offset-6 col-md-4">
 				<button class="btn btn-primary" ng-click="addAffiliation()" ng-disabled="addingAffiliation" ng-class="{disabled:addingAffiliation}"><@orcid.msg 'manual_affiliation_form_contents.btnaddtolist'/></button> 
 				<a href="" ng-click="closeModal()"><@orcid.msg 'manage.deleteExternalIdentifier.cancel'/></a>
 			</div>
-			<div class="span4">
+			<div class="col-md-2">
 				<span ng-show="addingAffiliation">
 					<i class="icon-spinner icon-2x icon-spin  green"></i>
-				</span>
-				<span ng-show="editWork.errors.length > 0" class="alert">Please fix above errors</span>
-			</div>
-		</div>
+				</span>				
+			</div>			
+		</div>		
 		<div class="row">
-			<div class="span12">
-			   &nbsp;
-			</div>
-		</div>
+			<div class="col-md-12">	
+				<span ng-show="editWork.errors.length > 0" class="alert">Please fix above errors</span>
+			<div>
+		<div>
 	<div>
 </script>
 
