@@ -94,7 +94,7 @@ public class JpaJaxbEntityAdapterToOrcidClientGroupTest extends DBUnitTest {
         OrcidClientGroup orcidClientGroup = adapter.toOrcidClientGroup(profileEntity);
         assertNotNull(orcidClientGroup);
         String expected = IOUtils.toString(getClass().getResourceAsStream(CLIENT_GROUP), "UTF-8");
-        //assertEquals(expected, orcidClientGroup.toString());
+        assertEquals(expected, orcidClientGroup.toString());
     }
     
     @Test
