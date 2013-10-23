@@ -7,6 +7,7 @@ import javax.xml.bind.annotation.XmlEnumValue;
 public enum WorkSubtype implements Serializable {
     @XmlEnumValue("artistic-performance")ARTISTIC_PERFORMANCE("artistic-performance"),
     @XmlEnumValue("book-chapter")BOOK_CHAPTER("book-chapter"),
+    @XmlEnumValue("book-review")BOOK_REVIEW("book-review"),
     @XmlEnumValue("book")BOOK("book"),
     @XmlEnumValue("conference-abstract")CONFERENCE_ABSTRACT("conference-abstract"),
     @XmlEnumValue("conference-paper")CONFERENCE_PAPER("conference-paper"),
@@ -37,7 +38,9 @@ public enum WorkSubtype implements Serializable {
     @XmlEnumValue("standards-and-policy")STANDARDS_AND_POLICY("standards-and-policy"),
     @XmlEnumValue("supervised-student-publication")SUPERVISED_STUDENT_PUBLICATION("supervised-student-publication"),
     @XmlEnumValue("technical-standard")TECHNICAL_STANDARD("technical-standard"),
+    @XmlEnumValue("test")TEST("test"),
     @XmlEnumValue("translation")TRANSLATION("translation"),
+    @XmlEnumValue("trademark")TRADEMARK("trademark"),
     @XmlEnumValue("website")WEBSITE("website"),
     @XmlEnumValue("working-paper")WORKING_PAPER("working-paper"),
     @XmlEnumValue("undefined")UNDEFINED("undefined");

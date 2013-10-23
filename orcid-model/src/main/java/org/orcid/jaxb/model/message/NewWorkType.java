@@ -8,10 +8,10 @@ import javax.xml.bind.annotation.XmlEnumValue;
 
 public enum NewWorkType {
     @XmlEnumValue("publication")
-    PUBLICATION("publication", WorkSubtype.BOOK_CHAPTER, WorkSubtype.BOOK, WorkSubtype.DICTIONARY_ENTRY, WorkSubtype.DISSERTATION, WorkSubtype.EDITED_BOOK,
+    PUBLICATION("publication", WorkSubtype.BOOK_CHAPTER, WorkSubtype.BOOK_REVIEW, WorkSubtype.BOOK, WorkSubtype.DICTIONARY_ENTRY, WorkSubtype.DISSERTATION, WorkSubtype.EDITED_BOOK,
             WorkSubtype.ENCYCLOPEDIA_ENTRY, WorkSubtype.JOURNAL_ARTICLE, WorkSubtype.JOURNAL_ISSUE, WorkSubtype.MAGAZINE_ARTICLE, WorkSubtype.MANUAL,
             WorkSubtype.NEWSLETTER_ARTICLE, WorkSubtype.NEWSPAPER_ARTICLE, WorkSubtype.ONLINE_RESOURCE, WorkSubtype.REPORT, WorkSubtype.RESEARCH_TOOL,
-            WorkSubtype.SUPERVISED_STUDENT_PUBLICATION, WorkSubtype.TRANSLATION, WorkSubtype.WEBSITE, WorkSubtype.WORKING_PAPER),             
+            WorkSubtype.SUPERVISED_STUDENT_PUBLICATION, WorkSubtype.TEST, WorkSubtype.TRANSLATION, WorkSubtype.WEBSITE, WorkSubtype.WORKING_PAPER),             
     @XmlEnumValue("conference")
     CONFERENCE("conference", WorkSubtype.CONFERENCE_ABSTRACT, WorkSubtype.CONFERENCE_PAPER, WorkSubtype.CONFERENCE_POSTER), 
     @XmlEnumValue("intellectual_property")

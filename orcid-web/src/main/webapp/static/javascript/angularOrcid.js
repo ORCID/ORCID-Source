@@ -673,7 +673,7 @@ function ResetPasswordCtrl($scope, $compile) {
 	    	// something bad is happening!
 	    	console.log("ResetPasswordCtrl.serverValidate() error");
 	    });
-	};
+	};		
 	
 	// in the case of slow network connection
 	// we don't want to overwrite  values while
@@ -1439,6 +1439,7 @@ function WorkCtrl($scope, $compile, worksSrvc) {
 	$scope.bibtexCitations = {};
 	$scope.languages = null;
 	$scope.editTranslatedTitle = false;
+	$scope.subtypes = null;
 	
 	$scope.toggleDisplayWorks = function () {
 		$scope.displayWorks = !$scope.displayWorks;
@@ -1718,9 +1719,7 @@ function WorkCtrl($scope, $compile, worksSrvc) {
 		$event.preventDefault();
 		$scope.editWork.visibility.visibility = priv;
 	};
-
-	
-		
+			
 	$scope.setPrivacy = function(putCode, priv, $event) {
 		$event.preventDefault();
 		var idx;
@@ -1798,6 +1797,26 @@ function WorkCtrl($scope, $compile, worksSrvc) {
 	    	console.log("Error updating profile work.");
 	    });
 	};		
+	
+	
+	$scope.loadWorkSubtypes = function(){			
+		if($scope.editWork.workType.value != null && $scope.editWork.workType.value != ""){
+			$.ajax({
+		        url: $('body').data('baseurl') + 'works/loadWorkSubtypes.json?workType=' + $scope.editWork.workType.value,
+		        type: 'POST',	        
+		        contentType: 'application/json;charset=UTF-8',
+		        dataType: 'json',
+		        success: function(data) {
+		        	console.log(data);
+		        	$scope.subtypes = data;
+		        	$scope.$apply();
+		        }
+		    }).fail(function() { 
+		    	console.log("Error loading subtypes.");
+	    });
+		}
+	};
+	
 }
 
 function QuickSearchCtrl($scope, $compile){

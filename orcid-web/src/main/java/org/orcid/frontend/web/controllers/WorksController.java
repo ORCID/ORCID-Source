@@ -19,6 +19,7 @@ package org.orcid.frontend.web.controllers;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -39,10 +40,12 @@ import org.orcid.core.manager.WorkContributorManager;
 import org.orcid.core.manager.WorkExternalIdentifierManager;
 import org.orcid.core.manager.WorkManager;
 import org.orcid.core.utils.JsonUtils;
+import org.orcid.frontend.web.util.FunctionsOverCollections;
 import org.orcid.frontend.web.util.LanguagesMap;
 import org.orcid.jaxb.model.message.CitationType;
 import org.orcid.jaxb.model.message.ContributorAttributes;
 import org.orcid.jaxb.model.message.ContributorRole;
+import org.orcid.jaxb.model.message.NewWorkType;
 import org.orcid.jaxb.model.message.OrcidActivities;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidWork;
@@ -50,6 +53,7 @@ import org.orcid.jaxb.model.message.OrcidWorks;
 import org.orcid.jaxb.model.message.PublicationDate;
 import org.orcid.jaxb.model.message.SequenceType;
 import org.orcid.jaxb.model.message.WorkContributors;
+import org.orcid.jaxb.model.message.WorkSubtype;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.PublicationDateEntity;
 import org.orcid.persistence.jpa.entities.WorkContributorEntity;
@@ -69,6 +73,7 @@ import org.orcid.utils.BibtexUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -723,4 +728,22 @@ public class WorksController extends BaseWorkspaceController {
         }
         return work;
     }
+    
+    /**
+     * Return a list of work subtypes based on the work type provided as a parameter
+     * @param workType
+     * @return a map containing the list of subtypes associated with that type and his localized name
+     * */
+    @RequestMapping(value = "/loadWorkSubtypes.json", method = RequestMethod.POST)    
+    public @ResponseBody Map<String, String> retriveWorkSubtypesAsMap(@RequestParam(value = "workType")String workTypeName){
+    	Map<String, String> workSubtypes = new LinkedHashMap<String, String>();
+    	NewWorkType workType = NewWorkType.fromValue(workTypeName);    	    	
+    	
+    	for(WorkSubtype workSubtype : workType.getSubTypes()){
+    		workSubtypes.put(workSubtype.value(), getMessage(buildInternationalizationKey(WorkSubtype.class, workSubtype.value())));
+    	}
+    	
+    	return FunctionsOverCollections.sortMapsByValues(workSubtypes);
+    }    
+       
 }

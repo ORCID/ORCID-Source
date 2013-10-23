@@ -132,19 +132,7 @@ public class WorkspaceController extends BaseWorkspaceController {
         }
         
         return FunctionsOverCollections.sortMapsByValues(workTypes);
-    }
-    
-    @ModelAttribute("WorkSubtypes")
-    public Map<String, String> retriveWorkSubtypesAsMap(String workTypeName){
-    	Map<String, String> workSubtypes = new LinkedHashMap<String, String>();
-    	NewWorkType workType = NewWorkType.fromValue(workTypeName);    	    	
-    	
-    	for(WorkSubtype workSubtype : workType.getSubTypes()){
-    		workSubtypes.put(workSubtype.value(), getMessage(buildInternationalizationKey(WorkSubtype.class, workSubtype.value())));
-    	}
-    	
-    	return FunctionsOverCollections.sortMapsByValues(workSubtypes);
-    }    
+    }        
 
     @ModelAttribute("citationTypes")
     public Map<String, String> retrieveTypesAsMap() {

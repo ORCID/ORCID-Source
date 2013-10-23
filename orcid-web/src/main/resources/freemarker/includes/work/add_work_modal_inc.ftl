@@ -38,7 +38,7 @@
 				<div class="control-group">
 		    		<label class="relative"><@orcid.msg 'manual_work_form_contents.labelworktype'/></label>
 		    		<div class="relative">
-			    		<select id="workType" name="workType" class="input-xlarge" ng-model="editWork.workType.value" ng-change="serverValidate('works/work/workTypeValidate.json')">
+			    		<select id="workType" name="workType" class="input-xlarge" ng-model="editWork.workType.value" ng-change="loadWorkSubtypes()">
 			    			<option value=""><@orcid.msg 'org.orcid.jaxb.model.message.WorkType.empty' /></option>
 							<#list workTypes?keys as key>
 								<option value="${key}">${workTypes[key]}</option>
@@ -49,6 +49,18 @@
 							<div ng-repeat='error in editWork.workType.errors' ng-bind-html-unsafe="error"></div>
 						</span>
 					</div>
+				</div>
+
+				<div class="control-group">
+		    		<label class="relative"><@orcid.msg 'manual_work_form_contents.labelworksubtype'/></label>
+					<select id="workSubtype" name="workSubtype" class="input-xlarge" ng-model="editWork.workSubtype.value">
+						<option value=""><@orcid.msg 'org.orcid.jaxb.model.message.WorkSubtype.empty' /></option>
+						<option ng-repeat="(key, value) in subtypes" value="{{key}}">{{value}}</option>	
+					</select>
+					<span class="required" ng-class="isValidClass(editWork.workSubtype)">*</span>
+					<span class="orcid-error" ng-show="editWork.workSubtype.errors.length > 0">
+						<div ng-repeat='error in editWork.workSubtype.errors' ng-bind-html-unsafe="error"></div>
+					</span>
 				</div>
 
 				<div class="control-group">
