@@ -72,7 +72,7 @@
 					<label><@orcid.msg 'manual_affiliation_form_contents.labelregion'/></label>
 				    <div class="relative">
 						<input name="region" type="text" class="input-xlarge"  ng-model="editAffiliation.region.value" placeholder="<@orcid.msg 'manual_affiliation_form_contents.add_region'/>" ng-change="serverValidate('affiliations/affiliation/regionValidate.json')" ng-model-onblur/>
-						<span class="orcid-error" ng-show="editAffiliation.affiliationName.errors.length > 0">
+						<span class="orcid-error" ng-show="editAffiliation.region.errors.length > 0">
 							<div ng-repeat='error in editAffiliation.region.errors' ng-bind-html-unsafe="error"></div>
 						</span>
 					</div>
@@ -94,6 +94,16 @@
 				</div>
 			</div>
 			<div class="span6">
+				<div class="control-group">
+					<label><@orcid.msg 'manual_affiliation_form_contents.labelroletitle'/></label>
+				    <div class="relative">
+						<input name="region" type="text" class="input-xlarge"  ng-model="editAffiliation.roleTitle.value" placeholder="<@orcid.msg 'manual_affiliation_form_contents.add_title'/>" ng-change="serverValidate('affiliations/affiliation/roleTitleValidate.json')" ng-model-onblur/>
+						<span class="orcid-error" ng-show="editAffiliation.roleTitle.errors.length > 0">
+							<div ng-repeat='error in editAffiliation.roleTitle.errors' ng-bind-html-unsafe="error"></div>
+						</span>
+					</div>
+				</div>
+
 				<div class="control-group">
 		    		<label class="relative"><@orcid.msg 'manual_affiliation_form_contents.labelaffiliationtype'/></label>
 		    		<div class="relative">
@@ -198,6 +208,9 @@
 	        </h3>
 	        <div class="affiliation-details">
 	            <span ng-show="affiliation.departmentName"><span ng-bind-html="affiliation.departmentName.value"></span> | </span><span ng-bind-html="affiliation.city.value"></span><span ng-show="affiliation.region">, <span ng-bind-html="affiliation.region.value"></span></span>, <span ng-bind-html="affiliation.countryForDisplay"></span>
+	        </div>
+	        <div class="affiliation-details" ng-show="affiliation.roleTitle">
+	            <span ng-bind-html="affiliation.roleTitle.value"></span>
 	        </div>
 	        <div ng-show="affiliation.sourceName">
 	            <span class="affiliation-source">SOURCE: <span ng-bind-html="affiliation.sourceName"></span></span>
