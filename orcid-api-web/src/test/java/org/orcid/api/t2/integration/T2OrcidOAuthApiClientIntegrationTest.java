@@ -48,6 +48,7 @@ import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.message.Subtitle;
 import org.orcid.jaxb.model.message.Title;
 import org.orcid.jaxb.model.message.Visibility;
+import org.orcid.jaxb.model.message.WorkSubtype;
 import org.orcid.jaxb.model.message.WorkTitle;
 import org.orcid.jaxb.model.message.NewWorkType;
 import org.slf4j.Logger;
@@ -231,7 +232,8 @@ public class T2OrcidOAuthApiClientIntegrationTest extends BaseT2OrcidOAuthApiCli
 
         orcidWorks = new OrcidWorks();
         OrcidWork orcidWork = orcidClientDataHelper.createWork("Single works");
-        orcidWork.setWorkType(WorkType.UNDEFINED);
+        orcidWork.setWorkType(NewWorkType.OTHER_OUTPUT);
+        orcidWork.setWorkSubtype(WorkSubtype.UNDEFINED);
         orcidWorks.getOrcidWork().add(orcidWork);        
         message.getOrcidProfile().setOrcidWorks(orcidWorks);
 
@@ -321,15 +323,20 @@ public class T2OrcidOAuthApiClientIntegrationTest extends BaseT2OrcidOAuthApiCli
         message.getOrcidProfile().getOrcidInternal().setSecurityDetails(null);
         assertClientResponse401Details(oauthT2Client.updateWorksXml(this.orcid, message, null));
 
-        if(work1.getWorkType() == null)
-            work1.setWorkType(WorkType.UNDEFINED);
-        
-        if(workToUpdate.getWorkType() == null){
-            workToUpdate.setWorkType(WorkType.UNDEFINED);
+        if(work1.getWorkType() == null) {
+            work1.setWorkType(NewWorkType.OTHER_OUTPUT);
+            work1.setWorkSubtype(WorkSubtype.UNDEFINED);
         }
         
-        if(work3.getWorkType() == null)
-            work3.setWorkType(WorkType.UNDEFINED);
+        if(workToUpdate.getWorkType() == null){
+        	workToUpdate.setWorkType(NewWorkType.OTHER_OUTPUT);
+        	workToUpdate.setWorkSubtype(WorkSubtype.UNDEFINED);
+        }
+        
+        if(work3.getWorkType() == null) {
+        	work3.setWorkType(NewWorkType.OTHER_OUTPUT);
+            work3.setWorkSubtype(WorkSubtype.UNDEFINED);
+        }
         
         ClientResponse updatedWorksResponse = oauthT2Client.updateWorksXml(this.orcid, message, accessToken);
 

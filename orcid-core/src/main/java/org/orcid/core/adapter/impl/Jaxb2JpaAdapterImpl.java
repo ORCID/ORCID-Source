@@ -304,8 +304,8 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             workEntity.setJournalTitle(orcidWork.getJournalTitle() != null ? orcidWork.getJournalTitle().getContent() : null);
             workEntity.setLanguageCode(orcidWork.getLanguageCode() != null ? orcidWork.getLanguageCode() : null);
             workEntity.setIso2Country(orcidWork.getCountry() == null ? null : orcidWork.getCountry().getValue());
-            // TODO this code will be phased out when schema 1.0.6.XSD is
-            workEntity.setWorkType(WorkType.BIBLE.equals(orcidWork.getWorkType()) ? WorkType.RELIGIOUS_TEXT : orcidWork.getWorkType());
+            workEntity.setWorkType(orcidWork.getWorkType());
+            workEntity.setWorkSubtype(orcidWork.getWorkSubtype());
             workEntity.setWorkUrl(orcidWork.getUrl() != null ? orcidWork.getUrl().getValue() : null);
             return workEntity;
         }

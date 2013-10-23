@@ -215,11 +215,11 @@ public class WorkEntity extends BaseEntity<Long> implements Comparable<WorkEntit
     @Basic
     @Enumerated(EnumType.STRING)
     @Column(name = "work_subtype", length = 100)
-    public WorkSubtype getWorkSubType() {
+    public WorkSubtype getWorkSubtype() {
         return workSubtype;
     }
 
-    public void setWorkSubType(WorkSubtype workSubtype) {
+    public void setWorkSubtype(WorkSubtype workSubtype) {
         this.workSubtype = workSubtype;
     }
     

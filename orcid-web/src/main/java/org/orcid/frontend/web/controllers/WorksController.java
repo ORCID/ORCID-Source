@@ -211,6 +211,11 @@ public class WorksController extends BaseWorkspaceController {
         wTypeText.setValue("");
         wTypeText.setRequired(true);
         w.setWorkType(wTypeText);
+        
+        Text wSubtypeText = new Text();
+        wSubtypeText.setValue("");
+        wSubtypeText.setRequired(true);
+        w.setWorkSubtype(wSubtypeText);
 
         Date d = new Date();
         d.setDay("");
@@ -274,6 +279,7 @@ public class WorksController extends BaseWorkspaceController {
         workWorkTitleTranslatedTitleValidate(work);
         workdescriptionValidate(work);
         workWorkTypeValidate(work);
+        workWorkSubtypeValidate(work);
         workWorkExternalIdentifiersValidate(work);
         workUrlValidate(work);
         workJournalTitleValidate(work);
@@ -286,6 +292,7 @@ public class WorksController extends BaseWorkspaceController {
         copyErrors(work.getShortDescription(), work);
         copyErrors(work.getWorkTitle().getSubtitle(), work);
         copyErrors(work.getWorkType(), work);
+        copyErrors(work.getWorkSubtype(), work);
         copyErrors(work.getUrl(), work);
         copyErrors(work.getJournalTitle(), work);
 
@@ -392,6 +399,7 @@ public class WorksController extends BaseWorkspaceController {
         workEntity.setTitle(orcidWork.getWorkTitle().getTitle().getContent());
         workEntity.setJournalTitle(orcidWork.getJournalTitle() != null ? orcidWork.getJournalTitle().getContent() : null);
         workEntity.setWorkType(orcidWork.getWorkType());
+        workEntity.setWorkSubtype(orcidWork.getWorkSubtype());
         workEntity.setWorkUrl(orcidWork.getUrl().getValue());
         workEntity.setLanguageCode(StringUtils.isEmpty(orcidWork.getLanguageCode()) ? null : orcidWork.getLanguageCode());
 
@@ -590,6 +598,17 @@ public class WorksController extends BaseWorkspaceController {
         return work;
     }
 
+    @RequestMapping(value = "/work/workSubtypeValidate.json", method = RequestMethod.POST)
+    public @ResponseBody
+    Work workWorkSubtypeValidate(@RequestBody Work work) {
+        work.getWorkSubtype().setErrors(new ArrayList<String>());
+        if (work.getWorkSubtype().getValue() == null || work.getWorkSubtype().getValue().trim().length() == 0) {
+            setError(work.getWorkType(), "NotBlank.manualWork.workSubtype");
+        }
+
+        return work;
+    }
+    
     @RequestMapping(value = "/work/workExternalIdentifiersValidate.json", method = RequestMethod.POST)
     public @ResponseBody
     Work workWorkExternalIdentifiersValidate(@RequestBody Work work) {

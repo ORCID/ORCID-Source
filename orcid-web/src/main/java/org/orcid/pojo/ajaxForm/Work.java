@@ -33,6 +33,7 @@ import org.orcid.jaxb.model.message.WorkContributors;
 import org.orcid.jaxb.model.message.WorkExternalIdentifiers;
 import org.orcid.jaxb.model.message.WorkSource;
 import org.orcid.jaxb.model.message.NewWorkType;
+import org.orcid.jaxb.model.message.WorkSubtype;
 import org.orcid.utils.BibtexUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -73,6 +74,8 @@ public class Work implements ErrorsInterface, Serializable {
     private static Logger LOGGER = LoggerFactory.getLogger(Work.class);
 
     private Text workType;
+    
+    private Text workSubtype;
 
     protected String citationForDisplay;
 
@@ -157,7 +160,11 @@ public class Work implements ErrorsInterface, Serializable {
             ow.setWorkTitle(this.workTitle.toWorkTitle());
         }
         if (this.getWorkType() != null) {
-            ow.setWorkType(WorkType.fromValue(this.getWorkType().getValue()));
+            ow.setWorkType(NewWorkType.fromValue(this.getWorkType().getValue()));
+        }
+        
+        if(this.getWorkSubtype() != null){
+        	ow.setWorkSubtype(WorkSubtype.fromValue(this.getWorkSubtype().getValue()));
         }
 
         if (this.getJournalTitle() != null) {
@@ -297,6 +304,14 @@ public class Work implements ErrorsInterface, Serializable {
         this.workType = workType;
     }
 
+    public Text getWorkSubtype(){
+    	return workSubtype;
+    }
+    
+    public void setWorkSubtype(Text workSubtype){
+    	this.workSubtype = workSubtype;
+    }
+    
     public Text getJournalTitle() {
         return journalTitle;
     }

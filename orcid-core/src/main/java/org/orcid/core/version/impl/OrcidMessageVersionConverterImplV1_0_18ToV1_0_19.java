@@ -23,6 +23,7 @@ import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidWork;
 import org.orcid.jaxb.model.message.OrcidWorks;
 import org.orcid.jaxb.model.message.NewWorkType;
+import org.orcid.jaxb.model.message.WorkSubtype;
 
 /**
  * 
@@ -58,10 +59,9 @@ public class OrcidMessageVersionConverterImplV1_0_18ToV1_0_19 implements OrcidMe
             if(activites != null){
                 OrcidWorks works = activites.getOrcidWorks();
                 if(works != null){
-                    for(OrcidWork work : works.getOrcidWork()){
-                        if(work.getWorkType() != null){
-                            work.setWorkType(null);
-                        }
+                    for(OrcidWork work : works.getOrcidWork()){                        
+                    	work.setWorkType(null);
+                        work.setWorkSubtype(null);
                     }
                 }
             }
@@ -90,7 +90,8 @@ public class OrcidMessageVersionConverterImplV1_0_18ToV1_0_19 implements OrcidMe
                 if(works != null){
                     for(OrcidWork work : works.getOrcidWork()){
                         if(work.getWorkType() == null){
-                            work.setWorkType(WorkType.UNDEFINED);
+                            work.setWorkType(NewWorkType.OTHER_OUTPUT);
+                            work.setWorkSubtype(WorkSubtype.UNDEFINED);
                         }
                     }
                 }

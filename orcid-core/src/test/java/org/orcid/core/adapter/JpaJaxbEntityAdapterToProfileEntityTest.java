@@ -39,6 +39,7 @@ import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidWork;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.message.NewWorkType;
+import org.orcid.jaxb.model.message.WorkSubtype;
 import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.GivenPermissionByEntity;
@@ -214,10 +215,13 @@ public class JpaJaxbEntityAdapterToProfileEntityTest extends DBUnitTest {
         OrcidMessage orcidMessage = getOrcidMessage(ORCID_INTERNAL_FULL_XML);
         List<OrcidWork> currentOrcidWorks = orcidMessage.getOrcidProfile().getOrcidActivities().getOrcidWorks().getOrcidWork();
         assertTrue(currentOrcidWorks.size() == 1);
-        currentOrcidWorks.get(0).setWorkType(WorkType.BIBLE);
+        currentOrcidWorks.get(0).setWorkType(NewWorkType.OTHER_OUTPUT);
+        currentOrcidWorks.get(0).setWorkSubtype(WorkSubtype.DATA_SET);
         ProfileEntity profileEntity = adapter.toProfileEntity(orcidMessage.getOrcidProfile());
         List<ProfileWorkEntity> profileWorks = new ArrayList<ProfileWorkEntity>(profileEntity.getProfileWorks());
-        assertTrue(profileWorks.size() == 1 && profileWorks.get(0).getWork().getWorkType().equals(WorkType.RELIGIOUS_TEXT));
+        assertEquals(1, profileWorks.size());
+        assertTrue(profileWorks.get(0).getWork().getWorkType().equals(NewWorkType.OTHER_OUTPUT));
+        assertTrue(profileWorks.get(0).getWork().getWorkSubtype().equals(WorkSubtype.DATA_SET));
 
     }
 

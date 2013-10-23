@@ -39,6 +39,7 @@ import org.orcid.jaxb.model.message.SequenceType;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
 import org.orcid.jaxb.model.message.NewWorkType;
+import org.orcid.jaxb.model.message.WorkSubtype;
 
 /**
  * 
@@ -60,7 +61,8 @@ public class CurrentWorkTest {
         currentWork.setCitation("Carberry, Josiah S., John W. Spaeth, and Paulo Di Fillipo. \"Neanderthal Man.\" Book of Prehistory. N.p.: Brown UP, "
                 + "2012. 450-70. 09 Oct. 2012. Web.");
         currentWork.setCitationType(CitationType.FORMATTED_UNSPECIFIED.value());
-        currentWork.setWorkType(WorkType.BOOK.value());
+        currentWork.setWorkType(NewWorkType.PUBLICATION.value());
+        currentWork.setWorkSubtype(WorkSubtype.BOOK.value());
         currentWork.setYear("2012");
         currentWork.setMonth("10");
         currentWork.setDay("09");
