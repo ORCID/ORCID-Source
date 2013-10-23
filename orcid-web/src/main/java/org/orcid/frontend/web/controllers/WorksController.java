@@ -608,7 +608,7 @@ public class WorksController extends BaseWorkspaceController {
     Work workWorkSubtypeValidate(@RequestBody Work work) {
         work.getWorkSubtype().setErrors(new ArrayList<String>());
         if (work.getWorkSubtype().getValue() == null || work.getWorkSubtype().getValue().trim().length() == 0) {
-            setError(work.getWorkType(), "NotBlank.manualWork.workSubtype");
+            setError(work.getWorkSubtype(), "NotBlank.manualWork.workSubtype");
         }
 
         return work;

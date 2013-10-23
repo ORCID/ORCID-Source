@@ -114,7 +114,9 @@ public class Work implements ErrorsInterface, Serializable {
             w.setWorkTitle(WorkTitle.valueOf(orcidWork.getWorkTitle()));
         if (orcidWork.getWorkType() != null)
             w.setWorkType(Text.valueOf(orcidWork.getWorkType().value()));
-
+        if (orcidWork.getWorkSubtype() != null)
+            w.setWorkSubtype(Text.valueOf(orcidWork.getWorkSubtype().value()));
+        
         if (orcidWork.getJournalTitle() != null)
             w.setJournalTitle(Text.valueOf(orcidWork.getJournalTitle().getContent()));
                 
