@@ -47,6 +47,12 @@
 						<span class="orcid-error" ng-show="editAffiliation.affiliationName.errors.length > 0">
 							<div ng-repeat='error in editAffiliation.affiliationName.errors' ng-bind-html-unsafe="error"></div>
 						</span>
+						<div style="size-font: 80%;" ng-show="editAffiliation.disambiguatedAffiliationIdentifier"><strong>also known as:</strong> <a class="icon-remove-sign grey" ng-click="removeDisambiguatedAffiliation()"></a><br />
+						    <div ng-bind="disambiguatedAffiliation.value"></div>
+						    <div>
+						    	<span ng-bind="disambiguatedAffiliation.city"></span><span ng-bind="disambiguatedAffiliation.region"></span>,<span ng-bind="disambiguatedAffiliation.orgType"></span>
+						    </div>
+						</div>
 					</div>
 				</div>
 				<div class="control-group">

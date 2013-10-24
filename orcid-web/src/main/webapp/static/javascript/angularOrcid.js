@@ -1157,7 +1157,7 @@ function AffiliationCtrl($scope, $compile, affiliationsSrvc){
 								name: 'affiliationName',
 								limit: numOfResults,
 								remote: {
-									url: $('body').data('baseurl')+'affiliations/disambiguated/%QUERY?limit=' + numOfResults
+									url: $('body').data('baseurl')+'affiliations/disambiguated/name/%QUERY?limit=' + numOfResults
 								},
 								template: function (datum) {
 									   var forDisplay = 
@@ -1174,15 +1174,40 @@ function AffiliationCtrl($scope, $compile, affiliationsSrvc){
 								}
 							});
 							$("#affiliationName").bind("typeahead:selected", function(obj, datum) {        
-								$("input[name=city]").val(datum.city);
-								$("input[name=region]").val(datum.region);
-								$("select[name=country]").val(datum.country);
-								$scope.editAffiliation.city.value = datum.city;
-								$scope.editAffiliation.region.value = datum.region;
-								$scope.editAffiliation.country.value = datum.country;
+								$scope.selectAffiliation(datum);
+								$scope.$apply();
 							});
 						}
 	    });
+	};
+	
+	$scope.selectAffiliation = function(datum) {
+		$scope.editAffiliation.city.value = datum.city;
+		$scope.editAffiliation.region.value = datum.region;
+		$scope.editAffiliation.country.value = datum.country;
+		//$scope.editAffiliation.disambiguatedAffiliationIdentifier = datum.disambiguatedAffiliationIdentifier
+		$scope.getDisambiguatedAffiliation(datum.disambiguatedAffiliationIdentifier);
+	};
+	
+	$scope.getDisambiguatedAffiliation = function(id) {
+		$.ajax({
+			url: $('body').data('baseurl') + 'affiliations/disambiguated/id/' + id,
+	        dataType: 'json',
+	        type: 'GET',
+	        success: function(data) {
+	        	console.log(data.disambiguatedAffiliationIdentifier);
+		        $scope.disambiguatedAffiliation = data;
+		        $scope.editAffiliation.disambiguatedAffiliationIdentifier = data.disambiguatedAffiliationIdentifier;
+		        $scope.$apply();   	
+	        }
+		}).fail(function(){
+	    	console.log("error getDisambiguatedAffiliation(id)");
+		});
+	};
+	
+	$scope.removeDisambiguatedAffiliation = function() {
+		delete $scope.disambiguatedAffiliation;
+		delete $scope.editAffiliation.disambiguatedAffiliationIdentifier;
 	};
 
 	$scope.addAffiliationModal = function(){
