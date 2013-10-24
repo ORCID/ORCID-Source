@@ -1344,8 +1344,13 @@ function AffiliationCtrl($scope, $compile, affiliationsSrvc){
 
 	
 		
-	$scope.setPrivacy = function(idx, priv, $event) {
+	$scope.setPrivacy = function(putCode, priv, $event) {
 		$event.preventDefault();
+		var idx;
+		for (idx in $scope.affiliations) {
+			if ($scope.affiliations[idx].putCode.value == putCode)
+				break;
+		}
 		$scope.affiliations[idx].visibility.visibility = priv;
 		$scope.curPrivToggle = null;
 		$scope.updateProfileAffiliation(idx);
