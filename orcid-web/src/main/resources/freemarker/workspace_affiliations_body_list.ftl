@@ -217,8 +217,8 @@
 	        </div>
         </div>
         <div class="pull-right" style="width: 130px;">
-		<@orcid.privacyToggle "affiliation.visibility.visibility" "setPrivacy($index, 'PUBLIC', $event)" 
-                    	  "setPrivacy($index, 'LIMITED', $event)" "setPrivacy($index, 'PRIVATE', $event)" />
+		<@orcid.privacyToggle "affiliation.visibility.visibility" "setPrivacy(affiliation.putCode.value, 'PUBLIC', $event)" 
+                    	  "setPrivacy(affiliation.putCode.value, 'LIMITED', $event)" "setPrivacy(affiliation.putCode.value, 'PRIVATE', $event)" />
 		</div>
     </li>           
 </ul>
