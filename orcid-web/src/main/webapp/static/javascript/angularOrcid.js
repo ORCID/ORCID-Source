@@ -1148,37 +1148,47 @@ function AffiliationCtrl($scope, $compile, affiliationsSrvc){
 	};
 	
 	$scope.showAddModal = function(){;
-		var numOfResults = 100;
+		
 		$.colorbox({        	
 			html: $compile($('#add-affiliation-modal').html())($scope),
 			onComplete: function() {
-							$.colorbox.resize();
-							$("#affiliationName").typeahead({
-								name: 'affiliationName',
-								limit: numOfResults,
-								remote: {
-									url: $('body').data('baseurl')+'affiliations/disambiguated/name/%QUERY?limit=' + numOfResults
-								},
-								template: function (datum) {
-									   var forDisplay = 
-									       '<span style=\'white-space: nowrap; font-weight: bold;\'>' + datum.value+ '</span>'
-									      +'<span style=\'font-size: 80%;\'>'
-									      + ' <br />' + datum.city;
-									   if(datum.region){
-										   forDisplay += ", " + datum.region;
-									   }
-									   if (datum.orgType != null && datum.orgType.trim() != '')
-									      forDisplay += ", " + datum.orgType;
-									   forDisplay += '</span><hr />';
-									   return forDisplay;
-								}
-							});
-							$("#affiliationName").bind("typeahead:selected", function(obj, datum) {        
-								$scope.selectAffiliation(datum);
-								$scope.$apply();
-							});
-						}
+				$.colorbox.resize();
+				$scope.bindTypeahead();
+				}
 	    });
+	};
+	
+	$scope.bindTypeahead = function () {
+		var numOfResults = 100;
+		
+		$("#affiliationName").typeahead({
+			name: 'affiliationName',
+			limit: numOfResults,
+			remote: {
+				url: $('body').data('baseurl')+'affiliations/disambiguated/name/%QUERY?limit=' + numOfResults
+			},
+			template: function (datum) {
+				   var forDisplay = 
+				       '<span style=\'white-space: nowrap; font-weight: bold;\'>' + datum.value+ '</span>'
+				      +'<span style=\'font-size: 80%;\'>'
+				      + ' <br />' + datum.city;
+				   if(datum.region){
+					   forDisplay += ", " + datum.region;
+				   }
+				   if (datum.orgType != null && datum.orgType.trim() != '')
+				      forDisplay += ", " + datum.orgType;
+				   forDisplay += '</span><hr />';
+				   return forDisplay;
+			}
+		});
+		$("#affiliationName").bind("typeahead:selected", function(obj, datum) {        
+			$scope.selectAffiliation(datum);
+			$scope.$apply();
+		});		
+	};
+	
+	$scope.unbindTypeahead = function () {
+		$('#affiliationName').typeahead('destroy');
 	};
 	
 	$scope.selectAffiliation = function(datum) {
@@ -1186,7 +1196,10 @@ function AffiliationCtrl($scope, $compile, affiliationsSrvc){
 		$scope.editAffiliation.region.value = datum.region;
 		$scope.editAffiliation.country.value = datum.country;
 		//$scope.editAffiliation.disambiguatedAffiliationIdentifier = datum.disambiguatedAffiliationIdentifier
-		$scope.getDisambiguatedAffiliation(datum.disambiguatedAffiliationIdentifier);
+		if (datum.disambiguatedAffiliationIdentifier != undefined && datum.disambiguatedAffiliationIdentifier != null) {
+			$scope.getDisambiguatedAffiliation(datum.disambiguatedAffiliationIdentifier);
+				$scope.unbindTypeahead();
+		}
 	};
 	
 	$scope.getDisambiguatedAffiliation = function(id) {
@@ -1206,6 +1219,7 @@ function AffiliationCtrl($scope, $compile, affiliationsSrvc){
 	};
 	
 	$scope.removeDisambiguatedAffiliation = function() {
+		$scope.bindTypeahead();
 		delete $scope.disambiguatedAffiliation;
 		delete $scope.editAffiliation.disambiguatedAffiliationIdentifier;
 	};

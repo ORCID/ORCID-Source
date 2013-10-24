@@ -39,6 +39,16 @@
 		</div>
 		<div class="row">
 			<div class="span6">
+				<div class="control-group" ng-show="editAffiliation.disambiguatedAffiliationIdentifier">
+					<div style="position: absolute; left: 300px"><label><a class="icon-remove-sign grey" ng-click="removeDisambiguatedAffiliation()">Remove</a></label></div>
+					<label>Affiliation Also Known As</label>
+				    <div class="relative" style="font-weight: strong;">
+						<span ng-bind="disambiguatedAffiliation.value"></span> <br />
+						<div>
+						    <span ng-bind="disambiguatedAffiliation.city"></span><span ng-bind="disambiguatedAffiliation.region"></span>,<span ng-bind="disambiguatedAffiliation.orgType"></span>
+						</div>
+					</div>
+				</div>
 				<div class="control-group">
 					<label><@orcid.msg 'manual_affiliation_form_contents.labelname'/></label>
 				    <div class="relative">
@@ -46,21 +56,6 @@
 						<span class="required" ng-class="isValidClass(editAffiliation.affiliationName)">*</span>
 						<span class="orcid-error" ng-show="editAffiliation.affiliationName.errors.length > 0">
 							<div ng-repeat='error in editAffiliation.affiliationName.errors' ng-bind-html-unsafe="error"></div>
-						</span>
-						<div style="size-font: 80%;" ng-show="editAffiliation.disambiguatedAffiliationIdentifier"><strong>also known as:</strong> <a class="icon-remove-sign grey" ng-click="removeDisambiguatedAffiliation()"></a><br />
-						    <div ng-bind="disambiguatedAffiliation.value"></div>
-						    <div>
-						    	<span ng-bind="disambiguatedAffiliation.city"></span><span ng-bind="disambiguatedAffiliation.region"></span>,<span ng-bind="disambiguatedAffiliation.orgType"></span>
-						    </div>
-						</div>
-					</div>
-				</div>
-				<div class="control-group">
-					<label><@orcid.msg 'manual_affiliation_form_contents.labeldepartment'/></label>
-				    <div class="relative">
-						<input name="department" type="text" class="input-xlarge"  ng-model="editAffiliation.departmentName.value" placeholder="<@orcid.msg 'manual_affiliation_form_contents.add_department'/>" ng-change="serverValidate('affiliations/affiliation/departmentValidate.json')" ng-model-onblur/>
-						<span class="orcid-error" ng-show="editAffiliation.departmentName.errors.length > 0">
-							<div ng-repeat='error in editAffiliation.departmentName.errors' ng-bind-html-unsafe="error"></div>
 						</span>
 					</div>
 				</div>
@@ -99,7 +94,18 @@
 					</div>
 				</div>
 			</div>
+			
 			<div class="span6">
+			     <div class="control-group">
+					<label><@orcid.msg 'manual_affiliation_form_contents.labeldepartment'/></label>
+				    <div class="relative">
+						<input name="department" type="text" class="input-xlarge"  ng-model="editAffiliation.departmentName.value" placeholder="<@orcid.msg 'manual_affiliation_form_contents.add_department'/>" ng-change="serverValidate('affiliations/affiliation/departmentValidate.json')" ng-model-onblur/>
+						<span class="orcid-error" ng-show="editAffiliation.departmentName.errors.length > 0">
+							<div ng-repeat='error in editAffiliation.departmentName.errors' ng-bind-html-unsafe="error"></div>
+						</span>
+					</div>
+				</div>
+			
 				<div class="control-group">
 					<label><@orcid.msg 'manual_affiliation_form_contents.labelroletitle'/></label>
 				    <div class="relative">
