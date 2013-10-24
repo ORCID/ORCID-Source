@@ -78,7 +78,6 @@ import org.orcid.pojo.DupicateResearcher;
 import org.orcid.pojo.Redirect;
 import org.orcid.pojo.ajaxForm.Checkbox;
 import org.orcid.pojo.ajaxForm.Claim;
-import org.orcid.pojo.ajaxForm.ErrorsInterface;
 import org.orcid.pojo.ajaxForm.Registration;
 import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.utils.DateUtils;
@@ -533,7 +532,11 @@ public class RegistrationController extends BaseController {
     private void automaticallyLogin(HttpServletRequest request, String password, OrcidProfile orcidProfile) {
         UsernamePasswordAuthenticationToken token = null;
         try {
-            token = new UsernamePasswordAuthenticationToken(orcidProfile.getOrcid().getValue(), password);
+            String orcid = orcidProfile.getOrcid().getValue();
+            // Force refresh of profile entity to ensure new password value is
+            // picked up from DB.
+            profileDao.refresh(profileDao.find(orcid));
+            token = new UsernamePasswordAuthenticationToken(orcid, password);
             token.setDetails(new WebAuthenticationDetails(request));
             Authentication authentication = authenticationManager.authenticate(token);
             SecurityContextHolder.getContext().setAuthentication(authentication);
