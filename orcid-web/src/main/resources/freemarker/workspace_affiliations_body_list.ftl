@@ -97,7 +97,7 @@
 				<div class="control-group">
 					<label><@orcid.msg 'manual_affiliation_form_contents.labelroletitle'/></label>
 				    <div class="relative">
-						<input name="region" type="text" class="input-xlarge"  ng-model="editAffiliation.roleTitle.value" placeholder="<@orcid.msg 'manual_affiliation_form_contents.add_title'/>" ng-change="serverValidate('affiliations/affiliation/roleTitleValidate.json')" ng-model-onblur/>
+						<input name="roletitle" type="text" class="input-xlarge"  ng-model="editAffiliation.roleTitle.value" placeholder="<@orcid.msg 'manual_affiliation_form_contents.add_title'/>" ng-change="serverValidate('affiliations/affiliation/roleTitleValidate.json')" ng-model-onblur/>
 						<span class="orcid-error" ng-show="editAffiliation.roleTitle.errors.length > 0">
 							<div ng-repeat='error in editAffiliation.roleTitle.errors' ng-bind-html-unsafe="error"></div>
 						</span>
