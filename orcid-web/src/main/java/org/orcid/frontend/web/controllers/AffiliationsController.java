@@ -286,9 +286,9 @@ public class AffiliationsController extends BaseWorkspaceController {
      */
     @RequestMapping(value = "/disambiguated/{query}", method = RequestMethod.GET)
     public @ResponseBody
-    List<Map<String, String>> searchDisambiguated(@PathVariable("query") String query) {
+    List<Map<String, String>> searchDisambiguated(@PathVariable("query") String query, @RequestParam(value = "limit") int limit) {
         List<Map<String, String>> datums = new ArrayList<>();
-        for (OrgDisambiguatedEntity orgDisambiguatedEntity : orgDisambiguatedDao.getOrgs(query, 0, 10)) {
+        for (OrgDisambiguatedEntity orgDisambiguatedEntity : orgDisambiguatedDao.getOrgs(query, 0, limit)) {
             Map<String, String> datum = new HashMap<>();
             datum.put("value", orgDisambiguatedEntity.getName());
             datum.put("city", orgDisambiguatedEntity.getCity());

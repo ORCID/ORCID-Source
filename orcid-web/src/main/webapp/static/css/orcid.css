@@ -2433,3 +2433,10 @@ a.btn-primary:hover {
 .affiliation-source {
 	font-size: 18px;
 }
+
+/* .tt-dropdown-menu used for typeahead
+    http://stackoverflow.com/questions/17982037/typeahead-js-scrollbar-and-keyboard-event */
+.tt-dropdown-menu {
+  height: 300px;
+  overflow-y: auto;
+}
