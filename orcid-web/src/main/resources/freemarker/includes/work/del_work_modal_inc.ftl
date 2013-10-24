@@ -17,7 +17,7 @@
 
 -->
 <script type="text/ng-template" id="delete-work-modal">
-	<div>
+	<div class>
 		<h3>${springMacroRequestContext.getMessage("manage.deleteWork.pleaseConfirm")}</h3>
 		{{fixedTitle}}<br />
 		<br />

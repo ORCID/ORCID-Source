@@ -18,23 +18,36 @@
 -->
 <script type="text/ng-template" id="add-work-modal">
 	<div class="edit-work colorbox-content">
+		
 		<!-- Title -->
-		<div class="row">
-			<div class="col-md-9">
+		<div class="row">			
+
+			<div class="col-md-9 col-xs-9">
 				<h1 class="lightbox-title pull-left"><@orcid.msg 'manual_work_form_contents.add_work'/></h1>
 			</div>
-			<div class="control-group col-md-2">
-		 		<label class="relative"><@orcid.msg 'privacyToggle.help.who_can_see'/></label>
+			
+			<div class="col-xs-3 visible-xs hidden-md hidden-lg">
+				<a class="btn close-button" ng-click="closeModal()">X</a>
+			</div>
+			
+			<div class="control-group privacy-control col-md-2">
+		 		<label class="relative">
+					<@orcid.msg 'privacyToggle.help.who_can_see'/>
+				</label>
 		 		<@orcid.privacyToggle "editWork.visibility.visibility" "setAddWorkPrivacy('PUBLIC', $event)" 
 		        "setAddWorkPrivacy('LIMITED', $event)" "setAddWorkPrivacy('PRIVATE', $event)" />					
-		 	</div>				
-			<div class="pull-right col-md-1">
+		 	</div>
+
+			<div class="col-md-1 hidden-sm hidden-xs">
 				<a class="btn close-button" ng-click="closeModal()">X</a>
 			</div>
 		</div>
 
+		<!-- Main content -->		
 		<div class="row">
-			<div class="col-md-6">	
+			<!-- Left Column -->			
+			<div class="col-md-6 col-sm-12 col-xs-12">	
+				
 				<div class="control-group">
 		    		<label class="relative"><@orcid.msg 'manual_work_form_contents.labelworktype'/></label>
 		    		<div class="relative">
@@ -66,7 +79,7 @@
 					</div>
 				</div>
 
-				<div id="translatedTitle" style="display:none;">
+				<div id="translatedTitle">
 					<span class="orcid-error" ng-show="editWork.workTitle.translatedTitle.errors.length > 0">
 						<div ng-repeat='error in editWork.workTitle.translatedTitle.errors' ng-bind-html-unsafe="error"></div>
 					</span>
@@ -78,12 +91,14 @@
 					</div>
 
 					<div class="control-group">
-						<label class="relative"><@orcid.msg 'manual_work_form_contents.labeltranslatedtitlelanguage'/></label>						
-						<select id="language" name="language" ng-model="editWork.workTitle.translatedTitle.languageCode">			
-							<#list languages?keys as key>
-								<option value="${languages[key]}">${key}</option>
-							</#list>
-						</select>						
+						<label class="relative"><@orcid.msg 'manual_work_form_contents.labeltranslatedtitlelanguage'/></label>
+						<div class="relative">						
+							<select id="language" name="language" ng-model="editWork.workTitle.translatedTitle.languageCode">			
+								<#list languages?keys as key>
+									<option value="${languages[key]}">${key}</option>
+								</#list>
+							</select>				
+						</div>
 					</div>					
 				</div>
 
@@ -128,12 +143,12 @@
 						</#list>
 		    		</select>
 		    		</div>
-		    	</div>		 		
-
-				<div class="col-md-6">&nbsp;</div>
-
+		    	</div>
+		    	
 				<div class="control-group">
-					<span><strong><@orcid.msg 'manual_work_form_contents.titlecitation'/></strong></span>
+					<span class="citation-title">
+						<strong><@orcid.msg 'manual_work_form_contents.titlecitation'/></strong>
+					</span>
 				</div>
 				<div class="control-group">
 		    		<label class="relative"><@orcid.msg 'manual_work_form_contents.labelcitationtype'/></label>
@@ -149,6 +164,7 @@
 						</span>
 					</div>
 				</div>
+				
 				<div class="control-group">
 					<label><@orcid.msg 'manual_work_form_contents.labelcitation'/></label>
 				    <div class="relative">
@@ -158,8 +174,6 @@
 						</span>
 					</div>
 				</div>
-
-				<div class="col-md-5">&nbsp;</div>
 			
 				<div class="control-group">
 					<label><@orcid.msg 'manual_work_form_contents.labeldescription'/></label>
@@ -170,9 +184,12 @@
 						</span>
 					</div>
 				</div>
+				
 			</div>
 
-			<div class="col-md-5">
+
+			<!-- Right column -->
+			<div class="col-md-6 col-sm-12 col-xs-12">				
 				<div class="control-group" ng-repeat="contributor in editWork.contributors">
 				    <label class="relative"><@orcid.msg 'manual_work_form_contents.labelRole'/></label>
 				    <div class="relative">    
@@ -187,6 +204,7 @@
 						</span>
 				    </div>
 				</div>		    	
+				
 				<div class="control-group" ng-repeat="contributor in editWork.contributors">
 				    <label class="relative"><@orcid.msg 'manual_work_form_contents.labelcredited'/></label>
 				    <div class="relative">    
@@ -200,9 +218,7 @@
 								<div ng-repeat='error in contributor.contributorSequence.errors' ng-bind-html-unsafe="error"></div>
 						</span>
 				    </div>
-				</div>				
-
-		    	<div class="col-md-6">&nbsp;</div>
+				</div>
 
 				<div class="control-group">
 					<span><strong><@orcid.msg 'manual_work_form_contents.titlecitationexternalidentifier'/></strong></span>
@@ -232,9 +248,7 @@
 								</span>
 						</div>
 					</div>				
-				</div>		
-
-				<div class="col-md-5">&nbsp;</div>
+				</div>
 				
 				<div class="control-group">
 		    		<label class="relative"><@orcid.msg 'manual_work_form_contents.labelURL'/></label>
@@ -248,12 +262,14 @@
 
 				<div class="control-group">
 					<label class="relative"><@orcid.msg 'manual_work_form_contents.labelformlanguage'/></label>
-					<select id="language" name="language" ng-model="editWork.languageCode.value">
-						<option value="${currentLocaleKey}">${currentLocaleValue}</option>
-						<#list languages?keys as key>
-							<option value="${languages[key]}">${key}</option>
-						</#list>
-					</select>
+					<div class="relative">	
+						<select id="language" name="language" ng-model="editWork.languageCode.value">
+							<option value="${currentLocaleKey}">${currentLocaleValue}</option>
+							<#list languages?keys as key>
+								<option value="${languages[key]}">${key}</option>
+							</#list>
+						</select>
+					</div>
 				</div>
 
 				<div class="control-group">
@@ -267,9 +283,7 @@
 						</select>                        
                     </div>
                 </div>
-				
-				<div class="col-md-5">&nbsp;</div>
-
+                
 				<div class="small-row"> 
 					<div>
 						<button class="btn btn-primary" ng-click="addWork()" ng-disabled="addingWork" ng-class="{disabled:addingWork}"><@orcid.msg 'manual_work_form_contents.btnaddtolist'/></button> 

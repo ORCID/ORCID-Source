@@ -2373,11 +2373,6 @@ header overrides
 	margin-left: 120px;
 }
 
-.manage-bio .input-xlarge {
-	/*width: 220px;*/
-	
-}
-
 .manage-bio .span6 {
 	position: relative;
 }
@@ -2401,16 +2396,15 @@ header overrides
 
 /* Edit Works */
 
-.edit-work{
-	width: 840px; 
-}
-
 .edit-work label,.edit-work input,.edit-work textarea,.edit-work select
 	{
 	margin-bottom: 0;
 }
 
-.manage-bio label,.manage-bio input,.manage-bio textarea,.manage-bio select
+.manage-bio label,
+.manage-bio input,
+.manage-bio textarea,
+.manage-bio select
 	{
 	margin-bottom: 0;
 }
@@ -2738,7 +2732,41 @@ ul.personal-inf-display li{
 	display: inline;
 }
 
+/* Add Work */
 
+#translatedTitle{
+	display: none;
+}
+
+.translated-title-section{
+	color: #2DC0CE;
+    float: right;
+    font-size: 13px;
+    margin: 5px 49px 0 0;    
+}
+
+.citation-title{
+	margin: 70px 0 0 0;
+	display: block;
+}
+
+.edit-work textarea{
+	height: 60px;
+}
+
+.text-error{
+	color: #B94A48;
+}
+
+.edit-work #day,
+.edit-work #month{
+	width: 100px;
+	margin: 0 10px 0 0; 
+}
+
+.edit-work #year{
+	width: 100px;
+}
 
 
 /* Media Queries */
@@ -3251,17 +3279,16 @@ ul.personal-inf-display li{
 	
 	
 	/* Lightboxes */	
+	
 	#colorbox, 
 	#cboxWrapper, 
 	#edit-work, 
 	#colorbox-content, 
 	#cboxContent, 
 	#cboxLoadedContent{
-		width: 100% !important;
-		left:0 !important;
-		top: 0 !important;
-		
+		width: 100% !important;			
 	}
+	
 	
 	.close-button {
 	    background-color: #CD5C5C;
@@ -3347,21 +3374,33 @@ ul.personal-inf-display li{
 		width: 100%; 
 	}
 	
-	/* review
-	.manage-bio .right{
-		float: none !important;
-	}		
+	/* Edit work*/
 	
-	.manage-bio .controls{
-		margin-left: 0 !important;
+	.edit-work .privacy-control{
+		margin-left: 15px;
+		width: 75%;
 	}
-	*/
 	
-	#cboxOverlay{
-		height: auto;		
+	.edit-work .popover-help-container{
+		top: -2px !important;
 	}
-    	
 	
+	.edit-work .input-xlarge{
+		width: 96%;
+	}
+	
+	.edit-work #day, .edit-work #month{
+		width: 72px;
+	}
+	
+	.edit-work .citation-title{
+		margin: 25px 0 0 0;
+	}
+	
+	.edit-work .translated-title-section{
+		font-size: 18px;
+		margin-right: 10px;
+	}
 }
 
 @media ( max-width : 980px) { /* Tablet */
@@ -3393,8 +3432,8 @@ ul.personal-inf-display li{
 	.header .navigation>.menu>li>.menu>li>a {
 		font-size: 11px;
 	}
-	.container .content-wrapper .aside,.container .content-wrapper .aside .inner-box
-		{
+	.container .content-wrapper .aside,
+	.container .content-wrapper .aside .inner-box{
 		margin-top: 0;
 	}
 	.container .header .logo p {
@@ -3468,6 +3507,13 @@ ul.personal-inf-display li{
 	
 	.popover.bottom .arrow{
 		left: 260px;
+	}
+	
+	/* Add works */
+	
+	.edit-work .privacy-control{
+		margin-left: 15px;
+		width: 75%;
 	}
 	
 }
