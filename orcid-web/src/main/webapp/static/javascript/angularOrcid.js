@@ -1148,14 +1148,16 @@ function AffiliationCtrl($scope, $compile, affiliationsSrvc){
 	};
 	
 	$scope.showAddModal = function(){;
+		var numOfResults = 100;
 		$.colorbox({        	
 			html: $compile($('#add-affiliation-modal').html())($scope),
 			onComplete: function() {
 							$.colorbox.resize();
 							$("#affiliationName").typeahead({
 								name: 'affiliationName',
+								limit: numOfResults,
 								remote: {
-									url: $('body').data('baseurl')+'affiliations/disambiguated/%QUERY'
+									url: $('body').data('baseurl')+'affiliations/disambiguated/%QUERY?limit=' + numOfResults
 								},
 								template: function (datum) {
 									   var forDisplay = 
