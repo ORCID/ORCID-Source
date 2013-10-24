@@ -2248,6 +2248,7 @@ header overrides
 }
 
 #third-parties .footer {
+	height: 40px;
 	background: none;
 	border-top: 1px solid #CACACA;
 	font-size: 13px;
