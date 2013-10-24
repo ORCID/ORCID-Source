@@ -1815,7 +1815,9 @@ function WorkCtrl($scope, $compile, worksSrvc) {
 		        }
 		    }).fail(function() { 
 		    	console.log("Error loading subtypes.");
-	    });
+		    });
+		} else {
+			$scope.subtypes = null;
 		}
 	};
 	

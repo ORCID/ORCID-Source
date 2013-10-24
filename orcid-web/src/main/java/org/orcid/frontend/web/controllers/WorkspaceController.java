@@ -128,7 +128,8 @@ public class WorkspaceController extends BaseWorkspaceController {
         Map<String, String> workTypes = new LinkedHashMap<String, String>();
 
         for (NewWorkType workType : NewWorkType.values()) {
-            workTypes.put(workType.value(), getMessage(buildInternationalizationKey(NewWorkType.class, workType.value())));
+            if(!workType.isDeprecated())
+                workTypes.put(workType.value(), getMessage(buildInternationalizationKey(NewWorkType.class, workType.value())));
         }
         
         return FunctionsOverCollections.sortMapsByValues(workTypes);
