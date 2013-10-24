@@ -4,9 +4,29 @@ We release updates to the Registry regularly. Below is a list of the improvement
 * [2013 Releases](https://trello.com/b/ZgYVAlel)
 * [2012 Releases](https://trello.com/b/vyCDYdvR)
 
+## release-1.1.36.12
+(2013-10-24)
+
+* Admin page for deactivation.
+
+* XSD changes to insure given-names is not empty.
+
+* Make works info popover unhidden. Also added to public view.
+
+* Remove concept of single use token.
+
+* Index other work identifiers in Solr.
+
+* Migrate pubmed links.
+
+* Forced hibernate to refresh when a profile transitions to "claimed".
+
+
+
 ## release-1.1.35.42 
 (2013-10-18)
-Stop importing duplicated works
+
+* Stop importing duplicated works
 
 * Added abbreviations to external identifiers types
 
