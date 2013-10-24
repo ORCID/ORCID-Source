@@ -54,4 +54,7 @@
 	<cache name="staticContent" maxElementsInMemory="100" timeToLiveSeconds="900" overflowToDisk="false" copyOnRead="false"
            copyOnWrite="false" eternal="false"/>
            
+    <cache name="orgs" maxElementsInMemory="20000" timeToLiveSeconds="900" overflowToDisk="false" copyOnRead="false"
+           copyOnWrite="false" eternal="false"/>
+           
 </ehcache>
