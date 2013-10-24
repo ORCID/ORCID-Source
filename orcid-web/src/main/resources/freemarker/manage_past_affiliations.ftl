@@ -22,7 +22,7 @@
 <table class="table">
     <thead>
     <tr>
-        <th><button class="btn btn-danger" type="submit" name="action" value="remove">${springMacroRequestContext.getMessage("manage_past_affiliations.thremove")}</button></th>
+        <th><button class="btn btn-danger" type="submit" name="action" value="remove">${springMacroRequestContext.getMessage("common.remove")}</button></th>
         <th>${springMacroRequestContext.getMessage("manage_past_affiliations.thname")}</th>
         <th>${springMacroRequestContext.getMessage("manage_past_affiliations.thdepartment")}</th>
         <th>${springMacroRequestContext.getMessage("manage_past_affiliations.thaddress")}</th>
