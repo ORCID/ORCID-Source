@@ -634,6 +634,7 @@
                 <xs:element ref="orcid:short-description" minOccurs="0"/>
                 <xs:element ref="orcid:work-citation" minOccurs="0"/>
                 <xs:element ref="orcid:work-type" />
+                <xs:element ref="orcid:work-subtype" />
                 <xs:element ref="orcid:publication-date" minOccurs="0"/>
                 <xs:element ref="orcid:work-external-identifiers" minOccurs="0"/>
                 <xs:element ref="orcid:url" minOccurs="0"/>
@@ -654,68 +655,55 @@
     <xs:element name="work-type">
         <xs:simpleType>
             <xs:restriction base="xs:string">
-                <xs:enumeration value="advertisement"/>
-                <xs:enumeration value="audiovisual"/>
-                <xs:enumeration value="bible"/>
-                <xs:enumeration value="book"/>
-                <xs:enumeration value="brochure"/>
-                <xs:enumeration value="cartoon-comic"/>
-                <xs:enumeration value="chapter-anthology"/>
-                <xs:enumeration value="components"/>
-                <xs:enumeration value="conference-proceedings"/>
-                <xs:enumeration value="congressional-publication"/>
-                <xs:enumeration value="court-case"/>
-                <xs:enumeration value="database"/>
-                <xs:enumeration value="dictionary-entry"/>
-                <xs:enumeration value="digital-image"/>
-                <xs:enumeration value="dissertation-abstract"/>
-                <xs:enumeration value="dissertation"/>
-                <xs:enumeration value="e-mail"/>
-                <xs:enumeration value="editorial"/>
-                <xs:enumeration value="electronic-only"/>
-                <xs:enumeration value="encyclopedia-article"/>
-                <xs:enumeration value="executive-order"/>
-                <xs:enumeration value="federal-bill"/>
-                <xs:enumeration value="federal-report"/>
-                <xs:enumeration value="federal-rule"/>
-                <xs:enumeration value="federalstatute"/>
-                <xs:enumeration value="federal-testimony"/>
-                <xs:enumeration value="film-movie"/>
-                <xs:enumeration value="government-publication"/>
-                <xs:enumeration value="interview"/>
-                <xs:enumeration value="journal-article"/>
-                <xs:enumeration value="lecture-speech"/>
-                <xs:enumeration value="legal"/>
-                <xs:enumeration value="letter"/>
-                <xs:enumeration value="live-performance"/>
-                <xs:enumeration value="magazine-article"/>
-                <xs:enumeration value="mailing-list"/>
-                <xs:enumeration value="manuscript"/>
-                <xs:enumeration value="map-chart"/>
-                <xs:enumeration value="musical-recording"/>
-                <xs:enumeration value="newsgroup"/>
-                <xs:enumeration value="newsletter"/>
-                <xs:enumeration value="newspaper-article"/>
-                <xs:enumeration value="non-periodicals"/>
-                <xs:enumeration value="other"/>
-                <xs:enumeration value="painting"/>
-                <xs:enumeration value="pamphlet"/>
-                <xs:enumeration value="patent"/>
-                <xs:enumeration value="periodicals"/>
-                <xs:enumeration value="photograph"/>
-                <xs:enumeration value="press-release"/>
-                <xs:enumeration value="raw-data"/>
-                <xs:enumeration value="religious-text"/>
-                <xs:enumeration value="report"/>
-                <xs:enumeration value="reports-working-papers"/>
-                <xs:enumeration value="review"/>
-                <xs:enumeration value="scholarly-project"/>
-                <xs:enumeration value="software"/>
-                <xs:enumeration value="standards"/>
-                <xs:enumeration value="television-radio"/>
-                <xs:enumeration value="thesis"/>
-                <xs:enumeration value="web-site"/>
-                <xs:enumeration value="undefined"/>
+                <xs:enumeration value="publication"/>
+                <xs:enumeration value="conference"/>
+                <xs:enumeration value="intellectual_property"/>
+                <xs:enumeration value="other_output"/>                
+            </xs:restriction>
+        </xs:simpleType>
+    </xs:element>
+    <xs:element name="work-subtype">
+        <xs:simpleType>
+            <xs:restriction base="xs:string">
+				<xs:enumeration value="artistic-performance"/>
+				<xs:enumeration value="book-chapter"/>
+				<xs:enumeration value="book-review"/>
+				<xs:enumeration value="book"/>
+				<xs:enumeration value="conference-abstract"/>
+				<xs:enumeration value="conference-paper"/>
+				<xs:enumeration value="conference-poster"/>
+				<xs:enumeration value="data-set"/>
+				<xs:enumeration value="dictionary-entry"/>
+				<xs:enumeration value="disclosure"/>
+				<xs:enumeration value="dissertation"/>
+				<xs:enumeration value="edited-book"/>
+				<xs:enumeration value="encyclopedia-entry"/>
+				<xs:enumeration value="invention"/>
+				<xs:enumeration value="journal-article"/>
+				<xs:enumeration value="journal-issue"/>
+				<xs:enumeration value="lecture-speech"/>
+				<xs:enumeration value="license"/>
+				<xs:enumeration value="magazine-article"/>
+				<xs:enumeration value="manual"/>
+				<xs:enumeration value="newsletter-article"/>
+				<xs:enumeration value="newspaper-article"/>
+				<xs:enumeration value="online-resource"/>
+				<xs:enumeration value="other"/>
+				<xs:enumeration value="patent"/>
+				<xs:enumeration value="registered-copyright"/>
+				<xs:enumeration value="report"/>
+				<xs:enumeration value="research-technique"/>
+				<xs:enumeration value="research-tool"/>
+				<xs:enumeration value="spin-off-company"/>
+				<xs:enumeration value="standards-and-policy"/>
+				<xs:enumeration value="supervised-student-publication"/>
+				<xs:enumeration value="technical-standard"/>
+				<xs:enumeration value="test"/>
+				<xs:enumeration value="translation"/>
+				<xs:enumeration value="trademark"/>
+				<xs:enumeration value="website"/>
+				<xs:enumeration value="working-paper"/>
+				<xs:enumeration value="undefined"/>
             </xs:restriction>
         </xs:simpleType>
     </xs:element>

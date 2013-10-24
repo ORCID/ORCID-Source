@@ -1,5 +1,5 @@
-# Summary of API Changes from 1.0.21 to 1.0.22
+# Summary of API Changes from 1.0.22 to 1.0.23
 
-* Added language code for works.
-* Added a translated title field to add a title in an alternate language
-* Added a country field
+* New work types
+* Added work subtypes
+* It is still possible to add works with the old types if you use an older message version

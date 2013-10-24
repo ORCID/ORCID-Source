@@ -18,8 +18,8 @@ public enum NewWorkType {
     INTELLECTUAL_PROPERTY("intellectual_property", WorkSubtype.DISCLOSURE, WorkSubtype.LICENSE, WorkSubtype.PATENT, WorkSubtype.REGISTERED_COPYRIGHT), 
     @XmlEnumValue("other_output")
     OTHER_OUTPUT("other_output", WorkSubtype.ARTISTIC_PERFORMANCE, WorkSubtype.DATA_SET, WorkSubtype.INVENTION, WorkSubtype.LECTURE_SPEECH, WorkSubtype.OTHER,
-            WorkSubtype.RESEARCH_TECHNIQUE, WorkSubtype.SPIN_OFF_COMPANY, WorkSubtype.STANDARDS_AND_POLICY, WorkSubtype.TECHNICAL_STANDARD, WorkSubtype.UNDEFINED);
-
+            WorkSubtype.RESEARCH_TECHNIQUE, WorkSubtype.SPIN_OFF_COMPANY, WorkSubtype.STANDARDS_AND_POLICY, WorkSubtype.TECHNICAL_STANDARD, WorkSubtype.UNDEFINED);  
+    
     private List<WorkSubtype> subTypes = new ArrayList<WorkSubtype>();
     private String value;
 
