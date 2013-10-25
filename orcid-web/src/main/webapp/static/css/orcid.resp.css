@@ -3516,9 +3516,8 @@ ul.personal-inf-display li{
 	
 	.edit-work .privacy-control{
 		margin-left: 15px;
-		width: 75%;
+		width: 35%;
 	}
-	
 }
 
 @media(min-width:1200px){

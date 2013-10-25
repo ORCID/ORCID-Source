@@ -298,7 +298,7 @@ function DeactivateAccountCtrl($scope, $compile) {
 	    	    $.colorbox({
 	    	        html : $compile($('#deactivate-account-modal').html())($scope)	            	
 	    	    });
-	    	    $scope.$apply();
+	    	    $scope.$apply();	    	    
 	    	    $.colorbox.resize();
 	        }
 	    }).fail(function() { 
@@ -1453,12 +1453,15 @@ function WorkCtrl($scope, $compile, worksSrvc) {
 	
 	$scope.showAddModal = function(){;
 		$scope.editTranslatedTitle = false;
-		isMobile() ? w = '100%' : w = '800px';
+		isMobile() ? w = '100%' : w = '768px';
 		isMobile() ? h = '100%' : h = '750px';		
-	    $.colorbox({        	
+	    $.colorbox({	    	
+	    	scrolling: true,
 	        html: $compile($('#add-work-modal').html())($scope),	        
 	        onLoad: function() {$('#cboxClose').remove();},
-	        onComplete: function() {$.colorbox.resize({width:w, height:h});}
+	        onComplete: function() {
+	        		$.colorbox.resize({width:w, height:h});
+	        		}
 	    });
 	};
 

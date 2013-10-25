@@ -22,15 +22,15 @@
 		<!-- Title -->
 		<div class="row">			
 
-			<div class="col-md-9 col-xs-9">
+			<div class="col-md-9 col-sm-6 col-xs-9">
 				<h1 class="lightbox-title pull-left"><@orcid.msg 'manual_work_form_contents.add_work'/></h1>
 			</div>
 			
-			<div class="col-xs-3 visible-xs hidden-md hidden-lg">
+			<div class="col-xs-3 visible-xs hidden-sm hidden-md hidden-lg">
 				<a class="btn close-button" ng-click="closeModal()">X</a>
 			</div>
 			
-			<div class="control-group privacy-control col-md-2">
+			<div class="control-group privacy-control col-md-2 col-sm-2">
 		 		<label class="relative">
 					<@orcid.msg 'privacyToggle.help.who_can_see'/>
 				</label>
@@ -38,7 +38,7 @@
 		        "setAddWorkPrivacy('LIMITED', $event)" "setAddWorkPrivacy('PRIVATE', $event)" />					
 		 	</div>
 
-			<div class="col-md-1 hidden-sm hidden-xs">
+			<div class="col-md-1 col-sm-1 hidden-xs">
 				<a class="btn close-button" ng-click="closeModal()">X</a>
 			</div>
 		</div>
@@ -46,7 +46,7 @@
 		<!-- Main content -->		
 		<div class="row">
 			<!-- Left Column -->			
-			<div class="col-md-6 col-sm-12 col-xs-12">	
+			<div class="col-md-6 col-sm-6 col-xs-12">	
 				
 				<div class="control-group">
 		    		<label class="relative"><@orcid.msg 'manual_work_form_contents.labelworktype'/></label>
@@ -189,7 +189,7 @@
 
 
 			<!-- Right column -->
-			<div class="col-md-6 col-sm-12 col-xs-12">				
+			<div class="col-md-6 col-sm-6 col-xs-12">				
 				<div class="control-group" ng-repeat="contributor in editWork.contributors">
 				    <label class="relative"><@orcid.msg 'manual_work_form_contents.labelRole'/></label>
 				    <div class="relative">    
