@@ -24,6 +24,7 @@ import javax.persistence.TypedQuery;
 import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.persistence.dao.OrgDisambiguatedDao;
 import org.orcid.persistence.jpa.entities.OrgDisambiguatedEntity;
+import org.springframework.cache.annotation.Cacheable;
 
 /**
  * 
@@ -48,9 +49,10 @@ public class OrgDisambiguatedDaoImpl extends GenericDaoImpl<OrgDisambiguatedEnti
 
     @Override
     public OrgDisambiguatedEntity findByNameCityRegionCountryAndSourceType(String name, String city, String region, Iso3166Country country, String sourceType) {
-        TypedQuery<OrgDisambiguatedEntity> query = entityManager.createQuery(
-                "from OrgDisambiguatedEntity where name = :name and city = :city and region = :region and country = :country and sourceType = :sourceType",
-                OrgDisambiguatedEntity.class);
+        TypedQuery<OrgDisambiguatedEntity> query = entityManager
+                .createQuery(
+                        "from OrgDisambiguatedEntity where name = :name and city = :city and (region = :region or (region is null and :region is null)) and country = :country and sourceType = :sourceType",
+                        OrgDisambiguatedEntity.class);
         query.setParameter("name", name);
         query.setParameter("city", city);
         query.setParameter("region", region);
@@ -62,15 +64,13 @@ public class OrgDisambiguatedDaoImpl extends GenericDaoImpl<OrgDisambiguatedEnti
 
     @SuppressWarnings("unchecked")
     @Override
+    @Cacheable("orgs")
     public List<OrgDisambiguatedEntity> getOrgs(String searchTerm, int firstResult, int maxResults) {
         String qStr = "select od.*, COUNT(*) as countAll from org_disambiguated od left join org_affiliation_relation oa on od.id = oa.org_id"
-                + "  where lower(name) like '%' || lower(:searchTerm) || '%'" + "  group by od.id order by countAll DESC, od.name";
+                + " where lower(name) like '%' || lower(:searchTerm) || '%' group by od.id "
+                + " order by position(lower(:searchTerm) in lower(name)), char_length(name), countAll DESC, od.name";
 
         Query query = entityManager.createNativeQuery(qStr, OrgDisambiguatedEntity.class);
-
-        // TypedQuery<OrgDisambiguatedEntity> query = entityManager.createQuery(
-        // "from OrgDisambiguatedEntity where lower(name) like '%' || lower(:searchTerm) || '%' order by name",
-        // OrgDisambiguatedEntity.class);
         query.setParameter("searchTerm", searchTerm);
         query.setFirstResult(firstResult);
         query.setMaxResults(maxResults);

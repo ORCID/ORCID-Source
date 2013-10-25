@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+import org.jsoup.select.Evaluator.IsEmpty;
 import org.orcid.jaxb.model.message.Affiliation;
 import org.orcid.jaxb.model.message.AffiliationAddress;
 import org.orcid.jaxb.model.message.AffiliationCity;
@@ -47,6 +48,8 @@ public class AffiliationForm implements ErrorsInterface, Serializable {
     private Text region;
 
     private Text country;
+    
+    private Text roleTitle;
 
     private String countryForDisplay;
 
@@ -188,6 +191,10 @@ public class AffiliationForm implements ErrorsInterface, Serializable {
         if (affiliation.getDepartmentName() != null) {
             form.setDepartmentName(Text.valueOf(affiliation.getDepartmentName()));
         }
+        if (affiliation.getRoleTitle() != null) {
+            form.setRoleTitle(Text.valueOf(affiliation.getRoleTitle()));
+        }
+        
         if (affiliation.getAffiliationType() != null) {
             form.setAffiliationType(Text.valueOf(affiliation.getAffiliationType().value()));
         }
@@ -206,7 +213,7 @@ public class AffiliationForm implements ErrorsInterface, Serializable {
 
     public org.orcid.jaxb.model.message.Affiliation toAffiliation() {
         org.orcid.jaxb.model.message.Affiliation affiliation = new org.orcid.jaxb.model.message.Affiliation();
-        if (putCode != null && StringUtils.isNotBlank(putCode.getValue())) {
+        if (!PojoUtil.isEmpty(putCode)) {
             affiliation.setPutCode(putCode.getValue());
         }
         affiliation.setVisibility(visibility.getVisibility());
@@ -214,23 +221,34 @@ public class AffiliationForm implements ErrorsInterface, Serializable {
         AffiliationAddress affiliationAddress = new AffiliationAddress();
         affiliation.setAffiliationAddress(affiliationAddress);
         affiliationAddress.setAffiliationCity(new AffiliationCity(city.getValue()));
-        if (region != null && StringUtils.isNotBlank(region.getValue())) {
+        if (!PojoUtil.isEmpty(region)) {
             affiliationAddress.setAffiliationRegion(new AffiliationRegion(region.getValue()));
         }
         affiliationAddress.setAffiliationCountry(new AffiliationCountry(Iso3166Country.fromValue(country.getValue())));
-        if (departmentName != null && StringUtils.isNotBlank(departmentName.getValue())) {
+        if (!PojoUtil.isEmpty(roleTitle)) {
+            affiliation.setRoleTitle(roleTitle.getValue());
+        }
+        if (!PojoUtil.isEmpty(departmentName)) {
             affiliation.setDepartmentName(departmentName.getValue());
         }
-        if (affiliationType != null && StringUtils.isNotBlank(affiliationType.getValue())) {
+        if (!PojoUtil.isEmpty(affiliationType)) {
             affiliation.setAffiliationType(AffiliationType.fromValue(affiliationType.getValue()));
         }
-        if (startDate != null) {
+        if (!PojoUtil.isEmply(startDate)) {
             affiliation.setStartDate(startDate.toFuzzyDate());
         }
-        if (endDate != null) {
+        if (!PojoUtil.isEmply(endDate)) {
             affiliation.setEndDate(endDate.toFuzzyDate());
         }
         return affiliation;
+    }
+
+    public Text getRoleTitle() {
+        return roleTitle;
+    }
+
+    public void setRoleTitle(Text roleTitle) {
+        this.roleTitle = roleTitle;
     }
 
 }

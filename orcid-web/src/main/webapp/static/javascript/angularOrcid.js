@@ -1145,19 +1145,21 @@ function AffiliationCtrl($scope, $compile, affiliationsSrvc){
 	
 	$scope.toggleDisplayAffiliations = function () {
 		$scope.displayAffiliations = !$scope.displayAffiliations;
-	};
-	
+	};	
+
 	$scope.showAddModal = function(){
 		isMobile() ? w = '100%' : w = '800px';
 		isMobile() ? h = '100%' : h = '550px';
+		var numOfResults = 100;
 		$.colorbox({        	
 			html: $compile($('#add-affiliation-modal').html())($scope),
 			onComplete: function() {
 							$.colorbox.resize({width:w, height:y});
 							$("#affiliationName").typeahead({
 								name: 'affiliationName',
+								limit: numOfResults,
 								remote: {
-									url: $('body').data('baseurl')+'affiliations/disambiguated/%QUERY',
+									url: $('body').data('baseurl')+'affiliations/disambiguated/%QUERY?limit=' + numOfResults
 								},
 								template: function (datum) {
 									   var forDisplay = 
@@ -1344,8 +1346,13 @@ function AffiliationCtrl($scope, $compile, affiliationsSrvc){
 
 	
 		
-	$scope.setPrivacy = function(idx, priv, $event) {
+	$scope.setPrivacy = function(putCode, priv, $event) {
 		$event.preventDefault();
+		var idx;
+		for (idx in $scope.affiliations) {
+			if ($scope.affiliations[idx].putCode.value == putCode)
+				break;
+		}
 		$scope.affiliations[idx].visibility.visibility = priv;
 		$scope.curPrivToggle = null;
 		$scope.updateProfileAffiliation(idx);
@@ -2198,7 +2205,7 @@ function profileDeactivationAndReactivationCtrl($scope,$compile){
 	
 	$scope.deactivateAccount = function() {
 		$.ajax({
-	        url: orcidVar.baseUri+'/admin/deactivate-profile?orcid=' + $scope.orcidToDeactivate,	        
+	        url: orcidVar.baseUri+'/admin-actions/deactivate-profile?orcid=' + $scope.orcidToDeactivate,	        
 	        type: 'GET',
 	        dataType: 'json',
 	        success: function(data){
@@ -2222,7 +2229,7 @@ function profileDeactivationAndReactivationCtrl($scope,$compile){
 	
 	$scope.reactivateAccount = function() {
 		$.ajax({
-	        url: orcidVar.baseUri+'/admin/reactivate-profile?orcid=' + $scope.orcidToReactivate,	        
+	        url: orcidVar.baseUri+'/admin-actions/reactivate-profile?orcid=' + $scope.orcidToReactivate,	        
 	        type: 'GET',
 	        dataType: 'json',
 	        success: function(data){
@@ -2245,7 +2252,7 @@ function profileDeactivationAndReactivationCtrl($scope,$compile){
 	
 	$scope.confirmDeactivateAccount = function() {		
 		$.ajax({
-	        url: orcidVar.baseUri+'/admin/deactivate-profile/check-orcid.json?orcid=' + $scope.orcidToDeactivate,	        
+	        url: orcidVar.baseUri+'/admin-actions/deactivate-profile/check-orcid.json?orcid=' + $scope.orcidToDeactivate,	        
 	        type: 'GET',
 	        dataType: 'json',
 	        success: function(data){
@@ -2339,7 +2346,7 @@ function profileDeprecationCtrl($scope,$compile){
 	
 	$scope.getAccountDetails = function (orcid, callback){
 		$.ajax({
-	        url: orcidVar.baseUri+'/admin/deprecate-profile/check-orcid.json?orcid=' + orcid,	        
+	        url: orcidVar.baseUri+'/admin-actions/deprecate-profile/check-orcid.json?orcid=' + orcid,	        
 	        type: 'GET',
 	        dataType: 'json',
 	        success: function(data){
@@ -2456,7 +2463,7 @@ function profileDeprecationCtrl($scope,$compile){
 		var deprecatedOrcid = $scope.deprecatedAccount.orcid;
 		var primaryOrcid = $scope.primaryAccount.orcid;		
 		$.ajax({
-	        url: orcidVar.baseUri+'/admin/deprecate-profile/deprecate-profile.json?deprecated=' + deprecatedOrcid + '&primary=' + primaryOrcid,	        
+	        url: orcidVar.baseUri+'/admin-actions/deprecate-profile/deprecate-profile.json?deprecated=' + deprecatedOrcid + '&primary=' + primaryOrcid,	        
 	        type: 'GET',
 	        dataType: 'json',
 	        success: function(data){

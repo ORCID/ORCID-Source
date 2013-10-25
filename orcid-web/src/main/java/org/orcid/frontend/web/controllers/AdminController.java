@@ -48,7 +48,7 @@ import org.springframework.web.servlet.ModelAndView;
  */
 
 @Controller
-@RequestMapping(value = { "/admin" })
+@RequestMapping(value = { "/admin-actions" })
 public class AdminController extends BaseController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AdminController.class);

@@ -176,11 +176,12 @@
 			method="POST" access="DENY_OAUTH,ROLE_USER" />
 		<sec:intercept-url pattern="/manage-clients" 
 			access="ROLE_GROUP"/>
-		<sec:intercept-url pattern="/admin" 
+		<sec:intercept-url pattern="/admin-actions" 
 			access="ROLE_ADMIN"/>
-		<sec:intercept-url pattern="/admin/.*" 
-			access="ROLE_ADMIN"/>		
-
+		<sec:intercept-url pattern="/admin-actions/.*" 
+			access="ROLE_ADMIN"/>
+		<sec:intercept-url pattern="/.*" access="ROLE_USER"/>  
+		
 		<!-- <sec:form-login authentication-failure-url="/signin" login-page="/signin" 
 			login-processing-url="/signin/auth" -->
 		<!-- username-parameter="userId" password-parameter="password" default-target-url="/my-orcid"/> -->
