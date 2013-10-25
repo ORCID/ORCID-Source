@@ -233,8 +233,7 @@ public class AffiliationForm implements ErrorsInterface, Serializable {
         }
         if (!PojoUtil.isEmpty(disambiguatedAffiliationIdentifier)) {
             affiliation.setDisambiguatedAffiliation(new DisambiguatedAffiliation());
-            if (!PojoUtil.isEmpty(disambiguatedAffiliationIdentifier)) 
-                affiliation.getDisambiguatedAffiliation().setDisambiguatedAffiliationIdentifier(disambiguatedAffiliationIdentifier.getValue());
+            affiliation.getDisambiguatedAffiliation().setDisambiguatedAffiliationIdentifier(disambiguatedAffiliationIdentifier.getValue());
         }
         affiliationAddress.setAffiliationCountry(new AffiliationCountry(Iso3166Country.fromValue(country.getValue())));
         if (!PojoUtil.isEmpty(roleTitle)) {
