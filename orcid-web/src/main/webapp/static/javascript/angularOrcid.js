@@ -1148,7 +1148,7 @@ function AffiliationCtrl($scope, $compile, affiliationsSrvc){
 	};
 	
 	$scope.showAddModal = function(){;
-		var numOfResults = 100;
+		var numOfResults = 25;
 		$.colorbox({        	
 			html: $compile($('#add-affiliation-modal').html())($scope),
 			onComplete: function() {
