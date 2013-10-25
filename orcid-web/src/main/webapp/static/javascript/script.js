@@ -294,7 +294,7 @@ $(function () {
 	        		    orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'Sign-In', 'OAuth']);
 	        	    else
 	        	    	orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'Sign-In', 'Website']);
-	        	    orcidGA.windowLocationHrefDelay(data.url);
+	        	    orcidGA.windowLocationHrefDelay(data.url + window.location.hash);
 	            } else {
 	            	if ($('form#loginForm #login-error-mess').length == 0) {
 	            		var message;
