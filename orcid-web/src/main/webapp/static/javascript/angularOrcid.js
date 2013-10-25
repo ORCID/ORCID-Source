@@ -1454,7 +1454,7 @@ function WorkCtrl($scope, $compile, worksSrvc) {
 	$scope.showAddModal = function(){;
 		$scope.editTranslatedTitle = false;
 		isMobile() ? w = '100%' : w = '800px';
-		isMobile() ? h = '100%' : h = '550px';		
+		isMobile() ? h = '100%' : h = '750px';		
 	    $.colorbox({        	
 	        html: $compile($('#add-work-modal').html())($scope),	        
 	        onLoad: function() {$('#cboxClose').remove();},
