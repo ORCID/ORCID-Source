@@ -156,6 +156,10 @@ img {
 	float: right;	
 }
 
+.pop-up-content{
+	margin: 15px;
+}
+
 #map_canvas img {
 	max-width: none;
 }
@@ -2149,6 +2153,10 @@ a:hover {
 	width: 700px;
 }
 
+.lightbox-container{
+	padding: 0 15px 30px;
+}
+
 .no-icon {
 	background: none;
 	padding-right: 0;
@@ -2561,11 +2569,6 @@ ul.workspace-private-toolbar > li{
 #current-work-list h3 {
 	margin: 0;
 	line-height: 1.1em;
-}
-
-#third-parties .span9 {
-	margin-left: 0;
-	width: 680px;
 }
 
 #third-parties .footer {

@@ -982,7 +982,7 @@ function ClaimCtrl($scope, $compile) {
 
 
 function VerifyEmailCtrl($scope, $compile) {
-	$scope.getEmails = function() {
+	$scope.getEmails = function() {		
 		$.ajax({
 	        url: $('body').data('baseurl') + 'account/emails.json',
 	        //type: 'POST',
@@ -1007,9 +1007,7 @@ function VerifyEmailCtrl($scope, $compile) {
 	        	        escKey:false, 
 	        	        overlayClose:false,
 	        	        transition: 'fade',
-	        	        close: '',
-	        	        //height: '200px',
-	        	        //width: '500px',
+	        	        close: '',	        	        
 	        	        scrolling: false
 	        	        	    });
 	        	        $.colorbox.resize();	        		
@@ -1046,7 +1044,7 @@ function VerifyEmailCtrl($scope, $compile) {
 	        close: '',
 	        scrolling: false
 	        	    });
-	    $.colorbox.resize();
+	    $.colorbox.resize({width:"500px", height:"200px"});
 		
 	};
 	
@@ -1149,8 +1147,8 @@ function AffiliationCtrl($scope, $compile, affiliationsSrvc){
 
 	$scope.showAddModal = function(){
 		isMobile() ? w = '100%' : w = '800px';
-		isMobile() ? h = '100%' : h = '550px';
-		var numOfResults = 100;
+		isMobile() ? h = '100%' : h = '550px';		
+		var numOfResults = 25;
 		$.colorbox({        	
 			html: $compile($('#add-affiliation-modal').html())($scope),
 			onComplete: function() {
@@ -1460,7 +1458,7 @@ function WorkCtrl($scope, $compile, worksSrvc) {
 	    $.colorbox({        	
 	        html: $compile($('#add-work-modal').html())($scope),	        
 	        onLoad: function() {$('#cboxClose').remove();},
-	        onComplete: function() {$.colorbox.resize({width:w, height:y});}
+	        onComplete: function() {$.colorbox.resize({width:w, height:h});}
 	    });
 	};
 
