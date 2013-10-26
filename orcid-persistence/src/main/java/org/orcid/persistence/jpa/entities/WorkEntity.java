@@ -16,6 +16,9 @@
  */
 package org.orcid.persistence.jpa.entities;
 
+import java.util.Comparator;
+import java.util.SortedSet;
+
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -36,11 +39,7 @@ import org.hibernate.annotations.Sort;
 import org.hibernate.annotations.SortType;
 import org.orcid.jaxb.model.message.CitationType;
 import org.orcid.jaxb.model.message.Iso3166Country;
-import org.orcid.jaxb.model.message.NewWorkType;
-import org.orcid.jaxb.model.message.WorkSubtype;
-
-import java.util.Comparator;
-import java.util.SortedSet;
+import org.orcid.jaxb.model.message.WorkType;
 
 /**
  * orcid-entities - Dec 6, 2011 - WorkEntity
@@ -66,8 +65,7 @@ public class WorkEntity extends BaseEntity<Long> implements Comparable<WorkEntit
     private String translatedTitleLanguageCode;
     private Iso3166Country iso2Country;
     private CitationType citationType;
-    private NewWorkType workType;
-    private WorkSubtype workSubtype;
+    private WorkType workType;
     private PublicationDateEntity publicationDate;
     private String contributorsJson;
     private SortedSet<WorkContributorEntity> contributors;
@@ -204,25 +202,14 @@ public class WorkEntity extends BaseEntity<Long> implements Comparable<WorkEntit
     @Basic
     @Enumerated(EnumType.STRING)
     @Column(name = "work_type", length = 100)
-    public NewWorkType getWorkType() {
+    public WorkType getWorkType() {
         return workType;
     }
 
-    public void setWorkType(NewWorkType workType) {
+    public void setWorkType(WorkType workType) {
         this.workType = workType;
     }
             
-    @Basic
-    @Enumerated(EnumType.STRING)
-    @Column(name = "work_subtype", length = 100)
-    public WorkSubtype getWorkSubtype() {
-        return workSubtype;
-    }
-
-    public void setWorkSubtype(WorkSubtype workSubtype) {
-        this.workSubtype = workSubtype;
-    }
-    
     @Column(name = "contributors_json")
     public String getContributorsJson() {
         return contributorsJson;

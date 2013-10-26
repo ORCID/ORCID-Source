@@ -32,15 +32,14 @@ import org.orcid.jaxb.model.message.Citation;
 import org.orcid.jaxb.model.message.CitationType;
 import org.orcid.jaxb.model.message.ContactDetails;
 import org.orcid.jaxb.model.message.Email;
-import org.orcid.jaxb.model.message.NewWorkType;
 import org.orcid.jaxb.model.message.OrcidActivities;
 import org.orcid.jaxb.model.message.OrcidBio;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidWork;
 import org.orcid.jaxb.model.message.OrcidWorks;
-import org.orcid.jaxb.model.message.WorkSubtype;
 import org.orcid.jaxb.model.message.WorkTitle;
+import org.orcid.jaxb.model.message.WorkType;
 import org.orcid.utils.BibtexException;
 import org.orcid.utils.BibtexUtils;
 import org.slf4j.Logger;
@@ -64,8 +63,6 @@ public class ValidationManagerImpl implements ValidationManager {
     
     private boolean validateTitle = false;
     
-    private boolean checkWorkSubtype = false;
-
     private Schema schema;
 
     private static final Logger LOG = LoggerFactory.getLogger(ValidationManagerImpl.class);
@@ -89,14 +86,6 @@ public class ValidationManagerImpl implements ValidationManager {
     
     public void setValidateTitle(boolean validateTitle) {
         this.validateTitle = validateTitle;
-    }
-
-    public boolean isCheckWorkSubtype() {
-        return checkWorkSubtype;
-    }
-
-    public void setCheckWorkSubtype(boolean checkWorkSubtype) {
-        this.checkWorkSubtype = checkWorkSubtype;
     }
 
     @Override
@@ -194,27 +183,7 @@ public class ValidationManagerImpl implements ValidationManager {
             if(title == null || title.getTitle() == null || StringUtils.isEmpty(title.getTitle().getContent())){
                 throw new OrcidValidationException("Invalid Title: title cannot be null nor emtpy");
             }
-        }
-        
-        if(checkWorkSubtype){
-            NewWorkType workType = orcidWork.getWorkType();
-            WorkSubtype workSubtype = orcidWork.getWorkSubtype();
-            boolean isValid = false;
-            //Check if the work subtype is valid given the work type
-            for (WorkSubtype subtype : workType.getSubTypes()){
-                if(subtype.value().equals(workSubtype.value())){
-                    isValid = true;
-                    break;
-                }
-            }
-            
-            if(!isValid){
-                String validSubtypes = new String();
-                for(WorkSubtype subtype : workType.getSubTypes())
-                    validSubtypes += subtype.value() + ' ';
-                throw new OrcidValidationException("Invalid Subtype: Given worktype '" + workType.value() + "' valid subtypes are: " + validSubtypes);
-            }            
-        }
+        }                
     }
 
     private void initSchema() {

@@ -29,8 +29,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.jaxb.model.message.CitationType;
-import org.orcid.jaxb.model.message.NewWorkType;
-import org.orcid.jaxb.model.message.WorkSubtype;
+import org.orcid.jaxb.model.message.WorkType;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.test.DBUnitTest;
 import org.springframework.test.annotation.Rollback;
@@ -72,8 +71,7 @@ public class WorkDaoTest extends DBUnitTest {
         work.setDescription(description);
         work.setTitle(title);
         work.setSubtitle(subtitle);
-        work.setWorkType(NewWorkType.PUBLICATION);
-        work.setWorkSubtype(WorkSubtype.BOOK);
+        work.setWorkType(WorkType.BOOK);
         work.setWorkUrl(url);
 
         assertNull(work.getId());

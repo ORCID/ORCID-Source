@@ -32,8 +32,7 @@ import org.orcid.jaxb.model.message.Url;
 import org.orcid.jaxb.model.message.WorkContributors;
 import org.orcid.jaxb.model.message.WorkExternalIdentifiers;
 import org.orcid.jaxb.model.message.WorkSource;
-import org.orcid.jaxb.model.message.NewWorkType;
-import org.orcid.jaxb.model.message.WorkSubtype;
+import org.orcid.jaxb.model.message.WorkType;
 import org.orcid.utils.BibtexUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -73,9 +72,9 @@ public class Work implements ErrorsInterface, Serializable {
 
     private static Logger LOGGER = LoggerFactory.getLogger(Work.class);
 
-    private Text workType;
+    private Text workCategory;
     
-    private Text workSubtype;
+    private Text workType;
 
     protected String citationForDisplay;
 
@@ -114,8 +113,6 @@ public class Work implements ErrorsInterface, Serializable {
             w.setWorkTitle(WorkTitle.valueOf(orcidWork.getWorkTitle()));
         if (orcidWork.getWorkType() != null)
             w.setWorkType(Text.valueOf(orcidWork.getWorkType().value()));
-        if (orcidWork.getWorkSubtype() != null)
-            w.setWorkSubtype(Text.valueOf(orcidWork.getWorkSubtype().value()));
         
         if (orcidWork.getJournalTitle() != null)
             w.setJournalTitle(Text.valueOf(orcidWork.getJournalTitle().getContent()));
@@ -162,13 +159,9 @@ public class Work implements ErrorsInterface, Serializable {
             ow.setWorkTitle(this.workTitle.toWorkTitle());
         }
         if (this.getWorkType() != null) {
-            ow.setWorkType(NewWorkType.fromValue(this.getWorkType().getValue()));
+            ow.setWorkType(WorkType.fromValue(this.getWorkType().getValue()));
         }
         
-        if(this.getWorkSubtype() != null){
-        	ow.setWorkSubtype(WorkSubtype.fromValue(this.getWorkSubtype().getValue()));
-        }
-
         if (this.getJournalTitle() != null) {
             ow.setJournalTitle(new Title(this.getJournalTitle().getValue()));
         }
@@ -305,16 +298,16 @@ public class Work implements ErrorsInterface, Serializable {
     public void setWorkType(Text workType) {
         this.workType = workType;
     }
+    
+    public Text getWorkCategory() {
+		return workCategory;
+	}
 
-    public Text getWorkSubtype(){
-    	return workSubtype;
-    }
-    
-    public void setWorkSubtype(Text workSubtype){
-    	this.workSubtype = workSubtype;
-    }
-    
-    public Text getJournalTitle() {
+	public void setWorkCategory(Text workCategory) {
+		this.workCategory = workCategory;
+	}
+
+	public Text getJournalTitle() {
         return journalTitle;
     }
 

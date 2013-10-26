@@ -33,7 +33,6 @@ import javax.ws.rs.core.MediaType;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.api.common.OrcidApiConstants;
-import org.orcid.jaxb.model.clientgroup.OrcidClientGroup;
 import org.orcid.jaxb.model.message.ExternalIdOrcid;
 import org.orcid.jaxb.model.message.ExternalIdReference;
 import org.orcid.jaxb.model.message.ExternalIdentifier;
@@ -48,9 +47,8 @@ import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.message.Subtitle;
 import org.orcid.jaxb.model.message.Title;
 import org.orcid.jaxb.model.message.Visibility;
-import org.orcid.jaxb.model.message.WorkSubtype;
 import org.orcid.jaxb.model.message.WorkTitle;
-import org.orcid.jaxb.model.message.NewWorkType;
+import org.orcid.jaxb.model.message.WorkType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -232,8 +230,7 @@ public class T2OrcidOAuthApiClientIntegrationTest extends BaseT2OrcidOAuthApiCli
 
         orcidWorks = new OrcidWorks();
         OrcidWork orcidWork = orcidClientDataHelper.createWork("Single works");
-        orcidWork.setWorkType(NewWorkType.OTHER_OUTPUT);
-        orcidWork.setWorkSubtype(WorkSubtype.UNDEFINED);
+        orcidWork.setWorkType(WorkType.UNDEFINED);
         orcidWorks.getOrcidWork().add(orcidWork);        
         message.getOrcidProfile().setOrcidWorks(orcidWorks);
 
@@ -324,18 +321,15 @@ public class T2OrcidOAuthApiClientIntegrationTest extends BaseT2OrcidOAuthApiCli
         assertClientResponse401Details(oauthT2Client.updateWorksXml(this.orcid, message, null));
 
         if(work1.getWorkType() == null) {
-            work1.setWorkType(NewWorkType.OTHER_OUTPUT);
-            work1.setWorkSubtype(WorkSubtype.UNDEFINED);
+            work1.setWorkType(WorkType.UNDEFINED);
         }
         
         if(workToUpdate.getWorkType() == null){
-        	workToUpdate.setWorkType(NewWorkType.OTHER_OUTPUT);
-        	workToUpdate.setWorkSubtype(WorkSubtype.UNDEFINED);
+        	workToUpdate.setWorkType(WorkType.UNDEFINED);
         }
         
         if(work3.getWorkType() == null) {
-        	work3.setWorkType(NewWorkType.OTHER_OUTPUT);
-            work3.setWorkSubtype(WorkSubtype.UNDEFINED);
+        	work3.setWorkType(WorkType.UNDEFINED);
         }
         
         ClientResponse updatedWorksResponse = oauthT2Client.updateWorksXml(this.orcid, message, accessToken);

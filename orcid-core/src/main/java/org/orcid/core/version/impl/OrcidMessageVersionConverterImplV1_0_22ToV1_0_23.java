@@ -16,17 +16,13 @@
  */
 package org.orcid.core.version.impl;
 
-import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.version.OrcidMessageVersionConverter;
-import org.orcid.jaxb.model.message.NewWorkType;
 import org.orcid.jaxb.model.message.OrcidActivities;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidWork;
 import org.orcid.jaxb.model.message.OrcidWorks;
-import org.orcid.jaxb.model.message.Title;
-import org.orcid.jaxb.model.message.WorkSubtype;
-import org.orcid.jaxb.model.message.WorkTitle;
+import org.orcid.jaxb.model.message.WorkType;
 
 /**
  * 
@@ -37,8 +33,6 @@ public class OrcidMessageVersionConverterImplV1_0_22ToV1_0_23 implements OrcidMe
 
     private static final String FROM_VERSION = "1.0.22";
     private static final String TO_VERSION = "1.0.23";
-
-    private static final String EMPTY_TITLE = "NOT_DEFINED";
 
     @Override
     public String getFromVersion() {
@@ -64,11 +58,9 @@ public class OrcidMessageVersionConverterImplV1_0_22ToV1_0_23 implements OrcidMe
                 OrcidWorks orcidWorks = orcidActivities.getOrcidWorks();
                 if (orcidWorks != null) {
                     for (OrcidWork orcidWork : orcidWorks.getOrcidWork()) {
-                        NewWorkType downgradedWorkType = downgradeWorkType(orcidWork.getWorkType(), orcidWork.getWorkSubtype());                        
+                        WorkType downgradedWorkType = downgradeWorkType(orcidWork.getWorkType());                        
                         //Downgrade work type
-                        orcidWork.setWorkType(downgradedWorkType);
-                        //Remove the work subtype
-                        orcidWork.setWorkSubtype(null);
+                        orcidWork.setWorkType(downgradedWorkType);                       
                     }
                 }
             }
@@ -92,10 +84,8 @@ public class OrcidMessageVersionConverterImplV1_0_22ToV1_0_23 implements OrcidMe
                 if (orcidWorks != null) {
                     for (OrcidWork orcidWork : orcidWorks.getOrcidWork()) {
                         //Upgrade work type and subtype for each work
-                        NewWorkType updatedWorkType = upgradeWorkType(orcidWork.getWorkType());
-                        WorkSubtype workSubtype = upgradeWorkSubtype(orcidWork.getWorkType());
-                        orcidWork.setWorkType(updatedWorkType);
-                        orcidWork.setWorkSubtype(workSubtype);
+                        WorkType updatedWorkType = upgradeWorkType(orcidWork.getWorkType());
+                        orcidWork.setWorkType(updatedWorkType);                        
                     }
                 }
             }
@@ -103,373 +93,236 @@ public class OrcidMessageVersionConverterImplV1_0_22ToV1_0_23 implements OrcidMe
         return orcidMessage;
     }
 
-    /**
-     * Determine the work type based on the old deprecated workType
-     * */
-    private NewWorkType upgradeWorkType(NewWorkType oldWorkType) {
-        // If it is not deprecated, it is not an old type
-        if (!oldWorkType.isDeprecated())
-            return oldWorkType;
-        switch (oldWorkType) {
-        case ADVERTISEMENT:
-            return NewWorkType.OTHER_OUTPUT;
-        case AUDIOVISUAL:
-            return NewWorkType.OTHER_OUTPUT;
-        case BIBLE:
-            return NewWorkType.OTHER_OUTPUT;
-        case BOOK:
-            return NewWorkType.PUBLICATION;
-        case BROCHURE:
-            return NewWorkType.OTHER_OUTPUT;
-        case CARTOON_COMIC:
-            return NewWorkType.OTHER_OUTPUT;
-        case CHAPTER_ANTHOLOGY:
-            return NewWorkType.PUBLICATION;
-        case COMPONENTS:
-            return NewWorkType.OTHER_OUTPUT;
-        case CONFERENCE_PROCEEDINGS:
-            return NewWorkType.CONFERENCE;
-        case CONGRESSIONAL_PUBLICATION:
-            return NewWorkType.OTHER_OUTPUT;
-        case COURT_CASE:
-            return NewWorkType.OTHER_OUTPUT;
-        case DATABASE:
-            return NewWorkType.OTHER_OUTPUT;
-        case DICTIONARY_ENTRY:
-            return NewWorkType.PUBLICATION;
-        case DIGITAL_IMAGE:
-            return NewWorkType.PUBLICATION;
-        case DISSERTATON_ABSTRACT:
-            return NewWorkType.PUBLICATION;
-        case DISSERTATION:
-            return NewWorkType.PUBLICATION;
-        case EMAIL:
-            return NewWorkType.OTHER_OUTPUT;
-        case EDITORIAL:
-            return NewWorkType.PUBLICATION;
-        case ELECTRONIC_ONLY:
-            return NewWorkType.PUBLICATION;
-        case ENCYCLOPEDIA_ARTICLE:
-            return NewWorkType.PUBLICATION;
-        case EXECUTIVE_ORDER:
-            return NewWorkType.OTHER_OUTPUT;
-        case FEDERAL_BILL:
-            return NewWorkType.OTHER_OUTPUT;
-        case FEDERAL_REPORT:
-            return NewWorkType.OTHER_OUTPUT;
-        case FEDERAL_RULE:
-            return NewWorkType.OTHER_OUTPUT;
-        case FEDERAL_STATUTE:
-            return NewWorkType.OTHER_OUTPUT;
-        case FEDERAL_TESTIMONY:
-            return NewWorkType.OTHER_OUTPUT;
-        case FILM_MOVIE:
-            return NewWorkType.OTHER_OUTPUT;
-        case GOVERNMENT_PUBLICATION:
-            return NewWorkType.OTHER_OUTPUT;
-        case INTERVIEW:
-            return NewWorkType.OTHER_OUTPUT;
-        case JOURNAL_ARTICLE:
-            return NewWorkType.PUBLICATION;
-        case LECTURE_SPEECH:
-            return NewWorkType.OTHER_OUTPUT;
-        case LEGAL:
-            return NewWorkType.OTHER_OUTPUT;
-        case LETTER:
-            return NewWorkType.OTHER_OUTPUT;
-        case LIVE_PERFORMANCE:
-            return NewWorkType.OTHER_OUTPUT;
-        case MAGAZINE_ARTICLE:
-            return NewWorkType.PUBLICATION;
-        case MAILING_LIST:
-            return NewWorkType.OTHER_OUTPUT;
-        case MANUSCRIPT:
-            return NewWorkType.OTHER_OUTPUT;
-        case MAP_CHART:
-            return NewWorkType.OTHER_OUTPUT;
-        case MUSICAL_RECORDING:
-            return NewWorkType.OTHER_OUTPUT;
-        case NEWSGROUP:
-            return NewWorkType.OTHER_OUTPUT;
-        case NEWSLETTER:
-            return NewWorkType.PUBLICATION;
-        case NEWSPAPER_ARTICLE:
-            return NewWorkType.PUBLICATION;
-        case NON_PERIODICALS:
-            return NewWorkType.OTHER_OUTPUT;
-        case OTHER:
-            return NewWorkType.OTHER_OUTPUT;
-        case PAMPHLET:
-            return NewWorkType.OTHER_OUTPUT;
-        case PAINTING:
-            return NewWorkType.OTHER_OUTPUT;
-        case PATENT:
-            return NewWorkType.INTELLECTUAL_PROPERTY;
-        case PERIODICALS:
-            return NewWorkType.PUBLICATION;
-        case PHOTOGRAPH:
-            return NewWorkType.OTHER_OUTPUT;
-        case PRESSRELEASE:
-            return NewWorkType.OTHER_OUTPUT;
-        case RAW_DATA:
-            return NewWorkType.OTHER_OUTPUT;
-        case RELIGIOUS_TEXT:
-            return NewWorkType.OTHER_OUTPUT;
-        case REPORT:
-            return NewWorkType.PUBLICATION;
-        case REPORTS_WORKING_PAPERS:
-            return NewWorkType.PUBLICATION;
-        case REVIEW:
-            return NewWorkType.PUBLICATION;
-        case SCHOLARLY_PROJECT:
-            return NewWorkType.OTHER_OUTPUT;
-        case SOFTWARE:
-            return NewWorkType.PUBLICATION;
-        case STANDARDS:
-            return NewWorkType.OTHER_OUTPUT;
-        case TELEVISION_RADIO:
-            return NewWorkType.OTHER_OUTPUT;
-        case THESIS:
-            return NewWorkType.PUBLICATION;
-        case WEBSITE:
-            return NewWorkType.PUBLICATION;
-        case UNDEFINED:
-            return NewWorkType.OTHER_OUTPUT;
-        default:
-            // This should never happens, but just in case
-            return oldWorkType;
-        }
-    }
-
+    
     /**
      * Determine the sub type based on the old deprecated workType
      * */
-    private WorkSubtype upgradeWorkSubtype(NewWorkType oldWorkType) {
-        if (!oldWorkType.isDeprecated())
-            throw new IllegalArgumentException("WorkType: " + oldWorkType.value() + " is not deprecated");
+    private WorkType upgradeWorkType(WorkType oldWorkType) {
+        //If it is one of the new work types, just return it
+    	if (!oldWorkType.isDeprecated())
+            return oldWorkType;
 
         switch (oldWorkType) {
         case ADVERTISEMENT:
-            return WorkSubtype.OTHER;
+            return WorkType.OTHER;
         case AUDIOVISUAL:
-            return WorkSubtype.OTHER;
+            return WorkType.OTHER;
         case BIBLE:
-            return WorkSubtype.OTHER;
+            return WorkType.OTHER;
         case BOOK:
-            return WorkSubtype.BOOK;
+            return WorkType.BOOK;
         case BROCHURE:
-            return WorkSubtype.OTHER;
+            return WorkType.OTHER;
         case CARTOON_COMIC:
-            return WorkSubtype.ARTISTIC_PERFORMANCE;
+            return WorkType.ARTISTIC_PERFORMANCE;
         case CHAPTER_ANTHOLOGY:
-            return WorkSubtype.BOOK_CHAPTER;
+            return WorkType.BOOK_CHAPTER;
         case COMPONENTS:
-            return WorkSubtype.OTHER;
+            return WorkType.OTHER;
         case CONFERENCE_PROCEEDINGS:
-            return WorkSubtype.CONFERENCE_PAPER;
+            return WorkType.CONFERENCE_PAPER;
         case CONGRESSIONAL_PUBLICATION:
-            return WorkSubtype.STANDARDS_AND_POLICY;
+            return WorkType.STANDARDS_AND_POLICY;
         case COURT_CASE:
-            return WorkSubtype.OTHER;
+            return WorkType.OTHER;
         case DATABASE:
-            return WorkSubtype.DATA_SET;
+            return WorkType.DATA_SET;
         case DICTIONARY_ENTRY:
-            return WorkSubtype.DICTIONARY_ENTRY;
+            return WorkType.DICTIONARY_ENTRY;
         case DIGITAL_IMAGE:
-            return WorkSubtype.ONLINE_RESOURCE;
+            return WorkType.ONLINE_RESOURCE;
         case DISSERTATON_ABSTRACT:
-            return WorkSubtype.DISSERTATION;
+            return WorkType.DISSERTATION;
         case DISSERTATION:
-            return WorkSubtype.DISSERTATION;
+            return WorkType.DISSERTATION;
         case EMAIL:
-            return WorkSubtype.OTHER;
+            return WorkType.OTHER;
         case EDITORIAL:
-            return WorkSubtype.MAGAZINE_ARTICLE;
+            return WorkType.MAGAZINE_ARTICLE;
         case ELECTRONIC_ONLY:
-            return WorkSubtype.ONLINE_RESOURCE;
+            return WorkType.ONLINE_RESOURCE;
         case ENCYCLOPEDIA_ARTICLE:
-            return WorkSubtype.ENCYCLOPEDIA_ENTRY;
+            return WorkType.ENCYCLOPEDIA_ENTRY;
         case EXECUTIVE_ORDER:
-            return WorkSubtype.STANDARDS_AND_POLICY;
+            return WorkType.STANDARDS_AND_POLICY;
         case FEDERAL_BILL:
-            return WorkSubtype.STANDARDS_AND_POLICY;
+            return WorkType.STANDARDS_AND_POLICY;
         case FEDERAL_REPORT:
-            return WorkSubtype.STANDARDS_AND_POLICY;
+            return WorkType.STANDARDS_AND_POLICY;
         case FEDERAL_RULE:
-            return WorkSubtype.STANDARDS_AND_POLICY;
+            return WorkType.STANDARDS_AND_POLICY;
         case FEDERAL_STATUTE:
-            return WorkSubtype.STANDARDS_AND_POLICY;
+            return WorkType.STANDARDS_AND_POLICY;
         case FEDERAL_TESTIMONY:
-            return WorkSubtype.OTHER;
+            return WorkType.OTHER;
         case FILM_MOVIE:
-            return WorkSubtype.ARTISTIC_PERFORMANCE;
+            return WorkType.ARTISTIC_PERFORMANCE;
         case GOVERNMENT_PUBLICATION:
-            return WorkSubtype.STANDARDS_AND_POLICY;
+            return WorkType.STANDARDS_AND_POLICY;
         case INTERVIEW:
-            return WorkSubtype.OTHER;
+            return WorkType.OTHER;
         case JOURNAL_ARTICLE:
-            return WorkSubtype.JOURNAL_ARTICLE;
+            return WorkType.JOURNAL_ARTICLE;
         case LECTURE_SPEECH:
-            return WorkSubtype.LECTURE_SPEECH;
+            return WorkType.LECTURE_SPEECH;
         case LEGAL:
-            return WorkSubtype.OTHER;
+            return WorkType.OTHER;
         case LETTER:
-            return WorkSubtype.OTHER;
+            return WorkType.OTHER;
         case LIVE_PERFORMANCE:
-            return WorkSubtype.ARTISTIC_PERFORMANCE;
+            return WorkType.ARTISTIC_PERFORMANCE;
         case MAGAZINE_ARTICLE:
-            return WorkSubtype.MAGAZINE_ARTICLE;
+            return WorkType.MAGAZINE_ARTICLE;
         case MAILING_LIST:
-            return WorkSubtype.OTHER;
+            return WorkType.OTHER;
         case MANUSCRIPT:
-            return WorkSubtype.OTHER;
+            return WorkType.OTHER;
         case MAP_CHART:
-            return WorkSubtype.DATA_SET;
+            return WorkType.DATA_SET;
         case MUSICAL_RECORDING:
-            return WorkSubtype.ARTISTIC_PERFORMANCE;
+            return WorkType.ARTISTIC_PERFORMANCE;
         case NEWSGROUP:
-            return WorkSubtype.OTHER;
+            return WorkType.OTHER;
         case NEWSLETTER:
-            return WorkSubtype.NEWSLETTER_ARTICLE;
+            return WorkType.NEWSLETTER_ARTICLE;
         case NEWSPAPER_ARTICLE:
-            return WorkSubtype.NEWSPAPER_ARTICLE;
+            return WorkType.NEWSPAPER_ARTICLE;
         case NON_PERIODICALS:
-            return WorkSubtype.OTHER;
+            return WorkType.OTHER;
         case OTHER:
-            return WorkSubtype.OTHER;
+            return WorkType.OTHER;
         case PAMPHLET:
-            return WorkSubtype.OTHER;
+            return WorkType.OTHER;
         case PAINTING:
-            return WorkSubtype.ARTISTIC_PERFORMANCE;
+            return WorkType.ARTISTIC_PERFORMANCE;
         case PATENT:
-            return WorkSubtype.PATENT;
+            return WorkType.PATENT;
         case PERIODICALS:
-            return WorkSubtype.MAGAZINE_ARTICLE;
+            return WorkType.MAGAZINE_ARTICLE;
         case PHOTOGRAPH:
-            return WorkSubtype.ARTISTIC_PERFORMANCE;
+            return WorkType.ARTISTIC_PERFORMANCE;
         case PRESSRELEASE:
-            return WorkSubtype.OTHER;
+            return WorkType.OTHER;
         case RAW_DATA:
-            return WorkSubtype.DATA_SET;
+            return WorkType.DATA_SET;
         case RELIGIOUS_TEXT:
-            return WorkSubtype.OTHER;
+            return WorkType.OTHER;
         case REPORT:
-            return WorkSubtype.REPORT;
+            return WorkType.REPORT;
         case REPORTS_WORKING_PAPERS:
-            return WorkSubtype.WORKING_PAPER;
+            return WorkType.WORKING_PAPER;
         case REVIEW:
-            return WorkSubtype.BOOK_REVIEW;
+            return WorkType.BOOK_REVIEW;
         case SCHOLARLY_PROJECT:
-            return WorkSubtype.OTHER;
+            return WorkType.OTHER;
         case SOFTWARE:
-            return WorkSubtype.ONLINE_RESOURCE;
+            return WorkType.ONLINE_RESOURCE;
         case STANDARDS:
-            return WorkSubtype.STANDARDS_AND_POLICY;
+            return WorkType.STANDARDS_AND_POLICY;
         case TELEVISION_RADIO:
-            return WorkSubtype.ARTISTIC_PERFORMANCE;
+            return WorkType.ARTISTIC_PERFORMANCE;
         case THESIS:
-            return WorkSubtype.SUPERVISED_STUDENT_PUBLICATION;
+            return WorkType.SUPERVISED_STUDENT_PUBLICATION;
         case WEBSITE:
-            return WorkSubtype.WEBSITE;
+            return WorkType.WEBSITE;
         case UNDEFINED:
-            return WorkSubtype.OTHER;
+            return WorkType.UNDEFINED;
         default:
             // This should never happens, but just in case
-            return WorkSubtype.UNDEFINED;
+            return WorkType.UNDEFINED;
         }
     }
 
     /**
-     * Determine the old work type based on the new work type and subtype
+     * Get a new work type and downgrade it to an old work type
      * */
-    private NewWorkType downgradeWorkType(NewWorkType newWorkType, WorkSubtype workSubtype) {
-        // If the work type is not deprecated it means it should not be
-        // downgraded
-        if (newWorkType.isDeprecated()) {
-            return newWorkType;
-        }
-
-        switch (workSubtype) {
+    private WorkType downgradeWorkType(WorkType workType) {
+    	//If it is one of the old work types just return it
+    	if(workType.isDeprecated()){
+    		return workType;
+    	}
+    	
+        switch (workType) {
         case ARTISTIC_PERFORMANCE:
-            return NewWorkType.LIVE_PERFORMANCE;
+            return WorkType.LIVE_PERFORMANCE;
         case BOOK_CHAPTER:
-            return NewWorkType.CHAPTER_ANTHOLOGY;
+            return WorkType.CHAPTER_ANTHOLOGY;
         case BOOK_REVIEW:
-            return NewWorkType.REVIEW;
+            return WorkType.REVIEW;
         case BOOK:
-            return NewWorkType.BOOK;
+            return WorkType.BOOK;
         case CONFERENCE_ABSTRACT:
-            return NewWorkType.UNDEFINED;
+            return WorkType.UNDEFINED;
         case CONFERENCE_PAPER:
-            return NewWorkType.CONFERENCE_PROCEEDINGS;
+            return WorkType.CONFERENCE_PROCEEDINGS;
         case CONFERENCE_POSTER:
-            return NewWorkType.UNDEFINED;
+            return WorkType.UNDEFINED;
         case DATA_SET:
-            return NewWorkType.DATABASE;
+            return WorkType.DATABASE;
         case DICTIONARY_ENTRY:
-            return NewWorkType.DICTIONARY_ENTRY;
+            return WorkType.DICTIONARY_ENTRY;
         case DISCLOSURE:
-            return NewWorkType.UNDEFINED;
+            return WorkType.UNDEFINED;
         case DISSERTATION:
-            return NewWorkType.DISSERTATION;
+            return WorkType.DISSERTATION;
         case EDITED_BOOK:
-            return NewWorkType.UNDEFINED;
+            return WorkType.UNDEFINED;
         case ENCYCLOPEDIA_ENTRY:
-            return NewWorkType.ENCYCLOPEDIA_ARTICLE;
+            return WorkType.ENCYCLOPEDIA_ARTICLE;
         case INVENTION:
-            return NewWorkType.UNDEFINED;
+            return WorkType.UNDEFINED;
         case JOURNAL_ARTICLE:
-            return NewWorkType.JOURNAL_ARTICLE;
+            return WorkType.JOURNAL_ARTICLE;
         case JOURNAL_ISSUE:
-            return NewWorkType.UNDEFINED;
+            return WorkType.UNDEFINED;
         case LECTURE_SPEECH:
-            return NewWorkType.LECTURE_SPEECH;
+            return WorkType.LECTURE_SPEECH;
         case LICENSE:
-            return NewWorkType.UNDEFINED;
+            return WorkType.UNDEFINED;
         case MAGAZINE_ARTICLE:
-            return NewWorkType.MAGAZINE_ARTICLE;
+            return WorkType.MAGAZINE_ARTICLE;
         case MANUAL:
-            return NewWorkType.UNDEFINED;
+            return WorkType.UNDEFINED;
         case NEWSLETTER_ARTICLE:
-            return NewWorkType.NEWSLETTER;
+            return WorkType.NEWSLETTER;
         case NEWSPAPER_ARTICLE:
-            return NewWorkType.NEWSPAPER_ARTICLE;
+            return WorkType.NEWSPAPER_ARTICLE;
         case ONLINE_RESOURCE:
-            return NewWorkType.ELECTRONIC_ONLY;
+            return WorkType.ELECTRONIC_ONLY;
         case OTHER:
-            return NewWorkType.OTHER;
+            return WorkType.OTHER;
         case PATENT:
-            return NewWorkType.PATENT;
+            return WorkType.PATENT;
         case REGISTERED_COPYRIGHT:
-            return NewWorkType.UNDEFINED;
+            return WorkType.UNDEFINED;
         case REPORT:
-            return NewWorkType.REPORT;
+            return WorkType.REPORT;
         case RESEARCH_TECHNIQUE:
-            return NewWorkType.UNDEFINED;
+            return WorkType.UNDEFINED;
         case RESEARCH_TOOL:
-            return NewWorkType.UNDEFINED;
+            return WorkType.UNDEFINED;
         case SPIN_OFF_COMPANY:
-            return NewWorkType.UNDEFINED;
+            return WorkType.UNDEFINED;
         case STANDARDS_AND_POLICY:
-            return NewWorkType.GOVERNMENT_PUBLICATION;
+            return WorkType.GOVERNMENT_PUBLICATION;
         case SUPERVISED_STUDENT_PUBLICATION:
-            return NewWorkType.THESIS;
+            return WorkType.THESIS;
         case TECHNICAL_STANDARD:
-            return NewWorkType.UNDEFINED;
+            return WorkType.UNDEFINED;
         case TEST:
-            return NewWorkType.UNDEFINED;
+            return WorkType.UNDEFINED;
         case TRADEMARK:
-            return NewWorkType.UNDEFINED;
+            return WorkType.UNDEFINED;
         case TRANSLATION:
-            return NewWorkType.UNDEFINED;        
+            return WorkType.UNDEFINED;        
         case WEBSITE:
-            return NewWorkType.WEBSITE;
+            return WorkType.WEBSITE;
         case WORKING_PAPER:
-            return NewWorkType.REPORTS_WORKING_PAPERS;
+            return WorkType.REPORTS_WORKING_PAPERS;
         case UNDEFINED:
-            return NewWorkType.UNDEFINED;
+            return WorkType.UNDEFINED;
         default:
-            return NewWorkType.UNDEFINED;
+            return WorkType.UNDEFINED;
         }
     }
 }

@@ -776,7 +776,6 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
             orcidWork.setCountry(country);
         }
         orcidWork.setWorkType(work.getWorkType());
-        orcidWork.setWorkSubtype(work.getWorkSubtype());
         orcidWork.setVisibility(profileWorkEntity.getVisibility());
         return orcidWork;
     }

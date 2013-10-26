@@ -1441,7 +1441,7 @@ function WorkCtrl($scope, $compile, worksSrvc) {
 	$scope.bibtexCitations = {};
 	$scope.languages = null;
 	$scope.editTranslatedTitle = false;
-	$scope.subtypes = null;
+	$scope.types = null;
 	
 	$scope.toggleDisplayWorks = function () {
 		$scope.displayWorks = !$scope.displayWorks;
@@ -1747,7 +1747,7 @@ function WorkCtrl($scope, $compile, worksSrvc) {
 	        }
 	    }).fail(function() { 
 	    	// something bad is happening!
-	    	console.log("RegistrationCtrl.serverValidate() error");
+	    	console.log("WorkCtrl.serverValidate() error");
 	    });
 	};
 	
@@ -1801,23 +1801,23 @@ function WorkCtrl($scope, $compile, worksSrvc) {
 	};		
 	
 	
-	$scope.loadWorkSubtypes = function(){			
-		if($scope.editWork.workType.value != null && $scope.editWork.workType.value != ""){
+	$scope.loadWorkTypes = function(){			
+		if($scope.editWork.workCategory.value != null && $scope.editWork.workCategory.value != ""){
 			$.ajax({
-		        url: $('body').data('baseurl') + 'works/loadWorkSubtypes.json?workType=' + $scope.editWork.workType.value,
+		        url: $('body').data('baseurl') + 'works/loadWorkTypes.json?workCategory=' + $scope.editWork.workCategory.value,
 		        type: 'POST',	        
 		        contentType: 'application/json;charset=UTF-8',
 		        dataType: 'json',
 		        success: function(data) {
 		        	console.log(data);
-		        	$scope.subtypes = data;
+		        	$scope.types = data;
 		        	$scope.$apply();
 		        }
 		    }).fail(function() { 
-		    	console.log("Error loading subtypes.");
+		    	console.log("Error loading work types.");
 		    });
 		} else {
-			$scope.subtypes = null;
+			$scope.types = null;
 		}
 	};
 	

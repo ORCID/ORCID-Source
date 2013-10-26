@@ -51,9 +51,8 @@ import org.orcid.jaxb.model.message.ExternalIdentifiers;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.SequenceType;
 import org.orcid.jaxb.model.message.SourceOrcid;
+import org.orcid.jaxb.model.message.WorkCategory;
 import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
-import org.orcid.jaxb.model.message.NewWorkType;
-import org.orcid.jaxb.model.message.WorkSubtype;
 import org.orcid.pojo.ThirdPartyRedirect;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -123,16 +122,15 @@ public class WorkspaceController extends BaseWorkspaceController {
         return FunctionsOverCollections.sortMapsByValues(affiliationTypes);
     }
 
-    @ModelAttribute("workTypes")
+    @ModelAttribute("workCategories")
     public Map<String, String> retrieveWorkTypesAsMap() {
-        Map<String, String> workTypes = new LinkedHashMap<String, String>();
+        Map<String, String> workCategories = new LinkedHashMap<String, String>();
 
-        for (NewWorkType workType : NewWorkType.values()) {
-            if(!workType.isDeprecated())
-                workTypes.put(workType.value(), getMessage(buildInternationalizationKey(NewWorkType.class, workType.value())));
+        for (WorkCategory workCategory : WorkCategory.values()) {
+        	workCategories.put(workCategory.value(), getMessage(buildInternationalizationKey(WorkCategory.class, workCategory.value())));
         }
         
-        return FunctionsOverCollections.sortMapsByValues(workTypes);
+        return FunctionsOverCollections.sortMapsByValues(workCategories);
     }        
 
     @ModelAttribute("citationTypes")

@@ -38,7 +38,6 @@ import org.orcid.jaxb.model.message.Country;
 import org.orcid.jaxb.model.message.Day;
 import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.jaxb.model.message.Month;
-import org.orcid.jaxb.model.message.NewWorkType;
 import org.orcid.jaxb.model.message.OrcidActivities;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidWork;
@@ -55,8 +54,8 @@ import org.orcid.jaxb.model.message.WorkExternalIdentifier;
 import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
 import org.orcid.jaxb.model.message.WorkExternalIdentifiers;
 import org.orcid.jaxb.model.message.WorkSource;
-import org.orcid.jaxb.model.message.WorkSubtype;
 import org.orcid.jaxb.model.message.WorkTitle;
+import org.orcid.jaxb.model.message.WorkType;
 import org.orcid.jaxb.model.message.Year;
 import org.orcid.utils.BibtexUtils;
 import org.orcid.utils.DateUtils;
@@ -88,8 +87,6 @@ public class CurrentWork {
 
     private String workType;
     
-    private String workSubtype;
-
     private String year;
 
     private String month;
@@ -149,14 +146,9 @@ public class CurrentWork {
             journalTitle = orcidJournalTitle.getContent();
         }
 
-        NewWorkType orcidWorkType = orcidWork.getWorkType();
+        WorkType orcidWorkType = orcidWork.getWorkType();
         if (orcidWorkType != null) {
             workType = orcidWorkType.value();
-        }
-        
-        WorkSubtype orcidWorkSubtype = orcidWork.getWorkSubtype();
-        if(orcidWorkSubtype != null){
-        	workSubtype = orcidWorkSubtype.value();
         }
         
         description = orcidWork.getShortDescription();
@@ -314,16 +306,7 @@ public class CurrentWork {
         this.workType = workType;
     }
     
-    @NotBlank
-    public String getWorkSubtype() {
-        return workSubtype;
-    }
-
-    public void setWorkSubtype(String workSubtype) {
-        this.workSubtype = workSubtype;
-    }
-    
-    public String getYear() {
+      public String getYear() {
         return year;
     }
 
@@ -489,13 +472,9 @@ public class CurrentWork {
             orcidWork.setShortDescription(description);
         }
         if (StringUtils.isNotBlank(workType)) {
-            NewWorkType orcidWorkType = NewWorkType.fromValue(workType);
+            WorkType orcidWorkType = WorkType.fromValue(workType);
             orcidWork.setWorkType(orcidWorkType);
-        }        
-        if (StringUtils.isNotBlank(workSubtype)) {
-            WorkSubtype orcidWorkSubtype = WorkSubtype.fromValue(workSubtype);
-            orcidWork.setWorkSubtype(orcidWorkSubtype);
-        }                
+        }                               
         if (StringUtils.isNotBlank(year)) {
             PublicationDate publicationDate = retrievePublicationDate(orcidWork);
             publicationDate.setYear(new Year(Integer.valueOf(year)));

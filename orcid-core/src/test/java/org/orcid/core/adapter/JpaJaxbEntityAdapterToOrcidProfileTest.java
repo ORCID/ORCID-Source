@@ -80,8 +80,7 @@ import org.orcid.jaxb.model.message.Source;
 import org.orcid.jaxb.model.message.Url;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.message.WorkContributors;
-import org.orcid.jaxb.model.message.NewWorkType;
-import org.orcid.jaxb.model.message.WorkSubtype;
+import org.orcid.jaxb.model.message.WorkType;
 import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.test.DBUnitTest;
@@ -266,9 +265,7 @@ public class JpaJaxbEntityAdapterToOrcidProfileTest extends DBUnitTest {
                 assertEquals("Sue Ellen ewing", orcidWork.getWorkCitation().getCitation());
                 assertEquals(CitationType.FORMATTED_IEEE, orcidWork.getWorkCitation().getWorkCitationType());
                 assertNotNull(orcidWork.getWorkType());
-                assertEquals(NewWorkType.PUBLICATION, orcidWork.getWorkType());
-                assertEquals(WorkSubtype.BOOK, orcidWork.getWorkSubtype());
-                
+                assertEquals(WorkType.BOOK, orcidWork.getWorkType());
             }
         }
         
