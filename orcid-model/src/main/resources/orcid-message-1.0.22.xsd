@@ -1818,6 +1818,7 @@
             <xs:enumeration value="ZM"/>
             <xs:enumeration value="ZW"/>
             <xs:enumeration value="TW"/>
+            <xs:enumeration value="XK"/>
         </xs:restriction>
     </xs:simpleType>
     <xs:simpleType name="iso-3166-country-or-empty">
