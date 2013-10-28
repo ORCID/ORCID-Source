@@ -1147,7 +1147,7 @@ function AffiliationCtrl($scope, $compile, affiliationsSrvc){
 
 	$scope.showAddModal = function(){
 		isMobile() ? w = '100%' : w = '800px';
-		isMobile() ? h = '100%' : h = '550px';		
+		isMobile() ? h = '100%' : h = '550px';
 		var numOfResults = 25;
 		$.colorbox({        	
 			html: $compile($('#add-affiliation-modal').html())($scope),

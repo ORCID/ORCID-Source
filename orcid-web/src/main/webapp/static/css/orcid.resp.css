@@ -131,6 +131,10 @@ sub {
 	bottom: -0.25em;
 }
 
+.bottomBuffer {
+	margin-bottom: 1em;
+}
+
 img {
 	/* Responsive images (ensure images don't scale beyond their parents) */
 	max-width: 100%;
@@ -330,12 +334,6 @@ a:hover {
 
 .submitted {
 	display: none;
-}
-
-.span3.override {
-	margin-left: 0;
-	margin-right: 0;
-	width: 240px;
 }
 
 .collapsible {
@@ -2845,6 +2843,39 @@ ul.personal-inf-display li{
   overflow-y: auto;
 }
 
+.small-row {	
+	display: inline-block;
+	float: left;
+	margin-top:20px;	
+}
+
+.popover-work-container {
+	display: none;
+	position: absolute; 
+	left: -463px; 
+	top: 17px;
+	width: 686px;
+	max-width: 686px;
+	background-color: #ffffff;
+	height: 175px;
+}
+
+.show-work-info:hover .popover-work-container {
+	display: inline;
+}
+
+.show-work-info .popover.bottom .arrow{
+	left: 484px !important;
+}
+
+.show-work-info .lightbox-container{
+	overflow-y:scroll;
+	height: 175px;
+}
+
+
+
+
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */
 	.alert .small {
@@ -3456,6 +3487,10 @@ ul.personal-inf-display li{
 		margin-right: 10px;
 	}
 	
+	.add-work .alert{
+		padding: 0 10px;
+	}
+	
 	/* Workspace Affiliations */
 	/* Affiliations Pop over */
 	#workspace-affiliations .popover-help-container .popover{
@@ -3472,6 +3507,16 @@ ul.personal-inf-display li{
 	
 	#edit-affiliation .popover.bottom .arrow{
 		left: 118px;
+	}
+	
+	/* Work List*/
+	.popover-work-container{		
+		max-width:100%;
+		left:0;		
+	}
+
+	.show-work-info .popover.bottom .arrow{
+		left: 27px !important;
 	}
 	
 }
