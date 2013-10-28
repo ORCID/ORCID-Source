@@ -105,6 +105,9 @@ public class ValidationManagerImpl implements ValidationManager {
         if (ValidationBehaviour.IGNORE.equals(validationBehaviour)) {
             return;
         }        
+        //TODO: Remove this when all old work types are not allowed from API request
+        this.messageVersion = orcidMessage.getMessageVersion();
+        //TODO: END
         doSchemaValidation(orcidMessage);
         doCustomValidation(orcidMessage);
     }
@@ -136,10 +139,7 @@ public class ValidationManagerImpl implements ValidationManager {
             if (requireOrcidProfile) {
                 throw new OrcidValidationException("There must be an orcid-profile element");
             }
-        } else {
-            //TODO: Remove this when all old work types are removed
-            this.messageVersion = orcidMessage.getMessageVersion();
-            //TODO: END
+        } else {            
             checkBio(orcidProfile.getOrcidBio());
             checkActivities(orcidProfile.getOrcidActivities());
         }
@@ -212,7 +212,10 @@ public class ValidationManagerImpl implements ValidationManager {
         if (schema == null) {
             SchemaFactory factory = SchemaFactory.newInstance("http://www.w3.org/2001/XMLSchema");
             try {
-                schema = factory.newSchema(ValidateOrcidMessage.class.getResource("/orcid-message-" + version + ".xsd"));
+                if(this.messageVersion != null)
+                    schema = factory.newSchema(ValidateOrcidMessage.class.getResource("/orcid-message-" + this.messageVersion + ".xsd"));
+                else 
+                    schema = factory.newSchema(ValidateOrcidMessage.class.getResource("/orcid-message-" + version + ".xsd"));
             } catch (SAXException e) {
                 handleError("Error initializing schema", e);
             }
