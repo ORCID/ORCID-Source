@@ -1152,7 +1152,7 @@ function AffiliationCtrl($scope, $compile, affiliationsSrvc){
 		$.colorbox({        	
 			html: $compile($('#add-affiliation-modal').html())($scope),
 			onComplete: function() {
-							$.colorbox.resize({width:w, height:y});
+							$.colorbox.resize({width:w, height:h});
 							$("#affiliationName").typeahead({
 								name: 'affiliationName',
 								limit: numOfResults,

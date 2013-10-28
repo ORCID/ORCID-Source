@@ -18,29 +18,33 @@
 -->
 
 <script type="text/ng-template" id="delete-affiliation-modal">
-	<div>
-		<h3>${springMacroRequestContext.getMessage("manage.deleteAffiliation.pleaseConfirm")}</h3>
-		<p>{{fixedTitle}}</p>		
-    	<div class="btn btn-danger" ng-click="deleteByPutCode()">
-    		${springMacroRequestContext.getMessage("manage.deleteAffiliation.delete")}
-    	</div>
-    	<a href="" ng-click="closeModal()">${springMacroRequestContext.getMessage("manage.deleteAffiliation.cancel")}</a>
-    <div>
+	<div class="lightbox-container">
+		<div class="row">
+			<div class="col-md-12 col-xs-12 col-sm-12">
+				<h3>${springMacroRequestContext.getMessage("manage.deleteAffiliation.pleaseConfirm")}</h3>
+				<p>{{fixedTitle}}</p>		
+    			<div class="btn btn-danger" ng-click="deleteByPutCode()">
+    				${springMacroRequestContext.getMessage("manage.deleteAffiliation.delete")}
+    			</div>
+    			<a href="" ng-click="closeModal()">${springMacroRequestContext.getMessage("manage.deleteAffiliation.cancel")}</a>
+			</div>
+		</div>
+    </div>
 </script>
 
 <script type="text/ng-template" id="add-affiliation-modal">
 	<div id="edit-affiliation" class="edit-affiliation colorbox-content">
 		<div class="row">
-			<div class="col-md-11 col-sm-11 col-xs-10">
+			<div class="col-md-11 col-sm-10 col-xs-10">
 				<h1 class="lightbox-title pull-left"><@orcid.msg 'manual_affiliation_form_contents.add_affiliation'/></h1>				
 			</div>
-			<div class="col-md-1 col-sm-1 col-xs-2">
+			<div class="col-md-1 col-sm-2 col-xs-2">
 				<a class="btn pull-right close-button" ng-click="closeModal()">X</a>
 			</div>
 		</div>
 
 		<div class="row">
-			<div class="col-md-6">
+			<div class="col-md-6 col-sm-6 col-xs-12">
 				<div class="control-group">
 					<label><@orcid.msg 'manual_affiliation_form_contents.labelname'/></label>
 				    <div class="relative">
@@ -95,7 +99,7 @@
 					</div>
 				</div>
 			</div>
-			<div class="col-md-6">
+			<div class="col-md-6 col-sm-6 col-xs-12">
 				<div class="control-group">
 					<label><@orcid.msg 'manual_affiliation_form_contents.labelroletitle'/></label>
 				    <div class="relative">
@@ -168,18 +172,18 @@
 			</div>
 		</div>
 		<div class="row">			
-			<div class="col-md-offset-6 col-md-4">
+			<div class="col-md-offset-6 col-md-4 col-offset-sm-6 col-sm-4 col-xs-12">
 				<button class="btn btn-primary" ng-click="addAffiliation()" ng-disabled="addingAffiliation" ng-class="{disabled:addingAffiliation}"><@orcid.msg 'manual_affiliation_form_contents.btnaddtolist'/></button> 
 				<a href="" ng-click="closeModal()"><@orcid.msg 'manage.deleteExternalIdentifier.cancel'/></a>
 			</div>
-			<div class="col-md-2">
+			<div class="col-md-2 col-sm-6 col-xs-6">
 				<span ng-show="addingAffiliation">
 					<i class="icon-spinner icon-2x icon-spin  green"></i>
 				</span>				
 			</div>			
 		</div>		
 		<div class="row">
-			<div class="col-md-12">	
+			<div class="col-md-12 col-sm-12 col-xs-12">	
 				<span ng-show="editWork.errors.length > 0" class="alert">Please fix above errors</span>
 			<div>
 		<div>

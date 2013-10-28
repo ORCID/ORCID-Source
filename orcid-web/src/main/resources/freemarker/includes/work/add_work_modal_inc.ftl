@@ -17,7 +17,7 @@
 
 -->
 <script type="text/ng-template" id="add-work-modal">
-	<div class="edit-work colorbox-content">
+	<div class="add-work colorbox-content">
 		
 		<!-- Title -->
 		<div class="row">			

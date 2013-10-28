@@ -1514,7 +1514,7 @@ a:hover {
 
 .workspace-private-toolbar li a.icon-trash{
 	margin-right: 15px;
-    vertical-align: 8px;
+    vertical-align: 10px;
 }
 
 .orcid-id {
@@ -1737,6 +1737,12 @@ a:hover {
 .affiliation-title{
 	margin-top: 0 !important;	
 }
+/*
+#affiliationName{
+	width:90px;
+}
+*/
+
 
 #edit-affiliation #startDay,
 #edit-affiliation #startMonth,
@@ -1752,15 +1758,11 @@ a:hover {
 	width: 100px;
 }
 
-#edit-affiliation .input-xlarge{
+
+.add-work input.input-xlarge,
+.add-work #workType{
 	width: 95%;
 }
-
-#edit-affiliation .twitter-typeahead{
-	display:block !important;	
-}
-
-/**/
 
 .grant-title {
 	margin-right: 80px;
@@ -2404,7 +2406,10 @@ header overrides
 
 /* Edit Works */
 
-.edit-work label,.edit-work input,.edit-work textarea,.edit-work select
+.add-work label,
+.add-work input,
+.add-work textarea,
+.add-work select
 	{
 	margin-bottom: 0;
 }
@@ -2753,7 +2758,7 @@ ul.personal-inf-display li{
 	display: block;
 }
 
-.edit-work textarea{
+.add-work textarea{
 	height: 60px;
 }
 
@@ -2761,16 +2766,84 @@ ul.personal-inf-display li{
 	color: #B94A48;
 }
 
-.edit-work #day,
-.edit-work #month{
+.add-work #day,
+.add-work #month{
 	width: 100px;
 	margin: 0 10px 0 0; 
 }
 
-.edit-work #year{
+.add-work #year{
 	width: 100px;
+	margin-bottom:0;
 }
 
+/* Add work */	
+.add-work .popover-help-container .popover{
+	left: -200px !important;
+}
+
+.add-work .popover.bottom .arrow{
+	left: 206px !important;
+}
+
+/* Typeahead */
+
+.twitter-typeahead .tt-query,
+.twitter-typeahead .tt-hint {
+  margin-bottom: 0;
+}
+
+.tt-dropdown-menu {
+  min-width: 160px;
+  margin-top: 2px;
+  padding: 5px 0;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border: 1px solid rgba(0,0,0,.2);
+  *border-right-width: 2px;
+  *border-bottom-width: 2px;
+  -webkit-border-radius: 6px;
+     -moz-border-radius: 6px;
+          border-radius: 6px;
+  -webkit-box-shadow: 0 5px 10px rgba(0,0,0,.2);
+     -moz-box-shadow: 0 5px 10px rgba(0,0,0,.2);
+          box-shadow: 0 5px 10px rgba(0,0,0,.2);
+  -webkit-background-clip: padding-box;
+     -moz-background-clip: padding;
+          background-clip: padding-box;
+}
+
+.tt-suggestion {
+  display: block;
+  padding: 3px 20px;
+}
+
+.tt-suggestion.tt-is-under-cursor {
+  color: #fff;
+  background-color: #0081c2;
+  background-image: -moz-linear-gradient(top, #0088cc, #0077b3);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#0088cc), to(#0077b3));
+  background-image: -webkit-linear-gradient(top, #0088cc, #0077b3);
+  background-image: -o-linear-gradient(top, #0088cc, #0077b3);
+  background-image: linear-gradient(to bottom, #0088cc, #0077b3);
+  background-repeat: repeat-x;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff0088cc', endColorstr='#ff0077b3', GradientType=0)
+}
+
+.tt-suggestion.tt-is-under-cursor a {
+  color: #fff;
+}
+
+.tt-suggestion p {
+  margin: 0;
+}
+
+/* .tt-dropdown-menu used for typeahead
+    http://stackoverflow.com/questions/17982037/typeahead-js-scrollbar-and-keyboard-event */
+.tt-dropdown-menu {
+  height: 300px;
+  overflow-y: auto;
+}
 
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */
@@ -3051,7 +3124,7 @@ ul.personal-inf-display li{
 
 	/* Forms */
 	input[type="text"],input[type="password"] {
-		width: 100%;
+		width: 96%;
 	}
 
 	/* Footer */
@@ -3248,30 +3321,8 @@ ul.personal-inf-display li{
 	#workspace-publications .popover-help-container .arrow{
 		left: 203px !important;
 	}
-	/* Affiliations Pop over */
-	#workspace-affiliations .popover-help-container .popover{
-		left:-155px !important;
-	}
-	
-	#workspace-affiliations .popover-help-container .arrow{
-		left: 167px !important;
-	}
-	
-	 	
-	/*
-	.workspace-body-list ul.workspace-controls {
-	    margin-left: 0;
-	    margin-top: 15px;
-	    padding-left: 0;
-	    padding-right: 40px;
-	}
-	
-	.workspace-body-list ul.workspace-controls li a.icon-trash{
-		font-size: 28px;
-		margin-right:8px;
-	}
-	*/
-	
+		
+
 	.public-profile .popover-help-container .popover{
 		left:-193px;		
 	}
@@ -3285,7 +3336,7 @@ ul.personal-inf-display li{
 	
 	#colorbox, 
 	#cboxWrapper, 
-	#edit-work, 
+	#add-work, 
 	#colorbox-content, 
 	#cboxContent, 
 	#cboxLoadedContent{
@@ -3377,33 +3428,52 @@ ul.personal-inf-display li{
 		width: 100%; 
 	}
 	
-	/* Edit work*/
+	/* Add work*/
 	
-	.edit-work .privacy-control{
+	.add-work .privacy-control{
 		margin-left: 15px;
 		width: 75%;
 	}
 	
-	.edit-work .popover-help-container{
+	.add-work .popover-help-container{
 		top: -2px !important;
-	}
+	}	
 	
-	.edit-work .input-xlarge{
+	.add-work .input-xlarge{
 		width: 96%;
 	}
 	
-	.edit-work #day, .edit-work #month{
+	.add-work #day, .add-work #month{
 		width: 72px;
 	}
 	
-	.edit-work .citation-title{
+	.add-work .citation-title{
 		margin: 25px 0 0 0;
 	}
 	
-	.edit-work .translated-title-section{
+	.add-work .translated-title-section{
 		font-size: 18px;
 		margin-right: 10px;
 	}
+	
+	/* Workspace Affiliations */
+	/* Affiliations Pop over */
+	#workspace-affiliations .popover-help-container .popover{
+		left:-155px !important;
+	}
+	
+	#workspace-affiliations .popover-help-container .arrow{
+		left: 167px !important;
+	}
+		
+	#edit-affiliation .popover-help-container .popover{
+		left: -105px;
+	}
+	
+	#edit-affiliation .popover.bottom .arrow{
+		left: 118px;
+	}
+	
 }
 
 @media ( max-width : 980px) { /* Tablet */
@@ -3503,20 +3573,27 @@ ul.personal-inf-display li{
 		margin-left: 15px;
 	}
 	
-	/* Workspace Affiliations */	
-	.popover-help-container .popover{
+	/* Workspace Affiliations */
+	/*	
+	#edit-affiliation .popover-help-container .popover{
 		left: -255px;
-	}
+	}		
 	
-	.popover.bottom .arrow{
+	#edit-affiliation .popover.bottom .arrow{
 		left: 260px;
 	}
+	*/
+	
 	
 	/* Add works */
 	
-	.edit-work .privacy-control{
+	.add-work .privacy-control{
 		margin-left: 15px;
 		width: 35%;
+	}
+	
+	#uvTab{
+		display:none !important;
 	}
 }
 
