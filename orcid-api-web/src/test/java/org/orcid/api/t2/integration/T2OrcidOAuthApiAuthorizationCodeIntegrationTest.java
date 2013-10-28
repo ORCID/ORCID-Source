@@ -59,9 +59,12 @@ import org.orcid.jaxb.model.message.Title;
 import org.orcid.jaxb.model.message.TranslatedTitle;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.message.WorkTitle;
+import org.orcid.jaxb.model.message.WorkType;
 import org.orcid.persistence.dao.ClientRedirectDao;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.orcid.persistence.jpa.entities.ProfileWorkEntity;
+import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.persistence.jpa.entities.keys.ClientRedirectUriPk;
 import org.orcid.test.DBUnitTest;
 import org.springframework.beans.factory.annotation.Value;
@@ -181,13 +184,13 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
     }
 
     @Test
-    public void testAddWorkV22() throws InterruptedException, JSONException {
+    public void testAddWorkWithTranslatedTitleJournalTitleAndLanguageCode() throws InterruptedException, JSONException {
         String scopes = "/orcid-works/create";
         String authorizationCode = obtainAuthorizationCode(scopes);
         String accessToken = obtainAccessToken(authorizationCode, scopes);
 
         OrcidMessage orcidMessage = new OrcidMessage();
-        orcidMessage.setMessageVersion(OrcidMessage.DEFAULT_VERSION);
+        orcidMessage.setMessageVersion("1.0.22");
         OrcidProfile orcidProfile = new OrcidProfile();
         orcidMessage.setOrcidProfile(orcidProfile);
         OrcidActivities orcidActivities = new OrcidActivities();
@@ -213,7 +216,89 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
 
         ClientResponse clientResponse = oauthT2Client.addWorksJson("4444-4444-4444-4442", orcidMessage, accessToken);
         assertEquals(201, clientResponse.getStatus());
+    }        
+    
+    @Test
+    public void testAddWorkWithNewWorkTypesForV23() throws InterruptedException, JSONException {
+        String scopes = "/orcid-works/create";
+        String authorizationCode = obtainAuthorizationCode(scopes);
+        String accessToken = obtainAccessToken(authorizationCode, scopes);
+
+        OrcidMessage orcidMessage = new OrcidMessage();
+        orcidMessage.setMessageVersion("1.0.23");
+        OrcidProfile orcidProfile = new OrcidProfile();
+        orcidMessage.setOrcidProfile(orcidProfile);
+        OrcidActivities orcidActivities = new OrcidActivities();
+        orcidProfile.setOrcidActivities(orcidActivities);
+        OrcidWorks orcidWorks = new OrcidWorks();
+        orcidActivities.setOrcidWorks(orcidWorks);
+        OrcidWork orcidWork = new OrcidWork();
+        orcidWorks.getOrcidWork().add(orcidWork);
+        WorkTitle workTitle = new WorkTitle();
+        workTitle.setTitle(new Title("Work added by integration test - Version 23"));
+        orcidWork.setWorkTitle(workTitle);
+        orcidWork.setWorkType(WorkType.ARTISTIC_PERFORMANCE);
+        
+        ClientResponse clientResponse = oauthT2Client.addWorksJson("4444-4444-4444-4442", orcidMessage, accessToken);
+        assertEquals(201, clientResponse.getStatus());
     }
+    
+    @Test
+    public void testAddOldWorkType() throws InterruptedException, JSONException {
+        String scopes = "/orcid-works/create";
+        String authorizationCode = obtainAuthorizationCode(scopes);
+        String accessToken = obtainAccessToken(authorizationCode, scopes);
+        
+        OrcidMessage orcidMessage = new OrcidMessage();        
+        orcidMessage.setMessageVersion("1.0.22");
+        
+        OrcidProfile orcidProfile = new OrcidProfile();
+        orcidMessage.setOrcidProfile(orcidProfile);
+        OrcidActivities orcidActivities = new OrcidActivities();
+        orcidProfile.setOrcidActivities(orcidActivities);
+        OrcidWorks orcidWorks = new OrcidWorks();
+        orcidActivities.setOrcidWorks(orcidWorks);
+        OrcidWork orcidWork = new OrcidWork();
+        orcidWorks.getOrcidWork().add(orcidWork);
+        WorkTitle workTitle = new WorkTitle();
+        workTitle.setTitle(new Title("Work with old work type"));
+        orcidWork.setWorkTitle(workTitle);
+        orcidWork.setWorkType(WorkType.ADVERTISEMENT);
+        
+        ClientResponse clientResponse = oauthT2Client.addWorksJson("4444-4444-4444-4442", orcidMessage, accessToken);
+        assertEquals(201, clientResponse.getStatus());               
+    }
+    
+    @Test
+    public void testAddOldWorkTypeOnMessageV23() throws InterruptedException, JSONException {
+        String scopes = "/orcid-works/create";
+        String authorizationCode = obtainAuthorizationCode(scopes);
+        String accessToken = obtainAccessToken(authorizationCode, scopes);
+        
+        OrcidMessage orcidMessage = new OrcidMessage();        
+        orcidMessage.setMessageVersion("1.0.23");
+        
+        OrcidProfile orcidProfile = new OrcidProfile();
+        orcidMessage.setOrcidProfile(orcidProfile);
+        OrcidActivities orcidActivities = new OrcidActivities();
+        orcidProfile.setOrcidActivities(orcidActivities);
+        OrcidWorks orcidWorks = new OrcidWorks();
+        orcidActivities.setOrcidWorks(orcidWorks);
+        OrcidWork orcidWork = new OrcidWork();
+        orcidWorks.getOrcidWork().add(orcidWork);
+        WorkTitle workTitle = new WorkTitle();
+        workTitle.setTitle(new Title("Work with old work type"));
+        orcidWork.setWorkTitle(workTitle);
+        orcidWork.setWorkType(WorkType.ADVERTISEMENT);
+        
+        ClientResponse clientResponse = oauthT2Client.addWorksJson("4444-4444-4444-4442", orcidMessage, accessToken);
+        assertEquals(400, clientResponse.getStatus());        
+        orcidMessage = clientResponse.getEntity(OrcidMessage.class);
+        assertNotNull(orcidMessage);
+        assertNotNull(orcidMessage.getErrorDesc());
+        assertEquals(orcidMessage.getErrorDesc().getContent(), "Invalid incoming message: org.orcid.core.exception.OrcidValidationException: Invalid work type: Type advertisement is deprecated");
+    }
+    
     
     @Test
     public void testAddWorkWithEmptyTitle() throws InterruptedException, JSONException {

@@ -53,7 +53,7 @@
 
 				<div class="control-group">
 		    		<label class="relative"><@orcid.msg 'manual_work_form_contents.labelworktype'/></label>
-					<select id="workType" name="workType" class="input-xlarge" ng-model="editWork.workTtype.value">
+					<select id="workType" name="workType" class="input-xlarge" ng-model="editWork.workType.value">
 						<option value=""><@orcid.msg 'org.orcid.jaxb.model.message.WorkType.empty' /></option>
 						<option ng-repeat="(key, value) in types" value="{{key}}">{{value}}</option>	
 					</select>

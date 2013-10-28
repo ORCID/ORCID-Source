@@ -55,13 +55,13 @@ public class Work implements ErrorsInterface, Serializable {
     private Text url;
 
     private Text journalTitle;
-    
+
     private Text languageCode;
 
     private Citation citation;
 
     private Text country;
-    
+
     private List<Contributor> contributors;
 
     private List<WorkExternalIdentifier> workExternalIdentifiers;
@@ -73,7 +73,7 @@ public class Work implements ErrorsInterface, Serializable {
     private static Logger LOGGER = LoggerFactory.getLogger(Work.class);
 
     private Text workCategory;
-    
+
     private Text workType;
 
     protected String citationForDisplay;
@@ -113,15 +113,15 @@ public class Work implements ErrorsInterface, Serializable {
             w.setWorkTitle(WorkTitle.valueOf(orcidWork.getWorkTitle()));
         if (orcidWork.getWorkType() != null)
             w.setWorkType(Text.valueOf(orcidWork.getWorkType().value()));
-        
+
         if (orcidWork.getJournalTitle() != null)
             w.setJournalTitle(Text.valueOf(orcidWork.getJournalTitle().getContent()));
-                
-        if(orcidWork.getLanguageCode() != null)
+
+        if (orcidWork.getLanguageCode() != null)
             w.setLanguageCode(Text.valueOf(orcidWork.getLanguageCode()));
-        
-        if(orcidWork.getCountry() != null)
-            w.setCountry((orcidWork.getCountry().getValue() == null) ? null :  Text.valueOf(orcidWork.getCountry().getValue().value()));
+
+        if (orcidWork.getCountry() != null)
+            w.setCountry((orcidWork.getCountry().getValue() == null) ? null : Text.valueOf(orcidWork.getCountry().getValue().value()));
         return w;
     }
 
@@ -155,26 +155,26 @@ public class Work implements ErrorsInterface, Serializable {
         }
         if (this.getWorkSource() != null)
             ow.setWorkSource(new WorkSource(this.getWorkSource().getValue()));
-        if (this.getWorkTitle() != null){
+        if (this.getWorkTitle() != null) {
             ow.setWorkTitle(this.workTitle.toWorkTitle());
         }
         if (this.getWorkType() != null) {
             ow.setWorkType(WorkType.fromValue(this.getWorkType().getValue()));
         }
-        
+
         if (this.getJournalTitle() != null) {
             ow.setJournalTitle(new Title(this.getJournalTitle().getValue()));
         }
-            
-        if(this.getLanguageCode() != null){
+
+        if (this.getLanguageCode() != null) {
             ow.setLanguageCode(this.getLanguageCode().getValue());
         }
-        
-        if(this.getCountry() != null) {
+
+        if (this.getCountry() != null) {
             Country country = new Country(StringUtils.isEmpty(this.getCountry().getValue()) ? null : Iso3166Country.fromValue(this.getCountry().getValue()));
             ow.setCountry(country);
         }
-        
+
         return ow;
     }
 
@@ -298,16 +298,16 @@ public class Work implements ErrorsInterface, Serializable {
     public void setWorkType(Text workType) {
         this.workType = workType;
     }
-    
+
     public Text getWorkCategory() {
-		return workCategory;
-	}
+        return workCategory;
+    }
 
-	public void setWorkCategory(Text workCategory) {
-		this.workCategory = workCategory;
-	}
+    public void setWorkCategory(Text workCategory) {
+        this.workCategory = workCategory;
+    }
 
-	public Text getJournalTitle() {
+    public Text getJournalTitle() {
         return journalTitle;
     }
 
@@ -329,5 +329,5 @@ public class Work implements ErrorsInterface, Serializable {
 
     public void setCountry(Text country) {
         this.country = country;
-    }            
+    }
 }

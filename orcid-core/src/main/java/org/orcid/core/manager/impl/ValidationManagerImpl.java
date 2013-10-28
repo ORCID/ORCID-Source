@@ -56,12 +56,16 @@ public class ValidationManagerImpl implements ValidationManager {
     private ValidationBehaviour validationBehaviour = ValidationBehaviour.LOG_WARNING;
 
     private String version = OrcidMessage.DEFAULT_VERSION;
+    
+    private String messageVersion = null;
 
     private boolean requireOrcidProfile;
 
     private boolean validateBibtex = true;
     
     private boolean validateTitle = false;
+    
+    private boolean validateWorkType = false;
     
     private Schema schema;
 
@@ -86,6 +90,14 @@ public class ValidationManagerImpl implements ValidationManager {
     
     public void setValidateTitle(boolean validateTitle) {
         this.validateTitle = validateTitle;
+    }
+
+    public boolean isValidateWorkType() {
+        return validateWorkType;
+    }
+
+    public void setValidateWorkType(boolean validateWorkType) {
+        this.validateWorkType = validateWorkType;
     }
 
     @Override
@@ -125,6 +137,9 @@ public class ValidationManagerImpl implements ValidationManager {
                 throw new OrcidValidationException("There must be an orcid-profile element");
             }
         } else {
+            //TODO: Remove this when all old work types are removed
+            this.messageVersion = orcidMessage.getMessageVersion();
+            //TODO: END
             checkBio(orcidProfile.getOrcidBio());
             checkActivities(orcidProfile.getOrcidActivities());
         }
@@ -183,7 +198,14 @@ public class ValidationManagerImpl implements ValidationManager {
             if(title == null || title.getTitle() == null || StringUtils.isEmpty(title.getTitle().getContent())){
                 throw new OrcidValidationException("Invalid Title: title cannot be null nor emtpy");
             }
-        }                
+        }  
+        
+        //Do this only if the message version is greather than version 23
+        if(validateWorkType && this.messageVersion != null && this.messageVersion.compareTo(version) >= 0){            
+            if(orcidWork.getWorkType() != null && orcidWork.getWorkType().isDeprecated()){
+                throw new OrcidValidationException("Invalid work type: Type " + orcidWork.getWorkType().value() + " is deprecated");
+            }
+        }
     }
 
     private void initSchema() {
