@@ -634,7 +634,6 @@
                 <xs:element ref="orcid:short-description" minOccurs="0"/>
                 <xs:element ref="orcid:work-citation" minOccurs="0"/>
                 <xs:element ref="orcid:work-type" />
-                <xs:element ref="orcid:work-subtype" />
                 <xs:element ref="orcid:publication-date" minOccurs="0"/>
                 <xs:element ref="orcid:work-external-identifiers" minOccurs="0"/>
                 <xs:element ref="orcid:url" minOccurs="0"/>
@@ -653,16 +652,6 @@
         </xs:annotation>
     </xs:element>
     <xs:element name="work-type">
-        <xs:simpleType>
-            <xs:restriction base="xs:string">
-                <xs:enumeration value="publication"/>
-                <xs:enumeration value="conference"/>
-                <xs:enumeration value="intellectual_property"/>
-                <xs:enumeration value="other_output"/>                
-            </xs:restriction>
-        </xs:simpleType>
-    </xs:element>
-    <xs:element name="work-subtype">
         <xs:simpleType>
             <xs:restriction base="xs:string">
 				<xs:enumeration value="artistic-performance"/>
@@ -706,7 +695,7 @@
 				<xs:enumeration value="undefined"/>
             </xs:restriction>
         </xs:simpleType>
-    </xs:element>
+    </xs:element>    
     <xs:element name="work-external-identifiers">
         <xs:annotation>
             <xs:documentation>Container for storing the external references to the work.
