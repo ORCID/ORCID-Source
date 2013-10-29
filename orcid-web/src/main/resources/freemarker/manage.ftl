@@ -88,7 +88,7 @@
 			   							      	</div>			   							      	
 			   							    </div>
 			   							    <div class="col-md-6 col-xs-6">
-			   							      	<div class="">
+			   							      	<div class="emailVisibility">
 			   							      		<@orcid.privacyToggle "email.visibility" "setPrivacy($index, 'PUBLIC', $event)" "setPrivacy($index, 'LIMITED', $event)" "setPrivacy($index, 'PRIVATE', $event)" />
 			   							      	</div>	
 				   							</div>
@@ -102,51 +102,7 @@
 					   						</span>
 			   							</div>			 
 		   							</div>
-			   					</div>
-			   					<!-- End -->	
-			   					<!-- 
-			   					<table id="emailTable" class="table-responsive">
-			   						<tr ng-repeat='email in emailsPojo.emails'>
-			   						  
-			   						  <td class="padRgt" ng-class="{primaryEmail:email.primary}" ng-bind="email.value"></td>
-			   						  
-			   						  <td class="padRgt">
-			   						  		<span ng-hide="email.primary" ><a href="" ng-click="setPrimary($index)">${springMacroRequestContext.getMessage("manage.email.set_primary")}</a></span>
-			   							    <span ng-show="email.primary" class="muted" style="color: #bd362f;">${springMacroRequestContext.getMessage("manage.email.primary_email")}</span>
-			   						  </td>
-			   						  
-			   						  
-			   						   
-			   						  <td class="padRgt">
-			   						  	<select style="width: 100px; margin: 0px;" ng-change="saveEmail()" ng-model="email.current">
-	          							    <option value="true" ng-selected="email.current == true"><@orcid.msg 'manage.email.current.true' /></option>
-	          							    <option value="false" ng-selected="email.current == false"><@orcid.msg 'manage.email.current.false' /></option>              
-	        						    </select>
-			   						  </td>
-			   						  
-			   						  <td class="padRgt">
-			   						      <span ng-hide="email.verified"><a href="" ng-click="verifyEmail($index)">${springMacroRequestContext.getMessage("manage.email.verify")}</a></span>
-		   							      <span ng-show="email.verified">${springMacroRequestContext.getMessage("manage.email.verified")}</span>		
-			   						  </td>
-			   						  
-			   						  <td class="padRgt">
-			   						  	<a href="" class="icon-trash orcid-icon-trash grey" ng-show="email.primary == false" ng-click="confirmDeleteEmail($index)"></a>
-			   						  </td>
-			   						  
-			   						  <td class="padRgt">
-			   						  	<@orcid.privacyToggle "email.visibility" "setPrivacy($index, 'PUBLIC', $event)" "setPrivacy($index, 'LIMITED', $event)" "setPrivacy($index, 'PRIVATE', $event)" />
-	                           	      </td>
-	                           	      
-			   						</tr>			   						 
-				   				</table>
-				   				
-			   					<div>
-		   							<input type="email" placeholder="Add Another Email" class="input-xlarge" ng-model="inputEmail.value" style="margin: 0px;" required/> <span ng-click="checkCredentials()" class="btn btn-primary">${springMacroRequestContext.getMessage("manage.spanadd")}</span>
-		   							<span class="orcid-error" ng-show="inputEmail.errors.length > 0">
-			   							<span ng-repeat='error in inputEmail.errors' ng-bind-html-unsafe="error"></span>
-			   						</span>
-			   					</div>
-			   					-->	
+			   					</div>			   						
 			   				</div>
 						</td>
 					</tr>
@@ -158,7 +114,7 @@
 					</tr>
 					<tr ng-controller="PasswordEditCtrl" ng-show="showEditPassword" ng-cloak>
 						<td colspan="2">
-						<div class="editTablePadCell35">
+						<div class="editTablePadCell35" id="password-edit">
 							    <span class="orcid-error" ng-show="changePasswordPojo.errors.length > 0">
 				   						<div ng-repeat='error in changePasswordPojo.errors' ng-bind-html-unsafe="error"></div>
 				   				</span>
@@ -199,7 +155,7 @@
 					</tr>
 					<tr ng-controller="WorksPrivacyPreferencesCtrl" ng-show="showEditPrivacyPreferences" ng-cloak>
 						<td colspan="2">
-						<div class="editTablePadCell35">
+						<div class="editTablePadCell35" id="privacy-settings">
 							${springMacroRequestContext.getMessage("privacy_preferences.labelDefaultprivacyfornewWorks")}<br />
 							<@orcid.privacyToggle "prefsSrvc.prefs.workVisibilityDefault.value" "updateWorkVisibilityDefault('PUBLIC', $event)" "updateWorkVisibilityDefault('LIMITED', $event)" "updateWorkVisibilityDefault('PRIVATE', $event)" />
 						</div>

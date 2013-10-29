@@ -3519,6 +3519,46 @@ ul.personal-inf-display li{
 		left: 27px !important;
 	}
 	
+	/* Edit personal information Lightbox */	
+	.manage-bio .controls{
+		margin:0;
+	}
+	
+	.manage-bio .save-btns{
+		float:none;
+	}
+	
+	.manage-bio #bottom-submit-affiliates,
+	.manage-bio #bottom-clear-affiliates
+	{
+		width: 100%;
+	}
+	
+	.emailVisibility .popover-help-container .popover{
+		left: -235px !important;
+	}
+	
+	.emailVisibility .popover.bottom .arrow{
+		left: 248px !important;
+	}	
+	
+	#password-edit .popover-help-container .popover{
+		left: -236px !important;
+	}
+	
+	#password-edit .popover.bottom .arrow{
+		left: 248px !important;
+	}
+	
+	#privacy-settings .popover-help-container .popover{
+		left: -111px !important;
+	}
+	
+	#privacy-settings .popover.bottom .arrow{
+		left: 124px !important;
+	}
+	
+	
 }
 
 @media ( max-width : 980px) { /* Tablet */
