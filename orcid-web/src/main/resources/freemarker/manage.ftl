@@ -173,17 +173,26 @@
 							<span class="orcid-error" ng-show="errors.length > 0">
 			   					<span ng-repeat='error in errors' ng-bind-html-unsafe="error"></span><br />
 			   				</span>	
-							<label for="changeSecurityQuestionForm.securityQuestionAnswer" class="">${springMacroRequestContext.getMessage("manage.security_question")}</label>
-							<select id="securityQuestionId" name="securityQuestionId" class="input-xlarge" ng-model="securityQuestionPojo.securityQuestionId">								
-								<#list securityQuestions?keys as key>
-								   <option value="${key}" ng-selected="securityQuestionPojo.securityQuestionId == ${key}">${securityQuestions[key]}</option>
-								</#list>
-	    					</select> 
-	    					<label for="changeSecurityQuestionForm.securityQuestionAnswer" class="">${springMacroRequestContext.getMessage("manage.securityAnswer")}</label>
-	    					<input type="text" id="securityQuestionAnswer" name="securityQuestionAnswer" class="input-xlarge" ng-model="securityQuestionPojo.securityAnswer"><br />
-	    					<br />
-	    					<button id="bottom-submit-security-question" class="btn btn-primary" ng-click="checkCredentials()">Save changes</button>
-	    					<button id="bottom-reset-security-question" class="btn close-parent-popover" ng-click="getSecurityQuestion()">Cancel</button>
+							<div class="control-group">
+								<label for="changeSecurityQuestionForm.securityQuestionAnswer" class="">${springMacroRequestContext.getMessage("manage.security_question")}</label>
+								<div class="relative">
+									<select id="securityQuestionId" name="securityQuestionId" class="input-xlarge" ng-model="securityQuestionPojo.securityQuestionId">								
+										<#list securityQuestions?keys as key>
+										   <option value="${key}" ng-selected="securityQuestionPojo.securityQuestionId == ${key}">${securityQuestions[key]}</option>
+										</#list>
+			    					</select>
+		    					</div>
+		    				</div> 
+	    					<div class="control-group">
+	    						<label for="changeSecurityQuestionForm.securityQuestionAnswer" class="">${springMacroRequestContext.getMessage("manage.securityAnswer")}</label>
+	    						<div class="relative">			    								    					
+			    					<input type="text" id="securityQuestionAnswer" name="securityQuestionAnswer" class="input-xlarge" ng-model="securityQuestionPojo.securityAnswer">
+			    				</div>
+	    					</div>
+	    					<div class="control-group">
+		    					<button id="bottom-submit-security-question" class="btn btn-primary" ng-click="checkCredentials()">Save changes</button>
+		    					<button id="bottom-reset-security-question" class="btn close-parent-popover" ng-click="getSecurityQuestion()">Cancel</button>
+		    				</div>
 						</div>
 						</td>
 					</tr>							
