@@ -10,7 +10,9 @@ its entirety in all copies or substantial portion of the software.
 
 =============================================================================
 
---> <@protected classes=['manage'] nav="settings">
+-->
+
+<@protected classes=['manage'] nav="settings">
 <div class="row">
 	<div class="col-md-3 lhs override">
 		<ul class="settings-nav">
