@@ -1875,10 +1875,10 @@ function QuickSearchCtrl($scope, $compile){
 	$scope.getResults(10);
 };
 
-function ClientEditCtrl($scope, $compile){
-	$scope.errors = [];
-	$scope.clients = [];	
-	
+function ClientEditCtrl($scope, $compile){	
+	$scope.clients = [];
+	$scope.newClient = null;
+			
 	// Get the list of clients associated with this user
 	$scope.getClients = function(){
 		$.ajax({
@@ -1886,19 +1886,7 @@ function ClientEditCtrl($scope, $compile){
 	        dataType: 'json',
 	        success: function(data) {	        	        					
 				$scope.$apply(function(){
-					
-					$scope.clients.splice(0, $scope.clients.length);        		
-					for (i in data)	{
-						var client = data[i];
-						if(client.redirectUris != null && client.redirectUris.redirectUri.length > 0){
-							for(var j = 0; j < client.redirectUris.redirectUri.length; j++)	{						
-								delete client.redirectUris.redirectUri[j].scopeAsSingleString;
-								delete client.redirectUris.redirectUri[j].scope;							
-							}
-						}
-						$scope.clients.push(client);					
-					}
-					
+					$scope.clients = data;      		
 				});
 	        }
 	    }).fail(function() { 
@@ -1907,50 +1895,25 @@ function ClientEditCtrl($scope, $compile){
 	    });				
 	};		
 	
-	// Add a new uri input field to a new client
-	$scope.addUriToNewClientTable = function(){		
-		$('#client-table').find('tr:last > td:last').html('&nbsp;');		
-		$scope.newClient.redirectUris.redirectUri.push({value: '',type: 'DEFAULT'});
-	};
-	
-	// Add a new uri input field to a existing client
-	$scope.addUriToExistingClientTable = function(){
-		$scope.clientToEdit.redirectUris.redirectUri.push({value: '',type: 'DEFAULT'});
-	};
-	
-	// Display the modal to edit a client
-	$scope.editClient = function(idx) {
-		// Clean error list
-		$scope.errors.splice(0, $scope.errors.length);
-		// Copy the client to edit to a scope variable 
-		$scope.clientToEdit = angular.copy($scope.clients[idx]);		
-		$.colorbox({        	            
-            html : $compile($('#edit-client-modal').html())($scope), 
-            transition: 'fade',            
-	        onLoad: function() {
-			    $('#cboxClose').remove();
-			},
-	        scrolling: true
-        });		
-        $.colorbox.resize({width:"450px" , height:"420px"});   
+	// Get an empty modal to add
+	$scope.addClient = function(){		
+		$.ajax({
+			url: $('body').data('baseurl') + 'manage-clients/client.json',
+			dataType: 'json',
+			success: function(data) {
+				$scope.newClient = data;
+				console.log(data);
+				$scope.$apply(function() {
+					$scope.showNewClientModal();
+				});
+			}
+		}).fail(function() { 
+	    	console.log("Error fetching client");
+	    });
 	};
 	
 	// Display the modal to add a new client
-	$scope.addClient = function(){
-		// Clean error list
-		$scope.errors.splice(0, $scope.errors.length);
-		$scope.newClient = {			
-				displayName: '',
-				website: '',
-				shortDescription: '',			
-				redirectUris: {
-					redirectUri:[{value: '',type: 'DEFAULT'}]
-				},			
-				clientId:'',
-				clientSecret:'',
-				type: '', 
-				errors: ''
-		};	
+	$scope.showNewClientModal = function(){
 		$.colorbox({        	            
             html : $compile($('#new-client-modal').html())($scope), 
             transition: 'fade',
@@ -1962,9 +1925,33 @@ function ClientEditCtrl($scope, $compile){
         $.colorbox.resize({width:"580px" , height:"380px"});
 	};
 	
+	// Add a new uri input field to a new client
+	$scope.addUriToNewClientTable = function(){		
+		$scope.newClient.redirectUris.push({value: '',type: 'DEFAULT'});
+	};
+	
+	// Add a new uri input field to a existing client
+	$scope.addUriToExistingClientTable = function(){
+		$scope.clientToEdit.redirectUris.redirectUri.push({value: '',type: 'DEFAULT'});
+	};
+	
+	// Display the modal to edit a client
+	$scope.editClient = function(idx) {		
+		// Copy the client to edit to a scope variable 
+		$scope.clientToEdit = angular.copy($scope.clients[idx]);		
+		$.colorbox({        	            
+            html : $compile($('#edit-client-modal').html())($scope), 
+            transition: 'fade',            
+	        onLoad: function() {
+			    $('#cboxClose').remove();
+			},
+	        scrolling: true
+        });		
+        $.colorbox.resize({width:"450px" , height:"420px"});   
+	};		
+	
 	// Display client details: Client ID and Client secret
 	$scope.viewDetails = function(idx){
-		$scope.error = null;
 		$scope.clientDetails = $scope.clients[idx];
 		$.colorbox({        	            
             html : $compile($('#view-details-modal').html())($scope),
@@ -1990,28 +1977,7 @@ function ClientEditCtrl($scope, $compile){
 	};
 	
 	//Submits the client update request
-	$scope.submitEditClient = function(){
-		$scope.error = null;
-		//Check for errors
-		$scope.errors.splice(0, $scope.errors.length);
-		
-		if(!$scope.clientToEdit.displayName){
-			$scope.errors.push("Please enter the name");
-		}
-		
-		if(!$scope.clientToEdit.website){
-			$scope.errors.push("Please enter a website");
-		}
-		
-		if(!$scope.clientToEdit.shortDescription){
-			$scope.errors.push("Please enter a description");
-		}
-		
-		//If there is any error, return
-		if($scope.errors.length != 0){
-			return;
-		}
-		
+	$scope.submitEditClient = function(){				
 		// Check which redirect uris are empty strings and remove them from the array
 		for(var j = $scope.clientToEdit.redirectUris.redirectUri.length - 1; j >= 0 ; j--)	{
 			if(!$scope.clientToEdit.redirectUris.redirectUri[j].value){
@@ -2043,38 +2009,13 @@ function ClientEditCtrl($scope, $compile){
 	};
 	
 	//Submits the new client request
-	$scope.submitAddClient = function(){
-		$scope.error = null;
-		//Check for errors
-		$scope.errors.splice(0, $scope.errors.length);
-		
-		if(!$scope.newClient.displayName){
-			$scope.errors.push("Please enter the name");
-		}
-		
-		if(!$scope.newClient.website){
-			$scope.errors.push("Please enter a website");
-		}
-		
-		if(!$scope.newClient.shortDescription){
-			$scope.errors.push("Please enter a description");
-		}
-		
-		//If there is any error, return
-		if($scope.errors.length != 0){
-			return;
-		}
-		
+	$scope.submitAddClient = function(){		
 		// Check which redirect uris are empty strings and remove them from the array
-		for(var j = $scope.newClient.redirectUris.redirectUri.length - 1; j >= 0 ; j--)	{
-			if(!$scope.newClient.redirectUris.redirectUri[j].value){
-				$scope.newClient.redirectUris.redirectUri.splice(j, 1);
+		for(var j = $scope.newClient.redirectUris.length - 1; j >= 0 ; j--)	{
+			if(!$scope.newClient.redirectUris[j].value){
+				$scope.newClient.redirectUris.splice(j, 1);
 			}
 		}
-		
-		var type = $("#client_type").val();
-		$scope.newClient.type = type;
-		console.log(angular.toJson($scope.newClient));
 		
 		//Submit the new client request
 		$.ajax({
@@ -2085,11 +2026,12 @@ function ClientEditCtrl($scope, $compile){
 	        dataType: 'json',
 	        success: function(data) {
 	        	if(data.errors != null && data.errors.content){
-	        		$scope.error = data.errors.content;
+	        		$scope.newClient = data;
 	        		console.log("Unable to create client information.");
-	        	} 
-	        	//If everything worked fine, reload the list of clients
-        		$scope.getClients();
+	        	} else {
+	        		//If everything worked fine, reload the list of clients
+	        		$scope.getClients();
+	        	}
 	        }
 	    }).fail(function() { 
 	    	console.log("Error creating client information.");
