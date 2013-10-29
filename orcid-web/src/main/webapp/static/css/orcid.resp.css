@@ -2775,14 +2775,15 @@ ul.personal-inf-display li{
 	margin-bottom:0;
 }
 
-/* Add work */	
+/* Add work */
 .add-work .popover-help-container .popover{
-	left: -200px !important;
+	left: -200px;
 }
 
 .add-work .popover.bottom .arrow{
-	left: 206px !important;
+	left: 206px;
 }
+
 
 /* Typeahead */
 
@@ -3466,10 +3467,14 @@ ul.personal-inf-display li{
 		width: 75%;
 	}
 	
-	.add-work .popover-help-container{
-		top: -2px !important;
+	.add-work .popover-help-container .popover{
+		left:-110px;
 	}	
 	
+	.add-work .popover.bottom .arrow{
+		left:125px;
+	}
+		
 	.add-work .input-xlarge{
 		width: 96%;
 	}
@@ -3534,18 +3539,16 @@ ul.personal-inf-display li{
 		width: 100%;
 	}
 	
-	.emailVisibility .popover-help-container .popover{
-		left: -235px !important;
+	#manage-bio .lightbox-title{
+		font-size: 30 px;
 	}
 	
-	.emailVisibility .popover.bottom .arrow{
-		left: 248px !important;
-	}	
-	
+	.emailVisibility .popover-help-container .popover,
 	#password-edit .popover-help-container .popover{
 		left: -236px !important;
 	}
 	
+	.emailVisibility .popover.bottom .arrow,
 	#password-edit .popover.bottom .arrow{
 		left: 248px !important;
 	}
@@ -3557,8 +3560,6 @@ ul.personal-inf-display li{
 	#privacy-settings .popover.bottom .arrow{
 		left: 124px !important;
 	}
-	
-	
 }
 
 @media ( max-width : 980px) { /* Tablet */
@@ -3657,18 +3658,6 @@ ul.personal-inf-display li{
 	.workspace-profile{	
 		margin-left: 15px;
 	}
-	
-	/* Workspace Affiliations */
-	/*	
-	#edit-affiliation .popover-help-container .popover{
-		left: -255px;
-	}		
-	
-	#edit-affiliation .popover.bottom .arrow{
-		left: 260px;
-	}
-	*/
-	
 	
 	/* Add works */
 	
