@@ -1170,7 +1170,15 @@ ul.privacyHelp li.private {
 }
 
 .editTablePadCell35 .add-email span.btn{
-	margin-top:0;
+	margin-top:0;	
+}
+
+.editTablePadCell35 .add-email input{
+	width: 70%;
+}
+
+.editTablePadCell35 .email-verified{
+	padding-left: 0;
 }
 
 #emailTable td {
@@ -1522,14 +1530,15 @@ a:hover {
 
 .workspace-overview {
 	display: inline-block;
-	margin: 20px 30px 20px 0;
-	line-height: 1.25;
+	margin: 15px 0;
+	line-height: 1.25;	
 }
 
 .workspace-overview div {
 	margin-top: 5px;
 	font-size: 10px;
 	line-height: 1;
+	padding: 10px;
 }
 
 .overview-count,.overview-count:visited {
@@ -3647,6 +3656,10 @@ ul.personal-inf-display li{
 	
 	.workspace-top{
 		border-top: 0;
+	}
+	
+	.editTablePadCell35 .email-verified{
+		padding-left: 15px;
 	}
 	
 	/* Login */

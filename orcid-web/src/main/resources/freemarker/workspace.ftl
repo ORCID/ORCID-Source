@@ -101,30 +101,35 @@
         	<div class="workspace-inner workspace-header">
                 <div class="alert alert-info"><strong><@orcid.msg 'workspace.addinformationaboutyou'/></strong></div>
         		<div class="row">
-	        		<div class="workspace-overview col-md-2 col-sm-5" id="works-overview" ng-controller="WorkOverviewCtrl">
+        			<!-- Works -->
+	        		<div class="workspace-overview col-md-6 col-sm-6 col-xs-6" id="works-overview" ng-controller="WorkOverviewCtrl">
 	        			<a href="#workspace-publications" class="overview-count"><span ng-bind="works.length"></span></a>
 	        			<a href="#workspace-publications" class="overview-title"><@orcid.msg 'workspace.Works'/></a>
-	                    <br />
-	                    <a href="#workspace-publications" class="btn-update no-icon"><@orcid.msg 'workspace.view'/></a>
+	                    <br />	                    	
+	                    <a href="#workspace-publications" class="btn-update no-icon"><@orcid.msg 'workspace.view'/></a>	                    
 	        		</div>
-	                <div class="workspace-overview col-md-2 col-sm-5" id="affiliations-overview" ng-controller="AffiliationOverviewCtrl">
+	        		<!-- Afilliations -->
+	                <div class="workspace-overview col-md-6 col-sm-6 col-xs-6" id="affiliations-overview" ng-controller="AffiliationOverviewCtrl">
 	                    <a href="#workspace-affiliations" class="overview-count"><span ng-bind="affiliations.length"></span></a>
 	                    <a href="#workspace-affiliations" class="overview-title"><@orcid.msg 'workspace_bio.Affiliations'/></a>
 	                    <br />
 	                    <#if RequestParameters['affiliations']??>
 	                        <a href="#workspace-affiliations" class="btn-update no-icon"><@orcid.msg 'workspace.view'/></a>
 	                    <#else>
-	                        <div><a target="_blank" href="http://support.orcid.org/forums/179657-coming-soon" class="btn-update no-icon"><@orcid.msg 'workspace.ComingSoon'/></a></div>
+	                        <a target="_blank" href="http://support.orcid.org/forums/179657-coming-soon" class="btn-update no-icon"><@orcid.msg 'workspace.ComingSoon'/></a>
 	                    </#if>
-	                </div>                
-	        		<div class="workspace-overview  col-md-2 col-sm-5">
+	                </div>
+                </div>       
+                <div class="row">    
+	                <!-- Grants -->     
+	        		<div class="workspace-overview  col-md-6 col-sm-6 col-xs-6">
 	        			<a href="#workspace-grants" class="overview-count">${(profile.orcidActivities.orcidGrants.orcidGrant?size)!0}</a>
 	        			<a href="#workspace-grants" class="overview-title"><@orcid.msg 'workspace.Grants'/></a>
 	        			<br />
 	        			<a target="_blank" href="http://support.orcid.org/forums/179657-coming-soon" class="btn-update no-icon"><@orcid.msg 'workspace.ComingSoon'/></a>
 	        		</div>
-	        		
-	        		<div class="workspace-overview  col-md-2 col-sm-5">
+	        		<!-- Patents -->
+	        		<div class="workspace-overview  col-md-6 col-sm-6 col-xs-6">
 		        		<a href="#workspace-patents" class="overview-count">${(profile.orcidActivities.orcidPatents.orcidPatent?size)!0}</a>
 	        			<a href="#workspace-patents" class="overview-title"><@orcid.msg 'workspace.Patents'/></a>
 	        			<br />
