@@ -1927,12 +1927,12 @@ function ClientEditCtrl($scope, $compile){
 	
 	// Add a new uri input field to a new client
 	$scope.addUriToNewClientTable = function(){		
-		$scope.newClient.redirectUris.push({value: '',type: 'DEFAULT'});
+		$scope.newClient.redirectUris.push({value: '',type: 'default'});
 	};
 	
 	// Add a new uri input field to a existing client
 	$scope.addUriToExistingClientTable = function(){
-		$scope.clientToEdit.redirectUris.redirectUri.push({value: '',type: 'DEFAULT'});
+		$scope.clientToEdit.redirectUris.push({value: '',type: 'default'});
 	};
 	
 	// Display the modal to edit a client
@@ -1973,15 +1973,15 @@ function ClientEditCtrl($scope, $compile){
 	
 	// Delete an uri input field 
 	$scope.deleteUri = function(idx){
-		$scope.clientToEdit.redirectUris.redirectUri.splice(idx, 1);
+		$scope.clientToEdit.redirectUris.splice(idx, 1);
 	};
 	
 	//Submits the client update request
 	$scope.submitEditClient = function(){				
 		// Check which redirect uris are empty strings and remove them from the array
-		for(var j = $scope.clientToEdit.redirectUris.redirectUri.length - 1; j >= 0 ; j--)	{
-			if(!$scope.clientToEdit.redirectUris.redirectUri[j].value){
-				$scope.clientToEdit.redirectUris.redirectUri.splice(j, 1);
+		for(var j = $scope.clientToEdit.length - 1; j >= 0 ; j--)	{
+			if(!$scope.clientToEdit.redirectUris[j].value){
+				$scope.clientToEdit.redirectUris.splice(j, 1);
 			}
 		}				
 		
@@ -1994,18 +1994,18 @@ function ClientEditCtrl($scope, $compile){
 	        dataType: 'json',
 	        success: function(data) {
 	        	if(data.errors != null && data.errors.length > 0){
-	        		$scope.error = data.errors.content;
-	        		console.log("Unable to update client information.");
+	        		$scope.clientToEdit = data;
+	        		$scope.$apply();
 	        	} else {
 	        		//If everything worked fine, reload the list of clients
         			$scope.getClients();
+        			$.colorbox.close();
 	        	} 
 	        }
 	    }).fail(function() { 
 	    	alert("An error occured updating the client");
 	    	console.log("Error updating client information.");
-	    });		
-		$.colorbox.close();
+	    });				
 	};
 	
 	//Submits the new client request
@@ -2017,9 +2017,6 @@ function ClientEditCtrl($scope, $compile){
 			}
 		}
 		
-		console.log("Before:");
-		console.log(angular.toJson($scope.newClient));
-		
 		//Submit the new client request
 		$.ajax({
 	        url: $('body').data('baseurl') + 'manage-clients/add-client.json',
@@ -2027,9 +2024,7 @@ function ClientEditCtrl($scope, $compile){
 	        data: angular.toJson($scope.newClient),
 	        contentType: 'application/json;charset=UTF-8',
 	        dataType: 'json',
-	        success: function(data) {
-	        	console.log("From server:");
-        		console.log(angular.toJson(data));
+	        success: function(data) {	        	
 	        	if(data.errors != null && data.errors.length > 0){
 	        		$scope.newClient = data;
 	        		$scope.$apply();

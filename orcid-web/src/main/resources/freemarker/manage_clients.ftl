@@ -72,9 +72,8 @@
 		    		<div class="control-group" ng-repeat='rUri in clientToEdit.redirectUris'>						
 						<label class="control-label" style="margin-right:10px; text-align:left; width:90px"><@orcid.msg 'manage_clients.redirect_uri'/>:</label>
 						<div class="relative">
-							<input type="text" placeholder="Redirect Uri"  ng-model="rUri.value">						
+							<input type="text" placeholder="Redirect Uri"  ng-model="rUri.value.value">						
 							<a href ng-click="deleteUri($index)" class="icon-trash blue"></a>
-							<a ng-show="$last" href ng-click="addUriToExistingClientTable()" class="icon-plus-sign blue"></a>
 							<span class="orcid-error" ng-show="rUri.errors.length > 0">
 								<div ng-repeat='error in rUri.errors' ng-bind-html-unsafe="error"></div>
 							</span>
@@ -83,7 +82,7 @@
 		    	</div>
 	    	</div>
 	    	<div ng-show="!clientToEdit.redirectUris.redirectUri.length">			
-				<a href ng-click="addUriToExistingClientTable()" class="icon-plus-sign blue"> Add Redirect Uri</a>
+				<a href ng-click="addUriToExistingClientTable()" class="icon-plus-sign blue">Add Redirect Uri</a>
 			</div>
 			<div class="controls save-btns pull-right bottom-margin-small">
 				<span id="bottom-submit-update-credential-request" ng-click="submitEditClient($index)" class="btn btn-primary"><@orcid.msg 'manage_clients.update'/></span>				
@@ -130,7 +129,6 @@
 					<label class="control-label" style="margin-right:10px; text-align:left; width:90px"><@orcid.msg 'manage_clients.redirect_uri'/>:</label>
 					<div class="relative">
 						<input type="text" placeholder="Redirect Uri" class="input-xlarge" ng-model="rUri.value.value">
-						<a ng-show="$last" href ng-click="addUriToNewClientTable()" class="icon-plus-sign blue"></a>
 						<span class="orcid-error" ng-show="rUri.errors.length > 0">
 							<div ng-repeat='error in rUri.errors' ng-bind-html-unsafe="error"></div>
 						</span>						
@@ -138,6 +136,9 @@
 				</div>
 		    </div>
 		</form>
+		<div ng-show="!clientToEdit.redirectUris.redirectUri.length">			
+			<a href ng-click="addUriToNewClientTable()" class="icon-plus-sign blue">Add Redirect Uri</a>
+		</div>
 		<div class="controls save-btns pull-left bottom-margin-small">
 			<span id="bottom-submit-credential-request" ng-click="submitAddClient()" class="btn btn-primary"><@orcid.msg 'manage_clients.submit'/></span>				
 		</div>
@@ -170,7 +171,7 @@
 								<li><span><@orcid.msg 'manage_clients.description'/>:</span> {{client.shortDescription.value}}</li>
 								<li>
 									<div ng-repeat='rUri in client.redirectUris'>			                	
-					                	<span><@orcid.msg 'manage_clients.redirect_uri'/></span>: <a href="{{rUri.value}}" target="_blank">{{rUri.value}}</a>
+					                	<span><@orcid.msg 'manage_clients.redirect_uri'/></span>: <a href="{{rUri.value.value}}" target="_blank">{{rUri.value.value}}</a>
 									</div>
 								</li>
 							</ul>

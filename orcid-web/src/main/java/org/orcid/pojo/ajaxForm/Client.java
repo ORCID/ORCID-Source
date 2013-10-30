@@ -38,7 +38,9 @@ public class Client implements ErrorsInterface, Serializable {
                 redirectUris.add(RedirectUri.toRedirectUri(orcidRedirectUri));
             }
         }
-                
+        
+        client.setRedirectUris(redirectUris);
+        
         return client;
     }
     
@@ -50,12 +52,15 @@ public class Client implements ErrorsInterface, Serializable {
         orcidClient.setClientId(this.clientId.getValue());
         orcidClient.setClientSecret(this.clientSecret.getValue());
         if(!PojoUtil.isEmpty(this.type))
-        	orcidClient.setType(ClientType.valueOf(this.type.getValue()));
+        	orcidClient.setType(ClientType.fromValue(this.type.getValue()));
+        
         RedirectUris redirectUris = new RedirectUris();
         
         for(RedirectUri redirectUri : this.redirectUris){
             redirectUris.getRedirectUri().add(redirectUri.toRedirectUri());
         }
+        
+        orcidClient.setRedirectUris(redirectUris);
         
         return orcidClient;
     }
