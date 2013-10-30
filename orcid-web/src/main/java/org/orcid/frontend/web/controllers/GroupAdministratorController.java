@@ -120,47 +120,38 @@ public class GroupAdministratorController extends BaseWorkspaceController {
     }
     
     private Client validateDisplayName(Client client){
-        if(client.getDisplayName() != null){
-            client.getDisplayName().setErrors(new ArrayList<String>());
-            if(client.getDisplayName().getValue() != null && client.getDisplayName().getValue().length() > 150){
-                setError(client.getDisplayName(), "manage_clients.error.display_name.150");
-            }
-        } else {
-            client.setDisplayName(new Text());
-            client.getDisplayName().setErrors(new ArrayList<String>());
-            setError(client.getDisplayName(), "manage_clients.error.display_name.empty");
-        }
+    	client.getDisplayName().setErrors(new ArrayList<String>());
+        if(PojoUtil.isEmpty(client.getDisplayName())){
+        	setError(client.getDisplayName(), "manage_clients.error.display_name.empty");
+        } else if(client.getDisplayName().getValue().length() > 150){
+        	setError(client.getDisplayName(), "manage_clients.error.display_name.150");
+        } 
+            
         return client;
     }
     
     private Client validateWebsite(Client client){
-        if(client.getWebsite() != null){
-            client.getWebsite().setErrors(new ArrayList<String>());
-            if(!validateUrl(client.getWebsite().getValue())){
-                setError(client.getDisplayName(), "manage_clients.error.invalid_url");
-            }
-        } else {
-            client.setWebsite(new Text());
-            client.getWebsite().setErrors(new ArrayList<String>());
-            setError(client.getWebsite(), "manage_clients.error.website.empty");
-        }
+    	client.getWebsite().setErrors(new ArrayList<String>());
+    	if(PojoUtil.isEmpty(client.getWebsite())) {
+    		setError(client.getWebsite(), "manage_clients.error.website.empty");
+    	} else if(!validateUrl(client.getWebsite().getValue())) {
+    		setError(client.getWebsite(), "manage_clients.error.invalid_url");
+        }            
         return client;
     }
     
     private Client validateShortDescription(Client client){
-        if(client.getShortDescription() == null)
-            client.setShortDescription(new Text());
-        
+    	client.getShortDescription().setErrors(new ArrayList<String>());
         if(PojoUtil.isEmpty(client.getShortDescription()))
-            setError(client.getWebsite(), "manage_clients.error.short_description.empty");
+            setError(client.getShortDescription(), "manage_clients.error.short_description.empty");
         return client;
     }
     
     private Client validateRedirectUris(Client client){
         if(client.getRedirectUris() != null && client.getRedirectUris().size() > 0){
             for(RedirectUri redirectUri : client.getRedirectUris()){
-                if(!validateUrl(redirectUri.getValue().getValue())){
-                    redirectUri.setErrors(new ArrayList<String>());
+            	redirectUri.setErrors(new ArrayList<String>());
+                if(!validateUrl(redirectUri.getValue().getValue())){                    
                     setError(redirectUri, "manage_clients.error.invalid_url");
                 }
             }
@@ -171,7 +162,10 @@ public class GroupAdministratorController extends BaseWorkspaceController {
     
     @RequestMapping(value = "/add-client.json", method = RequestMethod.POST)
     @Produces(value = { MediaType.APPLICATION_JSON })
-    public @ResponseBody Client createClient(HttpServletRequest request, @RequestBody Client client) {                
+    public @ResponseBody Client createClient(HttpServletRequest request, @RequestBody Client client) { 
+    	//Clean the error list
+    	client.setErrors(new ArrayList<String>());
+    	//Validate fields 
         validateDisplayName(client);
         validateWebsite(client);
         validateShortDescription(client);
@@ -214,6 +208,9 @@ public class GroupAdministratorController extends BaseWorkspaceController {
     @RequestMapping(value = "/edit-client.json", method = RequestMethod.POST)
     @Produces(value = { MediaType.APPLICATION_JSON })
     public @ResponseBody Client editClient(HttpServletRequest request, @RequestBody Client client){
+    	//Clean the error list
+    	client.setErrors(new ArrayList<String>());
+    	//Validate fields 
         validateDisplayName(client);
         validateWebsite(client);
         validateShortDescription(client);

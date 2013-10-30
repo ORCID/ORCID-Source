@@ -25,11 +25,11 @@
 		<table class="table table-bordered">
 			<tr>
 				<td><@orcid.msg 'manage_clients.client_id'/></td>
-				<td>{{clientDetails.clientId}}</td>
+				<td>{{clientDetails.clientId.value}}</td>
 			</tr>
 			<tr>
 				<td><@orcid.msg 'manage_clients.client_secret'/></td>
-				<td>{{clientDetails.clientSecret}}</td>
+				<td>{{clientDetails.clientSecret.value}}</td>
 			</tr>
 		</table>		
 	</div>
@@ -42,23 +42,43 @@
 		<form class="form-horizontal">
 			<div class="control-group">
 				<label class="control-label" for="clientname" style="margin-right:10px; text-align:left; width:90px"><@orcid.msg 'manage_clients.display_name'/>: </label>
-		    	<input id="clientname" type="text" ng-model="clientToEdit.displayName.value" required />
+		    	<div class="relative">
+					<input id="clientname" type="text" ng-model="clientToEdit.displayName.value" required />
+					<span class="orcid-error" ng-show="clientToEdit.displayName.errors.length > 0">
+						<div ng-repeat='error in clientToEdit.displayName.errors' ng-bind-html-unsafe="error"></div>
+					</span>
+				</div>
 		    </div>
 		    <div class="control-group">
 				<label class="control-label" for="website" style="margin-right:10px; text-align:left; width:90px"><@orcid.msg 'manage_clients.website'/>: </label>
-		    	<input id="website" type="text" ng-model="clientToEdit.website.value" required />	
+		    	<div class="relative">
+					<input id="website" type="text" ng-model="clientToEdit.website.value" required />
+					<span class="orcid-error" ng-show="clientToEdit.website.errors.length > 0">
+						<div ng-repeat='error in clientToEdit.website.errors' ng-bind-html-unsafe="error"></div>
+					</span>
+				</div>	
 		    </div>
 		    <div class="control-group">
 				<label class="control-label" for="description" style="margin-right:10px; text-align:left; width:90px"><@orcid.msg 'manage_clients.description'/>: </label>
-		    	<input id="description" type="text" ng-model="clientToEdit.shortDescription.value" required />	
+		    	<div class="relative">
+					<input id="description" type="text" ng-model="clientToEdit.shortDescription.value" required />
+					<span class="orcid-error" ng-show="clientToEdit.shortDescription.errors.length > 0">
+						<div ng-repeat='error in clientToEdit.shortDescription.errors' ng-bind-html-unsafe="error"></div>
+					</span>
+				</div>	
 		    </div>		    	    	    	
 	    	<div ng-show="clientToEdit.redirectUris.length">
 	    		<div id="edit-client-table">
 		    		<div class="control-group" ng-repeat='rUri in clientToEdit.redirectUris'>						
 						<label class="control-label" style="margin-right:10px; text-align:left; width:90px"><@orcid.msg 'manage_clients.redirect_uri'/>:</label>
-						<input type="text" placeholder="Redirect Uri"  ng-model="rUri.value">						
-						<a href ng-click="deleteUri($index)" class="icon-trash blue"></a>
-						<a ng-show="$last" href ng-click="addUriToExistingClientTable()" class="icon-plus-sign blue"></a>	
+						<div class="relative">
+							<input type="text" placeholder="Redirect Uri"  ng-model="rUri.value">						
+							<a href ng-click="deleteUri($index)" class="icon-trash blue"></a>
+							<a ng-show="$last" href ng-click="addUriToExistingClientTable()" class="icon-plus-sign blue"></a>
+							<span class="orcid-error" ng-show="rUri.errors.length > 0">
+								<div ng-repeat='error in rUri.errors' ng-bind-html-unsafe="error"></div>
+							</span>
+						</div>	
 					</div>
 		    	</div>
 	    	</div>
@@ -80,30 +100,41 @@
 		<form class="form-horizontal">
 			<div class="control-group">
 				<label class="control-label" for="clientname" style="margin-right:10px; text-align:left; width:90px"><@orcid.msg 'manage_clients.display_name'/>: </label>
-				<input id="clientname" type="text" placeholder="Display name" class="input-xlarge" ng-model="newClient.displayName.value" required />								
-			</div>
-			<div ng-show="newClient.displayName.errors.length > 0">
-				<span>{{newClient.displayName.errors[0].value}}</span>
-			</div>
+				<div class="relative">
+					<input id="clientname" type="text" placeholder="Display name" class="input-xlarge" ng-model="newClient.displayName.value" required />
+					<span class="orcid-error" ng-show="newClient.displayName.errors.length > 0">
+						<div ng-repeat='error in newClient.displayName.errors' ng-bind-html-unsafe="error"></div>
+					</span>
+				</div>								
+			</div>									
 		 	<div class="control-group">
 		 		<label class="control-label" for="website" style="margin-right:10px; text-align:left; width:90px"><@orcid.msg 'manage_clients.website'/>: </label>
-		 		<input id="website" type="text" placeholder="Website" class="input-xlarge" ng-model="newClient.website.value" required />	 		
+				<div class="relative">
+		 			<input id="website" type="text" placeholder="Website" class="input-xlarge" ng-model="newClient.website.value" required />
+					<span class="orcid-error" ng-show="newClient.website.errors.length > 0">
+						<div ng-repeat='error in newClient.website.errors' ng-bind-html-unsafe="error"></div>
+					</span>
+				</div>	 		
 		 	</div>
-			<div ng-show="newClient.website.errors.length > 0">
-				<span>{{newClient.website.errors[0].value}}</span>
-			</div>
 			<div class="control-group">
 				<label class="control-label" for="description" style="margin-right:10px; text-align:left; width:90px"><@orcid.msg 'manage_clients.description'/>: </label>
-		    	<input id="description" type="text" placeholder="Description" class="input-xlarge" ng-model="newClient.shortDescription.value" required />	
-			</div>
-			<div ng-show="newClient.shortDescription.errors.length > 0">
-				<span>{{newClient.shortDescription.errors[0].value}}</span>
-			</div>
+		    	<div class="relative">
+					<input id="description" type="text" placeholder="Description" class="input-xlarge" ng-model="newClient.shortDescription.value" required />
+					<span class="orcid-error" ng-show="newClient.shortDescription.errors.length > 0">
+						<div ng-repeat='error in newClient.shortDescription.errors' ng-bind-html-unsafe="error"></div>
+					</span>
+				</div>	
+			</div>			
 	    	<div id="new-client-table">
 		    	<div class="control-group" ng-repeat='rUri in newClient.redirectUris'>						
 					<label class="control-label" style="margin-right:10px; text-align:left; width:90px"><@orcid.msg 'manage_clients.redirect_uri'/>:</label>
-					<input type="text" placeholder="Redirect Uri" class="input-xlarge" ng-model="rUri.value.value">					
-					<a ng-show="$last" href ng-click="addUriToNewClientTable()" class="icon-plus-sign blue"></a>	
+					<div class="relative">
+						<input type="text" placeholder="Redirect Uri" class="input-xlarge" ng-model="rUri.value.value">
+						<a ng-show="$last" href ng-click="addUriToNewClientTable()" class="icon-plus-sign blue"></a>
+						<span class="orcid-error" ng-show="rUri.errors.length > 0">
+							<div ng-repeat='error in rUri.errors' ng-bind-html-unsafe="error"></div>
+						</span>						
+					</div>
 				</div>
 		    </div>
 		</form>
@@ -132,7 +163,7 @@
 						<div class="pull-right"><a href="#" ng-click="viewDetails($index)" class="icon-zoom-in blue"></a></div>
 						<div class="pull-right"><a href="#" ng-click="editClient($index)" class="icon-pencil  blue"></a></div>
 						<div>							
-							<h4><@orcid.msg 'manage_clients.client_id'/>: {{client.clientId}}</h4>
+							<h4><@orcid.msg 'manage_clients.client_id'/>: {{client.clientId.value}}</h4>
 							<ul>
 								<li><span><@orcid.msg 'manage_clients.display_name'/></span>: {{client.displayName.value}}</li>
 								<li><span><@orcid.msg 'manage_clients.website'/>:</span> <a href="{{client.website}}" target="_blank">{{client.website.value}}</a></li>

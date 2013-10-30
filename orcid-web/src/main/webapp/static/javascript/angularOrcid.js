@@ -2017,6 +2017,9 @@ function ClientEditCtrl($scope, $compile){
 			}
 		}
 		
+		console.log("Before:");
+		console.log(angular.toJson($scope.newClient));
+		
 		//Submit the new client request
 		$.ajax({
 	        url: $('body').data('baseurl') + 'manage-clients/add-client.json',
@@ -2025,18 +2028,20 @@ function ClientEditCtrl($scope, $compile){
 	        contentType: 'application/json;charset=UTF-8',
 	        dataType: 'json',
 	        success: function(data) {
-	        	if(data.errors != null && data.errors.content){
+	        	console.log("From server:");
+        		console.log(angular.toJson(data));
+	        	if(data.errors != null && data.errors.length > 0){
 	        		$scope.newClient = data;
-	        		console.log("Unable to create client information.");
+	        		$scope.$apply();
 	        	} else {
 	        		//If everything worked fine, reload the list of clients
 	        		$scope.getClients();
+	        		$.colorbox.close();
 	        	}
 	        }
 	    }).fail(function() { 
 	    	console.log("Error creating client information.");
-	    });
-		$.colorbox.close();
+	    });		
 	};
 	    
 	//init

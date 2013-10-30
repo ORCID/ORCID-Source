@@ -532,8 +532,10 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
         clientAuthorizedGrantTypes.add("authorization_code");
         clientAuthorizedGrantTypes.add("refresh_token");
         Set<RedirectUri> redirectUrisToAdd = new HashSet<RedirectUri>();
-        redirectUrisToAdd.addAll(orcidClient.getRedirectUris().getRedirectUri());
-        redirectUrisToAdd.addAll(defaultRedirectUris);
+        if(orcidClient.getRedirectUris() != null) {        	
+        	redirectUrisToAdd.addAll(orcidClient.getRedirectUris().getRedirectUri());
+        	redirectUrisToAdd.addAll(defaultRedirectUris);
+        }
         List<String> clientGrantedAuthorities = new ArrayList<String>();
         clientGrantedAuthorities.add("ROLE_CLIENT");
 

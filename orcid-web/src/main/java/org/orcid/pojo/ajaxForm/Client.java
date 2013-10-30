@@ -27,7 +27,8 @@ public class Client implements ErrorsInterface, Serializable {
         client.setClientSecret(Text.valueOf(orcidClient.getClientSecret()));
         client.setDisplayName(Text.valueOf(orcidClient.getDisplayName()));
         client.setShortDescription(Text.valueOf(orcidClient.getShortDescription()));
-        client.setType(Text.valueOf(orcidClient.getType().value()));
+        if(orcidClient.getType() != null)
+        	client.setType(Text.valueOf(orcidClient.getType().value()));
         client.setWebsite(Text.valueOf(orcidClient.getWebsite()));
         
         List<RedirectUri> redirectUris = new ArrayList<RedirectUri>();
@@ -48,7 +49,8 @@ public class Client implements ErrorsInterface, Serializable {
         orcidClient.setShortDescription(this.shortDescription.getValue());
         orcidClient.setClientId(this.clientId.getValue());
         orcidClient.setClientSecret(this.clientSecret.getValue());
-        orcidClient.setType(ClientType.valueOf(this.type.getValue()));
+        if(!PojoUtil.isEmpty(this.type))
+        	orcidClient.setType(ClientType.valueOf(this.type.getValue()));
         RedirectUris redirectUris = new RedirectUris();
         
         for(RedirectUri redirectUri : this.redirectUris){
