@@ -130,8 +130,8 @@
 			value="${org.orcid.core.defaultRedirectUrisAsWhiteSpaceSeparatedList}" />
 	</bean>
 
-    <alias name="incomingValidationManagerV1_0_23" alias="incomingValidationManagerLatest"/>
-    <alias name="outgoingValidationManagerV1_0_23" alias="outgoingValidationManagerLatest"/>
+    <alias name="incomingValidationManagerV1_0_22" alias="incomingValidationManagerLatest"/>
+    <alias name="outgoingValidationManagerV1_0_22" alias="outgoingValidationManagerLatest"/>
 
     <bean id="incomingValidationManagerV1_0_14" class="org.orcid.core.manager.impl.ValidationManagerForLegacyApiVersionsImpl">
         <property name="validationBehaviour"

@@ -57,8 +57,6 @@ public class ValidationManagerImpl implements ValidationManager {
 
     private String version = OrcidMessage.DEFAULT_VERSION;
     
-    private String messageVersion = null;
-
     private boolean requireOrcidProfile;
 
     private boolean validateBibtex = true;
@@ -104,10 +102,7 @@ public class ValidationManagerImpl implements ValidationManager {
     public void validateMessage(OrcidMessage orcidMessage) {
         if (ValidationBehaviour.IGNORE.equals(validationBehaviour)) {
             return;
-        }        
-        //TODO: Remove this when all old work types are not allowed from API request
-        this.messageVersion = orcidMessage.getMessageVersion();
-        //TODO: END
+        }               
         doSchemaValidation(orcidMessage);
         doCustomValidation(orcidMessage);
     }
@@ -201,7 +196,7 @@ public class ValidationManagerImpl implements ValidationManager {
         }  
         
         //Do this only if the message version is greather than version 23
-        if(validateWorkType && this.messageVersion != null && this.messageVersion.compareTo(version) >= 0){            
+        if(validateWorkType){            
             if(orcidWork.getWorkType() != null && orcidWork.getWorkType().isDeprecated()){
                 throw new OrcidValidationException("Invalid work type: Type " + orcidWork.getWorkType().value() + " is deprecated");
             }
@@ -211,11 +206,8 @@ public class ValidationManagerImpl implements ValidationManager {
     private void initSchema() {
         if (schema == null) {
             SchemaFactory factory = SchemaFactory.newInstance("http://www.w3.org/2001/XMLSchema");
-            try {
-                if(this.messageVersion != null)
-                    schema = factory.newSchema(ValidateOrcidMessage.class.getResource("/orcid-message-" + this.messageVersion + ".xsd"));
-                else 
-                    schema = factory.newSchema(ValidateOrcidMessage.class.getResource("/orcid-message-" + version + ".xsd"));
+            try {                
+            	schema = factory.newSchema(ValidateOrcidMessage.class.getResource("/orcid-message-" + version + ".xsd"));
             } catch (SAXException e) {
                 handleError("Error initializing schema", e);
             }

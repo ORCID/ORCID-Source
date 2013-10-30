@@ -145,10 +145,10 @@ public class T2OrcidApiServiceVersionedDelegatorImpl implements T2OrcidApiServic
     }
 
     @Override
-    public Response createProfile(UriInfo uriInfo, OrcidMessage orcidMessage) {
-        OrcidMessage upgradedMessage = upgradeMessage(orcidMessage);
+    public Response createProfile(UriInfo uriInfo, OrcidMessage orcidMessage) {        
         Response response = null;
-        validateIncomingMessage(upgradedMessage);
+        validateIncomingMessage(orcidMessage);
+        OrcidMessage upgradedMessage = upgradeMessage(orcidMessage);
         response = t2OrcidApiServiceDelegator.createProfile(uriInfo, upgradedMessage);
         return response;
     }
