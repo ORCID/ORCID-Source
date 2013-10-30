@@ -14,18 +14,15 @@
  *
  * =============================================================================
  */
-package org.orcid.persistence.dao;
+package org.orcid.core.manager;
 
-import java.util.List;
+/**
+ * 
+ * @author Will Simpson
+ * 
+ */
+public interface OrgDisambiguatedManager {
 
-import org.orcid.persistence.solr.entities.OrgDisambiguatedSolrDocument;
-
-public interface OrgDisambiguatedSolrDao {
-
-    public void persist(OrgDisambiguatedSolrDocument orgDisambiguatedSolrDocument);
-
-    public OrgDisambiguatedSolrDocument findById(Long id);
-
-    public List<OrgDisambiguatedSolrDocument> getOrgs(String searchTerm, int firstResult, int maxResult);
+    void processOrgsForIndexing();
 
 }

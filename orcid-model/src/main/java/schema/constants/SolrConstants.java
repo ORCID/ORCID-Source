@@ -64,6 +64,7 @@ public class SolrConstants {
     public static final String ORG_DISAMBIGUATED_CITY = "org-disambiguated-city";
     public static final String ORG_DISAMBIGUATED_REGION = "org-disambiguated-region";
     public static final String ORG_DISAMBIGUATED_COUNTRY = "org-disambiguated-country";
+    public static final String ORG_DISAMBIGUATED_TYPE = "org-disambiguated-type";
     public static final String ORG_DISAMBIGUATED_POPULARITY = "org-disambiguated-popularity";
     public static final String ORG_NAMES = "org-names";
 }

@@ -20,6 +20,7 @@ import static schema.constants.SolrConstants.ORG_DISAMBIGUATED_ID;
 
 import java.io.IOException;
 import java.text.MessageFormat;
+import java.util.List;
 
 import javax.annotation.Resource;
 
@@ -55,7 +56,6 @@ public class OrgDisambiguatedSolrDaoImpl implements OrgDisambiguatedSolrDao {
     public OrgDisambiguatedSolrDocument findById(Long id) {
         SolrQuery query = new SolrQuery();
         query.setQuery(ORG_DISAMBIGUATED_ID + ":" + id).setFields("*");
-        ;
         try {
             QueryResponse queryResponse = solrServerReadOnly.query(query);
             if (!queryResponse.getResults().isEmpty()) {
@@ -66,8 +66,20 @@ public class OrgDisambiguatedSolrDaoImpl implements OrgDisambiguatedSolrDao {
             String errorMessage = MessageFormat.format("Error when attempting to retrieve org {0}", new Object[] { id });
             throw new NonTransientDataAccessResourceException(errorMessage, se);
         }
-
         return null;
+    }
+
+    @Override
+    public List<OrgDisambiguatedSolrDocument> getOrgs(String searchTerm, int firstResult, int maxResult) {
+        SolrQuery query = new SolrQuery();
+        query.setQuery("{!edismax qf='org-disambiguated-name^50.0 text^1.0' pf='org-disambiguated-name^50.0' mm=1}" + searchTerm + "*").setFields("*");
+        try {
+            QueryResponse queryResponse = solrServerReadOnly.query(query);
+            return queryResponse.getBeans(OrgDisambiguatedSolrDocument.class);
+        } catch (SolrServerException se) {
+            String errorMessage = MessageFormat.format("Error when attempting to search for orgs, with search term {0}", new Object[] { searchTerm });
+            throw new NonTransientDataAccessResourceException(errorMessage, se);
+        }
     }
 
 }
