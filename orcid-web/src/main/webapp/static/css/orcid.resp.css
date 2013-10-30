@@ -155,9 +155,15 @@ img {
 .centered{
 	text-align:center;
 }
+
 .right{
 	text-align:right;
 	float: right;	
+}
+
+.left{
+	text-align:left;
+	float: left;		
 }
 
 .pop-up-content{
@@ -2883,7 +2889,9 @@ ul.personal-inf-display li{
 	height: 175px;
 }
 
-
+.data-row-group .col-md-2{
+	padding-left: 0;
+}
 
 
 /* Media Queries */
@@ -3295,6 +3303,11 @@ ul.personal-inf-display li{
 	}
 	
 	/* Public Profile */
+	/*
+	.public-profile .workspace-inner > *{
+	 	padding-left: 0;
+	}
+	*/ 
 	
 	.public-profile .workspace-inner .alert{
 		margin-left: 0;
@@ -3312,7 +3325,8 @@ ul.personal-inf-display li{
 		border-left:none;
 	}
 	
-	.workspace-accordion-header, .workspace-accordion-content{
+	.workspace-accordion-header, 
+	.workspace-accordion-content{
 		padding-left:0;
 	}
 	
@@ -3331,6 +3345,7 @@ ul.personal-inf-display li{
 	    height: 50px;
 	    margin-top: 15px;
 	    width: 100%;
+	    padding-left: 10px;
 	}
 	
 	.workspace-private-toolbar .icon-question-sign{
@@ -3419,11 +3434,8 @@ ul.personal-inf-display li{
 	
 	.settings-table .icon-question-sign{
 		line-height: 18px;
-	}
+	}	
 	
-	.settings-table .email{
-		padding-left:30px;
-	}
 	
 	.settings-table .icon-trash{
 		font-size: 24px;
@@ -3431,12 +3443,8 @@ ul.personal-inf-display li{
 	
 	.settings-table .input-xlarge{
 		width: 80%;
-	}
-	
-	.settings-table .add-email{
-		margin-left:15px;
-	}
-	
+	}	
+
 	.manage-bio .input-xlarge{
 		width: 90%;
 	}
@@ -3569,6 +3577,12 @@ ul.personal-inf-display li{
 	#privacy-settings .popover.bottom .arrow{
 		left: 124px !important;
 	}
+	
+	/* Public Profile */
+	
+	.data-row-group .col-md-2{
+		padding-left: 15px;
+	}
 }
 
 @media ( max-width : 980px) { /* Tablet */
@@ -3657,10 +3671,11 @@ ul.personal-inf-display li{
 	.workspace-top{
 		border-top: 0;
 	}
-	
+	/*
 	.editTablePadCell35 .email-verified{
 		padding-left: 15px;
 	}
+	*/
 	
 	/* Login */
 	
@@ -3681,6 +3696,14 @@ ul.personal-inf-display li{
 	
 	#uvTab{
 		display:none !important;
+	}
+	
+	.data-row-group{
+		margin-top: 10px;
+	}
+	
+	.data-row-group .col-md-2{
+		padding-left: 15px;
 	}
 }
 

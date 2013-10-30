@@ -65,38 +65,37 @@
 								ng-bind-html-unsafe="error"></span>
 							</span>
 							<!-- Start -->
-							<div class="row">
-								<div ng-repeat='email in emailsPojo.emails' class="row">
-									<div class="col-md-7 row">
-										<!-- Primary Email -->
-										<div ng-class="{primaryEmail:email.primary}"
-											ng-bind="email.value" class="col-md-7 col-xs-7 email"></div>
-										<!-- Set Primary options -->
-										<div class="col-md-5 col-xs-5">
-											<span ng-hide="email.primary"> <a href=""
-												ng-click="setPrimary($index)">${springMacroRequestContext.getMessage("manage.email.set_primary")}</a>
-											</span> <span ng-show="email.primary" class="muted"
-												style="color: #bd362f;">
-												${springMacroRequestContext.getMessage("manage.email.primary_email")}
-											</span>
-										</div>
+							
+							<div ng-repeat='email in emailsPojo.emails' class="data-row-group">
+								<div class="row">
+									<!-- Primary Email -->
+									<div ng-class="{primaryEmail:email.primary}"
+										ng-bind="email.value" class="col-md-4 col-xs-12 email"></div>
+									<!-- Set Primary options -->
+									<div class="col-md-3 col-xs-12">
+										<span ng-hide="email.primary"> <a href=""
+											ng-click="setPrimary($index)">${springMacroRequestContext.getMessage("manage.email.set_primary")}</a>
+										</span> <span ng-show="email.primary" class="muted"
+											style="color: #bd362f;">
+											${springMacroRequestContext.getMessage("manage.email.primary_email")}
+										</span>
 									</div>
-									<div class="col-md-5 col-xs-12 row">
-										<div class="col-md-6 col-xs-6">
+									<div class="data-row-group">
+										<div class="col-md-2 col-xs-5">
 											<!-- Email verified -->
-											<div class="col-md-8 col-xs-7 email-verified">
-												<span ng-hide="email.verified" class="left"><a
-													href="" ng-click="verifyEmail($index)">${springMacroRequestContext.getMessage("manage.email.verify")}</a></span>
+											<div class="email-verified left">
+												<span ng-hide="email.verified" class="left"><a href=""
+													ng-click="verifyEmail($index)">${springMacroRequestContext.getMessage("manage.email.verify")}</a></span>
 												<span ng-show="email.verified" class="left">${springMacroRequestContext.getMessage("manage.email.verified")}</span>
 											</div>
 											<!-- Icon Trash / Privacy Settings -->
-											<div class="col-md-4 col-xs-3">
-												<a href="" class="icon-trash orcid-icon-trash grey left"
+											<div class="right">
+												<a href="" class="icon-trash orcid-icon-trash grey"
 													ng-show="email.primary == false"
 													ng-click="confirmDeleteEmail($index)"></a>
 											</div>
 										</div>
-										<div class="col-md-6 col-xs-6">
+										<div class="col-md-3 col-xs-6">
 											<div class="emailVisibility"><@orcid.privacyToggle
 												"email.visibility" "setPrivacy($index, 'PUBLIC', $event)"
 												"setPrivacy($index, 'LIMITED', $event)" "setPrivacy($index,
@@ -104,7 +103,8 @@
 										</div>
 									</div>
 								</div>
-								<div class="row">
+							</div>
+							<div class="row bottom-row">
 									<div class="col-md-12 add-email">
 										<input type="email" placeholder="Add Another Email"
 											class="input-xlarge" ng-model="inputEmail.value"
