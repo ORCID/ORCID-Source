@@ -424,7 +424,7 @@
 		<!-- A Geohash is a compact representation of a latitude longitude pair 
 			in a single field. See http://wiki.apache.org/solr/SpatialSearch -->
 		<fieldtype name="geohash" class="solr.GeoHashField" />
-		
+
 		<!-- Custom field type for ORCID to get stricter person name matching -->
 		<fieldType name="orcid_text_name" class="solr.TextField"
 			positionIncrementGap="100">
@@ -507,36 +507,36 @@
 			default value of "NOW" to indicate when each document was indexed. -->
 		<!-- <field name="timestamp" type="date" indexed="true" stored="true" default="NOW" 
 			multiValued="false"/> -->
-            
+
 		<field name="orcid" type="string" indexed="true" stored="true"
-            multiValued="false" />
-        <field name="email" type="string" indexed="true"
-            stored="true" multiValued="true" />
-        <field name="given-names" type="text_general" indexed="true"
-            stored="true" multiValued="false" />
-        <field name="family-name" type="text_general" indexed="true"
-            stored="true" multiValued="false" />
-        <field name="given-and-family-names" type="orcid_text_name" indexed="true"
-            stored="false" multiValued="false"/>
-        <field name="current-primary-institution-affiliation-name" type="text_general" indexed="true"
-            stored="true" multiValued="true" />
-        <field name="current-institution-affiliation-name" type="text_general" indexed="true"
-            stored="true" multiValued="true" />
-        <field name="past-institution-affiliation-name" type="text_general" indexed="true"
-            stored="true" multiValued="true" />        
-        <field name="credit-name" type="text_general" indexed="true"
-            stored="true" multiValued="false" />
-        <field name="other-names" type="text_general" indexed="true"
-            stored="true" multiValued="true" />
-        <field name="external-id-orcid" type="string" indexed="true" stored="false"
-            multiValued="true" />
-        <field name="external-id-reference" type="string" indexed="true" stored="false"
-            multiValued="true" />
-        <field name="external-id-orcid-and-reference" type="string" indexed="true" stored="false"
-            multiValued="true" />
-        <field name="digital-object-ids" type="text_general" indexed="true" stored="false"
-            multiValued="true" />
-            
+			multiValued="false" />
+		<field name="email" type="string" indexed="true" stored="true"
+			multiValued="true" />
+		<field name="given-names" type="text_general" indexed="true"
+			stored="true" multiValued="false" />
+		<field name="family-name" type="text_general" indexed="true"
+			stored="true" multiValued="false" />
+		<field name="given-and-family-names" type="orcid_text_name"
+			indexed="true" stored="false" multiValued="false" />
+		<field name="current-primary-institution-affiliation-name" type="text_general"
+			indexed="true" stored="true" multiValued="true" />
+		<field name="current-institution-affiliation-name" type="text_general"
+			indexed="true" stored="true" multiValued="true" />
+		<field name="past-institution-affiliation-name" type="text_general"
+			indexed="true" stored="true" multiValued="true" />
+		<field name="credit-name" type="text_general" indexed="true"
+			stored="true" multiValued="false" />
+		<field name="other-names" type="text_general" indexed="true"
+			stored="true" multiValued="true" />
+		<field name="external-id-orcid" type="string" indexed="true"
+			stored="false" multiValued="true" />
+		<field name="external-id-reference" type="string" indexed="true"
+			stored="false" multiValued="true" />
+		<field name="external-id-orcid-and-reference" type="string"
+			indexed="true" stored="false" multiValued="true" />
+		<field name="digital-object-ids" type="text_general" indexed="true"
+			stored="false" multiValued="true" />
+
 		<!-- Indexing all possible external identifier types -->
 		<field name="arxiv" type="text_general" indexed="true" stored="false"
 			multiValued="true" />
@@ -578,18 +578,19 @@
 			multiValued="true" />
 		<field name="other-identifier-type" type="text_general" indexed="true"
 			stored="false" multiValued="true" />
-            
-        <field name="work-titles" type="text_general" indexed="true"
-            stored="false" multiValued="true" />
-        <field name="grant-numbers" type="text_general" indexed="true"
-            stored="false" multiValued="true" />
-        <field name="patent-numbers" type="text_general" indexed="true"
-            stored="false" multiValued="true" />
-        <field name="keyword" type="text_general" indexed="true"
-            stored="false" multiValued="true" />
-        <field name="public-profile-message" type="string" indexed="false" stored="true"
-            multiValued="false" />
 
+		<field name="work-titles" type="text_general" indexed="true"
+			stored="false" multiValued="true" />
+		<field name="grant-numbers" type="text_general" indexed="true"
+			stored="false" multiValued="true" />
+		<field name="patent-numbers" type="text_general" indexed="true"
+			stored="false" multiValued="true" />
+		<field name="keyword" type="text_general" indexed="true" stored="false"
+			multiValued="true" />
+		<field name="public-profile-message" type="string" indexed="false"
+			stored="true" multiValued="false" />
+		<field name="primary-record" type="string" indexed="true"
+			stored="true" multiValued="false" />
 		<!-- Dynamic field definitions. If a field name is not found, dynamicFields 
 			will be used if the name matches any of the patterns. RESTRICTION: the glob-like 
 			pattern in the name attribute must have a "*" only at the start or the end. 
@@ -672,7 +673,7 @@
 		way to map multiple source fields to the same destination field is to use 
 		the dynamic field syntax. copyField also supports a maxChars to copy setting. -->
 
-	<copyField source="*" dest="text"/>
+	<copyField source="*" dest="text" />
 
 	<!-- copy name to alphaNameSort, a field designed for sorting by name -->
 	<!-- <copyField source="name" dest="alphaNameSort"/> -->

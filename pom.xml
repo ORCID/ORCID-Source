@@ -218,7 +218,7 @@ the software.
                             <exclude>**/src/main/webapp/solr/**/*.xml</exclude>
                             <exclude>**/src/main/resources/cdn_url.txt</exclude>
                             <exclude>**/src/main/resources/release_name.txt</exclude>
-                            <exclude>**/src/test/resources/solr/conf/**</exclude>
+                            <exclude>**/src/test/resources/solr/**</exclude>
                             <exclude>**/src/test/resources/org/orcid/core/manager/example**</exclude>
                             <exclude>**/src/test/resources/org/orcid/frontend/web/forms/**</exclude>
                             <exclude>**.md</exclude>
