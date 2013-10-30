@@ -65,7 +65,6 @@ import org.orcid.pojo.ajaxForm.Work;
 import org.orcid.pojo.ajaxForm.WorkExternalIdentifier;
 import org.orcid.pojo.ajaxForm.WorkTitle;
 import org.orcid.utils.BibtexException;
-import org.orcid.utils.BibtexUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -627,15 +626,6 @@ public class WorksController extends BaseWorkspaceController {
             // citation should not be blank if citation type is set
             if (work.getCitation().getCitation() == null || work.getCitation().getCitation().getValue().trim().equals("")) {
                 setError(work.getCitation().getCitation(), "NotBlank.manualWork.citation");
-            }
-
-            // if bibtext must be valid
-            if (work.getCitation().getCitationType().getValue().equals(CitationType.BIBTEX.value())) {
-                try {
-                    BibtexUtils.validate(work.getCitation().getCitation().getValue());
-                } catch (BibtexException e) {
-                    setError(work.getCitation().getCitation(), "manualWork.bibtext.notValid");
-                }
             }
 
         }
