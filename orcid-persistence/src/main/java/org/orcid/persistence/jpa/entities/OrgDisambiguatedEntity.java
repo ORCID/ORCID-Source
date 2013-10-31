@@ -58,7 +58,7 @@ public class OrgDisambiguatedEntity extends BaseEntity<Long> {
     private String status;
     private Date lastIndexedDate;
     private IndexingStatus indexingStatus = IndexingStatus.PENDING;
-    private Integer popularity;
+    private Integer popularity = 0;
     private Set<OrgDisambiguatedExternalIdentifierEntity> externalIdentifiers;
     private Set<OrgEntity> orgs;
 
