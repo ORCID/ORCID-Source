@@ -14,7 +14,7 @@
  *
  * =============================================================================
  */
-package org.orcid.api.t1.server;
+package org.orcid.api.t2.server;
 
 import javax.ws.rs.Path;
 
@@ -23,7 +23,7 @@ import javax.ws.rs.Path;
  * @author Angel Montenegro
  * 
  */
-@Path("/v1.0.23")
-public class T1OrcidApiServiceImplV1_0_23 extends T1OrcidApiServiceImplBase {
+@Path("/v1.1.0")
+public class T2OrcidApiServiceImplV1_1_0 extends T2OrcidApiServiceImplBase {
 
 }

@@ -62,27 +62,7 @@
 				</xs:documentation>
 			</xs:annotation>
 			<xs:restriction base="xs:string">
-				<xs:enumeration value="1.0.3" />
-				<xs:enumeration value="1.0.4" />
-				<xs:enumeration value="1.0.5" />
-				<xs:enumeration value="1.0.6" />
-				<xs:enumeration value="1.0.7" />
-				<xs:enumeration value="1.0.8" />
-				<xs:enumeration value="1.0.9" />
-				<xs:enumeration value="1.0.10" />
-				<xs:enumeration value="1.0.11" />
-				<xs:enumeration value="1.0.12" />
-				<xs:enumeration value="1.0.13" />
-				<xs:enumeration value="1.0.14" />
-				<xs:enumeration value="1.0.15" />
-				<xs:enumeration value="1.0.16" />
-				<xs:enumeration value="1.0.17" />
-				<xs:enumeration value="1.0.18" />
-				<xs:enumeration value="1.0.19" />
-				<xs:enumeration value="1.0.20" />
-				<xs:enumeration value="1.0.21" />
-				<xs:enumeration value="1.0.22" />
-				<xs:enumeration value="1.0.23" />
+				<xs:enumeration value="1.1.0" />				
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>

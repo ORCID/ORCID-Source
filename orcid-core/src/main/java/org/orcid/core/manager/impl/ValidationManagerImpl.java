@@ -195,7 +195,7 @@ public class ValidationManagerImpl implements ValidationManager {
             }
         }  
         
-        //Do this only if the message version is greather than version 23
+        //TODO: This will be valid during the transition to new work types, after that, we can remove the work type validation
         if(validateWorkType){            
             if(orcidWork.getWorkType() != null && orcidWork.getWorkType().isDeprecated()){
                 throw new OrcidValidationException("Invalid work type: Type " + orcidWork.getWorkType().value() + " is deprecated");
