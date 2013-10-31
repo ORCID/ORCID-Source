@@ -23,6 +23,7 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.orcid.core.manager.OrgDisambiguatedManager;
 import org.orcid.persistence.dao.OrgDisambiguatedDao;
 import org.orcid.persistence.dao.OrgDisambiguatedSolrDao;
@@ -44,6 +45,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 public class OrgDisambiguatedManagerImpl implements OrgDisambiguatedManager {
 
     private static final int INDEXING_CHUNK_SIZE = 1000;
+    private static final int INCORRECT_POPULARITY_CHUNK_SIZE = 1000;
     private static final Logger LOGGER = LoggerFactory.getLogger(OrgDisambiguatedManagerImpl.class);
 
     @Resource
@@ -103,6 +105,20 @@ public class OrgDisambiguatedManagerImpl implements OrgDisambiguatedManager {
         }
         document.setOrgNames(new ArrayList<>(orgNames));
         return document;
+    }
+
+    @Override
+    public void processOrgsWithIncorrectPopularity() {
+        LOGGER.info("About to process disambiguated orgs with incorrect popularity");
+        List<Pair<Long, Integer>> pairs = null;
+        do {
+            pairs = orgDisambiguatedDao.findDisambuguatedOrgsWithIncorrectPopularity(INCORRECT_POPULARITY_CHUNK_SIZE);
+            LOGGER.info("Found chunk of {} disambiguated orgs with incorrect popularity", pairs.size());
+            for (Pair<Long, Integer> pair : pairs) {
+                LOGGER.info("About to update popularity of disambiguated org: {}", pair);
+                orgDisambiguatedDao.updatePopularity(pair.getLeft(), pair.getRight());
+            }
+        } while (!pairs.isEmpty());
     }
 
 }

@@ -25,4 +25,6 @@ public interface OrgDisambiguatedManager {
 
     void processOrgsForIndexing();
 
+    void processOrgsWithIncorrectPopularity();
+
 }
