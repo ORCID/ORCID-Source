@@ -39,6 +39,7 @@ public class OrcidMessageVersionConverterChainImpl implements OrcidMessageVersio
     public List<OrcidMessageVersionConverter> converters;
     public List<OrcidMessageVersionConverter> descendingConverters;
     private boolean supportOldWorkTypes = false;
+    private static String MESSAGE_VERSION_WITH_NEW_WORK_TYPES = "1.1.0";
 
     public void setSupportOldWorkTypes(boolean value){
         this.supportOldWorkTypes = value;
@@ -66,18 +67,21 @@ public class OrcidMessageVersionConverterChainImpl implements OrcidMessageVersio
             }
         }
                 
-        //Downgrade work type
-        if(supportOldWorkTypes){
-            OrcidProfile orcidProfile = orcidMessage.getOrcidProfile();
-            if (orcidProfile != null) {
-                OrcidActivities orcidActivities = orcidProfile.getOrcidActivities();
-                if (orcidActivities != null) {
-                    OrcidWorks orcidWorks = orcidActivities.getOrcidWorks();
-                    if (orcidWorks != null) {
-                        for (OrcidWork orcidWork : orcidWorks.getOrcidWork()) {
-                            WorkType downgradedWorkType = downgradeWorkType(orcidWork.getWorkType());                        
-                            //Downgrade work type
-                            orcidWork.setWorkType(downgradedWorkType);                       
+        if(supportOldWorkTypes) {
+            //If the required message version is lower than V1.1.0, we need to downgrade the work type
+            if(MESSAGE_VERSION_WITH_NEW_WORK_TYPES.compareTo(requiredVersion) > 0){            
+                OrcidProfile orcidProfile = orcidMessage.getOrcidProfile();
+                if (orcidProfile != null) {
+                    OrcidActivities orcidActivities = orcidProfile.getOrcidActivities();
+                    if (orcidActivities != null) {
+                        OrcidWorks orcidWorks = orcidActivities.getOrcidWorks();
+                        if (orcidWorks != null) {
+                            for (OrcidWork orcidWork : orcidWorks.getOrcidWork()) {
+                                WorkType updatedWorkType = null;
+                                //Downgrade work type
+                                updatedWorkType = downgradeWorkType(orcidWork.getWorkType());
+                                orcidWork.setWorkType(updatedWorkType);                        
+                            }
                         }
                     }
                 }
@@ -102,8 +106,7 @@ public class OrcidMessageVersionConverterChainImpl implements OrcidMessageVersio
             }
         }
         
-        //Upgrade work type
-        if(supportOldWorkTypes){
+        if(supportOldWorkTypes) {
             OrcidProfile orcidProfile = orcidMessage.getOrcidProfile();
             if (orcidProfile != null) {
                 OrcidActivities orcidActivities = orcidProfile.getOrcidActivities();
@@ -111,8 +114,8 @@ public class OrcidMessageVersionConverterChainImpl implements OrcidMessageVersio
                     OrcidWorks orcidWorks = orcidActivities.getOrcidWorks();
                     if (orcidWorks != null) {
                         for (OrcidWork orcidWork : orcidWorks.getOrcidWork()) {
-                            //Upgrade work type and subtype for each work
-                            WorkType updatedWorkType = upgradeWorkType(orcidWork.getWorkType());
+                            //Upgrade work type
+                            WorkType updatedWorkType = upgradeWorkType(orcidWork.getWorkType());                            
                             orcidWork.setWorkType(updatedWorkType);                        
                         }
                     }
