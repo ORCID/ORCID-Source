@@ -44,11 +44,13 @@
 	>    	
 	    <link rel="stylesheet" href="${staticCdn}/twitter-bootstrap/3.0.0/css/bootstrap.min.css?v=${ver}"/>
 	    <!--[if lt IE 8]>
-	        <link rel="stylesheet" href="${staticCdn}/twitter-bootstrap/3.0.0/css/bootstrap-ie7.css?v=${ver}"/>
-	        <link rel="stylesheet" href="${staticCdn}/css/orcid-ie7.css?v=${ver}"/>        
+	        <link rel="stylesheet" href="${staticCdn}/twitter-bootstrap/3.0.0/css/bootstrap-ie7.css?v=${ver}"/>	                
 	    <![endif]-->
 	    
 	    <link rel="stylesheet" href="${staticCdn}/css/orcid.resp.css?v=${ver}"/><!-- Fonts references included -->
+	    <!--[if lt IE 8]>
+	    	<link rel="stylesheet" href="${staticCdn}/css/orcid-ie7.css?v=${ver}"/>
+	    <![endif]-->
 	    <link rel="stylesheet" href="${staticCdn}/css/jquery-ui-1.10.0.custom.min.css?v=${ver}"/>
 	    <link rel="stylesheet" href="${staticLoc}/font-awesome/3.2.1/css/font-awesome.css"/>
 	    <!--[if IE 7]>
@@ -58,7 +60,7 @@
 	    <script src="${staticCdn}/javascript/respond.min.js?v=${ver}"></script>
     
     <#else>		
-		<link rel="stylesheet" href="${staticLoc}/ORCID-Fonts-Dot-Com/style.css?v=${ver}"/>    
+		<link rel="stylesheet" href="${staticLoc}/ORCID-Fonts-Dot-Com/style.css?v=${ver}"/>
 	    <link rel="stylesheet" href="${staticCdn}/twitter-bootstrap/2.3.1/css/bootstrap.min.css?v=${ver}"/>
 	    <link rel="stylesheet" href="${staticCdn}/css/orcid.css?v=${ver}"/>
 	    <link rel="stylesheet" href="${staticCdn}/css/jquery-ui-1.10.0.custom.min.css?v=${ver}"/>
