@@ -39,7 +39,6 @@ import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidWork;
 import org.orcid.jaxb.model.message.OrcidWorks;
 import org.orcid.jaxb.model.message.WorkTitle;
-import org.orcid.jaxb.model.message.WorkType;
 import org.orcid.utils.BibtexException;
 import org.orcid.utils.BibtexUtils;
 import org.slf4j.Logger;

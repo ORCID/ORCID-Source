@@ -37,32 +37,4 @@
 		<sql>update work set work_type = 'UNDEFINED' where work_type is NULL;</sql>
 		<sql>update work set work_type = 'WORKING_PAPER' where work_type in('REPORTS_WORKING_PAPERS');</sql>
     </changeSet>
-</databaseChangeLog>	
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+</databaseChangeLog>
