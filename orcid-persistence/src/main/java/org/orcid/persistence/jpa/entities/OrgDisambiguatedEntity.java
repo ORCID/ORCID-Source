@@ -58,6 +58,7 @@ public class OrgDisambiguatedEntity extends BaseEntity<Long> {
     private String status;
     private Date lastIndexedDate;
     private IndexingStatus indexingStatus = IndexingStatus.PENDING;
+    private Integer popularity;
     private Set<OrgDisambiguatedExternalIdentifierEntity> externalIdentifiers;
     private Set<OrgEntity> orgs;
 
@@ -168,6 +169,14 @@ public class OrgDisambiguatedEntity extends BaseEntity<Long> {
 
     public void setIndexingStatus(IndexingStatus indexingStatus) {
         this.indexingStatus = indexingStatus;
+    }
+
+    public Integer getPopularity() {
+        return popularity;
+    }
+
+    public void setPopularity(Integer popularity) {
+        this.popularity = popularity;
     }
 
     @OneToMany(mappedBy = "orgDisambiguated")

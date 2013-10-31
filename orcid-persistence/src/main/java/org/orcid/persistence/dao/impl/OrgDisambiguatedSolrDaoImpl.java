@@ -72,7 +72,7 @@ public class OrgDisambiguatedSolrDaoImpl implements OrgDisambiguatedSolrDao {
     @Override
     public List<OrgDisambiguatedSolrDocument> getOrgs(String searchTerm, int firstResult, int maxResult) {
         SolrQuery query = new SolrQuery();
-        query.setQuery("{!edismax qf='org-disambiguated-name^50.0 text^1.0' pf='org-disambiguated-name^50.0' mm=1}" + searchTerm + "*").setFields("*");
+        query.setQuery("{!edismax qf='org-disambiguated-name^50.0 text^1.0' pf='org-disambiguated-name^50.0' mm=1 sort='score desc, org-disambiguated-popularity desc'}" + searchTerm + "*").setFields("*");
         try {
             QueryResponse queryResponse = solrServerReadOnly.query(query);
             return queryResponse.getBeans(OrgDisambiguatedSolrDocument.class);
