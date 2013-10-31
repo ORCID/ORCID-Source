@@ -269,37 +269,7 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
         assertEquals(201, clientResponse.getStatus());               
     }
     
-    @Test
-    public void testAddOldWorkTypeOnMessageV1_1_0() throws InterruptedException, JSONException {
-        String scopes = "/orcid-works/create";
-        String authorizationCode = obtainAuthorizationCode(scopes);
-        String accessToken = obtainAccessToken(authorizationCode, scopes);
-        
-        OrcidMessage orcidMessage = new OrcidMessage();        
-        orcidMessage.setMessageVersion("1.1.0");
-        
-        OrcidProfile orcidProfile = new OrcidProfile();
-        orcidMessage.setOrcidProfile(orcidProfile);
-        OrcidActivities orcidActivities = new OrcidActivities();
-        orcidProfile.setOrcidActivities(orcidActivities);
-        OrcidWorks orcidWorks = new OrcidWorks();
-        orcidActivities.setOrcidWorks(orcidWorks);
-        OrcidWork orcidWork = new OrcidWork();
-        orcidWorks.getOrcidWork().add(orcidWork);
-        WorkTitle workTitle = new WorkTitle();
-        workTitle.setTitle(new Title("Work with old work type"));
-        orcidWork.setWorkTitle(workTitle);
-        orcidWork.setWorkType(WorkType.ADVERTISEMENT);
-        
-        ClientResponse clientResponse = oauthT2Client.addWorksJson("4444-4444-4444-4442", orcidMessage, accessToken);
-        assertEquals(400, clientResponse.getStatus());        
-        orcidMessage = clientResponse.getEntity(OrcidMessage.class);
-        assertNotNull(orcidMessage);
-        assertNotNull(orcidMessage.getErrorDesc());
-        assertEquals(orcidMessage.getErrorDesc().getContent(), "Invalid incoming message: org.orcid.core.exception.OrcidValidationException: Invalid work type: Type advertisement is deprecated");
-    }
-    
-    
+   
     @Test
     public void testAddWorkWithEmptyTitle() throws InterruptedException, JSONException {
         String scopes = "/orcid-works/create";

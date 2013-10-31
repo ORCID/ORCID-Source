@@ -325,6 +325,7 @@
                 <bean class="org.orcid.core.version.impl.OrcidMessageVersionConverterImplV1_0_22ToV1_1_0"/>
 	        </list>
 	    </property>
+	    <property name="supportOldWorkTypes" value="true" />
 	</bean>
 
 	<cache:annotation-driven cache-manager="springCoreCacheManager"/>
