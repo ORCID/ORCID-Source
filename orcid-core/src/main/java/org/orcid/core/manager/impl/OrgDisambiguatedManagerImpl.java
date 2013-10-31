@@ -58,7 +58,7 @@ public class OrgDisambiguatedManagerImpl implements OrgDisambiguatedManager {
     private TransactionTemplate transactionTemplate;
 
     @Override
-    public void processOrgsForIndexing() {
+    synchronized public void processOrgsForIndexing() {
         LOGGER.info("About to process disambiguated orgs for indexing");
         List<OrgDisambiguatedEntity> entities = null;
         do {
@@ -109,7 +109,7 @@ public class OrgDisambiguatedManagerImpl implements OrgDisambiguatedManager {
     }
 
     @Override
-    public void processOrgsWithIncorrectPopularity() {
+    synchronized public void processOrgsWithIncorrectPopularity() {
         LOGGER.info("About to process disambiguated orgs with incorrect popularity");
         List<Pair<Long, Integer>> pairs = null;
         do {
