@@ -16,7 +16,21 @@
  */
 
 //IE7 hack
-if ( ! window.console ) console = { log: function(){} };
+if (!(window.console && console.log)) {
+	console = {
+		log : function() {
+		},
+		debug : function() {
+		},
+		info : function() {
+		},
+		warn : function() {
+		},
+		error : function() {
+		}
+	};
+};
+
 
 // add new method to string
 if (typeof String.prototype.startsWith != 'function') {
