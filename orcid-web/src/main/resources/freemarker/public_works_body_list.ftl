@@ -31,7 +31,7 @@
 		<#if (works)??>
 			<ul class="workspace-publications workspace-body-list">
 		        <#list works as work>
-		    		<div style="width: 530px;">
+		    		<div>
 				        <h3 class="work-title">
 				            <#if work.workTitle?? && work.workTitle.title?? && work.workTitle.title.value??>
 				        	    <#if work.workTitle.subtitle?? && work.workTitle.subtitle.value??>

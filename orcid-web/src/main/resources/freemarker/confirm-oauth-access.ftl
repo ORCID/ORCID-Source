@@ -17,10 +17,10 @@
 
 -->
 <@base>
-<div class="colorbox-content">
+<!-- colorbox-content -->
+<div class="container top-green-border">
 <div class="row">
-
-    <div class="span12">
+    <div class="col-md-6 col-sm-12">
         <@security.authorize ifAnyGranted="ROLE_USER">
         <#if justRegistered?? && justRegistered>
             <div class="alert alert-success">
@@ -29,7 +29,7 @@
         </#if>
         
         <div class="logo">
-            <h1><img src="${staticCdn}/img/orcid-logo.png" alt="ORCID logo"></h1>
+            <h1><a href="${aboutUri}"><img src="${staticCdn}/img/orcid-logo.png" alt="ORCID logo" /></a></h1>
             <p>${springMacroRequestContext.getMessage("confirm-oauth-access.connectingresearchandresearchers")}</p>
         </div>
         
@@ -39,8 +39,13 @@
         <hr />
         
     </div>
-    
-    <div class="span6">
+    </div>
+   <div class="row">
+   	<div class="col-md-6 col-md-push-6 col-sm-12 col-sm-push-12 margin-top-box">
+         <h5><#if (clientProfile.orcidBio.researcherUrls.url[0].value)??><a href="${(clientProfile.orcidBio.researcherUrls.url[0].value)!}" target="_blank"></#if>${(clientProfile.orcidBio.personalDetails.creditName.content)!}<#if (clientProfile.orcidBio.researcherUrls.url[0].value)??></a></#if></h5>
+         ${(clientProfile.orcidBio.biography.content)!}
+    </div>
+    <div class="col-md-6 col-md-pull-6 col-sm-12 margin-bottom-box">
          <h3>${clientProfile.orcidBio.personalDetails.creditName.content}</h3>
          <p>${springMacroRequestContext.getMessage("confirm-oauth-access.hasaskedforthefollowing")}</p>
          <#list scopes as scope>
@@ -50,32 +55,33 @@
          </#list>
          <p><@spring.message "orcid.frontend.web.oauth_is_secure"/></p>
          <div class="row">
-         <#assign authOnClick = "">
-         <#list scopes as scope>
-            <#assign authOnClick = authOnClick + " orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'Authorize_" + scope.name()?replace("ORCID_", "") + "', 'OAuth " + clientProfile.orcidBio.personalDetails.creditName.content + "']);">     
-         </#list>
-
-    	 <#assign denyOnClick = " orcidGA.gaPush(['_trackEvent', 'Disengagement', 'Authorize_Deny', 'OAuth " + clientProfile.orcidBio.personalDetails.creditName.content + "']);">     
-             <span class="span">
-                <form id="denialForm" class="form-inline" name="denialForm" action="<@spring.url '/oauth/authorize'/>" onsubmit="${denyOnClick} orcidGA.gaFormSumbitDelay(this); return false;" method="post">
-                    <input name="user_oauth_approval" value="false" type="hidden"/>
-                    <input class="btn btn-success" name="deny" value="${springMacroRequestContext.getMessage('confirm-oauth-access.Deny')}" type="submit">
-                </form>        
-            </span>
-            <span class="span">
-                <form id="confirmationForm" class="form-inline" name="confirmationForm" action="<@spring.url '/oauth/authorize'/>" onsubmit="${authOnClick} orcidGA.gaFormSumbitDelay(this); return false;" method="post">
-                    <input name="user_oauth_approval" value="true" type="hidden"/>
-                    <input class="btn btn-success" name="authorize" value="${springMacroRequestContext.getMessage('confirm-oauth-access.Authorize')}" type="submit">
-                </form>
-            </span>
-        </div>
+	        <#assign authOnClick = "">
+	        <#list scopes as scope>
+	           <#assign authOnClick = authOnClick + " orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'Authorize_" + scope.name()?replace("ORCID_", "") + "', 'OAuth " + clientProfile.orcidBio.personalDetails.creditName.content + "']);">     
+	        </#list>
+	
+	    	<#assign denyOnClick = " orcidGA.gaPush(['_trackEvent', 'Disengagement', 'Authorize_Deny', 'OAuth " + clientProfile.orcidBio.personalDetails.creditName.content + "']);">
+	    	<div class="col-md-3 col-sm-12">     
+	            <span class="span">
+	                <form id="denialForm" class="form-inline" name="denialForm" action="<@spring.url '/oauth/authorize'/>" onsubmit="${denyOnClick} orcidGA.gaFormSumbitDelay(this); return false;" method="post">
+	                    <input name="user_oauth_approval" value="false" type="hidden"/>
+	                    <button class="btn btn-primary" name="deny" value="${springMacroRequestContext.getMessage('confirm-oauth-access.Deny')}" type="submit">Deny
+	                    </button>	
+	                </form>        
+	            </span>
+            </div>
+            <div class="col-md-6">
+	            <span class="span">
+	                <form id="confirmationForm" class="form-inline" name="confirmationForm" action="<@spring.url '/oauth/authorize'/>" onsubmit="${authOnClick} orcidGA.gaFormSumbitDelay(this); return false;" method="post">
+	                    <input name="user_oauth_approval" value="true" type="hidden"/>
+	                    <button class="btn btn-primary" name="authorize" value="${springMacroRequestContext.getMessage('confirm-oauth-access.Authorize')}" type="submit">
+	                    	Authorize
+	                    </button>
+	                </form>                
+	            </span>
+            </div>
+        </div>        
     </div>
-    
-    <div class="span6">
-         <h5><#if (clientProfile.orcidBio.researcherUrls.url[0].value)??><a href="${(clientProfile.orcidBio.researcherUrls.url[0].value)!}" target="_blank"></#if>${(clientProfile.orcidBio.personalDetails.creditName.content)!}<#if (clientProfile.orcidBio.researcherUrls.url[0].value)??></a></#if></h5>
-         ${(clientProfile.orcidBio.biography.content)!}
-    </div>
-
 </div>
 </@security.authorize>
 </div>

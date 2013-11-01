@@ -18,9 +18,8 @@
 -->
 <@public classes=['home'] nav="register">
     <@spring.bind "emailAddressForm.*" />    
-    <div class="row">   
-        <div class="span3"></div>
-        <div class="span9">
+    <div class="row">
+        <div class="col-md-offset-3 col-md-9 col-sm-offset-3 col-sm-3 col-xs-12">
             <div class="alert alert-success">
                 <@spring.showErrors "orcid-error"/>
 		    </div>

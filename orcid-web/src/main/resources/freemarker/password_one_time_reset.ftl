@@ -19,7 +19,7 @@
 <@public>
 <@spring.bind "passwordTypeAndConfirmForm.*" />			
 	<div class="row">
-        <div class ="span9 offset3">
+        <div class ="col-md-9 col-md-offset-3 col-sm-9 col-sm-offset-3 col-xs-12">
         	<p>${springMacroRequestContext.getMessage("password_one_time_reset.ptypenewpassword")}</p>
         	<#if spring.status.error>
     			<div class="alert alert-error">        			
