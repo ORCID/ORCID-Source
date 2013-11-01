@@ -1462,6 +1462,8 @@ function PublicWorkCtrl($scope, $compile, worksSrvc) {
 	$scope.numOfWorksToAdd = null;
 	$scope.showBibtex = true;
 	$scope.bibtexCitations = {};
+	$scope.languages = null;
+	$scope.countries = null;
 
     $scope.bibtexShowToggle = function () {
     	$scope.showBibtex = !($scope.showBibtex);
@@ -1474,7 +1476,62 @@ function PublicWorkCtrl($scope, $compile, worksSrvc) {
 		$scope.works.push(dw);
 	}
 	
-	$scope.numOfWorksToAdd = 0;
+	$scope.renderLanguageName = function(workIdx) {
+		if($scope.languages == null) {
+			$.ajax({
+				url: $('body').data('baseurl') + 'works/languages.json',	        
+		        dataType: 'json',
+		        success: function(data) {
+		        	$scope.languages = data;
+		        	return $scope.getLanguageName(workIdx);
+		        }
+			}).fail(function(){
+				// something bad is happening!
+		    	console.log("error fetching languages");
+			});
+		} else {
+			return $scope.getLanguageName(workIdx);
+		}
+	};
+	
+	$scope.renderCountryName = function(workIdx) {
+		if($scope.countries == null) {
+			$.ajax({
+				url: $('body').data('baseurl') + 'works/countries.json',	        
+		        dataType: 'json',
+		        success: function(data) {
+		        	$scope.countries = data;
+		        	return $scope.getCountryName(workIdx);
+		        }
+			}).fail(function(){
+				// something bad is happening!
+		    	console.log("error fetching countries");
+			});
+		} else {
+			return $scope.getCountryName(workIdx);
+		}
+	};
+	
+	$scope.getLanguageName = function(workIdx){		
+		var language = null;
+		if($scope.works[workIdx].languageCode != null) {
+			language = $scope.languages[$scope.works[workIdx].languageCode.value];
+		}
+		
+		return language;
+	};
+	
+	$scope.getCountryName = function(workIdx){		
+		var country = null;
+		if($scope.works[workIdx].country != null){
+			country = $scope.countries[$scope.works[workIdx].country.value];
+		}
+		
+		return country;
+	};
+	
+	//init	
+	$scope.numOfWorksToAdd = 0;		
 }
 
 function WorkCtrl($scope, $compile, worksSrvc) {
