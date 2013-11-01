@@ -18,31 +18,37 @@
 -->
 
 <script type="text/ng-template" id="delete-affiliation-modal">
-	<div style="padding: 20px;">
-		<h3 style="margin-bottom: 0px;">${springMacroRequestContext.getMessage("manage.deleteAffiliation.pleaseConfirm")}</h3>
-		{{fixedTitle}}<br />
-		<br />
-    	<div class="btn btn-danger" ng-click="deleteByPutCode()">
-    		${springMacroRequestContext.getMessage("manage.deleteAffiliation.delete")}
-    	</div>
-    	<a href="" ng-click="closeModal()">${springMacroRequestContext.getMessage("manage.deleteAffiliation.cancel")}</a>
-    <div>
+	<div class="lightbox-container">
+		<div class="row">
+			<div class="col-md-12 col-xs-12 col-sm-12">
+				<h3>${springMacroRequestContext.getMessage("manage.deleteAffiliation.pleaseConfirm")}</h3>
+				<p>{{fixedTitle}}</p>		
+    			<div class="btn btn-danger" ng-click="deleteByPutCode()">
+    				${springMacroRequestContext.getMessage("manage.deleteAffiliation.delete")}
+    			</div>
+    			<a href="" ng-click="closeModal()">${springMacroRequestContext.getMessage("manage.deleteAffiliation.cancel")}</a>
+			</div>
+		</div>
+    </div>
 </script>
 
 <script type="text/ng-template" id="add-affiliation-modal">
-	<div class="edit-affiliation colorbox-content">
+	<div id="edit-affiliation" class="edit-affiliation colorbox-content">
 		<div class="row">
-			<div class="span12">
-				<h1 class="lightbox-title pull-left"><@orcid.msg 'manual_affiliation_form_contents.add_affiliation'/></h1>
+			<div class="col-md-11 col-sm-10 col-xs-10">
+				<h1 class="lightbox-title pull-left"><@orcid.msg 'manual_affiliation_form_contents.add_affiliation'/></h1>				
+			</div>
+			<div class="col-md-1 col-sm-2 col-xs-2">
 				<a class="btn pull-right close-button" ng-click="closeModal()">X</a>
 			</div>
 		</div>
+
 		<div class="row">
-			<div class="span6">
+			<div class="col-md-6 col-sm-6 col-xs-12">
 				<div class="control-group" ng-show="editAffiliation.disambiguatedAffiliationIdentifier">
 					<div style="position: absolute; left: 300px"><label><a class="icon-remove-sign grey" ng-click="removeDisambiguatedAffiliation()">&nbsp;<@orcid.msg 'common.remove'/></a></label></div>
 					<label>Affiliation</label>
-				    <div class="relative" style="font-weight: strong;">
+				    <div class="relative"  style="font-weight: strong;">
 						<span ng-bind="disambiguatedAffiliation.value"></span> <br />
 						<div>
 						    <span ng-bind="disambiguatedAffiliation.city"></span><span ng-bind="disambiguatedAffiliation.region"></span>,<span ng-bind="disambiguatedAffiliation.orgType"></span>
@@ -98,22 +104,20 @@
 					</div>
 				</div>
 			</div>
-			
-			<div class="span6">
-			     <div class="control-group">
+			<div class="col-md-6 col-sm-6 col-xs-12">
+				<div class="control-group">
 					<label><@orcid.msg 'manual_affiliation_form_contents.labeldepartment'/></label>
 				    <div class="relative">
-						<input name="department" type="text" class="input-xlarge"  ng-model="editAffiliation.departmentName.value" placeholder="<@orcid.msg 'manual_affiliation_form_contents.add_department'/>" ng-change="serverValidate('affiliations/affiliation/departmentValidate.json')" ng-model-onblur/>
+						<input id="departmentName" class="input-xlarge" name="departmentName" type="text" ng-model="editAffiliation.departmentName.value" placeholder="<@orcid.msg 'manual_affiliation_form_contents.add_department'/>" ng-change="serverValidate('affiliations/affiliation/departmentValidate.json')" ng-model-onblur/>
 						<span class="orcid-error" ng-show="editAffiliation.departmentName.errors.length > 0">
 							<div ng-repeat='error in editAffiliation.departmentName.errors' ng-bind-html-unsafe="error"></div>
 						</span>
 					</div>
 				</div>
-			
 				<div class="control-group">
 					<label><@orcid.msg 'manual_affiliation_form_contents.labelroletitle'/></label>
 				    <div class="relative">
-						<input name="region" type="text" class="input-xlarge"  ng-model="editAffiliation.roleTitle.value" placeholder="<@orcid.msg 'manual_affiliation_form_contents.add_title'/>" ng-change="serverValidate('affiliations/affiliation/roleTitleValidate.json')" ng-model-onblur/>
+						<input name="roletitle" type="text" class="input-xlarge"  ng-model="editAffiliation.roleTitle.value" placeholder="<@orcid.msg 'manual_affiliation_form_contents.add_title'/>" ng-change="serverValidate('affiliations/affiliation/roleTitleValidate.json')" ng-model-onblur/>
 						<span class="orcid-error" ng-show="editAffiliation.roleTitle.errors.length > 0">
 							<div ng-repeat='error in editAffiliation.roleTitle.errors' ng-bind-html-unsafe="error"></div>
 						</span>
@@ -134,17 +138,17 @@
 				<div class="control-group">
 		    		<label class="relative" for="manualAffiliation.startDay"><@orcid.msg 'manual_affiliation_form_contents.labelStartDate'/></label>
 		    		<div class="relative">
-				    <select id="startDay" name="startDay" ng-model="editAffiliation.startDate.day" class="span1">
+				    <select id="startDay" name="startDay" ng-model="editAffiliation.startDate.day">
 						<#list days?keys as key>
 							<option value="${key}">${days[key]}</option>
 						</#list>
 		    		</select>
-				    <select id="startMonth" name="startMonth" ng-model="editAffiliation.startDate.month" class="span1">
+				    <select id="startMonth" name="startMonth" ng-model="editAffiliation.startDate.month">
 						<#list months?keys as key>
 							<option value="${key}">${months[key]}</option>
 						</#list>
 		    		</select>
-				    <select id="startYear" name="startMonth" ng-model="editAffiliation.startDate.year" class="span2">
+				    <select id="startYear" name="startMonth" ng-model="editAffiliation.startDate.year">
 						<#list years?keys as key>
 							<option value="${key}">${years[key]}</option>
 						</#list>
@@ -154,17 +158,17 @@
 		    	<div class="control-group">
 		    		<label class="relative" for="manualAffiliation.endDay"><@orcid.msg 'manual_affiliation_form_contents.labelEndDate'/></label>
 		    		<div class="relative">
-				    <select id="endDay" name="endDay" ng-model="editAffiliation.endDate.day" class="span1">
+				    <select id="endDay" name="endDay" ng-model="editAffiliation.endDate.day">
 						<#list days?keys as key>
 							<option value="${key}">${days[key]}</option>
 						</#list>
 		    		</select>
-				    <select id="endMonth" name="endMonth" ng-model="editAffiliation.endDate.month" class="span1">
+				    <select id="endMonth" name="endMonth" ng-model="editAffiliation.endDate.month">
 						<#list months?keys as key>
 							<option value="${key}">${months[key]}</option>
 						</#list>
 		    		</select>
-				    <select id="endYear" name="endMonth" ng-model="editAffiliation.endDate.year" class="span2">
+				    <select id="endYear" name="endMonth" ng-model="editAffiliation.endDate.year">
 						<#list years?keys as key>
 							<option value="${key}">${years[key]}</option>
 						</#list>
@@ -181,60 +185,63 @@
 		 		</div>
 			</div>
 		</div>
-		<div class="row">
-			<div class="span6">
-			   &nbsp;
-			</div>
-			<div class="span2">
+		<div class="row">			
+			<div class="col-md-offset-6 col-md-4 col-offset-sm-6 col-sm-4 col-xs-12">
 				<button class="btn btn-primary" ng-click="addAffiliation()" ng-disabled="addingAffiliation" ng-class="{disabled:addingAffiliation}"><@orcid.msg 'manual_affiliation_form_contents.btnaddtolist'/></button> 
 				<a href="" ng-click="closeModal()"><@orcid.msg 'manage.deleteExternalIdentifier.cancel'/></a>
 			</div>
-			<div class="span4">
+			<div class="col-md-2 col-sm-6 col-xs-6">
 				<span ng-show="addingAffiliation">
 					<i class="icon-spinner icon-2x icon-spin  green"></i>
-				</span>
-				<span ng-show="editWork.errors.length > 0" class="alert" style>Please fix above errors</span>
-			</div>
-		</div>
+				</span>				
+			</div>			
+		</div>		
 		<div class="row">
-			<div class="span12">
-			   &nbsp;
-			</div>
-		</div>
+			<div class="col-md-12 col-sm-12 col-xs-12">	
+				<span ng-show="editWork.errors.length > 0" class="alert">Please fix above errors</span>
+			<div>
+		<div>
 	<div>
 </script>
 
 <ul ng-hide="!affiliations.length" class="workspace-affiliations workspace-body-list bottom-margin-medium" ng-cloak>        
     <li class="bottom-margin-small" ng-repeat="affiliation in affiliations | orderBy:['-startDate.year', '-startDate.month', '-startDate.day', '-endDate.year', '-endDate.month', '-endDate.day', 'affiliationName.value']">            	
-        <div class="pull-right" style="right: 145px; top: 20px; width: 15px;"><a href ng-click="deleteAffiliation(affiliation.putCode.value)" class="icon-trash orcid-icon-trash grey"></a></div>
-		<div style="width: 530px;">
-		    <div class="affiliation-type" ng-bind-html="affiliation.affiliationTypeForDisplay"></div>
-	        <h3 class="affiliation-title">
-	        	<strong ng-bind-html="affiliation.affiliationName.value"></strong>
-	        	<span class="affiliation-date" ng-show="affiliation.startDate">
-	        	    (<span ng-show="affiliation.startDate.month">{{affiliation.startDate.month}}-</span><span ng-show="affiliation.startDate.year">{{affiliation.startDate.year}}</span>
-	        	    <@orcid.msg 'workspace_affiliations.dateSeparator'/>
-	        	    <span ng-show="affiliation.endDate">
-	        	        <span ng-show="affiliation.endDate.month">{{affiliation.endDate.month}}-</span><span ng-show="affiliation.endDate.year">{{affiliation.endDate.year}}</span>)
-	        	    </span>
-	        	    <span ng-hide="affiliation.endDate">
-	        	        <@orcid.msg 'workspace_affiliations.present'/>)
-	        	    </span>
-	        	</span>
-	        </h3>
-	        <div class="affiliation-details">
-	            <span ng-show="affiliation.departmentName"><span ng-bind-html="affiliation.departmentName.value"></span> | </span><span ng-bind-html="affiliation.city.value"></span><span ng-show="affiliation.region">, <span ng-bind-html="affiliation.region.value"></span></span>, <span ng-bind-html="affiliation.countryForDisplay"></span>
+        <div class="row">        
+        	<!-- Information -->
+			<div class="col-md-8 col-sm-8">
+			    <div class="affiliation-type" ng-bind-html="affiliation.affiliationTypeForDisplay"></div>
+		        <h3 class="affiliation-title">
+		        	<strong ng-bind-html="affiliation.affiliationName.value"></strong>
+		        	<span class="affiliation-date" ng-show="affiliation.startDate">
+		        	    (<span ng-show="affiliation.startDate.month">{{affiliation.startDate.month}}-</span><span ng-show="affiliation.startDate.year">{{affiliation.startDate.year}}</span>
+		        	    <@orcid.msg 'workspace_affiliations.dateSeparator'/>
+		        	    <span ng-show="affiliation.endDate">
+		        	        <span ng-show="affiliation.endDate.month">{{affiliation.endDate.month}}-</span><span ng-show="affiliation.endDate.year">{{affiliation.endDate.year}}</span>)
+		        	    </span>
+		        	    <span ng-hide="affiliation.endDate">
+		        	        <@orcid.msg 'workspace_affiliations.present'/>)
+		        	    </span>
+		        	</span>
+		        </h3>
+		        <div class="affiliation-details" ng-show="affiliation.roleTitle">
+		            <span ng-bind-html="affiliation.roleTitle.value"></span>
+		        </div>
+		        <div ng-show="affiliation.sourceName">
+	            	<span class="affiliation-source">SOURCE: <span ng-bind-html="affiliation.sourceName"></span></span>
+	        	</div>
 	        </div>
-	        <div class="affiliation-details" ng-show="affiliation.roleTitle">
-	            <span ng-bind-html="affiliation.roleTitle.value"></span>
-	        </div>
-	        <div ng-show="affiliation.sourceName">
-	            <span class="affiliation-source">SOURCE: <span ng-bind-html="affiliation.sourceName"></span></span>
-	        </div>
-        </div>
-        <div class="pull-right" style="width: 130px;">
-		<@orcid.privacyToggle "affiliation.visibility.visibility" "setPrivacy($index, 'PUBLIC', $event)" 
-                    	  "setPrivacy($index, 'LIMITED', $event)" "setPrivacy($index, 'PRIVATE', $event)" />
+	        <!-- Privacy Settings -->
+	        <div class="col-md-4 col-sm-4 workspace-toolbar">
+	        	<ul class="workspace-private-toolbar">
+	        		<li>	
+			        	<a href ng-click="deleteAffiliation(affiliation.putCode.value)" class="icon-trash orcid-icon-trash grey"></a>
+			        </li>
+			        <li>
+						<@orcid.privacyToggle "affiliation.visibility.visibility" "setPrivacy(affiliation.putCode.value, 'PUBLIC', $event)" 
+                    	  "setPrivacy(affiliation.putCode.value, 'LIMITED', $event)" "setPrivacy(affiliation.putCode.value, 'PRIVATE', $event)" />
+			        </li>
+		        </ul>
+			</div>
 		</div>
     </li>           
 </ul>

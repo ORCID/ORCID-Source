@@ -250,10 +250,14 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
             orcidProfile.setOrcid(orcidGenerationManager.createNewOrcid());
         }
 
+        //Add source to works
+        String amenderOrcid = retrieveAmenderOrcid();
+        addSourceToWorks(orcidProfile, amenderOrcid);
+        
         ProfileEntity profileEntity = adapter.toProfileEntity(orcidProfile);
         encryptAndMapFieldsForProfileEntityPersistence(orcidProfile, profileEntity);
-        profileEntity.setAuthorities(getGrantedAuthorities(profileEntity));
-
+        profileEntity.setAuthorities(getGrantedAuthorities(profileEntity));        
+        
         profileDao.persist(profileEntity);
         profileDao.flush();
         OrcidProfile updatedTranslatedOrcid = adapter.toOrcidProfile(profileEntity);
@@ -1381,7 +1385,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
             }
             for (final String orcid : orcidsForIndexing) {
                 try {
-                    futureHM.remove(orcid).get(15, TimeUnit.SECONDS);
+                    futureHM.remove(orcid).get(60, TimeUnit.SECONDS);
                 } catch (InterruptedException e) {
                     orcidFailures.add(orcid);
                     LOG.error(orcid + " InterruptedException ", e);
@@ -1399,7 +1403,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
                 if (!executorService.isShutdown()) {
                     executorService.shutdown();
                     try {
-                        executorService.awaitTermination(30, TimeUnit.SECONDS);
+                        executorService.awaitTermination(120, TimeUnit.SECONDS);
                     } catch (InterruptedException e) {
                         LOG.warn("Received an interupt exception whilst waiting for the indexing to complete", e);
                     }

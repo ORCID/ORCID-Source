@@ -298,7 +298,7 @@ function DeactivateAccountCtrl($scope, $compile) {
 	    	    $.colorbox({
 	    	        html : $compile($('#deactivate-account-modal').html())($scope)	            	
 	    	    });
-	    	    $scope.$apply();
+	    	    $scope.$apply();	    	    
 	    	    $.colorbox.resize();
 	        }
 	    }).fail(function() { 
@@ -982,7 +982,7 @@ function ClaimCtrl($scope, $compile) {
 
 
 function VerifyEmailCtrl($scope, $compile) {
-	$scope.getEmails = function() {
+	$scope.getEmails = function() {		
 		$.ajax({
 	        url: $('body').data('baseurl') + 'account/emails.json',
 	        //type: 'POST',
@@ -1007,9 +1007,7 @@ function VerifyEmailCtrl($scope, $compile) {
 	        	        escKey:false, 
 	        	        overlayClose:false,
 	        	        transition: 'fade',
-	        	        close: '',
-	        	        //height: '200px',
-	        	        //width: '500px',
+	        	        close: '',	        	        
 	        	        scrolling: false
 	        	        	    });
 	        	        $.colorbox.resize();	        		
@@ -1046,7 +1044,7 @@ function VerifyEmailCtrl($scope, $compile) {
 	        close: '',
 	        scrolling: false
 	        	    });
-	    $.colorbox.resize();
+	    $.colorbox.resize({width:"500px", height:"200px"});
 		
 	};
 	
@@ -1145,16 +1143,18 @@ function AffiliationCtrl($scope, $compile, affiliationsSrvc){
 	
 	$scope.toggleDisplayAffiliations = function () {
 		$scope.displayAffiliations = !$scope.displayAffiliations;
-	};
-	
-	$scope.showAddModal = function(){;
-		
+	};	
+
+	$scope.showAddModal = function(){
+		isMobile() ? w = '100%' : w = '800px';
+		isMobile() ? h = '100%' : h = '550px';
+		var numOfResults = 25;
 		$.colorbox({        	
 			html: $compile($('#add-affiliation-modal').html())($scope),
 			onComplete: function() {
-				$.colorbox.resize();
-				$scope.bindTypeahead();
-				}
+							$.colorbox.resize({width:w, height:h});
+							$scope.bindTypeahead();
+			}
 	    });
 	};
 	
@@ -1383,8 +1383,13 @@ function AffiliationCtrl($scope, $compile, affiliationsSrvc){
 
 	
 		
-	$scope.setPrivacy = function(idx, priv, $event) {
+	$scope.setPrivacy = function(putCode, priv, $event) {
 		$event.preventDefault();
+		var idx;
+		for (idx in $scope.affiliations) {
+			if ($scope.affiliations[idx].putCode.value == putCode)
+				break;
+		}
 		$scope.affiliations[idx].visibility.visibility = priv;
 		$scope.curPrivToggle = null;
 		$scope.updateProfileAffiliation(idx);
@@ -1487,10 +1492,15 @@ function WorkCtrl($scope, $compile, worksSrvc) {
 	
 	$scope.showAddModal = function(){;
 		$scope.editTranslatedTitle = false;
-	    $.colorbox({        	
+		isMobile() ? w = '100%' : w = '768px';
+		isMobile() ? h = '100%' : h = '750px';		
+	    $.colorbox({	    	
+	    	scrolling: true,
 	        html: $compile($('#add-work-modal').html())($scope),	        
 	        onLoad: function() {$('#cboxClose').remove();},
-	        onComplete: function() {$.colorbox.resize();}
+	        onComplete: function() {
+	        		$.colorbox.resize({width:w, height:h});
+	        		}
 	    });
 	};
 
