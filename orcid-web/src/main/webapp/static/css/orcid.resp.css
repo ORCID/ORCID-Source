@@ -15,69 +15,6 @@
  * =============================================================================
  */
  
- 
-
-/* Fonts */
-@font-face {
-	font-family: "Gill Sans W01 Bold";
-	src:
-		url("../ORCID-Fonts-Dot-Com/1a6dec8e-26f9-4243-8495-835709538f92.eot?iefix")
-		format("eot");
-}
-
-@font-face {
-	font-family: "Gill Sans W01 Bold";
-	src:
-		url("../ORCID-Fonts-Dot-Com/1a6dec8e-26f9-4243-8495-835709538f92.eot?iefix");
-	src:
-		url("../ORCID-Fonts-Dot-Com/f05272f9-83e3-4de6-8423-5d57f730c87b.woff")
-		format("woff"),
-		url("../ORCID-Fonts-Dot-Com/33f5d8d9-105f-4a49-9351-74ecae7f4a49.ttf")
-		format("truetype"),
-		url("../ORCID-Fonts-Dot-Com/b56150eb-5caa-4385-b907-373e97ddb2ff.svg#b56150eb-5caa-4385-b907-373e97ddb2ff")
-		format("svg");
-}
-
-@font-face {
-	font-family: "Gill Sans W01 Medium";
-	src:
-		url("../ORCID-Fonts-Dot-Com/beab4258-af94-4971-a0db-b7bc2bef74bc.eot?iefix")
-		format("eot");
-}
-
-@font-face {
-	font-family: "Gill Sans W01 Medium";
-	src:
-		url("../ORCID-Fonts-Dot-Com/beab4258-af94-4971-a0db-b7bc2bef74bc.eot?iefix");
-	src:
-		url("../ORCID-Fonts-Dot-Com/cd5a93fc-2bb1-48df-8982-11119cd6e270.woff")
-		format("woff"),
-		url("../ORCID-Fonts-Dot-Com/b6bdc93b-2720-4c92-b68d-48499456178e.ttf")
-		format("truetype"),
-		url("../ORCID-Fonts-Dot-Com/944cce8d-20bf-41c1-ae29-2bc8199859db.svg#944cce8d-20bf-41c1-ae29-2bc8199859db")
-		format("svg");
-}
-
-@font-face {
-	font-family: "Gill Sans W02 Light";
-	src:
-		url("../ORCID-Fonts-Dot-Com/3d3ae305-c5f8-44e9-a93f-68343ef13a1e.eot?iefix")
-		format("eot");
-}
-
-@font-face {
-	font-family: "Gill Sans W02 Light";
-	src:
-		url("../ORCID-Fonts-Dot-Com/3d3ae305-c5f8-44e9-a93f-68343ef13a1e.eot?iefix");
-	src:
-		url("../ORCID-Fonts-Dot-Com/2b43682c-fbbf-4d2c-aa8f-53c5e9c07b89.woff")
-		format("woff"),
-		url("../ORCID-Fonts-Dot-Com/c7502fea-5840-46ed-9666-3479a56bf828.ttf")
-		format("truetype"),
-		url("../ORCID-Fonts-Dot-Com/59939f92-3d8b-46f6-8852-3a0db259dea0.svg#59939f92-3d8b-46f6-8852-3a0db259dea0")
-		format("svg");
-}
-
 /*Custom Style */
 article,aside,details,figcaption,figure,footer,header,hgroup,nav,section
 	{
