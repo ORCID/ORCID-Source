@@ -1568,6 +1568,23 @@ function WorkCtrl($scope, $compile, worksSrvc) {
 		});
 	};
 	
+	$scope.validateCitation = function() {
+		if ($scope.editWork.citation && $scope.editWork.citation.citationType.value == 'bibtex') {
+			try {
+				var parsed = bibtexParse.toJSON($scope.editWork.citation.citation.value);
+				console.log(parsed);
+				if (parsed.length == 0) throw "bibtex parse returne nothing";
+				var index = $scope.editWork.citation.citation.errors.indexOf(OM.getInstance().get('manualWork.bibtext.notValid'));
+				if (index > -1) {
+					$scope.editWork.citation.citation.errors.splice(index, 1);
+				}
+			} catch (err) {
+				$scope.editWork.citation.citation.errors.push(OM.getInstance().get('manualWork.bibtext.notValid'));
+			};
+		};
+	};
+
+	
 	
 	$scope.addWorkToScope = function() {
 		if($scope.worksToAddIds.length != 0 ) {
@@ -1793,6 +1810,9 @@ function WorkCtrl($scope, $compile, worksSrvc) {
 	        dataType: 'json',
 	        success: function(data) {
 	        	$scope.copyErrorsLeft($scope.editWork, data);
+	        	if ( relativePath == 'works/work/citationValidate.json') {
+	        		$scope.validateCitation();
+	        	}
 	        	$scope.$apply();
 	        }
 	    }).fail(function() { 
