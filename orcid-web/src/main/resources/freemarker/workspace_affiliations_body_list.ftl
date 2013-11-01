@@ -45,8 +45,19 @@
 
 		<div class="row">
 			<div class="col-md-6 col-sm-6 col-xs-12">
+				<div class="control-group" ng-show="editAffiliation.disambiguatedAffiliationIdentifier">
+					<div style="position: absolute; left: 300px"><label><a class="icon-remove-sign grey" ng-click="removeDisambiguatedAffiliation()">&nbsp;<@orcid.msg 'common.remove'/></a></label></div>
+					<label>Affiliation</label>
+				    <div class="relative"  style="font-weight: strong;">
+						<span ng-bind="disambiguatedAffiliation.value"></span> <br />
+						<div>
+						    <span ng-bind="disambiguatedAffiliation.city"></span><span ng-bind="disambiguatedAffiliation.region"></span>,<span ng-bind="disambiguatedAffiliation.orgType"></span>
+						</div>
+					</div>
+				</div>
 				<div class="control-group">
-					<label><@orcid.msg 'manual_affiliation_form_contents.labelname'/></label>
+					<label ng-hide="editAffiliation.disambiguatedAffiliationIdentifier"><@orcid.msg 'manual_affiliation_form_contents.labelname'/></label>
+					<label ng-show="editAffiliation.disambiguatedAffiliationIdentifier"><@orcid.msg 'manual_affiliation_form_contents.labeldisplayname'/></label>
 				    <div class="relative">
 						<input id="affiliationName" class="input-xlarge" name="affiliationName" type="text" ng-model="editAffiliation.affiliationName.value" placeholder="<@orcid.msg 'manual_affiliation_form_contents.add_name'/>" ng-change="serverValidate('affiliations/affiliation/affiliationNameValidate.json')" ng-model-onblur/>
 						<span class="required" ng-class="isValidClass(editAffiliation.affiliationName)">*</span>
@@ -56,16 +67,8 @@
 					</div>
 				</div>
 				<div class="control-group">
-					<label><@orcid.msg 'manual_affiliation_form_contents.labeldepartment'/></label>
-				    <div class="relative">
-						<input name="department" type="text" class="input-xlarge"  ng-model="editAffiliation.departmentName.value" placeholder="<@orcid.msg 'manual_affiliation_form_contents.add_department'/>" ng-change="serverValidate('affiliations/affiliation/departmentValidate.json')" ng-model-onblur/>
-						<span class="orcid-error" ng-show="editAffiliation.departmentName.errors.length > 0">
-							<div ng-repeat='error in editAffiliation.departmentName.errors' ng-bind-html-unsafe="error"></div>
-						</span>
-					</div>
-				</div>
-				<div class="control-group">
-					<label><@orcid.msg 'manual_affiliation_form_contents.labelcity'/></label>
+					<label ng-hide="editAffiliation.disambiguatedAffiliationIdentifier"><@orcid.msg 'manual_affiliation_form_contents.labelcity'/></label>
+					<label ng-show="editAffiliation.disambiguatedAffiliationIdentifier"><@orcid.msg 'manual_affiliation_form_contents.labeldisplaycity'/></label>
 				    <div class="relative">
 						<input name="city" type="text" class="input-xlarge"  ng-model="editAffiliation.city.value" placeholder="<@orcid.msg 'manual_affiliation_form_contents.add_city'/>" ng-change="serverValidate('affiliations/affiliation/cityValidate.json')" ng-model-onblur/>
 						<span class="required" ng-class="isValidClass(editAffiliation.city)">*</span>
@@ -75,7 +78,8 @@
 					</div>
 				</div>
 				<div class="control-group">
-					<label><@orcid.msg 'manual_affiliation_form_contents.labelregion'/></label>
+					<label ng-hide="editAffiliation.disambiguatedAffiliationIdentifier"><@orcid.msg 'manual_affiliation_form_contents.labelregion'/></label>
+					<label ng-show="editAffiliation.disambiguatedAffiliationIdentifier"><@orcid.msg 'manual_affiliation_form_contents.labeldisplayregion'/></label>
 				    <div class="relative">
 						<input name="region" type="text" class="input-xlarge"  ng-model="editAffiliation.region.value" placeholder="<@orcid.msg 'manual_affiliation_form_contents.add_region'/>" ng-change="serverValidate('affiliations/affiliation/regionValidate.json')" ng-model-onblur/>
 						<span class="orcid-error" ng-show="editAffiliation.region.errors.length > 0">
@@ -84,7 +88,8 @@
 					</div>
 				</div>
                 <div class="control-group">
-		    		<label class="relative"><@orcid.msg 'manage_bio_settings.labelcountry'/></label>
+		    		<label ng-hide="editAffiliation.disambiguatedAffiliationIdentifier"><@orcid.msg 'manual_affiliation_form_contents.labelcountry'/></label>
+		    		<label ng-show="editAffiliation.disambiguatedAffiliationIdentifier"><@orcid.msg 'manual_affiliation_form_contents.labeldisplaycountry'/></label>
 		    		<div class="relative">
 			    		<select id="country" name="country" ng-model="editAffiliation.country.value" ng-change="serverValidate('affiliations/affiliation/countryValidate.json')">
 			    			<option value=""><@orcid.msg 'org.orcid.persistence.jpa.entities.CountryIsoEntity.empty' /></option>
@@ -100,6 +105,15 @@
 				</div>
 			</div>
 			<div class="col-md-6 col-sm-6 col-xs-12">
+				<div class="control-group">
+					<label><@orcid.msg 'manual_affiliation_form_contents.labeldepartment'/></label>
+				    <div class="relative">
+						<input id="departmentName" class="input-xlarge" name="departmentName" type="text" ng-model="editAffiliation.departmentName.value" placeholder="<@orcid.msg 'manual_affiliation_form_contents.add_department'/>" ng-change="serverValidate('affiliations/affiliation/departmentValidate.json')" ng-model-onblur/>
+						<span class="orcid-error" ng-show="editAffiliation.departmentName.errors.length > 0">
+							<div ng-repeat='error in editAffiliation.departmentName.errors' ng-bind-html-unsafe="error"></div>
+						</span>
+					</div>
+				</div>
 				<div class="control-group">
 					<label><@orcid.msg 'manual_affiliation_form_contents.labelroletitle'/></label>
 				    <div class="relative">

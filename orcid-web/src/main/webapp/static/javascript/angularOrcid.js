@@ -1153,36 +1153,75 @@ function AffiliationCtrl($scope, $compile, affiliationsSrvc){
 			html: $compile($('#add-affiliation-modal').html())($scope),
 			onComplete: function() {
 							$.colorbox.resize({width:w, height:h});
-							$("#affiliationName").typeahead({
-								name: 'affiliationName',
-								limit: numOfResults,
-								remote: {
-									url: $('body').data('baseurl')+'affiliations/disambiguated/%QUERY?limit=' + numOfResults
-								},
-								template: function (datum) {
-									   var forDisplay = 
-									       '<span style=\'white-space: nowrap; font-weight: bold;\'>' + datum.value+ '</span>'
-									      +'<span style=\'font-size: 80%;\'>'
-									      + ' <br />' + datum.city;
-									   if(datum.region){
-										   forDisplay += ", " + datum.region;
-									   }
-									   if (datum.orgType != null && datum.orgType.trim() != '')
-									      forDisplay += ", " + datum.orgType;
-									   forDisplay += '</span><hr />';
-									   return forDisplay;
-								}
-							});
-							$("#affiliationName").bind("typeahead:selected", function(obj, datum) {        
-								$("input[name=city]").val(datum.city);
-								$("input[name=region]").val(datum.region);
-								$("select[name=country]").val(datum.country);
-								$scope.editAffiliation.city.value = datum.city;
-								$scope.editAffiliation.region.value = datum.region;
-								$scope.editAffiliation.country.value = datum.country;
-							});
-						}
+							$scope.bindTypeahead();
+			}
 	    });
+	};
+	
+	$scope.bindTypeahead = function () {
+		var numOfResults = 100;
+		
+		$("#affiliationName").typeahead({
+			name: 'affiliationName',
+			limit: numOfResults,
+			remote: {
+				url: $('body').data('baseurl')+'affiliations/disambiguated/name/%QUERY?limit=' + numOfResults
+			},
+			template: function (datum) {
+				   var forDisplay = 
+				       '<span style=\'white-space: nowrap; font-weight: bold;\'>' + datum.value+ '</span>'
+				      +'<span style=\'font-size: 80%;\'>'
+				      + ' <br />' + datum.city;
+				   if(datum.region){
+					   forDisplay += ", " + datum.region;
+				   }
+				   if (datum.orgType != null && datum.orgType.trim() != '')
+				      forDisplay += ", " + datum.orgType;
+				   forDisplay += '</span><hr />';
+				   return forDisplay;
+			}
+		});
+		$("#affiliationName").bind("typeahead:selected", function(obj, datum) {        
+			$scope.selectAffiliation(datum);
+			$scope.$apply();
+		});		
+	};
+	
+	$scope.unbindTypeahead = function () {
+		$('#affiliationName').typeahead('destroy');
+	};
+	
+	$scope.selectAffiliation = function(datum) {
+		$scope.editAffiliation.city.value = datum.city;
+		$scope.editAffiliation.region.value = datum.region;
+		$scope.editAffiliation.country.value = datum.country;
+		//$scope.editAffiliation.disambiguatedAffiliationIdentifier = datum.disambiguatedAffiliationIdentifier
+		if (datum.disambiguatedAffiliationIdentifier != undefined && datum.disambiguatedAffiliationIdentifier != null) {
+			$scope.getDisambiguatedAffiliation(datum.disambiguatedAffiliationIdentifier);
+				$scope.unbindTypeahead();
+		}
+	};
+	
+	$scope.getDisambiguatedAffiliation = function(id) {
+		$.ajax({
+			url: $('body').data('baseurl') + 'affiliations/disambiguated/id/' + id,
+	        dataType: 'json',
+	        type: 'GET',
+	        success: function(data) {
+	        	console.log(data.disambiguatedAffiliationIdentifier);
+		        $scope.disambiguatedAffiliation = data;
+		        $scope.editAffiliation.disambiguatedAffiliationIdentifier = data.disambiguatedAffiliationIdentifier;
+		        $scope.$apply();   	
+	        }
+		}).fail(function(){
+	    	console.log("error getDisambiguatedAffiliation(id)");
+		});
+	};
+	
+	$scope.removeDisambiguatedAffiliation = function() {
+		$scope.bindTypeahead();
+		delete $scope.disambiguatedAffiliation;
+		delete $scope.editAffiliation.disambiguatedAffiliationIdentifier;
 	};
 
 	$scope.addAffiliationModal = function(){
