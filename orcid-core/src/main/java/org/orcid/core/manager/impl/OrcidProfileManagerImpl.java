@@ -250,10 +250,14 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
             orcidProfile.setOrcid(orcidGenerationManager.createNewOrcid());
         }
 
+        //Add source to works
+        String amenderOrcid = retrieveAmenderOrcid();
+        addSourceToWorks(orcidProfile, amenderOrcid);
+        
         ProfileEntity profileEntity = adapter.toProfileEntity(orcidProfile);
         encryptAndMapFieldsForProfileEntityPersistence(orcidProfile, profileEntity);
-        profileEntity.setAuthorities(getGrantedAuthorities(profileEntity));
-
+        profileEntity.setAuthorities(getGrantedAuthorities(profileEntity));        
+        
         profileDao.persist(profileEntity);
         profileDao.flush();
         OrcidProfile updatedTranslatedOrcid = adapter.toOrcidProfile(profileEntity);
