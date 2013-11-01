@@ -49,6 +49,7 @@ public class LoginController extends BaseController {
     @RequestMapping(value = { "/oauth/signin", "/oauth/login" }, method = RequestMethod.GET)
     public ModelAndView loginGetHandler2(ModelAndView mav) {
         mav.setViewName("oauth_login");
+        mav.addObject("hideUserVoiceScript", true);
         return mav;
     }
 
