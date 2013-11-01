@@ -29,8 +29,8 @@
 	);
 </script>
 <div>
-	<div class="row-fluid">
-		<div class="span12">
+	<div class="row">
+		<div class="col-md-12 col-sm-12 col-xs-12">
 			${springMacroRequestContext.getMessage("confirm_delegate.areyousuredelegatedmanager")} <strong>${springMacroRequestContext.getMessage("confirm_delegate.except")}</strong> ${springMacroRequestContext.getMessage("confirm_delegate.yourpasswordandemail")}
 		</div>
 	</div>

@@ -130,39 +130,48 @@
           <button type="submit" class="btn btn-primary" ng-click="postRegister()">${springMacroRequestContext.getMessage("header.register")}</button>
     </div>  
 </div> 
-<script type="text/ng-template" id="duplicates">
-	<div style="padding: 20px">
-		<div style="width: 50%; float:left;">
-     		<h4>${springMacroRequestContext.getMessage("duplicate_researcher.wefoundfollowingrecords")}</h4>
-     	</div>
-     	<div style="width: 50%;  text-align: right; float:left; padding-top: 15px;">
-     	    <button class="btn btn-primary" ng-click="postRegisterConfirm()">${springMacroRequestContext.getMessage("duplicate_researcher.btncontinuetoregistration")}</button>
-		</div>
-			
-		<table class="table table-striped">
-			<thead>
-				<tr>               				
-    				<th>${springMacroRequestContext.getMessage("duplicate_researcher.thORCID")}</th>
-    				<th>${springMacroRequestContext.getMessage("duplicate_researcher.thEmail")}</th>
-    				<th>${springMacroRequestContext.getMessage("duplicate_researcher.thgivennames")}</th>
-    				<th>${springMacroRequestContext.getMessage("duplicate_researcher.thFamilyName")}</th>
-    				<th>${springMacroRequestContext.getMessage("duplicate_researcher.thInstitution")}</th>                				
-				</tr>
-			</thead>
-			<tbody>
-				 <tr ng-repeat='dup in duplicates'>
-				 	<td><a href="<@spring.url '/'/>{{dup.orcid}}" target="_blank">{{dup.orcid}}</a></td>
-        			<td>{{dup.email}}</td>
-        			<td>{{dup.givenNames}}</td>
-        			<td>{{dup.familyNames}}</td>
-        			<td>{{dup.institution}}</td>
-    			</tr>
-			</tbody>
-		</table>
 
-		<div style="width: 100%;  text-align: right;">
-		     <button class="btn btn-primary" ng-click="postRegisterConfirm()">${springMacroRequestContext.getMessage("duplicate_researcher.btncontinuetoregistration")}</button>
-		</div>   		
+<script type="text/ng-template" id="duplicates">
+	<div class="lightbox-container" id="duplicates-records">
+		<div class="row">			
+			<div class="col-md-6 col-sm-6 col-xs-12">
+	     		<h4>${springMacroRequestContext.getMessage("duplicate_researcher.wefoundfollowingrecords")}</h4>
+     		</div>
+     		<div class="col-md-6 col-sm-6 col-xs-12">
+	     	    <button class="btn btn-primary" ng-click="postRegisterConfirm()">${springMacroRequestContext.getMessage("duplicate_researcher.btncontinuetoregistration")}</button>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-">
+				
+			</div>
+
+			<table class="table-responsive table-striped">
+				<thead>
+					<tr>               				
+	    				<th>${springMacroRequestContext.getMessage("duplicate_researcher.thORCID")}</th>
+    					<th>${springMacroRequestContext.getMessage("duplicate_researcher.thEmail")}</th>
+    					<th>${springMacroRequestContext.getMessage("duplicate_researcher.thgivennames")}</th>
+    					<th>${springMacroRequestContext.getMessage("duplicate_researcher.thFamilyName")}</th>
+	    				<th>${springMacroRequestContext.getMessage("duplicate_researcher.thInstitution")}</th>                				
+					</tr>
+				</thead>
+				<tbody>
+				 	<tr ng-repeat='dup in duplicates'>
+					 	<td><a href="<@spring.url '/'/>{{dup.orcid}}" target="_blank">{{dup.orcid}}</a></td>
+        				<td>{{dup.email}}</td>
+        				<td>{{dup.givenNames}}</td>
+        				<td>{{dup.familyNames}}</td>
+        				<td>{{dup.institution}}</td>
+    				</tr>
+				</tbody>
+			</table>
+		</div>
+		<div class="row">
+			<div class="col-md-12 col-sm-12 col-xs-12">
+		    	<button class="btn btn-primary" ng-click="postRegisterConfirm()">${springMacroRequestContext.getMessage("duplicate_researcher.btncontinuetoregistration")}</button>
+			</div>
+		</div>
 	</div>
 </script>        
 </div>

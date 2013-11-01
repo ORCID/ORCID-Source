@@ -18,7 +18,7 @@
 -->
 <#if maintenanceMessage != ''>
     <div class="row">
-        <div class="col-md-11 col-md-offset-1 col-sm-12">
+        <div class="col-md-11 col-md-offset-1 col-sm-12 col-xs-12">
             <div class="maintenance-header">
                ${maintenanceMessage}
             </div>

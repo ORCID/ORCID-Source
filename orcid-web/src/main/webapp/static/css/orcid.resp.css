@@ -3583,6 +3583,11 @@ ul.personal-inf-display li{
 	.data-row-group .col-md-2{
 		padding-left: 15px;
 	}
+	
+	/* Registration duplicated records */
+	#duplicates-records .btn-primary{
+		font-size: 14px !important;
+	}
 }
 
 @media ( max-width : 980px) { /* Tablet */
