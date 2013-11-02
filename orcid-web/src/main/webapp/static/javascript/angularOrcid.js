@@ -1469,69 +1469,37 @@ function PublicWorkCtrl($scope, $compile, worksSrvc) {
     	$scope.showBibtex = !($scope.showBibtex);
     };   
 
-	for (idx in publicWorks) {
-		var dw = publicWorks[idx];        
-		removeBadContributors(dw);
-		addBibtexCitation($scope,dw);
-		$scope.works.push(dw);
-	}
 	
-	$scope.renderLanguageName = function(workIdx) {
-		if($scope.languages == null) {
+	$scope.addWorkToScope = function() {
+		if($scope.worksToAddIds.length != 0 ) {
+			var workIds = $scope.worksToAddIds.splice(0,20).join();
 			$.ajax({
-				url: $('body').data('baseurl') + 'works/languages.json',	        
-		        dataType: 'json',
-		        success: function(data) {
-		        	$scope.languages = data;
-		        	return $scope.getLanguageName(workIdx);
-		        }
-			}).fail(function(){
-				// something bad is happening!
-		    	console.log("error fetching languages");
-			});
-		} else {
-			return $scope.getLanguageName(workIdx);
+				url: $('body').data('baseurl') + orcidVar.orcidId +'/works.json?workIds=' + workIds,
+				dataType: 'json',
+				success: function(data) {
+					$scope.$apply(function(){ 
+						for (i in data) {
+							var dw = data[i];
+                            
+							removeBadContributors(dw);
+							
+							addBibtexCitation($scope,dw);
+							
+							$scope.works.push(dw);
+						}
+					});
+					setTimeout(function () {$scope.addWorkToScope();},50);
+				}
+			}).fail(function() { 
+		    	console.log("Error fetching work: " + value);
+		    });
 		}
-	};
+	}; 
 	
-	$scope.renderCountryName = function(workIdx) {
-		if($scope.countries == null) {
-			$.ajax({
-				url: $('body').data('baseurl') + 'works/countries.json',	        
-		        dataType: 'json',
-		        success: function(data) {
-		        	$scope.countries = data;
-		        	return $scope.getCountryName(workIdx);
-		        }
-			}).fail(function(){
-				// something bad is happening!
-		    	console.log("error fetching countries");
-			});
-		} else {
-			return $scope.getCountryName(workIdx);
-		}
-	};
-	
-	$scope.getLanguageName = function(workIdx){		
-		var language = null;
-		if($scope.works[workIdx].languageCode != null) {
-			language = $scope.languages[$scope.works[workIdx].languageCode.value];
-		}
+	$scope.numOfWorksToAdd = orcidVar.workIds.length;
+	$scope.worksToAddIds = orcidVar.workIds;
+	$scope.addWorkToScope();
 		
-		return language;
-	};
-	
-	$scope.getCountryName = function(workIdx){		
-		var country = null;
-		if($scope.works[workIdx].country != null){
-			country = $scope.countries[$scope.works[workIdx].country.value];
-		}
-		
-		return country;
-	};
-	
-	//init	
-	$scope.numOfWorksToAdd = 0;		
 }
 
 function WorkCtrl($scope, $compile, worksSrvc) {

@@ -17,15 +17,6 @@
 
 -->
 <#escape x as x?html>
-	<script type="text/javascript">
-	   <#noescape>
-	   <#if (works)??>
-	   		var publicWorks = JSON.parse("${worksJson}");
-	   <#else>
-	   	    var publicWorks = null;
-	   </#if>
-	   </#noescape>
-	</script>
 	<#-- noscript is for search engines -->
 	<noscript>
 		<#if (works)??>
@@ -56,9 +47,6 @@
 				        </h3>
 				        <#if work.shortDescription??>
 				           <div>${work.shortDescription}</div>
-				        </#if>
-				        <#if work.citation??>
-				           <div>${work.citation.citation}</div>
 				        </#if>
 				    </div>
 		        </#list>

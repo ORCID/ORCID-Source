@@ -25,9 +25,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
          
     <script type="text/javascript">
-    	var orcidVar = {};
-    	orcidVar.baseUri = '${baseUri}';
-    	orcidVar.baseUriHttp = '${baseUriHttp}';
+        var orcidVar = {};
+        orcidVar.baseUri = '${baseUri}';
+        orcidVar.baseUriHttp = '${baseUriHttp}';
+      <#if (workIdsJson)??>
+        orcidVar.workIds = JSON.parse("${workIdsJson}");
+      </#if>
+      <#if (profile)??>
+        orcidVar.orcidId = '${(profile.orcid.value)!}';
+      <#else>
+        orcidVar.orcidId = '${(profile.orcid.value)!}';
+      </#if>
     </script>    
     <#if
 		request.requestURI?ends_with("${basePath}signin")||
