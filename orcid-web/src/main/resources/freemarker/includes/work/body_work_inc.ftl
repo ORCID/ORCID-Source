@@ -38,7 +38,7 @@
 	        </div>
 	        <!-- Settings -->
 	        <div class="col-md-4 col-sm-4 workspace-toolbar">
-	        	<#include "all_info_work_inc.ftl"/>
+	        	<#include "work_more_info_inc.ftl"/>
 		        <#if !(isPublicProfile??)>
 					<ul class="workspace-private-toolbar">
 						<li>

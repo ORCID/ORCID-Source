@@ -16,9 +16,9 @@
     =============================================================================
 
 -->
-<div class="show-work-info">
+<div class="more-info">
 	<a class="icon-plus-sign grey"></a>	
-	<div class="popover bottom popover-work-container">
+	<div class="popover bottom more-info-container">
 		<div class="arrow"></div>	
 		<div class="lightbox-container">
 			<div class="row bottomBuffer"></div>

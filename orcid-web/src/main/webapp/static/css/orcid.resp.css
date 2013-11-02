@@ -1445,7 +1445,7 @@ a:hover {
 	padding-left: 10px;
 }
 
-.show-work-info{
+.more-info{
 	float: left;
     line-height: 30px;
     width: 33px;
@@ -2802,7 +2802,7 @@ ul.personal-inf-display li{
 	margin-top:20px;	
 }
 
-.popover-work-container {
+.more-info-container {
 	display: none;
 	position: absolute; 
 	left: -463px; 
@@ -2813,15 +2813,15 @@ ul.personal-inf-display li{
 	height: 175px;
 }
 
-.show-work-info:hover .popover-work-container {
+.more-info:hover .more-info-container {
 	display: inline;
 }
 
-.show-work-info .popover.bottom .arrow{
+.more-info .popover.bottom .arrow{
 	left: 484px !important;
 }
 
-.show-work-info .lightbox-container{
+.more-info .lightbox-container{
 	overflow-y:scroll;
 	height: 175px;
 }
@@ -3469,12 +3469,12 @@ ul.personal-inf-display li{
 	}
 	
 	/* Work List*/
-	.popover-work-container{		
+	.more-info-container{		
 		max-width:100%;
 		left:0;		
 	}
 
-	.show-work-info .popover.bottom .arrow{
+	.more-info .popover.bottom .arrow{
 		left: 27px !important;
 	}
 	
