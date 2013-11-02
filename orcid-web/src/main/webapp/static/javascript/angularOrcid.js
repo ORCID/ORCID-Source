@@ -1467,14 +1467,37 @@ function PublicWorkCtrl($scope, $compile, worksSrvc) {
     	$scope.showBibtex = !($scope.showBibtex);
     };   
 
-	for (idx in publicWorks) {
-		var dw = publicWorks[idx];        
-		removeBadContributors(dw);
-		addBibtexCitation($scope,dw);
-		$scope.works.push(dw);
-	}
 	
-	$scope.numOfWorksToAdd = 0;
+	$scope.addWorkToScope = function() {
+		if($scope.worksToAddIds.length != 0 ) {
+			var workIds = $scope.worksToAddIds.splice(0,20).join();
+			$.ajax({
+				url: $('body').data('baseurl') + orcidVar.orcidId +'/works.json?workIds=' + workIds,
+				dataType: 'json',
+				success: function(data) {
+					$scope.$apply(function(){ 
+						for (i in data) {
+							var dw = data[i];
+                            
+							removeBadContributors(dw);
+							
+							addBibtexCitation($scope,dw);
+							
+							$scope.works.push(dw);
+						}
+					});
+					setTimeout(function () {$scope.addWorkToScope();},50);
+				}
+			}).fail(function() { 
+		    	console.log("Error fetching work: " + value);
+		    });
+		}
+	}; 
+	
+	$scope.numOfWorksToAdd = orcidVar.workIds.length;
+	$scope.worksToAddIds = orcidVar.workIds;
+	$scope.addWorkToScope();
+		
 }
 
 function WorkCtrl($scope, $compile, worksSrvc) {
