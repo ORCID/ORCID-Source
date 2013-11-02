@@ -19,8 +19,6 @@ package org.orcid.frontend.web.controllers;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-import java.util.ArrayList;
-
 import javax.annotation.Resource;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
@@ -136,7 +134,7 @@ public class WorksControllerTest extends BaseControllerTest {
         worksController.workWorkTypeValidate(work);
         assertEquals(1, work.getWorkType().getErrors().size());
 
-    }
+    }    
 
     private String buildLongWord() {
         if (_5000chars == null) {
