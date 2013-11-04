@@ -44,7 +44,7 @@
     	<div class="relative">
         	<input id="passwordField" type="password" name="password" value="${(changePasswordForm.password)!}" class="password-strength input-xlarge"/>
         	<span class="required">*</span>
-        	<a class="password-info" href="#"><i class="icon-question-sign"></i></a>    
+        	<a class="password-info" href="#"><i class="glyphicon glyphicon-question-sign"></i></a>    
     	</div>
 	</div>
 	<div class="">

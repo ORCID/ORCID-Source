@@ -17,7 +17,7 @@
 
 -->
 <div class="show-work-info">
-	<a class="icon-plus-sign grey"></a>	
+	<a class="glyphicon glyphicon-plus-sign grey"></a>	
 	<div class="popover bottom popover-work-container">
 		<div class="arrow"></div>	
 		<div class="lightbox-container">

@@ -73,7 +73,7 @@
 						<label class="control-label" style="margin-right:10px; text-align:left; width:90px"><@orcid.msg 'manage_clients.redirect_uri'/>:</label>
 						<div class="relative">
 							<input type="text" placeholder="Redirect Uri"  ng-model="rUri.value.value">						
-							<a href ng-click="deleteUri($index)" class="icon-trash blue"></a>
+							<a href ng-click="deleteUri($index)" class="glyphicon glyphicon-trash blue"></a>
 							<span class="orcid-error" ng-show="rUri.errors.length > 0">
 								<div ng-repeat='error in rUri.errors' ng-bind-html-unsafe="error"></div>
 							</span>
