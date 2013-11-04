@@ -107,6 +107,11 @@ img {
 	margin: 15px;
 }
 
+.title-box{
+	border-bottom: 1px solid #dddddd;
+	margin-bottom: 15px; 
+}
+
 #map_canvas img {
 	max-width: none;
 }
@@ -2106,7 +2111,7 @@ a:hover {
 }
 
 .lightbox-container{
-	padding: 0 15px 30px;
+	padding: 5px 15px 30px;
 }
 
 .no-icon {
@@ -2830,11 +2835,29 @@ ul.personal-inf-display li{
 	padding-left: 0;
 }
 
+.table-container{
+	overflow-y: scroll;
+	overflow-x: normal;
+	margin-top: 15px;
+}
+
+.table th, .table td {
+    border-top: 1px solid #DDDDDD;
+    line-height: 20px;
+    padding: 8px;
+    text-align: left;
+    vertical-align: top;
+}
+
 
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */
+		
 	.alert .small {
 		float: none !important;
+	}
+	.centered-mobile{
+		text-align:center;
 	}
 	.container {
 		position: relative;
@@ -3525,6 +3548,51 @@ ul.personal-inf-display li{
 	#duplicates-records .btn-primary{
 		font-size: 14px !important;
 	}
+	
+	/* Reset Password w/ Security Question */
+	#reg-form-password #retypedPassword,
+	#reg-form-password #passwordField{
+		width: 85%;
+	}
+	
+	#reg-form-password #securityQuestionAnswer{
+		width: 100%;
+	}
+	
+	#reg-form-password select{
+		-webkit-appearance: listbox;
+	}
+	
+	#reg-form-password .popover-help-container .popover{
+		left: -245px !important;
+	}
+	
+	#reg-form-password  .popover.bottom .arrow{
+		left: 255px !important;
+	}
+	
+	#claim input[type="password"]{
+		width: 85%;
+	}
+	
+	#claim .popover-help-container .popover{
+		left: -245px !important;
+	}
+	
+	#claim .popover.bottom .arrow{
+		left: 255px !important;
+	}
+	
+	#claim .privacy .popover-help-container .popover{
+		left: -110px !important;
+	}
+	
+	#claim .privacy .popover.bottom .arrow{
+		left: 120px !important;
+	}
+	
+	
+	
 }
 
 @media ( max-width : 980px) { /* Tablet */
