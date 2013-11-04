@@ -2696,11 +2696,11 @@ ul.personal-inf-display li{
 	display: none;
 }
 
-.translated-title-section{
+.add-item-link{
 	color: #2DC0CE;
     float: right;
     font-size: 13px;
-    margin: 5px 49px 0 0;    
+    margin: 5px 17px 5px 0;    
 }
 
 .citation-title{
