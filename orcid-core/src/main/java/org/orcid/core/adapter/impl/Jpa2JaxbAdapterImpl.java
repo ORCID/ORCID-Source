@@ -769,8 +769,8 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         orcidWork.setWorkTitle(getWorkTitle(work));
         orcidWork.setJournalTitle(StringUtils.isNotBlank(work.getJournalTitle()) ? new Title(work.getJournalTitle()) : null);
         orcidWork.setLanguageCode(StringUtils.isNotBlank(work.getLanguageCode()) ? work.getLanguageCode() : null);
-        
-        if(work.getIso2Country() != null){
+
+        if (work.getIso2Country() != null) {
             Country country = new Country(work.getIso2Country());
             country.setVisibility(OrcidVisibilityDefaults.WORKS_COUNTRY_DEFAULT.getVisibility());
             orcidWork.setCountry(country);
@@ -793,8 +793,8 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         }
         WorkTitle workTitle = new WorkTitle();
         workTitle.setTitle(StringUtils.isNotBlank(work.getTitle()) ? new Title(work.getTitle()) : null);
-        workTitle.setSubtitle(StringUtils.isNotBlank(work.getSubtitle()) ? new Subtitle(work.getSubtitle()) : null);        
-        if(work.getTranslatedTitle() != null)
+        workTitle.setSubtitle(StringUtils.isNotBlank(work.getSubtitle()) ? new Subtitle(work.getSubtitle()) : null);
+        if (work.getTranslatedTitle() != null)
             workTitle.setTranslatedTitle(new TranslatedTitle(work.getTranslatedTitle(), work.getTranslatedTitleLanguageCode()));
         return workTitle;
     }
@@ -883,7 +883,9 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         Contributor contributor = new Contributor();
         ProfileEntity profile = contributorEntity.getProfile();
         if (profile != null) {
-            contributor.setContributorEmail(profile.getPrimaryEmail() != null ? new ContributorEmail(profile.getPrimaryEmail().getId()) : null);
+            contributor
+                    .setContributorEmail(profile.getPrimaryEmail() != null && Visibility.PUBLIC.equals(profile.getPrimaryEmail().getVisibility()) ? new ContributorEmail(
+                            profile.getPrimaryEmail().getId()) : null);
             CreditName creditName = new CreditName(profile.getCreditName());
             contributor.setCreditName(creditName);
             // Set visibility from parent work

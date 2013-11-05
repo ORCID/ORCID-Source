@@ -19,20 +19,6 @@
     var searchFilterChanged = false;
     var showingTemplateMenu = false;    
     
-    var footerPlacement = function() {
-        if (window.innerHeight > $("body").height()) {
-            $(".footer").addClass("fixed");
-        }
-        $(window).resize(function(e) {
-            if (window.innerHeight > $("body").height()) {
-                $(".footer").addClass("fixed");
-            }
-            else {
-                $(".footer").removeClass("fixed");
-            }
-        });
-    };
-
     var handleNews = function() {
         $(".news-section").hide();
         if (window.location.hash) {
@@ -323,21 +309,21 @@
             } 
         	
         };
-    };
+    };    
+    
 
     /*============================================================
         Page initialisation
     ============================================================*/
 
-    var init = function() {
-        // footerPlacement();
+    var init = function() { 
         //handleNews();
         searchFilters();
         //secondaryNavCleanup();
         toolTips();
         popupHandler();
         menuHack();
-        mobileMenuHandler();
+        mobileMenuHandler();              
     };
 
     init();

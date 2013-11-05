@@ -26,15 +26,8 @@
 		        	<strong ng-bind-html="work.workTitle.title.value"></strong><span class="work-subtitle" ng-show="work.workTitle.subtitle.value" ng-bind-html="':&nbsp;'.concat(work.workTitle.subtitle.value)"></span>
 		        	<span ng-show="work.publicationDate.month">{{work.publicationDate.month}}-</span><span ng-show="work.publicationDate.year">{{work.publicationDate.year}}</span>
 		        </h3>        
-				<div class="work-metadata">
-		            <span ng-repeat='ie in work.workExternalIdentifiers'>
-		            	<span ng-bind-html='ie | workExternalIdentifierHtml:$first:$last:work.workExternalIdentifiers.length'></span>
-		            </span>
-		            <span ng-show="work.url.value">URL: <a href="{{work.url.value | urlWithHttp}}" target="_blank">{{work.url.value}}</a></span>
-		        </div>
 	        
 		        <div ng-show="work.shortDescription" ng-bind-html="work.shortDescription.value"></div>
-		        <div ng-show="work.citationForDisplay" class="citation {{work.workCitation.workCitationType.toLowerCase()}}" ng-bind-html="work.citationForDisplay"></div>
 	        </div>
 	        <!-- Settings -->
 	        <div class="col-md-4 col-sm-4 workspace-toolbar">

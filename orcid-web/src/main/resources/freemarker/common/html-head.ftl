@@ -48,7 +48,9 @@
 		request.requestURI?ends_with("${basePath}statistics")||
 		request.requestURI?ends_with("${basePath}account")||	
 		request.requestURI?matches("(.*)/(?:\\d{4}-){3,}\\d{3}[\\dX]")||
-		request.requestURI?ends_with("${basePath}account/manage-bio-settings")
+		request.requestURI?ends_with("${basePath}account/manage-bio-settings")||
+		request.requestURI?matches("(.*)/[a-zA-Z0-9?=]*")
+		
 	>    	
 	    <link rel="stylesheet" href="${staticCdn}/twitter-bootstrap/3.0.0/css/bootstrap.min.css?v=${ver}"/>
 	    <!--[if lt IE 8]>
