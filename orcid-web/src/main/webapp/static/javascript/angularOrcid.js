@@ -1515,6 +1515,10 @@ function WorkCtrl($scope, $compile, worksSrvc) {
 		$scope.displayWorks = !$scope.displayWorks;
 	};
 	
+	$scope.addExternalIdentifier = function () {
+		$scope.editWork.workExternalIdentifiers.push({workExternalIdentifierId: { value: ""}, workExternalIdentifierType: {value: ""} });
+	};
+	
 	$scope.showAddModal = function(){;
 		$scope.editTranslatedTitle = false;
 		isMobile() ? w = '100%' : w = '768px';
