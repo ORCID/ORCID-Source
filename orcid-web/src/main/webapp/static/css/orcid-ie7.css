@@ -168,3 +168,12 @@ a#settings-button{
 .workspace-accordion-header{
 	padding:0 !important;
 }
+
+ul.workspace-private-toolbar > li{
+	zoom: 1;
+    *display: inline;	
+}
+
+.show-work-info{
+	margin-top: 7px;
+}
