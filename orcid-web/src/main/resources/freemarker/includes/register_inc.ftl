@@ -147,7 +147,7 @@
 					<table class="table">
 						<thead>
 							<tr>               				
-			    				<th>${springMacroRequestContext.getMessage("duplicate_researcher.thORCID")}</th>
+			    				<th>${springMacroRequestContext.getMessage("search_results.thORCIDID")}</th>
     							<th>${springMacroRequestContext.getMessage("duplicate_researcher.thEmail")}</th>
     							<th>${springMacroRequestContext.getMessage("duplicate_researcher.thgivennames")}</th>
     							<th>${springMacroRequestContext.getMessage("duplicate_researcher.thFamilyName")}</th>
