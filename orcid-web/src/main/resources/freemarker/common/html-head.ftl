@@ -64,7 +64,7 @@
 	    <link rel="stylesheet" href="${staticCdn}/css/jquery-ui-1.10.0.custom.min.css?v=${ver}"/>
 	    <link rel="stylesheet" href="${staticLoc}/font-awesome/3.2.1/css/font-awesome.css"/>
 	    <!--[if IE 7]>
-	    	<link href="${staticLoc}/font-awesome/3.0.2/css/font-awesome-ie7.css" rel="stylesheet">
+	    	<link href="${staticLoc}/font-awesome/3.0.2/css/font-awesome-ie7.min.css" rel="stylesheet">
 		<![endif]-->	
 		
 	    <script src="${staticCdn}/javascript/respond.min.js?v=${ver}"></script>
@@ -77,7 +77,7 @@
 	    <link rel="stylesheet" href="${staticCdn}/css/jquery-ui-1.10.0.custom.min.css?v=${ver}"/>
 	    <link rel="stylesheet" href="${staticLoc}/font-awesome/3.2.1/css/font-awesome.css"/>
 	    <!--[if IE 7]>
-	    	<link href="${staticLoc}/font-awesome/3.0.2/css/font-awesome-ie7.css" rel="stylesheet">
+	    	<link href="${staticLoc}/font-awesome/3.0.2/css/font-awesome-ie7.min.css" rel="stylesheet">
 		<![endif]-->
     </#if>
     
