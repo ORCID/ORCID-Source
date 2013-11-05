@@ -75,18 +75,12 @@
 		       		</#list></p>
 	       	</#if>
        		<div ng-controller="ExternalIdentifierCtrl" ng-hide="!externalIdentifiersPojo.externalIdentifiers.length" ng-cloak>	       			
-       			<p><strong><@orcid.msg 'public_profile.labelOtherIDs'/></strong> </p>
-		        <table id="externalIdentifierTable">
-		        	<tr style="vertical-align:bottom;" ng-repeat='externalIdentifier in externalIdentifiersPojo.externalIdentifiers'>
-		        		<td class="padRgt">
-		        			<p ng-hide="externalIdentifier.externalIdUrl">{{externalIdentifier.externalIdCommonName.content}} {{externalIdentifier.externalIdReference.content}}</p>
-		        			<p ng-show="externalIdentifier.externalIdUrl"><a href="{{externalIdentifier.externalIdUrl.value}}" target="_blank">{{externalIdentifier.externalIdCommonName.content}} {{externalIdentifier.externalIdReference.content}}</a></p>
-		     			</td>
-			   			<td class="padRgt">
-			   				<p><a ng-click="deleteExternalIdentifier($index)" class="glyphicon glyphicon-trash grey"></a></p>
-			   			</td>		        		
-		        	</tr>
-		        </table>
+       			<p><strong><@orcid.msg 'public_profile.labelOtherIDs'/></strong></p>
+       			<div ng-repeat='externalIdentifier in externalIdentifiersPojo.externalIdentifiers'>
+		        			<span ng-hide="externalIdentifier.externalIdUrl">{{externalIdentifier.externalIdCommonName.content}} {{externalIdentifier.externalIdReference.content}}</span>
+		        			<span ng-show="externalIdentifier.externalIdUrl"><a href="{{externalIdentifier.externalIdUrl.value}}" target="_blank">{{externalIdentifier.externalIdCommonName.content}} {{externalIdentifier.externalIdReference.content}}</a></span>
+			   				<a ng-click="deleteExternalIdentifier($index)" class="glyphicon glyphicon-trash grey"></a>       			
+       			</div>
 			</div>							    
 	        <@security.authorize ifAnyGranted="ROLE_ADMIN, ROLE_GROUP, ROLE_BASIC, ROLE_BASIC_INSTITUTION, ROLE_PREMIUM, ROLE_PREMIUM_INSTITUTION">
 	        	 <p><a href="<@spring.url "/manage-clients" />">${springMacroRequestContext.getMessage("workspace.ManageClientCredentials")}</a></p>	        	 
