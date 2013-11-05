@@ -1450,7 +1450,7 @@ a:hover {
 	padding-left: 10px;
 }
 
-.show-work-info{
+.more-info{
 	float: left;
     width: 33px;
 }
@@ -2794,7 +2794,7 @@ ul.personal-inf-display li{
 	margin-top:20px;	
 }
 
-.popover-work-container {	
+.more-info-container {
 	display: none;
 	position: absolute; 
 	left: -463px; 
@@ -2805,15 +2805,15 @@ ul.personal-inf-display li{
 	height: 350px;
 }
 
-.show-work-info:hover .popover-work-container {
+.more-info:hover .more-info-container {
 	display: inline;
 }
 
-.show-work-info .popover.bottom .arrow{
+.more-info .popover.bottom .arrow{
 	left: 484px !important;
 }
 
-.show-work-info .lightbox-container{
+.more-info .lightbox-container{
 	position:absolute;
 	top:0;
 	-webkit-overflow-scrolling: touch;
@@ -2824,19 +2824,19 @@ ul.personal-inf-display li{
 	
 }
 
-.show-work-info .lightbox-container::-webkit-scrollbar{
+.more-info .lightbox-container::-webkit-scrollbar{
     -webkit-appearance: none;
 }
 
-.show-work-info .lightbox-container::-webkit-scrollbar:vertical {
+.more-info .lightbox-container::-webkit-scrollbar:vertical {
     width: 11px;
 }
 
-.show-work-info .lightbox-container::-webkit-scrollbar:horizontal {
+.more-info .lightbox-container::-webkit-scrollbar:horizontal {
     height: 11px;
 }
 
-.show-work-info .lightbox-container::-webkit-scrollbar-thumb {
+.more-info .lightbox-container::-webkit-scrollbar-thumb {
     border-radius: 8px;
     border: 2px solid white;
     background-color: rgba(0, 0, 0, .3);
@@ -3486,12 +3486,12 @@ ul.personal-inf-display li{
 	}
 	
 	/* Work List*/
-	.popover-work-container{		
+	.more-info-container{		
 		max-width:100%;
 		left:0;		
 	}
 
-	.show-work-info .popover.bottom .arrow{
+	.more-info .popover.bottom .arrow{
 		left: 27px !important;
 	}
 	
