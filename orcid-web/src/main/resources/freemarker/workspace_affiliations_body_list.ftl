@@ -234,7 +234,7 @@
 	        <div class="col-md-4 col-sm-4 workspace-toolbar">
 	        	<ul class="workspace-private-toolbar">
 	        		<li>	
-			        	<a href ng-click="deleteAffiliation(affiliation.putCode.value)" class="icon-trash orcid-icon-trash grey"></a>
+			        	<a href ng-click="deleteAffiliation(affiliation.putCode.value)" class="glyphicon glyphicon-trash grey"></a>
 			        </li>
 			        <li>
 						<@orcid.privacyToggle "affiliation.visibility.visibility" "setPrivacy(affiliation.putCode.value, 'PUBLIC', $event)" 

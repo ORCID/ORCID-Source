@@ -29,7 +29,7 @@
             <input name="givenNames" type="text" class="input-xlarge" ng-model="register.givenNames.value" ng-model-onblur ng-change="serverValidate('GivenNames')"/>
             <span class="required" ng-class="isValidClass(register.givenNames)">*</span>
 			<div class="popover-help-container">
-                <a href="javascript:void(0);"><i class="icon-question-sign"></i></a>
+                <a href="javascript:void(0);"><i class="glyphicon glyphicon-question-sign"></i></a>
                 <div id="name-help" class="popover bottom">
 			        <div class="arrow"></div>
 			        <div class="popover-content">

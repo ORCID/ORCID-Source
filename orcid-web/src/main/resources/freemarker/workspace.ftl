@@ -83,7 +83,7 @@
 		        			<p ng-show="externalIdentifier.externalIdUrl"><a href="{{externalIdentifier.externalIdUrl.value}}" target="_blank">{{externalIdentifier.externalIdCommonName.content}} {{externalIdentifier.externalIdReference.content}}</a></p>
 		     			</td>
 			   			<td class="padRgt">
-			   				<p><a ng-click="deleteExternalIdentifier($index)" class="icon-trash orcid-icon-trash grey"></a></p>
+			   				<p><a ng-click="deleteExternalIdentifier($index)" class="glyphicon glyphicon-trash grey"></a></p>
 			   			</td>		        		
 		        	</tr>
 		        </table>

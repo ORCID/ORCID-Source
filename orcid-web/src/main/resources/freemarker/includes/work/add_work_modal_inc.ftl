@@ -73,8 +73,8 @@
 							<div ng-repeat='error in editWork.workTitle.title.errors' ng-bind-html-unsafe="error"></div>
 						</span>
 						<div class="add-item-link">
-							<span ng-hide="editTranslatedTitle"><a ng-click="toggleTranslatedTitleModal()" class="icon-plus-sign blue"><@orcid.msg 'manual_work_form_contents.labelshowtranslatedtitle'/></a></span>
-							<span ng-show="editTranslatedTitle"><a ng-click="toggleTranslatedTitleModal()" class="icon-minus-sign blue"><@orcid.msg 'manual_work_form_contents.labelhidetranslatedtitle'/></a></span>
+							<span ng-hide="editTranslatedTitle"><a ng-click="toggleTranslatedTitleModal()" class="glyphicon glyphicon-plus-sign blue"><@orcid.msg 'manual_work_form_contents.labelshowtranslatedtitle'/></a></span>
+							<span ng-show="editTranslatedTitle"><a ng-click="toggleTranslatedTitleModal()" class="glyphicon glyphicon-minus-sign blue"><@orcid.msg 'manual_work_form_contents.labelhidetranslatedtitle'/></a></span>
 						</div>
 					</div>
 				</div>

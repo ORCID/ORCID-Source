@@ -1452,11 +1452,12 @@ a:hover {
 
 .show-work-info{
 	float: left;
-    line-height: 30px;
     width: 33px;
 }
 
+
 .workspace-toolbar{
+    line-height: 30px;
 	margin-top: 15px;	
 }
 
@@ -1464,11 +1465,6 @@ a:hover {
 	margin:0 40px 0 0;
 	padding:0;
 	float:right;
-}
-
-.workspace-private-toolbar li a.icon-trash{
-	margin-right: 15px;
-    vertical-align: 10px;
 }
 
 .orcid-id {
@@ -1641,11 +1637,6 @@ a:hover {
 
 .workspace-body-list ul.workspace-controls li{
 	display: inline-block;
-}
-
-.workspace-body-list ul.workspace-controls li a.icon-trash{
-	font-size: 20px;
-	vertical-align: 7px;
 }
 
 .workspace-body-list ul.workspace-controls li a i{
@@ -2621,10 +2612,6 @@ a.btn-primary:hover {
 	margin-bottom: 0px;
 }
 
-.orcid-icon-trash {
-	background-color: white;
-}
-
 .orcid-red-background-input {
 	background-color: #ffcccc !important;
 }
@@ -3319,13 +3306,8 @@ ul.personal-inf-display li{
 		display: block;		
 		margin-top:10px;
 	}
-	
-	.workspace-top .icon-plus-sign.grey,
-	.workspace-private-toolbar li a.icon-trash{
-		font-size: 30px;
-	}
-	
-	.workspace-toolbar{
+
+    .workspace-toolbar{
 		border-bottom: 1px solid #CACACA;
 	    height: 50px;
 	    margin-top: 15px;
@@ -3333,18 +3315,9 @@ ul.personal-inf-display li{
 	    padding-left: 10px;
 	}
 	
-	.workspace-private-toolbar .icon-question-sign{
+	.workspace-private-toolbar .glyphicon {
 		line-height: 20px;
 	}	
-	
-	.workspace-toolbar .icon-plus-sign.grey{
-		line-height: 32px;
-	}
-	
-	.workspace-private-toolbar li a.icon-trash{
-		vertical-align: 4px;
-		margin-left: 7px;
-	}
 	
 	.workspace-private-toolbar{		
     	padding-bottom: 15px;
@@ -3421,10 +3394,6 @@ ul.personal-inf-display li{
 		line-height: 18px;
 	}	
 	
-	
-	.settings-table .icon-trash{
-		font-size: 24px;
-	}
 	
 	.settings-table .input-xlarge{
 		width: 80%;
