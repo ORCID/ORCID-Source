@@ -299,7 +299,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             WorkTitle workTitle = orcidWork.getWorkTitle();
             if (workTitle != null) {
                 workEntity.setSubtitle(workTitle.getSubtitle() != null ? workTitle.getSubtitle().getContent() : null);
-                workEntity.setTitle(workTitle.getTitle() != null ? workTitle.getTitle().getContent() : null);
+                workEntity.setTitle(workTitle.getTitle() != null ? workTitle.getTitle().getContent().trim() : null);
                 TranslatedTitle translatedTitle = workTitle.getTranslatedTitle();
                 if (translatedTitle != null) {
                     workEntity.setTranslatedTitle(StringUtils.isEmpty(translatedTitle.getContent()) ? null : translatedTitle.getContent());
