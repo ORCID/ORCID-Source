@@ -122,7 +122,6 @@ import org.orcid.persistence.jpa.entities.GrantContributorEntity;
 import org.orcid.persistence.jpa.entities.GrantEntity;
 import org.orcid.persistence.jpa.entities.GrantSourceEntity;
 import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
-import org.orcid.persistence.jpa.entities.OrgDisambiguatedEntity;
 import org.orcid.persistence.jpa.entities.OrgEntity;
 import org.orcid.persistence.jpa.entities.OtherNameEntity;
 import org.orcid.persistence.jpa.entities.PatentContributorEntity;

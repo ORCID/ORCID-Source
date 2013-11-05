@@ -16,7 +16,9 @@
  */
 package org.orcid.core.manager;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 import java.io.InputStreamReader;
 import java.util.Arrays;
@@ -26,14 +28,17 @@ import javax.annotation.Resource;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.orcid.core.BaseTest;
+import org.orcid.core.utils.JsonUtils;
 import org.orcid.jaxb.model.message.Contributor;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidWork;
 import org.orcid.jaxb.model.message.OrcidWorks;
+import org.orcid.jaxb.model.message.WorkContributors;
+import org.orcid.persistence.dao.WorkDao;
+import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -48,6 +53,9 @@ public class OrcidProfileManagerContributorVisibilityTest extends BaseTest {
     @Resource
     private OrcidProfileManager orcidProfileManager;
 
+    @Resource
+    private WorkDao workDao;
+
     @BeforeClass
     public static void initDBUnitData() throws Exception {
         initDBUnitData(Arrays.asList("/data/SecurityQuestionEntityData.xml", "/data/SubjectEntityData.xml", "/data/ProfileEntityData.xml"), null);
@@ -59,7 +67,6 @@ public class OrcidProfileManagerContributorVisibilityTest extends BaseTest {
                 Arrays.asList("/data/EmptyEntityData.xml", "/data/ProfileEntityData.xml", "/data/SubjectEntityData.xml", "/data/SecurityQuestionEntityData.xml"), null);
     }
 
-    @Ignore
     @Test
     @Transactional
     public void emailProvidedButDoesNotExistInDb() {
@@ -70,15 +77,23 @@ public class OrcidProfileManagerContributorVisibilityTest extends BaseTest {
         // Add the work
         orcidProfileManager.addOrcidWorks(orcidMessage.getOrcidProfile());
 
-        // Get it back from the DB
-        OrcidWork retrievedWork = retrieveAddedWork();
+        // Get it back from the API
+        OrcidWork retrievedWork = retrieveAddedWorkFromApi();
         Contributor workContributor = retrievedWork.getWorkContributors().getContributor().get(0);
 
         // Check that the contributor name is included in the resulting work
         assertEquals("Test Contributor Name", workContributor.getCreditName().getContent());
 
-        // Check that the email is not included in the resulting work
+        // Check that the email is not included in the resulting work, because
+        // never want to show email
         assertNull(workContributor.getContributorEmail());
+
+        // Get the contributor directly from the DB so can see stuff not
+        // included in the API
+        Contributor workContributorDirectFromDb = retrieveWorkContributorEntityDirectlyFromDb(retrievedWork);
+
+        // Check the email is in the DB for later use if needed
+        assertEquals("doesnotexist@orcid.org", workContributorDirectFromDb.getContributorEmail().getValue());
     }
 
     @Test
@@ -93,18 +108,18 @@ public class OrcidProfileManagerContributorVisibilityTest extends BaseTest {
         // Add the work
         orcidProfileManager.addOrcidWorks(orcidMessage.getOrcidProfile());
 
-        // Get it back from the DB
-        OrcidWork retrievedWork = retrieveAddedWork();
+        // Get it back from the API
+        OrcidWork retrievedWork = retrieveAddedWorkFromApi();
         Contributor workContributor = retrievedWork.getWorkContributors().getContributor().get(0);
 
         // Check that the contributor name is included in the resulting work
         assertEquals("U. Name", workContributor.getCreditName().getContent());
 
-        // Check that the email is also included in the resulting work
-        assertEquals("user@email.com", workContributor.getContributorEmail().getValue());
+        // Check that the email is not included in the resulting work, because
+        // never want to show email
+        assertNull(workContributor.getContributorEmail());
     }
 
-    @Ignore
     @Test
     @Transactional
     public void emailProvidedAndDoesExistInDbButCreditNameAndEmailArePrivate() {
@@ -117,8 +132,8 @@ public class OrcidProfileManagerContributorVisibilityTest extends BaseTest {
         // Add the work
         orcidProfileManager.addOrcidWorks(orcidMessage.getOrcidProfile());
 
-        // Get it back from the DB
-        OrcidWork retrievedWork = retrieveAddedWork();
+        // Get it back from the API
+        OrcidWork retrievedWork = retrieveAddedWorkFromApi();
         Contributor workContributor = retrievedWork.getWorkContributors().getContributor().get(0);
 
         // Check that the contributor name is not included in the resulting
@@ -126,8 +141,15 @@ public class OrcidProfileManagerContributorVisibilityTest extends BaseTest {
         assertNull(workContributor.getCreditName());
 
         // Check that the email is not included in the resulting work, because
-        // it is private
+        // never want to show email
         assertNull(workContributor.getContributorEmail());
+
+        // Get the contributor directly from the DB so can see stuff not
+        // included in the API
+        Contributor workContributorDirectFromDb = retrieveWorkContributorEntityDirectlyFromDb(retrievedWork);
+
+        // Check the email is in the DB for later use if needed
+        assertEquals("otis@reading.com", workContributorDirectFromDb.getContributorEmail().getValue());
     }
 
     @Test
@@ -140,8 +162,8 @@ public class OrcidProfileManagerContributorVisibilityTest extends BaseTest {
         // Add the work
         orcidProfileManager.addOrcidWorks(orcidMessage.getOrcidProfile());
 
-        // Get it back from the DB
-        OrcidWork retrievedWork = retrieveAddedWork();
+        // Get it back from the API
+        OrcidWork retrievedWork = retrieveAddedWorkFromApi();
         Contributor workContributor = retrievedWork.getWorkContributors().getContributor().get(0);
 
         // Check that the contributor name is not included in the resulting
@@ -149,7 +171,7 @@ public class OrcidProfileManagerContributorVisibilityTest extends BaseTest {
         assertNull(workContributor.getCreditName());
 
         // Check that the email is not included in the resulting work, because
-        // the ORCID does not exist
+        // never want to show email
         assertNull(workContributor.getContributorEmail());
     }
 
@@ -165,18 +187,18 @@ public class OrcidProfileManagerContributorVisibilityTest extends BaseTest {
         // Add the work
         orcidProfileManager.addOrcidWorks(orcidMessage.getOrcidProfile());
 
-        // Get it back from the DB
-        OrcidWork retrievedWork = retrieveAddedWork();
+        // Get it back from the API
+        OrcidWork retrievedWork = retrieveAddedWorkFromApi();
         Contributor workContributor = retrievedWork.getWorkContributors().getContributor().get(0);
 
         // Check that the contributor name is included in the resulting work
         assertEquals("U. Name", workContributor.getCreditName().getContent());
 
-        // Check that the email is also included in the resulting work
-        assertEquals("user@email.com", workContributor.getContributorEmail().getValue());
+        // Check that the email is not included in the resulting work, because
+        // never want to show email
+        assertNull(workContributor.getContributorEmail());
     }
 
-    @Ignore
     @Test
     @Transactional
     public void orcidProvidedAndDoesExistInDbButCreditNameAndEmailArePrivate() {
@@ -189,8 +211,8 @@ public class OrcidProfileManagerContributorVisibilityTest extends BaseTest {
         // Add the work
         orcidProfileManager.addOrcidWorks(orcidMessage.getOrcidProfile());
 
-        // Get it back from the DB
-        OrcidWork retrievedWork = retrieveAddedWork();
+        // Get it back from the API
+        OrcidWork retrievedWork = retrieveAddedWorkFromApi();
         Contributor workContributor = retrievedWork.getWorkContributors().getContributor().get(0);
 
         // Check that the contributor name is not included in the resulting
@@ -198,7 +220,7 @@ public class OrcidProfileManagerContributorVisibilityTest extends BaseTest {
         assertNull(workContributor.getCreditName());
 
         // Check that the email is not included in the resulting work, because
-        // it is private
+        // never want to show email
         assertNull(workContributor.getContributorEmail());
     }
 
@@ -211,15 +233,15 @@ public class OrcidProfileManagerContributorVisibilityTest extends BaseTest {
         // Add the work
         orcidProfileManager.addOrcidWorks(orcidMessage.getOrcidProfile());
 
-        // Get it back from the DB
-        OrcidWork retrievedWork = retrieveAddedWork();
+        // Get it back from the API
+        OrcidWork retrievedWork = retrieveAddedWorkFromApi();
         Contributor workContributor = retrievedWork.getWorkContributors().getContributor().get(0);
 
         // Check that the contributor name is included in the resulting work
         assertEquals("Test Contributor Name", workContributor.getCreditName().getContent());
 
         // Check that the email is not included in the resulting work, because
-        // it was not provided
+        // never want to show email
         assertNull(workContributor.getContributorEmail());
     }
 
@@ -227,13 +249,21 @@ public class OrcidProfileManagerContributorVisibilityTest extends BaseTest {
         return OrcidMessage.unmarshall(new InputStreamReader(getClass().getResourceAsStream(resourceName)));
     }
 
-    private OrcidWork retrieveAddedWork() {
+    private OrcidWork retrieveAddedWorkFromApi() {
         OrcidProfile retrieved = orcidProfileManager.retrieveOrcidProfile(TEST_ORCID);
         OrcidWorks orcidWorks = retrieved.retrieveOrcidWorks();
         assertNotNull(orcidWorks);
         List<OrcidWork> orcidWorkList = orcidWorks.getOrcidWork();
         assertEquals(1, orcidWorkList.size());
         return orcidWorkList.get(0);
+    }
+
+    private Contributor retrieveWorkContributorEntityDirectlyFromDb(OrcidWork retrievedWork) {
+        WorkEntity workEntity = workDao.find(Long.valueOf(retrievedWork.getPutCode()));
+        String contributorsJson = workEntity.getContributorsJson();
+        WorkContributors workContributors = JsonUtils.readObjectFromJsonString(contributorsJson, WorkContributors.class);
+        assertNotNull(workContributors);
+        return workContributors.getContributor().get(0);
     }
 
 }
