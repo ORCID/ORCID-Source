@@ -135,7 +135,9 @@
 	<div class="lightbox-container" id="duplicates-records">
 		<div class="row margin-top-box">			
 			<div class="col-md-6 col-sm-6 col-xs-12">
-	     		<h4>${springMacroRequestContext.getMessage("duplicate_researcher.wefoundfollowingrecords")}</h4>
+	     		<h4>${springMacroRequestContext.getMessage("duplicate_researcher.wefoundfollowingrecords")}
+	     		${springMacroRequestContext.getMessage("duplicate_researcher.to_access.1")}<a href="<@spring.url "/signin" />" target="signin">${springMacroRequestContext.getMessage("duplicate_researcher.to_access.2")}</a>${springMacroRequestContext.getMessage("duplicate_researcher.to_access.3")}
+	     		</h4>
      		</div>
      		<div class="col-md-6 col-sm-6 col-xs-12 right margin-top-box">
 	     	    <button class="btn btn-primary" ng-click="postRegisterConfirm()">${springMacroRequestContext.getMessage("duplicate_researcher.btncontinuetoregistration")}</button>

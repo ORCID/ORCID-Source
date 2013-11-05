@@ -93,7 +93,7 @@
 				<a href="${aboutUri}" id="logo-mini" class="pull-left"><img src="${staticCdn}/img/logo-orcid-mini.png" alt="ORCID logo" /></a>
 				<a href="#" id="mobile-settings" class="mobile-button mobile-settings"><span class="glyphicon glyphicon-cog"></span></a>                  
 				<a href="#" id="mobile-search" class="mobile-button mobile-search"><span class="glyphicon glyphicon-search"></span></a>
-				<a href="https://orcid.org/signin" id="mobile-sign-in" class="mobile-button mobile-sign-in"><span class="glyphicon glyphicon-user"></span></a>
+				<a href="<@spring.url "/signin" />" id="mobile-sign-in" class="mobile-button mobile-sign-in"><span class="glyphicon glyphicon-user"></span></a>
 				<!--  Desktop / Tablet menu -->                
                	<ul class="menu">
                    <li class="first expanded active-trail">
