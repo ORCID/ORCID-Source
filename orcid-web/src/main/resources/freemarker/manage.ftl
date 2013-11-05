@@ -90,7 +90,7 @@
 											</div>
 											<!-- Icon Trash / Privacy Settings -->
 											<div class="right">
-												<a href="" class="icon-trash orcid-icon-trash grey"
+												<a href="" class="glyphicon glyphicon-trash grey"
 													ng-show="email.primary == false"
 													ng-click="confirmDeleteEmail($index)"></a>
 											</div>
@@ -335,7 +335,7 @@
 							<#if scopePath_has_next>;&nbsp;</#if> </#list> </#if></td width="35%">
 						<td width="5%"><a
 							ng-click="confirmRevoke('${applicationSummary.applicationName.content?js_string}', '${applicationSummary_index}')"
-							class="icon-trash orcid-icon-trash grey"
+							class="glyphicon glyphicon-trash grey"
 							title="${springMacroRequestContext.getMessage("manage.revokeaccess")}"></a></td>
 					</form>
 				</tr>

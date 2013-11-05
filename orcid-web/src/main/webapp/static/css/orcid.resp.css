@@ -107,6 +107,11 @@ img {
 	margin: 15px;
 }
 
+.title-box{
+	border-bottom: 1px solid #dddddd;
+	margin-bottom: 15px; 
+}
+
 #map_canvas img {
 	max-width: none;
 }
@@ -1447,11 +1452,12 @@ a:hover {
 
 .more-info{
 	float: left;
-    line-height: 30px;
     width: 33px;
 }
 
+
 .workspace-toolbar{
+    line-height: 30px;
 	margin-top: 15px;	
 }
 
@@ -1459,11 +1465,6 @@ a:hover {
 	margin:0 40px 0 0;
 	padding:0;
 	float:right;
-}
-
-.workspace-private-toolbar li a.icon-trash{
-	margin-right: 15px;
-    vertical-align: 10px;
 }
 
 .orcid-id {
@@ -1636,11 +1637,6 @@ a:hover {
 
 .workspace-body-list ul.workspace-controls li{
 	display: inline-block;
-}
-
-.workspace-body-list ul.workspace-controls li a.icon-trash{
-	font-size: 20px;
-	vertical-align: 7px;
 }
 
 .workspace-body-list ul.workspace-controls li a i{
@@ -2106,7 +2102,7 @@ a:hover {
 }
 
 .lightbox-container{
-	padding: 0 15px 30px;
+	padding: 5px 15px 30px;
 }
 
 .no-icon {
@@ -2616,10 +2612,6 @@ a.btn-primary:hover {
 	margin-bottom: 0px;
 }
 
-.orcid-icon-trash {
-	background-color: white;
-}
-
 .orcid-red-background-input {
 	background-color: #ffcccc !important;
 }
@@ -2696,11 +2688,11 @@ ul.personal-inf-display li{
 	display: none;
 }
 
-.translated-title-section{
+.add-item-link{
 	color: #2DC0CE;
     float: right;
     font-size: 13px;
-    margin: 5px 49px 0 0;    
+    margin: 5px 17px 5px 0;    
 }
 
 .citation-title{
@@ -2810,7 +2802,7 @@ ul.personal-inf-display li{
 	width: 686px;
 	max-width: 686px;
 	background-color: #ffffff;
-	height: 175px;
+	height: 350px;
 }
 
 .more-info:hover .more-info-container {
@@ -2822,19 +2814,62 @@ ul.personal-inf-display li{
 }
 
 .more-info .lightbox-container{
-	overflow-y:scroll;
-	height: 175px;
+	position:absolute;
+	top:0;
+	-webkit-overflow-scrolling: touch;
+	overflow-y: scroll;
+	overflow-x: hidden;		
+	height: 345px;
+	width: 100%;
+	
 }
+
+.more-info .lightbox-container::-webkit-scrollbar{
+    -webkit-appearance: none;
+}
+
+.more-info .lightbox-container::-webkit-scrollbar:vertical {
+    width: 11px;
+}
+
+.more-info .lightbox-container::-webkit-scrollbar:horizontal {
+    height: 11px;
+}
+
+.more-info .lightbox-container::-webkit-scrollbar-thumb {
+    border-radius: 8px;
+    border: 2px solid white;
+    background-color: rgba(0, 0, 0, .3);
+}
+
 
 .data-row-group .col-md-2{
 	padding-left: 0;
 }
 
+.table-container{
+	overflow-y: scroll;
+	overflow-x: normal;
+	margin-top: 15px;
+}
+
+.table th, .table td {
+    border-top: 1px solid #DDDDDD;
+    line-height: 20px;
+    padding: 8px;
+    text-align: left;
+    vertical-align: top;
+}
+
 
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */
+		
 	.alert .small {
 		float: none !important;
+	}
+	.centered-mobile{
+		text-align:center;
 	}
 	.container {
 		position: relative;
@@ -3271,13 +3306,8 @@ ul.personal-inf-display li{
 		display: block;		
 		margin-top:10px;
 	}
-	
-	.workspace-top .icon-plus-sign.grey,
-	.workspace-private-toolbar li a.icon-trash{
-		font-size: 30px;
-	}
-	
-	.workspace-toolbar{
+
+    .workspace-toolbar{
 		border-bottom: 1px solid #CACACA;
 	    height: 50px;
 	    margin-top: 15px;
@@ -3285,18 +3315,9 @@ ul.personal-inf-display li{
 	    padding-left: 10px;
 	}
 	
-	.workspace-private-toolbar .icon-question-sign{
+	.workspace-private-toolbar .glyphicon {
 		line-height: 20px;
 	}	
-	
-	.workspace-toolbar .icon-plus-sign.grey{
-		line-height: 32px;
-	}
-	
-	.workspace-private-toolbar li a.icon-trash{
-		vertical-align: 4px;
-		margin-left: 7px;
-	}
 	
 	.workspace-private-toolbar{		
     	padding-bottom: 15px;
@@ -3373,10 +3394,6 @@ ul.personal-inf-display li{
 		line-height: 18px;
 	}	
 	
-	
-	.settings-table .icon-trash{
-		font-size: 24px;
-	}
 	
 	.settings-table .input-xlarge{
 		width: 80%;
@@ -3525,6 +3542,51 @@ ul.personal-inf-display li{
 	#duplicates-records .btn-primary{
 		font-size: 14px !important;
 	}
+	
+	/* Reset Password w/ Security Question */
+	#reg-form-password #retypedPassword,
+	#reg-form-password #passwordField{
+		width: 85%;
+	}
+	
+	#reg-form-password #securityQuestionAnswer{
+		width: 100%;
+	}
+	
+	#reg-form-password select{
+		-webkit-appearance: listbox;
+	}
+	
+	#reg-form-password .popover-help-container .popover{
+		left: -245px !important;
+	}
+	
+	#reg-form-password  .popover.bottom .arrow{
+		left: 255px !important;
+	}
+	
+	#claim input[type="password"]{
+		width: 85%;
+	}
+	
+	#claim .popover-help-container .popover{
+		left: -245px !important;
+	}
+	
+	#claim .popover.bottom .arrow{
+		left: 255px !important;
+	}
+	
+	#claim .privacy .popover-help-container .popover{
+		left: -110px !important;
+	}
+	
+	#claim .privacy .popover.bottom .arrow{
+		left: 120px !important;
+	}
+	
+	
+	
 }
 
 @media ( max-width : 980px) { /* Tablet */

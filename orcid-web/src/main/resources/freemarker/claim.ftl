@@ -17,6 +17,7 @@
 
 -->
 <@protected>
+<div id="claim">
    <div class="row">        
         <div class="col-md-offset-3 col-md-9 col-sm-offset-3 col-sm-9 col-xs-12"> 
 		<h2>${springMacroRequestContext.getMessage("claim.claimyourrecord")}</h2>
@@ -33,7 +34,7 @@
 	                            <input type="password" name="password" class="input-xlarge" ng-model="register.password.value" ng-change="serverValidate('Password')"/>
 	                            <span class="required" ng-class="isValidClass(register.password)">*</span>
 					   			<div class="popover-help-container" style="display: inline; position: relative;">
-	                                <a href="javascript:void(0);"><i class="icon-question-sign"></i></a>
+	                                <a href="javascript:void(0);"><i class="glyphicon glyphicon-question-sign"></i></a>
 	                                <div id="name-help" class="popover bottom">
 								        <div class="arrow"></div>
 								        <div class="popover-content">
@@ -67,14 +68,14 @@
 					   			</span>
 	                        </div>
 	                    </div>
-	     				<div style="margin-bottom: 20px; margin-top: 10px;">
+	     				<div class="margin-top-box privacy">
 	                        <label class="privacy-toggle-lbl">${springMacroRequestContext.getMessage("register.labelDefaultprivacyfornewworks")}</label>
 	                        <@orcid.privacyToggle "register.workVisibilityDefault.visibility" "updateWorkVisibilityDefault('PUBLIC', $event)"
 	                        	"updateWorkVisibilityDefault('LIMITED', $event)" "updateWorkVisibilityDefault('PRIVATE', $event)" />
 	                    </div>                    
-		                <div style="margin-bottom: 15px;">
+		                <div class="margin-top-box">
 		                    <div class="relative">
-		                        <label>${springMacroRequestContext.getMessage("claim.notificationemail")}</label>
+		                        <label></strong>${springMacroRequestContext.getMessage("claim.notificationemail")}</label>
 		                        <label class="checkbox">
 		                            <input type="checkbox" name="sendOrcidChangeNotifications" ng-model="register.sendChangeNotifications.value"/>
 		                            ${springMacroRequestContext.getMessage("register.labelsendmenotifications")}
@@ -85,19 +86,19 @@
 		                        </label>
 		                     </div>
 						</div>
-	                    <div>
-		                    <div class="relative"  style="margin-bottom: 15px;">
+	                    <div class="margin-top-box">
+		                    <div class="relative">
 		                        <label>${springMacroRequestContext.getMessage("register.labelTermsofUse")} <span class="required"  ng-class="{'text-error':register.termsOfUse.value == false}">*</span></label>
-		                        <label class="checkbox" style="width: 480px;">
-		                        <input type="checkbox" name="acceptTermsAndConditions" ng-model="register.termsOfUse.value" ng-change="serverValidate('TermsOfUse')"/>
-		                        ${springMacroRequestContext.getMessage("register.labelconsent")} <a href="${aboutUri}/footer/privacy-policy" target="_blank">${springMacroRequestContext.getMessage("register.labelprivacypolicy")}</a> ${springMacroRequestContext.getMessage("register.labeland")} ${springMacroRequestContext.getMessage("common.termsandconditions1")}<a href="${aboutUri}/content/orcid-terms-use" target="_blank">${springMacroRequestContext.getMessage("common.termsandconditions2")}</a> ${springMacroRequestContext.getMessage("common.termsandconditions3")}</p>
+		                        <label class="checkbox">
+		                        	<input type="checkbox" name="acceptTermsAndConditions" ng-model="register.termsOfUse.value" ng-change="serverValidate('TermsOfUse')"/>
+		                        	${springMacroRequestContext.getMessage("register.labelconsent")} <a href="${aboutUri}/footer/privacy-policy" target="_blank">${springMacroRequestContext.getMessage("register.labelprivacypolicy")}</a> ${springMacroRequestContext.getMessage("register.labeland")} ${springMacroRequestContext.getMessage("common.termsandconditions1")}<a href="${aboutUri}/content/orcid-terms-use" target="_blank">${springMacroRequestContext.getMessage("common.termsandconditions2")}</a> ${springMacroRequestContext.getMessage("common.termsandconditions3")}</p>
 		                        </label>
 		                        <span class="orcid-error" ng-show="register.termsOfUse.errors.length > 0">
 									<div ng-repeat='error in register.termsOfUse.errors' ng-bind-html-unsafe="error"></div>
 					   			</span>
 		                    </div>
 	                	</div>   
-		                <div class="relative">
+		                <div class="relative centered-mobile">
 		                      <button type="submit" class="btn btn-primary" ng-click="postClaim()">${springMacroRequestContext.getMessage("claim.btnClaim")}</button>
 		                      <span ng-show="postingClaim" ng-cloak>
 		                      	<i class="icon-spinner icon-2x icon-spin  green"></i>
@@ -105,6 +106,7 @@
 		                </div>  
 	                </div> 
 				</div>
-</div>
+		</div>
+	</div>
 </div>
 </@protected>

@@ -46,7 +46,7 @@
                     <div class="control-group"> 
              			<label for="firstName">${springMacroRequestContext.getMessage("manage_bio_settings.labelfirstname")}</label>             			
              			<div class="relative"><@spring.formInput "changePersonalInfoForm.firstName" 'class="input-xlarge"'/>
-             			<a href="http://support.orcid.org/knowledgebase/articles/142948-names-in-the-orcid-registry" target="_blank"><i class="icon-question-sign"></i></a>
+             			<a href="http://support.orcid.org/knowledgebase/articles/142948-names-in-the-orcid-registry" target="_blank"><i class="glyphicon glyphicon-question-sign"></i></a>
              			</div>
              		</div>
                     <div class="control-group"> 
@@ -135,7 +135,7 @@
                       		<#else> 
                       		    <a href="${savedResearcherUrl.url.value}">${savedResearcherUrl.url.value}</a>
                       		</#if>
-                      		<a href="" class="icon-trash orcid-icon-trash grey delete-url" ng-click="deleteEmail($index)" title="remove url"></a>
+                      		<a href="" class="glyphicon glyphicon-trash grey delete-url" ng-click="deleteEmail($index)" title="remove url"></a>
                       		</p>     		    
                     </#list>
              	</#if>

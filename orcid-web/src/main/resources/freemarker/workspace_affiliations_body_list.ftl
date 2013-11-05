@@ -52,7 +52,7 @@
 	        	<#include "includes/affiliate/affiliate_more_info_inc.ftl"/>
 	        	<ul class="workspace-private-toolbar">
 	        		<li>	
-			        	<a href ng-click="deleteAffiliation(affiliation.putCode.value)" class="icon-trash orcid-icon-trash grey"></a>
+			        	<a href ng-click="deleteAffiliation(affiliation.putCode.value)" class="glyphicon glyphicon-trash grey"></a>
 			        </li>
 			        <li>
 						<@orcid.privacyToggle "affiliation.visibility.visibility" "setPrivacy(affiliation.putCode.value, 'PUBLIC', $event)" 
