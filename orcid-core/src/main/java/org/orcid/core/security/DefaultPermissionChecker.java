@@ -142,16 +142,6 @@ public class DefaultPermissionChecker implements PermissionChecker {
         } else if (OrcidOAuth2Authentication.class.isAssignableFrom(authentication.getClass())) {
             OrcidOAuth2Authentication auth2Authentication = (OrcidOAuth2Authentication) authentication;
             Set<Visibility> visibilities = getVisibilitiesForOauth2Authentication(auth2Authentication, orcidMessage, requiredScope);
-            if (requiredScope.isWriteOperationScope()) {
-                OrcidOauth2TokenDetail tokenDetail = orcidOauthTokenDetailService.findNonDisabledByTokenValue(auth2Authentication.getActiveToken());
-                Date now = new Date();
-                tokenDetail.getDateCreated();
-                if (now.getTime() > 
-                    tokenDetail.getDateCreated().getTime() + (orcidRandomValueTokenServices.getWriteValiditySeconds() * 1000)) {
-                    removeWriteScopes(tokenDetail);
-                    orcidOauthTokenDetailService.saveOrUpdate(tokenDetail);
-                }
-            }
             return visibilities;
         } else {
             throw new IllegalArgumentException("Cannot obtain authentication details from " + authentication);
@@ -245,6 +235,18 @@ public class DefaultPermissionChecker implements PermissionChecker {
     private void checkScopes(OAuth2Authentication oAuth2Authentication, ScopePathType requiredScope) {
         AuthorizationRequest authorizationRequest = oAuth2Authentication.getAuthorizationRequest();
         Set<String> requestedScopes = authorizationRequest.getScope();
+        if (requiredScope.isWriteOperationScope()) {
+            OrcidOAuth2Authentication orcidOauth2Authentication = (OrcidOAuth2Authentication) oAuth2Authentication;
+            OrcidOauth2TokenDetail tokenDetail = orcidOauthTokenDetailService.findNonDisabledByTokenValue(orcidOauth2Authentication.getActiveToken());
+            Date now = new Date();
+            tokenDetail.getDateCreated();
+            if (now.getTime() > 
+                tokenDetail.getDateCreated().getTime() + (orcidRandomValueTokenServices.getWriteValiditySeconds() * 1000)) {
+                removeWriteScopes(tokenDetail);
+                orcidOauthTokenDetailService.saveOrUpdate(tokenDetail);
+                throw new AccessControlException("Write scopes for this token have expired " + requestedScopes);
+            }
+        }
         if (!hasRequiredScope(requestedScopes, requiredScope)) {
             throw new AccessControlException("Insufficient or wrong scope " + requestedScopes);
         }
