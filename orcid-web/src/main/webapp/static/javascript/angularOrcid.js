@@ -1498,7 +1498,7 @@ function PublicWorkCtrl($scope, $compile, worksSrvc) {
     $scope.renderLanguageName = function(workIdx) {
 		if($scope.languages == null) {
 			$.ajax({
-				url: $('body').data('baseurl') + 'works/languages.json',	        
+				url: $('body').data('baseurl') + orcidVar.orcidId + '/languages.json',	        
 		        dataType: 'json',
 		        success: function(data) {
 		        	$scope.languages = data;
@@ -1516,7 +1516,7 @@ function PublicWorkCtrl($scope, $compile, worksSrvc) {
 	$scope.renderCountryName = function(workIdx) {
 		if($scope.countries == null) {
 			$.ajax({
-				url: $('body').data('baseurl') + 'works/countries.json',	        
+				url: $('body').data('baseurl') + orcidVar.orcidId + '/countries.json',	        
 		        dataType: 'json',
 		        success: function(data) {
 		        	$scope.countries = data;
@@ -1539,12 +1539,12 @@ function PublicWorkCtrl($scope, $compile, worksSrvc) {
 				
 			if($scope.languages == null) {
 				$.ajax({
-					url: $('body').data('baseurl') + 'works/languages.json',	        
+					url: $('body').data('baseurl') + orcidVar.orcidId + '/languages.json',	        
 			        dataType: 'json',
 			        success: function(data) {
 			        	$scope.languages = data;
 			        	if($scope.languages[$scope.works[workIdx].workTitle.translatedTitle.languageCode])
-							info += ' - ' + $scope.languages[$scope.works[workIdx].workTitle.translatedTitle.languageCode.content];
+							info += ' - ' + $scope.languages[$scope.works[workIdx].workTitle.translatedTitle.languageCode];
 			        }
 				}).fail(function(){
 					// something bad is happening!
@@ -1553,7 +1553,7 @@ function PublicWorkCtrl($scope, $compile, worksSrvc) {
 			} else {
 				if($scope.languages[$scope.works[workIdx].workTitle.translatedTitle.languageCode])
 					info += ' - ' + $scope.languages[$scope.works[workIdx].workTitle.translatedTitle.languageCode];
-			}
+			}									
 		}
 		
 		return info;
