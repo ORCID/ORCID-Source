@@ -1531,9 +1531,37 @@ function PublicWorkCtrl($scope, $compile, worksSrvc) {
 		}
 	};
 	
+	$scope.renderTranslatedTitleInfo = function(workIdx) {
+		var info = null; 
+		
+		if($scope.works[workIdx].workTitle != null && $scope.works[workIdx].workTitle.translatedTitle != null) {
+			info = $scope.works[workIdx].workTitle.translatedTitle.content;
+				
+			if($scope.languages == null) {
+				$.ajax({
+					url: $('body').data('baseurl') + 'works/languages.json',	        
+			        dataType: 'json',
+			        success: function(data) {
+			        	$scope.languages = data;
+			        	if($scope.languages[$scope.works[workIdx].workTitle.translatedTitle.languageCode])
+							info += ' - ' + $scope.languages[$scope.works[workIdx].workTitle.translatedTitle.languageCode.content];
+			        }
+				}).fail(function(){
+					// something bad is happening!
+			    	console.log("error fetching languages");
+				});
+			} else {
+				if($scope.languages[$scope.works[workIdx].workTitle.translatedTitle.languageCode])
+					info += ' - ' + $scope.languages[$scope.works[workIdx].workTitle.translatedTitle.languageCode];
+			}
+		}
+		
+		return info;
+	};
+	
 	$scope.getLanguageName = function(workIdx){		
 		var language = null;
-		if($scope.works[workIdx].languageCode != null) {
+		if($scope.works[workIdx].languageCode != null) {			
 			language = $scope.languages[$scope.works[workIdx].languageCode.value];
 		}
 		
@@ -1747,7 +1775,7 @@ function WorkCtrl($scope, $compile, worksSrvc) {
 	
 	$scope.renderTranslatedTitleInfo = function(workIdx) {
 		if($scope.languages == null)
-			$scope.getLanguages;
+			$scope.getLanguages();
 		
 		var info = null; 
 		
