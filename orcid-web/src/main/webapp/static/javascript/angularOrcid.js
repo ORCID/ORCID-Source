@@ -1462,8 +1462,8 @@ function PublicWorkCtrl($scope, $compile, worksSrvc) {
 	$scope.numOfWorksToAdd = null;
 	$scope.showBibtex = true;
 	$scope.bibtexCitations = {};
-	$scope.languages = null;
-	$scope.countries = null;
+	$scope.languages = {};
+	$scope.countries = {};
 
     $scope.bibtexShowToggle = function () {
     	$scope.showBibtex = !($scope.showBibtex);
@@ -1478,12 +1478,9 @@ function PublicWorkCtrl($scope, $compile, worksSrvc) {
 				success: function(data) {
 					$scope.$apply(function(){ 
 						for (i in data) {
-							var dw = data[i];
-                            
-							removeBadContributors(dw);
-							
-							addBibtexCitation($scope,dw);
-							
+							var dw = data[i];                            
+							removeBadContributors(dw);							
+							addBibtexCitation($scope,dw);							
 							$scope.works.push(dw);
 						}
 					});
@@ -1495,65 +1492,50 @@ function PublicWorkCtrl($scope, $compile, worksSrvc) {
 		}
 	}; 
     
-    $scope.renderLanguageName = function(workIdx) {
-		if($scope.languages == null) {
-			$.ajax({
-				url: $('body').data('baseurl') + orcidVar.orcidId + '/languages.json',	        
-		        dataType: 'json',
-		        success: function(data) {
-		        	$scope.languages = data;
-		        	return $scope.getLanguageName(workIdx);
-		        }
-			}).fail(function(){
-				// something bad is happening!
-		    	console.log("error fetching languages");
-			});
-		} else {
-			return $scope.getLanguageName(workIdx);
-		}
-	};
-    
-	$scope.renderCountryName = function(workIdx) {
-		if($scope.countries == null) {
-			$.ajax({
-				url: $('body').data('baseurl') + orcidVar.orcidId + '/countries.json',	        
-		        dataType: 'json',
-		        success: function(data) {
-		        	$scope.countries = data;
-		        	return $scope.getCountryName(workIdx);
-		        }
-			}).fail(function(){
-				// something bad is happening!
-		    	console.log("error fetching countries");
-			});
-		} else {
-			return $scope.getCountryName(workIdx);
-		}
+	$scope.getCountries = function() {
+		$.ajax({
+			url: $('body').data('baseurl') + orcidVar.orcidId + '/countries.json',	        
+	        dataType: 'json',
+	        success: function(data) {
+	        	$scope.countries = data;
+	        	$scope.$apply();
+	        }
+		}).fail(function(){
+			// something bad is happening!
+	    	console.log("error fetching countries");
+		});
 	};
 	
+	$scope.getLanguages = function() {
+		$.ajax({
+			url: $('body').data('baseurl') + orcidVar.orcidId + '/languages.json',	        
+	        dataType: 'json',
+	        success: function(data) {
+	        	$scope.languages = data;
+	        	$scope.$apply();
+	        }
+		}).fail(function(){
+			// something bad is happening!
+	    	console.log("error fetching languages");
+		});
+	};
+	
+	
+	$scope.renderCountryName = function(workIdx) {		
+		return $scope.getCountryName(workIdx);		
+	};
+	
+    $scope.renderLanguageName = function(workIdx) {
+		return $scope.getLanguageName(workIdx);		
+	};
+    		
 	$scope.renderTranslatedTitleInfo = function(workIdx) {
 		var info = null; 
 		
 		if($scope.works[workIdx].workTitle != null && $scope.works[workIdx].workTitle.translatedTitle != null) {
-			info = $scope.works[workIdx].workTitle.translatedTitle.content;
-				
-			if($scope.languages == null) {
-				$.ajax({
-					url: $('body').data('baseurl') + orcidVar.orcidId + '/languages.json',	        
-			        dataType: 'json',
-			        success: function(data) {
-			        	$scope.languages = data;
-			        	if($scope.languages[$scope.works[workIdx].workTitle.translatedTitle.languageCode])
-							info += ' - ' + $scope.languages[$scope.works[workIdx].workTitle.translatedTitle.languageCode];
-			        }
-				}).fail(function(){
-					// something bad is happening!
-			    	console.log("error fetching languages");
-				});
-			} else {
-				if($scope.languages[$scope.works[workIdx].workTitle.translatedTitle.languageCode])
-					info += ' - ' + $scope.languages[$scope.works[workIdx].workTitle.translatedTitle.languageCode];
-			}									
+			info = $scope.works[workIdx].workTitle.translatedTitle.content;							
+			if($scope.languages[$scope.works[workIdx].workTitle.translatedTitle.languageCode])
+				info += ' - ' + $scope.languages[$scope.works[workIdx].workTitle.translatedTitle.languageCode];										
 		}
 		
 		return info;
@@ -1579,8 +1561,9 @@ function PublicWorkCtrl($scope, $compile, worksSrvc) {
 	
 	$scope.numOfWorksToAdd = orcidVar.workIds.length;
 	$scope.worksToAddIds = orcidVar.workIds;
-	$scope.addWorkToScope();
-		
+	$scope.getCountries();
+	$scope.getLanguages();
+	$scope.addWorkToScope();	
 }
 
 function WorkCtrl($scope, $compile, worksSrvc) {
