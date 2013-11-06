@@ -101,11 +101,24 @@ public class OrcidRandomValueTokenServices extends DefaultTokenServices {
         if (requestedScopes.size() == 1 && ScopePathType.ORCID_PROFILE_CREATE.equals(requestedScopes.iterator().next())) {
             return readValiditySeconds;
         }
+        /* 
+         * Tokens should last for the longest life span,
+         * DefaultPermissionChecker will strip scopes that
+         * are past their lifetimes
+         */
         for (ScopePathType scope : requestedScopes) {
-            if (scope.isWriteOperationScope()) {
-                return writeValiditySeconds;
+            if (scope.isReadOnlyScope()) {
+                return readValiditySeconds;
             }
         }
+        return writeValiditySeconds;
+    }
+
+    public int getWriteValiditySeconds() {
+        return writeValiditySeconds;
+    }
+
+    public int getReadValiditySeconds() {
         return readValiditySeconds;
     }
 }
