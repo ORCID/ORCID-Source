@@ -18,17 +18,18 @@ package org.orcid.frontend.web.controllers;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.orcid.core.locale.LocaleManager;
+import org.orcid.frontend.web.util.LanguagesMap;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidWork;
 import org.orcid.jaxb.model.message.Visibility;
@@ -44,6 +45,9 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class PublicProfileController extends BaseWorkspaceController {
 
+	@Resource
+    private LocaleManager localeManager;
+	
     @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}")
     public ModelAndView publicPreview(HttpServletRequest request, @RequestParam(value = "page", defaultValue = "1") int pageNo,
             @RequestParam(value = "maxResults", defaultValue = "15") int maxResults, @PathVariable("orcid") String orcid) {
@@ -107,6 +111,32 @@ public class PublicProfileController extends BaseWorkspaceController {
             }
         }
         return works;
+    }
+    
+    /**
+     * Returns a map containing the language code and name for each language
+     * supported.
+     * 
+     * @return A map of the form [language_code, language_name] containing all
+     *         supported languages
+     * */
+    @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/languages.json", method = RequestMethod.GET)
+    public @ResponseBody
+    Map<String, String> getLanguageMap(HttpServletRequest request) {
+        return LanguagesMap.buildLanguageMap(localeManager.getLocale(), false);
+    }
+
+    /**
+     * Returns a map containing the iso country code and the name for each
+     * country.\
+     * 
+     * @return A map of the form [iso_code, country_name] containing all
+     *         existing countries.
+     * */
+    @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/countries.json", method = RequestMethod.GET)
+    public @ResponseBody
+    Map<String, String> getCountriesMap(HttpServletRequest request) {
+        return retrieveIsoCountries();
     }
 
 }
