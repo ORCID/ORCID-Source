@@ -17,24 +17,37 @@
 
 -->
 <script type="text/ng-template" id="add-work-modal">
-	<div class="edit-work colorbox-content">
-		<div class="row">
-			<div class="span10">
+	<div class="add-work colorbox-content">
+		
+		<!-- Title -->
+		<div class="row">			
+
+			<div class="col-md-9 col-sm-6 col-xs-9">
 				<h1 class="lightbox-title pull-left"><@orcid.msg 'manual_work_form_contents.add_work'/></h1>
-				<div class="pull-right">
-					<div class="control-group span2">
-		 				<label class="relative"><@orcid.msg 'privacyToggle.help.who_can_see'/></label>
-		 				<@orcid.privacyToggle "editWork.visibility.visibility" "setAddWorkPrivacy('PUBLIC', $event)" 
-		                    	  "setAddWorkPrivacy('LIMITED', $event)" "setAddWorkPrivacy('PRIVATE', $event)" />					
-		 			</div>				
-					<div class="pull-right span1">
-						<a class="btn close-button" ng-click="closeModal()">X</a>
-					</div>
-				</div>
+			</div>
+			
+			<div class="col-xs-3 visible-xs hidden-sm hidden-md hidden-lg">
+				<a class="btn close-button" ng-click="closeModal()">X</a>
+			</div>
+			
+			<div class="control-group privacy-control col-md-2 col-sm-2">
+		 		<label class="relative">
+					<@orcid.msg 'privacyToggle.help.who_can_see'/>
+				</label>
+		 		<@orcid.privacyToggle "editWork.visibility.visibility" "setAddWorkPrivacy('PUBLIC', $event)" 
+		        "setAddWorkPrivacy('LIMITED', $event)" "setAddWorkPrivacy('PRIVATE', $event)" />					
+		 	</div>
+
+			<div class="col-md-1 col-sm-1 hidden-xs">
+				<a class="btn close-button" ng-click="closeModal()">X</a>
 			</div>
 		</div>
+
+		<!-- Main content -->		
 		<div class="row">
-			<div class="span5">	
+			<!-- Left Column -->			
+			<div class="col-md-6 col-sm-6 col-xs-12">	
+				
 				<div class="control-group">
 		    		<label class="relative"><@orcid.msg 'manual_work_form_contents.labelworkcategory'/></label>
 		    		<div class="relative">
@@ -71,14 +84,14 @@
 						<span class="orcid-error" ng-show="editWork.workTitle.title.errors.length > 0">
 							<div ng-repeat='error in editWork.workTitle.title.errors' ng-bind-html-unsafe="error"></div>
 						</span>
-						<div class="translated-title-section">
-							<span ng-hide="editTranslatedTitle"><@orcid.msg 'manual_work_form_contents.labelshowtranslatedtitle'/>&nbsp;<a ng-click="toggleTranslatedTitleModal()" class="icon-plus-sign blue"></a></span>
-							<span ng-show="editTranslatedTitle"><@orcid.msg 'manual_work_form_contents.labelhidetranslatedtitle'/>&nbsp;<a ng-click="toggleTranslatedTitleModal()" class="icon-minus-sign blue"></a></span>
+						<div class="add-item-link">
+							<span ng-hide="editTranslatedTitle"><a ng-click="toggleTranslatedTitleModal()" class="glyphicon glyphicon-plus-sign blue"><@orcid.msg 'manual_work_form_contents.labelshowtranslatedtitle'/></a></span>
+							<span ng-show="editTranslatedTitle"><a ng-click="toggleTranslatedTitleModal()" class="glyphicon glyphicon-minus-sign blue"><@orcid.msg 'manual_work_form_contents.labelhidetranslatedtitle'/></a></span>
 						</div>
 					</div>
 				</div>
 
-				<div id="translatedTitle" style="display:none;">
+				<div id="translatedTitle">
 					<span class="orcid-error" ng-show="editWork.workTitle.translatedTitle.errors.length > 0">
 						<div ng-repeat='error in editWork.workTitle.translatedTitle.errors' ng-bind-html-unsafe="error"></div>
 					</span>
@@ -90,12 +103,14 @@
 					</div>
 
 					<div class="control-group">
-						<label class="relative"><@orcid.msg 'manual_work_form_contents.labeltranslatedtitlelanguage'/></label>						
-						<select id="language" name="language" ng-model="editWork.workTitle.translatedTitle.languageCode">			
-							<#list languages?keys as key>
-								<option value="${languages[key]}">${key}</option>
-							</#list>
-						</select>						
+						<label class="relative"><@orcid.msg 'manual_work_form_contents.labeltranslatedtitlelanguage'/></label>
+						<div class="relative">						
+							<select id="language" name="language" ng-model="editWork.workTitle.translatedTitle.languageCode">			
+								<#list languages?keys as key>
+									<option value="${languages[key]}">${key}</option>
+								</#list>
+							</select>				
+						</div>
 					</div>					
 				</div>
 
@@ -122,30 +137,30 @@
 		 		<div class="control-group">
 		    		<label class="relative" for="manualWork.day"><@orcid.msg 'manual_work_form_contents.labelPubDate'/></label>
 		    		<div class="relative">
-				    <select id="day" name="day" ng-model="editWork.publicationDate.day" class="span1">
+				    <select id="day" name="day" ng-model="editWork.publicationDate.day" class="col-md-3">
 						<#list days?keys as key>
 							<option value="${key}">${days[key]}</option>
 						</#list>
 		    		</select>
 		
-				    <select id="month" name="month" ng-model="editWork.publicationDate.month" class="span1">
+				    <select id="month" name="month" ng-model="editWork.publicationDate.month" class="col-md-3">
 						<#list months?keys as key>
 							<option value="${key}">${months[key]}</option>
 						</#list>
 		    		</select>
 		
-				    <select id="year" name="month" ng-model="editWork.publicationDate.year" class="span2">
+				    <select id="year" name="month" ng-model="editWork.publicationDate.year" class="col-md-4">
 						<#list years?keys as key>
 							<option value="${key}">${years[key]}</option>
 						</#list>
 		    		</select>
 		    		</div>
-		    	</div>		 		
-
-				<div class="span5">&nbsp;</div>
-
+		    	</div>
+		    	
 				<div class="control-group">
-					<span><strong><@orcid.msg 'manual_work_form_contents.titlecitation'/></strong></span>
+					<span class="citation-title">
+						<strong><@orcid.msg 'manual_work_form_contents.titlecitation'/></strong>
+					</span>
 				</div>
 				<div class="control-group">
 		    		<label class="relative"><@orcid.msg 'manual_work_form_contents.labelcitationtype'/></label>
@@ -161,30 +176,32 @@
 						</span>
 					</div>
 				</div>
+				
 				<div class="control-group">
 					<label><@orcid.msg 'manual_work_form_contents.labelcitation'/></label>
 				    <div class="relative">
-						<textarea name="familyNames" type="text" class="input-xlarge"  ng-model="editWork.citation.citation.value" placeholder="<@orcid.msg 'manual_work_form_contents.add_citation'/>" ng-change="serverValidate('works/work/citationValidate.json')" ng-model-onblur/>
+						<textarea name="citation" type="text" class="input-xlarge"  ng-model="editWork.citation.citation.value" placeholder="<@orcid.msg 'manual_work_form_contents.add_citation'/>" ng-change="serverValidate('works/work/citationValidate.json')" ng-model-onblur/>
 						<span class="orcid-error" ng-show="editWork.citation.citation.errors.length > 0">
 							<div ng-repeat='error in editWork.citation.citation.errors' ng-bind-html-unsafe="error"></div>
 						</span>
 					</div>
 				</div>
-
-				<div class="span5">&nbsp;</div>
 			
 				<div class="control-group">
 					<label><@orcid.msg 'manual_work_form_contents.labeldescription'/></label>
 				    <div class="relative">
-						<textarea name="familyNames" type="text" class="input-xlarge"  ng-model="editWork.shortDescription.value" placeholder="<@orcid.msg 'manual_work_form_contents.add_description'/>" ng-change="serverValidate('works/work/descriptionValidate.json')" ng-model-onblur/>
+						<textarea name="discription" type="text" class="input-xlarge"  ng-model="editWork.shortDescription.value" placeholder="<@orcid.msg 'manual_work_form_contents.add_description'/>" ng-change="serverValidate('works/work/descriptionValidate.json')" ng-model-onblur/>
 						<span class="orcid-error" ng-show="editWork.shortDescription.errors.length > 0">
 							<div ng-repeat='error in editWork.shortDescription.errors' ng-bind-html-unsafe="error"></div>
 						</span>
 					</div>
 				</div>
+				
 			</div>
 
-			<div class="span5">
+
+			<!-- Right column -->
+			<div class="col-md-6 col-sm-6 col-xs-12">				
 				<div class="control-group" ng-repeat="contributor in editWork.contributors">
 				    <label class="relative"><@orcid.msg 'manual_work_form_contents.labelRole'/></label>
 				    <div class="relative">    
@@ -199,6 +216,7 @@
 						</span>
 				    </div>
 				</div>		    	
+				
 				<div class="control-group" ng-repeat="contributor in editWork.contributors">
 				    <label class="relative"><@orcid.msg 'manual_work_form_contents.labelcredited'/></label>
 				    <div class="relative">    
@@ -212,9 +230,7 @@
 								<div ng-repeat='error in contributor.contributorSequence.errors' ng-bind-html-unsafe="error"></div>
 						</span>
 				    </div>
-				</div>				
-
-		    	<div class="span5">&nbsp;</div>
+				</div>
 
 				<div class="control-group">
 					<span><strong><@orcid.msg 'manual_work_form_contents.titlecitationexternalidentifier'/></strong></span>
@@ -224,7 +240,7 @@
 					<div class="control-group">
 						<label class="relative"><@orcid.msg 'manual_work_form_contents.labelIDtype'/></label>
 						<div class="relative">
-			    			<select id="idType" name="idType" class="input-xlarge" ng-model="workExternalIdentifier.workExternalIdentifierType.value" ng-change="serverValidate('works/work/workExternalIdentifiersValidate.json')">																						 
+		    				<select id="idType" name="idType" class="input-xlarge" ng-model="workExternalIdentifier.workExternalIdentifierType.value" ng-change="serverValidate('works/work/workExternalIdentifiersValidate.json')">																						 
 								<option value=""><@orcid.msg 'org.orcid.jaxb.model.message.WorkExternalIdentifierType.empty' /></option>
 								<#list idTypes?keys as key>
 									<option value="${idTypes[key]}">${key}</option>
@@ -239,15 +255,16 @@
 						<label><@orcid.msg 'manual_work_form_contents.labelID'/></label>
 					    <div class="relative">
 							<input name="currentWorkExternalIds" type="text" class="input-xlarge"  ng-model="workExternalIdentifier.workExternalIdentifierId.value" placeholder="<@orcid.msg 'manual_work_form_contents.add_ID'/>"  ng-change="serverValidate('works/work/workExternalIdentifiersValidate.json')" ng-model-onblur/>
-								<span class="orcid-error" ng-show="workExternalIdentifier.workExternalIdentifierId.errors.length > 0">
-									<div ng-repeat='error in workExternalIdentifier.workExternalIdentifierId.errors' ng-bind-html-unsafe="error"></div>
-								</span>
+							<span class="orcid-error" ng-show="workExternalIdentifier.workExternalIdentifierId.errors.length > 0">
+								<div ng-repeat='error in workExternalIdentifier.workExternalIdentifierId.errors' ng-bind-html-unsafe="error"></div>
+							</span>
 						</div>
-					</div>				
-				</div>		
-
-				<div class="span5">&nbsp;</div>
-				
+					</div>	
+					<div ng-show="$last" class="add-item-link">			
+						<span><a href ng-click="addExternalIdentifier()" class="icon-plus-sign blue"><@orcid.msg 'manual_work_form_contents.add_external_identifier' /></a></span>
+					</div>			
+				</div>
+			
 				<div class="control-group">
 		    		<label class="relative"><@orcid.msg 'manual_work_form_contents.labelURL'/></label>
 		    		<div class="relative">
@@ -260,12 +277,14 @@
 
 				<div class="control-group">
 					<label class="relative"><@orcid.msg 'manual_work_form_contents.labelformlanguage'/></label>
-					<select id="language" name="language" ng-model="editWork.languageCode.value">
-						<option value="${currentLocaleKey}">${currentLocaleValue}</option>
-						<#list languages?keys as key>
-							<option value="${languages[key]}">${key}</option>
-						</#list>
-					</select>
+					<div class="relative">	
+						<select id="language" name="language" ng-model="editWork.languageCode.value">
+							<option value="${currentLocaleKey}">${currentLocaleValue}</option>
+							<#list languages?keys as key>
+								<option value="${languages[key]}">${key}</option>
+							</#list>
+						</select>
+					</div>
 				</div>
 
 				<div class="control-group">
@@ -279,9 +298,7 @@
 						</select>                        
                     </div>
                 </div>
-				
-				<div class="span5">&nbsp;</div>
-
+                
 				<div class="small-row"> 
 					<div>
 						<button class="btn btn-primary" ng-click="addWork()" ng-disabled="addingWork" ng-class="{disabled:addingWork}"><@orcid.msg 'manual_work_form_contents.btnaddtolist'/></button> 

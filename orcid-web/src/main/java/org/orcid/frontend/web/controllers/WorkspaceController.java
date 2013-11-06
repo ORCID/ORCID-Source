@@ -36,7 +36,6 @@ import org.orcid.core.manager.ProfileWorkManager;
 import org.orcid.core.manager.ThirdPartyImportManager;
 import org.orcid.core.manager.WorkContributorManager;
 import org.orcid.core.manager.WorkManager;
-import org.orcid.frontend.web.forms.CurrentWork;
 import org.orcid.frontend.web.util.FunctionsOverCollections;
 import org.orcid.frontend.web.util.LanguagesMap;
 import org.orcid.frontend.web.util.NumberList;
@@ -226,10 +225,6 @@ public class WorkspaceController extends BaseWorkspaceController {
         mav.addObject("showPrivacy", true);
 
         OrcidProfile profile = orcidProfileManager.retrieveOrcidProfile(getCurrentUserOrcid(), LoadOptions.BIO_ONLY);
-        List<CurrentWork> currentWorks = getCurrentWorksFromProfile(profile);
-        if (currentWorks != null && !currentWorks.isEmpty()) {
-            mav.addObject("currentWorks", currentWorks);
-        }
         mav.addObject("profile", profile);
         mav.addObject("currentLocaleKey", LanguagesMap.buildLanguageKey(localeManager.getLocale()));
         mav.addObject("currentLocaleValue", LanguagesMap.buildLanguageValue(localeManager.getLocale(), localeManager.getLocale()));

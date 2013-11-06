@@ -1,0 +1,179 @@
+/**
+ * =============================================================================
+ *
+ * ORCID (R) Open Source
+ * http://orcid.org
+ *
+ * Copyright (c) 2012-2013 ORCID, Inc.
+ * Licensed under an MIT-Style License (MIT)
+ * http://orcid.org/open-source-license
+ *
+ * This copyright and license information (including a link to the full license)
+ * shall be included in its entirety in all copies or substantial portion of
+ * the software.
+ *
+ * =============================================================================
+ */
+/* IE7 Custom Fixes */
+
+.container{	
+	padding: 0 !important;
+	overflow: hidden !important;
+	width: 960px !important;
+	min-width: 960px !important;
+}
+
+.main, #loginForm{
+	width: 960px;
+}
+
+.container .header{
+	padding: 0 !important;
+}
+
+/*
+.col-lg-1, .col-lg-2, .col-lg-3, .col-lg-4, .col-lg-5, .col-lg-6, .col-lg-7, .col-lg-8, .col-lg-9, .col-lg-10, .col-lg-11 .col-lg-12,
+.col-md-1, .col-md-2, .col-md-3, .col-md-4, .col-md-5, .col-md-6, .col-md-7, .col-md-8, .col-md-9, .col-md-10, .col-md-11 .col-md-12,
+.col-sm-1, .col-sm-2, .col-sm-3, .col-sm-4, .col-sm-5, .col-sm-6, .col-sm-7, .col-sm-8, .col-sm-9, .col-sm-10, .col-sm-11 .col-sm-12,
+.col-xs-1, .col-xs-2, .col-xs-3, .col-xs-4, .col-xs-5, .col-xs-6, .col-xs-7, .col-xs-8, .col-xs-9, .col-xs-10, .col-xs-11 .col-xs-12
+{
+	padding: 0 !important;		
+}
+
+
+.col-md-offset-1, .col-md-offset-2, .col-md-offset-3, .col-md-offset-4, .col-md-offset-5, .col-md-offset-6, .col-md-offset-7, .col-md-offset-8, .col-md-offset-9, .col-md-offset-10, .col-md-offset-11 .col-md-offset-12{
+	padding: 0 !important;
+}
+*/
+
+.col-md-9, .col-sm-9{
+	width: 74% !important;	
+}
+
+
+.col-md-10, .col-sm-10{
+	width: 80%;
+}
+
+.logo img{
+	width: 140px;
+	height: 43px;
+}
+
+.container .content-wrapper .aside .inner-box{
+	margin: 270px 10px 10px;
+}
+
+.container .header .search{
+	width: 900px;
+	z-index:900;
+}
+
+.container .header .search form fieldset.search_options{
+	width: 380px;
+	float: right;
+}
+
+form#form-search{
+	width: 720px !important;
+}
+
+.container .header .search form #search-box input{
+	float: left !important; 
+	background-color: #C9CACB !important;
+	border: none;
+	height: 14px !important;
+}
+
+.bar{
+	float: left !important;
+	width: 480px !important;
+}
+
+.search-button{
+	float:left;	
+	text-decoration: none;
+}
+
+.search-button{
+	margin: 5px 0;	
+}
+
+.search_options input{
+	margin-top: 5px !important;
+}
+
+a#settings-button{
+	float: left !important;
+}
+
+
+.container .header .navigation > ul.menu >li a{
+	height: 10px !important;
+}
+
+.container .header .navigation ul.menu li{
+	float: left;
+	list-style: none;
+	list-style-type: none;
+}
+
+.box{
+	width: 85%;
+}
+
+.container .header .conditions{
+	left:0;	
+	width: 890px !important;		
+}
+
+.footer{
+	margin: 0;
+}
+
+.home-footer{
+	margin-left: 0 !important;
+}
+
+#language-form{
+	width: 175px;
+}
+
+.see-more{
+	margin-right: 15px;
+}
+
+#bio-settings-form{
+	margin:15px;
+}
+
+.relative{
+	z-index:9999;
+}
+
+.workspace-right {
+	padding: 15px !important;
+}
+
+.workspace-publications{
+	padding-left: 15px;
+}
+
+.workspace-overview{
+	margin-left: 10px !important;
+	width: 45% !important;
+	display:block;
+}
+
+.workspace-accordion-header{
+	padding:0 !important;
+}
+
+ul.workspace-private-toolbar > li{
+	zoom: 1;
+    *display: inline;	
+}
+
+.show-work-info{
+	margin-top: 7px;
+}

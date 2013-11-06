@@ -99,11 +99,11 @@ public class OrcidWorks implements Serializable {
         return this.orcidWork;
     }
 
-    public Map<OrcidWork, OrcidWork> retrieveOrcidWorksAsMap() {
-        Map<OrcidWork, OrcidWork> workMap = new HashMap<OrcidWork, OrcidWork>();
+    public Map<String, OrcidWork> retrieveOrcidWorksAsMap() {
+        Map<String, OrcidWork> workMap = new HashMap<String, OrcidWork>();
         if (orcidWork != null) {
             for (OrcidWork work : orcidWork) {
-                workMap.put(work, work);
+                workMap.put(work.putCode, work);
             }
         }
         return workMap;

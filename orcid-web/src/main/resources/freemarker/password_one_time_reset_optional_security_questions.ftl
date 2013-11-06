@@ -18,7 +18,7 @@
 -->
 <@public>
 <div class="row">
-	<div class ="span9 offset3">
+	<div class ="col-md-9 col-md-offset-3 col-sm-9 col-sm-offset-3 col-xs-12">
 		<@spring.bind "oneTimeResetPasswordForm.*" />
 		<#if spring.status.error>
 			<div class="alert alert-error">
@@ -53,17 +53,19 @@
 	    			</div>        
 				</div>
 				<p><small>${springMacroRequestContext.getMessage("password_one_time_reset_optional_security_questions.optionalconsidersetting")}<small></p>			
-				<div class="control-group">        		   
-		            	<div class="controls">
-		            	 	<label for="oneTimeResetPasswordForm.securityQuestionId" class="control-label">${springMacroRequestContext.getMessage("password_one_time_reset_optional_security_questions.challengequestion")}</label>
-	            			<select id="securityQuestionId" name="securityQuestionId" class="span5">
+				<div class="control-group">
+						<label for="oneTimeResetPasswordForm.securityQuestionId" class="control-label">${springMacroRequestContext.getMessage("password_one_time_reset_optional_security_questions.challengequestion")}</label>        		   
+		            	<div class="controls">		            	 	
+	            			<select id="securityQuestionId" name="securityQuestionId" class="input-xlarge">
 	            				<#list securityQuestions?keys as key>
 								   <option value="${key}">${securityQuestions[key]}</option>
 								</#list>
-	            			</select>
-	            			<label for="oneTimeResetPasswordForm.securityQuestionAnswer" class="control-label">${springMacroRequestContext.getMessage("password_one_time_reset_optional_security_questions.challengeanswer")}</label>            	
-	            			<@spring.formInput "oneTimeResetPasswordForm.securityQuestionAnswer", 'class="span5"' />	                	
+	            			</select>	                	
 		                </div>
+		                <label for="oneTimeResetPasswordForm.securityQuestionAnswer" class="control-label">${springMacroRequestContext.getMessage("password_one_time_reset_optional_security_questions.challengeanswer")}</label>
+		                <div class="controls">			                            	
+		            		<@spring.formInput "oneTimeResetPasswordForm.securityQuestionAnswer",'class="input-xlarge"'/>
+			            </div>
 	        		</div>
 	    			<div class="controls">
 	        			<button id="bottom-submit-password-change" class="btn btn-primary" type="submit">${springMacroRequestContext.getMessage("freemarker.btnsavechanges")}</button>      

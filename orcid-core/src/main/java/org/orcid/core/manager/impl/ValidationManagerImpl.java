@@ -28,8 +28,6 @@ import org.orcid.core.cli.ValidateOrcidMessage;
 import org.orcid.core.exception.OrcidValidationException;
 import org.orcid.core.manager.ValidationBehaviour;
 import org.orcid.core.manager.ValidationManager;
-import org.orcid.jaxb.model.message.Citation;
-import org.orcid.jaxb.model.message.CitationType;
 import org.orcid.jaxb.model.message.ContactDetails;
 import org.orcid.jaxb.model.message.Email;
 import org.orcid.jaxb.model.message.OrcidActivities;
@@ -39,8 +37,6 @@ import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidWork;
 import org.orcid.jaxb.model.message.OrcidWorks;
 import org.orcid.jaxb.model.message.WorkTitle;
-import org.orcid.utils.BibtexException;
-import org.orcid.utils.BibtexUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
@@ -176,16 +172,6 @@ public class ValidationManagerImpl implements ValidationManager {
     }
 
     public void checkWork(OrcidWork orcidWork) {
-        if (validateBibtex && orcidWork.getWorkCitation() != null) {
-            Citation workCitation = orcidWork.getWorkCitation();
-            if (CitationType.BIBTEX.equals(workCitation.getWorkCitationType())) {
-                try {
-                    BibtexUtils.validate(workCitation.getCitation());
-                } catch (BibtexException e) {
-                    throw new OrcidValidationException("Invalid BibTeX citation: " + workCitation.getCitation() + "\n", e);
-                }
-            }
-        }
         
         if(validateTitle){
             WorkTitle title = orcidWork.getWorkTitle();

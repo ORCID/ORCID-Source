@@ -16,6 +16,8 @@
  */
 package org.orcid.frontend.web.controllers;
 
+import java.net.MalformedURLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -27,9 +29,14 @@ import org.orcid.core.exception.OrcidClientGroupManagementException;
 import org.orcid.core.manager.OrcidClientGroupManager;
 import org.orcid.jaxb.model.clientgroup.OrcidClient;
 import org.orcid.jaxb.model.clientgroup.OrcidClientGroup;
+import org.orcid.jaxb.model.clientgroup.RedirectUriType;
 import org.orcid.jaxb.model.message.ErrorDesc;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidType;
+import org.orcid.pojo.ajaxForm.Client;
+import org.orcid.pojo.ajaxForm.PojoUtil;
+import org.orcid.pojo.ajaxForm.RedirectUri;
+import org.orcid.pojo.ajaxForm.Text;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -82,67 +89,183 @@ public class GroupAdministratorController extends BaseWorkspaceController {
                 
         return mav;
     }
+        
+    @RequestMapping(value = "/client.json", method = RequestMethod.GET)
+    public @ResponseBody
+    Client getClient(HttpServletRequest request) {
+        Client emptyClient = new Client();
+        emptyClient.setDisplayName(Text.valueOf(""));        
+        emptyClient.setWebsite(Text.valueOf(""));        
+        emptyClient.setShortDescription(Text.valueOf(""));
+        emptyClient.setClientId(Text.valueOf(""));
+        emptyClient.setClientSecret(Text.valueOf(""));
+        emptyClient.setType(Text.valueOf(""));
+        ArrayList<RedirectUri> redirectUris = new ArrayList<RedirectUri>();
+        RedirectUri emptyRedirectUri = new RedirectUri();
+        emptyRedirectUri.setType(Text.valueOf(RedirectUriType.DEFAULT.value()));
+        emptyRedirectUri.setValue(Text.valueOf(""));
+        redirectUris.add(emptyRedirectUri);
+        emptyClient.setRedirectUris(redirectUris);
+        return emptyClient;
+    }
+    
+    private boolean validateUrl(String url){
+        try {
+            new java.net.URL(url);
+        }
+        catch ( MalformedURLException e ) {
+            return false;
+        }
+        return true;
+    }
+    
+    private Client validateDisplayName(Client client){
+    	client.getDisplayName().setErrors(new ArrayList<String>());
+        if(PojoUtil.isEmpty(client.getDisplayName())){
+        	setError(client.getDisplayName(), "manage_clients.error.display_name.empty");
+        } else if(client.getDisplayName().getValue().length() > 150){
+        	setError(client.getDisplayName(), "manage_clients.error.display_name.150");
+        } 
+            
+        return client;
+    }
+    
+    private Client validateWebsite(Client client){
+    	client.getWebsite().setErrors(new ArrayList<String>());
+    	if(PojoUtil.isEmpty(client.getWebsite())) {
+    		setError(client.getWebsite(), "manage_clients.error.website.empty");
+    	} else if(!validateUrl(client.getWebsite().getValue())) {
+    		setError(client.getWebsite(), "manage_clients.error.invalid_url");
+        }            
+        return client;
+    }
+    
+    private Client validateShortDescription(Client client){
+    	client.getShortDescription().setErrors(new ArrayList<String>());
+        if(PojoUtil.isEmpty(client.getShortDescription()))
+            setError(client.getShortDescription(), "manage_clients.error.short_description.empty");
+        return client;
+    }
+    
+    private Client validateRedirectUris(Client client){
+        if(client.getRedirectUris() != null && client.getRedirectUris().size() > 0){
+            for(RedirectUri redirectUri : client.getRedirectUris()){
+            	redirectUri.setErrors(new ArrayList<String>());
+                if(!validateUrl(redirectUri.getValue().getValue())){                    
+                    setError(redirectUri, "manage_clients.error.invalid_url");
+                }
+            }
+        }
+        return client;
+    }
+    
     
     @RequestMapping(value = "/add-client.json", method = RequestMethod.POST)
     @Produces(value = { MediaType.APPLICATION_JSON })
-    public @ResponseBody OrcidClient createClient(HttpServletRequest request, @RequestBody OrcidClient orcidClient) {                
-        OrcidProfile profile = getEffectiveProfile();
-        String groupOrcid = profile.getOrcid().getValue();
+    public @ResponseBody Client createClient(HttpServletRequest request, @RequestBody Client client) { 
+    	//Clean the error list
+    	client.setErrors(new ArrayList<String>());
+    	//Validate fields 
+        validateDisplayName(client);
+        validateWebsite(client);
+        validateShortDescription(client);
+        validateRedirectUris(client);
         
-        if(profile.getType() == null || !profile.getType().equals(OrcidType.GROUP)){
-        	LOGGER.warn("Trying to create client with non group user {}", profile.getOrcid().getValue());
-        	throw new OrcidClientGroupManagementException("Your account is not allowed to do this operation.");
+        copyErrors(client.getDisplayName(), client);
+        copyErrors(client.getWebsite(), client);
+        copyErrors(client.getShortDescription(), client);
+        
+        for(RedirectUri redirectUri : client.getRedirectUris()){
+            copyErrors(redirectUri, client);
         }
         
-        OrcidClient result = null;
+        if(client.getErrors().size() == 0) {
+            OrcidProfile profile = getEffectiveProfile();
+            String groupOrcid = profile.getOrcid().getValue();
+            
+            if(profile.getType() == null || !profile.getType().equals(OrcidType.GROUP)){
+            	LOGGER.warn("Trying to create client with non group user {}", profile.getOrcid().getValue());
+            	throw new OrcidClientGroupManagementException("Your account is not allowed to do this operation.");
+            }
+            
+            OrcidClient result = null;
+            
+            try {
+            	result = orcidClientGroupManager.createAndPersistClientProfile(groupOrcid, client.toOrcidClient());
+            } catch (OrcidClientGroupManagementException e){
+            	LOGGER.error(e.getMessage());
+            	result = new OrcidClient();
+            	result.setErrors(new ErrorDesc(getMessage("manage_clients.cannot_create_client")));
+            }
+            
+            client = Client.valueOf(result);
         
-        try {
-        	result = orcidClientGroupManager.createAndPersistClientProfile(groupOrcid, orcidClient);
-        } catch (OrcidClientGroupManagementException e){
-        	LOGGER.error(e.getMessage());
-        	result = new OrcidClient();
-        	result.setErrors(new ErrorDesc(getMessage("manage_clients.cannot_create_client")));
         }
         
-        return result;
+        return client;
+    }        
+    
+    @RequestMapping(value = "/edit-client.json", method = RequestMethod.POST)
+    @Produces(value = { MediaType.APPLICATION_JSON })
+    public @ResponseBody Client editClient(HttpServletRequest request, @RequestBody Client client){
+    	//Clean the error list
+    	client.setErrors(new ArrayList<String>());
+    	//Validate fields 
+        validateDisplayName(client);
+        validateWebsite(client);
+        validateShortDescription(client);
+        validateRedirectUris(client);
+        
+        copyErrors(client.getDisplayName(), client);
+        copyErrors(client.getWebsite(), client);
+        copyErrors(client.getShortDescription(), client);
+        
+        for(RedirectUri redirectUri : client.getRedirectUris()){
+            copyErrors(redirectUri, client);
+        }
+        
+        if(client.getErrors().size() == 0) {
+            OrcidProfile profile = getEffectiveProfile();
+        	String groupOrcid = profile.getOrcid().getValue();
+            
+            if(profile.getType() == null || !profile.getType().equals(OrcidType.GROUP)){
+            	LOGGER.warn("Trying to edit client with non group user {}", profile.getOrcid().getValue());
+            	throw new OrcidClientGroupManagementException("Your account is not allowed to do this operation.");
+            }
+            
+            OrcidClient result = null;
+            
+            try {
+                result = orcidClientGroupManager.updateClientProfile(groupOrcid, client.toOrcidClient());                
+            } catch(OrcidClientGroupManagementException e){
+            	LOGGER.error(e.getMessage());
+            	result = new OrcidClient();
+            	result.setErrors(new ErrorDesc(getMessage("manage_clients.unable_to_update")));
+            }
+            
+            client = Client.valueOf(result);
+        }
+        return client;        
     }
     
     @RequestMapping(value = "/get-clients.json", method = RequestMethod.GET)
     @Produces(value = { MediaType.APPLICATION_JSON })
-    public @ResponseBody List<OrcidClient> getClients(){
-    	OrcidProfile profile = getEffectiveProfile();
-    	String groupOrcid = profile.getOrcid().getValue();
+    public @ResponseBody List<Client> getClients(){
+        OrcidProfile profile = getEffectiveProfile();
+        String groupOrcid = profile.getOrcid().getValue();
         
         if(profile.getType() == null || !profile.getType().equals(OrcidType.GROUP)){
-        	LOGGER.warn("Trying to get clients of non group user {}", profile.getOrcid().getValue());
-        	throw new OrcidClientGroupManagementException("Your account is not allowed to do this operation.");
+                LOGGER.warn("Trying to get clients of non group user {}", profile.getOrcid().getValue());
+                throw new OrcidClientGroupManagementException("Your account is not allowed to do this operation.");
         }
         
         OrcidClientGroup group = orcidClientGroupManager.retrieveOrcidClientGroup(groupOrcid);
-                
-        return group.getOrcidClient();
-    }
-    
-    @RequestMapping(value = "/edit-client.json", method = RequestMethod.POST)
-    @Produces(value = { MediaType.APPLICATION_JSON })
-    public @ResponseBody OrcidClient editClient(HttpServletRequest request, @RequestBody OrcidClient orcidClient){
-    	OrcidProfile profile = getEffectiveProfile();
-    	String groupOrcid = profile.getOrcid().getValue();
+        List<Client> clients = new ArrayList<Client>();
         
-        if(profile.getType() == null || !profile.getType().equals(OrcidType.GROUP)){
-        	LOGGER.warn("Trying to edit client with non group user {}", profile.getOrcid().getValue());
-        	throw new OrcidClientGroupManagementException("Your account is not allowed to do this operation.");
+        for(OrcidClient orcidClient : group.getOrcidClient()){
+            clients.add(Client.valueOf(orcidClient));
         }
         
-        try {
-        	orcidClient = orcidClientGroupManager.updateClientProfile(groupOrcid, orcidClient);
-        } catch(OrcidClientGroupManagementException e){
-        	LOGGER.error(e.getMessage());
-        	OrcidClient error = new OrcidClient();
-        	error.setErrors(new ErrorDesc(getMessage("manage_clients.unable_to_update")));
-        	return error;
-        }
-        
-        return orcidClient;        
+        return clients;
     }
 }

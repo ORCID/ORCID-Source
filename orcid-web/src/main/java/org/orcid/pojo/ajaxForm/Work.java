@@ -33,7 +33,6 @@ import org.orcid.jaxb.model.message.WorkContributors;
 import org.orcid.jaxb.model.message.WorkExternalIdentifiers;
 import org.orcid.jaxb.model.message.WorkSource;
 import org.orcid.jaxb.model.message.WorkType;
-import org.orcid.utils.BibtexUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.util.HtmlUtils;
@@ -176,27 +175,6 @@ public class Work implements ErrorsInterface, Serializable {
         }
 
         return ow;
-    }
-
-    /**
-     * Return the Bibtex work citations in a readable format.
-     * 
-     * @return the bibtex citation converted into a readable string
-     * */
-    public String getCitationForDisplay() {
-        if (this.citation != null && this.citation.getCitation() != null
-                && CitationType.BIBTEX.value().toLowerCase().equals(this.citation.getCitationType().getValue().toLowerCase())) {
-            try {
-                String result = BibtexUtils.toCitation(HtmlUtils.htmlUnescape(this.citation.getCitation().getValue()));
-                return result;
-            } catch (ParseException e) {
-                LOGGER.info("Invalid BibTeX. Sending back as a string");
-            }
-        }
-        if (this.citation != null && this.citation.getCitation() != null) {
-            return this.citation.getCitation().getValue();
-        }
-        return null;
     }
 
     public void setCitationForDisplay(String citation) {

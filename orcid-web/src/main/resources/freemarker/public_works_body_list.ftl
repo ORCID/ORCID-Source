@@ -17,21 +17,12 @@
 
 -->
 <#escape x as x?html>
-	<script type="text/javascript">
-	   <#noescape>
-	   <#if (works)??>
-	   		var publicWorks = JSON.parse("${worksJson}");
-	   <#else>
-	   	    var publicWorks = null;
-	   </#if>
-	   </#noescape>
-	</script>
 	<#-- noscript is for search engines -->
 	<noscript>
 		<#if (works)??>
 			<ul class="workspace-publications workspace-body-list">
 		        <#list works as work>
-		    		<div style="width: 530px;">
+		    		<div>
 				        <h3 class="work-title">
 				            <#if work.workTitle?? && work.workTitle.title?? && work.workTitle.title.value??>
 				        	    <#if work.workTitle.subtitle?? && work.workTitle.subtitle.value??>
@@ -57,21 +48,12 @@
 				        <#if work.shortDescription??>
 				           <div>${work.shortDescription}</div>
 				        </#if>
-				        <#if work.citation??>
-				           <div>${work.citation.citation}</div>
-				        </#if>
 				    </div>
 		        </#list>
 			</ul>
 		</#if>
 	</noscript>
-	<#if (works)??>
-	   <div ng-controller="PublicWorkCtrl">
+	<div ng-controller="PublicWorkCtrl">
 	      <#include "includes/work/body_work_inc.ftl"/>
-	   </div>
-	<#else>
-	   <div class="alert alert-info">
-	      <strong>${springMacroRequestContext.getMessage("workspace_works_body_list.Nopublicationsaddedyet")}</strong>
-	   </div>
-	</#if>
+	</div>
 </#escape>

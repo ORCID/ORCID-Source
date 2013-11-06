@@ -28,6 +28,8 @@ import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
 import javax.mail.internet.AddressException;
@@ -86,6 +88,8 @@ public class BaseController {
     private String staticContentPath;
 
     private String staticCdnPath;
+    
+    static Pattern fileNamePattern = Pattern.compile("https{0,1}:\\/\\/[^\\/]*(.*){0,1}");
 
     @Value("${org.orcid.core.baseUri:http://orcid.org}")
     private String baseUri;
@@ -440,6 +444,14 @@ public class BaseController {
     public String getBaseUriHttp() {
         return baseUri.replace("https", "http");
     }
+    
+    @ModelAttribute("basePath")
+    public String getBasePath() {
+        Matcher fileNameMatcher = fileNamePattern.matcher(baseUri);        
+        if (!fileNameMatcher.find()) return "/";
+        return fileNameMatcher.group(1) + "/";
+    }
+
     
     /**
      * A method that will help us to internationalize enums

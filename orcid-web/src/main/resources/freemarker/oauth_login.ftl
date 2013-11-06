@@ -17,19 +17,21 @@
 
 -->
 <@base>
-<div class="oauth-login clearfix">
+<div class="container oauth-login top-green-border">
 	<div class="row">
-    <div class="logo">
-        <h1><img src="${staticCdn}/img/orcid-logo.png" alt="ORCID logo" /></h1>
-        <p>${springMacroRequestContext.getMessage("oauth_login.connectingresearch")}</p>
-    </div>
-    </div>
-    <div class="row">
-    <#if Session.SPRING_SECURITY_LAST_EXCEPTION?? && Session.SPRING_SECURITY_LAST_EXCEPTION.message?has_content>
-        <div class="alert alert-error pagination-centered input-xxlarge">
-            <p><@spring.message "orcid.frontend.security.bad_credentials"/></p>
-        </div>
-    </#if>
+		<div class="col-push-3 col-md-9">
+		    <div class="logo">
+		        <h1><a href="${aboutUri}"><img src="${staticCdn}/img/orcid-logo.png" alt="ORCID logo" /></a></h1>
+		        <p>${springMacroRequestContext.getMessage("oauth_login.connectingresearch")}</p>
+		    </div>
+	    </div>
+	</div>
+    <div class="row">    
+	    <#if Session.SPRING_SECURITY_LAST_EXCEPTION?? && Session.SPRING_SECURITY_LAST_EXCEPTION.message?has_content>
+	        <div class="alert alert-error pagination-centered input-xxlarge">
+	            <p><@spring.message "orcid.frontend.security.bad_credentials"/></p>
+	        </div>
+	    </#if>
     </div>
     <div class="row">
 		<#include "sandbox_warning.ftl"/>

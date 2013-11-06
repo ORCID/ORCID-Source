@@ -310,8 +310,8 @@ public class OrcidClientGroupManagerTest extends BaseTest {
         
         //Add one creator client to a basic group should fail
         try {
-            orcidClientGroupManager.createAndPersistClientProfile(createdGroup.getGroupOrcid(), client1);
-            fail();
+            OrcidClient orcidClient = orcidClientGroupManager.createAndPersistClientProfile(createdGroup.getGroupOrcid(), client1);
+            assertEquals(orcidClient.getType(), ClientType.UPDATER);
         } catch(OrcidClientGroupManagementException e){
             
         }     
@@ -385,8 +385,8 @@ public class OrcidClientGroupManagerTest extends BaseTest {
         
         //Add one creator client to a basic group should fail
         try {
-            orcidClientGroupManager.createAndPersistClientProfile(createdGroup.getGroupOrcid(), client1);
-            fail();
+        	OrcidClient orcidClient = orcidClientGroupManager.createAndPersistClientProfile(createdGroup.getGroupOrcid(), client1);
+        	assertEquals(orcidClient.getType(), ClientType.CREATOR);
         } catch(OrcidClientGroupManagementException e){
             
         }     
@@ -416,8 +416,8 @@ public class OrcidClientGroupManagerTest extends BaseTest {
         
         //Add one creator client to a premium group should fail
         try {
-            orcidClientGroupManager.createAndPersistClientProfile(createdGroup.getGroupOrcid(), client1);
-            fail();
+            OrcidClient orcidClient = orcidClientGroupManager.createAndPersistClientProfile(createdGroup.getGroupOrcid(), client1);
+            assertEquals(orcidClient.getType(), ClientType.PREMIUM_UPDATER);
         } catch(OrcidClientGroupManagementException e){
             
         }     
@@ -447,8 +447,8 @@ public class OrcidClientGroupManagerTest extends BaseTest {
         
         //Add one creator client to a premium group should fail
         try {
-            orcidClientGroupManager.createAndPersistClientProfile(createdGroup.getGroupOrcid(), client1);
-            fail();
+            OrcidClient orcidClient = orcidClientGroupManager.createAndPersistClientProfile(createdGroup.getGroupOrcid(), client1);
+            assertEquals(orcidClient.getType(), ClientType.PREMIUM_CREATOR);
         } catch(OrcidClientGroupManagementException e){
             
         }     
