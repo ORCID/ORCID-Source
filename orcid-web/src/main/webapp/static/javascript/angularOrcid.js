@@ -673,7 +673,7 @@ function ResetPasswordCtrl($scope, $compile) {
 	    	// something bad is happening!
 	    	console.log("ResetPasswordCtrl.serverValidate() error");
 	    });
-	};
+	};		
 	
 	// in the case of slow network connection
 	// we don't want to overwrite  values while
@@ -1469,8 +1469,7 @@ function PublicWorkCtrl($scope, $compile, worksSrvc) {
     	$scope.showBibtex = !($scope.showBibtex);
     };   
 
-	
-	$scope.addWorkToScope = function() {
+    $scope.addWorkToScope = function() {
 		if($scope.worksToAddIds.length != 0 ) {
 			var workIds = $scope.worksToAddIds.splice(0,20).join();
 			$.ajax({
@@ -1491,10 +1490,64 @@ function PublicWorkCtrl($scope, $compile, worksSrvc) {
 					setTimeout(function () {$scope.addWorkToScope();},50);
 				}
 			}).fail(function() { 
-		    	console.log("Error fetching work: " + value);
+		    	console.log("Error fetching works: " + workIds);
 		    });
 		}
 	}; 
+    
+    $scope.renderLanguageName = function(workIdx) {
+		if($scope.languages == null) {
+			$.ajax({
+				url: $('body').data('baseurl') + 'works/languages.json',	        
+		        dataType: 'json',
+		        success: function(data) {
+		        	$scope.languages = data;
+		        	return $scope.getLanguageName(workIdx);
+		        }
+			}).fail(function(){
+				// something bad is happening!
+		    	console.log("error fetching languages");
+			});
+		} else {
+			return $scope.getLanguageName(workIdx);
+		}
+	};
+    
+	$scope.renderCountryName = function(workIdx) {
+		if($scope.countries == null) {
+			$.ajax({
+				url: $('body').data('baseurl') + 'works/countries.json',	        
+		        dataType: 'json',
+		        success: function(data) {
+		        	$scope.countries = data;
+		        	return $scope.getCountryName(workIdx);
+		        }
+			}).fail(function(){
+				// something bad is happening!
+		    	console.log("error fetching countries");
+			});
+		} else {
+			return $scope.getCountryName(workIdx);
+		}
+	};
+	
+	$scope.getLanguageName = function(workIdx){		
+		var language = null;
+		if($scope.works[workIdx].languageCode != null) {
+			language = $scope.languages[$scope.works[workIdx].languageCode.value];
+		}
+		
+		return language;
+	};
+	
+	$scope.getCountryName = function(workIdx){		
+		var country = null;
+		if($scope.works[workIdx].country != null){
+			country = $scope.countries[$scope.works[workIdx].country.value];
+		}
+
+		return country;
+	};
 	
 	$scope.numOfWorksToAdd = orcidVar.workIds.length;
 	$scope.worksToAddIds = orcidVar.workIds;
@@ -1510,6 +1563,7 @@ function WorkCtrl($scope, $compile, worksSrvc) {
 	$scope.bibtexCitations = {};
 	$scope.languages = null;
 	$scope.editTranslatedTitle = false;
+	$scope.types = null;
 	
 	$scope.toggleDisplayWorks = function () {
 		$scope.displayWorks = !$scope.displayWorks;
@@ -1815,9 +1869,7 @@ function WorkCtrl($scope, $compile, worksSrvc) {
 		$event.preventDefault();
 		$scope.editWork.visibility.visibility = priv;
 	};
-
-	
-		
+			
 	$scope.setPrivacy = function(putCode, priv, $event) {
 		$event.preventDefault();
 		var idx;
@@ -1846,7 +1898,7 @@ function WorkCtrl($scope, $compile, worksSrvc) {
 	        }
 	    }).fail(function() { 
 	    	// something bad is happening!
-	    	console.log("RegistrationCtrl.serverValidate() error");
+	    	console.log("WorkCtrl.serverValidate() error");
 	    });
 	};
 	
@@ -1898,6 +1950,28 @@ function WorkCtrl($scope, $compile, worksSrvc) {
 	    	console.log("Error updating profile work.");
 	    });
 	};		
+	
+	
+	$scope.loadWorkTypes = function(){			
+		if($scope.editWork.workCategory.value != null && $scope.editWork.workCategory.value != ""){
+			$.ajax({
+		        url: $('body').data('baseurl') + 'works/loadWorkTypes.json?workCategory=' + $scope.editWork.workCategory.value,
+		        type: 'POST',	        
+		        contentType: 'application/json;charset=UTF-8',
+		        dataType: 'json',
+		        success: function(data) {
+		        	console.log(data);
+		        	$scope.types = data;
+		        	$scope.$apply();
+		        }
+		    }).fail(function() { 
+		    	console.log("Error loading work types.");
+		    });
+		} else {
+			$scope.types = null;
+		}
+	};
+	
 }
 
 function QuickSearchCtrl($scope, $compile){

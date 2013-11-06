@@ -33,7 +33,6 @@ import javax.ws.rs.core.MediaType;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.api.common.OrcidApiConstants;
-import org.orcid.jaxb.model.clientgroup.OrcidClientGroup;
 import org.orcid.jaxb.model.message.ExternalIdOrcid;
 import org.orcid.jaxb.model.message.ExternalIdReference;
 import org.orcid.jaxb.model.message.ExternalIdentifier;
@@ -321,15 +320,17 @@ public class T2OrcidOAuthApiClientIntegrationTest extends BaseT2OrcidOAuthApiCli
         message.getOrcidProfile().getOrcidInternal().setSecurityDetails(null);
         assertClientResponse401Details(oauthT2Client.updateWorksXml(this.orcid, message, null));
 
-        if(work1.getWorkType() == null)
+        if(work1.getWorkType() == null) {
             work1.setWorkType(WorkType.UNDEFINED);
-        
-        if(workToUpdate.getWorkType() == null){
-            workToUpdate.setWorkType(WorkType.UNDEFINED);
         }
         
-        if(work3.getWorkType() == null)
-            work3.setWorkType(WorkType.UNDEFINED);
+        if(workToUpdate.getWorkType() == null){
+        	workToUpdate.setWorkType(WorkType.UNDEFINED);
+        }
+        
+        if(work3.getWorkType() == null) {
+        	work3.setWorkType(WorkType.UNDEFINED);
+        }
         
         ClientResponse updatedWorksResponse = oauthT2Client.updateWorksXml(this.orcid, message, accessToken);
 
