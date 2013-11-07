@@ -154,6 +154,8 @@ public class WorksController extends BaseWorkspaceController {
     @RequestMapping(value = "/works.json", method = RequestMethod.GET)
     public @ResponseBody
     List<Work> getWorkJson(HttpServletRequest request, @RequestParam(value = "workIds") String workIdsStr) {
+        Map<String, String> countries = retrieveIsoCountries();
+        Map<String, String> languages = LanguagesMap.buildLanguageMap(localeManager.getLocale(), false);
         List<Work> workList = new ArrayList<>();
         Work work = null;
         String[] workIds = workIdsStr.split(",");
@@ -167,13 +169,29 @@ public class WorksController extends BaseWorkspaceController {
             }
             for (String workId : workIds) {
                 work = worksMap.get(workId);
+                //Set country name
+                if(!PojoUtil.isEmpty(work.getCountryCode())) {            
+                    Text countryName = Text.valueOf(countries.get(work.getCountryCode().getValue()));
+                    work.setCountryName(countryName);
+                }
+                //Set language name
+                if(!PojoUtil.isEmpty(work.getLanguageCode())) {
+                    Text languageName = Text.valueOf(languages.get(work.getLanguageCode().getValue()));
+                    work.setLanguageName(languageName);
+                }
+                //Set translated title language name
+                if(!(work.getWorkTitle().getTranslatedTitle() == null) && !StringUtils.isEmpty(work.getWorkTitle().getTranslatedTitle().getLanguageCode())) {
+                    String languageName = languages.get(work.getWorkTitle().getTranslatedTitle().getLanguageCode());
+                    work.getWorkTitle().getTranslatedTitle().setLanguageName(languageName);
+                }
+                                
                 workList.add(work);
             }
         }
 
         return workList;
     }
-
+    
     /**
      * Returns a blank work
      * */
@@ -192,6 +210,7 @@ public class WorksController extends BaseWorkspaceController {
         TranslatedTitle tt = new TranslatedTitle();
         tt.setContent(new String());
         tt.setLanguageCode(new String());
+        tt.setLanguageName(new String());
         wt.setTranslatedTitle(tt);
         w.setWorkTitle(wt);
 
@@ -261,8 +280,12 @@ public class WorksController extends BaseWorkspaceController {
         Text lc = new Text();
         lc.setRequired(false);
         w.setLanguageCode(lc);
+        Text ln = new Text();
+        ln.setRequired(false);
+        w.setLanguageName(ln);
 
-        w.setCountry(new Text());
+        w.setCountryCode(new Text());
+        w.setCountryName(new Text());
 
         return w;
     }

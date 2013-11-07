@@ -121,10 +121,6 @@
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/(\d{4}-){3,}\d{3}[\dX]/works.json(\?.*)?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
-		<sec:intercept-url pattern="/(\d{4}-){3,}\d{3}[\dX]/languages.json(\?.*)?"
-			access="IS_AUTHENTICATED_ANONYMOUSLY" />	
-		<sec:intercept-url pattern="/(\d{4}-){3,}\d{3}[\dX]/countries.json(\?.*)?"
-			access="IS_AUTHENTICATED_ANONYMOUSLY" />				
 		<sec:intercept-url pattern="/lang.json(.*)?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/login(\?.*)?"
@@ -187,9 +183,9 @@
 		<sec:intercept-url pattern="/admin-actions/.*" 
 			access="ROLE_ADMIN"/>
 		<sec:intercept-url pattern="/works/languages.json(\?.*)?" 
-			access="IS_AUTHENTICATED_ANONYMOUSLY"/>
+			access="ROLE_USER"/>
 		<sec:intercept-url pattern="/works/countries.json(\?.*)?" 
-			access="IS_AUTHENTICATED_ANONYMOUSLY"/>
+			access="ROLE_USER"/>
 		<sec:intercept-url pattern="/.*" access="ROLE_USER"/>  
 		
 		<!-- <sec:form-login authentication-failure-url="/signin" login-page="/signin" 
