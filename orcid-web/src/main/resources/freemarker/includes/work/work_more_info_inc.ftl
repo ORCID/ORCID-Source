@@ -152,14 +152,14 @@
 				<div class="col-md-8">
 					<strong><@orcid.msg
 						'manual_work_form_contents.labellanguage'/></strong>
-					<div ng-bind="renderLanguageName($index)"></div>
+					<div ng-bind="work.languageName.value"></div>
 				</div>
 			</div>
-			<div class="row bottomBuffer" ng-show="work.country.value" ng-cloak>
+			<div class="row bottomBuffer" ng-show="work.countryCode.value" ng-cloak>
 				<div class="col-md-8">
 					<strong><@orcid.msg
 						'manual_work_form_contents.labelcountry'/></strong>
-					<div ng-bind="renderCountryName($index)"></div>
+					<div ng-bind="work.countryName.value"></div>
 				</div>
 			</div>
 		</div>

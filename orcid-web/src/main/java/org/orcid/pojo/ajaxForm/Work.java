@@ -21,8 +21,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.jbibtex.ParseException;
-import org.orcid.jaxb.model.message.CitationType;
 import org.orcid.jaxb.model.message.Country;
 import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.jaxb.model.message.OrcidWork;
@@ -35,7 +33,6 @@ import org.orcid.jaxb.model.message.WorkSource;
 import org.orcid.jaxb.model.message.WorkType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.web.util.HtmlUtils;
 
 public class Work implements ErrorsInterface, Serializable {
 
@@ -56,10 +53,14 @@ public class Work implements ErrorsInterface, Serializable {
     private Text journalTitle;
 
     private Text languageCode;
+    
+    private Text languageName;
 
     private Citation citation;
 
-    private Text country;
+    private Text countryCode;
+    
+    private Text countryName;
 
     private List<Contributor> contributors;
 
@@ -120,7 +121,7 @@ public class Work implements ErrorsInterface, Serializable {
             w.setLanguageCode(Text.valueOf(orcidWork.getLanguageCode()));
 
         if (orcidWork.getCountry() != null)
-            w.setCountry((orcidWork.getCountry().getValue() == null) ? null : Text.valueOf(orcidWork.getCountry().getValue().value()));
+            w.setCountryCode((orcidWork.getCountry().getValue() == null) ? null : Text.valueOf(orcidWork.getCountry().getValue().value()));
         return w;
     }
 
@@ -169,8 +170,8 @@ public class Work implements ErrorsInterface, Serializable {
             ow.setLanguageCode(this.getLanguageCode().getValue());
         }
 
-        if (this.getCountry() != null) {
-            Country country = new Country(StringUtils.isEmpty(this.getCountry().getValue()) ? null : Iso3166Country.fromValue(this.getCountry().getValue()));
+        if (this.getCountryCode() != null) {
+            Country country = new Country(StringUtils.isEmpty(this.getCountryCode().getValue()) ? null : Iso3166Country.fromValue(this.getCountryCode().getValue()));
             ow.setCountry(country);
         }
 
@@ -301,11 +302,27 @@ public class Work implements ErrorsInterface, Serializable {
         this.languageCode = languageCode;
     }
 
-    public Text getCountry() {
-        return country;
+    public Text getCountryCode() {
+        return countryCode;
     }
 
-    public void setCountry(Text country) {
-        this.country = country;
+    public void setCountryCode(Text countryCode) {
+        this.countryCode = countryCode;
     }
+
+    public Text getLanguageName() {
+        return languageName;
+    }
+
+    public void setLanguageName(Text languageName) {
+        this.languageName = languageName;
+    }
+
+    public Text getCountryName() {
+        return countryName;
+    }
+
+    public void setCountryName(Text countryName) {
+        this.countryName = countryName;
+    }        
 }

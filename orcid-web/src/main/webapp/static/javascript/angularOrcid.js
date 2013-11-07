@@ -1462,8 +1462,6 @@ function PublicWorkCtrl($scope, $compile, worksSrvc) {
 	$scope.numOfWorksToAdd = null;
 	$scope.showBibtex = true;
 	$scope.bibtexCitations = {};
-	$scope.languages = {};
-	$scope.countries = {};
 
     $scope.bibtexShowToggle = function () {
     	$scope.showBibtex = !($scope.showBibtex);
@@ -1490,79 +1488,20 @@ function PublicWorkCtrl($scope, $compile, worksSrvc) {
 		    	console.log("Error fetching works: " + workIds);
 		    });
 		}
-	}; 
-    
-	$scope.getCountries = function() {
-		$.ajax({
-			url: $('body').data('baseurl') + orcidVar.orcidId + '/countries.json',	        
-	        dataType: 'json',
-	        success: function(data) {
-	        	$scope.countries = data;
-	        	$scope.$apply();
-	        }
-		}).fail(function(){
-			// something bad is happening!
-	    	console.log("error fetching countries");
-		});
-	};
-	
-	$scope.getLanguages = function() {
-		$.ajax({
-			url: $('body').data('baseurl') + orcidVar.orcidId + '/languages.json',	        
-	        dataType: 'json',
-	        success: function(data) {
-	        	$scope.languages = data;
-	        	$scope.$apply();
-	        }
-		}).fail(function(){
-			// something bad is happening!
-	    	console.log("error fetching languages");
-		});
-	};
-	
-	
-	$scope.renderCountryName = function(workIdx) {		
-		return $scope.getCountryName(workIdx);		
-	};
-	
-    $scope.renderLanguageName = function(workIdx) {
-		return $scope.getLanguageName(workIdx);		
-	};
-    		
+	};     
+	  
 	$scope.renderTranslatedTitleInfo = function(workIdx) {
 		var info = null; 
 		
 		if($scope.works[workIdx].workTitle != null && $scope.works[workIdx].workTitle.translatedTitle != null) {
-			info = $scope.works[workIdx].workTitle.translatedTitle.content;							
-			if($scope.languages[$scope.works[workIdx].workTitle.translatedTitle.languageCode])
-				info += ' - ' + $scope.languages[$scope.works[workIdx].workTitle.translatedTitle.languageCode];										
+			info = $scope.works[workIdx].workTitle.translatedTitle.content + ' - ' + $scope.works[workIdx].workTitle.translatedTitle.languageName;										
 		}
 		
 		return info;
 	};
-	
-	$scope.getLanguageName = function(workIdx){		
-		var language = null;
-		if($scope.works[workIdx].languageCode != null) {			
-			language = $scope.languages[$scope.works[workIdx].languageCode.value];
-		}
 		
-		return language;
-	};
-	
-	$scope.getCountryName = function(workIdx){		
-		var country = null;
-		if($scope.works[workIdx].country != null){
-			country = $scope.countries[$scope.works[workIdx].country.value];
-		}
-
-		return country;
-	};
-	
 	$scope.numOfWorksToAdd = orcidVar.workIds.length;
-	$scope.worksToAddIds = orcidVar.workIds;
-	$scope.getCountries();
-	$scope.getLanguages();
+	$scope.worksToAddIds = orcidVar.workIds;	
 	$scope.addWorkToScope();	
 }
 
@@ -1572,7 +1511,6 @@ function WorkCtrl($scope, $compile, worksSrvc) {
 	$scope.numOfWorksToAdd = null;
 	$scope.showBibtex = true;
 	$scope.bibtexCitations = {};
-	$scope.languages = null;
 	$scope.editTranslatedTitle = false;
 	$scope.types = null;
 	
@@ -1677,9 +1615,7 @@ function WorkCtrl($scope, $compile, worksSrvc) {
 			};
 		};
 	};
-
-	
-	
+		
 	$scope.addWorkToScope = function() {
 		if($scope.worksToAddIds.length != 0 ) {
 			var workIds = $scope.worksToAddIds.splice(0,20).join();
@@ -1704,8 +1640,7 @@ function WorkCtrl($scope, $compile, worksSrvc) {
 		    	console.log("Error fetching work: " + value);
 		    });
 		}
-	}; 
-	
+	}; 	
 
 	$scope.getWorks = function() {
 		//clear out current works
@@ -1729,76 +1664,18 @@ function WorkCtrl($scope, $compile, worksSrvc) {
 		});
 	};
 	
-	$scope.getLanguages = function() {
-		$.ajax({
-			url: $('body').data('baseurl') + 'works/languages.json',	        
-	        dataType: 'json',
-	        success: function(data) {
-	        	$scope.languages = data;
-	        	console.log($scope.languages);
-	        }
-		}).fail(function(){
-			// something bad is happening!
-	    	console.log("error fetching languages");
-		});
-	};
-	
-	$scope.getCountries = function() {
-		$.ajax({
-			url: $('body').data('baseurl') + 'works/countries.json',	        
-	        dataType: 'json',
-	        success: function(data) {
-	        	$scope.countries = data;
-	        }
-		}).fail(function(){
-			// something bad is happening!
-	    	console.log("error fetching countries");
-		});
-	};
-	
-	$scope.renderTranslatedTitleInfo = function(workIdx) {
-		if($scope.languages == null)
-			$scope.getLanguages();
-		
+	$scope.renderTranslatedTitleInfo = function(workIdx) {		
 		var info = null; 
 		
 		if($scope.works[workIdx].workTitle != null && $scope.works[workIdx].workTitle.translatedTitle != null) {
-			info = $scope.works[workIdx].workTitle.translatedTitle.content;
-			if($scope.languages[$scope.works[workIdx].workTitle.translatedTitle.languageCode])
-				info += ' - ' + $scope.languages[$scope.works[workIdx].workTitle.translatedTitle.languageCode];		
-		}
+			info = $scope.works[workIdx].workTitle.translatedTitle.content + ' - ' + $scope.works[workIdx].workTitle.translatedTitle.languageName;										
+		}		
 		
 		return info;
 	};
-	
-	$scope.renderLanguageName = function(workIdx){
-		if($scope.languages == null)
-			$scope.getLanguages();
 		
-		var language = null;
-		if($scope.works[workIdx].languageCode != null) {
-			language = $scope.languages[$scope.works[workIdx].languageCode.value];
-		}
-		
-		return language;
-	};
-	
-	$scope.renderCountryName = function(workIdx){
-		if($scope.countries == null)
-			$scope.getCountries();
-		
-		var country = null;
-		if($scope.works[workIdx].country != null){
-			country = $scope.countries[$scope.works[workIdx].country.value];
-		}
-		
-		return country;
-	};
-	
 	//init
-	$scope.getWorks();
-	$scope.getLanguages();
-	$scope.getCountries();
+	$scope.getWorks();	
 	
 	$scope.deleteWork = function(putCode) {
 		$scope.deletePutCode = putCode;

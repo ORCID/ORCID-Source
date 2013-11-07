@@ -16,7 +16,6 @@
  */
 package org.orcid.frontend.web.controllers;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -31,9 +30,6 @@ import org.orcid.core.manager.SponsorManager;
 import org.orcid.core.security.visibility.filter.VisibilityFilter;
 import org.orcid.frontend.web.util.FunctionsOverCollections;
 import org.orcid.frontend.web.util.YearsList;
-import org.orcid.jaxb.model.message.OrcidProfile;
-import org.orcid.jaxb.model.message.OrcidWork;
-import org.orcid.jaxb.model.message.OrcidWorks;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.persistence.jpa.entities.CountryIsoEntity;
 import org.springframework.web.bind.annotation.ModelAttribute;
