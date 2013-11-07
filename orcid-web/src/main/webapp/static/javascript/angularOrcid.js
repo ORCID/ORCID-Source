@@ -1730,7 +1730,7 @@ function WorkCtrl($scope, $compile, worksSrvc) {
 		        //Second Checking Condition Works For Chrome
 		        window.location.href = url;
 		    } 
-		}, 25);
+		}, 250);
 		$.colorbox.close();
 		
 	};
