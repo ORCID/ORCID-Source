@@ -32,6 +32,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.common.util.OAuth2Utils;
 import org.springframework.security.oauth2.provider.AuthorizationRequest;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
+import org.springframework.security.oauth2.provider.token.DefaultTokenServices;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -55,7 +56,7 @@ public class DefaultPermissionChecker implements PermissionChecker {
     private static final Date EXPIRES_DATE = new Date(0L);
     
     @Resource(name = "tokenServices")
-    private OrcidRandomValueTokenServices orcidRandomValueTokenServices;
+    private DefaultTokenServices defaultTokenServices;
 
     @Resource(name = "profileEntityManager")
     private ProfileEntityManager profileEntityManager;
@@ -240,6 +241,7 @@ public class DefaultPermissionChecker implements PermissionChecker {
             OrcidOauth2TokenDetail tokenDetail = orcidOauthTokenDetailService.findNonDisabledByTokenValue(orcidOauth2Authentication.getActiveToken());
             Date now = new Date();
             tokenDetail.getDateCreated();
+            OrcidRandomValueTokenServices orcidRandomValueTokenServices = (OrcidRandomValueTokenServices) defaultTokenServices;
             if (now.getTime() > 
                 tokenDetail.getDateCreated().getTime() + (orcidRandomValueTokenServices.getWriteValiditySeconds() * 1000)) {
                 removeWriteScopes(tokenDetail);
