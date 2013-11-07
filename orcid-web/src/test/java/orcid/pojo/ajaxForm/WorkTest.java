@@ -30,15 +30,11 @@ import org.junit.Test;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidWork;
 import org.orcid.pojo.ajaxForm.Work;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class WorkTest extends XMLTestCase {
     private Unmarshaller unmarshaller;
 
     ArrayList<Properties> pList = new ArrayList<>();
-
-    private static final Logger LOG = LoggerFactory.getLogger(WorkTest.class);
 
     public WorkTest() throws JAXBException {
         super("Work Ajax Form");

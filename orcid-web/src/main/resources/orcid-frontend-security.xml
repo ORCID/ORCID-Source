@@ -119,6 +119,12 @@
 
 		<sec:intercept-url pattern="/(\d{4}-){3,}\d{3}[\dX](\?.*)?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
+		<sec:intercept-url pattern="/(\d{4}-){3,}\d{3}[\dX]/works.json(\?.*)?"
+			access="IS_AUTHENTICATED_ANONYMOUSLY" />
+		<sec:intercept-url pattern="/(\d{4}-){3,}\d{3}[\dX]/languages.json(\?.*)?"
+			access="IS_AUTHENTICATED_ANONYMOUSLY" />	
+		<sec:intercept-url pattern="/(\d{4}-){3,}\d{3}[\dX]/countries.json(\?.*)?"
+			access="IS_AUTHENTICATED_ANONYMOUSLY" />				
 		<sec:intercept-url pattern="/lang.json(.*)?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/login(\?.*)?"

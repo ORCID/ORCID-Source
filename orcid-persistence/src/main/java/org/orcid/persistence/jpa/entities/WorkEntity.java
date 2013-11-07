@@ -16,6 +16,9 @@
  */
 package org.orcid.persistence.jpa.entities;
 
+import java.util.Comparator;
+import java.util.SortedSet;
+
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -37,9 +40,6 @@ import org.hibernate.annotations.SortType;
 import org.orcid.jaxb.model.message.CitationType;
 import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.jaxb.model.message.WorkType;
-
-import java.util.Comparator;
-import java.util.SortedSet;
 
 /**
  * orcid-entities - Dec 6, 2011 - WorkEntity
@@ -209,7 +209,7 @@ public class WorkEntity extends BaseEntity<Long> implements Comparable<WorkEntit
     public void setWorkType(WorkType workType) {
         this.workType = workType;
     }
-
+            
     @Column(name = "contributors_json")
     public String getContributorsJson() {
         return contributorsJson;

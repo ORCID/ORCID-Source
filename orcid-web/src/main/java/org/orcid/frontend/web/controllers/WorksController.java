@@ -19,6 +19,7 @@ package org.orcid.frontend.web.controllers;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -39,6 +40,7 @@ import org.orcid.core.manager.WorkContributorManager;
 import org.orcid.core.manager.WorkExternalIdentifierManager;
 import org.orcid.core.manager.WorkManager;
 import org.orcid.core.utils.JsonUtils;
+import org.orcid.frontend.web.util.FunctionsOverCollections;
 import org.orcid.frontend.web.util.LanguagesMap;
 import org.orcid.jaxb.model.message.CitationType;
 import org.orcid.jaxb.model.message.ContributorAttributes;
@@ -49,7 +51,9 @@ import org.orcid.jaxb.model.message.OrcidWork;
 import org.orcid.jaxb.model.message.OrcidWorks;
 import org.orcid.jaxb.model.message.PublicationDate;
 import org.orcid.jaxb.model.message.SequenceType;
+import org.orcid.jaxb.model.message.WorkCategory;
 import org.orcid.jaxb.model.message.WorkContributors;
+import org.orcid.jaxb.model.message.WorkType;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.PublicationDateEntity;
 import org.orcid.persistence.jpa.entities.WorkContributorEntity;
@@ -64,7 +68,6 @@ import org.orcid.pojo.ajaxForm.Visibility;
 import org.orcid.pojo.ajaxForm.Work;
 import org.orcid.pojo.ajaxForm.WorkExternalIdentifier;
 import org.orcid.pojo.ajaxForm.WorkTitle;
-import org.orcid.utils.BibtexException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -206,11 +209,16 @@ public class WorksController extends BaseWorkspaceController {
         c.setCitation(cText);
         w.setCitation(c);
 
+        Text wCategoryText = new Text();
+        wCategoryText.setValue("");
+        wCategoryText.setRequired(true);
+        w.setWorkCategory(wCategoryText);
+        
         Text wTypeText = new Text();
         wTypeText.setValue("");
         wTypeText.setRequired(true);
         w.setWorkType(wTypeText);
-
+        
         Date d = new Date();
         d.setDay("");
         d.setMonth("");
@@ -272,6 +280,7 @@ public class WorksController extends BaseWorkspaceController {
         workWorkTitleSubtitleValidate(work);
         workWorkTitleTranslatedTitleValidate(work);
         workdescriptionValidate(work);
+        workWorkCategoryValidate(work);
         workWorkTypeValidate(work);
         workWorkExternalIdentifiersValidate(work);
         workUrlValidate(work);
@@ -577,7 +586,19 @@ public class WorksController extends BaseWorkspaceController {
         }
         return work;
     }
+    
+    @RequestMapping(value = "/work/workCategoryValidate.json", method = RequestMethod.POST)
+    public @ResponseBody
+    Work workWorkCategoryValidate(@RequestBody Work work) {
+        work.getWorkCategory().setErrors(new ArrayList<String>());
+        if (work.getWorkCategory().getValue() == null || work.getWorkCategory().getValue().trim().length() == 0) {
+            setError(work.getWorkCategory(), "NotBlank.manualWork.workCategory");
+        }
 
+        return work;
+    }
+    
+    
     @RequestMapping(value = "/work/workTypeValidate.json", method = RequestMethod.POST)
     public @ResponseBody
     Work workWorkTypeValidate(@RequestBody Work work) {
@@ -588,7 +609,7 @@ public class WorksController extends BaseWorkspaceController {
 
         return work;
     }
-
+    
     @RequestMapping(value = "/work/workExternalIdentifiersValidate.json", method = RequestMethod.POST)
     public @ResponseBody
     Work workWorkExternalIdentifiersValidate(@RequestBody Work work) {
@@ -694,4 +715,22 @@ public class WorksController extends BaseWorkspaceController {
         }
         return work;
     }
+    
+    /**
+     * Return a list of work types based on the work category provided as a parameter
+     * @param workCategoryName
+     * @return a map containing the list of types associated with that type and his localized name
+     * */
+    @RequestMapping(value = "/loadWorkTypes.json", method = RequestMethod.POST)    
+    public @ResponseBody Map<String, String> retriveWorkSubtypesAsMap(@RequestParam(value = "workCategory")String workCategoryName){
+    	Map<String, String> workTypes = new LinkedHashMap<String, String>();
+    	WorkCategory workCategory = WorkCategory.fromValue(workCategoryName);    	    	
+    	
+    	for(WorkType workType : workCategory.getSubTypes()){
+    		workTypes.put(workType.value(), getMessage(buildInternationalizationKey(WorkType.class, workType.value())));
+    	}
+    	
+    	return FunctionsOverCollections.sortMapsByValues(workTypes);
+    }    
+       
 }

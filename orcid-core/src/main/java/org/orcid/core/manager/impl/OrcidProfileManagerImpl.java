@@ -68,7 +68,6 @@ import org.orcid.jaxb.model.message.Biography;
 import org.orcid.jaxb.model.message.Claimed;
 import org.orcid.jaxb.model.message.ContactDetails;
 import org.orcid.jaxb.model.message.Contributor;
-import org.orcid.jaxb.model.message.ContributorEmail;
 import org.orcid.jaxb.model.message.ContributorOrcid;
 import org.orcid.jaxb.model.message.CreditName;
 import org.orcid.jaxb.model.message.DeactivationDate;
@@ -250,14 +249,14 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
             orcidProfile.setOrcid(orcidGenerationManager.createNewOrcid());
         }
 
-        //Add source to works
+        // Add source to works
         String amenderOrcid = retrieveAmenderOrcid();
         addSourceToWorks(orcidProfile, amenderOrcid);
-        
+
         ProfileEntity profileEntity = adapter.toProfileEntity(orcidProfile);
         encryptAndMapFieldsForProfileEntityPersistence(orcidProfile, profileEntity);
-        profileEntity.setAuthorities(getGrantedAuthorities(profileEntity));        
-        
+        profileEntity.setAuthorities(getGrantedAuthorities(profileEntity));
+
         profileDao.persist(profileEntity);
         profileDao.flush();
         OrcidProfile updatedTranslatedOrcid = adapter.toOrcidProfile(profileEntity);
@@ -453,7 +452,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         }
         return profile;
     }
-    
+
     /**
      * Retrieves the orcid affiliations given an identifier
      * 
@@ -470,7 +469,6 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         }
         return profile;
     }
-
 
     /**
      * Retrieves the orcid works given an identifier
@@ -938,13 +936,13 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
                 existingOrcidWorksSet.add(existingWork);
             }
             for (Iterator<OrcidWork> updatedWorkIterator = updatedOrcidWorksList.iterator(); updatedWorkIterator.hasNext();) {
-                OrcidWork updatedWork = updatedWorkIterator.next();                                
-                for(OrcidWork orcidWork : existingOrcidWorksSet) {
-                    if(orcidWork.isDuplicated(updatedWork)){
+                OrcidWork updatedWork = updatedWorkIterator.next();
+                for (OrcidWork orcidWork : existingOrcidWorksSet) {
+                    if (orcidWork.isDuplicated(updatedWork)) {
                         updatedWorkIterator.remove();
                         break;
                     }
-                }                
+                }
             }
         }
     }
@@ -972,8 +970,9 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
                 if (contributor.getContributorOrcid() != null) {
                     ProfileEntity profile = profileDao.find(contributor.getContributorOrcid().getValue());
                     if (profile != null) {
-                        contributor.setContributorEmail(new ContributorEmail(profile.getPrimaryEmail().getId()));
-                        contributor.setCreditName(new CreditName(profile.getCreditName()));
+                        if (Visibility.PUBLIC.equals(profile.getCreditNameVisibility())) {
+                            contributor.setCreditName(new CreditName(profile.getCreditName()));
+                        }
                     }
                 } else if (contributor.getContributorEmail() != null) {
                     // Else, if email is available, get the profile
@@ -984,7 +983,11 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
                     if (emailEntity != null) {
                         ProfileEntity profileEntity = emailEntity.getProfile();
                         contributor.setContributorOrcid(new ContributorOrcid(profileEntity.getId()));
-                        contributor.setCreditName(new CreditName(profileEntity.getCreditName()));
+                        if (Visibility.PUBLIC.equals(profileEntity.getCreditNameVisibility())) {
+                            contributor.setCreditName(new CreditName(profileEntity.getCreditName()));
+                        } else {
+                            contributor.setCreditName(null);
+                        }
                     }
                 }
             }
@@ -1099,11 +1102,11 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
 
         return this.updateOrcidProfile(blankedOrcidProfile);
     }
-    
+
     /**
      * Reactivate an inactive profile
      * */
-    public OrcidProfile reactivateOrcidProfile(OrcidProfile deactivatedOrcidProfile){
+    public OrcidProfile reactivateOrcidProfile(OrcidProfile deactivatedOrcidProfile) {
         OrcidHistory deactivatedOrcidHistory = deactivatedOrcidProfile.getOrcidHistory();
         deactivatedOrcidHistory.setDeactivationDate(null);
         return this.updateOrcidProfile(deactivatedOrcidProfile);
@@ -1197,7 +1200,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
             }
         }
     }
-    
+
     private void setAffiliationPrivacy(Affiliations incomingAffiliations, Visibility defaultAffiliationVisibility, boolean isClaimed) {
         for (Affiliation incomingAffiliation : incomingAffiliations.getAffiliation()) {
             if (StringUtils.isBlank(incomingAffiliation.getPutCode())) {
@@ -1222,7 +1225,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
             }
         }
     }
-    
+
     private void dedupeAffiliations(OrcidProfile orcidProfile) {
         OrcidActivities orcidActivities = orcidProfile.getOrcidActivities();
         if (orcidActivities != null) {

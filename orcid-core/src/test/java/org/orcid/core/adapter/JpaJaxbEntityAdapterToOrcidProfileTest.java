@@ -266,7 +266,6 @@ public class JpaJaxbEntityAdapterToOrcidProfileTest extends DBUnitTest {
                 assertEquals(CitationType.FORMATTED_IEEE, orcidWork.getWorkCitation().getWorkCitationType());
                 assertNotNull(orcidWork.getWorkType());
                 assertEquals(WorkType.BOOK, orcidWork.getWorkType());
-                
             }
         }
         

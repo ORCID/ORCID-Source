@@ -20,7 +20,7 @@ public class OrcidCheckDigitGenerator {
 
     public static void main(String[] args) {
         String input = args[0];
-        String checkDigit = generateCheckDigit(input);
+        String checkDigit = generateCheckDigit(input.replace("-", ""));
         System.out.println("Input was: " + input);
         System.out.println("Check digit is: " + checkDigit);
         System.out.println("Full ORCID is: " + input + checkDigit);

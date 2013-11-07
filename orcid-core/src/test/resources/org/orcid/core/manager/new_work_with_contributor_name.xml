@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!--
+
+    =============================================================================
+
+    ORCID (R) Open Source
+    http://orcid.org
+
+    Copyright (c) 2012-2013 ORCID, Inc.
+    Licensed under an MIT-Style License (MIT)
+    http://orcid.org/open-source-license
+
+    This copyright and license information (including a link to the full license)
+    shall be included in its entirety in all copies or substantial portion of
+    the software.
+
+    =============================================================================
+
+-->
+<orcid-message xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+               xsi:schemaLocation="http://www.orcid.org/ns/orcid ../../../../../../../../orcid-model/src/main/resources/orcid-message-1.0.22.xsd"
+               xmlns="http://www.orcid.org/ns/orcid">
+    <message-version >1.0.22</message-version>
+    <orcid-profile>
+        <orcid>4444-4444-4444-4446</orcid>
+        <orcid-id>http://orcid.org/4444-4444-4444-4446</orcid-id>
+        <orcid-activities>
+            <orcid-works>
+                <orcid-work>
+                    <work-title>
+                        <title>Test Work</title>
+                    </work-title>
+                    <work-type>cartoon-comic</work-type>
+                    <work-contributors>
+                        <contributor>
+                            <credit-name>Test Contributor Name</credit-name>
+                        </contributor>
+                    </work-contributors>
+                </orcid-work>
+            </orcid-works>
+        </orcid-activities>
+    </orcid-profile>
+</orcid-message>

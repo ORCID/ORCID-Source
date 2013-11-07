@@ -49,19 +49,31 @@
 			<div class="col-md-6 col-sm-6 col-xs-12">	
 				
 				<div class="control-group">
-		    		<label class="relative"><@orcid.msg 'manual_work_form_contents.labelworktype'/></label>
+		    		<label class="relative"><@orcid.msg 'manual_work_form_contents.labelworkcategory'/></label>
 		    		<div class="relative">
-			    		<select id="workType" name="workType" class="input-xlarge" ng-model="editWork.workType.value" ng-change="serverValidate('works/work/workTypeValidate.json')">
-			    			<option value=""><@orcid.msg 'org.orcid.jaxb.model.message.WorkType.empty' /></option>
-							<#list workTypes?keys as key>
-								<option value="${key}">${workTypes[key]}</option>
+			    		<select id="workCategory" name="workCategory" class="input-xlarge" ng-model="editWork.workCategory.value" ng-change="loadWorkTypes()">
+			    			<option value=""><@orcid.msg 'org.orcid.jaxb.model.message.WorkCategory.empty' /></option>
+							<#list workCategories?keys as key>
+								<option value="${key}">${workCategories[key]}</option>
 							</#list>
 						</select> 
-						<span class="required" ng-class="isValidClass(editWork.workType)">*</span>
-						<span class="orcid-error" ng-show="editWork.workType.errors.length > 0">
-							<div ng-repeat='error in editWork.workType.errors' ng-bind-html-unsafe="error"></div>
+						<span class="required" ng-class="isValidClass(editWork.workCategory)">*</span>
+						<span class="orcid-error" ng-show="editWork.workCategory.errors.length > 0">
+							<div ng-repeat='error in editWork.workCategory.errors' ng-bind-html-unsafe="error"></div>
 						</span>
 					</div>
+				</div>
+
+				<div class="control-group">
+		    		<label class="relative"><@orcid.msg 'manual_work_form_contents.labelworktype'/></label>
+					<select id="workType" name="workType" class="input-xlarge" ng-model="editWork.workType.value">
+						<option value=""><@orcid.msg 'org.orcid.jaxb.model.message.WorkType.empty' /></option>
+						<option ng-repeat="(key, value) in types" value="{{key}}">{{value}}</option>	
+					</select>
+					<span class="required" ng-class="isValidClass(editWork.workType)">*</span>
+					<span class="orcid-error" ng-show="editWork.workType.errors.length > 0">
+						<div ng-repeat='error in editWork.workType.errors' ng-bind-html-unsafe="error"></div>
+					</span>
 				</div>
 
 				<div class="control-group">

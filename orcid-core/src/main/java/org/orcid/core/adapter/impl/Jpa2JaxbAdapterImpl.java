@@ -857,6 +857,8 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
                 if (creditName != null) {
                     creditName.setVisibility(profileWorkEntity.getVisibility());
                 }
+                // Strip out any contributor emails
+                contributor.setContributorEmail(null);
             }
             return workContributors;
         }
@@ -883,17 +885,12 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         Contributor contributor = new Contributor();
         ProfileEntity profile = contributorEntity.getProfile();
         if (profile != null) {
-            contributor
-                    .setContributorEmail(profile.getPrimaryEmail() != null && Visibility.PUBLIC.equals(profile.getPrimaryEmail().getVisibility()) ? new ContributorEmail(
-                            profile.getPrimaryEmail().getId()) : null);
             CreditName creditName = new CreditName(profile.getCreditName());
             contributor.setCreditName(creditName);
             // Set visibility from parent work
             creditName.setVisibility(visibility);
             contributor.setContributorOrcid(new ContributorOrcid(profile.getId()));
         } else {
-            contributor.setContributorEmail(StringUtils.isNotBlank(contributorEntity.getContributorEmail()) ? new ContributorEmail(contributorEntity
-                    .getContributorEmail()) : null);
             if (StringUtils.isNotBlank(contributorEntity.getCreditName())) {
                 CreditName creditName = new CreditName(contributorEntity.getCreditName());
                 contributor.setCreditName(creditName);
