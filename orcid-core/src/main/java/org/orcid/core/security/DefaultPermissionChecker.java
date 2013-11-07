@@ -149,7 +149,7 @@ public class DefaultPermissionChecker implements PermissionChecker {
         }
     }
 
-    private void removeWriteScopes(OrcidOauth2TokenDetail tokenDetail) {
+    public static void removeWriteScopes(OrcidOauth2TokenDetail tokenDetail) {
         Set<String> scopes = OAuth2Utils.parseParameterList(tokenDetail.getScope());
         Set<String> newScopes = new HashSet<String>();
         Set<ScopePathType> scopesFromStrings = ScopePathType.getScopesFromStrings(scopes);
@@ -240,7 +240,6 @@ public class DefaultPermissionChecker implements PermissionChecker {
             OrcidOAuth2Authentication orcidOauth2Authentication = (OrcidOAuth2Authentication) oAuth2Authentication;
             OrcidOauth2TokenDetail tokenDetail = orcidOauthTokenDetailService.findNonDisabledByTokenValue(orcidOauth2Authentication.getActiveToken());
             Date now = new Date();
-            tokenDetail.getDateCreated();
             OrcidRandomValueTokenServices orcidRandomValueTokenServices = (OrcidRandomValueTokenServices) defaultTokenServices;
             if (now.getTime() > 
                 tokenDetail.getDateCreated().getTime() + (orcidRandomValueTokenServices.getWriteValiditySeconds() * 1000)) {

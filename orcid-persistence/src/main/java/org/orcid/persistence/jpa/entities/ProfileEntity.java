@@ -16,6 +16,7 @@
  */
 package org.orcid.persistence.jpa.entities;
 
+import java.security.AccessControlException;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
@@ -40,6 +41,7 @@ import javax.persistence.Transient;
 
 import org.hibernate.annotations.Sort;
 import org.hibernate.annotations.SortType;
+import org.orcid.core.oauth.service.OrcidRandomValueTokenServices;
 import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.clientgroup.GroupType;
@@ -131,6 +133,9 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
     private String groupOrcid;
     private SortedSet<ProfileEntity> clientProfiles;
     private ClientDetailsEntity clientDetails;
+    
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = PROFILE)
+    @Sort(type = SortType.NATURAL)
     private SortedSet<OrcidOauth2TokenDetail> tokenDetails;
     private IndexingStatus indexingStatus = IndexingStatus.PENDING;
     private Set<ProfileEventEntity> profileEvents;
@@ -769,9 +774,18 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
         this.clientDetails = clientDetails;
     }
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = PROFILE)
-    @Sort(type = SortType.NATURAL)
     public SortedSet<OrcidOauth2TokenDetail> getTokenDetails() {
+        for (OrcidOauth2TokenDetail tokenDetail:tokenDetails) {
+            Date now = new Date();
+            OrcidRandomValueTokenServices orcidRandomValueTokenServices = (OrcidRandomValueTokenServices) defaultTokenServices;
+            if (now.getTime() > 
+                tokenDetail.getDateCreated().getTime() + (orcidRandomValueTokenServices.getWriteValiditySeconds() * 1000)) {
+                org.orcid.core.security.DefaultPermissionChecker.removeWriteScopes(tokenDetail);
+                orcidOauthTokenDetailService.saveOrUpdate(tokenDetail);
+                throw new AccessControlException("Write scopes for this token have expired " + requestedScopes);
+            }
+
+        }
         return tokenDetails;
     }
 
