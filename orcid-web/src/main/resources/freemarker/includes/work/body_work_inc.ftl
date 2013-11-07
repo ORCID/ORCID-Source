@@ -31,9 +31,9 @@
 	        </div>
 	        <!-- Settings -->
 	        <div class="col-md-4 col-sm-4 workspace-toolbar">
-				<a href ng-click="deleteWork(work.putCode.value)" class="glyphicon glyphicon-trash grey"></a>
-	        	<#include "work_more_info_inc.ftl"/>
-		        <#if !(isPublicProfile??)>
+	        	<#if !(isPublicProfile??)>
+					<a href ng-click="deleteWork(work.putCode.value)" class="glyphicon glyphicon-trash grey"></a>
+	        		<#include "work_more_info_inc.ftl"/>
 					<ul class="workspace-private-toolbar">
 						<@orcid.privacyToggle angularModel="work.visibility.visibility" 
 							publicClick="setPrivacy(work.putCode.value, 'PUBLIC', $event)" 
