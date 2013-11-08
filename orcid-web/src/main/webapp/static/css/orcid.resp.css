@@ -3243,7 +3243,7 @@ ul.personal-inf-display li{
 		width: 250px;
 	}
 	.popover-help-container a i {
-		font-size: 32px;
+		font-size: 25px;
 	}
 	#RegistrationCtr .popover-help-container .popover {
 		left: -109px;
@@ -3316,7 +3316,7 @@ ul.personal-inf-display li{
 	}
 	
 	.workspace-private-toolbar .glyphicon {
-		line-height: 20px;
+		line-height: 26px;
 	}	
 	
 	.workspace-private-toolbar{		
@@ -3324,18 +3324,23 @@ ul.personal-inf-display li{
     	float:left !important;    	    	
 	}
 	
+	.workspace-toolbar a.glyphicon-trash,
+	.workspace-toolbar .more-info .glyphicon-plus-sign{
+		font-size: 23px;
+		line-height: 27px;
+	}	
+		
 	.workspace-accordion-item{
 		border-bottom: none;
 	}
 	
 	#workspace-publications .popover-help-container .popover{
-		left:-190px !important;
+		left:-134px !important;
 	}
 	
 	#workspace-publications .popover-help-container .arrow{
-		left: 203px !important;
-	}
-		
+		left: 145px !important;
+	}		
 
 	.public-profile .popover-help-container .popover{
 		left:-193px;		
@@ -3470,11 +3475,11 @@ ul.personal-inf-display li{
 	/* Workspace Affiliations */
 	/* Affiliations Pop over */
 	#workspace-affiliations .popover-help-container .popover{
-		left:-155px !important;
+		left:-134px !important;
 	}
 	
 	#workspace-affiliations .popover-help-container .arrow{
-		left: 167px !important;
+		left: 146px !important;
 	}
 		
 	#edit-affiliation .popover-help-container .popover{
@@ -3492,7 +3497,7 @@ ul.personal-inf-display li{
 	}
 
 	.more-info .popover.bottom .arrow{
-		left: 27px !important;
+		left: 21px !important;
 	}
 	
 	/* Edit personal information Lightbox */	

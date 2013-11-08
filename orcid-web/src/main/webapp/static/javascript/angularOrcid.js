@@ -1147,7 +1147,7 @@ function AffiliationCtrl($scope, $compile, affiliationsSrvc){
 
 	$scope.showAddModal = function(){
 		isMobile() ? w = '100%' : w = '800px';
-		isMobile() ? h = '100%' : h = '550px';
+		isMobile() ? h = '100%' : h = 'auto';
 		var numOfResults = 25;
 		$.colorbox({        	
 			html: $compile($('#add-affiliation-modal').html())($scope),
@@ -1525,7 +1525,7 @@ function WorkCtrl($scope, $compile, worksSrvc) {
 	$scope.showAddModal = function(){;
 		$scope.editTranslatedTitle = false;
 		isMobile() ? w = '100%' : w = '768px';
-		isMobile() ? h = '100%' : h = '750px';		
+		isMobile() ? h = '100%' : h = 'auto';		
 	    $.colorbox({	    	
 	    	scrolling: true,
 	        html: $compile($('#add-work-modal').html())($scope),	        

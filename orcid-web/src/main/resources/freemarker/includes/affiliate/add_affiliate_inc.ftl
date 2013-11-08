@@ -18,6 +18,7 @@
 -->
 <script type="text/ng-template" id="add-affiliation-modal">
 	<div id="edit-affiliation" class="edit-affiliation colorbox-content">
+		<div class="lightbox-container"> 
 		<div class="row">
 			<div class="col-md-11 col-sm-10 col-xs-10">
 				<h1 class="lightbox-title pull-left"><@orcid.msg 'manual_affiliation_form_contents.add_affiliation'/></h1>				
@@ -183,7 +184,8 @@
 		<div class="row">
 			<div class="col-md-12 col-sm-12 col-xs-12">	
 				<span ng-show="editWork.errors.length > 0" class="alert">Please fix above errors</span>
-			<div>
-		<div>
-	<div>
+			</div>
+		</div>
+		</div>
+	</div>
 </script>
