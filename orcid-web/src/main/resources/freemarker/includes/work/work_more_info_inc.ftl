@@ -64,24 +64,20 @@
 			<div class="row bottomBuffer" ng-show="work.citation.citation.value"
 				ng-cloak>
 				<div class="col-md-8">
-					<strong> <@orcid.msg
-						'manual_work_form_contents.labelcitation'/> </strong> <span
-						ng-show="showBibtex && work.citation.citationType.value == 'bibtex'"><a
-						ng-click="bibtexShowToggle()">Show in Bibtex</a></span> <span
-						ng-show="showBibtex == false && work.citation.citationType.value == 'bibtex'"><a
-						ng-click="bibtexShowToggle()">Show in HTML</a></span>
-					<div
-						ng-hide="showBibtex && work.citation.citationType.value == 'bibtex'"
-						ng-bind="work.citation.citation.value"></div>
-					<div class="row" ng-show="showBibtex"
-						ng-repeat='bibJSON in bibtexCitations[work.putCode.value]'>
-						<div class="row">
-							<div class="col-md-2" style="margin-left: 0px;">{{bibJSON.entryType}}</div>
-							<div class="col-md-6">{{bibJSON.citationKey}}</div>
-						</div>
-						<div ng-repeat="(entKey,entVal) in bibJSON.entryTags" class="row">
-							<div class="col-md-2" style="margin-left: 0px;">{{entKey}}</div>
-							<div class="col-md6">{{entVal}}</div>
+					<strong><@orcid.msg 'manual_work_form_contents.labelcitation'/></strong>
+					<span ng-show="showBibtex && work.citation.citationType.value == 'bibtex'">
+						<a ng-click="bibtexShowToggle()">Show in Bibtex</a>
+					</span>
+					<span ng-show="showBibtex == false && work.citation.citationType.value == 'bibtex'">
+						<a ng-click="bibtexShowToggle()">Show in HTML</a>
+					</span>
+					<div ng-hide="showBibtex && work.citation.citationType.value == 'bibtex'" ng-bind="work.citation.citation.value" class="col-md-offset-1 col-md-11 col-sm-offset-1 col-sm-11 col-xs-12"></div>					
+					<div class="row" ng-show="showBibtex" ng-repeat='bibJSON in bibtexCitations[work.putCode.value]'>						
+						<div class="col-md-offset-1 col-md-2 col-sm-offset-1 col-sm-1 col-xs-offset-1 col-xs-11">{{bibJSON.entryType}}</div>
+						<div class="col-md-8 col-sm-9 col-xs-offset-1 col-xs-11">{{bibJSON.citationKey}}</div>						
+						<div ng-repeat="(entKey,entVal) in bibJSON.entryTags">
+							<div class="col-md-offset-1 col-md-2 col-sm-offset-1 col-sm-1 col-xs-offset-1 col-xs-11">{{entKey}}</div>
+							<div class="col-md-8 col-sm-9 col-xs-offset-1 col-xs-11">{{entVal}}</div>
 						</div>
 					</div>
 				</div>
@@ -89,8 +85,7 @@
 			<div class="row bottomBuffer"
 				ng-show="work.citation.citationType.value" ng-cloak>
 				<div class="col-md-8">
-					<strong> <@orcid.msg
-						'manual_work_form_contents.labelcitationtype'/> </strong>
+					<strong> <@orcid.msg 'manual_work_form_contents.labelcitationtype'/> </strong>
 					<div ng-bind="work.citation.citationType.value"></div>
 				</div>
 			</div>
