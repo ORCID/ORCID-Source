@@ -50,14 +50,10 @@
 	        <!-- Privacy Settings -->
 	        <div class="col-md-4 col-sm-4 workspace-toolbar">
 	        	<#include "includes/affiliate/affiliate_more_info_inc.ftl"/>
+	        	<a href ng-click="deleteAffiliation(affiliation.putCode.value)" class="glyphicon glyphicon-trash grey"></a>
 	        	<ul class="workspace-private-toolbar">
-	        		<li>	
-			        	<a href ng-click="deleteAffiliation(affiliation.putCode.value)" class="glyphicon glyphicon-trash grey"></a>
-			        </li>
-			        <li>
 						<@orcid.privacyToggle "affiliation.visibility.visibility" "setPrivacy(affiliation.putCode.value, 'PUBLIC', $event)" 
-                    	  "setPrivacy(affiliation.putCode.value, 'LIMITED', $event)" "setPrivacy(affiliation.putCode.value, 'PRIVATE', $event)" />
-			        </li>
+                    	  "setPrivacy(affiliation.putCode.value, 'LIMITED', $event)" "setPrivacy(affiliation.putCode.value, 'PRIVATE', $event)" />			        
 		        </ul>
 			</div>
 		</div>

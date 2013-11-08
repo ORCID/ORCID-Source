@@ -37,12 +37,11 @@
 	        	<#include "work_more_info_inc.ftl"/>
 	        	<#if !(isPublicProfile??)>
 					<ul class="workspace-private-toolbar">
+						<li>
 						<@orcid.privacyToggle angularModel="work.visibility.visibility" 
 							publicClick="setPrivacy(work.putCode.value, 'PUBLIC', $event)" 
 		                	limitedClick="setPrivacy(work.putCode.value, 'LIMITED', $event)" 
-		                	privateClick="setPrivacy(work.putCode.value, 'PRIVATE', $event)"
-		                	popoverStyle="left: -255px;"
-		                	arrowStyle="left: 261px;" />
+		                	privateClick="setPrivacy(work.putCode.value, 'PRIVATE', $event)"/>
 		                </li>			
 					</ul>			
 				</#if>				
