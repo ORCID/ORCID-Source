@@ -64,6 +64,11 @@
 	    <![endif]-->
 	    <link rel="stylesheet" href="${staticCdn}/css/jquery-ui-1.10.0.custom.min.css?v=${ver}"/>
 	    <script src="${staticCdn}/javascript/respond.min.js?v=${ver}"></script>
+	    
+	    <!-- Respond.js proxy on external server -->
+	    <link href="${staticCdn}/html/respond-proxy.html" id="respond-proxy" rel="respond-proxy" />
+	    <link href="${staticLoc}/img/respond.proxy.gif" id="respond-redirect" rel="respond-redirect" />
+	    <script src="${staticLoc}/javascript/respond.proxy.js"></script>
     
     <#else>
     	<link rel="stylesheet" href="${staticLoc}/css/fonts.css?v=${ver}"/>		
