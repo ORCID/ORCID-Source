@@ -164,7 +164,8 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
         }
         String groupOrcid = orcidClientGroup.getGroupOrcid();
         if (groupOrcid == null) {
-            createGroup(orcidClientGroup);
+            orcidClientGroup = createGroup(orcidClientGroup);
+            groupOrcid = orcidClientGroup.getGroupOrcid();
         } else {
             // If the incoming client group ORCID is not null, then lookup the
             // existing client group.
