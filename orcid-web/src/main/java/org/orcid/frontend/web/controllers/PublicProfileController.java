@@ -25,6 +25,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -33,6 +34,8 @@ import org.orcid.frontend.web.util.LanguagesMap;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidWork;
 import org.orcid.jaxb.model.message.Visibility;
+import org.orcid.pojo.ajaxForm.PojoUtil;
+import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.pojo.ajaxForm.Work;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -98,6 +101,8 @@ public class PublicProfileController extends BaseWorkspaceController {
     @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/works.json")
     public @ResponseBody
     List<Work> getWorkJson(HttpServletRequest request, @PathVariable("orcid") String orcid, @RequestParam(value = "workIds") String workIdsStr) {
+        Map<String, String> countries = retrieveIsoCountries();
+        Map<String, String> languages = LanguagesMap.buildLanguageMap(localeManager.getLocale(), false);
         OrcidProfile profile = orcidProfileManager.retrievePublicOrcidProfile(orcid);
         Map<String, OrcidWork> workMap = profile.getOrcidActivities().getOrcidWorks().retrieveOrcidWorksAsMap();
         List<Work> works = new ArrayList<Work>();
@@ -106,37 +111,26 @@ public class PublicProfileController extends BaseWorkspaceController {
             OrcidWork orcidWork = workMap.get(workId);
             if (orcidWork != null) {
                 // ONLY SHARE THE PUBLIC WORKS!
-                if (orcidWork.getVisibility().equals(Visibility.PUBLIC))
-                    works.add(Work.valueOf(orcidWork));
+                if (orcidWork.getVisibility().equals(Visibility.PUBLIC)) {
+                    Work work = Work.valueOf(orcidWork); 
+                    if(!PojoUtil.isEmpty(work.getCountryCode())) {            
+                        Text countryName = Text.valueOf(countries.get(work.getCountryCode().getValue()));
+                        work.setCountryName(countryName);
+                    }
+                    //Set language name
+                    if(!PojoUtil.isEmpty(work.getLanguageCode())) {
+                        Text languageName = Text.valueOf(languages.get(work.getLanguageCode().getValue()));
+                        work.setLanguageName(languageName);
+                    }
+                    //Set translated title language name
+                    if(!(work.getWorkTitle().getTranslatedTitle() == null) && !StringUtils.isEmpty(work.getWorkTitle().getTranslatedTitle().getLanguageCode())) {
+                        String languageName = languages.get(work.getWorkTitle().getTranslatedTitle().getLanguageCode());
+                        work.getWorkTitle().getTranslatedTitle().setLanguageName(languageName);
+                    }
+                    works.add(work);
+                }
             }
         }
         return works;
-    }
-    
-    /**
-     * Returns a map containing the language code and name for each language
-     * supported.
-     * 
-     * @return A map of the form [language_code, language_name] containing all
-     *         supported languages
-     * */
-    @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/languages.json", method = RequestMethod.GET)
-    public @ResponseBody
-    Map<String, String> getLanguageMap(HttpServletRequest request) {
-        return LanguagesMap.buildLanguageMap(localeManager.getLocale(), false);
-    }
-
-    /**
-     * Returns a map containing the iso country code and the name for each
-     * country.\
-     * 
-     * @return A map of the form [iso_code, country_name] containing all
-     *         existing countries.
-     * */
-    @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/countries.json", method = RequestMethod.GET)
-    public @ResponseBody
-    Map<String, String> getCountriesMap(HttpServletRequest request) {
-        return retrieveIsoCountries();
-    }
-
+    }        
 }

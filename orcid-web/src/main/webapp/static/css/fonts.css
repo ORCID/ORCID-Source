@@ -74,3 +74,12 @@
 		url("../ORCID-Fonts-Dot-Com/59939f92-3d8b-46f6-8852-3a0db259dea0.svg#59939f92-3d8b-46f6-8852-3a0db259dea0")
 		format("svg");
 }
+
+@font-face {
+  font-family: 'Glyphicons Halflings';
+  src: url('../twitter-bootstrap/3.0.2/fonts/glyphicons-halflings-regular.eot');
+  src: url('../twitter-bootstrap/3.0.2/fonts/glyphicons-halflings-regular.eot?#iefix') format('embedded-opentype'), 
+  	   url('../twitter-bootstrap/3.0.2/fonts/glyphicons-halflings-regular.woff') format('woff'), 
+  	   url('../twitter-bootstrap/3.0.2/fonts/glyphicons-halflings-regular.ttf') format('truetype'),
+  	   url('../twitter-bootstrap/3.0.2/fonts/glyphicons-halflings-regular.svg#glyphicons_halflingsregular') format('svg');
+}
