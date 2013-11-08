@@ -16,7 +16,6 @@
  */
 package org.orcid.persistence.jpa.entities;
 
-import java.security.AccessControlException;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;

@@ -239,18 +239,34 @@ public class DefaultPermissionChecker implements PermissionChecker {
         if (requiredScope.isWriteOperationScope()) {
             OrcidOAuth2Authentication orcidOauth2Authentication = (OrcidOAuth2Authentication) oAuth2Authentication;
             OrcidOauth2TokenDetail tokenDetail = orcidOauthTokenDetailService.findNonDisabledByTokenValue(orcidOauth2Authentication.getActiveToken());
-            Date now = new Date();
-            OrcidRandomValueTokenServices orcidRandomValueTokenServices = (OrcidRandomValueTokenServices) defaultTokenServices;
-            if (now.getTime() > 
-                tokenDetail.getDateCreated().getTime() + (orcidRandomValueTokenServices.getWriteValiditySeconds() * 1000)) {
-                removeWriteScopes(tokenDetail);
-                orcidOauthTokenDetailService.saveOrUpdate(tokenDetail);
-                throw new AccessControlException("Write scopes for this token have expired " + requestedScopes);
-            }
+            if (removeWriteScopesPastValitity(tokenDetail)) throw new AccessControlException("Write scopes for this token have expired ");
         }
         if (!hasRequiredScope(requestedScopes, requiredScope)) {
             throw new AccessControlException("Insufficient or wrong scope " + requestedScopes);
         }
+    }
+
+    /*
+     * Removed write scopes past the specified validity,
+     * returns true if modified false otherwise
+     */
+    public boolean removeWriteScopesPastValitity(OrcidOauth2TokenDetail tokenDetail) {
+        String[] scopes = tokenDetail.getScope().split("\\s+");
+        for (String scope: scopes) {
+            ScopePathType scopePathType = ScopePathType.fromValue(scope);
+            if (scopePathType.isWriteOperationScope()) { 
+                Date now = new Date();
+                OrcidRandomValueTokenServices orcidRandomValueTokenServices = (OrcidRandomValueTokenServices) defaultTokenServices;
+                if (now.getTime() > 
+                    tokenDetail.getDateCreated().getTime() + (orcidRandomValueTokenServices.getWriteValiditySeconds() * 1000)) {
+                    removeWriteScopes(tokenDetail);
+                    orcidOauthTokenDetailService.saveOrUpdate(tokenDetail);
+                    return true;
+                }
+                break;
+            }
+        }              
+        return false;
     }
 
     private void performSecurityChecks(OAuth2Authentication oAuth2Authentication, ScopePathType requiredScope, OrcidMessage orcidMessage, String orcid) {
