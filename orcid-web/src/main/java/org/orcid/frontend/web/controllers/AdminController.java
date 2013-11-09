@@ -18,10 +18,13 @@ package org.orcid.frontend.web.controllers;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 
 import javax.annotation.Resource;
 
+import org.hsqldb.lib.StringUtil;
 import org.orcid.core.manager.EmailManager;
 import org.orcid.core.manager.ExternalIdentifierManager;
 import org.orcid.core.manager.NotificationManager;
@@ -45,6 +48,7 @@ import org.orcid.utils.OrcidStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -112,6 +116,20 @@ public class AdminController extends BaseController {
         this.emailManager = emailManager;
     }
 
+    @ModelAttribute("groupTypes")
+    public Map<String, String> retrieveGroupTypes() {
+        GroupType [] groupTypes = GroupType.values();
+        Map<String, String> groupTypesMap = new TreeMap<String, String>();
+        
+        for(GroupType groupType : groupTypes){
+            String key = groupType.value();
+            String value = key.replace('-', ' ');
+            groupTypesMap.put(key, value); 
+        }
+        
+        return groupTypesMap;
+    }
+    
     @RequestMapping
     public ModelAndView getDeprecatedProfilesPage() {
         return new ModelAndView("admin_actions");
@@ -302,6 +320,20 @@ public class AdminController extends BaseController {
         return result;
     }
 
+    /**
+     * TODO
+     * */
+    @RequestMapping(value = "/group.json", method = RequestMethod.GET)
+    public @ResponseBody
+    Group getEmptyGroup() {
+        Group group = new Group();
+        group.setEmail(Text.valueOf(""));
+        group.setGroupName(Text.valueOf(""));
+        group.setGroupOrcid(Text.valueOf(""));
+        group.setType(Text.valueOf(""));
+        return group;
+    }
+    
     /**
      * TODO
      * */
