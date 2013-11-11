@@ -17,8 +17,6 @@
 package org.orcid.core.manager.impl;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -89,20 +87,6 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
     @Resource
     private EncryptionManager encryptionManager;
 
-    private List<RedirectUri> defaultRedirectUris;
-
-    public void setDefaultRedirectUrisAsWhiteSpaceSeparatedList(String defaultRedirectUrisAsWhiteSpaceSeparatedList) {
-        if (defaultRedirectUrisAsWhiteSpaceSeparatedList == null || defaultRedirectUrisAsWhiteSpaceSeparatedList.length() == 0) {
-            defaultRedirectUris = Collections.emptyList();
-        } else {
-            List<String> nonScopedDefaultRedirectUris = Arrays.asList(defaultRedirectUrisAsWhiteSpaceSeparatedList.split("\\s"));
-            defaultRedirectUris = new ArrayList<RedirectUri>();
-            for (String redirectUriOnly : nonScopedDefaultRedirectUris) {
-                defaultRedirectUris.add(new RedirectUri(redirectUriOnly));
-            }
-        }
-    }
-
     @Override
     @Transactional
     public OrcidClient createOrUpdateOrcidClientGroup(String groupOrcid, OrcidClient orcidClient) {
@@ -115,7 +99,7 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
             clientProfileEntities = new TreeSet<ProfileEntity>(new OrcidEntityIdComparator<String>());
             groupProfileEntity.setClientProfiles(clientProfileEntities);
         }
-        
+
         processClient(groupOrcid, clientProfileEntities, orcidClient, getClientType(groupProfileEntity.getGroupType()));
 
         OrcidClientGroup group = retrieveOrcidClientGroup(groupOrcid);
@@ -136,22 +120,25 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
         modifyClientTypesForAPIRequest(result);
         return result;
     }
-    
+
     /**
-     * Modifies the client types for API calls, so, the resulting client types will be only 
-     * creator or updater instead of "premium-creator" or "premium-updater"
+     * Modifies the client types for API calls, so, the resulting client types
+     * will be only creator or updater instead of "premium-creator" or
+     * "premium-updater"
+     * 
      * @param orcidClientGroup
-     *          The client group with the list of clients associated with this group
+     *            The client group with the list of clients associated with this
+     *            group
      * */
-    private void modifyClientTypesForAPIRequest(OrcidClientGroup orcidClientGroup){
-        for(OrcidClient client : orcidClientGroup.getOrcidClient()){
-            if(client.getType().equals(ClientType.PREMIUM_CREATOR))
+    private void modifyClientTypesForAPIRequest(OrcidClientGroup orcidClientGroup) {
+        for (OrcidClient client : orcidClientGroup.getOrcidClient()) {
+            if (client.getType().equals(ClientType.PREMIUM_CREATOR))
                 client.setType(ClientType.CREATOR);
-            else if(client.getType().equals(ClientType.PREMIUM_UPDATER))
+            else if (client.getType().equals(ClientType.PREMIUM_UPDATER))
                 client.setType(ClientType.UPDATER);
         }
     }
-    
+
     @Override
     @Transactional
     public OrcidClientGroup createOrUpdateOrcidClientGroup(OrcidClientGroup orcidClientGroup) {
@@ -161,11 +148,8 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
         }
         String groupOrcid = orcidClientGroup.getGroupOrcid();
         if (groupOrcid == null) {
-            // If the incoming client group ORCID is null, then create a new
-            // client group.
-            OrcidProfile groupProfile = createGroupProfile(orcidClientGroup);
-            groupProfile = orcidProfileManager.createOrcidProfile(groupProfile);
-            groupOrcid = groupProfile.getOrcid().getValue();
+            orcidClientGroup = createGroup(orcidClientGroup);
+            groupOrcid = orcidClientGroup.getGroupOrcid();
         } else {
             // If the incoming client group ORCID is not null, then lookup the
             // existing client group.
@@ -174,7 +158,7 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
                 // If and existing client group can't be found
                 // then raise an error.
                 throw new OrcidClientGroupManagementException("Group ORCID was specified but does not yet exist: " + groupOrcid);
-            } else {                
+            } else {
                 // If the existing client group is found, then update the name
                 // and contact email from the incoming client group, using the
                 // profile DAO
@@ -199,7 +183,7 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
             groupProfileEntity.setClientProfiles(clientProfileEntities);
         }
         // For each client in the client group
-        for (OrcidClient client : orcidClientGroup.getOrcidClient()) {            
+        for (OrcidClient client : orcidClientGroup.getOrcidClient()) {
             processClient(groupOrcid, clientProfileEntities, client, getClientType(groupProfileEntity.getGroupType()));
         }
         // Regenerate client group and return.
@@ -207,29 +191,52 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
     }
 
     /**
-     * Check if the client type matches the types that the group is allowed to add.
+     * Creates a group profile. If the OrcidClientGroup provided already
+     * contains a groupOrcid, it will just return it, if it doesnt, it will
+     * create the profile and update the parameter.
+     * 
+     * @param orcidClientGroup
+     *            the group to be created
+     * @return the group updated with his orcid id.
+     * */
+    public OrcidClientGroup createGroup(OrcidClientGroup orcidClientGroup) {
+        String groupOrcid = orcidClientGroup.getGroupOrcid();
+        if (groupOrcid == null) {
+            OrcidProfile groupProfile = createGroupProfile(orcidClientGroup);
+            groupProfile = orcidProfileManager.createOrcidProfile(groupProfile);
+            groupOrcid = groupProfile.getOrcid().getValue();
+            orcidClientGroup.setGroupOrcid(groupOrcid);
+        }
+
+        return orcidClientGroup;
+    }
+
+    /**
+     * Check if the client type matches the types that the group is allowed to
+     * add.
+     * 
      * @param clientType
-     *          Type of the client that want to be created 
+     *            Type of the client that want to be created
      * @param groupType
-     *          Group type
-     * @throws OrcidClientGroupManagementException if the client type cant be added by this group
+     *            Group type
+     * @throws OrcidClientGroupManagementException
+     *             if the client type cant be added by this group
      * */
     private void checkClientType(ClientType clientType, GroupType groupType) {
-        switch(groupType){
+        switch (groupType) {
         case BASIC:
-        case PREMIUM:        
-            if(clientType.equals(ClientType.CREATOR) || clientType.equals(ClientType.PREMIUM_CREATOR))
+        case PREMIUM:
+            if (clientType.equals(ClientType.CREATOR) || clientType.equals(ClientType.PREMIUM_CREATOR))
                 throw new OrcidClientGroupManagementException("Groups of type basic or premium can only create updator clients");
             break;
         case BASIC_INSTITUTION:
         case PREMIUM_INSTITUTION:
-            if(clientType.equals(ClientType.UPDATER) || clientType.equals(ClientType.PREMIUM_UPDATER))
+            if (clientType.equals(ClientType.UPDATER) || clientType.equals(ClientType.PREMIUM_UPDATER))
                 throw new OrcidClientGroupManagementException("Groups of type basic-institution or premium-institution can only create creator clients");
             break;
         }
     }
-    
-    
+
     /**
      * Creates a new client and set the group orcid as the owner of that client
      * 
@@ -241,10 +248,10 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
      * */
     public OrcidClient createAndPersistClientProfile(String groupOrcid, OrcidClient client) throws OrcidClientGroupManagementException {
         ProfileEntity groupProfileEntity = profileDao.find(groupOrcid);
-        //Sets the client type
-        setClientType(groupProfileEntity.getGroupType(), client);        
+        // Sets the client type
+        setClientType(groupProfileEntity.getGroupType(), client);
         if (!isAllowedToAddNewClient(groupOrcid))
-            throw new OrcidClientGroupManagementException("Your contract allow you to have only 1 client.");        
+            throw new OrcidClientGroupManagementException("Your contract allow you to have only 1 client.");
         // Create a new client profile for the orcidClient.
         OrcidProfile clientProfile = createClientProfile(client);
         clientProfile = orcidProfileManager.createOrcidProfile(clientProfile);
@@ -256,7 +263,7 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
         // And link the client to the copy of the profile cached in
         // memory by Hibernate
         // Use the profile DAO to link the clients to the group, so get the
-        // group profile entity.        
+        // group profile entity.
         SortedSet<ProfileEntity> clientProfileEntities = groupProfileEntity.getClientProfiles();
         if (clientProfileEntities == null) {
             clientProfileEntities = new TreeSet<ProfileEntity>(new OrcidEntityIdComparator<String>());
@@ -281,25 +288,26 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
      * */
     private boolean isAllowedToAddNewClient(String groupOrcid) {
         OrcidClientGroup group = retrieveOrcidClientGroup(groupOrcid);
-        
+
         // If this is a basic group or a basic institution group, it should
         // be allowed to have only one client
         if (group.getType().equals(GroupType.BASIC) || group.getType().equals(GroupType.BASIC_INSTITUTION)) {
             if (!group.getOrcidClient().isEmpty())
                 return false;
         }
-        
+
         return true;
     }
 
     /**
      * Returns the client type based on the group type
+     * 
      * @param groupType
      * @return the client type associated with the given group type
      * */
     private ClientType getClientType(GroupType groupType) {
         ClientType clientType = null;
-        switch(groupType){
+        switch (groupType) {
         case BASIC:
             clientType = ClientType.UPDATER;
             break;
@@ -313,7 +321,7 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
             clientType = ClientType.PREMIUM_CREATOR;
             break;
         default:
-            //This should never happen
+            // This should never happen
             throw new OrcidClientGroupManagementException("Inexisting group type: " + groupType);
         }
         return clientType;
@@ -450,9 +458,7 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
         Map<String, ClientRedirectUriEntity> clientRedirectUriEntitiesMap = ClientRedirectUriEntity.mapByUri(clientRedirectUriEntities);
         clientRedirectUriEntities.clear();
         Set<RedirectUri> redirectUrisToAdd = new HashSet<RedirectUri>();
-        redirectUrisToAdd.addAll(client.getRedirectUris().getRedirectUri());
-        if (!isUpdate)
-            redirectUrisToAdd.addAll(defaultRedirectUris);
+        redirectUrisToAdd.addAll(client.getRedirectUris().getRedirectUri());        
         for (RedirectUri redirectUri : redirectUrisToAdd) {
             if (clientRedirectUriEntitiesMap.containsKey(redirectUri.getValue())) {
                 clientRedirectUriEntities.add(clientRedirectUriEntitiesMap.get(redirectUri.getValue()));
@@ -532,9 +538,8 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
         clientAuthorizedGrantTypes.add("authorization_code");
         clientAuthorizedGrantTypes.add("refresh_token");
         Set<RedirectUri> redirectUrisToAdd = new HashSet<RedirectUri>();
-        if(orcidClient.getRedirectUris() != null) {        	
-        	redirectUrisToAdd.addAll(orcidClient.getRedirectUris().getRedirectUri());
-        	redirectUrisToAdd.addAll(defaultRedirectUris);
+        if (orcidClient.getRedirectUris() != null) {
+            redirectUrisToAdd.addAll(orcidClient.getRedirectUris().getRedirectUri());
         }
         List<String> clientGrantedAuthorities = new ArrayList<String>();
         clientGrantedAuthorities.add("ROLE_CLIENT");
@@ -599,23 +604,23 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
     /**
      * Sets the client type based on the group type
      * */
-    private void setClientType(GroupType groupType, OrcidClient client){
-        switch(groupType){
-        case BASIC: 
+    private void setClientType(GroupType groupType, OrcidClient client) {
+        switch (groupType) {
+        case BASIC:
             client.setType(ClientType.UPDATER);
             break;
         case BASIC_INSTITUTION:
             client.setType(ClientType.CREATOR);
             break;
-        case PREMIUM: 
+        case PREMIUM:
             client.setType(ClientType.PREMIUM_UPDATER);
             break;
-        case PREMIUM_INSTITUTION: 
+        case PREMIUM_INSTITUTION:
             client.setType(ClientType.PREMIUM_CREATOR);
-            break;            
+            break;
         }
     }
-    
+
     /**
      * Compare two client objects, one sent by the user and another one already
      * inserted on database. They both will be the same OrcidClient if they

@@ -19,7 +19,6 @@ package org.orcid.core.manager;
 import org.orcid.core.exception.OrcidClientGroupManagementException;
 import org.orcid.jaxb.model.clientgroup.OrcidClient;
 import org.orcid.jaxb.model.clientgroup.OrcidClientGroup;
-import org.orcid.jaxb.model.message.OrcidType;
 
 /**
  * 
@@ -107,5 +106,13 @@ public interface OrcidClientGroupManager {
      *            The orcid of the group that wants to be deleted
      * */
     void removeOrcidClientGroup(String groupOrcid);
+    
+    /**
+     * Creates a group profile. If the OrcidClientGroup provided already contains a groupOrcid, 
+     * it will just return it, if it doesnt, it will create the profile and update the parameter.
+     * @param orcidClientGroup the group to be created
+     * @return the group updated with his orcid id.
+     * */
+    OrcidClientGroup createGroup(OrcidClientGroup orcidClientGroup);
 
 }
