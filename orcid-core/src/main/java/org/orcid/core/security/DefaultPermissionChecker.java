@@ -20,6 +20,7 @@ import org.apache.commons.lang.StringUtils;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.oauth.OrcidOAuth2Authentication;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
+import org.orcid.core.oauth.service.OrcidRandomValueTokenServices;
 import org.orcid.jaxb.model.message.Orcid;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.ScopePathType;
@@ -31,6 +32,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.common.util.OAuth2Utils;
 import org.springframework.security.oauth2.provider.AuthorizationRequest;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
+import org.springframework.security.oauth2.provider.token.DefaultTokenServices;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -52,6 +54,9 @@ public class DefaultPermissionChecker implements PermissionChecker {
 
     // Initialise to 01-01-1970 (I was only 9 months old ;-))
     private static final Date EXPIRES_DATE = new Date(0L);
+    
+    @Resource(name = "tokenServices")
+    private DefaultTokenServices defaultTokenServices;
 
     @Resource(name = "profileEntityManager")
     private ProfileEntityManager profileEntityManager;
@@ -138,14 +143,13 @@ public class DefaultPermissionChecker implements PermissionChecker {
         } else if (OrcidOAuth2Authentication.class.isAssignableFrom(authentication.getClass())) {
             OrcidOAuth2Authentication auth2Authentication = (OrcidOAuth2Authentication) authentication;
             Set<Visibility> visibilities = getVisibilitiesForOauth2Authentication(auth2Authentication, orcidMessage, requiredScope);
-
             return visibilities;
         } else {
             throw new IllegalArgumentException("Cannot obtain authentication details from " + authentication);
         }
     }
 
-    private void removeWriteScopes(OrcidOauth2TokenDetail tokenDetail) {
+    public static void removeWriteScopes(OrcidOauth2TokenDetail tokenDetail) {
         Set<String> scopes = OAuth2Utils.parseParameterList(tokenDetail.getScope());
         Set<String> newScopes = new HashSet<String>();
         Set<ScopePathType> scopesFromStrings = ScopePathType.getScopesFromStrings(scopes);
@@ -232,9 +236,37 @@ public class DefaultPermissionChecker implements PermissionChecker {
     private void checkScopes(OAuth2Authentication oAuth2Authentication, ScopePathType requiredScope) {
         AuthorizationRequest authorizationRequest = oAuth2Authentication.getAuthorizationRequest();
         Set<String> requestedScopes = authorizationRequest.getScope();
+        if (requiredScope.isWriteOperationScope()) {
+            OrcidOAuth2Authentication orcidOauth2Authentication = (OrcidOAuth2Authentication) oAuth2Authentication;
+            OrcidOauth2TokenDetail tokenDetail = orcidOauthTokenDetailService.findNonDisabledByTokenValue(orcidOauth2Authentication.getActiveToken());
+            if (removeWriteScopesPastValitity(tokenDetail)) throw new AccessControlException("Write scopes for this token have expired ");
+        }
         if (!hasRequiredScope(requestedScopes, requiredScope)) {
             throw new AccessControlException("Insufficient or wrong scope " + requestedScopes);
         }
+    }
+
+    /*
+     * Removed write scopes past the specified validity,
+     * returns true if modified false otherwise
+     */
+    public boolean removeWriteScopesPastValitity(OrcidOauth2TokenDetail tokenDetail) {
+        String[] scopes = tokenDetail.getScope().split("\\s+");
+        for (String scope: scopes) {
+            ScopePathType scopePathType = ScopePathType.fromValue(scope);
+            if (scopePathType.isWriteOperationScope()) { 
+                Date now = new Date();
+                OrcidRandomValueTokenServices orcidRandomValueTokenServices = (OrcidRandomValueTokenServices) defaultTokenServices;
+                if (now.getTime() > 
+                    tokenDetail.getDateCreated().getTime() + (orcidRandomValueTokenServices.getWriteValiditySeconds() * 1000)) {
+                    removeWriteScopes(tokenDetail);
+                    orcidOauthTokenDetailService.saveOrUpdate(tokenDetail);
+                    return true;
+                }
+                break;
+            }
+        }              
+        return false;
     }
 
     private void performSecurityChecks(OAuth2Authentication oAuth2Authentication, ScopePathType requiredScope, OrcidMessage orcidMessage, String orcid) {

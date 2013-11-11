@@ -230,13 +230,6 @@
 	<bean id="orcidAuthorizationCodeService"
 		class="org.orcid.core.oauth.service.OrcidAuthorizationCodeServiceImpl" />
 
-	<bean id="orcidTokenStore" class="org.orcid.core.oauth.service.OrcidTokenStoreServiceImpl" />
-
-	<bean id="tokenServices"
-		class="org.springframework.security.oauth2.provider.token.DefaultTokenServices">
-		<property name="tokenStore" ref="orcidTokenStore" />
-	</bean>
-
 	<oauth2:resource-server id="resourceServerFilter"
 		resource-id="orcid" token-services-ref="tokenServices" />
 

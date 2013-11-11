@@ -81,6 +81,7 @@ public class OrcidOauth2TokenDetailServiceImpl implements OrcidOauth2TokenDetail
     @Override
     @Transactional
     public void saveOrUpdate(OrcidOauth2TokenDetail detail) {
+        if (detail.getId() != null) detail = orcidOauth2TokenDetailDao.merge(detail);
         orcidOauth2TokenDetailDao.persist(detail);
     }
 

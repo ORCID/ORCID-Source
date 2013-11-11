@@ -64,7 +64,7 @@ public abstract class BaseT2OrcidOAuthApiClientIntegrationTest {
     protected URI t2BaseUrl;
 
     protected void createAccessTokenFromCredentials() throws Exception {
-        createAccessTokenFromCredentials(ScopePathType.ORCID_PROFILE_CREATE.value());
+        createAccessTokenFromCredentials(ScopePathType.ORCID_PROFILE_CREATE.value() + ' ' + ScopePathType.ORCID_PROFILE_READ_LIMITED.value());
     }
 
     protected void createAccessTokenFromCredentials(String scopes) throws Exception {
@@ -126,4 +126,13 @@ public abstract class BaseT2OrcidOAuthApiClientIntegrationTest {
         List<String> authHeaders = clientResponse.getHeaders().get("WWW-Authenticate");
         assertTrue(authHeaders.contains("Bearer realm=\"ORCID T2 API\", error=\"invalid_token\", error_description=\"Invalid access token: null\""));
     }
+
+    protected void assertClientResponse403SecurityProblem(ClientResponse clientResponse) throws Exception {
+        // we've created client details but not tied them to an access token
+        assertEquals(403, clientResponse.getStatus());
+        String textEntity = clientResponse.getEntity(String.class);
+        assertTrue(textEntity.contains("Security problem"));
+    }
+
+
 }
