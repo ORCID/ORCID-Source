@@ -125,10 +125,7 @@
 		<constructor-arg value="12"></constructor-arg>
 	</bean>
 
-	<bean id="orcidClientGroupManager" class="org.orcid.core.manager.impl.OrcidClientGroupManagerImpl">
-		<property name="defaultRedirectUrisAsWhiteSpaceSeparatedList"
-			value="${org.orcid.core.defaultRedirectUrisAsWhiteSpaceSeparatedList}" />
-	</bean>
+	<bean id="orcidClientGroupManager" class="org.orcid.core.manager.impl.OrcidClientGroupManagerImpl" />		
 
     <alias name="incomingValidationManagerV1_0_22" alias="incomingValidationManagerLatest"/>
     <alias name="outgoingValidationManagerV1_0_22" alias="outgoingValidationManagerLatest"/>

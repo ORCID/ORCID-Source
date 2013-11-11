@@ -17,8 +17,6 @@
 package org.orcid.core.manager.impl;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -88,20 +86,6 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
 
     @Resource
     private EncryptionManager encryptionManager;
-
-    private List<RedirectUri> defaultRedirectUris;
-
-    public void setDefaultRedirectUrisAsWhiteSpaceSeparatedList(String defaultRedirectUrisAsWhiteSpaceSeparatedList) {
-        if (defaultRedirectUrisAsWhiteSpaceSeparatedList == null || defaultRedirectUrisAsWhiteSpaceSeparatedList.length() == 0) {
-            defaultRedirectUris = Collections.emptyList();
-        } else {
-            List<String> nonScopedDefaultRedirectUris = Arrays.asList(defaultRedirectUrisAsWhiteSpaceSeparatedList.split("\\s"));
-            defaultRedirectUris = new ArrayList<RedirectUri>();
-            for (String redirectUriOnly : nonScopedDefaultRedirectUris) {
-                defaultRedirectUris.add(new RedirectUri(redirectUriOnly));
-            }
-        }
-    }
 
     @Override
     @Transactional
@@ -474,9 +458,7 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
         Map<String, ClientRedirectUriEntity> clientRedirectUriEntitiesMap = ClientRedirectUriEntity.mapByUri(clientRedirectUriEntities);
         clientRedirectUriEntities.clear();
         Set<RedirectUri> redirectUrisToAdd = new HashSet<RedirectUri>();
-        redirectUrisToAdd.addAll(client.getRedirectUris().getRedirectUri());
-        if (!isUpdate)
-            redirectUrisToAdd.addAll(defaultRedirectUris);
+        redirectUrisToAdd.addAll(client.getRedirectUris().getRedirectUri());        
         for (RedirectUri redirectUri : redirectUrisToAdd) {
             if (clientRedirectUriEntitiesMap.containsKey(redirectUri.getValue())) {
                 clientRedirectUriEntities.add(clientRedirectUriEntitiesMap.get(redirectUri.getValue()));
@@ -558,7 +540,6 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
         Set<RedirectUri> redirectUrisToAdd = new HashSet<RedirectUri>();
         if (orcidClient.getRedirectUris() != null) {
             redirectUrisToAdd.addAll(orcidClient.getRedirectUris().getRedirectUri());
-            redirectUrisToAdd.addAll(defaultRedirectUris);
         }
         List<String> clientGrantedAuthorities = new ArrayList<String>();
         clientGrantedAuthorities.add("ROLE_CLIENT");

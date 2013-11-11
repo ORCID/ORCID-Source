@@ -24,7 +24,6 @@ import java.util.TreeMap;
 
 import javax.annotation.Resource;
 
-import org.hsqldb.lib.StringUtil;
 import org.orcid.core.manager.EmailManager;
 import org.orcid.core.manager.ExternalIdentifierManager;
 import org.orcid.core.manager.NotificationManager;
