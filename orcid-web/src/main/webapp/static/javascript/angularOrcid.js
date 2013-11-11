@@ -1221,7 +1221,7 @@ function AffiliationCtrl($scope, $compile, affiliationsSrvc){
 	$scope.removeDisambiguatedAffiliation = function() {
 		$scope.bindTypeahead();
 		delete $scope.disambiguatedAffiliation;
-		delete $scope.editAffiliation.disambiguatedAffiliationIdentifier;
+		delete $scope.editAffiliation.disambiguatedAffiliationSourceId;
 	};
 
 	$scope.addAffiliationModal = function(){

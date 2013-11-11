@@ -236,6 +236,7 @@ public class AffiliationForm implements ErrorsInterface, Serializable {
         if (!PojoUtil.isEmpty(disambiguatedAffiliationSourceId)) {
             affiliation.setDisambiguatedAffiliation(new DisambiguatedAffiliation());
             affiliation.getDisambiguatedAffiliation().setDisambiguatedAffiliationIdentifier(disambiguatedAffiliationSourceId.getValue());
+            affiliation.getDisambiguatedAffiliation().setDisambiguationSource(disambiguationSource.getValue());
         }
         affiliationAddress.setAffiliationCountry(new AffiliationCountry(Iso3166Country.fromValue(country.getValue())));
         if (!PojoUtil.isEmpty(roleTitle)) {
