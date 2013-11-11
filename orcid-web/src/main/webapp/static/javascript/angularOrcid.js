@@ -2528,18 +2528,6 @@ function revokeApplicationFormCtrl($scope,$compile){
 	};
 };
 
-
-
-
-
-
-
-
-
-
-
-
-
 function adminGroupsCtrl($scope,$compile){
 	$scope.showAdminGroupsModal = false;
 	$scope.newGroup = null;

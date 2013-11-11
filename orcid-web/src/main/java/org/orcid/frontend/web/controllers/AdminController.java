@@ -320,7 +320,8 @@ public class AdminController extends BaseController {
     }
 
     /**
-     * TODO
+     * Get an empty group
+     * @return an empty group
      * */
     @RequestMapping(value = "/group.json", method = RequestMethod.GET)
     public @ResponseBody
@@ -335,7 +336,9 @@ public class AdminController extends BaseController {
     }
     
     /**
-     * TODO
+     * Create a group
+     * @param the group to be created
+     * @return the group with the orcid information or with the error information
      * */
     @RequestMapping(value = "/create-group.json", method = RequestMethod.POST)
     public @ResponseBody
@@ -358,10 +361,7 @@ public class AdminController extends BaseController {
 
         return group;
     }
-
-    /**
-     * TODO
-     * */
+   
     private void validateGroupEmail(Group group) {
         group.getEmail().setErrors(new ArrayList<String>());
         if (PojoUtil.isEmpty(group.getEmail())) {
@@ -372,10 +372,7 @@ public class AdminController extends BaseController {
             setError(group.getEmail(), "group.email.already_used");
         }
     }
-
-    /**
-     * TODO
-     * */
+    
     private void validateGroupName(Group group) {
         group.getGroupName().setErrors(new ArrayList<String>());
         if (PojoUtil.isEmpty(group.getGroupName())) {
@@ -384,10 +381,7 @@ public class AdminController extends BaseController {
             setError(group.getGroupName(), "group.name.too_long");
         }
     }
-
-    /**
-     * TODO
-     * */
+    
     private void validateGroupType(Group group) {
         group.getType().setErrors(new ArrayList<String>());
         if (PojoUtil.isEmpty(group.getType())) {
