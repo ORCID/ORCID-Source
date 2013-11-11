@@ -2564,10 +2564,10 @@ function adminGroupsCtrl($scope,$compile){
 		$.colorbox.close();
 	};
 	
-	$scope.getGroup = function() {
+	$scope.getGroup = function() { 
 		$.ajax({
 	        url: orcidVar.baseUri+'/admin-actions/group.json',	        
-	        type: 'POST',
+	        type: 'GET',
 	        dataType: 'json',	        
 	        success: function(data){
 	        	$scope.$apply(function(){ 	
@@ -2583,15 +2583,18 @@ function adminGroupsCtrl($scope,$compile){
 	$scope.addGroup = function() {
 		$.ajax({
 	        url: orcidVar.baseUri+'/admin-actions/create-group.json',	        
+	        contentType: 'application/json;charset=UTF-8',
 	        type: 'POST',
 	        dataType: 'json',
-	        data: angular.toJson(work),
+	        data: angular.toJson($scope.newGroup),	        	       
 	        success: function(data){
+	        	console.log(data);
 	        	$scope.$apply(function(){ 
+	        		$scope.newGroup = data;
 	        		if(data.errors.length != 0){
-	        			$scope.errors = data.errors;
-	        		} else {
-	        			$scope.showSuccessModal(deprecatedOrcid, primaryOrcid);
+	        			
+	        		} else {	        			
+	        			$scope.showSuccessModal();
 	        		}
 				});
 	        }
@@ -2601,5 +2604,18 @@ function adminGroupsCtrl($scope,$compile){
 	    });		
 	};
 	
+	$scope.showSuccessModal = function() {
+		$.colorbox({                      
+			html : $compile($('#new-group-info').html())($scope),				
+				onLoad: function() {
+				$('#cboxClose').remove();
+			}
+		});
+		
+		$.colorbox.resize({width:"500px" , height:"450px"});
+	};
+	
+	//init 
+	$scope.getGroup();
 };
 

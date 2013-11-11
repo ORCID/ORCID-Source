@@ -330,14 +330,15 @@ public class AdminController extends BaseController {
         group.setEmail(Text.valueOf(""));
         group.setGroupName(Text.valueOf(""));
         group.setGroupOrcid(Text.valueOf(""));
-        group.setType(Text.valueOf(""));
+        //Set the default type as basic
+        group.setType(Text.valueOf(GroupType.BASIC.value()));
         return group;
     }
     
     /**
      * TODO
      * */
-    @RequestMapping(value = "/create-group", method = RequestMethod.POST)
+    @RequestMapping(value = "/create-group.json", method = RequestMethod.POST)
     public @ResponseBody
     Group createGroup(@RequestBody Group group) {
         group.setErrors(new ArrayList<String>());
