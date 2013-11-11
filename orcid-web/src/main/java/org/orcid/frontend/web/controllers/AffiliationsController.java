@@ -32,10 +32,12 @@ import org.orcid.jaxb.model.message.AffiliationType;
 import org.orcid.jaxb.model.message.Affiliations;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.persistence.dao.OrgAffiliationRelationDao;
+import org.orcid.persistence.dao.OrgDisambiguatedDao;
 import org.orcid.persistence.dao.OrgDisambiguatedSolrDao;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.CountryIsoEntity;
 import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
+import org.orcid.persistence.jpa.entities.OrgDisambiguatedEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.solr.entities.OrgDisambiguatedSolrDocument;
 import org.orcid.pojo.ajaxForm.AffiliationForm;
@@ -81,6 +83,9 @@ public class AffiliationsController extends BaseWorkspaceController {
 
     @Resource
     private OrgDisambiguatedSolrDao orgDisambiguatedSolrDao;
+
+    @Resource
+    private OrgDisambiguatedDao orgDisambiguatedDao;
 
     /**
      * Removes a affiliation from a profile
@@ -315,11 +320,19 @@ public class AffiliationsController extends BaseWorkspaceController {
     /**
      * fetch disambiguated by id
      */
-    @RequestMapping(value = "/disambiguated/id/{query}", method = RequestMethod.GET)
+    @RequestMapping(value = "/disambiguated/id/{id}", method = RequestMethod.GET)
     public @ResponseBody
-    Map<String, String> getDisambiguated(@PathVariable("query") Long query) {
-        OrgDisambiguatedSolrDocument orgDisambiguatedDocument = orgDisambiguatedSolrDao.findById(query);
-        Map<String, String> datum = createDatumFromOrgDisambiguated(orgDisambiguatedDocument);
+    Map<String, String> getDisambiguated(@PathVariable("id") Long id) {
+        OrgDisambiguatedEntity orgDisambiguatedEntity = orgDisambiguatedDao.find(id);
+        Map<String, String> datum = new HashMap<>();
+        datum.put("value", orgDisambiguatedEntity.getName());
+        datum.put("city", orgDisambiguatedEntity.getCity());
+        datum.put("region", orgDisambiguatedEntity.getRegion());
+        datum.put("country", orgDisambiguatedEntity.getCountry().value());
+        datum.put("orgType", orgDisambiguatedEntity.getOrgType());
+        datum.put("sourceId", orgDisambiguatedEntity.getSourceId());
+        datum.put("sourceType", orgDisambiguatedEntity.getSourceType());
+        datum.put("countryForDisplay", getMessage(buildInternationalizationKey(CountryIsoEntity.class, orgDisambiguatedEntity.getCountry().name())));
         return datum;
     }
 
