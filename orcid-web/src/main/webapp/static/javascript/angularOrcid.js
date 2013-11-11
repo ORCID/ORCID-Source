@@ -1195,10 +1195,9 @@ function AffiliationCtrl($scope, $compile, affiliationsSrvc){
 		$scope.editAffiliation.city.value = datum.city;
 		$scope.editAffiliation.region.value = datum.region;
 		$scope.editAffiliation.country.value = datum.country;
-		//$scope.editAffiliation.disambiguatedAffiliationIdentifier = datum.disambiguatedAffiliationIdentifier
 		if (datum.disambiguatedAffiliationIdentifier != undefined && datum.disambiguatedAffiliationIdentifier != null) {
 			$scope.getDisambiguatedAffiliation(datum.disambiguatedAffiliationIdentifier);
-				$scope.unbindTypeahead();
+			$scope.unbindTypeahead();
 		}
 	};
 	
@@ -1208,10 +1207,11 @@ function AffiliationCtrl($scope, $compile, affiliationsSrvc){
 	        dataType: 'json',
 	        type: 'GET',
 	        success: function(data) {
-	        	console.log(data.disambiguatedAffiliationIdentifier);
+	        	console.log(data.sourceId);
 		        $scope.disambiguatedAffiliation = data;
-		        $scope.editAffiliation.disambiguatedAffiliationIdentifier = data.disambiguatedAffiliationIdentifier;
-		        $scope.$apply();   	
+		        $scope.editAffiliation.disambiguatedAffiliationSourceId = data.sourceId;
+		        $scope.editAffiliation.disambiguationSource = data.sourceType;
+		        $scope.$apply();
 	        }
 		}).fail(function(){
 	    	console.log("error getDisambiguatedAffiliation(id)");

@@ -300,31 +300,31 @@ public class AffiliationsController extends BaseWorkspaceController {
             datum.put("region", orgDisambiguatedEntity.getRegion());
             datum.put("country", orgDisambiguatedEntity.getCountry().value());
             datum.put("orgType", orgDisambiguatedEntity.getOrgType());
-            datum.put("disambiguatedAffiliationIdentifier", Long.toString(orgDisambiguatedEntity.getId()));
+            datum.put("disambiguatedAffiliationIdentifier", String.valueOf(orgDisambiguatedEntity.getId()));
             datum.put("countryForDisplay", getMessage(buildInternationalizationKey(CountryIsoEntity.class, orgDisambiguatedEntity.getCountry().name())));
             datums.add(datum);
         }
         return datums;
     }
-    
+
     /**
      * fetch disambiguated by id
      */
-    @RequestMapping(value = "/disambiguated/id/{query}", method = RequestMethod.GET)
+    @RequestMapping(value = "/disambiguated/id/{id}", method = RequestMethod.GET)
     public @ResponseBody
-    Map<String, String> getDisambiguated(@PathVariable("query") Long query) {
-        OrgDisambiguatedEntity orgDisambiguatedEntity = orgDisambiguatedDao.find(query);
-            Map<String, String> datum = new HashMap<>();
-            datum.put("value", orgDisambiguatedEntity.getName());
-            datum.put("city", orgDisambiguatedEntity.getCity());
-            datum.put("region", orgDisambiguatedEntity.getRegion());
-            datum.put("country", orgDisambiguatedEntity.getCountry().value());
-            datum.put("orgType", orgDisambiguatedEntity.getOrgType());
-            datum.put("disambiguatedAffiliationIdentifier", Long.toString(orgDisambiguatedEntity.getId()));
-            datum.put("countryForDisplay", getMessage(buildInternationalizationKey(CountryIsoEntity.class, orgDisambiguatedEntity.getCountry().name())));
+    Map<String, String> getDisambiguated(@PathVariable("id") Long id) {
+        OrgDisambiguatedEntity orgDisambiguatedEntity = orgDisambiguatedDao.find(id);
+        Map<String, String> datum = new HashMap<>();
+        datum.put("value", orgDisambiguatedEntity.getName());
+        datum.put("city", orgDisambiguatedEntity.getCity());
+        datum.put("region", orgDisambiguatedEntity.getRegion());
+        datum.put("country", orgDisambiguatedEntity.getCountry().value());
+        datum.put("orgType", orgDisambiguatedEntity.getOrgType());
+        datum.put("sourceId", orgDisambiguatedEntity.getSourceId());
+        datum.put("sourceType", orgDisambiguatedEntity.getSourceType());
+        datum.put("countryForDisplay", getMessage(buildInternationalizationKey(CountryIsoEntity.class, orgDisambiguatedEntity.getCountry().name())));
         return datum;
     }
-    
 
     @RequestMapping(value = "/affiliation/affiliationNameValidate.json", method = RequestMethod.POST)
     public @ResponseBody
