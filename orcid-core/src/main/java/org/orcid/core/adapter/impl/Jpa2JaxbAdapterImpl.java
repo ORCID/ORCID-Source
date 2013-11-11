@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
 
+import javax.annotation.Resource;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
@@ -30,6 +31,9 @@ import javax.xml.datatype.XMLGregorianCalendar;
 import org.apache.commons.lang.StringUtils;
 import org.orcid.core.adapter.Jpa2JaxbAdapter;
 import org.orcid.core.manager.LoadOptions;
+import org.orcid.core.oauth.service.OrcidRandomValueTokenServices;
+import org.orcid.core.security.DefaultPermissionChecker;
+import org.orcid.core.security.PermissionChecker;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
 import org.orcid.core.utils.JsonUtils;
 import org.orcid.jaxb.model.clientgroup.OrcidClient;
@@ -70,6 +74,7 @@ import org.orcid.persistence.jpa.entities.WorkExternalIdentifierEntity;
 import org.orcid.utils.DateUtils;
 import org.orcid.utils.NullUtils;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.oauth2.provider.token.DefaultTokenServices;
 
 /**
  * <p/>
@@ -90,7 +95,10 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
     private String baseUri = null;
 
     private DatatypeFactory datatypeFactory = null;
-
+   
+    @Resource(name = "defaultPermissionChecker")
+    private PermissionChecker permissionChecker;
+    
     public Jpa2JaxbAdapterImpl() {
         try {
             datatypeFactory = DatatypeFactory.newInstance();
@@ -712,7 +720,14 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
 
     private Applications getApplications(ProfileEntity profileEntity) {
         Set<OrcidOauth2TokenDetail> tokenDetails = profileEntity.getTokenDetails();
+        
         if (tokenDetails != null && !tokenDetails.isEmpty()) {
+            // verify tokens don't need scopes removed.
+            DefaultPermissionChecker defaultPermissionChecker = (DefaultPermissionChecker)permissionChecker;
+            
+            for (OrcidOauth2TokenDetail tokenDetail:tokenDetails) 
+                defaultPermissionChecker.removeWriteScopesPastValitity(tokenDetail);
+            
             Applications applications = new Applications();
             for (OrcidOauth2TokenDetail tokenDetail : tokenDetails) {
                 if (tokenDetail.getTokenDisabled() == null || !tokenDetail.getTokenDisabled()) {

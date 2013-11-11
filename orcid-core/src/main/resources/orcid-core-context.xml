@@ -48,6 +48,26 @@
 		<property name="apiRecordCreationEmailEnabled"
 			value="${org.orcid.core.mail.apiRecordCreationEmailEnabled:true}" />
 	</bean>
+	
+	    <!-- Effectively a wrapper around the client details service, converting client to user details -->
+    <bean id="clientDetailsUserService" class="org.springframework.security.oauth2.provider.client.ClientDetailsUserDetailsService">
+        <constructor-arg ref="orcidClientDetailsService"/>
+    </bean>
+
+    <!-- The client details service to use when looking up clients in the db -->
+    <bean id="orcidClientDetailsService" class="org.orcid.core.oauth.service.OrcidClientDetailsServiceImpl"/>
+
+	<bean id="orcidTokenStore" class="org.orcid.core.oauth.service.OrcidTokenStoreServiceImpl" />
+
+    <!-- Use the provided token random token services to actually create the values, and plugin our tokenStore etc -->
+    <bean id="tokenServices" class="org.orcid.core.oauth.service.OrcidRandomValueTokenServices">
+        <constructor-arg ref="orcidClientDetailsService"/>
+        <constructor-arg value="3600"/>
+        <constructor-arg value="631138519"/>
+        <property name="tokenStore" ref="orcidTokenStore" />
+        <property name="supportRefreshToken" value="true" />
+    </bean>
+	
 
 	<bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
 		<property name="host" value="localhost" />
@@ -125,10 +145,7 @@
 		<constructor-arg value="12"></constructor-arg>
 	</bean>
 
-	<bean id="orcidClientGroupManager" class="org.orcid.core.manager.impl.OrcidClientGroupManagerImpl">
-		<property name="defaultRedirectUrisAsWhiteSpaceSeparatedList"
-			value="${org.orcid.core.defaultRedirectUrisAsWhiteSpaceSeparatedList}" />
-	</bean>
+	<bean id="orcidClientGroupManager" class="org.orcid.core.manager.impl.OrcidClientGroupManagerImpl" />		
 
     <alias name="incomingValidationManagerV1_0_22" alias="incomingValidationManagerLatest"/>
     <alias name="outgoingValidationManagerV1_0_22" alias="outgoingValidationManagerLatest"/>

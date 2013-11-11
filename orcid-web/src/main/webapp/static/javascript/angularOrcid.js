@@ -2527,3 +2527,83 @@ function revokeApplicationFormCtrl($scope,$compile){
 		$.colorbox.close();
 	};
 };
+
+function adminGroupsCtrl($scope,$compile){
+	$scope.showAdminGroupsModal = false;
+	$scope.newGroup = null;
+	
+	$scope.toggleReactivationModal = function() {
+		$scope.showAdminGroupsModal = !$scope.showAdminGroupsModal;
+    	$('#admin_groups_modal').toggle();
+	};
+	
+	$scope.showAddGroupModal = function() {
+		$.colorbox({                      
+			html : $compile($('#add-new-group').html())($scope),				
+				onLoad: function() {
+				$('#cboxClose').remove();
+			}
+		});
+		
+		$.colorbox.resize({width:"450px" , height:"360px"});
+	};
+	
+	$scope.closeModal = function() {
+		$.colorbox.close();
+	};
+	
+	$scope.getGroup = function() { 
+		$.ajax({
+	        url: orcidVar.baseUri+'/admin-actions/group.json',	        
+	        type: 'GET',
+	        dataType: 'json',	        
+	        success: function(data){
+	        	$scope.$apply(function(){ 	
+	        		$scope.newGroup = data;
+				});
+	        }
+	    }).fail(function(error) { 
+	    	// something bad is happening!	    	
+	    	console.log("Error getting emtpy group");	    	
+	    });		
+	};
+	
+	$scope.addGroup = function() {
+		$.ajax({
+	        url: orcidVar.baseUri+'/admin-actions/create-group.json',	        
+	        contentType: 'application/json;charset=UTF-8',
+	        type: 'POST',
+	        dataType: 'json',
+	        data: angular.toJson($scope.newGroup),	        	       
+	        success: function(data){
+	        	console.log(data);
+	        	$scope.$apply(function(){ 
+	        		$scope.newGroup = data;
+	        		if(data.errors.length != 0){
+	        			
+	        		} else {	        			
+	        			$scope.showSuccessModal();
+	        		}
+				});
+	        }
+	    }).fail(function(error) { 
+	    	// something bad is happening!	    	
+	    	console.log("Error deprecating the account");	    	
+	    });		
+	};
+	
+	$scope.showSuccessModal = function() {
+		$.colorbox({                      
+			html : $compile($('#new-group-info').html())($scope),				
+				onLoad: function() {
+				$('#cboxClose').remove();
+			}
+		});
+		
+		$.colorbox.resize({width:"500px" , height:"450px"});
+	};
+	
+	//init 
+	$scope.getGroup();
+};
+

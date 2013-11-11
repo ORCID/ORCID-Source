@@ -82,7 +82,7 @@
 		    	</div>
 	    	</div>
 	    	<div ng-show="!clientToEdit.redirectUris.redirectUri.length">			
-				<a href ng-click="addUriToExistingClientTable()" class="icon-plus-sign blue">Add Redirect Uri</a>
+				<a href ng-click="addUriToExistingClientTable()" class="icon-plus-sign blue"><@orcid.msg 'manage_clients.add_redirect_uri'/></a>
 			</div>
 			<div class="controls save-btns pull-right bottom-margin-small">
 				<span id="bottom-submit-update-credential-request" ng-click="submitEditClient($index)" class="btn btn-primary"><@orcid.msg 'manage_clients.update'/></span>				
@@ -137,7 +137,7 @@
 		    </div>
 		</form>
 		<div ng-show="!clientToEdit.redirectUris.redirectUri.length">			
-			<a href ng-click="addUriToNewClientTable()" class="icon-plus-sign blue">Add Redirect Uri</a>
+			<a href ng-click="addUriToNewClientTable()" class="icon-plus-sign blue"><@orcid.msg 'manage_clients.add_redirect_uri'/></a>
 		</div>
 		<div class="controls save-btns pull-left bottom-margin-small">
 			<span id="bottom-submit-credential-request" ng-click="submitAddClient()" class="btn btn-primary"><@orcid.msg 'manage_clients.submit'/></span>				
