@@ -309,7 +309,19 @@
             } 
         	
         };
-    };    
+    };
+    
+    var ie7zIndexFix = function(){    	
+    	var indexes = 800;
+    	$('#body-work-list').bind("DOMSubtreeModified",function(){ 
+        	$('.workspace-toolbar').each(function(index, element){
+        		$(element).attr('style', 'z-index:'+ indexes);
+        		indexes = --indexes;        		
+        	});
+        });
+    };
+    
+    
     
 
     /*============================================================
@@ -323,7 +335,8 @@
         toolTips();
         popupHandler();
         menuHack();
-        mobileMenuHandler();              
+        mobileMenuHandler();  
+        //ie7zIndexFix(); /* Still working on this */
     };
 
     init();
