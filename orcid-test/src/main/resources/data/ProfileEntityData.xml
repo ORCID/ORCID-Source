@@ -413,6 +413,17 @@
             country="GB"
             source_id="abc456"
             source_type="WDB"
+            popularity="1"
+            />
+            
+    <org_disambiguated
+            id="2"
+            name="Test Institution"
+            city="London"
+            country="GB"
+            source_id="def456"
+            source_type="WDB"
+            popularity="0"
             />
     
     <org

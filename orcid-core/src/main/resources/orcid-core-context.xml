@@ -319,6 +319,8 @@
 	
 	<bean id="orgManager" class="org.orcid.core.manager.impl.OrgManagerImpl" />
 	
+	<bean id="orgDisambiguatedManager" class="org.orcid.core.manager.impl.OrgDisambiguatedManagerImpl" />
+	
 	<bean id="crossRefEmail" class="org.orcid.core.profileEvent.CrossRefEmail" scope="prototype"/>
 
 	<bean id="messageSource"

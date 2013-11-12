@@ -395,7 +395,8 @@
 	<!-- SearchHandler http://wiki.apache.org/solr/SearchHandler For processing 
 		Search Queries, the primary Request Handler provided with Solr is "SearchHandler" 
 		It delegates to a sequent of SearchComponents (see below) and supports distributed 
-		queries across multiple shards -->
+		queries across multiple shards -->	
+	
 	<requestHandler name="search" class="solr.SearchHandler"
 		default="true">
 		<!-- default values for query parameters can be specified, these will be 
@@ -617,6 +618,19 @@
 		<str name="confFiles">schema.xml,stopwords.txt</str> </lst> <lst name="slave"> 
 		<str name="masterUrl">http://localhost:8983/solr/replication</str> <str name="pollInterval">00:00:60</str> 
 		</lst> </requestHandler> -->
+	<requestHandler name="/replication" class="solr.ReplicationHandler" >
+		<lst name="master">
+			<str name="enable">${solr.enable.master:true}</str>
+			<str name="replicateAfter">startup</str>
+			<str name="replicateAfter">commit</str>
+			<str name="confFiles">schema.xml,stopwords.txt</str>
+		</lst>
+		<lst name="slave">
+			<str name="enable">${solr.enable.slave:false}</str>
+			<str name="masterUrl">${solr.master.url:http://localhost:8080/orcid-solr-web/replication}</str>
+			<str name="pollInterval">${solr.poll.interval:00:00:60}</str>
+		</lst>
+	</requestHandler>
 
 	<!-- Search Components Search components are registered to SolrCore and 
 		used by instances of SearchHandler (which can access them by name) By default, 

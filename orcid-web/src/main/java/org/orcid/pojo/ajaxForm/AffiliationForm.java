@@ -20,8 +20,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
-import org.jsoup.select.Evaluator.IsEmpty;
 import org.orcid.jaxb.model.message.Affiliation;
 import org.orcid.jaxb.model.message.AffiliationAddress;
 import org.orcid.jaxb.model.message.AffiliationCity;
@@ -49,7 +47,7 @@ public class AffiliationForm implements ErrorsInterface, Serializable {
     private Text region;
 
     private Text country;
-    
+
     private Text roleTitle;
 
     private String countryForDisplay;
@@ -57,9 +55,11 @@ public class AffiliationForm implements ErrorsInterface, Serializable {
     private Text departmentName;
 
     private Text affiliationType;
-    
-    private Text disambiguatedAffiliationIdentifier;
-    
+
+    private Text disambiguatedAffiliationSourceId;
+
+    private Text disambiguationSource;
+
     private String affiliationTypeForDisplay;
 
     private Date startDate;
@@ -188,8 +188,10 @@ public class AffiliationForm implements ErrorsInterface, Serializable {
         AffiliationAddress address = affiliation.getAffiliationAddress();
         form.setCity(Text.valueOf(address.getAffiliationCity().getContent()));
         if (affiliation.getDisambiguatedAffiliation() != null) {
-            if (affiliation.getDisambiguatedAffiliation().getDisambiguatedAffiliationIdentifier() != null) 
-                form.setDisambiguatedAffiliationIdentifier(Text.valueOf(affiliation.getDisambiguatedAffiliation().getDisambiguatedAffiliationIdentifier()));
+            if (affiliation.getDisambiguatedAffiliation().getDisambiguatedAffiliationIdentifier() != null) {
+                form.setDisambiguatedAffiliationSourceId(Text.valueOf(affiliation.getDisambiguatedAffiliation().getDisambiguatedAffiliationIdentifier()));
+                form.setDisambiguationSource(Text.valueOf(affiliation.getDisambiguatedAffiliation().getDisambiguationSource()));
+            }
         }
         if (address.getAffiliationRegion() != null) {
             form.setRegion(Text.valueOf(address.getAffiliationRegion().getContent()));
@@ -201,7 +203,7 @@ public class AffiliationForm implements ErrorsInterface, Serializable {
         if (affiliation.getRoleTitle() != null) {
             form.setRoleTitle(Text.valueOf(affiliation.getRoleTitle()));
         }
-        
+
         if (affiliation.getAffiliationType() != null) {
             form.setAffiliationType(Text.valueOf(affiliation.getAffiliationType().value()));
         }
@@ -231,9 +233,10 @@ public class AffiliationForm implements ErrorsInterface, Serializable {
         if (!PojoUtil.isEmpty(region)) {
             affiliationAddress.setAffiliationRegion(new AffiliationRegion(region.getValue()));
         }
-        if (!PojoUtil.isEmpty(disambiguatedAffiliationIdentifier)) {
+        if (!PojoUtil.isEmpty(disambiguatedAffiliationSourceId)) {
             affiliation.setDisambiguatedAffiliation(new DisambiguatedAffiliation());
-            affiliation.getDisambiguatedAffiliation().setDisambiguatedAffiliationIdentifier(disambiguatedAffiliationIdentifier.getValue());
+            affiliation.getDisambiguatedAffiliation().setDisambiguatedAffiliationIdentifier(disambiguatedAffiliationSourceId.getValue());
+            affiliation.getDisambiguatedAffiliation().setDisambiguationSource(disambiguationSource.getValue());
         }
         affiliationAddress.setAffiliationCountry(new AffiliationCountry(Iso3166Country.fromValue(country.getValue())));
         if (!PojoUtil.isEmpty(roleTitle)) {
@@ -262,12 +265,20 @@ public class AffiliationForm implements ErrorsInterface, Serializable {
         this.roleTitle = roleTitle;
     }
 
-    public Text getDisambiguatedAffiliationIdentifier() {
-        return disambiguatedAffiliationIdentifier;
+    public Text getDisambiguatedAffiliationSourceId() {
+        return disambiguatedAffiliationSourceId;
     }
 
-    public void setDisambiguatedAffiliationIdentifier(Text disambiguatedAffiliationIdentifier) {
-        this.disambiguatedAffiliationIdentifier = disambiguatedAffiliationIdentifier;
+    public void setDisambiguatedAffiliationSourceId(Text disambiguatedAffiliationSourceId) {
+        this.disambiguatedAffiliationSourceId = disambiguatedAffiliationSourceId;
+    }
+
+    public Text getDisambiguationSource() {
+        return disambiguationSource;
+    }
+
+    public void setDisambiguationSource(Text disambiguationSource) {
+        this.disambiguationSource = disambiguationSource;
     }
 
 }

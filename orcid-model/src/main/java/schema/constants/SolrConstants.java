@@ -59,4 +59,12 @@ public class SolrConstants {
     public static final String SSRN = "ssrn";
     public static final String ZBL = "zbl";
     public static final String OTHER_IDENTIFIER_TYPE = "other-identifier-type";
+    public static final String ORG_DISAMBIGUATED_ID = "org-disambiguated-id";
+    public static final String ORG_DISAMBIGUATED_NAME = "org-disambiguated-name";
+    public static final String ORG_DISAMBIGUATED_CITY = "org-disambiguated-city";
+    public static final String ORG_DISAMBIGUATED_REGION = "org-disambiguated-region";
+    public static final String ORG_DISAMBIGUATED_COUNTRY = "org-disambiguated-country";
+    public static final String ORG_DISAMBIGUATED_TYPE = "org-disambiguated-type";
+    public static final String ORG_DISAMBIGUATED_POPULARITY = "org-disambiguated-popularity";
+    public static final String ORG_NAMES = "org-names";
 }

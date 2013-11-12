@@ -157,7 +157,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
 
     @Resource
     private OrgManager orgManager;
-    
+
     @Resource
     private OrgDisambiguatedDao orgDisambiguatedDao;
 
@@ -1069,7 +1069,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             orgRelationEntity.setOrg(getOrgEntity(affiliation));
             orgRelationEntity.setTitle(affiliation.getRoleTitle());
             orgRelationEntity.setStartDate(startDate != null ? new StartDateEntity(startDate) : null);
-           
+
             return orgRelationEntity;
         }
         return null;
@@ -1086,10 +1086,9 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             orgEntity.setRegion(region != null ? region.getContent() : null);
             AffiliationCountry country = address.getAffiliationCountry();
             orgEntity.setCountry(country != null ? country.getValue() : null);
-            if (affiliation.getDisambiguatedAffiliation() != null
-                && affiliation.getDisambiguatedAffiliation().getDisambiguatedAffiliationIdentifier() != null) {
-                orgEntity.setOrgDisambiguated(orgDisambiguatedDao
-                        .find(Long.parseLong(affiliation.getDisambiguatedAffiliation().getDisambiguatedAffiliationIdentifier())));
+            if (affiliation.getDisambiguatedAffiliation() != null && affiliation.getDisambiguatedAffiliation().getDisambiguatedAffiliationIdentifier() != null) {
+                orgEntity.setOrgDisambiguated(orgDisambiguatedDao.findBySourceIdAndSourceType(affiliation.getDisambiguatedAffiliation()
+                        .getDisambiguatedAffiliationIdentifier(), affiliation.getDisambiguatedAffiliation().getDisambiguationSource()));
             }
             return orgManager.createUpdate(orgEntity);
         }

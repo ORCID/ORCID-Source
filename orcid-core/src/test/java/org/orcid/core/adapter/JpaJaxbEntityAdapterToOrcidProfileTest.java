@@ -228,12 +228,12 @@ public class JpaJaxbEntityAdapterToOrcidProfileTest extends DBUnitTest {
         assertNotNull(orcidWorks);
         List<OrcidWork> orcidWorkList = orcidWorks.getOrcidWork();
         assertEquals(3, orcidWorkList.size());
-        
+
         boolean putCode1Found = false;
         boolean putCode4Found = false;
-        
-        for(OrcidWork orcidWork : orcidWorkList){
-            if(orcidWork.getPutCode().equals("1")){
+
+        for (OrcidWork orcidWork : orcidWorkList) {
+            if (orcidWork.getPutCode().equals("1")) {
                 putCode1Found = true;
                 assertEquals("1", orcidWork.getPutCode());
                 Citation workCitation = orcidWork.getWorkCitation();
@@ -245,9 +245,9 @@ public class JpaJaxbEntityAdapterToOrcidProfileTest extends DBUnitTest {
                 assertEquals(2, contributors.getContributor().size());
                 assertEquals("Jaylen Kessler", contributors.getContributor().get(0).getCreditName().getContent());
                 assertEquals(Visibility.LIMITED, contributors.getContributor().get(0).getCreditName().getVisibility());
-                assertEquals(Visibility.LIMITED, orcidWork.getVisibility());  
+                assertEquals(Visibility.LIMITED, orcidWork.getVisibility());
                 assertNull(orcidWork.getJournalTitle());
-            } else if(orcidWork.getPutCode().equals("4")){
+            } else if (orcidWork.getPutCode().equals("4")) {
                 putCode4Found = true;
                 assertNotNull(orcidWork.getWorkTitle());
                 assertNotNull(orcidWork.getWorkTitle().getTitle());
@@ -268,9 +268,9 @@ public class JpaJaxbEntityAdapterToOrcidProfileTest extends DBUnitTest {
                 assertEquals(WorkType.BOOK, orcidWork.getWorkType());
             }
         }
-        
+
         assertTrue(putCode1Found);
-        assertTrue(putCode4Found);        
+        assertTrue(putCode4Found);
     }
 
     private void checkOrcidGrants(OrcidGrants orcidGrants) {
@@ -374,7 +374,7 @@ public class JpaJaxbEntityAdapterToOrcidProfileTest extends DBUnitTest {
         assertEquals(1, affiliations.size());
         Affiliation affiliation = affiliations.get(0);
         assertEquals(Visibility.LIMITED, affiliation.getVisibility());
-        assertEquals("An Institution", affiliation.getAffiliationName());
+        assertEquals("An institution", affiliation.getAffiliationName());
         assertEquals("A Department", affiliation.getDepartmentName());
         assertEquals("2010-07-02", affiliation.getStartDate().toString());
         assertEquals("2011-07-02", affiliation.getEndDate().toString());
