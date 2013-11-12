@@ -28,6 +28,8 @@ import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
 import javax.mail.internet.AddressException;
@@ -87,6 +89,8 @@ public class BaseController {
 
     private String staticCdnPath;
 
+    static Pattern fileNamePattern = Pattern.compile("https{0,1}:\\/\\/[^\\/]*(.*){0,1}");
+
     @Value("${org.orcid.core.baseUri:http://orcid.org}")
     private String baseUri;
 
@@ -106,7 +110,7 @@ public class BaseController {
     private StatisticsManager statisticsManager;
 
     protected static final String EMPTY = "empty";
-    
+
     public OrcidProfileManager getOrcidProfileManager() {
         return orcidProfileManager;
     }
@@ -293,10 +297,7 @@ public class BaseController {
 
     protected void validateEmailAddress(String email, boolean ignoreCurrentUser, HttpServletRequest request, BindingResult bindingResult) {
         if (StringUtils.isNotBlank(email)) {
-            try {
-                InternetAddress addr = new InternetAddress(email);
-                addr.validate();
-            } catch (AddressException ex) {
+            if (!validateEmailAddress(email)) {
                 String[] codes = { "Email.personalInfoForm.email" };
                 String[] args = { email };
                 bindingResult.addError(new FieldError("email", "email", email, false, codes, args, "Not vaild"));
@@ -315,6 +316,27 @@ public class BaseController {
                 }
             }
         }
+    }
+
+    /**
+     * Validates if the provided string matches an email address pattern.
+     * 
+     * @param email
+     *            The string to evaluate
+     * @return true if the provided string matches an email address pattern,
+     *         false otherwise.
+     * */
+    protected boolean validateEmailAddress(String email) {
+        if (StringUtils.isNotBlank(email)) {
+            try {
+                InternetAddress addr = new InternetAddress(email);
+                addr.validate();
+                return true;
+            } catch (AddressException ex) {
+
+            }
+        }
+        return false;
     }
 
     private String createResendClaimUrl(String email, HttpServletRequest request) {
@@ -440,19 +462,29 @@ public class BaseController {
     public String getBaseUriHttp() {
         return baseUri.replace("https", "http");
     }
-    
+
+    @ModelAttribute("basePath")
+    public String getBasePath() {
+        Matcher fileNameMatcher = fileNamePattern.matcher(baseUri);
+        if (!fileNameMatcher.find())
+            return "/";
+        return fileNameMatcher.group(1) + "/";
+    }
+
     /**
-     * A method that will help us to internationalize enums
-     * For each enum, the value can be internationalized by adding a key of the form full.class.name.key and then
-     * using this method to build the string for that key.
+     * A method that will help us to internationalize enums For each enum, the
+     * value can be internationalized by adding a key of the form
+     * full.class.name.key and then using this method to build the string for
+     * that key.
+     * 
      * @param theClass
      * @param key
      * @return a String of the form full.class.name.with.package.key
      * */
-    protected String buildInternationalizationKey(Class theClass, String key){
+    protected String buildInternationalizationKey(Class theClass, String key) {
         return theClass.getName() + '.' + key;
     }
-    
+
     protected static void copyErrors(ErrorsInterface from, ErrorsInterface into) {
         for (String s : from.getErrors()) {
             into.getErrors().add(s);
@@ -462,5 +494,5 @@ public class BaseController {
     protected void setError(ErrorsInterface ei, String msg) {
         ei.getErrors().add(getMessage(msg));
     }
-    
+
 }

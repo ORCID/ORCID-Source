@@ -100,7 +100,6 @@
 	</div>
 </script>
 
-
 <script type="text/ng-template" id="confirm-reactivation-modal">
 	<div style="padding:20px">
     	<a id="cboxClose" class="btn pull-right close-button" ng-click="closeModal()">X</a>
@@ -117,6 +116,89 @@
 </script>
 
 
+
+
+
+<script type="text/ng-template" id="add-new-group">
+	<div class="colorbox-content">
+		<a id="cboxClose" class="btn pull-right close-button" ng-click="closeModal()">X</a>
+    	<h1><@orcid.msg 'manage_groups.add_new_group'/></h1>
+		<div>
+			<div class="control-group">
+    			<label class="relative"><@orcid.msg 'manage_groups.group_name'/></label>
+    			<div class="relative">
+      				<input type="text" class="input-xlarge" id="groupName" ng-model="newGroup.groupName.value" placeholder="<@orcid.msg 'manage_groups.name'/>">
+    			</div>
+				<span class="orcid-error" ng-show="newGroup.groupName.errors.length > 0">
+					<div ng-repeat='error in newGroup.groupName.errors' ng-bind-html-unsafe="error"></div>
+				</span>
+  			</div>
+			<div class="control-group">
+    			<label class="relative"><@orcid.msg 'manage_groups.group_email'/></label>
+    			<div class="relative">
+      				<input type="text" class="input-xlarge" id="groupEmail" ng-model="newGroup.email.value" placeholder="<@orcid.msg 'manage_groups.email'/>">
+    			</div>
+				<span class="orcid-error" ng-show="newGroup.email.errors.length > 0">
+					<div ng-repeat='error in newGroup.email.errors' ng-bind-html-unsafe="error"></div>
+				</span>
+  			</div>
+			<div class="control-group">
+    			<label class="relative"><@orcid.msg 'manage_groups.group_type'/></label>
+    			<div class="relative">					
+      				<select id="groupType" name="groupType" class="input-xlarge" ng-model="newGroup.type.value">			    		
+						<#list groupTypes?keys as key>
+							<option value="${key}">${groupTypes[key]}</option>
+						</#list>
+					</select> 
+    			</div>
+				<span class="orcid-error" ng-show="newGroup.type.errors.length > 0">
+					<div ng-repeat='error in newGroup.type.errors' ng-bind-html-unsafe="error"></div>
+				</span>
+  			</div>
+			<div class="control-group">
+				<button class="btn btn-primary" ng-click="addGroup()"><@orcid.msg 'manage_groups.btnadd'/></button>
+			</div>				
+		</div>
+	</div>
+</script>
+
+<script type="text/ng-template" id="new-group-info">
+	<div class="colorbox-content">
+		<a id="cboxClose" class="btn pull-right close-button" ng-click="closeModal()">X</a>
+    	<h1><@orcid.msg 'manage_groups.new_group_info'/></h1>
+		<div>
+			<div class="control-group">
+    			<span><strong><@orcid.msg 'manage_groups.group_name'/></strong></span>
+    			<div class="relative">
+      				<span>{{newGroup.groupName.value}}</span>
+    			</div>
+  			</div>
+			<div class="control-group">
+    			<span><strong><@orcid.msg 'manage_groups.group_email'/></strong></span>
+    			<div class="relative">
+      				<span>{{newGroup.email.value}}</span>
+    			</div>
+  			</div>
+			<div class="control-group">
+    			<span><strong><@orcid.msg 'manage_groups.group_orcid'/></strong></span>
+    			<div class="relative">
+      				<span>{{newGroup.groupOrcid.value}}</span>
+    			</div>
+  			</div>
+			<div class="control-group">
+    			<span><strong><@orcid.msg 'manage_groups.instructions_title'/></strong></span>
+    			<div class="relative">
+					<ul>
+      					<li><@orcid.msg 'manage_groups.instructions.1'/></li>
+						<li><@orcid.msg 'manage_groups.instructions.2'/></li>
+						<li><@orcid.msg 'manage_groups.instructions.3'/></li>
+					</ul>
+    			</div>
+  			</div>
+		</div>
+	</div>
+</script>
+
 <div class="row">
 	<div class="span3 lhs override">
 		<ul class="settings-nav">
@@ -124,17 +206,38 @@
 			<li><a href="<@spring.url "/account" />#manage-permissions">${springMacroRequestContext.getMessage("manage.managepermission")}</a></li>
 			<@security.authorize ifAnyGranted="ROLE_ADMIN">
 				<li><a href="<@spring.url "/admin-actions" />"><@orcid.msg 'admin.workspace_link' /></a></li>
-			</@security.authorize>				
+			</@security.authorize>					
 		</ul>
 	</div>
 	<div class="span9">
+	
+		<div ng-controller="adminGroupsCtrl" class="workspace-accordion-item" ng-cloak>
+			<p>
+				<@orcid.msg 'manage_groups.add_new_group' />&nbsp;
+				<a ng-show="showAdminGroupsModal" ng-click="toggleReactivationModal()" class="icon-minus-sign blue"></a>
+				<a ng-hide="showAdminGroupsModal" ng-click="toggleReactivationModal()" class="icon-plus-sign blue"></a>				
+			</p>
+			<div class="collapsible bottom-margin-small" id="admin_groups_modal" style="display:none;">
+				<h2><@orcid.msg 'manage_groups.admin_groups_title'/></h2>
+	    		<br />
+	    		<div>
+	    			<div class="view-items-link">							
+							<span><a ng-click="showAddGroupModal()" class="glyphicon glyphicon-plus-sign blue"><@orcid.msg 'manage_groups.add_group_link'/></a></span>
+					</div>
+					<div class="add-item-link">
+							<span><a ng-click="showAllGroupsModal()" class="glyphicon glyphicon-zoom-in blue"><@orcid.msg 'manage_groups.view_all_link'/></a></span>
+					</div>		
+				</div>
+			</div>
+		</div>	
+		<br />
 		<div ng-controller="profileDeprecationCtrl" class="workspace-accordion-item" ng-cloak>
 			<p>
 				<@orcid.msg 'admin.profile_deprecation' />&nbsp;
 				<a ng-hide="showModal" ng-click="toggleDeprecationModal()" class="icon-plus-sign blue"></a>
 				<a ng-show="showModal" ng-click="toggleDeprecationModal()" class="icon-minus-sign blue"></a>
 			</p>		
-			<div class="collapsible" id="deprecation_modal" style="display:none;">
+			<div class="collapsible bottom-margin-small" id="deprecation_modal" style="display:none;">
 		    	<h2><@orcid.msg 'admin.profile_deprecation.deprecate_account.title'/></h2>
 		    	<br />
 				<div>
@@ -161,15 +264,19 @@
 						<span class="orcid-error" ng-repeat='error in primaryAccount.errors' ng-bind-html-unsafe="error"></span><br />
 					</div>				
 				</div>
-				<div class="controls save-btns pull-left bottom-margin-small">
+				<div class="controls save-btns pull-left">
 		    		<span id="bottom-confirm-deprecate-profile" ng-click="confirmDeprecateAccount()" class="btn btn-primary"><@orcid.msg 'admin.profile_deprecation.deprecate_account'/></span>
 				</div>
 			</div>
 		</div>		
 		<br />			  
 		<div ng-controller="profileDeactivationAndReactivationCtrl" class="workspace-accordion-item" ng-cloak>
-			<p><@orcid.msg 'admin.profile_deactivation' />&nbsp;<a ng-click="toggleDeactivationModal()" class="icon-plus-sign blue"></a></p>			  	
-			<div class="collapsible" id="deactivation_modal" style="display:none;">
+			<p>
+				<@orcid.msg 'admin.profile_deactivation' />&nbsp;
+				<a  ng-show="showDeactivateModal" ng-click="toggleDeactivationModal()" class="icon-minus-sign blue"></a>
+				<a  ng-hide="showDeactivateModal" ng-click="toggleDeactivationModal()" class="icon-plus-sign blue"></a>
+			</p>			  	
+			<div class="collapsible bottom-margin-small" id="deactivation_modal" style="display:none;">
 				<h2><@orcid.msg 'admin.profile_deactivation.deactivate_account.title'/></h2>
 	    		<br />
 	    		<div>
@@ -184,8 +291,12 @@
 		</div>
 		<br />
 		<div ng-controller="profileDeactivationAndReactivationCtrl" class="workspace-accordion-item" ng-cloak>
-			<p><@orcid.msg 'admin.profile_reactivation' />&nbsp;<a ng-click="toggleReactivationModal()" class="icon-plus-sign blue"></a></p>
-			<div class="collapsible" id="reactivation_modal" style="display:none;">
+			<p>
+				<@orcid.msg 'admin.profile_reactivation' />&nbsp;
+				<a ng-show="showReactivateModal" ng-click="toggleReactivationModal()" class="icon-minus-sign blue"></a>
+				<a ng-hide="showReactivateModal" ng-click="toggleReactivationModal()" class="icon-plus-sign blue"></a>
+			</p>
+			<div class="collapsible bottom-margin-small" id="reactivation_modal" style="display:none;">
 				<h2><@orcid.msg 'admin.profile_reactivation.reactivate_account.title'/></h2>
 	    		<br />
 	    		<div>

@@ -40,8 +40,8 @@
     	<div ng-controller="VerifyEmailCtrl" style="display: hidden;"></div>
 	</#if>
 
-    <div class="span3 lhs">
-    	<div class="workspace-left workspace-profile">
+    <div class="col-md-3 lhs">
+    	<div class="workspace-profile">
             <h2 class="full-name">
                 <#if (profile.orcidBio.personalDetails.creditName.content)??>
                     ${(profile.orcidBio.personalDetails.creditName.content)!}
@@ -75,18 +75,12 @@
 		       		</#list></p>
 	       	</#if>
        		<div ng-controller="ExternalIdentifierCtrl" ng-hide="!externalIdentifiersPojo.externalIdentifiers.length" ng-cloak>	       			
-       			<p><strong><@orcid.msg 'public_profile.labelOtherIDs'/></strong> </p>
-		        <table id="externalIdentifierTable">
-		        	<tr style="vertical-align:bottom;" ng-repeat='externalIdentifier in externalIdentifiersPojo.externalIdentifiers'>
-		        		<td class="padRgt">
-		        			<p ng-hide="externalIdentifier.externalIdUrl">{{externalIdentifier.externalIdCommonName.content}} {{externalIdentifier.externalIdReference.content}}</p>
-		        			<p ng-show="externalIdentifier.externalIdUrl"><a href="{{externalIdentifier.externalIdUrl.value}}" target="_blank">{{externalIdentifier.externalIdCommonName.content}} {{externalIdentifier.externalIdReference.content}}</a></p>
-		     			</td>
-			   			<td class="padRgt">
-			   				<p><a ng-click="deleteExternalIdentifier($index)" class="icon-trash orcid-icon-trash grey"></a></p>
-			   			</td>		        		
-		        	</tr>
-		        </table>
+       			<p><strong><@orcid.msg 'public_profile.labelOtherIDs'/></strong></p>
+       			<div ng-repeat='externalIdentifier in externalIdentifiersPojo.externalIdentifiers'>
+		        			<span ng-hide="externalIdentifier.externalIdUrl">{{externalIdentifier.externalIdCommonName.content}} {{externalIdentifier.externalIdReference.content}}</span>
+		        			<span ng-show="externalIdentifier.externalIdUrl"><a href="{{externalIdentifier.externalIdUrl.value}}" target="_blank">{{externalIdentifier.externalIdCommonName.content}} {{externalIdentifier.externalIdReference.content}}</a></span>
+			   				<a ng-click="deleteExternalIdentifier($index)" class="glyphicon glyphicon-trash grey"></a>       			
+       			</div>
 			</div>							    
 	        <@security.authorize ifAnyGranted="ROLE_ADMIN, ROLE_GROUP, ROLE_BASIC, ROLE_BASIC_INSTITUTION, ROLE_PREMIUM, ROLE_PREMIUM_INSTITUTION">
 	        	 <p><a href="<@spring.url "/manage-clients" />">${springMacroRequestContext.getMessage("workspace.ManageClientCredentials")}</a></p>	        	 
@@ -96,54 +90,65 @@
 			</@security.authorize>
         </div>
     </div>
-    <div class="span9">
+    <div class="col-md-9">
         <div class="workspace-right">
         	<div class="workspace-inner workspace-header">
                 <div class="alert alert-info"><strong><@orcid.msg 'workspace.addinformationaboutyou'/></strong></div>
-        		<div class="workspace-overview" id="works-overview" ng-controller="WorkOverviewCtrl">
-        			<a href="#workspace-publications" class="overview-count"><span ng-bind="works.length"></span></a>
-        			<a href="#workspace-publications" class="overview-title"><@orcid.msg 'workspace.Works'/></a>
-                    <br />
-                    <a href="#workspace-publications" class="btn-update no-icon"><@orcid.msg 'workspace.view'/></a>
-        		</div>
-                <div class="workspace-overview" id="affiliations-overview" ng-controller="AffiliationOverviewCtrl">
-                    <a href="#workspace-affiliations" class="overview-count"><span ng-bind="affiliations.length"></span></a>
-                    <a href="#workspace-affiliations" class="overview-title"><@orcid.msg 'workspace_bio.Affiliations'/></a>
-                    <br />
-                    <#if RequestParameters['affiliations']??>
-                        <a href="#workspace-affiliations" class="btn-update no-icon"><@orcid.msg 'workspace.view'/></a>
-                    <#else>
-                        <div><a target="_blank" href="http://support.orcid.org/forums/179657-coming-soon" class="btn-update no-icon"><@orcid.msg 'workspace.ComingSoon'/></a></div>
-                    </#if>
-                </div>
-        		<div class="workspace-overview">
-        			<a href="#workspace-grants" class="overview-count">${(profile.orcidActivities.orcidGrants.orcidGrant?size)!0}</a>
-        			<a href="#workspace-grants" class="overview-title"><@orcid.msg 'workspace.Grants'/></a>
-        			<br />
-        			<a target="_blank" href="http://support.orcid.org/forums/179657-coming-soon" class="btn-update no-icon"><@orcid.msg 'workspace.ComingSoon'/></a>
-        		</div>
-        		<div class="workspace-overview">
-        			<a href="#workspace-patents" class="overview-count">${(profile.orcidActivities.orcidPatents.orcidPatent?size)!0}</a>
-        			<a href="#workspace-patents" class="overview-title"><@orcid.msg 'workspace.Patents'/></a>
-        			<br />
-        			<a target="_blank" href="http://support.orcid.org/forums/179657-coming-soon" class="btn-update no-icon"><@orcid.msg 'workspace.ComingSoon'/></a>
-        		</div>
+        		<div class="row">
+        			<!-- Works -->
+	        		<div class="workspace-overview col-md-6 col-sm-6 col-xs-6" id="works-overview" ng-controller="WorkOverviewCtrl">
+	        			<a href="#workspace-publications" class="overview-count"><span ng-bind="works.length"></span></a>
+	        			<a href="#workspace-publications" class="overview-title"><@orcid.msg 'workspace.Works'/></a>
+	                    <br />	                    	
+	                    <a href="#workspace-publications" class="btn-update no-icon"><@orcid.msg 'workspace.view'/></a>	                    
+	        		</div>
+	        		<!-- Afilliations -->
+	                <div class="workspace-overview col-md-6 col-sm-6 col-xs-6" id="affiliations-overview" ng-controller="AffiliationOverviewCtrl">
+	                    <a href="#workspace-affiliations" class="overview-count"><span ng-bind="affiliations.length"></span></a>
+	                    <a href="#workspace-affiliations" class="overview-title"><@orcid.msg 'workspace_bio.Affiliations'/></a>
+	                    <br />
+	                    <#if RequestParameters['affiliations']??>
+	                        <a href="#workspace-affiliations" class="btn-update no-icon"><@orcid.msg 'workspace.view'/></a>
+	                    <#else>
+	                        <a target="_blank" href="http://support.orcid.org/forums/179657-coming-soon" class="btn-update no-icon"><@orcid.msg 'workspace.ComingSoon'/></a>
+	                    </#if>
+	                </div>
+                </div>       
+                <div class="row">    
+	                <!-- Grants -->     
+	        		<div class="workspace-overview  col-md-6 col-sm-6 col-xs-6">
+	        			<a href="#workspace-grants" class="overview-count">${(profile.orcidActivities.orcidGrants.orcidGrant?size)!0}</a>
+	        			<a href="#workspace-grants" class="overview-title"><@orcid.msg 'workspace.Grants'/></a>
+	        			<br />
+	        			<a target="_blank" href="http://support.orcid.org/forums/179657-coming-soon" class="btn-update no-icon"><@orcid.msg 'workspace.ComingSoon'/></a>
+	        		</div>
+	        		<!-- Patents -->
+	        		<div class="workspace-overview  col-md-6 col-sm-6 col-xs-6">
+		        		<a href="#workspace-patents" class="overview-count">${(profile.orcidActivities.orcidPatents.orcidPatent?size)!0}</a>
+	        			<a href="#workspace-patents" class="overview-title"><@orcid.msg 'workspace.Patents'/></a>
+	        			<br />
+	        			<a target="_blank" href="http://support.orcid.org/forums/179657-coming-soon" class="btn-update no-icon"><@orcid.msg 'workspace.ComingSoon'/></a>
+	        		</div>
+	        	</div>
         	</div>
         	<div class="workspace-accordion" id="workspace-accordion">
-        	
+        		<!-- Personal Information -->
         	   <div id="workspace-personal" class="workspace-accordion-item workspace-accordion-active" ng-controller="PersonalInfoCtrl">
         			<div class="workspace-accordion-header" style="position: relative;">
-        			   <a href="" ng-click="toggleDisplayInfo()" style="color: #338caf;">
-        			       <i class="icon-caret-down" ng-class="{'icon-caret-right':displayInfo==false}"></i></a>
-        			   </a> 
-        			   <a ng-click="toggleDisplayInfo()"><@orcid.msg 'workspace.personal_information'/></a> 
-        			   <a href="<@spring.url '/account/manage-bio-settings'/>" id="upate-personal-modal-link" class="label btn-primary"><@orcid.msg 'workspace.Update'/></a>
+        			   <ul class="personal-inf-display">        			   		
+        			   		<li>
+        			   			<a href="" ng-click="toggleDisplayInfo()" class="toggle-text">
+	        			   			<i class="icon-caret-down" ng-class="{'icon-caret-right':displayInfo==false}"></i></a>
+	        			   		</a>
+        			   			<a href="" ng-click="toggleDisplayInfo()" class="toggle-text"><@orcid.msg 'workspace.personal_information'/></a></li>
+        			   		<li><a href="<@spring.url '/account/manage-bio-settings'/>" id="update-personal-modal-link" class="label btn-primary"><@orcid.msg 'workspace.Update'/></a></li>        			   		
+        			   </ul>
         			</div>
             		<div class="workspace-accordion-content" ng-show="displayInfo">
             			<#include "workspace_personal.ftl"/>
         			</div>
             	</div>
-            	
+            	<!-- Affiliations -->
             	<#--
         		<div id="workspace-affiliations" class="workspace-accordion-item${(!(profile.orcidBio.affiliations)?? || (profile.orcidBio.affiliations?size = 0))?string(" workspace-accordion-active", "")}">
                     <div class="workspace-accordion-header">
@@ -152,12 +157,12 @@
                 </div>
                 -->
                 <#if RequestParameters['affiliations']??>
-	                <div id="workspace-affiliations" style="position: relative;" class="workspace-accordion-item workspace-accordion-active" ng-controller="AffiliationCtrl">
+	                <div id="workspace-affiliations" class="workspace-accordion-item workspace-accordion-active" ng-controller="AffiliationCtrl">
 	                	<div class="workspace-accordion-header">
-	        				<a href="" ng-click="toggleDisplayAffiliations()" style="color: #338caf;">
+	        				<a href="" ng-click="toggleDisplayAffiliations()" class="toggle-text">
 	        			       <i class="icon-caret-down icon" ng-class="{'icon-caret-right':displayAffiliations==false}"></i></a>
 	        			    </a> 
-	        				<a href="" ng-click="toggleDisplayAffiliations()"><@orcid.msg 'workspace_bio.Affiliations'/></a>
+	        				<a href="" ng-click="toggleDisplayAffiliations()" class="toggle-text"><@orcid.msg 'workspace_bio.Affiliations'/></a>
 							<a href="" class="label btn-primary" ng-click="addAffiliationModal()"><@orcid.msg 'manual_affiliation_form_contents.add_affiliation_manually'/></a>
 						</div>
 	      	            <div ng-show="displayAffiliations" class="workspace-accordion-content">
@@ -165,21 +170,31 @@
 		            	</div>
 	            	</div>
             	</#if>
-                
-                <div id="workspace-publications" style="position: relative;" class="workspace-accordion-item workspace-accordion-active" ng-controller="WorkCtrl">
+                <!-- Works -->                
+                <div id="workspace-publications" class="workspace-accordion-item workspace-accordion-active" ng-controller="WorkCtrl">
                 	<div class="workspace-accordion-header">
-        				<a ng-click="toggleDisplayWorks()" style="color: #338caf;">
-        			       <i class="icon-caret-down icon" ng-class="{'icon-caret-right':displayWorks==false}"></i></a>
-        			    </a> 
-        				<a ng-click="toggleDisplayWorks()"><@orcid.msg 'workspace.Works'/></a>
-						<a class="label btn-primary" ng-click="showWorkImportWizard()"><@orcid.msg 'workspace.import_works'/></a>
-						<a class="label btn-primary" ng-click="addWorkModal()"><@orcid.msg 'manual_work_form_contents.add_work_manually'/></a>
+                		<ul class="personal-inf-display">
+                			<li>
+		        				<a href="" ng-click="toggleDisplayWorks()" class="toggle-text">
+		        			       <i class="icon-caret-down icon" ng-class="{'icon-caret-right':displayWorks==false}"></i></a>
+		        			    </a> 
+		        				<a href="" ng-click="toggleDisplayWorks()" class="toggle-text"><@orcid.msg 'workspace.Works'/></a>
+		        			</li>		        			
+							<li>
+								<a class="label btn-primary" ng-click="showWorkImportWizard()"><@orcid.msg 'workspace.import_works'/></a>
+							</li>	
+							<li>
+								<a href="" class="label btn-primary" ng-click="addWorkModal()"><@orcid.msg 'manual_work_form_contents.add_work_manually'/></a>
+							</li>	
+						</ul>					
 					</div>
+					
       	            <div ng-show="displayWorks" class="workspace-accordion-content">
 	            		<#include "includes/work/add_work_modal_inc.ftl"/>
 						<#include "includes/work/del_work_modal_inc.ftl"/>
 						<#include "includes/work/body_work_inc.ftl"/>
 	            	</div>
+	            	
             	</div>
             	
             	<#--
@@ -198,76 +213,110 @@
 </div>
 </#escape>
 
-<script type="text/ng-template" id="verify-email-modal">
-	<div style="padding: 20px">
-			<h4><@orcid.msg 'workspace.your_primary_email'/></h4>
-			<@orcid.msg 'workspace.ensure_future_access'/><br />
-			<br />
-			<span class="btn btn-primary" id="modal-close" ng-click="verifyEmail()"><@orcid.msg 'workspace.send_verification'/></span>
-			<span class="btn" id="modal-close" ng-click="closeColorBox()"><@orcid.msg 'freemarker.btncancel'/></span>
-		</div>
+<script type="text/ng-template" id="verify-email-modal">	
+	<div class="lightbox-container">
+		<div class="row">
+			<div class="col-md-12 col-xs-12 col-sm-12">
+				<h4><@orcid.msg 'workspace.your_primary_email'/></h4>
+				<@orcid.msg 'workspace.ensure_future_access'/><br />
+				<br />
+				<span class="btn btn-primary" id="modal-close" ng-click="verifyEmail()"><@orcid.msg 'workspace.send_verification'/></span>
+				<span class="btn" id="modal-close" ng-click="closeColorBox()"><@orcid.msg 'freemarker.btncancel'/></span>
+				</div>
+			</div>
+		</div>		
+	</div>		
 </script>
 
 <script type="text/ng-template" id="verify-email-modal-sent">
-	<div style="padding: 20px; width: 400px;">
-		<h4><@orcid.msg 'workspace.sent'/></h4>
-		<@orcid.msg 'workspace.check_your_email'/><br />
-		<br />
-		<span class="btn" ng-click="closeColorBox()"><@orcid.msg 'freemarker.btnclose'/></span>
+	<div class="lightbox-container">
+		<div class="row">
+			<div class="col-md-12 col-sm-12 col-xs-12">
+				<h4><@orcid.msg 'workspace.sent'/></h4>
+				<@orcid.msg 'workspace.check_your_email'/><br />
+				<br />
+				<span class="btn" ng-click="closeColorBox()"><@orcid.msg 'freemarker.btnclose'/></span>
+			</div>
+		</div>
 	</div>
 </script>
 
 <script type="text/ng-template" id="claimed-record-thanks">
-	<div style="padding: 20px;">
-		<strong><@spring.message "orcid.frontend.web.record_claimed"/></strong><br />
-		<br />
-		<button class="btn" ng-click="close()"><@spring.message "freemarker.btnclose"/></button>
+	<div class="lightbox-container">
+		<div class="row">
+			<div class="col-md-12 col-sm-12 col-xs-12">
+				<strong><@spring.message "orcid.frontend.web.record_claimed"/></strong><br />
+				<br />
+				<button class="btn" ng-click="close()"><@spring.message "freemarker.btnclose"/></button>
+			</div>
+		</div>
 	</div>
 </script>
 	
 <script type="text/ng-template" id="claimed-record-thanks-source-grand-read">
-	<div style="padding: 20px;">
-		<strong><@spring.message "orcid.frontend.web.record_claimed"/></strong><br />
-		<br />
-		<strong ng-bind="sourceGrantReadWizard.displayName"></strong> <@spring.message "orcid.frontend.web.record_claimed.would_like"/><br />
-		<br />
-		<button class="btn btn-primary" ng-click="yes()"><@spring.message "orcid.frontend.web.record_claimed.yes_go_to" /></button>
-		<button class="btn" ng-click="close()"><@spring.message "orcid.frontend.web.record_claimed.no_thanks" /></button>
+	<div class="lightbox-container">
+		<div class="row">
+			<div class="col-md-12 col-sm-12 col-xs-12">
+				<strong><@spring.message "orcid.frontend.web.record_claimed"/></strong><br />
+				<br />
+				<strong ng-bind="sourceGrantReadWizard.displayName"></strong> <@spring.message "orcid.frontend.web.record_claimed.would_like"/><br />
+				<br />
+				<button class="btn btn-primary" ng-click="yes()"><@spring.message "orcid.frontend.web.record_claimed.yes_go_to" /></button>
+				<button class="btn" ng-click="close()"><@spring.message "orcid.frontend.web.record_claimed.no_thanks" /></button>
+			</div>
+		</div>
 	</div>
 </script>
 
 <script type="text/ng-template" id="delete-external-id-modal">
-	<div style="padding: 20px;">
-		<h3><@orcid.msg 'manage.deleteExternalIdentifier.pleaseConfirm'/> {{removeExternalModalText}} </h3>
-		<button class="btn btn-danger" ng-click="removeExternalIdentifier()"><@orcid.msg 'manage.deleteExternalIdentifier.delete'/></button> 
-		<a ng-click="closeModal()"><@orcid.msg 'manage.deleteExternalIdentifier.cancel'/></a>
-	<div>
+	<div class="lightbox-container">
+		<div class="row">
+			<div class="col-md-12 col-sm-12 col-xs-12">
+				<h3><@orcid.msg 'manage.deleteExternalIdentifier.pleaseConfirm'/> {{removeExternalModalText}} </h3>
+				<button class="btn btn-danger" ng-click="removeExternalIdentifier()"><@orcid.msg 'manage.deleteExternalIdentifier.delete'/></button> 
+				<a ng-click="closeModal()"><@orcid.msg 'manage.deleteExternalIdentifier.cancel'/></a>
+			<div>
+		<div>
+	<div>	
 </script>
 
 <script type="text/ng-template" id="import-wizard-modal">
-    <#if ((thirdPartiesForImport)??)>
-    	<div id="third-parties">	
-			<div class="span9">
-				<a class="btn pull-right close-button" ng-click="closeModal()">X</a>
-	           	<h1 class="lightbox-title" style="text-transform: uppercase;"><@orcid.msg 'workspace.import_works'/></h1>
-	           		
-	           	</div>
-	           	<br />          		
-    	       	<div class="justify"><@orcid.msg 'workspace.ImportResearchActivities.description'/></div>
-            	<br />    	           	
-    	       	<#list thirdPartiesForImport?sort_by("displayName") as thirdPartyDetails>
-                     <#assign redirect = (thirdPartyDetails.redirectUris.redirectUri[0].value) >
-                     <#assign predefScopes = (thirdPartyDetails.redirectUris.redirectUri[0].scopeAsSingleString) >
-                     <strong><a ng-click="openImportWizardUrl('<@spring.url '/oauth/authorize?client_id=${thirdPartyDetails.clientId}&response_type=code&scope=${predefScopes}&redirect_uri=${redirect}'/>')">${thirdPartyDetails.displayName}</a></strong><br />
-                     <div class="justify">${(thirdPartyDetails.shortDescription)!}</div>
-                     <#if (thirdPartyDetails_has_next)><hr /></#if>
-                 </#list>
-                 <br />
-                 <div class="footer">
-	               	<strong><@orcid.msg 'workspace.ImportResearchActivities.footer.title'/></strong>
-	                <br />
-	                <@orcid.msg 'workspace.ImportResearchActivities.footer.description1'/> <a href="<@orcid.msg 'workspace.ImportResearchActivities.footer.description.url'/>"><@orcid.msg 'workspace.ImportResearchActivities.footer.description.link'/></a> <@orcid.msg 'workspace.ImportResearchActivities.footer.description2'/>
-                 </div>
+    <#if ((thirdPartiesForImport)??)>		
+    	<div id="third-parties">
+			<div class="row">	
+				<div class="col-md-12 col-sm-12 col-xs-12">					
+					<a class="btn pull-right close-button" ng-click="closeModal()">X</a>
+	           		<h1 class="lightbox-title" style="text-transform: uppercase;"><@orcid.msg 'workspace.import_works'/></h1>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-12 col-sm-12 col-xs-12">
+	    	    	<div class="justify">
+						<p><@orcid.msg 'workspace.ImportResearchActivities.description'/></p>
+					</div>            	    	           	
+    		    	<#list thirdPartiesForImport?sort_by("displayName") as thirdPartyDetails>
+	        	       	<#assign redirect = (thirdPartyDetails.redirectUris.redirectUri[0].value) >
+            	   		<#assign predefScopes = (thirdPartyDetails.redirectUris.redirectUri[0].scopeAsSingleString) >
+                   		<strong><a ng-click="openImportWizardUrl('<@spring.url '/oauth/authorize?client_id=${thirdPartyDetails.clientId}&response_type=code&scope=${predefScopes}&redirect_uri=${redirect}'/>')">${thirdPartyDetails.displayName}</a></strong><br />
+                 		<div class="justify">
+							<p>
+								${(thirdPartyDetails.shortDescription)!}
+							</p>
+						</div>
+                   		<#if (thirdPartyDetails_has_next)>
+	                      	<hr/>
+						</#if>
+                		</#list>
+				</div>
+			</div>                 
+            <div class="row footer">
+				<div class="col-md-12 col-sm-12 col-xs-12">
+					<p>
+				   		<strong><@orcid.msg 'workspace.ImportResearchActivities.footer.title'/></strong>	    
+	        			<@orcid.msg 'workspace.ImportResearchActivities.footer.description1'/> <a href="<@orcid.msg 'workspace.ImportResearchActivities.footer.description.url'/>"><@orcid.msg 'workspace.ImportResearchActivities.footer.description.link'/></a> <@orcid.msg 'workspace.ImportResearchActivities.footer.description2'/>
+			    	</p>
+				</div>
+	        </div>
 		</div>
 	</#if>
 </script>

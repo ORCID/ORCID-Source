@@ -17,7 +17,7 @@
 
 -->
 <div id="proxy" class="colorbox-content inline-modal">
-    <div class="span6">
+    <div class="col-md-6 col-sm-6 col-xs-12">
         <h1 class="lightbox-title">${springMacroRequestContext.getMessage("common.change_proxy.Signinasaproxy")}</h1>
         <div>
             <#list profile.orcidBio.delegation.givenPermissionBy.delegationDetails as delegationDetails>

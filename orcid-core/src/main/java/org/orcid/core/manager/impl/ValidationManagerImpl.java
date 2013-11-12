@@ -28,8 +28,6 @@ import org.orcid.core.cli.ValidateOrcidMessage;
 import org.orcid.core.exception.OrcidValidationException;
 import org.orcid.core.manager.ValidationBehaviour;
 import org.orcid.core.manager.ValidationManager;
-import org.orcid.jaxb.model.message.Citation;
-import org.orcid.jaxb.model.message.CitationType;
 import org.orcid.jaxb.model.message.ContactDetails;
 import org.orcid.jaxb.model.message.Email;
 import org.orcid.jaxb.model.message.OrcidActivities;
@@ -39,8 +37,6 @@ import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidWork;
 import org.orcid.jaxb.model.message.OrcidWorks;
 import org.orcid.jaxb.model.message.WorkTitle;
-import org.orcid.utils.BibtexException;
-import org.orcid.utils.BibtexUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
@@ -55,13 +51,15 @@ public class ValidationManagerImpl implements ValidationManager {
     private ValidationBehaviour validationBehaviour = ValidationBehaviour.LOG_WARNING;
 
     private String version = OrcidMessage.DEFAULT_VERSION;
-
+    
     private boolean requireOrcidProfile;
 
     private boolean validateBibtex = true;
     
     private boolean validateTitle = false;
-
+    
+    private boolean validateWorkType = false;
+    
     private Schema schema;
 
     private static final Logger LOG = LoggerFactory.getLogger(ValidationManagerImpl.class);
@@ -87,11 +85,19 @@ public class ValidationManagerImpl implements ValidationManager {
         this.validateTitle = validateTitle;
     }
 
+    public boolean isValidateWorkType() {
+        return validateWorkType;
+    }
+
+    public void setValidateWorkType(boolean validateWorkType) {
+        this.validateWorkType = validateWorkType;
+    }
+
     @Override
     public void validateMessage(OrcidMessage orcidMessage) {
         if (ValidationBehaviour.IGNORE.equals(validationBehaviour)) {
             return;
-        }        
+        }               
         doSchemaValidation(orcidMessage);
         doCustomValidation(orcidMessage);
     }
@@ -123,7 +129,7 @@ public class ValidationManagerImpl implements ValidationManager {
             if (requireOrcidProfile) {
                 throw new OrcidValidationException("There must be an orcid-profile element");
             }
-        } else {
+        } else {            
             checkBio(orcidProfile.getOrcidBio());
             checkActivities(orcidProfile.getOrcidActivities());
         }
@@ -166,21 +172,18 @@ public class ValidationManagerImpl implements ValidationManager {
     }
 
     public void checkWork(OrcidWork orcidWork) {
-        if (validateBibtex && orcidWork.getWorkCitation() != null) {
-            Citation workCitation = orcidWork.getWorkCitation();
-            if (CitationType.BIBTEX.equals(workCitation.getWorkCitationType())) {
-                try {
-                    BibtexUtils.validate(workCitation.getCitation());
-                } catch (BibtexException e) {
-                    throw new OrcidValidationException("Invalid BibTeX citation: " + workCitation.getCitation() + "\n", e);
-                }
-            }
-        }
         
         if(validateTitle){
             WorkTitle title = orcidWork.getWorkTitle();
             if(title == null || title.getTitle() == null || StringUtils.isEmpty(title.getTitle().getContent())){
                 throw new OrcidValidationException("Invalid Title: title cannot be null nor emtpy");
+            }
+        }  
+        
+        //TODO: This will be valid during the transition to new work types, after that, we can remove the work type validation
+        if(validateWorkType){            
+            if(orcidWork.getWorkType() != null && orcidWork.getWorkType().isDeprecated()){
+                throw new OrcidValidationException("Invalid work type: Type " + orcidWork.getWorkType().value() + " is deprecated");
             }
         }
     }
@@ -188,8 +191,8 @@ public class ValidationManagerImpl implements ValidationManager {
     private void initSchema() {
         if (schema == null) {
             SchemaFactory factory = SchemaFactory.newInstance("http://www.w3.org/2001/XMLSchema");
-            try {
-                schema = factory.newSchema(ValidateOrcidMessage.class.getResource("/orcid-message-" + version + ".xsd"));
+            try {                
+            	schema = factory.newSchema(ValidateOrcidMessage.class.getResource("/orcid-message-" + version + ".xsd"));
             } catch (SAXException e) {
                 handleError("Error initializing schema", e);
             }

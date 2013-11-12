@@ -21,8 +21,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.jbibtex.ParseException;
-import org.orcid.jaxb.model.message.CitationType;
 import org.orcid.jaxb.model.message.Country;
 import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.jaxb.model.message.OrcidWork;
@@ -33,10 +31,8 @@ import org.orcid.jaxb.model.message.WorkContributors;
 import org.orcid.jaxb.model.message.WorkExternalIdentifiers;
 import org.orcid.jaxb.model.message.WorkSource;
 import org.orcid.jaxb.model.message.WorkType;
-import org.orcid.utils.BibtexUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.web.util.HtmlUtils;
 
 public class Work implements ErrorsInterface, Serializable {
 
@@ -55,13 +51,17 @@ public class Work implements ErrorsInterface, Serializable {
     private Text url;
 
     private Text journalTitle;
-    
+
     private Text languageCode;
+    
+    private Text languageName;
 
     private Citation citation;
 
-    private Text country;
+    private Text countryCode;
     
+    private Text countryName;
+
     private List<Contributor> contributors;
 
     private List<WorkExternalIdentifier> workExternalIdentifiers;
@@ -71,6 +71,8 @@ public class Work implements ErrorsInterface, Serializable {
     private WorkTitle workTitle;
 
     private static Logger LOGGER = LoggerFactory.getLogger(Work.class);
+
+    private Text workCategory;
 
     private Text workType;
 
@@ -114,12 +116,12 @@ public class Work implements ErrorsInterface, Serializable {
 
         if (orcidWork.getJournalTitle() != null)
             w.setJournalTitle(Text.valueOf(orcidWork.getJournalTitle().getContent()));
-                
-        if(orcidWork.getLanguageCode() != null)
+
+        if (orcidWork.getLanguageCode() != null)
             w.setLanguageCode(Text.valueOf(orcidWork.getLanguageCode()));
-        
-        if(orcidWork.getCountry() != null)
-            w.setCountry((orcidWork.getCountry().getValue() == null) ? null :  Text.valueOf(orcidWork.getCountry().getValue().value()));
+
+        if (orcidWork.getCountry() != null)
+            w.setCountryCode((orcidWork.getCountry().getValue() == null) ? null : Text.valueOf(orcidWork.getCountry().getValue().value()));
         return w;
     }
 
@@ -153,7 +155,7 @@ public class Work implements ErrorsInterface, Serializable {
         }
         if (this.getWorkSource() != null)
             ow.setWorkSource(new WorkSource(this.getWorkSource().getValue()));
-        if (this.getWorkTitle() != null){
+        if (this.getWorkTitle() != null) {
             ow.setWorkTitle(this.workTitle.toWorkTitle());
         }
         if (this.getWorkType() != null) {
@@ -163,38 +165,17 @@ public class Work implements ErrorsInterface, Serializable {
         if (this.getJournalTitle() != null) {
             ow.setJournalTitle(new Title(this.getJournalTitle().getValue()));
         }
-            
-        if(this.getLanguageCode() != null){
+
+        if (this.getLanguageCode() != null) {
             ow.setLanguageCode(this.getLanguageCode().getValue());
         }
-        
-        if(this.getCountry() != null) {
-            Country country = new Country(StringUtils.isEmpty(this.getCountry().getValue()) ? null : Iso3166Country.fromValue(this.getCountry().getValue()));
+
+        if (this.getCountryCode() != null) {
+            Country country = new Country(StringUtils.isEmpty(this.getCountryCode().getValue()) ? null : Iso3166Country.fromValue(this.getCountryCode().getValue()));
             ow.setCountry(country);
         }
-        
-        return ow;
-    }
 
-    /**
-     * Return the Bibtex work citations in a readable format.
-     * 
-     * @return the bibtex citation converted into a readable string
-     * */
-    public String getCitationForDisplay() {
-        if (this.citation != null && this.citation.getCitation() != null
-                && CitationType.BIBTEX.value().toLowerCase().equals(this.citation.getCitationType().getValue().toLowerCase())) {
-            try {
-                String result = BibtexUtils.toCitation(HtmlUtils.htmlUnescape(this.citation.getCitation().getValue()));
-                return result;
-            } catch (ParseException e) {
-                LOGGER.info("Invalid BibTeX. Sending back as a string");
-            }
-        }
-        if (this.citation != null && this.citation.getCitation() != null) {
-            return this.citation.getCitation().getValue();
-        }
-        return null;
+        return ow;
     }
 
     public void setCitationForDisplay(String citation) {
@@ -297,6 +278,14 @@ public class Work implements ErrorsInterface, Serializable {
         this.workType = workType;
     }
 
+    public Text getWorkCategory() {
+        return workCategory;
+    }
+
+    public void setWorkCategory(Text workCategory) {
+        this.workCategory = workCategory;
+    }
+
     public Text getJournalTitle() {
         return journalTitle;
     }
@@ -313,11 +302,27 @@ public class Work implements ErrorsInterface, Serializable {
         this.languageCode = languageCode;
     }
 
-    public Text getCountry() {
-        return country;
+    public Text getCountryCode() {
+        return countryCode;
     }
 
-    public void setCountry(Text country) {
-        this.country = country;
-    }            
+    public void setCountryCode(Text countryCode) {
+        this.countryCode = countryCode;
+    }
+
+    public Text getLanguageName() {
+        return languageName;
+    }
+
+    public void setLanguageName(Text languageName) {
+        this.languageName = languageName;
+    }
+
+    public Text getCountryName() {
+        return countryName;
+    }
+
+    public void setCountryName(Text countryName) {
+        this.countryName = countryName;
+    }        
 }

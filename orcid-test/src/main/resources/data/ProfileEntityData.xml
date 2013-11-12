@@ -244,6 +244,7 @@
             family_name="Redding"
             vocative_name="Otis Redding"
             credit_name="O. Redding"
+            credit_name_visibility="PRIVATE"
             external_identifiers_visibility="LIMITED"
             biography_visibility="PUBLIC"
             keywords_visibility="REGISTERED_ONLY"
@@ -276,6 +277,7 @@
             family_name="Name"
             vocative_name="User Name"
             credit_name="U. Name"
+            credit_name_visibility="PUBLIC"
             external_identifiers_visibility="LIMITED"
             biography_visibility="PUBLIC"
             keywords_visibility="REGISTERED_ONLY"
@@ -632,7 +634,7 @@
         is_primary="true"
         is_current="true"
         is_verified="true"
-        visibility="PRIVATE"
+        visibility="PUBLIC"
         source_id="4444-4444-4444-444X"
     />
       

@@ -17,7 +17,7 @@
 
 -->
 <@public classes=['home'] >
-<div class="row-fluid">
+<div class="row">
     <#include "orcid_bio_search.ftl"/>
 </div>
 </@public>

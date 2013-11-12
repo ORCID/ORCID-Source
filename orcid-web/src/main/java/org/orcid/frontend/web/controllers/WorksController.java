@@ -19,6 +19,7 @@ package org.orcid.frontend.web.controllers;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -39,6 +40,7 @@ import org.orcid.core.manager.WorkContributorManager;
 import org.orcid.core.manager.WorkExternalIdentifierManager;
 import org.orcid.core.manager.WorkManager;
 import org.orcid.core.utils.JsonUtils;
+import org.orcid.frontend.web.util.FunctionsOverCollections;
 import org.orcid.frontend.web.util.LanguagesMap;
 import org.orcid.jaxb.model.message.CitationType;
 import org.orcid.jaxb.model.message.ContributorAttributes;
@@ -49,7 +51,9 @@ import org.orcid.jaxb.model.message.OrcidWork;
 import org.orcid.jaxb.model.message.OrcidWorks;
 import org.orcid.jaxb.model.message.PublicationDate;
 import org.orcid.jaxb.model.message.SequenceType;
+import org.orcid.jaxb.model.message.WorkCategory;
 import org.orcid.jaxb.model.message.WorkContributors;
+import org.orcid.jaxb.model.message.WorkType;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.PublicationDateEntity;
 import org.orcid.persistence.jpa.entities.WorkContributorEntity;
@@ -64,8 +68,6 @@ import org.orcid.pojo.ajaxForm.Visibility;
 import org.orcid.pojo.ajaxForm.Work;
 import org.orcid.pojo.ajaxForm.WorkExternalIdentifier;
 import org.orcid.pojo.ajaxForm.WorkTitle;
-import org.orcid.utils.BibtexException;
-import org.orcid.utils.BibtexUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -152,6 +154,8 @@ public class WorksController extends BaseWorkspaceController {
     @RequestMapping(value = "/works.json", method = RequestMethod.GET)
     public @ResponseBody
     List<Work> getWorkJson(HttpServletRequest request, @RequestParam(value = "workIds") String workIdsStr) {
+        Map<String, String> countries = retrieveIsoCountries();
+        Map<String, String> languages = LanguagesMap.buildLanguageMap(localeManager.getLocale(), false);
         List<Work> workList = new ArrayList<>();
         Work work = null;
         String[] workIds = workIdsStr.split(",");
@@ -165,13 +169,29 @@ public class WorksController extends BaseWorkspaceController {
             }
             for (String workId : workIds) {
                 work = worksMap.get(workId);
+                //Set country name
+                if(!PojoUtil.isEmpty(work.getCountryCode())) {            
+                    Text countryName = Text.valueOf(countries.get(work.getCountryCode().getValue()));
+                    work.setCountryName(countryName);
+                }
+                //Set language name
+                if(!PojoUtil.isEmpty(work.getLanguageCode())) {
+                    Text languageName = Text.valueOf(languages.get(work.getLanguageCode().getValue()));
+                    work.setLanguageName(languageName);
+                }
+                //Set translated title language name
+                if(!(work.getWorkTitle().getTranslatedTitle() == null) && !StringUtils.isEmpty(work.getWorkTitle().getTranslatedTitle().getLanguageCode())) {
+                    String languageName = languages.get(work.getWorkTitle().getTranslatedTitle().getLanguageCode());
+                    work.getWorkTitle().getTranslatedTitle().setLanguageName(languageName);
+                }
+                                
                 workList.add(work);
             }
         }
 
         return workList;
     }
-
+    
     /**
      * Returns a blank work
      * */
@@ -190,6 +210,7 @@ public class WorksController extends BaseWorkspaceController {
         TranslatedTitle tt = new TranslatedTitle();
         tt.setContent(new String());
         tt.setLanguageCode(new String());
+        tt.setLanguageName(new String());
         wt.setTranslatedTitle(tt);
         w.setWorkTitle(wt);
 
@@ -207,11 +228,16 @@ public class WorksController extends BaseWorkspaceController {
         c.setCitation(cText);
         w.setCitation(c);
 
+        Text wCategoryText = new Text();
+        wCategoryText.setValue("");
+        wCategoryText.setRequired(true);
+        w.setWorkCategory(wCategoryText);
+        
         Text wTypeText = new Text();
         wTypeText.setValue("");
         wTypeText.setRequired(true);
         w.setWorkType(wTypeText);
-
+        
         Date d = new Date();
         d.setDay("");
         d.setMonth("");
@@ -254,8 +280,12 @@ public class WorksController extends BaseWorkspaceController {
         Text lc = new Text();
         lc.setRequired(false);
         w.setLanguageCode(lc);
+        Text ln = new Text();
+        ln.setRequired(false);
+        w.setLanguageName(ln);
 
-        w.setCountry(new Text());
+        w.setCountryCode(new Text());
+        w.setCountryName(new Text());
 
         return w;
     }
@@ -273,6 +303,7 @@ public class WorksController extends BaseWorkspaceController {
         workWorkTitleSubtitleValidate(work);
         workWorkTitleTranslatedTitleValidate(work);
         workdescriptionValidate(work);
+        workWorkCategoryValidate(work);
         workWorkTypeValidate(work);
         workWorkExternalIdentifiersValidate(work);
         workUrlValidate(work);
@@ -389,7 +420,7 @@ public class WorksController extends BaseWorkspaceController {
         workEntity.setLastModified(new java.util.Date());
         workEntity.setPublicationDate(toFuzzyDate(orcidWork.getPublicationDate()));
         workEntity.setSubtitle(orcidWork.getWorkTitle().getSubtitle().getContent());
-        workEntity.setTitle(orcidWork.getWorkTitle().getTitle().getContent());
+        workEntity.setTitle(orcidWork.getWorkTitle().getTitle().getContent().trim());
         workEntity.setJournalTitle(orcidWork.getJournalTitle() != null ? orcidWork.getJournalTitle().getContent() : null);
         workEntity.setWorkType(orcidWork.getWorkType());
         workEntity.setWorkUrl(orcidWork.getUrl().getValue());
@@ -578,7 +609,19 @@ public class WorksController extends BaseWorkspaceController {
         }
         return work;
     }
+    
+    @RequestMapping(value = "/work/workCategoryValidate.json", method = RequestMethod.POST)
+    public @ResponseBody
+    Work workWorkCategoryValidate(@RequestBody Work work) {
+        work.getWorkCategory().setErrors(new ArrayList<String>());
+        if (work.getWorkCategory().getValue() == null || work.getWorkCategory().getValue().trim().length() == 0) {
+            setError(work.getWorkCategory(), "NotBlank.manualWork.workCategory");
+        }
 
+        return work;
+    }
+    
+    
     @RequestMapping(value = "/work/workTypeValidate.json", method = RequestMethod.POST)
     public @ResponseBody
     Work workWorkTypeValidate(@RequestBody Work work) {
@@ -589,7 +632,7 @@ public class WorksController extends BaseWorkspaceController {
 
         return work;
     }
-
+    
     @RequestMapping(value = "/work/workExternalIdentifiersValidate.json", method = RequestMethod.POST)
     public @ResponseBody
     Work workWorkExternalIdentifiersValidate(@RequestBody Work work) {
@@ -625,17 +668,8 @@ public class WorksController extends BaseWorkspaceController {
         } else if (!work.getCitation().getCitationType().getValue().trim().equals(CitationType.FORMATTED_UNSPECIFIED.value())
                 && !PojoUtil.isEmpty(work.getCitation().getCitationType())) {
             // citation should not be blank if citation type is set
-            if (work.getCitation().getCitation() == null || work.getCitation().getCitation().getValue().trim().equals("")) {
+            if (PojoUtil.isEmpty(work.getCitation().getCitation())) {
                 setError(work.getCitation().getCitation(), "NotBlank.manualWork.citation");
-            }
-
-            // if bibtext must be valid
-            if (work.getCitation().getCitationType().getValue().equals(CitationType.BIBTEX.value())) {
-                try {
-                    BibtexUtils.validate(work.getCitation().getCitation().getValue());
-                } catch (BibtexException e) {
-                    setError(work.getCitation().getCitation(), "manualWork.bibtext.notValid");
-                }
             }
 
         }
@@ -704,4 +738,22 @@ public class WorksController extends BaseWorkspaceController {
         }
         return work;
     }
+    
+    /**
+     * Return a list of work types based on the work category provided as a parameter
+     * @param workCategoryName
+     * @return a map containing the list of types associated with that type and his localized name
+     * */
+    @RequestMapping(value = "/loadWorkTypes.json", method = RequestMethod.POST)    
+    public @ResponseBody Map<String, String> retriveWorkSubtypesAsMap(@RequestParam(value = "workCategory")String workCategoryName){
+    	Map<String, String> workTypes = new LinkedHashMap<String, String>();
+    	WorkCategory workCategory = WorkCategory.fromValue(workCategoryName);    	    	
+    	
+    	for(WorkType workType : workCategory.getSubTypes()){
+    		workTypes.put(workType.value(), getMessage(buildInternationalizationKey(WorkType.class, workType.value())));
+    	}
+    	
+    	return FunctionsOverCollections.sortMapsByValues(workTypes);
+    }    
+       
 }

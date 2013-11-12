@@ -31,6 +31,8 @@ public class TranslatedTitle implements ErrorsInterface, Required, Serializable 
 
     private String languageCode;
     
+    private String languageName;
+    
     private boolean required = false;
     
     private String getRequiredMessage;
@@ -90,4 +92,12 @@ public class TranslatedTitle implements ErrorsInterface, Required, Serializable 
     public void setGetRequiredMessage(String getRequiredMessage) {
         this.getRequiredMessage = getRequiredMessage;
     }
+
+    public String getLanguageName() {
+        return languageName;
+    }
+
+    public void setLanguageName(String languageName) {
+        this.languageName = languageName;
+    }        
 }

@@ -3,4 +3,3 @@
 * Added language code for works.
 * Added a translated title field to add a title in an alternate language
 * Added a country field
-* Added provisional country code for Kosovo

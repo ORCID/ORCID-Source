@@ -17,12 +17,7 @@
 package org.orcid.core.version.impl;
 
 import org.orcid.core.version.OrcidMessageVersionConverter;
-import org.orcid.jaxb.model.message.OrcidActivities;
 import org.orcid.jaxb.model.message.OrcidMessage;
-import org.orcid.jaxb.model.message.OrcidProfile;
-import org.orcid.jaxb.model.message.OrcidWork;
-import org.orcid.jaxb.model.message.OrcidWorks;
-import org.orcid.jaxb.model.message.WorkType;
 
 /**
  * 

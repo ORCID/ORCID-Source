@@ -19,13 +19,13 @@
 <@protected>
 
 	<div class="row">
-		<div class="span3">
+		<div class="col-md-3 col-sm-3">
 			<ul>
 				<li><a href="#account-settings">${springMacroRequestContext.getMessage("manage.accountsettings")}</a></li>
 				<li><a href="#manage-permissions">${springMacroRequestContext.getMessage("manage.managepermission")}</a></li>
 			</ul>
 		</div>
-		<div class="span9">
+		<div class="col-md-9 col-sm-9">
 			<h1 id="account-settings">${springMacroRequestContext.getMessage("manage.accountsettings")}</h1>
 			<table class="table table-bordered table-settings">
 				<tbody>

@@ -58,10 +58,8 @@ public class OrcidMessageVersionConverterImplV1_0_18ToV1_0_19 implements OrcidMe
             if(activites != null){
                 OrcidWorks works = activites.getOrcidWorks();
                 if(works != null){
-                    for(OrcidWork work : works.getOrcidWork()){
-                        if(work.getWorkType() != null){
-                            work.setWorkType(null);
-                        }
+                    for(OrcidWork work : works.getOrcidWork()){                        
+                    	work.setWorkType(null);
                     }
                 }
             }

@@ -110,8 +110,8 @@ import org.orcid.jaxb.model.message.WorkExternalIdentifier;
 import org.orcid.jaxb.model.message.WorkExternalIdentifiers;
 import org.orcid.jaxb.model.message.WorkSource;
 import org.orcid.jaxb.model.message.WorkTitle;
-import org.orcid.jaxb.model.message.WorkType;
 import org.orcid.persistence.dao.GenericDao;
+import org.orcid.persistence.dao.OrgDisambiguatedDao;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.EndDateEntity;
 import org.orcid.persistence.jpa.entities.ExternalIdentifierEntity;
@@ -157,6 +157,9 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
 
     @Resource
     private OrgManager orgManager;
+    
+    @Resource
+    private OrgDisambiguatedDao orgDisambiguatedDao;
 
     @Override
     public ProfileEntity toProfileEntity(OrcidProfile profile, ProfileEntity existingProfileEntity) {
@@ -294,7 +297,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             WorkTitle workTitle = orcidWork.getWorkTitle();
             if (workTitle != null) {
                 workEntity.setSubtitle(workTitle.getSubtitle() != null ? workTitle.getSubtitle().getContent() : null);
-                workEntity.setTitle(workTitle.getTitle() != null ? workTitle.getTitle().getContent() : null);
+                workEntity.setTitle(workTitle.getTitle() != null ? workTitle.getTitle().getContent().trim() : null);
                 TranslatedTitle translatedTitle = workTitle.getTranslatedTitle();
                 if (translatedTitle != null) {
                     workEntity.setTranslatedTitle(StringUtils.isEmpty(translatedTitle.getContent()) ? null : translatedTitle.getContent());
@@ -304,8 +307,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             workEntity.setJournalTitle(orcidWork.getJournalTitle() != null ? orcidWork.getJournalTitle().getContent() : null);
             workEntity.setLanguageCode(orcidWork.getLanguageCode() != null ? orcidWork.getLanguageCode() : null);
             workEntity.setIso2Country(orcidWork.getCountry() == null ? null : orcidWork.getCountry().getValue());
-            // TODO this code will be phased out when schema 1.0.6.XSD is
-            workEntity.setWorkType(WorkType.BIBLE.equals(orcidWork.getWorkType()) ? WorkType.RELIGIOUS_TEXT : orcidWork.getWorkType());
+            workEntity.setWorkType(orcidWork.getWorkType());
             workEntity.setWorkUrl(orcidWork.getUrl() != null ? orcidWork.getUrl().getValue() : null);
             return workEntity;
         }
@@ -1067,6 +1069,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             orgRelationEntity.setOrg(getOrgEntity(affiliation));
             orgRelationEntity.setTitle(affiliation.getRoleTitle());
             orgRelationEntity.setStartDate(startDate != null ? new StartDateEntity(startDate) : null);
+           
             return orgRelationEntity;
         }
         return null;
@@ -1083,6 +1086,11 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             orgEntity.setRegion(region != null ? region.getContent() : null);
             AffiliationCountry country = address.getAffiliationCountry();
             orgEntity.setCountry(country != null ? country.getValue() : null);
+            if (affiliation.getDisambiguatedAffiliation() != null
+                && affiliation.getDisambiguatedAffiliation().getDisambiguatedAffiliationIdentifier() != null) {
+                orgEntity.setOrgDisambiguated(orgDisambiguatedDao
+                        .find(Long.parseLong(affiliation.getDisambiguatedAffiliation().getDisambiguatedAffiliationIdentifier())));
+            }
             return orgManager.createUpdate(orgEntity);
         }
         return null;

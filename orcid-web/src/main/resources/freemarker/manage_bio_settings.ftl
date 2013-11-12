@@ -20,8 +20,11 @@
 <div class="colorbox-content manage-bio" id="manage-bio">
     <form id="bio-settings-form" class="" action="<@spring.url '/account/save-bio-settings'/>" method="post" autocomplete="off">
         <div class="row">
-            <div class="span12">
-                <h1 class="lightbox-title pull-left">${springMacroRequestContext.getMessage("manage_bio_settings.editpersonalinformation")}</h1><a class="btn pull-right close-button">X</a>
+            <div class="col-md-11 col-sm-10 col-xs-10">
+                <h1 class="lightbox-title pull-left">${springMacroRequestContext.getMessage("manage_bio_settings.editpersonalinformation")}</h1>
+            </div>
+            <div class="col-md-1 col-sm-2 col-xs-2">
+            	<a class="btn pull-right close-button">X</a>
             </div>
         </div>
         <@spring.bind "changePersonalInfoForm.*" /> 
@@ -38,13 +41,12 @@
             </div>
         </#if>
         <div class="row">
-            <div class="span6">
-            		
+            <div class="col-md-6 col-sm-6 col-xs-12">
             	    <h3>${springMacroRequestContext.getMessage("manage_bio_settings.h3names")}</h3>		
                     <div class="control-group"> 
              			<label for="firstName">${springMacroRequestContext.getMessage("manage_bio_settings.labelfirstname")}</label>             			
              			<div class="relative"><@spring.formInput "changePersonalInfoForm.firstName" 'class="input-xlarge"'/>
-             			<a href="http://support.orcid.org/knowledgebase/articles/142948-names-in-the-orcid-registry" target="_blank"><i class="icon-question-sign"></i></a>
+             			<a href="http://support.orcid.org/knowledgebase/articles/142948-names-in-the-orcid-registry" target="_blank"><i class="glyphicon glyphicon-question-sign"></i></a>
              			</div>
              		</div>
                     <div class="control-group"> 
@@ -114,8 +116,7 @@
                 </div>
                 
             </div>
-            <div class="span6">
-             	
+            <div class="col-md-6 col-sm-6 col-xs-12">
                 <#if changePersonalInfoForm.savedResearcherUrls?? && changePersonalInfoForm.savedResearcherUrls.researcherUrl??>
                     <div class="websites-vis">
                         <label class="visibility-lbl">
@@ -134,7 +135,7 @@
                       		<#else> 
                       		    <a href="${savedResearcherUrl.url.value}">${savedResearcherUrl.url.value}</a>
                       		</#if>
-                      		<a href="" class="icon-trash orcid-icon-trash grey delete-url" ng-click="deleteEmail($index)" title="remove url"></a>
+                      		<a href="" class="glyphicon glyphicon-trash grey delete-url" ng-click="deleteEmail($index)" title="remove url"></a>
                       		</p>     		    
                     </#list>
              	</#if>
@@ -151,7 +152,7 @@
                     </div>
                 </div>
              	 		
-             	<div class="controls save-btns pull-right">
+             	<div class="controls save-btns right">
                     <button id="bottom-submit-affiliates" class="btn btn-primary" type="submit">${springMacroRequestContext.getMessage("manage_bio_settings.btnsavechanges")}</button>
                     <button id="bottom-clear-affiliates" class="btn close-button" type="reset">${springMacroRequestContext.getMessage("manage_bio_settings.btncancel")}</button>
                 </div>
@@ -161,4 +162,3 @@
 </div>
 <div id="confirm-dialog"></div>
 </@base>
-

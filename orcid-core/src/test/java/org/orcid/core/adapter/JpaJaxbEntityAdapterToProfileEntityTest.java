@@ -18,7 +18,10 @@ package org.orcid.core.adapter;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -214,11 +217,11 @@ public class JpaJaxbEntityAdapterToProfileEntityTest extends DBUnitTest {
         OrcidMessage orcidMessage = getOrcidMessage(ORCID_INTERNAL_FULL_XML);
         List<OrcidWork> currentOrcidWorks = orcidMessage.getOrcidProfile().getOrcidActivities().getOrcidWorks().getOrcidWork();
         assertTrue(currentOrcidWorks.size() == 1);
-        currentOrcidWorks.get(0).setWorkType(WorkType.BIBLE);
+        currentOrcidWorks.get(0).setWorkType(WorkType.DATA_SET);        
         ProfileEntity profileEntity = adapter.toProfileEntity(orcidMessage.getOrcidProfile());
         List<ProfileWorkEntity> profileWorks = new ArrayList<ProfileWorkEntity>(profileEntity.getProfileWorks());
-        assertTrue(profileWorks.size() == 1 && profileWorks.get(0).getWork().getWorkType().equals(WorkType.RELIGIOUS_TEXT));
-
+        assertEquals(1, profileWorks.size());
+        assertTrue(profileWorks.get(0).getWork().getWorkType().equals(WorkType.DATA_SET));
     }
 
     private OrcidMessage getOrcidMessage(String orcidMessagePath) throws JAXBException {

@@ -16,7 +16,6 @@
  */
 package org.orcid.frontend.web.controllers;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -29,12 +28,8 @@ import org.orcid.core.manager.CrossRefManager;
 import org.orcid.core.manager.SecurityQuestionManager;
 import org.orcid.core.manager.SponsorManager;
 import org.orcid.core.security.visibility.filter.VisibilityFilter;
-import org.orcid.frontend.web.forms.CurrentWork;
 import org.orcid.frontend.web.util.FunctionsOverCollections;
 import org.orcid.frontend.web.util.YearsList;
-import org.orcid.jaxb.model.message.OrcidProfile;
-import org.orcid.jaxb.model.message.OrcidWork;
-import org.orcid.jaxb.model.message.OrcidWorks;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.persistence.jpa.entities.CountryIsoEntity;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -111,18 +106,6 @@ public class BaseWorkspaceController extends BaseController {
             map.put(year, year);
         }
         return map;
-    }
-
-    protected List<CurrentWork> getCurrentWorksFromProfile(OrcidProfile profile) {
-        List<CurrentWork> currentWorks = new ArrayList<CurrentWork>();
-        OrcidWorks orcidWorks = (profile != null && profile.getOrcidActivities() != null) ? profile.getOrcidActivities().getOrcidWorks() : null;
-        if (orcidWorks != null && orcidWorks.getOrcidWork() != null && !orcidWorks.getOrcidWork().isEmpty()) {
-            List<OrcidWork> works = orcidWorks.getOrcidWork();
-            for (OrcidWork orcidWork : works) {
-                currentWorks.add(new CurrentWork(orcidWork));
-            }
-        }
-        return currentWorks;
     }
 
 }

@@ -36,7 +36,6 @@ import org.orcid.core.manager.ProfileWorkManager;
 import org.orcid.core.manager.ThirdPartyImportManager;
 import org.orcid.core.manager.WorkContributorManager;
 import org.orcid.core.manager.WorkManager;
-import org.orcid.frontend.web.forms.CurrentWork;
 import org.orcid.frontend.web.util.FunctionsOverCollections;
 import org.orcid.frontend.web.util.LanguagesMap;
 import org.orcid.frontend.web.util.NumberList;
@@ -51,8 +50,8 @@ import org.orcid.jaxb.model.message.ExternalIdentifiers;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.SequenceType;
 import org.orcid.jaxb.model.message.SourceOrcid;
+import org.orcid.jaxb.model.message.WorkCategory;
 import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
-import org.orcid.jaxb.model.message.WorkType;
 import org.orcid.pojo.ThirdPartyRedirect;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -122,19 +121,16 @@ public class WorkspaceController extends BaseWorkspaceController {
         return FunctionsOverCollections.sortMapsByValues(affiliationTypes);
     }
 
-
-    @ModelAttribute("workTypes")
+    @ModelAttribute("workCategories")
     public Map<String, String> retrieveWorkTypesAsMap() {
-        Map<String, String> workTypes = new LinkedHashMap<String, String>();
+        Map<String, String> workCategories = new LinkedHashMap<String, String>();
 
-        for (WorkType workType : WorkType.values()) {
-            workTypes.put(workType.value(), getMessage(buildInternationalizationKey(WorkType.class, workType.value())));
+        for (WorkCategory workCategory : WorkCategory.values()) {
+        	workCategories.put(workCategory.value(), getMessage(buildInternationalizationKey(WorkCategory.class, workCategory.value())));
         }
-
-        workTypes.remove(WorkType.BIBLE.value());
-        workTypes.remove(WorkType.UNDEFINED.value());
-        return FunctionsOverCollections.sortMapsByValues(workTypes);
-    }
+        
+        return FunctionsOverCollections.sortMapsByValues(workCategories);
+    }        
 
     @ModelAttribute("citationTypes")
     public Map<String, String> retrieveTypesAsMap() {
@@ -229,10 +225,6 @@ public class WorkspaceController extends BaseWorkspaceController {
         mav.addObject("showPrivacy", true);
 
         OrcidProfile profile = orcidProfileManager.retrieveOrcidProfile(getCurrentUserOrcid(), LoadOptions.BIO_ONLY);
-        List<CurrentWork> currentWorks = getCurrentWorksFromProfile(profile);
-        if (currentWorks != null && !currentWorks.isEmpty()) {
-            mav.addObject("currentWorks", currentWorks);
-        }
         mav.addObject("profile", profile);
         mav.addObject("currentLocaleKey", LanguagesMap.buildLanguageKey(localeManager.getLocale()));
         mav.addObject("currentLocaleValue", LanguagesMap.buildLanguageValue(localeManager.getLocale(), localeManager.getLocale()));

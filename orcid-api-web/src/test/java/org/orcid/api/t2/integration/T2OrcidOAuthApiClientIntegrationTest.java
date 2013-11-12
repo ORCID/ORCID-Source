@@ -26,14 +26,16 @@ import java.net.URI;
 import java.net.URLEncoder;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 
+import javax.annotation.Resource;
 import javax.ws.rs.core.MediaType;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.api.common.OrcidApiConstants;
-import org.orcid.jaxb.model.clientgroup.OrcidClientGroup;
+import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.jaxb.model.message.ExternalIdOrcid;
 import org.orcid.jaxb.model.message.ExternalIdReference;
 import org.orcid.jaxb.model.message.ExternalIdentifier;
@@ -50,6 +52,7 @@ import org.orcid.jaxb.model.message.Title;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.message.WorkTitle;
 import org.orcid.jaxb.model.message.WorkType;
+import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -62,6 +65,9 @@ import com.sun.jersey.api.client.WebResource.Builder;
 public class T2OrcidOAuthApiClientIntegrationTest extends BaseT2OrcidOAuthApiClientIntegrationTest {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(T2OrcidOAuthApiClientIntegrationTest.class);
+
+    @Resource
+    private OrcidOauth2TokenDetailService orcidOauthTokenDetailService;
 
     public T2OrcidOAuthApiClientIntegrationTest() {
         super();
@@ -244,6 +250,38 @@ public class T2OrcidOAuthApiClientIntegrationTest extends BaseT2OrcidOAuthApiCli
     }
 
     @Test
+    public void testRemoveWriteScopesPastValitity() throws Exception {
+
+        createNewOrcidUsingAccessToken();
+        OrcidOauth2TokenDetail orcidOauth2TokenDetail = orcidOauthTokenDetailService.findNonDisabledByTokenValue(accessToken);
+        Date d = new Date();
+        d.setTime(d.getTime() - 24 * 60 * 60 * 1000);
+        orcidOauth2TokenDetail.setDateCreated(d);
+        orcidOauthTokenDetailService.saveOrUpdate(orcidOauth2TokenDetail);
+        
+        OrcidMessage message = orcidClientDataHelper.createFromXML(OrcidClientDataHelper.ORCID_INTERNAL_NO_SPONSOR_XML);
+        message.getOrcidProfile().setOrcid(this.orcid);
+        OrcidWorks orcidWorks = message.getOrcidProfile().retrieveOrcidWorks();
+        assertTrue(orcidWorks != null && orcidWorks.getOrcidWork() != null && orcidWorks.getOrcidWork().size() == 3);
+
+        orcidWorks = new OrcidWorks();
+        OrcidWork orcidWork = orcidClientDataHelper.createWork("Single works");
+        orcidWork.setWorkType(WorkType.UNDEFINED);
+        orcidWorks.getOrcidWork().add(orcidWork);        
+        message.getOrcidProfile().setOrcidWorks(orcidWorks);
+        assertClientResponse403SecurityProblem(oauthT2Client.addWorksXml(orcid, message, accessToken));
+
+        // make sure write scope was removed
+        orcidOauth2TokenDetail = orcidOauthTokenDetailService.findNonDisabledByTokenValue(accessToken);
+        assertTrue(!orcidOauth2TokenDetail.getScope().contains("create"));
+        assertTrue(!orcidOauth2TokenDetail.getScope().contains("update"));
+        
+        // make sure read scope is still there
+        assertTrue(orcidOauth2TokenDetail.getScope().contains("read"));        
+    }
+
+    
+    @Test
     public void testUpdateBioDetailsXml() throws Exception {
         createNewOrcidUsingAccessToken();
         OrcidMessage message = orcidClientDataHelper.createFromXML(OrcidClientDataHelper.ORCID_INTERNAL_NO_SPONSOR_XML);
@@ -321,15 +359,17 @@ public class T2OrcidOAuthApiClientIntegrationTest extends BaseT2OrcidOAuthApiCli
         message.getOrcidProfile().getOrcidInternal().setSecurityDetails(null);
         assertClientResponse401Details(oauthT2Client.updateWorksXml(this.orcid, message, null));
 
-        if(work1.getWorkType() == null)
+        if(work1.getWorkType() == null) {
             work1.setWorkType(WorkType.UNDEFINED);
-        
-        if(workToUpdate.getWorkType() == null){
-            workToUpdate.setWorkType(WorkType.UNDEFINED);
         }
         
-        if(work3.getWorkType() == null)
-            work3.setWorkType(WorkType.UNDEFINED);
+        if(workToUpdate.getWorkType() == null){
+        	workToUpdate.setWorkType(WorkType.UNDEFINED);
+        }
+        
+        if(work3.getWorkType() == null) {
+        	work3.setWorkType(WorkType.UNDEFINED);
+        }
         
         ClientResponse updatedWorksResponse = oauthT2Client.updateWorksXml(this.orcid, message, accessToken);
 

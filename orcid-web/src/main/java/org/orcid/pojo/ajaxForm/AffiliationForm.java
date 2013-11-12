@@ -28,6 +28,7 @@ import org.orcid.jaxb.model.message.AffiliationCity;
 import org.orcid.jaxb.model.message.AffiliationCountry;
 import org.orcid.jaxb.model.message.AffiliationRegion;
 import org.orcid.jaxb.model.message.AffiliationType;
+import org.orcid.jaxb.model.message.DisambiguatedAffiliation;
 import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.jaxb.model.message.Source;
 
@@ -56,7 +57,9 @@ public class AffiliationForm implements ErrorsInterface, Serializable {
     private Text departmentName;
 
     private Text affiliationType;
-
+    
+    private Text disambiguatedAffiliationIdentifier;
+    
     private String affiliationTypeForDisplay;
 
     private Date startDate;
@@ -184,6 +187,10 @@ public class AffiliationForm implements ErrorsInterface, Serializable {
         form.setAffiliationName(Text.valueOf(affiliation.getAffiliationName()));
         AffiliationAddress address = affiliation.getAffiliationAddress();
         form.setCity(Text.valueOf(address.getAffiliationCity().getContent()));
+        if (affiliation.getDisambiguatedAffiliation() != null) {
+            if (affiliation.getDisambiguatedAffiliation().getDisambiguatedAffiliationIdentifier() != null) 
+                form.setDisambiguatedAffiliationIdentifier(Text.valueOf(affiliation.getDisambiguatedAffiliation().getDisambiguatedAffiliationIdentifier()));
+        }
         if (address.getAffiliationRegion() != null) {
             form.setRegion(Text.valueOf(address.getAffiliationRegion().getContent()));
         }
@@ -224,6 +231,10 @@ public class AffiliationForm implements ErrorsInterface, Serializable {
         if (!PojoUtil.isEmpty(region)) {
             affiliationAddress.setAffiliationRegion(new AffiliationRegion(region.getValue()));
         }
+        if (!PojoUtil.isEmpty(disambiguatedAffiliationIdentifier)) {
+            affiliation.setDisambiguatedAffiliation(new DisambiguatedAffiliation());
+            affiliation.getDisambiguatedAffiliation().setDisambiguatedAffiliationIdentifier(disambiguatedAffiliationIdentifier.getValue());
+        }
         affiliationAddress.setAffiliationCountry(new AffiliationCountry(Iso3166Country.fromValue(country.getValue())));
         if (!PojoUtil.isEmpty(roleTitle)) {
             affiliation.setRoleTitle(roleTitle.getValue());
@@ -249,6 +260,14 @@ public class AffiliationForm implements ErrorsInterface, Serializable {
 
     public void setRoleTitle(Text roleTitle) {
         this.roleTitle = roleTitle;
+    }
+
+    public Text getDisambiguatedAffiliationIdentifier() {
+        return disambiguatedAffiliationIdentifier;
+    }
+
+    public void setDisambiguatedAffiliationIdentifier(Text disambiguatedAffiliationIdentifier) {
+        this.disambiguatedAffiliationIdentifier = disambiguatedAffiliationIdentifier;
     }
 
 }

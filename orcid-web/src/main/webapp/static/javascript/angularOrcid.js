@@ -298,7 +298,7 @@ function DeactivateAccountCtrl($scope, $compile) {
 	    	    $.colorbox({
 	    	        html : $compile($('#deactivate-account-modal').html())($scope)	            	
 	    	    });
-	    	    $scope.$apply();
+	    	    $scope.$apply();	    	    
 	    	    $.colorbox.resize();
 	        }
 	    }).fail(function() { 
@@ -673,7 +673,7 @@ function ResetPasswordCtrl($scope, $compile) {
 	    	// something bad is happening!
 	    	console.log("ResetPasswordCtrl.serverValidate() error");
 	    });
-	};
+	};		
 	
 	// in the case of slow network connection
 	// we don't want to overwrite  values while
@@ -982,7 +982,7 @@ function ClaimCtrl($scope, $compile) {
 
 
 function VerifyEmailCtrl($scope, $compile) {
-	$scope.getEmails = function() {
+	$scope.getEmails = function() {		
 		$.ajax({
 	        url: $('body').data('baseurl') + 'account/emails.json',
 	        //type: 'POST',
@@ -1007,9 +1007,7 @@ function VerifyEmailCtrl($scope, $compile) {
 	        	        escKey:false, 
 	        	        overlayClose:false,
 	        	        transition: 'fade',
-	        	        close: '',
-	        	        //height: '200px',
-	        	        //width: '500px',
+	        	        close: '',	        	        
 	        	        scrolling: false
 	        	        	    });
 	        	        $.colorbox.resize();	        		
@@ -1046,7 +1044,7 @@ function VerifyEmailCtrl($scope, $compile) {
 	        close: '',
 	        scrolling: false
 	        	    });
-	    $.colorbox.resize();
+	    $.colorbox.resize({width:"500px", height:"200px"});
 		
 	};
 	
@@ -1145,44 +1143,85 @@ function AffiliationCtrl($scope, $compile, affiliationsSrvc){
 	
 	$scope.toggleDisplayAffiliations = function () {
 		$scope.displayAffiliations = !$scope.displayAffiliations;
-	};
-	
-	$scope.showAddModal = function(){;
-		var numOfResults = 100;
+	};	
+
+	$scope.showAddModal = function(){
+		isMobile() ? w = '100%' : w = '800px';
+		isMobile() ? h = '100%' : h = 'auto';
+		var numOfResults = 25;
 		$.colorbox({        	
 			html: $compile($('#add-affiliation-modal').html())($scope),
 			onComplete: function() {
-							$.colorbox.resize();
-							$("#affiliationName").typeahead({
-								name: 'affiliationName',
-								limit: numOfResults,
-								remote: {
-									url: $('body').data('baseurl')+'affiliations/disambiguated/%QUERY?limit=' + numOfResults
-								},
-								template: function (datum) {
-									   var forDisplay = 
-									       '<span style=\'white-space: nowrap; font-weight: bold;\'>' + datum.value+ '</span>'
-									      +'<span style=\'font-size: 80%;\'>'
-									      + ' <br />' + datum.city;
-									   if(datum.region){
-										   forDisplay += ", " + datum.region;
-									   }
-									   if (datum.orgType != null && datum.orgType.trim() != '')
-									      forDisplay += ", " + datum.orgType;
-									   forDisplay += '</span><hr />';
-									   return forDisplay;
-								}
-							});
-							$("#affiliationName").bind("typeahead:selected", function(obj, datum) {        
-								$("input[name=city]").val(datum.city);
-								$("input[name=region]").val(datum.region);
-								$("select[name=country]").val(datum.country);
-								$scope.editAffiliation.city.value = datum.city;
-								$scope.editAffiliation.region.value = datum.region;
-								$scope.editAffiliation.country.value = datum.country;
-							});
-						}
+							$.colorbox.resize({width:w, height:h});
+							$scope.bindTypeahead();
+			}
 	    });
+	};
+	
+	$scope.bindTypeahead = function () {
+		var numOfResults = 100;
+		
+		$("#affiliationName").typeahead({
+			name: 'affiliationName',
+			limit: numOfResults,
+			remote: {
+				url: $('body').data('baseurl')+'affiliations/disambiguated/name/%QUERY?limit=' + numOfResults
+			},
+			template: function (datum) {
+				   var forDisplay = 
+				       '<span style=\'white-space: nowrap; font-weight: bold;\'>' + datum.value+ '</span>'
+				      +'<span style=\'font-size: 80%;\'>'
+				      + ' <br />' + datum.city;
+				   if(datum.region){
+					   forDisplay += ", " + datum.region;
+				   }
+				   if (datum.orgType != null && datum.orgType.trim() != '')
+				      forDisplay += ", " + datum.orgType;
+				   forDisplay += '</span><hr />';
+				   return forDisplay;
+			}
+		});
+		$("#affiliationName").bind("typeahead:selected", function(obj, datum) {        
+			$scope.selectAffiliation(datum);
+			$scope.$apply();
+		});		
+	};
+	
+	$scope.unbindTypeahead = function () {
+		$('#affiliationName').typeahead('destroy');
+	};
+	
+	$scope.selectAffiliation = function(datum) {
+		$scope.editAffiliation.city.value = datum.city;
+		$scope.editAffiliation.region.value = datum.region;
+		$scope.editAffiliation.country.value = datum.country;
+		//$scope.editAffiliation.disambiguatedAffiliationIdentifier = datum.disambiguatedAffiliationIdentifier
+		if (datum.disambiguatedAffiliationIdentifier != undefined && datum.disambiguatedAffiliationIdentifier != null) {
+			$scope.getDisambiguatedAffiliation(datum.disambiguatedAffiliationIdentifier);
+				$scope.unbindTypeahead();
+		}
+	};
+	
+	$scope.getDisambiguatedAffiliation = function(id) {
+		$.ajax({
+			url: $('body').data('baseurl') + 'affiliations/disambiguated/id/' + id,
+	        dataType: 'json',
+	        type: 'GET',
+	        success: function(data) {
+	        	console.log(data.disambiguatedAffiliationIdentifier);
+		        $scope.disambiguatedAffiliation = data;
+		        $scope.editAffiliation.disambiguatedAffiliationIdentifier = data.disambiguatedAffiliationIdentifier;
+		        $scope.$apply();   	
+	        }
+		}).fail(function(){
+	    	console.log("error getDisambiguatedAffiliation(id)");
+		});
+	};
+	
+	$scope.removeDisambiguatedAffiliation = function() {
+		$scope.bindTypeahead();
+		delete $scope.disambiguatedAffiliation;
+		delete $scope.editAffiliation.disambiguatedAffiliationIdentifier;
 	};
 
 	$scope.addAffiliationModal = function(){
@@ -1428,14 +1467,42 @@ function PublicWorkCtrl($scope, $compile, worksSrvc) {
     	$scope.showBibtex = !($scope.showBibtex);
     };   
 
-	for (idx in publicWorks) {
-		var dw = publicWorks[idx];        
-		removeBadContributors(dw);
-		addBibtexCitation($scope,dw);
-		$scope.works.push(dw);
-	}
-	
-	$scope.numOfWorksToAdd = 0;
+    $scope.addWorkToScope = function() {
+		if($scope.worksToAddIds.length != 0 ) {
+			var workIds = $scope.worksToAddIds.splice(0,20).join();
+			$.ajax({
+				url: $('body').data('baseurl') + orcidVar.orcidId +'/works.json?workIds=' + workIds,
+				dataType: 'json',
+				success: function(data) {
+					$scope.$apply(function(){ 
+						for (i in data) {
+							var dw = data[i];                            
+							removeBadContributors(dw);							
+							addBibtexCitation($scope,dw);							
+							$scope.works.push(dw);
+						}
+					});
+					setTimeout(function () {$scope.addWorkToScope();},50);
+				}
+			}).fail(function() { 
+		    	console.log("Error fetching works: " + workIds);
+		    });
+		}
+	};     
+	  
+	$scope.renderTranslatedTitleInfo = function(workIdx) {
+		var info = null; 
+		
+		if($scope.works[workIdx].workTitle != null && $scope.works[workIdx].workTitle.translatedTitle != null) {
+			info = $scope.works[workIdx].workTitle.translatedTitle.content + ' - ' + $scope.works[workIdx].workTitle.translatedTitle.languageName;										
+		}
+		
+		return info;
+	};
+		
+	$scope.numOfWorksToAdd = orcidVar.workIds.length;
+	$scope.worksToAddIds = orcidVar.workIds;	
+	$scope.addWorkToScope();	
 }
 
 function WorkCtrl($scope, $compile, worksSrvc) {
@@ -1444,19 +1511,28 @@ function WorkCtrl($scope, $compile, worksSrvc) {
 	$scope.numOfWorksToAdd = null;
 	$scope.showBibtex = true;
 	$scope.bibtexCitations = {};
-	$scope.languages = null;
 	$scope.editTranslatedTitle = false;
+	$scope.types = null;
 	
 	$scope.toggleDisplayWorks = function () {
 		$scope.displayWorks = !$scope.displayWorks;
 	};
 	
+	$scope.addExternalIdentifier = function () {
+		$scope.editWork.workExternalIdentifiers.push({workExternalIdentifierId: { value: ""}, workExternalIdentifierType: {value: ""} });
+	};
+	
 	$scope.showAddModal = function(){;
 		$scope.editTranslatedTitle = false;
-	    $.colorbox({        	
+		isMobile() ? w = '100%' : w = '768px';
+		isMobile() ? h = '100%' : h = 'auto';		
+	    $.colorbox({	    	
+	    	scrolling: true,
 	        html: $compile($('#add-work-modal').html())($scope),	        
 	        onLoad: function() {$('#cboxClose').remove();},
-	        onComplete: function() {$.colorbox.resize();}
+	        onComplete: function() {
+	        		$.colorbox.resize({width:w, height:h});
+	        		}
 	    });
 	};
 
@@ -1524,7 +1600,22 @@ function WorkCtrl($scope, $compile, worksSrvc) {
 		});
 	};
 	
-	
+	$scope.validateCitation = function() {
+		if ($scope.editWork.citation && $scope.editWork.citation.citationType.value == 'bibtex') {
+			try {
+				var parsed = bibtexParse.toJSON($scope.editWork.citation.citation.value);
+				console.log(parsed);
+				if (parsed.length == 0) throw "bibtex parse returne nothing";
+				var index = $scope.editWork.citation.citation.errors.indexOf(OM.getInstance().get('manualWork.bibtext.notValid'));
+				if (index > -1) {
+					$scope.editWork.citation.citation.errors.splice(index, 1);
+				}
+			} catch (err) {
+				$scope.editWork.citation.citation.errors.push(OM.getInstance().get('manualWork.bibtext.notValid'));
+			};
+		};
+	};
+		
 	$scope.addWorkToScope = function() {
 		if($scope.worksToAddIds.length != 0 ) {
 			var workIds = $scope.worksToAddIds.splice(0,20).join();
@@ -1549,8 +1640,7 @@ function WorkCtrl($scope, $compile, worksSrvc) {
 		    	console.log("Error fetching work: " + value);
 		    });
 		}
-	}; 
-	
+	}; 	
 
 	$scope.getWorks = function() {
 		//clear out current works
@@ -1574,76 +1664,18 @@ function WorkCtrl($scope, $compile, worksSrvc) {
 		});
 	};
 	
-	$scope.getLanguages = function() {
-		$.ajax({
-			url: $('body').data('baseurl') + 'works/languages.json',	        
-	        dataType: 'json',
-	        success: function(data) {
-	        	$scope.languages = data;
-	        	console.log($scope.languages);
-	        }
-		}).fail(function(){
-			// something bad is happening!
-	    	console.log("error fetching languages");
-		});
-	};
-	
-	$scope.getCountries = function() {
-		$.ajax({
-			url: $('body').data('baseurl') + 'works/countries.json',	        
-	        dataType: 'json',
-	        success: function(data) {
-	        	$scope.countries = data;
-	        }
-		}).fail(function(){
-			// something bad is happening!
-	    	console.log("error fetching countries");
-		});
-	};
-	
-	$scope.renderTranslatedTitleInfo = function(workIdx) {
-		if($scope.languages == null)
-			$scope.getLanguages;
-		
+	$scope.renderTranslatedTitleInfo = function(workIdx) {		
 		var info = null; 
 		
 		if($scope.works[workIdx].workTitle != null && $scope.works[workIdx].workTitle.translatedTitle != null) {
-			info = $scope.works[workIdx].workTitle.translatedTitle.content;
-			if($scope.languages[$scope.works[workIdx].workTitle.translatedTitle.languageCode])
-				info += ' - ' + $scope.languages[$scope.works[workIdx].workTitle.translatedTitle.languageCode];		
-		}
+			info = $scope.works[workIdx].workTitle.translatedTitle.content + ' - ' + $scope.works[workIdx].workTitle.translatedTitle.languageName;										
+		}		
 		
 		return info;
 	};
-	
-	$scope.renderLanguageName = function(workIdx){
-		if($scope.languages == null)
-			$scope.getLanguages();
 		
-		var language = null;
-		if($scope.works[workIdx].languageCode != null) {
-			language = $scope.languages[$scope.works[workIdx].languageCode.value];
-		}
-		
-		return language;
-	};
-	
-	$scope.renderCountryName = function(workIdx){
-		if($scope.countries == null)
-			$scope.getCountries();
-		
-		var country = null;
-		if($scope.works[workIdx].country != null){
-			country = $scope.countries[$scope.works[workIdx].country.value];
-		}
-		
-		return country;
-	};
-	
 	//init
-	$scope.getWorks();
-	$scope.getLanguages();
-	$scope.getCountries();
+	$scope.getWorks();	
 	
 	$scope.deleteWork = function(putCode) {
 		$scope.deletePutCode = putCode;
@@ -1698,7 +1730,7 @@ function WorkCtrl($scope, $compile, worksSrvc) {
 		        //Second Checking Condition Works For Chrome
 		        window.location.href = url;
 		    } 
-		}, 25);
+		}, 250);
 		$.colorbox.close();
 		
 	};
@@ -1725,9 +1757,7 @@ function WorkCtrl($scope, $compile, worksSrvc) {
 		$event.preventDefault();
 		$scope.editWork.visibility.visibility = priv;
 	};
-
-	
-		
+			
 	$scope.setPrivacy = function(putCode, priv, $event) {
 		$event.preventDefault();
 		var idx;
@@ -1749,11 +1779,14 @@ function WorkCtrl($scope, $compile, worksSrvc) {
 	        dataType: 'json',
 	        success: function(data) {
 	        	$scope.copyErrorsLeft($scope.editWork, data);
+	        	if ( relativePath == 'works/work/citationValidate.json') {
+	        		$scope.validateCitation();
+	        	}
 	        	$scope.$apply();
 	        }
 	    }).fail(function() { 
 	    	// something bad is happening!
-	    	console.log("RegistrationCtrl.serverValidate() error");
+	    	console.log("WorkCtrl.serverValidate() error");
 	    });
 	};
 	
@@ -1805,6 +1838,28 @@ function WorkCtrl($scope, $compile, worksSrvc) {
 	    	console.log("Error updating profile work.");
 	    });
 	};		
+	
+	
+	$scope.loadWorkTypes = function(){			
+		if($scope.editWork.workCategory.value != null && $scope.editWork.workCategory.value != ""){
+			$.ajax({
+		        url: $('body').data('baseurl') + 'works/loadWorkTypes.json?workCategory=' + $scope.editWork.workCategory.value,
+		        type: 'POST',	        
+		        contentType: 'application/json;charset=UTF-8',
+		        dataType: 'json',
+		        success: function(data) {
+		        	console.log(data);
+		        	$scope.types = data;
+		        	$scope.$apply();
+		        }
+		    }).fail(function() { 
+		    	console.log("Error loading work types.");
+		    });
+		} else {
+			$scope.types = null;
+		}
+	};
+	
 }
 
 function QuickSearchCtrl($scope, $compile){
@@ -1875,10 +1930,10 @@ function QuickSearchCtrl($scope, $compile){
 	$scope.getResults(10);
 };
 
-function ClientEditCtrl($scope, $compile){
-	$scope.errors = [];
-	$scope.clients = [];	
-	
+function ClientEditCtrl($scope, $compile){	
+	$scope.clients = [];
+	$scope.newClient = null;
+			
 	// Get the list of clients associated with this user
 	$scope.getClients = function(){
 		$.ajax({
@@ -1886,19 +1941,7 @@ function ClientEditCtrl($scope, $compile){
 	        dataType: 'json',
 	        success: function(data) {	        	        					
 				$scope.$apply(function(){
-					
-					$scope.clients.splice(0, $scope.clients.length);        		
-					for (i in data)	{
-						var client = data[i];
-						if(client.redirectUris != null && client.redirectUris.redirectUri.length > 0){
-							for(var j = 0; j < client.redirectUris.redirectUri.length; j++)	{						
-								delete client.redirectUris.redirectUri[j].scopeAsSingleString;
-								delete client.redirectUris.redirectUri[j].scope;							
-							}
-						}
-						$scope.clients.push(client);					
-					}
-					
+					$scope.clients = data;      		
 				});
 	        }
 	    }).fail(function() { 
@@ -1907,50 +1950,25 @@ function ClientEditCtrl($scope, $compile){
 	    });				
 	};		
 	
-	// Add a new uri input field to a new client
-	$scope.addUriToNewClientTable = function(){		
-		$('#client-table').find('tr:last > td:last').html('&nbsp;');		
-		$scope.newClient.redirectUris.redirectUri.push({value: '',type: 'DEFAULT'});
-	};
-	
-	// Add a new uri input field to a existing client
-	$scope.addUriToExistingClientTable = function(){
-		$scope.clientToEdit.redirectUris.redirectUri.push({value: '',type: 'DEFAULT'});
-	};
-	
-	// Display the modal to edit a client
-	$scope.editClient = function(idx) {
-		// Clean error list
-		$scope.errors.splice(0, $scope.errors.length);
-		// Copy the client to edit to a scope variable 
-		$scope.clientToEdit = angular.copy($scope.clients[idx]);		
-		$.colorbox({        	            
-            html : $compile($('#edit-client-modal').html())($scope), 
-            transition: 'fade',            
-	        onLoad: function() {
-			    $('#cboxClose').remove();
-			},
-	        scrolling: true
-        });		
-        $.colorbox.resize({width:"450px" , height:"420px"});   
+	// Get an empty modal to add
+	$scope.addClient = function(){		
+		$.ajax({
+			url: $('body').data('baseurl') + 'manage-clients/client.json',
+			dataType: 'json',
+			success: function(data) {
+				$scope.newClient = data;
+				console.log(data);
+				$scope.$apply(function() {
+					$scope.showNewClientModal();
+				});
+			}
+		}).fail(function() { 
+	    	console.log("Error fetching client");
+	    });
 	};
 	
 	// Display the modal to add a new client
-	$scope.addClient = function(){
-		// Clean error list
-		$scope.errors.splice(0, $scope.errors.length);
-		$scope.newClient = {			
-				displayName: '',
-				website: '',
-				shortDescription: '',			
-				redirectUris: {
-					redirectUri:[{value: '',type: 'DEFAULT'}]
-				},			
-				clientId:'',
-				clientSecret:'',
-				type: '', 
-				errors: ''
-		};	
+	$scope.showNewClientModal = function(){
 		$.colorbox({        	            
             html : $compile($('#new-client-modal').html())($scope), 
             transition: 'fade',
@@ -1962,9 +1980,33 @@ function ClientEditCtrl($scope, $compile){
         $.colorbox.resize({width:"580px" , height:"380px"});
 	};
 	
+	// Add a new uri input field to a new client
+	$scope.addUriToNewClientTable = function(){		
+		$scope.newClient.redirectUris.push({value: '',type: 'default'});
+	};
+	
+	// Add a new uri input field to a existing client
+	$scope.addUriToExistingClientTable = function(){
+		$scope.clientToEdit.redirectUris.push({value: '',type: 'default'});
+	};
+	
+	// Display the modal to edit a client
+	$scope.editClient = function(idx) {		
+		// Copy the client to edit to a scope variable 
+		$scope.clientToEdit = angular.copy($scope.clients[idx]);		
+		$.colorbox({        	            
+            html : $compile($('#edit-client-modal').html())($scope), 
+            transition: 'fade',            
+	        onLoad: function() {
+			    $('#cboxClose').remove();
+			},
+	        scrolling: true
+        });		
+        $.colorbox.resize({width:"450px" , height:"420px"});   
+	};		
+	
 	// Display client details: Client ID and Client secret
 	$scope.viewDetails = function(idx){
-		$scope.error = null;
 		$scope.clientDetails = $scope.clients[idx];
 		$.colorbox({        	            
             html : $compile($('#view-details-modal').html())($scope),
@@ -1986,36 +2028,15 @@ function ClientEditCtrl($scope, $compile){
 	
 	// Delete an uri input field 
 	$scope.deleteUri = function(idx){
-		$scope.clientToEdit.redirectUris.redirectUri.splice(idx, 1);
+		$scope.clientToEdit.redirectUris.splice(idx, 1);
 	};
 	
 	//Submits the client update request
-	$scope.submitEditClient = function(){
-		$scope.error = null;
-		//Check for errors
-		$scope.errors.splice(0, $scope.errors.length);
-		
-		if(!$scope.clientToEdit.displayName){
-			$scope.errors.push("Please enter the name");
-		}
-		
-		if(!$scope.clientToEdit.website){
-			$scope.errors.push("Please enter a website");
-		}
-		
-		if(!$scope.clientToEdit.shortDescription){
-			$scope.errors.push("Please enter a description");
-		}
-		
-		//If there is any error, return
-		if($scope.errors.length != 0){
-			return;
-		}
-		
+	$scope.submitEditClient = function(){				
 		// Check which redirect uris are empty strings and remove them from the array
-		for(var j = $scope.clientToEdit.redirectUris.redirectUri.length - 1; j >= 0 ; j--)	{
-			if(!$scope.clientToEdit.redirectUris.redirectUri[j].value){
-				$scope.clientToEdit.redirectUris.redirectUri.splice(j, 1);
+		for(var j = $scope.clientToEdit.length - 1; j >= 0 ; j--)	{
+			if(!$scope.clientToEdit.redirectUris[j].value){
+				$scope.clientToEdit.redirectUris.splice(j, 1);
 			}
 		}				
 		
@@ -2028,53 +2049,28 @@ function ClientEditCtrl($scope, $compile){
 	        dataType: 'json',
 	        success: function(data) {
 	        	if(data.errors != null && data.errors.length > 0){
-	        		$scope.error = data.errors.content;
-	        		console.log("Unable to update client information.");
+	        		$scope.clientToEdit = data;
+	        		$scope.$apply();
 	        	} else {
 	        		//If everything worked fine, reload the list of clients
         			$scope.getClients();
+        			$.colorbox.close();
 	        	} 
 	        }
 	    }).fail(function() { 
 	    	alert("An error occured updating the client");
 	    	console.log("Error updating client information.");
-	    });		
-		$.colorbox.close();
+	    });				
 	};
 	
 	//Submits the new client request
-	$scope.submitAddClient = function(){
-		$scope.error = null;
-		//Check for errors
-		$scope.errors.splice(0, $scope.errors.length);
-		
-		if(!$scope.newClient.displayName){
-			$scope.errors.push("Please enter the name");
-		}
-		
-		if(!$scope.newClient.website){
-			$scope.errors.push("Please enter a website");
-		}
-		
-		if(!$scope.newClient.shortDescription){
-			$scope.errors.push("Please enter a description");
-		}
-		
-		//If there is any error, return
-		if($scope.errors.length != 0){
-			return;
-		}
-		
+	$scope.submitAddClient = function(){		
 		// Check which redirect uris are empty strings and remove them from the array
-		for(var j = $scope.newClient.redirectUris.redirectUri.length - 1; j >= 0 ; j--)	{
-			if(!$scope.newClient.redirectUris.redirectUri[j].value){
-				$scope.newClient.redirectUris.redirectUri.splice(j, 1);
+		for(var j = $scope.newClient.redirectUris.length - 1; j >= 0 ; j--)	{
+			if(!$scope.newClient.redirectUris[j].value){
+				$scope.newClient.redirectUris.splice(j, 1);
 			}
 		}
-		
-		var type = $("#client_type").val();
-		$scope.newClient.type = type;
-		console.log(angular.toJson($scope.newClient));
 		
 		//Submit the new client request
 		$.ajax({
@@ -2083,18 +2079,19 @@ function ClientEditCtrl($scope, $compile){
 	        data: angular.toJson($scope.newClient),
 	        contentType: 'application/json;charset=UTF-8',
 	        dataType: 'json',
-	        success: function(data) {
-	        	if(data.errors != null && data.errors.content){
-	        		$scope.error = data.errors.content;
-	        		console.log("Unable to create client information.");
-	        	} 
-	        	//If everything worked fine, reload the list of clients
-        		$scope.getClients();
+	        success: function(data) {	        	
+	        	if(data.errors != null && data.errors.length > 0){
+	        		$scope.newClient = data;
+	        		$scope.$apply();
+	        	} else {
+	        		//If everything worked fine, reload the list of clients
+	        		$scope.getClients();
+	        		$.colorbox.close();
+	        	}
 	        }
 	    }).fail(function() { 
 	    	console.log("Error creating client information.");
-	    });
-		$.colorbox.close();
+	    });		
 	};
 	    
 	//init
@@ -2530,3 +2527,83 @@ function revokeApplicationFormCtrl($scope,$compile){
 		$.colorbox.close();
 	};
 };
+
+function adminGroupsCtrl($scope,$compile){
+	$scope.showAdminGroupsModal = false;
+	$scope.newGroup = null;
+	
+	$scope.toggleReactivationModal = function() {
+		$scope.showAdminGroupsModal = !$scope.showAdminGroupsModal;
+    	$('#admin_groups_modal').toggle();
+	};
+	
+	$scope.showAddGroupModal = function() {
+		$.colorbox({                      
+			html : $compile($('#add-new-group').html())($scope),				
+				onLoad: function() {
+				$('#cboxClose').remove();
+			}
+		});
+		
+		$.colorbox.resize({width:"450px" , height:"360px"});
+	};
+	
+	$scope.closeModal = function() {
+		$.colorbox.close();
+	};
+	
+	$scope.getGroup = function() { 
+		$.ajax({
+	        url: orcidVar.baseUri+'/admin-actions/group.json',	        
+	        type: 'GET',
+	        dataType: 'json',	        
+	        success: function(data){
+	        	$scope.$apply(function(){ 	
+	        		$scope.newGroup = data;
+				});
+	        }
+	    }).fail(function(error) { 
+	    	// something bad is happening!	    	
+	    	console.log("Error getting emtpy group");	    	
+	    });		
+	};
+	
+	$scope.addGroup = function() {
+		$.ajax({
+	        url: orcidVar.baseUri+'/admin-actions/create-group.json',	        
+	        contentType: 'application/json;charset=UTF-8',
+	        type: 'POST',
+	        dataType: 'json',
+	        data: angular.toJson($scope.newGroup),	        	       
+	        success: function(data){
+	        	console.log(data);
+	        	$scope.$apply(function(){ 
+	        		$scope.newGroup = data;
+	        		if(data.errors.length != 0){
+	        			
+	        		} else {	        			
+	        			$scope.showSuccessModal();
+	        		}
+				});
+	        }
+	    }).fail(function(error) { 
+	    	// something bad is happening!	    	
+	    	console.log("Error deprecating the account");	    	
+	    });		
+	};
+	
+	$scope.showSuccessModal = function() {
+		$.colorbox({                      
+			html : $compile($('#new-group-info').html())($scope),				
+				onLoad: function() {
+				$('#cboxClose').remove();
+			}
+		});
+		
+		$.colorbox.resize({width:"500px" , height:"450px"});
+	};
+	
+	//init 
+	$scope.getGroup();
+};
+
