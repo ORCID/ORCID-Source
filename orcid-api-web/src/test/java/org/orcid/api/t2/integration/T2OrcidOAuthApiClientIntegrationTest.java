@@ -36,6 +36,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.api.common.OrcidApiConstants;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
+import org.orcid.core.security.DefaultPermissionChecker;
+import org.orcid.core.security.PermissionChecker;
 import org.orcid.jaxb.model.message.ExternalIdOrcid;
 import org.orcid.jaxb.model.message.ExternalIdReference;
 import org.orcid.jaxb.model.message.ExternalIdentifier;
@@ -68,6 +70,9 @@ public class T2OrcidOAuthApiClientIntegrationTest extends BaseT2OrcidOAuthApiCli
 
     @Resource
     private OrcidOauth2TokenDetailService orcidOauthTokenDetailService;
+
+    @Resource(name = "defaultPermissionChecker")
+    private PermissionChecker permissionChecker;
 
     public T2OrcidOAuthApiClientIntegrationTest() {
         super();
@@ -238,7 +243,7 @@ public class T2OrcidOAuthApiClientIntegrationTest extends BaseT2OrcidOAuthApiCli
         orcidWorks = new OrcidWorks();
         OrcidWork orcidWork = orcidClientDataHelper.createWork("Single works");
         orcidWork.setWorkType(WorkType.UNDEFINED);
-        orcidWorks.getOrcidWork().add(orcidWork);        
+        orcidWorks.getOrcidWork().add(orcidWork);
         message.getOrcidProfile().setOrcidWorks(orcidWorks);
 
         assertClientResponse401Details(oauthT2Client.addWorksXml(orcid, message, null));
@@ -252,13 +257,16 @@ public class T2OrcidOAuthApiClientIntegrationTest extends BaseT2OrcidOAuthApiCli
     @Test
     public void testRemoveWriteScopesPastValitity() throws Exception {
 
+        // test multi-scope token, by creating a token with a write scope and
+        // changing
+        // the tokens creation date to old
         createNewOrcidUsingAccessToken();
         OrcidOauth2TokenDetail orcidOauth2TokenDetail = orcidOauthTokenDetailService.findNonDisabledByTokenValue(accessToken);
         Date d = new Date();
         d.setTime(d.getTime() - 24 * 60 * 60 * 1000);
         orcidOauth2TokenDetail.setDateCreated(d);
         orcidOauthTokenDetailService.saveOrUpdate(orcidOauth2TokenDetail);
-        
+
         OrcidMessage message = orcidClientDataHelper.createFromXML(OrcidClientDataHelper.ORCID_INTERNAL_NO_SPONSOR_XML);
         message.getOrcidProfile().setOrcid(this.orcid);
         OrcidWorks orcidWorks = message.getOrcidProfile().retrieveOrcidWorks();
@@ -267,7 +275,7 @@ public class T2OrcidOAuthApiClientIntegrationTest extends BaseT2OrcidOAuthApiCli
         orcidWorks = new OrcidWorks();
         OrcidWork orcidWork = orcidClientDataHelper.createWork("Single works");
         orcidWork.setWorkType(WorkType.UNDEFINED);
-        orcidWorks.getOrcidWork().add(orcidWork);        
+        orcidWorks.getOrcidWork().add(orcidWork);
         message.getOrcidProfile().setOrcidWorks(orcidWorks);
         assertClientResponse403SecurityProblem(oauthT2Client.addWorksXml(orcid, message, accessToken));
 
@@ -275,12 +283,31 @@ public class T2OrcidOAuthApiClientIntegrationTest extends BaseT2OrcidOAuthApiCli
         orcidOauth2TokenDetail = orcidOauthTokenDetailService.findNonDisabledByTokenValue(accessToken);
         assertTrue(!orcidOauth2TokenDetail.getScope().contains("create"));
         assertTrue(!orcidOauth2TokenDetail.getScope().contains("update"));
-        
+
         // make sure read scope is still there
-        assertTrue(orcidOauth2TokenDetail.getScope().contains("read"));        
+        assertTrue(orcidOauth2TokenDetail.getScope().contains("read"));
     }
 
-    
+    @Test
+    public void testTokenWithBlankScope() throws Exception {
+        // Make sure the permissionChecker can handle blank scopes
+        OrcidOauth2TokenDetail orcidOauth2TokenDetail = orcidOauthTokenDetailService.findNonDisabledByTokenValue(accessToken);
+        DefaultPermissionChecker defaultPermissionChecker = (DefaultPermissionChecker) permissionChecker;        
+        defaultPermissionChecker.removeWriteScopesPastValitity(orcidOauth2TokenDetail);
+
+        // make sure blank scopes return 403
+        createNewOrcidUsingAccessToken();
+        OrcidMessage message = orcidClientDataHelper.createFromXML(OrcidClientDataHelper.ORCID_INTERNAL_NO_SPONSOR_XML);
+        message.getOrcidProfile().setOrcid(this.orcid);
+        OrcidWorks orcidWorks = message.getOrcidProfile().retrieveOrcidWorks();
+        orcidWorks = new OrcidWorks();
+        OrcidWork orcidWork = orcidClientDataHelper.createWork("Single works");
+        orcidWork.setWorkType(WorkType.UNDEFINED);
+        orcidWorks.getOrcidWork().add(orcidWork);
+        message.getOrcidProfile().setOrcidWorks(orcidWorks);
+        assertClientResponse403SecurityProblem(oauthT2Client.addWorksXml(orcid, message, blankScopeToken));
+    }
+
     @Test
     public void testUpdateBioDetailsXml() throws Exception {
         createNewOrcidUsingAccessToken();
@@ -359,18 +386,18 @@ public class T2OrcidOAuthApiClientIntegrationTest extends BaseT2OrcidOAuthApiCli
         message.getOrcidProfile().getOrcidInternal().setSecurityDetails(null);
         assertClientResponse401Details(oauthT2Client.updateWorksXml(this.orcid, message, null));
 
-        if(work1.getWorkType() == null) {
+        if (work1.getWorkType() == null) {
             work1.setWorkType(WorkType.UNDEFINED);
         }
-        
-        if(workToUpdate.getWorkType() == null){
-        	workToUpdate.setWorkType(WorkType.UNDEFINED);
+
+        if (workToUpdate.getWorkType() == null) {
+            workToUpdate.setWorkType(WorkType.UNDEFINED);
         }
-        
-        if(work3.getWorkType() == null) {
-        	work3.setWorkType(WorkType.UNDEFINED);
+
+        if (work3.getWorkType() == null) {
+            work3.setWorkType(WorkType.UNDEFINED);
         }
-        
+
         ClientResponse updatedWorksResponse = oauthT2Client.updateWorksXml(this.orcid, message, accessToken);
 
         assertEquals(200, updatedWorksResponse.getStatus());
