@@ -149,28 +149,10 @@
         			</div>
             	</div>
             	<!-- Affiliations -->
-            	<#--
-        		<div id="workspace-affiliations" class="workspace-accordion-item${(!(profile.orcidBio.affiliations)?? || (profile.orcidBio.affiliations?size = 0))?string(" workspace-accordion-active", "")}">
-                    <div class="workspace-accordion-header">
-                    	<a href="#"><@orcid.msg 'workspace_bio.Affiliations'/></a>
-                    </div>
-                </div>
-                -->
                 <#if RequestParameters['affiliations']??>
-	                <div id="workspace-affiliations" class="workspace-accordion-item workspace-accordion-active" ng-controller="AffiliationCtrl">
-	                	<div class="workspace-accordion-header">
-	        				<a href="" ng-click="toggleDisplayAffiliations()" class="toggle-text">
-	        			       <i class="icon-caret-down icon" ng-class="{'icon-caret-right':displayAffiliations==false}"></i></a>
-	        			    </a> 
-	        				<a href="" ng-click="toggleDisplayAffiliations()" class="toggle-text"><@orcid.msg 'workspace_bio.Affiliations'/></a>
-							<a href="" class="label btn-primary" ng-click="addAffiliationModal()"><@orcid.msg 'manual_affiliation_form_contents.add_affiliation_manually'/></a>
-						</div>
-	      	            <div ng-show="displayAffiliations" class="workspace-accordion-content">
-		            		<#include "workspace_affiliations_body_list.ftl"/>
-		            	</div>
-	            	</div>
-            	</#if>
-                <!-- Works -->                
+                	<#include "workspace_affiliations_body_list.ftl"/>
+                </#if>
+		        <!-- Works -->                
                 <div id="workspace-publications" class="workspace-accordion-item workspace-accordion-active" ng-controller="WorkCtrl">
                 	<div class="workspace-accordion-header">
                 		<ul class="personal-inf-display">
