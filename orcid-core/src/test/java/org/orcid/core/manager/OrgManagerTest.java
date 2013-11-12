@@ -18,11 +18,14 @@ package org.orcid.core.manager;
 
 import static org.junit.Assert.*;
 
+import java.io.IOException;
+import java.io.StringWriter;
 import java.util.Arrays;
 import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.io.IOUtils;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -59,6 +62,17 @@ public class OrgManagerTest extends BaseTest {
         for (OrgEntity org : orgs) {
             assertNull("Org should not contain disambiguated org: " + org.getName(), org.getOrgDisambiguated());
         }
+    }
+
+    @Test
+    public void testWriteAmbiguousOrgs() throws IOException {
+        StringWriter writer = new StringWriter();
+        
+        orgManager.writeAmbiguousOrgs(writer);
+        String result = writer.toString();
+
+        String expected = IOUtils.toString(getClass().getResource("expected_ambiguous_orgs.csv"));
+        assertEquals(expected, result);
     }
 
     @Test

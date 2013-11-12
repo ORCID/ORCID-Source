@@ -16,6 +16,7 @@
  */
 package org.orcid.core.manager.impl;
 
+import java.io.Writer;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -26,12 +27,16 @@ import org.orcid.persistence.dao.OrgDisambiguatedDao;
 import org.orcid.persistence.jpa.entities.OrgDisambiguatedEntity;
 import org.orcid.persistence.jpa.entities.OrgEntity;
 
+import au.com.bytecode.opencsv.CSVWriter;
+
 /**
  * 
  * @author Will Simpson
  * 
  */
 public class OrgManagerImpl implements OrgManager {
+
+    private static final String[] AMBIGUOUS_ORGS_HEADER = new String[] { "id", "name", "city", "region", "country" };
 
     @Resource
     private OrgDao orgDao;
@@ -42,6 +47,18 @@ public class OrgManagerImpl implements OrgManager {
     @Override
     public List<OrgEntity> getAmbiguousOrgs() {
         return orgDao.getAmbiguousOrgs();
+    }
+
+    @Override
+    public void writeAmbiguousOrgs(Writer writer) {
+        @SuppressWarnings("resource")
+        CSVWriter csvWriter = new CSVWriter(writer);
+        csvWriter.writeNext(AMBIGUOUS_ORGS_HEADER);
+        for (OrgEntity orgEntity : getAmbiguousOrgs()) {
+            String[] line = new String[] { String.valueOf(orgEntity.getId()), orgEntity.getName(), orgEntity.getCity(), orgEntity.getRegion(),
+                    orgEntity.getCountry().value() };
+            csvWriter.writeNext(line);
+        }
     }
 
     @Override

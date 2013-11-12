@@ -16,6 +16,7 @@
  */
 package org.orcid.core.manager;
 
+import java.io.Writer;
 import java.util.List;
 
 import org.orcid.persistence.jpa.entities.OrgEntity;
@@ -28,6 +29,8 @@ import org.orcid.persistence.jpa.entities.OrgEntity;
 public interface OrgManager {
 
     List<OrgEntity> getAmbiguousOrgs();
+    
+    void writeAmbiguousOrgs(Writer writer);
 
     List<OrgEntity> getOrgs(String searchTerm, int firstResult, int maxResults);
 
