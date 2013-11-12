@@ -259,16 +259,18 @@ public class DefaultPermissionChecker implements PermissionChecker {
         if (tokenDetail != null && tokenDetail.getScope() != null) {
             String[] scopes = tokenDetail.getScope().split("\\s+");
             for (String scope : scopes) {
-                ScopePathType scopePathType = ScopePathType.fromValue(scope);
-                if (scopePathType.isWriteOperationScope()) {
-                    Date now = new Date();
-                    OrcidRandomValueTokenServices orcidRandomValueTokenServices = (OrcidRandomValueTokenServices) defaultTokenServices;
-                    if (now.getTime() > tokenDetail.getDateCreated().getTime() + (orcidRandomValueTokenServices.getWriteValiditySeconds() * 1000)) {
-                        removeWriteScopes(tokenDetail);
-                        orcidOauthTokenDetailService.saveOrUpdate(tokenDetail);
-                        return true;
+                if (scope != null && !scope.isEmpty()) {
+                    ScopePathType scopePathType = ScopePathType.fromValue(scope);
+                    if (scopePathType.isWriteOperationScope()) {
+                        Date now = new Date();
+                        OrcidRandomValueTokenServices orcidRandomValueTokenServices = (OrcidRandomValueTokenServices) defaultTokenServices;
+                        if (now.getTime() > tokenDetail.getDateCreated().getTime() + (orcidRandomValueTokenServices.getWriteValiditySeconds() * 1000)) {
+                            removeWriteScopes(tokenDetail);
+                            orcidOauthTokenDetailService.saveOrUpdate(tokenDetail);
+                            return true;
+                        }
+                        break;
                     }
-                    break;
                 }
             }
         }
