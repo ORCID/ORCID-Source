@@ -26,7 +26,6 @@ import org.orcid.persistence.dao.OrgDao;
 import org.orcid.persistence.dao.OrgDisambiguatedDao;
 import org.orcid.persistence.jpa.entities.OrgDisambiguatedEntity;
 import org.orcid.persistence.jpa.entities.OrgEntity;
-import org.orcid.persistence.jpa.entities.ProfileEntity;
 
 /**
  * 
