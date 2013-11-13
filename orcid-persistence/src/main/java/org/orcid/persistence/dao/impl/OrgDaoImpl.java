@@ -22,6 +22,7 @@ import javax.persistence.TypedQuery;
 
 import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.persistence.dao.OrgDao;
+import org.orcid.persistence.jpa.entities.AmbiguousOrgEntity;
 import org.orcid.persistence.jpa.entities.OrgEntity;
 
 /**
@@ -36,8 +37,8 @@ public class OrgDaoImpl extends GenericDaoImpl<OrgEntity, Long> implements OrgDa
     }
 
     @Override
-    public List<OrgEntity> getAmbiguousOrgs() {
-        TypedQuery<OrgEntity> query = entityManager.createQuery("from OrgEntity where orgDisambiguated is null", OrgEntity.class);
+    public List<AmbiguousOrgEntity> getAmbiguousOrgs() {
+        TypedQuery<AmbiguousOrgEntity> query = entityManager.createQuery("from AmbiguousOrgEntity", AmbiguousOrgEntity.class);
         return query.getResultList();
     }
 

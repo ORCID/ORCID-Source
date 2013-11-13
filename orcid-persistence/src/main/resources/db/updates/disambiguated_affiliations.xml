@@ -187,5 +187,14 @@
             </column>
         </addColumn>
     </changeSet>
+    
+    <changeSet id="ADD-VIEW-OF-AMBIGUOUS-ORGS" author="Will Simpson">
+        <createView viewName="ambiguous_org">
+            SELECT o.id, o.name, o.city, o.region, o.country, o.url, o.source_id, o.date_created, o.last_modified, COUNT(*) used_count
+            FROM org o LEFT JOIN org_affiliation_relation oar ON oar.org_id = o.id
+            WHERE o.org_disambiguated_id IS NULL
+            GROUP BY o.id, o.name, o.city, o.region, o.country, o.url, o.source_id, o.date_created, o.last_modified
+        </createView>    
+    </changeSet>
 
 </databaseChangeLog>

@@ -24,6 +24,7 @@ import javax.annotation.Resource;
 import org.orcid.core.manager.OrgManager;
 import org.orcid.persistence.dao.OrgDao;
 import org.orcid.persistence.dao.OrgDisambiguatedDao;
+import org.orcid.persistence.jpa.entities.AmbiguousOrgEntity;
 import org.orcid.persistence.jpa.entities.OrgDisambiguatedEntity;
 import org.orcid.persistence.jpa.entities.OrgEntity;
 
@@ -36,7 +37,7 @@ import au.com.bytecode.opencsv.CSVWriter;
  */
 public class OrgManagerImpl implements OrgManager {
 
-    private static final String[] AMBIGUOUS_ORGS_HEADER = new String[] { "id", "name", "city", "region", "country" };
+    private static final String[] AMBIGUOUS_ORGS_HEADER = new String[] { "id", "name", "city", "region", "country", "used_count" };
 
     @Resource
     private OrgDao orgDao;
@@ -45,7 +46,7 @@ public class OrgManagerImpl implements OrgManager {
     private OrgDisambiguatedDao orgDisambiguatedDao;
 
     @Override
-    public List<OrgEntity> getAmbiguousOrgs() {
+    public List<AmbiguousOrgEntity> getAmbiguousOrgs() {
         return orgDao.getAmbiguousOrgs();
     }
 
@@ -54,9 +55,9 @@ public class OrgManagerImpl implements OrgManager {
         @SuppressWarnings("resource")
         CSVWriter csvWriter = new CSVWriter(writer);
         csvWriter.writeNext(AMBIGUOUS_ORGS_HEADER);
-        for (OrgEntity orgEntity : getAmbiguousOrgs()) {
+        for (AmbiguousOrgEntity orgEntity : getAmbiguousOrgs()) {
             String[] line = new String[] { String.valueOf(orgEntity.getId()), orgEntity.getName(), orgEntity.getCity(), orgEntity.getRegion(),
-                    orgEntity.getCountry().value() };
+                    orgEntity.getCountry().value(), String.valueOf(orgEntity.getUsedCount()) };
             csvWriter.writeNext(line);
         }
     }

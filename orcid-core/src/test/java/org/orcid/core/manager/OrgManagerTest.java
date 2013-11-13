@@ -31,6 +31,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.orcid.core.BaseTest;
 import org.orcid.jaxb.model.message.Iso3166Country;
+import org.orcid.persistence.jpa.entities.AmbiguousOrgEntity;
 import org.orcid.persistence.jpa.entities.OrgEntity;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -56,12 +57,9 @@ public class OrgManagerTest extends BaseTest {
 
     @Test
     public void getAmbiguousOrgs() {
-        List<OrgEntity> orgs = orgManager.getAmbiguousOrgs();
+        List<AmbiguousOrgEntity> orgs = orgManager.getAmbiguousOrgs();
         assertNotNull(orgs);
         assertEquals(2, orgs.size());
-        for (OrgEntity org : orgs) {
-            assertNull("Org should not contain disambiguated org: " + org.getName(), org.getOrgDisambiguated());
-        }
     }
 
     @Test

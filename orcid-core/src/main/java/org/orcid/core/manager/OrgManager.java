@@ -19,6 +19,7 @@ package org.orcid.core.manager;
 import java.io.Writer;
 import java.util.List;
 
+import org.orcid.persistence.jpa.entities.AmbiguousOrgEntity;
 import org.orcid.persistence.jpa.entities.OrgEntity;
 
 /**
@@ -28,7 +29,7 @@ import org.orcid.persistence.jpa.entities.OrgEntity;
  */
 public interface OrgManager {
 
-    List<OrgEntity> getAmbiguousOrgs();
+    List<AmbiguousOrgEntity> getAmbiguousOrgs();
     
     void writeAmbiguousOrgs(Writer writer);
 
