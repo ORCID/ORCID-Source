@@ -12,4 +12,5 @@ orcid-solr/src/main/webapp/solr/data/*
 orcid-solr-web/bin/
 rebel.xml
 orcid-solr-web/src/main/webapp/solr/data/
-
+orcid-solr-web/src/main/webapp/solr/org/data/
+orcid-solr-web/src/main/webapp/solr/profile/data/
