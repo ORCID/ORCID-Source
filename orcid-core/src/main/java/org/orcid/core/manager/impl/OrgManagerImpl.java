@@ -37,7 +37,10 @@ import au.com.bytecode.opencsv.CSVWriter;
  */
 public class OrgManagerImpl implements OrgManager {
 
-    private static final String[] AMBIGUOUS_ORGS_HEADER = new String[] { "id", "name", "city", "region", "country", "used_count" };
+    private static final String[] AMBIGUOUS_ORGS_HEADER = new String[] { "id", "source_orcid", "name", "city", "region", "country", "used_count" };
+
+    private static final String[] DISAMBIGUATED_ORGS_HEADER = new String[] { "id", "source_id", "source_type", "org_type", "name", "city", "region", "country",
+            "used_count" };
 
     @Resource
     private OrgDao orgDao;
@@ -56,8 +59,20 @@ public class OrgManagerImpl implements OrgManager {
         CSVWriter csvWriter = new CSVWriter(writer);
         csvWriter.writeNext(AMBIGUOUS_ORGS_HEADER);
         for (AmbiguousOrgEntity orgEntity : getAmbiguousOrgs()) {
-            String[] line = new String[] { String.valueOf(orgEntity.getId()), orgEntity.getName(), orgEntity.getCity(), orgEntity.getRegion(),
-                    orgEntity.getCountry().value(), String.valueOf(orgEntity.getUsedCount()) };
+            String[] line = new String[] { String.valueOf(orgEntity.getId()), orgEntity.getSourceOrcid(), orgEntity.getName(), orgEntity.getCity(),
+                    orgEntity.getRegion(), orgEntity.getCountry().value(), String.valueOf(orgEntity.getUsedCount()) };
+            csvWriter.writeNext(line);
+        }
+    }
+
+    @Override
+    public void writeDisambiguatedOrgs(Writer writer) {
+        @SuppressWarnings("resource")
+        CSVWriter csvWriter = new CSVWriter(writer);
+        csvWriter.writeNext(DISAMBIGUATED_ORGS_HEADER);
+        for (OrgDisambiguatedEntity orgEntity : orgDisambiguatedDao.getAll()) {
+            String[] line = new String[] { String.valueOf(orgEntity.getId()), orgEntity.getSourceId(), orgEntity.getSourceType(), orgEntity.getOrgType(),
+                    orgEntity.getName(), orgEntity.getCity(), orgEntity.getRegion(), orgEntity.getCountry().value(), String.valueOf(orgEntity.getPopularity()) };
             csvWriter.writeNext(line);
         }
     }

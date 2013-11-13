@@ -32,6 +32,8 @@ public interface OrgManager {
     List<AmbiguousOrgEntity> getAmbiguousOrgs();
     
     void writeAmbiguousOrgs(Writer writer);
+    
+    void writeDisambiguatedOrgs(Writer writer);
 
     List<OrgEntity> getOrgs(String searchTerm, int firstResult, int maxResults);
 

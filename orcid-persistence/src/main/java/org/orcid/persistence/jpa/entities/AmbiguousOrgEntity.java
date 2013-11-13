@@ -26,8 +26,6 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -51,7 +49,7 @@ public class AmbiguousOrgEntity extends BaseEntity<Long> implements Serializable
     private String region;
     private Iso3166Country country;
     private String url;
-    private ProfileEntity source;
+    private String sourceOrcid;
     private Integer usedCount;
 
     @Override
@@ -108,14 +106,13 @@ public class AmbiguousOrgEntity extends BaseEntity<Long> implements Serializable
         this.url = url;
     }
 
-    @ManyToOne
-    @JoinColumn(name = "source_id")
-    public ProfileEntity getSource() {
-        return source;
+    @Column(name = "source_id")
+    public String getSourceOrcid() {
+        return sourceOrcid;
     }
 
-    public void setSource(ProfileEntity source) {
-        this.source = source;
+    public void setSourceOrcid(String sourceOrcid) {
+        this.sourceOrcid = sourceOrcid;
     }
 
     @Column(name = "used_count")
