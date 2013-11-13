@@ -46,6 +46,7 @@ import org.orcid.jaxb.model.message.Affiliation;
 import org.orcid.jaxb.model.message.AffiliationAddress;
 import org.orcid.jaxb.model.message.AffiliationCity;
 import org.orcid.jaxb.model.message.AffiliationCountry;
+import org.orcid.jaxb.model.message.AffiliationType;
 import org.orcid.jaxb.model.message.Affiliations;
 import org.orcid.jaxb.model.message.Country;
 import org.orcid.jaxb.model.message.ExternalIdentifiers;
@@ -216,8 +217,8 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
 
         ClientResponse clientResponse = oauthT2Client.addWorksJson("4444-4444-4444-4442", orcidMessage, accessToken);
         assertEquals(201, clientResponse.getStatus());
-    }        
-    
+    }
+
     @Test
     public void testAddWorkWithNewWorkTypesForV1_1_0() throws InterruptedException, JSONException {
         String scopes = "/orcid-works/create";
@@ -238,20 +239,20 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
         workTitle.setTitle(new Title("Work added by integration test - Version 23"));
         orcidWork.setWorkTitle(workTitle);
         orcidWork.setWorkType(WorkType.ARTISTIC_PERFORMANCE);
-        
+
         ClientResponse clientResponse = oauthT2Client.addWorksJson("4444-4444-4444-4442", orcidMessage, accessToken);
         assertEquals(201, clientResponse.getStatus());
     }
-    
+
     @Test
     public void testAddOldWorkType() throws InterruptedException, JSONException {
         String scopes = "/orcid-works/create";
         String authorizationCode = obtainAuthorizationCode(scopes);
         String accessToken = obtainAccessToken(authorizationCode, scopes);
-        
-        OrcidMessage orcidMessage = new OrcidMessage();        
+
+        OrcidMessage orcidMessage = new OrcidMessage();
         orcidMessage.setMessageVersion("1.0.22");
-        
+
         OrcidProfile orcidProfile = new OrcidProfile();
         orcidMessage.setOrcidProfile(orcidProfile);
         OrcidActivities orcidActivities = new OrcidActivities();
@@ -264,18 +265,17 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
         workTitle.setTitle(new Title("Work with old work type"));
         orcidWork.setWorkTitle(workTitle);
         orcidWork.setWorkType(WorkType.ADVERTISEMENT);
-        
+
         ClientResponse clientResponse = oauthT2Client.addWorksJson("4444-4444-4444-4442", orcidMessage, accessToken);
-        assertEquals(201, clientResponse.getStatus());               
+        assertEquals(201, clientResponse.getStatus());
     }
-    
-   
+
     @Test
     public void testAddWorkWithEmptyTitle() throws InterruptedException, JSONException {
         String scopes = "/orcid-works/create";
         String authorizationCode = obtainAuthorizationCode(scopes);
         String accessToken = obtainAccessToken(authorizationCode, scopes);
-        
+
         OrcidMessage orcidMessage = new OrcidMessage();
         orcidMessage.setMessageVersion(OrcidMessage.DEFAULT_VERSION);
         OrcidProfile orcidProfile = new OrcidProfile();
@@ -285,21 +285,21 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
         OrcidWorks orcidWorks = new OrcidWorks();
         orcidActivities.setOrcidWorks(orcidWorks);
         OrcidWork orcidWork = new OrcidWork();
-        
+
         orcidWorks.getOrcidWork().add(orcidWork);
         WorkTitle workTitle = new WorkTitle();
         workTitle.setTitle(new Title(""));
-        
+
         orcidWork.setWorkTitle(workTitle);
-        
+
         ClientResponse clientResponse = oauthT2Client.addWorksJson("4444-4444-4444-4442", orcidMessage, accessToken);
         assertEquals(400, clientResponse.getStatus());
         OrcidMessage errorMessage = clientResponse.getEntity(OrcidMessage.class);
         assertNotNull(errorMessage);
         assertNotNull(errorMessage.getErrorDesc());
-        assertEquals("Invalid incoming message: org.orcid.core.exception.OrcidValidationException: Invalid Title: title cannot be null nor emtpy", errorMessage.getErrorDesc().getContent());                        
+        assertEquals("Invalid incoming message: org.orcid.core.exception.OrcidValidationException: Invalid Title: title cannot be null nor emtpy", errorMessage
+                .getErrorDesc().getContent());
     }
-    
 
     @Test
     public void testAddAffiliation() throws InterruptedException, JSONException {
@@ -319,6 +319,7 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
         affiliations.getAffiliation().add(affiliation);
         affiliation.setAffiliationName("Affiliation added by integration test");
         AffiliationAddress affiliationAddress = new AffiliationAddress();
+        affiliation.setAffiliationType(AffiliationType.EDUCATION);
         affiliation.setAffiliationAddress(affiliationAddress);
         affiliationAddress.setAffiliationCity(new AffiliationCity("Edinburgh"));
         affiliationAddress.setAffiliationCountry(new AffiliationCountry(Iso3166Country.GB));
