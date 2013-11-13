@@ -17,10 +17,11 @@
 
 -->
 <div class="more-info ie7-zi-fix-top">
+	<div class="ie7fix">
 	<a class="glyphicon glyphicon-plus-sign grey"></a>	
 	<div class="popover bottom more-info-container ">
 		<div class="arrow"></div>	
-		<div class="lightbox-container ie7-zi-fix-bottom">
+		<div class="lightbox-container">
 			<div class="row bottomBuffer"></div>
 			<div class="row bottomBuffer" ng-show="work.workTitle.title.value"
 				ng-cloak>
@@ -158,5 +159,6 @@
 				</div>
 			</div>
 		</div>
+	</div>
 	</div>
 </div>

@@ -147,10 +147,6 @@ a#settings-button{
 	margin:15px;
 }
 
-.relative{
-	z-index:9999;
-}
-
 .workspace-right {
 	padding: 15px !important;
 }
@@ -177,28 +173,6 @@ ul.workspace-private-toolbar > li{
 .show-work-info{
 	margin-top: 7px;
 }
-/* Clases for fixing IE7 z-index issues*/
-.ie7-zi-fix-top{
-	z-index: 9999;
-}
-.ie7-zi-fix-bottom{
-	z-index: 8888;
-}
-.ie7-zi-fix-up{
-	z-index: 7777;
-}
-.ie7-zi-fix-down{
-	z-index: 6666;
-}
-
-.ie7-zi-fix-max{
-	z-index: 99999;
-}
-
-
-.workspace-toolbar{
-	z-index: 9999999;
-}
 
 .workspace-toolbar .more-info{
 	margin-left: 25px;
@@ -213,7 +187,7 @@ ul.workspace-private-toolbar > li{
 	margin-top: -25px;
 }
 
-.workspace-private-toolbar .relative{
-	z-index: 100;
+.more-info .lightbox-container{
+	padding-right: 0;
+	padding-bottom: 0;
 }
-

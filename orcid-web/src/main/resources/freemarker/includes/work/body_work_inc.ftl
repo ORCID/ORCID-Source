@@ -18,7 +18,7 @@
 -->
 <ul ng-hide="!works.length" class="workspace-publications workspace-body-list bottom-margin-medium" id="body-work-list" ng-cloak>
         
-    <li class="bottom-margin-small ie7-zi-fix-bottom" ng-repeat="work in works | orderBy:['-publicationDate.year', '-publicationDate.month', '-publicationDate.day']">        
+    <li class="bottom-margin-small" ng-repeat="work in works | orderBy:['-publicationDate.year', '-publicationDate.month', '-publicationDate.day']">        
 		<div class="row">
 			<!-- Info -->
 			<div class="col-md-8 col-sm-8">
