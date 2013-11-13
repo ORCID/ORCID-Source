@@ -1216,6 +1216,7 @@ function AffiliationCtrl($scope, $compile, $filter, affiliationsSrvc){
 	};
 	
 	$scope.selectAffiliation = function(datum) {
+		$scope.editAffiliation.affiliationName.value = datum.value;
 		$scope.editAffiliation.city.value = datum.city;
 		$scope.editAffiliation.region.value = datum.region;
 		$scope.editAffiliation.country.value = datum.country;
@@ -1292,7 +1293,7 @@ function AffiliationCtrl($scope, $compile, $filter, affiliationsSrvc){
 		}).fail(function(){
 			// something bad is happening!
 			$scope.addingAffiliation = false;
-	    	console.log("error fetching affiliations");
+	    	console.log("error adding affiliations");
 		});
 	};
 	
