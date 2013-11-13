@@ -292,7 +292,7 @@ public class T2OrcidOAuthApiClientIntegrationTest extends BaseT2OrcidOAuthApiCli
     public void testTokenWithBlankScope() throws Exception {
         // Make sure the permissionChecker can handle blank scopes
         OrcidOauth2TokenDetail orcidOauth2TokenDetail = orcidOauthTokenDetailService.findNonDisabledByTokenValue(accessToken);
-        DefaultPermissionChecker defaultPermissionChecker = (DefaultPermissionChecker) permissionChecker;        
+        DefaultPermissionChecker defaultPermissionChecker = (DefaultPermissionChecker) permissionChecker;
         defaultPermissionChecker.removeWriteScopesPastValitity(orcidOauth2TokenDetail);
 
         // make sure blank scopes return 403
@@ -552,12 +552,12 @@ public class T2OrcidOAuthApiClientIntegrationTest extends BaseT2OrcidOAuthApiCli
     @Test
     public void testRegisterAndUnRegisterWebhook() throws Exception {
         createNewOrcidUsingAccessToken();
-        createAccessTokenFromCredentials(ScopePathType.WEBHOOK.value());
+        String webhookToken = createAccessTokenFromCredentials(ScopePathType.WEBHOOK.value());
         String webhookUri = URLEncoder.encode("http://nowhere.com", "UTF-8");
-        ClientResponse putResponse = oauthT2Client.registerWebhook(this.orcid, webhookUri, this.accessToken);
+        ClientResponse putResponse = oauthT2Client.registerWebhook(this.orcid, webhookUri, webhookToken);
         assertNotNull(putResponse);
         assertEquals(201, putResponse.getStatus());
-        ClientResponse deleteResponse = oauthT2Client.unregisterWebhook(this.orcid, webhookUri, this.accessToken);
+        ClientResponse deleteResponse = oauthT2Client.unregisterWebhook(this.orcid, webhookUri, webhookToken);
         assertNotNull(deleteResponse);
         assertEquals(204, deleteResponse.getStatus());
     }
