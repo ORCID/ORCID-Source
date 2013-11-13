@@ -45,7 +45,9 @@ orcidNgModule.directive('ngModelOnblur', function() {
 
 orcidNgModule.factory("affiliationsSrvc", function () {
 	var serv = {
-			affiliations: new Array()
+			affiliations: new Array(),
+			educations: new Array(),
+			employments: new Array()
 	}; 
 	return serv;
 });
@@ -105,6 +107,17 @@ orcidNgModule.filter('urlWithHttp', function(){
 	    return input;
 	};
 });
+
+orcidNgModule.filter('eduAffFilter', function(){
+	return function(arr){
+		var newArray  = new Array();
+		for (idx in arr) {
+			console.log(arr[idx]);
+		}
+	    return newArray;
+	};
+});
+
 
 function emptyTextField(field) {
 	if (field != null 
@@ -1135,10 +1148,21 @@ function AffiliationOverviewCtrl($scope, $compile, affiliationsSrvc){
 	$scope.affiliations = affiliationsSrvc.affiliations;
 }
 
-function AffiliationCtrl($scope, $compile, affiliationsSrvc){
-	
+function EducationOverviewCtrl($scope, $compile, affiliationsSrvc){
+	$scope.educations = affiliationsSrvc.educations;
+}
+
+function EmploymentOverviewCtrl($scope, $compile, affiliationsSrvc){
+	$scope.employments = affiliationsSrvc.employments;
+}
+
+
+function AffiliationCtrl($scope, $compile, $filter, affiliationsSrvc){
+	$scope.loadingAff = true;
 	$scope.displayAffiliations = true;
 	$scope.affiliations = affiliationsSrvc.affiliations;
+	$scope.educations = affiliationsSrvc.educations;
+	$scope.employments = affiliationsSrvc.employments;
 	$scope.numOfAffiliationsToAdd = null;
 	
 	$scope.toggleDisplayAffiliations = function () {
@@ -1224,12 +1248,15 @@ function AffiliationCtrl($scope, $compile, affiliationsSrvc){
 		delete $scope.editAffiliation.disambiguatedAffiliationSourceId;
 	};
 
-	$scope.addAffiliationModal = function(){
+	$scope.addAffiliationModal = function(type){
+		$scope.addAffType = type;
 		$.ajax({
 			url: $('body').data('baseurl') + 'affiliations/affiliation.json',
 			dataType: 'json',
 			success: function(data) {
 				$scope.editAffiliation = data;
+				if (type != null) 
+					$scope.editAffiliation.affiliationType.value = type;
 				$scope.$apply(function() {
 					$scope.showAddModal();
 				});
@@ -1278,23 +1305,37 @@ function AffiliationCtrl($scope, $compile, affiliationsSrvc){
 				dataType: 'json',
 				success: function(data) {
 					$scope.$apply(function(){ 
-						for (i in data)
-						$scope.affiliations.push(data[i]);
+						for (i in data) {
+							if (data[i].affiliationType != null && data[i].affiliationType.value != null
+									&& data[i].affiliationType.value == 'education')
+								$scope.educations.push(data[i]);
+							else if (data[i].affiliationType != null && data[i].affiliationType.value != null
+									&& data[i].affiliationType.value == 'employment')
+								$scope.employments.push(data[i]);
+							else
+								$scope.affiliations.push(data[i]);
+						};
 					});
 					setTimeout(function () {$scope.addAffiliationToScope();},50);
 				}
 			}).fail(function() { 
 		    	console.log("Error fetching affiliation: " + value);
 		    });
+		} else {
+			$scope.loadingAff = false;
+			$scope.$apply();
 		}
 	}; 
 	
 
 	$scope.getAffiliations = function() {
 		//clear out current affiliations
+		$scope.loadingAff = true;
 		$scope.affiliationsToAddIds = null;
 		$scope.numOfAffiliationsToAdd = null;
 		$scope.affiliations.length = 0;
+		$scope.educations.length = 0;
+		$scope.employments.length = 0;
 		//get affiliation ids
 		$.ajax({
 			url: $('body').data('baseurl') + 'affiliations/affiliationIds.json',	        
@@ -1302,8 +1343,7 @@ function AffiliationCtrl($scope, $compile, affiliationsSrvc){
 	        success: function(data) {
 	        	$scope.affiliationsToAddIds = data;
 	        	$scope.numOfAffiliationsToAdd = data.length;
-	 
-	        	if (data.length > 0 ) $scope.addAffiliationToScope();
+	        	$scope.addAffiliationToScope();
 	        	$scope.$apply();
 	        }
 		}).fail(function(){
@@ -1315,17 +1355,11 @@ function AffiliationCtrl($scope, $compile, affiliationsSrvc){
 	//init
 	$scope.getAffiliations();
 	
-	$scope.deleteAffiliation = function(putCode) {
-		$scope.deletePutCode = putCode;
-		var affiliation;
-		for (idx in $scope.affiliations) {
-			if ($scope.affiliations[idx].putCode.value == putCode) {
-				affiliation = $scope.affiliations[idx];
-				break;
-			}
-		}
-		if (affiliation.affiliationName && affiliation.affiliationName.value) 
-			$scope.fixedTitle = affiliation.affiliationName.value;
+	$scope.deleteAffiliation = function(aff) {
+		$scope.deleAff = aff;
+		
+		if (aff.affiliationName && aff.affiliationName.value) 
+			$scope.fixedTitle = aff.affiliationName.value;
 		else $scope.fixedTitle = '';
         var maxSize = 100;
         if($scope.fixedTitle.length > maxSize)
@@ -1336,19 +1370,27 @@ function AffiliationCtrl($scope, $compile, affiliationsSrvc){
         });
 	};
 	
-	$scope.deleteByPutCode = function() {		
-		var affiliation;
+	$scope.deleteAff = function() {		
+		var delAff = $scope.deleAff;
 		var idx;
-		for (idx in $scope.affiliations) {
-			if ($scope.affiliations[idx].putCode.value == $scope.deletePutCode) {
-				affiliation = $scope.affiliations[idx];
+		
+		// select correct array
+		var arr = $scope.affiliations;
+		if (delAff.affiliationType != null && delAff.affiliationType.value != null
+				&& delAff.affiliationType.value == 'education')
+			arr = $scope.educations;
+		if (delAff.affiliationType != null && delAff.affiliationType.value != null
+				&& delAff.affiliationType.value == 'employment')
+			arr = $scope.employments;
+		for (idx in arr) {
+			if (arr[idx].putCode.value == delAff.putCode.value) {
 				break;
 			}
 		}
 		// remove affiliation on server
-		$scope.removeAffiliation(affiliation);
+		$scope.removeAffiliation(delAff);
 		// remove the affiliation from the UI
-    	$scope.affiliations.splice(idx, 1);
+		arr.splice(idx, 1);
     	$scope.numOfAffiliationsToAdd--; // keep this number matching
     	// apply changes on scope
 		// close box
