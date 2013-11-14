@@ -18,7 +18,9 @@ package org.orcid.persistence.dao;
 
 import java.util.List;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.orcid.jaxb.model.message.Iso3166Country;
+import org.orcid.persistence.jpa.entities.IndexingStatus;
 import org.orcid.persistence.jpa.entities.OrgDisambiguatedEntity;
 
 /**
@@ -33,5 +35,13 @@ public interface OrgDisambiguatedDao extends GenericDao<OrgDisambiguatedEntity, 
     OrgDisambiguatedEntity findBySourceIdAndSourceType(String sourceId, String sourceType);
 
     OrgDisambiguatedEntity findByNameCityRegionCountryAndSourceType(String name, String city, String region, Iso3166Country country, String sourceType);
+
+    List<OrgDisambiguatedEntity> findOrgsByIndexingStatus(IndexingStatus indexingStatus, int firstResult, int maxResult);
+
+    void updateIndexingStatus(Long orgDisambiguatedId, IndexingStatus indexingStatus);
+    
+    List<Pair<Long, Integer>> findDisambuguatedOrgsWithIncorrectPopularity(int maxResults);
+
+    void updatePopularity(Long orgDisambiguatedId, Integer popularity);
 
 }

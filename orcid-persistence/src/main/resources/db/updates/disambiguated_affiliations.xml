@@ -171,5 +171,21 @@
             INSERT INTO org_disambiguated(id, source_id, source_url, source_type, name, city, country, date_created, last_modified) VALUES (nextval('org_disambiguated_seq'), 'Z', 'http://orcid.org', 'TEST', 'Z affiliation', 'Z town', 'BM', now(), now());
         </sql>
     </changeSet>
+    
+    <changeSet id="ADD-INDEXING-AND-POPULARTIY-COLUMNS-TO-ORG-DISAMBIGUATED" author="Will Simpson">
+        <addColumn tableName="org_disambiguated">
+            <column name="indexing_status" type="VARCHAR(20)" defaultValue="PENDING">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <addColumn tableName="org_disambiguated">
+            <column name="last_indexed_date" type="TIMESTAMP WITH TIME ZONE"/>
+        </addColumn>
+        <addColumn tableName="org_disambiguated">
+            <column name="popularity" type="int" defaultValue="0">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
 
 </databaseChangeLog>

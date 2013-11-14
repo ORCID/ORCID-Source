@@ -17,6 +17,7 @@
 package org.orcid.persistence.dao;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.net.URL;
 
 import org.apache.solr.client.solrj.SolrServer;
@@ -30,15 +31,27 @@ import org.apache.solr.core.CoreContainer;
  * 
  */
 class EmbeddedSolrFactory {
-
+    
+    private static CoreContainer coreContainer;
+    
     public static SolrServer createInstance() throws Exception {
+        return createInstance("");
+    }
 
+    public static SolrServer createInstance(String coreName) throws Exception {
+        if(coreContainer == null){
+            coreContainer = createCoreContainer();
+        }
+        EmbeddedSolrServer server = new EmbeddedSolrServer(coreContainer, coreName);
+        return server;
+    }
+
+    private static CoreContainer createCoreContainer() throws FileNotFoundException {
         URL solrHome = EmbeddedSolrFactory.class.getResource("/solr");
         File solrHomeDir = new File(solrHome.getFile());
         System.setProperty("solr.solr.home", solrHomeDir.getAbsolutePath());
         CoreContainer.Initializer initializer = new CoreContainer.Initializer();
         CoreContainer coreContainer = initializer.initialize();
-        EmbeddedSolrServer server = new EmbeddedSolrServer(coreContainer, "");
-        return server;
+        return coreContainer;
     }
 }

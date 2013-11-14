@@ -21,6 +21,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.core.manager.ProfileEntityManager;
+import org.orcid.core.oauth.OrcidOAuth2Authentication;
 import org.orcid.core.oauth.OrcidOauth2UserAuthentication;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.ScopePathType;
@@ -83,7 +84,7 @@ public class DefaultPermissionCheckerTest extends DBUnitTest {
         request.setResourceIds(resourceIds);
         ProfileEntity entity = profileEntityManager.findByOrcid("4444-4444-4444-4446");
         OrcidOauth2UserAuthentication oauth2UserAuthentication = new OrcidOauth2UserAuthentication(entity, true);
-        OAuth2Authentication oAuth2Authentication = new OAuth2Authentication(request, oauth2UserAuthentication);
+        OAuth2Authentication oAuth2Authentication = new OrcidOAuth2Authentication(request, oauth2UserAuthentication, "made-up-token");
         ScopePathType requiredScope = ScopePathType.ORCID_BIO_EXTERNAL_IDENTIFIERS_CREATE;
         OrcidMessage orcidMessage = getOrcidMessage();
         String messageOrcid = orcidMessage.getOrcidProfile().getOrcid().getValue();
@@ -101,7 +102,7 @@ public class DefaultPermissionCheckerTest extends DBUnitTest {
         request.setResourceIds(resourceIds);
         ProfileEntity entity = profileEntityManager.findByOrcid("4444-4444-4444-4445");
         OrcidOauth2UserAuthentication oauth2UserAuthentication = new OrcidOauth2UserAuthentication(entity, true);
-        OAuth2Authentication oAuth2Authentication = new OAuth2Authentication(request, oauth2UserAuthentication);
+        OAuth2Authentication oAuth2Authentication = new OrcidOAuth2Authentication(request, oauth2UserAuthentication, "made-up-token");
         ScopePathType requiredScope = ScopePathType.ORCID_BIO_EXTERNAL_IDENTIFIERS_CREATE;
         OrcidMessage orcidMessage = getOrcidMessage();
         String messageOrcid = orcidMessage.getOrcidProfile().getOrcid().getValue();
@@ -117,7 +118,7 @@ public class DefaultPermissionCheckerTest extends DBUnitTest {
         DefaultAuthorizationRequest request = new DefaultAuthorizationRequest("4444-4444-4444-4441", Arrays.asList("/orcid-bio/external-identifiers/create"));
         request.setAuthorities(grantedAuthorities);
         request.setResourceIds(resourceIds);
-        OAuth2Authentication oAuth2Authentication = new OAuth2Authentication(request, null);
+        OAuth2Authentication oAuth2Authentication = new OrcidOAuth2Authentication(request, null, "made-up-token");
         ScopePathType requiredScope = ScopePathType.ORCID_BIO_EXTERNAL_IDENTIFIERS_CREATE;
         OrcidMessage orcidMessage = getOrcidMessage();
         orcidMessage.getOrcidProfile().getOrcid().setValue("4444-4444-4444-4447");
@@ -132,7 +133,7 @@ public class DefaultPermissionCheckerTest extends DBUnitTest {
         DefaultAuthorizationRequest request = new DefaultAuthorizationRequest("4444-4444-4444-4441", Arrays.asList(ScopePathType.ORCID_WORKS_CREATE.value()));
         request.setAuthorities(grantedAuthorities);
         request.setResourceIds(resourceIds);
-        OAuth2Authentication oAuth2Authentication = new OAuth2Authentication(request, null);
+        OAuth2Authentication oAuth2Authentication = new OrcidOAuth2Authentication(request, null, "made-up-token");
         ScopePathType requiredScope = ScopePathType.ORCID_WORKS_CREATE;
         OrcidMessage orcidMessage = getOrcidMessage();
         defaultPermissionChecker.checkPermissions(oAuth2Authentication, requiredScope, orcidMessage);
@@ -145,7 +146,7 @@ public class DefaultPermissionCheckerTest extends DBUnitTest {
         DefaultAuthorizationRequest request = new DefaultAuthorizationRequest("4444-4444-4444-4441", Arrays.asList(ScopePathType.ORCID_BIO_READ_LIMITED.value()));
         request.setAuthorities(grantedAuthorities);
         request.setResourceIds(resourceIds);
-        OAuth2Authentication oAuth2Authentication = new OAuth2Authentication(request, null);
+        OAuth2Authentication oAuth2Authentication = new OrcidOAuth2Authentication(request, null, "made-up-token");
         ScopePathType requiredScope = ScopePathType.ORCID_BIO_READ_LIMITED;
         defaultPermissionChecker.checkPermissions(oAuth2Authentication, requiredScope, "4444-4444-4444-4447");
     }
