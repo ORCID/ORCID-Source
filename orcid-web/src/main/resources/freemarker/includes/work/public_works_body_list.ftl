@@ -54,6 +54,6 @@
 		</#if>
 	</noscript>
 	<div ng-controller="PublicWorkCtrl">
-	      <#include "includes/work/body_work_inc.ftl"/>
+	      <#include "body_work_inc.ftl"/>
 	</div>
 </#escape>

@@ -57,7 +57,7 @@ public class OrgManagerTest extends BaseTest {
 
     @Test
     public void getAmbiguousOrgs() {
-        List<AmbiguousOrgEntity> orgs = orgManager.getAmbiguousOrgs();
+        List<AmbiguousOrgEntity> orgs = orgManager.getAmbiguousOrgs(0, Integer.MAX_VALUE);
         assertNotNull(orgs);
         assertEquals(2, orgs.size());
     }
@@ -65,7 +65,7 @@ public class OrgManagerTest extends BaseTest {
     @Test
     public void testWriteAmbiguousOrgs() throws IOException {
         StringWriter writer = new StringWriter();
-        
+
         orgManager.writeAmbiguousOrgs(writer);
         String result = writer.toString();
 

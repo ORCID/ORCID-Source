@@ -25,7 +25,10 @@ package org.orcid.jaxb.model.message;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -105,6 +108,17 @@ public class Affiliations implements Serializable {
         }
         return filteredAffilations;
     }
+    
+    public Map<String, Affiliation> retrieveAffiliationAsMap() {
+        Map<String, Affiliation> affMap = new HashMap<String, Affiliation>();
+        if (affiliation != null) {
+            for (Affiliation aff : affiliation) {
+                affMap.put(aff.putCode, aff);
+            }
+        }
+        return affMap;
+    }
+
 
     @Override
     public boolean equals(Object o) {
