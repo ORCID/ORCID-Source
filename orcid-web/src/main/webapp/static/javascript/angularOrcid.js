@@ -108,6 +108,13 @@ orcidNgModule.filter('urlWithHttp', function(){
 	};
 });
 
+function fixZindexIE7(target, zindex){
+	$(target).each(function(){
+		$(this).css('z-index', zindex);    			
+		--zindex;    			    		
+	});
+}
+
 function emptyTextField(field) {
 	if (field != null 
 			&& field.value != null
@@ -1556,7 +1563,7 @@ function WorkCtrl($scope, $compile, worksSrvc) {
 	
 	$scope.showAddModal = function(){;
 		$scope.editTranslatedTitle = false;
-		isMobile() ? w = '100%' : w = '768px';
+		isMobile() ? w = '100%' : w = '800px';
 		isMobile() ? h = '100%' : h = 'auto';		
 	    $.colorbox({	    	
 	    	scrolling: true,
@@ -1673,22 +1680,9 @@ function WorkCtrl($scope, $compile, worksSrvc) {
 		    });
 		}else {
 			if(isIE() == 7){
-				var zIndexParent = 999999;
-		    	var zIndexChild = 500;	    	
-		    	var zIndexLastChild = 400;
-		    	$('.workspace-toolbar').each(function(){
-		    	$(this).css('z-index', zIndexParent);    			
-		    		--zIndexParent;    			    		
-		    	});	 
-		    	$('.workspace-private-toolbar').each(function(){     			
-		    		$(this).css('z-index', zIndexChild);
-		    		--zIndexChild;
-		    	});
-		    	
-		    	$('#privacy-bar').each(function(){
-		    		$(this).css('z-index', zIndexLastChild);
-		    		--zIndexLastChild;
-		    	});
+				fixZindexIE7('.workspace-toolbar', 999999);
+				fixZindexIE7('.workspace-private-toolbar', 500);
+				fixZindexIE7('#privacy-bar', 400);
 			}
 		}
 	}; 	
