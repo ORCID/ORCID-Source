@@ -25,11 +25,11 @@ import org.orcid.persistence.jpa.entities.OrgEntity;
 /**
  * 
  * @author Will Simpson
- *
+ * 
  */
 public interface OrgDao extends GenericDao<OrgEntity, Long> {
 
-    List<AmbiguousOrgEntity> getAmbiguousOrgs();
+    List<AmbiguousOrgEntity> getAmbiguousOrgs(int firstResult, int maxResults);
 
     List<OrgEntity> getOrgs(String searchTerm, int firstResult, int maxResults);
 
