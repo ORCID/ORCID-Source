@@ -627,7 +627,7 @@
 		</lst>
 		<lst name="slave">
 			<str name="enable">${solr.enable.slave:false}</str>
-			<str name="masterUrl">${solr.master.url:http://localhost:8080/orcid-solr-web/replication}</str>
+			<str name="masterUrl">${solr.master.url:http://localhost:8080/orcid-solr-web}/replication</str>
 			<str name="pollInterval">${solr.poll.interval:00:00:60}</str>
 		</lst>
 	</requestHandler>
