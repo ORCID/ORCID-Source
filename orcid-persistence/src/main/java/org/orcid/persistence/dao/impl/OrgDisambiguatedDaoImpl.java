@@ -54,6 +54,15 @@ public class OrgDisambiguatedDaoImpl extends GenericDaoImpl<OrgDisambiguatedEnti
     }
 
     @Override
+    public List<OrgDisambiguatedEntity> getChunk(int firstResult, int maxResults) {
+        // Order by id so that we can page through in a predictable way
+        TypedQuery<OrgDisambiguatedEntity> query = entityManager.createQuery("from OrgDisambiguatedEntity order by id", OrgDisambiguatedEntity.class);
+        query.setFirstResult(firstResult);
+        query.setMaxResults(maxResults);
+        return query.getResultList();
+    }
+
+    @Override
     public OrgDisambiguatedEntity findByNameCityRegionCountryAndSourceType(String name, String city, String region, Iso3166Country country, String sourceType) {
         TypedQuery<OrgDisambiguatedEntity> query = entityManager
                 .createQuery(
@@ -127,7 +136,7 @@ public class OrgDisambiguatedDaoImpl extends GenericDaoImpl<OrgDisambiguatedEnti
         }
         return pairs;
     }
-    
+
     @Override
     @Transactional
     public void updatePopularity(Long orgDisambiguatedId, Integer popularity) {
