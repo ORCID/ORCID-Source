@@ -31,6 +31,7 @@ import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.frontend.web.util.LanguagesMap;
+import org.orcid.jaxb.model.message.Affiliation;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidWork;
 import org.orcid.jaxb.model.message.Visibility;
@@ -48,9 +49,9 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class PublicProfileController extends BaseWorkspaceController {
 
-	@Resource
+    @Resource
     private LocaleManager localeManager;
-	
+
     @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}")
     public ModelAndView publicPreview(HttpServletRequest request, @RequestParam(value = "page", defaultValue = "1") int pageNo,
             @RequestParam(value = "maxResults", defaultValue = "15") int maxResults, @PathVariable("orcid") String orcid) {
@@ -65,25 +66,41 @@ public class PublicProfileController extends BaseWorkspaceController {
         List<Work> works = new ArrayList<Work>();
         List<String> workIds = new ArrayList<String>();
 
+        List<Affiliation> affilations = new ArrayList<Affiliation>();
+        List<String> affiliationIds = new ArrayList<String>();
+
         if (profile.getOrcidDeprecated() != null) {
             String primaryRecord = profile.getOrcidDeprecated().getPrimaryRecord().getOrcid().getValue();
             mav.addObject("deprecated", true);
             mav.addObject("primaryRecord", primaryRecord);
-        } else if (profile.getOrcidActivities() != null && profile.getOrcidActivities().getOrcidWorks() != null) {
-
-            for (OrcidWork orcidWork : profile.getOrcidActivities().getOrcidWorks().getOrcidWork()) {
-                works.add(Work.valueOf(orcidWork));
-                workIds.add(orcidWork.getPutCode());
+        } else {
+            if (profile.getOrcidActivities() != null && profile.getOrcidActivities().getOrcidWorks() != null) {
+                for (OrcidWork orcidWork : profile.getOrcidActivities().getOrcidWorks().getOrcidWork()) {
+                    works.add(Work.valueOf(orcidWork));
+                    workIds.add(orcidWork.getPutCode());
+                }
+                if (!works.isEmpty()) {
+                    mav.addObject("works", works);
+                }
             }
-            if (!works.isEmpty()) {
-                mav.addObject("works", works);
+
+            if (profile.getOrcidActivities() != null && profile.getOrcidActivities().getAffiliations() != null) {
+                for (Affiliation affiliation : profile.getOrcidActivities().getAffiliations().getAffiliation()) {
+                    affilations.add(affiliation);
+                    affiliationIds.add(affiliation.getPutCode());
+                }
+                if (!affilations.isEmpty()) {
+                    mav.addObject("affilations", affilations);
+                }
             }
         }
         ObjectMapper mapper = new ObjectMapper();
 
         try {
             String worksIdsJson = mapper.writeValueAsString(workIds);
+            String affiliationsIdsJson = mapper.writeValueAsString(affiliationIds);
             mav.addObject("workIdsJson", StringEscapeUtils.escapeEcmaScript(worksIdsJson));
+            mav.addObject("affiliationsIdsJson", StringEscapeUtils.escapeEcmaScript(affiliationsIdsJson));
         } catch (JsonGenerationException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -112,18 +129,18 @@ public class PublicProfileController extends BaseWorkspaceController {
             if (orcidWork != null) {
                 // ONLY SHARE THE PUBLIC WORKS!
                 if (orcidWork.getVisibility().equals(Visibility.PUBLIC)) {
-                    Work work = Work.valueOf(orcidWork); 
-                    if(!PojoUtil.isEmpty(work.getCountryCode())) {            
+                    Work work = Work.valueOf(orcidWork);
+                    if (!PojoUtil.isEmpty(work.getCountryCode())) {
                         Text countryName = Text.valueOf(countries.get(work.getCountryCode().getValue()));
                         work.setCountryName(countryName);
                     }
-                    //Set language name
-                    if(!PojoUtil.isEmpty(work.getLanguageCode())) {
+                    // Set language name
+                    if (!PojoUtil.isEmpty(work.getLanguageCode())) {
                         Text languageName = Text.valueOf(languages.get(work.getLanguageCode().getValue()));
                         work.setLanguageName(languageName);
                     }
-                    //Set translated title language name
-                    if(!(work.getWorkTitle().getTranslatedTitle() == null) && !StringUtils.isEmpty(work.getWorkTitle().getTranslatedTitle().getLanguageCode())) {
+                    // Set translated title language name
+                    if (!(work.getWorkTitle().getTranslatedTitle() == null) && !StringUtils.isEmpty(work.getWorkTitle().getTranslatedTitle().getLanguageCode())) {
                         String languageName = languages.get(work.getWorkTitle().getTranslatedTitle().getLanguageCode());
                         work.getWorkTitle().getTranslatedTitle().setLanguageName(languageName);
                     }
@@ -132,5 +149,5 @@ public class PublicProfileController extends BaseWorkspaceController {
             }
         }
         return works;
-    }        
+    }
 }
