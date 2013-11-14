@@ -108,17 +108,6 @@ orcidNgModule.filter('urlWithHttp', function(){
 	};
 });
 
-orcidNgModule.filter('eduAffFilter', function(){
-	return function(arr){
-		var newArray  = new Array();
-		for (idx in arr) {
-			console.log(arr[idx]);
-		}
-	    return newArray;
-	};
-});
-
-
 function emptyTextField(field) {
 	if (field != null 
 			&& field.value != null
