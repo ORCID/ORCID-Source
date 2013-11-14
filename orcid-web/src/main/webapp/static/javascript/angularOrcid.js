@@ -43,14 +43,115 @@ orcidNgModule.directive('ngModelOnblur', function() {
     };
 });
 
-orcidNgModule.factory("affiliationsSrvc", function () {
+orcidNgModule.factory("affiliationsSrvc", ['$rootScope', function ($rootScope) {
 	var serv = {
 			affiliations: new Array(),
 			educations: new Array(),
-			employments: new Array()
+			employments: new Array(),
+			loadingAff: true,
+			affiliationsToAddIds: null,
+	    	addAffiliationToScope: function(path) {
+	    		if(serv.affiliationsToAddIds.length != 0 ) {
+	    			var affiliationIds = serv.affiliationsToAddIds.splice(0,20).join();
+	    			$.ajax({
+	    				url: $('body').data('baseurl') + path + '?affiliationIds=' + affiliationIds,
+	    				dataType: 'json',
+	    				success: function(data) {
+	    						for (i in data) {
+	    							if (data[i].affiliationType != null && data[i].affiliationType.value != null
+	    									&& data[i].affiliationType.value == 'education')
+	    								serv.educations.push(data[i]);
+	    							else if (data[i].affiliationType != null && data[i].affiliationType.value != null
+	    									&& data[i].affiliationType.value == 'employment')
+	    								serv.employments.push(data[i]);
+	    							else
+	    								serv.affiliations.push(data[i]);
+	    						};
+	    					setTimeout(function () {serv.addAffiliationToScope(path);},50);
+	    				}
+	    			}).fail(function() { 
+	    		    	console.log("Error fetching affiliation: " + value);
+	    		    });
+	    		} else {
+	    			serv.loadingAff = false;
+	    			$rootScope.$apply();
+	    		};
+	    	},
+	    	setIdsToAdd: function(ids) {
+	    		serv.affiliationsToAddIds = ids;
+	    	},
+	    	getAffiliations: function(path) {
+	    		//clear out current affiliations
+	    		serv.loadingAff = true;
+	    		serv.affiliationsToAddIds = null;
+	    		serv.affiliations.length = 0;
+	    		serv.educations.length = 0;
+	    		serv.employments.length = 0;
+	    		//get affiliation ids
+	    		$.ajax({
+	    			url: $('body').data('baseurl') + path,	        
+	    	        dataType: 'json',
+	    	        success: function(data) {
+	    	        	serv.affiliationsToAddIds = data;
+	    	        	serv.addAffiliationToScope('affiliations/affiliations.json');
+	    	        	$rootScope.$apply();
+	    	        }
+	    		}).fail(function(){
+	    			// something bad is happening!
+	    	    	console.log("error fetching affiliations");
+	    		});
+	    	},
+	    	updateProfileAffiliation: function(aff) {
+	    		$.ajax({
+	    	        url: $('body').data('baseurl') + 'affiliations/affiliation.json',
+	    	        type: 'PUT',
+	    	        data: angular.toJson(aff),
+	    	        contentType: 'application/json;charset=UTF-8',
+	    	        dataType: 'json',
+	    	        success: function(data) {	        	
+	    	        	if(data.errors.length != 0){
+	    	        		console.log("Unable to update profile affiliation.");
+	    	        	}
+	    	        	$rootScope.$apply();
+	    	        }
+	    	    }).fail(function() { 
+	    	    	console.log("Error updating profile affiliation.");
+	    	    });
+	    	},
+	    	deleteAffiliation: function(affiliation) {
+				var arr = serv.affiliations;
+				if (affiliation.affiliationType != null && affiliation.affiliationType.value != null
+						&& affiliation.affiliationType.value == 'education')
+					arr = serv.educations;
+				if (affiliation.affiliationType != null && affiliation.affiliationType.value != null
+						&& affiliation.affiliationType.value == 'employment')
+					arr = serv.employments;
+				var idx;
+				for (idx in arr) {
+					if (arr[idx].putCode.value == affiliation.putCode.value) {
+						break;
+					}
+				}
+				arr.splice(idx, 1);
+	    		$.ajax({
+	    	        url: $('body').data('baseurl') + 'affiliations/affiliations.json',
+	    	        type: 'DELETE',
+	    	        data: angular.toJson(affiliation),
+	    	        contentType: 'application/json;charset=UTF-8',
+	    	        dataType: 'json',
+	    	        success: function(data) {	        	
+	    	        	if(data.errors.length != 0){
+	    	        		console.log("Unable to delete affiliation.");
+	    	        	}
+	    	        	$rootScope.$apply();
+	    	        }
+	    	    }).fail(function() { 
+	    	    	console.log("Error deleting affiliation.");
+	    	    });
+	    	}  
 	}; 
 	return serv;
-});
+}]);
 
 orcidNgModule.factory("worksSrvc", function () {
 	var serv = {
@@ -1156,14 +1257,20 @@ function EmploymentOverviewCtrl($scope, $compile, affiliationsSrvc){
 	$scope.employments = affiliationsSrvc.employments;
 }
 
+function PublicEduAffiliation($scope, $compile, $filter, affiliationsSrvc){
+	$scope.affiliationsSrvc = affiliationsSrvc;
+}
+
+function PublicEmpAffiliation($scope, $compile, $filter, affiliationsSrvc){
+	$scope.affiliationsSrvc = affiliationsSrvc;
+	affiliationsSrvc.setIdsToAdd(orcidVar.affiliationIdsJson);
+	affiliationsSrvc.addAffiliationToScope(orcidVar.orcidId +'/affiliations.json');
+}
+
 
 function AffiliationCtrl($scope, $compile, $filter, affiliationsSrvc){
-	$scope.loadingAff = true;
+	$scope.affiliationsSrvc = affiliationsSrvc;
 	$scope.displayAffiliations = true;
-	$scope.affiliations = affiliationsSrvc.affiliations;
-	$scope.educations = affiliationsSrvc.educations;
-	$scope.employments = affiliationsSrvc.employments;
-	$scope.numOfAffiliationsToAdd = null;
 	
 	$scope.toggleDisplayAffiliations = function () {
 		$scope.displayAffiliations = !$scope.displayAffiliations;
@@ -1267,7 +1374,6 @@ function AffiliationCtrl($scope, $compile, $filter, affiliationsSrvc){
 	    });
 	};
 
-
 	$scope.addAffiliation = function(){
 		if ($scope.addingAffiliation) return; // don't process if adding affiliation
 		$scope.addingAffiliation = true;
@@ -1282,7 +1388,7 @@ function AffiliationCtrl($scope, $compile, $filter, affiliationsSrvc){
 	        	if (data.errors.length == 0){
 	        		$.colorbox.close(); 
 	        		$scope.addingAffiliation = false;
-	        		$scope.getAffiliations();
+	        		affiliationsSrvc.getAffiliations('affiliations/affiliationIds.json');
 	        	} else {
 		        	$scope.editAffiliation = data;
 		        	$scope.copyErrorsLeft($scope.editAffiliation, data);
@@ -1296,65 +1402,6 @@ function AffiliationCtrl($scope, $compile, $filter, affiliationsSrvc){
 	    	console.log("error adding affiliations");
 		});
 	};
-	
-	
-	$scope.addAffiliationToScope = function() {
-		if($scope.affiliationsToAddIds.length != 0 ) {
-			var affiliationIds = $scope.affiliationsToAddIds.splice(0,20).join();
-			$.ajax({
-				url: $('body').data('baseurl') + 'affiliations/affiliations.json?affiliationIds=' + affiliationIds,
-				dataType: 'json',
-				success: function(data) {
-					$scope.$apply(function(){ 
-						for (i in data) {
-							if (data[i].affiliationType != null && data[i].affiliationType.value != null
-									&& data[i].affiliationType.value == 'education')
-								$scope.educations.push(data[i]);
-							else if (data[i].affiliationType != null && data[i].affiliationType.value != null
-									&& data[i].affiliationType.value == 'employment')
-								$scope.employments.push(data[i]);
-							else
-								$scope.affiliations.push(data[i]);
-						};
-					});
-					setTimeout(function () {$scope.addAffiliationToScope();},50);
-				}
-			}).fail(function() { 
-		    	console.log("Error fetching affiliation: " + value);
-		    });
-		} else {
-			$scope.loadingAff = false;
-			$scope.$apply();
-		}
-	}; 
-	
-
-	$scope.getAffiliations = function() {
-		//clear out current affiliations
-		$scope.loadingAff = true;
-		$scope.affiliationsToAddIds = null;
-		$scope.numOfAffiliationsToAdd = null;
-		$scope.affiliations.length = 0;
-		$scope.educations.length = 0;
-		$scope.employments.length = 0;
-		//get affiliation ids
-		$.ajax({
-			url: $('body').data('baseurl') + 'affiliations/affiliationIds.json',	        
-	        dataType: 'json',
-	        success: function(data) {
-	        	$scope.affiliationsToAddIds = data;
-	        	$scope.numOfAffiliationsToAdd = data.length;
-	        	$scope.addAffiliationToScope();
-	        	$scope.$apply();
-	        }
-		}).fail(function(){
-			// something bad is happening!
-	    	console.log("error fetching affiliations");
-		});
-	};
-	
-	//init
-	$scope.getAffiliations();
 	
 	$scope.deleteAffiliation = function(aff) {
 		$scope.deleAff = aff;
@@ -1371,30 +1418,8 @@ function AffiliationCtrl($scope, $compile, $filter, affiliationsSrvc){
         });
 	};
 	
-	$scope.deleteAff = function() {		
-		var delAff = $scope.deleAff;
-		var idx;
-		
-		// select correct array
-		var arr = $scope.affiliations;
-		if (delAff.affiliationType != null && delAff.affiliationType.value != null
-				&& delAff.affiliationType.value == 'education')
-			arr = $scope.educations;
-		if (delAff.affiliationType != null && delAff.affiliationType.value != null
-				&& delAff.affiliationType.value == 'employment')
-			arr = $scope.employments;
-		for (idx in arr) {
-			if (arr[idx].putCode.value == delAff.putCode.value) {
-				break;
-			}
-		}
-		// remove affiliation on server
-		$scope.removeAffiliation(delAff);
-		// remove the affiliation from the UI
-		arr.splice(idx, 1);
-    	$scope.numOfAffiliationsToAdd--; // keep this number matching
-    	// apply changes on scope
-		// close box
+	$scope.deleteAff = function(delAff) {		
+		affiliationsSrvc.deleteAffiliation(delAff);
 		$.colorbox.close(); 
 	};
 	
@@ -1402,40 +1427,15 @@ function AffiliationCtrl($scope, $compile, $filter, affiliationsSrvc){
 		$.colorbox.close();
 	};
 	
-	$scope.removeAffiliation = function(affiliation) {
-		$.ajax({
-	        url: $('body').data('baseurl') + 'affiliations/affiliations.json',
-	        type: 'DELETE',
-	        data: angular.toJson(affiliation),
-	        contentType: 'application/json;charset=UTF-8',
-	        dataType: 'json',
-	        success: function(data) {	        	
-	        	if(data.errors.length != 0){
-	        		console.log("Unable to delete affiliation.");
-	        	} 
-	        }
-	    }).fail(function() { 
-	    	console.log("Error deleting affiliation.");
-	    });
-	};
-
 	$scope.setAddAffiliationPrivacy = function(priv, $event) {
 		$event.preventDefault();
 		$scope.editAffiliation.visibility.visibility = priv;
 	};
-
-	
 		
-	$scope.setPrivacy = function(putCode, priv, $event) {
+	$scope.setPrivacy = function(aff, priv, $event) {
 		$event.preventDefault();
-		var idx;
-		for (idx in $scope.affiliations) {
-			if ($scope.affiliations[idx].putCode.value == putCode)
-				break;
-		}
-		$scope.affiliations[idx].visibility.visibility = priv;
-		$scope.curPrivToggle = null;
-		$scope.updateProfileAffiliation(idx);
+		aff.visibility.visibility = priv;
+		affiliationsSrvc.updateProfileAffiliation(aff);
 	};
 	
 	$scope.serverValidate = function (relativePath) {
@@ -1478,26 +1478,9 @@ function AffiliationCtrl($scope, $compile, $filter, affiliationsSrvc){
 		if (cur.errors !== undefined && cur.errors.length > 0) valid = false;
 		return valid ? '' : 'text-error';
 	};
-
 	
-	$scope.updateProfileAffiliation = function(idx) {
-		var affiliation = $scope.affiliations[idx];
-		$.ajax({
-	        url: $('body').data('baseurl') + 'affiliations/affiliation.json',
-	        type: 'PUT',
-	        data: angular.toJson(affiliation),
-	        contentType: 'application/json;charset=UTF-8',
-	        dataType: 'json',
-	        success: function(data) {	        	
-	        	if(data.errors.length != 0){
-	        		console.log("Unable to update profile affiliation.");
-	        	} 
-	        }
-	    }).fail(function() { 
-	    	console.log("Error updating profile affiliation.");
-	    });
-	};
-	
+	//init
+	affiliationsSrvc.getAffiliations('affiliations/affiliationIds.json');
 }
 
 function PublicWorkCtrl($scope, $compile, worksSrvc) {

@@ -25,7 +25,10 @@ package org.orcid.jaxb.model.message;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -62,7 +65,7 @@ public class Affiliations implements Serializable {
      * 
      */
     private static final long serialVersionUID = 1L;
-    protected List<Affiliation> affiliation;
+    protected List<Affiliation> affiliations;
 
     /**
      * Gets the value of the affiliation property.
@@ -88,16 +91,16 @@ public class Affiliations implements Serializable {
      * 
      */
     public List<Affiliation> getAffiliation() {
-        if (affiliation == null) {
-            affiliation = new ArrayList<Affiliation>();
+        if (affiliations == null) {
+            affiliations = new ArrayList<Affiliation>();
         }
-        return this.affiliation;
+        return this.affiliations;
     }
 
     public List<Affiliation> getAffiliationsByType(AffiliationType affiliationType) {
         List<Affiliation> filteredAffilations = new ArrayList<Affiliation>();
-        if (affiliation != null && affiliationType != null) {
-            for (Affiliation aff : affiliation) {
+        if (affiliations != null && affiliationType != null) {
+            for (Affiliation aff : affiliations) {
                 if (affiliationType.equals(aff.getAffiliationType())) {
                     filteredAffilations.add(aff);
                 }
@@ -105,6 +108,17 @@ public class Affiliations implements Serializable {
         }
         return filteredAffilations;
     }
+    
+    public Map<String, Affiliation> retrieveAffiliationAsMap() {
+        Map<String, Affiliation> affMap = new HashMap<String, Affiliation>();
+        if (affiliations != null) {
+            for (Affiliation aff : affiliations) {
+                affMap.put(aff.putCode, aff);
+            }
+        }
+        return affMap;
+    }
+
 
     @Override
     public boolean equals(Object o) {
@@ -117,7 +131,7 @@ public class Affiliations implements Serializable {
 
         Affiliations that = (Affiliations) o;
 
-        if (affiliation != null ? !affiliation.equals(that.affiliation) : that.affiliation != null) {
+        if (affiliations != null ? !affiliations.equals(that.affiliations) : that.affiliations != null) {
             return false;
         }
 
@@ -126,6 +140,6 @@ public class Affiliations implements Serializable {
 
     @Override
     public int hashCode() {
-        return affiliation != null ? affiliation.hashCode() : 0;
+        return affiliations != null ? affiliations.hashCode() : 0;
     }
 }

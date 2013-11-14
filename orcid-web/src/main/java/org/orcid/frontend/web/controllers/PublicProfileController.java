@@ -35,6 +35,7 @@ import org.orcid.jaxb.model.message.Affiliation;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidWork;
 import org.orcid.jaxb.model.message.Visibility;
+import org.orcid.pojo.ajaxForm.AffiliationForm;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.pojo.ajaxForm.Work;
@@ -98,9 +99,9 @@ public class PublicProfileController extends BaseWorkspaceController {
 
         try {
             String worksIdsJson = mapper.writeValueAsString(workIds);
-            String affiliationsIdsJson = mapper.writeValueAsString(affiliationIds);
+            String affiliationIdsJson = mapper.writeValueAsString(affiliationIds);
             mav.addObject("workIdsJson", StringEscapeUtils.escapeEcmaScript(worksIdsJson));
-            mav.addObject("affiliationsIdsJson", StringEscapeUtils.escapeEcmaScript(affiliationsIdsJson));
+            mav.addObject("affiliationIdsJson", StringEscapeUtils.escapeEcmaScript(affiliationIdsJson));
         } catch (JsonGenerationException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -113,6 +114,24 @@ public class PublicProfileController extends BaseWorkspaceController {
         }
 
         return mav;
+    }
+    
+
+    @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/affiliations.json")
+    public @ResponseBody
+    List<AffiliationForm> getAffiliationsJson(HttpServletRequest request, @PathVariable("orcid") String orcid, @RequestParam(value = "affiliationIds") String workIdsStr) {
+        List<AffiliationForm> affs = new ArrayList<AffiliationForm>();
+        OrcidProfile profile = orcidProfileManager.retrievePublicOrcidProfile(orcid);
+        Map<String, Affiliation> affMap = profile.getOrcidActivities().getAffiliations().retrieveAffiliationAsMap();
+        String[] affIds = workIdsStr.split(",");
+        for (String id: affIds) {
+            Affiliation aff = affMap.get(id);
+            // ONLY SHARE THE PUBLIC AFFILIATIONS! 
+            if (aff != null && aff.getVisibility().equals(Visibility.PUBLIC)) {
+                affs.add(AffiliationForm.valueOf(aff));
+            }
+        }
+        return affs;
     }
 
     @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/works.json")
