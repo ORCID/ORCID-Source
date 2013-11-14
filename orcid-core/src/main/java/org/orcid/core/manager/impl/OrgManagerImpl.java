@@ -16,6 +16,7 @@
  */
 package org.orcid.core.manager.impl;
 
+import java.io.Writer;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -23,8 +24,11 @@ import javax.annotation.Resource;
 import org.orcid.core.manager.OrgManager;
 import org.orcid.persistence.dao.OrgDao;
 import org.orcid.persistence.dao.OrgDisambiguatedDao;
+import org.orcid.persistence.jpa.entities.AmbiguousOrgEntity;
 import org.orcid.persistence.jpa.entities.OrgDisambiguatedEntity;
 import org.orcid.persistence.jpa.entities.OrgEntity;
+
+import au.com.bytecode.opencsv.CSVWriter;
 
 /**
  * 
@@ -33,6 +37,11 @@ import org.orcid.persistence.jpa.entities.OrgEntity;
  */
 public class OrgManagerImpl implements OrgManager {
 
+    private static final String[] AMBIGUOUS_ORGS_HEADER = new String[] { "id", "source_orcid", "name", "city", "region", "country", "used_count" };
+
+    private static final String[] DISAMBIGUATED_ORGS_HEADER = new String[] { "id", "source_id", "source_type", "org_type", "name", "city", "region", "country",
+            "used_count" };
+
     @Resource
     private OrgDao orgDao;
 
@@ -40,8 +49,32 @@ public class OrgManagerImpl implements OrgManager {
     private OrgDisambiguatedDao orgDisambiguatedDao;
 
     @Override
-    public List<OrgEntity> getAmbiguousOrgs() {
+    public List<AmbiguousOrgEntity> getAmbiguousOrgs() {
         return orgDao.getAmbiguousOrgs();
+    }
+
+    @Override
+    public void writeAmbiguousOrgs(Writer writer) {
+        @SuppressWarnings("resource")
+        CSVWriter csvWriter = new CSVWriter(writer);
+        csvWriter.writeNext(AMBIGUOUS_ORGS_HEADER);
+        for (AmbiguousOrgEntity orgEntity : getAmbiguousOrgs()) {
+            String[] line = new String[] { String.valueOf(orgEntity.getId()), orgEntity.getSourceOrcid(), orgEntity.getName(), orgEntity.getCity(),
+                    orgEntity.getRegion(), orgEntity.getCountry().value(), String.valueOf(orgEntity.getUsedCount()) };
+            csvWriter.writeNext(line);
+        }
+    }
+
+    @Override
+    public void writeDisambiguatedOrgs(Writer writer) {
+        @SuppressWarnings("resource")
+        CSVWriter csvWriter = new CSVWriter(writer);
+        csvWriter.writeNext(DISAMBIGUATED_ORGS_HEADER);
+        for (OrgDisambiguatedEntity orgEntity : orgDisambiguatedDao.getAll()) {
+            String[] line = new String[] { String.valueOf(orgEntity.getId()), orgEntity.getSourceId(), orgEntity.getSourceType(), orgEntity.getOrgType(),
+                    orgEntity.getName(), orgEntity.getCity(), orgEntity.getRegion(), orgEntity.getCountry().value(), String.valueOf(orgEntity.getPopularity()) };
+            csvWriter.writeNext(line);
+        }
     }
 
     @Override
