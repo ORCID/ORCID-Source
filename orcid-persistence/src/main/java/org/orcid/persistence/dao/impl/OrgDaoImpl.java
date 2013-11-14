@@ -37,8 +37,11 @@ public class OrgDaoImpl extends GenericDaoImpl<OrgEntity, Long> implements OrgDa
     }
 
     @Override
-    public List<AmbiguousOrgEntity> getAmbiguousOrgs() {
-        TypedQuery<AmbiguousOrgEntity> query = entityManager.createQuery("from AmbiguousOrgEntity", AmbiguousOrgEntity.class);
+    public List<AmbiguousOrgEntity> getAmbiguousOrgs(int firstResult, int maxResults) {
+        // Order by ID so we can page through in a predictable way
+        TypedQuery<AmbiguousOrgEntity> query = entityManager.createQuery("from AmbiguousOrgEntity order by id", AmbiguousOrgEntity.class);
+        query.setFirstResult(firstResult);
+        query.setMaxResults(maxResults);
         return query.getResultList();
     }
 

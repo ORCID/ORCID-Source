@@ -55,8 +55,8 @@ public class OrgManagerImpl implements OrgManager {
     private SourceManager sourceManager;
 
     @Override
-    public List<AmbiguousOrgEntity> getAmbiguousOrgs() {
-        return orgDao.getAmbiguousOrgs();
+    public List<AmbiguousOrgEntity> getAmbiguousOrgs(int firstResult, int maxResults) {
+        return orgDao.getAmbiguousOrgs(firstResult, maxResults);
     }
 
     @Override
@@ -64,11 +64,18 @@ public class OrgManagerImpl implements OrgManager {
         @SuppressWarnings("resource")
         CSVWriter csvWriter = new CSVWriter(writer);
         csvWriter.writeNext(AMBIGUOUS_ORGS_HEADER);
-        for (AmbiguousOrgEntity orgEntity : getAmbiguousOrgs()) {
-            String[] line = new String[] { String.valueOf(orgEntity.getId()), orgEntity.getSourceOrcid(), orgEntity.getName(), orgEntity.getCity(),
-                    orgEntity.getRegion(), orgEntity.getCountry().value(), String.valueOf(orgEntity.getUsedCount()) };
-            csvWriter.writeNext(line);
-        }
+        int firstResult = 0;
+        List<AmbiguousOrgEntity> chunk = null;
+        do {
+            chunk = getAmbiguousOrgs(firstResult, CHUNK_SIZE);
+            for (AmbiguousOrgEntity orgEntity : chunk) {
+                String[] line = new String[] { String.valueOf(orgEntity.getId()), orgEntity.getSourceOrcid(), orgEntity.getName(), orgEntity.getCity(),
+                        orgEntity.getRegion(), orgEntity.getCountry().value(), String.valueOf(orgEntity.getUsedCount()) };
+                csvWriter.writeNext(line);
+            }
+            firstResult += chunk.size();
+        } while (!chunk.isEmpty());
+
     }
 
     @Override
