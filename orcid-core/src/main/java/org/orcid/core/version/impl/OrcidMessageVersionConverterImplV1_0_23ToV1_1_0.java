@@ -29,12 +29,12 @@ import org.orcid.jaxb.model.message.OrcidProfile;
 
 /**
  * 
- * @author Angel Montenegro
+ * @author rcpeters
  * 
  */
-public class OrcidMessageVersionConverterImplV1_0_22ToV1_1_0 implements OrcidMessageVersionConverter {
+public class OrcidMessageVersionConverterImplV1_0_23ToV1_1_0 implements OrcidMessageVersionConverter {
 
-    private static final String FROM_VERSION = "1.0.22";
+    private static final String FROM_VERSION = "1.0.23";
     private static final String TO_VERSION = "1.1.0";
 
     @Override
