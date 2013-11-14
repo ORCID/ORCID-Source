@@ -16,6 +16,7 @@
  */
 package org.orcid.persistence.jpa.entities;
 
+import java.util.Date;
 import java.util.Set;
 
 import javax.persistence.Basic;
@@ -55,6 +56,9 @@ public class OrgDisambiguatedEntity extends BaseEntity<Long> {
     private Iso3166Country country;
     private String url;
     private String status;
+    private Date lastIndexedDate;
+    private IndexingStatus indexingStatus = IndexingStatus.PENDING;
+    private Integer popularity = 0;
     private Set<OrgDisambiguatedExternalIdentifierEntity> externalIdentifiers;
     private Set<OrgEntity> orgs;
 
@@ -145,6 +149,34 @@ public class OrgDisambiguatedEntity extends BaseEntity<Long> {
 
     public void setUrl(String url) {
         this.url = url;
+    }
+
+    @Column(name = "last_indexed_date")
+    public Date getLastIndexedDate() {
+        return lastIndexedDate;
+    }
+
+    public void setLastIndexedDate(Date lastIndexedDate) {
+        this.lastIndexedDate = lastIndexedDate;
+    }
+
+    @Basic
+    @Enumerated(EnumType.STRING)
+    @Column(name = "indexing_status")
+    public IndexingStatus getIndexingStatus() {
+        return indexingStatus;
+    }
+
+    public void setIndexingStatus(IndexingStatus indexingStatus) {
+        this.indexingStatus = indexingStatus;
+    }
+
+    public Integer getPopularity() {
+        return popularity;
+    }
+
+    public void setPopularity(Integer popularity) {
+        this.popularity = popularity;
     }
 
     @OneToMany(mappedBy = "orgDisambiguated")

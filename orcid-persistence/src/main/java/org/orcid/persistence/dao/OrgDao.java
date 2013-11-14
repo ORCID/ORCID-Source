@@ -19,6 +19,7 @@ package org.orcid.persistence.dao;
 import java.util.List;
 
 import org.orcid.jaxb.model.message.Iso3166Country;
+import org.orcid.persistence.jpa.entities.AmbiguousOrgEntity;
 import org.orcid.persistence.jpa.entities.OrgEntity;
 
 /**
@@ -28,7 +29,7 @@ import org.orcid.persistence.jpa.entities.OrgEntity;
  */
 public interface OrgDao extends GenericDao<OrgEntity, Long> {
 
-    List<OrgEntity> getAmbiguousOrgs();
+    List<AmbiguousOrgEntity> getAmbiguousOrgs();
 
     List<OrgEntity> getOrgs(String searchTerm, int firstResult, int maxResults);
 

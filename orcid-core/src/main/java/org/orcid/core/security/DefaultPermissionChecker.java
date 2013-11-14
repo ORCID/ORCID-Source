@@ -54,7 +54,7 @@ public class DefaultPermissionChecker implements PermissionChecker {
 
     // Initialise to 01-01-1970 (I was only 9 months old ;-))
     private static final Date EXPIRES_DATE = new Date(0L);
-    
+
     @Resource(name = "tokenServices")
     private DefaultTokenServices defaultTokenServices;
 
@@ -238,8 +238,13 @@ public class DefaultPermissionChecker implements PermissionChecker {
         Set<String> requestedScopes = authorizationRequest.getScope();
         if (requiredScope.isWriteOperationScope()) {
             OrcidOAuth2Authentication orcidOauth2Authentication = (OrcidOAuth2Authentication) oAuth2Authentication;
-            OrcidOauth2TokenDetail tokenDetail = orcidOauthTokenDetailService.findNonDisabledByTokenValue(orcidOauth2Authentication.getActiveToken());
-            if (removeWriteScopesPastValitity(tokenDetail)) throw new AccessControlException("Write scopes for this token have expired ");
+            String activeToken = orcidOauth2Authentication.getActiveToken();
+            if (activeToken != null) {
+                OrcidOauth2TokenDetail tokenDetail = orcidOauthTokenDetailService.findNonDisabledByTokenValue(activeToken);
+                if (removeWriteScopesPastValitity(tokenDetail)) {
+                    throw new AccessControlException("Write scopes for this token have expired ");
+                }
+            }
         }
         if (!hasRequiredScope(requestedScopes, requiredScope)) {
             throw new AccessControlException("Insufficient or wrong scope " + requestedScopes);
@@ -247,25 +252,28 @@ public class DefaultPermissionChecker implements PermissionChecker {
     }
 
     /*
-     * Removed write scopes past the specified validity,
-     * returns true if modified false otherwise
+     * Removed write scopes past the specified validity, returns true if
+     * modified false otherwise
      */
     public boolean removeWriteScopesPastValitity(OrcidOauth2TokenDetail tokenDetail) {
-        String[] scopes = tokenDetail.getScope().split("\\s+");
-        for (String scope: scopes) {
-            ScopePathType scopePathType = ScopePathType.fromValue(scope);
-            if (scopePathType.isWriteOperationScope()) { 
-                Date now = new Date();
-                OrcidRandomValueTokenServices orcidRandomValueTokenServices = (OrcidRandomValueTokenServices) defaultTokenServices;
-                if (now.getTime() > 
-                    tokenDetail.getDateCreated().getTime() + (orcidRandomValueTokenServices.getWriteValiditySeconds() * 1000)) {
-                    removeWriteScopes(tokenDetail);
-                    orcidOauthTokenDetailService.saveOrUpdate(tokenDetail);
-                    return true;
+        if (tokenDetail != null && tokenDetail.getScope() != null) {
+            String[] scopes = tokenDetail.getScope().split("\\s+");
+            for (String scope : scopes) {
+                if (scope != null && !scope.isEmpty()) {
+                    ScopePathType scopePathType = ScopePathType.fromValue(scope);
+                    if (scopePathType.isWriteOperationScope()) {
+                        Date now = new Date();
+                        OrcidRandomValueTokenServices orcidRandomValueTokenServices = (OrcidRandomValueTokenServices) defaultTokenServices;
+                        if (now.getTime() > tokenDetail.getDateCreated().getTime() + (orcidRandomValueTokenServices.getWriteValiditySeconds() * 1000)) {
+                            removeWriteScopes(tokenDetail);
+                            orcidOauthTokenDetailService.saveOrUpdate(tokenDetail);
+                            return true;
+                        }
+                        break;
+                    }
                 }
-                break;
             }
-        }              
+        }
         return false;
     }
 

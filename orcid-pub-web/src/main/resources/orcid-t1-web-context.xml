@@ -33,7 +33,7 @@
 
     <bean id="jsonpCallbackFilter" class="org.orcid.core.web.filters.JsonpCallbackFilter" />
     
-    <alias name="t1OrcidApiServiceDelegatorV1_0_22" alias="t1OrcidApiServiceDelegatorLatest"/>
+    <alias name="t1OrcidApiServiceDelegatorV1_0_23" alias="t1OrcidApiServiceDelegatorLatest"/>
     
     <bean id="t1OrcidApiServiceImplLatest" class="org.orcid.api.t1.server.T1OrcidApiServiceImplLatest">
         <property name="orcidApiServiceDelegator" ref="t1OrcidApiServiceDelegatorLatest"/>
@@ -109,6 +109,14 @@
     <bean id="t1OrcidApiServiceDelegatorV1_0_22" class="org.orcid.api.common.delegator.impl.OrcidApiServiceVersionedDelegatorImpl">
         <property name="externalVersion" value="1.0.22"/>
         <property name="outgoingValidationManager" ref="outgoingValidationManagerV1_0_22"/>
+    </bean>
+
+	<bean id="t1OrcidApiServiceImplV1_0_23" class="org.orcid.api.t1.server.T1OrcidApiServiceImplV1_0_23">
+        <property name="orcidApiServiceDelegator" ref="t1OrcidApiServiceDelegatorV1_0_23"/>
+    </bean>
+    <bean id="t1OrcidApiServiceDelegatorV1_0_23" class="org.orcid.api.common.delegator.impl.OrcidApiServiceVersionedDelegatorImpl">
+        <property name="externalVersion" value="1.0.23"/>
+        <property name="outgoingValidationManager" ref="outgoingValidationManagerV1_0_23"/>
     </bean>
     
     <bean id="t1OrcidApiServiceImplV1_1_0" class="org.orcid.api.t1.server.T1OrcidApiServiceImplV1_1_0">

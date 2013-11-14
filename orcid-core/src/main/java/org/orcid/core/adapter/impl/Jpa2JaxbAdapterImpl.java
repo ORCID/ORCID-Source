@@ -495,15 +495,11 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         affiliation.setSource(getSource(orgAffiliationRelationEntity));
 
         OrgDisambiguatedEntity orgDisambiguatedEntity = orgAffiliationRelationEntity.getOrg().getOrgDisambiguated();
-        if (orgDisambiguatedEntity == null) {
-
-            affiliation.setAffiliationAddress(getAddress(orgAffiliationRelationEntity.getOrg()));
-            affiliation.setAffiliationName(orgAffiliationRelationEntity.getOrg().getName());
-        } else {
-            affiliation.setAffiliationAddress(getAddress(orgDisambiguatedEntity));
-            affiliation.setAffiliationName(orgDisambiguatedEntity.getName());
+        if (orgDisambiguatedEntity != null) {
             affiliation.setDisambiguatedAffiliation(getDisambiguatedAffiliation(orgDisambiguatedEntity));
         }
+        affiliation.setAffiliationAddress(getAddress(orgAffiliationRelationEntity.getOrg()));
+        affiliation.setAffiliationName(orgAffiliationRelationEntity.getOrg().getName());
 
         return affiliation;
     }

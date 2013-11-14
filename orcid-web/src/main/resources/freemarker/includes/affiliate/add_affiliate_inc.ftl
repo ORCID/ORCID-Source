@@ -21,7 +21,9 @@
 		<div class="lightbox-container"> 
 		<div class="row">
 			<div class="col-md-11 col-sm-10 col-xs-10">
-				<h1 class="lightbox-title pull-left"><@orcid.msg 'manual_affiliation_form_contents.add_affiliation'/></h1>				
+				<h1 ng-show="addAffType == null || addAffType == undefined " class="lightbox-title pull-left"><@orcid.msg 'manual_affiliation_form_contents.add_affiliation'/></h1>
+				<h1 ng-show="addAffType == 'education'" class="lightbox-title pull-left"><@orcid.msg 'manual_affiliation_form_contents.add_education'/></h1>
+				<h1 ng-show="addAffType == 'employment'" class="lightbox-title pull-left"><@orcid.msg 'manual_affiliation_form_contents.add_employment'/></h1>				
 			</div>
 			<div class="col-md-1 col-sm-2 col-xs-2">
 				<a class="btn pull-right close-button" ng-click="closeModal()">X</a>
@@ -30,13 +32,13 @@
 
 		<div class="row">
 			<div class="col-md-6 col-sm-6 col-xs-12">
-				<div class="control-group" ng-show="editAffiliation.disambiguatedAffiliationIdentifier">
+				<div class="control-group" ng-show="editAffiliation.disambiguatedAffiliationSourceId">
 					<div style="position: absolute; left: 300px"><label><a class="icon-remove-sign grey" ng-click="removeDisambiguatedAffiliation()">&nbsp;<@orcid.msg 'common.remove'/></a></label></div>
 					<label>Affiliation</label>
 				    <div class="relative"  style="font-weight: strong;">
 						<span ng-bind="disambiguatedAffiliation.value"></span> <br />
 						<div>
-						    <span ng-bind="disambiguatedAffiliation.city"></span><span ng-bind="disambiguatedAffiliation.region"></span>,<span ng-bind="disambiguatedAffiliation.orgType"></span>
+						    <span ng-bind="disambiguatedAffiliation.city"></span><span ng-show="disambiguatedAffiliation.region"> (<span ng-bind="disambiguatedAffiliation.region"></span>)</span>, <span ng-bind="disambiguatedAffiliation.orgType"></span>
 						</div>
 					</div>
 				</div>
@@ -109,7 +111,7 @@
 					</div>
 				</div>
 
-				<div class="control-group">
+				<div ng-show="addAffType != 'education' && addAffType != 'employment'" class="control-group">
 		    		<label class="relative"><@orcid.msg 'manual_affiliation_form_contents.labelaffiliationtype'/></label>
 		    		<div class="relative">
 			    		<select id="affiliationType" name="affiliationType" class="input-xlarge" ng-model="editAffiliation.affiliationType.value">

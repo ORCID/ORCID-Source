@@ -21,6 +21,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.net.URI;
+import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -30,10 +31,12 @@ import org.codehaus.jettison.json.JSONObject;
 import org.junit.After;
 import org.junit.Before;
 import org.orcid.api.t2.T2OAuthAPIService;
+import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.jaxb.model.clientgroup.OrcidClient;
 import org.orcid.jaxb.model.clientgroup.OrcidClientGroup;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.ScopePathType;
+import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.ContextConfiguration;
 
@@ -43,12 +46,16 @@ import com.sun.jersey.core.util.MultivaluedMapImpl;
 
 @ContextConfiguration(locations = { "classpath:test-oauth-orcid-t2-client-context.xml" })
 public abstract class BaseT2OrcidOAuthApiClientIntegrationTest {
+    
+    @Resource
+    private OrcidOauth2TokenDetailService orcidOauthTokenDetailService;
 
     protected String clientSecret;
     protected String clientId;
     protected String groupOrcid;
     protected String orcid;
     protected String accessToken;
+    protected String blankScopeToken;
     protected String grantType = "client_credentials";
 
     @Resource
@@ -64,10 +71,20 @@ public abstract class BaseT2OrcidOAuthApiClientIntegrationTest {
     protected URI t2BaseUrl;
 
     protected void createAccessTokenFromCredentials() throws Exception {
-        createAccessTokenFromCredentials(ScopePathType.ORCID_PROFILE_CREATE.value() + ' ' + ScopePathType.ORCID_PROFILE_READ_LIMITED.value());
+        this.accessToken = createAccessTokenFromCredentials(ScopePathType.ORCID_PROFILE_CREATE.value() + ' ' + ScopePathType.ORCID_PROFILE_READ_LIMITED.value());
+        assertNotNull(this.accessToken);
     }
+    
+    protected void createBlankTokenFromCredentials() throws Exception {
+        this.blankScopeToken = createAccessTokenFromCredentials(ScopePathType.ORCID_PROFILE_CREATE.value());
+        OrcidOauth2TokenDetail orcidOauth2TokenDetail = orcidOauthTokenDetailService.findNonDisabledByTokenValue(blankScopeToken);
+        orcidOauth2TokenDetail.setScope("");
+        orcidOauthTokenDetailService.saveOrUpdate(orcidOauth2TokenDetail);
+        assertNotNull(this.blankScopeToken);
+    }
+    
 
-    protected void createAccessTokenFromCredentials(String scopes) throws Exception {
+    protected String createAccessTokenFromCredentials(String scopes) throws Exception {
         MultivaluedMap<String, String> params = new MultivaluedMapImpl();
         params.add("client_id", clientId);
         params.add("client_secret", clientSecret);
@@ -77,8 +94,7 @@ public abstract class BaseT2OrcidOAuthApiClientIntegrationTest {
         assertEquals(200, clientResponse.getStatus());
         String body = clientResponse.getEntity(String.class);
         JSONObject jsonObject = new JSONObject(body);
-        this.accessToken = (String) jsonObject.get("access_token");
-        assertNotNull(this.accessToken);
+        return (String) jsonObject.get("access_token");
     }
 
     @Before
@@ -90,7 +106,7 @@ public abstract class BaseT2OrcidOAuthApiClientIntegrationTest {
         this.clientId = complexityClient.getClientId();
         this.clientSecret = complexityClient.getClientSecret();
         createAccessTokenFromCredentials();
-
+        createBlankTokenFromCredentials();
     }
 
     @After

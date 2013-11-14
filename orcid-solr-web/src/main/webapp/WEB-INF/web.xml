@@ -69,7 +69,19 @@
        <env-entry-type>java.lang.String</env-entry-type>
     </env-entry>
    
-   -->  
+   -->
+   
+  <filter>
+    <display-name>SolrMigrationFilter</display-name>
+    <filter-name>SolrMigrationFilter</filter-name>
+    <filter-class>org.orcid.solr.filter.SolrMigrationFilter</filter-class>
+  </filter>
+  <filter-mapping>
+    <filter-name>SolrMigrationFilter</filter-name>
+    <url-pattern>/SolrMigrationFilter</url-pattern>
+  </filter-mapping>
+   
+   
   <!-- Any path (name) registered in solrconfig.xml will be sent to that filter -->
   <filter>
     <filter-name>SolrRequestFilter</filter-name>

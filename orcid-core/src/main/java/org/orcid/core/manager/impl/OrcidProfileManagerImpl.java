@@ -57,7 +57,7 @@ import org.orcid.core.manager.OrcidGenerationManager;
 import org.orcid.core.manager.OrcidIndexManager;
 import org.orcid.core.manager.OrcidProfileCleaner;
 import org.orcid.core.manager.OrcidProfileManager;
-import org.orcid.core.oauth.OrcidProfileUserDetails;
+import org.orcid.core.manager.SourceManager;
 import org.orcid.core.security.OrcidWebRole;
 import org.orcid.core.security.visibility.aop.VisibilityControl;
 import org.orcid.core.utils.OrcidJaxbCopyUtils;
@@ -124,8 +124,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.oauth2.provider.AuthorizationRequest;
-import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
@@ -198,6 +196,9 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
     @Resource
     private GenericDao<EmailEventEntity, Long> emailEventDao;
 
+    @Resource
+    private SourceManager sourceManager;
+
     private int claimWaitPeriodDays = 10;
 
     private int claimReminderAfterDays = 8;
@@ -250,7 +251,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         }
 
         // Add source to works
-        String amenderOrcid = retrieveAmenderOrcid();
+        String amenderOrcid = sourceManager.retrieveSourceOrcid();
         addSourceToWorks(orcidProfile, amenderOrcid);
 
         ProfileEntity profileEntity = adapter.toProfileEntity(orcidProfile);
@@ -273,7 +274,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
     @Override
     @Transactional
     public OrcidProfile updateOrcidProfile(OrcidProfile orcidProfile) {
-        String amenderOrcid = retrieveAmenderOrcid();
+        String amenderOrcid = sourceManager.retrieveSourceOrcid();
         ProfileEntity existingProfileEntity = profileDao.find(orcidProfile.getOrcid().getValue());
         if (existingProfileEntity != null) {
             profileDao.removeChildrenWithGeneratedIds(existingProfileEntity);
@@ -283,6 +284,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         dedupeProfileWorks(orcidProfile);
         dedupeAffiliations(orcidProfile);
         addSourceToEmails(orcidProfile, existingProfileEntity, amenderOrcid);
+        addSourceToAffiliations(orcidProfile, amenderOrcid);
         addSourceToWorks(orcidProfile, amenderOrcid);
         addSourceToAffiliations(orcidProfile, amenderOrcid);
         ProfileEntity profileEntity = adapter.toProfileEntity(orcidProfile, existingProfileEntity);
@@ -295,21 +297,6 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         putInCache(updatedOrcidProfile);
         notificationManager.sendAmendEmail(updatedOrcidProfile, amenderOrcid);
         return updatedOrcidProfile;
-    }
-
-    private String retrieveAmenderOrcid() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null) {
-            return null;
-        }
-        if (OAuth2Authentication.class.isAssignableFrom(authentication.getClass())) {
-            AuthorizationRequest authorizationRequest = ((OAuth2Authentication) authentication).getAuthorizationRequest();
-            return authorizationRequest.getClientId();
-        }
-        if (OrcidProfileUserDetails.class.isAssignableFrom(authentication.getPrincipal().getClass())) {
-            return ((OrcidProfileUserDetails) authentication.getPrincipal()).getRealOrcid();
-        }
-        return null;
     }
 
     /**
@@ -598,7 +585,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
     }
 
     private boolean isBeingAccessedByCreator(OrcidProfile orcidProfile) {
-        String amenderOrcid = retrieveAmenderOrcid();
+        String amenderOrcid = sourceManager.retrieveSourceOrcid();
         Source source = orcidProfile.getOrcidHistory().getSource();
         if (NullUtils.noneNull(amenderOrcid, source)) {
             return amenderOrcid.equals(source.getSourceOrcid().getValue());
@@ -922,7 +909,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         Boolean claimed = existingProfile.getOrcidHistory().isClaimed();
         setWorkPrivacy(updatedOrcidWorks, workVisibilityDefault, claimed == null ? false : claimed);
         updatedOrcidWorks = dedupeWorks(updatedOrcidWorks);
-        String amenderOrcid = retrieveAmenderOrcid();
+        String amenderOrcid = sourceManager.retrieveSourceOrcid();
         addSourceToWorks(updatedOrcidWorks, amenderOrcid);
         List<OrcidWork> updatedOrcidWorksList = updatedOrcidWorks.getOrcidWork();
         checkForAlreadyExistingWorks(existingOrcidWorks, updatedOrcidWorksList);
@@ -1182,7 +1169,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         Boolean claimed = existingProfile.getOrcidHistory().isClaimed();
         setAffiliationPrivacy(updatedAffiliations, workVisibilityDefault, claimed == null ? false : claimed);
         updatedAffiliations = dedupeAffiliations(updatedAffiliations);
-        String amenderOrcid = retrieveAmenderOrcid();
+        String amenderOrcid = sourceManager.retrieveSourceOrcid();
         addSourceToAffiliations(updatedAffiliations, amenderOrcid);
         List<Affiliation> updatedAffiliationsList = updatedAffiliations.getAffiliation();
         checkForAlreadyExistingAffiliations(existingAffiliations, updatedAffiliationsList);

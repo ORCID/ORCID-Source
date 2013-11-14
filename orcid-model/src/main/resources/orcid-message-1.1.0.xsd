@@ -449,20 +449,19 @@
 	<xs:element name="affiliation">
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element name="name" type="orcid:non-empty-string" />
-				<xs:element name="type" type="orcid:affiliation-type"
-					minOccurs="0" />
+				<xs:element name="name" type="orcid:non-empty-string"/>
+				<xs:element name="type" type="orcid:affiliation-type" />
 				<xs:element name="address" type="orcid:affiliation-address" />
 				<xs:element name="department-name" type="orcid:non-empty-string"
-					minOccurs="0" />
+					minOccurs="0" maxOccurs="1" />
 				<xs:element name="role-title" type="orcid:non-empty-string"
-					minOccurs="0" />
+					minOccurs="0" maxOccurs="1" />
 				<xs:element name="start-date" type="orcid:fuzzy-date"
-					minOccurs="0" />
-				<xs:element name="end-date" minOccurs="0" />
-				<xs:element ref="orcid:source" minOccurs="0" />
+					minOccurs="0" maxOccurs="1" />
+				<xs:element name="end-date" minOccurs="0" maxOccurs="1" />
+				<xs:element ref="orcid:source" minOccurs="0"  maxOccurs="1" />
 				<xs:element name="disambiguated-affiliation" type="orcid:disambiguated-affiliation"
-					minOccurs="0" />
+					minOccurs="0" maxOccurs="1" />
 			</xs:sequence>
 			<xs:attributeGroup ref="orcid:put-code" />
 			<xs:attributeGroup ref="orcid:visibility" />
@@ -1922,6 +1921,7 @@
 			<xs:enumeration value="ZM" />
 			<xs:enumeration value="ZW" />
 			<xs:enumeration value="TW" />
+			<xs:enumeration value="XK"/>
 		</xs:restriction>
 	</xs:simpleType>
 	<xs:simpleType name="iso-3166-country-or-empty">

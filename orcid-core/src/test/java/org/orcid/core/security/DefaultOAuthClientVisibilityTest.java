@@ -22,6 +22,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
@@ -84,7 +85,10 @@ public class DefaultOAuthClientVisibilityTest extends BaseTest {
         // visibilities
         OrcidOAuth2Authentication oAuth2Authentication = new OrcidOAuth2Authentication(request, oauth2UserAuthentication, "made-up-token");
 
-        when(orcidOauth2TokenDetailService.findNonDisabledByTokenValue(any(String.class))).thenReturn(new OrcidOauth2TokenDetail());
+        OrcidOauth2TokenDetail tokenDetail = new OrcidOauth2TokenDetail();
+        tokenDetail.setScope("/orcid-bio/external-identifiers/create");
+        tokenDetail.setDateCreated(new Date());
+        when(orcidOauth2TokenDetailService.findNonDisabledByTokenValue(any(String.class))).thenReturn(tokenDetail);
         ScopePathType scopePathType = ScopePathType.ORCID_BIO_EXTERNAL_IDENTIFIERS_CREATE;
         Set<Visibility> visibilitiesForClient = permissionChecker.obtainVisibilitiesForAuthentication(oAuth2Authentication, scopePathType, getOrcidMessage());
         assertTrue(visibilitiesForClient.size() == 3);

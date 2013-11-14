@@ -171,5 +171,30 @@
             INSERT INTO org_disambiguated(id, source_id, source_url, source_type, name, city, country, date_created, last_modified) VALUES (nextval('org_disambiguated_seq'), 'Z', 'http://orcid.org', 'TEST', 'Z affiliation', 'Z town', 'BM', now(), now());
         </sql>
     </changeSet>
+    
+    <changeSet id="ADD-INDEXING-AND-POPULARTIY-COLUMNS-TO-ORG-DISAMBIGUATED" author="Will Simpson">
+        <addColumn tableName="org_disambiguated">
+            <column name="indexing_status" type="VARCHAR(20)" defaultValue="PENDING">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <addColumn tableName="org_disambiguated">
+            <column name="last_indexed_date" type="TIMESTAMP WITH TIME ZONE"/>
+        </addColumn>
+        <addColumn tableName="org_disambiguated">
+            <column name="popularity" type="int" defaultValue="0">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+    
+    <changeSet id="ADD-VIEW-OF-AMBIGUOUS-ORGS" author="Will Simpson">
+        <createView viewName="ambiguous_org">
+            SELECT o.id, o.name, o.city, o.region, o.country, o.url, o.source_id, o.date_created, o.last_modified, COUNT(*) used_count
+            FROM org o LEFT JOIN org_affiliation_relation oar ON oar.org_id = o.id
+            WHERE o.org_disambiguated_id IS NULL
+            GROUP BY o.id, o.name, o.city, o.region, o.country, o.url, o.source_id, o.date_created, o.last_modified
+        </createView>    
+    </changeSet>
 
 </databaseChangeLog>
