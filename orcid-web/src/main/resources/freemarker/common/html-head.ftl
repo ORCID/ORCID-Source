@@ -31,6 +31,9 @@
       <#if (workIdsJson)??>
         orcidVar.workIds = JSON.parse("${workIdsJson}");
       </#if>
+      <#if (affiliationIdsJson)??>
+        orcidVar.affiliationIdsJson = JSON.parse("${affiliationIdsJson}");
+      </#if>
       <#if (profile)??>
         orcidVar.orcidId = '${(profile.orcid.value)!}';
       <#else>
