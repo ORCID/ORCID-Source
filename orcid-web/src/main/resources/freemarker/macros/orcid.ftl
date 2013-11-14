@@ -25,8 +25,8 @@
  -->
 
 
-<#macro privacyToggle angularModel publicClick limitedClick privateClick popoverStyle="" arrowStyle="">
-	<div class="relative">
+<#macro privacyToggle angularModel publicClick limitedClick privateClick popoverStyle="" arrowStyle="">	
+	<div class="relative" id="privacy-bar">
 		<ul class="privacyToggle">
 			<li class="publicActive" ng-class="{publicInActive: ${angularModel} != 'PUBLIC'}"><a href="" title="<@orcid.msg 'manage.lipublic' />" ng-click="${publicClick}"></a></li>
 			<li class="limitedActive" ng-class="{limitedInActive: ${angularModel} != 'LIMITED'}"><a href="" title="<@orcid.msg 'manage.lilimited' />" ng-click="${limitedClick}"></a></li>

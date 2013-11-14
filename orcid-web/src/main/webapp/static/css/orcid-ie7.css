@@ -147,10 +147,6 @@ a#settings-button{
 	margin:15px;
 }
 
-.relative{
-	z-index:9999;
-}
-
 .workspace-right {
 	padding: 15px !important;
 }
@@ -176,4 +172,22 @@ ul.workspace-private-toolbar > li{
 
 .show-work-info{
 	margin-top: 7px;
+}
+
+.workspace-toolbar .more-info{
+	margin-left: 25px;
+}
+
+.workspace-toolbar .more-info,
+.workspace-toolbar .glyphicon-trash{
+	margin-top: 25px;	
+}
+
+.workspace-toolbar .workspace-private-toolbar{
+	margin-top: -25px;
+}
+
+.more-info .lightbox-container{
+	padding-right: 0;
+	padding-bottom: 0;
 }

@@ -55,7 +55,7 @@
              		</div>
              		<div class="control-group"> 
                         <label for="creditName">${springMacroRequestContext.getMessage("manage_bio_settings.labelpublishedname")}</label>
-             			<div class="relative">
+             			<div class="relative ie7-zi-fix-top">
              			    <@spring.formInput "changePersonalInfoForm.creditName" 'class="input-xlarge"'/>
              			    <label class="visibility-lbl">
              			        ${springMacroRequestContext.getMessage("manage_bio_settings.labelvisibility")}
@@ -66,7 +66,7 @@
              		</div>
              		<div class="control-group">
                         <label for="creditName">${springMacroRequestContext.getMessage("manage_bio_settings.othernames")}</label>
-                        <div class="relative">
+                        <div class="relative ie7-zi-fix-bottom">
              			<@spring.formInput "changePersonalInfoForm.otherNamesDelimited" 'class="input-xlarge"'/>
              			<label class="visibility-lbl">
              			    ${springMacroRequestContext.getMessage("manage_bio_settings.labelvisibility")}
@@ -84,7 +84,7 @@
              			
              	<div class="control-group">
                     <label for="keywordsDelimited">${springMacroRequestContext.getMessage("manage_bio_settings.labelkeywords")}</label>
-                	<div class="relative">
+                	<div class="relative ie7-zi-fix-top">
                 	    <@spring.formInput "changePersonalInfoForm.keywordsDelimited", 'class="input-xlarge"'/>
                 	    <label class="visibility-lbl">
                             ${springMacroRequestContext.getMessage("manage_bio_settings.labelvisibility")}
@@ -96,7 +96,7 @@
                 
              	<div class="control-group">
                     <label for="biography">${springMacroRequestContext.getMessage("manage_bio_settings.labelcountry")}</label>
-                    <div class="relative">
+                    <div class="relative ie7-zi-fix-bottom">
                     	<select id="isoCountryCode" name="isoCountryCode">
                     		<option value=""><@orcid.msg 'org.orcid.persistence.jpa.entities.CountryIsoEntity.empty' /></option>
 	                    	<#list isoCountries?keys as key>

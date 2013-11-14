@@ -310,20 +310,19 @@
         	
         };
     };    
-    
 
     /*============================================================
         Page initialisation
     ============================================================*/
 
-    var init = function() { 
+    var init = function() {
         //handleNews();
         searchFilters();
         //secondaryNavCleanup();
         toolTips();
         popupHandler();
         menuHack();
-        mobileMenuHandler();              
+        mobileMenuHandler();      
     };
 
     init();

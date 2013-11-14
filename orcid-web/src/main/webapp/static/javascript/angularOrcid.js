@@ -108,17 +108,6 @@ orcidNgModule.filter('urlWithHttp', function(){
 	};
 });
 
-orcidNgModule.filter('eduAffFilter', function(){
-	return function(arr){
-		var newArray  = new Array();
-		for (idx in arr) {
-			console.log(arr[idx]);
-		}
-	    return newArray;
-	};
-});
-
-
 function emptyTextField(field) {
 	if (field != null 
 			&& field.value != null
@@ -1559,7 +1548,7 @@ function WorkCtrl($scope, $compile, worksSrvc) {
 	
 	$scope.toggleDisplayWorks = function () {
 		$scope.displayWorks = !$scope.displayWorks;
-	};
+	};	
 	
 	$scope.addExternalIdentifier = function () {
 		$scope.editWork.workExternalIdentifiers.push({workExternalIdentifierId: { value: ""}, workExternalIdentifierType: {value: ""} });
@@ -1682,6 +1671,25 @@ function WorkCtrl($scope, $compile, worksSrvc) {
 			}).fail(function() { 
 		    	console.log("Error fetching work: " + value);
 		    });
+		}else {
+			if(isIE() == 7){
+				var zIndexParent = 999999;
+		    	var zIndexChild = 500;	    	
+		    	var zIndexLastChild = 400;
+		    	$('.workspace-toolbar').each(function(){
+		    	$(this).css('z-index', zIndexParent);    			
+		    		--zIndexParent;    			    		
+		    	});	 
+		    	$('.workspace-private-toolbar').each(function(){     			
+		    		$(this).css('z-index', zIndexChild);
+		    		--zIndexChild;
+		    	});
+		    	
+		    	$('#privacy-bar').each(function(){
+		    		$(this).css('z-index', zIndexLastChild);
+		    		--zIndexLastChild;
+		    	});
+			}
 		}
 	}; 	
 
@@ -1706,6 +1714,7 @@ function WorkCtrl($scope, $compile, worksSrvc) {
 	    	console.log("error fetching works");
 		});
 	};
+		
 	
 	$scope.renderTranslatedTitleInfo = function(workIdx) {		
 		var info = null; 
