@@ -96,7 +96,7 @@
                 <div class="alert alert-info"><strong><@orcid.msg 'workspace.addinformationaboutyou'/></strong></div>
         		<div class="row">
         			<!-- Works -->
-	        		<div class="workspace-overview col-md-6 col-sm-6 col-xs-6" id="works-overview" ng-controller="WorkOverviewCtrl">
+	        		<div class="workspace-overview col-md-3 col-sm-3 col-xs-3" id="works-overview" ng-controller="WorkOverviewCtrl">
 	        			<a href="#workspace-publications" class="overview-count"><span ng-bind="works.length"></span></a>
 	        			<a href="#workspace-publications" class="overview-title"><@orcid.msg 'workspace.Works'/></a>
 	                    <br />	                    	
@@ -104,20 +104,20 @@
 	        		</div>
 	        		<!-- Afilliations -->
 					<#if RequestParameters['affiliations']??>
-		                <div class="workspace-overview col-md-6 col-sm-6 col-xs-6" id="educations-overview" ng-controller="EducationOverviewCtrl">
+		                <div class="workspace-overview col-md-3 col-sm-3 col-xs-3" id="educations-overview" ng-controller="EducationOverviewCtrl">
 		                    <a href="#workspace-educations" class="overview-count"><span ng-bind="educations.length"></span></a>
 		                    <a href="#workspace-educations" class="overview-title"><@orcid.msg 'org.orcid.jaxb.model.message.AffiliationType.education'/></a>
 		                    <br />
 		                    <a href="#workspace-educations" class="btn-update no-icon"><@orcid.msg 'org.orcid.jaxb.model.message.AffiliationType.education'/></a>
 		                </div>
-		                <div class="workspace-overview col-md-6 col-sm-6 col-xs-6" id="educations-overview" ng-controller="EmploymentOverviewCtrl">
+		                <div class="workspace-overview col-md-3 col-sm-3 col-xs-3" id="educations-overview" ng-controller="EmploymentOverviewCtrl">
 		                    <a href="#workspace-employments" class="overview-count"><span ng-bind="employments.length"></span></a>
 		                    <a href="#workspace-employments" class="overview-title"><@orcid.msg 'org.orcid.jaxb.model.message.AffiliationType.employment'/></a>
 		                    <br />
 		                    <a href="#workspace-employments" class="btn-update no-icon"><@orcid.msg 'org.orcid.jaxb.model.message.AffiliationType.employment'/></a>
 		                </div>
 		             <#else>
-		                <div class="workspace-overview col-md-6 col-sm-6 col-xs-6" id="affiliations-overview" ng-controller="AffiliationOverviewCtrl">
+		                <div class="workspace-overview col-md-3 col-sm-3 col-xs-3" id="affiliations-overview" ng-controller="AffiliationOverviewCtrl">
 		                    <a href="#workspace-affiliations" class="overview-count"><span ng-bind="affiliations.length"></span></a>
 		                    <a href="#workspace-affiliations" class="overview-title"><@orcid.msg 'workspace_bio.Affiliations'/></a>
 		                    <br />
@@ -129,16 +129,9 @@
 		                </div>
 		             </#if>	                
 	                <!-- Grants -->     
-	        		<div class="workspace-overview  col-md-6 col-sm-6 col-xs-6">
+	        		<div class="workspace-overview  col-md-3 col-sm-3 col-xs-3">
 	        			<a href="#workspace-grants" class="overview-count">${(profile.orcidActivities.orcidGrants.orcidGrant?size)!0}</a>
 	        			<a href="#workspace-grants" class="overview-title"><@orcid.msg 'workspace.Grants'/></a>
-	        			<br />
-	        			<a target="_blank" href="http://support.orcid.org/forums/179657-coming-soon" class="btn-update no-icon"><@orcid.msg 'workspace.ComingSoon'/></a>
-	        		</div>
-	        		<!-- Patents -->
-	        		<div class="workspace-overview  col-md-6 col-sm-6 col-xs-6">
-		        		<a href="#workspace-patents" class="overview-count">${(profile.orcidActivities.orcidPatents.orcidPatent?size)!0}</a>
-	        			<a href="#workspace-patents" class="overview-title"><@orcid.msg 'workspace.Patents'/></a>
 	        			<br />
 	        			<a target="_blank" href="http://support.orcid.org/forums/179657-coming-soon" class="btn-update no-icon"><@orcid.msg 'workspace.ComingSoon'/></a>
 	        		</div>
