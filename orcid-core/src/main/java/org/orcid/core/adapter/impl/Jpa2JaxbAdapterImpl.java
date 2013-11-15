@@ -814,7 +814,8 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         //Set the source name
         //If it is a client, lets use the source_name if it is public
         if(sourceProfile.getOrcidType() != null && sourceProfile.getOrcidType().equals(OrcidType.CLIENT)) {
-            if(sourceProfile.getCreditNameVisibility() == null || Visibility.PUBLIC.equals(sourceProfile.getCreditNameVisibility())) {
+            Visibility workSourceVisibility = (sourceProfile.getCreditNameVisibility() == null) ? OrcidVisibilityDefaults.CREDIT_NAME_DEFAULT.getVisibility() : sourceProfile.getCreditNameVisibility();            
+            if(Visibility.PUBLIC.equals(workSourceVisibility)) {
                 workSource.setSourceName(sourceProfile.getCreditName());
             }
         } else {
