@@ -41,7 +41,7 @@
             <div id="buttons">
                 <div class="relative">
                     <button class="btn btn-primary" type="submit">${springMacroRequestContext.getMessage("oauth_sign_in.h3signin")}</button>
-                    <span id="ajax-loader" class="hide"><i id="ajax-loader" class="icon-spinner icon-large icon-spin green"></i></span>
+                    <span id="ajax-loader" class="hide"><i id="ajax-loader" class="glyphicon glyphicon-refresh spin x2 green"></i></span>
                 </div>
                 <div class="relative margin-top-box">
                 	<a href="<@spring.url '/reset-password'/>">${springMacroRequestContext.getMessage("oauth_sign_in.forgottenpassword")}</a>

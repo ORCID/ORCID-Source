@@ -304,7 +304,7 @@
 						<a href="" ng-click="closeModal()"><@orcid.msg 'manage.deleteExternalIdentifier.cancel'/></a>
 						&nbsp;
 						<span ng-show="addingWork">
-							<i class="icon-spinner icon-2x icon-spin  green"></i>
+							<i class="glyphicon glyphicon-refresh spin x2 green"></i>
 						</span>
 						<span ng-show="editWork.errors.length > 0" class="alert" style>Please fix above errors</span>					
 					</div>
