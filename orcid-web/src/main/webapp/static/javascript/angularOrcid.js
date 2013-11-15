@@ -48,7 +48,7 @@ orcidNgModule.factory("affiliationsSrvc", ['$rootScope', function ($rootScope) {
 			affiliations: new Array(),
 			educations: new Array(),
 			employments: new Array(),
-			loadingAff: true,
+			loading: false,
 			affiliationsToAddIds: null,
 	    	addAffiliationToScope: function(path) {
 	    		if(serv.affiliationsToAddIds.length != 0 ) {
@@ -73,8 +73,9 @@ orcidNgModule.factory("affiliationsSrvc", ['$rootScope', function ($rootScope) {
 	    		    	console.log("Error fetching affiliation: " + value);
 	    		    });
 	    		} else {
-	    			serv.loadingAff = false;
-	    			$rootScope.$apply();
+	    			$rootScope.$apply( function() {
+	    				serv.loading = false;
+	    			});
 	    		};
 	    	},
 	    	setIdsToAdd: function(ids) {
@@ -82,7 +83,7 @@ orcidNgModule.factory("affiliationsSrvc", ['$rootScope', function ($rootScope) {
 	    	},
 	    	getAffiliations: function(path) {
 	    		//clear out current affiliations
-	    		serv.loadingAff = true;
+	    		serv.loading = true;
 	    		serv.affiliationsToAddIds = null;
 	    		serv.affiliations.length = 0;
 	    		serv.educations.length = 0;
@@ -155,6 +156,7 @@ orcidNgModule.factory("affiliationsSrvc", ['$rootScope', function ($rootScope) {
 
 orcidNgModule.factory("worksSrvc", function () {
 	var serv = {
+		    loading: false,
 			works: new Array()
 	}; 
 	return serv;
@@ -1237,20 +1239,17 @@ function PersonalInfoCtrl($scope, $compile){
 	};
 };
 
-function WorkOverviewCtrl($scope, $compile, worksSrvc){
-	$scope.works = worksSrvc.works;
-}
-
-function AffiliationOverviewCtrl($scope, $compile, affiliationsSrvc){
-	$scope.affiliations = affiliationsSrvc.affiliations;
-}
-
-function EducationOverviewCtrl($scope, $compile, affiliationsSrvc){
-	$scope.educations = affiliationsSrvc.educations;
-}
-
-function EmploymentOverviewCtrl($scope, $compile, affiliationsSrvc){
-	$scope.employments = affiliationsSrvc.employments;
+function WorkspaceSummaryCtrl($scope, $compile, affiliationsSrvc, worksSrvc){
+	$scope.worksSrvc = worksSrvc;
+	$scope.affiliationsSrvc = affiliationsSrvc;
+	$scope.showAddAlert = function () {
+		if (worksSrvc.loading == false && affiliationsSrvc.loading == false
+				&& worksSrvc.works.length == 0 
+				&& affiliationsSrvc.educations.length == 0
+				&& affiliationsSrvc.employments.length == 0)
+			return true;
+		return false;
+	};
 }
 
 function PublicEduAffiliation($scope, $compile, $filter, affiliationsSrvc){
@@ -1481,7 +1480,7 @@ function AffiliationCtrl($scope, $compile, $filter, affiliationsSrvc){
 
 function PublicWorkCtrl($scope, $compile, worksSrvc) {
 	$scope.works = worksSrvc.works;
-	$scope.numOfWorksToAdd = null;
+	$scope.worksSrvc = worksSrvc;
 	$scope.showBibtex = true;
 	$scope.bibtexCitations = {};
 
@@ -1491,6 +1490,7 @@ function PublicWorkCtrl($scope, $compile, worksSrvc) {
 
     $scope.addWorkToScope = function() {
 		if($scope.worksToAddIds.length != 0 ) {
+			$scope.worksSrvc.loading = true;
 			var workIds = $scope.worksToAddIds.splice(0,20).join();
 			$.ajax({
 				url: $('body').data('baseurl') + orcidVar.orcidId +'/works.json?workIds=' + workIds,
@@ -1507,8 +1507,13 @@ function PublicWorkCtrl($scope, $compile, worksSrvc) {
 					setTimeout(function () {$scope.addWorkToScope();},50);
 				}
 			}).fail(function() { 
+				$scope.$apply(function() {
+					$scope.worksSrvc.loading = false;
+				});
 		    	console.log("Error fetching works: " + workIds);
 		    });
+		} else {
+			$scope.worksSrvc.loading = false;
 		}
 	};     
 	  
@@ -1522,15 +1527,14 @@ function PublicWorkCtrl($scope, $compile, worksSrvc) {
 		return info;
 	};
 		
-	$scope.numOfWorksToAdd = orcidVar.workIds.length;
 	$scope.worksToAddIds = orcidVar.workIds;	
 	$scope.addWorkToScope();	
 }
 
 function WorkCtrl($scope, $compile, worksSrvc) {
 	$scope.displayWorks = true;
+	$scope.worksSrvc = worksSrvc;
 	$scope.works = worksSrvc.works;
-	$scope.numOfWorksToAdd = null;
 	$scope.showBibtex = true;
 	$scope.bibtexCitations = {};
 	$scope.editTranslatedTitle = false;
@@ -1640,6 +1644,7 @@ function WorkCtrl($scope, $compile, worksSrvc) {
 		
 	$scope.addWorkToScope = function() {
 		if($scope.worksToAddIds.length != 0 ) {
+			$scope.worksSrvc.loading = true;
 			var workIds = $scope.worksToAddIds.splice(0,20).join();
 			$.ajax({
 				url: $('body').data('baseurl') + 'works/works.json?workIds=' + workIds,
@@ -1662,6 +1667,9 @@ function WorkCtrl($scope, $compile, worksSrvc) {
 		    	console.log("Error fetching work: " + value);
 		    });
 		}else {
+			$scope.$apply(function() {
+				$scope.worksSrvc.loading = false;
+			});
 			if(isIE() == 7){
 				fixZindexIE7('.workspace-toolbar', 999999);
 				fixZindexIE7('.workspace-private-toolbar', 500);
@@ -1673,7 +1681,7 @@ function WorkCtrl($scope, $compile, worksSrvc) {
 	$scope.getWorks = function() {
 		//clear out current works
 		$scope.worksToAddIds = null;
-		$scope.numOfWorksToAdd = null;
+		$scope.worksSrvc.loading = true;
 		$scope.works.length = 0;
 		//get work ids
 		$.ajax({
@@ -1681,9 +1689,7 @@ function WorkCtrl($scope, $compile, worksSrvc) {
 	        dataType: 'json',
 	        success: function(data) {
 	        	$scope.worksToAddIds = data;
-	        	$scope.numOfWorksToAdd = data.length;
-	 
-	        	if (data.length > 0 ) $scope.addWorkToScope();
+	        	$scope.addWorkToScope();
 	        	$scope.$apply();
 	        }
 		}).fail(function(){
@@ -1740,7 +1746,6 @@ function WorkCtrl($scope, $compile, worksSrvc) {
 		$scope.removeWork(work);
 		// remove the work from the UI
     	$scope.works.splice(idx, 1);
-    	$scope.numOfWorksToAdd--; // keep this number matching
     	// apply changes on scope
 		// close box
 		$.colorbox.close(); 
