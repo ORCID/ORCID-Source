@@ -1523,7 +1523,9 @@ function PublicWorkCtrl($scope, $compile, worksSrvc) {
 		    	console.log("Error fetching works: " + workIds);
 		    });
 		} else {
-			$scope.worksSrvc.loading = false;
+			$scope.$apply(function () {
+				$scope.worksSrvc.loading = false;
+			});
 		}
 	};     
 	  
