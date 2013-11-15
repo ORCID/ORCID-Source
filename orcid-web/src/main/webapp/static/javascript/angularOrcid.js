@@ -1266,7 +1266,17 @@ function PublicEmpAffiliation($scope, $compile, $filter, affiliationsSrvc){
 function AffiliationCtrl($scope, $compile, $filter, affiliationsSrvc){
 	$scope.affiliationsSrvc = affiliationsSrvc;
 	$scope.displayAffiliations = true;
+	$scope.displayEducation = true;
+	$scope.displayEmployment = true;
 	
+	$scope.toggleDisplayEducation = function () {
+		$scope.displayEducation = !$scope.displayEducation;
+	};	
+
+	$scope.toggleDisplayEmployment = function () {
+		$scope.displayEmployment = !$scope.displayEmployment;
+	};	
+
 	$scope.toggleDisplayAffiliations = function () {
 		$scope.displayAffiliations = !$scope.displayAffiliations;
 	};	

@@ -108,11 +108,11 @@
 		                    <a href="#workspace-educations" class="overview-count"><span ng-bind="affiliationsSrvc.educations.length"></span></a>
 		                    <a href="#workspace-educations" class="overview-title"><@orcid.msg 'org.orcid.jaxb.model.message.AffiliationType.education'/></a>
 		                    <br />
-		                    <a href="#workspace-educations" class="btn-update no-icon"><@orcid.msg 'org.orcid.jaxb.model.message.AffiliationType.education'/></a>
+		                    <a href="#workspace-educations" class="btn-update no-icon"><@orcid.msg 'workspace.view'/></a>
 		                </div>
 		                <div class="workspace-overview col-md-3 col-sm-3 col-xs-3" id="educations-overview">
 		                    <a href="#workspace-employments" class="overview-count"><span ng-bind="affiliationsSrvc.employments.length"></span></a>
-		                    <a href="#workspace-employments" class="overview-title"><@orcid.msg 'org.orcid.jaxb.model.message.AffiliationType.employment'/></a>
+		                    <a href="#workspace-employments" class="overview-title"><@orcid.msg 'workspace.view'/></a>
 		                    <br />
 		                    <a href="#workspace-employments" class="btn-update no-icon"><@orcid.msg 'org.orcid.jaxb.model.message.AffiliationType.employment'/></a>
 		                </div>

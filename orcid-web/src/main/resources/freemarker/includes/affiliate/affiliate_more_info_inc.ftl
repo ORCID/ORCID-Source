@@ -78,7 +78,13 @@
 					<div ng-bind="affiliation.affiliationType.value"></div>
 				</div>
 			</div>
-
+			<div class="row bottomBuffer" ng-show="affiliation.sourceName"
+				ng-cloak>
+				<div class="col-md-8">
+					<strong><@orcid.msg 'manual_affiliation_form_contents.labelaffiliationtype'/></strong>
+					<div ng-bind="affiliation.sourceName"></div>
+				</div>
+			</div>
 			<div class="row bottomBuffer" ng-show="affiliation.startDate.year" ng-cloak>
 				<div class="col-md-8">
 					<strong><@orcid.msg 'manual_affiliation_form_contents.labelStartDate'/></strong>
