@@ -3754,6 +3754,8 @@ ul.personal-inf-display li{
 	.container{
 		max-width:960px;
 	}
-	
-	
+}
+
+.citation-raw {
+	white-space: pre-wrap
 }

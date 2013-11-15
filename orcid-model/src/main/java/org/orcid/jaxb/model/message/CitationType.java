@@ -59,7 +59,9 @@ public enum CitationType {
     FORMATTED_IEEE("formatted-ieee"), @XmlEnumValue("formatted-mla")
     FORMATTED_MLA("formatted-mla"), @XmlEnumValue("formatted-vancouver")
     FORMATTED_VANCOUVER("formatted-vancouver"), @XmlEnumValue("formatted-chicago")
-    FORMATTED_CHICAGO("formatted-chicago");
+    FORMATTED_CHICAGO("formatted-chicago"),
+    @XmlEnumValue("ris") RIS("ris");
+    
     private final String value;
 
     CitationType(String v) {

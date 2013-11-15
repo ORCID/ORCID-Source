@@ -2445,3 +2445,7 @@ a.btn-primary:hover {
 .tt-is-under-cursor .tt-query  {
 	color: red;
 }
+
+.citation-raw {
+	white-space: pre-wrap
+}

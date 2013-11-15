@@ -16,11 +16,14 @@
  */
 package org.orcid.core.version.impl;
 
+import java.util.List;
+
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.version.OrcidMessageVersionConverter;
 import org.orcid.jaxb.model.message.Affiliation;
 import org.orcid.jaxb.model.message.AffiliationType;
 import org.orcid.jaxb.model.message.Affiliations;
+import org.orcid.jaxb.model.message.CitationType;
 import org.orcid.jaxb.model.message.OrcidActivities;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidProfile;
@@ -55,8 +58,26 @@ public class OrcidMessageVersionConverterImplV1_0_22ToV1_0_23 implements OrcidMe
             return null;
         }
         orcidMessage.setMessageVersion(FROM_VERSION);
-
+        
+        OrcidProfile orcidProfile = orcidMessage.getOrcidProfile();
+        
+        if (orcidProfile != null) {
+            OrcidActivities orcidActivities = orcidProfile.getOrcidActivities();
+            if (orcidActivities != null && orcidActivities.getOrcidWorks() != null) {
+                List<OrcidWork> works = orcidActivities.getOrcidWorks().getOrcidWork();
+                for (OrcidWork orcidWork: works) {
+                    if (orcidWork.getWorkCitation() != null && orcidWork.getWorkCitation().getWorkCitationType() != null) {
+                        CitationType workCitationType =  orcidWork.getWorkCitation().getWorkCitationType();
+                        if (workCitationType.equals(CitationType.RIS)) {
+                            orcidWork.getWorkCitation().setWorkCitationType(CitationType.FORMATTED_UNSPECIFIED);
+                        }
+                    }
+                }
+            }
+        }
         return orcidMessage;
+        
+        
     }
 
     @Override
