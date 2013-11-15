@@ -158,6 +158,18 @@
 					<div ng-bind="work.countryName.value"></div>
 				</div>
 			</div>
+			
+			
+			<div class="row bottomBuffer" ng-show="work.workSourceName.value" ng-cloak>
+				<div class="col-md-8">
+					<strong> <@orcid.msg
+						'manual_work_form_contents.labelWorkSource'/> </strong>
+					<div ng-bind="work.workSourceName.value"></div>
+				</div>
+			</div>
+			
+			
+			
 		</div>
 	</div>
 	</div>
