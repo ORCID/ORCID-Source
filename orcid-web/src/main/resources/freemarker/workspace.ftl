@@ -118,7 +118,7 @@
 		                </div>
 		             <#else>
 		                <div class="workspace-overview col-md-3 col-sm-3 col-xs-3" id="affiliations-overview">
-		                    <a href="#workspace-affiliations" class="overview-count"><span ng-bind="affiliations.length"></span></a>
+		                    <a href="#workspace-affiliations" class="overview-count"><span ng-bind="affiliationsSrvc.affiliations.length"></span></a>
 		                    <a href="#workspace-affiliations" class="overview-title"><@orcid.msg 'workspace_bio.Affiliations'/></a>
 		                    <br />
 		                    <#if RequestParameters['affiliations']??>
