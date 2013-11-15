@@ -33,7 +33,7 @@
 		<div class="row">
 			<div class="col-md-6 col-sm-6 col-xs-12">
 				<div class="control-group" ng-show="editAffiliation.disambiguatedAffiliationSourceId">
-					<div style="position: absolute; left: 300px"><label><a class="icon-remove-sign grey" ng-click="removeDisambiguatedAffiliation()">&nbsp;<@orcid.msg 'common.remove'/></a></label></div>
+					<div style="position: absolute; left: 300px"><label><a class="glyphicon glyphicon-remove-sign grey" ng-click="removeDisambiguatedAffiliation()">&nbsp;<@orcid.msg 'common.remove'/></a></label></div>
 					<label>Affiliation</label>
 				    <div class="relative"  style="font-weight: strong;">
 						<span ng-bind="disambiguatedAffiliation.value"></span> <br />
