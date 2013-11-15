@@ -106,13 +106,13 @@
 					<#if RequestParameters['affiliations']??>
 		                <div class="workspace-overview col-md-6 col-sm-6 col-xs-6" id="educations-overview" ng-controller="EducationOverviewCtrl">
 		                    <a href="#workspace-educations" class="overview-count"><span ng-bind="educations.length"></span></a>
-		                    <a href="#workspace-educations" class="overview-title"><@orcid.msg 'org.orcid.jaxb.model.message.AffiliationType.education'/></a>
+		                    <a href="#workspace-educations" class="overview-title"><@orcid.msg 'workspace.view'/></a>
 		                    <br />
 		                    <a href="#workspace-educations" class="btn-update no-icon"><@orcid.msg 'org.orcid.jaxb.model.message.AffiliationType.education'/></a>
 		                </div>
 		                <div class="workspace-overview col-md-6 col-sm-6 col-xs-6" id="educations-overview" ng-controller="EmploymentOverviewCtrl">
 		                    <a href="#workspace-employments" class="overview-count"><span ng-bind="employments.length"></span></a>
-		                    <a href="#workspace-employments" class="overview-title"><@orcid.msg 'org.orcid.jaxb.model.message.AffiliationType.employment'/></a>
+		                    <a href="#workspace-employments" class="overview-title"><@orcid.msg 'workspace.view'/></a>
 		                    <br />
 		                    <a href="#workspace-employments" class="btn-update no-icon"><@orcid.msg 'org.orcid.jaxb.model.message.AffiliationType.employment'/></a>
 		                </div>
@@ -132,13 +132,6 @@
 	        		<div class="workspace-overview  col-md-6 col-sm-6 col-xs-6">
 	        			<a href="#workspace-grants" class="overview-count">${(profile.orcidActivities.orcidGrants.orcidGrant?size)!0}</a>
 	        			<a href="#workspace-grants" class="overview-title"><@orcid.msg 'workspace.Grants'/></a>
-	        			<br />
-	        			<a target="_blank" href="http://support.orcid.org/forums/179657-coming-soon" class="btn-update no-icon"><@orcid.msg 'workspace.ComingSoon'/></a>
-	        		</div>
-	        		<!-- Patents -->
-	        		<div class="workspace-overview  col-md-6 col-sm-6 col-xs-6">
-		        		<a href="#workspace-patents" class="overview-count">${(profile.orcidActivities.orcidPatents.orcidPatent?size)!0}</a>
-	        			<a href="#workspace-patents" class="overview-title"><@orcid.msg 'workspace.Patents'/></a>
 	        			<br />
 	        			<a target="_blank" href="http://support.orcid.org/forums/179657-coming-soon" class="btn-update no-icon"><@orcid.msg 'workspace.ComingSoon'/></a>
 	        		</div>

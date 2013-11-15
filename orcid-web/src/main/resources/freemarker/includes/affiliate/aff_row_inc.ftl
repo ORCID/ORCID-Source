@@ -19,8 +19,7 @@
 			        <div class="row">        
 			        	<!-- Information -->
 						<div class="col-md-8 col-sm-8">
-						    <div class="affiliation-type" ng-bind-html="affiliation.affiliationTypeForDisplay"></div>
-					        <h3 class="affiliation-title">
+						    <h3 class="affiliation-title">
 					        	<strong ng-bind-html="affiliation.affiliationName.value"></strong>
 					        	<span class="affiliation-date" ng-show="affiliation.startDate">
 					        	    (<span ng-show="affiliation.startDate.month">{{affiliation.startDate.month}}-</span><span ng-show="affiliation.startDate.year">{{affiliation.startDate.year}}</span>
@@ -36,9 +35,6 @@
 					        <div class="affiliation-details" ng-show="affiliation.roleTitle">
 					            <span ng-bind-html="affiliation.roleTitle.value"></span>
 					        </div>
-					        <div ng-show="affiliation.sourceName">
-				            	<span class="affiliation-source">SOURCE: <span ng-bind-html="affiliation.sourceName"></span></span>
-				        	</div>
 				        </div>
 				        <!-- Privacy Settings -->
 				        <div class="col-md-4 col-sm-4 workspace-toolbar">
