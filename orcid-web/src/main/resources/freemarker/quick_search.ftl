@@ -46,7 +46,7 @@
       </table>
       <div id="show-more-button-container">
                 <button id="show-more-button" type="submit" class="ng-cloak btn" ng-click="getMoreResults()" ng-show="areMoreResults">Show more</button>
-                <span id="ajax-loader"><i class="icon-spinner icon-large icon-spin green"></i></span>
+                <span id="ajax-loader"><i class="glyphicon glyphicon-refresh spin x2 green"></i></span>
             </div>
             <div id="no-results-alert" class="hide alert alert-error"><@spring.message "orcid.frontend.web.no_results"/></div>
         </div>   

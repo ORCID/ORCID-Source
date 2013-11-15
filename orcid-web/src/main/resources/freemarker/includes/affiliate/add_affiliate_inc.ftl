@@ -179,7 +179,7 @@
 			</div>
 			<div class="col-md-2 col-sm-6 col-xs-6">
 				<span ng-show="addingAffiliation">
-					<i class="icon-spinner icon-2x icon-spin  green"></i>
+					<i class="glyphicon glyphicon-refresh spin x2 green"></i>
 				</span>				
 			</div>			
 		</div>		

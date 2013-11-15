@@ -22,7 +22,7 @@
 	</li>
 </ul>
 <div ng-show="affiliationsSrvc.loading == true;" class="text-center">
-    <i class="glyphicon glyphicon-refresh spin green"></i>
+    <i class="glyphicon glyphicon-refresh spin x4 green"></i>
 </div>
 <div ng-show="affiliationsSrvc.loading == false && affiliationsSrvc.educations.length == 0" class="alert alert-info" ng-cloak>
     <strong><#if (publicProfile)?? && publicProfile == true>${springMacroRequestContext.getMessage("workspace_affiliations_body_list.Noeducationaddedyet")}<#else>${springMacroRequestContext.getMessage("workspace_affiliations_body_list.havenotaddedanyeducation")} <a ng-click="addAffiliationModal('education')">${springMacroRequestContext.getMessage("workspace_affiliations_body_list.addsomenow")}</a></#if></strong>
