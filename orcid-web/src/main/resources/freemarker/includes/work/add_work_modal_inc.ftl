@@ -18,10 +18,9 @@
 -->
 <script type="text/ng-template" id="add-work-modal">
 	<div class="add-work colorbox-content">
-		
+		<div class="lightbox-container-ie7">		
 		<!-- Title -->
-		<div class="row">			
-
+		<div class="row">
 			<div class="col-md-9 col-sm-6 col-xs-9">
 				<h1 class="lightbox-title pull-left"><@orcid.msg 'manual_work_form_contents.add_work'/></h1>
 			</div>
@@ -312,5 +311,6 @@
 				</div>
 			</div>
 		</div>				
+	<div>
 	<div>
 </script>

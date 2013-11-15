@@ -278,6 +278,7 @@
 <script type="text/ng-template" id="import-wizard-modal">
     <#if ((thirdPartiesForImport)??)>		
     	<div id="third-parties">
+			<div class="ie7fix-inner">
 			<div class="row">	
 				<div class="col-md-12 col-sm-12 col-xs-12">					
 					<a class="btn pull-right close-button" ng-click="closeModal()">X</a>
@@ -312,6 +313,7 @@
 			    	</p>
 				</div>
 	        </div>
+		</div>
 		</div>
 	</#if>
 </script>

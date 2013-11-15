@@ -191,3 +191,37 @@ ul.workspace-private-toolbar > li{
 	padding-right: 0;
 	padding-bottom: 0;
 }
+
+.ie7-zi-fix-top{
+	z-index: 999999;
+}
+
+.ie7-zi-fix-botttom{
+	z-index: 500;
+}
+
+.ie7fix{
+	margin-left: 15px;
+	display:block;
+}
+
+.ie7fix-inner{
+	padding:15px;
+}
+
+#cboxLoadedContent{
+	overflow: visible !important; /* Overwriting Colorbox container*/ 
+}
+
+.lightbox-container .btn-danger{
+	width: 250px;
+}
+
+.add-work .col-md-6{
+	width: 350px;
+	margin-right:15px;
+}
+
+.lightbox-container-ie7{
+	padding:15px;
+}

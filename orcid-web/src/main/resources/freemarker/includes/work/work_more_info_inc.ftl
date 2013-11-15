@@ -16,12 +16,12 @@
     =============================================================================
 
 -->
-<div class="more-info ie7-zi-fix-top">
-	<div class="ie7fix">
+<div class="more-info ie7-zi-fix-top">	
 	<a class="glyphicon glyphicon-plus-sign grey"></a>	
-	<div class="popover bottom more-info-container ">
+	<div class="popover bottom more-info-container ">	
 		<div class="arrow"></div>	
 		<div class="lightbox-container">
+			<div class="ie7fix">
 			<div class="row bottomBuffer"></div>
 			<div class="row bottomBuffer" ng-show="work.workTitle.title.value"
 				ng-cloak>
@@ -158,7 +158,7 @@
 					<div ng-bind="work.countryName.value"></div>
 				</div>
 			</div>
-		</div>
-	</div>
+			</div>
+		</div><!-- .lightbox-container -->
 	</div>
 </div>
