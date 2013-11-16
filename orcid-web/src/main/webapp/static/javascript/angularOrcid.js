@@ -294,15 +294,16 @@ function EditTableCtrl($scope) {
 		else $scope.emailToggleText = OM.getInstance().get("manage.editTable.edit");		
 	};
 	
+	
+	
 	$scope.toggleEmailEdit = function() {
 		$scope.showEditEmail = !$scope.showEditEmail;
-		$scope.emailUpdateToggleText();
+		$scope.emailUpdateToggleText();		
 	};
 	
 	// init email edit row
 	$scope.showEditEmail = (window.location.hash === "#editEmail");
-	$scope.emailUpdateToggleText();
-	
+	$scope.emailUpdateToggleText();	
 
 	// password edit row
 	$scope.passwordUpdateToggleText = function () {
@@ -492,6 +493,7 @@ function PasswordEditCtrl($scope, $http) {
 	        success: function(data) {
 	        	$scope.changePasswordPojo = data;
 	        	$scope.$apply();
+	        	$scope.zIndexfixIE7();
 	        }
 	    }).fail(function() { 
 	    	// something bad is happening!
@@ -500,6 +502,11 @@ function PasswordEditCtrl($scope, $http) {
 	};
 	
 	$scope.getChangePassword();
+	
+	$scope.zIndexfixIE7 = function(){
+		fixZindexIE7('#password-edit', 999999);
+		fixZindexIE7('#password-edit .relative', 99999);
+	};
 	
 	$scope.saveChangePassword = function() {
 		$.ajax({
@@ -529,6 +536,7 @@ function EmailEditCtrl($scope, $compile) {
 	        success: function(data) {
 	        	$scope.emailsPojo = data;
 	        	$scope.$apply();
+	        	if(isIE() == 7) $scope.fixZindexesIE7();
 	        }
 	    }).fail(function() { 
 	    	// something bad is happening!
@@ -556,6 +564,15 @@ function EmailEditCtrl($scope, $compile) {
 			}
 		}
 		$scope.saveEmail();
+	};
+	
+	$scope.fixZindexesIE7 =  function(){
+	    fixZindexIE7('.popover',2000);
+	    fixZindexIE7('.popover-help-container',3000);
+	    fixZindexIE7('#privacy-bar',500);
+	    fixZindexIE7('.emailVisibility',5000);
+	    fixZindexIE7('.col-md-3', 6000);
+	    fixZindexIE7('.row', 7000);	  
 	};
 	
 	$scope.toggleVisibility = function(idx) {
