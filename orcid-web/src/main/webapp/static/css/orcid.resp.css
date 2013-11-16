@@ -2863,8 +2863,6 @@ ul.personal-inf-display li{
 }
 
 .spin{
-	font-size: 60px;
-	margin-bottom: 15px;
 	-webkit-animation-name: spin;
     -webkit-animation-duration: 1000ms;
     -webkit-animation-iteration-count: infinite;
@@ -2895,6 +2893,19 @@ ul.personal-inf-display li{
     from {transform:rotate(0deg);}
     to {transform:rotate(360deg);}
 }
+
+.x2 {
+	font-size: 200%;	
+}
+
+.x4 {
+	font-size: 400%;	
+}
+
+.x8 {
+	font-size: 800%;	
+}
+
 
 
 /* Media Queries */

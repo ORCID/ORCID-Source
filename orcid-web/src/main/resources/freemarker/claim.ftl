@@ -101,7 +101,7 @@
 		                <div class="relative centered-mobile">
 		                      <button type="submit" class="btn btn-primary" ng-click="postClaim()">${springMacroRequestContext.getMessage("claim.btnClaim")}</button>
 		                      <span ng-show="postingClaim" ng-cloak>
-		                      	<i class="icon-spinner icon-2x icon-spin  green"></i>
+		                      	<i class="glyphicon glyphicon-refresh spin x2 green"></i>
 		                      </span>
 		                </div>  
 	                </div> 

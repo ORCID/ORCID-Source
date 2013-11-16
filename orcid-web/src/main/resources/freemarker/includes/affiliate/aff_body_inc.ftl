@@ -22,9 +22,9 @@
 		<#include "aff_row_inc.ftl" />
     </li>           
 </ul>
-<div ng-show="affiliationsSrvc.loadingAff == true" class="text-center">
-    <i class="glyphicon glyphicon-refresh spin green"></i>
+<div ng-show="affiliationsSrvc.loading == true" class="text-center">
+    <i class="glyphicon glyphicon-refresh spin x4 green"></i>
 </div>
-<div ng-show="affiliationsSrvc.loadingAff == false && affiliationsSrvc.affiliations.length == 0" class="alert alert-info" ng-cloak>
+<div ng-show="affiliationsSrvc.loading == false && affiliationsSrvc.affiliations.length == 0" class="alert alert-info" ng-cloak>
     <strong><#if (publicProfile)?? && publicProfile == true>${springMacroRequestContext.getMessage("workspace_affiliations_body_list.Noaffilationsaddedyet")}<#else>${springMacroRequestContext.getMessage("workspace_affiliations_body_list.havenotaddedanyaffiliations")} <a ng-click="addAffiliationModal()">${springMacroRequestContext.getMessage("workspace_affiliations_body_list.addsomenow")}</a></#if></strong>
 </div>

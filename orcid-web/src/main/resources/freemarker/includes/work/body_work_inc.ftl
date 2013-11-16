@@ -51,10 +51,10 @@
         </div>
     </li><!-- bottom-margin-small -->
 </ul>
-<div ng-show="numOfWorksToAdd==null || (numOfWorksToAdd > works.length)" class="text-center">
-    <i class="glyphicon glyphicon-refresh spin green"></i>
+<div ng-show="worksSrvc.loading == true" class="text-center">
+    <i class="glyphicon glyphicon-refresh spin x4 green"></i>
 </div>
-<div ng-show="numOfWorksToAdd==0 && works.length == 0" class="alert alert-info" ng-cloak>
+<div ng-show="worksSrvc.loading == false && works.length == 0" class="alert alert-info" ng-cloak>
     <strong><#if (publicProfile)?? && publicProfile == true>${springMacroRequestContext.getMessage("workspace_works_body_list.Nopublicationsaddedyet")}<#else>${springMacroRequestContext.getMessage("workspace_works_body_list.havenotaddedanyworks")} <a ng-click="addWorkModal()">${springMacroRequestContext.getMessage("workspace_works_body_list.addsomenow")}</a></#if></strong>
 </div>
     

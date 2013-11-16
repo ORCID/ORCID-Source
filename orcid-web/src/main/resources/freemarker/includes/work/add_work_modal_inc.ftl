@@ -84,8 +84,8 @@
 							<div ng-repeat='error in editWork.workTitle.title.errors' ng-bind-html-unsafe="error"></div>
 						</span>
 						<div class="add-item-link">
-							<span ng-hide="editTranslatedTitle"><a ng-click="toggleTranslatedTitleModal()" class="glyphicon glyphicon-plus-sign blue"><@orcid.msg 'manual_work_form_contents.labelshowtranslatedtitle'/></a></span>
-							<span ng-show="editTranslatedTitle"><a ng-click="toggleTranslatedTitleModal()" class="glyphicon glyphicon-minus-sign blue"><@orcid.msg 'manual_work_form_contents.labelhidetranslatedtitle'/></a></span>
+							<span ng-hide="editTranslatedTitle"><a ng-click="toggleTranslatedTitleModal()"><i class="glyphicon glyphicon-plus-sign blue"></i> <@orcid.msg 'manual_work_form_contents.labelshowtranslatedtitle'/></a></span>
+							<span ng-show="editTranslatedTitle"><a ng-click="toggleTranslatedTitleModal()"><i class="glyphicon glyphicon-minus-sign blue"></i> <@orcid.msg 'manual_work_form_contents.labelhidetranslatedtitle'/></a></span>
 						</div>
 					</div>
 				</div>
@@ -260,7 +260,7 @@
 						</div>
 					</div>	
 					<div ng-show="$last" class="add-item-link">			
-						<span><a href ng-click="addExternalIdentifier()" class="icon-plus-sign blue"><@orcid.msg 'manual_work_form_contents.add_external_identifier' /></a></span>
+						<span><a href ng-click="addExternalIdentifier()"><i class="glyphicon glyphicon-plus-sign blue"></i> <@orcid.msg 'manual_work_form_contents.add_external_identifier' /></a></span>
 					</div>			
 				</div>
 			
@@ -304,7 +304,7 @@
 						<a href="" ng-click="closeModal()"><@orcid.msg 'manage.deleteExternalIdentifier.cancel'/></a>
 						&nbsp;
 						<span ng-show="addingWork">
-							<i class="icon-spinner icon-2x icon-spin  green"></i>
+							<i class="glyphicon glyphicon-refresh spin x2 green"></i>
 						</span>
 						<span ng-show="editWork.errors.length > 0" class="alert" style>Please fix above errors</span>					
 					</div>
