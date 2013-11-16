@@ -18,6 +18,7 @@ package org.orcid.frontend.web.controllers;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -33,6 +34,7 @@ import org.orcid.core.manager.ProfileWorkManager;
 import org.orcid.jaxb.model.clientgroup.GroupType;
 import org.orcid.jaxb.model.clientgroup.OrcidClientGroup;
 import org.orcid.jaxb.model.message.OrcidProfile;
+import org.orcid.jaxb.model.message.OrcidType;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.ExternalIdentifierEntity;
@@ -393,5 +395,21 @@ public class AdminController extends BaseController {
                 setError(group.getType(), "group.type.invalid");
             }
         }
+    }
+    
+    /**
+     * Fetch all groups that exists on database
+     * 
+     * @return the list of groups that exists on database
+     * */
+    @RequestMapping(value = "/list-groups.json", method = RequestMethod.GET)
+    public @ResponseBody
+    List<Group> listGroups() {
+    	List<ProfileEntity> profileEntities = profileEntityManager.findProfilesByOrcidType(OrcidType.GROUP);
+    	List<Group> groups = new ArrayList<Group>();
+    	for(ProfileEntity profile : profileEntities){
+    		groups.add(Group.fromProfileEntity(profile));
+    	}
+    	return groups;
     }
 }

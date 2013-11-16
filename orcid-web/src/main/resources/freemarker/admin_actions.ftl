@@ -115,10 +115,6 @@
 	</div>
 </script>
 
-
-
-
-
 <script type="text/ng-template" id="add-new-group">
 	<div class="colorbox-content">
 		<a id="cboxClose" class="btn pull-right close-button" ng-click="closeModal()">X</a>
@@ -195,6 +191,32 @@
 					</ul>
     			</div>
   			</div>
+		</div>
+	</div>
+</script>
+
+<script type="text/ng-template" id="list-groups">
+	<div class="colorbox-content">
+		<a id="cboxClose" class="btn pull-right close-button" ng-click="closeModal()">X</a>
+    	<h1><@orcid.msg 'manage_groups.group_list_title'/></h1>
+		<div>
+			<div class="relative" ng-show="groups.length > 0">				
+				<ul>
+      				<li><@orcid.msg 'manage_groups.orcid'/></li>
+					<li><@orcid.msg 'manage_groups.name'/></li>
+					<li><@orcid.msg 'manage_groups.email'/></li>
+					<li><@orcid.msg 'manage_groups.type'/></li>
+				</ul>
+				<ul ng-repeat="group in groups">
+					<li>{{group.groupOrcid}}</li>
+					<li>{{group.groupName}}</li>
+					<li>{{group.email}}</li>
+					<li>{{group.type}}</li>
+				</ul>
+    		</div>
+			<div ng-show="groups.length == 0">
+				<span><@orcid.msg 'manage_groups.no_groups'/></span>
+			</div>
 		</div>
 	</div>
 </script>
