@@ -493,5 +493,20 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
         updateQuery.setParameter("encryptedSecurityAnswer", encryptedSecurityAnswer);
         updateQuery.executeUpdate();
     }
+    
+    /**
+     * Return the list of profiles that belongs to the provided OrcidType
+     * @param type
+     * 		OrcidType that indicates the profile type we want to fetch
+     * @return the list of profiles that belongs to the specified type  
+     * */
+    @Override
+    @Transactional
+    @SuppressWarnings("unchecked")
+    public List<ProfileEntity> findProfilesByOrcidType(OrcidType type){
+    	Query query = entityManager.createQuery("from ProfileEntity where profile_deactivation_date=NULL and orcidType=:type");
+    	query.setParameter("type", type.value());
+    	return (List<ProfileEntity>)query.getResultList();
+    }
 
 }
