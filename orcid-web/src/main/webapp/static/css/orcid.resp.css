@@ -646,8 +646,8 @@ select {
 
 .header .search .settings-button i,.header .search .search-button i {
 	width: 22px;
-	float: right;
-    margin-right: 9px;
+	float: right;    
+    margin: 3px 9px 0 0;
 }
 
 .header .search .settings-button:hover {
@@ -660,6 +660,7 @@ select {
 	border: 0;
 	background: transparent;
 	padding: 0 0 30px 0;
+	margin-bottom:6px;
 }
 
 .header .search .search-button .icon-orcid-search {
@@ -3379,11 +3380,11 @@ ul.personal-inf-display li{
 		border-bottom: none;
 	}
 	
-	#workspace-publications .popover-help-container .popover{
+	#workspace-accordion .popover-help-container .popover{
 		left:-134px !important;
 	}
 	
-	#workspace-publications .popover-help-container .arrow{
+	#workspace-accordion .popover-help-container .arrow{
 		left: 145px !important;
 	}		
 
@@ -3519,6 +3520,7 @@ ul.personal-inf-display li{
 	
 	/* Workspace Affiliations */
 	/* Affiliations Pop over */
+	/*
 	#workspace-affiliations .popover-help-container .popover{
 		left:-134px !important;
 	}
@@ -3534,6 +3536,7 @@ ul.personal-inf-display li{
 	#edit-affiliation .popover.bottom .arrow{
 		left: 118px;
 	}
+	*/
 	
 	/* Work List*/
 	.more-info-container{		
