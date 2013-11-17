@@ -211,6 +211,20 @@ orcidNgModule.filter('urlWithHttp', function(){
 	};
 });
 
+function formColorBoxWidth() {
+	return isMobile()? '100%': '800px';
+}
+
+function formColorBoxResize() {
+    if (isMobile())
+    	$.colorbox.resize({width: formColorBoxWidth(), height: '100%'});
+    else
+    	// IE8 and below doesn't take auto height
+    	// however the default div height
+    	// is auto anyway
+    	$.colorbox.resize({width:'800px'});
+}
+
 function fixZindexIE7(target, zindex){
 	$(target).each(function(){
 		$(this).css('z-index', zindex);    			
@@ -1302,14 +1316,15 @@ function AffiliationCtrl($scope, $compile, $filter, affiliationsSrvc){
 	};	
 
 	$scope.showAddModal = function(){
-		isMobile() ? w = '100%' : w = '800px';
-		isMobile() ? h = '100%' : h = 'auto';
 		var numOfResults = 25;
 		$.colorbox({        	
 			html: $compile($('#add-affiliation-modal').html())($scope),
+			// start the colorbox off with the correct width
+			width: formColorBoxResize(),
 			onComplete: function() {
-							$.colorbox.resize({width:w, height:h});
-							$scope.bindTypeahead();
+				//resize to insure content fits
+				formColorBoxResize();
+				$scope.bindTypeahead();
 			}
 	    });
 	};
@@ -1582,15 +1597,15 @@ function WorkCtrl($scope, $compile, worksSrvc) {
 	
 	$scope.showAddModal = function(){;
 		$scope.editTranslatedTitle = false;
-		isMobile() ? w = '100%' : w = '800px';
-		isMobile() ? h = '100%' : h = 'auto';		
 	    $.colorbox({	    	
 	    	scrolling: true,
 	        html: $compile($('#add-work-modal').html())($scope),	        
 	        onLoad: function() {$('#cboxClose').remove();},
-	        onComplete: function() {
-	        		$.colorbox.resize({width:w, height:h});
-	        		}
+			// start the colorbox off with the correct width
+			width: formColorBoxResize(),
+			onComplete: function() {
+				//resize to insure content fits
+	        }
 	    });
 	};
 
