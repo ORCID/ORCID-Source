@@ -39,6 +39,7 @@
       <#else>
         orcidVar.orcidId = '${(profile.orcid.value)!}';
       </#if>
+      orcidVar.jsMessages = JSON.parse("${jsMessagesJson}");
     </script>    
     <#if
 		request.requestURI?ends_with("${basePath}signin")||

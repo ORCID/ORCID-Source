@@ -293,8 +293,8 @@ function EditTableCtrl($scope) {
 	
 	// email edit row
 	$scope.emailUpdateToggleText = function () {
-		if ($scope.showEditEmail) $scope.emailToggleText = OM.getInstance().get("manage.editTable.hide");
-		else $scope.emailToggleText = OM.getInstance().get("manage.editTable.edit");		
+		if ($scope.showEditEmail) $scope.emailToggleText = om.get("manage.editTable.hide");
+		else $scope.emailToggleText = om.get("manage.editTable.edit");		
 	};
 	
 	
@@ -310,8 +310,8 @@ function EditTableCtrl($scope) {
 
 	// password edit row
 	$scope.passwordUpdateToggleText = function () {
-		if ($scope.showEditPassword) $scope.passwordToggleText = OM.getInstance().get("manage.editTable.hide");
-		else $scope.passwordToggleText = OM.getInstance().get("manage.editTable.edit");		
+		if ($scope.showEditPassword) $scope.passwordToggleText = om.get("manage.editTable.hide");
+		else $scope.passwordToggleText = om.get("manage.editTable.edit");		
 	};
 	
 	$scope.togglePasswordEdit = function() {
@@ -325,8 +325,8 @@ function EditTableCtrl($scope) {
 	
 	// deactivate edit row
 	$scope.deactivateUpdateToggleText = function () {
-		if ($scope.showEditDeactivate) $scope.deactivateToggleText = OM.getInstance().get("manage.editTable.hide");
-		else $scope.deactivateToggleText = OM.getInstance().get("manage.editTable.deactivateRecord");		
+		if ($scope.showEditDeactivate) $scope.deactivateToggleText = om.get("manage.editTable.hide");
+		else $scope.deactivateToggleText = om.get("manage.editTable.deactivateRecord");		
 	};
 
 	$scope.toggleDeactivateEdit = function() {
@@ -340,8 +340,8 @@ function EditTableCtrl($scope) {
 	
 	// privacy preferences edit row
 	$scope.privacyPreferencesUpdateToggleText = function () {
-		if ($scope.showEditPrivacyPreferences) $scope.privacyPreferencesToggleText = OM.getInstance().get("manage.editTable.hide");
-		else $scope.privacyPreferencesToggleText = OM.getInstance().get("manage.editTable.edit");		
+		if ($scope.showEditPrivacyPreferences) $scope.privacyPreferencesToggleText = om.get("manage.editTable.hide");
+		else $scope.privacyPreferencesToggleText = om.get("manage.editTable.edit");		
 	};
 
 	$scope.togglePrivacyPreferencesEdit = function() {
@@ -355,8 +355,8 @@ function EditTableCtrl($scope) {
 
 	// email preferences edit row
 	$scope.emailPreferencesUpdateToggleText = function () {
-		if ($scope.showEditEmailPreferences) $scope.emailPreferencesToggleText = OM.getInstance().get("manage.editTable.hide");
-		else $scope.emailPreferencesToggleText = OM.getInstance().get("manage.editTable.edit");		
+		if ($scope.showEditEmailPreferences) $scope.emailPreferencesToggleText = om.get("manage.editTable.hide");
+		else $scope.emailPreferencesToggleText = om.get("manage.editTable.edit");		
 	};
 
 	$scope.toggleEmailPreferencesEdit = function() {
@@ -370,8 +370,8 @@ function EditTableCtrl($scope) {
 
 	// security question edit row
 	$scope.securityQuestionUpdateToggleText = function () {
-		if ($scope.showEditSecurityQuestion) $scope.securityQuestionToggleText = OM.getInstance().get("manage.editTable.hide");
-		else $scope.securityQuestionToggleText = OM.getInstance().get("manage.editTable.edit");		
+		if ($scope.showEditSecurityQuestion) $scope.securityQuestionToggleText = om.get("manage.editTable.hide");
+		else $scope.securityQuestionToggleText = om.get("manage.editTable.edit");		
 	};
 
 	$scope.toggleSecurityQuestionEdit = function() {
@@ -968,7 +968,7 @@ function RegistrationCtrl($scope, $compile) {
 	
 	$scope.showProcessingColorBox = function () {
 	    $.colorbox({
-	        html : $('<div style="font-size: 50px; line-height: 60px; padding: 20px; text-align:center">' + OM.getInstance().get('common.processing') + '&nbsp;<i id="ajax-loader" class="glyphicon glyphicon-refresh spin green"></i></div>'),
+	        html : $('<div style="font-size: 50px; line-height: 60px; padding: 20px; text-align:center">' + om.get('common.processing') + '&nbsp;<i id="ajax-loader" class="glyphicon glyphicon-refresh spin green"></i></div>'),
 	        width: '400px', 
 	        height:"100px",
 	        close: '',
@@ -1665,12 +1665,12 @@ function WorkCtrl($scope, $compile, worksSrvc) {
 				var parsed = bibtexParse.toJSON($scope.editWork.citation.citation.value);
 				console.log(parsed);
 				if (parsed.length == 0) throw "bibtex parse returne nothing";
-				var index = $scope.editWork.citation.citation.errors.indexOf(OM.getInstance().get('manualWork.bibtext.notValid'));
+				var index = $scope.editWork.citation.citation.errors.indexOf(om.get('manualWork.bibtext.notValid'));
 				if (index > -1) {
 					$scope.editWork.citation.citation.errors.splice(index, 1);
 				}
 			} catch (err) {
-				$scope.editWork.citation.citation.errors.push(OM.getInstance().get('manualWork.bibtext.notValid'));
+				$scope.editWork.citation.citation.errors.push(om.get('manualWork.bibtext.notValid'));
 			};
 		};
 	};
@@ -2248,8 +2248,8 @@ function profileDeactivationAndReactivationCtrl($scope,$compile){
 	$scope.deactivatedAccount = null;
 	$scope.reactivatedAccount = null;
 	$scope.successMessage = null;
-	$scope.deactivateMessage = OM.getInstance().get('admin.profile_deactivation.success');
-	$scope.reactivateMessage = OM.getInstance().get('admin.profile_reactivation.success');
+	$scope.deactivateMessage = om.get('admin.profile_deactivation.success');
+	$scope.reactivateMessage = om.get('admin.profile_reactivation.success');
 	$scope.showDeactivateModal = false;
 	$scope.showReactivateModal = false;
 
@@ -2542,8 +2542,8 @@ function profileDeprecationCtrl($scope,$compile){
 	};
 	
 	$scope.showSuccessModal = function(deprecated, primary){
-		console.log(OM.getInstance().get('admin.profile_deprecation.deprecate_account.success_message'));
-		$scope.successMessage = OM.getInstance().get('admin.profile_deprecation.deprecate_account.success_message').replace("{{0}}", deprecated).replace("{{1}}", primary);
+		console.log(om.get('admin.profile_deprecation.deprecate_account.success_message'));
+		$scope.successMessage = om.get('admin.profile_deprecation.deprecate_account.success_message').replace("{{0}}", deprecated).replace("{{1}}", primary);
 		
 		//Clean fields
 		$scope.deprecated_verified = false;
