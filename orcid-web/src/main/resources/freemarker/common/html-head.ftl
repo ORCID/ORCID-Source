@@ -58,7 +58,9 @@
 		<link rel="stylesheet" href="${staticLoc}/css/fonts.css?v=${ver}"/>
 	    <link rel="stylesheet" href="${staticCdn}/twitter-bootstrap/3.0.2/css/bootstrap.min.css?v=${ver}"/>
 	    <!--[if lt IE 8]>
-	        <link rel="stylesheet" href="${staticCdn}/twitter-bootstrap/3.0.2/css/bootstrap-ie7.css?v=${ver}"/>	                
+	    	<style type="text/css">
+	    		<#include "bootstrap-ie7_css.ftl">
+	    	</style>
 	    <![endif]-->
 
 	    <link rel="stylesheet" href="${staticCdn}/css/orcid.resp.css?v=${ver}"/>	    
