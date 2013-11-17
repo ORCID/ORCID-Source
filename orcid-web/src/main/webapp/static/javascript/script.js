@@ -119,38 +119,15 @@ var OrcidGA = function () {
 
 var orcidGA = new OrcidGA();
 
-var OrcidMessage = function (messageUrl) {
-	this.localData = null;
-	this.load(messageUrl);
-};
-
-OrcidMessage.prototype.load = function (messageUrl) {
-	(function (orcidMessage) {
-		$.ajax({
-			url:messageUrl,
-			async: false,
-			dataType: 'json',
-			success:function(data) {
-			    orcidMessage.localData = data;
-	        }
-		});
-	})(this);
+var OrcidMessage = function () {
+	//nothing to init now
 };
 
 OrcidMessage.prototype.get =  function (name) {
-	return this.localData.messages[name];
+	return orcidVar.jsMessages.messages[name];
 };
 
-OrcidMessage.instance = null;
-
-OrcidMessage.getInstance = function() {
-	console.log("OrcidMessage singleton"); 
-	if (this.instance == null) {
-		messageUrl = orcidVar.baseUri + "/lang.json";	
-		return this.instance = new OrcidMessage(messageUrl);
-	}
-	return this.instance;
-};
+var om = new OrcidMessage();
 
 /* 
  * every 15 seconds check and make sure
@@ -216,12 +193,12 @@ $(function () {
     	if (!warnMessCookie) {
     		var wHtml = '<div class="alert" id="test-warn-div">';
     			wHtml = wHtml + '<strong>';
-    			wHtml = wHtml + OM.getInstance().get('common.js.domain.warn.template').replace('{{curentDomian}}',window.location.hostname);
+    			wHtml = wHtml + om.get('common.js.domain.warn.template').replace('{{curentDomian}}',window.location.hostname);
     			wHtml = wHtml + '</strong> ';
     			//don't let the warning be disabled for test-warn-dismiss
     			if (window.location.hostname.toLowerCase() != "sandbox-1.orcid.org") {
     				wHtml = wHtml + ' <div style="float: right" class="small"><a href="#" id="test-warn-dismiss">'
-    				wHtml = wHtml + OM.getInstance().get('common.cookies.click_dismiss');
+    				wHtml = wHtml + om.get('common.cookies.click_dismiss');
     				wHtml = wHtml + '</a></div>';
     			}
     			wHtml = wHtml + '</div>';
@@ -278,7 +255,7 @@ $(function () {
 	if (oldBrowserFlag && location == parent.location) {
 		var wHtml = '<div class="alert" id="browser-warn-div">';
 			wHtml = wHtml + '<strong>'; 
-			wHtml = wHtml + OM.getInstance().get('common.old.browser');
+			wHtml = wHtml + om.get('common.old.browser');
 			wHtml = wHtml + '</strong>';
 			wHtml = wHtml + '</div>';
 			$('body').prepend(wHtml);
@@ -314,18 +291,18 @@ $(function () {
 	            		var message;
 	            		if(data.deprecated){
 	            			if(data.primary)
-	            				message = OM.getInstance().get('orcid.frontend.security.deprecated_with_primary').replace("{{primary}}", data.primary);	            				
+	            				message = om.get('orcid.frontend.security.deprecated_with_primary').replace("{{primary}}", data.primary);	            				
 	            			else
-	            				message = OM.getInstance().get('orcid.frontend.security.deprecated');
+	            				message = om.get('orcid.frontend.security.deprecated');
 	            		} else if(data.unclaimed){
 	            			var resendClaimUrl = window.location + "/../resend-claim";
 	            			var userId = $('#userId').val();
                             if(userId.indexOf('@') != -1){
 	            		        resendClaimUrl += '?email=' + encodeURIComponent(userId);	
 	            		    }
-	            		    message = OM.getInstance().get('orcid.frontend.security.unclaimed_exists').replace("{{resendClaimUrl}}",resendClaimUrl);  
+	            		    message = om.get('orcid.frontend.security.unclaimed_exists').replace("{{resendClaimUrl}}",resendClaimUrl);  
 	            		} else{
-	            			message = OM.getInstance().get('orcid.frontend.security.bad_credentials'); 
+	            			message = om.get('orcid.frontend.security.bad_credentials'); 
 	            		}
 		            	$("<div class='alert' id='login-error-mess'>"+ message + "</div>")
 		            	    .hide()
