@@ -31,7 +31,6 @@ import javax.xml.datatype.XMLGregorianCalendar;
 import org.apache.commons.lang.StringUtils;
 import org.orcid.core.adapter.Jpa2JaxbAdapter;
 import org.orcid.core.manager.LoadOptions;
-import org.orcid.core.oauth.service.OrcidRandomValueTokenServices;
 import org.orcid.core.security.DefaultPermissionChecker;
 import org.orcid.core.security.PermissionChecker;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
@@ -74,7 +73,6 @@ import org.orcid.persistence.jpa.entities.WorkExternalIdentifierEntity;
 import org.orcid.utils.DateUtils;
 import org.orcid.utils.NullUtils;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.oauth2.provider.token.DefaultTokenServices;
 
 /**
  * <p/>
@@ -444,12 +442,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
             OrcidWorks works = new OrcidWorks();
             for (ProfileWorkEntity profileWorkEntity : profileWorks) {
                 OrcidWork orcidWork = getOrcidWork(profileWorkEntity);
-                orcidWork.setVisibility(profileWorkEntity.getVisibility());
-                if (profileWorkEntity.getSourceProfile() == null) {
-                    orcidWork.setWorkSource(new WorkSource(WorkSource.NULL_SOURCE_PROFILE));
-                } else {
-                    orcidWork.setWorkSource(new WorkSource(profileWorkEntity.getSourceProfile().getId()));
-                }
+                orcidWork.setVisibility(profileWorkEntity.getVisibility());                
                 works.getOrcidWork().add(orcidWork);
             }
             return works;
@@ -810,12 +803,33 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         return workTitle;
     }
 
-    private WorkSource getWorkSource(ProfileWorkEntity profileWorkEntity) {
+    private WorkSource getWorkSource(ProfileWorkEntity profileWorkEntity) {                
         if (profileWorkEntity == null || profileWorkEntity.getSourceProfile() == null) {
-            return null;
+            return new WorkSource(WorkSource.NULL_SOURCE_PROFILE);
         }
         ProfileEntity sourceProfile = profileWorkEntity.getSourceProfile();
-        return new WorkSource(sourceProfile.getId());
+        
+        WorkSource workSource = new WorkSource(sourceProfile.getId());
+        
+        //Set the source name
+        //If it is a client, lets use the source_name if it is public
+        if(sourceProfile.getOrcidType() != null && sourceProfile.getOrcidType().equals(OrcidType.CLIENT)) {
+            Visibility workSourceVisibility = (sourceProfile.getCreditNameVisibility() == null) ? OrcidVisibilityDefaults.CREDIT_NAME_DEFAULT.getVisibility() : sourceProfile.getCreditNameVisibility();            
+            if(Visibility.PUBLIC.equals(workSourceVisibility)) {
+                workSource.setSourceName(sourceProfile.getCreditName());
+            }
+        } else {
+            //If it is a user, check if it have a credit name and is visible
+            if(!StringUtils.isEmpty(sourceProfile.getCreditName()) && Visibility.PUBLIC.equals(sourceProfile.getCreditNameVisibility())){
+                workSource.setSourceName(sourceProfile.getCreditName());
+            } else {
+                //If it doesnt, lets use the give name + family name
+                String name = sourceProfile.getGivenNames() + (StringUtils.isEmpty(sourceProfile.getFamilyName()) ? "" : " " + sourceProfile.getFamilyName());
+                workSource.setSourceName(name);
+            }
+        }
+                            
+        return workSource;
     }
 
     private SourceDate getSourceDate(Date depositedDate) {

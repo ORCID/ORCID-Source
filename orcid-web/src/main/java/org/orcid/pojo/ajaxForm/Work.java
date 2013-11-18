@@ -67,6 +67,8 @@ public class Work implements ErrorsInterface, Serializable {
     private List<WorkExternalIdentifier> workExternalIdentifiers;
 
     private Text workSource;
+    
+    private Text workSourceName;
 
     private WorkTitle workTitle;
 
@@ -107,8 +109,12 @@ public class Work implements ErrorsInterface, Serializable {
             }
             w.setWorkExternalIdentifiers(workExternalIdentifiers);
         }
-        if (orcidWork.getWorkSource() != null)
+        if (orcidWork.getWorkSource() != null) {
             w.setWorkSource(Text.valueOf(orcidWork.getWorkSource().getContent()));
+            if(orcidWork.getWorkSource().getSourceName() != null)
+                w.setWorkSourceName(Text.valueOf(orcidWork.getWorkSource().getSourceName()));
+        }
+                        
         if (orcidWork.getWorkTitle() != null)
             w.setWorkTitle(WorkTitle.valueOf(orcidWork.getWorkTitle()));
         if (orcidWork.getWorkType() != null)
@@ -324,5 +330,13 @@ public class Work implements ErrorsInterface, Serializable {
 
     public void setCountryName(Text countryName) {
         this.countryName = countryName;
-    }        
+    }
+
+    public Text getWorkSourceName() {
+        return workSourceName;
+    }
+
+    public void setWorkSourceName(Text workSourceName) {
+        this.workSourceName = workSourceName;
+    }             
 }

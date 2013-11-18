@@ -27,7 +27,9 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.ResourceBundle;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -38,6 +40,10 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringEscapeUtils;
+import org.codehaus.jackson.JsonGenerationException;
+import org.codehaus.jackson.map.JsonMappingException;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.EmailManager;
 import org.orcid.core.manager.OrcidProfileManager;
@@ -48,7 +54,9 @@ import org.orcid.jaxb.model.message.Email;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.pojo.ajaxForm.ErrorsInterface;
+import org.orcid.utils.OrcidStringUtils;
 import org.orcid.utils.OrcidWebUtils;
+import org.orcid.utils.UTF8Control;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -60,6 +68,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.servlet.support.RequestContextUtils;
 
 public class BaseController {
 
@@ -290,6 +299,25 @@ public class BaseController {
     public LoginForm getLoginForm() {
         return new LoginForm();
     }
+
+    @ModelAttribute("jsMessagesJson")
+    public String getJavascriptMessages(HttpServletRequest request) {
+        ObjectMapper mapper = new ObjectMapper();
+        Locale locale = RequestContextUtils.getLocale(request);
+        org.orcid.pojo.Local lPojo = new org.orcid.pojo.Local();
+        lPojo.setLocale(locale.toString());
+  
+        ResourceBundle resources = ResourceBundle.getBundle("i18n/javascript", locale, new UTF8Control());
+        lPojo.setMessages(OrcidStringUtils.resourceBundleToMap(resources));
+        String messages = "";
+        try {
+            messages = StringEscapeUtils.escapeEcmaScript(mapper.writeValueAsString(lPojo));
+        } catch (IOException e) {
+            LOGGER.error("getJavascriptMessages error:"+ e.toString(), e);
+        }
+        return messages;      
+    }
+
 
     protected void validateEmailAddress(String email, HttpServletRequest request, BindingResult bindingResult) {
         validateEmailAddress(email, true, request, bindingResult);

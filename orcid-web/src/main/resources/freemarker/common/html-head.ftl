@@ -23,7 +23,16 @@
     <meta name="description" content="">
     <meta name="author" content="ORCID">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-         
+    <!-- hack in json3 to allow angular js to work in IE7 -->
+    <!-- we also need this JSON parser for orcidVar -->
+    <!--[if IE 7]>
+    	<script src="//cdnjs.cloudflare.com/ajax/libs/json3/3.2.4/json3.min.js" type="text/javascript"></script>
+    	<script type="text/javascript">
+			if (typeof JSON == 'undefined') {
+    			document.write(unescape("%3Cscript src='${staticCdn}/javascript/json3/3.2.4/json3.min.js' type='text/javascript'%3E%3C/script%3E"));
+			}
+		</script>
+    <![endif]-->
     <script type="text/javascript">
         var orcidVar = {};
         orcidVar.baseUri = '${baseUri}';
@@ -39,6 +48,7 @@
       <#else>
         orcidVar.orcidId = '${(profile.orcid.value)!}';
       </#if>
+      orcidVar.jsMessages = JSON.parse("${jsMessagesJson}");
     </script>    
     <#if
 		request.requestURI?ends_with("${basePath}signin")||
@@ -106,10 +116,6 @@
 
 
     <#include "/layout/google_analytics.ftl">
-    <!-- hack in json3 to allow angular js to work in IE7 -->
-    <!--[if IE 7]>
-    	<script src="//cdnjs.cloudflare.com/ajax/libs/json3/3.2.4/json3.min.js" type="text/javascript"></script>
-     <![endif]-->
      <script type="text/javascript">
 		  var _prum={id:"51682c74abe53d6049000000"};
 		  var PRUM_EPISODES=PRUM_EPISODES||{};

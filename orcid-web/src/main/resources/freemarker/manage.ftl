@@ -106,7 +106,7 @@
 							</div>
 							<div class="row bottom-row">
 									<div class="col-md-12 add-email">
-										<input type="email" placeholder="Add Another Email"
+										<input type="email" placeholder="${springMacroRequestContext.getMessage("manage.add_another_email")}"
 											class="input-xlarge" ng-model="inputEmail.value"
 											style="margin: 0px;" required /> <span
 											ng-click="checkCredentials()" class="btn btn-primary">${springMacroRequestContext.getMessage("manage.spanadd")}</span>

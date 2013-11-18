@@ -29,13 +29,13 @@
             <div>
                 <label for="userId">${springMacroRequestContext.getMessage("oauth_sign_in.labelemailorID")}</label>
                 <div class="relative">
-                   <@spring.formInput "loginForm.userId" 'placeholder="Email or ORCID" class="input-xlarge"' />
+                   <@spring.formInput "loginForm.userId" 'placeholder="${springMacroRequestContext.getMessage("oauth_sign_in.labelemailorID")}" class="input-xlarge"' />
                 </div>
             </div>
             <div id="passwordField">
                 <label for="password">${springMacroRequestContext.getMessage("oauth_sign_in.labelpassword")}</label>
                 <div class="relative">
-                   <@spring.formPasswordInput "loginForm.password" 'placeholder="Password" class="input-xlarge"' />
+                   <@spring.formPasswordInput "loginForm.password" 'placeholder="${springMacroRequestContext.getMessage("oauth_sign_in.labelpassword")}" class="input-xlarge"' />
                 </div>
             </div>
             <div id="buttons">
