@@ -154,7 +154,7 @@
 		    		</div>
 		    	</div>
 		    	<div class="control-group">
-		    		<label class="relative" for="manualAffiliation.endDay"><@orcid.msg 'manual_affiliation_form_contents.labelEndDate'/></label>
+		    		<label class="relative" for="manualAffiliation.endDay"><@orcid.msg 'manual_affiliation_form_contents.labelEndDateLeave'/></label>
 		    		<div class="relative">
 				    <select id="endDay" name="endDay" ng-model="editAffiliation.endDate.day">
 						<#list days?keys as key>
