@@ -283,8 +283,9 @@ function removeBadContributors(dw) {
 			&& dw.contributors[idx].orcid == null
 			&& dw.contributors[idx].creditName == null
 			&& dw.contributors[idx].contributorRole == null
-			&& dw.contributors[idx].creditNameVisibility == null)
-			delete dw.contributors.splice(idx,1);
+			&& dw.contributors[idx].creditNameVisibility == null) {
+				dw.contributors.splice(idx,1);
+			}
 	}
 }
 
