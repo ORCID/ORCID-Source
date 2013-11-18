@@ -198,7 +198,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
 
     @Resource
     private SourceManager sourceManager;
-
+ 
     private int claimWaitPeriodDays = 10;
 
     private int claimReminderAfterDays = 8;

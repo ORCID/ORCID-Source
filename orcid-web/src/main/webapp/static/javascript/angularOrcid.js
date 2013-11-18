@@ -2615,6 +2615,7 @@ function revokeApplicationFormCtrl($scope,$compile){
 function adminGroupsCtrl($scope,$compile){
 	$scope.showAdminGroupsModal = false;
 	$scope.newGroup = null;
+	$scope.groups = [];
 	
 	$scope.toggleReactivationModal = function() {
 		$scope.showAdminGroupsModal = !$scope.showAdminGroupsModal;
@@ -2634,6 +2635,35 @@ function adminGroupsCtrl($scope,$compile){
 	
 	$scope.closeModal = function() {
 		$.colorbox.close();
+	};
+	
+	$scope.listGroups = function() {
+		$.ajax({
+	        url: orcidVar.baseUri+'/admin-actions/list-groups.json',	        
+	        type: 'GET',
+	        dataType: 'json',	        
+	        success: function(data){
+	        	$scope.$apply(function(){
+	        		console.log(data);
+	        		$scope.groups = data;
+	        		$scope.showGroupList();
+				});	        	
+	        }
+	    }).fail(function(error) { 
+	    	// something bad is happening!	    	
+	    	console.log("Error getting existing groups");	    	
+	    });					
+	};
+	
+	$scope.showGroupList = function() {
+		$.colorbox({                      
+			html : $compile($('#list-groups').html())($scope),				
+				onLoad: function() {
+				$('#cboxClose').remove();
+			}
+		});
+		
+		$.colorbox.resize({width:"750px" , height:"360px"});
 	};
 	
 	$scope.getGroup = function() { 
