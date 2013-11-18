@@ -144,7 +144,7 @@
         			   <ul class="personal-inf-display">        			   		
         			   		<li>
         			   			<a href="" ng-click="toggleDisplayInfo()" class="toggle-text">
-	        			   			<i class="icon-caret-down" ng-class="{'icon-caret-right':displayInfo==false}"></i></a>
+	        			   			<i class="glyphicon-chevron-down glyphicon x0" ng-class="{'glyphicon-chevron-right':displayInfo==false}"></i></a>
 	        			   		</a>
         			   			<a href="" ng-click="toggleDisplayInfo()" class="toggle-text"><@orcid.msg 'workspace.personal_information'/></a></li>
         			   		<li><a href="<@spring.url '/account/manage-bio-settings'/>" id="update-personal-modal-link" class="label btn-primary"><@orcid.msg 'workspace.Update'/></a></li>        			   		
@@ -164,7 +164,7 @@
                 		<ul class="personal-inf-display">
                 			<li>
 		        				<a href="" ng-click="toggleDisplayWorks()" class="toggle-text">
-		        			       <i class="icon-caret-down icon" ng-class="{'icon-caret-right':displayWorks==false}"></i></a>
+		        			       <i class="glyphicon-chevron-down glyphicon x0" ng-class="{'glyphicon-chevron-right':displayWorks==false}"></i></a>
 		        			    </a> 
 		        				<a href="" ng-click="toggleDisplayWorks()" class="toggle-text"><@orcid.msg 'workspace.Works'/></a>
 		        			</li>		        			
