@@ -89,4 +89,6 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
     void updateEncryptedPassword(String orcid, String encryptedPassword);
 
     void updateSecurityQuestion(String orcid, Integer securityQuestionId, String encryptedSecurityAnswer);
+    
+    List<ProfileEntity> findProfilesByOrcidType(OrcidType type);
 }

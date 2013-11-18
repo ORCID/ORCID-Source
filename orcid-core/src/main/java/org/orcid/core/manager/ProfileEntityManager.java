@@ -16,7 +16,10 @@
  */
 package org.orcid.core.manager;
 
+import java.util.List;
+
 import org.orcid.jaxb.model.message.OrcidProfile;
+import org.orcid.jaxb.model.message.OrcidType;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 
 /**
@@ -45,4 +48,6 @@ public interface ProfileEntityManager {
     public boolean updateProfile(ProfileEntity profile);
     
     public boolean deprecateProfile(ProfileEntity deprecatedProfile, ProfileEntity primaryProfile);
+    
+    public List<ProfileEntity> findProfilesByOrcidType(OrcidType type);
 }

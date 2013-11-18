@@ -22,6 +22,7 @@ import java.util.List;
 
 import org.orcid.jaxb.model.clientgroup.GroupType;
 import org.orcid.jaxb.model.clientgroup.OrcidClientGroup;
+import org.orcid.persistence.jpa.entities.ProfileEntity;
 
 public class Group implements ErrorsInterface, Serializable {
     private static final long serialVersionUID = 1L;
@@ -42,6 +43,15 @@ public class Group implements ErrorsInterface, Serializable {
         this.errors = errors;
     }
 
+    public static Group fromProfileEntity(ProfileEntity profile){
+    	Group group = new Group();
+    	group.setEmail(Text.valueOf(profile.getPrimaryEmail().getId()));
+    	group.setGroupName(Text.valueOf(profile.getCreditName()));
+    	group.setGroupOrcid(Text.valueOf(profile.getId()));
+    	group.setType(Text.valueOf(profile.getGroupType().value()));
+    	return group;
+    }
+    
     public OrcidClientGroup toOrcidClientGroup() {
         OrcidClientGroup orcidClientGroup = new OrcidClientGroup();
         orcidClientGroup.setType(GroupType.fromValue(getType().getValue()));

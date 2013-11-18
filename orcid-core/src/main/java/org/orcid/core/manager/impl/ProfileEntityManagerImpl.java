@@ -16,10 +16,14 @@
  */
 package org.orcid.core.manager.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.annotation.Resource;
 
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.jaxb.model.message.OrcidProfile;
+import org.orcid.jaxb.model.message.OrcidType;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.springframework.stereotype.Service;
@@ -62,7 +66,10 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
     }
 
     /**
-     * TODO
+     * Updates a profile with the given OrcidProfile object
+     * @param orcidProfile
+     * 		The object that will be used to update the database profile
+     * @return true if the profile was successfully updated on database, false otherwise
      * */
     @Override
     public boolean updateProfile(OrcidProfile orcidProfile) {
@@ -120,5 +127,17 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
             profileDao.refresh(deprecatedProfile);
         return result;
     }
-
+    
+    /**
+     * Return the list of profiles that belongs to the provided OrcidType
+     * @param type
+     * 		OrcidType that indicates the profile type we want to fetch
+     * @return the list of profiles that belongs to the specified type  
+     * */
+    @Override
+    public List<ProfileEntity> findProfilesByOrcidType(OrcidType type){
+    	if(type == null)
+    		return new ArrayList<ProfileEntity>();
+    	return profileDao.findProfilesByOrcidType(type);
+    }
 }
