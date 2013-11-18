@@ -134,10 +134,10 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
      * 		OrcidType that indicates the profile type we want to fetch
      * @return the list of profiles that belongs to the specified type  
      * */
+    @Override
     public List<ProfileEntity> findProfilesByOrcidType(OrcidType type){
     	if(type == null)
     		return new ArrayList<ProfileEntity>();
     	return profileDao.findProfilesByOrcidType(type);
     }
-
 }

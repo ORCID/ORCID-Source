@@ -505,7 +505,7 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
     @SuppressWarnings("unchecked")
     public List<ProfileEntity> findProfilesByOrcidType(OrcidType type){
     	Query query = entityManager.createQuery("from ProfileEntity where profile_deactivation_date=NULL and orcidType=:type");
-    	query.setParameter("type", type.value());
+    	query.setParameter("type", type);
     	return (List<ProfileEntity>)query.getResultList();
     }
 

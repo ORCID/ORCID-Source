@@ -200,21 +200,23 @@
 		<a id="cboxClose" class="btn pull-right close-button" ng-click="closeModal()">X</a>
     	<h1><@orcid.msg 'manage_groups.group_list_title'/></h1>
 		<div>
-			<div class="relative" ng-show="groups.length > 0">				
-				<ul>
-      				<li><@orcid.msg 'manage_groups.orcid'/></li>
-					<li><@orcid.msg 'manage_groups.name'/></li>
-					<li><@orcid.msg 'manage_groups.email'/></li>
-					<li><@orcid.msg 'manage_groups.type'/></li>
-				</ul>
-				<ul ng-repeat="group in groups">
-					<li>{{group.groupOrcid}}</li>
-					<li>{{group.groupName}}</li>
-					<li>{{group.email}}</li>
-					<li>{{group.type}}</li>
-				</ul>
+			<div class="relative" ng-show="groups.length">				
+				<table class="table table-bordered">
+					<tr>
+      					<th><@orcid.msg 'manage_groups.orcid'/></th>
+						<th><@orcid.msg 'manage_groups.name'/></th>
+						<th><@orcid.msg 'manage_groups.email'/></th>
+						<th><@orcid.msg 'manage_groups.type'/></th>
+					</tr>
+					<tr ng-repeat="group in groups">
+						<td>{{group.groupOrcid.value}}</td>
+						<td>{{group.groupName.value}}</td>
+						<td>{{group.email.value}}</td>
+						<td>{{group.type.value}}</td>
+					</tr>
+				</table>
     		</div>
-			<div ng-show="groups.length == 0">
+			<div ng-show="!groups.length">
 				<span><@orcid.msg 'manage_groups.no_groups'/></span>
 			</div>
 		</div>
@@ -247,7 +249,7 @@
 							<span><a ng-click="showAddGroupModal()" class="glyphicon glyphicon-plus-sign blue"><@orcid.msg 'manage_groups.add_group_link'/></a></span>
 					</div>
 					<div class="add-item-link">
-							<span><a ng-click="showAllGroupsModal()" class="glyphicon glyphicon-zoom-in blue"><@orcid.msg 'manage_groups.view_all_link'/></a></span>
+							<span><a ng-click="listGroups()" class="glyphicon glyphicon-zoom-in blue"><@orcid.msg 'manage_groups.view_all_link'/></a></span>
 					</div>		
 				</div>
 			</div>

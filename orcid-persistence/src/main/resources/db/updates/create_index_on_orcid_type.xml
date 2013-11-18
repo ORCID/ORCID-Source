@@ -20,7 +20,7 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
 
-	<changeSet author="Angel Montenegro" id="CREATE-INDEX-ON-ORCID-TYPE">
+	<changeSet author="Angel Montenegro" id="CREATE-INDEX-ON-ORCID-TYPE" dbms="postgresql">
 	    <createIndex tableName="profile" indexName="profile_orcid_type">
             <column name="orcid_type" />
         </createIndex>
