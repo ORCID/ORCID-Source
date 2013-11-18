@@ -28,6 +28,7 @@ import java.io.Serializable;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
 
@@ -59,9 +60,11 @@ public class WorkSource implements Serializable {
     /**
      * 
      */
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;            
+    @XmlTransient
+    private String sourceName;
     @XmlValue
-    protected String content;
+    protected String content;            
 
     public WorkSource() {
 
@@ -69,6 +72,25 @@ public class WorkSource implements Serializable {
 
     public WorkSource(String content) {
         setContent(content);
+    }
+    
+    public WorkSource(String content, String sourceName) {
+        setContent(content);
+        setSourceName(sourceName);
+    }
+    
+    /**
+     * Gets the value of the sourceName property.     
+     */    
+    public String getSourceName() {
+        return this.sourceName;
+    }
+
+    /**
+     * Set the value of the sourceName property
+     * */
+    public void setSourceName(String sourceName) {
+        this.sourceName = sourceName;
     }
 
     /**
@@ -83,7 +105,7 @@ public class WorkSource implements Serializable {
      * */
     public void setContent(String content) {
         this.content = content;
-    }
+    }        
 
     @Override
     public boolean equals(Object o) {
@@ -96,19 +118,23 @@ public class WorkSource implements Serializable {
 
         WorkSource that = (WorkSource) o;
 
-        if (content != null)
+        if (content != null ? !content.equals(that.content) : that.content != null) {
+               return false;
+        }
 
-            if (content != null ? !content.equals(that.content) : that.content != null) {
-                return false;
-            }
-
+        if (sourceName != null ? !sourceName.equals(that.sourceName) : that.sourceName != null) {
+            return false;
+        }
+        
         return true;
     }
 
     @Override
     public int hashCode() {
-        int result = content != null ? content.hashCode() : 0;
-        result = 31 * result;
+        int prime = 31;
+        int result = 1;        
+        result = prime * result + ((content == null) ? 0 : content.hashCode());                       
+        result = prime * result + ((sourceName == null) ? 0 : sourceName.hashCode());
         return result;
     }
 }

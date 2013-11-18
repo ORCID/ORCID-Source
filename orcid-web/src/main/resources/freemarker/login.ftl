@@ -29,13 +29,13 @@
 		    <div class="control-group col-md-offset-3 col-md-9 col-sm-9 col-sm-offset-3 col-xs-12">
 		        <label for="userId" class="control-label">${springMacroRequestContext.getMessage("login.username")}</label>
 		        <div>
-		           <input type="text" id="userId" name="userId" value="" placeholder="Email or ORCID">
+		           <input type="text" id="userId" name="userId" value="" placeholder="${springMacroRequestContext.getMessage("login.username")}">
 		        </div>
 		    </div>
 		    <div class="control-group col-md-offset-3 col-md-9 col-sm-9 col-sm-offset-3 col-xs-12">
 		        <label for="password" class="control-label">${springMacroRequestContext.getMessage("login.password")}</label>
 		        <div>
-		            <input type="password" id="password" name="password" value="" placeholder="Password">
+		            <input type="password" id="password" name="password" value="" placeholder="${springMacroRequestContext.getMessage("login.password")}">
 		        </div>
 		    </div>
 		    <div class="control-group col-md-offset-3 col-md-9 col-sm-9 col-sm-offset-3 col-xs-12">
