@@ -208,6 +208,7 @@ the software.
                         	<exclude>**/src/main/webapp/static/javascript/jquery/**</exclude>
                         	<exclude>**/src/main/webapp/static/javascript/jqueryui/**</exclude>
                         	<exclude>**/src/main/webapp/static/javascript/angularjs/**</exclude>
+                        	<exclude>**/src/main/webapp/static/javascript/json3/**</exclude>
                         	<exclude>**/src/main/webapp/static/javascript/typeahead/**</exclude>
                         	<exclude>**/src/main/webapp/static/javascript/respond.proxy.js</exclude>
                         	<exclude>**/src/main/webapp/static/css/jquery-*.css</exclude>
