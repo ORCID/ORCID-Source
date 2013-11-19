@@ -2911,6 +2911,14 @@ ul.personal-inf-display li{
 	font-size: 800%;	
 }
 
+#loginForm #ajax-loader{
+	vertical-align: -6px;
+}
+/*Safari Windows Hack*/
+::i-block-chrome,#loginForm #ajax-loader{
+	vertical-align: -43px;
+}
+
 
 
 /* Media Queries */
