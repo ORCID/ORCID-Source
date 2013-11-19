@@ -1563,6 +1563,7 @@
             <xs:enumeration value="formatted-mla"/>
             <xs:enumeration value="formatted-vancouver"/>
             <xs:enumeration value="formatted-chicago"/>
+            <xs:enumeration value="ris"/>
         </xs:restriction>
     </xs:simpleType>
     <xs:simpleType name="iso-3166-country">

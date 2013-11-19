@@ -1659,6 +1659,7 @@
 		<xs:restriction base="xs:string">
 			<xs:enumeration value="formatted-unspecified" />
 			<xs:enumeration value="bibtex" />
+			<xs:enumeration value="ris" />
 			<xs:enumeration value="formatted-apa" />
 			<xs:enumeration value="formatted-harvard" />
 			<xs:enumeration value="formatted-ieee" />
