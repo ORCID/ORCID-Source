@@ -3521,27 +3521,8 @@ ul.personal-inf-display li{
 	
 	.add-work .alert{
 		padding: 0 10px;
-	}
+	}	
 	
-	/* Workspace Affiliations */
-	/* Affiliations Pop over */
-	/*
-	#workspace-affiliations .popover-help-container .popover{
-		left:-134px !important;
-	}
-	
-	#workspace-affiliations .popover-help-container .arrow{
-		left: 146px !important;
-	}
-		
-	#edit-affiliation .popover-help-container .popover{
-		left: -105px;
-	}
-	
-	#edit-affiliation .popover.bottom .arrow{
-		left: 118px;
-	}
-	*/
 	
 	/* Work List*/
 	.more-info-container{		
@@ -3643,6 +3624,25 @@ ul.personal-inf-display li{
 		left: 120px !important;
 	}
 	
+	/* Affiliations */
+	
+	#edit-affiliation .privacy-control{
+		width: 70%;
+		margin-left: 15px;
+	}
+	
+	#edit-affiliation .lightbox-container{
+		padding: 0;
+	}
+	
+	#edit-affiliation .popover-help-container .popover{
+		left: -110px;
+	}
+	
+	#edit-affiliation .popover.bottom .arrow{
+		 left: 44%;
+		 top: -11px;
+	}	
 	
 	
 }
