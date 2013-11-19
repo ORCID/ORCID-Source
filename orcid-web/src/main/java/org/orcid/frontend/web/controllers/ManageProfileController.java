@@ -192,41 +192,6 @@ public class ManageProfileController extends BaseWorkspaceController {
         return mav;
     }
 
-    @RequestMapping(value = "/manage-password-info", method = RequestMethod.GET)
-    public ModelAndView viewPasswordInfo() {
-        ModelAndView defaultView = rebuildManageView("password-tab");
-        ManagePasswordOptionsForm passwordOptionForUser = populateManagePasswordFormFromUserInfo();
-        defaultView.addObject("passwordOptionsForm", passwordOptionForUser);
-        return defaultView;
-    }
-
-    @RequestMapping(value = "/manage-password-info", method = RequestMethod.POST)
-    public ModelAndView updatePasswordInformation(@ModelAttribute @Valid ManagePasswordOptionsForm passwordOptionsForm, BindingResult bindingResult) {
-
-        // if errors - redirect to the populate view - bind where we can see
-        // errors
-        if (bindingResult.hasErrors()) {
-            ModelAndView erroredView = rebuildManageView("password-tab");
-            erroredView.addAllObjects(bindingResult.getModel());
-            return erroredView;
-        }
-
-        // if not retrieve the user credentials, and set the new security
-        // details
-        OrcidProfile profile = getEffectiveProfile();
-        profile.setPassword(passwordOptionsForm.getPassword());
-        profile.setVerificationCode(passwordOptionsForm.getVerificationNumber());
-        profile.setSecurityQuestionAnswer(passwordOptionsForm.getSecurityQuestionAnswer());
-        profile.getOrcidInternal().getSecurityDetails().setSecurityQuestionId(new SecurityQuestionId(passwordOptionsForm.getSecurityQuestionId()));
-
-        orcidProfileManager.updatePasswordInformation(profile);
-        // return the view as if an HTTP get now that the info has persisted ok
-        ModelAndView mav = rebuildManageView("password-tab");
-        mav.addObject("activeTab", "password-tab");
-        mav.addObject("passwordOptionsSaved", true);
-        return mav;
-    }
-
     @RequestMapping(value = "/search-for-delegates", method = RequestMethod.GET)
     public ModelAndView viewSearchForDelegates() {
         ModelAndView mav = new ModelAndView("search_for_delegates");
@@ -441,13 +406,6 @@ public class ManageProfileController extends BaseWorkspaceController {
         return "redirect:/account";
     }
 
-    @RequestMapping(value = { "/password", "/change-password" }, method = RequestMethod.GET)
-    public ModelAndView viewChangePassword() {
-        ChangePasswordForm changePasswordForm = new ChangePasswordForm();
-        ModelAndView changePasswordView = new ModelAndView("change_password");
-        changePasswordView.addObject(changePasswordForm);
-        return changePasswordView;
-    }
 
     @RequestMapping(value = { "/security-question", "/change-security-question" }, method = RequestMethod.GET)
     public ModelAndView viewChangeSecurityQuestion() {
@@ -504,7 +462,7 @@ public class ManageProfileController extends BaseWorkspaceController {
         if (securityQuestion.getSecurityQuestionId() != 0 && (securityQuestion.getSecurityAnswer() == null || securityQuestion.getSecurityAnswer().trim() == ""))
             errors.add(getMessage("manage.pleaseProvideAnAnswer"));
 
-        if (securityQuestion.getPassword() == null || !encryptionManager.hashMatches(securityQuestion.getPassword(), getCurrentUser().getPassword())) {
+        if (securityQuestion.getPassword() == null || !encryptionManager.hashMatches(securityQuestion.getPassword(), getEffectiveProfile().getPassword())) {
             errors.add(getMessage("check_password_modal.incorrect_password"));
         }
 
@@ -568,31 +526,6 @@ public class ManageProfileController extends BaseWorkspaceController {
         return changeSecurityDetailsView;
     }
 
-    @RequestMapping(value = { "/password", "/change-password" }, method = RequestMethod.POST)
-    public ModelAndView updateWithChangedPassword(@ModelAttribute @Valid ChangePasswordForm passwordOptionsForm, BindingResult bindingResult) {
-
-        ModelAndView changePasswordView = new ModelAndView("change_password");
-        if (bindingResult.hasErrors()) {
-            changePasswordView.addAllObjects(bindingResult.getModel());
-            return changePasswordView;
-        }
-
-        if (!encryptionManager.hashMatches(passwordOptionsForm.getOldPassword(), getCurrentUser().getPassword())) {
-            String[] codes = { "orcid.frontend.change.password.current_password_incorrect" };
-            bindingResult.addError(new FieldError("oldPassword", "oldPassword", null, false, codes, null, "Old Password Invalid"));
-            changePasswordView.addAllObjects(bindingResult.getModel());
-            return changePasswordView;
-
-        }
-
-        OrcidProfile profile = getEffectiveProfile();
-        profile.setPassword(passwordOptionsForm.getPassword());
-        orcidProfileManager.updatePasswordInformation(profile);
-        // return the view as if an HTTP get now that the info has persisted ok
-        changePasswordView.addObject("passwordOptionsSaved", true);
-        return changePasswordView;
-    }
-
     @RequestMapping(value = { "/change-password.json" }, method = RequestMethod.GET)
     public @ResponseBody
     ChangePassword getChangedPasswordJson(HttpServletRequest request) {
@@ -611,7 +544,7 @@ public class ManageProfileController extends BaseWorkspaceController {
             errors.add(getMessage("FieldMatch.registrationForm"));
         }
 
-        if (cp.getOldPassword() == null || !encryptionManager.hashMatches(cp.getOldPassword(), getCurrentUser().getPassword())) {
+        if (cp.getOldPassword() == null || !encryptionManager.hashMatches(cp.getOldPassword(), getEffectiveProfile().getPassword())) {
             errors.add(getMessage("orcid.frontend.change.password.current_password_incorrect"));
         }
 
@@ -693,7 +626,7 @@ public class ManageProfileController extends BaseWorkspaceController {
     org.orcid.pojo.Email addEmailsJson(HttpServletRequest request, @RequestBody org.orcid.pojo.AddEmail email) {
         List<String> errors = new ArrayList<String>();
         // Check password
-        if (email.getPassword() == null || !encryptionManager.hashMatches(email.getPassword(), getCurrentUser().getPassword())) {
+        if (email.getPassword() == null || !encryptionManager.hashMatches(email.getPassword(), getEffectiveProfile().getPassword())) {
             errors.add(getMessage("check_password_modal.incorrect_password"));
         }
 
