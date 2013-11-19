@@ -2894,6 +2894,11 @@ ul.personal-inf-display li{
     to {transform:rotate(360deg);}
 }
 
+.x0{
+    font-size: 50%;
+    vertical-align: 3px;
+}
+
 .x2 {
 	font-size: 200%;	
 }
