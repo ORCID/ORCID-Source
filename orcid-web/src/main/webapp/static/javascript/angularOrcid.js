@@ -227,7 +227,7 @@ function formColorBoxResize() {
 
 function fixZindexIE7(target, zindex){
 	$(target).each(function(){
-		$(this).css('z-index', zindex);    			
+		$(this).css('z-index', zindex);		
 		--zindex;    			    		
 	});
 }
@@ -311,8 +311,6 @@ function EditTableCtrl($scope) {
 		else $scope.emailToggleText = om.get("manage.editTable.edit");		
 	};
 	
-	
-	
 	$scope.toggleEmailEdit = function() {
 		$scope.showEditEmail = !$scope.showEditEmail;
 		$scope.emailUpdateToggleText();		
@@ -348,9 +346,16 @@ function EditTableCtrl($scope) {
 		$scope.deactivateUpdateToggleText();
 	};
 	
-	// init deactivate
+	$scope.fixIE7zIndexes = function() {
+		fixZindexIE7('tr', 999999);
+		fixZindexIE7('#privacy-settings', 5000);
+		console.log('Fixes applied');
+	};
+	
+	// init deactivate and Z-Indexes Fix
 	$scope.showEditDeactivate = (window.location.hash === "#editDeactivate");
 	$scope.deactivateUpdateToggleText();
+	$scope.fixIE7zIndexes();
 	
 	// privacy preferences edit row
 	$scope.privacyPreferencesUpdateToggleText = function () {
@@ -360,7 +365,7 @@ function EditTableCtrl($scope) {
 
 	$scope.togglePrivacyPreferencesEdit = function() {
 		$scope.showEditPrivacyPreferences = !$scope.showEditPrivacyPreferences;
-		$scope.privacyPreferencesUpdateToggleText();
+		$scope.privacyPreferencesUpdateToggleText();		
 	};
 	
 	// init privacy preferences
@@ -380,7 +385,7 @@ function EditTableCtrl($scope) {
 	
 	// init privacy preferences
 	$scope.showEditEmailPreferences = (window.location.hash === "#editEmailPreferences");
-	$scope.emailPreferencesUpdateToggleText();	
+	$scope.emailPreferencesUpdateToggleText();
 
 	// security question edit row
 	$scope.securityQuestionUpdateToggleText = function () {
