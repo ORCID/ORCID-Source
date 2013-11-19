@@ -1380,11 +1380,13 @@ function AffiliationCtrl($scope, $compile, $filter, affiliationsSrvc){
 	        dataType: 'json',
 	        type: 'GET',
 	        success: function(data) {
-	        	console.log(data.sourceId);
-		        $scope.disambiguatedAffiliation = data;
-		        $scope.editAffiliation.disambiguatedAffiliationSourceId = data.sourceId;
-		        $scope.editAffiliation.disambiguationSource = data.sourceType;
-		        $scope.$apply();
+	        	if (data != null) {
+	        		console.log(data.sourceId);
+			        $scope.disambiguatedAffiliation = data;
+			        $scope.editAffiliation.disambiguatedAffiliationSourceId = data.sourceId;
+			        $scope.editAffiliation.disambiguationSource = data.sourceType;
+			        $scope.$apply();
+	        	}
 	        }
 		}).fail(function(){
 	    	console.log("error getDisambiguatedAffiliation(id)");
