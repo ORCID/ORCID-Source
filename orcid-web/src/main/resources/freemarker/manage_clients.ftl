@@ -72,7 +72,7 @@
 		    		<div class="control-group" ng-repeat='rUri in clientToEdit.redirectUris'>						
 						<label class="control-label" style="margin-right:10px; text-align:left; width:90px"><@orcid.msg 'manage_clients.redirect_uri'/>:</label>
 						<div class="relative">
-							<input type="text" placeholder="Redirect Uri"  ng-model="rUri.value.value">						
+							<input type="text" placeholder="<@orcid.msg 'manage_clients.redirect_uri_placeholder'/>"  ng-model="rUri.value.value">						
 							<a href ng-click="deleteUri($index)" class="glyphicon glyphicon-trash blue"></a>
 							<span class="orcid-error" ng-show="rUri.errors.length > 0">
 								<div ng-repeat='error in rUri.errors' ng-bind-html-unsafe="error"></div>
@@ -100,7 +100,7 @@
 			<div class="control-group">
 				<label class="control-label" for="clientname" style="margin-right:10px; text-align:left; width:90px"><@orcid.msg 'manage_clients.display_name'/>: </label>
 				<div class="relative">
-					<input id="clientname" type="text" placeholder="Display name" class="input-xlarge" ng-model="newClient.displayName.value" required />
+					<input id="clientname" type="text" placeholder="<@orcid.msg 'manage_clients.display_name_placeholder'/>" class="input-xlarge" ng-model="newClient.displayName.value" required />
 					<span class="orcid-error" ng-show="newClient.displayName.errors.length > 0">
 						<div ng-repeat='error in newClient.displayName.errors' ng-bind-html-unsafe="error"></div>
 					</span>
@@ -109,7 +109,7 @@
 		 	<div class="control-group">
 		 		<label class="control-label" for="website" style="margin-right:10px; text-align:left; width:90px"><@orcid.msg 'manage_clients.website'/>: </label>
 				<div class="relative">
-		 			<input id="website" type="text" placeholder="Website" class="input-xlarge" ng-model="newClient.website.value" required />
+		 			<input id="website" type="text" placeholder="<@orcid.msg 'manage_clients.website_placeholder'/>" class="input-xlarge" ng-model="newClient.website.value" required />
 					<span class="orcid-error" ng-show="newClient.website.errors.length > 0">
 						<div ng-repeat='error in newClient.website.errors' ng-bind-html-unsafe="error"></div>
 					</span>
@@ -118,7 +118,7 @@
 			<div class="control-group">
 				<label class="control-label" for="description" style="margin-right:10px; text-align:left; width:90px"><@orcid.msg 'manage_clients.description'/>: </label>
 		    	<div class="relative">
-					<input id="description" type="text" placeholder="Description" class="input-xlarge" ng-model="newClient.shortDescription.value" required />
+					<input id="description" type="text" placeholder="<@orcid.msg 'manage_clients.description_placeholder'/>" class="input-xlarge" ng-model="newClient.shortDescription.value" required />
 					<span class="orcid-error" ng-show="newClient.shortDescription.errors.length > 0">
 						<div ng-repeat='error in newClient.shortDescription.errors' ng-bind-html-unsafe="error"></div>
 					</span>
@@ -128,7 +128,7 @@
 		    	<div class="control-group" ng-repeat='rUri in newClient.redirectUris'>						
 					<label class="control-label" style="margin-right:10px; text-align:left; width:90px"><@orcid.msg 'manage_clients.redirect_uri'/>:</label>
 					<div class="relative">
-						<input type="text" placeholder="Redirect Uri" class="input-xlarge" ng-model="rUri.value.value">
+						<input type="text" placeholder="<@orcid.msg 'manage_clients.redirect_uri_placeholder'/>" class="input-xlarge" ng-model="rUri.value.value">
 						<span class="orcid-error" ng-show="rUri.errors.length > 0">
 							<div ng-repeat='error in rUri.errors' ng-bind-html-unsafe="error"></div>
 						</span>						

@@ -104,7 +104,7 @@
 					<div class="control-group">
 						<label class="relative"><@orcid.msg 'manual_work_form_contents.labeltranslatedtitlelanguage'/></label>
 						<div class="relative">						
-							<select id="language" name="language" ng-model="editWork.workTitle.translatedTitle.languageCode">			
+							<select id="language" name="language" ng-model="editWork.workTitle.translatedTitle.languageCode" ng-change="serverValidate('works/work/workTitle/translatedTitleValidate.json')">			
 								<#list languages?keys as key>
 									<option value="${languages[key]}">${key}</option>
 								</#list>
