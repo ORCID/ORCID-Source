@@ -96,7 +96,7 @@
                 <div class="alert alert-info" ng-show="showAddAlert()" ng-cloak><strong><@orcid.msg 'workspace.addinformationaboutyou'/></strong></div>
         		<div class="row">
         			<!-- Works -->
-	        		<div class="workspace-overview col-md-3 col-sm-3 col-xs-3" id="works-overview">
+	        		<div class="workspace-overview col-md-3 col-sm-3 col-xs-6" id="works-overview">
 	        			<a href="#workspace-publications" class="overview-count"><span ng-bind="worksSrvc.works.length"></span></a>
 	        			<a href="#workspace-publications" class="overview-title"><@orcid.msg 'workspace.Works'/></a>
 	                    <br />	                    	
@@ -104,20 +104,20 @@
 	        		</div>
 	        		<!-- Afilliations -->
 					<#if RequestParameters['affiliations']??>
-		                <div class="workspace-overview col-md-3 col-sm-3 col-xs-3" id="educations-overview">
+		                <div class="workspace-overview col-md-3 col-sm-3 col-xs-6" id="educations-overview">
 		                    <a href="#workspace-educations" class="overview-count"><span ng-bind="affiliationsSrvc.educations.length"></span></a>
 		                    <a href="#workspace-educations" class="overview-title"><@orcid.msg 'org.orcid.jaxb.model.message.AffiliationType.education'/></a>
 		                    <br />
 		                    <a href="#workspace-educations" class="btn-update no-icon"><@orcid.msg 'workspace.view'/></a>
 		                </div>
-		                <div class="workspace-overview col-md-3 col-sm-3 col-xs-3" id="educations-overview">
+		                <div class="workspace-overview col-md-3 col-sm-3 col-xs-6" id="employments-overview">
 		                    <a href="#workspace-employments" class="overview-count"><span ng-bind="affiliationsSrvc.employments.length"></span></a>
 		                    <a href="#workspace-employments" class="overview-title"><@orcid.msg 'org.orcid.jaxb.model.message.AffiliationType.employment'/></a>
 		                    <br />
 		                    <a href="#workspace-employments" class="btn-update no-icon"><@orcid.msg 'workspace.view'/></a>
 		                </div>
 		             <#else>
-		                <div class="workspace-overview col-md-3 col-sm-3 col-xs-3" id="affiliations-overview">
+		                <div class="workspace-overview col-md-3 col-sm-3 col-xs-6" id="affiliations-overview">
 		                    <a href="#workspace-affiliations" class="overview-count"><span ng-bind="affiliationsSrvc.affiliations.length"></span></a>
 		                    <a href="#workspace-affiliations" class="overview-title"><@orcid.msg 'workspace_bio.Affiliations'/></a>
 		                    <br />
@@ -129,7 +129,7 @@
 		                </div>
 		             </#if>	                
 	                <!-- Grants -->     
-	        		<div class="workspace-overview  col-md-3 col-sm-3 col-xs-3">
+	        		<div class="workspace-overview  col-md-3 col-sm-3 col-xs-6">
 	        			<a href="#workspace-grants" class="overview-count">${(profile.orcidActivities.orcidGrants.orcidGrant?size)!0}</a>
 	        			<a href="#workspace-grants" class="overview-title"><@orcid.msg 'workspace.Grants'/></a>
 	        			<br />
@@ -206,14 +206,16 @@
 		<div class="row">
 			<div class="col-md-12 col-xs-12 col-sm-12">
 				<h4><@orcid.msg 'workspace.your_primary_email'/></h4>
-				<@orcid.msg 'workspace.ensure_future_access'/><br />
+				<@orcid.msg 'workspace.ensure_future_access'/>
 				<br />
+				<br />						
 				<span class="btn btn-primary" id="modal-close" ng-click="verifyEmail()"><@orcid.msg 'workspace.send_verification'/></span>
-				<span class="btn" id="modal-close" ng-click="closeColorBox()"><@orcid.msg 'freemarker.btncancel'/></span>
-				</div>
+				<span class="btn" id="modal-close" ng-click="closeColorBox()"><@orcid.msg 'freemarker.btncancel'/></span>								
 			</div>
 		</div>		
 	</div>		
+
+
 </script>
 
 <script type="text/ng-template" id="verify-email-modal-sent">
