@@ -18,15 +18,28 @@
 -->
 <script type="text/ng-template" id="add-affiliation-modal">
 	<div id="edit-affiliation" class="edit-affiliation colorbox-content">
-		<div class="lightbox-container"> 
+		<div class="lightbox-container">
 		<div class="row">
-			<div class="col-md-11 col-sm-10 col-xs-10">
+			<div class="col-md-9 col-sm-6 col-xs-9">
 				<h1 ng-show="addAffType == null || addAffType == undefined " class="lightbox-title pull-left"><@orcid.msg 'manual_affiliation_form_contents.add_affiliation'/></h1>
 				<h1 ng-show="addAffType == 'education'" class="lightbox-title pull-left"><@orcid.msg 'manual_affiliation_form_contents.add_education'/></h1>
-				<h1 ng-show="addAffType == 'employment'" class="lightbox-title pull-left"><@orcid.msg 'manual_affiliation_form_contents.add_employment'/></h1>				
+				<h1 ng-show="addAffType == 'employment'" class="lightbox-title pull-left"><@orcid.msg 'manual_affiliation_form_contents.add_employment'/></h1>
 			</div>
-			<div class="col-md-1 col-sm-2 col-xs-2">
-				<a class="btn pull-right close-button" ng-click="closeModal()">X</a>
+			
+			<div class="col-xs-3 visible-xs hidden-sm hidden-md hidden-lg">
+				<a class="btn close-button" ng-click="closeModal()">X</a>
+			</div>
+			
+			<div class="control-group privacy-control col-md-2 col-sm-2">
+		 		<label class="relative">
+					<@orcid.msg 'privacyToggle.help.who_can_see'/>
+				</label>
+		 		<@orcid.privacyToggle "editAffiliation.visibility.visibility" "setAddAffiliationPrivacy('PUBLIC', $event)" 
+		                   	  "setAddAffiliationPrivacy('LIMITED', $event)" "setAddAffiliationPrivacy('PRIVATE', $event)" />		
+		 	</div>
+
+			<div class="col-md-1 col-sm-1 hidden-xs">
+				<a class="btn close-button" ng-click="closeModal()">X</a>
 			</div>
 		</div>
 
@@ -176,11 +189,6 @@
 						<div ng-repeat='error in editAffiliation.endDate.errors' ng-bind-html-unsafe="error"></div>
 					</span>
 		    	</div>
-		    	<div class="control-group">
-		 			<label class="relative"><@orcid.msg 'privacyToggle.help.who_can_see'/></label>
-		 				<@orcid.privacyToggle "editAffiliation.visibility.visibility" "setAddAffiliationPrivacy('PUBLIC', $event)" 
-		                    	  "setAddAffiliationPrivacy('LIMITED', $event)" "setAddAffiliationPrivacy('PRIVATE', $event)" />
-		 		</div>
 			</div>
 		</div>
 		<div class="row">			
