@@ -256,7 +256,7 @@ public class RDFMessageBodyWriter implements MessageBodyWriter<OrcidMessage> {
             // m.write(entityStream, "N3", TMP_BASE);
 
             StringWriter writer = new StringWriter();
-            m.write(writer, "N3", TMP_BASE);
+            m.write(writer, "TURTLE", TMP_BASE);
             String relativizedTurtle = writer.toString().replace(TMP_BASE, "");
             entityStream.write(relativizedTurtle.getBytes(UTF8));
         }
