@@ -118,13 +118,42 @@ public class RDFWriterTest {
         System.out.println(str);
         assertTrue(str.contains("<http://orcid.example.com/000-1337>"));
         assertTrue(str.contains("foaf:Person"));
-        assertTrue(str.contains("foaf:name \"John F"));
+        assertTrue(str.contains("foaf:familyName \"Doe"));
+        assertTrue(str.contains("foaf:givenName \"John"));
+        // and the credit name, which here includes initial F
+        assertTrue(str.contains("foaf:name \"John F Doe"));
+        // ontology details should NOT be included
         assertFalse(str.contains("subClassOf"));
+        // provenance
         assertTrue(str.contains("pav:lastUpdateOn"));
         assertTrue(str.contains("1980-12-31T23:29:29.999Z"));
+        // location
         assertTrue(str.contains("gn:countryCode"));
         assertTrue(str.contains("GB"));
 
     }
 
+    @Test
+    public void missingCreditName() throws Exception {
+
+        ByteArrayOutputStream entityStream = new ByteArrayOutputStream(1024);
+        OrcidMessage fakeBio = fakeBio();
+        // empty creditName
+        fakeBio.getOrcidProfile().getOrcidBio().getPersonalDetails().setCreditName(null);
+        rdfWriter.writeTo(fakeBio, OrcidMessage.class, null, null, new MediaType("text", "turtle"), null, entityStream);
+
+        String str = entityStream.toString("utf-8");
+        System.out.println(str);
+        // Should NOT include a foaf:name
+        assertFalse(str.contains("foaf:name"));
+        // but do include a concatenation as a label
+        assertTrue(str.contains("rdfs:label \"John Doe"));
+        // And family/given
+        assertTrue(str.contains("foaf:familyName \"Doe"));
+        assertTrue(str.contains("foaf:givenName \"John"));
+
+        
+    }
+
+    
 }
