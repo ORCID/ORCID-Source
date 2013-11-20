@@ -88,6 +88,12 @@ public class RDFMessageBodyWriter implements MessageBodyWriter<OrcidMessage> {
     private static final String PROV_O = "http://www.w3.org/ns/prov-o#";
     private static final String FOAF_0_1 = "http://xmlns.com/foaf/0.1/";
     protected static final String TMP_BASE = "app://614879b4-48c3-45ab-a828-2a72e43f80d9/";
+
+    private static final List<String> URL_NAME_HOMEPAGE = Arrays.asList("homepage", "home", "home page", "personal", "personal homepage", "personal home page");
+    private static final String URL_NAME_FOAF = "foaf";
+    private static final String URL_NAME_WEBID = "webid";
+    
+
     private static final Charset UTF8 = Charset.forName("UTF-8");
 
     private DatatypeProperty foafName;
@@ -362,44 +368,63 @@ public class RDFMessageBodyWriter implements MessageBodyWriter<OrcidMessage> {
         }
         for (ResearcherUrl url : researcherUrls.getResearcherUrl()) {
             Individual page = m.createIndividual(url.getUrl().getValue(), null);
-            if (isHomePage(url)) {
+            String urlName = getUrlName(url);
+            if (isHomePage(urlName)) {
                 person.addProperty(foafHomepage, page);
-            } else if (isFoaf(url)) {
-                // TODO: Is this the proper way to link to other FOAF URIs?
-                // What if we want to link to the URL of the other FOAF *Profile*?
+            } else if (isFoaf(urlName)) {
+                // TODO: What if we want to link to the URL of the other FOAF
+                // *Profile*?
 
-                // Note: We don't dear to do owl:sameAs or prov:specializationOf
-                // as we don't know the extent of the other FOAF profile - we'll 
+                // Note: We don't dear here to do owl:sameAs or
+                // prov:specializationOf as we don't know the extent of the
+                // other FOAF profile - we'll
                 // suffice to say it's an alternate view of the same person
                 person.addProperty(provAlternateOf, page);
                 page.addRDFType(foafPerson);
                 page.addRDFType(provPerson);
                 person.addSeeAlso(page);
+            } else if (isWebID(urlName)) {
+                person.addSameAs(page);
             } else {
+                // It's some other foaf:page which might not be about
+                // this person
                 person.addProperty(foafPage, page);
             }
         }
     }
 
-    private boolean isFoaf(ResearcherUrl url) {
-        if (url.getUrlName() == null || url.getUrlName().getContent() == null) {
-            return false;
+    private String getUrlName(ResearcherUrl url) {
+        if (url.getUrlName() == null ) {
+            return null;
         }
-        return url.getUrlName().getContent().equalsIgnoreCase("foaf");
+        return url.getUrlName().getContent().toLowerCase();
     }
 
+    private boolean isFoaf(String urlName) {
+        if (urlName == null) {
+            return false;
+        }
+        return urlName.equals(URL_NAME_FOAF);
+    }
+
+    private boolean isWebID(String urlName) {
+        if (urlName == null) {
+            return false;
+        }
+        return urlName.equals(URL_NAME_WEBID);
+    }
+
+    
     /**
      * There's no indication in ORCID if the URL is a homepage or some other
      * page, so we'll guess based on it's name, it be something similar to
      * "home page".
      */
-    private boolean isHomePage(ResearcherUrl url) {
-        if (url.getUrlName() == null || url.getUrlName().getContent() == null) {
+    private boolean isHomePage(String urlName) {
+        if (urlName == null) {
             return false;
         }
-        String name = url.getUrlName().getContent().toLowerCase();
-        List<String> candidates = Arrays.asList("homepage", "home", "home page", "personal", "personal homepage", "personal home page");
-        return candidates.contains(name);
+        return URL_NAME_HOMEPAGE.contains(urlName);
     }
 
     private void describeBiography(Biography biography, Individual person, OntModel m) {
