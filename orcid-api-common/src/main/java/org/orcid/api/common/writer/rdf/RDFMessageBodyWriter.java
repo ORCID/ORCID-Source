@@ -17,7 +17,6 @@
 package org.orcid.api.common.writer.rdf;
 
 import static org.orcid.api.common.OrcidApiConstants.APPLICATION_RDFXML;
-import static org.orcid.api.common.OrcidApiConstants.PROFILE_POST_PATH;
 import static org.orcid.api.common.OrcidApiConstants.TEXT_N3;
 import static org.orcid.api.common.OrcidApiConstants.TEXT_TURTLE;
 
@@ -27,7 +26,6 @@ import java.io.OutputStream;
 import java.io.StringWriter;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
-import java.net.URI;
 import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.List;
@@ -37,19 +35,16 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.ext.MessageBodyWriter;
 import javax.ws.rs.ext.Provider;
 import javax.xml.datatype.XMLGregorianCalendar;
 
-import org.orcid.api.common.OrcidApiService;
 import org.orcid.jaxb.model.message.Address;
 import org.orcid.jaxb.model.message.Biography;
 import org.orcid.jaxb.model.message.ContactDetails;
 import org.orcid.jaxb.model.message.Email;
 import org.orcid.jaxb.model.message.ErrorDesc;
-import org.orcid.jaxb.model.message.LastModifiedDate;
 import org.orcid.jaxb.model.message.OrcidBio;
 import org.orcid.jaxb.model.message.OrcidHistory;
 import org.orcid.jaxb.model.message.OrcidMessage;
@@ -68,6 +63,7 @@ import com.hp.hpl.jena.ontology.OntModel;
 import com.hp.hpl.jena.ontology.Ontology;
 import com.hp.hpl.jena.rdf.model.Literal;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
+import com.hp.hpl.jena.rdf.model.ResIterator;
 
 /**
  * 2013 ORCID
@@ -81,7 +77,7 @@ public class RDFMessageBodyWriter implements MessageBodyWriter<OrcidMessage> {
     private static final String MEMBER_API = "https://api.orcid.org/";
     private static final String EN = "en";
     private static final String GEONAMES_RDF = "geonames_v3.1.rdf";
-    private static final String GEONAMES = "http://www.geonames.org/ontology#";
+    private static final String GEONAMES = "http://www.geonames.org/ontology";
 
     private static final String GN = "http://www.geonames.org/ontology#";
 
@@ -462,16 +458,33 @@ public class RDFMessageBodyWriter implements MessageBodyWriter<OrcidMessage> {
         Address addr = contactDetails.getAddress();
         if (addr != null) {
             if (addr.getCountry() != null) {
-                String country = addr.getCountry().getValue().name();
+                String countryCode = addr.getCountry().getValue().name();
                 
                 Individual position = m.createIndividual(gnFeature);
-                position.addProperty(gnCountryCode, country);
+                position.addProperty(gnCountryCode, countryCode);
                 person.addProperty(foafBasedNear, position);
+
+                Individual country = getCountry(countryCode);
+                if (country != null) {
+                    //System.out.println(country);
+                    position.addProperty(gnParentCountry, country);
+                    
+                }
+                
                 // TODO: Include URI and (a) full name of country 
                 // Potential source: geonames.org
                 // See https://gist.github.com/stain/7566375
             }
         }
+    }
+
+    private Individual getCountry(String countryCode) {
+        ResIterator hasCountryCode = geo.listSubjectsWithProperty(gnCountryCode, countryCode);
+        if (hasCountryCode.hasNext()) {
+            return geo.getIndividual(hasCountryCode.next().getURI());
+        }
+        return null;
+
     }
 
     private void describePersonalDetails(PersonalDetails personalDetails, Individual person, OntModel m) {
@@ -550,16 +563,21 @@ public class RDFMessageBodyWriter implements MessageBodyWriter<OrcidMessage> {
         if (geo != null) {
             return;
         }
-        OntModel ontModel = loadOntologyFromClasspath(GEONAMES_RDF, GEONAMES_RDF);
+        OntModel ontModel = loadOntologyFromClasspath(GEONAMES_RDF, GEONAMES);
         
         gnFeature = ontModel.getOntClass(GN + "Feature");
         gnParentCountry = ontModel.getObjectProperty(GN + "parentCountry");
         gnCountryCode = ontModel.getDatatypeProperty(GN + "countryCode");
 
+        // Also load countries
+        InputStream countries = getClass().getResourceAsStream("countries.ttl");
+        ontModel.read(countries, "http://example.com/", "TURTLE");
+        
         checkNotNull(gnFeature, gnParentCountry, gnCountryCode);
-        geo = ontModel;
+        geo = ontModel;        
     }
 
+ 
     
     private void checkNotNull(Object... possiblyNulls) {
         int i = 0;
@@ -589,7 +607,7 @@ public class RDFMessageBodyWriter implements MessageBodyWriter<OrcidMessage> {
         checkNotNull(provPerson, provAgent, provSoftwareAgent, provWasAttributedTo, provAlternateOf, provGeneratedAt, provInvalidatedAt);
         prov = ontModel;
     }
-
+   
     protected OntModel loadOntologyFromClasspath(String classPathUri, String uri) {
         OntModel ontModel = ModelFactory.createOntologyModel();
 
