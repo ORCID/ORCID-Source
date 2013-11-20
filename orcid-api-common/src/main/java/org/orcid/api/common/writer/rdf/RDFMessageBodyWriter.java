@@ -465,10 +465,9 @@ public class RDFMessageBodyWriter implements MessageBodyWriter<OrcidMessage> {
                 person.addProperty(foafBasedNear, position);
 
                 Individual country = getCountry(countryCode);
+                country = addToModel(position.getOntModel(), country);
                 if (country != null) {
-                    //System.out.println(country);
                     position.addProperty(gnParentCountry, country);
-                    
                 }
                 
                 // TODO: Include URI and (a) full name of country 
@@ -476,6 +475,12 @@ public class RDFMessageBodyWriter implements MessageBodyWriter<OrcidMessage> {
                 // See https://gist.github.com/stain/7566375
             }
         }
+    }
+
+    private Individual addToModel(OntModel ontModel, Individual country) {
+//        ontModel.addSubModel(country.getModel());
+        ontModel.add(country.listProperties().toList());
+        return country;
     }
 
     private Individual getCountry(String countryCode) {
