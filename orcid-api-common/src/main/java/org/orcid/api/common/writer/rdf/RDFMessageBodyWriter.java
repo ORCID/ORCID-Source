@@ -133,6 +133,7 @@ public class RDFMessageBodyWriter implements MessageBodyWriter<OrcidMessage> {
 
     /**
      * Ascertain if the MessageBodyWriter supports a particular type.
+
      * 
      * @param type
      *            the class of object that is to be written.
@@ -258,8 +259,9 @@ public class RDFMessageBodyWriter implements MessageBodyWriter<OrcidMessage> {
     }
 
     private Individual describeAccount(OrcidProfile orcidProfile, OntModel m, Individual person) {
-        // Add /orcid-profile to identify the profile itself
-        String orcidProfileUri = orcidProfile.getOrcidId() + PROFILE_POST_PATH;
+        // Add / to identify the profile itself - as /orcid-profile from PROFILE_POST_PATH
+        // is not accessible publicly
+        String orcidProfileUri = orcidProfile.getOrcidId() + "/";
 
         Individual account = m.createIndividual(orcidProfileUri, foafOnlineAccount);
         person.addProperty(foafAccount, account);
