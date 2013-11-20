@@ -265,6 +265,11 @@ public class RDFMessageBodyWriter implements MessageBodyWriter<OrcidMessage> {
 
         Individual account = m.createIndividual(orcidProfileUri, foafOnlineAccount);
         person.addProperty(foafAccount, account);
+        // which is also the list of publications 
+        // (at least in the HTML rendering - foaf:publications
+        // goes to a foaf:Document)
+        person.addProperty(foafPublications, account);
+
         Individual webSite = null;
         if (baseUri != null) {
             webSite = m.createIndividual(baseUri, null);
@@ -323,15 +328,7 @@ public class RDFMessageBodyWriter implements MessageBodyWriter<OrcidMessage> {
             }
 
         }
-
-        if (uriInfo != null) {
-            // Links to publications resource
-            UriBuilder builder = uriInfo.getBaseUriBuilder();
-            // CHECK - does this get orcid-pub-web vs. orcid-web etc. wrong?
-            URI worksDetails = builder.path(OrcidApiService.class, "viewWorksDetailsXml").build(orcId);
-            person.addProperty(foafPublications, m.createIndividual(worksDetails.toASCIIString(), null));
-        }
-
+        
         return account;
     }
 
