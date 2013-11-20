@@ -445,16 +445,18 @@ public class RDFMessageBodyWriter implements MessageBodyWriter<OrcidMessage> {
         }
 
         if (personalDetails.getCreditName() != null) {
+            // User has provided full name
             String creditName = personalDetails.getCreditName().getContent();
             person.addProperty(foafName, creditName);
             person.addLabel(creditName, null);
         } else if (personalDetails.getGivenNames() != null && personalDetails.getFamilyName() != null) {
-            // Naive combination assuming givenNames ~= first name and familyName ~= lastName
+            // Naive fallback assuming givenNames ~= first name and familyName ~= lastName
             // See http://www.w3.org/International/questions/qa-personal-names for further
-            // considerations -- we don't report this as foaf:name as we can't be sure
+            // considerations -- we don't report this as foaf:name as we can't be sure of the ordering.
+            
             // NOTE: ORCID gui is westernized asking for "First name" and
             // "Last name" and assuming the above mapping
-            String label = personalDetails.getGivenNames() + " " + personalDetails.getFamilyName();
+            String label = personalDetails.getGivenNames().getContent() + " " + personalDetails.getFamilyName().getContent();
             person.addLabel(label, null);
         }
 
