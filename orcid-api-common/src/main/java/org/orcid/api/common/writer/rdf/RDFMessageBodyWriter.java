@@ -227,7 +227,7 @@ public class RDFMessageBodyWriter implements MessageBodyWriter<OrcidMessage> {
         }
 
         OrcidProfile orcidProfile = xml.getOrcidProfile();
-        System.out.println(httpHeaders);
+//        System.out.println(httpHeaders);
         if (orcidProfile != null) {
             Individual person = describePerson(orcidProfile, m);
             if (person != null) {
