@@ -51,8 +51,11 @@
         </div>
     </li><!-- bottom-margin-small -->
 </ul>
-<div ng-show="worksSrvc.loading == true" class="text-center">
-    <i class="glyphicon glyphicon-refresh spin x4 green"></i>
+<div ng-show="worksSrvc.loading == true" class="text-center" id="workSpinner">
+	<i class="glyphicon glyphicon-refresh spin x4 green" id="spinner"></i><!-- Hidden with a CSS hack on IE 7 only -->
+    <!--[if lt IE 8]>    
+    	<img src="${staticCdn}/img/spin-big.gif" width="85" height ="85"/>
+    <![endif]-->
 </div>
 <div ng-show="worksSrvc.loading == false && works.length == 0" class="alert alert-info" ng-cloak>
     <strong><#if (publicProfile)?? && publicProfile == true>${springMacroRequestContext.getMessage("workspace_works_body_list.Nopublicationsaddedyet")}<#else>${springMacroRequestContext.getMessage("workspace_works_body_list.havenotaddedanyworks")} <a ng-click="addWorkModal()">${springMacroRequestContext.getMessage("workspace_works_body_list.addsomenow")}</a></#if></strong>

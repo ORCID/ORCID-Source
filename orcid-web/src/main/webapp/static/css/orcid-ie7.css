@@ -225,3 +225,7 @@ ul.workspace-private-toolbar > li{
 .lightbox-container-ie7{
 	padding:15px;
 }
+
+#spinner{
+	display:none;
+}
