@@ -45,6 +45,10 @@ import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OtherNames;
 import org.orcid.jaxb.model.message.PersonalDetails;
+import org.orcid.jaxb.model.message.ResearcherUrl;
+import org.orcid.jaxb.model.message.ResearcherUrls;
+import org.orcid.jaxb.model.message.Url;
+import org.orcid.jaxb.model.message.UrlName;
 
 //@RunWith(SpringJUnit4ClassRunner.class)
 //@ContextConfiguration(locations = { "classpath:orcid-t1-web-context.xml" })
@@ -79,6 +83,26 @@ public class RDFWriterTest {
         personal.getOtherNames().addOtherName("Johnny");
         personal.getOtherNames().addOtherName("Mr Doe");
 
+        ResearcherUrls urls = new ResearcherUrls();
+        bio.setResearcherUrls(urls);
+
+        ResearcherUrl anonymous = new ResearcherUrl(new Url("http://example.com/anon"));
+        urls.getResearcherUrl().add(anonymous);
+
+        // "home page" - with strange casing
+        ResearcherUrl homePage = new ResearcherUrl(new Url("http://example.com/myPage"), new UrlName("homePage"));
+        urls.getResearcherUrl().add(homePage);
+
+        ResearcherUrl foaf = new ResearcherUrl(new Url("http://example.com/foaf#me"), new UrlName("FOAF"));
+        urls.getResearcherUrl().add(foaf);
+
+        ResearcherUrl webId = new ResearcherUrl(new Url("http://example.com/webId"), new UrlName("webID"));
+        urls.getResearcherUrl().add(webId);
+
+        ResearcherUrl other = new ResearcherUrl(new Url("http://example.com/other"), new UrlName("other"));
+        urls.getResearcherUrl().add(other);
+        
+        
         bio.setContactDetails(new ContactDetails());
         bio.getContactDetails().setEmail(Arrays.asList(new Email("john@example.org"), new Email("doe@example.com")));
         bio.getContactDetails().setAddress(new Address());
@@ -97,15 +121,32 @@ public class RDFWriterTest {
 
         String str = entityStream.toString("utf-8");
         System.out.println(str);
-        assertTrue(str.contains("http://orcid.example.com/000-1337"));
-        assertTrue(str.contains("foaf:name>John F"));
         assertTrue(str.contains("rdf:about"));
+        assertTrue(str.contains("http://orcid.example.com/000-1337"));
+        assertTrue(str.contains("foaf:name>John F Doe<"));
+        assertTrue(str.contains("foaf:givenName>John<"));
+        assertTrue(str.contains("foaf:familyName>Doe<"));
+        assertTrue(str.contains("foaf:account"));
+        assertTrue(str.contains("http://orcid.example.com/000-1337/"));
         assertFalse(str.contains("subClassOf"));
+        assertTrue(str.contains("foaf:mbox"));
+        assertTrue(str.contains("mailto:john@example.org"));
+        assertTrue(str.contains("mailto:doe@example.com"));
         assertTrue(str.contains("pav:lastUpdateOn"));
         assertTrue(str.contains("1980-12-31T23:29:29.999Z"));
+        assertTrue(str.contains("foaf:based_near"));
         assertTrue(str.contains("gn:countryCode"));
         assertTrue(str.contains("GB"));
+        assertTrue(str.contains("owl:sameAs"));
+        assertTrue(str.contains("http://example.com/webId"));
+        assertTrue(str.contains("rdfs:seeAlso"));
+        assertTrue(str.contains("prov:alternateOf"));
+        assertTrue(str.contains("http://example.com/foaf#me"));
 
+        assertTrue(str.contains("foaf:page"));
+        assertTrue(str.contains("http://example.com/anon"));
+        assertTrue(str.contains("http://example.com/other"));
+        
     }
 
     @Test
@@ -117,6 +158,8 @@ public class RDFWriterTest {
         String str = entityStream.toString("utf-8");
         System.out.println(str);
         assertTrue(str.contains("<http://orcid.example.com/000-1337>"));
+        assertTrue(str.contains("foaf:account"));       
+        assertTrue(str.contains("<http://orcid.example.com/000-1337/>"));
         assertTrue(str.contains("foaf:Person"));
         assertTrue(str.contains("foaf:familyName \"Doe"));
         assertTrue(str.contains("foaf:givenName \"John"));
@@ -130,7 +173,7 @@ public class RDFWriterTest {
         // location
         assertTrue(str.contains("gn:countryCode"));
         assertTrue(str.contains("GB"));
-
+        
     }
 
     @Test
@@ -151,9 +194,6 @@ public class RDFWriterTest {
         // And family/given
         assertTrue(str.contains("foaf:familyName \"Doe"));
         assertTrue(str.contains("foaf:givenName \"John"));
-
-        
     }
-
     
 }
