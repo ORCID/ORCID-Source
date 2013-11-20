@@ -80,6 +80,11 @@ public class RDFMessageBodyWriter implements MessageBodyWriter<OrcidMessage> {
 
     private static final String MEMBER_API = "https://api.orcid.org/";
     private static final String EN = "en";
+    private static final String GEONAMES_RDF = "geonames_v3.1.rdf";
+    private static final String GEONAMES = "http://www.geonames.org/ontology#";
+
+    private static final String GN = "http://www.geonames.org/ontology#";
+
     private static final String FOAF_RDF = "foaf.rdf";
     private static final String PAV = "http://purl.org/pav/";
     private static final String PAV_RDF = "pav.rdf";
@@ -136,6 +141,10 @@ public class RDFMessageBodyWriter implements MessageBodyWriter<OrcidMessage> {
     private DatatypeProperty pavCreatedOn;
     private DatatypeProperty provInvalidatedAt;
     private DatatypeProperty pavContributedOn;
+    private OntModel geo;
+    private DatatypeProperty gnCountryCode;
+    private ObjectProperty gnParentCountry;
+    private OntClass gnFeature;
 
     /**
      * Ascertain if the MessageBodyWriter supports a particular type.
@@ -454,11 +463,13 @@ public class RDFMessageBodyWriter implements MessageBodyWriter<OrcidMessage> {
         if (addr != null) {
             if (addr.getCountry() != null) {
                 String country = addr.getCountry().getValue().name();
-                // TODO: Add a proper 'country' property
-                Individual position = m.createIndividual(null, null);
-                position.addLabel(country, null);
-                position.addComment("Country code: " + country, EN);
+                
+                Individual position = m.createIndividual(gnFeature);
+                position.addProperty(gnCountryCode, country);
                 person.addProperty(foafBasedNear, position);
+                // TODO: Include URI and (a) full name of country 
+                // Potential source: geonames.org
+                // See https://gist.github.com/stain/7566375
             }
         }
     }
@@ -503,11 +514,15 @@ public class RDFMessageBodyWriter implements MessageBodyWriter<OrcidMessage> {
         if (pav == null) {
             loadPav();
         }
+        if (geo == null) {
+            loadGeo();
+        }
 
         OntModel ontModel = ModelFactory.createOntologyModel();
         ontModel.setNsPrefix("foaf", FOAF_0_1);
         ontModel.setNsPrefix("prov", PROV);
         ontModel.setNsPrefix("pav", PAV);
+        ontModel.setNsPrefix("gn", GN);
         //ontModel.getDocumentManager().loadImports(foaf.getOntModel());
         return ontModel;
     }
@@ -531,6 +546,21 @@ public class RDFMessageBodyWriter implements MessageBodyWriter<OrcidMessage> {
         pav = ontModel;
     }
 
+    protected synchronized void loadGeo() {
+        if (geo != null) {
+            return;
+        }
+        OntModel ontModel = loadOntologyFromClasspath(GEONAMES_RDF, GEONAMES_RDF);
+        
+        gnFeature = ontModel.getOntClass(GN + "Feature");
+        gnParentCountry = ontModel.getObjectProperty(GN + "parentCountry");
+        gnCountryCode = ontModel.getDatatypeProperty(GN + "countryCode");
+
+        checkNotNull(gnFeature, gnParentCountry, gnCountryCode);
+        geo = ontModel;
+    }
+
+    
     private void checkNotNull(Object... possiblyNulls) {
         int i = 0;
         for (Object check : possiblyNulls) {

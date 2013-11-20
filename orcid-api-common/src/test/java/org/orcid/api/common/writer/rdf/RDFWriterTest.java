@@ -16,27 +16,31 @@
  */
 package org.orcid.api.common.writer.rdf;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayOutputStream;
-import java.net.URI;
 import java.util.Arrays;
-import java.util.List;
 
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.PathSegment;
-import javax.ws.rs.core.UriBuilder;
-import javax.ws.rs.core.UriInfo;
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
 
+import org.junit.Before;
 import org.junit.Test;
+import org.orcid.jaxb.model.message.Address;
 import org.orcid.jaxb.model.message.ContactDetails;
+import org.orcid.jaxb.model.message.Country;
+import org.orcid.jaxb.model.message.CreationMethod;
 import org.orcid.jaxb.model.message.CreditName;
 import org.orcid.jaxb.model.message.Email;
 import org.orcid.jaxb.model.message.FamilyName;
 import org.orcid.jaxb.model.message.GivenNames;
+import org.orcid.jaxb.model.message.Iso3166Country;
+import org.orcid.jaxb.model.message.LastModifiedDate;
 import org.orcid.jaxb.model.message.OrcidBio;
+import org.orcid.jaxb.model.message.OrcidHistory;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OtherNames;
@@ -46,15 +50,26 @@ import org.orcid.jaxb.model.message.PersonalDetails;
 //@ContextConfiguration(locations = { "classpath:orcid-t1-web-context.xml" })
 public class RDFWriterTest {
 
+    private static DatatypeFactory dataTypeFactory;
     private RDFMessageBodyWriter rdfWriter = new RDFMessageBodyWriter();
 
-    private OrcidMessage fakeBio() {
+    @Before
+    public void makeDataTypeFactory() throws DatatypeConfigurationException {
+        dataTypeFactory = DatatypeFactory.newInstance();
+    }
+    
+    private OrcidMessage fakeBio() throws DatatypeConfigurationException {
         OrcidMessage orcidMessage = new OrcidMessage();
         OrcidProfile orcidProfile1 = new OrcidProfile();
         orcidProfile1.setOrcidId("http://orcid.example.com/000-1337");
         orcidProfile1.setOrcid("000-1337");
         OrcidBio bio = new OrcidBio();
         orcidProfile1.setOrcidBio(bio);
+        OrcidHistory history = new OrcidHistory();
+        XMLGregorianCalendar value = dataTypeFactory.newXMLGregorianCalendar(1980,12,31,23,29,29,999,0);
+        history.setCreationMethod(CreationMethod.WEBSITE);
+        history.setLastModifiedDate(new LastModifiedDate(value));
+        orcidProfile1.setOrcidHistory(history);
         PersonalDetails personal = new PersonalDetails();
         bio.setPersonalDetails(personal);
         personal.setFamilyName(new FamilyName("Doe"));
@@ -66,7 +81,8 @@ public class RDFWriterTest {
 
         bio.setContactDetails(new ContactDetails());
         bio.getContactDetails().setEmail(Arrays.asList(new Email("john@example.org"), new Email("doe@example.com")));
-
+        bio.getContactDetails().setAddress(new Address());
+        bio.getContactDetails().getAddress().setCountry(new Country(Iso3166Country.GB));
         orcidMessage.setOrcidProfile(orcidProfile1);
         return orcidMessage;
 
@@ -85,6 +101,11 @@ public class RDFWriterTest {
         assertTrue(str.contains("foaf:name>John F"));
         assertTrue(str.contains("rdf:about"));
         assertFalse(str.contains("subClassOf"));
+        assertTrue(str.contains("pav:lastUpdateOn"));
+        assertTrue(str.contains("1980-12-31T23:29:29.999Z"));
+        assertTrue(str.contains("gn:countryCode"));
+        assertTrue(str.contains("GB"));
+
     }
 
     @Test
@@ -99,6 +120,11 @@ public class RDFWriterTest {
         assertTrue(str.contains("foaf:Person"));
         assertTrue(str.contains("foaf:name \"John F"));
         assertFalse(str.contains("subClassOf"));
+        assertTrue(str.contains("pav:lastUpdateOn"));
+        assertTrue(str.contains("1980-12-31T23:29:29.999Z"));
+        assertTrue(str.contains("gn:countryCode"));
+        assertTrue(str.contains("GB"));
+
     }
 
 }
