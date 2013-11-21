@@ -54,7 +54,6 @@
 		  		<i class="glyphicon-chevron-down glyphicon x0" ng-class="{'glyphicon-chevron-right':displayAffiliations==false}"></i></a>
 		   	</a> 
 		    <a href="" ng-click="toggleDisplayAffiliations()" class="toggle-text"><@orcid.msg 'workspace_bio.Affiliations'/></a>
-			<a href="" class="label btn-primary" ng-click="addAffiliationModal()"><@orcid.msg 'manual_affiliation_form_contents.add_affiliation_manually'/></a>
 		</div>
 		<div ng-show="displayAffiliations" class="workspace-accordion-content">
 			<#include "includes/affiliate/aff_body_inc.ftl" />
