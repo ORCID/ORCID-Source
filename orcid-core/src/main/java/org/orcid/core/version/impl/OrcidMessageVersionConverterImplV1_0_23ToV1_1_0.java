@@ -18,14 +18,22 @@ package org.orcid.core.version.impl;
 
 import java.util.Iterator;
 
+import org.orcid.core.tree.TreeCleaner;
+import org.orcid.core.tree.TreeCleaningStrategy;
 import org.orcid.core.version.OrcidMessageVersionConverter;
 import org.orcid.jaxb.model.message.Affiliation;
 import org.orcid.jaxb.model.message.AffiliationAddress;
 import org.orcid.jaxb.model.message.Affiliations;
 import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.jaxb.model.message.OrcidActivities;
+import org.orcid.jaxb.model.message.OrcidId;
+import org.orcid.jaxb.model.message.OrcidIdBase;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidProfile;
+import org.orcid.jaxb.model.message.OrcidWork;
+import org.orcid.jaxb.model.message.OrcidWorks;
+import org.orcid.jaxb.model.message.WorkSource;
+import org.orcid.utils.OrcidStringUtils;
 
 /**
  * 
@@ -56,6 +64,7 @@ public class OrcidMessageVersionConverterImplV1_0_23ToV1_1_0 implements OrcidMes
 
         OrcidProfile orcidProfile = orcidMessage.getOrcidProfile();
         if (orcidProfile != null) {
+            downgradeOrcidIds(orcidProfile);
             OrcidActivities orcidActivities = orcidProfile.getOrcidActivities();
             if (orcidActivities != null) {
                 downgradeAffiliations(orcidActivities.getAffiliations());
@@ -63,6 +72,41 @@ public class OrcidMessageVersionConverterImplV1_0_23ToV1_1_0 implements OrcidMes
         }
 
         return orcidMessage;
+    }
+
+    private void downgradeOrcidIds(OrcidProfile orcidProfile) {
+        OrcidId orcidId = orcidProfile.getOrcidId();
+        if (orcidId != null) {
+            orcidProfile.setOrcid(orcidId.getPath());
+        }
+        TreeCleaner treeCleaner = new TreeCleaner();
+        // For backwards compatibility
+        treeCleaner.setRemoveEmptyObjects(false);
+        treeCleaner.clean(orcidProfile, new TreeCleaningStrategy() {
+            @Override
+            public boolean needsStripping(Object obj) {
+                if (obj instanceof OrcidId) {
+                    // The main ID for the record
+                    OrcidId orcidId = (OrcidId) obj;
+                    String currentValue = orcidId.getUri();
+                    orcidId.setValue(currentValue);
+                    orcidId.setUri(null);
+                    orcidId.setPath(null);
+                    orcidId.setHost(null);
+                } else if (obj instanceof OrcidIdBase) {
+                    // Work sources etc.
+                    OrcidIdBase orcidId = (OrcidIdBase) obj;
+                    String currentValue = orcidId.getPath();
+                    orcidId.setValue(currentValue);
+                    orcidId.setUri(null);
+                    orcidId.setPath(null);
+                    orcidId.setHost(null);
+                }
+                // Always return false because we do not want to remove the obj
+                // itself
+                return false;
+            }
+        });
     }
 
     private void downgradeAffiliations(Affiliations affiliations) {
@@ -90,6 +134,55 @@ public class OrcidMessageVersionConverterImplV1_0_23ToV1_1_0 implements OrcidMes
         }
         orcidMessage.setMessageVersion(TO_VERSION);
 
+        OrcidProfile orcidProfile = orcidMessage.getOrcidProfile();
+        if (orcidProfile != null) {
+            OrcidActivities orcidActivities = orcidProfile.getOrcidActivities();
+            if (orcidActivities != null) {
+                upgradeOrcidWorks(orcidActivities.getOrcidWorks());
+            }
+            upgradeOrcidIds(orcidProfile);
+        }
+
         return orcidMessage;
     }
+
+    private void upgradeOrcidIds(OrcidProfile orcidProfile) {
+        TreeCleaner treeCleaner = new TreeCleaner();
+        treeCleaner.clean(orcidProfile, new TreeCleaningStrategy() {
+            @Override
+            public boolean needsStripping(Object obj) {
+                if (obj instanceof OrcidId) {
+                    // The main ID for the record
+                    OrcidId orcidId = (OrcidId) obj;
+                    String currentValue = orcidId.getValue();
+                    orcidId.setUri(currentValue);
+                    if (currentValue != null) {
+                        orcidId.setPath(OrcidStringUtils.getOrcidNumber(currentValue));
+                    }
+                } else if (obj instanceof OrcidIdBase) {
+                    // Work sources etc.
+                    OrcidIdBase orcidId = (OrcidIdBase) obj;
+                    String currentValue = orcidId.getValue();
+                    orcidId.setPath(currentValue);
+                }
+                // Always return false because we do not want to remove the obj
+                // itself
+                return false;
+            }
+        });
+    }
+
+    private void upgradeOrcidWorks(OrcidWorks orcidWorks) {
+        if (orcidWorks != null) {
+            for (OrcidWork orcidWork : orcidWorks.getOrcidWork()) {
+                WorkSource workSource = orcidWork.getWorkSource();
+                if (workSource != null) {
+                    if (WorkSource.NULL_SOURCE_PROFILE.equals(workSource.getValue())) {
+                        orcidWork.setWorkSource(null);
+                    }
+                }
+            }
+        }
+    }
+
 }

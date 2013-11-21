@@ -25,116 +25,44 @@ package org.orcid.jaxb.model.message;
 
 import java.io.Serializable;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
-import javax.xml.bind.annotation.XmlType;
-import javax.xml.bind.annotation.XmlValue;
 
-/**
- * <p>Java class for anonymous complex type.
- * 
- * <p>The following schema fragment specifies the expected content contained within this class.
- * 
- * <pre>
- * &lt;complexType>
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
- * </pre>
- * 
- * 
- */
-@XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "content" })
 @XmlRootElement(name = "work-source")
-public class WorkSource implements Serializable {
+public class WorkSource extends OrcidIdBase implements Serializable {
 
-    //This field indicates that the source is null on database
-    //So -1 will be the same as a null value on the source
+    // This field indicates that the source is null on database
+    // So -1 will be the same as a null value on the source
     public static String NULL_SOURCE_PROFILE = "NOT_DEFINED";
 
-    /**
-     * 
-     */
-    private static final long serialVersionUID = 1L;            
-    @XmlTransient
+    private static final long serialVersionUID = 1L;
+
     private String sourceName;
-    @XmlValue
-    protected String content;            
 
     public WorkSource() {
-
+        super();
     }
 
-    public WorkSource(String content) {
-        setContent(content);
+    public WorkSource(OrcidIdBase other) {
+        super(other);
     }
-    
-    public WorkSource(String content, String sourceName) {
-        setContent(content);
+
+    public WorkSource(String path) {
+        super(path);
+    }
+
+    public WorkSource(String path, String sourceName) {
+        setPath(path);
         setSourceName(sourceName);
     }
-    
-    /**
-     * Gets the value of the sourceName property.     
-     */    
+
+    @XmlTransient
     public String getSourceName() {
         return this.sourceName;
     }
 
-    /**
-     * Set the value of the sourceName property
-     * */
     public void setSourceName(String sourceName) {
         this.sourceName = sourceName;
     }
 
-    /**
-     * Gets the value of the content property.     
-     */
-    public String getContent() {
-        return this.content;
-    }
-
-    /**
-     * Set the value of the content property
-     * */
-    public void setContent(String content) {
-        this.content = content;
-    }        
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof WorkSource)) {
-            return false;
-        }
-
-        WorkSource that = (WorkSource) o;
-
-        if (content != null ? !content.equals(that.content) : that.content != null) {
-               return false;
-        }
-
-        if (sourceName != null ? !sourceName.equals(that.sourceName) : that.sourceName != null) {
-            return false;
-        }
-        
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        int prime = 31;
-        int result = 1;        
-        result = prime * result + ((content == null) ? 0 : content.hashCode());                       
-        result = prime * result + ((sourceName == null) ? 0 : sourceName.hashCode());
-        return result;
-    }
 }

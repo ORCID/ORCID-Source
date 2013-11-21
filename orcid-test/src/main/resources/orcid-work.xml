@@ -44,7 +44,10 @@
     <url>http://neanderthalmen.com</url>
     <work-contributors>
         <contributor>
-            <contributor-orcid>4444-4444-4444-4449</contributor-orcid>
+            <contributor-orcid>
+                <uri>http://orcid.org/4444-4444-4444-4449</uri>
+                <path>4444-4444-4444-4449</path>
+            </contributor-orcid>
             <credit-name>J. S. Carberry</credit-name>
             <contributor-email>jscarberry@semantico.com</contributor-email>
             <contributor-attributes>

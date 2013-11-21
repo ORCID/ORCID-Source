@@ -31,9 +31,12 @@ import javax.xml.bind.annotation.XmlType;
 import java.io.Serializable;
 
 /**
- * <p>Java class for anonymous complex type.
+ * <p>
+ * Java class for anonymous complex type.
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p>
+ * The following schema fragment specifies the expected content contained within
+ * this class.
  * 
  * <pre>
  * &lt;complexType>
@@ -51,7 +54,7 @@ import java.io.Serializable;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "orcid", "creditName" })
+@XmlType(name = "", propOrder = { "orcid", "orcidId", "creditName" })
 @XmlRootElement(name = "delegate-summary")
 public class DelegateSummary implements Serializable {
 
@@ -59,8 +62,10 @@ public class DelegateSummary implements Serializable {
      * 
      */
     private static final long serialVersionUID = 1L;
-    @XmlElement(required = true)
+    @XmlElement
     protected Orcid orcid;
+    @XmlElement(name = "orcid-id")
+    protected OrcidId orcidId;
     @XmlElement(name = "credit-name")
     protected CreditName creditName;
 
@@ -69,41 +74,53 @@ public class DelegateSummary implements Serializable {
     }
 
     public DelegateSummary(Orcid orcid) {
-        super();
         this.orcid = orcid;
+    }
+
+    public DelegateSummary(OrcidId orcidId) {
+        this.orcidId = orcidId;
     }
 
     /**
      * Gets the value of the orcid property.
      * 
-     * @return
-     *     possible object is
-     *     {@link Orcid }
-     *     
+     * @return possible object is {@link Orcid }
+     * 
      */
     public Orcid getOrcid() {
-        return orcid;
+        if (orcid != null) {
+            return orcid;
+        }
+        if (orcidId != null) {
+            return new Orcid(orcidId.getPath());
+        }
+        return null;
     }
 
     /**
      * Sets the value of the orcid property.
      * 
      * @param value
-     *     allowed object is
-     *     {@link Orcid }
-     *     
+     *            allowed object is {@link Orcid }
+     * 
      */
     public void setOrcid(Orcid value) {
         this.orcid = value;
     }
 
+    public OrcidId getOrcidId() {
+        return orcidId;
+    }
+
+    public void setOrcidId(OrcidId orcidId) {
+        this.orcidId = orcidId;
+    }
+
     /**
      * Gets the value of the creditName property.
      * 
-     * @return
-     *     possible object is
-     *     {@link CreditName }
-     *     
+     * @return possible object is {@link CreditName }
+     * 
      */
     public CreditName getCreditName() {
         return creditName;
@@ -113,9 +130,8 @@ public class DelegateSummary implements Serializable {
      * Sets the value of the creditName property.
      * 
      * @param value
-     *     allowed object is
-     *     {@link CreditName }
-     *     
+     *            allowed object is {@link CreditName }
+     * 
      */
     public void setCreditName(CreditName value) {
         this.creditName = value;

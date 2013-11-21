@@ -259,7 +259,7 @@ public class RDFMessageBodyWriter implements MessageBodyWriter<OrcidMessage> {
 
     private Individual describeAccount(OrcidProfile orcidProfile, OntModel m, Individual person) {
         // Add /orcid-profile to identify the profile itself
-        String orcidProfileUri = orcidProfile.getOrcidId() + PROFILE_POST_PATH;
+        String orcidProfileUri = orcidProfile.retrieveOrcidUriAsString() + PROFILE_POST_PATH;
 
         Individual account = m.createIndividual(orcidProfileUri, foafOnlineAccount);
         person.addProperty(foafAccount, account);
@@ -338,7 +338,7 @@ public class RDFMessageBodyWriter implements MessageBodyWriter<OrcidMessage> {
     }
 
     private Individual describePerson(OrcidProfile orcidProfile, OntModel m) {
-        String orcidUri = orcidProfile.getOrcidId();
+        String orcidUri = orcidProfile.retrieveOrcidUriAsString();
         Individual person = m.createIndividual(orcidUri, foafPerson);
         person.addRDFType(provPerson);
 

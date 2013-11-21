@@ -37,6 +37,7 @@ import org.orcid.jaxb.model.message.Email;
 import org.orcid.jaxb.model.message.FamilyName;
 import org.orcid.jaxb.model.message.GivenNames;
 import org.orcid.jaxb.model.message.OrcidBio;
+import org.orcid.jaxb.model.message.OrcidId;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OtherNames;
@@ -51,8 +52,10 @@ public class RDFWriterTest {
     private OrcidMessage fakeBio() {
         OrcidMessage orcidMessage = new OrcidMessage();
         OrcidProfile orcidProfile1 = new OrcidProfile();
-        orcidProfile1.setOrcidId("http://orcid.example.com/000-1337");
-        orcidProfile1.setOrcid("000-1337");
+        OrcidId orcidId = new OrcidId();
+        orcidId.setUri("http://orcid.example.com/000-1337");
+        orcidId.setPath("000-1337");
+        orcidProfile1.setOrcidId(orcidId);
         OrcidBio bio = new OrcidBio();
         orcidProfile1.setOrcidBio(bio);
         PersonalDetails personal = new PersonalDetails();

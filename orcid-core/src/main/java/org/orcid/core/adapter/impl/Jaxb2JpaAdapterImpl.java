@@ -166,10 +166,10 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
         Assert.notNull(profile, "Cannot convert a null OrcidProfile");
         ProfileEntity profileEntity = existingProfileEntity == null ? new ProfileEntity() : existingProfileEntity;
 
-        // if orci d-id exist us it
+        // if orcid-id exist us it
         String orcidString = profile.getOrcid().getValue();
-        if (profile.getOrcidId() != null && !profile.getOrcidId().isEmpty()) {
-            orcidString = OrcidStringUtils.getOrcidNumber(profile.getOrcidId());
+        if (profile.retrieveOrcidUriAsString() != null && !profile.retrieveOrcidUriAsString().isEmpty()) {
+            orcidString = OrcidStringUtils.getOrcidNumber(profile.retrieveOrcidUriAsString());
         }
 
         profileEntity.setId(orcidString);
@@ -273,8 +273,8 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
     }
 
     private ProfileEntity getWorkSource(WorkSource workSource) {
-        if (workSource != null && StringUtils.isNotEmpty(workSource.getContent()) && !workSource.getContent().equals(WorkSource.NULL_SOURCE_PROFILE)) {
-            return new ProfileEntity(workSource.getContent());
+        if (workSource != null && StringUtils.isNotEmpty(workSource.getPath()) && !workSource.getPath().equals(WorkSource.NULL_SOURCE_PROFILE)) {
+            return new ProfileEntity(workSource.getPath());
         }
         return null;
     }
@@ -458,7 +458,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
                 GrantSourceEntity grantSourceEntity = new GrantSourceEntity();
                 grantSourceEntity.setProfileGrant(profileGrantEntity);
                 grantSourceEntity.setDepositedDate(source.getSourceDate() != null ? toDate(source.getSourceDate().getValue()) : null);
-                grantSourceEntity.setSponsorOrcid(source.getSourceOrcid() != null ? new ProfileEntity(source.getSourceOrcid().getValue()) : null);
+                grantSourceEntity.setSponsorOrcid(source.getSourceOrcid() != null ? new ProfileEntity(source.getSourceOrcid().getPath()) : null);
                 grantSourceEntities.add(grantSourceEntity);
             }
             return grantSourceEntities;
@@ -599,7 +599,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
                 PatentSourceEntity patentSourceEntity = new PatentSourceEntity();
                 patentSourceEntity.setProfilePatent(profilePatentEntity);
                 patentSourceEntity.setDepositedDate(source.getSourceDate() != null ? toDate(source.getSourceDate().getValue()) : null);
-                patentSourceEntity.setSponsorOrcid(source.getSourceOrcid() != null ? new ProfileEntity(source.getSourceOrcid().getValue()) : null);
+                patentSourceEntity.setSponsorOrcid(source.getSourceOrcid() != null ? new ProfileEntity(source.getSourceOrcid().getPath()) : null);
                 patentSourceEntities.add(patentSourceEntity);
             }
             return patentSourceEntities;
@@ -891,7 +891,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             profileEntity.setCreationMethod(creationMethod != null ? creationMethod.value() : null);
             if (orcidHistory.getSource() != null) {
                 ProfileEntity source = new ProfileEntity();
-                source.setId(orcidHistory.getSource().getSourceOrcid().getValue());
+                source.setId(orcidHistory.getSource().getSourceOrcid().getPath());
                 profileEntity.setSource(source);
             }
         }
@@ -1096,8 +1096,8 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
     }
 
     private ProfileEntity getSource(Source source) {
-        if (source != null && StringUtils.isNotEmpty(source.getSourceOrcid().getValue()) && !source.getSourceOrcid().getValue().equals(WorkSource.NULL_SOURCE_PROFILE)) {
-            return new ProfileEntity(source.getSourceOrcid().getValue());
+        if (source != null && StringUtils.isNotEmpty(source.getSourceOrcid().getPath()) && !source.getSourceOrcid().getPath().equals(WorkSource.NULL_SOURCE_PROFILE)) {
+            return new ProfileEntity(source.getSourceOrcid().getPath());
         }
         return null;
     }

@@ -42,7 +42,7 @@ public class OrcidMessageVersionConverterV1_0_16ToV1_0_17ImplTest {
         assertNotNull(newMessage);
         assertEquals("1.0.17", newMessage.getMessageVersion());
         assertEquals("4444-4444-4444-4446", newMessage.getOrcidProfile().getOrcid().getValue());
-        assertEquals("http://orcid.org/4444-4444-4444-4446", newMessage.getOrcidProfile().getOrcidId());
+        assertEquals("http://orcid.org/4444-4444-4444-4446", newMessage.getOrcidProfile().retrieveOrcidUriAsString());
     }
 
 }

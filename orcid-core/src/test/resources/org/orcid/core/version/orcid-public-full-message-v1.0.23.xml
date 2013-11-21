@@ -18,29 +18,25 @@
 
 -->
 <orcid-message xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-               xsi:schemaLocation="http://www.orcid.org/ns/orcid ../../../../orcid-model/src/main/resources/orcid-message-1.1.0.xsd"
+               xsi:schemaLocation="http://www.orcid.org/ns/orcid ../../../../orcid-model/src/main/resources/orcid-message-1.0.23.xsd"
                xmlns="http://www.orcid.org/ns/orcid">
-    <message-version>1.1.0</message-version>
+    <message-version>1.0.23</message-version>
+    <!-- Error message, if applicable -->
+    <!-- Unable to connect to ORCID, no matching researchers, etc. -->
+    <!-- <error-desc>No researcher found.</error-desc> -->
     <orcid-profile>
-        <orcid-id>
-            <uri>http://orcid.org/4444-4444-4444-4446</uri>
-            <path>4444-4444-4444-4446</path>
-            <host>orcid.org</host>
-       </orcid-id>
-        <orcid-preferences>
-        	<locale>zh_CN</locale>
-        </orcid-preferences>
+        <orcid>4444-4444-4444-4446</orcid>
+        <orcid-id>http://orcid.org/4444-4444-4444-4446</orcid-id>
         <orcid-history>
             <creation-method>API</creation-method>
             <completion-date>2012-10-09T15:50:07</completion-date>
             <submission-date>2012-10-09T15:50:07</submission-date>
+            <!-- In short, researcher has claimed the profile if confirmed=true -->
             <claimed>true</claimed>
+            <!-- The name of the institution that invited the researcher 
+                to register with ORCID -->
             <source>
-                <source-orcid>
-                    <uri>http://orcid.org/8888-8888-8888-8880</uri>
-                    <path>8888-8888-8888-8880</path>
-                    <host>orcid.org</host>
-                </source-orcid>
+                <source-orcid>8888-8888-8888-8880</source-orcid>
                 <source-name>Brown University Library</source-name>
                 <source-date>2012-10-09T15:50:07</source-date>
             </source>
@@ -51,7 +47,7 @@
                 <family-name>Carberry</family-name>
             </personal-details>
             <researcher-urls>
-                <researcher-url>
+                <researcher-url >
                     <url-name>Carberry-Hay</url-name>
                     <url>http://library.brown.edu/about/hay/carberry.php</url>
                 </researcher-url>
@@ -64,16 +60,17 @@
                     <url>http://www.brown.edu/Administration/News_Bureau/Databases/Encyclopedia/search.php?serial=C0070</url>
                 </researcher-url>
             </researcher-urls>
+            <contact-details>
+                <address>
+                    <country>US</country>
+                </address>
+            </contact-details>
             <keywords>
                 <keyword>Bilocation</keyword>
             </keywords>
             <external-identifiers>
                 <external-identifier>
-                    <external-id-orcid>
-                        <uri>http://orcid.org/8888-8888-8888-8880</uri>
-                        <path>8888-8888-8888-8880</path>
-                        <host>orcid.org</host>
-                    </external-id-orcid>
+                    <external-id-orcid>8888-8888-8888-8880</external-id-orcid>
                     <external-id-reference>YH0923</external-id-reference>
                 </external-identifier>
             </external-identifiers>
@@ -115,7 +112,7 @@
                 </affiliation>
                 <affiliation>
                     <name>Yale University</name>
-                    <type>employment</type>
+                    <type>education</type>
                     <address>
                         <city>New Haven</city>
                         <region>CT</region>
@@ -157,28 +154,25 @@
                         <title>Work title 1</title>
                         <subtitle>Work subtitle 1</subtitle>
                     </work-title>
-                    <journal-title>Journal Title # 1</journal-title>
                     <work-citation>
-                        <work-citation-type>formatted-apa</work-citation-type>
-                        <citation>Carberry, Josiah S., John W. Spaeth, and Paulo Di Fillipo. "Neanderthal Man." Book of Prehistory. N.p.: Brown UP, 2012. 450-70. 09 Oct. 2012. Web.</citation>
+                        <work-citation-type>bibtex</work-citation-type>
+                        <citation>@article{anarticle, title = {Example title from bibtex} }</citation>
                     </work-citation>
                     <work-type>journal-article</work-type>
-                    <work-contributors>
-                        <contributor>
-                            <contributor-orcid>
-                                <uri>http://orcid.org/4444-4444-4444-4446</uri>
-                                <path>4444-4444-4444-4446</path>
-                                <host>orcid.org</host>
-                            </contributor-orcid>
-                            <contributor-attributes>
-                                <contributor-sequence>first</contributor-sequence>
-                                <contributor-role>author</contributor-role>
-                            </contributor-attributes>
-                        </contributor>
-                        <contributor>
-                            <credit-name>John W. Spaeth</credit-name>
-                        </contributor>
-                    </work-contributors>
+                </orcid-work>
+                <orcid-work>
+                    <work-title>
+                        <title>Work title 2</title>
+                        <subtitle>Work subtitle 2</subtitle>
+                    </work-title>
+                    <work-type>bible</work-type>
+                </orcid-work>
+                <orcid-work>
+                    <work-title>
+                        <title>Work Title 3</title>
+                        <subtitle>Work subtitle 3</subtitle>
+                    </work-title>
+                    <work-type>religious-text</work-type>
                 </orcid-work>
             </orcid-works>
             <orcid-grants>
@@ -196,22 +190,16 @@
                     <grant-date>2012-11-21T08:56:32</grant-date>
                     <grant-contributors>
                         <contributor>
-                            <contributor-orcid>
-                                <uri>http://orcid.org/2111-1111-1111-1103</uri>
-                                <path>2111-1111-1111-1103</path>
-                                <host>orcid.org</host>
-                            </contributor-orcid>
+                            <contributor-orcid>2111-1111-1111-1103</contributor-orcid>
+                            <credit-name>Credit Name</credit-name>
                             <contributor-attributes>
                                 <contributor-sequence>first</contributor-sequence>
                                 <contributor-role>postdoctoral-researcher</contributor-role>
                             </contributor-attributes>
                         </contributor>
                         <contributor>
-                            <contributor-orcid>
-                                <uri>http://orcid.org/2111-1111-1111-1104</uri>
-                                <path>2111-1111-1111-1104</path>
-                                <host>orcid.org</host>
-                            </contributor-orcid>
+                            <contributor-orcid>2111-1111-1111-1104</contributor-orcid>
+                            <credit-name>Credit Name</credit-name>
                             <contributor-attributes>
                                 <contributor-sequence>additional</contributor-sequence>
                                 <contributor-role>graduate-student</contributor-role>
@@ -220,20 +208,12 @@
                     </grant-contributors>
                     <grant-sources>
                         <source>
-                            <source-orcid>
-                                <uri>http://orcid.org/2111-1111-1111-1105</uri>
-                                <path>2111-1111-1111-1105</path>
-                                <host>orcid.org</host>
-                            </source-orcid>
+                            <source-orcid>2111-1111-1111-1105</source-orcid>
                             <source-name>Sponsor 1</source-name>
                             <source-date>2012-11-21T08:56:33</source-date>
                         </source>
                         <source>
-                            <source-orcid>
-                                <uri>http://orcid.org/2111-1111-1111-1115</uri>
-                                <path>2111-1111-1111-1115</path>
-                                <host>orcid.org</host>
-                            </source-orcid>
+                            <source-orcid>2111-1111-1111-1115</source-orcid>
                             <source-name>Sponsor 2</source-name>
                             <source-date>2012-11-21T08:56:33</source-date>
                         </source>
@@ -242,27 +222,26 @@
             </orcid-grants>
             <orcid-patents>
                 <orcid-patent put-code="3">
+                    <country>GB</country>
                     <patent-number>GB2447776</patent-number>
                     <short-description>POLYCRYSTALLINE DIAMOND CONSTRUCTIONS HAVING IMPROVED THERMAL STABILITY</short-description>
                     <patent-issue-date>2012-03-20T00:00:00</patent-issue-date>
+                    <assignee>
+                        <assignee-orcid>0000-8928-9282-9282</assignee-orcid>
+                        <assignee-name>MADAPUSI K KESHAVAN</assignee-name>
+                    </assignee>
                     <patent-contributors>
                         <contributor>
-                            <contributor-orcid>
-                                <uri>http://orcid.org/2111-1111-1111-1123</uri>
-                                <path>2111-1111-1111-1123</path>
-                                <host>orcid.org</host>
-                            </contributor-orcid>
+                            <contributor-orcid>2111-1111-1111-1123</contributor-orcid>
+                            <credit-name>Francis Rossi</credit-name>
                             <contributor-attributes>
                                 <contributor-sequence>first</contributor-sequence>
                                 <contributor-role>principal-investigator</contributor-role>
                             </contributor-attributes>
                         </contributor>
                         <contributor>
-                            <contributor-orcid>
-                                <uri>http://orcid.org/2111-1111-1111-1124</uri>
-                                <path>2111-1111-1111-1124</path>
-                                <host>orcid.org</host>
-                            </contributor-orcid>
+                            <contributor-orcid>2111-1111-1111-1124</contributor-orcid>
+                            <credit-name>Rick Parfitt</credit-name>
                             <contributor-attributes>
                                 <contributor-sequence>additional</contributor-sequence>
                                 <contributor-role>support-staff</contributor-role>
@@ -271,47 +250,27 @@
                     </patent-contributors>
                     <patent-sources>
                         <source>
-                            <source-orcid>
-                                <uri>http://orcid.org/0000-8928-9282-9282</uri>
-                                <path>0000-8928-9282-9282</path>
-                                <host>orcid.org</host>
-                            </source-orcid>
+                            <source-orcid>0000-8928-9282-9282</source-orcid>
                             <source-name>Peter Gabriel</source-name>
                             <source-date>2012-03-20T00:00:00</source-date>
                         </source>
                         <source>
-                            <source-orcid>
-                                <uri>http://orcid.org/0000-8273-9282-9282</uri>
-                                <path>0000-8273-9282-9282</path>
-                                <host>orcid.org</host>
-                            </source-orcid>
+                            <source-orcid>0000-8273-9282-9282</source-orcid>
                             <source-name>Tony Banks</source-name>
                             <source-date>2012-01-20T00:00:00</source-date>
                         </source>
                         <source>
-                            <source-orcid>
-                                <uri>http://orcid.org/0000-3273-2239-1293</uri>
-                                <path>0000-3273-2239-1293</path>
-                                <host>orcid.org</host>
-                            </source-orcid>
+                            <source-orcid>0000-3273-2239-1293</source-orcid>
                             <source-name>Anthony Phillips</source-name>
                             <source-date>2012-01-20T00:00:00</source-date>
                         </source>
                         <source>
-                            <source-orcid>
-                                <uri>http://orcid.org/0000-3273-2239-1294</uri>
-                                <path>0000-3273-2239-1294</path>
-                                <host>orcid.org</host>
-                            </source-orcid>
+                            <source-orcid>0000-3273-2239-1294</source-orcid>
                             <source-name>Mike Rutherford</source-name>
                             <source-date>2012-01-20T00:00:00</source-date>
                         </source>
                         <source>
-                            <source-orcid>
-                                <uri>http://orcid.org/0000-3273-2239-2733</uri>
-                                <path>0000-3273-2239-2733</path>
-                                <host>orcid.org</host>
-                            </source-orcid>
+                            <source-orcid>0000-3273-2239-2733</source-orcid>
                             <source-name>Chris Stewart</source-name>
                             <source-date>2012-01-20T00:00:00</source-date>
                         </source>

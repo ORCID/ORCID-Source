@@ -94,7 +94,7 @@ public class CrossRefEmail implements ProfileEvent {
                 if (!mailGunManager.sendVerifyEmail("support@verify.orcid.org", email, "Please verify your email", text, html))
                     pet = ProfileEventType.EMAIL_VERIFY_CROSSREF_MARKETING_FAIL;
             } catch (Exception e) {
-                LOG.error("ProfileEventType exception trying to send email to: " + orcidProfile.getOrcidId(), e);
+                LOG.error("ProfileEventType exception trying to send email to: " + orcidProfile.retrieveOrcidUriAsString(), e);
                 pet = ProfileEventType.EMAIL_VERIFY_CROSSREF_MARKETING_FAIL;
             }
             return pet;

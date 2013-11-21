@@ -135,7 +135,7 @@ public class ProfileEventManager {
                 OrcidProfile orcidProfile = getOrcidProfileManager().retrieveOrcidProfile(orcid);
                 try {
                     ProfileEvent pe = (ProfileEvent)context.getBean(classStr,orcidProfile);
-                    getProfileEventDao().persist(new ProfileEventEntity(orcidProfile.getOrcidId(), pe.call()));
+                    getProfileEventDao().persist(new ProfileEventEntity(orcidProfile.retrieveOrcidUriAsString(), pe.call()));
                 } catch (Exception e) {
                     LOG.error("Error calling ", e);
                 }

@@ -134,7 +134,7 @@ public class OrcidIndexManagerImpl implements OrcidIndexManager {
 					ExternalIdOrcid externalIdOrcid = externalIdentifier
 							.getExternalIdOrcid();
 					if (externalIdOrcid != null) {
-						extIdOrcids.add(externalIdOrcid.getValue());
+						extIdOrcids.add(externalIdOrcid.getPath());
 					}
 					ExternalIdReference externalIdReference = externalIdentifier
 							.getExternalIdReference();
@@ -143,7 +143,7 @@ public class OrcidIndexManagerImpl implements OrcidIndexManager {
 					}
 					if (NullUtils
 							.noneNull(externalIdOrcid, externalIdReference)) {
-						extIdOrcidsAndRefs.add(externalIdOrcid.getValue() + "="
+						extIdOrcidsAndRefs.add(externalIdOrcid.getPath() + "="
 								+ externalIdReference.getContent());
 					}
 				}

@@ -132,7 +132,7 @@ public class JpaJaxbEntityAdapterToOrcidProfileTest extends DBUnitTest {
         long start = System.currentTimeMillis();
         OrcidProfile orcidProfile = adapter.toOrcidProfile(profileEntity);
         System.out.println("Took: " + Long.toString(System.currentTimeMillis() - start));
-
+        
         checkOrcidProfile(orcidProfile);
         validateAgainstSchema(new OrcidMessage(orcidProfile));
     }
@@ -299,7 +299,7 @@ public class JpaJaxbEntityAdapterToOrcidProfileTest extends DBUnitTest {
         Source sponsor = orcidHistory.getSource();
         assertNotNull(sponsor);
         assertEquals("S. Milligan", sponsor.getSourceName().getContent());
-        assertEquals("4444-4444-4444-4441", sponsor.getSourceOrcid().getValue());
+        assertEquals("4444-4444-4444-4441", sponsor.getSourceOrcid().getPath());
         assertEquals(DateUtils.convertToDate("2012-06-29T15:31:00"), orcidHistory.getDeactivationDate().getValue().toGregorianCalendar().getTime());
         assertEquals(DateUtils.convertToDate("2011-07-02T15:31:00"), orcidHistory.getLastModifiedDate().getValue().toGregorianCalendar().getTime());
     }
@@ -393,7 +393,7 @@ public class JpaJaxbEntityAdapterToOrcidProfileTest extends DBUnitTest {
         assertEquals(Visibility.LIMITED, externalIdentifiers.getVisibility());
         assertEquals(1, externalIdentifiers.getExternalIdentifier().size());
         ExternalIdentifier externalIdentifier = externalIdentifiers.getExternalIdentifier().get(0);
-        assertEquals("4444-4444-4444-4441", externalIdentifier.getExternalIdOrcid().getValue());
+        assertEquals("4444-4444-4444-4441", externalIdentifier.getExternalIdOrcid().getPath());
         assertEquals("d3clan", externalIdentifier.getExternalIdReference().getContent());
         assertEquals("Facebook", externalIdentifier.getExternalIdCommonName().getContent());
     }
@@ -452,7 +452,7 @@ public class JpaJaxbEntityAdapterToOrcidProfileTest extends DBUnitTest {
         assertEquals(2, applications.getApplicationSummary().size());
         Map<String, ApplicationSummary> applicationsMappedByOrcid = Maps.uniqueIndex(applications.getApplicationSummary(), new Function<ApplicationSummary, String>() {
             public String apply(ApplicationSummary applicationSummary) {
-                return applicationSummary.getApplicationOrcid().getValue();
+                return applicationSummary.getApplicationOrcid().getPath();
             }
         });
         ApplicationSummary application1 = applicationsMappedByOrcid.get("4444-4444-4444-4441");
