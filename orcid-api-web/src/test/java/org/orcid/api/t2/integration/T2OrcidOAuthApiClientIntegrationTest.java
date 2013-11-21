@@ -24,6 +24,7 @@ import static org.orcid.api.common.OrcidApiConstants.EXTERNAL_IDENTIFIER_PATH;
 
 import java.net.URI;
 import java.net.URLEncoder;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -255,16 +256,17 @@ public class T2OrcidOAuthApiClientIntegrationTest extends BaseT2OrcidOAuthApiCli
     }
 
     @Test
-    public void testRemoveWriteScopesPastValitity() throws Exception {
+    public void testRemoveUserGrantWriteScopePastValitity() throws Exception {
 
-        // test multi-scope token, by creating a token with a write scope and
-        // changing
-        // the tokens creation date to old
         createNewOrcidUsingAccessToken();
         OrcidOauth2TokenDetail orcidOauth2TokenDetail = orcidOauthTokenDetailService.findNonDisabledByTokenValue(accessToken);
+
+        // modify the access token to look like a user granted token and make it a day old
         Date d = new Date();
         d.setTime(d.getTime() - 24 * 60 * 60 * 1000);
         orcidOauth2TokenDetail.setDateCreated(d);
+        orcidOauth2TokenDetail.setScope(ScopePathType.ORCID_WORKS_UPDATE.value() + " " + ScopePathType.ORCID_WORKS_CREATE.value() + " "
+                + ScopePathType.ORCID_PROFILE_READ_LIMITED.value());
         orcidOauthTokenDetailService.saveOrUpdate(orcidOauth2TokenDetail);
 
         OrcidMessage message = orcidClientDataHelper.createFromXML(OrcidClientDataHelper.ORCID_INTERNAL_NO_SPONSOR_XML);
@@ -293,7 +295,7 @@ public class T2OrcidOAuthApiClientIntegrationTest extends BaseT2OrcidOAuthApiCli
         // Make sure the permissionChecker can handle blank scopes
         OrcidOauth2TokenDetail orcidOauth2TokenDetail = orcidOauthTokenDetailService.findNonDisabledByTokenValue(accessToken);
         DefaultPermissionChecker defaultPermissionChecker = (DefaultPermissionChecker) permissionChecker;
-        defaultPermissionChecker.removeWriteScopesPastValitity(orcidOauth2TokenDetail);
+        defaultPermissionChecker.removeUserGrantWriteScopePastValitity(orcidOauth2TokenDetail);
 
         // make sure blank scopes return 403
         createNewOrcidUsingAccessToken();

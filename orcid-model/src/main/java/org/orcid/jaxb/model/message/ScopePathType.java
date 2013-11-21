@@ -136,6 +136,9 @@ public enum ScopePathType implements Serializable {
         return combined;
     }
 
+    /*
+     * These types are issued by the user and last a long time
+     */
     public boolean isReadOnlyScope() {
         switch (this) {
         case ORCID_BIO_READ_LIMITED:
@@ -152,8 +155,28 @@ public enum ScopePathType implements Serializable {
             return false;
         }
     }
+    
+    /* 
+     * http://support.orcid.org/knowledgebase/articles/119656
+     * These types are issues by ORCID and don't expire for
+     * at long time.
+     */
+    public boolean isClientCreditalScope() {
+        switch (this) {
+            case ORCID_PROFILE_CREATE:
+                return true;
+            case READ_PUBLIC:
+                return true;
+            default:
+                return false;
+        }
+    }
 
-    public boolean isWriteOperationScope() {
+    /*
+     * These scopes are granted by the user and 
+     * currently only last an hour.
+     */
+    public boolean isUserGrantWriteScope() {
         switch (this) {
         case AFFILIATIONS_UPDATE:
             return true;
@@ -168,7 +191,10 @@ public enum ScopePathType implements Serializable {
         case ORCID_BIO_UPDATE:
             return true;
         case ORCID_PROFILE_CREATE:
-            return true;
+            // this is tricky, this scope doesn't follow all the rules of 
+            // of the other scopes, it is allow to have a longer expiration date
+            // and only works on unclaimed records
+            return false; 
         case ORCID_GRANTS_CREATE:
             return true;
         case ORCID_GRANTS_UPDATE:
