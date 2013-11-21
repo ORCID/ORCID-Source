@@ -78,7 +78,7 @@ public class OrcidMessageVersionConverterImplV1_0_23ToV1_1_0 implements OrcidMes
     private void downgradeOrcidIds(OrcidProfile orcidProfile) {
         final String orcid = orcidProfile.retrieveOrcidPath();
         OrcidId orcidId = orcidProfile.getOrcidId();
-        if (orcidId != null) {
+        if (orcidId != null && orcidId.getPath() != null) {
             orcidProfile.setOrcid(orcidId.getPath());
         }
         TreeCleaner treeCleaner = new TreeCleaner();
