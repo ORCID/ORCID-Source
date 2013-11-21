@@ -47,7 +47,12 @@
 			<div class="col-md-6 col-sm-6 col-xs-12">
 				<div class="control-group" ng-show="editAffiliation.disambiguatedAffiliationSourceId">
 					<div style="position: absolute; left: 300px"><label><a class="glyphicon glyphicon-remove-sign grey" ng-click="removeDisambiguatedAffiliation()">&nbsp;<@orcid.msg 'common.remove'/></a></label></div>
-					<label><@orcid.msg 'manual_affiliation_form_contents.labelaffiliation'/></label>
+					<span ng-show="addAffType == 'education'">
+					   <label><@orcid.msg 'manual_affiliation_form_contents.labelinstitution'/></label>
+					</span>
+					<span ng-show="addAffType == 'employment'">
+					   <label><@orcid.msg 'manual_affiliation_form_contents.labelinstitutionemployer'/></label>
+				    </span>
 				    <div class="relative"  style="font-weight: strong;">
 						<span ng-bind="disambiguatedAffiliation.value"></span> <br />
 						<div>
@@ -56,10 +61,6 @@
 					</div>
 				</div>
 				<div class="control-group">
-					<span ng-show="addAffType != 'education' && addAffType != 'employment'">
-					   <label ng-hide="disambiguatedAffiliation"><@orcid.msg 'manual_affiliation_form_contents.labelname'/></label>
-					   <label ng-show="disambiguatedAffiliation"><@orcid.msg 'manual_affiliation_form_contents.labeldisplayname'/></label>
-					</span>
 					<span ng-show="addAffType == 'education'">
 					   <label ng-hide="disambiguatedAffiliation"><@orcid.msg 'manual_affiliation_form_contents.labelinstitution'/></label>
 					   <label ng-show="disambiguatedAffiliation"><@orcid.msg 'manual_affiliation_form_contents.labeldisplayinstitution'/></label>
@@ -132,18 +133,6 @@
 						<span class="orcid-error" ng-show="editAffiliation.roleTitle.errors.length > 0">
 							<div ng-repeat='error in editAffiliation.roleTitle.errors' ng-bind-html-unsafe="error"></div>
 						</span>
-					</div>
-				</div>
-
-				<div ng-show="addAffType != 'education' && addAffType != 'employment'" class="control-group">
-		    		<label class="relative"><@orcid.msg 'manual_affiliation_form_contents.labelaffiliationtype'/></label>
-		    		<div class="relative">
-			    		<select id="affiliationType" name="affiliationType" class="input-xlarge" ng-model="editAffiliation.affiliationType.value">
-			    			<option value=""><@orcid.msg 'org.orcid.jaxb.model.message.AffiliationType.empty' /></option>
-							<#list affiliationTypes?keys as key>
-								<option value="${key}">${affiliationLongDescriptionTypes[key]}</option>
-							</#list>
-						</select> 
 					</div>
 				</div>
 				<div class="control-group">

@@ -129,7 +129,7 @@ public class WorkspaceController extends BaseWorkspaceController {
         	workCategories.put(workCategory.value(), getMessage(buildInternationalizationKey(WorkCategory.class, workCategory.value())));
         }
         
-        return FunctionsOverCollections.sortMapsByValues(workCategories);
+        return workCategories;
     }        
 
     @ModelAttribute("citationTypes")
@@ -147,7 +147,7 @@ public class WorkspaceController extends BaseWorkspaceController {
     public Map<String, String> retrieveYearsAsMap() {
         Map<String, String> map = new LinkedHashMap<String, String>();
         List<String> list = YearsList.createList();
-        map.put("", "Year");
+        map.put("", getMessage("select.item.year"));
         for (String year : list) {
             map.put(year, year);
         }
@@ -158,7 +158,7 @@ public class WorkspaceController extends BaseWorkspaceController {
     public Map<String, String> retrieveMonthsAsMap() {
         Map<String, String> map = new LinkedHashMap<String, String>();
         List<String> list = NumberList.createList(12);
-        map.put("", "Month");
+        map.put("", getMessage("select.item.month"));
         for (String month : list) {
             map.put(month, month);
         }
@@ -169,7 +169,7 @@ public class WorkspaceController extends BaseWorkspaceController {
     public Map<String, String> retrieveDaysAsMap() {
         Map<String, String> map = new LinkedHashMap<String, String>();
         List<String> list = NumberList.createList(31);
-        map.put("", "Day");
+        map.put("", getMessage("select.item.day"));
         for (String day : list) {
             map.put(day, day);
         }
