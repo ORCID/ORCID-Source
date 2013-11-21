@@ -503,7 +503,24 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
             return null;
         }
         Source source = new Source(sourceEntity.getId());
-        source.setSourceName(new SourceName(sourceEntity.getCreditName()));
+        
+        //Set the source name
+        //If it is a client, lets use the source_name if it is public
+        if(OrcidType.CLIENT.equals(sourceEntity.getOrcidType())){
+        	Visibility affiliationSourceVisibility = (sourceEntity.getCreditNameVisibility() == null) ? OrcidVisibilityDefaults.CREDIT_NAME_DEFAULT.getVisibility() : sourceEntity.getCreditNameVisibility();  
+        	if(Visibility.PUBLIC.equals(affiliationSourceVisibility)) {
+        		source.setSourceName(new SourceName(sourceEntity.getCreditName()));
+        	}
+        } else {
+        	//If it is a user, check if it have a credit name and is visible
+            if(Visibility.PUBLIC.equals(sourceEntity.getCreditNameVisibility())){
+            	source.setSourceName(new SourceName(sourceEntity.getCreditName()));
+            } else {
+                //If it doesnt, lets use the give name + family name
+                String name = sourceEntity.getGivenNames() + (StringUtils.isEmpty(sourceEntity.getFamilyName()) ? "" : " " + sourceEntity.getFamilyName());
+                source.setSourceName(new SourceName(name));
+            }
+        }
         source.setSourceDate(new SourceDate(DateUtils.convertToXMLGregorianCalendar(orgAffiliationRelationEntity.getDateCreated())));
         return source;
     }
