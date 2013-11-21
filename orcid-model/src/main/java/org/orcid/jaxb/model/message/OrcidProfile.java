@@ -153,6 +153,20 @@ public class OrcidProfile implements Serializable {
         return orcidId.getValue();
     }
 
+    public String retrieveOrcidPath() {
+        if (orcidId == null) {
+            return null;
+        }
+        String path = orcidId.getPath();
+        if (path != null) {
+            return path;
+        }
+        if (orcid != null) {
+            return orcid.getValue();
+        }
+        return null;
+    }
+
     public OrcidId getOrcidId() {
         return orcidId;
     }

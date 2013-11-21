@@ -24,7 +24,9 @@ import org.orcid.core.version.OrcidMessageVersionConverter;
 import org.orcid.jaxb.model.message.Affiliation;
 import org.orcid.jaxb.model.message.AffiliationAddress;
 import org.orcid.jaxb.model.message.Affiliations;
+import org.orcid.jaxb.model.message.ExternalIdentifier;
 import org.orcid.jaxb.model.message.Iso3166Country;
+import org.orcid.jaxb.model.message.Orcid;
 import org.orcid.jaxb.model.message.OrcidActivities;
 import org.orcid.jaxb.model.message.OrcidId;
 import org.orcid.jaxb.model.message.OrcidIdBase;
@@ -61,7 +63,6 @@ public class OrcidMessageVersionConverterImplV1_0_23ToV1_1_0 implements OrcidMes
             return null;
         }
         orcidMessage.setMessageVersion(FROM_VERSION);
-
         OrcidProfile orcidProfile = orcidMessage.getOrcidProfile();
         if (orcidProfile != null) {
             downgradeOrcidIds(orcidProfile);
@@ -75,6 +76,7 @@ public class OrcidMessageVersionConverterImplV1_0_23ToV1_1_0 implements OrcidMes
     }
 
     private void downgradeOrcidIds(OrcidProfile orcidProfile) {
+        final String orcid = orcidProfile.retrieveOrcidPath();
         OrcidId orcidId = orcidProfile.getOrcidId();
         if (orcidId != null) {
             orcidProfile.setOrcid(orcidId.getPath());
@@ -101,6 +103,10 @@ public class OrcidMessageVersionConverterImplV1_0_23ToV1_1_0 implements OrcidMes
                     orcidId.setUri(null);
                     orcidId.setPath(null);
                     orcidId.setHost(null);
+                    if (obj instanceof ExternalIdentifier) {
+                        ExternalIdentifier externalIdentifier = (ExternalIdentifier) obj;
+                        externalIdentifier.setOrcid(new Orcid(orcid));
+                    }
                 }
                 // Always return false because we do not want to remove the obj
                 // itself
@@ -164,6 +170,10 @@ public class OrcidMessageVersionConverterImplV1_0_23ToV1_1_0 implements OrcidMes
                     OrcidIdBase orcidId = (OrcidIdBase) obj;
                     String currentValue = orcidId.getValue();
                     orcidId.setPath(currentValue);
+                    if (obj instanceof ExternalIdentifier) {
+                        ExternalIdentifier externalIdentifier = (ExternalIdentifier) obj;
+                        externalIdentifier.setOrcid(null);
+                    }
                 }
                 // Always return false because we do not want to remove the obj
                 // itself
