@@ -129,7 +129,7 @@ public class WorkspaceController extends BaseWorkspaceController {
         	workCategories.put(workCategory.value(), getMessage(buildInternationalizationKey(WorkCategory.class, workCategory.value())));
         }
         
-        return FunctionsOverCollections.sortMapsByValues(workCategories);
+        return workCategories;
     }        
 
     @ModelAttribute("citationTypes")
