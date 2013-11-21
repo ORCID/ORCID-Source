@@ -240,7 +240,10 @@ $(function () {
 	// to 1.9 or higher you will need to use the pluggin
 	var oldBrowserFlag =  false;
 
-	if ($.browser.msie && parseInt($.browser.version,10)<8) {
+	if (!!navigator.userAgent.match(/Trident\/7\./)) {
+		//IE 11
+		oldBrowserFlag = false; 
+	} else if ($.browser.msie && parseInt($.browser.version,10)<8) {
 		oldBrowserFlag = true;
 	} else if (/chrom(e|ium)/.test(navigator.userAgent.toLowerCase()) && parseInt($.browser.version,10)<22 ) {
 		oldBrowserFlag = true;
