@@ -494,7 +494,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             AgencyName agencyName = fundingAgency.getAgencyName();
             AgencyOrcid agencyOrcid = fundingAgency.getAgencyOrcid();
             grantEntity.setAgencyName(agencyName != null ? agencyName.getContent() : null);
-            grantEntity.setAgencyOrcid(agencyOrcid != null ? new ProfileEntity(agencyOrcid.getValue()) : null);
+            grantEntity.setAgencyOrcid(agencyOrcid != null ? new ProfileEntity(agencyOrcid.getPath()) : null);
         }
     }
 

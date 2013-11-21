@@ -887,7 +887,7 @@
 		</xs:annotation>
 		<xs:complexType mixed="true" />
 	</xs:element>
-	<xs:element name="agency-orcid">
+	<xs:element name="agency-orcid" type="orcid:orcid-id">
 		<xs:annotation>
 			<xs:documentation>The ORCID identifier for the agency providing the
 				funding associated with this
@@ -896,11 +896,6 @@
 				details of the client application.
 			</xs:documentation>
 		</xs:annotation>
-		<xs:complexType>
-			<xs:simpleContent>
-				<xs:extension base="orcid:orcid-path" />
-			</xs:simpleContent>
-		</xs:complexType>
 	</xs:element>
 	<xs:element name="grant-external-identifier">
 		<xs:annotation>

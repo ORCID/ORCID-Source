@@ -291,7 +291,11 @@
             <orcid-grants>
                 <orcid-grant visibility="public">
                     <funding-agency>
-                        <agency-orcid>1111-1111-1111-1113</agency-orcid>
+                        <agency-orcid>
+                            <uri>http://orcid.org/1111-1111-1111-1113</uri>
+                            <path>1111-1111-1111-1113</path>
+                            <host>orcid.org</host>
+                        </agency-orcid>
                         <agency-name>Agency name</agency-name>
                     </funding-agency>
                     <grant-external-identifier>
@@ -350,7 +354,11 @@
                 </orcid-grant>
                 <orcid-grant visibility="limited">
                     <funding-agency>
-                        <agency-orcid>1111-1111-1111-1113</agency-orcid>
+                        <agency-orcid>
+                            <uri>http://orcid.org/1111-1111-1111-1113</uri>
+                            <path>1111-1111-1111-1113</path>
+                            <host>orcid.org</host>
+                        </agency-orcid>
                         <agency-name>Agency name</agency-name>
                     </funding-agency>
                     <grant-external-identifier>
