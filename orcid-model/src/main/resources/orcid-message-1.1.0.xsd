@@ -749,7 +749,6 @@
 				<xs:enumeration value="trademark" />
 				<xs:enumeration value="website" />
 				<xs:enumeration value="working-paper" />
-				<xs:enumeration value="undefined" />
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>

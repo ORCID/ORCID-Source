@@ -1937,9 +1937,26 @@ function WorkCtrl($scope, $compile, worksSrvc) {
 		        contentType: 'application/json;charset=UTF-8',
 		        dataType: 'json',
 		        success: function(data) {
-		        	console.log(data);
-		        	$scope.types = data;
-		        	$scope.$apply();
+		        	
+		        	$scope.$apply(function() {
+			        	$scope.types = data;		        	
+			        	switch ($scope.editWork.workCategory.value){
+			                case "conference":
+			                	$scope.editWork.workType.value="conference-paper";		                	
+			                    break;
+			                case "intellectual_property":
+			                	$scope.editWork.workType.value="patent";
+			                    break;
+			                case "other_output":
+			                	$scope.editWork.workType.value="data-set";
+			                    break;
+			                case "publication":
+			                	$scope.editWork.workType.value="journal-article";
+			                    break;
+			        	}
+			        	console.log($scope.editWork.workType.value);
+		        	});
+		        	
 		        }
 		    }).fail(function() { 
 		    	console.log("Error loading work types.");
