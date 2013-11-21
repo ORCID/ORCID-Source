@@ -750,7 +750,8 @@ public class WorksController extends BaseWorkspaceController {
     	WorkCategory workCategory = WorkCategory.fromValue(workCategoryName);    	    	
     	
     	for(WorkType workType : workCategory.getSubTypes()){
-    		workTypes.put(workType.value(), getMessage(buildInternationalizationKey(WorkType.class, workType.value())));
+    		if(!workType.equals(WorkType.UNDEFINED))
+    			workTypes.put(workType.value(), getMessage(buildInternationalizationKey(WorkType.class, workType.value())));
     	}
     	
     	return FunctionsOverCollections.sortMapsByValues(workTypes);
