@@ -2058,14 +2058,18 @@ a:hover {
 .popover-help-container .popover {
 	display: none;
 	position: absolute;
-	left: -245px;
+	left: -134px;
 	top: 17px;
 	width: 300px;
 	background-color: #ffffff;
 	font-size: 14px;
 }
 
-.popover.bottom .arrow{
+.workspace-top .popover-help-container .popover{
+	left: -245px;
+}
+
+.workspace-top .popover.bottom .arrow{
 	left: 252px;
 }
 
