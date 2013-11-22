@@ -299,7 +299,8 @@ public class OrcidIndexManagerImplTest extends BaseTest {
         orcidSolrDocument.setOrcid("5678");
         orcidSolrDocument.setFamilyName("Logan");
         orcidSolrDocument.setGivenNames("Donald Edward");
-        //orcidSolrDocument.setAffiliatePrimaryInstitutionNames(Arrays.asList(new String[] { "University of Portsmouth" }));
+        // orcidSolrDocument.setAffiliatePrimaryInstitutionNames(Arrays.asList(new
+        // String[] { "University of Portsmouth" }));
         OrcidProfile orcidProfile = getOrcidProfileMandatoryOnly();
         OrcidMessage orcidMessage = createFilteredOrcidMessage(orcidProfile);
         orcidSolrDocument.setPublicProfileMessage(orcidMessage.toString());
@@ -550,21 +551,24 @@ public class OrcidIndexManagerImplTest extends BaseTest {
         orcidSolrDocument.setOl(new ArrayList<String>());
         orcidSolrDocument.setOsti(new ArrayList<String>());
         orcidSolrDocument.setOtherIdentifierType(new ArrayList<String>());
-        orcidSolrDocument.setPmc(new ArrayList<String>());        
+        orcidSolrDocument.setPmc(new ArrayList<String>());
         orcidSolrDocument.setRfc(new ArrayList<String>());
         orcidSolrDocument.setSsrn(new ArrayList<String>());
         orcidSolrDocument.setZbl(new ArrayList<String>());
         orcidSolrDocument.setFamilyName("familyName");
         orcidSolrDocument.setGivenNames("givenNames");
         orcidSolrDocument.addEmailAddress("email");
-        //orcidSolrDocument.setAffiliatePrimaryInstitutionNames(Arrays.asList(new String[] { "Primary Inst1" }));
-        //orcidSolrDocument.setAffiliateInstitutionNames(Arrays.asList(new String[] { "Current Inst2" }));
+        // orcidSolrDocument.setAffiliatePrimaryInstitutionNames(Arrays.asList(new
+        // String[] { "Primary Inst1" }));
+        // orcidSolrDocument.setAffiliateInstitutionNames(Arrays.asList(new
+        // String[] { "Current Inst2" }));
         orcidSolrDocument.setOtherNames(Arrays.asList(new String[] { "Other 1", "Other 2" }));
-        orcidSolrDocument.setPmid(Arrays.asList(new String[] {"work1-pmid"}));
+        orcidSolrDocument.setPmid(Arrays.asList(new String[] { "work1-pmid" }));
         orcidSolrDocument.setExternalIdOrcids(Arrays.asList(new String[] { "45678", "54321" }));
         orcidSolrDocument.setExternalIdReferences(Arrays.asList(new String[] { "defghi", "abc123" }));
         orcidSolrDocument.setExternalIdOrcidsAndReferences(Arrays.asList(new String[] { "45678=defghi", "54321=abc123" }));
-       // orcidSolrDocument.setPastInstitutionNames(Arrays.asList(new String[] { "Past Inst 1", "Past Inst 2" }));
+        // orcidSolrDocument.setPastInstitutionNames(Arrays.asList(new String[]
+        // { "Past Inst 1", "Past Inst 2" }));
         orcidSolrDocument.setWorkTitles(Arrays.asList(new String[] { "Work title 1", "Work title 2" }));
         orcidSolrDocument.setKeywords(Arrays.asList(new String[] { "Pavement Studies", "Advanced Tea Making" }));
         OrcidProfile orcidProfile = getStandardOrcid();
@@ -604,7 +608,9 @@ public class OrcidIndexManagerImplTest extends BaseTest {
 
     private ExternalIdentifier createExternalIdentifier(String orcid, String reference) {
         ExternalIdentifier externalIdentifier1 = new ExternalIdentifier();
-        externalIdentifier1.setExternalIdOrcid(new ExternalIdOrcid(orcid));
+        ExternalIdOrcid externalIdOrcid = new ExternalIdOrcid();
+        externalIdOrcid.setPath(orcid);
+        externalIdentifier1.setExternalIdOrcid(externalIdOrcid);
         externalIdentifier1.setExternalIdReference(new ExternalIdReference(reference));
         return externalIdentifier1;
     }

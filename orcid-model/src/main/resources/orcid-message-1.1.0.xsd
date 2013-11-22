@@ -82,7 +82,6 @@
 		</xs:annotation>
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element ref="orcid:orcid" minOccurs="0" />
 				<xs:element ref="orcid:orcid-id" minOccurs="0" />
 				<xs:element ref="orcid:orcid-deprecated" minOccurs="0"
 					maxOccurs="1" />
@@ -240,7 +239,7 @@
 		</xs:annotation>
 		<xs:complexType mixed="true" />
 	</xs:element>
-	<xs:element name="source-orcid">
+	<xs:element name="source-orcid" type="orcid:orcid-id">
 		<xs:annotation>
 			<xs:documentation>The ORCID identifier for the client application
 				that created the
@@ -249,11 +248,6 @@
 				details of the client application.
 			</xs:documentation>
 		</xs:annotation>
-		<xs:complexType>
-			<xs:simpleContent>
-				<xs:extension base="orcid:orcid" />
-			</xs:simpleContent>
-		</xs:complexType>
 	</xs:element>
 	<xs:element name="source-reference">
 		<xs:annotation>
@@ -404,7 +398,7 @@
 						default="true" />
 					<xs:attribute name="verified" type="xs:boolean"
 						default="false" />
-					<xs:attribute name="source" type="orcid:orcid" />
+					<xs:attribute name="source" type="orcid:orcid-path" />
 				</xs:extension>
 			</xs:simpleContent>
 		</xs:complexType>
@@ -506,7 +500,6 @@
 		</xs:annotation>
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element ref="orcid:orcid" minOccurs="0" maxOccurs="1" />
 				<xs:element ref="orcid:external-id-orcid" minOccurs="0"
 					maxOccurs="1" />
 				<xs:element ref="orcid:external-id-common-name"
@@ -518,16 +511,11 @@
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
-	<xs:element name="external-id-orcid">
+	<xs:element name="external-id-orcid" type="orcid:orcid-id">
 		<xs:annotation>
 			<xs:documentation>ORCID identifier used for external
 			</xs:documentation>
 		</xs:annotation>
-		<xs:complexType>
-			<xs:simpleContent>
-				<xs:extension base="orcid:orcid" />
-			</xs:simpleContent>
-		</xs:complexType>
 	</xs:element>
 	<xs:element name="external-id-common-name">
 		<xs:complexType mixed="true" />
@@ -587,7 +575,7 @@
 	<xs:element name="delegate-summary">
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element ref="orcid:orcid" />
+				<xs:element ref="orcid:orcid-id" />
 				<xs:element minOccurs="0" ref="orcid:credit-name" />
 			</xs:sequence>
 		</xs:complexType>
@@ -615,13 +603,7 @@
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
-	<xs:element name="application-orcid">
-		<xs:complexType>
-			<xs:simpleContent>
-				<xs:extension base="orcid:orcid" />
-			</xs:simpleContent>
-		</xs:complexType>
-	</xs:element>
+	<xs:element name="application-orcid" type="orcid:orcid-id"/>
 	<xs:element name="application-name">
 		<xs:complexType mixed="true" />
 	</xs:element>
@@ -749,7 +731,6 @@
 				<xs:enumeration value="trademark" />
 				<xs:enumeration value="website" />
 				<xs:enumeration value="working-paper" />
-				<xs:enumeration value="undefined" />
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
@@ -827,7 +808,7 @@
 			<xs:documentation>Value for the identifier</xs:documentation>
 		</xs:annotation>
 	</xs:element>
-	<xs:element name="work-source">
+	<xs:element name="work-source" type="orcid:orcid-id">
 		<xs:annotation>
 			<xs:documentation>Container for the source of a work.
 			</xs:documentation>
@@ -905,7 +886,7 @@
 		</xs:annotation>
 		<xs:complexType mixed="true" />
 	</xs:element>
-	<xs:element name="agency-orcid">
+	<xs:element name="agency-orcid" type="orcid:orcid-id">
 		<xs:annotation>
 			<xs:documentation>The ORCID identifier for the agency providing the
 				funding associated with this
@@ -914,11 +895,6 @@
 				details of the client application.
 			</xs:documentation>
 		</xs:annotation>
-		<xs:complexType>
-			<xs:simpleContent>
-				<xs:extension base="orcid:orcid" />
-			</xs:simpleContent>
-		</xs:complexType>
 	</xs:element>
 	<xs:element name="grant-external-identifier">
 		<xs:annotation>
@@ -992,13 +968,7 @@
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
-	<xs:element name="contributor-orcid">
-		<xs:complexType>
-			<xs:simpleContent>
-				<xs:extension base="orcid:orcid" />
-			</xs:simpleContent>
-		</xs:complexType>
-	</xs:element>
+	<xs:element name="contributor-orcid" type="orcid:orcid-id"/>
 	<xs:element name="contributor-email">
 		<xs:complexType>
 			<xs:simpleContent>
@@ -1106,13 +1076,7 @@
 	<xs:element name="assignee-name">
 		<xs:complexType mixed="true" />
 	</xs:element>
-	<xs:element name="assignee-orcid">
-		<xs:complexType>
-			<xs:simpleContent>
-				<xs:extension base="orcid:orcid" />
-			</xs:simpleContent>
-		</xs:complexType>
-	</xs:element>
+	<xs:element name="assignee-orcid" type="orcid:orcid-id"/>
 	<xs:element name="patent-contributors">
 		<xs:annotation>
 			<xs:documentation>Container for the contributors of a patent.
@@ -1238,22 +1202,13 @@
 		</xs:annotation>
 		<xs:complexType>
 			<xs:simpleContent>
-				<xs:extension base="orcid:orcid" />
+				<xs:extension base="orcid:orcid-path" />
 			</xs:simpleContent>
 		</xs:complexType>
 	</xs:element>
-	<xs:element name="orcid-id">
-		<xs:annotation>
-			<xs:documentation>The identifier of the researcher or contributor in
-				ORCID.
-			</xs:documentation>
-		</xs:annotation>
-		<xs:complexType>
-			<xs:simpleContent>
-				<xs:extension base="orcid:orcid-id" />
-			</xs:simpleContent>
-		</xs:complexType>
-	</xs:element>
+	<xs:element name="orcid-id" type="orcid:orcid-id"/>
+	<xs:element name="path" type="orcid:orcid-path"/>
+	<xs:element name="host" type="xs:string"/>
 	<xs:element name="credit-name">
 		<xs:annotation>
 			<xs:documentation>The name by which to when credited or cited, for
@@ -1460,17 +1415,34 @@
 	<xs:element name="encrypted-verification-code">
 		<xs:complexType mixed="true" />
 	</xs:element>
-	<xs:simpleType name="orcid">
+	<xs:simpleType name="orcid-path">
 		<xs:restriction base="xs:string">
 			<xs:pattern value="(\d{4}-){3,}\d{3}[\dX]" />
 		</xs:restriction>
 	</xs:simpleType>
-	<xs:simpleType name="orcid-id">
+	<xs:simpleType name="orcid-uri">
 		<xs:restriction base="xs:string">
 			<xs:pattern
 				value="http://([^/]*orcid\.org|localhost.*/orcid-web)/(\d{4}-){3,}\d{3}[\dX]" />
 		</xs:restriction>
 	</xs:simpleType>
+	<xs:complexType name="orcid-id">
+		<xs:annotation>
+			<xs:documentation>The identifier of the researcher or contributor in
+				ORCID. At least one of uri or path must be given.
+			</xs:documentation>
+		</xs:annotation>
+		    <xs:sequence>
+			    <xs:choice>
+					<xs:sequence>
+					    <xs:element name="uri" type="orcid:orcid-uri"/>
+					    <xs:element name="path" type="orcid:orcid-path" minOccurs="0"/>
+					</xs:sequence>
+					<xs:element name="path" type="orcid:orcid-path"/>
+				</xs:choice>
+				<xs:element ref="orcid:host" minOccurs="0"/>
+			</xs:sequence>
+	</xs:complexType>
 	<xs:simpleType name="orcid-type">
 		<xs:restriction base="xs:string">
 			<xs:enumeration value="admin" />

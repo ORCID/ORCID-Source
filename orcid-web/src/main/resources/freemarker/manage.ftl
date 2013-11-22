@@ -323,7 +323,7 @@
 						<a href="<@orcid.absUrl applicationSummary.applicationWebsite/>">${applicationSummary.applicationWebsite.value}</a></td>
 						<td width="35%">${applicationSummary.approvalDate.value.toGregorianCalendar().time?date}</td>
 						<td width="5%"><input type="hidden" name="applicationOrcid"
-							value="${applicationSummary.applicationOrcid.value}" /> <input
+							value="${applicationSummary.applicationOrcid.path}" /> <input
 							type="hidden" name="confirmed" value="no" /> <input type="hidden"
 							name="revokeApplicationName"
 							value="${applicationSummary.applicationName.content}" /> <#if

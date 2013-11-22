@@ -18,12 +18,15 @@
 
 -->
 <orcid-message xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://www.orcid.org/ns/orcid ../../../../orcid-model/src/main/resources/orcid-message-1.0.22.xsd"
+    xsi:schemaLocation="http://www.orcid.org/ns/orcid ../../../../orcid-model/src/main/resources/orcid-message-1.1.0.xsd"
     xmlns="http://www.orcid.org/ns/orcid">
-    <message-version>1.0.22</message-version>
+    <message-version>1.1.0</message-version>
     <orcid-profile xmlns="http://www.orcid.org/ns/orcid">
-        <orcid>4444-4444-4444-4446</orcid>
-        <orcid-id>http://orcid.org/4444-4444-4444-4446</orcid-id>
+        <orcid-id>
+            <uri>http://orcid.org/4444-4444-4444-4446</uri>
+            <path>4444-4444-4444-4446</path>
+            <host>orcid.org</host>
+         </orcid-id>
         <orcid-history>
             <creation-method>API</creation-method>
             <completion-date>2012-10-09T15:50:07</completion-date>
@@ -31,7 +34,11 @@
             <!-- In short, researcher has claimed the profile if confirmed=true -->
             <claimed>true</claimed>
             <source>
-                <source-orcid>8888-8888-8888-8880</source-orcid>
+                <source-orcid>
+                    <uri>http://orcid.org/8888-8888-8888-8880</uri>
+                    <path>8888-8888-8888-8880</path>
+                    <host>orcid.org</host>
+                </source-orcid>
                 <source-name>Brown University Library</source-name>
             </source>
         </orcid-history>
@@ -65,7 +72,11 @@
             </keywords>
             <external-identifiers>
                 <external-identifier>
-                    <external-id-orcid>8888-8888-8888-8880</external-id-orcid>
+                    <external-id-orcid>
+                        <uri>http://orcid.org/8888-8888-8888-8880</uri>
+                        <path>8888-8888-8888-8880</path>
+                        <host>orcid.org</host>
+                    </external-id-orcid>
                     <external-id-reference>YH0923</external-id-reference>
                 </external-identifier>
             </external-identifiers>
@@ -149,21 +160,21 @@
                         <title>Work title 1</title>
                         <subtitle>Work subtitle 1</subtitle>
                     </work-title>
-                	<work-type>audiovisual</work-type>
+                	<work-type>online-resource</work-type>
                 </orcid-work>
                 <orcid-work>
                     <work-title>
                         <title>Work title 2</title>
                         <subtitle>Work subtitle 2</subtitle>
                     </work-title>
-                    <work-type>audiovisual</work-type>
+                    <work-type>online-resource</work-type>
                 </orcid-work>
                 <orcid-work>
                     <work-title>
                         <title>Work Title 3</title>
                         <subtitle>Work subtitle 3</subtitle>
                     </work-title>
-                    <work-type>audiovisual</work-type>
+                    <work-type>online-resource</work-type>
                 </orcid-work>
             </orcid-works>
         </orcid-activities>

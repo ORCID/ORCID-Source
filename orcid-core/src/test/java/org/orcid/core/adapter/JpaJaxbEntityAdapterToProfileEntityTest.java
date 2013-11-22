@@ -165,13 +165,21 @@ public class JpaJaxbEntityAdapterToProfileEntityTest extends DBUnitTest {
             String contributorsJson = workEntity.getContributorsJson();
             if ("Work title 1".equals(workEntity.getTitle())) {
                 assertEquals(
-                        "{\"contributor\":[{\"contributorOrcid\":{\"value\":\"4444-4444-4444-4446\"},\"creditName\":null,\"contributorEmail\":null,\"contributorAttributes\":{\"contributorSequence\":\"FIRST\",\"contributorRole\":\"AUTHOR\"}},{\"contributorOrcid\":null,\"creditName\":{\"content\":\"John W. Spaeth\",\"visibility\":\"PUBLIC\"},\"contributorEmail\":null,\"contributorAttributes\":null}]}",
+                        "{\"contributor\":[{\"contributorOrcid\":{\"values\":null,\"uri\":\"http://orcid.org/4444-4444-4444-4446\",\"path\":\"4444-4444-4444-4446\",\"host\":\"orcid.org\",\"value\":null},\"creditName\":null,\"contributorEmail\":null,\"contributorAttributes\":{\"contributorSequence\":\"FIRST\",\"contributorRole\":\"AUTHOR\"}},{\"contributorOrcid\":null,\"creditName\":{\"content\":\"John W. Spaeth\",\"visibility\":\"PUBLIC\"},\"contributorEmail\":null,\"contributorAttributes\":null}]}",
                         contributorsJson);
-            } else {
+                assertEquals("Journal Title # 1", workEntity.getJournalTitle());
+                
+            }
+            else if(workEntity.getTitle().equals("Work title 2")){
                 assertNull(contributorsJson);
+                assertEquals("Journal Title # 2", workEntity.getJournalTitle());
+            } 
+            else {
+                assertNull(contributorsJson);
+                assertNull(workEntity.getJournalTitle());
             }
         }
-
+        
         assertEquals(2, profileEntity.getProfileGrants().size());
         for (ProfileGrantEntity profileGrantEntity : profileEntity.getProfileGrants()) {
             assertEquals(2, profileGrantEntity.getGrant().getContributors().size());

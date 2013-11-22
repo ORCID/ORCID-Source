@@ -207,7 +207,7 @@ public class OrcidWork implements VisibilityType, Serializable {
     public void setWorkType(WorkType value) {
         this.workType = value;
     }
-    
+
     /**
      * Gets the value of the publicationDate property.
      * 
@@ -403,8 +403,9 @@ public class OrcidWork implements VisibilityType, Serializable {
     }
 
     /**
-     * Indicates if two works are ORCID duplicated.
-     * Two works will be duplicated if they have the same title, type, subtype, external identifiers and source.
+     * Indicates if two works are ORCID duplicated. Two works will be duplicated
+     * if they have the same title, type, subtype, external identifiers and
+     * source.
      * 
      * @return true if the two works are duplicated according to ORCID
      *         requirements
@@ -439,8 +440,7 @@ public class OrcidWork implements VisibilityType, Serializable {
         if (this.getWorkSource() == null) {
             if (other.getWorkSource() != null)
                 return false;
-        }
-        if (!this.getWorkSource().equals(other.getWorkSource()))
+        } else if (!this.getWorkSource().equals(other.getWorkSource()))
             return false;
 
         return true;
@@ -527,7 +527,7 @@ public class OrcidWork implements VisibilityType, Serializable {
             return false;
         if (workType != other.workType)
             return false;
-        
+
         if (journalTitle == null) {
             if (other.journalTitle != null)
                 return false;

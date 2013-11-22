@@ -110,11 +110,10 @@ public class Work implements ErrorsInterface, Serializable {
             w.setWorkExternalIdentifiers(workExternalIdentifiers);
         }
         if (orcidWork.getWorkSource() != null) {
-            w.setWorkSource(Text.valueOf(orcidWork.getWorkSource().getContent()));
+            w.setWorkSource(Text.valueOf(orcidWork.getWorkSource().getPath()));
             if(orcidWork.getWorkSource().getSourceName() != null)
                 w.setWorkSourceName(Text.valueOf(orcidWork.getWorkSource().getSourceName()));
         }
-                        
         if (orcidWork.getWorkTitle() != null)
             w.setWorkTitle(WorkTitle.valueOf(orcidWork.getWorkTitle()));
         if (orcidWork.getWorkType() != null)

@@ -132,7 +132,7 @@ public class OrcidMessageVersionConverterChainImpl implements OrcidMessageVersio
     private WorkType upgradeWorkType(WorkType oldWorkType) {
         //If it is null, return undefined
         if(oldWorkType == null)
-            return WorkType.UNDEFINED;
+            return WorkType.OTHER;
         //If it is one of the new work types, just return it
         if (!oldWorkType.isDeprecated())
             return oldWorkType;
@@ -261,10 +261,10 @@ public class OrcidMessageVersionConverterChainImpl implements OrcidMessageVersio
         case WEBSITE:
             return WorkType.WEBSITE;
         case UNDEFINED:
-            return WorkType.UNDEFINED;
+            return WorkType.OTHER;
         default:
             // This should never happens, but just in case
-            return WorkType.UNDEFINED;
+            return WorkType.OTHER;
         }
     }
 

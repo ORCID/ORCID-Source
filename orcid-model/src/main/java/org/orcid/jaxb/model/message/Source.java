@@ -31,9 +31,12 @@ import javax.xml.bind.annotation.XmlType;
 import java.io.Serializable;
 
 /**
- * <p>Java class for anonymous complex type.
+ * <p>
+ * Java class for anonymous complex type.
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p>
+ * The following schema fragment specifies the expected content contained within
+ * this class.
  * 
  * <pre>
  * &lt;complexType>
@@ -70,17 +73,17 @@ public class Source implements Serializable {
     public Source() {
     }
 
-    public Source(String amenderOrcid) {
-        this.sourceOrcid = new SourceOrcid(amenderOrcid);
+    public Source(String amenderOrcidPath) {
+        SourceOrcid so = new SourceOrcid();
+        so.setPath(amenderOrcidPath);
+        this.sourceOrcid = so;
     }
 
     /**
      * Gets the value of the sourceOrcid property.
      * 
-     * @return
-     *     possible object is
-     *     {@link SourceOrcid }
-     *     
+     * @return possible object is {@link SourceOrcid }
+     * 
      */
     public SourceOrcid getSourceOrcid() {
         return sourceOrcid;
@@ -90,9 +93,8 @@ public class Source implements Serializable {
      * Sets the value of the sourceOrcid property.
      * 
      * @param value
-     *     allowed object is
-     *     {@link SourceOrcid }
-     *     
+     *            allowed object is {@link SourceOrcid }
+     * 
      */
     public void setSourceOrcid(SourceOrcid value) {
         this.sourceOrcid = value;
@@ -101,10 +103,8 @@ public class Source implements Serializable {
     /**
      * Gets the value of the sourceName property.
      * 
-     * @return
-     *     possible object is
-     *     {@link SourceName }
-     *     
+     * @return possible object is {@link SourceName }
+     * 
      */
     public SourceName getSourceName() {
         return sourceName;
@@ -114,9 +114,8 @@ public class Source implements Serializable {
      * Sets the value of the sourceName property.
      * 
      * @param value
-     *     allowed object is
-     *     {@link SourceName }
-     *     
+     *            allowed object is {@link SourceName }
+     * 
      */
     public void setSourceName(SourceName value) {
         this.sourceName = value;
@@ -125,10 +124,8 @@ public class Source implements Serializable {
     /**
      * Gets the value of the sourceDate property.
      * 
-     * @return
-     *     possible object is
-     *     {@link SourceDate }
-     *     
+     * @return possible object is {@link SourceDate }
+     * 
      */
     public SourceDate getSourceDate() {
         return sourceDate;
@@ -138,9 +135,8 @@ public class Source implements Serializable {
      * Sets the value of the sourceDate property.
      * 
      * @param value
-     *     allowed object is
-     *     {@link SourceDate }
-     *     
+     *            allowed object is {@link SourceDate }
+     * 
      */
     public void setSourceDate(SourceDate value) {
         this.sourceDate = value;

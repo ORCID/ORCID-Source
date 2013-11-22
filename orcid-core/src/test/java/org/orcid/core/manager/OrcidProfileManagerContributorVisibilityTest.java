@@ -27,6 +27,7 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import org.junit.AfterClass;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.orcid.core.BaseTest;
@@ -65,6 +66,11 @@ public class OrcidProfileManagerContributorVisibilityTest extends BaseTest {
     public static void removeDBUnitData() throws Exception {
         removeDBUnitData(
                 Arrays.asList("/data/EmptyEntityData.xml", "/data/ProfileEntityData.xml", "/data/SubjectEntityData.xml", "/data/SecurityQuestionEntityData.xml"), null);
+    }
+
+    @Before
+    public void before() {
+        orcidProfileManager.clearOrcidProfileCache();
     }
 
     @Test

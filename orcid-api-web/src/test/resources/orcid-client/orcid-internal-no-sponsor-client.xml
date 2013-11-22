@@ -18,9 +18,9 @@
 
 -->
 <orcid-message xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://www.orcid.org/ns/orcid ../../../../../orcid-model/src/main/resources/orcid-message-1.0.16.xsd"
+    xsi:schemaLocation="http://www.orcid.org/ns/orcid ../../../../../orcid-model/src/main/resources/orcid-message-1.0.23.xsd"
     xmlns="http://www.orcid.org/ns/orcid">
-    <message-version>1.0.16</message-version>
+    <message-version>1.0.23</message-version>
     <orcid-profile xmlns="http://www.orcid.org/ns/orcid">
         <orcid-history>
             <creation-method>API</creation-method>
@@ -70,6 +70,7 @@ v
                         <title>Work title 1</title>
                         <subtitle>Work subtitle 1</subtitle>
                     </work-title>
+                    <work-type>journal-article</work-type>
                     <work-source>NOT_DEFINED</work-source>                    
                 </orcid-work>
                 <orcid-work visibility="public">
@@ -77,12 +78,14 @@ v
                         <title>Work title 2</title>
                         <subtitle>Work subtitle 2</subtitle>
                     </work-title>
+                    <work-type>journal-article</work-type>
                 </orcid-work>
                 <orcid-work visibility="public">
                     <work-title>
                         <title>Work Title 3</title>
                         <subtitle>Work subtitle 3</subtitle>
                     </work-title>
+                    <work-type>journal-article</work-type>
                     <work-source>NOT_DEFINED</work-source>
                 </orcid-work>
             </orcid-works>
