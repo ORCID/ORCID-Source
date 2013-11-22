@@ -154,6 +154,48 @@ orcidNgModule.factory("affiliationsSrvc", ['$rootScope', function ($rootScope) {
 	return serv;
 }]);
 
+orcidNgModule.factory("workspaceSrvc", ['$rootScope', function ($rootScope) {
+	var serv = {
+			displayAffiliations: true,
+			displayEducation: true,
+			displayEmployment: true,
+			displayPersonalInfo: true,
+			displayWorks: true,
+			toggleAffiliations: function() {
+				displayAffiliations = !displayAffiliations;
+			},
+			toggleEducation: function() {
+				serv.displayEducation = !serv.displayEducation;
+			},
+			toggleEmployment: function() {
+				serv.displayEmployment = !serv.displayEmployment;
+			},
+			togglePersonalInfo: function() {
+				serv.displayPersonalInfo = !serv.displayPersonalInfo;
+			},
+			toggleWorks: function() {
+				serv.displayWorks = !serv.displayWorks;
+			},
+			openAffiliations: function() {
+				serv.displayAffiliations = true;
+			},
+			openEducation: function() {
+				serv.displayEducation = true;
+			},
+			openEmployment: function() {
+				serv.displayEmployment = true;
+			},
+			openPersonalInfo: function() {
+				serv.displayPersonalInfo = true;
+			},
+			openWorks: function() {
+				serv.displayWorks = true;
+			}
+	}; 
+	return serv;
+}]);
+
+
 orcidNgModule.factory("worksSrvc", function () {
 	var serv = {
 		    loading: false,
@@ -1272,14 +1314,15 @@ function ClaimThanks($scope, $compile) {
 	
 };
 
-function PersonalInfoCtrl($scope, $compile){
-	$scope.displayInfo = true;
+function PersonalInfoCtrl($scope, $compile, workspaceSrvc){
+	$scope.displayInfo = workspaceSrvc.displayPersonalInfo;
 	$scope.toggleDisplayInfo = function () {
 		$scope.displayInfo = !$scope.displayInfo;
 	};
 };
 
-function WorkspaceSummaryCtrl($scope, $compile, affiliationsSrvc, worksSrvc){
+function WorkspaceSummaryCtrl($scope, $compile, affiliationsSrvc, worksSrvc, workspaceSrvc){
+	$scope.workspaceSrvc = workspaceSrvc;
 	$scope.worksSrvc = worksSrvc;
 	$scope.affiliationsSrvc = affiliationsSrvc;
 	$scope.showAddAlert = function () {
@@ -1289,7 +1332,7 @@ function WorkspaceSummaryCtrl($scope, $compile, affiliationsSrvc, worksSrvc){
 				&& affiliationsSrvc.employments.length == 0)
 			return true;
 		return false;
-	};
+	};	
 }
 
 function PublicEduAffiliation($scope, $compile, $filter, affiliationsSrvc){
@@ -1303,23 +1346,9 @@ function PublicEmpAffiliation($scope, $compile, $filter, affiliationsSrvc){
 }
 
 
-function AffiliationCtrl($scope, $compile, $filter, affiliationsSrvc){
+function AffiliationCtrl($scope, $compile, $filter, affiliationsSrvc, workspaceSrvc){
 	$scope.affiliationsSrvc = affiliationsSrvc;
-	$scope.displayAffiliations = true;
-	$scope.displayEducation = true;
-	$scope.displayEmployment = true;
-	
-	$scope.toggleDisplayEducation = function () {
-		$scope.displayEducation = !$scope.displayEducation;
-	};	
-
-	$scope.toggleDisplayEmployment = function () {
-		$scope.displayEmployment = !$scope.displayEmployment;
-	};	
-
-	$scope.toggleDisplayAffiliations = function () {
-		$scope.displayAffiliations = !$scope.displayAffiliations;
-	};	
+	$scope.workspaceSrvc = workspaceSrvc;
 
 	$scope.showAddModal = function(){
 		var numOfResults = 25;
@@ -1586,18 +1615,14 @@ function PublicWorkCtrl($scope, $compile, worksSrvc) {
 	$scope.addWorkToScope();	
 }
 
-function WorkCtrl($scope, $compile, worksSrvc) {
-	$scope.displayWorks = true;
+function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
+	$scope.workspaceSrvc = workspaceSrvc;
 	$scope.worksSrvc = worksSrvc;
 	$scope.works = worksSrvc.works;
 	$scope.showBibtex = true;
 	$scope.bibtexCitations = {};
 	$scope.editTranslatedTitle = false;
 	$scope.types = null;
-	
-	$scope.toggleDisplayWorks = function () {
-		$scope.displayWorks = !$scope.displayWorks;
-	};	
 	
 	$scope.addExternalIdentifier = function () {
 		$scope.editWork.workExternalIdentifiers.push({workExternalIdentifierId: { value: ""}, workExternalIdentifierType: {value: ""} });

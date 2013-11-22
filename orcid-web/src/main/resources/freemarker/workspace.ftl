@@ -97,24 +97,24 @@
         		<div class="row">
         			<!-- Works -->
 	        		<div class="workspace-overview col-md-3 col-sm-3 col-xs-6" id="works-overview">
-	        			<a href="#workspace-publications" class="overview-count"><span ng-bind="worksSrvc.works.length"></span></a>
-	        			<a href="#workspace-publications" class="overview-title"><@orcid.msg 'workspace.Works'/></a>
+	        			<a href="#workspace-publications" class="overview-count" ng-click="workspaceSrvc.openWorks()"><span ng-bind="worksSrvc.works.length"></span></a>
+	        			<a href="#workspace-publications" class="overview-title" ng-click="workspaceSrvc.openWorks()"><@orcid.msg 'workspace.Works'/></a>
 	                    <br />	                    	
-	                    <a href="#workspace-publications" class="btn-update no-icon"><@orcid.msg 'workspace.view'/></a>	                    
+	                    <a href="#workspace-publications" class="btn-update no-icon" ng-click="workspaceSrvc.openWorks()"><@orcid.msg 'workspace.view'/></a>	                    
 	        		</div>
 	        		<!-- Afilliations -->
 					<#if RequestParameters['affiliations']??>
 		                <div class="workspace-overview col-md-3 col-sm-3 col-xs-6" id="educations-overview">
-		                    <a href="#workspace-educations" class="overview-count"><span ng-bind="affiliationsSrvc.educations.length"></span></a>
-		                    <a href="#workspace-educations" class="overview-title"><@orcid.msg 'org.orcid.jaxb.model.message.AffiliationType.education'/></a>
+		                    <a href="#workspace-educations" class="overview-count" ng-click="workspaceSrvc.openEducation()"><span ng-bind="affiliationsSrvc.educations.length"></span></a>
+		                    <a href="#workspace-educations" class="overview-title" ng-click="workspaceSrvc.openEducation()"><@orcid.msg 'org.orcid.jaxb.model.message.AffiliationType.education'/></a>
 		                    <br />
-		                    <a href="#workspace-educations" class="btn-update no-icon"><@orcid.msg 'workspace.view'/></a>
+		                    <a href="#workspace-educations" class="btn-update no-icon" ng-click="workspaceSrvc.openEducation()"><@orcid.msg 'workspace.view'/></a>
 		                </div>
 		                <div class="workspace-overview col-md-3 col-sm-3 col-xs-6" id="employments-overview">
-		                    <a href="#workspace-employments" class="overview-count"><span ng-bind="affiliationsSrvc.employments.length"></span></a>
-		                    <a href="#workspace-employments" class="overview-title"><@orcid.msg 'org.orcid.jaxb.model.message.AffiliationType.employment'/></a>
+		                    <a href="#workspace-employments" class="overview-count" ng-click="workspaceSrvc.openEmployment()"><span ng-bind="affiliationsSrvc.employments.length"></span></a>
+		                    <a href="#workspace-employments" class="overview-title" ng-click="workspaceSrvc.openEmployment()"><@orcid.msg 'org.orcid.jaxb.model.message.AffiliationType.employment'/></a>
 		                    <br />
-		                    <a href="#workspace-employments" class="btn-update no-icon"><@orcid.msg 'workspace.view'/></a>
+		                    <a href="#workspace-employments" class="btn-update no-icon" ng-click="workspaceSrvc.openEmployment()"><@orcid.msg 'workspace.view'/></a>
 		                </div>
 		             <#else>
 		                <div class="workspace-overview col-md-3 col-sm-3 col-xs-6" id="affiliations-overview">
@@ -163,8 +163,8 @@
                 	<div class="workspace-accordion-header">
                 		<ul class="personal-inf-display">
                 			<li>
-		        				<a href="" ng-click="toggleDisplayWorks()" class="toggle-text">
-		        			       <i class="glyphicon-chevron-down glyphicon x0" ng-class="{'glyphicon-chevron-right':displayWorks==false}"></i></a>
+		        				<a href="" ng-click="workspaceSrvc.toggleWorks()" class="toggle-text">
+		        			       <i class="glyphicon-chevron-down glyphicon x0" ng-class="{'glyphicon-chevron-right':workspaceSrvc.displayWorks==false}"></i></a>
 		        			    </a> 
 		        				<a href="" ng-click="toggleDisplayWorks()" class="toggle-text"><@orcid.msg 'workspace.Works'/></a>
 		        			</li>		        			
@@ -177,7 +177,7 @@
 						</ul>					
 					</div>
 					
-      	            <div ng-show="displayWorks" class="workspace-accordion-content">
+      	            <div ng-show="workspaceSrvc.displayWorks" class="workspace-accordion-content">
 	            		<#include "includes/work/add_work_modal_inc.ftl"/>
 						<#include "includes/work/del_work_modal_inc.ftl"/>
 						<#include "includes/work/body_work_inc.ftl"/>
