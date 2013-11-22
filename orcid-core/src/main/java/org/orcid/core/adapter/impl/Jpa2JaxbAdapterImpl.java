@@ -748,8 +748,8 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
             DefaultPermissionChecker defaultPermissionChecker = (DefaultPermissionChecker) permissionChecker;
 
             for (OrcidOauth2TokenDetail tokenDetail : tokenDetails)
-                defaultPermissionChecker.removeWriteScopesPastValitity(tokenDetail);
-
+                defaultPermissionChecker.removeUserGrantWriteScopePastValitity(tokenDetail);
+            
             Applications applications = new Applications();
             for (OrcidOauth2TokenDetail tokenDetail : tokenDetails) {
                 if (tokenDetail.getTokenDisabled() == null || !tokenDetail.getTokenDisabled()) {
