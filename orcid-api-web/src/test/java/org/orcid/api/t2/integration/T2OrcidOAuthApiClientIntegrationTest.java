@@ -265,7 +265,7 @@ public class T2OrcidOAuthApiClientIntegrationTest extends BaseT2OrcidOAuthApiCli
         createNewOrcidUsingAccessToken();
         OrcidOauth2TokenDetail orcidOauth2TokenDetail = orcidOauthTokenDetailService.findNonDisabledByTokenValue(accessToken);
 
-        // modify the access token to look like a user granted token and make it a day old
+        // make it a day old
         Date d = new Date();
         d.setTime(d.getTime() - 24 * 60 * 60 * 1000);
         orcidOauth2TokenDetail.setDateCreated(d);
