@@ -1349,6 +1349,7 @@ function PublicEmpAffiliation($scope, $compile, $filter, affiliationsSrvc){
 function AffiliationCtrl($scope, $compile, $filter, affiliationsSrvc, workspaceSrvc){
 	$scope.affiliationsSrvc = affiliationsSrvc;
 	$scope.workspaceSrvc = workspaceSrvc;
+	$scope.editAffiliation;
 
 	$scope.showAddModal = function(){
 		var numOfResults = 25;
@@ -1398,13 +1399,15 @@ function AffiliationCtrl($scope, $compile, $filter, affiliationsSrvc, workspaceS
 	};
 	
 	$scope.selectAffiliation = function(datum) {
-		$scope.editAffiliation.affiliationName.value = datum.value;
-		$scope.editAffiliation.city.value = datum.city;
-		$scope.editAffiliation.region.value = datum.region;
-		$scope.editAffiliation.country.value = datum.country;
-		if (datum.disambiguatedAffiliationIdentifier != undefined && datum.disambiguatedAffiliationIdentifier != null) {
-			$scope.getDisambiguatedAffiliation(datum.disambiguatedAffiliationIdentifier);
-			$scope.unbindTypeahead();
+		if (datum != undefined && datum != null) {
+			$scope.editAffiliation.affiliationName.value = datum.value;
+			$scope.editAffiliation.city.value = datum.city;
+			$scope.editAffiliation.region.value = datum.region;
+			$scope.editAffiliation.country.value = datum.country;
+			if (datum.disambiguatedAffiliationIdentifier != undefined && datum.disambiguatedAffiliationIdentifier != null) {
+				$scope.getDisambiguatedAffiliation(datum.disambiguatedAffiliationIdentifier);
+				$scope.unbindTypeahead();
+			}
 		}
 	};
 	
@@ -1429,11 +1432,12 @@ function AffiliationCtrl($scope, $compile, $filter, affiliationsSrvc, workspaceS
 	
 	$scope.removeDisambiguatedAffiliation = function() {
 		$scope.bindTypeahead();
-		delete $scope.disambiguatedAffiliation;
-		delete $scope.editAffiliation.disambiguatedAffiliationSourceId;
+		if ($scope.disambiguatedAffiliation != undefined) delete $scope.disambiguatedAffiliation;
+		if ($scope.editAffiliation != undefined && $scope.editAffiliation.disambiguatedAffiliationSourceId != undefined) delete $scope.editAffiliation.disambiguatedAffiliationSourceId;
 	};
 
 	$scope.addAffiliationModal = function(type){
+		$scope.removeDisambiguatedAffiliation();
 		$scope.addAffType = type;
 		$.ajax({
 			url: $('body').data('baseurl') + 'affiliations/affiliation.json',
