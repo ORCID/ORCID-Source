@@ -2065,6 +2065,14 @@ a:hover {
 	font-size: 14px;
 }
 
+.workspace-top .popover-help-container .popover{
+	left: -245px;
+}
+
+.workspace-top .popover.bottom .arrow{
+	left: 252px;
+}
+
 .popover-help-container  ul {
 	list-style-type: disc;
 }
