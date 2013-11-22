@@ -473,18 +473,6 @@ $(function () {
 		href: baseUrl + "account/search-for-delegates #add-an-individual"
 	});
 	
-	
-	$('.workspace-header').on('click', '.overview-title,.overview-count', function (e) {
-		e.preventDefault();
-		var el = $($(this).attr('href')).addClass('workspace-accordion-active');
-		el.find('.workspace-accordion-content').slideDown(150);
-		$('body,window').animate({ 
-			scrollTop: el.offset().top
-		}, 500);
-	});
-	
-	
-	
 	// Search hack
 	
 	$('#form-search').on('submit', function (e){
