@@ -60,73 +60,81 @@ public class OrcidApiServiceVersionedDelegatorImpl implements OrcidApiServiceDel
     @Override
     public Response findBioDetails(String orcid) {
         Response response = orcidApiServiceDelegator.findBioDetails(orcid);
-        return downgradeAndValidateResponse(response);
+        return regradeAndValidateResponse(response);
     }
 
     @Override
     public Response findBioDetailsFromPublicCache(String orcid) {
         Response response = orcidApiServiceDelegator.findBioDetailsFromPublicCache(orcid);
-        return downgradeAndValidateResponse(response);
+        return regradeAndValidateResponse(response);
     }
 
     @Override
     public Response findExternalIdentifiers(String orcid) {
         Response response = orcidApiServiceDelegator.findExternalIdentifiers(orcid);
-        return downgradeAndValidateResponse(response);
+        return regradeAndValidateResponse(response);
     }
 
     @Override
     public Response findExternalIdentifiersFromPublicCache(String orcid) {
         Response response = orcidApiServiceDelegator.findExternalIdentifiersFromPublicCache(orcid);
-        return downgradeAndValidateResponse(response);
+        return regradeAndValidateResponse(response);
     }
 
     @Override
     public Response findFullDetails(String orcid) {
         Response response = orcidApiServiceDelegator.findFullDetails(orcid);
-        return downgradeAndValidateResponse(response);
+        return regradeAndValidateResponse(response);
     }
 
     @Override
     public Response findFullDetailsFromPublicCache(String orcid) {
         Response response = orcidApiServiceDelegator.findFullDetailsFromPublicCache(orcid);
-        return downgradeAndValidateResponse(response);
+        return regradeAndValidateResponse(response);
     }
 
     @Override
     public Response findAffiliationsDetails(String orcid) {
         Response response = orcidApiServiceDelegator.findAffiliationsDetails(orcid);
-        return downgradeAndValidateResponse(response);
+        return regradeAndValidateResponse(response);
     }
 
     @Override
     public Response findAffiliationsDetailsFromPublicCache(String orcid) {
         Response response = orcidApiServiceDelegator.findAffiliationsDetailsFromPublicCache(orcid);
-        return downgradeAndValidateResponse(response);
+        return regradeAndValidateResponse(response);
     }
 
     @Override
     public Response findWorksDetails(String orcid) {
         Response response = orcidApiServiceDelegator.findWorksDetails(orcid);
-        return downgradeAndValidateResponse(response);
+        return regradeAndValidateResponse(response);
     }
 
     @Override
     public Response findWorksDetailsFromPublicCache(String orcid) {
         Response response = orcidApiServiceDelegator.findWorksDetailsFromPublicCache(orcid);
-        return downgradeAndValidateResponse(response);
+        return regradeAndValidateResponse(response);
     }
 
     @Override
     public Response searchByQuery(Map<String, List<String>> queryMap) {
         Response response = orcidApiServiceDelegator.searchByQuery(queryMap);
-        return downgradeAndValidateResponse(response);
+        return regradeAndValidateResponse(response);
     }
 
-    private Response downgradeResponse(Response response) {
+    private Response regradeResponse(Response response) {
         OrcidMessage orcidMessage = (OrcidMessage) response.getEntity();
         if (orcidMessage != null) {
-            orcidMessageVersionConverterChain.downgradeMessage(orcidMessage, externalVersion);
+            String messageVersion = orcidMessage.getMessageVersion();
+            if (externalVersion.equals(messageVersion)) {
+                return response;
+            }
+            if (externalVersion.compareTo(messageVersion) > 0) {
+                orcidMessageVersionConverterChain.upgradeMessage(orcidMessage, externalVersion);
+            } else {
+                orcidMessageVersionConverterChain.downgradeMessage(orcidMessage, externalVersion);
+            }
         }
         return Response.fromResponse(response).entity(orcidMessage).build();
     }
@@ -136,10 +144,10 @@ public class OrcidApiServiceVersionedDelegatorImpl implements OrcidApiServiceDel
         outgoingValidationManager.validateMessage(orcidMessage);
     }
 
-    private Response downgradeAndValidateResponse(Response response) {
-        Response downgradedResponse = downgradeResponse(response);
-        validateOutgoingResponse(downgradedResponse);
-        return downgradedResponse;
+    private Response regradeAndValidateResponse(Response response) {
+        Response regradedResponse = regradeResponse(response);
+        validateOutgoingResponse(regradedResponse);
+        return regradedResponse;
     }
 
 }
