@@ -195,7 +195,7 @@ public class ManageProfileControllerTest extends BaseControllerTest {
         ChangePersonalInfoForm changePersonalInfoForm = new ChangePersonalInfoForm(getOrcidProfile());
         ModelAndView successView = controller.saveEditedBio(request, changePersonalInfoForm, bindingResult, mock(RedirectAttributes.class));
         verify(mockNotificationManager, times(0)).sendEmailAddressChangedNotification(any(OrcidProfile.class), any(Email.class), any(URI.class));
-        assertEquals("redirect:manage-bio-settings", successView.getViewName());
+        assertEquals("redirect:/account/manage-bio-settings", successView.getViewName());
     }
 
     @Test
