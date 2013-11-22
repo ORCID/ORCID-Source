@@ -107,7 +107,7 @@ public class OrcidRandomValueTokenServices extends DefaultTokenServices {
          * are past their lifetimes
          */
         for (ScopePathType scope : requestedScopes) {
-            if (scope.isReadOnlyScope()) {
+            if (!scope.isUserGrantWriteScope()) {
                 return readValiditySeconds;
             }
         }
