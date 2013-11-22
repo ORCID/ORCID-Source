@@ -171,7 +171,7 @@
                            <a href="<@spring.url "/signin" />" title=""><@orcid.msg 'public-layout.sign_in'/></a>
                        </@security.authorize>
                        <@security.authorize ifAnyGranted="ROLE_USER, ROLE_ADMIN, ROLE_BASIC, ROLE_PREMIUM, ROLE_BASIC_INSTITUTION, ROLE_PREMIUM_INSTITUTION">
-                           <a href="<@spring.url '/signout'/>"><@orcid.msg 'public-layout.sign_out'/></a>
+                           <a href="<@spring.url '/signout'/>" id="signout"><@orcid.msg 'public-layout.sign_out'/></a>
                        </@security.authorize>
                    </li>
                </ul>                    
