@@ -128,11 +128,11 @@
     };
 
     var menuHack = function() {
-        $(".main > .menu > li.last").on("mouseenter", function(e) {
-            $(".main > .menu").css({"background":"#a6ce39"});
+        $("#signout").on("mouseenter", function(e) {
+            $(".header .navigation > .menu").css({"background":"#a6ce39"});        
         });
-        $(".main > .menu > li.last.leaf").on("mouseout", function(e) {
-            $(".main > .menu").css({"background":"#338caf"});
+        $("#signout").on("mouseout", function(e) {
+            $(".header .navigation > .menu").css({"background":"#338caf"});
         });
     };
     

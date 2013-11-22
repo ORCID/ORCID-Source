@@ -931,6 +931,10 @@ select {
 	display: none;
 }
 
+#signout{
+	width:120px;
+}
+
 /*
     Footer area
 */
