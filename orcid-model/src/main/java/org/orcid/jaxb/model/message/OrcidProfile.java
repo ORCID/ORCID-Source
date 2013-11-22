@@ -139,7 +139,11 @@ public class OrcidProfile implements Serializable {
     }
 
     public void setOrcid(String value) {
-        this.orcid = new Orcid(value);
+        if (value == null) {
+            this.orcid = null;
+        } else {
+            this.orcid = new Orcid(value);
+        }
     }
 
     public String retrieveOrcidUriAsString() {

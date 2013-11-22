@@ -247,7 +247,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
     @Transactional
     public OrcidProfile createOrcidProfile(OrcidProfile orcidProfile) {
         if (orcidProfile.getOrcid() == null) {
-            orcidProfile.setOrcid(orcidGenerationManager.createNewOrcid());
+            orcidProfile.setOrcidId(orcidGenerationManager.createNewOrcid());
         }
 
         // Add source to works
