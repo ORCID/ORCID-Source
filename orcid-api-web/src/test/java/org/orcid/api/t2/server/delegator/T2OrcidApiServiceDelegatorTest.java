@@ -56,6 +56,7 @@ import org.orcid.jaxb.model.message.GivenNames;
 import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.jaxb.model.message.OrcidActivities;
 import org.orcid.jaxb.model.message.OrcidBio;
+import org.orcid.jaxb.model.message.OrcidId;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidWorks;
@@ -79,7 +80,7 @@ public class T2OrcidApiServiceDelegatorTest extends DBUnitTest {
     private static final List<String> DATA_FILES = Arrays.asList("/data/EmptyEntityData.xml", "/data/SecurityQuestionEntityData.xml", "/data/ProfileEntityData.xml",
             "/data/WorksEntityData.xml", "/data/ProfileWorksEntityData.xml", "/data/ClientDetailsEntityData.xml", "/data/Oauth2TokenDetailsData.xml");
 
-    @Resource(name = "t2OrcidApiServiceDelegatorLatest")
+    @Resource(name = "t2OrcidApiServiceDelegatorV1_1_0")
     private T2OrcidApiServiceDelegator t2OrcidApiServiceDelegator;
 
     @Resource
@@ -116,10 +117,10 @@ public class T2OrcidApiServiceDelegatorTest extends DBUnitTest {
     public void testAddWorks() {
         setUpSecurityContext();
         OrcidMessage orcidMessage = new OrcidMessage();
-        orcidMessage.setMessageVersion("1.0.14");
+        orcidMessage.setMessageVersion("1.1.0");
         OrcidProfile orcidProfile = new OrcidProfile();
         orcidMessage.setOrcidProfile(orcidProfile);
-        orcidProfile.setOrcid("4444-4444-4444-4441");
+        orcidProfile.setOrcidId(new OrcidId("4444-4444-4444-4441"));
         OrcidActivities orcidActivities = new OrcidActivities();
         orcidProfile.setOrcidActivities(orcidActivities);
         OrcidWorks orcidWorks = new OrcidWorks();
@@ -213,10 +214,10 @@ public class T2OrcidApiServiceDelegatorTest extends DBUnitTest {
     public void testAddAffilliations() {
         setUpSecurityContext(ScopePathType.AFFILIATIONS_CREATE);
         OrcidMessage orcidMessage = new OrcidMessage();
-        orcidMessage.setMessageVersion("1.0.19");
+        orcidMessage.setMessageVersion("1.1.0");
         OrcidProfile orcidProfile = new OrcidProfile();
         orcidMessage.setOrcidProfile(orcidProfile);
-        orcidProfile.setOrcid("4444-4444-4444-4441");
+        orcidProfile.setOrcidId(new OrcidId("4444-4444-4444-4441"));
         OrcidActivities orcidActivities = new OrcidActivities();
         orcidProfile.setOrcidActivities(orcidActivities);
         Affiliations affiliations = new Affiliations();
@@ -234,18 +235,18 @@ public class T2OrcidApiServiceDelegatorTest extends DBUnitTest {
         assertEquals(HttpStatus.SC_CREATED, response.getStatus());
         String location = ((URI) response.getMetadata().getFirst("Location")).getPath();
         assertNotNull(location);
-        
+
         OrcidProfile retrievedProfile = orcidProfileManager.retrieveOrcidProfile("4444-4444-4444-4441");
         List<Affiliation> affiliationsList = retrievedProfile.getOrcidActivities().getAffiliations().getAffiliation();
         assertEquals(1, affiliationsList.size());
         Affiliation affiliation = affiliationsList.get(0);
         assertEquals("A new affiliation", affiliation.getAffiliationName());
-        assertEquals("4444-4444-4444-4447", affiliation.getSource().getSourceOrcid().getValue());
+        assertEquals("4444-4444-4444-4447", affiliation.getSource().getSourceOrcid().getPath());
     }
 
     private OrcidMessage createStubOrcidMessage() {
         OrcidMessage orcidMessage = new OrcidMessage();
-        orcidMessage.setMessageVersion("1.0.14");
+        orcidMessage.setMessageVersion("1.1.0");
         OrcidProfile orcidProfile = new OrcidProfile();
         orcidMessage.setOrcidProfile(orcidProfile);
         OrcidBio orcidBio = new OrcidBio();

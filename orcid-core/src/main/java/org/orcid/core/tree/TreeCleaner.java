@@ -32,6 +32,16 @@ public class TreeCleaner {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TreeCleaner.class);
 
+    private boolean removeEmptyObjects = true;
+
+    public boolean isRemoveEmptyObjects() {
+        return removeEmptyObjects;
+    }
+
+    public void setRemoveEmptyObjects(boolean removeEmptyObjects) {
+        this.removeEmptyObjects = removeEmptyObjects;
+    }
+
     public void clean(Object obj, TreeCleaningStrategy decisionMaker) {
         if (obj == null) {
             return;
@@ -52,7 +62,7 @@ public class TreeCleaner {
                 iterator.remove();
             } else {
                 clean(objInCollection, decisionMaker);
-                if (hasNoActiveProperties(objInCollection)) {
+                if (removeEmptyObjects && hasNoActiveProperties(objInCollection)) {
                     iterator.remove();
                 }
             }
@@ -70,7 +80,7 @@ public class TreeCleaner {
                     nullify(obj, gettersAndSetters, getter);
                 } else {
                     clean(returnedObj, decisionMaker);
-                    if (hasNoActiveProperties(returnedObj)) {
+                    if (removeEmptyObjects && hasNoActiveProperties(returnedObj)) {
                         nullify(obj, gettersAndSetters, getter);
                     }
                 }

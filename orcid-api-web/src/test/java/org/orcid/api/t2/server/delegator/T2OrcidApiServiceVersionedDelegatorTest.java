@@ -49,6 +49,7 @@ import org.orcid.jaxb.model.message.Email;
 import org.orcid.jaxb.model.message.GivenNames;
 import org.orcid.jaxb.model.message.OrcidActivities;
 import org.orcid.jaxb.model.message.OrcidBio;
+import org.orcid.jaxb.model.message.OrcidId;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidWorks;
@@ -77,8 +78,8 @@ public class T2OrcidApiServiceVersionedDelegatorTest extends DBUnitTest {
 
     @Resource
     private OrcidProfileManager orcidProfileManager;
-   
-    @Resource(name = "t2OrcidApiServiceDelegatorLatest")
+
+    @Resource(name = "t2OrcidApiServiceDelegatorV1_1_0")
     private T2OrcidApiServiceDelegator t2OrcidApiServiceDelegatorLatest;
 
     @Mock
@@ -112,10 +113,10 @@ public class T2OrcidApiServiceVersionedDelegatorTest extends DBUnitTest {
     public void testAddWorks() {
         setUpSecurityContext();
         OrcidMessage orcidMessage = new OrcidMessage();
-        orcidMessage.setMessageVersion("1.0.14");
+        orcidMessage.setMessageVersion("1.1.0");
         OrcidProfile orcidProfile = new OrcidProfile();
         orcidMessage.setOrcidProfile(orcidProfile);
-        orcidProfile.setOrcid("4444-4444-4444-4441");
+        orcidProfile.setOrcidId(new OrcidId("4444-4444-4444-4441"));
         OrcidActivities orcidActivities = new OrcidActivities();
         orcidProfile.setOrcidActivities(orcidActivities);
         OrcidWorks orcidWorks = new OrcidWorks();
@@ -229,7 +230,7 @@ public class T2OrcidApiServiceVersionedDelegatorTest extends DBUnitTest {
 
     private OrcidMessage createStubOrcidMessage() {
         OrcidMessage orcidMessage = new OrcidMessage();
-        orcidMessage.setMessageVersion("1.0.14");
+        orcidMessage.setMessageVersion("1.1.0");
         OrcidProfile orcidProfile = new OrcidProfile();
         orcidMessage.setOrcidProfile(orcidProfile);
         OrcidBio orcidBio = new OrcidBio();

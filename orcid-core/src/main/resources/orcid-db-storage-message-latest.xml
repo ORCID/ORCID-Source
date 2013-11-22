@@ -18,9 +18,9 @@
 
 -->
 <orcid-message xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-               xsi:schemaLocation="http://www.orcid.org/ns/orcid ../../../../orcid-model/src/main/resources/orcid-message-1.0.22.xsd"
+               xsi:schemaLocation="http://www.orcid.org/ns/orcid ../../../../orcid-model/src/main/resources/orcid-message-1.1.0.xsd"
                xmlns="http://www.orcid.org/ns/orcid">
-    <message-version>1.0.22</message-version>
+    <message-version>1.1.0</message-version>
     <!-- Error message, if applicable -->
     <!-- Unable to connect to ORCID, no matching researchers, etc. -->
     <!-- <error-desc>No researcher found.</error-desc> -->
@@ -34,7 +34,11 @@
             <!-- The name of the institution that invited the researcher to register
                    with ORCID -->
             <source>
-                <source-orcid>8888-8888-8888-8880</source-orcid>
+                <source-orcid>
+                    <uri>http://orcid.org/8888-8888-8888-8880</uri>
+                    <path>8888-8888-8888-8880</path>
+                    <host>orcid.org</host>
+                </source-orcid>
                 <source-name>Brown University Library</source-name>
             </source>
         </orcid-history>
@@ -62,7 +66,11 @@
             </contact-details>
             <external-identifiers visibility="public">
                 <external-identifier>
-                    <external-id-orcid>8888-8888-8888-8880</external-id-orcid>
+                    <external-id-orcid>
+                        <uri>http://orcid.org/8888-8888-8888-8880</uri>
+                        <path>8888-8888-8888-8880</path>
+                        <host>orcid.org</host>
+                    </external-id-orcid>
                     <external-id-common-name>Facebook</external-id-common-name>
                     <external-id-reference>d3clan</external-id-reference>
                     <external-id-url>http://www.facebook.com/d3clan</external-id-url>
@@ -187,7 +195,11 @@
                     </publication-date>
                     <work-contributors>
                         <contributor>
-                            <contributor-orcid>4444-4444-4444-4449</contributor-orcid>
+                            <contributor-orcid>
+                                <uri>http://orcid.org/4444-4444-4444-4449</uri>
+                                <path>4444-4444-4444-4449</path>
+                                <host>orcid.org</host>
+                            </contributor-orcid>
                             <contributor-email>josiah_carberry@brown.edu</contributor-email>
                             <contributor-attributes>
                                 <contributor-sequence>first</contributor-sequence>

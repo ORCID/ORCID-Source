@@ -305,7 +305,6 @@ public class OrcidProfileManagerBaseTest extends BaseTest {
         orcidWork.setWorkTitle(title);
         orcidWork.setWorkExternalIdentifiers(workExternalIdentifiers);
         orcidWork.setWorkContributors(workContributors);
-        orcidWork.setWorkSource(new WorkSource(WorkSource.NULL_SOURCE_PROFILE));
         return orcidWork;
     }
 

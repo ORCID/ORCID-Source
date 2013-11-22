@@ -14,7 +14,7 @@
  *
  * =============================================================================
  */
-package org.orcid.core.version;
+package org.orcid.core.version.impl;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -22,10 +22,8 @@ import static org.junit.Assert.assertNotNull;
 import java.io.InputStreamReader;
 import java.io.Reader;
 
-import javax.annotation.Resource;
-
 import org.junit.Test;
-import org.orcid.core.BaseTest;
+import org.orcid.core.version.OrcidMessageVersionConverter;
 import org.orcid.jaxb.model.message.OrcidMessage;
 
 /**
@@ -33,19 +31,17 @@ import org.orcid.jaxb.model.message.OrcidMessage;
  * @author Will Simpson
  * 
  */
-public class OrcidMessageVersionConverterChainTest extends BaseTest {
-
-    @Resource
-    private OrcidMessageVersionConverterChain orcidMessageVersionConverterChain;
+public class OrcidMessageVersionConverterV1_0_23ToV1_1_0ImplTest {
 
     @Test
-    public void testUpdgrade() {
-        Reader reader = new InputStreamReader(getClass().getResourceAsStream("orcid-public-full-message-v1.0.16.xml"));
+    public void testUpgradeMessage() {
+        Reader reader = new InputStreamReader(getClass().getResourceAsStream("/org/orcid/core/version/orcid-public-full-message-v1.0.23.xml"));
         OrcidMessage oldMessage = OrcidMessage.unmarshall(reader);
-        OrcidMessage newMessage = orcidMessageVersionConverterChain.upgradeMessage(oldMessage, "1.0.17");
+        OrcidMessageVersionConverter converter = new OrcidMessageVersionConverterImplV1_0_23ToV1_1_0();
+        OrcidMessage newMessage = converter.upgradeMessage(oldMessage);
         assertNotNull(newMessage);
-        assertEquals("1.0.17", newMessage.getMessageVersion());
-        assertEquals("4444-4444-4444-4446", newMessage.getOrcidProfile().getOrcid().getValue());
+        assertEquals("1.1.0", newMessage.getMessageVersion());
+        assertEquals("4444-4444-4444-4446", newMessage.getOrcidProfile().getOrcidId().getPath());
         assertEquals("http://orcid.org/4444-4444-4444-4446", newMessage.getOrcidProfile().retrieveOrcidUriAsString());
     }
 

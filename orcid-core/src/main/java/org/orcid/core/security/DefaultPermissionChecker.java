@@ -213,7 +213,7 @@ public class DefaultPermissionChecker implements PermissionChecker {
         if (orcidMessage != null && orcidMessage.getOrcidProfile() != null && orcidMessage.getOrcidProfile().getOrcidHistory() != null
                 && orcidMessage.getOrcidProfile().getOrcidHistory().getSource() != null
                 && orcidMessage.getOrcidProfile().getOrcidHistory().getSource().getSourceOrcid() != null) {
-            return orcidMessage.getOrcidProfile().getOrcidHistory().getSource().getSourceOrcid().getValue();
+            return orcidMessage.getOrcidProfile().getOrcidHistory().getSource().getSourceOrcid().getPath();
         } else {
             return null;
         }

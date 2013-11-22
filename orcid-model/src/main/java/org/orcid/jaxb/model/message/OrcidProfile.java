@@ -69,7 +69,7 @@ public class OrcidProfile implements Serializable {
     protected Orcid orcid;
 
     @XmlElement(name = "orcid-id")
-    protected String orcidId;
+    protected OrcidId orcidId;
 
     @XmlElement(name = "orcid-deprecated")
     private OrcidDeprecated orcidDeprecated;
@@ -115,7 +115,16 @@ public class OrcidProfile implements Serializable {
      * 
      */
     public Orcid getOrcid() {
-        return orcid;
+        if (orcid != null) {
+            return orcid;
+        }
+        if (orcidId != null) {
+            String path = orcidId.getPath();
+            if (path != null) {
+                return new Orcid(path);
+            }
+        }
+        return null;
     }
 
     /**
@@ -129,23 +138,45 @@ public class OrcidProfile implements Serializable {
         this.orcid = value;
     }
 
-    public String getOrcidId() {
-        return this.orcidId; // orcidId;
+    public void setOrcid(String value) {
+        this.orcid = new Orcid(value);
+    }
+
+    public String retrieveOrcidUriAsString() {
+        if (orcidId == null) {
+            return null;
+        }
+        String uri = orcidId.getUri();
+        if (uri != null) {
+            return uri;
+        }
+        return orcidId.getValue();
+    }
+
+    public String retrieveOrcidPath() {
+        if (orcidId == null) {
+            return null;
+        }
+        String path = orcidId.getPath();
+        if (path != null) {
+            return path;
+        }
+        if (orcid != null) {
+            return orcid.getValue();
+        }
+        return null;
+    }
+
+    public OrcidId getOrcidId() {
+        return orcidId;
+    }
+
+    public void setOrcidId(OrcidId orcidId) {
+        this.orcidId = orcidId;
     }
 
     public void setOrcidId(String value) {
-        this.orcidId = value;
-    }
-
-    /**
-     * Sets the value of the orcid property.
-     * 
-     * @param value
-     *            allowed object is {@link String }
-     * 
-     */
-    public void setOrcid(String value) {
-        this.orcid = new Orcid(value);
+        this.orcidId = new OrcidId(value);
     }
 
     /**
@@ -452,7 +483,7 @@ public class OrcidProfile implements Serializable {
             orcidActivities.downgradeToAffiliationsOnly();
         }
     }
-    
+
     @Override
     public String toString() {
         return OrcidMessage.convertToString(this);

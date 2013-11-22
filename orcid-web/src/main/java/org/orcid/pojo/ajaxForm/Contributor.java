@@ -17,9 +17,12 @@
 package org.orcid.pojo.ajaxForm;
 
 import java.io.Serializable;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.orcid.jaxb.model.message.ContributorEmail;
 import org.orcid.jaxb.model.message.ContributorOrcid;
 import org.orcid.jaxb.model.message.ContributorRole;
@@ -37,6 +40,8 @@ public class Contributor implements ErrorsInterface, Serializable {
     private Text email;
 
     private Text orcid;
+
+    private Text uri;
 
     private Text creditName;
 
@@ -56,8 +61,10 @@ public class Contributor implements ErrorsInterface, Serializable {
             }
             if (contributor.getContributorEmail() != null)
                 c.setEmail(Text.valueOf(contributor.getContributorEmail().getValue()));
-            if (contributor.getContributorOrcid() != null)
-                c.setOrcid(Text.valueOf(contributor.getContributorOrcid().getValue()));
+            if (contributor.getContributorOrcid() != null) {
+                c.setOrcid(Text.valueOf(contributor.getContributorOrcid().getPath()));
+                c.setUri(Text.valueOf(contributor.getContributorOrcid().getUri()));
+            }
             if (contributor.getCreditName() != null) {
                 c.setCreditName(Text.valueOf(contributor.getCreditName().getContent()));
                 c.setCreditNameVisibility(Visibility.valueOf(contributor.getCreditName().getVisibility()));
@@ -79,8 +86,23 @@ public class Contributor implements ErrorsInterface, Serializable {
         }
         if (this.getEmail() != null)
             c.setContributorEmail(new ContributorEmail(this.getEmail().getValue()));
-        if (this.getOrcid() != null)
-            c.setContributorOrcid(new ContributorOrcid(this.getOrcid().getValue()));
+        if (this.getOrcid() != null) {
+            ContributorOrcid contributorOrcid = new ContributorOrcid(this.getOrcid().getValue());
+            if (this.getUri() != null) {
+                String uriString = this.getUri().getValue();
+                if (StringUtils.isNotBlank(uriString)) {
+                    try {
+                        URI uri = new URI(uriString);
+                        contributorOrcid.setHost(uri.getHost());
+                    } catch (URISyntaxException e) {
+                        throw new RuntimeException("Problem parsing contributor orcid uri", e);
+                    }
+                }
+            }
+            contributorOrcid.setUri(this.getUri().getValue());
+
+            c.setContributorOrcid(contributorOrcid);
+        }
         if (this.getCreditName() != null) {
             CreditName cn = new CreditName(this.getCreditName().getValue());
             cn.setVisibility(org.orcid.jaxb.model.message.Visibility.fromValue(this.getCreditNameVisibility().getVisibility().value()));
@@ -127,6 +149,14 @@ public class Contributor implements ErrorsInterface, Serializable {
 
     public void setOrcid(Text orcid) {
         this.orcid = orcid;
+    }
+
+    public Text getUri() {
+        return uri;
+    }
+
+    public void setUri(Text uri) {
+        this.uri = uri;
     }
 
     public Text getCreditName() {

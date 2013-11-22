@@ -20,6 +20,7 @@ import static org.junit.Assert.assertEquals;
 
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
+import org.orcid.jaxb.model.message.OrcidId;
 import org.orcid.jaxb.model.message.OrcidProfile;
 
 public class ChangePersonalInfoFormTest {
@@ -27,7 +28,7 @@ public class ChangePersonalInfoFormTest {
     @Test
     public void testConvertFormToOrcidProfile() throws Exception {
         OrcidProfile profile = new OrcidProfile();
-        profile.setOrcid("4444-4444-4444-4446");
+        profile.setOrcidId(new OrcidId("4444-4444-4444-4446"));
         ChangePersonalInfoForm changePersonalInfoForm = new ChangePersonalInfoForm(profile);
         changePersonalInfoForm.setFirstName("Johnny");
         changePersonalInfoForm.setLastName("Simpson");
@@ -50,7 +51,7 @@ public class ChangePersonalInfoFormTest {
     @Test
     public void testRemoveDuplicatedOtherNames() throws Exception {
         OrcidProfile profile = new OrcidProfile();
-        profile.setOrcid("4444-4444-4444-4446");
+        profile.setOrcidId(new OrcidId("4444-4444-4444-4446"));
         ChangePersonalInfoForm changePersonalInfoForm = new ChangePersonalInfoForm(profile);
         changePersonalInfoForm.setFirstName("Johnny");
         changePersonalInfoForm.setLastName("Simpson");
@@ -73,7 +74,7 @@ public class ChangePersonalInfoFormTest {
     @Test
     public void testRemoveDuplicatedKeywords() throws Exception {
         OrcidProfile profile = new OrcidProfile();
-        profile.setOrcid("4444-4444-4444-4446");
+        profile.setOrcidId(new OrcidId("4444-4444-4444-4446"));
         ChangePersonalInfoForm changePersonalInfoForm = new ChangePersonalInfoForm(profile);
         changePersonalInfoForm.setFirstName("Johnny");
         changePersonalInfoForm.setLastName("Simpson");

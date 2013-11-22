@@ -350,9 +350,9 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
     }
 
     private void addSourceToWorks(OrcidWorks orcidWorks, String amenderOrcid) {
-        if (orcidWorks != null && !orcidWorks.getOrcidWork().isEmpty()) {
+        if (orcidWorks != null && !orcidWorks.getOrcidWork().isEmpty() && amenderOrcid != null) {
             for (OrcidWork orcidWork : orcidWorks.getOrcidWork()) {
-                if (orcidWork.getWorkSource() == null || StringUtils.isEmpty(orcidWork.getWorkSource().getContent()))
+                if (orcidWork.getWorkSource() == null || StringUtils.isEmpty(orcidWork.getWorkSource().getPath()))
                     orcidWork.setWorkSource(new WorkSource(amenderOrcid));
             }
         }
@@ -588,7 +588,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         String amenderOrcid = sourceManager.retrieveSourceOrcid();
         Source source = orcidProfile.getOrcidHistory().getSource();
         if (NullUtils.noneNull(amenderOrcid, source)) {
-            return amenderOrcid.equals(source.getSourceOrcid().getValue());
+            return amenderOrcid.equals(source.getSourceOrcid().getPath());
         }
         return false;
     }
