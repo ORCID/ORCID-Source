@@ -2058,11 +2058,15 @@ a:hover {
 .popover-help-container .popover {
 	display: none;
 	position: absolute;
-	left: -134px;
+	left: -245px;
 	top: 17px;
 	width: 300px;
 	background-color: #ffffff;
 	font-size: 14px;
+}
+
+.popover.bottom .arrow{
+	left: 252px;
 }
 
 .popover-help-container  ul {
