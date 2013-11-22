@@ -457,10 +457,6 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
             for (ProfileWorkEntity profileWorkEntity : profileWorks) {
                 OrcidWork orcidWork = getOrcidWork(profileWorkEntity);
                 orcidWork.setVisibility(profileWorkEntity.getVisibility());                
-                orcidWork.setVisibility(profileWorkEntity.getVisibility());
-                if (profileWorkEntity.getSourceProfile() != null) {
-                    orcidWork.setWorkSource(new WorkSource(getOrcidIdBase(profileWorkEntity.getSourceProfile().getId())));
-                }
                 works.getOrcidWork().add(orcidWork);
             }
             return works;
