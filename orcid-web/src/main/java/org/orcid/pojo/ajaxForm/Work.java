@@ -21,7 +21,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.hsqldb.lib.StringUtil;
+import org.orcid.frontend.web.util.Conversions;
 import org.orcid.jaxb.model.message.Country;
+import org.orcid.jaxb.model.message.FuzzyDate;
 import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.jaxb.model.message.OrcidWork;
 import org.orcid.jaxb.model.message.PublicationDate;
@@ -31,6 +34,7 @@ import org.orcid.jaxb.model.message.WorkContributors;
 import org.orcid.jaxb.model.message.WorkExternalIdentifiers;
 import org.orcid.jaxb.model.message.WorkSource;
 import org.orcid.jaxb.model.message.WorkType;
+import org.orcid.persistence.jpa.entities.custom.MinimizedWorkEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -80,6 +84,63 @@ public class Work implements ErrorsInterface, Serializable {
 
     protected String citationForDisplay;
 
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    public static Work valueOf(MinimizedWorkEntity minimizedWorkEntity) {
+    	Work w = new Work();
+    	//Set id
+        w.setPutCode(Text.valueOf(String.valueOf(minimizedWorkEntity.getId())));
+    	//Set publication date
+        w.setPublicationDate(Date.valueOf(new FuzzyDate(minimizedWorkEntity.getPublicationYear(), minimizedWorkEntity.getPublicationMonth(), minimizedWorkEntity.getPublicationDay())));
+        //Set title and subtitle
+        if(!StringUtil.isEmpty(minimizedWorkEntity.getTitle())) {
+        	Text title = Text.valueOf(minimizedWorkEntity.getTitle());
+        	Text subtitle = Text.valueOf(minimizedWorkEntity.getSubtitle());
+        	WorkTitle workTitle = new WorkTitle();
+        	workTitle.setTitle(title);
+        	workTitle.setSubtitle(subtitle);
+        	w.setWorkTitle(workTitle);
+        }
+        //Set description
+        if(!StringUtil.isEmpty(minimizedWorkEntity.getDescription())){
+        	w.setShortDescription(Text.valueOf(minimizedWorkEntity.getDescription()));
+        }
+        //Set visibility
+        w.setVisibility(Visibility.valueOf(minimizedWorkEntity.getVisibility()));	
+        
+        return w;	
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     public static Work valueOf(OrcidWork orcidWork) {
         Work w = new Work();
         if (orcidWork.getPublicationDate() != null)

@@ -58,6 +58,7 @@ import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.PublicationDateEntity;
 import org.orcid.persistence.jpa.entities.WorkContributorEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
+import org.orcid.persistence.jpa.entities.custom.MinimizedWorkEntity;
 import org.orcid.pojo.ajaxForm.Citation;
 import org.orcid.pojo.ajaxForm.Contributor;
 import org.orcid.pojo.ajaxForm.Date;
@@ -695,17 +696,16 @@ public class WorksController extends BaseWorkspaceController {
      */
     private List<String> createWorksIdList(HttpServletRequest request) {
         OrcidProfile currentProfile = getEffectiveProfile();
-        OrcidWorks orcidWorks = currentProfile.getOrcidActivities() == null ? null : currentProfile.getOrcidActivities().getOrcidWorks();
-
+        List<MinimizedWorkEntity> works = workManager.findWorks(currentProfile.getOrcid().getValue());
         HashMap<String, Work> worksMap = new HashMap<String, Work>();
         List<String> workIds = new ArrayList<String>();
-        if (orcidWorks != null) {
-            for (OrcidWork work : orcidWorks.getOrcidWork()) {
+        if (works != null) {
+            for (MinimizedWorkEntity work : works) {
                 try {
-                    worksMap.put(work.getPutCode(), Work.valueOf(work));
-                    workIds.add(work.getPutCode());
+                    worksMap.put(String.valueOf(work.getId()), Work.valueOf(work));
+                    workIds.add(String.valueOf(work.getId()));
                 } catch (Exception e) {
-                    LOGGER.error("ProfileWork failed to parse as Work. Put code" + work.getPutCode());
+                    LOGGER.error("ProfileWork failed to parse as Work. Put code" + work.getId());
                 }
             }
             request.getSession().setAttribute(WORKS_MAP, worksMap);

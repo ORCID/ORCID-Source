@@ -16,7 +16,10 @@
  */
 package org.orcid.core.manager;
 
+import java.util.List;
+
 import org.orcid.persistence.jpa.entities.WorkEntity;
+import org.orcid.persistence.jpa.entities.custom.MinimizedWorkEntity;
 
 public interface WorkManager {
     /**
@@ -27,4 +30,13 @@ public interface WorkManager {
      * @return the work already persisted on database
      * */
     WorkEntity addWork(WorkEntity work);
+    
+    /**
+     * Find the works for a specific user
+     * 
+     * @param orcid
+     * 		the Id of the user
+     * @return the list of works associated to the specific user 
+     * */
+    List<MinimizedWorkEntity> findWorks(String orcid);
 }

@@ -16,11 +16,14 @@
  */
 package org.orcid.core.manager.impl;
 
+import java.util.List;
+
 import javax.annotation.Resource;
 
 import org.orcid.core.manager.WorkManager;
 import org.orcid.persistence.dao.WorkDao;
 import org.orcid.persistence.jpa.entities.WorkEntity;
+import org.orcid.persistence.jpa.entities.custom.MinimizedWorkEntity;
 
 public class WorkManagerImpl implements WorkManager {
 
@@ -36,5 +39,16 @@ public class WorkManagerImpl implements WorkManager {
      * */
     public WorkEntity addWork(WorkEntity work) {
         return workDao.addWork(work);
+    }
+    
+    /**
+     * Find the works for a specific user
+     * 
+     * @param orcid
+     * 		the Id of the user
+     * @return the list of works associated to the specific user 
+     * */
+    public List<MinimizedWorkEntity> findWorks(String orcid) {
+    	return workDao.findWorks(orcid);
     }
 }
