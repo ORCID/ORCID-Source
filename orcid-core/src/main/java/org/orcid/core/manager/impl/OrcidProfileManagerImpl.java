@@ -198,7 +198,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
 
     @Resource
     private SourceManager sourceManager;
- 
+
     private int claimWaitPeriodDays = 10;
 
     private int claimReminderAfterDays = 8;
@@ -372,7 +372,8 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
 
         if (affiliations != null && !affiliations.getAffiliation().isEmpty()) {
             for (Affiliation affiliation : affiliations.getAffiliation()) {
-                if (affiliation.getSource() == null || StringUtils.isEmpty(affiliation.getSource().getSourceOrcid().getValue()))
+                if (affiliation.getSource() == null || affiliation.getSource().getSourceOrcid() == null
+                        || StringUtils.isEmpty(affiliation.getSource().getSourceOrcid().getPath()))
                     affiliation.setSource(new Source(amenderOrcid));
             }
         }
