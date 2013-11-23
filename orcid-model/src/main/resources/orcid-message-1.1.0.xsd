@@ -82,7 +82,7 @@
 		</xs:annotation>
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element ref="orcid:orcid-id" minOccurs="0" />
+				<xs:element ref="orcid:orcid-identifier" minOccurs="0" />
 				<xs:element ref="orcid:orcid-deprecated" minOccurs="0"
 					maxOccurs="1" />
 				<xs:element ref="orcid:orcid-preferences" minOccurs="0" />
@@ -575,7 +575,7 @@
 	<xs:element name="delegate-summary">
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element ref="orcid:orcid-id" />
+				<xs:element ref="orcid:orcid-identifier" />
 				<xs:element minOccurs="0" ref="orcid:credit-name" />
 			</xs:sequence>
 		</xs:complexType>
@@ -1206,7 +1206,7 @@
 			</xs:simpleContent>
 		</xs:complexType>
 	</xs:element>
-	<xs:element name="orcid-id" type="orcid:orcid-id"/>
+	<xs:element name="orcid-identifier" type="orcid:orcid-id"/>
 	<xs:element name="path" type="orcid:orcid-path"/>
 	<xs:element name="host" type="xs:string"/>
 	<xs:element name="credit-name">
@@ -1350,8 +1350,7 @@
 		</xs:annotation>
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element ref="orcid:orcid" />
-				<xs:element ref="orcid:orcid-id" />
+				<xs:element ref="orcid:orcid-identifier" />
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>

@@ -165,7 +165,7 @@ public class JpaJaxbEntityAdapterToProfileEntityTest extends DBUnitTest {
             String contributorsJson = workEntity.getContributorsJson();
             if ("Work title 1".equals(workEntity.getTitle())) {
                 assertEquals(
-                        "{\"contributor\":[{\"contributorOrcid\":{\"values\":null,\"uri\":\"http://orcid.org/4444-4444-4444-4446\",\"path\":\"4444-4444-4444-4446\",\"host\":\"orcid.org\",\"value\":null},\"creditName\":null,\"contributorEmail\":null,\"contributorAttributes\":{\"contributorSequence\":\"FIRST\",\"contributorRole\":\"AUTHOR\"}},{\"contributorOrcid\":null,\"creditName\":{\"content\":\"John W. Spaeth\",\"visibility\":\"PUBLIC\"},\"contributorEmail\":null,\"contributorAttributes\":null}]}",
+                        "{\"contributor\":[{\"contributorOrcid\":{\"uri\":\"http://orcid.org/4444-4444-4444-4446\",\"path\":\"4444-4444-4444-4446\",\"host\":\"orcid.org\",\"value\":null,\"valueAsString\":null},\"creditName\":null,\"contributorEmail\":null,\"contributorAttributes\":{\"contributorSequence\":\"FIRST\",\"contributorRole\":\"AUTHOR\"}},{\"contributorOrcid\":null,\"creditName\":{\"content\":\"John W. Spaeth\",\"visibility\":\"PUBLIC\"},\"contributorEmail\":null,\"contributorAttributes\":null}]}",
                         contributorsJson);
                 assertEquals("Journal Title # 1", workEntity.getJournalTitle());
                 

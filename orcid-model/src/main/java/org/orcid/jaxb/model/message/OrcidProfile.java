@@ -61,15 +61,20 @@ import org.orcid.jaxb.model.clientgroup.GroupType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "orcid", "orcidId", "orcidDeprecated", "orcidPreferences", "orcidHistory", "orcidBio", "orcidActivities", "orcidInternal" })
+@XmlType(name = "", propOrder = { "orcid", "orcidId", "orcidIdentifier", "orcidDeprecated", "orcidPreferences", "orcidHistory", "orcidBio", "orcidActivities",
+        "orcidInternal" })
 @XmlRootElement(name = "orcid-profile")
 public class OrcidProfile implements Serializable {
 
     private static final long serialVersionUID = 1L;
     protected Orcid orcid;
 
+    // Legacy
     @XmlElement(name = "orcid-id")
-    protected OrcidId orcidId;
+    protected String orcidId;
+
+    @XmlElement(name = "orcid-identifier")
+    protected OrcidIdentifier orcidIdentifier;
 
     @XmlElement(name = "orcid-deprecated")
     private OrcidDeprecated orcidDeprecated;
@@ -118,8 +123,8 @@ public class OrcidProfile implements Serializable {
         if (orcid != null) {
             return orcid;
         }
-        if (orcidId != null) {
-            String path = orcidId.getPath();
+        if (orcidIdentifier != null) {
+            String path = orcidIdentifier.getPath();
             if (path != null) {
                 return new Orcid(path);
             }
@@ -147,21 +152,21 @@ public class OrcidProfile implements Serializable {
     }
 
     public String retrieveOrcidUriAsString() {
-        if (orcidId == null) {
+        if (orcidIdentifier == null) {
             return null;
         }
-        String uri = orcidId.getUri();
+        String uri = orcidIdentifier.getUri();
         if (uri != null) {
             return uri;
         }
-        return orcidId.getValue();
+        return orcidIdentifier.getValueAsString();
     }
 
     public String retrieveOrcidPath() {
-        if (orcidId == null) {
+        if (orcidIdentifier == null) {
             return null;
         }
-        String path = orcidId.getPath();
+        String path = orcidIdentifier.getPath();
         if (path != null) {
             return path;
         }
@@ -171,16 +176,24 @@ public class OrcidProfile implements Serializable {
         return null;
     }
 
-    public OrcidId getOrcidId() {
+    public OrcidIdentifier getOrcidIdentifier() {
+        return orcidIdentifier;
+    }
+
+    public void setOrcidIdentifier(OrcidIdentifier orcidIdentifier) {
+        this.orcidIdentifier = orcidIdentifier;
+    }
+
+    public void setOrcidIdentifier(String path) {
+        this.orcidIdentifier = new OrcidIdentifier(path);
+    }
+
+    public String getOrcidId() {
         return orcidId;
     }
 
-    public void setOrcidId(OrcidId orcidId) {
+    public void setOrcidId(String orcidId) {
         this.orcidId = orcidId;
-    }
-
-    public void setOrcidId(String value) {
-        this.orcidId = new OrcidId(value);
     }
 
     /**

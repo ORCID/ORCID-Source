@@ -48,7 +48,7 @@ import javax.xml.bind.annotation.XmlType;
  * @author Angel Montenegro
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "orcid", "orcidId" })
+@XmlType(name = "", propOrder = { "orcid", "orcidId", "orcidIdentifier" })
 @XmlRootElement(name = "primary-record")
 public class PrimaryRecord implements Serializable {
     /**
@@ -60,6 +60,8 @@ public class PrimaryRecord implements Serializable {
     protected Orcid orcid;
     @XmlElement(name = "orcid-id")
     protected Url orcidId;
+    @XmlElement(name = "orcid-identifier")
+    protected OrcidIdentifier orcidIdentifier;
 
     public Orcid getOrcid() {
         return orcid;
@@ -75,6 +77,14 @@ public class PrimaryRecord implements Serializable {
 
     public void setOrcidId(Url orcidId) {
         this.orcidId = orcidId;
+    }
+    
+    public OrcidIdentifier getOrcidIdentifier() {
+        return orcidIdentifier;
+    }
+
+    public void setOrcidIdentifier(OrcidIdentifier orcidIdentifier) {
+        this.orcidIdentifier = orcidIdentifier;
     }
 
     @Override

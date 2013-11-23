@@ -54,7 +54,7 @@ import java.io.Serializable;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "orcid", "orcidId", "creditName" })
+@XmlType(name = "", propOrder = { "orcid", "orcidIdentifier", "creditName" })
 @XmlRootElement(name = "delegate-summary")
 public class DelegateSummary implements Serializable {
 
@@ -64,8 +64,8 @@ public class DelegateSummary implements Serializable {
     private static final long serialVersionUID = 1L;
     @XmlElement
     protected Orcid orcid;
-    @XmlElement(name = "orcid-id")
-    protected OrcidId orcidId;
+    @XmlElement(name = "orcid-identifier")
+    protected OrcidIdentifier orcidIdentifier;
     @XmlElement(name = "credit-name")
     protected CreditName creditName;
 
@@ -77,8 +77,8 @@ public class DelegateSummary implements Serializable {
         this.orcid = orcid;
     }
 
-    public DelegateSummary(OrcidId orcidId) {
-        this.orcidId = orcidId;
+    public DelegateSummary(OrcidIdentifier orcidIdentifier) {
+        this.orcidIdentifier = orcidIdentifier;
     }
 
     /**
@@ -91,8 +91,8 @@ public class DelegateSummary implements Serializable {
         if (orcid != null) {
             return orcid;
         }
-        if (orcidId != null) {
-            return new Orcid(orcidId.getPath());
+        if (orcidIdentifier != null) {
+            return new Orcid(orcidIdentifier.getPath());
         }
         return null;
     }
@@ -108,12 +108,12 @@ public class DelegateSummary implements Serializable {
         this.orcid = value;
     }
 
-    public OrcidId getOrcidId() {
-        return orcidId;
+    public OrcidIdentifier getOrcidIdentifier() {
+        return orcidIdentifier;
     }
 
-    public void setOrcidId(OrcidId orcidId) {
-        this.orcidId = orcidId;
+    public void setOrcidIdentifier(OrcidIdentifier orcidIdentifier) {
+        this.orcidIdentifier = orcidIdentifier;
     }
 
     /**

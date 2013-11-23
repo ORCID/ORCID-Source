@@ -18,20 +18,20 @@ package org.orcid.jaxb.model.message;
  */
 import javax.xml.bind.annotation.XmlRootElement;
 
-@XmlRootElement(name = "orcid-id")
-public class OrcidId extends OrcidIdBase {
+@XmlRootElement(name = "orcid-identifier")
+public class OrcidIdentifier extends OrcidIdBase {
 
     private static final long serialVersionUID = 1L;
 
-    public OrcidId() {
+    public OrcidIdentifier() {
         super();
     }
 
-    public OrcidId(String path) {
+    public OrcidIdentifier(String path) {
         super(path);
     }
 
-    public OrcidId(OrcidIdBase other) {
+    public OrcidIdentifier(OrcidIdBase other) {
         super(other);
     }
 

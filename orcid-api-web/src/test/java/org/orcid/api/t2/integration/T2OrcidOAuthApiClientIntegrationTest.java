@@ -407,7 +407,7 @@ public class T2OrcidOAuthApiClientIntegrationTest extends BaseT2OrcidOAuthApiCli
 
             if (workTitle != null && workTitle.getTitle() != null) {
                 if ("Single works with title".equals(workTitle.getTitle().getContent())) {
-                    assertEquals(clientOrcid, work.getWorkSource().getValue());
+                    assertEquals(clientOrcid, work.getWorkSource().getValueAsString());
                     break;
                 }
             }
@@ -470,7 +470,7 @@ public class T2OrcidOAuthApiClientIntegrationTest extends BaseT2OrcidOAuthApiCli
 
         assertEquals("Chromosome 5a55.5 microdeletions comprising AB555 and CD5555", workToUpdate.getWorkTitle().getTitle().getContent());
         assertEquals("Chromosome subtitle", workToUpdate.getWorkTitle().getSubtitle().getContent());
-        assertEquals(this.clientId, workToUpdate.getWorkSource().getValue());
+        assertEquals(this.clientId, workToUpdate.getWorkSource().getValueAsString());
 
         // check other works unchanged
         assertEquals("Work title 1", orcidWorks.getOrcidWork().get(1).getWorkTitle().getTitle().getContent());
@@ -499,7 +499,7 @@ public class T2OrcidOAuthApiClientIntegrationTest extends BaseT2OrcidOAuthApiCli
             ExternalIdentifiers newExternalIdentifiers = new ExternalIdentifiers();
             newExternalIdentifiers.setVisibility(Visibility.PUBLIC);
             ExternalIdOrcid externalIdOrcid = new ExternalIdOrcid();
-            externalIdOrcid.setValue(clientId);
+            externalIdOrcid.setValueAsString(clientId);
             ExternalIdentifier additionalIdentifer = new ExternalIdentifier(externalIdOrcid, new ExternalIdReference("abc123"));
             newExternalIdentifiers.getExternalIdentifier().add(additionalIdentifer);
             orcidBio.setExternalIdentifiers(newExternalIdentifiers);
@@ -542,7 +542,7 @@ public class T2OrcidOAuthApiClientIntegrationTest extends BaseT2OrcidOAuthApiCli
         ExternalIdentifiers newExternalIdentifiers = new ExternalIdentifiers();
         newExternalIdentifiers.setVisibility(Visibility.PUBLIC);
         ExternalIdOrcid externalIdOrcid = new ExternalIdOrcid();
-        externalIdOrcid.setValue(clientId);
+        externalIdOrcid.setValueAsString(clientId);
         ExternalIdentifier additionalIdentifer = new ExternalIdentifier(externalIdOrcid, new ExternalIdReference("abc123"));
         newExternalIdentifiers.getExternalIdentifier().add(additionalIdentifer);
         orcidBio.setExternalIdentifiers(newExternalIdentifiers);
@@ -581,7 +581,7 @@ public class T2OrcidOAuthApiClientIntegrationTest extends BaseT2OrcidOAuthApiCli
         ExternalIdentifiers newExternalIdentifiers = new ExternalIdentifiers();
         newExternalIdentifiers.setVisibility(Visibility.PUBLIC);
         ExternalIdOrcid externalIdOrcid = new ExternalIdOrcid();
-        externalIdOrcid.setValue(clientId);
+        externalIdOrcid.setValueAsString(clientId);
         ExternalIdentifier additionalIdentifer = new ExternalIdentifier(externalIdOrcid, new ExternalIdReference("abc123"));
         newExternalIdentifiers.getExternalIdentifier().add(additionalIdentifer);
         orcidBio.setExternalIdentifiers(newExternalIdentifiers);

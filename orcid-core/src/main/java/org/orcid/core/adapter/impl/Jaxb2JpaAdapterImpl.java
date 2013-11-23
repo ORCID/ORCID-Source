@@ -401,7 +401,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             for (Contributor contributor : contributorList) {
                 WorkContributorEntity workContributorEntity = new WorkContributorEntity();
                 workContributorEntity.setContributorEmail(contributor.getContributorEmail() != null ? contributor.getContributorEmail().getValue() : null);
-                workContributorEntity.setProfile(contributor.getContributorOrcid() != null ? new ProfileEntity(contributor.getContributorOrcid().getValue()) : null);
+                workContributorEntity.setProfile(contributor.getContributorOrcid() != null ? new ProfileEntity(contributor.getContributorOrcid().getPath()) : null);
                 workContributorEntity.setWork(workEntity);
                 ContributorAttributes contributorAttributes = contributor.getContributorAttributes();
                 if (contributorAttributes != null) {
