@@ -784,7 +784,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
         if (externalIdentifier != null && externalIdentifier.getExternalIdReference() != null) {
             ExternalIdCommonName externalIdCommonName = externalIdentifier.getExternalIdCommonName();
             ExternalIdOrcid externalIdOrcid = externalIdentifier.getExternalIdOrcid();
-            String externalIdOrcidValue = externalIdOrcid != null ? externalIdOrcid.getValue() : null;
+            String externalIdOrcidValue = externalIdOrcid != null ? externalIdOrcid.getPath() : null;
             ExternalIdReference externalIdReference = externalIdentifier.getExternalIdReference();
             String referenceValue = externalIdReference != null ? externalIdReference.getContent() : null;
             ExternalIdUrl externalIdUrl = externalIdentifier.getExternalIdUrl();
