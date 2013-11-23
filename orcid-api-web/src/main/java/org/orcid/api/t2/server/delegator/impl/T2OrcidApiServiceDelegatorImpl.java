@@ -333,7 +333,7 @@ public class T2OrcidApiServiceDelegatorImpl extends OrcidApiServiceDelegatorImpl
                     // Check if the provided external orcid exists
                     ExternalIdOrcid eio = ei.getExternalIdOrcid();
 
-                    if (StringUtils.isBlank(eio.getPath()) || !profileEntityManager.orcidExists(eio.getValue())) {
+                    if (StringUtils.isBlank(eio.getPath()) || !profileEntityManager.orcidExists(eio.getValueAsString())) {
                         throw new OrcidNotFoundException("Cannot find external ORCID");
                     }
                 }

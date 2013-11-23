@@ -31,7 +31,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.orcid.utils.OrcidStringUtils;
 
 @XmlAccessorType(XmlAccessType.PROPERTY)
-@XmlType(name = "", propOrder = { "values", "uri", "path", "host" })
+@XmlType(name = "", propOrder = { "value", "uri", "path", "host" })
 public class OrcidIdBase implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -59,7 +59,7 @@ public class OrcidIdBase implements Serializable {
     }
 
     @XmlMixed
-    public List<String> getValues() {
+    public List<String> getValue() {
         if (values != null) {
             String combinedValues = StringUtils.join(values.toArray());
             if (StringUtils.isBlank(combinedValues)) {
@@ -69,19 +69,19 @@ public class OrcidIdBase implements Serializable {
         return values;
     }
 
-    public void setValues(List<String> values) {
+    public void setValue(List<String> values) {
         this.values = values;
     }
 
     @XmlTransient
-    public String getValue() {
+    public String getValueAsString() {
         if (values != null && !values.isEmpty() && StringUtils.isNotBlank(values.get(0))) {
             return values.get(0);
         }
         return null;
     }
 
-    public void setValue(String value) {
+    public void setValueAsString(String value) {
         if (values == null) {
             values = new ArrayList<>(1);
         } else {

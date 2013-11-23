@@ -49,7 +49,7 @@ import org.orcid.jaxb.model.message.Email;
 import org.orcid.jaxb.model.message.GivenNames;
 import org.orcid.jaxb.model.message.OrcidActivities;
 import org.orcid.jaxb.model.message.OrcidBio;
-import org.orcid.jaxb.model.message.OrcidId;
+import org.orcid.jaxb.model.message.OrcidIdentifier;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidWorks;
@@ -116,7 +116,7 @@ public class T2OrcidApiServiceVersionedDelegatorTest extends DBUnitTest {
         orcidMessage.setMessageVersion("1.1.0");
         OrcidProfile orcidProfile = new OrcidProfile();
         orcidMessage.setOrcidProfile(orcidProfile);
-        orcidProfile.setOrcidId(new OrcidId("4444-4444-4444-4441"));
+        orcidProfile.setOrcidIdentifier(new OrcidIdentifier("4444-4444-4444-4441"));
         OrcidActivities orcidActivities = new OrcidActivities();
         orcidProfile.setOrcidActivities(orcidActivities);
         OrcidWorks orcidWorks = new OrcidWorks();

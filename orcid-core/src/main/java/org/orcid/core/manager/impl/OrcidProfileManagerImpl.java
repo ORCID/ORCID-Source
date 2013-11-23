@@ -247,7 +247,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
     @Transactional
     public OrcidProfile createOrcidProfile(OrcidProfile orcidProfile) {
         if (orcidProfile.getOrcid() == null) {
-            orcidProfile.setOrcidId(orcidGenerationManager.createNewOrcid());
+            orcidProfile.setOrcidIdentifier(orcidGenerationManager.createNewOrcid());
         }
 
         // Add source to works
@@ -899,7 +899,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
     @Override
     @Transactional
     public void addOrcidWorks(OrcidProfile updatedOrcidProfile) {
-        String orcid = updatedOrcidProfile.getOrcidId().getPath();
+        String orcid = updatedOrcidProfile.getOrcidIdentifier().getPath();
         OrcidProfile existingProfile = retrieveOrcidProfile(orcid);
         if (existingProfile == null) {
             throw new IllegalArgumentException("No record found for " + orcid);

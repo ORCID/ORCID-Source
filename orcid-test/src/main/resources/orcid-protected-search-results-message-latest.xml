@@ -28,11 +28,11 @@
 		<orcid-search-result>
 			<relevancy-score>0.65</relevancy-score>
 			<orcid-profile>
-				<orcid-id>
+				<orcid-identifier>
 				    <uri>http://orcid.org/4444-4444-4444-4446</uri>
 				    <path>4444-4444-4444-4446</path>
 				    <host>orcid.org</host>
-				</orcid-id>
+				</orcid-identifier>
 				<orcid-history>
 					<creation-method>API</creation-method>
 					<completion-date>2012-10-09T15:50:07</completion-date>
@@ -91,11 +91,11 @@
 							<delegation-details>
 								<approval-date>2012-11-10T13:18:51</approval-date>
 								<delegate-summary>
-                                    <orcid-id>
+                                    <orcid-identifier>
                                         <uri>http://orcid.org/8888-8888-8888-8880</uri>
 				                        <path>8888-8888-8888-8880</path>
 				                        <host>orcid.org</host>
-                                    </orcid-id>
+                                    </orcid-identifier>
                                     <credit-name>Bobie Ewing</credit-name>
                                 </delegate-summary>
 							</delegation-details>
@@ -104,11 +104,11 @@
 							<delegation-details>
 								<approval-date>2012-12-22T08:16:22</approval-date>
 								<delegate-summary>
-									<orcid-id>
+									<orcid-identifier>
 									    <uri>http://orcid.org/2222-2222-2222-2229</uri>
 				                        <path>2222-2222-2222-2229</path>
 				                        <host>orcid.org</host>
-				                    </orcid-id>
+				                    </orcid-identifier>
 									<credit-name>W. J. R. Simpson</credit-name>
 								</delegate-summary>
 							</delegation-details>

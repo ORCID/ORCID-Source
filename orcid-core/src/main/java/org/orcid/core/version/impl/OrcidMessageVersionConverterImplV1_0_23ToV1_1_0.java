@@ -29,14 +29,17 @@ import org.orcid.jaxb.model.message.ExternalIdentifier;
 import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.jaxb.model.message.Orcid;
 import org.orcid.jaxb.model.message.OrcidActivities;
-import org.orcid.jaxb.model.message.OrcidId;
 import org.orcid.jaxb.model.message.OrcidIdBase;
+import org.orcid.jaxb.model.message.OrcidIdentifier;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidProfile;
+import org.orcid.jaxb.model.message.OrcidSearchResult;
+import org.orcid.jaxb.model.message.OrcidSearchResults;
 import org.orcid.jaxb.model.message.OrcidWork;
 import org.orcid.jaxb.model.message.OrcidWorks;
+import org.orcid.jaxb.model.message.PrimaryRecord;
+import org.orcid.jaxb.model.message.Url;
 import org.orcid.jaxb.model.message.WorkSource;
-import org.orcid.utils.OrcidStringUtils;
 
 /**
  * 
@@ -65,6 +68,13 @@ public class OrcidMessageVersionConverterImplV1_0_23ToV1_1_0 implements OrcidMes
         }
         orcidMessage.setMessageVersion(FROM_VERSION);
         OrcidProfile orcidProfile = orcidMessage.getOrcidProfile();
+        downgradeProfile(orcidProfile);
+        downgradeSearchResults(orcidMessage);
+
+        return orcidMessage;
+    }
+
+    private void downgradeProfile(OrcidProfile orcidProfile) {
         if (orcidProfile != null) {
             downgradeOrcidIds(orcidProfile);
             OrcidActivities orcidActivities = orcidProfile.getOrcidActivities();
@@ -72,42 +82,61 @@ public class OrcidMessageVersionConverterImplV1_0_23ToV1_1_0 implements OrcidMes
                 downgradeAffiliations(orcidActivities.getAffiliations());
             }
         }
+    }
 
-        return orcidMessage;
+    private void downgradeSearchResults(OrcidMessage orcidMessage) {
+        OrcidSearchResults orcidSearchResults = orcidMessage.getOrcidSearchResults();
+        if (orcidSearchResults != null) {
+            for (OrcidSearchResult orcidSearchResult : orcidSearchResults.getOrcidSearchResult()) {
+                downgradeProfile(orcidSearchResult.getOrcidProfile());
+            }
+        }
     }
 
     private void downgradeOrcidIds(OrcidProfile orcidProfile) {
         final String orcid = orcidProfile.retrieveOrcidPath();
-        OrcidId orcidId = orcidProfile.getOrcidId();
-        if (orcidId != null && orcidId.getPath() != null) {
-            orcidProfile.setOrcid(orcidId.getPath());
+        OrcidIdentifier orcidIdentifier = orcidProfile.getOrcidIdentifier();
+        if (orcidIdentifier != null) {
+            if (orcidIdentifier.getPath() != null) {
+                orcidProfile.setOrcid(orcidIdentifier.getPath());
+            }
+            if (orcidIdentifier.getUri() != null) {
+                orcidProfile.setOrcidId(orcidIdentifier.getUri());
+            }
         }
+        orcidProfile.setOrcidIdentifier((OrcidIdentifier) null);
         TreeCleaner treeCleaner = new TreeCleaner();
         // For backwards compatibility
         treeCleaner.setRemoveEmptyObjects(false);
         treeCleaner.clean(orcidProfile, new TreeCleaningStrategy() {
             @Override
             public boolean needsStripping(Object obj) {
-                if (obj instanceof OrcidId) {
-                    // The main ID for the record
-                    OrcidId orcidId = (OrcidId) obj;
-                    String currentValue = orcidId.getUri();
-                    orcidId.setValue(currentValue);
-                    orcidId.setUri(null);
-                    orcidId.setPath(null);
-                    orcidId.setHost(null);
-                } else if (obj instanceof OrcidIdBase) {
+                if (obj instanceof OrcidIdBase) {
                     // Work sources etc.
                     OrcidIdBase orcidId = (OrcidIdBase) obj;
                     String currentValue = orcidId.getPath();
-                    orcidId.setValue(currentValue);
-                    orcidId.setUri(null);
-                    orcidId.setPath(null);
-                    orcidId.setHost(null);
+                    orcidId.setValueAsString(currentValue);
+                    if (currentValue != null) {
+                        orcidId.setUri(null);
+                        orcidId.setPath(null);
+                        orcidId.setHost(null);
+                    }
                     if (obj instanceof ExternalIdentifier) {
                         ExternalIdentifier externalIdentifier = (ExternalIdentifier) obj;
                         externalIdentifier.setOrcid(new Orcid(orcid));
                     }
+                } else if (obj instanceof PrimaryRecord) {
+                    PrimaryRecord primaryRecord = (PrimaryRecord) obj;
+                    OrcidIdentifier orcidIdentifier = primaryRecord.getOrcidIdentifier();
+                    if (orcidIdentifier != null) {
+                        if (orcidIdentifier.getPath() != null) {
+                            primaryRecord.setOrcid(new Orcid(orcidIdentifier.getPath()));
+                        }
+                        if (orcidIdentifier.getUri() != null) {
+                            primaryRecord.setOrcidId(new Url(orcidIdentifier.getUri()));
+                        }
+                    }
+                    primaryRecord.setOrcidIdentifier((OrcidIdentifier) null);
                 }
                 // Always return false because we do not want to remove the obj
                 // itself
@@ -142,6 +171,13 @@ public class OrcidMessageVersionConverterImplV1_0_23ToV1_1_0 implements OrcidMes
         orcidMessage.setMessageVersion(TO_VERSION);
 
         OrcidProfile orcidProfile = orcidMessage.getOrcidProfile();
+        upgradeProfile(orcidProfile);
+        upgradeSearchResults(orcidMessage);
+
+        return orcidMessage;
+    }
+
+    private void upgradeProfile(OrcidProfile orcidProfile) {
         if (orcidProfile != null) {
             OrcidActivities orcidActivities = orcidProfile.getOrcidActivities();
             if (orcidActivities != null) {
@@ -149,41 +185,60 @@ public class OrcidMessageVersionConverterImplV1_0_23ToV1_1_0 implements OrcidMes
             }
             upgradeOrcidIds(orcidProfile);
         }
+    }
 
-        return orcidMessage;
+    private void upgradeSearchResults(OrcidMessage orcidMessage) {
+        OrcidSearchResults orcidSearchResults = orcidMessage.getOrcidSearchResults();
+        if (orcidSearchResults != null) {
+            for (OrcidSearchResult orcidSearchResult : orcidSearchResults.getOrcidSearchResult()) {
+                upgradeProfile(orcidSearchResult.getOrcidProfile());
+            }
+        }
     }
 
     private void upgradeOrcidIds(OrcidProfile orcidProfile) {
+        OrcidIdentifier newOrcidIdentifier = new OrcidIdentifier();
+        orcidProfile.setOrcidIdentifier(newOrcidIdentifier);
         Orcid orcid = orcidProfile.getOrcid();
         if (orcid != null) {
             String orcidValue = orcid.getValue();
             if (StringUtils.isNotBlank(orcidValue)) {
-                OrcidId existingOrcidId = orcidProfile.getOrcidId();
-                OrcidId orcidId = existingOrcidId != null ? existingOrcidId : new OrcidId();
-                orcidId.setPath(orcidValue);
-                orcidProfile.setOrcidId(orcidId);
+                newOrcidIdentifier.setPath(orcidValue);
             }
+        }
+        String orcidId = orcidProfile.getOrcidId();
+        if (StringUtils.isNotBlank(orcidId)) {
+            newOrcidIdentifier.setUri(orcidId);
         }
         TreeCleaner treeCleaner = new TreeCleaner();
         treeCleaner.clean(orcidProfile, new TreeCleaningStrategy() {
             @Override
             public boolean needsStripping(Object obj) {
-                if (obj instanceof OrcidId) {
-                    // The main ID for the record
-                    OrcidId orcidId = (OrcidId) obj;
-                    String currentValue = orcidId.getValue();
-                    orcidId.setUri(currentValue);
-                    if (currentValue != null) {
-                        orcidId.setPath(OrcidStringUtils.getOrcidNumber(currentValue));
-                    }
-                } else if (obj instanceof OrcidIdBase) {
+                if (obj instanceof OrcidIdBase) {
                     // Work sources etc.
                     OrcidIdBase orcidId = (OrcidIdBase) obj;
-                    String currentValue = orcidId.getValue();
-                    orcidId.setPath(currentValue);
+                    String currentValue = orcidId.getValueAsString();
+                    if (StringUtils.isNotBlank(currentValue)) {
+                        orcidId.setPath(currentValue);
+                    }
                     if (obj instanceof ExternalIdentifier) {
                         ExternalIdentifier externalIdentifier = (ExternalIdentifier) obj;
                         externalIdentifier.setOrcid(null);
+                    }
+                } else if (obj instanceof PrimaryRecord) {
+                    PrimaryRecord primaryRecord = (PrimaryRecord) obj;
+                    OrcidIdentifier newOrcidIdentifier = new OrcidIdentifier();
+                    primaryRecord.setOrcidIdentifier(newOrcidIdentifier);
+                    Orcid orcid = primaryRecord.getOrcid();
+                    if (orcid != null) {
+                        String orcidValue = orcid.getValue();
+                        if (StringUtils.isNotBlank(orcidValue)) {
+                            newOrcidIdentifier.setPath(orcidValue);
+                        }
+                    }
+                    Url orcidId = primaryRecord.getOrcidId();
+                    if (orcidId != null) {
+                        newOrcidIdentifier.setUri(orcidId.getValue());
                     }
                 }
                 // Always return false because we do not want to remove the obj
@@ -198,7 +253,7 @@ public class OrcidMessageVersionConverterImplV1_0_23ToV1_1_0 implements OrcidMes
             for (OrcidWork orcidWork : orcidWorks.getOrcidWork()) {
                 WorkSource workSource = orcidWork.getWorkSource();
                 if (workSource != null) {
-                    if (WorkSource.NULL_SOURCE_PROFILE.equals(workSource.getValue())) {
+                    if (WorkSource.NULL_SOURCE_PROFILE.equals(workSource.getValueAsString())) {
                         orcidWork.setWorkSource(null);
                     }
                 }
