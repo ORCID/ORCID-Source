@@ -18,6 +18,7 @@ package org.orcid.core.version.impl;
 
 import java.util.Iterator;
 
+import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.tree.TreeCleaner;
 import org.orcid.core.tree.TreeCleaningStrategy;
 import org.orcid.core.version.OrcidMessageVersionConverter;
@@ -153,6 +154,16 @@ public class OrcidMessageVersionConverterImplV1_0_23ToV1_1_0 implements OrcidMes
     }
 
     private void upgradeOrcidIds(OrcidProfile orcidProfile) {
+        Orcid orcid = orcidProfile.getOrcid();
+        if (orcid != null) {
+            String orcidValue = orcid.getValue();
+            if (StringUtils.isNotBlank(orcidValue)) {
+                OrcidId existingOrcidId = orcidProfile.getOrcidId();
+                OrcidId orcidId = existingOrcidId != null ? existingOrcidId : new OrcidId();
+                orcidId.setPath(orcidValue);
+                orcidProfile.setOrcidId(orcidId);
+            }
+        }
         TreeCleaner treeCleaner = new TreeCleaner();
         treeCleaner.clean(orcidProfile, new TreeCleaningStrategy() {
             @Override

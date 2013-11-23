@@ -122,7 +122,7 @@ public class CheckAndFixContributorNameVisibility {
                             for (Contributor contributor : workContributors.getContributor()) {
                                 ContributorOrcid contributorOrcid = contributor.getContributorOrcid();
                                 if (contributorOrcid != null) {
-                                    String orcid = contributorOrcid.getValue();
+                                    String orcid = contributorOrcid.getPath();
                                     ProfileEntity contributorProfile = profileDao.find(orcid);
                                     if (!Visibility.PUBLIC.equals(contributorProfile.getCreditNameVisibility())) {
                                         contributor.setCreditName(null);

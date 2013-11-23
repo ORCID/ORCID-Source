@@ -159,7 +159,7 @@ public class OrcidProfileManagerBaseTest extends BaseTest {
         profile.setVerificationCode("1234");
         profile.setSecurityQuestionAnswer("random answer");
 
-        profile.setOrcid(TEST_ORCID);
+        profile.setOrcidId(TEST_ORCID);
         OrcidBio bio = new OrcidBio();
         ContactDetails contactDetails = new ContactDetails();
         contactDetails.addOrReplacePrimaryEmail(new Email("will@semantico.com"));

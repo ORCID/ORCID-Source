@@ -87,7 +87,7 @@ public class DefaultPermissionChecker implements PermissionChecker {
     public void checkPermissions(Authentication authentication, ScopePathType requiredScope, String orcid, OrcidMessage orcidMessage) {
         if (StringUtils.isNotBlank(orcid) && orcidMessage != null && orcidMessage.getOrcidProfile() != null
                 && (orcidMessage.getOrcidProfile().getOrcid() == null || StringUtils.isBlank(orcidMessage.getOrcidProfile().getOrcid().getValue()))) {
-            orcidMessage.getOrcidProfile().setOrcid(orcid);
+            orcidMessage.getOrcidProfile().setOrcidId(orcid);
         }
         performPermissionChecks(authentication, requiredScope, orcid, orcidMessage);
     }

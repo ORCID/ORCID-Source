@@ -28,6 +28,7 @@ import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
 import org.apache.commons.lang3.StringUtils;
+import org.orcid.utils.OrcidStringUtils;
 
 @XmlAccessorType(XmlAccessType.PROPERTY)
 @XmlType(name = "", propOrder = { "values", "uri", "path", "host" })
@@ -100,7 +101,13 @@ public class OrcidIdBase implements Serializable {
 
     @XmlElement
     public String getPath() {
-        return path;
+        if (path != null) {
+            return path;
+        }
+        if (uri != null) {
+            return OrcidStringUtils.getOrcidNumber(uri);
+        }
+        return null;
     }
 
     public void setPath(String path) {
