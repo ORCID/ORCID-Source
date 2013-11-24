@@ -32,6 +32,8 @@ public class ContributorOrcid extends OrcidIdBase implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    private String value;
+    
     public ContributorOrcid() {
         super();
     }
@@ -43,5 +45,12 @@ public class ContributorOrcid extends OrcidIdBase implements Serializable {
     public ContributorOrcid(OrcidIdBase other) {
         super(other);
     }
+    
+    public String getValue() {        
+        return value;
+    }
 
+    public void setValue(String value) {
+        this.value = value;
+    }    
 }
