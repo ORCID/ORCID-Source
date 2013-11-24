@@ -59,7 +59,7 @@ public class OrcidIdBase implements Serializable {
     }
 
     @XmlMixed
-    public List<String> getValue() {
+    public List<String> getValues() {
         if (values != null) {
             String combinedValues = StringUtils.join(values.toArray());
             if (StringUtils.isBlank(combinedValues)) {
@@ -69,10 +69,10 @@ public class OrcidIdBase implements Serializable {
         return values;
     }
 
-    public void setValue(List<String> values) {
+    public void setValues(List<String> values) {
         this.values = values;
     }
-
+    
     @XmlTransient
     public String getValueAsString() {
         if (values != null && !values.isEmpty() && StringUtils.isNotBlank(values.get(0))) {
