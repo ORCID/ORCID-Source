@@ -903,6 +903,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         // New way of doing work contributors
         String jsonString = work.getContributorsJson();
         if (jsonString != null) {
+            jsonString = jsonString.replaceAll("\"contributorOrcid\":\\{\"value\":\"(.*?)\"\\}","\"contributorOrcid\":\\{\"value\":[\"$1\"]\\}");
             WorkContributors workContributors = JsonUtils.readObjectFromJsonString(jsonString, WorkContributors.class);
             for (Contributor contributor : workContributors.getContributor()) {
                 // Make sure contributor credit name has the same visibility as
@@ -918,7 +919,11 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
                 if (contributorOrcid != null) {
                     String uri = contributorOrcid.getUri();
                     if (uri == null) {
-                        contributor.setContributorOrcid(new ContributorOrcid(getOrcidIdBase(contributorOrcid.getPath())));
+                        String orcid = contributorOrcid.getValueAsString();
+                        if(orcid == null){
+                            orcid = contributorOrcid.getPath();
+                        }
+                        contributor.setContributorOrcid(new ContributorOrcid(getOrcidIdBase(orcid)));
                     }
                 }
             }
