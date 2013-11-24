@@ -753,16 +753,21 @@ public class RegistrationController extends BaseController {
     @RequestMapping(value = "/claim/{encryptedEmail}", method = RequestMethod.GET)
     public ModelAndView verifyClaim(HttpServletRequest request, @PathVariable("encryptedEmail") String encryptedEmail, RedirectAttributes redirectAttributes)
             throws NoSuchRequestHandlingMethodException, UnsupportedEncodingException {
-        String decryptedEmail = encryptionManager.decryptForExternalUse(new String(Base64.decodeBase64(encryptedEmail), "UTF-8"));
-        if (!isEmailOkForCurrentUser(decryptedEmail)) {
-            return new ModelAndView("wrong_user");
-        }
-        OrcidProfile profileToClaim = orcidProfileManager.retrieveOrcidProfileByEmail(decryptedEmail);
-        if (profileToClaim.getOrcidHistory().isClaimed()) {
-            return new ModelAndView("redirect:/signin?alreadyClaimed");
-        }
-        ModelAndView mav = new ModelAndView("claim");
-        return mav;
+    	try {    
+    		String decryptedEmail = encryptionManager.decryptForExternalUse(new String(Base64.decodeBase64(encryptedEmail), "UTF-8"));
+	        if (!isEmailOkForCurrentUser(decryptedEmail)) {
+	            return new ModelAndView("wrong_user");
+	        }        
+	        OrcidProfile profileToClaim = orcidProfileManager.retrieveOrcidProfileByEmail(decryptedEmail);
+	        if (profileToClaim.getOrcidHistory().isClaimed()) {
+	            return new ModelAndView("redirect:/signin?alreadyClaimed");
+	        }
+	        ModelAndView mav = new ModelAndView("claim");
+	        return mav;
+        } catch(EncryptionOperationNotPossibleException e){
+        	LOGGER.warn("Error decypting claim email from the claim profile link");
+            return new ModelAndView("redirect:/signin?invalidClaimUrl");        
+        }        
     }
 
     @RequestMapping(value = "/claim/{encryptedEmail}.json", method = RequestMethod.GET)
