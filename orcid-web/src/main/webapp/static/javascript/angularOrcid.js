@@ -1715,7 +1715,7 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 			try {
 				var parsed = bibtexParse.toJSON($scope.editWork.citation.citation.value);
 				console.log(parsed);
-				if (parsed.length == 0) throw "bibtex parse returne nothing";
+				if (parsed.length == 0) throw "bibtex parse return nothing";
 				var index = $scope.editWork.citation.citation.errors.indexOf(om.get('manualWork.bibtext.notValid'));
 				if (index > -1) {
 					$scope.editWork.citation.citation.errors.splice(index, 1);
