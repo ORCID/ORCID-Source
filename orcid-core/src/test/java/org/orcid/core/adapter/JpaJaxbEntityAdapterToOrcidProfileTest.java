@@ -132,7 +132,7 @@ public class JpaJaxbEntityAdapterToOrcidProfileTest extends DBUnitTest {
         long start = System.currentTimeMillis();
         OrcidProfile orcidProfile = adapter.toOrcidProfile(profileEntity);
         System.out.println("Took: " + Long.toString(System.currentTimeMillis() - start));
-        
+
         checkOrcidProfile(orcidProfile);
         validateAgainstSchema(new OrcidMessage(orcidProfile));
     }
@@ -247,6 +247,11 @@ public class JpaJaxbEntityAdapterToOrcidProfileTest extends DBUnitTest {
                 assertEquals(Visibility.LIMITED, contributors.getContributor().get(0).getCreditName().getVisibility());
                 assertEquals(Visibility.LIMITED, orcidWork.getVisibility());
                 assertNull(orcidWork.getJournalTitle());
+            } else if (orcidWork.getPutCode().equals("3")) {
+                WorkContributors contributors = orcidWork.getWorkContributors();
+                assertNotNull(contributors);
+                assertEquals(1, contributors.getContributor().size());
+                assertEquals("0000-0003-0172-7925", contributors.getContributor().get(0).getContributorOrcid().getPath());
             } else if (orcidWork.getPutCode().equals("4")) {
                 putCode4Found = true;
                 assertNotNull(orcidWork.getWorkTitle());
