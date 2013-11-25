@@ -903,7 +903,6 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         // New way of doing work contributors
         String jsonString = work.getContributorsJson();
         if (jsonString != null) {
-            jsonString = jsonString.replaceAll("\"contributorOrcid\":\\{\"value\":\"(.*?)\"\\}","\"contributorOrcid\":\\{\"value\":[\"$1\"]\\}");
             WorkContributors workContributors = JsonUtils.readObjectFromJsonString(jsonString, WorkContributors.class);
             for (Contributor contributor : workContributors.getContributor()) {
                 // Make sure contributor credit name has the same visibility as

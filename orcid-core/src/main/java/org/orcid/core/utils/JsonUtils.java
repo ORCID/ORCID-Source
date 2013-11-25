@@ -19,6 +19,7 @@ package org.orcid.core.utils;
 import java.io.IOException;
 
 import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.map.DeserializationConfig.Feature;
 
 /**
  * 
@@ -38,6 +39,7 @@ public class JsonUtils {
 
     public static <T> T readObjectFromJsonString(String jsonString, Class<T> clazz) {
         ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
         try {
             return mapper.readValue(jsonString, clazz);
         } catch (IOException e) {

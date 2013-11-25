@@ -28,6 +28,7 @@ import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
 import org.apache.commons.lang3.StringUtils;
+import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.orcid.utils.OrcidStringUtils;
 
 @XmlAccessorType(XmlAccessType.PROPERTY)
@@ -59,6 +60,7 @@ public class OrcidIdBase implements Serializable {
     }
 
     @XmlMixed
+    @JsonSerialize(using=OrcidIdSerializer.class)
     public List<String> getValue() {
         if (values != null) {
             String combinedValues = StringUtils.join(values.toArray());
