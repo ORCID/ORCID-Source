@@ -116,7 +116,8 @@
                 </div>
                 
             </div>
-            <div class="col-md-6 col-sm-6 col-xs-12">
+            <!-- Websites -->
+            <div class="col-md-6 col-sm-6 col-xs-12" id="websites">
                 <#if changePersonalInfoForm.savedResearcherUrls?? && changePersonalInfoForm.savedResearcherUrls.researcherUrl??>
                     <div class="websites-vis">
                         <label class="visibility-lbl">
