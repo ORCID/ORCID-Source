@@ -164,9 +164,9 @@
                 		<ul class="personal-inf-display">
                 			<li>
 		        				<a href="" ng-click="workspaceSrvc.toggleWorks()" class="toggle-text">
-		        			       <i class="glyphicon-chevron-down glyphicon x0" ng-class="{'glyphicon-chevron-right':workspaceSrvc.displayWorks==false}"></i></a>
+		        			       <i class="glyphicon-chevron-down glyphicon x0" ng-class="{'glyphicon-chevron-right':workspaceSrvc.displayWorks==false}"></i>
 		        			    </a> 
-		        				<a href="" ng-click="toggleDisplayWorks()" class="toggle-text"><@orcid.msg 'workspace.Works'/></a>
+		        				<a href="" ng-click="workspaceSrvc.toggleWorks()" class="toggle-text"><@orcid.msg 'workspace.Works'/></a>
 		        			</li>		        			
 							<li>
 								<a class="label btn-primary" ng-click="showWorkImportWizard()"><@orcid.msg 'workspace.import_works'/></a>

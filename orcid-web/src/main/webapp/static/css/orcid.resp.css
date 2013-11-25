@@ -1455,6 +1455,10 @@ a:hover {
 	padding-left: 10px;
 }
 
+.workspace-right h3{
+	font-size: 16px;
+} 
+
 .more-info{
 	float: left;
     width: 33px;
