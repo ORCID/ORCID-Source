@@ -127,18 +127,20 @@
                         <@orcid.privacy "" changePersonalInfoForm.websiteUrlVisibility! />
                     </div>
                  	<h3>${springMacroRequestContext.getMessage("manage_bio_settings.h3websites")}</h3>
-             		<#list changePersonalInfoForm.savedResearcherUrls.researcherUrl as savedResearcherUrl>     		  	
-             			<p>
-             		  		<@spring.formHiddenInput "changePersonalInfoForm.savedResearcherUrls.researcherUrl[${savedResearcherUrl_index}].urlName.content"/>
-             		  		<@spring.formHiddenInput "changePersonalInfoForm.savedResearcherUrls.researcherUrl[${savedResearcherUrl_index}].url.value"/>
-                      		<#if savedResearcherUrl.urlName?? && savedResearcherUrl.urlName.content?? && savedResearcherUrl.urlName.content != ''>
-                      		    ${savedResearcherUrl.urlName.content} (<a href="${savedResearcherUrl.url.value}">${savedResearcherUrl.url.value}</a>)
-                      		<#else> 
-                      		    <a href="${savedResearcherUrl.url.value}">${savedResearcherUrl.url.value}</a>
-                      		</#if>
-                      		<a href="" class="glyphicon glyphicon-trash grey delete-url" ng-click="deleteEmail($index)" title="remove url"></a>
-                      		</p>     		    
-                    </#list>
+                 	<div class="margin-top-bottom-box">
+	             		<#list changePersonalInfoForm.savedResearcherUrls.researcherUrl as savedResearcherUrl>     		  	
+	             			<p>
+	             		  		<@spring.formHiddenInput "changePersonalInfoForm.savedResearcherUrls.researcherUrl[${savedResearcherUrl_index}].urlName.content"/>
+	             		  		<@spring.formHiddenInput "changePersonalInfoForm.savedResearcherUrls.researcherUrl[${savedResearcherUrl_index}].url.value"/>
+	                      		<#if savedResearcherUrl.urlName?? && savedResearcherUrl.urlName.content?? && savedResearcherUrl.urlName.content != ''>
+	                      		    ${savedResearcherUrl.urlName.content} (<a href="${savedResearcherUrl.url.value}">${savedResearcherUrl.url.value}</a>)
+	                      		<#else> 
+	                      		    <a href="${savedResearcherUrl.url.value}">${savedResearcherUrl.url.value}</a>
+	                      		</#if>
+	                      		<a href="" class="glyphicon glyphicon-trash grey delete-url" ng-click="deleteEmail($index)" title="remove url"></a>
+	                      		</p>     		    
+	                    </#list>
+                    </div>
              	</#if>
                	<label for="websiteUrlText">${springMacroRequestContext.getMessage("manage_bio_settings.labelwebsite")}</label>
              	<div class="control-group form-inline websites">
