@@ -90,7 +90,7 @@ public class OrcidMessageVersionConverterChainImpl implements OrcidMessageVersio
         
         return orcidMessage;
     }
-
+    
     @Override
     public OrcidMessage upgradeMessage(OrcidMessage orcidMessage, String requiredVersion) {
         if (orcidMessage == null) {

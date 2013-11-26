@@ -439,7 +439,7 @@ public class T2OrcidApiClientIntegrationTest extends AbstractT2ClientIntegration
 
             ExternalIdentifiers newExternalIdentifiers = new ExternalIdentifiers();
             ExternalIdOrcid externalIdOrcid = new ExternalIdOrcid();
-            externalIdOrcid.setValue(sponsorOrcid);
+            externalIdOrcid.setValueAsString(sponsorOrcid);
             ExternalIdentifier additionalIdentifer = new ExternalIdentifier(externalIdOrcid, new ExternalIdReference("abc"));
             newExternalIdentifiers.getExternalIdentifier().add(additionalIdentifer);
             orcidBio.setExternalIdentifiers(newExternalIdentifiers);
@@ -481,7 +481,7 @@ public class T2OrcidApiClientIntegrationTest extends AbstractT2ClientIntegration
 
             ExternalIdentifiers newExternalIdentifiers = new ExternalIdentifiers();
             ExternalIdOrcid externalIdOrcid = new ExternalIdOrcid();
-            externalIdOrcid.setValue(sponsorOrcid);
+            externalIdOrcid.setValueAsString(sponsorOrcid);
             ExternalIdentifier additionalIdentifer = new ExternalIdentifier(externalIdOrcid, new ExternalIdReference("abc"));
             newExternalIdentifiers.getExternalIdentifier().add(additionalIdentifer);
             orcidBio.setExternalIdentifiers(newExternalIdentifiers);

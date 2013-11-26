@@ -577,7 +577,7 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
         String originalPutCode = profile1.getOrcidActivities().getOrcidWorks().getOrcidWork().get(0).getPutCode();
 
         OrcidProfile profile2 = new OrcidProfile();
-        profile2.setOrcid(TEST_ORCID);
+        profile2.setOrcidIdentifier(TEST_ORCID);
         OrcidWorks orcidWorks = new OrcidWorks();
         profile2.setOrcidWorks(orcidWorks);
 
@@ -630,7 +630,7 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
         orcidProfileManager.createOrcidProfile(profile1);
 
         OrcidProfile profile2 = new OrcidProfile();
-        profile2.setOrcid(TEST_ORCID);
+        profile2.setOrcidIdentifier(TEST_ORCID);
         OrcidWorks orcidWorks = new OrcidWorks();
         profile2.setOrcidWorks(orcidWorks);
 
@@ -682,7 +682,7 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
         orcidProfileManager.createOrcidProfile(profile1);
 
         OrcidProfile profile2 = new OrcidProfile();
-        profile2.setOrcid(TEST_ORCID);
+        profile2.setOrcidIdentifier(TEST_ORCID);
         OrcidWorks orcidWorks = new OrcidWorks();
         profile2.setOrcidWorks(orcidWorks);
 

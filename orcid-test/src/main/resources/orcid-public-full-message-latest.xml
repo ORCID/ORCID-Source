@@ -25,11 +25,11 @@
     <!-- Unable to connect to ORCID, no matching researchers, etc. -->
     <!-- <error-desc>No researcher found.</error-desc> -->
     <orcid-profile>
-        <orcid-id>
+        <orcid-identifier>
             <uri>http://orcid.org/4444-4444-4444-4446</uri>
             <path>4444-4444-4444-4446</path>
             <host>orcid.org</host>
-        </orcid-id>
+        </orcid-identifier>
         <orcid-history>
             <creation-method>API</creation-method>
             <completion-date>2012-10-09T15:50:07</completion-date>

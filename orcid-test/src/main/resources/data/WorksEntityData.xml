@@ -44,7 +44,7 @@
           publication_month="9"
           publication_day="2"
           title="A Book With Contributors JSON"
-          contributors_json="{&quot;contributor&quot;:[{&quot;contributorOrcid&quot;:null,&quot;creditName&quot;:{&quot;content&quot;:&quot;Jason Contributor&quot;,&quot;visibility&quot;:null},&quot;contributorEmail&quot;:null,&quot;contributorAttributes&quot;:null}]}"
+          contributors_json="{&quot;contributor&quot;:[{&quot;contributorOrcid&quot;:{&quot;value&quot;:&quot;0000-0003-0172-7925&quot;},&quot;creditName&quot;:{&quot;content&quot;:&quot;Jason Contributor&quot;,&quot;visibility&quot;:null},&quot;contributorEmail&quot;:null,&quot;contributorAttributes&quot;:null}]}"
           work_type="BOOK"          
             />
             

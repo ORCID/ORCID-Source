@@ -4,6 +4,28 @@ We release updates to the Registry regularly. Below is a list of the improvement
 * [2013 Releases](https://trello.com/b/ZgYVAlel)
 * [2012 Releases](https://trello.com/b/vyCDYdvR)
 
+## 
+
+* New ORCID iD structure changed in 1.1.0!
+
+* Removing the undefined work type form the UI and from the latest orcid-message (1.1.0)
+
+* Release responsive design
+
+* Add RIS to citiations types in new XSDs. 1.0.23 and 1.1.0 
+
+* Create orcid-message-1.0.23.xsd which only allows education and employment affiliations. Modify orcid-message-1.1.0.xsd to only allow education and employment.
+
+* Change multi-scope token have expiration of matching longest scope, scopes with shorter scopes are removed past their expirations.
+
+* Updated to bootstrap 3.0.2 
+
+* Migrating works to works metadata.
+
+* Add plus sign next to ID to allow user to add more than one ID
+
+
+
 ## release-1.1.36.12
 (2013-10-24)
 

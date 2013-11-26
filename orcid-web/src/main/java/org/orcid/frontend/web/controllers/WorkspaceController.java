@@ -254,7 +254,7 @@ public class WorkspaceController extends BaseWorkspaceController {
         if (currentProfile.getOrcidHistory().getSource() == null)
             return tpr;
         SourceOrcid sourceOrcid = currentProfile.getOrcidHistory().getSource().getSourceOrcid();
-        String sourcStr = sourceOrcid.getValue();
+        String sourcStr = sourceOrcid.getPath();
         List<OrcidClient> orcidClients = thirdPartyImportManager.findOrcidClientsWithPredefinedOauthScopeReadAccess();
         for (OrcidClient orcidClient : orcidClients) {
             if (sourcStr.equals(orcidClient.getClientId())) {

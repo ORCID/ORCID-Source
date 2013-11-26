@@ -25,11 +25,11 @@
     <!-- Unable to connect to ORCID, no matching researchers, etc. -->
     <!-- <error-desc>No researcher found.</error-desc> -->
     <orcid-profile>
-        <orcid-id>
+        <orcid-identifier>
             <uri>http://orcid.org/4444-4444-4444-4446</uri>
             <path>4444-4444-4444-4446</path>
             <host>orcid.org</host>
-        </orcid-id>
+        </orcid-identifier>
         <orcid-preferences>
         	<locale>en</locale>
         </orcid-preferences>
@@ -106,11 +106,11 @@
                     <delegation-details>
                         <approval-date>2012-11-10T13:18:51</approval-date>
                         <delegate-summary>
-                            <orcid-id>
+                            <orcid-identifier>
                                 <uri>http://orcid.org/1111-1111-1111-1115</uri>
                                 <path>1111-1111-1111-1115</path>
                                 <host>orcid.org</host>
-                             </orcid-id>
+                             </orcid-identifier>
                             <credit-name>Patricia Carberry</credit-name>
                         </delegate-summary>
                     </delegation-details>
@@ -119,11 +119,11 @@
                     <delegation-details>
                         <approval-date>2012-12-22T08:16:22</approval-date>
                         <delegate-summary>
-                            <orcid-id>
+                            <orcid-identifier>
                                 <uri>http://orcid.org/2222-2222-2222-2229</uri>
                                 <path>2222-2222-2222-2229</path>
                                 <host>orcid.org</host>
-                            </orcid-id>
+                            </orcid-identifier>
                             <credit-name>W. J. R. Simpson</credit-name>
                         </delegate-summary>
                     </delegation-details>

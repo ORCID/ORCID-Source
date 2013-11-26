@@ -198,7 +198,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
 
     @Resource
     private SourceManager sourceManager;
- 
+
     private int claimWaitPeriodDays = 10;
 
     private int claimReminderAfterDays = 8;
@@ -247,7 +247,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
     @Transactional
     public OrcidProfile createOrcidProfile(OrcidProfile orcidProfile) {
         if (orcidProfile.getOrcid() == null) {
-            orcidProfile.setOrcidId(orcidGenerationManager.createNewOrcid());
+            orcidProfile.setOrcidIdentifier(orcidGenerationManager.createNewOrcid());
         }
 
         // Add source to works
@@ -372,7 +372,8 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
 
         if (affiliations != null && !affiliations.getAffiliation().isEmpty()) {
             for (Affiliation affiliation : affiliations.getAffiliation()) {
-                if (affiliation.getSource() == null || StringUtils.isEmpty(affiliation.getSource().getSourceOrcid().getValue()))
+                if (affiliation.getSource() == null || affiliation.getSource().getSourceOrcid() == null
+                        || StringUtils.isEmpty(affiliation.getSource().getSourceOrcid().getPath()))
                     affiliation.setSource(new Source(amenderOrcid));
             }
         }
@@ -898,7 +899,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
     @Override
     @Transactional
     public void addOrcidWorks(OrcidProfile updatedOrcidProfile) {
-        String orcid = updatedOrcidProfile.getOrcid().getValue();
+        String orcid = updatedOrcidProfile.getOrcidIdentifier().getPath();
         OrcidProfile existingProfile = retrieveOrcidProfile(orcid);
         if (existingProfile == null) {
             throw new IllegalArgumentException("No record found for " + orcid);
@@ -955,7 +956,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
                 // If contributor orcid is available, look for the profile
                 // associated with that orcid
                 if (contributor.getContributorOrcid() != null) {
-                    ProfileEntity profile = profileDao.find(contributor.getContributorOrcid().getValue());
+                    ProfileEntity profile = profileDao.find(contributor.getContributorOrcid().getPath());
                     if (profile != null) {
                         if (Visibility.PUBLIC.equals(profile.getCreditNameVisibility())) {
                             contributor.setCreditName(new CreditName(profile.getCreditName()));
@@ -1207,7 +1208,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         if (affiliations != null && !affiliations.getAffiliation().isEmpty()) {
             for (Affiliation affiliation : affiliations.getAffiliation()) {
                 if (affiliation.getSource() == null || affiliation.getSource().getSourceOrcid() == null
-                        || StringUtils.isEmpty(affiliation.getSource().getSourceOrcid().getValue()))
+                        || StringUtils.isEmpty(affiliation.getSource().getSourceOrcid().getPath()))
                     affiliation.setSource(new Source(amenderOrcid));
             }
         }

@@ -607,7 +607,7 @@ public class NotificationManagerImpl implements NotificationManager {
         Applications applications = orcidProfile.getOrcidBio().getApplications();
         if (applications != null && applications.getApplicationSummary() != null && !applications.getApplicationSummary().isEmpty()) {
             for (ApplicationSummary applicationSummary : applications.getApplicationSummary()) {
-                if (amenderOrcid.equals(applicationSummary.getApplicationOrcid().getValue())) {
+                if (amenderOrcid.equals(applicationSummary.getApplicationOrcid().getPath())) {
                     return applicationSummary.getApplicationName().getContent();
                 }
             }

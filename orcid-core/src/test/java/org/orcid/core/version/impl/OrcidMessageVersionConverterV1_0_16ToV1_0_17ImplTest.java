@@ -16,14 +16,14 @@
  */
 package org.orcid.core.version.impl;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import java.io.InputStreamReader;
 import java.io.Reader;
 
 import org.junit.Test;
 import org.orcid.core.version.OrcidMessageVersionConverter;
-import org.orcid.core.version.impl.OrcidMessageVersionConverterImplV1_0_15ToV1_0_16;
 import org.orcid.jaxb.model.message.OrcidMessage;
 
 /**
@@ -42,7 +42,7 @@ public class OrcidMessageVersionConverterV1_0_16ToV1_0_17ImplTest {
         assertNotNull(newMessage);
         assertEquals("1.0.17", newMessage.getMessageVersion());
         assertEquals("4444-4444-4444-4446", newMessage.getOrcidProfile().getOrcid().getValue());
-        assertEquals("http://orcid.org/4444-4444-4444-4446", newMessage.getOrcidProfile().retrieveOrcidUriAsString());
+        assertEquals("http://orcid.org/4444-4444-4444-4446", newMessage.getOrcidProfile().getOrcidId());
     }
 
 }

@@ -40,7 +40,6 @@ import org.orcid.jaxb.model.message.GivenNames;
 import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.jaxb.model.message.LastModifiedDate;
 import org.orcid.jaxb.model.message.OrcidBio;
-import org.orcid.jaxb.model.message.OrcidId;
 import org.orcid.jaxb.model.message.OrcidHistory;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidProfile;
@@ -66,10 +65,8 @@ public class RDFWriterTest {
     private OrcidMessage fakeBio() throws DatatypeConfigurationException {
         OrcidMessage orcidMessage = new OrcidMessage();
         OrcidProfile orcidProfile1 = new OrcidProfile();
-        OrcidId orcidId = new OrcidId();
-        orcidId.setUri("http://orcid.example.com/000-1337");
-        orcidId.setPath("000-1337");
-        orcidProfile1.setOrcidId(orcidId);
+        orcidProfile1.setOrcidId("http://orcid.example.com/000-1337");
+        orcidProfile1.setOrcid("000-1337");
         OrcidBio bio = new OrcidBio();
         orcidProfile1.setOrcidBio(bio);
         OrcidHistory history = new OrcidHistory();

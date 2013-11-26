@@ -121,7 +121,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
 
         OrcidProfile profile = new OrcidProfile();
         OrcidType type = profileEntity.getOrcidType();
-        profile.setOrcidId(new OrcidId(getOrcidIdBase(profileEntity.getId())));
+        profile.setOrcidIdentifier(new OrcidIdentifier(getOrcidIdBase(profileEntity.getId())));
         // load deprecation info
         profile.setOrcidDeprecated(getOrcidDeprecated(profileEntity));
 
@@ -625,7 +625,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
             delegation.setGivenPermissionTo(givenPermissionTo);
             for (GivenPermissionToEntity givenPermissionToEntity : givenPermissionToEntities) {
                 DelegationDetails delegationDetails = new DelegationDetails();
-                DelegateSummary delegateSummary = new DelegateSummary(new OrcidId(getOrcidIdBase(givenPermissionToEntity.getReceiver().getId())));
+                DelegateSummary delegateSummary = new DelegateSummary(new OrcidIdentifier(getOrcidIdBase(givenPermissionToEntity.getReceiver().getId())));
                 String receiverCreditName = givenPermissionToEntity.getReceiver().getCreditName();
                 delegateSummary.setCreditName(StringUtils.isNotBlank(receiverCreditName) ? new CreditName(receiverCreditName) : null);
                 delegationDetails.setDelegateSummary(delegateSummary);
@@ -641,7 +641,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
             delegation.setGivenPermissionBy(givenPermissionBy);
             for (GivenPermissionByEntity givenPermissionByEntity : givenPermissionByEntities) {
                 DelegationDetails delegationDetails = new DelegationDetails();
-                DelegateSummary delegateSummary = new DelegateSummary(new OrcidId(getOrcidIdBase((givenPermissionByEntity.getGiver().getId()))));
+                DelegateSummary delegateSummary = new DelegateSummary(new OrcidIdentifier(getOrcidIdBase((givenPermissionByEntity.getGiver().getId()))));
                 String creditName = givenPermissionByEntity.getGiver().getCreditName();
                 delegateSummary.setCreditName(StringUtils.isNotBlank(creditName) ? new CreditName(creditName) : null);
                 delegationDetails.setDelegateSummary(delegateSummary);
@@ -918,7 +918,11 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
                 if (contributorOrcid != null) {
                     String uri = contributorOrcid.getUri();
                     if (uri == null) {
-                        contributor.setContributorOrcid(new ContributorOrcid(getOrcidIdBase(contributorOrcid.getPath())));
+                        String orcid = contributorOrcid.getValueAsString();
+                        if(orcid == null){
+                            orcid = contributorOrcid.getPath();
+                        }
+                        contributor.setContributorOrcid(new ContributorOrcid(getOrcidIdBase(orcid)));
                     }
                 }
             }
