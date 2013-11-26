@@ -932,7 +932,7 @@ select {
 }
 
 #signout{
-	width:120px;
+	max-width:120px;
 }
 
 /*
@@ -2674,10 +2674,11 @@ a.btn-primary:hover {
 	position: absolute;
 	z-index: -1;
 	width: 100%;
-	height: 61px;
-	text-align: right;
-	line-height: 50px;
+	height: 80px;
+	text-align: left;
+	line-height: 104px;
 	overflow: hidden;
+	padding-left:224px;
 }
 
 #loginForm #login-register{
@@ -3282,7 +3283,7 @@ ul.personal-inf-display li{
 		margin: 0;
 		padding: 0;
 		min-height: 30px;
-		height: 30px;
+		height: 50px;
 		text-align: center;
 		top: 260px; /* Login layout top */
 	}
@@ -3667,7 +3668,7 @@ ul.personal-inf-display li{
 	
 }
 
-@media ( max-width : 980px) { /* Tablet */
+@media (min-width : 768px ) and (max-width : 992px) { /* Tablet */
 	/*Header*/
 	
 	.container .header .search form input[type='search'] {
@@ -3692,6 +3693,7 @@ ul.personal-inf-display li{
 		font-size: 12px;
 		word-wrap: break-word;
 		padding: 10px;
+		display: block;
 	}
 	.header .navigation>.menu>li>.menu>li>a {
 		font-size: 11px;
@@ -3786,6 +3788,11 @@ ul.personal-inf-display li{
 	
 	.data-row-group .col-md-2{
 		padding-left: 15px;
+	}
+	
+	#loginForm #login-error-mess{
+		padding-left: 0;
+		text-align:center;
 	}
 }
 
