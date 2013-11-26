@@ -250,9 +250,10 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
             orcidProfile.setOrcidIdentifier(orcidGenerationManager.createNewOrcid());
         }
 
-        // Add source to works
+        // Add source to works and affiliations
         String amenderOrcid = sourceManager.retrieveSourceOrcid();
         addSourceToWorks(orcidProfile, amenderOrcid);
+        addSourceToAffiliations(orcidProfile, amenderOrcid);
 
         ProfileEntity profileEntity = adapter.toProfileEntity(orcidProfile);
         encryptAndMapFieldsForProfileEntityPersistence(orcidProfile, profileEntity);

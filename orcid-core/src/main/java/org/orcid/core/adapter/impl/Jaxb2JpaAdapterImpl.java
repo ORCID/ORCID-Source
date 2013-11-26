@@ -1063,7 +1063,8 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             FuzzyDate startDate = affiliation.getStartDate();
             FuzzyDate endDate = affiliation.getEndDate();
             orgRelationEntity.setAffiliationType(affiliation.getAffiliationType());
-            orgRelationEntity.setVisibility(affiliation.getVisibility());
+            orgRelationEntity.setVisibility(affiliation.getVisibility() == null ? Visibility.PRIVATE : affiliation.getVisibility());
+            orgRelationEntity.setSource(getSource(affiliation.getSource()));
             orgRelationEntity.setDepartment(affiliation.getDepartmentName());
             orgRelationEntity.setEndDate(endDate != null ? new EndDateEntity(endDate) : null);
             orgRelationEntity.setOrg(getOrgEntity(affiliation));
