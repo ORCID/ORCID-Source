@@ -82,17 +82,6 @@ public class Work implements ErrorsInterface, Serializable {
 
     protected String citationForDisplay;
 
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     public static Work valueOf(MinimizedWorkEntity minimizedWorkEntity) {
     	Work w = new Work();
     	//Set id
@@ -117,27 +106,6 @@ public class Work implements ErrorsInterface, Serializable {
         
         return w;	
     }
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     
     public static Work valueOf(OrcidWork orcidWork) {
         Work w = new Work();
