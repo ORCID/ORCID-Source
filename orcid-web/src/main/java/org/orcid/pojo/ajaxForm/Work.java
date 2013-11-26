@@ -22,7 +22,6 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.hsqldb.lib.StringUtil;
-import org.orcid.frontend.web.util.Conversions;
 import org.orcid.jaxb.model.message.Country;
 import org.orcid.jaxb.model.message.FuzzyDate;
 import org.orcid.jaxb.model.message.Iso3166Country;
@@ -102,7 +101,7 @@ public class Work implements ErrorsInterface, Serializable {
     	//Set publication date
         w.setPublicationDate(Date.valueOf(new FuzzyDate(minimizedWorkEntity.getPublicationYear(), minimizedWorkEntity.getPublicationMonth(), minimizedWorkEntity.getPublicationDay())));
         //Set title and subtitle
-        if(!StringUtil.isEmpty(minimizedWorkEntity.getTitle())) {
+        if(!StringUtils.isEmpty(minimizedWorkEntity.getTitle())) {
         	Text title = Text.valueOf(minimizedWorkEntity.getTitle());
         	Text subtitle = Text.valueOf(minimizedWorkEntity.getSubtitle());
         	WorkTitle workTitle = new WorkTitle();
@@ -111,7 +110,7 @@ public class Work implements ErrorsInterface, Serializable {
         	w.setWorkTitle(workTitle);
         }
         //Set description
-        if(!StringUtil.isEmpty(minimizedWorkEntity.getDescription())){
+        if(!StringUtils.isEmpty(minimizedWorkEntity.getDescription())){
         	w.setShortDescription(Text.valueOf(minimizedWorkEntity.getDescription()));
         }
         //Set visibility

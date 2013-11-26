@@ -53,17 +53,18 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements
 	 * @param orcid
 	 *            the Id of the user
 	 * @return the list of works associated to the specific user
-	 * */
+	 * */	
+	@SuppressWarnings("unchecked")
 	public List<MinimizedWorkEntity> findWorks(String orcid) {
+		
 		Query query = entityManager
 				.createQuery(
-						"select NEW MinimizedWorkEntity (w.id, w.title, w.subtitle, w.description, w.publication_day, w.publication_month, w.publication_year, pw.visibility) " +
-						"from work w, profile_work pw " +
-						"where pw.orcid=:orcid and w.work_id=pw.work_id " +
-						"order by w.publication_year desc, w.publication_month desc, w.publication_day desc, w.title desc, w.work_id desc",
-						MinimizedWorkEntity.class);
+						"select NEW org.orcid.persistence.jpa.entities.custom.MinimizedWorkEntity(w.id, w.title, w.subtitle, w.description, w.publicationDate.day, w.publicationDate.month, w.publicationDate.year, pw.visibility) " +
+						"from WorkEntity w, ProfileWorkEntity pw " +
+						"where pw.profile.id=:orcid and w.id=pw.work.id " +
+						"order by w.publicationDate.year desc, w.publicationDate.month desc, w.publicationDate.day desc, w.title asc, w.id desc");		
 		query.setParameter("orcid", orcid);
-		List<MinimizedWorkEntity> results = (List<MinimizedWorkEntity>) query.getResultList();  
-		return results;
+		
+		return query.getResultList();  
 	}
 }
