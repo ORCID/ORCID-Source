@@ -37,6 +37,7 @@ import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Resource;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -74,6 +75,11 @@ abstract public class T1OrcidApiServiceImplBase implements OrcidApiService<Respo
     private UriInfo uriInfo;
 
     private OrcidApiServiceDelegator orcidApiServiceDelegator;
+
+    // Base the RDF stuff on the root version of the API, because sits outside
+    // the versioning mechanism
+    @Resource(name = "t1OrcidApiServiceDelegatorLatest")
+    private OrcidApiServiceDelegator orcidApiServiceDelegatorLatest;
 
     public void setUriInfo(UriInfo uriInfo) {
         this.uriInfo = uriInfo;
@@ -162,7 +168,7 @@ abstract public class T1OrcidApiServiceImplBase implements OrcidApiService<Respo
     @Path(EXPERIMENTAL_RDF_V1 + BIO_PATH)
     public Response viewBioDetailsRdf(@PathParam("orcid") String orcid) {
         T1_GET_REQUESTS.inc();
-        return orcidApiServiceDelegator.findBioDetails(orcid);
+        return orcidApiServiceDelegatorLatest.findBioDetails(orcid);
     }
 
     /**
@@ -199,7 +205,7 @@ abstract public class T1OrcidApiServiceImplBase implements OrcidApiService<Respo
     @Path(EXPERIMENTAL_RDF_V1 + BIO_PATH)
     public Response viewBioDetailsTurtle(@PathParam("orcid") String orcid) {
         T1_GET_REQUESTS.inc();
-        return orcidApiServiceDelegator.findBioDetails(orcid);
+        return orcidApiServiceDelegatorLatest.findBioDetails(orcid);
     }
 
     /**
@@ -318,10 +324,10 @@ abstract public class T1OrcidApiServiceImplBase implements OrcidApiService<Respo
         T1_GET_REQUESTS.inc();
         return orcidApiServiceDelegator.findFullDetailsFromPublicCache(orcid);
     }
-    
+
     /**
-     * GETs the HTML representation of the ORCID record containing only affiliation
-     * details
+     * GETs the HTML representation of the ORCID record containing only
+     * affiliation details
      * 
      * @param orcid
      *            the ORCID that corresponds to the user's record
@@ -338,8 +344,8 @@ abstract public class T1OrcidApiServiceImplBase implements OrcidApiService<Respo
     }
 
     /**
-     * GETs the XML representation of the ORCID record containing only affiliation
-     * details
+     * GETs the XML representation of the ORCID record containing only
+     * affiliation details
      * 
      * @param orcid
      *            the ORCID that corresponds to the user's record
@@ -354,8 +360,8 @@ abstract public class T1OrcidApiServiceImplBase implements OrcidApiService<Respo
     }
 
     /**
-     * GETs the JSON representation of the ORCID record containing only affiliation
-     * details
+     * GETs the JSON representation of the ORCID record containing only
+     * affiliation details
      * 
      * @param orcid
      *            the ORCID that corresponds to the user's record
@@ -369,7 +375,6 @@ abstract public class T1OrcidApiServiceImplBase implements OrcidApiService<Respo
         T1_GET_REQUESTS.inc();
         return orcidApiServiceDelegator.findAffiliationsDetailsFromPublicCache(orcid);
     }
-
 
     /**
      * GETs the HTML representation of the ORCID record containing only work
