@@ -17,7 +17,7 @@
 
 -->
 <div class="more-info ie7-zi-fix-top">	
-	<a class="glyphicon glyphicon-plus-sign grey"></a>	
+	<a class="glyphicon glyphicon-plus-sign grey" ng-mouseover="loadWorkInfo(work.putCode.value); $event.stopPropagation()"></a>	
 	<div class="popover bottom more-info-container ">	
 		<div class="arrow"></div>	
 		<div class="lightbox-container">

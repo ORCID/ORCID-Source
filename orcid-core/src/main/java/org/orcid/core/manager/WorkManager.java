@@ -20,6 +20,7 @@ import java.util.List;
 
 import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.persistence.jpa.entities.custom.MinimizedWorkEntity;
+import org.orcid.persistence.jpa.entities.custom.WorkInfoEntity;
 
 public interface WorkManager {
     /**
@@ -39,4 +40,15 @@ public interface WorkManager {
      * @return the list of works associated to the specific user 
      * */
     List<MinimizedWorkEntity> findWorks(String orcid);
+    
+    /**
+     * Loads work information
+     * 
+     * @param orcid
+     * 		The client orcid
+     * @param workId
+     * 		the Id of the work
+     * @return a workInfo object with the work information
+     * */
+    WorkInfoEntity loadWorkInfo(String orcid, String workId);
 }

@@ -1796,6 +1796,10 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 	//init
 	$scope.getWorks();	
 	
+	$scope.loadWorkInfo = function(putCode) {
+		console.log("Loading work info: " + putCode);
+	};
+	
 	$scope.deleteWork = function(putCode) {
 		$scope.deletePutCode = putCode;
 		var work;
