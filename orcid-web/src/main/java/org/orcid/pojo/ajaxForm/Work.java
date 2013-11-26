@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.hsqldb.lib.StringUtil;
 import org.orcid.jaxb.model.message.Country;
 import org.orcid.jaxb.model.message.FuzzyDate;
 import org.orcid.jaxb.model.message.Iso3166Country;
