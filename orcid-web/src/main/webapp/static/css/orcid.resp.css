@@ -1709,6 +1709,10 @@ a:hover {
 	width: 100px;
 }
 
+#edit-affiliation .tt-hint,
+#edit-affiliation #affiliationName{
+	color: #939598;
+}
 
 .add-work input.input-xlarge,
 .add-work #workType{
