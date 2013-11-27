@@ -39,7 +39,7 @@ public class OrcidMessageVersionConverterChainImpl implements OrcidMessageVersio
     public List<OrcidMessageVersionConverter> converters;
     public List<OrcidMessageVersionConverter> descendingConverters;
     private boolean supportOldWorkTypes = false;
-    private static String MESSAGE_VERSION_WITH_NEW_WORK_TYPES = "1.1.0";
+    private static String MESSAGE_VERSION_WITH_NEW_WORK_TYPES = "1.1";
 
     public void setSupportOldWorkTypes(boolean value){
         this.supportOldWorkTypes = value;
@@ -68,7 +68,7 @@ public class OrcidMessageVersionConverterChainImpl implements OrcidMessageVersio
         }
                 
         if(supportOldWorkTypes) {
-            //If the required message version is lower than V1.1.0, we need to downgrade the work type
+            //If the required message version is lower than V1.1, we need to downgrade the work type
             if(MESSAGE_VERSION_WITH_NEW_WORK_TYPES.compareTo(requiredVersion) > 0){            
                 OrcidProfile orcidProfile = orcidMessage.getOrcidProfile();
                 if (orcidProfile != null) {

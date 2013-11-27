@@ -80,7 +80,7 @@ public class T2OrcidApiServiceDelegatorTest extends DBUnitTest {
     private static final List<String> DATA_FILES = Arrays.asList("/data/EmptyEntityData.xml", "/data/SecurityQuestionEntityData.xml", "/data/ProfileEntityData.xml",
             "/data/WorksEntityData.xml", "/data/ProfileWorksEntityData.xml", "/data/ClientDetailsEntityData.xml", "/data/Oauth2TokenDetailsData.xml");
 
-    @Resource(name = "t2OrcidApiServiceDelegatorV1_1_0")
+    @Resource(name = "t2OrcidApiServiceDelegatorV1_1")
     private T2OrcidApiServiceDelegator t2OrcidApiServiceDelegator;
 
     @Resource
@@ -117,7 +117,7 @@ public class T2OrcidApiServiceDelegatorTest extends DBUnitTest {
     public void testAddWorks() {
         setUpSecurityContext();
         OrcidMessage orcidMessage = new OrcidMessage();
-        orcidMessage.setMessageVersion("1.1.0");
+        orcidMessage.setMessageVersion("1.1");
         OrcidProfile orcidProfile = new OrcidProfile();
         orcidMessage.setOrcidProfile(orcidProfile);
         orcidProfile.setOrcidIdentifier(new OrcidIdentifier("4444-4444-4444-4441"));
@@ -214,7 +214,7 @@ public class T2OrcidApiServiceDelegatorTest extends DBUnitTest {
     public void testAddAffilliations() {
         setUpSecurityContext(ScopePathType.AFFILIATIONS_CREATE);
         OrcidMessage orcidMessage = new OrcidMessage();
-        orcidMessage.setMessageVersion("1.1.0");
+        orcidMessage.setMessageVersion("1.1");
         OrcidProfile orcidProfile = new OrcidProfile();
         orcidMessage.setOrcidProfile(orcidProfile);
         orcidProfile.setOrcidIdentifier(new OrcidIdentifier("4444-4444-4444-4441"));
@@ -246,7 +246,7 @@ public class T2OrcidApiServiceDelegatorTest extends DBUnitTest {
 
     private OrcidMessage createStubOrcidMessage() {
         OrcidMessage orcidMessage = new OrcidMessage();
-        orcidMessage.setMessageVersion("1.1.0");
+        orcidMessage.setMessageVersion("1.1");
         OrcidProfile orcidProfile = new OrcidProfile();
         orcidMessage.setOrcidProfile(orcidProfile);
         OrcidBio orcidBio = new OrcidBio();

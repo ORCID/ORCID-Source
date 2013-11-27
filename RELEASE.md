@@ -6,15 +6,15 @@ We release updates to the Registry regularly. Below is a list of the improvement
 
 ## 
 
-* New ORCID iD structure changed in 1.1.0!
+* New ORCID iD structure changed in 1.1!
 
-* Removing the undefined work type form the UI and from the latest orcid-message (1.1.0)
+* Removing the undefined work type form the UI and from the latest orcid-message (1.1)
 
 * Release responsive design
 
-* Add RIS to citiations types in new XSDs. 1.0.23 and 1.1.0 
+* Add RIS to citiations types in new XSDs. 1.0.23 and 1.1
 
-* Create orcid-message-1.0.23.xsd which only allows education and employment affiliations. Modify orcid-message-1.1.0.xsd to only allow education and employment.
+* Create orcid-message-1.0.23.xsd which only allows education and employment affiliations. Modify orcid-message-1.1.xsd to only allow education and employment.
 
 * Change multi-scope token have expiration of matching longest scope, scopes with shorter scopes are removed past their expirations.
 
