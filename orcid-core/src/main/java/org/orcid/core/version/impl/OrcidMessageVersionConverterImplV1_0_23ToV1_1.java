@@ -46,10 +46,10 @@ import org.orcid.jaxb.model.message.WorkSource;
  * @author rcpeters
  * 
  */
-public class OrcidMessageVersionConverterImplV1_0_23ToV1_1_0 implements OrcidMessageVersionConverter {
+public class OrcidMessageVersionConverterImplV1_0_23ToV1_1 implements OrcidMessageVersionConverter {
 
     private static final String FROM_VERSION = "1.0.23";
-    private static final String TO_VERSION = "1.1.0";
+    private static final String TO_VERSION = "1.1";
 
     @Override
     public String getFromVersion() {

@@ -79,7 +79,7 @@ public class T2OrcidApiServiceVersionedDelegatorTest extends DBUnitTest {
     @Resource
     private OrcidProfileManager orcidProfileManager;
 
-    @Resource(name = "t2OrcidApiServiceDelegatorV1_1_0")
+    @Resource(name = "t2OrcidApiServiceDelegatorV1_1")
     private T2OrcidApiServiceDelegator t2OrcidApiServiceDelegatorLatest;
 
     @Mock
@@ -113,7 +113,7 @@ public class T2OrcidApiServiceVersionedDelegatorTest extends DBUnitTest {
     public void testAddWorks() {
         setUpSecurityContext();
         OrcidMessage orcidMessage = new OrcidMessage();
-        orcidMessage.setMessageVersion("1.1.0");
+        orcidMessage.setMessageVersion("1.1");
         OrcidProfile orcidProfile = new OrcidProfile();
         orcidMessage.setOrcidProfile(orcidProfile);
         orcidProfile.setOrcidIdentifier(new OrcidIdentifier("4444-4444-4444-4441"));
@@ -230,7 +230,7 @@ public class T2OrcidApiServiceVersionedDelegatorTest extends DBUnitTest {
 
     private OrcidMessage createStubOrcidMessage() {
         OrcidMessage orcidMessage = new OrcidMessage();
-        orcidMessage.setMessageVersion("1.1.0");
+        orcidMessage.setMessageVersion("1.1");
         OrcidProfile orcidProfile = new OrcidProfile();
         orcidMessage.setOrcidProfile(orcidProfile);
         OrcidBio orcidBio = new OrcidBio();

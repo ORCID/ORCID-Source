@@ -23,7 +23,7 @@ import javax.ws.rs.Path;
  * @author Angel Montenegro
  * 
  */
-@Path("/v1.1.0")
-public class T1OrcidApiServiceImplV1_1_0 extends T1OrcidApiServiceImplBase {
+@Path("/v1.1")
+public class T1OrcidApiServiceImplV1_1 extends T1OrcidApiServiceImplBase {
 
 }

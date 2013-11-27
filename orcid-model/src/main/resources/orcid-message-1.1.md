@@ -1,4 +1,4 @@
-# Summary of API Changes from 1.0.22 to 1.1.0
+# Summary of API Changes from 1.0.22 to 1.1
 
 * New work types
 * Added work subtypes
