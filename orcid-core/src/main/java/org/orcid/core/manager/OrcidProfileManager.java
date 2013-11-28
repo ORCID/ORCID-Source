@@ -339,5 +339,7 @@ public interface OrcidProfileManager {
     void clearOrcidProfileCache();
 
     public void addLocale(OrcidProfile orcidProfile, Locale locale);
+    
+    public void processProfilePendingIndexingInTransaction(final String orcid);
 
 }

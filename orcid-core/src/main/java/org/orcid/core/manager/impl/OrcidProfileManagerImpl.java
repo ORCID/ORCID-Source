@@ -1424,7 +1424,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
                 new LinkedBlockingQueue<Runnable>(INDEXING_BATCH_SIZE), Executors.defaultThreadFactory(), new ThreadPoolExecutor.CallerRunsPolicy());
     }
 
-    private void processProfilePendingIndexingInTransaction(final String orcid) {
+    public void processProfilePendingIndexingInTransaction(final String orcid) {
         transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
             protected void doInTransactionWithoutResult(TransactionStatus status) {
