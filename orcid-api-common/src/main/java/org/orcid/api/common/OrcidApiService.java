@@ -91,8 +91,8 @@ public interface OrcidApiService<T> {
     T viewBioDetailsRdf(@PathParam("orcid") String orcid);
 
     /**
-     * GETs the RDF Turtle representation of the ORCID record containing only the
-     * Biography details
+     * GETs the RDF Turtle representation of the ORCID record containing only
+     * the Biography details
      * 
      * @param orcid
      *            the ORCID that corresponds to the user's record
@@ -178,8 +178,8 @@ public interface OrcidApiService<T> {
     T viewFullDetailsJson(@PathParam("orcid") String orcid);
 
     /**
-     * GETs the HTML representation of the ORCID record containing only affiliations
-     * details
+     * GETs the HTML representation of the ORCID record containing only
+     * affiliations details
      * 
      * @param orcid
      *            the ORCID that corresponds to the user's record
@@ -191,8 +191,8 @@ public interface OrcidApiService<T> {
     T viewAffiliationsDetailsHtml(@PathParam("orcid") String orcid);
 
     /**
-     * GETs the XML representation of the ORCID record containing only affiliations
-     * details
+     * GETs the XML representation of the ORCID record containing only
+     * affiliations details
      * 
      * @param orcid
      *            the ORCID that corresponds to the user's record
@@ -204,8 +204,8 @@ public interface OrcidApiService<T> {
     T viewAffiliationsDetailsXml(@PathParam("orcid") String orcid);
 
     /**
-     * GETs the JSON representation of the ORCID record containing only affiliations
-     * details
+     * GETs the JSON representation of the ORCID record containing only
+     * affiliations details
      * 
      * @param orcid
      *            the ORCID that corresponds to the user's record
@@ -216,8 +216,6 @@ public interface OrcidApiService<T> {
     @Path(AFFILIATIONS_PATH)
     T viewAffiliationsDetailsJson(@PathParam("orcid") String orcid);
 
-    
-    
     /**
      * GETs the HTML representation of the ORCID record containing only work
      * details
