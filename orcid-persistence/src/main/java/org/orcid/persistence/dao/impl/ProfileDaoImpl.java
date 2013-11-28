@@ -72,15 +72,16 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
         return findOrcidsByIndexingStatus(indexingStatus, maxResults, Collections.EMPTY_LIST);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public List<String> findOrcidsByIndexingStatus(IndexingStatus indexingStatus, int maxResults, Collection<String> orcidsToExclude) {
-        StringBuilder builder = new StringBuilder("select p.id from ProfileEntity p where p.indexingStatus = :indexingStatus");
+        StringBuilder builder = new StringBuilder("SELECT p.orcid FROM profile p WHERE p.indexing_status = :indexingStatus");
         if (!orcidsToExclude.isEmpty()) {
-            builder.append(" and p.id not in :orcidsToExclude");
+            builder.append(" AND p.orcid NOT IN :orcidsToExclude");
         }
-        builder.append(" order by p.lastModified");
-        TypedQuery<String> query = entityManager.createQuery(builder.toString(), String.class);
-        query.setParameter("indexingStatus", indexingStatus);
+        builder.append(" ORDER BY (p.last_modified > (NOW() - CAST('1' as INTERVAL HOUR))) DESC, p.last_modified");
+        Query query = entityManager.createNativeQuery(builder.toString());
+        query.setParameter("indexingStatus", indexingStatus.name());
         if (!orcidsToExclude.isEmpty()) {
             query.setParameter("orcidsToExclude", orcidsToExclude);
         }
