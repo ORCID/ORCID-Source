@@ -1617,6 +1617,7 @@ a:hover {
 	font-weight: bold;
 	margin: 10px 0 0 !important;
 	line-height: 1;
+	word-wrap:break-word;
 }
 
 .privacy-list,.workspace-body-list {
