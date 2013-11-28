@@ -16,6 +16,7 @@
  */
 package org.orcid.persistence.dao.impl;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -72,16 +73,25 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
         return findOrcidsByIndexingStatus(indexingStatus, maxResults, Collections.EMPTY_LIST);
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public List<String> findOrcidsByIndexingStatus(IndexingStatus indexingStatus, int maxResults, Collection<String> orcidsToExclude) {
-        StringBuilder builder = new StringBuilder("SELECT p.orcid FROM profile p WHERE p.indexing_status = :indexingStatus");
+        List<IndexingStatus> indexingStatuses = new ArrayList<>(1);
+        indexingStatuses.add(indexingStatus);
+        return findOrcidsByIndexingStatus(indexingStatuses, maxResults, orcidsToExclude);
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<String> findOrcidsByIndexingStatus(Collection<IndexingStatus> indexingStatuses, int maxResults, Collection<String> orcidsToExclude) {
+        StringBuilder builder = new StringBuilder("SELECT p.orcid FROM profile p WHERE p.indexing_status IN :indexingStatus");
         if (!orcidsToExclude.isEmpty()) {
             builder.append(" AND p.orcid NOT IN :orcidsToExclude");
         }
-        builder.append(" ORDER BY (p.last_modified > (NOW() - CAST('1' as INTERVAL HOUR))) DESC, p.last_modified");
+        // Ordering by indexing status will force re-indexing to be lower
+        // priority than normal indexing
+        builder.append(" ORDER BY (p.last_modified > (NOW() - CAST('1' as INTERVAL HOUR))) DESC, indexing_status, p.last_modified");
         Query query = entityManager.createNativeQuery(builder.toString());
-        query.setParameter("indexingStatus", indexingStatus.name());
+        query.setParameter("indexingStatus", IndexingStatus.getNames(indexingStatuses));
         if (!orcidsToExclude.isEmpty()) {
             query.setParameter("orcidsToExclude", orcidsToExclude);
         }
@@ -131,7 +141,7 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
                 + "where ev.email IS NULL "
                 +    "and e.is_verified = false "
                 +    "and e.date_created < (now() - CAST('" + daysUnverified + "' AS INTERVAL DAY)) "
-                +    " ORDER BY e.last_modified";	
+                +    " ORDER BY e.last_modified";
         //@formatter:on
         Query query = entityManager.createNativeQuery(queryStr);
         query.setParameter("evt", ev.name());
