@@ -21,11 +21,12 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import org.apache.commons.lang.StringUtils;
+import org.orcid.core.adapter.Jpa2JaxbAdapter;
 import org.orcid.core.manager.WorkManager;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
 import org.orcid.jaxb.model.message.OrcidType;
-import org.orcid.jaxb.model.message.SourceName;
 import org.orcid.jaxb.model.message.Visibility;
+import org.orcid.jaxb.model.message.WorkContributors;
 import org.orcid.persistence.dao.ProfileWorkDao;
 import org.orcid.persistence.dao.WorkDao;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -41,6 +42,9 @@ public class WorkManagerImpl implements WorkManager {
 
     @Resource
     private ProfileWorkDao profileWorkDao;
+    
+    @Resource
+    private Jpa2JaxbAdapter jpa2JaxbAdapter; 
     
     /**
      * Add a new work to the work table
@@ -74,7 +78,16 @@ public class WorkManagerImpl implements WorkManager {
     public WorkInfoEntity loadWorkInfo(String orcid, String workId) {
     	WorkInfoEntity workInfo = new WorkInfoEntity();
     	ProfileWorkEntity profileWork = profileWorkDao.getProfileWork(orcid, workId);
+    	//Set visibilty
+    	workInfo.setVisibility(profileWork.getVisibility());
+    	// Load work contributors info
+    	loadWorkContributors(profileWork, workInfo);
+    	// Load source info
     	loadWorkSourceInfo(profileWork.getSourceProfile(), workInfo);
+    	// Load work info
+    	loadWorkInfo(profileWork.getWork(), workInfo);
+    	// Load external identifier info
+    	loadWorkExternalIdentifiers(profileWork.getWork(), workInfo);
     	return workInfo;
     }
     
@@ -104,25 +117,45 @@ public class WorkManagerImpl implements WorkManager {
     /**
      * TODO
      * */
+    private void loadWorkContributors(ProfileWorkEntity profileWorkEntity, WorkInfoEntity workInfo) {
+    	WorkContributors workContributors = jpa2JaxbAdapter.getWorkContributors(profileWorkEntity); 
+    	workInfo.setWorkContributors(workContributors);    	
+    }
+    
+    /**
+     * TODO
+     * */
     private void loadWorkInfo(WorkEntity workEntity, WorkInfoEntity workInfo){
     	if(workEntity == null)
     		return;
-    	workInfo.setCitation();
-    	workInfo.setCitationType();
-    	workInfo.setContributorsJson();
-    	workInfo.setDescription();
-    	workInfo.setId();
-    	workInfo.setIso2Country();
-    	workInfo.setJournalTitle();
-    	workInfo.setLanguageCode();
-    	workInfo.setPublicationDay();
-    	workInfo.setPublicationMonth();
-    	workInfo.setPublicationYear();
-    	workInfo.setSubtitle();
-    	workInfo.setTitle();
-    	workInfo.setTranslatedTitle();
-    	workInfo.setTranslatedTitleLanguageCode();
-    	workInfo.setWorkType();
-    	workInfo.setWorkUrl();
+    	workInfo.setCitation(workEntity.getCitation());
+    	workInfo.setCitationType(workEntity.getCitationType());
+    	workInfo.setDescription(workEntity.getDescription());
+    	workInfo.setId(workEntity.getId());
+    	workInfo.setIso2Country(workEntity.getIso2Country());
+    	workInfo.setJournalTitle(workEntity.getJournalTitle());
+    	workInfo.setLanguageCode(workEntity.getLanguageCode());
+    	if(workEntity.getPublicationDate() != null) {
+    		if(workEntity.getPublicationDate().getDay() != null)
+    			workInfo.setPublicationDay(workEntity.getPublicationDate().getDay());
+    		if(workEntity.getPublicationDate().getMonth() != null)
+    			workInfo.setPublicationMonth(workEntity.getPublicationDate().getMonth());
+    		if(workEntity.getPublicationDate().getYear() != null)
+    			workInfo.setPublicationYear(workEntity.getPublicationDate().getYear());
+    	}
+    	workInfo.setSubtitle(workEntity.getSubtitle());
+    	workInfo.setTitle(workEntity.getTitle());
+    	workInfo.setTranslatedTitle(workEntity.getTranslatedTitle());
+    	workInfo.setTranslatedTitleLanguageCode(workEntity.getTranslatedTitleLanguageCode());
+    	workInfo.setWorkType(workEntity.getWorkType());
+    	workInfo.setWorkUrl(workEntity.getWorkUrl());
     }
+    
+    /**
+     * TODO
+     * */
+    private void loadWorkExternalIdentifiers(WorkEntity workEntity, WorkInfoEntity workInfo) {    	
+    	workInfo.setExternalIdentifiers(jpa2JaxbAdapter.getWorkExternalIdentifiers(workEntity));
+    }
+        
 }

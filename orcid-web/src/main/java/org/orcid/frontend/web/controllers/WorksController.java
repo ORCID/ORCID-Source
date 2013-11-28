@@ -59,6 +59,7 @@ import org.orcid.persistence.jpa.entities.PublicationDateEntity;
 import org.orcid.persistence.jpa.entities.WorkContributorEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.persistence.jpa.entities.custom.MinimizedWorkEntity;
+import org.orcid.persistence.jpa.entities.custom.WorkInfoEntity;
 import org.orcid.pojo.ajaxForm.Citation;
 import org.orcid.pojo.ajaxForm.Contributor;
 import org.orcid.pojo.ajaxForm.Date;
@@ -291,6 +292,46 @@ public class WorksController extends BaseWorkspaceController {
         return w;
     }
 
+    
+    /**
+     * Returns a blank work
+     * */
+    @RequestMapping(value = "/getWorkInfo.json", method = RequestMethod.GET)
+    public @ResponseBody
+    Work getWorkInfo(@RequestParam(value = "workId") String workId) {
+    	Map<String, String> countries = retrieveIsoCountries();
+        Map<String, String> languages = LanguagesMap.buildLanguageMap(localeManager.getLocale(), false);
+    	if(StringUtils.isEmpty(workId))
+    		return null;
+    	
+    	// Get current profile
+        OrcidProfile currentProfile = getEffectiveProfile();
+        // Get orcid
+        String orcid = currentProfile.getOrcid().getValue();
+    	
+    	WorkInfoEntity workInfo = workManager.loadWorkInfo(orcid, workId);
+    	
+    	Work work = Work.valueOf(workInfo);
+    	
+    	//Set country name
+        if(!PojoUtil.isEmpty(work.getCountryCode())) {            
+            Text countryName = Text.valueOf(countries.get(work.getCountryCode().getValue()));
+            work.setCountryName(countryName);
+        }
+        //Set language name
+        if(!PojoUtil.isEmpty(work.getLanguageCode())) {
+            Text languageName = Text.valueOf(languages.get(work.getLanguageCode().getValue()));
+            work.setLanguageName(languageName);
+        }
+        //Set translated title language name
+        if(!(work.getWorkTitle().getTranslatedTitle() == null) && !StringUtils.isEmpty(work.getWorkTitle().getTranslatedTitle().getLanguageCode())) {
+            String languageName = languages.get(work.getWorkTitle().getTranslatedTitle().getLanguageCode());
+            work.getWorkTitle().getTranslatedTitle().setLanguageName(languageName);
+        }
+    	
+    	return work;
+    }
+    
     /**
      * Returns a blank work
      * */

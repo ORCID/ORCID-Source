@@ -22,6 +22,7 @@ import java.util.List;
 
 import org.orcid.jaxb.model.message.WorkExternalIdentifierId;
 import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
+import org.orcid.persistence.jpa.entities.WorkExternalIdentifierEntity;
 
 public class WorkExternalIdentifier implements ErrorsInterface, Serializable {
     
@@ -43,7 +44,7 @@ public class WorkExternalIdentifier implements ErrorsInterface, Serializable {
         }
         return wi;
 
-    }
+    }    
     
     public org.orcid.jaxb.model.message.WorkExternalIdentifier toWorkExternalIdentifier() {
         org.orcid.jaxb.model.message.WorkExternalIdentifier we = new org.orcid.jaxb.model.message.WorkExternalIdentifier();

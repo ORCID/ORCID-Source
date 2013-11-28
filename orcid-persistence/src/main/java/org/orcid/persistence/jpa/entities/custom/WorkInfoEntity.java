@@ -4,6 +4,9 @@ import java.util.SortedSet;
 
 import org.orcid.jaxb.model.message.CitationType;
 import org.orcid.jaxb.model.message.Iso3166Country;
+import org.orcid.jaxb.model.message.Visibility;
+import org.orcid.jaxb.model.message.WorkContributors;
+import org.orcid.jaxb.model.message.WorkExternalIdentifiers;
 import org.orcid.jaxb.model.message.WorkType;
 import org.orcid.persistence.jpa.entities.WorkExternalIdentifierEntity;
 
@@ -22,12 +25,19 @@ public class WorkInfoEntity {
 	private String languageCode;
 	private String translatedTitleLanguageCode;
 	private String sourceName;
+	private Visibility visibility;
 	private Iso3166Country iso2Country;
 	private CitationType citationType;
 	private WorkType workType;
-	private String contributorsJson;
-	private SortedSet<WorkExternalIdentifierEntity> externalIdentifiers;
-	
+	private WorkContributors workContributors;
+	private WorkExternalIdentifiers externalIdentifiers;
+		
+	public Visibility getVisibility() {
+		return visibility;
+	}
+	public void setVisibility(Visibility visibility) {
+		this.visibility = visibility;
+	}
 	public String getSourceName() {
 		return sourceName;
 	}
@@ -130,17 +140,17 @@ public class WorkInfoEntity {
 	public void setWorkType(WorkType workType) {
 		this.workType = workType;
 	}
-	public String getContributorsJson() {
-		return contributorsJson;
+	public WorkContributors getWorkContributors() {
+		return workContributors;
 	}
-	public void setContributorsJson(String contributorsJson) {
-		this.contributorsJson = contributorsJson;
+	public void setWorkContributors(WorkContributors workContributors) {
+		this.workContributors = workContributors;
 	}
-	public SortedSet<WorkExternalIdentifierEntity> getExternalIdentifiers() {
+	public WorkExternalIdentifiers getExternalIdentifiers() {
 		return externalIdentifiers;
 	}
 	public void setExternalIdentifiers(
-			SortedSet<WorkExternalIdentifierEntity> externalIdentifiers) {
+			WorkExternalIdentifiers externalIdentifiers) {
 		this.externalIdentifiers = externalIdentifiers;
 	}		
 }

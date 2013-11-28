@@ -17,62 +17,65 @@
 
 -->
 <div class="more-info ie7-zi-fix-top">	
-	<a class="glyphicon glyphicon-plus-sign grey" ng-mouseover="loadWorkInfo(work.putCode.value); $event.stopPropagation()"></a>	
-	<div class="popover bottom more-info-container ">	
+	<a class="glyphicon glyphicon-plus-sign grey" ng-mouseover="loadWorkInfo(work.putCode.value, $event); $event.stopPropagation()"></a>	
+	<div class="popover bottom more-info-container">	
 		<div class="arrow"></div>	
-		<div class="lightbox-container">
+		<div class="lightbox-container">		
 			<div class="ie7fix">
+			<div class="col-md-1 col-sm-2 col-xs-2">
+            	<a class="btn pull-right close-button" ng-click="closePopover($event)">X</a>
+            </div>
 			<div class="row bottomBuffer"></div>
-			<div class="row bottomBuffer" ng-show="work.workTitle.title.value"
+			<div class="row bottomBuffer" ng-show="worksInfo[work.putCode.value].workTitle.title.value"
 				ng-cloak>
 				<div class="col-md-8">
 					<strong><@orcid.msg
 						'manual_work_form_contents.labeltitle'/></strong>
-					<div ng-bind="work.workTitle.title.value"></div>
+					<div ng-bind="worksInfo[work.putCode.value].workTitle.title.value"></div>
 				</div>
 			</div>
 			<div class="row bottomBuffer"
-				ng-show="work.workTitle.translatedTitle.content" ng-cloak>
+				ng-show="worksInfo[work.putCode.value].workTitle.translatedTitle.content" ng-cloak>
 				<div class="col-md-8">
 					<strong><@orcid.msg
 						'manual_work_form_contents.labeltranslatedtitle'/></strong>
-					<div ng-bind="renderTranslatedTitleInfo($index)"></div>
+					<div ng-bind="renderTranslatedTitleInfo(work.putCode.value)"></div>
 				</div>
 			</div>
-			<div class="row bottomBuffer" ng-show="work.workTitle.subtitle.value"
+			<div class="row bottomBuffer" ng-show="worksInfo[work.putCode.value].workTitle.subtitle.value"
 				ng-cloak>
 				<div class="col-md-8">
 					<strong> <@orcid.msg
 						'manual_work_form_contents.labelsubtitle'/> </strong>
-					<div ng-bind="work.workTitle.subtitle.value"></div>
+					<div ng-bind="worksInfo[work.putCode.value].workTitle.subtitle.value"></div>
 				</div>
 			</div>
-			<div class="row bottomBuffer" ng-show="work.journalTitle.value"
+			<div class="row bottomBuffer" ng-show="worksInfo[work.putCode.value].journalTitle.value"
 				ng-cloak>
 				<div class="col-md-8">
 					<strong> <@orcid.msg
 						'manual_work_form_contents.journalTitle'/> </strong>
-					<div ng-bind="work.journalTitle.value"></div>
+					<div ng-bind="worksInfo[work.putCode.value].journalTitle.value"></div>
 				</div>
 			</div>
-			<div class="row bottomBuffer" ng-show="work.workType.value" ng-cloak>
+			<div class="row bottomBuffer" ng-show="worksInfo[work.putCode.value].workType.value" ng-cloak>
 				<div class="col-md-8">
 					<strong> <@orcid.msg
 						'manual_work_form_contents.labelworktype'/> </strong>
-					<div ng-bind="work.workType.value"></div>
+					<div ng-bind="worksInfo[work.putCode.value].workType.value"></div>
 				</div>
 			</div>
-			<div class="row bottomBuffer" ng-show="work.citation.citation.value"
+			<div class="row bottomBuffer" ng-show="worksInfo[work.putCode.value].citation.citation.value"
 				ng-cloak>
 				<div class="col-md-8">
 					<strong><@orcid.msg 'manual_work_form_contents.labelcitation'/></strong>
-					<span ng-show="showBibtex && work.citation.citationType.value == 'bibtex'">
+					<span ng-show="showBibtex && worksInfo[work.putCode.value].citation.citationType.value == 'bibtex'">
 						<a ng-click="bibtexShowToggle()">Show in Bibtex</a>
 					</span>
-					<span ng-show="showBibtex == false && work.citation.citationType.value == 'bibtex'">
+					<span ng-show="showBibtex == false && worksInfo[work.putCode.value].citation.citationType.value == 'bibtex'">
 						<a ng-click="bibtexShowToggle()">Show in HTML</a>
 					</span>
-					<div ng-hide="showBibtex && work.citation.citationType.value == 'bibtex'" ng-bind="work.citation.citation.value" class="col-md-offset-1 col-md-11 col-sm-offset-1 col-sm-11 col-xs-12 citation-raw"></div>					
+					<div ng-hide="showBibtex && worksInfo[work.putCode.value].citation.citationType.value == 'bibtex'" ng-bind="worksInfo[work.putCode.value].citation.citation.value" class="col-md-offset-1 col-md-11 col-sm-offset-1 col-sm-11 col-xs-12 citation-raw"></div>					
 					<div class="row" ng-show="showBibtex" ng-repeat='bibJSON in bibtexCitations[work.putCode.value]'>						
 						<div class="col-md-offset-1 col-md-2 col-sm-offset-1 col-sm-1 col-xs-offset-1 col-xs-11">{{bibJSON.entryType}}</div>
 						<div class="col-md-8 col-sm-9 col-xs-offset-1 col-xs-11">{{bibJSON.citationKey}}</div>						
@@ -83,86 +86,101 @@
 					</div>
 				</div>
 			</div>
+			
+			
+			
+			
+			
 			<div class="row bottomBuffer"
-				ng-show="work.citation.citationType.value" ng-cloak>
+				ng-show="worksInfo[work.putCode.value].citation.citationType.value" ng-cloak>
 				<div class="col-md-8">
 					<strong> <@orcid.msg 'manual_work_form_contents.labelcitationtype'/> </strong>
-					<div ng-bind="work.citation.citationType.value"></div>
+					<div ng-bind="worksInfo[work.putCode.value].citation.citationType.value"></div>
 				</div>
 			</div>
-			<div class="row bottomBuffer" ng-show="work.publicationDate.year"
+			<div class="row bottomBuffer" ng-show="worksInfo[work.putCode.value].publicationDate.year"
 				ng-cloak>
 				<div class="col-md-8">
 					<strong> <@orcid.msg
 						'manual_work_form_contents.labelPubDate'/> </strong>
 					<div>
 						<span
-							ng-show="work.publicationDate.day && work.publicationDate.month">{{work.publicationDate.day}}-</span><span
-							ng-show="work.publicationDate.month">{{work.publicationDate.month}}-</span><span
-							ng-show="work.publicationDate.year">{{work.publicationDate.year}}</span>
+							ng-show="worksInfo[work.putCode.value].publicationDate.day && worksInfo[work.putCode.value].publicationDate.month">{{worksInfo[work.putCode.value].publicationDate.day}}-</span><span
+							ng-show="worksInfo[work.putCode.value].publicationDate.month">{{worksInfo[work.putCode.value].publicationDate.month}}-</span><span
+							ng-show="worksInfo[work.putCode.value].publicationDate.year">{{worksInfo[work.putCode.value].publicationDate.year}}</span>
 					</div>
 				</div>
 			</div>
-			<div class="row bottomBuffer" ng-show="work.shortDescription.value"
+			
+			
+			
+			
+			<div class="row bottomBuffer" ng-show="worksInfo[work.putCode.value].shortDescription.value"
 				ng-cloak>
 				<div class="col-md-8">
 					<strong> <@orcid.msg
 						'manual_work_form_contents.labeldescription'/> </strong>
-					<div ng-bind="work.shortDescription.value"
+					<div ng-bind="worksInfo[work.putCode.value].shortDescription.value"
 						style="white-space: pre-wrap;"></div>
 				</div>
 			</div>
 			<div class="row bottomBuffer"
-				ng-show="work.workExternalIdentifiers.length > 0" ng-cloak>
+				ng-show="worksInfo[work.putCode.value].workExternalIdentifiers.length > 0" ng-cloak>
 				<div class="col-md-8">
 					<strong> <@orcid.msg 'manual_work_form_contents.labelID'/>
 					</strong>
 					<div>
-						<span ng-repeat='ie in work.workExternalIdentifiers'> <span
+						<span ng-repeat='ie in worksInfo[work.putCode.value].workExternalIdentifiers'> <span
 							ng-bind-html='ie | workExternalIdentifierHtml:$first:$last:work.workExternalIdentifiers.length'></span>
 						</span>
 					</div>
 				</div>
 			</div>
-			<div class="row bottomBuffer" ng-show="work.url.value" ng-cloak>
+			
+			
+			
+			
+			
+			
+			<div class="row bottomBuffer" ng-show="worksInfo[work.putCode.value].url.value" ng-cloak>
 				<div class="col-md-8">
 					<strong> <@orcid.msg
 						'manual_work_form_contents.labelURL'/> </strong>
 					<div>
-						<a href="{{work.url.value | urlWithHttp}}" target="_blank">{{work.url.value}}</a>
+						<a href="{{worksInfo[work.putCode.value].url.value | urlWithHttp}}" target="_blank">{{worksInfo[work.putCode.value].url.value}}</a>
 					</div>
 				</div>
 			</div>
-			<div class="row bottomBuffer" ng-show="work.contributors.length > 0"
+			<div class="row bottomBuffer" ng-show="worksInfo[work.putCode.value].contributors.length > 0"
 				ng-cloak>
 				<div class="col-md-8">
 					<strong> Contributor </strong>
-					<div ng-repeat="contributor in work.contributors">
+					<div ng-repeat="contributor in worksInfo[work.putCode.value].contributors">
 						{{contributor.creditName.value}} <span
 							ng-bind='contributor | contributorFilter'></span>
 					</div>
 				</div>
 			</div>
-			<div class="row bottomBuffer" ng-show="work.languageCode.value"
+			<div class="row bottomBuffer" ng-show="worksInfo[work.putCode.value].languageCode.value"
 				ng-cloak>
 				<div class="col-md-8">
 					<strong><@orcid.msg
 						'manual_work_form_contents.labellanguage'/></strong>
-					<div ng-bind="work.languageName.value"></div>
+					<div ng-bind="worksInfo[work.putCode.value].languageName.value"></div>
 				</div>
 			</div>
-			<div class="row bottomBuffer" ng-show="work.countryCode.value" ng-cloak>
+			<div class="row bottomBuffer" ng-show="worksInfo[work.putCode.value].countryCode.value" ng-cloak>
 				<div class="col-md-8">
 					<strong><@orcid.msg
 						'manual_work_form_contents.labelcountry'/></strong>
-					<div ng-bind="work.countryName.value"></div>
+					<div ng-bind="worksInfo[work.putCode.value].countryName.value"></div>
 				</div>
 			</div>						
-			<div class="row bottomBuffer" ng-show="work.workSourceName.value" ng-cloak>
+			<div class="row bottomBuffer" ng-show="worksInfo[work.putCode.value].workSourceName.value" ng-cloak>
 				<div class="col-md-8">
 					<strong> <@orcid.msg
 						'manual_work_form_contents.labelWorkSource'/> </strong>
-					<div ng-bind="work.workSourceName.value"></div>
+					<div ng-bind="worksInfo[work.putCode.value].workSourceName.value"></div>
 				</div>
 			</div>
 			</div>
