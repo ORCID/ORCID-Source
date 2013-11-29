@@ -33,10 +33,10 @@
 
     <bean id="jsonpCallbackFilter" class="org.orcid.core.web.filters.JsonpCallbackFilter" />
     
-    <alias name="t1OrcidApiServiceDelegatorV1_0_23" alias="t1OrcidApiServiceDelegatorLatest"/>
+    <alias name="t1OrcidApiServiceDelegatorV1_1" alias="t1OrcidApiServiceDelegatorLatest"/>
     
-    <bean id="t1OrcidApiServiceImplLatest" class="org.orcid.api.t1.server.T1OrcidApiServiceImplLatest">
-        <property name="orcidApiServiceDelegator" ref="t1OrcidApiServiceDelegatorLatest"/>
+    <bean id="t1OrcidApiServiceImplRoot" class="org.orcid.api.t1.server.T1OrcidApiServiceImplRoot">
+        <property name="orcidApiServiceDelegator" ref="t1OrcidApiServiceDelegatorV1_0_23"/>
     </bean>
     
     <bean id="t1OrcidApiServiceImplV1_0_14" class="org.orcid.api.t1.server.T1OrcidApiServiceImplV1_0_14">

@@ -14,7 +14,7 @@
  *
  * =============================================================================
  */
-package org.orcid.api.t1.server;
+package org.orcid.api.t2.server;
 
 import javax.ws.rs.Path;
 
@@ -24,6 +24,6 @@ import javax.ws.rs.Path;
  * 
  */
 @Path("/")
-public class T1OrcidApiServiceImplLatest extends T1OrcidApiServiceImplBase {
+public class T2OrcidApiServiceImplRoot extends T2OrcidApiServiceImplBase {
 
 }
