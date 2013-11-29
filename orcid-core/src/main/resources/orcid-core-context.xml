@@ -359,6 +359,7 @@
                 <bean class="org.orcid.core.version.impl.OrcidMessageVersionConverterImplV1_0_21ToV1_0_22"/>
                 <bean class="org.orcid.core.version.impl.OrcidMessageVersionConverterImplV1_0_22ToV1_0_23"/>
                 <bean class="org.orcid.core.version.impl.OrcidMessageVersionConverterImplV1_0_23ToV1_1"/>
+                <bean class="org.orcid.core.version.impl.OrcidMessageVersionConverterImplV1_1ToV1_2_rc1"/>
 	        </list>
 	    </property>
 	    <property name="supportOldWorkTypes" value="true" />
