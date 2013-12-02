@@ -1142,7 +1142,11 @@
 		</xs:annotation>
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element ref="orcid:title" />
+				<xs:element name="title" type="orcid:non-empty-string">
+                    <xs:annotation>
+            			<xs:documentation>The main title of the work.</xs:documentation>
+        			</xs:annotation>
+                </xs:element>
 				<xs:element ref="orcid:subtitle" minOccurs="0" />
 				<xs:element ref="orcid:translated-title" minOccurs="0" />
 			</xs:sequence>
@@ -1164,18 +1168,6 @@
 		<xs:simpleType>
 			<xs:restriction base="xs:string" />
 		</xs:simpleType>
-	</xs:element>
-	<xs:element name="title">
-		<xs:annotation>
-			<xs:documentation>The main title of the work.</xs:documentation>
-		</xs:annotation>
-		<xs:complexType>
-			<xs:simpleContent>
-				<xs:extension base="orcid:non-empty-string">
-					<xs:attributeGroup ref="orcid:visibility" />
-				</xs:extension>
-			</xs:simpleContent>
-		</xs:complexType>
 	</xs:element>
 	<xs:element name="subtitle">
 		<xs:annotation>
