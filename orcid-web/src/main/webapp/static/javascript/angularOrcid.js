@@ -271,7 +271,7 @@ function fixZindexIE7(target, zindex){
 	$(target).each(function(){
 		$(this).css('z-index', zindex);		
 		--zindex;    			    		
-	});
+	});	
 }
 
 function emptyTextField(field) {
@@ -1590,7 +1590,11 @@ function PublicWorkCtrl($scope, $compile, worksSrvc) {
 							$scope.works.push(dw);
 						}
 					});
-					setTimeout(function () {$scope.addWorkToScope();},50);
+					setTimeout(function(){
+						$scope.addWorkToScope();
+						fixZindexIE7('.workspace-public workspace-body-list li',99999);
+						fixZindexIE7('.workspace-toolbar',9999);
+					},50);
 				}
 			}).fail(function() { 
 				$scope.$apply(function() {
