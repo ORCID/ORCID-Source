@@ -1367,8 +1367,11 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
 
         List<String> orcidsForIndexing = new ArrayList<>();
         List<String> orcidFailures = new ArrayList<>();
+        List<IndexingStatus> indexingStatuses = new ArrayList<IndexingStatus>(2);
+        indexingStatuses.add(IndexingStatus.PENDING);
+        indexingStatuses.add(IndexingStatus.REINDEX);
         do {
-            orcidsForIndexing = profileDao.findOrcidsByIndexingStatus(IndexingStatus.PENDING, INDEXING_BATCH_SIZE, orcidFailures);
+            orcidsForIndexing = profileDao.findOrcidsByIndexingStatus(indexingStatuses, INDEXING_BATCH_SIZE, orcidFailures);
             LOG.info("Got batch of {} profiles for indexing", orcidsForIndexing.size());
             for (final String orcid : orcidsForIndexing) {
                 FutureTask<String> task = new FutureTask<String>(new GetPendingOrcid(orcid));

@@ -38,6 +38,8 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
     List<String> findOrcidsByIndexingStatus(IndexingStatus indexingStatus, int maxResults);
 
     List<String> findOrcidsByIndexingStatus(IndexingStatus indexingStatus, int maxResults, Collection<String> orcidsToExclude);
+    
+    List<String> findOrcidsByIndexingStatus(Collection<IndexingStatus> indexingStatuses, int maxResults, Collection<String> orcidsToExclude);
 
     List<String> findUnclaimedNotIndexedAfterWaitPeriod(int waitPeriodDays, int maxResults, Collection<String> orcidsToExclude);
 
@@ -91,4 +93,5 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
     void updateSecurityQuestion(String orcid, Integer securityQuestionId, String encryptedSecurityAnswer);
     
     List<ProfileEntity> findProfilesByOrcidType(OrcidType type);
+
 }
