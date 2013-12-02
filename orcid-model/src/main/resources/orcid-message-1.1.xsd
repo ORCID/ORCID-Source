@@ -1169,7 +1169,13 @@
 		<xs:annotation>
 			<xs:documentation>The main title of the work.</xs:documentation>
 		</xs:annotation>
-		<xs:complexType mixed="true" />
+		<xs:complexType>
+			<xs:simpleContent>
+				<xs:extension base="orcid:non-empty-string">
+					<xs:attributeGroup ref="orcid:visibility" />
+				</xs:extension>
+			</xs:simpleContent>
+		</xs:complexType>
 	</xs:element>
 	<xs:element name="subtitle">
 		<xs:annotation>
