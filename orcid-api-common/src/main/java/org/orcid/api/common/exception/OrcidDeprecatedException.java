@@ -21,11 +21,11 @@ import com.sun.jersey.api.client.ClientResponse.Status;
 /**
  * 
  * @author Angel Montenegro
- *
+ * 
  */
 public class OrcidDeprecatedException extends OrcidApiException {
     private static final long serialVersionUID = 1L;
-	
+
     public OrcidDeprecatedException(String msg) {
         super(msg, Status.MOVED_PERMANENTLY.getStatusCode());
     }
