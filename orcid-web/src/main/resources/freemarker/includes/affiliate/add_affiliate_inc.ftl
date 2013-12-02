@@ -44,19 +44,20 @@
 
 		<div class="row">
 			<div class="col-md-6 col-sm-6 col-xs-12">
-				<div class="control-group" ng-show="editAffiliation.disambiguatedAffiliationSourceId">					
-					<span id="remove-disambiguated">
-						<a ng-click="removeDisambiguatedAffiliation()" class="gray">
-							<span class="glyphicon glyphicon-remove-sign"></span><@orcid.msg 'common.remove'/>
-						</a>
-					</span>					
+				<div class="control-group" ng-show="editAffiliation.disambiguatedAffiliationSourceId">
 					<span ng-show="addAffType == 'education'">
 					   <label><@orcid.msg 'manual_affiliation_form_contents.labelinstitution'/></label>
 					</span>
 					<span ng-show="addAffType == 'employment'">
 					   <label><@orcid.msg 'manual_affiliation_form_contents.labelinstitutionemployer'/></label>
 				    </span>
-				    <div class="relative"  style="font-weight: strong;">
+					<span id="remove-disambiguated" class="pull-right">
+						<a ng-click="removeDisambiguatedAffiliation()">
+							<span class="glyphicon glyphicon-remove-sign"></span><@orcid.msg 'common.remove'/>
+						</a>
+					</span>
+
+				    <div class="relative" style="font-weight: strong;">
 						<span ng-bind="disambiguatedAffiliation.value"></span> <br />
 						<div>
 						    <span ng-bind="disambiguatedAffiliation.city"></span><span ng-show="disambiguatedAffiliation.region"> (<span ng-bind="disambiguatedAffiliation.region"></span>)</span>, <span ng-bind="disambiguatedAffiliation.orgType"></span>
