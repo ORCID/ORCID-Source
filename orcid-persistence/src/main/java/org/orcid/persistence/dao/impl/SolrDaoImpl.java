@@ -76,7 +76,7 @@ public class SolrDaoImpl implements SolrDao {
     public OrcidSolrResult findByOrcid(String orcid) {
         OrcidSolrResult orcidSolrResult = null;
         SolrQuery query = new SolrQuery();
-        query.setQuery(ORCID + ":" + orcid).setFields(SCORE, ORCID, PUBLIC_PROFILE);
+        query.setQuery(ORCID + ":\"" + orcid + "\"").setFields(SCORE, ORCID, PUBLIC_PROFILE);
         ;
         try {
             QueryResponse queryResponse = solrServerReadOnly.query(query);
