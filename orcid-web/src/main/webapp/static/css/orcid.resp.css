@@ -2455,7 +2455,7 @@ header overrides
 }
 
 .input-xlarge {
-	width: 340px;
+	width: 330px;
 }
 
 .relative {
@@ -2805,6 +2805,7 @@ ul.personal-inf-display li{
   overflow-y: auto;
 }
 
+
 .small-row {	
 	display: inline-block;
 	float: left;
@@ -2935,6 +2936,16 @@ ul.personal-inf-display li{
 	vertical-align: -43px;
 }
 
+#edit-affiliation #remove-disambiguated{
+	display: block;
+	width: 100%;
+	text-align: right;
+}
+
+#edit-affiliation #remove-disambiguated a span{
+	vertical-align:-2px;
+	margin-right: 5px;
+}
 
 
 /* Media Queries */
@@ -3666,7 +3677,15 @@ ul.personal-inf-display li{
 	#edit-affiliation .popover.bottom .arrow{
 		 left: 44%;
 		 top: -11px;
+	}
+	
+	#edit-affiliation input#affiliationName{
+		width: 95%;
 	}	
+	
+	#edit-affiliation .twitter-typeahead{
+		width: 95%;
+	}
 	
 	
 }
