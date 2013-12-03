@@ -259,7 +259,7 @@ public class OrcidMessageVersionConverterChainImpl implements OrcidMessageVersio
         case THESIS:
             return WorkType.SUPERVISED_STUDENT_PUBLICATION;
         case WEBSITE:
-            return WorkType.WEBSITE;
+            return WorkType.WEB_SITE;
         case UNDEFINED:
             return WorkType.OTHER;
         default:
@@ -354,7 +354,7 @@ public class OrcidMessageVersionConverterChainImpl implements OrcidMessageVersio
         case TRANSLATION:
             return WorkType.UNDEFINED;        
         case WEBSITE:
-            return WorkType.WEBSITE;
+            return WorkType.WEB_SITE;
         case WORKING_PAPER:
             return WorkType.REPORTS_WORKING_PAPERS;
         case UNDEFINED:
