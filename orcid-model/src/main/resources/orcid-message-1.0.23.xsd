@@ -1111,7 +1111,11 @@
         </xs:annotation>
         <xs:complexType>
             <xs:sequence>
-                <xs:element ref="orcid:title"/>
+                <xs:element name="title" type="orcid:non-empty-string">
+                    <xs:annotation>
+            			<xs:documentation>The main title of the work.</xs:documentation>
+        			</xs:annotation>
+                </xs:element>
                 <xs:element ref="orcid:subtitle" minOccurs="0"/>
                 <xs:element ref="orcid:translated-title" minOccurs="0"/>
             </xs:sequence>
@@ -1132,12 +1136,6 @@
             <xs:restriction base="xs:string"/>
         </xs:simpleType>
     </xs:element>    
-    <xs:element name="title">
-        <xs:annotation>
-            <xs:documentation>The main title of the work.</xs:documentation>
-        </xs:annotation>
-        <xs:complexType mixed="true"/>
-    </xs:element>
     <xs:element name="subtitle">
         <xs:annotation>
             <xs:documentation>The book title if the work is a chapter, or the journal title if the
