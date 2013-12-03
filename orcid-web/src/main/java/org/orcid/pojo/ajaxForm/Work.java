@@ -22,6 +22,7 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.orcid.jaxb.model.message.Country;
+import org.orcid.jaxb.model.message.FuzzyDate;
 import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.jaxb.model.message.OrcidWork;
 import org.orcid.jaxb.model.message.PublicationDate;
@@ -31,8 +32,8 @@ import org.orcid.jaxb.model.message.WorkContributors;
 import org.orcid.jaxb.model.message.WorkExternalIdentifiers;
 import org.orcid.jaxb.model.message.WorkSource;
 import org.orcid.jaxb.model.message.WorkType;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.orcid.persistence.jpa.entities.custom.MinimizedWorkEntity;
+import org.orcid.persistence.jpa.entities.custom.WorkInfoEntity;
 
 public class Work implements ErrorsInterface, Serializable {
 
@@ -72,14 +73,100 @@ public class Work implements ErrorsInterface, Serializable {
 
     private WorkTitle workTitle;
 
-    private static Logger LOGGER = LoggerFactory.getLogger(Work.class);
-
     private Text workCategory;
 
     private Text workType;
 
     protected String citationForDisplay;
 
+    public static Work valueOf(MinimizedWorkEntity minimizedWorkEntity) {
+    	Work w = new Work();
+    	//Set id
+        w.setPutCode(Text.valueOf(String.valueOf(minimizedWorkEntity.getId())));
+    	//Set publication date
+        w.setPublicationDate(Date.valueOf(new FuzzyDate(minimizedWorkEntity.getPublicationYear(), minimizedWorkEntity.getPublicationMonth(), minimizedWorkEntity.getPublicationDay())));
+        //Set title and subtitle
+        if(!StringUtils.isEmpty(minimizedWorkEntity.getTitle())) {
+        	Text title = Text.valueOf(minimizedWorkEntity.getTitle());
+        	Text subtitle = Text.valueOf(minimizedWorkEntity.getSubtitle());
+        	WorkTitle workTitle = new WorkTitle();
+        	workTitle.setTitle(title);
+        	workTitle.setSubtitle(subtitle);
+        	w.setWorkTitle(workTitle);
+        }
+        //Set description
+        if(!StringUtils.isEmpty(minimizedWorkEntity.getDescription())){
+        	w.setShortDescription(Text.valueOf(minimizedWorkEntity.getDescription()));
+        }
+        //Set visibility
+        w.setVisibility(Visibility.valueOf(minimizedWorkEntity.getVisibility()));	
+        
+        return w;	
+    }
+    
+    public static Work valueOf(WorkInfoEntity workInfo) {
+    	Work w = new Work();
+    	// Set put code
+    	w.setPutCode(Text.valueOf(String.valueOf(workInfo.getId())));
+    	// Set publication date
+        w.setPublicationDate(Date.valueOf(new FuzzyDate(workInfo.getPublicationYear(), workInfo.getPublicationMonth(), workInfo.getPublicationDay())));
+        // Set short description
+        w.setShortDescription(Text.valueOf(workInfo.getDescription()));
+        // Set URL
+        w.setUrl(Text.valueOf(workInfo.getWorkUrl()));
+        // Set visibility
+        w.setVisibility(Visibility.valueOf(workInfo.getVisibility()));
+        // Set citation
+        Citation citation = new Citation();
+        if(StringUtils.isNotEmpty(workInfo.getCitation()))
+        	citation.setCitation(Text.valueOf(workInfo.getCitation()));
+        if(workInfo.getCitationType() != null)
+        	citation.setCitationType(Text.valueOf(workInfo.getCitationType().value()));
+        w.setCitation(citation);
+        // Set work contributors
+        if (workInfo.getWorkContributors() != null && workInfo.getWorkContributors().getContributor() != null) {
+            List<Contributor> contributors = new ArrayList<Contributor>();
+            for (org.orcid.jaxb.model.message.Contributor owContributor : workInfo.getWorkContributors().getContributor()) {
+                contributors.add(Contributor.valueOf(owContributor));
+            }
+            w.setContributors(contributors);
+        }                
+        // Set external identifiers
+        if (workInfo.getExternalIdentifiers() != null && workInfo.getExternalIdentifiers().getWorkExternalIdentifier() != null) {
+            List<WorkExternalIdentifier> workExternalIdentifiers = new ArrayList<WorkExternalIdentifier>();
+            for (org.orcid.jaxb.model.message.WorkExternalIdentifier owWorkExternalIdentifier : workInfo.getExternalIdentifiers().getWorkExternalIdentifier()) {
+                workExternalIdentifiers.add(WorkExternalIdentifier.valueOf(owWorkExternalIdentifier));
+            }
+            w.setWorkExternalIdentifiers(workExternalIdentifiers);
+        }
+        // Set source name
+        if (StringUtils.isNotEmpty(workInfo.getSourceName())) {
+            w.setWorkSourceName(Text.valueOf(workInfo.getSourceName()));
+        }
+        // Set title
+        WorkTitle workTitle = new WorkTitle();
+        workTitle.setTitle(Text.valueOf(workInfo.getTitle()));
+        workTitle.setSubtitle(Text.valueOf(workInfo.getSubtitle()));
+        TranslatedTitle translatedTitle = new TranslatedTitle();
+        translatedTitle.setContent(workInfo.getTranslatedTitle());
+        translatedTitle.setLanguageCode(workInfo.getTranslatedTitleLanguageCode());
+        workTitle.setTranslatedTitle(translatedTitle);
+        w.setWorkTitle(workTitle);
+        // Set type 
+        if (workInfo.getWorkType() != null)
+            w.setWorkType(Text.valueOf(workInfo.getWorkType().value()));
+        // Set journal title
+        if (StringUtils.isNotEmpty(workInfo.getJournalTitle()))
+            w.setJournalTitle(Text.valueOf(workInfo.getJournalTitle()));
+        // Set language code
+        if (StringUtils.isNotEmpty(workInfo.getLanguageCode()))
+            w.setLanguageCode(Text.valueOf(workInfo.getLanguageCode()));
+        // Set country code
+        if (workInfo.getIso2Country() != null)
+            w.setCountryCode(Text.valueOf(workInfo.getIso2Country().value()));
+    	return w;
+    }
+    
     public static Work valueOf(OrcidWork orcidWork) {
         Work w = new Work();
         if (orcidWork.getPublicationDate() != null)

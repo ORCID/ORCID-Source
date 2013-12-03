@@ -868,7 +868,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         return new SourceDate(toXMLGregorianCalendar(depositedDate));
     }
 
-    private WorkExternalIdentifiers getWorkExternalIdentifiers(WorkEntity work) {
+    public WorkExternalIdentifiers getWorkExternalIdentifiers(WorkEntity work) {
         if (work == null || work.getExternalIdentifiers() == null || work.getExternalIdentifiers().isEmpty()) {
             return null;
         }
@@ -895,49 +895,39 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         return workExternalIdentifier;
     }
 
-    private WorkContributors getWorkContributors(ProfileWorkEntity profileWorkEntity) {
+    public WorkContributors getWorkContributors(ProfileWorkEntity profileWorkEntity) {
         WorkEntity work = profileWorkEntity.getWork();
         if (work == null) {
             return null;
         }
         // New way of doing work contributors
         String jsonString = work.getContributorsJson();
-        if (jsonString != null) {
-            WorkContributors workContributors = JsonUtils.readObjectFromJsonString(jsonString, WorkContributors.class);
-            for (Contributor contributor : workContributors.getContributor()) {
-                // Make sure contributor credit name has the same visibility as
-                // the work
-                CreditName creditName = contributor.getCreditName();
-                if (creditName != null) {
-                    creditName.setVisibility(profileWorkEntity.getVisibility());
-                }
-                // Strip out any contributor emails
-                contributor.setContributorEmail(null);
-                // Make sure orcid-id in new format
-                ContributorOrcid contributorOrcid = contributor.getContributorOrcid();
-                if (contributorOrcid != null) {
-                    String uri = contributorOrcid.getUri();
-                    if (uri == null) {
-                        String orcid = contributorOrcid.getValueAsString();
-                        if(orcid == null){
-                            orcid = contributorOrcid.getPath();
-                        }
-                        contributor.setContributorOrcid(new ContributorOrcid(getOrcidIdBase(orcid)));
-                    }
-                }
+        if (jsonString == null) {
+        	return null;
+        }
+        
+        WorkContributors workContributors = JsonUtils.readObjectFromJsonString(jsonString, WorkContributors.class);
+        
+        for (Contributor contributor : workContributors.getContributor()) {
+            // Make sure contributor credit name has the same visibility as
+            // the work
+            CreditName creditName = contributor.getCreditName();
+            if (creditName != null) {
+                creditName.setVisibility(profileWorkEntity.getVisibility());
             }
-            return workContributors;
-        }
-        // Old way of doing contributors
-        if (work.getContributors() == null || work.getContributors().isEmpty()) {
-            return null;
-        }
-        Set<WorkContributorEntity> contributorEntities = work.getContributors();
-        WorkContributors workContributors = new WorkContributors();
-        for (WorkContributorEntity contributorEntity : contributorEntities) {
-            Contributor workContributor = getWorkContributor(contributorEntity, profileWorkEntity.getVisibility());
-            if (workContributor != null) {
-                workContributors.getContributor().add(workContributor);
+            // Strip out any contributor emails
+            contributor.setContributorEmail(null);
+            // Make sure orcid-id in new format
+            ContributorOrcid contributorOrcid = contributor.getContributorOrcid();
+            if (contributorOrcid != null) {
+                String uri = contributorOrcid.getUri();
+                if (uri == null) {
+                    String orcid = contributorOrcid.getValueAsString();
+                    if(orcid == null){
+                        orcid = contributorOrcid.getPath();
+                    }
+                    contributor.setContributorOrcid(new ContributorOrcid(getOrcidIdBase(orcid)));
+                }
             }
         }
         return workContributors;

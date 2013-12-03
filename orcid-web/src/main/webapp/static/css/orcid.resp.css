@@ -2827,10 +2827,6 @@ ul.personal-inf-display li{
 	height: 350px;
 }
 
-.more-info:hover .more-info-container {
-	display: inline;
-}
-
 .more-info .popover.bottom .arrow{
 	left: 484px !important;
 }
