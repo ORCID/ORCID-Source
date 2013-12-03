@@ -25,7 +25,10 @@
 		    <#include "/common/browser-checks.ftl" />
 		    <#if (RequestParameters['alreadyClaimed'])??>
 		        <div class="alert col-md-offset-3 col-md-9 col-sm-12 col-xs-12"><@spring.message "orcid.frontend.security.already_claimed"/></div>
-		    </#if>            
+		    </#if>   
+		    <#if (RequestParameters['invalidClaimUrl'])??>
+		        <div class="alert col-md-offset-3 col-md-9 col-sm-12 col-xs-12"><@spring.message "orcid.frontend.security.invalid_claim_url"/></div>
+		    </#if>          
 		    <div class="control-group col-md-offset-3 col-md-9 col-sm-9 col-sm-offset-3 col-xs-12">
 		        <label for="userId" class="control-label">${springMacroRequestContext.getMessage("login.username")}</label>
 		        <div>
