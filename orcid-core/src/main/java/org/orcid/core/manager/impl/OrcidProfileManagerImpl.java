@@ -250,9 +250,10 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
             orcidProfile.setOrcidIdentifier(orcidGenerationManager.createNewOrcid());
         }
 
-        // Add source to works
+        // Add source to works and affiliations
         String amenderOrcid = sourceManager.retrieveSourceOrcid();
         addSourceToWorks(orcidProfile, amenderOrcid);
+        addSourceToAffiliations(orcidProfile, amenderOrcid);
 
         ProfileEntity profileEntity = adapter.toProfileEntity(orcidProfile);
         encryptAndMapFieldsForProfileEntityPersistence(orcidProfile, profileEntity);
@@ -1366,8 +1367,11 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
 
         List<String> orcidsForIndexing = new ArrayList<>();
         List<String> orcidFailures = new ArrayList<>();
+        List<IndexingStatus> indexingStatuses = new ArrayList<IndexingStatus>(2);
+        indexingStatuses.add(IndexingStatus.PENDING);
+        indexingStatuses.add(IndexingStatus.REINDEX);
         do {
-            orcidsForIndexing = profileDao.findOrcidsByIndexingStatus(IndexingStatus.PENDING, INDEXING_BATCH_SIZE, orcidFailures);
+            orcidsForIndexing = profileDao.findOrcidsByIndexingStatus(indexingStatuses, INDEXING_BATCH_SIZE, orcidFailures);
             LOG.info("Got batch of {} profiles for indexing", orcidsForIndexing.size());
             for (final String orcid : orcidsForIndexing) {
                 FutureTask<String> task = new FutureTask<String>(new GetPendingOrcid(orcid));
@@ -1424,7 +1428,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
                 new LinkedBlockingQueue<Runnable>(INDEXING_BATCH_SIZE), Executors.defaultThreadFactory(), new ThreadPoolExecutor.CallerRunsPolicy());
     }
 
-    private void processProfilePendingIndexingInTransaction(final String orcid) {
+    public void processProfilePendingIndexingInTransaction(final String orcid) {
         transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
             protected void doInTransactionWithoutResult(TransactionStatus status) {

@@ -253,6 +253,10 @@ orcidNgModule.filter('urlWithHttp', function(){
 	};
 });
 
+function safeApply(scope, fn) {
+    (scope.$$phase || scope.$root.$$phase) ? fn() : scope.$apply(fn);
+}
+
 function formColorBoxWidth() {
 	return isMobile()? '100%': '800px';
 }
@@ -271,7 +275,7 @@ function fixZindexIE7(target, zindex){
 	$(target).each(function(){
 		$(this).css('z-index', zindex);		
 		--zindex;    			    		
-	});
+	});	
 }
 
 function emptyTextField(field) {
@@ -808,8 +812,6 @@ function ExternalIdentifierCtrl($scope, $compile){
 	
 	$scope.removeExternalIdentifier = function() {
 		var externalIdentifier = $scope.externalIdentifiersPojo.externalIdentifiers[$scope.removeExternalIdentifierIndex];
-		$scope.externalIdentifiersPojo.externalIdentifiers.splice($scope.removeExternalIdentifierIndex, 1);
-		$scope.removeExternalIdentifierIndex = null;
 		$.ajax({
 	        url: $('body').data('baseurl') + 'my-orcid/externalIdentifiers.json',
 	        type: 'DELETE',
@@ -819,7 +821,11 @@ function ExternalIdentifierCtrl($scope, $compile){
 	        success: function(data) {	        	
 	        	if(data.errors.length != 0){
 	        		console.log("Unable to delete external identifier.");
-	        	} 
+	        	} else {
+	    	    	$scope.externalIdentifiersPojo.externalIdentifiers.splice($scope.removeExternalIdentifierIndex, 1);
+	    		    $scope.removeExternalIdentifierIndex = null;
+	    		    $scope.$apply();
+	        	}
 	        }
 	    }).fail(function() { 
 	    	console.log("Error deleting external identifier.");
@@ -1590,7 +1596,11 @@ function PublicWorkCtrl($scope, $compile, worksSrvc) {
 							$scope.works.push(dw);
 						}
 					});
-					setTimeout(function () {$scope.addWorkToScope();},50);
+					setTimeout(function(){
+						$scope.addWorkToScope();
+						fixZindexIE7('.workspace-public workspace-body-list li',99999);
+						fixZindexIE7('.workspace-toolbar',9999);
+					},50);
 				}
 			}).fail(function() { 
 				$scope.$apply(function() {
@@ -1627,6 +1637,7 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 	$scope.bibtexCitations = {};
 	$scope.editTranslatedTitle = false;
 	$scope.types = null;
+	$scope.worksInfo = {};
 	
 	$scope.addExternalIdentifier = function () {
 		$scope.editWork.workExternalIdentifiers.push({workExternalIdentifierId: { value: ""}, workExternalIdentifierType: {value: ""} });
@@ -1656,8 +1667,6 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
     	$scope.showBibtex = !($scope.showBibtex);
     };
     
-    //setTimeout(function() {$scope.showDetailModal(0); $scope.$apply();}, 1000);
-
 	$scope.showWorkImportWizard =  function() {
 		$.colorbox({        	            
             html : $compile($('#import-wizard-modal').html())($scope),
@@ -1783,11 +1792,11 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 	};
 		
 	
-	$scope.renderTranslatedTitleInfo = function(workIdx) {		
+	$scope.renderTranslatedTitleInfo = function(putCode) {		
 		var info = null; 
 		
-		if($scope.works[workIdx].workTitle != null && $scope.works[workIdx].workTitle.translatedTitle != null) {
-			info = $scope.works[workIdx].workTitle.translatedTitle.content + ' - ' + $scope.works[workIdx].workTitle.translatedTitle.languageName;										
+		if(putCode != null && $scope.worksInfo[putCode] != null && $scope.worksInfo[putCode].workTitle != null && $scope.worksInfo[putCode].workTitle.translatedTitle != null) {
+			info = $scope.worksInfo[putCode].workTitle.translatedTitle.content + ' - ' + $scope.worksInfo[putCode].workTitle.translatedTitle.languageName;										
 		}		
 		
 		return info;
@@ -1795,6 +1804,35 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 		
 	//init
 	$scope.getWorks();	
+	
+	$scope.loadWorkInfo = function(putCode, event) {
+		if($scope.worksInfo[putCode] == null) {		
+			$.ajax({
+				url: $('body').data('baseurl') + 'works/getWorkInfo.json?workId=' + putCode,	        
+		        dataType: 'json',
+		        success: function(data) {
+		        	
+		        	safeApply($scope, function () {
+		        		removeBadContributors(data);
+						addBibtexCitation($scope,data);
+						$scope.worksInfo[putCode] = data;
+						$(event.target).next().css('display','inline');		        		
+		        	});		        	
+		        }
+			}).fail(function(){
+				// something bad is happening!
+		    	console.log("error fetching works");
+			});
+		} else {
+			safeApply($scope, function () {
+				$(event.target).next().css('display','inline');
+			});			
+		}
+	};			
+	
+	$scope.closePopover = function(event) {
+		$('.more-info-container').css('display', 'none');
+	};
 	
 	$scope.deleteWork = function(putCode) {
 		$scope.deletePutCode = putCode;

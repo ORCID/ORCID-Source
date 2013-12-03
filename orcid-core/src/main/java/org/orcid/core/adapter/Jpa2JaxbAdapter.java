@@ -21,8 +21,11 @@ import org.orcid.jaxb.model.clientgroup.OrcidClient;
 import org.orcid.jaxb.model.clientgroup.OrcidClientGroup;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidWork;
+import org.orcid.jaxb.model.message.WorkContributors;
+import org.orcid.jaxb.model.message.WorkExternalIdentifiers;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileWorkEntity;
+import org.orcid.persistence.jpa.entities.WorkEntity;
 
 /**
  * orcid-persistence - Dec 7, 2011 - Jaxb2JpaAdapter
@@ -41,5 +44,9 @@ public interface Jpa2JaxbAdapter {
     OrcidClient toOrcidClient(ProfileEntity profileEntity);
     
     OrcidWork getOrcidWork(ProfileWorkEntity profileWorkEntity);
+    
+    WorkContributors getWorkContributors(ProfileWorkEntity profileWorkEntity);
+    
+    WorkExternalIdentifiers getWorkExternalIdentifiers(WorkEntity work);
 
 }

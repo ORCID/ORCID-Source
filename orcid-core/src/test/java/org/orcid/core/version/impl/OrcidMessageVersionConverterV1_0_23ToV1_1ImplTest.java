@@ -31,16 +31,16 @@ import org.orcid.jaxb.model.message.OrcidMessage;
  * @author Will Simpson
  * 
  */
-public class OrcidMessageVersionConverterV1_0_23ToV1_1_0ImplTest {
+public class OrcidMessageVersionConverterV1_0_23ToV1_1ImplTest {
 
     @Test
     public void testUpgradeMessage() {
         Reader reader = new InputStreamReader(getClass().getResourceAsStream("/org/orcid/core/version/orcid-public-full-message-v1.0.23.xml"));
         OrcidMessage oldMessage = OrcidMessage.unmarshall(reader);
-        OrcidMessageVersionConverter converter = new OrcidMessageVersionConverterImplV1_0_23ToV1_1_0();
+        OrcidMessageVersionConverter converter = new OrcidMessageVersionConverterImplV1_0_23ToV1_1();
         OrcidMessage newMessage = converter.upgradeMessage(oldMessage);
         assertNotNull(newMessage);
-        assertEquals("1.1.0", newMessage.getMessageVersion());
+        assertEquals("1.1", newMessage.getMessageVersion());
         assertEquals("4444-4444-4444-4446", newMessage.getOrcidProfile().getOrcidIdentifier().getPath());
         assertEquals("http://orcid.org/4444-4444-4444-4446", newMessage.getOrcidProfile().retrieveOrcidUriAsString());
     }

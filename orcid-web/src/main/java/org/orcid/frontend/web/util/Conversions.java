@@ -14,16 +14,24 @@
  *
  * =============================================================================
  */
-package org.orcid.api.t2.server;
+package org.orcid.frontend.web.util;
 
-import javax.ws.rs.Path;
+import org.orcid.jaxb.model.message.FuzzyDate;
+import org.orcid.persistence.jpa.entities.FuzzyDateEntity;
+
 
 /**
- * 
- * @author Angel Montenegro
- * 
- */
-@Path("/v1.1.0")
-public class T2OrcidApiServiceImplV1_1_0 extends T2OrcidApiServiceImplBase {
-
+ * Util class to provide conversions from Entities to Pojos and vice versa
+ * */
+public class Conversions {
+	
+	/**
+	 * Converts from FuzzyDateEntity to FuzzyDate
+	 * @param fde
+	 * 	The FuzzyDateEntity
+	 * @return a FuzzyDate object 
+	 * */
+	public static FuzzyDate toFuzzyDate(FuzzyDateEntity fde){
+		return new FuzzyDate(fde.getYear(), fde.getMonth(), fde.getDay());		
+	}
 }

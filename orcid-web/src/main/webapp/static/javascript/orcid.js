@@ -148,8 +148,9 @@
         
             $(window).bind('resize', function() {
                 if(navigator.appVersion.indexOf("MSIE 7.") == -1){ //Not IE7
-                    ww = document.body.clientWidth;            
-                    if (ww > 767){ //Tablet ~ PC                
+                    ww = document.body.clientWidth;
+                    console.log(ww);
+                    if (ww > 750){ //Tablet ~ PC                
                         $(".container .header .search form input[type='search']").blur(); /* To let "else" statement work properly*/
                         restoreDesktopUI();
                     }else{
