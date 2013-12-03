@@ -1693,12 +1693,6 @@ a:hover {
 .affiliation-title{
 	margin-top: 0 !important;	
 }
-/*
-#affiliationName{
-	width:90px;
-}
-*/
-
 
 #edit-affiliation #startDay,
 #edit-affiliation #startMonth,
@@ -1712,11 +1706,6 @@ a:hover {
 #edit-affiliation #endYear
 {
 	width: 100px;
-}
-
-#edit-affiliation .tt-hint,
-#edit-affiliation #affiliationName{
-	color: #939598;
 }
 
 .add-work input.input-xlarge,
@@ -2758,6 +2747,21 @@ ul.personal-inf-display li{
   margin-bottom: 0;
 }
 
+#affiliationName{
+	
+	color: #222; /* Input text */
+}
+
+.twitter-typeahead .tt-hint{	
+	color: #939598; /* Hint text */		
+}
+
+.tt-suggestion {
+  display: block;
+  padding: 3px 20px;
+  color: #222;  /* Suggestion text*/
+}
+
 .tt-dropdown-menu {
   min-width: 160px;
   margin-top: 2px;
@@ -2776,11 +2780,6 @@ ul.personal-inf-display li{
   -webkit-background-clip: padding-box;
      -moz-background-clip: padding;
           background-clip: padding-box;
-}
-
-.tt-suggestion {
-  display: block;
-  padding: 3px 20px;
 }
 
 .tt-suggestion.tt-is-under-cursor {
@@ -2942,8 +2941,6 @@ ul.personal-inf-display li{
 }
 
 #edit-affiliation #remove-disambiguated{
-	display: block;
-	width: 100%;
 	text-align: right;
 }
 
