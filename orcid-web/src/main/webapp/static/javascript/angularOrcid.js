@@ -326,7 +326,7 @@ orcidNgModule.filter('workExternalIdentifierHtml', function(){
 
 
 function addBibtexCitation($scope, dw) {
-	if (dw.citation && dw.citation.citationType.value == 'bibtex') {
+	if (dw.citation && dw.citation.citationType && dw.citation.citationType.value == 'bibtex') {
 		try {
 			$scope.bibtexCitations[dw.putCode.value] = bibtexParse.toJSON(dw.citation.citation.value);
 		} catch (err) {
@@ -1609,9 +1609,7 @@ function PublicWorkCtrl($scope, $compile, worksSrvc) {
 		    	console.log("Error fetching works: " + workIds);
 		    });
 		} else {
-			$scope.$apply(function () {
-				$scope.worksSrvc.loading = false;
-			});
+			$scope.worksSrvc.loading = false;
 		}
 	};     
 	  
@@ -1746,11 +1744,7 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 					$scope.$apply(function(){ 
 						for (i in data) {
 							var dw = data[i];
-                            
-							removeBadContributors(dw);
-							
-							addBibtexCitation($scope,dw);
-							
+							removeBadContributors(dw);							
 							$scope.works.push(dw);
 						}
 					});
@@ -1812,7 +1806,7 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 		        dataType: 'json',
 		        success: function(data) {
 		        	
-		        	safeApply($scope, function () {
+		        	$scope.$apply(function () {
 		        		removeBadContributors(data);
 						addBibtexCitation($scope,data);
 						$scope.worksInfo[putCode] = data;
@@ -1824,9 +1818,7 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 		    	console.log("error fetching works");
 			});
 		} else {
-			safeApply($scope, function () {
-				$(event.target).next().css('display','inline');
-			});			
+			$(event.target).next().css('display','inline');
 		}
 	};			
 	
