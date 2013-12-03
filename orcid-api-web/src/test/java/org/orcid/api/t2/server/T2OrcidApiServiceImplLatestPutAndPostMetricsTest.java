@@ -20,24 +20,17 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import javax.annotation.Resource;
 import javax.ws.rs.core.Response;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.orcid.api.t2.server.delegator.T2OrcidApiServiceDelegator;
 import org.orcid.jaxb.model.message.OrcidMessage;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:test-orcid-t2-web-context.xml" })
 public class T2OrcidApiServiceImplLatestPutAndPostMetricsTest {
 
-    @Resource
-    private T2OrcidApiServiceImplRoot t2OrcidApiService;
+    private T2OrcidApiServiceImplRoot t2OrcidApiService = new T2OrcidApiServiceImplRoot();
 
     // mock the search results so that we don't need a db setub to check the
     // counter works as expected

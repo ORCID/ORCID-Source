@@ -36,11 +36,7 @@
         <property name="serviceDelegator" ref="t2OrcidApiServiceDelegatorV1_0_23"/>
     </bean>
     
-    <bean id="t2OrcidApiServiceDelegatorLatest" class="org.orcid.api.t2.server.delegator.impl.T2OrcidApiServiceVersionedDelegatorImpl">
-        <property name="externalVersion" value="1.1"/>
-        <property name="incomingValidationManager" ref="incomingValidationManagerLatest"/>
-        <property name="outgoingValidationManager" ref="outgoingValidationManagerLatest"/>
-    </bean>
+    <bean id="t2OrcidApiServiceDelegatorPrototype" class="org.orcid.api.t2.server.delegator.impl.T2OrcidApiServiceVersionedDelegatorImpl" scope="prototype"/>
     
     <bean id="t2OrcidApiServiceImplV1_0_14" class="org.orcid.api.t2.server.T2OrcidApiServiceImplV1_0_14">
         <property name="serviceDelegator" ref="t2OrcidApiServiceDelegatorV1_0_14"/>
@@ -153,4 +149,7 @@
         <property name="outgoingValidationManager" ref="outgoingValidationManagerV1_1"/>
     </bean>
     
+    <bean id="t2OrcidApiServiceImplV1_2_rc1" class="org.orcid.api.t2.server.T2OrcidApiServiceImplV1_2_rc1">
+        <property name="externalVersion" value="1.2_rc1"/>
+    </bean>
 </beans>
