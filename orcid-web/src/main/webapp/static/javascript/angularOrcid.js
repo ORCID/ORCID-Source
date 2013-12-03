@@ -808,8 +808,6 @@ function ExternalIdentifierCtrl($scope, $compile){
 	
 	$scope.removeExternalIdentifier = function() {
 		var externalIdentifier = $scope.externalIdentifiersPojo.externalIdentifiers[$scope.removeExternalIdentifierIndex];
-		$scope.externalIdentifiersPojo.externalIdentifiers.splice($scope.removeExternalIdentifierIndex, 1);
-		$scope.removeExternalIdentifierIndex = null;
 		$.ajax({
 	        url: $('body').data('baseurl') + 'my-orcid/externalIdentifiers.json',
 	        type: 'DELETE',
@@ -819,7 +817,11 @@ function ExternalIdentifierCtrl($scope, $compile){
 	        success: function(data) {	        	
 	        	if(data.errors.length != 0){
 	        		console.log("Unable to delete external identifier.");
-	        	} 
+	        	} else {
+	    	    	$scope.externalIdentifiersPojo.externalIdentifiers.splice($scope.removeExternalIdentifierIndex, 1);
+	    		    $scope.removeExternalIdentifierIndex = null;
+	    		    $scope.$apply();
+	        	}
 	        }
 	    }).fail(function() { 
 	    	console.log("Error deleting external identifier.");
