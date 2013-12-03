@@ -3688,10 +3688,6 @@ ul.personal-inf-display li{
 	
 	#edit-affiliation .twitter-typeahead{
 		width: 95%;
-	}
-	
-	#signout{
-		max-width:100px;
 	}	
 	
 }
@@ -3821,6 +3817,10 @@ ul.personal-inf-display li{
 	#loginForm #login-error-mess{
 		padding-left: 0;
 		text-align:center;
+	}
+	
+	#signout{
+		max-width:100px;
 	}
 }
 
