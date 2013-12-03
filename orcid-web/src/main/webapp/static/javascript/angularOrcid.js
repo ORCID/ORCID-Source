@@ -1796,20 +1796,6 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 		return info;
 	};
 		
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	//init
 	$scope.getWorks();	
 	
@@ -1824,7 +1810,7 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 		        		removeBadContributors(data);
 						addBibtexCitation($scope,data);
 						$scope.worksInfo[putCode] = data;
-			        	$(event.target).next().css('display','inline');		        		
+						$(event.target).next().css('display','inline');		        		
 		        	});		        	
 		        }
 			}).fail(function(){
@@ -1839,35 +1825,8 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 	};			
 	
 	$scope.closePopover = function(event) {
-		$(event.target).parent().parent().parent().css('display', 'none');
+		$('.more-info-container').css('display', 'none');
 	};
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	
 	$scope.deleteWork = function(putCode) {
 		$scope.deletePutCode = putCode;

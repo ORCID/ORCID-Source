@@ -17,15 +17,11 @@
 
 -->
 <div class="more-info ie7-zi-fix-top">	
-	<a class="glyphicon glyphicon-plus-sign grey" ng-mouseover="loadWorkInfo(work.putCode.value, $event); $event.stopPropagation()"></a>	
-	<div class="popover bottom more-info-container">	
+	<a class="glyphicon glyphicon-plus-sign grey" ng-mouseenter="loadWorkInfo(work.putCode.value, $event); $event.stopPropagation()"></a>	
+	<div class="popover bottom more-info-container" ng-mouseleave="closePopover(); $event.stopPropagation()">	
 		<div class="arrow"></div>	
 		<div class="lightbox-container">		
-			<div class="ie7fix">
-			<div class="col-md-1 col-sm-2 col-xs-2">
-            	<a class="btn pull-right close-button" ng-click="closePopover($event)">X</a>
-            </div>
-			<div class="row bottomBuffer"></div>
+			<div class="ie7fix">				
 			<div class="row bottomBuffer" ng-show="worksInfo[work.putCode.value].workTitle.title.value"
 				ng-cloak>
 				<div class="col-md-8">
@@ -87,10 +83,6 @@
 				</div>
 			</div>
 			
-			
-			
-			
-			
 			<div class="row bottomBuffer"
 				ng-show="worksInfo[work.putCode.value].citation.citationType.value" ng-cloak>
 				<div class="col-md-8">
@@ -111,9 +103,6 @@
 					</div>
 				</div>
 			</div>
-			
-			
-			
 			
 			<div class="row bottomBuffer" ng-show="worksInfo[work.putCode.value].shortDescription.value"
 				ng-cloak>
@@ -136,11 +125,6 @@
 					</div>
 				</div>
 			</div>
-			
-			
-			
-			
-			
 			
 			<div class="row bottomBuffer" ng-show="worksInfo[work.putCode.value].url.value" ng-cloak>
 				<div class="col-md-8">
