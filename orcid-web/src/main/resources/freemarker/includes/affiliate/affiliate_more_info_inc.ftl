@@ -21,6 +21,7 @@
 	<div class="popover bottom more-info-container">
 		<div class="arrow"></div>	
 		<div class="lightbox-container">
+			<div class="ie7fix">
 			<div class="row bottomBuffer"></div>
 			<div class="row bottomBuffer" ng-show="affiliation.affiliationName.value"
 				ng-cloak>
@@ -102,6 +103,7 @@
 					<strong><@orcid.msg 'manual_affiliation_form_contents.labelsource'/></strong>
 					<div ng-bind="affiliation.sourceName"></div>
 				</div>
+			</div>
 			</div>
 		</div>
 	</div>

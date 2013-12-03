@@ -54,7 +54,7 @@ public class YearsList {
     }
 
     public static List<String> createList(List<String> listToPrepend) {
-        return createList(listToPrepend, getCurrentYear(), DEFAULT_EARLIEST_YEAR);
+        return createList(listToPrepend, getLatestYear(), DEFAULT_EARLIEST_YEAR);
     }
 
     private static List<String> createList(List<String> listToPrepend, int latestYear, int earliestYear) {
@@ -68,8 +68,10 @@ public class YearsList {
         return years;
     }
 
-    private static int getCurrentYear() {
-        return Calendar.getInstance().get(Calendar.YEAR);
+    private static int getLatestYear() {
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.MONTH, 3);
+        return calendar.get(Calendar.YEAR);
     }
 
 }

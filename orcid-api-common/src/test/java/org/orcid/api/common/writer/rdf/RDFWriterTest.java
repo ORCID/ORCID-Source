@@ -40,7 +40,6 @@ import org.orcid.jaxb.model.message.GivenNames;
 import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.jaxb.model.message.LastModifiedDate;
 import org.orcid.jaxb.model.message.OrcidBio;
-import org.orcid.jaxb.model.message.OrcidIdentifier;
 import org.orcid.jaxb.model.message.OrcidHistory;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidProfile;
@@ -62,18 +61,16 @@ public class RDFWriterTest {
     public void makeDataTypeFactory() throws DatatypeConfigurationException {
         dataTypeFactory = DatatypeFactory.newInstance();
     }
-    
+
     private OrcidMessage fakeBio() throws DatatypeConfigurationException {
         OrcidMessage orcidMessage = new OrcidMessage();
         OrcidProfile orcidProfile1 = new OrcidProfile();
-        OrcidIdentifier orcidId = new OrcidIdentifier();
-        orcidId.setUri("http://orcid.example.com/000-1337");
-        orcidId.setPath("000-1337");
-        orcidProfile1.setOrcidIdentifier(orcidId);
+        orcidProfile1.setOrcidId("http://orcid.example.com/000-1337");
+        orcidProfile1.setOrcid("000-1337");
         OrcidBio bio = new OrcidBio();
         orcidProfile1.setOrcidBio(bio);
         OrcidHistory history = new OrcidHistory();
-        XMLGregorianCalendar value = dataTypeFactory.newXMLGregorianCalendar(1980,12,31,23,29,29,999,0);
+        XMLGregorianCalendar value = dataTypeFactory.newXMLGregorianCalendar(1980, 12, 31, 23, 29, 29, 999, 0);
         history.setCreationMethod(CreationMethod.WEBSITE);
         history.setLastModifiedDate(new LastModifiedDate(value));
         orcidProfile1.setOrcidHistory(history);
@@ -104,8 +101,7 @@ public class RDFWriterTest {
 
         ResearcherUrl other = new ResearcherUrl(new Url("http://example.com/other"), new UrlName("other"));
         urls.getResearcherUrl().add(other);
-        
-        
+
         bio.setContactDetails(new ContactDetails());
         bio.getContactDetails().setEmail(Arrays.asList(new Email("john@example.org"), new Email("doe@example.com")));
         bio.getContactDetails().setAddress(new Address());
@@ -149,7 +145,7 @@ public class RDFWriterTest {
         assertTrue(str.contains("foaf:page"));
         assertTrue(str.contains("http://example.com/anon"));
         assertTrue(str.contains("http://example.com/other"));
-        
+
     }
 
     @Test
@@ -161,7 +157,7 @@ public class RDFWriterTest {
         String str = entityStream.toString("utf-8");
         System.out.println(str);
         assertTrue(str.contains("<http://orcid.example.com/000-1337>"));
-        assertTrue(str.contains("foaf:account"));       
+        assertTrue(str.contains("foaf:account"));
         assertTrue(str.contains("<http://orcid.example.com/000-1337/>"));
         assertTrue(str.contains("foaf:Person"));
         assertTrue(str.contains("foaf:familyName \"Doe"));
@@ -176,7 +172,7 @@ public class RDFWriterTest {
         // location
         assertTrue(str.contains("gn:countryCode"));
         assertTrue(str.contains("GB"));
-        
+
     }
 
     @Test
@@ -198,5 +194,5 @@ public class RDFWriterTest {
         assertTrue(str.contains("foaf:familyName \"Doe"));
         assertTrue(str.contains("foaf:givenName \"John"));
     }
-    
+
 }

@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!--
+
+    =============================================================================
+
+    ORCID (R) Open Source
+    http://orcid.org
+
+    Copyright (c) 2012-2013 ORCID, Inc.
+    Licensed under an MIT-Style License (MIT)
+    http://orcid.org/open-source-license
+
+    This copyright and license information (including a link to the full license)
+    shall be included in its entirety in all copies or substantial portion of
+    the software.
+
+    =============================================================================
+
+-->
+<orcid-message  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.orcid.org/ns/orcid ../../../../orcid-model/src/main/resources/orcid-message-1.1.xsd"
+    xmlns="http://www.orcid.org/ns/orcid">
+    <message-version>1.1</message-version>
+    <orcid-profile>
+        <orcid-preferences>
+            <locale>en</locale>
+        </orcid-preferences>
+         <orcid-bio>
+            <personal-details>
+                <given-names>Severus</given-names>
+                <family-name>Snape</family-name>
+            </personal-details>
+            <biography visibility="public">Potions Master</biography>
+            <researcher-urls visibility="public">
+                <researcher-url>
+                    <url-name>Wikipedia Page</url-name>
+                    <url>http://en.wikipedia.org/wiki/Harry_Potter</url>
+                </researcher-url>
+            </researcher-urls>   
+            <contact-details>
+                <email primary="true" visibility="public">ss13@nowhere.com</email>
+            </contact-details>
+            <keywords visibility="public">
+                <keyword>Potions</keyword>
+                <keyword>Hogwarts</keyword>
+            </keywords>
+            <external-identifiers visibility="public">
+                <external-identifier>
+                    <external-id-common-name>A-0000-9999</external-id-common-name>
+                    <external-id-reference>A-0000-9999</external-id-reference>
+                    <external-id-url>http://www.myid.com/12345</external-id-url>
+                </external-identifier>
+                </external-identifiers>
+        </orcid-bio>
+        <orcid-activities>
+            <affiliations>
+                <affiliation>
+                    <name>Institution Name</name>
+                    <type>employment</type>
+                    <address>
+                        <city>City</city>
+                        <region>Region</region>
+                        <country>US</country>
+                    </address>
+                    <department-name>Department</department-name>
+                    <role-title>Title</role-title>
+                    <start-date>
+                        <year>2012</year>
+                        <month>11</month>
+                        <day>22</day>
+                    </start-date>
+                    <end-date>
+                        <year>2013</year>
+                    </end-date>
+                </affiliation>
+            </affiliations>
+            <orcid-works> 
+                <orcid-work>
+                    <work-title>
+                        <title>Title</title>
+                    </work-title>
+                    <work-citation>
+                        <work-citation-type>formatted-unspecified</work-citation-type>
+                        <citation>Test me</citation>
+                    </work-citation>
+                    <work-type>book</work-type>
+                </orcid-work>
+            </orcid-works>
+       </orcid-activities>
+   </orcid-profile>
+</orcid-message>

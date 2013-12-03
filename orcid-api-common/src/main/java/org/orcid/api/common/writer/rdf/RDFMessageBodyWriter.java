@@ -71,7 +71,7 @@ import com.hp.hpl.jena.rdf.model.ResIterator;
  * @author Stian Soiland-Reyes
  */
 @Provider
-@Produces( { APPLICATION_RDFXML, TEXT_TURTLE, TEXT_N3 })
+@Produces({ APPLICATION_RDFXML, TEXT_TURTLE, TEXT_N3 })
 public class RDFMessageBodyWriter implements MessageBodyWriter<OrcidMessage> {
 
     private static final String MEMBER_API = "https://api.orcid.org/";
@@ -93,7 +93,6 @@ public class RDFMessageBodyWriter implements MessageBodyWriter<OrcidMessage> {
     private static final List<String> URL_NAME_HOMEPAGE = Arrays.asList("homepage", "home", "home page", "personal", "personal homepage", "personal home page");
     private static final String URL_NAME_FOAF = "foaf";
     private static final String URL_NAME_WEBID = "webid";
-    
 
     private static final Charset UTF8 = Charset.forName("UTF-8");
 
@@ -144,7 +143,7 @@ public class RDFMessageBodyWriter implements MessageBodyWriter<OrcidMessage> {
 
     /**
      * Ascertain if the MessageBodyWriter supports a particular type.
-
+     * 
      * 
      * @param type
      *            the class of object that is to be written.
@@ -191,7 +190,7 @@ public class RDFMessageBodyWriter implements MessageBodyWriter<OrcidMessage> {
      */
     @Override
     public long getSize(OrcidMessage message, Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType) {
-        // TODO: Can we calculate the size in advance? 
+        // TODO: Can we calculate the size in advance?
         // It would mean buffering up the actual RDF
         return -1;
     }
@@ -238,7 +237,7 @@ public class RDFMessageBodyWriter implements MessageBodyWriter<OrcidMessage> {
         }
 
         OrcidProfile orcidProfile = xml.getOrcidProfile();
-//        System.out.println(httpHeaders);
+        // System.out.println(httpHeaders);
         if (orcidProfile != null) {
             Individual person = describePerson(orcidProfile, m);
             if (person != null) {
@@ -249,10 +248,10 @@ public class RDFMessageBodyWriter implements MessageBodyWriter<OrcidMessage> {
         if (mediaType.isCompatible(rdfXml)) {
             m.write(entityStream, "RDF/XML", TMP_BASE);
         } else {
-            // Silly workaround to generate relative URIs 
+            // Silly workaround to generate relative URIs
 
             // The below would not correctly relativize according to TMP_BASE
-            // https://issues.apache.org/jira/browse/JENA-132 
+            // https://issues.apache.org/jira/browse/JENA-132
             // m.write(entityStream, "N3", TMP_BASE);
 
             StringWriter writer = new StringWriter();
@@ -270,13 +269,14 @@ public class RDFMessageBodyWriter implements MessageBodyWriter<OrcidMessage> {
     }
 
     private Individual describeAccount(OrcidProfile orcidProfile, OntModel m, Individual person) {
-        // Add / to identify the profile itself - as /orcid-profile from PROFILE_POST_PATH
+        // Add / to identify the profile itself - as /orcid-profile from
+        // PROFILE_POST_PATH
         // is not accessible publicly
-        String orcidProfileUri = orcidProfile.getOrcidIdentifier().getUri() + "/";
+        String orcidProfileUri = orcidProfile.getOrcidId() + "/";
 
         Individual account = m.createIndividual(orcidProfileUri, foafOnlineAccount);
         person.addProperty(foafAccount, account);
-        // which is also the list of publications 
+        // which is also the list of publications
         // (at least in the HTML rendering - foaf:publications
         // goes to a foaf:Document)
         person.addProperty(foafPublications, account);
@@ -339,7 +339,7 @@ public class RDFMessageBodyWriter implements MessageBodyWriter<OrcidMessage> {
             }
 
         }
-        
+
         return account;
     }
 
@@ -348,7 +348,7 @@ public class RDFMessageBodyWriter implements MessageBodyWriter<OrcidMessage> {
     }
 
     private Individual describePerson(OrcidProfile orcidProfile, OntModel m) {
-        String orcidUri = orcidProfile.retrieveOrcidUriAsString();
+        String orcidUri = orcidProfile.getOrcidId();
         Individual person = m.createIndividual(orcidUri, foafPerson);
         person.addRDFType(provPerson);
 
@@ -399,7 +399,7 @@ public class RDFMessageBodyWriter implements MessageBodyWriter<OrcidMessage> {
     }
 
     private String getUrlName(ResearcherUrl url) {
-        if (url.getUrlName() == null ) {
+        if (url.getUrlName() == null) {
             return null;
         }
         return url.getUrlName().getContent().toLowerCase();
@@ -419,7 +419,6 @@ public class RDFMessageBodyWriter implements MessageBodyWriter<OrcidMessage> {
         return urlName.equals(URL_NAME_WEBID);
     }
 
-    
     /**
      * There's no indication in ORCID if the URL is a homepage or some other
      * page, so we'll guess based on it's name, it be something similar to
@@ -434,7 +433,8 @@ public class RDFMessageBodyWriter implements MessageBodyWriter<OrcidMessage> {
 
     private void describeBiography(Biography biography, Individual person, OntModel m) {
         if (biography != null) {
-            // FIXME: Which language is the biography written in? Can't assume EN
+            // FIXME: Which language is the biography written in? Can't assume
+            // EN
             person.addProperty(foafPlan, biography.getContent());
         }
     }
@@ -459,7 +459,7 @@ public class RDFMessageBodyWriter implements MessageBodyWriter<OrcidMessage> {
         if (addr != null) {
             if (addr.getCountry() != null) {
                 String countryCode = addr.getCountry().getValue().name();
-                
+
                 Individual position = m.createIndividual(gnFeature);
                 position.addProperty(gnCountryCode, countryCode);
                 person.addProperty(foafBasedNear, position);
@@ -469,8 +469,8 @@ public class RDFMessageBodyWriter implements MessageBodyWriter<OrcidMessage> {
                 if (country != null) {
                     position.addProperty(gnParentCountry, country);
                 }
-                
-                // TODO: Include URI and (a) full name of country 
+
+                // TODO: Include URI and (a) full name of country
                 // Potential source: geonames.org
                 // See https://gist.github.com/stain/7566375
             }
@@ -478,7 +478,7 @@ public class RDFMessageBodyWriter implements MessageBodyWriter<OrcidMessage> {
     }
 
     private Individual addToModel(OntModel ontModel, Individual country) {
-//        ontModel.addSubModel(country.getModel());
+        // ontModel.addSubModel(country.getModel());
         ontModel.add(country.listProperties().toList());
         return country;
     }
@@ -503,10 +503,12 @@ public class RDFMessageBodyWriter implements MessageBodyWriter<OrcidMessage> {
             person.addProperty(foafName, creditName);
             person.addLabel(creditName, null);
         } else if (personalDetails.getGivenNames() != null && personalDetails.getFamilyName() != null) {
+            //@formatter:off
             // Naive fallback assuming givenNames ~= first name and familyName ~= lastName
             // See http://www.w3.org/International/questions/qa-personal-names for further
             // considerations -- we don't report this as foaf:name as we can't be sure of the ordering.
-            
+            //@formatter:on
+
             // NOTE: ORCID gui is westernized asking for "First name" and
             // "Last name" and assuming the above mapping
             String label = personalDetails.getGivenNames().getContent() + " " + personalDetails.getFamilyName().getContent();
@@ -541,7 +543,7 @@ public class RDFMessageBodyWriter implements MessageBodyWriter<OrcidMessage> {
         ontModel.setNsPrefix("prov", PROV);
         ontModel.setNsPrefix("pav", PAV);
         ontModel.setNsPrefix("gn", GN);
-        //ontModel.getDocumentManager().loadImports(foaf.getOntModel());
+        // ontModel.getDocumentManager().loadImports(foaf.getOntModel());
         return ontModel;
     }
 
@@ -569,7 +571,7 @@ public class RDFMessageBodyWriter implements MessageBodyWriter<OrcidMessage> {
             return;
         }
         OntModel ontModel = loadOntologyFromClasspath(GEONAMES_RDF, GEONAMES);
-        
+
         gnFeature = ontModel.getOntClass(GN + "Feature");
         gnParentCountry = ontModel.getObjectProperty(GN + "parentCountry");
         gnCountryCode = ontModel.getDatatypeProperty(GN + "countryCode");
@@ -577,13 +579,11 @@ public class RDFMessageBodyWriter implements MessageBodyWriter<OrcidMessage> {
         // Also load countries
         InputStream countries = getClass().getResourceAsStream("countries.ttl");
         ontModel.read(countries, "http://example.com/", "TURTLE");
-        
+
         checkNotNull(gnFeature, gnParentCountry, gnCountryCode);
-        geo = ontModel;        
+        geo = ontModel;
     }
 
- 
-    
     private void checkNotNull(Object... possiblyNulls) {
         int i = 0;
         for (Object check : possiblyNulls) {
@@ -612,7 +612,7 @@ public class RDFMessageBodyWriter implements MessageBodyWriter<OrcidMessage> {
         checkNotNull(provPerson, provAgent, provSoftwareAgent, provWasAttributedTo, provAlternateOf, provGeneratedAt, provInvalidatedAt);
         prov = ontModel;
     }
-   
+
     protected OntModel loadOntologyFromClasspath(String classPathUri, String uri) {
         OntModel ontModel = ModelFactory.createOntologyModel();
 

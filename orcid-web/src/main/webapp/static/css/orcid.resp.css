@@ -1455,6 +1455,10 @@ a:hover {
 	padding-left: 10px;
 }
 
+.workspace-right h3{
+	font-size: 16px;
+} 
+
 .more-info{
 	float: left;
     width: 33px;
@@ -1617,6 +1621,7 @@ a:hover {
 	font-weight: bold;
 	margin: 10px 0 0 !important;
 	line-height: 1;
+	word-wrap:break-word;
 }
 
 .privacy-list,.workspace-body-list {
@@ -1688,12 +1693,6 @@ a:hover {
 .affiliation-title{
 	margin-top: 0 !important;	
 }
-/*
-#affiliationName{
-	width:90px;
-}
-*/
-
 
 #edit-affiliation #startDay,
 #edit-affiliation #startMonth,
@@ -1708,7 +1707,6 @@ a:hover {
 {
 	width: 100px;
 }
-
 
 .add-work input.input-xlarge,
 .add-work #workType{
@@ -2451,7 +2449,7 @@ header overrides
 }
 
 .input-xlarge {
-	width: 340px;
+	width: 330px;
 }
 
 .relative {
@@ -2749,6 +2747,21 @@ ul.personal-inf-display li{
   margin-bottom: 0;
 }
 
+#affiliationName{
+	
+	color: #222; /* Input text */
+}
+
+.twitter-typeahead .tt-hint{	
+	color: #939598; /* Hint text */		
+}
+
+.tt-suggestion {
+  display: block;
+  padding: 3px 20px;
+  color: #222;  /* Suggestion text*/
+}
+
 .tt-dropdown-menu {
   min-width: 160px;
   margin-top: 2px;
@@ -2767,11 +2780,6 @@ ul.personal-inf-display li{
   -webkit-background-clip: padding-box;
      -moz-background-clip: padding;
           background-clip: padding-box;
-}
-
-.tt-suggestion {
-  display: block;
-  padding: 3px 20px;
 }
 
 .tt-suggestion.tt-is-under-cursor {
@@ -2800,6 +2808,7 @@ ul.personal-inf-display li{
   height: 300px;
   overflow-y: auto;
 }
+
 
 .small-row {	
 	display: inline-block;
@@ -2931,6 +2940,14 @@ ul.personal-inf-display li{
 	vertical-align: -43px;
 }
 
+#edit-affiliation #remove-disambiguated{
+	text-align: right;
+}
+
+#edit-affiliation #remove-disambiguated a span{
+	vertical-align:-2px;
+	margin-right: 5px;
+}
 
 
 /* Media Queries */
@@ -3662,12 +3679,20 @@ ul.personal-inf-display li{
 	#edit-affiliation .popover.bottom .arrow{
 		 left: 44%;
 		 top: -11px;
+	}
+	
+	#edit-affiliation input#affiliationName{
+		width: 95%;
 	}	
+	
+	#edit-affiliation .twitter-typeahead{
+		width: 95%;
+	}
 	
 	
 }
 
-@media ( max-width : 980px) { /* Tablet */
+@media ( max-width : 992px) { /* Tablet */
 	/*Header*/
 	
 	.container .header .search form input[type='search'] {

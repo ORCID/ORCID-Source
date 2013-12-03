@@ -39,7 +39,7 @@ public class OrcidMessageVersionConverterChainImpl implements OrcidMessageVersio
     public List<OrcidMessageVersionConverter> converters;
     public List<OrcidMessageVersionConverter> descendingConverters;
     private boolean supportOldWorkTypes = false;
-    private static String MESSAGE_VERSION_WITH_NEW_WORK_TYPES = "1.1.0";
+    private static String MESSAGE_VERSION_WITH_NEW_WORK_TYPES = "1.1";
 
     public void setSupportOldWorkTypes(boolean value){
         this.supportOldWorkTypes = value;
@@ -68,7 +68,7 @@ public class OrcidMessageVersionConverterChainImpl implements OrcidMessageVersio
         }
                 
         if(supportOldWorkTypes) {
-            //If the required message version is lower than V1.1.0, we need to downgrade the work type
+            //If the required message version is lower than V1.1, we need to downgrade the work type
             if(MESSAGE_VERSION_WITH_NEW_WORK_TYPES.compareTo(requiredVersion) > 0){            
                 OrcidProfile orcidProfile = orcidMessage.getOrcidProfile();
                 if (orcidProfile != null) {
@@ -258,7 +258,7 @@ public class OrcidMessageVersionConverterChainImpl implements OrcidMessageVersio
             return WorkType.ARTISTIC_PERFORMANCE;
         case THESIS:
             return WorkType.SUPERVISED_STUDENT_PUBLICATION;
-        case WEBSITE:
+        case WEB_SITE:
             return WorkType.WEBSITE;
         case UNDEFINED:
             return WorkType.OTHER;
@@ -354,7 +354,7 @@ public class OrcidMessageVersionConverterChainImpl implements OrcidMessageVersio
         case TRANSLATION:
             return WorkType.UNDEFINED;        
         case WEBSITE:
-            return WorkType.WEBSITE;
+            return WorkType.WEB_SITE;
         case WORKING_PAPER:
             return WorkType.REPORTS_WORKING_PAPERS;
         case UNDEFINED:

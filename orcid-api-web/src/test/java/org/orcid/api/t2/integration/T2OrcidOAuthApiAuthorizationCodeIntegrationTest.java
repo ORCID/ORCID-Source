@@ -220,13 +220,13 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
     }
 
     @Test
-    public void testAddWorkWithNewWorkTypesForV1_1_0() throws InterruptedException, JSONException {
+    public void testAddWorkWithNewWorkTypesForV1_1() throws InterruptedException, JSONException {
         String scopes = "/orcid-works/create";
         String authorizationCode = obtainAuthorizationCode(scopes);
         String accessToken = obtainAccessToken(authorizationCode, scopes);
 
         OrcidMessage orcidMessage = new OrcidMessage();
-        orcidMessage.setMessageVersion("1.1.0");
+        orcidMessage.setMessageVersion("1.1");
         OrcidProfile orcidProfile = new OrcidProfile();
         orcidMessage.setOrcidProfile(orcidProfile);
         OrcidActivities orcidActivities = new OrcidActivities();

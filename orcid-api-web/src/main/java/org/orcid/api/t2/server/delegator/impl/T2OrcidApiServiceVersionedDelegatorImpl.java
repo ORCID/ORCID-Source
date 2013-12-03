@@ -159,8 +159,6 @@ public class T2OrcidApiServiceVersionedDelegatorImpl implements T2OrcidApiServic
         validateIncomingMessage(orcidMessage);
         OrcidMessage upgradedMessage = upgradeMessage(orcidMessage);
         response = t2OrcidApiServiceDelegator.updateBioDetails(uriInfo, orcid, upgradedMessage);
-        response = downgradeAndValidateResponse(response);
-        downgradeAndValidateResponse(response);
         return downgradeAndValidateResponse(response);
     }
 

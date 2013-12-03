@@ -143,13 +143,13 @@
         <property name="outgoingValidationManager" ref="outgoingValidationManagerV1_0_23"/>
     </bean>
 
-    <bean id="t2OrcidApiServiceImplV1_1_0" class="org.orcid.api.t2.server.T2OrcidApiServiceImplV1_1_0">
-        <property name="serviceDelegator" ref="t2OrcidApiServiceDelegatorV1_1_0"/>
+    <bean id="t2OrcidApiServiceImplV1_1" class="org.orcid.api.t2.server.T2OrcidApiServiceImplV1_1">
+        <property name="serviceDelegator" ref="t2OrcidApiServiceDelegatorV1_1"/>
     </bean>
-    <bean id="t2OrcidApiServiceDelegatorV1_1_0" class="org.orcid.api.t2.server.delegator.impl.T2OrcidApiServiceVersionedDelegatorImpl">
-        <property name="externalVersion" value="1.1.0"/>
-        <property name="incomingValidationManager" ref="incomingValidationManagerV1_1_0"/>
-        <property name="outgoingValidationManager" ref="outgoingValidationManagerV1_1_0"/>
+    <bean id="t2OrcidApiServiceDelegatorV1_1" class="org.orcid.api.t2.server.delegator.impl.T2OrcidApiServiceVersionedDelegatorImpl">
+        <property name="externalVersion" value="1.1"/>
+        <property name="incomingValidationManager" ref="incomingValidationManagerV1_1"/>
+        <property name="outgoingValidationManager" ref="outgoingValidationManagerV1_1"/>
     </bean>
     
 </beans>

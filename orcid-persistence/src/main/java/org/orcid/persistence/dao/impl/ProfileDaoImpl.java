@@ -16,6 +16,7 @@
  */
 package org.orcid.persistence.dao.impl;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -74,13 +75,23 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
 
     @Override
     public List<String> findOrcidsByIndexingStatus(IndexingStatus indexingStatus, int maxResults, Collection<String> orcidsToExclude) {
-        StringBuilder builder = new StringBuilder("select p.id from ProfileEntity p where p.indexingStatus = :indexingStatus");
+        List<IndexingStatus> indexingStatuses = new ArrayList<>(1);
+        indexingStatuses.add(indexingStatus);
+        return findOrcidsByIndexingStatus(indexingStatuses, maxResults, orcidsToExclude);
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<String> findOrcidsByIndexingStatus(Collection<IndexingStatus> indexingStatuses, int maxResults, Collection<String> orcidsToExclude) {
+        StringBuilder builder = new StringBuilder("SELECT p.orcid FROM profile p WHERE p.indexing_status IN :indexingStatus");
         if (!orcidsToExclude.isEmpty()) {
-            builder.append(" and p.id not in :orcidsToExclude");
+            builder.append(" AND p.orcid NOT IN :orcidsToExclude");
         }
-        builder.append(" order by p.lastModified");
-        TypedQuery<String> query = entityManager.createQuery(builder.toString(), String.class);
-        query.setParameter("indexingStatus", indexingStatus);
+        // Ordering by indexing status will force re-indexing to be lower
+        // priority than normal indexing
+        builder.append(" ORDER BY (p.last_modified > (NOW() - CAST('1' as INTERVAL HOUR))) DESC, indexing_status, p.last_modified");
+        Query query = entityManager.createNativeQuery(builder.toString());
+        query.setParameter("indexingStatus", IndexingStatus.getNames(indexingStatuses));
         if (!orcidsToExclude.isEmpty()) {
             query.setParameter("orcidsToExclude", orcidsToExclude);
         }
@@ -121,6 +132,7 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
     @SuppressWarnings("unchecked")
     @Override
     public List<String> findEmailsUnverfiedDays(int daysUnverified, int maxResults, EmailEventType ev) {
+        //@formatter:off
         String queryStr = 
                   "SELECT e.email FROM email e "
                 + "LEFT JOIN email_event ev ON e.email = ev.email "
@@ -129,14 +141,14 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
                 + "where ev.email IS NULL "
                 +    "and e.is_verified = false "
                 +    "and e.date_created < (now() - CAST('" + daysUnverified + "' AS INTERVAL DAY)) "
-                +    " ORDER BY e.last_modified";        		
+                +    " ORDER BY e.last_modified";
+        //@formatter:on
         Query query = entityManager.createNativeQuery(queryStr);
         query.setParameter("evt", ev.name());
         query.setMaxResults(maxResults);
         return query.getResultList();
     }
 
-    
     @SuppressWarnings("unchecked")
     @Override
     public List<String> findUnclaimedNeedingReminder(int remindAfterDays, int maxResults, Collection<String> orcidsToExclude) {
@@ -366,11 +378,11 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
         query.setParameter("profile_address_visibility", StringUtils.upperCase(profile.getProfileAddressVisibility().value()));
         query.setParameter("orcid", profile.getId());
 
-        boolean result = query.executeUpdate() > 0 ? true : false; 
-        
+        boolean result = query.executeUpdate() > 0 ? true : false;
+
         updateWebhookProfileLastUpdate(profile.getId());
-        
-        return result;        
+
+        return result;
     }
 
     public Date retrieveLastModifiedDate(String orcid) {
@@ -389,21 +401,17 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
     @Override
     @Transactional
     public void updateLastModifiedDateWithoutResult(String orcid) {
-        Query query = entityManager
-                .createNativeQuery(
-                        "update profile set last_modified = now() where orcid = :orcid ");
-        query.setParameter("orcid", orcid);   
+        Query query = entityManager.createNativeQuery("update profile set last_modified = now() where orcid = :orcid ");
+        query.setParameter("orcid", orcid);
         query.executeUpdate();
 
         updateWebhookProfileLastUpdate(orcid);
     }
-    
+
     private void updateWebhookProfileLastUpdate(String orcid) {
-        Query query = entityManager
-                .createNativeQuery(
-                        "update webhook set profile_last_modified = (select last_modified from profile where orcid = :orcid ) "
-                      + "where orcid = :orcid "    );
-        query.setParameter("orcid", orcid);        
+        Query query = entityManager.createNativeQuery("update webhook set profile_last_modified = (select last_modified from profile where orcid = :orcid ) "
+                + "where orcid = :orcid ");
+        query.setParameter("orcid", orcid);
         query.executeUpdate();
     }
 
@@ -456,24 +464,24 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
                 .createNativeQuery("update profile set last_modified=now(), indexing_status='PENDING', primary_record=:primary_record, deprecated_date=now() where orcid=:orcid");
         query.setParameter("orcid", deprecatedOrcid);
         query.setParameter("primary_record", primaryOrcid);
-        
-        boolean result = query.executeUpdate() > 0 ? true : false; 
-        
+
+        boolean result = query.executeUpdate() > 0 ? true : false;
+
         updateWebhookProfileLastUpdate(primaryOrcid);
-        
+
         return result;
     }
-    
+
     @Override
-    public boolean isProfileDeprecated(String orcid){       
+    public boolean isProfileDeprecated(String orcid) {
         return retrievePrimaryAccountOrcid(orcid) != null;
     }
-    
-    @Override 
-    public String retrievePrimaryAccountOrcid(String deprecatedOrcid){
+
+    @Override
+    public String retrievePrimaryAccountOrcid(String deprecatedOrcid) {
         Query query = entityManager.createNativeQuery("select primary_record from profile where orcid = :orcid");
         query.setParameter("orcid", deprecatedOrcid);
-        return (String)query.getSingleResult();
+        return (String) query.getSingleResult();
     }
 
     public void updateEncryptedPassword(String orcid, String encryptedPassword) {
@@ -493,20 +501,21 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
         updateQuery.setParameter("encryptedSecurityAnswer", encryptedSecurityAnswer);
         updateQuery.executeUpdate();
     }
-    
+
     /**
      * Return the list of profiles that belongs to the provided OrcidType
+     * 
      * @param type
-     * 		OrcidType that indicates the profile type we want to fetch
-     * @return the list of profiles that belongs to the specified type  
+     *            OrcidType that indicates the profile type we want to fetch
+     * @return the list of profiles that belongs to the specified type
      * */
     @Override
     @Transactional
     @SuppressWarnings("unchecked")
-    public List<ProfileEntity> findProfilesByOrcidType(OrcidType type){
-    	Query query = entityManager.createQuery("from ProfileEntity where profile_deactivation_date=NULL and orcidType=:type");
-    	query.setParameter("type", type);
-    	return (List<ProfileEntity>)query.getResultList();
+    public List<ProfileEntity> findProfilesByOrcidType(OrcidType type) {
+        Query query = entityManager.createQuery("from ProfileEntity where profile_deactivation_date=NULL and orcidType=:type");
+        query.setParameter("type", type);
+        return (List<ProfileEntity>) query.getResultList();
     }
 
 }

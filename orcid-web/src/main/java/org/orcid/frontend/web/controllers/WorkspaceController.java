@@ -278,11 +278,6 @@ public class WorkspaceController extends BaseWorkspaceController {
     org.orcid.pojo.ExternalIdentifier removeExternalIdentifierJson(HttpServletRequest request, @RequestBody org.orcid.pojo.ExternalIdentifier externalIdentifier) {
         List<String> errors = new ArrayList<String>();
 
-        // If the orcid is blank, add an error
-        if (externalIdentifier.getOrcid() == null || StringUtils.isBlank(externalIdentifier.getOrcid().getValue())) {
-            errors.add(getMessage("ExternalIdentifier.orcid"));
-        }
-
         // If the external identifier is blank, add an error
         if (externalIdentifier.getExternalIdReference() == null || StringUtils.isBlank(externalIdentifier.getExternalIdReference().getContent())) {
             errors.add(getMessage("ExternalIdentifier.externalIdReference"));
@@ -306,7 +301,7 @@ public class WorkspaceController extends BaseWorkspaceController {
             // Update cached profile
             currentProfile.getOrcidBio().setExternalIdentifiers(externalIdentifiers);
             // Remove external identifier
-            externalIdentifierManager.removeExternalIdentifier(externalIdentifier.getOrcid().getValue(), externalIdentifier.getExternalIdReference().getContent());
+            externalIdentifierManager.removeExternalIdentifier(currentProfile.getOrcid().getValue(), externalIdentifier.getExternalIdReference().getContent());
         }
 
         return externalIdentifier;

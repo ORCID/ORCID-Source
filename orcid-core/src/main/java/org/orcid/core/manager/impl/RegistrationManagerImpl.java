@@ -129,6 +129,7 @@ public class RegistrationManagerImpl implements RegistrationManager {
     @Override
     public OrcidProfile createMinimalRegistration(OrcidProfile orcidProfile) {
         OrcidProfile minimalProfile = orcidProfileManager.createOrcidProfile(orcidProfile);
+        orcidProfileManager.processProfilePendingIndexingInTransaction(orcidProfile.getOrcidIdentifier().getPath());
         LOGGER.debug("Created minimal orcid and assigned id of {}", orcidProfile.getOrcid().getValue());
         return minimalProfile;
     }
