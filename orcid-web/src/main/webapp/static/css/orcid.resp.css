@@ -2946,6 +2946,10 @@ ul.personal-inf-display li{
 	white-space: pre-wrap
 }
 
+#signout{
+	max-width:120px;
+}
+
 
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */
