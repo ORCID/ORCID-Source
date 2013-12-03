@@ -92,7 +92,9 @@ public class WorkManagerImpl implements WorkManager {
     }
     
     /**
-     * TODO
+     * Loads the source info for a given work
+     * @param sourceEntity
+     * @param workInfo
      * */
     private void loadWorkSourceInfo(ProfileEntity sourceEntity, WorkInfoEntity workInfo) {
     	if(sourceEntity == null)
@@ -115,7 +117,9 @@ public class WorkManagerImpl implements WorkManager {
     }
     
     /**
-     * TODO
+     * Loads the contributors info for a given work
+     * @param profileWorkEntity
+     * @param workInfo
      * */
     private void loadWorkContributors(ProfileWorkEntity profileWorkEntity, WorkInfoEntity workInfo) {
     	WorkContributors workContributors = jpa2JaxbAdapter.getWorkContributors(profileWorkEntity); 
@@ -123,7 +127,9 @@ public class WorkManagerImpl implements WorkManager {
     }
     
     /**
-     * TODO
+     * Loads the work info for a given work
+     * @param workEntity
+     * @param workInfo
      * */
     private void loadWorkInfo(WorkEntity workEntity, WorkInfoEntity workInfo){
     	if(workEntity == null)
@@ -152,7 +158,9 @@ public class WorkManagerImpl implements WorkManager {
     }
     
     /**
-     * TODO
+     * Loads the work external identifier info for a given work
+     * @param workEntity
+     * @param workInfo
      * */
     private void loadWorkExternalIdentifiers(WorkEntity workEntity, WorkInfoEntity workInfo) {    	
     	workInfo.setExternalIdentifiers(jpa2JaxbAdapter.getWorkExternalIdentifiers(workEntity));

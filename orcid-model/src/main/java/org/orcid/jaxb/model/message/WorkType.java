@@ -202,9 +202,7 @@ public enum WorkType implements Serializable {
     @XmlEnumValue("television-radio")
     TELEVISION_RADIO("television-radio"), 
     @XmlEnumValue("thesis")
-    THESIS("thesis"),
-    @XmlEnumValue("web-site")
-    WEB_SITE("web-site");
+    THESIS("thesis");
     
     private final String value;
     private boolean deprecated = true;

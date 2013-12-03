@@ -354,7 +354,7 @@ public class OrcidMessageVersionConverterChainImpl implements OrcidMessageVersio
         case TRANSLATION:
             return WorkType.UNDEFINED;        
         case WEBSITE:
-            return WorkType.WEB_SITE;
+            return WorkType.WEBSITE;
         case WORKING_PAPER:
             return WorkType.REPORTS_WORKING_PAPERS;
         case UNDEFINED:
