@@ -258,8 +258,8 @@ public class OrcidMessageVersionConverterChainImpl implements OrcidMessageVersio
             return WorkType.ARTISTIC_PERFORMANCE;
         case THESIS:
             return WorkType.SUPERVISED_STUDENT_PUBLICATION;
-        case WEBSITE:
-            return WorkType.WEB_SITE;
+        case WEB_SITE:
+            return WorkType.WEBSITE;
         case UNDEFINED:
             return WorkType.OTHER;
         default:
