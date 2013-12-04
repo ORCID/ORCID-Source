@@ -58,6 +58,8 @@ public class PublicProfileController extends BaseWorkspaceController {
     
     @Resource
     private WorkManager workManager;
+    
+    private static final String WORKS_MAP = "WORKS_MAP";
 
     @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}")
     public ModelAndView publicPreview(HttpServletRequest request, @RequestParam(value = "page", defaultValue = "1") int pageNo,
@@ -90,6 +92,7 @@ public class PublicProfileController extends BaseWorkspaceController {
         		}        		
         		 if (!works.isEmpty()) {
                      mav.addObject("works", works);
+                     request.getSession().setAttribute("WORKS_MAP", works);
                  }
         	}            
 
