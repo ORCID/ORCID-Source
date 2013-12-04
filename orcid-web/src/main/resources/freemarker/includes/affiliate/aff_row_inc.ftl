@@ -21,15 +21,17 @@
 						<div class="col-md-8 col-sm-8">
 						    <h3 class="affiliation-title">
 					        	<strong ng-bind-html="affiliation.affiliationName.value"></strong>
-					        	<span class="affiliation-date" ng-show="affiliation.startDate">
+					        	<span class="affiliation-date" ng-show="affiliation.startDate && !affiliation.endDate">
 					        	    (<span ng-show="affiliation.startDate.month">{{affiliation.startDate.month}}-</span><span ng-show="affiliation.startDate.year">{{affiliation.startDate.year}}</span>
 					        	    <@orcid.msg 'workspace_affiliations.dateSeparator'/>
-					        	    <span ng-show="affiliation.endDate">
-					        	        <span ng-show="affiliation.endDate.month">{{affiliation.endDate.month}}-</span><span ng-show="affiliation.endDate.year">{{affiliation.endDate.year}}</span>)
-					        	    </span>
-					        	    <span ng-hide="affiliation.endDate">
-					        	        <@orcid.msg 'workspace_affiliations.present'/>)
-					        	    </span>
+					        	    <@orcid.msg 'workspace_affiliations.present'/>)
+					        	</span>
+					        	<span class="affiliation-date" ng-show="affiliation.startDate && affiliation.endDate">
+					        		(<span ng-show="affiliation.startDate.month">{{affiliation.startDate.month}}-</span><span ng-show="affiliation.startDate.year">{{affiliation.startDate.year}}</span>
+					        		<@orcid.msg 'workspace_affiliations.dateSeparator'/> <span ng-show="affiliation.endDate.month">{{affiliation.endDate.month}}-</span><span ng-show="affiliation.endDate.year">{{affiliation.endDate.year}}</span>)
+					            </span>
+					            <span class="affiliation-date" ng-show="!affiliation.startDate && affiliation.endDate">
+					        	     (<span ng-show="affiliation.endDate.month">{{affiliation.endDate.month}}-</span><span ng-show="affiliation.endDate.year">{{affiliation.endDate.year}}</span>)
 					        	</span>
 					        </h3>
 					        <div class="affiliation-details" ng-show="affiliation.roleTitle">
