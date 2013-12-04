@@ -102,32 +102,18 @@
 	                    <br />	                    	
 	                    <a href="#workspace-publications" class="btn-update no-icon" ng-click="workspaceSrvc.openWorks()"><@orcid.msg 'workspace.view'/></a>	                    
 	        		</div>
-	        		<!-- Afilliations -->
-					<#if RequestParameters['affiliations']??>
-		                <div class="workspace-overview col-md-3 col-sm-3 col-xs-6" id="educations-overview">
-		                    <a href="#workspace-educations" class="overview-count" ng-click="workspaceSrvc.openEducation()"><span ng-bind="affiliationsSrvc.educations.length"></span></a>
-		                    <a href="#workspace-educations" class="overview-title" ng-click="workspaceSrvc.openEducation()"><@orcid.msg 'org.orcid.jaxb.model.message.AffiliationType.education'/></a>
-		                    <br />
-		                    <a href="#workspace-educations" class="btn-update no-icon" ng-click="workspaceSrvc.openEducation()"><@orcid.msg 'workspace.view'/></a>
-		                </div>
-		                <div class="workspace-overview col-md-3 col-sm-3 col-xs-6" id="employments-overview">
-		                    <a href="#workspace-employments" class="overview-count" ng-click="workspaceSrvc.openEmployment()"><span ng-bind="affiliationsSrvc.employments.length"></span></a>
-		                    <a href="#workspace-employments" class="overview-title" ng-click="workspaceSrvc.openEmployment()"><@orcid.msg 'org.orcid.jaxb.model.message.AffiliationType.employment'/></a>
-		                    <br />
-		                    <a href="#workspace-employments" class="btn-update no-icon" ng-click="workspaceSrvc.openEmployment()"><@orcid.msg 'workspace.view'/></a>
-		                </div>
-		             <#else>
-		                <div class="workspace-overview col-md-3 col-sm-3 col-xs-6" id="affiliations-overview">
-		                    <a href="#workspace-affiliations" class="overview-count"><span ng-bind="affiliationsSrvc.affiliations.length"></span></a>
-		                    <a href="#workspace-affiliations" class="overview-title"><@orcid.msg 'workspace_bio.Affiliations'/></a>
-		                    <br />
-		                    <#if RequestParameters['affiliations']??>
-		                        <a href="#workspace-affiliations" class="btn-update no-icon"><@orcid.msg 'workspace.view'/></a>
-		                    <#else>
-		                        <a target="_blank" href="http://support.orcid.org/forums/179657-coming-soon" class="btn-update no-icon"><@orcid.msg 'workspace.ComingSoon'/></a>
-		                    </#if>
-		                </div>
-		             </#if>	                
+		            <div class="workspace-overview col-md-3 col-sm-3 col-xs-6" id="educations-overview">
+		                <a href="#workspace-educations" class="overview-count" ng-click="workspaceSrvc.openEducation()"><span ng-bind="affiliationsSrvc.educations.length"></span></a>
+		                <a href="#workspace-educations" class="overview-title" ng-click="workspaceSrvc.openEducation()"><@orcid.msg 'org.orcid.jaxb.model.message.AffiliationType.education'/></a>
+		                <br />
+		                <a href="#workspace-educations" class="btn-update no-icon" ng-click="workspaceSrvc.openEducation()"><@orcid.msg 'workspace.view'/></a>
+		            </div>
+		            <div class="workspace-overview col-md-3 col-sm-3 col-xs-6" id="employments-overview">
+		                <a href="#workspace-employments" class="overview-count" ng-click="workspaceSrvc.openEmployment()"><span ng-bind="affiliationsSrvc.employments.length"></span></a>
+		                <a href="#workspace-employments" class="overview-title" ng-click="workspaceSrvc.openEmployment()"><@orcid.msg 'org.orcid.jaxb.model.message.AffiliationType.employment'/></a>
+		                <br />
+		                <a href="#workspace-employments" class="btn-update no-icon" ng-click="workspaceSrvc.openEmployment()"><@orcid.msg 'workspace.view'/></a>
+		             </div>
 	                <!-- Grants -->     
 	        		<div class="workspace-overview  col-md-3 col-sm-3 col-xs-6">
 	        			<a href="#workspace-grants" class="overview-count">${(profile.orcidActivities.orcidGrants.orcidGrant?size)!0}</a>
@@ -155,9 +141,7 @@
         			</div>
             	</div>
             	<!-- Affiliations -->
-                <#if RequestParameters['affiliations']??>
-                	<#include "workspace_affiliations_body_list.ftl"/>
-                </#if>
+                <#include "workspace_affiliations_body_list.ftl"/>
 		        <!-- Works -->                
                 <div id="workspace-publications" class="workspace-accordion-item workspace-accordion-active" ng-controller="WorkCtrl">
                 	<div class="workspace-accordion-header">

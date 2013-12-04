@@ -58,8 +58,7 @@ import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.PublicationDateEntity;
 import org.orcid.persistence.jpa.entities.WorkContributorEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
-import org.orcid.persistence.jpa.entities.custom.MinimizedWorkEntity;
-import org.orcid.pojo.ajaxForm.Citation; 
+import org.orcid.pojo.ajaxForm.Citation;
 import org.orcid.pojo.ajaxForm.Contributor;
 import org.orcid.pojo.ajaxForm.Date;
 import org.orcid.pojo.ajaxForm.PojoUtil;
@@ -76,7 +75,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.orcid.jaxb.model.message.Visibility;
 
 /**
  * @author rcpeters
@@ -290,7 +288,6 @@ public class WorksController extends BaseWorkspaceController {
         return w;
     }
 
-    
     /**
      * Returns a blank work
      * */
@@ -741,16 +738,17 @@ public class WorksController extends BaseWorkspaceController {
      */
     private List<String> createWorksIdList(HttpServletRequest request) {
         OrcidProfile currentProfile = getEffectiveProfile();
-        List<MinimizedWorkEntity> works = workManager.findWorks(currentProfile.getOrcid().getValue());
+        OrcidWorks orcidWorks = currentProfile.getOrcidActivities() == null ? null : currentProfile.getOrcidActivities().getOrcidWorks();
+
         HashMap<String, Work> worksMap = new HashMap<String, Work>();
         List<String> workIds = new ArrayList<String>();
-        if (works != null) {
-            for (MinimizedWorkEntity work : works) {
+        if (orcidWorks != null) {
+            for (OrcidWork work : orcidWorks.getOrcidWork()) {
                 try {
-                    worksMap.put(String.valueOf(work.getId()), Work.valueOf(work));
-                    workIds.add(String.valueOf(work.getId()));
+                    worksMap.put(work.getPutCode(), Work.valueOf(work));
+                    workIds.add(work.getPutCode());
                 } catch (Exception e) {
-                    LOGGER.error("ProfileWork failed to parse as Work. Put code" + work.getId());
+                    LOGGER.error("ProfileWork failed to parse as Work. Put code" + work.getPutCode());
                 }
             }
             request.getSession().setAttribute(WORKS_MAP, worksMap);
