@@ -38,7 +38,7 @@ public interface WorkDao extends GenericDao<WorkEntity, Long> {
     WorkEntity addWork(WorkEntity work);
     
     /**
-     * Find the works for a specific user
+     * Find works for a specific user
      * 
      * @param orcid
      * 		the Id of the user

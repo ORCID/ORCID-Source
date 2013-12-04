@@ -47,7 +47,7 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
     }
 
 	/**
-	 * Find the works for a specific user
+	 * Find works for a specific user
 	 * 
 	 * @param orcid
 	 *            the Id of the user
