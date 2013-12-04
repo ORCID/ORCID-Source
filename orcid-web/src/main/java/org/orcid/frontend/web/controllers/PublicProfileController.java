@@ -30,11 +30,13 @@ import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.orcid.core.locale.LocaleManager;
+import org.orcid.core.manager.WorkManager;
 import org.orcid.frontend.web.util.LanguagesMap;
 import org.orcid.jaxb.model.message.Affiliation;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidWork;
 import org.orcid.jaxb.model.message.Visibility;
+import org.orcid.persistence.jpa.entities.custom.MinimizedWorkEntity;
 import org.orcid.pojo.ajaxForm.AffiliationForm;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Text;
@@ -52,6 +54,9 @@ public class PublicProfileController extends BaseWorkspaceController {
 
     @Resource
     private LocaleManager localeManager;
+    
+    @Resource
+    private WorkManager workManager;
 
     @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}")
     public ModelAndView publicPreview(HttpServletRequest request, @RequestParam(value = "page", defaultValue = "1") int pageNo,
@@ -75,15 +80,17 @@ public class PublicProfileController extends BaseWorkspaceController {
             mav.addObject("deprecated", true);
             mav.addObject("primaryRecord", primaryRecord);
         } else {
-            if (profile.getOrcidActivities() != null && profile.getOrcidActivities().getOrcidWorks() != null) {
-                for (OrcidWork orcidWork : profile.getOrcidActivities().getOrcidWorks().getOrcidWork()) {
-                    works.add(Work.valueOf(orcidWork));
-                    workIds.add(orcidWork.getPutCode());
-                }
-                if (!works.isEmpty()) {
-                    mav.addObject("works", works);
-                }
-            }
+        	
+        	List<MinimizedWorkEntity> publicWorks = workManager.findPublicWorks(orcid);
+        	if(publicWorks != null && publicWorks.size() > 0) {
+        		for(MinimizedWorkEntity minimizedWork : publicWorks){
+        			works.add(Work.valueOf(minimizedWork));
+        			workIds.add(String.valueOf(minimizedWork.getId()));
+        		}        		
+        		 if (!works.isEmpty()) {
+                     mav.addObject("works", works);
+                 }
+        	}            
 
             if (profile.getOrcidActivities() != null && profile.getOrcidActivities().getAffiliations() != null) {
                 for (Affiliation affiliation : profile.getOrcidActivities().getAffiliations().getAffiliation()) {
@@ -168,5 +175,39 @@ public class PublicProfileController extends BaseWorkspaceController {
             }
         }
         return works;
+    }
+    
+    /**
+     * Returns the work info for a given work id
+     * @param workId The id of the work
+     * @return the content of that work
+     * */
+    @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/getWorkInfo.json", method = RequestMethod.GET)
+    public @ResponseBody
+    Work getWorkInfo(@PathVariable("orcid") String orcid, @RequestParam(value = "workId") String workId) {
+    	Map<String, String> countries = retrieveIsoCountries();
+        Map<String, String> languages = LanguagesMap.buildLanguageMap(localeManager.getLocale(), false);
+    	if(StringUtils.isEmpty(workId))
+    		return null;    	    
+    	
+    	Work work = workManager.loadWorkInfo(orcid, workId);
+    	
+    	//Set country name
+        if(!PojoUtil.isEmpty(work.getCountryCode())) {            
+            Text countryName = Text.valueOf(countries.get(work.getCountryCode().getValue()));
+            work.setCountryName(countryName);
+        }
+        //Set language name
+        if(!PojoUtil.isEmpty(work.getLanguageCode())) {
+            Text languageName = Text.valueOf(languages.get(work.getLanguageCode().getValue()));
+            work.setLanguageName(languageName);
+        }
+        //Set translated title language name
+        if(!(work.getWorkTitle().getTranslatedTitle() == null) && !StringUtils.isEmpty(work.getWorkTitle().getTranslatedTitle().getLanguageCode())) {
+            String languageName = languages.get(work.getWorkTitle().getTranslatedTitle().getLanguageCode());
+            work.getWorkTitle().getTranslatedTitle().setLanguageName(languageName);
+        }
+    	
+    	return work;
     }
 }

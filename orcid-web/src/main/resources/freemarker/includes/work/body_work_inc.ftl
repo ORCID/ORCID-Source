@@ -40,7 +40,7 @@
 	        		<!-- Privacy bar -->
 					<ul class="workspace-private-toolbar">
 						<li>
-						<@orcid.privacyToggle angularModel="work.visibility.visibility" 
+						<@orcid.privacyToggle angularModel="work.visibility" 
 							publicClick="setPrivacy(work.putCode.value, 'PUBLIC', $event)" 
 		                	limitedClick="setPrivacy(work.putCode.value, 'LIMITED', $event)" 
 		                	privateClick="setPrivacy(work.putCode.value, 'PRIVATE', $event)"/>

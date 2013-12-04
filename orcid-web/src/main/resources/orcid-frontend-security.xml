@@ -123,6 +123,8 @@
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/(\d{4}-){3,}\d{3}[\dX]/affiliations.json(\?.*)?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
+		<sec:intercept-url pattern="/(\d{4}-){3,}\d{3}[\dX]/getWorkInfo.json(\?.*)?"
+ 	      	access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/lang.json(.*)?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/login(\?.*)?"
