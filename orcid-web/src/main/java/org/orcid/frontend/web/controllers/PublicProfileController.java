@@ -35,6 +35,7 @@ import org.orcid.frontend.web.util.LanguagesMap;
 import org.orcid.jaxb.model.message.Affiliation;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidWork;
+import org.orcid.jaxb.model.message.OrcidWorks;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.persistence.jpa.entities.custom.MinimizedWorkEntity;
 import org.orcid.pojo.ajaxForm.AffiliationForm;
@@ -190,24 +191,40 @@ public class PublicProfileController extends BaseWorkspaceController {
     	if(StringUtils.isEmpty(workId))
     		return null;    	    
     	
-    	Work work = workManager.loadWorkInfo(orcid, workId);
+    	OrcidProfile publicProfile = orcidProfileManager.retrievePublicOrcidProfile(orcid);
     	
-    	//Set country name
-        if(!PojoUtil.isEmpty(work.getCountryCode())) {            
-            Text countryName = Text.valueOf(countries.get(work.getCountryCode().getValue()));
-            work.setCountryName(countryName);
-        }
-        //Set language name
-        if(!PojoUtil.isEmpty(work.getLanguageCode())) {
-            Text languageName = Text.valueOf(languages.get(work.getLanguageCode().getValue()));
-            work.setLanguageName(languageName);
-        }
-        //Set translated title language name
-        if(!(work.getWorkTitle().getTranslatedTitle() == null) && !StringUtils.isEmpty(work.getWorkTitle().getTranslatedTitle().getLanguageCode())) {
-            String languageName = languages.get(work.getWorkTitle().getTranslatedTitle().getLanguageCode());
-            work.getWorkTitle().getTranslatedTitle().setLanguageName(languageName);
-        }
-    	
-    	return work;
+    	if(publicProfile != null && publicProfile.getOrcidActivities() != null) {
+    		OrcidWorks orcidWorks = publicProfile.getOrcidActivities().getOrcidWorks();
+        	if(orcidWorks != null){
+        		List<OrcidWork> orcidWorkList = orcidWorks.getOrcidWork();
+        		for(OrcidWork orcidWork : orcidWorkList) {
+        			if(workId.equals(orcidWork.getPutCode())){
+        				if(Visibility.PUBLIC.equals(orcidWork.getVisibility())){
+        					Work work = Work.valueOf(orcidWork);
+        					//Set country name
+        			        if(!PojoUtil.isEmpty(work.getCountryCode())) {            
+        			            Text countryName = Text.valueOf(countries.get(work.getCountryCode().getValue()));
+        			            work.setCountryName(countryName);
+        			        }
+        			        //Set language name
+        			        if(!PojoUtil.isEmpty(work.getLanguageCode())) {
+        			            Text languageName = Text.valueOf(languages.get(work.getLanguageCode().getValue()));
+        			            work.setLanguageName(languageName);
+        			        }
+        			        //Set translated title language name
+        			        if(!(work.getWorkTitle().getTranslatedTitle() == null) && !StringUtils.isEmpty(work.getWorkTitle().getTranslatedTitle().getLanguageCode())) {
+        			            String languageName = languages.get(work.getWorkTitle().getTranslatedTitle().getLanguageCode());
+        			            work.getWorkTitle().getTranslatedTitle().setLanguageName(languageName);
+        			        }
+        			        
+        			        return work;
+        				}
+        				break;
+        			}
+        		}
+        	}
+    	}
+    	    	    	
+    	return null;
     }
 }

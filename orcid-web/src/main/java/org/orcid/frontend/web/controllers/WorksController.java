@@ -303,29 +303,37 @@ public class WorksController extends BaseWorkspaceController {
     		return null;
     	
     	// Get current profile
-        OrcidProfile currentProfile = getEffectiveProfile();
-        // Get orcid
-        String orcid = currentProfile.getOrcid().getValue();
+        OrcidProfile currentProfile = getEffectiveProfile();        
     	
-        Work work = workManager.loadWorkInfo(orcid, workId);
-    	
-    	//Set country name
-        if(!PojoUtil.isEmpty(work.getCountryCode())) {            
-            Text countryName = Text.valueOf(countries.get(work.getCountryCode().getValue()));
-            work.setCountryName(countryName);
+        if(currentProfile != null && currentProfile.getOrcidActivities() != null) {
+        	OrcidWorks orcidWorks = currentProfile.getOrcidActivities().getOrcidWorks();
+        	if(orcidWorks != null){
+        		List<OrcidWork> orcidWorkList = orcidWorks.getOrcidWork();
+        		for(OrcidWork orcidWork : orcidWorkList) {
+        			if(workId.equals(orcidWork.getPutCode())){
+        				Work work = Work.valueOf(orcidWork);
+        				//Set country name
+        		        if(!PojoUtil.isEmpty(work.getCountryCode())) {            
+        		            Text countryName = Text.valueOf(countries.get(work.getCountryCode().getValue()));
+        		            work.setCountryName(countryName);
+        		        }
+        		        //Set language name
+        		        if(!PojoUtil.isEmpty(work.getLanguageCode())) {
+        		            Text languageName = Text.valueOf(languages.get(work.getLanguageCode().getValue()));
+        		            work.setLanguageName(languageName);
+        		        }
+        		        //Set translated title language name
+        		        if(!(work.getWorkTitle().getTranslatedTitle() == null) && !StringUtils.isEmpty(work.getWorkTitle().getTranslatedTitle().getLanguageCode())) {
+        		            String languageName = languages.get(work.getWorkTitle().getTranslatedTitle().getLanguageCode());
+        		            work.getWorkTitle().getTranslatedTitle().setLanguageName(languageName);
+        		        }
+        		        
+        		        return work;
+        			}
+        		}
+        	}
         }
-        //Set language name
-        if(!PojoUtil.isEmpty(work.getLanguageCode())) {
-            Text languageName = Text.valueOf(languages.get(work.getLanguageCode().getValue()));
-            work.setLanguageName(languageName);
-        }
-        //Set translated title language name
-        if(!(work.getWorkTitle().getTranslatedTitle() == null) && !StringUtils.isEmpty(work.getWorkTitle().getTranslatedTitle().getLanguageCode())) {
-            String languageName = languages.get(work.getWorkTitle().getTranslatedTitle().getLanguageCode());
-            work.getWorkTitle().getTranslatedTitle().setLanguageName(languageName);
-        }
-    	
-    	return work;
+        return null;
     }
     
     /**

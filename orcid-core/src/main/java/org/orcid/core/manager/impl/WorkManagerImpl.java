@@ -20,14 +20,10 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
-import org.orcid.pojo.ajaxForm.Work;
 import org.orcid.core.adapter.Jpa2JaxbAdapter;
 import org.orcid.core.manager.WorkManager;
-import org.orcid.jaxb.model.message.WorkContributors;
-import org.orcid.jaxb.model.message.WorkExternalIdentifiers;
 import org.orcid.persistence.dao.ProfileWorkDao;
 import org.orcid.persistence.dao.WorkDao;
-import org.orcid.persistence.jpa.entities.ProfileWorkEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.persistence.jpa.entities.custom.MinimizedWorkEntity;
 
@@ -74,20 +70,4 @@ public class WorkManagerImpl implements WorkManager {
     public List<MinimizedWorkEntity> findPublicWorks(String orcid) {
     	return workDao.findPublicWorks(orcid);
     }
-	
-	/**
-	 * Loads work information
-	 * 
-	 * @param workId
-	 *            the Id of the work
-	 * @return a workInfo object with the work information
-	 * */
-	public Work loadWorkInfo(String orcid, String workId) {	 	
-		ProfileWorkEntity profileWork = profileWorkDao.getProfileWork(orcid,
-				workId);		
-		WorkEntity workEntity = profileWork.getWork();
-		WorkContributors workContributors = jpa2JaxbAdapter.getWorkContributors(profileWork);
-		WorkExternalIdentifiers externalIdentifiers = jpa2JaxbAdapter.getWorkExternalIdentifiers(workEntity);
-		return Work.valueOf(profileWork, workEntity, workContributors, externalIdentifiers);
-	}
 }
