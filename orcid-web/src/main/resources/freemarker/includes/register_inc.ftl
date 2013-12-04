@@ -26,7 +26,7 @@
         <label class="control-label">${springMacroRequestContext.getMessage("oauth_sign_up.labelfirstname")}
         </label>
         <div class="relative">
-            <input name="givenNames" type="text" class="input-xlarge" ng-model="register.givenNames.value" ng-model-onblur ng-change="serverValidate('GivenNames')"/>
+            <input name="givenNames" type="text" tabindex="1" class="input-xlarge" ng-model="register.givenNames.value" ng-model-onblur ng-change="serverValidate('GivenNames')"/>
             <span class="required" ng-class="isValidClass(register.givenNames)">*</span>
 			<div class="popover-help-container">
                 <a href="javascript:void(0);"><i class="glyphicon glyphicon-question-sign"></i></a>
@@ -49,7 +49,7 @@
 	<div>
         <label class="control-label">${springMacroRequestContext.getMessage("oauth_sign_up.labellastname")}</label>
         <div class="relative">
-            <input name="familyNames" type="text" class="input-xlarge"  ng-model="register.familyNames.value" ng-model-onblur/>
+            <input name="familyNames" type="text" tabindex="2" class="input-xlarge"  ng-model="register.familyNames.value" ng-model-onblur/>
             <span class="orcid-error" ng-show="register.familyNames.errors.length > 0">
 				<div ng-repeat='error in register.familyNames.errors' ng-bind-html-unsafe="error"></div>
    			</span>
@@ -58,7 +58,7 @@
     <div>
         <label class="control-label">${springMacroRequestContext.getMessage("oauth_sign_up.labelemail")}</label>
         <div class="relative">
-            <input name="email" type="text" class="input-xlarge" ng-model="register.email.value" ng-model-onblur ng-change="serverValidate('Email')" />
+            <input name="email" type="text" tabindex="3" class="input-xlarge" ng-model="register.email.value" ng-model-onblur ng-change="serverValidate('Email')" />
             <span class="required" ng-class="isValidClass(register.email)">*</span>
             <span class="orcid-error" ng-show="register.email.errors.length > 0">
 				<div ng-repeat='error in register.email.errors' ng-bind-html-unsafe="error"></div>
@@ -68,7 +68,7 @@
     <div>
         <label class="control-label">${springMacroRequestContext.getMessage("oauth_sign_up.labelreenteremail")}</label>
         <div class="relative">
-            <input name="confirmedEmail" type="text" class="input-xlarge" ng-model="register.emailConfirm.value" ng-model-onblur ng-change="serverValidate('EmailConfirm')" />
+            <input name="confirmedEmail" type="text" tabindex="4" class="input-xlarge" ng-model="register.emailConfirm.value" ng-model-onblur ng-change="serverValidate('EmailConfirm')" />
             <span class="required" ng-class="isValidClass(register.emailConfirm)">*</span>
             <span class="orcid-error" ng-show="register.emailConfirm.errors.length > 0">
 				<div ng-repeat='error in register.emailConfirm.errors' ng-bind-html-unsafe="error"></div>
@@ -78,7 +78,7 @@
     <div class="control-group">
         <label class="control-label">${springMacroRequestContext.getMessage("oauth_sign_up.labelpassword")}</label>
         <div class="relative">
-            <input type="password" name="password" class="input-xlarge" ng-model="register.password.value" ng-change="serverValidate('Password')"/>
+            <input type="password" name="password" tabindex="5" class="input-xlarge" ng-model="register.password.value" ng-change="serverValidate('Password')"/>
             <span class="required" ng-class="isValidClass(register.password)">*</span>
    			<@orcid.passwordHelpPopup />
             <span class="orcid-error" ng-show="register.password.errors.length > 0">
@@ -89,7 +89,7 @@
     <div>
         <label class="control-label">${springMacroRequestContext.getMessage("password_one_time_reset.labelconfirmpassword")}</label>
         <div class="relative">
-            <input type="password" name="confirmPassword" class="input-xlarge" ng-model="register.passwordConfirm.value" ng-change="serverValidate('PasswordConfirm')"/>
+            <input type="password" name="confirmPassword" tabindex="6" class="input-xlarge" ng-model="register.passwordConfirm.value" ng-change="serverValidate('PasswordConfirm')"/>
             <span class="required" ng-class="isValidClass(register.passwordConfirm)">*</span>
             <span class="orcid-error" ng-show="register.passwordConfirm.errors.length > 0">
 				<div ng-repeat='error in register.passwordConfirm.errors' ng-bind-html-unsafe="error"></div>
