@@ -47,10 +47,15 @@
                     ${(profile.orcidBio.personalDetails.creditName.content)!}
                 <#else>
                     ${(profile.orcidBio.personalDetails.givenNames.content)!} ${(profile.orcidBio.personalDetails.familyName.content)!}
-                </#if>
-            </h2>
-            <p><small id="orcid-id" class="orcid-id">${baseUriHttp}/${(profile.orcid.value)!}</small></p>
-	        <p class="hoover-white-fonts"><a href="${baseUriHttp}/${(profile.orcid.value)!}" class="label btn-primary"><@orcid.msg 'workspace.ViewPublicORCIDRecord'/></a></p>
+                </#if>                
+            </h2>            
+            <!-- <p><small id="orcid-id" class="orcid-id">${baseUriHttp}/${(profile.orcid.value)!}</small></p> -->           			  
+			 
+			
+			<input type="text" class="orcid-id-input" onClick="this.select();" value="${baseUriHttp}/${(profile.orcid.value)!}" readonly="readonly">					       
+							
+            
+	        <p class="hoover-white-fonts"><a href="${baseUriHttp}/${(profile.orcid.value)!}" class="label btn-primary"><@orcid.msg 'workspace.ViewPublicORCIDRecord'/></a><br /><a href="<@spring.url '/account/manage-bio-settings'/>" id="update-personal-modal-link" class="label btn-primary"><@orcid.msg 'workspace.Update'/></a></p>
 	        <#if ((profile.orcidBio.personalDetails.otherNames.otherName)?size != 0)>
 	        	<p><strong><@orcid.msg 'workspace.Alsoknownas'/></strong><br />
 		       		<#list profile.orcidBio.personalDetails.otherNames.otherName as otherName>

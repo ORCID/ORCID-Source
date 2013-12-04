@@ -268,10 +268,12 @@ function formColorBoxResize() {
 }
 
 function fixZindexIE7(target, zindex){
-	$(target).each(function(){
-		$(this).css('z-index', zindex);		
-		--zindex;    			    		
-	});	
+	if(isIE() == 7){
+		$(target).each(function(){
+			$(this).css('z-index', zindex);		
+			--zindex;    			    		
+		});
+	}
 }
 
 function emptyTextField(field) {
@@ -388,10 +390,9 @@ function EditTableCtrl($scope) {
 		$scope.deactivateUpdateToggleText();
 	};
 	
-	$scope.fixIE7zIndexes = function() {
+	$scope.fixIE7zIndexes = function() {		
 		fixZindexIE7('tr', 999999);
 		fixZindexIE7('#privacy-settings', 5000);
-		console.log('Fixes applied');
 	};
 	
 	// init deactivate and Z-Indexes Fix
@@ -567,9 +568,9 @@ function PasswordEditCtrl($scope, $http) {
 	
 	$scope.getChangePassword();
 	
-	$scope.zIndexfixIE7 = function(){
+	$scope.zIndexfixIE7 = function(){		
 		fixZindexIE7('#password-edit', 999999);
-		fixZindexIE7('#password-edit .relative', 99999);
+		fixZindexIE7('#password-edit .relative', 99999);		
 	};
 	
 	$scope.saveChangePassword = function() {
@@ -630,13 +631,13 @@ function EmailEditCtrl($scope, $compile) {
 		$scope.saveEmail();
 	};
 	
-	$scope.fixZindexesIE7 =  function(){
+	$scope.fixZindexesIE7 =  function(){		
 	    fixZindexIE7('.popover',2000);
 	    fixZindexIE7('.popover-help-container',3000);
 	    fixZindexIE7('#privacy-bar',500);
 	    fixZindexIE7('.emailVisibility',5000);
 	    fixZindexIE7('.col-md-3', 6000);
-	    fixZindexIE7('.row', 7000);	  
+	    fixZindexIE7('.row', 7000);	
 	};
 	
 	$scope.toggleVisibility = function(idx) {
@@ -1593,9 +1594,9 @@ function PublicWorkCtrl($scope, $compile, worksSrvc) {
 						}
 					});
 					setTimeout(function(){
-						$scope.addWorkToScope();
+						$scope.addWorkToScope();						
 						fixZindexIE7('.workspace-public workspace-body-list li',99999);
-						fixZindexIE7('.workspace-toolbar',9999);
+						fixZindexIE7('.workspace-toolbar',9999);						
 					},50);
 				}
 			}).fail(function() { 
@@ -1759,12 +1760,10 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 		}else {
 			$scope.$apply(function() {
 				$scope.worksSrvc.loading = false;
-			});
-			if(isIE() == 7){
-				fixZindexIE7('.workspace-toolbar', 999999);
-				fixZindexIE7('.workspace-private-toolbar', 500);
-				fixZindexIE7('#privacy-bar', 400);
-			}
+			});			
+			fixZindexIE7('.workspace-toolbar', 999999);
+			fixZindexIE7('.workspace-private-toolbar', 500);
+			fixZindexIE7('#privacy-bar', 400);
 		}
 	}; 	
 
