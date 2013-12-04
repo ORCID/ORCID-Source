@@ -86,7 +86,7 @@ public class T2OrcidApiServiceVersionedDelegatorTest extends DBUnitTest {
     @Resource
     private OrcidProfileManager orcidProfileManager;
 
-    @Resource(name = "t2OrcidApiServiceDelegatorLatest")
+    @Resource(name = "t2OrcidApiServiceDelegatorPrototype")
     private T2OrcidApiServiceDelegator t2OrcidApiServiceDelegatorLatest;
 
     @Mock

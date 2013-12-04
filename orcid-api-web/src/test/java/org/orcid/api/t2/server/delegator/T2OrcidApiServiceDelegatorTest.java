@@ -22,7 +22,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -40,7 +39,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.orcid.api.common.exception.OrcidBadRequestException;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.oauth.OrcidOAuth2Authentication;
 import org.orcid.jaxb.model.message.Affiliation;
@@ -80,7 +78,7 @@ public class T2OrcidApiServiceDelegatorTest extends DBUnitTest {
     private static final List<String> DATA_FILES = Arrays.asList("/data/EmptyEntityData.xml", "/data/SecurityQuestionEntityData.xml", "/data/ProfileEntityData.xml",
             "/data/WorksEntityData.xml", "/data/ProfileWorksEntityData.xml", "/data/ClientDetailsEntityData.xml", "/data/Oauth2TokenDetailsData.xml");
 
-    @Resource(name = "t2OrcidApiServiceDelegatorV1_1")
+    @Resource(name = "t2OrcidApiServiceDelegatorLatest")
     private T2OrcidApiServiceDelegator t2OrcidApiServiceDelegator;
 
     @Resource
@@ -127,23 +125,6 @@ public class T2OrcidApiServiceDelegatorTest extends DBUnitTest {
         orcidActivities.setOrcidWorks(orcidWorks);
         Response response = t2OrcidApiServiceDelegator.addWorks(mockedUriInfo, "4444-4444-4444-4441", orcidMessage);
         assertNotNull(response);
-    }
-
-    @Test(expected = OrcidBadRequestException.class)
-    public void testCreateBioWithMultiplePrimaryEmails() {
-        setUpSecurityContextForClientOnly();
-        OrcidMessage orcidMessage = createStubOrcidMessage();
-        ContactDetails contactDetails = orcidMessage.getOrcidProfile().getOrcidBio().getContactDetails();
-        List<Email> emailList = new ArrayList<>();
-        String[] emailStrings = new String[] { "madeupemail@semantico.com", "madeupemail2@semantico.com" };
-        for (String emailString : emailStrings) {
-            Email email = new Email(emailString);
-            email.setPrimary(true);
-            emailList.add(email);
-        }
-        contactDetails.getEmail().addAll(emailList);
-
-        t2OrcidApiServiceDelegator.createProfile(mockedUriInfo, orcidMessage);
     }
 
     @Test

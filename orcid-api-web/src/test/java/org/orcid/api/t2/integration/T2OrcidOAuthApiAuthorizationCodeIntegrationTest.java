@@ -64,8 +64,6 @@ import org.orcid.jaxb.model.message.WorkType;
 import org.orcid.persistence.dao.ClientRedirectDao;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
-import org.orcid.persistence.jpa.entities.ProfileWorkEntity;
-import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.persistence.jpa.entities.keys.ClientRedirectUriPk;
 import org.orcid.test.DBUnitTest;
 import org.springframework.beans.factory.annotation.Value;
@@ -94,8 +92,11 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
     @Resource
     private ClientRedirectDao clientRedirectDao;
 
-    @Resource
+    @Resource(name="t2OAuthClient")
     private T2OAuthAPIService<ClientResponse> oauthT2Client;
+    
+    @Resource(name="t2OAuthClient1_2_rc1")
+    private T2OAuthAPIService<ClientResponse> oauthT2Client1_2_rc1;
 
     @Resource
     private ProfileDao profileDao;
@@ -308,7 +309,7 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
         String accessToken = obtainAccessToken(authorizationCode, scopes);
 
         OrcidMessage orcidMessage = new OrcidMessage();
-        orcidMessage.setMessageVersion("1.0.23");
+        orcidMessage.setMessageVersion("1.2_rc1");
         OrcidProfile orcidProfile = new OrcidProfile();
         orcidMessage.setOrcidProfile(orcidProfile);
         OrcidActivities orcidActivities = new OrcidActivities();
@@ -324,7 +325,7 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
         affiliationAddress.setAffiliationCity(new AffiliationCity("Edinburgh"));
         affiliationAddress.setAffiliationCountry(new AffiliationCountry(Iso3166Country.GB));
 
-        ClientResponse clientResponse = oauthT2Client.addAffiliationsXml("4444-4444-4444-4442", orcidMessage, accessToken);
+        ClientResponse clientResponse = oauthT2Client1_2_rc1.addAffiliationsXml("4444-4444-4444-4442", orcidMessage, accessToken);
         assertEquals(201, clientResponse.getStatus());
     }
 

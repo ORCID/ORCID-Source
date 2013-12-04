@@ -62,7 +62,6 @@ import org.orcid.api.t2.T2OrcidApiService;
 import org.orcid.api.t2.server.delegator.OrcidClientCredentialEndPointDelegator;
 import org.orcid.api.t2.server.delegator.T2OrcidApiServiceDelegator;
 import org.orcid.api.t2.server.delegator.impl.T2OrcidApiServiceVersionedDelegatorImpl;
-import org.orcid.core.manager.impl.ValidationManagerImpl;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.security.oauth2.common.util.OAuth2Utils;
@@ -130,19 +129,7 @@ abstract public class T2OrcidApiServiceImplBase implements T2OrcidApiService<Res
         // Automatically configure a service delegator, if one hasn't been set
         if (serviceDelegator == null && externalVersion != null) {
             serviceDelegatorPrototype.setExternalVersion(externalVersion);
-
-            ValidationManagerImpl incomingValidationManagerImpl = new ValidationManagerImpl();
-            incomingValidationManagerImpl.setVersion(externalVersion);
-            incomingValidationManagerImpl.setRequireOrcidProfile(true);
-            incomingValidationManagerImpl.setValidateTitle(true);
-            incomingValidationManagerImpl.setValidateWorkType(true);
-            serviceDelegatorPrototype.setIncomingValidationManager(incomingValidationManagerImpl);
-
-            ValidationManagerImpl outgoingValidationManagerImpl = new ValidationManagerImpl();
-            outgoingValidationManagerImpl.setVersion(externalVersion);
-            outgoingValidationManagerImpl.setValidateBibtex(false);
-            serviceDelegatorPrototype.setOutgoingValidationManager(outgoingValidationManagerImpl);
-
+            serviceDelegatorPrototype.autoConfigureValidators();
             serviceDelegator = serviceDelegatorPrototype;
         }
     }
