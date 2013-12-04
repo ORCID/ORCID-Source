@@ -2664,15 +2664,14 @@ a.btn-primary:hover {
 }
 
 #loginForm #login-error-mess {
-	top: 0px;
+	top: 280px;
 	position: absolute;
-	z-index: -1;
-	width: 100%;
-	height: 80px;
-	text-align: left;
-	line-height: 104px;
+	z-index: 0;
+	width: 76%;
+	min-height: 50px;
+	height:auto;		
 	overflow: hidden;
-	padding-left:224px;
+	margin-left: 24%;
 }
 
 #loginForm #login-register{
@@ -3693,6 +3692,10 @@ ul.personal-inf-display li{
 	#edit-affiliation .twitter-typeahead{
 		width: 95%;
 	}	
+	
+	#loginForm #login-error-mess {
+		width: 100%;
+	}
 	
 }
 
