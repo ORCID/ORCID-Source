@@ -33,6 +33,7 @@ import javax.servlet.http.HttpSession;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
 
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -51,6 +52,8 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import org.orcid.jaxb.model.message.Visibility;
+
+import com.google.common.collect.Lists;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:orcid-core-context.xml", "classpath:orcid-frontend-web-servlet.xml" })
@@ -74,6 +77,11 @@ public class WorksControllerTest extends BaseControllerTest {
     @BeforeClass
     public static void beforeClass() throws Exception {
         initDBUnitData(DATA_FILES, null);
+    }
+    
+    @AfterClass
+    public static void afterClass() throws Exception {
+        removeDBUnitData(Lists.reverse(DATA_FILES), null);
     }
     
     @Test
