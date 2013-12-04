@@ -59,14 +59,12 @@ import org.orcid.persistence.jpa.entities.PublicationDateEntity;
 import org.orcid.persistence.jpa.entities.WorkContributorEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.persistence.jpa.entities.custom.MinimizedWorkEntity;
-import org.orcid.persistence.jpa.entities.custom.WorkInfoEntity;
-import org.orcid.pojo.ajaxForm.Citation;
+import org.orcid.pojo.ajaxForm.Citation; 
 import org.orcid.pojo.ajaxForm.Contributor;
 import org.orcid.pojo.ajaxForm.Date;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.pojo.ajaxForm.TranslatedTitle;
-import org.orcid.pojo.ajaxForm.Visibility;
 import org.orcid.pojo.ajaxForm.Work;
 import org.orcid.pojo.ajaxForm.WorkExternalIdentifier;
 import org.orcid.pojo.ajaxForm.WorkTitle;
@@ -78,6 +76,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.orcid.jaxb.model.message.Visibility;
 
 /**
  * @author rcpeters
@@ -275,8 +274,7 @@ public class WorksController extends BaseWorkspaceController {
         w.setShortDescription(disText);
 
         OrcidProfile profile = getEffectiveProfile();
-        Visibility v = Visibility.valueOf(profile.getOrcidInternal().getPreferences().getWorkVisibilityDefault().getValue());
-        w.setVisibility(v);
+        w.setVisibility(profile.getOrcidInternal().getPreferences().getWorkVisibilityDefault().getValue());
 
         // Language code
         Text lc = new Text();
@@ -309,9 +307,7 @@ public class WorksController extends BaseWorkspaceController {
         // Get orcid
         String orcid = currentProfile.getOrcid().getValue();
     	
-    	WorkInfoEntity workInfo = workManager.loadWorkInfo(orcid, workId);
-    	
-    	Work work = Work.valueOf(workInfo);
+        Work work = workManager.loadWorkInfo(orcid, workId);
     	
     	//Set country name
         if(!PojoUtil.isEmpty(work.getCountryCode())) {            

@@ -1575,6 +1575,7 @@ function PublicWorkCtrl($scope, $compile, worksSrvc) {
 	$scope.worksSrvc = worksSrvc;
 	$scope.showBibtex = true;
 	$scope.bibtexCitations = {};
+	$scope.worksInfo = {};
 
     $scope.bibtexShowToggle = function () {
     	$scope.showBibtex = !($scope.showBibtex);
@@ -1609,22 +1610,51 @@ function PublicWorkCtrl($scope, $compile, worksSrvc) {
 		    	console.log("Error fetching works: " + workIds);
 		    });
 		} else {
-			$scope.worksSrvc.loading = false;
+			$scope.$apply(function() {
+				$scope.worksSrvc.loading = false;
+			});
 		}
 	};     
 	  
-	$scope.renderTranslatedTitleInfo = function(workIdx) {
+	$scope.renderTranslatedTitleInfo = function(putCode) {		
 		var info = null; 
 		
-		if($scope.works[workIdx].workTitle != null && $scope.works[workIdx].workTitle.translatedTitle != null) {
-			info = $scope.works[workIdx].workTitle.translatedTitle.content + ' - ' + $scope.works[workIdx].workTitle.translatedTitle.languageName;										
-		}
+		if(putCode != null && $scope.worksInfo[putCode] != null && $scope.worksInfo[putCode].workTitle != null && $scope.worksInfo[putCode].workTitle.translatedTitle != null) {
+			info = $scope.worksInfo[putCode].workTitle.translatedTitle.content + ' - ' + $scope.worksInfo[putCode].workTitle.translatedTitle.languageName;										
+		}		
 		
 		return info;
 	};
 		
 	$scope.worksToAddIds = orcidVar.workIds;	
-	$scope.addWorkToScope();	
+	$scope.addWorkToScope();
+	
+	$scope.loadWorkInfo = function(putCode, event) {
+		if($scope.worksInfo[putCode] == null) {		
+			$.ajax({
+				url: $('body').data('baseurl') + orcidVar.orcidId + '/getWorkInfo.json?workId=' + putCode,	        
+		        dataType: 'json',
+		        success: function(data) {
+		        	
+		        	$scope.$apply(function () {
+		        		removeBadContributors(data);
+						addBibtexCitation($scope,data);
+						$scope.worksInfo[putCode] = data;
+						$(event.target).next().css('display','inline');		        		
+		        	});		        	
+		        }
+			}).fail(function(){
+				// something bad is happening!
+		    	console.log("error fetching works");
+			});
+		} else {
+			$(event.target).next().css('display','inline');
+		}
+	};			
+	
+	$scope.closePopover = function(event) {
+		$('.more-info-container').css('display', 'none');
+	};
 }
 
 function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
@@ -1903,7 +1933,7 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 
 	$scope.setAddWorkPrivacy = function(priv, $event) {
 		$event.preventDefault();
-		$scope.editWork.visibility.visibility = priv;
+		$scope.editWork.visibility = priv;
 	};
 			
 	$scope.setPrivacy = function(putCode, priv, $event) {
@@ -1913,7 +1943,7 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 			if ($scope.works[idx].putCode.value == putCode)
 				break;
 		}
-		$scope.works[idx].visibility.visibility = priv;
+		$scope.works[idx].visibility = priv;
 		$scope.curPrivToggle = null;
 		$scope.updateProfileWork(putCode);
 	};
