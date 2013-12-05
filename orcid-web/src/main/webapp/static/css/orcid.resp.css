@@ -2637,6 +2637,18 @@ a.btn-primary:hover {
 	width: 50%;
 }
 
+#loginForm .submit-login,
+#loginForm .submit-login div{
+	z-index: 1001;
+	width: 150px;
+	height: 45px;
+}
+
+#loginForm #form-sign-in-button{
+	z-index: 1001;
+	width: 98px;
+}
+
 .oauth-login #loginForm #userId,
 .oauth-login #loginForm #password {
 	width: 80%;
@@ -2653,25 +2665,23 @@ a.btn-primary:hover {
     z-index: -1;
 }
 
-
-
 #loginForm #form-sign-in-button {
 	margin: 10px 0;
 }
 
 #loginForm #login-reset {
 	padding-left: 0;
+	margin-top: 15px;
 }
 
 #loginForm #login-error-mess {
-	top: 280px;
+	top: 153px;
 	position: absolute;
-	z-index: 0;
-	width: 76%;
-	min-height: 50px;
+	z-index: 1000;
 	height:auto;		
 	overflow: hidden;
-	margin-left: 24%;
+	width: 100%;
+	padding-left: 330px;	
 }
 
 #loginForm #login-register{
@@ -3298,7 +3308,6 @@ ul.personal-inf-display li{
 		width: 100%;
 	}
 	#loginForm #login-error-mess {
-		font-size: 12px;
 		line-height: 25px;
 		margin: 0;
 		padding: 0;
@@ -3695,11 +3704,21 @@ ul.personal-inf-display li{
 	
 	#loginForm #login-error-mess {
 		width: 100%;
+		text-align: center;
+	}
+	
+	#loginForm .submit-login,
+	#loginForm .submit-login div{
+		width: 100%;
+	}
+	
+	#loginForm #login-reset{
+		margin-top: 65px;
 	}
 	
 }
 
-@media (max-width : 992px) { /* Tablet */
+@media (min-width : 768px) and (max-width : 992px) { /* Tablet */
 	/*Header*/
 	
 	.container .header .search form input[type='search'] {
@@ -3822,12 +3841,16 @@ ul.personal-inf-display li{
 	}
 	
 	#loginForm #login-error-mess{
-		padding-left: 0;
-		text-align:center;
+		padding-left: 280px;
+		text-align:left;
 	}
 	
 	#signout{
 		max-width:100px;
+	}
+	
+	#loginForm #login-reset{
+		margin-top: 25px;
 	}
 }
 

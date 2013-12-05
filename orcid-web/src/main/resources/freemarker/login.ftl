@@ -20,28 +20,28 @@
 <#include "sandbox_warning.ftl"/>
 	<form class="form-sign-in" id="loginForm" action="<@spring.url '/signin/auth'/>" method="post">
 		<div class="row">
-		    <@spring.bind "loginForm" />
-		    <@spring.showErrors "<br/>" "error" />
-		    <#include "/common/browser-checks.ftl" />
+		    <@spring.bind "loginForm" />		     
+		    <@spring.showErrors "<br/>" "error" />		     
+		    <#include "/common/browser-checks.ftl" />		     
 		    <#if (RequestParameters['alreadyClaimed'])??>
-		        <div class="alert col-md-offset-3 col-md-9 col-sm-12 col-xs-12"><@spring.message "orcid.frontend.security.already_claimed"/></div>
+		        <div class="alert col-md-12 col-sm-12 col-xs-12"><@spring.message "orcid.frontend.security.already_claimed"/></div>
 		    </#if>   
 		    <#if (RequestParameters['invalidClaimUrl'])??>
 		        <div class="alert col-md-offset-3 col-md-9 col-sm-12 col-xs-12"><@spring.message "orcid.frontend.security.invalid_claim_url"/></div>
-		    </#if>          
+		    </#if>		              
 		    <div class="control-group col-md-offset-3 col-md-9 col-sm-9 col-sm-offset-3 col-xs-12">
 		        <label for="userId" class="control-label">${springMacroRequestContext.getMessage("login.username")}</label>
 		        <div>
 		           <input type="text" id="userId" name="userId" value="" placeholder="${springMacroRequestContext.getMessage("login.username")}">
 		        </div>
 		    </div>
-		    <div class="control-group col-md-offset-3 col-md-9 col-sm-9 col-sm-offset-3 col-xs-12">
+		    <div class="control-group col-md-offset-3 col-md-9 col-sm-9 col-sm-offset-3 col-xs-12 password">
 		        <label for="password" class="control-label">${springMacroRequestContext.getMessage("login.password")}</label>
 		        <div>
 		            <input type="password" id="password" name="password" value="" placeholder="${springMacroRequestContext.getMessage("login.password")}">
 		        </div>
 		    </div>
-		    <div class="control-group col-md-offset-3 col-md-9 col-sm-9 col-sm-offset-3 col-xs-12">
+		    <div class="control-group col-md-offset-3 col-md-9 col-sm-9 col-sm-offset-3 col-xs-12 submit-login">
 		        <div>		        	
 		            <button id='form-sign-in-button' class="btn btn-primary" type="submit">${springMacroRequestContext.getMessage("login.signin")}</button>
 		            <span id="ajax-loader" class="no-visible"><i id="ajax-loader" class="glyphicon glyphicon-refresh spin x2 green"></i></span>
