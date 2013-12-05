@@ -14,6 +14,8 @@ Welcome to ORCID Source. Here are some resources to get you started.
 
 * [ORCID's API XSD - API message](https://github.com/ORCID/ORCID-Source/tree/master/orcid-model/src/main/resources)
 
+* [ORCID's Localization Reference](https://github.com/ORCID/ORCID-Source/tree/master/orcid-core/src/main/resources/i18n)
+
 
 # Getting Support
 
