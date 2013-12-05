@@ -118,129 +118,7 @@ public class Work implements ErrorsInterface, Serializable {
 
 		return w;
 	}
-
-	public static Work valueOf(ProfileWorkEntity profileWorkEntity,
-			WorkEntity workEntity, WorkContributors workContributors,
-			WorkExternalIdentifiers workExternalIdentifiers) {
-		if (workEntity == null || profileWorkEntity == null)
-			return null;
-		Work work = new Work();
-		// Set id
-		if (workEntity.getId() != null)
-			work.setPutCode(Text.valueOf(String.valueOf(workEntity.getId())));
-		// Set publication date
-		if (workEntity.getPublicationDate() != null) {
-			Integer year = (workEntity.getPublicationDate().getYear() == null || workEntity
-					.getPublicationDate().getYear() <= 0) ? null : workEntity
-					.getPublicationDate().getYear();
-			Integer month = (workEntity.getPublicationDate().getMonth() == null || workEntity
-					.getPublicationDate().getMonth() <= 0) ? null : workEntity
-					.getPublicationDate().getMonth();
-			Integer day = (workEntity.getPublicationDate().getDay() == null || workEntity
-					.getPublicationDate().getDay() <= 0) ? null : workEntity
-					.getPublicationDate().getDay();
-			work.setPublicationDate(Date
-					.valueOf(new FuzzyDate(year, month, day)));
-		}
-		// Set short description
-		if (StringUtils.isNotEmpty(workEntity.getDescription()))
-			work.setShortDescription(Text.valueOf(workEntity.getDescription()));
-		// Set URL
-		if (StringUtils.isNotEmpty(workEntity.getWorkUrl()))
-			work.setUrl(Text.valueOf(workEntity.getWorkUrl()));
-		// Set visibility
-		if (profileWorkEntity.getVisibility() != null)
-			work.setVisibility(profileWorkEntity.getVisibility());
-		// Set citation
-		if (StringUtils.isNotEmpty(workEntity.getCitation())) {
-			Citation citation = new Citation();
-			citation.setCitation(Text.valueOf(workEntity.getCitation()));
-			if (workEntity.getCitationType() != null) {
-				citation.setCitationType(Text.valueOf(workEntity
-						.getCitationType().value()));
-			}
-			work.setCitation(citation);
-		}
-		// Set work contributors
-		if (workContributors != null
-				&& workContributors.getContributor() != null) {
-			List<Contributor> contributors = new ArrayList<Contributor>();
-			for (org.orcid.jaxb.model.message.Contributor owContributor : workContributors
-					.getContributor()) {
-				contributors.add(Contributor.valueOf(owContributor));
-			}
-			work.setContributors(contributors);
-		}
-		// Set external identifiers
-		if (workExternalIdentifiers != null
-				&& workExternalIdentifiers.getWorkExternalIdentifier() != null) {
-			List<WorkExternalIdentifier> externalIdentifiers = new ArrayList<WorkExternalIdentifier>();
-			for (org.orcid.jaxb.model.message.WorkExternalIdentifier owWorkExternalIdentifier : workExternalIdentifiers
-					.getWorkExternalIdentifier()) {
-				externalIdentifiers.add(WorkExternalIdentifier
-						.valueOf(owWorkExternalIdentifier));
-			}
-			work.setWorkExternalIdentifiers(externalIdentifiers);
-		}
-		// Set source name
-		if (profileWorkEntity.getSourceProfile() != null) {
-			ProfileEntity sourceEntity = profileWorkEntity.getSourceProfile();
-			String sourceName = new String();
-			Visibility sourceNameVisibility = (sourceEntity
-					.getCreditNameVisibility() == null) ? OrcidVisibilityDefaults.CREDIT_NAME_DEFAULT
-					.getVisibility() : sourceEntity.getCreditNameVisibility();
-			if (OrcidType.CLIENT.equals(sourceEntity.getOrcidType())) {
-				if (Visibility.PUBLIC.equals(sourceNameVisibility)) {
-					sourceName = sourceEntity.getCreditName();
-				}
-			} else {
-				// If it is a user, check if it have a credit name and is
-				// visible
-				if (Visibility.PUBLIC.equals(sourceNameVisibility)) {
-					sourceName = sourceEntity.getCreditName();
-				} else {
-					// If it doesnt, lets use the give name + family name
-					sourceName = sourceEntity.getGivenNames()
-							+ (StringUtils
-									.isEmpty(sourceEntity.getFamilyName()) ? ""
-									: " " + sourceEntity.getFamilyName());
-				}
-			}
-			work.setWorkSourceName(Text.valueOf(sourceName));
-		}
-		// Set title
-		if (StringUtils.isNotEmpty(workEntity.getTitle())) {
-			WorkTitle workTitle = new WorkTitle();
-			workTitle.setTitle(Text.valueOf(workEntity.getTitle()));
-			if (StringUtils.isNotEmpty(workEntity.getSubtitle())) {
-				workTitle.setSubtitle(Text.valueOf(workEntity.getSubtitle()));
-			}
-			if (StringUtils.isNotEmpty(workEntity.getTranslatedTitle())) {
-				TranslatedTitle translatedTitle = new TranslatedTitle();
-				translatedTitle.setContent(workEntity.getTranslatedTitle());
-				translatedTitle.setLanguageCode(workEntity
-						.getTranslatedTitleLanguageCode());
-				workTitle.setTranslatedTitle(translatedTitle);
-			}
-			work.setWorkTitle(workTitle);
-		}
-		// Set type
-		if (workEntity.getWorkType() != null)
-			work.setWorkType(Text.valueOf(workEntity.getWorkType().value()));
-		// Set journal title
-		if (StringUtils.isNotEmpty(workEntity.getJournalTitle()))
-			work.setJournalTitle(Text.valueOf(workEntity.getJournalTitle()));
-		// Set language code
-		if (StringUtils.isNotEmpty(workEntity.getLanguageCode()))
-			work.setLanguageCode(Text.valueOf(workEntity.getLanguageCode()));
-		// Set country code
-		if (workEntity.getIso2Country() != null)
-			work.setCountryCode(Text.valueOf(workEntity.getIso2Country()
-					.value()));
-
-		return work;
-	}
-
+	
 	public static Work valueOf(OrcidWork orcidWork) {
 		Work w = new Work();
 		if (orcidWork.getPublicationDate() != null)
@@ -297,6 +175,21 @@ public class Work implements ErrorsInterface, Serializable {
 		if (orcidWork.getCountry() != null)
 			w.setCountryCode((orcidWork.getCountry().getValue() == null) ? null
 					: Text.valueOf(orcidWork.getCountry().getValue().value()));
+		return w;
+	}
+	
+	public static Work minimizedValueOf(OrcidWork orcidWork) {
+		Work w = new Work();
+		if (orcidWork.getPublicationDate() != null)
+			w.setPublicationDate(Date.valueOf(orcidWork.getPublicationDate()));
+		if (orcidWork.getPutCode() != null)
+			w.setPutCode(Text.valueOf(orcidWork.getPutCode()));
+		if (orcidWork.getShortDescription() != null)
+			w.setShortDescription(Text.valueOf(orcidWork.getShortDescription()));
+		if (orcidWork.getVisibility() != null)
+			w.setVisibility(orcidWork.getVisibility());
+		if (orcidWork.getWorkTitle() != null)
+			w.setWorkTitle(WorkTitle.valueOf(orcidWork.getWorkTitle()));
 		return w;
 	}
 

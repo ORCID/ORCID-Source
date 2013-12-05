@@ -2838,6 +2838,12 @@ ul.personal-inf-display li{
 	height: 350px;
 }
 
+.work-more-info-container #ajax-loader{
+	position: absolute;
+	top: 40%;
+	left: 50%;
+}
+
 .more-info:hover .work-more-info-container {
 	display: inline;
 }

@@ -1570,6 +1570,7 @@ function PublicWorkCtrl($scope, $compile, worksSrvc) {
 	$scope.works = worksSrvc.works;
 	$scope.worksSrvc = worksSrvc;
 	$scope.showBibtex = true;
+	$scope.loadingInfo = false;
 	$scope.bibtexCitations = {};
 	$scope.worksInfo = {};
 
@@ -1626,25 +1627,32 @@ function PublicWorkCtrl($scope, $compile, worksSrvc) {
 	$scope.addWorkToScope();
 	
 	$scope.loadWorkInfo = function(putCode, event) {
+		//Close any open popover
+		$scope.closePopover(event);
+		//Display the popover
+		$scope.loadingInfo = true;
+		$(event.target).next().css('display','inline');		
 		if($scope.worksInfo[putCode] == null) {		
 			$.ajax({
 				url: $('body').data('baseurl') + orcidVar.orcidId + '/getWorkInfo.json?workId=' + putCode,	        
 		        dataType: 'json',
-		        success: function(data) {
-		        	
+		        success: function(data) {		        	
 		        	$scope.$apply(function () {
 		        		removeBadContributors(data);
 						addBibtexCitation($scope,data);
 						$scope.worksInfo[putCode] = data;
-						$(event.target).next().css('display','inline');		        		
+						$scope.loadingInfo = false;
 		        	});		        	
 		        }
 			}).fail(function(){
 				// something bad is happening!
 		    	console.log("error fetching works");
+		    	$(event.target).next().css('display','none');	
+		    	$scope.loadingInfo = false;
 			});
 		} else {
 			$(event.target).next().css('display','inline');
+			$scope.loadingInfo = false;
 		}
 	};			
 	
@@ -1658,6 +1666,7 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 	$scope.worksSrvc = worksSrvc;
 	$scope.works = worksSrvc.works;
 	$scope.showBibtex = true;
+	$scope.loadingInfo = false;
 	$scope.bibtexCitations = {};
 	$scope.editTranslatedTitle = false;
 	$scope.types = null;
@@ -1769,8 +1778,7 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 				success: function(data) {
 					$scope.$apply(function(){ 
 						for (i in data) {
-							var dw = data[i];
-							removeBadContributors(dw);							
+							var dw = data[i];													
 							$scope.works.push(dw);
 						}
 					});
@@ -1826,6 +1834,11 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 	$scope.getWorks();	
 	
 	$scope.loadWorkInfo = function(putCode, event) {
+		//Close any open popover
+		$scope.closePopover(event);
+		//Display the popover
+		$scope.loadingInfo = true;		
+		$(event.target).next().css('display','inline');	
 		if($scope.worksInfo[putCode] == null) {		
 			$.ajax({
 				url: $('body').data('baseurl') + 'works/getWorkInfo.json?workId=' + putCode,	        
@@ -1836,15 +1849,17 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 		        		removeBadContributors(data);
 						addBibtexCitation($scope,data);
 						$scope.worksInfo[putCode] = data;
-						$(event.target).next().css('display','inline');		        		
+						$scope.loadingInfo = false;
 		        	});		        	
 		        }
 			}).fail(function(){
 				// something bad is happening!
 		    	console.log("error fetching works");
+		    	$scope.loadingInfo = false;
 			});
 		} else {
 			$(event.target).next().css('display','inline');
+			$scope.loadingInfo = false;
 		}
 	};			
 	
