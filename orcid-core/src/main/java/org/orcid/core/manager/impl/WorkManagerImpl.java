@@ -16,6 +16,7 @@
  */
 package org.orcid.core.manager.impl;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -26,6 +27,7 @@ import org.orcid.persistence.dao.ProfileWorkDao;
 import org.orcid.persistence.dao.WorkDao;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.persistence.jpa.entities.custom.MinimizedWorkEntity;
+import org.springframework.cache.annotation.Cacheable;
 
 public class WorkManagerImpl implements WorkManager {
 
@@ -56,7 +58,8 @@ public class WorkManagerImpl implements WorkManager {
 	 *            the Id of the user
 	 * @return the list of works associated to the specific user
 	 * */
-	public List<MinimizedWorkEntity> findWorks(String orcid) {
+	@Cacheable(value="works", key="#orcid.concat('-').concat(#lastModified)")
+	public List<MinimizedWorkEntity> findWorks(String orcid, Date lastModified) {		
 		return workDao.findWorks(orcid);
 	}
 
@@ -66,7 +69,7 @@ public class WorkManagerImpl implements WorkManager {
      * @param orcid
      * 		the Id of the user
      * @return the list of works associated to the specific user 
-     * */
+     * */	
     public List<MinimizedWorkEntity> findPublicWorks(String orcid) {
     	return workDao.findPublicWorks(orcid);
     }

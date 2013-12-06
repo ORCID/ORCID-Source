@@ -16,6 +16,7 @@
  */
 package org.orcid.core.manager;
 
+import java.util.Date;
 import java.util.List;
 
 import org.orcid.persistence.jpa.entities.WorkEntity;
@@ -38,7 +39,7 @@ public interface WorkManager {
      * 		the Id of the user
      * @return the list of works associated to the specific user 
      * */
-    List<MinimizedWorkEntity> findWorks(String orcid); 
+    List<MinimizedWorkEntity> findWorks(String orcid, Date lastModified); 
     
     /**
      * Find the public works for a specific user
