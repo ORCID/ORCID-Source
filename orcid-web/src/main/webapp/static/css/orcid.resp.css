@@ -707,7 +707,7 @@ select {
 
 .header .logo h1 {
 	font-weight: 100;
-	margin-top: 10px;
+	margin-top: 0;
 }
 
 .header .logo p {
@@ -715,8 +715,9 @@ select {
 	float: right;
 	font-size: 14px;
 	color: #939498;
-	line-height: 13px;
+	line-height: 17px;
 	font-weight: 100;
+	margin-right: 10px;
 }
 
 .header .alignment {
@@ -925,10 +926,6 @@ select {
 /* Mobile menu icon */
 .header .navigation>.mobile-button {
 	display: none;
-}
-
-#signout{
-	width:120px;
 }
 
 /*
@@ -2638,6 +2635,18 @@ a.btn-primary:hover {
 	width: 50%;
 }
 
+#loginForm .submit-login,
+#loginForm .submit-login div{
+	z-index: 1001;
+	width: 150px;
+	height: 45px;
+}
+
+#loginForm #form-sign-in-button{
+	z-index: 1001;
+	width: 98px;
+}
+
 .oauth-login #loginForm #userId,
 .oauth-login #loginForm #password {
 	width: 80%;
@@ -2654,25 +2663,23 @@ a.btn-primary:hover {
     z-index: -1;
 }
 
-
-
 #loginForm #form-sign-in-button {
 	margin: 10px 0;
 }
 
 #loginForm #login-reset {
 	padding-left: 0;
+	margin-top: 25px;
 }
 
 #loginForm #login-error-mess {
-	top: 0px;
+	top: 153px;
 	position: absolute;
-	z-index: -1;
-	width: 100%;
-	height: 61px;
-	text-align: right;
-	line-height: 50px;
+	z-index: 1000;
+	height:auto;		
 	overflow: hidden;
+	width: 100%;
+	padding-left: 330px;	
 }
 
 #loginForm #login-register{
@@ -2953,6 +2960,13 @@ ul.personal-inf-display li{
 	margin-top: 15px;	 	
 }
 
+.citation-raw {
+	white-space: pre-wrap
+}
+
+#signout{
+	max-width:120px;
+}
 
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */
@@ -3298,12 +3312,11 @@ ul.personal-inf-display li{
 		width: 100%;
 	}
 	#loginForm #login-error-mess {
-		font-size: 12px;
 		line-height: 25px;
 		margin: 0;
 		padding: 0;
 		min-height: 30px;
-		height: 30px;
+		height: 50px;
 		text-align: center;
 		top: 260px; /* Login layout top */
 	}
@@ -3691,12 +3704,25 @@ ul.personal-inf-display li{
 	
 	#edit-affiliation .twitter-typeahead{
 		width: 95%;
+	}	
+	
+	#loginForm #login-error-mess {
+		width: 100%;
+		text-align: center;
 	}
 	
+	#loginForm .submit-login,
+	#loginForm .submit-login div{
+		width: 100%;
+	}
+	
+	#loginForm #login-reset{
+		margin-top: 65px;
+	}
 	
 }
 
-@media ( max-width : 992px) { /* Tablet */
+@media (min-width : 768px) and (max-width : 992px) { /* Tablet */
 	/*Header*/
 	
 	.container .header .search form input[type='search'] {
@@ -3721,6 +3747,7 @@ ul.personal-inf-display li{
 		font-size: 12px;
 		word-wrap: break-word;
 		padding: 10px;
+		display: block;
 	}
 	.header .navigation>.menu>li>.menu>li>a {
 		font-size: 11px;
@@ -3816,14 +3843,23 @@ ul.personal-inf-display li{
 	.data-row-group .col-md-2{
 		padding-left: 15px;
 	}
+	
+	#loginForm #login-error-mess{
+		padding-left: 280px;
+		text-align:left;
+	}
+	
+	#signout{
+		max-width:100px;
+	}
+	
+	#loginForm #login-reset{
+		margin-top: 25px;
+	}
 }
 
 @media(min-width:1200px){
 	.container{
 		max-width:960px;
 	}
-}
-
-.citation-raw {
-	white-space: pre-wrap
 }

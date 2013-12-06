@@ -1718,7 +1718,10 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 	};
 	
 	$scope.validateCitation = function() {
-		if ($scope.editWork.citation && $scope.editWork.citation.citationType.value == 'bibtex') {
+		if ($scope.editWork.citation
+				&& $scope.editWork.citation.citation.value
+				&& $scope.editWork.citation.citation.value.length > 0
+				&& $scope.editWork.citation.citationType.value == 'bibtex') {
 			try {
 				var parsed = bibtexParse.toJSON($scope.editWork.citation.citation.value);
 				console.log(parsed);
