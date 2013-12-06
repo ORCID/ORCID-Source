@@ -24,6 +24,6 @@ import javax.ws.rs.Path;
  * 
  */
 @Path("/")
-public class T2OrcidApiServiceImplLatest extends T2OrcidApiServiceImplBase {
+public class T2OrcidApiServiceImplRoot extends T2OrcidApiServiceImplBase {
 
 }

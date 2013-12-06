@@ -24,7 +24,6 @@ import static org.orcid.api.common.OrcidApiConstants.EXTERNAL_IDENTIFIER_PATH;
 
 import java.net.URI;
 import java.net.URLEncoder;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;

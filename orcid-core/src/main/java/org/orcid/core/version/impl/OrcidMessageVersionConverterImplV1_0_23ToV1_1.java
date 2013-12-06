@@ -23,7 +23,8 @@ import org.orcid.core.tree.TreeCleaner;
 import org.orcid.core.tree.TreeCleaningStrategy;
 import org.orcid.core.version.OrcidMessageVersionConverter;
 import org.orcid.jaxb.model.message.Affiliation;
-import org.orcid.jaxb.model.message.AffiliationAddress;
+import org.orcid.jaxb.model.message.Organization;
+import org.orcid.jaxb.model.message.OrganizationAddress;
 import org.orcid.jaxb.model.message.Affiliations;
 import org.orcid.jaxb.model.message.ExternalIdentifier;
 import org.orcid.jaxb.model.message.Iso3166Country;
@@ -149,14 +150,18 @@ public class OrcidMessageVersionConverterImplV1_0_23ToV1_1 implements OrcidMessa
         if (affiliations != null) {
             for (Iterator<Affiliation> affiliationIterator = affiliations.getAffiliation().iterator(); affiliationIterator.hasNext();) {
                 Affiliation affiliation = affiliationIterator.next();
-                AffiliationAddress address = affiliation.getAffiliationAddress();
-                if (address != null) {
-                    Iso3166Country country = address.getAffiliationCountry().getValue();
-                    if (Iso3166Country.XK.equals(country)) {
-                        // The country code is not valid in the earlier version
-                        // of the schema, so unfortunately we have to
-                        // omit the affiliation
-                        affiliationIterator.remove();
+                Organization organization = affiliation.getOrganization();
+                if (organization != null) {
+                    OrganizationAddress address = organization.getAddress();
+                    if (address != null) {
+                        Iso3166Country country = address.getCountry();
+                        if (Iso3166Country.XK.equals(country)) {
+                            // The country code is not valid in the earlier
+                            // version
+                            // of the schema, so unfortunately we have to
+                            // omit the affiliation
+                            affiliationIterator.remove();
+                        }
                     }
                 }
             }

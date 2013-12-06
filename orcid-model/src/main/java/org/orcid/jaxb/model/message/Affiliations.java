@@ -101,7 +101,7 @@ public class Affiliations implements Serializable {
         List<Affiliation> filteredAffilations = new ArrayList<Affiliation>();
         if (affiliation != null && affiliationType != null) {
             for (Affiliation aff : affiliation) {
-                if (affiliationType.equals(aff.getAffiliationType())) {
+                if (affiliationType.equals(aff.getType())) {
                     filteredAffilations.add(aff);
                 }
             }

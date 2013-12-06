@@ -33,9 +33,6 @@ import org.orcid.core.BaseTest;
 import org.orcid.core.manager.impl.OrcidIndexManagerImpl;
 import org.orcid.core.security.visibility.filter.VisibilityFilter;
 import org.orcid.jaxb.model.message.Affiliation;
-import org.orcid.jaxb.model.message.AffiliationAddress;
-import org.orcid.jaxb.model.message.AffiliationCountry;
-import org.orcid.jaxb.model.message.AffiliationType;
 import org.orcid.jaxb.model.message.Affiliations;
 import org.orcid.jaxb.model.message.ContactDetails;
 import org.orcid.jaxb.model.message.CreditName;
@@ -47,7 +44,6 @@ import org.orcid.jaxb.model.message.ExternalIdentifiers;
 import org.orcid.jaxb.model.message.FamilyName;
 import org.orcid.jaxb.model.message.GivenNames;
 import org.orcid.jaxb.model.message.GrantNumber;
-import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.jaxb.model.message.Keyword;
 import org.orcid.jaxb.model.message.Keywords;
 import org.orcid.jaxb.model.message.OrcidActivities;
@@ -592,18 +588,6 @@ public class OrcidIndexManagerImplTest extends BaseTest {
         OrcidMessage orcidMessage = createFilteredOrcidMessage(orcidProfile);
         orcidSolrDocument.setPublicProfileMessage(orcidMessage.toString());
         return orcidSolrDocument;
-    }
-
-    private Affiliation createAffiliation(String instName, AffiliationType affiliationType) {
-        Affiliation affiliation = new Affiliation();
-        affiliation.setAffiliationType(affiliationType);
-        affiliation.setAffiliationName(instName);
-        affiliation.setRoleTitle("A Role");
-        AffiliationAddress address = new AffiliationAddress();
-        address.setAffiliationCountry(new AffiliationCountry(Iso3166Country.GB));
-        affiliation.setAffiliationAddress(address);
-        affiliation.setVisibility(Visibility.PUBLIC);
-        return affiliation;
     }
 
     private ExternalIdentifier createExternalIdentifier(String orcid, String reference) {

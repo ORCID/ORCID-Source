@@ -34,9 +34,6 @@ import org.mockito.Mock;
 import org.orcid.core.BaseTest;
 import org.orcid.core.manager.impl.OrcidSearchManagerImpl;
 import org.orcid.jaxb.model.message.Affiliation;
-import org.orcid.jaxb.model.message.AffiliationAddress;
-import org.orcid.jaxb.model.message.AffiliationCountry;
-import org.orcid.jaxb.model.message.AffiliationType;
 import org.orcid.jaxb.model.message.Affiliations;
 import org.orcid.jaxb.model.message.ContactDetails;
 import org.orcid.jaxb.model.message.CreditName;
@@ -44,7 +41,6 @@ import org.orcid.jaxb.model.message.Email;
 import org.orcid.jaxb.model.message.FamilyName;
 import org.orcid.jaxb.model.message.GivenNames;
 import org.orcid.jaxb.model.message.GrantNumber;
-import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.jaxb.model.message.OrcidActivities;
 import org.orcid.jaxb.model.message.OrcidBio;
 import org.orcid.jaxb.model.message.OrcidGrant;
@@ -389,14 +385,4 @@ public class OrcidSearchManagerImplTest extends BaseTest {
 
     }
 
-    private Affiliation createAffiliation(AffiliationType affiliationType, String instName) {
-        Affiliation affiliation = new Affiliation();
-        affiliation.setAffiliationType(affiliationType);
-        affiliation.setAffiliationName(instName);
-        affiliation.setRoleTitle("A Role");
-        AffiliationAddress address = new AffiliationAddress();
-        address.setAffiliationCountry(new AffiliationCountry(Iso3166Country.GB));
-        affiliation.setAffiliationAddress(address);
-        return affiliation;
-    }
 }
