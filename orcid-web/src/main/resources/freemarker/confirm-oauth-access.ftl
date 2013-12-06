@@ -41,10 +41,12 @@
     </div>
     </div>
    <div class="row">
-   	<div class="col-md-6 col-md-push-6 col-sm-12 col-sm-push-12 margin-top-box">
+   	
+   	<div class="col-md-6 col-md-push-6 col-sm-12 margin-top-box">
          <h5><#if (clientProfile.orcidBio.researcherUrls.url[0].value)??><a href="${(clientProfile.orcidBio.researcherUrls.url[0].value)!}" target="_blank"></#if>${(clientProfile.orcidBio.personalDetails.creditName.content)!}<#if (clientProfile.orcidBio.researcherUrls.url[0].value)??></a></#if></h5>
          ${(clientProfile.orcidBio.biography.content)!}
     </div>
+    
     <div class="col-md-6 col-md-pull-6 col-sm-12 margin-bottom-box">
          <h3>${clientProfile.orcidBio.personalDetails.creditName.content}</h3>
          <p>${springMacroRequestContext.getMessage("confirm-oauth-access.hasaskedforthefollowing")}</p>
@@ -61,7 +63,7 @@
 	        </#list>
 	
 	    	<#assign denyOnClick = " orcidGA.gaPush(['_trackEvent', 'Disengagement', 'Authorize_Deny', 'OAuth " + clientProfile.orcidBio.personalDetails.creditName.content + "']);">
-	    	<div class="col-md-3 col-sm-12">     
+	    	<div class="col-md-3 col-sm-2">     
 	            <span class="span">
 	                <form id="denialForm" class="form-inline" name="denialForm" action="<@spring.url '/oauth/authorize'/>" onsubmit="${denyOnClick} orcidGA.gaFormSumbitDelay(this); return false;" method="post">
 	                    <input name="user_oauth_approval" value="false" type="hidden"/>
@@ -70,18 +72,19 @@
 	                </form>        
 	            </span>
             </div>
-            <div class="col-md-6">
+            <div class="col-md-6 col-sm-2">
 	            <span class="span">
 	                <form id="confirmationForm" class="form-inline" name="confirmationForm" action="<@spring.url '/oauth/authorize'/>" onsubmit="${authOnClick} orcidGA.gaFormSumbitDelay(this); return false;" method="post">
 	                    <input name="user_oauth_approval" value="true" type="hidden"/>
 	                    <button class="btn btn-primary" name="authorize" value="${springMacroRequestContext.getMessage('confirm-oauth-access.Authorize')}" type="submit">
 	                    	Authorize
 	                    </button>
-	                </form>                
+	                </form>
 	            </span>
             </div>
         </div>        
     </div>
+    
 </div>
 </@security.authorize>
 </div>
