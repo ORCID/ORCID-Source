@@ -42,9 +42,6 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.orcid.core.manager.impl.OrcidProfileManagerImpl;
 import org.orcid.jaxb.model.message.Affiliation;
-import org.orcid.jaxb.model.message.AffiliationAddress;
-import org.orcid.jaxb.model.message.AffiliationCity;
-import org.orcid.jaxb.model.message.AffiliationCountry;
 import org.orcid.jaxb.model.message.AffiliationType;
 import org.orcid.jaxb.model.message.Affiliations;
 import org.orcid.jaxb.model.message.ApprovalDate;
@@ -69,6 +66,8 @@ import org.orcid.jaxb.model.message.OrcidInternal;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidWork;
 import org.orcid.jaxb.model.message.OrcidWorks;
+import org.orcid.jaxb.model.message.Organization;
+import org.orcid.jaxb.model.message.OrganizationAddress;
 import org.orcid.jaxb.model.message.OtherName;
 import org.orcid.jaxb.model.message.OtherNames;
 import org.orcid.jaxb.model.message.PersonalDetails;
@@ -113,7 +112,7 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
     protected static final String DELEGATE_ORCID = "1111-1111-1111-1115";
 
     protected static final String TEST_ORCID = "4444-4444-4444-4447";
-    
+
     protected static final String TEST_ORCID_WITH_WORKS = "4444-4444-4444-4443";
 
     @Resource
@@ -358,105 +357,112 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
     @Test
     @Transactional
     @Rollback(true)
-    public void testPreventDuplicatedWorks(){
+    public void testPreventDuplicatedWorks() {
         OrcidWork work1 = createWork1();
         OrcidWork work2 = createWork2();
         OrcidWork work3 = createWork3();
-        OrcidProfile profile = createBasicProfile();        
+        OrcidProfile profile = createBasicProfile();
         profile = orcidProfileManager.createOrcidProfile(profile);
         assertNotNull(profile);
         assertNotNull(profile.getOrcidActivities());
         assertNotNull(profile.getOrcidActivities().getOrcidWorks());
         assertNotNull(profile.getOrcidActivities().getOrcidWorks().getOrcidWork());
         assertEquals(1, profile.getOrcidActivities().getOrcidWorks().getOrcidWork().size());
-        assertEquals(work1.getWorkTitle().getTitle().getContent(), profile.getOrcidActivities().getOrcidWorks().getOrcidWork().get(0).getWorkTitle().getTitle().getContent());               
-        
+        assertEquals(work1.getWorkTitle().getTitle().getContent(), profile.getOrcidActivities().getOrcidWorks().getOrcidWork().get(0).getWorkTitle().getTitle()
+                .getContent());
+
         profile.getOrcidActivities().getOrcidWorks().getOrcidWork().add(work2);
         orcidProfileManager.addOrcidWorks(profile);
-        
+
         profile = orcidProfileManager.retrieveOrcidProfile(TEST_ORCID);
-        
+
         assertNotNull(profile);
         assertNotNull(profile.getOrcidActivities());
         assertNotNull(profile.getOrcidActivities().getOrcidWorks());
         assertNotNull(profile.getOrcidActivities().getOrcidWorks().getOrcidWork());
         assertEquals(2, profile.getOrcidActivities().getOrcidWorks().getOrcidWork().size());
-        assertTrue(
-                profile.getOrcidActivities().getOrcidWorks().getOrcidWork().get(0).getWorkTitle().getTitle().getContent().equals(work1.getWorkTitle().getTitle().getContent()) ||
-                profile.getOrcidActivities().getOrcidWorks().getOrcidWork().get(1).getWorkTitle().getTitle().getContent().equals(work1.getWorkTitle().getTitle().getContent()) 
-                );
-        assertTrue(
-                profile.getOrcidActivities().getOrcidWorks().getOrcidWork().get(0).getWorkTitle().getTitle().getContent().equals(work2.getWorkTitle().getTitle().getContent()) ||
-                profile.getOrcidActivities().getOrcidWorks().getOrcidWork().get(1).getWorkTitle().getTitle().getContent().equals(work2.getWorkTitle().getTitle().getContent())
-                );
-        assertFalse(
-                profile.getOrcidActivities().getOrcidWorks().getOrcidWork().get(0).getWorkTitle().getTitle().getContent().equals(work3.getWorkTitle().getTitle().getContent()) ||
-                profile.getOrcidActivities().getOrcidWorks().getOrcidWork().get(1).getWorkTitle().getTitle().getContent().equals(work3.getWorkTitle().getTitle().getContent())
-                );
-        
-        //Add work # 3 and duplicate other works
+        assertTrue(profile.getOrcidActivities().getOrcidWorks().getOrcidWork().get(0).getWorkTitle().getTitle().getContent()
+                .equals(work1.getWorkTitle().getTitle().getContent())
+                || profile.getOrcidActivities().getOrcidWorks().getOrcidWork().get(1).getWorkTitle().getTitle().getContent()
+                        .equals(work1.getWorkTitle().getTitle().getContent()));
+        assertTrue(profile.getOrcidActivities().getOrcidWorks().getOrcidWork().get(0).getWorkTitle().getTitle().getContent()
+                .equals(work2.getWorkTitle().getTitle().getContent())
+                || profile.getOrcidActivities().getOrcidWorks().getOrcidWork().get(1).getWorkTitle().getTitle().getContent()
+                        .equals(work2.getWorkTitle().getTitle().getContent()));
+        assertFalse(profile.getOrcidActivities().getOrcidWorks().getOrcidWork().get(0).getWorkTitle().getTitle().getContent()
+                .equals(work3.getWorkTitle().getTitle().getContent())
+                || profile.getOrcidActivities().getOrcidWorks().getOrcidWork().get(1).getWorkTitle().getTitle().getContent()
+                        .equals(work3.getWorkTitle().getTitle().getContent()));
+
+        // Add work # 3 and duplicate other works
         profile.getOrcidActivities().getOrcidWorks().getOrcidWork().add(work1);
         profile.getOrcidActivities().getOrcidWorks().getOrcidWork().add(work2);
         profile.getOrcidActivities().getOrcidWorks().getOrcidWork().add(work3);
         orcidProfileManager.addOrcidWorks(profile);
-        
+
         profile = orcidProfileManager.retrieveOrcidProfile(TEST_ORCID);
-        
-        //Work 3 was added and work 1 and 2 where not added twice
+
+        // Work 3 was added and work 1 and 2 where not added twice
         assertNotNull(profile);
         assertNotNull(profile.getOrcidActivities());
         assertNotNull(profile.getOrcidActivities().getOrcidWorks());
         assertNotNull(profile.getOrcidActivities().getOrcidWorks().getOrcidWork());
         assertEquals(3, profile.getOrcidActivities().getOrcidWorks().getOrcidWork().size());
-        assertTrue(
-                profile.getOrcidActivities().getOrcidWorks().getOrcidWork().get(0).getWorkTitle().getTitle().getContent().equals(work1.getWorkTitle().getTitle().getContent()) ||
-                profile.getOrcidActivities().getOrcidWorks().getOrcidWork().get(1).getWorkTitle().getTitle().getContent().equals(work1.getWorkTitle().getTitle().getContent()) ||
-                profile.getOrcidActivities().getOrcidWorks().getOrcidWork().get(2).getWorkTitle().getTitle().getContent().equals(work3.getWorkTitle().getTitle().getContent())
-                );
-        assertTrue(
-                profile.getOrcidActivities().getOrcidWorks().getOrcidWork().get(0).getWorkTitle().getTitle().getContent().equals(work2.getWorkTitle().getTitle().getContent()) ||
-                profile.getOrcidActivities().getOrcidWorks().getOrcidWork().get(1).getWorkTitle().getTitle().getContent().equals(work2.getWorkTitle().getTitle().getContent()) ||
-                profile.getOrcidActivities().getOrcidWorks().getOrcidWork().get(2).getWorkTitle().getTitle().getContent().equals(work3.getWorkTitle().getTitle().getContent())
-                );
-        assertTrue(
-                profile.getOrcidActivities().getOrcidWorks().getOrcidWork().get(0).getWorkTitle().getTitle().getContent().equals(work3.getWorkTitle().getTitle().getContent()) ||
-                profile.getOrcidActivities().getOrcidWorks().getOrcidWork().get(1).getWorkTitle().getTitle().getContent().equals(work3.getWorkTitle().getTitle().getContent()) ||
-                profile.getOrcidActivities().getOrcidWorks().getOrcidWork().get(2).getWorkTitle().getTitle().getContent().equals(work3.getWorkTitle().getTitle().getContent())
-                );
-        
-        //Duplicate all works
+        assertTrue(profile.getOrcidActivities().getOrcidWorks().getOrcidWork().get(0).getWorkTitle().getTitle().getContent()
+                .equals(work1.getWorkTitle().getTitle().getContent())
+                || profile.getOrcidActivities().getOrcidWorks().getOrcidWork().get(1).getWorkTitle().getTitle().getContent()
+                        .equals(work1.getWorkTitle().getTitle().getContent())
+                || profile.getOrcidActivities().getOrcidWorks().getOrcidWork().get(2).getWorkTitle().getTitle().getContent()
+                        .equals(work3.getWorkTitle().getTitle().getContent()));
+        assertTrue(profile.getOrcidActivities().getOrcidWorks().getOrcidWork().get(0).getWorkTitle().getTitle().getContent()
+                .equals(work2.getWorkTitle().getTitle().getContent())
+                || profile.getOrcidActivities().getOrcidWorks().getOrcidWork().get(1).getWorkTitle().getTitle().getContent()
+                        .equals(work2.getWorkTitle().getTitle().getContent())
+                || profile.getOrcidActivities().getOrcidWorks().getOrcidWork().get(2).getWorkTitle().getTitle().getContent()
+                        .equals(work3.getWorkTitle().getTitle().getContent()));
+        assertTrue(profile.getOrcidActivities().getOrcidWorks().getOrcidWork().get(0).getWorkTitle().getTitle().getContent()
+                .equals(work3.getWorkTitle().getTitle().getContent())
+                || profile.getOrcidActivities().getOrcidWorks().getOrcidWork().get(1).getWorkTitle().getTitle().getContent()
+                        .equals(work3.getWorkTitle().getTitle().getContent())
+                || profile.getOrcidActivities().getOrcidWorks().getOrcidWork().get(2).getWorkTitle().getTitle().getContent()
+                        .equals(work3.getWorkTitle().getTitle().getContent()));
+
+        // Duplicate all works
         profile.getOrcidActivities().getOrcidWorks().getOrcidWork().add(work1);
         profile.getOrcidActivities().getOrcidWorks().getOrcidWork().add(work2);
         profile.getOrcidActivities().getOrcidWorks().getOrcidWork().add(work3);
-        
+
         orcidProfileManager.addOrcidWorks(profile);
-        
+
         profile = orcidProfileManager.retrieveOrcidProfile(TEST_ORCID);
-        
-        //No new works are added and no duplicated was allowed
+
+        // No new works are added and no duplicated was allowed
         assertNotNull(profile);
         assertNotNull(profile.getOrcidActivities());
         assertNotNull(profile.getOrcidActivities().getOrcidWorks());
         assertNotNull(profile.getOrcidActivities().getOrcidWorks().getOrcidWork());
         assertEquals(3, profile.getOrcidActivities().getOrcidWorks().getOrcidWork().size());
-        
-        assertTrue(
-                profile.getOrcidActivities().getOrcidWorks().getOrcidWork().get(0).getWorkTitle().getTitle().getContent().equals(work1.getWorkTitle().getTitle().getContent()) ||
-                profile.getOrcidActivities().getOrcidWorks().getOrcidWork().get(1).getWorkTitle().getTitle().getContent().equals(work1.getWorkTitle().getTitle().getContent()) ||
-                profile.getOrcidActivities().getOrcidWorks().getOrcidWork().get(2).getWorkTitle().getTitle().getContent().equals(work3.getWorkTitle().getTitle().getContent())
-                );
-        assertTrue(
-                profile.getOrcidActivities().getOrcidWorks().getOrcidWork().get(0).getWorkTitle().getTitle().getContent().equals(work2.getWorkTitle().getTitle().getContent()) ||
-                profile.getOrcidActivities().getOrcidWorks().getOrcidWork().get(1).getWorkTitle().getTitle().getContent().equals(work2.getWorkTitle().getTitle().getContent()) ||
-                profile.getOrcidActivities().getOrcidWorks().getOrcidWork().get(2).getWorkTitle().getTitle().getContent().equals(work3.getWorkTitle().getTitle().getContent())
-                );
-        assertTrue(
-                profile.getOrcidActivities().getOrcidWorks().getOrcidWork().get(0).getWorkTitle().getTitle().getContent().equals(work3.getWorkTitle().getTitle().getContent()) ||
-                profile.getOrcidActivities().getOrcidWorks().getOrcidWork().get(1).getWorkTitle().getTitle().getContent().equals(work3.getWorkTitle().getTitle().getContent()) ||
-                profile.getOrcidActivities().getOrcidWorks().getOrcidWork().get(2).getWorkTitle().getTitle().getContent().equals(work3.getWorkTitle().getTitle().getContent())
-                );
+
+        assertTrue(profile.getOrcidActivities().getOrcidWorks().getOrcidWork().get(0).getWorkTitle().getTitle().getContent()
+                .equals(work1.getWorkTitle().getTitle().getContent())
+                || profile.getOrcidActivities().getOrcidWorks().getOrcidWork().get(1).getWorkTitle().getTitle().getContent()
+                        .equals(work1.getWorkTitle().getTitle().getContent())
+                || profile.getOrcidActivities().getOrcidWorks().getOrcidWork().get(2).getWorkTitle().getTitle().getContent()
+                        .equals(work3.getWorkTitle().getTitle().getContent()));
+        assertTrue(profile.getOrcidActivities().getOrcidWorks().getOrcidWork().get(0).getWorkTitle().getTitle().getContent()
+                .equals(work2.getWorkTitle().getTitle().getContent())
+                || profile.getOrcidActivities().getOrcidWorks().getOrcidWork().get(1).getWorkTitle().getTitle().getContent()
+                        .equals(work2.getWorkTitle().getTitle().getContent())
+                || profile.getOrcidActivities().getOrcidWorks().getOrcidWork().get(2).getWorkTitle().getTitle().getContent()
+                        .equals(work3.getWorkTitle().getTitle().getContent()));
+        assertTrue(profile.getOrcidActivities().getOrcidWorks().getOrcidWork().get(0).getWorkTitle().getTitle().getContent()
+                .equals(work3.getWorkTitle().getTitle().getContent())
+                || profile.getOrcidActivities().getOrcidWorks().getOrcidWork().get(1).getWorkTitle().getTitle().getContent()
+                        .equals(work3.getWorkTitle().getTitle().getContent())
+                || profile.getOrcidActivities().getOrcidWorks().getOrcidWork().get(2).getWorkTitle().getTitle().getContent()
+                        .equals(work3.getWorkTitle().getTitle().getContent()));
     }
-    
+
     @Test
     @Transactional
     @Rollback(true)
@@ -871,8 +877,8 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
 
         Affiliation affiliation1 = getAffiliation();
         Affiliation affiliation2 = getAffiliation();
-        affiliation2.setAffiliationName("Past Institution 2");
-        affiliation2.setAffiliationType(AffiliationType.EDUCATION);
+        affiliation2.setType(AffiliationType.EDUCATION);
+        affiliation2.getOrganization().setName("Past Institution 2");
 
         affiliations.getAffiliation().add(affiliation1);
         affiliations.getAffiliation().add(affiliation2);
@@ -916,11 +922,13 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
         orcidActivities.setAffiliations(affiliations);
         Affiliation affiliation = new Affiliation();
         affiliations.getAffiliation().add(affiliation);
-        affiliation.setAffiliationName("New College");
-        AffiliationAddress affiliationAddress = new AffiliationAddress();
-        affiliation.setAffiliationAddress(affiliationAddress);
-        affiliationAddress.setAffiliationCity(new AffiliationCity("Edinburgh"));
-        affiliationAddress.setAffiliationCountry(new AffiliationCountry(Iso3166Country.GB));
+        Organization organization = new Organization();
+        affiliation.setOrganization(organization);
+        organization.setName("New College");
+        OrganizationAddress organizationAddress = new OrganizationAddress();
+        organization.setAddress(organizationAddress);
+        organizationAddress.setCity("Edinburgh");
+        organizationAddress.setCountry(Iso3166Country.GB);
 
         orcidProfileManager.createOrcidProfile(profile1);
 

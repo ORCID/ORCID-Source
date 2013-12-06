@@ -37,10 +37,6 @@ import org.orcid.core.adapter.Jaxb2JpaAdapter;
 import org.orcid.core.manager.OrgManager;
 import org.orcid.core.utils.JsonUtils;
 import org.orcid.jaxb.model.message.Affiliation;
-import org.orcid.jaxb.model.message.AffiliationAddress;
-import org.orcid.jaxb.model.message.AffiliationCity;
-import org.orcid.jaxb.model.message.AffiliationCountry;
-import org.orcid.jaxb.model.message.AffiliationRegion;
 import org.orcid.jaxb.model.message.Affiliations;
 import org.orcid.jaxb.model.message.AgencyName;
 import org.orcid.jaxb.model.message.AgencyOrcid;
@@ -90,6 +86,8 @@ import org.orcid.jaxb.model.message.OrcidPreferences;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidWork;
 import org.orcid.jaxb.model.message.OrcidWorks;
+import org.orcid.jaxb.model.message.Organization;
+import org.orcid.jaxb.model.message.OrganizationAddress;
 import org.orcid.jaxb.model.message.OtherName;
 import org.orcid.jaxb.model.message.OtherNames;
 import org.orcid.jaxb.model.message.PatentContributors;
@@ -1062,7 +1060,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             }
             FuzzyDate startDate = affiliation.getStartDate();
             FuzzyDate endDate = affiliation.getEndDate();
-            orgRelationEntity.setAffiliationType(affiliation.getAffiliationType());
+            orgRelationEntity.setAffiliationType(affiliation.getType());
             orgRelationEntity.setVisibility(affiliation.getVisibility() == null ? Visibility.PRIVATE : affiliation.getVisibility());
             orgRelationEntity.setSource(getSource(affiliation.getSource()));
             orgRelationEntity.setDepartment(affiliation.getDepartmentName());
@@ -1079,17 +1077,15 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
     private OrgEntity getOrgEntity(Affiliation affiliation) {
         if (affiliation != null) {
             OrgEntity orgEntity = new OrgEntity();
-            orgEntity.setName(affiliation.getAffiliationName());
-            AffiliationAddress address = affiliation.getAffiliationAddress();
-            AffiliationCity city = address.getAffiliationCity();
-            orgEntity.setCity(city != null ? city.getContent() : null);
-            AffiliationRegion region = address.getAffiliationRegion();
-            orgEntity.setRegion(region != null ? region.getContent() : null);
-            AffiliationCountry country = address.getAffiliationCountry();
-            orgEntity.setCountry(country != null ? country.getValue() : null);
-            if (affiliation.getDisambiguatedAffiliation() != null && affiliation.getDisambiguatedAffiliation().getDisambiguatedAffiliationIdentifier() != null) {
-                orgEntity.setOrgDisambiguated(orgDisambiguatedDao.findBySourceIdAndSourceType(affiliation.getDisambiguatedAffiliation()
-                        .getDisambiguatedAffiliationIdentifier(), affiliation.getDisambiguatedAffiliation().getDisambiguationSource()));
+            Organization organization = affiliation.getOrganization();
+            orgEntity.setName(organization.getName());
+            OrganizationAddress address = organization.getAddress();
+            orgEntity.setCity(address.getCity());
+            orgEntity.setRegion(address.getRegion());
+            orgEntity.setCountry(address.getCountry());
+            if (organization.getDisambiguatedOrganization() != null && organization.getDisambiguatedOrganization().getDisambiguatedOrganizationIdentifier() != null) {
+                orgEntity.setOrgDisambiguated(orgDisambiguatedDao.findBySourceIdAndSourceType(organization.getDisambiguatedOrganization()
+                        .getDisambiguatedOrganizationIdentifier(), organization.getDisambiguatedOrganization().getDisambiguationSource()));
             }
             return orgManager.createUpdate(orgEntity);
         }

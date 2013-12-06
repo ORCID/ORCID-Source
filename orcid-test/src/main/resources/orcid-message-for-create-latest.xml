@@ -55,13 +55,7 @@
         <orcid-activities>
             <affiliations>
                 <affiliation>
-                    <name>Institution Name</name>
                     <type>employment</type>
-                    <address>
-                        <city>City</city>
-                        <region>Region</region>
-                        <country>US</country>
-                    </address>
                     <department-name>Department</department-name>
                     <role-title>Title</role-title>
                     <start-date>
@@ -72,6 +66,14 @@
                     <end-date>
                         <year>2013</year>
                     </end-date>
+                    <organization>
+                        <name>Institution Name</name>
+                        <address>
+                            <city>City</city>
+                            <region>Region</region>
+                            <country>US</country>
+                        </address>
+                    </organization>
                 </affiliation>
             </affiliations>
             <orcid-works> 

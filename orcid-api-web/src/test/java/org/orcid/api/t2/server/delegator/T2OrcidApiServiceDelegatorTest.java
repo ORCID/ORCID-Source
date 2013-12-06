@@ -42,9 +42,6 @@ import org.mockito.MockitoAnnotations;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.oauth.OrcidOAuth2Authentication;
 import org.orcid.jaxb.model.message.Affiliation;
-import org.orcid.jaxb.model.message.AffiliationAddress;
-import org.orcid.jaxb.model.message.AffiliationCity;
-import org.orcid.jaxb.model.message.AffiliationCountry;
 import org.orcid.jaxb.model.message.AffiliationType;
 import org.orcid.jaxb.model.message.Affiliations;
 import org.orcid.jaxb.model.message.ContactDetails;
@@ -58,6 +55,8 @@ import org.orcid.jaxb.model.message.OrcidIdentifier;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidWorks;
+import org.orcid.jaxb.model.message.Organization;
+import org.orcid.jaxb.model.message.OrganizationAddress;
 import org.orcid.jaxb.model.message.PersonalDetails;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.message.Visibility;
@@ -205,12 +204,14 @@ public class T2OrcidApiServiceDelegatorTest extends DBUnitTest {
         orcidActivities.setAffiliations(affiliations);
         Affiliation affiliation1 = new Affiliation();
         affiliations.getAffiliation().add(affiliation1);
-        affiliation1.setAffiliationName("A new affiliation");
-        affiliation1.setAffiliationType(AffiliationType.EDUCATION);
-        AffiliationAddress affiliationAddress = new AffiliationAddress();
-        affiliation1.setAffiliationAddress(affiliationAddress);
-        affiliationAddress.setAffiliationCity(new AffiliationCity("Edinburgh"));
-        affiliationAddress.setAffiliationCountry(new AffiliationCountry(Iso3166Country.GB));
+        affiliation1.setType(AffiliationType.EDUCATION);
+        Organization organization1 = new Organization();
+        affiliation1.setOrganization(organization1);
+        organization1.setName("A new affiliation");
+        OrganizationAddress organizationAddress = new OrganizationAddress();
+        organization1.setAddress(organizationAddress);
+        organizationAddress.setCity("Edinburgh");
+        organizationAddress.setCountry(Iso3166Country.GB);
         Response response = t2OrcidApiServiceDelegator.addAffiliations(mockedUriInfo, "4444-4444-4444-4441", orcidMessage);
         assertNotNull(response);
         assertEquals(HttpStatus.SC_CREATED, response.getStatus());
@@ -221,7 +222,7 @@ public class T2OrcidApiServiceDelegatorTest extends DBUnitTest {
         List<Affiliation> affiliationsList = retrievedProfile.getOrcidActivities().getAffiliations().getAffiliation();
         assertEquals(1, affiliationsList.size());
         Affiliation affiliation = affiliationsList.get(0);
-        assertEquals("A new affiliation", affiliation.getAffiliationName());
+        assertEquals("A new affiliation", affiliation.getOrganization().getName());
         assertEquals("4444-4444-4444-4447", affiliation.getSource().getSourceOrcid().getPath());
     }
 

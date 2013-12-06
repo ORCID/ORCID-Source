@@ -81,63 +81,64 @@
         <orcid-activities>
             <affiliations>
                 <affiliation visibility="public">
-                    <name>New College</name>
                     <type>employment</type>
-                    <address>
-                        <city>Some City</city>
-                        <region>CT</region>
-                        <country>US</country>
-                    </address>
                     <role-title>Researcher (Academic)</role-title>
                     <start-date>
                         <year>2012</year>
                         <month>04</month>
                     </start-date>
+                    <organization>
+                        <name>New College</name>
+                        <address>
+                            <city>Some City</city>
+                            <region>CT</region>
+                            <country>US</country>
+                        </address>
+                    </organization>
                 </affiliation>
                 <affiliation visibility="public">
-                    <name>Brown University</name>
                     <type>funding</type>
-                    <address>
-                        <city>Providence</city>
-                        <region>RI</region>
-                        <country>US</country>
-                    </address>
                     <department-name>Psychoceramics</department-name>
                     <role-title>Researcher (Academic)</role-title>
                     <start-date>
                         <year>2008</year>
                         <month>02</month>
                     </start-date>
-                    <disambiguated-affiliation>
-                        <disambiguated-affiliation-identifier>abc123</disambiguated-affiliation-identifier>
-                        <disambiguation-source>RINGGOLD</disambiguation-source>
-                    </disambiguated-affiliation>
+                    <organization>
+	                    <name>Brown University</name>
+	                    <address>
+	                        <city>Providence</city>
+	                        <region>RI</region>
+	                        <country>US</country>
+	                    </address>
+	                    <disambiguated-organization>
+	                        <disambiguated-organization-identifier>abc123</disambiguated-organization-identifier>
+	                        <disambiguation-source>RINGGOLD</disambiguation-source>
+	                    </disambiguated-organization>
+                    </organization>
                 </affiliation>
                 <affiliation visibility="public">
-                    <name>Yale University</name>
                     <type>employment</type>
-                    <address>
-                        <city>New Haven</city>
-                        <region>CT</region>
-                        <country>US</country>
-                    </address>
                     <department-name>Law</department-name>
                     <role-title>Researcher (Academic)</role-title>
                     <start-date>
                         <year>2005</year>
                     </start-date>
-                    <disambiguated-affiliation>
-                        <disambiguated-affiliation-identifier>def456</disambiguated-affiliation-identifier>
-                        <disambiguation-source>RINGGOLD</disambiguation-source>
-                    </disambiguated-affiliation>
+                    <organization>
+	                    <name>Yale University</name>
+	                    <address>
+	                        <city>New Haven</city>
+	                        <region>CT</region>
+	                        <country>US</country>
+	                    </address>
+	                    <disambiguated-organization>
+	                        <disambiguated-organization-identifier>def456</disambiguated-organization-identifier>
+	                        <disambiguation-source>RINGGOLD</disambiguation-source>
+	                    </disambiguated-organization>
+                    </organization>
                 </affiliation>
                 <affiliation visibility="public">
-                    <name>Slightly Obscure College</name>
                     <type>education</type>
-                    <address>
-                        <city>London</city>
-                        <country>GB</country>
-                    </address>
                     <role-title>Student</role-title>
                     <start-date>
                         <year>1993</year>
@@ -145,10 +146,17 @@
                     <end-date>
                         <year>1996</year>
                     </end-date>
-                    <disambiguated-affiliation>
-                        <disambiguated-affiliation-identifier>ghi789</disambiguated-affiliation-identifier>
-                        <disambiguation-source>ORCID</disambiguation-source>
-                    </disambiguated-affiliation>
+                    <organization>
+	                    <name>Slightly Obscure College</name>
+	                    <address>
+	                        <city>London</city>
+	                        <country>GB</country>
+	                    </address>
+	                    <disambiguated-organization>
+	                        <disambiguated-organization-identifier>ghi789</disambiguated-organization-identifier>
+	                        <disambiguation-source>ORCID</disambiguation-source>
+	                    </disambiguated-organization>
+                    </organization>
                 </affiliation>
             </affiliations>
             <orcid-works>

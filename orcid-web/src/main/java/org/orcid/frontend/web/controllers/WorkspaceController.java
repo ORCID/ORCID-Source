@@ -114,11 +114,11 @@ public class WorkspaceController extends BaseWorkspaceController {
     
     @ModelAttribute("affiliationLongDescriptionTypes")
     public Map<String, String> retrieveAffiliationLongDescriptionTypesAsMap() {
-        Map<String, String> affiliationTypes = new LinkedHashMap<String, String>();
-        for (AffiliationType affiliationType : AffiliationType.values()) {
-            affiliationTypes.put(affiliationType.value(), getMessage(AffiliationType.class.getName() + '.' + "longDescription" + '.' + affiliationType.value()));
+        Map<String, String> organizationTypes = new LinkedHashMap<String, String>();
+        for (AffiliationType organizationType : AffiliationType.values()) {
+            organizationTypes.put(organizationType.value(), getMessage(AffiliationType.class.getName() + '.' + "longDescription" + '.' + organizationType.value()));
         }
-        return FunctionsOverCollections.sortMapsByValues(affiliationTypes);
+        return FunctionsOverCollections.sortMapsByValues(organizationTypes);
     }
 
     @ModelAttribute("workCategories")

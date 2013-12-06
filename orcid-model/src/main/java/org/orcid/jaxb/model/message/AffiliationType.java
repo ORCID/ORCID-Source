@@ -26,7 +26,7 @@ import java.io.Serializable;
  * 
  * @author Declan Newman (declan) Date: 31/07/2012
  */
-@XmlType(name = "affiliation-type")
+@XmlType(name = "type")
 @XmlEnum
 public enum AffiliationType implements Serializable {
 
