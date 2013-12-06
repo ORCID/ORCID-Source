@@ -40,7 +40,6 @@ import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidWork;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.persistence.jpa.entities.ProfileWorkEntity;
-import org.orcid.persistence.jpa.entities.custom.MinimizedWorkEntity;
 import org.orcid.pojo.ajaxForm.AffiliationForm;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Text;
@@ -108,27 +107,7 @@ public class PublicProfileController extends BaseWorkspaceController {
                     mav.addObject("works", works);
                     request.getSession().setAttribute(WORKS_MAP, worksMap);
                 }
-            }
-        	
-        	/*
-        	 * Loading the Minimized version of works.
-        	 * This is commented since the OrcidProfile object will have the works, 
-        	 * so, we dont need to do this.
-        	List<MinimizedWorkEntity> publicWorks = workManager.findPublicWorks(orcid);
-        	if(publicWorks != null && publicWorks.size() > 0) {
-        		for(MinimizedWorkEntity minimizedWork : publicWorks){
-        			String workId = String.valueOf(minimizedWork.getId());
-        			Work work = Work.valueOf(minimizedWork); 
-        			works.add(work);
-        			workIds.add(workId);
-        			worksMap.put(workId, work);
-        		}        		
-        		 if (!works.isEmpty()) {
-                     mav.addObject("works", works);
-                     request.getSession().setAttribute(WORKS_MAP, worksMap);
-                 }
-        	}                        
-            */
+            }        	        	
         	
         	if (profile.getOrcidActivities() != null && profile.getOrcidActivities().getAffiliations() != null) {
                 for (Affiliation affiliation : profile.getOrcidActivities().getAffiliations().getAffiliation()) {
