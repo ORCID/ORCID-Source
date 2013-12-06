@@ -711,7 +711,7 @@ select {
 
 .header .logo h1 {
 	font-weight: 100;
-	margin-top: 10px;
+	margin-top: 0;
 }
 
 .header .logo p {
@@ -719,8 +719,9 @@ select {
 	float: right;
 	font-size: 14px;
 	color: #939498;
-	line-height: 13px;
+	line-height: 17px;
 	font-weight: 100;
+	margin-right: 10px;
 }
 
 .header .alignment {
@@ -2952,7 +2953,6 @@ ul.personal-inf-display li{
 #signout{
 	max-width:120px;
 }
-
 
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */
