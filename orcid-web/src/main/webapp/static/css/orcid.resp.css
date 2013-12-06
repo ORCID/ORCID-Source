@@ -17,7 +17,7 @@
  
 /*Custom Style */
 article,aside,details,figcaption,figure,footer,header,hgroup,nav,section
-	{
+{
 	display: block;
 }
 
@@ -47,10 +47,6 @@ a:focus {
 
 a:hover,a:active {
 	outline: 0;
-}
-
-.btn{
-	border: none;
 }
 
 sub,sup {
@@ -1106,7 +1102,7 @@ ul.privacyHelp li.private {
 
 .editTablePadCell35{	
 	padding: 0px;
-	margin: 0 30px;
+	margin: 0 30px;	
 }
 
 
@@ -1476,6 +1472,7 @@ a:hover {
 .orcid-id {
 	font-size: 12px;
 	line-height: 1;
+	word-wrap:break-word;
 }
 
 .workspace-overview {
@@ -2954,6 +2951,13 @@ ul.personal-inf-display li{
 #edit-affiliation #remove-disambiguated a span{
 	vertical-align:-2px;
 	margin-right: 5px;
+}
+
+.orcid-id-input{	
+	width: 100%;
+	font-size: 12px !important; /* Overwriting Bootstrap */
+	text-align: center;
+	margin-top: 15px;	 	
 }
 
 .citation-raw {
