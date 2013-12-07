@@ -34,7 +34,7 @@
 			 		<label class="relative">
 						<@orcid.msg 'privacyToggle.help.who_can_see'/>
 					</label>
-		 			<@orcid.privacyToggle "editWork.visibility.visibility" "setAddWorkPrivacy('PUBLIC', $event)" 
+		 			<@orcid.privacyToggle "editWork.visibility" "setAddWorkPrivacy('PUBLIC', $event)" 
 					"setAddWorkPrivacy('LIMITED', $event)" "setAddWorkPrivacy('PRIVATE', $event)" />					
 		 		</div>
 			</div>

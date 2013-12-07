@@ -2835,6 +2835,27 @@ ul.personal-inf-display li{
 	display: inline;
 }
 
+.work-more-info-container {
+	display: none;
+	position: absolute; 
+	left: -463px; 
+	top: 17px;
+	width: 686px;
+	max-width: 686px;
+	background-color: #ffffff;
+	height: 350px;
+}
+
+.work-more-info-container #ajax-loader{
+	position: absolute;
+	top: 40%;
+	left: 50%;
+}
+
+.more-info:hover .work-more-info-container {
+	display: inline;
+}
+
 .more-info .popover.bottom .arrow{
 	left: 484px !important;
 }

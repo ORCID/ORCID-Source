@@ -66,9 +66,9 @@ public class StatisticsGeneratorDaoTest extends DBUnitTest {
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void testStatistics() {
         assertEquals(6, statisticsGeneratorDao.getAccountsWithVerifiedEmails());
-        assertEquals(2, statisticsGeneratorDao.getAccountsWithWorks());
+        assertEquals(3, statisticsGeneratorDao.getAccountsWithWorks());
         assertEquals(7, statisticsGeneratorDao.getLiveIds());
-        assertEquals(4, statisticsGeneratorDao.getNumberOfWorks());
+        assertEquals(7, statisticsGeneratorDao.getNumberOfWorks());
         assertEquals(0, statisticsGeneratorDao.getNumberOfWorksWithDOIs());
     }
 }

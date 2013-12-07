@@ -82,9 +82,9 @@ public class StatisticsDaoTest extends DBUnitTest {
         long s7 = 0;
 
         assertEquals(6, s1);
-        assertEquals(2, s2);
+        assertEquals(3, s2);
         assertEquals(7, s3);
-        assertEquals(4, s4);
+        assertEquals(7, s4);
         assertEquals(0, s5);
 
         StatisticKeyEntity key = statisticsDao.createKey();
