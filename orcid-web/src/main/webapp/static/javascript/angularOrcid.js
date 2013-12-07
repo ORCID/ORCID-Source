@@ -1594,7 +1594,8 @@ function PublicWorkCtrl($scope, $compile, worksSrvc) {
 						}
 					});
 					setTimeout(function(){
-						$scope.addWorkToScope();						
+						$scope.addWorkToScope();
+						$scope.$apply();
 						fixZindexIE7('.workspace-public workspace-body-list li',99999);
 						fixZindexIE7('.workspace-toolbar',9999);						
 					},50);
