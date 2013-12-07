@@ -55,16 +55,17 @@ import org.orcid.jaxb.model.message.WorkCategory;
 import org.orcid.jaxb.model.message.WorkContributors;
 import org.orcid.jaxb.model.message.WorkType;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.orcid.persistence.jpa.entities.ProfileWorkEntity;
 import org.orcid.persistence.jpa.entities.PublicationDateEntity;
 import org.orcid.persistence.jpa.entities.WorkContributorEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
+import org.orcid.persistence.jpa.entities.custom.MinimizedWorkEntity;
 import org.orcid.pojo.ajaxForm.Citation;
 import org.orcid.pojo.ajaxForm.Contributor;
 import org.orcid.pojo.ajaxForm.Date;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.pojo.ajaxForm.TranslatedTitle;
-import org.orcid.pojo.ajaxForm.Visibility;
 import org.orcid.pojo.ajaxForm.Work;
 import org.orcid.pojo.ajaxForm.WorkExternalIdentifier;
 import org.orcid.pojo.ajaxForm.WorkTitle;
@@ -180,7 +181,7 @@ public class WorksController extends BaseWorkspaceController {
                     work.setLanguageName(languageName);
                 }
                 //Set translated title language name
-                if(!(work.getWorkTitle().getTranslatedTitle() == null) && !StringUtils.isEmpty(work.getWorkTitle().getTranslatedTitle().getLanguageCode())) {
+                if(!(work.getWorkTitle() == null) && !(work.getWorkTitle().getTranslatedTitle() == null) && !StringUtils.isEmpty(work.getWorkTitle().getTranslatedTitle().getLanguageCode())) {
                     String languageName = languages.get(work.getWorkTitle().getTranslatedTitle().getLanguageCode());
                     work.getWorkTitle().getTranslatedTitle().setLanguageName(languageName);
                 }
@@ -273,8 +274,7 @@ public class WorksController extends BaseWorkspaceController {
         w.setShortDescription(disText);
 
         OrcidProfile profile = getEffectiveProfile();
-        Visibility v = Visibility.valueOf(profile.getOrcidInternal().getPreferences().getWorkVisibilityDefault().getValue());
-        w.setVisibility(v);
+        w.setVisibility(profile.getOrcidInternal().getPreferences().getWorkVisibilityDefault().getValue());
 
         // Language code
         Text lc = new Text();
@@ -290,6 +290,47 @@ public class WorksController extends BaseWorkspaceController {
         return w;
     }
 
+    
+    /**
+     * Returns a blank work
+     * */
+    @RequestMapping(value = "/getWorkInfo.json", method = RequestMethod.GET)
+    public @ResponseBody
+    Work getWorkInfo(@RequestParam(value = "workId") String workId) {
+    	Map<String, String> countries = retrieveIsoCountries();
+        Map<String, String> languages = LanguagesMap.buildLanguageMap(localeManager.getLocale(), false);
+    	if(StringUtils.isEmpty(workId))
+    		return null;
+    	    	    	
+    	ProfileWorkEntity profileWork = profileWorkManager.getProfileWork(this.getCurrentUserOrcid(), workId);
+    	
+    	if(profileWork != null){
+    	
+    		OrcidWork orcidWork = jpa2JaxbAdapter.getOrcidWork(profileWork);
+    	
+    		if(orcidWork != null) {
+				Work work = Work.valueOf(orcidWork);
+				//Set country name
+		        if(!PojoUtil.isEmpty(work.getCountryCode())) {            
+		            Text countryName = Text.valueOf(countries.get(work.getCountryCode().getValue()));
+		            work.setCountryName(countryName);
+		        }
+		        //Set language name
+		        if(!PojoUtil.isEmpty(work.getLanguageCode())) {
+		            Text languageName = Text.valueOf(languages.get(work.getLanguageCode().getValue()));
+		            work.setLanguageName(languageName);
+		        }
+		        //Set translated title language name
+		        if(!(work.getWorkTitle().getTranslatedTitle() == null) && !StringUtils.isEmpty(work.getWorkTitle().getTranslatedTitle().getLanguageCode())) {
+		            String languageName = languages.get(work.getWorkTitle().getTranslatedTitle().getLanguageCode());
+		            work.getWorkTitle().getTranslatedTitle().setLanguageName(languageName);
+		        }        		        
+		        return work;
+    		}
+        }
+        return null;
+    }
+    
     /**
      * Returns a blank work
      * */
@@ -695,17 +736,17 @@ public class WorksController extends BaseWorkspaceController {
      */
     private List<String> createWorksIdList(HttpServletRequest request) {
         OrcidProfile currentProfile = getEffectiveProfile();
-        OrcidWorks orcidWorks = currentProfile.getOrcidActivities() == null ? null : currentProfile.getOrcidActivities().getOrcidWorks();
-
+        java.util.Date lastModified = currentProfile.getOrcidHistory().getLastModifiedDate().getValue().toGregorianCalendar().getTime();        
+        List<MinimizedWorkEntity> works = workManager.findWorks(currentProfile.getOrcid().getValue(), lastModified);
         HashMap<String, Work> worksMap = new HashMap<String, Work>();
         List<String> workIds = new ArrayList<String>();
-        if (orcidWorks != null) {
-            for (OrcidWork work : orcidWorks.getOrcidWork()) {
+        if (works != null) {
+            for (MinimizedWorkEntity work : works) {
                 try {
-                    worksMap.put(work.getPutCode(), Work.valueOf(work));
-                    workIds.add(work.getPutCode());
+                    worksMap.put(String.valueOf(work.getId()), Work.valueOf(work));
+                    workIds.add(String.valueOf(work.getId()));
                 } catch (Exception e) {
-                    LOGGER.error("ProfileWork failed to parse as Work. Put code" + work.getPutCode());
+                    LOGGER.error("ProfileWork failed to parse as Work. Put code" + work.getId());
                 }
             }
             request.getSession().setAttribute(WORKS_MAP, worksMap);
