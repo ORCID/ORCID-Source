@@ -51,7 +51,7 @@ orcidNgModule.factory("affiliationsSrvc", ['$rootScope', function ($rootScope) {
 			loading: false,
 			affiliationsToAddIds: null,
 	    	addAffiliationToScope: function(path) {
-	    		if(serv.affiliationsToAddIds.length != 0 ) {
+	    		if( serv.affiliationsToAddIds.length != 0 ) {
 	    			var affiliationIds = serv.affiliationsToAddIds.splice(0,20).join();
 	    			$.ajax({
 	    				url: $('body').data('baseurl') + path + '?affiliationIds=' + affiliationIds,
@@ -67,7 +67,15 @@ orcidNgModule.factory("affiliationsSrvc", ['$rootScope', function ($rootScope) {
 	    							else
 	    								serv.affiliations.push(data[i]);
 	    						};
-	    					setTimeout(function () {serv.addAffiliationToScope(path);},50);
+	    						if (serv.affiliationsToAddIds.length == 0) {
+	    							serv.loading = false;
+	    							$rootScope.$apply();
+	    						} else {
+	    							$rootScope.$apply();
+	    					    	setTimeout(function () {
+	    					    		serv.addAffiliationToScope(path);
+	    					    	},50);	    							
+	    						}
 	    				}
 	    			}).fail(function() { 
 	    		    	console.log("Error fetching affiliation: " + value);
@@ -1593,12 +1601,17 @@ function PublicWorkCtrl($scope, $compile, worksSrvc) {
 							$scope.works.push(dw);
 						}
 					});
-					setTimeout(function(){
-						$scope.addWorkToScope();
-						$scope.$apply();
+					if($scope.worksToAddIds.length == 0 ) {
+						$scope.worksSrvc.loading = false;
+						$scope.$apply();					
 						fixZindexIE7('.workspace-public workspace-body-list li',99999);
 						fixZindexIE7('.workspace-toolbar',9999);						
-					},50);
+					} else {
+						$scope.$apply();					
+						setTimeout(function(){
+							$scope.addWorkToScope();
+						},50);
+					}
 				}
 			}).fail(function() { 
 				$scope.$apply(function() {
@@ -1783,18 +1796,24 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 							$scope.works.push(dw);
 						}
 					});
-					setTimeout(function () {$scope.addWorkToScope();},50);
+					if($scope.worksToAddIds.length == 0 ) {
+						$scope.worksSrvc.loading = false;
+						$scope.$apply();
+						fixZindexIE7('.workspace-toolbar', 999999);
+						fixZindexIE7('.workspace-private-toolbar', 500);
+						fixZindexIE7('#privacy-bar', 400);						
+					} else {
+						$scope.$apply();
+						setTimeout(function () {
+							$scope.addWorkToScope(); 
+						},50);
+					}
 				}
 			}).fail(function() { 
 		    	console.log("Error fetching work: " + value);
 		    });
-		}else {
-			$scope.$apply(function() {
-				$scope.worksSrvc.loading = false;
-			});			
-			fixZindexIE7('.workspace-toolbar', 999999);
-			fixZindexIE7('.workspace-private-toolbar', 500);
-			fixZindexIE7('#privacy-bar', 400);
+		} else {
+			$scope.worksSrvc.loading = false;
 		}
 	}; 	
 
