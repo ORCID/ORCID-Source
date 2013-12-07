@@ -73,9 +73,7 @@ orcidNgModule.factory("affiliationsSrvc", ['$rootScope', function ($rootScope) {
 	    		    	console.log("Error fetching affiliation: " + value);
 	    		    });
 	    		} else {
-	    			$rootScope.$apply( function() {
-	    				serv.loading = false;
-	    			});
+	    			serv.loading = false;
 	    		};
 	    	},
 	    	setIdsToAdd: function(ids) {
@@ -1608,9 +1606,7 @@ function PublicWorkCtrl($scope, $compile, worksSrvc) {
 		    	console.log("Error fetching works: " + workIds);
 		    });
 		} else {
-			$scope.$apply(function() {
-				$scope.worksSrvc.loading = false;
-			});
+			$scope.worksSrvc.loading = false;
 		}
 	};     
 	  
