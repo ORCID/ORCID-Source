@@ -476,14 +476,6 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link AffiliationName }
-     * 
-     */
-    public AffiliationName createAffiliationName() {
-        return new AffiliationName();
-    }
-
-    /**
      * Create an instance of {@link AffiliationAddress }
      * 
      */
@@ -513,14 +505,6 @@ public class ObjectFactory {
      */
     public DepartmentName createDepartmentName() {
         return new DepartmentName();
-    }
-
-    /**
-     * Create an instance of {@link DisambiguatedAffiliation }
-     * 
-     */
-    public DisambiguatedAffiliation createDisambiguatedAffiliation() {
-        return new DisambiguatedAffiliation();
     }
 
     /**

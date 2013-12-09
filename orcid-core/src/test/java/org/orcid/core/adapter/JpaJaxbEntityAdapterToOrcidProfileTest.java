@@ -40,7 +40,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.jaxb.model.message.Address;
 import org.orcid.jaxb.model.message.Affiliation;
-import org.orcid.jaxb.model.message.AffiliationAddress;
 import org.orcid.jaxb.model.message.ApplicationSummary;
 import org.orcid.jaxb.model.message.Applications;
 import org.orcid.jaxb.model.message.Citation;
@@ -50,7 +49,7 @@ import org.orcid.jaxb.model.message.Contributor;
 import org.orcid.jaxb.model.message.CreditName;
 import org.orcid.jaxb.model.message.Delegation;
 import org.orcid.jaxb.model.message.DelegationDetails;
-import org.orcid.jaxb.model.message.DisambiguatedAffiliation;
+import org.orcid.jaxb.model.message.DisambiguatedOrganization;
 import org.orcid.jaxb.model.message.Email;
 import org.orcid.jaxb.model.message.ExternalIdentifier;
 import org.orcid.jaxb.model.message.ExternalIdentifiers;
@@ -69,6 +68,7 @@ import org.orcid.jaxb.model.message.OrcidPatents;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidWork;
 import org.orcid.jaxb.model.message.OrcidWorks;
+import org.orcid.jaxb.model.message.OrganizationAddress;
 import org.orcid.jaxb.model.message.OtherNames;
 import org.orcid.jaxb.model.message.PatentContributors;
 import org.orcid.jaxb.model.message.PersonalDetails;
@@ -379,17 +379,17 @@ public class JpaJaxbEntityAdapterToOrcidProfileTest extends DBUnitTest {
         assertEquals(1, affiliations.size());
         Affiliation affiliation = affiliations.get(0);
         assertEquals(Visibility.LIMITED, affiliation.getVisibility());
-        assertEquals("An institution", affiliation.getAffiliationName());
+        assertEquals("An institution", affiliation.getOrganization().getName());
         assertEquals("A Department", affiliation.getDepartmentName());
         assertEquals("2010-07-02", affiliation.getStartDate().toString());
         assertEquals("2011-07-02", affiliation.getEndDate().toString());
         assertEquals("Primary Researcher", affiliation.getRoleTitle());
-        DisambiguatedAffiliation disambiguatedAffiliation = affiliation.getDisambiguatedAffiliation();
+        DisambiguatedOrganization disambiguatedAffiliation = affiliation.getOrganization().getDisambiguatedOrganization();
         assertNotNull(disambiguatedAffiliation);
-        assertEquals("abc456", disambiguatedAffiliation.getDisambiguatedAffiliationIdentifier());
+        assertEquals("abc456", disambiguatedAffiliation.getDisambiguatedOrganizationIdentifier());
         assertEquals("WDB", disambiguatedAffiliation.getDisambiguationSource());
 
-        checkAddress(affiliation.getAffiliationAddress());
+        checkAddress(affiliation.getOrganization().getAddress());
 
     }
 
@@ -448,9 +448,9 @@ public class JpaJaxbEntityAdapterToOrcidProfileTest extends DBUnitTest {
 
     }
 
-    private void checkAddress(AffiliationAddress address) {
+    private void checkAddress(OrganizationAddress address) {
         assertNotNull(address);
-        assertEquals(Iso3166Country.GB, address.getAffiliationCountry().getValue());
+        assertEquals(Iso3166Country.GB, address.getCountry());
     }
 
     private void checkApplications(Applications applications) {

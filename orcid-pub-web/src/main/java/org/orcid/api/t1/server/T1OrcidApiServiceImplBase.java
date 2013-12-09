@@ -49,7 +49,10 @@ import javax.ws.rs.core.UriInfo;
 
 import org.orcid.api.common.OrcidApiService;
 import org.orcid.api.common.delegator.OrcidApiServiceDelegator;
+import org.orcid.api.common.delegator.impl.OrcidApiServiceVersionedDelegatorImpl;
+import org.orcid.core.manager.impl.ValidationManagerImpl;
 import org.orcid.jaxb.model.message.OrcidMessage;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
 
 import com.yammer.metrics.Metrics;
@@ -60,7 +63,7 @@ import com.yammer.metrics.core.Counter;
  * 
  * @author Declan Newman (declan) Date: 01/03/2012
  */
-abstract public class T1OrcidApiServiceImplBase implements OrcidApiService<Response> {
+abstract public class T1OrcidApiServiceImplBase implements OrcidApiService<Response>, InitializingBean {
 
     @Value("${org.orcid.core.pubBaseUri:http://orcid.org}")
     private String pubBaseUri;
@@ -76,6 +79,19 @@ abstract public class T1OrcidApiServiceImplBase implements OrcidApiService<Respo
 
     private OrcidApiServiceDelegator orcidApiServiceDelegator;
 
+    /**
+     * Only used if service delegator is not set and this bean needs to
+     * configure one for itself.
+     */
+    private String externalVersion;
+
+    /**
+     * Only used if service delegator is not set and this bean needs to
+     * configure one for itself.
+     */
+    @Resource(name = "t1OrcidApiServiceDelegatorPrototype")
+    private OrcidApiServiceVersionedDelegatorImpl orcidApiServiceDelegatorPrototype;
+
     // Base the RDF stuff on the root version of the API, because sits outside
     // the versioning mechanism
     @Resource(name = "t1OrcidApiServiceDelegatorLatest")
@@ -87,6 +103,30 @@ abstract public class T1OrcidApiServiceImplBase implements OrcidApiService<Respo
 
     public void setOrcidApiServiceDelegator(OrcidApiServiceDelegator orcidApiServiceDelegator) {
         this.orcidApiServiceDelegator = orcidApiServiceDelegator;
+    }
+
+    /**
+     * 
+     * @param externalVersion
+     *            The API schema version to use. Not needed if we are setting a
+     *            service delegator explicitly (and not relying on this bean to
+     *            configure one for itself).
+     */
+    public void setExternalVersion(String externalVersion) {
+        this.externalVersion = externalVersion;
+    }
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        // Automatically configure a service delegator, if one hasn't been set
+        if (orcidApiServiceDelegator == null && externalVersion != null) {
+            orcidApiServiceDelegatorPrototype.setExternalVersion(externalVersion);
+            ValidationManagerImpl outgoingValidationManagerImpl = new ValidationManagerImpl();
+            outgoingValidationManagerImpl.setVersion(externalVersion);
+            outgoingValidationManagerImpl.setValidateBibtex(false);
+            orcidApiServiceDelegatorPrototype.setOutgoingValidationManager(outgoingValidationManagerImpl);
+            orcidApiServiceDelegator = orcidApiServiceDelegatorPrototype;
+        }
     }
 
     /**

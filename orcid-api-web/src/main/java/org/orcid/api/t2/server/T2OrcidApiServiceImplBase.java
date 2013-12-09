@@ -61,7 +61,9 @@ import org.apache.commons.lang.StringUtils;
 import org.orcid.api.t2.T2OrcidApiService;
 import org.orcid.api.t2.server.delegator.OrcidClientCredentialEndPointDelegator;
 import org.orcid.api.t2.server.delegator.T2OrcidApiServiceDelegator;
+import org.orcid.api.t2.server.delegator.impl.T2OrcidApiServiceVersionedDelegatorImpl;
 import org.orcid.jaxb.model.message.OrcidMessage;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.security.oauth2.common.util.OAuth2Utils;
 
 import com.yammer.metrics.Metrics;
@@ -72,7 +74,7 @@ import com.yammer.metrics.core.Counter;
  * 
  * @author Declan Newman (declan) Date: 07/03/2012
  */
-abstract public class T2OrcidApiServiceImplBase implements T2OrcidApiService<Response> {
+abstract public class T2OrcidApiServiceImplBase implements T2OrcidApiService<Response>, InitializingBean {
 
     @Context
     private UriInfo uriInfo;
@@ -85,8 +87,20 @@ abstract public class T2OrcidApiServiceImplBase implements T2OrcidApiService<Res
     final static Counter T2_SEARCH_RESULTS_NONE_FOUND = Metrics.newCounter(T2OrcidApiServiceImplBase.class, "T2-SEARCH-RESULTS-NONE-FOUND");
     final static Counter T2_SEARCH_RESULTS_FOUND = Metrics.newCounter(T2OrcidApiServiceImplBase.class, "T2-SEARCH-RESULTS-FOUND");
 
-    @Resource(name = "orcidT2ServiceDelegator")
     private T2OrcidApiServiceDelegator serviceDelegator;
+
+    /**
+     * Only used if service delegator is not set and this bean needs to
+     * configure one for itself.
+     */
+    private String externalVersion;
+
+    /**
+     * Only used if service delegator is not set and this bean needs to
+     * configure one for itself.
+     */
+    @Resource(name = "t2OrcidApiServiceDelegatorPrototype")
+    private T2OrcidApiServiceVersionedDelegatorImpl serviceDelegatorPrototype;
 
     @Resource
     private OrcidClientCredentialEndPointDelegator orcidClientCredentialEndPointDelegator;
@@ -97,6 +111,27 @@ abstract public class T2OrcidApiServiceImplBase implements T2OrcidApiService<Res
 
     public void setServiceDelegator(T2OrcidApiServiceDelegator serviceDelegator) {
         this.serviceDelegator = serviceDelegator;
+    }
+
+    /**
+     * 
+     * @param externalVersion
+     *            The API schema version to use. Not needed if we are setting a
+     *            service delegator explicitly (and not relying on this bean to
+     *            configure one for itself).
+     */
+    public void setExternalVersion(String externalVersion) {
+        this.externalVersion = externalVersion;
+    }
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        // Automatically configure a service delegator, if one hasn't been set
+        if (serviceDelegator == null && externalVersion != null) {
+            serviceDelegatorPrototype.setExternalVersion(externalVersion);
+            serviceDelegatorPrototype.autoConfigureValidators();
+            serviceDelegator = serviceDelegatorPrototype;
+        }
     }
 
     /**

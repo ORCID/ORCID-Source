@@ -21,13 +21,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.orcid.jaxb.model.message.Affiliation;
-import org.orcid.jaxb.model.message.AffiliationAddress;
-import org.orcid.jaxb.model.message.AffiliationCity;
-import org.orcid.jaxb.model.message.AffiliationCountry;
-import org.orcid.jaxb.model.message.AffiliationRegion;
 import org.orcid.jaxb.model.message.AffiliationType;
-import org.orcid.jaxb.model.message.DisambiguatedAffiliation;
+import org.orcid.jaxb.model.message.DisambiguatedOrganization;
 import org.orcid.jaxb.model.message.Iso3166Country;
+import org.orcid.jaxb.model.message.Organization;
+import org.orcid.jaxb.model.message.OrganizationAddress;
 import org.orcid.jaxb.model.message.Source;
 
 public class AffiliationForm implements ErrorsInterface, Serializable {
@@ -184,19 +182,20 @@ public class AffiliationForm implements ErrorsInterface, Serializable {
         AffiliationForm form = new AffiliationForm();
         form.setPutCode(Text.valueOf(affiliation.getPutCode()));
         form.setVisibility(Visibility.valueOf(affiliation.getVisibility()));
-        form.setAffiliationName(Text.valueOf(affiliation.getAffiliationName()));
-        AffiliationAddress address = affiliation.getAffiliationAddress();
-        form.setCity(Text.valueOf(address.getAffiliationCity().getContent()));
-        if (affiliation.getDisambiguatedAffiliation() != null) {
-            if (affiliation.getDisambiguatedAffiliation().getDisambiguatedAffiliationIdentifier() != null) {
-                form.setDisambiguatedAffiliationSourceId(Text.valueOf(affiliation.getDisambiguatedAffiliation().getDisambiguatedAffiliationIdentifier()));
-                form.setDisambiguationSource(Text.valueOf(affiliation.getDisambiguatedAffiliation().getDisambiguationSource()));
+        Organization organization = affiliation.getOrganization();
+        form.setAffiliationName(Text.valueOf(organization.getName()));
+        OrganizationAddress address = organization.getAddress();
+        form.setCity(Text.valueOf(address.getCity()));
+        if (organization.getDisambiguatedOrganization() != null) {
+            if (organization.getDisambiguatedOrganization().getDisambiguatedOrganizationIdentifier() != null) {
+                form.setDisambiguatedAffiliationSourceId(Text.valueOf(organization.getDisambiguatedOrganization().getDisambiguatedOrganizationIdentifier()));
+                form.setDisambiguationSource(Text.valueOf(organization.getDisambiguatedOrganization().getDisambiguationSource()));
             }
         }
-        if (address.getAffiliationRegion() != null) {
-            form.setRegion(Text.valueOf(address.getAffiliationRegion().getContent()));
+        if (address.getRegion() != null) {
+            form.setRegion(Text.valueOf(address.getRegion()));
         }
-        form.setCountry(Text.valueOf(address.getAffiliationCountry().getValue().value()));
+        form.setCountry(Text.valueOf(address.getCountry().value()));
         if (affiliation.getDepartmentName() != null) {
             form.setDepartmentName(Text.valueOf(affiliation.getDepartmentName()));
         }
@@ -204,8 +203,8 @@ public class AffiliationForm implements ErrorsInterface, Serializable {
             form.setRoleTitle(Text.valueOf(affiliation.getRoleTitle()));
         }
 
-        if (affiliation.getAffiliationType() != null) {
-            form.setAffiliationType(Text.valueOf(affiliation.getAffiliationType().value()));
+        if (affiliation.getType() != null) {
+            form.setAffiliationType(Text.valueOf(affiliation.getType().value()));
         }
         if (affiliation.getStartDate() != null) {
             form.setStartDate(Date.valueOf(affiliation.getStartDate()));
@@ -226,27 +225,29 @@ public class AffiliationForm implements ErrorsInterface, Serializable {
             affiliation.setPutCode(putCode.getValue());
         }
         affiliation.setVisibility(visibility.getVisibility());
-        affiliation.setAffiliationName(affiliationName.getValue());
-        AffiliationAddress affiliationAddress = new AffiliationAddress();
-        affiliation.setAffiliationAddress(affiliationAddress);
-        affiliationAddress.setAffiliationCity(new AffiliationCity(city.getValue()));
+        Organization organization = new Organization();
+        affiliation.setOrganization(organization);
+        organization.setName(affiliationName.getValue());
+        OrganizationAddress organizationAddress = new OrganizationAddress();
+        organization.setAddress(organizationAddress);
+        organizationAddress.setCity(city.getValue());
         if (!PojoUtil.isEmpty(region)) {
-            affiliationAddress.setAffiliationRegion(new AffiliationRegion(region.getValue()));
+            organizationAddress.setRegion(region.getValue());
         }
         if (!PojoUtil.isEmpty(disambiguatedAffiliationSourceId)) {
-            affiliation.setDisambiguatedAffiliation(new DisambiguatedAffiliation());
-            affiliation.getDisambiguatedAffiliation().setDisambiguatedAffiliationIdentifier(disambiguatedAffiliationSourceId.getValue());
-            affiliation.getDisambiguatedAffiliation().setDisambiguationSource(disambiguationSource.getValue());
+            organization.setDisambiguatedOrganization(new DisambiguatedOrganization());
+            organization.getDisambiguatedOrganization().setDisambiguatedOrganizationIdentifier(disambiguatedAffiliationSourceId.getValue());
+            organization.getDisambiguatedOrganization().setDisambiguationSource(disambiguationSource.getValue());
         }
-        affiliationAddress.setAffiliationCountry(new AffiliationCountry(Iso3166Country.fromValue(country.getValue())));
+        organizationAddress.setCountry(Iso3166Country.fromValue(country.getValue()));
+        if (!PojoUtil.isEmpty(affiliationType)) {
+            affiliation.setType(AffiliationType.fromValue(affiliationType.getValue()));
+        }
         if (!PojoUtil.isEmpty(roleTitle)) {
             affiliation.setRoleTitle(roleTitle.getValue());
         }
         if (!PojoUtil.isEmpty(departmentName)) {
             affiliation.setDepartmentName(departmentName.getValue());
-        }
-        if (!PojoUtil.isEmpty(affiliationType)) {
-            affiliation.setAffiliationType(AffiliationType.fromValue(affiliationType.getValue()));
         }
         if (!PojoUtil.isEmply(startDate)) {
             affiliation.setStartDate(startDate.toFuzzyDate());

@@ -25,7 +25,6 @@ import static org.mockito.Mockito.when;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.annotation.Resource;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
@@ -33,23 +32,17 @@ import javax.ws.rs.core.UriInfo;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.orcid.api.t2.server.delegator.T2OrcidApiServiceDelegator;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidSearchResult;
 import org.orcid.jaxb.model.message.OrcidSearchResults;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.sun.jersey.core.util.MultivaluedMapImpl;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:test-orcid-t2-web-context.xml" })
 public class T2OrcidApiServiceImplLatestGetAndSearchMetricsTest {
 
-    @Resource
-    private T2OrcidApiServiceImplLatest t2OrcidApiService;
+    private T2OrcidApiServiceImplRoot t2OrcidApiService = new T2OrcidApiServiceImplRoot();
 
     // mock the search results so that we don't need a db setub to check the
     // counter works as expected
@@ -70,168 +63,168 @@ public class T2OrcidApiServiceImplLatestGetAndSearchMetricsTest {
     @After
     @Before
     public void resetVals() {
-        T2OrcidApiServiceImplLatest.T2_SEARCH_REQUESTS.clear();
-        T2OrcidApiServiceImplLatest.T2_GET_REQUESTS.clear();
-        T2OrcidApiServiceImplLatest.T2_SEARCH_RESULTS_NONE_FOUND.clear();
-        T2OrcidApiServiceImplLatest.T2_SEARCH_RESULTS_FOUND.clear();
+        T2OrcidApiServiceImplRoot.T2_SEARCH_REQUESTS.clear();
+        T2OrcidApiServiceImplRoot.T2_GET_REQUESTS.clear();
+        T2OrcidApiServiceImplRoot.T2_SEARCH_RESULTS_NONE_FOUND.clear();
+        T2OrcidApiServiceImplRoot.T2_SEARCH_RESULTS_FOUND.clear();
 
     }
 
     @Test
     public void testCounterUnaffectedByViewStatus() {
-        assertTrue(T2OrcidApiServiceImplLatest.T2_SEARCH_REQUESTS.count() == 0);
-        assertTrue(T2OrcidApiServiceImplLatest.T2_GET_REQUESTS.count() == 0);
+        assertTrue(T2OrcidApiServiceImplRoot.T2_SEARCH_REQUESTS.count() == 0);
+        assertTrue(T2OrcidApiServiceImplRoot.T2_GET_REQUESTS.count() == 0);
         Response response = t2OrcidApiService.viewStatusText();
         assertEquals(200, response.getStatus());
-        assertTrue(T2OrcidApiServiceImplLatest.T2_SEARCH_REQUESTS.count() == 0);
-        assertTrue(T2OrcidApiServiceImplLatest.T2_GET_REQUESTS.count() == 0);
+        assertTrue(T2OrcidApiServiceImplRoot.T2_SEARCH_REQUESTS.count() == 0);
+        assertTrue(T2OrcidApiServiceImplRoot.T2_GET_REQUESTS.count() == 0);
 
     }
 
     @Test
     public void testViewBioDetailsHtml() {
 
-        assertTrue(T2OrcidApiServiceImplLatest.T2_SEARCH_REQUESTS.count() == 0);
-        assertTrue(T2OrcidApiServiceImplLatest.T2_GET_REQUESTS.count() == 0);
+        assertTrue(T2OrcidApiServiceImplRoot.T2_SEARCH_REQUESTS.count() == 0);
+        assertTrue(T2OrcidApiServiceImplRoot.T2_GET_REQUESTS.count() == 0);
         when(mockServiceDelegator.findBioDetails(any(String.class))).thenReturn(successResponse);
-        assertTrue(T2OrcidApiServiceImplLatest.T2_SEARCH_REQUESTS.count() == 0);
+        assertTrue(T2OrcidApiServiceImplRoot.T2_SEARCH_REQUESTS.count() == 0);
         Response response = t2OrcidApiService.viewBioDetailsHtml("orcid");
         assertEquals(200, response.getStatus());
-        assertTrue(T2OrcidApiServiceImplLatest.T2_GET_REQUESTS.count() == 1);
-        assertTrue(T2OrcidApiServiceImplLatest.T2_SEARCH_REQUESTS.count() == 0);
+        assertTrue(T2OrcidApiServiceImplRoot.T2_GET_REQUESTS.count() == 1);
+        assertTrue(T2OrcidApiServiceImplRoot.T2_SEARCH_REQUESTS.count() == 0);
     }
 
     @Test
     public void testViewBioDetailsXml() {
-        assertTrue(T2OrcidApiServiceImplLatest.T2_SEARCH_REQUESTS.count() == 0);
-        assertTrue(T2OrcidApiServiceImplLatest.T2_GET_REQUESTS.count() == 0);
+        assertTrue(T2OrcidApiServiceImplRoot.T2_SEARCH_REQUESTS.count() == 0);
+        assertTrue(T2OrcidApiServiceImplRoot.T2_GET_REQUESTS.count() == 0);
         when(mockServiceDelegator.findBioDetails(any(String.class))).thenReturn(successResponse);
-        assertTrue(T2OrcidApiServiceImplLatest.T2_SEARCH_REQUESTS.count() == 0);
+        assertTrue(T2OrcidApiServiceImplRoot.T2_SEARCH_REQUESTS.count() == 0);
         Response response = t2OrcidApiService.viewBioDetailsXml("orcid");
         assertEquals(200, response.getStatus());
-        assertTrue(T2OrcidApiServiceImplLatest.T2_GET_REQUESTS.count() == 1);
-        assertTrue(T2OrcidApiServiceImplLatest.T2_SEARCH_REQUESTS.count() == 0);
+        assertTrue(T2OrcidApiServiceImplRoot.T2_GET_REQUESTS.count() == 1);
+        assertTrue(T2OrcidApiServiceImplRoot.T2_SEARCH_REQUESTS.count() == 0);
     }
 
     @Test
     public void testViewBioDetailsJson() {
-        assertTrue(T2OrcidApiServiceImplLatest.T2_SEARCH_REQUESTS.count() == 0);
-        assertTrue(T2OrcidApiServiceImplLatest.T2_GET_REQUESTS.count() == 0);
+        assertTrue(T2OrcidApiServiceImplRoot.T2_SEARCH_REQUESTS.count() == 0);
+        assertTrue(T2OrcidApiServiceImplRoot.T2_GET_REQUESTS.count() == 0);
         when(mockServiceDelegator.findBioDetails(any(String.class))).thenReturn(successResponse);
-        assertTrue(T2OrcidApiServiceImplLatest.T2_SEARCH_REQUESTS.count() == 0);
+        assertTrue(T2OrcidApiServiceImplRoot.T2_SEARCH_REQUESTS.count() == 0);
         Response response = t2OrcidApiService.viewBioDetailsJson("orcid");
         assertEquals(200, response.getStatus());
-        assertTrue(T2OrcidApiServiceImplLatest.T2_GET_REQUESTS.count() == 1);
-        assertTrue(T2OrcidApiServiceImplLatest.T2_SEARCH_REQUESTS.count() == 0);
+        assertTrue(T2OrcidApiServiceImplRoot.T2_GET_REQUESTS.count() == 1);
+        assertTrue(T2OrcidApiServiceImplRoot.T2_SEARCH_REQUESTS.count() == 0);
     }
 
     @Test
     public void testViewExternalIdentifiersHtml() {
-        assertTrue(T2OrcidApiServiceImplLatest.T2_SEARCH_REQUESTS.count() == 0);
-        assertTrue(T2OrcidApiServiceImplLatest.T2_GET_REQUESTS.count() == 0);
+        assertTrue(T2OrcidApiServiceImplRoot.T2_SEARCH_REQUESTS.count() == 0);
+        assertTrue(T2OrcidApiServiceImplRoot.T2_GET_REQUESTS.count() == 0);
         when(mockServiceDelegator.findExternalIdentifiers(any(String.class))).thenReturn(successResponse);
-        assertTrue(T2OrcidApiServiceImplLatest.T2_SEARCH_REQUESTS.count() == 0);
+        assertTrue(T2OrcidApiServiceImplRoot.T2_SEARCH_REQUESTS.count() == 0);
         Response response = t2OrcidApiService.viewExternalIdentifiersHtml("orcid");
         assertEquals(200, response.getStatus());
-        assertTrue(T2OrcidApiServiceImplLatest.T2_GET_REQUESTS.count() == 1);
-        assertTrue(T2OrcidApiServiceImplLatest.T2_SEARCH_REQUESTS.count() == 0);
+        assertTrue(T2OrcidApiServiceImplRoot.T2_GET_REQUESTS.count() == 1);
+        assertTrue(T2OrcidApiServiceImplRoot.T2_SEARCH_REQUESTS.count() == 0);
     }
 
     @Test
     public void testViewExternalIdentifiersXml() {
-        assertTrue(T2OrcidApiServiceImplLatest.T2_SEARCH_REQUESTS.count() == 0);
-        assertTrue(T2OrcidApiServiceImplLatest.T2_GET_REQUESTS.count() == 0);
+        assertTrue(T2OrcidApiServiceImplRoot.T2_SEARCH_REQUESTS.count() == 0);
+        assertTrue(T2OrcidApiServiceImplRoot.T2_GET_REQUESTS.count() == 0);
         when(mockServiceDelegator.findExternalIdentifiers(any(String.class))).thenReturn(successResponse);
-        assertTrue(T2OrcidApiServiceImplLatest.T2_SEARCH_REQUESTS.count() == 0);
+        assertTrue(T2OrcidApiServiceImplRoot.T2_SEARCH_REQUESTS.count() == 0);
         Response response = t2OrcidApiService.viewExternalIdentifiersXml("orcid");
         assertEquals(200, response.getStatus());
-        assertTrue(T2OrcidApiServiceImplLatest.T2_GET_REQUESTS.count() == 1);
-        assertTrue(T2OrcidApiServiceImplLatest.T2_SEARCH_REQUESTS.count() == 0);
+        assertTrue(T2OrcidApiServiceImplRoot.T2_GET_REQUESTS.count() == 1);
+        assertTrue(T2OrcidApiServiceImplRoot.T2_SEARCH_REQUESTS.count() == 0);
     }
 
     @Test
     public void testViewExternalIdentifiersJson() {
-        assertTrue(T2OrcidApiServiceImplLatest.T2_SEARCH_REQUESTS.count() == 0);
-        assertTrue(T2OrcidApiServiceImplLatest.T2_GET_REQUESTS.count() == 0);
+        assertTrue(T2OrcidApiServiceImplRoot.T2_SEARCH_REQUESTS.count() == 0);
+        assertTrue(T2OrcidApiServiceImplRoot.T2_GET_REQUESTS.count() == 0);
         when(mockServiceDelegator.findExternalIdentifiers(any(String.class))).thenReturn(successResponse);
-        assertTrue(T2OrcidApiServiceImplLatest.T2_SEARCH_REQUESTS.count() == 0);
+        assertTrue(T2OrcidApiServiceImplRoot.T2_SEARCH_REQUESTS.count() == 0);
         Response response = t2OrcidApiService.viewExternalIdentifiersJson("orcid");
         assertEquals(200, response.getStatus());
-        assertTrue(T2OrcidApiServiceImplLatest.T2_GET_REQUESTS.count() == 1);
-        assertTrue(T2OrcidApiServiceImplLatest.T2_SEARCH_REQUESTS.count() == 0);
+        assertTrue(T2OrcidApiServiceImplRoot.T2_GET_REQUESTS.count() == 1);
+        assertTrue(T2OrcidApiServiceImplRoot.T2_SEARCH_REQUESTS.count() == 0);
     }
 
     @Test
     public void testViewFullDetailsHtml() {
-        assertTrue(T2OrcidApiServiceImplLatest.T2_SEARCH_REQUESTS.count() == 0);
-        assertTrue(T2OrcidApiServiceImplLatest.T2_GET_REQUESTS.count() == 0);
+        assertTrue(T2OrcidApiServiceImplRoot.T2_SEARCH_REQUESTS.count() == 0);
+        assertTrue(T2OrcidApiServiceImplRoot.T2_GET_REQUESTS.count() == 0);
         when(mockServiceDelegator.findFullDetails(any(String.class))).thenReturn(successResponse);
-        assertTrue(T2OrcidApiServiceImplLatest.T2_SEARCH_REQUESTS.count() == 0);
+        assertTrue(T2OrcidApiServiceImplRoot.T2_SEARCH_REQUESTS.count() == 0);
         Response response = t2OrcidApiService.viewFullDetailsHtml("orcid");
         assertEquals(200, response.getStatus());
-        assertTrue(T2OrcidApiServiceImplLatest.T2_GET_REQUESTS.count() == 1);
-        assertTrue(T2OrcidApiServiceImplLatest.T2_SEARCH_REQUESTS.count() == 0);
+        assertTrue(T2OrcidApiServiceImplRoot.T2_GET_REQUESTS.count() == 1);
+        assertTrue(T2OrcidApiServiceImplRoot.T2_SEARCH_REQUESTS.count() == 0);
     }
 
     @Test
     public void testViewFullDetailsXml() {
-        assertTrue(T2OrcidApiServiceImplLatest.T2_SEARCH_REQUESTS.count() == 0);
-        assertTrue(T2OrcidApiServiceImplLatest.T2_GET_REQUESTS.count() == 0);
+        assertTrue(T2OrcidApiServiceImplRoot.T2_SEARCH_REQUESTS.count() == 0);
+        assertTrue(T2OrcidApiServiceImplRoot.T2_GET_REQUESTS.count() == 0);
         when(mockServiceDelegator.findFullDetails(any(String.class))).thenReturn(successResponse);
-        assertTrue(T2OrcidApiServiceImplLatest.T2_SEARCH_REQUESTS.count() == 0);
+        assertTrue(T2OrcidApiServiceImplRoot.T2_SEARCH_REQUESTS.count() == 0);
         Response response = t2OrcidApiService.viewFullDetailsXml("orcid");
         assertEquals(200, response.getStatus());
-        assertTrue(T2OrcidApiServiceImplLatest.T2_GET_REQUESTS.count() == 1);
-        assertTrue(T2OrcidApiServiceImplLatest.T2_SEARCH_REQUESTS.count() == 0);
+        assertTrue(T2OrcidApiServiceImplRoot.T2_GET_REQUESTS.count() == 1);
+        assertTrue(T2OrcidApiServiceImplRoot.T2_SEARCH_REQUESTS.count() == 0);
 
     }
 
     @Test
     public void testViewFullDetailsJson() {
-        assertTrue(T2OrcidApiServiceImplLatest.T2_SEARCH_REQUESTS.count() == 0);
-        assertTrue(T2OrcidApiServiceImplLatest.T2_GET_REQUESTS.count() == 0);
+        assertTrue(T2OrcidApiServiceImplRoot.T2_SEARCH_REQUESTS.count() == 0);
+        assertTrue(T2OrcidApiServiceImplRoot.T2_GET_REQUESTS.count() == 0);
         when(mockServiceDelegator.findFullDetails(any(String.class))).thenReturn(successResponse);
-        assertTrue(T2OrcidApiServiceImplLatest.T2_SEARCH_REQUESTS.count() == 0);
+        assertTrue(T2OrcidApiServiceImplRoot.T2_SEARCH_REQUESTS.count() == 0);
         Response response = t2OrcidApiService.viewFullDetailsJson("orcid");
         assertEquals(200, response.getStatus());
-        assertTrue(T2OrcidApiServiceImplLatest.T2_GET_REQUESTS.count() == 1);
-        assertTrue(T2OrcidApiServiceImplLatest.T2_SEARCH_REQUESTS.count() == 0);
+        assertTrue(T2OrcidApiServiceImplRoot.T2_GET_REQUESTS.count() == 1);
+        assertTrue(T2OrcidApiServiceImplRoot.T2_SEARCH_REQUESTS.count() == 0);
     }
 
     @Test
     public void testViewWorksDetailsHtml() {
-        assertTrue(T2OrcidApiServiceImplLatest.T2_SEARCH_REQUESTS.count() == 0);
-        assertTrue(T2OrcidApiServiceImplLatest.T2_GET_REQUESTS.count() == 0);
+        assertTrue(T2OrcidApiServiceImplRoot.T2_SEARCH_REQUESTS.count() == 0);
+        assertTrue(T2OrcidApiServiceImplRoot.T2_GET_REQUESTS.count() == 0);
         when(mockServiceDelegator.findWorksDetails(any(String.class))).thenReturn(successResponse);
-        assertTrue(T2OrcidApiServiceImplLatest.T2_SEARCH_REQUESTS.count() == 0);
+        assertTrue(T2OrcidApiServiceImplRoot.T2_SEARCH_REQUESTS.count() == 0);
         Response response = t2OrcidApiService.viewWorksDetailsHtml("orcid");
         assertEquals(200, response.getStatus());
-        assertTrue(T2OrcidApiServiceImplLatest.T2_GET_REQUESTS.count() == 1);
-        assertTrue(T2OrcidApiServiceImplLatest.T2_SEARCH_REQUESTS.count() == 0);
+        assertTrue(T2OrcidApiServiceImplRoot.T2_GET_REQUESTS.count() == 1);
+        assertTrue(T2OrcidApiServiceImplRoot.T2_SEARCH_REQUESTS.count() == 0);
     }
 
     @Test
     public void testViewWorksDetailsXml() {
-        assertTrue(T2OrcidApiServiceImplLatest.T2_SEARCH_REQUESTS.count() == 0);
-        assertTrue(T2OrcidApiServiceImplLatest.T2_GET_REQUESTS.count() == 0);
+        assertTrue(T2OrcidApiServiceImplRoot.T2_SEARCH_REQUESTS.count() == 0);
+        assertTrue(T2OrcidApiServiceImplRoot.T2_GET_REQUESTS.count() == 0);
         when(mockServiceDelegator.findWorksDetails(any(String.class))).thenReturn(successResponse);
-        assertTrue(T2OrcidApiServiceImplLatest.T2_SEARCH_REQUESTS.count() == 0);
+        assertTrue(T2OrcidApiServiceImplRoot.T2_SEARCH_REQUESTS.count() == 0);
         Response response = t2OrcidApiService.viewWorksDetailsXml("orcid");
         assertEquals(200, response.getStatus());
-        assertTrue(T2OrcidApiServiceImplLatest.T2_GET_REQUESTS.count() == 1);
-        assertTrue(T2OrcidApiServiceImplLatest.T2_SEARCH_REQUESTS.count() == 0);
+        assertTrue(T2OrcidApiServiceImplRoot.T2_GET_REQUESTS.count() == 1);
+        assertTrue(T2OrcidApiServiceImplRoot.T2_SEARCH_REQUESTS.count() == 0);
     }
 
     @Test
     public void testViewWorksDetailsJson() {
-        assertTrue(T2OrcidApiServiceImplLatest.T2_SEARCH_REQUESTS.count() == 0);
-        assertTrue(T2OrcidApiServiceImplLatest.T2_GET_REQUESTS.count() == 0);
+        assertTrue(T2OrcidApiServiceImplRoot.T2_SEARCH_REQUESTS.count() == 0);
+        assertTrue(T2OrcidApiServiceImplRoot.T2_GET_REQUESTS.count() == 0);
         when(mockServiceDelegator.findWorksDetails(any(String.class))).thenReturn(successResponse);
-        assertTrue(T2OrcidApiServiceImplLatest.T2_SEARCH_REQUESTS.count() == 0);
+        assertTrue(T2OrcidApiServiceImplRoot.T2_SEARCH_REQUESTS.count() == 0);
         Response response = t2OrcidApiService.viewWorksDetailsJson("orcid");
         assertEquals(200, response.getStatus());
-        assertTrue(T2OrcidApiServiceImplLatest.T2_GET_REQUESTS.count() == 1);
-        assertTrue(T2OrcidApiServiceImplLatest.T2_SEARCH_REQUESTS.count() == 0);
+        assertTrue(T2OrcidApiServiceImplRoot.T2_GET_REQUESTS.count() == 1);
+        assertTrue(T2OrcidApiServiceImplRoot.T2_SEARCH_REQUESTS.count() == 0);
     }
 
     @Test
@@ -240,18 +233,18 @@ public class T2OrcidApiServiceImplLatestGetAndSearchMetricsTest {
         t2OrcidApiService.setUriInfo(uriInfo);
         MultivaluedMap<String, String> queryMaps = queryParams();
         when(uriInfo.getQueryParameters()).thenReturn(queryMaps);
-        assertTrue(T2OrcidApiServiceImplLatest.T2_SEARCH_REQUESTS.count() == 0);
-        assertTrue(T2OrcidApiServiceImplLatest.T2_GET_REQUESTS.count() == 0);
-        assertTrue(T2OrcidApiServiceImplLatest.T2_SEARCH_RESULTS_FOUND.count() == 0);
-        assertTrue(T2OrcidApiServiceImplLatest.T2_SEARCH_RESULTS_NONE_FOUND.count() == 0);
+        assertTrue(T2OrcidApiServiceImplRoot.T2_SEARCH_REQUESTS.count() == 0);
+        assertTrue(T2OrcidApiServiceImplRoot.T2_GET_REQUESTS.count() == 0);
+        assertTrue(T2OrcidApiServiceImplRoot.T2_SEARCH_RESULTS_FOUND.count() == 0);
+        assertTrue(T2OrcidApiServiceImplRoot.T2_SEARCH_RESULTS_NONE_FOUND.count() == 0);
         when(mockServiceDelegator.searchByQuery(queryMaps)).thenReturn(successResponse);
-        assertTrue(T2OrcidApiServiceImplLatest.T2_SEARCH_REQUESTS.count() == 0);
+        assertTrue(T2OrcidApiServiceImplRoot.T2_SEARCH_REQUESTS.count() == 0);
         Response response = t2OrcidApiService.searchByQueryJSON("orcid");
         assertTrue(200 == response.getStatus());
-        assertTrue(T2OrcidApiServiceImplLatest.T2_GET_REQUESTS.count() == 0);
-        assertTrue(T2OrcidApiServiceImplLatest.T2_SEARCH_REQUESTS.count() == 1);
-        assertTrue(T2OrcidApiServiceImplLatest.T2_SEARCH_RESULTS_NONE_FOUND.count() == 1);
-        assertTrue(T2OrcidApiServiceImplLatest.T2_SEARCH_RESULTS_FOUND.count() == 0);
+        assertTrue(T2OrcidApiServiceImplRoot.T2_GET_REQUESTS.count() == 0);
+        assertTrue(T2OrcidApiServiceImplRoot.T2_SEARCH_REQUESTS.count() == 1);
+        assertTrue(T2OrcidApiServiceImplRoot.T2_SEARCH_RESULTS_NONE_FOUND.count() == 1);
+        assertTrue(T2OrcidApiServiceImplRoot.T2_SEARCH_RESULTS_FOUND.count() == 0);
     }
 
     @Test
@@ -260,16 +253,16 @@ public class T2OrcidApiServiceImplLatestGetAndSearchMetricsTest {
         t2OrcidApiService.setUriInfo(uriInfo);
         MultivaluedMap<String, String> queryMaps = queryParams();
         when(uriInfo.getQueryParameters()).thenReturn(queryMaps);
-        assertTrue(T2OrcidApiServiceImplLatest.T2_SEARCH_REQUESTS.count() == 0);
-        assertTrue(T2OrcidApiServiceImplLatest.T2_SEARCH_RESULTS_NONE_FOUND.count() == 0);
-        assertTrue(T2OrcidApiServiceImplLatest.T2_SEARCH_RESULTS_FOUND.count() == 0);
+        assertTrue(T2OrcidApiServiceImplRoot.T2_SEARCH_REQUESTS.count() == 0);
+        assertTrue(T2OrcidApiServiceImplRoot.T2_SEARCH_RESULTS_NONE_FOUND.count() == 0);
+        assertTrue(T2OrcidApiServiceImplRoot.T2_SEARCH_RESULTS_FOUND.count() == 0);
         when(mockServiceDelegator.searchByQuery(queryMaps)).thenReturn(orcidWithMultipleResults());
-        assertTrue(T2OrcidApiServiceImplLatest.T2_SEARCH_REQUESTS.count() == 0);
+        assertTrue(T2OrcidApiServiceImplRoot.T2_SEARCH_REQUESTS.count() == 0);
         Response response = t2OrcidApiService.searchByQueryJSON("orcid");
         assertEquals(200, response.getStatus());
-        assertTrue(T2OrcidApiServiceImplLatest.T2_SEARCH_REQUESTS.count() == 1);
-        assertTrue(T2OrcidApiServiceImplLatest.T2_SEARCH_RESULTS_NONE_FOUND.count() == 0);
-        assertTrue(T2OrcidApiServiceImplLatest.T2_SEARCH_RESULTS_FOUND.count() == 3);
+        assertTrue(T2OrcidApiServiceImplRoot.T2_SEARCH_REQUESTS.count() == 1);
+        assertTrue(T2OrcidApiServiceImplRoot.T2_SEARCH_RESULTS_NONE_FOUND.count() == 0);
+        assertTrue(T2OrcidApiServiceImplRoot.T2_SEARCH_RESULTS_FOUND.count() == 3);
     }
 
     private MultivaluedMap<String, String> queryParams() {
@@ -283,18 +276,18 @@ public class T2OrcidApiServiceImplLatestGetAndSearchMetricsTest {
         t2OrcidApiService.setUriInfo(uriInfo);
         MultivaluedMap<String, String> queryMaps = queryParams();
         when(uriInfo.getQueryParameters()).thenReturn(queryMaps);
-        assertTrue(T2OrcidApiServiceImplLatest.T2_SEARCH_REQUESTS.count() == 0);
-        assertTrue(T2OrcidApiServiceImplLatest.T2_GET_REQUESTS.count() == 0);
-        assertTrue(T2OrcidApiServiceImplLatest.T2_SEARCH_RESULTS_NONE_FOUND.count() == 0);
-        assertTrue(T2OrcidApiServiceImplLatest.T2_SEARCH_RESULTS_FOUND.count() == 0);
+        assertTrue(T2OrcidApiServiceImplRoot.T2_SEARCH_REQUESTS.count() == 0);
+        assertTrue(T2OrcidApiServiceImplRoot.T2_GET_REQUESTS.count() == 0);
+        assertTrue(T2OrcidApiServiceImplRoot.T2_SEARCH_RESULTS_NONE_FOUND.count() == 0);
+        assertTrue(T2OrcidApiServiceImplRoot.T2_SEARCH_RESULTS_FOUND.count() == 0);
         when(mockServiceDelegator.searchByQuery(queryMaps)).thenReturn(successResponse);
-        assertTrue(T2OrcidApiServiceImplLatest.T2_SEARCH_REQUESTS.count() == 0);
+        assertTrue(T2OrcidApiServiceImplRoot.T2_SEARCH_REQUESTS.count() == 0);
         Response response = t2OrcidApiService.searchByQueryXML("orcid");
         assertEquals(200, response.getStatus());
-        assertTrue(T2OrcidApiServiceImplLatest.T2_GET_REQUESTS.count() == 0);
-        assertTrue(T2OrcidApiServiceImplLatest.T2_SEARCH_REQUESTS.count() == 1);
-        assertTrue(T2OrcidApiServiceImplLatest.T2_SEARCH_RESULTS_NONE_FOUND.count() == 1);
-        assertTrue(T2OrcidApiServiceImplLatest.T2_SEARCH_RESULTS_FOUND.count() == 0);
+        assertTrue(T2OrcidApiServiceImplRoot.T2_GET_REQUESTS.count() == 0);
+        assertTrue(T2OrcidApiServiceImplRoot.T2_SEARCH_REQUESTS.count() == 1);
+        assertTrue(T2OrcidApiServiceImplRoot.T2_SEARCH_RESULTS_NONE_FOUND.count() == 1);
+        assertTrue(T2OrcidApiServiceImplRoot.T2_SEARCH_RESULTS_FOUND.count() == 0);
     }
 
     @Test
@@ -303,16 +296,16 @@ public class T2OrcidApiServiceImplLatestGetAndSearchMetricsTest {
         t2OrcidApiService.setUriInfo(uriInfo);
         MultivaluedMap<String, String> queryMaps = queryParams();
         when(uriInfo.getQueryParameters()).thenReturn(queryMaps);
-        assertTrue(T2OrcidApiServiceImplLatest.T2_SEARCH_REQUESTS.count() == 0);
-        assertTrue(T2OrcidApiServiceImplLatest.T2_SEARCH_RESULTS_NONE_FOUND.count() == 0);
-        assertTrue(T2OrcidApiServiceImplLatest.T2_SEARCH_RESULTS_FOUND.count() == 0);
+        assertTrue(T2OrcidApiServiceImplRoot.T2_SEARCH_REQUESTS.count() == 0);
+        assertTrue(T2OrcidApiServiceImplRoot.T2_SEARCH_RESULTS_NONE_FOUND.count() == 0);
+        assertTrue(T2OrcidApiServiceImplRoot.T2_SEARCH_RESULTS_FOUND.count() == 0);
         when(mockServiceDelegator.searchByQuery(queryMaps)).thenReturn(orcidWithMultipleResults());
-        assertTrue(T2OrcidApiServiceImplLatest.T2_SEARCH_REQUESTS.count() == 0);
+        assertTrue(T2OrcidApiServiceImplRoot.T2_SEARCH_REQUESTS.count() == 0);
         Response response = t2OrcidApiService.searchByQueryXML("orcid");
         assertEquals(200, response.getStatus());
-        assertTrue(T2OrcidApiServiceImplLatest.T2_SEARCH_REQUESTS.count() == 1);
-        assertTrue(T2OrcidApiServiceImplLatest.T2_SEARCH_RESULTS_NONE_FOUND.count() == 0);
-        assertTrue(T2OrcidApiServiceImplLatest.T2_SEARCH_RESULTS_FOUND.count() == 3);
+        assertTrue(T2OrcidApiServiceImplRoot.T2_SEARCH_REQUESTS.count() == 1);
+        assertTrue(T2OrcidApiServiceImplRoot.T2_SEARCH_RESULTS_NONE_FOUND.count() == 0);
+        assertTrue(T2OrcidApiServiceImplRoot.T2_SEARCH_RESULTS_FOUND.count() == 3);
     }
 
     private Response orcidWithMultipleResults() {

@@ -97,9 +97,9 @@ public class OrcidMessageVersionConverterImplV1_0_22ToV1_0_23 implements OrcidMe
                 Affiliations affs = orcidActivities.getAffiliations();
                 if (affs != null) {
                     for(Affiliation aff:affs.getAffiliation()) {
-                        if (aff.getAffiliationType() == null)
+                        if (aff.getType() == null)
                             affs.getAffiliation().remove(aff);
-                        else if ( !(aff.getAffiliationType().equals(AffiliationType.EDUCATION) || aff.getAffiliationType().equals(AffiliationType.EMPLOYMENT)))
+                        else if ( !(aff.getType().equals(AffiliationType.EDUCATION) || aff.getType().equals(AffiliationType.EMPLOYMENT)))
                             affs.getAffiliation().remove(aff);
                     }
                 }

@@ -21,7 +21,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.net.URI;
-import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -61,7 +60,7 @@ public abstract class BaseT2OrcidOAuthApiClientIntegrationTest {
     @Resource
     protected OrcidClientDataHelper orcidClientDataHelper;
 
-    @Resource
+    @Resource(name="t2OAuthClient")
     protected T2OAuthAPIService<ClientResponse> oauthT2Client;
 
     @Resource

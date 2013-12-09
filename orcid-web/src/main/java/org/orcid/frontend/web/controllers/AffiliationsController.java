@@ -249,11 +249,11 @@ public class AffiliationsController extends BaseWorkspaceController {
             for (Affiliation affiliation : affiliations.getAffiliation()) {
                 try {
                     AffiliationForm form = AffiliationForm.valueOf(affiliation);
-                    if (affiliation.getAffiliationType() != null) {
-                        form.setAffiliationTypeForDisplay(getMessage(buildInternationalizationKey(AffiliationType.class, affiliation.getAffiliationType().value())));
+                    if (affiliation.getType() != null) {
+                        form.setAffiliationTypeForDisplay(getMessage(buildInternationalizationKey(AffiliationType.class, affiliation.getType().value())));
                     }
-                    form.setCountryForDisplay(getMessage(buildInternationalizationKey(CountryIsoEntity.class, affiliation.getAffiliationAddress().getAffiliationCountry()
-                            .getValue().name())));
+                    form.setCountryForDisplay(getMessage(buildInternationalizationKey(CountryIsoEntity.class, affiliation.getOrganization().getAddress().getCountry()
+                            .name())));
                     affiliationsMap.put(affiliation.getPutCode(), form);
                     affiliationIds.add(affiliation.getPutCode());
                 } catch (Exception e) {

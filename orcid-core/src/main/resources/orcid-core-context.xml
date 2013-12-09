@@ -147,8 +147,8 @@
 
 	<bean id="orcidClientGroupManager" class="org.orcid.core.manager.impl.OrcidClientGroupManagerImpl" />		
 
-    <alias name="incomingValidationManagerV1_0_23" alias="incomingValidationManagerLatest"/>
-    <alias name="outgoingValidationManagerV1_0_23" alias="outgoingValidationManagerLatest"/>
+    <alias name="incomingValidationManagerV1_1" alias="incomingValidationManagerLatest"/>
+    <alias name="outgoingValidationManagerV1_1" alias="outgoingValidationManagerLatest"/>
 
     <bean id="incomingValidationManagerV1_0_14" class="org.orcid.core.manager.impl.ValidationManagerForLegacyApiVersionsImpl">
         <property name="validationBehaviour"
@@ -359,6 +359,7 @@
                 <bean class="org.orcid.core.version.impl.OrcidMessageVersionConverterImplV1_0_21ToV1_0_22"/>
                 <bean class="org.orcid.core.version.impl.OrcidMessageVersionConverterImplV1_0_22ToV1_0_23"/>
                 <bean class="org.orcid.core.version.impl.OrcidMessageVersionConverterImplV1_0_23ToV1_1"/>
+                <bean class="org.orcid.core.version.impl.OrcidMessageVersionConverterImplV1_1ToV1_2_rc1"/>
 	        </list>
 	    </property>
 	    <property name="supportOldWorkTypes" value="true" />

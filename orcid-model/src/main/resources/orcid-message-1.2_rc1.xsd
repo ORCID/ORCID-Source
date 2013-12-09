@@ -51,7 +51,8 @@
 		</xs:annotation>
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
-				<xs:enumeration value="1.1" />				
+				<xs:enumeration value="1.1" />
+				<xs:enumeration value="1.2_rc1" />
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
@@ -591,12 +592,105 @@
 		</xs:annotation>
 		<xs:complexType>
 			<xs:sequence>
+			    <xs:element minOccurs="0" maxOccurs="1" ref="orcid:affiliations" />
 				<xs:element minOccurs="0" maxOccurs="1" ref="orcid:orcid-works" />
 				<xs:element minOccurs="0" maxOccurs="1" ref="orcid:orcid-grants" />
 				<xs:element minOccurs="0" maxOccurs="1" ref="orcid:orcid-patents" />
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
+		<xs:element name="affiliations">
+		<xs:annotation>
+			<xs:documentation>Container for the list of affiliations (eg. employment or education) associated with the researcher or contributor
+			</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element maxOccurs="unbounded" minOccurs="0"
+					ref="orcid:affiliation" />
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="affiliation">
+	    <xs:annotation>
+			<xs:documentation>An affiliation associated with the researcher or contributor. 
+				* The visibility attribute (private, limited or public) can be set at record creation, and indicates who can see this section of information.
+				* The put-code attribute is used only when reading this element. When updating the item, the put-code attribute must be included to indicate the specific record to be updated.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+			    <xs:element name="type" type="orcid:affiliation-type" />
+			    <xs:element name="department-name" type="orcid:non-empty-string"
+					minOccurs="0" maxOccurs="1" />
+				<xs:element name="role-title" type="orcid:non-empty-string"
+					minOccurs="0" maxOccurs="1" />
+				<xs:element name="start-date" type="orcid:fuzzy-date"
+					minOccurs="0" maxOccurs="1" />
+				<xs:element name="end-date" minOccurs="0" maxOccurs="1" />
+				<xs:element ref="orcid:organization" minOccurs="1" maxOccurs="1"/>
+				<xs:element ref="orcid:source" minOccurs="0"  maxOccurs="1" />
+			</xs:sequence>
+			<xs:attributeGroup ref="orcid:put-code" />
+			<xs:attributeGroup ref="orcid:visibility" />
+		</xs:complexType>
+	</xs:element>
+	<xs:simpleType name="affiliation-type">
+	    <xs:annotation>
+			<xs:documentation>The type of the affiliation. Presently only "education" and "employment" are used. 
+				"distinction", "funding", and "contribution" are all for FUTURE use and will not be show to the researcher in the web interface.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="education" />
+			<xs:enumeration value="employment" />
+			<xs:enumeration value="distinction" />
+			<xs:enumeration value="funding" />
+			<xs:enumeration value="contribution" />
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:element name="organization">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="name" type="orcid:non-empty-string"/>
+				<xs:element name="address" type="orcid:organization-address" />
+				<xs:element name="disambiguated-organization" type="orcid:disambiguated-organization"
+					minOccurs="0" maxOccurs="1" />
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:complexType name="organization-address">
+		<xs:annotation>
+			<xs:documentation>Container for organization location information
+			</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element minOccurs="1" name="city" type="orcid:non-empty-string">
+				<xs:annotation>
+					<xs:documentation>City</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element minOccurs="0" name="region" type="orcid:non-empty-string">
+				<xs:annotation>
+					<xs:documentation>Region within a country</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element minOccurs="1" name="country" type="orcid:iso-3166-country" />
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="disambiguated-organization">
+	    <xs:annotation>
+			<xs:documentation>A reference to a disambiguated version the organizaiton to which the researcher or contributor is affiliated. The list of disambiguated organizations come from ORCID partners such as Ringgold, ISNI and FundRef.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element ref="orcid:disambiguated-organization-identifier" />
+			<xs:element ref="orcid:disambiguation-source" />
+		</xs:sequence>
+	</xs:complexType>
+	<xs:element name="disambiguated-organization-identifier"
+		type="orcid:short-text" />
+	<xs:element name="disambiguation-source" type="orcid:short-text" />
 	<xs:element name="orcid-works">
 		<xs:annotation>
 			<xs:documentation>Container for the Works published by the researcher or contributor.

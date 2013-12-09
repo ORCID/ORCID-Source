@@ -490,7 +490,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
     private Affiliation getAffiliation(OrgAffiliationRelationEntity orgAffiliationRelationEntity) {
         Affiliation affiliation = new Affiliation();
         affiliation.setPutCode(Long.toString(orgAffiliationRelationEntity.getId()));
-        affiliation.setAffiliationType(orgAffiliationRelationEntity.getAffiliationType());
+        affiliation.setType(orgAffiliationRelationEntity.getAffiliationType());
         affiliation.setRoleTitle(orgAffiliationRelationEntity.getTitle());
 
         FuzzyDateEntity startDate = orgAffiliationRelationEntity.getStartDate();
@@ -501,12 +501,14 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         affiliation.setDepartmentName(orgAffiliationRelationEntity.getDepartment());
         affiliation.setSource(getSource(orgAffiliationRelationEntity));
 
+        Organization organization = new Organization();
         OrgDisambiguatedEntity orgDisambiguatedEntity = orgAffiliationRelationEntity.getOrg().getOrgDisambiguated();
         if (orgDisambiguatedEntity != null) {
-            affiliation.setDisambiguatedAffiliation(getDisambiguatedAffiliation(orgDisambiguatedEntity));
+            organization.setDisambiguatedOrganization(getDisambiguatedAffiliation(orgDisambiguatedEntity));
         }
-        affiliation.setAffiliationAddress(getAddress(orgAffiliationRelationEntity.getOrg()));
-        affiliation.setAffiliationName(orgAffiliationRelationEntity.getOrg().getName());
+        organization.setAddress(getAddress(orgAffiliationRelationEntity.getOrg()));
+        organization.setName(orgAffiliationRelationEntity.getOrg().getName());
+        affiliation.setOrganization(organization);
 
         return affiliation;
     }
@@ -539,11 +541,11 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         return source;
     }
 
-    private DisambiguatedAffiliation getDisambiguatedAffiliation(OrgDisambiguatedEntity orgDisambiguatedEntity) {
-        DisambiguatedAffiliation disambiguatedAffiliation = new DisambiguatedAffiliation();
-        disambiguatedAffiliation.setDisambiguatedAffiliationIdentifier(orgDisambiguatedEntity.getSourceId());
-        disambiguatedAffiliation.setDisambiguationSource(orgDisambiguatedEntity.getSourceType());
-        return disambiguatedAffiliation;
+    private DisambiguatedOrganization getDisambiguatedAffiliation(OrgDisambiguatedEntity orgDisambiguatedEntity) {
+        DisambiguatedOrganization disambiguatedOrganization = new DisambiguatedOrganization();
+        disambiguatedOrganization.setDisambiguatedOrganizationIdentifier(orgDisambiguatedEntity.getSourceId());
+        disambiguatedOrganization.setDisambiguationSource(orgDisambiguatedEntity.getSourceType());
+        return disambiguatedOrganization;
     }
 
     private Affiliations getAffiliations(ProfileEntity profileEntity) {
@@ -691,32 +693,32 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         }
     }
 
-    private AffiliationAddress getAddress(OrgEntity orgEntity) {
+    private OrganizationAddress getAddress(OrgEntity orgEntity) {
         if (orgEntity != null) {
             String city = orgEntity.getCity();
             String region = orgEntity.getRegion();
             Iso3166Country country = orgEntity.getCountry();
             if (!NullUtils.allNull(city, region, country)) {
-                AffiliationAddress address = new AffiliationAddress();
-                address.setAffiliationCity(city != null ? new AffiliationCity(city) : null);
-                address.setAffiliationRegion(region != null ? new AffiliationRegion(region) : null);
-                address.setAffiliationCountry(country != null ? new AffiliationCountry(country) : null);
+                OrganizationAddress address = new OrganizationAddress();
+                address.setCity(city);
+                address.setRegion(region);
+                address.setCountry(country);
                 return address;
             }
         }
         return null;
     }
 
-    private AffiliationAddress getAddress(OrgDisambiguatedEntity orgDisambiguatedEntity) {
+    private OrganizationAddress getAddress(OrgDisambiguatedEntity orgDisambiguatedEntity) {
         if (orgDisambiguatedEntity != null) {
             String city = orgDisambiguatedEntity.getCity();
             String region = orgDisambiguatedEntity.getRegion();
             Iso3166Country country = orgDisambiguatedEntity.getCountry();
             if (!NullUtils.allNull(city, region, country)) {
-                AffiliationAddress address = new AffiliationAddress();
-                address.setAffiliationCity(city != null ? new AffiliationCity(city) : null);
-                address.setAffiliationRegion(region != null ? new AffiliationRegion(region) : null);
-                address.setAffiliationCountry(country != null ? new AffiliationCountry(country) : null);
+                OrganizationAddress address = new OrganizationAddress();
+                address.setCity(city);
+                address.setRegion(region);
+                address.setCountry(country);
                 return address;
             }
         }
