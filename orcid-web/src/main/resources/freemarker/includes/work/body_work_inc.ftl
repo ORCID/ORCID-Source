@@ -26,6 +26,7 @@
 		        	<strong ng-bind-html="work.workTitle.title.value"></strong><span class="work-subtitle" ng-show="work.workTitle.subtitle.value" ng-bind-html="':&nbsp;'.concat(work.workTitle.subtitle.value)"></span>
 		        	<span ng-show="work.publicationDate.month">{{work.publicationDate.month}}-</span><span ng-show="work.publicationDate.year">{{work.publicationDate.year}}</span>
 		        </h3>
+		        <div ng-show="work.shortDescription" ng-bind-html="work.shortDescription.value"></div> 
 	        </div>
 	        <!-- Settings -->
 	        <div class="col-md-4 col-sm-4 workspace-toolbar">
