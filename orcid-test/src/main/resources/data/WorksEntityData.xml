@@ -27,6 +27,7 @@
           description="Very interesting book about days and life"
           work_type="BOOK"          
           citation="Bobby Ewing, "
+          contributors_json="{&quot;contributor&quot;:[{&quot;contributorOrcid&quot;:{&quot;value&quot;:&quot;0000-0003-0172-7925&quot;},&quot;creditName&quot;:{&quot;content&quot;:&quot;Jaylen Kessler&quot;,&quot;visibility&quot;:null},&quot;contributorEmail&quot;:null,&quot;contributorAttributes&quot;:null},{&quot;contributorOrcid&quot;:{&quot;value&quot;:&quot;0000-0003-0172-7926&quot;},&quot;creditName&quot;:{&quot;content&quot;:&quot;Makayla Lindgren&quot;,&quot;visibility&quot;:null},&quot;contributorEmail&quot;:null,&quot;contributorAttributes&quot;:null}]}"
           citation_type="FORMATTED_IEEE"
             />
     <work work_id="2"
@@ -44,7 +45,7 @@
           publication_month="9"
           publication_day="2"
           title="A Book With Contributors JSON"
-          contributors_json="{&quot;contributor&quot;:[{&quot;contributorOrcid&quot;:null,&quot;creditName&quot;:{&quot;content&quot;:&quot;Jason Contributor&quot;,&quot;visibility&quot;:null},&quot;contributorEmail&quot;:null,&quot;contributorAttributes&quot;:null}]}"
+          contributors_json="{&quot;contributor&quot;:[{&quot;contributorOrcid&quot;:{&quot;value&quot;:&quot;0000-0003-0172-7925&quot;},&quot;creditName&quot;:{&quot;content&quot;:&quot;Jason Contributor&quot;,&quot;visibility&quot;:null},&quot;contributorEmail&quot;:null,&quot;contributorAttributes&quot;:null}]}"
           work_type="BOOK"          
             />
             
@@ -92,8 +93,6 @@
            grant_date="2009-01-01"
             />
 
-    <work_contributor work_contributor_id="1" work_id="1" credit_name="Jaylen Kessler" contributor_role="PRINCIPAL_INVESTIGATOR" contributor_sequence="FIRST"/>
-    <work_contributor work_contributor_id="2" work_id="1" credit_name="Makayla Lindgren" contributor_role="AUTHOR" contributor_sequence="ADDITIONAL"/>
 
     <grant_contributor grant_contributor_id="1" grant_id="1" credit_name="Jaylen Kessler" contributor_role="PRINCIPAL_INVESTIGATOR" contributor_sequence="FIRST"/>
     <grant_contributor grant_contributor_id="2" grant_id="1" credit_name="Makayla Lindgren" contributor_role="AUTHOR" contributor_sequence="ADDITIONAL"/>

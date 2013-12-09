@@ -45,6 +45,7 @@ import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidWork;
 import org.orcid.jaxb.model.message.OrcidWorks;
+import org.orcid.jaxb.model.message.Organization;
 import org.orcid.jaxb.model.message.OtherNames;
 import org.orcid.jaxb.model.message.PersonalDetails;
 import org.orcid.jaxb.model.message.ResearcherUrl;
@@ -243,8 +244,8 @@ public class OrcidJaxbCopyUtilsTest {
         Affiliations updatedAffiliations = updatedOrcidProfile.getOrcidActivities().getAffiliations();
         List<Affiliation> updatedAffilationsList = updatedAffiliations.getAffiliation();
 
-        assertEquals("New College", existingAffilationsList.get(0).getAffiliationName());
-        assertEquals("Brown University", existingAffilationsList.get(1).getAffiliationName());
+        assertEquals("New College", existingAffilationsList.get(0).getOrganization().getName());
+        assertEquals("Brown University", existingAffilationsList.get(1).getOrganization().getName());
         assertEquals(Visibility.PUBLIC, existingAffilationsList.get(0).getVisibility());
         assertEquals(Visibility.PUBLIC, existingAffilationsList.get(1).getVisibility());
         assertEquals(4, existingAffilationsList.size());
@@ -252,32 +253,34 @@ public class OrcidJaxbCopyUtilsTest {
 
         // to test:
         // updating affiliations retains visibility when null - changes content
-        updatedAffilationsList.get(0).setAffiliationName("new affiliation name");
+        updatedAffilationsList.get(0).getOrganization().setName("new affiliation name");
         updatedAffilationsList.get(0).setVisibility(null);
         OrcidJaxbCopyUtils.copyAffiliationsToExistingPreservingVisibility(existingAffiliations, updatedAffiliations);
-        assertEquals("new affiliation name", existingAffilationsList.get(0).getAffiliationName());
+        assertEquals("new affiliation name", existingAffilationsList.get(0).getOrganization().getName());
         assertEquals(Visibility.PUBLIC, existingAffilationsList.get(0).getVisibility());
 
         // updating affiliations changes visibility when populated - changes
         // content
-        updatedAffilationsList.get(0).setAffiliationName("a seperate affiliation name");
+        updatedAffilationsList.get(0).getOrganization().setName("a seperate affiliation name");
         updatedAffilationsList.get(0).setVisibility(Visibility.PRIVATE);
         OrcidJaxbCopyUtils.copyAffiliationsToExistingPreservingVisibility(existingAffiliations, updatedAffiliations);
-        assertEquals("a seperate affiliation name", existingAffilationsList.get(0).getAffiliationName());
+        assertEquals("a seperate affiliation name", existingAffilationsList.get(0).getOrganization().getName());
         assertEquals(Visibility.PRIVATE, existingAffilationsList.get(0).getVisibility());
 
         // adding new affiliations with a null visibility adds an extra element
         // with the def
         Affiliation extraAffiliation = new Affiliation();
-        extraAffiliation.setAffiliationName("extra affiliation");
+        Organization organization = new Organization();
+        extraAffiliation.setOrganization(organization);
+        organization.setName("extra affiliation");
         updatedAffilationsList.add(extraAffiliation);
 
         OrcidJaxbCopyUtils.copyAffiliationsToExistingPreservingVisibility(existingAffiliations, updatedAffiliations);
         assertEquals(5, existingAffilationsList.size());
 
-        assertEquals("a seperate affiliation name", existingAffilationsList.get(0).getAffiliationName());
-        assertEquals("Brown University", existingAffilationsList.get(1).getAffiliationName());
-        assertEquals("extra affiliation", existingAffilationsList.get(4).getAffiliationName());
+        assertEquals("a seperate affiliation name", existingAffilationsList.get(0).getOrganization().getName());
+        assertEquals("Brown University", existingAffilationsList.get(1).getOrganization().getName());
+        assertEquals("extra affiliation", existingAffilationsList.get(4).getOrganization().getName());
 
         assertEquals(Visibility.PRIVATE, existingAffilationsList.get(0).getVisibility());
         assertEquals(Visibility.PUBLIC, existingAffilationsList.get(1).getVisibility());

@@ -39,12 +39,12 @@ public class OrcidMessageVersionConverterChainImpl implements OrcidMessageVersio
     public List<OrcidMessageVersionConverter> converters;
     public List<OrcidMessageVersionConverter> descendingConverters;
     private boolean supportOldWorkTypes = false;
-    private static String MESSAGE_VERSION_WITH_NEW_WORK_TYPES = "1.1.0";
+    private static String MESSAGE_VERSION_WITH_NEW_WORK_TYPES = "1.1";
 
-    public void setSupportOldWorkTypes(boolean value){
+    public void setSupportOldWorkTypes(boolean value) {
         this.supportOldWorkTypes = value;
     }
-    
+
     public void setConverters(List<OrcidMessageVersionConverter> converters) {
         this.converters = converters;
         List<OrcidMessageVersionConverter> descendingConverters = new ArrayList<>(converters);
@@ -62,14 +62,16 @@ public class OrcidMessageVersionConverterChainImpl implements OrcidMessageVersio
             if (requiredVersion.equals(oldVersion)) {
                 break;
             }
-            if (converter.getFromVersion().compareTo(requiredVersion) >= 0) {
+            String fromVersion = converter.getFromVersion();
+            if (fromVersion.compareTo(oldVersion) < 0 && fromVersion.compareTo(requiredVersion) >= 0) {
                 orcidMessage = converter.downgradeMessage(orcidMessage);
             }
         }
-                
-        if(supportOldWorkTypes) {
-            //If the required message version is lower than V1.1.0, we need to downgrade the work type
-            if(MESSAGE_VERSION_WITH_NEW_WORK_TYPES.compareTo(requiredVersion) > 0){            
+
+        if (supportOldWorkTypes) {
+            // If the required message version is lower than V1.1, we need to
+            // downgrade the work type
+            if (MESSAGE_VERSION_WITH_NEW_WORK_TYPES.compareTo(requiredVersion) > 0) {
                 OrcidProfile orcidProfile = orcidMessage.getOrcidProfile();
                 if (orcidProfile != null) {
                     OrcidActivities orcidActivities = orcidProfile.getOrcidActivities();
@@ -78,16 +80,16 @@ public class OrcidMessageVersionConverterChainImpl implements OrcidMessageVersio
                         if (orcidWorks != null) {
                             for (OrcidWork orcidWork : orcidWorks.getOrcidWork()) {
                                 WorkType updatedWorkType = null;
-                                //Downgrade work type
+                                // Downgrade work type
                                 updatedWorkType = downgradeWorkType(orcidWork.getWorkType());
-                                orcidWork.setWorkType(updatedWorkType);                        
+                                orcidWork.setWorkType(updatedWorkType);
                             }
                         }
                     }
                 }
             }
         }
-        
+
         return orcidMessage;
     }
 
@@ -101,12 +103,13 @@ public class OrcidMessageVersionConverterChainImpl implements OrcidMessageVersio
             if (requiredVersion.equals(oldVersion)) {
                 break;
             }
-            if (converter.getToVersion().compareTo(requiredVersion) <= 0) {
+            String toVersion = converter.getToVersion();
+            if (toVersion.compareTo(oldVersion) > 0 && toVersion.compareTo(requiredVersion) <= 0) {
                 orcidMessage = converter.upgradeMessage(orcidMessage);
             }
         }
-        
-        if(supportOldWorkTypes) {
+
+        if (supportOldWorkTypes) {
             OrcidProfile orcidProfile = orcidMessage.getOrcidProfile();
             if (orcidProfile != null) {
                 OrcidActivities orcidActivities = orcidProfile.getOrcidActivities();
@@ -114,26 +117,26 @@ public class OrcidMessageVersionConverterChainImpl implements OrcidMessageVersio
                     OrcidWorks orcidWorks = orcidActivities.getOrcidWorks();
                     if (orcidWorks != null) {
                         for (OrcidWork orcidWork : orcidWorks.getOrcidWork()) {
-                            //Upgrade work type
-                            WorkType updatedWorkType = upgradeWorkType(orcidWork.getWorkType());                            
-                            orcidWork.setWorkType(updatedWorkType);                        
+                            // Upgrade work type
+                            WorkType updatedWorkType = upgradeWorkType(orcidWork.getWorkType());
+                            orcidWork.setWorkType(updatedWorkType);
                         }
                     }
                 }
             }
         }
-        
+
         return orcidMessage;
     }
-    
+
     /**
      * Determine the sub type based on the old deprecated workType
      * */
     private WorkType upgradeWorkType(WorkType oldWorkType) {
-        //If it is null, return undefined
-        if(oldWorkType == null)
-            return WorkType.UNDEFINED;
-        //If it is one of the new work types, just return it
+        // If it is null, return undefined
+        if (oldWorkType == null)
+            return WorkType.OTHER;
+        // If it is one of the new work types, just return it
         if (!oldWorkType.isDeprecated())
             return oldWorkType;
 
@@ -258,13 +261,13 @@ public class OrcidMessageVersionConverterChainImpl implements OrcidMessageVersio
             return WorkType.ARTISTIC_PERFORMANCE;
         case THESIS:
             return WorkType.SUPERVISED_STUDENT_PUBLICATION;
-        case WEBSITE:
+        case WEB_SITE:
             return WorkType.WEBSITE;
         case UNDEFINED:
-            return WorkType.UNDEFINED;
+            return WorkType.OTHER;
         default:
             // This should never happens, but just in case
-            return WorkType.UNDEFINED;
+            return WorkType.OTHER;
         }
     }
 
@@ -272,14 +275,14 @@ public class OrcidMessageVersionConverterChainImpl implements OrcidMessageVersio
      * Get a new work type and downgrade it to an old work type
      * */
     private WorkType downgradeWorkType(WorkType workType) {
-        //This should never happen, but just in case
-        if(workType == null)
+        // This should never happen, but just in case
+        if (workType == null)
             return WorkType.UNDEFINED;
-        //If it is one of the old work types just return it
-        if(workType.isDeprecated()){
-                return workType;
+        // If it is one of the old work types just return it
+        if (workType.isDeprecated()) {
+            return workType;
         }
-        
+
         switch (workType) {
         case ARTISTIC_PERFORMANCE:
             return WorkType.LIVE_PERFORMANCE;
@@ -352,9 +355,9 @@ public class OrcidMessageVersionConverterChainImpl implements OrcidMessageVersio
         case TRADEMARK:
             return WorkType.UNDEFINED;
         case TRANSLATION:
-            return WorkType.UNDEFINED;        
+            return WorkType.UNDEFINED;
         case WEBSITE:
-            return WorkType.WEBSITE;
+            return WorkType.WEB_SITE;
         case WORKING_PAPER:
             return WorkType.REPORTS_WORKING_PAPERS;
         case UNDEFINED:

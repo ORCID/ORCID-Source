@@ -771,7 +771,7 @@ public class ManageProfileController extends BaseWorkspaceController {
     @RequestMapping(value = "/save-bio-settings", method = RequestMethod.POST)
     public ModelAndView saveEditedBio(HttpServletRequest request, @Valid @ModelAttribute("changePersonalInfoForm") ChangePersonalInfoForm changePersonalInfoForm,
             BindingResult bindingResult, RedirectAttributes redirectAttributes) {
-        ModelAndView manageBioView = new ModelAndView("redirect:manage-bio-settings");
+        ModelAndView manageBioView = new ModelAndView("redirect:/account/manage-bio-settings");
 
         for (String keyword : changePersonalInfoForm.getKeywordsAsList()) {
             if (keyword.length() > ChangePersonalInfoForm.KEYWORD_MAX_LEN) {

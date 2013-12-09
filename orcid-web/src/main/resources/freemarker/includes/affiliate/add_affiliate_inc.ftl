@@ -16,11 +16,10 @@
     =============================================================================
 
 -->
-<script type="text/ng-template" id="add-affiliation-modal">
-	<div id="edit-affiliation" class="edit-affiliation colorbox-content">
-		<div class="lightbox-container">
+ <script type="text/ng-template" id="add-affiliation-modal">
+	<div id="edit-affiliation" class="edit-affiliation colorbox-content">		 
 		<div class="row">
-			<div class="col-md-9 col-sm-6 col-xs-9">
+			<div class="col-md-8 col-sm-6 col-xs-9">
 				<h1 ng-show="addAffType == null || addAffType == undefined " class="lightbox-title pull-left"><@orcid.msg 'manual_affiliation_form_contents.add_affiliation'/></h1>
 				<h1 ng-show="addAffType == 'education'" class="lightbox-title pull-left"><@orcid.msg 'manual_affiliation_form_contents.add_education'/></h1>
 				<h1 ng-show="addAffType == 'employment'" class="lightbox-title pull-left"><@orcid.msg 'manual_affiliation_form_contents.add_employment'/></h1>
@@ -30,13 +29,15 @@
 				<a class="btn close-button" ng-click="closeModal()">X</a>
 			</div>
 			
-			<div class="control-group privacy-control col-md-2 col-sm-2">
-		 		<label class="relative">
-					<@orcid.msg 'privacyToggle.help.who_can_see'/>
-				</label>
-		 		<@orcid.privacyToggle "editAffiliation.visibility.visibility" "setAddAffiliationPrivacy('PUBLIC', $event)" 
+			<div class="col-md-3 col-sm-2">
+				<div class="control-group privacy-control pull-right">
+		 			<label class="relative">
+						<@orcid.msg 'privacyToggle.help.who_can_see'/>
+					</label>
+		 			<@orcid.privacyToggle "editAffiliation.visibility.visibility" "setAddAffiliationPrivacy('PUBLIC', $event)" 
 		                   	  "setAddAffiliationPrivacy('LIMITED', $event)" "setAddAffiliationPrivacy('PRIVATE', $event)" />		
-		 	</div>
+		 		</div>
+			</div>
 
 			<div class="col-md-1 col-sm-1 hidden-xs">
 				<a class="btn close-button" ng-click="closeModal()">X</a>
@@ -46,9 +47,19 @@
 		<div class="row">
 			<div class="col-md-6 col-sm-6 col-xs-12">
 				<div class="control-group" ng-show="editAffiliation.disambiguatedAffiliationSourceId">
-					<div style="position: absolute; left: 300px"><label><a class="glyphicon glyphicon-remove-sign grey" ng-click="removeDisambiguatedAffiliation()">&nbsp;<@orcid.msg 'common.remove'/></a></label></div>
-					<label><@orcid.msg 'manual_affiliation_form_contents.labelaffiliation'/></label>
-				    <div class="relative"  style="font-weight: strong;">
+					<span ng-show="addAffType == 'education'">
+					   <label><@orcid.msg 'manual_affiliation_form_contents.labelinstitution'/></label>
+					</span>
+					<span ng-show="addAffType == 'employment'">
+					   <label><@orcid.msg 'manual_affiliation_form_contents.labelinstitutionemployer'/></label>
+				    </span>
+					<span id="remove-disambiguated" class="pull-right">
+						<a ng-click="removeDisambiguatedAffiliation()">
+							<span class="glyphicon glyphicon-remove-sign"></span><@orcid.msg 'common.remove'/>
+						</a>
+					</span>
+
+				    <div class="relative" style="font-weight: strong;">
 						<span ng-bind="disambiguatedAffiliation.value"></span> <br />
 						<div>
 						    <span ng-bind="disambiguatedAffiliation.city"></span><span ng-show="disambiguatedAffiliation.region"> (<span ng-bind="disambiguatedAffiliation.region"></span>)</span>, <span ng-bind="disambiguatedAffiliation.orgType"></span>
@@ -56,10 +67,6 @@
 					</div>
 				</div>
 				<div class="control-group">
-					<span ng-show="addAffType != 'education' && addAffType != 'employment'">
-					   <label ng-hide="disambiguatedAffiliation"><@orcid.msg 'manual_affiliation_form_contents.labelname'/></label>
-					   <label ng-show="disambiguatedAffiliation"><@orcid.msg 'manual_affiliation_form_contents.labeldisplayname'/></label>
-					</span>
 					<span ng-show="addAffType == 'education'">
 					   <label ng-hide="disambiguatedAffiliation"><@orcid.msg 'manual_affiliation_form_contents.labelinstitution'/></label>
 					   <label ng-show="disambiguatedAffiliation"><@orcid.msg 'manual_affiliation_form_contents.labeldisplayinstitution'/></label>
@@ -134,18 +141,6 @@
 						</span>
 					</div>
 				</div>
-
-				<div ng-show="addAffType != 'education' && addAffType != 'employment'" class="control-group">
-		    		<label class="relative"><@orcid.msg 'manual_affiliation_form_contents.labelaffiliationtype'/></label>
-		    		<div class="relative">
-			    		<select id="affiliationType" name="affiliationType" class="input-xlarge" ng-model="editAffiliation.affiliationType.value">
-			    			<option value=""><@orcid.msg 'org.orcid.jaxb.model.message.AffiliationType.empty' /></option>
-							<#list affiliationTypes?keys as key>
-								<option value="${key}">${affiliationLongDescriptionTypes[key]}</option>
-							</#list>
-						</select> 
-					</div>
-				</div>
 				<div class="control-group">
 		    		<label class="relative" for="manualAffiliation.startDay"><@orcid.msg 'manual_affiliation_form_contents.labelStartDate'/></label>
 		    		<div class="relative">
@@ -189,24 +184,14 @@
 						<div ng-repeat='error in editAffiliation.endDate.errors' ng-bind-html-unsafe="error"></div>
 					</span>
 		    	</div>
+		    	<div class="control-group">
+					<button class="btn btn-primary" ng-click="addAffiliation()" ng-disabled="addingAffiliation" ng-class="{disabled:addingAffiliation}"><@orcid.msg 'manual_affiliation_form_contents.btnaddtolist'/></button> 
+					<a href="" ng-click="closeModal()"><@orcid.msg 'manage.deleteExternalIdentifier.cancel'/></a>
+					<span ng-show="addingAffiliation">
+						<i class="glyphicon glyphicon-refresh spin x2 green"></i>
+					</span>
+					<span ng-show="editWork.errors.length > 0" class="alert">Please fix above errors</span>
+				</div>
 			</div>
-		</div>
-		<div class="row">			
-			<div class="col-md-offset-6 col-md-4 col-offset-sm-6 col-sm-4 col-xs-12">
-				<button class="btn btn-primary" ng-click="addAffiliation()" ng-disabled="addingAffiliation" ng-class="{disabled:addingAffiliation}"><@orcid.msg 'manual_affiliation_form_contents.btnaddtolist'/></button> 
-				<a href="" ng-click="closeModal()"><@orcid.msg 'manage.deleteExternalIdentifier.cancel'/></a>
-			</div>
-			<div class="col-md-2 col-sm-6 col-xs-6">
-				<span ng-show="addingAffiliation">
-					<i class="glyphicon glyphicon-refresh spin x2 green"></i>
-				</span>				
-			</div>			
-		</div>		
-		<div class="row">
-			<div class="col-md-12 col-sm-12 col-xs-12">	
-				<span ng-show="editWork.errors.length > 0" class="alert">Please fix above errors</span>
-			</div>
-		</div>
-		</div>
 	</div>
 </script>

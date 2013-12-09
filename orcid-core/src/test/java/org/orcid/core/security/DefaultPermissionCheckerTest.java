@@ -121,8 +121,8 @@ public class DefaultPermissionCheckerTest extends DBUnitTest {
         OAuth2Authentication oAuth2Authentication = new OrcidOAuth2Authentication(request, null, "made-up-token");
         ScopePathType requiredScope = ScopePathType.ORCID_BIO_EXTERNAL_IDENTIFIERS_CREATE;
         OrcidMessage orcidMessage = getOrcidMessage();
-        orcidMessage.getOrcidProfile().getOrcid().setValue("4444-4444-4444-4447");
-        String messageOrcid = orcidMessage.getOrcidProfile().getOrcid().getValue();
+        orcidMessage.getOrcidProfile().getOrcidIdentifier().setPath("4444-4444-4444-4447");
+        String messageOrcid = orcidMessage.getOrcidProfile().getOrcidIdentifier().getPath();
         defaultPermissionChecker.checkPermissions(oAuth2Authentication, requiredScope, messageOrcid, orcidMessage);
     }
 

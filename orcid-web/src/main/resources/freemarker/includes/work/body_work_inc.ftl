@@ -25,8 +25,7 @@
 		        <h3 class="work-title">
 		        	<strong ng-bind-html="work.workTitle.title.value"></strong><span class="work-subtitle" ng-show="work.workTitle.subtitle.value" ng-bind-html="':&nbsp;'.concat(work.workTitle.subtitle.value)"></span>
 		        	<span ng-show="work.publicationDate.month">{{work.publicationDate.month}}-</span><span ng-show="work.publicationDate.year">{{work.publicationDate.year}}</span>
-		        </h3>
-		        <div ng-show="work.shortDescription" ng-bind-html="work.shortDescription.value"></div>
+		        </h3> 
 	        </div>
 	        <!-- Settings -->
 	        <div class="col-md-4 col-sm-4 workspace-toolbar">
@@ -40,7 +39,7 @@
 	        		<!-- Privacy bar -->
 					<ul class="workspace-private-toolbar">
 						<li>
-						<@orcid.privacyToggle angularModel="work.visibility.visibility" 
+						<@orcid.privacyToggle angularModel="work.visibility" 
 							publicClick="setPrivacy(work.putCode.value, 'PUBLIC', $event)" 
 		                	limitedClick="setPrivacy(work.putCode.value, 'LIMITED', $event)" 
 		                	privateClick="setPrivacy(work.putCode.value, 'PRIVATE', $event)"/>
@@ -51,8 +50,11 @@
         </div>
     </li><!-- bottom-margin-small -->
 </ul>
-<div ng-show="worksSrvc.loading == true" class="text-center">
-    <i class="glyphicon glyphicon-refresh spin x4 green"></i>
+<div ng-show="worksSrvc.loading == true" class="text-center" id="workSpinner">
+	<i class="glyphicon glyphicon-refresh spin x4 green" id="spinner"></i><!-- Hidden with a CSS hack on IE 7 only -->
+    <!--[if lt IE 8]>    
+    	<img src="${staticCdn}/img/spin-big.gif" width="85" height ="85"/>
+    <![endif]-->
 </div>
 <div ng-show="worksSrvc.loading == false && works.length == 0" class="alert alert-info" ng-cloak>
     <strong><#if (publicProfile)?? && publicProfile == true>${springMacroRequestContext.getMessage("workspace_works_body_list.Nopublicationsaddedyet")}<#else>${springMacroRequestContext.getMessage("workspace_works_body_list.havenotaddedanyworks")} <a ng-click="addWorkModal()">${springMacroRequestContext.getMessage("workspace_works_body_list.addsomenow")}</a></#if></strong>

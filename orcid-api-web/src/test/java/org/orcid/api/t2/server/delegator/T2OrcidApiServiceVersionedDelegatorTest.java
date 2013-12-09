@@ -31,6 +31,9 @@ import java.util.Set;
 import javax.annotation.Resource;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
 
 import org.apache.http.HttpStatus;
 import org.junit.After;
@@ -43,17 +46,22 @@ import org.mockito.MockitoAnnotations;
 import org.orcid.api.common.exception.OrcidBadRequestException;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.oauth.OrcidOAuth2Authentication;
+import org.orcid.jaxb.model.message.Affiliation;
+import org.orcid.jaxb.model.message.Affiliations;
 import org.orcid.jaxb.model.message.ContactDetails;
 import org.orcid.jaxb.model.message.CreditName;
 import org.orcid.jaxb.model.message.Email;
 import org.orcid.jaxb.model.message.GivenNames;
 import org.orcid.jaxb.model.message.OrcidActivities;
 import org.orcid.jaxb.model.message.OrcidBio;
+import org.orcid.jaxb.model.message.OrcidIdentifier;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidWorks;
 import org.orcid.jaxb.model.message.PersonalDetails;
 import org.orcid.jaxb.model.message.ScopePathType;
+import org.orcid.jaxb.model.message.Source;
+import org.orcid.jaxb.model.message.SourceOrcid;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.test.DBUnitTest;
@@ -77,12 +85,14 @@ public class T2OrcidApiServiceVersionedDelegatorTest extends DBUnitTest {
 
     @Resource
     private OrcidProfileManager orcidProfileManager;
-   
-    @Resource(name = "t2OrcidApiServiceDelegatorLatest")
+
+    @Resource(name = "t2OrcidApiServiceDelegatorPrototype")
     private T2OrcidApiServiceDelegator t2OrcidApiServiceDelegatorLatest;
 
     @Mock
     private UriInfo mockedUriInfo;
+
+    private Unmarshaller unmarshaller;
 
     @BeforeClass
     public static void initDBUnitData() throws Exception {
@@ -90,9 +100,12 @@ public class T2OrcidApiServiceVersionedDelegatorTest extends DBUnitTest {
     }
 
     @Before
-    public void before() {
+    public void before() throws JAXBException {
         MockitoAnnotations.initMocks(this);
         when(mockedUriInfo.getBaseUriBuilder()).thenReturn(new UriBuilderImpl());
+
+        JAXBContext context = JAXBContext.newInstance(OrcidMessage.class);
+        unmarshaller = context.createUnmarshaller();
     }
 
     @After
@@ -112,10 +125,10 @@ public class T2OrcidApiServiceVersionedDelegatorTest extends DBUnitTest {
     public void testAddWorks() {
         setUpSecurityContext();
         OrcidMessage orcidMessage = new OrcidMessage();
-        orcidMessage.setMessageVersion("1.0.14");
+        orcidMessage.setMessageVersion("1.1");
         OrcidProfile orcidProfile = new OrcidProfile();
         orcidMessage.setOrcidProfile(orcidProfile);
-        orcidProfile.setOrcid("4444-4444-4444-4441");
+        orcidProfile.setOrcidIdentifier(new OrcidIdentifier("4444-4444-4444-4441"));
         OrcidActivities orcidActivities = new OrcidActivities();
         orcidProfile.setOrcidActivities(orcidActivities);
         OrcidWorks orcidWorks = new OrcidWorks();
@@ -227,9 +240,47 @@ public class T2OrcidApiServiceVersionedDelegatorTest extends DBUnitTest {
         assertEquals("Reserved For Claim", givenNames.getContent());
     }
 
+    @Test
+    public void testCreateWithAffiliations() throws JAXBException {
+        setUpSecurityContextForClientOnly();
+        OrcidMessage orcidMessage = getOrcidMessage("/orcid-message-for-create-latest.xml");
+
+        Response createResponse = t2OrcidApiServiceDelegatorLatest.createProfile(mockedUriInfo, orcidMessage);
+
+        assertNotNull(createResponse);
+        assertEquals(HttpStatus.SC_CREATED, createResponse.getStatus());
+        String location = ((URI) createResponse.getMetadata().getFirst("Location")).getPath();
+        assertNotNull(location);
+        String orcid = location.substring(1, 20);
+
+        Response readResponse = t2OrcidApiServiceDelegatorLatest.findFullDetails(orcid);
+        assertNotNull(readResponse);
+        assertEquals(HttpStatus.SC_OK, readResponse.getStatus());
+        OrcidMessage retrievedMessage = (OrcidMessage) readResponse.getEntity();
+        OrcidProfile orcidProfile = retrievedMessage.getOrcidProfile();
+        assertEquals(orcid, orcidProfile.getOrcidIdentifier().getPath());
+
+        Affiliations affiliations = orcidProfile.retrieveAffiliations();
+        assertNotNull(affiliations);
+        assertEquals(1, affiliations.getAffiliation().size());
+
+        Affiliation affiliation = affiliations.getAffiliation().get(0);
+        assertEquals(Visibility.PRIVATE, affiliation.getVisibility());
+
+        Source source = affiliation.getSource();
+        assertNotNull(source);
+        SourceOrcid sourceOrcid = source.getSourceOrcid();
+        assertNotNull(sourceOrcid);
+        assertEquals("4444-4444-4444-4445", sourceOrcid.getPath());
+    }
+
+    private OrcidMessage getOrcidMessage(String orcidMessagePath) throws JAXBException {
+        return (OrcidMessage) unmarshaller.unmarshal(getClass().getResourceAsStream(orcidMessagePath));
+    }
+
     private OrcidMessage createStubOrcidMessage() {
         OrcidMessage orcidMessage = new OrcidMessage();
-        orcidMessage.setMessageVersion("1.0.14");
+        orcidMessage.setMessageVersion("1.1");
         OrcidProfile orcidProfile = new OrcidProfile();
         orcidMessage.setOrcidProfile(orcidProfile);
         OrcidBio orcidBio = new OrcidBio();

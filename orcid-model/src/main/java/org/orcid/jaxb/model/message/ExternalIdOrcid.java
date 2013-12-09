@@ -23,95 +23,25 @@
 
 package org.orcid.jaxb.model.message;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
-import javax.xml.bind.annotation.XmlValue;
 import java.io.Serializable;
 
-/**
- * <p>Java class for anonymous complex type.
- * 
- * <p>The following schema fragment specifies the expected content contained within this class.
- * 
- * <pre>
- * &lt;complexType>
- *   &lt;simpleContent>
- *     &lt;extension base="&lt;http://www.orcid.org/ns/orcid>orcid">
- *     &lt;/extension>
- *   &lt;/simpleContent>
- * &lt;/complexType>
- * </pre>
- * 
- * 
- */
-@XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "value" })
-@XmlRootElement(name = "external-id-orcid")
-public class ExternalIdOrcid implements Serializable {
+import javax.xml.bind.annotation.XmlRootElement;
 
-    /**
-     * 
-     */
+@XmlRootElement(name = "external-id-orcid")
+public class ExternalIdOrcid extends OrcidIdBase implements Serializable {
+
     private static final long serialVersionUID = 1L;
 
     public ExternalIdOrcid() {
-
-    }
-
-    public ExternalIdOrcid(String value) {
         super();
-        this.value = value;
     }
 
-    @XmlValue
-    protected String value;
-
-    /**
-     * Gets the value of the value property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getValue() {
-        return value;
+    public ExternalIdOrcid(String path) {
+        super(path);
     }
 
-    /**
-     * Sets the value of the value property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setValue(String value) {
-        this.value = value;
+    public ExternalIdOrcid(OrcidIdBase other) {
+        super(other);
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof ExternalIdOrcid)) {
-            return false;
-        }
-
-        ExternalIdOrcid that = (ExternalIdOrcid) o;
-
-        if (value != null ? !value.equals(that.value) : that.value != null) {
-            return false;
-        }
-
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        return value != null ? value.hashCode() : 0;
-    }
 }

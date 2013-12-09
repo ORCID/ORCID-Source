@@ -1,0 +1,893 @@
+@prefix geonames:	<http://www.geonames.org/ontology#> .
+<http://sws.geonames.org/4034894/>	geonames:name	"Samoa" ,
+		"Independent State of Samoa" ;
+	geonames:countryCode	"WS" .
+@prefix rdfs:	<http://www.w3.org/2000/01/rdf-schema#> .
+<http://sws.geonames.org/4034894/>	rdfs:label	"Independent State of Samoa" ,
+		"Samoa" .
+<http://sws.geonames.org/3576468/>	geonames:name	"Saint Lucia" ;
+	geonames:countryCode	"LC" ;
+	rdfs:label	"Saint Lucia" .
+<http://sws.geonames.org/3577815/>	geonames:name	"Saint Vincent and the Grenadines" ;
+	geonames:countryCode	"VC" ;
+	rdfs:label	"Saint Vincent and the Grenadines" .
+<http://sws.geonames.org/3057568/>	geonames:name	"Slovak Republic" ,
+		"Slovakia" ;
+	geonames:countryCode	"SK" ;
+	rdfs:label	"Slovak Republic" ,
+		"Slovakia" .
+<http://sws.geonames.org/3190538/>	geonames:name	"Republic of Slovenia" ,
+		"Slovenia" ;
+	geonames:countryCode	"SI" ;
+	rdfs:label	"Republic of Slovenia" ,
+		"Slovenia" .
+<http://sws.geonames.org/1327865/>	geonames:name	"Myanmar" ,
+		"Union of Burma" ;
+	geonames:countryCode	"MM" ;
+	rdfs:label	"Union of Burma" ,
+		"Myanmar" .
+<http://sws.geonames.org/69543/>	geonames:name	"Republic of Yemen" ,
+		"Yemen" ;
+	geonames:countryCode	"YE" ;
+	rdfs:label	"Yemen" ,
+		"Republic of Yemen" .
+<http://sws.geonames.org/895949/>	geonames:name	"Zambia" ,
+		"Republic of Zambia" ;
+	geonames:countryCode	"ZM" ;
+	rdfs:label	"Zambia" ,
+		"Republic of Zambia" .
+<http://sws.geonames.org/174982/>	geonames:name	"Armenia" ,
+		"Republic of Armenia" ;
+	geonames:countryCode	"AM" ;
+	rdfs:label	"Armenia" ,
+		"Republic of Armenia" .
+<http://sws.geonames.org/783754/>	geonames:name	"Republic of Albania" ,
+		"Albania" ;
+	geonames:countryCode	"AL" ;
+	rdfs:label	"Republic of Albania" ,
+		"Albania" .
+<http://sws.geonames.org/390903/>	geonames:name	"Hellenic Republic" ,
+		"Greece" ;
+	geonames:countryCode	"GR" ;
+	rdfs:label	"Greece" ,
+		"Hellenic Republic" .
+<http://sws.geonames.org/719819/>	geonames:name	"Hungary" ,
+		"Republic of Hungary" ;
+	geonames:countryCode	"HU" ;
+	rdfs:label	"Republic of Hungary" ,
+		"Hungary" .
+<http://sws.geonames.org/597427/>	geonames:name	"Lithuania" ,
+		"Republic of Lithuania" ;
+	geonames:countryCode	"LT" ;
+	rdfs:label	"Lithuania" ,
+		"Republic of Lithuania" .
+<http://sws.geonames.org/458258/>	geonames:name	"Republic of Latvia" ,
+		"Latvia" ;
+	geonames:countryCode	"LV" ;
+	rdfs:label	"Latvia" ,
+		"Republic of Latvia" .
+<http://sws.geonames.org/617790/>	geonames:name	"Moldova" ,
+		"Republic of Moldova" ;
+	geonames:countryCode	"MD" ;
+	rdfs:label	"Moldova" ,
+		"Republic of Moldova" .
+<http://sws.geonames.org/718075/>	geonames:name	"Republic of Macedonia" ,
+		"Macedonia" ;
+	geonames:countryCode	"MK" ;
+	rdfs:label	"Republic of Macedonia" ,
+		"Macedonia" .
+<http://sws.geonames.org/433561/>	geonames:name	"Republic of Burundi" ,
+		"Burundi" ;
+	geonames:countryCode	"BI" ;
+	rdfs:label	"Republic of Burundi" ,
+		"Burundi" .
+<http://sws.geonames.org/933860/>	geonames:name	"Botswana" ,
+		"Republic of Botswana" ;
+	geonames:countryCode	"BW" ;
+	rdfs:label	"Botswana" ,
+		"Republic of Botswana" .
+<http://sws.geonames.org/338010/>	geonames:name	"Eritrea" ,
+		"State of Eritrea" ;
+	geonames:countryCode	"ER" ;
+	rdfs:label	"State of Eritrea" ,
+		"Eritrea" .
+<http://sws.geonames.org/337996/>	geonames:name	"Federal Democratic Republic of Ethiopia" ,
+		"Ethiopia" ;
+	geonames:countryCode	"ET" ;
+	rdfs:label	"Ethiopia" ,
+		"Federal Democratic Republic of Ethiopia" .
+<http://sws.geonames.org/223816/>	geonames:name	"Djibouti" ,
+		"Republic of Djibouti" ;
+	geonames:countryCode	"DJ" ;
+	rdfs:label	"Republic of Djibouti" ,
+		"Djibouti" .
+<http://sws.geonames.org/192950/>	geonames:name	"Republic of Kenya" ,
+		"Kenya" ;
+	geonames:countryCode	"KE" ;
+	rdfs:label	"Republic of Kenya" ,
+		"Kenya" .
+<http://sws.geonames.org/932692/>	geonames:name	"Kingdom of Lesotho" ,
+		"Lesotho" ;
+	geonames:countryCode	"LS" ;
+	rdfs:label	"Lesotho" ,
+		"Kingdom of Lesotho" .
+<http://sws.geonames.org/927384/>	geonames:name	"Republic of Malawi" ,
+		"Malawi" ;
+	geonames:countryCode	"MW" ;
+	rdfs:label	"Malawi" ,
+		"Republic of Malawi" .
+<http://sws.geonames.org/357994/>	geonames:name	"Arab Republic of Egypt" ,
+		"Egypt" ;
+	geonames:countryCode	"EG" ;
+	rdfs:label	"Arab Republic of Egypt" ,
+		"Egypt" .
+<http://sws.geonames.org/921929/>	geonames:name	"Union of the Comoros" ,
+		"Comoros" ;
+	geonames:countryCode	"KM" ;
+	rdfs:label	"Union of the Comoros" ,
+		"Comoros" .
+<http://sws.geonames.org/934292/>	geonames:name	"Mauritius" ,
+		"Republic of Mauritius" ;
+	geonames:countryCode	"MU" ;
+	rdfs:label	"Republic of Mauritius" ,
+		"Mauritius" .
+<http://sws.geonames.org/587116/>	geonames:name	"Azerbaijan" ,
+		"Republic of Azerbaijan" ;
+	geonames:countryCode	"AZ" ;
+	rdfs:label	"Azerbaijan" ,
+		"Republic of Azerbaijan" .
+<http://sws.geonames.org/290291/>	geonames:name	"Kingdom of Bahrain" ,
+		"Bahrain" ;
+	geonames:countryCode	"BH" ;
+	rdfs:label	"Kingdom of Bahrain" ,
+		"Bahrain" .
+<http://sws.geonames.org/732800/>	geonames:name	"Bulgaria" ,
+		"Republic of Bulgaria" ;
+	geonames:countryCode	"BG" ;
+	rdfs:label	"Republic of Bulgaria" ,
+		"Bulgaria" .
+<http://sws.geonames.org/630336/>	geonames:name	"Republic of Belarus" ,
+		"Belarus" ;
+	geonames:countryCode	"BY" ;
+	rdfs:label	"Belarus" ,
+		"Republic of Belarus" .
+<http://sws.geonames.org/239880/>	geonames:name	"Central African Republic" ;
+	geonames:countryCode	"CF" ;
+	rdfs:label	"Central African Republic" .
+<http://sws.geonames.org/146669/>	geonames:name	"Cyprus" ,
+		"K\u0131br\u0131s Cumhuriyeti" ,
+		"Republic of Cyprus" ;
+	geonames:countryCode	"CY" ;
+	rdfs:label	"Republic of Cyprus" ,
+		"Cyprus" ,
+		"K\u0131br\u0131s Cumhuriyeti" .
+<http://sws.geonames.org/130758/>	geonames:name	"Islamic Republic of Iran" ,
+		"Iran" ;
+	geonames:countryCode	"IR" ;
+	rdfs:label	"Islamic Republic of Iran" ,
+		"Iran" .
+<http://sws.geonames.org/294640/>	geonames:name	"Israel" ,
+		"State of Israel" ;
+	geonames:countryCode	"IL" ;
+	rdfs:label	"Israel" ,
+		"State of Israel" .
+<http://sws.geonames.org/453733/>	geonames:name	"Estonia" ,
+		"Republic of Estonia" ;
+	geonames:countryCode	"EE" ;
+	rdfs:label	"Republic of Estonia" ,
+		"Estonia" .
+<http://sws.geonames.org/660013/>	geonames:name	"Finland" ,
+		"Republic of Finland" ;
+	geonames:countryCode	"FI" ;
+	rdfs:label	"Republic of Finland" ,
+		"Finland" .
+<http://sws.geonames.org/248816/>	geonames:name	"Jordan" ,
+		"Hashemite Kingdom of Jordan" ;
+	geonames:countryCode	"JO" ;
+	rdfs:label	"Jordan" ,
+		"Hashemite Kingdom of Jordan" .
+<http://sws.geonames.org/285570/>	geonames:name	"Kuwait" ,
+		"State of Kuwait" ;
+	geonames:countryCode	"KW" ;
+	rdfs:label	"Kuwait" ,
+		"State of Kuwait" .
+<http://sws.geonames.org/831053/>	geonames:name	"Kosovo" ,
+		"Republic of Kosovo" ;
+	geonames:countryCode	"XK" ;
+	rdfs:label	"Kosovo" ,
+		"Republic of Kosovo" .
+<http://sws.geonames.org/272103/>	geonames:name	"Lebanon" ,
+		"Republic of Lebanon" ;
+	geonames:countryCode	"LB" ;
+	rdfs:label	"Lebanon" ,
+		"Republic of Lebanon" .
+<http://sws.geonames.org/286963/>	geonames:name	"Sultanate of Oman" ,
+		"Oman" ;
+	geonames:countryCode	"OM" ;
+	rdfs:label	"Sultanate of Oman" ,
+		"Oman" .
+<http://sws.geonames.org/798544/>	geonames:name	"Poland" ,
+		"Republic of Poland" ;
+	geonames:countryCode	"PL" ;
+	rdfs:label	"Poland" ,
+		"Republic of Poland" .
+<http://sws.geonames.org/289688/>	geonames:name	"State of Qatar" ,
+		"Qatar" ;
+	geonames:countryCode	"QA" ;
+	rdfs:label	"State of Qatar" ,
+		"Qatar" .
+<http://sws.geonames.org/878675/>	geonames:name	"Zimbabwe" ,
+		"Republic of Zimbabwe" ;
+	geonames:countryCode	"ZW" ;
+	rdfs:label	"Republic of Zimbabwe" ,
+		"Zimbabwe" .
+<http://sws.geonames.org/798549/>	geonames:name	"Romania" ,
+		"Rom\u00E2nia" ;
+	geonames:countryCode	"RO" ;
+	rdfs:label	"Romania" ,
+		"Rom\u00E2nia" .
+<http://sws.geonames.org/953987/>	geonames:name	"South Africa" ;
+	geonames:countryCode	"ZA" ;
+	rdfs:label	"South Africa" .
+<http://sws.geonames.org/241170/>	geonames:name	"Republic of Seychelles" ;
+	geonames:countryCode	"SC" ;
+	rdfs:label	"Republic of Seychelles" .
+<http://sws.geonames.org/366755/>	geonames:name	"Sudan" ,
+		"Republic of the Sudan" ;
+	geonames:countryCode	"SD" ;
+	rdfs:label	"Sudan" ,
+		"Republic of the Sudan" .
+<http://sws.geonames.org/934841/>	geonames:name	"Kingdom of Swaziland" ,
+		"Swaziland" ;
+	geonames:countryCode	"SZ" ;
+	rdfs:label	"Swaziland" ,
+		"Kingdom of Swaziland" .
+<http://sws.geonames.org/102358/>	geonames:name	"Kingdom of Saudi Arabia" ,
+		"Saudi Arabia" ;
+	geonames:countryCode	"SA" ;
+	rdfs:label	"Saudi Arabia" ,
+		"Kingdom of Saudi Arabia" .
+<http://sws.geonames.org/163843/>	geonames:name	"Syrian Arab Republic" ,
+		"Syria" ;
+	geonames:countryCode	"SY" ;
+	rdfs:label	"Syrian Arab Republic" ,
+		"Syria" .
+<http://sws.geonames.org/290557/>	geonames:name	"United Arab Emirates" ;
+	geonames:countryCode	"AE" ;
+	rdfs:label	"United Arab Emirates" .
+<http://sws.geonames.org/298795/>	geonames:name	"Republic of Turkey" ,
+		"Turkey" ;
+	geonames:countryCode	"TR" ;
+	rdfs:label	"Republic of Turkey" ,
+		"Turkey" .
+<http://sws.geonames.org/149590/>	geonames:name	"Tanzania" ,
+		"United Republic of Tanzania" ;
+	geonames:countryCode	"TZ" ;
+	rdfs:label	"United Republic of Tanzania" ,
+		"Tanzania" .
+<http://sws.geonames.org/226074/>	geonames:name	"Uganda" ,
+		"Republic of Uganda" ;
+	geonames:countryCode	"UG" ;
+	rdfs:label	"Uganda" ,
+		"Republic of Uganda" .
+<http://sws.geonames.org/690791/>	geonames:name	"Ukraine" ;
+	geonames:countryCode	"UA" ;
+	rdfs:label	"Ukraine" .
+<http://sws.geonames.org/614540/>	geonames:name	"Georgia" ;
+	geonames:countryCode	"GE" ;
+	rdfs:label	"Georgia" .
+<http://sws.geonames.org/3595528/>	geonames:name	"Republic of Guatemala" ,
+		"Guatemala" ;
+	geonames:countryCode	"GT" ;
+	rdfs:label	"Republic of Guatemala" ,
+		"Guatemala" .
+<http://sws.geonames.org/2921044/>	geonames:name	"Germany" ,
+		"Federal Republic of Germany" ;
+	geonames:countryCode	"DE" ;
+	rdfs:label	"Germany" ,
+		"Federal Republic of Germany" .
+<http://sws.geonames.org/2629691/>	geonames:name	"Republic of Iceland" ,
+		"Iceland" ;
+	geonames:countryCode	"IS" ;
+	rdfs:label	"Republic of Iceland" ,
+		"Iceland" .
+<http://sws.geonames.org/2963597/>	geonames:name	"Ireland" ,
+		"\u00C9ire" ;
+	geonames:countryCode	"IE" ;
+	rdfs:label	"Ireland" ,
+		"\u00C9ire" .
+<http://sws.geonames.org/3175395/>	geonames:name	"Italy" ,
+		"Italian Republic" ;
+	geonames:countryCode	"IT" ;
+	rdfs:label	"Italy" ,
+		"Italian Republic" .
+<http://sws.geonames.org/3042058/>	geonames:name	"Liechtenstein" ,
+		"Principality of Liechtenstein" ;
+	geonames:countryCode	"LI" ;
+	rdfs:label	"Liechtenstein" ,
+		"Principality of Liechtenstein" .
+<http://sws.geonames.org/2960313/>	geonames:name	"Luxembourg" ,
+		"Grand Duchy of Luxembourg" ;
+	geonames:countryCode	"LU" ;
+	rdfs:label	"Grand Duchy of Luxembourg" ,
+		"Luxembourg" .
+<http://sws.geonames.org/2993457/>	geonames:name	"Principality of Monaco" ,
+		"Monaco" ;
+	geonames:countryCode	"MC" ;
+	rdfs:label	"Principality of Monaco" ,
+		"Monaco" .
+<http://sws.geonames.org/2562770/>	geonames:name	"Republic of Malta" ,
+		"Malta" ;
+	geonames:countryCode	"MT" ;
+	rdfs:label	"Malta" ,
+		"Republic of Malta" .
+<http://sws.geonames.org/3194884/>	geonames:name	"Montenegro" ,
+		"Republic of Montenegro" ;
+	geonames:countryCode	"ME" ;
+	rdfs:label	"Montenegro" ,
+		"Republic of Montenegro" .
+<http://sws.geonames.org/2635167/>	geonames:name	"United Kingdom" ,
+		"United Kingdom of Great Britain and Northern Ireland" ;
+	geonames:countryCode	"GB" ;
+	rdfs:label	"United Kingdom" ,
+		"United Kingdom of Great Britain and Northern Ireland" .
+<http://sws.geonames.org/3077311/>	geonames:name	"Czech Republic" ;
+	geonames:countryCode	"CZ" ;
+	rdfs:label	"Czech Republic" .
+<http://sws.geonames.org/2589581/>	geonames:name	"People\u2019s Democratic Republic of Algeria" ,
+		"Algeria" ;
+	geonames:countryCode	"DZ" ;
+	rdfs:label	"Algeria" ,
+		"People\u2019s Democratic Republic of Algeria" .
+<http://sws.geonames.org/3351879/>	geonames:name	"Republic of Angola" ,
+		"Angola" ;
+	geonames:countryCode	"AO" ;
+	rdfs:label	"Republic of Angola" ,
+		"Angola" .
+<http://sws.geonames.org/2434508/>	geonames:name	"Chad" ,
+		"Republic of Chad" ;
+	geonames:countryCode	"TD" ;
+	rdfs:label	"Chad" ,
+		"Republic of Chad" .
+<http://sws.geonames.org/2260494/>	geonames:name	"Republic of the Congo" ;
+	geonames:countryCode	"CG" ;
+	rdfs:label	"Republic of the Congo" .
+<http://sws.geonames.org/2233387/>	geonames:name	"Cameroon" ,
+		"Republic of Cameroon" ;
+	geonames:countryCode	"CM" ;
+	rdfs:label	"Republic of Cameroon" ,
+		"Cameroon" .
+<http://sws.geonames.org/2395170/>	geonames:name	"Republic of Benin" ,
+		"Benin" ;
+	geonames:countryCode	"BJ" ;
+	rdfs:label	"Republic of Benin" ,
+		"Benin" .
+<http://sws.geonames.org/2309096/>	geonames:name	"Equatorial Guinea" ,
+		"Republic of Equatorial Guinea" ;
+	geonames:countryCode	"GQ" ;
+	rdfs:label	"Equatorial Guinea" ,
+		"Republic of Equatorial Guinea" .
+<http://sws.geonames.org/2300660/>	geonames:name	"Republic of Ghana" ,
+		"Ghana" ;
+	geonames:countryCode	"GH" ;
+	rdfs:label	"Ghana" ,
+		"Republic of Ghana" .
+<http://sws.geonames.org/2413451/>	geonames:name	"Gambia" ;
+	geonames:countryCode	"GM" ;
+	rdfs:label	"Gambia" .
+<http://sws.geonames.org/2400553/>	geonames:name	"Gabon" ,
+		"Gabonese Republic" ;
+	geonames:countryCode	"GA" ;
+	rdfs:label	"Gabonese Republic" ,
+		"Gabon" .
+<http://sws.geonames.org/2420477/>	geonames:name	"Guinea" ,
+		"Republic of Guinea" ;
+	geonames:countryCode	"GN" ;
+	rdfs:label	"Republic of Guinea" ,
+		"Guinea" .
+<http://sws.geonames.org/2287781/>	geonames:name	"Republic of C\u00F4te d\u2019Ivoire" ;
+	geonames:countryCode	"CI" ;
+	rdfs:label	"Republic of C\u00F4te d\u2019Ivoire" .
+<http://sws.geonames.org/2275384/>	geonames:name	"Republic of Liberia" ,
+		"Liberia" ;
+	geonames:countryCode	"LR" ;
+	rdfs:label	"Liberia" ,
+		"Republic of Liberia" .
+<http://sws.geonames.org/2215636/>	geonames:name	"Great Socialist People\u2019s Libyan Arab Jamahiriya" ,
+		"Libya" ;
+	geonames:countryCode	"LY" ;
+	rdfs:label	"Great Socialist People\u2019s Libyan Arab Jamahiriya" ,
+		"Libya" .
+<http://sws.geonames.org/1062947/>	geonames:name	"Madagascar" ,
+		"Republic of Madagascar" ;
+	geonames:countryCode	"MG" ;
+	rdfs:label	"Madagascar" ,
+		"Republic of Madagascar" .
+<http://sws.geonames.org/2453866/>	geonames:name	"Mali" ,
+		"Republic of Mali" ;
+	geonames:countryCode	"ML" ;
+	rdfs:label	"Republic of Mali" ,
+		"Mali" .
+<http://sws.geonames.org/2542007/>	geonames:name	"Kingdom of Morocco" ,
+		"Morocco" ;
+	geonames:countryCode	"MA" ;
+	rdfs:label	"Kingdom of Morocco" ,
+		"Morocco" .
+<http://sws.geonames.org/2378080/>	geonames:name	"Mauritania" ,
+		"Islamic Republic of Mauritania" ;
+	geonames:countryCode	"MR" ;
+	rdfs:label	"Mauritania" ,
+		"Islamic Republic of Mauritania" .
+<http://sws.geonames.org/1036973/>	geonames:name	"Mozambique" ,
+		"Republic of Mozambique" ;
+	geonames:countryCode	"MZ" ;
+	rdfs:label	"Mozambique" ,
+		"Republic of Mozambique" .
+<http://sws.geonames.org/2372248/>	geonames:name	"Guinea-Bissau" ,
+		"Republic of Guinea-Bissau" ;
+	geonames:countryCode	"GW" ;
+	rdfs:label	"Republic of Guinea-Bissau" ,
+		"Guinea-Bissau" .
+<http://sws.geonames.org/3355338/>	geonames:name	"Republic of Namibia" ,
+		"Namibia" ;
+	geonames:countryCode	"NA" ;
+	rdfs:label	"Namibia" ,
+		"Republic of Namibia" .
+<http://sws.geonames.org/2361809/>	geonames:name	"Burkina Faso" ;
+	geonames:countryCode	"BF" ;
+	rdfs:label	"Burkina Faso" .
+<http://sws.geonames.org/1282028/>	geonames:name	"Republic of Maldives" ,
+		"Maldives" ;
+	geonames:countryCode	"MV" ;
+	rdfs:label	"Republic of Maldives" ,
+		"Maldives" .
+<http://sws.geonames.org/3374766/>	geonames:name	"Cape Verde" ,
+		"Republic of Cape Verde" ;
+	geonames:countryCode	"CV" ;
+	rdfs:label	"Cape Verde" ,
+		"Republic of Cape Verde" .
+<http://sws.geonames.org/1149361/>	geonames:name	"Islamic Republic of Afghanistan" ,
+		"Afghanistan" ;
+	geonames:countryCode	"AF" ;
+	rdfs:label	"Islamic Republic of Afghanistan" ,
+		"Afghanistan" .
+<http://sws.geonames.org/3865483/>	geonames:name	"Argentine Republic" ,
+		"Argentina" ;
+	geonames:countryCode	"AR" ;
+	rdfs:label	"Argentina" ,
+		"Argentine Republic" .
+<http://sws.geonames.org/3041565/>	geonames:name	"Principality of Andorra" ,
+		"Andorra" ;
+	geonames:countryCode	"AD" ;
+	rdfs:label	"Principality of Andorra" ,
+		"Andorra" .
+<http://sws.geonames.org/3576396/>	geonames:name	"Antigua and Barbuda" ;
+	geonames:countryCode	"AG" ;
+	rdfs:label	"Antigua and Barbuda" .
+<http://sws.geonames.org/2077456/>	geonames:name	"Commonwealth of Australia" ,
+		"Australia" ;
+	geonames:countryCode	"AU" ;
+	rdfs:label	"Commonwealth of Australia" ,
+		"Australia" .
+<http://sws.geonames.org/2782113/>	geonames:name	"Austria" ,
+		"Republic of Austria" ;
+	geonames:countryCode	"AT" ;
+	rdfs:label	"Republic of Austria" ,
+		"Austria" .
+<http://sws.geonames.org/6251999/>	geonames:name	"Canada" ;
+	geonames:countryCode	"CA" ;
+	rdfs:label	"Canada" .
+<http://sws.geonames.org/3374084/>	geonames:name	"Barbados" ;
+	geonames:countryCode	"BB" ;
+	rdfs:label	"Barbados" .
+<http://sws.geonames.org/2802361/>	geonames:name	"Belgium" ,
+		"Kingdom of Belgium" ;
+	geonames:countryCode	"BE" ;
+	rdfs:label	"Kingdom of Belgium" ,
+		"Belgium" .
+<http://sws.geonames.org/3996063/>	geonames:name	"Mexico" ;
+	geonames:countryCode	"MX" ;
+	rdfs:label	"Mexico" .
+<http://sws.geonames.org/3572887/>	geonames:name	"Bahamas" ,
+		"Commonwealth of The Bahamas" ;
+	geonames:countryCode	"BS" ;
+	rdfs:label	"Bahamas" ,
+		"Commonwealth of The Bahamas" .
+<http://sws.geonames.org/1210997/>	geonames:name	"People\u2019s Republic of Bangladesh" ,
+		"Bangladesh" ;
+	geonames:countryCode	"BD" ;
+	rdfs:label	"People\u2019s Republic of Bangladesh" ,
+		"Bangladesh" .
+<http://sws.geonames.org/3582678/>	geonames:name	"Belize" ;
+	geonames:countryCode	"BZ" ;
+	rdfs:label	"Belize" .
+<http://sws.geonames.org/3469034/>	geonames:name	"Federative Republic of Brazil" ,
+		"Brazil" ;
+	geonames:countryCode	"BR" ;
+	rdfs:label	"Brazil" ,
+		"Federative Republic of Brazil" .
+<http://sws.geonames.org/3923057/>	geonames:name	"Bolivia" ,
+		"Plurinational State of Bolivia" ;
+	geonames:countryCode	"BO" ;
+	rdfs:label	"Bolivia" ,
+		"Plurinational State of Bolivia" .
+<http://sws.geonames.org/2103350/>	geonames:name	"Solomon Islands" ;
+	geonames:countryCode	"SB" ;
+	rdfs:label	"Solomon Islands" .
+<http://sws.geonames.org/1252634/>	geonames:name	"Bhutan" ,
+		"Kingdom of Bhutan" ;
+	geonames:countryCode	"BT" ;
+	rdfs:label	"Kingdom of Bhutan" ,
+		"Bhutan" .
+<http://sws.geonames.org/1820814/>	geonames:name	"Brunei" ,
+		"Negara Brunei Darussalam" ;
+	geonames:countryCode	"BN" ;
+	rdfs:label	"Negara Brunei Darussalam" ,
+		"Brunei" .
+<http://sws.geonames.org/1831722/>	geonames:name	"Cambodia" ,
+		"Kingdom of Cambodia" ;
+	geonames:countryCode	"KH" ;
+	rdfs:label	"Cambodia" ,
+		"Kingdom of Cambodia" .
+<http://sws.geonames.org/1227603/>	geonames:name	"Sri Lanka" ,
+		"Democratic Socialist Republic of Sri Lanka" ;
+	geonames:countryCode	"LK" ;
+	rdfs:label	"Sri Lanka" ,
+		"Democratic Socialist Republic of Sri Lanka" .
+<http://sws.geonames.org/3202326/>	geonames:name	"Croatia" ,
+		"Republic of Croatia" ;
+	geonames:countryCode	"HR" ;
+	rdfs:label	"Croatia" ,
+		"Republic of Croatia" .
+<http://sws.geonames.org/3686110/>	geonames:name	"Republic of Colombia" ,
+		"Colombia" ;
+	geonames:countryCode	"CO" ;
+	rdfs:label	"Colombia" ,
+		"Republic of Colombia" .
+<http://sws.geonames.org/3895114/>	geonames:name	"Republic of Chile" ,
+		"Chile" ;
+	geonames:countryCode	"CL" ;
+	rdfs:label	"Chile" ,
+		"Republic of Chile" .
+<http://sws.geonames.org/3378535/>	geonames:name	"Co-operative Republic of Guyana" ,
+		"Guyana" ;
+	geonames:countryCode	"GY" ;
+	rdfs:label	"Co-operative Republic of Guyana" ,
+		"Guyana" .
+<http://sws.geonames.org/3624060/>	geonames:name	"Costa Rica" ,
+		"Republic of Costa Rica" ;
+	geonames:countryCode	"CR" ;
+	rdfs:label	"Costa Rica" ,
+		"Republic of Costa Rica" .
+<http://sws.geonames.org/3562981/>	geonames:name	"Cuba" ,
+		"Republic of Cuba" ;
+	geonames:countryCode	"CU" ;
+	rdfs:label	"Republic of Cuba" ,
+		"Cuba" .
+<http://sws.geonames.org/3608932/>	geonames:name	"Honduras" ,
+		"Republic of Honduras" ;
+	geonames:countryCode	"HN" ;
+	rdfs:label	"Honduras" ,
+		"Republic of Honduras" .
+<http://sws.geonames.org/3723988/>	geonames:name	"Republic of Haiti" ,
+		"Haiti" ;
+	geonames:countryCode	"HT" ;
+	rdfs:label	"Republic of Haiti" ,
+		"Haiti" .
+<http://sws.geonames.org/2623032/>	geonames:name	"Denmark" ,
+		"Kingdom of Denmark" ;
+	geonames:countryCode	"DK" ;
+	rdfs:label	"Kingdom of Denmark" ,
+		"Denmark" .
+<http://sws.geonames.org/3575830/>	geonames:name	"Dominica" ;
+	geonames:countryCode	"DM" ;
+	rdfs:label	"Dominica" .
+<http://sws.geonames.org/3508796/>	geonames:name	"Dominican Republic" ;
+	geonames:countryCode	"DO" ;
+	rdfs:label	"Dominican Republic" .
+<http://sws.geonames.org/1269750/>	geonames:name	"India" ,
+		"Republic of India" ;
+	geonames:countryCode	"IN" ;
+	rdfs:label	"India" ,
+		"Republic of India" .
+<http://sws.geonames.org/3658394/>	geonames:name	"Ecuador" ,
+		"Republic of Ecuador" ;
+	geonames:countryCode	"EC" ;
+	rdfs:label	"Ecuador" ,
+		"Republic of Ecuador" .
+<http://sws.geonames.org/1643084/>	geonames:name	"Indonesia" ,
+		"Republic of Indonesia" ;
+	geonames:countryCode	"ID" ;
+	rdfs:label	"Republic of Indonesia" ,
+		"Indonesia" .
+<http://sws.geonames.org/3585968/>	geonames:name	"Republic of El Salvador" ,
+		"El Salvador" ;
+	geonames:countryCode	"SV" ;
+	rdfs:label	"El Salvador" ,
+		"Republic of El Salvador" .
+<http://sws.geonames.org/1861060/>	geonames:name	"Japan" ;
+	geonames:countryCode	"JP" ;
+	rdfs:label	"Japan" .
+<http://sws.geonames.org/3489940/>	geonames:name	"Jamaica" ;
+	geonames:countryCode	"JM" ;
+	rdfs:label	"Jamaica" .
+<http://sws.geonames.org/2205218/>	geonames:name	"Republic of the Fiji Islands" ,
+		"Fiji" ;
+	geonames:countryCode	"FJ" ;
+	rdfs:label	"Republic of the Fiji Islands" ,
+		"Fiji" .
+<http://sws.geonames.org/1527747/>	geonames:name	"Kyrgyz Republic" ,
+		"Kyrgyzstan" ;
+	geonames:countryCode	"KG" ;
+	rdfs:label	"Kyrgyz Republic" ,
+		"Kyrgyzstan" .
+<http://sws.geonames.org/3017382/>	geonames:name	"Republic of France" ,
+		"France" ;
+	geonames:countryCode	"FR" ;
+	rdfs:label	"France" ,
+		"Republic of France" .
+<http://sws.geonames.org/4030945/>	geonames:name	"Republic of Kiribati" ,
+		"Kiribati" ;
+	geonames:countryCode	"KI" ;
+	rdfs:label	"Kiribati" ,
+		"Republic of Kiribati" .
+<http://sws.geonames.org/1522867/>	geonames:name	"Republic of Kazakhstan" ,
+		"Kazakhstan" ;
+	geonames:countryCode	"KZ" ;
+	rdfs:label	"Kazakhstan" ,
+		"Republic of Kazakhstan" .
+<http://sws.geonames.org/3580239/>	geonames:name	"Grenada" ;
+	geonames:countryCode	"GD" ;
+	rdfs:label	"Grenada" .
+<http://sws.geonames.org/2750405/>	geonames:name	"Kingdom of the Netherlands" ,
+		"Netherlands" ;
+	geonames:countryCode	"NL" ;
+	rdfs:label	"Netherlands" ,
+		"Kingdom of the Netherlands" .
+<http://sws.geonames.org/2440476/>	geonames:name	"Niger" ,
+		"Republic of Niger" ;
+	geonames:countryCode	"NE" ;
+	rdfs:label	"Niger" ,
+		"Republic of Niger" .
+<http://sws.geonames.org/2134431/>	geonames:name	"Republic of Vanuatu" ,
+		"Vanuatu" ;
+	geonames:countryCode	"VU" ;
+	rdfs:label	"Vanuatu" ,
+		"Republic of Vanuatu" .
+<http://sws.geonames.org/3144096/>	geonames:name	"Kingdom of Norway" ,
+		"Norway" ;
+	geonames:countryCode	"NO" ;
+	rdfs:label	"Kingdom of Norway" ,
+		"Norway" .
+<http://sws.geonames.org/3617476/>	geonames:name	"Republic of Nicaragua" ,
+		"Nicaragua" ;
+	geonames:countryCode	"NI" ;
+	rdfs:label	"Republic of Nicaragua" ,
+		"Nicaragua" .
+<http://sws.geonames.org/2328926/>	geonames:name	"Federal Republic of Nigeria" ,
+		"Nigeria" ;
+	geonames:countryCode	"NG" ;
+	rdfs:label	"Nigeria" ,
+		"Federal Republic of Nigeria" .
+<http://sws.geonames.org/2186224/>	geonames:name	"New Zealand" ;
+	geonames:countryCode	"NZ" ;
+	rdfs:label	"New Zealand" .
+<http://sws.geonames.org/3932488/>	geonames:name	"Republic of Peru" ,
+		"Peru" ;
+	geonames:countryCode	"PE" ;
+	rdfs:label	"Peru" ,
+		"Republic of Peru" .
+<http://sws.geonames.org/1694008/>	geonames:name	"Republic of the Philippines" ,
+		"Philippines" ;
+	geonames:countryCode	"PH" ;
+	rdfs:label	"Philippines" ,
+		"Republic of the Philippines" .
+<http://sws.geonames.org/1168579/>	geonames:name	"Islamic Republic of Pakistan" ,
+		"Pakistan" ;
+	geonames:countryCode	"PK" ;
+	rdfs:label	"Islamic Republic of Pakistan" ,
+		"Pakistan" .
+<http://sws.geonames.org/3703430/>	geonames:name	"Republic of Panama" ,
+		"Panama" ;
+	geonames:countryCode	"PA" ;
+	rdfs:label	"Republic of Panama" ,
+		"Panama" .
+<http://sws.geonames.org/2264397/>	geonames:name	"Portugal" ,
+		"Portuguese Republic" ;
+	geonames:countryCode	"PT" ;
+	rdfs:label	"Portugal" ,
+		"Portuguese Republic" .
+<http://sws.geonames.org/2088628/>	geonames:name	"Papua New Guinea" ,
+		"Independent State of Papua New Guinea" ;
+	geonames:countryCode	"PG" ;
+	rdfs:label	"Independent State of Papua New Guinea" ,
+		"Papua New Guinea" .
+<http://sws.geonames.org/3437598/>	geonames:name	"Paraguay" ,
+		"Republic of Paraguay" ;
+	geonames:countryCode	"PY" ;
+	rdfs:label	"Paraguay" ,
+		"Republic of Paraguay" .
+<http://sws.geonames.org/6290252/>	geonames:name	"Serbia" ;
+	geonames:countryCode	"RS" ;
+	rdfs:label	"Serbia" .
+<http://sws.geonames.org/1814991/>	geonames:name	"People\u2019s Republic of China" ,
+		"China" ;
+	geonames:countryCode	"CN" ;
+	rdfs:label	"China" ,
+		"People\u2019s Republic of China" .
+<http://sws.geonames.org/2245662/>	geonames:name	"Republic of Senegal" ,
+		"Senegal" ;
+	geonames:countryCode	"SN" ;
+	rdfs:label	"Republic of Senegal" ,
+		"Senegal" .
+<http://sws.geonames.org/1880251/>	geonames:name	"Republic of Singapore" ,
+		"Singapore" ;
+	geonames:countryCode	"SG" ;
+	rdfs:label	"Singapore" ,
+		"Republic of Singapore" .
+<http://sws.geonames.org/2403846/>	geonames:name	"Republic of Sierra Leone" ,
+		"Sierra Leone" ;
+	geonames:countryCode	"SL" ;
+	rdfs:label	"Republic of Sierra Leone" ,
+		"Sierra Leone" .
+<http://sws.geonames.org/3168068/>	geonames:name	"Repubblica di San Marino" ;
+	geonames:countryCode	"SM" ;
+	rdfs:label	"Repubblica di San Marino" .
+<http://sws.geonames.org/2510769/>	geonames:name	"Kingdom of Spain" ,
+		"Spain" ;
+	geonames:countryCode	"ES" ;
+	rdfs:label	"Spain" ,
+		"Kingdom of Spain" .
+<http://sws.geonames.org/2661886/>	geonames:name	"Kingdom of Sweden" ,
+		"Sweden" ;
+	geonames:countryCode	"SE" ;
+	rdfs:label	"Kingdom of Sweden" ,
+		"Sweden" .
+<http://sws.geonames.org/2658434/>	geonames:name	"Swiss Confederation" ,
+		"Switzerland" ;
+	geonames:countryCode	"CH" ;
+	rdfs:label	"Switzerland" ,
+		"Swiss Confederation" .
+<http://sws.geonames.org/1220409/>	geonames:name	"Tajikistan" ,
+		"Republic of Tajikistan" ;
+	geonames:countryCode	"TJ" ;
+	rdfs:label	"Republic of Tajikistan" ,
+		"Tajikistan" .
+<http://sws.geonames.org/2363686/>	geonames:name	"Togolese Republic" ,
+		"Togo" ;
+	geonames:countryCode	"TG" ;
+	rdfs:label	"Togolese Republic" ,
+		"Togo" .
+<http://sws.geonames.org/1605651/>	geonames:name	"Kingdom of Thailand" ,
+		"Thailand" ;
+	geonames:countryCode	"TH" ;
+	rdfs:label	"Kingdom of Thailand" ,
+		"Thailand" .
+<http://sws.geonames.org/2464461/>	geonames:name	"Tunisia" ,
+		"Tunisian Republic" ;
+	geonames:countryCode	"TN" ;
+	rdfs:label	"Tunisia" ,
+		"Tunisian Republic" .
+<http://sws.geonames.org/1218197/>	geonames:name	"Turkmenistan" ;
+	geonames:countryCode	"TM" ;
+	rdfs:label	"Turkmenistan" .
+<http://sws.geonames.org/4032283/>	geonames:name	"Kingdom of Tonga" ,
+		"Tonga" ;
+	geonames:countryCode	"TO" ;
+	rdfs:label	"Tonga" ,
+		"Kingdom of Tonga" .
+<http://sws.geonames.org/3573591/>	geonames:name	"Republic of Trinidad and Tobago" ;
+	geonames:countryCode	"TT" ;
+	rdfs:label	"Republic of Trinidad and Tobago" .
+<http://sws.geonames.org/2110297/>	geonames:name	"Tuvalu" ;
+	geonames:countryCode	"TV" ;
+	rdfs:label	"Tuvalu" .
+<http://sws.geonames.org/3439705/>	geonames:name	"Uruguay" ,
+		"Oriental Republic of Uruguay" ;
+	geonames:countryCode	"UY" ;
+	rdfs:label	"Uruguay" ,
+		"Oriental Republic of Uruguay" .
+<http://sws.geonames.org/1512440/>	geonames:name	"Republic of Uzbekistan" ,
+		"Uzbekistan" ;
+	geonames:countryCode	"UZ" ;
+	rdfs:label	"Republic of Uzbekistan" ,
+		"Uzbekistan" .
+<http://sws.geonames.org/1966436/>	geonames:name	"Democratic Republic of Timor-Leste" ,
+		"East Timor" ;
+	geonames:countryCode	"TL" ;
+	rdfs:label	"East Timor" ,
+		"Democratic Republic of Timor-Leste" .
+<http://sws.geonames.org/1562822/>	geonames:name	"Vietnam" ,
+		"Socialist Republic of Vietnam" ;
+	geonames:countryCode	"VN" ;
+	rdfs:label	"Socialist Republic of Vietnam" ,
+		"Vietnam" .
+<http://sws.geonames.org/1873107/>	geonames:name	"North Korea" ,
+		"Democratic People\u2019s Republic of Korea" ;
+	geonames:countryCode	"KP" ;
+	rdfs:label	"North Korea" ,
+		"Democratic People\u2019s Republic of Korea" .
+<http://sws.geonames.org/1835841/>	geonames:name	"Republic of Korea" ,
+		"South Korea" ;
+	geonames:countryCode	"KR" ;
+	rdfs:label	"South Korea" ,
+		"Republic of Korea" .
+<http://sws.geonames.org/1655842/>	geonames:name	"Laos" ,
+		"Lao People\u2019s Democratic Republic" ;
+	geonames:countryCode	"LA" ;
+	rdfs:label	"Laos" ,
+		"Lao People\u2019s Democratic Republic" .
+<http://sws.geonames.org/2029969/>	geonames:name	"Mongolia" ;
+	geonames:countryCode	"MN" ;
+	rdfs:label	"Mongolia" .
+<http://sws.geonames.org/1733045/>	geonames:name	"Malaysia" ;
+	geonames:countryCode	"MY" ;
+	rdfs:label	"Malaysia" .
+<http://sws.geonames.org/1282988/>	geonames:name	"Nepal" ,
+		"Kingdom of Nepal" ;
+	geonames:countryCode	"NP" ;
+	rdfs:label	"Kingdom of Nepal" ,
+		"Nepal" .
+<http://sws.geonames.org/2110425/>	geonames:name	"Naoero" ,
+		"Nauru" ;
+	geonames:countryCode	"NR" ;
+	rdfs:label	"Nauru" ,
+		"Naoero" .
+<http://sws.geonames.org/3277605/>	geonames:name	"Bosnia and Herzegovina" ;
+	geonames:countryCode	"BA" ;
+	rdfs:label	"Bosnia and Herzegovina" .
+<http://sws.geonames.org/49518/>	geonames:name	"Republic of Rwanda" ,
+		"Rwanda" ,
+		"R\u00E9publique du Rwanda" ;
+	geonames:countryCode	"RW" ;
+	rdfs:label	"Republic of Rwanda" ,
+		"Rwanda" ,
+		"R\u00E9publique du Rwanda" .
+<http://sws.geonames.org/99237/>	geonames:name	"Republic of Iraq" ,
+		"Iraq" ;
+	geonames:countryCode	"IQ" ;
+	rdfs:label	"Republic of Iraq" ,
+		"Iraq" .
+<http://sws.geonames.org/51537/>	geonames:name	"Somalia" ;
+	geonames:countryCode	"SO" ;
+	rdfs:label	"Somalia" .
+<http://sws.geonames.org/203312/>	geonames:name	"Democratic Republic of the Congo" ;
+	geonames:countryCode	"CD" ;
+	rdfs:label	"Democratic Republic of the Congo" .
+<http://sws.geonames.org/1668284/>	geonames:name	"Taiwan" ;
+	geonames:countryCode	"TW" ;
+	rdfs:label	"Taiwan" .
+<http://sws.geonames.org/2017370/>	geonames:name	"Russian Federation" ,
+		"Russia" ;
+	geonames:countryCode	"RU" ;
+	rdfs:label	"Russia" ,
+		"Russian Federation" .
+<http://sws.geonames.org/6252001/>	geonames:name	"United States" ;
+	geonames:countryCode	"US" ;
+	rdfs:label	"United States" .
+<http://sws.geonames.org/3164670/>	geonames:name	"Holy See" ,
+		"State of the Vatican City" ;
+	geonames:countryCode	"VA" ;
+	rdfs:label	"State of the Vatican City" ,
+		"Holy See" .
+<http://sws.geonames.org/3625428/>	geonames:name	"Republic of Venezuela" ,
+		"Bolivarian Republic of Venezuela" ;
+	geonames:countryCode	"VE" ;
+	rdfs:label	"Republic of Venezuela" ,
+		"Bolivarian Republic of Venezuela" .
+<http://sws.geonames.org/3382998/>	geonames:name	"Suriname" ,
+		"Republic of Suriname" ;
+	geonames:countryCode	"SR" ;
+	rdfs:label	"Suriname" ,
+		"Republic of Suriname" .
+<http://sws.geonames.org/2410758/>	geonames:name	"Sao Tome and Principe" ;
+	geonames:countryCode	"ST" ;
+	rdfs:label	"Sao Tome and Principe" .
+<http://sws.geonames.org/3575174/>	geonames:name	"Federation of Saint Kitts and Nevis" ,
+		"Saint Kitts and Nevis" ;
+	geonames:countryCode	"KN" ;
+	rdfs:label	"Saint Kitts and Nevis" ,
+		"Federation of Saint Kitts and Nevis" .
+<http://sws.geonames.org/7909807/>	geonames:name	"South Sudan" ;
+	geonames:countryCode	"SS" ;
+	rdfs:label	"South Sudan" .

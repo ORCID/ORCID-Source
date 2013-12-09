@@ -250,10 +250,10 @@ public class OrcidApiServiceDelegatorImpl implements OrcidApiServiceDelegator {
             for (OrcidSearchResult searchResult : searchResults) {
                 OrcidSearchResult filteredSearchResult = new OrcidSearchResult();
                 OrcidProfile filteredProfile = new OrcidProfile();
-                String retrievedOrcid = searchResult.getOrcidProfile().getOrcid().getValue();
                 filteredSearchResult.setRelevancyScore(searchResult.getRelevancyScore());
-                filteredProfile.setOrcid(retrievedOrcid);
+                filteredProfile.setOrcid(searchResult.getOrcidProfile().getOrcid());
                 filteredProfile.setOrcidId(searchResult.getOrcidProfile().getOrcidId());
+                filteredProfile.setOrcidIdentifier(searchResult.getOrcidProfile().getOrcidIdentifier());
                 filteredProfile.setOrcidBio(searchResult.getOrcidProfile().getOrcidBio());
                 filteredSearchResult.setOrcidProfile(filteredProfile);
                 filteredResults.add(filteredSearchResult);

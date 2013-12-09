@@ -20,10 +20,10 @@ import javax.ws.rs.Path;
 
 /**
  * 
- * @author Angel Montenegro
+ * @author Will Simpson
  * 
  */
-@Path("/v1.1.0")
-public class T2OrcidApiServiceImplV1_1_0 extends T2OrcidApiServiceImplBase {
+@Path("/v1.2_rc1")
+public class T2OrcidApiServiceImplV1_2_rc1 extends T2OrcidApiServiceImplBase {
 
 }

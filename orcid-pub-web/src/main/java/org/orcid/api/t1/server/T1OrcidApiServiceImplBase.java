@@ -37,6 +37,7 @@ import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Resource;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -48,7 +49,10 @@ import javax.ws.rs.core.UriInfo;
 
 import org.orcid.api.common.OrcidApiService;
 import org.orcid.api.common.delegator.OrcidApiServiceDelegator;
+import org.orcid.api.common.delegator.impl.OrcidApiServiceVersionedDelegatorImpl;
+import org.orcid.core.manager.impl.ValidationManagerImpl;
 import org.orcid.jaxb.model.message.OrcidMessage;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
 
 import com.yammer.metrics.Metrics;
@@ -59,7 +63,7 @@ import com.yammer.metrics.core.Counter;
  * 
  * @author Declan Newman (declan) Date: 01/03/2012
  */
-abstract public class T1OrcidApiServiceImplBase implements OrcidApiService<Response> {
+abstract public class T1OrcidApiServiceImplBase implements OrcidApiService<Response>, InitializingBean {
 
     @Value("${org.orcid.core.pubBaseUri:http://orcid.org}")
     private String pubBaseUri;
@@ -75,12 +79,54 @@ abstract public class T1OrcidApiServiceImplBase implements OrcidApiService<Respo
 
     private OrcidApiServiceDelegator orcidApiServiceDelegator;
 
+    /**
+     * Only used if service delegator is not set and this bean needs to
+     * configure one for itself.
+     */
+    private String externalVersion;
+
+    /**
+     * Only used if service delegator is not set and this bean needs to
+     * configure one for itself.
+     */
+    @Resource(name = "t1OrcidApiServiceDelegatorPrototype")
+    private OrcidApiServiceVersionedDelegatorImpl orcidApiServiceDelegatorPrototype;
+
+    // Base the RDF stuff on the root version of the API, because sits outside
+    // the versioning mechanism
+    @Resource(name = "t1OrcidApiServiceDelegatorLatest")
+    private OrcidApiServiceDelegator orcidApiServiceDelegatorLatest;
+
     public void setUriInfo(UriInfo uriInfo) {
         this.uriInfo = uriInfo;
     }
 
     public void setOrcidApiServiceDelegator(OrcidApiServiceDelegator orcidApiServiceDelegator) {
         this.orcidApiServiceDelegator = orcidApiServiceDelegator;
+    }
+
+    /**
+     * 
+     * @param externalVersion
+     *            The API schema version to use. Not needed if we are setting a
+     *            service delegator explicitly (and not relying on this bean to
+     *            configure one for itself).
+     */
+    public void setExternalVersion(String externalVersion) {
+        this.externalVersion = externalVersion;
+    }
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        // Automatically configure a service delegator, if one hasn't been set
+        if (orcidApiServiceDelegator == null && externalVersion != null) {
+            orcidApiServiceDelegatorPrototype.setExternalVersion(externalVersion);
+            ValidationManagerImpl outgoingValidationManagerImpl = new ValidationManagerImpl();
+            outgoingValidationManagerImpl.setVersion(externalVersion);
+            outgoingValidationManagerImpl.setValidateBibtex(false);
+            orcidApiServiceDelegatorPrototype.setOutgoingValidationManager(outgoingValidationManagerImpl);
+            orcidApiServiceDelegator = orcidApiServiceDelegatorPrototype;
+        }
     }
 
     /**
@@ -162,7 +208,7 @@ abstract public class T1OrcidApiServiceImplBase implements OrcidApiService<Respo
     @Path(EXPERIMENTAL_RDF_V1 + BIO_PATH)
     public Response viewBioDetailsRdf(@PathParam("orcid") String orcid) {
         T1_GET_REQUESTS.inc();
-        return orcidApiServiceDelegator.findBioDetails(orcid);
+        return orcidApiServiceDelegatorLatest.findBioDetails(orcid);
     }
 
     /**
@@ -199,7 +245,7 @@ abstract public class T1OrcidApiServiceImplBase implements OrcidApiService<Respo
     @Path(EXPERIMENTAL_RDF_V1 + BIO_PATH)
     public Response viewBioDetailsTurtle(@PathParam("orcid") String orcid) {
         T1_GET_REQUESTS.inc();
-        return orcidApiServiceDelegator.findBioDetails(orcid);
+        return orcidApiServiceDelegatorLatest.findBioDetails(orcid);
     }
 
     /**
@@ -318,10 +364,10 @@ abstract public class T1OrcidApiServiceImplBase implements OrcidApiService<Respo
         T1_GET_REQUESTS.inc();
         return orcidApiServiceDelegator.findFullDetailsFromPublicCache(orcid);
     }
-    
+
     /**
-     * GETs the HTML representation of the ORCID record containing only affiliation
-     * details
+     * GETs the HTML representation of the ORCID record containing only
+     * affiliation details
      * 
      * @param orcid
      *            the ORCID that corresponds to the user's record
@@ -338,8 +384,8 @@ abstract public class T1OrcidApiServiceImplBase implements OrcidApiService<Respo
     }
 
     /**
-     * GETs the XML representation of the ORCID record containing only affiliation
-     * details
+     * GETs the XML representation of the ORCID record containing only
+     * affiliation details
      * 
      * @param orcid
      *            the ORCID that corresponds to the user's record
@@ -354,8 +400,8 @@ abstract public class T1OrcidApiServiceImplBase implements OrcidApiService<Respo
     }
 
     /**
-     * GETs the JSON representation of the ORCID record containing only affiliation
-     * details
+     * GETs the JSON representation of the ORCID record containing only
+     * affiliation details
      * 
      * @param orcid
      *            the ORCID that corresponds to the user's record
@@ -369,7 +415,6 @@ abstract public class T1OrcidApiServiceImplBase implements OrcidApiService<Respo
         T1_GET_REQUESTS.inc();
         return orcidApiServiceDelegator.findAffiliationsDetailsFromPublicCache(orcid);
     }
-
 
     /**
      * GETs the HTML representation of the ORCID record containing only work

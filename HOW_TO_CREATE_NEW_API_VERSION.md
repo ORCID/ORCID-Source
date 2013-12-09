@@ -16,11 +16,11 @@ You may want to point these aliases to your new version.
 
 Look for existing service and delegator beans in orcid-t1-web-context.xml. For example, t1OrcidApiServiceImplV1_0_15 and t1OrcidApiServiceDelegatorV1_0_15.
 
-Create new bean definitions for your new API version.
+Create new bean definitions for your new API version, similar to existing ones.
 
-Also, there is a bean alias for the latest API version (serviced on the root URL) called t1OrcidApiServiceDelegatorLatest.
+If you want your new API version to be served on the root URL, then update t1OrcidApiServiceImplRoot to point to your service delegator.
 
-You may want to point the alias to your new version.
+Also, there is a bean alias for the latest service delegator (used internally) called t1OrcidApiServiceDelegatorLatest. You should to point the alias to your new version.
 
 Create a new class for your new API version. See existing classes, such as T1OrcidApiServiceImplV1_0_15.
 
@@ -30,9 +30,11 @@ You now have a new version of the public API configured!
 
 Look for existing service and delegator beans in orcid-t2-web-context.xml. For example, t2OrcidApiServiceImplV1_0_15 and t2OrcidApiServiceDelegatorV1_0_15.
 
-Create new bean definitions for your new API version.
+Create new bean definitions for your new API version, similar to existing ones.
 
-There is also a bean definition for the delegator for the latest API version (served on the root URL) called t2OrcidApiServiceDelegatorLatest. You may want to update the externalVersion property to be your new API version number.
+If you want your new API version to be served on the root URL, then update t2OrcidApiServiceImplRoot to point to your service delegator.
+
+There is also a bean definition for the latest service delegator (used internally) called t2OrcidApiServiceDelegatorLatest. You should update the externalVersion property to be your new API version number.
 
 Create a new class for your API version. See existing classes such as T2OrcidApiServiceImplV1_0_15.
 

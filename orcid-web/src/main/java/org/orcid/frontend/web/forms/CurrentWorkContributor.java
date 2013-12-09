@@ -43,7 +43,7 @@ public class CurrentWorkContributor {
     public CurrentWorkContributor(Contributor contributor) {
         ContributorOrcid contributorOrcid = contributor.getContributorOrcid();
         if (contributorOrcid != null) {
-            orcid = contributorOrcid.getValue();
+            orcid = contributorOrcid.getPath();
         }
         if (contributor != null && contributor.getCreditName() != null) {
             creditName = contributor.getCreditName().getContent();

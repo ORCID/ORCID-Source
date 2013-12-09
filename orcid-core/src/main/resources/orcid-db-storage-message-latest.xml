@@ -18,9 +18,9 @@
 
 -->
 <orcid-message xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-               xsi:schemaLocation="http://www.orcid.org/ns/orcid ../../../../orcid-model/src/main/resources/orcid-message-1.0.22.xsd"
+               xsi:schemaLocation="http://www.orcid.org/ns/orcid ../../../../orcid-model/src/main/resources/orcid-message-1.2_rc1.xsd"
                xmlns="http://www.orcid.org/ns/orcid">
-    <message-version>1.0.22</message-version>
+    <message-version>1.2_rc1</message-version>
     <!-- Error message, if applicable -->
     <!-- Unable to connect to ORCID, no matching researchers, etc. -->
     <!-- <error-desc>No researcher found.</error-desc> -->
@@ -34,7 +34,11 @@
             <!-- The name of the institution that invited the researcher to register
                    with ORCID -->
             <source>
-                <source-orcid>8888-8888-8888-8880</source-orcid>
+                <source-orcid>
+                    <uri>http://orcid.org/8888-8888-8888-8880</uri>
+                    <path>8888-8888-8888-8880</path>
+                    <host>orcid.org</host>
+                </source-orcid>
                 <source-name>Brown University Library</source-name>
             </source>
         </orcid-history>
@@ -62,7 +66,11 @@
             </contact-details>
             <external-identifiers visibility="public">
                 <external-identifier>
-                    <external-id-orcid>8888-8888-8888-8880</external-id-orcid>
+                    <external-id-orcid>
+                        <uri>http://orcid.org/8888-8888-8888-8880</uri>
+                        <path>8888-8888-8888-8880</path>
+                        <host>orcid.org</host>
+                    </external-id-orcid>
                     <external-id-common-name>Facebook</external-id-common-name>
                     <external-id-reference>d3clan</external-id-reference>
                     <external-id-url>http://www.facebook.com/d3clan</external-id-url>
@@ -72,13 +80,7 @@
         <orcid-activities>
             <affiliations>
                 <affiliation>
-                    <name>Brown University</name>
                     <type>employment</type>
-                    <address>
-                        <city>Providence</city>
-                        <region>RI</region>
-                        <country>US</country>
-                    </address>
                     <department-name>Psychoceramics</department-name>
                     <role-title>Researcher (Academic)</role-title>
                     <start-date>
@@ -91,15 +93,17 @@
                         <month>01</month>
                         <day>01</day>
                     </end-date>
+                    <organization>
+                        <name>Brown University</name>
+	                    <address>
+	                        <city>Providence</city>
+	                        <region>RI</region>
+	                        <country>US</country>
+	                    </address>
+                    </organization>
                 </affiliation>
                 <affiliation>
-                    <name>Staffordshire University</name>
                     <type>employment</type>
-                    <address>
-                        <city>Stoke-on-Trent</city>
-                        <region>Staffordshire</region>
-                        <country>GB</country>
-                    </address>
                     <department-name>Psychoceramics</department-name>
                     <role-title>Researcher (Academic)</role-title>
                     <start-date>
@@ -112,15 +116,17 @@
                         <month>01</month>
                         <day>01</day>
                     </end-date>
+                    <organization>
+	                    <name>Staffordshire University</name>
+	                    <address>
+	                        <city>Stoke-on-Trent</city>
+	                        <region>Staffordshire</region>
+	                        <country>GB</country>
+	                    </address>
+                    </organization>
                 </affiliation>
                 <affiliation>
-                    <name>Jiangxi Normal University (JXNU)</name>
                     <type>employment</type>
-                    <address>
-                        <city>Nanchang</city>
-                        <region>Jiangxi</region>
-                        <country>CH</country>
-                    </address>
                     <department-name>Ancient Psychoceramics</department-name>
                     <role-title>Researcher (Academic)</role-title>
                     <start-date>
@@ -133,15 +139,17 @@
                         <month>01</month>
                         <day>01</day>
                     </end-date>
+                    <organization>
+	                    <name>Jiangxi Normal University (JXNU)</name>
+	                    <address>
+	                        <city>Nanchang</city>
+	                        <region>Jiangxi</region>
+	                        <country>CH</country>
+	                    </address>
+                    </organization>
                 </affiliation>
                 <affiliation>
-                    <name>Bowdoin College</name>
                     <type>employment</type>
-                    <address>
-                        <city>Brunswick</city>
-                        <region>ME</region>
-                        <country>US</country>
-                    </address>
                     <department-name>Psychoceramics</department-name>
                     <role-title>Researcher (Academic)</role-title>
                     <start-date>
@@ -154,15 +162,17 @@
                         <month>01</month>
                         <day>01</day>
                     </end-date>
+                    <organization>
+	                    <name>Bowdoin College</name>
+	                    <address>
+	                        <city>Brunswick</city>
+	                        <region>ME</region>
+	                        <country>US</country>
+	                    </address>
+                    </organization>
                 </affiliation>
                 <affiliation>
-                    <name>Universtät Wien</name>
                     <type>employment</type>
-                    <address>
-                        <city>Vienna</city>
-                        <region>Vienna</region>
-                        <country>AT</country>
-                    </address>
                     <department-name>Psychoceramics</department-name>
                     <role-title>Researcher (Academic)</role-title>
                     <start-date>
@@ -175,6 +185,14 @@
                         <month>01</month>
                         <day>01</day>
                     </end-date>
+                    <organization>
+	                    <name>Universtät Wien</name>
+	                    <address>
+	                        <city>Vienna</city>
+	                        <region>Vienna</region>
+	                        <country>AT</country>
+	                    </address>
+                    </organization>
                 </affiliation>
             </affiliations>
             <orcid-works>
@@ -187,7 +205,11 @@
                     </publication-date>
                     <work-contributors>
                         <contributor>
-                            <contributor-orcid>4444-4444-4444-4449</contributor-orcid>
+                            <contributor-orcid>
+                                <uri>http://orcid.org/4444-4444-4444-4449</uri>
+                                <path>4444-4444-4444-4449</path>
+                                <host>orcid.org</host>
+                            </contributor-orcid>
                             <contributor-email>josiah_carberry@brown.edu</contributor-email>
                             <contributor-attributes>
                                 <contributor-sequence>first</contributor-sequence>

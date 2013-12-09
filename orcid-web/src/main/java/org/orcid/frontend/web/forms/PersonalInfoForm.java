@@ -30,6 +30,7 @@ import org.orcid.jaxb.model.message.GivenNames;
 import org.orcid.jaxb.model.message.Keyword;
 import org.orcid.jaxb.model.message.Keywords;
 import org.orcid.jaxb.model.message.OrcidBio;
+import org.orcid.jaxb.model.message.OrcidIdentifier;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OtherName;
 import org.orcid.jaxb.model.message.OtherNames;
@@ -177,7 +178,7 @@ public class PersonalInfoForm {
 
     public OrcidProfile getOrcidProfile() {
         OrcidProfile profile = new OrcidProfile();
-        profile.setOrcid(orcid);
+        profile.setOrcidIdentifier(new OrcidIdentifier(orcid));
         OrcidBio bio = new OrcidBio();
         profile.setOrcidBio(bio);
         PersonalDetails personalDetails = new PersonalDetails();

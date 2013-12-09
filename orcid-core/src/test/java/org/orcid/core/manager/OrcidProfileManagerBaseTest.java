@@ -28,8 +28,6 @@ import org.mockito.Mock;
 import org.orcid.core.BaseTest;
 import org.orcid.core.manager.impl.OrcidProfileManagerImpl;
 import org.orcid.jaxb.model.message.Affiliation;
-import org.orcid.jaxb.model.message.AffiliationAddress;
-import org.orcid.jaxb.model.message.AffiliationCountry;
 import org.orcid.jaxb.model.message.AffiliationType;
 import org.orcid.jaxb.model.message.Biography;
 import org.orcid.jaxb.model.message.ContactDetails;
@@ -49,6 +47,8 @@ import org.orcid.jaxb.model.message.OrcidInternal;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidWork;
 import org.orcid.jaxb.model.message.OrcidWorks;
+import org.orcid.jaxb.model.message.Organization;
+import org.orcid.jaxb.model.message.OrganizationAddress;
 import org.orcid.jaxb.model.message.PersonalDetails;
 import org.orcid.jaxb.model.message.Preferences;
 import org.orcid.jaxb.model.message.ResearcherUrl;
@@ -65,7 +65,6 @@ import org.orcid.jaxb.model.message.WorkExternalIdentifier;
 import org.orcid.jaxb.model.message.WorkExternalIdentifierId;
 import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
 import org.orcid.jaxb.model.message.WorkExternalIdentifiers;
-import org.orcid.jaxb.model.message.WorkSource;
 import org.orcid.jaxb.model.message.WorkTitle;
 import org.orcid.persistence.dao.ClientDetailsDao;
 import org.orcid.persistence.dao.GenericDao;
@@ -159,7 +158,7 @@ public class OrcidProfileManagerBaseTest extends BaseTest {
         profile.setVerificationCode("1234");
         profile.setSecurityQuestionAnswer("random answer");
 
-        profile.setOrcid(TEST_ORCID);
+        profile.setOrcidIdentifier(TEST_ORCID);
         OrcidBio bio = new OrcidBio();
         ContactDetails contactDetails = new ContactDetails();
         contactDetails.addOrReplacePrimaryEmail(new Email("will@semantico.com"));
@@ -305,7 +304,6 @@ public class OrcidProfileManagerBaseTest extends BaseTest {
         orcidWork.setWorkTitle(title);
         orcidWork.setWorkExternalIdentifiers(workExternalIdentifiers);
         orcidWork.setWorkContributors(workContributors);
-        orcidWork.setWorkSource(new WorkSource(WorkSource.NULL_SOURCE_PROFILE));
         return orcidWork;
     }
 
@@ -316,13 +314,15 @@ public class OrcidProfileManagerBaseTest extends BaseTest {
         Affiliation affiliation = new Affiliation();
         affiliation.setStartDate(new FuzzyDate(calendar.getYear(), calendar.getMonth(), calendar.getDay()));
         affiliation.setEndDate(new FuzzyDate(calendar.getYear(), calendar.getMonth(), calendar.getDay()));
-        affiliation.setAffiliationType(AffiliationType.EDUCATION);
-        affiliation.setAffiliationName("Past Institution");
+        affiliation.setType(AffiliationType.EDUCATION);
         affiliation.setRoleTitle("A Role");
         affiliation.setDepartmentName("A Department");
-        AffiliationAddress address = new AffiliationAddress();
-        address.setAffiliationCountry(new AffiliationCountry(Iso3166Country.GB));
-        affiliation.setAffiliationAddress(address);
+        Organization organization = new Organization();
+        affiliation.setOrganization(organization);
+        organization.setName("Past Institution");
+        OrganizationAddress address = new OrganizationAddress();
+        address.setCountry(Iso3166Country.GB);
+        organization.setAddress(address);
         return affiliation;
     }
 

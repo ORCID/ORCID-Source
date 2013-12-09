@@ -23,6 +23,7 @@ import org.apache.commons.lang.StringUtils;
 import org.orcid.core.manager.OrcidProfileCleaner;
 import org.orcid.core.tree.TreeCleaner;
 import org.orcid.core.tree.TreeCleaningStrategy;
+import org.orcid.jaxb.model.message.OrcidIdBase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,7 +42,7 @@ public class OrcidProfileCleanerImpl implements OrcidProfileCleaner, TreeCleanin
         if (obj == null) {
             return false;
         }
-        return hasBlankProperty(obj, "content") || hasBlankProperty(obj, "value");
+        return hasBlankProperty(obj, "content") || (hasBlankProperty(obj, "value") && !(obj instanceof OrcidIdBase));
     }
 
     private boolean hasBlankProperty(Object obj, String propertyName) {

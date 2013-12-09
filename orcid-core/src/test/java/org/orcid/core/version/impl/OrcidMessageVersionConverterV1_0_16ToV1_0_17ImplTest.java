@@ -16,14 +16,14 @@
  */
 package org.orcid.core.version.impl;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import java.io.InputStreamReader;
 import java.io.Reader;
 
 import org.junit.Test;
 import org.orcid.core.version.OrcidMessageVersionConverter;
-import org.orcid.core.version.impl.OrcidMessageVersionConverterImplV1_0_15ToV1_0_16;
 import org.orcid.jaxb.model.message.OrcidMessage;
 
 /**

@@ -51,7 +51,7 @@ orcidNgModule.factory("affiliationsSrvc", ['$rootScope', function ($rootScope) {
 			loading: false,
 			affiliationsToAddIds: null,
 	    	addAffiliationToScope: function(path) {
-	    		if(serv.affiliationsToAddIds.length != 0 ) {
+	    		if( serv.affiliationsToAddIds.length != 0 ) {
 	    			var affiliationIds = serv.affiliationsToAddIds.splice(0,20).join();
 	    			$.ajax({
 	    				url: $('body').data('baseurl') + path + '?affiliationIds=' + affiliationIds,
@@ -67,15 +67,21 @@ orcidNgModule.factory("affiliationsSrvc", ['$rootScope', function ($rootScope) {
 	    							else
 	    								serv.affiliations.push(data[i]);
 	    						};
-	    					setTimeout(function () {serv.addAffiliationToScope(path);},50);
+	    						if (serv.affiliationsToAddIds.length == 0) {
+	    							serv.loading = false;
+	    							$rootScope.$apply();
+	    						} else {
+	    							$rootScope.$apply();
+	    					    	setTimeout(function () {
+	    					    		serv.addAffiliationToScope(path);
+	    					    	},50);	    							
+	    						}
 	    				}
 	    			}).fail(function() { 
 	    		    	console.log("Error fetching affiliation: " + value);
 	    		    });
 	    		} else {
-	    			$rootScope.$apply( function() {
-	    				serv.loading = false;
-	    			});
+	    			serv.loading = false;
 	    		};
 	    	},
 	    	setIdsToAdd: function(ids) {
@@ -154,6 +160,48 @@ orcidNgModule.factory("affiliationsSrvc", ['$rootScope', function ($rootScope) {
 	return serv;
 }]);
 
+orcidNgModule.factory("workspaceSrvc", ['$rootScope', function ($rootScope) {
+	var serv = {
+			displayAffiliations: true,
+			displayEducation: true,
+			displayEmployment: true,
+			displayPersonalInfo: true,
+			displayWorks: true,
+			toggleAffiliations: function() {
+				displayAffiliations = !displayAffiliations;
+			},
+			toggleEducation: function() {
+				serv.displayEducation = !serv.displayEducation;
+			},
+			toggleEmployment: function() {
+				serv.displayEmployment = !serv.displayEmployment;
+			},
+			togglePersonalInfo: function() {
+				serv.displayPersonalInfo = !serv.displayPersonalInfo;
+			},
+			toggleWorks: function() {
+				serv.displayWorks = !serv.displayWorks;
+			},
+			openAffiliations: function() {
+				serv.displayAffiliations = true;
+			},
+			openEducation: function() {
+				serv.displayEducation = true;
+			},
+			openEmployment: function() {
+				serv.displayEmployment = true;
+			},
+			openPersonalInfo: function() {
+				serv.displayPersonalInfo = true;
+			},
+			openWorks: function() {
+				serv.displayWorks = true;
+			}
+	}; 
+	return serv;
+}]);
+
+
 orcidNgModule.factory("worksSrvc", function () {
 	var serv = {
 		    loading: false,
@@ -226,10 +274,12 @@ function formColorBoxResize() {
 }
 
 function fixZindexIE7(target, zindex){
-	$(target).each(function(){
-		$(this).css('z-index', zindex);		
-		--zindex;    			    		
-	});
+	if(isIE() == 7){
+		$(target).each(function(){
+			$(this).css('z-index', zindex);		
+			--zindex;    			    		
+		});
+	}
 }
 
 function emptyTextField(field) {
@@ -280,7 +330,7 @@ orcidNgModule.filter('workExternalIdentifierHtml', function(){
 
 
 function addBibtexCitation($scope, dw) {
-	if (dw.citation && dw.citation.citationType.value == 'bibtex') {
+	if (dw.citation && dw.citation.citationType && dw.citation.citationType.value == 'bibtex') {
 		try {
 			$scope.bibtexCitations[dw.putCode.value] = bibtexParse.toJSON(dw.citation.citation.value);
 		} catch (err) {
@@ -346,10 +396,9 @@ function EditTableCtrl($scope) {
 		$scope.deactivateUpdateToggleText();
 	};
 	
-	$scope.fixIE7zIndexes = function() {
+	$scope.fixIE7zIndexes = function() {		
 		fixZindexIE7('tr', 999999);
 		fixZindexIE7('#privacy-settings', 5000);
-		console.log('Fixes applied');
 	};
 	
 	// init deactivate and Z-Indexes Fix
@@ -525,9 +574,9 @@ function PasswordEditCtrl($scope, $http) {
 	
 	$scope.getChangePassword();
 	
-	$scope.zIndexfixIE7 = function(){
+	$scope.zIndexfixIE7 = function(){		
 		fixZindexIE7('#password-edit', 999999);
-		fixZindexIE7('#password-edit .relative', 99999);
+		fixZindexIE7('#password-edit .relative', 99999);		
 	};
 	
 	$scope.saveChangePassword = function() {
@@ -588,13 +637,13 @@ function EmailEditCtrl($scope, $compile) {
 		$scope.saveEmail();
 	};
 	
-	$scope.fixZindexesIE7 =  function(){
+	$scope.fixZindexesIE7 =  function(){		
 	    fixZindexIE7('.popover',2000);
 	    fixZindexIE7('.popover-help-container',3000);
 	    fixZindexIE7('#privacy-bar',500);
 	    fixZindexIE7('.emailVisibility',5000);
 	    fixZindexIE7('.col-md-3', 6000);
-	    fixZindexIE7('.row', 7000);	  
+	    fixZindexIE7('.row', 7000);	
 	};
 	
 	$scope.toggleVisibility = function(idx) {
@@ -766,8 +815,6 @@ function ExternalIdentifierCtrl($scope, $compile){
 	
 	$scope.removeExternalIdentifier = function() {
 		var externalIdentifier = $scope.externalIdentifiersPojo.externalIdentifiers[$scope.removeExternalIdentifierIndex];
-		$scope.externalIdentifiersPojo.externalIdentifiers.splice($scope.removeExternalIdentifierIndex, 1);
-		$scope.removeExternalIdentifierIndex = null;
 		$.ajax({
 	        url: $('body').data('baseurl') + 'my-orcid/externalIdentifiers.json',
 	        type: 'DELETE',
@@ -777,7 +824,11 @@ function ExternalIdentifierCtrl($scope, $compile){
 	        success: function(data) {	        	
 	        	if(data.errors.length != 0){
 	        		console.log("Unable to delete external identifier.");
-	        	} 
+	        	} else {
+	    	    	$scope.externalIdentifiersPojo.externalIdentifiers.splice($scope.removeExternalIdentifierIndex, 1);
+	    		    $scope.removeExternalIdentifierIndex = null;
+	    		    $scope.$apply();
+	        	}
 	        }
 	    }).fail(function() { 
 	    	console.log("Error deleting external identifier.");
@@ -1272,14 +1323,15 @@ function ClaimThanks($scope, $compile) {
 	
 };
 
-function PersonalInfoCtrl($scope, $compile){
-	$scope.displayInfo = true;
+function PersonalInfoCtrl($scope, $compile, workspaceSrvc){
+	$scope.displayInfo = workspaceSrvc.displayPersonalInfo;
 	$scope.toggleDisplayInfo = function () {
 		$scope.displayInfo = !$scope.displayInfo;
 	};
 };
 
-function WorkspaceSummaryCtrl($scope, $compile, affiliationsSrvc, worksSrvc){
+function WorkspaceSummaryCtrl($scope, $compile, affiliationsSrvc, worksSrvc, workspaceSrvc){
+	$scope.workspaceSrvc = workspaceSrvc;
 	$scope.worksSrvc = worksSrvc;
 	$scope.affiliationsSrvc = affiliationsSrvc;
 	$scope.showAddAlert = function () {
@@ -1289,7 +1341,7 @@ function WorkspaceSummaryCtrl($scope, $compile, affiliationsSrvc, worksSrvc){
 				&& affiliationsSrvc.employments.length == 0)
 			return true;
 		return false;
-	};
+	};	
 }
 
 function PublicEduAffiliation($scope, $compile, $filter, affiliationsSrvc){
@@ -1303,23 +1355,10 @@ function PublicEmpAffiliation($scope, $compile, $filter, affiliationsSrvc){
 }
 
 
-function AffiliationCtrl($scope, $compile, $filter, affiliationsSrvc){
+function AffiliationCtrl($scope, $compile, $filter, affiliationsSrvc, workspaceSrvc){
 	$scope.affiliationsSrvc = affiliationsSrvc;
-	$scope.displayAffiliations = true;
-	$scope.displayEducation = true;
-	$scope.displayEmployment = true;
-	
-	$scope.toggleDisplayEducation = function () {
-		$scope.displayEducation = !$scope.displayEducation;
-	};	
-
-	$scope.toggleDisplayEmployment = function () {
-		$scope.displayEmployment = !$scope.displayEmployment;
-	};	
-
-	$scope.toggleDisplayAffiliations = function () {
-		$scope.displayAffiliations = !$scope.displayAffiliations;
-	};	
+	$scope.workspaceSrvc = workspaceSrvc;
+	$scope.editAffiliation;
 
 	$scope.showAddModal = function(){
 		var numOfResults = 25;
@@ -1369,13 +1408,15 @@ function AffiliationCtrl($scope, $compile, $filter, affiliationsSrvc){
 	};
 	
 	$scope.selectAffiliation = function(datum) {
-		$scope.editAffiliation.affiliationName.value = datum.value;
-		$scope.editAffiliation.city.value = datum.city;
-		$scope.editAffiliation.region.value = datum.region;
-		$scope.editAffiliation.country.value = datum.country;
-		if (datum.disambiguatedAffiliationIdentifier != undefined && datum.disambiguatedAffiliationIdentifier != null) {
-			$scope.getDisambiguatedAffiliation(datum.disambiguatedAffiliationIdentifier);
-			$scope.unbindTypeahead();
+		if (datum != undefined && datum != null) {
+			$scope.editAffiliation.affiliationName.value = datum.value;
+			$scope.editAffiliation.city.value = datum.city;
+			$scope.editAffiliation.region.value = datum.region;
+			$scope.editAffiliation.country.value = datum.country;
+			if (datum.disambiguatedAffiliationIdentifier != undefined && datum.disambiguatedAffiliationIdentifier != null) {
+				$scope.getDisambiguatedAffiliation(datum.disambiguatedAffiliationIdentifier);
+				$scope.unbindTypeahead();
+			}
 		}
 	};
 	
@@ -1400,11 +1441,12 @@ function AffiliationCtrl($scope, $compile, $filter, affiliationsSrvc){
 	
 	$scope.removeDisambiguatedAffiliation = function() {
 		$scope.bindTypeahead();
-		delete $scope.disambiguatedAffiliation;
-		delete $scope.editAffiliation.disambiguatedAffiliationSourceId;
+		if ($scope.disambiguatedAffiliation != undefined) delete $scope.disambiguatedAffiliation;
+		if ($scope.editAffiliation != undefined && $scope.editAffiliation.disambiguatedAffiliationSourceId != undefined) delete $scope.editAffiliation.disambiguatedAffiliationSourceId;
 	};
 
 	$scope.addAffiliationModal = function(type){
+		$scope.removeDisambiguatedAffiliation();
 		$scope.addAffType = type;
 		$.ajax({
 			url: $('body').data('baseurl') + 'affiliations/affiliation.json',
@@ -1535,7 +1577,9 @@ function PublicWorkCtrl($scope, $compile, worksSrvc) {
 	$scope.works = worksSrvc.works;
 	$scope.worksSrvc = worksSrvc;
 	$scope.showBibtex = true;
+	$scope.loadingInfo = false;
 	$scope.bibtexCitations = {};
+	$scope.worksInfo = {};
 
     $scope.bibtexShowToggle = function () {
     	$scope.showBibtex = !($scope.showBibtex);
@@ -1557,7 +1601,17 @@ function PublicWorkCtrl($scope, $compile, worksSrvc) {
 							$scope.works.push(dw);
 						}
 					});
-					setTimeout(function () {$scope.addWorkToScope();},50);
+					if($scope.worksToAddIds.length == 0 ) {
+						$scope.worksSrvc.loading = false;
+						$scope.$apply();					
+						fixZindexIE7('.workspace-public workspace-body-list li',99999);
+						fixZindexIE7('.workspace-toolbar',9999);						
+					} else {
+						$scope.$apply();					
+						setTimeout(function(){
+							$scope.addWorkToScope();
+						},50);
+					}
 				}
 			}).fail(function() { 
 				$scope.$apply(function() {
@@ -1566,38 +1620,68 @@ function PublicWorkCtrl($scope, $compile, worksSrvc) {
 		    	console.log("Error fetching works: " + workIds);
 		    });
 		} else {
-			$scope.$apply(function () {
-				$scope.worksSrvc.loading = false;
-			});
+			$scope.worksSrvc.loading = false;
 		}
 	};     
 	  
-	$scope.renderTranslatedTitleInfo = function(workIdx) {
+	$scope.renderTranslatedTitleInfo = function(putCode) {		
 		var info = null; 
 		
-		if($scope.works[workIdx].workTitle != null && $scope.works[workIdx].workTitle.translatedTitle != null) {
-			info = $scope.works[workIdx].workTitle.translatedTitle.content + ' - ' + $scope.works[workIdx].workTitle.translatedTitle.languageName;										
-		}
+		if(putCode != null && $scope.worksInfo[putCode] != null && $scope.worksInfo[putCode].workTitle != null && $scope.worksInfo[putCode].workTitle.translatedTitle != null) {
+			info = $scope.worksInfo[putCode].workTitle.translatedTitle.content + ' - ' + $scope.worksInfo[putCode].workTitle.translatedTitle.languageName;										
+		}		
 		
 		return info;
 	};
 		
 	$scope.worksToAddIds = orcidVar.workIds;	
-	$scope.addWorkToScope();	
+	$scope.addWorkToScope();
+	
+	$scope.loadWorkInfo = function(putCode, event) {
+		//Close any open popover
+		$scope.closePopover(event);
+		//Display the popover
+		$scope.loadingInfo = true;
+		$(event.target).next().css('display','inline');		
+		if($scope.worksInfo[putCode] == null) {		
+			$.ajax({
+				url: $('body').data('baseurl') + orcidVar.orcidId + '/getWorkInfo.json?workId=' + putCode,	        
+		        dataType: 'json',
+		        success: function(data) {		        	
+		        	$scope.$apply(function () {
+		        		removeBadContributors(data);
+						addBibtexCitation($scope,data);
+						$scope.worksInfo[putCode] = data;
+						$scope.loadingInfo = false;
+		        	});		        	
+		        }
+			}).fail(function(){
+				// something bad is happening!
+		    	console.log("error fetching works");
+		    	$(event.target).next().css('display','none');	
+		    	$scope.loadingInfo = false;
+			});
+		} else {
+			$(event.target).next().css('display','inline');
+			$scope.loadingInfo = false;
+		}
+	};			
+	
+	$scope.closePopover = function(event) {
+		$('.work-more-info-container').css('display', 'none');
+	};
 }
 
-function WorkCtrl($scope, $compile, worksSrvc) {
-	$scope.displayWorks = true;
+function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
+	$scope.workspaceSrvc = workspaceSrvc;
 	$scope.worksSrvc = worksSrvc;
 	$scope.works = worksSrvc.works;
 	$scope.showBibtex = true;
+	$scope.loadingInfo = false;
 	$scope.bibtexCitations = {};
 	$scope.editTranslatedTitle = false;
 	$scope.types = null;
-	
-	$scope.toggleDisplayWorks = function () {
-		$scope.displayWorks = !$scope.displayWorks;
-	};	
+	$scope.worksInfo = {};
 	
 	$scope.addExternalIdentifier = function () {
 		$scope.editWork.workExternalIdentifiers.push({workExternalIdentifierId: { value: ""}, workExternalIdentifierType: {value: ""} });
@@ -1627,8 +1711,6 @@ function WorkCtrl($scope, $compile, worksSrvc) {
     	$scope.showBibtex = !($scope.showBibtex);
     };
     
-    //setTimeout(function() {$scope.showDetailModal(0); $scope.$apply();}, 1000);
-
 	$scope.showWorkImportWizard =  function() {
 		$.colorbox({        	            
             html : $compile($('#import-wizard-modal').html())($scope),
@@ -1682,11 +1764,14 @@ function WorkCtrl($scope, $compile, worksSrvc) {
 	};
 	
 	$scope.validateCitation = function() {
-		if ($scope.editWork.citation && $scope.editWork.citation.citationType.value == 'bibtex') {
+		if ($scope.editWork.citation
+				&& $scope.editWork.citation.citation.value
+				&& $scope.editWork.citation.citation.value.length > 0
+				&& $scope.editWork.citation.citationType.value == 'bibtex') {
 			try {
 				var parsed = bibtexParse.toJSON($scope.editWork.citation.citation.value);
 				console.log(parsed);
-				if (parsed.length == 0) throw "bibtex parse returne nothing";
+				if (parsed.length == 0) throw "bibtex parse return nothing";
 				var index = $scope.editWork.citation.citation.errors.indexOf(om.get('manualWork.bibtext.notValid'));
 				if (index > -1) {
 					$scope.editWork.citation.citation.errors.splice(index, 1);
@@ -1707,29 +1792,28 @@ function WorkCtrl($scope, $compile, worksSrvc) {
 				success: function(data) {
 					$scope.$apply(function(){ 
 						for (i in data) {
-							var dw = data[i];
-                            
-							removeBadContributors(dw);
-							
-							addBibtexCitation($scope,dw);
-							
+							var dw = data[i];													
 							$scope.works.push(dw);
 						}
 					});
-					setTimeout(function () {$scope.addWorkToScope();},50);
+					if($scope.worksToAddIds.length == 0 ) {
+						$scope.worksSrvc.loading = false;
+						$scope.$apply();
+						fixZindexIE7('.workspace-toolbar', 999999);
+						fixZindexIE7('.workspace-private-toolbar', 500);
+						fixZindexIE7('#privacy-bar', 400);						
+					} else {
+						$scope.$apply();
+						setTimeout(function () {
+							$scope.addWorkToScope(); 
+						},50);
+					}
 				}
 			}).fail(function() { 
 		    	console.log("Error fetching work: " + value);
 		    });
-		}else {
-			$scope.$apply(function() {
-				$scope.worksSrvc.loading = false;
-			});
-			if(isIE() == 7){
-				fixZindexIE7('.workspace-toolbar', 999999);
-				fixZindexIE7('.workspace-private-toolbar', 500);
-				fixZindexIE7('#privacy-bar', 400);
-			}
+		} else {
+			$scope.worksSrvc.loading = false;
 		}
 	}; 	
 
@@ -1754,11 +1838,11 @@ function WorkCtrl($scope, $compile, worksSrvc) {
 	};
 		
 	
-	$scope.renderTranslatedTitleInfo = function(workIdx) {		
+	$scope.renderTranslatedTitleInfo = function(putCode) {		
 		var info = null; 
 		
-		if($scope.works[workIdx].workTitle != null && $scope.works[workIdx].workTitle.translatedTitle != null) {
-			info = $scope.works[workIdx].workTitle.translatedTitle.content + ' - ' + $scope.works[workIdx].workTitle.translatedTitle.languageName;										
+		if(putCode != null && $scope.worksInfo[putCode] != null && $scope.worksInfo[putCode].workTitle != null && $scope.worksInfo[putCode].workTitle.translatedTitle != null) {
+			info = $scope.worksInfo[putCode].workTitle.translatedTitle.content + ' - ' + $scope.worksInfo[putCode].workTitle.translatedTitle.languageName;										
 		}		
 		
 		return info;
@@ -1766,6 +1850,40 @@ function WorkCtrl($scope, $compile, worksSrvc) {
 		
 	//init
 	$scope.getWorks();	
+	
+	$scope.loadWorkInfo = function(putCode, event) {
+		//Close any open popover
+		$scope.closePopover(event);
+		//Display the popover
+		$scope.loadingInfo = true;		
+		$(event.target).next().css('display','inline');	
+		if($scope.worksInfo[putCode] == null) {		
+			$.ajax({
+				url: $('body').data('baseurl') + 'works/getWorkInfo.json?workId=' + putCode,	        
+		        dataType: 'json',
+		        success: function(data) {
+		        	
+		        	$scope.$apply(function () {
+		        		removeBadContributors(data);
+						addBibtexCitation($scope,data);
+						$scope.worksInfo[putCode] = data;
+						$scope.loadingInfo = false;
+		        	});		        	
+		        }
+			}).fail(function(){
+				// something bad is happening!
+		    	console.log("error fetching works");
+		    	$scope.loadingInfo = false;
+			});
+		} else {
+			$(event.target).next().css('display','inline');
+			$scope.loadingInfo = false;
+		}
+	};			
+	
+	$scope.closePopover = function(event) {
+		$('.work-more-info-container').css('display', 'none');
+	};
 	
 	$scope.deleteWork = function(putCode) {
 		$scope.deletePutCode = putCode;
@@ -1844,7 +1962,7 @@ function WorkCtrl($scope, $compile, worksSrvc) {
 
 	$scope.setAddWorkPrivacy = function(priv, $event) {
 		$event.preventDefault();
-		$scope.editWork.visibility.visibility = priv;
+		$scope.editWork.visibility = priv;
 	};
 			
 	$scope.setPrivacy = function(putCode, priv, $event) {
@@ -1854,7 +1972,7 @@ function WorkCtrl($scope, $compile, worksSrvc) {
 			if ($scope.works[idx].putCode.value == putCode)
 				break;
 		}
-		$scope.works[idx].visibility.visibility = priv;
+		$scope.works[idx].visibility = priv;
 		$scope.curPrivToggle = null;
 		$scope.updateProfileWork(putCode);
 	};
@@ -1937,9 +2055,26 @@ function WorkCtrl($scope, $compile, worksSrvc) {
 		        contentType: 'application/json;charset=UTF-8',
 		        dataType: 'json',
 		        success: function(data) {
-		        	console.log(data);
-		        	$scope.types = data;
-		        	$scope.$apply();
+		        	
+		        	$scope.$apply(function() {
+			        	$scope.types = data;		        	
+			        	switch ($scope.editWork.workCategory.value){
+			                case "conference":
+			                	$scope.editWork.workType.value="conference-paper";		                	
+			                    break;
+			                case "intellectual_property":
+			                	$scope.editWork.workType.value="patent";
+			                    break;
+			                case "other_output":
+			                	$scope.editWork.workType.value="data-set";
+			                    break;
+			                case "publication":
+			                	$scope.editWork.workType.value="journal-article";
+			                    break;
+			        	}
+			        	console.log($scope.editWork.workType.value);
+		        	});
+		        	
 		        }
 		    }).fail(function() { 
 		    	console.log("Error loading work types.");
@@ -2725,4 +2860,3 @@ function adminGroupsCtrl($scope,$compile){
 	//init 
 	$scope.getGroup();
 };
-

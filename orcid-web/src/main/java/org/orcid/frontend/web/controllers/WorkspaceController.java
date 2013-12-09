@@ -114,11 +114,11 @@ public class WorkspaceController extends BaseWorkspaceController {
     
     @ModelAttribute("affiliationLongDescriptionTypes")
     public Map<String, String> retrieveAffiliationLongDescriptionTypesAsMap() {
-        Map<String, String> affiliationTypes = new LinkedHashMap<String, String>();
-        for (AffiliationType affiliationType : AffiliationType.values()) {
-            affiliationTypes.put(affiliationType.value(), getMessage(AffiliationType.class.getName() + '.' + "longDescription" + '.' + affiliationType.value()));
+        Map<String, String> organizationTypes = new LinkedHashMap<String, String>();
+        for (AffiliationType organizationType : AffiliationType.values()) {
+            organizationTypes.put(organizationType.value(), getMessage(AffiliationType.class.getName() + '.' + "longDescription" + '.' + organizationType.value()));
         }
-        return FunctionsOverCollections.sortMapsByValues(affiliationTypes);
+        return FunctionsOverCollections.sortMapsByValues(organizationTypes);
     }
 
     @ModelAttribute("workCategories")
@@ -129,7 +129,7 @@ public class WorkspaceController extends BaseWorkspaceController {
         	workCategories.put(workCategory.value(), getMessage(buildInternationalizationKey(WorkCategory.class, workCategory.value())));
         }
         
-        return FunctionsOverCollections.sortMapsByValues(workCategories);
+        return workCategories;
     }        
 
     @ModelAttribute("citationTypes")
@@ -147,7 +147,7 @@ public class WorkspaceController extends BaseWorkspaceController {
     public Map<String, String> retrieveYearsAsMap() {
         Map<String, String> map = new LinkedHashMap<String, String>();
         List<String> list = YearsList.createList();
-        map.put("", "Year");
+        map.put("", getMessage("select.item.year"));
         for (String year : list) {
             map.put(year, year);
         }
@@ -158,7 +158,7 @@ public class WorkspaceController extends BaseWorkspaceController {
     public Map<String, String> retrieveMonthsAsMap() {
         Map<String, String> map = new LinkedHashMap<String, String>();
         List<String> list = NumberList.createList(12);
-        map.put("", "Month");
+        map.put("", getMessage("select.item.month"));
         for (String month : list) {
             map.put(month, month);
         }
@@ -169,7 +169,7 @@ public class WorkspaceController extends BaseWorkspaceController {
     public Map<String, String> retrieveDaysAsMap() {
         Map<String, String> map = new LinkedHashMap<String, String>();
         List<String> list = NumberList.createList(31);
-        map.put("", "Day");
+        map.put("", getMessage("select.item.day"));
         for (String day : list) {
             map.put(day, day);
         }
@@ -254,7 +254,7 @@ public class WorkspaceController extends BaseWorkspaceController {
         if (currentProfile.getOrcidHistory().getSource() == null)
             return tpr;
         SourceOrcid sourceOrcid = currentProfile.getOrcidHistory().getSource().getSourceOrcid();
-        String sourcStr = sourceOrcid.getValue();
+        String sourcStr = sourceOrcid.getPath();
         List<OrcidClient> orcidClients = thirdPartyImportManager.findOrcidClientsWithPredefinedOauthScopeReadAccess();
         for (OrcidClient orcidClient : orcidClients) {
             if (sourcStr.equals(orcidClient.getClientId())) {
@@ -277,11 +277,6 @@ public class WorkspaceController extends BaseWorkspaceController {
     public @ResponseBody
     org.orcid.pojo.ExternalIdentifier removeExternalIdentifierJson(HttpServletRequest request, @RequestBody org.orcid.pojo.ExternalIdentifier externalIdentifier) {
         List<String> errors = new ArrayList<String>();
-
-        // If the orcid is blank, add an error
-        if (externalIdentifier.getOrcid() == null || StringUtils.isBlank(externalIdentifier.getOrcid().getValue())) {
-            errors.add(getMessage("ExternalIdentifier.orcid"));
-        }
 
         // If the external identifier is blank, add an error
         if (externalIdentifier.getExternalIdReference() == null || StringUtils.isBlank(externalIdentifier.getExternalIdReference().getContent())) {
@@ -306,7 +301,7 @@ public class WorkspaceController extends BaseWorkspaceController {
             // Update cached profile
             currentProfile.getOrcidBio().setExternalIdentifiers(externalIdentifiers);
             // Remove external identifier
-            externalIdentifierManager.removeExternalIdentifier(externalIdentifier.getOrcid().getValue(), externalIdentifier.getExternalIdReference().getContent());
+            externalIdentifierManager.removeExternalIdentifier(currentProfile.getOrcid().getValue(), externalIdentifier.getExternalIdReference().getContent());
         }
 
         return externalIdentifier;

@@ -17,7 +17,7 @@
  
 /*Custom Style */
 article,aside,details,figcaption,figure,footer,header,hgroup,nav,section
-	{
+{
 	display: block;
 }
 
@@ -47,10 +47,6 @@ a:focus {
 
 a:hover,a:active {
 	outline: 0;
-}
-
-.btn{
-	border: none;
 }
 
 sub,sup {
@@ -711,7 +707,7 @@ select {
 
 .header .logo h1 {
 	font-weight: 100;
-	margin-top: 10px;
+	margin-top: 0;
 }
 
 .header .logo p {
@@ -719,8 +715,9 @@ select {
 	float: right;
 	font-size: 14px;
 	color: #939498;
-	line-height: 13px;
+	line-height: 17px;
 	font-weight: 100;
+	margin-right: 10px;
 }
 
 .header .alignment {
@@ -1105,7 +1102,7 @@ ul.privacyHelp li.private {
 
 .editTablePadCell35{	
 	padding: 0px;
-	margin: 0 30px;
+	margin: 0 30px;	
 }
 
 
@@ -1451,6 +1448,10 @@ a:hover {
 	padding-left: 10px;
 }
 
+.workspace-right h3{
+	font-size: 16px;
+} 
+
 .more-info{
 	float: left;
     width: 33px;
@@ -1471,6 +1472,7 @@ a:hover {
 .orcid-id {
 	font-size: 12px;
 	line-height: 1;
+	word-wrap:break-word;
 }
 
 .workspace-overview {
@@ -1613,6 +1615,7 @@ a:hover {
 	font-weight: bold;
 	margin: 10px 0 0 !important;
 	line-height: 1;
+	word-wrap:break-word;
 }
 
 .privacy-list,.workspace-body-list {
@@ -1684,12 +1687,6 @@ a:hover {
 .affiliation-title{
 	margin-top: 0 !important;	
 }
-/*
-#affiliationName{
-	width:90px;
-}
-*/
-
 
 #edit-affiliation #startDay,
 #edit-affiliation #startMonth,
@@ -1704,7 +1701,6 @@ a:hover {
 {
 	width: 100px;
 }
-
 
 .add-work input.input-xlarge,
 .add-work #workType{
@@ -2063,6 +2059,14 @@ a:hover {
 	width: 300px;
 	background-color: #ffffff;
 	font-size: 14px;
+}
+
+.workspace-top .popover-help-container .popover{
+	left: -245px;
+}
+
+.workspace-top .popover.bottom .arrow{
+	left: 252px;
 }
 
 .popover-help-container  ul {
@@ -2439,7 +2443,7 @@ header overrides
 }
 
 .input-xlarge {
-	width: 340px;
+	width: 330px;
 }
 
 .relative {
@@ -2631,6 +2635,18 @@ a.btn-primary:hover {
 	width: 50%;
 }
 
+#loginForm .submit-login,
+#loginForm .submit-login div{
+	z-index: 1001;
+	width: 150px;
+	height: 45px;
+}
+
+#loginForm #form-sign-in-button{
+	z-index: 1001;
+	width: 98px;
+}
+
 .oauth-login #loginForm #userId,
 .oauth-login #loginForm #password {
 	width: 80%;
@@ -2647,25 +2663,23 @@ a.btn-primary:hover {
     z-index: -1;
 }
 
-
-
 #loginForm #form-sign-in-button {
 	margin: 10px 0;
 }
 
 #loginForm #login-reset {
 	padding-left: 0;
+	margin-top: 25px;
 }
 
 #loginForm #login-error-mess {
-	top: 0px;
+	top: 153px;
 	position: absolute;
-	z-index: -1;
-	width: 100%;
-	height: 61px;
-	text-align: right;
-	line-height: 50px;
+	z-index: 1000;
+	height:auto;		
 	overflow: hidden;
+	width: 100%;
+	padding-left: 330px;	
 }
 
 #loginForm #login-register{
@@ -2737,6 +2751,21 @@ ul.personal-inf-display li{
   margin-bottom: 0;
 }
 
+#affiliationName{
+	
+	color: #222; /* Input text */
+}
+
+.twitter-typeahead .tt-hint{	
+	color: #939598; /* Hint text */		
+}
+
+.tt-suggestion {
+  display: block;
+  padding: 3px 20px;
+  color: #222;  /* Suggestion text*/
+}
+
 .tt-dropdown-menu {
   min-width: 160px;
   margin-top: 2px;
@@ -2755,11 +2784,6 @@ ul.personal-inf-display li{
   -webkit-background-clip: padding-box;
      -moz-background-clip: padding;
           background-clip: padding-box;
-}
-
-.tt-suggestion {
-  display: block;
-  padding: 3px 20px;
 }
 
 .tt-suggestion.tt-is-under-cursor {
@@ -2789,6 +2813,7 @@ ul.personal-inf-display li{
   overflow-y: auto;
 }
 
+
 .small-row {	
 	display: inline-block;
 	float: left;
@@ -2807,6 +2832,27 @@ ul.personal-inf-display li{
 }
 
 .more-info:hover .more-info-container {
+	display: inline;
+}
+
+.work-more-info-container {
+	display: none;
+	position: absolute; 
+	left: -463px; 
+	top: 17px;
+	width: 686px;
+	max-width: 686px;
+	background-color: #ffffff;
+	height: 350px;
+}
+
+.work-more-info-container #ajax-loader{
+	position: absolute;
+	top: 40%;
+	left: 50%;
+}
+
+.more-info:hover .work-more-info-container {
 	display: inline;
 }
 
@@ -2911,7 +2957,37 @@ ul.personal-inf-display li{
 	font-size: 800%;	
 }
 
+#loginForm #ajax-loader{
+	vertical-align: -6px;
+}
+/*Safari Windows Hack*/
+::i-block-chrome,#loginForm #ajax-loader{
+	vertical-align: -43px;
+}
 
+#edit-affiliation #remove-disambiguated{
+	text-align: right;
+}
+
+#edit-affiliation #remove-disambiguated a span{
+	vertical-align:-2px;
+	margin-right: 5px;
+}
+
+.orcid-id-input{	
+	width: 100%;
+	font-size: 12px !important; /* Overwriting Bootstrap */
+	text-align: center;
+	margin-top: 15px;	 	
+}
+
+.citation-raw {
+	white-space: pre-wrap
+}
+
+#signout{
+	max-width:120px;
+}
 
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */
@@ -3257,12 +3333,11 @@ ul.personal-inf-display li{
 		width: 100%;
 	}
 	#loginForm #login-error-mess {
-		font-size: 12px;
 		line-height: 25px;
 		margin: 0;
 		padding: 0;
 		min-height: 30px;
-		height: 30px;
+		height: 50px;
 		text-align: center;
 		top: 260px; /* Login layout top */
 	}
@@ -3642,12 +3717,33 @@ ul.personal-inf-display li{
 	#edit-affiliation .popover.bottom .arrow{
 		 left: 44%;
 		 top: -11px;
+	}
+	
+	#edit-affiliation input#affiliationName{
+		width: 95%;
 	}	
 	
+	#edit-affiliation .twitter-typeahead{
+		width: 95%;
+	}	
+	
+	#loginForm #login-error-mess {
+		width: 100%;
+		text-align: center;
+	}
+	
+	#loginForm .submit-login,
+	#loginForm .submit-login div{
+		width: 100%;
+	}
+	
+	#loginForm #login-reset{
+		margin-top: 65px;
+	}
 	
 }
 
-@media ( max-width : 980px) { /* Tablet */
+@media (min-width : 768px) and (max-width : 992px) { /* Tablet */
 	/*Header*/
 	
 	.container .header .search form input[type='search'] {
@@ -3672,6 +3768,7 @@ ul.personal-inf-display li{
 		font-size: 12px;
 		word-wrap: break-word;
 		padding: 10px;
+		display: block;
 	}
 	.header .navigation>.menu>li>.menu>li>a {
 		font-size: 11px;
@@ -3767,14 +3864,23 @@ ul.personal-inf-display li{
 	.data-row-group .col-md-2{
 		padding-left: 15px;
 	}
+	
+	#loginForm #login-error-mess{
+		padding-left: 280px;
+		text-align:left;
+	}
+	
+	#signout{
+		max-width:100px;
+	}
+	
+	#loginForm #login-reset{
+		margin-top: 25px;
+	}
 }
 
 @media(min-width:1200px){
 	.container{
 		max-width:960px;
 	}
-}
-
-.citation-raw {
-	white-space: pre-wrap
 }

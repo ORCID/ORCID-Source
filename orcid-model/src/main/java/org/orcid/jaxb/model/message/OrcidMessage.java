@@ -73,10 +73,10 @@ import javax.xml.transform.Source;
 public class OrcidMessage implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    public static final String DEFAULT_VERSION = "1.0.22";
+    public static final String DEFAULT_VERSION = "1.2_rc1";
 
     @XmlElement(name = "message-version", required = true)
-    protected String messageVersion;
+    protected String messageVersion = DEFAULT_VERSION;
     @XmlElement(name = "orcid-profile")
     protected OrcidProfile orcidProfile;
     @XmlElement(name = "orcid-search-results")

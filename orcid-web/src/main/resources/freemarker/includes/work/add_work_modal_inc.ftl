@@ -21,7 +21,7 @@
 		<div class="lightbox-container-ie7">		
 		<!-- Title -->
 		<div class="row">
-			<div class="col-md-9 col-sm-6 col-xs-9">
+			<div class="col-md-8 col-sm-6 col-xs-9">
 				<h1 class="lightbox-title pull-left"><@orcid.msg 'manual_work_form_contents.add_work'/></h1>
 			</div>
 			
@@ -29,13 +29,15 @@
 				<a class="btn close-button" ng-click="closeModal()">X</a>
 			</div>
 			
-			<div class="control-group privacy-control col-md-2 col-sm-2">
-		 		<label class="relative">
-					<@orcid.msg 'privacyToggle.help.who_can_see'/>
-				</label>
-		 		<@orcid.privacyToggle "editWork.visibility.visibility" "setAddWorkPrivacy('PUBLIC', $event)" 
-		        "setAddWorkPrivacy('LIMITED', $event)" "setAddWorkPrivacy('PRIVATE', $event)" />					
-		 	</div>
+			<div class="col-md-3 col-sm-2">
+				<div class="control-group privacy-control pull-right">
+			 		<label class="relative">
+						<@orcid.msg 'privacyToggle.help.who_can_see'/>
+					</label>
+		 			<@orcid.privacyToggle "editWork.visibility" "setAddWorkPrivacy('PUBLIC', $event)" 
+					"setAddWorkPrivacy('LIMITED', $event)" "setAddWorkPrivacy('PRIVATE', $event)" />					
+		 		</div>
+			</div>
 
 			<div class="col-md-1 col-sm-1 hidden-xs">
 				<a class="btn close-button" ng-click="closeModal()">X</a>
@@ -65,9 +67,7 @@
 
 				<div class="control-group">
 		    		<label class="relative"><@orcid.msg 'manual_work_form_contents.labelworktype'/></label>
-					<select id="workType" name="workType" class="input-xlarge" ng-model="editWork.workType.value">
-						<option value=""><@orcid.msg 'org.orcid.jaxb.model.message.WorkType.empty' /></option>
-						<option ng-repeat="(key, value) in types" value="{{key}}">{{value}}</option>	
+					<select id="workType" name="workType" class="input-xlarge" ng-model="editWork.workType.value" ng-options="key as value for (key , value) in types">						
 					</select>
 					<span class="required" ng-class="isValidClass(editWork.workType)">*</span>
 					<span class="orcid-error" ng-show="editWork.workType.errors.length > 0">

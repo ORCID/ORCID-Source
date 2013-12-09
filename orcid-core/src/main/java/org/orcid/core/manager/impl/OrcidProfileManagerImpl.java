@@ -198,7 +198,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
 
     @Resource
     private SourceManager sourceManager;
- 
+
     private int claimWaitPeriodDays = 10;
 
     private int claimReminderAfterDays = 8;
@@ -247,12 +247,13 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
     @Transactional
     public OrcidProfile createOrcidProfile(OrcidProfile orcidProfile) {
         if (orcidProfile.getOrcid() == null) {
-            orcidProfile.setOrcid(orcidGenerationManager.createNewOrcid());
+            orcidProfile.setOrcidIdentifier(orcidGenerationManager.createNewOrcid());
         }
 
-        // Add source to works
+        // Add source to works and affiliations
         String amenderOrcid = sourceManager.retrieveSourceOrcid();
         addSourceToWorks(orcidProfile, amenderOrcid);
+        addSourceToAffiliations(orcidProfile, amenderOrcid);
 
         ProfileEntity profileEntity = adapter.toProfileEntity(orcidProfile);
         encryptAndMapFieldsForProfileEntityPersistence(orcidProfile, profileEntity);
@@ -350,9 +351,9 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
     }
 
     private void addSourceToWorks(OrcidWorks orcidWorks, String amenderOrcid) {
-        if (orcidWorks != null && !orcidWorks.getOrcidWork().isEmpty()) {
+        if (orcidWorks != null && !orcidWorks.getOrcidWork().isEmpty() && amenderOrcid != null) {
             for (OrcidWork orcidWork : orcidWorks.getOrcidWork()) {
-                if (orcidWork.getWorkSource() == null || StringUtils.isEmpty(orcidWork.getWorkSource().getContent()))
+                if (orcidWork.getWorkSource() == null || StringUtils.isEmpty(orcidWork.getWorkSource().getPath()))
                     orcidWork.setWorkSource(new WorkSource(amenderOrcid));
             }
         }
@@ -372,7 +373,8 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
 
         if (affiliations != null && !affiliations.getAffiliation().isEmpty()) {
             for (Affiliation affiliation : affiliations.getAffiliation()) {
-                if (affiliation.getSource() == null || StringUtils.isEmpty(affiliation.getSource().getSourceOrcid().getValue()))
+                if (affiliation.getSource() == null || affiliation.getSource().getSourceOrcid() == null
+                        || StringUtils.isEmpty(affiliation.getSource().getSourceOrcid().getPath()))
                     affiliation.setSource(new Source(amenderOrcid));
             }
         }
@@ -588,7 +590,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         String amenderOrcid = sourceManager.retrieveSourceOrcid();
         Source source = orcidProfile.getOrcidHistory().getSource();
         if (NullUtils.noneNull(amenderOrcid, source)) {
-            return amenderOrcid.equals(source.getSourceOrcid().getValue());
+            return amenderOrcid.equals(source.getSourceOrcid().getPath());
         }
         return false;
     }
@@ -898,7 +900,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
     @Override
     @Transactional
     public void addOrcidWorks(OrcidProfile updatedOrcidProfile) {
-        String orcid = updatedOrcidProfile.getOrcid().getValue();
+        String orcid = updatedOrcidProfile.getOrcidIdentifier().getPath();
         OrcidProfile existingProfile = retrieveOrcidProfile(orcid);
         if (existingProfile == null) {
             throw new IllegalArgumentException("No record found for " + orcid);
@@ -955,7 +957,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
                 // If contributor orcid is available, look for the profile
                 // associated with that orcid
                 if (contributor.getContributorOrcid() != null) {
-                    ProfileEntity profile = profileDao.find(contributor.getContributorOrcid().getValue());
+                    ProfileEntity profile = profileDao.find(contributor.getContributorOrcid().getPath());
                     if (profile != null) {
                         if (Visibility.PUBLIC.equals(profile.getCreditNameVisibility())) {
                             contributor.setCreditName(new CreditName(profile.getCreditName()));
@@ -1207,7 +1209,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         if (affiliations != null && !affiliations.getAffiliation().isEmpty()) {
             for (Affiliation affiliation : affiliations.getAffiliation()) {
                 if (affiliation.getSource() == null || affiliation.getSource().getSourceOrcid() == null
-                        || StringUtils.isEmpty(affiliation.getSource().getSourceOrcid().getValue()))
+                        || StringUtils.isEmpty(affiliation.getSource().getSourceOrcid().getPath()))
                     affiliation.setSource(new Source(amenderOrcid));
             }
         }
@@ -1365,8 +1367,11 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
 
         List<String> orcidsForIndexing = new ArrayList<>();
         List<String> orcidFailures = new ArrayList<>();
+        List<IndexingStatus> indexingStatuses = new ArrayList<IndexingStatus>(2);
+        indexingStatuses.add(IndexingStatus.PENDING);
+        indexingStatuses.add(IndexingStatus.REINDEX);
         do {
-            orcidsForIndexing = profileDao.findOrcidsByIndexingStatus(IndexingStatus.PENDING, INDEXING_BATCH_SIZE, orcidFailures);
+            orcidsForIndexing = profileDao.findOrcidsByIndexingStatus(indexingStatuses, INDEXING_BATCH_SIZE, orcidFailures);
             LOG.info("Got batch of {} profiles for indexing", orcidsForIndexing.size());
             for (final String orcid : orcidsForIndexing) {
                 FutureTask<String> task = new FutureTask<String>(new GetPendingOrcid(orcid));
@@ -1423,7 +1428,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
                 new LinkedBlockingQueue<Runnable>(INDEXING_BATCH_SIZE), Executors.defaultThreadFactory(), new ThreadPoolExecutor.CallerRunsPolicy());
     }
 
-    private void processProfilePendingIndexingInTransaction(final String orcid) {
+    public void processProfilePendingIndexingInTransaction(final String orcid) {
         transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
             protected void doInTransactionWithoutResult(TransactionStatus status) {

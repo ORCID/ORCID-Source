@@ -16,6 +16,8 @@
  */
 package org.orcid.core.adapter.impl;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -93,10 +95,10 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
     private String baseUri = null;
 
     private DatatypeFactory datatypeFactory = null;
-   
+
     @Resource(name = "defaultPermissionChecker")
     private PermissionChecker permissionChecker;
-    
+
     public Jpa2JaxbAdapterImpl() {
         try {
             datatypeFactory = DatatypeFactory.newInstance();
@@ -119,9 +121,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
 
         OrcidProfile profile = new OrcidProfile();
         OrcidType type = profileEntity.getOrcidType();
-        profile.setOrcid(profileEntity.getId());
-        // we may just want an other property entry instead of baseUri
-        profile.setOrcidId(baseUri.replace("https", "http") + "/" + profileEntity.getId());
+        profile.setOrcidIdentifier(new OrcidIdentifier(getOrcidIdBase(profileEntity.getId())));
         // load deprecation info
         profile.setOrcidDeprecated(getOrcidDeprecated(profileEntity));
 
@@ -232,6 +232,20 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
             orcidDeprecated.setPrimaryRecord(primaryRecord);
         }
         return orcidDeprecated;
+    }
+
+    private OrcidIdBase getOrcidIdBase(String id) {
+        OrcidIdBase orcidId = new OrcidIdBase();
+        String correctedBaseUri = baseUri.replace("https", "http");
+        try {
+            URI uri = new URI(correctedBaseUri);
+            orcidId.setHost(uri.getHost());
+        } catch (URISyntaxException e) {
+            throw new RuntimeException("Error parsing base uri", e);
+        }
+        orcidId.setUri(correctedBaseUri + "/" + id);
+        orcidId.setPath(id);
+        return orcidId;
     }
 
     private OrcidActivities getOrcidActivities(ProfileEntity profileEntity) {
@@ -476,7 +490,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
     private Affiliation getAffiliation(OrgAffiliationRelationEntity orgAffiliationRelationEntity) {
         Affiliation affiliation = new Affiliation();
         affiliation.setPutCode(Long.toString(orgAffiliationRelationEntity.getId()));
-        affiliation.setAffiliationType(orgAffiliationRelationEntity.getAffiliationType());
+        affiliation.setType(orgAffiliationRelationEntity.getAffiliationType());
         affiliation.setRoleTitle(orgAffiliationRelationEntity.getTitle());
 
         FuzzyDateEntity startDate = orgAffiliationRelationEntity.getStartDate();
@@ -487,12 +501,14 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         affiliation.setDepartmentName(orgAffiliationRelationEntity.getDepartment());
         affiliation.setSource(getSource(orgAffiliationRelationEntity));
 
+        Organization organization = new Organization();
         OrgDisambiguatedEntity orgDisambiguatedEntity = orgAffiliationRelationEntity.getOrg().getOrgDisambiguated();
         if (orgDisambiguatedEntity != null) {
-            affiliation.setDisambiguatedAffiliation(getDisambiguatedAffiliation(orgDisambiguatedEntity));
+            organization.setDisambiguatedOrganization(getDisambiguatedAffiliation(orgDisambiguatedEntity));
         }
-        affiliation.setAffiliationAddress(getAddress(orgAffiliationRelationEntity.getOrg()));
-        affiliation.setAffiliationName(orgAffiliationRelationEntity.getOrg().getName());
+        organization.setAddress(getAddress(orgAffiliationRelationEntity.getOrg()));
+        organization.setName(orgAffiliationRelationEntity.getOrg().getName());
+        affiliation.setOrganization(organization);
 
         return affiliation;
     }
@@ -503,16 +519,33 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
             return null;
         }
         Source source = new Source(sourceEntity.getId());
-        source.setSourceName(new SourceName(sourceEntity.getCreditName()));
+        
+        //Set the source name
+        //If it is a client, lets use the source_name if it is public
+        if(OrcidType.CLIENT.equals(sourceEntity.getOrcidType())){
+        	Visibility affiliationSourceVisibility = (sourceEntity.getCreditNameVisibility() == null) ? OrcidVisibilityDefaults.CREDIT_NAME_DEFAULT.getVisibility() : sourceEntity.getCreditNameVisibility();  
+        	if(Visibility.PUBLIC.equals(affiliationSourceVisibility)) {
+        		source.setSourceName(new SourceName(sourceEntity.getCreditName()));
+        	}
+        } else {
+        	//If it is a user, check if it have a credit name and is visible
+            if(Visibility.PUBLIC.equals(sourceEntity.getCreditNameVisibility())){
+            	source.setSourceName(new SourceName(sourceEntity.getCreditName()));
+            } else {
+                //If it doesnt, lets use the give name + family name
+                String name = sourceEntity.getGivenNames() + (StringUtils.isEmpty(sourceEntity.getFamilyName()) ? "" : " " + sourceEntity.getFamilyName());
+                source.setSourceName(new SourceName(name));
+            }
+        }
         source.setSourceDate(new SourceDate(DateUtils.convertToXMLGregorianCalendar(orgAffiliationRelationEntity.getDateCreated())));
         return source;
     }
 
-    private DisambiguatedAffiliation getDisambiguatedAffiliation(OrgDisambiguatedEntity orgDisambiguatedEntity) {
-        DisambiguatedAffiliation disambiguatedAffiliation = new DisambiguatedAffiliation();
-        disambiguatedAffiliation.setDisambiguatedAffiliationIdentifier(orgDisambiguatedEntity.getSourceId());
-        disambiguatedAffiliation.setDisambiguationSource(orgDisambiguatedEntity.getSourceType());
-        return disambiguatedAffiliation;
+    private DisambiguatedOrganization getDisambiguatedAffiliation(OrgDisambiguatedEntity orgDisambiguatedEntity) {
+        DisambiguatedOrganization disambiguatedOrganization = new DisambiguatedOrganization();
+        disambiguatedOrganization.setDisambiguatedOrganizationIdentifier(orgDisambiguatedEntity.getSourceId());
+        disambiguatedOrganization.setDisambiguationSource(orgDisambiguatedEntity.getSourceType());
+        return disambiguatedOrganization;
     }
 
     private Affiliations getAffiliations(ProfileEntity profileEntity) {
@@ -571,9 +604,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
             for (ExternalIdentifierEntity externalIdentifierEntity : externalIdentifierEntities) {
                 ExternalIdentifier externalIdentifier = new ExternalIdentifier();
                 ProfileEntity externalIdEntity = externalIdentifierEntity.getExternalIdOrcid();
-                ProfileEntity orcidProfile = externalIdentifierEntity.getOwner();
-                externalIdentifier.setExternalIdOrcid(externalIdEntity != null ? new ExternalIdOrcid(externalIdEntity.getId()) : null);
-                externalIdentifier.setOrcid(orcidProfile != null ? new Orcid(orcidProfile.getId()) : null);
+                externalIdentifier.setExternalIdOrcid(externalIdEntity != null ? new ExternalIdOrcid(getOrcidIdBase(externalIdEntity.getId())) : null);
                 externalIdentifier.setExternalIdReference(StringUtils.isNotBlank(externalIdentifierEntity.getExternalIdReference()) ? new ExternalIdReference(
                         externalIdentifierEntity.getExternalIdReference()) : null);
                 externalIdentifier.setExternalIdCommonName(StringUtils.isNotBlank(externalIdentifierEntity.getExternalIdCommonName()) ? new ExternalIdCommonName(
@@ -596,7 +627,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
             delegation.setGivenPermissionTo(givenPermissionTo);
             for (GivenPermissionToEntity givenPermissionToEntity : givenPermissionToEntities) {
                 DelegationDetails delegationDetails = new DelegationDetails();
-                DelegateSummary delegateSummary = new DelegateSummary(new Orcid(givenPermissionToEntity.getReceiver().getId()));
+                DelegateSummary delegateSummary = new DelegateSummary(new OrcidIdentifier(getOrcidIdBase(givenPermissionToEntity.getReceiver().getId())));
                 String receiverCreditName = givenPermissionToEntity.getReceiver().getCreditName();
                 delegateSummary.setCreditName(StringUtils.isNotBlank(receiverCreditName) ? new CreditName(receiverCreditName) : null);
                 delegationDetails.setDelegateSummary(delegateSummary);
@@ -612,7 +643,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
             delegation.setGivenPermissionBy(givenPermissionBy);
             for (GivenPermissionByEntity givenPermissionByEntity : givenPermissionByEntities) {
                 DelegationDetails delegationDetails = new DelegationDetails();
-                DelegateSummary delegateSummary = new DelegateSummary(new Orcid(givenPermissionByEntity.getGiver().getId()));
+                DelegateSummary delegateSummary = new DelegateSummary(new OrcidIdentifier(getOrcidIdBase((givenPermissionByEntity.getGiver().getId()))));
                 String creditName = givenPermissionByEntity.getGiver().getCreditName();
                 delegateSummary.setCreditName(StringUtils.isNotBlank(creditName) ? new CreditName(creditName) : null);
                 delegationDetails.setDelegateSummary(delegateSummary);
@@ -662,32 +693,32 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         }
     }
 
-    private AffiliationAddress getAddress(OrgEntity orgEntity) {
+    private OrganizationAddress getAddress(OrgEntity orgEntity) {
         if (orgEntity != null) {
             String city = orgEntity.getCity();
             String region = orgEntity.getRegion();
             Iso3166Country country = orgEntity.getCountry();
             if (!NullUtils.allNull(city, region, country)) {
-                AffiliationAddress address = new AffiliationAddress();
-                address.setAffiliationCity(city != null ? new AffiliationCity(city) : null);
-                address.setAffiliationRegion(region != null ? new AffiliationRegion(region) : null);
-                address.setAffiliationCountry(country != null ? new AffiliationCountry(country) : null);
+                OrganizationAddress address = new OrganizationAddress();
+                address.setCity(city);
+                address.setRegion(region);
+                address.setCountry(country);
                 return address;
             }
         }
         return null;
     }
 
-    private AffiliationAddress getAddress(OrgDisambiguatedEntity orgDisambiguatedEntity) {
+    private OrganizationAddress getAddress(OrgDisambiguatedEntity orgDisambiguatedEntity) {
         if (orgDisambiguatedEntity != null) {
             String city = orgDisambiguatedEntity.getCity();
             String region = orgDisambiguatedEntity.getRegion();
             Iso3166Country country = orgDisambiguatedEntity.getCountry();
             if (!NullUtils.allNull(city, region, country)) {
-                AffiliationAddress address = new AffiliationAddress();
-                address.setAffiliationCity(city != null ? new AffiliationCity(city) : null);
-                address.setAffiliationRegion(region != null ? new AffiliationRegion(region) : null);
-                address.setAffiliationCountry(country != null ? new AffiliationCountry(country) : null);
+                OrganizationAddress address = new OrganizationAddress();
+                address.setCity(city);
+                address.setRegion(region);
+                address.setCountry(country);
                 return address;
             }
         }
@@ -699,7 +730,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         if (sponsorProfileEntity != null) {
             Source sponsor = new Source();
             SourceName sponsorName = StringUtils.isNotBlank(sponsorProfileEntity.getCreditName()) ? new SourceName(sponsorProfileEntity.getCreditName()) : null;
-            SourceOrcid sponsorOrcid = StringUtils.isNotBlank(sponsorProfileEntity.getId()) ? new SourceOrcid(sponsorProfileEntity.getId()) : null;
+            SourceOrcid sponsorOrcid = StringUtils.isNotBlank(sponsorProfileEntity.getId()) ? new SourceOrcid(getOrcidIdBase(sponsorProfileEntity.getId())) : null;
             sponsor.setSourceName(sponsorName);
             sponsor.setSourceOrcid(sponsorOrcid);
             return sponsor;
@@ -709,13 +740,13 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
 
     private Applications getApplications(ProfileEntity profileEntity) {
         Set<OrcidOauth2TokenDetail> tokenDetails = profileEntity.getTokenDetails();
-        
+
         if (tokenDetails != null && !tokenDetails.isEmpty()) {
             // verify tokens don't need scopes removed.
-            DefaultPermissionChecker defaultPermissionChecker = (DefaultPermissionChecker)permissionChecker;
-            
-            for (OrcidOauth2TokenDetail tokenDetail:tokenDetails) 
-                defaultPermissionChecker.removeWriteScopesPastValitity(tokenDetail);
+            DefaultPermissionChecker defaultPermissionChecker = (DefaultPermissionChecker) permissionChecker;
+
+            for (OrcidOauth2TokenDetail tokenDetail : tokenDetails)
+                defaultPermissionChecker.removeUserGrantWriteScopePastValitity(tokenDetail);
             
             Applications applications = new Applications();
             for (OrcidOauth2TokenDetail tokenDetail : tokenDetails) {
@@ -725,7 +756,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
 
                     ProfileEntity acceptedClientProfileEntity = acceptedClient != null ? acceptedClient.getProfileEntity() : null;
                     if (acceptedClientProfileEntity != null) {
-                        applicationSummary.setApplicationOrcid(new ApplicationOrcid(acceptedClient.getClientId()));
+                        applicationSummary.setApplicationOrcid(new ApplicationOrcid(getOrcidIdBase(acceptedClient.getClientId())));
                         applicationSummary.setApplicationName(new ApplicationName(acceptedClientProfileEntity.getCreditName()));
                         SortedSet<ResearcherUrlEntity> researcherUrls = acceptedClient.getProfileEntity().getResearcherUrls();
                         if (researcherUrls != null && !researcherUrls.isEmpty()) {
@@ -805,11 +836,11 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
 
     private WorkSource getWorkSource(ProfileWorkEntity profileWorkEntity) {                
         if (profileWorkEntity == null || profileWorkEntity.getSourceProfile() == null) {
-            return new WorkSource(WorkSource.NULL_SOURCE_PROFILE);
+            return null;
         }
         ProfileEntity sourceProfile = profileWorkEntity.getSourceProfile();
         
-        WorkSource workSource = new WorkSource(sourceProfile.getId());
+        WorkSource workSource = new WorkSource(getOrcidIdBase(sourceProfile.getId()));
         
         //Set the source name
         //If it is a client, lets use the source_name if it is public
@@ -884,6 +915,18 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
                 }
                 // Strip out any contributor emails
                 contributor.setContributorEmail(null);
+                // Make sure orcid-id in new format
+                ContributorOrcid contributorOrcid = contributor.getContributorOrcid();
+                if (contributorOrcid != null) {
+                    String uri = contributorOrcid.getUri();
+                    if (uri == null) {
+                        String orcid = contributorOrcid.getValueAsString();
+                        if(orcid == null){
+                            orcid = contributorOrcid.getPath();
+                        }
+                        contributor.setContributorOrcid(new ContributorOrcid(getOrcidIdBase(orcid)));
+                    }
+                }
             }
             return workContributors;
         }
@@ -914,7 +957,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
             contributor.setCreditName(creditName);
             // Set visibility from parent work
             creditName.setVisibility(visibility);
-            contributor.setContributorOrcid(new ContributorOrcid(profile.getId()));
+            contributor.setContributorOrcid(new ContributorOrcid(getOrcidIdBase(profile.getId())));
         } else {
             if (StringUtils.isNotBlank(contributorEntity.getCreditName())) {
                 CreditName creditName = new CreditName(contributorEntity.getCreditName());

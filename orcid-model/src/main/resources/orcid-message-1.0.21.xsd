@@ -385,56 +385,6 @@
             <xs:restriction base="xs:string"/>
         </xs:simpleType>
     </xs:element>
-    <xs:element name="affiliations">
-        <xs:annotation>
-            <xs:documentation>Container for the list of affiliations associated with the researcher or contributor
-            </xs:documentation>
-        </xs:annotation>
-        <xs:complexType>
-            <xs:sequence>
-                <xs:element maxOccurs="unbounded" minOccurs="0" ref="orcid:affiliation"/>
-            </xs:sequence>
-        </xs:complexType>
-    </xs:element>
-    <xs:element name="affiliation">
-        <xs:complexType>
-            <xs:sequence>
-                <xs:element ref="orcid:affiliation-name"/>
-                <xs:element ref="orcid:affiliation-type" minOccurs="0"/>
-                <xs:element ref="orcid:affiliation-address"/>
-                <xs:element ref="orcid:department-name" minOccurs="0"/>
-                <xs:element ref="orcid:role-title" minOccurs="0"/>
-                <xs:element ref="orcid:start-date" minOccurs="0"/>
-                <xs:element ref="orcid:end-date" minOccurs="0"/>
-                <xs:element ref="orcid:source" minOccurs="0"/>
-                <xs:element ref="orcid:disambiguated-affiliation" minOccurs="0"/>
-            </xs:sequence>
-            <xs:attributeGroup ref="orcid:put-code"/>
-            <xs:attributeGroup ref="orcid:visibility"/>
-        </xs:complexType>
-    </xs:element>
-    <xs:element name="affiliation-type">
-        <xs:simpleType>
-            <xs:restriction base="xs:string">
-                <xs:enumeration value="current-primary-institution"/>
-                <xs:enumeration value="current-institution"/>
-                <xs:enumeration value="published-here"/>
-                <xs:enumeration value="funded-by"/>
-                <xs:enumeration value="past-institution"/>
-                <xs:enumeration value="educated-here"/>
-            </xs:restriction>
-        </xs:simpleType>
-    </xs:element>
-    <xs:element name="disambiguated-affiliation">
-        <xs:complexType>
-            <xs:sequence>
-                <xs:element ref="orcid:disambiguated-affiliation-identifier"/>
-                <xs:element ref="orcid:disambiguation-source"/>
-            </xs:sequence>
-        </xs:complexType>
-    </xs:element>
-    <xs:element name="disambiguated-affiliation-identifier" type="orcid:short-text"/>
-    <xs:element name="disambiguation-source" type="orcid:short-text"/>
     <xs:element name="external-identifiers">
         <xs:annotation>
             <xs:documentation>Container for links to the reasearcher or contributor in other
@@ -594,7 +544,6 @@
         </xs:annotation>
         <xs:complexType>
             <xs:sequence>
-                <xs:element ref="orcid:affiliations" minOccurs="0" maxOccurs="1"/>
                 <xs:element minOccurs="0" maxOccurs="1" ref="orcid:orcid-works"/>
                 <xs:element minOccurs="0" maxOccurs="1" ref="orcid:orcid-grants"/>
                 <xs:element minOccurs="0" maxOccurs="1" ref="orcid:orcid-patents"/>
@@ -1533,17 +1482,14 @@
             <xs:enumeration value="/authenticate"/>
             <xs:enumeration value="/orcid-bio/read-limited"/>
             <xs:enumeration value="/orcid-profile/read-limited"/>
-            <xs:enumeration value="/affiliations/read-limited"/>
             <xs:enumeration value="/orcid-works/read-limited"/>
             <xs:enumeration value="/orcid-grants/read-limited"/>
             <xs:enumeration value="/orcid-patents/read-limited"/>
-            <xs:enumeration value="/affiliations/update"/>
             <xs:enumeration value="/orcid-works/update"/>
             <xs:enumeration value="/orcid-grants/update"/>
             <xs:enumeration value="/orcid-patents/update"/>
             <xs:enumeration value="/orcid-bio/external-identifiers/create"/>
             <xs:enumeration value="/orcid-bio/update"/>
-            <xs:enumeration value="/affiliations/create"/>
             <xs:enumeration value="/orcid-works/create"/>
             <xs:enumeration value="/orcid-grants/create"/>
             <xs:enumeration value="/orcid-patents/create"/>

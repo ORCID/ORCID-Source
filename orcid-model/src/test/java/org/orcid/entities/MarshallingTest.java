@@ -77,7 +77,7 @@ public class MarshallingTest {
         OrcidWorks orcidWorks = orcidProfile.retrieveOrcidWorks();
         assertTrue(orcidWorks != null && orcidWorks.getOrcidWork().size() == 1);
         OrcidWork orcidWork = orcidWorks.getOrcidWork().get(0);
-        assertEquals("bible", orcidWork.getWorkType().value());
+        assertEquals("journal-article", orcidWork.getWorkType().value());
 
     }
 

@@ -128,11 +128,11 @@
     };
 
     var menuHack = function() {
-        $(".main > .menu > li.last").on("mouseenter", function(e) {
-            $(".main > .menu").css({"background":"#a6ce39"});
+        $("#signout").on("mouseenter", function(e) {
+            $(".header .navigation > .menu").css({"background":"#a6ce39"});        
         });
-        $(".main > .menu > li.last.leaf").on("mouseout", function(e) {
-            $(".main > .menu").css({"background":"#338caf"});
+        $("#signout").on("mouseout", function(e) {
+            $(".header .navigation > .menu").css({"background":"#338caf"});
         });
     };
     
@@ -148,8 +148,8 @@
         
             $(window).bind('resize', function() {
                 if(navigator.appVersion.indexOf("MSIE 7.") == -1){ //Not IE7
-                    ww = document.body.clientWidth;            
-                    if (ww > 767){ //Tablet ~ PC                
+                    ww = document.body.clientWidth;                    
+                    if (ww > 750){ //Tablet ~ PC                
                         $(".container .header .search form input[type='search']").blur(); /* To let "else" statement work properly*/
                         restoreDesktopUI();
                     }else{

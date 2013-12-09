@@ -43,9 +43,6 @@ import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.orcid.api.t2.T2OAuthAPIService;
 import org.orcid.jaxb.model.message.Affiliation;
-import org.orcid.jaxb.model.message.AffiliationAddress;
-import org.orcid.jaxb.model.message.AffiliationCity;
-import org.orcid.jaxb.model.message.AffiliationCountry;
 import org.orcid.jaxb.model.message.AffiliationType;
 import org.orcid.jaxb.model.message.Affiliations;
 import org.orcid.jaxb.model.message.Country;
@@ -56,6 +53,8 @@ import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidWork;
 import org.orcid.jaxb.model.message.OrcidWorks;
+import org.orcid.jaxb.model.message.Organization;
+import org.orcid.jaxb.model.message.OrganizationAddress;
 import org.orcid.jaxb.model.message.Title;
 import org.orcid.jaxb.model.message.TranslatedTitle;
 import org.orcid.jaxb.model.message.Visibility;
@@ -64,8 +63,6 @@ import org.orcid.jaxb.model.message.WorkType;
 import org.orcid.persistence.dao.ClientRedirectDao;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
-import org.orcid.persistence.jpa.entities.ProfileWorkEntity;
-import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.persistence.jpa.entities.keys.ClientRedirectUriPk;
 import org.orcid.test.DBUnitTest;
 import org.springframework.beans.factory.annotation.Value;
@@ -94,8 +91,11 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
     @Resource
     private ClientRedirectDao clientRedirectDao;
 
-    @Resource
+    @Resource(name="t2OAuthClient")
     private T2OAuthAPIService<ClientResponse> oauthT2Client;
+    
+    @Resource(name="t2OAuthClient1_2_rc1")
+    private T2OAuthAPIService<ClientResponse> oauthT2Client1_2_rc1;
 
     @Resource
     private ProfileDao profileDao;
@@ -220,13 +220,13 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
     }
 
     @Test
-    public void testAddWorkWithNewWorkTypesForV1_1_0() throws InterruptedException, JSONException {
+    public void testAddWorkWithNewWorkTypesForV1_1() throws InterruptedException, JSONException {
         String scopes = "/orcid-works/create";
         String authorizationCode = obtainAuthorizationCode(scopes);
         String accessToken = obtainAccessToken(authorizationCode, scopes);
 
         OrcidMessage orcidMessage = new OrcidMessage();
-        orcidMessage.setMessageVersion("1.1.0");
+        orcidMessage.setMessageVersion("1.1");
         OrcidProfile orcidProfile = new OrcidProfile();
         orcidMessage.setOrcidProfile(orcidProfile);
         OrcidActivities orcidActivities = new OrcidActivities();
@@ -308,7 +308,7 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
         String accessToken = obtainAccessToken(authorizationCode, scopes);
 
         OrcidMessage orcidMessage = new OrcidMessage();
-        orcidMessage.setMessageVersion(OrcidMessage.DEFAULT_VERSION);
+        orcidMessage.setMessageVersion("1.2_rc1");
         OrcidProfile orcidProfile = new OrcidProfile();
         orcidMessage.setOrcidProfile(orcidProfile);
         OrcidActivities orcidActivities = new OrcidActivities();
@@ -317,14 +317,16 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
         orcidActivities.setAffiliations(affiliations);
         Affiliation affiliation = new Affiliation();
         affiliations.getAffiliation().add(affiliation);
-        affiliation.setAffiliationName("Affiliation added by integration test");
-        AffiliationAddress affiliationAddress = new AffiliationAddress();
-        affiliation.setAffiliationType(AffiliationType.EDUCATION);
-        affiliation.setAffiliationAddress(affiliationAddress);
-        affiliationAddress.setAffiliationCity(new AffiliationCity("Edinburgh"));
-        affiliationAddress.setAffiliationCountry(new AffiliationCountry(Iso3166Country.GB));
+        affiliation.setType(AffiliationType.EDUCATION);
+        Organization organization = new Organization();
+        affiliation.setOrganization(organization);
+        organization.setName("Affiliation added by integration test");
+        OrganizationAddress organizationAddress = new OrganizationAddress();
+        organization.setAddress(organizationAddress);
+        organizationAddress.setCity("Edinburgh");
+        organizationAddress.setCountry(Iso3166Country.GB);
 
-        ClientResponse clientResponse = oauthT2Client.addAffiliationsXml("4444-4444-4444-4442", orcidMessage, accessToken);
+        ClientResponse clientResponse = oauthT2Client1_2_rc1.addAffiliationsXml("4444-4444-4444-4442", orcidMessage, accessToken);
         assertEquals(201, clientResponse.getStatus());
     }
 

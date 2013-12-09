@@ -40,7 +40,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.jaxb.model.message.Address;
 import org.orcid.jaxb.model.message.Affiliation;
-import org.orcid.jaxb.model.message.AffiliationAddress;
 import org.orcid.jaxb.model.message.ApplicationSummary;
 import org.orcid.jaxb.model.message.Applications;
 import org.orcid.jaxb.model.message.Citation;
@@ -50,7 +49,7 @@ import org.orcid.jaxb.model.message.Contributor;
 import org.orcid.jaxb.model.message.CreditName;
 import org.orcid.jaxb.model.message.Delegation;
 import org.orcid.jaxb.model.message.DelegationDetails;
-import org.orcid.jaxb.model.message.DisambiguatedAffiliation;
+import org.orcid.jaxb.model.message.DisambiguatedOrganization;
 import org.orcid.jaxb.model.message.Email;
 import org.orcid.jaxb.model.message.ExternalIdentifier;
 import org.orcid.jaxb.model.message.ExternalIdentifiers;
@@ -69,6 +68,7 @@ import org.orcid.jaxb.model.message.OrcidPatents;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidWork;
 import org.orcid.jaxb.model.message.OrcidWorks;
+import org.orcid.jaxb.model.message.OrganizationAddress;
 import org.orcid.jaxb.model.message.OtherNames;
 import org.orcid.jaxb.model.message.PatentContributors;
 import org.orcid.jaxb.model.message.PersonalDetails;
@@ -247,6 +247,11 @@ public class JpaJaxbEntityAdapterToOrcidProfileTest extends DBUnitTest {
                 assertEquals(Visibility.LIMITED, contributors.getContributor().get(0).getCreditName().getVisibility());
                 assertEquals(Visibility.LIMITED, orcidWork.getVisibility());
                 assertNull(orcidWork.getJournalTitle());
+            } else if (orcidWork.getPutCode().equals("3")) {
+                WorkContributors contributors = orcidWork.getWorkContributors();
+                assertNotNull(contributors);
+                assertEquals(1, contributors.getContributor().size());
+                assertEquals("0000-0003-0172-7925", contributors.getContributor().get(0).getContributorOrcid().getPath());
             } else if (orcidWork.getPutCode().equals("4")) {
                 putCode4Found = true;
                 assertNotNull(orcidWork.getWorkTitle());
@@ -299,7 +304,7 @@ public class JpaJaxbEntityAdapterToOrcidProfileTest extends DBUnitTest {
         Source sponsor = orcidHistory.getSource();
         assertNotNull(sponsor);
         assertEquals("S. Milligan", sponsor.getSourceName().getContent());
-        assertEquals("4444-4444-4444-4441", sponsor.getSourceOrcid().getValue());
+        assertEquals("4444-4444-4444-4441", sponsor.getSourceOrcid().getPath());
         assertEquals(DateUtils.convertToDate("2012-06-29T15:31:00"), orcidHistory.getDeactivationDate().getValue().toGregorianCalendar().getTime());
         assertEquals(DateUtils.convertToDate("2011-07-02T15:31:00"), orcidHistory.getLastModifiedDate().getValue().toGregorianCalendar().getTime());
     }
@@ -374,17 +379,17 @@ public class JpaJaxbEntityAdapterToOrcidProfileTest extends DBUnitTest {
         assertEquals(1, affiliations.size());
         Affiliation affiliation = affiliations.get(0);
         assertEquals(Visibility.LIMITED, affiliation.getVisibility());
-        assertEquals("An institution", affiliation.getAffiliationName());
+        assertEquals("An institution", affiliation.getOrganization().getName());
         assertEquals("A Department", affiliation.getDepartmentName());
         assertEquals("2010-07-02", affiliation.getStartDate().toString());
         assertEquals("2011-07-02", affiliation.getEndDate().toString());
         assertEquals("Primary Researcher", affiliation.getRoleTitle());
-        DisambiguatedAffiliation disambiguatedAffiliation = affiliation.getDisambiguatedAffiliation();
+        DisambiguatedOrganization disambiguatedAffiliation = affiliation.getOrganization().getDisambiguatedOrganization();
         assertNotNull(disambiguatedAffiliation);
-        assertEquals("abc456", disambiguatedAffiliation.getDisambiguatedAffiliationIdentifier());
+        assertEquals("abc456", disambiguatedAffiliation.getDisambiguatedOrganizationIdentifier());
         assertEquals("WDB", disambiguatedAffiliation.getDisambiguationSource());
 
-        checkAddress(affiliation.getAffiliationAddress());
+        checkAddress(affiliation.getOrganization().getAddress());
 
     }
 
@@ -393,7 +398,7 @@ public class JpaJaxbEntityAdapterToOrcidProfileTest extends DBUnitTest {
         assertEquals(Visibility.LIMITED, externalIdentifiers.getVisibility());
         assertEquals(1, externalIdentifiers.getExternalIdentifier().size());
         ExternalIdentifier externalIdentifier = externalIdentifiers.getExternalIdentifier().get(0);
-        assertEquals("4444-4444-4444-4441", externalIdentifier.getExternalIdOrcid().getValue());
+        assertEquals("4444-4444-4444-4441", externalIdentifier.getExternalIdOrcid().getPath());
         assertEquals("d3clan", externalIdentifier.getExternalIdReference().getContent());
         assertEquals("Facebook", externalIdentifier.getExternalIdCommonName().getContent());
     }
@@ -443,16 +448,16 @@ public class JpaJaxbEntityAdapterToOrcidProfileTest extends DBUnitTest {
 
     }
 
-    private void checkAddress(AffiliationAddress address) {
+    private void checkAddress(OrganizationAddress address) {
         assertNotNull(address);
-        assertEquals(Iso3166Country.GB, address.getAffiliationCountry().getValue());
+        assertEquals(Iso3166Country.GB, address.getCountry());
     }
 
     private void checkApplications(Applications applications) {
         assertEquals(2, applications.getApplicationSummary().size());
         Map<String, ApplicationSummary> applicationsMappedByOrcid = Maps.uniqueIndex(applications.getApplicationSummary(), new Function<ApplicationSummary, String>() {
             public String apply(ApplicationSummary applicationSummary) {
-                return applicationSummary.getApplicationOrcid().getValue();
+                return applicationSummary.getApplicationOrcid().getPath();
             }
         });
         ApplicationSummary application1 = applicationsMappedByOrcid.get("4444-4444-4444-4441");

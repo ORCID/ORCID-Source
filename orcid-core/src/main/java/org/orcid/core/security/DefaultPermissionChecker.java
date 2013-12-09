@@ -37,11 +37,13 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import java.security.AccessControlException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -85,7 +87,7 @@ public class DefaultPermissionChecker implements PermissionChecker {
     public void checkPermissions(Authentication authentication, ScopePathType requiredScope, String orcid, OrcidMessage orcidMessage) {
         if (StringUtils.isNotBlank(orcid) && orcidMessage != null && orcidMessage.getOrcidProfile() != null
                 && (orcidMessage.getOrcidProfile().getOrcid() == null || StringUtils.isBlank(orcidMessage.getOrcidProfile().getOrcid().getValue()))) {
-            orcidMessage.getOrcidProfile().setOrcid(orcid);
+            orcidMessage.getOrcidProfile().setOrcidIdentifier(orcid);
         }
         performPermissionChecks(authentication, requiredScope, orcid, orcidMessage);
     }
@@ -148,20 +150,7 @@ public class DefaultPermissionChecker implements PermissionChecker {
             throw new IllegalArgumentException("Cannot obtain authentication details from " + authentication);
         }
     }
-
-    public static void removeWriteScopes(OrcidOauth2TokenDetail tokenDetail) {
-        Set<String> scopes = OAuth2Utils.parseParameterList(tokenDetail.getScope());
-        Set<String> newScopes = new HashSet<String>();
-        Set<ScopePathType> scopesFromStrings = ScopePathType.getScopesFromStrings(scopes);
-        for (Iterator<ScopePathType> it = scopesFromStrings.iterator(); it.hasNext();) {
-            ScopePathType scopePathType = it.next();
-            if (!scopePathType.isWriteOperationScope()) {
-                newScopes.add(scopePathType.value());
-            }
-        }
-        tokenDetail.setScope(OAuth2Utils.formatParameterList(newScopes));
-    }
-
+    
     private Set<Visibility> getVisibilitiesForOauth2Authentication(OAuth2Authentication oAuth2Authentication, OrcidMessage orcidMessage, ScopePathType requiredScope) {
 
         Set<Visibility> visibilities = new HashSet<Visibility>();
@@ -213,7 +202,7 @@ public class DefaultPermissionChecker implements PermissionChecker {
         if (orcidMessage != null && orcidMessage.getOrcidProfile() != null && orcidMessage.getOrcidProfile().getOrcidHistory() != null
                 && orcidMessage.getOrcidProfile().getOrcidHistory().getSource() != null
                 && orcidMessage.getOrcidProfile().getOrcidHistory().getSource().getSourceOrcid() != null) {
-            return orcidMessage.getOrcidProfile().getOrcidHistory().getSource().getSourceOrcid().getValue();
+            return orcidMessage.getOrcidProfile().getOrcidHistory().getSource().getSourceOrcid().getPath();
         } else {
             return null;
         }
@@ -236,12 +225,12 @@ public class DefaultPermissionChecker implements PermissionChecker {
     private void checkScopes(OAuth2Authentication oAuth2Authentication, ScopePathType requiredScope) {
         AuthorizationRequest authorizationRequest = oAuth2Authentication.getAuthorizationRequest();
         Set<String> requestedScopes = authorizationRequest.getScope();
-        if (requiredScope.isWriteOperationScope()) {
+        if (requiredScope.isUserGrantWriteScope()) {
             OrcidOAuth2Authentication orcidOauth2Authentication = (OrcidOAuth2Authentication) oAuth2Authentication;
             String activeToken = orcidOauth2Authentication.getActiveToken();
             if (activeToken != null) {
                 OrcidOauth2TokenDetail tokenDetail = orcidOauthTokenDetailService.findNonDisabledByTokenValue(activeToken);
-                if (removeWriteScopesPastValitity(tokenDetail)) {
+                if (removeUserGrantWriteScopePastValitity(tokenDetail)) {
                     throw new AccessControlException("Write scopes for this token have expired ");
                 }
             }
@@ -252,26 +241,32 @@ public class DefaultPermissionChecker implements PermissionChecker {
     }
 
     /*
-     * Removed write scopes past the specified validity, returns true if
+     * Remove UserGrantWriteScope past the specified validity, returns true if
      * modified false otherwise
      */
-    public boolean removeWriteScopesPastValitity(OrcidOauth2TokenDetail tokenDetail) {
+    public boolean removeUserGrantWriteScopePastValitity(OrcidOauth2TokenDetail tokenDetail) {
+        boolean scopeRemoved = false;
         if (tokenDetail != null && tokenDetail.getScope() != null) {
-            String[] scopes = tokenDetail.getScope().split("\\s+");
+            Set<String> scopes = OAuth2Utils.parseParameterList(tokenDetail.getScope());
+            List<String> removeScopes =  new ArrayList<String>();
             for (String scope : scopes) {
                 if (scope != null && !scope.isEmpty()) {
                     ScopePathType scopePathType = ScopePathType.fromValue(scope);
-                    if (scopePathType.isWriteOperationScope()) {
+                    if (scopePathType.isUserGrantWriteScope()) {
                         Date now = new Date();
                         OrcidRandomValueTokenServices orcidRandomValueTokenServices = (OrcidRandomValueTokenServices) defaultTokenServices;
                         if (now.getTime() > tokenDetail.getDateCreated().getTime() + (orcidRandomValueTokenServices.getWriteValiditySeconds() * 1000)) {
-                            removeWriteScopes(tokenDetail);
-                            orcidOauthTokenDetailService.saveOrUpdate(tokenDetail);
-                            return true;
+                            removeScopes.add(scope);
+                            scopeRemoved = true;
                         }
-                        break;
                     }
                 }
+            }
+            if (scopeRemoved) {
+                for (String scope:removeScopes) scopes.remove(scope); 
+                tokenDetail.setScope(OAuth2Utils.formatParameterList(scopes));
+                orcidOauthTokenDetailService.saveOrUpdate(tokenDetail);
+                return true;
             }
         }
         return false;

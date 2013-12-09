@@ -27,6 +27,7 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import org.junit.AfterClass;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.orcid.core.BaseTest;
@@ -65,6 +66,11 @@ public class OrcidProfileManagerContributorVisibilityTest extends BaseTest {
     public static void removeDBUnitData() throws Exception {
         removeDBUnitData(
                 Arrays.asList("/data/EmptyEntityData.xml", "/data/ProfileEntityData.xml", "/data/SubjectEntityData.xml", "/data/SecurityQuestionEntityData.xml"), null);
+    }
+
+    @Before
+    public void before() {
+        orcidProfileManager.clearOrcidProfileCache();
     }
 
     @Test
@@ -180,9 +186,9 @@ public class OrcidProfileManagerContributorVisibilityTest extends BaseTest {
     public void orcidProvidedAndDoesExistInDbAndCreditNameAndEmailArePublic() {
         // Unmarshall message containing contributor email
         OrcidMessage orcidMessage = unmarshallOrcidMessage("new_work_with_contributor_orcid.xml");
-        // Change email to one that exists in DB
+        // Change orcid to one that exists in DB
         orcidMessage.getOrcidProfile().retrieveOrcidWorks().getOrcidWork().get(0).getWorkContributors().getContributor().get(0).getContributorOrcid()
-                .setValue("4444-4444-4444-444X");
+                .setPath("4444-4444-4444-444X");
 
         // Add the work
         orcidProfileManager.addOrcidWorks(orcidMessage.getOrcidProfile());
@@ -206,7 +212,7 @@ public class OrcidProfileManagerContributorVisibilityTest extends BaseTest {
         OrcidMessage orcidMessage = unmarshallOrcidMessage("new_work_with_contributor_orcid.xml");
         // Change email to one that exists in DB
         orcidMessage.getOrcidProfile().retrieveOrcidWorks().getOrcidWork().get(0).getWorkContributors().getContributor().get(0).getContributorOrcid()
-                .setValue("4444-4444-4444-4447");
+                .setPath("4444-4444-4444-4447");
 
         // Add the work
         orcidProfileManager.addOrcidWorks(orcidMessage.getOrcidProfile());

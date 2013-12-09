@@ -27,18 +27,21 @@ import org.orcid.api.common.exception.OrcidBadRequestException;
 import org.orcid.api.common.exception.OrcidNotFoundException;
 import org.orcid.api.t2.server.delegator.T2OrcidApiServiceDelegator;
 import org.orcid.core.exception.OrcidValidationException;
+import org.orcid.core.manager.ValidationBehaviour;
 import org.orcid.core.manager.ValidationManager;
+import org.orcid.core.manager.impl.ValidationManagerImpl;
 import org.orcid.core.security.DeprecatedException;
 import org.orcid.core.version.OrcidMessageVersionConverterChain;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.persistence.dao.ProfileDao;
+import org.springframework.beans.factory.InitializingBean;
 
 /**
  * 
  * @author Will Simpson
  * 
  */
-public class T2OrcidApiServiceVersionedDelegatorImpl implements T2OrcidApiServiceDelegator {
+public class T2OrcidApiServiceVersionedDelegatorImpl implements T2OrcidApiServiceDelegator, InitializingBean {
 
     @Resource(name = "orcidT2ServiceDelegator")
     private T2OrcidApiServiceDelegator t2OrcidApiServiceDelegator;
@@ -50,7 +53,7 @@ public class T2OrcidApiServiceVersionedDelegatorImpl implements T2OrcidApiServic
 
     private ValidationManager outgoingValidationManager;
 
-    private String externalVersion;
+    private String externalVersion = OrcidMessage.DEFAULT_VERSION;
 
     private boolean supportsAffiliations = true;
 
@@ -76,6 +79,30 @@ public class T2OrcidApiServiceVersionedDelegatorImpl implements T2OrcidApiServic
     @Override
     public Response viewStatusText() {
         return t2OrcidApiServiceDelegator.viewStatusText();
+    }
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        autoConfigureValidators();
+    }
+
+    public void autoConfigureValidators() {
+        if (incomingValidationManager == null) {
+            ValidationManagerImpl incomingValidationManagerImpl = new ValidationManagerImpl();
+            incomingValidationManagerImpl.setValidationBehaviour(ValidationBehaviour.THROW_VALIDATION_EXCEPTION);
+            incomingValidationManagerImpl.setVersion(externalVersion);
+            incomingValidationManagerImpl.setRequireOrcidProfile(true);
+            incomingValidationManagerImpl.setValidateTitle(true);
+            incomingValidationManagerImpl.setValidateWorkType(true);
+            setIncomingValidationManager(incomingValidationManagerImpl);
+        }
+
+        if (outgoingValidationManager == null) {
+            ValidationManagerImpl outgoingValidationManagerImpl = new ValidationManagerImpl();
+            outgoingValidationManagerImpl.setVersion(externalVersion);
+            outgoingValidationManagerImpl.setValidateBibtex(false);
+            setOutgoingValidationManager(outgoingValidationManagerImpl);
+        }
     }
 
     @Override
@@ -146,9 +173,9 @@ public class T2OrcidApiServiceVersionedDelegatorImpl implements T2OrcidApiServic
 
     @Override
     public Response createProfile(UriInfo uriInfo, OrcidMessage orcidMessage) {
-        OrcidMessage upgradedMessage = upgradeMessage(orcidMessage);
         Response response = null;
-        validateIncomingMessage(upgradedMessage);        
+        validateIncomingMessage(orcidMessage);
+        OrcidMessage upgradedMessage = upgradeMessage(orcidMessage);
         response = t2OrcidApiServiceDelegator.createProfile(uriInfo, upgradedMessage);
         return response;
     }
@@ -159,8 +186,7 @@ public class T2OrcidApiServiceVersionedDelegatorImpl implements T2OrcidApiServic
         validateIncomingMessage(orcidMessage);
         OrcidMessage upgradedMessage = upgradeMessage(orcidMessage);
         response = t2OrcidApiServiceDelegator.updateBioDetails(uriInfo, orcid, upgradedMessage);
-        response = downgradeAndValidateResponse(response);
-        return response;
+        return downgradeAndValidateResponse(response);
     }
 
     @Override
@@ -178,7 +204,7 @@ public class T2OrcidApiServiceVersionedDelegatorImpl implements T2OrcidApiServic
         validateIncomingMessage(orcidMessage);
         OrcidMessage upgradedMessage = upgradeMessage(orcidMessage);
         response = t2OrcidApiServiceDelegator.updateWorks(uriInfo, orcid, upgradedMessage);
-        return response;
+        return downgradeAndValidateResponse(response);
     }
 
     @Override
@@ -187,7 +213,7 @@ public class T2OrcidApiServiceVersionedDelegatorImpl implements T2OrcidApiServic
         validateIncomingMessage(orcidMessage);
         OrcidMessage upgradedMessage = upgradeMessage(orcidMessage);
         response = t2OrcidApiServiceDelegator.addExternalIdentifiers(uriInfo, orcid, upgradedMessage);
-        return response;
+        return downgradeAndValidateResponse(response);
     }
 
     @Override

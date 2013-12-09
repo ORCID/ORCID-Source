@@ -195,7 +195,7 @@ public class ManageProfileControllerTest extends BaseControllerTest {
         ChangePersonalInfoForm changePersonalInfoForm = new ChangePersonalInfoForm(getOrcidProfile());
         ModelAndView successView = controller.saveEditedBio(request, changePersonalInfoForm, bindingResult, mock(RedirectAttributes.class));
         verify(mockNotificationManager, times(0)).sendEmailAddressChangedNotification(any(OrcidProfile.class), any(Email.class), any(URI.class));
-        assertEquals("redirect:manage-bio-settings", successView.getViewName());
+        assertEquals("redirect:/account/manage-bio-settings", successView.getViewName());
     }
 
     @Test
@@ -208,40 +208,6 @@ public class ManageProfileControllerTest extends BaseControllerTest {
 
     }
 
-    @Test
-    public void testChangePasswordHappyPath() throws Exception {
-
-        BindingResult bindingResult = mock(BindingResult.class);
-        ChangePasswordForm changePasswordForm = new ChangePasswordForm();
-        changePasswordForm.setOldPassword("0ldPassword");
-        changePasswordForm.setPassword("n3wPassword");
-        changePasswordForm.setRetypedPassword("n3wPassword");
-        when(bindingResult.hasErrors()).thenReturn(false);
-        when(encryptionManager.hashMatches(any(String.class), any(String.class))).thenReturn(true);
-
-        ModelAndView modelAndView = controller.updateWithChangedPassword(changePasswordForm, bindingResult);
-        assertEquals("change_password", modelAndView.getViewName());
-        assertNotNull(modelAndView.getModel().get("passwordOptionsSaved"));
-
-    }
-
-    @Test
-    public void testChangePasswordOldPasswordWrong() throws Exception {
-
-        BindingResult bindingResult = mock(BindingResult.class);
-        ChangePasswordForm changePasswordForm = new ChangePasswordForm();
-        changePasswordForm.setOldPassword("0ldPassword");
-        changePasswordForm.setPassword("n3wPassword");
-        changePasswordForm.setRetypedPassword("n3wPassword");
-
-        when(bindingResult.hasErrors()).thenReturn(false);
-        when(encryptionManager.hashMatches(any(String.class), any(String.class))).thenReturn(false);
-
-        ModelAndView modelAndView = controller.updateWithChangedPassword(changePasswordForm, bindingResult);
-        assertEquals("change_password", modelAndView.getViewName());
-        assertNull(modelAndView.getModel().get("passwordOptionsSaved"));
-
-    }
 
     @Test
     public void testChangeSecurityDetailsSuccess() throws Exception {

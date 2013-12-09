@@ -31,6 +31,7 @@ import java.util.List;
 
 import javax.annotation.Resource;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedMap;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -254,17 +255,21 @@ public class T2OrcidOAuthApiClientIntegrationTest extends BaseT2OrcidOAuthApiCli
         assertTrue(retrievedOrcidWorks.getEntity(OrcidMessage.class).getOrcidProfile().retrieveOrcidWorks().getOrcidWork().size() == 4);
     }
 
+    /*
+     * this is to test removing a UserGrantWrite Scope that is older then 1 hour
+     */
     @Test
-    public void testRemoveWriteScopesPastValitity() throws Exception {
+    public void testUserGrantWriteScopeRemove() throws Exception {
 
-        // test multi-scope token, by creating a token with a write scope and
-        // changing
-        // the tokens creation date to old
         createNewOrcidUsingAccessToken();
         OrcidOauth2TokenDetail orcidOauth2TokenDetail = orcidOauthTokenDetailService.findNonDisabledByTokenValue(accessToken);
+
+        // make it a day old
         Date d = new Date();
         d.setTime(d.getTime() - 24 * 60 * 60 * 1000);
         orcidOauth2TokenDetail.setDateCreated(d);
+        orcidOauth2TokenDetail.setScope(ScopePathType.ORCID_WORKS_UPDATE.value() + " " + ScopePathType.ORCID_WORKS_CREATE.value() + " "
+                + ScopePathType.ORCID_PROFILE_READ_LIMITED.value());
         orcidOauthTokenDetailService.saveOrUpdate(orcidOauth2TokenDetail);
 
         OrcidMessage message = orcidClientDataHelper.createFromXML(OrcidClientDataHelper.ORCID_INTERNAL_NO_SPONSOR_XML);
@@ -287,13 +292,58 @@ public class T2OrcidOAuthApiClientIntegrationTest extends BaseT2OrcidOAuthApiCli
         // make sure read scope is still there
         assertTrue(orcidOauth2TokenDetail.getScope().contains("read"));
     }
+    
+    /*
+     * this is to test a ClientCreditalScope Scope that is older then 1 hour
+     * isn't removed 
+     */
+    @Test
+    public void testClientCreditalScopeIsntRemove() throws Exception {
+
+        createNewOrcidUsingAccessToken();
+        OrcidOauth2TokenDetail orcidOauth2TokenDetail = orcidOauthTokenDetailService.findNonDisabledByTokenValue(accessToken);
+
+        // modify the access token to look like a user granted token and make it a day old
+        Date d = new Date();
+        d.setTime(d.getTime() - 24 * 60 * 60 * 1000);
+        orcidOauth2TokenDetail.setDateCreated(d);
+        // ORCID_PROFILE_CREATE is a ClientCreditalScope
+        // ORCID_WORKS_CREATE is a UserGrantScope
+        orcidOauth2TokenDetail.setScope(ScopePathType.ORCID_PROFILE_CREATE.value() + " " + ScopePathType.ORCID_WORKS_CREATE.value());
+        orcidOauthTokenDetailService.saveOrUpdate(orcidOauth2TokenDetail);
+
+        // test creating a record works with token
+        OrcidMessage message = orcidClientDataHelper.createFromXML(OrcidClientDataHelper.ORCID_INTERNAL_NO_SPONSOR_XML);
+        ClientResponse clientResponse = oauthT2Client.createProfileXML(message, accessToken);
+        assertEquals(201,clientResponse.getStatus());
+        MultivaluedMap<String, String> map = clientResponse.getHeaders();
+        List<String> locList = map.get("Location");
+        assertTrue(locList.get(0).contains("/orcid-profile"));
+        
+        // test trying use UserGrantToken
+        OrcidWorks orcidWorks = message.getOrcidProfile().retrieveOrcidWorks();
+        orcidWorks = new OrcidWorks();
+        OrcidWork orcidWork = orcidClientDataHelper.createWork("Single works");
+        orcidWork.setWorkType(WorkType.UNDEFINED);
+        orcidWorks.getOrcidWork().add(orcidWork);
+        message.getOrcidProfile().setOrcidWorks(orcidWorks);
+        assertClientResponse403SecurityProblem(oauthT2Client.addWorksXml(orcid, message, accessToken));
+        
+        // test ClientCreditalScope isn't removed
+        orcidOauth2TokenDetail = orcidOauthTokenDetailService.findNonDisabledByTokenValue(accessToken);
+        assertTrue(orcidOauth2TokenDetail.getScope().contains("/orcid-profile/create"));
+        // test make sure UserGrantScope is removed
+        assertTrue(!orcidOauth2TokenDetail.getScope().contains("/orcid-works/create"));
+    }
+
+    
 
     @Test
     public void testTokenWithBlankScope() throws Exception {
         // Make sure the permissionChecker can handle blank scopes
         OrcidOauth2TokenDetail orcidOauth2TokenDetail = orcidOauthTokenDetailService.findNonDisabledByTokenValue(accessToken);
         DefaultPermissionChecker defaultPermissionChecker = (DefaultPermissionChecker) permissionChecker;
-        defaultPermissionChecker.removeWriteScopesPastValitity(orcidOauth2TokenDetail);
+        defaultPermissionChecker.removeUserGrantWriteScopePastValitity(orcidOauth2TokenDetail);
 
         // make sure blank scopes return 403
         createNewOrcidUsingAccessToken();
@@ -356,7 +406,7 @@ public class T2OrcidOAuthApiClientIntegrationTest extends BaseT2OrcidOAuthApiCli
 
             if (workTitle != null && workTitle.getTitle() != null) {
                 if ("Single works with title".equals(workTitle.getTitle().getContent())) {
-                    assertEquals(clientOrcid, work.getWorkSource().getContent());
+                    assertEquals(clientOrcid, work.getWorkSource().getValueAsString());
                     break;
                 }
             }
@@ -419,7 +469,7 @@ public class T2OrcidOAuthApiClientIntegrationTest extends BaseT2OrcidOAuthApiCli
 
         assertEquals("Chromosome 5a55.5 microdeletions comprising AB555 and CD5555", workToUpdate.getWorkTitle().getTitle().getContent());
         assertEquals("Chromosome subtitle", workToUpdate.getWorkTitle().getSubtitle().getContent());
-        assertEquals(this.clientId, workToUpdate.getWorkSource().getContent());
+        assertEquals(this.clientId, workToUpdate.getWorkSource().getValueAsString());
 
         // check other works unchanged
         assertEquals("Work title 1", orcidWorks.getOrcidWork().get(1).getWorkTitle().getTitle().getContent());
@@ -447,7 +497,9 @@ public class T2OrcidOAuthApiClientIntegrationTest extends BaseT2OrcidOAuthApiCli
 
             ExternalIdentifiers newExternalIdentifiers = new ExternalIdentifiers();
             newExternalIdentifiers.setVisibility(Visibility.PUBLIC);
-            ExternalIdentifier additionalIdentifer = new ExternalIdentifier(new ExternalIdOrcid(clientId), new ExternalIdReference("abc123"));
+            ExternalIdOrcid externalIdOrcid = new ExternalIdOrcid();
+            externalIdOrcid.setValueAsString(clientId);
+            ExternalIdentifier additionalIdentifer = new ExternalIdentifier(externalIdOrcid, new ExternalIdReference("abc123"));
             newExternalIdentifiers.getExternalIdentifier().add(additionalIdentifer);
             orcidBio.setExternalIdentifiers(newExternalIdentifiers);
 
@@ -488,7 +540,9 @@ public class T2OrcidOAuthApiClientIntegrationTest extends BaseT2OrcidOAuthApiCli
 
         ExternalIdentifiers newExternalIdentifiers = new ExternalIdentifiers();
         newExternalIdentifiers.setVisibility(Visibility.PUBLIC);
-        ExternalIdentifier additionalIdentifer = new ExternalIdentifier(new ExternalIdOrcid(clientId), new ExternalIdReference("abc123"));
+        ExternalIdOrcid externalIdOrcid = new ExternalIdOrcid();
+        externalIdOrcid.setValueAsString(clientId);
+        ExternalIdentifier additionalIdentifer = new ExternalIdentifier(externalIdOrcid, new ExternalIdReference("abc123"));
         newExternalIdentifiers.getExternalIdentifier().add(additionalIdentifer);
         orcidBio.setExternalIdentifiers(newExternalIdentifiers);
 
@@ -525,7 +579,9 @@ public class T2OrcidOAuthApiClientIntegrationTest extends BaseT2OrcidOAuthApiCli
 
         ExternalIdentifiers newExternalIdentifiers = new ExternalIdentifiers();
         newExternalIdentifiers.setVisibility(Visibility.PUBLIC);
-        ExternalIdentifier additionalIdentifer = new ExternalIdentifier(new ExternalIdOrcid(clientId), new ExternalIdReference("abc123"));
+        ExternalIdOrcid externalIdOrcid = new ExternalIdOrcid();
+        externalIdOrcid.setValueAsString(clientId);
+        ExternalIdentifier additionalIdentifer = new ExternalIdentifier(externalIdOrcid, new ExternalIdReference("abc123"));
         newExternalIdentifiers.getExternalIdentifier().add(additionalIdentifer);
         orcidBio.setExternalIdentifiers(newExternalIdentifiers);
 

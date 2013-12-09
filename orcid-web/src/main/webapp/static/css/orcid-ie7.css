@@ -225,3 +225,17 @@ ul.workspace-private-toolbar > li{
 .lightbox-container-ie7{
 	padding:15px;
 }
+
+#spinner{
+	display:none;
+}
+
+#edit-affiliation .col-md-6{
+	width: 380px; /* Fixed Width */	
+}
+
+#statistics .col-md-6{
+	width: 450px;
+}
+
+ 

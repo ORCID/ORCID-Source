@@ -47,10 +47,15 @@
                     ${(profile.orcidBio.personalDetails.creditName.content)!}
                 <#else>
                     ${(profile.orcidBio.personalDetails.givenNames.content)!} ${(profile.orcidBio.personalDetails.familyName.content)!}
-                </#if>
-            </h2>
-            <p><small id="orcid-id" class="orcid-id">${baseUriHttp}/${(profile.orcid.value)!}</small></p>
-	        <p class="hoover-white-fonts"><a href="${baseUriHttp}/${(profile.orcid.value)!}" class="label btn-primary"><@orcid.msg 'workspace.ViewPublicORCIDRecord'/></a></p>
+                </#if>                
+            </h2>            
+            <!-- <p><small id="orcid-id" class="orcid-id">${baseUriHttp}/${(profile.orcid.value)!}</small></p> -->           			  
+			 
+			
+			<input type="text" class="orcid-id-input" onClick="this.select();" value="${baseUriHttp}/${(profile.orcid.value)!}" readonly="readonly">					       
+							
+            
+	        <p class="hoover-white-fonts"><a href="${baseUriHttp}/${(profile.orcid.value)!}" class="label btn-primary"><@orcid.msg 'workspace.ViewPublicORCIDRecord'/></a><br /><a href="<@spring.url '/account/manage-bio-settings'/>" id="update-personal-modal-link" class="label btn-primary"><@orcid.msg 'workspace.Update'/></a></p>
 	        <#if ((profile.orcidBio.personalDetails.otherNames.otherName)?size != 0)>
 	        	<p><strong><@orcid.msg 'workspace.Alsoknownas'/></strong><br />
 		       		<#list profile.orcidBio.personalDetails.otherNames.otherName as otherName>
@@ -97,37 +102,23 @@
         		<div class="row">
         			<!-- Works -->
 	        		<div class="workspace-overview col-md-3 col-sm-3 col-xs-6" id="works-overview">
-	        			<a href="#workspace-publications" class="overview-count"><span ng-bind="worksSrvc.works.length"></span></a>
-	        			<a href="#workspace-publications" class="overview-title"><@orcid.msg 'workspace.Works'/></a>
+	        			<a href="#workspace-publications" class="overview-count" ng-click="workspaceSrvc.openWorks()"><span ng-bind="worksSrvc.works.length"></span></a>
+	        			<a href="#workspace-publications" class="overview-title" ng-click="workspaceSrvc.openWorks()"><@orcid.msg 'workspace.Works'/></a>
 	                    <br />	                    	
-	                    <a href="#workspace-publications" class="btn-update no-icon"><@orcid.msg 'workspace.view'/></a>	                    
+	                    <a href="#workspace-publications" class="btn-update no-icon" ng-click="workspaceSrvc.openWorks()"><@orcid.msg 'workspace.view'/></a>	                    
 	        		</div>
-	        		<!-- Afilliations -->
-					<#if RequestParameters['affiliations']??>
-		                <div class="workspace-overview col-md-3 col-sm-3 col-xs-6" id="educations-overview">
-		                    <a href="#workspace-educations" class="overview-count"><span ng-bind="affiliationsSrvc.educations.length"></span></a>
-		                    <a href="#workspace-educations" class="overview-title"><@orcid.msg 'org.orcid.jaxb.model.message.AffiliationType.education'/></a>
-		                    <br />
-		                    <a href="#workspace-educations" class="btn-update no-icon"><@orcid.msg 'workspace.view'/></a>
-		                </div>
-		                <div class="workspace-overview col-md-3 col-sm-3 col-xs-6" id="employments-overview">
-		                    <a href="#workspace-employments" class="overview-count"><span ng-bind="affiliationsSrvc.employments.length"></span></a>
-		                    <a href="#workspace-employments" class="overview-title"><@orcid.msg 'org.orcid.jaxb.model.message.AffiliationType.employment'/></a>
-		                    <br />
-		                    <a href="#workspace-employments" class="btn-update no-icon"><@orcid.msg 'workspace.view'/></a>
-		                </div>
-		             <#else>
-		                <div class="workspace-overview col-md-3 col-sm-3 col-xs-6" id="affiliations-overview">
-		                    <a href="#workspace-affiliations" class="overview-count"><span ng-bind="affiliationsSrvc.affiliations.length"></span></a>
-		                    <a href="#workspace-affiliations" class="overview-title"><@orcid.msg 'workspace_bio.Affiliations'/></a>
-		                    <br />
-		                    <#if RequestParameters['affiliations']??>
-		                        <a href="#workspace-affiliations" class="btn-update no-icon"><@orcid.msg 'workspace.view'/></a>
-		                    <#else>
-		                        <a target="_blank" href="http://support.orcid.org/forums/179657-coming-soon" class="btn-update no-icon"><@orcid.msg 'workspace.ComingSoon'/></a>
-		                    </#if>
-		                </div>
-		             </#if>	                
+		            <div class="workspace-overview col-md-3 col-sm-3 col-xs-6" id="educations-overview">
+		                <a href="#workspace-educations" class="overview-count" ng-click="workspaceSrvc.openEducation()"><span ng-bind="affiliationsSrvc.educations.length"></span></a>
+		                <a href="#workspace-educations" class="overview-title" ng-click="workspaceSrvc.openEducation()"><@orcid.msg 'org.orcid.jaxb.model.message.AffiliationType.education'/></a>
+		                <br />
+		                <a href="#workspace-educations" class="btn-update no-icon" ng-click="workspaceSrvc.openEducation()"><@orcid.msg 'workspace.view'/></a>
+		            </div>
+		            <div class="workspace-overview col-md-3 col-sm-3 col-xs-6" id="employments-overview">
+		                <a href="#workspace-employments" class="overview-count" ng-click="workspaceSrvc.openEmployment()"><span ng-bind="affiliationsSrvc.employments.length"></span></a>
+		                <a href="#workspace-employments" class="overview-title" ng-click="workspaceSrvc.openEmployment()"><@orcid.msg 'org.orcid.jaxb.model.message.AffiliationType.employment'/></a>
+		                <br />
+		                <a href="#workspace-employments" class="btn-update no-icon" ng-click="workspaceSrvc.openEmployment()"><@orcid.msg 'workspace.view'/></a>
+		             </div>
 	                <!-- Grants -->     
 	        		<div class="workspace-overview  col-md-3 col-sm-3 col-xs-6">
 	        			<a href="#workspace-grants" class="overview-count">${(profile.orcidActivities.orcidGrants.orcidGrant?size)!0}</a>
@@ -155,18 +146,16 @@
         			</div>
             	</div>
             	<!-- Affiliations -->
-                <#if RequestParameters['affiliations']??>
-                	<#include "workspace_affiliations_body_list.ftl"/>
-                </#if>
+                <#include "workspace_affiliations_body_list.ftl"/>
 		        <!-- Works -->                
                 <div id="workspace-publications" class="workspace-accordion-item workspace-accordion-active" ng-controller="WorkCtrl">
                 	<div class="workspace-accordion-header">
                 		<ul class="personal-inf-display">
                 			<li>
-		        				<a href="" ng-click="toggleDisplayWorks()" class="toggle-text">
-		        			       <i class="glyphicon-chevron-down glyphicon x0" ng-class="{'glyphicon-chevron-right':displayWorks==false}"></i></a>
+		        				<a href="" ng-click="workspaceSrvc.toggleWorks()" class="toggle-text">
+		        			       <i class="glyphicon-chevron-down glyphicon x0" ng-class="{'glyphicon-chevron-right':workspaceSrvc.displayWorks==false}"></i>
 		        			    </a> 
-		        				<a href="" ng-click="toggleDisplayWorks()" class="toggle-text"><@orcid.msg 'workspace.Works'/></a>
+		        				<a href="" ng-click="workspaceSrvc.toggleWorks()" class="toggle-text"><@orcid.msg 'workspace.Works'/></a>
 		        			</li>		        			
 							<li>
 								<a class="label btn-primary" ng-click="showWorkImportWizard()"><@orcid.msg 'workspace.import_works'/></a>
@@ -177,7 +166,7 @@
 						</ul>					
 					</div>
 					
-      	            <div ng-show="displayWorks" class="workspace-accordion-content">
+      	            <div ng-show="workspaceSrvc.displayWorks" class="workspace-accordion-content">
 	            		<#include "includes/work/add_work_modal_inc.ftl"/>
 						<#include "includes/work/del_work_modal_inc.ftl"/>
 						<#include "includes/work/body_work_inc.ftl"/>

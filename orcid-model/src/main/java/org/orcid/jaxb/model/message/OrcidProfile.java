@@ -61,15 +61,20 @@ import org.orcid.jaxb.model.clientgroup.GroupType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "orcid", "orcidId", "orcidDeprecated", "orcidPreferences", "orcidHistory", "orcidBio", "orcidActivities", "orcidInternal" })
+@XmlType(name = "", propOrder = { "orcid", "orcidId", "orcidIdentifier", "orcidDeprecated", "orcidPreferences", "orcidHistory", "orcidBio", "orcidActivities",
+        "orcidInternal" })
 @XmlRootElement(name = "orcid-profile")
 public class OrcidProfile implements Serializable {
 
     private static final long serialVersionUID = 1L;
     protected Orcid orcid;
 
+    // Legacy
     @XmlElement(name = "orcid-id")
     protected String orcidId;
+
+    @XmlElement(name = "orcid-identifier")
+    protected OrcidIdentifier orcidIdentifier;
 
     @XmlElement(name = "orcid-deprecated")
     private OrcidDeprecated orcidDeprecated;
@@ -115,7 +120,16 @@ public class OrcidProfile implements Serializable {
      * 
      */
     public Orcid getOrcid() {
-        return orcid;
+        if (orcid != null) {
+            return orcid;
+        }
+        if (orcidIdentifier != null) {
+            String path = orcidIdentifier.getPath();
+            if (path != null) {
+                return new Orcid(path);
+            }
+        }
+        return null;
     }
 
     /**
@@ -129,23 +143,57 @@ public class OrcidProfile implements Serializable {
         this.orcid = value;
     }
 
-    public String getOrcidId() {
-        return this.orcidId; // orcidId;
-    }
-
-    public void setOrcidId(String value) {
-        this.orcidId = value;
-    }
-
-    /**
-     * Sets the value of the orcid property.
-     * 
-     * @param value
-     *            allowed object is {@link String }
-     * 
-     */
     public void setOrcid(String value) {
-        this.orcid = new Orcid(value);
+        if (value == null) {
+            this.orcid = null;
+        } else {
+            this.orcid = new Orcid(value);
+        }
+    }
+
+    public String retrieveOrcidUriAsString() {
+        if (orcidIdentifier == null) {
+            return null;
+        }
+        String uri = orcidIdentifier.getUri();
+        if (uri != null) {
+            return uri;
+        }
+        return orcidIdentifier.getValueAsString();
+    }
+
+    public String retrieveOrcidPath() {
+        if (orcidIdentifier == null) {
+            return null;
+        }
+        String path = orcidIdentifier.getPath();
+        if (path != null) {
+            return path;
+        }
+        if (orcid != null) {
+            return orcid.getValue();
+        }
+        return null;
+    }
+
+    public OrcidIdentifier getOrcidIdentifier() {
+        return orcidIdentifier;
+    }
+
+    public void setOrcidIdentifier(OrcidIdentifier orcidIdentifier) {
+        this.orcidIdentifier = orcidIdentifier;
+    }
+
+    public void setOrcidIdentifier(String path) {
+        this.orcidIdentifier = new OrcidIdentifier(path);
+    }
+
+    public String getOrcidId() {
+        return orcidId;
+    }
+
+    public void setOrcidId(String orcidId) {
+        this.orcidId = orcidId;
     }
 
     /**
@@ -452,7 +500,7 @@ public class OrcidProfile implements Serializable {
             orcidActivities.downgradeToAffiliationsOnly();
         }
     }
-    
+
     @Override
     public String toString() {
         return OrcidMessage.convertToString(this);
