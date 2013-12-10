@@ -112,7 +112,7 @@
 					</div>
 				</div>
 				
-				<div class="row bottomBuffer" ng-show="worksInfo[work.putCode.value].shortDescription"
+				<div class="row bottomBuffer" ng-show="worksInfo[work.putCode.value].shortDescription.value"
 					ng-cloak>
 					<div class="col-md-8">
 						<strong> <@orcid.msg
