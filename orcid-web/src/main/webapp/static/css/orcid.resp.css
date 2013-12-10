@@ -711,8 +711,8 @@ select {
 }
 
 .header .logo p {
-	width: 140px;
-	float: right;
+	width: 130px;
+	float: left;
 	font-size: 14px;
 	color: #939498;
 	line-height: 17px;
@@ -2435,7 +2435,7 @@ header overrides
 
 .logo p {
 	width: 140px;
-	margin-left: 95px;
+	margin-left: 98px;
 	font-size: 14px;
 	color: #939498;
 	line-height: 13px;

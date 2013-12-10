@@ -1,24 +1,30 @@
 # ORCID XSD Information
 
-The current version of the ORCID XSD is [Version 1.0.23](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/orcid-message-1.0.23.xsd).
+#### XSD Release Version
 
-Read the [changelog from the previous version](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/orcid-message-1.0.23.md).
+* **[ORCID Message 1.1](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/orcid-message-1.1.xsd)** <br>_Read the [changelog from the previous version (ORCID Message 1.0.23)](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/orcid-message-1.1.md)_
+
+#### XSD Release Candidate(s)
+
+* **[ORCID Message 1.2_rc1](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/orcid-message-1.2_rc1.xsd)** <br>_Contains: XSD for Organizational Affiliations_
+
+#### Still-supported, Deprecated Versions
+
+* **[Version 1.0.x (includes versions 1.0.1 through 1.0.23)](https://github.com/ORCID/ORCID-Source/tree/master/orcid-model/src/main/resources)** <br>_Sunset Date: March 1, 2014_
+
+
 
 ## Key Notices
 
-While most versions of the XSD are backward compatible, a deprecated version is expected during Summer 2013. See the [notice of the change](http://support.orcid.org/knowledgebase/articles/167943-xsd-1-0-10-planning-for-the-update).
+In November 2013, ORCID released is new XSD versioning scheme and release process. This scheme was created to allow for flexible development of future enhancements, while providing stability for those incorporating changes. Please read the following notice carefully to familiarize yourself with these changes.
+
+**Who is affected?** All users of the ORCID public or member API will be affected by this change.
 
 ## Staying Informed
 
 You can stay informed of updates to the XSD and API by subscribing to our [API Users Group](https://groups.google.com/forum/?fromgroups#!forum/orcid-api-users) mailing list and forum.
 
-## About XSD Updates and Versioning
-
-In November 2013, ORCID released is new XSD versioning scheme. This scheme was created to allow for flexible development of future enhancements, while providing stability for those incorporating changes.
-
-### Who is affected?
-
-All users of the ORCID public or member API will be affected by this change.
+# About XSD Updates and Versioning
 
 ### High-level description
 
@@ -34,7 +40,7 @@ The XSD version you should use depends on what you are trying to do. Most develo
 
 ## Using XSD Versions
 
-### Deprecated Version(s)
+### <a name="deprecatedVersion"></a>Deprecated Version(s)
 
 The deprecated version(s) of the XSD are former versions of the XSD. If you are using a deprecated version, you should be planning a migration to move to a release version. Other things of note about deprecated versions:
 
@@ -42,17 +48,17 @@ The deprecated version(s) of the XSD are former versions of the XSD. If you are 
 * Developers on deprecated versions should refer to the migration notes to assist in moving to the latest release version.
 * Future functionality will not be supported in deprecated versions.
 * Future versions may not be backward compatible with deprecated versions.
-* Deprecated versions will have a “sunset date”, after which they will no longer be supported. developers experiencing problems with deprecated versions will be directed to move to the release version.
+* Deprecated versions will have a “sunset date”, after which they will no longer be supported. Developers experiencing problems with deprecated versions will be directed to move to the release version.
 
-### Release Version(s)
+### <a name="releaseVersion"></a>Release Version(s)
 
 Release versions of the XSD are fully documented, tested, supported and encouraged for use. Of note about release versions:
 
 * Our intent is for release versions of the XSD to have longer lifespans than the very fast pace of ORCID new development.
-* When feasible, we will provide estimates of when the next release version is likely to be available.
+* When feasible, we will provide estimates of when the next release version is likely to be available, and what it is likely to contain.
 * While more than one release version may be available at any time, we highly recommend that developers update to the latest release version at least once per year to enjoy optimal XSD stability.
 
-### Release Candidate(s)
+### <a name="releaseCandidate"></a>Release Candidate(s)
 
 Release candidate versions of the XSD contain elements and data structures for future functionality, potential changes and other enhancements. Of note about release candidates:
 
@@ -62,16 +68,16 @@ Release candidate versions of the XSD contain elements and data structures for f
 * We welcome feedback from any developers working with current release candidates.
 
 
-## ORCID-Message XSD Versions
+# ORCID-Message XSD Versions
 
 | Version/link | Release Date | Sunset date | Notes | Who should be using this version |
 | ------------ | ------------ | ----------- | ----- | -------------------------------- |
-| ORCID XSD 1.0.x | various | Mar 1, 2014 | DEPRECATED VERSIONS <br><br> Currently versions 1.0.1 - 1.0.23 | _All users should immediately begin their migrations to version 1.1._ <br><br>These versions have a sunset date of March 1, 2014, and won't be supported after this date. |
-| ORCID XSD 1.1 | Nov 25, 2013 | | **RELEASE VERSION**<br><br>CURRENT SUPPORTED VERSION | ALL API users should migrate to this version to ensure future API compatibility. |
-| XSD 1.2_rc1 | | | RELEASE CANDIDATE: Affiliations | This unsupported release candidate provides elements needed for API calls involving Education or Employment Affiliations. |
+| [ORCID XSD 1.0.x](https://github.com/ORCID/ORCID-Source/tree/master/orcid-model/src/main/resources) | various | Mar 1, 2014 | [DEPRECATED VERSIONS](#deprecatedVersion) <br><br> Currently versions 1.0.1 - 1.0.23 | _All users should immediately begin their migrations to version 1.1._ <br><br>These versions have a sunset date of March 1, 2014, and won't be supported after this date. |
+| [ORCID XSD 1.1](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/orcid-message-1.1.xsd) | Nov 25, 2013 | | **[RELEASE VERSION](#releaseVersion)**<br><br>CURRENT SUPPORTED VERSION | ALL API users should migrate to this version to ensure future API compatibility. |
+| [XSD 1.2_rc1](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/orcid-message-1.2_rc1.xsd) | | | [RELEASE CANDIDATE](#releaseCandidate): Affiliations | This unsupported release candidate provides elements needed for API calls involving Education or Employment Affiliations. |
 | | | | _other release candidates are likely prior to version ORCID XSD 1.2_ | |
 | ORCID XSD 1.2 | TBD - target: Mar 2014 | | Expected to include support for:<br>* Affiliations<br>* Funding<br>* Account Delegation | First fully-supported XSD for this new functionality |
 
 ## Getting help
 
-Your best first resource for getting help is our [ORCID Support Site](http://support.orcid.org). We also invite you to submit questions to the [API Users Group](https://groups.google.com/forum/?fromgroups#!forum/orcid-api-users) mailing list and forum, or to contact our member support help desk at support@orcid.org.
+Your best first resource for getting help is our [ORCID Support Site](http://support.orcid.org), where you may access our complete documentation, tutorials and guides, as well as contact our support team. We also invite you to submit questions to the [API Users Group](https://groups.google.com/forum/?fromgroups#!forum/orcid-api-users) mailing list and forum.
