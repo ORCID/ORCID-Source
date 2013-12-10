@@ -61,9 +61,10 @@
 			</column>
 			<column name="type" type="VARCHAR(255)" />
 			<column name="value" type="VARCHAR(2084)" />
-			<column name="url" type="VARCHAR(350)" />
+			<column name="url" type="VARCHAR(2000)" />
 		</createTable>
 		
+		<addUniqueConstraint constraintName="funding_external_identifier_constraints" tableName="funding_external_identifier" columnNames="type,value,url"/>
         <addForeignKeyConstraint constraintName="org_funding_relation_org_id_fk" baseTableName="org_funding_relation" baseColumnNames="org_id" referencedTableName="org" referencedColumnNames="id" />
         <addForeignKeyConstraint constraintName="org_funding_relation_orcid_fk" baseTableName="org_funding_relation" baseColumnNames="orcid" referencedTableName="profile" referencedColumnNames="orcid" />
         <addForeignKeyConstraint constraintName="funding_external_identifiers_fk" baseTableName="funding_external_identifier" baseColumnNames="org_funding_relation_id" referencedTableName="org_funding_relation" referencedColumnNames="id" />
