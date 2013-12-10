@@ -18,6 +18,7 @@ package org.orcid.api.common.jaxb;
 
 import java.io.File;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 
 import javax.xml.bind.JAXBException;
@@ -37,7 +38,7 @@ import org.xml.sax.ContentHandler;
 /**
  * 
  * @author Will Simpson
- *
+ * 
  */
 public class OrcidMarshallerWrapper implements Marshaller {
 
@@ -54,7 +55,11 @@ public class OrcidMarshallerWrapper implements Marshaller {
 
     @Override
     public void marshal(Object jaxbElement, OutputStream os) throws JAXBException {
-        marshaller.marshal(jaxbElement, new FilterInvalidXmlCharsOutputStreamWriter(os));
+        try {
+            marshaller.marshal(jaxbElement, new FilterInvalidXmlCharsOutputStreamWriter(os, (String) marshaller.getProperty(JAXB_ENCODING)));
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException("Problem creating output stream filter for invalid XML chars", e);
+        }
     }
 
     @Override
@@ -158,5 +163,5 @@ public class OrcidMarshallerWrapper implements Marshaller {
     public Listener getListener() {
         return marshaller.getListener();
     }
-    
+
 }

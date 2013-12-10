@@ -19,6 +19,7 @@ package org.orcid.api.common.jaxb;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
 
 /**
  * 
@@ -29,6 +30,10 @@ public class FilterInvalidXmlCharsOutputStreamWriter extends OutputStreamWriter 
 
     public FilterInvalidXmlCharsOutputStreamWriter(OutputStream out) {
         super(out);
+    }
+
+    public FilterInvalidXmlCharsOutputStreamWriter(OutputStream out, String charsetName) throws UnsupportedEncodingException {
+        super(out, charsetName);
     }
 
     @Override
