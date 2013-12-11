@@ -894,7 +894,7 @@ select {
 	background: #a6ce39;
 }
 
-.header .navigation>.menu>li.active-trail>a>:hover {
+.header .navigation>.menu>li.active-trail>a>hover {
 	color: #fff !important;
 }
 
