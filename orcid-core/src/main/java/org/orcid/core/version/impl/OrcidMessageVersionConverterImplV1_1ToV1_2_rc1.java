@@ -56,7 +56,8 @@ public class OrcidMessageVersionConverterImplV1_1ToV1_2_rc1 implements OrcidMess
     }
 
     private void downgradeProfile(OrcidProfile orcidProfile) {
-        orcidProfile.setAffiliations(null);
+        if (orcidProfile != null)
+            orcidProfile.setAffiliations(null);
     }
 
     private void downgradeSearchResults(OrcidMessage orcidMessage) {
