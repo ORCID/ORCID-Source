@@ -456,6 +456,12 @@ function EditTableCtrl($scope) {
 
 function WorksPrivacyPreferencesCtrl($scope, prefsSrvc) {
 	$scope.prefsSrvc = prefsSrvc;
+	$scope.privacyHelp = {};
+	
+	$scope.toggleClickPrivacyHelp = function(key) {
+		if (!document.documentElement.className.contains('no-touch'))
+			$scope.privacyHelp[key]=!$scope.privacyHelp[key];
+	};
 	
 	$scope.updateWorkVisibilityDefault = function(priv, $event) {
 		$scope.prefsSrvc.prefs.workVisibilityDefault.value = priv;
@@ -598,6 +604,13 @@ function PasswordEditCtrl($scope, $http) {
 };
 
 function EmailEditCtrl($scope, $compile) {
+	$scope.privacyHelp = {};
+	
+	$scope.toggleClickPrivacyHelp = function(key) {
+		if (!document.documentElement.className.contains('no-touch'))
+			$scope.privacyHelp[key]=!$scope.privacyHelp[key];
+	};
+	
 	$scope.getEmails = function() {
 		$.ajax({
 	        url: $('body').data('baseurl') + 'account/emails.json',
@@ -894,6 +907,12 @@ function ResetPasswordCtrl($scope, $compile) {
 }
 
 function RegistrationCtrl($scope, $compile) {
+	$scope.privacyHelp = {};
+	
+	$scope.toggleClickPrivacyHelp = function(key) {
+		if (!document.documentElement.className.contains('no-touch'))
+			$scope.privacyHelp[key]=!$scope.privacyHelp[key];
+	};
 		
 	$scope.getRegister = function(){
 		$.ajax({
@@ -1359,6 +1378,12 @@ function AffiliationCtrl($scope, $compile, $filter, affiliationsSrvc, workspaceS
 	$scope.affiliationsSrvc = affiliationsSrvc;
 	$scope.workspaceSrvc = workspaceSrvc;
 	$scope.editAffiliation;
+	$scope.privacyHelp = {};
+	
+	$scope.toggleClickPrivacyHelp = function(key) {
+		if (!document.documentElement.className.contains('no-touch'))
+			$scope.privacyHelp[key]=!$scope.privacyHelp[key];
+	};
 
 	$scope.showAddModal = function(){
 		var numOfResults = 25;
@@ -1682,6 +1707,12 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 	$scope.editTranslatedTitle = false;
 	$scope.types = null;
 	$scope.worksInfo = {};
+	$scope.privacyHelp = {};
+	
+	$scope.toggleClickPrivacyHelp = function(key) {
+		if (!document.documentElement.className.contains('no-touch'))
+			$scope.privacyHelp[key]=!$scope.privacyHelp[key];
+	};
 	
 	$scope.addExternalIdentifier = function () {
 		$scope.editWork.workExternalIdentifiers.push({workExternalIdentifierId: { value: ""}, workExternalIdentifierType: {value: ""} });

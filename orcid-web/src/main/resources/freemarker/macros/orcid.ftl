@@ -25,15 +25,15 @@
  -->
 
 
-<#macro privacyToggle angularModel publicClick limitedClick privateClick popoverStyle="" arrowStyle="">	
+<#macro privacyToggle angularModel publicClick limitedClick privateClick popoverStyle="" arrowStyle="" questionClick="alert('no function passed')" clickedClassCheck="{'popover-help-container-show':privacyHelp['work']==true}">	
 	<div class="relative" id="privacy-bar">
 		<ul class="privacyToggle">
 			<li class="publicActive" ng-class="{publicInActive: ${angularModel} != 'PUBLIC'}"><a href="" title="<@orcid.msg 'manage.lipublic' />" ng-click="${publicClick}"></a></li>
 			<li class="limitedActive" ng-class="{limitedInActive: ${angularModel} != 'LIMITED'}"><a href="" title="<@orcid.msg 'manage.lilimited' />" ng-click="${limitedClick}"></a></li>
 			<li class="privateActive" ng-class="{privateInActive: ${angularModel} != 'PRIVATE'}"><a href="" title="<@orcid.msg 'manage.liprivate' />" ng-click="${privateClick}"></a></li>
 		</ul>
-		<div class="popover-help-container" style="position: absolute; left: 110px; top: 0px;">
-        	<a href="javascript:void(0);"><i class="glyphicon glyphicon-question-sign" style="width: 14px;"></i></a>
+		<div class="popover-help-container" ng-class="${clickedClassCheck}"  style="position: absolute; left: 110px; top: 0px;">
+        	<a ng-click="${questionClick}"><i class="glyphicon glyphicon-question-sign" style="width: 14px;"></i></a>
             <div class="popover bottom" style="${popoverStyle}">
 		        <div class="arrow" style="${arrowStyle}"></div>
 		        <div class="popover-content">
