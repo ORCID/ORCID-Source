@@ -105,11 +105,11 @@
         <div class="relative">
             <label>${springMacroRequestContext.getMessage("claim.notificationemail")}</label>
             <label class="checkbox">
-                <input type="checkbox" name="sendOrcidChangeNotifications" ng-model="register.sendChangeNotifications.value"/>
+                <input type="checkbox" tabindex="7" name="sendOrcidChangeNotifications" ng-model="register.sendChangeNotifications.value"/>
                 ${springMacroRequestContext.getMessage("register.labelsendmenotifications")}
             </label>
             <label class="checkbox">
-                <input type="checkbox" name="sendOrcidNews" ng-model="register.sendOrcidNews.value"/>
+                <input type="checkbox" tabindex="8" name="sendOrcidNews" ng-model="register.sendOrcidNews.value"/>
                 ${springMacroRequestContext.getMessage("register.labelsendinformation")}
             </label>
          </div>
@@ -118,7 +118,7 @@
         <div class="relative"  style="margin-bottom: 15px;">
             <label>${springMacroRequestContext.getMessage("register.labelTermsofUse")} <span class="required"  ng-class="{'text-error':register.termsOfUse.value == false}">*</span></label>
             <label class="checkbox" style="width: 100%">
-            <input type="checkbox" name="acceptTermsAndConditions" ng-model="register.termsOfUse.value" ng-change="serverValidate('TermsOfUse')" />
+            <input type="checkbox" tabindex="9" name="acceptTermsAndConditions" ng-model="register.termsOfUse.value" ng-change="serverValidate('TermsOfUse')" />
             ${springMacroRequestContext.getMessage("register.labelconsent")} <a href="${aboutUri}/footer/privacy-policy" target="_blank">${springMacroRequestContext.getMessage("register.labelprivacypolicy")}</a> ${springMacroRequestContext.getMessage("register.labeland")}  ${springMacroRequestContext.getMessage("common.termsandconditions1")}<a href="${aboutUri}/content/orcid-terms-use" target="_blank">${springMacroRequestContext.getMessage("common.termsandconditions2")}</a> ${springMacroRequestContext.getMessage("common.termsandconditions3")}</p>
             </label>
             <span class="orcid-error" ng-show="register.termsOfUse.errors.length > 0">
@@ -127,7 +127,7 @@
         </div>
 	</div>   
     <div class="relative">
-          <button type="submit" class="btn btn-primary" ng-click="postRegister()">${springMacroRequestContext.getMessage("header.register")}</button>
+          <button type="submit" tabindex="10" class="btn btn-primary" ng-click="postRegister()">${springMacroRequestContext.getMessage("header.register")}</button>
     </div>  
 </div> 
 
