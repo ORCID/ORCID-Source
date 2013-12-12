@@ -1365,10 +1365,23 @@ function WorkspaceSummaryCtrl($scope, $compile, affiliationsSrvc, worksSrvc, wor
 
 function PublicEduAffiliation($scope, $compile, $filter, affiliationsSrvc){
 	$scope.affiliationsSrvc = affiliationsSrvc;
+	$scope.moreInfo = {};
+	
+	$scope.toggleClickMoreInfo = function(key) {
+		if (!document.documentElement.className.contains('no-touch'))
+			$scope.moreInfo[key]=!$scope.moreInfo[key];
+	};
 }
 
 function PublicEmpAffiliation($scope, $compile, $filter, affiliationsSrvc){
 	$scope.affiliationsSrvc = affiliationsSrvc;
+	$scope.moreInfo = {};
+	
+	$scope.toggleClickMoreInfo = function(key) {
+		if (!document.documentElement.className.contains('no-touch'))
+			$scope.moreInfo[key]=!$scope.moreInfo[key];
+	};
+	
 	affiliationsSrvc.setIdsToAdd(orcidVar.affiliationIdsJson);
 	affiliationsSrvc.addAffiliationToScope(orcidVar.orcidId +'/affiliations.json');
 }
@@ -1379,10 +1392,16 @@ function AffiliationCtrl($scope, $compile, $filter, affiliationsSrvc, workspaceS
 	$scope.workspaceSrvc = workspaceSrvc;
 	$scope.editAffiliation;
 	$scope.privacyHelp = {};
+	$scope.moreInfo = {};
 	
 	$scope.toggleClickPrivacyHelp = function(key) {
 		if (!document.documentElement.className.contains('no-touch'))
 			$scope.privacyHelp[key]=!$scope.privacyHelp[key];
+	};
+
+	$scope.toggleClickMoreInfo = function(key) {
+		if (!document.documentElement.className.contains('no-touch'))
+			$scope.moreInfo[key]=!$scope.moreInfo[key];
 	};
 
 	$scope.showAddModal = function(){
@@ -1605,6 +1624,7 @@ function PublicWorkCtrl($scope, $compile, worksSrvc) {
 	$scope.loadingInfo = false;
 	$scope.bibtexCitations = {};
 	$scope.worksInfo = {};
+	$scope.moreInfoOpen = false;
 
     $scope.bibtexShowToggle = function () {
     	$scope.showBibtex = !($scope.showBibtex);
@@ -1662,9 +1682,24 @@ function PublicWorkCtrl($scope, $compile, worksSrvc) {
 	$scope.worksToAddIds = orcidVar.workIds;	
 	$scope.addWorkToScope();
 	
+
+	$scope.moreInfoClick = function(work, $event) {
+		if (!document.documentElement.className.contains('no-touch'));
+			$scope.moreInfoOpen?$scope.closePopover():$scope.loadWorkInfo(work.putCode.value, $event);
+	};
+	
+	$scope.moreInfoMouseEnter = function(work, $event) {
+		$event.stopPropagation();
+		if (document.documentElement.className.contains('no-touch'))
+			$scope.loadWorkInfo(work.putCode.value, $event);
+		else
+			$scope.moreInfoOpen?$scope.closePopover():$scope.loadWorkInfo(work.putCode.value, $event);
+	};
+	
 	$scope.loadWorkInfo = function(putCode, event) {
 		//Close any open popover
 		$scope.closePopover(event);
+		$scope.moreInfoOpen = true;
 		//Display the popover
 		$scope.loadingInfo = true;
 		$(event.target).next().css('display','inline');		
@@ -1693,6 +1728,7 @@ function PublicWorkCtrl($scope, $compile, worksSrvc) {
 	};			
 	
 	$scope.closePopover = function(event) {
+		$scope.moreInfoOpen = false;
 		$('.work-more-info-container').css('display', 'none');
 	};
 }
@@ -1708,12 +1744,13 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 	$scope.types = null;
 	$scope.worksInfo = {};
 	$scope.privacyHelp = {};
+	$scope.moreInfoOpen = false;
 	
 	$scope.toggleClickPrivacyHelp = function(key) {
 		if (!document.documentElement.className.contains('no-touch'))
 			$scope.privacyHelp[key]=!$scope.privacyHelp[key];
 	};
-	
+
 	$scope.addExternalIdentifier = function () {
 		$scope.editWork.workExternalIdentifiers.push({workExternalIdentifierId: { value: ""}, workExternalIdentifierType: {value: ""} });
 	};
@@ -1882,9 +1919,23 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 	//init
 	$scope.getWorks();	
 	
+	$scope.moreInfoClick = function(work, $event) {
+		if (!document.documentElement.className.contains('no-touch'));
+			$scope.moreInfoOpen?$scope.closePopover():$scope.loadWorkInfo(work.putCode.value, $event);
+	};
+	
+	$scope.moreInfoMouseEnter = function(work, $event) {
+		$event.stopPropagation();
+		if (document.documentElement.className.contains('no-touch'))
+			$scope.loadWorkInfo(work.putCode.value, $event);
+		else
+			$scope.moreInfoOpen?$scope.closePopover():$scope.loadWorkInfo(work.putCode.value, $event);
+	};
+	
 	$scope.loadWorkInfo = function(putCode, event) {
 		//Close any open popover
 		$scope.closePopover(event);
+		$scope.moreInfoOpen = true;
 		//Display the popover
 		$scope.loadingInfo = true;		
 		$(event.target).next().css('display','inline');	
@@ -1913,6 +1964,7 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 	};			
 	
 	$scope.closePopover = function(event) {
+		$scope.moreInfoOpen = false;
 		$('.work-more-info-container').css('display', 'none');
 	};
 	

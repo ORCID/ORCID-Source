@@ -2836,9 +2836,14 @@ ul.personal-inf-display li{
 	height: 350px;
 }
 
-.more-info:hover .more-info-container {
+.no-touch .more-info:hover .more-info-container {
 	display: inline;
 }
+
+.more-info-show .more-info-container {
+	display: inline;
+}
+
 
 .work-more-info-container {
 	display: none;
@@ -2857,7 +2862,7 @@ ul.personal-inf-display li{
 	left: 50%;
 }
 
-.more-info:hover .work-more-info-container {
+.no-touch .more-info:hover .work-more-info-container {
 	display: inline;
 }
 
