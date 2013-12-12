@@ -44,6 +44,7 @@ import org.orcid.jaxb.model.clientgroup.RedirectUriType;
 import org.orcid.jaxb.model.clientgroup.RedirectUris;
 import org.orcid.jaxb.model.message.*;
 import org.orcid.persistence.jpa.entities.BaseContributorEntity;
+import org.orcid.persistence.jpa.entities.BaseEntity;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ClientRedirectUriEntity;
 import org.orcid.persistence.jpa.entities.EmailEntity;
@@ -70,6 +71,7 @@ import org.orcid.persistence.jpa.entities.ProfilePatentEntity;
 import org.orcid.persistence.jpa.entities.ProfileWorkEntity;
 import org.orcid.persistence.jpa.entities.PublicationDateEntity;
 import org.orcid.persistence.jpa.entities.ResearcherUrlEntity;
+import org.orcid.persistence.jpa.entities.SourceAware;
 import org.orcid.persistence.jpa.entities.WorkContributorEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.persistence.jpa.entities.WorkExternalIdentifierEntity;
@@ -516,23 +518,36 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
     
     private Funding getFunding(OrgFundingRelationEntity orgFundationRelationEntity){
     	Funding funding = new Funding();
-    	funding.setAmount();
-    	funding.setCurrency();
-    	funding.setDescription();
-    	funding.setFundingContributors();
-    	funding.setFundingExternalIdentifiers();
-    	funding.setOrganization();
-    	funding.setPutCode();
-    	funding.setSource();
-    	funding.setTitle();
-    	funding.setType();
-    	funding.setUrl();
-    	funding.setVisibility();
+    	funding.setAmount(orgFundationRelationEntity.getAmount());
+    	funding.setCurrency(orgFundationRelationEntity.getCurrencyCode());
+    	funding.setDescription(orgFundationRelationEntity.getDescription());    	
+    	funding.setPutCode(Long.toString(orgFundationRelationEntity.getId()));    	
+    	funding.setTitle(orgFundationRelationEntity.getTitle());
+    	funding.setType(orgFundationRelationEntity.getType());
+    	funding.setUrl(new Url(orgFundationRelationEntity.getUrl()));
+    	funding.setVisibility(orgFundationRelationEntity.getVisibility());
+    	
+    	
+    	Organization organization = new Organization();
+        OrgDisambiguatedEntity orgDisambiguatedEntity = orgFundationRelationEntity.getOrg().getOrgDisambiguated();
+        if (orgDisambiguatedEntity != null) {
+            organization.setDisambiguatedOrganization(getDisambiguatedAffiliation(orgDisambiguatedEntity));
+        }
+        organization.setAddress(getAddress(orgFundationRelationEntity.getOrg()));
+        organization.setName(orgFundationRelationEntity.getOrg().getName());
+        funding.setOrganization(organization);
+    	
+        //TODO
+        //funding.setFundingContributors();
+        //TODO
+        //funding.setFundingExternalIdentifiers();
+
+        funding.setSource(getSource(orgFundationRelationEntity));
     	return funding;
     }
 
-    private Source getSource(OrgAffiliationRelationEntity orgAffiliationRelationEntity) {
-        ProfileEntity sourceEntity = orgAffiliationRelationEntity.getSource();
+    private Source getSource(SourceAware sourceAwareEntity) {
+        ProfileEntity sourceEntity = sourceAwareEntity.getSource();
         if (sourceEntity == null) {
             return null;
         }
@@ -554,8 +569,11 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
                 String name = sourceEntity.getGivenNames() + (StringUtils.isEmpty(sourceEntity.getFamilyName()) ? "" : " " + sourceEntity.getFamilyName());
                 source.setSourceName(new SourceName(name));
             }
+        }        
+        if(sourceAwareEntity instanceof BaseEntity) {
+        	Date createdDate = ((BaseEntity) sourceAwareEntity).getDateCreated();
+        	source.setSourceDate(new SourceDate(DateUtils.convertToXMLGregorianCalendar(createdDate)));
         }
-        source.setSourceDate(new SourceDate(DateUtils.convertToXMLGregorianCalendar(orgAffiliationRelationEntity.getDateCreated())));
         return source;
     }
 
@@ -588,10 +606,12 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
     
     
     private Fundings getFundings(ProfileEntity profileEntity) {
-    	Set<OrgFundingRelation> orgFundingRelation = profileEntity.getOrgFundingRelation();
+    	Set<OrgFundingRelationEntity> orgFundingRelation = profileEntity.getOrgFundingRelation();
     	if(orgFundingRelation != null && !orgFundingRelation.isEmpty()) {
     		Funding funding = new Funding();
     	}
+    	//TODO
+    	return null;
     }
     
     

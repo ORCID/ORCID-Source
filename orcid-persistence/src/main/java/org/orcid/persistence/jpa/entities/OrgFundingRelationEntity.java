@@ -42,7 +42,7 @@ import org.orcid.utils.NullUtils;
  */
 @Entity
 @Table(name = "org_funding_relation")
-public class OrgFundingRelationEntity extends BaseEntity<Long> implements Comparable<OrgFundingRelationEntity>, ProfileAware {
+public class OrgFundingRelationEntity extends BaseEntity<Long> implements Comparable<OrgFundingRelationEntity>, ProfileAware, SourceAware {
 
 	private static final long serialVersionUID = 1L;
 	
@@ -53,7 +53,7 @@ public class OrgFundingRelationEntity extends BaseEntity<Long> implements Compar
     private String description;
     private FundingType type;
     private CurrencyCode currencyCode;
-    private long amount;
+    private String amount;
     private String url;
     private String contributorsJson;
 	private StartDateEntity startDate;
@@ -131,11 +131,11 @@ public class OrgFundingRelationEntity extends BaseEntity<Long> implements Compar
 	}
 
 	@JoinColumn(name = "amount", nullable = false)
-	public long getAmount() {
+	public String getAmount() {
 		return amount;
 	}
 
-	public void setAmount(long amount) {
+	public void setAmount(String amount) {
 		this.amount = amount;
 	}
 
