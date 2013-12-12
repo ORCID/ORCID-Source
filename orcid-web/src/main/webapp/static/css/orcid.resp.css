@@ -3790,13 +3790,11 @@ p.orcid-id-container{
 		margin-top: 65px;
 	}
 	
-	.public-profile .left-aside{
+	.public-profile .left-aside,
+	.public-profile .right-aside{
 		padding: 15px;	
 	}
-
-	.public-profile .right-aside{
-		padding: 15px;
-	}
+	
 	
 }
 
