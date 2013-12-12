@@ -97,9 +97,13 @@
 										</div>
 										<div class="col-md-3 col-xs-6">
 											<div class="emailVisibility"><@orcid.privacyToggle
-												"email.visibility" "setPrivacy($index, 'PUBLIC', $event)"
-												"setPrivacy($index, 'LIMITED', $event)" "setPrivacy($index,
-												'PRIVATE', $event)" /></div>
+												angularModel="email.visibility" 
+												questionClick="toggleClickPrivacyHelp(email.value)"
+												clickedClassCheck="{'popover-help-container-show':privacyHelp[email.value]==true}" 
+												publicClick="setPrivacy(affiliation, 'PUBLIC', $event)" 
+			                    				limitedClick="setPrivacy(affiliation, 'LIMITED', $event)" 
+			                    				privateClick="setPrivacy(affiliation, 'PRIVATE', $event)" />			        
+											</div>
 										</div>
 									</div>
 								</div>
@@ -181,10 +185,12 @@
 						<div class="editTablePadCell35" id="privacy-settings">
 							${springMacroRequestContext.getMessage("privacy_preferences.labelDefaultprivacyfornewWorks")}<br />
 							<@orcid.privacyToggle
-							"prefsSrvc.prefs.workVisibilityDefault.value"
-							"updateWorkVisibilityDefault('PUBLIC', $event)"
-							"updateWorkVisibilityDefault('LIMITED', $event)"
-							"updateWorkVisibilityDefault('PRIVATE', $event)" />
+							angularModel="prefsSrvc.prefs.workVisibilityDefault.value"
+							questionClick="toggleClickPrivacyHelp('workPrivHelp')"
+							clickedClassCheck="{'popover-help-container-show':privacyHelp['workPrivHelp']==true}" 
+							publicClick="updateWorkVisibilityDefault('PUBLIC', $event)"
+							limitedClick="updateWorkVisibilityDefault('LIMITED', $event)"
+							privateClick="updateWorkVisibilityDefault('PRIVATE', $event)" />
 						</div>
 					</td>
 				</tr>

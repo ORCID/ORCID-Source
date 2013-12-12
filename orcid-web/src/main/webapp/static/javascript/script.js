@@ -40,11 +40,19 @@ if (typeof String.prototype.startsWith != 'function') {
 }
 
 //add new method to string
+if (typeof String.prototype.contains != 'function') {
+	  String.prototype.contains = function (str){
+	    return this.indexOf(str) != -1; 
+	  };
+}
+
+//add new method to string
 if (typeof String.prototype.endsWith != 'function') {
 	  String.prototype.endsWith = function (str){
 	    return this.slice(-str.length) == str;
 	  };
 }
+
 
 if (typeof String.prototype.trim != 'function') {  
   String.prototype.trim = function () {  
@@ -54,6 +62,11 @@ if (typeof String.prototype.trim != 'function') {
 
 // This is to prevent IE from caching ajax request via jquery
 $.ajaxSetup({ cache: false });
+
+//test for touch events support and if not supported, attach .no-touch class to the HTML tag.
+if (!("ontouchstart" in document.documentElement)) {
+document.documentElement.className += " no-touch";
+}
 
 // function for javascript cookies
 var OrcidCookie = new function () {

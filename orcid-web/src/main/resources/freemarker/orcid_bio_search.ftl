@@ -28,7 +28,7 @@
 		</div>
 	</#if>
 	<div class="row">
-	   <div class="span9 offset3">
+	   <div class="col-md-9">
     <h1>${springMacroRequestContext.getMessage("orcid_bio_search.h1advancedsearch")}</h1>
     <p><b>${springMacroRequestContext.getMessage("orcid_bio_search.pyoumustpopulate")}</b></p>
         <form id="searchForm" class="form-horizontal" action="<@spring.url '/orcid-search/search-for-orcid'/>" method="get">
@@ -54,9 +54,9 @@
                 <div class="control-group">
                     <div class="controls">
                         <label for="otherNamesSearchable" class="checkbox">
-                    <@spring.formCheckbox "searchOrcidForm.otherNamesSearchable" 'class="input-xlarge"'/>
+                        <@spring.formCheckbox "searchOrcidForm.otherNamesSearchable"/>
                         ${springMacroRequestContext.getMessage("orcid_bio_search.labelalsosearchothernames")}</label>
-                <@spring.showErrors "<br/>" "error" />
+                        <@spring.showErrors "<br/>" "error" />
                     </div>
                 </div>
                 <div class="control-group">
@@ -68,22 +68,6 @@
                     </div>
                 </div>
                 <div class="control-group">
-                    <label for="institutionName" class="control-label">${springMacroRequestContext.getMessage("orcid_bio_search.labelinstitutionname")}</label>
-
-                    <div class="controls">
-                    <@spring.formInput "searchOrcidForm.institutionName" 'class="input-xlarge"'/>
-                <@spring.showErrors "<br/>" "error" />
-                    </div>
-                </div>
-                 <div class="control-group">
-                    <div class="controls">
-                        <label for="pastInstitutionsSearchable" class="checkbox">
-                    <@spring.formCheckbox "searchOrcidForm.pastInstitutionsSearchable" 'class="input-xlarge"'/>
-                        ${springMacroRequestContext.getMessage("orcid_bio_search.labelalsosearchpast")}</label>
-                <@spring.showErrors "<br/>" "error" />
-                    </div>
-                </div>
-                  <div class="control-group">
                     <label for="familyName" class="control-label">${springMacroRequestContext.getMessage("orcid_bio_search.labelkeywords")}</label>
                     <div class="controls">
                     <@spring.formInput "searchOrcidForm.keyword" 'class="input-xlarge"'/>
@@ -98,5 +82,5 @@
             </fieldset>
         </form>
         <#include "search_results.ftl"/>
-        </div>
+    </div>
 </div>

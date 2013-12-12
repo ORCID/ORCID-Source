@@ -16,8 +16,8 @@
     =============================================================================
 
 -->
-<div class="more-info">
-	<a class="glyphicon glyphicon-plus-sign grey"></a>	
+<div class="more-info" ng-class="{'more-info-show':moreInfo[affiliation.putCode.value]==true}">
+	<a class="glyphicon glyphicon-plus-sign grey" ng-click="toggleClickMoreInfo(affiliation.putCode.value)"></a>	
 	<div class="popover bottom more-info-container">
 		<div class="arrow"></div>	
 		<div class="lightbox-container">

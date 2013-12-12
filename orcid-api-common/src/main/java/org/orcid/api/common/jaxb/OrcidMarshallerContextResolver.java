@@ -51,7 +51,7 @@ public class OrcidMarshallerContextResolver implements ContextResolver<Marshalle
             context = JAXBContext.newInstance(type);
             Marshaller marshaller = context.createMarshaller();
             marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-            return marshaller;
+            return new OrcidMarshallerWrapper(marshaller);
         } catch (JAXBException e) {
             logger.error("Cannot create new marshaller", e);
             throw new WebApplicationException(getResponse(e));

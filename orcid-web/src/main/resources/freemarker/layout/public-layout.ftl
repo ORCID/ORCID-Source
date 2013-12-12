@@ -115,7 +115,7 @@
                        </ul>
                    </li>
                    <li class="expanded">
-                       <a href="${aboutUri}/organizationss"><@orcid.msg 'public-layout.for_organizations'/></a>
+                       <a href="${aboutUri}/organizations"><@orcid.msg 'public-layout.for_organizations'/></a>
                        <ul class="menu">
                            <li class="first leaf"><a href="${aboutUri}/organizations/funders"><@orcid.msg 'public-layout.funders'/></a></li>
                            <li class="leaf"><a href="${aboutUri}/organizations/institutions" title=""><@orcid.msg 'public-layout.research_organizations'/></a></li>

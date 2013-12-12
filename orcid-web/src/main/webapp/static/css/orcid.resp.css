@@ -894,7 +894,7 @@ select {
 	background: #a6ce39;
 }
 
-.header .navigation>.menu>li.active-trail>a>:hover {
+.header .navigation>.menu>li.active-trail>a:hover {
 	color: #fff !important;
 }
 
@@ -2073,9 +2073,14 @@ a:hover {
 	list-style-type: disc;
 }
 
-.popover-help-container:hover .popover {
+.no-touch .popover-help-container:hover .popover {
 	display: block;
 }
+
+.popover-help-container-show .popover {
+	display: block;
+}
+
 
 .workspace-inner {
 	padding-left: 10px;
@@ -2831,9 +2836,14 @@ ul.personal-inf-display li{
 	height: 350px;
 }
 
-.more-info:hover .more-info-container {
+.no-touch .more-info:hover .more-info-container {
 	display: inline;
 }
+
+.more-info-show .more-info-container {
+	display: inline;
+}
+
 
 .work-more-info-container {
 	display: none;
@@ -2852,7 +2862,7 @@ ul.personal-inf-display li{
 	left: 50%;
 }
 
-.more-info:hover .work-more-info-container {
+.no-touch .more-info:hover .work-more-info-container {
 	display: inline;
 }
 

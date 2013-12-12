@@ -4,8 +4,17 @@ We release updates to the Registry regularly. Below is a list of the improvement
 * [2013 Releases](https://trello.com/b/ZgYVAlel)
 * [2012 Releases](https://trello.com/b/vyCDYdvR)
 
-## 
+## 1.1.39.11
+(2013-10-10)
+* 1.2_rc1 - Affiliation's API
 
+* Don't load works more info until mouse over
+
+* General UI fixes
+
+
+## release-1.1.38.5
+(2013-10-5)
 * New ORCID iD structure changed in 1.1!
 
 * Removing the undefined work type form the UI and from the latest orcid-message (1.1)
