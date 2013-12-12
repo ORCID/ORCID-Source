@@ -44,8 +44,12 @@
 				        	<#if !(isPublicProfile??)>
 				        		<a href ng-click="deleteAffiliation(affiliation)" class="glyphicon glyphicon-trash grey"></a>
 				        		<ul class="workspace-private-toolbar">
-									<@orcid.privacyToggle "affiliation.visibility.visibility" "setPrivacy(affiliation, 'PUBLIC', $event)" 
-			                    	  "setPrivacy(affiliation, 'LIMITED', $event)" "setPrivacy(affiliation, 'PRIVATE', $event)" />			        
+									<@orcid.privacyToggle  angularModel="affiliation.visibility.visibility"
+									questionClick="toggleClickPrivacyHelp(affiliation.putCode.value)"
+									clickedClassCheck="{'popover-help-container-show':privacyHelp[affiliation.putCode.value]==true}" 
+									publicClick="setPrivacy(affiliation, 'PUBLIC', $event)" 
+			                    	limitedClick="setPrivacy(affiliation, 'LIMITED', $event)" 
+			                    	privateClick="setPrivacy(affiliation, 'PRIVATE', $event)" />			        
 					        	</ul>
 					        </#if>
 						</div>
