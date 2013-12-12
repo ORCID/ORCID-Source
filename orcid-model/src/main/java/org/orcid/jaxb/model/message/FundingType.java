@@ -49,7 +49,7 @@ import java.io.Serializable;
  * </pre>
  * 
  */
-@XmlType(name = "orcid-type")
+@XmlType(name = "funding-type")
 @XmlEnum
 public enum FundingType implements Serializable {
     @XmlEnumValue("grant")

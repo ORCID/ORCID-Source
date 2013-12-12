@@ -49,7 +49,7 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "funding" })
+@XmlType(name = "", propOrder = { "fundings" })
 @XmlRootElement(name = "fundings")
 public class Fundings implements Serializable {
 	private static final long serialVersionUID = 1L;
