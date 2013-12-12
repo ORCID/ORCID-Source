@@ -3790,6 +3790,14 @@ p.orcid-id-container{
 		margin-top: 65px;
 	}
 	
+	.public-profile .left-aside{
+		padding: 15px;	
+	}
+
+	.public-profile .right-aside{
+		padding: 15px;
+	}
+	
 }
 
 @media (min-width : 768px) and (max-width : 992px) { /* Tablet */
@@ -3925,6 +3933,10 @@ p.orcid-id-container{
 	
 	#loginForm #login-reset{
 		margin-top: 25px;
+	}
+	
+	.workspace-profile{
+		margin-bottom: 30px;				
 	}
 }
 
