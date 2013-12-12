@@ -42,7 +42,7 @@ import org.orcid.utils.NullUtils;
  */
 @Entity
 @Table(name = "org_funding_relation")
-public class OrgFundingRelation extends BaseEntity<Long> implements Comparable<OrgFundingRelation>, ProfileAware {
+public class OrgFundingRelationEntity extends BaseEntity<Long> implements Comparable<OrgFundingRelationEntity>, ProfileAware {
 
 	private static final long serialVersionUID = 1L;
 	
@@ -194,7 +194,7 @@ public class OrgFundingRelation extends BaseEntity<Long> implements Comparable<O
 	}
 
 	@Override
-	public int compareTo(OrgFundingRelation other) {
+	public int compareTo(OrgFundingRelationEntity other) {
 		if (other == null) {
             return 1;
         }

@@ -39,7 +39,7 @@ public class FundingExternalIdentifier extends BaseEntity<Long> implements Compa
 	private static final long serialVersionUID = 1L;
 	
 	private Long id;
-	private OrgFundingRelation orgFunding;
+	private OrgFundingRelationEntity orgFunding;
 	private String type;
 	private String value;
 	private String url;
@@ -57,11 +57,11 @@ public class FundingExternalIdentifier extends BaseEntity<Long> implements Compa
 	
 	@ManyToOne(fetch = FetchType.LAZY, cascade = { CascadeType.DETACH, CascadeType.REFRESH })
     @JoinColumn(name = "id", nullable = false)
-	public OrgFundingRelation getOrgFunding() {
+	public OrgFundingRelationEntity getOrgFunding() {
 		return orgFunding;
 	}
 	
-	public void setOrgFunding(OrgFundingRelation orgFunding) {
+	public void setOrgFunding(OrgFundingRelationEntity orgFunding) {
 		this.orgFunding = orgFunding;
 	}
 	

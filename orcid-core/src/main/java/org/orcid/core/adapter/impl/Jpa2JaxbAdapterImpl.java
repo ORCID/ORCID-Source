@@ -58,6 +58,7 @@ import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
 import org.orcid.persistence.jpa.entities.OrgDisambiguatedEntity;
 import org.orcid.persistence.jpa.entities.OrgEntity;
+import org.orcid.persistence.jpa.entities.OrgFundingRelationEntity;
 import org.orcid.persistence.jpa.entities.OtherNameEntity;
 import org.orcid.persistence.jpa.entities.PatentContributorEntity;
 import org.orcid.persistence.jpa.entities.PatentEntity;
@@ -512,6 +513,23 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
 
         return affiliation;
     }
+    
+    private Funding getFunding(OrgFundingRelationEntity orgFundationRelationEntity){
+    	Funding funding = new Funding();
+    	funding.setAmount();
+    	funding.setCurrency();
+    	funding.setDescription();
+    	funding.setFundingContributors();
+    	funding.setFundingExternalIdentifiers();
+    	funding.setOrganization();
+    	funding.setPutCode();
+    	funding.setSource();
+    	funding.setTitle();
+    	funding.setType();
+    	funding.setUrl();
+    	funding.setVisibility();
+    	return funding;
+    }
 
     private Source getSource(OrgAffiliationRelationEntity orgAffiliationRelationEntity) {
         ProfileEntity sourceEntity = orgAffiliationRelationEntity.getSource();
@@ -561,6 +579,30 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         return null;
     }
 
+    
+    
+    
+    
+    
+    
+    
+    
+    private Fundings getFundings(ProfileEntity profileEntity) {
+    	Set<OrgFundingRelation> orgFundingRelation = profileEntity.getOrgFundingRelation();
+    	if(orgFundingRelation != null && !orgFundingRelation.isEmpty()) {
+    		Funding funding = new Funding();
+    	}
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     private Keywords getKeywords(ProfileEntity profileEntity) {
         Set<ProfileKeywordEntity> profileEntityKeywords = profileEntity.getKeywords();
         if (profileEntityKeywords != null && !profileEntityKeywords.isEmpty()) {

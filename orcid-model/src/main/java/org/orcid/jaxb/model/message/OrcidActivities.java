@@ -44,6 +44,7 @@ import javax.xml.bind.annotation.XmlType;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
  *         &lt;element ref="{http://www.orcid.org/ns/orcid}affiliations" minOccurs="0"/>
+ *         &lt;element ref="{http://www.orcid.org/ns/orcid}fundings" minOccurs="0"/>
  *         &lt;element ref="{http://www.orcid.org/ns/orcid}orcid-works" minOccurs="0"/>
  *         &lt;element ref="{http://www.orcid.org/ns/orcid}orcid-grants" minOccurs="0"/>
  *         &lt;element ref="{http://www.orcid.org/ns/orcid}orcid-patents" minOccurs="0"/>
@@ -62,6 +63,7 @@ public class OrcidActivities implements Serializable {
 
     private final static long serialVersionUID = 1L;
     protected Affiliations affiliations;
+    protected Fundings fundings;
     @XmlElement(name = "orcid-works")
     protected OrcidWorks orcidWorks;
     @XmlElement(name = "orcid-grants")
@@ -91,6 +93,27 @@ public class OrcidActivities implements Serializable {
     }
 
     /**
+     * Gets the value of the fundings property.
+     * 
+     * @return possible object is {@link Fundings }
+     * 
+     */
+    public Fundings getFundings() {
+		return fundings;
+	}
+    
+    /**
+     * Sets the value of the fundings property.
+     * 
+     * @param value
+     *            allowed object is {@link Fundings }
+     * 
+     */
+	public void setFundings(Fundings fundings) {
+		this.fundings = fundings;
+	}
+
+	/**
      * Gets the value of the orcidWorks property.
      * 
      * @return possible object is {@link OrcidWorks }
@@ -171,6 +194,7 @@ public class OrcidActivities implements Serializable {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((affiliations == null) ? 0 : affiliations.hashCode());
+        result = prime * result + ((fundings == null) ? 0 : fundings.hashCode());
         result = prime * result + ((orcidGrants == null) ? 0 : orcidGrants.hashCode());
         result = prime * result + ((orcidPatents == null) ? 0 : orcidPatents.hashCode());
         result = prime * result + ((orcidWorks == null) ? 0 : orcidWorks.hashCode());
@@ -190,6 +214,11 @@ public class OrcidActivities implements Serializable {
             if (other.affiliations != null)
                 return false;
         } else if (!affiliations.equals(other.affiliations))
+            return false;
+        if (fundings == null) {
+            if (other.fundings != null)
+                return false;
+        } else if (!fundings.equals(other.fundings))
             return false;
         if (orcidGrants == null) {
             if (other.orcidGrants != null)
