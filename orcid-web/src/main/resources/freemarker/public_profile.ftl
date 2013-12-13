@@ -32,10 +32,9 @@
             <div class="oid">
             	<p class="orcid-id-container">		
 	            	<span class="mini-orcid-icon"></span>
-	            	<a href="${baseUriHttp}/${(profile.orcid.value)!}" id="orcid-id" class="orcid-id">${baseUriHttp}/${(profile.orcid.value)!}</a>
+	            	<a href="${baseUriHttp}/${(profile.orcid.value)!}" id="orcid-id" class="orcid-id" title="Click for public view of ORCID iD">${baseUriHttp}/${(profile.orcid.value)!}</a>
             	<p>
-            </div>
-            <!-- <p><small id="orcid-id" class="orcid-id">${baseUriHttp}/${(profile.orcid.value)!}</small></p> -->
+            </div>            
             <#if (profile.orcidBio.personalDetails.otherNames)?? && (profile.orcidBio.personalDetails.otherNames.otherName?size != 0)>
                 <p><strong>${springMacroRequestContext.getMessage("public_profile.labelAlsoknownas")}</strong><br />
                   <#list profile.orcidBio.personalDetails.otherNames.otherName as otherName>

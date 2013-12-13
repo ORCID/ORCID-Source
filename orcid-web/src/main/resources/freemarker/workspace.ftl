@@ -48,15 +48,13 @@
                 <#else>
                     ${(profile.orcidBio.personalDetails.givenNames.content)!} ${(profile.orcidBio.personalDetails.familyName.content)!}
                 </#if>                
-            </h2>            
-            <div
+            </h2>
             <div class="oid">
             	<p class="orcid-id-container">		
 	            	<span class="mini-orcid-icon"></span>
-	            	<a href="${baseUriHttp}/${(profile.orcid.value)!}" id="orcid-id" class="orcid-id">${baseUriHttp}/${(profile.orcid.value)!}</a>
+	            	<a href="${baseUriHttp}/${(profile.orcid.value)!}" id="orcid-id" class="orcid-id" title="Click for public view of ORCID iD">${baseUriHttp}/${(profile.orcid.value)!}</a>
             	<p>
-            </div>	       
-	        
+            </div>
 	        <#if ((profile.orcidBio.personalDetails.otherNames.otherName)?size != 0)>
 	        	<p><strong><@orcid.msg 'workspace.Alsoknownas'/></strong><br />
 		       		<#list profile.orcidBio.personalDetails.otherNames.otherName as otherName>
