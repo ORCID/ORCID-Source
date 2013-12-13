@@ -66,6 +66,8 @@ import org.orcid.jaxb.model.message.FamilyName;
 import org.orcid.jaxb.model.message.Funding;
 import org.orcid.jaxb.model.message.FundingAgency;
 import org.orcid.jaxb.model.message.FundingContributors;
+import org.orcid.jaxb.model.message.FundingExternalIdentifier;
+import org.orcid.jaxb.model.message.FundingExternalIdentifiers;
 import org.orcid.jaxb.model.message.Fundings;
 import org.orcid.jaxb.model.message.FuzzyDate;
 import org.orcid.jaxb.model.message.GivenNames;
@@ -116,6 +118,7 @@ import org.orcid.persistence.dao.OrgDisambiguatedDao;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.EndDateEntity;
 import org.orcid.persistence.jpa.entities.ExternalIdentifierEntity;
+import org.orcid.persistence.jpa.entities.FundingExternalIdentifierEntity;
 import org.orcid.persistence.jpa.entities.GivenPermissionByEntity;
 import org.orcid.persistence.jpa.entities.GivenPermissionToEntity;
 import org.orcid.persistence.jpa.entities.GrantContributorEntity;
@@ -138,7 +141,6 @@ import org.orcid.persistence.jpa.entities.PublicationDateEntity;
 import org.orcid.persistence.jpa.entities.ResearcherUrlEntity;
 import org.orcid.persistence.jpa.entities.SecurityQuestionEntity;
 import org.orcid.persistence.jpa.entities.StartDateEntity;
-import org.orcid.persistence.jpa.entities.WorkContributorEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.persistence.jpa.entities.WorkExternalIdentifierEntity;
 import org.orcid.persistence.jpa.entities.keys.WorkExternalIdentifierEntityPk;
@@ -201,8 +203,8 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             orcidWorks = orcidActivities.getOrcidWorks();
         }
         setOrgAffiliationRelations(profileEntity, affiliations);
-        
-        setPatents(profileEntity, orcidPatents);
+        setOrgFundingRelations(profileEntity, fundings);
+        setPatents(profileEntity, orcidPatents);        
         setGrants(profileEntity, orcidGrants);
         setWorks(profileEntity, orcidWorks);
     }
@@ -390,36 +392,6 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
         } catch (NumberFormatException e) {
             return null;
         }
-    }
-
-    // Old way of doing work contributors
-    private SortedSet<WorkContributorEntity> getWorkContributors(WorkEntity workEntity, WorkContributors workContributors) {
-        SortedSet<WorkContributorEntity> workContributorEntities = workEntity.getContributors();
-        if (workContributorEntities == null) {
-            workContributorEntities = new TreeSet<WorkContributorEntity>();
-        } else {
-            // To allow for orphan deletion
-            workContributorEntities.clear();
-        }
-        if (workContributors != null && workContributors.getContributor() != null && !workContributors.getContributor().isEmpty()) {
-            List<Contributor> contributorList = workContributors.getContributor();
-            for (Contributor contributor : contributorList) {
-                WorkContributorEntity workContributorEntity = new WorkContributorEntity();
-                workContributorEntity.setContributorEmail(contributor.getContributorEmail() != null ? contributor.getContributorEmail().getValue() : null);
-                workContributorEntity.setProfile(contributor.getContributorOrcid() != null ? new ProfileEntity(contributor.getContributorOrcid().getPath()) : null);
-                workContributorEntity.setWork(workEntity);
-                ContributorAttributes contributorAttributes = contributor.getContributorAttributes();
-                if (contributorAttributes != null) {
-                    ContributorRole contributorRole = contributorAttributes.getContributorRole();
-                    SequenceType contributorSequence = contributorAttributes.getContributorSequence();
-                    workContributorEntity.setContributorRole(contributorRole);
-                    workContributorEntity.setSequence(contributorSequence);
-                }
-                workContributorEntity.setCreditName(contributor.getCreditName() != null ? contributor.getCreditName().getContent() : null);
-                workContributorEntities.add(workContributorEntity);
-            }
-        }
-        return workContributorEntities;
     }
 
     private String getWorkContributorsJson(WorkContributors workContributors) {
@@ -961,30 +933,32 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
 
     }
     
-    
     /**
      * TODO
      * */
-    private void setOrgFundingRelations(ProfileEntity profileEntity, Fundings fundings) {
+    private void setOrgFundingRelations(ProfileEntity profileEntity, Fundings fundings) {    	
     	SortedSet<OrgFundingRelationEntity> existingOrgFundingEntities = profileEntity.getOrgFundingRelations();
     	if(existingOrgFundingEntities == null) {
     		existingOrgFundingEntities = new TreeSet<>();
     	}
     	
-    	Map<String, OrgFundingRelationEntity> updatedOrgFundingRelationEntitiesMap = createOrgFundingEntitiesMap(existingOrgFundingEntities);    	
-    	SortedSet<OrgAffiliationRelationEntity> updatedOrgAffiliationEntities = new TreeSet<>();
-        
-    	// Populate the updated set
-    	if (fundings != null && !fundings.getFundings().isEmpty()) {
-            for (Funding funding : fundings.getFundings()) {
-                OrgAffiliationRelationEntity orgRelationEntity = getOrgAffiliationRelationEntity(affiliation,
-                        existingOrgAffiliationsEntitiesMap.get(affiliation.getPutCode()));
-                orgRelationEntity.setProfile(profileEntity);
-                updatedOrgAffiliationEntities.add(orgRelationEntity);
-            }
-        }
-        Map<String, OrgAffiliationRelationEntity> updatedOrgAffiliationEntitiesMap = createOrgAffiliationEntitiesMap(updatedOrgAffiliationEntities);
+    	// Create a map containing the existing orgFunding entities
+    	Map<String, OrgFundingRelationEntity> existingOrgFundingRelationEntitiesMap = createOrgFundingEntitiesMap(existingOrgFundingEntities);    	
     	
+    	// A set that will contain the updated orfFunding entities that comes from the funding object
+    	SortedSet<OrgFundingRelationEntity> updatedOrgFundingEntities = new TreeSet<>();
+        
+    	// Populate a list of the updated orgFunding entities that comes from the fundings object
+    	if(fundings != null && fundings.getFundings() != null && !fundings.getFundings().isEmpty()) {
+        	for(Funding funding : fundings.getFundings()) {
+        		OrgFundingRelationEntity newOrgFundingRelationEntity = getOrgFundingRelationEntity(funding, existingOrgFundingRelationEntitiesMap.get(funding.getPutCode()));
+        		newOrgFundingRelationEntity.setProfile(profileEntity);
+        		updatedOrgFundingEntities.add(newOrgFundingRelationEntity);
+        	}
+        }
+    	    	
+    	// Create a map containing the orgFundings that comes in the fundings object and that will be persisted
+    	Map<String, OrgFundingRelationEntity> updatedOrgFundingRelationEntitiesMap = createOrgFundingEntitiesMap(updatedOrgFundingEntities);
     	
     	// Remove orphans
     	for(Iterator<OrgFundingRelationEntity> iterator = existingOrgFundingEntities.iterator(); iterator.hasNext();){
@@ -995,9 +969,13 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
     	}
     	
     	// Add new
-    	for() {
-    		
-    	}
+        for (OrgFundingRelationEntity updatedEntity : updatedOrgFundingEntities) {
+            if (updatedEntity.getId() == null) {
+                existingOrgFundingEntities.add(updatedEntity);
+            }
+        }
+        profileEntity.setOrgFundingRelations(existingOrgFundingEntities);
+    	
     	
     }
     
@@ -1014,13 +992,6 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
         return map;
 
     }
-    
-    
-    
-    
-    
-    
-    
 
     private void setInternalDetails(ProfileEntity profileEntity, OrcidInternal orcidInternal) {
         if (orcidInternal != null) {
@@ -1161,6 +1132,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
                 }
                 orgRelationEntity = new OrgFundingRelationEntity();
                 orgRelationEntity.setSource(getSource(funding.getSource()));
+                orgRelationEntity.setOrg(getOrgEntity(funding));
             } else {
                 orgRelationEntity = exisitingOrgFundingEntity;
                 orgRelationEntity.clean();
@@ -1172,18 +1144,35 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             orgRelationEntity.setCurrencyCode(funding.getCurrencyCode());
             orgRelationEntity.setDescription(funding.getDescription());
             orgRelationEntity.setEndDate(endDate != null ? new EndDateEntity(endDate) : null);
-            orgRelationEntity.setExternalIdentifiers();
-            orgRelationEntity.setOrg();
-            orgRelationEntity.setSource();
+            orgRelationEntity.setExternalIdentifiers(getFundingExternalIdentifiers(orgRelationEntity, funding.getFundingExternalIdentifiers()));            
             orgRelationEntity.setStartDate(startDate != null ? new StartDateEntity(startDate) : null);
-            orgRelationEntity.setTitle();
-            orgRelationEntity.setType();
-            orgRelationEntity.setUrl();
-            orgRelationEntity.setVisibility();
+            orgRelationEntity.setTitle(funding.getTitle());
+            orgRelationEntity.setType(funding.getType());
+            if(funding.getUrl() != null)
+            	orgRelationEntity.setUrl(funding.getUrl().getValue());            
+            orgRelationEntity.setVisibility(funding.getVisibility());
 
             return orgRelationEntity;
         }
         return null;
+    }
+    
+    /**
+     * TODO
+     * */
+    private SortedSet<FundingExternalIdentifierEntity> getFundingExternalIdentifiers(OrgFundingRelationEntity orgFundingRelationEntity, FundingExternalIdentifiers externalIdentifiers) {
+    	if(externalIdentifiers == null || externalIdentifiers.getFundingExternalIdentifier() == null || externalIdentifiers.getFundingExternalIdentifier().isEmpty())
+    		return null;
+    	TreeSet<FundingExternalIdentifierEntity> result = new TreeSet<>();
+    	List<FundingExternalIdentifier> externalIdentifierList = externalIdentifiers.getFundingExternalIdentifier();
+    	for(FundingExternalIdentifier externalIdentifier : externalIdentifierList){
+    		FundingExternalIdentifierEntity entity = new FundingExternalIdentifierEntity();    		
+    		entity.setOrgFunding(orgFundingRelationEntity);
+    		entity.setType(externalIdentifier.getType());
+    		entity.setUrl(externalIdentifier.getUrl().getValue());    		
+    		entity.setValue(externalIdentifier.getValue());
+    	}
+    	return result;
     }
 
     private OrgEntity getOrgEntity(Affiliation affiliation) {
@@ -1203,7 +1192,28 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
         }
         return null;
     }
-
+    
+    /**
+     * TODO
+     * */
+    private OrgEntity getOrgEntity(Funding funding) {
+        if (funding != null) {
+            OrgEntity orgEntity = new OrgEntity();
+            Organization organization = funding.getOrganization();
+            orgEntity.setName(organization.getName());
+            OrganizationAddress address = organization.getAddress();
+            orgEntity.setCity(address.getCity());
+            orgEntity.setRegion(address.getRegion());
+            orgEntity.setCountry(address.getCountry());
+            if (organization.getDisambiguatedOrganization() != null && organization.getDisambiguatedOrganization().getDisambiguatedOrganizationIdentifier() != null) {
+                orgEntity.setOrgDisambiguated(orgDisambiguatedDao.findBySourceIdAndSourceType(organization.getDisambiguatedOrganization()
+                        .getDisambiguatedOrganizationIdentifier(), organization.getDisambiguatedOrganization().getDisambiguationSource()));
+            }
+            return orgManager.createUpdate(orgEntity);
+        }
+        return null;
+    }
+    
     private ProfileEntity getSource(Source source) {
         if (source != null && StringUtils.isNotEmpty(source.getSourceOrcid().getPath()) && !source.getSourceOrcid().getPath().equals(WorkSource.NULL_SOURCE_PROFILE)) {
             return new ProfileEntity(source.getSourceOrcid().getPath());
