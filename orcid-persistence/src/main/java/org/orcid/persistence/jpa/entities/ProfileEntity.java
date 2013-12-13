@@ -91,7 +91,7 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
     private SortedSet<ProfileKeywordEntity> keywords;
     private Set<ExternalIdentifierEntity> externalIdentifiers;
     private SortedSet<OrgAffiliationRelationEntity> orgAffiliationRelations;
-    private SortedSet<OrgFundingRelationEntity> orgFundingRelation;
+    private SortedSet<OrgFundingRelationEntity> orgFundingRelations;
     private Set<EmailEntity> emails;
 
     // Poor old vocative name :-(
@@ -432,17 +432,17 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
      */
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = PROFILE, orphanRemoval = true)
     @Sort(type = SortType.NATURAL)
-    public SortedSet<OrgFundingRelationEntity> getOrgFundingRelation() {
-		return orgFundingRelation;
+    public SortedSet<OrgFundingRelationEntity> getOrgFundingRelations() {
+		return orgFundingRelations;
 	}
 
     /**
      * @param fundings
      *            the fundings to set
      */
-	public void setOrgFundingRelation(
+	public void setOrgFundingRelations(
 			SortedSet<OrgFundingRelationEntity> fundings) {
-		this.orgFundingRelation = fundings;
+		this.orgFundingRelations = fundings;
 	}
 
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = PROFILE, orphanRemoval = true)

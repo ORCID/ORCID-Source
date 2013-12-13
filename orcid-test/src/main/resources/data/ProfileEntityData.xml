@@ -483,6 +483,8 @@
             end_day="02"
             visibility="LIMITED"
             />
+            
+	<org_funding_relation />            
 
     <given_permission_to
             given_permission_to_id="1"

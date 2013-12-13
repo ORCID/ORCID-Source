@@ -606,7 +606,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
     
     
     private Fundings getFundings(ProfileEntity profileEntity) {
-    	Set<OrgFundingRelationEntity> orgFundingRelation = profileEntity.getOrgFundingRelation();
+    	Set<OrgFundingRelationEntity> orgFundingRelation = profileEntity.getOrgFundingRelations();
     	if(orgFundingRelation != null && !orgFundingRelation.isEmpty()) {
     		Funding funding = new Funding();
     	}
@@ -619,7 +619,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
     
     
     
-    
+     
     
     
     

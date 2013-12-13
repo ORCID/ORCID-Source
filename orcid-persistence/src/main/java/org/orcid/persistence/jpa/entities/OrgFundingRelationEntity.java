@@ -27,9 +27,12 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Sort;
+import org.hibernate.annotations.SortType;
 import org.orcid.jaxb.model.message.CurrencyCode;
 import org.orcid.jaxb.model.message.FundingType;
 import org.orcid.jaxb.model.message.Visibility;
@@ -44,8 +47,8 @@ import org.orcid.utils.NullUtils;
 @Table(name = "org_funding_relation")
 public class OrgFundingRelationEntity extends BaseEntity<Long> implements Comparable<OrgFundingRelationEntity>, ProfileAware, SourceAware {
 
-	private static final long serialVersionUID = 1L;
-	
+	private static final long serialVersionUID = -8214632843521743285L;
+
 	private Long id;
     private OrgEntity org;
     private ProfileEntity profile;
@@ -59,6 +62,7 @@ public class OrgFundingRelationEntity extends BaseEntity<Long> implements Compar
 	private StartDateEntity startDate;
     private EndDateEntity endDate;
     private Visibility visibility;
+    private FundingExternalIdentifier externalIdentifiers;
     private ProfileEntity source;
 	
     @Override
@@ -112,7 +116,8 @@ public class OrgFundingRelationEntity extends BaseEntity<Long> implements Compar
 		this.description = description;
 	}
 
-	@JoinColumn(name = "type", nullable = false)
+	@Basic
+    @Enumerated(EnumType.STRING)
 	public FundingType getType() {
 		return type;
 	}
@@ -121,7 +126,8 @@ public class OrgFundingRelationEntity extends BaseEntity<Long> implements Compar
 		this.type = type;
 	}
 
-	@JoinColumn(name = "currency", nullable = false)
+	@Basic
+    @Enumerated(EnumType.STRING)
 	public CurrencyCode getCurrencyCode() {
 		return currencyCode;
 	}
@@ -181,6 +187,16 @@ public class OrgFundingRelationEntity extends BaseEntity<Long> implements Compar
 
 	public void setVisibility(Visibility visibility) {
 		this.visibility = visibility;
+	}
+
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "orgFunding", orphanRemoval = true)
+    @Sort(type = SortType.NATURAL)
+	public FundingExternalIdentifier getExternalIdentifiers() {
+		return externalIdentifiers;
+	}
+
+	public void setExternalIdentifiers(FundingExternalIdentifier externalIdentifiers) {
+		this.externalIdentifiers = externalIdentifiers;
 	}
 
 	@ManyToOne
