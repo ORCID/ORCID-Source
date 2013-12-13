@@ -47,6 +47,8 @@ public class Registration implements ErrorsInterface, Serializable {
     private Text givenNames;
 
     private Text familyNames;
+    
+    private Text creationType;
 
     public Registration() {
         errors = new ArrayList<String>();
@@ -56,6 +58,7 @@ public class Registration implements ErrorsInterface, Serializable {
         emailConfirm = new Text();
         givenNames = new Text();
         familyNames = new Text();
+        creationType = new Text();
         sendChangeNotifications = new Checkbox();
         sendOrcidNews = new Checkbox();
         termsOfUse = new Checkbox();
@@ -149,6 +152,14 @@ public class Registration implements ErrorsInterface, Serializable {
 
     public void setTermsOfUse(Checkbox termsOfUse) {
         this.termsOfUse = termsOfUse;
+    }
+
+    public Text getCreationType() {
+        return creationType;
+    }
+
+    public void setCreationType(Text creationType) {
+        this.creationType = creationType;
     }
 
 }
