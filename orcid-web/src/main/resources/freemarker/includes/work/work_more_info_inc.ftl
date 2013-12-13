@@ -16,8 +16,8 @@
     =============================================================================
 
 -->
-<div class="more-info ie7-zi-fix-top" ng-click="closePopover(); $event.stopPropagation()" ng-mouseleave="closePopover(); $event.stopPropagation()">	
-	<a class="glyphicon glyphicon-plus-sign grey" ng-mouseenter="moreInfoMouseEnter(work,$event);" ng-click="moreInfoMouseEnter(work,$event);"></a>	
+<div class="more-info ie7-zi-fix-top" ng-mouseleave="closePopover(); $event.stopPropagation()">	
+	<a class="glyphicon glyphicon-plus-sign grey" ng-mouseenter="moreInfoMouseEnter(work,$event);" ng-click="moreInfoClick(work,$event);"></a>	
 	<div class="popover bottom work-more-info-container" >		
 		<div class="arrow"></div>	
 		<div class="lightbox-container">			

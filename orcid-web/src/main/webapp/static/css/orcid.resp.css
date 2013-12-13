@@ -2840,10 +2840,6 @@ ul.personal-inf-display li{
 	height: 350px;
 }
 
-.no-touch .more-info:hover .more-info-container {
-	display: inline;
-}
-
 .more-info-show .more-info-container {
 	display: inline;
 }
@@ -2866,9 +2862,6 @@ ul.personal-inf-display li{
 	left: 50%;
 }
 
-.no-touch .more-info:hover .work-more-info-container {
-	display: inline;
-}
 
 .more-info .popover.bottom .arrow{
 	left: 484px !important;
