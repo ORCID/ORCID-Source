@@ -40,7 +40,7 @@
     	<div ng-controller="VerifyEmailCtrl" style="display: hidden;"></div>
 	</#if>
 
-    <div class="col-md-3 lhs">
+    <div class="col-md-3 lhs left-aside">
     	<div class="workspace-profile">
             <h2 class="full-name">
                 <#if (profile.orcidBio.personalDetails.creditName.content)??>
@@ -49,13 +49,14 @@
                     ${(profile.orcidBio.personalDetails.givenNames.content)!} ${(profile.orcidBio.personalDetails.familyName.content)!}
                 </#if>                
             </h2>            
-            <!-- <p><small id="orcid-id" class="orcid-id">${baseUriHttp}/${(profile.orcid.value)!}</small></p> -->           			  
-			 
-			
-			<input type="text" class="orcid-id-input" onClick="this.select();" value="${baseUriHttp}/${(profile.orcid.value)!}" readonly="readonly">					       
-							
-            
-	        <p class="hoover-white-fonts"><a href="${baseUriHttp}/${(profile.orcid.value)!}" class="label btn-primary"><@orcid.msg 'workspace.ViewPublicORCIDRecord'/></a><br /><a href="<@spring.url '/account/manage-bio-settings'/>" id="update-personal-modal-link" class="label btn-primary"><@orcid.msg 'workspace.Update'/></a></p>
+            <div
+            <div class="oid">
+            	<p class="orcid-id-container">		
+	            	<span class="mini-orcid-icon"></span>
+	            	<a href="${baseUriHttp}/${(profile.orcid.value)!}" id="orcid-id" class="orcid-id">${baseUriHttp}/${(profile.orcid.value)!}</a>
+            	<p>
+            </div>	       
+	        
 	        <#if ((profile.orcidBio.personalDetails.otherNames.otherName)?size != 0)>
 	        	<p><strong><@orcid.msg 'workspace.Alsoknownas'/></strong><br />
 		       		<#list profile.orcidBio.personalDetails.otherNames.otherName as otherName>
@@ -86,16 +87,23 @@
 		        			<span ng-show="externalIdentifier.externalIdUrl"><a href="{{externalIdentifier.externalIdUrl.value}}" target="_blank">{{externalIdentifier.externalIdCommonName.content}} {{externalIdentifier.externalIdReference.content}}</a></span>
 			   				<a ng-click="deleteExternalIdentifier($index)" class="glyphicon glyphicon-trash grey"></a>       			
        			</div>
-			</div>							    
+			</div>
+													    
 	        <@security.authorize ifAnyGranted="ROLE_ADMIN, ROLE_GROUP, ROLE_BASIC, ROLE_BASIC_INSTITUTION, ROLE_PREMIUM, ROLE_PREMIUM_INSTITUTION">
 	        	 <p><a href="<@spring.url "/manage-clients" />">${springMacroRequestContext.getMessage("workspace.ManageClientCredentials")}</a></p>	        	 
 	        </@security.authorize>
 			<@security.authorize ifAnyGranted="ROLE_ADMIN">
 				<p><a href="<@spring.url "/admin-actions" />"><@orcid.msg 'admin.workspace_link' /></a></p>
 			</@security.authorize>
+			
+			<p class="hoover-white-fonts">
+	       		<!-- <a href="${baseUriHttp}/${(profile.orcid.value)!}" class="label btn-primary"><@orcid.msg 'workspace.ViewPublicORCIDRecord'/></a> -->	       
+	       		<a href="<@spring.url '/account/manage-bio-settings'/>" id="update-personal-modal-link" class="label btn-primary"><@orcid.msg 'workspace.Update'/></a>
+	        </p>
+			
         </div>
     </div>
-    <div class="col-md-9">
+    <div class="col-md-9 right-aside">
         <div class="workspace-right">
         	<div class="workspace-inner workspace-header" ng-controller="WorkspaceSummaryCtrl">
                 <div class="alert alert-info" ng-show="showAddAlert()" ng-cloak><strong><@orcid.msg 'workspace.addinformationaboutyou'/></strong></div>

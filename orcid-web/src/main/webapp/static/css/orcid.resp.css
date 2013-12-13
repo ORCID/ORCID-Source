@@ -1470,9 +1470,13 @@ a:hover {
 }
 
 .orcid-id {
-	font-size: 12px;
+	font-size: 10px;
 	line-height: 1;
 	word-wrap:break-word;
+	color: #338CAF;
+	font-weight: bold;
+	vertical-align:3px;
+	margin-left: 5px;	
 }
 
 .workspace-overview {
@@ -2999,6 +3003,41 @@ ul.personal-inf-display li{
 	max-width:120px;
 }
 
+p.orcid-id-container{
+	width: 100%;
+	padding: 4px 5px 2px 5px;
+	background-color: #DEEEF4;
+	margin: 10px 0;
+	
+	
+}
+
+.public-profile .oid{
+	padding: 5px 0;
+	border-bottom: 1px solid #c9c9c9;
+	margin-bottom: 10px;
+}
+
+.public-profile p{
+	padding-right: 15px;
+}
+
+.public-profile .left-aside{
+	padding: 0;	
+}
+
+.public-profile .right-aside{
+	padding:0;
+}
+
+.public-profile .mini-orcid-icon{
+	background: url('../img/mini-icon.png') transparent -22px 0px no-repeat;	
+	width: 20px;
+	height: 20px;
+	display: block;
+	float: left;
+}
+
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */
 		
@@ -3751,6 +3790,12 @@ ul.personal-inf-display li{
 		margin-top: 65px;
 	}
 	
+	.public-profile .left-aside,
+	.public-profile .right-aside{
+		padding: 15px;	
+	}
+	
+	
 }
 
 @media (min-width : 768px) and (max-width : 992px) { /* Tablet */
@@ -3886,6 +3931,10 @@ ul.personal-inf-display li{
 	
 	#loginForm #login-reset{
 		margin-top: 25px;
+	}
+	
+	.workspace-profile{
+		margin-bottom: 30px;				
 	}
 }
 
