@@ -3788,13 +3788,21 @@ p.orcid-id-container{
 	
 	#loginForm #login-reset{
 		margin-top: 65px;
+	}	
+
+	.workspace-header-public{
+		border-top: 0;
+	}
+	
+	.work-more-info-container{
+		left: 0;
+		width: 100%;		
 	}
 	
 	.public-profile .left-aside,
 	.public-profile .right-aside{
 		padding: 15px;	
 	}
-	
 	
 }
 
