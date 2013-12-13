@@ -976,11 +976,14 @@ function RegistrationCtrl($scope, $compile) {
 	};
 	
 	$scope.postRegister = function () {
-		if (basePath.startsWith(baseUrl + 'oauth')) 
+		if (basePath.startsWith(baseUrl + 'oauth')) { 
 		    orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'New-Registration-Submit', 'OAuth']);
-	    else
-	    	orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'New-Registration-Submit', 'Website']);	
-		$.ajax({
+		    $scope.register.creationType.value = "Member-referred";
+		} else {
+	    	orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'New-Registration-Submit', 'Website']);
+	    	$scope.register.creationType.value = "Direct";
+		}
+	    $.ajax({
 	        url: $('body').data('baseurl') + 'register.json',
 	        type: 'POST',
 	        data:  angular.toJson($scope.register),
@@ -1757,6 +1760,7 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 	
 	$scope.showAddModal = function(){;
 		$scope.editTranslatedTitle = false;
+		$scope.types = null;
 	    $.colorbox({	    	
 	    	scrolling: true,
 	        html: $compile($('#add-work-modal').html())($scope),	        

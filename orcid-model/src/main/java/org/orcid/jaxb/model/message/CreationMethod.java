@@ -57,6 +57,20 @@ public enum CreationMethod implements Serializable {
     API("API"),
 
     /**
+     * The user registered on the /register page.
+     * 
+     */
+    @XmlEnumValue("Direct")
+    DIRECT("Direct"),
+
+    /**
+     * The registered on the /oauth/signin.
+     * 
+     */
+    @XmlEnumValue("Member-referred")
+    MEMBER_REFERRED("Member-referred"),
+
+    /**
      * The profile was created manually using the ORCID web user interface.
      * 
      */
