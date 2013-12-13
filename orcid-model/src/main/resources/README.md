@@ -3,30 +3,30 @@
 #### XSD Release Version
 
 * **[ORCID Message 1.1](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/orcid-message-1.1.xsd)** <br>_Read the [change log from the previous version (ORCID Message 1.0.23)](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/orcid-message-1.1.md)_
-    * API Base URIs - PRODUCTION
+    * API Base URLs - PRODUCTION
         * Public API:   http://pub.orcid.org/v1.1/
         * Member API:   https://api.orcid.org/v1.1/
-    * API Base URIs - SANDBOX
+    * API Base URLs - SANDBOX
         * Public API:   http://pub.sandbox-1.orcid.org/v1.1/
         * Member API:   http://api.sandbox-1.orcid.org/v1.1/
 
 #### XSD Release Candidate(s)
 
 * **[ORCID Message 1.2_rc1](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/orcid-message-1.2_rc1.xsd)** <br>_Contains: XSD for Organizational Affiliations_
-    * API Base URIs - PRODUCTION
+    * API Base URLs - PRODUCTION
         * Public API:   http://pub.orcid.org/v1.2_rc1/
         * Member API:   https://api.orcid.org/v1.2_rc1/
-    * API Base URIs - SANDBOX
+    * API Base URLs - SANDBOX
         * Public API:   http://pub.sandbox-1.orcid.org/v1.2_rc1/
         * Member API:   http://api.sandbox-1.orcid.org/v1.2_rc1/
 
-#### Still-supported, Deprecated Versions
+#### Deprecated Versions (Will be removed March 2014)
 
 * **[Version 1.0.x (includes versions 1.0.1 through 1.0.23)](https://github.com/ORCID/ORCID-Source/tree/master/orcid-model/src/main/resources)** <br>_Sunset Date: March 1, 2014_
-    * API Base URIs - PRODUCTION
+    * API Base URLs - PRODUCTION
         * Public API:   http://pub.orcid.org
         * Member API:   https://api.orcid.org
-    * API Base URIs - SANDBOX
+    * API Base URLs - SANDBOX
         * Public API:   http://pub.sandbox-1.orcid.org
         * Member API:   http://api.sandbox-1.orcid.org
 
