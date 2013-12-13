@@ -17,6 +17,7 @@
 package org.orcid.persistence.jpa.entities;
 
 import java.util.List;
+import java.util.SortedSet;
 
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
@@ -68,7 +69,7 @@ public class OrgFundingRelationEntity extends BaseEntity<Long> implements Compar
 	private StartDateEntity startDate;
     private EndDateEntity endDate;
     private Visibility visibility;
-    private List<FundingExternalIdentifierEntity> externalIdentifiers;
+    private SortedSet<FundingExternalIdentifierEntity> externalIdentifiers;
     private ProfileEntity source;
 	
     @Override
@@ -200,11 +201,11 @@ public class OrgFundingRelationEntity extends BaseEntity<Long> implements Compar
 	@OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.LAZY, mappedBy = ORG_FUNDING, orphanRemoval = true)
 	@Fetch(FetchMode.SUBSELECT)
     @Sort(type = SortType.NATURAL)
-	public List<FundingExternalIdentifierEntity> getExternalIdentifiers() {
+	public SortedSet<FundingExternalIdentifierEntity> getExternalIdentifiers() {
 		return externalIdentifiers;
 	}
 
-	public void setExternalIdentifiers(List<FundingExternalIdentifierEntity> externalIdentifiers) {
+	public void setExternalIdentifiers(SortedSet<FundingExternalIdentifierEntity> externalIdentifiers) {
 		this.externalIdentifiers = externalIdentifiers;
 	}
 
@@ -254,10 +255,20 @@ public class OrgFundingRelationEntity extends BaseEntity<Long> implements Compar
         }
         return name.compareTo(otherName);
     }
+    
+    /**
+     * Clean simple fields so that entity can be reused.
+     */
+    public void clean() {
+        type = null;
+        title = null;        
+        startDate = null;
+        endDate = null;
+        visibility = null;
+        description = null;
+        currencyCode = null;
+        amount = null;
+        contributorsJson = null;
+        url = null;
+    }
 }
-
-
-
-
-
-

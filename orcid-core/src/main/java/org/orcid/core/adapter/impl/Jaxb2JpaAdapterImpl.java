@@ -63,7 +63,10 @@ import org.orcid.jaxb.model.message.ExternalIdUrl;
 import org.orcid.jaxb.model.message.ExternalIdentifier;
 import org.orcid.jaxb.model.message.ExternalIdentifiers;
 import org.orcid.jaxb.model.message.FamilyName;
+import org.orcid.jaxb.model.message.Funding;
 import org.orcid.jaxb.model.message.FundingAgency;
+import org.orcid.jaxb.model.message.FundingContributors;
+import org.orcid.jaxb.model.message.Fundings;
 import org.orcid.jaxb.model.message.FuzzyDate;
 import org.orcid.jaxb.model.message.GivenNames;
 import org.orcid.jaxb.model.message.GivenPermissionBy;
@@ -120,6 +123,7 @@ import org.orcid.persistence.jpa.entities.GrantEntity;
 import org.orcid.persistence.jpa.entities.GrantSourceEntity;
 import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
 import org.orcid.persistence.jpa.entities.OrgEntity;
+import org.orcid.persistence.jpa.entities.OrgFundingRelationEntity;
 import org.orcid.persistence.jpa.entities.OtherNameEntity;
 import org.orcid.persistence.jpa.entities.PatentContributorEntity;
 import org.orcid.persistence.jpa.entities.PatentEntity;
@@ -185,16 +189,19 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
 
     private void setActivityDetails(ProfileEntity profileEntity, OrcidActivities orcidActivities) {
         Affiliations affiliations = null;
+        Fundings fundings = null;
         OrcidPatents orcidPatents = null;
         OrcidGrants orcidGrants = null;
         OrcidWorks orcidWorks = null;
         if (orcidActivities != null) {
             affiliations = orcidActivities.getAffiliations();
+            fundings = orcidActivities.getFundings();
             orcidPatents = orcidActivities.getOrcidPatents();
             orcidGrants = orcidActivities.getOrcidGrants();
             orcidWorks = orcidActivities.getOrcidWorks();
         }
         setOrgAffiliationRelations(profileEntity, affiliations);
+        
         setPatents(profileEntity, orcidPatents);
         setGrants(profileEntity, orcidGrants);
         setWorks(profileEntity, orcidWorks);
@@ -420,6 +427,13 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             return null;
         }
         return JsonUtils.convertToJsonString(workContributors);
+    }
+    
+    private String getFoundingContributorsJson(FundingContributors fundingContributors) {
+        if (fundingContributors == null) {
+            return null;
+        }
+        return JsonUtils.convertToJsonString(fundingContributors);
     }
 
     private void setGrants(ProfileEntity profileEntity, OrcidGrants orcidGrants) {
@@ -946,6 +960,67 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
         return map;
 
     }
+    
+    
+    /**
+     * TODO
+     * */
+    private void setOrgFundingRelations(ProfileEntity profileEntity, Fundings fundings) {
+    	SortedSet<OrgFundingRelationEntity> existingOrgFundingEntities = profileEntity.getOrgFundingRelations();
+    	if(existingOrgFundingEntities == null) {
+    		existingOrgFundingEntities = new TreeSet<>();
+    	}
+    	
+    	Map<String, OrgFundingRelationEntity> updatedOrgFundingRelationEntitiesMap = createOrgFundingEntitiesMap(existingOrgFundingEntities);    	
+    	SortedSet<OrgAffiliationRelationEntity> updatedOrgAffiliationEntities = new TreeSet<>();
+        
+    	// Populate the updated set
+    	if (fundings != null && !fundings.getFundings().isEmpty()) {
+            for (Funding funding : fundings.getFundings()) {
+                OrgAffiliationRelationEntity orgRelationEntity = getOrgAffiliationRelationEntity(affiliation,
+                        existingOrgAffiliationsEntitiesMap.get(affiliation.getPutCode()));
+                orgRelationEntity.setProfile(profileEntity);
+                updatedOrgAffiliationEntities.add(orgRelationEntity);
+            }
+        }
+        Map<String, OrgAffiliationRelationEntity> updatedOrgAffiliationEntitiesMap = createOrgAffiliationEntitiesMap(updatedOrgAffiliationEntities);
+    	
+    	
+    	// Remove orphans
+    	for(Iterator<OrgFundingRelationEntity> iterator = existingOrgFundingEntities.iterator(); iterator.hasNext();){
+    		OrgFundingRelationEntity existingEntity = iterator.next();
+    		if(!updatedOrgFundingRelationEntitiesMap.containsKey(Long.toString(existingEntity.getId()))){
+    			iterator.remove();
+    		}
+    	}
+    	
+    	// Add new
+    	for() {
+    		
+    	}
+    	
+    }
+    
+    /**
+     * TODO
+     * */
+    private Map<String, OrgFundingRelationEntity> createOrgFundingEntitiesMap(Set<OrgFundingRelationEntity> orgFundingEntities) {
+        Map<String, OrgFundingRelationEntity> map = new HashMap<>();
+        if (orgFundingEntities != null) {
+            for (OrgFundingRelationEntity orgFundingEntity : orgFundingEntities) {
+                map.put(String.valueOf(orgFundingEntity.getId()), orgFundingEntity);
+            }
+        }
+        return map;
+
+    }
+    
+    
+    
+    
+    
+    
+    
 
     private void setInternalDetails(ProfileEntity profileEntity, OrcidInternal orcidInternal) {
         if (orcidInternal != null) {
@@ -1053,7 +1128,6 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
                     throw new IllegalArgumentException("Invalid put-code was supplied for an affiliation: " + putCode);
                 }
                 orgRelationEntity = new OrgAffiliationRelationEntity();
-                orgRelationEntity.setSource(getSource(affiliation.getSource()));
             } else {
                 orgRelationEntity = exisitingOrgAffiliationEntity;
                 orgRelationEntity.clean();
@@ -1068,6 +1142,44 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             orgRelationEntity.setOrg(getOrgEntity(affiliation));
             orgRelationEntity.setTitle(affiliation.getRoleTitle());
             orgRelationEntity.setStartDate(startDate != null ? new StartDateEntity(startDate) : null);
+
+            return orgRelationEntity;
+        }
+        return null;
+    }
+    
+    /**
+     * TODO
+     * */
+    private OrgFundingRelationEntity getOrgFundingRelationEntity(Funding funding, OrgFundingRelationEntity exisitingOrgFundingEntity) {
+        if (funding != null) {
+        	OrgFundingRelationEntity orgRelationEntity = null;
+            if (exisitingOrgFundingEntity == null) {
+                String putCode = funding.getPutCode();
+                if (StringUtils.isNotBlank(putCode) && !"-1".equals(putCode)) {
+                    throw new IllegalArgumentException("Invalid put-code was supplied for an funding: " + putCode);
+                }
+                orgRelationEntity = new OrgFundingRelationEntity();
+                orgRelationEntity.setSource(getSource(funding.getSource()));
+            } else {
+                orgRelationEntity = exisitingOrgFundingEntity;
+                orgRelationEntity.clean();
+            }
+            FuzzyDate startDate = funding.getStartDate();
+            FuzzyDate endDate = funding.getEndDate();
+            orgRelationEntity.setAmount(funding.getAmount());
+            orgRelationEntity.setContributorsJson(getFoundingContributorsJson(funding.getFundingContributors()));
+            orgRelationEntity.setCurrencyCode(funding.getCurrencyCode());
+            orgRelationEntity.setDescription(funding.getDescription());
+            orgRelationEntity.setEndDate(endDate != null ? new EndDateEntity(endDate) : null);
+            orgRelationEntity.setExternalIdentifiers();
+            orgRelationEntity.setOrg();
+            orgRelationEntity.setSource();
+            orgRelationEntity.setStartDate(startDate != null ? new StartDateEntity(startDate) : null);
+            orgRelationEntity.setTitle();
+            orgRelationEntity.setType();
+            orgRelationEntity.setUrl();
+            orgRelationEntity.setVisibility();
 
             return orgRelationEntity;
         }

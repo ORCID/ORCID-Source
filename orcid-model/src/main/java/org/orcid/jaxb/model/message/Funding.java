@@ -59,7 +59,7 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = { "putCode", "title", "description", "type",
-		"currency", "amount", "url", "organization", "fundingExternalIdentifiers", "fundingContributors", "visibility",
+		"currencyCode", "amount", "url", "startDate", "endDate", "organization", "fundingExternalIdentifiers", "fundingContributors", "visibility",
 		"source" })
 @XmlRootElement(name = "funding")
 public class Funding implements Serializable, VisibilityType {
@@ -73,11 +73,15 @@ public class Funding implements Serializable, VisibilityType {
 	@XmlElement
 	protected FundingType type;
 	@XmlElement(name = "currency-code")
-	protected CurrencyCode currency;
+	protected CurrencyCode currencyCode;
 	@XmlElement
 	protected String amount;
 	@XmlElement
 	protected Url url;
+	@XmlElement(name = "start-date")
+    protected FuzzyDate startDate;
+    @XmlElement(name = "end-date")
+    protected FuzzyDate endDate;
 	@XmlElement(required = true)
 	protected Organization organization;
 	@XmlElement(name="funding-external-identifiers")
@@ -114,12 +118,12 @@ public class Funding implements Serializable, VisibilityType {
 		this.type = type;
 	}
 
-	public CurrencyCode getCurrency() {
-		return currency;
+	public CurrencyCode getCurrencyCode() {
+		return currencyCode;
 	}
 
-	public void setCurrency(CurrencyCode currency) {
-		this.currency = currency;
+	public void setCurrencyCode(CurrencyCode currencyCode) {
+		this.currencyCode = currencyCode;
 	}
 
 	public String getAmount() {
@@ -186,7 +190,48 @@ public class Funding implements Serializable, VisibilityType {
 	public void setFundingContributors(FundingContributors fundingContributors) {
 		this.fundingContributors = fundingContributors;
 	}
+	/**
+     * Gets the value of the startDate property.
+     * 
+     * @return possible object is {@link FuzzyDate }
+     * 
+     */
+    public FuzzyDate getStartDate() {
+        return startDate;
+    }
 
+    /**
+     * Sets the value of the startDate property.
+     * 
+     * @param value
+     *            allowed object is {@link FuzzyDate }
+     * 
+     */
+    public void setStartDate(FuzzyDate value) {
+        this.startDate = value;
+    }
+
+    /**
+     * Gets the value of the endDate property.
+     * 
+     * @return possible object is {@link FuzzyDate }
+     * 
+     */
+    public FuzzyDate getEndDate() {
+        return endDate;
+    }
+
+    /**
+     * Sets the value of the endDate property.
+     * 
+     * @param value
+     *            allowed object is {@link FuzzyDate }
+     * 
+     */
+    public void setEndDate(FuzzyDate value) {
+        this.endDate = value;
+    }
+    
 	/**
 	 * 
 	 * Note that put-code is not part of hashCode or equals! This is to allow
@@ -202,7 +247,7 @@ public class Funding implements Serializable, VisibilityType {
 				+ ((description == null) ? 0 : description.hashCode());
 		result = prime * result + ((type == null) ? 0 : type.hashCode());
 		result = prime * result
-				+ ((currency == null) ? 0 : currency.hashCode());
+				+ ((currencyCode == null) ? 0 : currencyCode.hashCode());
 		result = prime * result + ((amount == null) ? 0 : amount.hashCode());
 		result = prime * result + ((url == null) ? 0 : url.hashCode());
 		result = prime * result
@@ -212,6 +257,8 @@ public class Funding implements Serializable, VisibilityType {
 		result = prime * result + ((source == null) ? 0 : source.hashCode());
 		result = prime * result + ((fundingExternalIdentifiers == null) ? 0 : fundingExternalIdentifiers.hashCode());
 		result = prime * result + ((fundingContributors == null) ? 0 : fundingContributors.hashCode());
+		result = prime * result + ((startDate == null) ? 0 : startDate.hashCode());
+		result = prime * result + ((endDate == null) ? 0 : endDate.hashCode());
 		return result;
 	}
 
@@ -272,11 +319,11 @@ public class Funding implements Serializable, VisibilityType {
 			if(!type.equals(other.type))
 				return false;
 		}
-		if (currency == null) {
-			if(other.currency != null)
+		if (currencyCode == null) {
+			if(other.currencyCode != null)
 				return false;
 		} else {
-			if(!currency.equals(other.currency))
+			if(!currencyCode.equals(other.currencyCode))
 				return false;
 		}
 		if (amount == null) {
@@ -307,6 +354,16 @@ public class Funding implements Serializable, VisibilityType {
 			if(!source.equals(other.source))
 				return false;
 		}
+		if (startDate == null) {
+            if (other.startDate != null)
+                return false;
+        } else if (!startDate.equals(other.startDate))
+            return false;
+		if (endDate == null) {
+            if (other.endDate != null)
+                return false;
+        } else if (!endDate.equals(other.endDate))
+            return false;
 		return true;
 	}
 }

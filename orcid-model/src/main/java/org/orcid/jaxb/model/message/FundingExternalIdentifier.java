@@ -62,6 +62,7 @@ public class FundingExternalIdentifier implements Serializable {
 	protected Url url;
 	@XmlAttribute(name = "put-code")	
 	protected String putCode;
+	
 	public String getType() {
 		return type;
 	}

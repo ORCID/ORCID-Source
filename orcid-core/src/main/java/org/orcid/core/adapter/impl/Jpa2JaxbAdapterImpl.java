@@ -49,6 +49,7 @@ import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ClientRedirectUriEntity;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.ExternalIdentifierEntity;
+import org.orcid.persistence.jpa.entities.FundingExternalIdentifierEntity;
 import org.orcid.persistence.jpa.entities.FuzzyDateEntity;
 import org.orcid.persistence.jpa.entities.GivenPermissionByEntity;
 import org.orcid.persistence.jpa.entities.GivenPermissionToEntity;
@@ -72,7 +73,6 @@ import org.orcid.persistence.jpa.entities.ProfileWorkEntity;
 import org.orcid.persistence.jpa.entities.PublicationDateEntity;
 import org.orcid.persistence.jpa.entities.ResearcherUrlEntity;
 import org.orcid.persistence.jpa.entities.SourceAware;
-import org.orcid.persistence.jpa.entities.WorkContributorEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.persistence.jpa.entities.WorkExternalIdentifierEntity;
 import org.orcid.utils.DateUtils;
@@ -253,6 +253,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
 
     private OrcidActivities getOrcidActivities(ProfileEntity profileEntity) {
         Affiliations affiliations = getAffiliations(profileEntity);
+        Fundings funginds = getFundings(profileEntity);
         OrcidGrants orcidGrants = getOrcidGrants(profileEntity);
         OrcidPatents orcidPatents = getOrcidPatents(profileEntity);
         OrcidWorks orcidWorks = getOrcidWorks(profileEntity);
@@ -519,36 +520,111 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
     /**
      * TODO
      * */
-    private Funding getFunding(OrgFundingRelationEntity orgFundationRelationEntity){
+    private Funding getFunding(OrgFundingRelationEntity orgFundingRelationEntity){
     	Funding funding = new Funding();
-    	funding.setAmount(orgFundationRelationEntity.getAmount());
-    	funding.setCurrency(orgFundationRelationEntity.getCurrencyCode());
-    	funding.setDescription(orgFundationRelationEntity.getDescription());    	
-    	funding.setPutCode(Long.toString(orgFundationRelationEntity.getId()));    	
-    	funding.setTitle(orgFundationRelationEntity.getTitle());
-    	funding.setType(orgFundationRelationEntity.getType());
-    	funding.setUrl(new Url(orgFundationRelationEntity.getUrl()));
-    	funding.setVisibility(orgFundationRelationEntity.getVisibility());
+    	funding.setAmount(orgFundingRelationEntity.getAmount());
+    	funding.setCurrency(orgFundingRelationEntity.getCurrencyCode());
+    	funding.setDescription(orgFundingRelationEntity.getDescription());    	
+    	funding.setPutCode(Long.toString(orgFundingRelationEntity.getId()));    	
+    	funding.setTitle(orgFundingRelationEntity.getTitle());
+    	funding.setType(orgFundingRelationEntity.getType());
+    	funding.setUrl(new Url(orgFundingRelationEntity.getUrl()));
+    	funding.setVisibility(orgFundingRelationEntity.getVisibility());
     	
     	
     	Organization organization = new Organization();
-        OrgDisambiguatedEntity orgDisambiguatedEntity = orgFundationRelationEntity.getOrg().getOrgDisambiguated();
+        OrgDisambiguatedEntity orgDisambiguatedEntity = orgFundingRelationEntity.getOrg().getOrgDisambiguated();
         if (orgDisambiguatedEntity != null) {
             organization.setDisambiguatedOrganization(getDisambiguatedOrganization(orgDisambiguatedEntity));
         }
-        organization.setAddress(getAddress(orgFundationRelationEntity.getOrg()));
-        organization.setName(orgFundationRelationEntity.getOrg().getName());
+        organization.setAddress(getAddress(orgFundingRelationEntity.getOrg()));
+        organization.setName(orgFundingRelationEntity.getOrg().getName());
         funding.setOrganization(organization);
     	
-        //TODO
-        //funding.setFundingContributors();
-        //TODO
-        //funding.setFundingExternalIdentifiers();
+        funding.setFundingContributors(getFundingContributors(orgFundingRelationEntity));
+        funding.setFundingExternalIdentifiers(getFundingExternalIdentifiers(orgFundingRelationEntity));
 
-        funding.setSource(getSource(orgFundationRelationEntity));
+        funding.setSource(getSource(orgFundingRelationEntity));
     	return funding;
     }
 
+    /**
+     * TODO
+     * */
+    private FundingExternalIdentifiers getFundingExternalIdentifiers(OrgFundingRelationEntity orgFundingRelationEntity) {
+        if (orgFundingRelationEntity == null || orgFundingRelationEntity.getExternalIdentifiers() == null || orgFundingRelationEntity.getExternalIdentifiers().isEmpty()) {
+            return null;
+        }
+        SortedSet<FundingExternalIdentifierEntity> fundingExternalIdentifierEntities = orgFundingRelationEntity.getExternalIdentifiers();
+        FundingExternalIdentifiers workExternalIdentifiers = new FundingExternalIdentifiers();
+        
+        
+        for (FundingExternalIdentifierEntity fundingExternalIdentifierEntity : fundingExternalIdentifierEntities) {
+            FundingExternalIdentifier fundingExternalIdentifier = getFundingExternalIdentifier(fundingExternalIdentifierEntity);
+            if (fundingExternalIdentifier != null) {
+                workExternalIdentifiers.getFundingExternalIdentifier().add(fundingExternalIdentifier);
+            }
+        }
+        
+        
+        return workExternalIdentifiers;
+    }
+    
+    /**
+     * TODO
+     * */
+    private FundingExternalIdentifier getFundingExternalIdentifier(FundingExternalIdentifierEntity fundingExternalIdentifierEntity) {
+        if (fundingExternalIdentifierEntity == null) {
+            return null;
+        }
+        FundingExternalIdentifier fundingExternalIdentifier = new FundingExternalIdentifier();
+        
+        fundingExternalIdentifier.setPutCode(Long.toString(fundingExternalIdentifierEntity.getId()));
+        fundingExternalIdentifier.setType(fundingExternalIdentifierEntity.getType());
+        fundingExternalIdentifier.setUrl(new Url(fundingExternalIdentifierEntity.getUrl()));
+        fundingExternalIdentifier.setValue(fundingExternalIdentifierEntity.getValue());
+        
+        return fundingExternalIdentifier;
+    }
+    
+    /**
+     * TODO
+     * */
+    private FundingContributors getFundingContributors(OrgFundingRelationEntity orgFundingRelationEntity) {        
+        FundingContributors fundingContributors = new FundingContributors();
+        // New way of doing work contributors
+        String jsonString = orgFundingRelationEntity.getContributorsJson();
+        if (jsonString != null) {
+        	fundingContributors = JsonUtils.readObjectFromJsonString(jsonString, FundingContributors.class);
+            for (Contributor contributor : fundingContributors.getContributor()) {
+                // Make sure contributor credit name has the same visibility as
+                // the funding relation
+                CreditName creditName = contributor.getCreditName();
+                if (creditName != null) {
+                    creditName.setVisibility(orgFundingRelationEntity.getVisibility());
+                }
+                // Strip out any contributor emails
+                contributor.setContributorEmail(null);
+                // Make sure orcid-id in new format
+                ContributorOrcid contributorOrcid = contributor.getContributorOrcid();
+                if (contributorOrcid != null) {
+                    String uri = contributorOrcid.getUri();
+                    if (uri == null) {
+                        String orcid = contributorOrcid.getValueAsString();
+                        if(orcid == null){
+                            orcid = contributorOrcid.getPath();
+                        }
+                        contributor.setContributorOrcid(new ContributorOrcid(getOrcidIdBase(orcid)));
+                    }
+                }
+            }
+        }        
+        return fundingContributors;
+    }  
+    
+    /**
+     * TODO
+     * */
     private Source getSource(SourceAware sourceAwareEntity) {
         ProfileEntity sourceEntity = sourceAwareEntity.getSource();
         if (sourceEntity == null) {
@@ -606,7 +682,13 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
     private Fundings getFundings(ProfileEntity profileEntity) {
     	Set<OrgFundingRelationEntity> orgFundingRelation = profileEntity.getOrgFundingRelations();
     	if(orgFundingRelation != null && !orgFundingRelation.isEmpty()) {
-    		Funding funding = new Funding();
+    		Fundings fundings = new Fundings();
+    		List<Funding> fundingList = fundings.getFundings();
+    		for(OrgFundingRelationEntity orgFundingRelationEntity : orgFundingRelation) {
+    			fundingList.add(getFunding(orgFundingRelationEntity));
+    		}
+    		
+    		return fundings;
     	}
     	//TODO
     	return null;
@@ -953,10 +1035,11 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         if (work == null) {
             return null;
         }
+        WorkContributors workContributors = new WorkContributors();
         // New way of doing work contributors
         String jsonString = work.getContributorsJson();
         if (jsonString != null) {
-            WorkContributors workContributors = JsonUtils.readObjectFromJsonString(jsonString, WorkContributors.class);
+            workContributors = JsonUtils.readObjectFromJsonString(jsonString, WorkContributors.class);
             for (Contributor contributor : workContributors.getContributor()) {
                 // Make sure contributor credit name has the same visibility as
                 // the work
@@ -979,49 +1062,9 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
                     }
                 }
             }
-            return workContributors;
-        }
-        // Old way of doing contributors
-        if (work.getContributors() == null || work.getContributors().isEmpty()) {
-            return null;
-        }
-        Set<WorkContributorEntity> contributorEntities = work.getContributors();
-        WorkContributors workContributors = new WorkContributors();
-        for (WorkContributorEntity contributorEntity : contributorEntities) {
-            Contributor workContributor = getWorkContributor(contributorEntity, profileWorkEntity.getVisibility());
-            if (workContributor != null) {
-                workContributors.getContributor().add(workContributor);
-            }
-        }
+        }        
         return workContributors;
-    }
-
-    private Contributor getWorkContributor(WorkContributorEntity contributorEntity, Visibility visibility) {
-        if (contributorEntity == null) {
-            return null;
-        }
-
-        Contributor contributor = new Contributor();
-        ProfileEntity profile = contributorEntity.getProfile();
-        if (profile != null) {
-            CreditName creditName = new CreditName(profile.getCreditName());
-            contributor.setCreditName(creditName);
-            // Set visibility from parent work
-            creditName.setVisibility(visibility);
-            contributor.setContributorOrcid(new ContributorOrcid(getOrcidIdBase(profile.getId())));
-        } else {
-            if (StringUtils.isNotBlank(contributorEntity.getCreditName())) {
-                CreditName creditName = new CreditName(contributorEntity.getCreditName());
-                contributor.setCreditName(creditName);
-                // Set visibility from parent work
-                creditName.setVisibility(visibility);
-            }
-        }
-
-        contributor.setContributorAttributes(getContributorAttributes(contributorEntity));
-
-        return contributor;
-    }
+    }    
 
     private PublicationDate getPublicationDateFromEntity(PublicationDateEntity fuzzyDate) {
         if (fuzzyDate == null) {
