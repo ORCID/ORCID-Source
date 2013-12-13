@@ -48,11 +48,13 @@
 			<column name="type" type="VARCHAR(25)">
 				<constraints nullable="false" />
 			</column>
+			<column name="start_day" type="integer" />
 			<column name="start_month" type="integer" />
 			<column name="start_year" type="integer" />
+			<column name="end_day" type="integer" />
 			<column name="end_month" type="integer" />
 			<column name="end_year" type="integer" />
-			<column name="currency" type="VARCHAR(3)" />
+			<column name="currency_code" type="VARCHAR(3)" />
 			<column name="amount" type="NUMERIC(100)" />
 			<column name="url" type="VARCHAR(350)" />
 			<column name="contributors_json" type="TEXT" />
@@ -64,7 +66,7 @@
 		
 		<!-- funding_external_identifier -->
 		<createTable tableName="funding_external_identifier">
-			<column name="id" type="bigint">
+			<column name="funding_external_identifier_id" type="bigint">
 				<constraints nullable="false" primaryKey="true"
 					primaryKeyName="funding_external_identifier_pkey" />
 			</column>
@@ -89,6 +91,6 @@
     
     <changeSet id="CREATE-AUTOCOLS" author="Angel Montenegro" dbms="hsqldb">
         <addAutoIncrement tableName="org_funding_relation" columnName="id" columnDataType="bigint"/>
-        <addAutoIncrement tableName="funding_external_identifier" columnName="id" columnDataType="bigint"/>
+        <addAutoIncrement tableName="funding_external_identifier" columnName="funding_external_identifier_id" columnDataType="bigint"/>
     </changeSet>
 </databaseChangeLog>                   

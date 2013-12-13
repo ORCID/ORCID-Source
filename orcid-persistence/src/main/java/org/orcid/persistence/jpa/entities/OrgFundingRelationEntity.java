@@ -16,8 +16,11 @@
  */
 package org.orcid.persistence.jpa.entities;
 
+import java.util.List;
+
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -31,6 +34,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.Sort;
 import org.hibernate.annotations.SortType;
 import org.orcid.jaxb.model.message.CurrencyCode;
@@ -47,6 +52,7 @@ import org.orcid.utils.NullUtils;
 @Table(name = "org_funding_relation")
 public class OrgFundingRelationEntity extends BaseEntity<Long> implements Comparable<OrgFundingRelationEntity>, ProfileAware, SourceAware {
 
+	private static final String ORG_FUNDING = "orgFunding";
 	private static final long serialVersionUID = -8214632843521743285L;
 
 	private Long id;
@@ -62,7 +68,7 @@ public class OrgFundingRelationEntity extends BaseEntity<Long> implements Compar
 	private StartDateEntity startDate;
     private EndDateEntity endDate;
     private Visibility visibility;
-    private FundingExternalIdentifier externalIdentifiers;
+    private List<FundingExternalIdentifierEntity> externalIdentifiers;
     private ProfileEntity source;
 	
     @Override
@@ -98,7 +104,7 @@ public class OrgFundingRelationEntity extends BaseEntity<Long> implements Compar
 		this.profile = profile;
 	}
 
-	@JoinColumn(name = "title", nullable = false)
+	@Column(name = "title", nullable = false)
 	public String getTitle() {
 		return title;
 	}
@@ -107,7 +113,7 @@ public class OrgFundingRelationEntity extends BaseEntity<Long> implements Compar
 		this.title = title;
 	}
 
-	@JoinColumn(name = "description")
+	@Column(name = "description")
 	public String getDescription() {
 		return description;
 	}
@@ -118,6 +124,7 @@ public class OrgFundingRelationEntity extends BaseEntity<Long> implements Compar
 
 	@Basic
     @Enumerated(EnumType.STRING)
+	@Column(name="type")
 	public FundingType getType() {
 		return type;
 	}
@@ -128,6 +135,7 @@ public class OrgFundingRelationEntity extends BaseEntity<Long> implements Compar
 
 	@Basic
     @Enumerated(EnumType.STRING)
+	@Column(name="currency_code")
 	public CurrencyCode getCurrencyCode() {
 		return currencyCode;
 	}
@@ -136,7 +144,7 @@ public class OrgFundingRelationEntity extends BaseEntity<Long> implements Compar
 		this.currencyCode = currencyCode;
 	}
 
-	@JoinColumn(name = "amount", nullable = false)
+	@Column(name = "amount")
 	public String getAmount() {
 		return amount;
 	}
@@ -145,7 +153,7 @@ public class OrgFundingRelationEntity extends BaseEntity<Long> implements Compar
 		this.amount = amount;
 	}
 
-	@JoinColumn(name = "url")
+	@Column(name = "url")
 	public String getUrl() {
 		return url;
 	}
@@ -154,7 +162,7 @@ public class OrgFundingRelationEntity extends BaseEntity<Long> implements Compar
 		this.url = url;
 	}
 
-	@JoinColumn(name = "contributors_json")
+	@Column(name = "contributors_json")
 	public String getContributorsJson() {
 		return contributorsJson;
 	}
@@ -189,18 +197,19 @@ public class OrgFundingRelationEntity extends BaseEntity<Long> implements Compar
 		this.visibility = visibility;
 	}
 
-	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "orgFunding", orphanRemoval = true)
+	@OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.LAZY, mappedBy = ORG_FUNDING, orphanRemoval = true)
+	@Fetch(FetchMode.SUBSELECT)
     @Sort(type = SortType.NATURAL)
-	public FundingExternalIdentifier getExternalIdentifiers() {
+	public List<FundingExternalIdentifierEntity> getExternalIdentifiers() {
 		return externalIdentifiers;
 	}
 
-	public void setExternalIdentifiers(FundingExternalIdentifier externalIdentifiers) {
+	public void setExternalIdentifiers(List<FundingExternalIdentifierEntity> externalIdentifiers) {
 		this.externalIdentifiers = externalIdentifiers;
 	}
 
 	@ManyToOne
-    @JoinColumn(name = "source_id")
+	@JoinColumn(name = "source_id")
 	public ProfileEntity getSource() {
 		return source;
 	}
@@ -246,3 +255,9 @@ public class OrgFundingRelationEntity extends BaseEntity<Long> implements Compar
         return name.compareTo(otherName);
     }
 }
+
+
+
+
+
+

@@ -17,6 +17,7 @@
 package org.orcid.persistence.jpa.entities;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -34,7 +35,7 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "funding_external_identifier")
-public class FundingExternalIdentifier extends BaseEntity<Long> implements Comparable<FundingExternalIdentifier> {
+public class FundingExternalIdentifierEntity extends BaseEntity<Long> implements Comparable<FundingExternalIdentifierEntity> {
 
 	private static final long serialVersionUID = 1L;
 	
@@ -45,6 +46,7 @@ public class FundingExternalIdentifier extends BaseEntity<Long> implements Compa
 	private String url;
 	
 	@Id
+	@Column(name="funding_external_identifier_id")
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "funding_external_identifier_seq")
     @SequenceGenerator(name = "funding_external_identifier_seq", sequenceName = "funding_external_identifier_seq")
 	public Long getId() {
@@ -55,8 +57,8 @@ public class FundingExternalIdentifier extends BaseEntity<Long> implements Compa
 		this.id = id;
 	}
 	
-	@ManyToOne(fetch = FetchType.LAZY, cascade = { CascadeType.DETACH, CascadeType.REFRESH })
-    @JoinColumn(name = "id", nullable = false)
+	@ManyToOne(cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.DETACH }, fetch = FetchType.EAGER)
+    @JoinColumn(name = "id")
 	public OrgFundingRelationEntity getOrgFunding() {
 		return orgFunding;
 	}
@@ -65,6 +67,7 @@ public class FundingExternalIdentifier extends BaseEntity<Long> implements Compa
 		this.orgFunding = orgFunding;
 	}
 	
+	@Column
 	public String getType() {
 		return type;
 	}
@@ -73,6 +76,7 @@ public class FundingExternalIdentifier extends BaseEntity<Long> implements Compa
 		this.type = type;
 	}
 	
+	@Column
 	public String getValue() {
 		return value;
 	}
@@ -81,6 +85,7 @@ public class FundingExternalIdentifier extends BaseEntity<Long> implements Compa
 		this.value = value;
 	}
 	
+	@Column
 	public String getUrl() {
 		return url;
 	}
@@ -90,10 +95,30 @@ public class FundingExternalIdentifier extends BaseEntity<Long> implements Compa
 	}
 
 	@Override
-	public int compareTo(FundingExternalIdentifier o) {
-		// TODO Auto-generated method stub
-		return 0;
+	public int compareTo(FundingExternalIdentifierEntity other) {
+		 if (other == null) {
+	            return -1;
+	       }
+		 
+		 if(type != null) {
+			 if(!type.equals(other.getType())) {
+				 return type.compareTo(other.getType());
+			 }
+		 }
+		 
+		 if(value != null) {
+			 if(!value.equals(other.getValue())){
+				 return value.compareTo(other.getValue());
+			 }
+		 }
+		 
+		 if(url != null) {
+			 if(!url.equals(other.getUrl())) {
+				 return url.compareTo(other.getValue());
+			 }
+		 }
+		 
+		 return 0;
 	}
-	
 	
 }

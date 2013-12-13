@@ -29,6 +29,7 @@
         <class>org.orcid.persistence.jpa.entities.CountryIsoEntity</class>
         <class>org.orcid.persistence.jpa.entities.ExternalIdentifierEntity</class>
         <class>org.orcid.persistence.jpa.entities.EmailEntity</class>
+        <class>org.orcid.persistence.jpa.entities.FundingExternalIdentifierEntity</class>
         <class>org.orcid.persistence.jpa.entities.FuzzyDateEntity</class>
         <class>org.orcid.persistence.jpa.entities.GivenPermissionByEntity</class>
         <class>org.orcid.persistence.jpa.entities.GivenPermissionToEntity</class>
@@ -39,6 +40,7 @@
         <class>org.orcid.persistence.jpa.entities.KeywordViewEntity</class>
         <class>org.orcid.persistence.jpa.entities.OtherNameEntity</class>
         <class>org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity</class>
+        <class>org.orcid.persistence.jpa.entities.OrgFundingRelationEntity</class>
         <class>org.orcid.persistence.jpa.entities.OrgDisambiguatedEntity</class>
         <class>org.orcid.persistence.jpa.entities.OrgDisambiguatedExternalIdentifierEntity</class>
         <class>org.orcid.persistence.jpa.entities.OrgEntity</class>

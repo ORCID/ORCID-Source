@@ -507,7 +507,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         Organization organization = new Organization();
         OrgDisambiguatedEntity orgDisambiguatedEntity = orgAffiliationRelationEntity.getOrg().getOrgDisambiguated();
         if (orgDisambiguatedEntity != null) {
-            organization.setDisambiguatedOrganization(getDisambiguatedAffiliation(orgDisambiguatedEntity));
+            organization.setDisambiguatedOrganization(getDisambiguatedOrganization(orgDisambiguatedEntity));
         }
         organization.setAddress(getAddress(orgAffiliationRelationEntity.getOrg()));
         organization.setName(orgAffiliationRelationEntity.getOrg().getName());
@@ -516,6 +516,9 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         return affiliation;
     }
     
+    /**
+     * TODO
+     * */
     private Funding getFunding(OrgFundingRelationEntity orgFundationRelationEntity){
     	Funding funding = new Funding();
     	funding.setAmount(orgFundationRelationEntity.getAmount());
@@ -531,7 +534,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
     	Organization organization = new Organization();
         OrgDisambiguatedEntity orgDisambiguatedEntity = orgFundationRelationEntity.getOrg().getOrgDisambiguated();
         if (orgDisambiguatedEntity != null) {
-            organization.setDisambiguatedOrganization(getDisambiguatedAffiliation(orgDisambiguatedEntity));
+            organization.setDisambiguatedOrganization(getDisambiguatedOrganization(orgDisambiguatedEntity));
         }
         organization.setAddress(getAddress(orgFundationRelationEntity.getOrg()));
         organization.setName(orgFundationRelationEntity.getOrg().getName());
@@ -577,7 +580,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         return source;
     }
 
-    private DisambiguatedOrganization getDisambiguatedAffiliation(OrgDisambiguatedEntity orgDisambiguatedEntity) {
+    private DisambiguatedOrganization getDisambiguatedOrganization(OrgDisambiguatedEntity orgDisambiguatedEntity) {
         DisambiguatedOrganization disambiguatedOrganization = new DisambiguatedOrganization();
         disambiguatedOrganization.setDisambiguatedOrganizationIdentifier(orgDisambiguatedEntity.getSourceId());
         disambiguatedOrganization.setDisambiguationSource(orgDisambiguatedEntity.getSourceType());
@@ -597,14 +600,9 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         return null;
     }
 
-    
-    
-    
-    
-    
-    
-    
-    
+    /**
+     * TODO
+     * */
     private Fundings getFundings(ProfileEntity profileEntity) {
     	Set<OrgFundingRelationEntity> orgFundingRelation = profileEntity.getOrgFundingRelations();
     	if(orgFundingRelation != null && !orgFundingRelation.isEmpty()) {
@@ -613,15 +611,6 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
     	//TODO
     	return null;
     }
-    
-    
-    
-    
-    
-    
-     
-    
-    
     
     private Keywords getKeywords(ProfileEntity profileEntity) {
         Set<ProfileKeywordEntity> profileEntityKeywords = profileEntity.getKeywords();
