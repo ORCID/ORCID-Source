@@ -1757,6 +1757,7 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 	
 	$scope.showAddModal = function(){;
 		$scope.editTranslatedTitle = false;
+		$scope.types = null;
 	    $.colorbox({	    	
 	    	scrolling: true,
 	        html: $compile($('#add-work-modal').html())($scope),	        
