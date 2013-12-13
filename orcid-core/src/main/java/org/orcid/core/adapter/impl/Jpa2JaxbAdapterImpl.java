@@ -523,7 +523,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
     private Funding getFunding(OrgFundingRelationEntity orgFundingRelationEntity){
     	Funding funding = new Funding();
     	funding.setAmount(orgFundingRelationEntity.getAmount());
-    	funding.setCurrency(orgFundingRelationEntity.getCurrencyCode());
+    	funding.setCurrencyCode(orgFundingRelationEntity.getCurrencyCode());
     	funding.setDescription(orgFundingRelationEntity.getDescription());    	
     	funding.setPutCode(Long.toString(orgFundingRelationEntity.getId()));    	
     	funding.setTitle(orgFundingRelationEntity.getTitle());
