@@ -152,4 +152,8 @@
     <bean id="t2OrcidApiServiceImplV1_2_rc1" class="org.orcid.api.t2.server.T2OrcidApiServiceImplV1_2_rc1">
         <property name="externalVersion" value="1.2_rc1"/>
     </bean>
+    <bean id="t2OrcidApiServiceImplV1_2_rc2" class="org.orcid.api.t2.server.T2OrcidApiServiceImplV1_2_rc2">
+        <property name="externalVersion" value="1.2_rc2"/>
+    </bean>
+    
 </beans>

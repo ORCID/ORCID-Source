@@ -94,8 +94,8 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
     @Resource(name="t2OAuthClient")
     private T2OAuthAPIService<ClientResponse> oauthT2Client;
     
-    @Resource(name="t2OAuthClient1_2_rc1")
-    private T2OAuthAPIService<ClientResponse> oauthT2Client1_2_rc1;
+    @Resource(name="t2OAuthClient1_2_rc2")
+    private T2OAuthAPIService<ClientResponse> oauthT2Client1_2_rc2;
 
     @Resource
     private ProfileDao profileDao;
@@ -308,7 +308,7 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
         String accessToken = obtainAccessToken(authorizationCode, scopes);
 
         OrcidMessage orcidMessage = new OrcidMessage();
-        orcidMessage.setMessageVersion("1.2_rc1");
+        orcidMessage.setMessageVersion("1.2_rc2");
         OrcidProfile orcidProfile = new OrcidProfile();
         orcidMessage.setOrcidProfile(orcidProfile);
         OrcidActivities orcidActivities = new OrcidActivities();
@@ -326,7 +326,7 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
         organizationAddress.setCity("Edinburgh");
         organizationAddress.setCountry(Iso3166Country.GB);
 
-        ClientResponse clientResponse = oauthT2Client1_2_rc1.addAffiliationsXml("4444-4444-4444-4442", orcidMessage, accessToken);
+        ClientResponse clientResponse = oauthT2Client1_2_rc2.addAffiliationsXml("4444-4444-4444-4442", orcidMessage, accessToken);
         assertEquals(201, clientResponse.getStatus());
     }
 

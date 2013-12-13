@@ -35,6 +35,11 @@
 		<constructor-arg ref="jerseyClient"/>
 	</bean>
 
+	<bean id="t2OAuthClient1_2_rc2" class="org.orcid.api.t2.integration.T2OAuthOrcidApiClientImpl">
+		<constructor-arg value="${org.orcid.t2.client.base_url}/v1.2_rc2"/>
+		<constructor-arg ref="jerseyClient"/>
+	</bean>
+
 	<!-- Override for the jersey client to run OAuth client config and not certificates one -->
 	<bean id="clientConfig" class="org.orcid.api.t2.integration.OrcidJerseyT2ClientOAuthConfig">
 		<constructor-arg ref="providers" />
