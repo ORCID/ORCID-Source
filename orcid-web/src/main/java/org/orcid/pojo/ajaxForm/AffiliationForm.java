@@ -249,10 +249,10 @@ public class AffiliationForm implements ErrorsInterface, Serializable {
         if (!PojoUtil.isEmpty(departmentName)) {
             affiliation.setDepartmentName(departmentName.getValue());
         }
-        if (!PojoUtil.isEmply(startDate)) {
+        if (!PojoUtil.isEmpty(startDate)) {
             affiliation.setStartDate(startDate.toFuzzyDate());
         }
-        if (!PojoUtil.isEmply(endDate)) {
+        if (!PojoUtil.isEmpty(endDate)) {
             affiliation.setEndDate(endDate.toFuzzyDate());
         }
         return affiliation;

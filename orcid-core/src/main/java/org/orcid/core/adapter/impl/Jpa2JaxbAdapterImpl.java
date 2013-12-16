@@ -530,8 +530,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
     	funding.setType(orgFundingRelationEntity.getType());
     	funding.setUrl(new Url(orgFundingRelationEntity.getUrl()));
     	funding.setVisibility(orgFundingRelationEntity.getVisibility());
-    	
-    	
+    	    	
     	Organization organization = new Organization();
         OrgDisambiguatedEntity orgDisambiguatedEntity = orgFundingRelationEntity.getOrg().getOrgDisambiguated();
         if (orgDisambiguatedEntity != null) {

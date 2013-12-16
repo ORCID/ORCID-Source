@@ -20,8 +20,8 @@ import javax.persistence.Query;
 
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.persistence.dao.OrgFundingRelationDao;
-import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
 import org.orcid.persistence.jpa.entities.OrgFundingRelationEntity;
+import org.springframework.transaction.annotation.Transactional;
 
 public class OrgFundingRelationDaoImpl extends GenericDaoImpl<OrgFundingRelationEntity, Long> implements OrgFundingRelationDao {
 	
@@ -39,6 +39,8 @@ public class OrgFundingRelationDaoImpl extends GenericDaoImpl<OrgFundingRelation
      *            The client orcid
      * @return true if the relationship was deleted
      * */
+	@Override
+	@Transactional
 	public boolean removeOrgFundingRelation(String clientOrcid, String orgFundingRelationId) {
 		Query query = entityManager.createQuery("delete from OrgFundingRelationEntity where profile.id=:clientOrcid and id=:orgFundingRelationId");
 		query.setParameter("clientOrcid", clientOrcid);
@@ -60,8 +62,14 @@ public class OrgFundingRelationDaoImpl extends GenericDaoImpl<OrgFundingRelation
      * 
      * @return true if the relationship was updated
      * */
+	@Override
+	@Transactional
 	public boolean updateOrgFundingRelation(String clientOrcid, String orgFundingRelationId, Visibility visibility) {
-		
+		Query query = entityManager.createQuery("update OrgFundingRelationEntity set visibility=:visibility where profile.id=:clientOrcid and id=:orgFundingRelationId");
+		query.setParameter("clientOrcid", clientOrcid);
+		query.setParameter("orgFundingRelationId", Long.valueOf(orgFundingRelationId));
+		query.setParameter("visibility", visibility.name());
+		return query.executeUpdate() > 0 ? true : false;
 	}
 	
 	/**
@@ -70,8 +78,11 @@ public class OrgFundingRelationDaoImpl extends GenericDaoImpl<OrgFundingRelation
 	 * 		The object to be persisted
 	 * @return the created OrgFundingRelationEntity with the id assigned on database
 	 * */	
+	@Override
+	@Transactional
 	public OrgFundingRelationEntity addOrgFundingRelation(OrgFundingRelationEntity newOrgFundingRelationEntity) {
-		
+		entityManager.persist(newOrgFundingRelationEntity);
+		return newOrgFundingRelationEntity;
 	}
 	
 	/**
@@ -85,8 +96,12 @@ public class OrgFundingRelationDaoImpl extends GenericDaoImpl<OrgFundingRelation
      * 
      * @return the OrgFundingRelationEntity object
      * */
+	@Override
 	public OrgFundingRelationEntity getOrgFundingRelation(String orgId, String clientOrcid) {
-		
+		Query query = entityManager.createQuery("from OrgFundingRelationEntity where profile.id=:clientOrcid and org.id=:orgId");
+		query.setParameter("clientOrcid", clientOrcid);
+		query.setParameter("orgId", Long.valueOf(orgId));
+		return (OrgFundingRelationEntity)query.getSingleResult();
 	}
 	
 	/**
@@ -97,7 +112,10 @@ public class OrgFundingRelationDaoImpl extends GenericDaoImpl<OrgFundingRelation
      * 
      * @return the OrgFundingRelationEntity object
      * */
+	@Override
 	public OrgFundingRelationEntity getOrgFundingRelation(String orgFundingRelationId) {
-		
+		Query query = entityManager.createQuery("from OrgFundingRelationEntity where id=:id");
+		query.setParameter("id", Long.valueOf(orgFundingRelationId));
+		return (OrgFundingRelationEntity) query.getSingleResult();
 	}
 }

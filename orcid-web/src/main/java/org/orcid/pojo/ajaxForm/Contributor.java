@@ -110,7 +110,7 @@ public class Contributor implements ErrorsInterface, Serializable {
         }
         return c;
     }
-
+    
     public List<String> getErrors() {
         return errors;
     }

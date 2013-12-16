@@ -28,7 +28,7 @@ public class PojoUtil {
         return false;
     }
     
-    public static boolean isEmply(Date date) {
+    public static boolean isEmpty(Date date) {
         if (date == null) return true;
         if (!PojoUtil.isEmpty(date.getDay()))
             return false;
