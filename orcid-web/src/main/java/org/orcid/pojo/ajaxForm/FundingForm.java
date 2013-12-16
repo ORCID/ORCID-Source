@@ -54,6 +54,8 @@ public class FundingForm implements ErrorsInterface, Serializable {
     private Text disambiguatedFundingSourceId;
 
     private Text disambiguationSource;
+    
+    private String fundingTypeForDisplay;
 
     public List<String> getErrors() {
         return errors;
@@ -191,6 +193,14 @@ public class FundingForm implements ErrorsInterface, Serializable {
 
 	public void setDisambiguationSource(Text disambiguationSource) {
 		this.disambiguationSource = disambiguationSource;
+	}	
+	
+	public String getFundingTypeForDisplay() {
+		return fundingTypeForDisplay;
+	}
+
+	public void setFundingTypeForDisplay(String fundingTypeForDisplay) {
+		this.fundingTypeForDisplay = fundingTypeForDisplay;
 	}
 
 	public Funding toFunding() {

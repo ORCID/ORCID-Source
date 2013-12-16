@@ -1089,6 +1089,16 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
         orgAffiliationRelationEntity.setProfile(profileEntity);
         return orgAffiliationRelationEntity;
     }
+    
+    /**
+     * TODO
+     * */
+    @Override
+    public OrgFundingRelationEntity getNewOrgFundingRelationEntity(Funding updatedFunding, ProfileEntity profileEntity) {
+        OrgFundingRelationEntity orgFundingRelationEntity = getOrgFundingRelationEntity(updatedFunding, null);
+        orgFundingRelationEntity.setProfile(profileEntity);
+        return orgFundingRelationEntity;
+    }
 
     private OrgAffiliationRelationEntity getOrgAffiliationRelationEntity(Affiliation affiliation, OrgAffiliationRelationEntity exisitingOrgAffiliationEntity) {
         if (affiliation != null) {

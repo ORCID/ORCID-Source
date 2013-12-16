@@ -75,7 +75,7 @@
 			</column>
 			<column name="type" type="VARCHAR(255)" />
 			<column name="value" type="VARCHAR(2084)" />
-			<column name="url" type="VARCHAR(2000)" />
+			<column name="url" type="VARCHAR(350)" />
 		</createTable>
 		
 		<addUniqueConstraint constraintName="funding_external_identifier_constraints" tableName="funding_external_identifier" columnNames="type,value,url"/>
