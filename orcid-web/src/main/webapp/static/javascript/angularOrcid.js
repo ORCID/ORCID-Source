@@ -1374,6 +1374,17 @@ function PublicEduAffiliation($scope, $compile, $filter, affiliationsSrvc){
 		if (!document.documentElement.className.contains('no-touch'))
 			$scope.moreInfo[key]=!$scope.moreInfo[key];
 	};
+	
+	$scope.moreInfoMouseEnter = function(key, $event) {
+		$event.stopPropagation();
+		if (document.documentElement.className.contains('no-touch'))
+			$scope.moreInfo[key]=true;
+	};
+
+	$scope.closeMoreInfo = function(key) {
+		$scope.moreInfo[key]=false;
+	};
+
 }
 
 function PublicEmpAffiliation($scope, $compile, $filter, affiliationsSrvc){
@@ -1385,6 +1396,16 @@ function PublicEmpAffiliation($scope, $compile, $filter, affiliationsSrvc){
 			$scope.moreInfo[key]=!$scope.moreInfo[key];
 	};
 	
+	$scope.moreInfoMouseEnter = function(key, $event) {
+		$event.stopPropagation();
+		if (document.documentElement.className.contains('no-touch'))
+			$scope.moreInfo[key]=true;
+	};
+
+	$scope.closeMoreInfo = function(key) {
+		$scope.moreInfo[key]=false;
+	};
+
 	affiliationsSrvc.setIdsToAdd(orcidVar.affiliationIdsJson);
 	affiliationsSrvc.addAffiliationToScope(orcidVar.orcidId +'/affiliations.json');
 }
@@ -1395,16 +1416,47 @@ function AffiliationCtrl($scope, $compile, $filter, affiliationsSrvc, workspaceS
 	$scope.workspaceSrvc = workspaceSrvc;
 	$scope.editAffiliation;
 	$scope.privacyHelp = {};
+	$scope.privacyHelpCurKey = null;
 	$scope.moreInfo = {};
+	$scope.moreInfoCurKey = null;
 	
 	$scope.toggleClickPrivacyHelp = function(key) {
-		if (!document.documentElement.className.contains('no-touch'))
+		if (!document.documentElement.className.contains('no-touch')) {
+			if ($scope.privacyHelpCurKey != null 
+					&& $scope.privacyHelpCurKey != key) {
+				$scope.privacyHelp[$scope.privacyHelpCurKey]=false;
+			}
+			$scope.privacyHelpCurKey = key;
 			$scope.privacyHelp[key]=!$scope.privacyHelp[key];
+		}
+			
 	};
 
 	$scope.toggleClickMoreInfo = function(key) {
-		if (!document.documentElement.className.contains('no-touch'))
+		if (!document.documentElement.className.contains('no-touch')) {
+			if ($scope.moreInfoCurKey != null 
+					&& $scope.moreInfoCurKey != key) {
+				$scope.moreInfo[$scope.moreInfoCurKey]=false;
+			}
+			$scope.moreInfoCurKey = key;
 			$scope.moreInfo[key]=!$scope.moreInfo[key];
+		}
+	};
+	
+	$scope.moreInfoMouseEnter = function(key, $event) {
+		$event.stopPropagation();
+		if (document.documentElement.className.contains('no-touch')) {
+			if ($scope.moreInfoCurKey != null 
+					&& $scope.moreInfoCurKey != key) {
+				$scope.privacyHelp[$scope.moreInfoCurKey]=false;
+			}
+			$scope.moreInfoCurKey = key;
+			$scope.moreInfo[key]=true;
+		}
+	};
+
+	$scope.closeMoreInfo = function(key) {
+		$scope.moreInfo[key]=false;
 	};
 
 	$scope.showAddModal = function(){
@@ -1687,7 +1739,7 @@ function PublicWorkCtrl($scope, $compile, worksSrvc) {
 	
 
 	$scope.moreInfoClick = function(work, $event) {
-		if (!document.documentElement.className.contains('no-touch'));
+		if (!document.documentElement.className.contains('no-touch'))
 			$scope.moreInfoOpen?$scope.closePopover():$scope.loadWorkInfo(work.putCode.value, $event);
 	};
 	
@@ -1924,7 +1976,7 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 	$scope.getWorks();	
 	
 	$scope.moreInfoClick = function(work, $event) {
-		if (!document.documentElement.className.contains('no-touch'));
+		if (!document.documentElement.className.contains('no-touch'))
 			$scope.moreInfoOpen?$scope.closePopover():$scope.loadWorkInfo(work.putCode.value, $event);
 	};
 	
