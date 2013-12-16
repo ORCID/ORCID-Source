@@ -65,9 +65,13 @@
         };
     };
 
-    var toolTips = function() {
+    var toolTips = function(){
         $(".settings-button").tooltip({
             placement: "bottom"
+        });
+        
+        $(".orcid-id").tooltip({
+            placement: "top"
         });
     };
 
