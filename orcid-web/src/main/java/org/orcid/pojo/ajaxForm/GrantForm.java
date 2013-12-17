@@ -7,17 +7,17 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.orcid.jaxb.model.message.CurrencyCode;
 import org.orcid.jaxb.model.message.DisambiguatedOrganization;
-import org.orcid.jaxb.model.message.Funding;
-import org.orcid.jaxb.model.message.FundingContributors;
-import org.orcid.jaxb.model.message.FundingExternalIdentifier;
-import org.orcid.jaxb.model.message.FundingExternalIdentifiers;
-import org.orcid.jaxb.model.message.FundingType;
+import org.orcid.jaxb.model.message.GrantContributors;
+import org.orcid.jaxb.model.message.GrantExternalIdentifier;
+import org.orcid.jaxb.model.message.GrantType;
+import org.orcid.jaxb.model.message.OrcidGrant;
+import org.orcid.jaxb.model.message.OrcidGrantExternalIdentifiers;
 import org.orcid.jaxb.model.message.Organization;
 import org.orcid.jaxb.model.message.Source;
 import org.orcid.jaxb.model.message.Url;
 
 
-public class FundingForm implements ErrorsInterface, Serializable {
+public class GrantForm implements ErrorsInterface, Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -43,7 +43,7 @@ public class FundingForm implements ErrorsInterface, Serializable {
     
     private List<Contributor> contributors;
     
-    private List<FundingExternalIdentifierForm> externalIdentifiers;
+    private List<GrantExternalIdentifierForm> externalIdentifiers;
     
     private Text putCode;
 
@@ -169,12 +169,12 @@ public class FundingForm implements ErrorsInterface, Serializable {
 		this.sourceName = sourceName;
 	}
     
-	public List<FundingExternalIdentifierForm> getExternalIdentifiers() {
+	public List<GrantExternalIdentifierForm> getExternalIdentifiers() {
 		return externalIdentifiers;
 	}
 
 	public void setExternalIdentifiers(
-			List<FundingExternalIdentifierForm> externalIdentifiers) {
+			List<GrantExternalIdentifierForm> externalIdentifiers) {
 		this.externalIdentifiers = externalIdentifiers;
 	}		
 	
@@ -203,8 +203,8 @@ public class FundingForm implements ErrorsInterface, Serializable {
 		this.fundingTypeForDisplay = fundingTypeForDisplay;
 	}
 
-	public Funding toFunding() {
-		Funding result = new Funding();
+	public OrcidGrant toFunding() {
+		OrcidGrant result = new OrcidGrant();
 		if(!PojoUtil.isEmpty(amount))
 			result.setAmount(amount.getValue());
 		if(!PojoUtil.isEmpty(currencyCode))
@@ -215,19 +215,19 @@ public class FundingForm implements ErrorsInterface, Serializable {
 			result.setEndDate(endDate.toFuzzyDate());
 				
 		if(contributors != null && !contributors.isEmpty()) {
-			FundingContributors fContributors = new FundingContributors();  
+			GrantContributors gContributors = new GrantContributors();  
 			for(Contributor contributor : contributors){
-				fContributors.getContributor().add(contributor.toContributor());
+				gContributors.getContributor().add(contributor.toContributor());
 			}
-			result.setFundingContributors(fContributors);
+			result.setGrantContributors(gContributors);
 		}
 		
 		if(externalIdentifiers != null && !externalIdentifiers.isEmpty()) {
-			FundingExternalIdentifiers fExternalIdentifiers = new FundingExternalIdentifiers(); 
-			for(FundingExternalIdentifierForm fExternalIdentifier : externalIdentifiers) {
-				fExternalIdentifiers.getFundingExternalIdentifier().add(fExternalIdentifier.toFundingExternalIdentifier());
+			OrcidGrantExternalIdentifiers gExternalIdentifiers = new OrcidGrantExternalIdentifiers(); 
+			for(GrantExternalIdentifierForm gExternalIdentifier : externalIdentifiers) {
+				gExternalIdentifiers.getGrantExternalIdentifier().add(gExternalIdentifier.toFundingExternalIdentifier());
 			}
-			result.setFundingExternalIdentifiers(fExternalIdentifiers);
+			result.setGrantExternalIdentifiers(gExternalIdentifiers);
 		}
 		
 		Organization organization = new Organization();
@@ -248,7 +248,7 @@ public class FundingForm implements ErrorsInterface, Serializable {
 		if(!PojoUtil.isEmpty(title))
 			result.setTitle(title.getValue());
 		if(!PojoUtil.isEmpty(fundingType))
-			result.setType(FundingType.valueOf(fundingType.getValue()));
+			result.setType(GrantType.valueOf(fundingType.getValue()));
 		if(!PojoUtil.isEmpty(url))
 			result.setUrl(new Url(url.getValue()));
 		if(visibility != null)
@@ -256,8 +256,8 @@ public class FundingForm implements ErrorsInterface, Serializable {
 		return result;
 	}
 	
-	public static FundingForm valueOf(Funding funding) {
-		FundingForm result = new FundingForm();
+	public static GrantForm valueOf(OrcidGrant funding) {
+		GrantForm result = new GrantForm();
 		
 		if(StringUtils.isNotEmpty(funding.getPutCode()))
 			result.setPutCode(Text.valueOf(funding.getPutCode()));
@@ -303,20 +303,20 @@ public class FundingForm implements ErrorsInterface, Serializable {
 		}
 		
 		// Set contributors
-		if(funding.getFundingContributors() != null) {
+		if(funding.getGrantContributors() != null) {
 			List<Contributor> contributors = new ArrayList<Contributor> ();
-			for(org.orcid.jaxb.model.message.Contributor fContributor : funding.getFundingContributors().getContributor()) {
-				Contributor contributor = Contributor.valueOf(fContributor);
+			for(org.orcid.jaxb.model.message.Contributor gContributor : funding.getGrantContributors().getContributor()) {
+				Contributor contributor = Contributor.valueOf(gContributor);
 				contributors.add(contributor);
 			}
 			result.setContributors(contributors);
 		}
 		
 		// Set external identifiers
-		if(funding.getFundingExternalIdentifiers() != null) {
-			List<FundingExternalIdentifierForm> externalIdentifiersList = new ArrayList<FundingExternalIdentifierForm>();
-			for(FundingExternalIdentifier fExternalIdentifier : funding.getFundingExternalIdentifiers().getFundingExternalIdentifier()){
-				FundingExternalIdentifierForm fundingExternalIdentifierForm = FundingExternalIdentifierForm.valueOf(fExternalIdentifier);
+		if(funding.getGrantExternalIdentifiers() != null) {
+			List<GrantExternalIdentifierForm> externalIdentifiersList = new ArrayList<GrantExternalIdentifierForm>();
+			for(GrantExternalIdentifier fExternalIdentifier : funding.getGrantExternalIdentifiers().getGrantExternalIdentifier()){
+				GrantExternalIdentifierForm fundingExternalIdentifierForm = GrantExternalIdentifierForm.valueOf(fExternalIdentifier);
 				externalIdentifiersList.add(fundingExternalIdentifierForm);
 			}			
 			result.setExternalIdentifiers(externalIdentifiersList);

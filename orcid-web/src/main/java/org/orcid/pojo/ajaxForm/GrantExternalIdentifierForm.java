@@ -5,10 +5,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.hsqldb.lib.StringUtil;
-import org.orcid.jaxb.model.message.FundingExternalIdentifier;
+import org.orcid.jaxb.model.message.GrantExternalIdentifier;
 import org.orcid.jaxb.model.message.Url;
 
-public class FundingExternalIdentifierForm implements ErrorsInterface, Serializable {
+public class GrantExternalIdentifierForm implements ErrorsInterface, Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -52,8 +52,8 @@ public class FundingExternalIdentifierForm implements ErrorsInterface, Serializa
 		this.url = url;
 	}
 
-	public static FundingExternalIdentifierForm valueOf(FundingExternalIdentifier fundingExternalIdentifier){
-		FundingExternalIdentifierForm result = new FundingExternalIdentifierForm();
+	public static GrantExternalIdentifierForm valueOf(GrantExternalIdentifier fundingExternalIdentifier){
+		GrantExternalIdentifierForm result = new GrantExternalIdentifierForm();
 		if(!StringUtil.isEmpty(fundingExternalIdentifier.getPutCode()))
 			result.setPutCode(Text.valueOf(fundingExternalIdentifier.getPutCode()));
 		if(!StringUtil.isEmpty(fundingExternalIdentifier.getType()))
@@ -65,8 +65,8 @@ public class FundingExternalIdentifierForm implements ErrorsInterface, Serializa
 		return result;
 	}
 	
-	public FundingExternalIdentifier toFundingExternalIdentifier() {
-		FundingExternalIdentifier result = new FundingExternalIdentifier();
+	public GrantExternalIdentifier toFundingExternalIdentifier() {
+		GrantExternalIdentifier result = new GrantExternalIdentifier();
 		if(!PojoUtil.isEmpty(putCode))
 			result.setPutCode(putCode.getValue());
 		if(!PojoUtil.isEmpty(type))

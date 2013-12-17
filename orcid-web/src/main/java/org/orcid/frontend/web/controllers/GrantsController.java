@@ -25,19 +25,19 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.orcid.core.adapter.Jaxb2JpaAdapter;
 import org.orcid.jaxb.model.message.CurrencyCode;
-import org.orcid.jaxb.model.message.Funding;
-import org.orcid.jaxb.model.message.FundingType;
-import org.orcid.jaxb.model.message.Fundings;
+import org.orcid.jaxb.model.message.GrantType;
+import org.orcid.jaxb.model.message.OrcidGrant;
+import org.orcid.jaxb.model.message.OrcidGrants;
 import org.orcid.jaxb.model.message.OrcidProfile;
-import org.orcid.persistence.dao.FundingExternalIdentifierDao;
-import org.orcid.persistence.dao.OrgFundingRelationDao;
+import org.orcid.persistence.dao.GrantExternalIdentifierDao;
+import org.orcid.persistence.dao.ProfileGrantDao;
 import org.orcid.persistence.dao.ProfileDao;
-import org.orcid.persistence.jpa.entities.OrgFundingRelationEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.orcid.persistence.jpa.entities.ProfileGrantEntity;
 import org.orcid.pojo.ajaxForm.Contributor;
 import org.orcid.pojo.ajaxForm.Date;
-import org.orcid.pojo.ajaxForm.FundingExternalIdentifierForm;
-import org.orcid.pojo.ajaxForm.FundingForm;
+import org.orcid.pojo.ajaxForm.GrantExternalIdentifierForm;
+import org.orcid.pojo.ajaxForm.GrantForm;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.pojo.ajaxForm.Visibility;
@@ -55,18 +55,18 @@ import org.springframework.web.bind.annotation.ResponseBody;
  */
 @Controller("fundingsController")
 @RequestMapping(value = { "/fundings" })
-public class FundingsController extends BaseWorkspaceController {
-	private static final Logger LOGGER = LoggerFactory.getLogger(FundingsController.class);
+public class GrantsController extends BaseWorkspaceController {
+	private static final Logger LOGGER = LoggerFactory.getLogger(GrantsController.class);
 	private static final String FUNDING_MAP = "FUNDING_MAP";
 	
 	@Resource
     private ProfileDao profileDao;
 	
 	@Resource
-	OrgFundingRelationDao orgFundingRelationDao;
+	ProfileGrantDao orgFundingRelationDao;
 	
 	@Resource 
-	FundingExternalIdentifierDao fundingExternalIdentifierDao;
+	GrantExternalIdentifierDao fundingExternalIdentifierDao;
 	
 	@Resource
     private Jaxb2JpaAdapter jaxb2JpaAdapter;
@@ -76,8 +76,8 @@ public class FundingsController extends BaseWorkspaceController {
      * */
     @RequestMapping(value = "/funding.json", method = RequestMethod.GET)
     public @ResponseBody
-    FundingForm getFunding(HttpServletRequest request) { 
-    	FundingForm result = new FundingForm();
+    GrantForm getFunding(HttpServletRequest request) { 
+    	GrantForm result = new GrantForm();
     	result.setAmount(new Text());    	
     	result.setCurrencyCode(new Text());
     	result.setDescription(new Text());
@@ -112,8 +112,8 @@ public class FundingsController extends BaseWorkspaceController {
         emptyContributors.add(c);
         result.setContributors(emptyContributors);
                 
-        List<FundingExternalIdentifierForm> emptyExternalIdentifiers = new ArrayList<FundingExternalIdentifierForm>();
-        FundingExternalIdentifierForm f = new FundingExternalIdentifierForm();
+        List<GrantExternalIdentifierForm> emptyExternalIdentifiers = new ArrayList<GrantExternalIdentifierForm>();
+        GrantExternalIdentifierForm f = new GrantExternalIdentifierForm();
         f.setPutCode(new Text());
         f.setType(new Text());
         f.setUrl(new Text());
@@ -142,16 +142,16 @@ public class FundingsController extends BaseWorkspaceController {
      */
     private List<String> createFundingIdList(HttpServletRequest request) {
         OrcidProfile currentProfile = getEffectiveProfile();
-        Fundings fundings = currentProfile.getOrcidActivities() == null ? null : currentProfile.getOrcidActivities().getFundings();
+        OrcidGrants fundings = currentProfile.getOrcidActivities() == null ? null : currentProfile.getOrcidActivities().getOrcidGrants();
 
-        HashMap<String, FundingForm> fundingsMap = new HashMap<>();
+        HashMap<String, GrantForm> fundingsMap = new HashMap<>();
         List<String> fundingIds = new ArrayList<String>();
         if (fundings != null) {
-            for (Funding funding : fundings.getFundings()) {
+            for (OrcidGrant funding : fundings.getOrcidGrant()) {
                 try {
-                    FundingForm form = FundingForm.valueOf(funding);
+                    GrantForm form = GrantForm.valueOf(funding);
                     if (funding.getType() != null) {
-                        form.setFundingTypeForDisplay(getMessage(buildInternationalizationKey(FundingType.class, funding.getType().value())));
+                        form.setFundingTypeForDisplay(getMessage(buildInternationalizationKey(GrantType.class, funding.getType().value())));
                     }
                     fundingsMap.put(funding.getPutCode(), form);
                     fundingIds.add(funding.getPutCode());
@@ -170,17 +170,17 @@ public class FundingsController extends BaseWorkspaceController {
     @SuppressWarnings("unchecked")
     @RequestMapping(value = "/fundings.json", method = RequestMethod.GET)
     public @ResponseBody
-    List<FundingForm> getFundingJson(HttpServletRequest request, @RequestParam(value = "fundingIds") String fundingIdsStr) {
-        List<FundingForm> fundingList = new ArrayList<>();
-        FundingForm funding = null;
+    List<GrantForm> getFundingJson(HttpServletRequest request, @RequestParam(value = "fundingIds") String fundingIdsStr) {
+        List<GrantForm> fundingList = new ArrayList<>();
+        GrantForm funding = null;
         String[] fundingIds = fundingIdsStr.split(",");
 
         if (fundingIds != null) {
-            HashMap<String, FundingForm> fundingsMap = (HashMap<String, FundingForm>) request.getSession().getAttribute(FUNDING_MAP);
+            HashMap<String, GrantForm> fundingsMap = (HashMap<String, GrantForm>) request.getSession().getAttribute(FUNDING_MAP);
             // this should never happen, but just in case.
             if (fundingsMap == null) {
                 createFundingIdList(request);
-                fundingsMap = (HashMap<String, FundingForm>) request.getSession().getAttribute(FUNDING_MAP);
+                fundingsMap = (HashMap<String, GrantForm>) request.getSession().getAttribute(FUNDING_MAP);
             }
             for (String fundingId : fundingIds) {
                 funding = fundingsMap.get(fundingId);
@@ -197,7 +197,7 @@ public class FundingsController extends BaseWorkspaceController {
      * */
     @RequestMapping(value = "/funding.json", method = RequestMethod.POST)
     public @ResponseBody
-    FundingForm postFunding(HttpServletRequest request, FundingForm funding) {
+    GrantForm postFunding(HttpServletRequest request, GrantForm funding) {
     	validateAmount(funding);
     	validateCurrency(funding);
     	validateTitle(funding);
@@ -213,7 +213,7 @@ public class FundingsController extends BaseWorkspaceController {
     	copyErrors(funding.getUrl(), funding);
     	copyErrors(funding.getEndDate(), funding);
     	
-    	for(FundingExternalIdentifierForm extId : funding.getExternalIdentifiers()){
+    	for(GrantExternalIdentifierForm extId : funding.getExternalIdentifiers()){
     		copyErrors(extId.getType(), funding);
     		copyErrors(extId.getUrl(), funding);
     		copyErrors(extId.getValue(), funding);
@@ -222,9 +222,9 @@ public class FundingsController extends BaseWorkspaceController {
     	// If there are no errors, persist to DB
     	if (funding.getErrors().isEmpty()) {
     		ProfileEntity userProfile = profileDao.find(getEffectiveUserOrcid());
-    		OrgFundingRelationEntity orgFundingRelationEntity = jaxb2JpaAdapter.getNewOrgFundingRelationEntity(funding.toFunding(), userProfile);
-    		orgFundingRelationEntity.setSource(userProfile);
-            orgFundingRelationDao.persist(orgFundingRelationEntity);
+    		ProfileGrantEntity orgProfileGrantEntity = jaxb2JpaAdapter.getNewProfileGrantEntity(funding.toFunding(), userProfile);
+    		orgProfileGrantEntity.setSource(userProfile);
+            orgFundingRelationDao.persist(orgProfileGrantEntity);
     	}
     	
     	return funding;
@@ -235,7 +235,7 @@ public class FundingsController extends BaseWorkspaceController {
      * */
     @RequestMapping(value = "/funding/amountValidate.json", method = RequestMethod.POST)
     public @ResponseBody
-    FundingForm validateAmount(FundingForm funding) {    	
+    GrantForm validateAmount(GrantForm funding) {    	
     	funding.getAmount().setErrors(new ArrayList<String>());
     	if(PojoUtil.isEmpty(funding.getAmount())) {
     		setError(funding.getAmount(), "NotBlank.funding.amount");
@@ -256,7 +256,7 @@ public class FundingsController extends BaseWorkspaceController {
     
     @RequestMapping(value = "/funding/currencyValidate.json", method = RequestMethod.POST)
     public @ResponseBody
-    FundingForm validateCurrency(FundingForm funding) {
+    GrantForm validateCurrency(GrantForm funding) {
     	funding.getCurrencyCode().setErrors(new ArrayList<String>());
     	if(PojoUtil.isEmpty(funding.getCurrencyCode())) {
     		setError(funding.getCurrencyCode(), "NotBlank.funding.currency");
@@ -272,7 +272,7 @@ public class FundingsController extends BaseWorkspaceController {
     
     @RequestMapping(value = "/funding/titleValidate.json", method = RequestMethod.POST)
     public @ResponseBody
-    FundingForm validateTitle(FundingForm funding) {
+    GrantForm validateTitle(GrantForm funding) {
     	funding.getTitle().setErrors(new ArrayList<String>());
     	if(PojoUtil.isEmpty(funding.getTitle())) {
     		setError(funding.getTitle(), "NotBlank.funding.title");
@@ -285,7 +285,7 @@ public class FundingsController extends BaseWorkspaceController {
     
     @RequestMapping(value = "/funding/descriptionValidate.json", method = RequestMethod.POST)
     public @ResponseBody
-    FundingForm validateDescription(FundingForm funding) {
+    GrantForm validateDescription(GrantForm funding) {
     	funding.getDescription().setErrors(new ArrayList<String>());
    		if(funding.getDescription().getValue().length() > 5000)
    			setError(funding.getDescription(), "funding.length_less_5000");
@@ -294,7 +294,7 @@ public class FundingsController extends BaseWorkspaceController {
     
     @RequestMapping(value = "/funding/urlValidate.json", method = RequestMethod.POST)
     public @ResponseBody
-    FundingForm validateUrl(FundingForm funding) {
+    GrantForm validateUrl(GrantForm funding) {
     	funding.getUrl().setErrors(new ArrayList<String>());
     	if(funding.getUrl().getValue().length() > 350)
     		setError(funding.getUrl(), "funding.length_less_350");
@@ -303,7 +303,7 @@ public class FundingsController extends BaseWorkspaceController {
     
     @RequestMapping(value = "/funding/datesValidate.json", method = RequestMethod.POST)
     public @ResponseBody
-    FundingForm validateDates(@RequestBody FundingForm funding) {
+    GrantForm validateDates(@RequestBody GrantForm funding) {
     	funding.getStartDate().setErrors(new ArrayList<String>());
     	funding.getEndDate().setErrors(new ArrayList<String>());
         if (!PojoUtil.isEmpty(funding.getStartDate()) && !PojoUtil.isEmpty(funding.getEndDate())) {
@@ -315,9 +315,9 @@ public class FundingsController extends BaseWorkspaceController {
     
     @RequestMapping(value = "/funding/externalIdentifiersValidate.json", method = RequestMethod.POST)
     public @ResponseBody
-    FundingForm validateExternalIdentifiers(@RequestBody FundingForm funding) {
+    GrantForm validateExternalIdentifiers(@RequestBody GrantForm funding) {
     	if(funding.getExternalIdentifiers() != null && !funding.getExternalIdentifiers().isEmpty()) {
-    		for(FundingExternalIdentifierForm extId : funding.getExternalIdentifiers()) {
+    		for(GrantExternalIdentifierForm extId : funding.getExternalIdentifiers()) {
     			if(!PojoUtil.isEmpty(extId.getType()) && extId.getType().getValue().length() > 255)
     				setError(extId.getType(), "funding.lenght_less_255");
     			if(!PojoUtil.isEmpty(extId.getUrl()) && extId.getUrl().getValue().length() > 350)

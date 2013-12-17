@@ -23,15 +23,18 @@
 	<changeSet id="CREATE-FOUNDING-TABLES" author="Angel Montenegro">
 		<preConditions onFail="MARK_RAN">
 			<not>
-				<tableExists tableName="org_funding_relation" />
+				<tableExists tableName="profile_grant" />
 			</not>
 		</preConditions>		
 
+		<dropTable cascadeConstraints="true"            
+            tableName="profile_grant"/>
+
 		<!-- org_funding_relation -->
-		<createTable tableName="org_funding_relation">
+		<createTable tableName="profile_grant">
 			<column name="id" type="bigint">
 				<constraints nullable="false" primaryKey="true"
-					primaryKeyName="org_funding_relation_pkey" />
+					primaryKeyName="profile_grant_pkey" />
 			</column>
 			<column name="org_id" type="bigint">
 				<constraints nullable="false" />
@@ -65,12 +68,12 @@
 		</createTable>
 		
 		<!-- funding_external_identifier -->
-		<createTable tableName="funding_external_identifier">
-			<column name="funding_external_identifier_id" type="bigint">
+		<createTable tableName="grant_external_identifier">
+			<column name="grant_external_identifier_id" type="bigint">
 				<constraints nullable="false" primaryKey="true"
-					primaryKeyName="funding_external_identifier_pkey" />
+					primaryKeyName="grant_external_identifier_pkey" />
 			</column>
-			<column name="org_funding_relation_id" type="bigint">
+			<column name="profile_grant_id" type="bigint">
 				<constraints nullable="false"/>
 			</column>
 			<column name="type" type="VARCHAR(255)" />
@@ -78,19 +81,19 @@
 			<column name="url" type="VARCHAR(350)" />
 		</createTable>
 		
-		<addUniqueConstraint constraintName="funding_external_identifier_constraints" tableName="funding_external_identifier" columnNames="type,value,url"/>
-        <addForeignKeyConstraint constraintName="org_funding_relation_org_id_fk" baseTableName="org_funding_relation" baseColumnNames="org_id" referencedTableName="org" referencedColumnNames="id" />
-        <addForeignKeyConstraint constraintName="org_funding_relation_orcid_fk" baseTableName="org_funding_relation" baseColumnNames="orcid" referencedTableName="profile" referencedColumnNames="orcid" />
-        <addForeignKeyConstraint constraintName="funding_external_identifiers_fk" baseTableName="funding_external_identifier" baseColumnNames="org_funding_relation_id" referencedTableName="org_funding_relation" referencedColumnNames="id" />
+		<addUniqueConstraint constraintName="grant_external_identifier_constraints" tableName="grant_external_identifier" columnNames="type,value,url"/>
+        <addForeignKeyConstraint constraintName="profile_grant_org_id_fk" baseTableName="profile_grant" baseColumnNames="org_id" referencedTableName="org" referencedColumnNames="id" />
+        <addForeignKeyConstraint constraintName="profile_grant_orcid_fk" baseTableName="profile_grant" baseColumnNames="orcid" referencedTableName="profile" referencedColumnNames="orcid" />
+        <addForeignKeyConstraint constraintName="grant_external_identifiers_fk" baseTableName="grant_external_identifier" baseColumnNames="profile_grant_id" referencedTableName="profile_grant" referencedColumnNames="id" />
 	</changeSet>
 	
 	<changeSet id="CREATE-SEQUENCES" author="Angel Montenegro" dbms="postgresql">
-        <createSequence sequenceName="org_funding_relation_seq" startValue="1000"/>
-        <createSequence sequenceName="funding_external_identifier_seq" startValue="1000"/>
+        <createSequence sequenceName="profile_grant_seq" startValue="1000"/>
+        <createSequence sequenceName="grant_external_identifier_seq" startValue="1000"/>
     </changeSet>
     
     <changeSet id="CREATE-AUTOCOLS" author="Angel Montenegro" dbms="hsqldb">
-        <addAutoIncrement tableName="org_funding_relation" columnName="id" columnDataType="bigint"/>
-        <addAutoIncrement tableName="funding_external_identifier" columnName="funding_external_identifier_id" columnDataType="bigint"/>
+        <addAutoIncrement tableName="profile_grant" columnName="id" columnDataType="bigint"/>
+        <addAutoIncrement tableName="grant_external_identifier" columnName="grant_external_identifier_id" columnDataType="bigint"/>
     </changeSet>
 </databaseChangeLog>                   
