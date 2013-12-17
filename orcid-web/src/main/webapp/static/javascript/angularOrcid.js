@@ -202,6 +202,104 @@ orcidNgModule.factory("workspaceSrvc", ['$rootScope', function ($rootScope) {
 }]);
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+orcidNgModule.factory("grantsSrvc", ['$rootScope', function ($rootScope) {
+	var serv = {
+			grants: new Array(),
+			loading: false,
+			grantsToAddIds: null,
+			addGrantToScope: function(path) {
+	    		if( serv.grantsToAddIds.length != 0 ) {
+	    			var grantIds = serv.grantsToAddIds.splice(0,20).join();
+	    			$.ajax({
+	    				url: $('body').data('baseurl') + path + '?grantIds=' + grantIds,
+	    				dataType: 'json',
+	    				success: function(data) {
+	    						for (i in data) {	    							
+	    							serv.grants.push(data[i]);
+	    						};
+	    						if (serv.grantsToAddIds.length == 0) {
+	    							serv.loading = false;
+	    							$rootScope.$apply();
+	    						} else {
+	    							$rootScope.$apply();
+	    					    	setTimeout(function () {
+	    					    		serv.addGrantToScope(path);
+	    					    	},50);	    							
+	    						}
+	    				}
+	    			}).fail(function() { 
+	    		    	console.log("Error fetching grants: " + value);
+	    		    });
+	    		} else {
+	    			serv.loading = false;
+	    		};
+	    	},
+	    	setIdsToAdd: function(ids) {
+	    		serv.grantsToAddIds = ids;
+	    	},
+	    	getGrants: function(path) {
+	    		//clear out current grants
+	    		serv.loading = true;
+	    		serv.grantsToAddIds = null;
+	    		serv.grants.length = 0;
+	    		//get grant ids
+	    		$.ajax({
+	    			url: $('body').data('baseurl') + path,	        
+	    	        dataType: 'json',
+	    	        success: function(data) {
+	    	        	serv.grantsToAddIds = data;
+	    	        	serv.addGrantToScope('grant/grants.json');
+	    	        	$rootScope.$apply();
+	    	        }
+	    		}).fail(function(){
+	    			// something bad is happening!
+	    	    	console.log("error fetching grants");
+	    		});
+	    	},
+	};
+	return serv;
+}]);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 orcidNgModule.factory("worksSrvc", function () {
 	var serv = {
 		    loading: false,
@@ -1671,6 +1769,165 @@ function AffiliationCtrl($scope, $compile, $filter, affiliationsSrvc, workspaceS
 	//init
 	affiliationsSrvc.getAffiliations('affiliations/affiliationIds.json');
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+function GrantCtrl($scope, $compile, $filter, grantsSrvc, workspaceSrvc) {	
+	$scope.workspaceSrvc = workspaceSrvc;
+	$scope.grantsSrvc = grantsSrvc;
+	$scope.editGrant = null;
+	$scope.disambiguatedGrant = null;
+	
+	$scope.addGrantModal = function(type){
+		$.ajax({
+			url: $('body').data('baseurl') + 'grants/grant.json',
+			dataType: 'json',
+			success: function(data) {
+				$scope.editGrant = data;				
+				$scope.$apply(function() {
+					$scope.showAddModal();
+				});
+			}
+		}).fail(function() { 
+	    	console.log("Error fetching affiliation: " + value);
+	    });
+	};
+	
+	
+	$scope.showAddModal = function(){
+		$.colorbox({        	
+			html: $compile($('#add-grant-modal').html())($scope),			
+			width: formColorBoxResize(),
+			onComplete: function() {
+				//resize to insure content fits
+				formColorBoxResize();
+				$scope.bindTypeahead();
+			}
+	    });
+	};
+	
+	$scope.bindTypeahead = function () {
+		var numOfResults = 100;
+		
+		$("#grantName").typeahead({
+			name: 'grantName',
+			limit: numOfResults,
+			remote: {
+				url: $('body').data('baseurl')+'grants/disambiguated/name/%QUERY?limit=' + numOfResults
+			},
+			template: function (datum) {
+				   var forDisplay = 
+				       '<span style=\'white-space: nowrap; font-weight: bold;\'>' + datum.value + '</span><hr />';
+				   return forDisplay;
+			}
+		});
+		$("#grantName").bind("typeahead:selected", function(obj, datum) {        
+			$scope.selectGrant(datum);
+			$scope.$apply();
+		});		
+	};
+	
+	$scope.selectGrant = function(datum) {
+		if (datum != undefined && datum != null) {
+			$scope.editGrant.grantName.value = datum.value;
+			if (datum.disambiguatedAffiliationIdentifier != undefined && datum.disambiguatedAffiliationIdentifier != null) {
+				$scope.getDisambiguatedGrant(datum.disambiguatedAffiliationIdentifier);
+				$scope.unbindTypeahead();
+			}
+		}
+	};
+	
+	$scope.getDisambiguatedGrant = function(id) {
+		$.ajax({
+			url: $('body').data('baseurl') + 'grants/disambiguated/id/' + id,
+	        dataType: 'json',
+	        type: 'GET',
+	        success: function(data) {
+	        	if (data != null) {
+	        		console.log(data.sourceId);
+			        $scope.disambiguatedGrant = data;
+			        $scope.editGrant.disambiguatedGrantSourceId = data.sourceId;
+			        $scope.editGrant.disambiguationSource = data.sourceType;
+			        $scope.$apply();
+	        	}
+	        }
+		}).fail(function(){
+	    	console.log("error getDisambiguatedGrant(id)");
+		});
+	};
+	
+	//init
+	grantsSrvc.getGrants('grants/grantIds.json');
+	
+	$scope.closeModal = function() {
+		$.colorbox.close();
+	};
+	
+	$scope.setAddGrantPrivacy = function(priv, $event) {
+		$event.preventDefault();
+		$scope.editGrant.visibility.visibility = priv;
+	};
+	
+	$scope.removeDisambiguatedGrant = function() {
+		$scope.bindTypeahead();
+		if ($scope.disambiguatedGrant != undefined) delete $scope.disambiguatedGrant;
+		if ($scope.editGrant != undefined && $scope.editGrant.disambiguatedGrantSourceId != undefined) delete $scope.editGrant.disambiguatedGrantSourceId;
+	};
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 function PublicWorkCtrl($scope, $compile, worksSrvc) {
 	$scope.works = worksSrvc.works;

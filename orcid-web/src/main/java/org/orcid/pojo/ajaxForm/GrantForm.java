@@ -27,9 +27,9 @@ public class GrantForm implements ErrorsInterface, Serializable {
 
     private Text description;
     
-    private Text fundingName;
+    private Text grantName;
     
-    private Text fundingType;
+    private Text grantType;
     
     private Text currencyCode;
     
@@ -51,11 +51,11 @@ public class GrantForm implements ErrorsInterface, Serializable {
     
     private String sourceName;
     
-    private Text disambiguatedFundingSourceId;
+    private Text disambiguatedGrantSourceId;
 
     private Text disambiguationSource;
     
-    private String fundingTypeForDisplay;
+    private String grantTypeForDisplay;
 
     public List<String> getErrors() {
         return errors;
@@ -97,20 +97,20 @@ public class GrantForm implements ErrorsInterface, Serializable {
 		this.description = description;
 	}
 
-	public Text getFundingName() {
-		return fundingName;
+	public Text getGrantName() {
+		return grantName;
 	}
 
-	public void setFundingName(Text fundingName) {
-		this.fundingName = fundingName;
+	public void setGrantName(Text grantName) {
+		this.grantName = grantName;
 	}
 
-	public Text getFundingType() {
-		return fundingType;
+	public Text getGrantType() {
+		return grantType;
 	}
 
-	public void setFundingType(Text fundingType) {
-		this.fundingType = fundingType;
+	public void setGrantType(Text grantType) {
+		this.grantType = grantType;
 	}
 
 	public Text getCurrencyCode() {
@@ -178,13 +178,13 @@ public class GrantForm implements ErrorsInterface, Serializable {
 		this.externalIdentifiers = externalIdentifiers;
 	}		
 	
-	public Text getDisambiguatedFundingSourceId() {
-		return disambiguatedFundingSourceId;
+	public Text getDisambiguatedGrantSourceId() {
+		return disambiguatedGrantSourceId;
 	}
 
-	public void setDisambiguatedFundingSourceId(
-			Text disambiguatedFundingSourceId) {
-		this.disambiguatedFundingSourceId = disambiguatedFundingSourceId;
+	public void setDisambiguatedGrantSourceId(
+			Text disambiguatedGrantSourceId) {
+		this.disambiguatedGrantSourceId = disambiguatedGrantSourceId;
 	}
 
 	public Text getDisambiguationSource() {
@@ -195,12 +195,12 @@ public class GrantForm implements ErrorsInterface, Serializable {
 		this.disambiguationSource = disambiguationSource;
 	}	
 	
-	public String getFundingTypeForDisplay() {
-		return fundingTypeForDisplay;
+	public String getGrantTypeForDisplay() {
+		return grantTypeForDisplay;
 	}
 
-	public void setFundingTypeForDisplay(String fundingTypeForDisplay) {
-		this.fundingTypeForDisplay = fundingTypeForDisplay;
+	public void setGrantTypeForDisplay(String grantTypeForDisplay) {
+		this.grantTypeForDisplay = grantTypeForDisplay;
 	}
 
 	public OrcidGrant toFunding() {
@@ -231,11 +231,11 @@ public class GrantForm implements ErrorsInterface, Serializable {
 		}
 		
 		Organization organization = new Organization();
-		if(!PojoUtil.isEmpty(fundingName))
-			organization.setName(fundingName.getValue());
-		if (!PojoUtil.isEmpty(disambiguatedFundingSourceId)) {
+		if(!PojoUtil.isEmpty(grantName))
+			organization.setName(grantName.getValue());
+		if (!PojoUtil.isEmpty(disambiguatedGrantSourceId)) {
             organization.setDisambiguatedOrganization(new DisambiguatedOrganization());
-            organization.getDisambiguatedOrganization().setDisambiguatedOrganizationIdentifier(disambiguatedFundingSourceId.getValue());
+            organization.getDisambiguatedOrganization().setDisambiguatedOrganizationIdentifier(disambiguatedGrantSourceId.getValue());
             organization.getDisambiguatedOrganization().setDisambiguationSource(disambiguationSource.getValue());
         }
 		
@@ -247,8 +247,8 @@ public class GrantForm implements ErrorsInterface, Serializable {
 			result.setStartDate(startDate.toFuzzyDate());
 		if(!PojoUtil.isEmpty(title))
 			result.setTitle(title.getValue());
-		if(!PojoUtil.isEmpty(fundingType))
-			result.setType(GrantType.valueOf(fundingType.getValue()));
+		if(!PojoUtil.isEmpty(grantType))
+			result.setType(GrantType.valueOf(grantType.getValue()));
 		if(!PojoUtil.isEmpty(url))
 			result.setUrl(new Url(url.getValue()));
 		if(visibility != null)
@@ -256,56 +256,56 @@ public class GrantForm implements ErrorsInterface, Serializable {
 		return result;
 	}
 	
-	public static GrantForm valueOf(OrcidGrant funding) {
+	public static GrantForm valueOf(OrcidGrant grant) {
 		GrantForm result = new GrantForm();
 		
-		if(StringUtils.isNotEmpty(funding.getPutCode()))
-			result.setPutCode(Text.valueOf(funding.getPutCode()));
+		if(StringUtils.isNotEmpty(grant.getPutCode()))
+			result.setPutCode(Text.valueOf(grant.getPutCode()));
 		
-		if(StringUtils.isNotEmpty(funding.getAmount()))
-			result.setAmount(Text.valueOf(funding.getAmount()));
-		if(funding.getCurrencyCode() != null)
-			result.setCurrencyCode(Text.valueOf(funding.getCurrencyCode().value()));
-		if(StringUtils.isNotEmpty(funding.getDescription()))
-			result.setDescription(Text.valueOf(funding.getDescription()));
+		if(StringUtils.isNotEmpty(grant.getAmount()))
+			result.setAmount(Text.valueOf(grant.getAmount()));
+		if(grant.getCurrencyCode() != null)
+			result.setCurrencyCode(Text.valueOf(grant.getCurrencyCode().value()));
+		if(StringUtils.isNotEmpty(grant.getDescription()))
+			result.setDescription(Text.valueOf(grant.getDescription()));
 		
-		if(funding.getEndDate() != null)
-			result.setEndDate(Date.valueOf(funding.getEndDate()));
+		if(grant.getEndDate() != null)
+			result.setEndDate(Date.valueOf(grant.getEndDate()));
 		
-		if(funding.getType() != null)
-			result.setFundingType(Text.valueOf(funding.getType().value()));
+		if(grant.getType() != null)
+			result.setGrantType(Text.valueOf(grant.getType().value()));
 				
-		Source source = funding.getSource();
+		Source source = grant.getSource();
 		if(source != null && source.getSourceName() != null)
 			result.setSourceName(source.getSourceName().getContent());
 		
-		if(funding.getStartDate() != null)
-			result.setStartDate(Date.valueOf(funding.getStartDate()));
+		if(grant.getStartDate() != null)
+			result.setStartDate(Date.valueOf(grant.getStartDate()));
 		
-		if(StringUtils.isNotEmpty(funding.getTitle()))
-			result.setTitle(Text.valueOf(funding.getTitle()));
+		if(StringUtils.isNotEmpty(grant.getTitle()))
+			result.setTitle(Text.valueOf(grant.getTitle()));
 		
-		if(funding.getUrl() != null)
-			result.setUrl(Text.valueOf(funding.getUrl().getValue()));
+		if(grant.getUrl() != null)
+			result.setUrl(Text.valueOf(grant.getUrl().getValue()));
 		
-		if(funding.getVisibility() != null)
-		result.setVisibility(Visibility.valueOf(funding.getVisibility()));
+		if(grant.getVisibility() != null)
+		result.setVisibility(Visibility.valueOf(grant.getVisibility()));
 		
 		// Set the disambiguated organization
-		Organization organization = funding.getOrganization();
-		result.setFundingName(Text.valueOf(organization.getName()));
+		Organization organization = grant.getOrganization();
+		result.setGrantName(Text.valueOf(organization.getName()));
 		DisambiguatedOrganization disambiguatedOrganization = organization.getDisambiguatedOrganization(); 
 		if(disambiguatedOrganization != null) {
 			if(StringUtils.isNotEmpty(disambiguatedOrganization.getDisambiguatedOrganizationIdentifier())) {
-				result.setDisambiguatedFundingSourceId(Text.valueOf(disambiguatedOrganization.getDisambiguatedOrganizationIdentifier()));
+				result.setDisambiguatedGrantSourceId(Text.valueOf(disambiguatedOrganization.getDisambiguatedOrganizationIdentifier()));
 				result.setDisambiguationSource(Text.valueOf(disambiguatedOrganization.getDisambiguationSource()));
 			}			
 		}
 		
 		// Set contributors
-		if(funding.getGrantContributors() != null) {
+		if(grant.getGrantContributors() != null) {
 			List<Contributor> contributors = new ArrayList<Contributor> ();
-			for(org.orcid.jaxb.model.message.Contributor gContributor : funding.getGrantContributors().getContributor()) {
+			for(org.orcid.jaxb.model.message.Contributor gContributor : grant.getGrantContributors().getContributor()) {
 				Contributor contributor = Contributor.valueOf(gContributor);
 				contributors.add(contributor);
 			}
@@ -313,11 +313,11 @@ public class GrantForm implements ErrorsInterface, Serializable {
 		}
 		
 		// Set external identifiers
-		if(funding.getGrantExternalIdentifiers() != null) {
+		if(grant.getGrantExternalIdentifiers() != null) {
 			List<GrantExternalIdentifierForm> externalIdentifiersList = new ArrayList<GrantExternalIdentifierForm>();
-			for(GrantExternalIdentifier fExternalIdentifier : funding.getGrantExternalIdentifiers().getGrantExternalIdentifier()){
-				GrantExternalIdentifierForm fundingExternalIdentifierForm = GrantExternalIdentifierForm.valueOf(fExternalIdentifier);
-				externalIdentifiersList.add(fundingExternalIdentifierForm);
+			for(GrantExternalIdentifier fExternalIdentifier : grant.getGrantExternalIdentifiers().getGrantExternalIdentifier()){
+				GrantExternalIdentifierForm grantExternalIdentifierForm = GrantExternalIdentifierForm.valueOf(fExternalIdentifier);
+				externalIdentifiersList.add(grantExternalIdentifierForm);
 			}			
 			result.setExternalIdentifiers(externalIdentifiersList);
 		}

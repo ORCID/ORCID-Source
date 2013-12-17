@@ -19,6 +19,7 @@ package org.orcid.frontend.web.controllers;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -30,10 +31,15 @@ import org.orcid.jaxb.model.message.OrcidGrant;
 import org.orcid.jaxb.model.message.OrcidGrants;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.persistence.dao.GrantExternalIdentifierDao;
+import org.orcid.persistence.dao.OrgDisambiguatedDao;
+import org.orcid.persistence.dao.OrgDisambiguatedSolrDao;
 import org.orcid.persistence.dao.ProfileGrantDao;
 import org.orcid.persistence.dao.ProfileDao;
+import org.orcid.persistence.jpa.entities.CountryIsoEntity;
+import org.orcid.persistence.jpa.entities.OrgDisambiguatedEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileGrantEntity;
+import org.orcid.persistence.solr.entities.OrgDisambiguatedSolrDocument;
 import org.orcid.pojo.ajaxForm.Contributor;
 import org.orcid.pojo.ajaxForm.Date;
 import org.orcid.pojo.ajaxForm.GrantExternalIdentifierForm;
@@ -44,6 +50,7 @@ import org.orcid.pojo.ajaxForm.Visibility;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -53,38 +60,44 @@ import org.springframework.web.bind.annotation.ResponseBody;
 /**
  * @author Angel Montenegro
  */
-@Controller("fundingsController")
-@RequestMapping(value = { "/fundings" })
+@Controller("grantsController")
+@RequestMapping(value = { "/grants" })
 public class GrantsController extends BaseWorkspaceController {
 	private static final Logger LOGGER = LoggerFactory.getLogger(GrantsController.class);
-	private static final String FUNDING_MAP = "FUNDING_MAP";
+	private static final String GRANT_MAP = "GRANT_MAP";
 	
 	@Resource
     private ProfileDao profileDao;
 	
 	@Resource
-	ProfileGrantDao orgFundingRelationDao;
+	ProfileGrantDao profileGrantDao;
 	
 	@Resource 
-	GrantExternalIdentifierDao fundingExternalIdentifierDao;
+	GrantExternalIdentifierDao grantExternalIdentifierDao;
 	
 	@Resource
     private Jaxb2JpaAdapter jaxb2JpaAdapter;
 	
+	@Resource
+    private OrgDisambiguatedSolrDao orgDisambiguatedSolrDao;
+	
+	@Resource
+    private OrgDisambiguatedDao orgDisambiguatedDao;
+	
 	/**
      * Returns a blank funding form
      * */
-    @RequestMapping(value = "/funding.json", method = RequestMethod.GET)
+    @RequestMapping(value = "/grant.json", method = RequestMethod.GET)
     public @ResponseBody
     GrantForm getFunding(HttpServletRequest request) { 
     	GrantForm result = new GrantForm();
     	result.setAmount(new Text());    	
     	result.setCurrencyCode(new Text());
     	result.setDescription(new Text());
-    	result.setDisambiguatedFundingSourceId(new Text());
+    	result.setDisambiguatedGrantSourceId(new Text());
     	result.setDisambiguationSource(new Text());    	    	
-    	result.setFundingName(new Text());
-    	result.setFundingType(new Text());
+    	result.setGrantName(new Text());
+    	result.setGrantType(new Text());
     	result.setSourceName(new String());    	
     	result.setTitle(new Text());
     	result.setUrl(new Text());    	
@@ -125,208 +138,247 @@ public class GrantsController extends BaseWorkspaceController {
     }
     
     /**
-     * List fundings associated with a profile
+     * List grants associated with a profile
      * */
-    @RequestMapping(value = "/fundingIds.json", method = RequestMethod.GET)
+    @RequestMapping(value = "/grantIds.json", method = RequestMethod.GET)
     public @ResponseBody
-    List<String> getFundingsJson(HttpServletRequest request) {
+    List<String> getGrantsJson(HttpServletRequest request) {
         // Get cached profile
-        List<String> fundingIds = createFundingIdList(request);
-        return fundingIds;
+        List<String> grantIds = createGrantIdList(request);
+        return grantIds;
     }
 
     /**
-     * Create a funding id list and sorts a map associated with the list in
+     * Create a grant id list and sorts a map associated with the list in
      * in the session
      * 
      */
-    private List<String> createFundingIdList(HttpServletRequest request) {
+    private List<String> createGrantIdList(HttpServletRequest request) {
         OrcidProfile currentProfile = getEffectiveProfile();
-        OrcidGrants fundings = currentProfile.getOrcidActivities() == null ? null : currentProfile.getOrcidActivities().getOrcidGrants();
+        OrcidGrants grants = currentProfile.getOrcidActivities() == null ? null : currentProfile.getOrcidActivities().getOrcidGrants();
 
         HashMap<String, GrantForm> fundingsMap = new HashMap<>();
         List<String> fundingIds = new ArrayList<String>();
-        if (fundings != null) {
-            for (OrcidGrant funding : fundings.getOrcidGrant()) {
+        if (grants != null) {
+            for (OrcidGrant grant : grants.getOrcidGrant()) {
                 try {
-                    GrantForm form = GrantForm.valueOf(funding);
-                    if (funding.getType() != null) {
-                        form.setFundingTypeForDisplay(getMessage(buildInternationalizationKey(GrantType.class, funding.getType().value())));
+                    GrantForm form = GrantForm.valueOf(grant);
+                    if (grant.getType() != null) {
+                        form.setGrantTypeForDisplay(getMessage(buildInternationalizationKey(GrantType.class, grant.getType().value())));
                     }
-                    fundingsMap.put(funding.getPutCode(), form);
-                    fundingIds.add(funding.getPutCode());
+                    fundingsMap.put(grant.getPutCode(), form);
+                    fundingIds.add(grant.getPutCode());
                 } catch (Exception e) {
-                    LOGGER.error("Failed to parse as Funding. Put code" + funding.getPutCode());
+                    LOGGER.error("Failed to parse as Grant. Put code" + grant.getPutCode());
                 }
             }
-            request.getSession().setAttribute(FUNDING_MAP, fundingsMap);
+            request.getSession().setAttribute(GRANT_MAP, fundingsMap);
         }
         return fundingIds;
     }
     
     /**
-     * List fundings associated with a profile
+     * List grants associated with a profile
      * */
     @SuppressWarnings("unchecked")
-    @RequestMapping(value = "/fundings.json", method = RequestMethod.GET)
+    @RequestMapping(value = "/grants.json", method = RequestMethod.GET)
     public @ResponseBody
-    List<GrantForm> getFundingJson(HttpServletRequest request, @RequestParam(value = "fundingIds") String fundingIdsStr) {
-        List<GrantForm> fundingList = new ArrayList<>();
-        GrantForm funding = null;
-        String[] fundingIds = fundingIdsStr.split(",");
+    List<GrantForm> getGrantJson(HttpServletRequest request, @RequestParam(value = "grantIds") String grantIdsStr) {
+        List<GrantForm> grantList = new ArrayList<>();
+        GrantForm grant = null;
+        String[] grantIds = grantIdsStr.split(",");
 
-        if (fundingIds != null) {
-            HashMap<String, GrantForm> fundingsMap = (HashMap<String, GrantForm>) request.getSession().getAttribute(FUNDING_MAP);
+        if (grantIds != null) {
+            HashMap<String, GrantForm> grantsMap = (HashMap<String, GrantForm>) request.getSession().getAttribute(GRANT_MAP);
             // this should never happen, but just in case.
-            if (fundingsMap == null) {
-                createFundingIdList(request);
-                fundingsMap = (HashMap<String, GrantForm>) request.getSession().getAttribute(FUNDING_MAP);
+            if (grantsMap == null) {
+                createGrantIdList(request);
+                grantsMap = (HashMap<String, GrantForm>) request.getSession().getAttribute(GRANT_MAP);
             }
-            for (String fundingId : fundingIds) {
-                funding = fundingsMap.get(fundingId);
-                fundingList.add(funding);
+            for (String grantId : grantIds) {
+            	grant = grantsMap.get(grantId);
+                grantList.add(grant);
             }
         }
 
-        return fundingList;
+        return grantList;
     }
     
     
     /**
      * Persist a funding object on database
      * */
-    @RequestMapping(value = "/funding.json", method = RequestMethod.POST)
+    @RequestMapping(value = "/grant.json", method = RequestMethod.POST)
     public @ResponseBody
-    GrantForm postFunding(HttpServletRequest request, GrantForm funding) {
-    	validateAmount(funding);
-    	validateCurrency(funding);
-    	validateTitle(funding);
-    	validateDescription(funding);   
-    	validateUrl(funding);
-    	validateDates(funding);
-    	validateExternalIdentifiers(funding);
+    GrantForm postFunding(HttpServletRequest request, GrantForm grant) {
+    	validateAmount(grant);
+    	validateCurrency(grant);
+    	validateTitle(grant);
+    	validateDescription(grant);   
+    	validateUrl(grant);
+    	validateDates(grant);
+    	validateExternalIdentifiers(grant);
     	
-    	copyErrors(funding.getAmount(), funding);
-    	copyErrors(funding.getCurrencyCode(), funding);
-    	copyErrors(funding.getTitle(), funding);
-    	copyErrors(funding.getDescription(), funding);
-    	copyErrors(funding.getUrl(), funding);
-    	copyErrors(funding.getEndDate(), funding);
+    	copyErrors(grant.getAmount(), grant);
+    	copyErrors(grant.getCurrencyCode(), grant);
+    	copyErrors(grant.getTitle(), grant);
+    	copyErrors(grant.getDescription(), grant);
+    	copyErrors(grant.getUrl(), grant);
+    	copyErrors(grant.getEndDate(), grant);
     	
-    	for(GrantExternalIdentifierForm extId : funding.getExternalIdentifiers()){
-    		copyErrors(extId.getType(), funding);
-    		copyErrors(extId.getUrl(), funding);
-    		copyErrors(extId.getValue(), funding);
+    	for(GrantExternalIdentifierForm extId : grant.getExternalIdentifiers()){
+    		copyErrors(extId.getType(), grant);
+    		copyErrors(extId.getUrl(), grant);
+    		copyErrors(extId.getValue(), grant);
     	}
     	
     	// If there are no errors, persist to DB
-    	if (funding.getErrors().isEmpty()) {
+    	if (grant.getErrors().isEmpty()) {
     		ProfileEntity userProfile = profileDao.find(getEffectiveUserOrcid());
-    		ProfileGrantEntity orgProfileGrantEntity = jaxb2JpaAdapter.getNewProfileGrantEntity(funding.toFunding(), userProfile);
+    		ProfileGrantEntity orgProfileGrantEntity = jaxb2JpaAdapter.getNewProfileGrantEntity(grant.toFunding(), userProfile);
     		orgProfileGrantEntity.setSource(userProfile);
-            orgFundingRelationDao.persist(orgProfileGrantEntity);
+    		profileGrantDao.persist(orgProfileGrantEntity);
     	}
     	
-    	return funding;
+    	return grant;
     }
     
     /**
      * Validators
      * */
-    @RequestMapping(value = "/funding/amountValidate.json", method = RequestMethod.POST)
+    @RequestMapping(value = "/grant/amountValidate.json", method = RequestMethod.POST)
     public @ResponseBody
-    GrantForm validateAmount(GrantForm funding) {    	
-    	funding.getAmount().setErrors(new ArrayList<String>());
-    	if(PojoUtil.isEmpty(funding.getAmount())) {
-    		setError(funding.getAmount(), "NotBlank.funding.amount");
+    GrantForm validateAmount(GrantForm grant) {    	
+    	grant.getAmount().setErrors(new ArrayList<String>());
+    	if(PojoUtil.isEmpty(grant.getAmount())) {
+    		setError(grant.getAmount(), "NotBlank.grant.amount");
     	} else {
-    		String amount = funding.getAmount().getValue();
+    		String amount = grant.getAmount().getValue();
     		long lAmount = 0;
     		try {
     			lAmount = Long.valueOf(amount);
     		} catch(NumberFormatException nfe) {
-    			setError(funding.getAmount(), "Invalid.funding.amount");
+    			setError(grant.getAmount(), "Invalid.grant.amount");
     		}
     		
     		if(lAmount < 0)
-    			setError(funding.getAmount(), "Invalid.funding.amount");
+    			setError(grant.getAmount(), "Invalid.grant.amount");
     	}
-    	return funding;
+    	return grant;
     }
     
-    @RequestMapping(value = "/funding/currencyValidate.json", method = RequestMethod.POST)
+    @RequestMapping(value = "/grant/currencyValidate.json", method = RequestMethod.POST)
     public @ResponseBody
-    GrantForm validateCurrency(GrantForm funding) {
-    	funding.getCurrencyCode().setErrors(new ArrayList<String>());
-    	if(PojoUtil.isEmpty(funding.getCurrencyCode())) {
-    		setError(funding.getCurrencyCode(), "NotBlank.funding.currency");
+    GrantForm validateCurrency(GrantForm grant) {
+    	grant.getCurrencyCode().setErrors(new ArrayList<String>());
+    	if(PojoUtil.isEmpty(grant.getCurrencyCode())) {
+    		setError(grant.getCurrencyCode(), "NotBlank.grant.currency");
     	} else {
     		try {
-    			CurrencyCode.fromValue(funding.getCurrencyCode().getValue());
+    			CurrencyCode.fromValue(grant.getCurrencyCode().getValue());
     		} catch(IllegalArgumentException iae) {
-    			setError(funding.getCurrencyCode(), "NotValid.funding.currency");
+    			setError(grant.getCurrencyCode(), "NotValid.grant.currency");
     		}
     	}
-    	return funding;
+    	return grant;
     }
     
-    @RequestMapping(value = "/funding/titleValidate.json", method = RequestMethod.POST)
+    @RequestMapping(value = "/grant/titleValidate.json", method = RequestMethod.POST)
     public @ResponseBody
-    GrantForm validateTitle(GrantForm funding) {
-    	funding.getTitle().setErrors(new ArrayList<String>());
-    	if(PojoUtil.isEmpty(funding.getTitle())) {
-    		setError(funding.getTitle(), "NotBlank.funding.title");
+    GrantForm validateTitle(GrantForm grant) {
+    	grant.getTitle().setErrors(new ArrayList<String>());
+    	if(PojoUtil.isEmpty(grant.getTitle())) {
+    		setError(grant.getTitle(), "NotBlank.grant.title");
     	} else {
-    		if(funding.getTitle().getValue().length() > 1000)
-    			setError(funding.getTitle(), "funding.length_less_1000");
+    		if(grant.getTitle().getValue().length() > 1000)
+    			setError(grant.getTitle(), "grant.length_less_1000");
     	}
-    	return funding;
+    	return grant;
     }
     
-    @RequestMapping(value = "/funding/descriptionValidate.json", method = RequestMethod.POST)
+    @RequestMapping(value = "/grant/descriptionValidate.json", method = RequestMethod.POST)
     public @ResponseBody
-    GrantForm validateDescription(GrantForm funding) {
-    	funding.getDescription().setErrors(new ArrayList<String>());
-   		if(funding.getDescription().getValue().length() > 5000)
-   			setError(funding.getDescription(), "funding.length_less_5000");
-   		return funding;
+    GrantForm validateDescription(GrantForm grant) {
+    	grant.getDescription().setErrors(new ArrayList<String>());
+   		if(grant.getDescription().getValue().length() > 5000)
+   			setError(grant.getDescription(), "grant.length_less_5000");
+   		return grant;
     }
     
     @RequestMapping(value = "/funding/urlValidate.json", method = RequestMethod.POST)
     public @ResponseBody
-    GrantForm validateUrl(GrantForm funding) {
-    	funding.getUrl().setErrors(new ArrayList<String>());
-    	if(funding.getUrl().getValue().length() > 350)
-    		setError(funding.getUrl(), "funding.length_less_350");
-    	return funding;
+    GrantForm validateUrl(GrantForm grant) {
+    	grant.getUrl().setErrors(new ArrayList<String>());
+    	if(grant.getUrl().getValue().length() > 350)
+    		setError(grant.getUrl(), "grant.length_less_350");
+    	return grant;
     }
     
-    @RequestMapping(value = "/funding/datesValidate.json", method = RequestMethod.POST)
+    @RequestMapping(value = "/grant/datesValidate.json", method = RequestMethod.POST)
     public @ResponseBody
-    GrantForm validateDates(@RequestBody GrantForm funding) {
-    	funding.getStartDate().setErrors(new ArrayList<String>());
-    	funding.getEndDate().setErrors(new ArrayList<String>());
-        if (!PojoUtil.isEmpty(funding.getStartDate()) && !PojoUtil.isEmpty(funding.getEndDate())) {
-            if (funding.getStartDate().toJavaDate().after(funding.getEndDate().toJavaDate()))
-                setError(funding.getEndDate(), "funding.endDate.after");
+    GrantForm validateDates(@RequestBody GrantForm grant) {
+    	grant.getStartDate().setErrors(new ArrayList<String>());
+    	grant.getEndDate().setErrors(new ArrayList<String>());
+        if (!PojoUtil.isEmpty(grant.getStartDate()) && !PojoUtil.isEmpty(grant.getEndDate())) {
+            if (grant.getStartDate().toJavaDate().after(grant.getEndDate().toJavaDate()))
+                setError(grant.getEndDate(), "grant.endDate.after");
         }
-        return funding;
+        return grant;
     }
     
-    @RequestMapping(value = "/funding/externalIdentifiersValidate.json", method = RequestMethod.POST)
+    @RequestMapping(value = "/grant/externalIdentifiersValidate.json", method = RequestMethod.POST)
     public @ResponseBody
-    GrantForm validateExternalIdentifiers(@RequestBody GrantForm funding) {
-    	if(funding.getExternalIdentifiers() != null && !funding.getExternalIdentifiers().isEmpty()) {
-    		for(GrantExternalIdentifierForm extId : funding.getExternalIdentifiers()) {
+    GrantForm validateExternalIdentifiers(@RequestBody GrantForm grant) {
+    	if(grant.getExternalIdentifiers() != null && !grant.getExternalIdentifiers().isEmpty()) {
+    		for(GrantExternalIdentifierForm extId : grant.getExternalIdentifiers()) {
     			if(!PojoUtil.isEmpty(extId.getType()) && extId.getType().getValue().length() > 255)
-    				setError(extId.getType(), "funding.lenght_less_255");
+    				setError(extId.getType(), "grant.lenght_less_255");
     			if(!PojoUtil.isEmpty(extId.getUrl()) && extId.getUrl().getValue().length() > 350)
-    				setError(extId.getUrl(), "funding.length_less_350");
+    				setError(extId.getUrl(), "grant.length_less_350");
     			if(!PojoUtil.isEmpty(extId.getValue()) && extId.getValue().getValue().length() > 2084)
-    				setError(extId.getValue(), "funding.length_less_2084");
+    				setError(extId.getValue(), "grant.length_less_2084");
     		}
     	}
-    	return funding;
+    	return grant;
+    }
+    
+    /**
+     * Typeahead
+     * */
+    
+    /**
+     * Search DB for disambiguated affiliations to suggest to user
+     */
+    @RequestMapping(value = "/disambiguated/name/{query}", method = RequestMethod.GET)
+    public @ResponseBody
+    List<Map<String, String>> searchDisambiguated(@PathVariable("query") String query, @RequestParam(value = "limit") int limit) {
+        List<Map<String, String>> datums = new ArrayList<>();
+        for (OrgDisambiguatedSolrDocument orgDisambiguatedDocument : orgDisambiguatedSolrDao.getOrgs(query, 0, limit)) {
+            Map<String, String> datum = createDatumFromOrgDisambiguated(orgDisambiguatedDocument);
+            datums.add(datum);
+        }
+        return datums;
+    }
+    
+    private Map<String, String> createDatumFromOrgDisambiguated(OrgDisambiguatedSolrDocument orgDisambiguatedDocument) {
+        Map<String, String> datum = new HashMap<>();
+        datum.put("value", orgDisambiguatedDocument.getOrgDisambiguatedName());
+        datum.put("disambiguatedAffiliationIdentifier", Long.toString(orgDisambiguatedDocument.getOrgDisambiguatedId()));
+        return datum;
+    }
+    
+    /**
+     * fetch disambiguated by id
+     */
+    @RequestMapping(value = "/disambiguated/id/{id}", method = RequestMethod.GET)
+    public @ResponseBody
+    Map<String, String> getDisambiguated(@PathVariable("id") Long id) {
+        OrgDisambiguatedEntity orgDisambiguatedEntity = orgDisambiguatedDao.find(id);
+        Map<String, String> datum = new HashMap<>();
+        datum.put("value", orgDisambiguatedEntity.getName());        
+        datum.put("sourceId", orgDisambiguatedEntity.getSourceId());
+        datum.put("sourceType", orgDisambiguatedEntity.getSourceType());
+        return datum;
     }
 }
 
