@@ -126,6 +126,14 @@ the software.
                 <configuration>
                     <!-- argLine>-Duser.timezone=America/Los_Angeles</argLine -->
                     <argLine>-Duser.timezone=GMT</argLine>
+                    <runOrder>alphabetical</runOrder>
+                    <!-- we need to rewrite our unit test
+                    to be runOrder random and take avantage 
+                    of the speedup below
+                    <parallel>classes</parallel>
+                    <threadCount>4</threadCount>
+                    <perCoreThreadCount>true</perCoreThreadCount>
+                    -->
                     <excludes>
                         <exclude>**/*BaseTest.java</exclude>
                         <exclude>**/integration/**.java</exclude>
