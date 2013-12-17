@@ -39,7 +39,7 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element ref="{http://www.orcid.org/ns/orcid}funding-external-identifier" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element ref="{http://www.orcid.org/ns/orcid}grant-external-identifier" maxOccurs="unbounded" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -49,15 +49,15 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "fundingExternalIdentifier" })
-@XmlRootElement(name = "funding-external-identifiers")
-public class FundingExternalIdentifiers implements Serializable {	
+@XmlType(name = "", propOrder = { "grantExternalIdentifier" })
+@XmlRootElement(name = "grant-external-identifiers")
+public class OrcidGrantExternalIdentifiers implements Serializable {	
     private static final long serialVersionUID = 1L;
-    @XmlElement(name = "funding-external-identifier")
-    protected List<FundingExternalIdentifier> fundingExternalIdentifier;
+    @XmlElement(name = "grant-external-identifier")
+    protected List<GrantExternalIdentifier> grantExternalIdentifier;
 	
     /**
-     * Gets the value of the fundingExternalIdentifier property.
+     * Gets the value of the grantExternalIdentifier property.
      * 
      * <p>
      * This accessor method returns a reference to the live list,
@@ -78,10 +78,10 @@ public class FundingExternalIdentifiers implements Serializable {
      * 
      * 
      */
-    public List<FundingExternalIdentifier> getFundingExternalIdentifier() {
-    	if(fundingExternalIdentifier == null)
-    		fundingExternalIdentifier = new ArrayList<FundingExternalIdentifier>();
-		return fundingExternalIdentifier;
+    public List<GrantExternalIdentifier> getGrantExternalIdentifier() {
+    	if(grantExternalIdentifier == null)
+    		grantExternalIdentifier = new ArrayList<GrantExternalIdentifier>();
+		return grantExternalIdentifier;
 	}	
 	
 	@Override
@@ -90,8 +90,8 @@ public class FundingExternalIdentifiers implements Serializable {
 		int result = 1;
 		result = prime
 				* result
-				+ ((fundingExternalIdentifier == null) ? 0
-						: fundingExternalIdentifier.hashCode());
+				+ ((grantExternalIdentifier == null) ? 0
+						: grantExternalIdentifier.hashCode());
 		return result;
 	}
 	
@@ -103,15 +103,15 @@ public class FundingExternalIdentifiers implements Serializable {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		FundingExternalIdentifiers other = (FundingExternalIdentifiers) obj;
-		if (fundingExternalIdentifier == null) {
-			if (other.fundingExternalIdentifier != null)
+		OrcidGrantExternalIdentifiers other = (OrcidGrantExternalIdentifiers) obj;
+		if (grantExternalIdentifier == null) {
+			if (other.grantExternalIdentifier != null)
 				return false;
 		} else {
-			if (other.fundingExternalIdentifier == null)
+			if (other.grantExternalIdentifier == null)
                 return false;
-            else if (!(fundingExternalIdentifier.containsAll(other.fundingExternalIdentifier) && other.fundingExternalIdentifier.containsAll(fundingExternalIdentifier) && 
-                    other.fundingExternalIdentifier.size() == fundingExternalIdentifier.size())) {
+            else if (!(grantExternalIdentifier.containsAll(other.grantExternalIdentifier) && other.grantExternalIdentifier.containsAll(grantExternalIdentifier) && 
+                    other.grantExternalIdentifier.size() == grantExternalIdentifier.size())) {
                 return false;
             }
 		}

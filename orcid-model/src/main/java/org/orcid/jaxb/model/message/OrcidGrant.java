@@ -32,24 +32,29 @@ import javax.xml.bind.annotation.XmlType;
 import java.io.Serializable;
 
 /**
- * <p>Java class for anonymous complex type.
+ * <p>
+ * Java class for anonymous complex type.
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p>
+ * The following schema fragment specifies the expected content contained within
+ * this class.
  * 
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element ref="{http://www.orcid.org/ns/orcid}put-code" minOccurs="0"/>
- *         &lt;element ref="{http://www.orcid.org/ns/orcid}funding-agency" minOccurs="0"/>
- *         &lt;element ref="{http://www.orcid.org/ns/orcid}grant-external-identifier" minOccurs="0"/>
- *         &lt;element ref="{http://www.orcid.org/ns/orcid}grant-number" minOccurs="0"/>
- *         &lt;element ref="{http://www.orcid.org/ns/orcid}short-description" minOccurs="0"/>
- *         &lt;element ref="{http://www.orcid.org/ns/orcid}grant-date" minOccurs="0"/>
- *         &lt;element ref="{http://www.orcid.org/ns/orcid}grant-contributors" minOccurs="0"/>
- *         &lt;element ref="{http://www.orcid.org/ns/orcid}grant-sources" minOccurs="0"/>
+ *         &lt;element ref="{http://www.orcid.org/ns/orcid}title" minOccurs="0"/>
+ *         &lt;element ref="{http://www.orcid.org/ns/orcid}description"/>
+ *         &lt;element ref="{http://www.orcid.org/ns/orcid}type"/>
+ *         &lt;element ref="{http://www.orcid.org/ns/orcid}currency-code" minOccurs="0" maxOrrurs="1"/>
+ *         &lt;element ref="{http://www.orcid.org/ns/orcid}amount"/>
+ *         &lt;element ref="{http://www.orcid.org/ns/orcid}url"/>
+ *         &lt;element ref="{http://www.orcid.org/ns/orcid}organization"/>
+ *         &lt;element ref="{http://www.orcid.org/ns/orcid}grant-external-identifiers" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element ref="{http://www.orcid.org/ns/orcid}grant-contributors" maxOccurs="unbounded" minOccurs="0"/>
  *       &lt;/sequence>
+ *       &lt;attGroup ref="{http://www.orcid.org/ns/orcid}put-code"/>
  *       &lt;attGroup ref="{http://www.orcid.org/ns/orcid}visibility"/>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -59,302 +64,312 @@ import java.io.Serializable;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "fundingAgency", "grantExternalIdentifier", "grantNumber", "shortDescription", "grantDate", "grantContributors", "grantSources" })
+@XmlType(name = "", propOrder = { "putCode", "title", "description", "type",
+		"currencyCode", "amount", "url", "startDate", "endDate", "organization", "grantExternalIdentifiers", "grantContributors", "visibility",
+		"source" })
 @XmlRootElement(name = "orcid-grant")
 public class OrcidGrant implements VisibilityType, Serializable {
 
-    /**
-     * 
-     */
-    private static final long serialVersionUID = 1L;
-    @XmlElement(name = "funding-agency")
-    protected FundingAgency fundingAgency;
-    @XmlElement(name = "grant-external-identifier")
-    protected GrantExternalIdentifier grantExternalIdentifier;
-    @XmlElement(name = "grant-number")
-    protected GrantNumber grantNumber;
-    @XmlElement(name = "short-description")
-    protected String shortDescription;
-    @XmlElement(name = "grant-date")
-    protected GrantDate grantDate;
-    @XmlElement(name = "grant-contributors")
+	private final static long serialVersionUID = 1L;
+
+	@XmlElement
+	protected String title;
+	@XmlElement
+	protected String description;
+	@XmlElement
+	protected GrantType type;
+	@XmlElement(name = "currency-code")
+	protected CurrencyCode currencyCode;
+	@XmlElement
+	protected String amount;
+	@XmlElement
+	protected Url url;
+	@XmlElement(name = "start-date")
+    protected FuzzyDate startDate;
+    @XmlElement(name = "end-date")
+    protected FuzzyDate endDate;
+	@XmlElement(required = true)
+	protected Organization organization;
+	@XmlElement(name="grant-external-identifiers")
+	protected OrcidGrantExternalIdentifiers grantExternalIdentifiers;
+	@XmlElement(name = "grant-contributors")
     protected GrantContributors grantContributors;
-    @XmlElement(name = "grant-sources")
-    protected GrantSources grantSources;
-    @XmlAttribute(name = "put-code")
-    protected String putCode;
-    @XmlAttribute
-    protected Visibility visibility;
+	@XmlAttribute(required = true)
+	protected Visibility visibility;
+	protected Source source;
+	@XmlAttribute(name = "put-code")
+	protected String putCode;
 
-    /**
-     * Gets the value of the putCode property.
+	public String getTitle() {
+		return title;
+	}
+
+	public void setTitle(String title) {
+		this.title = title;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public GrantType getType() {
+		return type;
+	}
+
+	public void setType(GrantType type) {
+		this.type = type;
+	}
+
+	public CurrencyCode getCurrencyCode() {
+		return currencyCode;
+	}
+
+	public void setCurrencyCode(CurrencyCode currencyCode) {
+		this.currencyCode = currencyCode;
+	}
+
+	public String getAmount() {
+		return amount;
+	}
+
+	public void setAmount(String amount) {
+		this.amount = amount;
+	}
+
+	public Url getUrl() {
+		return url;
+	}
+
+	public void setUrl(Url url) {
+		this.url = url;
+	}
+
+	public Organization getOrganization() {
+		return organization;
+	}
+
+	public void setOrganization(Organization organization) {
+		this.organization = organization;
+	}
+
+	public Source getSource() {
+		return source;
+	}
+
+	public void setSource(Source source) {
+		this.source = source;
+	}
+
+	public Visibility getVisibility() {
+		return visibility;
+	}
+
+	public void setVisibility(Visibility visibility) {
+		this.visibility = visibility;
+	}
+
+	public String getPutCode() {
+		return putCode;
+	}
+
+	public void setPutCode(String putCode) {
+		this.putCode = putCode;
+	}
+		
+	public OrcidGrantExternalIdentifiers getGrantExternalIdentifiers() {
+		return grantExternalIdentifiers;
+	}
+
+	public void setGrantExternalIdentifiers(
+			OrcidGrantExternalIdentifiers grantExternalIdentifiers) {
+		this.grantExternalIdentifiers = grantExternalIdentifiers;
+	}
+	
+	public GrantContributors getGrantContributors() {
+		return grantContributors;
+	}
+
+	public void setGrantContributors(GrantContributors grantContributors) {
+		this.grantContributors = grantContributors;
+	}
+	/**
+     * Gets the value of the startDate property.
      * 
-     * @return
-     *     possible object is
-     *     {@link Object }
-     *     
+     * @return possible object is {@link FuzzyDate }
+     * 
      */
-    public String getPutCode() {
-        return putCode;
+    public FuzzyDate getStartDate() {
+        return startDate;
     }
 
     /**
-     * Sets the value of the putCode property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Object }
-     *     
-     */
-    public void setPutCode(String value) {
-        this.putCode = value;
-    }
-
-    /**
-     * Gets the value of the fundingAgency property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link FundingAgency }
-     *     
-     */
-    public FundingAgency getFundingAgency() {
-        return fundingAgency;
-    }
-
-    /**
-     * Sets the value of the fundingAgency property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link FundingAgency }
-     *     
-     */
-    public void setFundingAgency(FundingAgency value) {
-        this.fundingAgency = value;
-    }
-
-    /**
-     * Gets the value of the grantExternalIdentifier property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link GrantExternalIdentifier }
-     *     
-     */
-    public GrantExternalIdentifier getGrantExternalIdentifier() {
-        return grantExternalIdentifier;
-    }
-
-    /**
-     * Sets the value of the grantExternalIdentifier property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link GrantExternalIdentifier }
-     *     
-     */
-    public void setGrantExternalIdentifier(GrantExternalIdentifier value) {
-        this.grantExternalIdentifier = value;
-    }
-
-    /**
-     * Gets the value of the grantNumber property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link GrantNumber }
-     *     
-     */
-    public GrantNumber getGrantNumber() {
-        return grantNumber;
-    }
-
-    /**
-     * Sets the value of the grantNumber property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link GrantNumber }
-     *     
-     */
-    public void setGrantNumber(GrantNumber value) {
-        this.grantNumber = value;
-    }
-
-    /**
-     * Gets the value of the shortDescription property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getShortDescription() {
-        return shortDescription;
-    }
-
-    /**
-     * Sets the value of the shortDescription property.
+     * Sets the value of the startDate property.
      * 
      * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setShortDescription(String value) {
-        this.shortDescription = value;
-    }
-
-    /**
-     * Gets the value of the grantDate property.
+     *            allowed object is {@link FuzzyDate }
      * 
-     * @return
-     *     possible object is
-     *     {@link GrantDate }
-     *     
      */
-    public GrantDate getGrantDate() {
-        return grantDate;
+    public void setStartDate(FuzzyDate value) {
+        this.startDate = value;
     }
 
     /**
-     * Sets the value of the grantDate property.
+     * Gets the value of the endDate property.
+     * 
+     * @return possible object is {@link FuzzyDate }
+     * 
+     */
+    public FuzzyDate getEndDate() {
+        return endDate;
+    }
+
+    /**
+     * Sets the value of the endDate property.
      * 
      * @param value
-     *     allowed object is
-     *     {@link GrantDate }
-     *     
-     */
-    public void setGrantDate(GrantDate value) {
-        this.grantDate = value;
-    }
-
-    /**
-     * Gets the value of the grantContributors property.
+     *            allowed object is {@link FuzzyDate }
      * 
-     * @return
-     *     possible object is
-     *     {@link GrantContributors }
-     *     
      */
-    public GrantContributors getGrantContributors() {
-        return grantContributors;
+    public void setEndDate(FuzzyDate value) {
+        this.endDate = value;
     }
+    
+	/**
+	 * 
+	 * Note that put-code is not part of hashCode or equals! This is to allow
+	 * better de-duplication.
+	 * 
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((title == null) ? 0 : title.hashCode());
+		result = prime * result
+				+ ((description == null) ? 0 : description.hashCode());
+		result = prime * result + ((type == null) ? 0 : type.hashCode());
+		result = prime * result
+				+ ((currencyCode == null) ? 0 : currencyCode.hashCode());
+		result = prime * result + ((amount == null) ? 0 : amount.hashCode());
+		result = prime * result + ((url == null) ? 0 : url.hashCode());
+		result = prime * result
+				+ ((organization == null) ? 0 : organization.hashCode());
+		result = prime * result
+				+ ((visibility == null) ? 0 : visibility.hashCode());
+		result = prime * result + ((source == null) ? 0 : source.hashCode());
+		result = prime * result + ((grantExternalIdentifiers == null) ? 0 : grantExternalIdentifiers.hashCode());
+		result = prime * result + ((grantContributors == null) ? 0 : grantContributors.hashCode());
+		result = prime * result + ((startDate == null) ? 0 : startDate.hashCode());
+		result = prime * result + ((endDate == null) ? 0 : endDate.hashCode());
+		return result;
+	}
 
-    /**
-     * Sets the value of the grantContributors property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link GrantContributors }
-     *     
-     */
-    public void setGrantContributors(GrantContributors value) {
-        this.grantContributors = value;
-    }
-
-    /**
-     * Gets the value of the grantSources property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link GrantSources }
-     *     
-     */
-    public GrantSources getGrantSources() {
-        return grantSources;
-    }
-
-    /**
-     * Sets the value of the grantSources property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link GrantSources }
-     *     
-     */
-    public void setGrantSources(GrantSources value) {
-        this.grantSources = value;
-    }
-
-    /**
-     * Gets the value of the visibility property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Visibility }
-     *     
-     */
-    public Visibility getVisibility() {
-        return visibility;
-    }
-
-    /**
-     * Sets the value of the visibility property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Visibility }
-     *     
-     */
-    public void setVisibility(Visibility value) {
-        this.visibility = value;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof OrcidGrant)) {
+	/**
+	 * 
+	 * Note that put-code is not part of hashCode or equals! This is to allow
+	 * better de-duplication.
+	 * 
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		OrcidGrant other = (OrcidGrant) obj;
+		if (title == null) {
+			if(other.title != null)
+				return false;
+		} else {
+			if(!title.equals(other.title))
+				return false;
+		}
+		if (description == null) {
+			if(other.description != null)
+				return false;
+		} else {
+			if(!description.equals(other.description))
+				return false;
+		}
+		if (organization == null) {
+			if(other.organization != null)
+				return false;
+		} else {
+			if(!organization.equals(other.organization))
+				return false;
+		}
+		if (grantExternalIdentifiers != null) {
+			if(other.grantExternalIdentifiers != null)
+				return false;
+		} else {
+			if(!grantExternalIdentifiers.equals(other.grantExternalIdentifiers))
+				return false;
+		}
+		if (grantContributors != null) {
+			if(other.grantContributors != null)
+				return false;
+		} else {
+			if(!grantContributors.equals(other.grantContributors))
+				return false;
+		}
+		if (type == null) {
+			if(other.type != null)
+				return false;
+		} else {
+			if(!type.equals(other.type))
+				return false;
+		}
+		if (currencyCode == null) {
+			if(other.currencyCode != null)
+				return false;
+		} else {
+			if(!currencyCode.equals(other.currencyCode))
+				return false;
+		}
+		if (amount == null) {
+			if(other.amount != null)
+				return false;
+		} else {
+			if(!amount.equals(other.amount))
+				return false;
+		}
+		if (url == null) {
+			if(other.url != null)
+				return false;
+		} else {
+			if(!url.equals(other.url))
+				return false;
+		}
+		if (visibility == null) {
+			if(other.visibility != null)
+				return false;
+		} else {
+			if(!visibility.equals(other.visibility))
+				return false;
+		}
+		if (source == null) {
+			if(other.source != null)
+				return false;
+		} else {
+			if(!source.equals(other.source))
+				return false;
+		}
+		if (startDate == null) {
+            if (other.startDate != null)
+                return false;
+        } else if (!startDate.equals(other.startDate))
             return false;
-        }
-
-        OrcidGrant that = (OrcidGrant) o;
-
-        if (fundingAgency != null ? !fundingAgency.equals(that.fundingAgency) : that.fundingAgency != null) {
+		if (endDate == null) {
+            if (other.endDate != null)
+                return false;
+        } else if (!endDate.equals(other.endDate))
             return false;
-        }
-        if (grantContributors != null ? !grantContributors.equals(that.grantContributors) : that.grantContributors != null) {
-            return false;
-        }
-        if (grantDate != null ? !grantDate.equals(that.grantDate) : that.grantDate != null) {
-            return false;
-        }
-        if (grantExternalIdentifier != null ? !grantExternalIdentifier.equals(that.grantExternalIdentifier) : that.grantExternalIdentifier != null) {
-            return false;
-        }
-        if (grantNumber != null ? !grantNumber.equals(that.grantNumber) : that.grantNumber != null) {
-            return false;
-        }
-        if (grantSources != null ? !grantSources.equals(that.grantSources) : that.grantSources != null) {
-            return false;
-        }
-        if (putCode != null ? !putCode.equals(that.putCode) : that.putCode != null) {
-            return false;
-        }
-        if (shortDescription != null ? !shortDescription.equals(that.shortDescription) : that.shortDescription != null) {
-            return false;
-        }
-        if (visibility != that.visibility) {
-            return false;
-        }
-
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = fundingAgency != null ? fundingAgency.hashCode() : 0;
-        result = 31 * result + (grantExternalIdentifier != null ? grantExternalIdentifier.hashCode() : 0);
-        result = 31 * result + (grantNumber != null ? grantNumber.hashCode() : 0);
-        result = 31 * result + (shortDescription != null ? shortDescription.hashCode() : 0);
-        result = 31 * result + (grantDate != null ? grantDate.hashCode() : 0);
-        result = 31 * result + (grantContributors != null ? grantContributors.hashCode() : 0);
-        result = 31 * result + (grantSources != null ? grantSources.hashCode() : 0);
-        result = 31 * result + (putCode != null ? putCode.hashCode() : 0);
-        result = 31 * result + (visibility != null ? visibility.hashCode() : 0);
-        return result;
-    }
+		return true;
+	}
 }

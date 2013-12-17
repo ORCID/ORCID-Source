@@ -19,21 +19,21 @@ package org.orcid.persistence.dao.impl;
 import javax.persistence.Query;
 
 import org.orcid.jaxb.model.message.Visibility;
-import org.orcid.persistence.dao.OrgFundingRelationDao;
-import org.orcid.persistence.jpa.entities.OrgFundingRelationEntity;
+import org.orcid.persistence.dao.ProfileGrantDao;
+import org.orcid.persistence.jpa.entities.ProfileGrantEntity;
 import org.springframework.transaction.annotation.Transactional;
 
-public class OrgFundingRelationDaoImpl extends GenericDaoImpl<OrgFundingRelationEntity, Long> implements OrgFundingRelationDao {
+public class ProfileGrantDaoImpl extends GenericDaoImpl<ProfileGrantEntity, Long> implements ProfileGrantDao {
 	
-	public OrgFundingRelationDaoImpl() {
-        super(OrgFundingRelationEntity.class);
+	public ProfileGrantDaoImpl() {
+        super(ProfileGrantEntity.class);
     }
 	
 	/**
      * Removes the relationship that exists between a funding and a profile.
      * 
-     * @param orgFundingRelationId
-     *            The id of the orgFundingRelationId that will be removed from the client
+     * @param profileGrantId
+     *            The id of the profileGrant that will be removed from the client
      *            profile
      * @param clientOrcid
      *            The client orcid
@@ -41,10 +41,10 @@ public class OrgFundingRelationDaoImpl extends GenericDaoImpl<OrgFundingRelation
      * */
 	@Override
 	@Transactional
-	public boolean removeOrgFundingRelation(String clientOrcid, String orgFundingRelationId) {
-		Query query = entityManager.createQuery("delete from OrgFundingRelationEntity where profile.id=:clientOrcid and id=:orgFundingRelationId");
+	public boolean removeProfileGrant(String clientOrcid, String profileGrantId) {
+		Query query = entityManager.createQuery("delete from ProfileGrantEntity where profile.id=:clientOrcid and id=:profileGrantId");
 		query.setParameter("clientOrcid", clientOrcid);
-		query.setParameter("orgFundingRelationId", Long.valueOf(orgFundingRelationId));
+		query.setParameter("profileGrantId", Long.valueOf(profileGrantId));
 		return query.executeUpdate() > 0 ? true : false;
 	}
 	
@@ -54,8 +54,8 @@ public class OrgFundingRelationDaoImpl extends GenericDaoImpl<OrgFundingRelation
      * @param clientOrcid
      *            The client orcid
      * 
-     * @param orgFundingRelationId
-     *            The id of the orgFundingRelationId that will be updated
+     * @param profileGrantId
+     *            The id of the profile grant that will be updated
      * 
      * @param visibility
      *            The new visibility value for the profile orgFundingRelationId relationship
@@ -64,25 +64,26 @@ public class OrgFundingRelationDaoImpl extends GenericDaoImpl<OrgFundingRelation
      * */
 	@Override
 	@Transactional
-	public boolean updateOrgFundingRelation(String clientOrcid, String orgFundingRelationId, Visibility visibility) {
-		Query query = entityManager.createQuery("update OrgFundingRelationEntity set visibility=:visibility where profile.id=:clientOrcid and id=:orgFundingRelationId");
+	public boolean updateProfileGrant(String clientOrcid, String profileGrantId, Visibility visibility) {
+		Query query = entityManager.createQuery("update ProfileGrantEntity set visibility=:visibility where profile.id=:clientOrcid and id=:profileGrantId");
 		query.setParameter("clientOrcid", clientOrcid);
-		query.setParameter("orgFundingRelationId", Long.valueOf(orgFundingRelationId));
+		query.setParameter("profileGrantId", Long.valueOf(profileGrantId));
 		query.setParameter("visibility", visibility.name());
 		return query.executeUpdate() > 0 ? true : false;
 	}
 	
 	/**
-	 * Creates a new funding relationship between an organization and a profile.
-	 * @param newOrgFundingRelationEntity
+	 * Creates a new profile grant relationship between an organization and a profile.
+	 * 
+	 * @param newProfileGrantEntity
 	 * 		The object to be persisted
-	 * @return the created OrgFundingRelationEntity with the id assigned on database
+	 * @return the created newProfileGrantEntity with the id assigned on database
 	 * */	
 	@Override
 	@Transactional
-	public OrgFundingRelationEntity addOrgFundingRelation(OrgFundingRelationEntity newOrgFundingRelationEntity) {
-		entityManager.persist(newOrgFundingRelationEntity);
-		return newOrgFundingRelationEntity;
+	public ProfileGrantEntity addProfileGrant(ProfileGrantEntity newProfileGrantEntity) {
+		entityManager.persist(newProfileGrantEntity);
+		return newProfileGrantEntity;
 	}
 	
 	/**
@@ -94,28 +95,28 @@ public class OrgFundingRelationDaoImpl extends GenericDaoImpl<OrgFundingRelation
      * @param orgId
      *            The id of the organization
      * 
-     * @return the OrgFundingRelationEntity object
+     * @return the ProfileGrantEntity object
      * */
 	@Override
-	public OrgFundingRelationEntity getOrgFundingRelation(String orgId, String clientOrcid) {
-		Query query = entityManager.createQuery("from OrgFundingRelationEntity where profile.id=:clientOrcid and org.id=:orgId");
+	public ProfileGrantEntity getOrgFundingRelation(String orgId, String clientOrcid) {
+		Query query = entityManager.createQuery("from ProfileGrantEntity where profile.id=:clientOrcid and org.id=:orgId");
 		query.setParameter("clientOrcid", clientOrcid);
 		query.setParameter("orgId", Long.valueOf(orgId));
-		return (OrgFundingRelationEntity)query.getSingleResult();
+		return (ProfileGrantEntity)query.getSingleResult();
 	}
 	
 	/**
-     * Get the funding associated with the given orgFundingRelationId
+     * Get the funding associated with the given profileGrant id
      * 
-     * @param orgFundingRelationId
+     * @param profileGrantId
      *            The id of the orgFundingRelation object
      * 
-     * @return the OrgFundingRelationEntity object
+     * @return the ProfileGrantEntity object
      * */
 	@Override
-	public OrgFundingRelationEntity getOrgFundingRelation(String orgFundingRelationId) {
-		Query query = entityManager.createQuery("from OrgFundingRelationEntity where id=:id");
-		query.setParameter("id", Long.valueOf(orgFundingRelationId));
-		return (OrgFundingRelationEntity) query.getSingleResult();
+	public ProfileGrantEntity getOrgFundingRelation(String profileGrantId) {
+		Query query = entityManager.createQuery("from ProfileGrantEntity where id=:id");
+		query.setParameter("id", Long.valueOf(profileGrantId));
+		return (ProfileGrantEntity) query.getSingleResult();
 	}
 }

@@ -155,12 +155,12 @@ public class OrcidSearchManagerImplTest extends BaseTest {
         OrcidGrant retrievedGrant2 = orcidGrants.get(1);
 
         // check returns a reduced payload
-        assertEquals("grant1", retrievedGrant1.getGrantNumber().getContent());
-        assertEquals("Grant 1 - a short description", retrievedGrant1.getShortDescription());
+        assertEquals("grant1", retrievedGrant1.getTitle());
+        assertEquals("Grant 1 - a short description", retrievedGrant1.getDescription());
         assertNull(retrievedGrant1.getPutCode());
 
-        assertEquals("grant2", retrievedGrant2.getGrantNumber().getContent());
-        assertEquals("Grant 2 - a short description", retrievedGrant2.getShortDescription());
+        assertEquals("grant2", retrievedGrant2.getTitle());
+        assertEquals("Grant 2 - a short description", retrievedGrant2.getDescription());
         assertNull(retrievedGrant2.getPutCode());
 
     }
@@ -349,13 +349,13 @@ public class OrcidSearchManagerImplTest extends BaseTest {
         OrcidGrants orcidGrants = new OrcidGrants();
         orcidProfile.setOrcidGrants(orcidGrants);
         OrcidGrant orcidGrant1 = new OrcidGrant();
-        orcidGrant1.setGrantNumber(new GrantNumber("grant1"));
-        orcidGrant1.setShortDescription("Grant 1 - a short description");
+        orcidGrant1.setTitle("grant1");
+        orcidGrant1.setDescription("Grant 1 - a short description");
         orcidGrant1.setPutCode("grant 1 - put-code");
 
         OrcidGrant orcidGrant2 = new OrcidGrant();
-        orcidGrant2.setGrantNumber(new GrantNumber("grant2"));
-        orcidGrant2.setShortDescription("Grant 2 - a short description");
+        orcidGrant2.setTitle("grant2");
+        orcidGrant2.setDescription("Grant 2 - a short description");
         orcidGrant2.setPutCode("grant 2 - put-code");
 
         orcidGrants.getOrcidGrant().add(orcidGrant1);

@@ -2,10 +2,10 @@ package org.orcid.persistence.dao;
 
 import java.util.List;
 
-import org.orcid.persistence.jpa.entities.FundingExternalIdentifierEntity;
+import org.orcid.persistence.jpa.entities.GrantExternalIdentifierEntity;
 
-public interface FundingExternalIdentifierDao extends
-		GenericDao<FundingExternalIdentifierEntity, Long> {
+public interface GrantExternalIdentifierDao extends
+		GenericDao<GrantExternalIdentifierEntity, Long> {
 	/**
 	 * Removes a funding external identifier
 	 * 
@@ -43,8 +43,8 @@ public interface FundingExternalIdentifierDao extends
 	 * @return the created FundingExternalIdentifierEntity with the id assigned
 	 *         on database
 	 * */
-	FundingExternalIdentifierEntity addFundingExternalIdentifier(
-			FundingExternalIdentifierEntity newFundingExternalIdentifierEntity);
+	GrantExternalIdentifierEntity addFundingExternalIdentifier(
+			GrantExternalIdentifierEntity newFundingExternalIdentifierEntity);
 
 	/**
 	 * Get the external identifier associated with the provided id
@@ -55,7 +55,7 @@ public interface FundingExternalIdentifierDao extends
 	 * @return the FundingExternalIdentifierEntity object associated with the
 	 *         provided id
 	 * */
-	FundingExternalIdentifierEntity getFundingExternalIdentifier(String id);
+	GrantExternalIdentifierEntity getFundingExternalIdentifier(String id);
 
 	/**
 	 * Get the list of external identifiers associated with the given
@@ -66,6 +66,6 @@ public interface FundingExternalIdentifierDao extends
 	 * 
 	 * @return the OrgFundingRelationEntity object
 	 * */
-	List<FundingExternalIdentifierEntity> getFundingExternalIdentifiers(
+	List<GrantExternalIdentifierEntity> getFundingExternalIdentifiers(
 			String orgFundingRelationId);
 }

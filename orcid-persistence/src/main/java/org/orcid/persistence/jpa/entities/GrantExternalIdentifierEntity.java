@@ -34,21 +34,21 @@ import javax.persistence.Table;
  * 
  */
 @Entity
-@Table(name = "funding_external_identifier")
-public class FundingExternalIdentifierEntity extends BaseEntity<Long> implements Comparable<FundingExternalIdentifierEntity> {
+@Table(name = "grant_external_identifier")
+public class GrantExternalIdentifierEntity extends BaseEntity<Long> implements Comparable<GrantExternalIdentifierEntity> {
 
 	private static final long serialVersionUID = 1L;
 	
 	private Long id;
-	private OrgFundingRelationEntity orgFunding;
+	private ProfileGrantEntity profileGrant;
 	private String type;
 	private String value;
 	private String url;
 	
 	@Id
 	@Column(name="funding_external_identifier_id")
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "funding_external_identifier_seq")
-    @SequenceGenerator(name = "funding_external_identifier_seq", sequenceName = "funding_external_identifier_seq")
+    @GeneratedValue(strategy = GenerationType.AUTO, generator = "grant_external_identifier_seq")
+    @SequenceGenerator(name = "grant_external_identifier_seq", sequenceName = "grant_external_identifier_seq")
 	public Long getId() {
 		return id;
 	}
@@ -59,12 +59,12 @@ public class FundingExternalIdentifierEntity extends BaseEntity<Long> implements
 	
 	@ManyToOne(cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.DETACH }, fetch = FetchType.EAGER)
     @JoinColumn(name = "id")
-	public OrgFundingRelationEntity getOrgFunding() {
-		return orgFunding;
+	public ProfileGrantEntity getOrgFunding() {
+		return profileGrant;
 	}
 	
-	public void setOrgFunding(OrgFundingRelationEntity orgFunding) {
-		this.orgFunding = orgFunding;
+	public void setOrgFunding(ProfileGrantEntity profileGrant) {
+		this.profileGrant = profileGrant;
 	}
 	
 	@Column
@@ -95,7 +95,7 @@ public class FundingExternalIdentifierEntity extends BaseEntity<Long> implements
 	}
 
 	@Override
-	public int compareTo(FundingExternalIdentifierEntity other) {
+	public int compareTo(GrantExternalIdentifierEntity other) {
 		 if (other == null) {
 	            return -1;
 	       }

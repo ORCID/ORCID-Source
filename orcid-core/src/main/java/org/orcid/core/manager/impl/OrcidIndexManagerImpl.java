@@ -288,11 +288,9 @@ public class OrcidIndexManagerImpl implements OrcidIndexManager {
 			if (orcidGrants != null) {
 				List<String> grantNumbers = new ArrayList<String>();
 				for (OrcidGrant orcidGrant : orcidGrants) {
-					if (orcidGrant.getGrantNumber() != null
-							&& !StringUtils.isBlank(orcidGrant.getGrantNumber()
-									.getContent())) {
-						grantNumbers.add(orcidGrant.getGrantNumber()
-								.getContent());
+					if (orcidGrant.getTitle() != null
+							&& !StringUtils.isBlank(orcidGrant.getTitle())) {
+						grantNumbers.add(orcidGrant.getTitle());
 					}
 				}
 

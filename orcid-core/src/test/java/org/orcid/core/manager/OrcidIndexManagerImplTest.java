@@ -336,15 +336,15 @@ public class OrcidIndexManagerImplTest extends BaseTest {
         OrcidGrants orcidGrants = new OrcidGrants();
         OrcidGrant orcidGrant1 = new OrcidGrant();
         orcidGrant1.setVisibility(Visibility.PUBLIC);
-        orcidGrant1.setGrantNumber(new GrantNumber("grant 1"));
+        orcidGrant1.setTitle("grant 1");
 
         OrcidGrant orcidGrant2 = new OrcidGrant();
         orcidGrant2.setVisibility(Visibility.PUBLIC);
-        orcidGrant2.setGrantNumber(new GrantNumber("grant 2"));
+        orcidGrant2.setTitle("grant 2");
 
         OrcidGrant orcidGrant3 = new OrcidGrant();
         orcidGrant3.setVisibility(Visibility.LIMITED);
-        orcidGrant3.setGrantNumber(new GrantNumber("grant 3"));
+        orcidGrant3.setTitle("grant 3");
 
         OrcidGrant orcidGrant4 = new OrcidGrant();
         orcidGrant4.setVisibility(Visibility.PUBLIC);

@@ -136,8 +136,7 @@ public class OrcidSearchManagerImpl implements OrcidSearchManager {
                     for (OrcidGrant fullOrcidGrant : fullOrcidGrants.getOrcidGrant()) {
                         OrcidGrant reducedGrant = new OrcidGrant();
                         reducedGrant.setVisibility(fullOrcidGrant.getVisibility());
-                        reducedGrant.setGrantNumber(fullOrcidGrant.getGrantNumber());
-                        reducedGrant.setShortDescription(fullOrcidGrant.getShortDescription());
+                        reducedGrant.setDescription(fullOrcidGrant.getDescription());
                         reducedGrants.getOrcidGrant().add(reducedGrant);
                     }
                 }

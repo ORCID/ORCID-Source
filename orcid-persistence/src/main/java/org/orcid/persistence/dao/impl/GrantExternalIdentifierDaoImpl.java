@@ -4,14 +4,14 @@ import java.util.List;
 
 import javax.persistence.Query;
 
-import org.orcid.persistence.dao.FundingExternalIdentifierDao;
-import org.orcid.persistence.jpa.entities.FundingExternalIdentifierEntity;
+import org.orcid.persistence.dao.GrantExternalIdentifierDao;
+import org.orcid.persistence.jpa.entities.GrantExternalIdentifierEntity;
 import org.springframework.transaction.annotation.Transactional;
 
-public class FundingExternalIdentifierDaoImpl extends GenericDaoImpl<FundingExternalIdentifierEntity, Long> implements FundingExternalIdentifierDao  {
+public class GrantExternalIdentifierDaoImpl extends GenericDaoImpl<GrantExternalIdentifierEntity, Long> implements GrantExternalIdentifierDao  {
 
-	public FundingExternalIdentifierDaoImpl() {
-		super(FundingExternalIdentifierEntity.class);
+	public GrantExternalIdentifierDaoImpl() {
+		super(GrantExternalIdentifierEntity.class);
 	}
 
 	/**
@@ -68,8 +68,8 @@ public class FundingExternalIdentifierDaoImpl extends GenericDaoImpl<FundingExte
 	 * */
 	@Override
 	@Transactional
-	public FundingExternalIdentifierEntity addFundingExternalIdentifier(
-			FundingExternalIdentifierEntity newFundingExternalIdentifierEntity) {
+	public GrantExternalIdentifierEntity addFundingExternalIdentifier(
+			GrantExternalIdentifierEntity newFundingExternalIdentifierEntity) {
 		entityManager.persist(newFundingExternalIdentifierEntity);
 		return newFundingExternalIdentifierEntity;	
 	}
@@ -84,10 +84,10 @@ public class FundingExternalIdentifierDaoImpl extends GenericDaoImpl<FundingExte
 	 *         provided id
 	 * */
 	@Override
-	public FundingExternalIdentifierEntity getFundingExternalIdentifier(String id) {
+	public GrantExternalIdentifierEntity getFundingExternalIdentifier(String id) {
 		Query query = entityManager.createQuery("from FundingExternalIdentifierEntity where id=:id");
 		query.setParameter("id", Long.valueOf(id));
-		return (FundingExternalIdentifierEntity)query.getSingleResult();		
+		return (GrantExternalIdentifierEntity)query.getSingleResult();		
 	}
 
 	/**
@@ -100,7 +100,7 @@ public class FundingExternalIdentifierDaoImpl extends GenericDaoImpl<FundingExte
 	 * @return the OrgFundingRelationEntity object
 	 * */
 	@Override
-	public List<FundingExternalIdentifierEntity> getFundingExternalIdentifiers(
+	public List<GrantExternalIdentifierEntity> getFundingExternalIdentifiers(
 			String orgFundingRelationId) {
 		Query query = entityManager.createQuery("from FundingExternalIdentifierEntity where orgFunding.id=:id");
 		query.setParameter("id", Long.valueOf(orgFundingRelationId));
