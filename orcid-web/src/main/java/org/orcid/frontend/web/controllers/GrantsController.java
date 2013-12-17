@@ -85,7 +85,7 @@ public class GrantsController extends BaseWorkspaceController {
     private OrgDisambiguatedDao orgDisambiguatedDao;
 	
 	/**
-     * Returns a blank funding form
+     * Returns a blank grant form
      * */
     @RequestMapping(value = "/grant.json", method = RequestMethod.GET)
     public @ResponseBody
@@ -157,8 +157,8 @@ public class GrantsController extends BaseWorkspaceController {
         OrcidProfile currentProfile = getEffectiveProfile();
         OrcidGrants grants = currentProfile.getOrcidActivities() == null ? null : currentProfile.getOrcidActivities().getOrcidGrants();
 
-        HashMap<String, GrantForm> fundingsMap = new HashMap<>();
-        List<String> fundingIds = new ArrayList<String>();
+        HashMap<String, GrantForm> grantsMap = new HashMap<>();
+        List<String> grantIds = new ArrayList<String>();
         if (grants != null) {
             for (OrcidGrant grant : grants.getOrcidGrant()) {
                 try {
@@ -166,15 +166,15 @@ public class GrantsController extends BaseWorkspaceController {
                     if (grant.getType() != null) {
                         form.setGrantTypeForDisplay(getMessage(buildInternationalizationKey(GrantType.class, grant.getType().value())));
                     }
-                    fundingsMap.put(grant.getPutCode(), form);
-                    fundingIds.add(grant.getPutCode());
+                    grantsMap.put(grant.getPutCode(), form);
+                    grantIds.add(grant.getPutCode());
                 } catch (Exception e) {
                     LOGGER.error("Failed to parse as Grant. Put code" + grant.getPutCode());
                 }
             }
-            request.getSession().setAttribute(GRANT_MAP, fundingsMap);
+            request.getSession().setAttribute(GRANT_MAP, grantsMap);
         }
-        return fundingIds;
+        return grantIds;
     }
     
     /**
@@ -206,11 +206,12 @@ public class GrantsController extends BaseWorkspaceController {
     
     
     /**
-     * Persist a funding object on database
+     * Persist a grant object on database
      * */
     @RequestMapping(value = "/grant.json", method = RequestMethod.POST)
     public @ResponseBody
     GrantForm postFunding(HttpServletRequest request, GrantForm grant) {
+    	validateName(grant);
     	validateAmount(grant);
     	validateCurrency(grant);
     	validateTitle(grant);
@@ -218,13 +219,16 @@ public class GrantsController extends BaseWorkspaceController {
     	validateUrl(grant);
     	validateDates(grant);
     	validateExternalIdentifiers(grant);
+    	validateType(grant);
     	
+    	copyErrors(grant.getGrantName(), grant);
     	copyErrors(grant.getAmount(), grant);
     	copyErrors(grant.getCurrencyCode(), grant);
     	copyErrors(grant.getTitle(), grant);
     	copyErrors(grant.getDescription(), grant);
     	copyErrors(grant.getUrl(), grant);
     	copyErrors(grant.getEndDate(), grant);
+    	copyErrors(grant.getGrantType(), grant);
     	
     	for(GrantExternalIdentifierForm extId : grant.getExternalIdentifiers()){
     		copyErrors(extId.getType(), grant);
@@ -277,10 +281,24 @@ public class GrantsController extends BaseWorkspaceController {
     		try {
     			CurrencyCode.fromValue(grant.getCurrencyCode().getValue());
     		} catch(IllegalArgumentException iae) {
-    			setError(grant.getCurrencyCode(), "NotValid.grant.currency");
+    			setError(grant.getCurrencyCode(), "Invalid.grant.currency");
     		}
     	}
     	return grant;
+    }
+    
+    @RequestMapping(value = "/grant/nameValidate.json", method = RequestMethod.POST)
+    public @ResponseBody
+    GrantForm validateName(GrantForm grant) {
+    	grant.getGrantName().setErrors(new ArrayList<String>());
+        if (grant.getGrantName().getValue() == null || grant.getGrantName().getValue().trim().length() == 0) {
+            setError(grant.getGrantName(), "NotBlank.grant.name");
+        } else {
+            if (grant.getGrantName().getValue().trim().length() > 1000) {
+                setError(grant.getGrantName(), "grant.length_less_1000");
+            }
+        }
+        return grant;
     }
     
     @RequestMapping(value = "/grant/titleValidate.json", method = RequestMethod.POST)
@@ -305,7 +323,7 @@ public class GrantsController extends BaseWorkspaceController {
    		return grant;
     }
     
-    @RequestMapping(value = "/funding/urlValidate.json", method = RequestMethod.POST)
+    @RequestMapping(value = "/grant/urlValidate.json", method = RequestMethod.POST)
     public @ResponseBody
     GrantForm validateUrl(GrantForm grant) {
     	grant.getUrl().setErrors(new ArrayList<String>());
@@ -337,6 +355,22 @@ public class GrantsController extends BaseWorkspaceController {
     				setError(extId.getUrl(), "grant.length_less_350");
     			if(!PojoUtil.isEmpty(extId.getValue()) && extId.getValue().getValue().length() > 2084)
     				setError(extId.getValue(), "grant.length_less_2084");
+    		}
+    	}
+    	return grant;
+    }
+    
+    @RequestMapping(value = "/grant/typeValidate.json", method = RequestMethod.POST)
+    public @ResponseBody
+    GrantForm validateType(GrantForm grant) {
+    	grant.getGrantType().setErrors(new ArrayList<String>());
+    	if(PojoUtil.isEmpty(grant.getGrantType())) {
+    		setError(grant.getGrantType(), "NotBlank.grant.type");
+    	} else {
+    		try {
+    			GrantType.fromValue(grant.getGrantType().getValue());
+    		} catch(IllegalArgumentException iae) {
+    			setError(grant.getGrantType(), "Invalid.grant.type");
     		}
     	}
     	return grant;

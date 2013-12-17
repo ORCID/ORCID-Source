@@ -49,7 +49,7 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "grantExternalIdentifier" })
+@XmlType(propOrder = { "grantExternalIdentifier" })
 @XmlRootElement(name = "grant-external-identifiers")
 public class OrcidGrantExternalIdentifiers implements Serializable {	
     private static final long serialVersionUID = 1L;

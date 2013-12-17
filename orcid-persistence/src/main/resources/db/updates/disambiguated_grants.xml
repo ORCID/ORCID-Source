@@ -23,10 +23,10 @@
 	<changeSet id="CREATE-FOUNDING-TABLES" author="Angel Montenegro">
 		<preConditions onFail="MARK_RAN">
 			<not>
-				<tableExists tableName="profile_grant" />
+				<tableExists tableName="grant_external_identifier" />
 			</not>
 		</preConditions>		
-
+		
 		<dropTable cascadeConstraints="true"            
             tableName="profile_grant"/>
 

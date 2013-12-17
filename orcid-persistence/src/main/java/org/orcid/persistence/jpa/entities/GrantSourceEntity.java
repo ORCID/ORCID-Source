@@ -52,7 +52,7 @@ public class GrantSourceEntity extends BaseEntity<GrantSourceEntityPk> implement
 
     @Id
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumns( { @JoinColumn(name = "grant_id", nullable = false), @JoinColumn(name = "orcid", nullable = false) })
+    @JoinColumns( { @JoinColumn(name = "id", nullable = false), @JoinColumn(name = "orcid", nullable = false) })
     public ProfileGrantEntity getProfileGrant() {
         return profileGrant;
     }

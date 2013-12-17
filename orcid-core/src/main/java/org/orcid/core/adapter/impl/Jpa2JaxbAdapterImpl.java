@@ -506,10 +506,10 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
     /**
      * TODO
      * */
-    private GrantContributors getFundingContributors(ProfileGrantEntity orgFundingRelationEntity) {        
+    private GrantContributors getFundingContributors(ProfileGrantEntity profileGrantEntity) {        
     	GrantContributors grantContributors = new GrantContributors();
         // New way of doing work contributors
-        String jsonString = orgFundingRelationEntity.getContributorsJson();
+        String jsonString = profileGrantEntity.getContributorsJson();
         if (jsonString != null) {
         	grantContributors = JsonUtils.readObjectFromJsonString(jsonString, GrantContributors.class);
             for (Contributor contributor : grantContributors.getContributor()) {
@@ -517,7 +517,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
                 // the funding relation
                 CreditName creditName = contributor.getCreditName();
                 if (creditName != null) {
-                    creditName.setVisibility(orgFundingRelationEntity.getVisibility());
+                    creditName.setVisibility(profileGrantEntity.getVisibility());
                 }
                 // Strip out any contributor emails
                 contributor.setContributorEmail(null);

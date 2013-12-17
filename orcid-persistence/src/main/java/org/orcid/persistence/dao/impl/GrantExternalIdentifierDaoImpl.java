@@ -15,7 +15,7 @@ public class GrantExternalIdentifierDaoImpl extends GenericDaoImpl<GrantExternal
 	}
 
 	/**
-	 * Removes a funding external identifier
+	 * Removes a grant external identifier
 	 * 
 	 * @param id
 	 *            The id of the external identifier
@@ -23,8 +23,8 @@ public class GrantExternalIdentifierDaoImpl extends GenericDaoImpl<GrantExternal
 	 * */
 	@Override
 	@Transactional
-	public boolean removeFundingExternalIdentifier(String id) {
-		Query query = entityManager.createQuery("delete from FundingExternalIdentifierEntity where id=:id");
+	public boolean removeGrantExternalIdentifier(String id) {
+		Query query = entityManager.createQuery("delete from GrantExternalIdentifierEntity where id=:id");
 		query.setParameter("id", Long.valueOf(id));
 		return query.executeUpdate() > 0 ? true : false;
 	}
@@ -48,9 +48,9 @@ public class GrantExternalIdentifierDaoImpl extends GenericDaoImpl<GrantExternal
 	 * */
 	@Override
 	@Transactional
-	public boolean updateFundingExternalIdentifier(String id, String type,
+	public boolean updateGrantExternalIdentifier(String id, String type,
 			String value, String url) {
-		Query query = entityManager.createQuery("update FundingExternalIdentifierEntity set type=:type, value=:value, url=:url where id=:id");
+		Query query = entityManager.createQuery("update GrantExternalIdentifierEntity set type=:type, value=:value, url=:url where id=:id");
 		query.setParameter("id", Long.valueOf(id));
 		query.setParameter("type", type);
 		query.setParameter("value", value);
@@ -59,51 +59,51 @@ public class GrantExternalIdentifierDaoImpl extends GenericDaoImpl<GrantExternal
 	}
 
 	/**
-	 * Creates a new funding external identifier
+	 * Creates a new grant external identifier
 	 * 
-	 * @param newFundingExternalIdentifierEntity
+	 * @param newGrantExternalIdentifierEntity
 	 *            The object to be persisted
-	 * @return the created FundingExternalIdentifierEntity with the id assigned
+	 * @return the created GrantExternalIdentifierEntity with the id assigned
 	 *         on database
 	 * */
 	@Override
 	@Transactional
-	public GrantExternalIdentifierEntity addFundingExternalIdentifier(
-			GrantExternalIdentifierEntity newFundingExternalIdentifierEntity) {
-		entityManager.persist(newFundingExternalIdentifierEntity);
-		return newFundingExternalIdentifierEntity;	
+	public GrantExternalIdentifierEntity addGrantExternalIdentifier(
+			GrantExternalIdentifierEntity newGrantExternalIdentifierEntity) {
+		entityManager.persist(newGrantExternalIdentifierEntity);
+		return newGrantExternalIdentifierEntity;	
 	}
 
 	/**
 	 * Get the external identifier associated with the provided id
 	 * 
 	 * @param id
-	 *            the funding external identifier id
+	 *            the grant external identifier id
 	 * 
-	 * @return the FundingExternalIdentifierEntity object associated with the
+	 * @return the GrantExternalIdentifierEntity object associated with the
 	 *         provided id
 	 * */
 	@Override
-	public GrantExternalIdentifierEntity getFundingExternalIdentifier(String id) {
-		Query query = entityManager.createQuery("from FundingExternalIdentifierEntity where id=:id");
+	public GrantExternalIdentifierEntity getGrantExternalIdentifier(String id) {
+		Query query = entityManager.createQuery("from GrantExternalIdentifierEntity where id=:id");
 		query.setParameter("id", Long.valueOf(id));
 		return (GrantExternalIdentifierEntity)query.getSingleResult();		
 	}
 
 	/**
 	 * Get the list of external identifiers associated with the given
-	 * orgFundingRelation object
+	 * profileGrantEntity object
 	 * 
-	 * @param orgFundingRelationId
-	 *            The id of the orgFundingRelation object
+	 * @param profileGrantId
+	 *            The id of the orgGrantRelation object
 	 * 
-	 * @return the OrgFundingRelationEntity object
+	 * @return the ProfileGrantEntity object
 	 * */
 	@Override
-	public List<GrantExternalIdentifierEntity> getFundingExternalIdentifiers(
-			String orgFundingRelationId) {
-		Query query = entityManager.createQuery("from FundingExternalIdentifierEntity where orgFunding.id=:id");
-		query.setParameter("id", Long.valueOf(orgFundingRelationId));
+	public List<GrantExternalIdentifierEntity> getGrantExternalIdentifiers(
+			String profileGrantId) {
+		Query query = entityManager.createQuery("from GrantExternalIdentifierEntity where orgGrant.id=:id");
+		query.setParameter("id", Long.valueOf(profileGrantId));
 		return query.getResultList();
 	}
 }

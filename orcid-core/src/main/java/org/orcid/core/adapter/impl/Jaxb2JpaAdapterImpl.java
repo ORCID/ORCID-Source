@@ -409,7 +409,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
     	// Populate a list of the updated orgFunding entities that comes from the fundings object
     	if(orcidGrants != null && orcidGrants.getOrcidGrant() != null && !orcidGrants.getOrcidGrant().isEmpty()) {
         	for(OrcidGrant funding : orcidGrants.getOrcidGrant()) {
-        		ProfileGrantEntity newProfileGrantEntity = getOrgFundingRelationEntity(funding, existingProfileGrantEntitiesMap.get(funding.getPutCode()));
+        		ProfileGrantEntity newProfileGrantEntity = getProfileGrantEntity(funding, existingProfileGrantEntitiesMap.get(funding.getPutCode()));
         		newProfileGrantEntity.setProfile(profileEntity);
         		updatedProfileGrantEntities.add(newProfileGrantEntity);
         	}
@@ -969,9 +969,9 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
      * */
     @Override
     public ProfileGrantEntity getNewProfileGrantEntity(OrcidGrant updatedFunding, ProfileEntity profileEntity) {
-        ProfileGrantEntity orgFundingRelationEntity = getOrgFundingRelationEntity(updatedFunding, null);
-        orgFundingRelationEntity.setProfile(profileEntity);
-        return orgFundingRelationEntity;
+        ProfileGrantEntity profileGrantEntity = getProfileGrantEntity(updatedFunding, null);
+        profileGrantEntity.setProfile(profileEntity);
+        return profileGrantEntity;
     }
 
     private OrgAffiliationRelationEntity getOrgAffiliationRelationEntity(Affiliation affiliation, OrgAffiliationRelationEntity exisitingOrgAffiliationEntity) {
@@ -1006,7 +1006,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
     /**
      * TODO
      * */
-    private ProfileGrantEntity getOrgFundingRelationEntity(OrcidGrant grant, ProfileGrantEntity exisitingOrgFundingEntity) {
+    private ProfileGrantEntity getProfileGrantEntity(OrcidGrant grant, ProfileGrantEntity exisitingOrgFundingEntity) {
         if (grant != null) {
         	ProfileGrantEntity orgRelationEntity = null;
             if (exisitingOrgFundingEntity == null) {
@@ -1044,14 +1044,14 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
     /**
      * TODO
      * */
-    private SortedSet<GrantExternalIdentifierEntity> getGrantExternalIdentifiers(ProfileGrantEntity orgFundingRelationEntity, OrcidGrantExternalIdentifiers externalIdentifiers) {
+    private SortedSet<GrantExternalIdentifierEntity> getGrantExternalIdentifiers(ProfileGrantEntity profileGrantEntity, OrcidGrantExternalIdentifiers externalIdentifiers) {
     	if(externalIdentifiers == null || externalIdentifiers.getGrantExternalIdentifier() == null || externalIdentifiers.getGrantExternalIdentifier().isEmpty())
     		return null;
     	TreeSet<GrantExternalIdentifierEntity> result = new TreeSet<>();
     	List<GrantExternalIdentifier> externalIdentifierList = externalIdentifiers.getGrantExternalIdentifier();
     	for(GrantExternalIdentifier externalIdentifier : externalIdentifierList){
     		GrantExternalIdentifierEntity entity = new GrantExternalIdentifierEntity();    		
-    		entity.setOrgFunding(orgFundingRelationEntity);
+    		entity.setOrgFunding(profileGrantEntity);
     		entity.setType(externalIdentifier.getType());
     		entity.setUrl(externalIdentifier.getUrl().getValue());    		
     		entity.setValue(externalIdentifier.getValue());

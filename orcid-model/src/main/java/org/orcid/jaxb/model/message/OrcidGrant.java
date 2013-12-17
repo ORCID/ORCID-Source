@@ -64,7 +64,7 @@ import java.io.Serializable;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "putCode", "title", "description", "type",
+@XmlType(propOrder = { "putCode", "title", "description", "type",
 		"currencyCode", "amount", "url", "startDate", "endDate", "organization", "grantExternalIdentifiers", "grantContributors", "visibility",
 		"source" })
 @XmlRootElement(name = "orcid-grant")

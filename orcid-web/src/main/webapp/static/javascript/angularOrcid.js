@@ -1884,6 +1884,45 @@ function GrantCtrl($scope, $compile, $filter, grantsSrvc, workspaceSrvc) {
 		if ($scope.disambiguatedGrant != undefined) delete $scope.disambiguatedGrant;
 		if ($scope.editGrant != undefined && $scope.editGrant.disambiguatedGrantSourceId != undefined) delete $scope.editGrant.disambiguatedGrantSourceId;
 	};
+	
+	$scope.isValidClass = function (cur) {
+		if (cur === undefined) return '';
+		var valid = true;
+		if (cur.required && (cur.value == null || cur.value.trim() == '')) valid = false;
+		if (cur.errors !== undefined && cur.errors.length > 0) valid = false;
+		return valid ? '' : 'text-error';
+	};
+	
+	// Server validations
+	$scope.serverValidate = function (relativePath) {
+		$.ajax({
+	        url: $('body').data('baseurl') + relativePath,
+	        type: 'POST',
+	        data:  angular.toJson($scope.editGrant),
+	        contentType: 'application/json;charset=UTF-8',
+	        dataType: 'json',
+	        success: function(data) {
+	        	$scope.copyErrorsLeft($scope.editGrant, data);
+	        	$scope.$apply();
+	        }
+	    }).fail(function() { 
+	    	// something bad is happening!
+	    	console.log("GrantsCtrl.serverValidate() error");
+	    });
+	};
+	
+	$scope.copyErrorsLeft = function (data1, data2) {
+		for (var key in data1) {
+			if (key == null) continue;
+			if (key == 'errors') {
+				data1.errors = data2.errors;
+			} else {
+				if (typeof(data1[key])=="object") {
+					$scope.copyErrorsLeft(data1[key], data2[key]);
+				}
+			};
+		};
+	};
 }
 
 

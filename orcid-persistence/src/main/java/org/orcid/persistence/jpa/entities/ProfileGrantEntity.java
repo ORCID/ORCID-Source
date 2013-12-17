@@ -16,15 +16,7 @@
  */
 package org.orcid.persistence.jpa.entities;
 
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
-import org.hibernate.annotations.Sort;
-import org.hibernate.annotations.SortType;
-import org.orcid.jaxb.model.message.CurrencyCode;
-import org.orcid.jaxb.model.message.GrantType;
-import org.orcid.jaxb.model.message.Visibility;
-import org.orcid.persistence.jpa.entities.keys.ProfileGrantEntityPk;
-import org.orcid.utils.NullUtils;
+import java.util.SortedSet;
 
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
@@ -36,16 +28,20 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.IdClass;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.persistence.Transient;
-import java.util.Date;
-import java.util.Set;
-import java.util.SortedSet;
+
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+import org.hibernate.annotations.Sort;
+import org.hibernate.annotations.SortType;
+import org.orcid.jaxb.model.message.CurrencyCode;
+import org.orcid.jaxb.model.message.GrantType;
+import org.orcid.jaxb.model.message.Visibility;
+import org.orcid.utils.NullUtils;
 
 /**
  * orcid-entities - Dec 6, 2011 - ProfileInstitutionEntity
@@ -55,7 +51,6 @@ import java.util.SortedSet;
 
 @Entity
 @Table(name = "profile_grant")
-@IdClass(ProfileGrantEntityPk.class)
 public class ProfileGrantEntity extends BaseEntity<Long> implements Comparable<ProfileGrantEntity>, ProfileAware, SourceAware {
 
     private static final long serialVersionUID = -3187757614938904392L;
@@ -216,7 +211,7 @@ public class ProfileGrantEntity extends BaseEntity<Long> implements Comparable<P
 	}
 
 	@ManyToOne
-	@JoinColumn(name = "source_id")
+	@JoinColumn(name = "orcid")
 	public ProfileEntity getSource() {
 		return source;
 	}

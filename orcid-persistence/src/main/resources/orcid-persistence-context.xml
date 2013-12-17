@@ -138,9 +138,9 @@
     
     <bean id="orgDisambiguatedDao" class="org.orcid.persistence.dao.impl.OrgDisambiguatedDaoImpl" />
             
-     <bean id="orgFundingRelationDao" class="org.orcid.persistence.dao.impl.OrgFundingRelationDao" />
+     <bean id="profileGrantDao" class="org.orcid.persistence.dao.impl.ProfileGrantDao" />
     
-     <bean id="fundingExternalIdentifierDao" class="org.orcid.persistence.dao.impl.FundingExternalIdentifierDao" />
+     <bean id="grantExternalIdentifierDao" class="org.orcid.persistence.dao.impl.GrantExternalIdentifierDao" />
                 
     <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean" depends-on="liquibase">
         <property name="jpaVendorAdapter" ref="jpaVendorAdapter" />

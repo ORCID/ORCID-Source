@@ -45,8 +45,10 @@ import org.orcid.jaxb.model.clientgroup.RedirectUri;
 import org.orcid.jaxb.model.message.AffiliationType;
 import org.orcid.jaxb.model.message.CitationType;
 import org.orcid.jaxb.model.message.ContributorRole;
+import org.orcid.jaxb.model.message.CurrencyCode;
 import org.orcid.jaxb.model.message.ExternalIdentifier;
 import org.orcid.jaxb.model.message.ExternalIdentifiers;
+import org.orcid.jaxb.model.message.GrantType;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.SequenceType;
 import org.orcid.jaxb.model.message.SourceOrcid;
@@ -111,6 +113,25 @@ public class WorkspaceController extends BaseWorkspaceController {
         }
         return FunctionsOverCollections.sortMapsByValues(affiliationTypes);
     }
+    
+    @ModelAttribute("grantTypes")
+    public Map<String, String> retrieveGrantTypesAsMap() {
+        Map<String, String> grantTypes = new LinkedHashMap<String, String>();
+        for (GrantType grantType : GrantType.values()) {
+        	grantTypes.put(grantType.value(), getMessage(buildInternationalizationKey(GrantType.class, grantType.value())));
+        }
+        return FunctionsOverCollections.sortMapsByValues(grantTypes);
+    }
+    
+    @ModelAttribute("currencyCodeTypes")
+    public Map<String, String> retrieveCurrencyCodesTypesAsMap() {
+        Map<String, String> currencyCodeTypes = new LinkedHashMap<String, String>();
+        for (CurrencyCode currencyCode : CurrencyCode.values()) {
+        	currencyCodeTypes.put(currencyCode.value(), getMessage(buildInternationalizationKey(GrantType.class, currencyCode.value())));
+        }
+        return FunctionsOverCollections.sortMapsByValues(currencyCodeTypes);
+    }
+    
     
     @ModelAttribute("affiliationLongDescriptionTypes")
     public Map<String, String> retrieveAffiliationLongDescriptionTypesAsMap() {
