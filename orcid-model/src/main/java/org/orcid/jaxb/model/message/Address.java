@@ -49,7 +49,7 @@ import java.io.Serializable;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "country" })
+@XmlType(propOrder = { "country" })
 @XmlRootElement(name = "address")
 public class Address implements Serializable {
 

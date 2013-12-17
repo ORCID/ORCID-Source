@@ -54,7 +54,7 @@ import java.io.Serializable;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "applicationOrcid", "applicationName", "applicationWebsite", "approvalDate", "scopePaths" })
+@XmlType( propOrder = { "applicationOrcid", "applicationName", "applicationWebsite", "approvalDate", "scopePaths" })
 @XmlRootElement(name = "application-summary")
 public class ApplicationSummary implements Serializable {
 

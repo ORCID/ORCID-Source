@@ -57,7 +57,7 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "otherName" })
+@XmlType( propOrder = { "otherName" })
 @XmlRootElement(name = "other-names")
 public class OtherNames implements Serializable, VisibilityType {
 

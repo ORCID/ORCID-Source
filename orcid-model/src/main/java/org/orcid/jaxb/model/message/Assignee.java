@@ -53,7 +53,7 @@ import java.io.Serializable;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "assigneeOrcid", "assigneeName" })
+@XmlType( propOrder = { "assigneeOrcid", "assigneeName" })
 @XmlRootElement(name = "assignee")
 public class Assignee implements VisibilityType, Serializable {
 

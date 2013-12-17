@@ -56,7 +56,7 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "orcidSearchResult" })
+@XmlType( propOrder = { "orcidSearchResult" })
 @XmlRootElement(name = "orcid-search-results")
 public class OrcidSearchResults implements Serializable {
 

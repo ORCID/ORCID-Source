@@ -51,7 +51,7 @@ import java.io.Serializable;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "workExternalIdentifierType", "workExternalIdentifierId" })
+@XmlType( propOrder = { "workExternalIdentifierType", "workExternalIdentifierId" })
 @XmlRootElement(name = "work-external-identifier")
 public class WorkExternalIdentifier implements Serializable {
 

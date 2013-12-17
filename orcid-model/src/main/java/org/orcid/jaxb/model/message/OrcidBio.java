@@ -63,7 +63,7 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "personalDetails", "biography", "researcherUrls", "contactDetails", "keywords", "externalIdentifiers", "delegation", "applications" })
+@XmlType( propOrder = { "personalDetails", "biography", "researcherUrls", "contactDetails", "keywords", "externalIdentifiers", "delegation", "applications" })
 public class OrcidBio implements Serializable {
 
     private final static long serialVersionUID = 1L;

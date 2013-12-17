@@ -54,7 +54,7 @@ import java.util.List;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "alternativeEmails" })
+@XmlType( propOrder = { "alternativeEmails" })
 @XmlRootElement(name = "alternative-emails")
 public class AlternativeEmails implements VisibilityType, Serializable {
 

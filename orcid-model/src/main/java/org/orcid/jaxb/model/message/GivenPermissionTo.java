@@ -52,7 +52,7 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "delegationDetails" })
+@XmlType( propOrder = { "delegationDetails" })
 @XmlRootElement(name = "given-permission-to")
 public class GivenPermissionTo implements Serializable {
 

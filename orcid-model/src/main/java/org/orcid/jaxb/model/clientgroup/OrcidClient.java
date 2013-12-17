@@ -66,7 +66,7 @@ import org.orcid.jaxb.model.message.OrcidType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "displayName", "website", "shortDescription", "redirectUris", "clientId", "clientSecret", "errors" })
+@XmlType(propOrder = { "displayName", "website", "shortDescription", "redirectUris", "clientId", "clientSecret", "errors" })
 @XmlRootElement(name = "orcid-client")
 public class OrcidClient implements Serializable {
 

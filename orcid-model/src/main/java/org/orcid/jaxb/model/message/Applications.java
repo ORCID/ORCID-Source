@@ -54,7 +54,7 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "applicationSummary" })
+@XmlType( propOrder = { "applicationSummary" })
 @XmlRootElement(name = "applications")
 public class Applications implements VisibilityType, Serializable {
 
