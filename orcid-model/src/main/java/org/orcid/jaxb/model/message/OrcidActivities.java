@@ -44,7 +44,6 @@ import javax.xml.bind.annotation.XmlType;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
  *         &lt;element ref="{http://www.orcid.org/ns/orcid}affiliations" minOccurs="0"/>
- *         &lt;element ref="{http://www.orcid.org/ns/orcid}fundings" minOccurs="0"/>
  *         &lt;element ref="{http://www.orcid.org/ns/orcid}orcid-works" minOccurs="0"/>
  *         &lt;element ref="{http://www.orcid.org/ns/orcid}orcid-grants" minOccurs="0"/>
  *         &lt;element ref="{http://www.orcid.org/ns/orcid}orcid-patents" minOccurs="0"/>
@@ -57,7 +56,7 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "affiliations", "fundings", "orcidWorks", "orcidGrants", "orcidPatents" })
+@XmlType(name = "", propOrder = { "affiliations", "orcidWorks", "orcidGrants", "orcidPatents" })
 @XmlRootElement(name = "orcid-activities")
 public class OrcidActivities implements Serializable {
 

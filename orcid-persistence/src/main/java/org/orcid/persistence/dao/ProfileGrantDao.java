@@ -22,7 +22,7 @@ import org.orcid.persistence.jpa.entities.ProfileGrantEntity;
 public interface ProfileGrantDao extends GenericDao<ProfileGrantEntity, Long> {
 
 	 /**
-     * Removes the relationship that exists between a funding and a profile.
+     * Removes the relationship that exists between a grant and a profile.
      * 
      * @param profileGrantId
      *            The id of the profileGrant that will be removed from the client
@@ -33,7 +33,7 @@ public interface ProfileGrantDao extends GenericDao<ProfileGrantEntity, Long> {
      * */
 	boolean removeProfileGrant(String clientOrcid, String profileGrantId);
 	/**
-     * Updates the visibility of an existing profile funding relationship
+     * Updates the visibility of an existing profile grant relationship
      * 
      * @param clientOrcid
      *            The client orcid
@@ -42,7 +42,7 @@ public interface ProfileGrantDao extends GenericDao<ProfileGrantEntity, Long> {
      *            The id of the profile grant that will be updated
      * 
      * @param visibility
-     *            The new visibility value for the profile orgFundingRelationId relationship
+     *            The new visibility value for the profile profileGrant object
      * 
      * @return true if the relationship was updated
      * */
@@ -56,7 +56,7 @@ public interface ProfileGrantDao extends GenericDao<ProfileGrantEntity, Long> {
 	 * */
 	ProfileGrantEntity addProfileGrant(ProfileGrantEntity newProfileGrantEntity);
 	/**
-     * Get the funding associated with the client orcid and the organization id
+     * Get the grant associated with the client orcid and the organization id
      * 
      * @param clientOrcid
      *            The client orcid
@@ -66,14 +66,14 @@ public interface ProfileGrantDao extends GenericDao<ProfileGrantEntity, Long> {
      * 
      * @return the ProfileGrantEntity object
      * */
-	ProfileGrantEntity getOrgFundingRelation(String orgId, String clientOrcid);
+	ProfileGrantEntity getProfileGrantEntity(String orgId, String clientOrcid);
 	/**
-     * Get the funding associated with the given profileGrant id
+     * Get the grant associated with the given profileGrant id
      * 
      * @param profileGrantId
-     *            The id of the orgFundingRelation object
+     *            The id of the ProfileGrantEntity object
      * 
      * @return the ProfileGrantEntity object
      * */
-	ProfileGrantEntity getOrgFundingRelation(String profileGrantId);
+	ProfileGrantEntity getProfileGrantEntity(String profileGrantId);
 }

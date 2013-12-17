@@ -46,7 +46,7 @@ public class GrantExternalIdentifierEntity extends BaseEntity<Long> implements C
 	private String url;
 	
 	@Id
-	@Column(name="funding_external_identifier_id")
+	@Column(name="grant_external_identifier_id")
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "grant_external_identifier_seq")
     @SequenceGenerator(name = "grant_external_identifier_seq", sequenceName = "grant_external_identifier_seq")
 	public Long getId() {
@@ -59,11 +59,11 @@ public class GrantExternalIdentifierEntity extends BaseEntity<Long> implements C
 	
 	@ManyToOne(cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.DETACH }, fetch = FetchType.EAGER)
     @JoinColumn(name = "id")
-	public ProfileGrantEntity getOrgFunding() {
+	public ProfileGrantEntity getProfileGrant() {
 		return profileGrant;
 	}
 	
-	public void setOrgFunding(ProfileGrantEntity profileGrant) {
+	public void setProfileGrant(ProfileGrantEntity profileGrant) {
 		this.profileGrant = profileGrant;
 	}
 	

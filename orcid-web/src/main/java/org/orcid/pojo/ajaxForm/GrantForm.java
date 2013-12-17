@@ -203,7 +203,7 @@ public class GrantForm implements ErrorsInterface, Serializable {
 		this.grantTypeForDisplay = grantTypeForDisplay;
 	}
 
-	public OrcidGrant toFunding() {
+	public OrcidGrant toOrcidGrant() {
 		OrcidGrant result = new OrcidGrant();
 		if(!PojoUtil.isEmpty(amount))
 			result.setAmount(amount.getValue());
@@ -225,7 +225,7 @@ public class GrantForm implements ErrorsInterface, Serializable {
 		if(externalIdentifiers != null && !externalIdentifiers.isEmpty()) {
 			OrcidGrantExternalIdentifiers gExternalIdentifiers = new OrcidGrantExternalIdentifiers(); 
 			for(GrantExternalIdentifierForm gExternalIdentifier : externalIdentifiers) {
-				gExternalIdentifiers.getGrantExternalIdentifier().add(gExternalIdentifier.toFundingExternalIdentifier());
+				gExternalIdentifiers.getGrantExternalIdentifier().add(gExternalIdentifier.toGrantExternalIdentifier());
 			}
 			result.setGrantExternalIdentifiers(gExternalIdentifiers);
 		}

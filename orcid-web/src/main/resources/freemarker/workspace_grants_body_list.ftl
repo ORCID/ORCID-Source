@@ -16,19 +16,22 @@
     =============================================================================
 
 -->
-<#if (profile.orcidActivities.orcidGrants)??>
-    <ul class="workspace-grants workspace-body-list">
-        <#list profile.orcidActivities.orcidGrants.orcidGrant as grant>
-            <#if grant.visibility! != 'public' >
-                <#assign visibilityClass="protected"/>
-            <#else>
-                <#assign visibilityClass=""/>
-            </#if>
-            <@orcid.grantDetails grant/>
-        </#list>
-    </ul>
-<#else>
-    <div class="alert alert-info">
-        <strong><#if (publicProfile)?? && publicProfile == true>${springMacroRequestContext.getMessage("workspace_grants_body_list.Nograntsaddedyet")}<#else>${springMacroRequestContext.getMessage("workspace_grants_body_list.havenotadd")}</#if></strong>
-    </div>
-</#if>
+
+<#include "includes/affiliate/del_grant_inc.ftl"/>
+
+<#include "includes/grant/add_grant_inc.ftl"/>
+<div ng-controller="GrantCtrl">
+	<!-- Grants -->
+	<div id="workspace-grants" class="workspace-accordion-item workspace-accordion-active" >
+		<div class="workspace-accordion-header"><a name='workspace-grants' />
+		    <a href="" ng-click="workspaceSrvc.toggleGrants()" class="toggle-text">
+		  		<i class="glyphicon-chevron-down glyphicon x0" ng-class="{'glyphicon-chevron-right':workspaceSrvc.displayGrants==false}"></i></a>
+		   	</a> 
+		    <a href="" ng-click="workspaceSrvc.toggleGrants()" class="toggle-text"><@orcid.msg 'org.orcid.jaxb.model.message.GrantType.grant'/></a>
+			<a href="" class="label btn-primary" ng-click="addGrantModal()"><@orcid.msg 'manual_grant_form_contents.add_grant_manually'/></a>
+		</div>
+		<div ng-show="workspaceSrvc.displayGrants" class="workspace-accordion-content">
+			<#include "includes/grant/body_grant_inc.ftl" />
+		</div>
+	</div>		
+</div>

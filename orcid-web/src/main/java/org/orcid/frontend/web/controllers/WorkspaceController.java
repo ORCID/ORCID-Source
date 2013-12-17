@@ -127,7 +127,7 @@ public class WorkspaceController extends BaseWorkspaceController {
     public Map<String, String> retrieveCurrencyCodesTypesAsMap() {
         Map<String, String> currencyCodeTypes = new LinkedHashMap<String, String>();
         for (CurrencyCode currencyCode : CurrencyCode.values()) {
-        	currencyCodeTypes.put(currencyCode.value(), getMessage(buildInternationalizationKey(GrantType.class, currencyCode.value())));
+        	currencyCodeTypes.put(currencyCode.value(), currencyCode.value());
         }
         return FunctionsOverCollections.sortMapsByValues(currencyCodeTypes);
     }

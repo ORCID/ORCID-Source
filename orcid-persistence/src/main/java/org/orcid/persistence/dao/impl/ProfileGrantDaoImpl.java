@@ -30,7 +30,7 @@ public class ProfileGrantDaoImpl extends GenericDaoImpl<ProfileGrantEntity, Long
     }
 	
 	/**
-     * Removes the relationship that exists between a funding and a profile.
+     * Removes the relationship that exists between a grant and a profile.
      * 
      * @param profileGrantId
      *            The id of the profileGrant that will be removed from the client
@@ -49,7 +49,7 @@ public class ProfileGrantDaoImpl extends GenericDaoImpl<ProfileGrantEntity, Long
 	}
 	
 	/**
-     * Updates the visibility of an existing profile funding relationship
+     * Updates the visibility of an existing profile grant relationship
      * 
      * @param clientOrcid
      *            The client orcid
@@ -58,7 +58,7 @@ public class ProfileGrantDaoImpl extends GenericDaoImpl<ProfileGrantEntity, Long
      *            The id of the profile grant that will be updated
      * 
      * @param visibility
-     *            The new visibility value for the profile orgFundingRelationId relationship
+     *            The new visibility value for the profile profileGrant object
      * 
      * @return true if the relationship was updated
      * */
@@ -78,7 +78,7 @@ public class ProfileGrantDaoImpl extends GenericDaoImpl<ProfileGrantEntity, Long
 	 * @param newProfileGrantEntity
 	 * 		The object to be persisted
 	 * @return the created newProfileGrantEntity with the id assigned on database
-	 * */	
+	 * */
 	@Override
 	@Transactional
 	public ProfileGrantEntity addProfileGrant(ProfileGrantEntity newProfileGrantEntity) {
@@ -87,7 +87,7 @@ public class ProfileGrantDaoImpl extends GenericDaoImpl<ProfileGrantEntity, Long
 	}
 	
 	/**
-     * Get the funding associated with the client orcid and the organization id
+     * Get the grant associated with the client orcid and the organization id
      * 
      * @param clientOrcid
      *            The client orcid
@@ -98,7 +98,7 @@ public class ProfileGrantDaoImpl extends GenericDaoImpl<ProfileGrantEntity, Long
      * @return the ProfileGrantEntity object
      * */
 	@Override
-	public ProfileGrantEntity getOrgFundingRelation(String orgId, String clientOrcid) {
+	public ProfileGrantEntity getProfileGrantEntity(String orgId, String clientOrcid) {
 		Query query = entityManager.createQuery("from ProfileGrantEntity where profile.id=:clientOrcid and org.id=:orgId");
 		query.setParameter("clientOrcid", clientOrcid);
 		query.setParameter("orgId", Long.valueOf(orgId));
@@ -106,15 +106,15 @@ public class ProfileGrantDaoImpl extends GenericDaoImpl<ProfileGrantEntity, Long
 	}
 	
 	/**
-     * Get the funding associated with the given profileGrant id
+     * Get the grant associated with the given profileGrant id
      * 
      * @param profileGrantId
-     *            The id of the orgFundingRelation object
+     *            The id of the ProfileGrantEntity object
      * 
      * @return the ProfileGrantEntity object
      * */
 	@Override
-	public ProfileGrantEntity getOrgFundingRelation(String profileGrantId) {
+	public ProfileGrantEntity getProfileGrantEntity(String profileGrantId) {
 		Query query = entityManager.createQuery("from ProfileGrantEntity where id=:id");
 		query.setParameter("id", Long.valueOf(profileGrantId));
 		return (ProfileGrantEntity) query.getSingleResult();

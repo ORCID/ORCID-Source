@@ -52,7 +52,7 @@
     <![endif]-->
 </div>
 <div ng-show="grantsSrvc.loading == false && grantsSrvc.grants.length == 0" class="alert alert-info" ng-cloak>
-    <strong><#if (publicProfile)?? && publicProfile == true><@orcid.msg 'workspace_grants_body_list.nograntaddedyet' /><#else><@orcid.msg 'workspace_grants.havenotaddaffiliation' /><a ng-click="addGrantModal()"><@orcid.msg 'workspace_grants_body_list.addsomenow'/></a></#if></strong>
+    <strong><#if (publicProfile)?? && publicProfile == true><@orcid.msg 'workspace_grants_body_list.nograntaddedyet' /><#else><@orcid.msg 'workspace_grants.havenotaddaffiliation' /><a ng-click="addGrantModal()"> <@orcid.msg 'workspace_grants_body_list.addsomenow'/></a></#if></strong>
 </div>
 
 

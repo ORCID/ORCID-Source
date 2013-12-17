@@ -165,6 +165,7 @@ orcidNgModule.factory("workspaceSrvc", ['$rootScope', function ($rootScope) {
 			displayAffiliations: true,
 			displayEducation: true,
 			displayEmployment: true,
+			displayGrants: true, 
 			displayPersonalInfo: true,
 			displayWorks: true,
 			toggleAffiliations: function() {
@@ -175,6 +176,9 @@ orcidNgModule.factory("workspaceSrvc", ['$rootScope', function ($rootScope) {
 			},
 			toggleEmployment: function() {
 				serv.displayEmployment = !serv.displayEmployment;
+			},
+			toggleGrants: function() {
+				serv.displayGrants = !serv.displayGrants;
 			},
 			togglePersonalInfo: function() {
 				serv.displayPersonalInfo = !serv.displayPersonalInfo;

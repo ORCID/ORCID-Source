@@ -33,9 +33,8 @@ import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.persistence.dao.GrantExternalIdentifierDao;
 import org.orcid.persistence.dao.OrgDisambiguatedDao;
 import org.orcid.persistence.dao.OrgDisambiguatedSolrDao;
-import org.orcid.persistence.dao.ProfileGrantDao;
 import org.orcid.persistence.dao.ProfileDao;
-import org.orcid.persistence.jpa.entities.CountryIsoEntity;
+import org.orcid.persistence.dao.ProfileGrantDao;
 import org.orcid.persistence.jpa.entities.OrgDisambiguatedEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileGrantEntity;
@@ -89,7 +88,7 @@ public class GrantsController extends BaseWorkspaceController {
      * */
     @RequestMapping(value = "/grant.json", method = RequestMethod.GET)
     public @ResponseBody
-    GrantForm getFunding(HttpServletRequest request) { 
+    GrantForm getGrant(HttpServletRequest request) { 
     	GrantForm result = new GrantForm();
     	result.setAmount(new Text());    	
     	result.setCurrencyCode(new Text());
@@ -210,7 +209,7 @@ public class GrantsController extends BaseWorkspaceController {
      * */
     @RequestMapping(value = "/grant.json", method = RequestMethod.POST)
     public @ResponseBody
-    GrantForm postFunding(HttpServletRequest request, GrantForm grant) {
+    GrantForm postGrant(HttpServletRequest request, GrantForm grant) {
     	validateName(grant);
     	validateAmount(grant);
     	validateCurrency(grant);
@@ -239,7 +238,7 @@ public class GrantsController extends BaseWorkspaceController {
     	// If there are no errors, persist to DB
     	if (grant.getErrors().isEmpty()) {
     		ProfileEntity userProfile = profileDao.find(getEffectiveUserOrcid());
-    		ProfileGrantEntity orgProfileGrantEntity = jaxb2JpaAdapter.getNewProfileGrantEntity(grant.toFunding(), userProfile);
+    		ProfileGrantEntity orgProfileGrantEntity = jaxb2JpaAdapter.getNewProfileGrantEntity(grant.toOrcidGrant(), userProfile);
     		orgProfileGrantEntity.setSource(userProfile);
     		profileGrantDao.persist(orgProfileGrantEntity);
     	}

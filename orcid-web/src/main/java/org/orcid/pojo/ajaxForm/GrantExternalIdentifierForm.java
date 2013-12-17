@@ -52,20 +52,20 @@ public class GrantExternalIdentifierForm implements ErrorsInterface, Serializabl
 		this.url = url;
 	}
 
-	public static GrantExternalIdentifierForm valueOf(GrantExternalIdentifier fundingExternalIdentifier){
+	public static GrantExternalIdentifierForm valueOf(GrantExternalIdentifier grantExternalIdentifier){
 		GrantExternalIdentifierForm result = new GrantExternalIdentifierForm();
-		if(!StringUtil.isEmpty(fundingExternalIdentifier.getPutCode()))
-			result.setPutCode(Text.valueOf(fundingExternalIdentifier.getPutCode()));
-		if(!StringUtil.isEmpty(fundingExternalIdentifier.getType()))
-			result.setType(Text.valueOf(fundingExternalIdentifier.getType()));
-		if(fundingExternalIdentifier.getUrl() != null && !StringUtil.isEmpty(fundingExternalIdentifier.getUrl().getValue()))
-			result.setUrl(Text.valueOf(fundingExternalIdentifier.getUrl().getValue()));
-		if(!StringUtil.isEmpty(fundingExternalIdentifier.getValue()))
-			result.setValue(Text.valueOf(fundingExternalIdentifier.getValue()));
+		if(!StringUtil.isEmpty(grantExternalIdentifier.getPutCode()))
+			result.setPutCode(Text.valueOf(grantExternalIdentifier.getPutCode()));
+		if(!StringUtil.isEmpty(grantExternalIdentifier.getType()))
+			result.setType(Text.valueOf(grantExternalIdentifier.getType()));
+		if(grantExternalIdentifier.getUrl() != null && !StringUtil.isEmpty(grantExternalIdentifier.getUrl().getValue()))
+			result.setUrl(Text.valueOf(grantExternalIdentifier.getUrl().getValue()));
+		if(!StringUtil.isEmpty(grantExternalIdentifier.getValue()))
+			result.setValue(Text.valueOf(grantExternalIdentifier.getValue()));
 		return result;
 	}
 	
-	public GrantExternalIdentifier toFundingExternalIdentifier() {
+	public GrantExternalIdentifier toGrantExternalIdentifier() {
 		GrantExternalIdentifier result = new GrantExternalIdentifier();
 		if(!PojoUtil.isEmpty(putCode))
 			result.setPutCode(putCode.getValue());

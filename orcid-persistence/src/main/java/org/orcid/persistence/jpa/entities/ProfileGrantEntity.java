@@ -55,7 +55,7 @@ public class ProfileGrantEntity extends BaseEntity<Long> implements Comparable<P
 
     private static final long serialVersionUID = -3187757614938904392L;
 
-    private static final String ORG_FUNDING = "orgFunding";	
+    private static final String PROFILE_GRANT = "profileGrant";	
 
 	private Long id;
     private OrgEntity org;
@@ -96,8 +96,8 @@ public class ProfileGrantEntity extends BaseEntity<Long> implements Comparable<P
 	}
 
 	@Override
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "orcid", nullable = false, updatable = false, insertable = true)
+	@ManyToOne(cascade = { CascadeType.REFRESH }, fetch = FetchType.EAGER)
+    @JoinColumn(name = "orcid", nullable = false)
 	public ProfileEntity getProfile() {
 		return profile;
 	}
@@ -199,7 +199,7 @@ public class ProfileGrantEntity extends BaseEntity<Long> implements Comparable<P
 		this.visibility = visibility;
 	}
 
-	@OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.LAZY, mappedBy = ORG_FUNDING, orphanRemoval = true)
+	@OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.LAZY, mappedBy = PROFILE_GRANT, orphanRemoval = true)
 	@Fetch(FetchMode.SUBSELECT)
     @Sort(type = SortType.NATURAL)
 	public SortedSet<GrantExternalIdentifierEntity> getExternalIdentifiers() {
@@ -210,8 +210,8 @@ public class ProfileGrantEntity extends BaseEntity<Long> implements Comparable<P
 		this.externalIdentifiers = externalIdentifiers;
 	}
 
-	@ManyToOne
-	@JoinColumn(name = "orcid")
+	@ManyToOne(cascade = { CascadeType.REFRESH }, fetch = FetchType.EAGER)
+	@JoinColumn(name = "source_id", nullable = true, updatable = false)
 	public ProfileEntity getSource() {
 		return source;
 	}
