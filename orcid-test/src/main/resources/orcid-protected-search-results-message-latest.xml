@@ -18,9 +18,9 @@
 
 -->
 <orcid-message xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.orcid.org/ns/orcid ../../../../orcid-model/src/main/resources/orcid-message-1.2_rc1.xsd"
+	xsi:schemaLocation="http://www.orcid.org/ns/orcid ../../../../orcid-model/src/main/resources/orcid-message-1.2_rc2.xsd"
 	xmlns="http://www.orcid.org/ns/orcid">
-	<message-version>1.2_rc1</message-version>
+	<message-version>1.2_rc2</message-version>
 	<!-- Error message, if applicable -->
 	<!-- Unable to connect to ORCID, no matching researchers, etc. -->
 	<!-- <error-desc>No researcher found.</error-desc> -->

@@ -20,7 +20,7 @@
 <@public >
 <#escape x as x?html>
 <div class="row workspace-top public-profile">
-    <div class="col-md-3">
+    <div class="col-md-3 left-aside">
         <div class="workspace-left workspace-profile">
             <h2 class="full-name">
                 <#if (profile.orcidBio.personalDetails.creditName.content)??>
@@ -29,7 +29,12 @@
                     ${(profile.orcidBio.personalDetails.givenNames.content)!} ${(profile.orcidBio.personalDetails.familyName.content)!}
                 </#if>
             </h2>
-            <p><small id="orcid-id" class="orcid-id">${baseUriHttp}/${(profile.orcid.value)!}</small></p>
+            <div class="oid">
+            	<p class="orcid-id-container">		
+	            	<span class="mini-orcid-icon"></span>
+	            	<a href="${baseUriHttp}/${(profile.orcid.value)!}" id="orcid-id" class="orcid-id" title="Click for public view of ORCID iD">${baseUriHttp}/${(profile.orcid.value)!}</a>
+            	<p>
+            </div>            
             <#if (profile.orcidBio.personalDetails.otherNames)?? && (profile.orcidBio.personalDetails.otherNames.otherName?size != 0)>
                 <p><strong>${springMacroRequestContext.getMessage("public_profile.labelAlsoknownas")}</strong><br />
                   <#list profile.orcidBio.personalDetails.otherNames.otherName as otherName>
@@ -66,7 +71,7 @@
             </#if>
         </div>
     </div>
-    <div class="col-md-9">
+    <div class="col-md-9 right-aside">
         <div class="workspace-right">
         	<#if (deprecated)??>
 	        	<div class="alert alert-error readme">

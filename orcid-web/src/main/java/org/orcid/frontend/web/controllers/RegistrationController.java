@@ -231,7 +231,7 @@ public class RegistrationController extends BaseController {
 
         OrcidHistory orcidHistory = new OrcidHistory();
         orcidHistory.setClaimed(new Claimed(true));
-        orcidHistory.setCreationMethod(CreationMethod.WEBSITE);
+        orcidHistory.setCreationMethod(CreationMethod.fromValue(reg.getCreationType().getValue()));
 
         profile.setOrcidHistory(orcidHistory);
         orcidHistory.setSubmissionDate(new SubmissionDate(DateUtils.convertToXMLGregorianCalendar(new Date())));
