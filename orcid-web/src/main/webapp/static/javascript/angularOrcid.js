@@ -1815,6 +1815,7 @@ function AffiliationCtrl($scope, $compile, $filter, affiliationsSrvc, workspaceS
 function GrantCtrl($scope, $compile, $filter, grantsSrvc, workspaceSrvc) {	
 	$scope.workspaceSrvc = workspaceSrvc;
 	$scope.grantsSrvc = grantsSrvc;
+	$scope.addingGrant = false;
 	$scope.editGrant = null;
 	$scope.disambiguatedGrant = null;
 	
@@ -1822,17 +1823,17 @@ function GrantCtrl($scope, $compile, $filter, grantsSrvc, workspaceSrvc) {
 		$.ajax({
 			url: $('body').data('baseurl') + 'grants/grant.json',
 			dataType: 'json',
-			success: function(data) {
-				$scope.editGrant = data;				
+			success: function(data) {						
 				$scope.$apply(function() {
+					$scope.editGrant = data;
 					$scope.showAddModal();
+					console.log(angular.toJson($scope.editGrant));
 				});
 			}
 		}).fail(function() { 
 	    	console.log("Error fetching affiliation: " + value);
 	    });
 	};
-	
 	
 	$scope.showAddModal = function(){
 		$.colorbox({        	
@@ -1844,6 +1845,34 @@ function GrantCtrl($scope, $compile, $filter, grantsSrvc, workspaceSrvc) {
 				$scope.bindTypeahead();
 			}
 	    });
+	};
+	
+	$scope.addGrant = function(){
+		if ($scope.addingGrant) return; // don't process if adding grant
+		$scope.addingGrant = true;
+		$scope.editGrant.errors.length = 0;
+		$.ajax({
+			url: $('body').data('baseurl') + 'grants/grant.json',
+	        contentType: 'application/json;charset=UTF-8',
+	        dataType: 'json',
+	        type: 'POST',
+	        data:  angular.toJson($scope.editGrant),
+	        success: function(data) {
+	        	if (data.errors.length == 0){
+	        		$.colorbox.close(); 	        		
+	        		grantsSrvc.getGrants('grants/grantIds.json');
+	        	} else {
+		        	$scope.editGrant = data;
+		        	$scope.copyErrorsLeft($scope.editGrant, data);
+		        	$scope.$apply();
+	        	}
+	        	$scope.addingGrant = false;
+	        }
+		}).fail(function(){
+			// something bad is happening!
+			$scope.addingGrant = false;
+	    	console.log("error adding affiliations");
+		});
 	};
 	
 	$scope.bindTypeahead = function () {
@@ -1870,6 +1899,10 @@ function GrantCtrl($scope, $compile, $filter, grantsSrvc, workspaceSrvc) {
 	$scope.selectGrant = function(datum) {
 		if (datum != undefined && datum != null) {
 			$scope.editGrant.grantName.value = datum.value;
+			$scope.editGrant.city.value = datum.city;
+			$scope.editGrant.region.value = datum.region;
+			$scope.editGrant.country.value = datum.country;
+			
 			if (datum.disambiguatedAffiliationIdentifier != undefined && datum.disambiguatedAffiliationIdentifier != null) {
 				$scope.getDisambiguatedGrant(datum.disambiguatedAffiliationIdentifier);
 				$scope.unbindTypeahead();
@@ -1938,6 +1971,7 @@ function GrantCtrl($scope, $compile, $filter, grantsSrvc, workspaceSrvc) {
 	
 	// Server validations
 	$scope.serverValidate = function (relativePath) {
+		console.log(angular.toJson($scope.editGrant));
 		$.ajax({
 	        url: $('body').data('baseurl') + relativePath,
 	        type: 'POST',
@@ -1965,6 +1999,14 @@ function GrantCtrl($scope, $compile, $filter, grantsSrvc, workspaceSrvc) {
 				}
 			};
 		};
+	};
+	
+	$scope.unbindTypeahead = function () {
+		$('#grantName').typeahead('destroy');
+	};
+	
+	$scope.addExternalIdentifier = function () {
+		$scope.editGrant.externalIdentifiers.push({putCode: { value: ""}, type: {value: ""}, value: {value: ""}, url: {value: ""} });
 	};
 }
 

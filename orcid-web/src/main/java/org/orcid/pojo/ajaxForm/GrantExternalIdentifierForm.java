@@ -1,10 +1,25 @@
+/**
+ * =============================================================================
+ *
+ * ORCID (R) Open Source
+ * http://orcid.org
+ *
+ * Copyright (c) 2012-2013 ORCID, Inc.
+ * Licensed under an MIT-Style License (MIT)
+ * http://orcid.org/open-source-license
+ *
+ * This copyright and license information (including a link to the full license)
+ * shall be included in its entirety in all copies or substantial portion of
+ * the software.
+ *
+ * =============================================================================
+ */
 package org.orcid.pojo.ajaxForm;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.hsqldb.lib.StringUtil;
 import org.orcid.jaxb.model.message.GrantExternalIdentifier;
 import org.orcid.jaxb.model.message.Url;
 
@@ -19,7 +34,7 @@ public class GrantExternalIdentifierForm implements ErrorsInterface, Serializabl
     private Text value;
     private Text url;
     
-	@Override
+	@Override 
 	public List<String> getErrors() {
 		return this.errors;
 	}
@@ -54,13 +69,13 @@ public class GrantExternalIdentifierForm implements ErrorsInterface, Serializabl
 
 	public static GrantExternalIdentifierForm valueOf(GrantExternalIdentifier grantExternalIdentifier){
 		GrantExternalIdentifierForm result = new GrantExternalIdentifierForm();
-		if(!StringUtil.isEmpty(grantExternalIdentifier.getPutCode()))
+		if(!PojoUtil.isEmpty(grantExternalIdentifier.getPutCode()))
 			result.setPutCode(Text.valueOf(grantExternalIdentifier.getPutCode()));
-		if(!StringUtil.isEmpty(grantExternalIdentifier.getType()))
+		if(grantExternalIdentifier.getType() != null)
 			result.setType(Text.valueOf(grantExternalIdentifier.getType()));
-		if(grantExternalIdentifier.getUrl() != null && !StringUtil.isEmpty(grantExternalIdentifier.getUrl().getValue()))
+		if(grantExternalIdentifier.getUrl() != null && !PojoUtil.isEmpty(grantExternalIdentifier.getUrl().getValue()))
 			result.setUrl(Text.valueOf(grantExternalIdentifier.getUrl().getValue()));
-		if(!StringUtil.isEmpty(grantExternalIdentifier.getValue()))
+		if(!PojoUtil.isEmpty(grantExternalIdentifier.getValue()))
 			result.setValue(Text.valueOf(grantExternalIdentifier.getValue()));
 		return result;
 	}

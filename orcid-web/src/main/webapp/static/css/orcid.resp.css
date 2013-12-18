@@ -3031,6 +3031,14 @@ p.orcid-id-container{
 	float: left;
 }
 
+#currencyCode {
+	width: 20%;
+}
+
+#grantAmount {
+	width: 53%;
+}
+
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */
 		

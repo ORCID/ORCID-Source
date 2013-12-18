@@ -93,9 +93,7 @@ public class GrantsController extends BaseWorkspaceController {
     	GrantForm result = new GrantForm();
     	result.setAmount(new Text());    	
     	result.setCurrencyCode(new Text());
-    	result.setDescription(new Text());
-    	result.setDisambiguatedGrantSourceId(new Text());
-    	result.setDisambiguationSource(new Text());    	    	
+    	result.setDescription(new Text());    	  	    
     	result.setGrantName(new Text());
     	result.setGrantType(new Text());
     	result.setSourceName(new String());    	
@@ -121,7 +119,8 @@ public class GrantsController extends BaseWorkspaceController {
         c.setEmail(new Text());
         c.setCreditName(new Text());
         c.setContributorRole(new Text());
-        c.setContributorSequence(new Text());
+        c.setContributorSequence(new Text());        
+        c.setUri(new Text());
         emptyContributors.add(c);
         result.setContributors(emptyContributors);
                 
@@ -230,7 +229,7 @@ public class GrantsController extends BaseWorkspaceController {
      * */
     @RequestMapping(value = "/grant.json", method = RequestMethod.POST)
     public @ResponseBody
-    GrantForm postGrant(HttpServletRequest request, GrantForm grant) {
+    GrantForm postGrant(HttpServletRequest request, @RequestBody GrantForm grant) {
     	validateName(grant);
     	validateAmount(grant);
     	validateCurrency(grant);
@@ -240,6 +239,9 @@ public class GrantsController extends BaseWorkspaceController {
     	validateDates(grant);
     	validateExternalIdentifiers(grant);
     	validateType(grant);
+    	validateCity(grant);
+    	validateRegion(grant);
+    	validateCountry(grant);
     	
     	copyErrors(grant.getGrantName(), grant);
     	copyErrors(grant.getAmount(), grant);
@@ -272,9 +274,9 @@ public class GrantsController extends BaseWorkspaceController {
      * */
     @RequestMapping(value = "/grant/amountValidate.json", method = RequestMethod.POST)
     public @ResponseBody
-    GrantForm validateAmount(GrantForm grant) {    	
+    GrantForm validateAmount(@RequestBody GrantForm grant) {    	
     	grant.getAmount().setErrors(new ArrayList<String>());
-    	if(PojoUtil.isEmpty(grant.getAmount())) {
+    	if(PojoUtil.isEmpty(grant.getAmount())) { 
     		setError(grant.getAmount(), "NotBlank.grant.amount");
     	} else {
     		String amount = grant.getAmount().getValue();
@@ -293,7 +295,7 @@ public class GrantsController extends BaseWorkspaceController {
     
     @RequestMapping(value = "/grant/currencyValidate.json", method = RequestMethod.POST)
     public @ResponseBody
-    GrantForm validateCurrency(GrantForm grant) {
+    GrantForm validateCurrency(@RequestBody GrantForm grant) {
     	grant.getCurrencyCode().setErrors(new ArrayList<String>());
     	if(PojoUtil.isEmpty(grant.getCurrencyCode())) {
     		setError(grant.getCurrencyCode(), "NotBlank.grant.currency");
@@ -309,7 +311,7 @@ public class GrantsController extends BaseWorkspaceController {
     
     @RequestMapping(value = "/grant/nameValidate.json", method = RequestMethod.POST)
     public @ResponseBody
-    GrantForm validateName(GrantForm grant) {
+    GrantForm validateName(@RequestBody GrantForm grant) {
     	grant.getGrantName().setErrors(new ArrayList<String>());
         if (grant.getGrantName().getValue() == null || grant.getGrantName().getValue().trim().length() == 0) {
             setError(grant.getGrantName(), "NotBlank.grant.name");
@@ -323,7 +325,7 @@ public class GrantsController extends BaseWorkspaceController {
     
     @RequestMapping(value = "/grant/titleValidate.json", method = RequestMethod.POST)
     public @ResponseBody
-    GrantForm validateTitle(GrantForm grant) {
+    GrantForm validateTitle(@RequestBody GrantForm grant) {
     	grant.getTitle().setErrors(new ArrayList<String>());
     	if(PojoUtil.isEmpty(grant.getTitle())) {
     		setError(grant.getTitle(), "NotBlank.grant.title");
@@ -336,18 +338,18 @@ public class GrantsController extends BaseWorkspaceController {
     
     @RequestMapping(value = "/grant/descriptionValidate.json", method = RequestMethod.POST)
     public @ResponseBody
-    GrantForm validateDescription(GrantForm grant) {
-    	grant.getDescription().setErrors(new ArrayList<String>());
-   		if(grant.getDescription().getValue().length() > 5000)
+    GrantForm validateDescription(@RequestBody GrantForm grant) {
+    	grant.getDescription().setErrors(new ArrayList<String>());    	
+   		if(!PojoUtil.isEmpty(grant.getDescription()) && grant.getDescription().getValue().length() > 5000)
    			setError(grant.getDescription(), "grant.length_less_5000");
    		return grant;
     }
     
     @RequestMapping(value = "/grant/urlValidate.json", method = RequestMethod.POST)
     public @ResponseBody
-    GrantForm validateUrl(GrantForm grant) {
+    GrantForm validateUrl(@RequestBody GrantForm grant) {
     	grant.getUrl().setErrors(new ArrayList<String>());
-    	if(grant.getUrl().getValue().length() > 350)
+    	if(!PojoUtil.isEmpty(grant.getUrl()) && grant.getUrl().getValue().length() > 350)
     		setError(grant.getUrl(), "grant.length_less_350");
     	return grant;
     }
@@ -382,7 +384,7 @@ public class GrantsController extends BaseWorkspaceController {
     
     @RequestMapping(value = "/grant/typeValidate.json", method = RequestMethod.POST)
     public @ResponseBody
-    GrantForm validateType(GrantForm grant) {
+    GrantForm validateType(@RequestBody GrantForm grant) {
     	grant.getGrantType().setErrors(new ArrayList<String>());
     	if(PojoUtil.isEmpty(grant.getGrantType())) {
     		setError(grant.getGrantType(), "NotBlank.grant.type");
@@ -394,6 +396,40 @@ public class GrantsController extends BaseWorkspaceController {
     		}
     	}
     	return grant;
+    }
+    
+    @RequestMapping(value = "/grant/cityValidate.json", method = RequestMethod.POST)
+    public @ResponseBody
+    GrantForm validateCity(@RequestBody GrantForm grant) {
+    	grant.getCity().setErrors(new ArrayList<String>());
+        if (grant.getCity().getValue() == null || grant.getCity().getValue().trim().length() == 0) {
+            setError(grant.getCity(), "NotBlank.grant.city");
+        } else {
+            if (grant.getCity().getValue().trim().length() > 1000) {
+                setError(grant.getCity(), "grant.length_less_1000");
+            }
+        }
+        return grant;
+    }
+    
+    @RequestMapping(value = "/grant/regionValidate.json", method = RequestMethod.POST)
+    public @ResponseBody
+    GrantForm validateRegion(@RequestBody GrantForm grant) {
+    	grant.getRegion().setErrors(new ArrayList<String>());
+        if (grant.getRegion().getValue() != null && grant.getRegion().getValue().trim().length() > 1000) {
+            setError(grant.getRegion(), "grant.length_less_1000");
+        }
+        return grant;
+    }
+
+    @RequestMapping(value = "/grant/countryValidate.json", method = RequestMethod.POST)
+    public @ResponseBody
+    GrantForm validateCountry(@RequestBody GrantForm grant) {
+    	grant.getCountry().setErrors(new ArrayList<String>());
+        if (grant.getCountry().getValue() == null || grant.getCountry().getValue().trim().length() == 0) {
+            setError(grant.getCountry(), "NotBlank.grant.country");
+        }
+        return grant;
     }
     
     /**
@@ -417,6 +453,8 @@ public class GrantsController extends BaseWorkspaceController {
     private Map<String, String> createDatumFromOrgDisambiguated(OrgDisambiguatedSolrDocument orgDisambiguatedDocument) {
         Map<String, String> datum = new HashMap<>();
         datum.put("value", orgDisambiguatedDocument.getOrgDisambiguatedName());
+        datum.put("city", orgDisambiguatedDocument.getOrgDisambiguatedCity());
+        datum.put("region", orgDisambiguatedDocument.getOrgDisambiguatedRegion());
         datum.put("disambiguatedAffiliationIdentifier", Long.toString(orgDisambiguatedDocument.getOrgDisambiguatedId()));
         return datum;
     }
@@ -429,7 +467,9 @@ public class GrantsController extends BaseWorkspaceController {
     Map<String, String> getDisambiguated(@PathVariable("id") Long id) {
         OrgDisambiguatedEntity orgDisambiguatedEntity = orgDisambiguatedDao.find(id);
         Map<String, String> datum = new HashMap<>();
-        datum.put("value", orgDisambiguatedEntity.getName());        
+        datum.put("value", orgDisambiguatedEntity.getName()); 
+        datum.put("city", orgDisambiguatedEntity.getCity());
+        datum.put("region", orgDisambiguatedEntity.getRegion());
         datum.put("sourceId", orgDisambiguatedEntity.getSourceId());
         datum.put("sourceType", orgDisambiguatedEntity.getSourceType());
         return datum;

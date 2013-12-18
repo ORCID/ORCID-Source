@@ -67,7 +67,7 @@ public class GrantExternalIdentifierEntity extends BaseEntity<Long> implements C
 		this.profileGrant = profileGrant;
 	}
 	
-	@Column
+	@Column	
 	public String getType() {
 		return type;
 	}

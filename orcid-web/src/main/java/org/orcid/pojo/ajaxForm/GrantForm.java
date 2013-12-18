@@ -1,3 +1,19 @@
+/**
+ * =============================================================================
+ *
+ * ORCID (R) Open Source
+ * http://orcid.org
+ *
+ * Copyright (c) 2012-2013 ORCID, Inc.
+ * Licensed under an MIT-Style License (MIT)
+ * http://orcid.org/open-source-license
+ *
+ * This copyright and license information (including a link to the full license)
+ * shall be included in its entirety in all copies or substantial portion of
+ * the software.
+ *
+ * =============================================================================
+ */
 package org.orcid.pojo.ajaxForm;
 
 import java.io.Serializable;
@@ -10,9 +26,11 @@ import org.orcid.jaxb.model.message.DisambiguatedOrganization;
 import org.orcid.jaxb.model.message.GrantContributors;
 import org.orcid.jaxb.model.message.GrantExternalIdentifier;
 import org.orcid.jaxb.model.message.GrantType;
+import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.jaxb.model.message.OrcidGrant;
 import org.orcid.jaxb.model.message.OrcidGrantExternalIdentifiers;
 import org.orcid.jaxb.model.message.Organization;
+import org.orcid.jaxb.model.message.OrganizationAddress;
 import org.orcid.jaxb.model.message.Source;
 import org.orcid.jaxb.model.message.Url;
 
@@ -56,6 +74,12 @@ public class GrantForm implements ErrorsInterface, Serializable {
     private Text disambiguationSource;
     
     private String grantTypeForDisplay;
+    
+    private Text city;
+
+    private Text region;
+
+    private Text country;
 
     public List<String> getErrors() {
         return errors;
@@ -202,6 +226,30 @@ public class GrantForm implements ErrorsInterface, Serializable {
 	public void setGrantTypeForDisplay(String grantTypeForDisplay) {
 		this.grantTypeForDisplay = grantTypeForDisplay;
 	}
+	
+	public Text getCity() {
+		return city;
+	}
+
+	public void setCity(Text city) {
+		this.city = city;
+	}
+
+	public Text getRegion() {
+		return region;
+	}
+
+	public void setRegion(Text region) {
+		this.region = region;
+	}
+
+	public Text getCountry() {
+		return country;
+	}
+
+	public void setCountry(Text country) {
+		this.country = country;
+	}
 
 	public OrcidGrant toOrcidGrant() {
 		OrcidGrant result = new OrcidGrant();
@@ -213,11 +261,24 @@ public class GrantForm implements ErrorsInterface, Serializable {
 			result.setDescription(description.getValue());
 		if(!PojoUtil.isEmpty(endDate))
 			result.setEndDate(endDate.toFuzzyDate());
-				
+		if(!PojoUtil.isEmpty(putCode))
+			result.setPutCode(putCode.getValue());
+		if(!PojoUtil.isEmpty(startDate))
+			result.setStartDate(startDate.toFuzzyDate());
+		if(!PojoUtil.isEmpty(title))
+			result.setTitle(title.getValue());
+		if(!PojoUtil.isEmpty(grantType))
+			result.setType(GrantType.fromValue(grantType.getValue()));
+		if(!PojoUtil.isEmpty(url))
+			result.setUrl(new Url(url.getValue()));
+		if(visibility != null)
+			result.setVisibility(visibility.getVisibility());		
+		
 		if(contributors != null && !contributors.isEmpty()) {
 			GrantContributors gContributors = new GrantContributors();  
 			for(Contributor contributor : contributors){
-				gContributors.getContributor().add(contributor.toContributor());
+				if(!PojoUtil.isEmtpy(contributor))
+					gContributors.getContributor().add(contributor.toContributor());
 			}
 			result.setGrantContributors(gContributors);
 		}
@@ -230,9 +291,19 @@ public class GrantForm implements ErrorsInterface, Serializable {
 			result.setGrantExternalIdentifiers(gExternalIdentifiers);
 		}
 		
+		// Set Organization
 		Organization organization = new Organization();
 		if(!PojoUtil.isEmpty(grantName))
-			organization.setName(grantName.getValue());
+			organization.setName(grantName.getValue());		
+        OrganizationAddress organizationAddress = new OrganizationAddress();
+        organization.setAddress(organizationAddress);
+        organizationAddress.setCity(city.getValue());
+        if (!PojoUtil.isEmpty(region)) {
+            organizationAddress.setRegion(region.getValue());
+        }  
+        if (!PojoUtil.isEmpty(country)) {
+            organizationAddress.setCountry(Iso3166Country.fromValue(region.getValue()));
+        } 
 		if (!PojoUtil.isEmpty(disambiguatedGrantSourceId)) {
             organization.setDisambiguatedOrganization(new DisambiguatedOrganization());
             organization.getDisambiguatedOrganization().setDisambiguatedOrganizationIdentifier(disambiguatedGrantSourceId.getValue());
@@ -240,19 +311,6 @@ public class GrantForm implements ErrorsInterface, Serializable {
         }
 		
 		result.setOrganization(organization);
-		
-		if(!PojoUtil.isEmpty(putCode))
-			result.setPutCode(putCode.getValue());
-		if(!PojoUtil.isEmpty(startDate))
-			result.setStartDate(startDate.toFuzzyDate());
-		if(!PojoUtil.isEmpty(title))
-			result.setTitle(title.getValue());
-		if(!PojoUtil.isEmpty(grantType))
-			result.setType(GrantType.valueOf(grantType.getValue()));
-		if(!PojoUtil.isEmpty(url))
-			result.setUrl(new Url(url.getValue()));
-		if(visibility != null)
-			result.setVisibility(visibility.getVisibility());
 		return result;
 	}
 	
@@ -293,13 +351,22 @@ public class GrantForm implements ErrorsInterface, Serializable {
 		
 		// Set the disambiguated organization
 		Organization organization = grant.getOrganization();
-		result.setGrantName(Text.valueOf(organization.getName()));
+		result.setGrantName(Text.valueOf(organization.getName()));		
 		DisambiguatedOrganization disambiguatedOrganization = organization.getDisambiguatedOrganization(); 
 		if(disambiguatedOrganization != null) {
 			if(StringUtils.isNotEmpty(disambiguatedOrganization.getDisambiguatedOrganizationIdentifier())) {
 				result.setDisambiguatedGrantSourceId(Text.valueOf(disambiguatedOrganization.getDisambiguatedOrganizationIdentifier()));
 				result.setDisambiguationSource(Text.valueOf(disambiguatedOrganization.getDisambiguationSource()));
 			}			
+		}
+		OrganizationAddress organizationAddress = organization.getAddress();
+		if(organizationAddress != null) {
+			if(!PojoUtil.isEmpty(organizationAddress.getCity()))
+				result.setCity(Text.valueOf(organizationAddress.getCity()));
+			if(!PojoUtil.isEmpty(organizationAddress.getRegion()))
+				result.setRegion(Text.valueOf(organizationAddress.getRegion()));	
+			if(organizationAddress.getCountry() != null)
+				result.setCountry(Text.valueOf(organizationAddress.getCountry().value()));
 		}
 		
 		// Set contributors
