@@ -20,7 +20,7 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
 
-	<changeSet id="CREATE-FOUNDING-TABLES" author="Angel Montenegro">
+	<changeSet id="CREATE-GRANT-TABLES" author="Angel Montenegro">
 		<preConditions onFail="MARK_RAN">
 			<not>
 				<tableExists tableName="grant_external_identifier" />
@@ -52,9 +52,6 @@
 			<column name="title" type="VARCHAR(1000)">
 				<constraints nullable="false" />
 			</column>
-			<column name="description" type="VARCHAR(5000)">
-				<constraints nullable="false" />
-			</column>
 			<column name="type" type="VARCHAR(25)">
 				<constraints nullable="false" />
 			</column>
@@ -64,6 +61,7 @@
 			<column name="amount" type="VARCHAR(100)">
 				<constraints nullable="false" />
 			</column>
+			<column name="description" type="VARCHAR(5000)" />
 			<column name="start_day" type="integer" />
 			<column name="start_month" type="integer" />
 			<column name="start_year" type="integer" />

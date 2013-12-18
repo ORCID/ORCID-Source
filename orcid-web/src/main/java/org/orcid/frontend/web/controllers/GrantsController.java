@@ -27,9 +27,9 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 import org.orcid.core.adapter.Jaxb2JpaAdapter;
+import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
 import org.orcid.jaxb.model.message.CurrencyCode;
 import org.orcid.jaxb.model.message.GrantType;
-import org.orcid.jaxb.model.message.OrcidActivities;
 import org.orcid.jaxb.model.message.OrcidGrant;
 import org.orcid.jaxb.model.message.OrcidGrants;
 import org.orcid.jaxb.model.message.OrcidProfile;
@@ -267,40 +267,48 @@ public class GrantsController extends BaseWorkspaceController {
     	
     	// If there are no errors, persist to DB
     	if (grant.getErrors().isEmpty()) {
+    		//Set the credit name
+    		setContributorsCreditName(grant);
     		//Update on database
     		ProfileEntity userProfile = profileDao.find(getEffectiveUserOrcid());
-    		ProfileGrantEntity orgProfileGrantEntity = jaxb2JpaAdapter.getNewProfileGrantEntity(grant.toOrcidGrant(), userProfile);
-    		orgProfileGrantEntity.setSource(userProfile);
+    		ProfileGrantEntity profileGrantEntity = jaxb2JpaAdapter.getNewProfileGrantEntity(grant.toOrcidGrant(), userProfile);
+    		profileGrantEntity.setSource(userProfile);
     		// Persists the profile grant object
-    		profileGrantDao.createProfileGrant(orgProfileGrantEntity);
+    		ProfileGrantEntity newProfileGrant = profileGrantDao.createProfileGrant(profileGrantEntity);
     		
     		// Persist the external identifiers
-    		SortedSet<GrantExternalIdentifierEntity> externalIdentifiers = orgProfileGrantEntity.getExternalIdentifiers();
-    		for(GrantExternalIdentifierEntity externalIdentifier : externalIdentifiers) {
-    			grantExternalIdentifierDao.createGrantExternalIdentifier(externalIdentifier);
-    		} 
+    		SortedSet<GrantExternalIdentifierEntity> externalIdentifiers = profileGrantEntity.getExternalIdentifiers();
     		
-    		//Update cached object
-    		OrcidProfile currentProfile = getEffectiveProfile();
-    		if(currentProfile.getOrcidActivities() != null) {
-    			if(currentProfile.getOrcidActivities().getOrcidGrants() == null){
-    				currentProfile.getOrcidActivities().getOrcidGrants().getOrcidGrant().add(grant.toOrcidGrant());
-    			} else {
-    				OrcidGrants grants = new OrcidGrants();
-    				grants.getOrcidGrant().add(grant.toOrcidGrant());
-    				currentProfile.getOrcidActivities().setOrcidGrants(grants);
+    		if(externalIdentifiers != null && !externalIdentifiers.isEmpty()) {
+    			for(GrantExternalIdentifierEntity externalIdentifier : externalIdentifiers) {
+    				externalIdentifier.setProfileGrant(newProfileGrant);    				
+    				grantExternalIdentifierDao.createGrantExternalIdentifier(externalIdentifier);
     			}
-    		} else {
-    			OrcidActivities activities = new OrcidActivities();
-    			OrcidGrants grants = new OrcidGrants();
-				grants.getOrcidGrant().add(grant.toOrcidGrant());
-				currentProfile.getOrcidActivities().setOrcidGrants(grants);
-    			activities.setOrcidGrants(grants);
-    			currentProfile.setOrcidActivities(activities);
     		}
     	}
     	
     	return grant;
+    }
+    
+    private void setContributorsCreditName(GrantForm grant) {
+    	OrcidProfile profile = getEffectiveProfile();
+    	String creditName = null;
+    	Visibility creditNameVisibility = null;
+    	if(profile.getOrcidBio() != null && profile.getOrcidBio().getPersonalDetails() != null && profile.getOrcidBio().getPersonalDetails().getCreditName() != null) {
+    		creditName = profile.getOrcidBio().getPersonalDetails().getCreditName().getContent();
+    		creditNameVisibility = Visibility.valueOf(profile.getOrcidBio().getPersonalDetails().getCreditName().getVisibility());
+    	}
+    	if(grant != null && grant.getContributors() != null && !grant.getContributors().isEmpty()) {
+    		for(Contributor contributor : grant.getContributors()){
+    			if(!PojoUtil.isEmpty(creditName))
+    				contributor.setCreditName(Text.valueOf(creditName));
+    			if(creditNameVisibility != null) {
+    				contributor.setCreditNameVisibility(creditNameVisibility);
+    			} else {
+    				contributor.setCreditNameVisibility(Visibility.valueOf(OrcidVisibilityDefaults.CREDIT_NAME_DEFAULT.getVisibility()));
+    			}
+    		}
+    	}
     }
     
     /**
