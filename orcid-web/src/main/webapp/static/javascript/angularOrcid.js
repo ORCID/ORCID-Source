@@ -283,6 +283,31 @@ orcidNgModule.factory("grantsSrvc", ['$rootScope', function ($rootScope) {
 	    	    	console.log("error fetching grants");
 	    		});
 	    	},
+	    	deleteGrant: function(grant) {
+				var arr = serv.grants;				
+				var idx;
+				for (idx in arr) {
+					if (arr[idx].putCode.value == grant.putCode.value) {
+						break;
+					}
+				}
+				arr.splice(idx, 1);
+	    		$.ajax({
+	    	        url: $('body').data('baseurl') + 'grants/grant.json',
+	    	        type: 'DELETE',
+	    	        data: angular.toJson(grant),
+	    	        contentType: 'application/json;charset=UTF-8',
+	    	        dataType: 'json',
+	    	        success: function(data) {	        	
+	    	        	if(data.errors.length != 0){
+	    	        		console.log("Unable to delete grant.");
+	    	        	}
+	    	        	$rootScope.$apply();
+	    	        }
+	    	    }).fail(function() { 
+	    	    	console.log("Error deleting grant.");
+	    	    });
+	    	}
 	};
 	return serv;
 }]);
@@ -1869,6 +1894,20 @@ function GrantCtrl($scope, $compile, $filter, grantsSrvc, workspaceSrvc) {
 		}).fail(function(){
 	    	console.log("error getDisambiguatedGrant(id)");
 		});
+	};
+	
+	$scope.deleteGrant = function(grant) {
+		$scope.delGrant = grant;
+				
+		$.colorbox({        	            
+            html : $compile($('#delete-grant-modal').html())($scope),
+            onComplete: function() {$.colorbox.resize();}
+        });
+	};
+	
+	$scope.confirmDeleteGrant = function(delGrant) {		
+		grantsSrvc.deleteGrant(delGrant);
+		$.colorbox.close(); 
 	};
 	
 	//init

@@ -17,7 +17,7 @@
 
 -->
 
-<#include "includes/affiliate/del_grant_inc.ftl"/>
+<#include "includes/grant/del_grant_inc.ftl"/>
 
 <#include "includes/grant/add_grant_inc.ftl"/>
 <div ng-controller="GrantCtrl">

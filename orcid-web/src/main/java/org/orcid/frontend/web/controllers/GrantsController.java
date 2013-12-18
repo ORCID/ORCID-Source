@@ -18,6 +18,7 @@ package org.orcid.frontend.web.controllers;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -134,6 +135,26 @@ public class GrantsController extends BaseWorkspaceController {
         result.setExternalIdentifiers(emptyExternalIdentifiers);
         
     	return result;
+    }
+    
+    /**
+     * Returns a blank grant form
+     * */
+    @RequestMapping(value = "/grant.json", method = RequestMethod.DELETE)
+    public @ResponseBody GrantForm deleteGrantJson(HttpServletRequest request, GrantForm grant) {
+    	OrcidProfile currentProfile = getEffectiveProfile();
+        OrcidGrants grants = currentProfile.getOrcidActivities() == null ? null : currentProfile.getOrcidActivities().getOrcidGrants();
+        if(grants != null) {
+        	List<OrcidGrant> grantList = grants.getOrcidGrant();
+        	Iterator<OrcidGrant> iterator = grantList.iterator();
+        	while(iterator.hasNext()){
+        		OrcidGrant orcidGrant = iterator.next();
+        		if(grant.getPutCode().getValue().equals(orcidGrant.getPutCode())){
+        			iterator.remove();
+        		}
+        	}
+        }
+    	return grant;
     }
     
     /**
