@@ -26,6 +26,15 @@ public class PojoUtil {
     	}
     	return false;
     }
+    
+    public static boolean allAreEmtpy(Text ...texts) {
+    	for(Text text : texts){
+    		if(!isEmpty(text)){
+    			return false;
+    		}
+    	}
+    	return true;
+    }
 	
 	public static boolean isEmpty(Text text) {
         if (text == null || text.getValue() == null || text.getValue().trim().isEmpty()) return true;
@@ -50,8 +59,11 @@ public class PojoUtil {
     }
     
     public static boolean isEmtpy(Contributor c) {
-    	return PojoUtil.anyIsEmtpy(c.getContributorSequence(), c.getEmail(), c.getOrcid(), c.getUri(), c.getCreditName(), c.getContributorRole());
+    	return PojoUtil.allAreEmtpy(c.getContributorSequence(), c.getEmail(), c.getOrcid(), c.getUri(), c.getCreditName(), c.getContributorRole());
     }
 
+    public static boolean isEmtpy(GrantExternalIdentifierForm g) {
+    	return PojoUtil.allAreEmtpy(g.getPutCode(), g.getType(), g.getValue(), g.getUrl());
+    }
 
 }

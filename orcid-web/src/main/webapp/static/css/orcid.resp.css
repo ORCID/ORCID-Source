@@ -1695,13 +1695,19 @@ a:hover {
 #edit-affiliation #startDay,
 #edit-affiliation #startMonth,
 #edit-affiliation #endDay,
-#edit-affiliation #endMonth
+#edit-affiliation #endMonth,
+#edit-grant #startDay,
+#edit-grant #startMonth,
+#edit-grant #endDay,
+#edit-grant #endMonth
 {
 	width: 80px;	
 }
 
 #edit-affiliation #startYear,
-#edit-affiliation #endYear
+#edit-affiliation #endYear,
+#edit-grant #startYear,
+#edit-grant #endYear
 {
 	width: 100px;
 }

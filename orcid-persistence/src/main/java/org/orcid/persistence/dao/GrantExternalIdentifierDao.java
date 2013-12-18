@@ -59,7 +59,7 @@ public interface GrantExternalIdentifierDao extends
 	 * @return the created GrantExternalIdentifierEntity with the id assigned
 	 *         on database
 	 * */
-	GrantExternalIdentifierEntity addGrantExternalIdentifier(
+	GrantExternalIdentifierEntity createGrantExternalIdentifier(
 			GrantExternalIdentifierEntity newGrantExternalIdentifierEntity);
 
 	/**

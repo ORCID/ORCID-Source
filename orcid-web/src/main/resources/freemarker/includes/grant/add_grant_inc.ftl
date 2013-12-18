@@ -168,7 +168,11 @@
 							<div ng-repeat='error in editGrant.amount.errors' ng-bind-html-unsafe="error"></div>
 						</span>			
 					</div>
-				</div>	
+				</div>							
+			</div>
+			
+								
+			<div class="col-md-6 col-sm-6 col-xs-12">
 				<div class="control-group">
 		    		<label class="relative"><@orcid.msg 'manual_grant_form_contents.labelStartDate'/></label>
 		    		<div class="relative">
@@ -211,11 +215,8 @@
 		    		<span class="orcid-error" ng-show="editGrant.endDate.errors.length > 0">
 						<div ng-repeat='error in editGrant.endDate.errors' ng-bind-html-unsafe="error"></div>
 					</span>
-		    	</div>					
-			</div>
-
-
-			<div class="col-md-6 col-sm-6 col-xs-12">
+		    	</div>	
+			
 				<div class="control-group" ng-repeat="contributor in editGrant.contributors">
 				    <label class="relative"><@orcid.msg 'manual_grant_form_contents.labelRole'/></label>
 				    <div class="relative">    

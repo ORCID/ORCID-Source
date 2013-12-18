@@ -1897,6 +1897,7 @@ function GrantCtrl($scope, $compile, $filter, grantsSrvc, workspaceSrvc) {
 	};
 	
 	$scope.selectGrant = function(datum) {
+		console.log(angular.toJson(datum));
 		if (datum != undefined && datum != null) {
 			$scope.editGrant.grantName.value = datum.value;
 			$scope.editGrant.city.value = datum.city;

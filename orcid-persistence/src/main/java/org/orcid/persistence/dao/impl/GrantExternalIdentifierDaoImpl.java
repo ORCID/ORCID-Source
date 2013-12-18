@@ -84,7 +84,7 @@ public class GrantExternalIdentifierDaoImpl extends GenericDaoImpl<GrantExternal
 	 * */
 	@Override
 	@Transactional
-	public GrantExternalIdentifierEntity addGrantExternalIdentifier(
+	public GrantExternalIdentifierEntity createGrantExternalIdentifier(
 			GrantExternalIdentifierEntity newGrantExternalIdentifierEntity) {
 		entityManager.persist(newGrantExternalIdentifierEntity);
 		return newGrantExternalIdentifierEntity;	

@@ -274,23 +274,6 @@ public class GrantForm implements ErrorsInterface, Serializable {
 		if(visibility != null)
 			result.setVisibility(visibility.getVisibility());		
 		
-		if(contributors != null && !contributors.isEmpty()) {
-			GrantContributors gContributors = new GrantContributors();  
-			for(Contributor contributor : contributors){
-				if(!PojoUtil.isEmtpy(contributor))
-					gContributors.getContributor().add(contributor.toContributor());
-			}
-			result.setGrantContributors(gContributors);
-		}
-		
-		if(externalIdentifiers != null && !externalIdentifiers.isEmpty()) {
-			OrcidGrantExternalIdentifiers gExternalIdentifiers = new OrcidGrantExternalIdentifiers(); 
-			for(GrantExternalIdentifierForm gExternalIdentifier : externalIdentifiers) {
-				gExternalIdentifiers.getGrantExternalIdentifier().add(gExternalIdentifier.toGrantExternalIdentifier());
-			}
-			result.setGrantExternalIdentifiers(gExternalIdentifiers);
-		}
-		
 		// Set Organization
 		Organization organization = new Organization();
 		if(!PojoUtil.isEmpty(grantName))
@@ -302,15 +285,34 @@ public class GrantForm implements ErrorsInterface, Serializable {
             organizationAddress.setRegion(region.getValue());
         }  
         if (!PojoUtil.isEmpty(country)) {
-            organizationAddress.setCountry(Iso3166Country.fromValue(region.getValue()));
+            organizationAddress.setCountry(Iso3166Country.fromValue(country.getValue()));
         } 
 		if (!PojoUtil.isEmpty(disambiguatedGrantSourceId)) {
             organization.setDisambiguatedOrganization(new DisambiguatedOrganization());
             organization.getDisambiguatedOrganization().setDisambiguatedOrganizationIdentifier(disambiguatedGrantSourceId.getValue());
             organization.getDisambiguatedOrganization().setDisambiguationSource(disambiguationSource.getValue());
-        }
-		
+        }		
 		result.setOrganization(organization);
+		
+		// Set contributors
+		if(contributors != null && !contributors.isEmpty()) {
+			GrantContributors gContributors = new GrantContributors();  
+			for(Contributor contributor : contributors){
+				if(!PojoUtil.isEmtpy(contributor))
+					gContributors.getContributor().add(contributor.toContributor());
+			}
+			result.setGrantContributors(gContributors);
+		}
+		// Set external identifiers
+		if(externalIdentifiers != null && !externalIdentifiers.isEmpty()) {
+			OrcidGrantExternalIdentifiers gExternalIdentifiers = new OrcidGrantExternalIdentifiers(); 
+			for(GrantExternalIdentifierForm gExternalIdentifier : externalIdentifiers) {
+				if(!PojoUtil.isEmtpy(gExternalIdentifier))
+					gExternalIdentifiers.getGrantExternalIdentifier().add(gExternalIdentifier.toGrantExternalIdentifier());
+			}
+			result.setGrantExternalIdentifiers(gExternalIdentifiers);
+		}				
+		
 		return result;
 	}
 	

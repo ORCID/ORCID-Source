@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.SortedSet;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -28,6 +29,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.orcid.core.adapter.Jaxb2JpaAdapter;
 import org.orcid.jaxb.model.message.CurrencyCode;
 import org.orcid.jaxb.model.message.GrantType;
+import org.orcid.jaxb.model.message.OrcidActivities;
 import org.orcid.jaxb.model.message.OrcidGrant;
 import org.orcid.jaxb.model.message.OrcidGrants;
 import org.orcid.jaxb.model.message.OrcidProfile;
@@ -36,6 +38,7 @@ import org.orcid.persistence.dao.OrgDisambiguatedDao;
 import org.orcid.persistence.dao.OrgDisambiguatedSolrDao;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.dao.ProfileGrantDao;
+import org.orcid.persistence.jpa.entities.GrantExternalIdentifierEntity;
 import org.orcid.persistence.jpa.entities.OrgDisambiguatedEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileGrantEntity;
@@ -132,6 +135,10 @@ public class GrantsController extends BaseWorkspaceController {
         f.setValue(new Text());
         emptyExternalIdentifiers.add(f);
         result.setExternalIdentifiers(emptyExternalIdentifiers);
+        
+        result.setCity(new Text());
+        result.setCountry(new Text());
+        result.setRegion(new Text());
         
     	return result;
     }
@@ -260,10 +267,37 @@ public class GrantsController extends BaseWorkspaceController {
     	
     	// If there are no errors, persist to DB
     	if (grant.getErrors().isEmpty()) {
+    		//Update on database
     		ProfileEntity userProfile = profileDao.find(getEffectiveUserOrcid());
     		ProfileGrantEntity orgProfileGrantEntity = jaxb2JpaAdapter.getNewProfileGrantEntity(grant.toOrcidGrant(), userProfile);
     		orgProfileGrantEntity.setSource(userProfile);
-    		profileGrantDao.persist(orgProfileGrantEntity);
+    		// Persists the profile grant object
+    		profileGrantDao.createProfileGrant(orgProfileGrantEntity);
+    		
+    		// Persist the external identifiers
+    		SortedSet<GrantExternalIdentifierEntity> externalIdentifiers = orgProfileGrantEntity.getExternalIdentifiers();
+    		for(GrantExternalIdentifierEntity externalIdentifier : externalIdentifiers) {
+    			grantExternalIdentifierDao.createGrantExternalIdentifier(externalIdentifier);
+    		} 
+    		
+    		//Update cached object
+    		OrcidProfile currentProfile = getEffectiveProfile();
+    		if(currentProfile.getOrcidActivities() != null) {
+    			if(currentProfile.getOrcidActivities().getOrcidGrants() == null){
+    				currentProfile.getOrcidActivities().getOrcidGrants().getOrcidGrant().add(grant.toOrcidGrant());
+    			} else {
+    				OrcidGrants grants = new OrcidGrants();
+    				grants.getOrcidGrant().add(grant.toOrcidGrant());
+    				currentProfile.getOrcidActivities().setOrcidGrants(grants);
+    			}
+    		} else {
+    			OrcidActivities activities = new OrcidActivities();
+    			OrcidGrants grants = new OrcidGrants();
+				grants.getOrcidGrant().add(grant.toOrcidGrant());
+				currentProfile.getOrcidActivities().setOrcidGrants(grants);
+    			activities.setOrcidGrants(grants);
+    			currentProfile.setOrcidActivities(activities);
+    		}
     	}
     	
     	return grant;
@@ -455,6 +489,7 @@ public class GrantsController extends BaseWorkspaceController {
         datum.put("value", orgDisambiguatedDocument.getOrgDisambiguatedName());
         datum.put("city", orgDisambiguatedDocument.getOrgDisambiguatedCity());
         datum.put("region", orgDisambiguatedDocument.getOrgDisambiguatedRegion());
+        datum.put("country", orgDisambiguatedDocument.getOrgDisambiguatedCountry());
         datum.put("disambiguatedAffiliationIdentifier", Long.toString(orgDisambiguatedDocument.getOrgDisambiguatedId()));
         return datum;
     }
@@ -470,6 +505,7 @@ public class GrantsController extends BaseWorkspaceController {
         datum.put("value", orgDisambiguatedEntity.getName()); 
         datum.put("city", orgDisambiguatedEntity.getCity());
         datum.put("region", orgDisambiguatedEntity.getRegion());
+        datum.put("country", orgDisambiguatedEntity.getCountry().value());
         datum.put("sourceId", orgDisambiguatedEntity.getSourceId());
         datum.put("sourceType", orgDisambiguatedEntity.getSourceType());
         return datum;
