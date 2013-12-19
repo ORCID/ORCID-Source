@@ -275,7 +275,7 @@ orcidNgModule.factory("grantsSrvc", ['$rootScope', function ($rootScope) {
 	    	        dataType: 'json',
 	    	        success: function(data) {
 	    	        	serv.grantsToAddIds = data;
-	    	        	serv.addGrantToScope('grant/grants.json');
+	    	        	serv.addGrantToScope('grants/grants.json');
 	    	        	$rootScope.$apply();
 	    	        }
 	    		}).fail(function(){

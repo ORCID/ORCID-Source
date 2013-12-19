@@ -58,7 +58,7 @@ public class GrantExternalIdentifierEntity extends BaseEntity<Long> implements C
 	}
 	
 	@ManyToOne(cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.DETACH }, fetch = FetchType.EAGER)
-    @JoinColumn(name = "id")
+    @JoinColumn(name = "profile_grant_id")
 	public ProfileGrantEntity getProfileGrant() {
 		return profileGrant;
 	}

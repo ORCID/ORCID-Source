@@ -42,6 +42,28 @@
 					<span ng-bind-html="grant.url.value"></span>
 				</div>
 			</div>
+			
+			
+			
+			<!-- Privacy Settings -->
+	        <div class="col-md-4 col-sm-4 workspace-toolbar">
+	        	<#include "grant_more_info_inc.ftl"/>
+	        	<#if !(isPublicProfile??)>
+	        		<a href ng-click="deleteGrant(grant)" class="glyphicon glyphicon-trash grey"></a>
+	        		<ul class="workspace-private-toolbar">
+						<@orcid.privacyToggle  angularModel="grant.visibility.visibility"
+						questionClick="toggleClickPrivacyHelp(grant.putCode.value)"
+						clickedClassCheck="{'popover-help-container-show':privacyHelp[grant.putCode.value]==true}" 
+						publicClick="setPrivacy(grant, 'PUBLIC', $event)" 
+	                	limitedClick="setPrivacy(grant, 'LIMITED', $event)" 
+	                	privateClick="setPrivacy(grant, 'PRIVATE', $event)" />			        
+		        	</ul>
+		        </#if>
+			</div>
+			
+			
+			
+			
 		</div>
 	</li>
 </ul>

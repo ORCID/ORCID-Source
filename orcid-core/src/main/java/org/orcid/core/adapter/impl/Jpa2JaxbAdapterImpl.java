@@ -495,7 +495,6 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         }
         GrantExternalIdentifier grantExternalIdentifier = new GrantExternalIdentifier();
         
-        grantExternalIdentifier.setPutCode(Long.toString(grantExternalIdentifierEntity.getId()));
         grantExternalIdentifier.setType(grantExternalIdentifierEntity.getType());
         grantExternalIdentifier.setUrl(new Url(grantExternalIdentifierEntity.getUrl()));
         grantExternalIdentifier.setValue(grantExternalIdentifierEntity.getValue());

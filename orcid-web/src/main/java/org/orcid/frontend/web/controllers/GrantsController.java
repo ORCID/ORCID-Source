@@ -116,20 +116,21 @@ public class GrantsController extends BaseWorkspaceController {
         endDate.setMonth("");
         endDate.setYear("");    	
         
-        List<Contributor> emptyContributors = new ArrayList<Contributor>();
-        Contributor c = new Contributor();
-        c.setOrcid(new Text());
-        c.setEmail(new Text());
-        c.setCreditName(new Text());
-        c.setContributorRole(new Text());
-        c.setContributorSequence(new Text());        
-        c.setUri(new Text());
-        emptyContributors.add(c);
-        result.setContributors(emptyContributors);
+        // Set empty contributor
+        Contributor contr = new Contributor();
+        List<Contributor> contrList = new ArrayList<Contributor>();
+        Text rText = new Text();
+        rText.setValue("");
+        contr.setContributorRole(rText);
+        Text sText = new Text();
+        sText.setValue("");
+        contr.setContributorSequence(sText);
+        contrList.add(contr);
+        result.setContributors(contrList);
                 
+        // Set empty external identifier
         List<GrantExternalIdentifierForm> emptyExternalIdentifiers = new ArrayList<GrantExternalIdentifierForm>();
         GrantExternalIdentifierForm f = new GrantExternalIdentifierForm();
-        f.setPutCode(new Text());
         f.setType(new Text());
         f.setUrl(new Text());
         f.setValue(new Text());

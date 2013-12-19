@@ -892,110 +892,260 @@
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
+	
+	
+	
+	
 	<xs:element name="orcid-grants">
 		<xs:annotation>
-			<xs:documentation>(FUTURE) Container for the grants received by the researcher or contributor
-			</xs:documentation>
+			<xs:documentation>Container for the grants received by the researcher or contributor</xs:documentation>
 		</xs:annotation>
 		<xs:complexType>
 			<xs:sequence>
 				<xs:element maxOccurs="unbounded" minOccurs="0"
 					ref="orcid:orcid-grant" />
 			</xs:sequence>
-			<xs:attributeGroup ref="orcid:scope" />
 		</xs:complexType>
 	</xs:element>
 	<xs:element name="orcid-grant">
 		<xs:annotation>
-			<xs:documentation>(FUTURE) A grant received by the researcher or contributor. 
+			<xs:documentation>A grant received by the researcher or contributor. 
 				* The visibility attribute (private, limited or public) can be set at record creation, and indicates who can see this section of information.
 				* The put-code attribute is used only when reading this element. When updating the item, the put-code attribute must be included to indicate the specific record to be updated.
 			</xs:documentation>
 		</xs:annotation>
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element ref="orcid:funding-agency" minOccurs="0" />
-				<xs:element ref="orcid:grant-external-identifier"
-					minOccurs="0" />
-				<xs:element ref="orcid:grant-number" minOccurs="0" />
-				<xs:element ref="orcid:short-description" minOccurs="0" />
-				<xs:element ref="orcid:grant-date" minOccurs="0" />
-				<xs:element ref="orcid:grant-contributors" minOccurs="0" />
-				<xs:element ref="orcid:grant-sources" minOccurs="0" />
+				<xs:element name="title" type="orcid:non-empty-string" />
+				<xs:element name="description" type="orcid:non-empty-string" />
+				<xs:element ref="orcid:currency-code" />				
+				<xs:element name="amount" type="orcid:non-empty-string" />
+				<xs:element ref="orcid:grant-type" />
+				<xs:element ref="orcid:url" minOccurs="0" />
+				<xs:element name="start-date" type="orcid:fuzzy-date" minOccurs="0" maxOccurs="1" />
+				<xs:element name="end-date" type="orcid:fuzzy-date" minOccurs="0" maxOccurs="1" />												
+				<xs:element ref="orcid:organization" minOccurs="1" maxOccurs="1"/>
+				<xs:element ref="orcid:grant-external-identifiers" minOccurs="0" maxOccurs="1"/>
+				<xs:element ref="orcid:grant-contributors" minOccurs="0" maxOccurs="1"/>				
+				<xs:element ref="orcid:source" minOccurs="0"  maxOccurs="1" />
 			</xs:sequence>
-			<xs:attributeGroup ref="orcid:visibility" />
 			<xs:attributeGroup ref="orcid:put-code" />
+			<xs:attributeGroup ref="orcid:visibility" />
 		</xs:complexType>
 	</xs:element>
-	<xs:element name="funding-agency">
+	<xs:element name="grant-type">
 		<xs:annotation>
-			<xs:documentation>Agency providing the funding</xs:documentation>
+			<xs:documentation>The type of grant, it could be grant, contract, award or salary-award.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:enumeration value="grant" />
+				<xs:enumeration value="contract" />
+				<xs:enumeration value="award" />
+				<xs:enumeration value="salary-award" />
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>	
+	<xs:element name="currency-code">
+		<xs:annotation>
+			<xs:documentation>The currency code used on grants
+			</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:enumeration value="AED" />
+				<xs:enumeration value="AFN" />
+				<xs:enumeration value="ALL" />
+				<xs:enumeration value="AMD" />
+				<xs:enumeration value="ANG" />
+				<xs:enumeration value="AOA" />
+				<xs:enumeration value="ARS" />
+				<xs:enumeration value="AUD" />
+				<xs:enumeration value="AWG" />
+				<xs:enumeration value="AZN" />
+				<xs:enumeration value="BAM" />
+				<xs:enumeration value="BBD" />
+				<xs:enumeration value="BDT" />
+				<xs:enumeration value="BGN" />
+				<xs:enumeration value="BHD" />
+				<xs:enumeration value="BIF" />
+				<xs:enumeration value="BMD" />
+				<xs:enumeration value="BND" />
+				<xs:enumeration value="BOB" />
+				<xs:enumeration value="BRL" />
+				<xs:enumeration value="BSD" />
+				<xs:enumeration value="BTN" />
+				<xs:enumeration value="BWP" />
+				<xs:enumeration value="BYR" />
+				<xs:enumeration value="BZD" />
+				<xs:enumeration value="CAD" />
+				<xs:enumeration value="CDF" />
+				<xs:enumeration value="CHF" />
+				<xs:enumeration value="CLP" />
+				<xs:enumeration value="CNY" />
+				<xs:enumeration value="COP" />
+				<xs:enumeration value="CRC" />
+				<xs:enumeration value="CUC" />
+				<xs:enumeration value="CUP" />
+				<xs:enumeration value="CVE" />
+				<xs:enumeration value="CZK" />
+				<xs:enumeration value="DJF" />
+				<xs:enumeration value="DKK" />
+				<xs:enumeration value="DOP" />
+				<xs:enumeration value="DZD" />
+				<xs:enumeration value="EGP" />
+				<xs:enumeration value="ERN" />
+				<xs:enumeration value="ETB" />
+				<xs:enumeration value="EUR" />
+				<xs:enumeration value="FJD" />
+				<xs:enumeration value="FKP" />
+				<xs:enumeration value="GBP" />
+				<xs:enumeration value="GEL" />
+				<xs:enumeration value="GGP" />
+				<xs:enumeration value="GHS" />
+				<xs:enumeration value="GIP" />
+				<xs:enumeration value="GMD" />
+				<xs:enumeration value="GNF" />
+				<xs:enumeration value="GTQ" />
+				<xs:enumeration value="GYD" />
+				<xs:enumeration value="HKD" />
+				<xs:enumeration value="HNL" />
+				<xs:enumeration value="HRK" />
+				<xs:enumeration value="HTG" />
+				<xs:enumeration value="HUF" />
+				<xs:enumeration value="IDR" />
+				<xs:enumeration value="ILS" />
+				<xs:enumeration value="IMP" />
+				<xs:enumeration value="INR" />
+				<xs:enumeration value="IQD" />
+				<xs:enumeration value="IRR" />
+				<xs:enumeration value="ISK" />
+				<xs:enumeration value="JEP" />
+				<xs:enumeration value="JMD" />
+				<xs:enumeration value="JOD" />
+				<xs:enumeration value="JPY" />
+				<xs:enumeration value="KES" />
+				<xs:enumeration value="KGS" />
+				<xs:enumeration value="KHR" />
+				<xs:enumeration value="KMF" />
+				<xs:enumeration value="KPW" />
+				<xs:enumeration value="KRW" />
+				<xs:enumeration value="KWD" />
+				<xs:enumeration value="KYD" />
+				<xs:enumeration value="KZT" />
+				<xs:enumeration value="LAK" />
+				<xs:enumeration value="LBP" />
+				<xs:enumeration value="LKR" />
+				<xs:enumeration value="LRD" />
+				<xs:enumeration value="LSL" />
+				<xs:enumeration value="LTL" />
+				<xs:enumeration value="LVL" />
+				<xs:enumeration value="LYD" />
+				<xs:enumeration value="MAD" />
+				<xs:enumeration value="MDL" />
+				<xs:enumeration value="MGA" />
+				<xs:enumeration value="MKD" />
+				<xs:enumeration value="MMK" />
+				<xs:enumeration value="MNT" />
+				<xs:enumeration value="MOP" />
+				<xs:enumeration value="MRO" />
+				<xs:enumeration value="MUR" />
+				<xs:enumeration value="MVR" />
+				<xs:enumeration value="MWK" />
+				<xs:enumeration value="MXN" />
+				<xs:enumeration value="MYR" />
+				<xs:enumeration value="MZN" />
+				<xs:enumeration value="NAD" />
+				<xs:enumeration value="NGN" />
+				<xs:enumeration value="NIO" />
+				<xs:enumeration value="NOK" />
+				<xs:enumeration value="NPR" />
+				<xs:enumeration value="NZD" />
+				<xs:enumeration value="OMR" />
+				<xs:enumeration value="PAB" />
+				<xs:enumeration value="PEN" />
+				<xs:enumeration value="PGK" />
+				<xs:enumeration value="PHP" />
+				<xs:enumeration value="PKR" />
+				<xs:enumeration value="PLN" />
+				<xs:enumeration value="PYG" />
+				<xs:enumeration value="QAR" />
+				<xs:enumeration value="RON" />
+				<xs:enumeration value="RSD" />
+				<xs:enumeration value="RUB" />
+				<xs:enumeration value="RWF" />
+				<xs:enumeration value="SAR" />
+				<xs:enumeration value="SBD" />
+				<xs:enumeration value="SCR" />
+				<xs:enumeration value="SDG" />
+				<xs:enumeration value="SEK" />
+				<xs:enumeration value="SGD" />
+				<xs:enumeration value="SHP" />
+				<xs:enumeration value="SLL" />
+				<xs:enumeration value="SOS" />
+				<xs:enumeration value="SPL" />
+				<xs:enumeration value="SRD" />
+				<xs:enumeration value="STD" />
+				<xs:enumeration value="SVC" />
+				<xs:enumeration value="SYP" />
+				<xs:enumeration value="SZL" />
+				<xs:enumeration value="THB" />
+				<xs:enumeration value="TJS" />
+				<xs:enumeration value="TMT" />
+				<xs:enumeration value="TND" />
+				<xs:enumeration value="TOP" />
+				<xs:enumeration value="TRY" />
+				<xs:enumeration value="TTD" />
+				<xs:enumeration value="TVD" />
+				<xs:enumeration value="TWD" />
+				<xs:enumeration value="TZS" />
+				<xs:enumeration value="UAH" />
+				<xs:enumeration value="UGX" />
+				<xs:enumeration value="USD" />
+				<xs:enumeration value="UYU" />
+				<xs:enumeration value="UZS" />
+				<xs:enumeration value="VEF" />
+				<xs:enumeration value="VND" />
+				<xs:enumeration value="VUV" />
+				<xs:enumeration value="WST" />
+				<xs:enumeration value="XAF" />
+				<xs:enumeration value="XCD" />
+				<xs:enumeration value="XDR" />
+				<xs:enumeration value="XOF" />
+				<xs:enumeration value="XPF" />
+				<xs:enumeration value="YER" />
+				<xs:enumeration value="ZAR" />
+				<xs:enumeration value="ZMW" />
+				<xs:enumeration value="ZWD" />
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	
+	<xs:element name="grant-external-identifiers">
+		<xs:annotation>
+			<xs:documentation>Container for storing the external references to the grant.
+			</xs:documentation>
 		</xs:annotation>
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element ref="orcid:agency-orcid" minOccurs="0" />
-				<xs:element ref="orcid:agency-name" minOccurs="0" />
+				<xs:element maxOccurs="unbounded" minOccurs="0"
+					ref="orcid:grant-external-identifier" />
 			</xs:sequence>
 		</xs:complexType>
-	</xs:element>
-	<xs:element name="agency-name">
-		<xs:annotation>
-			<xs:documentation>Name of funding agency</xs:documentation>
-		</xs:annotation>
-		<xs:complexType mixed="true" />
-	</xs:element>
-	<xs:element name="agency-orcid" type="orcid:orcid-id">
-		<xs:annotation>
-			<xs:documentation>The ORCID identifier for the agency providing the
-				funding to the researcher or contributor associated with this
-				ORCID Record. Note this is a normal ORCID identifier, so can be used to look up
-				the full
-				details of the client application.
-			</xs:documentation>
-		</xs:annotation>
 	</xs:element>
 	<xs:element name="grant-external-identifier">
 		<xs:annotation>
-			<xs:documentation>(FUTURE) A link to an external reference identifier for the grant</xs:documentation>
+			<xs:documentation>A link to an external reference identifier for the grant</xs:documentation>
 		</xs:annotation>
 		<xs:complexType>
-			<xs:sequence>
-				<xs:element ref="orcid:grant-external-program" minOccurs="0"
-					maxOccurs="1" />
-				<xs:element ref="orcid:grant-external-id" minOccurs="0"
-					maxOccurs="1" />
+			<xs:sequence>				
+				<xs:element name="grant-external-identifier-type" type="orcid:non-empty-string" minOccurs="0" maxOccurs="1" />
+				<xs:element name="grant-external-identifier-value" type="orcid:non-empty-string" minOccurs="0" maxOccurs="1" />
+				<xs:element name="grant-external-identifier-url" type="xs:anyURI" minOccurs="0" maxOccurs="1" />
 			</xs:sequence>
 		</xs:complexType>
-	</xs:element>
-	<xs:element name="grant-external-program">
-		<xs:annotation>
-			<xs:documentation>(FUTURE) The program that created the id</xs:documentation>
-		</xs:annotation>
-		<xs:complexType mixed="true" />
-	</xs:element>
-	<xs:element name="grant-external-id">
-		<xs:annotation>
-			<xs:documentation>Value for the identifier</xs:documentation>
-		</xs:annotation>
-		<xs:complexType mixed="true" />
-	</xs:element>
-	<xs:element name="grant-number">
-		<xs:annotation>
-			<xs:documentation>Grant number</xs:documentation>
-		</xs:annotation>
-		<xs:complexType mixed="true" />
-	</xs:element>
-	<xs:element name="grant-date">
-		<xs:annotation>
-			<xs:documentation>The date the grant was provided.
-			</xs:documentation>
-		</xs:annotation>
-		<xs:complexType>
-			<xs:simpleContent>
-				<xs:extension base="xs:dateTime" />
-			</xs:simpleContent>
-		</xs:complexType>
-	</xs:element>
+	</xs:element>			
 	<xs:element name="grant-contributors">
 		<xs:annotation>
 			<xs:documentation>Container for the contributors of a grant.
@@ -1006,7 +1156,6 @@
 				<xs:element maxOccurs="unbounded" minOccurs="0"
 					ref="orcid:contributor" />
 			</xs:sequence>
-			<xs:attributeGroup ref="orcid:scope" />
 		</xs:complexType>
 	</xs:element>
 	<xs:element name="contributor">
@@ -1079,19 +1228,14 @@
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
-	<xs:element name="grant-sources">
-		<xs:annotation>
-			<xs:documentation>(FUTURE)</xs:documentation>
-			<xs:documentation>Container for the sources of a grant.
-			</xs:documentation>
-		</xs:annotation>
-		<xs:complexType>
-			<xs:sequence>
-				<xs:element maxOccurs="unbounded" minOccurs="0"
-					ref="orcid:source" />
-			</xs:sequence>
-		</xs:complexType>
-	</xs:element>
+	
+
+
+
+
+
+
+
 	<xs:element name="orcid-patents">
 		<xs:annotation>
 			<xs:documentation>(DEPRECATED) Patents are contained within the Work element. This element should not be used.

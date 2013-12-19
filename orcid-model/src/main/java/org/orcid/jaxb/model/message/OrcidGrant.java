@@ -46,8 +46,8 @@ import java.io.Serializable;
  *       &lt;sequence>
  *         &lt;element ref="{http://www.orcid.org/ns/orcid}title" minOccurs="0"/>
  *         &lt;element ref="{http://www.orcid.org/ns/orcid}description"/>
- *         &lt;element ref="{http://www.orcid.org/ns/orcid}type"/>
- *         &lt;element ref="{http://www.orcid.org/ns/orcid}currency-code" minOccurs="0" maxOrrurs="1"/>
+ *         &lt;element ref="{http://www.orcid.org/ns/orcid}grant-type"/>
+ *         &lt;element ref="{http://www.orcid.org/ns/orcid}grant-currency-code" minOccurs="0" maxOrrurs="1"/>
  *         &lt;element ref="{http://www.orcid.org/ns/orcid}amount"/>
  *         &lt;element ref="{http://www.orcid.org/ns/orcid}url"/>
  *         &lt;element ref="{http://www.orcid.org/ns/orcid}organization"/>
@@ -76,9 +76,9 @@ public class OrcidGrant implements VisibilityType, Serializable {
 	protected String title;
 	@XmlElement
 	protected String description;
-	@XmlElement
+	@XmlElement(name = "grant-type")
 	protected GrantType type;
-	@XmlElement(name = "currency-code")
+	@XmlElement(name = "grant-currency-code")
 	protected CurrencyCode currencyCode;
 	@XmlElement
 	protected String amount;

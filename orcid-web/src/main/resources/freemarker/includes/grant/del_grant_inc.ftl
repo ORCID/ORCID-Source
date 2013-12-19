@@ -20,12 +20,12 @@
 	<div class="lightbox-container">
 		<div class="row">
 			<div class="col-md-12 col-xs-12 col-sm-12">
-				<h3><@orcid.msg 'manage.deleteAffiliation.pleaseConfirm' /></h3>
-				<p>{{fixedTitle}}</p>		
-    			<div class="btn btn-danger" ng-click="deleteAff(deleAff)">
-    				<@orcid.msg 'manage.deleteAffiliation.delete' />
+				<h3><@orcid.msg 'manage.deleteGrant.pleaseConfirm' /></h3>
+				<p>{{delGrant.title.value}}</p>		
+    			<div class="btn btn-danger" ng-click="confirmDeleteGrant(delGrant)">
+    				<@orcid.msg 'manage.deleteGrant.delete' />
     			</div>
-    			<a href="" ng-click="closeModal()"><@orcid.msg 'manage.deleteAffiliation.cancel' /></a>
+    			<a href="" ng-click="closeModal()"><@orcid.msg 'manage.deleteGrant.cancel' /></a>
 			</div>
 		</div>
     </div>

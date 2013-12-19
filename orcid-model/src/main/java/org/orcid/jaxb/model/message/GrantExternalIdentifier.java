@@ -48,7 +48,6 @@ import java.io.Serializable;
  *         &lt;element ref="{http://www.orcid.org/ns/orcid}value"/>
  *         &lt;element ref="{http://www.orcid.org/ns/orcid}url" minOccurs="0"/>
  *       &lt;/sequence>
- *       &lt;attGroup ref="{http://www.orcid.org/ns/orcid}put-code"/>       
  *     &lt;/restriction>
  *   &lt;/complexContent>
  * &lt;/complexType>
@@ -57,7 +56,7 @@ import java.io.Serializable;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "putCode", "type", "value", "url" })
+@XmlType(propOrder = { "type", "value", "url" })
 @XmlRootElement(name = "grant-external-identifier")
 public class GrantExternalIdentifier implements Serializable {
 	private static final long serialVersionUID = 1L;
@@ -66,9 +65,7 @@ public class GrantExternalIdentifier implements Serializable {
 	@XmlElement
 	protected String value;
 	@XmlElement
-	protected Url url;
-	@XmlAttribute(name = "put-code")	
-	protected String putCode;
+	protected Url url;	
 	
 	public String getType() {
 		return type;
@@ -87,18 +84,11 @@ public class GrantExternalIdentifier implements Serializable {
 	}
 	public void setUrl(Url url) {
 		this.url = url;
-	}
-	public String getPutCode() {
-		return putCode;
-	}
-	public void setPutCode(String putCode) {
-		this.putCode = putCode;
-	}
+	}	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((putCode == null) ? 0 : putCode.hashCode());
 		result = prime * result + ((type == null) ? 0 : type.hashCode());
 		result = prime * result + ((url == null) ? 0 : url.hashCode());
 		result = prime * result + ((value == null) ? 0 : value.hashCode());
@@ -112,12 +102,7 @@ public class GrantExternalIdentifier implements Serializable {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		GrantExternalIdentifier other = (GrantExternalIdentifier) obj;
-		if (putCode == null) {
-			if (other.putCode != null)
-				return false;
-		} else if (!putCode.equals(other.putCode))
-			return false;
+		GrantExternalIdentifier other = (GrantExternalIdentifier) obj;		
 		if (type == null) {
 			if (other.type != null)
 				return false;

@@ -28,8 +28,7 @@ public class GrantExternalIdentifierForm implements ErrorsInterface, Serializabl
     private static final long serialVersionUID = 1L;
 
     private List<String> errors = new ArrayList<String>();
-
-    private Text putCode;    
+     
     private Text type;
     private Text value;
     private Text url;
@@ -41,13 +40,7 @@ public class GrantExternalIdentifierForm implements ErrorsInterface, Serializabl
 	@Override
 	public void setErrors(List<String> errors) {
 		this.errors = errors;
-	}
-	public Text getPutCode() {
-		return putCode;
-	}
-	public void setPutCode(Text putCode) {
-		this.putCode = putCode;
-	}
+	}	
 	public Text getType() {
 		return type;
 	}
@@ -68,9 +61,7 @@ public class GrantExternalIdentifierForm implements ErrorsInterface, Serializabl
 	}
 
 	public static GrantExternalIdentifierForm valueOf(GrantExternalIdentifier grantExternalIdentifier){
-		GrantExternalIdentifierForm result = new GrantExternalIdentifierForm();
-		if(!PojoUtil.isEmpty(grantExternalIdentifier.getPutCode()))
-			result.setPutCode(Text.valueOf(grantExternalIdentifier.getPutCode()));
+		GrantExternalIdentifierForm result = new GrantExternalIdentifierForm();		
 		if(grantExternalIdentifier.getType() != null)
 			result.setType(Text.valueOf(grantExternalIdentifier.getType()));
 		if(grantExternalIdentifier.getUrl() != null && !PojoUtil.isEmpty(grantExternalIdentifier.getUrl().getValue()))
@@ -81,9 +72,7 @@ public class GrantExternalIdentifierForm implements ErrorsInterface, Serializabl
 	}
 	
 	public GrantExternalIdentifier toGrantExternalIdentifier() {
-		GrantExternalIdentifier result = new GrantExternalIdentifier();
-		if(!PojoUtil.isEmpty(putCode))
-			result.setPutCode(putCode.getValue());
+		GrantExternalIdentifier result = new GrantExternalIdentifier();		
 		if(!PojoUtil.isEmpty(type))
 			result.setType(type.getValue());
 		if(!PojoUtil.isEmpty(url))
