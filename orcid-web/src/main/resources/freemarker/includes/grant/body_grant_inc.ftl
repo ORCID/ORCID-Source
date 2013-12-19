@@ -21,23 +21,25 @@
 		<div class="row">        
 			<!-- Information -->
 			<div class="col-md-8 col-sm-8">
-				<h3 class="affiliation-title">
+				<h3 class="grant-title">
 					<strong ng-show="grant.title">{{grant.title.value}}:</strong>
-					<span ng-bind-html="grant.fundingName.value"></span>
-					
-					<span class="grant-date" ng-show="grant.startDate && !grant.endDate">
-						(<span ng-show="grant.startDate.month">{{grant.startDate.month}}-</span><span ng-show="grant.startDate.year">{{grant.startDate.year}}</span>
-					    <@orcid.msg 'workspace_grants.dateSeparator'/>
-					    <@orcid.msg 'workspace_grants.present'/>)
-					</span>
-					<span class="grant-date" ng-show="grant.startDate && grant.endDate">
-						(<span ng-show="grant.startDate.month">{{grant.startDate.month}}-</span><span ng-show="grant.startDate.year">{{grant.startDate.year}}</span>
-						<@orcid.msg 'workspace_grants.dateSeparator'/><span ng-show="grant.endDate.month">{{grant.endDate.month}}-</span><span ng-show="grant.endDate.year">{{grant.endDate.year}}</span>)
-					</span>
-					<span class="grant-date" ng-show="!grant.startDate && grant.endDate">
-						     (<span ng-show="grant.endDate.month">{{grant.endDate.month}}-</span><span ng-show="grant.endDate.year">{{grant.endDate.year}}</span>)
-					</span>					
+					<span class="grant-name" ng-bind-html="grant.grantName.value"></span>
 				</h3>
+			</div>
+			<div>
+				<span class="grant-date" ng-show="grant.startDate && !grant.endDate">
+					(<span ng-show="grant.startDate.month">{{grant.startDate.month}}-</span><span ng-show="grant.startDate.year">{{grant.startDate.year}}</span>
+				    <@orcid.msg 'workspace_grants.dateSeparator'/>
+				    <@orcid.msg 'workspace_grants.present'/>)
+				</span>
+				<span class="grant-date" ng-show="grant.startDate && grant.endDate">
+					(<span ng-show="grant.startDate.month">{{grant.startDate.month}}-</span><span ng-show="grant.startDate.year">{{grant.startDate.year}}</span>
+					<@orcid.msg 'workspace_grants.dateSeparator'/><span ng-show="grant.endDate.month">{{grant.endDate.month}}-</span><span ng-show="grant.endDate.year">{{grant.endDate.year}}</span>)
+				</span>
+				<span class="grant-date" ng-show="!grant.startDate && grant.endDate">
+					     (<span ng-show="grant.endDate.month">{{grant.endDate.month}}-</span><span ng-show="grant.endDate.year">{{grant.endDate.year}}</span>)
+				</span>					
+				<br />
 				<div class="grant-details" ng-show="grant.url">
 					<span ng-bind-html="grant.url.value"></span>
 				</div>

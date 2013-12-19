@@ -1718,7 +1718,8 @@ a:hover {
 }
 
 .grant-title {
-	margin-right: 80px;
+	margin-right: 5px;
+	font-weight: bold;
 }
 
 .label-clear {
@@ -1727,10 +1728,6 @@ a:hover {
 	color: #949599;
 	text-shadow: 0;
 	font-weight: normal;
-}
-
-.grant-title {
-	margin-right: 90px;
 }
 
 .grey {
