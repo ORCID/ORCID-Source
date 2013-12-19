@@ -28,7 +28,7 @@ import org.orcid.jaxb.model.message.OrcidSearchResults;
  * @author rcpeters
  * 
  */
-public class OrcidMessageVersionConverterImplV1_1ToV1_2_rc2 implements OrcidMessageVersionConverter {
+public class OrcidMessageVersionConverterImplV1_2_rc1ToV1_2_rc2 implements OrcidMessageVersionConverter {
 
     private static final String FROM_VERSION = "1.2_rc1";
     private static final String TO_VERSION = "1.2_rc2";
@@ -61,8 +61,8 @@ public class OrcidMessageVersionConverterImplV1_1ToV1_2_rc2 implements OrcidMess
                 && orcidProfile.getOrcidHistory() !=null
                 && orcidProfile.getOrcidHistory().getCreationMethod() != null) {
             CreationMethod c = orcidProfile.getOrcidHistory().getCreationMethod(); 
-            if (c.equals(CreationMethod.MEMBER_REFERRED) || c.equals(CreationMethod.DIRECT));
-            orcidProfile.getOrcidHistory().setCreationMethod(CreationMethod.WEBSITE);
+            if (c.equals(CreationMethod.MEMBER_REFERRED) || c.equals(CreationMethod.DIRECT))
+                orcidProfile.getOrcidHistory().setCreationMethod(CreationMethod.WEBSITE);
         }
     }
 

@@ -167,7 +167,19 @@ public class OrgAffiliationRelationEntity extends BaseEntity<Long> implements Co
         if (compareStarts != 0) {
             return compareStarts;
         }
-        return compareNames(org.getName(), other.getOrg().getName());
+        int compareTypes = compareTypes(affiliationType, other.getAffiliationType());
+        if (compareTypes != 0) {
+            return compareTypes;
+        }
+        int compareNames = compareNames(org.getName(), other.getOrg().getName());
+        if (compareNames != 0) {
+            return compareNames;
+        }
+        int compareDepartments = compareDepartments(department, other.getDepartment());
+        if (compareDepartments != 0) {
+            return compareDepartments;
+        }
+        return compareTitles(title, other.getTitle());
     }
 
     private int compareEnds(FuzzyDateEntity endDate, FuzzyDateEntity otherEndDate) {
@@ -184,11 +196,32 @@ public class OrgAffiliationRelationEntity extends BaseEntity<Long> implements Co
         return -startDate.compareTo(otherStartDate);
     }
 
+    private int compareTypes(AffiliationType affiliationType, AffiliationType otherAffiliationType) {
+        if (NullUtils.anyNull(affiliationType, otherAffiliationType)) {
+            return NullUtils.compareNulls(affiliationType, otherAffiliationType);
+        }
+        return affiliationType.compareTo(otherAffiliationType);
+    }
+
     private int compareNames(String name, String otherName) {
         if (NullUtils.anyNull(name, otherName)) {
             return NullUtils.compareNulls(name, otherName);
         }
         return name.compareTo(otherName);
+    }
+
+    private int compareDepartments(String department, String otherDepartment) {
+        if (NullUtils.anyNull(department, otherDepartment)) {
+            return NullUtils.compareNulls(department, otherDepartment);
+        }
+        return department.compareTo(otherDepartment);
+    }
+
+    private int compareTitles(String title, String otherTitle) {
+        if (NullUtils.anyNull(title, otherTitle)) {
+            return NullUtils.compareNulls(title, otherTitle);
+        }
+        return title.compareTo(otherTitle);
     }
 
     /**
