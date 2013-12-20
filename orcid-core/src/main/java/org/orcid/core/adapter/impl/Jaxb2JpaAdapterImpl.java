@@ -35,6 +35,7 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.orcid.core.adapter.Jaxb2JpaAdapter;
 import org.orcid.core.manager.OrgManager;
+import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
 import org.orcid.core.utils.JsonUtils;
 import org.orcid.jaxb.model.message.Affiliation;
 import org.orcid.jaxb.model.message.Affiliations;
@@ -1023,18 +1024,18 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             }
             FuzzyDate startDate = grant.getStartDate();
             FuzzyDate endDate = grant.getEndDate();
-            profileGrantEntity.setAmount(grant.getAmount());
+            profileGrantEntity.setAmount(StringUtils.isNotBlank(grant.getAmount()) ? grant.getAmount() : null);
             profileGrantEntity.setContributorsJson(getGrantContributorsJson(grant.getGrantContributors()));
-            profileGrantEntity.setCurrencyCode(grant.getCurrencyCode());
-            profileGrantEntity.setDescription(grant.getDescription());
+            profileGrantEntity.setCurrencyCode(grant.getCurrencyCode() != null ? grant.getCurrencyCode() : null);
+            profileGrantEntity.setDescription(StringUtils.isNotBlank(grant.getDescription()) ? grant.getDescription() : null);
             profileGrantEntity.setEndDate(endDate != null ? new EndDateEntity(endDate) : null);
             profileGrantEntity.setExternalIdentifiers(getGrantExternalIdentifiers(profileGrantEntity, grant.getGrantExternalIdentifiers()));            
             profileGrantEntity.setStartDate(startDate != null ? new StartDateEntity(startDate) : null);
-            profileGrantEntity.setTitle(grant.getTitle());
-            profileGrantEntity.setType(grant.getType());
+            profileGrantEntity.setTitle(StringUtils.isNotBlank(grant.getTitle()) ? grant.getTitle() : null);
+            profileGrantEntity.setType(grant.getType() != null ? grant.getType() : null);
             if(grant.getUrl() != null)
-            	profileGrantEntity.setUrl(grant.getUrl().getValue());            
-            profileGrantEntity.setVisibility(grant.getVisibility());
+            	profileGrantEntity.setUrl(StringUtils.isNotBlank(grant.getUrl().getValue()) ? grant.getUrl().getValue() : null);            
+            profileGrantEntity.setVisibility(grant.getVisibility() != null ? grant.getVisibility() : OrcidVisibilityDefaults.WORKS_DEFAULT.getVisibility());
 
             return profileGrantEntity;
         }
@@ -1055,6 +1056,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
     		entity.setType(externalIdentifier.getType());
     		entity.setUrl(externalIdentifier.getUrl().getValue());    		
     		entity.setValue(externalIdentifier.getValue());
+    		result.add(entity);
     	}
     	return result;
     }

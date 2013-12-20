@@ -2007,7 +2007,7 @@ function GrantCtrl($scope, $compile, $filter, grantsSrvc, workspaceSrvc) {
 	};
 	
 	$scope.addExternalIdentifier = function () {
-		$scope.editGrant.externalIdentifiers.push({putCode: { value: ""}, type: {value: ""}, value: {value: ""}, url: {value: ""} });
+		$scope.editGrant.externalIdentifiers.push({type: {value: ""}, value: {value: ""}, url: {value: ""} });
 	};
 }
 

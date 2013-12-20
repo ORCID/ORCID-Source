@@ -54,7 +54,7 @@ public interface ProfileGrantDao extends GenericDao<ProfileGrantEntity, Long> {
 	 * 		The object to be persisted
 	 * @return the created newProfileGrantEntity with the id assigned on database
 	 * */
-	ProfileGrantEntity createProfileGrant(ProfileGrantEntity newProfileGrantEntity);
+	ProfileGrantEntity addProfileGrant(ProfileGrantEntity newProfileGrantEntity);
 	/**
      * Get the grant associated with the client orcid and the organization id
      * 

@@ -133,6 +133,17 @@
 				</div>
 				<div class="control-group">
 					<span>
+					   <label><@orcid.msg 'manual_grant_form_contents.label_url'/></label>					   
+					</span>
+					<div class="relative">
+						<input id="grantUrl" class="input-xlarge" name="grantUrl" type="text" ng-model="editGrant.url.value" placeholder="<@orcid.msg 'manual_grant_form_contents.add_url'/>" ng-change="serverValidate('grants/grant/urlValidate.json')" ng-model-onblur/>						
+						<span class="orcid-error" ng-show="editGrant.url.errors.length > 0">
+							<div ng-repeat='error in editGrant.url.errors' ng-bind-html-unsafe="error"></div>
+						</span>
+					</div>
+				</div>
+				<div class="control-group">
+					<span>
 						<label><@orcid.msg 'manual_grant_form_contents.grant_type'/></label>
 					</span>
 					<div class="relative">						

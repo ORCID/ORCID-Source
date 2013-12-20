@@ -269,7 +269,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
     		OrcidGrants grants = new OrcidGrants();
     		List<OrcidGrant> grantList = grants.getOrcidGrant();
     		for(ProfileGrantEntity profileGrantEntity : profileGrants) {
-    			grantList.add(getGrant(profileGrantEntity));
+    			grantList.add(getOrcidGrant(profileGrantEntity));
     		}
     		
     		return grants;
@@ -437,17 +437,20 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
     /**
      * TODO
      * */
-    private OrcidGrant getGrant(ProfileGrantEntity profileGrantEntity){
+    public OrcidGrant getOrcidGrant(ProfileGrantEntity profileGrantEntity){
     	OrcidGrant grant = new OrcidGrant();
-    	grant.setAmount(profileGrantEntity.getAmount());
-    	grant.setCurrencyCode(profileGrantEntity.getCurrencyCode());
-    	grant.setDescription(profileGrantEntity.getDescription());    	
+    	grant.setAmount(StringUtils.isNotEmpty(profileGrantEntity.getAmount()) ? profileGrantEntity.getAmount() : null );
+    	grant.setCurrencyCode(profileGrantEntity.getCurrencyCode() != null ? profileGrantEntity.getCurrencyCode() : null);
+    	grant.setDescription(StringUtils.isNotEmpty(profileGrantEntity.getDescription()) ? profileGrantEntity.getDescription() : null); 
+        grant.setTitle(StringUtils.isNotEmpty(profileGrantEntity.getTitle()) ? profileGrantEntity.getTitle() : null);
+    	grant.setType(profileGrantEntity.getType() != null ? profileGrantEntity.getType() : null);
+    	grant.setUrl(StringUtils.isNotEmpty(profileGrantEntity.getUrl()) ? new Url(profileGrantEntity.getUrl()) : null);
+    	grant.setVisibility(profileGrantEntity.getVisibility() != null ? profileGrantEntity.getVisibility() : Visibility.PRIVATE);
     	grant.setPutCode(Long.toString(profileGrantEntity.getId()));    	
-    	grant.setTitle(profileGrantEntity.getTitle());
-    	grant.setType(profileGrantEntity.getType());
-    	grant.setUrl(new Url(profileGrantEntity.getUrl()));
-    	grant.setVisibility(profileGrantEntity.getVisibility());
-    	    	
+    	grant.setGrantContributors(getGrantContributors(profileGrantEntity));
+        grant.setGrantExternalIdentifiers(getGrantExternalIdentifiers(profileGrantEntity));
+    	
+        // Set organization
     	Organization organization = new Organization();
         OrgDisambiguatedEntity orgDisambiguatedEntity = profileGrantEntity.getOrg().getOrgDisambiguated();
         if (orgDisambiguatedEntity != null) {
@@ -456,10 +459,14 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         organization.setAddress(getAddress(profileGrantEntity.getOrg()));
         organization.setName(profileGrantEntity.getOrg().getName());
         grant.setOrganization(organization);
-    	
-        grant.setGrantContributors(getGrantContributors(profileGrantEntity));
-        grant.setGrantExternalIdentifiers(getGrantExternalIdentifiers(profileGrantEntity));
-
+        
+        // Set start and end date
+        FuzzyDateEntity startDate = profileGrantEntity.getStartDate();
+        FuzzyDateEntity endDate = profileGrantEntity.getEndDate();
+        grant.setStartDate(startDate != null ? new FuzzyDate(startDate.getYear(), startDate.getMonth(), startDate.getDay()) : null);
+        grant.setEndDate(endDate != null ? new FuzzyDate(endDate.getYear(), endDate.getMonth(), endDate.getDay()) : null);
+        
+        // Set source
         grant.setSource(getSource(profileGrantEntity));
     	return grant;
     }
@@ -472,16 +479,14 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
             return null;
         }
         SortedSet<GrantExternalIdentifierEntity> grantExternalIdentifierEntitys = profileGrantEntity.getExternalIdentifiers();
-        OrcidGrantExternalIdentifiers workExternalIdentifiers = new OrcidGrantExternalIdentifiers();
-        
+        OrcidGrantExternalIdentifiers workExternalIdentifiers = new OrcidGrantExternalIdentifiers();        
         
         for (GrantExternalIdentifierEntity grantExternalIdentifierEntity : grantExternalIdentifierEntitys) {
             GrantExternalIdentifier grantExternalIdentifier = getGrantExternalIdentifier(grantExternalIdentifierEntity);
             if (grantExternalIdentifier != null) {
                 workExternalIdentifiers.getGrantExternalIdentifier().add(grantExternalIdentifier);
             }
-        }
-        
+        }        
         
         return workExternalIdentifiers;
     }

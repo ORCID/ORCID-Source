@@ -62,8 +62,6 @@ public class GrantContributors implements Serializable {
      */
     private static final long serialVersionUID = 1L;
     protected List<Contributor> contributor;
-    @XmlAttribute
-    protected Scope scope;
 
     /**
      * Gets the value of the contributor property.
@@ -92,31 +90,7 @@ public class GrantContributors implements Serializable {
             contributor = new ArrayList<Contributor>();
         }
         return this.contributor;
-    }
-
-    /**
-     * Gets the value of the scope property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Scope }
-     *     
-     */
-    public Scope getScope() {
-        return scope;
-    }
-
-    /**
-     * Sets the value of the scope property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Scope }
-     *     
-     */
-    public void setScope(Scope value) {
-        this.scope = value;
-    }
+    }    
 
     @Override
     public boolean equals(Object o) {
@@ -132,17 +106,13 @@ public class GrantContributors implements Serializable {
         if (contributor != null ? !contributor.equals(that.contributor) : that.contributor != null) {
             return false;
         }
-        if (scope != that.scope) {
-            return false;
-        }
 
         return true;
     }
 
     @Override
     public int hashCode() {
-        int result = contributor != null ? contributor.hashCode() : 0;
-        result = 31 * result + (scope != null ? scope.hashCode() : 0);
+        int result = 31 * (contributor != null ? contributor.hashCode() : 0);
         return result;
     }
 }

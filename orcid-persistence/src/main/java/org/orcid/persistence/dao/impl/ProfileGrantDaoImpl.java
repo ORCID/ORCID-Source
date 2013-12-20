@@ -81,7 +81,7 @@ public class ProfileGrantDaoImpl extends GenericDaoImpl<ProfileGrantEntity, Long
 	 * */
 	@Override
 	@Transactional
-	public ProfileGrantEntity createProfileGrant(ProfileGrantEntity newProfileGrantEntity) {
+	public ProfileGrantEntity addProfileGrant(ProfileGrantEntity newProfileGrantEntity) {
 		entityManager.persist(newProfileGrantEntity);
 		return newProfileGrantEntity;
 	}

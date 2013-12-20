@@ -1676,7 +1676,17 @@ a:hover {
 	line-height: 1.2;
 }
 
-/* Affiliations*/
+/* Grants */
+.grant-title {
+	margin-top: 0 !important;	
+}
+
+.grant-name {
+    font-style: italic;
+    font-weight: normal !important;
+}
+
+/* Affiliations */
 .affiliation-date {
     font-style: italic;
     font-weight: normal !important;
@@ -1715,11 +1725,6 @@ a:hover {
 .add-work input.input-xlarge,
 .add-work #workType{
 	width: 95%;
-}
-
-.grant-title {
-	margin-right: 5px;
-	font-weight: bold;
 }
 
 .label-clear {
