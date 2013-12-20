@@ -68,7 +68,7 @@ public class ProfileGrantDaoImpl extends GenericDaoImpl<ProfileGrantEntity, Long
 		Query query = entityManager.createQuery("update ProfileGrantEntity set visibility=:visibility where profile.id=:clientOrcid and id=:profileGrantId");
 		query.setParameter("clientOrcid", clientOrcid);
 		query.setParameter("profileGrantId", Long.valueOf(profileGrantId));
-		query.setParameter("visibility", visibility.name());
+		query.setParameter("visibility", visibility);
 		return query.executeUpdate() > 0 ? true : false;
 	}
 	

@@ -29,6 +29,8 @@ import javax.servlet.http.HttpServletRequest;
 import org.orcid.core.adapter.Jaxb2JpaAdapter;
 import org.orcid.core.adapter.Jpa2JaxbAdapter;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
+import org.orcid.jaxb.model.message.Affiliation;
+import org.orcid.jaxb.model.message.Affiliations;
 import org.orcid.jaxb.model.message.CurrencyCode;
 import org.orcid.jaxb.model.message.GrantType;
 import org.orcid.jaxb.model.message.OrcidActivities;
@@ -45,6 +47,7 @@ import org.orcid.persistence.jpa.entities.OrgDisambiguatedEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileGrantEntity;
 import org.orcid.persistence.solr.entities.OrgDisambiguatedSolrDocument;
+import org.orcid.pojo.ajaxForm.AffiliationForm;
 import org.orcid.pojo.ajaxForm.Contributor;
 import org.orcid.pojo.ajaxForm.Date;
 import org.orcid.pojo.ajaxForm.GrantExternalIdentifierForm;
@@ -156,7 +159,7 @@ public class GrantsController extends BaseWorkspaceController {
 	 * */
 	@RequestMapping(value = "/grant.json", method = RequestMethod.DELETE)
 	public @ResponseBody
-	GrantForm deleteGrantJson(HttpServletRequest request, GrantForm grant) {
+	GrantForm deleteGrantJson(HttpServletRequest request, @RequestBody GrantForm grant) {
 		OrcidProfile currentProfile = getEffectiveProfile();
 		OrcidGrants grants = currentProfile.getOrcidActivities() == null ? null
 				: currentProfile.getOrcidActivities().getOrcidGrants();
@@ -170,6 +173,8 @@ public class GrantsController extends BaseWorkspaceController {
 					iterator.remove();
 				}
 			}
+			currentProfile.getOrcidActivities().setOrcidGrants(grants);
+			profileGrantDao.removeProfileGrant(currentProfile.getOrcid().getValue(), grant.getPutCode().getValue());
 		}
 		return grant;
 	}
@@ -213,19 +218,7 @@ public class GrantsController extends BaseWorkspaceController {
 				}
 			}
 			request.getSession().setAttribute(GRANT_MAP, grantsMap);
-		}
-		System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------------");
-		System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------------");
-		System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------------");
-		System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------------");
-		System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------------");
-		System.out.println("ID List: " + grantIds);
-		System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------------");
-		System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------------");
-		System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------------");
-		System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------------");
-		System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------------");
-		
+		}		
 		return grantIds;
 	}
 
@@ -372,6 +365,29 @@ public class GrantsController extends BaseWorkspaceController {
 		}
 	}
 
+	/**
+     * Saves an affiliation
+     * */
+    @RequestMapping(value = "/grant.json", method = RequestMethod.PUT)
+    public @ResponseBody
+    GrantForm updateProfileGrantJson(HttpServletRequest request, @RequestBody GrantForm grant) {
+        // Get cached profile
+        OrcidProfile currentProfile = getEffectiveProfile();
+        OrcidGrants orcidGrants = currentProfile.getOrcidActivities() == null ? null : currentProfile.getOrcidActivities().getOrcidGrants();
+        if (orcidGrants != null) {
+            List<OrcidGrant> orcidGrantList = orcidGrants.getOrcidGrant();
+            if (orcidGrantList != null) {
+                for (OrcidGrant orcidGrant : orcidGrantList) {
+                    if (orcidGrant.getPutCode().equals(grant.getPutCode().getValue())) {
+                        // Update the privacy of the grant
+                    	profileGrantDao.updateProfileGrant(currentProfile.getOrcid().getValue(), grant.getPutCode().getValue(), grant.getVisibility().getVisibility());
+                    }
+                }
+            }
+        }
+        return grant;
+    }
+	
 	/**
 	 * Validators
 	 * */

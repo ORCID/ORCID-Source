@@ -283,15 +283,25 @@ orcidNgModule.factory("grantsSrvc", ['$rootScope', function ($rootScope) {
 	    	    	console.log("error fetching grants");
 	    		});
 	    	},
-	    	deleteGrant: function(grant) {
-				var arr = serv.grants;				
-				var idx;
-				for (idx in arr) {
-					if (arr[idx].putCode.value == grant.putCode.value) {
-						break;
-					}
-				}
-				arr.splice(idx, 1);
+	    	updateProfileGrant: function(grant) {
+	    		$.ajax({
+	    	        url: $('body').data('baseurl') + 'grants/grant.json',
+	    	        type: 'PUT',
+	    	        data: angular.toJson(grant),
+	    	        contentType: 'application/json;charset=UTF-8',
+	    	        dataType: 'json',
+	    	        success: function(grant) {	        	
+	    	        	if(data.errors.length != 0){
+	    	        		console.log("Unable to update profile grant.");
+	    	        	}
+	    	        	$rootScope.$apply();
+	    	        }
+	    	    }).fail(function() { 
+	    	    	console.log("Error updating profile grant.");
+	    	    });
+	    	},
+	    	deleteGrant: function(grant) {	
+	    		console.log(angular.toJson(grant));
 	    		$.ajax({
 	    	        url: $('body').data('baseurl') + 'grants/grant.json',
 	    	        type: 'DELETE',
@@ -301,6 +311,15 @@ orcidNgModule.factory("grantsSrvc", ['$rootScope', function ($rootScope) {
 	    	        success: function(data) {	        	
 	    	        	if(data.errors.length != 0){
 	    	        		console.log("Unable to delete grant.");
+	    	        	} else {
+	    	        		var arr = serv.grants;				
+	    					var idx;
+	    					for (idx in arr) {
+	    						if (arr[idx].putCode.value == grant.putCode.value) {
+	    							break;
+	    						}
+	    					}
+	    					arr.splice(idx, 1);
 	    	        	}
 	    	        	$rootScope.$apply();
 	    	        }
@@ -1939,7 +1958,7 @@ function GrantCtrl($scope, $compile, $filter, grantsSrvc, workspaceSrvc) {
         });
 	};
 	
-	$scope.confirmDeleteGrant = function(delGrant) {		
+	$scope.confirmDeleteGrant = function(delGrant) {	
 		grantsSrvc.deleteGrant(delGrant);
 		$.colorbox.close(); 
 	};
@@ -1951,9 +1970,17 @@ function GrantCtrl($scope, $compile, $filter, grantsSrvc, workspaceSrvc) {
 		$.colorbox.close();
 	};
 	
+	// Add privacy for new grants
 	$scope.setAddGrantPrivacy = function(priv, $event) {
 		$event.preventDefault();
 		$scope.editGrant.visibility.visibility = priv;
+	};
+	
+	// Update privacy of an existing grant
+	$scope.setPrivacy = function(grant, priv, $event) {
+		$event.preventDefault();
+		grant.visibility.visibility = priv;
+		grantsSrvc.updateProfileGrant(grant);
 	};
 	
 	$scope.removeDisambiguatedGrant = function() {
@@ -1968,7 +1995,7 @@ function GrantCtrl($scope, $compile, $filter, grantsSrvc, workspaceSrvc) {
 		if (cur.required && (cur.value == null || cur.value.trim() == '')) valid = false;
 		if (cur.errors !== undefined && cur.errors.length > 0) valid = false;
 		return valid ? '' : 'text-error';
-	};
+	};			
 	
 	// Server validations
 	$scope.serverValidate = function (relativePath) {
