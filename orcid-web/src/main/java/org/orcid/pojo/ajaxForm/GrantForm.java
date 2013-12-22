@@ -73,13 +73,15 @@ public class GrantForm implements ErrorsInterface, Serializable {
 
     private Text disambiguationSource;
     
-    private String grantTypeForDisplay;
-    
     private Text city;
 
     private Text region;
 
     private Text country;
+    
+    private String countryForDisplay;
+    
+    private String grantTypeForDisplay;
 
     public List<String> getErrors() {
         return errors;
@@ -251,6 +253,14 @@ public class GrantForm implements ErrorsInterface, Serializable {
 		this.country = country;
 	}
 
+	public String getCountryForDisplay() {
+        return countryForDisplay;
+    }
+
+    public void setCountryForDisplay(String countryForDisplay) {
+        this.countryForDisplay = countryForDisplay;
+    }
+    
 	public OrcidGrant toOrcidGrant() {
 		OrcidGrant result = new OrcidGrant();
 		if(!PojoUtil.isEmpty(amount))

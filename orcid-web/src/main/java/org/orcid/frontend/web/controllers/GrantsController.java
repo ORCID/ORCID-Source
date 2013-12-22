@@ -42,6 +42,7 @@ import org.orcid.persistence.dao.OrgDisambiguatedDao;
 import org.orcid.persistence.dao.OrgDisambiguatedSolrDao;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.dao.ProfileGrantDao;
+import org.orcid.persistence.jpa.entities.CountryIsoEntity;
 import org.orcid.persistence.jpa.entities.GrantExternalIdentifierEntity;
 import org.orcid.persistence.jpa.entities.OrgDisambiguatedEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -210,6 +211,8 @@ public class GrantsController extends BaseWorkspaceController {
 						form.setGrantTypeForDisplay(getMessage(buildInternationalizationKey(
 								GrantType.class, grant.getType().value())));
 					}
+					form.setCountryForDisplay(getMessage(buildInternationalizationKey(CountryIsoEntity.class, grant.getOrganization().getAddress().getCountry()
+                            .name())));										
 					grantsMap.put(grant.getPutCode(), form);
 					grantIds.add(grant.getPutCode());
 				} catch (Exception e) {
