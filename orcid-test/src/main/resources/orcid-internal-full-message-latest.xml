@@ -18,223 +18,223 @@
 
 -->
 <orcid-message xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-               xsi:schemaLocation="http://www.orcid.org/ns/orcid ../../../../orcid-model/src/main/resources/orcid-message-1.2_rc2.xsd"
-               xmlns="http://www.orcid.org/ns/orcid">
-    <message-version>1.2_rc2</message-version>
-    <!-- Error message, if applicable -->
-    <!-- Unable to connect to ORCID, no matching researchers, etc. -->
-    <!-- <error-desc>No researcher found.</error-desc> -->
-    <orcid-profile>
-        <orcid-identifier>
-            <uri>http://orcid.org/4444-4444-4444-4446</uri>
-            <path>4444-4444-4444-4446</path>
-            <host>orcid.org</host>
-        </orcid-identifier>
-        <orcid-preferences>
-        	<locale>en</locale>
-        </orcid-preferences>
-        <orcid-history>
-            <creation-method>API</creation-method>
-            <completion-date>2012-10-09T15:50:07</completion-date>
-            <submission-date>2012-10-09T15:50:07</submission-date>
-            <!-- In short, researcher has claimed the profile if confirmed=true -->
-            <claimed>true</claimed>
-            <!-- The name of the institution that invited the researcher 
-                to register with ORCID -->
-            <source>
-                <source-orcid>
-                    <uri>http://orcid.org/8888-8888-8888-8880</uri>
-                    <path>8888-8888-8888-8880</path>
-                    <host>orcid.org</host>
-                </source-orcid>
-                <source-name>Brown University Library</source-name>
-                <source-date>2012-10-09T15:50:07</source-date>
-            </source>
-        </orcid-history>
-        <orcid-bio scope="update">
-            <personal-details>
-                <given-names>Josiah</given-names>
-                <family-name>Carberry</family-name>
-                <credit-name visibility="public">J. S. Carberry</credit-name>
-                <other-names visibility="limited">
-                    <other-name>Josiah S Carberry</other-name>
-                    <other-name>Josiah Carberry</other-name>
-                </other-names>
-            </personal-details>
-            <biography visibility="limited">
+	xsi:schemaLocation="http://www.orcid.org/ns/orcid ../../../../orcid-model/src/main/resources/orcid-message-1.2_rc2.xsd"
+	xmlns="http://www.orcid.org/ns/orcid">
+	<message-version>1.2_rc2</message-version>
+	<!-- Error message, if applicable -->
+	<!-- Unable to connect to ORCID, no matching researchers, etc. -->
+	<!-- <error-desc>No researcher found.</error-desc> -->
+	<orcid-profile>
+		<orcid-identifier>
+			<uri>http://orcid.org/4444-4444-4444-4446</uri>
+			<path>4444-4444-4444-4446</path>
+			<host>orcid.org</host>
+		</orcid-identifier>
+		<orcid-preferences>
+			<locale>en</locale>
+		</orcid-preferences>
+		<orcid-history>
+			<creation-method>API</creation-method>
+			<completion-date>2012-10-09T15:50:07</completion-date>
+			<submission-date>2012-10-09T15:50:07</submission-date>
+			<!-- In short, researcher has claimed the profile if confirmed=true -->
+			<claimed>true</claimed>
+			<!-- The name of the institution that invited the researcher to register 
+				with ORCID -->
+			<source>
+				<source-orcid>
+					<uri>http://orcid.org/8888-8888-8888-8880</uri>
+					<path>8888-8888-8888-8880</path>
+					<host>orcid.org</host>
+				</source-orcid>
+				<source-name>Brown University Library</source-name>
+				<source-date>2012-10-09T15:50:07</source-date>
+			</source>
+		</orcid-history>
+		<orcid-bio scope="update">
+			<personal-details>
+				<given-names>Josiah</given-names>
+				<family-name>Carberry</family-name>
+				<credit-name visibility="public">J. S. Carberry</credit-name>
+				<other-names visibility="limited">
+					<other-name>Josiah S Carberry</other-name>
+					<other-name>Josiah Carberry</other-name>
+				</other-names>
+			</personal-details>
+			<biography visibility="limited">
                 Josiah Stinkney Carberry is a fictional professor, created as a
                 joke. He is said to have taught at Brown University, and
                 to be known for his work in "psychoceramics", the supposed study of "cracked pots".
-            </biography>                     
-            <researcher-urls>
-                <researcher-url>
-                    <url-name>Carberry-Hay</url-name>
-                    <url>http://library.brown.edu/about/hay/carberry.php</url>
-                </researcher-url>
-                <researcher-url>
-                    <url-name>Carberry 2</url-name>
-                    <url>http://en.wikipedia.org/wiki/Josiah_S._Carberry</url>
-                </researcher-url>
-                <researcher-url>
-                    <url-name>Carberry work 3</url-name>
-                    <url>http://www.brown.edu/Administration/News_Bureau/Databases/Encyclopedia/search.php?serial=C0070</url>
-                </researcher-url>
-            </researcher-urls>
-            <contact-details>
-                <email primary="true" visibility="limited">josiah_carberry@brown.edu</email>
-                <email primary="false" visibility="public">josiah_carberry_1@brown.edu</email>
-                <email primary="false" visibility="public">josiah_carberry_2@brown.edu</email>
-                <address>
-                    <country>US</country>
-                </address>
-            </contact-details>
-            <keywords visibility="public">
-                <keyword>Bilocation</keyword>
-            </keywords>
-            <external-identifiers visibility="public">
-                <external-identifier>
-                    <external-id-orcid>
-                        <uri>http://orcid.org/8888-8888-8888-8880</uri>
-                        <path>8888-8888-8888-8880</path>
-                        <host>orcid.org</host>
-                    </external-id-orcid>
-                    <external-id-reference>YH0923</external-id-reference>
-                </external-identifier>
-            </external-identifiers>
-            <delegation visibility="private">
-                <given-permission-to>
-                    <delegation-details>
-                        <approval-date>2012-11-10T13:18:51</approval-date>
-                        <delegate-summary>
-                            <orcid-identifier>
-                                <uri>http://orcid.org/1111-1111-1111-1115</uri>
-                                <path>1111-1111-1111-1115</path>
-                                <host>orcid.org</host>
-                             </orcid-identifier>
-                            <credit-name>Patricia Carberry</credit-name>
-                        </delegate-summary>
-                    </delegation-details>
-                </given-permission-to>
-                <given-permission-by>
-                    <delegation-details>
-                        <approval-date>2012-12-22T08:16:22</approval-date>
-                        <delegate-summary>
-                            <orcid-identifier>
-                                <uri>http://orcid.org/2222-2222-2222-2229</uri>
-                                <path>2222-2222-2222-2229</path>
-                                <host>orcid.org</host>
-                            </orcid-identifier>
-                            <credit-name>W. J. R. Simpson</credit-name>
-                        </delegate-summary>
-                    </delegation-details>
-                </given-permission-by>
-            </delegation>
-            <applications visibility="private">
-                <application-summary>
-                    <application-orcid>
-                        <uri>http://orcid.org/8888-8888-8888-8880</uri>
-                        <path>8888-8888-8888-8880</path>
-                        <host>orcid.org</host>
-                    </application-orcid>
-                    <application-name>Brown University</application-name>
-                    <application-website>www.brown.edu</application-website>
-                    <approval-date>2012-11-21T08:56:32</approval-date>
-                    <scope-paths>
-                        <scope-path>/orcid-profile/read-limited</scope-path>
-                        <scope-path>/orcid-works/create</scope-path>
-                    </scope-paths>
-                </application-summary>
-            </applications>
-        </orcid-bio>
-        <orcid-activities>
-            <affiliations>
-                <affiliation visibility="public">
-                    <type>employment</type>
-                    <role-title>Researcher (Academic)</role-title>
-                    <start-date>
-                        <year>2012</year>
-                        <month>04</month>
-                    </start-date>
-                    <organization>
-                        <name>New College</name>
-                        <address>
-                            <city>Some City</city>
-                            <region>CT</region>
-                            <country>US</country>
-                        </address>
-                    </organization>
-                </affiliation>
-                <affiliation visibility="public">
-                    <type>funding</type>
-                    <department-name>Psychoceramics</department-name>
-                    <role-title>Researcher (Academic)</role-title>
-                    <start-date>
-                        <year>2008</year>
-                        <month>02</month>
-                    </start-date>
-                    <organization>
-	                    <name>Brown University</name>
-	                    <address>
-	                        <city>Providence</city>
-	                        <region>RI</region>
-	                        <country>US</country>
-	                    </address>
-	                    <disambiguated-organization>
-	                        <disambiguated-organization-identifier>abc123</disambiguated-organization-identifier>
-	                        <disambiguation-source>RINGGOLD</disambiguation-source>
-	                    </disambiguated-organization>
-                    </organization>
-                </affiliation>
-                <affiliation visibility="public">
-                    <type>employment</type>
-                    <department-name>Law</department-name>
-                    <role-title>Researcher (Academic)</role-title>
-                    <start-date>
-                        <year>2005</year>
-                    </start-date>
-                    <organization>
-	                    <name>Yale University</name>
-	                    <address>
-	                        <city>New Haven</city>
-	                        <region>CT</region>
-	                        <country>US</country>
-	                    </address>
-	                    <disambiguated-organization>
-	                        <disambiguated-organization-identifier>def456</disambiguated-organization-identifier>
-	                        <disambiguation-source>RINGGOLD</disambiguation-source>
-	                    </disambiguated-organization>
-                    </organization>
-                </affiliation>
-                <affiliation visibility="public">
-                    <type>education</type>
-                    <role-title>Student</role-title>
-                    <start-date>
-                        <year>1993</year>
-                    </start-date>
-                    <end-date>
-                        <year>1996</year>
-                    </end-date>
-                    <organization>
-	                    <name>Slightly Obscure College</name>
-	                    <address>
-	                        <city>London</city>
-	                        <country>GB</country>
-	                    </address>
-	                    <disambiguated-organization>
-	                        <disambiguated-organization-identifier>ghi789</disambiguated-organization-identifier>
-	                        <disambiguation-source>ORCID</disambiguation-source>
-	                    </disambiguated-organization>
-                    </organization>
-                </affiliation>
-            </affiliations>
-            <orcid-works scope="update">            
-                <orcid-work visibility="public">
-                    <work-title>
-                        <title>Neanderthal Man</title>
-                    </work-title>
-                    <work-citation>
-                        <work-citation-type>bibtex</work-citation-type>
-                        <citation>
+            </biography>
+			<researcher-urls>
+				<researcher-url>
+					<url-name>Carberry-Hay</url-name>
+					<url>http://library.brown.edu/about/hay/carberry.php</url>
+				</researcher-url>
+				<researcher-url>
+					<url-name>Carberry 2</url-name>
+					<url>http://en.wikipedia.org/wiki/Josiah_S._Carberry</url>
+				</researcher-url>
+				<researcher-url>
+					<url-name>Carberry work 3</url-name>
+					<url>http://www.brown.edu/Administration/News_Bureau/Databases/Encyclopedia/search.php?serial=C0070</url>
+				</researcher-url>
+			</researcher-urls>
+			<contact-details>
+				<email primary="true" visibility="limited">josiah_carberry@brown.edu</email>
+				<email primary="false" visibility="public">josiah_carberry_1@brown.edu</email>
+				<email primary="false" visibility="public">josiah_carberry_2@brown.edu</email>
+				<address>
+					<country>US</country>
+				</address>
+			</contact-details>
+			<keywords visibility="public">
+				<keyword>Bilocation</keyword>
+			</keywords>
+			<external-identifiers visibility="public">
+				<external-identifier>
+					<external-id-orcid>
+						<uri>http://orcid.org/8888-8888-8888-8880</uri>
+						<path>8888-8888-8888-8880</path>
+						<host>orcid.org</host>
+					</external-id-orcid>
+					<external-id-reference>YH0923</external-id-reference>
+				</external-identifier>
+			</external-identifiers>
+			<delegation visibility="private">
+				<given-permission-to>
+					<delegation-details>
+						<approval-date>2012-11-10T13:18:51</approval-date>
+						<delegate-summary>
+							<orcid-identifier>
+								<uri>http://orcid.org/1111-1111-1111-1115</uri>
+								<path>1111-1111-1111-1115</path>
+								<host>orcid.org</host>
+							</orcid-identifier>
+							<credit-name>Patricia Carberry</credit-name>
+						</delegate-summary>
+					</delegation-details>
+				</given-permission-to>
+				<given-permission-by>
+					<delegation-details>
+						<approval-date>2012-12-22T08:16:22</approval-date>
+						<delegate-summary>
+							<orcid-identifier>
+								<uri>http://orcid.org/2222-2222-2222-2229</uri>
+								<path>2222-2222-2222-2229</path>
+								<host>orcid.org</host>
+							</orcid-identifier>
+							<credit-name>W. J. R. Simpson</credit-name>
+						</delegate-summary>
+					</delegation-details>
+				</given-permission-by>
+			</delegation>
+			<applications visibility="private">
+				<application-summary>
+					<application-orcid>
+						<uri>http://orcid.org/8888-8888-8888-8880</uri>
+						<path>8888-8888-8888-8880</path>
+						<host>orcid.org</host>
+					</application-orcid>
+					<application-name>Brown University</application-name>
+					<application-website>www.brown.edu</application-website>
+					<approval-date>2012-11-21T08:56:32</approval-date>
+					<scope-paths>
+						<scope-path>/orcid-profile/read-limited</scope-path>
+						<scope-path>/orcid-works/create</scope-path>
+					</scope-paths>
+				</application-summary>
+			</applications>
+		</orcid-bio>
+		<orcid-activities>
+			<affiliations>
+				<affiliation visibility="public">
+					<type>employment</type>
+					<role-title>Researcher (Academic)</role-title>
+					<start-date>
+						<year>2012</year>
+						<month>04</month>
+					</start-date>
+					<organization>
+						<name>New College</name>
+						<address>
+							<city>Some City</city>
+							<region>CT</region>
+							<country>US</country>
+						</address>
+					</organization>
+				</affiliation>
+				<affiliation visibility="public">
+					<type>funding</type>
+					<department-name>Psychoceramics</department-name>
+					<role-title>Researcher (Academic)</role-title>
+					<start-date>
+						<year>2008</year>
+						<month>02</month>
+					</start-date>
+					<organization>
+						<name>Brown University</name>
+						<address>
+							<city>Providence</city>
+							<region>RI</region>
+							<country>US</country>
+						</address>
+						<disambiguated-organization>
+							<disambiguated-organization-identifier>abc123</disambiguated-organization-identifier>
+							<disambiguation-source>RINGGOLD</disambiguation-source>
+						</disambiguated-organization>
+					</organization>
+				</affiliation>
+				<affiliation visibility="public">
+					<type>employment</type>
+					<department-name>Law</department-name>
+					<role-title>Researcher (Academic)</role-title>
+					<start-date>
+						<year>2005</year>
+					</start-date>
+					<organization>
+						<name>Yale University</name>
+						<address>
+							<city>New Haven</city>
+							<region>CT</region>
+							<country>US</country>
+						</address>
+						<disambiguated-organization>
+							<disambiguated-organization-identifier>def456</disambiguated-organization-identifier>
+							<disambiguation-source>RINGGOLD</disambiguation-source>
+						</disambiguated-organization>
+					</organization>
+				</affiliation>
+				<affiliation visibility="public">
+					<type>education</type>
+					<role-title>Student</role-title>
+					<start-date>
+						<year>1993</year>
+					</start-date>
+					<end-date>
+						<year>1996</year>
+					</end-date>
+					<organization>
+						<name>Slightly Obscure College</name>
+						<address>
+							<city>London</city>
+							<country>GB</country>
+						</address>
+						<disambiguated-organization>
+							<disambiguated-organization-identifier>ghi789</disambiguated-organization-identifier>
+							<disambiguation-source>ORCID</disambiguation-source>
+						</disambiguated-organization>
+					</organization>
+				</affiliation>
+			</affiliations>
+			<orcid-works scope="update">
+				<orcid-work visibility="public">
+					<work-title>
+						<title>Neanderthal Man</title>
+					</work-title>
+					<work-citation>
+						<work-citation-type>bibtex</work-citation-type>
+						<citation>
                             @Article{Aravind:2011:NDB,
                                 author =       "Alex A. Aravind and Wim H. Hesselink",
                                 title =        "Nonatomic dual bakery algorithm with bounded tokens",
@@ -248,284 +248,233 @@
                                 ISSN =         "0001-5903 (print), 1432-0525 (electronic)",
                                 ISSN-L =       "0001-5903"
                             }</citation>
-                    </work-citation>
-                    <work-type>journal-article</work-type>                    
-                    <publication-date>
-                        <year>2012</year>
-                        <month>10</month>
-                        <day>09</day>
-                    </publication-date>
-                    <work-external-identifiers>
-                        <work-external-identifier>
-                            <work-external-identifier-type>doi</work-external-identifier-type>
-                            <work-external-identifier-id>http://10.5555/12345ABCDE</work-external-identifier-id>
-                        </work-external-identifier>
-                    </work-external-identifiers>
-                    <work-contributors>
-                        <contributor>
-                            <contributor-orcid>
-                                <uri>http://orcid.org/1111-1111-1111-1115</uri>
-                                <path>1111-1111-1111-1115</path>
-                                <host>orcid.org</host>
-                            </contributor-orcid>
-                            <credit-name>Flibberdy Flabinah</credit-name>
-                            <contributor-attributes>
-                                <contributor-sequence>first</contributor-sequence>
-                                <contributor-role>author</contributor-role>
-                            </contributor-attributes>
-                        </contributor>
-                        <contributor>
-                            <contributor-orcid>
-                                <uri>http://orcid.org/2222-2222-2222-2229</uri>
-                                <path>2222-2222-2222-2229</path>
-                                <host>orcid.org</host>
-                            </contributor-orcid>
-                            <credit-name>Flobberdy Flip</credit-name>
-                            <contributor-attributes>
-                                <contributor-sequence>additional</contributor-sequence>
-                                <contributor-role>author</contributor-role>
-                            </contributor-attributes>
-                        </contributor>
-                        <contributor>
-                            <credit-name>Paul Di Filippo</credit-name>
-                            <contributor-attributes>
-                                <contributor-sequence>additional</contributor-sequence>
-                                <contributor-role>author</contributor-role>
-                            </contributor-attributes>
-                        </contributor>
-                    </work-contributors>
-                </orcid-work>
-            </orcid-works>
-            <orcid-grants>
-                <orcid-grant visibility="public">
-                    <funding-agency>
-                        <agency-orcid>
-                            <uri>http://orcid.org/1111-1111-1111-1113</uri>
-                            <path>1111-1111-1111-1113</path>
-                            <host>orcid.org</host>
-                        </agency-orcid>
-                        <agency-name>Agency name</agency-name>
-                    </funding-agency>
-                    <grant-external-identifier>
-                        <grant-external-program>_REF</grant-external-program>
-                        <grant-external-id>extId</grant-external-id>
-                    </grant-external-identifier>
-                    <grant-number>1</grant-number>
-                    <short-description>A short description</short-description>
-                    <grant-date>2012-11-21T08:56:32</grant-date>
-                    <grant-contributors>
-                        <contributor>
-                            <contributor-orcid>
-                                <uri>http://orcid.org/2111-1111-1111-1113</uri>
-                                <path>2111-1111-1111-1113</path>
-                                <host>orcid.org</host>
-                            </contributor-orcid>
-                            <credit-name>Credit Name</credit-name>
-                            <contributor-attributes>
-                                <contributor-sequence>first</contributor-sequence>
-                                <contributor-role>postdoctoral-researcher</contributor-role>
-                            </contributor-attributes>
-                        </contributor>
-                        <contributor>
-                            <contributor-orcid>
-                                <uri>http://orcid.org/2111-1111-1111-1119</uri>
-                                <path>2111-1111-1111-1119</path>
-                                <host>orcid.org</host>
-                            </contributor-orcid>
-                            <credit-name>Credit Name</credit-name>
-                            <contributor-attributes>
-                                <contributor-sequence>additional</contributor-sequence>
-                                <contributor-role>graduate-student</contributor-role>
-                            </contributor-attributes>
-                        </contributor>
-                    </grant-contributors>
-                    <grant-sources>
-                        <source>
-                            <source-orcid>
-                                <uri>http://orcid.org/2111-1111-1111-1114</uri>
-                                <path>2111-1111-1111-1114</path>
-                                <host>orcid.org</host>
-                            </source-orcid>
-                            <source-name>Sponsor 1</source-name>
-                            <source-date>2012-11-21T08:56:33</source-date>
-                        </source>
-                        <source>
-                            <source-orcid>
-                                <uri>http://orcid.org/2111-1111-1111-1115</uri>
-                                <path>2111-1111-1111-1115</path>
-                                <host>orcid.org</host>
-                            </source-orcid>
-                            <source-name>Sponsor 2</source-name>
-                            <source-date>2012-11-21T08:56:33</source-date>
-                        </source>
-                    </grant-sources>
-                </orcid-grant>
-                <orcid-grant visibility="limited">
-                    <funding-agency>
-                        <agency-orcid>
-                            <uri>http://orcid.org/1111-1111-1111-1113</uri>
-                            <path>1111-1111-1111-1113</path>
-                            <host>orcid.org</host>
-                        </agency-orcid>
-                        <agency-name>Agency name</agency-name>
-                    </funding-agency>
-                    <grant-external-identifier>
-                        <grant-external-program>_REF2</grant-external-program>
-                        <grant-external-id>extId</grant-external-id>
-                    </grant-external-identifier>
-                    <grant-number>1</grant-number>
-                    <short-description>A short description</short-description>
-                    <grant-date>2012-11-21T08:56:32</grant-date>
-                    <grant-contributors>
-                        <contributor>
-                            <contributor-orcid>
-                                <uri>http://orcid.org/2111-1111-1111-1113</uri>
-                                <path>2111-1111-1111-1113</path>
-                                <host>orcid.org</host>
-                            </contributor-orcid>
-                            <credit-name>Credit Name</credit-name>
-                            <contributor-attributes>
-                                <contributor-sequence>first</contributor-sequence>
-                                <contributor-role>co-investigator</contributor-role>
-                            </contributor-attributes>
-                        </contributor>
-                        <contributor>
-                            <contributor-orcid>
-                                <uri>http://orcid.org/2111-1111-1111-1120</uri>
-                                <path>2111-1111-1111-1120</path>
-                                <host>orcid.org</host>
-                            </contributor-orcid>
-                            <credit-name>Credit Name</credit-name>
-                            <contributor-attributes>
-                                <contributor-sequence>additional</contributor-sequence>
-                                <contributor-role>co-investigator</contributor-role>
-                            </contributor-attributes>
-                        </contributor>
-                    </grant-contributors>
-                    <grant-sources>
-                        <source>
-                            <source-orcid>
-                                <uri>http://orcid.org/2111-1111-1111-1116</uri>
-                                <path>2111-1111-1111-1116</path>
-                                <host>orcid.org</host>
-                            </source-orcid>
-                            <source-name>Sponsor 1</source-name>
-                            <source-date>2012-11-21T08:56:33</source-date>
-                        </source>
-                        <source>
-                            <source-orcid>
-                                <uri>http://orcid.org/2111-1111-1111-1117</uri>
-                                <path>2111-1111-1111-1117</path>
-                                <host>orcid.org</host>
-                            </source-orcid>
-                            <source-name>Sponsor 2</source-name>
-                            <source-date>2012-11-21T08:56:33</source-date>
-                        </source>
-                    </grant-sources>
-                </orcid-grant>
-            </orcid-grants>
-            <orcid-patents>
-                <orcid-patent visibility="public">
-                    <country>GB</country>
-                    <patent-number>GB2447776</patent-number>
-                    <short-description>POLYCRYSTALLINE DIAMOND CONSTRUCTIONS HAVING IMPROVED THERMAL STABILITY</short-description>
-                    <patent-issue-date>2012-03-20T00:00:00</patent-issue-date>
-                    <assignee>
-                        <assignee-orcid>
-                            <uri>http://orcid.org/0000-8928-9282-9282</uri>
-                            <path>0000-8928-9282-9282</path>
-                            <host>orcid.org</host>
-                        </assignee-orcid>
-                        <assignee-name>MADAPUSI K KESHAVAN</assignee-name>
-                    </assignee>
-                    <patent-contributors>
-                        <contributor>
-                            <contributor-orcid>
-                                <uri>http://orcid.org/2111-1111-1111-1113</uri>
-                                <path>2111-1111-1111-1113</path>
-                                <host>orcid.org</host>
-                            </contributor-orcid>
-                            <credit-name>Francis Rossi</credit-name>
-                            <contributor-attributes>
-                                <contributor-sequence>first</contributor-sequence>
-                                <contributor-role>principal-investigator</contributor-role>
-                            </contributor-attributes>
-                        </contributor>
-                        <contributor>
-                            <contributor-orcid>
-                                <uri>http://orcid.org/2111-1111-1111-1121</uri>
-                                <path>2111-1111-1111-1121</path>
-                                <host>orcid.org</host>
-                            </contributor-orcid>
-                            <credit-name>Rick Parfitt</credit-name>
-                            <contributor-attributes>
-                                <contributor-sequence>additional</contributor-sequence>
-                                <contributor-role>support-staff</contributor-role>
-                            </contributor-attributes>
-                        </contributor>
-                    </patent-contributors>
-                    <patent-sources>
-                        <source>
-                            <source-orcid>
-                                <uri>http://orcid.org/0000-8928-9282-9282</uri>
-                                <path>0000-8928-9282-9282</path>
-                                <host>orcid.org</host>
-                            </source-orcid>
-                            <source-name>Peter Gabriel</source-name>
-                            <source-date>2012-03-20T00:00:00</source-date>
-                        </source>
-                        <source>
-                            <source-orcid>
-                                <uri>http://orcid.org/0000-8273-9282-9282</uri>
-                                <path>0000-8273-9282-9282</path>
-                                <host>orcid.org</host>
-                            </source-orcid>
-                            <source-name>Tony Banks</source-name>
-                            <source-date>2012-01-20T00:00:00</source-date>
-                        </source>
-                        <source>
-                            <source-orcid>
-                                <uri>http://orcid.org/0000-3273-2239-1293</uri>
-                                <path>0000-3273-2239-1293</path>
-                                <host>orcid.org</host>
-                            </source-orcid>
-                            <source-name>Anthony Phillips</source-name>
-                            <source-date>2012-01-20T00:00:00</source-date>
-                        </source>
-                        <source>
-                            <source-orcid>
-                                <uri>http://orcid.org/0000-3273-2239-1294</uri>
-                                <path>0000-3273-2239-1294</path>
-                                <host>orcid.org</host>
-                            </source-orcid>
-                            <source-name>Mike Rutherford</source-name>
-                            <source-date>2012-01-20T00:00:00</source-date>
-                        </source>
-                        <source>
-                            <source-orcid>
-                                <uri>http://orcid.org/0000-3273-2239-2733</uri>
-                                <path>0000-3273-2239-2733</path>
-                                <host>orcid.org</host>
-                            </source-orcid>
-                            <source-name>Chris Stewart</source-name>
-                            <source-date>2012-01-20T00:00:00</source-date>
-                        </source>
-                    </patent-sources>
-                </orcid-patent>
-            </orcid-patents>
-        </orcid-activities>
-        <orcid-internal>
-            <security-details>
-                <encrypted-password>abc123</encrypted-password>
-                <security-question-id>1</security-question-id>
-                <encrypted-security-answer>dMDyJ1Z7Qn6xWClFzA63fQ==</encrypted-security-answer>
-                <encrypted-verification-code>ghi789</encrypted-verification-code>
-            </security-details>
-            <preferences>
-            	<send-change-notifications>true</send-change-notifications>
-                <send-orcid-news>false</send-orcid-news>
-                <work-visibility-default>public</work-visibility-default>
-            </preferences>
-        </orcid-internal>
-    </orcid-profile>
+					</work-citation>
+					<work-type>journal-article</work-type>
+					<publication-date>
+						<year>2012</year>
+						<month>10</month>
+						<day>09</day>
+					</publication-date>
+					<work-external-identifiers>
+						<work-external-identifier>
+							<work-external-identifier-type>doi</work-external-identifier-type>
+							<work-external-identifier-id>http://10.5555/12345ABCDE</work-external-identifier-id>
+						</work-external-identifier>
+					</work-external-identifiers>
+					<work-contributors>
+						<contributor>
+							<contributor-orcid>
+								<uri>http://orcid.org/1111-1111-1111-1115</uri>
+								<path>1111-1111-1111-1115</path>
+								<host>orcid.org</host>
+							</contributor-orcid>
+							<credit-name>Flibberdy Flabinah</credit-name>
+							<contributor-attributes>
+								<contributor-sequence>first</contributor-sequence>
+								<contributor-role>author</contributor-role>
+							</contributor-attributes>
+						</contributor>
+						<contributor>
+							<contributor-orcid>
+								<uri>http://orcid.org/2222-2222-2222-2229</uri>
+								<path>2222-2222-2222-2229</path>
+								<host>orcid.org</host>
+							</contributor-orcid>
+							<credit-name>Flobberdy Flip</credit-name>
+							<contributor-attributes>
+								<contributor-sequence>additional</contributor-sequence>
+								<contributor-role>author</contributor-role>
+							</contributor-attributes>
+						</contributor>
+						<contributor>
+							<credit-name>Paul Di Filippo</credit-name>
+							<contributor-attributes>
+								<contributor-sequence>additional</contributor-sequence>
+								<contributor-role>author</contributor-role>
+							</contributor-attributes>
+						</contributor>
+					</work-contributors>
+				</orcid-work>
+			</orcid-works>
+			<orcid-grants>
+				<orcid-grant visibility="public">					
+					<title>Grant # 1</title>
+					<description>1</description>
+					<url>http://grant1.com</url>
+					<grant-type>award</grant-type>
+					<currency-code>USD</currency-code>
+					<amount>2500</amount>										
+					<start-date>
+						<year>2012</year>
+						<month>04</month>
+					</start-date>
+					<end-date>
+						<year>2014</year>
+						<month>01</month>
+						<day>01</day>
+					</end-date>
+					<organization>
+						<name>New College</name>
+						<address>
+							<city>Some City</city>
+							<region>CT</region>
+							<country>US</country>
+						</address>
+					</organization>
+					<grant-external-identifiers>
+						<grant-external-identifier>
+							<grant-external-identifier-type>type1</grant-external-identifier-type>
+							<grant-external-identifier-value>value1</grant-external-identifier-value>
+							<grant-external-identifier-url>url1</grant-external-identifier-url>
+						</grant-external-identifier>
+						<grant-external-identifier>
+							<grant-external-identifier-type>type2</grant-external-identifier-type>
+							<grant-external-identifier-url>url2</grant-external-identifier-url>
+						</grant-external-identifier>
+						<grant-external-identifier>
+							<grant-external-identifier-type>type3</grant-external-identifier-type>
+							<grant-external-identifier-value>value3</grant-external-identifier-value>
+						</grant-external-identifier>
+					</grant-external-identifiers>
+					<grant-contributors>
+						<contributor>
+							<contributor-orcid>
+								<uri>http://orcid.org/2111-1111-1111-1113</uri>
+								<path>2111-1111-1111-1113</path>
+								<host>orcid.org</host>
+							</contributor-orcid>
+							<credit-name>Credit Name</credit-name>
+							<contributor-attributes>
+								<contributor-sequence>first</contributor-sequence>
+								<contributor-role>postdoctoral-researcher</contributor-role>
+							</contributor-attributes>
+						</contributor>
+						<contributor>
+							<contributor-orcid>
+								<uri>http://orcid.org/2111-1111-1111-1119</uri>
+								<path>2111-1111-1111-1119</path>
+								<host>orcid.org</host>
+							</contributor-orcid>
+							<credit-name>Credit Name</credit-name>
+							<contributor-attributes>
+								<contributor-sequence>additional</contributor-sequence>
+								<contributor-role>graduate-student</contributor-role>
+							</contributor-attributes>
+						</contributor>
+					</grant-contributors>
+					<source>
+						<source-orcid>
+							<uri>http://orcid.org/2111-1111-1111-1114</uri>
+							<path>2111-1111-1111-1114</path>
+							<host>orcid.org</host>
+						</source-orcid>
+						<source-name>Sponsor 1</source-name>
+						<source-date>2012-11-21T08:56:33</source-date>
+					</source>
+				</orcid-grant>
+			</orcid-grants>
+			<orcid-patents>
+				<orcid-patent visibility="public">
+					<country>GB</country>
+					<patent-number>GB2447776</patent-number>
+					<short-description>POLYCRYSTALLINE DIAMOND CONSTRUCTIONS HAVING IMPROVED THERMAL STABILITY</short-description>
+					<patent-issue-date>2012-03-20T00:00:00</patent-issue-date>
+					<assignee>
+						<assignee-orcid>
+							<uri>http://orcid.org/0000-8928-9282-9282</uri>
+							<path>0000-8928-9282-9282</path>
+							<host>orcid.org</host>
+						</assignee-orcid>
+						<assignee-name>MADAPUSI K KESHAVAN</assignee-name>
+					</assignee>
+					<patent-contributors>
+						<contributor>
+							<contributor-orcid>
+								<uri>http://orcid.org/2111-1111-1111-1113</uri>
+								<path>2111-1111-1111-1113</path>
+								<host>orcid.org</host>
+							</contributor-orcid>
+							<credit-name>Francis Rossi</credit-name>
+							<contributor-attributes>
+								<contributor-sequence>first</contributor-sequence>
+								<contributor-role>principal-investigator</contributor-role>
+							</contributor-attributes>
+						</contributor>
+						<contributor>
+							<contributor-orcid>
+								<uri>http://orcid.org/2111-1111-1111-1121</uri>
+								<path>2111-1111-1111-1121</path>
+								<host>orcid.org</host>
+							</contributor-orcid>
+							<credit-name>Rick Parfitt</credit-name>
+							<contributor-attributes>
+								<contributor-sequence>additional</contributor-sequence>
+								<contributor-role>support-staff</contributor-role>
+							</contributor-attributes>
+						</contributor>
+					</patent-contributors>
+					<patent-sources>
+						<source>
+							<source-orcid>
+								<uri>http://orcid.org/0000-8928-9282-9282</uri>
+								<path>0000-8928-9282-9282</path>
+								<host>orcid.org</host>
+							</source-orcid>
+							<source-name>Peter Gabriel</source-name>
+							<source-date>2012-03-20T00:00:00</source-date>
+						</source>
+						<source>
+							<source-orcid>
+								<uri>http://orcid.org/0000-8273-9282-9282</uri>
+								<path>0000-8273-9282-9282</path>
+								<host>orcid.org</host>
+							</source-orcid>
+							<source-name>Tony Banks</source-name>
+							<source-date>2012-01-20T00:00:00</source-date>
+						</source>
+						<source>
+							<source-orcid>
+								<uri>http://orcid.org/0000-3273-2239-1293</uri>
+								<path>0000-3273-2239-1293</path>
+								<host>orcid.org</host>
+							</source-orcid>
+							<source-name>Anthony Phillips</source-name>
+							<source-date>2012-01-20T00:00:00</source-date>
+						</source>
+						<source>
+							<source-orcid>
+								<uri>http://orcid.org/0000-3273-2239-1294</uri>
+								<path>0000-3273-2239-1294</path>
+								<host>orcid.org</host>
+							</source-orcid>
+							<source-name>Mike Rutherford</source-name>
+							<source-date>2012-01-20T00:00:00</source-date>
+						</source>
+						<source>
+							<source-orcid>
+								<uri>http://orcid.org/0000-3273-2239-2733</uri>
+								<path>0000-3273-2239-2733</path>
+								<host>orcid.org</host>
+							</source-orcid>
+							<source-name>Chris Stewart</source-name>
+							<source-date>2012-01-20T00:00:00</source-date>
+						</source>
+					</patent-sources>
+				</orcid-patent>
+			</orcid-patents>
+		</orcid-activities>
+		<orcid-internal>
+			<security-details>
+				<encrypted-password>abc123</encrypted-password>
+				<security-question-id>1</security-question-id>
+				<encrypted-security-answer>dMDyJ1Z7Qn6xWClFzA63fQ==</encrypted-security-answer>
+				<encrypted-verification-code>ghi789</encrypted-verification-code>
+			</security-details>
+			<preferences>
+				<send-change-notifications>true</send-change-notifications>
+				<send-orcid-news>false</send-orcid-news>
+				<work-visibility-default>public</work-visibility-default>
+			</preferences>
+		</orcid-internal>
+	</orcid-profile>
 </orcid-message>

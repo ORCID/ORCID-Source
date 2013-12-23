@@ -16,6 +16,7 @@
  */
 package org.orcid.frontend.web.controllers;
 
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -403,12 +404,12 @@ public class GrantsController extends BaseWorkspaceController {
 		} else {
 			String amount = grant.getAmount().getValue();
 			long lAmount = 0;
-			try {
-				lAmount = Long.valueOf(amount);
-			} catch (NumberFormatException nfe) {
+			//TODO Chck this regex
+			String pattern = "[0-9]{1,3}(?:[0-9]*(?:[.,][0-9]{2})?|(?:,[0-9]{3})*(?:\\.[0-9]{2})?|(?:\\.[0-9]{3})*(?:,[0-9]{2})?)";
+			if(!amount.matches(pattern)){
 				setError(grant.getAmount(), "Invalid.grant.amount");
 			}
-
+			
 			if (lAmount < 0)
 				setError(grant.getAmount(), "Invalid.grant.amount");
 		}

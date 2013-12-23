@@ -216,7 +216,6 @@
 			</xs:simpleContent>
 		</xs:complexType>
 	</xs:element>
-
 	<xs:element name="source">
 		<xs:annotation>
 			<xs:documentation>The client application (Member organization's system) that created the ORCID Record via the API (if any).
@@ -915,13 +914,13 @@
 			</xs:documentation>
 		</xs:annotation>
 		<xs:complexType>
-			<xs:sequence>
-				<xs:element name="title" type="orcid:non-empty-string" />
-				<xs:element name="description" type="orcid:non-empty-string" />
-				<xs:element ref="orcid:currency-code" />				
-				<xs:element name="amount" type="orcid:non-empty-string" />
-				<xs:element ref="orcid:grant-type" />
-				<xs:element ref="orcid:url" minOccurs="0" />
+			<xs:sequence>				
+				<xs:element name="title" type="orcid:non-empty-string" minOccurs="1" maxOccurs="1"/>
+				<xs:element name="description" type="orcid:non-empty-string" minOccurs="0" maxOccurs="1"/>							
+				<xs:element ref="orcid:url" minOccurs="0" maxOccurs="1"/>
+				<xs:element ref="orcid:grant-type" minOccurs="1" maxOccurs="1" />
+				<xs:element ref="orcid:currency-code" minOccurs="1" maxOccurs="1"/>				
+				<xs:element name="amount" type="orcid:non-empty-string" minOccurs="1" maxOccurs="1"/>
 				<xs:element name="start-date" type="orcid:fuzzy-date" minOccurs="0" maxOccurs="1" />
 				<xs:element name="end-date" type="orcid:fuzzy-date" minOccurs="0" maxOccurs="1" />												
 				<xs:element ref="orcid:organization" minOccurs="1" maxOccurs="1"/>
@@ -932,21 +931,8 @@
 			<xs:attributeGroup ref="orcid:put-code" />
 			<xs:attributeGroup ref="orcid:visibility" />
 		</xs:complexType>
-	</xs:element>
-	<xs:element name="grant-type">
-		<xs:annotation>
-			<xs:documentation>The type of grant, it could be grant, contract, award or salary-award.
-			</xs:documentation>
-		</xs:annotation>
-		<xs:simpleType>
-			<xs:restriction base="xs:string">
-				<xs:enumeration value="grant" />
-				<xs:enumeration value="contract" />
-				<xs:enumeration value="award" />
-				<xs:enumeration value="salary-award" />
-			</xs:restriction>
-		</xs:simpleType>
 	</xs:element>	
+	
 	<xs:element name="currency-code">
 		<xs:annotation>
 			<xs:documentation>The currency code used on grants
@@ -1121,7 +1107,20 @@
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
-	
+	<xs:element name="grant-type">
+		<xs:annotation>
+			<xs:documentation>The type of grant, it could be grant, contract, award or salary-award.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:enumeration value="grant" />
+				<xs:enumeration value="contract" />
+				<xs:enumeration value="award" />
+				<xs:enumeration value="salary-award" />
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
 	<xs:element name="grant-external-identifiers">
 		<xs:annotation>
 			<xs:documentation>Container for storing the external references to the grant.

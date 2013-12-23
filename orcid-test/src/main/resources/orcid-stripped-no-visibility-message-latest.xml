@@ -190,68 +190,73 @@
                 </orcid-work>
             </orcid-works>
             <orcid-grants>
-                <orcid-grant put-code="1">
-                    <funding-agency>
-                        <agency-orcid>
-                            <uri>http://orcid.org/1111-1111-1111-1102</uri>
-                            <path>1111-1111-1111-1102</path>
-                            <host>orcid.org</host>
-                        </agency-orcid>
-                        <agency-name>Agency name</agency-name>
-                    </funding-agency>
-                    <grant-external-identifier>
-                        <grant-external-program>_REF</grant-external-program>
-                        <grant-external-id>extId</grant-external-id>
-                    </grant-external-identifier>
-                    <grant-number>1</grant-number>
-                    <short-description>A short description</short-description>
-                    <grant-date>2012-11-21T08:56:32</grant-date>
-                    <grant-contributors>
-                        <contributor>
-                            <contributor-orcid>
-                                <uri>http://orcid.org/2111-1111-1111-1103</uri>
-                                <path>2111-1111-1111-1103</path>
-                                <host>orcid.org</host>
-                            </contributor-orcid>
-                            <contributor-attributes>
-                                <contributor-sequence>first</contributor-sequence>
-                                <contributor-role>postdoctoral-researcher</contributor-role>
-                            </contributor-attributes>
-                        </contributor>
-                        <contributor>
-                            <contributor-orcid>
-                                <uri>http://orcid.org/2111-1111-1111-1104</uri>
-                                <path>2111-1111-1111-1104</path>
-                                <host>orcid.org</host>
-                            </contributor-orcid>
-                            <contributor-attributes>
-                                <contributor-sequence>additional</contributor-sequence>
-                                <contributor-role>graduate-student</contributor-role>
-                            </contributor-attributes>
-                        </contributor>
-                    </grant-contributors>
-                    <grant-sources>
-                        <source>
-                            <source-orcid>
-                                <uri>http://orcid.org/2111-1111-1111-1105</uri>
-                                <path>2111-1111-1111-1105</path>
-                                <host>orcid.org</host>
-                            </source-orcid>
-                            <source-name>Sponsor 1</source-name>
-                            <source-date>2012-11-21T08:56:33</source-date>
-                        </source>
-                        <source>
-                            <source-orcid>
-                                <uri>http://orcid.org/2111-1111-1111-1115</uri>
-                                <path>2111-1111-1111-1115</path>
-                                <host>orcid.org</host>
-                            </source-orcid>
-                            <source-name>Sponsor 2</source-name>
-                            <source-date>2012-11-21T08:56:33</source-date>
-                        </source>
-                    </grant-sources>
-                </orcid-grant>
-            </orcid-grants>
+				<orcid-grant>					
+					<title>Grant # 1</title>
+					<description>1</description>
+					<url>http://grant1.com</url>
+					<grant-type>award</grant-type>
+					<currency-code>USD</currency-code>
+					<amount>2500</amount>										
+					<start-date>
+						<year>2012</year>
+						<month>04</month>
+					</start-date>
+					<end-date>
+						<year>2014</year>
+						<month>01</month>
+						<day>01</day>
+					</end-date>
+					<organization>
+						<name>New College</name>
+						<address>
+							<city>Some City</city>
+							<region>CT</region>
+							<country>US</country>
+						</address>
+					</organization>
+					<grant-external-identifiers>
+						<grant-external-identifier>
+							<grant-external-identifier-type>type1</grant-external-identifier-type>
+							<grant-external-identifier-value>value1</grant-external-identifier-value>
+							<grant-external-identifier-url>url1</grant-external-identifier-url>
+						</grant-external-identifier>
+						<grant-external-identifier>
+							<grant-external-identifier-type>type2</grant-external-identifier-type>
+							<grant-external-identifier-url>url2</grant-external-identifier-url>
+						</grant-external-identifier>
+						<grant-external-identifier>
+							<grant-external-identifier-type>type3</grant-external-identifier-type>
+							<grant-external-identifier-value>value3</grant-external-identifier-value>
+						</grant-external-identifier>
+					</grant-external-identifiers>
+					<grant-contributors>
+						<contributor>
+							<contributor-orcid>
+								<uri>http://orcid.org/2111-1111-1111-1113</uri>
+								<path>2111-1111-1111-1113</path>
+								<host>orcid.org</host>
+							</contributor-orcid>
+							<credit-name>Credit Name</credit-name>
+							<contributor-attributes>
+								<contributor-sequence>first</contributor-sequence>
+								<contributor-role>postdoctoral-researcher</contributor-role>
+							</contributor-attributes>
+						</contributor>
+						<contributor>
+							<credit-name>Phil Collins</credit-name>
+						</contributor>
+					</grant-contributors>
+					<source>
+						<source-orcid>
+							<uri>http://orcid.org/2111-1111-1111-1114</uri>
+							<path>2111-1111-1111-1114</path>
+							<host>orcid.org</host>
+						</source-orcid>
+						<source-name>Sponsor 1</source-name>
+						<source-date>2012-11-21T08:56:33</source-date>
+					</source>
+				</orcid-grant>
+			</orcid-grants>
             <orcid-patents>
                 <orcid-patent put-code="3">
                     <patent-number>GB2447776</patent-number>

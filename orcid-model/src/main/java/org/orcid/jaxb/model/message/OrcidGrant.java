@@ -46,10 +46,12 @@ import java.io.Serializable;
  *       &lt;sequence>
  *         &lt;element ref="{http://www.orcid.org/ns/orcid}title" minOccurs="0"/>
  *         &lt;element ref="{http://www.orcid.org/ns/orcid}description"/>
+ *         &lt;element ref="{http://www.orcid.org/ns/orcid}url"/>         
  *         &lt;element ref="{http://www.orcid.org/ns/orcid}grant-type"/>
- *         &lt;element ref="{http://www.orcid.org/ns/orcid}grant-currency-code" minOccurs="0" maxOrrurs="1"/>
- *         &lt;element ref="{http://www.orcid.org/ns/orcid}amount"/>
- *         &lt;element ref="{http://www.orcid.org/ns/orcid}url"/>
+ *         &lt;element ref="{http://www.orcid.org/ns/orcid}currency-code" minOccurs="0" maxOrrurs="1"/>
+ *         &lt;element ref="{http://www.orcid.org/ns/orcid}amount"/> 
+ *         &lt;element name="start-date" type="{http://www.orcid.org/ns/orcid}fuzzy-date" minOccurs="0"/>        
+ *         &lt;element name="end-date" type="{http://www.orcid.org/ns/orcid}fuzzy-date" minOccurs="0"/>
  *         &lt;element ref="{http://www.orcid.org/ns/orcid}organization"/>
  *         &lt;element ref="{http://www.orcid.org/ns/orcid}grant-external-identifiers" maxOccurs="unbounded" minOccurs="0"/>
  *         &lt;element ref="{http://www.orcid.org/ns/orcid}grant-contributors" maxOccurs="unbounded" minOccurs="0"/>
@@ -64,9 +66,8 @@ import java.io.Serializable;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "putCode", "title", "description", "type",
-		"currencyCode", "amount", "url", "startDate", "endDate", "organization", "grantExternalIdentifiers", "grantContributors", "visibility",
-		"source" })
+@XmlType(propOrder = { "title", "description", "url", "type",
+		"currencyCode", "amount",  "startDate", "endDate", "organization", "grantExternalIdentifiers", "grantContributors", "source" })
 @XmlRootElement(name = "orcid-grant")
 public class OrcidGrant implements VisibilityType, Serializable {
 
@@ -78,7 +79,7 @@ public class OrcidGrant implements VisibilityType, Serializable {
 	protected String description;
 	@XmlElement(name = "grant-type")
 	protected GrantType type;
-	@XmlElement(name = "grant-currency-code")
+	@XmlElement(name = "currency-code")
 	protected CurrencyCode currencyCode;
 	@XmlElement
 	protected String amount;

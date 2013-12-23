@@ -44,9 +44,9 @@ import java.io.Serializable;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element ref="{http://www.orcid.org/ns/orcid}type"/>
- *         &lt;element ref="{http://www.orcid.org/ns/orcid}value"/>
- *         &lt;element ref="{http://www.orcid.org/ns/orcid}url" minOccurs="0"/>
+ *         &lt;element ref="{http://www.orcid.org/ns/orcid}grant-external-identifier-type"/>
+ *         &lt;element ref="{http://www.orcid.org/ns/orcid}grant-external-identifier-value"/>
+ *         &lt;element ref="{http://www.orcid.org/ns/orcid}grant-external-identifier-url" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -60,11 +60,11 @@ import java.io.Serializable;
 @XmlRootElement(name = "grant-external-identifier")
 public class GrantExternalIdentifier implements Serializable {
 	private static final long serialVersionUID = 1L;
-	@XmlElement
+	@XmlElement(name="grant-external-identifier-type")
 	protected String type;
-	@XmlElement
+	@XmlElement(name="grant-external-identifier-value")
 	protected String value;
-	@XmlElement
+	@XmlElement(name="grant-external-identifier-url")
 	protected Url url;	
 	
 	public String getType() {

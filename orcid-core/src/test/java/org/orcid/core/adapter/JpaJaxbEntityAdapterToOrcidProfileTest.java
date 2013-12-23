@@ -281,7 +281,7 @@ public class JpaJaxbEntityAdapterToOrcidProfileTest extends DBUnitTest {
     private void checkOrcidGrants(OrcidGrants orcidGrants) {
         assertNotNull(orcidGrants);
         List<OrcidGrant> orcidGrantList = orcidGrants.getOrcidGrant();
-        assertEquals(2, orcidGrantList.size());
+        assertEquals(3, orcidGrantList.size());
     }
 
     private void checkOrcidPatents(OrcidPatents orcidPatents) {

@@ -33,6 +33,7 @@
     <email_event/>
     <funding_grant/>
     <profile_grant/>
+    <grant_external_identifier/>
     <grant_contributor/>
     <other_name/>
     <profile_keyword/>

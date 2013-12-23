@@ -286,15 +286,15 @@ public class OrcidIndexManagerImpl implements OrcidIndexManager {
 					.retrieveOrcidGrants() != null ? filteredProfile
 					.retrieveOrcidGrants().getOrcidGrant() : null;
 			if (orcidGrants != null) {
-				List<String> grantNumbers = new ArrayList<String>();
+				List<String> grantTitle = new ArrayList<String>();
 				for (OrcidGrant orcidGrant : orcidGrants) {
 					if (orcidGrant.getTitle() != null
 							&& !StringUtils.isBlank(orcidGrant.getTitle())) {
-						grantNumbers.add(orcidGrant.getTitle());
+						grantTitle.add(orcidGrant.getTitle());
 					}
 				}
 
-				profileIndexDocument.setGrantNumbers(grantNumbers);
+				profileIndexDocument.setGrantNumbers(grantTitle);
 			}
 
 			List<OrcidPatent> orcidPatents = filteredProfile

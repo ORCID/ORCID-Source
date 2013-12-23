@@ -224,7 +224,18 @@ public class ProfileGrantEntity extends BaseEntity<Long> implements Comparable<P
 	public int compareTo(ProfileGrantEntity other) {
 		if (other == null) {
             return 1;
-        }
+        }				
+		
+		int compareTypes = compareTypes(type, other.getType());
+		if(compareTypes != 0) {
+			return compareTypes;
+		}
+		
+		int compareTitles = compareTitles(title, other.getTitle());
+		if(compareTitles != 0) {
+			return compareTitles;
+		}
+		
         int compareEnds = compareEnds(endDate, other.getEndDate());
         if (compareEnds != 0) {
             return compareEnds;
@@ -236,6 +247,13 @@ public class ProfileGrantEntity extends BaseEntity<Long> implements Comparable<P
         return compareNames(org.getName(), other.getOrg().getName());
 	}
 
+	private int compareTypes(GrantType type, GrantType otherType){
+		if (NullUtils.anyNull(type, otherType)) {
+            return -NullUtils.compareNulls(type, otherType);
+        }
+		return -type.compareTo(otherType);
+	}
+	
 	private int compareEnds(FuzzyDateEntity endDate, FuzzyDateEntity otherEndDate) {
         if (NullUtils.anyNull(endDate, otherEndDate)) {
             return -NullUtils.compareNulls(endDate, otherEndDate);
@@ -255,6 +273,13 @@ public class ProfileGrantEntity extends BaseEntity<Long> implements Comparable<P
             return NullUtils.compareNulls(name, otherName);
         }
         return name.compareTo(otherName);
+    }
+    
+    private int compareTitles(String title, String otherTitle) {
+        if (NullUtils.anyNull(title, otherTitle)) {
+            return NullUtils.compareNulls(title, otherTitle);
+        }
+        return title.compareTo(otherTitle);
     }
     
     /**

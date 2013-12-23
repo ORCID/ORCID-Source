@@ -56,6 +56,7 @@ import org.orcid.jaxb.model.message.OtherName;
 import org.orcid.jaxb.model.message.OtherNames;
 import org.orcid.jaxb.model.message.PatentNumber;
 import org.orcid.jaxb.model.message.PersonalDetails;
+import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.message.WorkExternalIdentifier;
 import org.orcid.jaxb.model.message.WorkExternalIdentifierId;
 import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
@@ -349,11 +350,13 @@ public class OrcidSearchManagerImplTest extends BaseTest {
         OrcidGrants orcidGrants = new OrcidGrants();
         orcidProfile.setOrcidGrants(orcidGrants);
         OrcidGrant orcidGrant1 = new OrcidGrant();
+        orcidGrant1.setVisibility(Visibility.PUBLIC);
         orcidGrant1.setTitle("grant1");
         orcidGrant1.setDescription("Grant 1 - a short description");
         orcidGrant1.setPutCode("grant 1 - put-code");
 
         OrcidGrant orcidGrant2 = new OrcidGrant();
+        orcidGrant2.setVisibility(Visibility.PUBLIC);
         orcidGrant2.setTitle("grant2");
         orcidGrant2.setDescription("Grant 2 - a short description");
         orcidGrant2.setPutCode("grant 2 - put-code");
