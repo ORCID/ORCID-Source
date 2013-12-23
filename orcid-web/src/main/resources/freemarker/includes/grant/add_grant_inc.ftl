@@ -160,7 +160,7 @@
 				</div>	
 				<div class="control-group">
 					<span>
-						<label><@orcid.msg 'manual_grant_form_contents.amount'/></label>
+						<label><@orcid.msg 'manual_grant_form_contents.label_amount'/></label>
 					</span>
 					<div class="relative">						
 						<div class="relative">
@@ -229,7 +229,7 @@
 		    	</div>	
 			
 				<div class="control-group" ng-repeat="contributor in editGrant.contributors">
-				    <label class="relative"><@orcid.msg 'manual_grant_form_contents.labelRole'/></label>
+				    <label class="relative"><@orcid.msg 'manual_grant_form_contents.label_role'/></label>
 				    <div class="relative">    
 						<select id="role" name="role" ng-model="contributor.contributorRole.value">
 							<option value=""><@orcid.msg 'org.orcid.jaxb.model.message.ContributorRole.empty' /></option>
@@ -257,7 +257,7 @@
 				    </div>
 				</div>
 		    	<div class="control-group">
-					<span><strong><@orcid.msg 'manual_grant_form_contents.titlecitationexternalidentifier'/></strong></span>
+					<span><strong><@orcid.msg 'manual_grant_form_contents.title_external_identifier'/></strong></span>
 				</div>
 		    	<div ng-repeat="externalIdentifier in editGrant.externalIdentifiers"> 
 					<!-- Type -->

@@ -57,62 +57,82 @@
 					<strong><@orcid.msg 'manual_grant_form_contents.labelcountry'/></strong>
 					<div ng-bind="grant.countryForDisplay"></div>
 				</div>
-			</div>
-			
-			
-			
-			
-			
-			
-			<div class="row bottomBuffer" ng-show="affiliation.departmentName.value"
-				ng-cloak>
-				<div class="col-md-8">
-					<strong><@orcid.msg 'manual_affiliation_form_contents.labeldepartment'/></strong>
-					<div ng-bind="affiliation.departmentName.value"></div>
-				</div>
-			</div>
-			<div class="row bottomBuffer" ng-show="affiliation.roleTitle.value"
-				ng-cloak>
-				<div class="col-md-8">
-					<strong ng-show="affiliation.affiliationType.value == 'education'"><@orcid.msg 'manual_affiliation_form_contents.labeldegreetitle'/></strong>
-					<strong ng-show="affiliation.affiliationType.value != 'education'"><@orcid.msg 'manual_affiliation_form_contents.labelroletitle'/></strong>
-					<div ng-bind="affiliation.roleTitle.value"></div>
-				</div>
-			</div>
-			<div class="row bottomBuffer" ng-show="affiliation.affiliationType.value"
-				ng-cloak>
-				<div class="col-md-8">
-					<strong><@orcid.msg 'manual_affiliation_form_contents.labelaffiliationtype'/></strong>
-					<div ng-bind="affiliation.affiliationType.value"></div>
-				</div>
 			</div>			
-			<div class="row bottomBuffer" ng-show="affiliation.startDate.year" ng-cloak>
-				<div class="col-md-8">
-					<strong><@orcid.msg 'manual_affiliation_form_contents.labelStartDate'/></strong>
-					<div>
-						<span
-							ng-show="affiliation.startDate.day && affiliation.startDate.month">{{affiliation.startDate.day}}-</span><span
-							ng-show="affiliation.startDate.month">{{affiliation.startDate.month}}-</span><span
-							ng-show="affiliation.startDate.year">{{affiliation.startDate.year}}</span>
-					</div>
-				</div>
-			</div>
-			<div class="row bottomBuffer" ng-show="affiliation.endDate.year" ng-cloak>
-				<div class="col-md-8">
-					<strong><@orcid.msg 'manual_affiliation_form_contents.labelEndDate'/></strong>
-					<div>
-						<span
-							ng-show="affiliation.endDate.day && affiliation.endDate.month">{{affiliation.endDate.day}}-</span><span
-							ng-show="affiliation.endDate.month">{{affiliation.endDate.month}}-</span><span
-							ng-show="affiliation.endDate.year">{{affiliation.endDate.year}}</span>
-					</div>
-				</div>
-			</div>
-			<div class="row bottomBuffer" ng-show="affiliation.sourceName"
+			<div class="row bottomBuffer" ng-show="grant.title.value"
 				ng-cloak>
 				<div class="col-md-8">
-					<strong><@orcid.msg 'manual_affiliation_form_contents.labelsource'/></strong>
-					<div ng-bind="affiliation.sourceName"></div>
+					<strong><@orcid.msg 'manual_grant_form_contents.label_title'/></strong>
+					<div ng-bind="grant.title.value"></div>
+				</div>
+			</div>
+			<div class="row bottomBuffer" ng-show="grant.description.value"
+				ng-cloak>
+				<div class="col-md-8">
+					<strong><@orcid.msg 'manual_grant_form_contents.label_description'/></strong>
+					<div ng-bind="grant.description.value"></div>
+				</div>
+			</div>
+			<div class="row bottomBuffer" ng-show="grant.amount.value"
+				ng-cloak>
+				<div class="col-md-8">
+					<strong><@orcid.msg 'manual_grant_form_contents.label_amount'/></strong>
+					<div>{{grant.currencyCode.value}} {{grant.amount.value}}</div>
+				</div>
+			</div>
+			<div class="row bottomBuffer" ng-show="grant.url.value"
+				ng-cloak>
+				<div class="col-md-8">
+					<strong><@orcid.msg 'manual_grant_form_contents.label_url'/></strong>
+					<div ng-bind="grant.url.value"></div>
+				</div>
+			</div>
+			<div class="row bottomBuffer" ng-show="grant.startDate.year" ng-cloak>
+				<div class="col-md-8">
+					<strong><@orcid.msg 'manual_grant_form_contents.labelStartDate'/></strong>
+					<div>
+						<span
+							ng-show="grant.startDate.day && grant.startDate.month">{{grant.startDate.day}}-</span><span
+							ng-show="grant.startDate.month">{{grant.startDate.month}}-</span><span
+							ng-show="grant.startDate.year">{{grant.startDate.year}}</span>
+					</div>
+				</div>
+			</div>
+			<div class="row bottomBuffer" ng-show="grant.endDate.year" ng-cloak>
+				<div class="col-md-8">
+					<strong><@orcid.msg 'manual_grant_form_contents.labelEndDate'/></strong>
+					<div>
+						<span
+							ng-show="grant.endDate.day && grant.endDate.month">{{grant.endDate.day}}-</span><span
+							ng-show="grant.endDate.month">{{grant.endDate.month}}-</span><span
+							ng-show="grant.endDate.year">{{grant.endDate.year}}</span>
+					</div>
+				</div>
+			</div>
+			<div class="row bottomBuffer" ng-show="grant.externalIdentifiers.length > 0" ng-cloak>
+				<div class="col-md-8">
+					<strong><@orcid.msg 'manual_grant_form_contents.title_external_identifier'/></strong>
+					<div>
+						<span ng-repeat='ei in grant.externalIdentifiers'> <span
+							ng-bind-html='ei | externalIdentifierHtml:$first:$last:grant.externalIdentifiers.length'></span>
+						</span>
+					</div>
+				</div>
+			</div>
+			<div class="row bottomBuffer" ng-show="grant.contributors.length > 0"
+				ng-cloak>
+				<div class="col-md-12">
+					<strong><@orcid.msg 'manual_grant_form_contents.label_contributors'/></strong>
+					<div ng-repeat="contributor in grant.contributors">
+						{{contributor.creditName.value}} <span
+							ng-bind='contributor | contributorFilter'></span>
+					</div>
+				</div>
+			</div>
+			<div class="row bottomBuffer" ng-show="grant.sourceName"
+				ng-cloak>
+				<div class="col-md-8">
+					<strong><@orcid.msg 'manual_grant_form_contents.label_source'/></strong>
+					<div ng-bind="grant.sourceName"></div>
 				</div>
 			</div>
 			</div>

@@ -474,6 +474,31 @@ orcidNgModule.filter('workExternalIdentifierHtml', function(){
 	};
 });
 
+//We should merge this one with workExternalIdentifierHtml
+orcidNgModule.filter('externalIdentifierHtml', function(){
+	return function(externalIdentifier, first, last, length){
+		var output = '';
+		
+		if (externalIdentifier == null) return output;
+		var type = externalIdentifier.type.value;;		
+		if (type != null) output = output + type.toUpperCase() + ": ";
+		var value = null;
+		if(externalIdentifier.value != null)
+			value = externalIdentifier.value.value;
+		var link = null;
+		if(externalIdentifier.url != null)
+			link = externalIdentifier.url.value;
+		
+		if (link != null && value != null) 
+		    output = output + "<a href='" + link + "' target='_blank'>" + value + "</a>";
+		else if(value != null)
+			output = output + " " + value;
+		else if(link != null)
+			output = output + "<a href='" + link + "' target='_blank'>" + link + "</a>";
+		if (length > 1 && !last) output = output + ',';
+	    return output;
+	};
+});
 
 function addBibtexCitation($scope, dw) {
 	if (dw.citation && dw.citation.citationType && dw.citation.citationType.value == 'bibtex') {
@@ -1837,6 +1862,43 @@ function GrantCtrl($scope, $compile, $filter, grantsSrvc, workspaceSrvc) {
 	$scope.addingGrant = false;
 	$scope.editGrant = null;
 	$scope.disambiguatedGrant = null;
+	$scope.moreInfo = {};
+	
+	
+	
+	
+	
+	
+	$scope.toggleClickMoreInfo = function(key) {
+		if (!document.documentElement.className.contains('no-touch')) {
+			if ($scope.moreInfoCurKey != null 
+					&& $scope.moreInfoCurKey != key) {
+				$scope.moreInfo[$scope.moreInfoCurKey]=false;
+			}
+			$scope.moreInfoCurKey = key;
+			$scope.moreInfo[key]=!$scope.moreInfo[key];
+		}
+	};
+	
+	$scope.moreInfoMouseEnter = function(key, $event) {
+		$event.stopPropagation();
+		if (document.documentElement.className.contains('no-touch')) {
+			if ($scope.moreInfoCurKey != null 
+					&& $scope.moreInfoCurKey != key) {
+				$scope.privacyHelp[$scope.moreInfoCurKey]=false;
+			}
+			$scope.moreInfoCurKey = key;
+			$scope.moreInfo[key]=true;
+		}
+	};
+	
+	$scope.closeMoreInfo = function(key) {
+		$scope.moreInfo[key]=false;
+	};
+	
+	
+	
+	
 	
 	$scope.addGrantModal = function(type){
 		$.ajax({
