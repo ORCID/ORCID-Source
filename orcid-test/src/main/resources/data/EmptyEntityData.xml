@@ -31,17 +31,14 @@
     <external_identifier/>
     <email/>
     <email_event/>
-    <funding_grant/>
     <profile_grant/>
     <grant_external_identifier/>
-    <grant_contributor/>
     <other_name/>
     <profile_keyword/>
     <profile_patent/>
     <webhook/>
 	<org/>
 	<org_affiliation_relation/>
-	<org_funding_relation/>
 	<address/>
 	<institution/>
 	<affiliation/>

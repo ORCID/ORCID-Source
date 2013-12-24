@@ -37,7 +37,7 @@
             tableName="profile_grant"/>
             
 
-		<!-- org_funding_relation -->
+		<!-- profile_grant -->
 		<createTable tableName="profile_grant">
 			<column name="id" type="bigint">
 				<constraints nullable="false" primaryKey="true"

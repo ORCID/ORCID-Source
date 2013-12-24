@@ -22,6 +22,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -33,6 +34,7 @@ import javax.ws.rs.core.UriInfo;
 
 import org.apache.http.HttpStatus;
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -100,7 +102,14 @@ public class T2OrcidApiServiceDelegatorTest extends DBUnitTest {
     @After
     public void after() {
         SecurityContextHolder.clearContext();
-        orcidProfileManager.clearOrcidProfileCache();
+        orcidProfileManager.clearOrcidProfileCache();     
+    }
+    
+    @AfterClass
+    public static void removeDBUnitData() throws Exception {
+        List<String> reversedDataFiles = new ArrayList<String>(Arrays.asList("/data/Oauth2TokenDetailsData.xml", 
+        		"/data/ProfileWorksEntityData.xml", "/data/WorksEntityData.xml", "/data/ClientDetailsEntityData.xml"));        
+        removeDBUnitData(reversedDataFiles, null);
     }
 
     @Test
