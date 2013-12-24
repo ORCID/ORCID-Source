@@ -25,11 +25,7 @@
     
     <profile_work orcid="4444-4444-4444-4446" work_id="1" visibility="PUBLIC" />
     <profile_work orcid="4444-4444-4444-4446" work_id="2" visibility="LIMITED" />
-    <profile_work orcid="4444-4444-4444-4446" work_id="3" visibility="PRIVATE" />
-        
-    <profile_grant id="1" orcid="4444-4444-4444-4443" org_id="1" title="Grant # 1" type="SALARY_AWARD" currency_code="USD" amount="2500" visibility="LIMITED" />
-    <profile_grant id="2" orcid="4444-4444-4444-4443" org_id="2" title="Grant # 2" type="GRANT" currency_code="CRC" amount="1,650.000" visibility="PUBLIC" />
-    <profile_grant id="3" orcid="4444-4444-4444-4443" org_id="3" title="Grant # 3" type="GRANT" currency_code="CRC" amount="1.650,000" visibility="PRIVATE" />
+    <profile_work orcid="4444-4444-4444-4446" work_id="3" visibility="PRIVATE" />            
 
     <profile_patent orcid="4444-4444-4444-4443" patent_id="1" visibility="LIMITED" />
     <profile_patent orcid="4444-4444-4444-4443" patent_id="2" visibility="LIMITED" />
