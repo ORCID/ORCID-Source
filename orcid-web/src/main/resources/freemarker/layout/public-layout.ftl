@@ -90,7 +90,7 @@
             <div class="col-md-9 col-sm-9 col-sm-push-3 col-md-push-3 navigation">
             	<!--  Mobile menu -->
 				<a href="#" id="mobile-menu-icon" class="mobile-button mobile-menu-icon"><span class="glyphicon glyphicon-align-justify"></span></a>
-				<a href="${aboutUri}" id="logo-mini" class="pull-left"><img src="${staticCdn}/img/logo-orcid-mini.png" alt="ORCID logo" /></a>
+				<a href="${aboutUri}" id="logo-mini" class="pull-left"><!--  <img src="${staticCdn}/img/logo-orcid-mini.png" alt="ORCID logo" /> --></a>
 				<a href="#" id="mobile-settings" class="mobile-button mobile-settings"><span class="glyphicon glyphicon-cog"></span></a>                  
 				<a href="#" id="mobile-search" class="mobile-button mobile-search"><span class="glyphicon glyphicon-search"></span></a>
 				<a href="<@spring.url "/signin" />" id="mobile-sign-in" class="mobile-button mobile-sign-in"><span class="glyphicon glyphicon-user"></span></a>

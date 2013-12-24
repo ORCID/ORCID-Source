@@ -1470,14 +1470,18 @@ a:hover {
 	float:right;
 }
 
-.orcid-id {
+.orcid-id{
 	font-size: 10px;
 	line-height: 1;
 	word-wrap:break-word;
-	color: #338CAF;
+	color: #FFF;
 	font-weight: bold;
 	vertical-align:3px;
 	margin-left: 5px;	
+}
+
+.orcid-id:hover{
+	color: #C9CACB;
 }
 
 .workspace-overview {
@@ -3000,10 +3004,8 @@ ul.personal-inf-display li{
 p.orcid-id-container{
 	width: 100%;
 	padding: 4px 5px 2px 5px;
-	background-color: #DEEEF4;
+	background-color: #939598;
 	margin: 10px 0;
-	
-	
 }
 
 .public-profile .oid{
@@ -3025,7 +3027,8 @@ p.orcid-id-container{
 }
 
 .public-profile .mini-orcid-icon{
-	background: url('../img/mini-icon.png') transparent -22px 0px no-repeat;	
+	background: url('../img/mini-icon.png') transparent no-repeat;
+	background-size: 20px 20px;	
 	width: 20px;
 	height: 20px;
 	display: block;
@@ -3148,6 +3151,10 @@ p.orcid-id-container{
 		display: block;
 		margin-left: 5px;
 		margin-top: 5px;
+		background: url(../img/logo-orcid-mini.png) no-repeat transparent;
+		background-size: 100px 31px;
+		width: 105px;
+		height: 31px;  
 	}
 	.container .header .logo {
 		display: none;
@@ -3944,4 +3951,8 @@ p.orcid-id-container{
 	.container{
 		max-width:960px;
 	}
+}
+
+@media only screen and (-webkit-min-device-pixel-ratio: 2) , only screen and (min-device-pixel-ratio: 2) {
+	
 }
