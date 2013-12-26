@@ -1863,11 +1863,7 @@ function GrantCtrl($scope, $compile, $filter, grantsSrvc, workspaceSrvc) {
 	$scope.editGrant = null;
 	$scope.disambiguatedGrant = null;
 	$scope.moreInfo = {};
-	
-	
-	
-	
-	
+	$scope.privacyHelp = {};
 	
 	$scope.toggleClickMoreInfo = function(key) {
 		if (!document.documentElement.className.contains('no-touch')) {
@@ -1895,10 +1891,6 @@ function GrantCtrl($scope, $compile, $filter, grantsSrvc, workspaceSrvc) {
 	$scope.closeMoreInfo = function(key) {
 		$scope.moreInfo[key]=false;
 	};
-	
-	
-	
-	
 	
 	$scope.addGrantModal = function(type){
 		$.ajax({
@@ -1938,16 +1930,16 @@ function GrantCtrl($scope, $compile, $filter, grantsSrvc, workspaceSrvc) {
 	        dataType: 'json',
 	        type: 'POST',
 	        data:  angular.toJson($scope.editGrant),
-	        success: function(data) {
+	        success: function(data) {	        		        	
 	        	if (data.errors.length == 0){
 	        		$.colorbox.close(); 	        		
 	        		grantsSrvc.getGrants('grants/grantIds.json');
 	        	} else {
 		        	$scope.editGrant = data;
-		        	$scope.copyErrorsLeft($scope.editGrant, data);
-		        	$scope.$apply();
+		        	$scope.copyErrorsLeft($scope.editGrant, data);		        	
 	        	}
 	        	$scope.addingGrant = false;
+	        	$scope.$apply();
 	        }
 		}).fail(function(){
 			// something bad is happening!

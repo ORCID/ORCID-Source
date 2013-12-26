@@ -162,23 +162,25 @@ public class GrantsController extends BaseWorkspaceController {
 	@RequestMapping(value = "/grant.json", method = RequestMethod.DELETE)
 	public @ResponseBody
 	GrantForm deleteGrantJson(HttpServletRequest request, @RequestBody GrantForm grant) {
+		OrcidGrant delGrant = grant.toOrcidGrant();
 		OrcidProfile currentProfile = getEffectiveProfile();
 		OrcidGrants grants = currentProfile.getOrcidActivities() == null ? null
 				: currentProfile.getOrcidActivities().getOrcidGrants();
+		GrantForm deletedGrant = new GrantForm();
 		if (grants != null) {
 			List<OrcidGrant> grantList = grants.getOrcidGrant();
 			Iterator<OrcidGrant> iterator = grantList.iterator();
 			while (iterator.hasNext()) {
 				OrcidGrant orcidGrant = iterator.next();
-				if (grant.getPutCode().getValue()
-						.equals(orcidGrant.getPutCode())) {
+				if (delGrant.equals(orcidGrant)) {
 					iterator.remove();
+					deletedGrant = grant;
 				}
 			}
 			currentProfile.getOrcidActivities().setOrcidGrants(grants);
 			profileGrantDao.removeProfileGrant(currentProfile.getOrcid().getValue(), grant.getPutCode().getValue());
 		}
-		return grant;
+		return deletedGrant;
 	}
 
 	/**

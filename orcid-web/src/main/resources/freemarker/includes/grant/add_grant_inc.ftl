@@ -296,12 +296,13 @@
 						<span><a href ng-click="addExternalIdentifier()"><i class="glyphicon glyphicon-plus-sign blue"></i> <@orcid.msg 'manual_grant_form_contents.add_external_identifier' /></a></span>
 					</div>			
 				</div>
-		    	<div class="control-group">
+				
+		    	<div class="small-row">
 					<button class="btn btn-primary" ng-click="addGrant()" ng-disabled="addingGrant" ng-class="{disabled:addingGrant}"><@orcid.msg 'manual_grant_form_contents.btnaddtolist'/></button> 
 					<a href="" ng-click="closeModal()"><@orcid.msg 'manage.deleteExternalIdentifier.cancel'/></a>
 					<span ng-show="addingGrant">
 						<i class="glyphicon glyphicon-refresh spin x2 green"></i>
-					</span>
+					</span>					
 					<span ng-show="editGrant.errors.length > 0" class="alert"><@orcid.msg 'manual_grant_form_contents.fix_errors'/></span>
 				</div>
 			</div>
