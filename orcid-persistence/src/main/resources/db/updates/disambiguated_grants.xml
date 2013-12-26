@@ -95,7 +95,7 @@
 		<addUniqueConstraint constraintName="grant_external_identifier_constraints" tableName="grant_external_identifier" columnNames="ext_type,ext_value,ext_url"/>
         <addForeignKeyConstraint constraintName="profile_grant_org_id_fk" baseTableName="profile_grant" baseColumnNames="org_id" referencedTableName="org" referencedColumnNames="id" />
         <addForeignKeyConstraint constraintName="profile_grant_orcid_fk" baseTableName="profile_grant" baseColumnNames="orcid" referencedTableName="profile" referencedColumnNames="orcid" />
-        <addForeignKeyConstraint constraintName="grant_external_identifiers_fk" baseTableName="grant_external_identifier" baseColumnNames="profile_grant_id" referencedTableName="profile_grant" referencedColumnNames="id" />
+        <addForeignKeyConstraint constraintName="grant_external_identifiers_fk" baseTableName="grant_external_identifier" baseColumnNames="profile_grant_id" referencedTableName="profile_grant" referencedColumnNames="id" deleteCascade="true"/>
 	</changeSet>
 	
 	<changeSet id="CREATE-SEQUENCES" author="Angel Montenegro" dbms="postgresql">

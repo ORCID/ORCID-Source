@@ -95,6 +95,10 @@ public class OrcidGrants implements Serializable {
         }
         return this.orcidGrant;
     }
+    
+    public void setOrcidGrant(List<OrcidGrant> orcidGrant){
+    	this.orcidGrant = orcidGrant;
+    }
 
     /**
      * Gets the value of the scope property.

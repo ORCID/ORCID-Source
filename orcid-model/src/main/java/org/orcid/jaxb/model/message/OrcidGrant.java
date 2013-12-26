@@ -66,7 +66,7 @@ import java.io.Serializable;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "title", "description", "url", "type",
+@XmlType(propOrder = { "putCode", "title", "description", "url", "type",
 		"currencyCode", "amount",  "startDate", "endDate", "organization", "grantExternalIdentifiers", "grantContributors", "source" })
 @XmlRootElement(name = "orcid-grant")
 public class OrcidGrant implements VisibilityType, Serializable {
@@ -305,14 +305,14 @@ public class OrcidGrant implements VisibilityType, Serializable {
 			if(!organization.equals(other.organization))
 				return false;
 		}
-		if (grantExternalIdentifiers != null) {
+		if (grantExternalIdentifiers == null) {
 			if(other.grantExternalIdentifiers != null)
 				return false;
 		} else {
 			if(!grantExternalIdentifiers.equals(other.grantExternalIdentifiers))
 				return false;
 		}
-		if (grantContributors != null) {
+		if (grantContributors == null) {
 			if(other.grantContributors != null)
 				return false;
 		} else {
@@ -346,21 +346,7 @@ public class OrcidGrant implements VisibilityType, Serializable {
 		} else {
 			if(!url.equals(other.url))
 				return false;
-		}
-		if (visibility == null) {
-			if(other.visibility != null)
-				return false;
-		} else {
-			if(!visibility.equals(other.visibility))
-				return false;
-		}
-		if (source == null) {
-			if(other.source != null)
-				return false;
-		} else {
-			if(!source.equals(other.source))
-				return false;
-		}
+		}		
 		if (startDate == null) {
             if (other.startDate != null)
                 return false;

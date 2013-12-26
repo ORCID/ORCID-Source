@@ -23,6 +23,7 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.orcid.jaxb.model.message.CurrencyCode;
 import org.orcid.jaxb.model.message.DisambiguatedOrganization;
+import org.orcid.jaxb.model.message.FuzzyDate;
 import org.orcid.jaxb.model.message.GrantContributors;
 import org.orcid.jaxb.model.message.GrantExternalIdentifier;
 import org.orcid.jaxb.model.message.GrantType;
@@ -269,18 +270,20 @@ public class GrantForm implements ErrorsInterface, Serializable {
 			result.setCurrencyCode(CurrencyCode.valueOf(currencyCode.getValue()));
 		if(!PojoUtil.isEmpty(description))
 			result.setDescription(description.getValue());
-		if(!PojoUtil.isEmpty(endDate))
-			result.setEndDate(endDate.toFuzzyDate());
-		if(!PojoUtil.isEmpty(putCode))
-			result.setPutCode(putCode.getValue());
 		if(!PojoUtil.isEmpty(startDate))
-			result.setStartDate(startDate.toFuzzyDate());
+			result.setStartDate(new FuzzyDate(startDate.toFuzzyDate()));
+		if(!PojoUtil.isEmpty(endDate))
+			result.setEndDate(new FuzzyDate(endDate.toFuzzyDate()));
+		if(!PojoUtil.isEmpty(putCode))
+			result.setPutCode(putCode.getValue());		
 		if(!PojoUtil.isEmpty(title))
 			result.setTitle(title.getValue());
 		if(!PojoUtil.isEmpty(grantType))
 			result.setType(GrantType.fromValue(grantType.getValue()));
 		if(!PojoUtil.isEmpty(url))
-			result.setUrl(new Url(url.getValue()));
+			result.setUrl(new Url(url.getValue()));	
+		else 
+			result.setUrl(new Url(""));
 		if(visibility != null)
 			result.setVisibility(visibility.getVisibility());		
 		

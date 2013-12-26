@@ -48,6 +48,7 @@ import java.io.Serializable;
  *         &lt;element ref="{http://www.orcid.org/ns/orcid}grant-external-identifier-value"/>
  *         &lt;element ref="{http://www.orcid.org/ns/orcid}grant-external-identifier-url" minOccurs="0"/>
  *       &lt;/sequence>
+ *       &lt;attGroup ref="{http://www.orcid.org/ns/orcid}put-code"/>
  *     &lt;/restriction>
  *   &lt;/complexContent>
  * &lt;/complexType>
@@ -56,10 +57,12 @@ import java.io.Serializable;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "type", "value", "url" })
+@XmlType(propOrder = { "putCode", "type", "value", "url" })
 @XmlRootElement(name = "grant-external-identifier")
 public class GrantExternalIdentifier implements Serializable {
 	private static final long serialVersionUID = 1L;
+	@XmlAttribute(name = "put-code")
+	protected String putCode;
 	@XmlElement(name="grant-external-identifier-type")
 	protected String type;
 	@XmlElement(name="grant-external-identifier-value")
@@ -85,6 +88,12 @@ public class GrantExternalIdentifier implements Serializable {
 	public void setUrl(Url url) {
 		this.url = url;
 	}	
+	public String getPutCode() {
+		return putCode;
+	}
+	public void setPutCode(String putCode) {
+		this.putCode = putCode;
+	}
 	@Override
 	public int hashCode() {
 		final int prime = 31;

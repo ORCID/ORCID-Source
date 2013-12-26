@@ -444,7 +444,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
     	grant.setDescription(StringUtils.isNotEmpty(profileGrantEntity.getDescription()) ? profileGrantEntity.getDescription() : null); 
         grant.setTitle(StringUtils.isNotEmpty(profileGrantEntity.getTitle()) ? profileGrantEntity.getTitle() : null);
     	grant.setType(profileGrantEntity.getType() != null ? profileGrantEntity.getType() : null);
-    	grant.setUrl(StringUtils.isNotEmpty(profileGrantEntity.getUrl()) ? new Url(profileGrantEntity.getUrl()) : null);
+    	grant.setUrl(StringUtils.isNotEmpty(profileGrantEntity.getUrl()) ? new Url(profileGrantEntity.getUrl()) : new Url(new String()));
     	grant.setVisibility(profileGrantEntity.getVisibility() != null ? profileGrantEntity.getVisibility() : Visibility.PRIVATE);
     	grant.setPutCode(Long.toString(profileGrantEntity.getId()));    	
     	grant.setGrantContributors(getGrantContributors(profileGrantEntity));
@@ -503,6 +503,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         grantExternalIdentifier.setType(grantExternalIdentifierEntity.getType());
         grantExternalIdentifier.setUrl(new Url(grantExternalIdentifierEntity.getUrl()));
         grantExternalIdentifier.setValue(grantExternalIdentifierEntity.getValue());
+        grantExternalIdentifier.setPutCode(String.valueOf(grantExternalIdentifierEntity.getId()));
         
         return grantExternalIdentifier;
     }

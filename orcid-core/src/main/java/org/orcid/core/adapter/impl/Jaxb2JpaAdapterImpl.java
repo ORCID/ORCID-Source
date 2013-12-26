@@ -1058,6 +1058,8 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
     		if(externalIdentifier.getUrl() != null)
     			entity.setUrl(StringUtils.isNotEmpty(externalIdentifier.getUrl().getValue()) ? externalIdentifier.getUrl().getValue() : null);    		    		
     		result.add(entity);
+    		if(StringUtils.isNotEmpty(externalIdentifier.getPutCode()))
+    			entity.setId(Long.valueOf(externalIdentifier.getPutCode()));
     	}
     	return result;
     }

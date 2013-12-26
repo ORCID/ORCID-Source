@@ -16,7 +16,6 @@
  */
 package org.orcid.frontend.web.controllers;
 
-import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -30,8 +29,6 @@ import javax.servlet.http.HttpServletRequest;
 import org.orcid.core.adapter.Jaxb2JpaAdapter;
 import org.orcid.core.adapter.Jpa2JaxbAdapter;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
-import org.orcid.jaxb.model.message.Affiliation;
-import org.orcid.jaxb.model.message.Affiliations;
 import org.orcid.jaxb.model.message.CurrencyCode;
 import org.orcid.jaxb.model.message.GrantType;
 import org.orcid.jaxb.model.message.OrcidActivities;
@@ -49,7 +46,6 @@ import org.orcid.persistence.jpa.entities.OrgDisambiguatedEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileGrantEntity;
 import org.orcid.persistence.solr.entities.OrgDisambiguatedSolrDocument;
-import org.orcid.pojo.ajaxForm.AffiliationForm;
 import org.orcid.pojo.ajaxForm.Contributor;
 import org.orcid.pojo.ajaxForm.Date;
 import org.orcid.pojo.ajaxForm.GrantExternalIdentifierForm;
@@ -164,8 +160,7 @@ public class GrantsController extends BaseWorkspaceController {
 	GrantForm deleteGrantJson(HttpServletRequest request, @RequestBody GrantForm grant) {
 		OrcidGrant delGrant = grant.toOrcidGrant();
 		OrcidProfile currentProfile = getEffectiveProfile();
-		OrcidGrants grants = currentProfile.getOrcidActivities() == null ? null
-				: currentProfile.getOrcidActivities().getOrcidGrants();
+		OrcidGrants grants = currentProfile.getOrcidActivities() == null ? null : currentProfile.getOrcidActivities().getOrcidGrants();
 		GrantForm deletedGrant = new GrantForm();
 		if (grants != null) {
 			List<OrcidGrant> grantList = grants.getOrcidGrant();
@@ -177,6 +172,7 @@ public class GrantsController extends BaseWorkspaceController {
 					deletedGrant = grant;
 				}
 			}
+			grants.setOrcidGrant(grantList);
 			currentProfile.getOrcidActivities().setOrcidGrants(grants);
 			profileGrantDao.removeProfileGrant(currentProfile.getOrcid().getValue(), grant.getPutCode().getValue());
 		}
