@@ -205,30 +205,9 @@ orcidNgModule.factory("workspaceSrvc", ['$rootScope', function ($rootScope) {
 	return serv;
 }]);
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+/**
+ * Grants Service 
+ * */
 orcidNgModule.factory("grantsSrvc", ['$rootScope', function ($rootScope) {
 	var serv = {
 			grants: new Array(),
@@ -330,23 +309,6 @@ orcidNgModule.factory("grantsSrvc", ['$rootScope', function ($rootScope) {
 	};
 	return serv;
 }]);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 orcidNgModule.factory("worksSrvc", function () {
 	var serv = {
@@ -1523,15 +1485,17 @@ function PersonalInfoCtrl($scope, $compile, workspaceSrvc){
 	};
 };
 
-function WorkspaceSummaryCtrl($scope, $compile, affiliationsSrvc, worksSrvc, workspaceSrvc){
+function WorkspaceSummaryCtrl($scope, $compile, affiliationsSrvc, grantsSrvc, worksSrvc, workspaceSrvc){
 	$scope.workspaceSrvc = workspaceSrvc;
 	$scope.worksSrvc = worksSrvc;
 	$scope.affiliationsSrvc = affiliationsSrvc;
+	$scope.grantsSrvc = grantsSrvc;
 	$scope.showAddAlert = function () {
 		if (worksSrvc.loading == false && affiliationsSrvc.loading == false
 				&& worksSrvc.works.length == 0 
 				&& affiliationsSrvc.educations.length == 0
-				&& affiliationsSrvc.employments.length == 0)
+				&& affiliationsSrvc.employments.length == 0
+				&& grantsSrvc.grants.length == 0)
 			return true;
 		return false;
 	};	
@@ -1843,19 +1807,9 @@ function AffiliationCtrl($scope, $compile, $filter, affiliationsSrvc, workspaceS
 	affiliationsSrvc.getAffiliations('affiliations/affiliationIds.json');
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+/**
+ * Grants Controller 
+ * */
 function GrantCtrl($scope, $compile, $filter, grantsSrvc, workspaceSrvc) {	
 	$scope.workspaceSrvc = workspaceSrvc;
 	$scope.grantsSrvc = grantsSrvc;
@@ -2092,48 +2046,31 @@ function GrantCtrl($scope, $compile, $filter, grantsSrvc, workspaceSrvc) {
 	};
 }
 
+/**
+ * Public Grants Controller 
+ * */
+function PublicGrantsCtrl($scope, $compile, $filter, grantsSrvc){
+	$scope.grantsSrvc = grantsSrvc;
+	$scope.moreInfo = {};
+	
+	$scope.toggleClickMoreInfo = function(key) {
+		if (!document.documentElement.className.contains('no-touch'))
+			$scope.moreInfo[key]=!$scope.moreInfo[key];
+	};
+	
+	$scope.moreInfoMouseEnter = function(key, $event) {
+		$event.stopPropagation();
+		if (document.documentElement.className.contains('no-touch'))
+			$scope.moreInfo[key]=true;
+	};
 
+	$scope.closeMoreInfo = function(key) {
+		$scope.moreInfo[key]=false;
+	};
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+	grantsSrvc.setIdsToAdd(orcidVar.grantIdsJson);
+	grantsSrvc.addGrantToScope(orcidVar.orcidId +'/grants.json');
+}
 
 function PublicWorkCtrl($scope, $compile, worksSrvc) {
 	$scope.works = worksSrvc.works;

@@ -36,11 +36,13 @@ import org.orcid.core.manager.ProfileWorkManager;
 import org.orcid.core.manager.WorkManager;
 import org.orcid.frontend.web.util.LanguagesMap;
 import org.orcid.jaxb.model.message.Affiliation;
+import org.orcid.jaxb.model.message.OrcidGrant;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidWork;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.persistence.jpa.entities.ProfileWorkEntity;
 import org.orcid.pojo.ajaxForm.AffiliationForm;
+import org.orcid.pojo.ajaxForm.GrantForm;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.pojo.ajaxForm.Work;
@@ -56,6 +58,7 @@ import org.springframework.web.servlet.ModelAndView;
 public class PublicProfileController extends BaseWorkspaceController {
 
 	private static final String WORKS_MAP = "WORKS_MAP"; 
+	private static final String GRANTS_MAP = "GRANTS_MAP";
 	
     @Resource
     private LocaleManager localeManager;
@@ -86,6 +89,10 @@ public class PublicProfileController extends BaseWorkspaceController {
         
         List<Affiliation> affilations = new ArrayList<Affiliation>();
         List<String> affiliationIds = new ArrayList<String>();
+                
+        List<String> grantIds = new ArrayList<String>();
+        HashMap<String, OrcidGrant> grantsMap = new HashMap<String, OrcidGrant>();
+        
 
         if (profile.getOrcidDeprecated() != null) {
             String primaryRecord = profile.getOrcidDeprecated().getPrimaryRecord().getOrcid().getValue();
@@ -93,39 +100,55 @@ public class PublicProfileController extends BaseWorkspaceController {
             mav.addObject("primaryRecord", primaryRecord);
         } else {
         	
-        	if (profile.getOrcidActivities() != null && profile.getOrcidActivities().getOrcidWorks() != null) {
-                for (OrcidWork orcidWork : profile.getOrcidActivities().getOrcidWorks().getOrcidWork()) {
-                	if(Visibility.PUBLIC.equals(orcidWork.getVisibility())) {
-                		String workId = orcidWork.getPutCode();
-                		Work work = Work.minimizedValueOf(orcidWork); 
-                		works.add(work);
-                		workIds.add(workId);
-                		worksMap.put(workId, work);
-                	}
-                }
-                if (!works.isEmpty()) {
-                    mav.addObject("works", works);
-                    request.getSession().setAttribute(WORKS_MAP, worksMap);
-                }
-            }        	        	
-        	
-        	if (profile.getOrcidActivities() != null && profile.getOrcidActivities().getAffiliations() != null) {
-                for (Affiliation affiliation : profile.getOrcidActivities().getAffiliations().getAffiliation()) {
-                    affilations.add(affiliation);
-                    affiliationIds.add(affiliation.getPutCode());
-                }
-                if (!affilations.isEmpty()) {
-                    mav.addObject("affilations", affilations);
-                }
-            }
+        	if(profile.getOrcidActivities() != null) {
+	        	if (profile.getOrcidActivities().getOrcidWorks() != null) {
+	                for (OrcidWork orcidWork : profile.getOrcidActivities().getOrcidWorks().getOrcidWork()) {
+	                	if(Visibility.PUBLIC.equals(orcidWork.getVisibility())) {
+	                		String workId = orcidWork.getPutCode();
+	                		Work work = Work.minimizedValueOf(orcidWork); 
+	                		works.add(work);
+	                		workIds.add(workId);
+	                		worksMap.put(workId, work);
+	                	}
+	                }
+	                if (!works.isEmpty()) {
+	                    mav.addObject("works", works);
+	                    request.getSession().setAttribute(WORKS_MAP, worksMap);
+	                }
+	            }        	        	
+	        	
+	        	if (profile.getOrcidActivities().getAffiliations() != null) {
+	                for (Affiliation affiliation : profile.getOrcidActivities().getAffiliations().getAffiliation()) {
+	                    affilations.add(affiliation);
+	                    affiliationIds.add(affiliation.getPutCode());
+	                }
+	                if (!affilations.isEmpty()) {
+	                    mav.addObject("affilations", affilations);
+	                }
+	            }
+	        	
+	        	if(profile.getOrcidActivities().getOrcidGrants() != null) {
+	        		for(OrcidGrant grant : profile.getOrcidActivities().getOrcidGrants().getOrcidGrant()) {
+	        			if(Visibility.PUBLIC.equals(grant.getVisibility())) {
+	        				grantsMap.put(grant.getPutCode(), grant);
+	        				grantIds.add(grant.getPutCode());
+	        			}
+	        		}	        		
+	        		if(!grantIds.isEmpty()) {
+	        			request.getSession().setAttribute(GRANTS_MAP, grantsMap);
+	        		}
+	        	}
+        	}
         }
         ObjectMapper mapper = new ObjectMapper();
 
         try {
             String worksIdsJson = mapper.writeValueAsString(workIds);
             String affiliationIdsJson = mapper.writeValueAsString(affiliationIds);
+            String grantIdsJson = mapper.writeValueAsString(grantIds);
             mav.addObject("workIdsJson", StringEscapeUtils.escapeEcmaScript(worksIdsJson));
             mav.addObject("affiliationIdsJson", StringEscapeUtils.escapeEcmaScript(affiliationIdsJson));
+            mav.addObject("grantIdsJson", StringEscapeUtils.escapeEcmaScript(grantIdsJson));            
         } catch (JsonGenerationException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -158,6 +181,19 @@ public class PublicProfileController extends BaseWorkspaceController {
         return affs;
     }
 
+    @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/grants.json")
+    public @ResponseBody
+    List<GrantForm> getGrantsJson(HttpServletRequest request, @PathVariable("orcid") String orcid, @RequestParam(value = "grantIds") String grantIdsStr) {
+        List<GrantForm> grants = new ArrayList<GrantForm>();
+        Map<String, OrcidGrant> grantMap = (HashMap<String, OrcidGrant>) request.getSession().getAttribute(GRANTS_MAP);
+        String[] grantIds = grantIdsStr.split(",");
+        for (String id: grantIds) {
+            OrcidGrant grant = grantMap.get(id);                        
+            grants.add(GrantForm.valueOf(grant));
+        }
+        return grants;
+    }
+    
     @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/works.json")
     public @ResponseBody
     List<Work> getWorkJson(HttpServletRequest request, @PathVariable("orcid") String orcid, @RequestParam(value = "workIds") String workIdsStr) {
