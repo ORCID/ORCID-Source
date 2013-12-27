@@ -95,6 +95,20 @@ public interface OrcidApiServiceDelegator {
 
     Response findAffiliationsDetailsFromPublicCache(String orcid);
 
+    
+    /**
+     * finds and returns the {@link org.orcid.jaxb.model.message.OrcidMessage}
+     * wrapped in a {@link Response} with only the grants details
+     * 
+     * @param orcid
+     *            the ORCID to be used to identify the record
+     * @return the {@link Response} with the
+     *         {@link org.orcid.jaxb.model.message.OrcidMessage} within it
+     */
+    Response findGrantsDetails(String orcid);
+
+    Response findGrantsDetailsFromPublicCache(String orcid);
+    
     /**
      * finds and returns the {@link org.orcid.jaxb.model.message.OrcidMessage}
      * wrapped in a {@link Response} with only the work details

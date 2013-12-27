@@ -201,6 +201,62 @@ public class T2OrcidApiClientImpl implements T2OrcidApiService<ClientResponse> {
     }
 
     /**
+     * POST an XML representation of the ORCID record containing only
+     * grants details
+     * 
+     * @param orcid
+     *            the ORCID that corresponds to the user's record
+     * @return the XML representation of the ORCID record including the added
+     *         grant(s)
+     */
+    @Override
+    public ClientResponse addGrantsXml(@PathParam("orcid") String orcid, OrcidMessage orcidMessage) {
+        return postClientResponse(UriBuilder.fromPath(GRANTS_PATH).build(orcid), VND_ORCID_XML, orcidMessage);
+    }
+
+    /**
+     * POST a JSON representation of the ORCID record containing only
+     * grants details
+     * 
+     * @param orcid
+     *            the ORCID that corresponds to the user's record
+     * @return the JSON representation of the ORCID record including the added
+     *         grant(s)
+     */
+    @Override
+    public ClientResponse addGrantsJson(@PathParam("orcid") String orcid, OrcidMessage orcidMessage) {
+        return postClientResponse(UriBuilder.fromPath(GRANTS_PATH).build(orcid), VND_ORCID_JSON, orcidMessage);
+    }
+
+    /**
+     * PUT an XML representation of the ORCID record containing only
+     * grants details
+     * 
+     * @param orcid
+     *            the ORCID that corresponds to the user's record
+     * @return the XML representation of the ORCID record including the added
+     *         grant(s)
+     */
+    @Override
+    public ClientResponse updateGrantsXml(@PathParam("orcid") String orcid, OrcidMessage orcidMessage) {
+        return putClientResponse(UriBuilder.fromPath(GRANTS_PATH).build(orcid), VND_ORCID_XML, orcidMessage);
+    }
+
+    /**
+     * PUT a JSON representation of the ORCID record containing only
+     * grants details
+     * 
+     * @param orcid
+     *            the ORCID that corresponds to the user's record
+     * @return the JSON representation of the ORCID record including the added
+     *         grant(s)
+     */
+    @Override
+    public ClientResponse updateGrantsJson(@PathParam("orcid") String orcid, OrcidMessage orcidMessage) {
+        return putClientResponse(UriBuilder.fromPath(GRANTS_PATH).build(orcid), VND_ORCID_JSON, orcidMessage);
+    }
+    
+    /**
      * POST an XML representation of the ORCID external identifiers containing
      * only the URLs details
      * 
@@ -446,6 +502,44 @@ public class T2OrcidApiClientImpl implements T2OrcidApiService<ClientResponse> {
         return orcidClientHelper.getClientResponse(UriBuilder.fromPath(AFFILIATIONS_PATH).build(orcid), VND_ORCID_JSON);
     }
 
+    /**
+     * GETs the HTML representation of the ORCID record containing only grant
+     * details
+     * 
+     * @param orcid
+     *            the ORCID that corresponds to the user's record
+     * @return the HTML representation of the ORCID record
+     */
+    @Override
+    public ClientResponse viewGrantsDetailsHtml(@PathParam("orcid") String orcid) {
+        return orcidClientHelper.getClientResponse(UriBuilder.fromPath(GRANTS_PATH).build(orcid), MediaType.TEXT_HTML);
+    }
+
+    /**
+     * GETs the XML representation of the ORCID record containing only grant
+     * details
+     * 
+     * @param orcid
+     *            the ORCID that corresponds to the user's record
+     * @return the XML representation of the ORCID record
+     */
+    @Override
+    public ClientResponse viewGrantsDetailsXml(@PathParam("orcid") String orcid) {
+        return orcidClientHelper.getClientResponse(UriBuilder.fromPath(GRANTS_PATH).build(orcid), VND_ORCID_XML);
+    }
+
+    /**
+     * GETs the JSON representation of the ORCID record containing only grant
+     * details
+     * 
+     * @param orcid
+     *            the ORCID that corresponds to the user's record
+     * @return the JSON representation of the ORCID record
+     */
+    @Override
+    public ClientResponse viewGrantsDetailsJson(@PathParam("orcid") String orcid) {
+        return orcidClientHelper.getClientResponse(UriBuilder.fromPath(GRANTS_PATH).build(orcid), VND_ORCID_JSON);
+    }
     
     /**
      * GETs the HTML representation of the ORCID record containing only work

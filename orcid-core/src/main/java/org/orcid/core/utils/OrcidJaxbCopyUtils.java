@@ -31,6 +31,7 @@ import org.orcid.jaxb.model.message.Email;
 import org.orcid.jaxb.model.message.ExternalIdentifiers;
 import org.orcid.jaxb.model.message.Keywords;
 import org.orcid.jaxb.model.message.OrcidBio;
+import org.orcid.jaxb.model.message.OrcidGrant;
 import org.orcid.jaxb.model.message.OrcidGrants;
 import org.orcid.jaxb.model.message.OrcidHistory;
 import org.orcid.jaxb.model.message.OrcidPatents;
@@ -101,6 +102,22 @@ public class OrcidJaxbCopyUtils {
         }
         existingAffiliationsList.clear();
         existingAffiliationsList.addAll(updatedAffiliationsList);
+    }
+    
+    public static void copyOrcidGrantsToExistingPreservingVisibility(OrcidGrants existingGrants, OrcidGrants updatedGrants) {
+        if (updatedGrants == null) {
+            return;
+        }
+        List<OrcidGrant> updatedGrantsList = updatedGrants.getOrcidGrant();
+        if (updatedGrantsList.isEmpty()) {
+            return;
+        }
+        List<OrcidGrant> existingGrantsList = existingGrants.getOrcidGrant();
+        for (OrcidGrant updatedGrant : updatedGrantsList) {
+            mergeGrants(existingGrantsList, updatedGrant);
+        }
+        existingGrantsList.clear();
+        existingGrantsList.addAll(updatedGrantsList);
     }
 
     public static void copyUpdatedExternalIdentifiersToExistingPreservingVisibility(OrcidBio existing, OrcidBio updated) {
@@ -345,6 +362,17 @@ public class OrcidJaxbCopyUtils {
         return null;
     }
 
+    private static OrcidGrant obtainLikelyEqual(OrcidGrant toCompare, List<OrcidGrant> toCompareTo) {
+        if (toCompare != null && toCompareTo != null && !toCompareTo.isEmpty()) {
+            for (OrcidGrant ai : toCompareTo) {
+                if (ai.equals(toCompare)) {
+                    return ai;
+                }
+            }
+        }
+        return null;
+    }
+    
     public static void copyUpdatedGrantsVisibilityInformationOnlyPreservingVisbility(OrcidGrants existingGrants, OrcidGrants updatedGrants) {
         throw new RuntimeException("Not implemented!");
     }
@@ -367,6 +395,23 @@ public class OrcidJaxbCopyUtils {
             // if you can't match this type, default its value if null
             updatedAffiliation.setVisibility(updatedAffiliation.getVisibility() != null ? updatedAffiliation.getVisibility()
                     : OrcidVisibilityDefaults.AFFILIATE_NAME_DEFAULT.getVisibility());
+        }
+    }
+    
+    private static void mergeGrants(List<OrcidGrant> existingGrants, OrcidGrant updatedGrant) {
+        OrcidGrant likelyExisting = obtainLikelyEqual(updatedGrant, existingGrants);
+        if (likelyExisting != null) {
+            Visibility likelyExistingGrantInstitutionNameVisibility = likelyExisting.getVisibility();
+
+            if (likelyExistingGrantInstitutionNameVisibility == null && updatedGrant.getVisibility() == null) {
+            	updatedGrant.setVisibility(OrcidVisibilityDefaults.GRANT_DEFAULT.getVisibility());
+            } else if (updatedGrant.getVisibility() == null && likelyExistingGrantInstitutionNameVisibility != null) {
+            	updatedGrant.setVisibility(likelyExistingGrantInstitutionNameVisibility);
+            }
+        } else {
+            // if you can't match this type, default its value if null
+        	updatedGrant.setVisibility(updatedGrant.getVisibility() != null ? updatedGrant.getVisibility()
+                    : OrcidVisibilityDefaults.GRANT_DEFAULT.getVisibility());
         }
     }
 

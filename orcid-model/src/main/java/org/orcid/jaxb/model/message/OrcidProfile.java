@@ -501,6 +501,13 @@ public class OrcidProfile implements Serializable {
         }
     }
 
+    public void downgradeToGrantsOnly() {
+        setOrcidBio(null);
+        if (orcidActivities != null) {
+            orcidActivities.downgradeToGrantsOnly();
+        }
+    }
+    
     @Override
     public String toString() {
         return OrcidMessage.convertToString(this);

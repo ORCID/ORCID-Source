@@ -26,6 +26,7 @@ import static org.orcid.api.common.OrcidApiConstants.VND_ORCID_JSON;
 import static org.orcid.api.common.OrcidApiConstants.VND_ORCID_XML;
 import static org.orcid.api.common.OrcidApiConstants.WEBHOOKS_PATH;
 import static org.orcid.api.common.OrcidApiConstants.WORKS_PATH;
+import static org.orcid.api.common.OrcidApiConstants.GRANTS_PATH;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
@@ -221,6 +222,67 @@ public interface T2OAuthAPIService<T> extends OAuthOrcidApiService<T> {
     @Path(AFFILIATIONS_PATH)
     T updateAffiliationsJson(@PathParam("orcid") String orcid, OrcidMessage orcidMessage, String token);
 
+    /**
+     * POST an XML representation of the ORCID record containing only
+     * grant details
+     * 
+     * @param orcid
+     *            the ORCID that corresponds to the user's record
+     * @return the XML representation of the ORCID record including the added
+     *         grant(s)
+     */
+    @POST
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
+    @Consumes(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, MediaType.WILDCARD })
+    @Path(GRANTS_PATH)
+    T addGrantsXml(@PathParam("orcid") String orcid, OrcidMessage orcidMessage, String token);
+
+    /**
+     * POST a JSON representation of the ORCID record containing only
+     * grant details
+     * 
+     * @param orcid
+     *            the ORCID that corresponds to the user's record
+     * @return the JSON representation of the ORCID record including the added
+     *         grant(s)
+     */
+    @POST
+    @Produces(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Consumes(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(GRANTS_PATH)
+    T addGrantsJson(@PathParam("orcid") String orcid, OrcidMessage orcidMessage, String token);
+
+    /**
+     * PUT an XML representation of the ORCID record containing only
+     * grant details
+     * 
+     * @param orcid
+     *            the ORCID that corresponds to the user's record
+     * @return the XML representation of the ORCID record including the added
+     *         grant(s)
+     */
+    @PUT
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
+    @Consumes(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, MediaType.WILDCARD })
+    @Path(GRANTS_PATH)
+    T updateGrantsXml(@PathParam("orcid") String orcid, OrcidMessage orcidMessage, String token);
+
+    /**
+     * PUT a JSON representation of the ORCID record containing only
+     * grant details
+     * 
+     * @param orcid
+     *            the ORCID that corresponds to the user's record
+     * @return the JSON representation of the ORCID record including the added
+     *         grant(s)
+     */
+    @PUT
+    @Produces(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Consumes(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(GRANTS_PATH)
+    T updateGrantsJson(@PathParam("orcid") String orcid, OrcidMessage orcidMessage, String token);
+
+    
     /**
      * POST an XML representation of the ORCID external identifiers containing
      * only the URLs details

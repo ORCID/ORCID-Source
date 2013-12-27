@@ -107,4 +107,13 @@
         <addAutoIncrement tableName="profile_grant" columnName="id" columnDataType="bigint"/>
         <addAutoIncrement tableName="grant_external_identifier" columnName="grant_external_identifier_id" columnDataType="bigint"/>
     </changeSet>
+    
+    <changeSet id="ADD-GRANT-SCOPES-TO-EXISTING-CLIENTS" author="Angel Montenegro">
+        <sql>INSERT INTO client_scope SELECT client_details_id, '/orcid-grants/update', now(), now() FROM client_scope WHERE scope_type = '/orcid-works/update' AND client_details_id NOT IN (SELECT client_details_id FROM client_scope WHERE scope_type = '/orcid-grants/update')</sql>
+        <sql>INSERT INTO client_scope SELECT client_details_id, '/orcid-grants/create', now(), now() FROM client_scope WHERE scope_type = '/orcid-works/create' AND client_details_id NOT IN (SELECT client_details_id FROM client_scope WHERE scope_type = '/orcid-grants/create')</sql>
+    </changeSet>
+
+    <changeSet id="ADD-GRANT-READ-LIMITED-SCOPE-TO-EXISTING-CLIENTS" author="Angel Montenegro">
+        <sql>INSERT INTO client_scope SELECT client_details_id, '/orcid-grants/read-limited', now(), now() FROM client_scope WHERE scope_type = '/orcid-works/read-limited' AND client_details_id NOT IN (SELECT client_details_id FROM client_scope WHERE scope_type = '/orcid-grants/read-limited')</sql>
+    </changeSet>
 </databaseChangeLog>                   

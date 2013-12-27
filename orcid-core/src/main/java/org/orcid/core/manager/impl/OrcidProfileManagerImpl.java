@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.SortedSet;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -85,6 +86,8 @@ import org.orcid.jaxb.model.message.LastModifiedDate;
 import org.orcid.jaxb.model.message.OrcidActivities;
 import org.orcid.jaxb.model.message.OrcidBio;
 import org.orcid.jaxb.model.message.OrcidDeprecated;
+import org.orcid.jaxb.model.message.OrcidGrant;
+import org.orcid.jaxb.model.message.OrcidGrants;
 import org.orcid.jaxb.model.message.OrcidHistory;
 import org.orcid.jaxb.model.message.OrcidInternal;
 import org.orcid.jaxb.model.message.OrcidPreferences;
@@ -104,17 +107,21 @@ import org.orcid.jaxb.model.message.WorkSource;
 import org.orcid.persistence.dao.EmailDao;
 import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.dao.GivenPermissionToDao;
+import org.orcid.persistence.dao.GrantExternalIdentifierDao;
 import org.orcid.persistence.dao.OrcidOauth2TokenDetailDao;
 import org.orcid.persistence.dao.ProfileDao;
+import org.orcid.persistence.dao.ProfileGrantDao;
 import org.orcid.persistence.dao.ProfileWorkDao;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.EmailEventEntity;
 import org.orcid.persistence.jpa.entities.EmailEventType;
+import org.orcid.persistence.jpa.entities.GrantExternalIdentifierEntity;
 import org.orcid.persistence.jpa.entities.IndexingStatus;
 import org.orcid.persistence.jpa.entities.OrcidGrantedAuthority;
 import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.orcid.persistence.jpa.entities.ProfileGrantEntity;
 import org.orcid.persistence.jpa.entities.ProfileWorkEntity;
 import org.orcid.utils.DateUtils;
 import org.orcid.utils.NullUtils;
@@ -159,6 +166,12 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
 
     @Resource
     private GenericDao<OrgAffiliationRelationEntity, Long> orgAffilationRelationDao;
+    
+    @Resource
+	ProfileGrantDao profileGrantDao;
+
+	@Resource
+	GrantExternalIdentifierDao grantExternalIdentifierDao;
 
     @Resource
     private EmailDao emailDao;
@@ -254,6 +267,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         String amenderOrcid = sourceManager.retrieveSourceOrcid();
         addSourceToWorks(orcidProfile, amenderOrcid);
         addSourceToAffiliations(orcidProfile, amenderOrcid);
+        addSourceToGrants(orcidProfile, amenderOrcid);
 
         ProfileEntity profileEntity = adapter.toProfileEntity(orcidProfile);
         encryptAndMapFieldsForProfileEntityPersistence(orcidProfile, profileEntity);
@@ -281,13 +295,16 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
             profileDao.removeChildrenWithGeneratedIds(existingProfileEntity);
             setWorkPrivacy(orcidProfile, existingProfileEntity.getWorkVisibilityDefault());
             setAffiliationPrivacy(orcidProfile, existingProfileEntity.getWorkVisibilityDefault());
+            setGrantPrivacy(orcidProfile, existingProfileEntity.getWorkVisibilityDefault());
         }
         dedupeProfileWorks(orcidProfile);
         dedupeAffiliations(orcidProfile);
+        dedupeGrants(orcidProfile);
         addSourceToEmails(orcidProfile, existingProfileEntity, amenderOrcid);
         addSourceToAffiliations(orcidProfile, amenderOrcid);
         addSourceToWorks(orcidProfile, amenderOrcid);
         addSourceToAffiliations(orcidProfile, amenderOrcid);
+        addSourceToGrants(orcidProfile, amenderOrcid);
         ProfileEntity profileEntity = adapter.toProfileEntity(orcidProfile, existingProfileEntity);
         profileEntity.setLastModified(new Date());
         profileEntity.setIndexingStatus(IndexingStatus.PENDING);
@@ -380,6 +397,28 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         }
 
     }
+    
+    /**
+     * Add source to the grants
+     * 
+     * @param orcidProfile
+     *            The profile
+     * @param amenderOrcid
+     *            The orcid of the user or client that is adding the grants
+     *            to the profile user
+     * */
+    private void addSourceToGrants(OrcidProfile orcidProfile, String amenderOrcid) {
+        OrcidGrants grants = orcidProfile.getOrcidActivities() == null ? null : orcidProfile.getOrcidActivities().getOrcidGrants();
+
+        if (grants != null && !grants.getOrcidGrant().isEmpty()) {
+            for (OrcidGrant grant : grants.getOrcidGrant()) {
+                if (grant.getSource() == null || grant.getSource().getSourceOrcid() == null
+                        || StringUtils.isEmpty(grant.getSource().getSourceOrcid().getPath()))
+                	grant.setSource(new Source(amenderOrcid));
+            }
+        }
+
+    }
 
     private void setWorkPrivacy(OrcidProfile updatedOrcidProfile, Visibility defaultWorkVisibility) {
         OrcidHistory orcidHistory = updatedOrcidProfile.getOrcidHistory();
@@ -459,6 +498,23 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         return profile;
     }
 
+    /**
+     * Retrieves the orcid grants given an identifier
+     * 
+     * @param orcid
+     *            the identifier
+     * @return the orcid profile with only the grants populated
+     */
+    @Override
+    @Transactional
+    public OrcidProfile retrieveClaimedGrants(String orcid) {
+        OrcidProfile profile = retrieveClaimedOrcidProfile(orcid);
+        if (profile != null) {
+            profile.downgradeToGrantsOnly();
+        }
+        return profile;
+    }
+    
     /**
      * Retrieves the orcid works given an identifier
      * 
@@ -822,6 +878,36 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
 
     @Override
     @Transactional
+    public OrcidProfile updateGrants(OrcidProfile updatedOrcidProfile) {
+        OrcidProfile existingProfile = retrieveOrcidProfile(updatedOrcidProfile.getOrcid().getValue());
+        if (existingProfile == null) {
+            return null;
+        }
+        OrcidActivities updatedActivities = updatedOrcidProfile.getOrcidActivities();
+        if (updatedActivities == null) {
+            return null;
+        }
+        OrcidGrants updatedOrcidGrants = updatedActivities.getOrcidGrants();
+        if (updatedOrcidGrants == null) {
+            return null;
+        }
+        OrcidActivities existingActivities = existingProfile.getOrcidActivities();
+        if (existingActivities == null) {
+            existingActivities = new OrcidActivities();
+            existingProfile.setOrcidActivities(existingActivities);
+        }
+        OrcidGrants existingOrcidGrants = existingActivities.getOrcidGrants();
+        if (existingOrcidGrants == null) {
+        	existingOrcidGrants = new OrcidGrants();
+            existingActivities.setOrcidGrants(existingOrcidGrants);
+        }
+
+        OrcidJaxbCopyUtils.copyOrcidGrantsToExistingPreservingVisibility(existingOrcidGrants, updatedOrcidGrants);
+        return updateOrcidProfile(existingProfile);
+    }
+    
+    @Override
+    @Transactional
     public void updatePasswordInformation(OrcidProfile updatedOrcidProfile) {
         String orcid = updatedOrcidProfile.getOrcid().getValue();
         String hashedPassword = hash(updatedOrcidProfile.getPassword());
@@ -1178,6 +1264,34 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         persistAddedAffiliations(orcid, updatedAffiliationsList);
     }
 
+    /**
+     * Adds a new {@link List&lt;org.orcid.jaxb.model.message.OrcidGrants&lt;}
+     * to the {@link} OrcidProfile} and returns the updated values
+     * 
+     * @param updatedOrcidProfile
+     * @return
+     */
+    @Override
+    @Transactional
+    public void addGrants(OrcidProfile updatedOrcidProfile) {    	
+        String orcid = updatedOrcidProfile.getOrcid().getValue();
+        OrcidProfile existingProfile = retrieveOrcidProfile(orcid);
+        if (existingProfile == null) {
+            throw new IllegalArgumentException("No record found for " + orcid);
+        }
+        OrcidGrants existingOrcidGrants = existingProfile.retrieveOrcidGrants();
+        OrcidGrants updatedOrcidGrants = updatedOrcidProfile.retrieveOrcidGrants();
+        Visibility workVisibilityDefault = existingProfile.getOrcidInternal().getPreferences().getWorkVisibilityDefault().getValue();
+        Boolean claimed = existingProfile.getOrcidHistory().isClaimed();
+        setGrantPrivacy(updatedOrcidGrants, workVisibilityDefault, claimed == null ? false : claimed);
+        updatedOrcidGrants = dedupeGrants(updatedOrcidGrants);
+        String amenderOrcid = sourceManager.retrieveSourceOrcid();        
+        addSourceToGrants(updatedOrcidGrants, amenderOrcid);        
+        List<OrcidGrant> updatedGrantsList = updatedOrcidGrants.getOrcidGrant();
+        checkForAlreadyExistingGrants(existingOrcidGrants, updatedGrantsList);
+        persistAddedGrants(orcid, updatedGrantsList);
+    }
+    
     private void setAffiliationPrivacy(OrcidProfile updatedOrcidProfile, Visibility defaultAffiliationVisibility) {
         OrcidHistory orcidHistory = updatedOrcidProfile.getOrcidHistory();
         boolean isClaimed = orcidHistory != null ? orcidHistory.getClaimed().isValue() : false;
@@ -1186,6 +1300,18 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
             Affiliations incomingWorks = incomingActivities.getAffiliations();
             if (incomingWorks != null) {
                 setAffiliationPrivacy(incomingWorks, defaultAffiliationVisibility, isClaimed);
+            }
+        }
+    }
+    
+    private void setGrantPrivacy(OrcidProfile updatedOrcidProfile, Visibility defaultGrantVisibility) {
+        OrcidHistory orcidHistory = updatedOrcidProfile.getOrcidHistory();
+        boolean isClaimed = orcidHistory != null ? orcidHistory.getClaimed().isValue() : false;
+        OrcidActivities incomingActivities = updatedOrcidProfile.getOrcidActivities();
+        if (incomingActivities != null) {
+            OrcidGrants incomingGrants = incomingActivities.getOrcidGrants();
+            if (incomingGrants != null) {
+                setGrantPrivacy(incomingGrants, defaultGrantVisibility, isClaimed);
             }
         }
     }
@@ -1204,6 +1330,21 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
             }
         }
     }
+    
+    private void setGrantPrivacy(OrcidGrants incomingGrants, Visibility defaultGrantVisibility, boolean isClaimed) {
+        for (OrcidGrant incomingGrant : incomingGrants.getOrcidGrant()) {
+            if (StringUtils.isBlank(incomingGrant.getPutCode())) {
+                Visibility incomingGrantVisibility = incomingGrant.getVisibility();
+                if (isClaimed) {
+                    if (defaultGrantVisibility.isMoreRestrictiveThan(incomingGrantVisibility)) {
+                    	incomingGrant.setVisibility(defaultGrantVisibility);
+                    }
+                } else if (incomingGrantVisibility == null) {
+                    incomingGrant.setVisibility(Visibility.PRIVATE);
+                }
+            }
+        }
+    }
 
     private void addSourceToAffiliations(Affiliations affiliations, String amenderOrcid) {
         if (affiliations != null && !affiliations.getAffiliation().isEmpty()) {
@@ -1211,6 +1352,16 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
                 if (affiliation.getSource() == null || affiliation.getSource().getSourceOrcid() == null
                         || StringUtils.isEmpty(affiliation.getSource().getSourceOrcid().getPath()))
                     affiliation.setSource(new Source(amenderOrcid));
+            }
+        }
+    }
+    
+    private void addSourceToGrants(OrcidGrants grants, String amenderOrcid) {
+        if (grants != null && !grants.getOrcidGrant().isEmpty()) {
+            for (OrcidGrant grant : grants.getOrcidGrant()) {
+                if (grant.getSource() == null || grant.getSource().getSourceOrcid() == null
+                        || StringUtils.isEmpty(grant.getSource().getSourceOrcid().getPath()))
+                	grant.setSource(new Source(amenderOrcid));
             }
         }
     }
@@ -1236,7 +1387,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         dedupedAffiliations.getAffiliation().addAll(affiliationSet);
         return dedupedAffiliations;
     }
-
+    
     private void checkForAlreadyExistingAffiliations(Affiliations existingAffiliations, List<Affiliation> updatedAffiliationsList) {
         if (existingAffiliations != null) {
             Set<Affiliation> existingAffiliationsSet = new HashSet<>();
@@ -1260,7 +1411,64 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         }
         removeFromCache(orcid);
     }
+    
+    private void dedupeGrants(OrcidProfile orcidProfile) {
+        OrcidActivities orcidActivities = orcidProfile.getOrcidActivities();
+        if (orcidActivities != null) {
+            OrcidGrants grants = orcidActivities.getOrcidGrants();
+            if (grants != null) {
+                OrcidGrants dedupedGrants = dedupeGrants(grants);
+                orcidActivities.setOrcidGrants(dedupedGrants);
+            }
+        }
+    }
 
+    private OrcidGrants dedupeGrants(OrcidGrants grants) {
+        Set<OrcidGrant> grantsSet = new LinkedHashSet<OrcidGrant>();
+        for (OrcidGrant grant : grants.getOrcidGrant()) {
+            orcidProfileCleaner.clean(grant);
+            grantsSet.add(grant);
+        }
+        OrcidGrants dedupedGrants = new OrcidGrants();
+        dedupedGrants.getOrcidGrant().addAll(grantsSet);
+        return dedupedGrants;
+    }
+    
+    private void checkForAlreadyExistingGrants(OrcidGrants existingGrants, List<OrcidGrant> updatedGrantsList) {
+        if (existingGrants != null) {
+            Set<OrcidGrant> existingGrantsSet = new HashSet<>();
+            for (OrcidGrant existingGrant : existingGrants.getOrcidGrant()) {
+            	existingGrantsSet.add(existingGrant);
+            }
+            for (Iterator<OrcidGrant> updatedGrantIterator = updatedGrantsList.iterator(); updatedGrantIterator.hasNext();) {
+                OrcidGrant updatedGrant = updatedGrantIterator.next();
+                if (existingGrantsSet.contains(updatedGrant)) {
+                	updatedGrantIterator.remove();
+                }
+            }
+        }
+    }
+
+    private void persistAddedGrants(String orcid, List<OrcidGrant> updatedGrantsList) {
+        ProfileEntity profileEntity = profileDao.find(orcid);
+        for (OrcidGrant updatedGrant : updatedGrantsList) {
+            ProfileGrantEntity profileGrantEntity = jaxb2JpaAdapter.getNewProfileGrantEntity(updatedGrant, profileEntity);
+            //Save the profile grant
+            ProfileGrantEntity newProfileGrant = profileGrantDao
+					.addProfileGrant(profileGrantEntity);
+            //Save the external identifiers
+            SortedSet<GrantExternalIdentifierEntity> externalIdentifiers = profileGrantEntity.getExternalIdentifiers();
+ 			if (externalIdentifiers != null && !externalIdentifiers.isEmpty()) {
+ 				for (GrantExternalIdentifierEntity externalIdentifier : externalIdentifiers) {
+ 					externalIdentifier.setProfileGrant(newProfileGrant);
+ 					grantExternalIdentifierDao
+ 							.createGrantExternalIdentifier(externalIdentifier);
+ 				}
+ 			}            
+        }
+        removeFromCache(orcid);
+    }
+    
     @Override
     @Transactional
     public OrcidProfile addDelegates(OrcidProfile updatedOrcidProfile) {

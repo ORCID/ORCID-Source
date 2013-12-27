@@ -89,6 +89,15 @@ public interface OrcidProfileManager {
     OrcidProfile retrieveClaimedAffiliations(String orcid);
     
     /**
+     * Retrieves the orcid grants given an identifier
+     * 
+     * @param orcid
+     *            the identifier
+     * @return the orcid profile with only the grants populated
+     */
+    OrcidProfile retrieveClaimedGrants(String orcid);
+    
+    /**
      * Retrieves the orcid works given an identifier
      * 
      * @param orcid
@@ -154,6 +163,14 @@ public interface OrcidProfileManager {
      * @see #updatePersonalInformation(OrcidProfile)
      */
     OrcidProfile updateAffiliations(OrcidProfile orcidProfile);
+    
+    /**
+     * Like {@link #updatePersonalInformation(OrcidProfile)}, but for primary
+     * grants and joint affiliation (not past institutions).
+     * 
+     * @see #updatePersonalInformation(OrcidProfile)
+     */
+    OrcidProfile updateGrants(OrcidProfile orcidProfile);
 
     /**
      * Overwrites the password and security details in the DB with the values in
@@ -254,6 +271,15 @@ public interface OrcidProfileManager {
      * @return
      */
     void addAffiliations(OrcidProfile orcidProfile);
+    
+    /**
+     * Adds a new {@link org.orcid.jaxb.model.message.OrcidGrants} to the
+     * {@link} OrcidProfile} and returns the updated values
+     * 
+     * @param orcidProfile
+     * @return
+     */
+    void addGrants(OrcidProfile orcidProfile);
 
     /**
      * Attempt to locate a profile with the email address. This is for internal

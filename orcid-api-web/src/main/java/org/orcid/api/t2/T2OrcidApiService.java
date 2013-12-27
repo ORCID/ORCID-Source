@@ -219,7 +219,67 @@ public interface T2OrcidApiService<T> extends OrcidApiService<T> {
     @Consumes(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(AFFILIATIONS_PATH)
     T updateAffiliationsJson(@PathParam("orcid") String orcid, OrcidMessage orcidMessage);
+    
+    /**
+     * POST an XML representation of the ORCID record containing only
+     * grants details
+     * 
+     * @param orcid
+     *            the ORCID that corresponds to the user's record
+     * @return the XML representation of the ORCID record including the added
+     *         grant(s)
+     */
+    @POST
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
+    @Consumes(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, MediaType.WILDCARD })
+    @Path(GRANTS_PATH)
+    T addGrantsXml(@PathParam("orcid") String orcid, OrcidMessage orcidMessage);
 
+    /**
+     * POST a JSON representation of the ORCID record containing only
+     * grants details
+     * 
+     * @param orcid
+     *            the ORCID that corresponds to the user's record
+     * @return the JSON representation of the ORCID record including the added
+     *         grant(s)
+     */
+    @POST
+    @Produces(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Consumes(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(GRANTS_PATH)
+    T addGrantsJson(@PathParam("orcid") String orcid, OrcidMessage orcidMessage);
+
+    /**
+     * PUT an XML representation of the ORCID record containing only
+     * grants details
+     * 
+     * @param orcid
+     *            the ORCID that corresponds to the user's record
+     * @return the XML representation of the ORCID record including the added
+     *         grant(s)
+     */
+    @PUT
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
+    @Consumes(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, MediaType.WILDCARD })
+    @Path(GRANTS_PATH)
+    T updateGrantsXml(@PathParam("orcid") String orcid, OrcidMessage orcidMessage);
+
+    /**
+     * PUT a JSON representation of the ORCID record containing only
+     * grants details
+     * 
+     * @param orcid
+     *            the ORCID that corresponds to the user's record
+     * @return the JSON representation of the ORCID record including the added
+     *         grant(s)
+     */
+    @PUT
+    @Produces(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Consumes(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(GRANTS_PATH)
+    T updateGrantsJson(@PathParam("orcid") String orcid, OrcidMessage orcidMessage);
+    
     /**
      * POST an XML representation of the ORCID external identifiers containing
      * only the URLs details

@@ -31,6 +31,7 @@ import static org.orcid.api.common.OrcidApiConstants.TEXT_TURTLE;
 import static org.orcid.api.common.OrcidApiConstants.VND_ORCID_JSON;
 import static org.orcid.api.common.OrcidApiConstants.VND_ORCID_XML;
 import static org.orcid.api.common.OrcidApiConstants.WORKS_PATH;
+import static org.orcid.api.common.OrcidApiConstants.GRANTS_PATH;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -415,7 +416,58 @@ abstract public class T1OrcidApiServiceImplBase implements OrcidApiService<Respo
         T1_GET_REQUESTS.inc();
         return orcidApiServiceDelegator.findAffiliationsDetailsFromPublicCache(orcid);
     }
+    
+    /**
+     * GETs the HTML representation of the ORCID record containing only
+     * grant details
+     * 
+     * @param orcid
+     *            the ORCID that corresponds to the user's record
+     * @return the HTML representation of the ORCID record
+     */
+    @Override
+    @GET
+    @Produces(value = { MediaType.TEXT_HTML })
+    @Path(GRANTS_PATH)
+    public Response viewGrantsDetailsHtml(@PathParam("orcid") String orcid) {
+        T1_GET_REQUESTS.inc();
+        Response response = orcidApiServiceDelegator.findGrantsDetailsFromPublicCache(orcid);
+        return Response.fromResponse(response).header("Content-Disposition", "attachment; filename=\"" + orcid + "-grants.xml\"").build();
+    }
 
+    /**
+     * GETs the XML representation of the ORCID record containing only
+     * grant details
+     * 
+     * @param orcid
+     *            the ORCID that corresponds to the user's record
+     * @return the XML representation of the ORCID record
+     */
+    @GET
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
+    @Path(GRANTS_PATH)
+    public Response viewGrantsDetailsXml(@PathParam("orcid") String orcid) {
+        T1_GET_REQUESTS.inc();
+        return orcidApiServiceDelegator.findGrantsDetailsFromPublicCache(orcid);
+    }
+
+    /**
+     * GETs the JSON representation of the ORCID record containing only
+     * grant details
+     * 
+     * @param orcid
+     *            the ORCID that corresponds to the user's record
+     * @return the JSON representation of the ORCID record
+     */
+    @Override
+    @GET
+    @Produces(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(GRANTS_PATH)
+    public Response viewGrantsDetailsJson(@PathParam("orcid") String orcid) {
+        T1_GET_REQUESTS.inc();
+        return orcidApiServiceDelegator.findGrantsDetailsFromPublicCache(orcid);
+    }
+    
     /**
      * GETs the HTML representation of the ORCID record containing only work
      * details

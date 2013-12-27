@@ -322,7 +322,7 @@ public class T2OrcidApiClientIntegrationTest extends AbstractT2ClientIntegration
         orcidWorks = message.getOrcidProfile().retrieveOrcidWorks();
         assertTrue(orcidWorks != null && orcidWorks.getOrcidWork() != null && orcidWorks.getOrcidWork().size() == 4);
     }
-
+    
     @Test
     public void testUpdateWorksXml() throws Exception {
 

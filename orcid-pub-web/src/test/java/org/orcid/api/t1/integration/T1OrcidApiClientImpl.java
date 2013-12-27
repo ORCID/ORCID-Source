@@ -226,6 +226,45 @@ public class T1OrcidApiClientImpl implements OrcidApiService<ClientResponse> {
     }
 
     /**
+     * GETs the HTML representation of the ORCID record containing only grant
+     * details
+     * 
+     * @param orcid
+     *            the ORCID that corresponds to the user's record
+     * @return the HTML representation of the ORCID record
+     */
+    @Override
+    public ClientResponse viewGrantsDetailsHtml(@PathParam("orcid") String orcid) {
+        return orcidClientHelper.getClientResponse(UriBuilder.fromPath(GRANTS_PATH).build(orcid), MediaType.TEXT_HTML);
+    }
+
+    /**
+     * GETs the XML representation of the ORCID record containing only grant
+     * details
+     * 
+     * @param orcid
+     *            the ORCID that corresponds to the user's record
+     * @return the XML representation of the ORCID record
+     */
+    @Override
+    public ClientResponse viewGrantsDetailsXml(@PathParam("orcid") String orcid) {
+        return orcidClientHelper.getClientResponse(UriBuilder.fromPath(GRANTS_PATH).build(orcid), VND_ORCID_XML);
+    }
+
+    /**
+     * GETs the JSON representation of the ORCID record containing only grant
+     * details
+     * 
+     * @param orcid
+     *            the ORCID that corresponds to the user's record
+     * @return the JSON representation of the ORCID record
+     */
+    @Override
+    public ClientResponse viewGrantsDetailsJson(@PathParam("orcid") String orcid) {
+        return orcidClientHelper.getClientResponse(UriBuilder.fromPath(GRANTS_PATH).build(orcid), VND_ORCID_JSON);
+    }
+    
+    /**
      * GETs the HTML representation of the ORCID record containing only work
      * details
      * 

@@ -164,6 +164,12 @@ public class OrcidActivities implements Serializable {
         setOrcidGrants(null);
         setOrcidPatents(null);
     }
+    
+    public void downgradeToGrantsOnly() {
+        setOrcidWorks(null);        
+        setOrcidPatents(null);
+        setAffiliations(null);
+    }
 
 
     @Override
