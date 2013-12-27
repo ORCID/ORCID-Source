@@ -3800,7 +3800,7 @@ p.orcid-id-container{
 	
 }
 
-@media (min-width : 768px) and (max-width : 992px) { /* Tablet */
+@media (min-width : 768px) and (max-width : 991px) { /* Tablet */
 	/*Header*/
 	
 	.container .header .search form input[type='search'] {
