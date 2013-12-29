@@ -61,6 +61,8 @@
 			<column name="amount" type="VARCHAR(100)">
 				<constraints nullable="false" />
 			</column>
+			<column name="translated_title" type="VARCHAR(1000)" />
+			<column name="translated_title_language_code" type="VARCHAR(20)" />
 			<column name="description" type="VARCHAR(5000)" />
 			<column name="start_day" type="integer" />
 			<column name="start_month" type="integer" />

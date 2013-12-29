@@ -1913,7 +1913,17 @@ function GrantCtrl($scope, $compile, $filter, grantsSrvc, workspaceSrvc) {
 			},
 			template: function (datum) {
 				   var forDisplay = 
-				       '<span style=\'white-space: nowrap; font-weight: bold;\'>' + datum.value + '</span><hr />';
+				       '<span style=\'white-space: nowrap; font-weight: bold;\'>' + datum.value+ '</span>'
+				      +'<span style=\'font-size: 80%;\'>'
+				      + ' <br />' + datum.city;
+				   if(datum.region){
+					   forDisplay += ", " + datum.region;
+				   }
+				   if (datum.orgType != null && datum.orgType.trim() != '')
+				      forDisplay += ", " + datum.orgType;
+				   forDisplay += '</span><hr />';
+				   
+				   
 				   return forDisplay;
 			}
 		});

@@ -44,7 +44,7 @@ import java.io.Serializable;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element ref="{http://www.orcid.org/ns/orcid}title" minOccurs="0"/>
+ *         &lt;element ref="{http://www.orcid.org/ns/orcid}grant-title" minOccurs="0"/>
  *         &lt;element ref="{http://www.orcid.org/ns/orcid}description"/>
  *         &lt;element ref="{http://www.orcid.org/ns/orcid}url"/>         
  *         &lt;element ref="{http://www.orcid.org/ns/orcid}grant-type"/>
@@ -66,15 +66,15 @@ import java.io.Serializable;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "putCode", "title", "description", "url", "type",
+@XmlType(propOrder = { "putCode", "grantTitle", "description", "url", "type",
 		"currencyCode", "amount",  "startDate", "endDate", "organization", "grantExternalIdentifiers", "grantContributors", "source" })
 @XmlRootElement(name = "orcid-grant")
 public class OrcidGrant implements VisibilityType, Serializable {
 
 	private final static long serialVersionUID = 1L;
 
-	@XmlElement
-	protected String title;
+	@XmlElement(name = "grant-title")
+	protected GrantTitle title;
 	@XmlElement
 	protected String description;
 	@XmlElement(name = "grant-type")
@@ -101,11 +101,11 @@ public class OrcidGrant implements VisibilityType, Serializable {
 	@XmlAttribute(name = "put-code")
 	protected String putCode;
 
-	public String getTitle() {
+	public GrantTitle getGrantTitle() {
 		return title;
 	}
 
-	public void setTitle(String title) {
+	public void setTitle(GrantTitle title) {
 		this.title = title;
 	}
 

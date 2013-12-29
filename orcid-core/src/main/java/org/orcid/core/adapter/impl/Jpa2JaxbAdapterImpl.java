@@ -435,14 +435,24 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
     }
     
     /**
-     * TODO
+     * Transforms a profileGrantEntity into a OrcidGrant
+     * @param profileGrantEntity
+     * @return OrcidGrant
      * */
     public OrcidGrant getOrcidGrant(ProfileGrantEntity profileGrantEntity){
     	OrcidGrant grant = new OrcidGrant();
     	grant.setAmount(StringUtils.isNotEmpty(profileGrantEntity.getAmount()) ? profileGrantEntity.getAmount() : null );
     	grant.setCurrencyCode(profileGrantEntity.getCurrencyCode() != null ? profileGrantEntity.getCurrencyCode() : null);
     	grant.setDescription(StringUtils.isNotEmpty(profileGrantEntity.getDescription()) ? profileGrantEntity.getDescription() : null); 
-        grant.setTitle(StringUtils.isNotEmpty(profileGrantEntity.getTitle()) ? profileGrantEntity.getTitle() : null);
+        GrantTitle title = new GrantTitle();
+        title.setTitle(StringUtils.isNotEmpty(profileGrantEntity.getTitle()) ? new Title(profileGrantEntity.getTitle()) : null);
+    	if(StringUtils.isNotEmpty(profileGrantEntity.getTranslatedTitle())) {
+    		String translatedTitleValue = profileGrantEntity.getTranslatedTitle();
+    		String code = profileGrantEntity.getTranslatedTitleLanguageCode();
+    		TranslatedTitle translatedTitle = new TranslatedTitle(translatedTitleValue, code);
+    		title.setTranslatedTitle(translatedTitle);
+    	}
+    	grant.setTitle(title);
     	grant.setType(profileGrantEntity.getType() != null ? profileGrantEntity.getType() : null);
     	grant.setUrl(StringUtils.isNotEmpty(profileGrantEntity.getUrl()) ? new Url(profileGrantEntity.getUrl()) : new Url(new String()));
     	grant.setVisibility(profileGrantEntity.getVisibility() != null ? profileGrantEntity.getVisibility() : Visibility.PRIVATE);
@@ -472,7 +482,9 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
     }
 
     /**
-     * TODO
+     * Get external identifiers from a profileGrantEntity object
+     * @param profileGrantEntity
+     * @return The external identifiers in the form of a OrcidGrantExternalIdentifiers object
      * */
     private OrcidGrantExternalIdentifiers getGrantExternalIdentifiers(ProfileGrantEntity profileGrantEntity) {
         if (profileGrantEntity == null || profileGrantEntity.getExternalIdentifiers() == null || profileGrantEntity.getExternalIdentifiers().isEmpty()) {
@@ -492,7 +504,9 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
     }
     
     /**
-     * TODO
+     * Transforms a GrantExternalIdentifierEntity into a GrantExternalIdentifier object
+     * @param grantExternalIdentifierEntity
+     * @return GrantExternalIdentifier
      * */
     private GrantExternalIdentifier getGrantExternalIdentifier(GrantExternalIdentifierEntity grantExternalIdentifierEntity) {
         if (grantExternalIdentifierEntity == null) {
@@ -509,7 +523,9 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
     }
     
     /**
-     * TODO
+     * Get the grant contributors from a profileGrantEntity
+     * @param profileGrantEntity
+     * @return the contributors in a form of GrantContributors object
      * */
     private GrantContributors getGrantContributors(ProfileGrantEntity profileGrantEntity) {        
     	GrantContributors grantContributors = new GrantContributors();
@@ -544,7 +560,10 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
     }  
     
     /**
-     * TODO
+     * Get the source of a sowrceAware object
+     * @param sourceAwareEntity
+     * 		The entity to obtain the source
+     * @return the source of the object
      * */
     private Source getSource(SourceAware sourceAwareEntity) {
         ProfileEntity sourceEntity = sourceAwareEntity.getSource();

@@ -274,15 +274,7 @@ public class ObjectFactory {
     public AgencyName createAgencyName() {
         return new AgencyName();
     }
-
-    /**
-     * Create an instance of {@link GrantNumber }
-     * 
-     */
-    public GrantNumber createGrantNumber() {
-        return new GrantNumber();
-    }
-
+   
     /**
      * Create an instance of {@link GrantDate }
      * 

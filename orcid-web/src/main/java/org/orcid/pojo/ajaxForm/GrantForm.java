@@ -26,6 +26,7 @@ import org.orcid.jaxb.model.message.DisambiguatedOrganization;
 import org.orcid.jaxb.model.message.FuzzyDate;
 import org.orcid.jaxb.model.message.GrantContributors;
 import org.orcid.jaxb.model.message.GrantExternalIdentifier;
+import org.orcid.jaxb.model.message.GrantTitle;
 import org.orcid.jaxb.model.message.GrantType;
 import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.jaxb.model.message.OrcidGrant;
@@ -33,6 +34,7 @@ import org.orcid.jaxb.model.message.OrcidGrantExternalIdentifiers;
 import org.orcid.jaxb.model.message.Organization;
 import org.orcid.jaxb.model.message.OrganizationAddress;
 import org.orcid.jaxb.model.message.Source;
+import org.orcid.jaxb.model.message.Title;
 import org.orcid.jaxb.model.message.Url;
 
 
@@ -42,7 +44,7 @@ public class GrantForm implements ErrorsInterface, Serializable {
 
     private List<String> errors = new ArrayList<String>();
     
-    private Text title;
+    private GrantTitleForm grantTitle;     
 
     private Text description;
     
@@ -108,12 +110,12 @@ public class GrantForm implements ErrorsInterface, Serializable {
 		this.visibility = visibility;
 	}
 
-	public Text getTitle() {
-		return title;
+	public GrantTitleForm getGrantTitle() {
+		return grantTitle;
 	}
 
-	public void setTitle(Text title) {
-		this.title = title;
+	public void setGrantTitle(GrantTitleForm title) {
+		this.grantTitle = title;
 	}
 
 	public Text getDescription() {
@@ -276,8 +278,9 @@ public class GrantForm implements ErrorsInterface, Serializable {
 			result.setEndDate(new FuzzyDate(endDate.toFuzzyDate()));
 		if(!PojoUtil.isEmpty(putCode))
 			result.setPutCode(putCode.getValue());		
-		if(!PojoUtil.isEmpty(title))
-			result.setTitle(title.getValue());
+		if(grantTitle != null) {						
+			result.setTitle(grantTitle.toGrantTitle());
+		}				
 		if(!PojoUtil.isEmpty(grantType))
 			result.setType(GrantType.fromValue(grantType.getValue()));
 		if(!PojoUtil.isEmpty(url))
@@ -355,8 +358,18 @@ public class GrantForm implements ErrorsInterface, Serializable {
 		if(grant.getStartDate() != null)
 			result.setStartDate(Date.valueOf(grant.getStartDate()));
 		
-		if(StringUtils.isNotEmpty(grant.getTitle()))
-			result.setTitle(Text.valueOf(grant.getTitle()));
+		if(grant.getGrantTitle() != null) {
+			GrantTitleForm grantTitle = new GrantTitleForm();
+			if(grant.getGrantTitle().getTitle() != null)
+				grantTitle.setTitle(Text.valueOf(grant.getGrantTitle().getTitle().getContent()));
+			if(grant.getGrantTitle().getTranslatedTitle() != null){
+				TranslatedTitle translatedTitle = new TranslatedTitle();
+				translatedTitle.setContent(grant.getGrantTitle().getTranslatedTitle().getContent());
+				translatedTitle.setLanguageCode(grant.getGrantTitle().getTranslatedTitle().getLanguageCode());
+				grantTitle.setTranslatedTitle(translatedTitle);
+			}
+			result.setGrantTitle(grantTitle);
+		}
 		
 		if(grant.getUrl() != null)
 			result.setUrl(Text.valueOf(grant.getUrl().getValue()));

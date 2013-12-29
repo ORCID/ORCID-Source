@@ -40,7 +40,6 @@ import org.orcid.jaxb.model.message.CreditName;
 import org.orcid.jaxb.model.message.Email;
 import org.orcid.jaxb.model.message.FamilyName;
 import org.orcid.jaxb.model.message.GivenNames;
-import org.orcid.jaxb.model.message.GrantNumber;
 import org.orcid.jaxb.model.message.OrcidActivities;
 import org.orcid.jaxb.model.message.OrcidBio;
 import org.orcid.jaxb.model.message.OrcidGrant;

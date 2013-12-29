@@ -61,6 +61,8 @@ public class ProfileGrantEntity extends BaseEntity<Long> implements Comparable<P
     private OrgEntity org;
     private ProfileEntity profile;
     private String title;
+    private String translatedTitle;
+    private String translatedTitleLanguageCode;
     private String description;
     private GrantType type;
     private CurrencyCode currencyCode;
@@ -115,6 +117,25 @@ public class ProfileGrantEntity extends BaseEntity<Long> implements Comparable<P
 		this.title = title;
 	}
 
+	@Column(name = "translated_title")
+    public String getTranslatedTitle() {
+        return translatedTitle;
+    }
+
+    public void setTranslatedTitle(String translatedTitle) {
+        this.translatedTitle = translatedTitle;
+    }
+
+    @Column(name = "translated_title_language_code", length = 25)
+    public String getTranslatedTitleLanguageCode() {
+        return translatedTitleLanguageCode;
+    }
+
+    public void setTranslatedTitleLanguageCode(String translatedTitleLanguageCode) {
+        this.translatedTitleLanguageCode = translatedTitleLanguageCode;
+    }
+
+	
 	@Column(name = "description")
 	public String getDescription() {
 		return description;
@@ -287,7 +308,9 @@ public class ProfileGrantEntity extends BaseEntity<Long> implements Comparable<P
      */
     public void clean() {
         type = null;
-        title = null;        
+        title = null;
+        translatedTitle = null;
+        translatedTitleLanguageCode = null;
         startDate = null;
         endDate = null;
         visibility = null;

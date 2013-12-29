@@ -915,7 +915,7 @@
 		</xs:annotation>
 		<xs:complexType>
 			<xs:sequence>				
-				<xs:element name="title" type="orcid:non-empty-string" minOccurs="1" maxOccurs="1"/>
+				<xs:element ref="orcid:grant-title" minOccurs="0" />
 				<xs:element name="description" type="orcid:non-empty-string" minOccurs="0" maxOccurs="1"/>							
 				<xs:element ref="orcid:url" minOccurs="0" maxOccurs="1"/>
 				<xs:element ref="orcid:grant-type" minOccurs="1" maxOccurs="1" />
@@ -932,7 +932,21 @@
 			<xs:attributeGroup ref="orcid:visibility" />
 		</xs:complexType>
 	</xs:element>	
-	
+	<xs:element name="grant-title">
+		<xs:annotation>
+			<xs:documentation>Container for titles of the grant.</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="title" type="orcid:non-empty-string">
+                    <xs:annotation>
+            			<xs:documentation>The main name or title of the grant.</xs:documentation>
+        			</xs:annotation>
+                </xs:element>
+				<xs:element ref="orcid:translated-title" minOccurs="0" />
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
 	<xs:element name="currency-code">
 		<xs:annotation>
 			<xs:documentation>The currency code used on grants
@@ -1411,7 +1425,7 @@
 	</xs:element>
 	<xs:element name="translated-title">
 		<xs:annotation>
-			<xs:documentation>The main title of the work translated into another language. The translated language will be included in the &lt;language-code> attribute.
+			<xs:documentation>The main title of the work or grant translated into another language. The translated language will be included in the &lt;language-code> attribute.
 			</xs:documentation>
 		</xs:annotation>
 		<xs:complexType>
