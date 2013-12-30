@@ -20,16 +20,16 @@ import java.util.List;
 
 import org.orcid.persistence.jpa.entities.FundingExternalIdentifierEntity;
 
-public interface GrantExternalIdentifierDao extends
+public interface FundingExternalIdentifierDao extends
 		GenericDao<FundingExternalIdentifierEntity, Long> {
 	/**
-	 * Removes a grant external identifier
+	 * Removes a funding external identifier
 	 * 
 	 * @param id
 	 *            The id of the external identifier
 	 * @return true if the external identifier was deleted
 	 * */
-	boolean removeGrantExternalIdentifier(String id);
+	boolean removeFundingExternalIdentifier(String id);
 
 	/**
 	 * Updates an external identifier
@@ -48,40 +48,40 @@ public interface GrantExternalIdentifierDao extends
 	 * 
 	 * @return true if the external identifier was updated
 	 * */
-	boolean updateGrantExternalIdentifier(String id, String type,
+	boolean updateFundingExternalIdentifier(String id, String type,
 			String value, String url);
 
 	/**
-	 * Creates a new grant external identifier
+	 * Creates a new funding external identifier
 	 * 
-	 * @param newGrantExternalIdentifierEntity
+	 * @param newFundingExternalIdentifierEntity
 	 *            The object to be persisted
-	 * @return the created GrantExternalIdentifierEntity with the id assigned
+	 * @return the created FundingExternalIdentifierEntity with the id assigned
 	 *         on database
 	 * */
-	FundingExternalIdentifierEntity createGrantExternalIdentifier(
-			FundingExternalIdentifierEntity newGrantExternalIdentifierEntity);
+	FundingExternalIdentifierEntity createFundingExternalIdentifier(
+			FundingExternalIdentifierEntity newFundingExternalIdentifierEntity);
 
 	/**
 	 * Get the external identifier associated with the provided id
 	 * 
 	 * @param id
-	 *            the grant external identifier id
+	 *            the funding external identifier id
 	 * 
-	 * @return the GrantExternalIdentifierEntity object associated with the
+	 * @return the FundingExternalIdentifierEntity object associated with the
 	 *         provided id
 	 * */
-	FundingExternalIdentifierEntity getGrantExternalIdentifier(String id);
+	FundingExternalIdentifierEntity getFundingExternalIdentifier(String id);
 
 	/**
 	 * Get the list of external identifiers associated with the given
-	 * profileGrant id
+	 * profileFunding id
 	 * 
-	 * @param orgGrantRelationId
-	 *            The id of the orgGrantRelation object
+	 * @param orgFundingRelationId
+	 *            The id of the orgFundingRelation object
 	 * 
-	 * @return the GrantExternalIdentifierEntity object
+	 * @return the FundingExternalIdentifierEntity object
 	 * */
-	List<FundingExternalIdentifierEntity> getGrantExternalIdentifiers(
-			String profileGrantId);
+	List<FundingExternalIdentifierEntity> getFundingExternalIdentifiers(
+			String profileFundingId);
 }

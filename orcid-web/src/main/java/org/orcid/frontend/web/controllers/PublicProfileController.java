@@ -42,7 +42,7 @@ import org.orcid.jaxb.model.message.OrcidWork;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.persistence.jpa.entities.ProfileWorkEntity;
 import org.orcid.pojo.ajaxForm.AffiliationForm;
-import org.orcid.pojo.ajaxForm.GrantForm;
+import org.orcid.pojo.ajaxForm.FundingForm;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.pojo.ajaxForm.Work;
@@ -183,13 +183,13 @@ public class PublicProfileController extends BaseWorkspaceController {
 
     @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/grants.json")
     public @ResponseBody
-    List<GrantForm> getFundingsJson(HttpServletRequest request, @PathVariable("orcid") String orcid, @RequestParam(value = "grantIds") String fundingIdsStr) {
-        List<GrantForm> fundings = new ArrayList<GrantForm>();
+    List<FundingForm> getFundingsJson(HttpServletRequest request, @PathVariable("orcid") String orcid, @RequestParam(value = "grantIds") String fundingIdsStr) {
+        List<FundingForm> fundings = new ArrayList<FundingForm>();
         Map<String, OrcidFunding> fundingMap = (HashMap<String, OrcidFunding>) request.getSession().getAttribute(FUNDINGS_MAP);
         String[] fundingIds = fundingIdsStr.split(",");
         for (String id: fundingIds) {
             OrcidFunding funding = fundingMap.get(id);                        
-            fundings.add(GrantForm.valueOf(funding));
+            fundings.add(FundingForm.valueOf(funding));
         }
         return fundings;
     }

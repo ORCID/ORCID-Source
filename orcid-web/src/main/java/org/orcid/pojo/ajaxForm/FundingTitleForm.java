@@ -23,7 +23,7 @@ import java.util.List;
 import org.orcid.jaxb.model.message.FundingTitle;
 import org.orcid.jaxb.model.message.Title;
 
-public class GrantTitleForm implements ErrorsInterface, Serializable {
+public class FundingTitleForm implements ErrorsInterface, Serializable {
     
     private static final long serialVersionUID = 1L;
 
@@ -33,8 +33,8 @@ public class GrantTitleForm implements ErrorsInterface, Serializable {
 
     private TranslatedTitle translatedTitle;
     
-    public static GrantTitleForm valueOf(FundingTitle grantTitle) {
-        GrantTitleForm gt = new GrantTitleForm(); 
+    public static FundingTitleForm valueOf(FundingTitle grantTitle) {
+        FundingTitleForm gt = new FundingTitleForm(); 
         if (grantTitle != null) {
             if (grantTitle.getTitle() != null) {
             	gt.setTitle(Text.valueOf(grantTitle.getTitle().getContent()));
@@ -51,7 +51,7 @@ public class GrantTitleForm implements ErrorsInterface, Serializable {
 
     }
 
-    public FundingTitle toGrantTitle() {
+    public FundingTitle toFundingTitle() {
         FundingTitle gt = new FundingTitle();
         if (this.getTitle() != null)
         	gt.setTitle(new Title(this.getTitle().getValue()));       

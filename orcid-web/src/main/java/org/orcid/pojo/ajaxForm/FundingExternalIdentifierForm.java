@@ -79,7 +79,7 @@ public class FundingExternalIdentifierForm implements ErrorsInterface, Serializa
 		return result;
 	}
 	
-	public FundingExternalIdentifier toGrantExternalIdentifier() {
+	public FundingExternalIdentifier toFundingExternalIdentifier() {
 		FundingExternalIdentifier result = new FundingExternalIdentifier();		
 		if(!PojoUtil.isEmpty(type))
 			result.setType(type.getValue());

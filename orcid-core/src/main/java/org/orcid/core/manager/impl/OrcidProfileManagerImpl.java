@@ -107,10 +107,10 @@ import org.orcid.jaxb.model.message.WorkSource;
 import org.orcid.persistence.dao.EmailDao;
 import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.dao.GivenPermissionToDao;
-import org.orcid.persistence.dao.GrantExternalIdentifierDao;
+import org.orcid.persistence.dao.FundingExternalIdentifierDao;
 import org.orcid.persistence.dao.OrcidOauth2TokenDetailDao;
 import org.orcid.persistence.dao.ProfileDao;
-import org.orcid.persistence.dao.ProfileGrantDao;
+import org.orcid.persistence.dao.ProfileFundingDao;
 import org.orcid.persistence.dao.ProfileWorkDao;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.EmailEventEntity;
@@ -168,10 +168,10 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
     private GenericDao<OrgAffiliationRelationEntity, Long> orgAffilationRelationDao;
     
     @Resource
-	ProfileGrantDao profileGrantDao;
+	ProfileFundingDao profileGrantDao;
 
 	@Resource
-	GrantExternalIdentifierDao grantExternalIdentifierDao;
+	FundingExternalIdentifierDao grantExternalIdentifierDao;
 
     @Resource
     private EmailDao emailDao;
@@ -1455,14 +1455,14 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
             ProfileFundingEntity profileGrantEntity = jaxb2JpaAdapter.getNewProfileGrantEntity(updatedGrant, profileEntity);
             //Save the profile grant
             ProfileFundingEntity newProfileFunding = profileGrantDao
-					.addProfileGrant(profileGrantEntity);
+					.addProfileFunding(profileGrantEntity);
             //Save the external identifiers
             SortedSet<FundingExternalIdentifierEntity> externalIdentifiers = profileGrantEntity.getExternalIdentifiers();
  			if (externalIdentifiers != null && !externalIdentifiers.isEmpty()) {
  				for (FundingExternalIdentifierEntity externalIdentifier : externalIdentifiers) {
  					externalIdentifier.setProfileFunding(newProfileFunding);
  					grantExternalIdentifierDao
- 							.createGrantExternalIdentifier(externalIdentifier);
+ 							.createFundingExternalIdentifier(externalIdentifier);
  				}
  			}            
         }
