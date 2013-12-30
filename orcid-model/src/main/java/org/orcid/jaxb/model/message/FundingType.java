@@ -51,7 +51,7 @@ import java.io.Serializable;
  */
 @XmlType(name = "grant-type")
 @XmlEnum
-public enum GrantType implements Serializable {
+public enum FundingType implements Serializable {
     @XmlEnumValue("grant")
     GRANT("grant"), 
     @XmlEnumValue("contract")
@@ -62,7 +62,7 @@ public enum GrantType implements Serializable {
     SALARY_AWARD("salary-award");
     private final String value;
 
-    GrantType(String v) {
+    FundingType(String v) {
         value = v;
     }
 
@@ -70,8 +70,8 @@ public enum GrantType implements Serializable {
         return value;
     }
     
-    public static GrantType fromValue(String v) {
-        for (GrantType c : GrantType.values()) {
+    public static FundingType fromValue(String v) {
+        for (FundingType c : FundingType.values()) {
             if (c.value.equals(v)) {
                 return c;
             }

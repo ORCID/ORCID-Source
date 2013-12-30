@@ -20,13 +20,13 @@ import javax.persistence.Query;
 
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.persistence.dao.ProfileGrantDao;
-import org.orcid.persistence.jpa.entities.ProfileGrantEntity;
+import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
 import org.springframework.transaction.annotation.Transactional;
 
-public class ProfileGrantDaoImpl extends GenericDaoImpl<ProfileGrantEntity, Long> implements ProfileGrantDao {
+public class ProfileGrantDaoImpl extends GenericDaoImpl<ProfileFundingEntity, Long> implements ProfileGrantDao {
 	
 	public ProfileGrantDaoImpl() {
-        super(ProfileGrantEntity.class);
+        super(ProfileFundingEntity.class);
     }
 	
 	/**
@@ -81,7 +81,7 @@ public class ProfileGrantDaoImpl extends GenericDaoImpl<ProfileGrantEntity, Long
 	 * */
 	@Override
 	@Transactional
-	public ProfileGrantEntity addProfileGrant(ProfileGrantEntity newProfileGrantEntity) {
+	public ProfileFundingEntity addProfileGrant(ProfileFundingEntity newProfileGrantEntity) {
 		entityManager.persist(newProfileGrantEntity);
 		return newProfileGrantEntity;
 	}
@@ -98,11 +98,11 @@ public class ProfileGrantDaoImpl extends GenericDaoImpl<ProfileGrantEntity, Long
      * @return the ProfileGrantEntity object
      * */
 	@Override
-	public ProfileGrantEntity getProfileGrantEntity(String orgId, String clientOrcid) {
+	public ProfileFundingEntity getProfileGrantEntity(String orgId, String clientOrcid) {
 		Query query = entityManager.createQuery("from ProfileGrantEntity where profile.id=:clientOrcid and org.id=:orgId");
 		query.setParameter("clientOrcid", clientOrcid);
 		query.setParameter("orgId", Long.valueOf(orgId));
-		return (ProfileGrantEntity)query.getSingleResult();
+		return (ProfileFundingEntity)query.getSingleResult();
 	}
 	
 	/**
@@ -114,9 +114,9 @@ public class ProfileGrantDaoImpl extends GenericDaoImpl<ProfileGrantEntity, Long
      * @return the ProfileGrantEntity object
      * */
 	@Override
-	public ProfileGrantEntity getProfileGrantEntity(String profileGrantId) {
+	public ProfileFundingEntity getProfileGrantEntity(String profileGrantId) {
 		Query query = entityManager.createQuery("from ProfileGrantEntity where id=:id");
 		query.setParameter("id", Long.valueOf(profileGrantId));
-		return (ProfileGrantEntity) query.getSingleResult();
+		return (ProfileFundingEntity) query.getSingleResult();
 	}
 }

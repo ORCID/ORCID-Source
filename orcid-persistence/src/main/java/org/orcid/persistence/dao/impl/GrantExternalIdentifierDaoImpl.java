@@ -21,13 +21,13 @@ import java.util.List;
 import javax.persistence.Query;
 
 import org.orcid.persistence.dao.GrantExternalIdentifierDao;
-import org.orcid.persistence.jpa.entities.GrantExternalIdentifierEntity;
+import org.orcid.persistence.jpa.entities.FundingExternalIdentifierEntity;
 import org.springframework.transaction.annotation.Transactional;
 
-public class GrantExternalIdentifierDaoImpl extends GenericDaoImpl<GrantExternalIdentifierEntity, Long> implements GrantExternalIdentifierDao  {
+public class GrantExternalIdentifierDaoImpl extends GenericDaoImpl<FundingExternalIdentifierEntity, Long> implements GrantExternalIdentifierDao  {
 
 	public GrantExternalIdentifierDaoImpl() {
-		super(GrantExternalIdentifierEntity.class);
+		super(FundingExternalIdentifierEntity.class);
 	}
 
 	/**
@@ -84,8 +84,8 @@ public class GrantExternalIdentifierDaoImpl extends GenericDaoImpl<GrantExternal
 	 * */
 	@Override
 	@Transactional
-	public GrantExternalIdentifierEntity createGrantExternalIdentifier(
-			GrantExternalIdentifierEntity newGrantExternalIdentifierEntity) {
+	public FundingExternalIdentifierEntity createGrantExternalIdentifier(
+			FundingExternalIdentifierEntity newGrantExternalIdentifierEntity) {
 		entityManager.persist(newGrantExternalIdentifierEntity);
 		return newGrantExternalIdentifierEntity;	
 	}
@@ -100,10 +100,10 @@ public class GrantExternalIdentifierDaoImpl extends GenericDaoImpl<GrantExternal
 	 *         provided id
 	 * */
 	@Override
-	public GrantExternalIdentifierEntity getGrantExternalIdentifier(String id) {
+	public FundingExternalIdentifierEntity getGrantExternalIdentifier(String id) {
 		Query query = entityManager.createQuery("from GrantExternalIdentifierEntity where id=:id");
 		query.setParameter("id", Long.valueOf(id));
-		return (GrantExternalIdentifierEntity)query.getSingleResult();		
+		return (FundingExternalIdentifierEntity)query.getSingleResult();		
 	}
 
 	/**
@@ -116,7 +116,7 @@ public class GrantExternalIdentifierDaoImpl extends GenericDaoImpl<GrantExternal
 	 * @return the ProfileGrantEntity object
 	 * */
 	@Override
-	public List<GrantExternalIdentifierEntity> getGrantExternalIdentifiers(
+	public List<FundingExternalIdentifierEntity> getGrantExternalIdentifiers(
 			String profileGrantId) {
 		Query query = entityManager.createQuery("from GrantExternalIdentifierEntity where orgGrant.id=:id");
 		query.setParameter("id", Long.valueOf(profileGrantId));

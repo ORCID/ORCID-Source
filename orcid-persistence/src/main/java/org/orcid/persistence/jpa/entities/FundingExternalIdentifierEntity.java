@@ -34,21 +34,21 @@ import javax.persistence.Table;
  * 
  */
 @Entity
-@Table(name = "grant_external_identifier")
-public class GrantExternalIdentifierEntity extends BaseEntity<Long> implements Comparable<GrantExternalIdentifierEntity> {
+@Table(name = "funding_external_identifier")
+public class FundingExternalIdentifierEntity extends BaseEntity<Long> implements Comparable<FundingExternalIdentifierEntity> {
 
 	private static final long serialVersionUID = 1L;
 	
 	private Long id;
-	private ProfileGrantEntity profileGrant;
+	private ProfileFundingEntity profileFunding;
 	private String type;
 	private String value;
 	private String url;
 	
 	@Id
-	@Column(name="grant_external_identifier_id")
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "grant_external_identifier_seq")
-    @SequenceGenerator(name = "grant_external_identifier_seq", sequenceName = "grant_external_identifier_seq")
+	@Column(name="funding_external_identifier_id")
+    @GeneratedValue(strategy = GenerationType.AUTO, generator = "funding_external_identifier_seq")
+    @SequenceGenerator(name = "funding_external_identifier_seq", sequenceName = "funding_external_identifier_seq")
 	public Long getId() {
 		return id;
 	}
@@ -58,13 +58,13 @@ public class GrantExternalIdentifierEntity extends BaseEntity<Long> implements C
 	}
 	
 	@ManyToOne(cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.DETACH }, fetch = FetchType.EAGER)
-    @JoinColumn(name = "profile_grant_id")
-	public ProfileGrantEntity getProfileGrant() {
-		return profileGrant;
+    @JoinColumn(name = "profile_funding_id")
+	public ProfileFundingEntity getProfileFunding() {
+		return profileFunding;
 	}
 	
-	public void setProfileGrant(ProfileGrantEntity profileGrant) {
-		this.profileGrant = profileGrant;
+	public void setProfileFunding(ProfileFundingEntity profileFunding) {
+		this.profileFunding = profileFunding;
 	}
 	
 	@Column(name="ext_type")	
@@ -95,7 +95,7 @@ public class GrantExternalIdentifierEntity extends BaseEntity<Long> implements C
 	}
 
 	@Override
-	public int compareTo(GrantExternalIdentifierEntity other) {
+	public int compareTo(FundingExternalIdentifierEntity other) {
 		 if (other == null) {
 	            return -1;
 	       }

@@ -39,7 +39,7 @@ import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.Sort;
 import org.hibernate.annotations.SortType;
 import org.orcid.jaxb.model.message.CurrencyCode;
-import org.orcid.jaxb.model.message.GrantType;
+import org.orcid.jaxb.model.message.FundingType;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.utils.NullUtils;
 
@@ -47,15 +47,16 @@ import org.orcid.utils.NullUtils;
  * orcid-entities - Dec 6, 2011 - ProfileInstitutionEntity
  * 
  * @author Declan Newman (declan)
+ * Angel Montenegro
  */
 
 @Entity
-@Table(name = "profile_grant")
-public class ProfileGrantEntity extends BaseEntity<Long> implements Comparable<ProfileGrantEntity>, ProfileAware, SourceAware {
+@Table(name = "profile_funding")
+public class ProfileFundingEntity extends BaseEntity<Long> implements Comparable<ProfileFundingEntity>, ProfileAware, SourceAware {
 
     private static final long serialVersionUID = -3187757614938904392L;
 
-    private static final String PROFILE_GRANT = "profileGrant";	
+    private static final String PROFILE_FUNDING = "profileFunding";	
 
 	private Long id;
     private OrgEntity org;
@@ -64,7 +65,7 @@ public class ProfileGrantEntity extends BaseEntity<Long> implements Comparable<P
     private String translatedTitle;
     private String translatedTitleLanguageCode;
     private String description;
-    private GrantType type;
+    private FundingType type;
     private CurrencyCode currencyCode;
     private String amount;
     private String url;
@@ -72,13 +73,13 @@ public class ProfileGrantEntity extends BaseEntity<Long> implements Comparable<P
 	private StartDateEntity startDate;
     private EndDateEntity endDate;
     private Visibility visibility;
-    private SortedSet<GrantExternalIdentifierEntity> externalIdentifiers;
+    private SortedSet<FundingExternalIdentifierEntity> externalIdentifiers;
     private ProfileEntity source;
 	
     @Override
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "profile_grant_seq")
-    @SequenceGenerator(name = "profile_grant_seq", sequenceName = "profile_grant_seq")
+    @GeneratedValue(strategy = GenerationType.AUTO, generator = "profile_funding_seq")
+    @SequenceGenerator(name = "profile_funding_seq", sequenceName = "profile_funding_seq")
 	public Long getId() {
 		return id;
 	}
@@ -148,11 +149,11 @@ public class ProfileGrantEntity extends BaseEntity<Long> implements Comparable<P
 	@Basic
     @Enumerated(EnumType.STRING)
 	@Column(name="type")
-	public GrantType getType() {
+	public FundingType getType() {
 		return type;
 	}
 
-	public void setType(GrantType type) {
+	public void setType(FundingType type) {
 		this.type = type;
 	}
 
@@ -220,14 +221,14 @@ public class ProfileGrantEntity extends BaseEntity<Long> implements Comparable<P
 		this.visibility = visibility;
 	}
 
-	@OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.LAZY, mappedBy = PROFILE_GRANT, orphanRemoval = true)
+	@OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.LAZY, mappedBy = PROFILE_FUNDING, orphanRemoval = true)
 	@Fetch(FetchMode.SUBSELECT)
     @Sort(type = SortType.NATURAL)
-	public SortedSet<GrantExternalIdentifierEntity> getExternalIdentifiers() {
+	public SortedSet<FundingExternalIdentifierEntity> getExternalIdentifiers() {
 		return externalIdentifiers;
 	}
 
-	public void setExternalIdentifiers(SortedSet<GrantExternalIdentifierEntity> externalIdentifiers) {
+	public void setExternalIdentifiers(SortedSet<FundingExternalIdentifierEntity> externalIdentifiers) {
 		this.externalIdentifiers = externalIdentifiers;
 	}
 
@@ -242,7 +243,7 @@ public class ProfileGrantEntity extends BaseEntity<Long> implements Comparable<P
 	}
 
 	@Override
-	public int compareTo(ProfileGrantEntity other) {
+	public int compareTo(ProfileFundingEntity other) {
 		if (other == null) {
             return 1;
         }				
@@ -268,7 +269,7 @@ public class ProfileGrantEntity extends BaseEntity<Long> implements Comparable<P
         return compareNames(org.getName(), other.getOrg().getName());
 	}
 
-	private int compareTypes(GrantType type, GrantType otherType){
+	private int compareTypes(FundingType type, FundingType otherType){
 		if (NullUtils.anyNull(type, otherType)) {
             return -NullUtils.compareNulls(type, otherType);
         }

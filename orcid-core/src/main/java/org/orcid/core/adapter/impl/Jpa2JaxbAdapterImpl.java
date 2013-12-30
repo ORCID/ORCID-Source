@@ -52,7 +52,7 @@ import org.orcid.persistence.jpa.entities.ExternalIdentifierEntity;
 import org.orcid.persistence.jpa.entities.FuzzyDateEntity;
 import org.orcid.persistence.jpa.entities.GivenPermissionByEntity;
 import org.orcid.persistence.jpa.entities.GivenPermissionToEntity;
-import org.orcid.persistence.jpa.entities.GrantExternalIdentifierEntity;
+import org.orcid.persistence.jpa.entities.FundingExternalIdentifierEntity;
 import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
 import org.orcid.persistence.jpa.entities.OrgDisambiguatedEntity;
@@ -62,7 +62,7 @@ import org.orcid.persistence.jpa.entities.PatentContributorEntity;
 import org.orcid.persistence.jpa.entities.PatentEntity;
 import org.orcid.persistence.jpa.entities.PatentSourceEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
-import org.orcid.persistence.jpa.entities.ProfileGrantEntity;
+import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
 import org.orcid.persistence.jpa.entities.ProfileKeywordEntity;
 import org.orcid.persistence.jpa.entities.ProfilePatentEntity;
 import org.orcid.persistence.jpa.entities.ProfileWorkEntity;
@@ -264,12 +264,12 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
     }
 
     private OrcidGrants getOrcidGrants(ProfileEntity profileEntity) {
-    	Set<ProfileGrantEntity> profileGrants = profileEntity.getProfileGrants();
+    	Set<ProfileFundingEntity> profileGrants = profileEntity.getProfileGrants();
     	if(profileGrants != null && !profileGrants.isEmpty()) {
     		OrcidGrants grants = new OrcidGrants();
     		List<OrcidGrant> grantList = grants.getOrcidGrant();
-    		for(ProfileGrantEntity profileGrantEntity : profileGrants) {
-    			grantList.add(getOrcidGrant(profileGrantEntity));
+    		for(ProfileFundingEntity profileFundingEntity : profileGrants) {
+    			grantList.add(getOrcidGrant(profileFundingEntity));
     		}
     		
     		return grants;
@@ -435,76 +435,76 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
     }
     
     /**
-     * Transforms a profileGrantEntity into a OrcidGrant
-     * @param profileGrantEntity
+     * Transforms a profileFundingEntity into a OrcidGrant
+     * @param profileFundingEntity
      * @return OrcidGrant
      * */
-    public OrcidGrant getOrcidGrant(ProfileGrantEntity profileGrantEntity){
+    public OrcidGrant getOrcidGrant(ProfileFundingEntity profileFundingEntity){
     	OrcidGrant grant = new OrcidGrant();    	
-    	if(StringUtils.isNotEmpty(profileGrantEntity.getAmount())) {
+    	if(StringUtils.isNotEmpty(profileFundingEntity.getAmount())) {
     		Amount orcidAmount = new Amount();
-    		orcidAmount.setContent(StringUtils.isNotEmpty(profileGrantEntity.getAmount()) ? profileGrantEntity.getAmount() : null );
-    		orcidAmount.setCurrencyCode(profileGrantEntity.getCurrencyCode() != null ? profileGrantEntity.getCurrencyCode() : null);    		
+    		orcidAmount.setContent(StringUtils.isNotEmpty(profileFundingEntity.getAmount()) ? profileFundingEntity.getAmount() : null );
+    		orcidAmount.setCurrencyCode(profileFundingEntity.getCurrencyCode() != null ? profileFundingEntity.getCurrencyCode() : null);    		
     		grant.setAmount(orcidAmount);
     	}    	    	
-    	grant.setDescription(StringUtils.isNotEmpty(profileGrantEntity.getDescription()) ? profileGrantEntity.getDescription() : null); 
+    	grant.setDescription(StringUtils.isNotEmpty(profileFundingEntity.getDescription()) ? profileFundingEntity.getDescription() : null); 
         FundingTitle title = new FundingTitle();
-        title.setTitle(StringUtils.isNotEmpty(profileGrantEntity.getTitle()) ? new Title(profileGrantEntity.getTitle()) : null);
-    	if(StringUtils.isNotEmpty(profileGrantEntity.getTranslatedTitle())) {
-    		String translatedTitleValue = profileGrantEntity.getTranslatedTitle();
-    		String code = profileGrantEntity.getTranslatedTitleLanguageCode();
+        title.setTitle(StringUtils.isNotEmpty(profileFundingEntity.getTitle()) ? new Title(profileFundingEntity.getTitle()) : null);
+    	if(StringUtils.isNotEmpty(profileFundingEntity.getTranslatedTitle())) {
+    		String translatedTitleValue = profileFundingEntity.getTranslatedTitle();
+    		String code = profileFundingEntity.getTranslatedTitleLanguageCode();
     		TranslatedTitle translatedTitle = new TranslatedTitle(translatedTitleValue, code);
     		title.setTranslatedTitle(translatedTitle);
     	}
     	grant.setTitle(title);
-    	grant.setType(profileGrantEntity.getType() != null ? profileGrantEntity.getType() : null);
-    	grant.setUrl(StringUtils.isNotEmpty(profileGrantEntity.getUrl()) ? new Url(profileGrantEntity.getUrl()) : new Url(new String()));
-    	grant.setVisibility(profileGrantEntity.getVisibility() != null ? profileGrantEntity.getVisibility() : Visibility.PRIVATE);
-    	grant.setPutCode(Long.toString(profileGrantEntity.getId()));    	
-    	grant.setGrantContributors(getGrantContributors(profileGrantEntity));
-        grant.setGrantExternalIdentifiers(getGrantExternalIdentifiers(profileGrantEntity));
+    	grant.setType(profileFundingEntity.getType() != null ? profileFundingEntity.getType() : null);
+    	grant.setUrl(StringUtils.isNotEmpty(profileFundingEntity.getUrl()) ? new Url(profileFundingEntity.getUrl()) : new Url(new String()));
+    	grant.setVisibility(profileFundingEntity.getVisibility() != null ? profileFundingEntity.getVisibility() : Visibility.PRIVATE);
+    	grant.setPutCode(Long.toString(profileFundingEntity.getId()));    	
+    	grant.setGrantContributors(getGrantContributors(profileFundingEntity));
+        grant.setGrantExternalIdentifiers(getGrantExternalIdentifiers(profileFundingEntity));
     	
         // Set organization
     	Organization organization = new Organization();
-        OrgDisambiguatedEntity orgDisambiguatedEntity = profileGrantEntity.getOrg().getOrgDisambiguated();
+        OrgDisambiguatedEntity orgDisambiguatedEntity = profileFundingEntity.getOrg().getOrgDisambiguated();
         if (orgDisambiguatedEntity != null) {
             organization.setDisambiguatedOrganization(getDisambiguatedOrganization(orgDisambiguatedEntity));
         }
-        organization.setAddress(getAddress(profileGrantEntity.getOrg()));
-        organization.setName(profileGrantEntity.getOrg().getName());
+        organization.setAddress(getAddress(profileFundingEntity.getOrg()));
+        organization.setName(profileFundingEntity.getOrg().getName());
         grant.setOrganization(organization);
         
         // Set start and end date
-        FuzzyDateEntity startDate = profileGrantEntity.getStartDate();
-        FuzzyDateEntity endDate = profileGrantEntity.getEndDate();
+        FuzzyDateEntity startDate = profileFundingEntity.getStartDate();
+        FuzzyDateEntity endDate = profileFundingEntity.getEndDate();
         grant.setStartDate(startDate != null ? new FuzzyDate(startDate.getYear(), startDate.getMonth(), startDate.getDay()) : null);
         grant.setEndDate(endDate != null ? new FuzzyDate(endDate.getYear(), endDate.getMonth(), endDate.getDay()) : null);
         
         // Set source
-        grant.setSource(getSource(profileGrantEntity));
+        grant.setSource(getSource(profileFundingEntity));
     	return grant;
     }
 
     /**
-     * Get external identifiers from a profileGrantEntity object
-     * @param profileGrantEntity
+     * Get external identifiers from a profileFundingEntity object
+     * @param profileFundingEntity
      * @return The external identifiers in the form of a OrcidGrantExternalIdentifiers object
      * */
-    private OrcidGrantExternalIdentifiers getGrantExternalIdentifiers(ProfileGrantEntity profileGrantEntity) {
-        if (profileGrantEntity == null || profileGrantEntity.getExternalIdentifiers() == null || profileGrantEntity.getExternalIdentifiers().isEmpty()) {
+    private FundingExternalIdentifiers getGrantExternalIdentifiers(ProfileFundingEntity profileFundingEntity) {
+        if (profileFundingEntity == null || profileFundingEntity.getExternalIdentifiers() == null || profileFundingEntity.getExternalIdentifiers().isEmpty()) {
             return null;
         }
-        SortedSet<GrantExternalIdentifierEntity> grantExternalIdentifierEntitys = profileGrantEntity.getExternalIdentifiers();
-        OrcidGrantExternalIdentifiers workExternalIdentifiers = new OrcidGrantExternalIdentifiers();        
+        SortedSet<FundingExternalIdentifierEntity> fundingExternalIdentifierEntitys = profileFundingEntity.getExternalIdentifiers();
+        FundingExternalIdentifiers fundingExternalIdentifiers = new FundingExternalIdentifiers();        
         
-        for (GrantExternalIdentifierEntity grantExternalIdentifierEntity : grantExternalIdentifierEntitys) {
-            GrantExternalIdentifier grantExternalIdentifier = getGrantExternalIdentifier(grantExternalIdentifierEntity);
-            if (grantExternalIdentifier != null) {
-                workExternalIdentifiers.getGrantExternalIdentifier().add(grantExternalIdentifier);
+        for (FundingExternalIdentifierEntity fundingExternalIdentifierEntity : fundingExternalIdentifierEntitys) {
+            FundingExternalIdentifier fundingExternalIdentifier = getGrantExternalIdentifier(fundingExternalIdentifierEntity);
+            if (fundingExternalIdentifier != null) {
+                fundingExternalIdentifiers.getFundingExternalIdentifier().add(fundingExternalIdentifier);
             }
         }        
         
-        return workExternalIdentifiers;
+        return fundingExternalIdentifiers;
     }
     
     /**
@@ -512,11 +512,11 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
      * @param grantExternalIdentifierEntity
      * @return GrantExternalIdentifier
      * */
-    private GrantExternalIdentifier getGrantExternalIdentifier(GrantExternalIdentifierEntity grantExternalIdentifierEntity) {
+    private FundingExternalIdentifier getGrantExternalIdentifier(FundingExternalIdentifierEntity grantExternalIdentifierEntity) {
         if (grantExternalIdentifierEntity == null) {
             return null;
         }
-        GrantExternalIdentifier grantExternalIdentifier = new GrantExternalIdentifier();
+        FundingExternalIdentifier grantExternalIdentifier = new FundingExternalIdentifier();
         
         grantExternalIdentifier.setType(grantExternalIdentifierEntity.getType());
         grantExternalIdentifier.setUrl(new Url(grantExternalIdentifierEntity.getUrl()));
@@ -527,14 +527,14 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
     }
     
     /**
-     * Get the grant contributors from a profileGrantEntity
-     * @param profileGrantEntity
+     * Get the grant contributors from a profileFundingEntity
+     * @param profileFundingEntity
      * @return the contributors in a form of GrantContributors object
      * */
-    private GrantContributors getGrantContributors(ProfileGrantEntity profileGrantEntity) {        
+    private GrantContributors getGrantContributors(ProfileFundingEntity profileFundingEntity) {        
     	GrantContributors grantContributors = new GrantContributors();
         // New way of doing work contributors
-        String jsonString = profileGrantEntity.getContributorsJson();
+        String jsonString = profileFundingEntity.getContributorsJson();
         if (jsonString != null) {
         	grantContributors = JsonUtils.readObjectFromJsonString(jsonString, GrantContributors.class);
             for (Contributor contributor : grantContributors.getContributor()) {
@@ -542,7 +542,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
                 // the grant relation
                 CreditName creditName = contributor.getCreditName();
                 if (creditName != null) {
-                    creditName.setVisibility(profileGrantEntity.getVisibility());
+                    creditName.setVisibility(profileFundingEntity.getVisibility());
                 }
                 // Strip out any contributor emails
                 contributor.setContributorEmail(null);

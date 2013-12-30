@@ -34,7 +34,7 @@ import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
 import org.orcid.frontend.web.util.LanguagesMap;
 import org.orcid.jaxb.model.message.CurrencyCode;
-import org.orcid.jaxb.model.message.GrantType;
+import org.orcid.jaxb.model.message.FundingType;
 import org.orcid.jaxb.model.message.OrcidActivities;
 import org.orcid.jaxb.model.message.OrcidGrant;
 import org.orcid.jaxb.model.message.OrcidGrants;
@@ -45,14 +45,14 @@ import org.orcid.persistence.dao.OrgDisambiguatedSolrDao;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.dao.ProfileGrantDao;
 import org.orcid.persistence.jpa.entities.CountryIsoEntity;
-import org.orcid.persistence.jpa.entities.GrantExternalIdentifierEntity;
+import org.orcid.persistence.jpa.entities.FundingExternalIdentifierEntity;
 import org.orcid.persistence.jpa.entities.OrgDisambiguatedEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
-import org.orcid.persistence.jpa.entities.ProfileGrantEntity;
+import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
 import org.orcid.persistence.solr.entities.OrgDisambiguatedSolrDocument;
 import org.orcid.pojo.ajaxForm.Contributor;
 import org.orcid.pojo.ajaxForm.Date;
-import org.orcid.pojo.ajaxForm.GrantExternalIdentifierForm;
+import org.orcid.pojo.ajaxForm.FundingExternalIdentifierForm;
 import org.orcid.pojo.ajaxForm.GrantForm;
 import org.orcid.pojo.ajaxForm.GrantTitleForm;
 import org.orcid.pojo.ajaxForm.PojoUtil;
@@ -156,8 +156,8 @@ public class GrantsController extends BaseWorkspaceController {
 		result.setContributors(contrList);
 
 		// Set empty external identifier
-		List<GrantExternalIdentifierForm> emptyExternalIdentifiers = new ArrayList<GrantExternalIdentifierForm>();
-		GrantExternalIdentifierForm f = new GrantExternalIdentifierForm();
+		List<FundingExternalIdentifierForm> emptyExternalIdentifiers = new ArrayList<FundingExternalIdentifierForm>();
+		FundingExternalIdentifierForm f = new FundingExternalIdentifierForm();
 		f.setType(new Text());
 		f.setUrl(new Text());
 		f.setValue(new Text());
@@ -228,7 +228,7 @@ public class GrantsController extends BaseWorkspaceController {
 					GrantForm form = GrantForm.valueOf(grant);
 					if (grant.getType() != null) {
 						form.setGrantTypeForDisplay(getMessage(buildInternationalizationKey(
-								GrantType.class, grant.getType().value())));
+								FundingType.class, grant.getType().value())));
 					}
 					//Set translated title language name
 			        if(!(grant.getTitle().getTranslatedTitle() == null) && !StringUtils.isEmpty(grant.getTitle().getTranslatedTitle().getLanguageCode())) {
@@ -309,7 +309,7 @@ public class GrantsController extends BaseWorkspaceController {
 		copyErrors(grant.getEndDate(), grant);
 		copyErrors(grant.getGrantType(), grant);
 
-		for (GrantExternalIdentifierForm extId : grant.getExternalIdentifiers()) {
+		for (FundingExternalIdentifierForm extId : grant.getExternalIdentifiers()) {
 			copyErrors(extId.getType(), grant);
 			copyErrors(extId.getUrl(), grant);
 			copyErrors(extId.getValue(), grant);
@@ -324,20 +324,20 @@ public class GrantsController extends BaseWorkspaceController {
 			// Update on database
 			ProfileEntity userProfile = profileDao
 					.find(getEffectiveUserOrcid());
-			ProfileGrantEntity profileGrantEntity = jaxb2JpaAdapter
+			ProfileFundingEntity profileGrantEntity = jaxb2JpaAdapter
 					.getNewProfileGrantEntity(grant.toOrcidGrant(), userProfile);
 			profileGrantEntity.setSource(userProfile);
 			// Persists the profile grant object
-			ProfileGrantEntity newProfileGrant = profileGrantDao
+			ProfileFundingEntity newProfileGrant = profileGrantDao
 					.addProfileGrant(profileGrantEntity);
 
 			// Persist the external identifiers
-			SortedSet<GrantExternalIdentifierEntity> externalIdentifiers = profileGrantEntity
+			SortedSet<FundingExternalIdentifierEntity> externalIdentifiers = profileGrantEntity
 					.getExternalIdentifiers();
 
 			if (externalIdentifiers != null && !externalIdentifiers.isEmpty()) {
-				for (GrantExternalIdentifierEntity externalIdentifier : externalIdentifiers) {
-					externalIdentifier.setProfileGrant(newProfileGrant);
+				for (FundingExternalIdentifierEntity externalIdentifier : externalIdentifiers) {
+					externalIdentifier.setProfileFunding(newProfileGrant);
 					grantExternalIdentifierDao
 							.createGrantExternalIdentifier(externalIdentifier);
 				}
@@ -399,7 +399,7 @@ public class GrantsController extends BaseWorkspaceController {
 	private void setTypeToExternalIdentifiers(GrantForm grant) {
 		if(grant == null || grant.getExternalIdentifiers() == null || grant.getExternalIdentifiers().isEmpty())
 			return;
-		for(GrantExternalIdentifierForm extId : grant.getExternalIdentifiers()) {
+		for(FundingExternalIdentifierForm extId : grant.getExternalIdentifiers()) {
 			extId.setType(Text.valueOf(DEFAULT_GRANT_EXTERNAL_IDENTIFIER_TYPE_CODE));
 		}
 	}
@@ -564,7 +564,7 @@ public class GrantsController extends BaseWorkspaceController {
 	GrantForm validateExternalIdentifiers(@RequestBody GrantForm grant) {
 		if (grant.getExternalIdentifiers() != null
 				&& !grant.getExternalIdentifiers().isEmpty()) {
-			for (GrantExternalIdentifierForm extId : grant
+			for (FundingExternalIdentifierForm extId : grant
 					.getExternalIdentifiers()) {
 				if (!PojoUtil.isEmpty(extId.getType())
 						&& extId.getType().getValue().length() > 255)
@@ -588,7 +588,7 @@ public class GrantsController extends BaseWorkspaceController {
 			setError(grant.getGrantType(), "NotBlank.grant.type");
 		} else {
 			try {
-				GrantType.fromValue(grant.getGrantType().getValue());
+				FundingType.fromValue(grant.getGrantType().getValue());
 			} catch (IllegalArgumentException iae) {
 				setError(grant.getGrantType(), "Invalid.grant.type");
 			}

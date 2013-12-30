@@ -115,13 +115,13 @@ import org.orcid.persistence.dao.ProfileWorkDao;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.EmailEventEntity;
 import org.orcid.persistence.jpa.entities.EmailEventType;
-import org.orcid.persistence.jpa.entities.GrantExternalIdentifierEntity;
+import org.orcid.persistence.jpa.entities.FundingExternalIdentifierEntity;
 import org.orcid.persistence.jpa.entities.IndexingStatus;
 import org.orcid.persistence.jpa.entities.OrcidGrantedAuthority;
 import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
-import org.orcid.persistence.jpa.entities.ProfileGrantEntity;
+import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
 import org.orcid.persistence.jpa.entities.ProfileWorkEntity;
 import org.orcid.utils.DateUtils;
 import org.orcid.utils.NullUtils;
@@ -1452,15 +1452,15 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
     private void persistAddedGrants(String orcid, List<OrcidGrant> updatedGrantsList) {
         ProfileEntity profileEntity = profileDao.find(orcid);
         for (OrcidGrant updatedGrant : updatedGrantsList) {
-            ProfileGrantEntity profileGrantEntity = jaxb2JpaAdapter.getNewProfileGrantEntity(updatedGrant, profileEntity);
+            ProfileFundingEntity profileGrantEntity = jaxb2JpaAdapter.getNewProfileGrantEntity(updatedGrant, profileEntity);
             //Save the profile grant
-            ProfileGrantEntity newProfileGrant = profileGrantDao
+            ProfileFundingEntity newProfileFunding = profileGrantDao
 					.addProfileGrant(profileGrantEntity);
             //Save the external identifiers
-            SortedSet<GrantExternalIdentifierEntity> externalIdentifiers = profileGrantEntity.getExternalIdentifiers();
+            SortedSet<FundingExternalIdentifierEntity> externalIdentifiers = profileGrantEntity.getExternalIdentifiers();
  			if (externalIdentifiers != null && !externalIdentifiers.isEmpty()) {
- 				for (GrantExternalIdentifierEntity externalIdentifier : externalIdentifiers) {
- 					externalIdentifier.setProfileGrant(newProfileGrant);
+ 				for (FundingExternalIdentifierEntity externalIdentifier : externalIdentifiers) {
+ 					externalIdentifier.setProfileFunding(newProfileFunding);
  					grantExternalIdentifierDao
  							.createGrantExternalIdentifier(externalIdentifier);
  				}

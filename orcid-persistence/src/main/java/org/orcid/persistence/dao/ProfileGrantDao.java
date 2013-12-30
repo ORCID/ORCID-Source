@@ -17,9 +17,9 @@
 package org.orcid.persistence.dao;
 
 import org.orcid.jaxb.model.message.Visibility;
-import org.orcid.persistence.jpa.entities.ProfileGrantEntity;
+import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
 
-public interface ProfileGrantDao extends GenericDao<ProfileGrantEntity, Long> {
+public interface ProfileGrantDao extends GenericDao<ProfileFundingEntity, Long> {
 
 	 /**
      * Removes the relationship that exists between a grant and a profile.
@@ -54,7 +54,7 @@ public interface ProfileGrantDao extends GenericDao<ProfileGrantEntity, Long> {
 	 * 		The object to be persisted
 	 * @return the created newProfileGrantEntity with the id assigned on database
 	 * */
-	ProfileGrantEntity addProfileGrant(ProfileGrantEntity newProfileGrantEntity);
+	ProfileFundingEntity addProfileGrant(ProfileFundingEntity newProfileGrantEntity);
 	/**
      * Get the grant associated with the client orcid and the organization id
      * 
@@ -66,7 +66,7 @@ public interface ProfileGrantDao extends GenericDao<ProfileGrantEntity, Long> {
      * 
      * @return the ProfileGrantEntity object
      * */
-	ProfileGrantEntity getProfileGrantEntity(String orgId, String clientOrcid);
+	ProfileFundingEntity getProfileGrantEntity(String orgId, String clientOrcid);
 	/**
      * Get the grant associated with the given profileGrant id
      * 
@@ -75,5 +75,5 @@ public interface ProfileGrantDao extends GenericDao<ProfileGrantEntity, Long> {
      * 
      * @return the ProfileGrantEntity object
      * */
-	ProfileGrantEntity getProfileGrantEntity(String profileGrantId);
+	ProfileFundingEntity getProfileGrantEntity(String profileGrantId);
 }

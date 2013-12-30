@@ -76,11 +76,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link GrantExternalIdentifier }
+     * Create an instance of {@link FundingExternalIdentifier }
      * 
      */
-    public GrantExternalIdentifier createGrantExternalIdentifier() {
-        return new GrantExternalIdentifier();
+    public FundingExternalIdentifier createFundingExternalIdentifier() {
+        return new FundingExternalIdentifier();
     }
 
     /**
@@ -89,14 +89,6 @@ public class ObjectFactory {
      */
     public GrantExternalProgram createGrantExternalProgram() {
         return new GrantExternalProgram();
-    }
-
-    /**
-     * Create an instance of {@link GrantExternalId }
-     * 
-     */
-    public GrantExternalId createGrantExternalId() {
-        return new GrantExternalId();
     }
 
     /**

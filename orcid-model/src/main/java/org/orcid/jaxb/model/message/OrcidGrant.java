@@ -73,12 +73,14 @@ public class OrcidGrant implements VisibilityType, Serializable {
 
 	private final static long serialVersionUID = 1L;
 
-	@XmlElement(name = "funding-title")
+	@XmlElement(name = "funding-type", required = true)
+	protected FundingType type;
+	@XmlElement(name = "funding-title", required = true)
 	protected FundingTitle title;
-	@XmlElement
-	protected String description;
-	@XmlElement(name = "funding-type")
-	protected GrantType type;
+	@XmlElement(required = true)
+	protected Organization organization;
+	@XmlElement(name = "short-description")
+	protected String description;	
 	@XmlElement(name = "amount")
 	protected Amount amount;
 	@XmlElement
@@ -86,12 +88,10 @@ public class OrcidGrant implements VisibilityType, Serializable {
 	@XmlElement(name = "start-date")
     protected FuzzyDate startDate;
     @XmlElement(name = "end-date")
-    protected FuzzyDate endDate;
-	@XmlElement(required = true)
-	protected Organization organization;
-	@XmlElement(name="grant-external-identifiers")
-	protected OrcidGrantExternalIdentifiers grantExternalIdentifiers;
-	@XmlElement(name = "grant-contributors")
+    protected FuzzyDate endDate;	
+	@XmlElement(name="funding-external-identifiers")
+	protected FundingExternalIdentifiers grantExternalIdentifiers;
+	@XmlElement(name = "funding-contributors")
     protected GrantContributors grantContributors;
 	@XmlAttribute(required = true)
 	protected Visibility visibility;
@@ -115,11 +115,11 @@ public class OrcidGrant implements VisibilityType, Serializable {
 		this.description = description;
 	}
 
-	public GrantType getType() {
+	public FundingType getType() {
 		return type;
 	}
 
-	public void setType(GrantType type) {
+	public void setType(FundingType type) {
 		this.type = type;
 	}	
 
@@ -171,12 +171,12 @@ public class OrcidGrant implements VisibilityType, Serializable {
 		this.putCode = putCode;
 	}
 		
-	public OrcidGrantExternalIdentifiers getGrantExternalIdentifiers() {
+	public FundingExternalIdentifiers getGrantExternalIdentifiers() {
 		return grantExternalIdentifiers;
 	}
 
 	public void setGrantExternalIdentifiers(
-			OrcidGrantExternalIdentifiers grantExternalIdentifiers) {
+			FundingExternalIdentifiers grantExternalIdentifiers) {
 		this.grantExternalIdentifiers = grantExternalIdentifiers;
 	}
 	

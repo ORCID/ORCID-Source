@@ -122,7 +122,7 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
     private Collection<OrcidGrantedAuthority> authorities;
     private Set<GivenPermissionToEntity> givenPermissionTo;
     private Set<GivenPermissionByEntity> givenPermissionBy;
-    private SortedSet<ProfileGrantEntity> profileGrants;
+    private SortedSet<ProfileFundingEntity> profileGrants;
     private SortedSet<ProfilePatentEntity> profilePatents;
     private SortedSet<ProfileWorkEntity> profileWorks;
     private Locale locale = Locale.EN;
@@ -504,7 +504,7 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
      */
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = PROFILE, orphanRemoval = true)
     @Sort(type = SortType.NATURAL)    
-    public SortedSet<ProfileGrantEntity> getProfileGrants() {
+    public SortedSet<ProfileFundingEntity> getProfileGrants() {
         return profileGrants;
     }
 
@@ -512,7 +512,7 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
      * @param grants
      *            the grants to set
      */
-    public void setProfileGrants(SortedSet<ProfileGrantEntity> grants) {
+    public void setProfileGrants(SortedSet<ProfileFundingEntity> grants) {
         this.profileGrants = grants;
     }
 

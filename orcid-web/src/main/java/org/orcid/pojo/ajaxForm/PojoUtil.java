@@ -62,7 +62,7 @@ public class PojoUtil {
     	return PojoUtil.allAreEmtpy(c.getContributorSequence(), c.getEmail(), c.getOrcid(), c.getUri(), c.getCreditName(), c.getContributorRole());
     }
 
-    public static boolean isEmtpy(GrantExternalIdentifierForm g) {
+    public static boolean isEmtpy(FundingExternalIdentifierForm g) {
     	return PojoUtil.allAreEmtpy(g.getType(), g.getValue(), g.getUrl());
     }
 

@@ -23,7 +23,7 @@ import org.orcid.jaxb.model.message.OrcidGrant;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidWork;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
-import org.orcid.persistence.jpa.entities.ProfileGrantEntity;
+import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
 import org.orcid.persistence.jpa.entities.ProfileWorkEntity;
 
 /**
@@ -44,6 +44,6 @@ public interface Jpa2JaxbAdapter {
     
     OrcidWork getOrcidWork(ProfileWorkEntity profileWorkEntity);
     
-    OrcidGrant getOrcidGrant(ProfileGrantEntity profileGrantEntity);
+    OrcidGrant getOrcidGrant(ProfileFundingEntity profileGrantEntity);
 
 }

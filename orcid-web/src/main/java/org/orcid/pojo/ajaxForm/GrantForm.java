@@ -26,11 +26,11 @@ import org.orcid.jaxb.model.message.CurrencyCode;
 import org.orcid.jaxb.model.message.DisambiguatedOrganization;
 import org.orcid.jaxb.model.message.FuzzyDate;
 import org.orcid.jaxb.model.message.GrantContributors;
-import org.orcid.jaxb.model.message.GrantExternalIdentifier;
-import org.orcid.jaxb.model.message.GrantType;
+import org.orcid.jaxb.model.message.FundingExternalIdentifier;
+import org.orcid.jaxb.model.message.FundingType;
 import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.jaxb.model.message.OrcidGrant;
-import org.orcid.jaxb.model.message.OrcidGrantExternalIdentifiers;
+import org.orcid.jaxb.model.message.FundingExternalIdentifiers;
 import org.orcid.jaxb.model.message.Organization;
 import org.orcid.jaxb.model.message.OrganizationAddress;
 import org.orcid.jaxb.model.message.Source;
@@ -63,7 +63,7 @@ public class GrantForm implements ErrorsInterface, Serializable {
     
     private List<Contributor> contributors;
     
-    private List<GrantExternalIdentifierForm> externalIdentifiers;
+    private List<FundingExternalIdentifierForm> externalIdentifiers;
     
     private Text putCode;
 
@@ -197,12 +197,12 @@ public class GrantForm implements ErrorsInterface, Serializable {
 		this.sourceName = sourceName;
 	}
     
-	public List<GrantExternalIdentifierForm> getExternalIdentifiers() {
+	public List<FundingExternalIdentifierForm> getExternalIdentifiers() {
 		return externalIdentifiers;
 	}
 
 	public void setExternalIdentifiers(
-			List<GrantExternalIdentifierForm> externalIdentifiers) {
+			List<FundingExternalIdentifierForm> externalIdentifiers) {
 		this.externalIdentifiers = externalIdentifiers;
 	}		
 	
@@ -283,7 +283,7 @@ public class GrantForm implements ErrorsInterface, Serializable {
 			result.setTitle(grantTitle.toGrantTitle());
 		}				
 		if(!PojoUtil.isEmpty(grantType))
-			result.setType(GrantType.fromValue(grantType.getValue()));
+			result.setType(FundingType.fromValue(grantType.getValue()));
 		if(!PojoUtil.isEmpty(url))
 			result.setUrl(new Url(url.getValue()));	
 		else 
@@ -322,12 +322,12 @@ public class GrantForm implements ErrorsInterface, Serializable {
 		}
 		// Set external identifiers
 		if(externalIdentifiers != null && !externalIdentifiers.isEmpty()) {
-			OrcidGrantExternalIdentifiers gExternalIdentifiers = new OrcidGrantExternalIdentifiers(); 
-			for(GrantExternalIdentifierForm gExternalIdentifier : externalIdentifiers) {
-				if(!PojoUtil.isEmtpy(gExternalIdentifier))
-					gExternalIdentifiers.getGrantExternalIdentifier().add(gExternalIdentifier.toGrantExternalIdentifier());
+			FundingExternalIdentifiers fExternalIdentifiers = new FundingExternalIdentifiers(); 
+			for(FundingExternalIdentifierForm fExternalIdentifier : externalIdentifiers) {
+				if(!PojoUtil.isEmtpy(fExternalIdentifier))
+					fExternalIdentifiers.getFundingExternalIdentifier().add(fExternalIdentifier.toGrantExternalIdentifier());
 			}
-			result.setGrantExternalIdentifiers(gExternalIdentifiers);
+			result.setGrantExternalIdentifiers(fExternalIdentifiers);
 		}				
 		
 		return result;
@@ -412,9 +412,9 @@ public class GrantForm implements ErrorsInterface, Serializable {
 		
 		// Set external identifiers
 		if(grant.getGrantExternalIdentifiers() != null) {
-			List<GrantExternalIdentifierForm> externalIdentifiersList = new ArrayList<GrantExternalIdentifierForm>();
-			for(GrantExternalIdentifier fExternalIdentifier : grant.getGrantExternalIdentifiers().getGrantExternalIdentifier()){
-				GrantExternalIdentifierForm grantExternalIdentifierForm = GrantExternalIdentifierForm.valueOf(fExternalIdentifier);
+			List<FundingExternalIdentifierForm> externalIdentifiersList = new ArrayList<FundingExternalIdentifierForm>();
+			for(FundingExternalIdentifier fExternalIdentifier : grant.getGrantExternalIdentifiers().getFundingExternalIdentifier()){
+				FundingExternalIdentifierForm grantExternalIdentifierForm = FundingExternalIdentifierForm.valueOf(fExternalIdentifier);
 				externalIdentifiersList.add(grantExternalIdentifierForm);
 			}			
 			result.setExternalIdentifiers(externalIdentifiersList);

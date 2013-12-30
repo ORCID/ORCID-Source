@@ -44,9 +44,9 @@ import java.io.Serializable;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element ref="{http://www.orcid.org/ns/orcid}grant-external-identifier-type"/>
- *         &lt;element ref="{http://www.orcid.org/ns/orcid}grant-external-identifier-value"/>
- *         &lt;element ref="{http://www.orcid.org/ns/orcid}grant-external-identifier-url" minOccurs="0"/>
+ *         &lt;element ref="{http://www.orcid.org/ns/orcid}funding-external-identifier-type"/>
+ *         &lt;element ref="{http://www.orcid.org/ns/orcid}funding-external-identifier-value"/>
+ *         &lt;element ref="{http://www.orcid.org/ns/orcid}funding-external-identifier-url" minOccurs="0"/>
  *       &lt;/sequence>
  *       &lt;attGroup ref="{http://www.orcid.org/ns/orcid}put-code"/>
  *     &lt;/restriction>
@@ -58,16 +58,16 @@ import java.io.Serializable;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "putCode", "type", "value", "url" })
-@XmlRootElement(name = "grant-external-identifier")
-public class GrantExternalIdentifier implements Serializable {
+@XmlRootElement(name = "funding-external-identifier")
+public class FundingExternalIdentifier implements Serializable {
 	private static final long serialVersionUID = 1L;
 	@XmlAttribute(name = "put-code")
 	protected String putCode;
-	@XmlElement(name="grant-external-identifier-type")
+	@XmlElement(name="funding-external-identifier-type")
 	protected String type;
-	@XmlElement(name="grant-external-identifier-value")
+	@XmlElement(name="funding-external-identifier-value")
 	protected String value;
-	@XmlElement(name="grant-external-identifier-url")
+	@XmlElement(name="funding-external-identifier-url")
 	protected Url url;	
 	
 	public String getType() {
@@ -111,7 +111,7 @@ public class GrantExternalIdentifier implements Serializable {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		GrantExternalIdentifier other = (GrantExternalIdentifier) obj;		
+		FundingExternalIdentifier other = (FundingExternalIdentifier) obj;		
 		if (type == null) {
 			if (other.type != null)
 				return false;

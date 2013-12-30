@@ -48,7 +48,7 @@ import org.orcid.jaxb.model.message.ContributorRole;
 import org.orcid.jaxb.model.message.CurrencyCode;
 import org.orcid.jaxb.model.message.ExternalIdentifier;
 import org.orcid.jaxb.model.message.ExternalIdentifiers;
-import org.orcid.jaxb.model.message.GrantType;
+import org.orcid.jaxb.model.message.FundingType;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.SequenceType;
 import org.orcid.jaxb.model.message.SourceOrcid;
@@ -117,8 +117,8 @@ public class WorkspaceController extends BaseWorkspaceController {
     @ModelAttribute("grantTypes")
     public Map<String, String> retrieveGrantTypesAsMap() {
         Map<String, String> grantTypes = new LinkedHashMap<String, String>();
-        for (GrantType grantType : GrantType.values()) {
-        	grantTypes.put(grantType.value(), getMessage(buildInternationalizationKey(GrantType.class, grantType.value())));
+        for (FundingType fundingType : FundingType.values()) {
+        	grantTypes.put(fundingType.value(), getMessage(buildInternationalizationKey(FundingType.class, fundingType.value())));
         }
         return FunctionsOverCollections.sortMapsByValues(grantTypes);
     }
