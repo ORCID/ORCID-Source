@@ -40,7 +40,7 @@ import org.orcid.jaxb.model.message.CreditName;
 import org.orcid.jaxb.model.message.Email;
 import org.orcid.jaxb.model.message.FamilyName;
 import org.orcid.jaxb.model.message.GivenNames;
-import org.orcid.jaxb.model.message.GrantTitle;
+import org.orcid.jaxb.model.message.FundingTitle;
 import org.orcid.jaxb.model.message.OrcidActivities;
 import org.orcid.jaxb.model.message.OrcidBio;
 import org.orcid.jaxb.model.message.OrcidGrant;
@@ -157,15 +157,15 @@ public class OrcidSearchManagerImplTest extends BaseTest {
         OrcidGrant retrievedGrant2 = orcidGrants.get(1);
 
         // check returns a reduced payload
-        assertNotNull(retrievedGrant1.getGrantTitle());
-        assertNotNull(retrievedGrant1.getGrantTitle().getTitle());
-        assertEquals("grant1", retrievedGrant1.getGrantTitle().getTitle().getContent());
+        assertNotNull(retrievedGrant1.getTitle());
+        assertNotNull(retrievedGrant1.getTitle().getTitle());
+        assertEquals("grant1", retrievedGrant1.getTitle().getTitle().getContent());
         assertEquals("Grant 1 - a short description", retrievedGrant1.getDescription());
         assertNull(retrievedGrant1.getPutCode());
 
-        assertNotNull(retrievedGrant2.getGrantTitle());
-        assertNotNull(retrievedGrant2.getGrantTitle().getTitle());
-        assertEquals("grant2", retrievedGrant2.getGrantTitle().getTitle().getContent());
+        assertNotNull(retrievedGrant2.getTitle());
+        assertNotNull(retrievedGrant2.getTitle().getTitle());
+        assertEquals("grant2", retrievedGrant2.getTitle().getTitle().getContent());
         assertEquals("Grant 2 - a short description", retrievedGrant2.getDescription());
         assertNull(retrievedGrant2.getPutCode());
 
@@ -356,7 +356,7 @@ public class OrcidSearchManagerImplTest extends BaseTest {
         orcidProfile.setOrcidGrants(orcidGrants);
         OrcidGrant orcidGrant1 = new OrcidGrant();
         orcidGrant1.setVisibility(Visibility.PUBLIC);
-        GrantTitle title = new GrantTitle();
+        FundingTitle title = new FundingTitle();
         title.setTitle(new Title("grant1"));
         orcidGrant1.setTitle(title);
         orcidGrant1.setDescription("Grant 1 - a short description");
@@ -364,7 +364,7 @@ public class OrcidSearchManagerImplTest extends BaseTest {
 
         OrcidGrant orcidGrant2 = new OrcidGrant();
         orcidGrant2.setVisibility(Visibility.PUBLIC);
-        GrantTitle title2 = new GrantTitle();
+        FundingTitle title2 = new FundingTitle();
         title2.setTitle(new Title("grant2"));
         orcidGrant2.setTitle(title2);
         orcidGrant2.setDescription("Grant 2 - a short description");

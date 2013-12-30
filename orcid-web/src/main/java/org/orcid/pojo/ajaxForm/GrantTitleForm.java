@@ -20,7 +20,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.orcid.jaxb.model.message.GrantTitle;
+import org.orcid.jaxb.model.message.FundingTitle;
 import org.orcid.jaxb.model.message.Title;
 
 public class GrantTitleForm implements ErrorsInterface, Serializable {
@@ -33,7 +33,7 @@ public class GrantTitleForm implements ErrorsInterface, Serializable {
 
     private TranslatedTitle translatedTitle;
     
-    public static GrantTitleForm valueOf(GrantTitle grantTitle) {
+    public static GrantTitleForm valueOf(FundingTitle grantTitle) {
         GrantTitleForm gt = new GrantTitleForm(); 
         if (grantTitle != null) {
             if (grantTitle.getTitle() != null) {
@@ -51,8 +51,8 @@ public class GrantTitleForm implements ErrorsInterface, Serializable {
 
     }
 
-    public GrantTitle toGrantTitle() {
-        GrantTitle gt = new GrantTitle();
+    public FundingTitle toGrantTitle() {
+        FundingTitle gt = new FundingTitle();
         if (this.getTitle() != null)
         	gt.setTitle(new Title(this.getTitle().getValue()));       
         if(this.getTranslatedTitle() != null)

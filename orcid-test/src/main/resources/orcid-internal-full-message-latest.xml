@@ -298,7 +298,9 @@
 			</orcid-works>
 			<orcid-grants>
 				<orcid-grant visibility="public">					
-					<title>Grant # 1</title>
+					<funding-title>
+						<title>Grant # 1</title>
+					</funding-title>
 					<description>1</description>
 					<url>http://grant1.com</url>
 					<grant-type>award</grant-type>

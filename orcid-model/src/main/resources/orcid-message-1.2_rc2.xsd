@@ -588,13 +588,13 @@
 	<xs:element name="orcid-activities">
 		<xs:annotation>
 			<xs:documentation>Container for research activities of the researcher or contributor, such as Works.
-			</xs:documentation>
+			Please note that the orcid-patents element is deprecated and will be removed soon</xs:documentation>
 		</xs:annotation>
 		<xs:complexType>
 			<xs:sequence>
 			    <xs:element minOccurs="0" maxOccurs="1" ref="orcid:affiliations" />
 				<xs:element minOccurs="0" maxOccurs="1" ref="orcid:orcid-works" />
-				<xs:element minOccurs="0" maxOccurs="1" ref="orcid:orcid-grants" />
+				<xs:element minOccurs="0" maxOccurs="1" ref="orcid:orcid-funding-list" />
 				<xs:element minOccurs="0" maxOccurs="1" ref="orcid:orcid-patents" />
 			</xs:sequence>
 		</xs:complexType>
@@ -895,61 +895,70 @@
 	
 	
 	
-	<xs:element name="orcid-grants">
+	<xs:element name="orcid-funding-list">
 		<xs:annotation>
-			<xs:documentation>Container for the grants received by the researcher or contributor</xs:documentation>
+			<xs:documentation>Container for the funding received by the researcher or contributor</xs:documentation>
 		</xs:annotation>
 		<xs:complexType>
 			<xs:sequence>
 				<xs:element maxOccurs="unbounded" minOccurs="0"
-					ref="orcid:orcid-grant" />
+					ref="orcid:orcid-funding" />
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
-	<xs:element name="orcid-grant">
+	<xs:element name="orcid-funding">
 		<xs:annotation>
-			<xs:documentation>A grant received by the researcher or contributor. 
+			<xs:documentation>Funding received by the researcher or contributor. 
+				* REQUIRED FIELDS: Funding-type, Funding-title, Funding Agency (organization)
 				* The visibility attribute (private, limited or public) can be set at record creation, and indicates who can see this section of information.
 				* The put-code attribute is used only when reading this element. When updating the item, the put-code attribute must be included to indicate the specific record to be updated.
 			</xs:documentation>
 		</xs:annotation>
 		<xs:complexType>
 			<xs:sequence>				
-				<xs:element ref="orcid:grant-title" minOccurs="0" />
-				<xs:element name="description" type="orcid:non-empty-string" minOccurs="0" maxOccurs="1"/>							
-				<xs:element ref="orcid:url" minOccurs="0" maxOccurs="1"/>
-				<xs:element ref="orcid:grant-type" minOccurs="1" maxOccurs="1" />
-				<xs:element ref="orcid:currency-code" minOccurs="1" maxOccurs="1"/>				
-				<xs:element name="amount" type="orcid:non-empty-string" minOccurs="1" maxOccurs="1"/>
+				<xs:element ref="orcid:funding-type" minOccurs="1" maxOccurs="1" />
+				<xs:element ref="orcid:funding-title" minOccurs="0" />
+				<xs:element ref="orcid:organization" minOccurs="1" maxOccurs="1"/>				
+				<xs:element ref="orcid:short-description" minOccurs="0"/>			
+				<xs:element ref="orcid:amount" minOccurs="0" maxOccurs="1"/>
+				<xs:element ref="orcid:url" minOccurs="0" maxOccurs="1"/>				
 				<xs:element name="start-date" type="orcid:fuzzy-date" minOccurs="0" maxOccurs="1" />
 				<xs:element name="end-date" type="orcid:fuzzy-date" minOccurs="0" maxOccurs="1" />												
-				<xs:element ref="orcid:organization" minOccurs="1" maxOccurs="1"/>
-				<xs:element ref="orcid:grant-external-identifiers" minOccurs="0" maxOccurs="1"/>
-				<xs:element ref="orcid:grant-contributors" minOccurs="0" maxOccurs="1"/>				
+				<xs:element ref="orcid:funding-external-identifiers" minOccurs="0" maxOccurs="1"/>
+				<xs:element ref="orcid:funding-contributors" minOccurs="0" maxOccurs="1"/>				
 				<xs:element ref="orcid:source" minOccurs="0"  maxOccurs="1" />
 			</xs:sequence>
 			<xs:attributeGroup ref="orcid:put-code" />
 			<xs:attributeGroup ref="orcid:visibility" />
 		</xs:complexType>
 	</xs:element>	
-	<xs:element name="grant-title">
+	<xs:element name="funding-title">
 		<xs:annotation>
-			<xs:documentation>Container for titles of the grant.</xs:documentation>
+			<xs:documentation>Container for titles of the funding.</xs:documentation>
 		</xs:annotation>
 		<xs:complexType>
 			<xs:sequence>
 				<xs:element name="title" type="orcid:non-empty-string">
                     <xs:annotation>
-            			<xs:documentation>The main name or title of the grant.</xs:documentation>
+            			<xs:documentation>The main name or title of the funding.</xs:documentation>
         			</xs:annotation>
                 </xs:element>
 				<xs:element ref="orcid:translated-title" minOccurs="0" />
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
-	<xs:element name="currency-code">
+	<xs:element name="amount">
 		<xs:annotation>
-			<xs:documentation>The currency code used on grants
+			<xs:documentation>The funding amount.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>						
+			<xs:attribute ref="orcid:currency-code" use="required" />							
+		</xs:complexType>
+	</xs:element>
+	<xs:attribute name="currency-code">
+		<xs:annotation>
+			<xs:documentation>The currency code used for funding amounts. From the ISO 4217 list (www.iso.org/iso/home/standards/currency_codes.htm).
 			</xs:documentation>
 		</xs:annotation>
 		<xs:simpleType>
@@ -1120,10 +1129,10 @@
 				<xs:enumeration value="ZWD" />
 			</xs:restriction>
 		</xs:simpleType>
-	</xs:element>
-	<xs:element name="grant-type">
+	</xs:attribute>
+	<xs:element name="funding-type">
 		<xs:annotation>
-			<xs:documentation>The type of grant, it could be grant, contract, award or salary-award.
+			<xs:documentation>The type of funding, it could be grant, contract, award or salary-award.
 			</xs:documentation>
 		</xs:annotation>
 		<xs:simpleType>
@@ -1135,33 +1144,33 @@
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
-	<xs:element name="grant-external-identifiers">
+	<xs:element name="funding-external-identifiers">
 		<xs:annotation>
-			<xs:documentation>Container for storing the external references to the grant.
+			<xs:documentation>Container for storing the external references to the funding.
 			</xs:documentation>
 		</xs:annotation>
 		<xs:complexType>
 			<xs:sequence>
 				<xs:element maxOccurs="unbounded" minOccurs="0"
-					ref="orcid:grant-external-identifier" />
+					ref="orcid:funding-external-identifier" />
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
-	<xs:element name="grant-external-identifier">
+	<xs:element name="funding-external-identifier">
 		<xs:annotation>
-			<xs:documentation>A link to an external reference identifier for the grant</xs:documentation>
+			<xs:documentation>A link to an external reference identifier for the funding</xs:documentation>
 		</xs:annotation>
 		<xs:complexType>
 			<xs:sequence>				
-				<xs:element name="grant-external-identifier-type" type="orcid:non-empty-string" minOccurs="0" maxOccurs="1" />
-				<xs:element name="grant-external-identifier-value" type="orcid:non-empty-string" minOccurs="0" maxOccurs="1" />
-				<xs:element name="grant-external-identifier-url" type="xs:anyURI" minOccurs="0" maxOccurs="1" />
+				<xs:element name="funding-external-identifier-type" type="orcid:non-empty-string" minOccurs="0" maxOccurs="1" fixed="grant_number"/>
+				<xs:element name="funding-external-identifier-value" type="orcid:non-empty-string" minOccurs="0" maxOccurs="1" />
+				<xs:element name="funding-external-identifier-url" type="xs:anyURI" minOccurs="0" maxOccurs="1" />
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>			
-	<xs:element name="grant-contributors">
+	<xs:element name="funding-contributors">
 		<xs:annotation>
-			<xs:documentation>Container for the contributors of a grant.
+			<xs:documentation>Container for the contributors of a funding.
 			</xs:documentation>
 		</xs:annotation>
 		<xs:complexType>
@@ -1241,14 +1250,6 @@
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
-	
-
-
-
-
-
-
-
 	<xs:element name="orcid-patents">
 		<xs:annotation>
 			<xs:documentation>(DEPRECATED) Patents are contained within the Work element. This element should not be used.
@@ -1453,7 +1454,7 @@
 	<xs:element name="host" type="xs:string"/>
 	<xs:element name="credit-name">
 		<xs:annotation>
-			<xs:documentation>The name to use for the researcher or contributor when credited or cited, for example, in an article or index, or as a grant contributor. The value of this field also is used as the display name for the researcher or contributor in the ORCID Registry in their ORCID Record, or when listed as a contributor on other ORCID Records. The visibility attribute (private, limited or public) can be set at record creation, and indicates who can see this section of information. If this element is NULL, &lt;given-name> &lt;family-name> will be used for display purposes, with a visibility of "public".
+			<xs:documentation>The name to use for the researcher or contributor when credited or cited, for example, in an article or index, or as a funding contributor. The value of this field also is used as the display name for the researcher or contributor in the ORCID Registry in their ORCID Record, or when listed as a contributor on other ORCID Records. The visibility attribute (private, limited or public) can be set at record creation, and indicates who can see this section of information. If this element is NULL, &lt;given-name> &lt;family-name> will be used for display purposes, with a visibility of "public".
 			</xs:documentation>
 		</xs:annotation>
 		<xs:complexType>

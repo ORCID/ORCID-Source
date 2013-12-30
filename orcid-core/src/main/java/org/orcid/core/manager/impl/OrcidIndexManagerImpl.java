@@ -35,7 +35,7 @@ import org.orcid.jaxb.model.message.ExternalIdOrcid;
 import org.orcid.jaxb.model.message.ExternalIdReference;
 import org.orcid.jaxb.model.message.ExternalIdentifier;
 import org.orcid.jaxb.model.message.ExternalIdentifiers;
-import org.orcid.jaxb.model.message.GrantTitle;
+import org.orcid.jaxb.model.message.FundingTitle;
 import org.orcid.jaxb.model.message.Keyword;
 import org.orcid.jaxb.model.message.OrcidActivities;
 import org.orcid.jaxb.model.message.OrcidBio;
@@ -284,23 +284,24 @@ public class OrcidIndexManagerImpl implements OrcidIndexManager {
 					.retrieveOrcidGrants() != null ? filteredProfile
 					.retrieveOrcidGrants().getOrcidGrant() : null;
 			if (orcidGrants != null) {
-				List<String> grantTitle = new ArrayList<String>();
-				List<String> grantTranslatedTitle = new ArrayList<String>();
+				List<String> fundingTitle = new ArrayList<String>();
+				List<String> fundingTranslatedTitle = new ArrayList<String>();
 				for (OrcidGrant orcidGrant : orcidGrants) {
-					GrantTitle title = orcidGrant.getGrantTitle();					
+					FundingTitle title = orcidGrant.getTitle();					
 					if (title != null) {
 						if (title.getTitle() != null && !StringUtils.isBlank(title.getTitle().getContent())) {					
-							grantTitle.add(title.getTitle().getContent());
+							fundingTitle.add(title.getTitle().getContent());
 						}
 						
 						if(title.getTranslatedTitle() != null && StringUtils.isBlank(title.getTranslatedTitle().getContent())) {
-							grantTranslatedTitle.add(title.getTranslatedTitle().getContent());
+							fundingTranslatedTitle.add(title.getTranslatedTitle().getContent());
 						}
 					}
 					
 				}
 
-				profileIndexDocument.setFundTitles(grantTitle);
+				profileIndexDocument.setFundingTitles(fundingTitle);
+				profileIndexDocument.setFundingTitles(fundingTranslatedTitle);
 			}
 
 			List<OrcidPatent> orcidPatents = filteredProfile

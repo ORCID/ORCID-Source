@@ -21,12 +21,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.orcid.jaxb.model.message.Amount;
 import org.orcid.jaxb.model.message.CurrencyCode;
 import org.orcid.jaxb.model.message.DisambiguatedOrganization;
 import org.orcid.jaxb.model.message.FuzzyDate;
 import org.orcid.jaxb.model.message.GrantContributors;
 import org.orcid.jaxb.model.message.GrantExternalIdentifier;
-import org.orcid.jaxb.model.message.GrantTitle;
 import org.orcid.jaxb.model.message.GrantType;
 import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.jaxb.model.message.OrcidGrant;
@@ -34,7 +34,6 @@ import org.orcid.jaxb.model.message.OrcidGrantExternalIdentifiers;
 import org.orcid.jaxb.model.message.Organization;
 import org.orcid.jaxb.model.message.OrganizationAddress;
 import org.orcid.jaxb.model.message.Source;
-import org.orcid.jaxb.model.message.Title;
 import org.orcid.jaxb.model.message.Url;
 
 
@@ -266,10 +265,12 @@ public class GrantForm implements ErrorsInterface, Serializable {
     
 	public OrcidGrant toOrcidGrant() {
 		OrcidGrant result = new OrcidGrant();
+		Amount orcidAmount = new Amount();
 		if(!PojoUtil.isEmpty(amount))
-			result.setAmount(amount.getValue());
+			orcidAmount.setContent(amount.getValue());
 		if(!PojoUtil.isEmpty(currencyCode))
-			result.setCurrencyCode(CurrencyCode.valueOf(currencyCode.getValue()));
+			orcidAmount.setCurrencyCode(CurrencyCode.valueOf(currencyCode.getValue()));		
+		result.setAmount(orcidAmount);
 		if(!PojoUtil.isEmpty(description))
 			result.setDescription(description.getValue());
 		if(!PojoUtil.isEmpty(startDate))
@@ -338,10 +339,12 @@ public class GrantForm implements ErrorsInterface, Serializable {
 		if(StringUtils.isNotEmpty(grant.getPutCode()))
 			result.setPutCode(Text.valueOf(grant.getPutCode()));
 		
-		if(StringUtils.isNotEmpty(grant.getAmount()))
-			result.setAmount(Text.valueOf(grant.getAmount()));
-		if(grant.getCurrencyCode() != null)
-			result.setCurrencyCode(Text.valueOf(grant.getCurrencyCode().value()));
+		if(grant.getAmount() != null) {			
+			if(StringUtils.isNotEmpty(grant.getAmount().getContent()))
+				result.setAmount(Text.valueOf(grant.getAmount().getContent()));
+			if(grant.getAmount().getCurrencyCode() != null)
+				result.setCurrencyCode(Text.valueOf(grant.getAmount().getCurrencyCode().value()));
+		}
 		if(StringUtils.isNotEmpty(grant.getDescription()))
 			result.setDescription(Text.valueOf(grant.getDescription()));
 		
@@ -358,14 +361,14 @@ public class GrantForm implements ErrorsInterface, Serializable {
 		if(grant.getStartDate() != null)
 			result.setStartDate(Date.valueOf(grant.getStartDate()));
 		
-		if(grant.getGrantTitle() != null) {
+		if(grant.getTitle() != null) {
 			GrantTitleForm grantTitle = new GrantTitleForm();
-			if(grant.getGrantTitle().getTitle() != null)
-				grantTitle.setTitle(Text.valueOf(grant.getGrantTitle().getTitle().getContent()));
-			if(grant.getGrantTitle().getTranslatedTitle() != null){
+			if(grant.getTitle().getTitle() != null)
+				grantTitle.setTitle(Text.valueOf(grant.getTitle().getTitle().getContent()));
+			if(grant.getTitle().getTranslatedTitle() != null){
 				TranslatedTitle translatedTitle = new TranslatedTitle();
-				translatedTitle.setContent(grant.getGrantTitle().getTranslatedTitle().getContent());
-				translatedTitle.setLanguageCode(grant.getGrantTitle().getTranslatedTitle().getLanguageCode());
+				translatedTitle.setContent(grant.getTitle().getTranslatedTitle().getContent());
+				translatedTitle.setLanguageCode(grant.getTitle().getTranslatedTitle().getLanguageCode());
 				grantTitle.setTranslatedTitle(translatedTitle);
 			}
 			result.setGrantTitle(grantTitle);

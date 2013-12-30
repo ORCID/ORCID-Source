@@ -53,7 +53,7 @@ import java.io.Serializable;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = { "title", "translatedTitle" })
 @XmlRootElement(name = "grant-title")
-public class GrantTitle implements Serializable {
+public class FundingTitle implements Serializable {
 
     /**
      * 
@@ -128,7 +128,7 @@ public class GrantTitle implements Serializable {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        GrantTitle other = (GrantTitle) obj;
+        FundingTitle other = (FundingTitle) obj;
         if (title == null) {
             if (other.title != null)
                 return false;

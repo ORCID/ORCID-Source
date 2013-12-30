@@ -581,6 +581,8 @@
 
 		<field name="work-titles" type="text_general" indexed="true"
 			stored="false" multiValued="true" />
+		<field name="funding-titles" type="text_general" indexed="true"
+			stored="false" multiValued="true" />			
 		<field name="grant-numbers" type="text_general" indexed="true"
 			stored="false" multiValued="true" />
 		<field name="patent-numbers" type="text_general" indexed="true"

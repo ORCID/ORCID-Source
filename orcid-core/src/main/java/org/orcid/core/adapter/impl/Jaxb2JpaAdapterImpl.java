@@ -68,7 +68,7 @@ import org.orcid.jaxb.model.message.GivenPermissionBy;
 import org.orcid.jaxb.model.message.GivenPermissionTo;
 import org.orcid.jaxb.model.message.GrantContributors;
 import org.orcid.jaxb.model.message.GrantExternalIdentifier;
-import org.orcid.jaxb.model.message.GrantTitle;
+import org.orcid.jaxb.model.message.FundingTitle;
 import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.jaxb.model.message.Keyword;
 import org.orcid.jaxb.model.message.Keywords;
@@ -1033,22 +1033,25 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             }
             FuzzyDate startDate = grant.getStartDate();
             FuzzyDate endDate = grant.getEndDate();
-            profileGrantEntity.setAmount(StringUtils.isNotBlank(grant.getAmount()) ? grant.getAmount() : null);
+            if(grant.getAmount() != null) {
+            	profileGrantEntity.setAmount(StringUtils.isNotBlank(grant.getAmount().getContent()) ? grant.getAmount().getContent() : null);            
+            	profileGrantEntity.setCurrencyCode(grant.getAmount().getCurrencyCode() != null ? grant.getAmount().getCurrencyCode() : null);
+            }
+            
             profileGrantEntity.setContributorsJson(getGrantContributorsJson(grant.getGrantContributors()));
-            profileGrantEntity.setCurrencyCode(grant.getCurrencyCode() != null ? grant.getCurrencyCode() : null);
             profileGrantEntity.setDescription(StringUtils.isNotBlank(grant.getDescription()) ? grant.getDescription() : null);
             profileGrantEntity.setEndDate(endDate != null ? new EndDateEntity(endDate) : null);
             profileGrantEntity.setExternalIdentifiers(getGrantExternalIdentifiers(profileGrantEntity, grant.getGrantExternalIdentifiers()));            
             profileGrantEntity.setStartDate(startDate != null ? new StartDateEntity(startDate) : null);
             
-            GrantTitle grantTitle = grant.getGrantTitle();
-            if(grantTitle != null) {
+            FundingTitle fundingTitle = grant.getTitle();
+            if(fundingTitle != null) {
             	String title = null, translatedTitle = null, languageCode = null;            	
-            	if(grantTitle.getTitle() != null)
-            		title = grantTitle.getTitle().getContent();
-            	if(grantTitle.getTranslatedTitle() != null) {
-            		translatedTitle = grantTitle.getTranslatedTitle().getContent();
-            		languageCode = grantTitle.getTranslatedTitle().getLanguageCode();
+            	if(fundingTitle.getTitle() != null)
+            		title = fundingTitle.getTitle().getContent();
+            	if(fundingTitle.getTranslatedTitle() != null) {
+            		translatedTitle = fundingTitle.getTranslatedTitle().getContent();
+            		languageCode = fundingTitle.getTranslatedTitle().getLanguageCode();
             	}
             	
             	profileGrantEntity.setTitle(StringUtils.isNotBlank(title) ? title : null);

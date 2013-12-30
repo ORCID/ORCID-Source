@@ -144,8 +144,8 @@ public class OrcidSolrDocument {
     @Field(SolrConstants.GRANT_NUMBERS)
     private List<String> grantNumbers;
 
-    @Field(SolrConstants.FUND_TITLES)
-    private List<String> fundTitles;
+    @Field(SolrConstants.FUNDING_TITLES)
+    private List<String> fundingTitles;
     
     @Field(SolrConstants.PATENT_NUMBERS)
     private List<String> patentNumbers;
@@ -296,12 +296,12 @@ public class OrcidSolrDocument {
         this.grantNumbers = grantNumbers;
     }
     
-    public List<String> getFundTitles() {
-        return fundTitles;
+    public List<String> getFundingTitles() {
+        return fundingTitles;
     }
 
-    public void setFundTitles(List<String> fundTitles) {
-        this.fundTitles = fundTitles;
+    public void setFundingTitles(List<String> fundingTitles) {
+        this.fundingTitles = fundingTitles;
     }
 
     public List<String> getPatentNumbers() {
@@ -347,7 +347,7 @@ public class OrcidSolrDocument {
         result = prime * result + ((externalIdOrcidsAndReferences == null) ? 0 : externalIdOrcidsAndReferences.hashCode());
         result = prime * result + ((externalIdReferences == null) ? 0 : externalIdReferences.hashCode());
         result = prime * result + ((familyName == null) ? 0 : familyName.hashCode());
-        result = prime * result + ((fundTitles == null) ? 0 : fundTitles.hashCode());
+        result = prime * result + ((fundingTitles == null) ? 0 : fundingTitles.hashCode());
         result = prime * result + ((givenAndFamilyNames == null) ? 0 : givenAndFamilyNames.hashCode());
         result = prime * result + ((givenNames == null) ? 0 : givenNames.hashCode());
         result = prime * result + ((grantNumbers == null) ? 0 : grantNumbers.hashCode());
@@ -440,10 +440,10 @@ public class OrcidSolrDocument {
                 return false;
         } else if (!familyName.equals(other.familyName))
             return false;
-        if (fundTitles == null) {
-            if (other.fundTitles != null)
+        if (fundingTitles == null) {
+            if (other.fundingTitles != null)
                 return false;
-        } else if (!fundTitles.equals(other.fundTitles))
+        } else if (!fundingTitles.equals(other.fundingTitles))
             return false;
         if (givenAndFamilyNames == null) {
             if (other.givenAndFamilyNames != null)

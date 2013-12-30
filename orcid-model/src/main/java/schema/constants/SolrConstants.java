@@ -34,7 +34,7 @@ public class SolrConstants {
     public static final String DIGITAL_OBJECT_IDS = "digital-object-ids";
     public static final String WORK_TITLES = "work-titles";
     public static final String GRANT_NUMBERS = "grant-numbers";
-    public static final String FUND_TITLES = "fund-titles";
+    public static final String FUNDING_TITLES = "funding-titles";
     public static final String PATENT_NUMBERS = "patent-numbers";
     public static final String KEYWORDS = "keyword";
     public static final String TEXT = "text";

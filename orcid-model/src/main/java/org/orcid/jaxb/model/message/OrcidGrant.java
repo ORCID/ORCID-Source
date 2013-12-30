@@ -44,17 +44,17 @@ import java.io.Serializable;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element ref="{http://www.orcid.org/ns/orcid}grant-title" minOccurs="0"/>
- *         &lt;element ref="{http://www.orcid.org/ns/orcid}description"/>
- *         &lt;element ref="{http://www.orcid.org/ns/orcid}url"/>         
- *         &lt;element ref="{http://www.orcid.org/ns/orcid}grant-type"/>
- *         &lt;element ref="{http://www.orcid.org/ns/orcid}currency-code" minOccurs="0" maxOrrurs="1"/>
- *         &lt;element ref="{http://www.orcid.org/ns/orcid}amount"/> 
- *         &lt;element name="start-date" type="{http://www.orcid.org/ns/orcid}fuzzy-date" minOccurs="0"/>        
- *         &lt;element name="end-date" type="{http://www.orcid.org/ns/orcid}fuzzy-date" minOccurs="0"/>
- *         &lt;element ref="{http://www.orcid.org/ns/orcid}organization"/>
- *         &lt;element ref="{http://www.orcid.org/ns/orcid}grant-external-identifiers" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element ref="{http://www.orcid.org/ns/orcid}grant-contributors" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element ref="orcid:funding-type" minOccurs="1" maxOccurs="1" />
+ *			&lt;element ref="orcid:funding-title" minOccurs="0" />
+ *			&lt;element ref="orcid:organization" minOccurs="1" maxOccurs="1"/>				
+ *			&lt;element ref="orcid:short-description" minOccurs="0"/>			
+ *			&lt;element ref="orcid:amount" minOccurs="0" maxOccurs="1"/>
+ *			&lt;element ref="orcid:url" minOccurs="0" maxOccurs="1"/>				
+ *			&lt;element name="start-date" type="orcid:fuzzy-date" minOccurs="0" maxOccurs="1" />
+ *			&lt;element name="end-date" type="orcid:fuzzy-date" minOccurs="0" maxOccurs="1" />												
+ *			&lt;element ref="orcid:funding-external-identifiers" minOccurs="0" maxOccurs="1"/>
+ *			&lt;element ref="orcid:funding-contributors" minOccurs="0" maxOccurs="1"/>				
+ *			&lt;element ref="orcid:source" minOccurs="0"  maxOccurs="1" />
  *       &lt;/sequence>
  *       &lt;attGroup ref="{http://www.orcid.org/ns/orcid}put-code"/>
  *       &lt;attGroup ref="{http://www.orcid.org/ns/orcid}visibility"/>
@@ -73,16 +73,14 @@ public class OrcidGrant implements VisibilityType, Serializable {
 
 	private final static long serialVersionUID = 1L;
 
-	@XmlElement(name = "grant-title")
-	protected GrantTitle title;
+	@XmlElement(name = "funding-title")
+	protected FundingTitle title;
 	@XmlElement
 	protected String description;
-	@XmlElement(name = "grant-type")
+	@XmlElement(name = "funding-type")
 	protected GrantType type;
-	@XmlElement(name = "currency-code")
-	protected CurrencyCode currencyCode;
-	@XmlElement
-	protected String amount;
+	@XmlElement(name = "amount")
+	protected Amount amount;
 	@XmlElement
 	protected Url url;
 	@XmlElement(name = "start-date")
@@ -101,11 +99,11 @@ public class OrcidGrant implements VisibilityType, Serializable {
 	@XmlAttribute(name = "put-code")
 	protected String putCode;
 
-	public GrantTitle getGrantTitle() {
+	public FundingTitle getTitle() {
 		return title;
 	}
 
-	public void setTitle(GrantTitle title) {
+	public void setTitle(FundingTitle title) {
 		this.title = title;
 	}
 
@@ -123,21 +121,13 @@ public class OrcidGrant implements VisibilityType, Serializable {
 
 	public void setType(GrantType type) {
 		this.type = type;
-	}
+	}	
 
-	public CurrencyCode getCurrencyCode() {
-		return currencyCode;
-	}
-
-	public void setCurrencyCode(CurrencyCode currencyCode) {
-		this.currencyCode = currencyCode;
-	}
-
-	public String getAmount() {
+	public Amount getAmount() {
 		return amount;
 	}
 
-	public void setAmount(String amount) {
+	public void setAmount(Amount amount) {
 		this.amount = amount;
 	}
 
@@ -252,9 +242,7 @@ public class OrcidGrant implements VisibilityType, Serializable {
 		result = prime * result + ((title == null) ? 0 : title.hashCode());
 		result = prime * result
 				+ ((description == null) ? 0 : description.hashCode());
-		result = prime * result + ((type == null) ? 0 : type.hashCode());
-		result = prime * result
-				+ ((currencyCode == null) ? 0 : currencyCode.hashCode());
+		result = prime * result + ((type == null) ? 0 : type.hashCode());		
 		result = prime * result + ((amount == null) ? 0 : amount.hashCode());
 		result = prime * result + ((url == null) ? 0 : url.hashCode());
 		result = prime * result
@@ -325,14 +313,7 @@ public class OrcidGrant implements VisibilityType, Serializable {
 		} else {
 			if(!type.equals(other.type))
 				return false;
-		}
-		if (currencyCode == null) {
-			if(other.currencyCode != null)
-				return false;
-		} else {
-			if(!currencyCode.equals(other.currencyCode))
-				return false;
-		}
+		}		
 		if (amount == null) {
 			if(other.amount != null)
 				return false;

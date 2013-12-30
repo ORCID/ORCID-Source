@@ -80,6 +80,7 @@ public class GrantsController extends BaseWorkspaceController {
 	private static final String GRANT_MAP = "GRANT_MAP";
 	private static final Pattern LANGUAGE_CODE = Pattern.compile("([a-zA-Z]{2})(_[a-zA-Z]{2}){0,2}");
 	private static final String DEFAULT_GRANT_EXTERNAL_IDENTIFIER_TYPE="Grant number";
+	private static final String DEFAULT_GRANT_EXTERNAL_IDENTIFIER_TYPE_CODE="grant_number";
 	
 	@Resource
 	private ProfileDao profileDao;
@@ -230,8 +231,8 @@ public class GrantsController extends BaseWorkspaceController {
 								GrantType.class, grant.getType().value())));
 					}
 					//Set translated title language name
-			        if(!(grant.getGrantTitle().getTranslatedTitle() == null) && !StringUtils.isEmpty(grant.getGrantTitle().getTranslatedTitle().getLanguageCode())) {
-			            String languageName = languages.get(grant.getGrantTitle().getTranslatedTitle().getLanguageCode());
+			        if(!(grant.getTitle().getTranslatedTitle() == null) && !StringUtils.isEmpty(grant.getTitle().getTranslatedTitle().getLanguageCode())) {
+			            String languageName = languages.get(grant.getTitle().getTranslatedTitle().getLanguageCode());
 			            form.getGrantTitle().getTranslatedTitle().setLanguageName(languageName);
 			        }        		       
 					form.setCountryForDisplay(getMessage(buildInternationalizationKey(CountryIsoEntity.class, grant.getOrganization().getAddress().getCountry()
@@ -399,7 +400,7 @@ public class GrantsController extends BaseWorkspaceController {
 		if(grant == null || grant.getExternalIdentifiers() == null || grant.getExternalIdentifiers().isEmpty())
 			return;
 		for(GrantExternalIdentifierForm extId : grant.getExternalIdentifiers()) {
-			extId.setType(Text.valueOf(DEFAULT_GRANT_EXTERNAL_IDENTIFIER_TYPE));
+			extId.setType(Text.valueOf(DEFAULT_GRANT_EXTERNAL_IDENTIFIER_TYPE_CODE));
 		}
 	}
 

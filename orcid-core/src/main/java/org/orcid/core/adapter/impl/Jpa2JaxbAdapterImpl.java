@@ -440,11 +440,15 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
      * @return OrcidGrant
      * */
     public OrcidGrant getOrcidGrant(ProfileGrantEntity profileGrantEntity){
-    	OrcidGrant grant = new OrcidGrant();
-    	grant.setAmount(StringUtils.isNotEmpty(profileGrantEntity.getAmount()) ? profileGrantEntity.getAmount() : null );
-    	grant.setCurrencyCode(profileGrantEntity.getCurrencyCode() != null ? profileGrantEntity.getCurrencyCode() : null);
+    	OrcidGrant grant = new OrcidGrant();    	
+    	if(StringUtils.isNotEmpty(profileGrantEntity.getAmount())) {
+    		Amount orcidAmount = new Amount();
+    		orcidAmount.setContent(StringUtils.isNotEmpty(profileGrantEntity.getAmount()) ? profileGrantEntity.getAmount() : null );
+    		orcidAmount.setCurrencyCode(profileGrantEntity.getCurrencyCode() != null ? profileGrantEntity.getCurrencyCode() : null);    		
+    		grant.setAmount(orcidAmount);
+    	}    	    	
     	grant.setDescription(StringUtils.isNotEmpty(profileGrantEntity.getDescription()) ? profileGrantEntity.getDescription() : null); 
-        GrantTitle title = new GrantTitle();
+        FundingTitle title = new FundingTitle();
         title.setTitle(StringUtils.isNotEmpty(profileGrantEntity.getTitle()) ? new Title(profileGrantEntity.getTitle()) : null);
     	if(StringUtils.isNotEmpty(profileGrantEntity.getTranslatedTitle())) {
     		String translatedTitleValue = profileGrantEntity.getTranslatedTitle();
