@@ -36,7 +36,7 @@ import org.orcid.core.manager.ProfileWorkManager;
 import org.orcid.core.manager.WorkManager;
 import org.orcid.frontend.web.util.LanguagesMap;
 import org.orcid.jaxb.model.message.Affiliation;
-import org.orcid.jaxb.model.message.OrcidGrant;
+import org.orcid.jaxb.model.message.OrcidFunding;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidWork;
 import org.orcid.jaxb.model.message.Visibility;
@@ -58,7 +58,7 @@ import org.springframework.web.servlet.ModelAndView;
 public class PublicProfileController extends BaseWorkspaceController {
 
 	private static final String WORKS_MAP = "WORKS_MAP"; 
-	private static final String GRANTS_MAP = "GRANTS_MAP";
+	private static final String FUNDINGS_MAP = "FUNDINGS_MAP";
 	
     @Resource
     private LocaleManager localeManager;
@@ -90,8 +90,8 @@ public class PublicProfileController extends BaseWorkspaceController {
         List<Affiliation> affilations = new ArrayList<Affiliation>();
         List<String> affiliationIds = new ArrayList<String>();
                 
-        List<String> grantIds = new ArrayList<String>();
-        HashMap<String, OrcidGrant> grantsMap = new HashMap<String, OrcidGrant>();
+        List<String> fundingIds = new ArrayList<String>();
+        HashMap<String, OrcidFunding> fundingMap = new HashMap<String, OrcidFunding>();
         
 
         if (profile.getOrcidDeprecated() != null) {
@@ -127,15 +127,15 @@ public class PublicProfileController extends BaseWorkspaceController {
 	                }
 	            }
 	        	
-	        	if(profile.getOrcidActivities().getOrcidGrants() != null) {
-	        		for(OrcidGrant grant : profile.getOrcidActivities().getOrcidGrants().getOrcidGrant()) {
-	        			if(Visibility.PUBLIC.equals(grant.getVisibility())) {
-	        				grantsMap.put(grant.getPutCode(), grant);
-	        				grantIds.add(grant.getPutCode());
+	        	if(profile.getOrcidActivities().getOrcidFundings() != null) {
+	        		for(OrcidFunding funding : profile.getOrcidActivities().getOrcidFundings().getOrcidFunding()) {
+	        			if(Visibility.PUBLIC.equals(funding.getVisibility())) {
+	        				fundingMap.put(funding.getPutCode(), funding);
+	        				fundingIds.add(funding.getPutCode());
 	        			}
 	        		}	        		
-	        		if(!grantIds.isEmpty()) {
-	        			request.getSession().setAttribute(GRANTS_MAP, grantsMap);
+	        		if(!fundingIds.isEmpty()) {
+	        			request.getSession().setAttribute(FUNDINGS_MAP, fundingMap);
 	        		}
 	        	}
         	}
@@ -145,7 +145,7 @@ public class PublicProfileController extends BaseWorkspaceController {
         try {
             String worksIdsJson = mapper.writeValueAsString(workIds);
             String affiliationIdsJson = mapper.writeValueAsString(affiliationIds);
-            String grantIdsJson = mapper.writeValueAsString(grantIds);
+            String grantIdsJson = mapper.writeValueAsString(fundingIds);
             mav.addObject("workIdsJson", StringEscapeUtils.escapeEcmaScript(worksIdsJson));
             mav.addObject("affiliationIdsJson", StringEscapeUtils.escapeEcmaScript(affiliationIdsJson));
             mav.addObject("grantIdsJson", StringEscapeUtils.escapeEcmaScript(grantIdsJson));            
@@ -183,15 +183,15 @@ public class PublicProfileController extends BaseWorkspaceController {
 
     @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/grants.json")
     public @ResponseBody
-    List<GrantForm> getGrantsJson(HttpServletRequest request, @PathVariable("orcid") String orcid, @RequestParam(value = "grantIds") String grantIdsStr) {
-        List<GrantForm> grants = new ArrayList<GrantForm>();
-        Map<String, OrcidGrant> grantMap = (HashMap<String, OrcidGrant>) request.getSession().getAttribute(GRANTS_MAP);
-        String[] grantIds = grantIdsStr.split(",");
-        for (String id: grantIds) {
-            OrcidGrant grant = grantMap.get(id);                        
-            grants.add(GrantForm.valueOf(grant));
+    List<GrantForm> getFundingsJson(HttpServletRequest request, @PathVariable("orcid") String orcid, @RequestParam(value = "grantIds") String fundingIdsStr) {
+        List<GrantForm> fundings = new ArrayList<GrantForm>();
+        Map<String, OrcidFunding> fundingMap = (HashMap<String, OrcidFunding>) request.getSession().getAttribute(FUNDINGS_MAP);
+        String[] fundingIds = fundingIdsStr.split(",");
+        for (String id: fundingIds) {
+            OrcidFunding funding = fundingMap.get(id);                        
+            fundings.add(GrantForm.valueOf(funding));
         }
-        return grants;
+        return fundings;
     }
     
     @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/works.json")

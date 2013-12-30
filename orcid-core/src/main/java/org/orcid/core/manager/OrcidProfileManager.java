@@ -273,7 +273,7 @@ public interface OrcidProfileManager {
     void addAffiliations(OrcidProfile orcidProfile);
     
     /**
-     * Adds a new {@link org.orcid.jaxb.model.message.OrcidGrants} to the
+     * Adds a new {@link org.orcid.jaxb.model.message.OrcidFundingList} to the
      * {@link} OrcidProfile} and returns the updated values
      * 
      * @param orcidProfile

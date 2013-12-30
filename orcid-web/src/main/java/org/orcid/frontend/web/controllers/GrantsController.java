@@ -36,8 +36,8 @@ import org.orcid.frontend.web.util.LanguagesMap;
 import org.orcid.jaxb.model.message.CurrencyCode;
 import org.orcid.jaxb.model.message.FundingType;
 import org.orcid.jaxb.model.message.OrcidActivities;
-import org.orcid.jaxb.model.message.OrcidGrant;
-import org.orcid.jaxb.model.message.OrcidGrants;
+import org.orcid.jaxb.model.message.OrcidFunding;
+import org.orcid.jaxb.model.message.OrcidFundingList;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.persistence.dao.GrantExternalIdentifierDao;
 import org.orcid.persistence.dao.OrgDisambiguatedDao;
@@ -177,22 +177,22 @@ public class GrantsController extends BaseWorkspaceController {
 	@RequestMapping(value = "/grant.json", method = RequestMethod.DELETE)
 	public @ResponseBody
 	GrantForm deleteGrantJson(HttpServletRequest request, @RequestBody GrantForm grant) {
-		OrcidGrant delGrant = grant.toOrcidGrant();
+		OrcidFunding delGrant = grant.toOrcidGrant();
 		OrcidProfile currentProfile = getEffectiveProfile();
-		OrcidGrants grants = currentProfile.getOrcidActivities() == null ? null : currentProfile.getOrcidActivities().getOrcidGrants();
+		OrcidFundingList grants = currentProfile.getOrcidActivities() == null ? null : currentProfile.getOrcidActivities().getOrcidFundings();
 		GrantForm deletedGrant = new GrantForm();
 		if (grants != null) {
-			List<OrcidGrant> grantList = grants.getOrcidGrant();
-			Iterator<OrcidGrant> iterator = grantList.iterator();
+			List<OrcidFunding> grantList = grants.getOrcidFunding();
+			Iterator<OrcidFunding> iterator = grantList.iterator();
 			while (iterator.hasNext()) {
-				OrcidGrant orcidGrant = iterator.next();
+				OrcidFunding orcidGrant = iterator.next();
 				if (delGrant.equals(orcidGrant)) {
 					iterator.remove();
 					deletedGrant = grant;
 				}
 			}
-			grants.setOrcidGrant(grantList);
-			currentProfile.getOrcidActivities().setOrcidGrants(grants);
+			grants.setOrcidFunding(grantList);
+			currentProfile.getOrcidActivities().setOrcidFundings(grants);
 			profileGrantDao.removeProfileGrant(currentProfile.getOrcid().getValue(), grant.getPutCode().getValue());
 		}
 		return deletedGrant;
@@ -217,36 +217,36 @@ public class GrantsController extends BaseWorkspaceController {
 	private List<String> createGrantIdList(HttpServletRequest request) {
 		OrcidProfile currentProfile = getEffectiveProfile();
 		Map<String, String> languages = LanguagesMap.buildLanguageMap(localeManager.getLocale(), false);
-		OrcidGrants grants = currentProfile.getOrcidActivities() == null ? null
-				: currentProfile.getOrcidActivities().getOrcidGrants();
+		OrcidFundingList fundings = currentProfile.getOrcidActivities() == null ? null
+				: currentProfile.getOrcidActivities().getOrcidFundings();
 
-		HashMap<String, GrantForm> grantsMap = new HashMap<>();
-		List<String> grantIds = new ArrayList<String>();
-		if (grants != null) {
-			for (OrcidGrant grant : grants.getOrcidGrant()) {
+		HashMap<String, GrantForm> fundingsMap = new HashMap<>();
+		List<String> fundingIds = new ArrayList<String>();
+		if (fundings != null) {
+			for (OrcidFunding funding : fundings.getOrcidFunding()) {
 				try {
-					GrantForm form = GrantForm.valueOf(grant);
-					if (grant.getType() != null) {
+					GrantForm form = GrantForm.valueOf(funding);
+					if (funding.getType() != null) {
 						form.setGrantTypeForDisplay(getMessage(buildInternationalizationKey(
-								FundingType.class, grant.getType().value())));
+								FundingType.class, funding.getType().value())));
 					}
 					//Set translated title language name
-			        if(!(grant.getTitle().getTranslatedTitle() == null) && !StringUtils.isEmpty(grant.getTitle().getTranslatedTitle().getLanguageCode())) {
-			            String languageName = languages.get(grant.getTitle().getTranslatedTitle().getLanguageCode());
+			        if(!(funding.getTitle().getTranslatedTitle() == null) && !StringUtils.isEmpty(funding.getTitle().getTranslatedTitle().getLanguageCode())) {
+			            String languageName = languages.get(funding.getTitle().getTranslatedTitle().getLanguageCode());
 			            form.getGrantTitle().getTranslatedTitle().setLanguageName(languageName);
 			        }        		       
-					form.setCountryForDisplay(getMessage(buildInternationalizationKey(CountryIsoEntity.class, grant.getOrganization().getAddress().getCountry()
+					form.setCountryForDisplay(getMessage(buildInternationalizationKey(CountryIsoEntity.class, funding.getOrganization().getAddress().getCountry()
                             .name())));										
-					grantsMap.put(grant.getPutCode(), form);
-					grantIds.add(grant.getPutCode());
+					fundingsMap.put(funding.getPutCode(), form);
+					fundingIds.add(funding.getPutCode());
 				} catch (Exception e) {
 					LOGGER.error("Failed to parse as Grant. Put code"
-							+ grant.getPutCode());
+							+ funding.getPutCode());
 				}
 			}
-			request.getSession().setAttribute(GRANT_MAP, grantsMap);
+			request.getSession().setAttribute(GRANT_MAP, fundingsMap);
 		}		
-		return grantIds;
+		return fundingIds;
 	}
 
 	/**
@@ -345,8 +345,8 @@ public class GrantsController extends BaseWorkspaceController {
 
 			// Transform it back into a OrcidGrant to add it into the cached
 			// object
-			OrcidGrant newOrcidGrant = jpa2JaxbAdapter
-					.getOrcidGrant(newProfileGrant);
+			OrcidFunding newOrcidGrant = jpa2JaxbAdapter
+					.getOrcidFunding(newProfileGrant);
 			// Update the grants on the cached object
 			OrcidProfile currentProfile = getEffectiveProfile();
 			// Initialize activities if needed
@@ -354,14 +354,14 @@ public class GrantsController extends BaseWorkspaceController {
 				currentProfile.setOrcidActivities(new OrcidActivities());
 			}
 			// Initialize grants if needed
-			if (currentProfile.getOrcidActivities().getOrcidGrants() == null) {
-				currentProfile.getOrcidActivities().setOrcidGrants(
-						new OrcidGrants());
+			if (currentProfile.getOrcidActivities().getOrcidFundings() == null) {
+				currentProfile.getOrcidActivities().setOrcidFundings(
+						new OrcidFundingList());
 			}
 			
 			// Set the new grant into the cached object
-			currentProfile.getOrcidActivities().getOrcidGrants()
-					.getOrcidGrant().add(newOrcidGrant);			
+			currentProfile.getOrcidActivities().getOrcidFundings()
+					.getOrcidFunding().add(newOrcidGrant);			
 		}
 
 		return grant;
@@ -412,11 +412,11 @@ public class GrantsController extends BaseWorkspaceController {
     GrantForm updateProfileGrantJson(HttpServletRequest request, @RequestBody GrantForm grant) {
         // Get cached profile
         OrcidProfile currentProfile = getEffectiveProfile();
-        OrcidGrants orcidGrants = currentProfile.getOrcidActivities() == null ? null : currentProfile.getOrcidActivities().getOrcidGrants();
+        OrcidFundingList orcidGrants = currentProfile.getOrcidActivities() == null ? null : currentProfile.getOrcidActivities().getOrcidFundings();
         if (orcidGrants != null) {
-            List<OrcidGrant> orcidGrantList = orcidGrants.getOrcidGrant();
+            List<OrcidFunding> orcidGrantList = orcidGrants.getOrcidFunding();
             if (orcidGrantList != null) {
-                for (OrcidGrant orcidGrant : orcidGrantList) {
+                for (OrcidFunding orcidGrant : orcidGrantList) {
                     if (orcidGrant.getPutCode().equals(grant.getPutCode().getValue())) {
                         // Update the privacy of the grant
                     	profileGrantDao.updateProfileGrant(currentProfile.getOrcid().getValue(), grant.getPutCode().getValue(), grant.getVisibility().getVisibility());

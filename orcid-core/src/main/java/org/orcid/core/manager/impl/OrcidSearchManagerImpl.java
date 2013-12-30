@@ -26,8 +26,8 @@ import javax.annotation.Resource;
 import org.orcid.core.exception.OrcidSearchException;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.manager.OrcidSearchManager;
-import org.orcid.jaxb.model.message.OrcidGrant;
-import org.orcid.jaxb.model.message.OrcidGrants;
+import org.orcid.jaxb.model.message.OrcidFunding;
+import org.orcid.jaxb.model.message.OrcidFundingList;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidPatent;
 import org.orcid.jaxb.model.message.OrcidPatents;
@@ -129,21 +129,21 @@ public class OrcidSearchManagerImpl implements OrcidSearchManager {
                     }
                 }
 
-                OrcidGrants reducedGrants = new OrcidGrants();
-                OrcidGrants fullOrcidGrants = orcidProfile.retrieveOrcidGrants();
-                if (fullOrcidGrants != null && !fullOrcidGrants.getOrcidGrant().isEmpty()) {
+                OrcidFundingList reducedFundings = new OrcidFundingList();
+                OrcidFundingList fullOrcidFundings = orcidProfile.retrieveOrcidFundings();
+                if (fullOrcidFundings != null && !fullOrcidFundings.getOrcidFunding().isEmpty()) {
 
-                    for (OrcidGrant fullOrcidGrant : fullOrcidGrants.getOrcidGrant()) {
-                        OrcidGrant reducedGrant = new OrcidGrant();
-                        reducedGrant.setVisibility(fullOrcidGrant.getVisibility());
-                        reducedGrant.setDescription(fullOrcidGrant.getDescription());
-                        reducedGrant.setTitle(fullOrcidGrant.getTitle());
-                        reducedGrants.getOrcidGrant().add(reducedGrant);
+                    for (OrcidFunding fullOrcidFunding : fullOrcidFundings.getOrcidFunding()) {
+                        OrcidFunding reducedFunding = new OrcidFunding();
+                        reducedFunding.setVisibility(fullOrcidFunding.getVisibility());
+                        reducedFunding.setDescription(fullOrcidFunding.getDescription());
+                        reducedFunding.setTitle(fullOrcidFunding.getTitle());
+                        reducedFundings.getOrcidFunding().add(reducedFunding);
                     }
                 }
                 orcidProfile.setOrcidWorks(orcidWorksTitlesOnly);
                 orcidProfile.setOrcidPatents(reducedPatents);
-                orcidProfile.setOrcidGrants(reducedGrants);
+                orcidProfile.setOrcidFundings(reducedFundings);
 
                 orcidSearchResult.setOrcidProfile(orcidProfile);
 

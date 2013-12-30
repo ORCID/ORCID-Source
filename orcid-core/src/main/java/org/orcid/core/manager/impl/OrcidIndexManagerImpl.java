@@ -40,7 +40,7 @@ import org.orcid.jaxb.model.message.Keyword;
 import org.orcid.jaxb.model.message.OrcidActivities;
 import org.orcid.jaxb.model.message.OrcidBio;
 import org.orcid.jaxb.model.message.OrcidDeprecated;
-import org.orcid.jaxb.model.message.OrcidGrant;
+import org.orcid.jaxb.model.message.OrcidFunding;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidPatent;
 import org.orcid.jaxb.model.message.OrcidProfile;
@@ -280,14 +280,14 @@ public class OrcidIndexManagerImpl implements OrcidIndexManager {
 						allExternalIdentifiers);
 			}
 
-			List<OrcidGrant> orcidGrants = filteredProfile
-					.retrieveOrcidGrants() != null ? filteredProfile
-					.retrieveOrcidGrants().getOrcidGrant() : null;
-			if (orcidGrants != null) {
+			List<OrcidFunding> orcidFundings = filteredProfile
+					.retrieveOrcidFundings() != null ? filteredProfile
+					.retrieveOrcidFundings().getOrcidFunding() : null;
+			if (orcidFundings != null) {
 				List<String> fundingTitle = new ArrayList<String>();
 				List<String> fundingTranslatedTitle = new ArrayList<String>();
-				for (OrcidGrant orcidGrant : orcidGrants) {
-					FundingTitle title = orcidGrant.getTitle();					
+				for (OrcidFunding orcidFunding : orcidFundings) {
+					FundingTitle title = orcidFunding.getTitle();					
 					if (title != null) {
 						if (title.getTitle() != null && !StringUtils.isBlank(title.getTitle().getContent())) {					
 							fundingTitle.add(title.getTitle().getContent());

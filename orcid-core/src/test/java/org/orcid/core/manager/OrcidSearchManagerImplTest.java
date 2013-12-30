@@ -43,8 +43,8 @@ import org.orcid.jaxb.model.message.GivenNames;
 import org.orcid.jaxb.model.message.FundingTitle;
 import org.orcid.jaxb.model.message.OrcidActivities;
 import org.orcid.jaxb.model.message.OrcidBio;
-import org.orcid.jaxb.model.message.OrcidGrant;
-import org.orcid.jaxb.model.message.OrcidGrants;
+import org.orcid.jaxb.model.message.OrcidFunding;
+import org.orcid.jaxb.model.message.OrcidFundingList;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidPatent;
 import org.orcid.jaxb.model.message.OrcidPatents;
@@ -152,9 +152,9 @@ public class OrcidSearchManagerImplTest extends BaseTest {
         assertEquals("Patent 2 - a short description", retrievedPatent2.getShortDescription());
         assertNull(retrievedPatent2.getPutCode());
 
-        List<OrcidGrant> orcidGrants = retrievedProfile.retrieveOrcidGrants().getOrcidGrant();
-        OrcidGrant retrievedGrant1 = orcidGrants.get(0);
-        OrcidGrant retrievedGrant2 = orcidGrants.get(1);
+        List<OrcidFunding> orcidGrants = retrievedProfile.retrieveOrcidFundings().getOrcidFunding();
+        OrcidFunding retrievedGrant1 = orcidGrants.get(0);
+        OrcidFunding retrievedGrant2 = orcidGrants.get(1);
 
         // check returns a reduced payload
         assertNotNull(retrievedGrant1.getTitle());
@@ -352,9 +352,9 @@ public class OrcidSearchManagerImplTest extends BaseTest {
         orcidProfile.setOrcidPatents(orcidPatents);
         orcidProfile.setOrcidWorks(orcidWorks);
 
-        OrcidGrants orcidGrants = new OrcidGrants();
-        orcidProfile.setOrcidGrants(orcidGrants);
-        OrcidGrant orcidGrant1 = new OrcidGrant();
+        OrcidFundingList orcidFundings = new OrcidFundingList();
+        orcidProfile.setOrcidFundings(orcidFundings);
+        OrcidFunding orcidGrant1 = new OrcidFunding();
         orcidGrant1.setVisibility(Visibility.PUBLIC);
         FundingTitle title = new FundingTitle();
         title.setTitle(new Title("grant1"));
@@ -362,7 +362,7 @@ public class OrcidSearchManagerImplTest extends BaseTest {
         orcidGrant1.setDescription("Grant 1 - a short description");
         orcidGrant1.setPutCode("grant 1 - put-code");
 
-        OrcidGrant orcidGrant2 = new OrcidGrant();
+        OrcidFunding orcidGrant2 = new OrcidFunding();
         orcidGrant2.setVisibility(Visibility.PUBLIC);
         FundingTitle title2 = new FundingTitle();
         title2.setTitle(new Title("grant2"));
@@ -370,8 +370,8 @@ public class OrcidSearchManagerImplTest extends BaseTest {
         orcidGrant2.setDescription("Grant 2 - a short description");
         orcidGrant2.setPutCode("grant 2 - put-code");
 
-        orcidGrants.getOrcidGrant().add(orcidGrant1);
-        orcidGrants.getOrcidGrant().add(orcidGrant2);
+        orcidFundings.getOrcidFunding().add(orcidGrant1);
+        orcidFundings.getOrcidFunding().add(orcidGrant2);
 
         return orcidProfile;
     }

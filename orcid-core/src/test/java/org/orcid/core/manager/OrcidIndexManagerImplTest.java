@@ -48,8 +48,8 @@ import org.orcid.jaxb.model.message.Keyword;
 import org.orcid.jaxb.model.message.Keywords;
 import org.orcid.jaxb.model.message.OrcidActivities;
 import org.orcid.jaxb.model.message.OrcidBio;
-import org.orcid.jaxb.model.message.OrcidGrant;
-import org.orcid.jaxb.model.message.OrcidGrants;
+import org.orcid.jaxb.model.message.OrcidFunding;
+import org.orcid.jaxb.model.message.OrcidFundingList;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidPatent;
 import org.orcid.jaxb.model.message.OrcidPatents;
@@ -333,30 +333,30 @@ public class OrcidIndexManagerImplTest extends BaseTest {
 
     private OrcidProfile getOrcidWithGrants() {
         OrcidProfile orcidWithGrants = getStandardOrcid();
-        OrcidGrants orcidGrants = new OrcidGrants();
-        OrcidGrant orcidGrant1 = new OrcidGrant();
+        OrcidFundingList orcidFundings = new OrcidFundingList();
+        OrcidFunding orcidGrant1 = new OrcidFunding();
         orcidGrant1.setVisibility(Visibility.PUBLIC);
         FundingTitle title = new FundingTitle();
         title.setTitle(new Title("grant 1"));
         orcidGrant1.setTitle(title);
 
-        OrcidGrant orcidGrant2 = new OrcidGrant();
+        OrcidFunding orcidGrant2 = new OrcidFunding();
         orcidGrant2.setVisibility(Visibility.PUBLIC);
         FundingTitle title2 = new FundingTitle();
         title2.setTitle(new Title("grant 2"));
         orcidGrant2.setTitle(title2);
 
-        OrcidGrant orcidGrant3 = new OrcidGrant();
+        OrcidFunding orcidGrant3 = new OrcidFunding();
         orcidGrant3.setVisibility(Visibility.LIMITED);
         FundingTitle title3 = new FundingTitle();
         title3.setTitle(new Title("grant 3"));
         orcidGrant3.setTitle(title3);
 
-        OrcidGrant orcidGrant4 = new OrcidGrant();
+        OrcidFunding orcidGrant4 = new OrcidFunding();
         orcidGrant4.setVisibility(Visibility.PUBLIC);
 
-        orcidGrants.getOrcidGrant().addAll(Arrays.asList(new OrcidGrant[] { orcidGrant1, orcidGrant2, orcidGrant3, orcidGrant4 }));
-        orcidWithGrants.setOrcidGrants(orcidGrants);
+        orcidFundings.getOrcidFunding().addAll(Arrays.asList(new OrcidFunding[] { orcidGrant1, orcidGrant2, orcidGrant3, orcidGrant4 }));
+        orcidWithGrants.setOrcidFundings(orcidFundings);
         return orcidWithGrants;
     }
 

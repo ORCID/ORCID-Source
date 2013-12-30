@@ -26,9 +26,9 @@ package org.orcid.jaxb.model.message;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
@@ -54,8 +54,8 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = { "contributor" })
-@XmlRootElement(name = "grant-contributors")
-public class GrantContributors implements Serializable {
+@XmlRootElement(name = "funding-contributors")
+public class FundingContributors implements Serializable {
 
     /**
      * 
@@ -97,11 +97,11 @@ public class GrantContributors implements Serializable {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof GrantContributors)) {
+        if (!(o instanceof FundingContributors)) {
             return false;
         }
 
-        GrantContributors that = (GrantContributors) o;
+        FundingContributors that = (FundingContributors) o;
 
         if (contributor != null ? !contributor.equals(that.contributor) : that.contributor != null) {
             return false;

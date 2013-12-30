@@ -66,10 +66,10 @@ import java.io.Serializable;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "putCode", "title", "description", "url", "type",
-		"currencyCode", "amount",  "startDate", "endDate", "organization", "grantExternalIdentifiers", "grantContributors", "source" })
-@XmlRootElement(name = "orcid-grant")
-public class OrcidGrant implements VisibilityType, Serializable {
+@XmlType(propOrder = { "putCode", "type", "title", "organization", "description",
+		"amount",  "url", "startDate", "endDate", "fundingExternalIdentifiers", "fundingContributors", "source" })
+@XmlRootElement(name = "orcid-funding")
+public class OrcidFunding implements VisibilityType, Serializable {
 
 	private final static long serialVersionUID = 1L;
 
@@ -90,14 +90,14 @@ public class OrcidGrant implements VisibilityType, Serializable {
     @XmlElement(name = "end-date")
     protected FuzzyDate endDate;	
 	@XmlElement(name="funding-external-identifiers")
-	protected FundingExternalIdentifiers grantExternalIdentifiers;
+	protected FundingExternalIdentifiers fundingExternalIdentifiers;
 	@XmlElement(name = "funding-contributors")
-    protected GrantContributors grantContributors;
-	@XmlAttribute(required = true)
-	protected Visibility visibility;
+    protected FundingContributors fundingContributors;	
 	protected Source source;
 	@XmlAttribute(name = "put-code")
 	protected String putCode;
+	@XmlAttribute(required = true)
+	protected Visibility visibility;
 
 	public FundingTitle getTitle() {
 		return title;
@@ -171,21 +171,21 @@ public class OrcidGrant implements VisibilityType, Serializable {
 		this.putCode = putCode;
 	}
 		
-	public FundingExternalIdentifiers getGrantExternalIdentifiers() {
-		return grantExternalIdentifiers;
+	public FundingExternalIdentifiers getFundingExternalIdentifiers() {
+		return fundingExternalIdentifiers;
 	}
 
-	public void setGrantExternalIdentifiers(
-			FundingExternalIdentifiers grantExternalIdentifiers) {
-		this.grantExternalIdentifiers = grantExternalIdentifiers;
+	public void setFundingExternalIdentifiers(
+			FundingExternalIdentifiers fundingExternalIdentifiers) {
+		this.fundingExternalIdentifiers = fundingExternalIdentifiers;
 	}
 	
-	public GrantContributors getGrantContributors() {
-		return grantContributors;
+	public FundingContributors getFundingContributors() {
+		return fundingContributors;
 	}
 
-	public void setGrantContributors(GrantContributors grantContributors) {
-		this.grantContributors = grantContributors;
+	public void setFundingContributors(FundingContributors fundingContributors) {
+		this.fundingContributors = fundingContributors;
 	}
 	/**
      * Gets the value of the startDate property.
@@ -250,8 +250,8 @@ public class OrcidGrant implements VisibilityType, Serializable {
 		result = prime * result
 				+ ((visibility == null) ? 0 : visibility.hashCode());
 		result = prime * result + ((source == null) ? 0 : source.hashCode());
-		result = prime * result + ((grantExternalIdentifiers == null) ? 0 : grantExternalIdentifiers.hashCode());
-		result = prime * result + ((grantContributors == null) ? 0 : grantContributors.hashCode());
+		result = prime * result + ((fundingExternalIdentifiers == null) ? 0 : fundingExternalIdentifiers.hashCode());
+		result = prime * result + ((fundingContributors == null) ? 0 : fundingContributors.hashCode());
 		result = prime * result + ((startDate == null) ? 0 : startDate.hashCode());
 		result = prime * result + ((endDate == null) ? 0 : endDate.hashCode());
 		return result;
@@ -271,7 +271,7 @@ public class OrcidGrant implements VisibilityType, Serializable {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		OrcidGrant other = (OrcidGrant) obj;
+		OrcidFunding other = (OrcidFunding) obj;
 		if (title == null) {
 			if(other.title != null)
 				return false;
@@ -293,18 +293,18 @@ public class OrcidGrant implements VisibilityType, Serializable {
 			if(!organization.equals(other.organization))
 				return false;
 		}
-		if (grantExternalIdentifiers == null) {
-			if(other.grantExternalIdentifiers != null)
+		if (fundingExternalIdentifiers == null) {
+			if(other.fundingExternalIdentifiers != null)
 				return false;
 		} else {
-			if(!grantExternalIdentifiers.equals(other.grantExternalIdentifiers))
+			if(!fundingExternalIdentifiers.equals(other.fundingExternalIdentifiers))
 				return false;
 		}
-		if (grantContributors == null) {
-			if(other.grantContributors != null)
+		if (fundingContributors == null) {
+			if(other.fundingContributors != null)
 				return false;
 		} else {
-			if(!grantContributors.equals(other.grantContributors))
+			if(!fundingContributors.equals(other.fundingContributors))
 				return false;
 		}
 		if (type == null) {

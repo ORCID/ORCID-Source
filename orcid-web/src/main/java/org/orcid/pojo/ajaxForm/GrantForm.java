@@ -25,11 +25,11 @@ import org.orcid.jaxb.model.message.Amount;
 import org.orcid.jaxb.model.message.CurrencyCode;
 import org.orcid.jaxb.model.message.DisambiguatedOrganization;
 import org.orcid.jaxb.model.message.FuzzyDate;
-import org.orcid.jaxb.model.message.GrantContributors;
+import org.orcid.jaxb.model.message.FundingContributors;
 import org.orcid.jaxb.model.message.FundingExternalIdentifier;
 import org.orcid.jaxb.model.message.FundingType;
 import org.orcid.jaxb.model.message.Iso3166Country;
-import org.orcid.jaxb.model.message.OrcidGrant;
+import org.orcid.jaxb.model.message.OrcidFunding;
 import org.orcid.jaxb.model.message.FundingExternalIdentifiers;
 import org.orcid.jaxb.model.message.Organization;
 import org.orcid.jaxb.model.message.OrganizationAddress;
@@ -263,8 +263,8 @@ public class GrantForm implements ErrorsInterface, Serializable {
         this.countryForDisplay = countryForDisplay;
     }
     
-	public OrcidGrant toOrcidGrant() {
-		OrcidGrant result = new OrcidGrant();
+	public OrcidFunding toOrcidGrant() {
+		OrcidFunding result = new OrcidFunding();
 		Amount orcidAmount = new Amount();
 		if(!PojoUtil.isEmpty(amount))
 			orcidAmount.setContent(amount.getValue());
@@ -313,12 +313,12 @@ public class GrantForm implements ErrorsInterface, Serializable {
 		
 		// Set contributors
 		if(contributors != null && !contributors.isEmpty()) {
-			GrantContributors gContributors = new GrantContributors();  
+			FundingContributors gContributors = new FundingContributors();  
 			for(Contributor contributor : contributors){
 				if(!PojoUtil.isEmtpy(contributor))
 					gContributors.getContributor().add(contributor.toContributor());
 			}
-			result.setGrantContributors(gContributors);
+			result.setFundingContributors(gContributors);
 		}
 		// Set external identifiers
 		if(externalIdentifiers != null && !externalIdentifiers.isEmpty()) {
@@ -327,61 +327,61 @@ public class GrantForm implements ErrorsInterface, Serializable {
 				if(!PojoUtil.isEmtpy(fExternalIdentifier))
 					fExternalIdentifiers.getFundingExternalIdentifier().add(fExternalIdentifier.toGrantExternalIdentifier());
 			}
-			result.setGrantExternalIdentifiers(fExternalIdentifiers);
+			result.setFundingExternalIdentifiers(fExternalIdentifiers);
 		}				
 		
 		return result;
 	}
 	
-	public static GrantForm valueOf(OrcidGrant grant) {
+	public static GrantForm valueOf(OrcidFunding funding) {
 		GrantForm result = new GrantForm();
 		
-		if(StringUtils.isNotEmpty(grant.getPutCode()))
-			result.setPutCode(Text.valueOf(grant.getPutCode()));
+		if(StringUtils.isNotEmpty(funding.getPutCode()))
+			result.setPutCode(Text.valueOf(funding.getPutCode()));
 		
-		if(grant.getAmount() != null) {			
-			if(StringUtils.isNotEmpty(grant.getAmount().getContent()))
-				result.setAmount(Text.valueOf(grant.getAmount().getContent()));
-			if(grant.getAmount().getCurrencyCode() != null)
-				result.setCurrencyCode(Text.valueOf(grant.getAmount().getCurrencyCode().value()));
+		if(funding.getAmount() != null) {			
+			if(StringUtils.isNotEmpty(funding.getAmount().getContent()))
+				result.setAmount(Text.valueOf(funding.getAmount().getContent()));
+			if(funding.getAmount().getCurrencyCode() != null)
+				result.setCurrencyCode(Text.valueOf(funding.getAmount().getCurrencyCode().value()));
 		}
-		if(StringUtils.isNotEmpty(grant.getDescription()))
-			result.setDescription(Text.valueOf(grant.getDescription()));
+		if(StringUtils.isNotEmpty(funding.getDescription()))
+			result.setDescription(Text.valueOf(funding.getDescription()));
 		
-		if(grant.getEndDate() != null)
-			result.setEndDate(Date.valueOf(grant.getEndDate()));
+		if(funding.getEndDate() != null)
+			result.setEndDate(Date.valueOf(funding.getEndDate()));
 		
-		if(grant.getType() != null)
-			result.setGrantType(Text.valueOf(grant.getType().value()));
+		if(funding.getType() != null)
+			result.setGrantType(Text.valueOf(funding.getType().value()));
 				
-		Source source = grant.getSource();
+		Source source = funding.getSource();
 		if(source != null && source.getSourceName() != null)
 			result.setSourceName(source.getSourceName().getContent());
 		
-		if(grant.getStartDate() != null)
-			result.setStartDate(Date.valueOf(grant.getStartDate()));
+		if(funding.getStartDate() != null)
+			result.setStartDate(Date.valueOf(funding.getStartDate()));
 		
-		if(grant.getTitle() != null) {
+		if(funding.getTitle() != null) {
 			GrantTitleForm grantTitle = new GrantTitleForm();
-			if(grant.getTitle().getTitle() != null)
-				grantTitle.setTitle(Text.valueOf(grant.getTitle().getTitle().getContent()));
-			if(grant.getTitle().getTranslatedTitle() != null){
+			if(funding.getTitle().getTitle() != null)
+				grantTitle.setTitle(Text.valueOf(funding.getTitle().getTitle().getContent()));
+			if(funding.getTitle().getTranslatedTitle() != null){
 				TranslatedTitle translatedTitle = new TranslatedTitle();
-				translatedTitle.setContent(grant.getTitle().getTranslatedTitle().getContent());
-				translatedTitle.setLanguageCode(grant.getTitle().getTranslatedTitle().getLanguageCode());
+				translatedTitle.setContent(funding.getTitle().getTranslatedTitle().getContent());
+				translatedTitle.setLanguageCode(funding.getTitle().getTranslatedTitle().getLanguageCode());
 				grantTitle.setTranslatedTitle(translatedTitle);
 			}
 			result.setGrantTitle(grantTitle);
 		}
 		
-		if(grant.getUrl() != null)
-			result.setUrl(Text.valueOf(grant.getUrl().getValue()));
+		if(funding.getUrl() != null)
+			result.setUrl(Text.valueOf(funding.getUrl().getValue()));
 		
-		if(grant.getVisibility() != null)
-		result.setVisibility(Visibility.valueOf(grant.getVisibility()));
+		if(funding.getVisibility() != null)
+		result.setVisibility(Visibility.valueOf(funding.getVisibility()));
 		
 		// Set the disambiguated organization
-		Organization organization = grant.getOrganization();
+		Organization organization = funding.getOrganization();
 		result.setGrantName(Text.valueOf(organization.getName()));		
 		DisambiguatedOrganization disambiguatedOrganization = organization.getDisambiguatedOrganization(); 
 		if(disambiguatedOrganization != null) {
@@ -401,9 +401,9 @@ public class GrantForm implements ErrorsInterface, Serializable {
 		}
 		
 		// Set contributors
-		if(grant.getGrantContributors() != null) {
+		if(funding.getFundingContributors() != null) {
 			List<Contributor> contributors = new ArrayList<Contributor> ();
-			for(org.orcid.jaxb.model.message.Contributor gContributor : grant.getGrantContributors().getContributor()) {
+			for(org.orcid.jaxb.model.message.Contributor gContributor : funding.getFundingContributors().getContributor()) {
 				Contributor contributor = Contributor.valueOf(gContributor);
 				contributors.add(contributor);
 			}
@@ -411,9 +411,9 @@ public class GrantForm implements ErrorsInterface, Serializable {
 		}
 		
 		// Set external identifiers
-		if(grant.getGrantExternalIdentifiers() != null) {
+		if(funding.getFundingExternalIdentifiers() != null) {
 			List<FundingExternalIdentifierForm> externalIdentifiersList = new ArrayList<FundingExternalIdentifierForm>();
-			for(FundingExternalIdentifier fExternalIdentifier : grant.getGrantExternalIdentifiers().getFundingExternalIdentifier()){
+			for(FundingExternalIdentifier fExternalIdentifier : funding.getFundingExternalIdentifiers().getFundingExternalIdentifier()){
 				FundingExternalIdentifierForm grantExternalIdentifierForm = FundingExternalIdentifierForm.valueOf(fExternalIdentifier);
 				externalIdentifiersList.add(grantExternalIdentifierForm);
 			}			

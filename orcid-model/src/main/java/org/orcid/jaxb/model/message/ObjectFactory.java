@@ -84,6 +84,14 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link FundingContributors }
+     * 
+     */
+    public FundingContributors createFundingContributors() {
+        return new FundingContributors();
+    }
+    
+    /**
      * Create an instance of {@link GrantExternalProgram }
      * 
      */
@@ -228,19 +236,19 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link OrcidGrants }
+     * Create an instance of {@link OrcidFundingList }
      * 
      */
-    public OrcidGrants createOrcidGrants() {
-        return new OrcidGrants();
+    public OrcidFundingList createOrcidGrants() {
+        return new OrcidFundingList();
     }
 
     /**
-     * Create an instance of {@link OrcidGrant }
+     * Create an instance of {@link OrcidFunding }
      * 
      */
-    public OrcidGrant createOrcidGrant() {
-        return new OrcidGrant();
+    public OrcidFunding createOrcidGrant() {
+        return new OrcidFunding();
     }
 
     /**
@@ -276,11 +284,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link GrantContributors }
+     * Create an instance of {@link FundingContributors }
      * 
      */
-    public GrantContributors createGrantContributors() {
-        return new GrantContributors();
+    public FundingContributors createGrantContributors() {
+        return new FundingContributors();
     }
 
     /**

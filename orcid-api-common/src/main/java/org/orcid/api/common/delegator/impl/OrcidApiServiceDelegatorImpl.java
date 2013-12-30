@@ -227,7 +227,7 @@ public class OrcidApiServiceDelegatorImpl implements OrcidApiServiceDelegator {
             if (orcidMessage != null) {
                 OrcidProfile orcidProfile = orcidMessage.getOrcidProfile();
                 if (orcidProfile != null) {
-                    orcidProfile.downgradeToGrantsOnly();
+                    orcidProfile.downgradeToFundingsOnly();
                 }
             }
             return getOrcidMessageResponse(orcidMessage, orcid);

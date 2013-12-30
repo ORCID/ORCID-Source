@@ -43,7 +43,7 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element ref="{http://www.orcid.org/ns/orcid}orcid-grant" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element ref="{http://www.orcid.org/ns/orcid}orcid-funding" maxOccurs="unbounded" minOccurs="0"/>
  *       &lt;/sequence>
  *       &lt;attGroup ref="{http://www.orcid.org/ns/orcid}scope"/>
  *     &lt;/restriction>
@@ -54,16 +54,16 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "orcidGrant" })
-@XmlRootElement(name = "orcid-grants")
-public class OrcidGrants implements Serializable {
+@XmlType(propOrder = { "orcidFunding" })
+@XmlRootElement(name = "orcid-funding-list")
+public class OrcidFundingList implements Serializable {
 
     /**
      * 
      */
     private static final long serialVersionUID = 1L;
-    @XmlElement(name = "orcid-grant")
-    protected List<OrcidGrant> orcidGrant;
+    @XmlElement(name = "orcid-funding")
+    protected List<OrcidFunding> orcidFunding;
     @XmlAttribute
     protected Scope scope;
 
@@ -85,19 +85,19 @@ public class OrcidGrants implements Serializable {
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link OrcidGrant }
+     * {@link OrcidFunding }
      * 
      * 
      */
-    public List<OrcidGrant> getOrcidGrant() {
-        if (orcidGrant == null) {
-            orcidGrant = new ArrayList<OrcidGrant>();
+    public List<OrcidFunding> getOrcidFunding() {
+        if (orcidFunding == null) {
+        	orcidFunding = new ArrayList<OrcidFunding>();
         }
-        return this.orcidGrant;
+        return this.orcidFunding;
     }
     
-    public void setOrcidGrant(List<OrcidGrant> orcidGrant){
-    	this.orcidGrant = orcidGrant;
+    public void setOrcidFunding(List<OrcidFunding> orcidFunding){
+    	this.orcidFunding = orcidFunding;
     }
 
     /**
@@ -129,13 +129,13 @@ public class OrcidGrants implements Serializable {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof OrcidGrants)) {
+        if (!(o instanceof OrcidFundingList)) {
             return false;
         }
 
-        OrcidGrants that = (OrcidGrants) o;
+        OrcidFundingList that = (OrcidFundingList) o;
 
-        if (orcidGrant != null ? !orcidGrant.equals(that.orcidGrant) : that.orcidGrant != null) {
+        if (orcidFunding != null ? !orcidFunding.equals(that.orcidFunding) : that.orcidFunding != null) {
             return false;
         }
         if (scope != that.scope) {
@@ -147,7 +147,7 @@ public class OrcidGrants implements Serializable {
 
     @Override
     public int hashCode() {
-        int result = orcidGrant != null ? orcidGrant.hashCode() : 0;
+        int result = orcidFunding != null ? orcidFunding.hashCode() : 0;
         result = 31 * result + (scope != null ? scope.hashCode() : 0);
         return result;
     }
