@@ -37,8 +37,8 @@
     <webhook/>
 	<org/>
 	<org_affiliation_relation/>
-	<profile_grant/>
-	<grant_external_identifier/>      
+	<profile_funding/>
+	<funding_external_identifier/>      
 	<address/>
 	<institution/>
 	<affiliation/>

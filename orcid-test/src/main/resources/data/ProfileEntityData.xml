@@ -484,7 +484,7 @@
             visibility="LIMITED"
             />
             
-	<profile_grant 
+	<profile_funding 
 			id="1" 
 			orcid="4444-4444-4444-4443" 
 			org_id="1" 
@@ -494,7 +494,7 @@
 			amount="2500" 
 			visibility="LIMITED" />
 			
-    <profile_grant 
+    <profile_funding 
     		id="2" 
     		orcid="4444-4444-4444-4443" 
     		org_id="2" 
@@ -504,7 +504,7 @@
     		amount="1,650.000" 
     		visibility="PUBLIC" />
     		
-    <profile_grant 
+    <profile_funding 
     		id="3" 
     		orcid="4444-4444-4444-4443" 
     		org_id="3" 
