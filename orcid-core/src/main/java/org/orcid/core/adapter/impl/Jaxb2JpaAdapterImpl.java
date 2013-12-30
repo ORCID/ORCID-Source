@@ -68,6 +68,7 @@ import org.orcid.jaxb.model.message.GivenPermissionBy;
 import org.orcid.jaxb.model.message.GivenPermissionTo;
 import org.orcid.jaxb.model.message.GrantContributors;
 import org.orcid.jaxb.model.message.GrantExternalIdentifier;
+import org.orcid.jaxb.model.message.GrantTitle;
 import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.jaxb.model.message.Keyword;
 import org.orcid.jaxb.model.message.Keywords;
@@ -855,7 +856,9 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
     }        
     
     /**
-     * TODO
+     * Create a map with the provided profileGrantEntities
+     * @param profileGrantEntities
+     * @return Map<String, ProfileGrantEntity>
      * */
     private Map<String, ProfileGrantEntity> createProfileGrantEntitiesMap(Set<ProfileGrantEntity> profileGrantEntities) {
         Map<String, ProfileGrantEntity> map = new HashMap<>();
@@ -966,7 +969,10 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
     }
     
     /**
-     * TODO
+     * Transforms a OrcidGrant object into a ProfileGrantEntity object
+     * @param updatedOrcidGrant
+     * @param profileEntity
+     * @return ProfileGrantEntity
      * */
     @Override
     public ProfileGrantEntity getNewProfileGrantEntity(OrcidGrant updatedOrcidGrant, ProfileEntity profileEntity) {
@@ -1005,7 +1011,10 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
     }
     
     /**
-     * TODO
+     * Get a ProfileGrantEntity based on a Grant object
+     * @param grant
+     * @param exisitingProfileGrantEntity
+     * @return a ProfileGrantEntity created from the provided grant 
      * */
     private ProfileGrantEntity getProfileGrantEntity(OrcidGrant grant, ProfileGrantEntity exisitingProfileGrantEntity) {
         if (grant != null) {
@@ -1031,7 +1040,22 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             profileGrantEntity.setEndDate(endDate != null ? new EndDateEntity(endDate) : null);
             profileGrantEntity.setExternalIdentifiers(getGrantExternalIdentifiers(profileGrantEntity, grant.getGrantExternalIdentifiers()));            
             profileGrantEntity.setStartDate(startDate != null ? new StartDateEntity(startDate) : null);
-            profileGrantEntity.setTitle(StringUtils.isNotBlank(grant.getTitle()) ? grant.getTitle() : null);
+            
+            GrantTitle grantTitle = grant.getGrantTitle();
+            if(grantTitle != null) {
+            	String title = null, translatedTitle = null, languageCode = null;            	
+            	if(grantTitle.getTitle() != null)
+            		title = grantTitle.getTitle().getContent();
+            	if(grantTitle.getTranslatedTitle() != null) {
+            		translatedTitle = grantTitle.getTranslatedTitle().getContent();
+            		languageCode = grantTitle.getTranslatedTitle().getLanguageCode();
+            	}
+            	
+            	profileGrantEntity.setTitle(StringUtils.isNotBlank(title) ? title : null);
+            	profileGrantEntity.setTranslatedTitle(StringUtils.isNotBlank(translatedTitle) ? translatedTitle : null);
+            	profileGrantEntity.setTranslatedTitleLanguageCode(StringUtils.isNotBlank(languageCode) ? languageCode : null);            	
+            }
+                        
             profileGrantEntity.setType(grant.getType() != null ? grant.getType() : null);
             if(grant.getUrl() != null)
             	profileGrantEntity.setUrl(StringUtils.isNotBlank(grant.getUrl().getValue()) ? grant.getUrl().getValue() : null);            
@@ -1043,7 +1067,10 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
     }
     
     /**
-     * TODO
+     * Get a list of GrantExternalIdentifierEntity from the external identifiers
+     * @param profileGrantEntity
+     * @param externalIdentifiers
+     * @return a list of GrantExternalIdentifierEntity based on the provided OrcidGrantExternalIdentifiers
      * */
     private SortedSet<GrantExternalIdentifierEntity> getGrantExternalIdentifiers(ProfileGrantEntity profileGrantEntity, OrcidGrantExternalIdentifiers externalIdentifiers) {
     	if(externalIdentifiers == null || externalIdentifiers.getGrantExternalIdentifier() == null || externalIdentifiers.getGrantExternalIdentifier().isEmpty())
@@ -1083,7 +1110,9 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
     }
     
     /**
-     * TODO
+     * Get an OrgEntity object based on the provided orcidGrant
+     * @param orcidGrant
+     * @return a OrgEntity based on the provided OrcidGrant
      * */
     private OrgEntity getOrgEntity(OrcidGrant orcidGrant) {
         if (orcidGrant != null) {

@@ -22,13 +22,17 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.SortedSet;
+import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.adapter.Jaxb2JpaAdapter;
 import org.orcid.core.adapter.Jpa2JaxbAdapter;
+import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
+import org.orcid.frontend.web.util.LanguagesMap;
 import org.orcid.jaxb.model.message.CurrencyCode;
 import org.orcid.jaxb.model.message.GrantType;
 import org.orcid.jaxb.model.message.OrcidActivities;
@@ -50,8 +54,10 @@ import org.orcid.pojo.ajaxForm.Contributor;
 import org.orcid.pojo.ajaxForm.Date;
 import org.orcid.pojo.ajaxForm.GrantExternalIdentifierForm;
 import org.orcid.pojo.ajaxForm.GrantForm;
+import org.orcid.pojo.ajaxForm.GrantTitleForm;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Text;
+import org.orcid.pojo.ajaxForm.TranslatedTitle;
 import org.orcid.pojo.ajaxForm.Visibility;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -72,7 +78,9 @@ public class GrantsController extends BaseWorkspaceController {
 	private static final Logger LOGGER = LoggerFactory
 			.getLogger(GrantsController.class);
 	private static final String GRANT_MAP = "GRANT_MAP";
-
+	private static final Pattern LANGUAGE_CODE = Pattern.compile("([a-zA-Z]{2})(_[a-zA-Z]{2}){0,2}");
+	private static final String DEFAULT_GRANT_EXTERNAL_IDENTIFIER_TYPE="Grant number";
+	
 	@Resource
 	private ProfileDao profileDao;
 
@@ -93,6 +101,9 @@ public class GrantsController extends BaseWorkspaceController {
 
 	@Resource
 	private OrgDisambiguatedDao orgDisambiguatedDao;
+	
+	@Resource
+    private LocaleManager localeManager;
 
 	/**
 	 * Returns a blank grant form
@@ -105,9 +116,16 @@ public class GrantsController extends BaseWorkspaceController {
 		result.setCurrencyCode(new Text());
 		result.setDescription(new Text());
 		result.setGrantName(new Text());
-		result.setGrantType(new Text());
+		result.setGrantType(Text.valueOf(DEFAULT_GRANT_EXTERNAL_IDENTIFIER_TYPE));
 		result.setSourceName(new String());
-		result.setTitle(new Text());
+		GrantTitleForm title = new GrantTitleForm();
+		title.setTitle(new Text());
+		TranslatedTitle tt = new TranslatedTitle();
+        tt.setContent(new String());
+        tt.setLanguageCode(new String());
+        tt.setLanguageName(new String());
+        title.setTranslatedTitle(tt);        
+		result.setGrantTitle(title);
 		result.setUrl(new Text());
 		OrcidProfile profile = getEffectiveProfile();
 		Visibility v = Visibility.valueOf(profile.getOrcidInternal()
@@ -197,6 +215,7 @@ public class GrantsController extends BaseWorkspaceController {
 	 */
 	private List<String> createGrantIdList(HttpServletRequest request) {
 		OrcidProfile currentProfile = getEffectiveProfile();
+		Map<String, String> languages = LanguagesMap.buildLanguageMap(localeManager.getLocale(), false);
 		OrcidGrants grants = currentProfile.getOrcidActivities() == null ? null
 				: currentProfile.getOrcidActivities().getOrcidGrants();
 
@@ -210,6 +229,11 @@ public class GrantsController extends BaseWorkspaceController {
 						form.setGrantTypeForDisplay(getMessage(buildInternationalizationKey(
 								GrantType.class, grant.getType().value())));
 					}
+					//Set translated title language name
+			        if(!(grant.getGrantTitle().getTranslatedTitle() == null) && !StringUtils.isEmpty(grant.getGrantTitle().getTranslatedTitle().getLanguageCode())) {
+			            String languageName = languages.get(grant.getGrantTitle().getTranslatedTitle().getLanguageCode());
+			            form.getGrantTitle().getTranslatedTitle().setLanguageName(languageName);
+			        }        		       
 					form.setCountryForDisplay(getMessage(buildInternationalizationKey(CountryIsoEntity.class, grant.getOrganization().getAddress().getCountry()
                             .name())));										
 					grantsMap.put(grant.getPutCode(), form);
@@ -264,6 +288,7 @@ public class GrantsController extends BaseWorkspaceController {
 		validateAmount(grant);
 		validateCurrency(grant);
 		validateTitle(grant);
+		validateTranslatedTitle(grant);
 		validateDescription(grant);
 		validateUrl(grant);
 		validateDates(grant);
@@ -276,7 +301,8 @@ public class GrantsController extends BaseWorkspaceController {
 		copyErrors(grant.getGrantName(), grant);
 		copyErrors(grant.getAmount(), grant);
 		copyErrors(grant.getCurrencyCode(), grant);
-		copyErrors(grant.getTitle(), grant);
+		copyErrors(grant.getGrantTitle().getTitle(), grant);
+		copyErrors(grant.getGrantTitle().getTranslatedTitle(), grant);
 		copyErrors(grant.getDescription(), grant);
 		copyErrors(grant.getUrl(), grant);
 		copyErrors(grant.getEndDate(), grant);
@@ -292,6 +318,8 @@ public class GrantsController extends BaseWorkspaceController {
 		if (grant.getErrors().isEmpty()) {
 			// Set the credit name
 			setContributorsCreditName(grant);
+			// Set default type for external identifiers
+			setTypeToExternalIdentifiers(grant);
 			// Update on database
 			ProfileEntity userProfile = profileDao
 					.find(getEffectiveUserOrcid());
@@ -364,6 +392,14 @@ public class GrantsController extends BaseWorkspaceController {
 											.getVisibility()));
 				}
 			}
+		}
+	}
+	
+	private void setTypeToExternalIdentifiers(GrantForm grant) {
+		if(grant == null || grant.getExternalIdentifiers() == null || grant.getExternalIdentifiers().isEmpty())
+			return;
+		for(GrantExternalIdentifierForm extId : grant.getExternalIdentifiers()) {
+			extId.setType(Text.valueOf(DEFAULT_GRANT_EXTERNAL_IDENTIFIER_TYPE));
 		}
 	}
 
@@ -448,15 +484,45 @@ public class GrantsController extends BaseWorkspaceController {
 	@RequestMapping(value = "/grant/titleValidate.json", method = RequestMethod.POST)
 	public @ResponseBody
 	GrantForm validateTitle(@RequestBody GrantForm grant) {
-		grant.getTitle().setErrors(new ArrayList<String>());
-		if (PojoUtil.isEmpty(grant.getTitle())) {
-			setError(grant.getTitle(), "NotBlank.grant.title");
+		grant.getGrantTitle().getTitle().setErrors(new ArrayList<String>());		
+		if (PojoUtil.isEmpty(grant.getGrantTitle().getTitle())) {
+			setError(grant.getGrantTitle().getTitle(), "NotBlank.grant.title");
 		} else {
-			if (grant.getTitle().getValue().length() > 1000)
-				setError(grant.getTitle(), "grant.length_less_1000");
+			if (grant.getGrantTitle().getTitle().getValue().length() > 1000)
+				setError(grant.getGrantTitle().getTitle(), "grant.length_less_1000");
 		}
 		return grant;
 	}
+	
+	@RequestMapping(value = "/grant/translatedTitleValidate.json", method = RequestMethod.POST)
+	public @ResponseBody
+	GrantForm validateTranslatedTitle(@RequestBody GrantForm grant) {
+		grant.getGrantTitle().getTranslatedTitle().setErrors(new ArrayList<String>());		
+		if (grant.getGrantTitle().getTranslatedTitle() != null) {
+
+            String content = grant.getGrantTitle().getTranslatedTitle().getContent();
+            String code = grant.getGrantTitle().getTranslatedTitle().getLanguageCode();
+
+            if (!StringUtils.isEmpty(content)) {
+                if (!StringUtils.isEmpty(code)) {
+                    if (!LANGUAGE_CODE.matcher(grant.getGrantTitle().getTranslatedTitle().getLanguageCode()).matches()) {
+                        setError(grant.getGrantTitle().getTranslatedTitle(), "manual_grant_form_contents.invalid_language_code");
+                    }
+                } else {
+                    setError(grant.getGrantTitle().getTranslatedTitle(), "manual_grant_form_contents.empty_code");
+                }
+                if (content.length() > 1000) {
+                    setError(grant.getGrantTitle().getTranslatedTitle(), "grant.length_less_1000");
+                }
+            } else {
+                if (!StringUtils.isEmpty(code)) {
+                    setError(grant.getGrantTitle().getTranslatedTitle(), "manual_grant_form_contents.empty_translation");
+                }
+            }
+        }
+		return grant;
+	}
+	
 
 	@RequestMapping(value = "/grant/descriptionValidate.json", method = RequestMethod.POST)
 	public @ResponseBody
@@ -609,7 +675,7 @@ public class GrantsController extends BaseWorkspaceController {
 	Map<String, String> getDisambiguated(@PathVariable("id") Long id) {
 		OrgDisambiguatedEntity orgDisambiguatedEntity = orgDisambiguatedDao
 				.find(id);
-		Map<String, String> datum = new HashMap<>();
+		Map<String, String> datum = new HashMap<>();		
 		datum.put("value", orgDisambiguatedEntity.getName());
 		datum.put("city", orgDisambiguatedEntity.getCity());
 		datum.put("region", orgDisambiguatedEntity.getRegion());

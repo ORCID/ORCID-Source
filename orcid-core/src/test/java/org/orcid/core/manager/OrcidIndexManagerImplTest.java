@@ -43,6 +43,7 @@ import org.orcid.jaxb.model.message.ExternalIdentifier;
 import org.orcid.jaxb.model.message.ExternalIdentifiers;
 import org.orcid.jaxb.model.message.FamilyName;
 import org.orcid.jaxb.model.message.GivenNames;
+import org.orcid.jaxb.model.message.GrantTitle;
 import org.orcid.jaxb.model.message.Keyword;
 import org.orcid.jaxb.model.message.Keywords;
 import org.orcid.jaxb.model.message.OrcidActivities;
@@ -335,15 +336,21 @@ public class OrcidIndexManagerImplTest extends BaseTest {
         OrcidGrants orcidGrants = new OrcidGrants();
         OrcidGrant orcidGrant1 = new OrcidGrant();
         orcidGrant1.setVisibility(Visibility.PUBLIC);
-        orcidGrant1.setTitle("grant 1");
+        GrantTitle title = new GrantTitle();
+        title.setTitle(new Title("grant 1"));
+        orcidGrant1.setTitle(title);
 
         OrcidGrant orcidGrant2 = new OrcidGrant();
         orcidGrant2.setVisibility(Visibility.PUBLIC);
-        orcidGrant2.setTitle("grant 2");
+        GrantTitle title2 = new GrantTitle();
+        title2.setTitle(new Title("grant 2"));
+        orcidGrant2.setTitle(title2);
 
         OrcidGrant orcidGrant3 = new OrcidGrant();
         orcidGrant3.setVisibility(Visibility.LIMITED);
-        orcidGrant3.setTitle("grant 3");
+        GrantTitle title3 = new GrantTitle();
+        title3.setTitle(new Title("grant 3"));
+        orcidGrant3.setTitle(title3);
 
         OrcidGrant orcidGrant4 = new OrcidGrant();
         orcidGrant4.setVisibility(Visibility.PUBLIC);

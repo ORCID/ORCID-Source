@@ -23,13 +23,6 @@
 		<div class="lightbox-container">
 			<div class="ie7fix">
 			<div class="row bottomBuffer"></div>
-			<div class="row bottomBuffer" ng-show="grant.grantName.value"
-				ng-cloak>
-				<div class="col-md-8">					
-					<strong><@orcid.msg 'manual_grant_form_contents.label_institution_organization'/></strong>
-					<div ng-bind="grant.grantName.value"></div>
-				</div>
-			</div>
 			<div class="row bottomBuffer" ng-show="grant.grantType.value"
 				ng-cloak>
 				<div class="col-md-8">					
@@ -37,53 +30,26 @@
 					<div ng-bind="grant.grantTypeForDisplay"></div>
 				</div>
 			</div>
-			<div class="row bottomBuffer" ng-show="grant.city.value"
-				ng-cloak>
-				<div class="col-md-8">
-					<strong><@orcid.msg 'manual_grant_form_contents.labelcity'/></strong>
-					<div ng-bind="grant.city.value"></div>
-				</div>
-			</div>
-			<div class="row bottomBuffer" ng-show="grant.region.value"
-				ng-cloak>
-				<div class="col-md-8">
-					<strong><@orcid.msg 'manual_grant_form_contents.labelregion'/></strong>
-					<div ng-bind="grant.region.value"></div>
-				</div>
-			</div>
-			<div class="row bottomBuffer" ng-show="grant.country.value"
-				ng-cloak>
-				<div class="col-md-8">
-					<strong><@orcid.msg 'manual_grant_form_contents.labelcountry'/></strong>
-					<div ng-bind="grant.countryForDisplay"></div>
-				</div>
-			</div>			
-			<div class="row bottomBuffer" ng-show="grant.title.value"
+			<div class="row bottomBuffer" ng-show="grant.grantTitle.title.value"
 				ng-cloak>
 				<div class="col-md-8">
 					<strong><@orcid.msg 'manual_grant_form_contents.label_title'/></strong>
-					<div ng-bind="grant.title.value"></div>
+					<div ng-bind="grant.grantTitle.title.value"></div>
 				</div>
 			</div>
-			<div class="row bottomBuffer" ng-show="grant.description.value"
+			<div class="row bottomBuffer" ng-show="grant.grantTitle.translatedTitle.content" 
 				ng-cloak>
-				<div class="col-md-8">
-					<strong><@orcid.msg 'manual_grant_form_contents.label_description'/></strong>
-					<div ng-bind="grant.description.value"></div>
+					<div class="col-md-12">
+						<strong><@orcid.msg
+							'manual_grant_form_contents.label_translated_title'/></strong>
+						<div ng-bind="renderTranslatedTitleInfo(grant)"></div>
+					</div>
 				</div>
-			</div>
 			<div class="row bottomBuffer" ng-show="grant.amount.value"
 				ng-cloak>
 				<div class="col-md-8">
 					<strong><@orcid.msg 'manual_grant_form_contents.label_amount'/></strong>
 					<div>{{grant.currencyCode.value}} {{grant.amount.value}}</div>
-				</div>
-			</div>
-			<div class="row bottomBuffer" ng-show="grant.url.value"
-				ng-cloak>
-				<div class="col-md-8">
-					<strong><@orcid.msg 'manual_grant_form_contents.label_url'/></strong>
-					<div ng-bind="grant.url.value"></div>
 				</div>
 			</div>
 			<div class="row bottomBuffer" ng-show="grant.startDate.year" ng-cloak>
@@ -108,16 +74,6 @@
 					</div>
 				</div>
 			</div>
-			<div class="row bottomBuffer" ng-show="grant.externalIdentifiers.length > 0" ng-cloak>
-				<div class="col-md-8">
-					<strong><@orcid.msg 'manual_grant_form_contents.title_external_identifier'/></strong>
-					<div>
-						<span ng-repeat='ei in grant.externalIdentifiers'> <span
-							ng-bind-html='ei | externalIdentifierHtml:$first:$last:grant.externalIdentifiers.length'></span>
-						</span>
-					</div>
-				</div>
-			</div>
 			<div class="row bottomBuffer" ng-show="grant.contributors.length > 0"
 				ng-cloak>
 				<div class="col-md-12">
@@ -128,6 +84,58 @@
 					</div>
 				</div>
 			</div>
+			<div class="row bottomBuffer" ng-show="grant.description.value"
+				ng-cloak>
+				<div class="col-md-8">
+					<strong><@orcid.msg 'manual_grant_form_contents.label_description'/></strong>
+					<div ng-bind="grant.description.value"></div>
+				</div>
+			</div>	
+			<div class="row bottomBuffer" ng-show="grant.grantName.value"
+				ng-cloak>
+				<div class="col-md-8">					
+					<strong><@orcid.msg 'manual_grant_form_contents.label_funding_agency_name'/></strong>
+					<div ng-bind="grant.grantName.value"></div>
+				</div>
+			</div>			
+			<div class="row bottomBuffer" ng-show="grant.city.value"
+				ng-cloak>
+				<div class="col-md-8">
+					<strong><@orcid.msg 'manual_grant_form_contents.label_city'/></strong>
+					<div ng-bind="grant.city.value"></div>
+				</div>
+			</div>
+			<div class="row bottomBuffer" ng-show="grant.region.value"
+				ng-cloak>
+				<div class="col-md-8">
+					<strong><@orcid.msg 'manual_grant_form_contents.label_region'/></strong>
+					<div ng-bind="grant.region.value"></div>
+				</div>
+			</div>
+			<div class="row bottomBuffer" ng-show="grant.country.value"
+				ng-cloak>
+				<div class="col-md-8">
+					<strong><@orcid.msg 'manual_grant_form_contents.label_country'/></strong>
+					<div ng-bind="grant.countryForDisplay"></div>
+				</div>
+			</div>						
+			<div class="row bottomBuffer" ng-show="grant.externalIdentifiers.length > 0" ng-cloak>
+				<div class="col-md-8">
+					<strong><@orcid.msg 'manual_grant_form_contents.title_external_identifier'/></strong>
+					<div>
+						<span ng-repeat='ei in grant.externalIdentifiers'> <span
+							ng-bind-html='ei | externalIdentifierHtml:$first:$last:grant.externalIdentifiers.length'></span>
+						</span>
+					</div>
+				</div>
+			</div>
+			<div class="row bottomBuffer" ng-show="grant.url.value"
+				ng-cloak>
+				<div class="col-md-8">
+					<strong><@orcid.msg 'manual_grant_form_contents.label_url'/></strong>
+					<div ng-bind="grant.url.value"></div>
+				</div>
+			</div>			
 			<div class="row bottomBuffer" ng-show="grant.sourceName"
 				ng-cloak>
 				<div class="col-md-8">

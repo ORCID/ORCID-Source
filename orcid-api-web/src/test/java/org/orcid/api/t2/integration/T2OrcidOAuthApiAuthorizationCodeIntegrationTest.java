@@ -56,6 +56,7 @@ import org.orcid.jaxb.model.message.ExternalIdentifiers;
 import org.orcid.jaxb.model.message.FuzzyDate;
 import org.orcid.jaxb.model.message.GrantContributors;
 import org.orcid.jaxb.model.message.GrantExternalIdentifier;
+import org.orcid.jaxb.model.message.GrantTitle;
 import org.orcid.jaxb.model.message.GrantType;
 import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.jaxb.model.message.OrcidActivities;
@@ -371,7 +372,9 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
         
         OrcidGrants grants = new OrcidGrants();
         OrcidGrant grant = new OrcidGrant();
-    	grant.setTitle(GRANT_TITLE);
+        GrantTitle title = new GrantTitle();
+        title.setTitle(new Title(GRANT_TITLE));
+    	grant.setTitle(title);
     	grant.setType(GrantType.SALARY_AWARD);
     	grant.setVisibility(Visibility.PUBLIC);
     	grant.setCurrencyCode(CurrencyCode.CRC);

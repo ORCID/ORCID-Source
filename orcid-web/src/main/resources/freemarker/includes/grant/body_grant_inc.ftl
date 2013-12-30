@@ -23,7 +23,7 @@
 			<!-- Information -->
 			<div class="col-md-8 col-sm-8 col-xs-8">
 				<h3 class="grant-title">
-					<strong ng-show="grant.title">{{grant.title.value}}:</strong>
+					<strong ng-show="grant.grantTitle.title.value">{{grant.grantTitle.title.value}}:</strong>
 					<span class="grant-name" ng-bind-html="grant.grantName.value"></span>
 				</h3>
 			</div>
@@ -48,12 +48,12 @@
 			<div class="col-md-12 col-sm-12 col-xs-12">
 				<span class="grant-date" ng-show="grant.startDate && !grant.endDate">
 					(<span ng-show="grant.startDate.month">{{grant.startDate.month}}-</span><span ng-show="grant.startDate.year">{{grant.startDate.year}}</span>
-				    <@orcid.msg 'workspace_grants.dateSeparator'/>
+				    <@orcid.msg 'workspace_grants.dateSeparator'/>&nbsp;
 				    <@orcid.msg 'workspace_grants.present'/>)
 				</span>
 				<span class="grant-date" ng-show="grant.startDate && grant.endDate">
 					(<span ng-show="grant.startDate.month">{{grant.startDate.month}}-</span><span ng-show="grant.startDate.year">{{grant.startDate.year}}</span>
-					<@orcid.msg 'workspace_grants.dateSeparator'/><span ng-show="grant.endDate.month">{{grant.endDate.month}}-</span><span ng-show="grant.endDate.year">{{grant.endDate.year}}</span>)
+					<@orcid.msg 'workspace_grants.dateSeparator'/>&nbsp;<span ng-show="grant.endDate.month">{{grant.endDate.month}}-</span><span ng-show="grant.endDate.year">{{grant.endDate.year}}</span>)
 				</span>
 				<span class="grant-date" ng-show="!grant.startDate && grant.endDate">
 					     (<span ng-show="grant.endDate.month">{{grant.endDate.month}}-</span><span ng-show="grant.endDate.year">{{grant.endDate.year}}</span>)

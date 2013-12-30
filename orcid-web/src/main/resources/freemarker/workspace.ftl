@@ -125,13 +125,22 @@
 		                <br />
 		                <a href="#workspace-employments" class="btn-update no-icon" ng-click="workspaceSrvc.openEmployment()"><@orcid.msg 'workspace.view'/></a>
 		             </div>
-	                <!-- Grants -->     
-	        		<div class="workspace-overview  col-md-3 col-sm-3 col-xs-6">
-	        			<a href="#workspace-grants" class="overview-count">${(profile.orcidActivities.orcidGrants.orcidGrant?size)!0}</a>
-	        			<a href="#workspace-grants" class="overview-title"><@orcid.msg 'workspace.Grants'/></a>
-	        			<br />
-	        			<a target="_blank" href="http://support.orcid.org/forums/179657-coming-soon" class="btn-update no-icon"><@orcid.msg 'workspace.ComingSoon'/></a>
-	        		</div>
+	                <!-- Grants -->
+					<#if RequestParameters['grants']??>
+						<div class="workspace-overview  col-md-3 col-sm-3 col-xs-6">
+	        				<a href="#workspace-grants" class="overview-count" ng-click="workspaceSrvc.openGrants()"><span ng-bind="grantsSrvc.grants.length"></a>
+	        				<a href="#workspace-grants" class="overview-title" ng-click="workspaceSrvc.openGrants()"><@orcid.msg 'workspace.Grants'/></a>
+	        				<br />
+	        				<a href="#workspace-employments" class="btn-update no-icon" ng-click="workspaceSrvc.openGrants()"><@orcid.msg 'workspace.view'/></a>
+	        			</div>
+					<#else>
+						<div class="workspace-overview  col-md-3 col-sm-3 col-xs-6">
+	        				<a href="#workspace-grants" class="overview-count">${(profile.orcidActivities.orcidGrants.orcidGrant?size)!0}</a>
+	        				<a href="#workspace-grants" class="overview-title"><@orcid.msg 'workspace.Grants'/></a>
+	        				<br />
+	        				<a target="_blank" href="http://support.orcid.org/forums/179657-coming-soon" class="btn-update no-icon"><@orcid.msg 'workspace.ComingSoon'/></a>
+	        			</div>
+					</#if>	        		
 	        	</div>
         	</div>
         	<div class="workspace-accordion" id="workspace-accordion">
@@ -157,7 +166,9 @@
                 
                 
                 <!-- Grants -->
-                <#include "workspace_grants_body_list.ftl"/>
+                <#if RequestParameters['grants']??>
+                	<#include "workspace_grants_body_list.ftl"/>
+                </#if>
                 
                 
 		        <!-- Works -->                

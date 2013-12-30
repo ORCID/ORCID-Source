@@ -192,6 +192,9 @@ orcidNgModule.factory("workspaceSrvc", ['$rootScope', function ($rootScope) {
 			openEducation: function() {
 				serv.displayEducation = true;
 			},
+			openGrants: function() {
+				serv.displayGrants = true;
+			},
 			openEmployment: function() {
 				serv.displayEmployment = true;
 			},
@@ -1818,6 +1821,7 @@ function GrantCtrl($scope, $compile, $filter, grantsSrvc, workspaceSrvc) {
 	$scope.disambiguatedGrant = null;
 	$scope.moreInfo = {};
 	$scope.privacyHelp = {};
+	$scope.editTranslatedTitle = false; 
 	
 	$scope.toggleClickMoreInfo = function(key) {
 		if (!document.documentElement.className.contains('no-touch')) {
@@ -1863,6 +1867,7 @@ function GrantCtrl($scope, $compile, $filter, grantsSrvc, workspaceSrvc) {
 	};
 	
 	$scope.showAddModal = function(){
+		$scope.editTranslatedTitle = false;
 		$.colorbox({        	
 			html: $compile($('#add-grant-modal').html())($scope),			
 			width: formColorBoxResize(),
@@ -2053,6 +2058,21 @@ function GrantCtrl($scope, $compile, $filter, grantsSrvc, workspaceSrvc) {
 	
 	$scope.addExternalIdentifier = function () {
 		$scope.editGrant.externalIdentifiers.push({type: {value: ""}, value: {value: ""}, url: {value: ""} });
+	};
+	
+	$scope.toggleTranslatedTitleModal = function(){
+		$scope.editTranslatedTitle = !$scope.editTranslatedTitle;
+    	$('#translatedTitle').toggle();
+    	$.colorbox.resize();
+	};
+	
+	$scope.renderTranslatedTitleInfo = function(grant) {		
+		var info = null; 
+		console.log(angular.toJson(grant));
+		if(grant != null && grant.grantTitle != null && grant.grantTitle.translatedTitle != null) {
+			info = grant.grantTitle.translatedTitle.content + ' - ' + grant.grantTitle.translatedTitle.languageName;										
+		}				
+		return info;
 	};
 }
 

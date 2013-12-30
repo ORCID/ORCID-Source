@@ -66,7 +66,7 @@ import java.io.Serializable;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "putCode", "grantTitle", "description", "url", "type",
+@XmlType(propOrder = { "putCode", "title", "description", "url", "type",
 		"currencyCode", "amount",  "startDate", "endDate", "organization", "grantExternalIdentifiers", "grantContributors", "source" })
 @XmlRootElement(name = "orcid-grant")
 public class OrcidGrant implements VisibilityType, Serializable {
