@@ -264,7 +264,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
     }
 
     private OrcidFundingList getOrcidGrants(ProfileEntity profileEntity) {
-    	Set<ProfileFundingEntity> profileGrants = profileEntity.getProfileGrants();
+    	Set<ProfileFundingEntity> profileGrants = profileEntity.getProfileFunding();
     	if(profileGrants != null && !profileGrants.isEmpty()) {
     		OrcidFundingList grants = new OrcidFundingList();
     		List<OrcidFunding> grantList = grants.getOrcidFunding();

@@ -42,8 +42,8 @@ import org.orcid.jaxb.model.message.ExternalIdReference;
 import org.orcid.jaxb.model.message.ExternalIdentifier;
 import org.orcid.jaxb.model.message.ExternalIdentifiers;
 import org.orcid.jaxb.model.message.FamilyName;
-import org.orcid.jaxb.model.message.GivenNames;
 import org.orcid.jaxb.model.message.FundingTitle;
+import org.orcid.jaxb.model.message.GivenNames;
 import org.orcid.jaxb.model.message.Keyword;
 import org.orcid.jaxb.model.message.Keywords;
 import org.orcid.jaxb.model.message.OrcidActivities;
@@ -124,7 +124,7 @@ public class OrcidIndexManagerImplTest extends BaseTest {
     public void checkGrantsPersisted() throws Exception {
 
         OrcidProfile grantsProfileListing = getOrcidWithGrants();
-        OrcidSolrDocument grantsListing = solrDocWithGrantNumbers();
+        OrcidSolrDocument grantsListing = solrDocWithFundingTitles();
         orcidIndexManager.persistProfileInformationForIndexing(grantsProfileListing);
         verify(solrDao).persist(eq(grantsListing));
 
@@ -445,7 +445,9 @@ public class OrcidIndexManagerImplTest extends BaseTest {
         OrcidActivities orcidActivities = new OrcidActivities();
         orcidProfile.setOrcidActivities(orcidActivities);
         Affiliations affiliations = new Affiliations();
+        OrcidFundingList fundings = new OrcidFundingList(); 
         orcidActivities.setAffiliations(affiliations);
+        orcidActivities.setOrcidFundings(fundings);
 
         OrcidWorks orcidWorks = new OrcidWorks();
         OrcidWork orcidWork1 = new OrcidWork();
@@ -504,9 +506,9 @@ public class OrcidIndexManagerImplTest extends BaseTest {
         return orcidSolrDocument;
     }
 
-    private OrcidSolrDocument solrDocWithGrantNumbers() {
-        OrcidSolrDocument orcidSolrDocument = fullyPopulatedSolrDocumentForPersistence();
-        orcidSolrDocument.setGrantNumbers(Arrays.asList(new String[] { "grant 1", "grant 2" }));
+    private OrcidSolrDocument solrDocWithFundingTitles() {
+        OrcidSolrDocument orcidSolrDocument = fullyPopulatedSolrDocumentForPersistence();        
+        orcidSolrDocument.setFundingTitles(Arrays.asList(new String[] { "grant 1", "grant 2" }));
         OrcidProfile orcidProfile = getOrcidWithGrants();
         OrcidMessage orcidMessage = createFilteredOrcidMessage(orcidProfile);
         orcidSolrDocument.setPublicProfileMessage(orcidMessage.toString());
@@ -571,7 +573,7 @@ public class OrcidIndexManagerImplTest extends BaseTest {
         orcidSolrDocument.setExternalIdOrcidsAndReferences(Arrays.asList(new String[] { "45678=defghi", "54321=abc123" }));
         // orcidSolrDocument.setPastInstitutionNames(Arrays.asList(new String[]
         // { "Past Inst 1", "Past Inst 2" }));
-        orcidSolrDocument.setWorkTitles(Arrays.asList(new String[] { "Work title 1", "Work title 2" }));
+        orcidSolrDocument.setWorkTitles(Arrays.asList(new String[] { "Work title 1", "Work title 2" }));        
         orcidSolrDocument.setKeywords(Arrays.asList(new String[] { "Pavement Studies", "Advanced Tea Making" }));
         OrcidProfile orcidProfile = getStandardOrcid();
         OrcidMessage orcidMessage = createFilteredOrcidMessage(orcidProfile);

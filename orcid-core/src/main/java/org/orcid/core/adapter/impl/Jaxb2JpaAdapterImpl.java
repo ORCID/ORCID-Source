@@ -397,7 +397,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
     }
 
     private void setFundings(ProfileEntity profileEntity, OrcidFundingList orcidFundings) {
-    	SortedSet<ProfileFundingEntity> existingProfileFundingEntities = profileEntity.getProfileGrants();
+    	SortedSet<ProfileFundingEntity> existingProfileFundingEntities = profileEntity.getProfileFunding();
     	if(existingProfileFundingEntities == null) {
     		existingProfileFundingEntities = new TreeSet<>();
     	}
@@ -423,7 +423,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
     	// Remove orphans
     	for(Iterator<ProfileFundingEntity> iterator = updatedProfileFundingEntities.iterator(); iterator.hasNext();){
     		ProfileFundingEntity existingEntity = iterator.next();
-    		if(!updatedProfileGrantEntitiesMap.containsKey(Long.toString(existingEntity.getId()))){
+    		if(existingEntity.getId() != null && !updatedProfileGrantEntitiesMap.containsKey(Long.toString(existingEntity.getId()))){
     			iterator.remove();
     		}
     	}
@@ -434,7 +434,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             	existingProfileFundingEntities.add(updatedEntity);
             }
         }
-        profileEntity.setProfileGrants(existingProfileFundingEntities);
+        profileEntity.setProfileFunding(existingProfileFundingEntities);
     }           
     
     private void setPatents(ProfileEntity profileEntity, OrcidPatents orcidPatents) {

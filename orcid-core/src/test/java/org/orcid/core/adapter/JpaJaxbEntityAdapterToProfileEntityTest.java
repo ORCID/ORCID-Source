@@ -214,8 +214,8 @@ public class JpaJaxbEntityAdapterToProfileEntityTest extends DBUnitTest {
             }
         }
 
-        assertEquals(2, profileEntity.getProfileGrants().size());
-        for (ProfileFundingEntity profileGrantEntity : profileEntity.getProfileGrants()) {
+        assertEquals(2, profileEntity.getProfileFunding().size());
+        for (ProfileFundingEntity profileGrantEntity : profileEntity.getProfileFunding()) {
             assertNotNull(profileGrantEntity.getContributorsJson());
         }
 

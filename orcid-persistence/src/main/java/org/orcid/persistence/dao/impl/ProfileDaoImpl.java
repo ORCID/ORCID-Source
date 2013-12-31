@@ -299,7 +299,7 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
     @Transactional
     public void removeChildrenWithGeneratedIds(ProfileEntity profileEntity) {
         String orcid = profileEntity.getId();
-        removeChildren(orcid, profileEntity.getProfileGrants());
+        removeChildren(orcid, profileEntity.getProfileFunding());
         removeChildren(orcid, profileEntity.getProfilePatents());
         removeChildren(orcid, profileEntity.getResearcherUrls(), "user.id");
         removeChildren(orcid, profileEntity.getOtherNames());
