@@ -165,7 +165,7 @@ orcidNgModule.factory("workspaceSrvc", ['$rootScope', function ($rootScope) {
 			displayAffiliations: true,
 			displayEducation: true,
 			displayEmployment: true,
-			displayGrants: true, 
+			displayFunding: true, 
 			displayPersonalInfo: true,
 			displayWorks: true,
 			toggleAffiliations: function() {
@@ -177,8 +177,8 @@ orcidNgModule.factory("workspaceSrvc", ['$rootScope', function ($rootScope) {
 			toggleEmployment: function() {
 				serv.displayEmployment = !serv.displayEmployment;
 			},
-			toggleGrants: function() {
-				serv.displayGrants = !serv.displayGrants;
+			toggleFunding: function() {
+				serv.displayFunding = !serv.displayFunding;
 			},
 			togglePersonalInfo: function() {
 				serv.displayPersonalInfo = !serv.displayPersonalInfo;
@@ -192,8 +192,8 @@ orcidNgModule.factory("workspaceSrvc", ['$rootScope', function ($rootScope) {
 			openEducation: function() {
 				serv.displayEducation = true;
 			},
-			openGrants: function() {
-				serv.displayGrants = true;
+			openFunding: function() {
+				serv.displayFunding = true;
 			},
 			openEmployment: function() {
 				serv.displayEmployment = true;
@@ -209,95 +209,95 @@ orcidNgModule.factory("workspaceSrvc", ['$rootScope', function ($rootScope) {
 }]);
 
 /**
- * Grants Service 
+ * Fundings Service 
  * */
-orcidNgModule.factory("grantsSrvc", ['$rootScope', function ($rootScope) {
+orcidNgModule.factory("fundingSrvc", ['$rootScope', function ($rootScope) {
 	var serv = {
-			grants: new Array(),
+			fundings: new Array(),
 			loading: false,
-			grantsToAddIds: null,
-			addGrantToScope: function(path) {
-	    		if( serv.grantsToAddIds.length != 0 ) {
-	    			var grantIds = serv.grantsToAddIds.splice(0,20).join();
+			fundingToAddIds: null,
+			addFundingToScope: function(path) {
+	    		if( serv.fundingToAddIds.length != 0 ) {
+	    			var fundingIds = serv.fundingToAddIds.splice(0,20).join();
 	    			$.ajax({
-	    				url: $('body').data('baseurl') + path + '?grantIds=' + grantIds,
+	    				url: $('body').data('baseurl') + path + '?fundingIds=' + fundingIds,
 	    				dataType: 'json',
 	    				success: function(data) {
 	    						for (i in data) {	    							
-	    							serv.grants.push(data[i]);
+	    							serv.fundings.push(data[i]);
 	    						};
-	    						if (serv.grantsToAddIds.length == 0) {
+	    						if (serv.fundingToAddIds.length == 0) {
 	    							serv.loading = false;
 	    							$rootScope.$apply();
 	    						} else {
 	    							$rootScope.$apply();
 	    					    	setTimeout(function () {
-	    					    		serv.addGrantToScope(path);
+	    					    		serv.addFundingToScope(path);
 	    					    	},50);	    							
 	    						}
 	    				}
 	    			}).fail(function() { 
-	    		    	console.log("Error fetching grants: " + value);
+	    		    	console.log("Error fetching fundings: " + value);
 	    		    });
 	    		} else {
 	    			serv.loading = false;
 	    		};
 	    	},
 	    	setIdsToAdd: function(ids) {
-	    		serv.grantsToAddIds = ids;
+	    		serv.fundingToAddIds = ids;
 	    	},
-	    	getGrants: function(path) {
-	    		//clear out current grants
+	    	getFundings: function(path) {
+	    		//clear out current fundings
 	    		serv.loading = true;
-	    		serv.grantsToAddIds = null;
-	    		serv.grants.length = 0;
-	    		//get grant ids
+	    		serv.fundingToAddIds = null;
+	    		serv.fundings.length = 0;
+	    		//get funding ids
 	    		$.ajax({
 	    			url: $('body').data('baseurl') + path,	        
 	    	        dataType: 'json',
 	    	        success: function(data) {
-	    	        	serv.grantsToAddIds = data;
-	    	        	serv.addGrantToScope('grants/grants.json');
+	    	        	serv.fundingToAddIds = data;
+	    	        	serv.addFundingToScope('fundings/fundings.json');
 	    	        	$rootScope.$apply();
 	    	        }
 	    		}).fail(function(){
 	    			// something bad is happening!
-	    	    	console.log("error fetching grants");
+	    	    	console.log("error fetching fundings");
 	    		});
 	    	},
-	    	updateProfileGrant: function(grant) {
+	    	updateProfileFunding: function(funding) {
 	    		$.ajax({
-	    	        url: $('body').data('baseurl') + 'grants/grant.json',
+	    	        url: $('body').data('baseurl') + 'fundings/funding.json',
 	    	        type: 'PUT',
-	    	        data: angular.toJson(grant),
-	    	        contentType: 'application/json;charset=UTF-8',
-	    	        dataType: 'json',
-	    	        success: function(grant) {	        	
-	    	        	if(data.errors.length != 0){
-	    	        		console.log("Unable to update profile grant.");
-	    	        	}
-	    	        	$rootScope.$apply();
-	    	        }
-	    	    }).fail(function() { 
-	    	    	console.log("Error updating profile grant.");
-	    	    });
-	    	},
-	    	deleteGrant: function(grant) {	
-	    		console.log(angular.toJson(grant));
-	    		$.ajax({
-	    	        url: $('body').data('baseurl') + 'grants/grant.json',
-	    	        type: 'DELETE',
-	    	        data: angular.toJson(grant),
+	    	        data: angular.toJson(funding),
 	    	        contentType: 'application/json;charset=UTF-8',
 	    	        dataType: 'json',
 	    	        success: function(data) {	        	
 	    	        	if(data.errors.length != 0){
-	    	        		console.log("Unable to delete grant.");
+	    	        		console.log("Unable to update profile funding.");
+	    	        	}
+	    	        	$rootScope.$apply();
+	    	        }
+	    	    }).fail(function() { 
+	    	    	console.log("Error updating profile funding.");
+	    	    });
+	    	},
+	    	deleteFunding: function(funding) {	
+	    		console.log(angular.toJson(funding));
+	    		$.ajax({
+	    	        url: $('body').data('baseurl') + 'fundings/funding.json',
+	    	        type: 'DELETE',
+	    	        data: angular.toJson(funding),
+	    	        contentType: 'application/json;charset=UTF-8',
+	    	        dataType: 'json',
+	    	        success: function(data) {	        	
+	    	        	if(data.errors.length != 0){
+	    	        		console.log("Unable to delete funding.");
 	    	        	} else {
-	    	        		var arr = serv.grants;				
+	    	        		var arr = serv.fundings;				
 	    					var idx;
 	    					for (idx in arr) {
-	    						if (arr[idx].putCode.value == grant.putCode.value) {
+	    						if (arr[idx].putCode.value == funding.putCode.value) {
 	    							break;
 	    						}
 	    					}
@@ -306,7 +306,7 @@ orcidNgModule.factory("grantsSrvc", ['$rootScope', function ($rootScope) {
 	    	        	$rootScope.$apply();
 	    	        }
 	    	    }).fail(function() { 
-	    	    	console.log("Error deleting grant.");
+	    	    	console.log("Error deleting funding.");
 	    	    });
 	    	}
 	};
@@ -1488,17 +1488,17 @@ function PersonalInfoCtrl($scope, $compile, workspaceSrvc){
 	};
 };
 
-function WorkspaceSummaryCtrl($scope, $compile, affiliationsSrvc, grantsSrvc, worksSrvc, workspaceSrvc){
+function WorkspaceSummaryCtrl($scope, $compile, affiliationsSrvc, fundingSrvc, worksSrvc, workspaceSrvc){
 	$scope.workspaceSrvc = workspaceSrvc;
 	$scope.worksSrvc = worksSrvc;
 	$scope.affiliationsSrvc = affiliationsSrvc;
-	$scope.grantsSrvc = grantsSrvc;
+	$scope.fundingSrvc = fundingSrvc;
 	$scope.showAddAlert = function () {
 		if (worksSrvc.loading == false && affiliationsSrvc.loading == false
 				&& worksSrvc.works.length == 0 
 				&& affiliationsSrvc.educations.length == 0
 				&& affiliationsSrvc.employments.length == 0
-				&& grantsSrvc.grants.length == 0)
+				&& fundingSrvc.fundings.length == 0)
 			return true;
 		return false;
 	};	
@@ -1811,14 +1811,14 @@ function AffiliationCtrl($scope, $compile, $filter, affiliationsSrvc, workspaceS
 }
 
 /**
- * Grants Controller 
+ * Fundings Controller 
  * */
-function GrantCtrl($scope, $compile, $filter, grantsSrvc, workspaceSrvc) {	
+function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc) {	
 	$scope.workspaceSrvc = workspaceSrvc;
-	$scope.grantsSrvc = grantsSrvc;
-	$scope.addingGrant = false;
-	$scope.editGrant = null;
-	$scope.disambiguatedGrant = null;
+	$scope.fundingSrvc = fundingSrvc;
+	$scope.addingFunding = false;
+	$scope.editFunding = null;
+	$scope.disambiguatedFunding = null;
 	$scope.moreInfo = {};
 	$scope.privacyHelp = {};
 	$scope.editTranslatedTitle = false; 
@@ -1850,26 +1850,26 @@ function GrantCtrl($scope, $compile, $filter, grantsSrvc, workspaceSrvc) {
 		$scope.moreInfo[key]=false;
 	};
 	
-	$scope.addGrantModal = function(type){
+	$scope.addFundingModal = function(type){
 		$.ajax({
-			url: $('body').data('baseurl') + 'grants/grant.json',
+			url: $('body').data('baseurl') + 'fundings/funding.json',
 			dataType: 'json',
 			success: function(data) {						
 				$scope.$apply(function() {
-					$scope.editGrant = data;
+					$scope.editFunding = data;
 					$scope.showAddModal();
-					console.log(angular.toJson($scope.editGrant));
+					console.log(angular.toJson($scope.editFunding));
 				});
 			}
 		}).fail(function() { 
-	    	console.log("Error fetching affiliation: " + value);
+	    	console.log("Error fetching funding: " + value);
 	    });
 	};
 	
 	$scope.showAddModal = function(){
 		$scope.editTranslatedTitle = false;
 		$.colorbox({        	
-			html: $compile($('#add-grant-modal').html())($scope),			
+			html: $compile($('#add-funding-modal').html())($scope),			
 			width: formColorBoxResize(),
 			onComplete: function() {
 				//resize to insure content fits
@@ -1879,30 +1879,30 @@ function GrantCtrl($scope, $compile, $filter, grantsSrvc, workspaceSrvc) {
 	    });
 	};
 	
-	$scope.addGrant = function(){
-		if ($scope.addingGrant) return; // don't process if adding grant
-		$scope.addingGrant = true;
-		$scope.editGrant.errors.length = 0;
+	$scope.addFunding = function(){
+		if ($scope.addingFunding) return; // don't process if adding funding
+		$scope.addingFunding = true;
+		$scope.editFunding.errors.length = 0;
 		$.ajax({
-			url: $('body').data('baseurl') + 'grants/grant.json',
+			url: $('body').data('baseurl') + 'fundings/funding.json',
 	        contentType: 'application/json;charset=UTF-8',
 	        dataType: 'json',
 	        type: 'POST',
-	        data:  angular.toJson($scope.editGrant),
+	        data:  angular.toJson($scope.editFunding),
 	        success: function(data) {	        		        	
 	        	if (data.errors.length == 0){
 	        		$.colorbox.close(); 	        		
-	        		grantsSrvc.getGrants('grants/grantIds.json');
+	        		fundingSrvc.getFundings('fundings/fundingIds.json');
 	        	} else {
-		        	$scope.editGrant = data;
-		        	$scope.copyErrorsLeft($scope.editGrant, data);		        	
+		        	$scope.editFunding = data;
+		        	$scope.copyErrorsLeft($scope.editFunding, data);		        	
 	        	}
-	        	$scope.addingGrant = false;
+	        	$scope.addingFunding = false;
 	        	$scope.$apply();
 	        }
 		}).fail(function(){
 			// something bad is happening!
-			$scope.addingGrant = false;
+			$scope.addingFunding = false;
 	    	console.log("error adding affiliations");
 		});
 	};
@@ -1910,11 +1910,11 @@ function GrantCtrl($scope, $compile, $filter, grantsSrvc, workspaceSrvc) {
 	$scope.bindTypeahead = function () {
 		var numOfResults = 100;
 		
-		$("#grantName").typeahead({
-			name: 'grantName',
+		$("#fundingName").typeahead({
+			name: 'fundingName',
 			limit: numOfResults,
 			remote: {
-				url: $('body').data('baseurl')+'grants/disambiguated/name/%QUERY?limit=' + numOfResults
+				url: $('body').data('baseurl')+'fundings/disambiguated/name/%QUERY?limit=' + numOfResults
 			},
 			template: function (datum) {
 				   var forDisplay = 
@@ -1926,90 +1926,89 @@ function GrantCtrl($scope, $compile, $filter, grantsSrvc, workspaceSrvc) {
 				   }
 				   if (datum.orgType != null && datum.orgType.trim() != '')
 				      forDisplay += ", " + datum.orgType;
-				   forDisplay += '</span><hr />';
-				   
+				   forDisplay += '</span><hr />';				   
 				   
 				   return forDisplay;
 			}
 		});
-		$("#grantName").bind("typeahead:selected", function(obj, datum) {        
-			$scope.selectGrant(datum);
+		$("#fundingName").bind("typeahead:selected", function(obj, datum) {        
+			$scope.selectFunding(datum);
 			$scope.$apply();
 		});		
 	};
 	
-	$scope.selectGrant = function(datum) {
+	$scope.selectFunding = function(datum) {
 		console.log(angular.toJson(datum));
 		if (datum != undefined && datum != null) {
-			$scope.editGrant.grantName.value = datum.value;
-			$scope.editGrant.city.value = datum.city;
-			$scope.editGrant.region.value = datum.region;
-			$scope.editGrant.country.value = datum.country;
+			$scope.editFunding.fundingName.value = datum.value;
+			$scope.editFunding.city.value = datum.city;
+			$scope.editFunding.region.value = datum.region;
+			$scope.editFunding.country.value = datum.country;
 			
-			if (datum.disambiguatedAffiliationIdentifier != undefined && datum.disambiguatedAffiliationIdentifier != null) {
-				$scope.getDisambiguatedGrant(datum.disambiguatedAffiliationIdentifier);
+			if (datum.disambiguatedFundingIdentifier != undefined && datum.disambiguatedFundingIdentifier != null) {
+				$scope.getDisambiguatedFunding(datum.disambiguatedFundingIdentifier);
 				$scope.unbindTypeahead();
 			}
 		}
 	};
 	
-	$scope.getDisambiguatedGrant = function(id) {
+	$scope.getDisambiguatedFunding = function(id) {
 		$.ajax({
-			url: $('body').data('baseurl') + 'grants/disambiguated/id/' + id,
+			url: $('body').data('baseurl') + 'fundings/disambiguated/id/' + id,
 	        dataType: 'json',
 	        type: 'GET',
 	        success: function(data) {
 	        	if (data != null) {
 	        		console.log(data.sourceId);
-			        $scope.disambiguatedGrant = data;
-			        $scope.editGrant.disambiguatedGrantSourceId = data.sourceId;
-			        $scope.editGrant.disambiguationSource = data.sourceType;
+			        $scope.disambiguatedFunding = data;
+			        $scope.editFunding.disambiguatedFundingSourceId = data.sourceId;
+			        $scope.editFunding.disambiguationSource = data.sourceType;
 			        $scope.$apply();
 	        	}
 	        }
 		}).fail(function(){
-	    	console.log("error getDisambiguatedGrant(id)");
+	    	console.log("error getDisambiguatedFunding(id)");
 		});
 	};
 	
-	$scope.deleteGrant = function(grant) {
-		$scope.delGrant = grant;
+	$scope.deleteFunding = function(funding) {
+		$scope.delFunding = funding;
 				
 		$.colorbox({        	            
-            html : $compile($('#delete-grant-modal').html())($scope),
+            html : $compile($('#delete-funding-modal').html())($scope),
             onComplete: function() {$.colorbox.resize();}
         });
 	};
 	
-	$scope.confirmDeleteGrant = function(delGrant) {	
-		grantsSrvc.deleteGrant(delGrant);
+	$scope.confirmDeleteFunding = function(delFunding) {	
+		fundingSrvc.deleteFunding(delFunding);
 		$.colorbox.close(); 
 	};
 	
 	//init
-	grantsSrvc.getGrants('grants/grantIds.json');
+	fundingSrvc.getFundings('fundings/fundingIds.json');
 	
 	$scope.closeModal = function() {
 		$.colorbox.close();
 	};
 	
-	// Add privacy for new grants
-	$scope.setAddGrantPrivacy = function(priv, $event) {
+	// Add privacy for new fundings
+	$scope.setAddFundingPrivacy = function(priv, $event) {
 		$event.preventDefault();
-		$scope.editGrant.visibility.visibility = priv;
+		$scope.editFunding.visibility.visibility = priv;
 	};
 	
-	// Update privacy of an existing grant
-	$scope.setPrivacy = function(grant, priv, $event) {
+	// Update privacy of an existing funding
+	$scope.setPrivacy = function(funding, priv, $event) {
 		$event.preventDefault();
-		grant.visibility.visibility = priv;
-		grantsSrvc.updateProfileGrant(grant);
+		funding.visibility.visibility = priv;
+		fundingSrvc.updateProfileFunding(funding);
 	};
 	
-	$scope.removeDisambiguatedGrant = function() {
+	$scope.removeDisambiguatedFunding = function() {
 		$scope.bindTypeahead();
-		if ($scope.disambiguatedGrant != undefined) delete $scope.disambiguatedGrant;
-		if ($scope.editGrant != undefined && $scope.editGrant.disambiguatedGrantSourceId != undefined) delete $scope.editGrant.disambiguatedGrantSourceId;
+		if ($scope.disambiguatedFunding != undefined) delete $scope.disambiguatedFunding;
+		if ($scope.editFunding != undefined && $scope.editFunding.disambiguatedFundingSourceId != undefined) delete $scope.editFunding.disambiguatedFundingSourceId;
 	};
 	
 	$scope.isValidClass = function (cur) {
@@ -2022,20 +2021,20 @@ function GrantCtrl($scope, $compile, $filter, grantsSrvc, workspaceSrvc) {
 	
 	// Server validations
 	$scope.serverValidate = function (relativePath) {
-		console.log(angular.toJson($scope.editGrant));
+		console.log(angular.toJson($scope.editFunding));
 		$.ajax({
 	        url: $('body').data('baseurl') + relativePath,
 	        type: 'POST',
-	        data:  angular.toJson($scope.editGrant),
+	        data:  angular.toJson($scope.editFunding),
 	        contentType: 'application/json;charset=UTF-8',
 	        dataType: 'json',
 	        success: function(data) {
-	        	$scope.copyErrorsLeft($scope.editGrant, data);
+	        	$scope.copyErrorsLeft($scope.editFunding, data);
 	        	$scope.$apply();
 	        }
 	    }).fail(function() { 
 	    	// something bad is happening!
-	    	console.log("GrantsCtrl.serverValidate() error");
+	    	console.log("FundingCtrl.serverValidate() error");
 	    });
 	};
 	
@@ -2053,11 +2052,11 @@ function GrantCtrl($scope, $compile, $filter, grantsSrvc, workspaceSrvc) {
 	};
 	
 	$scope.unbindTypeahead = function () {
-		$('#grantName').typeahead('destroy');
+		$('#fundingName').typeahead('destroy');
 	};
 	
 	$scope.addExternalIdentifier = function () {
-		$scope.editGrant.externalIdentifiers.push({type: {value: ""}, value: {value: ""}, url: {value: ""} });
+		$scope.editFunding.externalIdentifiers.push({type: {value: ""}, value: {value: ""}, url: {value: ""} });
 	};
 	
 	$scope.toggleTranslatedTitleModal = function(){
@@ -2066,21 +2065,21 @@ function GrantCtrl($scope, $compile, $filter, grantsSrvc, workspaceSrvc) {
     	$.colorbox.resize();
 	};
 	
-	$scope.renderTranslatedTitleInfo = function(grant) {		
+	$scope.renderTranslatedTitleInfo = function(funding) {		
 		var info = null; 
-		console.log(angular.toJson(grant));
-		if(grant != null && grant.grantTitle != null && grant.grantTitle.translatedTitle != null) {
-			info = grant.grantTitle.translatedTitle.content + ' - ' + grant.grantTitle.translatedTitle.languageName;										
+		console.log(angular.toJson(funding));
+		if(funding != null && funding.fundingTitle != null && funding.fundingTitle.translatedTitle != null) {
+			info = funding.fundingTitle.translatedTitle.content + ' - ' + funding.fundingTitle.translatedTitle.languageName;										
 		}				
 		return info;
 	};
 }
 
 /**
- * Public Grants Controller 
+ * Public Funding Controller 
  * */
-function PublicGrantsCtrl($scope, $compile, $filter, grantsSrvc){
-	$scope.grantsSrvc = grantsSrvc;
+function PublicFundingCtrl($scope, $compile, $filter, fundingSrvc){
+	$scope.fundingSrvc = fundingSrvc;
 	$scope.moreInfo = {};
 	
 	$scope.toggleClickMoreInfo = function(key) {
@@ -2098,8 +2097,17 @@ function PublicGrantsCtrl($scope, $compile, $filter, grantsSrvc){
 		$scope.moreInfo[key]=false;
 	};
 
-	grantsSrvc.setIdsToAdd(orcidVar.grantIdsJson);
-	grantsSrvc.addGrantToScope(orcidVar.orcidId +'/grants.json');
+	fundingSrvc.setIdsToAdd(orcidVar.fundingIdsJson);
+	fundingSrvc.addFundingToScope(orcidVar.orcidId +'/fundings.json');
+	
+	$scope.renderTranslatedTitleInfo = function(funding) {		
+		var info = null; 
+		console.log(angular.toJson(funding));
+		if(funding != null && funding.fundingTitle != null && funding.fundingTitle.translatedTitle != null) {
+			info = funding.fundingTitle.translatedTitle.content + ' - ' + funding.fundingTitle.translatedTitle.languageName;										
+		}				
+		return info;
+	};
 }
 
 function PublicWorkCtrl($scope, $compile, worksSrvc) {

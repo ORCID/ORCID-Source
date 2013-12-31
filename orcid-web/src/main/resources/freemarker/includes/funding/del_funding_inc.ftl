@@ -16,16 +16,16 @@
     =============================================================================
 
 -->
-<script type="text/ng-template" id="delete-grant-modal">
+<script type="text/ng-template" id="delete-funding-modal">
 	<div class="lightbox-container">
 		<div class="row">
 			<div class="col-md-12 col-xs-12 col-sm-12">
-				<h3><@orcid.msg 'manage.deleteGrant.pleaseConfirm' /></h3>
-				<p>{{delGrant.title.value}}</p>		
-    			<div class="btn btn-danger" ng-click="confirmDeleteGrant(delGrant)">
-    				<@orcid.msg 'manage.deleteGrant.delete' />
+				<h3><@orcid.msg 'manage.deleteFunding.pleaseConfirm' /></h3>
+				<p>{{delFunding.fundingTitle.title.value}}</p>		
+    			<div class="btn btn-danger" ng-click="confirmDeleteFunding(delFunding)">
+    				<@orcid.msg 'manage.deleteFunding.delete' />
     			</div>
-    			<a href="" ng-click="closeModal()"><@orcid.msg 'manage.deleteGrant.cancel' /></a>
+    			<a href="" ng-click="closeModal()"><@orcid.msg 'manage.deleteFunding.cancel' /></a>
 			</div>
 		</div>
     </div>

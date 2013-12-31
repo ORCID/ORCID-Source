@@ -24,9 +24,9 @@
     <div ng-controller="PublicEmpAffiliation">
     	<#include "includes/affiliate/emp_body_inc.ftl" />
 	</div>
-	<h3 class="workspace-header-public">${springMacroRequestContext.getMessage("org.orcid.jaxb.model.message.GrantType.grant")}</h3>
-	<div ng-controller="PublicGrantsCtrl">
-    	<#include "includes/grant/body_grant_inc.ftl" />
+	<h3 class="workspace-header-public">${springMacroRequestContext.getMessage("workspace.Funding")}</h3>
+	<div ng-controller="PublicFundingCtrl">
+    	<#include "includes/funding/body_funding_inc.ftl" />
 	</div>
 		
     <h3 class="workspace-header-public">${springMacroRequestContext.getMessage("workspace.Works")}</h3>

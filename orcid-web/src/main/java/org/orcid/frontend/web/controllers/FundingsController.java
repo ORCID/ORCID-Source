@@ -255,7 +255,7 @@ public class FundingsController extends BaseWorkspaceController {
 	@SuppressWarnings("unchecked")
 	@RequestMapping(value = "/fundings.json", method = RequestMethod.GET)
 	public @ResponseBody
-	List<FundingForm> getGrantJson(HttpServletRequest request,
+	List<FundingForm> getFundingJson(HttpServletRequest request,
 			@RequestParam(value = "fundingIds") String fundingIdsStr) {
 		List<FundingForm> fundingList = new ArrayList<>();
 		FundingForm funding = null;
@@ -285,6 +285,9 @@ public class FundingsController extends BaseWorkspaceController {
 	@RequestMapping(value = "/funding.json", method = RequestMethod.POST)
 	public @ResponseBody
 	FundingForm postGrant(HttpServletRequest request, @RequestBody FundingForm funding) {
+		//Remove empty external identifiers
+		removeEmptyExternalIds(funding);
+		
 		validateName(funding);
 		validateAmount(funding);
 		validateCurrency(funding);
@@ -367,6 +370,20 @@ public class FundingsController extends BaseWorkspaceController {
 		return funding;
 	}
 
+	private void removeEmptyExternalIds(FundingForm funding) {
+		List<FundingExternalIdentifierForm> extIds = funding.getExternalIdentifiers();
+		List<FundingExternalIdentifierForm> updatedExtIds = new ArrayList<FundingExternalIdentifierForm>();
+		//For all external identifiers
+		for(FundingExternalIdentifierForm extId : extIds) {
+			//Keep only the ones that contains a value or url
+			if(!PojoUtil.isEmpty(extId.getValue()) || !PojoUtil.isEmpty(extId.getUrl())) {
+				updatedExtIds.add(extId);
+			}
+		}
+		
+		funding.setExternalIdentifiers(updatedExtIds);
+	}
+	
 	private void setContributorsCreditName(FundingForm funding) {
 		OrcidProfile profile = getEffectiveProfile();
 		String creditName = null;
@@ -435,18 +452,18 @@ public class FundingsController extends BaseWorkspaceController {
 	FundingForm validateAmount(@RequestBody FundingForm funding) {
 		funding.getAmount().setErrors(new ArrayList<String>());
 		if (PojoUtil.isEmpty(funding.getAmount())) {
-			setError(funding.getAmount(), "NotBlank.funding.amount");
+			setError(funding.getAmount(), "NotBlank.fundings.amount");
 		} else {
 			String amount = funding.getAmount().getValue();
 			long lAmount = 0;
 			//TODO Chck this regex
 			String pattern = "[0-9]{1,3}(?:[0-9]*(?:[.,][0-9]{2})?|(?:,[0-9]{3})*(?:\\.[0-9]{2})?|(?:\\.[0-9]{3})*(?:,[0-9]{2})?)";
 			if(!amount.matches(pattern)){
-				setError(funding.getAmount(), "Invalid.funding.amount");
+				setError(funding.getAmount(), "Invalid.fundings.amount");
 			}
 			
 			if (lAmount < 0)
-				setError(funding.getAmount(), "Invalid.funding.amount");
+				setError(funding.getAmount(), "Invalid.fundings.amount");
 		}
 		return funding;
 	}
@@ -456,12 +473,12 @@ public class FundingsController extends BaseWorkspaceController {
 	FundingForm validateCurrency(@RequestBody FundingForm funding) {
 		funding.getCurrencyCode().setErrors(new ArrayList<String>());
 		if (PojoUtil.isEmpty(funding.getCurrencyCode())) {
-			setError(funding.getCurrencyCode(), "NotBlank.funding.currency");
+			setError(funding.getCurrencyCode(), "NotBlank.fundings.currency");
 		} else {
 			try {
 				CurrencyCode.fromValue(funding.getCurrencyCode().getValue());
 			} catch (IllegalArgumentException iae) {
-				setError(funding.getCurrencyCode(), "Invalid.funding.currency");
+				setError(funding.getCurrencyCode(), "Invalid.fundings.currency");
 			}
 		}
 		return funding;
@@ -473,10 +490,10 @@ public class FundingsController extends BaseWorkspaceController {
 		funding.getFundingName().setErrors(new ArrayList<String>());
 		if (funding.getFundingName().getValue() == null
 				|| funding.getFundingName().getValue().trim().length() == 0) {
-			setError(funding.getFundingName(), "NotBlank.funding.name");
+			setError(funding.getFundingName(), "NotBlank.fundings.name");
 		} else {
 			if (funding.getFundingName().getValue().trim().length() > 1000) {
-				setError(funding.getFundingName(), "funding.length_less_1000");
+				setError(funding.getFundingName(), "fundings.length_less_1000");
 			}
 		}
 		return funding;
@@ -487,10 +504,10 @@ public class FundingsController extends BaseWorkspaceController {
 	FundingForm validateTitle(@RequestBody FundingForm funding) {
 		funding.getFundingTitle().getTitle().setErrors(new ArrayList<String>());		
 		if (PojoUtil.isEmpty(funding.getFundingTitle().getTitle())) {
-			setError(funding.getFundingTitle().getTitle(), "NotBlank.funding.title");
+			setError(funding.getFundingTitle().getTitle(), "NotBlank.fundings.title");
 		} else {
 			if (funding.getFundingTitle().getTitle().getValue().length() > 1000)
-				setError(funding.getFundingTitle().getTitle(), "funding.length_less_1000");
+				setError(funding.getFundingTitle().getTitle(), "fundings.length_less_1000");
 		}
 		return funding;
 	}
@@ -513,7 +530,7 @@ public class FundingsController extends BaseWorkspaceController {
                     setError(funding.getFundingTitle().getTranslatedTitle(), "manual_funding_form_contents.empty_code");
                 }
                 if (content.length() > 1000) {
-                    setError(funding.getFundingTitle().getTranslatedTitle(), "funding.length_less_1000");
+                    setError(funding.getFundingTitle().getTranslatedTitle(), "fundings.length_less_1000");
                 }
             } else {
                 if (!StringUtils.isEmpty(code)) {
@@ -531,7 +548,7 @@ public class FundingsController extends BaseWorkspaceController {
 		funding.getDescription().setErrors(new ArrayList<String>());
 		if (!PojoUtil.isEmpty(funding.getDescription())
 				&& funding.getDescription().getValue().length() > 5000)
-			setError(funding.getDescription(), "funding.length_less_5000");
+			setError(funding.getDescription(), "fundings.length_less_5000");
 		return funding;
 	}
 
@@ -541,7 +558,7 @@ public class FundingsController extends BaseWorkspaceController {
 		funding.getUrl().setErrors(new ArrayList<String>());
 		if (!PojoUtil.isEmpty(funding.getUrl())
 				&& funding.getUrl().getValue().length() > 350)
-			setError(funding.getUrl(), "funding.length_less_350");
+			setError(funding.getUrl(), "fundings.length_less_350");
 		return funding;
 	}
 
@@ -554,7 +571,7 @@ public class FundingsController extends BaseWorkspaceController {
 				&& !PojoUtil.isEmpty(funding.getEndDate())) {
 			if (funding.getStartDate().toJavaDate()
 					.after(funding.getEndDate().toJavaDate()))
-				setError(funding.getEndDate(), "funding.endDate.after");
+				setError(funding.getEndDate(), "fundings.endDate.after");
 		}
 		return funding;
 	}
@@ -568,13 +585,13 @@ public class FundingsController extends BaseWorkspaceController {
 					.getExternalIdentifiers()) {
 				if (!PojoUtil.isEmpty(extId.getType())
 						&& extId.getType().getValue().length() > 255)
-					setError(extId.getType(), "funding.lenght_less_255");
+					setError(extId.getType(), "fundings.lenght_less_255");
 				if (!PojoUtil.isEmpty(extId.getUrl())
 						&& extId.getUrl().getValue().length() > 350)
-					setError(extId.getUrl(), "funding.length_less_350");
+					setError(extId.getUrl(), "fundings.length_less_350");
 				if (!PojoUtil.isEmpty(extId.getValue())
 						&& extId.getValue().getValue().length() > 2084)
-					setError(extId.getValue(), "funding.length_less_2084");
+					setError(extId.getValue(), "fundings.length_less_2084");
 			}
 		}
 		return funding;
@@ -585,12 +602,12 @@ public class FundingsController extends BaseWorkspaceController {
 	FundingForm validateType(@RequestBody FundingForm funding) {
 		funding.getFundingType().setErrors(new ArrayList<String>());
 		if (PojoUtil.isEmpty(funding.getFundingType())) {
-			setError(funding.getFundingType(), "NotBlank.funding.type");
+			setError(funding.getFundingType(), "NotBlank.fundings.type");
 		} else {
 			try {
 				FundingType.fromValue(funding.getFundingType().getValue());
 			} catch (IllegalArgumentException iae) {
-				setError(funding.getFundingType(), "Invalid.funding.type");
+				setError(funding.getFundingType(), "Invalid.fundings.type");
 			}
 		}
 		return funding;
@@ -602,10 +619,10 @@ public class FundingsController extends BaseWorkspaceController {
 		funding.getCity().setErrors(new ArrayList<String>());
 		if (funding.getCity().getValue() == null
 				|| funding.getCity().getValue().trim().length() == 0) {
-			setError(funding.getCity(), "NotBlank.funding.city");
+			setError(funding.getCity(), "NotBlank.fundings.city");
 		} else {
 			if (funding.getCity().getValue().trim().length() > 1000) {
-				setError(funding.getCity(), "funding.length_less_1000");
+				setError(funding.getCity(), "fundings.length_less_1000");
 			}
 		}
 		return funding;
@@ -617,7 +634,7 @@ public class FundingsController extends BaseWorkspaceController {
 		funding.getRegion().setErrors(new ArrayList<String>());
 		if (funding.getRegion().getValue() != null
 				&& funding.getRegion().getValue().trim().length() > 1000) {
-			setError(funding.getRegion(), "funding.length_less_1000");
+			setError(funding.getRegion(), "fundings.length_less_1000");
 		}
 		return funding;
 	}
@@ -628,7 +645,7 @@ public class FundingsController extends BaseWorkspaceController {
 		funding.getCountry().setErrors(new ArrayList<String>());
 		if (funding.getCountry().getValue() == null
 				|| funding.getCountry().getValue().trim().length() == 0) {
-			setError(funding.getCountry(), "NotBlank.funding.country");
+			setError(funding.getCountry(), "NotBlank.fundings.country");
 		}
 		return funding;
 	}
@@ -663,7 +680,7 @@ public class FundingsController extends BaseWorkspaceController {
 				orgDisambiguatedDocument.getOrgDisambiguatedRegion());
 		datum.put("country",
 				orgDisambiguatedDocument.getOrgDisambiguatedCountry());
-		datum.put("disambiguatedAffiliationIdentifier",
+		datum.put("disambiguatedFundingIdentifier",
 				Long.toString(orgDisambiguatedDocument.getOrgDisambiguatedId()));
 		return datum;
 	}

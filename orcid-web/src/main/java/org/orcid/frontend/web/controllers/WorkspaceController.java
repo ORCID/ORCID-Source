@@ -114,8 +114,8 @@ public class WorkspaceController extends BaseWorkspaceController {
         return FunctionsOverCollections.sortMapsByValues(affiliationTypes);
     }
     
-    @ModelAttribute("grantTypes")
-    public Map<String, String> retrieveGrantTypesAsMap() {
+    @ModelAttribute("fundingTypes")
+    public Map<String, String> retrieveFundingTypesAsMap() {
         Map<String, String> grantTypes = new LinkedHashMap<String, String>();
         for (FundingType fundingType : FundingType.values()) {
         	grantTypes.put(fundingType.value(), getMessage(buildInternationalizationKey(FundingType.class, fundingType.value())));

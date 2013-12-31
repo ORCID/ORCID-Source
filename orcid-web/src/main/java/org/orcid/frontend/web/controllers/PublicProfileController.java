@@ -36,10 +36,12 @@ import org.orcid.core.manager.ProfileWorkManager;
 import org.orcid.core.manager.WorkManager;
 import org.orcid.frontend.web.util.LanguagesMap;
 import org.orcid.jaxb.model.message.Affiliation;
+import org.orcid.jaxb.model.message.FundingType;
 import org.orcid.jaxb.model.message.OrcidFunding;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidWork;
 import org.orcid.jaxb.model.message.Visibility;
+import org.orcid.persistence.jpa.entities.CountryIsoEntity;
 import org.orcid.persistence.jpa.entities.ProfileWorkEntity;
 import org.orcid.pojo.ajaxForm.AffiliationForm;
 import org.orcid.pojo.ajaxForm.FundingForm;
@@ -145,10 +147,10 @@ public class PublicProfileController extends BaseWorkspaceController {
         try {
             String worksIdsJson = mapper.writeValueAsString(workIds);
             String affiliationIdsJson = mapper.writeValueAsString(affiliationIds);
-            String grantIdsJson = mapper.writeValueAsString(fundingIds);
+            String fundingIdsJson = mapper.writeValueAsString(fundingIds);
             mav.addObject("workIdsJson", StringEscapeUtils.escapeEcmaScript(worksIdsJson));
             mav.addObject("affiliationIdsJson", StringEscapeUtils.escapeEcmaScript(affiliationIdsJson));
-            mav.addObject("grantIdsJson", StringEscapeUtils.escapeEcmaScript(grantIdsJson));            
+            mav.addObject("fundingIdsJson", StringEscapeUtils.escapeEcmaScript(fundingIdsJson));            
         } catch (JsonGenerationException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -181,15 +183,30 @@ public class PublicProfileController extends BaseWorkspaceController {
         return affs;
     }
 
-    @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/grants.json")
+    @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/fundings.json")
     public @ResponseBody
-    List<FundingForm> getFundingsJson(HttpServletRequest request, @PathVariable("orcid") String orcid, @RequestParam(value = "grantIds") String fundingIdsStr) {
-        List<FundingForm> fundings = new ArrayList<FundingForm>();
+    List<FundingForm> getFundingsJson(HttpServletRequest request, @PathVariable("orcid") String orcid, @RequestParam(value = "fundingIds") String fundingIdsStr) {
+    	Map<String, String> languages = LanguagesMap.buildLanguageMap(localeManager.getLocale(), false);
+    	List<FundingForm> fundings = new ArrayList<FundingForm>();
         Map<String, OrcidFunding> fundingMap = (HashMap<String, OrcidFunding>) request.getSession().getAttribute(FUNDINGS_MAP);
         String[] fundingIds = fundingIdsStr.split(",");
         for (String id: fundingIds) {
-            OrcidFunding funding = fundingMap.get(id);                        
-            fundings.add(FundingForm.valueOf(funding));
+            OrcidFunding funding = fundingMap.get(id);              
+            FundingForm form = FundingForm.valueOf(funding);             		
+            //Set type name
+            if (funding.getType() != null) {
+				form.setFundingTypeForDisplay(getMessage(buildInternationalizationKey(
+						FundingType.class, funding.getType().value())));
+			}
+			//Set translated title language name
+	        if(!(funding.getTitle().getTranslatedTitle() == null) && !StringUtils.isEmpty(funding.getTitle().getTranslatedTitle().getLanguageCode())) {
+	            String languageName = languages.get(funding.getTitle().getTranslatedTitle().getLanguageCode());
+	            form.getFundingTitle().getTranslatedTitle().setLanguageName(languageName);
+	        }        		
+	        //Set country name
+			form.setCountryForDisplay(getMessage(buildInternationalizationKey(CountryIsoEntity.class, funding.getOrganization().getAddress().getCountry()
+                    .name())));	
+            fundings.add(form);
         }
         return fundings;
     }
