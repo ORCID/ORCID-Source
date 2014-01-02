@@ -100,9 +100,9 @@
 												angularModel="email.visibility" 
 												questionClick="toggleClickPrivacyHelp(email.value)"
 												clickedClassCheck="{'popover-help-container-show':privacyHelp[email.value]==true}" 
-												publicClick="setPrivacy(affiliation, 'PUBLIC', $event)" 
-			                    				limitedClick="setPrivacy(affiliation, 'LIMITED', $event)" 
-			                    				privateClick="setPrivacy(affiliation, 'PRIVATE', $event)" />			        
+												publicClick="setPrivacy($index, 'PUBLIC', $event)" 
+			                    				limitedClick="setPrivacy($index, 'LIMITED', $event)" 
+			                    				privateClick="setPrivacy($index, 'PRIVATE', $event)" />			        
 											</div>
 										</div>
 									</div>
