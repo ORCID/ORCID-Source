@@ -132,47 +132,44 @@
     };
 
     var menuHack = function() {
-        $("#signout").on("mouseenter", function(e) {
-            $(".header .navigation > .menu").css({"background":"#a6ce39"});        
+        $("#signin").on("mouseenter", function(e) {
+            $(".header .navigation>.menu").css({"background":"#a6ce39"});        
         });
-        $("#signout").on("mouseout", function(e) {
+        $("#signin").on("mouseout", function(e) {
             $(".header .navigation > .menu").css({"background":"#338caf"});
         });
     };
     
-    /* Mobile Menu Handler */
-
-    var mobileMenuHandler = function(){        
+    /* Menu Handler Mobile / Desktop - Prototype implementation */
+    var menuHandler = function(){        
         
-        var display = $('#mobile-menu-icon').css('display');    
-        var originalMenu = $('.header .navigation').html(); //Menu data
-        //var activeTrailMain = null;
+        var menu = function(menu){
+        	this.menu = menu;
+        };
+        
+        menu.prototype.data = function(){
+        	return this.menu;
+        };        
+        
+        originalMenu = new menu($('.header .navigation').html()); //Desktop menu data
          
-        /* Managing window resizing for restore visibility of some elements due to Javascript actions over the styles for Mobie or Tablet views */
-        
-            $(window).bind('resize', function() {
-                if(navigator.appVersion.indexOf("MSIE 7.") == -1){ //Not IE7                	
-                	
-                	var isMac = navigator.platform.toUpperCase().indexOf('MAC')>=0;                	
-                	ww = $(window).width();
-                	
-	                if (ww > 750 && !isMac){ //Tablet ~ PC                
-	                    $(".container .header .search form input[type='search']").blur();
-	                    restoreDesktopUI();
-	                }else if (ww > 752 && isMac){ //Mac OS
-	                	$(".container .header .search form input[type='search']").blur();
-	                    restoreDesktopUI();	                                    
-	                }else{
-	                	if(!$(".container .header .search form input[type='search']").is(":focus") && !$('select#language-codes').is(":focus")){ //This is to prevent hiding search and Language selector elements.
-	                        hideMenuItems();  
-	                    }
-	                }
+    	/* Managing window resizing for restore visibility of some elements due to Javascript actions over the styles for Mobile or Tablet views */
+        $(window).bind('resize', function() {            	
+            if(navigator.appVersion.indexOf("MSIE 7.") == -1){ //Not IE7                	                	
+            	ww = getWindowWidth();        
+                if (ww > 767){ //Tablet ~ PC
+                	$(".container .header .search form input[type='search']").blur();
+                    restoreDesktopMenu();	                                    
+                }else{
+                	if(!$(".container .header .search form input[type='search']").is(":focus") && !$('select#language-codes').is(":focus")){ //This is to prevent hiding search and Language selector elements.
+                        hideMenuItems(); 
+                        restoreMobileMenu(); //Trigger menu adjustment                        
+                    }
                 }
-            });    
-        
-        
+            }
+        });
 
-        var restoreDesktopUI = function(){
+        var restoreDesktopMenu = function(){
                 /* Restoring different elements of the Desktop layout, this is due the menu modification performed to adapt it to mobile devices */                
                 if($('#mobile-menu-icon').css('display') == 'none'){
                 	$('.container .header .search').css('display', 'block');
@@ -185,65 +182,62 @@
 
                     /* Restoring Tablet/Desktop Menu content */
                     $('.header .navigation').html(''); //Deleting DOM content
-                    $('.header .navigation').prepend(originalMenu);
-                    /*$(".container .header .conditions").css('display', 'block');*/
+                    $('.header .navigation').prepend(originalMenu.data());                    
                 }
-        }
-        
-
-        var menuAdjustment = function(){            
-
-            if(display == 'block'){ /* If the Mobile menu is ON */
-                
-
-                var topItems = $('.header .navigation > .menu > li > a');
-                var topItemsLi = $('.header .navigation > .menu > li');
-
-                var links = $('.header .navigation > .menu > li > .menu > li').has('ul').children('a');
-                var toInject = $('.header .navigation > .menu > li > .menu > li > ul.menu');                           
-               
-                //Inject links to the Second Level
-                for( var i = 0; i < topItems.length; ++i){                                
-                    $(topItemsLi[i]).children().not("a").prepend('<li class="first expanded"><a href="'+topItems[i].href+'">'+topItems[i].text+'</li>');                    
-                }
-
-                for (var i = 0; i < links.length; ++i){
-                    $(toInject[i]).prepend('<li class="leaf"><a href="'+links[i].href+'">'+links[i].text+'</li>');                   
-                }
-
-                $('.header > .row > .navigation > .menu > li > a:not(:last-child)').not("ul li ul li a").removeAttr('href');
-
-                //Removing links for elements with three level menus.
-                $('.header .navigation > .menu > li > .menu > li').has('ul').children('a').attr('href', '');
-
-                
-
-                /* First Level Tap´*/
-                $('.header .navigation > .menu > li > a').live('click', function(event){                
-                    //var activeTrailMain = $(this);                    
-                    $('.header .navigation > .menu > li').removeClass('active-trail');
-
-                });
-
-                /* Second Level Tap */
-                $('.header .navigation ul li ul li a').live('click', function(event){
-                    event.preventDefault();
-                    var hasChildren = $(this).parent().has('ul').length;
-                    if(hasChildren){                    
-                        var display = $(this).parent().children('ul').css('display');
-                        if (display == 'none'){                                        
-                            $(this).parent().children('ul').slideDown('slow');                        
-                        }else{
-                            $(this).parent().children('ul').slideUp('slow');
-                        }     
-                    }else{
-                         window.location = this.href;                
-                    }
-                });    
-            }
         };
 
-        menuAdjustment(); //Trigger menu adjustment
+        var prepareMobileMenu = function(){
+            var topItems = $('.header .navigation > .menu > li > a');
+            var topItemsLi = $('.header .navigation > .menu > li');
+
+            var links = $('.header .navigation > .menu > li > .menu > li').has('ul').children('a');
+            var toInject = $('.header .navigation > .menu > li > .menu > li > ul.menu');                           
+           
+            //Inject links to the Second Level
+            for( var i = 0; i < topItems.length; ++i){                                
+                $(topItemsLi[i]).children().not("a").prepend('<li class="first expanded"><a href="'+topItems[i].href+'">'+topItems[i].text+'</li>');                    
+            }
+
+            for (var i = 0; i < links.length; ++i){
+                $(toInject[i]).prepend('<li class="leaf"><a href="'+links[i].href+'">'+links[i].text+'</li>');                   
+            }
+
+            $('.header > .row > .navigation > .menu > li > a:not(:last-child)').not("ul li ul li a").removeAttr('href');
+
+            //Removing links for elements with three level menus.
+            $('.header .navigation > .menu > li > .menu > li').has('ul').children('a').attr('href', '');
+            
+            mobileMenu = new menu($('.header .navigation').html()); //Menu data            
+            restoreDesktopMenu(); //Restoring original menu after changes
+        };        
+        
+        prepareMobileMenu();
+        
+        var restoreMobileMenu = function(){
+        	$('.header .navigation').html(''); //Deleting DOM menu content
+            $('.header .navigation').prepend(mobileMenu.data()); //Restoring mobile menu structure
+        };
+        
+        /* First Level Tap */
+        $('.header .navigation > .menu > li > a').live('click', function(event){
+            $('.header .navigation > .menu > li').removeClass('active-trail');
+        });
+
+        /* Second Level Tap */
+        $('.header .navigation ul li ul li a').live('click', function(event){
+            event.preventDefault();
+            var hasChildren = $(this).parent().has('ul').length;
+            if(hasChildren){                    
+                var display = $(this).parent().children('ul').css('display');
+                if (display == 'none'){                                        
+                    $(this).parent().children('ul').slideDown('slow');                        
+                }else{
+                    $(this).parent().children('ul').slideUp('slow');
+                }     
+            }else{
+                 window.location = this.href;                
+            }
+        });  
 
         /* Menu icon */
         $('#mobile-menu-icon').live('click', function(event){        	
@@ -273,7 +267,7 @@
             	}
                 $(menuObject).css('display','block');
                 $(menuButton).css('background','#939598');
-            }else{
+            }else{            	
             	if($(menuButton).attr('id') == 'mobile-search' || $(menuButton).attr('id') == 'mobile-settings'){
             		$('.container .header #search').css('display', 'none');
             	}
@@ -319,8 +313,26 @@
             } 
         	
         };
-    };    
-
+    };
+	
+	function setLoginStatusIcon(){
+		$.ajax({
+			url: orcidVar.baseUri + '/userStatus.json?callback=?',
+	        type: 'GET',
+	        dataType: 'json',
+	        success: function(data) {        	
+	        	if (data.loggedIn == true){	        		
+	        		$('.header .navigation>.mobile-sign-in span').removeClass('glyphicon-user');
+	        		$('.header .navigation>.mobile-sign-in span').addClass('glyphicon-log-out');        		        		
+	        		$('.mobile-sign-in').prop('href', 'signout');	        		
+	        	}
+	        }
+	    }).fail(function() { 
+	    	// something bad is happening!
+	    	console.log("error with loggin check on :" + window.location.href);
+	    });	
+	}	
+    
     /*============================================================
         Page initialisation
     ============================================================*/
@@ -331,8 +343,9 @@
         //secondaryNavCleanup();
         toolTips();
         popupHandler();
-        menuHack();
-        mobileMenuHandler();      
+        menuHack();        
+        menuHandler();
+        //setLoginStatusIcon();
     };
 
     init();
