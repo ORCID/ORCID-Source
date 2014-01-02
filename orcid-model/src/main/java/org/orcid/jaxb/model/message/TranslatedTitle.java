@@ -51,7 +51,7 @@ import org.apache.commons.lang.StringUtils;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "content" })
+@XmlType( propOrder = { "content" })
 @XmlRootElement(name = "translated-title")
 public class TranslatedTitle implements Serializable {
     /**

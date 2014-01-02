@@ -53,7 +53,7 @@ import java.io.Serializable;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "givenPermissionTo", "givenPermissionBy" })
+@XmlType( propOrder = { "givenPermissionTo", "givenPermissionBy" })
 @XmlRootElement(name = "delegation")
 public class Delegation implements VisibilityType, Serializable {
 

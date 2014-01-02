@@ -55,7 +55,7 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "sendChangeNotifications", "sendOrcidNews", "workVisibilityDefault" })
+@XmlType( propOrder = { "sendChangeNotifications", "sendOrcidNews", "workVisibilityDefault" })
 @XmlRootElement(name = "preferences")
 public class Preferences implements Serializable {
 

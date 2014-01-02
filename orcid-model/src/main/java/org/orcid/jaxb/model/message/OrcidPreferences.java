@@ -55,7 +55,7 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "locale" })
+@XmlType( propOrder = { "locale" })
 @XmlRootElement(name = "orcid-preferences")
 public class OrcidPreferences implements Serializable {
 

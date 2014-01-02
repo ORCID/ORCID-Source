@@ -49,7 +49,7 @@ import java.io.Serializable;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "value" })
+@XmlType( propOrder = { "value" })
 @XmlRootElement(name = "patent-issue-date")
 public class PatentIssueDate implements Serializable {
 

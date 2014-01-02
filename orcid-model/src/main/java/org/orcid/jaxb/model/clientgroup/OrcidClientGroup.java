@@ -67,7 +67,7 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "groupOrcid", "type", "groupName", "email", "orcidClient" })
+@XmlType(propOrder = { "groupOrcid", "type", "groupName", "email", "orcidClient" })
 @XmlRootElement(name = "orcid-client-group")
 public class OrcidClientGroup implements Serializable {
 

@@ -32,7 +32,7 @@ import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.orcid.utils.OrcidStringUtils;
 
 @XmlAccessorType(XmlAccessType.PROPERTY)
-@XmlType(name = "", propOrder = { "value", "uri", "path", "host" })
+@XmlType( propOrder = { "value", "uri", "path", "host" })
 public class OrcidIdBase implements Serializable {
     private static final long serialVersionUID = 1L;
 

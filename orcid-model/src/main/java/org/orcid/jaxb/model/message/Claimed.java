@@ -47,7 +47,7 @@ import java.io.Serializable;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "value" })
+@XmlType( propOrder = { "value" })
 @XmlRootElement(name = "claimed")
 public class Claimed implements Serializable {
 

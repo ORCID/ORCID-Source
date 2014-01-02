@@ -54,7 +54,7 @@ import java.io.Serializable;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "securityDetails", "preferences" })
+@XmlType( propOrder = { "securityDetails", "preferences" })
 @XmlRootElement(name = "orcid-internal")
 public class OrcidInternal implements VisibilityType, Serializable {
 

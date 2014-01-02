@@ -54,7 +54,7 @@ import java.io.Serializable;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "orcid", "orcidIdentifier", "creditName" })
+@XmlType( propOrder = { "orcid", "orcidIdentifier", "creditName" })
 @XmlRootElement(name = "delegate-summary")
 public class DelegateSummary implements Serializable {
 

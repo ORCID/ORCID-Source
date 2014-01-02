@@ -60,7 +60,7 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "creationMethod", "completionDate", "submissionDate", "lastModifiedDate", "claimed", "source", "deactivationDate" })
+@XmlType( propOrder = { "creationMethod", "completionDate", "submissionDate", "lastModifiedDate", "claimed", "source", "deactivationDate" })
 @XmlRootElement(name = "orcid-history")
 public class OrcidHistory implements Serializable {
 

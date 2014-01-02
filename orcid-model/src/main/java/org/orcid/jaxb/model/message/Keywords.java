@@ -53,7 +53,7 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "keyword" })
+@XmlType( propOrder = { "keyword" })
 @XmlRootElement(name = "keywords")
 public class Keywords implements VisibilityType, Serializable {
 

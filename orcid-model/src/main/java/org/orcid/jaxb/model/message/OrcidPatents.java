@@ -54,7 +54,7 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "orcidPatent" })
+@XmlType( propOrder = { "orcidPatent" })
 @XmlRootElement(name = "orcid-patents")
 public class OrcidPatents implements Serializable {
 

@@ -54,7 +54,7 @@ import javax.xml.bind.annotation.XmlValue;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "content" })
+@XmlType( propOrder = { "content" })
 @XmlRootElement(name = "affiliation-city")
 public class AffiliationCity implements Serializable {
 

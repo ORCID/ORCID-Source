@@ -69,7 +69,7 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "putCode", "workTitle", "journalTitle", "shortDescription", "workCitation", "workType", "publicationDate", "workExternalIdentifiers",
+@XmlType(propOrder = { "putCode", "workTitle", "journalTitle", "shortDescription", "workCitation", "workType", "publicationDate", "workExternalIdentifiers",
         "url", "workContributors", "workSource", "languageCode", "country" })
 @XmlRootElement(name = "orcid-work")
 public class OrcidWork implements VisibilityType, Serializable {

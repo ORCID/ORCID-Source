@@ -41,7 +41,7 @@ import java.io.Serializable;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "content" })
+@XmlType( propOrder = { "content" })
 public class ErrorDesc implements Serializable {
 
     /**

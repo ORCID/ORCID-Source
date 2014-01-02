@@ -59,7 +59,7 @@ import java.util.Map;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "orcidWork" })
+@XmlType( propOrder = { "orcidWork" })
 @XmlRootElement(name = "orcid-works")
 public class OrcidWorks implements Serializable {
 

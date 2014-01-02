@@ -48,7 +48,7 @@ import javax.xml.bind.annotation.XmlType;
  * @author Angel Montenegro
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "orcid", "orcidId", "orcidIdentifier" })
+@XmlType( propOrder = { "orcid", "orcidId", "orcidIdentifier" })
 @XmlRootElement(name = "primary-record")
 public class PrimaryRecord implements Serializable {
     /**

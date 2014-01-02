@@ -52,7 +52,7 @@ import javax.xml.bind.annotation.XmlValue;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "content" })
+@XmlType( propOrder = { "content" })
 @XmlRootElement(name = "affiliation-region")
 public class AffiliationRegion implements Serializable {
 

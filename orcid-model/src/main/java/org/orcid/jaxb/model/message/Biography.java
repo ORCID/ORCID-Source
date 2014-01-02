@@ -49,7 +49,7 @@ import java.io.Serializable;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "content" })
+@XmlType( propOrder = { "content" })
 @XmlRootElement(name = "biography")
 public class Biography implements VisibilityType, Serializable {
 

@@ -51,7 +51,7 @@ import java.io.Serializable;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "grantExternalProgram", "grantExternalId" })
+@XmlType( propOrder = { "grantExternalProgram", "grantExternalId" })
 @XmlRootElement(name = "grant-external-identifier")
 public class GrantExternalIdentifier implements Serializable {
 
