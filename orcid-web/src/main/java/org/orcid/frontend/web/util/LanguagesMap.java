@@ -39,7 +39,7 @@ public class LanguagesMap {
 
     private static final Locale[] orcidLocales = getLanguages();
 
-    /* get all ISO languages, remove zh and in zh_tw and zh_cn */ 
+    /* get all ISO languages, remove zh and add in zh_TW and zh_CN */ 
     static private Locale[] getLanguages() {
         String[] codes = Locale.getISOLanguages();
         Locale[] orcidCodes = new Locale[codes.length+1];
