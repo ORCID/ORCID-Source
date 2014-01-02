@@ -12,6 +12,14 @@
 
 #### XSD Release Candidate(s)
 
+* **[ORCID Message 1.2_rc2](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/orcid-message-1.2_rc2.xsd)** <br>_Contains: updates to creation-method field_
+    * API Base URLs - PRODUCTION
+        * Public API:   http://pub.orcid.org/v1.2_rc2/
+        * Member API:   https://api.orcid.org/v1.2_rc2/
+    * API Base URLs - SANDBOX
+        * Public API:   http://pub.sandbox-1.orcid.org/v1.2_rc2/
+        * Member API:   http://api.sandbox-1.orcid.org/v1.2_rc2/
+
 * **[ORCID Message 1.2_rc1](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/orcid-message-1.2_rc1.xsd)** <br>_Contains: XSD for Organizational Affiliations_
     * API Base URLs - PRODUCTION
         * Public API:   http://pub.orcid.org/v1.2_rc1/
@@ -97,6 +105,7 @@ Release candidate versions of the XSD contain elements and data structures for f
 | [ORCID XSD 1.0.x](https://github.com/ORCID/ORCID-Source/tree/master/orcid-model/src/main/resources) | various | Mar 1, 2014 | [DEPRECATED VERSIONS](#deprecatedVersion) <br><br> Currently versions 1.0.1 - 1.0.23 | _All users should immediately begin their migrations to version 1.1._ <br><br>These versions have a sunset date of March 1, 2014, and won't be supported after this date. |
 | [ORCID XSD 1.1](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/orcid-message-1.1.xsd) | Nov 25, 2013 | | **[RELEASE VERSION](#releaseVersion)**<br><br>CURRENT SUPPORTED VERSION | ALL API users should migrate to this version to ensure future API compatibility. |
 | [XSD 1.2_rc1](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/orcid-message-1.2_rc1.xsd) | | | [RELEASE CANDIDATE](#releaseCandidate): Affiliations | This unsupported release candidate provides elements needed for API calls involving Education or Employment Affiliations. |
+| [XSD 1.2_rc2](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/orcid-message-1.2_rc2.xsd) | | | [RELEASE CANDIDATE](#releaseCandidate): Creation-Method | This unsupported release candidate updates the options for the creation-method field. |
 | | | | _other release candidates are likely prior to version ORCID XSD 1.2_ | |
 | ORCID XSD 1.2 | TBD - target: Mar 2014 | | Expected to include support for:<br>* Affiliations<br>* Funding<br>* Account Delegation | First fully-supported XSD for this new functionality |
 
