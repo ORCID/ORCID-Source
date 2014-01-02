@@ -37,8 +37,26 @@ public class LanguagesMap {
      * */
     private static Map<String, Map<String, String>> i18nLanguagesMap = new TreeMap<String, Map<String, String>>();
 
-    private static final Locale[] locales = Locale.getAvailableLocales();
+    private static final Locale[] orcidLocales = getLanguages();
 
+    /* get all ISO languages, remove zh and in zh_tw and zh_cn */ 
+    static private Locale[] getLanguages() {
+        String[] codes = Locale.getISOLanguages();
+        Locale[] orcidCodes = new Locale[codes.length+1];
+        boolean postCh = false;
+        for (int i = 0; i< codes.length; i++) {
+            if (codes[i].equals("zh")) {
+                orcidCodes[i] =  Locale.SIMPLIFIED_CHINESE;
+                orcidCodes[i+1] =  Locale.TRADITIONAL_CHINESE;
+                postCh = true;
+            } else {
+                if (postCh) orcidCodes[i+1] = new Locale(codes[i]);
+                else orcidCodes[i] = new Locale(codes[i]);
+            }
+        }
+        return orcidCodes;
+    }
+    
     /**
      * Return a map that contains the list of available languages
      * 
@@ -51,11 +69,11 @@ public class LanguagesMap {
         if (locale == null)
             locale = Locale.US;
 
-        if (i18nLanguagesMap.containsKey(buildLocaleKey(locale)))
-            return i18nLanguagesMap.get(buildLocaleKey(locale));
+        if (i18nLanguagesMap.containsKey(locale.toString()))
+            return i18nLanguagesMap.get(locale.toString());
         else {
             Map<String, String> newLanguageMap = LanguagesMap.buildLanguageMap(locale);
-            i18nLanguagesMap.put(buildLocaleKey(locale), newLanguageMap);
+            i18nLanguagesMap.put(locale.toString(), newLanguageMap);
             return newLanguageMap;
         }
     }
@@ -82,12 +100,12 @@ public class LanguagesMap {
     public static Map<String, String> buildLanguageMap(Locale userLocale, boolean sorted) {
         Map<String, String> languagesMap = new TreeMap<String, String>();
 
-        for (Locale locale : locales) {
+        for (Locale locale: orcidLocales) {
             if(sorted)
                 // It is ordered backwards to keep it sorted by language and country
-                languagesMap.put(buildLanguageValue(locale, userLocale), buildLanguageKey(locale));
+                languagesMap.put(buildLanguageValue(locale, userLocale), locale.toString());
             else 
-                languagesMap.put(buildLanguageKey(locale), buildLanguageValue(locale, userLocale));
+                languagesMap.put(locale.toString(), buildLanguageValue(locale, userLocale));
         }
 
         return languagesMap;
@@ -115,37 +133,5 @@ public class LanguagesMap {
             return language + ' ' + displayVariant;
         else
             return language + ' ' + displayVariant + " (" + locale.getDisplayCountry(userLocale) + ')';
-    }
-
-    /**
-     * Builds a language key for the given locale
-     * 
-     * @param locale
-     * @return a language key
-     * */
-    public static String buildLanguageKey(Locale locale) {
-        String variant = locale.getVariant();
-        if (StringUtils.isEmpty(variant))
-            if (StringUtils.isEmpty(locale.getCountry()))
-                return locale.getLanguage();
-            else
-                return locale.getLanguage() + '_' + locale.getCountry();
-        else if (StringUtils.isEmpty(locale.getCountry()))
-            return locale.getLanguage() + '_' + variant;
-        else
-            return locale.getLanguage() + '_' + locale.getCountry() + '_' + variant;
-    }
-
-    /**
-     * Builds a locale key
-     * 
-     * @param locale
-     * @return a locale key
-     * */
-    private static String buildLocaleKey(Locale locale) {
-        if (StringUtils.isEmpty(locale.getVariant()))
-            return locale.getLanguage() + '-' + locale.getCountry();
-        else
-            return locale.getLanguage() + '-' + locale.getCountry() + '-' + locale.getVariant();
     }
 }
