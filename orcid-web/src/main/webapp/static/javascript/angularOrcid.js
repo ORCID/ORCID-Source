@@ -676,9 +676,9 @@ function EmailEditCtrl($scope, $compile) {
 		else $scope.curPrivToggle = null;
 	};
 	
-	$scope.setPrivacy = function(idx, priv, $event) {
+	$scope.setPrivacy = function(email, priv, $event) {
 		$event.preventDefault();
-		$scope.emailsPojo.emails[idx].visibility = priv;
+		email.visibility = priv;
 		$scope.curPrivToggle = null;
 		$scope.saveEmail();
 	};
