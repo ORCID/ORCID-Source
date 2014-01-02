@@ -1,42 +1,30 @@
 # How To Create a New API Version
 
-## Set up validation manager beans
-
-Look for the existing validation managers in orcid-core-context.xml. For example, outgoingValidationManagerV1_0_15.
-
-There are two validation managers for each API version. One for validating incoming messsages, and one for validating outgoing messages.
-
-Create the new bean definitions for your new API version.
-
-Also, there is a pair of bean aliases for the latest API version (served on the root URL), called incomingValidationManagerLatest and outgoingValidationManagerLatest.
-
-You may want to point these aliases to your new version.
-
 ## The public API
 
-Look for existing service and delegator beans in orcid-t1-web-context.xml. For example, t1OrcidApiServiceImplV1_0_15 and t1OrcidApiServiceDelegatorV1_0_15.
+Look for a recent service bean in orcid-t1-web-context.xml. For example, t1OrcidApiServiceImplV1_2_rc1.
 
-Create new bean definitions for your new API version, similar to existing ones.
+Create a new bean definition for your new API version, similar to the existing one. Set the external version property of the bean to your new version number.
 
-If you want your new API version to be served on the root URL, then update t1OrcidApiServiceImplRoot to point to your service delegator.
+If you want your new API version to be served on the root URL, then update the external version property of t1OrcidApiServiceImplRoot to your version number.
 
-Also, there is a bean alias for the latest service delegator (used internally) called t1OrcidApiServiceDelegatorLatest. You should to point the alias to your new version.
+Create a new class for your new API version. See existing classes, such as T1OrcidApiServiceImplV1_2_rc1.
 
-Create a new class for your new API version. See existing classes, such as T1OrcidApiServiceImplV1_0_15.
+There is no longer any need to configure a service delegator and validation manager. It is done automcatically by the base service class.
 
 You now have a new version of the public API configured!
 
 ## The member API
 
-Look for existing service and delegator beans in orcid-t2-web-context.xml. For example, t2OrcidApiServiceImplV1_0_15 and t2OrcidApiServiceDelegatorV1_0_15.
+Look for a recent service bean in orcid-t2-web-context.xml. For example, t2OrcidApiServiceImplV1_2_rc1.
 
-Create new bean definitions for your new API version, similar to existing ones.
+Create a new bean definition for your new API version, similar to the existing one. Set the external version property of the bean to your new version number.
 
-If you want your new API version to be served on the root URL, then update t2OrcidApiServiceImplRoot to point to your service delegator.
+If you want your new API version to be served on the root URL, then update the external version property of t2OrcidApiServiceImplRoot to your version number.
 
-There is also a bean definition for the latest service delegator (used internally) called t2OrcidApiServiceDelegatorLatest. You should update the externalVersion property to be your new API version number.
+There is no longer any need to configure a service delegator and validation managers. It is done automcatically by the base service class.
 
-Create a new class for your API version. See existing classes such as T2OrcidApiServiceImplV1_0_15.
+Create a new class for your API version. See existing classes such as T2OrcidApiServiceImplV1_2_rc1.
 
 You now have a new version of the member API configured!
 

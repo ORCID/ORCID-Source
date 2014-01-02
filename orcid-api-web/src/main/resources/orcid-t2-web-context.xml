@@ -34,7 +34,7 @@
         <property name="serviceDelegator" ref="t2OrcidApiServiceDelegatorV1_0_23"/>
     </bean>
     
-    <bean id="t2OrcidApiServiceDelegatorLatest" class="org.orcid.api.t2.server.delegator.impl.T2OrcidApiServiceDelegatorImpl"/>
+    <bean id="t2OrcidApiServiceDelegatorLatest" class="org.orcid.api.t2.server.delegator.impl.T2OrcidApiServiceVersionedDelegatorImpl"/>
     
     <bean id="t2OrcidApiServiceDelegatorPrototype" class="org.orcid.api.t2.server.delegator.impl.T2OrcidApiServiceVersionedDelegatorImpl" scope="prototype"/>
     
