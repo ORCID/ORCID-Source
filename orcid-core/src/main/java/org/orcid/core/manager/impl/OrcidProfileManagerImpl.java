@@ -295,11 +295,11 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
             profileDao.removeChildrenWithGeneratedIds(existingProfileEntity);
             setWorkPrivacy(orcidProfile, existingProfileEntity.getWorkVisibilityDefault());
             setAffiliationPrivacy(orcidProfile, existingProfileEntity.getWorkVisibilityDefault());
-            setGrantPrivacy(orcidProfile, existingProfileEntity.getWorkVisibilityDefault());
+            setFundingPrivacy(orcidProfile, existingProfileEntity.getWorkVisibilityDefault());
         }
         dedupeProfileWorks(orcidProfile);
         dedupeAffiliations(orcidProfile);
-        dedupeGrants(orcidProfile);
+        dedupeFundings(orcidProfile);
         addSourceToEmails(orcidProfile, existingProfileEntity, amenderOrcid);
         addSourceToAffiliations(orcidProfile, amenderOrcid);
         addSourceToWorks(orcidProfile, amenderOrcid);
@@ -1304,7 +1304,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         }
     }
     
-    private void setGrantPrivacy(OrcidProfile updatedOrcidProfile, Visibility defaultGrantVisibility) {
+    private void setFundingPrivacy(OrcidProfile updatedOrcidProfile, Visibility defaultGrantVisibility) {
         OrcidHistory orcidHistory = updatedOrcidProfile.getOrcidHistory();
         boolean isClaimed = orcidHistory != null ? orcidHistory.getClaimed().isValue() : false;
         OrcidActivities incomingActivities = updatedOrcidProfile.getOrcidActivities();
@@ -1412,7 +1412,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         removeFromCache(orcid);
     }
     
-    private void dedupeGrants(OrcidProfile orcidProfile) {
+    private void dedupeFundings(OrcidProfile orcidProfile) {
         OrcidActivities orcidActivities = orcidProfile.getOrcidActivities();
         if (orcidActivities != null) {
             OrcidFundingList fungins = orcidActivities.getOrcidFundings();
