@@ -219,23 +219,12 @@
                     </work-contributors>
                 </orcid-work>
             </orcid-works>
-            <orcid-grants>
-				<orcid-grant visibility="public">					
-					<title>Grant # 1</title>
-					<description>1</description>
-					<url>http://grant1.com</url>
-					<grant-type>award</grant-type>
-					<currency-code>USD</currency-code>
-					<amount>2500</amount>										
-					<start-date>
-						<year>2012</year>
-						<month>04</month>
-					</start-date>
-					<end-date>
-						<year>2014</year>
-						<month>01</month>
-						<day>01</day>
-					</end-date>
+            <orcid-funding-list>
+				<orcid-funding visibility="public">					
+					<funding-type>award</funding-type>
+					<funding-title>
+						<title>Grant # 1</title>
+					</funding-title>
 					<organization>
 						<name>New College</name>
 						<address>
@@ -244,22 +233,34 @@
 							<country>US</country>
 						</address>
 					</organization>
-					<grant-external-identifiers>
-						<grant-external-identifier>
-							<grant-external-identifier-type>type1</grant-external-identifier-type>
-							<grant-external-identifier-value>value1</grant-external-identifier-value>
-							<grant-external-identifier-url>url1</grant-external-identifier-url>
-						</grant-external-identifier>
-						<grant-external-identifier>
-							<grant-external-identifier-type>type2</grant-external-identifier-type>
-							<grant-external-identifier-url>url2</grant-external-identifier-url>
-						</grant-external-identifier>
-						<grant-external-identifier>
-							<grant-external-identifier-type>type3</grant-external-identifier-type>
-							<grant-external-identifier-value>value3</grant-external-identifier-value>
-						</grant-external-identifier>
-					</grant-external-identifiers>
-					<grant-contributors>
+					<short-description>1</short-description>													
+					<amount currency-code="USD">2500</amount>
+					<url>http://grant1.com</url>										
+					<start-date>
+						<year>2012</year>
+						<month>04</month>
+					</start-date>
+					<end-date>
+						<year>2014</year>
+						<month>01</month>
+						<day>01</day>
+					</end-date>					
+					<funding-external-identifiers>
+						<funding-external-identifier>
+							<funding-external-identifier-type>grant_number</funding-external-identifier-type>
+							<funding-external-identifier-value>value1</funding-external-identifier-value>
+							<funding-external-identifier-url>url1</funding-external-identifier-url>
+						</funding-external-identifier>
+						<funding-external-identifier>
+							<funding-external-identifier-type>grant_number</funding-external-identifier-type>
+							<funding-external-identifier-url>url2</funding-external-identifier-url>
+						</funding-external-identifier>
+						<funding-external-identifier>
+							<funding-external-identifier-type>grant_number</funding-external-identifier-type>
+							<funding-external-identifier-value>value3</funding-external-identifier-value>
+						</funding-external-identifier>
+					</funding-external-identifiers>
+					<funding-contributors>
 						<contributor>
 							<contributor-orcid>
 								<uri>http://orcid.org/2111-1111-1111-1113</uri>
@@ -284,7 +285,7 @@
 								<contributor-role>graduate-student</contributor-role>
 							</contributor-attributes>
 						</contributor>
-					</grant-contributors>
+					</funding-contributors>
 					<source>
 						<source-orcid>
 							<uri>http://orcid.org/2111-1111-1111-1114</uri>
@@ -294,8 +295,8 @@
 						<source-name>Sponsor 1</source-name>
 						<source-date>2012-11-21T08:56:33</source-date>
 					</source>
-				</orcid-grant>
-			</orcid-grants>
+				</orcid-funding>
+			</orcid-funding-list>
         </orcid-activities>
         <orcid-internal>
             <security-details>

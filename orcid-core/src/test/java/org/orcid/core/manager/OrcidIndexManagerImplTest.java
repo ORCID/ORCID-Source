@@ -444,9 +444,10 @@ public class OrcidIndexManagerImplTest extends BaseTest {
 
         OrcidActivities orcidActivities = new OrcidActivities();
         orcidProfile.setOrcidActivities(orcidActivities);
-        Affiliations affiliations = new Affiliations();
-        OrcidFundingList fundings = new OrcidFundingList(); 
+        Affiliations affiliations = new Affiliations();        
         orcidActivities.setAffiliations(affiliations);
+        
+        OrcidFundingList fundings = new OrcidFundingList(); 
         orcidActivities.setOrcidFundings(fundings);
 
         OrcidWorks orcidWorks = new OrcidWorks();
@@ -573,7 +574,7 @@ public class OrcidIndexManagerImplTest extends BaseTest {
         orcidSolrDocument.setExternalIdOrcidsAndReferences(Arrays.asList(new String[] { "45678=defghi", "54321=abc123" }));
         // orcidSolrDocument.setPastInstitutionNames(Arrays.asList(new String[]
         // { "Past Inst 1", "Past Inst 2" }));
-        orcidSolrDocument.setWorkTitles(Arrays.asList(new String[] { "Work title 1", "Work title 2" }));        
+        orcidSolrDocument.setWorkTitles(Arrays.asList(new String[] { "Work title 1", "Work title 2" }));      
         orcidSolrDocument.setKeywords(Arrays.asList(new String[] { "Pavement Studies", "Advanced Tea Making" }));
         OrcidProfile orcidProfile = getStandardOrcid();
         OrcidMessage orcidMessage = createFilteredOrcidMessage(orcidProfile);

@@ -284,8 +284,7 @@ public class OrcidIndexManagerImpl implements OrcidIndexManager {
 					.retrieveOrcidFundings() != null ? filteredProfile
 					.retrieveOrcidFundings().getOrcidFunding() : null;
 			if (orcidFundings != null) {
-				List<String> fundingTitle = new ArrayList<String>();
-				List<String> fundingTranslatedTitle = new ArrayList<String>();
+				List<String> fundingTitle = new ArrayList<String>();				
 				for (OrcidFunding orcidFunding : orcidFundings) {
 					FundingTitle title = orcidFunding.getTitle();					
 					if (title != null) {
@@ -294,14 +293,13 @@ public class OrcidIndexManagerImpl implements OrcidIndexManager {
 						}
 						
 						if(title.getTranslatedTitle() != null && StringUtils.isBlank(title.getTranslatedTitle().getContent())) {
-							fundingTranslatedTitle.add(title.getTranslatedTitle().getContent());
+							fundingTitle.add(title.getTranslatedTitle().getContent());
 						}
 					}
 					
 				}
 
 				profileIndexDocument.setFundingTitles(fundingTitle);
-				profileIndexDocument.setFundingTitles(fundingTranslatedTitle);
 			}
 
 			List<OrcidPatent> orcidPatents = filteredProfile

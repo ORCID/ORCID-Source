@@ -108,7 +108,7 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
 	public static final String GRANT_URL = "http://myurl.com";
 	public static final String ORG_NAME = "My Org";
 	public static final String ORG_CITY = "My City";
-	public static final String EXT_ID_TYPE = "ext id type";
+	public static final String EXT_ID_TYPE = "grant_number";
 	public static final String EXT_ID_URL = "http://ext.id.url";
 	public static final String EXT_ID_VALUE = "ext id value";
 	public static final String CONTRIBUTOR_CREDIT_NAME = "My Credit Name";	
