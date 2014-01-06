@@ -748,7 +748,7 @@ select {
 	margin-bottom: 0;
 	height: 60px;
 	background: #338caf;
-	font-family: 'Gill Sans W01 Bold', 'Helvetica Bold', 'Gill Sans', sans-serif, 'Tahoma', 'Verdana';	   
+	font-family: 'Gill Sans W01 Bold', 'Helvetica', 'Gill Sans', sans-serif, 'Tahoma', 'Verdana';	   
 }
 
 .header .navigation>.menu>li {
