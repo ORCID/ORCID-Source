@@ -4,6 +4,9 @@ We release updates to the Registry regularly. Below is a list of the improvement
 * [2013 Releases](https://trello.com/b/ZgYVAlel)
 * [2012 Releases](https://trello.com/b/vyCDYdvR)
 
+Also see XSD Version information:<br />
+https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/README.md
+
 ## 1.1.39.11
 (2013-10-10)
 * 1.2_rc1 - Affiliation's API
