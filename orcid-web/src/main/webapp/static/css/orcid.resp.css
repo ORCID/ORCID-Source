@@ -217,7 +217,7 @@ body {
 }
 
 h1,h2,h3,h4,h5,h6 {
-	font-family: 'Gill Sans W01 Medium', 'Helvetica', 'Gill Sans', sans-serif, 'Tahoma', 'Verdana';
+	font-family: 'Gill Sans W01 Bold', 'Helvetica', 'Gill Sans', sans-serif, 'Tahoma', 'Verdana';
 	color: #a6ce39;
 	font-weight: bold;
 }
@@ -980,7 +980,7 @@ select {
 */
 h1,h2,h3,h4,h5,h6,b,strong,.table th,.close,.nav-header,.label,.badge,.header .search form input[type="search"],.header .main>.menu>li>a,.btn-update,.btn-update:visited,.overview-count,.overview-count:visited,.overview-title,.workspace-accordion-header a,.workspace-accordion-header a:visited,.workspace-accordion-header a:hover,.workspace-header-public,.workspace-help a,.full-name,.tabs a,.tabs a:visited
 	{	
-	font-family: 'Gill Sans W01 Medium', 'Helvetica', 'Gill Sans', sans-serif;
+	font-family: 'Gill Sans W01 Bold', 'Helvetica', 'Gill Sans', sans-serif;
 	font-weight: bold;	
 }
 
