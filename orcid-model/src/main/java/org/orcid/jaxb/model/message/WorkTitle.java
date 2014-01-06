@@ -52,7 +52,7 @@ import java.io.Serializable;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "title", "subtitle", "translatedTitle" })
+@XmlType( propOrder = { "title", "subtitle", "translatedTitle" })
 @XmlRootElement(name = "work-title")
 public class WorkTitle implements Serializable {
 

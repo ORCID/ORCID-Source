@@ -52,7 +52,7 @@ import java.io.Serializable;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "orcid", "externalIdOrcid", "externalIdCommonName", "externalIdReference", "externalIdUrl" })
+@XmlType( propOrder = { "orcid", "externalIdOrcid", "externalIdCommonName", "externalIdReference", "externalIdUrl" })
 @XmlRootElement(name = "external-identifier")
 public class ExternalIdentifier implements Serializable {
 

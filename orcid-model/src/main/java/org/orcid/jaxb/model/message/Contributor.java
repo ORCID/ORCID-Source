@@ -53,7 +53,7 @@ import java.io.Serializable;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "contributorOrcid", "creditName", "contributorEmail", "contributorAttributes" })
+@XmlType( propOrder = { "contributorOrcid", "creditName", "contributorEmail", "contributorAttributes" })
 @XmlRootElement(name = "contributor")
 public class Contributor implements Serializable {
 

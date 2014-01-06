@@ -24,15 +24,17 @@ import javax.ws.rs.core.Response;
 
 import org.orcid.api.common.delegator.OrcidApiServiceDelegator;
 import org.orcid.core.manager.ValidationManager;
+import org.orcid.core.manager.impl.ValidationManagerImpl;
 import org.orcid.core.version.OrcidMessageVersionConverterChain;
 import org.orcid.jaxb.model.message.OrcidMessage;
+import org.springframework.beans.factory.InitializingBean;
 
 /**
  * 
  * @author Will Simpson
  * 
  */
-public class OrcidApiServiceVersionedDelegatorImpl implements OrcidApiServiceDelegator {
+public class OrcidApiServiceVersionedDelegatorImpl implements OrcidApiServiceDelegator, InitializingBean {
 
     @Resource(name = "orcidApiServiceDelegator")
     private OrcidApiServiceDelegator orcidApiServiceDelegator;
@@ -42,7 +44,7 @@ public class OrcidApiServiceVersionedDelegatorImpl implements OrcidApiServiceDel
 
     private ValidationManager outgoingValidationManager;
 
-    private String externalVersion;
+    private String externalVersion = OrcidMessage.DEFAULT_VERSION;
 
     public void setExternalVersion(String externalVersion) {
         this.externalVersion = externalVersion;
@@ -50,6 +52,20 @@ public class OrcidApiServiceVersionedDelegatorImpl implements OrcidApiServiceDel
 
     public void setOutgoingValidationManager(ValidationManager outgoingValidationManager) {
         this.outgoingValidationManager = outgoingValidationManager;
+    }
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        autoConfigureValidators();
+    }
+
+    public void autoConfigureValidators() {
+        if (outgoingValidationManager == null) {
+            ValidationManagerImpl outgoingValidationManagerImpl = new ValidationManagerImpl();
+            outgoingValidationManagerImpl.setVersion(externalVersion);
+            outgoingValidationManagerImpl.setValidateBibtex(false);
+            setOutgoingValidationManager(outgoingValidationManagerImpl);
+        }
     }
 
     @Override

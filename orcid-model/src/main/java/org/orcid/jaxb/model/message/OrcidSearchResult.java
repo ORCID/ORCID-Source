@@ -51,7 +51,7 @@ import java.io.Serializable;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "relevancyScore", "orcidProfile" })
+@XmlType( propOrder = { "relevancyScore", "orcidProfile" })
 @XmlRootElement(name = "orcid-search-result")
 public class OrcidSearchResult implements Serializable {
 

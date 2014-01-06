@@ -44,7 +44,7 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "redirectUri" })
+@XmlType(propOrder = { "redirectUri" })
 @XmlRootElement(name = "redirect-uris")
 public class RedirectUris {
 

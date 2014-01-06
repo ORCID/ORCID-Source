@@ -811,9 +811,9 @@ function EmailEditCtrl($scope, $compile) {
 		else $scope.curPrivToggle = null;
 	};
 	
-	$scope.setPrivacy = function(idx, priv, $event) {
+	$scope.setPrivacy = function(email, priv, $event) {
 		$event.preventDefault();
-		$scope.emailsPojo.emails[idx].visibility = priv;
+		email.visibility = priv;
 		$scope.curPrivToggle = null;
 		$scope.saveEmail();
 	};
@@ -1857,7 +1857,6 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc) {
 				$scope.$apply(function() {
 					$scope.editFunding = data;
 					$scope.showAddModal();
-					console.log(angular.toJson($scope.editFunding));
 				});
 			}
 		}).fail(function() { 
@@ -1894,7 +1893,10 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc) {
 	        		fundingSrvc.getFundings('fundings/fundingIds.json');
 	        	} else {
 		        	$scope.editFunding = data;
-		        	$scope.copyErrorsLeft($scope.editFunding, data);		        	
+		        	if($scope.editFunding.externalIdentifiers.length == 0) {
+		        		$scope.addExternalIdentifier();
+		        	}
+		        	$scope.copyErrorsLeft($scope.editFunding, data);
 	        	}
 	        	$scope.addingFunding = false;
 	        	$scope.$apply();

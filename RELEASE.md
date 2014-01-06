@@ -4,6 +4,24 @@ We release updates to the Registry regularly. Below is a list of the improvement
 * [2013 Releases](https://trello.com/b/ZgYVAlel)
 * [2012 Releases](https://trello.com/b/vyCDYdvR)
 
+
+## release-1.1.40.6
+(2013-12-19)
+* rc2 added granularity to creation method
+
+* Lot of UI changes including using full popup width.
+
+* Added Korean / hidden beta https://qa.orcid.org/register?lang=ko
+
+* Remove institutions from advance search
+
+* Make privacy help and works more info ipad friendly(ish)
+
+* Prevent chars not allowed in xml1.0 from being outputted
+
+* Fix issue with education and employment deduping each other 
+
+
 ## 1.1.39.11
 (2013-10-10)
 * 1.2_rc1 - Affiliation's API

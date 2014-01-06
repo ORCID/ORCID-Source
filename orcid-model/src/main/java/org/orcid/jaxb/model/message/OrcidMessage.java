@@ -68,7 +68,7 @@ import javax.xml.transform.Source;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "messageVersion", "orcidProfile", "orcidSearchResults", "errorDesc" })
+@XmlType( propOrder = { "messageVersion", "orcidProfile", "orcidSearchResults", "errorDesc" })
 @XmlRootElement(name = "orcid-message")
 public class OrcidMessage implements Serializable {
 

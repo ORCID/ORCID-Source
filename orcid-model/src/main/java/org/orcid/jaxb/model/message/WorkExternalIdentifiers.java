@@ -57,7 +57,7 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "workExternalIdentifier" })
+@XmlType( propOrder = { "workExternalIdentifier" })
 @XmlRootElement(name = "work-external-identifiers")
 public class WorkExternalIdentifiers implements Serializable {
 

@@ -55,7 +55,7 @@ import java.io.Serializable;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "sourceOrcid", "sourceName", "sourceDate" })
+@XmlType( propOrder = { "sourceOrcid", "sourceName", "sourceDate" })
 @XmlRootElement(name = "source")
 public class Source implements Serializable {
 

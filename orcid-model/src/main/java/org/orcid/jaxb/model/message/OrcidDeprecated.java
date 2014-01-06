@@ -26,7 +26,7 @@ import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "date", "primaryRecord"})
+@XmlType( propOrder = { "date", "primaryRecord"})
 @XmlRootElement(name = "deprecated")
 public class OrcidDeprecated implements Serializable {
 	/**

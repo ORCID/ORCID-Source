@@ -54,7 +54,7 @@ import java.io.Serializable;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "givenNames", "familyName", "creditName", "otherNames" })
+@XmlType( propOrder = { "givenNames", "familyName", "creditName", "otherNames" })
 @XmlRootElement(name = "personal-details")
 public class PersonalDetails implements Serializable {
 

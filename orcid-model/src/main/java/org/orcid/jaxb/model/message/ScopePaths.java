@@ -52,7 +52,7 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "scopePath" })
+@XmlType( propOrder = { "scopePath" })
 @XmlRootElement(name = "scope-paths")
 public class ScopePaths implements Serializable {
 

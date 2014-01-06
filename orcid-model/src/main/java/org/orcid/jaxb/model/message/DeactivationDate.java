@@ -53,7 +53,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "value" })
+@XmlType( propOrder = { "value" })
 @XmlRootElement(name = "deactivation-date")
 public class DeactivationDate implements Serializable {
 

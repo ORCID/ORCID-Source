@@ -48,7 +48,7 @@ import org.orcid.jaxb.model.message.ScopePathType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "value" })
+@XmlType(propOrder = { "value" })
 @XmlRootElement(name = "redirect-uri")
 public class RedirectUri implements Serializable {
 

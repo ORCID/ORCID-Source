@@ -61,7 +61,7 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "country", "patentNumber", "shortDescription", "patentIssueDate", "assignee", "patentContributors", "patentSources" })
+@XmlType( propOrder = { "country", "patentNumber", "shortDescription", "patentIssueDate", "assignee", "patentContributors", "patentSources" })
 @XmlRootElement(name = "orcid-patent")
 public class OrcidPatent implements VisibilityType, Serializable {
 

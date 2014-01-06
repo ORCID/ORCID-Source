@@ -50,7 +50,7 @@ import java.io.Serializable;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "content" })
+@XmlType( propOrder = { "content" })
 @XmlRootElement(name = "short-description")
 public class ShortDescription implements Serializable {
 

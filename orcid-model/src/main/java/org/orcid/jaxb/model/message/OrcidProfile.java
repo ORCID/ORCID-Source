@@ -61,7 +61,7 @@ import org.orcid.jaxb.model.clientgroup.GroupType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "orcid", "orcidId", "orcidIdentifier", "orcidDeprecated", "orcidPreferences", "orcidHistory", "orcidBio", "orcidActivities",
+@XmlType( propOrder = { "orcid", "orcidId", "orcidIdentifier", "orcidDeprecated", "orcidPreferences", "orcidHistory", "orcidBio", "orcidActivities",
         "orcidInternal" })
 @XmlRootElement(name = "orcid-profile")
 public class OrcidProfile implements Serializable {
