@@ -101,18 +101,24 @@ public class FundingExternalIdentifierEntity extends BaseEntity<Long> implements
 	       }
 		 
 		 if(type != null) {
+			 if(other.getType() == null)
+				 return 1;
 			 if(!type.equals(other.getType())) {
 				 return type.compareTo(other.getType());
 			 }
 		 }
 		 
 		 if(value != null) {
+			 if(other.getValue() == null)
+				 return 1;
 			 if(!value.equals(other.getValue())){
 				 return value.compareTo(other.getValue());
 			 }
 		 }
 		 
 		 if(url != null) {
+			 if(other.getUrl() == null)
+				 return 1;
 			 if(!url.equals(other.getUrl())) {
 				 return url.compareTo(other.getValue());
 			 }

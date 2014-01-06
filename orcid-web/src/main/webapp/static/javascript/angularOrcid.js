@@ -283,7 +283,6 @@ orcidNgModule.factory("fundingSrvc", ['$rootScope', function ($rootScope) {
 	    	    });
 	    	},
 	    	deleteFunding: function(funding) {	
-	    		console.log(angular.toJson(funding));
 	    		$.ajax({
 	    	        url: $('body').data('baseurl') + 'fundings/funding.json',
 	    	        type: 'DELETE',
