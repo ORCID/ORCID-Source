@@ -349,6 +349,42 @@
 			</tbody>
 		</table>
 		</#if>
+		
+		<#if RequestParameters['delegates']??>
+		<h3>
+			<b>${springMacroRequestContext.getMessage("settings.tdtrustindividual")}</b>
+		</h3>
+		<p>
+			${springMacroRequestContext.getMessage("settings.tdallowpermission")}<br />
+			<a href="http://support.orcid.org/knowledgebase/articles/131598"
+				target=_blank"">${springMacroRequestContext.getMessage("manage.findoutmore")}</a>
+		</p>
+		<#if (profile.orcidBio.delegation.givenPermissionTo)??>
+		<table ng-controller="revokeDelegateCtrl"
+			class="table table-bordered settings-table normal-width">
+			<thead>
+				<tr>
+					<th width="35%">${springMacroRequestContext.getMessage("manage.thproxy")}</th>
+					<th width="5%">${springMacroRequestContext.getMessage("manage.thapprovaldate")}</th>
+					<td width="5%"></td>
+				</tr>
+			</thead>
+			<tbody>
+			    <#list profile.orcidBio.delegation.givenPermissionTo.delegationDetails as
+				delegationDetails>
+				<tr>
+					<td width="35%"><a href="${delegationDetails.delegateSummary.orcidIdentifier.uri}">${delegationDetails.delegateSummary.creditName.content}</a></td>
+					<td width="35%">${delegationDetails.approvalDate.value.toGregorianCalendar().time?date}</td>
+					<td width="5%"><a
+						ng-click="confirmRevoke('${delegationDetails.delegateSummary.creditName.content?js_string}', '${delegationDetails_index}')"
+						class="glyphicon glyphicon-trash grey"
+						title="${springMacroRequestContext.getMessage("manage.revokeaccess")}"></a></td>
+				</tr>
+				</#list>
+			</tbody>
+		</table>
+		</#if>
+		</#if>
 	</div>
 </div>
 
