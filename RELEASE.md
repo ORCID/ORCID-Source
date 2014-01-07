@@ -5,6 +5,14 @@ We release updates to the Registry regularly. Below is a list of the improvement
 * [2012 Releases](https://trello.com/b/vyCDYdvR)
 
 
+##  release-1.1.42.1
+(2014-01-07)
+* Place work duplicate check after adding source information
+
+* Make external id source behavior consistent with other source ids 
+
+
+
 ## release-1.1.41.12
 (2014-01-06)
 * Change language list in add work modal to include all ISO_639-1_codes
