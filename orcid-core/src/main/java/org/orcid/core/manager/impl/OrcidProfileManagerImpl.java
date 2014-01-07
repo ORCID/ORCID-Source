@@ -282,12 +282,12 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
             setWorkPrivacy(orcidProfile, existingProfileEntity.getWorkVisibilityDefault());
             setAffiliationPrivacy(orcidProfile, existingProfileEntity.getWorkVisibilityDefault());
         }
-        dedupeProfileWorks(orcidProfile);
-        dedupeAffiliations(orcidProfile);
         addSourceToEmails(orcidProfile, existingProfileEntity, amenderOrcid);
         addSourceToAffiliations(orcidProfile, amenderOrcid);
         addSourceToWorks(orcidProfile, amenderOrcid);
         addSourceToAffiliations(orcidProfile, amenderOrcid);
+        dedupeProfileWorks(orcidProfile);
+        dedupeAffiliations(orcidProfile);
         ProfileEntity profileEntity = adapter.toProfileEntity(orcidProfile, existingProfileEntity);
         profileEntity.setLastModified(new Date());
         profileEntity.setIndexingStatus(IndexingStatus.PENDING);
@@ -910,9 +910,9 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         Visibility workVisibilityDefault = existingProfile.getOrcidInternal().getPreferences().getWorkVisibilityDefault().getValue();
         Boolean claimed = existingProfile.getOrcidHistory().isClaimed();
         setWorkPrivacy(updatedOrcidWorks, workVisibilityDefault, claimed == null ? false : claimed);
-        updatedOrcidWorks = dedupeWorks(updatedOrcidWorks);
         String amenderOrcid = sourceManager.retrieveSourceOrcid();
         addSourceToWorks(updatedOrcidWorks, amenderOrcid);
+        updatedOrcidWorks = dedupeWorks(updatedOrcidWorks);
         List<OrcidWork> updatedOrcidWorksList = updatedOrcidWorks.getOrcidWork();
         checkForAlreadyExistingWorks(existingOrcidWorks, updatedOrcidWorksList);
         persistAddedWorks(orcid, updatedOrcidWorksList);
