@@ -17,7 +17,7 @@
 package org.orcid.api.t2.server.delegator.impl;
 
 import static org.orcid.api.common.OrcidApiConstants.AFFILIATIONS_PATH;
-import static org.orcid.api.common.OrcidApiConstants.GRANTS_PATH;
+import static org.orcid.api.common.OrcidApiConstants.FUNDING_PATH;
 import static org.orcid.api.common.OrcidApiConstants.PROFILE_GET_PATH;
 import static org.orcid.api.common.OrcidApiConstants.STATUS_OK_MESSAGE;
 import static org.orcid.api.common.OrcidApiConstants.WORKS_PATH;
@@ -573,12 +573,12 @@ public class T2OrcidApiServiceDelegatorImpl extends OrcidApiServiceDelegatorImpl
     }
     
     @Override
-    @AccessControl(requiredScope = ScopePathType.ORCID_GRANTS_CREATE)
+    @AccessControl(requiredScope = ScopePathType.ORCID_FUNDING_CREATE)
     public Response addGrants(UriInfo uriInfo, String orcid, OrcidMessage orcidMessage) {
         OrcidProfile orcidProfile = orcidMessage.getOrcidProfile();
         try {
             orcidProfileManager.addGrants(orcidProfile);
-            return getCreatedResponse(uriInfo, GRANTS_PATH, orcidProfile);
+            return getCreatedResponse(uriInfo, FUNDING_PATH, orcidProfile);
         } catch (DataAccessException e) {
             throw new OrcidBadRequestException("Cannot update ORCID");
         } catch (PersistenceException pe) {
@@ -587,7 +587,7 @@ public class T2OrcidApiServiceDelegatorImpl extends OrcidApiServiceDelegatorImpl
     }
 
     @Override
-    @AccessControl(requiredScope = ScopePathType.ORCID_GRANTS_UPDATE)
+    @AccessControl(requiredScope = ScopePathType.ORCID_FUNDING_UPDATE)
     public Response updateGrants(UriInfo uriInfo, String orcid, OrcidMessage orcidMessage) {
         OrcidProfile orcidProfile = orcidMessage.getOrcidProfile();
         try {

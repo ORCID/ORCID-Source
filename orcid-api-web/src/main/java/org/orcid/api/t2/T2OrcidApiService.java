@@ -232,7 +232,7 @@ public interface T2OrcidApiService<T> extends OrcidApiService<T> {
     @POST
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
     @Consumes(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, MediaType.WILDCARD })
-    @Path(GRANTS_PATH)
+    @Path(FUNDING_PATH)
     T addGrantsXml(@PathParam("orcid") String orcid, OrcidMessage orcidMessage);
 
     /**
@@ -247,7 +247,7 @@ public interface T2OrcidApiService<T> extends OrcidApiService<T> {
     @POST
     @Produces(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Consumes(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
-    @Path(GRANTS_PATH)
+    @Path(FUNDING_PATH)
     T addGrantsJson(@PathParam("orcid") String orcid, OrcidMessage orcidMessage);
 
     /**
@@ -262,7 +262,7 @@ public interface T2OrcidApiService<T> extends OrcidApiService<T> {
     @PUT
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
     @Consumes(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, MediaType.WILDCARD })
-    @Path(GRANTS_PATH)
+    @Path(FUNDING_PATH)
     T updateGrantsXml(@PathParam("orcid") String orcid, OrcidMessage orcidMessage);
 
     /**
@@ -277,7 +277,7 @@ public interface T2OrcidApiService<T> extends OrcidApiService<T> {
     @PUT
     @Produces(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Consumes(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
-    @Path(GRANTS_PATH)
+    @Path(FUNDING_PATH)
     T updateGrantsJson(@PathParam("orcid") String orcid, OrcidMessage orcidMessage);
     
     /**

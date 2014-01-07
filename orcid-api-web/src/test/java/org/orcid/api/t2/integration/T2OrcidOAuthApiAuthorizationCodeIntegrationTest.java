@@ -360,7 +360,7 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
 
     @Test
     public void testAddGrant() throws InterruptedException, JSONException {
-        String scopes = "/orcid-grants/create";
+        String scopes = "/orcid-funding/create";
         String authorizationCode = obtainAuthorizationCode(scopes);
         String accessToken = obtainAccessToken(authorizationCode, scopes);
 

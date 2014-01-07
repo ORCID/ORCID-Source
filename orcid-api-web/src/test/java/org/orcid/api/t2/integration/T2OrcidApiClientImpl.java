@@ -211,7 +211,7 @@ public class T2OrcidApiClientImpl implements T2OrcidApiService<ClientResponse> {
      */
     @Override
     public ClientResponse addGrantsXml(@PathParam("orcid") String orcid, OrcidMessage orcidMessage) {
-        return postClientResponse(UriBuilder.fromPath(GRANTS_PATH).build(orcid), VND_ORCID_XML, orcidMessage);
+        return postClientResponse(UriBuilder.fromPath(FUNDING_PATH).build(orcid), VND_ORCID_XML, orcidMessage);
     }
 
     /**
@@ -225,7 +225,7 @@ public class T2OrcidApiClientImpl implements T2OrcidApiService<ClientResponse> {
      */
     @Override
     public ClientResponse addGrantsJson(@PathParam("orcid") String orcid, OrcidMessage orcidMessage) {
-        return postClientResponse(UriBuilder.fromPath(GRANTS_PATH).build(orcid), VND_ORCID_JSON, orcidMessage);
+        return postClientResponse(UriBuilder.fromPath(FUNDING_PATH).build(orcid), VND_ORCID_JSON, orcidMessage);
     }
 
     /**
@@ -239,7 +239,7 @@ public class T2OrcidApiClientImpl implements T2OrcidApiService<ClientResponse> {
      */
     @Override
     public ClientResponse updateGrantsXml(@PathParam("orcid") String orcid, OrcidMessage orcidMessage) {
-        return putClientResponse(UriBuilder.fromPath(GRANTS_PATH).build(orcid), VND_ORCID_XML, orcidMessage);
+        return putClientResponse(UriBuilder.fromPath(FUNDING_PATH).build(orcid), VND_ORCID_XML, orcidMessage);
     }
 
     /**
@@ -253,7 +253,7 @@ public class T2OrcidApiClientImpl implements T2OrcidApiService<ClientResponse> {
      */
     @Override
     public ClientResponse updateGrantsJson(@PathParam("orcid") String orcid, OrcidMessage orcidMessage) {
-        return putClientResponse(UriBuilder.fromPath(GRANTS_PATH).build(orcid), VND_ORCID_JSON, orcidMessage);
+        return putClientResponse(UriBuilder.fromPath(FUNDING_PATH).build(orcid), VND_ORCID_JSON, orcidMessage);
     }
     
     /**
@@ -512,7 +512,7 @@ public class T2OrcidApiClientImpl implements T2OrcidApiService<ClientResponse> {
      */
     @Override
     public ClientResponse viewGrantsDetailsHtml(@PathParam("orcid") String orcid) {
-        return orcidClientHelper.getClientResponse(UriBuilder.fromPath(GRANTS_PATH).build(orcid), MediaType.TEXT_HTML);
+        return orcidClientHelper.getClientResponse(UriBuilder.fromPath(FUNDING_PATH).build(orcid), MediaType.TEXT_HTML);
     }
 
     /**
@@ -525,7 +525,7 @@ public class T2OrcidApiClientImpl implements T2OrcidApiService<ClientResponse> {
      */
     @Override
     public ClientResponse viewGrantsDetailsXml(@PathParam("orcid") String orcid) {
-        return orcidClientHelper.getClientResponse(UriBuilder.fromPath(GRANTS_PATH).build(orcid), VND_ORCID_XML);
+        return orcidClientHelper.getClientResponse(UriBuilder.fromPath(FUNDING_PATH).build(orcid), VND_ORCID_XML);
     }
 
     /**
@@ -538,7 +538,7 @@ public class T2OrcidApiClientImpl implements T2OrcidApiService<ClientResponse> {
      */
     @Override
     public ClientResponse viewGrantsDetailsJson(@PathParam("orcid") String orcid) {
-        return orcidClientHelper.getClientResponse(UriBuilder.fromPath(GRANTS_PATH).build(orcid), VND_ORCID_JSON);
+        return orcidClientHelper.getClientResponse(UriBuilder.fromPath(FUNDING_PATH).build(orcid), VND_ORCID_JSON);
     }
     
     /**

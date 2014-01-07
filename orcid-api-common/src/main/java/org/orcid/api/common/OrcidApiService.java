@@ -226,7 +226,7 @@ public interface OrcidApiService<T> {
      */
     @GET
     @Produces(value = { MediaType.TEXT_HTML })
-    @Path(GRANTS_PATH)
+    @Path(FUNDING_PATH)
     T viewGrantsDetailsHtml(@PathParam("orcid") String orcid);
 
     /**
@@ -239,7 +239,7 @@ public interface OrcidApiService<T> {
      */
     @GET
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
-    @Path(GRANTS_PATH)
+    @Path(FUNDING_PATH)
     T viewGrantsDetailsXml(@PathParam("orcid") String orcid);
 
     /**
@@ -252,7 +252,7 @@ public interface OrcidApiService<T> {
      */
     @GET
     @Produces(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
-    @Path(GRANTS_PATH)
+    @Path(FUNDING_PATH)
     T viewGrantsDetailsJson(@PathParam("orcid") String orcid);
 
     /**

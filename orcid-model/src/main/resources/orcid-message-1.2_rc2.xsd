@@ -1826,15 +1826,15 @@
 			<xs:enumeration value="/orcid-bio/read-limited" />
 			<xs:enumeration value="/orcid-profile/read-limited" />
 			<xs:enumeration value="/orcid-works/read-limited" />
-			<xs:enumeration value="/orcid-grants/read-limited" />
+			<xs:enumeration value="/orcid-funding/read-limited" />
 			<xs:enumeration value="/orcid-patents/read-limited" />
 			<xs:enumeration value="/orcid-works/update" />
-			<xs:enumeration value="/orcid-grants/update" />
+			<xs:enumeration value="/orcid-funding/update" />
 			<xs:enumeration value="/orcid-patents/update" />
 			<xs:enumeration value="/orcid-bio/external-identifiers/create" />
 			<xs:enumeration value="/orcid-bio/update" />
 			<xs:enumeration value="/orcid-works/create" />
-			<xs:enumeration value="/orcid-grants/create" />
+			<xs:enumeration value="/orcid-funding/create" />
 			<xs:enumeration value="/orcid-patents/create" />
 			<xs:enumeration value="/orcid-profile/create" />
 		</xs:restriction>

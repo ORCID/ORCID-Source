@@ -31,7 +31,7 @@ import static org.orcid.api.common.OrcidApiConstants.TEXT_TURTLE;
 import static org.orcid.api.common.OrcidApiConstants.VND_ORCID_JSON;
 import static org.orcid.api.common.OrcidApiConstants.VND_ORCID_XML;
 import static org.orcid.api.common.OrcidApiConstants.WORKS_PATH;
-import static org.orcid.api.common.OrcidApiConstants.GRANTS_PATH;
+import static org.orcid.api.common.OrcidApiConstants.FUNDING_PATH;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -428,7 +428,7 @@ abstract public class T1OrcidApiServiceImplBase implements OrcidApiService<Respo
     @Override
     @GET
     @Produces(value = { MediaType.TEXT_HTML })
-    @Path(GRANTS_PATH)
+    @Path(FUNDING_PATH)
     public Response viewGrantsDetailsHtml(@PathParam("orcid") String orcid) {
         T1_GET_REQUESTS.inc();
         Response response = orcidApiServiceDelegator.findGrantsDetailsFromPublicCache(orcid);
@@ -445,7 +445,7 @@ abstract public class T1OrcidApiServiceImplBase implements OrcidApiService<Respo
      */
     @GET
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
-    @Path(GRANTS_PATH)
+    @Path(FUNDING_PATH)
     public Response viewGrantsDetailsXml(@PathParam("orcid") String orcid) {
         T1_GET_REQUESTS.inc();
         return orcidApiServiceDelegator.findGrantsDetailsFromPublicCache(orcid);
@@ -462,7 +462,7 @@ abstract public class T1OrcidApiServiceImplBase implements OrcidApiService<Respo
     @Override
     @GET
     @Produces(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
-    @Path(GRANTS_PATH)
+    @Path(FUNDING_PATH)
     public Response viewGrantsDetailsJson(@PathParam("orcid") String orcid) {
         T1_GET_REQUESTS.inc();
         return orcidApiServiceDelegator.findGrantsDetailsFromPublicCache(orcid);

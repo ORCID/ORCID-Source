@@ -110,12 +110,18 @@
         <addAutoIncrement tableName="funding_external_identifier" columnName="funding_external_identifier_id" columnDataType="bigint"/>
     </changeSet>
     
-    <changeSet id="ADD-FUNDING-SCOPES-TO-EXISTING-CLIENTS" author="Angel Montenegro">
-        <sql>INSERT INTO client_scope SELECT client_details_id, '/orcid-grants/update', now(), now() FROM client_scope WHERE scope_type = '/orcid-works/update' AND client_details_id NOT IN (SELECT client_details_id FROM client_scope WHERE scope_type = '/orcid-grants/update')</sql>
-        <sql>INSERT INTO client_scope SELECT client_details_id, '/orcid-grants/create', now(), now() FROM client_scope WHERE scope_type = '/orcid-works/create' AND client_details_id NOT IN (SELECT client_details_id FROM client_scope WHERE scope_type = '/orcid-grants/create')</sql>
+    <changeSet id="ADD-FUNDING-UPDATE-SCOPE-TO-EXISTING-CLIENTS" author="Angel Montenegro">
+    	<sql>UPDATE client_scope SET scope_type = '/orcid-funding/update' WHERE scope_type = '/orcid-grants/update'</sql>
+    	<sql>INSERT INTO client_scope SELECT client_details_id, '/orcid-funding/update', now(), now() FROM client_scope WHERE scope_type = '/orcid-works/update' AND client_details_id NOT IN (SELECT client_details_id FROM client_scope WHERE scope_type = '/orcid-funding/update')</sql>
+    </changeSet>
+    
+    <changeSet id="ADD-FUNDING-CREATE-SCOPE-TO-EXISTING-CLIENTS" author="Angel Montenegro">    	    	       
+        <sql>UPDATE client_scope SET scope_type = '/orcid-funding/create' WHERE scope_type = '/orcid-grants/create'</sql>
+        <sql>INSERT INTO client_scope SELECT client_details_id, '/orcid-funding/create', now(), now() FROM client_scope WHERE scope_type = '/orcid-works/create' AND client_details_id NOT IN (SELECT client_details_id FROM client_scope WHERE scope_type = '/orcid-funding/create')</sql>
     </changeSet>
 
     <changeSet id="ADD-FUNDING-READ-LIMITED-SCOPE-TO-EXISTING-CLIENTS" author="Angel Montenegro">
-        <sql>INSERT INTO client_scope SELECT client_details_id, '/orcid-grants/read-limited', now(), now() FROM client_scope WHERE scope_type = '/orcid-works/read-limited' AND client_details_id NOT IN (SELECT client_details_id FROM client_scope WHERE scope_type = '/orcid-grants/read-limited')</sql>
+    	<sql>UPDATE client_scope SET scope_type = '/orcid-funding/read-limited' WHERE scope_type = '/orcid-grants/read-limited'</sql>
+        <sql>INSERT INTO client_scope SELECT client_details_id, '/orcid-funding/read-limited', now(), now() FROM client_scope WHERE scope_type = '/orcid-works/read-limited' AND client_details_id NOT IN (SELECT client_details_id FROM client_scope WHERE scope_type = '/orcid-funding/read-limited')</sql>
     </changeSet>
 </databaseChangeLog>                   

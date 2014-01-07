@@ -26,7 +26,7 @@ import static org.orcid.api.common.OrcidApiConstants.VND_ORCID_JSON;
 import static org.orcid.api.common.OrcidApiConstants.VND_ORCID_XML;
 import static org.orcid.api.common.OrcidApiConstants.WEBHOOKS_PATH;
 import static org.orcid.api.common.OrcidApiConstants.WORKS_PATH;
-import static org.orcid.api.common.OrcidApiConstants.GRANTS_PATH;
+import static org.orcid.api.common.OrcidApiConstants.FUNDING_PATH;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
@@ -234,7 +234,7 @@ public interface T2OAuthAPIService<T> extends OAuthOrcidApiService<T> {
     @POST
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
     @Consumes(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, MediaType.WILDCARD })
-    @Path(GRANTS_PATH)
+    @Path(FUNDING_PATH)
     T addGrantsXml(@PathParam("orcid") String orcid, OrcidMessage orcidMessage, String token);
 
     /**
@@ -249,7 +249,7 @@ public interface T2OAuthAPIService<T> extends OAuthOrcidApiService<T> {
     @POST
     @Produces(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Consumes(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
-    @Path(GRANTS_PATH)
+    @Path(FUNDING_PATH)
     T addGrantsJson(@PathParam("orcid") String orcid, OrcidMessage orcidMessage, String token);
 
     /**
@@ -264,7 +264,7 @@ public interface T2OAuthAPIService<T> extends OAuthOrcidApiService<T> {
     @PUT
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
     @Consumes(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, MediaType.WILDCARD })
-    @Path(GRANTS_PATH)
+    @Path(FUNDING_PATH)
     T updateGrantsXml(@PathParam("orcid") String orcid, OrcidMessage orcidMessage, String token);
 
     /**
@@ -279,7 +279,7 @@ public interface T2OAuthAPIService<T> extends OAuthOrcidApiService<T> {
     @PUT
     @Produces(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Consumes(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
-    @Path(GRANTS_PATH)
+    @Path(FUNDING_PATH)
     T updateGrantsJson(@PathParam("orcid") String orcid, OrcidMessage orcidMessage, String token);
 
     
