@@ -43,7 +43,7 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element ref="{http://www.orcid.org/ns/orcid}orcid-funding" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element ref="{http://www.orcid.org/ns/orcid}funding" maxOccurs="unbounded" minOccurs="0"/>
  *       &lt;/sequence>
  *       &lt;attGroup ref="{http://www.orcid.org/ns/orcid}scope"/>
  *     &lt;/restriction>
@@ -56,7 +56,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "orcidFunding" })
 @XmlRootElement(name = "orcid-funding-list")
-public class OrcidFundingList implements Serializable {
+public class FundingList implements Serializable {
 
     /**
      * 
@@ -129,11 +129,11 @@ public class OrcidFundingList implements Serializable {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof OrcidFundingList)) {
+        if (!(o instanceof FundingList)) {
             return false;
         }
 
-        OrcidFundingList that = (OrcidFundingList) o;
+        FundingList that = (FundingList) o;
 
         if (orcidFunding != null ? !orcidFunding.equals(that.orcidFunding) : that.orcidFunding != null) {
             return false;

@@ -44,7 +44,7 @@ import org.orcid.jaxb.model.message.FundingTitle;
 import org.orcid.jaxb.model.message.OrcidActivities;
 import org.orcid.jaxb.model.message.OrcidBio;
 import org.orcid.jaxb.model.message.OrcidFunding;
-import org.orcid.jaxb.model.message.OrcidFundingList;
+import org.orcid.jaxb.model.message.FundingList;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidPatent;
 import org.orcid.jaxb.model.message.OrcidPatents;
@@ -152,7 +152,7 @@ public class OrcidSearchManagerImplTest extends BaseTest {
         assertEquals("Patent 2 - a short description", retrievedPatent2.getShortDescription());
         assertNull(retrievedPatent2.getPutCode());
 
-        List<OrcidFunding> orcidGrants = retrievedProfile.retrieveOrcidFundings().getOrcidFunding();
+        List<OrcidFunding> orcidGrants = retrievedProfile.retrieveFundings().getOrcidFunding();
         OrcidFunding retrievedGrant1 = orcidGrants.get(0);
         OrcidFunding retrievedGrant2 = orcidGrants.get(1);
 
@@ -352,8 +352,8 @@ public class OrcidSearchManagerImplTest extends BaseTest {
         orcidProfile.setOrcidPatents(orcidPatents);
         orcidProfile.setOrcidWorks(orcidWorks);
 
-        OrcidFundingList orcidFundings = new OrcidFundingList();
-        orcidProfile.setOrcidFundings(orcidFundings);
+        FundingList orcidFundings = new FundingList();
+        orcidProfile.setFundings(orcidFundings);
         OrcidFunding orcidGrant1 = new OrcidFunding();
         orcidGrant1.setVisibility(Visibility.PUBLIC);
         FundingTitle title = new FundingTitle();

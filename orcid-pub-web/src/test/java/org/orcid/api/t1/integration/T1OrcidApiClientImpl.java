@@ -234,7 +234,7 @@ public class T1OrcidApiClientImpl implements OrcidApiService<ClientResponse> {
      * @return the HTML representation of the ORCID record
      */
     @Override
-    public ClientResponse viewGrantsDetailsHtml(@PathParam("orcid") String orcid) {
+    public ClientResponse viewFundingDetailsHtml(@PathParam("orcid") String orcid) {
         return orcidClientHelper.getClientResponse(UriBuilder.fromPath(FUNDING_PATH).build(orcid), MediaType.TEXT_HTML);
     }
 
@@ -247,7 +247,7 @@ public class T1OrcidApiClientImpl implements OrcidApiService<ClientResponse> {
      * @return the XML representation of the ORCID record
      */
     @Override
-    public ClientResponse viewGrantsDetailsXml(@PathParam("orcid") String orcid) {
+    public ClientResponse viewFundingDetailsXml(@PathParam("orcid") String orcid) {
         return orcidClientHelper.getClientResponse(UriBuilder.fromPath(FUNDING_PATH).build(orcid), VND_ORCID_XML);
     }
 
@@ -260,7 +260,7 @@ public class T1OrcidApiClientImpl implements OrcidApiService<ClientResponse> {
      * @return the JSON representation of the ORCID record
      */
     @Override
-    public ClientResponse viewGrantsDetailsJson(@PathParam("orcid") String orcid) {
+    public ClientResponse viewFundingDetailsJson(@PathParam("orcid") String orcid) {
         return orcidClientHelper.getClientResponse(UriBuilder.fromPath(FUNDING_PATH).build(orcid), VND_ORCID_JSON);
     }
     

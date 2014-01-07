@@ -63,7 +63,7 @@ import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.jaxb.model.message.OrcidActivities;
 import org.orcid.jaxb.model.message.OrcidFunding;
 import org.orcid.jaxb.model.message.FundingExternalIdentifiers;
-import org.orcid.jaxb.model.message.OrcidFundingList;
+import org.orcid.jaxb.model.message.FundingList;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidWork;
@@ -371,7 +371,7 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
         OrcidActivities orcidActivities = new OrcidActivities();
         orcidProfile.setOrcidActivities(orcidActivities);
         
-        OrcidFundingList fundings = new OrcidFundingList();
+        FundingList fundings = new FundingList();
         OrcidFunding funding = new OrcidFunding();
         FundingTitle title = new FundingTitle();
         title.setTitle(new Title(GRANT_TITLE));
@@ -411,7 +411,7 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
     	contributors.getContributor().add(contributor);
     	funding.setFundingContributors(contributors);        
     	fundings.getOrcidFunding().add(funding);
-    	orcidMessage.getOrcidProfile().getOrcidActivities().setOrcidFundings(fundings);
+    	orcidMessage.getOrcidProfile().getOrcidActivities().setFundings(fundings);
 
         ClientResponse clientResponse = oauthT2Client1_2_rc2.addGrantsXml("4444-4444-4444-4442", orcidMessage, accessToken);
         assertEquals(201, clientResponse.getStatus());

@@ -249,24 +249,24 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
 
     private OrcidActivities getOrcidActivities(ProfileEntity profileEntity) {
         Affiliations affiliations = getAffiliations(profileEntity);        
-        OrcidFundingList orcidGrants = getOrcidGrants(profileEntity);
+        FundingList orcidGrants = getOrcidGrants(profileEntity);
         OrcidPatents orcidPatents = getOrcidPatents(profileEntity);
         OrcidWorks orcidWorks = getOrcidWorks(profileEntity);
         if (NullUtils.allNull(orcidGrants, orcidPatents, orcidWorks, affiliations)) {
             return null;
         }
         OrcidActivities orcidActivities = new OrcidActivities();
-        orcidActivities.setOrcidFundings(orcidGrants);
+        orcidActivities.setFundings(orcidGrants);
         orcidActivities.setOrcidPatents(orcidPatents);
         orcidActivities.setOrcidWorks(orcidWorks);
         orcidActivities.setAffiliations(affiliations);
         return orcidActivities;
     }
 
-    private OrcidFundingList getOrcidGrants(ProfileEntity profileEntity) {
+    private FundingList getOrcidGrants(ProfileEntity profileEntity) {
     	Set<ProfileFundingEntity> profileGrants = profileEntity.getProfileFunding();
     	if(profileGrants != null && !profileGrants.isEmpty()) {
-    		OrcidFundingList grants = new OrcidFundingList();
+    		FundingList grants = new FundingList();
     		List<OrcidFunding> grantList = grants.getOrcidFunding();
     		for(ProfileFundingEntity profileFundingEntity : profileGrants) {
     			grantList.add(getOrcidFunding(profileFundingEntity));

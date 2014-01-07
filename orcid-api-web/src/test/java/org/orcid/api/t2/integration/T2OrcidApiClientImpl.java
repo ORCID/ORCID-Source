@@ -202,7 +202,7 @@ public class T2OrcidApiClientImpl implements T2OrcidApiService<ClientResponse> {
 
     /**
      * POST an XML representation of the ORCID record containing only
-     * grants details
+     * fundings details
      * 
      * @param orcid
      *            the ORCID that corresponds to the user's record
@@ -210,13 +210,13 @@ public class T2OrcidApiClientImpl implements T2OrcidApiService<ClientResponse> {
      *         grant(s)
      */
     @Override
-    public ClientResponse addGrantsXml(@PathParam("orcid") String orcid, OrcidMessage orcidMessage) {
+    public ClientResponse addFundingXml(@PathParam("orcid") String orcid, OrcidMessage orcidMessage) {
         return postClientResponse(UriBuilder.fromPath(FUNDING_PATH).build(orcid), VND_ORCID_XML, orcidMessage);
     }
 
     /**
      * POST a JSON representation of the ORCID record containing only
-     * grants details
+     * fundings details
      * 
      * @param orcid
      *            the ORCID that corresponds to the user's record
@@ -224,13 +224,13 @@ public class T2OrcidApiClientImpl implements T2OrcidApiService<ClientResponse> {
      *         grant(s)
      */
     @Override
-    public ClientResponse addGrantsJson(@PathParam("orcid") String orcid, OrcidMessage orcidMessage) {
+    public ClientResponse addFundingJson(@PathParam("orcid") String orcid, OrcidMessage orcidMessage) {
         return postClientResponse(UriBuilder.fromPath(FUNDING_PATH).build(orcid), VND_ORCID_JSON, orcidMessage);
     }
 
     /**
      * PUT an XML representation of the ORCID record containing only
-     * grants details
+     * fundings details
      * 
      * @param orcid
      *            the ORCID that corresponds to the user's record
@@ -238,13 +238,13 @@ public class T2OrcidApiClientImpl implements T2OrcidApiService<ClientResponse> {
      *         grant(s)
      */
     @Override
-    public ClientResponse updateGrantsXml(@PathParam("orcid") String orcid, OrcidMessage orcidMessage) {
+    public ClientResponse updateFundingXml(@PathParam("orcid") String orcid, OrcidMessage orcidMessage) {
         return putClientResponse(UriBuilder.fromPath(FUNDING_PATH).build(orcid), VND_ORCID_XML, orcidMessage);
     }
 
     /**
      * PUT a JSON representation of the ORCID record containing only
-     * grants details
+     * fundings details
      * 
      * @param orcid
      *            the ORCID that corresponds to the user's record
@@ -252,7 +252,7 @@ public class T2OrcidApiClientImpl implements T2OrcidApiService<ClientResponse> {
      *         grant(s)
      */
     @Override
-    public ClientResponse updateGrantsJson(@PathParam("orcid") String orcid, OrcidMessage orcidMessage) {
+    public ClientResponse updateFundingJson(@PathParam("orcid") String orcid, OrcidMessage orcidMessage) {
         return putClientResponse(UriBuilder.fromPath(FUNDING_PATH).build(orcid), VND_ORCID_JSON, orcidMessage);
     }
     
@@ -511,7 +511,7 @@ public class T2OrcidApiClientImpl implements T2OrcidApiService<ClientResponse> {
      * @return the HTML representation of the ORCID record
      */
     @Override
-    public ClientResponse viewGrantsDetailsHtml(@PathParam("orcid") String orcid) {
+    public ClientResponse viewFundingDetailsHtml(@PathParam("orcid") String orcid) {
         return orcidClientHelper.getClientResponse(UriBuilder.fromPath(FUNDING_PATH).build(orcid), MediaType.TEXT_HTML);
     }
 
@@ -524,7 +524,7 @@ public class T2OrcidApiClientImpl implements T2OrcidApiService<ClientResponse> {
      * @return the XML representation of the ORCID record
      */
     @Override
-    public ClientResponse viewGrantsDetailsXml(@PathParam("orcid") String orcid) {
+    public ClientResponse viewFundingDetailsXml(@PathParam("orcid") String orcid) {
         return orcidClientHelper.getClientResponse(UriBuilder.fromPath(FUNDING_PATH).build(orcid), VND_ORCID_XML);
     }
 
@@ -537,7 +537,7 @@ public class T2OrcidApiClientImpl implements T2OrcidApiService<ClientResponse> {
      * @return the JSON representation of the ORCID record
      */
     @Override
-    public ClientResponse viewGrantsDetailsJson(@PathParam("orcid") String orcid) {
+    public ClientResponse viewFundingDetailsJson(@PathParam("orcid") String orcid) {
         return orcidClientHelper.getClientResponse(UriBuilder.fromPath(FUNDING_PATH).build(orcid), VND_ORCID_JSON);
     }
     

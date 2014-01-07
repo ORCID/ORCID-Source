@@ -393,9 +393,9 @@ abstract public class T2OrcidApiServiceImplBase implements T2OrcidApiService<Res
     @GET
     @Produces(value = { MediaType.TEXT_HTML })
     @Path(FUNDING_PATH)
-    public Response viewGrantsDetailsHtml(@PathParam("orcid") String orcid) {
+    public Response viewFundingDetailsHtml(@PathParam("orcid") String orcid) {
         T2_GET_REQUESTS.inc();
-        Response response = serviceDelegator.findGrantsDetails(orcid);
+        Response response = serviceDelegator.findFundingDetails(orcid);
         return Response.fromResponse(response).header("Content-Disposition", "attachment; filename=\"" + orcid + "-grants.xml\"").build();
     }
 
@@ -410,9 +410,9 @@ abstract public class T2OrcidApiServiceImplBase implements T2OrcidApiService<Res
     @GET
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
     @Path(FUNDING_PATH)
-    public Response viewGrantsDetailsXml(@PathParam("orcid") String orcid) {
+    public Response viewFundingDetailsXml(@PathParam("orcid") String orcid) {
         T2_GET_REQUESTS.inc();
-        return serviceDelegator.findGrantsDetails(orcid);
+        return serviceDelegator.findFundingDetails(orcid);
     }
 
     /**
@@ -427,9 +427,9 @@ abstract public class T2OrcidApiServiceImplBase implements T2OrcidApiService<Res
     @GET
     @Produces(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(FUNDING_PATH)
-    public Response viewGrantsDetailsJson(@PathParam("orcid") String orcid) {
+    public Response viewFundingDetailsJson(@PathParam("orcid") String orcid) {
         T2_GET_REQUESTS.inc();
-        return serviceDelegator.findGrantsDetails(orcid);
+        return serviceDelegator.findFundingDetails(orcid);
     }
     
     /**
@@ -707,9 +707,9 @@ abstract public class T2OrcidApiServiceImplBase implements T2OrcidApiService<Res
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
     @Consumes(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, MediaType.WILDCARD })
     @Path(FUNDING_PATH)
-    public Response addGrantsXml(@PathParam("orcid") String orcid, OrcidMessage orcidMessage) {
+    public Response addFundingXml(@PathParam("orcid") String orcid, OrcidMessage orcidMessage) {
         T2_POST_REQUESTS.inc();
-        return serviceDelegator.addGrants(uriInfo, orcid, orcidMessage);
+        return serviceDelegator.addFunding(uriInfo, orcid, orcidMessage);
     }
 
     /**
@@ -725,9 +725,9 @@ abstract public class T2OrcidApiServiceImplBase implements T2OrcidApiService<Res
     @Produces(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Consumes(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(FUNDING_PATH)
-    public Response addGrantsJson(@PathParam("orcid") String orcid, OrcidMessage orcidMessage) {
+    public Response addFundingJson(@PathParam("orcid") String orcid, OrcidMessage orcidMessage) {
         T2_POST_REQUESTS.inc();
-        return serviceDelegator.addGrants(uriInfo, orcid, orcidMessage);
+        return serviceDelegator.addFunding(uriInfo, orcid, orcidMessage);
     }
 
     /**
@@ -743,9 +743,9 @@ abstract public class T2OrcidApiServiceImplBase implements T2OrcidApiService<Res
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
     @Consumes(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, MediaType.WILDCARD })
     @Path(FUNDING_PATH)
-    public Response updateGrantsXml(@PathParam("orcid") String orcid, OrcidMessage orcidMessage) {
+    public Response updateFundingXml(@PathParam("orcid") String orcid, OrcidMessage orcidMessage) {
         T2_PUT_REQUESTS.inc();
-        return serviceDelegator.updateGrants(uriInfo, orcid, orcidMessage);
+        return serviceDelegator.updateFunding(uriInfo, orcid, orcidMessage);
     }
 
     /**
@@ -761,9 +761,9 @@ abstract public class T2OrcidApiServiceImplBase implements T2OrcidApiService<Res
     @Produces(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Consumes(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(FUNDING_PATH)
-    public Response updateGrantsJson(@PathParam("orcid") String orcid, OrcidMessage orcidMessage) {
+    public Response updateFundingJson(@PathParam("orcid") String orcid, OrcidMessage orcidMessage) {
         T2_PUT_REQUESTS.inc();
-        return serviceDelegator.updateGrants(uriInfo, orcid, orcidMessage);
+        return serviceDelegator.updateFunding(uriInfo, orcid, orcidMessage);
     }
     
     /**

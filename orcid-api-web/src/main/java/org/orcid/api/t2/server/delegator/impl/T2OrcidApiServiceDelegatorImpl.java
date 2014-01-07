@@ -82,7 +82,7 @@ import org.springframework.stereotype.Component;
  * <p/>
  * The delegator for the tier 2 API.
  * <p/>
- * The T2 delegator is responsible for the validation, retrieving results and
+ * The T2 delegator is responsible for the validation, retrieving results and 
  * passing of objects to be from the core
  * 
  * @author Declan Newman (declan) Date: 07/03/2012
@@ -573,11 +573,11 @@ public class T2OrcidApiServiceDelegatorImpl extends OrcidApiServiceDelegatorImpl
     }
     
     @Override
-    @AccessControl(requiredScope = ScopePathType.ORCID_FUNDING_CREATE)
-    public Response addGrants(UriInfo uriInfo, String orcid, OrcidMessage orcidMessage) {
+    @AccessControl(requiredScope = ScopePathType.FUNDING_CREATE)
+    public Response addFunding(UriInfo uriInfo, String orcid, OrcidMessage orcidMessage) {
         OrcidProfile orcidProfile = orcidMessage.getOrcidProfile();
         try {
-            orcidProfileManager.addGrants(orcidProfile);
+            orcidProfileManager.addFundings(orcidProfile);
             return getCreatedResponse(uriInfo, FUNDING_PATH, orcidProfile);
         } catch (DataAccessException e) {
             throw new OrcidBadRequestException("Cannot update ORCID");
@@ -587,11 +587,11 @@ public class T2OrcidApiServiceDelegatorImpl extends OrcidApiServiceDelegatorImpl
     }
 
     @Override
-    @AccessControl(requiredScope = ScopePathType.ORCID_FUNDING_UPDATE)
-    public Response updateGrants(UriInfo uriInfo, String orcid, OrcidMessage orcidMessage) {
+    @AccessControl(requiredScope = ScopePathType.FUNDING_UPDATE)
+    public Response updateFunding(UriInfo uriInfo, String orcid, OrcidMessage orcidMessage) {
         OrcidProfile orcidProfile = orcidMessage.getOrcidProfile();
         try {
-            orcidProfile = orcidProfileManager.updateGrants(orcidProfile);
+            orcidProfile = orcidProfileManager.updateFundings(orcidProfile);
             return getOrcidMessageResponse(orcidProfile, orcid);
         } catch (DataAccessException e) {
             throw new OrcidBadRequestException("Cannot update ORCID");

@@ -270,19 +270,19 @@ public class OrcidProfile implements Serializable {
      * 
      * @param orcidFundings
      */
-    public void setOrcidFundings(OrcidFundingList orcidFundings) {
+    public void setFundings(FundingList orcidFundings) {
         if (orcidActivities == null) {
             orcidActivities = new OrcidActivities();
         }
-        this.orcidActivities.setOrcidFundings(orcidFundings);
+        this.orcidActivities.setFundings(orcidFundings);
     }
 
     /**
      * 
      * @return
      */
-    public OrcidFundingList retrieveOrcidFundings() {
-        return orcidActivities != null ? orcidActivities.getOrcidFundings() : null;
+    public FundingList retrieveFundings() {
+        return orcidActivities != null ? orcidActivities.getFundings() : null;
     }
 
     /**

@@ -32,7 +32,7 @@ import org.orcid.jaxb.model.message.ExternalIdentifiers;
 import org.orcid.jaxb.model.message.Keywords;
 import org.orcid.jaxb.model.message.OrcidBio;
 import org.orcid.jaxb.model.message.OrcidFunding;
-import org.orcid.jaxb.model.message.OrcidFundingList;
+import org.orcid.jaxb.model.message.FundingList;
 import org.orcid.jaxb.model.message.OrcidHistory;
 import org.orcid.jaxb.model.message.OrcidPatents;
 import org.orcid.jaxb.model.message.OrcidWork;
@@ -104,7 +104,7 @@ public class OrcidJaxbCopyUtils {
         existingAffiliationsList.addAll(updatedAffiliationsList);
     }
     
-    public static void copyOrcidGrantsToExistingPreservingVisibility(OrcidFundingList existingFundings, OrcidFundingList updatedFundings) {
+    public static void copyFundingListToExistingPreservingVisibility(FundingList existingFundings, FundingList updatedFundings) {
         if (updatedFundings == null) {
             return;
         }
@@ -113,8 +113,8 @@ public class OrcidJaxbCopyUtils {
             return;
         }
         List<OrcidFunding> existingFundingsList = existingFundings.getOrcidFunding();
-        for (OrcidFunding updatedGrant : updatedFundingList) {
-        	mergeFundings(existingFundingsList, updatedGrant);
+        for (OrcidFunding updatedFunding : updatedFundingList) {
+        	mergeFundings(existingFundingsList, updatedFunding);
         }
         existingFundingsList.clear();
         existingFundingsList.addAll(updatedFundingList);
@@ -373,7 +373,7 @@ public class OrcidJaxbCopyUtils {
         return null;
     }
     
-    public static void copyUpdatedGrantsVisibilityInformationOnlyPreservingVisbility(OrcidFundingList existingGrants, OrcidFundingList updatedGrants) {
+    public static void copyUpdatedFundingListVisibilityInformationOnlyPreservingVisbility(FundingList existingFundingList, FundingList updatedFundingList) {
         throw new RuntimeException("Not implemented!");
     }
 
@@ -401,17 +401,17 @@ public class OrcidJaxbCopyUtils {
     private static void mergeFundings(List<OrcidFunding> existingFundings, OrcidFunding updatedFunding) {
         OrcidFunding likelyExisting = obtainLikelyEqual(updatedFunding, existingFundings);
         if (likelyExisting != null) {
-            Visibility likelyExistingGrantInstitutionNameVisibility = likelyExisting.getVisibility();
+            Visibility likelyExistingFundingInstitutionNameVisibility = likelyExisting.getVisibility();
 
-            if (likelyExistingGrantInstitutionNameVisibility == null && updatedFunding.getVisibility() == null) {
-            	updatedFunding.setVisibility(OrcidVisibilityDefaults.GRANT_DEFAULT.getVisibility());
-            } else if (updatedFunding.getVisibility() == null && likelyExistingGrantInstitutionNameVisibility != null) {
-            	updatedFunding.setVisibility(likelyExistingGrantInstitutionNameVisibility);
+            if (likelyExistingFundingInstitutionNameVisibility == null && updatedFunding.getVisibility() == null) {
+            	updatedFunding.setVisibility(OrcidVisibilityDefaults.FUNDING_DEFAULT.getVisibility());
+            } else if (updatedFunding.getVisibility() == null && likelyExistingFundingInstitutionNameVisibility != null) {
+            	updatedFunding.setVisibility(likelyExistingFundingInstitutionNameVisibility);
             }
         } else {
             // if you can't match this type, default its value if null
         	updatedFunding.setVisibility(updatedFunding.getVisibility() != null ? updatedFunding.getVisibility()
-                    : OrcidVisibilityDefaults.GRANT_DEFAULT.getVisibility());
+                    : OrcidVisibilityDefaults.FUNDING_DEFAULT.getVisibility());
         }
     }
 

@@ -27,7 +27,7 @@ import org.orcid.core.exception.OrcidSearchException;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.manager.OrcidSearchManager;
 import org.orcid.jaxb.model.message.OrcidFunding;
-import org.orcid.jaxb.model.message.OrcidFundingList;
+import org.orcid.jaxb.model.message.FundingList;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidPatent;
 import org.orcid.jaxb.model.message.OrcidPatents;
@@ -129,8 +129,8 @@ public class OrcidSearchManagerImpl implements OrcidSearchManager {
                     }
                 }
 
-                OrcidFundingList reducedFundings = new OrcidFundingList();
-                OrcidFundingList fullOrcidFundings = orcidProfile.retrieveOrcidFundings();
+                FundingList reducedFundings = new FundingList();
+                FundingList fullOrcidFundings = orcidProfile.retrieveFundings();
                 if (fullOrcidFundings != null && !fullOrcidFundings.getOrcidFunding().isEmpty()) {
 
                     for (OrcidFunding fullOrcidFunding : fullOrcidFundings.getOrcidFunding()) {
@@ -143,7 +143,7 @@ public class OrcidSearchManagerImpl implements OrcidSearchManager {
                 }
                 orcidProfile.setOrcidWorks(orcidWorksTitlesOnly);
                 orcidProfile.setOrcidPatents(reducedPatents);
-                orcidProfile.setOrcidFundings(reducedFundings);
+                orcidProfile.setFundings(reducedFundings);
 
                 orcidSearchResult.setOrcidProfile(orcidProfile);
 

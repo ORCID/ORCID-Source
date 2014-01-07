@@ -218,7 +218,7 @@ public interface OrcidApiService<T> {
 
     /**
      * GETs the HTML representation of the ORCID record containing only
-     * grants details
+     * funding details
      * 
      * @param orcid
      *            the ORCID that corresponds to the user's record
@@ -227,11 +227,11 @@ public interface OrcidApiService<T> {
     @GET
     @Produces(value = { MediaType.TEXT_HTML })
     @Path(FUNDING_PATH)
-    T viewGrantsDetailsHtml(@PathParam("orcid") String orcid);
+    T viewFundingDetailsHtml(@PathParam("orcid") String orcid);
 
     /**
      * GETs the XML representation of the ORCID record containing only
-     * grants details
+     * funding details
      * 
      * @param orcid
      *            the ORCID that corresponds to the user's record
@@ -240,11 +240,11 @@ public interface OrcidApiService<T> {
     @GET
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
     @Path(FUNDING_PATH)
-    T viewGrantsDetailsXml(@PathParam("orcid") String orcid);
+    T viewFundingDetailsXml(@PathParam("orcid") String orcid);
 
     /**
      * GETs the JSON representation of the ORCID record containing only
-     * grants details
+     * funding details
      * 
      * @param orcid
      *            the ORCID that corresponds to the user's record
@@ -253,7 +253,7 @@ public interface OrcidApiService<T> {
     @GET
     @Produces(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(FUNDING_PATH)
-    T viewGrantsDetailsJson(@PathParam("orcid") String orcid);
+    T viewFundingDetailsJson(@PathParam("orcid") String orcid);
 
     /**
      * GETs the HTML representation of the ORCID record containing only work

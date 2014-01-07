@@ -39,5 +39,5 @@ public interface Jaxb2JpaAdapter {
 
     OrgAffiliationRelationEntity getNewOrgAffiliationRelationEntity(Affiliation updatedAffiliation, ProfileEntity profileEntity);
 
-    ProfileFundingEntity getNewProfileGrantEntity(OrcidFunding updatedGrant, ProfileEntity profileEntity);
+    ProfileFundingEntity getNewProfileFundingEntity(OrcidFunding updatedGrant, ProfileEntity profileEntity);
 }

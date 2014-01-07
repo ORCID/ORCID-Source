@@ -154,14 +154,14 @@ public class T2OrcidApiServiceVersionedDelegatorImpl implements T2OrcidApiServic
     }
     
     @Override
-    public Response findGrantsDetails(String orcid) {
-        Response response = t2OrcidApiServiceDelegator.findGrantsDetails(orcid);
+    public Response findFundingDetails(String orcid) {
+        Response response = t2OrcidApiServiceDelegator.findFundingDetails(orcid);
         return downgradeAndValidateResponse(response);
     }
 
     @Override
-    public Response findGrantsDetailsFromPublicCache(String orcid) {
-        Response response = t2OrcidApiServiceDelegator.findGrantsDetailsFromPublicCache(orcid);
+    public Response findFundingDetailsFromPublicCache(String orcid) {
+        Response response = t2OrcidApiServiceDelegator.findFundingDetailsFromPublicCache(orcid);
         return downgradeAndValidateResponse(response);
     }
     
@@ -346,17 +346,17 @@ public class T2OrcidApiServiceVersionedDelegatorImpl implements T2OrcidApiServic
     }
     
     @Override
-    public Response addGrants(UriInfo uriInfo, String orcid, OrcidMessage orcidMessage) {
+    public Response addFunding(UriInfo uriInfo, String orcid, OrcidMessage orcidMessage) {
         validateIncomingMessage(orcidMessage);
         OrcidMessage upgradedMessage = upgradeMessage(orcidMessage);
-        return t2OrcidApiServiceDelegator.addGrants(uriInfo, orcid, upgradedMessage);
+        return t2OrcidApiServiceDelegator.addFunding(uriInfo, orcid, upgradedMessage);
     }
 
     @Override
-    public Response updateGrants(UriInfo uriInfo, String orcid, OrcidMessage orcidMessage) {
+    public Response updateFunding(UriInfo uriInfo, String orcid, OrcidMessage orcidMessage) {
         validateIncomingMessage(orcidMessage);
         OrcidMessage upgradedMessage = upgradeMessage(orcidMessage);
-        return t2OrcidApiServiceDelegator.updateGrants(uriInfo, orcid, upgradedMessage);
+        return t2OrcidApiServiceDelegator.updateFunding(uriInfo, orcid, upgradedMessage);
     }
 
 }

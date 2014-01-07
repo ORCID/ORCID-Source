@@ -49,7 +49,7 @@ import org.orcid.jaxb.model.message.Keywords;
 import org.orcid.jaxb.model.message.OrcidActivities;
 import org.orcid.jaxb.model.message.OrcidBio;
 import org.orcid.jaxb.model.message.OrcidFunding;
-import org.orcid.jaxb.model.message.OrcidFundingList;
+import org.orcid.jaxb.model.message.FundingList;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidPatent;
 import org.orcid.jaxb.model.message.OrcidPatents;
@@ -333,7 +333,7 @@ public class OrcidIndexManagerImplTest extends BaseTest {
 
     private OrcidProfile getOrcidWithGrants() {
         OrcidProfile orcidWithGrants = getStandardOrcid();
-        OrcidFundingList orcidFundings = new OrcidFundingList();
+        FundingList orcidFundings = new FundingList();
         OrcidFunding orcidGrant1 = new OrcidFunding();
         orcidGrant1.setVisibility(Visibility.PUBLIC);
         FundingTitle title = new FundingTitle();
@@ -356,7 +356,7 @@ public class OrcidIndexManagerImplTest extends BaseTest {
         orcidGrant4.setVisibility(Visibility.PUBLIC);
 
         orcidFundings.getOrcidFunding().addAll(Arrays.asList(new OrcidFunding[] { orcidGrant1, orcidGrant2, orcidGrant3, orcidGrant4 }));
-        orcidWithGrants.setOrcidFundings(orcidFundings);
+        orcidWithGrants.setFundings(orcidFundings);
         return orcidWithGrants;
     }
 
@@ -447,8 +447,8 @@ public class OrcidIndexManagerImplTest extends BaseTest {
         Affiliations affiliations = new Affiliations();        
         orcidActivities.setAffiliations(affiliations);
         
-        OrcidFundingList fundings = new OrcidFundingList(); 
-        orcidActivities.setOrcidFundings(fundings);
+        FundingList fundings = new FundingList(); 
+        orcidActivities.setFundings(fundings);
 
         OrcidWorks orcidWorks = new OrcidWorks();
         OrcidWork orcidWork1 = new OrcidWork();

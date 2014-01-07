@@ -419,7 +419,7 @@ abstract public class T1OrcidApiServiceImplBase implements OrcidApiService<Respo
     
     /**
      * GETs the HTML representation of the ORCID record containing only
-     * grant details
+     * funding details
      * 
      * @param orcid
      *            the ORCID that corresponds to the user's record
@@ -429,15 +429,15 @@ abstract public class T1OrcidApiServiceImplBase implements OrcidApiService<Respo
     @GET
     @Produces(value = { MediaType.TEXT_HTML })
     @Path(FUNDING_PATH)
-    public Response viewGrantsDetailsHtml(@PathParam("orcid") String orcid) {
+    public Response viewFundingDetailsHtml(@PathParam("orcid") String orcid) {
         T1_GET_REQUESTS.inc();
-        Response response = orcidApiServiceDelegator.findGrantsDetailsFromPublicCache(orcid);
+        Response response = orcidApiServiceDelegator.findFundingDetailsFromPublicCache(orcid);
         return Response.fromResponse(response).header("Content-Disposition", "attachment; filename=\"" + orcid + "-grants.xml\"").build();
     }
 
     /**
      * GETs the XML representation of the ORCID record containing only
-     * grant details
+     * funding details
      * 
      * @param orcid
      *            the ORCID that corresponds to the user's record
@@ -446,14 +446,14 @@ abstract public class T1OrcidApiServiceImplBase implements OrcidApiService<Respo
     @GET
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
     @Path(FUNDING_PATH)
-    public Response viewGrantsDetailsXml(@PathParam("orcid") String orcid) {
+    public Response viewFundingDetailsXml(@PathParam("orcid") String orcid) {
         T1_GET_REQUESTS.inc();
-        return orcidApiServiceDelegator.findGrantsDetailsFromPublicCache(orcid);
+        return orcidApiServiceDelegator.findFundingDetailsFromPublicCache(orcid);
     }
 
     /**
      * GETs the JSON representation of the ORCID record containing only
-     * grant details
+     * funding details
      * 
      * @param orcid
      *            the ORCID that corresponds to the user's record
@@ -463,9 +463,9 @@ abstract public class T1OrcidApiServiceImplBase implements OrcidApiService<Respo
     @GET
     @Produces(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(FUNDING_PATH)
-    public Response viewGrantsDetailsJson(@PathParam("orcid") String orcid) {
+    public Response viewFundingDetailsJson(@PathParam("orcid") String orcid) {
         T1_GET_REQUESTS.inc();
-        return orcidApiServiceDelegator.findGrantsDetailsFromPublicCache(orcid);
+        return orcidApiServiceDelegator.findFundingDetailsFromPublicCache(orcid);
     }
     
     /**

@@ -129,8 +129,8 @@ public class PublicProfileController extends BaseWorkspaceController {
 	                }
 	            }
 	        	
-	        	if(profile.getOrcidActivities().getOrcidFundings() != null) {
-	        		for(OrcidFunding funding : profile.getOrcidActivities().getOrcidFundings().getOrcidFunding()) {
+	        	if(profile.getOrcidActivities().getFundings() != null) {
+	        		for(OrcidFunding funding : profile.getOrcidActivities().getFundings().getOrcidFunding()) {
 	        			if(Visibility.PUBLIC.equals(funding.getVisibility())) {
 	        				fundingMap.put(funding.getPutCode(), funding);
 	        				fundingIds.add(funding.getPutCode());

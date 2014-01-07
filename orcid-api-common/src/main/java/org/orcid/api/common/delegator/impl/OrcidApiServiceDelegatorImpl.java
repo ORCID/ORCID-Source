@@ -214,14 +214,14 @@ public class OrcidApiServiceDelegatorImpl implements OrcidApiServiceDelegator {
      */
     @Override
     @VisibilityControl
-    public Response findGrantsDetails(String orcid) {
-        OrcidProfile profile = orcidProfileManager.retrieveClaimedGrants(orcid);
+    public Response findFundingDetails(String orcid) {
+        OrcidProfile profile = orcidProfileManager.retrieveClaimedFundings(orcid);
         return getOrcidMessageResponse(profile, orcid);
     }
 
     @Override
     @VisibilityControl
-    public Response findGrantsDetailsFromPublicCache(String orcid) {
+    public Response findFundingDetailsFromPublicCache(String orcid) {
         try {
             OrcidMessage orcidMessage = orcidSearchManager.findPublicProfileById(orcid);
             if (orcidMessage != null) {

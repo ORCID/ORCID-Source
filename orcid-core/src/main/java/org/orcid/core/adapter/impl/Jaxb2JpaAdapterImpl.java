@@ -77,7 +77,7 @@ import org.orcid.jaxb.model.message.OrcidActivities;
 import org.orcid.jaxb.model.message.OrcidBio;
 import org.orcid.jaxb.model.message.OrcidFunding;
 import org.orcid.jaxb.model.message.FundingExternalIdentifiers;
-import org.orcid.jaxb.model.message.OrcidFundingList;
+import org.orcid.jaxb.model.message.FundingList;
 import org.orcid.jaxb.model.message.OrcidHistory;
 import org.orcid.jaxb.model.message.OrcidInternal;
 import org.orcid.jaxb.model.message.OrcidPatent;
@@ -183,12 +183,12 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
     private void setActivityDetails(ProfileEntity profileEntity, OrcidActivities orcidActivities) {
         Affiliations affiliations = null;        
         OrcidPatents orcidPatents = null;
-        OrcidFundingList orcidFundings = null;
+        FundingList orcidFundings = null;
         OrcidWorks orcidWorks = null;
         if (orcidActivities != null) {
             affiliations = orcidActivities.getAffiliations();            
             orcidPatents = orcidActivities.getOrcidPatents();
-            orcidFundings = orcidActivities.getOrcidFundings();
+            orcidFundings = orcidActivities.getFundings();
             orcidWorks = orcidActivities.getOrcidWorks();
         }
         setOrgAffiliationRelations(profileEntity, affiliations);        
@@ -396,7 +396,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
         return JsonUtils.convertToJsonString(grantContributors);
     }
 
-    private void setFundings(ProfileEntity profileEntity, OrcidFundingList orcidFundings) {
+    private void setFundings(ProfileEntity profileEntity, FundingList orcidFundings) {
     	SortedSet<ProfileFundingEntity> existingProfileFundingEntities = profileEntity.getProfileFunding();
     	if(existingProfileFundingEntities == null) {
     		existingProfileFundingEntities = new TreeSet<>();
@@ -975,7 +975,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
      * @return ProfileFundingEntity
      * */
     @Override
-    public ProfileFundingEntity getNewProfileGrantEntity(OrcidFunding updatedOrcidGrant, ProfileEntity profileEntity) {
+    public ProfileFundingEntity getNewProfileFundingEntity(OrcidFunding updatedOrcidGrant, ProfileEntity profileEntity) {
         ProfileFundingEntity profileFundingEntity = getProfileFundingEntity(updatedOrcidGrant, null);
         profileFundingEntity.setProfile(profileEntity);
         return profileFundingEntity;

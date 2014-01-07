@@ -37,7 +37,7 @@ import org.orcid.jaxb.model.message.CurrencyCode;
 import org.orcid.jaxb.model.message.FundingType;
 import org.orcid.jaxb.model.message.OrcidActivities;
 import org.orcid.jaxb.model.message.OrcidFunding;
-import org.orcid.jaxb.model.message.OrcidFundingList;
+import org.orcid.jaxb.model.message.FundingList;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.persistence.dao.FundingExternalIdentifierDao;
 import org.orcid.persistence.dao.OrgDisambiguatedDao;
@@ -176,11 +176,11 @@ public class FundingsController extends BaseWorkspaceController {
 	 * */
 	@RequestMapping(value = "/funding.json", method = RequestMethod.DELETE)
 	public @ResponseBody
-	FundingForm deleteGrantJson(HttpServletRequest request, @RequestBody FundingForm funding) {
+	FundingForm deleteFundingJson(HttpServletRequest request, @RequestBody FundingForm funding) {
 		OrcidFunding delFunding = funding.toOrcidFunding();
 		OrcidProfile currentProfile = getEffectiveProfile();
-		OrcidFundingList fundings = currentProfile.getOrcidActivities() == null ? null : currentProfile.getOrcidActivities().getOrcidFundings();
-		FundingForm deletedGrant = new FundingForm();
+		FundingList fundings = currentProfile.getOrcidActivities() == null ? null : currentProfile.getOrcidActivities().getFundings();
+		FundingForm deletedFunding = new FundingForm();
 		if (fundings != null) {
 			List<OrcidFunding> fundingList = fundings.getOrcidFunding();
 			Iterator<OrcidFunding> iterator = fundingList.iterator();
@@ -188,14 +188,14 @@ public class FundingsController extends BaseWorkspaceController {
 				OrcidFunding orcidFunding = iterator.next();
 				if (delFunding.equals(orcidFunding)) {
 					iterator.remove();
-					deletedGrant = funding;
+					deletedFunding = funding;
 				}
 			}
 			fundings.setOrcidFunding(fundingList);
-			currentProfile.getOrcidActivities().setOrcidFundings(fundings);
+			currentProfile.getOrcidActivities().setFundings(fundings);
 			profileFundingDao.removeProfileFunding(currentProfile.getOrcid().getValue(), funding.getPutCode().getValue());
 		}
-		return deletedGrant;
+		return deletedFunding;
 	}
 
 	/**
@@ -203,9 +203,9 @@ public class FundingsController extends BaseWorkspaceController {
 	 * */
 	@RequestMapping(value = "/fundingIds.json", method = RequestMethod.GET)
 	public @ResponseBody
-	List<String> getGrantsJson(HttpServletRequest request) {
+	List<String> getFundingsJson(HttpServletRequest request) {
 		// Get cached profile
-		List<String> fundingIds = createGrantIdList(request);
+		List<String> fundingIds = createFundingIdList(request);
 		return fundingIds;
 	}
 
@@ -214,11 +214,11 @@ public class FundingsController extends BaseWorkspaceController {
 	 * session
 	 * 
 	 */
-	private List<String> createGrantIdList(HttpServletRequest request) {
+	private List<String> createFundingIdList(HttpServletRequest request) {
 		OrcidProfile currentProfile = getEffectiveProfile();
 		Map<String, String> languages = LanguagesMap.buildLanguageMap(localeManager.getLocale(), false);
-		OrcidFundingList fundings = currentProfile.getOrcidActivities() == null ? null
-				: currentProfile.getOrcidActivities().getOrcidFundings();
+		FundingList fundings = currentProfile.getOrcidActivities() == null ? null
+				: currentProfile.getOrcidActivities().getFundings();
 
 		HashMap<String, FundingForm> fundingsMap = new HashMap<>();
 		List<String> fundingIds = new ArrayList<String>();
@@ -266,7 +266,7 @@ public class FundingsController extends BaseWorkspaceController {
 					.getSession().getAttribute(GRANT_MAP);
 			// this should never happen, but just in case.
 			if (fundingsMap == null) {
-				createGrantIdList(request);
+				createFundingIdList(request);
 				fundingsMap = (HashMap<String, FundingForm>) request.getSession()
 						.getAttribute(GRANT_MAP);
 			}
@@ -328,7 +328,7 @@ public class FundingsController extends BaseWorkspaceController {
 			ProfileEntity userProfile = profileDao
 					.find(getEffectiveUserOrcid());
 			ProfileFundingEntity profileGrantEntity = jaxb2JpaAdapter
-					.getNewProfileGrantEntity(funding.toOrcidFunding(), userProfile);
+					.getNewProfileFundingEntity(funding.toOrcidFunding(), userProfile);
 			profileGrantEntity.setSource(userProfile);
 			// Persists the profile funding object
 			ProfileFundingEntity newProfileGrant = profileFundingDao
@@ -357,13 +357,13 @@ public class FundingsController extends BaseWorkspaceController {
 				currentProfile.setOrcidActivities(new OrcidActivities());
 			}
 			// Initialize fundings if needed
-			if (currentProfile.getOrcidActivities().getOrcidFundings() == null) {
-				currentProfile.getOrcidActivities().setOrcidFundings(
-						new OrcidFundingList());
+			if (currentProfile.getOrcidActivities().getFundings() == null) {
+				currentProfile.getOrcidActivities().setFundings(
+						new FundingList());
 			}
 			
 			// Set the new funding into the cached object
-			currentProfile.getOrcidActivities().getOrcidFundings()
+			currentProfile.getOrcidActivities().getFundings()
 					.getOrcidFunding().add(newOrcidGrant);			
 		}
 
@@ -426,10 +426,10 @@ public class FundingsController extends BaseWorkspaceController {
      * */
     @RequestMapping(value = "/funding.json", method = RequestMethod.PUT)
     public @ResponseBody
-    FundingForm updateProfileGrantJson(HttpServletRequest request, @RequestBody FundingForm funding) {
+    FundingForm updateProfileFundingJson(HttpServletRequest request, @RequestBody FundingForm funding) {
         // Get cached profile
         OrcidProfile currentProfile = getEffectiveProfile();
-        OrcidFundingList orcidGrants = currentProfile.getOrcidActivities() == null ? null : currentProfile.getOrcidActivities().getOrcidFundings();
+        FundingList orcidGrants = currentProfile.getOrcidActivities() == null ? null : currentProfile.getOrcidActivities().getFundings();
         if (orcidGrants != null) {
             List<OrcidFunding> orcidGrantList = orcidGrants.getOrcidFunding();
             if (orcidGrantList != null) {

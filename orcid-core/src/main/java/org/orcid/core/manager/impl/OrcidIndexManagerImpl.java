@@ -281,8 +281,8 @@ public class OrcidIndexManagerImpl implements OrcidIndexManager {
 			}
 
 			List<OrcidFunding> orcidFundings = filteredProfile
-					.retrieveOrcidFundings() != null ? filteredProfile
-					.retrieveOrcidFundings().getOrcidFunding() : null;
+					.retrieveFundings() != null ? filteredProfile
+					.retrieveFundings().getOrcidFunding() : null;
 			if (orcidFundings != null) {
 				List<String> fundingTitle = new ArrayList<String>();				
 				for (OrcidFunding orcidFunding : orcidFundings) {
