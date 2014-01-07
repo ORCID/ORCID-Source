@@ -61,7 +61,7 @@ import org.orcid.jaxb.model.message.FundingExternalIdentifier;
 import org.orcid.jaxb.model.message.FundingType;
 import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.jaxb.model.message.OrcidActivities;
-import org.orcid.jaxb.model.message.OrcidFunding;
+import org.orcid.jaxb.model.message.Funding;
 import org.orcid.jaxb.model.message.FundingExternalIdentifiers;
 import org.orcid.jaxb.model.message.FundingList;
 import org.orcid.jaxb.model.message.OrcidMessage;
@@ -360,7 +360,7 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
 
     @Test
     public void testAddGrant() throws InterruptedException, JSONException {
-        String scopes = "/orcid-funding/create";
+        String scopes = "/funding/create";
         String authorizationCode = obtainAuthorizationCode(scopes);
         String accessToken = obtainAccessToken(authorizationCode, scopes);
 
@@ -372,7 +372,7 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
         orcidProfile.setOrcidActivities(orcidActivities);
         
         FundingList fundings = new FundingList();
-        OrcidFunding funding = new OrcidFunding();
+        Funding funding = new Funding();
         FundingTitle title = new FundingTitle();
         title.setTitle(new Title(GRANT_TITLE));
         funding.setTitle(title);
@@ -410,7 +410,7 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
     	contributor.setContributorAttributes(attributes);
     	contributors.getContributor().add(contributor);
     	funding.setFundingContributors(contributors);        
-    	fundings.getOrcidFunding().add(funding);
+    	fundings.getFundings().add(funding);
     	orcidMessage.getOrcidProfile().getOrcidActivities().setFundings(fundings);
 
         ClientResponse clientResponse = oauthT2Client1_2_rc2.addGrantsXml("4444-4444-4444-4442", orcidMessage, accessToken);

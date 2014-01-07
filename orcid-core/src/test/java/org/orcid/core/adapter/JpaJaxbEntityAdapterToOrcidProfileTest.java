@@ -58,7 +58,7 @@ import org.orcid.jaxb.model.message.GivenNames;
 import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.jaxb.model.message.Keywords;
 import org.orcid.jaxb.model.message.OrcidBio;
-import org.orcid.jaxb.model.message.OrcidFunding;
+import org.orcid.jaxb.model.message.Funding;
 import org.orcid.jaxb.model.message.FundingList;
 import org.orcid.jaxb.model.message.OrcidHistory;
 import org.orcid.jaxb.model.message.OrcidInternal;
@@ -278,9 +278,9 @@ public class JpaJaxbEntityAdapterToOrcidProfileTest extends DBUnitTest {
         assertTrue(putCode4Found);
     }
 
-    private void checkOrcidFundings(FundingList orcidGrants) {
-        assertNotNull(orcidGrants);
-        List<OrcidFunding> orcidFundingList = orcidGrants.getOrcidFunding();
+    private void checkOrcidFundings(FundingList orcidFunding) {
+        assertNotNull(orcidFunding);
+        List<Funding> orcidFundingList = orcidFunding.getFundings();
         assertEquals(3, orcidFundingList.size());
     }
 

@@ -75,7 +75,7 @@ import org.orcid.jaxb.model.message.Keywords;
 import org.orcid.jaxb.model.message.Locale;
 import org.orcid.jaxb.model.message.OrcidActivities;
 import org.orcid.jaxb.model.message.OrcidBio;
-import org.orcid.jaxb.model.message.OrcidFunding;
+import org.orcid.jaxb.model.message.Funding;
 import org.orcid.jaxb.model.message.FundingExternalIdentifiers;
 import org.orcid.jaxb.model.message.FundingList;
 import org.orcid.jaxb.model.message.OrcidHistory;
@@ -409,8 +409,8 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
     	SortedSet<ProfileFundingEntity> updatedProfileFundingEntities = new TreeSet<>();
         
     	// Populate a list of the updated profileGrant entities that comes from the orcidGrant object
-    	if(orcidFundings != null && orcidFundings.getOrcidFunding() != null && !orcidFundings.getOrcidFunding().isEmpty()) {
-        	for(OrcidFunding orcidFunding : orcidFundings.getOrcidFunding()) {
+    	if(orcidFundings != null && orcidFundings.getFundings() != null && !orcidFundings.getFundings().isEmpty()) {
+        	for(Funding orcidFunding : orcidFundings.getFundings()) {
         		ProfileFundingEntity newProfileGrantEntity = getProfileFundingEntity(orcidFunding, existingProfileFundingEntitiesMap.get(orcidFunding.getPutCode()));
         		newProfileGrantEntity.setProfile(profileEntity);
         		updatedProfileFundingEntities.add(newProfileGrantEntity);
@@ -970,13 +970,13 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
     
     /**
      * Transforms a OrcidGrant object into a ProfileFundingEntity object
-     * @param updatedOrcidGrant
+     * @param updatedFunding
      * @param profileEntity
      * @return ProfileFundingEntity
      * */
     @Override
-    public ProfileFundingEntity getNewProfileFundingEntity(OrcidFunding updatedOrcidGrant, ProfileEntity profileEntity) {
-        ProfileFundingEntity profileFundingEntity = getProfileFundingEntity(updatedOrcidGrant, null);
+    public ProfileFundingEntity getNewProfileFundingEntity(Funding updatedFunding, ProfileEntity profileEntity) {
+        ProfileFundingEntity profileFundingEntity = getProfileFundingEntity(updatedFunding, null);
         profileFundingEntity.setProfile(profileEntity);
         return profileFundingEntity;
     }
@@ -1016,7 +1016,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
      * @param exisitingProfileGrantEntity
      * @return a ProfileGrantEntity created from the provided grant 
      * */
-    private ProfileFundingEntity getProfileFundingEntity(OrcidFunding funding, ProfileFundingEntity exisitingProfileFundingEntity) {
+    private ProfileFundingEntity getProfileFundingEntity(Funding funding, ProfileFundingEntity exisitingProfileFundingEntity) {
         if (funding != null) {
         	ProfileFundingEntity profileFundingEntity = null;
             if (exisitingProfileFundingEntity == null) {
@@ -1117,7 +1117,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
      * @param orcidGrant
      * @return a OrgEntity based on the provided OrcidGrant
      * */
-    private OrgEntity getOrgEntity(OrcidFunding orcidGrant) {
+    private OrgEntity getOrgEntity(Funding orcidGrant) {
         if (orcidGrant != null) {
             OrgEntity orgEntity = new OrgEntity();
             Organization organization = orcidGrant.getOrganization();

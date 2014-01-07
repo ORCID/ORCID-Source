@@ -31,7 +31,7 @@ import org.orcid.jaxb.model.message.Email;
 import org.orcid.jaxb.model.message.ExternalIdentifiers;
 import org.orcid.jaxb.model.message.Keywords;
 import org.orcid.jaxb.model.message.OrcidBio;
-import org.orcid.jaxb.model.message.OrcidFunding;
+import org.orcid.jaxb.model.message.Funding;
 import org.orcid.jaxb.model.message.FundingList;
 import org.orcid.jaxb.model.message.OrcidHistory;
 import org.orcid.jaxb.model.message.OrcidPatents;
@@ -108,12 +108,12 @@ public class OrcidJaxbCopyUtils {
         if (updatedFundings == null) {
             return;
         }
-        List<OrcidFunding> updatedFundingList = updatedFundings.getOrcidFunding();
+        List<Funding> updatedFundingList = updatedFundings.getFundings();
         if (updatedFundingList.isEmpty()) {
             return;
         }
-        List<OrcidFunding> existingFundingsList = existingFundings.getOrcidFunding();
-        for (OrcidFunding updatedFunding : updatedFundingList) {
+        List<Funding> existingFundingsList = existingFundings.getFundings();
+        for (Funding updatedFunding : updatedFundingList) {
         	mergeFundings(existingFundingsList, updatedFunding);
         }
         existingFundingsList.clear();
@@ -362,9 +362,9 @@ public class OrcidJaxbCopyUtils {
         return null;
     }
 
-    private static OrcidFunding obtainLikelyEqual(OrcidFunding toCompare, List<OrcidFunding> toCompareTo) {
+    private static Funding obtainLikelyEqual(Funding toCompare, List<Funding> toCompareTo) {
         if (toCompare != null && toCompareTo != null && !toCompareTo.isEmpty()) {
-            for (OrcidFunding ai : toCompareTo) {
+            for (Funding ai : toCompareTo) {
                 if (ai.equals(toCompare)) {
                     return ai;
                 }
@@ -398,8 +398,8 @@ public class OrcidJaxbCopyUtils {
         }
     }
     
-    private static void mergeFundings(List<OrcidFunding> existingFundings, OrcidFunding updatedFunding) {
-        OrcidFunding likelyExisting = obtainLikelyEqual(updatedFunding, existingFundings);
+    private static void mergeFundings(List<Funding> existingFundings, Funding updatedFunding) {
+        Funding likelyExisting = obtainLikelyEqual(updatedFunding, existingFundings);
         if (likelyExisting != null) {
             Visibility likelyExistingFundingInstitutionNameVisibility = likelyExisting.getVisibility();
 

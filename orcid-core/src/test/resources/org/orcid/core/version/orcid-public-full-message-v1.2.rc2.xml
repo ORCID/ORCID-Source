@@ -175,8 +175,8 @@
                     <work-type>religious-text</work-type>
                 </orcid-work>
             </orcid-works>
-            <orcid-funding-list>
-				<orcid-funding visibility="public">					
+            <funding-list>
+				<funding visibility="public">					
 					<funding-type>award</funding-type>
 					<funding-title>
 						<title>Grant # 1</title>
@@ -251,8 +251,8 @@
 						<source-name>Sponsor 1</source-name>
 						<source-date>2012-11-21T08:56:33</source-date>
 					</source>
-				</orcid-funding>
-			</orcid-funding-list>
+				</funding>
+			</funding-list>
             <orcid-patents>
                 <orcid-patent put-code="3">
                     <country>GB</country>

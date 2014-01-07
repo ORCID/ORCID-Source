@@ -55,49 +55,49 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "orcidFunding" })
-@XmlRootElement(name = "orcid-funding-list")
+@XmlRootElement(name = "funding-list")
 public class FundingList implements Serializable {
 
     /**
      * 
      */
     private static final long serialVersionUID = 1L;
-    @XmlElement(name = "orcid-funding")
-    protected List<OrcidFunding> orcidFunding;
+    @XmlElement(name = "funding")
+    protected List<Funding> fundings;
     @XmlAttribute
     protected Scope scope;
 
     /**
-     * Gets the value of the orcidGrant property.
+     * Gets the value of the Fundings property.
      * 
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the orcidGrant property.
+     * This is why there is not a <CODE>set</CODE> method for the Fundings property.
      * 
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
-     *    getOrcidGrant().add(newItem);
+     *    getFundings().add(newItem);
      * </pre>
      * 
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link OrcidFunding }
+     * {@link Funding }
      * 
      * 
      */
-    public List<OrcidFunding> getOrcidFunding() {
-        if (orcidFunding == null) {
-        	orcidFunding = new ArrayList<OrcidFunding>();
+    public List<Funding> getFundings() {
+        if (fundings == null) {
+        	fundings = new ArrayList<Funding>();
         }
-        return this.orcidFunding;
+        return this.fundings;
     }
     
-    public void setOrcidFunding(List<OrcidFunding> orcidFunding){
-    	this.orcidFunding = orcidFunding;
+    public void setFundings(List<Funding> fundings){
+    	this.fundings = fundings;
     }
 
     /**
@@ -135,7 +135,7 @@ public class FundingList implements Serializable {
 
         FundingList that = (FundingList) o;
 
-        if (orcidFunding != null ? !orcidFunding.equals(that.orcidFunding) : that.orcidFunding != null) {
+        if (fundings != null ? !fundings.equals(that.fundings) : that.fundings != null) {
             return false;
         }
         if (scope != that.scope) {
@@ -147,7 +147,7 @@ public class FundingList implements Serializable {
 
     @Override
     public int hashCode() {
-        int result = orcidFunding != null ? orcidFunding.hashCode() : 0;
+        int result = fundings != null ? fundings.hashCode() : 0;
         result = 31 * result + (scope != null ? scope.hashCode() : 0);
         return result;
     }

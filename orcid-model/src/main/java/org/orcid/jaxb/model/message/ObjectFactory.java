@@ -244,11 +244,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link OrcidFunding }
+     * Create an instance of {@link Funding }
      * 
      */
-    public OrcidFunding createFunding() {
-        return new OrcidFunding();
+    public Funding createFunding() {
+        return new Funding();
     }
 
     /**

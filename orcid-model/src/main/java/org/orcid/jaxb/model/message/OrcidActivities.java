@@ -112,7 +112,7 @@ public class OrcidActivities implements Serializable {
     }
 
     /**
-     * Gets the value of the orcidGrants property.
+     * Gets the value of the FundingList property.
      * 
      * @return possible object is {@link FundingList }
      * 
@@ -122,7 +122,7 @@ public class OrcidActivities implements Serializable {
     }
 
     /**
-     * Sets the value of the orcidGrants property.
+     * Sets the value of the FundingList property.
      * 
      * @param value
      *            allowed object is {@link FundingList }

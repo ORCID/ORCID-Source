@@ -36,7 +36,7 @@ import org.orcid.frontend.web.util.LanguagesMap;
 import org.orcid.jaxb.model.message.CurrencyCode;
 import org.orcid.jaxb.model.message.FundingType;
 import org.orcid.jaxb.model.message.OrcidActivities;
-import org.orcid.jaxb.model.message.OrcidFunding;
+import org.orcid.jaxb.model.message.Funding;
 import org.orcid.jaxb.model.message.FundingList;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.persistence.dao.FundingExternalIdentifierDao;
@@ -177,21 +177,21 @@ public class FundingsController extends BaseWorkspaceController {
 	@RequestMapping(value = "/funding.json", method = RequestMethod.DELETE)
 	public @ResponseBody
 	FundingForm deleteFundingJson(HttpServletRequest request, @RequestBody FundingForm funding) {
-		OrcidFunding delFunding = funding.toOrcidFunding();
+		Funding delFunding = funding.toOrcidFunding();
 		OrcidProfile currentProfile = getEffectiveProfile();
 		FundingList fundings = currentProfile.getOrcidActivities() == null ? null : currentProfile.getOrcidActivities().getFundings();
 		FundingForm deletedFunding = new FundingForm();
 		if (fundings != null) {
-			List<OrcidFunding> fundingList = fundings.getOrcidFunding();
-			Iterator<OrcidFunding> iterator = fundingList.iterator();
+			List<Funding> fundingList = fundings.getFundings();
+			Iterator<Funding> iterator = fundingList.iterator();
 			while (iterator.hasNext()) {
-				OrcidFunding orcidFunding = iterator.next();
+				Funding orcidFunding = iterator.next();
 				if (delFunding.equals(orcidFunding)) {
 					iterator.remove();
 					deletedFunding = funding;
 				}
 			}
-			fundings.setOrcidFunding(fundingList);
+			fundings.setFundings(fundingList);
 			currentProfile.getOrcidActivities().setFundings(fundings);
 			profileFundingDao.removeProfileFunding(currentProfile.getOrcid().getValue(), funding.getPutCode().getValue());
 		}
@@ -223,7 +223,7 @@ public class FundingsController extends BaseWorkspaceController {
 		HashMap<String, FundingForm> fundingsMap = new HashMap<>();
 		List<String> fundingIds = new ArrayList<String>();
 		if (fundings != null) {
-			for (OrcidFunding funding : fundings.getOrcidFunding()) {
+			for (Funding funding : fundings.getFundings()) {
 				try {
 					FundingForm form = FundingForm.valueOf(funding);
 					if (funding.getType() != null) {
@@ -348,8 +348,8 @@ public class FundingsController extends BaseWorkspaceController {
 
 			// Transform it back into a OrcidGrant to add it into the cached
 			// object
-			OrcidFunding newOrcidGrant = jpa2JaxbAdapter
-					.getOrcidFunding(newProfileGrant);
+			Funding newFunding = jpa2JaxbAdapter
+					.getFunding(newProfileGrant);
 			// Update the fundings on the cached object
 			OrcidProfile currentProfile = getEffectiveProfile();
 			// Initialize activities if needed
@@ -364,7 +364,7 @@ public class FundingsController extends BaseWorkspaceController {
 			
 			// Set the new funding into the cached object
 			currentProfile.getOrcidActivities().getFundings()
-					.getOrcidFunding().add(newOrcidGrant);			
+					.getFundings().add(newFunding);			
 		}
 
 		return funding;
@@ -426,22 +426,22 @@ public class FundingsController extends BaseWorkspaceController {
      * */
     @RequestMapping(value = "/funding.json", method = RequestMethod.PUT)
     public @ResponseBody
-    FundingForm updateProfileFundingJson(HttpServletRequest request, @RequestBody FundingForm funding) {
+    FundingForm updateProfileFundingJson(HttpServletRequest request, @RequestBody FundingForm fundingForm) {
         // Get cached profile
         OrcidProfile currentProfile = getEffectiveProfile();
         FundingList orcidGrants = currentProfile.getOrcidActivities() == null ? null : currentProfile.getOrcidActivities().getFundings();
         if (orcidGrants != null) {
-            List<OrcidFunding> orcidGrantList = orcidGrants.getOrcidFunding();
-            if (orcidGrantList != null) {
-                for (OrcidFunding orcidGrant : orcidGrantList) {
-                    if (orcidGrant.getPutCode().equals(funding.getPutCode().getValue())) {
+            List<Funding> fundings = orcidGrants.getFundings();
+            if (fundings != null) {
+                for (Funding funding : fundings) {
+                    if (funding.getPutCode().equals(fundingForm.getPutCode().getValue())) {
                         // Update the privacy of the funding
-                    	profileFundingDao.updateProfileFunding(currentProfile.getOrcid().getValue(), funding.getPutCode().getValue(), funding.getVisibility().getVisibility());
+                    	profileFundingDao.updateProfileFunding(currentProfile.getOrcid().getValue(), fundingForm.getPutCode().getValue(), fundingForm.getVisibility().getVisibility());
                     }
                 }
             }
         }
-        return funding;
+        return fundingForm;
     }
 	
 	/**

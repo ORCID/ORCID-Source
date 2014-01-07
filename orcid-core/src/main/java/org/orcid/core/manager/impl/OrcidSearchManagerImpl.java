@@ -26,7 +26,7 @@ import javax.annotation.Resource;
 import org.orcid.core.exception.OrcidSearchException;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.manager.OrcidSearchManager;
-import org.orcid.jaxb.model.message.OrcidFunding;
+import org.orcid.jaxb.model.message.Funding;
 import org.orcid.jaxb.model.message.FundingList;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidPatent;
@@ -131,14 +131,14 @@ public class OrcidSearchManagerImpl implements OrcidSearchManager {
 
                 FundingList reducedFundings = new FundingList();
                 FundingList fullOrcidFundings = orcidProfile.retrieveFundings();
-                if (fullOrcidFundings != null && !fullOrcidFundings.getOrcidFunding().isEmpty()) {
+                if (fullOrcidFundings != null && !fullOrcidFundings.getFundings().isEmpty()) {
 
-                    for (OrcidFunding fullOrcidFunding : fullOrcidFundings.getOrcidFunding()) {
-                        OrcidFunding reducedFunding = new OrcidFunding();
+                    for (Funding fullOrcidFunding : fullOrcidFundings.getFundings()) {
+                        Funding reducedFunding = new Funding();
                         reducedFunding.setVisibility(fullOrcidFunding.getVisibility());
                         reducedFunding.setDescription(fullOrcidFunding.getDescription());
                         reducedFunding.setTitle(fullOrcidFunding.getTitle());
-                        reducedFundings.getOrcidFunding().add(reducedFunding);
+                        reducedFundings.getFundings().add(reducedFunding);
                     }
                 }
                 orcidProfile.setOrcidWorks(orcidWorksTitlesOnly);

@@ -249,30 +249,30 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
 
     private OrcidActivities getOrcidActivities(ProfileEntity profileEntity) {
         Affiliations affiliations = getAffiliations(profileEntity);        
-        FundingList orcidGrants = getOrcidGrants(profileEntity);
+        FundingList fundings = getFundingList(profileEntity);
         OrcidPatents orcidPatents = getOrcidPatents(profileEntity);
         OrcidWorks orcidWorks = getOrcidWorks(profileEntity);
-        if (NullUtils.allNull(orcidGrants, orcidPatents, orcidWorks, affiliations)) {
+        if (NullUtils.allNull(fundings, orcidPatents, orcidWorks, affiliations)) {
             return null;
         }
         OrcidActivities orcidActivities = new OrcidActivities();
-        orcidActivities.setFundings(orcidGrants);
+        orcidActivities.setFundings(fundings);
         orcidActivities.setOrcidPatents(orcidPatents);
         orcidActivities.setOrcidWorks(orcidWorks);
         orcidActivities.setAffiliations(affiliations);
         return orcidActivities;
     }
 
-    private FundingList getOrcidGrants(ProfileEntity profileEntity) {
-    	Set<ProfileFundingEntity> profileGrants = profileEntity.getProfileFunding();
-    	if(profileGrants != null && !profileGrants.isEmpty()) {
-    		FundingList grants = new FundingList();
-    		List<OrcidFunding> grantList = grants.getOrcidFunding();
-    		for(ProfileFundingEntity profileFundingEntity : profileGrants) {
-    			grantList.add(getOrcidFunding(profileFundingEntity));
+    private FundingList getFundingList(ProfileEntity profileEntity) {
+    	Set<ProfileFundingEntity> profileFundings = profileEntity.getProfileFunding();
+    	if(profileFundings != null && !profileFundings.isEmpty()) {
+    		FundingList fundingList = new FundingList();
+    		List<Funding> fundings = fundingList.getFundings();
+    		for(ProfileFundingEntity profileFundingEntity : profileFundings) {
+    			fundings.add(getFunding(profileFundingEntity));
     		}
     		
-    		return grants;
+    		return fundingList;
     	}
     	return null;
     }
@@ -435,12 +435,12 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
     }
     
     /**
-     * Transforms a profileFundingEntity into a OrcidGrant
+     * Transforms a profileFundingEntity into a Funding
      * @param profileFundingEntity
-     * @return OrcidGrant
+     * @return Funding
      * */
-    public OrcidFunding getOrcidFunding(ProfileFundingEntity profileFundingEntity){
-    	OrcidFunding funding = new OrcidFunding();    	
+    public Funding getFunding(ProfileFundingEntity profileFundingEntity){
+    	Funding funding = new Funding();    	
     	if(StringUtils.isNotEmpty(profileFundingEntity.getAmount())) {
     		Amount orcidAmount = new Amount();
     		orcidAmount.setContent(StringUtils.isNotEmpty(profileFundingEntity.getAmount()) ? profileFundingEntity.getAmount() : null );
@@ -461,8 +461,8 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
     	funding.setUrl(StringUtils.isNotEmpty(profileFundingEntity.getUrl()) ? new Url(profileFundingEntity.getUrl()) : new Url(new String()));
     	funding.setVisibility(profileFundingEntity.getVisibility() != null ? profileFundingEntity.getVisibility() : Visibility.PRIVATE);
     	funding.setPutCode(Long.toString(profileFundingEntity.getId()));    	
-    	funding.setFundingContributors(getGrantContributors(profileFundingEntity));
-    	funding.setFundingExternalIdentifiers(getGrantExternalIdentifiers(profileFundingEntity));
+    	funding.setFundingContributors(getFundingContributors(profileFundingEntity));
+    	funding.setFundingExternalIdentifiers(getFundingExternalIdentifiers(profileFundingEntity));
     	
         // Set organization
     	Organization organization = new Organization();
@@ -488,9 +488,9 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
     /**
      * Get external identifiers from a profileFundingEntity object
      * @param profileFundingEntity
-     * @return The external identifiers in the form of a OrcidGrantExternalIdentifiers object
+     * @return The external identifiers in the form of a FundingExternalIdentifiers object
      * */
-    private FundingExternalIdentifiers getGrantExternalIdentifiers(ProfileFundingEntity profileFundingEntity) {
+    private FundingExternalIdentifiers getFundingExternalIdentifiers(ProfileFundingEntity profileFundingEntity) {
         if (profileFundingEntity == null || profileFundingEntity.getExternalIdentifiers() == null || profileFundingEntity.getExternalIdentifiers().isEmpty()) {
             return null;
         }
@@ -498,7 +498,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         FundingExternalIdentifiers fundingExternalIdentifiers = new FundingExternalIdentifiers();        
         
         for (FundingExternalIdentifierEntity fundingExternalIdentifierEntity : fundingExternalIdentifierEntitys) {
-            FundingExternalIdentifier fundingExternalIdentifier = getGrantExternalIdentifier(fundingExternalIdentifierEntity);
+            FundingExternalIdentifier fundingExternalIdentifier = getFundingExternalIdentifier(fundingExternalIdentifierEntity);
             if (fundingExternalIdentifier != null) {
                 fundingExternalIdentifiers.getFundingExternalIdentifier().add(fundingExternalIdentifier);
             }
@@ -508,38 +508,38 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
     }
     
     /**
-     * Transforms a GrantExternalIdentifierEntity into a GrantExternalIdentifier object
-     * @param grantExternalIdentifierEntity
-     * @return GrantExternalIdentifier
+     * Transforms a FundingExternalIdentifierEntity into a FundingExternalIdentifier object
+     * @param fundingExternalIdentifierEntity
+     * @return FundingExternalIdentifier
      * */
-    private FundingExternalIdentifier getGrantExternalIdentifier(FundingExternalIdentifierEntity grantExternalIdentifierEntity) {
-        if (grantExternalIdentifierEntity == null) {
+    private FundingExternalIdentifier getFundingExternalIdentifier(FundingExternalIdentifierEntity fundingExternalIdentifierEntity) {
+        if (fundingExternalIdentifierEntity == null) {
             return null;
         }
-        FundingExternalIdentifier grantExternalIdentifier = new FundingExternalIdentifier();
+        FundingExternalIdentifier fundingExternalIdentifier = new FundingExternalIdentifier();
         
-        grantExternalIdentifier.setType(grantExternalIdentifierEntity.getType());
-        grantExternalIdentifier.setUrl(new Url(grantExternalIdentifierEntity.getUrl()));
-        grantExternalIdentifier.setValue(grantExternalIdentifierEntity.getValue());
-        grantExternalIdentifier.setPutCode(String.valueOf(grantExternalIdentifierEntity.getId()));
+        fundingExternalIdentifier.setType(fundingExternalIdentifierEntity.getType());
+        fundingExternalIdentifier.setUrl(new Url(fundingExternalIdentifierEntity.getUrl()));
+        fundingExternalIdentifier.setValue(fundingExternalIdentifierEntity.getValue());
+        fundingExternalIdentifier.setPutCode(String.valueOf(fundingExternalIdentifierEntity.getId()));
         
-        return grantExternalIdentifier;
+        return fundingExternalIdentifier;
     }
     
     /**
-     * Get the grant contributors from a profileFundingEntity
+     * Get the funding contributors from a profileFundingEntity
      * @param profileFundingEntity
-     * @return the contributors in a form of GrantContributors object
+     * @return the contributors in a form of FundingContributors object
      * */
-    private FundingContributors getGrantContributors(ProfileFundingEntity profileFundingEntity) {        
-    	FundingContributors grantContributors = new FundingContributors();
+    private FundingContributors getFundingContributors(ProfileFundingEntity profileFundingEntity) {        
+    	FundingContributors fundingContributors = new FundingContributors();
         // New way of doing work contributors
         String jsonString = profileFundingEntity.getContributorsJson();
         if (jsonString != null) {
-        	grantContributors = JsonUtils.readObjectFromJsonString(jsonString, FundingContributors.class);
-            for (Contributor contributor : grantContributors.getContributor()) {
+        	fundingContributors = JsonUtils.readObjectFromJsonString(jsonString, FundingContributors.class);
+            for (Contributor contributor : fundingContributors.getContributor()) {
                 // Make sure contributor credit name has the same visibility as
-                // the grant relation
+                // the funding relation
                 CreditName creditName = contributor.getCreditName();
                 if (creditName != null) {
                     creditName.setVisibility(profileFundingEntity.getVisibility());
@@ -560,7 +560,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
                 }
             }
         }        
-        return grantContributors;
+        return fundingContributors;
     }  
     
     /**

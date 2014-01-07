@@ -68,8 +68,8 @@ import java.io.Serializable;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "putCode", "type", "title", "organization", "description",
 		"amount",  "url", "startDate", "endDate", "fundingExternalIdentifiers", "fundingContributors", "source" })
-@XmlRootElement(name = "orcid-funding")
-public class OrcidFunding implements VisibilityType, Serializable {
+@XmlRootElement(name = "funding")
+public class Funding implements VisibilityType, Serializable {
 
 	private final static long serialVersionUID = 1L;
 
@@ -271,7 +271,7 @@ public class OrcidFunding implements VisibilityType, Serializable {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		OrcidFunding other = (OrcidFunding) obj;
+		Funding other = (Funding) obj;
 		if (title == null) {
 			if(other.title != null)
 				return false;
