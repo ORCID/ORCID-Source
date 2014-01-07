@@ -54,7 +54,7 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "orcidFunding" })
+@XmlType(propOrder = { "fundings" })
 @XmlRootElement(name = "funding-list")
 public class FundingList implements Serializable {
 
