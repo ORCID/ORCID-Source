@@ -282,12 +282,12 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
             setWorkPrivacy(orcidProfile, existingProfileEntity.getWorkVisibilityDefault());
             setAffiliationPrivacy(orcidProfile, existingProfileEntity.getWorkVisibilityDefault());
         }
-        dedupeProfileWorks(orcidProfile);
-        dedupeAffiliations(orcidProfile);
         addSourceToEmails(orcidProfile, existingProfileEntity, amenderOrcid);
         addSourceToAffiliations(orcidProfile, amenderOrcid);
         addSourceToWorks(orcidProfile, amenderOrcid);
         addSourceToAffiliations(orcidProfile, amenderOrcid);
+        dedupeProfileWorks(orcidProfile);
+        dedupeAffiliations(orcidProfile);
         ProfileEntity profileEntity = adapter.toProfileEntity(orcidProfile, existingProfileEntity);
         profileEntity.setLastModified(new Date());
         profileEntity.setIndexingStatus(IndexingStatus.PENDING);
