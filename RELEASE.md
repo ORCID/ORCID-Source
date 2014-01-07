@@ -5,6 +5,15 @@ We release updates to the Registry regularly. Below is a list of the improvement
 * [2012 Releases](https://trello.com/b/vyCDYdvR)
 
 
+## release-1.1.41.12
+(2014-01-06)
+* Change language list in add work modal to include all ISO_639-1_codes
+  two letter codes
+
+* Various bug fixes
+
+
+
 ## release-1.1.40.6
 (2013-12-19)
 * rc2 added granularity to creation method
@@ -22,6 +31,7 @@ We release updates to the Registry regularly. Below is a list of the improvement
 * Fix issue with education and employment deduping each other 
 
 
+
 ## 1.1.39.11
 (2013-10-10)
 * 1.2_rc1 - Affiliation's API
@@ -29,6 +39,7 @@ We release updates to the Registry regularly. Below is a list of the improvement
 * Don't load works more info until mouse over
 
 * General UI fixes
+
 
 
 ## release-1.1.38.5
