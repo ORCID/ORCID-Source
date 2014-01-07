@@ -397,17 +397,19 @@ public class FundingsController extends BaseWorkspaceController {
 					.getPersonalDetails().getCreditName().getVisibility());
 		}
 		if (funding != null && funding.getContributors() != null
-				&& !funding.getContributors().isEmpty()) {
+				&& !funding.getContributors().isEmpty()) {			
 			for (Contributor contributor : funding.getContributors()) {
-				if (!PojoUtil.isEmpty(creditName))
-					contributor.setCreditName(Text.valueOf(creditName));
-				if (creditNameVisibility != null) {
-					contributor.setCreditNameVisibility(creditNameVisibility);
-				} else {
-					contributor
-							.setCreditNameVisibility(Visibility
-									.valueOf(OrcidVisibilityDefaults.CREDIT_NAME_DEFAULT
-											.getVisibility()));
+				if(!PojoUtil.areAllEmtpy(contributor.getContributorRole(), contributor.getContributorSequence())) {
+					if (!PojoUtil.isEmpty(creditName))
+						contributor.setCreditName(Text.valueOf(creditName));
+					if (creditNameVisibility != null) {
+						contributor.setCreditNameVisibility(creditNameVisibility);
+					} else {
+						contributor
+								.setCreditNameVisibility(Visibility
+										.valueOf(OrcidVisibilityDefaults.CREDIT_NAME_DEFAULT
+												.getVisibility()));
+					}
 				}
 			}
 		}

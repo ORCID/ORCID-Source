@@ -124,4 +124,10 @@
     	<sql>UPDATE client_scope SET scope_type = '/funding/read-limited' WHERE scope_type = '/orcid-grants/read-limited'</sql>
         <sql>INSERT INTO client_scope SELECT client_details_id, '/funding/read-limited', now(), now() FROM client_scope WHERE scope_type = '/orcid-works/read-limited' AND client_details_id NOT IN (SELECT client_details_id FROM client_scope WHERE scope_type = '/funding/read-limited')</sql>
     </changeSet>
+    
+    <changeSet id="UPDATE-OAUTH2-SCOPES" author="Angel Montenegro">
+    	<sql>UPDATE oauth2_token_detail set scope_type = '/funding/read-limited' where scope_type = '/orcid-grants/read-limited'</sql>
+    	<sql>UPDATE oauth2_token_detail set scope_type = '/funding/create' where scope_type = '/orcid-grants/create'</sql>
+    	<sql>UPDATE oauth2_token_detail set scope_type = '/funding/update' where scope_type = '/orcid-grants/update'</sql>
+    </changeSet>
 </databaseChangeLog>                   
