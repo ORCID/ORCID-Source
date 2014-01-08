@@ -137,7 +137,7 @@
 	                      		<#else> 
 	                      		    <a href="${savedResearcherUrl.url.value}">${savedResearcherUrl.url.value}</a>
 	                      		</#if>
-	                      		<a href="" class="glyphicon glyphicon-trash grey delete-url" ng-click="deleteEmail($index)" title="remove url"></a>
+	                      		<a href="" class="glyphicon glyphicon-trash grey delete-url" ng-click="deleteEmail($index)"></a>
 	                      		</p>     		    
 	                    </#list>
                     </div>
