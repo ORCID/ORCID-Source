@@ -90,8 +90,8 @@
         <addForeignKeyConstraint constraintName="funding_external_identifiers_fk" baseTableName="funding_external_identifier" baseColumnNames="profile_funding_id" referencedTableName="profile_funding" referencedColumnNames="id" deleteCascade="true"/>
 	</changeSet>
 	
-	<changeSet id="CREATE-SEQUENCES" author="Angel Montenegro" dbms="postgresql">
-		<preConditions>
+	<changeSet id="CREATE-FUNDING-SEQUENCES" author="Angel Montenegro" dbms="postgresql">
+		<preConditions onFail="MARK_RAN">
 			<not>
 				<sequenceExists sequenceName="profile_funding_seq"/>
 				<sequenceExists sequenceName="funding_external_identifier_seq"/>
