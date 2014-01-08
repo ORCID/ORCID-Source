@@ -37,7 +37,7 @@ import org.orcid.core.manager.WorkManager;
 import org.orcid.frontend.web.util.LanguagesMap;
 import org.orcid.jaxb.model.message.Affiliation;
 import org.orcid.jaxb.model.message.FundingType;
-import org.orcid.jaxb.model.message.OrcidFunding;
+import org.orcid.jaxb.model.message.Funding;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidWork;
 import org.orcid.jaxb.model.message.Visibility;
@@ -93,7 +93,7 @@ public class PublicProfileController extends BaseWorkspaceController {
         List<String> affiliationIds = new ArrayList<String>();
                 
         List<String> fundingIds = new ArrayList<String>();
-        HashMap<String, OrcidFunding> fundingMap = new HashMap<String, OrcidFunding>();
+        HashMap<String, Funding> fundingMap = new HashMap<String, Funding>();
         
 
         if (profile.getOrcidDeprecated() != null) {
@@ -129,8 +129,8 @@ public class PublicProfileController extends BaseWorkspaceController {
 	                }
 	            }
 	        	
-	        	if(profile.getOrcidActivities().getOrcidFundings() != null) {
-	        		for(OrcidFunding funding : profile.getOrcidActivities().getOrcidFundings().getOrcidFunding()) {
+	        	if(profile.getOrcidActivities().getFundings() != null) {
+	        		for(Funding funding : profile.getOrcidActivities().getFundings().getFundings()) {
 	        			if(Visibility.PUBLIC.equals(funding.getVisibility())) {
 	        				fundingMap.put(funding.getPutCode(), funding);
 	        				fundingIds.add(funding.getPutCode());
@@ -188,10 +188,10 @@ public class PublicProfileController extends BaseWorkspaceController {
     List<FundingForm> getFundingsJson(HttpServletRequest request, @PathVariable("orcid") String orcid, @RequestParam(value = "fundingIds") String fundingIdsStr) {
     	Map<String, String> languages = LanguagesMap.buildLanguageMap(localeManager.getLocale(), false);
     	List<FundingForm> fundings = new ArrayList<FundingForm>();
-        Map<String, OrcidFunding> fundingMap = (HashMap<String, OrcidFunding>) request.getSession().getAttribute(FUNDINGS_MAP);
+        Map<String, Funding> fundingMap = (HashMap<String, Funding>) request.getSession().getAttribute(FUNDINGS_MAP);
         String[] fundingIds = fundingIdsStr.split(",");
         for (String id: fundingIds) {
-            OrcidFunding funding = fundingMap.get(id);              
+            Funding funding = fundingMap.get(id);              
             FundingForm form = FundingForm.valueOf(funding);             		
             //Set type name
             if (funding.getType() != null) {

@@ -86,8 +86,8 @@ import org.orcid.jaxb.model.message.LastModifiedDate;
 import org.orcid.jaxb.model.message.OrcidActivities;
 import org.orcid.jaxb.model.message.OrcidBio;
 import org.orcid.jaxb.model.message.OrcidDeprecated;
-import org.orcid.jaxb.model.message.OrcidFunding;
-import org.orcid.jaxb.model.message.OrcidFundingList;
+import org.orcid.jaxb.model.message.Funding;
+import org.orcid.jaxb.model.message.FundingList;
 import org.orcid.jaxb.model.message.OrcidHistory;
 import org.orcid.jaxb.model.message.OrcidInternal;
 import org.orcid.jaxb.model.message.OrcidPreferences;
@@ -168,10 +168,10 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
     private GenericDao<OrgAffiliationRelationEntity, Long> orgAffilationRelationDao;
     
     @Resource
-	ProfileFundingDao profileGrantDao;
+	ProfileFundingDao profileFundingDao;
 
 	@Resource
-	FundingExternalIdentifierDao grantExternalIdentifierDao;
+	FundingExternalIdentifierDao fundingExternalIdentifierDao;
 
     @Resource
     private EmailDao emailDao;
@@ -267,7 +267,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         String amenderOrcid = sourceManager.retrieveSourceOrcid();
         addSourceToWorks(orcidProfile, amenderOrcid);
         addSourceToAffiliations(orcidProfile, amenderOrcid);
-        addSourceToGrants(orcidProfile, amenderOrcid);
+        addSourceToFundings(orcidProfile, amenderOrcid);
 
         ProfileEntity profileEntity = adapter.toProfileEntity(orcidProfile);
         encryptAndMapFieldsForProfileEntityPersistence(orcidProfile, profileEntity);
@@ -304,7 +304,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         addSourceToAffiliations(orcidProfile, amenderOrcid);
         addSourceToWorks(orcidProfile, amenderOrcid);
         addSourceToAffiliations(orcidProfile, amenderOrcid);
-        addSourceToGrants(orcidProfile, amenderOrcid);
+        addSourceToFundings(orcidProfile, amenderOrcid);
         ProfileEntity profileEntity = adapter.toProfileEntity(orcidProfile, existingProfileEntity);
         profileEntity.setLastModified(new Date());
         profileEntity.setIndexingStatus(IndexingStatus.PENDING);
@@ -399,19 +399,19 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
     }
     
     /**
-     * Add source to the grants
+     * Add source to the fundings
      * 
      * @param orcidProfile
      *            The profile
      * @param amenderOrcid
-     *            The orcid of the user or client that is adding the grants
+     *            The orcid of the user or client that is adding the fundings
      *            to the profile user
      * */
-    private void addSourceToGrants(OrcidProfile orcidProfile, String amenderOrcid) {
-        OrcidFundingList fundings = orcidProfile.getOrcidActivities() == null ? null : orcidProfile.getOrcidActivities().getOrcidFundings();
+    private void addSourceToFundings(OrcidProfile orcidProfile, String amenderOrcid) {
+        FundingList fundings = orcidProfile.getOrcidActivities() == null ? null : orcidProfile.getOrcidActivities().getFundings();
 
-        if (fundings != null && !fundings.getOrcidFunding().isEmpty()) {
-            for (OrcidFunding funding : fundings.getOrcidFunding()) {
+        if (fundings != null && !fundings.getFundings().isEmpty()) {
+            for (Funding funding : fundings.getFundings()) {
                 if (funding.getSource() == null || funding.getSource().getSourceOrcid() == null
                         || StringUtils.isEmpty(funding.getSource().getSourceOrcid().getPath()))
                 	funding.setSource(new Source(amenderOrcid));
@@ -499,15 +499,15 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
     }
 
     /**
-     * Retrieves the orcid grants given an identifier
+     * Retrieves the orcid fundings given an identifier
      * 
      * @param orcid
      *            the identifier
-     * @return the orcid profile with only the grants populated
+     * @return the orcid profile with only the funding list populated
      */
     @Override
     @Transactional
-    public OrcidProfile retrieveClaimedGrants(String orcid) {
+    public OrcidProfile retrieveClaimedFundings(String orcid) {
         OrcidProfile profile = retrieveClaimedOrcidProfile(orcid);
         if (profile != null) {
             profile.downgradeToFundingsOnly();
@@ -878,7 +878,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
 
     @Override
     @Transactional
-    public OrcidProfile updateGrants(OrcidProfile updatedOrcidProfile) {
+    public OrcidProfile updateFundings(OrcidProfile updatedOrcidProfile) {
         OrcidProfile existingProfile = retrieveOrcidProfile(updatedOrcidProfile.getOrcid().getValue());
         if (existingProfile == null) {
             return null;
@@ -887,8 +887,8 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         if (updatedActivities == null) {
             return null;
         }
-        OrcidFundingList updatedOrcidGrants = updatedActivities.getOrcidFundings();
-        if (updatedOrcidGrants == null) {
+        FundingList updatedFundingList = updatedActivities.getFundings();
+        if (updatedFundingList == null) {
             return null;
         }
         OrcidActivities existingActivities = existingProfile.getOrcidActivities();
@@ -896,13 +896,13 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
             existingActivities = new OrcidActivities();
             existingProfile.setOrcidActivities(existingActivities);
         }
-        OrcidFundingList existingOrcidGrants = existingActivities.getOrcidFundings();
-        if (existingOrcidGrants == null) {
-        	existingOrcidGrants = new OrcidFundingList();
-            existingActivities.setOrcidFundings(existingOrcidGrants);
+        FundingList existingFundingList = existingActivities.getFundings();
+        if (existingFundingList == null) {
+        	existingFundingList = new FundingList();
+            existingActivities.setFundings(existingFundingList);
         }
 
-        OrcidJaxbCopyUtils.copyOrcidGrantsToExistingPreservingVisibility(existingOrcidGrants, updatedOrcidGrants);
+        OrcidJaxbCopyUtils.copyFundingListToExistingPreservingVisibility(existingFundingList, updatedFundingList);
         return updateOrcidProfile(existingProfile);
     }
     
@@ -996,9 +996,9 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         Visibility workVisibilityDefault = existingProfile.getOrcidInternal().getPreferences().getWorkVisibilityDefault().getValue();
         Boolean claimed = existingProfile.getOrcidHistory().isClaimed();
         setWorkPrivacy(updatedOrcidWorks, workVisibilityDefault, claimed == null ? false : claimed);
-        updatedOrcidWorks = dedupeWorks(updatedOrcidWorks);
         String amenderOrcid = sourceManager.retrieveSourceOrcid();
         addSourceToWorks(updatedOrcidWorks, amenderOrcid);
+        updatedOrcidWorks = dedupeWorks(updatedOrcidWorks);
         List<OrcidWork> updatedOrcidWorksList = updatedOrcidWorks.getOrcidWork();
         checkForAlreadyExistingWorks(existingOrcidWorks, updatedOrcidWorksList);
         persistAddedWorks(orcid, updatedOrcidWorksList);
@@ -1265,7 +1265,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
     }
 
     /**
-     * Adds a new {@link List&lt;org.orcid.jaxb.model.message.OrcidGrants&lt;}
+     * Adds a new {@link List&lt;org.orcid.jaxb.model.message.FundingList&lt;}
      * to the {@link} OrcidProfile} and returns the updated values
      * 
      * @param updatedOrcidProfile
@@ -1273,23 +1273,23 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
      */
     @Override
     @Transactional
-    public void addGrants(OrcidProfile updatedOrcidProfile) {    	
+    public void addFundings(OrcidProfile updatedOrcidProfile) {    	
         String orcid = updatedOrcidProfile.getOrcid().getValue();
         OrcidProfile existingProfile = retrieveOrcidProfile(orcid);
         if (existingProfile == null) {
             throw new IllegalArgumentException("No record found for " + orcid);
         }
-        OrcidFundingList existingOrcidGrants = existingProfile.retrieveOrcidFundings();
-        OrcidFundingList updatedOrcidGrants = updatedOrcidProfile.retrieveOrcidFundings();
+        FundingList existingFundingList = existingProfile.retrieveFundings();
+        FundingList updatedFundingList = updatedOrcidProfile.retrieveFundings();
         Visibility workVisibilityDefault = existingProfile.getOrcidInternal().getPreferences().getWorkVisibilityDefault().getValue();
         Boolean claimed = existingProfile.getOrcidHistory().isClaimed();
-        setGrantPrivacy(updatedOrcidGrants, workVisibilityDefault, claimed == null ? false : claimed);
-        updatedOrcidGrants = dedupeFundings(updatedOrcidGrants);
+        setFundingPrivacy(updatedFundingList, workVisibilityDefault, claimed == null ? false : claimed);
+        updatedFundingList = dedupeFundings(updatedFundingList);
         String amenderOrcid = sourceManager.retrieveSourceOrcid();        
-        addSourceToFundings(updatedOrcidGrants, amenderOrcid);        
-        List<OrcidFunding> updatedGrantsList = updatedOrcidGrants.getOrcidFunding();
-        checkForAlreadyExistingGrants(existingOrcidGrants, updatedGrantsList);
-        persistAddedGrants(orcid, updatedGrantsList);
+        addSourceToFundings(updatedFundingList, amenderOrcid);        
+        List<Funding> updatedList = updatedFundingList.getFundings();
+        checkForAlreadyExistingFundings(existingFundingList, updatedList);
+        persistAddedFundings(orcid, updatedList);
     }
     
     private void setAffiliationPrivacy(OrcidProfile updatedOrcidProfile, Visibility defaultAffiliationVisibility) {
@@ -1304,14 +1304,14 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         }
     }
     
-    private void setFundingPrivacy(OrcidProfile updatedOrcidProfile, Visibility defaultGrantVisibility) {
+    private void setFundingPrivacy(OrcidProfile updatedOrcidProfile, Visibility defaultFundingVisibility) {
         OrcidHistory orcidHistory = updatedOrcidProfile.getOrcidHistory();
         boolean isClaimed = orcidHistory != null ? orcidHistory.getClaimed().isValue() : false;
         OrcidActivities incomingActivities = updatedOrcidProfile.getOrcidActivities();
         if (incomingActivities != null) {
-            OrcidFundingList incomingGrants = incomingActivities.getOrcidFundings();
-            if (incomingGrants != null) {
-                setGrantPrivacy(incomingGrants, defaultGrantVisibility, isClaimed);
+            FundingList incomingFundingList = incomingActivities.getFundings();
+            if (incomingFundingList != null) {
+            	setFundingPrivacy(incomingFundingList, defaultFundingVisibility, isClaimed);
             }
         }
     }
@@ -1331,8 +1331,8 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         }
     }
     
-    private void setGrantPrivacy(OrcidFundingList incomingFundings, Visibility defaultFundingVisibility, boolean isClaimed) {
-        for (OrcidFunding incomingFunding : incomingFundings.getOrcidFunding()) {
+    private void setFundingPrivacy(FundingList incomingFundings, Visibility defaultFundingVisibility, boolean isClaimed) {
+        for (Funding incomingFunding : incomingFundings.getFundings()) {
             if (StringUtils.isBlank(incomingFunding.getPutCode())) {
                 Visibility incomingFundingVisibility = incomingFunding.getVisibility();
                 if (isClaimed) {
@@ -1356,9 +1356,9 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         }
     }
     
-    private void addSourceToFundings(OrcidFundingList fundings, String amenderOrcid) {
-        if (fundings != null && !fundings.getOrcidFunding().isEmpty()) {
-            for (OrcidFunding funding : fundings.getOrcidFunding()) {
+    private void addSourceToFundings(FundingList fundings, String amenderOrcid) {
+        if (fundings != null && !fundings.getFundings().isEmpty()) {
+            for (Funding funding : fundings.getFundings()) {
                 if (funding.getSource() == null || funding.getSource().getSourceOrcid() == null
                         || StringUtils.isEmpty(funding.getSource().getSourceOrcid().getPath()))
                 	funding.setSource(new Source(amenderOrcid));
@@ -1415,33 +1415,33 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
     private void dedupeFundings(OrcidProfile orcidProfile) {
         OrcidActivities orcidActivities = orcidProfile.getOrcidActivities();
         if (orcidActivities != null) {
-            OrcidFundingList fungins = orcidActivities.getOrcidFundings();
+            FundingList fungins = orcidActivities.getFundings();
             if (fungins != null) {
-                OrcidFundingList dedupedFundings = dedupeFundings(fungins);
-                orcidActivities.setOrcidFundings(dedupedFundings);
+                FundingList dedupedFundings = dedupeFundings(fungins);
+                orcidActivities.setFundings(dedupedFundings);
             }
         }
     }
 
-    private OrcidFundingList dedupeFundings(OrcidFundingList fundings) {
-        Set<OrcidFunding> fundingsSet = new LinkedHashSet<OrcidFunding>();
-        for (OrcidFunding funding : fundings.getOrcidFunding()) {
+    private FundingList dedupeFundings(FundingList fundings) {
+        Set<Funding> fundingsSet = new LinkedHashSet<Funding>();
+        for (Funding funding : fundings.getFundings()) {
             orcidProfileCleaner.clean(funding);
             fundingsSet.add(funding);
         }
-        OrcidFundingList dedupedFundings = new OrcidFundingList();
-        dedupedFundings.getOrcidFunding().addAll(fundingsSet);
+        FundingList dedupedFundings = new FundingList();
+        dedupedFundings.getFundings().addAll(fundingsSet);
         return dedupedFundings;
     }
     
-    private void checkForAlreadyExistingGrants(OrcidFundingList existingFundings, List<OrcidFunding> updatedFundingsList) {
+    private void checkForAlreadyExistingFundings(FundingList existingFundings, List<Funding> updatedFundingsList) {
         if (existingFundings != null) {
-            Set<OrcidFunding> existingFundingsSet = new HashSet<>();
-            for (OrcidFunding existingGrant : existingFundings.getOrcidFunding()) {
-            	existingFundingsSet.add(existingGrant);
+            Set<Funding> existingFundingsSet = new HashSet<>();
+            for (Funding existingFunding : existingFundings.getFundings()) {
+            	existingFundingsSet.add(existingFunding);
             }
-            for (Iterator<OrcidFunding> updatedFundingIterator = updatedFundingsList.iterator(); updatedFundingIterator.hasNext();) {
-                OrcidFunding updatedFunding = updatedFundingIterator.next();
+            for (Iterator<Funding> updatedFundingIterator = updatedFundingsList.iterator(); updatedFundingIterator.hasNext();) {
+                Funding updatedFunding = updatedFundingIterator.next();
                 if (existingFundingsSet.contains(updatedFunding)) {
                 	updatedFundingIterator.remove();
                 }
@@ -1449,19 +1449,19 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         }
     }
 
-    private void persistAddedGrants(String orcid, List<OrcidFunding> updatedGrantsList) {
+    private void persistAddedFundings(String orcid, List<Funding> updatedFundingList) {
         ProfileEntity profileEntity = profileDao.find(orcid);
-        for (OrcidFunding updatedGrant : updatedGrantsList) {
-            ProfileFundingEntity profileGrantEntity = jaxb2JpaAdapter.getNewProfileGrantEntity(updatedGrant, profileEntity);
+        for (Funding updatedFunding : updatedFundingList) {
+            ProfileFundingEntity profileFundingEntity = jaxb2JpaAdapter.getNewProfileFundingEntity(updatedFunding, profileEntity);
             //Save the profile grant
-            ProfileFundingEntity newProfileFunding = profileGrantDao
-					.addProfileFunding(profileGrantEntity);
+            ProfileFundingEntity newProfileFunding = profileFundingDao
+					.addProfileFunding(profileFundingEntity);
             //Save the external identifiers
-            SortedSet<FundingExternalIdentifierEntity> externalIdentifiers = profileGrantEntity.getExternalIdentifiers();
+            SortedSet<FundingExternalIdentifierEntity> externalIdentifiers = profileFundingEntity.getExternalIdentifiers();
  			if (externalIdentifiers != null && !externalIdentifiers.isEmpty()) {
  				for (FundingExternalIdentifierEntity externalIdentifier : externalIdentifiers) {
  					externalIdentifier.setProfileFunding(newProfileFunding);
- 					grantExternalIdentifierDao
+ 					fundingExternalIdentifierDao
  							.createFundingExternalIdentifier(externalIdentifier);
  				}
  			}            

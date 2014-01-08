@@ -43,8 +43,8 @@ import org.orcid.jaxb.model.message.GivenNames;
 import org.orcid.jaxb.model.message.FundingTitle;
 import org.orcid.jaxb.model.message.OrcidActivities;
 import org.orcid.jaxb.model.message.OrcidBio;
-import org.orcid.jaxb.model.message.OrcidFunding;
-import org.orcid.jaxb.model.message.OrcidFundingList;
+import org.orcid.jaxb.model.message.Funding;
+import org.orcid.jaxb.model.message.FundingList;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidPatent;
 import org.orcid.jaxb.model.message.OrcidPatents;
@@ -152,22 +152,22 @@ public class OrcidSearchManagerImplTest extends BaseTest {
         assertEquals("Patent 2 - a short description", retrievedPatent2.getShortDescription());
         assertNull(retrievedPatent2.getPutCode());
 
-        List<OrcidFunding> orcidGrants = retrievedProfile.retrieveOrcidFundings().getOrcidFunding();
-        OrcidFunding retrievedGrant1 = orcidGrants.get(0);
-        OrcidFunding retrievedGrant2 = orcidGrants.get(1);
+        List<Funding> fundings = retrievedProfile.retrieveFundings().getFundings();
+        Funding funding1 = fundings.get(0);
+        Funding funding2 = fundings.get(1);
 
         // check returns a reduced payload
-        assertNotNull(retrievedGrant1.getTitle());
-        assertNotNull(retrievedGrant1.getTitle().getTitle());
-        assertEquals("grant1", retrievedGrant1.getTitle().getTitle().getContent());
-        assertEquals("Grant 1 - a short description", retrievedGrant1.getDescription());
-        assertNull(retrievedGrant1.getPutCode());
+        assertNotNull(funding1.getTitle());
+        assertNotNull(funding1.getTitle().getTitle());
+        assertEquals("grant1", funding1.getTitle().getTitle().getContent());
+        assertEquals("Grant 1 - a short description", funding1.getDescription());
+        assertNull(funding1.getPutCode());
 
-        assertNotNull(retrievedGrant2.getTitle());
-        assertNotNull(retrievedGrant2.getTitle().getTitle());
-        assertEquals("grant2", retrievedGrant2.getTitle().getTitle().getContent());
-        assertEquals("Grant 2 - a short description", retrievedGrant2.getDescription());
-        assertNull(retrievedGrant2.getPutCode());
+        assertNotNull(funding2.getTitle());
+        assertNotNull(funding2.getTitle().getTitle());
+        assertEquals("grant2", funding2.getTitle().getTitle().getContent());
+        assertEquals("Grant 2 - a short description", funding2.getDescription());
+        assertNull(funding2.getPutCode());
 
     }
 
@@ -352,26 +352,26 @@ public class OrcidSearchManagerImplTest extends BaseTest {
         orcidProfile.setOrcidPatents(orcidPatents);
         orcidProfile.setOrcidWorks(orcidWorks);
 
-        OrcidFundingList orcidFundings = new OrcidFundingList();
-        orcidProfile.setOrcidFundings(orcidFundings);
-        OrcidFunding orcidGrant1 = new OrcidFunding();
-        orcidGrant1.setVisibility(Visibility.PUBLIC);
+        FundingList orcidFundings = new FundingList();
+        orcidProfile.setFundings(orcidFundings);
+        Funding funding1 = new Funding();
+        funding1.setVisibility(Visibility.PUBLIC);
         FundingTitle title = new FundingTitle();
         title.setTitle(new Title("grant1"));
-        orcidGrant1.setTitle(title);
-        orcidGrant1.setDescription("Grant 1 - a short description");
-        orcidGrant1.setPutCode("grant 1 - put-code");
+        funding1.setTitle(title);
+        funding1.setDescription("Grant 1 - a short description");
+        funding1.setPutCode("grant 1 - put-code");
 
-        OrcidFunding orcidGrant2 = new OrcidFunding();
-        orcidGrant2.setVisibility(Visibility.PUBLIC);
+        Funding funding2 = new Funding();
+        funding2.setVisibility(Visibility.PUBLIC);
         FundingTitle title2 = new FundingTitle();
         title2.setTitle(new Title("grant2"));
-        orcidGrant2.setTitle(title2);
-        orcidGrant2.setDescription("Grant 2 - a short description");
-        orcidGrant2.setPutCode("grant 2 - put-code");
+        funding2.setTitle(title2);
+        funding2.setDescription("Grant 2 - a short description");
+        funding2.setPutCode("grant 2 - put-code");
 
-        orcidFundings.getOrcidFunding().add(orcidGrant1);
-        orcidFundings.getOrcidFunding().add(orcidGrant2);
+        orcidFundings.getFundings().add(funding1);
+        orcidFundings.getFundings().add(funding2);
 
         return orcidProfile;
     }

@@ -72,7 +72,7 @@
     <client_scope client_details_id="4444-4444-4444-4444" scope_type="/orcid-bio/read-limited"/>
     <client_scope client_details_id="4444-4444-4444-4445" scope_type="/orcid-bio/read-limited"/>
     <client_scope client_details_id="4444-4444-4444-4445" scope_type="/orcid-works/create"/>
-    <client_scope client_details_id="4444-4444-4444-4445" scope_type="/orcid-grants/create"/>
+    <client_scope client_details_id="4444-4444-4444-4445" scope_type="/funding/create"/>
     <client_scope client_details_id="4444-4444-4444-4445" scope_type="/affiliations/create"/>
 
 </dataset>

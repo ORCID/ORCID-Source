@@ -17,7 +17,7 @@
 package org.orcid.api.t2.server.delegator.impl;
 
 import static org.orcid.api.common.OrcidApiConstants.AFFILIATIONS_PATH;
-import static org.orcid.api.common.OrcidApiConstants.GRANTS_PATH;
+import static org.orcid.api.common.OrcidApiConstants.FUNDING_PATH;
 import static org.orcid.api.common.OrcidApiConstants.PROFILE_GET_PATH;
 import static org.orcid.api.common.OrcidApiConstants.STATUS_OK_MESSAGE;
 import static org.orcid.api.common.OrcidApiConstants.WORKS_PATH;
@@ -82,7 +82,7 @@ import org.springframework.stereotype.Component;
  * <p/>
  * The delegator for the tier 2 API.
  * <p/>
- * The T2 delegator is responsible for the validation, retrieving results and
+ * The T2 delegator is responsible for the validation, retrieving results and 
  * passing of objects to be from the core
  * 
  * @author Declan Newman (declan) Date: 07/03/2012
@@ -335,7 +335,7 @@ public class T2OrcidApiServiceDelegatorImpl extends OrcidApiServiceDelegatorImpl
                     // Check if the provided external orcid exists
                     ExternalIdOrcid eio = ei.getExternalIdOrcid();
 
-                    if (StringUtils.isBlank(eio.getPath()) || !profileEntityManager.orcidExists(eio.getValueAsString())) {
+                    if (StringUtils.isBlank(eio.getPath()) || !profileEntityManager.orcidExists(eio.getPath())) {
                         throw new OrcidNotFoundException("Cannot find external ORCID");
                     }
                 }
@@ -573,12 +573,12 @@ public class T2OrcidApiServiceDelegatorImpl extends OrcidApiServiceDelegatorImpl
     }
     
     @Override
-    @AccessControl(requiredScope = ScopePathType.ORCID_GRANTS_CREATE)
-    public Response addGrants(UriInfo uriInfo, String orcid, OrcidMessage orcidMessage) {
+    @AccessControl(requiredScope = ScopePathType.FUNDING_CREATE)
+    public Response addFunding(UriInfo uriInfo, String orcid, OrcidMessage orcidMessage) {
         OrcidProfile orcidProfile = orcidMessage.getOrcidProfile();
         try {
-            orcidProfileManager.addGrants(orcidProfile);
-            return getCreatedResponse(uriInfo, GRANTS_PATH, orcidProfile);
+            orcidProfileManager.addFundings(orcidProfile);
+            return getCreatedResponse(uriInfo, FUNDING_PATH, orcidProfile);
         } catch (DataAccessException e) {
             throw new OrcidBadRequestException("Cannot update ORCID");
         } catch (PersistenceException pe) {
@@ -587,11 +587,11 @@ public class T2OrcidApiServiceDelegatorImpl extends OrcidApiServiceDelegatorImpl
     }
 
     @Override
-    @AccessControl(requiredScope = ScopePathType.ORCID_GRANTS_UPDATE)
-    public Response updateGrants(UriInfo uriInfo, String orcid, OrcidMessage orcidMessage) {
+    @AccessControl(requiredScope = ScopePathType.FUNDING_UPDATE)
+    public Response updateFunding(UriInfo uriInfo, String orcid, OrcidMessage orcidMessage) {
         OrcidProfile orcidProfile = orcidMessage.getOrcidProfile();
         try {
-            orcidProfile = orcidProfileManager.updateGrants(orcidProfile);
+            orcidProfile = orcidProfileManager.updateFundings(orcidProfile);
             return getOrcidMessageResponse(orcidProfile, orcid);
         } catch (DataAccessException e) {
             throw new OrcidBadRequestException("Cannot update ORCID");

@@ -65,7 +65,7 @@ public class OrcidMessageVersionConverterImplV1_2_rc1ToV1_2_rc2 implements Orcid
         			orcidProfile.getOrcidHistory().setCreationMethod(CreationMethod.WEBSITE);
         	}
         	
-        	orcidProfile.setOrcidFundings(null);
+        	orcidProfile.setFundings(null);
         }
     }
 

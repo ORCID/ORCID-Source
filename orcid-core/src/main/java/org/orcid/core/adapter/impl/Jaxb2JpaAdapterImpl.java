@@ -75,9 +75,9 @@ import org.orcid.jaxb.model.message.Keywords;
 import org.orcid.jaxb.model.message.Locale;
 import org.orcid.jaxb.model.message.OrcidActivities;
 import org.orcid.jaxb.model.message.OrcidBio;
-import org.orcid.jaxb.model.message.OrcidFunding;
+import org.orcid.jaxb.model.message.Funding;
 import org.orcid.jaxb.model.message.FundingExternalIdentifiers;
-import org.orcid.jaxb.model.message.OrcidFundingList;
+import org.orcid.jaxb.model.message.FundingList;
 import org.orcid.jaxb.model.message.OrcidHistory;
 import org.orcid.jaxb.model.message.OrcidInternal;
 import org.orcid.jaxb.model.message.OrcidPatent;
@@ -183,12 +183,12 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
     private void setActivityDetails(ProfileEntity profileEntity, OrcidActivities orcidActivities) {
         Affiliations affiliations = null;        
         OrcidPatents orcidPatents = null;
-        OrcidFundingList orcidFundings = null;
+        FundingList orcidFundings = null;
         OrcidWorks orcidWorks = null;
         if (orcidActivities != null) {
             affiliations = orcidActivities.getAffiliations();            
             orcidPatents = orcidActivities.getOrcidPatents();
-            orcidFundings = orcidActivities.getOrcidFundings();
+            orcidFundings = orcidActivities.getFundings();
             orcidWorks = orcidActivities.getOrcidWorks();
         }
         setOrgAffiliationRelations(profileEntity, affiliations);        
@@ -389,14 +389,14 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
         return JsonUtils.convertToJsonString(workContributors);
     }
     
-    private String getGrantContributorsJson(FundingContributors grantContributors) {
-        if (grantContributors == null) {
+    private String getFundingContributorsJson(FundingContributors fundingContributors) {
+        if (fundingContributors == null) {
             return null;
         }
-        return JsonUtils.convertToJsonString(grantContributors);
+        return JsonUtils.convertToJsonString(fundingContributors);
     }
 
-    private void setFundings(ProfileEntity profileEntity, OrcidFundingList orcidFundings) {
+    private void setFundings(ProfileEntity profileEntity, FundingList orcidFundings) {
     	SortedSet<ProfileFundingEntity> existingProfileFundingEntities = profileEntity.getProfileFunding();
     	if(existingProfileFundingEntities == null) {
     		existingProfileFundingEntities = new TreeSet<>();
@@ -409,8 +409,8 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
     	SortedSet<ProfileFundingEntity> updatedProfileFundingEntities = new TreeSet<>();
         
     	// Populate a list of the updated profileGrant entities that comes from the orcidGrant object
-    	if(orcidFundings != null && orcidFundings.getOrcidFunding() != null && !orcidFundings.getOrcidFunding().isEmpty()) {
-        	for(OrcidFunding orcidFunding : orcidFundings.getOrcidFunding()) {
+    	if(orcidFundings != null && orcidFundings.getFundings() != null && !orcidFundings.getFundings().isEmpty()) {
+        	for(Funding orcidFunding : orcidFundings.getFundings()) {
         		ProfileFundingEntity newProfileGrantEntity = getProfileFundingEntity(orcidFunding, existingProfileFundingEntitiesMap.get(orcidFunding.getPutCode()));
         		newProfileGrantEntity.setProfile(profileEntity);
         		updatedProfileFundingEntities.add(newProfileGrantEntity);
@@ -970,13 +970,13 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
     
     /**
      * Transforms a OrcidGrant object into a ProfileFundingEntity object
-     * @param updatedOrcidGrant
+     * @param updatedFunding
      * @param profileEntity
      * @return ProfileFundingEntity
      * */
     @Override
-    public ProfileFundingEntity getNewProfileGrantEntity(OrcidFunding updatedOrcidGrant, ProfileEntity profileEntity) {
-        ProfileFundingEntity profileFundingEntity = getProfileFundingEntity(updatedOrcidGrant, null);
+    public ProfileFundingEntity getNewProfileFundingEntity(Funding updatedFunding, ProfileEntity profileEntity) {
+        ProfileFundingEntity profileFundingEntity = getProfileFundingEntity(updatedFunding, null);
         profileFundingEntity.setProfile(profileEntity);
         return profileFundingEntity;
     }
@@ -1011,18 +1011,18 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
     }
     
     /**
-     * Get a ProfileGrantEntity based on a Grant object
-     * @param grant
-     * @param exisitingProfileGrantEntity
-     * @return a ProfileGrantEntity created from the provided grant 
+     * Get a ProfileFundingEntity based on a Grant object
+     * @param funding
+     * @param exisitingProfileFundingEntity
+     * @return a ProfileFundingEntity created from the provided funding 
      * */
-    private ProfileFundingEntity getProfileFundingEntity(OrcidFunding funding, ProfileFundingEntity exisitingProfileFundingEntity) {
+    private ProfileFundingEntity getProfileFundingEntity(Funding funding, ProfileFundingEntity exisitingProfileFundingEntity) {
         if (funding != null) {
         	ProfileFundingEntity profileFundingEntity = null;
             if (exisitingProfileFundingEntity == null) {
                 String putCode = funding.getPutCode();
                 if (StringUtils.isNotBlank(putCode) && !"-1".equals(putCode)) {
-                    throw new IllegalArgumentException("Invalid put-code was supplied for a grant: " + putCode);
+                    throw new IllegalArgumentException("Invalid put-code was supplied for a funding: " + putCode);
                 }
                 profileFundingEntity = new ProfileFundingEntity();
                 profileFundingEntity.setSource(getSource(funding.getSource()));
@@ -1038,7 +1038,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             	profileFundingEntity.setCurrencyCode(funding.getAmount().getCurrencyCode() != null ? funding.getAmount().getCurrencyCode() : null);
             }
             
-            profileFundingEntity.setContributorsJson(getGrantContributorsJson(funding.getFundingContributors()));
+            profileFundingEntity.setContributorsJson(getFundingContributorsJson(funding.getFundingContributors()));
             profileFundingEntity.setDescription(StringUtils.isNotBlank(funding.getDescription()) ? funding.getDescription() : null);
             profileFundingEntity.setEndDate(endDate != null ? new EndDateEntity(endDate) : null);
             profileFundingEntity.setExternalIdentifiers(getGrantExternalIdentifiers(profileFundingEntity, funding.getFundingExternalIdentifiers()));            
@@ -1117,7 +1117,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
      * @param orcidGrant
      * @return a OrgEntity based on the provided OrcidGrant
      * */
-    private OrgEntity getOrgEntity(OrcidFunding orcidGrant) {
+    private OrgEntity getOrgEntity(Funding orcidGrant) {
         if (orcidGrant != null) {
             OrgEntity orgEntity = new OrgEntity();
             Organization organization = orcidGrant.getOrganization();

@@ -29,7 +29,7 @@ import org.orcid.jaxb.model.message.FundingContributors;
 import org.orcid.jaxb.model.message.FundingExternalIdentifier;
 import org.orcid.jaxb.model.message.FundingType;
 import org.orcid.jaxb.model.message.Iso3166Country;
-import org.orcid.jaxb.model.message.OrcidFunding;
+import org.orcid.jaxb.model.message.Funding;
 import org.orcid.jaxb.model.message.FundingExternalIdentifiers;
 import org.orcid.jaxb.model.message.Organization;
 import org.orcid.jaxb.model.message.OrganizationAddress;
@@ -263,8 +263,8 @@ public class FundingForm implements ErrorsInterface, Serializable {
         this.countryForDisplay = countryForDisplay;
     }
     
-	public OrcidFunding toOrcidFunding() {
-		OrcidFunding result = new OrcidFunding();
+	public Funding toOrcidFunding() {
+		Funding result = new Funding();
 		Amount orcidAmount = new Amount();
 		if(!PojoUtil.isEmpty(amount))
 			orcidAmount.setContent(amount.getValue());
@@ -333,7 +333,7 @@ public class FundingForm implements ErrorsInterface, Serializable {
 		return result;
 	}
 	
-	public static FundingForm valueOf(OrcidFunding funding) {
+	public static FundingForm valueOf(Funding funding) {
 		FundingForm result = new FundingForm();
 		
 		if(StringUtils.isNotEmpty(funding.getPutCode()))

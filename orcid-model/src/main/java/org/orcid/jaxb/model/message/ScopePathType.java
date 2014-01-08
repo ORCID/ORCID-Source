@@ -53,15 +53,15 @@ import javax.xml.bind.annotation.XmlType;
  *     &lt;enumeration value="/orcid-bio/read-limited"/>
  *     &lt;enumeration value="/orcid-profile/read-limited"/>
  *     &lt;enumeration value="/orcid-works/read-limited"/>
- *     &lt;enumeration value="/orcid-grants/read-limited"/>
+ *     &lt;enumeration value="/funding/read-limited"/>
  *     &lt;enumeration value="/orcid-patents/read-limited"/>
  *     &lt;enumeration value="/orcid-works/update"/>
- *     &lt;enumeration value="/orcid-grants/update"/>
+ *     &lt;enumeration value="/funding/update"/>
  *     &lt;enumeration value="/orcid-patents/update"/>
  *     &lt;enumeration value="/orcid-bio/external-identifiers/create"/>
  *     &lt;enumeration value="/orcid-bio/update"/>
  *     &lt;enumeration value="/orcid-works/create"/>
- *     &lt;enumeration value="/orcid-grants/create"/>
+ *     &lt;enumeration value="/funding/create"/>
  *     &lt;enumeration value="/orcid-patents/create"/>
  *     &lt;enumeration value="/orcid-profile/create"/>
  *   &lt;/restriction>
@@ -81,20 +81,20 @@ public enum ScopePathType implements Serializable {
     @XmlEnumValue("/orcid-profile/read-limited") ORCID_PROFILE_READ_LIMITED("/orcid-profile/read-limited", READ_PUBLIC),
     @XmlEnumValue("/affiliations/read-limited") AFFILIATIONS_READ_LIMITED("/affiliations/read-limited", READ_PUBLIC),
     @XmlEnumValue("/orcid-works/read-limited") ORCID_WORKS_READ_LIMITED("/orcid-works/read-limited", READ_PUBLIC),
-    @XmlEnumValue("/orcid-grants/read-limited") ORCID_GRANTS_READ_LIMITED("/orcid-grants/read-limited", READ_PUBLIC),
+    @XmlEnumValue("/funding/read-limited") FUNDING_READ_LIMITED("/funding/read-limited", READ_PUBLIC),
     @XmlEnumValue("/orcid-patents/read-limited") ORCID_PATENTS_READ_LIMITED("/orcid-patents/read-limited", READ_PUBLIC),
     @XmlEnumValue("/affiliations/update") AFFILIATIONS_UPDATE("/affiliations/update", AFFILIATIONS_READ_LIMITED, READ_PUBLIC),
     @XmlEnumValue("/orcid-works/update") ORCID_WORKS_UPDATE("/orcid-works/update", ORCID_WORKS_READ_LIMITED, READ_PUBLIC),
-    @XmlEnumValue("/orcid-grants/update") ORCID_GRANTS_UPDATE("/orcid-grants/update", ORCID_GRANTS_READ_LIMITED, READ_PUBLIC),
+    @XmlEnumValue("/funding/update") FUNDING_UPDATE("/funding/update", FUNDING_READ_LIMITED, READ_PUBLIC),
     @XmlEnumValue("/orcid-patents/update") ORCID_PATENTS_UPDATE("/orcid-patents/update", ORCID_PATENTS_READ_LIMITED, READ_PUBLIC),
     @XmlEnumValue("/orcid-bio/external-identifiers/create") ORCID_BIO_EXTERNAL_IDENTIFIERS_CREATE("/orcid-bio/external-identifiers/create", READ_PUBLIC),
     @XmlEnumValue("/orcid-bio/update") ORCID_BIO_UPDATE("/orcid-bio/update", ORCID_BIO_READ_LIMITED, ORCID_BIO_EXTERNAL_IDENTIFIERS_CREATE, READ_PUBLIC),
     @XmlEnumValue("/affiliations/create") AFFILIATIONS_CREATE("/affiliations/create", AFFILIATIONS_READ_LIMITED, READ_PUBLIC),
     @XmlEnumValue("/orcid-works/create") ORCID_WORKS_CREATE("/orcid-works/create", ORCID_WORKS_READ_LIMITED, READ_PUBLIC),
-    @XmlEnumValue("/orcid-grants/create") ORCID_GRANTS_CREATE("/orcid-grants/create", ORCID_GRANTS_READ_LIMITED, READ_PUBLIC),
+    @XmlEnumValue("/funding/create") FUNDING_CREATE("/funding/create", FUNDING_READ_LIMITED, READ_PUBLIC),
     @XmlEnumValue("/orcid-patents/create") ORCID_PATENTS_CREATE("/orcid-patents/create", ORCID_PATENTS_UPDATE, READ_PUBLIC),
     @XmlEnumValue("/orcid-profile/create") ORCID_PROFILE_CREATE("/orcid-profile/create", ORCID_BIO_READ_LIMITED, ORCID_WORKS_READ_LIMITED, ORCID_PROFILE_READ_LIMITED, ORCID_WORKS_UPDATE, ORCID_BIO_UPDATE,
-            ORCID_GRANTS_UPDATE, ORCID_PATENTS_UPDATE, ORCID_BIO_EXTERNAL_IDENTIFIERS_CREATE, ORCID_WORKS_CREATE, ORCID_GRANTS_CREATE, ORCID_PATENTS_CREATE, AUTHENTICATE, READ_PUBLIC);
+            FUNDING_UPDATE, ORCID_PATENTS_UPDATE, ORCID_BIO_EXTERNAL_IDENTIFIERS_CREATE, ORCID_WORKS_CREATE, FUNDING_CREATE, ORCID_PATENTS_CREATE, AUTHENTICATE, READ_PUBLIC);
     //@formatter:on
 
     private final String value;
@@ -147,7 +147,7 @@ public enum ScopePathType implements Serializable {
             return true;
         case ORCID_WORKS_READ_LIMITED:
             return true;
-        case ORCID_GRANTS_READ_LIMITED:
+        case FUNDING_READ_LIMITED:
             return true;
         case ORCID_PATENTS_READ_LIMITED:
             return true;
@@ -195,9 +195,9 @@ public enum ScopePathType implements Serializable {
             // of the other scopes, it is allow to have a longer expiration date
             // and only works on unclaimed records
             return false; 
-        case ORCID_GRANTS_CREATE:
+        case FUNDING_CREATE:
             return true;
-        case ORCID_GRANTS_UPDATE:
+        case FUNDING_UPDATE:
             return true;
         case ORCID_PATENTS_CREATE:
             return true;

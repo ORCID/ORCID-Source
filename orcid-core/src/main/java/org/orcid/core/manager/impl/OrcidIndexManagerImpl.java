@@ -40,7 +40,7 @@ import org.orcid.jaxb.model.message.Keyword;
 import org.orcid.jaxb.model.message.OrcidActivities;
 import org.orcid.jaxb.model.message.OrcidBio;
 import org.orcid.jaxb.model.message.OrcidDeprecated;
-import org.orcid.jaxb.model.message.OrcidFunding;
+import org.orcid.jaxb.model.message.Funding;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidPatent;
 import org.orcid.jaxb.model.message.OrcidProfile;
@@ -280,12 +280,12 @@ public class OrcidIndexManagerImpl implements OrcidIndexManager {
 						allExternalIdentifiers);
 			}
 
-			List<OrcidFunding> orcidFundings = filteredProfile
-					.retrieveOrcidFundings() != null ? filteredProfile
-					.retrieveOrcidFundings().getOrcidFunding() : null;
+			List<Funding> orcidFundings = filteredProfile
+					.retrieveFundings() != null ? filteredProfile
+					.retrieveFundings().getFundings() : null;
 			if (orcidFundings != null) {
 				List<String> fundingTitle = new ArrayList<String>();				
-				for (OrcidFunding orcidFunding : orcidFundings) {
+				for (Funding orcidFunding : orcidFundings) {
 					FundingTitle title = orcidFunding.getTitle();					
 					if (title != null) {
 						if (title.getTitle() != null && !StringUtils.isBlank(title.getTitle().getContent())) {					

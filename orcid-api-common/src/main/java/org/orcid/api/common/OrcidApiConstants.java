@@ -26,7 +26,7 @@ public class OrcidApiConstants {
     public static final String BIO_PATH = "/{orcid:[^/]+}{ignore:(/orcid-bio)?}"; 
     public static final String BIO_PATH_NO_REGEX = "/{orcid}/orcid-bio";
     public static final String AFFILIATIONS_PATH = "/{orcid}/affiliations";
-    public static final String GRANTS_PATH = "/{orcid}/grants"; 
+    public static final String FUNDING_PATH = "/{orcid}/funding"; 
     public static final String WORKS_PATH = "/{orcid}/orcid-works";
     public static final String EXTERNAL_IDENTIFIER_PATH = "/{orcid}/orcid-bio/external-identifiers";
     public static final String STATUS_PATH = "/status";

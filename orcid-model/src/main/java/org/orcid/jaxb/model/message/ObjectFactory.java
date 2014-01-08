@@ -236,19 +236,19 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link OrcidFundingList }
+     * Create an instance of {@link FundingList }
      * 
      */
-    public OrcidFundingList createOrcidGrants() {
-        return new OrcidFundingList();
+    public FundingList createFundingList() {
+        return new FundingList();
     }
 
     /**
-     * Create an instance of {@link OrcidFunding }
+     * Create an instance of {@link Funding }
      * 
      */
-    public OrcidFunding createOrcidGrant() {
-        return new OrcidFunding();
+    public Funding createFunding() {
+        return new Funding();
     }
 
     /**
@@ -281,15 +281,7 @@ public class ObjectFactory {
      */
     public GrantDate createGrantDate() {
         return new GrantDate();
-    }
-
-    /**
-     * Create an instance of {@link FundingContributors }
-     * 
-     */
-    public FundingContributors createGrantContributors() {
-        return new FundingContributors();
-    }
+    }    
 
     /**
      * Create an instance of {@link Contributor }

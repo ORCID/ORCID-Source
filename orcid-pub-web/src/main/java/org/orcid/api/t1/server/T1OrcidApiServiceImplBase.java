@@ -31,7 +31,7 @@ import static org.orcid.api.common.OrcidApiConstants.TEXT_TURTLE;
 import static org.orcid.api.common.OrcidApiConstants.VND_ORCID_JSON;
 import static org.orcid.api.common.OrcidApiConstants.VND_ORCID_XML;
 import static org.orcid.api.common.OrcidApiConstants.WORKS_PATH;
-import static org.orcid.api.common.OrcidApiConstants.GRANTS_PATH;
+import static org.orcid.api.common.OrcidApiConstants.FUNDING_PATH;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -419,7 +419,7 @@ abstract public class T1OrcidApiServiceImplBase implements OrcidApiService<Respo
     
     /**
      * GETs the HTML representation of the ORCID record containing only
-     * grant details
+     * funding details
      * 
      * @param orcid
      *            the ORCID that corresponds to the user's record
@@ -428,16 +428,16 @@ abstract public class T1OrcidApiServiceImplBase implements OrcidApiService<Respo
     @Override
     @GET
     @Produces(value = { MediaType.TEXT_HTML })
-    @Path(GRANTS_PATH)
-    public Response viewGrantsDetailsHtml(@PathParam("orcid") String orcid) {
+    @Path(FUNDING_PATH)
+    public Response viewFundingDetailsHtml(@PathParam("orcid") String orcid) {
         T1_GET_REQUESTS.inc();
-        Response response = orcidApiServiceDelegator.findGrantsDetailsFromPublicCache(orcid);
+        Response response = orcidApiServiceDelegator.findFundingDetailsFromPublicCache(orcid);
         return Response.fromResponse(response).header("Content-Disposition", "attachment; filename=\"" + orcid + "-grants.xml\"").build();
     }
 
     /**
      * GETs the XML representation of the ORCID record containing only
-     * grant details
+     * funding details
      * 
      * @param orcid
      *            the ORCID that corresponds to the user's record
@@ -445,15 +445,15 @@ abstract public class T1OrcidApiServiceImplBase implements OrcidApiService<Respo
      */
     @GET
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
-    @Path(GRANTS_PATH)
-    public Response viewGrantsDetailsXml(@PathParam("orcid") String orcid) {
+    @Path(FUNDING_PATH)
+    public Response viewFundingDetailsXml(@PathParam("orcid") String orcid) {
         T1_GET_REQUESTS.inc();
-        return orcidApiServiceDelegator.findGrantsDetailsFromPublicCache(orcid);
+        return orcidApiServiceDelegator.findFundingDetailsFromPublicCache(orcid);
     }
 
     /**
      * GETs the JSON representation of the ORCID record containing only
-     * grant details
+     * funding details
      * 
      * @param orcid
      *            the ORCID that corresponds to the user's record
@@ -462,10 +462,10 @@ abstract public class T1OrcidApiServiceImplBase implements OrcidApiService<Respo
     @Override
     @GET
     @Produces(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
-    @Path(GRANTS_PATH)
-    public Response viewGrantsDetailsJson(@PathParam("orcid") String orcid) {
+    @Path(FUNDING_PATH)
+    public Response viewFundingDetailsJson(@PathParam("orcid") String orcid) {
         T1_GET_REQUESTS.inc();
-        return orcidApiServiceDelegator.findGrantsDetailsFromPublicCache(orcid);
+        return orcidApiServiceDelegator.findFundingDetailsFromPublicCache(orcid);
     }
     
     /**

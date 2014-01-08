@@ -48,8 +48,8 @@ import org.orcid.jaxb.model.message.Keyword;
 import org.orcid.jaxb.model.message.Keywords;
 import org.orcid.jaxb.model.message.OrcidActivities;
 import org.orcid.jaxb.model.message.OrcidBio;
-import org.orcid.jaxb.model.message.OrcidFunding;
-import org.orcid.jaxb.model.message.OrcidFundingList;
+import org.orcid.jaxb.model.message.Funding;
+import org.orcid.jaxb.model.message.FundingList;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidPatent;
 import org.orcid.jaxb.model.message.OrcidPatents;
@@ -333,30 +333,30 @@ public class OrcidIndexManagerImplTest extends BaseTest {
 
     private OrcidProfile getOrcidWithGrants() {
         OrcidProfile orcidWithGrants = getStandardOrcid();
-        OrcidFundingList orcidFundings = new OrcidFundingList();
-        OrcidFunding orcidGrant1 = new OrcidFunding();
-        orcidGrant1.setVisibility(Visibility.PUBLIC);
+        FundingList orcidFundings = new FundingList();
+        Funding funding1 = new Funding();
+        funding1.setVisibility(Visibility.PUBLIC);
         FundingTitle title = new FundingTitle();
         title.setTitle(new Title("grant 1"));
-        orcidGrant1.setTitle(title);
+        funding1.setTitle(title);
 
-        OrcidFunding orcidGrant2 = new OrcidFunding();
-        orcidGrant2.setVisibility(Visibility.PUBLIC);
+        Funding funding2 = new Funding();
+        funding2.setVisibility(Visibility.PUBLIC);
         FundingTitle title2 = new FundingTitle();
         title2.setTitle(new Title("grant 2"));
-        orcidGrant2.setTitle(title2);
+        funding2.setTitle(title2);
 
-        OrcidFunding orcidGrant3 = new OrcidFunding();
-        orcidGrant3.setVisibility(Visibility.LIMITED);
+        Funding funding3 = new Funding();
+        funding3.setVisibility(Visibility.LIMITED);
         FundingTitle title3 = new FundingTitle();
         title3.setTitle(new Title("grant 3"));
-        orcidGrant3.setTitle(title3);
+        funding3.setTitle(title3);
 
-        OrcidFunding orcidGrant4 = new OrcidFunding();
-        orcidGrant4.setVisibility(Visibility.PUBLIC);
+        Funding funding4 = new Funding();
+        funding4.setVisibility(Visibility.PUBLIC);
 
-        orcidFundings.getOrcidFunding().addAll(Arrays.asList(new OrcidFunding[] { orcidGrant1, orcidGrant2, orcidGrant3, orcidGrant4 }));
-        orcidWithGrants.setOrcidFundings(orcidFundings);
+        orcidFundings.getFundings().addAll(Arrays.asList(new Funding[] { funding1, funding2, funding3, funding4 }));
+        orcidWithGrants.setFundings(orcidFundings);
         return orcidWithGrants;
     }
 
@@ -447,8 +447,8 @@ public class OrcidIndexManagerImplTest extends BaseTest {
         Affiliations affiliations = new Affiliations();        
         orcidActivities.setAffiliations(affiliations);
         
-        OrcidFundingList fundings = new OrcidFundingList(); 
-        orcidActivities.setOrcidFundings(fundings);
+        FundingList fundings = new FundingList(); 
+        orcidActivities.setFundings(fundings);
 
         OrcidWorks orcidWorks = new OrcidWorks();
         OrcidWork orcidWork1 = new OrcidWork();

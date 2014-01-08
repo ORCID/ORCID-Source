@@ -45,7 +45,7 @@ import javax.xml.bind.annotation.XmlType;
  *       &lt;sequence>
  *         &lt;element ref="{http://www.orcid.org/ns/orcid}affiliations" minOccurs="0"/>
  *         &lt;element ref="{http://www.orcid.org/ns/orcid}orcid-works" minOccurs="0"/>
- *         &lt;element ref="{http://www.orcid.org/ns/orcid}orcid-funding-list" minOccurs="0"/>
+ *         &lt;element ref="{http://www.orcid.org/ns/orcid}funding-list" minOccurs="0"/>
  *         &lt;element ref="{http://www.orcid.org/ns/orcid}orcid-patents" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
@@ -56,7 +56,7 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType( propOrder = { "affiliations", "orcidWorks", "orcidFundings", "orcidPatents" })
+@XmlType( propOrder = { "affiliations", "orcidWorks", "fundings", "orcidPatents" })
 @XmlRootElement(name = "orcid-activities")
 public class OrcidActivities implements Serializable {
 
@@ -64,8 +64,8 @@ public class OrcidActivities implements Serializable {
     protected Affiliations affiliations;    
     @XmlElement(name = "orcid-works")
     protected OrcidWorks orcidWorks;
-    @XmlElement(name = "orcid-funding-list")
-    protected OrcidFundingList orcidFundings;
+    @XmlElement(name = "funding-list")
+    protected FundingList fundings;
     @XmlElement(name = "orcid-patents")
     protected OrcidPatents orcidPatents;
 
@@ -112,24 +112,24 @@ public class OrcidActivities implements Serializable {
     }
 
     /**
-     * Gets the value of the orcidGrants property.
+     * Gets the value of the FundingList property.
      * 
-     * @return possible object is {@link OrcidFundingList }
+     * @return possible object is {@link FundingList }
      * 
      */
-    public OrcidFundingList getOrcidFundings() {
-        return orcidFundings;
+    public FundingList getFundings() {
+        return fundings;
     }
 
     /**
-     * Sets the value of the orcidGrants property.
+     * Sets the value of the FundingList property.
      * 
      * @param value
-     *            allowed object is {@link OrcidFundingList }
+     *            allowed object is {@link FundingList }
      * 
      */
-    public void setOrcidFundings(OrcidFundingList value) {
-        this.orcidFundings = value;
+    public void setFundings(FundingList value) {
+        this.fundings = value;
     }
 
     /**
@@ -155,13 +155,13 @@ public class OrcidActivities implements Serializable {
 
     public void downgradeToWorksOnly() {
         setAffiliations(null);
-        setOrcidFundings(null);
+        setFundings(null);
         setOrcidPatents(null);
     }
     
     public void downgradeToAffiliationsOnly() {
         setOrcidWorks(null);
-        setOrcidFundings(null);
+        setFundings(null);
         setOrcidPatents(null);
     }
     
@@ -177,7 +177,7 @@ public class OrcidActivities implements Serializable {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((affiliations == null) ? 0 : affiliations.hashCode());
-        result = prime * result + ((orcidFundings == null) ? 0 : orcidFundings.hashCode());
+        result = prime * result + ((fundings == null) ? 0 : fundings.hashCode());
         result = prime * result + ((orcidPatents == null) ? 0 : orcidPatents.hashCode());
         result = prime * result + ((orcidWorks == null) ? 0 : orcidWorks.hashCode());
         return result;
@@ -197,10 +197,10 @@ public class OrcidActivities implements Serializable {
                 return false;
         } else if (!affiliations.equals(other.affiliations))
             return false;        
-        if (orcidFundings == null) {
-            if (other.orcidFundings != null)
+        if (fundings == null) {
+            if (other.fundings != null)
                 return false;
-        } else if (!orcidFundings.equals(other.orcidFundings))
+        } else if (!fundings.equals(other.fundings))
             return false;
         if (orcidPatents == null) {
             if (other.orcidPatents != null)

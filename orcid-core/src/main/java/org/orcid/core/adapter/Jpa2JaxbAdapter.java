@@ -19,7 +19,7 @@ package org.orcid.core.adapter;
 import org.orcid.core.manager.LoadOptions;
 import org.orcid.jaxb.model.clientgroup.OrcidClient;
 import org.orcid.jaxb.model.clientgroup.OrcidClientGroup;
-import org.orcid.jaxb.model.message.OrcidFunding;
+import org.orcid.jaxb.model.message.Funding;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidWork;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -44,6 +44,6 @@ public interface Jpa2JaxbAdapter {
     
     OrcidWork getOrcidWork(ProfileWorkEntity profileWorkEntity);
     
-    OrcidFunding getOrcidFunding(ProfileFundingEntity profileFundingEntity);
+    Funding getFunding(ProfileFundingEntity profileFundingEntity);
 
 }

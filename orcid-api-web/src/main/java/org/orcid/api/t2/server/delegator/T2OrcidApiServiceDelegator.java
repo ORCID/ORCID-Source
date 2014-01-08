@@ -154,24 +154,24 @@ public interface T2OrcidApiServiceDelegator extends OrcidApiServiceDelegator {
     Response updateAffiliations(UriInfo uriInfo, String orcid, OrcidMessage orcidMessage);
     
     /**
-     * Add grant to an existing ORCID profile.
+     * Add funding to an existing ORCID profile.
      * 
      * @param orcidMessage
-     *            the message containing the grant to be added
-     * @return if the grant were all added successfully, a 201 with a
+     *            the message containing the funding to be added
+     * @return if the funding were all added successfully, a 201 with a
      *         location should be returned
      */
-    Response addGrants(UriInfo uriInfo, String orcid, OrcidMessage orcidMessage);
+    Response addFunding(UriInfo uriInfo, String orcid, OrcidMessage orcidMessage);
 
     /**
-     * Update the grant for a given ORCID profile. This will cause all
+     * Update the funding for a given ORCID profile. This will cause all
      * content to be overwritten
      * 
      * @param orcidMessage
-     *            the message containing all grant to overwritten. If any
-     *            other elements outside of the grant are present, a 400 Bad
+     *            the message containing all funding to overwritten. If any
+     *            other elements outside of the funding are present, a 400 Bad
      *            Request is returned
      * @return
      */
-    Response updateGrants(UriInfo uriInfo, String orcid, OrcidMessage orcidMessage);
+    Response updateFunding(UriInfo uriInfo, String orcid, OrcidMessage orcidMessage);
 }

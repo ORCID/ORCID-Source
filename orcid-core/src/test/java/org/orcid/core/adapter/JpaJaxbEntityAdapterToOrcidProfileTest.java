@@ -58,8 +58,8 @@ import org.orcid.jaxb.model.message.GivenNames;
 import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.jaxb.model.message.Keywords;
 import org.orcid.jaxb.model.message.OrcidBio;
-import org.orcid.jaxb.model.message.OrcidFunding;
-import org.orcid.jaxb.model.message.OrcidFundingList;
+import org.orcid.jaxb.model.message.Funding;
+import org.orcid.jaxb.model.message.FundingList;
 import org.orcid.jaxb.model.message.OrcidHistory;
 import org.orcid.jaxb.model.message.OrcidInternal;
 import org.orcid.jaxb.model.message.OrcidMessage;
@@ -216,7 +216,7 @@ public class JpaJaxbEntityAdapterToOrcidProfileTest extends DBUnitTest {
         checkAffiliations(orcidProfile.getOrcidActivities().getAffiliations().getAffiliation());
         assertNotNull(orcidProfile.retrieveOrcidWorks());
         checkOrcidWorks(orcidProfile.retrieveOrcidWorks());
-        checkOrcidFundings(orcidProfile.retrieveOrcidFundings());
+        checkOrcidFundings(orcidProfile.retrieveFundings());
         checkOrcidPatents(orcidProfile.retrieveOrcidPatents());
         assertEquals("4444-4444-4444-4443", orcidProfile.getOrcid().getValue());
 
@@ -278,9 +278,9 @@ public class JpaJaxbEntityAdapterToOrcidProfileTest extends DBUnitTest {
         assertTrue(putCode4Found);
     }
 
-    private void checkOrcidFundings(OrcidFundingList orcidGrants) {
-        assertNotNull(orcidGrants);
-        List<OrcidFunding> orcidFundingList = orcidGrants.getOrcidFunding();
+    private void checkOrcidFundings(FundingList orcidFunding) {
+        assertNotNull(orcidFunding);
+        List<Funding> orcidFundingList = orcidFunding.getFundings();
         assertEquals(3, orcidFundingList.size());
     }
 

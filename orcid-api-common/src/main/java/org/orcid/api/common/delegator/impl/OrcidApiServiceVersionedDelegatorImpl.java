@@ -122,14 +122,14 @@ public class OrcidApiServiceVersionedDelegatorImpl implements OrcidApiServiceDel
     }
     
     @Override
-	public Response findGrantsDetails(String orcid) {
-    	Response response = orcidApiServiceDelegator.findGrantsDetails(orcid);
+	public Response findFundingDetails(String orcid) {
+    	Response response = orcidApiServiceDelegator.findFundingDetails(orcid);
         return regradeAndValidateResponse(response);
 	}
 
 	@Override
-	public Response findGrantsDetailsFromPublicCache(String orcid) {
-		Response response = orcidApiServiceDelegator.findGrantsDetailsFromPublicCache(orcid);
+	public Response findFundingDetailsFromPublicCache(String orcid) {
+		Response response = orcidApiServiceDelegator.findFundingDetailsFromPublicCache(orcid);
         return regradeAndValidateResponse(response);
 	}
 
