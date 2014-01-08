@@ -91,11 +91,17 @@
 	</changeSet>
 	
 	<changeSet id="CREATE-SEQUENCES" author="Angel Montenegro" dbms="postgresql">
-        <createSequence sequenceName="profile_funding_seq" startValue="1000"/>
+		<preConditions>
+			<not>
+				<sequenceExists sequenceName="profile_funding_seq"/>
+				<sequenceExists sequenceName="funding_external_identifier_seq"/>
+			</not>
+		</preConditions>
+        <createSequence sequenceName="profile_funding_seq" startValue="1000" />
         <createSequence sequenceName="funding_external_identifier_seq" startValue="1000"/>
     </changeSet>
     
-    <changeSet id="CREATE-AUTOCOLS" author="Angel Montenegro" dbms="hsqldb">
+    <changeSet id="CREATE-AUTOCOLS" author="Angel Montenegro" dbms="hsqldb">    	
         <addAutoIncrement tableName="profile_funding" columnName="id" columnDataType="bigint"/>
         <addAutoIncrement tableName="funding_external_identifier" columnName="funding_external_identifier_id" columnDataType="bigint"/>
     </changeSet>
