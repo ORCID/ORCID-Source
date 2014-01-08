@@ -140,39 +140,42 @@
         });
     };
     
-    /* Menu Handler Mobile / Desktop - Prototype implementation */
+    /* Menu Handler Mobile / Desktop */
     var menuHandler = function(){        
         
         var menu = function(menu){
-        	this.menu = menu;
+            this.menu = menu;
         };
         
         menu.prototype.data = function(){
-        	return this.menu;
+            return this.menu;
         };        
         
         originalMenu = new menu($('.header .navigation').html()); //Desktop menu data
          
-    	/* Managing window resizing for restore visibility of some elements due to Javascript actions over the styles for Mobile or Tablet views */
-        $(window).bind('resize', function() {            	
-            if(navigator.appVersion.indexOf("MSIE 7.") == -1){ //Not IE7                	                	
-            	ww = getWindowWidth();        
+        /* Managing window resizing for restore visibility of some elements due to Javascript actions over the styles for Mobile or Tablet views */
+        $(window).bind('resize', function() {               
+            if(navigator.appVersion.indexOf("MSIE 7.") == -1){ //Not IE7                                        
+                ww = getWindowWidth();        
                 if (ww > 767){ //Tablet ~ PC
-                	$(".container .header .search form input[type='search']").blur();
-                    restoreDesktopMenu();	                                    
+                    $(".container .header .search form input[type='search']").blur();
+                    $('.header .navigation ul li ul li a').removeClass('slideDown'); //For handling menu animation for third level menus, only on mobile
+                    restoreDesktopMenu();                                                           
                 }else{
-                	if(!$(".container .header .search form input[type='search']").is(":focus") && !$('select#language-codes').is(":focus")){ //This is to prevent hiding search and Language selector elements.
+                    if(!$(".container .header .search form input[type='search']").is(":focus") && !$('select#language-codes').is(":focus")){ //This is to prevent hiding search and Language selector elements.
                         hideMenuItems(); 
                         restoreMobileMenu(); //Trigger menu adjustment                        
                     }
+                    $('.header .navigation ul li ul li a').addClass('slideDown'); //For handling menu animation for third level menus, only on mobile
                 }
+                setUserLoginStatus();                
             }
         });
 
         var restoreDesktopMenu = function(){
                 /* Restoring different elements of the Desktop layout, this is due the menu modification performed to adapt it to mobile devices */                
                 if($('#mobile-menu-icon').css('display') == 'none'){
-                	$('.container .header .search').css('display', 'block');
+                    $('.container .header .search').css('display', 'block');
                     $('.container .header .search #form-search').css('display', 'block');
                     $('.container .header .search #languageCtrl').css('display', 'block');
                     $('.header .navigation > .menu').css('display', 'block');
@@ -209,44 +212,44 @@
             
             mobileMenu = new menu($('.header .navigation').html()); //Menu data            
             restoreDesktopMenu(); //Restoring original menu after changes
+            
         };        
         
         prepareMobileMenu();
         
         var restoreMobileMenu = function(){
-        	$('.header .navigation').html(''); //Deleting DOM menu content
+            $('.header .navigation').html(''); //Deleting DOM menu content
             $('.header .navigation').prepend(mobileMenu.data()); //Restoring mobile menu structure
+
+            /* First Level Tap */
+            $('.header .navigation > .menu > li > a').live('click', function(event){
+                $('.header .navigation > .menu > li').removeClass('active-trail');
+            });
         };
         
-        /* First Level Tap */
-        $('.header .navigation > .menu > li > a').live('click', function(event){
-            $('.header .navigation > .menu > li').removeClass('active-trail');
-        });
-
-        /* Second Level Tap */
-        $('.header .navigation ul li ul li a').live('click', function(event){
-            event.preventDefault();
+        $('.header .navigation ul li ul li a.slideDown').live('click', function(event){ //For handling menu animation for third level menus, only on mobile
+            event.preventDefault();            
             var hasChildren = $(this).parent().has('ul').length;
-            if(hasChildren){                    
+            if(hasChildren){
                 var display = $(this).parent().children('ul').css('display');
                 if (display == 'none'){                                        
                     $(this).parent().children('ul').slideDown('slow');                        
                 }else{
                     $(this).parent().children('ul').slideUp('slow');
-                }     
+                }
             }else{
                  window.location = this.href;                
             }
-        });  
+        });        
 
         /* Menu icon */
-        $('#mobile-menu-icon').live('click', function(event){        	
+        $('#mobile-menu-icon').live('click', function(event){           
             event.preventDefault();
             tap('.container .header .navigation > .menu', this);            
         });        
 
         /* Search */ 
-        $('#mobile-search').live('click', function(event){        	
+        $('#mobile-search').live('click', function(event){          
             event.preventDefault();            
             tap('.container .header #form-search', this);            
         });
@@ -256,21 +259,20 @@
            event.preventDefault();
            tap('.container .header #languageCtrl', this);           
         });
-        
 
         var tap = function(menuObject, menuButton){            
             var display = $(menuObject).css('display');            
             if(display == 'none'){
-            	hideMenuItems(menuObject);
-            	if($(menuButton).attr('id') == 'mobile-search' || $(menuButton).attr('id') == 'mobile-settings'){
-            		$('.container .header #search').css('display', 'block');
-            	}
+                hideMenuItems(menuObject);
+                if($(menuButton).attr('id') == 'mobile-search' || $(menuButton).attr('id') == 'mobile-settings'){
+                    $('.container .header #search').css('display', 'block');
+                }
                 $(menuObject).css('display','block');
                 $(menuButton).css('background','#939598');
-            }else{            	
-            	if($(menuButton).attr('id') == 'mobile-search' || $(menuButton).attr('id') == 'mobile-settings'){
-            		$('.container .header #search').css('display', 'none');
-            	}
+            }else{              
+                if($(menuButton).attr('id') == 'mobile-search' || $(menuButton).attr('id') == 'mobile-settings'){
+                    $('.container .header #search').css('display', 'none');
+                }
                 $(menuObject).css('display','none');
                 $(menuButton).css('background','#338CAF');                 
             }
@@ -294,7 +296,7 @@
 
             if($(menuObject).attr('id') == 'languageCtrl'){ /* Language Button */            
                 $('.header .navigation > .menu').css('display', 'none');
-                $('.container .header #search').css('display', 'none');	
+                $('.container .header #search').css('display', 'none'); 
                 $('.container .header #form-search').css('display', 'none');
                 $('#mobile-menu-icon').css('background', '#338CAF');
                 $('#mobile-search').css('background', '#338CAF');
@@ -311,27 +313,38 @@
                 $('.header .navigation > .mobile-search').css('background','#338CAF');
                 $('.header .navigation > .mobile-settings').css('background','#338CAF');                            
             } 
-        	
+            
         };
     };
-	
-	function setLoginStatusIcon(){
-		$.ajax({
-			url: orcidVar.baseUri + '/userStatus.json?callback=?',
-	        type: 'GET',
-	        dataType: 'json',
-	        success: function(data) {        	
-	        	if (data.loggedIn == true){	        		
-	        		$('.header .navigation>.mobile-sign-in span').removeClass('glyphicon-user');
-	        		$('.header .navigation>.mobile-sign-in span').addClass('glyphicon-log-out');        		        		
-	        		$('.mobile-sign-in').prop('href', 'signout');	        		
-	        	}
-	        }
-	    }).fail(function() { 
-	    	// something bad is happening!
-	    	console.log("error with loggin check on :" + window.location.href);
-	    });	
-	}	
+    
+    
+    var setUserLoginStatus = function(){       
+
+        var l = window.location;
+        var host = l.host;
+         
+        if(host.indexOf('qa.orcid.org') >= 0){
+            base_url = 'https://qa.orcid.org/';
+        }else{
+            base_url = 'https://orcid.org/';
+        }
+
+        $.ajax({
+            url: base_url + 'userStatus.json',
+            type: 'GET',
+            dataType: 'json',
+            success: function(data) {           
+                if (data.loggedIn == true){                 
+                    /* Only for Mobile version */
+                    $('.header .navigation>.mobile-sign-in span').removeClass('glyphicon-user');
+                    $('.header .navigation>.mobile-sign-in span').addClass('glyphicon-log-out');                                
+                    $('.mobile-sign-in').prop('href', base_url + 'signout');
+                }
+            }
+        }).fail(function() {
+            console.log("error with loggin check on :" + window.location.href);
+        }); 
+    };
     
     /*============================================================
         Page initialisation
@@ -345,7 +358,7 @@
         popupHandler();
         menuHack();        
         menuHandler();
-        //setLoginStatusIcon();
+        setUserLoginStatus();
     };
 
     init();
