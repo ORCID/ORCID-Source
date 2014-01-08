@@ -2021,8 +2021,7 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc) {
 	};			
 	
 	// Server validations
-	$scope.serverValidate = function (relativePath) {
-		console.log(angular.toJson($scope.editFunding));
+	$scope.serverValidate = function (relativePath) {		
 		$.ajax({
 	        url: $('body').data('baseurl') + relativePath,
 	        type: 'POST',
@@ -2068,7 +2067,6 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc) {
 	
 	$scope.renderTranslatedTitleInfo = function(funding) {		
 		var info = null; 
-		console.log(angular.toJson(funding));
 		if(funding != null && funding.fundingTitle != null && funding.fundingTitle.translatedTitle != null) {
 			info = funding.fundingTitle.translatedTitle.content + ' - ' + funding.fundingTitle.translatedTitle.languageName;										
 		}				
@@ -2103,7 +2101,6 @@ function PublicFundingCtrl($scope, $compile, $filter, fundingSrvc){
 	
 	$scope.renderTranslatedTitleInfo = function(funding) {		
 		var info = null; 
-		console.log(angular.toJson(funding));
 		if(funding != null && funding.fundingTitle != null && funding.fundingTitle.translatedTitle != null) {
 			info = funding.fundingTitle.translatedTitle.content + ' - ' + funding.fundingTitle.translatedTitle.languageName;										
 		}				
