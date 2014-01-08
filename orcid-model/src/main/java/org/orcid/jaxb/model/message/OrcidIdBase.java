@@ -129,10 +129,7 @@ public class OrcidIdBase implements Serializable {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((host == null) ? 0 : host.hashCode());
         result = prime * result + ((path == null) ? 0 : path.hashCode());
-        result = prime * result + ((uri == null) ? 0 : uri.hashCode());
-        result = prime * result + ((values == null) ? 0 : values.hashCode());
         return result;
     }
 
@@ -145,25 +142,10 @@ public class OrcidIdBase implements Serializable {
         if (getClass() != obj.getClass())
             return false;
         OrcidIdBase other = (OrcidIdBase) obj;
-        if (host == null) {
-            if (other.host != null)
-                return false;
-        } else if (!host.equals(other.host))
-            return false;
         if (path == null) {
             if (other.path != null)
                 return false;
         } else if (!path.equals(other.path))
-            return false;
-        if (uri == null) {
-            if (other.uri != null)
-                return false;
-        } else if (!uri.equals(other.uri))
-            return false;
-        if (values == null) {
-            if (other.values != null)
-                return false;
-        } else if (!values.equals(other.values))
             return false;
         return true;
     }

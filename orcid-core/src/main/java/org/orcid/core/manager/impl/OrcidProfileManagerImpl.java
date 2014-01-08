@@ -996,9 +996,9 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         Visibility workVisibilityDefault = existingProfile.getOrcidInternal().getPreferences().getWorkVisibilityDefault().getValue();
         Boolean claimed = existingProfile.getOrcidHistory().isClaimed();
         setWorkPrivacy(updatedOrcidWorks, workVisibilityDefault, claimed == null ? false : claimed);
-        updatedOrcidWorks = dedupeWorks(updatedOrcidWorks);
         String amenderOrcid = sourceManager.retrieveSourceOrcid();
         addSourceToWorks(updatedOrcidWorks, amenderOrcid);
+        updatedOrcidWorks = dedupeWorks(updatedOrcidWorks);
         List<OrcidWork> updatedOrcidWorksList = updatedOrcidWorks.getOrcidWork();
         checkForAlreadyExistingWorks(existingOrcidWorks, updatedOrcidWorksList);
         persistAddedWorks(orcid, updatedOrcidWorksList);
