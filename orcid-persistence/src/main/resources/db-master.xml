@@ -75,5 +75,6 @@
     <include file="/db/updates/add_fields_to_work.xml" />
     <include file="/db/updates/disambiguated_affiliations_migrate_types.xml"/>
     <include file="/db/updates/update_work_types.xml"/>
+    <include file="/db/updates/disambiguated_funding.xml"/>
     <include file="/db/updates/change_creation_method_size.xml"/>
 </databaseChangeLog>

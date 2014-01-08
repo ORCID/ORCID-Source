@@ -120,6 +120,18 @@ public class OrcidApiServiceVersionedDelegatorImpl implements OrcidApiServiceDel
         Response response = orcidApiServiceDelegator.findAffiliationsDetailsFromPublicCache(orcid);
         return regradeAndValidateResponse(response);
     }
+    
+    @Override
+	public Response findFundingDetails(String orcid) {
+    	Response response = orcidApiServiceDelegator.findFundingDetails(orcid);
+        return regradeAndValidateResponse(response);
+	}
+
+	@Override
+	public Response findFundingDetailsFromPublicCache(String orcid) {
+		Response response = orcidApiServiceDelegator.findFundingDetailsFromPublicCache(orcid);
+        return regradeAndValidateResponse(response);
+	}
 
     @Override
     public Response findWorksDetails(String orcid) {
@@ -164,6 +176,5 @@ public class OrcidApiServiceVersionedDelegatorImpl implements OrcidApiServiceDel
         Response regradedResponse = regradeResponse(response);
         validateOutgoingResponse(regradedResponse);
         return regradedResponse;
-    }
-
+    }	
 }

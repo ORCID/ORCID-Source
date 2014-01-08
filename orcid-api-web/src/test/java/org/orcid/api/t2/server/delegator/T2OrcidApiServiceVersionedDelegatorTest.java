@@ -37,6 +37,7 @@ import javax.xml.bind.Unmarshaller;
 
 import org.apache.http.HttpStatus;
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -68,6 +69,7 @@ import org.orcid.test.DBUnitTest;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.context.SecurityContextImpl;
 import org.springframework.security.oauth2.provider.AuthorizationRequest;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -112,6 +114,13 @@ public class T2OrcidApiServiceVersionedDelegatorTest extends DBUnitTest {
     public void after() {
         SecurityContextHolder.clearContext();
         orcidProfileManager.clearOrcidProfileCache();
+    }
+    
+    @AfterClass
+    public static void removeDBUnitData() throws Exception {
+        List<String> reversedDataFiles = new ArrayList<String>(Arrays.asList("/data/Oauth2TokenDetailsData.xml", 
+        		"/data/ProfileWorksEntityData.xml", "/data/WorksEntityData.xml", "/data/ClientDetailsEntityData.xml"));        
+        removeDBUnitData(reversedDataFiles, null);
     }
 
     @Test

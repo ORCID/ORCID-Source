@@ -45,18 +45,35 @@ import org.orcid.api.t2.T2OAuthAPIService;
 import org.orcid.jaxb.model.message.Affiliation;
 import org.orcid.jaxb.model.message.AffiliationType;
 import org.orcid.jaxb.model.message.Affiliations;
+import org.orcid.jaxb.model.message.Amount;
+import org.orcid.jaxb.model.message.Contributor;
+import org.orcid.jaxb.model.message.ContributorAttributes;
+import org.orcid.jaxb.model.message.ContributorEmail;
+import org.orcid.jaxb.model.message.ContributorRole;
 import org.orcid.jaxb.model.message.Country;
+import org.orcid.jaxb.model.message.CreditName;
+import org.orcid.jaxb.model.message.CurrencyCode;
 import org.orcid.jaxb.model.message.ExternalIdentifiers;
+import org.orcid.jaxb.model.message.FundingTitle;
+import org.orcid.jaxb.model.message.FuzzyDate;
+import org.orcid.jaxb.model.message.FundingContributors;
+import org.orcid.jaxb.model.message.FundingExternalIdentifier;
+import org.orcid.jaxb.model.message.FundingType;
 import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.jaxb.model.message.OrcidActivities;
+import org.orcid.jaxb.model.message.Funding;
+import org.orcid.jaxb.model.message.FundingExternalIdentifiers;
+import org.orcid.jaxb.model.message.FundingList;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidWork;
 import org.orcid.jaxb.model.message.OrcidWorks;
 import org.orcid.jaxb.model.message.Organization;
 import org.orcid.jaxb.model.message.OrganizationAddress;
+import org.orcid.jaxb.model.message.SequenceType;
 import org.orcid.jaxb.model.message.Title;
 import org.orcid.jaxb.model.message.TranslatedTitle;
+import org.orcid.jaxb.model.message.Url;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.message.WorkTitle;
 import org.orcid.jaxb.model.message.WorkType;
@@ -85,6 +102,17 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
     private static final int DEFAULT_TIMEOUT_SECONDS = 30;
 
     private static final String CLIENT_DETAILS_ID = "4444-4444-4444-4445";
+    
+    public static final String GRANT_TITLE = "Grant Title # 1";
+    public static final String GRANT_DESCRIPTION = "A short description";
+	public static final String GRANT_URL = "http://myurl.com";
+	public static final String ORG_NAME = "My Org";
+	public static final String ORG_CITY = "My City";
+	public static final String EXT_ID_TYPE = "grant_number";
+	public static final String EXT_ID_URL = "http://ext.id.url";
+	public static final String EXT_ID_VALUE = "ext id value";
+	public static final String CONTRIBUTOR_CREDIT_NAME = "My Credit Name";	
+	public static final String CONTRIBUTOR_EMAIL = "my.email@contributor.com";
 
     private WebDriver webDriver;
 
@@ -330,6 +358,65 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
         assertEquals(201, clientResponse.getStatus());
     }
 
+    @Test
+    public void testAddGrant() throws InterruptedException, JSONException {
+        String scopes = "/funding/create";
+        String authorizationCode = obtainAuthorizationCode(scopes);
+        String accessToken = obtainAccessToken(authorizationCode, scopes);
+
+        OrcidMessage orcidMessage = new OrcidMessage();
+        orcidMessage.setMessageVersion("1.2_rc2");
+        OrcidProfile orcidProfile = new OrcidProfile();
+        orcidMessage.setOrcidProfile(orcidProfile);
+        OrcidActivities orcidActivities = new OrcidActivities();
+        orcidProfile.setOrcidActivities(orcidActivities);
+        
+        FundingList fundings = new FundingList();
+        Funding funding = new Funding();
+        FundingTitle title = new FundingTitle();
+        title.setTitle(new Title(GRANT_TITLE));
+        funding.setTitle(title);
+        funding.setType(FundingType.SALARY_AWARD);
+        funding.setVisibility(Visibility.PUBLIC);
+    	Amount amount = new Amount();
+    	amount.setCurrencyCode(CurrencyCode.CRC);
+    	amount.setContent("1.250.000");
+    	funding.setAmount(amount);
+    	funding.setStartDate(new FuzzyDate(2010, 1, 1));
+    	funding.setEndDate(new FuzzyDate(2013, 1, 1));
+    	funding.setDescription(GRANT_DESCRIPTION);
+    	funding.setUrl(new Url(GRANT_URL));
+    	Organization org = new Organization();
+    	org.setName(ORG_NAME);
+    	OrganizationAddress add = new OrganizationAddress();
+    	add.setCity(ORG_CITY);
+    	add.setCountry(Iso3166Country.CR);
+    	org.setAddress(add);
+    	funding.setOrganization(org);
+    	FundingExternalIdentifier extIdentifier = new FundingExternalIdentifier();
+    	extIdentifier.setType(EXT_ID_TYPE);
+    	extIdentifier.setUrl(new Url(EXT_ID_URL));
+    	extIdentifier.setValue(EXT_ID_VALUE);
+    	FundingExternalIdentifiers extIdentifiers = new FundingExternalIdentifiers();
+    	extIdentifiers.getFundingExternalIdentifier().add(extIdentifier);
+    	funding.setFundingExternalIdentifiers(extIdentifiers);
+    	FundingContributors contributors = new FundingContributors();
+    	Contributor contributor = new Contributor();
+    	contributor.setCreditName(new CreditName(CONTRIBUTOR_CREDIT_NAME));
+    	contributor.setContributorEmail(new ContributorEmail(CONTRIBUTOR_EMAIL));
+    	ContributorAttributes attributes = new ContributorAttributes();
+    	attributes.setContributorRole(ContributorRole.ASSIGNEE);
+    	attributes.setContributorSequence(SequenceType.FIRST);
+    	contributor.setContributorAttributes(attributes);
+    	contributors.getContributor().add(contributor);
+    	funding.setFundingContributors(contributors);        
+    	fundings.getFundings().add(funding);
+    	orcidMessage.getOrcidProfile().getOrcidActivities().setFundings(fundings);
+
+        ClientResponse clientResponse = oauthT2Client1_2_rc2.addFundingXml("4444-4444-4444-4442", orcidMessage, accessToken);
+        assertEquals(201, clientResponse.getStatus());
+    }
+    
     @Test
     public void testAddWorkToWrongProfile() throws InterruptedException, JSONException {
         String scopes = "/orcid-works/create";

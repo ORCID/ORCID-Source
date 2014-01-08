@@ -195,72 +195,7 @@
                     </work-title>
                     <work-type>journal-article</work-type>
                 </orcid-work>
-            </orcid-works>
-            <orcid-grants>
-                <orcid-grant put-code="1">
-                    <funding-agency>
-                        <agency-orcid>
-                            <uri>http://orcid.org/1111-1111-1111-1102</uri>
-                            <path>1111-1111-1111-1102</path>
-                            <host>orcid.org</host>
-                        </agency-orcid>
-                        <agency-name>Agency name</agency-name>
-                    </funding-agency>
-                    <grant-external-identifier>
-                        <grant-external-program>_REF</grant-external-program>
-                        <grant-external-id>extId</grant-external-id>
-                    </grant-external-identifier>
-                    <grant-number>1</grant-number>
-                    <short-description>A short description</short-description>
-                    <grant-date>2012-11-21T08:56:32</grant-date>
-                    <grant-contributors>
-                        <contributor>
-                            <contributor-orcid>
-                                 <uri>http://orcid.org/2111-1111-1111-1103</uri>
-                                 <path>2111-1111-1111-1103</path>
-                                 <host>orcid.org</host>
-                            </contributor-orcid>
-                            <credit-name>Credit Name</credit-name>
-                            <contributor-attributes>
-                                <contributor-sequence>first</contributor-sequence>
-                                <contributor-role>postdoctoral-researcher</contributor-role>
-                            </contributor-attributes>
-                        </contributor>
-                        <contributor>
-                            <contributor-orcid>
-                                 <uri>http://orcid.org/2111-1111-1111-1104</uri>
-                                 <path>2111-1111-1111-1104</path>
-                                 <host>orcid.org</host>
-                            </contributor-orcid>
-                            <credit-name>Credit Name</credit-name>
-                            <contributor-attributes>
-                                <contributor-sequence>additional</contributor-sequence>
-                                <contributor-role>graduate-student</contributor-role>
-                            </contributor-attributes>
-                        </contributor>
-                    </grant-contributors>
-                    <grant-sources>
-                        <source>
-                            <source-orcid>
-                                 <uri>http://orcid.org/2111-1111-1111-1105</uri>
-                                 <path>2111-1111-1111-1105</path>
-                                 <host>orcid.org</host>
-                            </source-orcid>
-                            <source-name>Sponsor 1</source-name>
-                            <source-date>2012-11-21T08:56:33</source-date>
-                        </source>
-                        <source>
-                            <source-orcid>
-                                 <uri>http://orcid.org/2111-1111-1111-1115</uri>
-                                 <path>2111-1111-1111-1115</path>
-                                 <host>orcid.org</host>
-                            </source-orcid>
-                            <source-name>Sponsor 2</source-name>
-                            <source-date>2012-11-21T08:56:33</source-date>
-                        </source>
-                    </grant-sources>
-                </orcid-grant>
-            </orcid-grants>
+            </orcid-works>            
             <orcid-patents>
                 <orcid-patent put-code="3">
                     <country>GB</country>

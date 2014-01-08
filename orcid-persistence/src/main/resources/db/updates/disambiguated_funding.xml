@@ -1,0 +1,133 @@
+<!--
+
+    =============================================================================
+
+    ORCID (R) Open Source
+    http://orcid.org
+
+    Copyright (c) 2012-2013 ORCID, Inc.
+    Licensed under an MIT-Style License (MIT)
+    http://orcid.org/open-source-license
+
+    This copyright and license information (including a link to the full license)
+    shall be included in its entirety in all copies or substantial portion of
+    the software.
+
+    =============================================================================
+
+-->
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+	<changeSet id="CREATE-FUNDING-TABLES" author="Angel Montenegro">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<tableExists tableName="funding_external_identifier" />
+			</not>
+		</preConditions>		
+				
+		<dropTable cascadeConstraints="true"            
+            tableName="grant_contributor"/>							
+		<dropTable cascadeConstraints="true"            
+            tableName="funding_grant"/>
+		<dropTable cascadeConstraints="true"            
+            tableName="grant_source"/>
+		<dropTable cascadeConstraints="true"            
+            tableName="profile_grant"/>
+            
+
+		<!-- profile_funding -->
+		<createTable tableName="profile_funding">
+			<column name="id" type="bigint">
+				<constraints nullable="false" primaryKey="true"
+					primaryKeyName="profile_funding_pkey" />
+			</column>
+			<column name="org_id" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="orcid" type="VARCHAR(255)">
+				<constraints nullable="false" />
+			</column>
+			<column name="title" type="VARCHAR(1000)">
+				<constraints nullable="false" />
+			</column>
+			<column name="type" type="VARCHAR(25)">
+				<constraints nullable="false" />
+			</column>
+			<column name="currency_code" type="VARCHAR(3)">
+				<constraints nullable="false" />
+			</column>
+			<column name="amount" type="VARCHAR(100)">
+				<constraints nullable="false" />
+			</column>
+			<column name="translated_title" type="VARCHAR(1000)" />
+			<column name="translated_title_language_code" type="VARCHAR(20)" />
+			<column name="description" type="VARCHAR(5000)" />
+			<column name="start_day" type="integer" />
+			<column name="start_month" type="integer" />
+			<column name="start_year" type="integer" />
+			<column name="end_day" type="integer" />
+			<column name="end_month" type="integer" />
+			<column name="end_year" type="integer" />			
+			<column name="url" type="VARCHAR(350)" />
+			<column name="contributors_json" type="TEXT" />
+			<column name="visibility" type="VARCHAR(20)" />
+			<column name="source_id" type="VARCHAR(255)" />
+			<column name="date_created" type="TIMESTAMP WITH TIME ZONE" />			
+			<column name="last_modified" type="TIMESTAMP WITH TIME ZONE" />			
+		</createTable>
+		
+		<!-- funding_external_identifier -->
+		<createTable tableName="funding_external_identifier">
+			<column name="funding_external_identifier_id" type="bigint">
+				<constraints nullable="false" primaryKey="true"
+					primaryKeyName="funding_external_identifier_pkey" />
+			</column>
+			<column name="profile_funding_id" type="bigint">
+				<constraints nullable="false"/>
+			</column>
+			<column name="ext_type" type="VARCHAR(255)" />
+			<column name="ext_value" type="VARCHAR(2084)" />
+			<column name="ext_url" type="VARCHAR(350)" />
+			<column name="date_created" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="last_modified" type="TIMESTAMP WITH TIME ZONE"/>
+		</createTable>
+		
+		<addUniqueConstraint constraintName="funding_external_identifier_constraints" tableName="funding_external_identifier" columnNames="ext_type,ext_value,ext_url"/>
+        <addForeignKeyConstraint constraintName="profile_funding_org_id_fk" baseTableName="profile_funding" baseColumnNames="org_id" referencedTableName="org" referencedColumnNames="id" />
+        <addForeignKeyConstraint constraintName="profile_funding_orcid_fk" baseTableName="profile_funding" baseColumnNames="orcid" referencedTableName="profile" referencedColumnNames="orcid" />
+        <addForeignKeyConstraint constraintName="funding_external_identifiers_fk" baseTableName="funding_external_identifier" baseColumnNames="profile_funding_id" referencedTableName="profile_funding" referencedColumnNames="id" deleteCascade="true"/>
+	</changeSet>
+	
+	<changeSet id="CREATE-SEQUENCES" author="Angel Montenegro" dbms="postgresql">
+        <createSequence sequenceName="profile_funding_seq" startValue="1000"/>
+        <createSequence sequenceName="funding_external_identifier_seq" startValue="1000"/>
+    </changeSet>
+    
+    <changeSet id="CREATE-AUTOCOLS" author="Angel Montenegro" dbms="hsqldb">
+        <addAutoIncrement tableName="profile_funding" columnName="id" columnDataType="bigint"/>
+        <addAutoIncrement tableName="funding_external_identifier" columnName="funding_external_identifier_id" columnDataType="bigint"/>
+    </changeSet>
+    
+    <changeSet id="ADD-FUNDING-UPDATE-SCOPE-TO-EXISTING-CLIENTS" author="Angel Montenegro">
+    	<sql>UPDATE client_scope SET scope_type = '/funding/update' WHERE scope_type = '/orcid-grants/update'</sql>
+    	<sql>INSERT INTO client_scope SELECT client_details_id, '/funding/update', now(), now() FROM client_scope WHERE scope_type = '/orcid-works/update' AND client_details_id NOT IN (SELECT client_details_id FROM client_scope WHERE scope_type = '/funding/update')</sql>
+    </changeSet>
+    
+    <changeSet id="ADD-FUNDING-CREATE-SCOPE-TO-EXISTING-CLIENTS" author="Angel Montenegro">    	    	       
+        <sql>UPDATE client_scope SET scope_type = '/funding/create' WHERE scope_type = '/orcid-grants/create'</sql>
+        <sql>INSERT INTO client_scope SELECT client_details_id, '/funding/create', now(), now() FROM client_scope WHERE scope_type = '/orcid-works/create' AND client_details_id NOT IN (SELECT client_details_id FROM client_scope WHERE scope_type = '/funding/create')</sql>
+    </changeSet>
+
+    <changeSet id="ADD-FUNDING-READ-LIMITED-SCOPE-TO-EXISTING-CLIENTS" author="Angel Montenegro">
+    	<sql>UPDATE client_scope SET scope_type = '/funding/read-limited' WHERE scope_type = '/orcid-grants/read-limited'</sql>
+        <sql>INSERT INTO client_scope SELECT client_details_id, '/funding/read-limited', now(), now() FROM client_scope WHERE scope_type = '/orcid-works/read-limited' AND client_details_id NOT IN (SELECT client_details_id FROM client_scope WHERE scope_type = '/funding/read-limited')</sql>
+    </changeSet>
+    
+    <changeSet id="UPDATE-OAUTH2-SCOPES" author="Angel Montenegro">
+    	<sql>UPDATE oauth2_token_detail set scope_type = '/funding/read-limited' where scope_type = '/orcid-grants/read-limited'</sql>
+    	<sql>UPDATE oauth2_token_detail set scope_type = '/funding/create' where scope_type = '/orcid-grants/create'</sql>
+    	<sql>UPDATE oauth2_token_detail set scope_type = '/funding/update' where scope_type = '/orcid-grants/update'</sql>
+    </changeSet>
+</databaseChangeLog>                   

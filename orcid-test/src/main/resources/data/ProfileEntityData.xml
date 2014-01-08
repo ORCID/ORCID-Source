@@ -483,7 +483,37 @@
             end_day="02"
             visibility="LIMITED"
             />
-
+            
+	<profile_funding 
+			id="1" 
+			orcid="4444-4444-4444-4443" 
+			org_id="1" 
+			title="Grant # 1" 
+			type="SALARY_AWARD" 
+			currency_code="USD" 
+			amount="2500" 
+			visibility="LIMITED" />
+			
+    <profile_funding 
+    		id="2" 
+    		orcid="4444-4444-4444-4443" 
+    		org_id="2" 
+    		title="Grant # 2" 
+    		type="GRANT" 
+    		currency_code="CRC" 
+    		amount="1,650.000" 
+    		visibility="PUBLIC" />
+    		
+    <profile_funding 
+    		id="3" 
+    		orcid="4444-4444-4444-4443" 
+    		org_id="3" 
+    		title="Grant # 3" 
+    		type="GRANT" 
+    		currency_code="CRC" 
+    		amount="1.650,000" 
+    		visibility="PRIVATE" />            
+            
     <given_permission_to
             given_permission_to_id="1"
             giver_orcid="4444-4444-4444-4441"

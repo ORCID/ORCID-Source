@@ -31,6 +31,10 @@ public class StartDateEntity extends FuzzyDateEntity {
     public StartDateEntity() {
     }
 
+    public StartDateEntity(Integer year, Integer month) {
+        super(year, month, null);
+    }
+    
     public StartDateEntity(Integer year, Integer month, Integer day) {
         super(year, month, day);
     }

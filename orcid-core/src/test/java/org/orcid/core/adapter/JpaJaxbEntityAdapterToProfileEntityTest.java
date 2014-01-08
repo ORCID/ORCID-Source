@@ -49,7 +49,7 @@ import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.GivenPermissionByEntity;
 import org.orcid.persistence.jpa.entities.GivenPermissionToEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
-import org.orcid.persistence.jpa.entities.ProfileGrantEntity;
+import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
 import org.orcid.persistence.jpa.entities.ProfileWorkEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.test.DBUnitTest;
@@ -214,9 +214,9 @@ public class JpaJaxbEntityAdapterToProfileEntityTest extends DBUnitTest {
             }
         }
 
-        assertEquals(2, profileEntity.getProfileGrants().size());
-        for (ProfileGrantEntity profileGrantEntity : profileEntity.getProfileGrants()) {
-            assertEquals(2, profileGrantEntity.getGrant().getContributors().size());
+        assertEquals(2, profileEntity.getProfileFunding().size());
+        for (ProfileFundingEntity profileGrantEntity : profileEntity.getProfileFunding()) {
+            assertNotNull(profileGrantEntity.getContributorsJson());
         }
 
         assertNotNull(profileEntity.getGivenPermissionTo());

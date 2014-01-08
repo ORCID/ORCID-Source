@@ -43,6 +43,9 @@
       <#if (affiliationIdsJson)??>
         orcidVar.affiliationIdsJson = JSON.parse("${affiliationIdsJson}");
       </#if>
+      <#if (fundingIdsJson)??>
+        orcidVar.fundingIdsJson = JSON.parse("${fundingIdsJson}");
+      </#if>
       <#if (profile)??>
         orcidVar.orcidId = '${(profile.orcid.value)!}';
       <#else>

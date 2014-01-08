@@ -76,27 +76,27 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link GrantExternalIdentifier }
+     * Create an instance of {@link FundingExternalIdentifier }
      * 
      */
-    public GrantExternalIdentifier createGrantExternalIdentifier() {
-        return new GrantExternalIdentifier();
+    public FundingExternalIdentifier createFundingExternalIdentifier() {
+        return new FundingExternalIdentifier();
     }
 
+    /**
+     * Create an instance of {@link FundingContributors }
+     * 
+     */
+    public FundingContributors createFundingContributors() {
+        return new FundingContributors();
+    }
+    
     /**
      * Create an instance of {@link GrantExternalProgram }
      * 
      */
     public GrantExternalProgram createGrantExternalProgram() {
         return new GrantExternalProgram();
-    }
-
-    /**
-     * Create an instance of {@link GrantExternalId }
-     * 
-     */
-    public GrantExternalId createGrantExternalId() {
-        return new GrantExternalId();
     }
 
     /**
@@ -236,19 +236,19 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link OrcidGrants }
+     * Create an instance of {@link FundingList }
      * 
      */
-    public OrcidGrants createOrcidGrants() {
-        return new OrcidGrants();
+    public FundingList createFundingList() {
+        return new FundingList();
     }
 
     /**
-     * Create an instance of {@link OrcidGrant }
+     * Create an instance of {@link Funding }
      * 
      */
-    public OrcidGrant createOrcidGrant() {
-        return new OrcidGrant();
+    public Funding createFunding() {
+        return new Funding();
     }
 
     /**
@@ -274,30 +274,14 @@ public class ObjectFactory {
     public AgencyName createAgencyName() {
         return new AgencyName();
     }
-
-    /**
-     * Create an instance of {@link GrantNumber }
-     * 
-     */
-    public GrantNumber createGrantNumber() {
-        return new GrantNumber();
-    }
-
+   
     /**
      * Create an instance of {@link GrantDate }
      * 
      */
     public GrantDate createGrantDate() {
         return new GrantDate();
-    }
-
-    /**
-     * Create an instance of {@link GrantContributors }
-     * 
-     */
-    public GrantContributors createGrantContributors() {
-        return new GrantContributors();
-    }
+    }    
 
     /**
      * Create an instance of {@link Contributor }

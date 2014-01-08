@@ -268,21 +268,21 @@ public class OrcidProfile implements Serializable {
 
     /**
      * 
-     * @param orcidGrants
+     * @param orcidFundings
      */
-    public void setOrcidGrants(OrcidGrants orcidGrants) {
+    public void setFundings(FundingList orcidFundings) {
         if (orcidActivities == null) {
             orcidActivities = new OrcidActivities();
         }
-        this.orcidActivities.setOrcidGrants(orcidGrants);
+        this.orcidActivities.setFundings(orcidFundings);
     }
 
     /**
      * 
      * @return
      */
-    public OrcidGrants retrieveOrcidGrants() {
-        return orcidActivities != null ? orcidActivities.getOrcidGrants() : null;
+    public FundingList retrieveFundings() {
+        return orcidActivities != null ? orcidActivities.getFundings() : null;
     }
 
     /**
@@ -501,6 +501,13 @@ public class OrcidProfile implements Serializable {
         }
     }
 
+    public void downgradeToFundingsOnly() {
+        setOrcidBio(null);
+        if (orcidActivities != null) {
+            orcidActivities.downgradeToFundingsOnly();
+        }
+    }
+    
     @Override
     public String toString() {
         return OrcidMessage.convertToString(this);

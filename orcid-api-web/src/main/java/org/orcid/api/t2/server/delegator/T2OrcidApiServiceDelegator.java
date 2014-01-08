@@ -152,4 +152,26 @@ public interface T2OrcidApiServiceDelegator extends OrcidApiServiceDelegator {
      * @return
      */
     Response updateAffiliations(UriInfo uriInfo, String orcid, OrcidMessage orcidMessage);
+    
+    /**
+     * Add funding to an existing ORCID profile.
+     * 
+     * @param orcidMessage
+     *            the message containing the funding to be added
+     * @return if the funding were all added successfully, a 201 with a
+     *         location should be returned
+     */
+    Response addFunding(UriInfo uriInfo, String orcid, OrcidMessage orcidMessage);
+
+    /**
+     * Update the funding for a given ORCID profile. This will cause all
+     * content to be overwritten
+     * 
+     * @param orcidMessage
+     *            the message containing all funding to overwritten. If any
+     *            other elements outside of the funding are present, a 400 Bad
+     *            Request is returned
+     * @return
+     */
+    Response updateFunding(UriInfo uriInfo, String orcid, OrcidMessage orcidMessage);
 }

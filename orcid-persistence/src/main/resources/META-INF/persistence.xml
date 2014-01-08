@@ -29,16 +29,14 @@
         <class>org.orcid.persistence.jpa.entities.CountryIsoEntity</class>
         <class>org.orcid.persistence.jpa.entities.ExternalIdentifierEntity</class>
         <class>org.orcid.persistence.jpa.entities.EmailEntity</class>
+        <class>org.orcid.persistence.jpa.entities.FundingExternalIdentifierEntity</class>
         <class>org.orcid.persistence.jpa.entities.FuzzyDateEntity</class>
         <class>org.orcid.persistence.jpa.entities.GivenPermissionByEntity</class>
         <class>org.orcid.persistence.jpa.entities.GivenPermissionToEntity</class>
-        <class>org.orcid.persistence.jpa.entities.GrantContributorEntity</class>
-        <class>org.orcid.persistence.jpa.entities.GrantEntity</class>
-        <class>org.orcid.persistence.jpa.entities.GrantSourceEntity</class>
         <class>org.orcid.persistence.jpa.entities.HearAboutEntity</class>
         <class>org.orcid.persistence.jpa.entities.KeywordViewEntity</class>
         <class>org.orcid.persistence.jpa.entities.OtherNameEntity</class>
-        <class>org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity</class>
+        <class>org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity</class>        
         <class>org.orcid.persistence.jpa.entities.OrgDisambiguatedEntity</class>
         <class>org.orcid.persistence.jpa.entities.OrgDisambiguatedExternalIdentifierEntity</class>
         <class>org.orcid.persistence.jpa.entities.OrgEntity</class>
@@ -48,7 +46,7 @@
         <class>org.orcid.persistence.jpa.entities.ProfileEntity</class>
         <class>org.orcid.persistence.jpa.entities.ProfileEventEntity</class>
         <class>org.orcid.persistence.jpa.entities.EmailEventEntity</class>
-        <class>org.orcid.persistence.jpa.entities.ProfileGrantEntity</class>
+        <class>org.orcid.persistence.jpa.entities.ProfileFundingEntity</class>
         <class>org.orcid.persistence.jpa.entities.ProfileKeywordEntity</class>
         <class>org.orcid.persistence.jpa.entities.ProfilePatentEntity</class>
         <class>org.orcid.persistence.jpa.entities.ProfileSummaryEntity</class>

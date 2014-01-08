@@ -26,9 +26,9 @@ package org.orcid.jaxb.model.message;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
@@ -54,16 +54,14 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType( propOrder = { "contributor" })
-@XmlRootElement(name = "grant-contributors")
-public class GrantContributors implements Serializable {
+@XmlRootElement(name = "funding-contributors")
+public class FundingContributors implements Serializable {
 
     /**
      * 
      */
     private static final long serialVersionUID = 1L;
     protected List<Contributor> contributor;
-    @XmlAttribute
-    protected Scope scope;
 
     /**
      * Gets the value of the contributor property.
@@ -92,47 +90,20 @@ public class GrantContributors implements Serializable {
             contributor = new ArrayList<Contributor>();
         }
         return this.contributor;
-    }
-
-    /**
-     * Gets the value of the scope property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Scope }
-     *     
-     */
-    public Scope getScope() {
-        return scope;
-    }
-
-    /**
-     * Sets the value of the scope property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Scope }
-     *     
-     */
-    public void setScope(Scope value) {
-        this.scope = value;
-    }
+    }    
 
     @Override
     public boolean equals(Object o) {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof GrantContributors)) {
+        if (!(o instanceof FundingContributors)) {
             return false;
         }
 
-        GrantContributors that = (GrantContributors) o;
+        FundingContributors that = (FundingContributors) o;
 
         if (contributor != null ? !contributor.equals(that.contributor) : that.contributor != null) {
-            return false;
-        }
-        if (scope != that.scope) {
             return false;
         }
 
@@ -141,8 +112,7 @@ public class GrantContributors implements Serializable {
 
     @Override
     public int hashCode() {
-        int result = contributor != null ? contributor.hashCode() : 0;
-        result = 31 * result + (scope != null ? scope.hashCode() : 0);
+        int result = 31 * (contributor != null ? contributor.hashCode() : 0);
         return result;
     }
 }

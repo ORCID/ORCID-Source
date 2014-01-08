@@ -42,7 +42,7 @@ import org.orcid.utils.NullUtils;
  */
 @Entity
 @Table(name = "org_affiliation_relation")
-public class OrgAffiliationRelationEntity extends BaseEntity<Long> implements Comparable<OrgAffiliationRelationEntity>, ProfileAware {
+public class OrgAffiliationRelationEntity extends BaseEntity<Long> implements Comparable<OrgAffiliationRelationEntity>, ProfileAware, SourceAware {
 
     private static final long serialVersionUID = 1L;
 

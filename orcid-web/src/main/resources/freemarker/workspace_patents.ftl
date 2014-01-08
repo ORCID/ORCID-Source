@@ -19,37 +19,37 @@
 <ul class="workspace-patents privacy-list">
 	<li>
 		<@orcid.privacy "hello" />
-		<h4 class="grant-title"><a href="#">${springMacroRequestContext.getMessage("workspace_grants.Loremipsumdolorsitamet")}</a> <span class="label label-clear"><b>${springMacroRequestContext.getMessage("workspace_grants.Updatedby")}</b> ${springMacroRequestContext.getMessage("workspace_grants.BrownUniversity")}</span></h4>
-		<p>${springMacroRequestContext.getMessage("workspace_grants.Loremipsum")}</p>
+		<h4 class="grant-title"><a href="#">${springMacroRequestContext.getMessage("workspace_fundings.Loremipsumdolorsitamet")}</a> <span class="label label-clear"><b>${springMacroRequestContext.getMessage("workspace_fundings.Updatedby")}</b> ${springMacroRequestContext.getMessage("workspace_fundings.BrownUniversity")}</span></h4>
+		<p>${springMacroRequestContext.getMessage("workspace_fundings.Loremipsum")}</p>
 	</li>
 	<li>
 		<@orcid.privacy "hello" "private" />
-		<h4 class="grant-title"><a href="#">${springMacroRequestContext.getMessage("workspace_grants.Loremipsumdolorsitamet")}</a> <span class="label label-clear"><b>${springMacroRequestContext.getMessage("workspace_grants.Updatedby")}</b> ${springMacroRequestContext.getMessage("workspace_grants.BrownUniversity")}</span></h4>
-		<p>${springMacroRequestContext.getMessage("workspace_grants.Loremipsum")}</p>
+		<h4 class="grant-title"><a href="#">${springMacroRequestContext.getMessage("workspace_fundings.Loremipsumdolorsitamet")}</a> <span class="label label-clear"><b>${springMacroRequestContext.getMessage("workspace_fundings.Updatedby")}</b> ${springMacroRequestContext.getMessage("workspace_fundings.BrownUniversity")}</span></h4>
+		<p>${springMacroRequestContext.getMessage("workspace_fundings.Loremipsum")}</p>
 	</li>
 	<li>
 		<@orcid.privacy "hello" />
-		<h4 class="grant-title"><a href="#">${springMacroRequestContext.getMessage("workspace_grants.Loremipsumdolorsitamet")}</a> <span class="label label-clear"><b>${springMacroRequestContext.getMessage("workspace_grants.Updatedby")}</b> ${springMacroRequestContext.getMessage("workspace_grants.BrownUniversity")}</span></h4>
-		<p>${springMacroRequestContext.getMessage("workspace_grants.Loremipsum")}</p>
+		<h4 class="grant-title"><a href="#">${springMacroRequestContext.getMessage("workspace_fundings.Loremipsumdolorsitamet")}</a> <span class="label label-clear"><b>${springMacroRequestContext.getMessage("workspace_fundings.Updatedby")}</b> ${springMacroRequestContext.getMessage("workspace_fundings.BrownUniversity")}</span></h4>
+		<p>${springMacroRequestContext.getMessage("workspace_fundings.Loremipsum")}</p>
 	</li>
 	<li>
 		<@orcid.privacy "hello" "private" />
-		<h4 class="grant-title"><a href="#">${springMacroRequestContext.getMessage("workspace_grants.Loremipsumdolorsitamet")}</a> <span class="label label-clear"><b>${springMacroRequestContext.getMessage("workspace_grants.Updatedby")}</b> ${springMacroRequestContext.getMessage("workspace_grants.BrownUniversity")}</span></h4>
-		<p>${springMacroRequestContext.getMessage("workspace_grants.Loremipsum")}</p>
+		<h4 class="grant-title"><a href="#">${springMacroRequestContext.getMessage("workspace_fundings.Loremipsumdolorsitamet")}</a> <span class="label label-clear"><b>${springMacroRequestContext.getMessage("workspace_fundings.Updatedby")}</b> ${springMacroRequestContext.getMessage("workspace_fundings.BrownUniversity")}</span></h4>
+		<p>${springMacroRequestContext.getMessage("workspace_fundings.Loremipsum")}</p>
 	</li>
 	<li>
 		<@orcid.privacy "hello" />
-		<h4 class="grant-title"><a href="#">${springMacroRequestContext.getMessage("workspace_grants.Loremipsumdolorsitamet")}</a> <span class="label label-clear"><b>${springMacroRequestContext.getMessage("workspace_grants.Updatedby")}</b> ${springMacroRequestContext.getMessage("workspace_grants.BrownUniversity")}</span></h4>
-		<p>${springMacroRequestContext.getMessage("workspace_grants.Loremipsum")}</p>
+		<h4 class="grant-title"><a href="#">${springMacroRequestContext.getMessage("workspace_fundings.Loremipsumdolorsitamet")}</a> <span class="label label-clear"><b>${springMacroRequestContext.getMessage("workspace_fundings.Updatedby")}</b> ${springMacroRequestContext.getMessage("workspace_fundings.BrownUniversity")}</span></h4>
+		<p>${springMacroRequestContext.getMessage("workspace_fundings.Loremipsum")}</p>
 	</li>
 	<li>
 		<@orcid.privacy "hello" "private" />
-		<h4 class="grant-title"><a href="#">${springMacroRequestContext.getMessage("workspace_grants.Loremipsumdolorsitamet")}</a> <span class="label label-clear"><b>${springMacroRequestContext.getMessage("workspace_grants.Updatedby")}</b> ${springMacroRequestContext.getMessage("workspace_grants.BrownUniversity")}</span></h4>
-		<p>${springMacroRequestContext.getMessage("workspace_grants.Loremipsum")}</p>
+		<h4 class="grant-title"><a href="#">${springMacroRequestContext.getMessage("workspace_fundings.Loremipsumdolorsitamet")}</a> <span class="label label-clear"><b>${springMacroRequestContext.getMessage("workspace_fundings.Updatedby")}</b> ${springMacroRequestContext.getMessage("workspace_fundings.BrownUniversity")}</span></h4>
+		<p>${springMacroRequestContext.getMessage("workspace_fundings.Loremipsum")}</p>
 	</li>
 	<li>
 		<@orcid.privacy "hello" />
-		<h4 class="grant-title"><a href="#">${springMacroRequestContext.getMessage("workspace_grants.Loremipsumdolorsitamet")}</a> <span class="label label-clear"><b>${springMacroRequestContext.getMessage("workspace_grants.Updatedby")}</b> ${springMacroRequestContext.getMessage("workspace_grants.BrownUniversity")}</span></h4>
-		<p>${springMacroRequestContext.getMessage("workspace_grants.Loremipsum")}</p>
+		<h4 class="grant-title"><a href="#">${springMacroRequestContext.getMessage("workspace_fundings.Loremipsumdolorsitamet")}</a> <span class="label label-clear"><b>${springMacroRequestContext.getMessage("workspace_fundings.Updatedby")}</b> ${springMacroRequestContext.getMessage("workspace_fundings.BrownUniversity")}</span></h4>
+		<p>${springMacroRequestContext.getMessage("workspace_fundings.Loremipsum")}</p>
 	</li>
 </ul>

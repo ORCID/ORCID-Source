@@ -43,7 +43,7 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element ref="{http://www.orcid.org/ns/orcid}orcid-grant" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element ref="{http://www.orcid.org/ns/orcid}funding" maxOccurs="unbounded" minOccurs="0"/>
  *       &lt;/sequence>
  *       &lt;attGroup ref="{http://www.orcid.org/ns/orcid}scope"/>
  *     &lt;/restriction>
@@ -54,46 +54,50 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType( propOrder = { "orcidGrant" })
-@XmlRootElement(name = "orcid-grants")
-public class OrcidGrants implements Serializable {
+@XmlType(propOrder = { "fundings" })
+@XmlRootElement(name = "funding-list")
+public class FundingList implements Serializable {
 
     /**
      * 
      */
     private static final long serialVersionUID = 1L;
-    @XmlElement(name = "orcid-grant")
-    protected List<OrcidGrant> orcidGrant;
+    @XmlElement(name = "funding")
+    protected List<Funding> fundings;
     @XmlAttribute
     protected Scope scope;
 
     /**
-     * Gets the value of the orcidGrant property.
+     * Gets the value of the Fundings property.
      * 
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the orcidGrant property.
+     * This is why there is not a <CODE>set</CODE> method for the Fundings property.
      * 
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
-     *    getOrcidGrant().add(newItem);
+     *    getFundings().add(newItem);
      * </pre>
      * 
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link OrcidGrant }
+     * {@link Funding }
      * 
      * 
      */
-    public List<OrcidGrant> getOrcidGrant() {
-        if (orcidGrant == null) {
-            orcidGrant = new ArrayList<OrcidGrant>();
+    public List<Funding> getFundings() {
+        if (fundings == null) {
+        	fundings = new ArrayList<Funding>();
         }
-        return this.orcidGrant;
+        return this.fundings;
+    }
+    
+    public void setFundings(List<Funding> fundings){
+    	this.fundings = fundings;
     }
 
     /**
@@ -125,13 +129,13 @@ public class OrcidGrants implements Serializable {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof OrcidGrants)) {
+        if (!(o instanceof FundingList)) {
             return false;
         }
 
-        OrcidGrants that = (OrcidGrants) o;
+        FundingList that = (FundingList) o;
 
-        if (orcidGrant != null ? !orcidGrant.equals(that.orcidGrant) : that.orcidGrant != null) {
+        if (fundings != null ? !fundings.equals(that.fundings) : that.fundings != null) {
             return false;
         }
         if (scope != that.scope) {
@@ -143,7 +147,7 @@ public class OrcidGrants implements Serializable {
 
     @Override
     public int hashCode() {
-        int result = orcidGrant != null ? orcidGrant.hashCode() : 0;
+        int result = fundings != null ? fundings.hashCode() : 0;
         result = 31 * result + (scope != null ? scope.hashCode() : 0);
         return result;
     }

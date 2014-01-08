@@ -201,6 +201,41 @@ public class OrcidApiServiceDelegatorImpl implements OrcidApiServiceDelegator {
             return findAffiliationsDetails(orcid);
         }
     }
+    
+    /**
+     * finds and returns the {@link org.orcid.jaxb.model.message.OrcidMessage}
+     * wrapped in a {@link javax.xml.ws.Response} with only the grants
+     * details
+     * 
+     * @param orcid
+     *            the ORCID to be used to identify the record
+     * @return the {@link javax.xml.ws.Response} with the
+     *         {@link org.orcid.jaxb.model.message.OrcidMessage} within it
+     */
+    @Override
+    @VisibilityControl
+    public Response findFundingDetails(String orcid) {
+        OrcidProfile profile = orcidProfileManager.retrieveClaimedFundings(orcid);
+        return getOrcidMessageResponse(profile, orcid);
+    }
+
+    @Override
+    @VisibilityControl
+    public Response findFundingDetailsFromPublicCache(String orcid) {
+        try {
+            OrcidMessage orcidMessage = orcidSearchManager.findPublicProfileById(orcid);
+            if (orcidMessage != null) {
+                OrcidProfile orcidProfile = orcidMessage.getOrcidProfile();
+                if (orcidProfile != null) {
+                    orcidProfile.downgradeToFundingsOnly();
+                }
+            }
+            return getOrcidMessageResponse(orcidMessage, orcid);
+        } catch (OrcidSearchException e) {
+            LOGGER.warn("Error searching, so falling back to DB", e);
+            return findAffiliationsDetails(orcid);
+        }
+    }
 
     /**
      * finds and returns the {@link org.orcid.jaxb.model.message.OrcidMessage}

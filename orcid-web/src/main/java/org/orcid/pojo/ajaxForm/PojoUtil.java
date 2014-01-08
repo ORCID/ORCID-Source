@@ -17,7 +17,26 @@
 package org.orcid.pojo.ajaxForm;
 
 public class PojoUtil {
-    public static boolean isEmpty(Text text) {
+	
+    public static boolean anyIsEmtpy(Text ...texts) {
+    	for(Text text : texts){
+    		if(isEmpty(text)){
+    			return true;
+    		}
+    	}
+    	return false;
+    }
+    
+    public static boolean areAllEmtpy(Text ...texts) {
+    	for(Text text : texts){
+    		if(!isEmpty(text)){
+    			return false;
+    		}
+    	}
+    	return true;
+    }
+	
+	public static boolean isEmpty(Text text) {
         if (text == null || text.getValue() == null || text.getValue().trim().isEmpty()) return true;
         return false;
     }
@@ -28,7 +47,7 @@ public class PojoUtil {
         return false;
     }
     
-    public static boolean isEmply(Date date) {
+    public static boolean isEmpty(Date date) {
         if (date == null) return true;
         if (!PojoUtil.isEmpty(date.getDay()))
             return false;
@@ -38,6 +57,13 @@ public class PojoUtil {
             return false;
         return true;
     }
+    
+    public static boolean isEmtpy(Contributor c) {
+    	return PojoUtil.areAllEmtpy(c.getContributorSequence(), c.getEmail(), c.getOrcid(), c.getUri(), c.getCreditName(), c.getContributorRole());
+    }
 
+    public static boolean isEmtpy(FundingExternalIdentifierForm g) {
+    	return PojoUtil.areAllEmtpy(g.getType(), g.getValue(), g.getUrl());
+    }
 
 }

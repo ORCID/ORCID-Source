@@ -132,12 +132,16 @@
 	
 	<bean id="profileWorkDao" class="org.orcid.persistence.dao.impl.ProfileWorkDaoImpl" />
 	
-    <bean id="orgAffilationRelationDao" class="org.orcid.persistence.dao.impl.OrgAffiliationRelationDaoImpl" />
+    <bean id="orgAffilationRelationDao" class="org.orcid.persistence.dao.impl.OrgAffiliationRelationDaoImpl" />     
  
     <bean id="orgDao" class="org.orcid.persistence.dao.impl.OrgDaoImpl" />
     
     <bean id="orgDisambiguatedDao" class="org.orcid.persistence.dao.impl.OrgDisambiguatedDaoImpl" />
-     
+            
+     <bean id="profileFundingDao" class="org.orcid.persistence.dao.impl.ProfileFundingDaoImpl" />
+    
+     <bean id="fundingExternalIdentifierDao" class="org.orcid.persistence.dao.impl.FundingExternalIdentifierDaoImpl" />
+                
     <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean" depends-on="liquibase">
         <property name="jpaVendorAdapter" ref="jpaVendorAdapter" />
         <property name="dataSource" ref="\${org.orcid.persistence.db.dataSource}" />

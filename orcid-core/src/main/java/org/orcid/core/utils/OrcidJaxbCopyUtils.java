@@ -31,7 +31,8 @@ import org.orcid.jaxb.model.message.Email;
 import org.orcid.jaxb.model.message.ExternalIdentifiers;
 import org.orcid.jaxb.model.message.Keywords;
 import org.orcid.jaxb.model.message.OrcidBio;
-import org.orcid.jaxb.model.message.OrcidGrants;
+import org.orcid.jaxb.model.message.Funding;
+import org.orcid.jaxb.model.message.FundingList;
 import org.orcid.jaxb.model.message.OrcidHistory;
 import org.orcid.jaxb.model.message.OrcidPatents;
 import org.orcid.jaxb.model.message.OrcidWork;
@@ -101,6 +102,22 @@ public class OrcidJaxbCopyUtils {
         }
         existingAffiliationsList.clear();
         existingAffiliationsList.addAll(updatedAffiliationsList);
+    }
+    
+    public static void copyFundingListToExistingPreservingVisibility(FundingList existingFundings, FundingList updatedFundings) {
+        if (updatedFundings == null) {
+            return;
+        }
+        List<Funding> updatedFundingList = updatedFundings.getFundings();
+        if (updatedFundingList.isEmpty()) {
+            return;
+        }
+        List<Funding> existingFundingsList = existingFundings.getFundings();
+        for (Funding updatedFunding : updatedFundingList) {
+        	mergeFundings(existingFundingsList, updatedFunding);
+        }
+        existingFundingsList.clear();
+        existingFundingsList.addAll(updatedFundingList);
     }
 
     public static void copyUpdatedExternalIdentifiersToExistingPreservingVisibility(OrcidBio existing, OrcidBio updated) {
@@ -345,7 +362,18 @@ public class OrcidJaxbCopyUtils {
         return null;
     }
 
-    public static void copyUpdatedGrantsVisibilityInformationOnlyPreservingVisbility(OrcidGrants existingGrants, OrcidGrants updatedGrants) {
+    private static Funding obtainLikelyEqual(Funding toCompare, List<Funding> toCompareTo) {
+        if (toCompare != null && toCompareTo != null && !toCompareTo.isEmpty()) {
+            for (Funding ai : toCompareTo) {
+                if (ai.equals(toCompare)) {
+                    return ai;
+                }
+            }
+        }
+        return null;
+    }
+    
+    public static void copyUpdatedFundingListVisibilityInformationOnlyPreservingVisbility(FundingList existingFundingList, FundingList updatedFundingList) {
         throw new RuntimeException("Not implemented!");
     }
 
@@ -367,6 +395,23 @@ public class OrcidJaxbCopyUtils {
             // if you can't match this type, default its value if null
             updatedAffiliation.setVisibility(updatedAffiliation.getVisibility() != null ? updatedAffiliation.getVisibility()
                     : OrcidVisibilityDefaults.AFFILIATE_NAME_DEFAULT.getVisibility());
+        }
+    }
+    
+    private static void mergeFundings(List<Funding> existingFundings, Funding updatedFunding) {
+        Funding likelyExisting = obtainLikelyEqual(updatedFunding, existingFundings);
+        if (likelyExisting != null) {
+            Visibility likelyExistingFundingInstitutionNameVisibility = likelyExisting.getVisibility();
+
+            if (likelyExistingFundingInstitutionNameVisibility == null && updatedFunding.getVisibility() == null) {
+            	updatedFunding.setVisibility(OrcidVisibilityDefaults.FUNDING_DEFAULT.getVisibility());
+            } else if (updatedFunding.getVisibility() == null && likelyExistingFundingInstitutionNameVisibility != null) {
+            	updatedFunding.setVisibility(likelyExistingFundingInstitutionNameVisibility);
+            }
+        } else {
+            // if you can't match this type, default its value if null
+        	updatedFunding.setVisibility(updatedFunding.getVisibility() != null ? updatedFunding.getVisibility()
+                    : OrcidVisibilityDefaults.FUNDING_DEFAULT.getVisibility());
         }
     }
 

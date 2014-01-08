@@ -30,16 +30,15 @@
     <oauth2_token_detail/>
     <external_identifier/>
     <email/>
-    <email_event/>
-    <funding_grant/>
-    <profile_grant/>
-    <grant_contributor/>
+    <email_event/>    
     <other_name/>
     <profile_keyword/>
     <profile_patent/>
     <webhook/>
 	<org/>
 	<org_affiliation_relation/>
+	<profile_funding/>
+	<funding_external_identifier/>      
 	<address/>
 	<institution/>
 	<affiliation/>

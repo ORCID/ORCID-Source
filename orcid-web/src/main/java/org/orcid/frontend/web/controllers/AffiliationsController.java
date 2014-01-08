@@ -409,7 +409,7 @@ public class AffiliationsController extends BaseWorkspaceController {
     AffiliationForm datesValidate(@RequestBody AffiliationForm affiliationForm) {
         affiliationForm.getStartDate().setErrors(new ArrayList<String>());
         affiliationForm.getEndDate().setErrors(new ArrayList<String>());
-        if (!PojoUtil.isEmply(affiliationForm.getStartDate()) && !PojoUtil.isEmply(affiliationForm.getEndDate())) {
+        if (!PojoUtil.isEmpty(affiliationForm.getStartDate()) && !PojoUtil.isEmpty(affiliationForm.getEndDate())) {
             if (affiliationForm.getStartDate().toJavaDate().after(affiliationForm.getEndDate().toJavaDate()))
                 setError(affiliationForm.getEndDate(), "manualAffiliation.endDate.after");
         }

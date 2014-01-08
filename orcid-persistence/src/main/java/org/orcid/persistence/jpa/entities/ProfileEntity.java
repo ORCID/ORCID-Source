@@ -122,7 +122,7 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
     private Collection<OrcidGrantedAuthority> authorities;
     private Set<GivenPermissionToEntity> givenPermissionTo;
     private Set<GivenPermissionByEntity> givenPermissionBy;
-    private SortedSet<ProfileGrantEntity> profileGrants;
+    private SortedSet<ProfileFundingEntity> profileFunding;
     private SortedSet<ProfilePatentEntity> profilePatents;
     private SortedSet<ProfileWorkEntity> profileWorks;
     private Locale locale = Locale.EN;
@@ -424,9 +424,9 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
      */
     public void setOrgAffiliationRelations(SortedSet<OrgAffiliationRelationEntity> affiliations) {
         this.orgAffiliationRelations = affiliations;
-    }
+    }    
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = PROFILE, orphanRemoval = true)
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = PROFILE, orphanRemoval = true)
     public Set<EmailEntity> getEmails() {
         return emails;
     }
@@ -502,18 +502,18 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
     /**
      * @return the grants
      */
-    @OneToMany(mappedBy = PROFILE, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @Sort(type = SortType.NATURAL)
-    public SortedSet<ProfileGrantEntity> getProfileGrants() {
-        return profileGrants;
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = PROFILE, orphanRemoval = true)
+    @Sort(type = SortType.NATURAL)    
+    public SortedSet<ProfileFundingEntity> getProfileFunding() {
+        return profileFunding;
     }
 
     /**
      * @param grants
      *            the grants to set
      */
-    public void setProfileGrants(SortedSet<ProfileGrantEntity> grants) {
-        this.profileGrants = grants;
+    public void setProfileFunding(SortedSet<ProfileFundingEntity> funding) {
+        this.profileFunding = funding;
     }
 
     /**

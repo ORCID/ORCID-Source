@@ -195,7 +195,47 @@ public class T2OAuthOrcidApiClientImpl implements T2OAuthAPIService<ClientRespon
         URI affiliationsPathWithOrcidUrl = orcidClientHelper.deriveUriFromRestPath(AFFILIATIONS_PATH, orcid);
         return putClientResponseWithToken(affiliationsPathWithOrcidUrl, VND_ORCID_JSON, orcidMessage, token);
     }
+    
+    @Override
+    @POST
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
+    @Consumes(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, MediaType.WILDCARD })
+    @Path(FUNDING_PATH)
+    public ClientResponse addFundingXml(String orcid, OrcidMessage orcidMessage, String token) {
+        URI grantsPathWithOrcidUrl = orcidClientHelper.deriveUriFromRestPath(FUNDING_PATH, orcid);
+        return postClientResponseWithToken(grantsPathWithOrcidUrl, VND_ORCID_XML, orcidMessage, token);
+    }
 
+    @Override
+    @POST
+    @Produces(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Consumes(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(FUNDING_PATH)
+    public ClientResponse addFundingJson(String orcid, OrcidMessage orcidMessage, String token) {
+        URI grantsPathWithOrcidUrl = orcidClientHelper.deriveUriFromRestPath(FUNDING_PATH, orcid);
+        return postClientResponseWithToken(grantsPathWithOrcidUrl, VND_ORCID_JSON, orcidMessage, token);
+    }
+
+    @Override
+    @PUT
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
+    @Consumes(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, MediaType.WILDCARD })
+    @Path(FUNDING_PATH)
+    public ClientResponse updateFundingXml(String orcid, OrcidMessage orcidMessage, String token) {
+        URI grantsPathWithOrcidUrl = orcidClientHelper.deriveUriFromRestPath(FUNDING_PATH, orcid);
+        return putClientResponseWithToken(grantsPathWithOrcidUrl, VND_ORCID_XML, orcidMessage, token);
+    }
+
+    @Override
+    @PUT
+    @Produces(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Consumes(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(FUNDING_PATH)
+    public ClientResponse updateFundingJson(String orcid, OrcidMessage orcidMessage, String token) {
+        URI grantsPathWithOrcidUrl = orcidClientHelper.deriveUriFromRestPath(FUNDING_PATH, orcid);
+        return putClientResponseWithToken(grantsPathWithOrcidUrl, VND_ORCID_JSON, orcidMessage, token);
+    }
+    
     @Override
     @POST
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })

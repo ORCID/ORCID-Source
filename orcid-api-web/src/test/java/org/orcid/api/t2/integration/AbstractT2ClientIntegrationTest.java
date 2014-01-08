@@ -34,8 +34,8 @@ import org.orcid.jaxb.model.message.WorkTitle;
 import com.sun.jersey.api.client.ClientResponse;
 
 public abstract class AbstractT2ClientIntegrationTest {
-
-    @Resource
+	
+	@Resource
     private T2OrcidApiService<ClientResponse> t2Client;
     private Unmarshaller unmarshaller;
 
@@ -116,5 +116,5 @@ public abstract class AbstractT2ClientIntegrationTest {
         workTitle.setTitle(title);
         orcidWork.setWorkTitle(workTitle);
         return orcidWork;
-    }
+    }            
 }

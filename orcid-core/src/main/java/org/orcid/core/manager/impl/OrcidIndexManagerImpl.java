@@ -29,20 +29,18 @@ import javax.annotation.Resource;
 import org.apache.commons.lang.StringUtils;
 import org.orcid.core.manager.OrcidIndexManager;
 import org.orcid.core.security.visibility.filter.VisibilityFilter;
-import org.orcid.jaxb.model.message.Affiliation;
-import org.orcid.jaxb.model.message.AffiliationType;
-import org.orcid.jaxb.model.message.Affiliations;
 import org.orcid.jaxb.model.message.ContactDetails;
 import org.orcid.jaxb.model.message.Email;
 import org.orcid.jaxb.model.message.ExternalIdOrcid;
 import org.orcid.jaxb.model.message.ExternalIdReference;
 import org.orcid.jaxb.model.message.ExternalIdentifier;
 import org.orcid.jaxb.model.message.ExternalIdentifiers;
+import org.orcid.jaxb.model.message.FundingTitle;
 import org.orcid.jaxb.model.message.Keyword;
 import org.orcid.jaxb.model.message.OrcidActivities;
 import org.orcid.jaxb.model.message.OrcidBio;
 import org.orcid.jaxb.model.message.OrcidDeprecated;
-import org.orcid.jaxb.model.message.OrcidGrant;
+import org.orcid.jaxb.model.message.Funding;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidPatent;
 import org.orcid.jaxb.model.message.OrcidProfile;
@@ -282,21 +280,26 @@ public class OrcidIndexManagerImpl implements OrcidIndexManager {
 						allExternalIdentifiers);
 			}
 
-			List<OrcidGrant> orcidGrants = filteredProfile
-					.retrieveOrcidGrants() != null ? filteredProfile
-					.retrieveOrcidGrants().getOrcidGrant() : null;
-			if (orcidGrants != null) {
-				List<String> grantNumbers = new ArrayList<String>();
-				for (OrcidGrant orcidGrant : orcidGrants) {
-					if (orcidGrant.getGrantNumber() != null
-							&& !StringUtils.isBlank(orcidGrant.getGrantNumber()
-									.getContent())) {
-						grantNumbers.add(orcidGrant.getGrantNumber()
-								.getContent());
+			List<Funding> orcidFundings = filteredProfile
+					.retrieveFundings() != null ? filteredProfile
+					.retrieveFundings().getFundings() : null;
+			if (orcidFundings != null) {
+				List<String> fundingTitle = new ArrayList<String>();				
+				for (Funding orcidFunding : orcidFundings) {
+					FundingTitle title = orcidFunding.getTitle();					
+					if (title != null) {
+						if (title.getTitle() != null && !StringUtils.isBlank(title.getTitle().getContent())) {					
+							fundingTitle.add(title.getTitle().getContent());
+						}
+						
+						if(title.getTranslatedTitle() != null && StringUtils.isBlank(title.getTranslatedTitle().getContent())) {
+							fundingTitle.add(title.getTranslatedTitle().getContent());
+						}
 					}
+					
 				}
 
-				profileIndexDocument.setGrantNumbers(grantNumbers);
+				profileIndexDocument.setFundingTitles(fundingTitle);
 			}
 
 			List<OrcidPatent> orcidPatents = filteredProfile

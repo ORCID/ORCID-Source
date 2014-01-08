@@ -23,9 +23,10 @@ public class OrcidApiConstants {
     public static final String PROFILE_POST_PATH = "/orcid-profile";
     public static final String PROFILE_GET_PATH = "/{orcid}" + PROFILE_POST_PATH;
     public static final String PROFILE_DELETE_PATH = "/{orcid}" + PROFILE_POST_PATH;
-    public static final String BIO_PATH = "/{orcid:[^/]+}{ignore:(/orcid-bio)?}";
+    public static final String BIO_PATH = "/{orcid:[^/]+}{ignore:(/orcid-bio)?}"; 
     public static final String BIO_PATH_NO_REGEX = "/{orcid}/orcid-bio";
     public static final String AFFILIATIONS_PATH = "/{orcid}/affiliations";
+    public static final String FUNDING_PATH = "/{orcid}/funding"; 
     public static final String WORKS_PATH = "/{orcid}/orcid-works";
     public static final String EXTERNAL_IDENTIFIER_PATH = "/{orcid}/orcid-bio/external-identifiers";
     public static final String STATUS_PATH = "/status";
@@ -45,4 +46,4 @@ public class OrcidApiConstants {
 
     public static final String STATUS_OK_MESSAGE = "OK I am here";
 
-}
+}       

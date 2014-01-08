@@ -25,10 +25,7 @@
     
     <profile_work orcid="4444-4444-4444-4446" work_id="1" visibility="PUBLIC" />
     <profile_work orcid="4444-4444-4444-4446" work_id="2" visibility="LIMITED" />
-    <profile_work orcid="4444-4444-4444-4446" work_id="3" visibility="PRIVATE" />
-        
-    <profile_grant orcid="4444-4444-4444-4443" grant_id="1" visibility="LIMITED" />
-    <profile_grant orcid="4444-4444-4444-4443" grant_id="2" visibility="LIMITED" />
+    <profile_work orcid="4444-4444-4444-4446" work_id="3" visibility="PRIVATE" />            
 
     <profile_patent orcid="4444-4444-4444-4443" patent_id="1" visibility="LIMITED" />
     <profile_patent orcid="4444-4444-4444-4443" patent_id="2" visibility="LIMITED" />

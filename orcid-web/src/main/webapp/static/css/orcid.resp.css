@@ -1681,7 +1681,17 @@ a:hover {
 	line-height: 1.2;
 }
 
-/* Affiliations*/
+/* Grants */
+.grant-title {
+	margin-top: 0 !important;	
+}
+
+.grant-name {
+    font-style: italic;
+    font-weight: normal !important;
+}
+
+/* Affiliations */
 .affiliation-date {
     font-style: italic;
     font-weight: normal !important;
@@ -1700,13 +1710,19 @@ a:hover {
 #edit-affiliation #startDay,
 #edit-affiliation #startMonth,
 #edit-affiliation #endDay,
-#edit-affiliation #endMonth
+#edit-affiliation #endMonth,
+#edit-funding #startDay,
+#edit-funding #startMonth,
+#edit-funding #endDay,
+#edit-funding #endMonth
 {
 	width: 80px;	
 }
 
 #edit-affiliation #startYear,
-#edit-affiliation #endYear
+#edit-affiliation #endYear,
+#edit-funding #startYear,
+#edit-funding #endYear
 {
 	width: 100px;
 }
@@ -1716,20 +1732,12 @@ a:hover {
 	width: 95%;
 }
 
-.grant-title {
-	margin-right: 80px;
-}
-
 .label-clear {
 	background: #fff;
 	border: 1px solid #c9c9c9;
 	color: #949599;
 	text-shadow: 0;
 	font-weight: normal;
-}
-
-.grant-title {
-	margin-right: 90px;
 }
 
 .grey {
@@ -3033,6 +3041,14 @@ p.orcid-id-container{
 	height: 20px;
 	display: block;
 	float: left;
+}
+
+#currencyCode {
+	width: 20%;
+}
+
+#fundingAmount {
+	width: 69%;
 }
 
 /* Media Queries */

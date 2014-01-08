@@ -57,12 +57,15 @@ public class OrcidMessageVersionConverterImplV1_2_rc1ToV1_2_rc2 implements Orcid
     }
 
     private void downgradeProfile(OrcidProfile orcidProfile) {
-        if (orcidProfile != null 
-                && orcidProfile.getOrcidHistory() !=null
-                && orcidProfile.getOrcidHistory().getCreationMethod() != null) {
-            CreationMethod c = orcidProfile.getOrcidHistory().getCreationMethod(); 
-            if (c.equals(CreationMethod.MEMBER_REFERRED) || c.equals(CreationMethod.DIRECT))
-                orcidProfile.getOrcidHistory().setCreationMethod(CreationMethod.WEBSITE);
+        if (orcidProfile != null) {                 
+        	if(orcidProfile.getOrcidHistory() !=null 
+        			&& orcidProfile.getOrcidHistory().getCreationMethod() != null) {
+        		CreationMethod c = orcidProfile.getOrcidHistory().getCreationMethod(); 
+        		if (c.equals(CreationMethod.MEMBER_REFERRED) || c.equals(CreationMethod.DIRECT))
+        			orcidProfile.getOrcidHistory().setCreationMethod(CreationMethod.WEBSITE);
+        	}
+        	
+        	orcidProfile.setFundings(null);
         }
     }
 

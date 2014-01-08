@@ -17,6 +17,7 @@
 package org.orcid.api.t2.server;
 
 import static org.orcid.api.common.OrcidApiConstants.AFFILIATIONS_PATH;
+import static org.orcid.api.common.OrcidApiConstants.FUNDING_PATH;
 import static org.orcid.api.common.OrcidApiConstants.APPLICATION_RDFXML;
 import static org.orcid.api.common.OrcidApiConstants.BIO_PATH;
 import static org.orcid.api.common.OrcidApiConstants.BIO_SEARCH_PATH;
@@ -381,6 +382,57 @@ abstract public class T2OrcidApiServiceImplBase implements T2OrcidApiService<Res
     }
 
     /**
+     * GETs the HTML representation of the ORCID record containing only
+     * funding details
+     * 
+     * @param orcid
+     *            the ORCID that corresponds to the user's record
+     * @return the HTML representation of the ORCID record
+     */
+    @Override
+    @GET
+    @Produces(value = { MediaType.TEXT_HTML })
+    @Path(FUNDING_PATH)
+    public Response viewFundingDetailsHtml(@PathParam("orcid") String orcid) {
+        T2_GET_REQUESTS.inc();
+        Response response = serviceDelegator.findFundingDetails(orcid);
+        return Response.fromResponse(response).header("Content-Disposition", "attachment; filename=\"" + orcid + "-grants.xml\"").build();
+    }
+
+    /**
+     * GETs the XML representation of the ORCID record containing only
+     * funding details
+     * 
+     * @param orcid
+     *            the ORCID that corresponds to the user's record
+     * @return the XML representation of the ORCID record
+     */
+    @GET
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
+    @Path(FUNDING_PATH)
+    public Response viewFundingDetailsXml(@PathParam("orcid") String orcid) {
+        T2_GET_REQUESTS.inc();
+        return serviceDelegator.findFundingDetails(orcid);
+    }
+
+    /**
+     * GETs the JSON representation of the ORCID record containing only
+     * funding details
+     * 
+     * @param orcid
+     *            the ORCID that corresponds to the user's record
+     * @return the JSON representation of the ORCID record
+     */
+    @Override
+    @GET
+    @Produces(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(FUNDING_PATH)
+    public Response viewFundingDetailsJson(@PathParam("orcid") String orcid) {
+        T2_GET_REQUESTS.inc();
+        return serviceDelegator.findFundingDetails(orcid);
+    }
+    
+    /**
      * GETs the HTML representation of the ORCID record containing only work
      * details
      * 
@@ -642,6 +694,78 @@ abstract public class T2OrcidApiServiceImplBase implements T2OrcidApiService<Res
         return serviceDelegator.updateAffiliations(uriInfo, orcid, orcidMessage);
     }
 
+    /**
+     * POST an XML representation of the ORCID record containing only
+     * funding details
+     * 
+     * @param orcid
+     *            the ORCID that corresponds to the user's record
+     * @return the XML representation of the ORCID record including the added
+     *         funding(s)
+     */
+    @POST
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
+    @Consumes(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, MediaType.WILDCARD })
+    @Path(FUNDING_PATH)
+    public Response addFundingXml(@PathParam("orcid") String orcid, OrcidMessage orcidMessage) {
+        T2_POST_REQUESTS.inc();
+        return serviceDelegator.addFunding(uriInfo, orcid, orcidMessage);
+    }
+
+    /**
+     * POST a JSON representation of the ORCID record containing only
+     * funding details
+     * 
+     * @param orcid
+     *            the ORCID that corresponds to the user's record
+     * @return the JSON representation of the ORCID record including the added
+     *         funding(s)
+     */
+    @POST
+    @Produces(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Consumes(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(FUNDING_PATH)
+    public Response addFundingJson(@PathParam("orcid") String orcid, OrcidMessage orcidMessage) {
+        T2_POST_REQUESTS.inc();
+        return serviceDelegator.addFunding(uriInfo, orcid, orcidMessage);
+    }
+
+    /**
+     * PUT an XML representation of the ORCID record containing only
+     * funding details
+     * 
+     * @param orcid
+     *            the ORCID that corresponds to the user's record
+     * @return the XML representation of the ORCID record including the added
+     *         funding(s)
+     */
+    @PUT
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
+    @Consumes(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, MediaType.WILDCARD })
+    @Path(FUNDING_PATH)
+    public Response updateFundingXml(@PathParam("orcid") String orcid, OrcidMessage orcidMessage) {
+        T2_PUT_REQUESTS.inc();
+        return serviceDelegator.updateFunding(uriInfo, orcid, orcidMessage);
+    }
+
+    /**
+     * PUT a JSON representation of the ORCID record containing only
+     * funding details
+     * 
+     * @param orcid
+     *            the ORCID that corresponds to the user's record
+     * @return the JSON representation of the ORCID record including the added
+     *         funding(s)
+     */
+    @PUT
+    @Produces(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Consumes(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(FUNDING_PATH)
+    public Response updateFundingJson(@PathParam("orcid") String orcid, OrcidMessage orcidMessage) {
+        T2_PUT_REQUESTS.inc();
+        return serviceDelegator.updateFunding(uriInfo, orcid, orcidMessage);
+    }
+    
     /**
      * POST an XML representation of the ORCID external identifiers containing
      * only the URLs details

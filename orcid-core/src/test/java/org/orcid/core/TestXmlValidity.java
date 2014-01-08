@@ -73,7 +73,7 @@ public class TestXmlValidity extends BaseTest {
             } catch (JAXBException e) {
                 Assert.fail("ORCID message is not well formed: " + resource + "\n" + e);
             } catch (OrcidValidationException e) {
-                Assert.fail("Validation failed: " + resource + "\n" + e.getCause());
+            	Assert.fail("Validation failed: " + resource + "\n" + e.getCause());                
             } finally {
                 IOUtils.closeQuietly(is);
             }

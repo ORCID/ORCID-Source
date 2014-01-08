@@ -144,6 +144,9 @@ public class OrcidSolrDocument {
     @Field(SolrConstants.GRANT_NUMBERS)
     private List<String> grantNumbers;
 
+    @Field(SolrConstants.FUNDING_TITLES)
+    private List<String> fundingTitles;
+    
     @Field(SolrConstants.PATENT_NUMBERS)
     private List<String> patentNumbers;
 
@@ -292,6 +295,14 @@ public class OrcidSolrDocument {
     public void setGrantNumbers(List<String> grantNumbers) {
         this.grantNumbers = grantNumbers;
     }
+    
+    public List<String> getFundingTitles() {
+        return fundingTitles;
+    }
+
+    public void setFundingTitles(List<String> fundingTitles) {
+        this.fundingTitles = fundingTitles;
+    }
 
     public List<String> getPatentNumbers() {
         return patentNumbers;
@@ -336,6 +347,7 @@ public class OrcidSolrDocument {
         result = prime * result + ((externalIdOrcidsAndReferences == null) ? 0 : externalIdOrcidsAndReferences.hashCode());
         result = prime * result + ((externalIdReferences == null) ? 0 : externalIdReferences.hashCode());
         result = prime * result + ((familyName == null) ? 0 : familyName.hashCode());
+        result = prime * result + ((fundingTitles == null) ? 0 : fundingTitles.hashCode());
         result = prime * result + ((givenAndFamilyNames == null) ? 0 : givenAndFamilyNames.hashCode());
         result = prime * result + ((givenNames == null) ? 0 : givenNames.hashCode());
         result = prime * result + ((grantNumbers == null) ? 0 : grantNumbers.hashCode());
@@ -427,6 +439,11 @@ public class OrcidSolrDocument {
             if (other.familyName != null)
                 return false;
         } else if (!familyName.equals(other.familyName))
+            return false;
+        if (fundingTitles == null) {
+            if (other.fundingTitles != null)
+                return false;
+        } else if (!fundingTitles.equals(other.fundingTitles))
             return false;
         if (givenAndFamilyNames == null) {
             if (other.givenAndFamilyNames != null)

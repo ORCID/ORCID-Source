@@ -152,7 +152,19 @@ public class T2OrcidApiServiceVersionedDelegatorImpl implements T2OrcidApiServic
         Response response = t2OrcidApiServiceDelegator.findAffiliationsDetailsFromPublicCache(orcid);
         return downgradeAndValidateResponse(response);
     }
+    
+    @Override
+    public Response findFundingDetails(String orcid) {
+        Response response = t2OrcidApiServiceDelegator.findFundingDetails(orcid);
+        return downgradeAndValidateResponse(response);
+    }
 
+    @Override
+    public Response findFundingDetailsFromPublicCache(String orcid) {
+        Response response = t2OrcidApiServiceDelegator.findFundingDetailsFromPublicCache(orcid);
+        return downgradeAndValidateResponse(response);
+    }
+    
     @Override
     public Response findWorksDetails(String orcid) {
         Response response = t2OrcidApiServiceDelegator.findWorksDetails(orcid);
@@ -331,6 +343,20 @@ public class T2OrcidApiServiceVersionedDelegatorImpl implements T2OrcidApiServic
         if (!supportsAffiliations) {
             throw new OrcidNotFoundException("Affiliations are not supported in this version of the API");
         }
+    }
+    
+    @Override
+    public Response addFunding(UriInfo uriInfo, String orcid, OrcidMessage orcidMessage) {
+        validateIncomingMessage(orcidMessage);
+        OrcidMessage upgradedMessage = upgradeMessage(orcidMessage);
+        return t2OrcidApiServiceDelegator.addFunding(uriInfo, orcid, upgradedMessage);
+    }
+
+    @Override
+    public Response updateFunding(UriInfo uriInfo, String orcid, OrcidMessage orcidMessage) {
+        validateIncomingMessage(orcidMessage);
+        OrcidMessage upgradedMessage = upgradeMessage(orcidMessage);
+        return t2OrcidApiServiceDelegator.updateFunding(uriInfo, orcid, upgradedMessage);
     }
 
 }

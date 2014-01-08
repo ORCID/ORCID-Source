@@ -165,6 +165,7 @@ orcidNgModule.factory("workspaceSrvc", ['$rootScope', function ($rootScope) {
 			displayAffiliations: true,
 			displayEducation: true,
 			displayEmployment: true,
+			displayFunding: true, 
 			displayPersonalInfo: true,
 			displayWorks: true,
 			toggleAffiliations: function() {
@@ -175,6 +176,9 @@ orcidNgModule.factory("workspaceSrvc", ['$rootScope', function ($rootScope) {
 			},
 			toggleEmployment: function() {
 				serv.displayEmployment = !serv.displayEmployment;
+			},
+			toggleFunding: function() {
+				serv.displayFunding = !serv.displayFunding;
 			},
 			togglePersonalInfo: function() {
 				serv.displayPersonalInfo = !serv.displayPersonalInfo;
@@ -187,6 +191,9 @@ orcidNgModule.factory("workspaceSrvc", ['$rootScope', function ($rootScope) {
 			},
 			openEducation: function() {
 				serv.displayEducation = true;
+			},
+			openFunding: function() {
+				serv.displayFunding = true;
 			},
 			openEmployment: function() {
 				serv.displayEmployment = true;
@@ -201,6 +208,109 @@ orcidNgModule.factory("workspaceSrvc", ['$rootScope', function ($rootScope) {
 	return serv;
 }]);
 
+/**
+ * Fundings Service 
+ * */
+orcidNgModule.factory("fundingSrvc", ['$rootScope', function ($rootScope) {
+	var serv = {
+			fundings: new Array(),
+			loading: false,
+			fundingToAddIds: null,
+			addFundingToScope: function(path) {
+	    		if( serv.fundingToAddIds.length != 0 ) {
+	    			var fundingIds = serv.fundingToAddIds.splice(0,20).join();
+	    			$.ajax({
+	    				url: $('body').data('baseurl') + path + '?fundingIds=' + fundingIds,
+	    				dataType: 'json',
+	    				success: function(data) {
+	    						for (i in data) {	    							
+	    							serv.fundings.push(data[i]);
+	    						};
+	    						if (serv.fundingToAddIds.length == 0) {
+	    							serv.loading = false;
+	    							$rootScope.$apply();
+	    						} else {
+	    							$rootScope.$apply();
+	    					    	setTimeout(function () {
+	    					    		serv.addFundingToScope(path);
+	    					    	},50);	    							
+	    						}
+	    				}
+	    			}).fail(function() { 
+	    		    	console.log("Error fetching fundings: " + value);
+	    		    });
+	    		} else {
+	    			serv.loading = false;
+	    		};
+	    	},
+	    	setIdsToAdd: function(ids) {
+	    		serv.fundingToAddIds = ids;
+	    	},
+	    	getFundings: function(path) {
+	    		//clear out current fundings
+	    		serv.loading = true;
+	    		serv.fundingToAddIds = null;
+	    		serv.fundings.length = 0;
+	    		//get funding ids
+	    		$.ajax({
+	    			url: $('body').data('baseurl') + path,	        
+	    	        dataType: 'json',
+	    	        success: function(data) {
+	    	        	serv.fundingToAddIds = data;
+	    	        	serv.addFundingToScope('fundings/fundings.json');
+	    	        	$rootScope.$apply();
+	    	        }
+	    		}).fail(function(){
+	    			// something bad is happening!
+	    	    	console.log("error fetching fundings");
+	    		});
+	    	},
+	    	updateProfileFunding: function(funding) {
+	    		$.ajax({
+	    	        url: $('body').data('baseurl') + 'fundings/funding.json',
+	    	        type: 'PUT',
+	    	        data: angular.toJson(funding),
+	    	        contentType: 'application/json;charset=UTF-8',
+	    	        dataType: 'json',
+	    	        success: function(data) {	        	
+	    	        	if(data.errors.length != 0){
+	    	        		console.log("Unable to update profile funding.");
+	    	        	}
+	    	        	$rootScope.$apply();
+	    	        }
+	    	    }).fail(function() { 
+	    	    	console.log("Error updating profile funding.");
+	    	    });
+	    	},
+	    	deleteFunding: function(funding) {	
+	    		$.ajax({
+	    	        url: $('body').data('baseurl') + 'fundings/funding.json',
+	    	        type: 'DELETE',
+	    	        data: angular.toJson(funding),
+	    	        contentType: 'application/json;charset=UTF-8',
+	    	        dataType: 'json',
+	    	        success: function(data) {	        	
+	    	        	if(data.errors.length != 0){
+	    	        		console.log("Unable to delete funding.");
+	    	        	} else {
+	    	        		var arr = serv.fundings;				
+	    					var idx;
+	    					for (idx in arr) {
+	    						if (arr[idx].putCode.value == funding.putCode.value) {
+	    							break;
+	    						}
+	    					}
+	    					arr.splice(idx, 1);
+	    	        	}
+	    	        	$rootScope.$apply();
+	    	        }
+	    	    }).fail(function() { 
+	    	    	console.log("Error deleting funding.");
+	    	    });
+	    	}
+	};
+	return serv;
+}]);
 
 orcidNgModule.factory("worksSrvc", function () {
 	var serv = {
@@ -328,6 +438,31 @@ orcidNgModule.filter('workExternalIdentifierHtml', function(){
 	};
 });
 
+//We should merge this one with workExternalIdentifierHtml
+orcidNgModule.filter('externalIdentifierHtml', function(){
+	return function(externalIdentifier, first, last, length){
+		var output = '';
+		
+		if (externalIdentifier == null) return output;
+		var type = externalIdentifier.type.value;;		
+		if (type != null) output = output + type.toUpperCase() + ": ";
+		var value = null;
+		if(externalIdentifier.value != null)
+			value = externalIdentifier.value.value;
+		var link = null;
+		if(externalIdentifier.url != null)
+			link = externalIdentifier.url.value;
+		
+		if (link != null && value != null) 
+		    output = output + "<a href='" + link + "' target='_blank'>" + value + "</a>";
+		else if(value != null)
+			output = output + " " + value;
+		else if(link != null)
+			output = output + "<a href='" + link + "' target='_blank'>" + link + "</a>";
+		if (length > 1 && !last) output = output + ',';
+	    return output;
+	};
+});
 
 function addBibtexCitation($scope, dw) {
 	if (dw.citation && dw.citation.citationType && dw.citation.citationType.value == 'bibtex') {
@@ -1352,15 +1487,17 @@ function PersonalInfoCtrl($scope, $compile, workspaceSrvc){
 	};
 };
 
-function WorkspaceSummaryCtrl($scope, $compile, affiliationsSrvc, worksSrvc, workspaceSrvc){
+function WorkspaceSummaryCtrl($scope, $compile, affiliationsSrvc, fundingSrvc, worksSrvc, workspaceSrvc){
 	$scope.workspaceSrvc = workspaceSrvc;
 	$scope.worksSrvc = worksSrvc;
 	$scope.affiliationsSrvc = affiliationsSrvc;
+	$scope.fundingSrvc = fundingSrvc;
 	$scope.showAddAlert = function () {
 		if (worksSrvc.loading == false && affiliationsSrvc.loading == false
 				&& worksSrvc.works.length == 0 
 				&& affiliationsSrvc.educations.length == 0
-				&& affiliationsSrvc.employments.length == 0)
+				&& affiliationsSrvc.employments.length == 0
+				&& fundingSrvc.fundings.length == 0)
 			return true;
 		return false;
 	};	
@@ -1670,6 +1807,308 @@ function AffiliationCtrl($scope, $compile, $filter, affiliationsSrvc, workspaceS
 	
 	//init
 	affiliationsSrvc.getAffiliations('affiliations/affiliationIds.json');
+}
+
+/**
+ * Fundings Controller 
+ * */
+function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc) {	
+	$scope.workspaceSrvc = workspaceSrvc;
+	$scope.fundingSrvc = fundingSrvc;
+	$scope.addingFunding = false;
+	$scope.editFunding = null;
+	$scope.disambiguatedFunding = null;
+	$scope.moreInfo = {};
+	$scope.privacyHelp = {};
+	$scope.editTranslatedTitle = false; 
+	
+	$scope.toggleClickMoreInfo = function(key) {
+		if (!document.documentElement.className.contains('no-touch')) {
+			if ($scope.moreInfoCurKey != null 
+					&& $scope.moreInfoCurKey != key) {
+				$scope.moreInfo[$scope.moreInfoCurKey]=false;
+			}
+			$scope.moreInfoCurKey = key;
+			$scope.moreInfo[key]=!$scope.moreInfo[key];
+		}
+	};
+	
+	$scope.moreInfoMouseEnter = function(key, $event) {
+		$event.stopPropagation();
+		if (document.documentElement.className.contains('no-touch')) {
+			if ($scope.moreInfoCurKey != null 
+					&& $scope.moreInfoCurKey != key) {
+				$scope.privacyHelp[$scope.moreInfoCurKey]=false;
+			}
+			$scope.moreInfoCurKey = key;
+			$scope.moreInfo[key]=true;
+		}
+	};
+	
+	$scope.closeMoreInfo = function(key) {
+		$scope.moreInfo[key]=false;
+	};
+	
+	$scope.addFundingModal = function(type){
+		$.ajax({
+			url: $('body').data('baseurl') + 'fundings/funding.json',
+			dataType: 'json',
+			success: function(data) {						
+				$scope.$apply(function() {
+					$scope.editFunding = data;
+					$scope.showAddModal();
+				});
+			}
+		}).fail(function() { 
+	    	console.log("Error fetching funding: " + value);
+	    });
+	};
+	
+	$scope.showAddModal = function(){
+		$scope.editTranslatedTitle = false;
+		$.colorbox({        	
+			html: $compile($('#add-funding-modal').html())($scope),			
+			width: formColorBoxResize(),
+			onComplete: function() {
+				//resize to insure content fits
+				formColorBoxResize();
+				$scope.bindTypeahead();
+			}
+	    });
+	};
+	
+	$scope.addFunding = function(){
+		if ($scope.addingFunding) return; // don't process if adding funding
+		$scope.addingFunding = true;
+		$scope.editFunding.errors.length = 0;
+		$.ajax({
+			url: $('body').data('baseurl') + 'fundings/funding.json',
+	        contentType: 'application/json;charset=UTF-8',
+	        dataType: 'json',
+	        type: 'POST',
+	        data:  angular.toJson($scope.editFunding),
+	        success: function(data) {	        		        	
+	        	if (data.errors.length == 0){
+	        		$.colorbox.close(); 	        		
+	        		fundingSrvc.getFundings('fundings/fundingIds.json');
+	        	} else {
+		        	$scope.editFunding = data;
+		        	if($scope.editFunding.externalIdentifiers.length == 0) {
+		        		$scope.addExternalIdentifier();
+		        	}
+		        	$scope.copyErrorsLeft($scope.editFunding, data);
+	        	}
+	        	$scope.addingFunding = false;
+	        	$scope.$apply();
+	        }
+		}).fail(function(){
+			// something bad is happening!
+			$scope.addingFunding = false;
+	    	console.log("error adding affiliations");
+		});
+	};
+	
+	$scope.bindTypeahead = function () {
+		var numOfResults = 100;
+		
+		$("#fundingName").typeahead({
+			name: 'fundingName',
+			limit: numOfResults,
+			remote: {
+				url: $('body').data('baseurl')+'fundings/disambiguated/name/%QUERY?limit=' + numOfResults
+			},
+			template: function (datum) {
+				   var forDisplay = 
+				       '<span style=\'white-space: nowrap; font-weight: bold;\'>' + datum.value+ '</span>'
+				      +'<span style=\'font-size: 80%;\'>'
+				      + ' <br />' + datum.city;
+				   if(datum.region){
+					   forDisplay += ", " + datum.region;
+				   }
+				   if (datum.orgType != null && datum.orgType.trim() != '')
+				      forDisplay += ", " + datum.orgType;
+				   forDisplay += '</span><hr />';				   
+				   
+				   return forDisplay;
+			}
+		});
+		$("#fundingName").bind("typeahead:selected", function(obj, datum) {        
+			$scope.selectFunding(datum);
+			$scope.$apply();
+		});		
+	};
+	
+	$scope.selectFunding = function(datum) {
+		console.log(angular.toJson(datum));
+		if (datum != undefined && datum != null) {
+			$scope.editFunding.fundingName.value = datum.value;
+			$scope.editFunding.city.value = datum.city;
+			$scope.editFunding.region.value = datum.region;
+			$scope.editFunding.country.value = datum.country;
+			
+			if (datum.disambiguatedFundingIdentifier != undefined && datum.disambiguatedFundingIdentifier != null) {
+				$scope.getDisambiguatedFunding(datum.disambiguatedFundingIdentifier);
+				$scope.unbindTypeahead();
+			}
+		}
+	};
+	
+	$scope.getDisambiguatedFunding = function(id) {
+		$.ajax({
+			url: $('body').data('baseurl') + 'fundings/disambiguated/id/' + id,
+	        dataType: 'json',
+	        type: 'GET',
+	        success: function(data) {
+	        	if (data != null) {
+	        		console.log(data.sourceId);
+			        $scope.disambiguatedFunding = data;
+			        $scope.editFunding.disambiguatedFundingSourceId = data.sourceId;
+			        $scope.editFunding.disambiguationSource = data.sourceType;
+			        $scope.$apply();
+	        	}
+	        }
+		}).fail(function(){
+	    	console.log("error getDisambiguatedFunding(id)");
+		});
+	};
+	
+	$scope.deleteFunding = function(funding) {
+		$scope.delFunding = funding;
+				
+		$.colorbox({        	            
+            html : $compile($('#delete-funding-modal').html())($scope),
+            onComplete: function() {$.colorbox.resize();}
+        });
+	};
+	
+	$scope.confirmDeleteFunding = function(delFunding) {	
+		fundingSrvc.deleteFunding(delFunding);
+		$.colorbox.close(); 
+	};
+	
+	//init
+	fundingSrvc.getFundings('fundings/fundingIds.json');
+	
+	$scope.closeModal = function() {
+		$.colorbox.close();
+	};
+	
+	// Add privacy for new fundings
+	$scope.setAddFundingPrivacy = function(priv, $event) {
+		$event.preventDefault();
+		$scope.editFunding.visibility.visibility = priv;
+	};
+	
+	// Update privacy of an existing funding
+	$scope.setPrivacy = function(funding, priv, $event) {
+		$event.preventDefault();
+		funding.visibility.visibility = priv;
+		fundingSrvc.updateProfileFunding(funding);
+	};
+	
+	$scope.removeDisambiguatedFunding = function() {
+		$scope.bindTypeahead();
+		if ($scope.disambiguatedFunding != undefined) delete $scope.disambiguatedFunding;
+		if ($scope.editFunding != undefined && $scope.editFunding.disambiguatedFundingSourceId != undefined) delete $scope.editFunding.disambiguatedFundingSourceId;
+	};
+	
+	$scope.isValidClass = function (cur) {
+		if (cur === undefined) return '';
+		var valid = true;
+		if (cur.required && (cur.value == null || cur.value.trim() == '')) valid = false;
+		if (cur.errors !== undefined && cur.errors.length > 0) valid = false;
+		return valid ? '' : 'text-error';
+	};			
+	
+	// Server validations
+	$scope.serverValidate = function (relativePath) {
+		console.log(angular.toJson($scope.editFunding));
+		$.ajax({
+	        url: $('body').data('baseurl') + relativePath,
+	        type: 'POST',
+	        data:  angular.toJson($scope.editFunding),
+	        contentType: 'application/json;charset=UTF-8',
+	        dataType: 'json',
+	        success: function(data) {
+	        	$scope.copyErrorsLeft($scope.editFunding, data);
+	        	$scope.$apply();
+	        }
+	    }).fail(function() { 
+	    	// something bad is happening!
+	    	console.log("FundingCtrl.serverValidate() error");
+	    });
+	};
+	
+	$scope.copyErrorsLeft = function (data1, data2) {
+		for (var key in data1) {
+			if (key == null) continue;
+			if (key == 'errors') {
+				data1.errors = data2.errors;
+			} else {
+				if (typeof(data1[key])=="object") {
+					$scope.copyErrorsLeft(data1[key], data2[key]);
+				}
+			};
+		};
+	};
+	
+	$scope.unbindTypeahead = function () {
+		$('#fundingName').typeahead('destroy');
+	};
+	
+	$scope.addExternalIdentifier = function () {
+		$scope.editFunding.externalIdentifiers.push({type: {value: ""}, value: {value: ""}, url: {value: ""} });
+	};
+	
+	$scope.toggleTranslatedTitleModal = function(){
+		$scope.editTranslatedTitle = !$scope.editTranslatedTitle;
+    	$('#translatedTitle').toggle();
+    	$.colorbox.resize();
+	};
+	
+	$scope.renderTranslatedTitleInfo = function(funding) {		
+		var info = null; 
+		console.log(angular.toJson(funding));
+		if(funding != null && funding.fundingTitle != null && funding.fundingTitle.translatedTitle != null) {
+			info = funding.fundingTitle.translatedTitle.content + ' - ' + funding.fundingTitle.translatedTitle.languageName;										
+		}				
+		return info;
+	};
+}
+
+/**
+ * Public Funding Controller 
+ * */
+function PublicFundingCtrl($scope, $compile, $filter, fundingSrvc){
+	$scope.fundingSrvc = fundingSrvc;
+	$scope.moreInfo = {};
+	
+	$scope.toggleClickMoreInfo = function(key) {
+		if (!document.documentElement.className.contains('no-touch'))
+			$scope.moreInfo[key]=!$scope.moreInfo[key];
+	};
+	
+	$scope.moreInfoMouseEnter = function(key, $event) {
+		$event.stopPropagation();
+		if (document.documentElement.className.contains('no-touch'))
+			$scope.moreInfo[key]=true;
+	};
+
+	$scope.closeMoreInfo = function(key) {
+		$scope.moreInfo[key]=false;
+	};
+
+	fundingSrvc.setIdsToAdd(orcidVar.fundingIdsJson);
+	fundingSrvc.addFundingToScope(orcidVar.orcidId +'/fundings.json');
+	
+	$scope.renderTranslatedTitleInfo = function(funding) {		
+		var info = null; 
+		console.log(angular.toJson(funding));
+		if(funding != null && funding.fundingTitle != null && funding.fundingTitle.translatedTitle != null) {
+			info = funding.fundingTitle.translatedTitle.content + ' - ' + funding.fundingTitle.translatedTitle.languageName;										
+		}				
+		return info;
+	};
 }
 
 function PublicWorkCtrl($scope, $compile, worksSrvc) {

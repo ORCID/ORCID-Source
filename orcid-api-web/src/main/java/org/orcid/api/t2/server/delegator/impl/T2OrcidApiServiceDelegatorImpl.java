@@ -17,9 +17,11 @@
 package org.orcid.api.t2.server.delegator.impl;
 
 import static org.orcid.api.common.OrcidApiConstants.AFFILIATIONS_PATH;
+import static org.orcid.api.common.OrcidApiConstants.FUNDING_PATH;
 import static org.orcid.api.common.OrcidApiConstants.PROFILE_GET_PATH;
 import static org.orcid.api.common.OrcidApiConstants.STATUS_OK_MESSAGE;
 import static org.orcid.api.common.OrcidApiConstants.WORKS_PATH;
+
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -80,7 +82,7 @@ import org.springframework.stereotype.Component;
  * <p/>
  * The delegator for the tier 2 API.
  * <p/>
- * The T2 delegator is responsible for the validation, retrieving results and
+ * The T2 delegator is responsible for the validation, retrieving results and 
  * passing of objects to be from the core
  * 
  * @author Declan Newman (declan) Date: 07/03/2012
@@ -564,6 +566,32 @@ public class T2OrcidApiServiceDelegatorImpl extends OrcidApiServiceDelegatorImpl
         OrcidProfile orcidProfile = orcidMessage.getOrcidProfile();
         try {
             orcidProfile = orcidProfileManager.updateAffiliations(orcidProfile);
+            return getOrcidMessageResponse(orcidProfile, orcid);
+        } catch (DataAccessException e) {
+            throw new OrcidBadRequestException("Cannot update ORCID");
+        }
+    }
+    
+    @Override
+    @AccessControl(requiredScope = ScopePathType.FUNDING_CREATE)
+    public Response addFunding(UriInfo uriInfo, String orcid, OrcidMessage orcidMessage) {
+        OrcidProfile orcidProfile = orcidMessage.getOrcidProfile();
+        try {
+            orcidProfileManager.addFundings(orcidProfile);
+            return getCreatedResponse(uriInfo, FUNDING_PATH, orcidProfile);
+        } catch (DataAccessException e) {
+            throw new OrcidBadRequestException("Cannot update ORCID");
+        } catch (PersistenceException pe) {
+            throw new OrcidBadRequestException("One of the parameters passed in the request is either too big or invalid.");
+        }
+    }
+
+    @Override
+    @AccessControl(requiredScope = ScopePathType.FUNDING_UPDATE)
+    public Response updateFunding(UriInfo uriInfo, String orcid, OrcidMessage orcidMessage) {
+        OrcidProfile orcidProfile = orcidMessage.getOrcidProfile();
+        try {
+            orcidProfile = orcidProfileManager.updateFundings(orcidProfile);
             return getOrcidMessageResponse(orcidProfile, orcid);
         } catch (DataAccessException e) {
             throw new OrcidBadRequestException("Cannot update ORCID");

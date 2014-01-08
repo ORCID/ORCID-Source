@@ -31,6 +31,10 @@ public class EndDateEntity extends FuzzyDateEntity {
     public EndDateEntity() {
     }
 
+    public EndDateEntity(Integer year, Integer month) {
+        super(year, month, null);
+    }
+    
     public EndDateEntity(Integer year, Integer month, Integer day) {
         super(year, month, day);
     }
