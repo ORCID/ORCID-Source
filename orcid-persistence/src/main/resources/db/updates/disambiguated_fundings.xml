@@ -26,17 +26,7 @@
 				<tableExists tableName="funding_external_identifier" />
 			</not>
 		</preConditions>		
-				
-		<dropTable cascadeConstraints="true"            
-            tableName="grant_contributor"/>							
-		<dropTable cascadeConstraints="true"            
-            tableName="funding_grant"/>
-		<dropTable cascadeConstraints="true"            
-            tableName="grant_source"/>
-		<dropTable cascadeConstraints="true"            
-            tableName="profile_grant"/>
-            
-
+				 
 		<!-- profile_funding -->
 		<createTable tableName="profile_funding">
 			<column name="id" type="bigint">
