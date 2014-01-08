@@ -184,10 +184,10 @@
             <span class="see-more">${liveIds} <@orcid.msg 'public-layout.amount_ids'/>
                 <a href="<@spring.url "/statistics" />" title=""><@orcid.msg 'public-layout.see_more'/></a>
             </span>
-        </div> <!-- .row -->        
-        <#include '../common/maintenance_header.ftl'/>
+        </div> <!-- .row -->
     </div><!-- .header -->
-    <div id="main" role="main" class="main">        
+    <div id="main" role="main" class="main">
+    	<#include '../common/maintenance_header.ftl'/>        
         <#-- wtf -->        
         <#nested>
     </div>
