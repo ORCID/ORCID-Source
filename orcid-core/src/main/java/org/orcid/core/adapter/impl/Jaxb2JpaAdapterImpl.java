@@ -389,11 +389,11 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
         return JsonUtils.convertToJsonString(workContributors);
     }
     
-    private String getGrantContributorsJson(FundingContributors grantContributors) {
-        if (grantContributors == null) {
+    private String getFundingContributorsJson(FundingContributors fundingContributors) {
+        if (fundingContributors == null) {
             return null;
         }
-        return JsonUtils.convertToJsonString(grantContributors);
+        return JsonUtils.convertToJsonString(fundingContributors);
     }
 
     private void setFundings(ProfileEntity profileEntity, FundingList orcidFundings) {
@@ -1011,10 +1011,10 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
     }
     
     /**
-     * Get a ProfileGrantEntity based on a Grant object
-     * @param grant
-     * @param exisitingProfileGrantEntity
-     * @return a ProfileGrantEntity created from the provided grant 
+     * Get a ProfileFundingEntity based on a Grant object
+     * @param funding
+     * @param exisitingProfileFundingEntity
+     * @return a ProfileFundingEntity created from the provided funding 
      * */
     private ProfileFundingEntity getProfileFundingEntity(Funding funding, ProfileFundingEntity exisitingProfileFundingEntity) {
         if (funding != null) {
@@ -1022,7 +1022,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             if (exisitingProfileFundingEntity == null) {
                 String putCode = funding.getPutCode();
                 if (StringUtils.isNotBlank(putCode) && !"-1".equals(putCode)) {
-                    throw new IllegalArgumentException("Invalid put-code was supplied for a grant: " + putCode);
+                    throw new IllegalArgumentException("Invalid put-code was supplied for a funding: " + putCode);
                 }
                 profileFundingEntity = new ProfileFundingEntity();
                 profileFundingEntity.setSource(getSource(funding.getSource()));
@@ -1038,7 +1038,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             	profileFundingEntity.setCurrencyCode(funding.getAmount().getCurrencyCode() != null ? funding.getAmount().getCurrencyCode() : null);
             }
             
-            profileFundingEntity.setContributorsJson(getGrantContributorsJson(funding.getFundingContributors()));
+            profileFundingEntity.setContributorsJson(getFundingContributorsJson(funding.getFundingContributors()));
             profileFundingEntity.setDescription(StringUtils.isNotBlank(funding.getDescription()) ? funding.getDescription() : null);
             profileFundingEntity.setEndDate(endDate != null ? new EndDateEntity(endDate) : null);
             profileFundingEntity.setExternalIdentifiers(getGrantExternalIdentifiers(profileFundingEntity, funding.getFundingExternalIdentifiers()));            

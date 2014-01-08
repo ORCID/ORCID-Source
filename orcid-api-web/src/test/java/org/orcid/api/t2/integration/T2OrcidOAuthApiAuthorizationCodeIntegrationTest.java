@@ -413,7 +413,7 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
     	fundings.getFundings().add(funding);
     	orcidMessage.getOrcidProfile().getOrcidActivities().setFundings(fundings);
 
-        ClientResponse clientResponse = oauthT2Client1_2_rc2.addGrantsXml("4444-4444-4444-4442", orcidMessage, accessToken);
+        ClientResponse clientResponse = oauthT2Client1_2_rc2.addFundingXml("4444-4444-4444-4442", orcidMessage, accessToken);
         assertEquals(201, clientResponse.getStatus());
     }
     

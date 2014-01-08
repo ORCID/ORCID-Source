@@ -201,7 +201,7 @@ public class T2OAuthOrcidApiClientImpl implements T2OAuthAPIService<ClientRespon
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
     @Consumes(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, MediaType.WILDCARD })
     @Path(FUNDING_PATH)
-    public ClientResponse addGrantsXml(String orcid, OrcidMessage orcidMessage, String token) {
+    public ClientResponse addFundingXml(String orcid, OrcidMessage orcidMessage, String token) {
         URI grantsPathWithOrcidUrl = orcidClientHelper.deriveUriFromRestPath(FUNDING_PATH, orcid);
         return postClientResponseWithToken(grantsPathWithOrcidUrl, VND_ORCID_XML, orcidMessage, token);
     }
@@ -211,7 +211,7 @@ public class T2OAuthOrcidApiClientImpl implements T2OAuthAPIService<ClientRespon
     @Produces(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Consumes(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(FUNDING_PATH)
-    public ClientResponse addGrantsJson(String orcid, OrcidMessage orcidMessage, String token) {
+    public ClientResponse addFundingJson(String orcid, OrcidMessage orcidMessage, String token) {
         URI grantsPathWithOrcidUrl = orcidClientHelper.deriveUriFromRestPath(FUNDING_PATH, orcid);
         return postClientResponseWithToken(grantsPathWithOrcidUrl, VND_ORCID_JSON, orcidMessage, token);
     }
@@ -221,7 +221,7 @@ public class T2OAuthOrcidApiClientImpl implements T2OAuthAPIService<ClientRespon
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
     @Consumes(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, MediaType.WILDCARD })
     @Path(FUNDING_PATH)
-    public ClientResponse updateGrantsXml(String orcid, OrcidMessage orcidMessage, String token) {
+    public ClientResponse updateFundingXml(String orcid, OrcidMessage orcidMessage, String token) {
         URI grantsPathWithOrcidUrl = orcidClientHelper.deriveUriFromRestPath(FUNDING_PATH, orcid);
         return putClientResponseWithToken(grantsPathWithOrcidUrl, VND_ORCID_XML, orcidMessage, token);
     }
@@ -231,7 +231,7 @@ public class T2OAuthOrcidApiClientImpl implements T2OAuthAPIService<ClientRespon
     @Produces(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Consumes(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(FUNDING_PATH)
-    public ClientResponse updateGrantsJson(String orcid, OrcidMessage orcidMessage, String token) {
+    public ClientResponse updateFundingJson(String orcid, OrcidMessage orcidMessage, String token) {
         URI grantsPathWithOrcidUrl = orcidClientHelper.deriveUriFromRestPath(FUNDING_PATH, orcid);
         return putClientResponseWithToken(grantsPathWithOrcidUrl, VND_ORCID_JSON, orcidMessage, token);
     }

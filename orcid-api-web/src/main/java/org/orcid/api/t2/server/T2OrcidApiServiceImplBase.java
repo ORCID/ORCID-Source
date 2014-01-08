@@ -383,7 +383,7 @@ abstract public class T2OrcidApiServiceImplBase implements T2OrcidApiService<Res
 
     /**
      * GETs the HTML representation of the ORCID record containing only
-     * grant details
+     * funding details
      * 
      * @param orcid
      *            the ORCID that corresponds to the user's record
@@ -401,7 +401,7 @@ abstract public class T2OrcidApiServiceImplBase implements T2OrcidApiService<Res
 
     /**
      * GETs the XML representation of the ORCID record containing only
-     * grant details
+     * funding details
      * 
      * @param orcid
      *            the ORCID that corresponds to the user's record
@@ -417,7 +417,7 @@ abstract public class T2OrcidApiServiceImplBase implements T2OrcidApiService<Res
 
     /**
      * GETs the JSON representation of the ORCID record containing only
-     * grant details
+     * funding details
      * 
      * @param orcid
      *            the ORCID that corresponds to the user's record
@@ -696,12 +696,12 @@ abstract public class T2OrcidApiServiceImplBase implements T2OrcidApiService<Res
 
     /**
      * POST an XML representation of the ORCID record containing only
-     * grant details
+     * funding details
      * 
      * @param orcid
      *            the ORCID that corresponds to the user's record
      * @return the XML representation of the ORCID record including the added
-     *         grant(s)
+     *         funding(s)
      */
     @POST
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
@@ -714,12 +714,12 @@ abstract public class T2OrcidApiServiceImplBase implements T2OrcidApiService<Res
 
     /**
      * POST a JSON representation of the ORCID record containing only
-     * grant details
+     * funding details
      * 
      * @param orcid
      *            the ORCID that corresponds to the user's record
      * @return the JSON representation of the ORCID record including the added
-     *         grant(s)
+     *         funding(s)
      */
     @POST
     @Produces(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
@@ -732,12 +732,12 @@ abstract public class T2OrcidApiServiceImplBase implements T2OrcidApiService<Res
 
     /**
      * PUT an XML representation of the ORCID record containing only
-     * grant details
+     * funding details
      * 
      * @param orcid
      *            the ORCID that corresponds to the user's record
      * @return the XML representation of the ORCID record including the added
-     *         grant(s)
+     *         funding(s)
      */
     @PUT
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
@@ -750,12 +750,12 @@ abstract public class T2OrcidApiServiceImplBase implements T2OrcidApiService<Res
 
     /**
      * PUT a JSON representation of the ORCID record containing only
-     * grant details
+     * funding details
      * 
      * @param orcid
      *            the ORCID that corresponds to the user's record
      * @return the JSON representation of the ORCID record including the added
-     *         grant(s)
+     *         funding(s)
      */
     @PUT
     @Produces(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
