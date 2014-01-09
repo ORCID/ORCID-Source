@@ -2437,7 +2437,8 @@ header overrides
 
 .maintenance-header {
 	background-color: #F7F7F7;
-	margin-bottom: 0px;
+	margin: 10px 0px;
+	padding: 5px;
 }
 
 .oauth-title {
