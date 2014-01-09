@@ -63,8 +63,6 @@ import org.orcid.jaxb.model.message.FundingList;
 import org.orcid.jaxb.model.message.OrcidHistory;
 import org.orcid.jaxb.model.message.OrcidInternal;
 import org.orcid.jaxb.model.message.OrcidMessage;
-import org.orcid.jaxb.model.message.OrcidPatent;
-import org.orcid.jaxb.model.message.OrcidPatents;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidWork;
 import org.orcid.jaxb.model.message.OrcidWorks;
@@ -217,7 +215,6 @@ public class JpaJaxbEntityAdapterToOrcidProfileTest extends DBUnitTest {
         assertNotNull(orcidProfile.retrieveOrcidWorks());
         checkOrcidWorks(orcidProfile.retrieveOrcidWorks());
         checkOrcidFundings(orcidProfile.retrieveFundings());
-        checkOrcidPatents(orcidProfile.retrieveOrcidPatents());
         assertEquals("4444-4444-4444-4443", orcidProfile.getOrcid().getValue());
 
         assertNotNull(orcidProfile.getOrcidInternal());
@@ -282,21 +279,6 @@ public class JpaJaxbEntityAdapterToOrcidProfileTest extends DBUnitTest {
         assertNotNull(orcidFunding);
         List<Funding> orcidFundingList = orcidFunding.getFundings();
         assertEquals(3, orcidFundingList.size());
-    }
-
-    private void checkOrcidPatents(OrcidPatents orcidPatents) {
-        assertNotNull(orcidPatents);
-        List<OrcidPatent> orcidPatentList = orcidPatents.getOrcidPatent();
-        assertEquals(2, orcidPatentList.size());
-        OrcidPatent orcidPatent1 = orcidPatentList.get(0);
-        assertEquals("1", orcidPatent1.getPutCode());
-        PatentContributors patentContributors = orcidPatent1.getPatentContributors();
-        assertNotNull(patentContributors);
-        List<Contributor> contributors = patentContributors.getContributor();
-        assertNotNull(contributors);
-        assertEquals(2, contributors.size());
-        Contributor contributor1 = contributors.get(0);
-        assertEquals("Jaylen Kessler", contributor1.getCreditName().getContent());
     }
 
     private void checkOrcidHistory(OrcidHistory orcidHistory) {

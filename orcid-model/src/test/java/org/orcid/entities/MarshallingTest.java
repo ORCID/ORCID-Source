@@ -32,13 +32,9 @@ import javax.xml.bind.Unmarshaller;
 import org.junit.Test;
 import org.orcid.jaxb.model.message.OrcidActivities;
 import org.orcid.jaxb.model.message.OrcidMessage;
-import org.orcid.jaxb.model.message.OrcidPatent;
-import org.orcid.jaxb.model.message.OrcidPatents;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidWork;
 import org.orcid.jaxb.model.message.OrcidWorks;
-import org.orcid.jaxb.model.message.Source;
-import org.orcid.jaxb.model.message.SourceName;
 
 /**
  * orcid-core - Oct 28, 2011 - PlaceholderTest
@@ -61,18 +57,6 @@ public class MarshallingTest {
         OrcidActivities orcidActivities = orcidProfile.getOrcidActivities();
         assertNotNull(orcidActivities);
         assertEquals(4, orcidActivities.getAffiliations().getAffiliation().size());
-        OrcidPatents orcidPatent = orcidActivities.getOrcidPatents();
-        assertNotNull(orcidPatent);
-        List<OrcidPatent> orcidPatents = orcidPatent.getOrcidPatent();
-        assertEquals(1, orcidPatents.size());
-        OrcidPatent patent = orcidPatents.get(0);
-
-        List<Source> sponsors = patent.getPatentSources().getSource();
-
-        for (Source sponsor : sponsors) {
-            SourceName sponsorName = sponsor.getSourceName();
-            assertTrue(GENESIS.contains(sponsorName.getContent()));
-        }
 
         OrcidWorks orcidWorks = orcidProfile.retrieveOrcidWorks();
         assertTrue(orcidWorks != null && orcidWorks.getOrcidWork().size() == 1);
