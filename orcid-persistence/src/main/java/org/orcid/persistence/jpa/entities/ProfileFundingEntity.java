@@ -16,6 +16,7 @@
  */
 package org.orcid.persistence.jpa.entities;
 
+import java.util.Currency;
 import java.util.SortedSet;
 
 import javax.persistence.Basic;
@@ -38,7 +39,6 @@ import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.Sort;
 import org.hibernate.annotations.SortType;
-import org.orcid.jaxb.model.message.CurrencyCode;
 import org.orcid.jaxb.model.message.FundingType;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.utils.NullUtils;
@@ -66,7 +66,7 @@ public class ProfileFundingEntity extends BaseEntity<Long> implements Comparable
     private String translatedTitleLanguageCode;
     private String description;
     private FundingType type;
-    private CurrencyCode currencyCode;
+    private String currencyCode;
     private String amount;
     private String url;
     private String contributorsJson;
@@ -157,14 +157,13 @@ public class ProfileFundingEntity extends BaseEntity<Long> implements Comparable
 		this.type = type;
 	}
 
-	@Basic
-    @Enumerated(EnumType.STRING)
+	@Basic    
 	@Column(name="currency_code")
-	public CurrencyCode getCurrencyCode() {
+	public String getCurrencyCode() {
 		return currencyCode;
 	}
 
-	public void setCurrencyCode(CurrencyCode currencyCode) {
+	public void setCurrencyCode(String currencyCode) {
 		this.currencyCode = currencyCode;
 	}
 

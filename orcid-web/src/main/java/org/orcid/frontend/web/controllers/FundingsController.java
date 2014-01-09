@@ -17,6 +17,7 @@
 package org.orcid.frontend.web.controllers;
 
 import java.util.ArrayList;
+import java.util.Currency;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -33,11 +34,10 @@ import org.orcid.core.adapter.Jpa2JaxbAdapter;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
 import org.orcid.frontend.web.util.LanguagesMap;
-import org.orcid.jaxb.model.message.CurrencyCode;
-import org.orcid.jaxb.model.message.FundingType;
-import org.orcid.jaxb.model.message.OrcidActivities;
 import org.orcid.jaxb.model.message.Funding;
 import org.orcid.jaxb.model.message.FundingList;
+import org.orcid.jaxb.model.message.FundingType;
+import org.orcid.jaxb.model.message.OrcidActivities;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.persistence.dao.FundingExternalIdentifierDao;
 import org.orcid.persistence.dao.OrgDisambiguatedDao;
@@ -478,7 +478,7 @@ public class FundingsController extends BaseWorkspaceController {
 			setError(funding.getCurrencyCode(), "NotBlank.fundings.currency");
 		} else {
 			try {
-				CurrencyCode.fromValue(funding.getCurrencyCode().getValue());
+				Currency.getInstance(funding.getCurrencyCode().getValue());				
 			} catch (IllegalArgumentException iae) {
 				setError(funding.getCurrencyCode(), "Invalid.fundings.currency");
 			}

@@ -17,6 +17,7 @@
 package org.orcid.frontend.web.controllers;
 
 import java.util.ArrayList;
+import java.util.Currency;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -45,7 +46,6 @@ import org.orcid.jaxb.model.clientgroup.RedirectUri;
 import org.orcid.jaxb.model.message.AffiliationType;
 import org.orcid.jaxb.model.message.CitationType;
 import org.orcid.jaxb.model.message.ContributorRole;
-import org.orcid.jaxb.model.message.CurrencyCode;
 import org.orcid.jaxb.model.message.ExternalIdentifier;
 import org.orcid.jaxb.model.message.ExternalIdentifiers;
 import org.orcid.jaxb.model.message.FundingType;
@@ -126,8 +126,8 @@ public class WorkspaceController extends BaseWorkspaceController {
     @ModelAttribute("currencyCodeTypes")
     public Map<String, String> retrieveCurrencyCodesTypesAsMap() {
         Map<String, String> currencyCodeTypes = new LinkedHashMap<String, String>();
-        for (CurrencyCode currencyCode : CurrencyCode.values()) {
-        	currencyCodeTypes.put(currencyCode.value(), currencyCode.value());
+        for (Currency currency : Currency.getAvailableCurrencies()) {
+        	currencyCodeTypes.put(currency.getCurrencyCode(), currency.getCurrencyCode());
         }
         return FunctionsOverCollections.sortMapsByValues(currencyCodeTypes);
     }

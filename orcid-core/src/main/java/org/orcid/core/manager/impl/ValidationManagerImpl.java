@@ -29,7 +29,6 @@ import org.orcid.core.exception.OrcidValidationException;
 import org.orcid.core.manager.ValidationBehaviour;
 import org.orcid.core.manager.ValidationManager;
 import org.orcid.jaxb.model.message.ContactDetails;
-import org.orcid.jaxb.model.message.CurrencyCode;
 import org.orcid.jaxb.model.message.Email;
 import org.orcid.jaxb.model.message.OrcidActivities;
 import org.orcid.jaxb.model.message.OrcidBio;

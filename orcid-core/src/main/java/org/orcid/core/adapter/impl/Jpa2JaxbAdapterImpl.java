@@ -862,7 +862,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         orcidWork.setWorkSource(getWorkSource(profileWorkEntity));
         orcidWork.setWorkTitle(getWorkTitle(work));
         orcidWork.setJournalTitle(StringUtils.isNotBlank(work.getJournalTitle()) ? new Title(work.getJournalTitle()) : null);
-        orcidWork.setLanguageCode(StringUtils.isNotBlank(work.getLanguageCode()) ? work.getLanguageCode() : null);
+        orcidWork.setLanguageCode(normalizeLanguageCode(work.getLanguageCode()));
 
         if (work.getIso2Country() != null) {
             Country country = new Country(work.getIso2Country());
@@ -872,6 +872,18 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         orcidWork.setWorkType(work.getWorkType());
         orcidWork.setVisibility(profileWorkEntity.getVisibility());
         return orcidWork;
+    }
+
+    /* converts locale codes to only return language code, with the exception of zh_CN and zh_TW */
+    static public String normalizeLanguageCode(String code) {
+        if (code == null || code.length() < 2) return null;
+        java.util.Locale locale = new java.util.Locale(code);
+        String localeString = locale.toString();
+        if (localeString.startsWith("zn")) {
+            if (localeString.startsWith("zn_CN") || localeString.startsWith("zn_TW")) return localeString.substring(0, 5);
+            else return "zn_CN"; // bit of a gamble here :-/
+        }
+        return localeString.substring(0, 2);    
     }
 
     private Citation getWorkCitation(WorkEntity work) {
