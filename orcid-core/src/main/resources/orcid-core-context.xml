@@ -490,5 +490,10 @@
 
     <bean id="jpa2JaxbAdapter" class="org.orcid.core.adapter.impl.Jpa2JaxbAdapterImpl" />
     <bean id="jaxb2JpaAdapter" class="org.orcid.core.adapter.impl.Jaxb2JpaAdapterImpl" />
-
+	
+	
+	<!-- Geonames username -->
+	<bean id="geonamesUser" class="java.lang.String">
+		<constructor-arg value="amontenegro"/>
+	</bean>
 </beans>
