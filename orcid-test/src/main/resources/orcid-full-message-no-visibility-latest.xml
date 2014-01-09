@@ -167,6 +167,7 @@
                     <work-title>
                         <title>Work title 1</title>
                         <subtitle>Work subtitle 1</subtitle>
+                        <translated-title language-code="en">Work title 1</translated-title>
                     </work-title>
                 	<work-type>online-resource</work-type>
                 </orcid-work>
