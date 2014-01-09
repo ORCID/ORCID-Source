@@ -26,17 +26,7 @@
 				<tableExists tableName="funding_external_identifier" />
 			</not>
 		</preConditions>		
-				
-		<dropTable cascadeConstraints="true"            
-            tableName="grant_contributor"/>							
-		<dropTable cascadeConstraints="true"            
-            tableName="funding_grant"/>
-		<dropTable cascadeConstraints="true"            
-            tableName="grant_source"/>
-		<dropTable cascadeConstraints="true"            
-            tableName="profile_grant"/>
-            
-
+				 
 		<!-- profile_funding -->
 		<createTable tableName="profile_funding">
 			<column name="id" type="bigint">
@@ -100,12 +90,18 @@
         <addForeignKeyConstraint constraintName="funding_external_identifiers_fk" baseTableName="funding_external_identifier" baseColumnNames="profile_funding_id" referencedTableName="profile_funding" referencedColumnNames="id" deleteCascade="true"/>
 	</changeSet>
 	
-	<changeSet id="CREATE-SEQUENCES" author="Angel Montenegro" dbms="postgresql">
-        <createSequence sequenceName="profile_funding_seq" startValue="1000"/>
+	<changeSet id="CREATE-FUNDING-SEQUENCES" author="Angel Montenegro" dbms="postgresql">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<sequenceExists sequenceName="profile_funding_seq"/>
+				<sequenceExists sequenceName="funding_external_identifier_seq"/>
+			</not>
+		</preConditions>
+        <createSequence sequenceName="profile_funding_seq" startValue="1000" />
         <createSequence sequenceName="funding_external_identifier_seq" startValue="1000"/>
     </changeSet>
     
-    <changeSet id="CREATE-AUTOCOLS" author="Angel Montenegro" dbms="hsqldb">
+    <changeSet id="CREATE-AUTOCOLS" author="Angel Montenegro" dbms="hsqldb">    	
         <addAutoIncrement tableName="profile_funding" columnName="id" columnDataType="bigint"/>
         <addAutoIncrement tableName="funding_external_identifier" columnName="funding_external_identifier_id" columnDataType="bigint"/>
     </changeSet>
