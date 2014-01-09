@@ -12,6 +12,15 @@
 
 #### XSD Release Candidate(s)
 
+* **[ORCID Message 1.2_rc3](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/orcid-message-1.2_rc3.xsd)** <br>_Contains: updates to creation-method field_
+    * API Base URLs - PRODUCTION
+        * Public API:   http://pub.orcid.org/v1.2_rc3/
+        * Member API:   https://api.orcid.org/v1.2_rc3/
+    * API Base URLs - SANDBOX
+        * Public API:   http://pub.sandbox-1.orcid.org/v1.2_rc3/
+        * Member API:   http://api.sandbox-1.orcid.org/v1.2_rc3/
+
+
 * **[ORCID Message 1.2_rc2](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/orcid-message-1.2_rc2.xsd)** <br>_Contains: updates to creation-method field_
     * API Base URLs - PRODUCTION
         * Public API:   http://pub.orcid.org/v1.2_rc2/
