@@ -61,20 +61,4 @@
           work_type="BOOK"          
             />        
 
-    <patent patent_id="1"
-            patent_no="GB9283949348"
-            short_description="Telephone thing"
-            issue_date="2011-01-02"
-            issuing_country="GB"
-            />
-    <patent patent_id="2"
-            patent_no="GB9283949349"
-            short_description="Computer thing"
-            issue_date="2011-01-04"
-            issuing_country="GB"
-            />
-
-    <patent_contributor patent_contributor_id="1" patent_id="1" credit_name="Jaylen Kessler" contributor_role="PRINCIPAL_INVESTIGATOR" contributor_sequence="FIRST"/>
-    <patent_contributor patent_contributor_id="2" patent_id="1" credit_name="Makayla Lindgren" contributor_role="AUTHOR" contributor_sequence="ADDITIONAL"/>
-
 </dataset>

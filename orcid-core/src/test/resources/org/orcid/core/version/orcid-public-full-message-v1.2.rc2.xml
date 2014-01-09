@@ -253,63 +253,6 @@
 					</source>
 				</funding>
 			</funding-list>
-            <orcid-patents>
-                <orcid-patent put-code="3">
-                    <country>GB</country>
-                    <patent-number>GB2447776</patent-number>
-                    <short-description>POLYCRYSTALLINE DIAMOND CONSTRUCTIONS HAVING IMPROVED THERMAL STABILITY</short-description>
-                    <patent-issue-date>2012-03-20T00:00:00</patent-issue-date>
-                    <assignee>
-                        <assignee-orcid>0000-8928-9282-9282</assignee-orcid>
-                        <assignee-name>MADAPUSI K KESHAVAN</assignee-name>
-                    </assignee>
-                    <patent-contributors>
-                        <contributor>
-                            <contributor-orcid>2111-1111-1111-1123</contributor-orcid>
-                            <credit-name>Francis Rossi</credit-name>
-                            <contributor-attributes>
-                                <contributor-sequence>first</contributor-sequence>
-                                <contributor-role>principal-investigator</contributor-role>
-                            </contributor-attributes>
-                        </contributor>
-                        <contributor>
-                            <contributor-orcid>2111-1111-1111-1124</contributor-orcid>
-                            <credit-name>Rick Parfitt</credit-name>
-                            <contributor-attributes>
-                                <contributor-sequence>additional</contributor-sequence>
-                                <contributor-role>support-staff</contributor-role>
-                            </contributor-attributes>
-                        </contributor>
-                    </patent-contributors>
-                    <patent-sources>
-                        <source>
-                            <source-orcid>0000-8928-9282-9282</source-orcid>
-                            <source-name>Peter Gabriel</source-name>
-                            <source-date>2012-03-20T00:00:00</source-date>
-                        </source>
-                        <source>
-                            <source-orcid>0000-8273-9282-9282</source-orcid>
-                            <source-name>Tony Banks</source-name>
-                            <source-date>2012-01-20T00:00:00</source-date>
-                        </source>
-                        <source>
-                            <source-orcid>0000-3273-2239-1293</source-orcid>
-                            <source-name>Anthony Phillips</source-name>
-                            <source-date>2012-01-20T00:00:00</source-date>
-                        </source>
-                        <source>
-                            <source-orcid>0000-3273-2239-1294</source-orcid>
-                            <source-name>Mike Rutherford</source-name>
-                            <source-date>2012-01-20T00:00:00</source-date>
-                        </source>
-                        <source>
-                            <source-orcid>0000-3273-2239-2733</source-orcid>
-                            <source-name>Chris Stewart</source-name>
-                            <source-date>2012-01-20T00:00:00</source-date>
-                        </source>
-                    </patent-sources>
-                </orcid-patent>
-            </orcid-patents>
         </orcid-activities>
     </orcid-profile>
 </orcid-message>
