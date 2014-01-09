@@ -18,19 +18,19 @@ package org.orcid.pojo.ajaxForm;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Currency;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.orcid.jaxb.model.message.Amount;
-import org.orcid.jaxb.model.message.CurrencyCode;
 import org.orcid.jaxb.model.message.DisambiguatedOrganization;
-import org.orcid.jaxb.model.message.FuzzyDate;
+import org.orcid.jaxb.model.message.Funding;
 import org.orcid.jaxb.model.message.FundingContributors;
 import org.orcid.jaxb.model.message.FundingExternalIdentifier;
-import org.orcid.jaxb.model.message.FundingType;
-import org.orcid.jaxb.model.message.Iso3166Country;
-import org.orcid.jaxb.model.message.Funding;
 import org.orcid.jaxb.model.message.FundingExternalIdentifiers;
+import org.orcid.jaxb.model.message.FundingType;
+import org.orcid.jaxb.model.message.FuzzyDate;
+import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.jaxb.model.message.Organization;
 import org.orcid.jaxb.model.message.OrganizationAddress;
 import org.orcid.jaxb.model.message.Source;
@@ -269,7 +269,7 @@ public class FundingForm implements ErrorsInterface, Serializable {
 		if(!PojoUtil.isEmpty(amount))
 			orcidAmount.setContent(amount.getValue());
 		if(!PojoUtil.isEmpty(currencyCode))
-			orcidAmount.setCurrencyCode(CurrencyCode.valueOf(currencyCode.getValue()));		
+			orcidAmount.setCurrencyCode(currencyCode.getValue());		
 		result.setAmount(orcidAmount);
 		if(!PojoUtil.isEmpty(description))
 			result.setDescription(description.getValue());
@@ -343,7 +343,7 @@ public class FundingForm implements ErrorsInterface, Serializable {
 			if(StringUtils.isNotEmpty(funding.getAmount().getContent()))
 				result.setAmount(Text.valueOf(funding.getAmount().getContent()));
 			if(funding.getAmount().getCurrencyCode() != null)
-				result.setCurrencyCode(Text.valueOf(funding.getAmount().getCurrencyCode().value()));
+				result.setCurrencyCode(Text.valueOf(funding.getAmount().getCurrencyCode()));
 		}
 		if(StringUtils.isNotEmpty(funding.getDescription()))
 			result.setDescription(Text.valueOf(funding.getDescription()));
