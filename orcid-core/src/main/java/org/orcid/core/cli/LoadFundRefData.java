@@ -83,12 +83,20 @@ public class LoadFundRefData {
 			Document xmlDocument = builder.parse(file);		
 			XPath xPath =  XPathFactory.newInstance().newXPath();
 			// Get the list of resources
-			String expression = "/RDF/ConceptScheme/hasTopConcept";
-			NodeList nodeList = (NodeList) xPath.compile(expression).evaluate(xmlDocument, XPathConstants.NODESET);
+			String conceptsExpression = "/RDF/ConceptScheme/hasTopConcept";
+			String itemExpression = "/RDF/Concept[@about='%s']";
+			String orgNameExpression = itemExpression + "/prefLabel/Label/literalForm";
+			NodeList nodeList = (NodeList) xPath.compile(conceptsExpression).evaluate(xmlDocument, XPathConstants.NODESET);
 			for (int i = 0; i < nodeList.getLength(); i++) {
 				NamedNodeMap attrs = nodeList.item(i).getAttributes();
 				Node node = attrs.getNamedItem("rdf:resource");
-				System.out.println(node.toString() + " -> " + node.getNodeValue());
+				String itemDoi = node.getNodeValue();
+				//Get organization name								
+				String orgName = (String)xPath.compile(orgNameExpression.replace("%s", itemDoi)).evaluate(xmlDocument, XPathConstants.STRING);
+				System.out.println("---------------------------------------------------------------------------------------------------------------");
+				System.out.println(orgName);
+				System.out.println("---------------------------------------------------------------------------------------------------------------");
+				
 			}
     	} catch(Exception e) {
     		
