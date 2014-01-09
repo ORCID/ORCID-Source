@@ -306,7 +306,7 @@
 						<span ng-show="addingWork">
 							<i class="glyphicon glyphicon-refresh spin x2 green"></i>
 						</span>
-						<span ng-show="editWork.errors.length > 0" class="alert" style>Please fix above errors</span>					
+						<span ng-show="editWork.errors.length > 0" class="alert" style><@orcid.msg 'common.please_fix_errors' /></span>					
 					</div>
 				</div>
 			</div>
