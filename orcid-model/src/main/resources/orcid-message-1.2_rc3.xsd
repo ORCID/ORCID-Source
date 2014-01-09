@@ -596,7 +596,6 @@
 			    <xs:element minOccurs="0" maxOccurs="1" ref="orcid:affiliations" />
 				<xs:element minOccurs="0" maxOccurs="1" ref="orcid:orcid-works" />
 				<xs:element minOccurs="0" maxOccurs="1" ref="orcid:funding-list" />
-				<xs:element minOccurs="0" maxOccurs="1" ref="orcid:orcid-patents" />
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
@@ -1252,100 +1251,6 @@
 				<xs:enumeration value="support-staff" />
 			</xs:restriction>
 		</xs:simpleType>
-	</xs:element>
-	<xs:element name="orcid-patents">
-		<xs:annotation>
-			<xs:documentation>(DEPRECATED) Patents are contained within the Work element. This element should not be used.
-			</xs:documentation>
-		</xs:annotation>
-		<xs:complexType>
-			<xs:sequence>
-				<xs:element maxOccurs="unbounded" minOccurs="0"
-					ref="orcid:orcid-patent" />
-			</xs:sequence>
-			<xs:attributeGroup ref="orcid:scope" />
-		</xs:complexType>
-	</xs:element>
-	<xs:element name="orcid-patent">
-		<xs:annotation>
-			<xs:documentation>(DEPRECATED) Patents are contained within the Work element. This element should not be used.</xs:documentation>
-		</xs:annotation>
-		<xs:complexType>
-			<xs:sequence>
-				<xs:element ref="orcid:country" minOccurs="0" />
-				<xs:element ref="orcid:patent-number" minOccurs="0" />
-				<xs:element ref="orcid:short-description" minOccurs="0" />
-				<xs:element ref="orcid:patent-issue-date" minOccurs="0" />
-				<xs:element ref="orcid:assignee" minOccurs="0" maxOccurs="unbounded" />
-				<xs:element ref="orcid:patent-contributors" minOccurs="0" />
-				<xs:element ref="orcid:patent-sources" minOccurs="0" />
-			</xs:sequence>
-			<xs:attributeGroup ref="orcid:visibility" />
-			<xs:attributeGroup ref="orcid:put-code" />
-		</xs:complexType>
-	</xs:element>
-	<xs:element name="patent-number">
-		<xs:annotation>
-			<xs:documentation>(DEPRECATED) Patents are contained within the Work element. This element should not be used.
-			</xs:documentation>
-		</xs:annotation>
-		<xs:complexType mixed="true" />
-	</xs:element>
-	<xs:element name="patent-issue-date">
-		<xs:annotation>
-			<xs:documentation>(DEPRECATED) Patents are contained within the Work element. This element should not be used.
-			</xs:documentation>
-		</xs:annotation>
-		<xs:complexType>
-			<xs:simpleContent>
-				<xs:extension base="xs:dateTime" />
-			</xs:simpleContent>
-		</xs:complexType>
-	</xs:element>
-	<xs:element name="assignee">
-		<xs:annotation>
-			<xs:documentation>(DEPRECATED) Patents are contained within the Work element. This element should not be used.
-			</xs:documentation>
-		</xs:annotation>
-		<xs:complexType>
-			<xs:sequence>
-				<xs:element ref="orcid:assignee-orcid" minOccurs="0" />
-				<xs:element ref="orcid:assignee-name" minOccurs="0" />
-			</xs:sequence>
-			<xs:attributeGroup ref="orcid:visibility" />
-		</xs:complexType>
-	</xs:element>
-	<xs:element name="assignee-name">
-		<xs:annotation>
-			<xs:documentation>(DEPRECATED) Patents are contained within the Work element. This element should not be used.
-			</xs:documentation>
-		</xs:annotation>
-		<xs:complexType mixed="true" />
-	</xs:element>
-	<xs:element name="assignee-orcid" type="orcid:orcid-id"/>
-	<xs:element name="patent-contributors">
-		<xs:annotation>
-			<xs:documentation>(DEPRECATED) Patents are contained within the Work element. This element should not be used.
-			</xs:documentation>
-		</xs:annotation>
-		<xs:complexType>
-			<xs:sequence>
-				<xs:element maxOccurs="unbounded" minOccurs="0"
-					ref="orcid:contributor" />
-			</xs:sequence>
-		</xs:complexType>
-	</xs:element>
-	<xs:element name="patent-sources">
-		<xs:annotation>
-			<xs:documentation>(DEPRECATED) Patents are contained within the Work element. This element should not be used.
-			</xs:documentation>
-		</xs:annotation>
-		<xs:complexType>
-			<xs:sequence>
-				<xs:element maxOccurs="unbounded" minOccurs="0"
-					ref="orcid:source" />
-			</xs:sequence>
-		</xs:complexType>
 	</xs:element>
 	<xs:element name="publication-date">
 		<xs:annotation>
