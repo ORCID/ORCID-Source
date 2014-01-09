@@ -2732,6 +2732,158 @@ function QuickSearchCtrl($scope, $compile){
 	$scope.getResults(10);
 };
 
+function DelegatesCtrl($scope, $compile){
+	$scope.results = new Array();
+	$scope.numFound = 0;
+	$scope.start = 0;
+	$scope.rows = 10;
+	$scope.showLoader = false;
+	
+	$scope.search = function(){
+		$scope.showLoader = true;
+		$scope.results = new Array();
+		$scope.getResults();
+	};
+	
+	$scope.getResults = function(rows){
+		$.ajax({
+			url: $('#DelegatesCtrl').data('search-query-url') + $scope.userQuery + '&start=' + $scope.start + '&rows=' + $scope.rows,      
+			dataType: 'json',
+			headers: { Accept: 'application/json'},
+			success: function(data) {
+				var resultsContainer = data['orcid-search-results']; 
+				if(typeof resultsContainer !== 'undefined'){
+					$scope.numFound = resultsContainer['num-found'];
+					$scope.results = $scope.results.concat(resultsContainer['orcid-search-result']);
+				}
+				else{
+					$('#no-results-alert').fadeIn(1200);
+				}
+				$scope.areMoreResults = $scope.numFound >= ($scope.start + $scope.rows);
+				$scope.showLoader = false;
+				$scope.$apply();
+				var newSearchResults = $('.new-search-result');
+				newSearchResults.fadeIn(1200);
+				newSearchResults.removeClass('new-search-result');
+				var newSearchResultsTop = newSearchResults.offset().top;
+				var showMoreButtonTop = $('#show-more-button-container').offset().top;
+				var bottom = $(window).height();
+				if(showMoreButtonTop > bottom){
+					$('html, body').animate(
+						{ 
+							scrollTop: newSearchResultsTop
+						},
+						1000, 
+						'easeOutQuint'
+					);
+				}
+			}
+		}).fail(function(){
+			// something bad is happening!
+			console.log("error doing search for delegates");
+		});
+	};
+	
+	$scope.getMoreResults = function(){
+		$scope.showLoader = true;
+		$scope.start += 10;
+		$scope.getResults();
+	};
+	
+	$scope.concatPropertyValues = function(array, propertyName){
+		if(typeof array === 'undefined'){
+			return '';
+		}
+		else{
+			return $.map(array, function(o){ return o[propertyName]; }).join(', ');
+		}
+	};
+	
+	$scope.areResults = function(){
+		return $scope.numFound != 0;
+	};
+	
+	$scope.confirmAddDelegate = function(delegateName, delegateId){
+		$scope.delegateNameToAdd = delegateName;
+		$scope.delegateToAdd = delegateId;
+		$.colorbox({                      
+			html : $compile($('#confirm-add-delegate-modal').html())($scope),
+			transition: 'fade',
+			close: '',
+			onLoad: function() {
+				$('#cboxClose').remove();
+			},
+			onComplete: function() {$.colorbox.resize();},
+			scrolling: true
+		});
+	};
+	
+	$scope.addDelegate = function() {
+		$.ajax({
+	        url: $('body').data('baseurl') + 'account/addDelegate.json',
+	        type: 'POST',
+	        data: $scope.delegateToAdd,
+	        contentType: 'application/json;charset=UTF-8',
+	        success: function(data) {
+	        	$scope.getDelegates();
+	        	$scope.$apply();
+	        	$scope.closeModal();
+	        }
+	    }).fail(function() { 
+	    	console.log("Error adding delegate.");
+	    });
+	};
+	
+	$scope.confirmRevoke = function(delegateName, delegateId) {
+	    $scope.delegateNameToRevoke = delegateName;
+	    $scope.delegateToRevoke = delegateId;
+        $.colorbox({
+            html : $compile($('#revoke-delegate-modal').html())($scope)
+            	
+        });
+        $.colorbox.resize();
+	};
+
+	$scope.revoke = function () {
+		$.ajax({
+	        url: $('body').data('baseurl') + 'account/revokeDelegate.json',
+	        type: 'DELETE',
+	        data:  $scope.delegateToRevoke,
+	        contentType: 'application/json;charset=UTF-8',
+	        success: function(data) {
+				$scope.getDelegates();
+				$scope.$apply();
+	        	$scope.closeModal();
+	        }
+	    }).fail(function() { 
+	    	// something bad is happening!
+	    	console.log("$DelegateCtrl.revoke() error");
+	    });
+	};
+	
+	$scope.getDelegates = function() {
+		$.ajax({
+	        url: $('body').data('baseurl') + 'account/delegates.json',
+	        dataType: 'json',
+	        success: function(data) {
+	        	$scope.delegation = data;
+	        	$scope.$apply();
+	        }
+	    }).fail(function() { 
+	    	// something bad is happening!
+	    	console.log("error with multi email");
+	    });
+	};
+	
+	$scope.closeModal = function() {
+		$.colorbox.close();
+	};
+	
+	// init
+	$scope.getDelegates();
+	
+};
+
 function ClientEditCtrl($scope, $compile){	
 	$scope.clients = [];
 	$scope.newClient = null;

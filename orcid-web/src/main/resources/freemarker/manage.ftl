@@ -111,8 +111,8 @@
 							<div class="row bottom-row">
 									<div class="col-md-12 add-email">
 										<input type="email" placeholder="${springMacroRequestContext.getMessage("manage.add_another_email")}"
-											class="input-xlarge" ng-model="inputEmail.value"
-											style="margin: 0px;" required /> <span
+											class="input-xlarge inline-input" ng-model="inputEmail.value"
+											required /> <span
 											ng-click="checkCredentials()" class="btn btn-primary">${springMacroRequestContext.getMessage("manage.spanadd")}</span>
 										<span class="orcid-error"
 											ng-show="inputEmail.errors.length > 0"> <span
@@ -356,34 +356,64 @@
 		</h3>
 		<p>
 			${springMacroRequestContext.getMessage("settings.tdallowpermission")}<br />
-			<a href="http://support.orcid.org/knowledgebase/articles/131598"
+			<a href="http://support.orcid.org/knowledgebase/articles/delegation"
 				target=_blank"">${springMacroRequestContext.getMessage("manage.findoutmore")}</a>
 		</p>
-		<#if (profile.orcidBio.delegation.givenPermissionTo)??>
-		<table ng-controller="revokeDelegateCtrl"
-			class="table table-bordered settings-table normal-width">
-			<thead>
-				<tr>
-					<th width="35%">${springMacroRequestContext.getMessage("manage.thproxy")}</th>
-					<th width="5%">${springMacroRequestContext.getMessage("manage.thapprovaldate")}</th>
-					<td width="5%"></td>
-				</tr>
-			</thead>
-			<tbody>
-			    <#list profile.orcidBio.delegation.givenPermissionTo.delegationDetails as
-				delegationDetails>
-				<tr>
-					<td width="35%"><a href="${delegationDetails.delegateSummary.orcidIdentifier.uri}">${delegationDetails.delegateSummary.creditName.content}</a></td>
-					<td width="35%">${delegationDetails.approvalDate.value.toGregorianCalendar().time?date}</td>
-					<td width="5%"><a
-						ng-click="confirmRevoke('${delegationDetails.delegateSummary.creditName.content?js_string}', '${delegationDetails_index}')"
-						class="glyphicon glyphicon-trash grey"
-						title="${springMacroRequestContext.getMessage("manage.revokeaccess")}"></a></td>
-				</tr>
-				</#list>
-			</tbody>
-		</table>
-		</#if>
+		<div ng-controller="DelegatesCtrl" id="DelegatesCtrl" data-search-query-url="${searchBaseUrl}">
+			<table class="table table-bordered settings-table normal-width" ng-show="delegation.givenPermissionTo.delegationDetails" ng-cloak>
+				<thead>
+					<tr>
+						<th width="35%">${springMacroRequestContext.getMessage("manage.thproxy")}</th>
+						<th width="5%">${springMacroRequestContext.getMessage("manage.thapprovaldate")}</th>
+						<td width="5%"></td>
+					</tr>
+				</thead>
+				<tbody>
+					<tr ng-repeat="delegationDetails in delegation.givenPermissionTo.delegationDetails">
+						<td width="35%"><a href="{{delegationDetails.delegateSummary.orcidIdentifier.uri}}">{{delegationDetails.delegateSummary.creditName.content}}</a></td>
+						<td width="35%">{{delegationDetails.approvalDate.value|date}}</td>
+						<td width="5%"><a
+							ng-click="confirmRevoke(delegationDetails.delegateSummary.creditName.content, delegationDetails.delegateSummary.orcidIdentifier.path)"
+							class="glyphicon glyphicon-trash grey"
+							title="{springMacroRequestContext.getMessage("manage.revokeaccess")}"></a></td>
+					</tr>
+				</tbody>
+			</table>
+			<p>Search for trusted individuals to add.</p>
+			<div>
+				<form ng-submit="search()">
+					<input type="text" placeholder="ORCID or names" class="input-xlarge inline-input" ng-model="userQuery"></input>
+					<input type="submit" class="btn btn-primary" value="Search"></input>
+				</form>
+			</div>
+			<div>
+				<table class="ng-cloak table table-striped" ng-show="areResults()">
+					<thead>
+						<tr>
+							<th>${springMacroRequestContext.getMessage("search_results.thORCIDID")}</th>
+							<th>${springMacroRequestContext.getMessage("search_results.thGivenname")}</th>
+							<th>${springMacroRequestContext.getMessage("search_results.thFamilynames")}</th>
+							<th>${springMacroRequestContext.getMessage("search_results.thInstitutions")}</th>
+							<th></th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr ng-repeat='result in results' class="new-search-result">
+							<td class='search-result-orcid-id'><a href="{{result['orcid-profile']['orcid-id']}}">{{result['orcid-profile'].orcid.value}}</td>
+							<td>{{result['orcid-profile']['orcid-bio']['personal-details']['given-names'].value}}</td>
+							<td>{{result['orcid-profile']['orcid-bio']['personal-details']['family-name'].value}}</td>
+							<td>{{concatPropertyValues(result['orcid-profile']['orcid-bio']['affiliations'], 'affiliation-name')}}</td>
+							<td><span ng-click="confirmAddDelegate(result['orcid-profile']['orcid-bio']['personal-details']['given-names'].value + ' ' + result['orcid-profile']['orcid-bio']['personal-details']['family-name'].value, result['orcid-profile']['orcid']['value'])" class="btn btn-primary">${springMacroRequestContext.getMessage("manage.spanadd")}</span></td>
+						</tr>
+					</tbody>
+				</table>
+				<div id="show-more-button-container">
+					<button id="show-more-button" type="submit" class="ng-cloak btn" ng-click="getMoreResults()" ng-show="areMoreResults">Show more</button>
+					<span id="ajax-loader" class="ng-cloak" ng-show="showLoader"><i class="glyphicon glyphicon-refresh spin x2 green"></i></span>
+				</div>
+				<div id="no-results-alert" class="hide alert alert-error"><@spring.message "orcid.frontend.web.no_results"/></div>
+			</div>
+		</div>
 		</#if>
 	</div>
 </div>
@@ -425,5 +455,23 @@
 		   <button class="btn btn-danger" ng-click="revokeAccess()">${springMacroRequestContext.getMessage("manage.application_access.revoke.confirm")}</button> 
 		   <a href="" ng-click="closeModal()">${springMacroRequestContext.getMessage("manage.application_access.revoke.cancel")}</a>
 		</div>
+	</script>
+	
+	<script type="text/ng-template" id="confirm-add-delegate-modal">
+		<div style="padding: 20px;">
+		   <h3>Add delegate</h3>
+		   <p> {{delegateNameToAdd}} ({{delegateToAdd}})</p>
+		   <button class="btn btn-primary" ng-click="addDelegate()">Add</button> 
+		   <a href="" ng-click="closeModal()">Cancel</a>
+		</div>
+	</script>
+	
+	<script type="text/ng-template" id="revoke-delegate-modal">
+		<div style="padding: 20px;">
+			<h3>Please confirm revocation of delegate</h3>
+			<p> {{delegateNameToRevoke}} ({{delegateToRevoke}})</p>
+			<button class="btn btn-danger" ng-click="revoke()">Revoke</button> 
+			<a href="" ng-click="closeModal()">Cancel</a>
+		<div>
 	</script>
 </@protected>

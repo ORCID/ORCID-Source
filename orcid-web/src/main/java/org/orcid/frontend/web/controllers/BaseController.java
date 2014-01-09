@@ -41,13 +41,12 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
-import org.codehaus.jackson.JsonGenerationException;
-import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.EmailManager;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.manager.StatisticsManager;
+import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.frontend.web.forms.LoginForm;
 import org.orcid.jaxb.model.message.Email;
@@ -117,6 +116,9 @@ public class BaseController {
 
     @Resource
     private StatisticsManager statisticsManager;
+
+    @Resource
+    private OrcidUrlManager orcidUrlManager;
 
     protected static final String EMPTY = "empty";
 
@@ -306,18 +308,17 @@ public class BaseController {
         Locale locale = RequestContextUtils.getLocale(request);
         org.orcid.pojo.Local lPojo = new org.orcid.pojo.Local();
         lPojo.setLocale(locale.toString());
-  
+
         ResourceBundle resources = ResourceBundle.getBundle("i18n/javascript", locale, new UTF8Control());
         lPojo.setMessages(OrcidStringUtils.resourceBundleToMap(resources));
         String messages = "";
         try {
             messages = StringEscapeUtils.escapeEcmaScript(mapper.writeValueAsString(lPojo));
         } catch (IOException e) {
-            LOGGER.error("getJavascriptMessages error:"+ e.toString(), e);
+            LOGGER.error("getJavascriptMessages error:" + e.toString(), e);
         }
-        return messages;      
+        return messages;
     }
-
 
     protected void validateEmailAddress(String email, HttpServletRequest request, BindingResult bindingResult) {
         validateEmailAddress(email, true, request, bindingResult);
@@ -521,6 +522,13 @@ public class BaseController {
 
     protected void setError(ErrorsInterface ei, String msg) {
         ei.getErrors().add(getMessage(msg));
+    }
+
+    @ModelAttribute("searchBaseUrl")
+    protected String createSearchBaseUrl() {
+        String baseUrlWithCorrectedProtocol = orcidUrlManager.getBaseUrl().replaceAll("^https?:", "");
+        String baseUrlWithCorrectedContext = baseUrlWithCorrectedProtocol.replaceAll("/orcid-web$", "/orcid-pub-web");
+        return baseUrlWithCorrectedContext + "/search/orcid-bio/?q=";
     }
 
 }

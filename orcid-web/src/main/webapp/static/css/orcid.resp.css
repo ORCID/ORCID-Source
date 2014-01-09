@@ -2473,6 +2473,10 @@ header overrides
 	width: 330px;
 }
 
+.inline-input{
+	margin-bottom: 0px !important;
+}
+
 .relative {
 	position: relative;
 }
@@ -3441,7 +3445,7 @@ p.orcid-id-container{
 	.input-xlarge{
 		width:100%;
 	}
-
+	
 	/* Registration */
 	#RegistrationCtr input[type="text"],#RegistrationCtr input[type="password"]
 		{
