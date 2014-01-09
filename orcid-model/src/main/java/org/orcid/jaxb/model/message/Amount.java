@@ -17,6 +17,7 @@
 package org.orcid.jaxb.model.message;
 
 import java.io.Serializable;
+import java.util.Currency;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -61,17 +62,17 @@ public class Amount implements Serializable {
     @XmlValue
     protected String content;
     @XmlAttribute(name = "currency-code", required = true)
-    protected CurrencyCode currencyCode;
+    protected String currencyCode;
 
     public Amount() {
-
+    	
     }
 
     public Amount(String content) {
         this.content = content;
     }
 
-    public Amount(String content, CurrencyCode currencyCode) {
+    public Amount(String content, String currencyCode) {
         this.content = content;
         this.currencyCode = currencyCode;
     }
@@ -84,11 +85,11 @@ public class Amount implements Serializable {
         this.content = content;
     }
 
-    public CurrencyCode getCurrencyCode() {
+    public String getCurrencyCode() {
         return currencyCode;
     }
 
-    public void setCurrencyCode(CurrencyCode currencyCode) {
+    public void setCurrencyCode(String currencyCode) {
         this.currencyCode = currencyCode;
     }
 
