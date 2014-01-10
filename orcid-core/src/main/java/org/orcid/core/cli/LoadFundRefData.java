@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.HashMap;
 
 import javax.ws.rs.core.MultivaluedMap;
 import javax.xml.parsers.DocumentBuilder;
@@ -59,6 +60,7 @@ public class LoadFundRefData {
     private OrgManager orgManager;
     private String apiUser;
     private Client jerseyClient;
+    private HashMap<String, String> cache = new HashMap<String, String>();
 	
 	public static void main(String[] args) {
 		LoadFundRefData loadFundRefData = new LoadFundRefData();
@@ -90,6 +92,7 @@ public class LoadFundRefData {
     
     private void execute() {
     	try {
+    		long start = System.currentTimeMillis();
 			FileInputStream file = new FileInputStream(fileToLoad);			
 			DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();			
 			DocumentBuilder builder =  builderFactory.newDocumentBuilder();			
@@ -100,7 +103,11 @@ public class LoadFundRefData {
 			String itemExpression = "/RDF/Concept[@about='%s']";
 			String orgNameExpression = itemExpression + "/prefLabel/Label/literalForm";
 			String orgCountryExpression = itemExpression + "/country";
+			String orgStateExpression = itemExpression + "/state";
+			// Parent node
 			NodeList nodeList = (NodeList) xPath.compile(conceptsExpression).evaluate(xmlDocument, XPathConstants.NODESET);
+			// Needed strings
+			String countryName = null, stateName = null;
 			for (int i = 0; i < nodeList.getLength(); i++) {
 				NamedNodeMap attrs = nodeList.item(i).getAttributes();
 				Node node = attrs.getNamedItem("rdf:resource");
@@ -111,27 +118,45 @@ public class LoadFundRefData {
 				Node countryNode = (Node)xPath.compile(orgCountryExpression.replace("%s", itemDoi)).evaluate(xmlDocument, XPathConstants.NODE);
 				NamedNodeMap countryAttrs = countryNode.getAttributes();
 				String countryCode = countryAttrs.getNamedItem("rdf:resource").getNodeValue();
-				String countryName = fetchCountryNameFromGeoNames(countryCode);
+				countryName = fetchFromGeoNames(countryCode, "countryName");
 				
-				
+				//Get state name
+				Node stateNode = (Node)xPath.compile(orgStateExpression.replace("%s", itemDoi)).evaluate(xmlDocument, XPathConstants.NODE);
+				if(stateNode != null) {
+					NamedNodeMap stateAttrs = stateNode.getAttributes();
+					String stateCode = stateAttrs.getNamedItem("rdf:resource").getNodeValue();
+					stateName = fetchFromGeoNames(stateCode, "name");
+				}
+								
+				System.out.println(itemDoi + ": " + orgName + " -> " + countryName + " -> " + stateName);
+				//TODO: Now look the orgName into the existing orgs or disambiguated orgs
+				//TODO: If exists Add an external identifier
+				//TODO: if doesnt exist, create the org and set the value requireManualValidation to true
 			}
+			System.out.println(System.currentTimeMillis() - start);
+			System.out.println("Cache size: " + cache.size());
     	} catch(Exception e) {
-    		
+    		System.out.println(e.toString());
     	}               
     }
     
     private String fetchFromGeoNames(String geoNameUri, String propertyToFetch){
     	String result = null;
     	String geoNameId = geoNameUri.replaceAll( "[^\\d]", "" );    	
-    	
-    	String jsonResponse = fetchFromGeoNames(geoNameId);
-    	result = fetchValueFromJson(jsonResponse, propertyToFetch);
+    	if(cache.containsKey(geoNameId)) {
+    		result = cache.get(geoNameId);
+    	} else {
+    		String jsonResponse = fetchJsonFromGeoNames(geoNameId);
+    		result = fetchValueFromJson(jsonResponse, propertyToFetch);    		
+    		System.out.println("Adding " + geoNameId + " -> " + result + " to cache");
+    		cache.put(geoNameId, result);
+    	}
     	
     	return result;
     }
     
     
-    private String fetchFromGeoNames(String geoNameId) {
+    private String fetchJsonFromGeoNames(String geoNameId) {
     	Client c = Client.create();    	
     	WebResource r = c.resource(geonamesApiUrl);
         MultivaluedMap<String, String> params = new MultivaluedMapImpl();
@@ -145,12 +170,13 @@ public class LoadFundRefData {
      * It only fetches properties in the first level
      * */
     private String fetchValueFromJson(String jsonString, String propetyName){
-    	String result = null;
+    	String result = null;    	
     	try {
         	ObjectMapper m = new ObjectMapper();
         	JsonNode rootNode = m.readTree(jsonString);
-        	JsonNode nameNode = rootNode.path("countryName");
-        	result = nameNode.getTextValue();
+        	JsonNode nameNode = rootNode.path(propetyName);
+        	if(nameNode != null)
+        		result = nameNode.getTextValue();
         } catch (Exception e) {
         	
         }
