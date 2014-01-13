@@ -114,7 +114,7 @@
                                    	<a ng-click="openMenu($event)" ><@orcid.msg 'public-layout.manage_proxy_account'/></a>
                                    		<ul class="dropdown-menu" ng-show="isDroppedDown" ng-cloak>
 	  										<li ng-repeat="delegationDetails in delegation.givenPermissionBy.delegationDetails">
-												<a href="{{delegationDetails.delegateSummary.orcidIdentifier.uri}}">{{delegationDetails.delegateSummary.orcidIdentifier.uri}}</a>
+												<a href="<@spring.url '/switch-user?j_username='/>{{delegationDetails.delegateSummary.orcidIdentifier.path}}">{{delegationDetails.delegateSummary.orcidIdentifier.path}}</a>
 											</li>
   										</ul>
                                    </li>
@@ -270,7 +270,7 @@
                                    	<a ng-click="openMenu($event)" ><@orcid.msg 'public-layout.manage_proxy_account'/></a>
                                    		<ul class="dropdown-menu" ng-show="isDroppedDown" ng-cloak>
 	  										<li ng-repeat="delegationDetails in delegation.givenPermissionBy.delegationDetails">
-												<a href="{{delegationDetails.delegateSummary.orcidIdentifier.uri}}">{{delegationDetails.delegateSummary.orcidIdentifier.uri}}</a>
+												<a href=""<@spring.url '/switch-user?j_username='/>"{{delegationDetails.delegateSummary.orcidIdentifier.path}}">{{delegationDetails.delegateSummary.orcidIdentifier.path}}</a>
 											</li>
   										</ul>
                                    </li>
