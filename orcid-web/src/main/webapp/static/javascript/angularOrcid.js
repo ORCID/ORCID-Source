@@ -2871,7 +2871,7 @@ function DelegatesCtrl($scope, $compile){
 	        }
 	    }).fail(function() { 
 	    	// something bad is happening!
-	    	console.log("error with multi email");
+	    	console.log("error with delegates");
 	    });
 	};
 	
@@ -2882,6 +2882,36 @@ function DelegatesCtrl($scope, $compile){
 	// init
 	$scope.getDelegates();
 	
+};
+
+function SwitchUserCtrl($scope, $compile, $document){
+	$scope.isDroppedDown = false;
+	
+	$scope.openMenu = function(event){
+		$scope.getDelegates();
+		$scope.isDroppedDown = true;
+		event.stopPropagation();
+	};
+	
+	$scope.getDelegates = function() {
+		$.ajax({
+	        url: $('body').data('baseurl') + 'account/delegates.json',
+	        dataType: 'json',
+	        success: function(data) {
+	        	$scope.delegation = data;
+	        	$scope.$apply();
+	        }
+	    }).fail(function() { 
+	    	// something bad is happening!
+	    	console.log("error with delegates");
+	    });
+	};
+	
+	$document.bind('click',
+		function(event){
+			$scope.isDroppedDown = false;
+			$scope.$apply();
+		});
 };
 
 function ClientEditCtrl($scope, $compile){	
