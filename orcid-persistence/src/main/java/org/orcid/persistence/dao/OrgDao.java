@@ -32,6 +32,8 @@ public interface OrgDao extends GenericDao<OrgEntity, Long> {
     List<AmbiguousOrgEntity> getAmbiguousOrgs(int firstResult, int maxResults);
 
     List<OrgEntity> getOrgs(String searchTerm, int firstResult, int maxResults);
+    
+    List<OrgEntity> getOrgsByName(String searchTerm);
 
     OrgEntity findByNameCityRegionAndCountry(String name, String city, String region, Iso3166Country country);
 
