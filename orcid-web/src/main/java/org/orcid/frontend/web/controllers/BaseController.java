@@ -24,6 +24,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -45,6 +46,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.EmailManager;
 import org.orcid.core.manager.OrcidProfileManager;
+import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.StatisticsManager;
 import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
@@ -63,7 +65,9 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.switchuser.SwitchUserGrantedAuthority;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -119,6 +123,9 @@ public class BaseController {
 
     @Resource
     private OrcidUrlManager orcidUrlManager;
+
+    @Resource
+    private SourceManager sourceManager;
 
     protected static final String EMPTY = "empty";
 
@@ -274,8 +281,7 @@ public class BaseController {
 
     @ModelAttribute("realUserOrcid")
     public String getRealUserOrcid() {
-        OrcidProfileUserDetails currentUser = getCurrentUser();
-        return currentUser == null ? null : currentUser.getRealOrcid();
+        return sourceManager.retrieveSourceOrcid();
     }
 
     public String getEffectiveUserOrcid() {

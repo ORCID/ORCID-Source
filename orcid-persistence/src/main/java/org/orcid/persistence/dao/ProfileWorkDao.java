@@ -80,7 +80,7 @@ public interface ProfileWorkDao extends GenericDao<ProfileWorkEntity, ProfileWor
      * 
      * @return true if the profile work relationship was created
      * */
-    boolean addProfileWork(String clientOrcid, long workId, Visibility visibility);
+    boolean addProfileWork(String clientOrcid, long workId, Visibility visibility, String sourceOrcid);
 
     List<String> findOrcidsNeedingWorkContributorMigration(int chunkSize);
 }
