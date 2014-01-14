@@ -25,6 +25,18 @@
 				<h3 class="funding-title">
 					<strong ng-show="funding.fundingTitle.title.value">{{funding.fundingTitle.title.value}}:</strong>
 					<span class="funding-name" ng-bind-html="funding.fundingName.value"></span>
+					<span class="funding-date" ng-show="funding.startDate && !funding.endDate">
+						(<span ng-show="funding.startDate.month">{{funding.startDate.month}}-</span><span ng-show="funding.startDate.year">{{funding.startDate.year}}</span>
+				    	<@orcid.msg 'workspace_fundings.dateSeparator'/>&nbsp;
+				    	<@orcid.msg 'workspace_fundings.present'/>)
+					</span>
+					<span class="funding-date" ng-show="funding.startDate && funding.endDate">
+						(<span ng-show="funding.startDate.month">{{funding.startDate.month}}-</span><span ng-show="funding.startDate.year">{{funding.startDate.year}}</span>
+						<@orcid.msg 'workspace_fundings.dateSeparator'/>&nbsp;<span ng-show="funding.endDate.month">{{funding.endDate.month}}-</span><span ng-show="funding.endDate.year">{{funding.endDate.year}}</span>)
+					</span>
+					<span class="funding-date" ng-show="!funding.startDate && funding.endDate">
+					     (<span ng-show="funding.endDate.month">{{funding.endDate.month}}-</span><span ng-show="funding.endDate.year">{{funding.endDate.year}}</span>)
+					</span>
 				</h3>
 			</div>
 			
@@ -46,19 +58,6 @@
 		</div>
 		<div class="row">			
 			<div class="col-md-12 col-sm-12 col-xs-12">
-				<span class="funding-date" ng-show="funding.startDate && !funding.endDate">
-					(<span ng-show="funding.startDate.month">{{funding.startDate.month}}-</span><span ng-show="funding.startDate.year">{{funding.startDate.year}}</span>
-				    <@orcid.msg 'workspace_fundings.dateSeparator'/>&nbsp;
-				    <@orcid.msg 'workspace_fundings.present'/>)
-				</span>
-				<span class="funding-date" ng-show="funding.startDate && funding.endDate">
-					(<span ng-show="funding.startDate.month">{{funding.startDate.month}}-</span><span ng-show="funding.startDate.year">{{funding.startDate.year}}</span>
-					<@orcid.msg 'workspace_fundings.dateSeparator'/>&nbsp;<span ng-show="funding.endDate.month">{{funding.endDate.month}}-</span><span ng-show="funding.endDate.year">{{funding.endDate.year}}</span>)
-				</span>
-				<span class="funding-date" ng-show="!funding.startDate && funding.endDate">
-					     (<span ng-show="funding.endDate.month">{{funding.endDate.month}}-</span><span ng-show="funding.endDate.year">{{funding.endDate.year}}</span>)
-				</span>					
-				<br />
 				<div class="funding-details" ng-show="funding.url">
 					<span ng-bind-html="funding.url.value"></span>
 				</div>

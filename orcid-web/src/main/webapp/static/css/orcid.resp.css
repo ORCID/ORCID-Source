@@ -1692,7 +1692,7 @@ a:hover {
 }
 
 /* Affiliations */
-.affiliation-date {
+.affiliation-date, .funding-date {
     font-style: italic;
     font-weight: normal !important;
 }
@@ -1703,7 +1703,7 @@ a:hover {
     margin: 10px 0 0 0;
 }
 
-.affiliation-title{
+.affiliation-title, .funding-title{
 	margin-top: 0 !important;	
 }
 
@@ -3041,6 +3041,11 @@ p.orcid-id-container{
 	height: 20px;
 	display: block;
 	float: left;
+}
+
+.type-preset {
+	padding-left: 12px;
+	color: black;
 }
 
 #currencyCode {
