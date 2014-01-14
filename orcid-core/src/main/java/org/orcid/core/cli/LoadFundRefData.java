@@ -139,8 +139,10 @@ public class LoadFundRefData {
 				//Now look an exact match into the disambiguated orgs
 				OrgDisambiguatedEntity existingDisambiguatedOrg = getMatchingDisambiguatedOrg(rdfOrganization.name, rdfOrganization.country, rdfOrganization.state);
 				//If exists add an external identifier
-				if(existingDisambiguatedOrg != null && !existsExternalIdentifier(existingDisambiguatedOrg, rdfOrganization.doi)){
-					createExternalIdentifier(existingDisambiguatedOrg, rdfOrganization.doi);
+				if(existingDisambiguatedOrg != null) { 
+					if(!existsExternalIdentifier(existingDisambiguatedOrg, rdfOrganization.doi)){				
+						createExternalIdentifier(existingDisambiguatedOrg, rdfOrganization.doi);
+					}
 				} else {
 					//Find an exact match in the list of orgs
 					OrgEntity existingOrg = getMatchingOrg(rdfOrganization.name, rdfOrganization.country, rdfOrganization.state);
