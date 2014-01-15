@@ -54,6 +54,24 @@ public class SourceManagerImpl implements SourceManager {
             return authorizationRequest.getClientId();
         }
         // Delegation mode
+        String realUserIfInDelegationMode = getRealUserIfInDelegationMode(authentication);
+        if (realUserIfInDelegationMode != null) {
+            return realUserIfInDelegationMode;
+        }
+        // Normal web user
+        if (OrcidProfileUserDetails.class.isAssignableFrom(authentication.getPrincipal().getClass())) {
+            return ((OrcidProfileUserDetails) authentication.getPrincipal()).getRealOrcid();
+        }
+        return null;
+    }
+
+    @Override
+    public boolean isInDelegationMode() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return getRealUserIfInDelegationMode(authentication) != null;
+    }
+
+    private String getRealUserIfInDelegationMode(Authentication authentication) {
         Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
         if (authorities != null) {
             for (GrantedAuthority authority : authorities) {
@@ -65,10 +83,6 @@ public class SourceManagerImpl implements SourceManager {
                     }
                 }
             }
-        }
-        // Normal web user
-        if (OrcidProfileUserDetails.class.isAssignableFrom(authentication.getPrincipal().getClass())) {
-            return ((OrcidProfileUserDetails) authentication.getPrincipal()).getRealOrcid();
         }
         return null;
     }

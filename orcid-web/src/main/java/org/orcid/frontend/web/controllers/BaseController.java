@@ -286,16 +286,15 @@ public class BaseController {
 
     public String getEffectiveUserOrcid() {
         OrcidProfileUserDetails currentUser = getCurrentUser();
-        return currentUser == null ? null : currentUser.getEffectiveOrcid();
+        if (currentUser == null) {
+            return null;
+        }
+        return isInDelegationMode() ? sourceManager.retrieveSourceOrcid() : currentUser.getRealOrcid();
     }
 
     @ModelAttribute("inDelegationMode")
     public boolean isInDelegationMode() {
-        OrcidProfileUserDetails currentUser = getCurrentUser();
-        if (currentUser == null) {
-            return false;
-        }
-        return currentUser.isInDelegationMode();
+        return sourceManager.isInDelegationMode();
     }
 
     @ModelAttribute("request")

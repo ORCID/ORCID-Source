@@ -345,7 +345,7 @@ public class ManageProfileController extends BaseWorkspaceController {
                 throw new AccessDeniedException("You are not allowed to switch to that user");
             }
         }
-        getCurrentUser().switchDelegationMode(giverOrcid);
+        //getCurrentUser().switchDelegationMode(giverOrcid);
         request.getSession().removeAttribute(WORKS_RESULTS_ATTRIBUTE);
         ModelAndView mav = new ModelAndView("redirect:/my-orcid");
         return mav;
@@ -357,7 +357,7 @@ public class ManageProfileController extends BaseWorkspaceController {
         if (!OrcidType.ADMIN.equals(getRealProfile().getType())) {
             throw new AccessDeniedException("You are not allowed to switch to that user");
         }
-        getCurrentUser().switchDelegationMode(targetOrcid);
+        //getCurrentUser().switchDelegationMode(targetOrcid);
         request.getSession().removeAttribute(WORKS_RESULTS_ATTRIBUTE);
         ModelAndView mav = new ModelAndView("redirect:/my-orcid");
         return mav;
