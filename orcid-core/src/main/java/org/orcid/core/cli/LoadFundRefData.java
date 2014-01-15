@@ -18,6 +18,8 @@ package org.orcid.core.cli;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -26,8 +28,10 @@ import java.util.Set;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
 import org.apache.commons.lang.StringUtils;
@@ -51,6 +55,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.WebResource;
@@ -124,6 +129,9 @@ public class LoadFundRefData {
         apiUser = (String)context.getBean("geonamesUser");
     }
     
+    /**
+     * 
+     * */
     private void execute() {
     	try {
     		long start = System.currentTimeMillis();
@@ -135,11 +143,12 @@ public class LoadFundRefData {
 			NodeList nodeList = (NodeList) xPath.compile(conceptsExpression).evaluate(xmlDocument, XPathConstants.NODESET);
 			for (int i = 0; i < nodeList.getLength(); i++) {				
 				RDFOrganization rdfOrganization = getOrganization(xmlDocument, nodeList.item(i).getAttributes());
-												
+				LOGGER.info("Processing organization from RDF, doi:{}, name:{}, country:{}, state:{}, type:{}, subtype:{}", new String[]{rdfOrganization.doi, rdfOrganization.name, rdfOrganization.country, rdfOrganization.state, rdfOrganization.type, rdfOrganization.subtype});
 				//Now look an exact match into the disambiguated orgs
 				OrgDisambiguatedEntity existingDisambiguatedOrg = getMatchingDisambiguatedOrg(rdfOrganization.name, rdfOrganization.country, rdfOrganization.state);
 				//If exists add an external identifier
 				if(existingDisambiguatedOrg != null) { 
+					LOGGER.info("Organiazation {} - {} already exists on database with id {}", new String[]{rdfOrganization.doi, rdfOrganization.name, String.valueOf(existingDisambiguatedOrg.getId())});
 					if(!existsExternalIdentifier(existingDisambiguatedOrg, rdfOrganization.doi)){				
 						createExternalIdentifier(existingDisambiguatedOrg, rdfOrganization.doi);
 					}
@@ -151,15 +160,19 @@ public class LoadFundRefData {
 					if(existingOrg != null) {
 						//If the disambiguated org exists, just create an external identifier for it
 						if(existingOrg.getOrgDisambiguated() != null) {
+							LOGGER.info("Creating external identifier for {} - {}", new String[]{rdfOrganization.doi, rdfOrganization.name});
 							createExternalIdentifier(existingOrg.getOrgDisambiguated(), rdfOrganization.doi);
 							addedExternalIdentifiers++;
 						} else {
 							//Else create the disambiguated org and assign it to the existing org							
+							LOGGER.info("Creating disambiguated org for {} - {}", new String[]{rdfOrganization.doi, rdfOrganization.name});
 							OrgDisambiguatedEntity disambiguatedOrg = createDisambiguatedOrg(orgType, rdfOrganization.name, country, rdfOrganization.state, rdfOrganization.doi);
 							addedDisambiguatedOrgs++;
-							createOrUpdateOrg(existingOrg.getName(), existingOrg.getCity(), existingOrg.getCountry(), existingOrg.getRegion(), disambiguatedOrg.getId());
+							LOGGER.info("Assiging the new disambiguated org to {} - {}", new String[]{String.valueOf(existingOrg.getId()), existingOrg.getName()});
+							createOrUpdateOrg(existingOrg.getName(), existingOrg.getCity(), existingOrg.getCountry(), existingOrg.getRegion(), disambiguatedOrg.getId());							
 						}
 					} else {
+						LOGGER.info("A new disambiguated organization and organization will be created for: {} - {}", new String[]{rdfOrganization.doi, rdfOrganization.name});
 						//Create disambiguated organization
 						OrgDisambiguatedEntity disambiguatedOrg = createDisambiguatedOrg(orgType, rdfOrganization.name, country, rdfOrganization.state, rdfOrganization.doi);
 						addedDisambiguatedOrgs++;
@@ -168,24 +181,28 @@ public class LoadFundRefData {
 						addedOrgs++;
 					}
 				}				
-			}
-			System.out.println(System.currentTimeMillis() - start);
-			System.out.println("Cache size: " + cache.size());
-    	} catch(Exception e) {
-    		System.out.println(e.toString());
-    	}               
+			}		
+			long end = System.currentTimeMillis();
+			System.out.println("Time taken to process the files: " + (end - start));
+    	} catch(FileNotFoundException fne) {
+    		LOGGER.error("Unable to read file {}", fileToLoad);
+    	} catch(ParserConfigurationException pce) {
+    		LOGGER.error("Unable to initialize the DocumentBuilder");
+    	} catch(IOException ioe){
+    		LOGGER.error("Unable to parse document {}", fileToLoad);
+    	} catch(SAXException se) {
+    		LOGGER.error("Unable to parse document {}", fileToLoad);
+    	} catch(XPathExpressionException xpe) {
+    		LOGGER.error("XPathExpressionException {}", xpe.getMessage());
+    	}     
     }       
     
     private RDFOrganization getOrganization(Document xmlDocument, NamedNodeMap attrs) {    	
     	RDFOrganization organization = new RDFOrganization();
     	try {
 			Node node = attrs.getNamedItem("rdf:resource");
-			String itemDoi = node.getNodeValue();
-			
-			System.out.println("---------------------------------------------------------------------------------------------------------------");
-			System.out.println(itemDoi);
-			System.out.println("---------------------------------------------------------------------------------------------------------------");
-			
+			String itemDoi = node.getNodeValue();			
+			LOGGER.info("Processing item {}", itemDoi);			
 			//Get organization name								
 			String orgName = (String)xPath.compile(orgNameExpression.replace("%s", itemDoi)).evaluate(xmlDocument, XPathConstants.STRING);
 			//Get country code
@@ -215,8 +232,8 @@ public class LoadFundRefData {
 			organization.country = countryCode;			
 			organization.state = stateName;
 			organization.subtype = orgSubType;						
-    	} catch(Exception e) {
-    		System.out.println(e.toString());
+    	} catch(XPathExpressionException xpe) {
+    		LOGGER.error("XPathExpressionException {}", xpe.getMessage());
     	}
 		
 		return organization;
@@ -235,7 +252,6 @@ public class LoadFundRefData {
 	    	} else {
 	    		String jsonResponse = fetchJsonFromGeoNames(geoNameId);
 	    		result = fetchValueFromJson(jsonResponse, propertyToFetch);    		
-	    		System.out.println("Adding " + cacheKey + " -> " + result + " to cache");
 	    		cache.put(cacheKey, result);
 	    	}
     	}
