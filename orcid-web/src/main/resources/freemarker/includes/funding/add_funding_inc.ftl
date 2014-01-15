@@ -324,7 +324,7 @@
 					<span ng-show="addingFunding">
 						<i class="glyphicon glyphicon-refresh spin x2 green"></i>
 					</span>					
-					<span ng-show="editFunding.errors.length > 0" class="alert"><@orcid.msg 'manual_funding_form_contents.fix_errors'/></span>
+					<span ng-show="editFunding.errors.length > 0" class="alert"><@orcid.msg 'common.please_fix_errors' /></span>
 				</div>
 			</div>
 	</div>

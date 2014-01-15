@@ -190,7 +190,7 @@
 					<span ng-show="addingAffiliation">
 						<i class="glyphicon glyphicon-refresh spin x2 green"></i>
 					</span>
-					<span ng-show="editWork.errors.length > 0" class="alert">Please fix above errors</span>
+					<span ng-show="editAffiliation.errors.length > 0" class="alert"><@orcid.msg 'common.please_fix_errors' /></span>
 				</div>
 			</div>
 	</div>
