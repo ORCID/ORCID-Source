@@ -111,13 +111,13 @@ public class FundingsController extends BaseWorkspaceController {
 	 * */
 	@RequestMapping(value = "/funding.json", method = RequestMethod.GET)
 	public @ResponseBody
-	FundingForm getGrant(HttpServletRequest request) {
+	FundingForm getFunding(HttpServletRequest request) {
 		FundingForm result = new FundingForm();
 		result.setAmount(new Text());
-		result.setCurrencyCode(new Text());
+		result.setCurrencyCode(Text.valueOf(""));
 		result.setDescription(new Text());
 		result.setFundingName(new Text());
-		result.setFundingType(Text.valueOf(DEFAULT_FUNDING_EXTERNAL_IDENTIFIER_TYPE));
+		result.setFundingType(Text.valueOf(""));
 		result.setSourceName(new String());
 		FundingTitleForm title = new FundingTitleForm();
 		title.setTitle(new Text());
@@ -158,14 +158,14 @@ public class FundingsController extends BaseWorkspaceController {
 		// Set empty external identifier
 		List<FundingExternalIdentifierForm> emptyExternalIdentifiers = new ArrayList<FundingExternalIdentifierForm>();
 		FundingExternalIdentifierForm f = new FundingExternalIdentifierForm();
-		f.setType(new Text());
+		f.setType(Text.valueOf(DEFAULT_FUNDING_EXTERNAL_IDENTIFIER_TYPE));
 		f.setUrl(new Text());
 		f.setValue(new Text());
 		emptyExternalIdentifiers.add(f);
 		result.setExternalIdentifiers(emptyExternalIdentifiers);
 
 		result.setCity(new Text());
-		result.setCountry(new Text());
+		result.setCountry(Text.valueOf(""));
 		result.setRegion(new Text());
 
 		return result;

@@ -54,7 +54,7 @@
 								<option value="${key}">${fundingTypes[key]}</option>
 							</#list>
 						</select>
-						<span class="required" ng-class="isValidClass(editFunding.fundingType)">*</span>
+						<span class="required text-error" ng-class="isValidClass(editFunding.fundingType)">*</span>
 						<span class="orcid-error" ng-show="editFunding.fundingType.errors.length > 0">
 							<div ng-repeat='error in editFunding.fundingType.errors' ng-bind-html-unsafe="error"></div>
 						</span>				
@@ -154,8 +154,8 @@
 						</#list>
 		    		</select>
 				    <select id="endYear" name="endMonth" ng-model="editFunding.endDate.year">
-						<#list years?keys as key>
-							<option value="${key}">${years[key]}</option>
+						<#list fundingYears?keys as key>
+							<option value="${key}">${fundingYears[key]}</option>
 						</#list>
 		    		</select>
 		    		</div>
@@ -279,7 +279,7 @@
 					<div class="control-group">
 						<label class="relative"><@orcid.msg 'manual_funding_form_contents.external_identifier.label_type'/></label>
 						<div class="relative">
-		    				<label name="currentFundingExternalIdentifierType" class="input-xlarge"><@orcid.msg 'manual_funding_form_contents.external_identifier.type_default'/></label>							
+		    				<label name="currentFundingExternalIdentifierType" class="input-xlarge type-preset"><@orcid.msg 'manual_funding_form_contents.external_identifier.type_default'/></label>							
 						</div>	
 					</div>
 					<!-- Value -->
