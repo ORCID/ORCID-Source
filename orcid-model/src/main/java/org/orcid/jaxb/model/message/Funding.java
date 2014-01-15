@@ -45,15 +45,15 @@ import java.io.Serializable;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
  *         &lt;element ref="orcid:funding-type" minOccurs="1" maxOccurs="1" />
- *			&lt;element ref="orcid:funding-title" minOccurs="0" />
- *			&lt;element ref="orcid:organization" minOccurs="1" maxOccurs="1"/>				
+ *			&lt;element ref="orcid:funding-title" minOccurs="0" /> *						
  *			&lt;element ref="orcid:short-description" minOccurs="0"/>			
  *			&lt;element ref="orcid:amount" minOccurs="0" maxOccurs="1"/>
  *			&lt;element ref="orcid:url" minOccurs="0" maxOccurs="1"/>				
  *			&lt;element name="start-date" type="orcid:fuzzy-date" minOccurs="0" maxOccurs="1" />
  *			&lt;element name="end-date" type="orcid:fuzzy-date" minOccurs="0" maxOccurs="1" />												
  *			&lt;element ref="orcid:funding-external-identifiers" minOccurs="0" maxOccurs="1"/>
- *			&lt;element ref="orcid:funding-contributors" minOccurs="0" maxOccurs="1"/>				
+ *			&lt;element ref="orcid:funding-contributors" minOccurs="0" maxOccurs="1"/>
+ *			&lt;element ref="orcid:organization" minOccurs="1" maxOccurs="1"/>				
  *			&lt;element ref="orcid:source" minOccurs="0"  maxOccurs="1" />
  *       &lt;/sequence>
  *       &lt;attGroup ref="{http://www.orcid.org/ns/orcid}put-code"/>
@@ -66,8 +66,8 @@ import java.io.Serializable;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "putCode", "type", "title", "organization", "description",
-		"amount",  "url", "startDate", "endDate", "fundingExternalIdentifiers", "fundingContributors", "source" })
+@XmlType(propOrder = { "putCode", "type", "title", "description",
+		"amount",  "url", "startDate", "endDate", "fundingExternalIdentifiers", "fundingContributors", "organization", "source" })
 @XmlRootElement(name = "funding")
 public class Funding implements VisibilityType, Serializable {
 

@@ -174,6 +174,17 @@ public class WorkspaceController extends BaseWorkspaceController {
         }
         return map;
     }
+    
+    @ModelAttribute("fundingYears")
+    public Map<String, String> retrieveFundingYearsAsMap() {
+        Map<String, String> map = new LinkedHashMap<String, String>();
+        List<String> list = YearsList.createList(10);
+        map.put("", getMessage("select.item.year"));
+        for (String year : list) {
+            map.put(year, year);
+        }
+        return map;
+    }
 
     @ModelAttribute("months")
     public Map<String, String> retrieveMonthsAsMap() {
