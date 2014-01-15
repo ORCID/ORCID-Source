@@ -917,8 +917,7 @@
 		<xs:complexType>
 			<xs:sequence>				
 				<xs:element ref="orcid:funding-type" minOccurs="1" maxOccurs="1" />
-				<xs:element ref="orcid:funding-title" minOccurs="0" />
-				<xs:element ref="orcid:organization" minOccurs="1" maxOccurs="1"/>				
+				<xs:element ref="orcid:funding-title" minOccurs="0" />							
 				<xs:element ref="orcid:short-description" minOccurs="0"/>			
 				<xs:element ref="orcid:amount" minOccurs="0" maxOccurs="1"/>
 				<xs:element ref="orcid:url" minOccurs="0" maxOccurs="1"/>				
@@ -926,7 +925,8 @@
 				<xs:element name="end-date" type="orcid:fuzzy-date" minOccurs="0" maxOccurs="1" />												
 				<xs:element ref="orcid:funding-external-identifiers" minOccurs="0" maxOccurs="1"/>
 				<xs:element ref="orcid:funding-contributors" minOccurs="0" maxOccurs="1"/>				
-				<xs:element ref="orcid:source" minOccurs="0"  maxOccurs="1" />
+				<xs:element ref="orcid:organization" minOccurs="1" maxOccurs="1"/>
+				<xs:element ref="orcid:source" minOccurs="0"  maxOccurs="1" />				
 			</xs:sequence>
 			<xs:attributeGroup ref="orcid:put-code" />
 			<xs:attributeGroup ref="orcid:visibility" />

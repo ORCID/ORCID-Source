@@ -34,6 +34,10 @@ public class YearsList {
     public static List<String> createList() {
         return createList((List<String>) null);
     }
+    
+    public static List<String> createList(int yearInFuture) {
+    	return createList((List<String>) null, yearInFuture);
+    }
 
     public static List<String> createList(String itemToPrepend) {
         List<String> listToPrepend = new ArrayList<String>(1);
@@ -55,6 +59,10 @@ public class YearsList {
 
     public static List<String> createList(List<String> listToPrepend) {
         return createList(listToPrepend, getLatestYear(), DEFAULT_EARLIEST_YEAR);
+    }
+    
+    public static List<String> createList(List<String> listToPrepend, int yearsInFuture) {
+        return createList(listToPrepend, getLatestYear() + yearsInFuture, DEFAULT_EARLIEST_YEAR);
     }
 
     private static List<String> createList(List<String> listToPrepend, int latestYear, int earliestYear) {
