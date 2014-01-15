@@ -469,7 +469,7 @@ function addBibtexCitation($scope, dw) {
 		try {
 			$scope.bibtexCitations[dw.putCode.value] = bibtexParse.toJSON(dw.citation.citation.value);
 		} catch (err) {
-			$scope.bibtexCitations[dw.putCode.value] = 'Error Parsing Bibtex';
+			$scope.bibtexCitations[dw.putCode.value] = null;
 			console.log("couldn't parse bibtex: " + dw.citation.citation.value);
 		}
 	}
