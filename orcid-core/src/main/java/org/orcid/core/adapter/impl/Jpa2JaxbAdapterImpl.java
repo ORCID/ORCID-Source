@@ -582,10 +582,10 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         	Visibility affiliationSourceVisibility = (sourceEntity.getCreditNameVisibility() == null) ? OrcidVisibilityDefaults.CREDIT_NAME_DEFAULT.getVisibility() : sourceEntity.getCreditNameVisibility();  
         	if(Visibility.PUBLIC.equals(affiliationSourceVisibility)) {
         		source.setSourceName(new SourceName(sourceEntity.getCreditName()));
-        	}
+        	} 
         } else {
         	//If it is a user, check if it have a credit name and is visible
-            if(Visibility.PUBLIC.equals(sourceEntity.getCreditNameVisibility())){
+            if(!StringUtils.isEmpty(sourceEntity.getCreditName()) && Visibility.PUBLIC.equals(sourceEntity.getCreditNameVisibility())){
             	source.setSourceName(new SourceName(sourceEntity.getCreditName()));
             } else {
                 //If it doesnt, lets use the give name + family name
