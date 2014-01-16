@@ -494,6 +494,6 @@
 	
 	<!-- Geonames username -->
 	<bean id="geonamesUser" class="java.lang.String">
-		<constructor-arg value="amontenegro"/>
+		<constructor-arg value="orcid"/>
 	</bean>
 </beans>

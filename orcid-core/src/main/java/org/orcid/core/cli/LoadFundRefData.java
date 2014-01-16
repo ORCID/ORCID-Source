@@ -69,7 +69,7 @@ import com.sun.jersey.core.util.MultivaluedMapImpl;
 public class LoadFundRefData {
 	
 	class RDFOrganization {
-		String doi, name, country, state, type, subtype;
+		String doi, name, country, state, stateCode, type, subtype;
 	}
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(LoadFundRefData.class);
@@ -90,7 +90,7 @@ public class LoadFundRefData {
     private String itemExpression = "/RDF/Concept[@about='%s']";
     private String orgNameExpression = itemExpression + "/prefLabel/Label/literalForm";
     private String orgCountryExpression = itemExpression + "/country";
-    private String orgStateExpression = itemExpression + "/state";
+    private String orgStateExpression = itemExpression + "/state";    
     private String orgTypeExpression = itemExpression + "/fundingBodyType";
     private String orgSubTypeExpression = itemExpression + "/fundingBodySubType";
     //xPath init
@@ -130,7 +130,7 @@ public class LoadFundRefData {
     }
     
     /**
-     * 
+     * Executes the import process
      * */
     private void execute() {
     	try {
@@ -143,19 +143,18 @@ public class LoadFundRefData {
 			NodeList nodeList = (NodeList) xPath.compile(conceptsExpression).evaluate(xmlDocument, XPathConstants.NODESET);
 			for (int i = 0; i < nodeList.getLength(); i++) {				
 				RDFOrganization rdfOrganization = getOrganization(xmlDocument, nodeList.item(i).getAttributes());
-				LOGGER.info("Processing organization from RDF, doi:{}, name:{}, country:{}, state:{}, type:{}, subtype:{}", new String[]{rdfOrganization.doi, rdfOrganization.name, rdfOrganization.country, rdfOrganization.state, rdfOrganization.type, rdfOrganization.subtype});
+				LOGGER.info("Processing organization from RDF, doi:{}, name:{}, country:{}, state:{}, stateCode:{}, type:{}, subtype:{}", new String[]{rdfOrganization.doi, rdfOrganization.name, rdfOrganization.country, rdfOrganization.state, rdfOrganization.stateCode, rdfOrganization.type, rdfOrganization.subtype});
 				//Now look an exact match into the disambiguated orgs
-				OrgDisambiguatedEntity existingDisambiguatedOrg = getMatchingDisambiguatedOrg(rdfOrganization.name, rdfOrganization.country, rdfOrganization.state);
+				OrgDisambiguatedEntity existingDisambiguatedOrg = getMatchingDisambiguatedOrg(rdfOrganization);
 				//If exists add an external identifier
 				if(existingDisambiguatedOrg != null) { 
-					LOGGER.info("Organiazation {} - {} already exists on database with id {}", new String[]{rdfOrganization.doi, rdfOrganization.name, String.valueOf(existingDisambiguatedOrg.getId())});
+					LOGGER.info("Organization {} - {} already exists on database with id {}", new String[]{rdfOrganization.doi, rdfOrganization.name, String.valueOf(existingDisambiguatedOrg.getId())});
 					if(!existsExternalIdentifier(existingDisambiguatedOrg, rdfOrganization.doi)){				
 						createExternalIdentifier(existingDisambiguatedOrg, rdfOrganization.doi);
 					}
 				} else {
 					//Find an exact match in the list of orgs
-					OrgEntity existingOrg = getMatchingOrg(rdfOrganization.name, rdfOrganization.country, rdfOrganization.state);
-					String orgType = rdfOrganization.type + (StringUtils.isEmpty(rdfOrganization.subtype) ? "" : "/" + rdfOrganization.subtype);
+					OrgEntity existingOrg = getMatchingOrg(rdfOrganization);					
 					Iso3166Country country = StringUtils.isNotBlank(rdfOrganization.country) ? Iso3166Country.fromValue(rdfOrganization.country) : null;
 					if(existingOrg != null) {
 						//If the disambiguated org exists, just create an external identifier for it
@@ -166,7 +165,7 @@ public class LoadFundRefData {
 						} else {
 							//Else create the disambiguated org and assign it to the existing org							
 							LOGGER.info("Creating disambiguated org for {} - {}", new String[]{rdfOrganization.doi, rdfOrganization.name});
-							OrgDisambiguatedEntity disambiguatedOrg = createDisambiguatedOrg(orgType, rdfOrganization.name, country, rdfOrganization.state, rdfOrganization.doi);
+							OrgDisambiguatedEntity disambiguatedOrg = createDisambiguatedOrg(rdfOrganization);
 							addedDisambiguatedOrgs++;
 							LOGGER.info("Assiging the new disambiguated org to {} - {}", new String[]{String.valueOf(existingOrg.getId()), existingOrg.getName()});
 							createOrUpdateOrg(existingOrg.getName(), existingOrg.getCity(), existingOrg.getCountry(), existingOrg.getRegion(), disambiguatedOrg.getId());							
@@ -174,7 +173,7 @@ public class LoadFundRefData {
 					} else {
 						LOGGER.info("A new disambiguated organization and organization will be created for: {} - {}", new String[]{rdfOrganization.doi, rdfOrganization.name});
 						//Create disambiguated organization
-						OrgDisambiguatedEntity disambiguatedOrg = createDisambiguatedOrg(orgType, rdfOrganization.name, country, rdfOrganization.state, rdfOrganization.doi);
+						OrgDisambiguatedEntity disambiguatedOrg = createDisambiguatedOrg(rdfOrganization);
 						addedDisambiguatedOrgs++;
 						//Create organization
 						createOrUpdateOrg(rdfOrganization.name, null, country, rdfOrganization.state, disambiguatedOrg.getId());
@@ -184,6 +183,9 @@ public class LoadFundRefData {
 			}		
 			long end = System.currentTimeMillis();
 			System.out.println("Time taken to process the files: " + (end - start));
+			for(String key : cache.keySet()){
+				System.out.println(key + ": " + cache.get(key));
+			}
     	} catch(FileNotFoundException fne) {
     		LOGGER.error("Unable to read file {}", fileToLoad);
     	} catch(ParserConfigurationException pce) {
@@ -194,7 +196,11 @@ public class LoadFundRefData {
     		LOGGER.error("Unable to parse document {}", fileToLoad);
     	} catch(XPathExpressionException xpe) {
     		LOGGER.error("XPathExpressionException {}", xpe.getMessage());
+    	} finally {
+    		LOGGER.info("Number new Disambiguated Orgs={}, new Orgs={}, new External Identifiers={}", new Object[] { addedDisambiguatedOrgs, addedOrgs, addedExternalIdentifiers,
+                    getTotal() });
     	}     
+    	
     }       
     
     private RDFOrganization getOrganization(Document xmlDocument, NamedNodeMap attrs) {    	
@@ -214,10 +220,15 @@ public class LoadFundRefData {
 			//Get state name
 			Node stateNode = (Node)xPath.compile(orgStateExpression.replace("%s", itemDoi)).evaluate(xmlDocument, XPathConstants.NODE);
 			String stateName = null;
+			String stateCode = null;
 			if(stateNode != null) {
 				NamedNodeMap stateAttrs = stateNode.getAttributes();
-				String stateCode = stateAttrs.getNamedItem("rdf:resource").getNodeValue();
-				stateName = fetchFromGeoNames(stateCode, "name");
+				String stateGeoNameCode = stateAttrs.getNamedItem("rdf:resource").getNodeValue();
+				stateName = fetchFromGeoNames(stateGeoNameCode, "name");
+				//Get state code for US states
+				if(countryCode != null && countryCode.equals("US")){
+					stateCode = fetchFromGeoNames(stateGeoNameCode, "adminCode1");
+				}
 			}
 			
 			//Get type
@@ -231,6 +242,7 @@ public class LoadFundRefData {
 			organization.name = orgName;
 			organization.country = countryCode;			
 			organization.state = stateName;
+			organization.stateCode = stateCode;
 			organization.subtype = orgSubType;						
     	} catch(XPathExpressionException xpe) {
     		LOGGER.error("XPathExpressionException {}", xpe.getMessage());
@@ -240,7 +252,7 @@ public class LoadFundRefData {
     }
     
     /**
-     * TODO
+     * Fetch a property from geonames 
      * */
     private String fetchFromGeoNames(String geoNameUri, String propertyToFetch){
     	String result = null;
@@ -260,16 +272,22 @@ public class LoadFundRefData {
     }    
     
     /**
-     * TODO
+     * Queries GeoNames API for a given geonameId and return the JSON string
      * */
     private String fetchJsonFromGeoNames(String geoNameId) {
-    	Client c = Client.create();    	
-    	WebResource r = c.resource(geonamesApiUrl);
-        MultivaluedMap<String, String> params = new MultivaluedMapImpl();
-        params.add("geonameId", geoNameId);
-        params.add("username", apiUser);
-        
-        return r.queryParams(params).get(String.class);    	        
+    	String result = null;
+    	if(cache.containsKey("geoname_json_" + geoNameId)) {
+    		return cache.get("geoname_json_" + geoNameId);
+    	} else {
+    		Client c = Client.create();    	
+    		WebResource r = c.resource(geonamesApiUrl);
+    		MultivaluedMap<String, String> params = new MultivaluedMapImpl();
+    		params.add("geonameId", geoNameId);
+    		params.add("username", apiUser);
+    		result = r.queryParams(params).get(String.class);
+    		cache.put("geoname_json_" + geoNameId , result);
+    	}
+        return result;
     }
     
     /**
@@ -290,15 +308,15 @@ public class LoadFundRefData {
     }    
     
     /**
-     * TODO
+     * Get the disambiguated org that have the same name, the same country, and, for US, the same state
      * */
-    private OrgDisambiguatedEntity getMatchingDisambiguatedOrg(String orgName, String country, String region) {
-    	List<OrgDisambiguatedEntity> orgs = getExistingDisambiguatedOrgs(orgName);
+    private OrgDisambiguatedEntity getMatchingDisambiguatedOrg(RDFOrganization rdfOrg) {
+    	List<OrgDisambiguatedEntity> orgs = getExistingDisambiguatedOrgs(rdfOrg.name);
     	if(orgs == null || orgs.size() == 0)
     		return null;
-    	
-    	for(OrgDisambiguatedEntity disambiguatedOrg : orgs) {
-    		if(attributesMatches(disambiguatedOrg, country, region)) {    			
+    	boolean compareRegion = (rdfOrg.country != null && rdfOrg.country.equals("US")) ? true : false;
+    	for(OrgDisambiguatedEntity disambiguatedOrg : orgs) {    		
+    		if(attributesMatches(disambiguatedOrg, rdfOrg, compareRegion)) {    			
     			return disambiguatedOrg;
     		}    			
     	}
@@ -306,14 +324,15 @@ public class LoadFundRefData {
     }
     
     /**
-     * TODO
+     * Get the org that have the same name, the same country, and, for US, the same state
      * */
-    private OrgEntity getMatchingOrg(String orgName, String country, String region) {
-    	List<OrgEntity> orgs = getExistingOrgs(orgName);
+    private OrgEntity getMatchingOrg(RDFOrganization rdfOrg) {
+    	List<OrgEntity> orgs = getExistingOrgs(rdfOrg.name);
     	if(orgs == null || orgs.size() == 0)
     		return null;
+    	boolean compareRegion = (rdfOrg.country != null && rdfOrg.country.equals("US")) ? true : false;
     	for(OrgEntity org : orgs){
-    		if(attributesMatches(org, country, region)) {    			
+    		if(attributesMatches(org, rdfOrg, compareRegion)) {    			
     			return org;
     		}
     	}
@@ -321,7 +340,7 @@ public class LoadFundRefData {
     }
     
     /**
-     * TODO
+     * Get the disambiguated orgs that have the given orgName
      * */
     private List<OrgDisambiguatedEntity> getExistingDisambiguatedOrgs(String orgName) {
     	List<OrgDisambiguatedEntity> orgs = orgDisambiguatedDao.findByName(orgName);
@@ -331,7 +350,7 @@ public class LoadFundRefData {
     }
     
     /**
-     * TODO
+     * Get the orgs that have the given orgName
      * */
     private List<OrgEntity> getExistingOrgs(String orgName) {
     	List<OrgEntity> orgs = orgManager.getOrgsByName(orgName);
@@ -341,55 +360,64 @@ public class LoadFundRefData {
     }
     
     /**
-     * TODO
+     * Checks if the country (and region for US) matches in the given disambiguated organization and the organization 
+     * that comes from the RDF
      * */
-    private boolean attributesMatches(OrgDisambiguatedEntity org, String country, String region) {
+    private boolean attributesMatches(OrgDisambiguatedEntity org, RDFOrganization rdfOrg, boolean compareRegion) {
     	if(org.getCountry() == null) {
-    		if(country != null)
+    		if(rdfOrg.country != null)
     			return false;
     	} else {
-    		if(country == null)
+    		if(rdfOrg.country == null)
     			return false;
-    		if(!org.getCountry().equals(Iso3166Country.fromValue(country)))
+    		if(!org.getCountry().equals(Iso3166Country.fromValue(rdfOrg.country)))
     			return false;
     	}
     	
-    	if(org.getRegion() == null) {
-    		if(region != null)
-    			return false;
-    	} else {
-    		if(!org.getRegion().equals(region))
-    			return false;
+    	//Compare against the region only for US organizations
+    	if(compareRegion) {    	
+	    	if(org.getRegion() == null) {
+	    		if(rdfOrg.stateCode != null)
+	    			return false;
+	    	} else {
+	    		if(!org.getRegion().equals(rdfOrg.stateCode))
+	    			return false;
+	    	}
     	}
     	return true;
     }
     
     /**
-     * TODO
+     * Checks if the country (and region for US) matches in the given organization and the organization 
+     * that comes from the RDF
      * */
-    private boolean attributesMatches(OrgEntity org, String country, String region) {
+    private boolean attributesMatches(OrgEntity org, RDFOrganization rdfOrg, boolean compareRegion) {
     	if(org.getCountry() == null) {
-    		if(country != null)
+    		if(rdfOrg.country != null)
     			return false;
     	} else {
-    		if(country == null)
+    		if(rdfOrg.country == null)
     			return false;
-    		if(!org.getCountry().equals(Iso3166Country.fromValue(country)))
+    		if(!org.getCountry().equals(Iso3166Country.fromValue(rdfOrg.country)))
     			return false;
     	}
     	
-    	if(org.getRegion() == null) {
-    		if(region != null)
-    			return false;
-    	} else {
-    		if(!org.getRegion().equals(region))
-    			return false;
+    	//Compare against the region only for US organizations
+    	if(compareRegion) {
+	    	if(org.getRegion() == null) {
+	    		if(rdfOrg.stateCode != null)
+	    			return false;
+	    	} else {
+	    		if(!org.getRegion().equals(rdfOrg.stateCode))
+	    			return false;
+	    	}
     	}
     	return true;
     }
     
     /**
-     * TODO
+     * Checks if the disambiguated org already contains an external identifier of type FUNDREF 
+     * and associated with the given id
      * */
     private boolean existsExternalIdentifier(OrgDisambiguatedEntity disambiguatedOrg, String id) {
     	Set<OrgDisambiguatedExternalIdentifierEntity> extIds = disambiguatedOrg.getExternalIdentifiers();
@@ -405,7 +433,7 @@ public class LoadFundRefData {
     }
     
     /**
-     * TODO
+     * Creates an external identifier in the org_disambiguated_external_identifier table
      * */
     private boolean createExternalIdentifier(OrgDisambiguatedEntity disambiguatedOrg, String identifier) {
     	LOGGER.info("Creating external identifier for {}", disambiguatedOrg.getId());
@@ -421,24 +449,29 @@ public class LoadFundRefData {
     }
     
     /**
-     * TODO
+     * Creates a disambiguated ORG in the org_disambiguated table
      * */
-    private OrgDisambiguatedEntity createDisambiguatedOrg(String orgType, String name, Iso3166Country country, String region, String doi) {    
-    	LOGGER.info("Creating disambiguated org {}", name);
+    private OrgDisambiguatedEntity createDisambiguatedOrg(RDFOrganization organization) {    
+    	LOGGER.info("Creating disambiguated org {}", organization.name);
+    	String orgType = organization.type + (StringUtils.isEmpty(organization.subtype) ? "" : "/" + organization.subtype);
+    	Iso3166Country country = StringUtils.isNotBlank(organization.country) ? Iso3166Country.fromValue(organization.country) : null;
     	OrgDisambiguatedEntity orgDisambiguatedEntity = new OrgDisambiguatedEntity();
-    	orgDisambiguatedEntity.setName(name);
-        orgDisambiguatedEntity.setRegion(region);
+    	orgDisambiguatedEntity.setName(organization.name);
+        if(country != null && country.equals(Iso3166Country.US))
+        	orgDisambiguatedEntity.setRegion(organization.stateCode);
+        else 
+        	orgDisambiguatedEntity.setRegion(organization.state);
         orgDisambiguatedEntity.setCountry(country);
         orgDisambiguatedEntity.setOrgType(orgType);        
-        orgDisambiguatedEntity.setSourceId(doi);
-        orgDisambiguatedEntity.setSourceUrl(doi);
+        orgDisambiguatedEntity.setSourceId(organization.doi);
+        orgDisambiguatedEntity.setSourceUrl(organization.doi);
         orgDisambiguatedEntity.setSourceType(FUNDREF_SOURCE_TYPE);
         orgDisambiguatedDao.persist(orgDisambiguatedEntity);
     	return orgDisambiguatedEntity;
     }
     
     /**
-     * TODO
+     * Creates or updates an Org in the org table
      * */
     private void createOrUpdateOrg(String name, String city, Iso3166Country country, String state, Long orgDisambiguatedId) {
         LOGGER.info("Adding or updating organization {} to disambiguated org {}", name, orgDisambiguatedId);
@@ -448,6 +481,10 @@ public class LoadFundRefData {
         orgEntity.setCity(city);
         orgEntity.setCountry(country);
         orgManager.createUpdate(orgEntity, orgDisambiguatedId);
+    }
+    
+    private long getTotal(){
+    	return addedOrgs + addedDisambiguatedOrgs + addedExternalIdentifiers;    
     }
     
 }
