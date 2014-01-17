@@ -135,24 +135,22 @@
 
 		 		<div class="control-group">
 		    		<label class="relative" for="manualWork.day"><@orcid.msg 'manual_work_form_contents.labelPubDate'/></label>
-		    		<div class="relative">
-				    <select id="day" name="day" ng-model="editWork.publicationDate.day" class="col-md-3">
-						<#list days?keys as key>
-							<option value="${key}">${days[key]}</option>
-						</#list>
-		    		</select>
-		
-				    <select id="month" name="month" ng-model="editWork.publicationDate.month" class="col-md-3">
-						<#list months?keys as key>
-							<option value="${key}">${months[key]}</option>
-						</#list>
-		    		</select>
-		
-				    <select id="year" name="month" ng-model="editWork.publicationDate.year" class="col-md-4">
-						<#list years?keys as key>
-							<option value="${key}">${years[key]}</option>
-						</#list>
-		    		</select>
+		    		<div class="relative">					    
+						<select id="year" name="month" ng-model="editWork.publicationDate.year" class="col-md-4">
+							<#list years?keys as key>
+								<option value="${key}">${years[key]}</option>
+							</#list>
+			    		</select>
+					    <select id="month" name="month" ng-model="editWork.publicationDate.month" class="col-md-3">
+							<#list months?keys as key>
+								<option value="${key}">${months[key]}</option>
+							</#list>
+			    		</select>
+						<select id="day" name="day" ng-model="editWork.publicationDate.day" class="col-md-3">
+							<#list days?keys as key>
+								<option value="${key}">${days[key]}</option>
+							</#list>
+			    		</select>								    
 		    		</div>
 		    	</div>
 		    	
