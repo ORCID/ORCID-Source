@@ -22,6 +22,7 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
+import org.orcid.frontend.web.controllers.WorksController;
 import org.orcid.jaxb.model.message.Country;
 import org.orcid.jaxb.model.message.FuzzyDate;
 import org.orcid.jaxb.model.message.Iso3166Country;
@@ -228,7 +229,10 @@ public class Work implements ErrorsInterface, Serializable {
 			ow.setWorkTitle(this.workTitle.toWorkTitle());
 		}
 		if (this.getWorkType() != null) {
-			ow.setWorkType(WorkType.fromValue(this.getWorkType().getValue()));
+			if(!WorksController.OTHER_AT_BOTTOM.equals(this.getWorkType().getValue()))
+				ow.setWorkType(WorkType.fromValue(this.getWorkType().getValue()));				
+			else
+				ow.setWorkType(WorkType.OTHER);
 		}
 
 		if (this.getJournalTitle() != null) {

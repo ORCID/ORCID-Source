@@ -91,6 +91,8 @@ public class WorksController extends BaseWorkspaceController {
 
     private static final Pattern LANGUAGE_CODE = Pattern.compile("([a-zA-Z]{2})(_[a-zA-Z]{2}){0,2}");
 
+    public static final String OTHER_AT_BOTTOM = "zzz-other";
+    
     @Resource
     private ThirdPartyImportManager thirdPartyImportManager;
 
@@ -791,8 +793,12 @@ public class WorksController extends BaseWorkspaceController {
     	WorkCategory workCategory = WorkCategory.fromValue(workCategoryName);    	    	
     	
     	for(WorkType workType : workCategory.getSubTypes()){
-    		if(!workType.equals(WorkType.UNDEFINED))
+    		//Dont put work type UNDEFINED
+    		if(!workType.equals(WorkType.UNDEFINED) && !workType.equals(WorkType.OTHER))
     			workTypes.put(workType.value(), getMessage(buildInternationalizationKey(WorkType.class, workType.value())));
+    		else if (workType.equals(WorkType.OTHER))
+    			//OTHER will be at the bottom of the list, so, put a custom message that will move other at bottom
+    			workTypes.put(OTHER_AT_BOTTOM, getMessage(buildInternationalizationKey(WorkType.class, workType.value())));
     	}
     	
     	return FunctionsOverCollections.sortMapsByValues(workTypes);
