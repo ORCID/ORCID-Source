@@ -69,7 +69,7 @@ public class PublicProfileController extends BaseWorkspaceController {
     private WorkManager workManager;
 
     @Resource
-    private ActivityCacheManager activityManager;
+    private ActivityCacheManager activityCacheManager;
     
     @Resource
     private ProfileWorkManager profileWorkManager;
@@ -279,7 +279,7 @@ public class PublicProfileController extends BaseWorkspaceController {
     public HashMap<String, Work> minimizedWorksMap(String orcid) {
         OrcidProfile profile = orcidProfileManager.retrievePublicOrcidProfile(orcid);
         if (profile == null) return null;
-        return activityManager.pubMinWorksMap(profile, activityManager.createKey(profile));
+        return activityCacheManager.pubMinWorksMap(profile, activityCacheManager.createKey(profile));
     }
 
 }
