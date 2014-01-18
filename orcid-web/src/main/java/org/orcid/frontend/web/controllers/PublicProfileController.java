@@ -32,7 +32,7 @@ import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.orcid.core.adapter.Jpa2JaxbAdapter;
 import org.orcid.core.locale.LocaleManager;
-import org.orcid.core.manager.ActivityManager;
+import org.orcid.core.manager.ActivityCacheManager;
 import org.orcid.core.manager.ProfileWorkManager;
 import org.orcid.core.manager.WorkManager;
 import org.orcid.frontend.web.util.LanguagesMap;
@@ -69,7 +69,7 @@ public class PublicProfileController extends BaseWorkspaceController {
     private WorkManager workManager;
 
     @Resource
-    private ActivityManager activityManager;
+    private ActivityCacheManager activityManager;
     
     @Resource
     private ProfileWorkManager profileWorkManager;
