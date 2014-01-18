@@ -35,6 +35,9 @@
            
     <cache name="iso-countries" maxElementsInMemory="200" eternal="true" overflowToDisk="false" copyOnRead="false"
            copyOnWrite="false"/>
+
+	<cache name="pub-min-works-map" maxElementsInMemory="1000" timeToLiveSeconds="1200" overflowToDisk="false" copyOnRead="false"
+           copyOnWrite="false" eternal="false"/>                 
            
     <cache name="security-questions" maxElementsInMemory="200" eternal="true" overflowToDisk="false" copyOnRead="false"
            copyOnWrite="false"/>
@@ -59,5 +62,6 @@
            
 	<cache name="works" maxElementsInMemory="2000" timeToLiveSeconds="900" overflowToDisk="false" copyOnRead="false"
            copyOnWrite="false" eternal="false"/>                 
+
            
 </ehcache>

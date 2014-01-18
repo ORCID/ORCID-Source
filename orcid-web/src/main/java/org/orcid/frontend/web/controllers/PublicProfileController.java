@@ -32,6 +32,7 @@ import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.orcid.core.adapter.Jpa2JaxbAdapter;
 import org.orcid.core.locale.LocaleManager;
+import org.orcid.core.manager.ActivityManager;
 import org.orcid.core.manager.ProfileWorkManager;
 import org.orcid.core.manager.WorkManager;
 import org.orcid.frontend.web.util.LanguagesMap;
@@ -59,21 +60,23 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class PublicProfileController extends BaseWorkspaceController {
 
-	private static final String WORKS_MAP = "WORKS_MAP"; 
-	private static final String FUNDINGS_MAP = "FUNDINGS_MAP";
-	
+    private static final String FUNDINGS_MAP = "FUNDINGS_MAP";
+
     @Resource
     private LocaleManager localeManager;
-    
+
     @Resource
     private WorkManager workManager;
+
+    @Resource
+    private ActivityManager activityManager;
     
     @Resource
     private ProfileWorkManager profileWorkManager;
 
     @Resource
     private Jpa2JaxbAdapter jpa2JaxbAdapter;
-    
+        
     @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}")
     public ModelAndView publicPreview(HttpServletRequest request, @RequestParam(value = "page", defaultValue = "1") int pageNo,
             @RequestParam(value = "maxResults", defaultValue = "15") int maxResults, @PathVariable("orcid") String orcid) {
@@ -85,72 +88,54 @@ public class PublicProfileController extends BaseWorkspaceController {
 
         mav.addObject("profile", profile);
 
-        List<Work> works = new ArrayList<Work>();
-        List<String> workIds = new ArrayList<String>();
-        HashMap<String, Work> worksMap = new HashMap<String, Work>();
-        
+        HashMap<String, Work> minimizedWorksMap = new HashMap<String, Work>();
         List<Affiliation> affilations = new ArrayList<Affiliation>();
         List<String> affiliationIds = new ArrayList<String>();
-                
+
         List<String> fundingIds = new ArrayList<String>();
         HashMap<String, Funding> fundingMap = new HashMap<String, Funding>();
-        
 
         if (profile.getOrcidDeprecated() != null) {
             String primaryRecord = profile.getOrcidDeprecated().getPrimaryRecord().getOrcid().getValue();
             mav.addObject("deprecated", true);
             mav.addObject("primaryRecord", primaryRecord);
         } else {
-        	
-        	if(profile.getOrcidActivities() != null) {
-	        	if (profile.getOrcidActivities().getOrcidWorks() != null) {
-	                for (OrcidWork orcidWork : profile.getOrcidActivities().getOrcidWorks().getOrcidWork()) {
-	                	if(Visibility.PUBLIC.equals(orcidWork.getVisibility())) {
-	                		String workId = orcidWork.getPutCode();
-	                		Work work = Work.minimizedValueOf(orcidWork); 
-	                		works.add(work);
-	                		workIds.add(workId);
-	                		worksMap.put(workId, work);
-	                	}
-	                }
-	                if (!works.isEmpty()) {
-	                    mav.addObject("works", works);
-	                    request.getSession().setAttribute(WORKS_MAP, worksMap);
-	                }
-	            }        	        	
-	        	
-	        	if (profile.getOrcidActivities().getAffiliations() != null) {
-	                for (Affiliation affiliation : profile.getOrcidActivities().getAffiliations().getAffiliation()) {
-	                    affilations.add(affiliation);
-	                    affiliationIds.add(affiliation.getPutCode());
-	                }
-	                if (!affilations.isEmpty()) {
-	                    mav.addObject("affilations", affilations);
-	                }
-	            }
-	        	
-	        	if(profile.getOrcidActivities().getFundings() != null) {
-	        		for(Funding funding : profile.getOrcidActivities().getFundings().getFundings()) {
-	        			if(Visibility.PUBLIC.equals(funding.getVisibility())) {
-	        				fundingMap.put(funding.getPutCode(), funding);
-	        				fundingIds.add(funding.getPutCode());
-	        			}
-	        		}	        		
-	        		if(!fundingIds.isEmpty()) {
-	        			request.getSession().setAttribute(FUNDINGS_MAP, fundingMap);
-	        		}
-	        	}
-        	}
+            minimizedWorksMap = minimizedWorksMap(orcid);
+            if (profile.getOrcidActivities() != null) {
+                    
+ 
+                if (profile.getOrcidActivities().getAffiliations() != null) {
+                    for (Affiliation affiliation : profile.getOrcidActivities().getAffiliations().getAffiliation()) {
+                        affilations.add(affiliation);
+                        affiliationIds.add(affiliation.getPutCode());
+                    }
+                    if (!affilations.isEmpty()) {
+                        mav.addObject("affilations", affilations);
+                    }
+                }
+
+                if (profile.getOrcidActivities().getFundings() != null) {
+                    for (Funding funding : profile.getOrcidActivities().getFundings().getFundings()) {
+                        if (Visibility.PUBLIC.equals(funding.getVisibility())) {
+                            fundingMap.put(funding.getPutCode(), funding);
+                            fundingIds.add(funding.getPutCode());
+                        }
+                    }
+                    if (!fundingIds.isEmpty()) {
+                        request.getSession().setAttribute(FUNDINGS_MAP, fundingMap);
+                    }
+                }
+            }
         }
         ObjectMapper mapper = new ObjectMapper();
 
         try {
-            String worksIdsJson = mapper.writeValueAsString(workIds);
+            String worksIdsJson = mapper.writeValueAsString(minimizedWorksMap.keySet());
             String affiliationIdsJson = mapper.writeValueAsString(affiliationIds);
             String fundingIdsJson = mapper.writeValueAsString(fundingIds);
             mav.addObject("workIdsJson", StringEscapeUtils.escapeEcmaScript(worksIdsJson));
             mav.addObject("affiliationIdsJson", StringEscapeUtils.escapeEcmaScript(affiliationIdsJson));
-            mav.addObject("fundingIdsJson", StringEscapeUtils.escapeEcmaScript(fundingIdsJson));            
+            mav.addObject("fundingIdsJson", StringEscapeUtils.escapeEcmaScript(fundingIdsJson));
         } catch (JsonGenerationException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -164,7 +149,6 @@ public class PublicProfileController extends BaseWorkspaceController {
 
         return mav;
     }
-    
 
     @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/affiliations.json")
     public @ResponseBody
@@ -173,9 +157,9 @@ public class PublicProfileController extends BaseWorkspaceController {
         OrcidProfile profile = orcidProfileManager.retrievePublicOrcidProfile(orcid);
         Map<String, Affiliation> affMap = profile.getOrcidActivities().getAffiliations().retrieveAffiliationAsMap();
         String[] affIds = workIdsStr.split(",");
-        for (String id: affIds) {
+        for (String id : affIds) {
             Affiliation aff = affMap.get(id);
-            // ONLY SHARE THE PUBLIC AFFILIATIONS! 
+            // ONLY SHARE THE PUBLIC AFFILIATIONS!
             if (aff != null && aff.getVisibility().equals(Visibility.PUBLIC)) {
                 affs.add(AffiliationForm.valueOf(aff));
             }
@@ -186,106 +170,116 @@ public class PublicProfileController extends BaseWorkspaceController {
     @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/fundings.json")
     public @ResponseBody
     List<FundingForm> getFundingsJson(HttpServletRequest request, @PathVariable("orcid") String orcid, @RequestParam(value = "fundingIds") String fundingIdsStr) {
-    	Map<String, String> languages = LanguagesMap.buildLanguageMap(localeManager.getLocale(), false);
-    	List<FundingForm> fundings = new ArrayList<FundingForm>();
+        Map<String, String> languages = LanguagesMap.buildLanguageMap(localeManager.getLocale(), false);
+        List<FundingForm> fundings = new ArrayList<FundingForm>();
         Map<String, Funding> fundingMap = (HashMap<String, Funding>) request.getSession().getAttribute(FUNDINGS_MAP);
         String[] fundingIds = fundingIdsStr.split(",");
-        for (String id: fundingIds) {
-            Funding funding = fundingMap.get(id);              
-            FundingForm form = FundingForm.valueOf(funding);             		
-            //Set type name
+        for (String id : fundingIds) {
+            Funding funding = fundingMap.get(id);
+            FundingForm form = FundingForm.valueOf(funding);
+            // Set type name
             if (funding.getType() != null) {
-				form.setFundingTypeForDisplay(getMessage(buildInternationalizationKey(
-						FundingType.class, funding.getType().value())));
-			}
-			//Set translated title language name
-	        if(!(funding.getTitle().getTranslatedTitle() == null) && !StringUtils.isEmpty(funding.getTitle().getTranslatedTitle().getLanguageCode())) {
-	            String languageName = languages.get(funding.getTitle().getTranslatedTitle().getLanguageCode());
-	            form.getFundingTitle().getTranslatedTitle().setLanguageName(languageName);
-	        }        		
-	        //Set country name
-			form.setCountryForDisplay(getMessage(buildInternationalizationKey(CountryIsoEntity.class, funding.getOrganization().getAddress().getCountry()
-                    .name())));	
+                form.setFundingTypeForDisplay(getMessage(buildInternationalizationKey(FundingType.class, funding.getType().value())));
+            }
+            // Set translated title language name
+            if (!(funding.getTitle().getTranslatedTitle() == null) && !StringUtils.isEmpty(funding.getTitle().getTranslatedTitle().getLanguageCode())) {
+                String languageName = languages.get(funding.getTitle().getTranslatedTitle().getLanguageCode());
+                form.getFundingTitle().getTranslatedTitle().setLanguageName(languageName);
+            }
+            // Set country name
+            form.setCountryForDisplay(getMessage(buildInternationalizationKey(CountryIsoEntity.class, funding.getOrganization().getAddress().getCountry().name())));
             fundings.add(form);
         }
         return fundings;
     }
-    
+
     @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/works.json")
     public @ResponseBody
     List<Work> getWorkJson(HttpServletRequest request, @PathVariable("orcid") String orcid, @RequestParam(value = "workIds") String workIdsStr) {
         Map<String, String> countries = retrieveIsoCountries();
         Map<String, String> languages = LanguagesMap.buildLanguageMap(localeManager.getLocale(), false);
-                              
-        List<Work> works = new ArrayList<Work>();
-        String[] workIds = workIdsStr.split(",");        
-        HashMap<String, Work> worksMap = (HashMap<String, Work>) request.getSession().getAttribute(WORKS_MAP);
         
-        for(String workId : workIds) {
-        	if(worksMap.containsKey(workId)) {
-        		Work work = worksMap.get(workId);
-	        	if(Visibility.PUBLIC.equals(work.getVisibility())) {
-	        		if (!PojoUtil.isEmpty(work.getCountryCode())) {
-	                    Text countryName = Text.valueOf(countries.get(work.getCountryCode().getValue()));
-	                    work.setCountryName(countryName);
-	                }
-	                // Set language name
-	                if (!PojoUtil.isEmpty(work.getLanguageCode())) {
-	                    Text languageName = Text.valueOf(languages.get(work.getLanguageCode().getValue()));
-	                    work.setLanguageName(languageName);
-	                }
-	                // Set translated title language name
-	                if (work.getWorkTitle() != null && work.getWorkTitle().getTranslatedTitle() != null && !StringUtils.isEmpty(work.getWorkTitle().getTranslatedTitle().getLanguageCode())) {
-	                    String languageName = languages.get(work.getWorkTitle().getTranslatedTitle().getLanguageCode());
-	                    work.getWorkTitle().getTranslatedTitle().setLanguageName(languageName);
-	                }
-	                works.add(work);
-	        	}
-        	}
+        HashMap<String, Work> minimizedWorksMap = minimizedWorksMap(orcid);
+        
+        List<Work> works = new ArrayList<Work>();
+        String[] workIds = workIdsStr.split(",");
+
+        for (String workId : workIds) {
+            if (minimizedWorksMap.containsKey(workId)) {
+                Work work = minimizedWorksMap.get(workId);
+                if (Visibility.PUBLIC.equals(work.getVisibility())) {
+                    if (!PojoUtil.isEmpty(work.getCountryCode())) {
+                        Text countryName = Text.valueOf(countries.get(work.getCountryCode().getValue()));
+                        work.setCountryName(countryName);
+                    }
+                    // Set language name
+                    if (!PojoUtil.isEmpty(work.getLanguageCode())) {
+                        Text languageName = Text.valueOf(languages.get(work.getLanguageCode().getValue()));
+                        work.setLanguageName(languageName);
+                    }
+                    // Set translated title language name
+                    if (work.getWorkTitle() != null && work.getWorkTitle().getTranslatedTitle() != null
+                            && !StringUtils.isEmpty(work.getWorkTitle().getTranslatedTitle().getLanguageCode())) {
+                        String languageName = languages.get(work.getWorkTitle().getTranslatedTitle().getLanguageCode());
+                        work.getWorkTitle().getTranslatedTitle().setLanguageName(languageName);
+                    }
+                    works.add(work);
+                }
+            }
         }
-                
+
         return works;
     }
-    
+
     /**
      * Returns the work info for a given work id
-     * @param workId The id of the work
+     * 
+     * @param workId
+     *            The id of the work
      * @return the content of that work
      * */
     @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/getWorkInfo.json", method = RequestMethod.GET)
     public @ResponseBody
     Work getWorkInfo(@PathVariable("orcid") String orcid, @RequestParam(value = "workId") String workId) {
-    	Map<String, String> countries = retrieveIsoCountries();
+        Map<String, String> countries = retrieveIsoCountries();
         Map<String, String> languages = LanguagesMap.buildLanguageMap(localeManager.getLocale(), false);
-    	if(StringUtils.isEmpty(workId))
-    		return null;    	    
-    	
-    	ProfileWorkEntity profileWork = profileWorkManager.getProfileWork(orcid, workId);
-    	
-    	if(profileWork != null){    	
-    		OrcidWork orcidWork = jpa2JaxbAdapter.getOrcidWork(profileWork);
-    		if(orcidWork != null) {
-				Work work = Work.valueOf(orcidWork);
-				//Set country name
-		        if(!PojoUtil.isEmpty(work.getCountryCode())) {            
-		            Text countryName = Text.valueOf(countries.get(work.getCountryCode().getValue()));
-		            work.setCountryName(countryName);
-		        }
-		        //Set language name
-		        if(!PojoUtil.isEmpty(work.getLanguageCode())) {
-		            Text languageName = Text.valueOf(languages.get(work.getLanguageCode().getValue()));
-		            work.setLanguageName(languageName);
-		        }
-		        //Set translated title language name
-		        if(work.getWorkTitle() != null && work.getWorkTitle().getTranslatedTitle() != null && !StringUtils.isEmpty(work.getWorkTitle().getTranslatedTitle().getLanguageCode())) {
-		            String languageName = languages.get(work.getWorkTitle().getTranslatedTitle().getLanguageCode());
-		            work.getWorkTitle().getTranslatedTitle().setLanguageName(languageName);
-		        }
-		        
-		        return work;
-    		}
+        if (StringUtils.isEmpty(workId))
+            return null;
+
+        ProfileWorkEntity profileWork = profileWorkManager.getProfileWork(orcid, workId);
+
+        if (profileWork != null) {
+            OrcidWork orcidWork = jpa2JaxbAdapter.getOrcidWork(profileWork);
+            if (orcidWork != null) {
+                Work work = Work.valueOf(orcidWork);
+                // Set country name
+                if (!PojoUtil.isEmpty(work.getCountryCode())) {
+                    Text countryName = Text.valueOf(countries.get(work.getCountryCode().getValue()));
+                    work.setCountryName(countryName);
+                }
+                // Set language name
+                if (!PojoUtil.isEmpty(work.getLanguageCode())) {
+                    Text languageName = Text.valueOf(languages.get(work.getLanguageCode().getValue()));
+                    work.setLanguageName(languageName);
+                }
+                // Set translated title language name
+                if (work.getWorkTitle() != null && work.getWorkTitle().getTranslatedTitle() != null
+                        && !StringUtils.isEmpty(work.getWorkTitle().getTranslatedTitle().getLanguageCode())) {
+                    String languageName = languages.get(work.getWorkTitle().getTranslatedTitle().getLanguageCode());
+                    work.getWorkTitle().getTranslatedTitle().setLanguageName(languageName);
+                }
+
+                return work;
+            }
         }
-    	    	    	
-    	return null;
-    }        
+
+        return null;
+    }
+    
+    public HashMap<String, Work> minimizedWorksMap(String orcid) {
+        OrcidProfile profile = orcidProfileManager.retrievePublicOrcidProfile(orcid);
+        if (profile == null) return null;
+        return activityManager.pubMinWorksMap(profile, activityManager.createKey(profile));
+    }
+
 }
