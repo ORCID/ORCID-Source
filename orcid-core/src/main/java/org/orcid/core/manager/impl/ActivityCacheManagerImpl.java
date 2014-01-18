@@ -22,6 +22,7 @@ import javax.annotation.Resource;
 
 import org.orcid.core.manager.ActivityCacheManager;
 import org.orcid.core.manager.OrcidProfileManager;
+import org.orcid.jaxb.model.message.Funding;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidWork;
 import org.orcid.jaxb.model.message.Visibility;
@@ -39,7 +40,7 @@ public class ActivityCacheManagerImpl extends Object implements ActivityCacheMan
         return profile.getOrcid().getValue() + "-" + profile.getOrcidHistory().getLastModifiedDate().getValue().toXMLFormat();
     }
 
-    @Cacheable(value = "pub-min-works-map", key = "#root.args[1]")
+    @Cacheable(value = "pub-min-works-maps", key = "#root.args[1]")
     public HashMap<String, Work> pubMinWorksMap(OrcidProfile profile, String key) {
         HashMap<String, Work> workMap = new HashMap<String, Work>();
         if (profile.getOrcidActivities() != null) {
@@ -53,6 +54,22 @@ public class ActivityCacheManagerImpl extends Object implements ActivityCacheMan
         }
         return workMap;
     }
+    
+    @Cacheable(value = "funding-maps", key = "#root.args[1]")
+    public HashMap<String, Funding> fundingMap(OrcidProfile profile, String key) {
+        HashMap<String, Funding> workMap = new HashMap<String, Funding>();
+        if (profile.getOrcidActivities() != null) {
+            if (profile.getOrcidActivities().getFundings() != null) {
+                for (Funding funding : profile.getOrcidActivities().getFundings().getFundings()) {
+                    if (Visibility.PUBLIC.equals(funding.getVisibility())) {
+                        workMap.put(funding.getPutCode(), funding);
+                    }
+                }
+            }
+        }
+        return workMap;
+    }
+
     
 
 }

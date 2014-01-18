@@ -18,6 +18,7 @@ package org.orcid.core.manager;
 
 import java.util.HashMap;
 
+import org.orcid.jaxb.model.message.Funding;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.pojo.ajaxForm.Work;
 
@@ -26,5 +27,7 @@ public interface ActivityCacheManager {
     public String createKey(OrcidProfile profile);
 
     public HashMap<String, Work> pubMinWorksMap(OrcidProfile profile, String key);
+    
+    public HashMap<String, Funding> fundingMap(OrcidProfile profile, String key);
 
 }

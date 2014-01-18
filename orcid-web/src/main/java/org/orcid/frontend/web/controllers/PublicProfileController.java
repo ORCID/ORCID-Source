@@ -60,8 +60,6 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class PublicProfileController extends BaseWorkspaceController {
 
-    private static final String FUNDINGS_MAP = "FUNDINGS_MAP";
-
     @Resource
     private LocaleManager localeManager;
 
@@ -70,13 +68,13 @@ public class PublicProfileController extends BaseWorkspaceController {
 
     @Resource
     private ActivityCacheManager activityCacheManager;
-    
+
     @Resource
     private ProfileWorkManager profileWorkManager;
 
     @Resource
     private Jpa2JaxbAdapter jpa2JaxbAdapter;
-        
+
     @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}")
     public ModelAndView publicPreview(HttpServletRequest request, @RequestParam(value = "page", defaultValue = "1") int pageNo,
             @RequestParam(value = "maxResults", defaultValue = "15") int maxResults, @PathVariable("orcid") String orcid) {
@@ -101,9 +99,10 @@ public class PublicProfileController extends BaseWorkspaceController {
             mav.addObject("primaryRecord", primaryRecord);
         } else {
             minimizedWorksMap = minimizedWorksMap(orcid);
+            fundingMap = fundingMap(orcid);
+            
             if (profile.getOrcidActivities() != null) {
-                    
- 
+
                 if (profile.getOrcidActivities().getAffiliations() != null) {
                     for (Affiliation affiliation : profile.getOrcidActivities().getAffiliations().getAffiliation()) {
                         affilations.add(affiliation);
@@ -113,18 +112,6 @@ public class PublicProfileController extends BaseWorkspaceController {
                         mav.addObject("affilations", affilations);
                     }
                 }
-
-                if (profile.getOrcidActivities().getFundings() != null) {
-                    for (Funding funding : profile.getOrcidActivities().getFundings().getFundings()) {
-                        if (Visibility.PUBLIC.equals(funding.getVisibility())) {
-                            fundingMap.put(funding.getPutCode(), funding);
-                            fundingIds.add(funding.getPutCode());
-                        }
-                    }
-                    if (!fundingIds.isEmpty()) {
-                        request.getSession().setAttribute(FUNDINGS_MAP, fundingMap);
-                    }
-                }
             }
         }
         ObjectMapper mapper = new ObjectMapper();
@@ -132,7 +119,7 @@ public class PublicProfileController extends BaseWorkspaceController {
         try {
             String worksIdsJson = mapper.writeValueAsString(minimizedWorksMap.keySet());
             String affiliationIdsJson = mapper.writeValueAsString(affiliationIds);
-            String fundingIdsJson = mapper.writeValueAsString(fundingIds);
+            String fundingIdsJson = mapper.writeValueAsString(fundingMap.keySet());
             mav.addObject("workIdsJson", StringEscapeUtils.escapeEcmaScript(worksIdsJson));
             mav.addObject("affiliationIdsJson", StringEscapeUtils.escapeEcmaScript(affiliationIdsJson));
             mav.addObject("fundingIdsJson", StringEscapeUtils.escapeEcmaScript(fundingIdsJson));
@@ -172,7 +159,7 @@ public class PublicProfileController extends BaseWorkspaceController {
     List<FundingForm> getFundingsJson(HttpServletRequest request, @PathVariable("orcid") String orcid, @RequestParam(value = "fundingIds") String fundingIdsStr) {
         Map<String, String> languages = LanguagesMap.buildLanguageMap(localeManager.getLocale(), false);
         List<FundingForm> fundings = new ArrayList<FundingForm>();
-        Map<String, Funding> fundingMap = (HashMap<String, Funding>) request.getSession().getAttribute(FUNDINGS_MAP);
+        Map<String, Funding> fundingMap = fundingMap(orcid); 
         String[] fundingIds = fundingIdsStr.split(",");
         for (String id : fundingIds) {
             Funding funding = fundingMap.get(id);
@@ -198,9 +185,9 @@ public class PublicProfileController extends BaseWorkspaceController {
     List<Work> getWorkJson(HttpServletRequest request, @PathVariable("orcid") String orcid, @RequestParam(value = "workIds") String workIdsStr) {
         Map<String, String> countries = retrieveIsoCountries();
         Map<String, String> languages = LanguagesMap.buildLanguageMap(localeManager.getLocale(), false);
-        
+
         HashMap<String, Work> minimizedWorksMap = minimizedWorksMap(orcid);
-        
+
         List<Work> works = new ArrayList<Work>();
         String[] workIds = workIdsStr.split(",");
 
@@ -275,10 +262,19 @@ public class PublicProfileController extends BaseWorkspaceController {
 
         return null;
     }
-    
+
+    public HashMap<String, Funding> fundingMap(String orcid) {
+        OrcidProfile profile = orcidProfileManager.retrievePublicOrcidProfile(orcid);
+        if (profile == null)
+            return null;
+        return activityCacheManager.fundingMap(profile, activityCacheManager.createKey(profile));
+
+    }
+
     public HashMap<String, Work> minimizedWorksMap(String orcid) {
         OrcidProfile profile = orcidProfileManager.retrievePublicOrcidProfile(orcid);
-        if (profile == null) return null;
+        if (profile == null)
+            return null;
         return activityCacheManager.pubMinWorksMap(profile, activityCacheManager.createKey(profile));
     }
 
