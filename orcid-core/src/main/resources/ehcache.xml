@@ -39,10 +39,10 @@
 	<cache name="pub-min-works-maps" maxElementsInMemory="2000" timeToLiveSeconds="1200" overflowToDisk="false" copyOnRead="false"
            copyOnWrite="false" eternal="false"/>
            
-    <cache name="affiliation-maps" maxElementsInMemory="2000" timeToLiveSeconds="1200" overflowToDisk="false" copyOnRead="false"
+    <cache name="pub-affiliation-maps" maxElementsInMemory="2000" timeToLiveSeconds="1200" overflowToDisk="false" copyOnRead="false"
            copyOnWrite="false" eternal="false"/>                 
            
-	<cache name="funding-maps" maxElementsInMemory="2000" timeToLiveSeconds="1200" overflowToDisk="false" copyOnRead="false"
+	<cache name="pub-funding-maps" maxElementsInMemory="2000" timeToLiveSeconds="1200" overflowToDisk="false" copyOnRead="false"
            copyOnWrite="false" eternal="false"/>                 
            
     <cache name="security-questions" maxElementsInMemory="200" eternal="true" overflowToDisk="false" copyOnRead="false"

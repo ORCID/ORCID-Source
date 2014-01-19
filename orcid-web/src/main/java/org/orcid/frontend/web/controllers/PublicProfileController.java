@@ -258,21 +258,21 @@ public class PublicProfileController extends BaseWorkspaceController {
         OrcidProfile profile = orcidProfileManager.retrievePublicOrcidProfile(orcid);
         if (profile == null)
             return null;
-        return activityCacheManager.fundingMap(profile, activityCacheManager.createKey(profile));
+        return activityCacheManager.fundingMap(profile);
     }
 
     public HashMap<String, Affiliation> affiliationMap(String orcid) {
         OrcidProfile profile = orcidProfileManager.retrievePublicOrcidProfile(orcid);
         if (profile == null)
             return null;
-        return activityCacheManager.affiliationMap(profile, activityCacheManager.createKey(profile));
+        return activityCacheManager.affiliationMap(profile);
     }
 
     public HashMap<String, Work> minimizedWorksMap(String orcid) {
         OrcidProfile profile = orcidProfileManager.retrievePublicOrcidProfile(orcid);
         if (profile == null)
             return null;
-        return activityCacheManager.pubMinWorksMap(profile, activityCacheManager.createKey(profile));
+        return activityCacheManager.pubMinWorksMap(profile);
     }
 
 }

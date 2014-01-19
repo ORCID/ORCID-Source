@@ -25,12 +25,10 @@ import org.orcid.pojo.ajaxForm.Work;
 
 public interface ActivityCacheManager {
 
-    public String createKey(OrcidProfile profile);
-
-    public HashMap<String, Work> pubMinWorksMap(OrcidProfile profile, String key);
+    public HashMap<String, Work> pubMinWorksMap(OrcidProfile profile);
     
-    public HashMap<String, Funding> fundingMap(OrcidProfile profile, String key);
+    public HashMap<String, Funding> fundingMap(OrcidProfile profile);
     
-    public HashMap<String, Affiliation> affiliationMap(OrcidProfile profile, String key);
+    public HashMap<String, Affiliation> affiliationMap(OrcidProfile profile);
     
 }

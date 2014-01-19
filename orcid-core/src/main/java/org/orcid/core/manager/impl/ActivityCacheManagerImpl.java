@@ -36,14 +36,8 @@ public class ActivityCacheManagerImpl extends Object implements ActivityCacheMan
     @Resource
     protected OrcidProfileManager orcidProfileManager;
 
-    public String createKey(OrcidProfile profile) {
-        if (profile == null)
-            return null;
-        return profile.getOrcid().getValue() + "-" + profile.getOrcidHistory().getLastModifiedDate().getValue().toXMLFormat();
-    }
-
-    @Cacheable(value = "pub-min-works-maps", key = "#root.args[1]")
-    public HashMap<String, Work> pubMinWorksMap(OrcidProfile profile, String key) {
+    @Cacheable(value = "pub-min-works-maps", key = "#profile.getOrcid().getValue().concat(#profile.getOrcidHistory().getLastModifiedDate().getValue().toXMLFormat())")
+    public HashMap<String, Work> pubMinWorksMap(OrcidProfile profile) {
         HashMap<String, Work> workMap = new HashMap<String, Work>();
         if (profile.getOrcidActivities() != null) {
             if (profile.getOrcidActivities().getOrcidWorks() != null) {
@@ -57,8 +51,8 @@ public class ActivityCacheManagerImpl extends Object implements ActivityCacheMan
         return workMap;
     }
 
-    @Cacheable(value = "funding-maps", key = "#root.args[1]")
-    public HashMap<String, Funding> fundingMap(OrcidProfile profile, String key) {
+    @Cacheable(value = "pub-funding-maps", key = "#profile.getOrcid().getValue().concat(#profile.getOrcidHistory().getLastModifiedDate().getValue().toXMLFormat())")
+    public HashMap<String, Funding> fundingMap(OrcidProfile profile) {
         HashMap<String, Funding> fundingMap = new HashMap<String, Funding>();
         if (profile.getOrcidActivities() != null) {
             if (profile.getOrcidActivities().getFundings() != null) {
@@ -72,8 +66,8 @@ public class ActivityCacheManagerImpl extends Object implements ActivityCacheMan
         return fundingMap;
     }
 
-    @Cacheable(value = "affiliation-maps", key = "#root.args[1]")
-    public HashMap<String, Affiliation> affiliationMap(OrcidProfile profile, String key) {
+    @Cacheable(value = "pub-affiliation-maps", key = "#profile.getOrcid().getValue().concat(#profile.getOrcidHistory().getLastModifiedDate().getValue().toXMLFormat())")
+    public HashMap<String, Affiliation> affiliationMap(OrcidProfile profile) {
         HashMap<String, Affiliation> affiliationMap = new HashMap<String, Affiliation>();
         if (profile.getOrcidActivities() != null) {
             if (profile.getOrcidActivities().getAffiliations() != null) {
