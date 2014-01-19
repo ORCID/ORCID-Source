@@ -90,7 +90,6 @@ public class PublicProfileController extends BaseWorkspaceController {
         List<Affiliation> affilations = new ArrayList<Affiliation>();
         List<String> affiliationIds = new ArrayList<String>();
 
-        List<String> fundingIds = new ArrayList<String>();
         HashMap<String, Funding> fundingMap = new HashMap<String, Funding>();
 
         if (profile.getOrcidDeprecated() != null) {
@@ -99,6 +98,8 @@ public class PublicProfileController extends BaseWorkspaceController {
             mav.addObject("primaryRecord", primaryRecord);
         } else {
             minimizedWorksMap = minimizedWorksMap(orcid);
+            if (minimizedWorksMap.size() > 0) mav.addObject("works", minimizedWorksMap.values());
+            
             fundingMap = fundingMap(orcid);
             
             if (profile.getOrcidActivities() != null) {
