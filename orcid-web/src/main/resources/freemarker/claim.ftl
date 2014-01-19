@@ -27,9 +27,11 @@
 						<!-- span class="orcid-error" ng-show="register.errors.length > 0">
 							<div ng-repeat='error in register.errors' ng-bind-html-unsafe="error"></div>
 					   	</span -->
+					   	<h4>${springMacroRequestContext.getMessage("claim.almostthere")}</h4>
+					   	<p>${springMacroRequestContext.getMessage("claim.completefields")}</p>
 										
 	                    <div class="control-group">
-	                        <label class="control-label">${springMacroRequestContext.getMessage("oauth_sign_up.labelpassword")}</label>
+	                        <label class="control-label">${springMacroRequestContext.getMessage("claim.password")}</label>
 	                        <div class="relative">
 	                            <input type="password" name="password" class="input-xlarge" ng-model="register.password.value" ng-change="serverValidate('Password')"/>
 	                            <span class="required" ng-class="isValidClass(register.password)">*</span>
@@ -42,10 +44,12 @@
 	                                        <ul>
 	                                            <li>${springMacroRequestContext.getMessage("password_one_time_reset.labelatleast09")}</li>
 	                                            <li>${springMacroRequestContext.getMessage("password_one_time_reset.labelatleast1following")}</li>
-	                                            <ul>
-	                                            	<li>${springMacroRequestContext.getMessage("password_one_time_reset.labelalphacharacter")}</li>
-	                                            	<li>${springMacroRequestContext.getMessage("password_one_time_reset.labelanyoffollow")}<br /> ! @ # $ % ^ * ( ) ~ `{ } [ ] | \ &amp; _</li>
-	                                            </ul>
+	                                            <li>
+		                                            <ul>
+		                                            	<li>${springMacroRequestContext.getMessage("password_one_time_reset.labelalphacharacter")}</li>
+		                                            	<li>${springMacroRequestContext.getMessage("password_one_time_reset.labelanyoffollow")}<br /> ! @ # $ % ^ * ( ) ~ `{ } [ ] | \ &amp; _</li>
+		                                            </ul>
+	                                            </li>
 	                                            <li>${springMacroRequestContext.getMessage("password_one_time_reset.labeloptionallyspace")}</li>
 	                                        </ul>                         
 	                                        <br />              
@@ -69,7 +73,7 @@
 	                        </div>
 	                    </div>
 	     				<div class="margin-top-box privacy">
-	                        <label class="privacy-toggle-lbl">${springMacroRequestContext.getMessage("register.labelDefaultprivacyfornewworks")}</label>
+	                        <label class="privacy-toggle-lbl">${springMacroRequestContext.getMessage("claim.defaultprivacynewworks")}</label>
 	                        <@orcid.privacyToggle "register.workVisibilityDefault.visibility" "updateWorkVisibilityDefault('PUBLIC', $event)"
 	                        	"updateWorkVisibilityDefault('LIMITED', $event)" "updateWorkVisibilityDefault('PRIVATE', $event)" />
 	                    </div>                    
