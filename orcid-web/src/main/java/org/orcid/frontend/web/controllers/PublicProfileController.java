@@ -87,9 +87,7 @@ public class PublicProfileController extends BaseWorkspaceController {
         mav.addObject("profile", profile);
 
         HashMap<String, Work> minimizedWorksMap = new HashMap<String, Work>();
-        List<Affiliation> affilations = new ArrayList<Affiliation>();
-        List<String> affiliationIds = new ArrayList<String>();
-
+        HashMap<String, Affiliation> affiliationMap = new HashMap<String, Affiliation>();
         HashMap<String, Funding> fundingMap = new HashMap<String, Funding>();
 
         if (profile.getOrcidDeprecated() != null) {
@@ -98,28 +96,21 @@ public class PublicProfileController extends BaseWorkspaceController {
             mav.addObject("primaryRecord", primaryRecord);
         } else {
             minimizedWorksMap = minimizedWorksMap(orcid);
-            if (minimizedWorksMap.size() > 0) mav.addObject("works", minimizedWorksMap.values());
-            
-            fundingMap = fundingMap(orcid);
-            
-            if (profile.getOrcidActivities() != null) {
+            if (minimizedWorksMap.size() > 0)
+                mav.addObject("works", minimizedWorksMap.values());
 
-                if (profile.getOrcidActivities().getAffiliations() != null) {
-                    for (Affiliation affiliation : profile.getOrcidActivities().getAffiliations().getAffiliation()) {
-                        affilations.add(affiliation);
-                        affiliationIds.add(affiliation.getPutCode());
-                    }
-                    if (!affilations.isEmpty()) {
-                        mav.addObject("affilations", affilations);
-                    }
-                }
-            }
+            affiliationMap = affiliationMap(orcid);
+            if (affiliationMap.size() > 0)
+                mav.addObject("affilations", affiliationMap.values());
+
+            fundingMap = fundingMap(orcid);
+
         }
         ObjectMapper mapper = new ObjectMapper();
 
         try {
             String worksIdsJson = mapper.writeValueAsString(minimizedWorksMap.keySet());
-            String affiliationIdsJson = mapper.writeValueAsString(affiliationIds);
+            String affiliationIdsJson = mapper.writeValueAsString(affiliationMap.keySet());
             String fundingIdsJson = mapper.writeValueAsString(fundingMap.keySet());
             mav.addObject("workIdsJson", StringEscapeUtils.escapeEcmaScript(worksIdsJson));
             mav.addObject("affiliationIdsJson", StringEscapeUtils.escapeEcmaScript(affiliationIdsJson));
@@ -142,8 +133,7 @@ public class PublicProfileController extends BaseWorkspaceController {
     public @ResponseBody
     List<AffiliationForm> getAffiliationsJson(HttpServletRequest request, @PathVariable("orcid") String orcid, @RequestParam(value = "affiliationIds") String workIdsStr) {
         List<AffiliationForm> affs = new ArrayList<AffiliationForm>();
-        OrcidProfile profile = orcidProfileManager.retrievePublicOrcidProfile(orcid);
-        Map<String, Affiliation> affMap = profile.getOrcidActivities().getAffiliations().retrieveAffiliationAsMap();
+        Map<String, Affiliation> affMap = affiliationMap(orcid);
         String[] affIds = workIdsStr.split(",");
         for (String id : affIds) {
             Affiliation aff = affMap.get(id);
@@ -160,7 +150,7 @@ public class PublicProfileController extends BaseWorkspaceController {
     List<FundingForm> getFundingsJson(HttpServletRequest request, @PathVariable("orcid") String orcid, @RequestParam(value = "fundingIds") String fundingIdsStr) {
         Map<String, String> languages = LanguagesMap.buildLanguageMap(localeManager.getLocale(), false);
         List<FundingForm> fundings = new ArrayList<FundingForm>();
-        Map<String, Funding> fundingMap = fundingMap(orcid); 
+        Map<String, Funding> fundingMap = fundingMap(orcid);
         String[] fundingIds = fundingIdsStr.split(",");
         for (String id : fundingIds) {
             Funding funding = fundingMap.get(id);
@@ -269,7 +259,13 @@ public class PublicProfileController extends BaseWorkspaceController {
         if (profile == null)
             return null;
         return activityCacheManager.fundingMap(profile, activityCacheManager.createKey(profile));
+    }
 
+    public HashMap<String, Affiliation> affiliationMap(String orcid) {
+        OrcidProfile profile = orcidProfileManager.retrievePublicOrcidProfile(orcid);
+        if (profile == null)
+            return null;
+        return activityCacheManager.affiliationMap(profile, activityCacheManager.createKey(profile));
     }
 
     public HashMap<String, Work> minimizedWorksMap(String orcid) {

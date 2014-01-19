@@ -17,11 +17,13 @@
 package org.orcid.core.manager.impl;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
 import org.orcid.core.manager.ActivityCacheManager;
 import org.orcid.core.manager.OrcidProfileManager;
+import org.orcid.jaxb.model.message.Affiliation;
 import org.orcid.jaxb.model.message.Funding;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidWork;
@@ -54,22 +56,31 @@ public class ActivityCacheManagerImpl extends Object implements ActivityCacheMan
         }
         return workMap;
     }
-    
+
     @Cacheable(value = "funding-maps", key = "#root.args[1]")
     public HashMap<String, Funding> fundingMap(OrcidProfile profile, String key) {
-        HashMap<String, Funding> workMap = new HashMap<String, Funding>();
+        HashMap<String, Funding> fundingMap = new HashMap<String, Funding>();
         if (profile.getOrcidActivities() != null) {
             if (profile.getOrcidActivities().getFundings() != null) {
                 for (Funding funding : profile.getOrcidActivities().getFundings().getFundings()) {
                     if (Visibility.PUBLIC.equals(funding.getVisibility())) {
-                        workMap.put(funding.getPutCode(), funding);
+                        fundingMap.put(funding.getPutCode(), funding);
                     }
                 }
             }
         }
-        return workMap;
+        return fundingMap;
     }
 
-    
+    @Cacheable(value = "affiliation-maps", key = "#root.args[1]")
+    public HashMap<String, Affiliation> affiliationMap(OrcidProfile profile, String key) {
+        HashMap<String, Affiliation> affiliationMap = new HashMap<String, Affiliation>();
+        if (profile.getOrcidActivities() != null) {
+            if (profile.getOrcidActivities().getAffiliations() != null) {
+                affiliationMap = (HashMap<String, Affiliation>) profile.getOrcidActivities().getAffiliations().retrieveAffiliationAsMap();
+            }
+        }
+        return affiliationMap;
+    }
 
 }

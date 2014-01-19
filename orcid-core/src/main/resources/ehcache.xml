@@ -37,8 +37,11 @@
            copyOnWrite="false"/>
 
 	<cache name="pub-min-works-maps" maxElementsInMemory="2000" timeToLiveSeconds="1200" overflowToDisk="false" copyOnRead="false"
+           copyOnWrite="false" eternal="false"/>
+           
+    <cache name="affiliation-maps" maxElementsInMemory="2000" timeToLiveSeconds="1200" overflowToDisk="false" copyOnRead="false"
            copyOnWrite="false" eternal="false"/>                 
-
+           
 	<cache name="funding-maps" maxElementsInMemory="2000" timeToLiveSeconds="1200" overflowToDisk="false" copyOnRead="false"
            copyOnWrite="false" eternal="false"/>                 
            
