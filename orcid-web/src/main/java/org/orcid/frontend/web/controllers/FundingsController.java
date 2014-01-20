@@ -105,6 +105,9 @@ public class FundingsController extends BaseWorkspaceController {
 	
 	@Resource
     private LocaleManager localeManager;
+	
+	@Resource(name="languagesMap")
+    private LanguagesMap lm;
 
 	/**
 	 * Returns a blank funding form
@@ -215,8 +218,8 @@ public class FundingsController extends BaseWorkspaceController {
 	 * 
 	 */
 	private List<String> createFundingIdList(HttpServletRequest request) {
-		OrcidProfile currentProfile = getEffectiveProfile();
-		Map<String, String> languages = LanguagesMap.buildLanguageMap(localeManager.getLocale(), false);
+		OrcidProfile currentProfile = getEffectiveProfile();		
+		Map<String, String> languages = lm.buildLanguageMap(localeManager.getLocale(), false);
 		FundingList fundings = currentProfile.getOrcidActivities() == null ? null
 				: currentProfile.getOrcidActivities().getFundings();
 

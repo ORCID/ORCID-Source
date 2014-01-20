@@ -22,6 +22,7 @@ import java.util.TreeMap;
 
 import org.apache.commons.lang.WordUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.cache.annotation.Cacheable;
 
 public class LanguagesMap {
     /**
@@ -64,31 +65,19 @@ public class LanguagesMap {
      *            The current locale
      * @return A map that contains the list of available languages in the
      *         current locale
-     * */
-    public static Map<String, String> getLanguagesMap(Locale locale) {
-        if (locale == null)
+     * */    
+    public Map<String, String> getLanguagesMap(Locale locale) {
+    	if (locale == null)
             locale = Locale.US;
 
         if (i18nLanguagesMap.containsKey(locale.toString()))
             return i18nLanguagesMap.get(locale.toString());
         else {
-            Map<String, String> newLanguageMap = LanguagesMap.buildLanguageMap(locale);
+            Map<String, String> newLanguageMap = buildLanguageMap(locale, true);
             i18nLanguagesMap.put(locale.toString(), newLanguageMap);
             return newLanguageMap;
         }
-    }
-
-    /**
-     * Builds a map that contains the available languages for the given locale
-     * Sorted by default
-     * 
-     * @param userLocale
-     *            the current locale
-     * @return A map containing the available languages for the given locale
-     * */
-    private static Map<String, String> buildLanguageMap(Locale userLocale) {
-        return buildLanguageMap(userLocale, true);
-    }
+    }    
     
     /**
      * Builds a map that contains the available languages for the given locale
@@ -96,9 +85,10 @@ public class LanguagesMap {
      * @param userLocale
      *            the current locale
      * @return A map containing the available languages for the given locale
-     * */
-    public static Map<String, String> buildLanguageMap(Locale userLocale, boolean sorted) {
-        Map<String, String> languagesMap = new TreeMap<String, String>();
+     * */    
+    @Cacheable(value = "languages-map", key = "#userLocale.toString() + '-' + #sorted.toString()")
+    public Map<String, String> buildLanguageMap(Locale userLocale, boolean sorted) {
+    	Map<String, String> languagesMap = new TreeMap<String, String>();
 
         for (Locale locale: orcidLocales) {
             if(sorted)
@@ -119,8 +109,9 @@ public class LanguagesMap {
      * 
      * @return The language translated to the given locale.
      * */
-    public static String buildLanguageValue(Locale locale, Locale userLocale) {
-        String variant = locale.getVariant();
+    @Cacheable(value = "languages-map", key = "#locale.toString() + '-' + #userLocale.toString()")
+    public String buildLanguageValue(Locale locale, Locale userLocale) {
+    	String variant = locale.getVariant();
         String displayVariant = locale.getDisplayVariant(userLocale);
         String language = WordUtils.capitalize(locale.getDisplayLanguage(userLocale));
 
