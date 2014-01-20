@@ -117,6 +117,9 @@ public class WorksController extends BaseWorkspaceController {
 
     @Resource
     private LocaleManager localeManager;
+    
+    @Resource(name="languagesMap")
+    private LanguagesMap lm;
 
     /**
      * Removes a work from a profile
@@ -156,7 +159,7 @@ public class WorksController extends BaseWorkspaceController {
     public @ResponseBody
     List<Work> getWorkJson(HttpServletRequest request, @RequestParam(value = "workIds") String workIdsStr) {
         Map<String, String> countries = retrieveIsoCountries();
-        Map<String, String> languages = LanguagesMap.buildLanguageMap(localeManager.getLocale(), false);
+        Map<String, String> languages = lm.buildLanguageMap(localeManager.getLocale(), false);
         List<Work> workList = new ArrayList<>();
         Work work = null;
         String[] workIds = workIdsStr.split(",");
@@ -298,7 +301,7 @@ public class WorksController extends BaseWorkspaceController {
     public @ResponseBody
     Work getWorkInfo(@RequestParam(value = "workId") String workId) {
     	Map<String, String> countries = retrieveIsoCountries();
-        Map<String, String> languages = LanguagesMap.buildLanguageMap(localeManager.getLocale(), false);
+        Map<String, String> languages = lm.buildLanguageMap(localeManager.getLocale(), false);
     	if(StringUtils.isEmpty(workId))
     		return null;
     	    	    	
@@ -429,7 +432,7 @@ public class WorksController extends BaseWorkspaceController {
     @RequestMapping(value = "/languages.json", method = RequestMethod.GET)
     public @ResponseBody
     Map<String, String> getLanguageMap(HttpServletRequest request) {
-        return LanguagesMap.buildLanguageMap(localeManager.getLocale(), false);
+        return lm.buildLanguageMap(localeManager.getLocale(), false);
     }
 
     /**

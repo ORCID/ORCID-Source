@@ -99,6 +99,9 @@ public class WorkspaceController extends BaseWorkspaceController {
 
     @Resource
     private LocaleManager localeManager;
+    
+    @Resource(name="languagesMap")
+    private LanguagesMap lm;
 
     @ModelAttribute("thirdPartiesForImport")
     public List<OrcidClient> retrieveThirdPartiesForImport() {
@@ -246,7 +249,7 @@ public class WorkspaceController extends BaseWorkspaceController {
 
     @ModelAttribute("languages")
     public Map<String, String> retrieveLocalesAsMap() {
-        return LanguagesMap.getLanguagesMap(localeManager.getLocale());
+        return lm.getLanguagesMap(localeManager.getLocale());
     }
 
     @RequestMapping
@@ -259,7 +262,7 @@ public class WorkspaceController extends BaseWorkspaceController {
         OrcidProfile profile = orcidProfileManager.retrieveOrcidProfile(getCurrentUserOrcid(), LoadOptions.BIO_ONLY);
         mav.addObject("profile", profile);
         mav.addObject("currentLocaleKey", localeManager.getLocale().toString());
-        mav.addObject("currentLocaleValue", LanguagesMap.buildLanguageValue(localeManager.getLocale(), localeManager.getLocale()));
+        mav.addObject("currentLocaleValue", lm.buildLanguageValue(localeManager.getLocale(), localeManager.getLocale()));
         return mav;
     }
 

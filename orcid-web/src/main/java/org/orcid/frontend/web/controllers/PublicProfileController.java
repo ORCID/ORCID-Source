@@ -74,6 +74,9 @@ public class PublicProfileController extends BaseWorkspaceController {
 
     @Resource
     private Jpa2JaxbAdapter jpa2JaxbAdapter;
+    
+    @Resource(name="languagesMap")
+    private LanguagesMap lm;
 
     @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}")
     public ModelAndView publicPreview(HttpServletRequest request, @RequestParam(value = "page", defaultValue = "1") int pageNo,
@@ -148,7 +151,7 @@ public class PublicProfileController extends BaseWorkspaceController {
     @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/fundings.json")
     public @ResponseBody
     List<FundingForm> getFundingsJson(HttpServletRequest request, @PathVariable("orcid") String orcid, @RequestParam(value = "fundingIds") String fundingIdsStr) {
-        Map<String, String> languages = LanguagesMap.buildLanguageMap(localeManager.getLocale(), false);
+        Map<String, String> languages = lm.buildLanguageMap(localeManager.getLocale(), false);
         List<FundingForm> fundings = new ArrayList<FundingForm>();
         Map<String, Funding> fundingMap = fundingMap(orcid);
         String[] fundingIds = fundingIdsStr.split(",");
@@ -175,7 +178,7 @@ public class PublicProfileController extends BaseWorkspaceController {
     public @ResponseBody
     List<Work> getWorkJson(HttpServletRequest request, @PathVariable("orcid") String orcid, @RequestParam(value = "workIds") String workIdsStr) {
         Map<String, String> countries = retrieveIsoCountries();
-        Map<String, String> languages = LanguagesMap.buildLanguageMap(localeManager.getLocale(), false);
+        Map<String, String> languages = lm.buildLanguageMap(localeManager.getLocale(), false);
 
         HashMap<String, Work> minimizedWorksMap = minimizedWorksMap(orcid);
 
@@ -220,7 +223,7 @@ public class PublicProfileController extends BaseWorkspaceController {
     public @ResponseBody
     Work getWorkInfo(@PathVariable("orcid") String orcid, @RequestParam(value = "workId") String workId) {
         Map<String, String> countries = retrieveIsoCountries();
-        Map<String, String> languages = LanguagesMap.buildLanguageMap(localeManager.getLocale(), false);
+        Map<String, String> languages = lm.buildLanguageMap(localeManager.getLocale(), false);
         if (StringUtils.isEmpty(workId))
             return null;
 

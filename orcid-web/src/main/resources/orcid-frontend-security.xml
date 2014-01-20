@@ -263,4 +263,7 @@
 	<!-- Simple listener that gets fired when successful login occurs -->
 	<bean id="loginApplicationListener"
 		class="org.orcid.frontend.web.listener.LoginApplicationListener" />
+		
+	<bean id="languagesMap"
+		class="org.orcid.frontend.web.util.LanguagesMap" />		
 </beans>
