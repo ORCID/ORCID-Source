@@ -26,16 +26,17 @@
 					<strong ng-show="funding.fundingTitle.title.value">{{funding.fundingTitle.title.value}}:</strong>
 					<span class="funding-name" ng-bind-html="funding.fundingName.value"></span>
 					<span class="funding-date" ng-show="funding.startDate && !funding.endDate">
-						(<span ng-show="funding.startDate.month">{{funding.startDate.month}}-</span><span ng-show="funding.startDate.year">{{funding.startDate.year}}</span>
-				    	<@orcid.msg 'workspace_fundings.dateSeparator'/>&nbsp;
+						(<span ng-show="funding.startDate.year">{{funding.startDate.year}}</span><span ng-show="funding.startDate.month">-{{funding.startDate.month}}</span>						
+				    	<@orcid.msg 'workspace_fundings.dateSeparator'/>
 				    	<@orcid.msg 'workspace_fundings.present'/>)
 					</span>
 					<span class="funding-date" ng-show="funding.startDate && funding.endDate">
-						(<span ng-show="funding.startDate.month">{{funding.startDate.month}}-</span><span ng-show="funding.startDate.year">{{funding.startDate.year}}</span>
-						<@orcid.msg 'workspace_fundings.dateSeparator'/>&nbsp;<span ng-show="funding.endDate.month">{{funding.endDate.month}}-</span><span ng-show="funding.endDate.year">{{funding.endDate.year}}</span>)
+						(<span ng-show="funding.startDate.year">{{funding.startDate.year}}</span><span ng-show="funding.startDate.month">-{{funding.startDate.month}}</span>						
+						<@orcid.msg 'workspace_fundings.dateSeparator'/>
+						<span ng-show="funding.endDate.year">{{funding.endDate.year}}</span><span ng-show="funding.endDate.month">-{{funding.endDate.month}}</span>)
 					</span>
 					<span class="funding-date" ng-show="!funding.startDate && funding.endDate">
-					     (<span ng-show="funding.endDate.month">{{funding.endDate.month}}-</span><span ng-show="funding.endDate.year">{{funding.endDate.year}}</span>)
+					     (<span ng-show="funding.endDate.year">{{funding.endDate.year}}</span><span ng-show="funding.endDate.month">-{{funding.endDate.month}}</span>)
 					</span>
 				</h3>
 			</div>
@@ -74,25 +75,4 @@
 <div ng-show="fundingSrvc.loading == false && fundingSrvc.fundings.length == 0" class="alert alert-info" ng-cloak>
     <strong><#if (publicProfile)?? && publicProfile == true><@orcid.msg 'workspace_fundings_body_list.nograntaddedyet' /><#else><@orcid.msg 'workspace_fundings.havenotaddaffiliation' /><a ng-click="addFundingModal()"> <@orcid.msg 'workspace_fundings_body_list.addsomenow'/></a></#if></strong>
 </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

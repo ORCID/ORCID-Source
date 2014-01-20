@@ -105,10 +105,7 @@
 						<strong> <@orcid.msg
 							'manual_work_form_contents.labelPubDate'/> </strong>
 						<div>
-							<span
-								ng-show="worksInfo[work.putCode.value].publicationDate.day && worksInfo[work.putCode.value].publicationDate.month">{{worksInfo[work.putCode.value].publicationDate.day}}-</span><span
-								ng-show="worksInfo[work.putCode.value].publicationDate.month">{{worksInfo[work.putCode.value].publicationDate.month}}-</span><span
-								ng-show="worksInfo[work.putCode.value].publicationDate.year">{{worksInfo[work.putCode.value].publicationDate.year}}</span>
+							<span ng-show="worksInfo[work.putCode.value].publicationDate.year">{{worksInfo[work.putCode.value].publicationDate.year}}</span><span ng-show="worksInfo[work.putCode.value].publicationDate.month">-{{worksInfo[work.putCode.value].publicationDate.month}}</span><span ng-show="worksInfo[work.putCode.value].publicationDate.day && worksInfo[work.putCode.value].publicationDate.month">-{{worksInfo[work.putCode.value].publicationDate.day}}</span>							
 						</div>
 					</div>
 				</div>

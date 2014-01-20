@@ -79,10 +79,7 @@
 				<div class="col-md-8">
 					<strong><@orcid.msg 'manual_affiliation_form_contents.labelStartDate'/></strong>
 					<div>
-						<span
-							ng-show="affiliation.startDate.day && affiliation.startDate.month">{{affiliation.startDate.day}}-</span><span
-							ng-show="affiliation.startDate.month">{{affiliation.startDate.month}}-</span><span
-							ng-show="affiliation.startDate.year">{{affiliation.startDate.year}}</span>
+						<span ng-show="affiliation.startDate.year">{{affiliation.startDate.year}}</span><span ng-show="affiliation.startDate.month">-{{affiliation.startDate.month}}</span><span ng-show="affiliation.startDate.day && affiliation.startDate.month">-{{affiliation.startDate.day}}</span>
 					</div>
 				</div>
 			</div>
@@ -90,10 +87,7 @@
 				<div class="col-md-8">
 					<strong><@orcid.msg 'manual_affiliation_form_contents.labelEndDate'/></strong>
 					<div>
-						<span
-							ng-show="affiliation.endDate.day && affiliation.endDate.month">{{affiliation.endDate.day}}-</span><span
-							ng-show="affiliation.endDate.month">{{affiliation.endDate.month}}-</span><span
-							ng-show="affiliation.endDate.year">{{affiliation.endDate.year}}</span>
+						<span ng-show="affiliation.endDate.year">{{affiliation.endDate.year}}</span><span ng-show="affiliation.endDate.month">-{{affiliation.endDate.month}}</span><span ng-show="affiliation.endDate.day && affiliation.endDate.month">-{{affiliation.endDate.day}}</span>						
 					</div>
 				</div>
 			</div>
