@@ -22,7 +22,6 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
-import org.orcid.frontend.web.controllers.WorksController;
 import org.orcid.jaxb.model.message.Country;
 import org.orcid.jaxb.model.message.FuzzyDate;
 import org.orcid.jaxb.model.message.Iso3166Country;
@@ -43,6 +42,8 @@ import org.orcid.persistence.jpa.entities.custom.MinimizedWorkEntity;
 
 public class Work implements ErrorsInterface, Serializable {
 
+	public static final String OTHER_AT_BOTTOM = "zzz-other";
+	
 	private static final long serialVersionUID = 1L;
 
 	private List<String> errors = new ArrayList<String>();
@@ -229,7 +230,7 @@ public class Work implements ErrorsInterface, Serializable {
 			ow.setWorkTitle(this.workTitle.toWorkTitle());
 		}
 		if (this.getWorkType() != null) {
-			if(!WorksController.OTHER_AT_BOTTOM.equals(this.getWorkType().getValue()))
+			if(!OTHER_AT_BOTTOM.equals(this.getWorkType().getValue()))
 				ow.setWorkType(WorkType.fromValue(this.getWorkType().getValue()));				
 			else
 				ow.setWorkType(WorkType.OTHER);
