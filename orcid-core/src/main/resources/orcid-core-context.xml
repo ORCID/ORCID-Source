@@ -323,6 +323,8 @@
 	
 	<bean id="profileWorkManager" class="org.orcid.core.manager.impl.ProfileWorkManagerImpl" />
 	
+	<bean id="ActivityCacheManager" class="org.orcid.core.manager.impl.ActivityCacheManagerImpl" />
+	
 	<bean id="profileEventManager" class="org.orcid.core.profileEvent.ProfileEventManager" />
 	
 	<bean id="workManager" class="org.orcid.core.manager.impl.WorkManagerImpl" />

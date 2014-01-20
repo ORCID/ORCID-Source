@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,6 +32,8 @@ import org.slf4j.LoggerFactory;
 public class TreeCleaner {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TreeCleaner.class);
+
+    public static final ConcurrentHashMap<Class<?>, Package> CANDIDATE_CLASSES = new ConcurrentHashMap<>();
 
     private boolean removeEmptyObjects = true;
 
@@ -144,9 +147,13 @@ public class TreeCleaner {
     private boolean isCandidate(Method method) {
         if (method != null && method.getName().startsWith("get")) {
             Class<?> returnType = method.getReturnType();
-            if (returnType != null && returnType.getPackage() != null) {
-                Package aPackage = returnType.getPackage();
+            if (CANDIDATE_CLASSES.contains(returnType)) {
+                return true;
+            }
+            Package aPackage = returnType.getPackage();
+            if (returnType != null && aPackage != null) {
                 if (aPackage.getName().startsWith("org.orcid") || Collection.class.isAssignableFrom(returnType) || String.class.isAssignableFrom(returnType)) {
+                    CANDIDATE_CLASSES.put(returnType, aPackage);
                     return true;
                 }
             }

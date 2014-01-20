@@ -19,19 +19,21 @@ package org.orcid.frontend.web.controllers;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.annotation.Resource;
 
+import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.CountryManager;
 import org.orcid.core.manager.CrossRefManager;
 import org.orcid.core.manager.SecurityQuestionManager;
 import org.orcid.core.manager.SponsorManager;
 import org.orcid.core.security.visibility.filter.VisibilityFilter;
-import org.orcid.frontend.web.util.FunctionsOverCollections;
 import org.orcid.frontend.web.util.YearsList;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.persistence.jpa.entities.CountryIsoEntity;
+import org.orcid.utils.FunctionsOverCollections;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
 /**
@@ -53,6 +55,9 @@ public class BaseWorkspaceController extends BaseController {
 
     @Resource
     protected CrossRefManager crossRefManager;
+    
+    @Resource
+    private LocaleManager localeManager;
 
     @Resource
     protected SecurityQuestionManager securityQuestionManager;
@@ -78,14 +83,8 @@ public class BaseWorkspaceController extends BaseController {
 
     @ModelAttribute("isoCountries")
     public Map<String, String> retrieveIsoCountries() {
-        Map<String, String> dbCountries = countryManager.retrieveCountriesAndIsoCodes(); 
-        Map<String, String> countries = new LinkedHashMap<String, String>();        
-        
-        for(String key : dbCountries.keySet()){            
-            countries.put(key, getMessage(buildInternationalizationKey(CountryIsoEntity.class, key)));
-        }
-                
-        return FunctionsOverCollections.sortMapsByValues(countries);
+        Locale locale = localeManager.getLocale();
+        return localeManager.getCountries(locale);
     }
 
     @ModelAttribute("emailVisibilities")

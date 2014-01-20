@@ -30,11 +30,20 @@
             memoryStoreEvictionPolicy="LRU"
             />
 
-    <cache name="country-list" maxElementsInMemory="200" eternal="true" overflowToDisk="false" copyOnRead="true"
+    <cache name="country-list" maxElementsInMemory="500" eternal="true" overflowToDisk="false" copyOnRead="true"
            copyOnWrite="true"/>
            
-    <cache name="iso-countries" maxElementsInMemory="200" eternal="true" overflowToDisk="false" copyOnRead="false"
+    <cache name="iso-countries" maxElementsInMemory="500" eternal="true" overflowToDisk="false" copyOnRead="false"
            copyOnWrite="false"/>
+
+	<cache name="pub-min-works-maps" maxElementsInMemory="2000" timeToLiveSeconds="1200" overflowToDisk="false" copyOnRead="false"
+           copyOnWrite="false" eternal="false"/>
+           
+    <cache name="pub-affiliation-maps" maxElementsInMemory="2000" timeToLiveSeconds="1200" overflowToDisk="false" copyOnRead="false"
+           copyOnWrite="false" eternal="false"/>                 
+           
+	<cache name="pub-funding-maps" maxElementsInMemory="2000" timeToLiveSeconds="1200" overflowToDisk="false" copyOnRead="false"
+           copyOnWrite="false" eternal="false"/>                 
            
     <cache name="security-questions" maxElementsInMemory="200" eternal="true" overflowToDisk="false" copyOnRead="false"
            copyOnWrite="false"/>
@@ -44,6 +53,9 @@
 
     <cache name="read-access-clients" maxElementsInMemory="200" eternal="true" overflowToDisk="false" copyOnRead="false"
            copyOnWrite="false"/>
+    
+    <cache name="locale-messages" maxElementsInMemory="2000" timeToLiveSeconds="1200" overflowToDisk="false" copyOnRead="false"
+           copyOnWrite="false" eternal="false"/>                 
            
     <cache name="recent-orcid" maxElementsInMemory="20000" timeToLiveSeconds="60" overflowToDisk="false" copyOnRead="false"
            copyOnWrite="false" eternal="false"/>
@@ -59,5 +71,6 @@
            
 	<cache name="works" maxElementsInMemory="2000" timeToLiveSeconds="900" overflowToDisk="false" copyOnRead="false"
            copyOnWrite="false" eternal="false"/>                 
+
            
 </ehcache>

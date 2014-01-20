@@ -19,10 +19,12 @@ package org.orcid.frontend.web.controllers;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import org.orcid.core.locale.LocaleManager;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.pojo.UserStatus;
 import org.orcid.utils.OrcidStringUtils;
@@ -41,6 +43,9 @@ import org.springframework.web.servlet.support.RequestContextUtils;
 @Controller
 public class HomeController extends BaseController {
     private static final Logger LOGGER = LoggerFactory.getLogger(HomeController.class);
+
+    @Resource
+    private LocaleManager localeManager;
 
 // @formatter:off
 //    @RequestMapping(value = "/")
@@ -95,15 +100,9 @@ public class HomeController extends BaseController {
                 }
             }
         }
-
+        
         Locale locale = RequestContextUtils.getLocale(request);
-        org.orcid.pojo.Local lPojo = new org.orcid.pojo.Local();
-        lPojo.setLocale(locale.toString());
-
-        ResourceBundle resources = ResourceBundle.getBundle("i18n/javascript", locale, new UTF8Control());
-        lPojo.setMessages(OrcidStringUtils.resourceBundleToMap(resources));
-
-        return lPojo;
+        return localeManager.getJavascriptMessages(locale);
 
     }
 

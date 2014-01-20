@@ -17,6 +17,9 @@
 package org.orcid.core.locale;
 
 import java.util.Locale;
+import java.util.Map;
+
+import org.orcid.pojo.Local;
 
 public interface LocaleManager {
 
@@ -33,5 +36,9 @@ public interface LocaleManager {
      * @return The localized message (using the locale for the current thread)
      */
     String resolveMessage(String messageCode, Object... messageParams);
+    
+    public Local getJavascriptMessages(Locale locale);
+    
+    public Map<String, String> getCountries(Locale locale);
 
 }
