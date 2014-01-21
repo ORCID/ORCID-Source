@@ -6,6 +6,14 @@ The ORCID Team is always **EXCITED** to get contributions. Checkout our pointers
     excellent [Collaborating Documentation](https://help.github.com/categories/63/articles) first.
 
 
+* **Feature requests should be made in the Ideas forum**
+
+    Don't create issues for feature requests in the GitHub issue tracker. Instead,
+    search [the Ideas Forum](http://support.orcid.org/forums/175591-orcid-ideas-forum)
+    to see if your idea has already been suggested. If it has, you can vote and comment
+    to show your support. If not, you can add a new idea.
+
+
 * **Discuss non-trivial contribution ideas with committers**
 
     If you're considering anything more than correcting a typo or fixing a minor
