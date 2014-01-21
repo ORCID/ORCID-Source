@@ -641,10 +641,13 @@ select {
 	font-size: 22px;
 }
 
-.header .search .settings-button i,.header .search .search-button i {
+.header .search .settings-button i,
+.header .search .search-button i {
 	width: 22px;
-	float: right;    
-    margin: 3px 9px 0 0;
+}
+
+.header .search .settings-button i{
+	margin: 3px 0;	
 }
 
 .header .search .settings-button:hover {
@@ -657,7 +660,8 @@ select {
 	border: 0;
 	background: transparent;
 	padding: 0 0 30px 0;
-	margin-bottom:6px;
+	margin: 3px 0 3px 5px;
+	float: left;
 }
 
 .header .search .search-button .icon-orcid-search {
@@ -665,6 +669,7 @@ select {
 	height: 21px;
 	background: transparent url(../img/all-icons.png) 0px 0px no-repeat;
 	display: block;
+	margin: 2px;
 }
 
 .header .search .search-button .icon-orcid-search:hover {
@@ -3057,6 +3062,10 @@ p.orcid-id-container{
 	width: 69%;
 }
 
+.top-buttons{
+	float: left;
+}
+
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */
 		
@@ -3825,6 +3834,14 @@ p.orcid-id-container{
 	.public-profile .left-aside,
 	.public-profile .right-aside{
 		padding: 15px;	
+	}
+	
+	.top-buttons{
+		float: right;
+	}
+	
+	.header .search .settings-button i{
+		margin: 10px 0 0 0;
 	}
 	
 }
