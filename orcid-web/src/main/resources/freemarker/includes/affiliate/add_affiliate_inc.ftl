@@ -143,42 +143,42 @@
 				</div>
 				<div class="control-group">
 		    		<label class="relative" for="manualAffiliation.startDay"><@orcid.msg 'manual_affiliation_form_contents.labelStartDate'/></label>
-		    		<div class="relative">
-				    <select id="startDay" name="startDay" ng-model="editAffiliation.startDate.day">
-						<#list days?keys as key>
-							<option value="${key}">${days[key]}</option>
-						</#list>
-		    		</select>
-				    <select id="startMonth" name="startMonth" ng-model="editAffiliation.startDate.month">
-						<#list months?keys as key>
-							<option value="${key}">${months[key]}</option>
-						</#list>
-		    		</select>
-				    <select id="startYear" name="startMonth" ng-model="editAffiliation.startDate.year">
-						<#list years?keys as key>
-							<option value="${key}">${years[key]}</option>
-						</#list>
-		    		</select>
+		    		<div class="relative">				    
+			    		<select id="startYear" name="startMonth" ng-model="editAffiliation.startDate.year">
+							<#list years?keys as key>
+								<option value="${key}">${years[key]}</option>
+							</#list>
+			    		</select>
+					    <select id="startMonth" name="startMonth" ng-model="editAffiliation.startDate.month">
+							<#list months?keys as key>
+								<option value="${key}">${months[key]}</option>
+							</#list>
+			    		</select>
+					    <select id="startDay" name="startDay" ng-model="editAffiliation.startDate.day">
+							<#list days?keys as key>
+								<option value="${key}">${days[key]}</option>
+							</#list>
+			    		</select>
 		    		</div>
 		    	</div>
 		    	<div class="control-group">
 		    		<label class="relative" for="manualAffiliation.endDay"><@orcid.msg 'manual_affiliation_form_contents.labelEndDateLeave'/></label>
-		    		<div class="relative">
-				    <select id="endDay" name="endDay" ng-model="editAffiliation.endDate.day">
-						<#list days?keys as key>
-							<option value="${key}">${days[key]}</option>
-						</#list>
-		    		</select>
-				    <select id="endMonth" name="endMonth" ng-model="editAffiliation.endDate.month">
-						<#list months?keys as key>
-							<option value="${key}">${months[key]}</option>
-						</#list>
-		    		</select>
-				    <select id="endYear" name="endMonth" ng-model="editAffiliation.endDate.year">
-						<#list years?keys as key>
-							<option value="${key}">${years[key]}</option>
-						</#list>
-		    		</select>
+		    		<div class="relative">				    
+			    		<select id="endYear" name="endMonth" ng-model="editAffiliation.endDate.year">
+							<#list years?keys as key>
+								<option value="${key}">${years[key]}</option>
+							</#list>
+			    		</select>
+					    <select id="endMonth" name="endMonth" ng-model="editAffiliation.endDate.month">
+							<#list months?keys as key>
+								<option value="${key}">${months[key]}</option>
+							</#list>
+			    		</select>				
+			    		<select id="endDay" name="endDay" ng-model="editAffiliation.endDate.day">
+							<#list days?keys as key>
+								<option value="${key}">${days[key]}</option>
+							</#list>
+			    		</select>    
 		    		</div>
 		    		<span class="orcid-error" ng-show="editAffiliation.endDate.errors.length > 0">
 						<div ng-repeat='error in editAffiliation.endDate.errors' ng-bind-html-unsafe="error"></div>

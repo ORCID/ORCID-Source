@@ -56,10 +56,7 @@
 				<div class="col-md-8">
 					<strong><@orcid.msg 'manual_funding_form_contents.labelStartDate'/></strong>
 					<div>
-						<span
-							ng-show="funding.startDate.day && funding.startDate.month">{{funding.startDate.day}}-</span><span
-							ng-show="funding.startDate.month">{{funding.startDate.month}}-</span><span
-							ng-show="funding.startDate.year">{{funding.startDate.year}}</span>
+						<span ng-show="funding.startDate.year">{{funding.startDate.year}}</span><span ng-show="funding.startDate.month">-{{funding.startDate.month}}</span><span ng-show="funding.startDate.day && funding.startDate.month">-{{funding.startDate.day}}</span>						
 					</div>
 				</div>
 			</div>
@@ -67,10 +64,7 @@
 				<div class="col-md-8">
 					<strong><@orcid.msg 'manual_funding_form_contents.labelEndDate'/></strong>
 					<div>
-						<span
-							ng-show="funding.endDate.day && funding.endDate.month">{{funding.endDate.day}}-</span><span
-							ng-show="funding.endDate.month">{{funding.endDate.month}}-</span><span
-							ng-show="funding.endDate.year">{{funding.endDate.year}}</span>
+						<span ng-show="funding.endDate.year">{{funding.endDate.year}}</span><span ng-show="funding.endDate.month">-{{funding.endDate.month}}</span><span ng-show="funding.endDate.day && funding.endDate.month">-{{funding.endDate.day}}</span>						
 					</div>
 				</div>
 			</div>

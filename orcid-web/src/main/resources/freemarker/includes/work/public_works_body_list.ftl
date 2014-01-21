@@ -32,15 +32,15 @@
 				        	    </#if>
 				        	    <#if work.publicationDate??>
 				        	    	<#assign date = '' >
-				        	    	<#if work.publicationDate.month??>
-				        	    		 <#if work.publicationDate.day??>
-				        	       			<#assign date = date + work.publicationDate.day + '-'>
-				        	    		</#if>
-				        	       		<#assign date = date + work.publicationDate.month + '-'>
-				        	        </#if>
-				        	        <#if work.publicationDate.year??>
+				        	    	<#if work.publicationDate.year??>
 				        	       		<#assign date = date + work.publicationDate.year>
 				        	    	</#if>
+				        	    	<#if work.publicationDate.month??>
+				        	    		 <#if work.publicationDate.day??>
+				        	       			<#assign date = date + '-' + work.publicationDate.day >
+				        	    		</#if>
+				        	       		<#assign date = date + '-' + work.publicationDate.month >
+				        	        </#if>				        	        
 				        	    	${date}
 				        	    </#if>
 				        	</#if>

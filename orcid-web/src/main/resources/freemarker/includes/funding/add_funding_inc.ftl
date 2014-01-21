@@ -123,41 +123,41 @@
 				<div class="control-group">
 		    		<label class="relative"><@orcid.msg 'manual_funding_form_contents.labelStartDate'/></label>
 		    		<div class="relative">
-				    <select id="startDay" name="startDay" ng-model="editFunding.startDate.day">
-						<#list days?keys as key>
-							<option value="${key}">${days[key]}</option>
-						</#list>
-		    		</select>
-				    <select id="startMonth" name="startMonth" ng-model="editFunding.startDate.month">
-						<#list months?keys as key>
-							<option value="${key}">${months[key]}</option>
-						</#list>
-		    		</select>
-				    <select id="startYear" name="startMonth" ng-model="editFunding.startDate.year">
-						<#list years?keys as key>
-							<option value="${key}">${years[key]}</option>
-						</#list>
-		    		</select>
+					    <select id="startYear" name="startMonth" ng-model="editFunding.startDate.year">
+							<#list years?keys as key>
+								<option value="${key}">${years[key]}</option>
+							</#list>
+			    		</select>				    
+					    <select id="startMonth" name="startMonth" ng-model="editFunding.startDate.month">
+							<#list months?keys as key>
+								<option value="${key}">${months[key]}</option>
+							</#list>
+			    		</select>
+					    <select id="startDay" name="startDay" ng-model="editFunding.startDate.day">
+							<#list days?keys as key>
+								<option value="${key}">${days[key]}</option>
+							</#list>
+			    		</select>
 		    		</div>
 		    	</div>
 		    	<div class="control-group">
 		    		<label class="relative"><@orcid.msg 'manual_funding_form_contents.labelEndDateLeave'/></label>
-		    		<div class="relative">
-				    <select id="endDay" name="endDay" ng-model="editFunding.endDate.day">
-						<#list days?keys as key>
-							<option value="${key}">${days[key]}</option>
-						</#list>
-		    		</select>
-				    <select id="endMonth" name="endMonth" ng-model="editFunding.endDate.month">
-						<#list months?keys as key>
-							<option value="${key}">${months[key]}</option>
-						</#list>
-		    		</select>
-				    <select id="endYear" name="endMonth" ng-model="editFunding.endDate.year">
-						<#list fundingYears?keys as key>
-							<option value="${key}">${fundingYears[key]}</option>
-						</#list>
-		    		</select>
+		    		<div class="relative">					    
+			    		<select id="endYear" name="endMonth" ng-model="editFunding.endDate.year">
+							<#list fundingYears?keys as key>
+								<option value="${key}">${fundingYears[key]}</option>
+							</#list>
+			    		</select>
+					    <select id="endMonth" name="endMonth" ng-model="editFunding.endDate.month">
+							<#list months?keys as key>
+								<option value="${key}">${months[key]}</option>
+							</#list>
+			    		</select>			
+			    		<select id="endDay" name="endDay" ng-model="editFunding.endDate.day">
+							<#list days?keys as key>
+								<option value="${key}">${days[key]}</option>
+							</#list>
+			    		</select>		    
 		    		</div>
 		    		<span class="orcid-error" ng-show="editFunding.endDate.errors.length > 0">
 						<div ng-repeat='error in editFunding.endDate.errors' ng-bind-html-unsafe="error"></div>
