@@ -29,7 +29,8 @@ UserVoice=window.UserVoice||[];(function(){var uv=document.createElement('script
 UserVoice.push(['set', {
   accent_color: '#a6ce39',
   trigger_color: 'white',
-  trigger_background_color: '#a6ce39'
+  trigger_background_color: '#a6ce39',
+  post_idea_enabled: 'false'
 }]);
 
 // Identify the user and pass traits
@@ -48,6 +49,7 @@ UserVoice.push(['identify', {
   //  ltv:          1495.00, // Decimal; lifetime value of the account
   //  plan:         'Enhanced' // Plan name for the account
   //}
+  
 }]);
 
 // Add default trigger to the bottom-right corner of the window:
