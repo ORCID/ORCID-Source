@@ -74,10 +74,12 @@
                     <div class="conditions">
                         <p><@orcid.msg 'public-layout.search.terms1'/><a href="${aboutUri}/legal"><@orcid.msg 'public-layout.search.terms2'/></a><@orcid.msg 'public-layout.search.terms3'/></p>
                     </div>
-                    <button type="submit" class="search-button">
-                        <i class="icon-orcid-search"></i>
-                    </button>
-                    <a href="<@spring.url "/orcid-search/search" />" class="settings-button" title="<@orcid.msg 'public-layout.search.advanced'/>"><i class="glyphicon glyphicon-cog"></i></a>
+                    <div class="top-buttons">
+                    	<button type="submit" class="search-button">
+	                        <i class="icon-orcid-search"></i>
+                    	</button>
+                    	<a href="<@spring.url "/orcid-search/search" />" class="settings-button" title="<@orcid.msg 'public-layout.search.advanced'/>"><i class="glyphicon glyphicon-cog"></i></a>
+                    </div>
                 </form>
                 <div class="language-selector" ng-controller="languageCtrl" id="languageCtrl">
 				    <form id="language-form" action="#">
