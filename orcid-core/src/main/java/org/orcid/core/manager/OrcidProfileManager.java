@@ -118,6 +118,8 @@ public interface OrcidProfileManager {
     OrcidProfile retrieveOrcidProfile(String orcid, LoadOptions loadOptions);
 
     OrcidProfile retrievePublicOrcidProfile(String orcid);
+    
+    OrcidProfile retrievePublicOrcidProfileFromCache(String orcid, Date lastModifiedDate);
 
     /**
      * Retrieves the orcid profile given an identifier, without any personal

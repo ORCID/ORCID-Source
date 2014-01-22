@@ -62,7 +62,6 @@ import org.orcid.core.manager.SourceManager;
 import org.orcid.core.security.OrcidWebRole;
 import org.orcid.core.security.visibility.aop.VisibilityControl;
 import org.orcid.core.utils.OrcidJaxbCopyUtils;
-import org.orcid.core.utils.ReleaseNameUtils;
 import org.orcid.jaxb.model.message.Affiliation;
 import org.orcid.jaxb.model.message.Affiliations;
 import org.orcid.jaxb.model.message.Biography;
@@ -125,8 +124,10 @@ import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
 import org.orcid.persistence.jpa.entities.ProfileWorkEntity;
 import org.orcid.utils.DateUtils;
 import org.orcid.utils.NullUtils;
+import org.orcid.utils.ReleaseNameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -629,9 +630,9 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
                 return orcidProfile;
             } else {
                 if (orcidProfile.getOrcidDeprecated() != null && orcidProfile.getOrcidDeprecated().getPrimaryRecord() != null)
-                    return createReservedForClaimOrcidProfile(orcid, orcidProfile.getOrcidDeprecated());
+                    return createReservedForClaimOrcidProfile(orcid, orcidProfile.getOrcidDeprecated(), orcidProfile.getOrcidHistory().getLastModifiedDate());
                 else
-                    return createReservedForClaimOrcidProfile(orcid);
+                    return createReservedForClaimOrcidProfile(orcid, orcidProfile.getOrcidHistory().getLastModifiedDate());
             }
         }
         return null;
@@ -661,11 +662,11 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         return false;
     }
 
-    private OrcidProfile createReservedForClaimOrcidProfile(String orcid) {
-        return createReservedForClaimOrcidProfile(orcid, null);
+    private OrcidProfile createReservedForClaimOrcidProfile(String orcid, LastModifiedDate lastModifiedDate) {
+        return createReservedForClaimOrcidProfile(orcid, null, lastModifiedDate);
     }
 
-    private OrcidProfile createReservedForClaimOrcidProfile(String orcid, OrcidDeprecated deprecatedInfo) {
+    private OrcidProfile createReservedForClaimOrcidProfile(String orcid, OrcidDeprecated deprecatedInfo, LastModifiedDate lastModifiedDate) {
         OrcidProfile op = new OrcidProfile();
         op.setOrcid(orcid);
 
@@ -674,6 +675,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
 
         OrcidHistory oh = new OrcidHistory();
         oh.setClaimed(new Claimed(false));
+        oh.setLastModifiedDate(lastModifiedDate);
         op.setOrcidHistory(oh);
         GivenNames gn = new GivenNames();
         PersonalDetails pd = new PersonalDetails();
@@ -693,6 +695,13 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         orcidProfile.setVerificationCode(decrypt(verificationCode));
         orcidProfile.setSecurityQuestionAnswer(decrypt(securityAnswer));
         return orcidProfile;
+    }
+
+    @Override
+    @VisibilityControl(removeAttributes = false, visibilities = Visibility.PUBLIC)
+    @Cacheable(value = "public-profile", key = "T(org.orcid.jaxb.model.message.OrcidProfile).createCacheKey(#orcid, #lastModifiedDate)")
+    public OrcidProfile retrievePublicOrcidProfileFromCache(String orcid, Date lastModifiedDate) {
+        return retrieveClaimedOrcidProfile(orcid);
     }
 
     @Override

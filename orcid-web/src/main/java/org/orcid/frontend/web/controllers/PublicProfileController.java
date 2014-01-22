@@ -33,6 +33,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.orcid.core.adapter.Jpa2JaxbAdapter;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.ActivityCacheManager;
+import org.orcid.core.manager.OrcidProfileCacheManager;
 import org.orcid.core.manager.ProfileWorkManager;
 import org.orcid.core.manager.WorkManager;
 import org.orcid.frontend.web.util.LanguagesMap;
@@ -78,6 +79,9 @@ public class PublicProfileController extends BaseWorkspaceController {
     @Resource(name="languagesMap")
     private LanguagesMap lm;
 
+    @Resource
+    private OrcidProfileCacheManager orcidProfileCacheManager;
+
     @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}")
     public ModelAndView publicPreview(HttpServletRequest request, @RequestParam(value = "page", defaultValue = "1") int pageNo,
             @RequestParam(value = "maxResults", defaultValue = "15") int maxResults, @PathVariable("orcid") String orcid) {
@@ -85,7 +89,7 @@ public class PublicProfileController extends BaseWorkspaceController {
         mav.addObject("isPublicProfile", true);
 
         request.getSession().removeAttribute(PUBLIC_WORKS_RESULTS_ATTRIBUTE);
-        OrcidProfile profile = orcidProfileManager.retrievePublicOrcidProfile(orcid);
+        OrcidProfile profile = orcidProfileCacheManager.retrievePublicOrcidProfile(orcid);
 
         mav.addObject("profile", profile);
 
