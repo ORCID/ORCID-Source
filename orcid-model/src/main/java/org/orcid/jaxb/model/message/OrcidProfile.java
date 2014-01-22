@@ -17,6 +17,7 @@
 package org.orcid.jaxb.model.message;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -27,8 +28,11 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
+import org.apache.commons.lang.StringUtils;
 import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.clientgroup.GroupType;
+import org.orcid.utils.DateUtils;
+import org.orcid.utils.ReleaseNameUtils;
 
 /**
  * <p>
@@ -61,12 +65,12 @@ import org.orcid.jaxb.model.clientgroup.GroupType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType( propOrder = { "orcid", "orcidId", "orcidIdentifier", "orcidDeprecated", "orcidPreferences", "orcidHistory", "orcidBio", "orcidActivities",
-        "orcidInternal" })
+@XmlType(propOrder = { "orcid", "orcidId", "orcidIdentifier", "orcidDeprecated", "orcidPreferences", "orcidHistory", "orcidBio", "orcidActivities", "orcidInternal" })
 @XmlRootElement(name = "orcid-profile")
 public class OrcidProfile implements Serializable {
 
     private static final long serialVersionUID = 1L;
+
     protected Orcid orcid;
 
     // Legacy
@@ -112,6 +116,9 @@ public class OrcidProfile implements Serializable {
 
     @XmlTransient
     private String securityQuestionAnswer;
+
+    @XmlTransient
+    String releaseName = ReleaseNameUtils.getReleaseName();
 
     /**
      * Gets the value of the orcid property.
@@ -476,6 +483,30 @@ public class OrcidProfile implements Serializable {
         this.orcidDeprecated = orcidDeprecated;
     }
 
+    public String getReleaseName() {
+        return releaseName;
+    }
+
+    public void setReleaseName(String releaseName) {
+        this.releaseName = releaseName;
+    }
+
+    public String getCacheKey() {
+        return createCacheKey(this);
+    }
+
+    public static String createCacheKey(OrcidProfile profile) {
+        return createCacheKey(profile.getOrcidIdentifier().getPath(), profile.getOrcidHistory().getLastModifiedDate().getValue().toXMLFormat(), profile.getReleaseName());
+    }
+
+    public static String createCacheKey(String path, Date lastModifiedDate) {
+        return createCacheKey(path, DateUtils.convertToXMLGregorianCalendar(lastModifiedDate).toXMLFormat(), ReleaseNameUtils.getReleaseName());
+    }
+
+    public static String createCacheKey(String path, String xmlFormatLastModifiedDate, String releaseName) {
+        return StringUtils.join(new String[] { path, xmlFormatLastModifiedDate, releaseName });
+    }
+
     public void downgradeToBioOnly() {
         setOrcidActivities(null);
     }
@@ -507,7 +538,7 @@ public class OrcidProfile implements Serializable {
             orcidActivities.downgradeToFundingsOnly();
         }
     }
-    
+
     @Override
     public String toString() {
         return OrcidMessage.convertToString(this);

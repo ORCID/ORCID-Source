@@ -75,5 +75,7 @@
 	<cache name="works" maxElementsInMemory="2000" timeToLiveSeconds="900" overflowToDisk="false" copyOnRead="false"
            copyOnWrite="false" eternal="false"/>                 
 
+	<cache name="public-profile" maxElementsInMemory="10000" timeToLiveSeconds="900" overflowToDisk="false" copyOnRead="false"
+           copyOnWrite="false" eternal="false"/>
            
 </ehcache>

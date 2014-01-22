@@ -14,7 +14,7 @@
  *
  * =============================================================================
  */
-package org.orcid.core.utils;
+package org.orcid.utils;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -22,7 +22,6 @@ import java.util.Date;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.orcid.utils.DateUtils;
 
 /**
  * 
