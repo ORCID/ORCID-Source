@@ -166,12 +166,12 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
 
     @Resource
     private GenericDao<OrgAffiliationRelationEntity, Long> orgAffilationRelationDao;
-    
-    @Resource
-	ProfileFundingDao profileFundingDao;
 
-	@Resource
-	FundingExternalIdentifierDao fundingExternalIdentifierDao;
+    @Resource
+    ProfileFundingDao profileFundingDao;
+
+    @Resource
+    FundingExternalIdentifierDao fundingExternalIdentifierDao;
 
     @Resource
     private EmailDao emailDao;
@@ -397,24 +397,23 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         }
 
     }
-    
+
     /**
      * Add source to the fundings
      * 
      * @param orcidProfile
      *            The profile
      * @param amenderOrcid
-     *            The orcid of the user or client that is adding the fundings
-     *            to the profile user
+     *            The orcid of the user or client that is adding the fundings to
+     *            the profile user
      * */
     private void addSourceToFundings(OrcidProfile orcidProfile, String amenderOrcid) {
         FundingList fundings = orcidProfile.getOrcidActivities() == null ? null : orcidProfile.getOrcidActivities().getFundings();
 
         if (fundings != null && !fundings.getFundings().isEmpty()) {
             for (Funding funding : fundings.getFundings()) {
-                if (funding.getSource() == null || funding.getSource().getSourceOrcid() == null
-                        || StringUtils.isEmpty(funding.getSource().getSourceOrcid().getPath()))
-                	funding.setSource(new Source(amenderOrcid));
+                if (funding.getSource() == null || funding.getSource().getSourceOrcid() == null || StringUtils.isEmpty(funding.getSource().getSourceOrcid().getPath()))
+                    funding.setSource(new Source(amenderOrcid));
             }
         }
 
@@ -514,7 +513,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         }
         return profile;
     }
-    
+
     /**
      * Retrieves the orcid works given an identifier
      * 
@@ -898,14 +897,14 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         }
         FundingList existingFundingList = existingActivities.getFundings();
         if (existingFundingList == null) {
-        	existingFundingList = new FundingList();
+            existingFundingList = new FundingList();
             existingActivities.setFundings(existingFundingList);
         }
 
         OrcidJaxbCopyUtils.copyFundingListToExistingPreservingVisibility(existingFundingList, updatedFundingList);
         return updateOrcidProfile(existingProfile);
     }
-    
+
     @Override
     @Transactional
     public void updatePasswordInformation(OrcidProfile updatedOrcidProfile) {
@@ -1273,7 +1272,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
      */
     @Override
     @Transactional
-    public void addFundings(OrcidProfile updatedOrcidProfile) {    	
+    public void addFundings(OrcidProfile updatedOrcidProfile) {
         String orcid = updatedOrcidProfile.getOrcid().getValue();
         OrcidProfile existingProfile = retrieveOrcidProfile(orcid);
         if (existingProfile == null) {
@@ -1285,13 +1284,13 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         Boolean claimed = existingProfile.getOrcidHistory().isClaimed();
         setFundingPrivacy(updatedFundingList, workVisibilityDefault, claimed == null ? false : claimed);
         updatedFundingList = dedupeFundings(updatedFundingList);
-        String amenderOrcid = sourceManager.retrieveSourceOrcid();        
-        addSourceToFundings(updatedFundingList, amenderOrcid);        
+        String amenderOrcid = sourceManager.retrieveSourceOrcid();
+        addSourceToFundings(updatedFundingList, amenderOrcid);
         List<Funding> updatedList = updatedFundingList.getFundings();
         checkForAlreadyExistingFundings(existingFundingList, updatedList);
         persistAddedFundings(orcid, updatedList);
     }
-    
+
     private void setAffiliationPrivacy(OrcidProfile updatedOrcidProfile, Visibility defaultAffiliationVisibility) {
         OrcidHistory orcidHistory = updatedOrcidProfile.getOrcidHistory();
         boolean isClaimed = orcidHistory != null ? orcidHistory.getClaimed().isValue() : false;
@@ -1303,7 +1302,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
             }
         }
     }
-    
+
     private void setFundingPrivacy(OrcidProfile updatedOrcidProfile, Visibility defaultFundingVisibility) {
         OrcidHistory orcidHistory = updatedOrcidProfile.getOrcidHistory();
         boolean isClaimed = orcidHistory != null ? orcidHistory.getClaimed().isValue() : false;
@@ -1311,7 +1310,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         if (incomingActivities != null) {
             FundingList incomingFundingList = incomingActivities.getFundings();
             if (incomingFundingList != null) {
-            	setFundingPrivacy(incomingFundingList, defaultFundingVisibility, isClaimed);
+                setFundingPrivacy(incomingFundingList, defaultFundingVisibility, isClaimed);
             }
         }
     }
@@ -1330,17 +1329,17 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
             }
         }
     }
-    
+
     private void setFundingPrivacy(FundingList incomingFundings, Visibility defaultFundingVisibility, boolean isClaimed) {
         for (Funding incomingFunding : incomingFundings.getFundings()) {
             if (StringUtils.isBlank(incomingFunding.getPutCode())) {
                 Visibility incomingFundingVisibility = incomingFunding.getVisibility();
                 if (isClaimed) {
                     if (defaultFundingVisibility.isMoreRestrictiveThan(incomingFundingVisibility)) {
-                    	incomingFunding.setVisibility(defaultFundingVisibility);
+                        incomingFunding.setVisibility(defaultFundingVisibility);
                     }
                 } else if (incomingFundingVisibility == null) {
-                	incomingFunding.setVisibility(Visibility.PRIVATE);
+                    incomingFunding.setVisibility(Visibility.PRIVATE);
                 }
             }
         }
@@ -1355,13 +1354,12 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
             }
         }
     }
-    
+
     private void addSourceToFundings(FundingList fundings, String amenderOrcid) {
         if (fundings != null && !fundings.getFundings().isEmpty()) {
             for (Funding funding : fundings.getFundings()) {
-                if (funding.getSource() == null || funding.getSource().getSourceOrcid() == null
-                        || StringUtils.isEmpty(funding.getSource().getSourceOrcid().getPath()))
-                	funding.setSource(new Source(amenderOrcid));
+                if (funding.getSource() == null || funding.getSource().getSourceOrcid() == null || StringUtils.isEmpty(funding.getSource().getSourceOrcid().getPath()))
+                    funding.setSource(new Source(amenderOrcid));
             }
         }
     }
@@ -1387,7 +1385,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         dedupedAffiliations.getAffiliation().addAll(affiliationSet);
         return dedupedAffiliations;
     }
-    
+
     private void checkForAlreadyExistingAffiliations(Affiliations existingAffiliations, List<Affiliation> updatedAffiliationsList) {
         if (existingAffiliations != null) {
             Set<Affiliation> existingAffiliationsSet = new HashSet<>();
@@ -1411,7 +1409,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         }
         removeFromCache(orcid);
     }
-    
+
     private void dedupeFundings(OrcidProfile orcidProfile) {
         OrcidActivities orcidActivities = orcidProfile.getOrcidActivities();
         if (orcidActivities != null) {
@@ -1433,17 +1431,17 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         dedupedFundings.getFundings().addAll(fundingsSet);
         return dedupedFundings;
     }
-    
+
     private void checkForAlreadyExistingFundings(FundingList existingFundings, List<Funding> updatedFundingsList) {
         if (existingFundings != null) {
             Set<Funding> existingFundingsSet = new HashSet<>();
             for (Funding existingFunding : existingFundings.getFundings()) {
-            	existingFundingsSet.add(existingFunding);
+                existingFundingsSet.add(existingFunding);
             }
             for (Iterator<Funding> updatedFundingIterator = updatedFundingsList.iterator(); updatedFundingIterator.hasNext();) {
                 Funding updatedFunding = updatedFundingIterator.next();
                 if (existingFundingsSet.contains(updatedFunding)) {
-                	updatedFundingIterator.remove();
+                    updatedFundingIterator.remove();
                 }
             }
         }
@@ -1453,22 +1451,20 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         ProfileEntity profileEntity = profileDao.find(orcid);
         for (Funding updatedFunding : updatedFundingList) {
             ProfileFundingEntity profileFundingEntity = jaxb2JpaAdapter.getNewProfileFundingEntity(updatedFunding, profileEntity);
-            //Save the profile grant
-            ProfileFundingEntity newProfileFunding = profileFundingDao
-					.addProfileFunding(profileFundingEntity);
-            //Save the external identifiers
+            // Save the profile grant
+            ProfileFundingEntity newProfileFunding = profileFundingDao.addProfileFunding(profileFundingEntity);
+            // Save the external identifiers
             SortedSet<FundingExternalIdentifierEntity> externalIdentifiers = profileFundingEntity.getExternalIdentifiers();
- 			if (externalIdentifiers != null && !externalIdentifiers.isEmpty()) {
- 				for (FundingExternalIdentifierEntity externalIdentifier : externalIdentifiers) {
- 					externalIdentifier.setProfileFunding(newProfileFunding);
- 					fundingExternalIdentifierDao
- 							.createFundingExternalIdentifier(externalIdentifier);
- 				}
- 			}            
+            if (externalIdentifiers != null && !externalIdentifiers.isEmpty()) {
+                for (FundingExternalIdentifierEntity externalIdentifier : externalIdentifiers) {
+                    externalIdentifier.setProfileFunding(newProfileFunding);
+                    fundingExternalIdentifierDao.createFundingExternalIdentifier(externalIdentifier);
+                }
+            }
         }
         removeFromCache(orcid);
     }
-    
+
     @Override
     @Transactional
     public OrcidProfile addDelegates(OrcidProfile updatedOrcidProfile) {
