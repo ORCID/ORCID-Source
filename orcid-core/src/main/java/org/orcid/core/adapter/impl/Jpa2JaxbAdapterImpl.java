@@ -73,6 +73,8 @@ import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.persistence.jpa.entities.WorkExternalIdentifierEntity;
 import org.orcid.utils.DateUtils;
 import org.orcid.utils.NullUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 
 /**
@@ -89,6 +91,8 @@ import org.springframework.beans.factory.annotation.Value;
  */
 
 public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(Jpa2JaxbAdapterImpl.class);
 
     @Value("${org.orcid.core.baseUri:http://orcid.org}")
     private String baseUri = null;
@@ -264,6 +268,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
     }
 
     private FundingList getFundingList(ProfileEntity profileEntity) {
+        LOGGER.debug("About to convert fundings from entity: " + profileEntity.getId());
         Set<ProfileFundingEntity> profileFundings = profileEntity.getProfileFunding();
         if (profileFundings != null && !profileFundings.isEmpty()) {
             FundingList fundingList = new FundingList();
@@ -288,6 +293,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
     }
 
     private OrcidPatents getOrcidPatents(ProfileEntity profileEntity) {
+        LOGGER.debug("About to convert patents from entity: " + profileEntity.getId());
         Set<ProfilePatentEntity> profilePatents = profileEntity.getProfilePatents();
         if (profilePatents == null || profilePatents.isEmpty()) {
             return null;
@@ -372,6 +378,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
     }
 
     private OrcidWorks getOrcidWorks(ProfileEntity profileEntity) {
+        LOGGER.debug("About to convert works from entity: " + profileEntity.getId());
         Set<ProfileWorkEntity> profileWorks = profileEntity.getProfileWorks();
         if (profileWorks != null && !profileWorks.isEmpty()) {
             OrcidWorks works = new OrcidWorks();
@@ -616,6 +623,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
     }
 
     private Affiliations getAffiliations(ProfileEntity profileEntity) {
+        LOGGER.debug("About to convert affiliations from entity: " + profileEntity.getId());
         Set<OrgAffiliationRelationEntity> orgRelationEntities = profileEntity.getOrgAffiliationRelations();
         if (orgRelationEntities != null && !orgRelationEntities.isEmpty()) {
             Affiliations affiliations = new Affiliations();
