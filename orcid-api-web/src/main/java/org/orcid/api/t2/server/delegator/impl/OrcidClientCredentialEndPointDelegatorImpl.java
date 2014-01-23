@@ -16,7 +16,14 @@
  */
 package org.orcid.api.t2.server.delegator.impl;
 
-import org.orcid.api.common.exception.OrcidApiException;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
+import javax.ws.rs.core.Response;
+
 import org.orcid.api.common.exception.OrcidInvalidScopeException;
 import org.orcid.api.t2.server.delegator.OrcidClientCredentialEndPointDelegator;
 import org.orcid.jaxb.model.message.ScopePathType;
@@ -27,18 +34,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.common.exceptions.UnsupportedGrantTypeException;
-import org.springframework.security.oauth2.provider.AuthorizationRequest;
 import org.springframework.security.oauth2.provider.DefaultAuthorizationRequest;
 import org.springframework.security.oauth2.provider.endpoint.AbstractEndpoint;
 import org.springframework.stereotype.Component;
-
-import javax.ws.rs.core.Response;
-
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * 2011-2012 ORCID
