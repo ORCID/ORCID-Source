@@ -188,6 +188,24 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
         assertNotNull(orcidMessage2);
     }
 
+    
+    @Test
+    public void testInvalidCodesFail() throws JSONException, InterruptedException {
+        String scopes = "/orcid-bios/read-limited";
+        String authorizationCode = obtainAuthorizationCode(scopes);
+        MultivaluedMap<String, String> params = new MultivaluedMapImpl();
+        params.add("client_id", CLIENT_DETAILS_ID);
+        params.add("client_secret", "client-secret");
+        params.add("grant_type", "authorization_code");
+        params.add("scope", scopes);
+        params.add("redirect_uri", redirectUri);
+        params.add("code", authorizationCode);
+        ClientResponse tokenResponse = oauthT2Client.obtainOauth2TokenPost("client_credentials", params);
+        assertEquals(409, tokenResponse.getStatus());
+    }
+    
+    
+    
     @Test
     public void testAddWork() throws InterruptedException, JSONException {
         String scopes = "/orcid-works/create";
