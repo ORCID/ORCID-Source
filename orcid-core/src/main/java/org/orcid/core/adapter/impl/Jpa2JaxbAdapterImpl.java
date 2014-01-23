@@ -248,7 +248,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
     }
 
     private OrcidActivities getOrcidActivities(ProfileEntity profileEntity) {
-        Affiliations affiliations = getAffiliations(profileEntity);        
+        Affiliations affiliations = getAffiliations(profileEntity);
         FundingList fundings = getFundingList(profileEntity);
         OrcidPatents orcidPatents = getOrcidPatents(profileEntity);
         OrcidWorks orcidWorks = getOrcidWorks(profileEntity);
@@ -264,17 +264,17 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
     }
 
     private FundingList getFundingList(ProfileEntity profileEntity) {
-    	Set<ProfileFundingEntity> profileFundings = profileEntity.getProfileFunding();
-    	if(profileFundings != null && !profileFundings.isEmpty()) {
-    		FundingList fundingList = new FundingList();
-    		List<Funding> fundings = fundingList.getFundings();
-    		for(ProfileFundingEntity profileFundingEntity : profileFundings) {
-    			fundings.add(getFunding(profileFundingEntity));
-    		}
-    		
-    		return fundingList;
-    	}
-    	return null;
+        Set<ProfileFundingEntity> profileFundings = profileEntity.getProfileFunding();
+        if (profileFundings != null && !profileFundings.isEmpty()) {
+            FundingList fundingList = new FundingList();
+            List<Funding> fundings = fundingList.getFundings();
+            for (ProfileFundingEntity profileFundingEntity : profileFundings) {
+                fundings.add(getFunding(profileFundingEntity));
+            }
+
+            return fundingList;
+        }
+        return null;
     }
 
     private ContributorAttributes getContributorAttributes(BaseContributorEntity contributorEntity) {
@@ -377,7 +377,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
             OrcidWorks works = new OrcidWorks();
             for (ProfileWorkEntity profileWorkEntity : profileWorks) {
                 OrcidWork orcidWork = getOrcidWork(profileWorkEntity);
-                orcidWork.setVisibility(profileWorkEntity.getVisibility());                
+                orcidWork.setVisibility(profileWorkEntity.getVisibility());
                 works.getOrcidWork().add(orcidWork);
             }
             return works;
@@ -433,39 +433,40 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
 
         return affiliation;
     }
-    
+
     /**
      * Transforms a profileFundingEntity into a Funding
+     * 
      * @param profileFundingEntity
      * @return Funding
      * */
-    public Funding getFunding(ProfileFundingEntity profileFundingEntity){
-    	Funding funding = new Funding();    	
-    	if(StringUtils.isNotEmpty(profileFundingEntity.getAmount())) {
-    		Amount orcidAmount = new Amount();
-    		orcidAmount.setContent(StringUtils.isNotEmpty(profileFundingEntity.getAmount()) ? profileFundingEntity.getAmount() : null );
-    		orcidAmount.setCurrencyCode(profileFundingEntity.getCurrencyCode() != null ? profileFundingEntity.getCurrencyCode() : null);    		
-    		funding.setAmount(orcidAmount);
-    	}    	    	
-    	funding.setDescription(StringUtils.isNotEmpty(profileFundingEntity.getDescription()) ? profileFundingEntity.getDescription() : null); 
+    public Funding getFunding(ProfileFundingEntity profileFundingEntity) {
+        Funding funding = new Funding();
+        if (StringUtils.isNotEmpty(profileFundingEntity.getAmount())) {
+            Amount orcidAmount = new Amount();
+            orcidAmount.setContent(StringUtils.isNotEmpty(profileFundingEntity.getAmount()) ? profileFundingEntity.getAmount() : null);
+            orcidAmount.setCurrencyCode(profileFundingEntity.getCurrencyCode() != null ? profileFundingEntity.getCurrencyCode() : null);
+            funding.setAmount(orcidAmount);
+        }
+        funding.setDescription(StringUtils.isNotEmpty(profileFundingEntity.getDescription()) ? profileFundingEntity.getDescription() : null);
         FundingTitle title = new FundingTitle();
         title.setTitle(StringUtils.isNotEmpty(profileFundingEntity.getTitle()) ? new Title(profileFundingEntity.getTitle()) : null);
-    	if(StringUtils.isNotEmpty(profileFundingEntity.getTranslatedTitle())) {
-    		String translatedTitleValue = profileFundingEntity.getTranslatedTitle();
-    		String code = profileFundingEntity.getTranslatedTitleLanguageCode();
-    		TranslatedTitle translatedTitle = new TranslatedTitle(translatedTitleValue, code);
-    		title.setTranslatedTitle(translatedTitle);
-    	}
-    	funding.setTitle(title);
-    	funding.setType(profileFundingEntity.getType() != null ? profileFundingEntity.getType() : null);
-    	funding.setUrl(StringUtils.isNotEmpty(profileFundingEntity.getUrl()) ? new Url(profileFundingEntity.getUrl()) : new Url(new String()));
-    	funding.setVisibility(profileFundingEntity.getVisibility() != null ? profileFundingEntity.getVisibility() : Visibility.PRIVATE);
-    	funding.setPutCode(Long.toString(profileFundingEntity.getId()));    	
-    	funding.setFundingContributors(getFundingContributors(profileFundingEntity));
-    	funding.setFundingExternalIdentifiers(getFundingExternalIdentifiers(profileFundingEntity));
-    	
+        if (StringUtils.isNotEmpty(profileFundingEntity.getTranslatedTitle())) {
+            String translatedTitleValue = profileFundingEntity.getTranslatedTitle();
+            String code = profileFundingEntity.getTranslatedTitleLanguageCode();
+            TranslatedTitle translatedTitle = new TranslatedTitle(translatedTitleValue, code);
+            title.setTranslatedTitle(translatedTitle);
+        }
+        funding.setTitle(title);
+        funding.setType(profileFundingEntity.getType() != null ? profileFundingEntity.getType() : null);
+        funding.setUrl(StringUtils.isNotEmpty(profileFundingEntity.getUrl()) ? new Url(profileFundingEntity.getUrl()) : new Url(new String()));
+        funding.setVisibility(profileFundingEntity.getVisibility() != null ? profileFundingEntity.getVisibility() : Visibility.PRIVATE);
+        funding.setPutCode(Long.toString(profileFundingEntity.getId()));
+        funding.setFundingContributors(getFundingContributors(profileFundingEntity));
+        funding.setFundingExternalIdentifiers(getFundingExternalIdentifiers(profileFundingEntity));
+
         // Set organization
-    	Organization organization = new Organization();
+        Organization organization = new Organization();
         OrgDisambiguatedEntity orgDisambiguatedEntity = profileFundingEntity.getOrg().getOrgDisambiguated();
         if (orgDisambiguatedEntity != null) {
             organization.setDisambiguatedOrganization(getDisambiguatedOrganization(orgDisambiguatedEntity));
@@ -473,42 +474,46 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         organization.setAddress(getAddress(profileFundingEntity.getOrg()));
         organization.setName(profileFundingEntity.getOrg().getName());
         funding.setOrganization(organization);
-        
+
         // Set start and end date
         FuzzyDateEntity startDate = profileFundingEntity.getStartDate();
         FuzzyDateEntity endDate = profileFundingEntity.getEndDate();
         funding.setStartDate(startDate != null ? new FuzzyDate(startDate.getYear(), startDate.getMonth(), startDate.getDay()) : null);
         funding.setEndDate(endDate != null ? new FuzzyDate(endDate.getYear(), endDate.getMonth(), endDate.getDay()) : null);
-        
+
         // Set source
         funding.setSource(getSource(profileFundingEntity));
-    	return funding;
+        return funding;
     }
 
     /**
      * Get external identifiers from a profileFundingEntity object
+     * 
      * @param profileFundingEntity
-     * @return The external identifiers in the form of a FundingExternalIdentifiers object
+     * @return The external identifiers in the form of a
+     *         FundingExternalIdentifiers object
      * */
     private FundingExternalIdentifiers getFundingExternalIdentifiers(ProfileFundingEntity profileFundingEntity) {
         if (profileFundingEntity == null || profileFundingEntity.getExternalIdentifiers() == null || profileFundingEntity.getExternalIdentifiers().isEmpty()) {
             return null;
         }
         SortedSet<FundingExternalIdentifierEntity> fundingExternalIdentifierEntitys = profileFundingEntity.getExternalIdentifiers();
-        FundingExternalIdentifiers fundingExternalIdentifiers = new FundingExternalIdentifiers();        
-        
+        FundingExternalIdentifiers fundingExternalIdentifiers = new FundingExternalIdentifiers();
+
         for (FundingExternalIdentifierEntity fundingExternalIdentifierEntity : fundingExternalIdentifierEntitys) {
             FundingExternalIdentifier fundingExternalIdentifier = getFundingExternalIdentifier(fundingExternalIdentifierEntity);
             if (fundingExternalIdentifier != null) {
                 fundingExternalIdentifiers.getFundingExternalIdentifier().add(fundingExternalIdentifier);
             }
-        }        
-        
+        }
+
         return fundingExternalIdentifiers;
     }
-    
+
     /**
-     * Transforms a FundingExternalIdentifierEntity into a FundingExternalIdentifier object
+     * Transforms a FundingExternalIdentifierEntity into a
+     * FundingExternalIdentifier object
+     * 
      * @param fundingExternalIdentifierEntity
      * @return FundingExternalIdentifier
      * */
@@ -517,26 +522,27 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
             return null;
         }
         FundingExternalIdentifier fundingExternalIdentifier = new FundingExternalIdentifier();
-        
+
         fundingExternalIdentifier.setType(fundingExternalIdentifierEntity.getType());
         fundingExternalIdentifier.setUrl(new Url(fundingExternalIdentifierEntity.getUrl()));
         fundingExternalIdentifier.setValue(fundingExternalIdentifierEntity.getValue());
         fundingExternalIdentifier.setPutCode(String.valueOf(fundingExternalIdentifierEntity.getId()));
-        
+
         return fundingExternalIdentifier;
     }
-    
+
     /**
      * Get the funding contributors from a profileFundingEntity
+     * 
      * @param profileFundingEntity
      * @return the contributors in a form of FundingContributors object
      * */
-    private FundingContributors getFundingContributors(ProfileFundingEntity profileFundingEntity) {        
-    	FundingContributors fundingContributors = new FundingContributors();
+    private FundingContributors getFundingContributors(ProfileFundingEntity profileFundingEntity) {
+        FundingContributors fundingContributors = new FundingContributors();
         // New way of doing work contributors
         String jsonString = profileFundingEntity.getContributorsJson();
         if (jsonString != null) {
-        	fundingContributors = JsonUtils.readObjectFromJsonString(jsonString, FundingContributors.class);
+            fundingContributors = JsonUtils.readObjectFromJsonString(jsonString, FundingContributors.class);
             for (Contributor contributor : fundingContributors.getContributor()) {
                 // Make sure contributor credit name has the same visibility as
                 // the funding relation
@@ -552,21 +558,22 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
                     String uri = contributorOrcid.getUri();
                     if (uri == null) {
                         String orcid = contributorOrcid.getValueAsString();
-                        if(orcid == null){
+                        if (orcid == null) {
                             orcid = contributorOrcid.getPath();
                         }
                         contributor.setContributorOrcid(new ContributorOrcid(getOrcidIdBase(orcid)));
                     }
                 }
             }
-        }        
+        }
         return fundingContributors;
-    }  
-    
+    }
+
     /**
      * Get the source of a sowrceAware object
+     * 
      * @param sourceAwareEntity
-     * 		The entity to obtain the source
+     *            The entity to obtain the source
      * @return the source of the object
      * */
     private Source getSource(SourceAware sourceAwareEntity) {
@@ -575,27 +582,28 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
             return null;
         }
         Source source = new Source(sourceEntity.getId());
-        
-        //Set the source name
-        //If it is a client, lets use the source_name if it is public
-        if(OrcidType.CLIENT.equals(sourceEntity.getOrcidType())){
-        	Visibility affiliationSourceVisibility = (sourceEntity.getCreditNameVisibility() == null) ? OrcidVisibilityDefaults.CREDIT_NAME_DEFAULT.getVisibility() : sourceEntity.getCreditNameVisibility();  
-        	if(Visibility.PUBLIC.equals(affiliationSourceVisibility)) {
-        		source.setSourceName(new SourceName(sourceEntity.getCreditName()));
-        	} 
+
+        // Set the source name
+        // If it is a client, lets use the source_name if it is public
+        if (OrcidType.CLIENT.equals(sourceEntity.getOrcidType())) {
+            Visibility affiliationSourceVisibility = (sourceEntity.getCreditNameVisibility() == null) ? OrcidVisibilityDefaults.CREDIT_NAME_DEFAULT.getVisibility()
+                    : sourceEntity.getCreditNameVisibility();
+            if (Visibility.PUBLIC.equals(affiliationSourceVisibility)) {
+                source.setSourceName(new SourceName(sourceEntity.getCreditName()));
+            }
         } else {
-        	//If it is a user, check if it have a credit name and is visible
-            if(!StringUtils.isEmpty(sourceEntity.getCreditName()) && Visibility.PUBLIC.equals(sourceEntity.getCreditNameVisibility())){
-            	source.setSourceName(new SourceName(sourceEntity.getCreditName()));
+            // If it is a user, check if it have a credit name and is visible
+            if (!StringUtils.isEmpty(sourceEntity.getCreditName()) && Visibility.PUBLIC.equals(sourceEntity.getCreditNameVisibility())) {
+                source.setSourceName(new SourceName(sourceEntity.getCreditName()));
             } else {
-                //If it doesnt, lets use the give name + family name
+                // If it doesnt, lets use the give name + family name
                 String name = sourceEntity.getGivenNames() + (StringUtils.isEmpty(sourceEntity.getFamilyName()) ? "" : " " + sourceEntity.getFamilyName());
                 source.setSourceName(new SourceName(name));
             }
-        }        
-        if(sourceAwareEntity instanceof BaseEntity) {
-        	Date createdDate = ((BaseEntity) sourceAwareEntity).getDateCreated();
-        	source.setSourceDate(new SourceDate(DateUtils.convertToXMLGregorianCalendar(createdDate)));
+        }
+        if (sourceAwareEntity instanceof BaseEntity) {
+            Date createdDate = ((BaseEntity) sourceAwareEntity).getDateCreated();
+            source.setSourceDate(new SourceDate(DateUtils.convertToXMLGregorianCalendar(createdDate)));
         }
         return source;
     }
@@ -618,8 +626,8 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
             return affiliations;
         }
         return null;
-    }   
-    
+    }
+
     private Keywords getKeywords(ProfileEntity profileEntity) {
         Set<ProfileKeywordEntity> profileEntityKeywords = profileEntity.getKeywords();
         if (profileEntityKeywords != null && !profileEntityKeywords.isEmpty()) {
@@ -806,7 +814,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
 
             for (OrcidOauth2TokenDetail tokenDetail : tokenDetails)
                 defaultPermissionChecker.removeUserGrantWriteScopePastValitity(tokenDetail);
-            
+
             Applications applications = new Applications();
             for (OrcidOauth2TokenDetail tokenDetail : tokenDetails) {
                 if (tokenDetail.getTokenDisabled() == null || !tokenDetail.getTokenDisabled()) {
@@ -874,16 +882,22 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         return orcidWork;
     }
 
-    /* converts locale codes to only return language code, with the exception of zh_CN and zh_TW */
+    /*
+     * converts locale codes to only return language code, with the exception of
+     * zh_CN and zh_TW
+     */
     static public String normalizeLanguageCode(String code) {
-        if (code == null || code.length() < 2) return null;
+        if (code == null || code.length() < 2)
+            return null;
         java.util.Locale locale = new java.util.Locale(code);
         String localeString = locale.toString();
         if (localeString.startsWith("zn")) {
-            if (localeString.startsWith("zn_CN") || localeString.startsWith("zn_TW")) return localeString.substring(0, 5);
-            else return "zn_CN"; // bit of a gamble here :-/
+            if (localeString.startsWith("zn_CN") || localeString.startsWith("zn_TW"))
+                return localeString.substring(0, 5);
+            else
+                return "zn_CN"; // bit of a gamble here :-/
         }
-        return localeString.substring(0, 2);    
+        return localeString.substring(0, 2);
     }
 
     private Citation getWorkCitation(WorkEntity work) {
@@ -905,32 +919,33 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         return workTitle;
     }
 
-    private WorkSource getWorkSource(ProfileWorkEntity profileWorkEntity) {                
+    private WorkSource getWorkSource(ProfileWorkEntity profileWorkEntity) {
         if (profileWorkEntity == null || profileWorkEntity.getSourceProfile() == null) {
             return null;
         }
         ProfileEntity sourceProfile = profileWorkEntity.getSourceProfile();
-        
+
         WorkSource workSource = new WorkSource(getOrcidIdBase(sourceProfile.getId()));
-        
-        //Set the source name
-        //If it is a client, lets use the source_name if it is public
-        if(sourceProfile.getOrcidType() != null && sourceProfile.getOrcidType().equals(OrcidType.CLIENT)) {
-            Visibility workSourceVisibility = (sourceProfile.getCreditNameVisibility() == null) ? OrcidVisibilityDefaults.CREDIT_NAME_DEFAULT.getVisibility() : sourceProfile.getCreditNameVisibility();            
-            if(Visibility.PUBLIC.equals(workSourceVisibility)) {
+
+        // Set the source name
+        // If it is a client, lets use the source_name if it is public
+        if (sourceProfile.getOrcidType() != null && sourceProfile.getOrcidType().equals(OrcidType.CLIENT)) {
+            Visibility workSourceVisibility = (sourceProfile.getCreditNameVisibility() == null) ? OrcidVisibilityDefaults.CREDIT_NAME_DEFAULT.getVisibility()
+                    : sourceProfile.getCreditNameVisibility();
+            if (Visibility.PUBLIC.equals(workSourceVisibility)) {
                 workSource.setSourceName(sourceProfile.getCreditName());
             }
         } else {
-            //If it is a user, check if it have a credit name and is visible
-            if(!StringUtils.isEmpty(sourceProfile.getCreditName()) && Visibility.PUBLIC.equals(sourceProfile.getCreditNameVisibility())){
+            // If it is a user, check if it have a credit name and is visible
+            if (!StringUtils.isEmpty(sourceProfile.getCreditName()) && Visibility.PUBLIC.equals(sourceProfile.getCreditNameVisibility())) {
                 workSource.setSourceName(sourceProfile.getCreditName());
             } else {
-                //If it doesnt, lets use the give name + family name
+                // If it doesnt, lets use the give name + family name
                 String name = sourceProfile.getGivenNames() + (StringUtils.isEmpty(sourceProfile.getFamilyName()) ? "" : " " + sourceProfile.getFamilyName());
                 workSource.setSourceName(name);
             }
         }
-                            
+
         return workSource;
     }
 
@@ -993,16 +1008,16 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
                     String uri = contributorOrcid.getUri();
                     if (uri == null) {
                         String orcid = contributorOrcid.getValueAsString();
-                        if(orcid == null){
+                        if (orcid == null) {
                             orcid = contributorOrcid.getPath();
                         }
                         contributor.setContributorOrcid(new ContributorOrcid(getOrcidIdBase(orcid)));
                     }
                 }
             }
-        }        
+        }
         return workContributors;
-    }    
+    }
 
     private PublicationDate getPublicationDateFromEntity(PublicationDateEntity fuzzyDate) {
         if (fuzzyDate == null) {
