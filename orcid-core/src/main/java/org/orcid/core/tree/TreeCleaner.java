@@ -60,11 +60,13 @@ public class TreeCleaner {
         Iterator<?> iterator = coll.iterator();
         while (iterator.hasNext()) {
             Object objInCollection = iterator.next();
-            boolean needsStripping = decisionMaker.needsStripping(objInCollection);
-            if (needsStripping) {
+            TreeCleaningDecision decision = decisionMaker.needsStripping(objInCollection);
+            if (decision.isNeedingCleaning()) {
                 iterator.remove();
             } else {
-                clean(objInCollection, decisionMaker);
+                if (decision.isNeedingPropertyChecking()) {
+                    clean(objInCollection, decisionMaker);
+                }
                 if (removeEmptyObjects && hasNoActiveProperties(objInCollection)) {
                     iterator.remove();
                 }
@@ -78,11 +80,13 @@ public class TreeCleaner {
         for (Method getter : getters) {
             try {
                 Object returnedObj = getter.invoke(obj);
-                boolean returnedObjNeedsStripping = decisionMaker.needsStripping(returnedObj);
-                if (returnedObjNeedsStripping) {
+                TreeCleaningDecision decision = decisionMaker.needsStripping(returnedObj);
+                if (decision.isNeedingCleaning()) {
                     nullify(obj, gettersAndSetters, getter);
                 } else {
-                    clean(returnedObj, decisionMaker);
+                    if (decision.isNeedingPropertyChecking()) {
+                        clean(returnedObj, decisionMaker);
+                    }
                     if (removeEmptyObjects && hasNoActiveProperties(returnedObj)) {
                         nullify(obj, gettersAndSetters, getter);
                     }

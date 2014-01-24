@@ -560,6 +560,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         Element element = getFromCache(orcid);
         if (element == null) {
             try {
+                LOG.debug("Profile not found in cache: " + orcid);
                 Object lock = obtainReadLock(orcid);
                 synchronized (lock) {
                     // Might be in the cache by now!
@@ -578,12 +579,14 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
     }
 
     private Object obtainReadLock(String orcid) {
+        LOG.debug("About to obtain read lock: " + orcid);
         Object newLock = new Object();
         Object existingLock = readLocks.putIfAbsent(orcid, newLock);
         return existingLock == null ? newLock : existingLock;
     }
 
     private void releaseReadLock(String orcid) {
+        LOG.debug("About to release read lock: " + orcid);
         readLocks.remove(orcid);
     }
 
@@ -593,6 +596,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
     }
 
     private OrcidProfile retrieveFreshOrcidProfile(String orcid, LoadOptions loadOptions) {
+        LOG.debug("About to obtain fresh profile: " + orcid);
         profileDao.flush();
         ProfileEntity profileEntity = profileDao.find(orcid);
         if (profileEntity != null) {
@@ -688,6 +692,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
     }
 
     private OrcidProfile convertToOrcidProfile(ProfileEntity profileEntity, LoadOptions loadOptions) {
+        LOG.debug("About to convert profile entity to orcid profile: " + profileEntity.getId());
         profileDao.refresh(profileEntity);
         OrcidProfile orcidProfile = adapter.toOrcidProfile(profileEntity, loadOptions);
         String verificationCode = profileEntity.getEncryptedVerificationCode();

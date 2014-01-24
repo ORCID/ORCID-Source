@@ -20,6 +20,7 @@ import java.util.Iterator;
 
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.tree.TreeCleaner;
+import org.orcid.core.tree.TreeCleaningDecision;
 import org.orcid.core.tree.TreeCleaningStrategy;
 import org.orcid.core.version.OrcidMessageVersionConverter;
 import org.orcid.jaxb.model.message.Affiliation;
@@ -111,7 +112,7 @@ public class OrcidMessageVersionConverterImplV1_0_23ToV1_1 implements OrcidMessa
         treeCleaner.setRemoveEmptyObjects(false);
         treeCleaner.clean(orcidProfile, new TreeCleaningStrategy() {
             @Override
-            public boolean needsStripping(Object obj) {
+            public TreeCleaningDecision needsStripping(Object obj) {
                 if (obj instanceof OrcidIdBase) {
                     // Work sources etc.
                     OrcidIdBase orcidId = (OrcidIdBase) obj;
@@ -139,9 +140,10 @@ public class OrcidMessageVersionConverterImplV1_0_23ToV1_1 implements OrcidMessa
                     }
                     primaryRecord.setOrcidIdentifier((OrcidIdentifier) null);
                 }
-                // Always return false because we do not want to remove the obj
+                // Always return default because we do not want to remove the
+                // obj
                 // itself
-                return false;
+                return TreeCleaningDecision.DEFAULT;
             }
         });
     }
@@ -218,7 +220,7 @@ public class OrcidMessageVersionConverterImplV1_0_23ToV1_1 implements OrcidMessa
         TreeCleaner treeCleaner = new TreeCleaner();
         treeCleaner.clean(orcidProfile, new TreeCleaningStrategy() {
             @Override
-            public boolean needsStripping(Object obj) {
+            public TreeCleaningDecision needsStripping(Object obj) {
                 if (obj instanceof OrcidIdBase) {
                     // Work sources etc.
                     OrcidIdBase orcidId = (OrcidIdBase) obj;
@@ -246,9 +248,9 @@ public class OrcidMessageVersionConverterImplV1_0_23ToV1_1 implements OrcidMessa
                         newOrcidIdentifier.setUri(orcidId.getValue());
                     }
                 }
-                // Always return false because we do not want to remove the obj
-                // itself
-                return false;
+                // Always return default because we do not want to remove the
+                // obj itself
+                return TreeCleaningDecision.DEFAULT;
             }
         });
     }

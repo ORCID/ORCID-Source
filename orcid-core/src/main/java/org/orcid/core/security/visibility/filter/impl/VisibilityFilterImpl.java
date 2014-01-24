@@ -22,10 +22,18 @@ import java.util.Set;
 
 import org.orcid.core.security.visibility.filter.VisibilityFilter;
 import org.orcid.core.tree.TreeCleaner;
+import org.orcid.core.tree.TreeCleaningDecision;
 import org.orcid.core.tree.TreeCleaningStrategy;
+import org.orcid.jaxb.model.message.Orcid;
+import org.orcid.jaxb.model.message.OrcidIdentifier;
 import org.orcid.jaxb.model.message.OrcidMessage;
+import org.orcid.jaxb.model.message.OrcidProfile;
+import org.orcid.jaxb.model.message.OrcidSearchResults;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.message.VisibilityType;
+import org.orcid.jaxb.model.message.WorkContributors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 /**
@@ -51,6 +59,8 @@ import org.springframework.stereotype.Component;
  */
 @Component("visibilityFilter")
 public class VisibilityFilterImpl implements VisibilityFilter {
+
+    private final static Logger LOGGER = LoggerFactory.getLogger(VisibilityFilterImpl.class);
 
     /**
      * Remove the elements that are not present in the list of set of
@@ -96,31 +106,59 @@ public class VisibilityFilterImpl implements VisibilityFilter {
         if (messageToBeFiltered == null || visibilities == null || visibilities.length == 0) {
             return null;
         }
+        String messageIdForLog = getMessageIdForLog(messageToBeFiltered);
+        LOGGER.debug("About to filter message: " + messageIdForLog);
         final Set<Visibility> visibilitySet = new HashSet<Visibility>(Arrays.asList(visibilities));
         if (visibilitySet.contains(Visibility.SYSTEM)) {
             return messageToBeFiltered;
         } else {
             TreeCleaner treeCleaner = new TreeCleaner();
             treeCleaner.clean(messageToBeFiltered, new TreeCleaningStrategy() {
-                public boolean needsStripping(Object obj) {
-                    boolean needsStripping = false;
-                    if (obj != null && VisibilityType.class.isAssignableFrom(obj.getClass())) {
-                        VisibilityType visibilityType = (VisibilityType) obj;
-                        if ((visibilityType.getVisibility() == null || !visibilitySet.contains(visibilityType.getVisibility()))) {
-                            needsStripping = true;
-                        }
-                        if (removeAttribute) {
-                            visibilityType.setVisibility(null);
+                public TreeCleaningDecision needsStripping(Object obj) {
+                    TreeCleaningDecision decision = TreeCleaningDecision.DEFAULT;
+                    if (obj != null) {
+                        Class<?> clazz = obj.getClass();
+                        if (WorkContributors.class.isAssignableFrom(clazz)) {
+                            decision = TreeCleaningDecision.IGNORE;
+                        } else if (VisibilityType.class.isAssignableFrom(clazz)) {
+                            VisibilityType visibilityType = (VisibilityType) obj;
+                            if ((visibilityType.getVisibility() == null || !visibilitySet.contains(visibilityType.getVisibility()))) {
+                                decision = TreeCleaningDecision.CLEANING_REQUIRED;
+                            }
+                            if (removeAttribute) {
+                                visibilityType.setVisibility(null);
+                            }
                         }
                     }
-                    return needsStripping;
+                    return decision;
                 }
             });
-            if (messageToBeFiltered.getOrcidProfile() != null) {
-                messageToBeFiltered.getOrcidProfile().setOrcidInternal(null);
+            OrcidProfile orcidProfile = messageToBeFiltered.getOrcidProfile();
+            if (orcidProfile != null) {
+                orcidProfile.setOrcidInternal(null);
             }
+            LOGGER.debug("Finished filtering message: " + messageIdForLog);
             return messageToBeFiltered;
         }
+    }
+
+    private String getMessageIdForLog(OrcidMessage messageToBeFiltered) {
+        String messageIdForLog = "unknown";
+        OrcidSearchResults orcidSearchResults = messageToBeFiltered.getOrcidSearchResults();
+        OrcidProfile orcidProfile = messageToBeFiltered.getOrcidProfile();
+        if (orcidSearchResults != null) {
+            messageIdForLog = "orcid-search-results";
+        } else if (orcidProfile != null) {
+            OrcidIdentifier orcidIdentifier = orcidProfile.getOrcidIdentifier();
+            if (orcidIdentifier != null) {
+                messageIdForLog = orcidIdentifier.getPath();
+            }
+            Orcid orcid = orcidProfile.getOrcid();
+            if (orcid != null) {
+                messageIdForLog = orcid.getValue();
+            }
+        }
+        return messageIdForLog;
     }
 
 }
