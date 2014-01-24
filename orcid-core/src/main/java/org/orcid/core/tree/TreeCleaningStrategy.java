@@ -18,6 +18,6 @@ package org.orcid.core.tree;
 
 public interface TreeCleaningStrategy {
 
-    boolean needsStripping(Object obj);
+    TreeCleaningDecision needsStripping(Object obj);
 
 }

@@ -22,6 +22,7 @@ import java.lang.reflect.Method;
 import org.apache.commons.lang.StringUtils;
 import org.orcid.core.manager.OrcidProfileCleaner;
 import org.orcid.core.tree.TreeCleaner;
+import org.orcid.core.tree.TreeCleaningDecision;
 import org.orcid.core.tree.TreeCleaningStrategy;
 import org.orcid.jaxb.model.message.OrcidIdBase;
 import org.slf4j.Logger;
@@ -38,11 +39,14 @@ public class OrcidProfileCleanerImpl implements OrcidProfileCleaner, TreeCleanin
     }
 
     @Override
-    public boolean needsStripping(Object obj) {
+    public TreeCleaningDecision needsStripping(Object obj) {
         if (obj == null) {
-            return false;
+            return TreeCleaningDecision.DEFAULT;
         }
-        return hasBlankProperty(obj, "content") || (hasBlankProperty(obj, "value") && !(obj instanceof OrcidIdBase));
+        if (hasBlankProperty(obj, "content") || (hasBlankProperty(obj, "value") && !(obj instanceof OrcidIdBase))) {
+            return TreeCleaningDecision.CLEANING_REQUIRED;
+        }
+        return TreeCleaningDecision.DEFAULT;
     }
 
     private boolean hasBlankProperty(Object obj, String propertyName) {

@@ -22,10 +22,12 @@ import java.util.Set;
 
 import org.orcid.core.security.visibility.filter.VisibilityFilter;
 import org.orcid.core.tree.TreeCleaner;
+import org.orcid.core.tree.TreeCleaningDecision;
 import org.orcid.core.tree.TreeCleaningStrategy;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.message.VisibilityType;
+import org.orcid.jaxb.model.message.WorkContributors;
 import org.springframework.stereotype.Component;
 
 /**
@@ -102,18 +104,23 @@ public class VisibilityFilterImpl implements VisibilityFilter {
         } else {
             TreeCleaner treeCleaner = new TreeCleaner();
             treeCleaner.clean(messageToBeFiltered, new TreeCleaningStrategy() {
-                public boolean needsStripping(Object obj) {
-                    boolean needsStripping = false;
-                    if (obj != null && VisibilityType.class.isAssignableFrom(obj.getClass())) {
-                        VisibilityType visibilityType = (VisibilityType) obj;
-                        if ((visibilityType.getVisibility() == null || !visibilitySet.contains(visibilityType.getVisibility()))) {
-                            needsStripping = true;
-                        }
-                        if (removeAttribute) {
-                            visibilityType.setVisibility(null);
+                public TreeCleaningDecision needsStripping(Object obj) {
+                    TreeCleaningDecision decision = TreeCleaningDecision.DEFAULT;
+                    if (obj != null) {
+                        Class<?> clazz = obj.getClass();
+                        if (WorkContributors.class.isAssignableFrom(clazz)) {
+                            decision = TreeCleaningDecision.IGNORE;
+                        } else if (VisibilityType.class.isAssignableFrom(clazz)) {
+                            VisibilityType visibilityType = (VisibilityType) obj;
+                            if ((visibilityType.getVisibility() == null || !visibilitySet.contains(visibilityType.getVisibility()))) {
+                                decision = TreeCleaningDecision.CLEANING_REQUIRED;
+                            }
+                            if (removeAttribute) {
+                                visibilityType.setVisibility(null);
+                            }
                         }
                     }
-                    return needsStripping;
+                    return decision;
                 }
             });
             if (messageToBeFiltered.getOrcidProfile() != null) {
