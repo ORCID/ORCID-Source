@@ -21,7 +21,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
-import java.util.Currency;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -188,6 +187,29 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
         assertNotNull(orcidMessage2);
     }
 
+    
+    @Test
+    public void testInvalidCodesFail() throws JSONException, InterruptedException {
+        String scopes = "/orcid-bio/read-limited";
+        String authorizationCode = obtainAuthorizationCode(scopes);
+        String wrongScope="/myscope";
+        MultivaluedMap<String, String> params = new MultivaluedMapImpl();
+        params.add("client_id", CLIENT_DETAILS_ID);
+        params.add("client_secret", "client-secret");
+        params.add("grant_type", "authorization_code");
+        params.add("scope", wrongScope);
+        params.add("redirect_uri", redirectUri);
+        params.add("code", authorizationCode);
+        ClientResponse tokenResponse = oauthT2Client.obtainOauth2TokenPost("client_credentials", params);
+        assertEquals(409, tokenResponse.getStatus());
+        OrcidMessage errorMessage = tokenResponse.getEntity(OrcidMessage.class);
+        assertNotNull(errorMessage);
+        assertNotNull(errorMessage.getErrorDesc());        
+        assertEquals("One of the provided scopes is not allowed. Please refere to the list of allowed scopes at: http://support.orcid.org/knowledgebase/articles/120162-orcid-scopes", errorMessage.getErrorDesc().getContent());
+    }
+    
+    
+    
     @Test
     public void testAddWork() throws InterruptedException, JSONException {
         String scopes = "/orcid-works/create";
