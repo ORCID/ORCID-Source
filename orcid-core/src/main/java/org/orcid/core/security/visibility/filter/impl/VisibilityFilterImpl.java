@@ -28,6 +28,8 @@ import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.message.VisibilityType;
 import org.orcid.jaxb.model.message.WorkContributors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 /**
@@ -53,6 +55,8 @@ import org.springframework.stereotype.Component;
  */
 @Component("visibilityFilter")
 public class VisibilityFilterImpl implements VisibilityFilter {
+
+    private final static Logger LOGGER = LoggerFactory.getLogger(VisibilityFilterImpl.class);
 
     /**
      * Remove the elements that are not present in the list of set of
@@ -98,6 +102,13 @@ public class VisibilityFilterImpl implements VisibilityFilter {
         if (messageToBeFiltered == null || visibilities == null || visibilities.length == 0) {
             return null;
         }
+        String messageIdForLog = "unknown";
+        if (messageToBeFiltered.getOrcidSearchResults() != null) {
+            messageIdForLog = "orcid-search-results";
+        } else if (messageToBeFiltered.getOrcidProfile() != null) {
+            messageIdForLog = messageToBeFiltered.getOrcidProfile().getOrcidIdentifier().getPath();
+        }
+        LOGGER.debug("About to filter message: " + messageIdForLog);
         final Set<Visibility> visibilitySet = new HashSet<Visibility>(Arrays.asList(visibilities));
         if (visibilitySet.contains(Visibility.SYSTEM)) {
             return messageToBeFiltered;
@@ -126,6 +137,7 @@ public class VisibilityFilterImpl implements VisibilityFilter {
             if (messageToBeFiltered.getOrcidProfile() != null) {
                 messageToBeFiltered.getOrcidProfile().setOrcidInternal(null);
             }
+            LOGGER.debug("Finished filtering message: " + messageIdForLog);
             return messageToBeFiltered;
         }
     }
