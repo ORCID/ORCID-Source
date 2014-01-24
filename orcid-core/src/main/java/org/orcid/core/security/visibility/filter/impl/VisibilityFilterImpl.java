@@ -24,7 +24,11 @@ import org.orcid.core.security.visibility.filter.VisibilityFilter;
 import org.orcid.core.tree.TreeCleaner;
 import org.orcid.core.tree.TreeCleaningDecision;
 import org.orcid.core.tree.TreeCleaningStrategy;
+import org.orcid.jaxb.model.message.Orcid;
+import org.orcid.jaxb.model.message.OrcidIdentifier;
 import org.orcid.jaxb.model.message.OrcidMessage;
+import org.orcid.jaxb.model.message.OrcidProfile;
+import org.orcid.jaxb.model.message.OrcidSearchResults;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.message.VisibilityType;
 import org.orcid.jaxb.model.message.WorkContributors;
@@ -102,12 +106,7 @@ public class VisibilityFilterImpl implements VisibilityFilter {
         if (messageToBeFiltered == null || visibilities == null || visibilities.length == 0) {
             return null;
         }
-        String messageIdForLog = "unknown";
-        if (messageToBeFiltered.getOrcidSearchResults() != null) {
-            messageIdForLog = "orcid-search-results";
-        } else if (messageToBeFiltered.getOrcidProfile() != null) {
-            messageIdForLog = messageToBeFiltered.getOrcidProfile().getOrcidIdentifier().getPath();
-        }
+        String messageIdForLog = getMessageIdForLog(messageToBeFiltered);
         LOGGER.debug("About to filter message: " + messageIdForLog);
         final Set<Visibility> visibilitySet = new HashSet<Visibility>(Arrays.asList(visibilities));
         if (visibilitySet.contains(Visibility.SYSTEM)) {
@@ -134,12 +133,32 @@ public class VisibilityFilterImpl implements VisibilityFilter {
                     return decision;
                 }
             });
-            if (messageToBeFiltered.getOrcidProfile() != null) {
-                messageToBeFiltered.getOrcidProfile().setOrcidInternal(null);
+            OrcidProfile orcidProfile = messageToBeFiltered.getOrcidProfile();
+            if (orcidProfile != null) {
+                orcidProfile.setOrcidInternal(null);
             }
             LOGGER.debug("Finished filtering message: " + messageIdForLog);
             return messageToBeFiltered;
         }
+    }
+
+    private String getMessageIdForLog(OrcidMessage messageToBeFiltered) {
+        String messageIdForLog = "unknown";
+        OrcidSearchResults orcidSearchResults = messageToBeFiltered.getOrcidSearchResults();
+        OrcidProfile orcidProfile = messageToBeFiltered.getOrcidProfile();
+        if (orcidSearchResults != null) {
+            messageIdForLog = "orcid-search-results";
+        } else if (orcidProfile != null) {
+            OrcidIdentifier orcidIdentifier = orcidProfile.getOrcidIdentifier();
+            if (orcidIdentifier != null) {
+                messageIdForLog = orcidIdentifier.getPath();
+            }
+            Orcid orcid = orcidProfile.getOrcid();
+            if (orcid != null) {
+                messageIdForLog = orcid.getValue();
+            }
+        }
+        return messageIdForLog;
     }
 
 }
