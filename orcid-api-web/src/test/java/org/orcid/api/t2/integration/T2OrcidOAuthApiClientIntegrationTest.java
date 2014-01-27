@@ -292,10 +292,10 @@ public class T2OrcidOAuthApiClientIntegrationTest extends BaseT2OrcidOAuthApiCli
         // make sure read scope is still there
         assertTrue(orcidOauth2TokenDetail.getScope().contains("read"));
     }
-    
+
     /*
      * this is to test a ClientCreditalScope Scope that is older then 1 hour
-     * isn't removed 
+     * isn't removed
      */
     @Test
     public void testClientCreditalScopeIsntRemove() throws Exception {
@@ -303,7 +303,8 @@ public class T2OrcidOAuthApiClientIntegrationTest extends BaseT2OrcidOAuthApiCli
         createNewOrcidUsingAccessToken();
         OrcidOauth2TokenDetail orcidOauth2TokenDetail = orcidOauthTokenDetailService.findNonDisabledByTokenValue(accessToken);
 
-        // modify the access token to look like a user granted token and make it a day old
+        // modify the access token to look like a user granted token and make it
+        // a day old
         Date d = new Date();
         d.setTime(d.getTime() - 24 * 60 * 60 * 1000);
         orcidOauth2TokenDetail.setDateCreated(d);
@@ -315,11 +316,11 @@ public class T2OrcidOAuthApiClientIntegrationTest extends BaseT2OrcidOAuthApiCli
         // test creating a record works with token
         OrcidMessage message = orcidClientDataHelper.createFromXML(OrcidClientDataHelper.ORCID_INTERNAL_NO_SPONSOR_XML);
         ClientResponse clientResponse = oauthT2Client.createProfileXML(message, accessToken);
-        assertEquals(201,clientResponse.getStatus());
+        assertEquals(201, clientResponse.getStatus());
         MultivaluedMap<String, String> map = clientResponse.getHeaders();
         List<String> locList = map.get("Location");
         assertTrue(locList.get(0).contains("/orcid-profile"));
-        
+
         // test trying use UserGrantToken
         OrcidWorks orcidWorks = message.getOrcidProfile().retrieveOrcidWorks();
         orcidWorks = new OrcidWorks();
@@ -328,15 +329,13 @@ public class T2OrcidOAuthApiClientIntegrationTest extends BaseT2OrcidOAuthApiCli
         orcidWorks.getOrcidWork().add(orcidWork);
         message.getOrcidProfile().setOrcidWorks(orcidWorks);
         assertClientResponse403SecurityProblem(oauthT2Client.addWorksXml(orcid, message, accessToken));
-        
+
         // test ClientCreditalScope isn't removed
         orcidOauth2TokenDetail = orcidOauthTokenDetailService.findNonDisabledByTokenValue(accessToken);
         assertTrue(orcidOauth2TokenDetail.getScope().contains("/orcid-profile/create"));
         // test make sure UserGrantScope is removed
         assertTrue(!orcidOauth2TokenDetail.getScope().contains("/orcid-works/create"));
     }
-
-    
 
     @Test
     public void testTokenWithBlankScope() throws Exception {
@@ -485,7 +484,7 @@ public class T2OrcidOAuthApiClientIntegrationTest extends BaseT2OrcidOAuthApiCli
 
             createNewOrcidUsingAccessToken();
             OrcidMessage sponsorMessage = orcidClientDataHelper.createSponsor();
-            sponsorOrcid = sponsorMessage.getOrcidProfile().getOrcid().getValue();
+            sponsorOrcid = sponsorMessage.getOrcidProfile().getOrcidIdentifier().getPath();
 
             // get the bio details of the actual
             createAccessTokenFromCredentials();

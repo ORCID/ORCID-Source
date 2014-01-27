@@ -22,7 +22,6 @@ import static org.orcid.api.common.OrcidApiConstants.PROFILE_GET_PATH;
 import static org.orcid.api.common.OrcidApiConstants.STATUS_OK_MESSAGE;
 import static org.orcid.api.common.OrcidApiConstants.WORKS_PATH;
 
-
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -82,7 +81,7 @@ import org.springframework.stereotype.Component;
  * <p/>
  * The delegator for the tier 2 API.
  * <p/>
- * The T2 delegator is responsible for the validation, retrieving results and 
+ * The T2 delegator is responsible for the validation, retrieving results and
  * passing of objects to be from the core
  * 
  * @author Declan Newman (declan) Date: 07/03/2012
@@ -204,10 +203,11 @@ public class T2OrcidApiServiceDelegatorImpl extends OrcidApiServiceDelegatorImpl
         OrcidProfile profile = orcidProfileManager.retrieveClaimedOrcidWorks(orcid);
         return getOrcidMessageResponse(profile, orcid);
     }
-    
+
     /**
      * finds and returns the {@link org.orcid.jaxb.model.message.OrcidMessage}
-     * wrapped in a {@link javax.xml.ws.Response} with only the affiliation details
+     * wrapped in a {@link javax.xml.ws.Response} with only the affiliation
+     * details
      * 
      * @param orcid
      *            the ORCID to be used to identify the record
@@ -360,8 +360,8 @@ public class T2OrcidApiServiceDelegatorImpl extends OrcidApiServiceDelegatorImpl
     }
 
     private Response getCreatedResponse(UriInfo uriInfo, String requested, OrcidProfile profile) {
-        if (profile != null && profile.getOrcid() != null) {
-            return getCreatedResponse(uriInfo, requested, profile.getOrcid().getValue());
+        if (profile != null && profile.getOrcidIdentifier() != null) {
+            return getCreatedResponse(uriInfo, requested, profile.getOrcidIdentifier().getPath());
         } else {
             throw new OrcidNotFoundException("Cannot find ORCID");
         }
@@ -407,8 +407,8 @@ public class T2OrcidApiServiceDelegatorImpl extends OrcidApiServiceDelegatorImpl
                 OrcidSearchResult filteredSearchResult = new OrcidSearchResult();
                 filteredSearchResult.setRelevancyScore(searchResult.getRelevancyScore());
                 OrcidProfile filteredProfile = new OrcidProfile();
-                String retrievedOrcid = searchResult.getOrcidProfile().getOrcid().getValue();
-                filteredProfile.setOrcid(retrievedOrcid);
+                String retrievedOrcid = searchResult.getOrcidProfile().getOrcidIdentifier().getPath();
+                filteredProfile.setOrcidIdentifier(retrievedOrcid);
                 filteredProfile.setOrcidBio(searchResult.getOrcidProfile().getOrcidBio());
                 filteredSearchResult.setOrcidProfile(filteredProfile);
                 filteredResults.add(filteredSearchResult);
@@ -571,7 +571,7 @@ public class T2OrcidApiServiceDelegatorImpl extends OrcidApiServiceDelegatorImpl
             throw new OrcidBadRequestException("Cannot update ORCID");
         }
     }
-    
+
     @Override
     @AccessControl(requiredScope = ScopePathType.FUNDING_CREATE)
     public Response addFunding(UriInfo uriInfo, String orcid, OrcidMessage orcidMessage) {

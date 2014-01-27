@@ -126,7 +126,7 @@ public class JpaJaxbEntityAdapterToProfileEntityTest extends DBUnitTest {
         assertNotNull(profileEntity);
         profileDao.persist(profileEntity);
 
-        ProfileEntity retrievedProfileEntity = profileDao.find(orcidMessage.getOrcidProfile().getOrcid().getValue());
+        ProfileEntity retrievedProfileEntity = profileDao.find(orcidMessage.getOrcidProfile().getOrcidIdentifier().getPath());
         assertNotNull(retrievedProfileEntity);
         assertEquals("Josiah", retrievedProfileEntity.getGivenNames());
 
@@ -241,7 +241,7 @@ public class JpaJaxbEntityAdapterToProfileEntityTest extends DBUnitTest {
         assertNotNull(profileEntity);
         profileDao.persist(profileEntity);
 
-        ProfileEntity retrievedProfileEntity = profileDao.find(orcidMessage.getOrcidProfile().getOrcid().getValue());
+        ProfileEntity retrievedProfileEntity = profileDao.find(orcidMessage.getOrcidProfile().getOrcidIdentifier().getPath());
         assertNotNull(retrievedProfileEntity);
         assertEquals("Josiah", retrievedProfileEntity.getGivenNames());
         assertEquals("abc123", retrievedProfileEntity.getEncryptedPassword());

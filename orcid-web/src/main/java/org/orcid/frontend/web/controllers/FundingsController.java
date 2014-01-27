@@ -196,7 +196,7 @@ public class FundingsController extends BaseWorkspaceController {
 			}
 			fundings.setFundings(fundingList);
 			currentProfile.getOrcidActivities().setFundings(fundings);
-			profileFundingDao.removeProfileFunding(currentProfile.getOrcid().getValue(), funding.getPutCode().getValue());
+			profileFundingDao.removeProfileFunding(currentProfile.getOrcidIdentifier().getPath(), funding.getPutCode().getValue());
 		}
 		return deletedFunding;
 	}
@@ -441,7 +441,7 @@ public class FundingsController extends BaseWorkspaceController {
                 for (Funding funding : fundings) {
                     if (funding.getPutCode().equals(fundingForm.getPutCode().getValue())) {
                         // Update the privacy of the funding
-                    	profileFundingDao.updateProfileFunding(currentProfile.getOrcid().getValue(), fundingForm.getPutCode().getValue(), fundingForm.getVisibility().getVisibility());
+                    	profileFundingDao.updateProfileFunding(currentProfile.getOrcidIdentifier().getPath(), fundingForm.getPutCode().getValue(), fundingForm.getVisibility().getVisibility());
                     }
                 }
             }

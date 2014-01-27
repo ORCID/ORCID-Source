@@ -106,7 +106,7 @@ public class PersonalInfoForm {
 
     public PersonalInfoForm(OrcidProfile orcidProfile, Map<String, String> availableSubjects) {
         availableRemainingSubjectMap = availableSubjects;
-        orcid = orcidProfile.getOrcid().getValue();
+        orcid = orcidProfile.getOrcidIdentifier().getPath();
 
         OrcidBio orcidBio = orcidProfile.getOrcidBio();
         PersonalDetails personalDetails = null;

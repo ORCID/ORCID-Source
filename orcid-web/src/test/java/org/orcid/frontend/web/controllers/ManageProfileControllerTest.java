@@ -283,7 +283,7 @@ public class ManageProfileControllerTest extends BaseControllerTest {
             public boolean matchesSafely(List<DelegationDetails> delegatesAdded) {
                 if (delegatesAdded != null && delegatesAdded.size() == 1) {
                     DelegationDetails delegationDetails = delegatesAdded.get(0);
-                    return "delegateOrcid".equals(delegationDetails.getDelegateSummary().getOrcid().getValue());
+                    return "delegateOrcid".equals(delegationDetails.getDelegateSummary().getOrcidIdentifier().getPath());
                 }
 
                 return false;

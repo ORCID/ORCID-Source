@@ -80,13 +80,13 @@ public class OrcidIndexManagerImpl implements OrcidIndexManager {
 		OrcidProfile filteredProfile = filteredMessage.getOrcidProfile();
 
 		OrcidSolrDocument profileIndexDocument = new OrcidSolrDocument();
-		profileIndexDocument.setOrcid(filteredProfile.getOrcid().getValue());
+		profileIndexDocument.setOrcid(filteredProfile.getOrcidIdentifier().getPath());
 
 		OrcidDeprecated orcidDeprecated = filteredProfile.getOrcidDeprecated();
 		if (orcidDeprecated != null) {
 			profileIndexDocument.setPrimaryRecord(orcidDeprecated
 					.getPrimaryRecord() != null ? orcidDeprecated
-					.getPrimaryRecord().getOrcid().getValue() : null);
+					.getPrimaryRecord().getOrcidIdentifier().getPath() : null);
 		}
 
 		OrcidBio orcidBio = filteredProfile.getOrcidBio();
@@ -345,7 +345,7 @@ public class OrcidIndexManagerImpl implements OrcidIndexManager {
 
 	@Override
 	public void deleteOrcidProfile(OrcidProfile orcidProfile) {
-		deleteOrcidProfile(orcidProfile.getOrcid().getValue());
+		deleteOrcidProfile(orcidProfile.getOrcidIdentifier().getPath());
 
 	}
 

@@ -265,7 +265,7 @@ public class OrcidIndexManagerImplTest extends BaseTest {
      */
     private OrcidProfile getOrcidProfileMandatoryOnly() {
         OrcidProfile orcidProfile = new OrcidProfile();
-        orcidProfile.setOrcid("5678");
+        orcidProfile.setOrcidIdentifier("5678");
         OrcidBio orcidBio = new OrcidBio();
         orcidProfile.setOrcidBio(orcidBio);
         ContactDetails contactDetails = new ContactDetails();
@@ -405,7 +405,7 @@ public class OrcidIndexManagerImplTest extends BaseTest {
 
     private OrcidProfile getStandardOrcid() {
         OrcidProfile orcidProfile = new OrcidProfile();
-        orcidProfile.setOrcid("1234");
+        orcidProfile.setOrcidIdentifier("1234");
 
         OrcidBio orcidBio = new OrcidBio();
         ContactDetails contactDetails = new ContactDetails();

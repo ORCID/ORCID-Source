@@ -69,7 +69,6 @@ import org.orcid.test.DBUnitTest;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.context.SecurityContextImpl;
 import org.springframework.security.oauth2.provider.AuthorizationRequest;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -173,7 +172,7 @@ public class T2OrcidApiServiceVersionedDelegatorTest extends DBUnitTest {
         assertNotNull(readResponse);
         assertEquals(HttpStatus.SC_OK, readResponse.getStatus());
         OrcidMessage retrievedMessage = (OrcidMessage) readResponse.getEntity();
-        assertEquals(orcid, retrievedMessage.getOrcidProfile().getOrcid().getValue());
+        assertEquals(orcid, retrievedMessage.getOrcidProfile().getOrcidIdentifier().getPath());
         assertEquals("S. Milligan", retrievedMessage.getOrcidProfile().getOrcidBio().getPersonalDetails().getCreditName().getContent());
     }
 
@@ -196,7 +195,7 @@ public class T2OrcidApiServiceVersionedDelegatorTest extends DBUnitTest {
         assertNotNull(readResponse);
         assertEquals(HttpStatus.SC_OK, readResponse.getStatus());
         OrcidMessage retrievedMessage = (OrcidMessage) readResponse.getEntity();
-        assertEquals(orcid, retrievedMessage.getOrcidProfile().getOrcid().getValue());
+        assertEquals(orcid, retrievedMessage.getOrcidProfile().getOrcidIdentifier().getPath());
         assertEquals("Test credit name", retrievedMessage.getOrcidProfile().getOrcidBio().getPersonalDetails().getCreditName().getContent());
     }
 
@@ -243,7 +242,7 @@ public class T2OrcidApiServiceVersionedDelegatorTest extends DBUnitTest {
         assertNotNull(readResponse);
         assertEquals(HttpStatus.SC_OK, readResponse.getStatus());
         OrcidMessage retrievedMessage = (OrcidMessage) readResponse.getEntity();
-        assertEquals(orcid, retrievedMessage.getOrcidProfile().getOrcid().getValue());
+        assertEquals(orcid, retrievedMessage.getOrcidProfile().getOrcidIdentifier().getPath());
         GivenNames givenNames = retrievedMessage.getOrcidProfile().getOrcidBio().getPersonalDetails().getGivenNames();
         assertNotNull(givenNames);
         assertEquals("Reserved For Claim", givenNames.getContent());

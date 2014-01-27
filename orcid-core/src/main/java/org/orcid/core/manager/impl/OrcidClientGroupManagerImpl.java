@@ -204,7 +204,7 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
         if (groupOrcid == null) {
             OrcidProfile groupProfile = createGroupProfile(orcidClientGroup);
             groupProfile = orcidProfileManager.createOrcidProfile(groupProfile);
-            groupOrcid = groupProfile.getOrcid().getValue();
+            groupOrcid = groupProfile.getOrcidIdentifier().getPath();
             orcidClientGroup.setGroupOrcid(groupOrcid);
         }
 
@@ -257,7 +257,7 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
         clientProfile = orcidProfileManager.createOrcidProfile(clientProfile);
         // Now the client profile has been created, use the profile DAO
         // to link it to the group.
-        ProfileEntity clientProfileEntity = profileDao.find(clientProfile.getOrcid().getValue());
+        ProfileEntity clientProfileEntity = profileDao.find(clientProfile.getOrcidIdentifier().getPath());
         clientProfileEntity.setGroupOrcid(groupOrcid);
         profileDao.merge(clientProfileEntity);
         // And link the client to the copy of the profile cached in
@@ -271,7 +271,7 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
         }
         clientProfileEntities.add(clientProfileEntity);
         // Use the client details service to create the client details
-        ClientDetailsEntity clientDetailsEntity = createClientDetails(clientProfile.getOrcid().getValue(), client, client.getType());
+        ClientDetailsEntity clientDetailsEntity = createClientDetails(clientProfile.getOrcidIdentifier().getPath(), client, client.getType());
         // And put the client details into the copy of the profile
         // entity cached in memory by Hibernate.
         clientProfileEntity.setClientDetails(clientDetailsEntity);
@@ -394,14 +394,14 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
             clientProfile = orcidProfileManager.createOrcidProfile(clientProfile);
             // Now the client profile has been created, use the profile DAO
             // to link it to the group.
-            ProfileEntity clientProfileEntity = profileDao.find(clientProfile.getOrcid().getValue());
+            ProfileEntity clientProfileEntity = profileDao.find(clientProfile.getOrcidIdentifier().getPath());
             clientProfileEntity.setGroupOrcid(groupOrcid);
             profileDao.merge(clientProfileEntity);
             // And link the client to the copy of the profile cached in
             // memory by Hibernate
             clientProfileEntities.add(clientProfileEntity);
             // Use the client details service to create the client details
-            ClientDetailsEntity clientDetailsEntity = createClientDetails(clientProfile.getOrcid().getValue(), client, clientType);
+            ClientDetailsEntity clientDetailsEntity = createClientDetails(clientProfile.getOrcidIdentifier().getPath(), client, clientType);
             // And put the client details into the copy of the profile
             // entity cached in memory by Hibernate.
             clientProfileEntity.setClientDetails(clientDetailsEntity);
@@ -458,7 +458,7 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
         Map<String, ClientRedirectUriEntity> clientRedirectUriEntitiesMap = ClientRedirectUriEntity.mapByUri(clientRedirectUriEntities);
         clientRedirectUriEntities.clear();
         Set<RedirectUri> redirectUrisToAdd = new HashSet<RedirectUri>();
-        redirectUrisToAdd.addAll(client.getRedirectUris().getRedirectUri());        
+        redirectUrisToAdd.addAll(client.getRedirectUris().getRedirectUri());
         for (RedirectUri redirectUri : redirectUrisToAdd) {
             if (clientRedirectUriEntitiesMap.containsKey(redirectUri.getValue())) {
                 clientRedirectUriEntities.add(clientRedirectUriEntitiesMap.get(redirectUri.getValue()));

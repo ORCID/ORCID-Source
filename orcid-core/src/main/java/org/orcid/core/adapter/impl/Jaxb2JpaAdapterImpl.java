@@ -62,22 +62,22 @@ import org.orcid.jaxb.model.message.ExternalIdUrl;
 import org.orcid.jaxb.model.message.ExternalIdentifier;
 import org.orcid.jaxb.model.message.ExternalIdentifiers;
 import org.orcid.jaxb.model.message.FamilyName;
+import org.orcid.jaxb.model.message.Funding;
+import org.orcid.jaxb.model.message.FundingContributors;
+import org.orcid.jaxb.model.message.FundingExternalIdentifier;
+import org.orcid.jaxb.model.message.FundingExternalIdentifiers;
+import org.orcid.jaxb.model.message.FundingList;
+import org.orcid.jaxb.model.message.FundingTitle;
 import org.orcid.jaxb.model.message.FuzzyDate;
 import org.orcid.jaxb.model.message.GivenNames;
 import org.orcid.jaxb.model.message.GivenPermissionBy;
 import org.orcid.jaxb.model.message.GivenPermissionTo;
-import org.orcid.jaxb.model.message.FundingContributors;
-import org.orcid.jaxb.model.message.FundingExternalIdentifier;
-import org.orcid.jaxb.model.message.FundingTitle;
 import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.jaxb.model.message.Keyword;
 import org.orcid.jaxb.model.message.Keywords;
 import org.orcid.jaxb.model.message.Locale;
 import org.orcid.jaxb.model.message.OrcidActivities;
 import org.orcid.jaxb.model.message.OrcidBio;
-import org.orcid.jaxb.model.message.Funding;
-import org.orcid.jaxb.model.message.FundingExternalIdentifiers;
-import org.orcid.jaxb.model.message.FundingList;
 import org.orcid.jaxb.model.message.OrcidHistory;
 import org.orcid.jaxb.model.message.OrcidInternal;
 import org.orcid.jaxb.model.message.OrcidPatent;
@@ -113,9 +113,9 @@ import org.orcid.persistence.dao.OrgDisambiguatedDao;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.EndDateEntity;
 import org.orcid.persistence.jpa.entities.ExternalIdentifierEntity;
+import org.orcid.persistence.jpa.entities.FundingExternalIdentifierEntity;
 import org.orcid.persistence.jpa.entities.GivenPermissionByEntity;
 import org.orcid.persistence.jpa.entities.GivenPermissionToEntity;
-import org.orcid.persistence.jpa.entities.FundingExternalIdentifierEntity;
 import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
 import org.orcid.persistence.jpa.entities.OrgEntity;
 import org.orcid.persistence.jpa.entities.OtherNameEntity;
@@ -162,7 +162,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
         ProfileEntity profileEntity = existingProfileEntity == null ? new ProfileEntity() : existingProfileEntity;
 
         // if orcid-id exist us it
-        String orcidString = profile.getOrcid().getValue();
+        String orcidString = profile.getOrcidIdentifier().getPath();
         if (profile.retrieveOrcidUriAsString() != null && !profile.retrieveOrcidUriAsString().isEmpty()) {
             orcidString = OrcidStringUtils.getOrcidNumber(profile.retrieveOrcidUriAsString());
         }
@@ -918,7 +918,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
                     GivenPermissionToEntity givenPermissionToEntity = new GivenPermissionToEntity();
                     givenPermissionToEntity.setGiver(profileEntity.getId());
                     DelegateSummary profileSummary = delegationDetails.getDelegateSummary();
-                    ProfileSummaryEntity profileSummaryEntity = new ProfileSummaryEntity(profileSummary.getOrcid().getValue());
+                    ProfileSummaryEntity profileSummaryEntity = new ProfileSummaryEntity(profileSummary.getOrcidIdentifier().getPath());
                     profileSummaryEntity.setCreditName(profileSummary.getCreditName() != null ? profileSummary.getCreditName().getContent() : null);
                     givenPermissionToEntity.setReceiver(profileSummaryEntity);
                     ApprovalDate approvalDate = delegationDetails.getApprovalDate();
@@ -943,7 +943,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
                 for (DelegationDetails delegationDetails : givenPermissionBy.getDelegationDetails()) {
                     GivenPermissionByEntity givenPermissionByEntity = new GivenPermissionByEntity();
                     DelegateSummary profileSummary = delegationDetails.getDelegateSummary();
-                    ProfileSummaryEntity profileSummaryEntity = new ProfileSummaryEntity(profileSummary.getOrcid().getValue());
+                    ProfileSummaryEntity profileSummaryEntity = new ProfileSummaryEntity(profileSummary.getOrcidIdentifier().getPath());
                     profileSummaryEntity.setCreditName(profileSummary.getCreditName().getContent());
                     givenPermissionByEntity.setGiver(profileSummaryEntity);
                     givenPermissionByEntity.setReceiver(profileEntity.getId());

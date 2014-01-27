@@ -118,7 +118,7 @@ public class OrcidSearchManagerImplTest extends BaseTest {
         assertTrue(new Float(37.2).compareTo(result.getRelevancyScore().getValue()) == 0);
 
         OrcidProfile retrievedProfile = result.getOrcidProfile();
-        assertEquals("5678", retrievedProfile.getOrcid().getValue());
+        assertEquals("5678", retrievedProfile.getOrcidIdentifier().getPath());
         OrcidBio orcidBio = retrievedProfile.getOrcidBio();
         assertEquals("Logan", orcidBio.getPersonalDetails().getFamilyName().getContent());
         assertEquals("Donald Edward", orcidBio.getPersonalDetails().getGivenNames().getContent());
@@ -183,7 +183,7 @@ public class OrcidSearchManagerImplTest extends BaseTest {
 
         OrcidSearchResult result = retrievedOrcidMessage.getOrcidSearchResults().getOrcidSearchResult().get(0);
         OrcidProfile retrievedProfile = result.getOrcidProfile();
-        assertEquals("5678", retrievedProfile.getOrcid().getValue());
+        assertEquals("5678", retrievedProfile.getOrcidIdentifier().getPath());
         OrcidBio orcidBio = retrievedProfile.getOrcidBio();
         assertEquals("Logan", orcidBio.getPersonalDetails().getFamilyName().getContent());
         assertEquals("Donald Edward", orcidBio.getPersonalDetails().getGivenNames().getContent());
@@ -213,12 +213,12 @@ public class OrcidSearchManagerImplTest extends BaseTest {
         assertTrue(retrievedOrcidMessage.getOrcidSearchResults() != null && retrievedOrcidMessage.getOrcidSearchResults().getOrcidSearchResult().size() == 1);
         OrcidSearchResult searchResult = retrievedOrcidMessage.getOrcidSearchResults().getOrcidSearchResult().get(0);
         OrcidProfile profileReturnedFromSearch = searchResult.getOrcidProfile();
-        assertEquals("5678", profileReturnedFromSearch.getOrcid().getValue());
+        assertEquals("5678", profileReturnedFromSearch.getOrcidIdentifier().getPath());
     }
 
     private OrcidProfile getOrcidProfile5678MandatoryOnly() {
         OrcidProfile orcidProfile = new OrcidProfile();
-        orcidProfile.setOrcid("5678");
+        orcidProfile.setOrcidIdentifier("5678");
         OrcidBio orcidBio = new OrcidBio();
         PersonalDetails personalDetails = new PersonalDetails();
         personalDetails.setFamilyName(new FamilyName("Logan"));
@@ -231,7 +231,7 @@ public class OrcidSearchManagerImplTest extends BaseTest {
 
     private OrcidProfile getOrcidProfile6789MandatoryOnly() {
         OrcidProfile orcidProfile = new OrcidProfile();
-        orcidProfile.setOrcid("6789");
+        orcidProfile.setOrcidIdentifier("6789");
         OrcidBio orcidBio = new OrcidBio();
         orcidProfile.setOrcidBio(orcidBio);
         ContactDetails contactDetails = new ContactDetails();
@@ -266,7 +266,7 @@ public class OrcidSearchManagerImplTest extends BaseTest {
 
         OrcidSearchResult result = retrievedOrcidMessage.getOrcidSearchResults().getOrcidSearchResult().get(0);
         OrcidProfile retrievedProfile = result.getOrcidProfile();
-        assertEquals("5678", retrievedProfile.getOrcid().getValue());
+        assertEquals("5678", retrievedProfile.getOrcidIdentifier().getPath());
         OrcidBio orcidBio = retrievedProfile.getOrcidBio();
         assertEquals("Logan", orcidBio.getPersonalDetails().getFamilyName().getContent());
         assertEquals("Donald Edward", orcidBio.getPersonalDetails().getGivenNames().getContent());
@@ -275,7 +275,7 @@ public class OrcidSearchManagerImplTest extends BaseTest {
         OrcidSearchResult result2 = retrievedOrcidMessage.getOrcidSearchResults().getOrcidSearchResult().get(1);
 
         OrcidProfile retrievedProfile2 = result2.getOrcidProfile();
-        assertEquals("6789", retrievedProfile2.getOrcid().getValue());
+        assertEquals("6789", retrievedProfile2.getOrcidIdentifier().getPath());
         OrcidBio orcidBio2 = retrievedProfile2.getOrcidBio();
         assertEquals("Thomson", orcidBio2.getPersonalDetails().getFamilyName().getContent());
         assertEquals("Homer J", orcidBio2.getPersonalDetails().getGivenNames().getContent());
@@ -308,7 +308,7 @@ public class OrcidSearchManagerImplTest extends BaseTest {
 
     private OrcidProfile getOrcidProfileAllIndexFieldsPopulated() {
         OrcidProfile orcidProfile = new OrcidProfile();
-        orcidProfile.setOrcid("5678");
+        orcidProfile.setOrcidIdentifier("5678");
 
         OrcidBio orcidBio = new OrcidBio();
         PersonalDetails personalDetails = new PersonalDetails();

@@ -198,7 +198,7 @@ public class JpaJaxbEntityAdapterToOrcidProfileTest extends DBUnitTest {
         assertNotNull(orcidProfile.getOrcidDeprecated().getPrimaryRecord());
         assertNotNull(orcidProfile.getOrcidDeprecated().getPrimaryRecord().getOrcid());
         assertNotNull(orcidProfile.getOrcidDeprecated().getPrimaryRecord().getOrcidId());
-        assertEquals("4444-4444-4444-4441", orcidProfile.getOrcidDeprecated().getPrimaryRecord().getOrcid().getValue());
+        assertEquals("4444-4444-4444-4441", orcidProfile.getOrcidDeprecated().getPrimaryRecord().getOrcidIdentifier().getPath());
         assertTrue(orcidProfile.getOrcidDeprecated().getPrimaryRecord().getOrcidId().getValue().endsWith("/4444-4444-4444-4441"));
         validateAgainstSchema(new OrcidMessage(orcidProfile));
     }
@@ -215,7 +215,7 @@ public class JpaJaxbEntityAdapterToOrcidProfileTest extends DBUnitTest {
         assertNotNull(orcidProfile.retrieveOrcidWorks());
         checkOrcidWorks(orcidProfile.retrieveOrcidWorks());
         checkOrcidFundings(orcidProfile.retrieveFundings());
-        assertEquals("4444-4444-4444-4443", orcidProfile.getOrcid().getValue());
+        assertEquals("4444-4444-4444-4443", orcidProfile.getOrcidIdentifier().getPath());
 
         assertNotNull(orcidProfile.getOrcidInternal());
         checkOrcidInternal(orcidProfile.getOrcidInternal());
@@ -389,11 +389,11 @@ public class JpaJaxbEntityAdapterToOrcidProfileTest extends DBUnitTest {
         assertNotNull(delegation);
         assertEquals(1, delegation.getGivenPermissionTo().getDelegationDetails().size());
         DelegationDetails givenPermssionToDetails = delegation.getGivenPermissionTo().getDelegationDetails().iterator().next();
-        assertEquals("4444-4444-4444-4446", givenPermssionToDetails.getDelegateSummary().getOrcid().getValue());
+        assertEquals("4444-4444-4444-4446", givenPermssionToDetails.getDelegateSummary().getOrcidIdentifier().getPath());
         assertTrue(givenPermssionToDetails.getApprovalDate().getValue().toXMLFormat().startsWith("2011-10-17T16:59:32.000"));
         assertEquals(1, delegation.getGivenPermissionBy().getDelegationDetails().size());
         DelegationDetails givenPermissionByDetails = delegation.getGivenPermissionBy().getDelegationDetails().iterator().next();
-        assertEquals("4444-4444-4444-4441", givenPermissionByDetails.getDelegateSummary().getOrcid().getValue());
+        assertEquals("4444-4444-4444-4441", givenPermissionByDetails.getDelegateSummary().getOrcidIdentifier().getPath());
         assertTrue(givenPermissionByDetails.getApprovalDate().getValue().toXMLFormat().startsWith("2011-08-24T11:28:16.000"));
     }
 

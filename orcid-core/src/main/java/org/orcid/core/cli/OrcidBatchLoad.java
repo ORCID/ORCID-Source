@@ -19,6 +19,7 @@ package org.orcid.core.cli;
 import java.io.InputStream;
 import java.text.MessageFormat;
 import java.util.Date;
+
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
@@ -113,7 +114,7 @@ public class OrcidBatchLoad {
     private void assignPersistenceFields(OrcidProfile profile) {
         // set the transient fields that the encrypters need
         profile.setPassword("password");
-        // profile.setOrcid();
+        // profile.setOrcidIdentifier();
         profile.setSecurityQuestionAnswer("securityQuestionAnswer");
         profile.setVerificationCode("1111");
 

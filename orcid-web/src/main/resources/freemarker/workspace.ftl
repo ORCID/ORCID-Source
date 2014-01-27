@@ -52,7 +52,7 @@
             <div class="oid">
             	<p class="orcid-id-container">		
 	            	<span class="mini-orcid-icon"></span>
-	            	<a href="${baseUriHttp}/${(profile.orcid.value)!}" id="orcid-id" class="orcid-id" title="Click for public view of ORCID iD">${baseUriHttp}/${(profile.orcid.value)!}</a>
+	            	<a href="${baseUriHttp}/${(profile.orcidIdentifier.path)!}" id="orcid-id" class="orcid-id" title="Click for public view of ORCID iD">${baseUriHttp}/${(profile.orcidIdentifier.path)!}</a>
             	<p>
             </div>
 	        <#if ((profile.orcidBio.personalDetails.otherNames.otherName)?size != 0)>
@@ -95,7 +95,7 @@
 			</@security.authorize>
 			
 			<p class="hoover-white-fonts">
-	       		<!-- <a href="${baseUriHttp}/${(profile.orcid.value)!}" class="label btn-primary"><@orcid.msg 'workspace.ViewPublicORCIDRecord'/></a> -->	       
+	       		<!-- <a href="${baseUriHttp}/${(profile.orcidIdentifier.path)!}" class="label btn-primary"><@orcid.msg 'workspace.ViewPublicORCIDRecord'/></a> -->	       
 	       		<a href="<@spring.url '/account/manage-bio-settings'/>" id="update-personal-modal-link" class="label btn-primary"><@orcid.msg 'workspace.Update'/></a>
 	        </p>
 			

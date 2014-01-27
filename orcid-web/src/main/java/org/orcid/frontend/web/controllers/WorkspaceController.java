@@ -336,7 +336,7 @@ public class WorkspaceController extends BaseWorkspaceController {
             // Update cached profile
             currentProfile.getOrcidBio().setExternalIdentifiers(externalIdentifiers);
             // Remove external identifier
-            externalIdentifierManager.removeExternalIdentifier(currentProfile.getOrcid().getValue(), externalIdentifier.getExternalIdReference().getContent());
+            externalIdentifierManager.removeExternalIdentifier(currentProfile.getOrcidIdentifier().getPath(), externalIdentifier.getExternalIdReference().getContent());
         }
 
         return externalIdentifier;

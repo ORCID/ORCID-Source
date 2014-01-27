@@ -107,7 +107,7 @@ public class AffiliationsController extends BaseWorkspaceController {
                 }
             }
             currentProfile.getOrcidActivities().setAffiliations(affiliations);
-            orgRelationAffiliationDao.removeOrgAffiliationRelation(currentProfile.getOrcid().getValue(), affiliation.getPutCode().getValue());
+            orgRelationAffiliationDao.removeOrgAffiliationRelation(currentProfile.getOrcidIdentifier().getPath(), affiliation.getPutCode().getValue());
         }
 
         return affiliation;
@@ -282,7 +282,7 @@ public class AffiliationsController extends BaseWorkspaceController {
                     // same affiliation
                     if (orcidAffiliation.getPutCode().equals(affiliation.getPutCode().getValue())) {
                         // Update the privacy of the affiliation
-                        orgRelationAffiliationDao.updateOrgAffiliationRelation(currentProfile.getOrcid().getValue(), affiliation.getPutCode().getValue(), affiliation
+                        orgRelationAffiliationDao.updateOrgAffiliationRelation(currentProfile.getOrcidIdentifier().getPath(), affiliation.getPutCode().getValue(), affiliation
                                 .getVisibility().getVisibility());
                     }
                 }

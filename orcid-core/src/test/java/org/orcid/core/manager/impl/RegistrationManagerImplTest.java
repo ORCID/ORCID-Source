@@ -56,7 +56,7 @@ public class RegistrationManagerImplTest {
     public void testVerifyRegistration() throws Exception {
         assertTrue(RegistrationManagerImpl.REGISTRATIONS_VERIFIED_COUNTER.count() == 0);
         OrcidProfile orcidProfile = new OrcidProfile();
-        orcidProfile.setOrcid("xyz");
+        orcidProfile.setOrcidIdentifier("xyz");
         registrationManagerImpl.verifyRegistration(orcidProfile, new URI(""));
         assertTrue(RegistrationManagerImpl.REGISTRATIONS_VERIFIED_COUNTER.count() == 1);
     }
@@ -64,7 +64,7 @@ public class RegistrationManagerImplTest {
     @Test
     public void testVerifyRegistrationNotIncrementedOnException() throws Exception {
         OrcidProfile orcidProfile = new OrcidProfile();
-        orcidProfile.setOrcid("xyz");
+        orcidProfile.setOrcidIdentifier("xyz");
         doThrow(new RuntimeException()).when(orcidProfileManager).updateOrcidHistory(orcidProfile);
         assertTrue(RegistrationManagerImpl.REGISTRATIONS_VERIFIED_COUNTER.count() == 0);
 
