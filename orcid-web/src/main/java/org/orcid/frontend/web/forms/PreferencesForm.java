@@ -39,7 +39,7 @@ public class PreferencesForm {
     }
 
     public PreferencesForm(OrcidProfile orcidProfile) {
-        orcid = orcidProfile.getOrcid().getValue();
+        orcid = orcidProfile.getOrcidIdentifier().getPath();
 
         OrcidInternal orcidInternal = orcidProfile.getOrcidInternal();
 
@@ -78,7 +78,7 @@ public class PreferencesForm {
 
     public OrcidProfile getOrcidProfile() {
         OrcidProfile orcidProfile = new OrcidProfile();
-        orcidProfile.setOrcid(orcid);
+        orcidProfile.setOrcidIdentifier(orcid);
         OrcidInternal internal = new OrcidInternal();
         orcidProfile.setOrcidInternal(internal);
         Preferences preferences = new Preferences();

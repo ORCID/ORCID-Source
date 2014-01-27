@@ -98,7 +98,7 @@ public class PublicProfileController extends BaseWorkspaceController {
         HashMap<String, Funding> fundingMap = new HashMap<String, Funding>();
 
         if (profile.getOrcidDeprecated() != null) {
-            String primaryRecord = profile.getOrcidDeprecated().getPrimaryRecord().getOrcid().getValue();
+            String primaryRecord = profile.getOrcidDeprecated().getPrimaryRecord().getOrcidIdentifier().getPath();
             mav.addObject("deprecated", true);
             mav.addObject("primaryRecord", primaryRecord);
         } else {

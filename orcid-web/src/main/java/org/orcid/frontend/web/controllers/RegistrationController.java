@@ -441,7 +441,7 @@ public class RegistrationController extends BaseController {
                 dr.setGivenNames(op.getOrcidBio().getPersonalDetails().getGivenNames().getContent());
                 dr.setInstitution(null);
             }
-            dr.setOrcid(op.getOrcid().getValue());
+            dr.setOrcid(op.getOrcidIdentifier().getPath());
             drList.add(dr);
         }
 
@@ -532,7 +532,7 @@ public class RegistrationController extends BaseController {
     private void automaticallyLogin(HttpServletRequest request, String password, OrcidProfile orcidProfile) {
         UsernamePasswordAuthenticationToken token = null;
         try {
-            String orcid = orcidProfile.getOrcid().getValue();
+            String orcid = orcidProfile.getOrcidIdentifier().getPath();
             // Force refresh of profile entity to ensure new password value is
             // picked up from DB.
             profileDao.refresh(profileDao.find(orcid));
@@ -903,8 +903,8 @@ public class RegistrationController extends BaseController {
             profileToSave = registrationManager.createMinimalRegistration(profileToSave);
             notificationManager.sendVerificationEmail(profileToSave, uri, profileToSave.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue());
             request.getSession().setAttribute(ManageProfileController.CHECK_EMAIL_VALIDATED, false);
-            LOGGER.info("Created profile from registration orcid={}, email={}, sessionid={}", new Object[] { profileToSave.getOrcid().getValue(), email, sessionId });
-            token = new UsernamePasswordAuthenticationToken(profileToSave.getOrcid().getValue(), password);
+            LOGGER.info("Created profile from registration orcid={}, email={}, sessionid={}", new Object[] { profileToSave.getOrcidIdentifier().getPath(), email, sessionId });
+            token = new UsernamePasswordAuthenticationToken(profileToSave.getOrcidIdentifier().getPath(), password);
             token.setDetails(new WebAuthenticationDetails(request));
             Authentication authentication = authenticationManager.authenticate(token);
             SecurityContextHolder.getContext().setAuthentication(authentication);

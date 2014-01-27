@@ -90,7 +90,7 @@ public class RegistrationManagerImpl implements RegistrationManager {
 
     @Override
     public void verifyRegistration(OrcidProfile orcidProfile, URI baseUri) {
-        LOGGER.debug("Verifying registration: {}", orcidProfile.getOrcid().getValue());
+        LOGGER.debug("Verifying registration: {}", orcidProfile.getOrcidIdentifier().getPath());
         OrcidHistory orcidHistory = orcidProfile.getOrcidHistory();
         if (orcidHistory == null) {
             orcidHistory = new OrcidHistory();
@@ -105,9 +105,9 @@ public class RegistrationManagerImpl implements RegistrationManager {
 
     @Override
     public void resetUserPassword(String toEmail, OrcidProfile orcidProfile, URI baseUri) {
-        LOGGER.debug("Resetting password for Orcid: {}", orcidProfile.getOrcid().getValue());
+        LOGGER.debug("Resetting password for Orcid: {}", orcidProfile.getOrcidIdentifier().getPath());
         if (!orcidProfile.getOrcidHistory().isClaimed()) {
-            LOGGER.debug("Profile is not claimed so re-sending claim email instead of password reset: {}", orcidProfile.getOrcid().getValue());
+            LOGGER.debug("Profile is not claimed so re-sending claim email instead of password reset: {}", orcidProfile.getOrcidIdentifier().getPath());
             notificationManager.sendApiRecordCreationEmail(toEmail,orcidProfile);
         } else {
             notificationManager.sendPasswordResetEmail(toEmail, orcidProfile, baseUri);
@@ -130,7 +130,7 @@ public class RegistrationManagerImpl implements RegistrationManager {
     public OrcidProfile createMinimalRegistration(OrcidProfile orcidProfile) {
         OrcidProfile minimalProfile = orcidProfileManager.createOrcidProfile(orcidProfile);
         orcidProfileManager.processProfilePendingIndexingInTransaction(orcidProfile.getOrcidIdentifier().getPath());
-        LOGGER.debug("Created minimal orcid and assigned id of {}", orcidProfile.getOrcid().getValue());
+        LOGGER.debug("Created minimal orcid and assigned id of {}", orcidProfile.getOrcidIdentifier().getPath());
         return minimalProfile;
     }
 

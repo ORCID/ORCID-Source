@@ -20,8 +20,8 @@ import org.orcid.jaxb.model.message.DelegateSummary;
 import org.orcid.jaxb.model.message.Delegation;
 import org.orcid.jaxb.model.message.DelegationDetails;
 import org.orcid.jaxb.model.message.GivenPermissionTo;
-import org.orcid.jaxb.model.message.Orcid;
 import org.orcid.jaxb.model.message.OrcidBio;
+import org.orcid.jaxb.model.message.OrcidIdentifier;
 import org.orcid.jaxb.model.message.OrcidProfile;
 
 /**
@@ -43,7 +43,7 @@ public class AddDelegateForm {
 
     public OrcidProfile getOrcidProfile(String orcid) {
         OrcidProfile orcidProfile = new OrcidProfile();
-        orcidProfile.setOrcid(orcid);
+        orcidProfile.setOrcidIdentifier(orcid);
         OrcidBio orcidBio = new OrcidBio();
         orcidProfile.setOrcidBio(orcidBio);
         Delegation delegation = new Delegation();
@@ -52,7 +52,7 @@ public class AddDelegateForm {
         delegation.setGivenPermissionTo(givenPermissionTo);
         DelegationDetails delegationDetails = new DelegationDetails();
         givenPermissionTo.getDelegationDetails().add(delegationDetails);
-        DelegateSummary delegateSummary = new DelegateSummary(new Orcid(delegateOrcid));
+        DelegateSummary delegateSummary = new DelegateSummary(new OrcidIdentifier(delegateOrcid));
         delegationDetails.setDelegateSummary(delegateSummary);
         return orcidProfile;
     }

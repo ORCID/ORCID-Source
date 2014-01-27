@@ -54,7 +54,7 @@ import java.io.Serializable;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType( propOrder = { "orcid", "orcidIdentifier", "creditName" })
+@XmlType(propOrder = { "orcid", "orcidIdentifier", "creditName" })
 @XmlRootElement(name = "delegate-summary")
 public class DelegateSummary implements Serializable {
 
@@ -73,8 +73,10 @@ public class DelegateSummary implements Serializable {
         super();
     }
 
+    @Deprecated
     public DelegateSummary(Orcid orcid) {
         this.orcid = orcid;
+        this.orcidIdentifier = new OrcidIdentifier(orcid.getValue());
     }
 
     public DelegateSummary(OrcidIdentifier orcidIdentifier) {
@@ -87,14 +89,9 @@ public class DelegateSummary implements Serializable {
      * @return possible object is {@link Orcid }
      * 
      */
+    @Deprecated
     public Orcid getOrcid() {
-        if (orcid != null) {
-            return orcid;
-        }
-        if (orcidIdentifier != null) {
-            return new Orcid(orcidIdentifier.getPath());
-        }
-        return null;
+        return orcid;
     }
 
     /**
@@ -104,6 +101,7 @@ public class DelegateSummary implements Serializable {
      *            allowed object is {@link Orcid }
      * 
      */
+    @Deprecated
     public void setOrcid(Orcid value) {
         this.orcid = value;
     }

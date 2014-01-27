@@ -53,7 +53,7 @@ public class MarshallingTest {
         assertNotNull(orcidMessage);
         OrcidProfile orcidProfile = orcidMessage.getOrcidProfile();
         assertNotNull(orcidProfile);
-        assertEquals("4444-4444-4444-4446", orcidProfile.getOrcid().getValue());
+        assertEquals("4444-4444-4444-4446", orcidProfile.getOrcidIdentifier().getPath());
         OrcidActivities orcidActivities = orcidProfile.getOrcidActivities();
         assertNotNull(orcidActivities);
         assertEquals(4, orcidActivities.getAffiliations().getAffiliation().size());

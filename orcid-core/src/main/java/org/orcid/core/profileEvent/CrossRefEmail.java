@@ -87,7 +87,7 @@ public class CrossRefEmail implements ProfileEvent {
                     LOG.debug("SendEventEmail exception", e);
                 }
                 templateParams.put("verificationUrl", verificationUrl);
-                templateParams.put("orcid", orcidProfile.getOrcid().getValue());
+                templateParams.put("orcid", orcidProfile.getOrcidIdentifier().getPath());
                 templateParams.put("baseUri", orcidUrlManager.getBaseUrl());
                 String text = templateManager.processTemplate("verification_email_w_crossref.ftl", templateParams);
                 String html = templateManager.processTemplate("verification_email_w_crossref_html.ftl", templateParams);

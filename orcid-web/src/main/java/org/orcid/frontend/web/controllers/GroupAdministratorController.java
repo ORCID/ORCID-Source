@@ -66,11 +66,11 @@ public class GroupAdministratorController extends BaseWorkspaceController {
         OrcidProfile profile = getEffectiveProfile();
         
         if(profile.getType() == null || !profile.getType().equals(OrcidType.GROUP)){        	
-        	LOGGER.warn("Trying to access manage-clients page with user {} which is not a group", profile.getOrcid().getValue());
+        	LOGGER.warn("Trying to access manage-clients page with user {} which is not a group", profile.getOrcidIdentifier().getPath());
         	return new ModelAndView("redirect:/my-orcid");
         }
         
-        OrcidClientGroup group = orcidClientGroupManager.retrieveOrcidClientGroup(profile.getOrcid().getValue());
+        OrcidClientGroup group = orcidClientGroupManager.retrieveOrcidClientGroup(profile.getOrcidIdentifier().getPath());
         mav.addObject("group", group);   
         switch(profile.getGroupType()){
         case BASIC:
@@ -181,10 +181,10 @@ public class GroupAdministratorController extends BaseWorkspaceController {
         
         if(client.getErrors().size() == 0) {
             OrcidProfile profile = getEffectiveProfile();
-            String groupOrcid = profile.getOrcid().getValue();
+            String groupOrcid = profile.getOrcidIdentifier().getPath();
             
             if(profile.getType() == null || !profile.getType().equals(OrcidType.GROUP)){
-            	LOGGER.warn("Trying to create client with non group user {}", profile.getOrcid().getValue());
+            	LOGGER.warn("Trying to create client with non group user {}", profile.getOrcidIdentifier().getPath());
             	throw new OrcidClientGroupManagementException("Your account is not allowed to do this operation.");
             }
             
@@ -226,10 +226,10 @@ public class GroupAdministratorController extends BaseWorkspaceController {
         
         if(client.getErrors().size() == 0) {
             OrcidProfile profile = getEffectiveProfile();
-        	String groupOrcid = profile.getOrcid().getValue();
+        	String groupOrcid = profile.getOrcidIdentifier().getPath();
             
             if(profile.getType() == null || !profile.getType().equals(OrcidType.GROUP)){
-            	LOGGER.warn("Trying to edit client with non group user {}", profile.getOrcid().getValue());
+            	LOGGER.warn("Trying to edit client with non group user {}", profile.getOrcidIdentifier().getPath());
             	throw new OrcidClientGroupManagementException("Your account is not allowed to do this operation.");
             }
             
@@ -252,10 +252,10 @@ public class GroupAdministratorController extends BaseWorkspaceController {
     @Produces(value = { MediaType.APPLICATION_JSON })
     public @ResponseBody List<Client> getClients(){
         OrcidProfile profile = getEffectiveProfile();
-        String groupOrcid = profile.getOrcid().getValue();
+        String groupOrcid = profile.getOrcidIdentifier().getPath();
         
         if(profile.getType() == null || !profile.getType().equals(OrcidType.GROUP)){
-                LOGGER.warn("Trying to get clients of non group user {}", profile.getOrcid().getValue());
+                LOGGER.warn("Trying to get clients of non group user {}", profile.getOrcidIdentifier().getPath());
                 throw new OrcidClientGroupManagementException("Your account is not allowed to do this operation.");
         }
         

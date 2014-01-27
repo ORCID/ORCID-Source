@@ -40,7 +40,7 @@ public class SearchForDelegatesForm {
         List<SearchForDelegatesResult> results = new ArrayList<SearchForDelegatesResult>();
         for (OrcidSearchResult orcidSearchResult : orcidSearchResults.getOrcidSearchResult()) {
             SearchForDelegatesResult result = new SearchForDelegatesResult();
-            result.setOrcid(orcidSearchResult.getOrcidProfile().getOrcid().getValue());
+            result.setOrcid(orcidSearchResult.getOrcidProfile().getOrcidIdentifier().getPath());
             OrcidBio orcidBio = orcidSearchResult.getOrcidProfile().getOrcidBio();
             result.setCreditName(orcidBio.getPersonalDetails().getCreditName().getContent());
             result.setEmail(orcidBio.getContactDetails().retrievePrimaryEmail().getValue());

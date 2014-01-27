@@ -32,6 +32,7 @@ import org.apache.commons.lang.StringUtils;
 import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.clientgroup.GroupType;
 import org.orcid.utils.DateUtils;
+import org.orcid.utils.NullUtils;
 import org.orcid.utils.ReleaseNameUtils;
 
 /**
@@ -71,9 +72,11 @@ public class OrcidProfile implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    @Deprecated
     protected Orcid orcid;
 
     // Legacy
+    @Deprecated
     @XmlElement(name = "orcid-id")
     protected String orcidId;
 
@@ -126,17 +129,9 @@ public class OrcidProfile implements Serializable {
      * @return possible object is {@link Orcid }
      * 
      */
+    @Deprecated
     public Orcid getOrcid() {
-        if (orcid != null) {
-            return orcid;
-        }
-        if (orcidIdentifier != null) {
-            String path = orcidIdentifier.getPath();
-            if (path != null) {
-                return new Orcid(path);
-            }
-        }
-        return null;
+        return orcid;
     }
 
     /**
@@ -146,10 +141,12 @@ public class OrcidProfile implements Serializable {
      *            allowed object is {@link Orcid }
      * 
      */
+    @Deprecated
     public void setOrcid(Orcid value) {
         this.orcid = value;
     }
 
+    @Deprecated
     public void setOrcid(String value) {
         if (value == null) {
             this.orcid = null;
@@ -496,7 +493,11 @@ public class OrcidProfile implements Serializable {
     }
 
     public static String createCacheKey(OrcidProfile profile) {
-        return createCacheKey(profile.getOrcidIdentifier().getPath(), profile.getOrcidHistory().getLastModifiedDate().getValue().toXMLFormat(), profile.getReleaseName());
+        OrcidHistory orcidHistory = profile.getOrcidHistory();
+        OrcidIdentifier orcidIdentifier = profile.getOrcidIdentifier();
+        String xmlFormatLastModifiedDate = (orcidHistory != null && orcidHistory.getLastModifiedDate() != null) ? orcidHistory.getLastModifiedDate().getValue()
+                .toXMLFormat() : "no-last-modified";
+        return createCacheKey(orcidIdentifier != null ? orcidIdentifier.getPath() : "no-orcid-identifier", xmlFormatLastModifiedDate, profile.getReleaseName());
     }
 
     public static String createCacheKey(String path, Date lastModifiedDate) {
@@ -504,7 +505,7 @@ public class OrcidProfile implements Serializable {
     }
 
     public static String createCacheKey(String path, String xmlFormatLastModifiedDate, String releaseName) {
-        return StringUtils.join(new String[] { path, xmlFormatLastModifiedDate, releaseName });
+        return StringUtils.join(new String[] { path, xmlFormatLastModifiedDate, releaseName }, "_");
     }
 
     public void downgradeToBioOnly() {

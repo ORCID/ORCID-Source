@@ -129,7 +129,7 @@ public class OrcidProfileManagerBaseTest extends BaseTest {
         OrcidProfile profile2 = new OrcidProfile();
         profile2.setPassword("password");
         profile2.setVerificationCode("1234");
-        profile2.setOrcid(TEST_ORCID);
+        profile2.setOrcidIdentifier(TEST_ORCID);
         OrcidBio bio = new OrcidBio();
         ContactDetails contactDetails = new ContactDetails();
         contactDetails.addOrReplacePrimaryEmail(new Email("will@orcid.org"));

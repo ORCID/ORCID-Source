@@ -48,7 +48,7 @@ public class OrcidMultiThreadedIndexingTest extends OrcidProfileManagerBaseTest 
         subjectDao.merge(new SubjectEntity("Dance"));
 
         OrcidProfile delegateProfile = new OrcidProfile();
-        delegateProfile.setOrcid(DELEGATE_ORCID);
+        delegateProfile.setOrcidIdentifier(DELEGATE_ORCID);
         OrcidBio delegateBio = new OrcidBio();
         delegateProfile.setOrcidBio(delegateBio);
         PersonalDetails delegatePersonalDetails = new PersonalDetails();
@@ -57,7 +57,7 @@ public class OrcidMultiThreadedIndexingTest extends OrcidProfileManagerBaseTest 
         orcidProfileManager.createOrcidProfile(delegateProfile);
 
         OrcidProfile applicationProfile = new OrcidProfile();
-        applicationProfile.setOrcid(APPLICATION_ORCID);
+        applicationProfile.setOrcidIdentifier(APPLICATION_ORCID);
         OrcidBio applicationBio = new OrcidBio();
         applicationProfile.setOrcidBio(applicationBio);
         PersonalDetails applicationPersonalDetails = new PersonalDetails();

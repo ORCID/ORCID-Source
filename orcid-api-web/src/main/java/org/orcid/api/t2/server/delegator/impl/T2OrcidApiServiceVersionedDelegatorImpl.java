@@ -152,7 +152,7 @@ public class T2OrcidApiServiceVersionedDelegatorImpl implements T2OrcidApiServic
         Response response = t2OrcidApiServiceDelegator.findAffiliationsDetailsFromPublicCache(orcid);
         return downgradeAndValidateResponse(response);
     }
-    
+
     @Override
     public Response findFundingDetails(String orcid) {
         Response response = t2OrcidApiServiceDelegator.findFundingDetails(orcid);
@@ -164,7 +164,7 @@ public class T2OrcidApiServiceVersionedDelegatorImpl implements T2OrcidApiServic
         Response response = t2OrcidApiServiceDelegator.findFundingDetailsFromPublicCache(orcid);
         return downgradeAndValidateResponse(response);
     }
-    
+
     @Override
     public Response findWorksDetails(String orcid) {
         Response response = t2OrcidApiServiceDelegator.findWorksDetails(orcid);
@@ -271,8 +271,8 @@ public class T2OrcidApiServiceVersionedDelegatorImpl implements T2OrcidApiServic
      *             if the account is deprecated
      * */
     private void checkDeprecation(OrcidMessage orcidMessage) {
-        if (orcidMessage != null && orcidMessage.getOrcidProfile() != null && orcidMessage.getOrcidProfile().getOrcid() != null) {
-            String orcid = orcidMessage.getOrcidProfile().getOrcid().getValue();
+        if (orcidMessage != null && orcidMessage.getOrcidProfile() != null && orcidMessage.getOrcidProfile().getOrcidIdentifier() != null) {
+            String orcid = orcidMessage.getOrcidProfile().getOrcidIdentifier().getPath();
             String primaryOrcid = this.profileDao.retrievePrimaryAccountOrcid(orcid);
             if (primaryOrcid != null) {
                 // TODO: Internationalize these messages
@@ -294,7 +294,7 @@ public class T2OrcidApiServiceVersionedDelegatorImpl implements T2OrcidApiServic
         if (orcidMessage != null && orcidMessage.getOrcidProfile() != null && orcidMessage.getOrcidProfile().getOrcidDeprecated() != null) {
             // TODO: Internationalize these messages
             throw new DeprecatedException("This account is deprecated. Please refer to account:"
-                    + orcidMessage.getOrcidProfile().getOrcidDeprecated().getPrimaryRecord().getOrcid().getValue());
+                    + orcidMessage.getOrcidProfile().getOrcidDeprecated().getPrimaryRecord().getOrcidIdentifier().getPath());
         }
 
         return response;
@@ -344,7 +344,7 @@ public class T2OrcidApiServiceVersionedDelegatorImpl implements T2OrcidApiServic
             throw new OrcidNotFoundException("Affiliations are not supported in this version of the API");
         }
     }
-    
+
     @Override
     public Response addFunding(UriInfo uriInfo, String orcid, OrcidMessage orcidMessage) {
         validateIncomingMessage(orcidMessage);

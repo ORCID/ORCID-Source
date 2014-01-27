@@ -47,13 +47,13 @@ public class CrossRefPublicationsForm {
         return orcid;
     }
 
-    public void setOrcid(String orcid) {
+    public void setOrcidIdentifier(String orcid) {
         this.orcid = orcid;
     }
 
     public OrcidProfile getOrcidProfile() {
         OrcidProfile profile = new OrcidProfile();
-        profile.setOrcid(orcid);
+        profile.setOrcidIdentifier(orcid);
         OrcidWorks orcidWorks = new OrcidWorks();
         profile.setOrcidWorks(orcidWorks);
         orcidWorks.getOrcidWork().addAll(getOrcidWorks());

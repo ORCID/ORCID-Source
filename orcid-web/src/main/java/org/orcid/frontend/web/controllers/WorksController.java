@@ -145,7 +145,7 @@ public class WorksController extends BaseWorkspaceController {
             }
             works.setOrcidWork(workList);
             currentProfile.getOrcidActivities().setOrcidWorks(works);
-            profileWorkManager.removeWork(currentProfile.getOrcid().getValue(), work.getPutCode().getValue());
+            profileWorkManager.removeWork(currentProfile.getOrcidIdentifier().getPath(), work.getPutCode().getValue());
         }
 
         return deletedWork;
@@ -402,7 +402,7 @@ public class WorksController extends BaseWorkspaceController {
             }
 
             // Create profile work relationship
-            profileWorkManager.addProfileWork(currentProfile.getOrcid().getValue(), workEntity.getId(), newOw.getVisibility());
+            profileWorkManager.addProfileWork(currentProfile.getOrcidIdentifier().getPath(), workEntity.getId(), newOw.getVisibility());
 
             // Set the id (put-code) to the new work
             newOw.setPutCode(String.valueOf(workEntity.getId()));
@@ -519,7 +519,7 @@ public class WorksController extends BaseWorkspaceController {
                 WorkContributorEntity workContributorEntity = new WorkContributorEntity();
                 workContributorEntity.setContributorEmail(currentProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail() != null ? currentProfile.getOrcidBio()
                         .getContactDetails().retrievePrimaryEmail().getValue() : null);
-                workContributorEntity.setProfile(new ProfileEntity(currentProfile.getOrcid().getValue()));
+                workContributorEntity.setProfile(new ProfileEntity(currentProfile.getOrcidIdentifier().getPath()));
                 workContributorEntity.setWork(workEntity);
                 workContributorEntity.setCreditName(currentProfile.getOrcidBio().getPersonalDetails().getCreditName() != null ? currentProfile.getOrcidBio()
                         .getPersonalDetails().getCreditName().getContent() : null);
@@ -740,7 +740,7 @@ public class WorksController extends BaseWorkspaceController {
     private List<String> createWorksIdList(HttpServletRequest request) {
         OrcidProfile currentProfile = getEffectiveProfile();
         java.util.Date lastModified = currentProfile.getOrcidHistory().getLastModifiedDate().getValue().toGregorianCalendar().getTime();        
-        List<MinimizedWorkEntity> works = workManager.findWorks(currentProfile.getOrcid().getValue(), lastModified);
+        List<MinimizedWorkEntity> works = workManager.findWorks(currentProfile.getOrcidIdentifier().getPath(), lastModified);
         HashMap<String, Work> worksMap = new HashMap<String, Work>();
         List<String> workIds = new ArrayList<String>();
         if (works != null) {
@@ -775,7 +775,7 @@ public class WorksController extends BaseWorkspaceController {
                     // same work
                     if (orcidWork.getPutCode().equals(ow.getPutCode())) {
                         // Update the privacy of the work
-                        profileWorkManager.updateWork(currentProfile.getOrcid().getValue(), ow.getPutCode(), ow.getVisibility());
+                        profileWorkManager.updateWork(currentProfile.getOrcidIdentifier().getPath(), ow.getPutCode(), ow.getVisibility());
                     }
                 }
             }
