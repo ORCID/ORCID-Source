@@ -1,28 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!--
-
-    =============================================================================
-
-    ORCID (R) Open Source
-    http://orcid.org
-
-    Copyright (c) 2012-2013 ORCID, Inc.
-    Licensed under an MIT-Style License (MIT)
-    http://orcid.org/open-source-license
-
-    This copyright and license information (including a link to the full license)
-    shall be included in its entirety in all copies or substantial portion of
-    the software.
-
-    =============================================================================
-
--->
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" version="1.7">
 
     <xs:element name="ehcache">
         <xs:complexType>
             <xs:sequence>
+                <xs:element maxOccurs="1" minOccurs="0" ref="managementRESTService"/>
                 <xs:element maxOccurs="1" minOccurs="0" ref="diskStore"/>
+                <xs:element maxOccurs="1" minOccurs="0" ref="sizeOfPolicy"/>
                 <xs:element maxOccurs="1" minOccurs="0" ref="transactionManagerLookup"/>
                 <xs:element maxOccurs="1" minOccurs="0" ref="cacheManagerEventListenerFactory"/>
                 <xs:element maxOccurs="unbounded" minOccurs="0" ref="cacheManagerPeerProviderFactory"/>
@@ -41,12 +25,25 @@
             <xs:attribute default="0" name="maxBytesLocalDisk" type="memoryUnit" use="optional"/>
         </xs:complexType>
     </xs:element>
+    <xs:element name="managementRESTService">
+        <xs:complexType>
+            <xs:attribute name="enabled" type="xs:boolean" use="optional"/>
+            <xs:attribute name="bind" use="optional"/>
+            <xs:attribute name="securityServiceLocation" use="optional"/>
+            <xs:attribute name="securityServiceTimeout" use="optional" type="xs:integer"/>
+            <xs:attribute name="sslEnabled" use="optional" type="xs:boolean"/>
+            <xs:attribute name="needClientAuth" use="optional" type="xs:boolean"/>
+            <xs:attribute name="sampleHistorySize" use="optional" type="xs:integer"/>
+            <xs:attribute name="sampleIntervalSeconds" use="optional" type="xs:integer"/>
+            <xs:attribute name="sampleSearchIntervalSeconds" use="optional" type="xs:integer"/>
+        </xs:complexType>
+    </xs:element>
     <xs:element name="diskStore">
         <xs:complexType>
             <xs:attribute name="path" use="optional"/>
         </xs:complexType>
     </xs:element>
-     <xs:element name="transactionManagerLookup">
+    <xs:element name="transactionManagerLookup">
         <xs:complexType>
             <xs:attribute name="class" use="required"/>
             <xs:attribute name="properties" use="optional"/>
@@ -104,17 +101,19 @@
                 <xs:element minOccurs="0" maxOccurs="1" ref="cacheWriter"/>
                 <xs:element minOccurs="0" maxOccurs="1" ref="copyStrategy"/>
                 <xs:element minOccurs="0" maxOccurs="1" ref="elementValueComparator"/>
+                <xs:element minOccurs="0" maxOccurs="1" ref="sizeOfPolicy"/>
+                <xs:element minOccurs="0" maxOccurs="1" ref="persistence"/>
             </xs:sequence>
             <xs:attribute name="diskExpiryThreadIntervalSeconds" type="xs:integer" use="optional"/>
             <xs:attribute name="diskSpoolBufferSizeMB" type="xs:integer" use="optional"/>
             <xs:attribute name="diskPersistent" type="xs:boolean" use="optional"/>
             <xs:attribute name="diskAccessStripes" type="xs:integer" use="optional" default="1"/>
-            <xs:attribute name="eternal" type="xs:boolean" use="required"/>
+            <xs:attribute name="eternal" type="xs:boolean" use="optional" default="false"/>
             <xs:attribute name="maxElementsInMemory" type="xs:integer" use="optional"/>
             <xs:attribute name="maxEntriesLocalHeap" type="xs:integer" use="optional"/>
             <xs:attribute name="clearOnFlush" type="xs:boolean" use="optional"/>
             <xs:attribute name="memoryStoreEvictionPolicy" type="xs:string" use="optional"/>
-            <xs:attribute name="overflowToDisk" type="xs:boolean" use="required"/>
+            <xs:attribute name="overflowToDisk" type="xs:boolean" use="optional"/>
             <xs:attribute name="timeToIdleSeconds" type="xs:integer" use="optional"/>
             <xs:attribute name="timeToLiveSeconds" type="xs:integer" use="optional"/>
             <xs:attribute name="maxElementsOnDisk" type="xs:integer" use="optional"/>
@@ -143,18 +142,20 @@
                 <xs:element minOccurs="0" maxOccurs="1" ref="copyStrategy"/>
                 <xs:element minOccurs="0" maxOccurs="1" ref="searchable"/>
                 <xs:element minOccurs="0" maxOccurs="1" ref="elementValueComparator"/>
+                <xs:element minOccurs="0" maxOccurs="1" ref="sizeOfPolicy"/>
+                <xs:element minOccurs="0" maxOccurs="1" ref="persistence"/>
             </xs:sequence>
             <xs:attribute name="diskExpiryThreadIntervalSeconds" type="xs:integer" use="optional"/>
             <xs:attribute name="diskSpoolBufferSizeMB" type="xs:integer" use="optional"/>
             <xs:attribute name="diskPersistent" type="xs:boolean" use="optional"/>
             <xs:attribute name="diskAccessStripes" type="xs:integer" use="optional" default="1"/>
-            <xs:attribute name="eternal" type="xs:boolean" use="required"/>
+            <xs:attribute name="eternal" type="xs:boolean" use="optional" default="false"/>
             <xs:attribute name="maxElementsInMemory" type="xs:integer" use="optional"/>
             <xs:attribute name="maxEntriesLocalHeap" type="xs:integer" use="optional"/>
             <xs:attribute name="memoryStoreEvictionPolicy" type="xs:string" use="optional"/>
             <xs:attribute name="clearOnFlush" type="xs:boolean" use="optional"/>
             <xs:attribute name="name" type="xs:string" use="required"/>
-            <xs:attribute name="overflowToDisk" type="xs:boolean" use="required"/>
+            <xs:attribute name="overflowToDisk" type="xs:boolean" use="optional"/>
             <xs:attribute name="timeToIdleSeconds" type="xs:integer" use="optional"/>
             <xs:attribute name="timeToLiveSeconds" type="xs:integer" use="optional"/>
             <xs:attribute name="maxElementsOnDisk" type="xs:integer" use="optional"/>
@@ -257,9 +258,9 @@
             <xs:attribute name="coherent" use="optional" type="xs:boolean" default="false"/>
             <xs:attribute name="consistency" use="optional" type="consistencyType" default="eventual"/>
             <xs:attribute name="synchronousWrites" use="optional" type="xs:boolean" default="false"/>
-            <xs:attribute name="storageStrategy" use="optional" type="storageStrategyType" default="DCV2"/>
             <xs:attribute name="concurrency" use="optional" type="xs:nonNegativeInteger" default="0"/>
             <xs:attribute name="localCacheEnabled" use="optional" type="xs:boolean" default="true"/>
+            <xs:attribute name="compressionEnabled" use="optional" type="xs:boolean" default="false"/>
         </xs:complexType>
     </xs:element>
     <xs:simpleType name="consistencyType">
@@ -310,12 +311,6 @@
         <xs:restriction base="xs:string">
             <xs:enumeration value="serialization" />
             <xs:enumeration value="identity" />
-        </xs:restriction>
-    </xs:simpleType>
-    <xs:simpleType name="storageStrategyType">
-        <xs:restriction base="xs:string">
-            <xs:enumeration value="classic" />
-            <xs:enumeration value="DCV2" />
         </xs:restriction>
     </xs:simpleType>
 
@@ -372,6 +367,36 @@
             <xs:attribute name="class" use="required" type="xs:string" />
         </xs:complexType>
     </xs:element>
+
+    <xs:element name="sizeOfPolicy">
+        <xs:complexType>
+            <xs:attribute name="maxDepth" use="required" type="xs:integer" />
+            <xs:attribute name="maxDepthExceededBehavior" use="optional" default="continue" type="maxDepthExceededBehavior" />
+        </xs:complexType>
+    </xs:element>
+
+	<xs:element name="persistence">
+	    <xs:complexType>
+            <xs:attribute name="strategy" use="required" type="persistenceStrategy"/>
+            <xs:attribute name="synchronousWrites" use="optional" default="false" type="xs:boolean"/>
+	    </xs:complexType>
+	</xs:element>
+	
+	<xs:simpleType name="persistenceStrategy">
+	    <xs:restriction base="xs:string">
+	        <xs:enumeration value="localTempSwap"/>
+	        <xs:enumeration value="localRestartable"/>
+	        <xs:enumeration value="none"/>
+	        <xs:enumeration value="distributed"/>
+	    </xs:restriction>
+	</xs:simpleType>
+	
+    <xs:simpleType name="maxDepthExceededBehavior">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="continue"/>
+            <xs:enumeration value="abort"/>
+        </xs:restriction>
+    </xs:simpleType>
 
     <xs:simpleType name="notificationScope">
         <xs:restriction base="xs:string">
