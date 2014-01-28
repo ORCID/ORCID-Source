@@ -61,6 +61,20 @@ public class OrcidClientCredentialEndPointDelegatorImpl extends AbstractEndpoint
             throw new InsufficientAuthenticationException("The client is not authenticated.");
         }
 
+        /**
+         * Patch, update any orcid-grants scope to funding scope
+         * */
+        for(String scope : scopes) {
+        	if(scope.contains("orcid-grants")) {
+        		String newScope = scope.replace("orcid-grants", "funding");
+        		LOGGER.info("Client {} provided a grants scope {} which will be updated to {}", new Object[] {
+        				clientId, scope, newScope
+        		});        		
+        		scopes.remove(scope);
+        		scopes.add(newScope);
+        	}
+        }
+        
         try {
 			if (scopes != null) {
 				for (String scope : scopes) {

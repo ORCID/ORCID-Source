@@ -208,6 +208,22 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
         assertEquals("One of the provided scopes is not allowed. Please refere to the list of allowed scopes at: http://support.orcid.org/knowledgebase/articles/120162-orcid-scopes", errorMessage.getErrorDesc().getContent());
     }
     
+    @Test
+    public void dontFailWithGrantScopes() throws JSONException, InterruptedException {
+        String scopes = "/orcid-bio/read-limited";
+        String authorizationCode = obtainAuthorizationCode(scopes);
+        String wrongScope="/orcid-bio/read-limited /funding/create /orcid-grants/read-limited";
+        MultivaluedMap<String, String> params = new MultivaluedMapImpl();
+        params.add("client_id", CLIENT_DETAILS_ID);
+        params.add("client_secret", "client-secret");
+        params.add("grant_type", "authorization_code");
+        params.add("scope", wrongScope);
+        params.add("redirect_uri", redirectUri);
+        params.add("code", authorizationCode);
+        ClientResponse tokenResponse = oauthT2Client.obtainOauth2TokenPost("client_credentials", params);
+        assertEquals(200, tokenResponse.getStatus());        
+    }
+    
     
     
     @Test
