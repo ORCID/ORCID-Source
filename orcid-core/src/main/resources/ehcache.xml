@@ -1,81 +1,108 @@
-<!--
+<!-- ============================================================================= 
+	ORCID (R) Open Source http://orcid.org Copyright (c) 2012-2013 ORCID, Inc. 
+	Licensed under an MIT-Style License (MIT) http://orcid.org/open-source-license 
+	This copyright and license information (including a link to the full license) 
+	shall be included in its entirety in all copies or substantial portion of 
+	the software. ============================================================================= -->
+<ehcache xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="ehcache.xsd">
 
-    =============================================================================
+	<diskStore path="java.io.tmpdir" />
 
-    ORCID (R) Open Source
-    http://orcid.org
+	<defaultCache maxElementsInMemory="5" eternal="false"
+		timeToIdleSeconds="20" timeToLiveSeconds="20"
+		memoryStoreEvictionPolicy="LRU">
+		<persistence strategy="none" />
+	</defaultCache>
 
-    Copyright (c) 2012-2013 ORCID, Inc.
-    Licensed under an MIT-Style License (MIT)
-    http://orcid.org/open-source-license
+	<cache name="country-list" maxElementsInMemory="500" eternal="true"
+		copyOnRead="true" copyOnWrite="true">
+		<persistence strategy="none" />
+	</cache>
 
-    This copyright and license information (including a link to the full license)
-    shall be included in its entirety in all copies or substantial portion of
-    the software.
+	<cache name="iso-countries" maxElementsInMemory="500" eternal="true"
+		copyOnRead="false" copyOnWrite="false">
+		<persistence strategy="none" />
+	</cache>
 
-    =============================================================================
+	<cache name="pub-min-works-maps" maxElementsInMemory="500"
+		timeToLiveSeconds="86400" maxElementsOnDisk="50000" copyOnRead="false"
+		copyOnWrite="false" eternal="false">
+		<persistence strategy="localTempSwap" />
+	</cache>
 
--->
-<ehcache xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="ehcache.xsd">
+	<cache name="pub-affiliation-maps" maxElementsInMemory="500"
+		timeToLiveSeconds="86400" maxElementsOnDisk="50000" copyOnRead="false"
+		copyOnWrite="false" eternal="false">
+		<persistence strategy="localTempSwap" />
+	</cache>
 
-    <diskStore path="java.io.tmpdir"/>
+	<cache name="pub-funding-maps" maxElementsInMemory="500"
+		timeToLiveSeconds="86400" maxElementsOnDisk="50000" copyOnRead="false"
+		copyOnWrite="false" eternal="false">
+		<persistence strategy="localTempSwap" />
+	</cache>
 
-    <defaultCache
-            maxElementsInMemory="5"
-            eternal="false"
-            timeToIdleSeconds="20"
-            timeToLiveSeconds="20"
-            overflowToDisk="false"
-            diskPersistent="false"
-            memoryStoreEvictionPolicy="LRU"
-            />
+	<cache name="security-questions" maxElementsInMemory="200"
+		eternal="true" copyOnRead="false" copyOnWrite="false">
+		<persistence strategy="none" />
+	</cache>
 
-    <cache name="country-list" maxElementsInMemory="500" eternal="true" overflowToDisk="false" copyOnRead="true"
-           copyOnWrite="true"/>
-           
-    <cache name="iso-countries" maxElementsInMemory="500" eternal="true" overflowToDisk="false" copyOnRead="false"
-           copyOnWrite="false"/>
+	<cache name="import-works-clients" maxElementsInMemory="200"
+		eternal="true" copyOnRead="false" copyOnWrite="false">
+		<persistence strategy="none" />
+	</cache>
 
-	<cache name="pub-min-works-maps" maxElementsInMemory="500" timeToLiveSeconds="86400" overflowToDisk="true" maxElementsOnDisk="50000" diskPersistent="true" copyOnRead="false"
-           copyOnWrite="false" eternal="false"/>
-           
-    <cache name="pub-affiliation-maps" maxElementsInMemory="500" timeToLiveSeconds="86400" overflowToDisk="true" maxElementsOnDisk="50000" diskPersistent="true"  copyOnRead="false"
-           copyOnWrite="false" eternal="false"/>                 
-           
-	<cache name="pub-funding-maps" maxElementsInMemory="500" timeToLiveSeconds="86400" overflowToDisk="true" maxElementsOnDisk="50000" diskPersistent="true" copyOnRead="false"
-           copyOnWrite="false" eternal="false"/>                 
-           
-    <cache name="security-questions" maxElementsInMemory="200" eternal="true" overflowToDisk="false" copyOnRead="false"
-           copyOnWrite="false"/>
-           
-    <cache name="import-works-clients" maxElementsInMemory="200" eternal="true" overflowToDisk="false" copyOnRead="false"
-           copyOnWrite="false"/>
+	<cache name="read-access-clients" maxElementsInMemory="200"
+		eternal="true" copyOnRead="false" copyOnWrite="false">
+		<persistence strategy="none" />
+	</cache>
 
-    <cache name="read-access-clients" maxElementsInMemory="200" eternal="true" overflowToDisk="false" copyOnRead="false"
-           copyOnWrite="false"/>
-    
-    <cache name="locale-messages" maxElementsInMemory="2000" timeToLiveSeconds="1200" overflowToDisk="false" copyOnRead="false"
-           copyOnWrite="false" eternal="false"/>  
-                      
- 	<cache name="languages-map" maxElementsInMemory="2000" timeToLiveSeconds="3600" overflowToDisk="false" copyOnRead="false"
-           copyOnWrite="false" eternal="false"/>                                        
-           
-    <cache name="recent-orcid" maxElementsInMemory="20000" timeToLiveSeconds="60" overflowToDisk="false" copyOnRead="false"
-           copyOnWrite="false" eternal="false"/>
+	<cache name="locale-messages" maxElementsInMemory="2000"
+		timeToLiveSeconds="1200" copyOnRead="false" copyOnWrite="false"
+		eternal="false">
+		<persistence strategy="none" />
+	</cache>
 
-	<cache name="statistics" maxElementsInMemory="100" timeToLiveSeconds="600" overflowToDisk="false" copyOnRead="false"
-           copyOnWrite="false" eternal="false"/>
-           
-	<cache name="staticContent" maxElementsInMemory="100" timeToLiveSeconds="900" overflowToDisk="false" copyOnRead="false"
-           copyOnWrite="false" eternal="false"/>
-           
-    <cache name="orgs" maxElementsInMemory="20000" timeToLiveSeconds="900" overflowToDisk="false" copyOnRead="false"
-           copyOnWrite="false" eternal="false"/>
-           
-	<cache name="works" maxElementsInMemory="2000" timeToLiveSeconds="86400" overflowToDisk="true" maxElementsOnDisk="50000" diskPersistent="true"  copyOnRead="false"
-           copyOnWrite="false" eternal="false"/>                 
+	<cache name="languages-map" maxElementsInMemory="2000"
+		timeToLiveSeconds="3600" copyOnRead="false" copyOnWrite="false"
+		eternal="false">
+		<persistence strategy="none" />
+	</cache>
 
-	<cache name="public-profile" maxElementsInMemory="500" timeToLiveSeconds="86400" overflowToDisk="true" maxElementsOnDisk="50000" diskPersistent="true" copyOnRead="false"
-           copyOnWrite="false" eternal="false"/>
-           
+	<cache name="recent-orcid" maxElementsInMemory="20000"
+		maxElementsOnDisk="50000" timeToLiveSeconds="60" copyOnRead="false"
+		copyOnWrite="false" eternal="false">
+		<persistence strategy="localTempSwap" />
+	</cache>
+
+	<cache name="statistics" maxElementsInMemory="100"
+		timeToLiveSeconds="600" copyOnRead="false" copyOnWrite="false"
+		eternal="false">
+		<persistence strategy="none" />
+	</cache>
+
+	<cache name="staticContent" maxElementsInMemory="100"
+		timeToLiveSeconds="900" copyOnRead="false" copyOnWrite="false"
+		eternal="false">
+		<persistence strategy="none" />
+	</cache>
+
+	<cache name="orgs" maxElementsInMemory="20000" timeToLiveSeconds="900"
+		copyOnRead="false" copyOnWrite="false" eternal="false">
+		<persistence strategy="none" />
+	</cache>
+
+	<cache name="works" maxElementsInMemory="2000" timeToLiveSeconds="86400"
+		maxElementsOnDisk="50000" copyOnRead="false" copyOnWrite="false"
+		eternal="false">
+		<persistence strategy="localTempSwap" />
+	</cache>
+
+	<cache name="public-profile" maxElementsInMemory="500"
+		timeToLiveSeconds="86400" maxElementsOnDisk="50000" copyOnRead="false"
+		copyOnWrite="false" eternal="false">
+		<persistence strategy="localTempSwap" />
+	</cache>
+
 </ehcache>
