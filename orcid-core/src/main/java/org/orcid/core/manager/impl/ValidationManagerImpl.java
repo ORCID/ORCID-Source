@@ -95,9 +95,6 @@ public class ValidationManagerImpl implements ValidationManager {
         this.validateWorkType = validateWorkType;
     }
 
-    
-    
-    
     public boolean isValidateOnlyOnePrimaryEmail() {
         return validateOnlyOnePrimaryEmail;
     }
@@ -105,9 +102,6 @@ public class ValidationManagerImpl implements ValidationManager {
     public void setValidateOnlyOnePrimaryEmail(boolean validateOnlyOnePrimaryEmail) {
         this.validateOnlyOnePrimaryEmail = validateOnlyOnePrimaryEmail;
     }
-    
-    
-    
     
     @Override
     public void validateMessage(OrcidMessage orcidMessage) {
