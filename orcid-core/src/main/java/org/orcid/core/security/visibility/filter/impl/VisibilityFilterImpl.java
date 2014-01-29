@@ -113,6 +113,9 @@ public class VisibilityFilterImpl implements VisibilityFilter {
             return messageToBeFiltered;
         } else {
             TreeCleaner treeCleaner = new TreeCleaner();
+            //If the object to filter is the orcid-search-results, dont clean it if it is empty
+            if(messageIdForLog.equalsIgnoreCase("orcid-search-results"))
+            	treeCleaner.setRemoveEmptyObjects(false);
             treeCleaner.clean(messageToBeFiltered, new TreeCleaningStrategy() {
                 public TreeCleaningDecision needsStripping(Object obj) {
                     TreeCleaningDecision decision = TreeCleaningDecision.DEFAULT;
