@@ -74,7 +74,7 @@ public class LoadFundRefData {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(LoadFundRefData.class);
 	private static final String FUNDREF_SOURCE_TYPE = "FUNDREF";
-	private static String geonamesApiUrl="http://api.geonames.org/getJSON";
+	private static String geonamesApiUrl;
 	//Params
 	@Option(name = "-f", usage = "Path to RDF file containing FundRef info to load into DB")
     private File fileToLoad;
@@ -125,8 +125,10 @@ public class LoadFundRefData {
         ApplicationContext context = new ClassPathXmlApplicationContext("orcid-core-context.xml");
         orgDisambiguatedDao = (OrgDisambiguatedDao) context.getBean("orgDisambiguatedDao");
         genericDao = (GenericDao)context.getBean("orgDisambiguatedExternalIdentifierEntityDao");
-        orgManager = (OrgManager) context.getBean("orgManager");        
-        apiUser = (String)context.getBean("geonamesUser");
+        orgManager = (OrgManager) context.getBean("orgManager"); 
+        //Geonames params
+        geonamesApiUrl = (String)context.getBean("geonamesApiUrl");
+        apiUser = (String)context.getBean("geonamesUser");        
     }
     
     /**
@@ -182,10 +184,7 @@ public class LoadFundRefData {
 				}				
 			}		
 			long end = System.currentTimeMillis();
-			System.out.println("Time taken to process the files: " + (end - start));
-			for(String key : cache.keySet()){
-				System.out.println(key + ": " + cache.get(key));
-			}
+			LOGGER.info("Time taken to process the files: {}", (end - start));			
     	} catch(FileNotFoundException fne) {
     		LOGGER.error("Unable to read file {}", fileToLoad);
     	} catch(ParserConfigurationException pce) {

@@ -496,4 +496,9 @@
 	<bean id="geonamesUser" class="java.lang.String">
 		<constructor-arg value="orcid"/>
 	</bean>
+	
+	<!-- Geonames API -->
+	<bean id="geonamesApiUrl" class="java.lang.String">
+		<constructor-arg value="http://api.geonames.org/getJSON"/>
+	</bean>	
 </beans>
