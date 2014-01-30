@@ -189,7 +189,7 @@ public class OrcidProfile implements Serializable {
     }
 
     public void setOrcidIdentifier(String path) {
-        this.orcidIdentifier = new OrcidIdentifier(path);
+        this.orcidIdentifier = path != null ? new OrcidIdentifier(path) : null;
     }
 
     public String getOrcidId() {
