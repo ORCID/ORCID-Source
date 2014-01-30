@@ -204,10 +204,10 @@ public class OrcidMessageVersionConverterImplV1_0_23ToV1_1 implements OrcidMessa
     }
 
     private void upgradeOrcidIds(OrcidProfile orcidProfile) {
-        OrcidIdentifier newOrcidIdentifier = new OrcidIdentifier();
-        orcidProfile.setOrcidIdentifier(newOrcidIdentifier);
         Orcid orcid = orcidProfile.getOrcid();
         if (orcid != null) {
+            OrcidIdentifier newOrcidIdentifier = new OrcidIdentifier();
+            orcidProfile.setOrcidIdentifier(newOrcidIdentifier);
             String orcidValue = orcid.getValue();
             if (StringUtils.isNotBlank(orcidValue)) {
                 newOrcidIdentifier.setPath(orcidValue);
@@ -215,7 +215,12 @@ public class OrcidMessageVersionConverterImplV1_0_23ToV1_1 implements OrcidMessa
         }
         String orcidId = orcidProfile.getOrcidId();
         if (StringUtils.isNotBlank(orcidId)) {
-            newOrcidIdentifier.setUri(orcidId);
+            OrcidIdentifier orcidIdentifier = orcidProfile.getOrcidIdentifier();
+            if (orcidIdentifier == null) {
+                orcidIdentifier = new OrcidIdentifier();
+                orcidProfile.setOrcidIdentifier(orcidIdentifier);
+            }
+            orcidIdentifier.setUri(orcidId);
         }
         TreeCleaner treeCleaner = new TreeCleaner();
         treeCleaner.clean(orcidProfile, new TreeCleaningStrategy() {
