@@ -426,7 +426,9 @@
 			</xs:documentation>
 		</xs:annotation>
 		<xs:simpleType>
-			<xs:restriction base="xs:string" />
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="5000"></xs:maxLength>
+			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
 
@@ -892,9 +894,6 @@
 		</xs:complexType>
 	</xs:element>
 	
-	
-	
-	
 	<xs:element name="funding-list">
 		<xs:annotation>
 			<xs:documentation>Container for the funding received by the researcher or contributor</xs:documentation>
@@ -938,7 +937,7 @@
 		</xs:annotation>
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element name="title" type="orcid:non-empty-string">
+				<xs:element name="title" type="orcid:string1000">
                     <xs:annotation>
             			<xs:documentation>The main name or title of the funding.</xs:documentation>
         			</xs:annotation>
@@ -1219,7 +1218,7 @@
 		<xs:complexType>
 			<xs:sequence>				
 				<xs:element name="funding-external-identifier-type" type="orcid:non-empty-string" minOccurs="0" maxOccurs="1" fixed="grant_number"/>
-				<xs:element name="funding-external-identifier-value" type="orcid:non-empty-string" minOccurs="0" maxOccurs="1" />
+				<xs:element name="funding-external-identifier-value" type="orcid:string2084" minOccurs="0" maxOccurs="1" />
 				<xs:element name="funding-external-identifier-url" type="xs:anyURI" minOccurs="0" maxOccurs="1" />
 			</xs:sequence>
 		</xs:complexType>
@@ -1583,10 +1582,9 @@
 		</xs:annotation>
 		<xs:complexType>
 			<xs:simpleContent>
-				<xs:extension base="xs:string">
-					<xs:attribute name="language-code" type="orcid:language-code"
-						use="required"></xs:attribute>
-				</xs:extension>
+				<xs:restriction base="orcid:stringWithLangCode">
+					<xs:maxLength value="1000"></xs:maxLength>
+				</xs:restriction>
 			</xs:simpleContent>
 		</xs:complexType>
 	</xs:element>
@@ -2286,5 +2284,23 @@
 		<xs:restriction base="xs:string">
 			<xs:maxLength value="500"></xs:maxLength>
 		</xs:restriction>
+	</xs:simpleType>	
+	<xs:simpleType name="string1000">
+		<xs:restriction base="orcid:non-empty-string">
+			<xs:maxLength value="1000"></xs:maxLength>
+		</xs:restriction>
 	</xs:simpleType>
+	<xs:simpleType name="string2084">
+		<xs:restriction base="orcid:non-empty-string">
+			<xs:maxLength value="2084"></xs:maxLength>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:complexType name="stringWithLangCode">
+  		<xs:simpleContent>
+    		<xs:extension base="orcid:non-empty-string">
+      			<xs:attribute name="language-code" type="orcid:language-code"
+						use="required"></xs:attribute>
+    		</xs:extension>
+  		</xs:simpleContent>
+	</xs:complexType>
 </xs:schema>
