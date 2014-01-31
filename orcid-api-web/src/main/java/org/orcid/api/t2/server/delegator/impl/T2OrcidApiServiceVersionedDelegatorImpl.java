@@ -296,7 +296,6 @@ public class T2OrcidApiServiceVersionedDelegatorImpl implements T2OrcidApiServic
             throw new DeprecatedException("This account is deprecated. Please refer to account:"
                     + orcidMessage.getOrcidProfile().getOrcidDeprecated().getPrimaryRecord().getOrcidIdentifier().getPath());
         }
-
         return response;
     }
 
@@ -318,9 +317,10 @@ public class T2OrcidApiServiceVersionedDelegatorImpl implements T2OrcidApiServic
     }
 
     private Response downgradeAndValidateResponse(Response response) {
+        checkProfileStatus(response);
         Response downgradedResponse = downgradeResponse(response);
         validateOutgoingResponse(downgradedResponse);
-        return checkProfileStatus(downgradedResponse);
+        return downgradedResponse;
     }
 
     @Override
