@@ -102,6 +102,11 @@ public class OrgManagerImpl implements OrgManager {
     }
 
     @Override
+    public List<OrgEntity> getOrgsByName(String searchTerm) {
+    	return orgDao.getOrgsByName(searchTerm);
+    }
+    
+    @Override
     public OrgEntity createUpdate(OrgEntity org) {
         OrgEntity existingOrg = orgDao.findByNameCityRegionAndCountry(org.getName(), org.getCity(), org.getRegion(), org.getCountry());
         if (existingOrg != null) {

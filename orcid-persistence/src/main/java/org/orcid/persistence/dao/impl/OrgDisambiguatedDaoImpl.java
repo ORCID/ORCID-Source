@@ -76,6 +76,17 @@ public class OrgDisambiguatedDaoImpl extends GenericDaoImpl<OrgDisambiguatedEnti
         List<OrgDisambiguatedEntity> results = query.getResultList();
         return results.isEmpty() ? null : results.get(0);
     }
+    
+    @Override
+    public List<OrgDisambiguatedEntity> findByName(String name) {
+    	TypedQuery<OrgDisambiguatedEntity> query = entityManager
+                .createQuery(
+                        "from OrgDisambiguatedEntity where lower(name) = lower(:name)",
+                        OrgDisambiguatedEntity.class);
+    	query.setParameter("name", name);
+    	List<OrgDisambiguatedEntity> results = query.getResultList();
+        return results.isEmpty() ? null : results;
+    }
 
     @SuppressWarnings("unchecked")
     @Override

@@ -298,8 +298,24 @@
         <property name="validateBibtex" value="false"/>        
         <property name="version" value="1.1" />
     </bean>
-
-	<bean id="localeManager" class="org.orcid.core.locale.LocaleManagerImpl" />
+    
+    <bean id="incomingValidationManagerV1_2_rc3" class="org.orcid.core.manager.impl.ValidationManagerForLegacyApiVersionsImpl">
+        <property name="validationBehaviour"
+            value="${org.orcid.core.manager.validationBehaviour:THROW_VALIDATION_EXCEPTION}" />
+        <property name="version" value="1.2_rc3" />
+        <property name="requireOrcidProfile" value="true"/>        
+        <property name="validateTitle" value="true"/>
+        <property name="validateWorkType" value="true"/>   
+        <property name="validateOnlyOnePrimaryEmail" value="true"/>        
+    </bean>
+    <bean id="outgoingValidationManagerV1_2_rc3" class="org.orcid.core.manager.impl.ValidationManagerImpl">
+        <property name="validationBehaviour"
+            value="${org.orcid.core.manager.validationBehaviour:LOG_WARNING}" />
+        <property name="validateBibtex" value="false"/>        
+        <property name="version" value="1.2_rc3" />
+    </bean>
+    
+    <bean id="localeManager" class="org.orcid.core.locale.LocaleManagerImpl" />
 
 	<!-- Statistics Generator Manager -->
 	<bean id="statisticsGeneratorManager" class="org.orcid.core.manager.impl.StatisticsGeneratorManagerImpl" />
@@ -494,5 +510,15 @@
 
     <bean id="jpa2JaxbAdapter" class="org.orcid.core.adapter.impl.Jpa2JaxbAdapterImpl" />
     <bean id="jaxb2JpaAdapter" class="org.orcid.core.adapter.impl.Jaxb2JpaAdapterImpl" />
-
+	
+	
+	<!-- Geonames username -->
+	<bean id="geonamesUser" class="java.lang.String">
+		<constructor-arg value="orcid"/>
+	</bean>
+	
+	<!-- Geonames API -->
+	<bean id="geonamesApiUrl" class="java.lang.String">
+		<constructor-arg value="http://api.geonames.org/getJSON"/>
+	</bean>	
 </beans>

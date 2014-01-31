@@ -60,6 +60,8 @@ public class ValidationManagerImpl implements ValidationManager {
     
     private boolean validateWorkType = false;
     
+    private boolean validateOnlyOnePrimaryEmail = false;
+    
     private Schema schema;
 
     private static final Logger LOG = LoggerFactory.getLogger(ValidationManagerImpl.class);
@@ -93,6 +95,14 @@ public class ValidationManagerImpl implements ValidationManager {
         this.validateWorkType = validateWorkType;
     }
 
+    public boolean isValidateOnlyOnePrimaryEmail() {
+        return validateOnlyOnePrimaryEmail;
+    }
+
+    public void setValidateOnlyOnePrimaryEmail(boolean validateOnlyOnePrimaryEmail) {
+        this.validateOnlyOnePrimaryEmail = validateOnlyOnePrimaryEmail;
+    }
+    
     @Override
     public void validateMessage(OrcidMessage orcidMessage) {
         if (ValidationBehaviour.IGNORE.equals(validationBehaviour)) {
@@ -152,6 +162,11 @@ public class ValidationManagerImpl implements ValidationManager {
             }
             if (primaryCount > 1) {
                 throw new OrcidValidationException("There must not be more than one primary email");
+            }
+            
+            if(validateOnlyOnePrimaryEmail) {
+            	if(primaryCount == 0)
+            		throw new OrcidValidationException("There must be just one primary email");
             }
         }
     }

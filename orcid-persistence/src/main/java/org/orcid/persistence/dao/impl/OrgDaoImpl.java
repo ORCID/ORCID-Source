@@ -53,6 +53,13 @@ public class OrgDaoImpl extends GenericDaoImpl<OrgEntity, Long> implements OrgDa
         query.setMaxResults(maxResults);
         return query.getResultList();
     }
+    
+    @Override
+    public List<OrgEntity> getOrgsByName(String searchTerm) {
+    	TypedQuery<OrgEntity> query = entityManager.createQuery("from OrgEntity where lower(name) like lower(:searchTerm) order by name", OrgEntity.class);
+    	query.setParameter("searchTerm", searchTerm);
+    	return query.getResultList();
+    }
 
     @Override
     public OrgEntity findByNameCityRegionAndCountry(String name, String city, String region, Iso3166Country country) {
