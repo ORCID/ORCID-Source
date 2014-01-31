@@ -230,8 +230,8 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
             orcidDeprecated = new OrcidDeprecated();
             orcidDeprecated.setDate(new DeprecatedDate(toXMLGregorianCalendar(profileEntity.getDeprecatedDate())));
             PrimaryRecord primaryRecord = new PrimaryRecord();
-            primaryRecord.setOrcid(new Orcid(profileEntity.getPrimaryRecord().getId()));
-            primaryRecord.setOrcidId(new Url(baseUri.replace("https", "http") + "/" + profileEntity.getPrimaryRecord().getId()));
+            OrcidIdentifier orcidIdentifier = new OrcidIdentifier(getOrcidIdBase(profileEntity.getPrimaryRecord().getId()));
+            primaryRecord.setOrcidIdentifier(orcidIdentifier);
             orcidDeprecated.setPrimaryRecord(primaryRecord);
         }
         return orcidDeprecated;
