@@ -113,6 +113,10 @@ public class VisibilityFilterImpl implements VisibilityFilter {
             return messageToBeFiltered;
         } else {
             TreeCleaner treeCleaner = new TreeCleaner();
+            //If the object to filter is the empty-orcid-search-results, it means it is an empty search result
+            //so, dont clean it
+            if(messageIdForLog.equalsIgnoreCase("empty-orcid-search-results"))
+            	treeCleaner.setRemoveEmptyObjects(false);
             treeCleaner.clean(messageToBeFiltered, new TreeCleaningStrategy() {
                 public TreeCleaningDecision needsStripping(Object obj) {
                     TreeCleaningDecision decision = TreeCleaningDecision.DEFAULT;
@@ -147,7 +151,10 @@ public class VisibilityFilterImpl implements VisibilityFilter {
         OrcidSearchResults orcidSearchResults = messageToBeFiltered.getOrcidSearchResults();
         OrcidProfile orcidProfile = messageToBeFiltered.getOrcidProfile();
         if (orcidSearchResults != null) {
-            messageIdForLog = "orcid-search-results";
+        	if(orcidSearchResults.getNumFound() == 0)
+        		messageIdForLog = "empty-orcid-search-results";
+        	else 
+        		messageIdForLog = "orcid-search-results";
         } else if (orcidProfile != null) {
             OrcidIdentifier orcidIdentifier = orcidProfile.getOrcidIdentifier();
             if (orcidIdentifier != null) {
