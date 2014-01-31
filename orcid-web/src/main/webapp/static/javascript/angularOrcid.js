@@ -2932,6 +2932,10 @@ function languageCtrl($scope, $cookies){
 	        	"value": 'fr',
 	    		"label": 'Français'
 	        },	        
+//	        {
+//	        	"value": 'ko',
+//	    		"label": '한국어'
+//	        },
 	        {
 		        "value": 'zh_CN',
 			    "label": '简体中文'
@@ -2941,7 +2945,7 @@ function languageCtrl($scope, $cookies){
 			    "label": '繁體中文'
 	        }	        
 	    ];	
-
+	
 	//Load Language that is set in the cookie or set default language to english
 	$scope.getCurrentLanguage = function(){
 		$scope.language = $scope.languages[0]; //Default
