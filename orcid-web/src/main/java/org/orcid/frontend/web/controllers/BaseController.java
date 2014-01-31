@@ -289,7 +289,7 @@ public class BaseController {
         if (currentUser == null) {
             return null;
         }
-        return isInDelegationMode() ? sourceManager.retrieveSourceOrcid() : currentUser.getRealOrcid();
+        return currentUser.getRealOrcid();
     }
 
     @ModelAttribute("inDelegationMode")

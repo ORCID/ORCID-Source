@@ -72,14 +72,16 @@ public class SourceManagerImpl implements SourceManager {
     }
 
     private String getRealUserIfInDelegationMode(Authentication authentication) {
-        Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
-        if (authorities != null) {
-            for (GrantedAuthority authority : authorities) {
-                if (authority instanceof SwitchUserGrantedAuthority) {
-                    SwitchUserGrantedAuthority suga = (SwitchUserGrantedAuthority) authority;
-                    Authentication sourceAuthentication = suga.getSource();
-                    if (sourceAuthentication instanceof UsernamePasswordAuthenticationToken && sourceAuthentication.getPrincipal() instanceof OrcidProfileUserDetails) {
-                        return ((OrcidProfileUserDetails) sourceAuthentication.getPrincipal()).getRealOrcid();
+        if (authentication != null) {
+            Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
+            if (authorities != null) {
+                for (GrantedAuthority authority : authorities) {
+                    if (authority instanceof SwitchUserGrantedAuthority) {
+                        SwitchUserGrantedAuthority suga = (SwitchUserGrantedAuthority) authority;
+                        Authentication sourceAuthentication = suga.getSource();
+                        if (sourceAuthentication instanceof UsernamePasswordAuthenticationToken && sourceAuthentication.getPrincipal() instanceof OrcidProfileUserDetails) {
+                            return ((OrcidProfileUserDetails) sourceAuthentication.getPrincipal()).getRealOrcid();
+                        }
                     }
                 }
             }
