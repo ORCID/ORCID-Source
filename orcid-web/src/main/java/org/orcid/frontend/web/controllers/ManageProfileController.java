@@ -328,50 +328,12 @@ public class ManageProfileController extends BaseWorkspaceController {
         return mav;
     }
 
-    @RequestMapping(value = "/switch-user", method = RequestMethod.POST)
-    public ModelAndView switchUser(HttpServletRequest request, @RequestParam("giverOrcid") String giverOrcid) {
-        OrcidProfileUserDetails userDetails = getCurrentUser();
-        // Check permissions!
-        if (isInDelegationMode()) {
-            // If already in delegation mode, check that is switching back to
-            // current user
-            if (!getRealUserOrcid().equals(giverOrcid)) {
-                throw new AccessDeniedException("You are not allowed to switch back to that user");
-            }
-        } else {
-            // If not yet in delegation mode, then check that the real user has
-            // permission to become the giver
-            if (!hasDelegatePermission(userDetails, giverOrcid)) {
-                throw new AccessDeniedException("You are not allowed to switch to that user");
-            }
-        }
-        // getCurrentUser().switchDelegationMode(giverOrcid);
-        request.getSession().removeAttribute(WORKS_RESULTS_ATTRIBUTE);
-        ModelAndView mav = new ModelAndView("redirect:/my-orcid");
-        return mav;
-    }
-
     @RequestMapping(value = "/admin-switch-user", method = RequestMethod.GET)
     public ModelAndView adminSwitchUser(HttpServletRequest request, @RequestParam("orcid") String targetOrcid) {
         // Redirect to the new way of switching user, which includes admin
         // access
         ModelAndView mav = new ModelAndView("redirect:/switch-user?j_username=" + targetOrcid);
         return mav;
-    }
-
-    private boolean hasDelegatePermission(OrcidProfileUserDetails userDetails, String giverOrcid) {
-        Delegation delegation = getRealProfile().getOrcidBio().getDelegation();
-        if (delegation != null) {
-            GivenPermissionBy givenPermissionBy = delegation.getGivenPermissionBy();
-            if (givenPermissionBy != null) {
-                for (DelegationDetails delegationDetails : givenPermissionBy.getDelegationDetails()) {
-                    if (delegationDetails.getDelegateSummary().getOrcidIdentifier().getPath().equals(giverOrcid)) {
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
     }
 
     protected ModelAndView rebuildManageView(String activeTab) {
