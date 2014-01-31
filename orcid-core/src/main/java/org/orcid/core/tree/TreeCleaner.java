@@ -33,7 +33,7 @@ public class TreeCleaner {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TreeCleaner.class);
 
-    public static final ConcurrentHashMap<Class<?>, Package> CANDIDATE_CLASSES = new ConcurrentHashMap<>();
+    public static final ConcurrentHashMap<Class<?>, Class<?>> CANDIDATE_CLASSES = new ConcurrentHashMap<>();
 
     private boolean removeEmptyObjects = true;
 
@@ -155,11 +155,11 @@ public class TreeCleaner {
                 return true;
             }
             Package aPackage = returnType.getPackage();
-            if (returnType != null && aPackage != null) {
-                if (aPackage.getName().startsWith("org.orcid") || Collection.class.isAssignableFrom(returnType) || String.class.isAssignableFrom(returnType)) {
-                    CANDIDATE_CLASSES.put(returnType, aPackage);
-                    return true;
-                }
+            String packageName = aPackage != null ? aPackage.getName() : "";
+            if (packageName.startsWith("org.orcid") || Collection.class.isAssignableFrom(returnType) || String.class.isAssignableFrom(returnType)
+                    || "long".equals(returnType.getName())) {
+                CANDIDATE_CLASSES.put(returnType, returnType);
+                return true;
             }
         }
         return false;
