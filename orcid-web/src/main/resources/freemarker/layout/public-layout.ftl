@@ -111,13 +111,13 @@
                                <li><a ${(nav=="settings")?string('class="active" ', '')}href="<@spring.url '/account'/>"><@orcid.msg 'public-layout.account_setting'/></a></li>
                                <#if RequestParameters['delegates']?? && isProxy>
                                    <li ng-controller="SwitchUserCtrl" class="dropdown">
-                                   	<a ng-click="openMenu($event)" ><@orcid.msg 'public-layout.manage_proxy_account'/></a>
-                                   		<ul class="dropdown-menu" ng-show="isDroppedDown" ng-cloak>
-	  										<li ng-repeat="delegationDetails in delegation.givenPermissionBy.delegationDetails">
-												<a href="<@spring.url '/switch-user?j_username='/>{{delegationDetails.delegateSummary.orcidIdentifier.path}}">{{delegationDetails.delegateSummary.creditName.content}} ({{delegationDetails.delegateSummary.orcidIdentifier.path}})</a>
-											</li>
-  										</ul>
-                                   </li>
+                                       <a ng-click="openMenu($event)" ><@orcid.msg 'public-layout.manage_proxy_account'/></a>
+                                       <ul class="dropdown-menu" ng-show="isDroppedDown" ng-cloak>
+                                           <li ng-repeat="delegationDetails in delegation.givenPermissionBy.delegationDetails | orderBy:'delegateSummary.creditName.content'">
+                                               <a href="<@spring.url '/switch-user?j_username='/>{{delegationDetails.delegateSummary.orcidIdentifier.path}}">{{delegationDetails.delegateSummary.creditName.content}} ({{delegationDetails.delegateSummary.orcidIdentifier.path}})</a>
+                                           </li>
+                                       </ul>
+                                    </li>
                                </#if>
                                <li><a href="<@spring.url '/signout'/>"><@orcid.msg 'public-layout.sign_out'/></a></li>
                            </@security.authorize>
@@ -267,13 +267,13 @@
                                 <li><a ${(nav=="settings")?string('class="active" ', '')}href="<@spring.url '/account'/>"><@orcid.msg 'public-layout.account_setting'/></a></li>
                                 <#if RequestParameters['delegates']?? && isProxy>
                                     <li ng-controller="SwitchUserCtrl" class="dropdown">
-                                   	<a ng-click="openMenu($event)" ><@orcid.msg 'public-layout.manage_proxy_account'/></a>
-                                   		<ul class="dropdown-menu" ng-show="isDroppedDown" ng-cloak>
-	  										<li ng-repeat="delegationDetails in delegation.givenPermissionBy.delegationDetails">
-												<a href=""<@spring.url '/switch-user?j_username='/>"{{delegationDetails.delegateSummary.orcidIdentifier.path}}">{{delegationDetails.delegateSummary.orcidIdentifier.path}}</a>
-											</li>
-  										</ul>
-                                   </li>
+                                        <a ng-click="openMenu($event)" ><@orcid.msg 'public-layout.manage_proxy_account'/></a>
+                                        <ul class="dropdown-menu" ng-show="isDroppedDown" ng-cloak>
+                                            <li ng-repeat="delegationDetails in delegation.givenPermissionBy.delegationDetails | orderBy:'delegateSummary.creditName.content'">
+                                                <a href="<@spring.url '/switch-user?j_username='/>{{delegationDetails.delegateSummary.orcidIdentifier.path}}">{{delegationDetails.delegateSummary.creditName.content}} ({{delegationDetails.delegateSummary.orcidIdentifier.path}})</a>
+                                            </li>
+                                        </ul>
+                                     </li>
                                 </#if>
                                 <li><a href="<@spring.url '/signout'/>"><@orcid.msg 'public-layout.sign_out'/></a></li>
                             </@security.authorize>

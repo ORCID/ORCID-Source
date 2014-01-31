@@ -369,7 +369,7 @@
 					</tr>
 				</thead>
 				<tbody>
-					<tr ng-repeat="delegationDetails in delegation.givenPermissionTo.delegationDetails">
+					<tr ng-repeat="delegationDetails in delegation.givenPermissionTo.delegationDetails | orderBy:'delegateSummary.creditName.content'">
 						<td width="35%"><a href="{{delegationDetails.delegateSummary.orcidIdentifier.uri}}">{{delegationDetails.delegateSummary.creditName.content}}</a></td>
 						<td width="35%">{{delegationDetails.approvalDate.value|date}}</td>
 						<td width="5%"><a
