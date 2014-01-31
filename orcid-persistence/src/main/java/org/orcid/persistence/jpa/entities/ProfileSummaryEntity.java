@@ -16,10 +16,17 @@
  */
 package org.orcid.persistence.jpa.entities;
 
+import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
+
+import org.apache.commons.lang3.StringUtils;
+import org.orcid.jaxb.model.message.Visibility;
 
 /**
  * 
@@ -32,7 +39,10 @@ public class ProfileSummaryEntity extends BaseEntity<String> {
 
     private static final long serialVersionUID = 1L;
     private String orcid;
+    private String givenNames;
+    private String familyName;
     private String creditName;
+    private Visibility creditNameVisibility;
 
     public ProfileSummaryEntity() {
         super();
@@ -53,6 +63,24 @@ public class ProfileSummaryEntity extends BaseEntity<String> {
         this.orcid = orcid;
     }
 
+    @Column(name = "given_names", length = 150)
+    public String getGivenNames() {
+        return givenNames;
+    }
+
+    public void setGivenNames(String givenNames) {
+        this.givenNames = givenNames;
+    }
+
+    @Column(name = "family_name", length = 150)
+    public String getFamilyName() {
+        return familyName;
+    }
+
+    public void setFamilyName(String familyName) {
+        this.familyName = familyName;
+    }
+
     @Column(name = "credit_name", length = 150)
     public String getCreditName() {
         return creditName;
@@ -60,6 +88,35 @@ public class ProfileSummaryEntity extends BaseEntity<String> {
 
     public void setCreditName(String creditName) {
         this.creditName = creditName;
+    }
+
+    @Basic
+    @Enumerated(EnumType.STRING)
+    @Column(name = "credit_name_visibility")
+    public Visibility getCreditNameVisibility() {
+        return creditNameVisibility;
+    }
+
+    public void setCreditNameVisibility(Visibility creditNameVisibility) {
+        this.creditNameVisibility = creditNameVisibility;
+    }
+
+    @Transient
+    public String getDisplayName() {
+        if (StringUtils.isNotBlank(creditName) && Visibility.PUBLIC.equals(creditNameVisibility)) {
+            return creditName;
+        }
+        StringBuilder builder = new StringBuilder();
+        if (StringUtils.isNotBlank(givenNames)) {
+            builder.append(givenNames);
+        }
+        if (StringUtils.isNotBlank(familyName)) {
+            if (builder.length() > 0) {
+                builder.append(" ");
+            }
+            builder.append(familyName);
+        }
+        return builder.length() > 0 ? builder.toString() : null;
     }
 
 }
