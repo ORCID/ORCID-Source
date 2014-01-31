@@ -37,6 +37,8 @@ public interface OrgDisambiguatedDao extends GenericDao<OrgDisambiguatedEntity, 
     OrgDisambiguatedEntity findBySourceIdAndSourceType(String sourceId, String sourceType);
 
     OrgDisambiguatedEntity findByNameCityRegionCountryAndSourceType(String name, String city, String region, Iso3166Country country, String sourceType);
+    
+    List<OrgDisambiguatedEntity> findByName(String name);
 
     List<OrgDisambiguatedEntity> findOrgsByIndexingStatus(IndexingStatus indexingStatus, int firstResult, int maxResult);
 

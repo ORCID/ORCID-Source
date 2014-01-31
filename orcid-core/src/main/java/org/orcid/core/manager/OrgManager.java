@@ -36,6 +36,8 @@ public interface OrgManager {
     void writeDisambiguatedOrgs(Writer writer);
 
     List<OrgEntity> getOrgs(String searchTerm, int firstResult, int maxResults);
+    
+    List<OrgEntity> getOrgsByName(String searchTerm);
 
     OrgEntity createUpdate(OrgEntity org);
 
