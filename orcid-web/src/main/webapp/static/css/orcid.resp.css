@@ -1463,6 +1463,10 @@ a:hover {
     width: 33px;
 }
 
+.more-info .ng-binding{
+	min-height: 30px;
+	height: auto;	
+}
 
 .workspace-toolbar{
     line-height: 30px;
