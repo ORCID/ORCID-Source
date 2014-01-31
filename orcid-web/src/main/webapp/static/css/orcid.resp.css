@@ -2689,6 +2689,7 @@ a.btn-primary:hover {
     top: 230px;
     width: 80%;
     z-index: -1;
+    padding-left:0;
 }
 
 #loginForm #form-sign-in-button {
@@ -3971,6 +3972,10 @@ p.orcid-id-container{
 	#loginForm #login-error-mess{
 		padding-left: 280px;
 		text-align:left;
+	}
+	
+	.oauth-login #loginForm #login-error-mess{
+		top: 203px;
 	}
 	
 	#signout{
