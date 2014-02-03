@@ -65,10 +65,11 @@
 		request.requestURI?ends_with("${basePath}account")||	
 		request.requestURI?matches("(.*)/(?:\\d{4}-){3,}\\d{3}[\\dX]")||
 		request.requestURI?ends_with("${basePath}account/manage-bio-settings")||
-		request.requestURI?matches("(.*)/[a-zA-Z0-9?=]*")
-		
-	>    	
+		request.requestURI?matches("(.*)/[a-zA-Z0-9?=]*")||
+		request.requestURI?contains("orcid-search")		
+	>	
 		<link rel="stylesheet" href="${staticLoc}/css/fonts.css?v=${ver}"/>
+		<!-- Always remember to remove Glyphicons font reference when bootstrap is updated -->
 	    <link rel="stylesheet" href="${staticCdn}/twitter-bootstrap/3.0.3/css/bootstrap.min.css?v=${ver}"/>
 	    <!--[if lt IE 8]>
 	        <link rel="stylesheet" href="${staticCdn}/twitter-bootstrap/3.0.3/css/bootstrap-ie7.css?v=${ver}"/>	                
