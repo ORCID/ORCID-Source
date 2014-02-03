@@ -29,6 +29,7 @@ import org.orcid.persistence.dao.OrgDisambiguatedDao;
 import org.orcid.persistence.dao.OrgDisambiguatedSolrDao;
 import org.orcid.persistence.jpa.entities.IndexingStatus;
 import org.orcid.persistence.jpa.entities.OrgDisambiguatedEntity;
+import org.orcid.persistence.jpa.entities.OrgDisambiguatedExternalIdentifierEntity;
 import org.orcid.persistence.jpa.entities.OrgEntity;
 import org.orcid.persistence.solr.entities.OrgDisambiguatedSolrDocument;
 import org.slf4j.Logger;
@@ -46,6 +47,7 @@ public class OrgDisambiguatedManagerImpl implements OrgDisambiguatedManager {
 
     private static final int INDEXING_CHUNK_SIZE = 1000;
     private static final int INCORRECT_POPULARITY_CHUNK_SIZE = 1000;
+    private static final String FUNDING_ORG_TYPE = "FUNDREF";
     private static final Logger LOGGER = LoggerFactory.getLogger(OrgDisambiguatedManagerImpl.class);
 
     @Resource
@@ -106,9 +108,28 @@ public class OrgDisambiguatedManagerImpl implements OrgDisambiguatedManager {
             }
         }
         document.setOrgNames(new ArrayList<>(orgNames));
+        
+        if(FUNDING_ORG_TYPE.equals(entity.getSourceType()) || hasFundrefExternalIdentifier(entity.getExternalIdentifiers())){
+        	document.setFundingOrg(true);
+        } else {
+        	document.setFundingOrg(false);
+        }
+        
+        
         return document;
     }
 
+    private boolean hasFundrefExternalIdentifier(Set<OrgDisambiguatedExternalIdentifierEntity> externalIdentifiers){
+    	if(externalIdentifiers == null || externalIdentifiers.size() == 0)
+    		return false;
+    	for(OrgDisambiguatedExternalIdentifierEntity extId : externalIdentifiers) {
+    		if(FUNDING_ORG_TYPE.equals(extId.getIdentifierType()))
+    			return true;
+    	}
+    	
+    	return false;
+    }
+    
     @Override
     synchronized public void processOrgsWithIncorrectPopularity() {
         LOGGER.info("About to process disambiguated orgs with incorrect popularity");
