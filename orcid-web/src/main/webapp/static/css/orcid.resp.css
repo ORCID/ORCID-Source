@@ -2530,6 +2530,7 @@ header overrides
 
 .workspace-profile p {
 	margin-bottom: 5px;
+	word-wrap: break-word;
 }
 
 .work-title {
