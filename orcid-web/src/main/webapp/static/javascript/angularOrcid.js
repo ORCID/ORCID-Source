@@ -1112,7 +1112,8 @@ function RegistrationCtrl($scope, $compile) {
 	
 	$scope.postRegister = function () {
 		if (basePath.startsWith(baseUrl + 'oauth')) { 
-		    orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'New-Registration-Submit', 'OAuth']);
+			var clientName = $('div#RegistrationCtr input[name="client_name"').val();
+		    orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'New-Registration-Submit ' + clientName, 'OAuth']);
 		    $scope.register.creationType.value = "Member-referred";
 		} else {
 	    	orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'New-Registration-Submit', 'Website']);
@@ -1147,8 +1148,10 @@ function RegistrationCtrl($scope, $compile) {
 	        contentType: 'application/json;charset=UTF-8',
 	        dataType: 'json',
 	        success: function(data) {
-	    		if (basePath.startsWith(baseUrl + 'oauth')) 
-	    		    orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'New-Registration', 'OAuth']);
+	    		if (basePath.startsWith(baseUrl + 'oauth')) {
+	    			var clientName = $('div#RegistrationCtr input[name="client_name"').val();
+	    		    orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'New-Registration ' + clientName, 'OAuth']);
+	    		}
 	    	    else
 	    	    	orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'New-Registration', 'Website']);
 	    		orcidGA.windowLocationHrefDelay(data.url);

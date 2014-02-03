@@ -18,8 +18,16 @@ package org.orcid.frontend.web.controllers;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.orcid.frontend.web.forms.LoginForm;
+import org.orcid.jaxb.model.message.OrcidProfile;
+import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
+import org.springframework.security.web.savedrequest.SavedRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,7 +36,8 @@ import org.springframework.web.servlet.ModelAndView;
 
 @Controller("loginController")
 public class LoginController extends BaseController {
-
+    Pattern clientIdPattern = Pattern.compile("client_id=([^&]*)");
+    
     @ModelAttribute("yesNo")
     public Map<String, String> retrieveYesNoMap() {
         Map<String, String> map = new LinkedHashMap<String, String>();
@@ -46,7 +55,24 @@ public class LoginController extends BaseController {
     }
 
     @RequestMapping(value = { "/oauth/signin", "/oauth/login" }, method = RequestMethod.GET)
-    public ModelAndView loginGetHandler2(ModelAndView mav) {
+    public ModelAndView loginGetHandler2(HttpServletRequest request, HttpServletResponse response, ModelAndView mav) {
+        // find client name if available 
+        SavedRequest savedRequest = new HttpSessionRequestCache().getRequest(request, response);
+        String client_name = "";
+        if (savedRequest != null) {
+            String url = savedRequest.getRedirectUrl();
+            Matcher matcher = clientIdPattern.matcher(url);
+            if (matcher.find()) {
+                String client_id = matcher.group(1);
+                if (client_id != null) {
+                    OrcidProfile clientProfile = orcidProfileManager.retrieveOrcidProfile(client_id);
+                    if (clientProfile.getOrcidBio() != null && clientProfile.getOrcidBio().getPersonalDetails() != null
+                            && clientProfile.getOrcidBio().getPersonalDetails().getCreditName() != null)
+                        client_name = clientProfile.getOrcidBio().getPersonalDetails().getCreditName().getContent();
+                }
+            }
+        }
+        mav.addObject("client_name", client_name);
         mav.setViewName("oauth_login");
         mav.addObject("hideUserVoiceScript", true);
         return mav;

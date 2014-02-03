@@ -282,9 +282,10 @@ $(function () {
 		if($('form#loginForm').attr('disabled')){
 			return false;
 		}
-		if (basePath.startsWith(baseUrl + 'oauth')) 
-		    orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'Sign-In-Submit', 'OAuth']);
-	    else
+		if (basePath.startsWith(baseUrl + 'oauth')) { 
+			var clientName = $('form#loginForm input[name="client_name"').val();
+		    orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'Sign-In-Submit ' + clientName, 'OAuth']);
+		} else
 	    	orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'Sign-In-Submit', 'Website']);	
 		$('form#loginForm').attr('disabled', 'disabled');
 		$('#ajax-loader').show();
@@ -297,9 +298,10 @@ $(function () {
 	        	$('#ajax-loader').hide();
 	        	$('form#loginForm').removeAttr('disabled');
 	            if (data.success) {
-	        	    if (basePath.startsWith(baseUrl + 'oauth/signin')) 
-	        		    orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'Sign-In', 'OAuth']);
-	        	    else
+	        	    if (basePath.startsWith(baseUrl + 'oauth/signin')) {
+	        	    	var clientName = $('form#loginForm input[name="client_name"').val();
+	        		    orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'Sign-In ' + clientName, 'OAuth']);
+	        	    } else
 	        	    	orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'Sign-In', 'Website']);
 	        	    orcidGA.windowLocationHrefDelay(data.url + window.location.hash);
 	            } else {
