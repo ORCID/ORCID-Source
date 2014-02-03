@@ -218,7 +218,8 @@ body {
 }
 
 h1,h2,h3,h4,h5,h6 {
-	font-family: 'Gill Sans W02 Bold', 'Helvetica', sans-serif;
+	font-family: 'Gill Sans W02 Medium', 'Helvetica', sans-serif;
+	font-weight: bold;
 	font-style: normal;
 	color: #a6ce39;	
 }
@@ -555,7 +556,8 @@ select {
 	padding: 0 0 0 10px;
 	margin: 0;
 	color: #939598;
-	font-family: 'Gill Sans W02 Bold', Helvetica, sans-serif;
+	font-family: 'Gill Sans W02 Medium', Helvetica, sans-serif;
+	font-weight: bold;
 	font-style: normal;
 	font-size: 12px;
 	box-shadow: none;
@@ -702,7 +704,8 @@ select {
 	margin: 3px;
 	color: #FFF;
 	font-size: 12px;	
-	font-family: 'Gill Sans W02 Bold', 'Helvetica', sans-serif;	
+	font-family: 'Gill Sans W02 Medium', 'Helvetica', sans-serif;
+	font-weight: bold;	
 	font-style: normal;
 	background: #A6CE39;
 	line-height: 20px;
@@ -755,7 +758,8 @@ select {
 	margin-bottom: 0;
 	height: 60px;
 	background: #338caf;
-	font-family: 'Gill Sans W02 Bold', 'Helvetica', sans-serif;
+	font-family: 'Gill Sans W02 Medium', 'Helvetica', sans-serif;
+	font-weight: bold;
 	font-style: normal;	   
 }
 
@@ -987,12 +991,14 @@ select {
 */
 h1,h2,h3,h4,h5,h6,b,strong,.table th,.close,.nav-header,.label,.badge,.header .search form input[type="search"],.header .main>.menu>li>a,.btn-update,.btn-update:visited,.overview-count,.overview-count:visited,.overview-title,.workspace-accordion-header a,.workspace-accordion-header a:visited,.workspace-accordion-header a:hover,.workspace-header-public,.workspace-help a,.full-name,.tabs a,.tabs a:visited
 {	
-	font-family: 'Gill Sans W02 Bold', 'Helvetica', sans-serif;
+	font-family: 'Gill Sans W02 Medium', 'Helvetica', sans-serif;
+	font-weight: bold;
 	font-style: normal;	
 }
 
 .primaryEmail {
-	font-family: 'Gill Sans W02 Bold', 'Helvetica', sans-serif;
+	font-family: 'Gill Sans W02 Medium', 'Helvetica', sans-serif;
+	font-weight: bold;
 	font-style: normal;
 }
 
@@ -1163,7 +1169,8 @@ ul.privacyHelp li.private {
 
 #statistics .page-header {
 	font-size: 2em;
-	font-family: 'Gill Sans W02 Bold', 'Helvetica', sans-serif;
+	font-family: 'Gill Sans W02 Medium', 'Helvetica', sans-serif;
+	font-weight: bold;
 	font-style: normal;
 	color: #A6CE39;
 	border: none;
@@ -1173,7 +1180,8 @@ ul.privacyHelp li.private {
 
 #statistics span.stat-name{
 	font-size: 1.5em;
-	font-family: 'Gill Sans W02 Bold', 'Helvetica', sans-serif;
+	font-family: 'Gill Sans W02 Medium', 'Helvetica', sans-serif;
+	font-weight: bold;
 	font-style: normal;
 	color: #939498;	 
 }
@@ -1181,7 +1189,8 @@ ul.privacyHelp li.private {
 #statistics span.stat-data {
 	font-size: 2em;
 	color: #939498;
-	font-family: 'Gill Sans W02 Bold', 'Helvetica', sans-serif;
+	font-family: 'Gill Sans W02 Medium', 'Helvetica', sans-serif;
+	font-weight: bold;
 	font-style: normal;	
 }
 
@@ -1429,7 +1438,8 @@ a:hover {
 	font-size: 10px;
 	line-height: 1.1;
 	text-transform: uppercase;
-	font-family: 'Gill Sans W02 Bold', 'Helvetica', sans-serif;
+	font-family: 'Gill Sans W02 Medium', 'Helvetica', sans-serif;
+	font-weight: bold;
 	font-style: normal;
 	display: inline-block;
 	padding-right: 13px;
@@ -1491,7 +1501,8 @@ a:hover {
 	line-height: 1;
 	word-wrap:break-word;
 	color: #FFF;
-	font-family: 'Gill Sans W02 Bold', 'Helvetica', sans-serif;
+	font-family: 'Gill Sans W02 Medium', 'Helvetica', sans-serif;
+	font-weight: bold;
 	font-style: normal;
 	vertical-align:3px;
 	margin-left: 5px;	
@@ -1519,7 +1530,8 @@ a:hover {
 	padding: 0 3px;
 	background: #31789B;
 	color: #fff;
-	font-family: 'Gill Sans W02 Bold', 'Helvetica', sans-serif;
+	font-family: 'Gill Sans W02 Medium', 'Helvetica', sans-serif;
+	font-weight: bold; 
 	font-style: normal;
 	margin-bottom: 10px;
 }
@@ -1532,7 +1544,8 @@ a:hover {
 .overview-title {
 	display: inline-block;
 	color: #939597;
-	font-family: 'Gill Sans W02 Bold', 'Helvetica', sans-serif;
+	font-family: 'Gill Sans W02 Medium', 'Helvetica', sans-serif;
+	font-weight: bold;
 	font-style: normal;
 }
 
@@ -1544,7 +1557,8 @@ a:hover {
 	position: relative;	
 	margin-top: 10px;
 	margin-bottom: 10px;	
-	font-family: 'Gill Sans W02 Bold', 'Helvetica', sans-serif;	
+	font-family: 'Gill Sans W02 Medium', 'Helvetica', sans-serif;
+	font-weight: bold;	
 }
 
 .toggle-text{	
@@ -1557,7 +1571,8 @@ a:hover {
 
 .workspace-accordion-header a,.workspace-accordion-header a:visited,.workspace-accordion-header a:hover,.workspace-header-public
 	{
-	font-family: 'Gill Sans W02 Bold', 'Helvetica', sans-serif;
+	font-family: 'Gill Sans W02 Medium', 'Helvetica', sans-serif;
+	font-weight: bold;
 	font-style: normal;
 }
 
@@ -1608,12 +1623,14 @@ a:hover {
 }
 
 .workspace-help a {
-	font-family: 'Gill Sans W02 Bold', 'Helvetica', sans-serif;
+	font-family: 'Gill Sans W02 Medium', 'Helvetica', sans-serif;
+	font-weight: bold;
 	font-style: normal;
 }
 
 .full-name {
-	font-family: 'Gill Sans W02 Bold', 'Helvetica', sans-serif;
+	font-family: 'Gill Sans W02 Medium', 'Helvetica', sans-serif;
+	font-weight: bold;
 	font-style: normal;
 	margin: 10px 0 0 !important;
 	line-height: 1;
@@ -1855,7 +1872,8 @@ a:hover {
 	border-width: 1px 1px 0 0;
 	color: #cacaca;
 	font-size: 12px;
-	font-family: 'Gill Sans W02 Bold', 'Helvetica', sans-serif;
+	font-family: 'Gill Sans W02 Medium', 'Helvetica', sans-serif;
+	font-weight: bold;
 	font-style: normal; 
 }
 
@@ -2599,7 +2617,8 @@ a.btn-primary:hover {
 }
 
 .clients span {
-	font-family: 'Gill Sans W02 Bold', 'Helvetica', sans-serif;
+	font-family: 'Gill Sans W02 Medium', 'Helvetica', sans-serif;
+	font-weight: bold;
 	font-style: normal;
 }
 
@@ -2612,7 +2631,8 @@ a.btn-primary:hover {
 .clients table.table caption {
 	text-align: left;
 	color: #A6CE39;
-	font-family: 'Gill Sans W02 Bold', 'Helvetica', sans-serif;
+	font-family: 'Gill Sans W02 Medium', 'Helvetica', sans-serif;
+	font-weight: bold;
 	font-style: normal;
 }
 
