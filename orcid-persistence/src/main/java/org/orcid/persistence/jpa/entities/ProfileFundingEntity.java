@@ -35,6 +35,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.Sort;
@@ -252,9 +253,14 @@ public class ProfileFundingEntity extends BaseEntity<Long> implements Comparable
 			return compareTypes;
 		}
 		
-		int compareTitles = compareTitles(title, other.getTitle());
+		int compareTitles = compareStrings(title, other.getTitle());
 		if(compareTitles != 0) {
 			return compareTitles;
+		}
+		
+		int compareDescriptions = compareStrings(description, other.getDescription());
+		if(compareDescriptions != 0) {
+			return compareDescriptions;
 		}
 		
         int compareEnds = compareEnds(endDate, other.getEndDate());
@@ -265,7 +271,34 @@ public class ProfileFundingEntity extends BaseEntity<Long> implements Comparable
         if (compareStarts != 0) {
             return compareStarts;
         }
-        return compareNames(org.getName(), other.getOrg().getName());
+        
+        int compareAmounts = compareStrings(amount, other.getAmount());
+        if(compareAmounts != 0) {
+        	return compareAmounts;
+        }
+        
+        int compareCurrency = compareStrings(currencyCode, other.getCurrencyCode());
+        if(compareCurrency != 0) {
+        	return compareCurrency;
+        }
+        
+        int compareOrgName = compareStrings(org.getName(), other.getOrg().getName()); 
+        if(compareOrgName != 0) {
+        	return compareOrgName;
+        }
+        
+        int compareOrgCountry = compareStrings(org.getCountry() == null ? null : org.getCountry().value(), 
+        		other.getOrg().getCountry() == null ? null : other.getOrg().getCountry().value());
+        if(compareOrgCountry != 0) {
+        	return compareOrgCountry;
+        }
+        
+        int compareOrgCity = compareStrings(org.getCity(), other.getOrg().getCity());
+        if(compareOrgCity != 0) {
+        	return compareOrgCity;
+        }
+        
+        return compareStrings(url, other.getUrl());
 	}
 
 	private int compareTypes(FundingType type, FundingType otherType){
@@ -289,20 +322,13 @@ public class ProfileFundingEntity extends BaseEntity<Long> implements Comparable
         return -startDate.compareTo(otherStartDate);
     }
 
-    private int compareNames(String name, String otherName) {
-        if (NullUtils.anyNull(name, otherName)) {
-            return NullUtils.compareNulls(name, otherName);
+    private int compareStrings(String string, String otherString) {
+        if (NullUtils.anyNull(string, otherString)) {
+            return NullUtils.compareNulls(string, otherString);
         }
-        return name.compareTo(otherName);
+        return string.compareTo(otherString);
     }
-    
-    private int compareTitles(String title, String otherTitle) {
-        if (NullUtils.anyNull(title, otherTitle)) {
-            return NullUtils.compareNulls(title, otherTitle);
-        }
-        return title.compareTo(otherTitle);
-    }
-    
+       
     /**
      * Clean simple fields so that entity can be reused.
      */
