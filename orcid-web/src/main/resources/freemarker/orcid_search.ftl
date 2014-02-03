@@ -17,7 +17,5 @@
 
 -->
 <@public classes=['home'] >
-<div class="row">
-    <#include "orcid_bio_search.ftl"/>
-</div>
+<#include "orcid_bio_search.ftl"/>
 </@public>
