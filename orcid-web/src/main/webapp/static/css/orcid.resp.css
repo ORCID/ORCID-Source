@@ -205,7 +205,8 @@ html {
 }
 
 body {
-	font-family: 'Gill Sans W01 Medium', 'Helvetica', 'Gill Sans', sans-serif, 'Tahoma', 'Verdana';
+	font-family: 'Gill Sans W02 Medium', 'Helvetica', sans-serif;
+	font-style: normal;  
 	color: #939598;
 	font-size: 16px;
 	min-height: 100%;
@@ -217,9 +218,9 @@ body {
 }
 
 h1,h2,h3,h4,h5,h6 {
-	font-family: 'Gill Sans W01 Bold', 'Helvetica', 'Gill Sans', sans-serif, 'Tahoma', 'Verdana';
-	color: #a6ce39;
-	font-weight: bold;
+	font-family: 'Gill Sans W02 Bold', 'Helvetica', sans-serif;
+	font-style: normal;
+	color: #a6ce39;	
 }
 
 h2 {
@@ -554,7 +555,8 @@ select {
 	padding: 0 0 0 10px;
 	margin: 0;
 	color: #939598;
-	font-weight: bold;
+	font-family: 'Gill Sans W02 Bold', Helvetica, sans-serif;
+	font-style: normal;
 	font-size: 12px;
 	box-shadow: none;
 	-webkit-box-shadow: none;
@@ -699,9 +701,9 @@ select {
 	-webkit-border-radius: 0;
 	margin: 3px;
 	color: #FFF;
-	font-size: 12px;
-	font-weight: bold;
-	font-family: 'Gill Sans W01 Medium', 'Helvetica', 'Gill Sans', sans-serif, 'Tahoma', 'Verdana';
+	font-size: 12px;	
+	font-family: 'Gill Sans W02 Bold', 'Helvetica', sans-serif;	
+	font-style: normal;
 	background: #A6CE39;
 	line-height: 20px;
 }
@@ -753,7 +755,8 @@ select {
 	margin-bottom: 0;
 	height: 60px;
 	background: #338caf;
-	font-family: 'Gill Sans W01 Bold', 'Helvetica', 'Gill Sans', sans-serif, 'Tahoma', 'Verdana';	   
+	font-family: 'Gill Sans W02 Bold', 'Helvetica', sans-serif;
+	font-style: normal;	   
 }
 
 .header .navigation>.menu>li {
@@ -798,7 +801,7 @@ select {
 	margin-left: 2px;
 	list-style: none;
 	background: #fff;
-	font-family: 'Gill Sans W01 Medium', 'Helvetica', 'Gill Sans', sans-serif, 'Tahoma', 'Verdana';	
+	font-family: 'Gill Sans W02 Medium', 'Helvetica', sans-serif;	
 	height: 30px;
 }
 
@@ -907,8 +910,7 @@ select {
 .header .navigation>.menu>li>a {
 	display: inline-block;
 	color: #fff;
-	font-size: 14px;
-	font-weight: bold;
+	font-size: 14px;	
 	height: 60px;
 	background: #338caf;
 	padding: 20px 17px 30px;
@@ -984,13 +986,14 @@ select {
     bold fonts
 */
 h1,h2,h3,h4,h5,h6,b,strong,.table th,.close,.nav-header,.label,.badge,.header .search form input[type="search"],.header .main>.menu>li>a,.btn-update,.btn-update:visited,.overview-count,.overview-count:visited,.overview-title,.workspace-accordion-header a,.workspace-accordion-header a:visited,.workspace-accordion-header a:hover,.workspace-header-public,.workspace-help a,.full-name,.tabs a,.tabs a:visited
-	{	
-	font-family: 'Gill Sans W01 Bold', 'Helvetica', 'Gill Sans', sans-serif;
-	font-weight: bold;	
+{	
+	font-family: 'Gill Sans W02 Bold', 'Helvetica', sans-serif;
+	font-style: normal;	
 }
 
 .primaryEmail {
-	font-weight: bold;
+	font-family: 'Gill Sans W02 Bold', 'Helvetica', sans-serif;
+	font-style: normal;
 }
 
 .privacyToggle {
@@ -1160,7 +1163,8 @@ ul.privacyHelp li.private {
 
 #statistics .page-header {
 	font-size: 2em;
-	font-weight: bolder;
+	font-family: 'Gill Sans W02 Bold', 'Helvetica', sans-serif;
+	font-style: normal;
 	color: #A6CE39;
 	border: none;
 	margin-bottom:10px;
@@ -1169,14 +1173,16 @@ ul.privacyHelp li.private {
 
 #statistics span.stat-name{
 	font-size: 1.5em;
-	font-weight: bold;
+	font-family: 'Gill Sans W02 Bold', 'Helvetica', sans-serif;
+	font-style: normal;
 	color: #939498;	 
 }
 
 #statistics span.stat-data {
 	font-size: 2em;
 	color: #939498;
-	font-weight: bold;	
+	font-family: 'Gill Sans W02 Bold', 'Helvetica', sans-serif;
+	font-style: normal;	
 }
 
 #statistics .col-md-3,
@@ -1423,7 +1429,8 @@ a:hover {
 	font-size: 10px;
 	line-height: 1.1;
 	text-transform: uppercase;
-	font-weight: bold;
+	font-family: 'Gill Sans W02 Bold', 'Helvetica', sans-serif;
+	font-style: normal;
 	display: inline-block;
 	padding-right: 13px;
 	background: no-repeat url(../img/bg-update.png) top right;
@@ -1484,7 +1491,8 @@ a:hover {
 	line-height: 1;
 	word-wrap:break-word;
 	color: #FFF;
-	font-weight: bold;
+	font-family: 'Gill Sans W02 Bold', 'Helvetica', sans-serif;
+	font-style: normal;
 	vertical-align:3px;
 	margin-left: 5px;	
 }
@@ -1511,7 +1519,8 @@ a:hover {
 	padding: 0 3px;
 	background: #31789B;
 	color: #fff;
-	font-weight: bold;
+	font-family: 'Gill Sans W02 Bold', 'Helvetica', sans-serif;
+	font-style: normal;
 	margin-bottom: 10px;
 }
 
@@ -1523,7 +1532,8 @@ a:hover {
 .overview-title {
 	display: inline-block;
 	color: #939597;
-	font-weight: bold;
+	font-family: 'Gill Sans W02 Bold', 'Helvetica', sans-serif;
+	font-style: normal;
 }
 
 .workspace-accordion-header,.workspace-accordion-content {
@@ -1531,12 +1541,10 @@ a:hover {
 }
 
 .workspace-accordion-header {
-	position: relative;
-	/*font-size: 20px;*/
+	position: relative;	
 	margin-top: 10px;
-	margin-bottom: 10px;
-	font-weight: bold;
-	font-family: 'Gill Sans W01 Medium', 'Helvetica', 'Gill Sans', sans-serif, 'Tahoma', 'Verdana';	
+	margin-bottom: 10px;	
+	font-family: 'Gill Sans W02 Bold', 'Helvetica', sans-serif;	
 }
 
 .toggle-text{	
@@ -1549,7 +1557,8 @@ a:hover {
 
 .workspace-accordion-header a,.workspace-accordion-header a:visited,.workspace-accordion-header a:hover,.workspace-header-public
 	{
-	font-weight: bold;
+	font-family: 'Gill Sans W02 Bold', 'Helvetica', sans-serif;
+	font-style: normal;
 }
 
 .workspace-accordion-header a.btn-primary {
@@ -1557,14 +1566,7 @@ a:hover {
 	vertical-align: text-top;
 	margin-top: 2px;
 }
-/*       
-.workspace-accordion-header:after {
-    content: "";
-    position: absolute;
-    top: 5px;
-    right: 10px;
-}
-*/
+
 .workspace-accordion-header .btn-update {
 	display: none;
 }
@@ -1572,17 +1574,7 @@ a:hover {
 .workspace-accordion-active .btn-update {
 	display: inline-block;
 }
-/*
-.js .workspace-accordion-active .workspace-accordion-header:after {
-    border: 10px solid transparent;
-    border-bottom-color: #31789B;
-}
 
-.js .workspace-accordion-header:after {
-    border: 10px solid transparent;
-    border-top-color: #31789B;    
-}
-*/
 .workspace-accordion-active .workspace-accordion-header,.workspace-header-public
 	{
 	border: 0;
@@ -1604,16 +1596,6 @@ a:hover {
 	margin-bottom: 10px;
 }
 
-/*
-.js .workspace-accordion-content {
-    display: none;
-}
-
-.js .workspace-accordion-active .workspace-accordion-content,
-.workspace-header-public {
-    display: block;
-}
-*/
 .workspace-help {
 	margin: 0;
 	padding-top: 10px;
@@ -1626,11 +1608,13 @@ a:hover {
 }
 
 .workspace-help a {
-	font-weight: bold;
+	font-family: 'Gill Sans W02 Bold', 'Helvetica', sans-serif;
+	font-style: normal;
 }
 
 .full-name {
-	font-weight: bold;
+	font-family: 'Gill Sans W02 Bold', 'Helvetica', sans-serif;
+	font-style: normal;
 	margin: 10px 0 0 !important;
 	line-height: 1;
 	word-wrap:break-word;
@@ -1644,14 +1628,6 @@ a:hover {
 .workspace-body-list {
 	margin-top: -10px;
 }
-/*
-.workspace-body-list .pull-right {
-	position: absolute;
-	right: 0;
-	top: 15px;
-	float: none;
-}
-*/
 
 .workspace-body-list ul.workspace-controls{
 	margin-top: 15px;
@@ -1879,7 +1855,8 @@ a:hover {
 	border-width: 1px 1px 0 0;
 	color: #cacaca;
 	font-size: 12px;
-	font-weight: bold;
+	font-family: 'Gill Sans W02 Bold', 'Helvetica', sans-serif;
+	font-style: normal; 
 }
 
 .tabs a:hover {
@@ -2243,7 +2220,7 @@ input.error {
 }
 
 .workspace-public .alert,.workspace-public .alert.alert-info strong {
-	font-family: 'Gill Sans W01 Medium', 'Helvetica', 'Gill Sans', sans-serif, 'Tahoma', 'Verdana';
+	font-family: 'Gill Sans W02 Medium', 'Helvetica', sans-serif;
 	font-weight: normal;
 	color: #939598;
 }
@@ -2534,7 +2511,7 @@ header overrides
 
 .work-title {
 	font-weight: normal;
-	font-family: 'Gill Sans W01 Medium', 'Helvetica', 'Gill Sans', sans-serif, 'Tahoma', 'Verdana';
+	font-family: 'Gill Sans W02 Medium', 'Helvetica', sans-serif;
 }
 
 ul.workspace-private-toolbar > li{
@@ -2622,7 +2599,8 @@ a.btn-primary:hover {
 }
 
 .clients span {
-	font-weight: bold;
+	font-family: 'Gill Sans W02 Bold', 'Helvetica', sans-serif;
+	font-style: normal;
 }
 
 .clients ul {
@@ -2634,7 +2612,8 @@ a.btn-primary:hover {
 .clients table.table caption {
 	text-align: left;
 	color: #A6CE39;
-	font-weight: bold;
+	font-family: 'Gill Sans W02 Bold', 'Helvetica', sans-serif;
+	font-style: normal;
 }
 
 #view-details-modal #cboxClose {
