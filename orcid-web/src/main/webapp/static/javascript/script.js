@@ -283,7 +283,7 @@ $(function () {
 			return false;
 		}
 		if (basePath.startsWith(baseUrl + 'oauth')) { 
-			var clientName = $('form#loginForm input[name="client_name"').val();
+			var clientName = $('form#loginForm input[name="client_name"]').val();
 		    orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'Sign-In-Submit ' + clientName, 'OAuth']);
 		} else
 	    	orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'Sign-In-Submit', 'Website']);	
@@ -299,7 +299,7 @@ $(function () {
 	        	$('form#loginForm').removeAttr('disabled');
 	            if (data.success) {
 	        	    if (basePath.startsWith(baseUrl + 'oauth/signin')) {
-	        	    	var clientName = $('form#loginForm input[name="client_name"').val();
+	        	    	var clientName = $('form#loginForm input[name="client_name"]').val();
 	        		    orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'Sign-In ' + clientName, 'OAuth']);
 	        	    } else
 	        	    	orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'Sign-In', 'Website']);
