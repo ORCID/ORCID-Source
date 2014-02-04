@@ -95,8 +95,8 @@ public class OrgDisambiguatedManagerImpl implements OrgDisambiguatedManager {
         document.setOrgDisambiguatedName(entity.getName());
         document.setOrgDisambiguatedCity(entity.getCity());
         document.setOrgDisambiguatedRegion(entity.getRegion());
-        if(entity.getCountry() != null)
-        	document.setOrgDisambiguatedCountry(entity.getCountry().value());
+        if (entity.getCountry() != null)
+            document.setOrgDisambiguatedCountry(entity.getCountry().value());
         document.setOrgDisambiguatedType(entity.getOrgType());
         document.setOrgDisambiguatedPopularity(entity.getPopularity());
         Set<String> orgNames = new HashSet<>();
@@ -108,33 +108,36 @@ public class OrgDisambiguatedManagerImpl implements OrgDisambiguatedManager {
             }
         }
         document.setOrgNames(new ArrayList<>(orgNames));
-        
-        if(FUNDING_ORG_TYPE.equals(entity.getSourceType()) || hasFundrefExternalIdentifier(entity.getExternalIdentifiers())){
-        	document.setFundingOrg(true);
+
+        if (FUNDING_ORG_TYPE.equals(entity.getSourceType()) || hasFundrefExternalIdentifier(entity.getExternalIdentifiers())) {
+            document.setFundingOrg(true);
         } else {
-        	document.setFundingOrg(false);
+            document.setFundingOrg(false);
         }
-        
-        
+
         return document;
     }
 
     /**
-     * Checks a list of external identifiers and return true is any of those is a funding organizations
-     * @param externalIdentifiers a list of external identifiers
-     * @return true if any of those external identifiers is a funding organization
+     * Checks a list of external identifiers and return true is any of those is
+     * a funding organizations
+     * 
+     * @param externalIdentifiers
+     *            a list of external identifiers
+     * @return true if any of those external identifiers is a funding
+     *         organization
      * */
-    private boolean hasFundrefExternalIdentifier(Set<OrgDisambiguatedExternalIdentifierEntity> externalIdentifiers){
-    	if(externalIdentifiers == null || externalIdentifiers.size() == 0)
-    		return false;
-    	for(OrgDisambiguatedExternalIdentifierEntity extId : externalIdentifiers) {
-    		if(FUNDING_ORG_TYPE.equals(extId.getIdentifierType()))
-    			return true;
-    	}
-    	
-    	return false;
+    private boolean hasFundrefExternalIdentifier(Set<OrgDisambiguatedExternalIdentifierEntity> externalIdentifiers) {
+        if (externalIdentifiers == null || externalIdentifiers.size() == 0)
+            return false;
+        for (OrgDisambiguatedExternalIdentifierEntity extId : externalIdentifiers) {
+            if (FUNDING_ORG_TYPE.equals(extId.getIdentifierType()))
+                return true;
+        }
+
+        return false;
     }
-    
+
     @Override
     synchronized public void processOrgsWithIncorrectPopularity() {
         LOGGER.info("About to process disambiguated orgs with incorrect popularity");
