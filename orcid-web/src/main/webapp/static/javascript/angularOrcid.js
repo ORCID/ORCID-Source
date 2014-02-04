@@ -1112,7 +1112,7 @@ function RegistrationCtrl($scope, $compile) {
 	
 	$scope.postRegister = function () {
 		if (basePath.startsWith(baseUrl + 'oauth')) { 
-			var clientName = $('div#RegistrationCtr input[name="client_name"').val();
+			var clientName = $('div#RegistrationCtr input[name="client_name"]').val();
 		    orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'New-Registration-Submit ' + clientName, 'OAuth']);
 		    $scope.register.creationType.value = "Member-referred";
 		} else {
@@ -1149,7 +1149,7 @@ function RegistrationCtrl($scope, $compile) {
 	        dataType: 'json',
 	        success: function(data) {
 	    		if (basePath.startsWith(baseUrl + 'oauth')) {
-	    			var clientName = $('div#RegistrationCtr input[name="client_name"').val();
+	    			var clientName = $('div#RegistrationCtr input[name="client_name"]').val();
 	    		    orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'New-Registration ' + clientName, 'OAuth']);
 	    		}
 	    	    else
