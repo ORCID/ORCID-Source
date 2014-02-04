@@ -1821,6 +1821,7 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc) {
 	$scope.moreInfo = {};
 	$scope.privacyHelp = {};
 	$scope.editTranslatedTitle = false; 
+	$scope.showFundersOnly = false;
 	
 	$scope.toggleClickMoreInfo = function(key) {
 		if (!document.documentElement.className.contains('no-touch')) {

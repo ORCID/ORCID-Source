@@ -224,6 +224,12 @@
 				<div class="control-group">
 					<span>
 					   <label ng-hide="disambiguatedFunding"><@orcid.msg 'manual_funding_form_contents.label_funding_agency_name'/></label>
+					   
+					   <input ng-hide="disambiguatedFunding"type="checkbox" id="showFundersOnly" name="showFundersOnly" ng-model="showFundersOnly"/>
+					   <label ng-hide="disambiguatedFunding"><@orcid.msg 'manual_funding_form_contents.show_only_funders'/></label>
+					   
+					   
+					   
 					   <label ng-show="disambiguatedFunding"><@orcid.msg 'manual_funding_form_contents.label_funding_agency_display_name'/></label>
 					</span>
 					<div class="relative">
