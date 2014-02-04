@@ -1454,8 +1454,11 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
             }
             for (Iterator<Funding> updatedFundingIterator = updatedFundingsList.iterator(); updatedFundingIterator.hasNext();) {
                 Funding updatedFunding = updatedFundingIterator.next();
-                if (existingFundingsSet.contains(updatedFunding)) {
-                    updatedFundingIterator.remove();
+                for(Funding funding : existingFundingsSet){
+                	if(funding.isDuplicated(updatedFunding)) {
+                		updatedFundingIterator.remove();
+                		break;
+                	}
                 }
             }
         }

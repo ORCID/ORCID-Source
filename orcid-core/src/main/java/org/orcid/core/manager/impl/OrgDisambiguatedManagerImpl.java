@@ -93,7 +93,8 @@ public class OrgDisambiguatedManagerImpl implements OrgDisambiguatedManager {
         document.setOrgDisambiguatedName(entity.getName());
         document.setOrgDisambiguatedCity(entity.getCity());
         document.setOrgDisambiguatedRegion(entity.getRegion());
-        document.setOrgDisambiguatedCountry(entity.getCountry().value());
+        if(entity.getCountry() != null)
+        	document.setOrgDisambiguatedCountry(entity.getCountry().value());
         document.setOrgDisambiguatedType(entity.getOrgType());
         document.setOrgDisambiguatedPopularity(entity.getPopularity());
         Set<String> orgNames = new HashSet<>();
