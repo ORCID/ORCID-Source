@@ -16,7 +16,6 @@
  */
 package org.orcid.persistence.jpa.entities;
 
-import java.util.Currency;
 import java.util.SortedSet;
 
 import javax.persistence.Basic;
@@ -35,7 +34,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
-import org.apache.commons.lang.StringUtils;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.Sort;
