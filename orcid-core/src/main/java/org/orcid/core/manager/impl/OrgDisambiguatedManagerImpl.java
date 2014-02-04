@@ -119,6 +119,11 @@ public class OrgDisambiguatedManagerImpl implements OrgDisambiguatedManager {
         return document;
     }
 
+    /**
+     * Checks a list of external identifiers and return true is any of those is a funding organizations
+     * @param externalIdentifiers a list of external identifiers
+     * @return true if any of those external identifiers is a funding organization
+     * */
     private boolean hasFundrefExternalIdentifier(Set<OrgDisambiguatedExternalIdentifierEntity> externalIdentifiers){
     	if(externalIdentifiers == null || externalIdentifiers.size() == 0)
     		return false;
