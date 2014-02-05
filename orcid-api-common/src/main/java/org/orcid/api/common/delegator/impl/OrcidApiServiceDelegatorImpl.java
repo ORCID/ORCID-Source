@@ -201,11 +201,10 @@ public class OrcidApiServiceDelegatorImpl implements OrcidApiServiceDelegator {
             return findAffiliationsDetails(orcid);
         }
     }
-    
+
     /**
      * finds and returns the {@link org.orcid.jaxb.model.message.OrcidMessage}
-     * wrapped in a {@link javax.xml.ws.Response} with only the grants
-     * details
+     * wrapped in a {@link javax.xml.ws.Response} with only the grants details
      * 
      * @param orcid
      *            the ORCID to be used to identify the record
@@ -281,19 +280,21 @@ public class OrcidApiServiceDelegatorImpl implements OrcidApiServiceDelegator {
         List<OrcidSearchResult> searchResults = orcidMessage.getOrcidSearchResults() != null ? orcidMessage.getOrcidSearchResults().getOrcidSearchResult() : null;
         List<OrcidSearchResult> filteredResults = new ArrayList<OrcidSearchResult>();
         OrcidSearchResults orcidSearchResults = new OrcidSearchResults();
-        if (searchResults != null && searchResults.size() > 0) {
-            for (OrcidSearchResult searchResult : searchResults) {
-                OrcidSearchResult filteredSearchResult = new OrcidSearchResult();
-                OrcidProfile filteredProfile = new OrcidProfile();
-                filteredSearchResult.setRelevancyScore(searchResult.getRelevancyScore());
-                filteredProfile.setOrcid(searchResult.getOrcidProfile().getOrcid());
-                filteredProfile.setOrcidId(searchResult.getOrcidProfile().getOrcidId());
-                filteredProfile.setOrcidIdentifier(searchResult.getOrcidProfile().getOrcidIdentifier());
-                filteredProfile.setOrcidBio(searchResult.getOrcidProfile().getOrcidBio());
-                filteredSearchResult.setOrcidProfile(filteredProfile);
-                filteredResults.add(filteredSearchResult);
-            }
+        if (searchResults != null) {
             orcidSearchResults.setNumFound(orcidMessage.getOrcidSearchResults().getNumFound());
+            if (searchResults.size() > 0) {
+                for (OrcidSearchResult searchResult : searchResults) {
+                    OrcidSearchResult filteredSearchResult = new OrcidSearchResult();
+                    OrcidProfile filteredProfile = new OrcidProfile();
+                    filteredSearchResult.setRelevancyScore(searchResult.getRelevancyScore());
+                    filteredProfile.setOrcid(searchResult.getOrcidProfile().getOrcid());
+                    filteredProfile.setOrcidId(searchResult.getOrcidProfile().getOrcidId());
+                    filteredProfile.setOrcidIdentifier(searchResult.getOrcidProfile().getOrcidIdentifier());
+                    filteredProfile.setOrcidBio(searchResult.getOrcidProfile().getOrcidBio());
+                    filteredSearchResult.setOrcidProfile(filteredProfile);
+                    filteredResults.add(filteredSearchResult);
+                }
+            }
         }
         orcidSearchResults.getOrcidSearchResult().addAll(filteredResults);
         return getOrcidSearchResultsResponse(orcidSearchResults, queryMap.toString());
