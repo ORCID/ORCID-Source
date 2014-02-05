@@ -15,6 +15,19 @@
  * =============================================================================
  */
 
+	function openImportWizardUrl(url) {
+		var win = window.open(url, "_target"); 
+		setTimeout( function() {
+		    if(!win || win.outerHeight === 0) {
+		        //First Checking Condition Works For IE & Firefox
+		        //Second Checking Condition Works For Chrome
+		        window.location.href = url;
+		    } 
+		}, 250);
+		$.colorbox.close();		
+	};
+
+
 var orcidNgModule = angular.module('orcidApp', ['ngCookies','ngSanitize']);
 
 orcidNgModule.directive('ngModelOnblur', function() {
@@ -1911,6 +1924,18 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc) {
 		});
 	};
 	
+	$scope.showTemplateInModal = function(templateId) {
+		$.colorbox({        	            
+            html : $compile($('#'+templateId).html())($scope),
+            onComplete: function() {$.colorbox.resize();}
+        });
+	};
+	
+	$scope.openImportWizardUrl = function(url) {
+		openImportWizardUrl(url);
+	};
+
+
 	$scope.bindTypeahead = function () {
 		var numOfResults = 100;
 		
@@ -2508,16 +2533,7 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 	
 
 	$scope.openImportWizardUrl = function(url) {
-		var win = window.open(url, "_target"); 
-		setTimeout( function() {
-		    if(!win || win.outerHeight === 0) {
-		        //First Checking Condition Works For IE & Firefox
-		        //Second Checking Condition Works For Chrome
-		        window.location.href = url;
-		    } 
-		}, 250);
-		$.colorbox.close();
-		
+		openImportWizardUrl(url);
 	};
 
 	

@@ -59,6 +59,9 @@ public enum RedirectUriType {
     @XmlEnumValue("grant-read-wizard")
     GRANT_READ_WIZARD("grant-read-wizard"),
 
+    @XmlEnumValue("import-funding-wizard")
+    IMPORT_FUNDING_WIZARD("import-funding-wizard"),
+    
     @XmlEnumValue("import-works-wizard")
     IMPORT_WORKS_WIZARD("import-works-wizard");
     //@formatter:on

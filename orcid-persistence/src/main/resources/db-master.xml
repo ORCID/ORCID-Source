@@ -77,4 +77,5 @@
     <include file="/db/updates/update_work_types.xml"/>
     <include file="/db/updates/disambiguated_fundings.xml"/>
     <include file="/db/updates/change_creation_method_size.xml"/>
+    <include file="/db/updates/fundingImportWizard.xml"/>
 </databaseChangeLog>
