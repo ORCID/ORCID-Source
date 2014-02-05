@@ -16,42 +16,42 @@
     =============================================================================
 
 -->
-			        <div class="row">        
-			        	<!-- Information -->
-						<div class="col-md-8 col-sm-8">
-						    <h3 class="affiliation-title">
-					        	<strong ng-bind-html="affiliation.affiliationName.value"></strong>
-					        	<span class="affiliation-date" ng-show="affiliation.startDate && !affiliation.endDate">
-					        	    (<span ng-show="affiliation.startDate.year">{{affiliation.startDate.year}}</span><span ng-show="affiliation.startDate.month">-{{affiliation.startDate.month}}</span>
-					        	    <@orcid.msg 'workspace_affiliations.dateSeparator'/>
-					        	    <@orcid.msg 'workspace_affiliations.present'/>)
-					        	</span>
-					        	<span class="affiliation-date" ng-show="affiliation.startDate && affiliation.endDate">
-					        		(<span ng-show="affiliation.startDate.year">{{affiliation.startDate.year}}</span><span ng-show="affiliation.startDate.month">-{{affiliation.startDate.month}}</span>
-					        		<@orcid.msg 'workspace_affiliations.dateSeparator'/>
-					        		<span ng-show="affiliation.endDate.year">{{affiliation.endDate.year}}</span><span ng-show="affiliation.endDate.month">-{{affiliation.endDate.month}}</span>)
-					            </span>
-					            <span class="affiliation-date" ng-show="!affiliation.startDate && affiliation.endDate">
-					        	     (<span ng-show="affiliation.endDate.year">{{affiliation.endDate.year}}</span><span ng-show="affiliation.endDate.month">-{{affiliation.endDate.month}}</span>)
-					        	</span>
-					        </h3>
-					        <div class="affiliation-details" ng-show="affiliation.roleTitle">
-					            <span ng-bind-html="affiliation.roleTitle.value"></span>
-					        </div>
-				        </div>
-				        <!-- Privacy Settings -->
-				        <div class="col-md-4 col-sm-4 workspace-toolbar">
-				        	<#include "affiliate_more_info_inc.ftl"/>
-				        	<#if !(isPublicProfile??)>
-				        		<a href ng-click="deleteAffiliation(affiliation)" class="glyphicon glyphicon-trash grey"></a>
-				        		<ul class="workspace-private-toolbar">
-									<@orcid.privacyToggle  angularModel="affiliation.visibility.visibility"
-									questionClick="toggleClickPrivacyHelp(affiliation.putCode.value)"
-									clickedClassCheck="{'popover-help-container-show':privacyHelp[affiliation.putCode.value]==true}" 
-									publicClick="setPrivacy(affiliation, 'PUBLIC', $event)" 
-			                    	limitedClick="setPrivacy(affiliation, 'LIMITED', $event)" 
-			                    	privateClick="setPrivacy(affiliation, 'PRIVATE', $event)" />			        
-					        	</ul>
-					        </#if>
-						</div>
-					</div>
+<div class="row">        
+  	<!-- Information -->
+	<div class="col-md-8 col-sm-8">
+	    <h3 class="affiliation-title">
+        	<strong ng-bind-html="affiliation.affiliationName.value"></strong>
+        	<span class="affiliation-date" ng-show="affiliation.startDate && !affiliation.endDate">
+        	    (<span ng-show="affiliation.startDate.year">{{affiliation.startDate.year}}</span><span ng-show="affiliation.startDate.month">-{{affiliation.startDate.month}}</span>
+        	    <@orcid.msg 'workspace_affiliations.dateSeparator'/>
+        	    <@orcid.msg 'workspace_affiliations.present'/>)
+        	</span>
+        	<span class="affiliation-date" ng-show="affiliation.startDate && affiliation.endDate">
+        		(<span ng-show="affiliation.startDate.year">{{affiliation.startDate.year}}</span><span ng-show="affiliation.startDate.month">-{{affiliation.startDate.month}}</span>
+        		<@orcid.msg 'workspace_affiliations.dateSeparator'/>
+        		<span ng-show="affiliation.endDate.year">{{affiliation.endDate.year}}</span><span ng-show="affiliation.endDate.month">-{{affiliation.endDate.month}}</span>)
+            </span>
+            <span class="affiliation-date" ng-show="!affiliation.startDate && affiliation.endDate">
+        	     (<span ng-show="affiliation.endDate.year">{{affiliation.endDate.year}}</span><span ng-show="affiliation.endDate.month">-{{affiliation.endDate.month}}</span>)
+        	</span>
+        </h3>
+        <div class="affiliation-details" ng-show="affiliation.roleTitle">
+            <span ng-bind-html="affiliation.roleTitle.value"></span>
+        </div>
+       </div>
+       <!-- Privacy Settings -->
+       <div class="col-md-4 col-sm-4 workspace-toolbar">
+       	<#include "affiliate_more_info_inc.ftl"/>
+       	<#if !(isPublicProfile??)>
+       		<a href ng-click="deleteAffiliation(affiliation)" class="glyphicon glyphicon-trash grey"></a>
+       		<ul class="workspace-private-toolbar">
+				<@orcid.privacyToggle  angularModel="affiliation.visibility.visibility"
+				questionClick="toggleClickPrivacyHelp(affiliation.putCode.value)"
+				clickedClassCheck="{'popover-help-container-show':privacyHelp[affiliation.putCode.value]==true}" 
+				publicClick="setPrivacy(affiliation, 'PUBLIC', $event)" 
+                  	limitedClick="setPrivacy(affiliation, 'LIMITED', $event)" 
+                  	privateClick="setPrivacy(affiliation, 'PRIVATE', $event)" />			        
+        	</ul>
+        </#if>
+	</div>
+</div>

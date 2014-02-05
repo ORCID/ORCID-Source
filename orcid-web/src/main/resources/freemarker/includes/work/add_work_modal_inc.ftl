@@ -21,16 +21,16 @@
 		<div class="lightbox-container-ie7">		
 		<!-- Title -->
 		<div class="row">
-			<div class="col-md-8 col-sm-6 col-xs-9">
+			<div class="col-md-8 col-sm-8 col-xs-9">
 				<h1 class="lightbox-title pull-left"><@orcid.msg 'manual_work_form_contents.add_work'/></h1>
 			</div>
 			
 			<div class="col-xs-3 visible-xs hidden-sm hidden-md hidden-lg">
-				<a class="btn close-button" ng-click="closeModal()">X</a>
+				<a class="btn close-button pull-right" ng-click="closeModal()">X</a>
 			</div>
 			
-			<div class="col-md-3 col-sm-2">
-				<div class="control-group privacy-control pull-right">
+			<div class="col-md-3 col-sm-3">
+				<div class="control-group privacy-control pull-left">
 			 		<label class="relative">
 						<@orcid.msg 'privacyToggle.help.who_can_see'/>
 					</label>
@@ -296,10 +296,10 @@
                     </div>
                 </div>
                 
-				<div class="small-row"> 
-					<div>
+				<div class="row"> 
+					<div class="col-md-12 col-sm-12 col-xs-12">
 						<button class="btn btn-primary" ng-click="addWork()" ng-disabled="addingWork" ng-class="{disabled:addingWork}"><@orcid.msg 'manual_work_form_contents.btnaddtolist'/></button> 
-						<a href="" ng-click="closeModal()"><@orcid.msg 'manage.deleteExternalIdentifier.cancel'/></a>
+						<a href="" class="cancel-action" ng-click="closeModal()"><@orcid.msg 'manage.deleteExternalIdentifier.cancel'/></a>
 						&nbsp;
 						<span ng-show="addingWork">
 							<i class="glyphicon glyphicon-refresh spin x2 green"></i>

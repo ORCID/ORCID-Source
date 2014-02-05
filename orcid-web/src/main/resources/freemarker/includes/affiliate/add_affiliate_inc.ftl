@@ -19,18 +19,18 @@
  <script type="text/ng-template" id="add-affiliation-modal">
 	<div id="edit-affiliation" class="edit-affiliation colorbox-content">		 
 		<div class="row">
-			<div class="col-md-8 col-sm-6 col-xs-9">
+			<div class="col-md-8 col-sm-8 col-xs-9">
 				<h1 ng-show="addAffType == null || addAffType == undefined " class="lightbox-title pull-left"><@orcid.msg 'manual_affiliation_form_contents.add_affiliation'/></h1>
 				<h1 ng-show="addAffType == 'education'" class="lightbox-title pull-left"><@orcid.msg 'manual_affiliation_form_contents.add_education'/></h1>
 				<h1 ng-show="addAffType == 'employment'" class="lightbox-title pull-left"><@orcid.msg 'manual_affiliation_form_contents.add_employment'/></h1>
 			</div>
 			
 			<div class="col-xs-3 visible-xs hidden-sm hidden-md hidden-lg">
-				<a class="btn close-button" ng-click="closeModal()">X</a>
+				<a class="btn close-button pull-right" ng-click="closeModal()">X</a>
 			</div>
 			
-			<div class="col-md-3 col-sm-2">
-				<div class="control-group privacy-control pull-right">
+			<div class="col-md-3 col-sm-3">
+				<div class="control-group privacy-control pull-left">
 		 			<label class="relative">
 						<@orcid.msg 'privacyToggle.help.who_can_see'/>
 					</label>
@@ -186,7 +186,7 @@
 		    	</div>
 		    	<div class="control-group">
 					<button class="btn btn-primary" ng-click="addAffiliation()" ng-disabled="addingAffiliation" ng-class="{disabled:addingAffiliation}"><@orcid.msg 'manual_affiliation_form_contents.btnaddtolist'/></button> 
-					<a href="" ng-click="closeModal()"><@orcid.msg 'manage.deleteExternalIdentifier.cancel'/></a>
+					<a href="" class="cancel-action" ng-click="closeModal()"><@orcid.msg 'manage.deleteExternalIdentifier.cancel'/></a>
 					<span ng-show="addingAffiliation">
 						<i class="glyphicon glyphicon-refresh spin x2 green"></i>
 					</span>
