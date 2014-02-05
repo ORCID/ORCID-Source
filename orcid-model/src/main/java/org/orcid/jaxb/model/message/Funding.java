@@ -340,4 +340,61 @@ public class Funding implements VisibilityType, Serializable {
             return false;
 		return true;
 	}
+	
+	
+	/**
+     * Indicates if two funding are ORCID duplicated. Two fundings will be duplicated
+     * if they have the same type, title, organization, description and amount
+     * 
+     * @return true if the two fundings are duplicated according to ORCID
+     *         requirements
+     * */
+    public boolean isDuplicated(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        Funding other = (Funding) obj;
+        
+        if(type == null) {
+        	if(other.type != null)
+        		return false;
+        } else {
+        	if(!type.equals(other.type))
+        		return false;
+        }
+        
+        if(title == null) {
+        	if(other.title != null)
+        		return false;
+        } else {
+        	if(!title.equals(other.title))
+        		return false;
+        }
+        
+        if (organization == null) {
+			if(other.organization != null)
+				return false;
+		} else {
+			if(!organization.equals(other.organization))
+				return false;
+		}
+        if (amount == null) {
+			if(other.amount != null)
+				return false;
+		} else {
+			if(!amount.equals(other.amount))
+				return false;
+		}
+        if (description == null) {
+			if(other.description != null)
+				return false;
+		} else {
+			if(!description.equals(other.description))
+				return false;
+		}
+        return true;
+    }
 }
