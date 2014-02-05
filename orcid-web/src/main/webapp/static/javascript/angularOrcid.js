@@ -2676,31 +2676,33 @@ function QuickSearchCtrl($scope, $compile){
 			dataType: 'json',
 			headers: { Accept: 'application/json'},
 			success: function(data) {
-				var resultsContainer = data['orcid-search-results']; 
-				if(typeof resultsContainer !== 'undefined'){
-					$scope.numFound = resultsContainer['num-found'];
+				$('#ajax-loader').hide();
+				var resultsContainer = data['orcid-search-results'];
+				$scope.numFound = resultsContainer['num-found'];
+				if(resultsContainer['orcid-search-result']){
 					$scope.results = $scope.results.concat(resultsContainer['orcid-search-result']);
 				}
-				else{
+				if(!$scope.numFound){
 					$('#no-results-alert').fadeIn(1200);
 				}
-				$scope.areMoreResults = $scope.numFound >= ($scope.start + $scope.rows);
+				$scope.areMoreResults = $scope.numFound > ($scope.start + $scope.rows);
 				$scope.$apply();
-				$('#ajax-loader').hide();
 				var newSearchResults = $('.new-search-result');
-				newSearchResults.fadeIn(1200);
-				newSearchResults.removeClass('new-search-result');
-				var newSearchResultsTop = newSearchResults.offset().top;
-				var showMoreButtonTop = $('#show-more-button-container').offset().top;
-				var bottom = $(window).height();
-				if(showMoreButtonTop > bottom){
-					$('html, body').animate(
-						{ 
-							scrollTop: newSearchResultsTop
-						},
-						1000, 
-						'easeOutQuint'
-					);
+				if(newSearchResults.length > 0){
+					newSearchResults.fadeIn(1200);
+					newSearchResults.removeClass('new-search-result');
+					var newSearchResultsTop = newSearchResults.offset().top;
+					var showMoreButtonTop = $('#show-more-button-container').offset().top;
+					var bottom = $(window).height();
+					if(showMoreButtonTop > bottom){
+						$('html, body').animate(
+							{ 
+								scrollTop: newSearchResultsTop
+							},
+							1000, 
+							'easeOutQuint'
+						);
+					}
 				}
 			}
 		}).fail(function(){
@@ -2725,7 +2727,7 @@ function QuickSearchCtrl($scope, $compile){
 	};
 	
 	$scope.areResults = function(){
-		return $scope.numFound != 0;
+		return $scope.results.length > 0;
 	};
 	
 	// init
