@@ -73,13 +73,18 @@ public class OrgDisambiguatedSolrDaoImpl implements OrgDisambiguatedSolrDao {
     public List<OrgDisambiguatedSolrDocument> getOrgs(String searchTerm, int firstResult, int maxResult) {
         return getOrgs(searchTerm, firstResult, maxResult, false);
     }
-    
+
+    @Override
     public List<OrgDisambiguatedSolrDocument> getOrgs(String searchTerm, int firstResult, int maxResult, boolean fundersOnly) {
         SolrQuery query = new SolrQuery();
-        if(fundersOnly) {
-            query.setQuery("{!edismax qf='org-disambiguated-name^50.0 text^1.0' pf='org-disambiguated-name^50.0' mm=1 sort='score desc, org-disambiguated-popularity desc'}" + searchTerm + "*").setFields("*");
-        } else {          
-            query.setQuery("{!edismax qf='org-disambiguated-name^50.0 text^1.0' pf='org-disambiguated-name^50.0' mm=1 sort='score desc, org-disambiguated-popularity desc'}" + searchTerm + "*").setFields("*");
+        if (fundersOnly) {
+            query.setQuery(
+                    "{!edismax qf='org-disambiguated-name^50.0 text^1.0' pf='org-disambiguated-name^50.0' mm=1 sort='score desc, org-disambiguated-popularity desc'}"
+                            + searchTerm + "* AND is-funding-org:true").setFields("*");
+        } else {
+            query.setQuery(
+                    "{!edismax qf='org-disambiguated-name^50.0 text^1.0' pf='org-disambiguated-name^50.0' mm=1 sort='score desc, org-disambiguated-popularity desc'}"
+                            + searchTerm + "*").setFields("*");
         }
         try {
             QueryResponse queryResponse = solrServerReadOnly.query(query);

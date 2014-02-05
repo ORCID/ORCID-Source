@@ -1700,6 +1700,10 @@ a:hover {
     font-weight: normal !important;
 }
 
+.show-funding-only {
+	padding-right: 38px;	
+}
+
 /* Affiliations */
 .affiliation-date, .funding-date {
     font-style: italic;

@@ -626,9 +626,10 @@ public class FundingsController extends BaseWorkspaceController {
      */
     @RequestMapping(value = "/disambiguated/name/{query}", method = RequestMethod.GET)
     public @ResponseBody
-    List<Map<String, String>> searchDisambiguated(@PathVariable("query") String query, @RequestParam(value = "limit") int limit, @RequestParam(value="funders-only") boolean fundersOnly) {
+    List<Map<String, String>> searchDisambiguated(@PathVariable("query") String query, @RequestParam(value = "limit") int limit,
+            @RequestParam(value = "funders-only") boolean fundersOnly) {
         List<Map<String, String>> datums = new ArrayList<>();
-        for (OrgDisambiguatedSolrDocument orgDisambiguatedDocument : orgDisambiguatedSolrDao.getOrgs(query, 0, limit)) {
+        for (OrgDisambiguatedSolrDocument orgDisambiguatedDocument : orgDisambiguatedSolrDao.getOrgs(query, 0, limit, fundersOnly)) {
             Map<String, String> datum = createDatumFromOrgDisambiguated(orgDisambiguatedDocument);
             datums.add(datum);
         }
