@@ -2,7 +2,6 @@ package org.orcid.core.manager.impl;
 
 import java.net.URI;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -13,7 +12,6 @@ import javax.annotation.Resource;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.OrcidSSOManager;
 import org.orcid.core.manager.ProfileEntityManager;
-import org.orcid.jaxb.model.clientgroup.RedirectUri;
 import org.orcid.jaxb.model.clientgroup.RedirectUriType;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.persistence.dao.ClientDetailsDao;
@@ -26,31 +24,49 @@ public class OrcidSSOManagerImpl implements OrcidSSOManager {
 
     @Resource
     private ProfileEntityManager profileEntityManager;
-    
+
     @Resource
     private EncryptionManager encryptionManager;
-    
+
     @Resource
     private ClientDetailsDao clientDetailsDao;
-    
-    private final static String SSO_SCOPE = ScopePathType.AUTHENTICATE.value(); 
-    
+
+    private final static String SSO_SCOPE = ScopePathType.AUTHENTICATE.value();
+
     @Override
     public ClientDetailsEntity generateUserCredentials(String orcid, Set<URI> redirectUris) {
-        ClientDetailsEntity result = null;
-        ProfileEntity profileEntity = profileEntityManager.findByOrcid(orcid);        
-        if(profileEntity == null) {
+        ProfileEntity profileEntity = profileEntityManager.findByOrcid(orcid);
+        if (profileEntity == null) {
             throw new IllegalArgumentException("ORCID does not exist for " + orcid + " cannot continue");
         } else {
-            String clientSecret = encryptionManager.encryptForInternalUse(UUID.randomUUID().toString());
-            String clientId = profileEntity.getId();
-            Set<String> redirectUrisSet = new HashSet<String>();
-            for(URI uri : redirectUris){
-                redirectUrisSet.add(uri.toString());
+            // If it already have SSO client credentials, just return them
+            if (profileEntity.getClientDetails() != null) {
+                ClientDetailsEntity existingClientDetails = profileEntity.getClientDetails();
+                boolean alreadyHaveAuthScope = false;
+                for (ClientScopeEntity clientScope : existingClientDetails.getClientScopes()) {
+                    if (SSO_SCOPE.equals(clientScope.getScopeType())) {
+                        alreadyHaveAuthScope = true;
+                        break;
+                    }
+                }
+
+                // TODO: Add scope to the list of existing scopes
+                if (!alreadyHaveAuthScope) {
+
+                }
+                return profileEntity.getClientDetails();
+            } else {
+                String clientSecret = encryptionManager.encryptForInternalUse(UUID.randomUUID().toString());
+                String clientId = profileEntity.getId();
+                Set<String> redirectUrisSet = new HashSet<String>();
+                for (URI uri : redirectUris) {
+                    redirectUrisSet.add(uri.toString());
+                }
+                ClientDetailsEntity clientDetailsEntity = populateClientDetailsEntity(clientId, clientSecret, redirectUrisSet);
+                clientDetailsDao.persist(clientDetailsEntity);
+                return clientDetailsDao.findByClientId(clientDetailsEntity.getId());
             }
-            ClientDetailsEntity clientDetailsEntity = populateClientDetailsEntity(clientId, clientSecret, redirectUrisSet);
         }
-        return result;
     }
 
     @Override
@@ -58,26 +74,26 @@ public class OrcidSSOManagerImpl implements OrcidSSOManager {
         // TODO Auto-generated method stub
         return null;
     }
-    
-    private ClientDetailsEntity populateClientDetailsEntity(String clientId, String clientSecret, Set<String> clientRegisteredRedirectUris){
+
+    private ClientDetailsEntity populateClientDetailsEntity(String clientId, String clientSecret, Set<String> clientRegisteredRedirectUris) {
         ClientDetailsEntity clientDetailsEntity = new ClientDetailsEntity();
         clientDetailsEntity.setId(clientId);
         clientDetailsEntity.setClientSecretForJpa(clientSecret);
         clientDetailsEntity.setDecryptedClientSecret(encryptionManager.decryptForInternalUse(clientSecret));
-        Set <ClientScopeEntity> clientScopes = new HashSet<ClientScopeEntity>();
+        Set<ClientScopeEntity> clientScopes = new HashSet<ClientScopeEntity>();
         clientScopes.add(getClientScopeEntity(SSO_SCOPE, clientDetailsEntity));
         clientDetailsEntity.setClientScopes(clientScopes);
         clientDetailsEntity.setClientRegisteredRedirectUris(getClientRegisteredRedirectUris(clientRegisteredRedirectUris, clientDetailsEntity));
         return clientDetailsEntity;
     }
-    
-    private ClientScopeEntity getClientScopeEntity(String clientScope, ClientDetailsEntity clientDetailsEntity) {               
+
+    private ClientScopeEntity getClientScopeEntity(String clientScope, ClientDetailsEntity clientDetailsEntity) {
         ClientScopeEntity clientScopeEntity = new ClientScopeEntity();
         clientScopeEntity.setClientDetailsEntity(clientDetailsEntity);
-        clientScopeEntity.setScopeType(clientScope);               
+        clientScopeEntity.setScopeType(clientScope);
         return clientScopeEntity;
     }
-    
+
     private SortedSet<ClientRedirectUriEntity> getClientRegisteredRedirectUris(Set<String> redirectUris, ClientDetailsEntity clientDetailsEntity) {
         SortedSet<ClientRedirectUriEntity> clientRedirectUriEntities = new TreeSet<ClientRedirectUriEntity>();
         for (String redirectUri : redirectUris) {
