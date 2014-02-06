@@ -58,6 +58,7 @@ import org.orcid.jaxb.model.message.FamilyName;
 import org.orcid.jaxb.model.message.GivenNames;
 import org.orcid.jaxb.model.message.OrcidBio;
 import org.orcid.jaxb.model.message.OrcidHistory;
+import org.orcid.jaxb.model.message.OrcidIdentifier;
 import org.orcid.jaxb.model.message.OrcidInternal;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidProfile;
@@ -437,11 +438,19 @@ public class RegistrationController extends BaseController {
                         dr.setEmail(op.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue());
                     }
                 }
-                dr.setFamilyNames(op.getOrcidBio().getPersonalDetails().getFamilyName().getContent());
+                FamilyName familyName = op.getOrcidBio().getPersonalDetails().getFamilyName();
+                if (familyName != null) {
+                    dr.setFamilyNames(familyName.getContent());
+                }
                 dr.setGivenNames(op.getOrcidBio().getPersonalDetails().getGivenNames().getContent());
                 dr.setInstitution(null);
             }
-            dr.setOrcid(op.getOrcidIdentifier().getPath());
+            OrcidIdentifier orcidIdentifier = op.getOrcidIdentifier();
+            // Everything should be reindexed with orcid-identifier by now, but
+            // check for null just in case.
+            if (orcidIdentifier != null) {
+                dr.setOrcid(orcidIdentifier.getPath());
+            }
             drList.add(dr);
         }
 
