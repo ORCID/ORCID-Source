@@ -3483,6 +3483,10 @@ function SSOPreferencesCtrl($scope, $compile) {
 	    });		
 	};
 	
+	$scope.postUserCredentials = function() {
+		
+	};
+	
 	//init
 	$scope.getUserCredentials();
 	
