@@ -20,10 +20,12 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -32,6 +34,7 @@ import javax.validation.Valid;
 import org.apache.commons.lang.StringUtils;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.NotificationManager;
+import org.orcid.core.manager.OrcidSSOManager;
 import org.orcid.core.manager.OrcidSearchManager;
 import org.orcid.core.manager.OtherNameManager;
 import org.orcid.core.manager.ProfileEntityManager;
@@ -41,7 +44,6 @@ import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.utils.SolrFieldWeight;
 import org.orcid.core.utils.SolrQueryBuilder;
 import org.orcid.frontend.web.forms.AddDelegateForm;
-import org.orcid.frontend.web.forms.ChangePasswordForm;
 import org.orcid.frontend.web.forms.ChangePersonalInfoForm;
 import org.orcid.frontend.web.forms.ChangeSecurityQuestionForm;
 import org.orcid.frontend.web.forms.ManagePasswordOptionsForm;
@@ -70,18 +72,21 @@ import org.orcid.jaxb.model.message.UrlName;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
 import org.orcid.password.constants.OrcidPasswordConstants;
+import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
+import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ResearcherUrlEntity;
 import org.orcid.pojo.ChangePassword;
 import org.orcid.pojo.SecurityQuestion;
 import org.orcid.pojo.ajaxForm.Emails;
 import org.orcid.pojo.ajaxForm.Errors;
+import org.orcid.pojo.ajaxForm.RedirectUri;
+import org.orcid.pojo.ajaxForm.SSOCredentials;
 import org.orcid.utils.OrcidWebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
 import org.springframework.validation.MapBindingResult;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -130,6 +135,9 @@ public class ManageProfileController extends BaseWorkspaceController {
 
     @Resource
     private OtherNameManager otherNameManager;
+    
+    @Resource 
+    private OrcidSSOManager orcidSSOManager;
 
     @Resource
     private ProfileEntityManager profileEntityManager;
@@ -856,4 +864,49 @@ public class ManageProfileController extends BaseWorkspaceController {
 
         return upTodateResearcherUrls;
     }
+    
+    @RequestMapping(value = "/generateSSOCredentials.json", method = RequestMethod.POST)
+    public @ResponseBody List<RedirectUri> generateSSOCredentialsJson(HttpServletRequest request, @RequestBody List<RedirectUri> redirectUris) {
+        OrcidProfile profile = getEffectiveProfile();
+        String orcid = profile.getOrcidIdentifier().getPath();
+        boolean hasErrors = false;
+        
+        for(RedirectUri redirectUri : redirectUris) {
+            try {
+                URI.create(redirectUri.getValue().getValue());
+            } catch (NullPointerException npe) {
+                List<String> errors = new ArrayList<String>();
+                errors.add(getMessage("manage.sso.empty_redirect_uri"));
+                redirectUri.setErrors(errors);
+                hasErrors = true;
+            } catch (IllegalArgumentException iae) {
+                List<String> errors = new ArrayList<String>();
+                errors.add(getMessage("manage.sso.invalid_redirect_uri"));
+                redirectUri.setErrors(errors);
+                hasErrors = true;
+            }
+        }
+                
+        if(!hasErrors) {
+            Set<String> redirectUriStrings = new HashSet<String>();
+            for(RedirectUri redirectUri : redirectUris){
+                redirectUriStrings.add(redirectUri.getValue().getValue());
+            }
+            orcidSSOManager.generateUserCredentials(orcid, redirectUriStrings);
+        }
+        
+        return redirectUris;
+    }
+    
+    @RequestMapping(value = "/getSSOCredentials.json", method = RequestMethod.POST)
+    public @ResponseBody SSOCredentials getSSOCredentialsJson(HttpServletRequest request) {
+        SSOCredentials credentials = new SSOCredentials();
+        String userOrcid = getEffectiveUserOrcid();
+        ProfileEntity profileEntity = profileEntityManager.findByOrcid(userOrcid);        
+        ClientDetailsEntity existingClientDetails = profileEntity.getClientDetails();
+        if(existingClientDetails != null) {
+            credentials = SSOCredentials.toSSOCredentials(existingClientDetails);
+        }        
+        return credentials;
+    }        
 }

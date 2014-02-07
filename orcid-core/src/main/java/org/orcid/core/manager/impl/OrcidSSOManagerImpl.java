@@ -1,6 +1,5 @@
 package org.orcid.core.manager.impl;
 
-import java.net.URI;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.SortedSet;
@@ -34,7 +33,7 @@ public class OrcidSSOManagerImpl implements OrcidSSOManager {
     private final static String SSO_SCOPE = ScopePathType.AUTHENTICATE.value();
 
     @Override
-    public ClientDetailsEntity generateUserCredentials(String orcid, Set<URI> redirectUris) {
+    public ClientDetailsEntity generateUserCredentials(String orcid, Set<String> redirectUris) {
         ProfileEntity profileEntity = profileEntityManager.findByOrcid(orcid);
         if (profileEntity == null) {
             throw new IllegalArgumentException("ORCID does not exist for " + orcid + " cannot continue");
@@ -42,25 +41,30 @@ public class OrcidSSOManagerImpl implements OrcidSSOManager {
             // If it already have SSO client credentials, just return them
             if (profileEntity.getClientDetails() != null) {
                 ClientDetailsEntity existingClientDetails = profileEntity.getClientDetails();
+                Set<ClientScopeEntity> existingScopes = existingClientDetails.getClientScopes();
                 boolean alreadyHaveAuthScope = false;
-                for (ClientScopeEntity clientScope : existingClientDetails.getClientScopes()) {
+                // Check if it already have the SSO scope
+                for (ClientScopeEntity clientScope : existingScopes) {
                     if (SSO_SCOPE.equals(clientScope.getScopeType())) {
                         alreadyHaveAuthScope = true;
                         break;
                     }
                 }
 
-                // TODO: Add scope to the list of existing scopes
+                // If it doesn't add it and persist it
                 if (!alreadyHaveAuthScope) {
-
+                    ClientScopeEntity ssoScope = getClientScopeEntity(SSO_SCOPE, existingClientDetails);
+                    existingScopes.add(ssoScope);
+                    existingClientDetails.setClientScopes(existingScopes);
+                    clientDetailsDao.merge(existingClientDetails);
                 }
-                return profileEntity.getClientDetails();
+                return clientDetailsDao.findByClientId(existingClientDetails.getId());
             } else {
                 String clientSecret = encryptionManager.encryptForInternalUse(UUID.randomUUID().toString());
                 String clientId = profileEntity.getId();
                 Set<String> redirectUrisSet = new HashSet<String>();
-                for (URI uri : redirectUris) {
-                    redirectUrisSet.add(uri.toString());
+                for (String uri : redirectUris) {
+                    redirectUrisSet.add(uri);
                 }
                 ClientDetailsEntity clientDetailsEntity = populateClientDetailsEntity(clientId, clientSecret, redirectUrisSet);
                 clientDetailsDao.persist(clientDetailsEntity);
@@ -100,7 +104,7 @@ public class OrcidSSOManagerImpl implements OrcidSSOManager {
             ClientRedirectUriEntity clientRedirectUriEntity = new ClientRedirectUriEntity();
             clientRedirectUriEntity.setClientDetailsEntity(clientDetailsEntity);
             clientRedirectUriEntity.setRedirectUri(redirectUri);
-            clientRedirectUriEntity.setRedirectUriType(RedirectUriType.DEFAULT.value());
+            clientRedirectUriEntity.setRedirectUriType(RedirectUriType.SSO_AUTHENTICATION.value());
             clientRedirectUriEntities.add(clientRedirectUriEntity);
         }
         return clientRedirectUriEntities;

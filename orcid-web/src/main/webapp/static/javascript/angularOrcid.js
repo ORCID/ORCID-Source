@@ -586,6 +586,25 @@ function EditTableCtrl($scope) {
 	$scope.showEditSecurityQuestion = (window.location.hash === "#editSecurityQuestion");
 	$scope.securityQuestionUpdateToggleText();	
 	
+	
+	
+	
+	
+	
+	// SSO preferences
+	$scope.ssoPreferencesUpdateToggleText = function () {
+		if ($scope.showSSOPreferences) $scope.ssoPreferencesToggleText = om.get("manage.editTable.hide");
+		else $scope.ssoPreferencesToggleText = om.get("manage.editTable.edit");		
+	};
+
+	$scope.toggleSSOPreferences = function() {
+		$scope.showEditSSOPreferences = !$scope.showEditSSOPreferences;
+		$scope.ssoPreferencesUpdateToggleText();
+	};
+	
+	// init security question
+	$scope.showEditSSOPreferences = (window.location.hash === "#editSSOPreferences");
+	$scope.ssoPreferencesUpdateToggleText();	
 };
 
 
@@ -3441,4 +3460,30 @@ function adminGroupsCtrl($scope,$compile){
 	
 	//init 
 	$scope.getGroup();
+};
+
+function SSOPreferencesCtrl($scope, $compile) {
+	$scope.userCredentials = null;	
+	
+	$scope.getUserCredentials = function() {
+		$.ajax({
+	        url: orcidVar.baseUri+'/account/getSSOCredentials.json',	        
+	        contentType: 'application/json;charset=UTF-8',
+	        type: 'POST',	                	      
+	        success: function(data){
+	        	console.log(data);
+	        	$scope.$apply(function(){ 
+	        		if(data.clientSecret != null)
+	        			$scope.userCredentials = data;
+				});
+	        }
+	    }).fail(function(error) { 
+	    	// something bad is happening!	    	
+	    	console.log("Error obtaining SSO credentials");	    	
+	    });		
+	};
+	
+	//init
+	$scope.getUserCredentials();
+	
 };

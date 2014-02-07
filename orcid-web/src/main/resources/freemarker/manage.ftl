@@ -271,6 +271,40 @@
 						</div>
 					</td>
 				</tr>
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				<tr>
+					<th><a name="ssoPreferences"></a><@orcid.msg 'manage.manage_sso_credentials' /></th>
+					<td><a href="" ng-click="toggleSSOPreferences"
+						ng-bind="ssoPreferencesToggleText"></a></td>
+				</tr>
+				<tr ng-controller="SSOPreferencesCtrl"
+					ng-show="showEditSSOPreferences" ng-cloak>
+					<td colspan="2">
+						<div class="create-sso-credentials">
+						</div>
+						<div class="show-sso-credentials">
+						</div>
+					</td>
+				</tr>
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
 				<tr>
 					<th><a name="editDeactivate"></a>${springMacroRequestContext.getMessage("manage.close_account")}</th>
 					<td><a href="" ng-click="toggleDeactivateEdit()"
@@ -388,6 +422,16 @@
 		   <h3>${springMacroRequestContext.getMessage("manage.application_access.revoke.confirm_revoke")} {{appName}}</h3>
 		   <button class="btn btn-danger" ng-click="revokeAccess()">${springMacroRequestContext.getMessage("manage.application_access.revoke.confirm")}</button> 
 		   <a href="" ng-click="closeModal()">${springMacroRequestContext.getMessage("manage.application_access.revoke.cancel")}</a>
+		</div>
+	</script>
+	
+	<script type="text/ng-template" id="generate-sso-credentials">
+		<div>
+			<h3><@orcid.msg 'manage.generate_sso_credentials.title'/></h3>
+			<span><@orcid.msg 'manage.generate_sso_credentials.instructions'/></span>
+			<input type="text" name="redirectUri" ng-model="redirect_uri.value" />
+			<button class="btn btn-danger" ng-click="submit()"><@orcid.msg 'manage.generate_sso_credentials.generate'/></button>
+			<a href="" ng-click="closeModal()"><@orcid.msg 'manage.generate_sso_credentials.cancel'/></a>
 		</div>
 	</script>
 </@protected>
