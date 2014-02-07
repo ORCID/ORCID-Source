@@ -54,7 +54,7 @@ import java.io.Serializable;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType( propOrder = { "securityDetails", "preferences" })
+@XmlType( propOrder = { "securityDetails", "preferences", "groupOrcidIdentifier" })
 @XmlRootElement(name = "orcid-internal")
 public class OrcidInternal implements VisibilityType, Serializable {
 
@@ -69,6 +69,10 @@ public class OrcidInternal implements VisibilityType, Serializable {
     protected Scope scope;
     @XmlAttribute
     protected Visibility visibility;
+    
+    @XmlElement(name = "group-orcid-identifier")
+    private OrcidIdentifier groupOrcidIdentifier;
+
 
     /**
      * Gets the value of the securityDetails property.
@@ -200,5 +204,13 @@ public class OrcidInternal implements VisibilityType, Serializable {
         result = 31 * result + (scope != null ? scope.hashCode() : 0);
         result = 31 * result + (visibility != null ? visibility.hashCode() : 0);
         return result;
+    }
+
+    public OrcidIdentifier getGroupOrcidIdentifier() {
+        return groupOrcidIdentifier;
+    }
+
+    public void setGroupOrcidIdentifier(OrcidIdentifier groupOrcidIdentifier) {
+        this.groupOrcidIdentifier = groupOrcidIdentifier;
     }
 }
