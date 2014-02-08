@@ -1000,7 +1000,9 @@ h1,h2,h3,h4,h5,h6,b,strong,.table th,.close,.nav-header,.label,.badge,.header .s
 	font-family: 'Gill Sans W02', 'Helvetica', sans-serif;
 	font-weight: bold;
 	font-style: normal;
+	word-break: break-all;
 }
+
 
 .privacyToggle {
 	position: relative;
@@ -1140,6 +1142,10 @@ ul.privacyHelp li.private {
 
 .editTablePadCell35 .email-verified{
 	padding-left: 0;
+}
+
+.editTablePadCell35 .email{
+	word-break: break-all;
 }
 
 #emailTable td {
@@ -1598,7 +1604,7 @@ a:hover {
 .orcid-id{
 	font-size: 10px;
 	line-height: 1;
-	word-wrap:break-word;
+	word-break: break-all;
 	color: #FFF;
 	font-family: 'Gill Sans W02', 'Helvetica', sans-serif;
 	font-weight: bold;
@@ -1733,7 +1739,7 @@ a:hover {
 	font-style: normal;
 	margin: 10px 0 0 !important;
 	line-height: 1;
-	word-wrap:break-word;
+	word-break: break-all;
 }
 
 .privacy-list,.workspace-body-list {
@@ -2628,7 +2634,7 @@ header overrides
 
 .workspace-profile p {
 	margin-bottom: 5px;
-	word-wrap: break-word;
+	word-break: break-all;
 }
 
 .work-title {
@@ -3989,7 +3995,7 @@ p.orcid-id-container{
 	}
 	.header .navigation>.menu>li>a {
 		font-size: 12px;
-		word-wrap: break-word;
+		word-break: break-all;
 		padding: 10px;
 		display: block;
 	}
