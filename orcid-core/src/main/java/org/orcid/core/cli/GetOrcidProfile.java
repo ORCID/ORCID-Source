@@ -29,6 +29,7 @@ public class GetOrcidProfile {
         ApplicationContext context = new ClassPathXmlApplicationContext("orcid-core-context.xml");
         OrcidProfileManager orcidProfileManager = (OrcidProfileManager) context.getBean("orcidProfileManager");
         System.out.println(orcidProfileManager.retrieveOrcidProfile(args[0]));
+        System.exit(0);
     }
 
 }

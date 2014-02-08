@@ -21,7 +21,7 @@
 <!DOCTYPE html>
 <html class="no-js oldie ng-app:orcidApp"  ng-app="orcidApp" id="ng-app" lang="en">
 <#include "/common/html-head.ftl" />
-<body data-baseurl="<@spring.url '/'/>">
+<body data-baseurl="<@spring.url '/'/>" class="<#if inDelegationMode>delegation-mode</#if>">
 <#nested />
 <#include "/common/scripts.ftl" />
 <#if !hideUserVoiceScript??> 
@@ -110,9 +110,16 @@
                                <@security.authorize ifAnyGranted="ROLE_USER, ROLE_ADMIN, ROLE_BASIC, ROLE_PREMIUM, ROLE_BASIC_INSTITUTION, ROLE_PREMIUM_INSTITUTION">
                                <li><a ${(nav=="record")?string('class="active" ', '')}href="<@spring.url '/my-orcid'/>"><@orcid.msg 'public-layout.my_orcid_record'/></a></li>
                                <li><a ${(nav=="settings")?string('class="active" ', '')}href="<@spring.url '/account'/>"><@orcid.msg 'public-layout.account_setting'/></a></li>
-                               <#--<#if isProxy>
-                                   <li><a href="#proxy" class="colorbox-modal"><@orcid.msg 'public-layout.manage_proxy_account'/></a></li>
-                               </#if>-->
+                               <#if RequestParameters['delegates']?? && isProxy>
+                                   <li ng-controller="SwitchUserCtrl" class="dropdown">
+                                       <a ng-click="openMenu($event)" ><@orcid.msg 'public-layout.manage_proxy_account'/></a>
+                                       <ul class="dropdown-menu" ng-show="isDroppedDown" ng-cloak>
+                                           <li ng-repeat="delegationDetails in delegation.givenPermissionBy.delegationDetails | orderBy:'delegateSummary.creditName.content'">
+                                               <a href="<@spring.url '/switch-user?j_username='/>{{delegationDetails.delegateSummary.orcidIdentifier.path}}">{{delegationDetails.delegateSummary.creditName.content}} ({{delegationDetails.delegateSummary.orcidIdentifier.path}})</a>
+                                           </li>
+                                       </ul>
+                                    </li>
+                               </#if>
                                <li><a href="<@spring.url '/signout'/>"><@orcid.msg 'public-layout.sign_out'/></a></li>
                            </@security.authorize>
                        </ul>
@@ -259,9 +266,16 @@
                             <@security.authorize ifAnyGranted="ROLE_USER, ROLE_ADMIN, ROLE_BASIC, ROLE_PREMIUM, ROLE_BASIC_INSTITUTION, ROLE_PREMIUM_INSTITUTION">
                                 <li><a ${(nav=="record")?string('class="active" ', '')}href="<@spring.url '/my-orcid'/>"><@orcid.msg 'public-layout.my_orcid_record'/></a></li>
                                 <li><a ${(nav=="settings")?string('class="active" ', '')}href="<@spring.url '/account'/>"><@orcid.msg 'public-layout.account_setting'/></a></li>
-                                <#--<#if isProxy>
-                                    <li><a href="#proxy" class="colorbox-modal"><@orcid.msg 'public-layout.manage_proxy_account'/></a></li>
-                                </#if>-->
+                                <#if RequestParameters['delegates']?? && isProxy>
+                                    <li ng-controller="SwitchUserCtrl" class="dropdown">
+                                        <a ng-click="openMenu($event)" ><@orcid.msg 'public-layout.manage_proxy_account'/></a>
+                                        <ul class="dropdown-menu" ng-show="isDroppedDown" ng-cloak>
+                                            <li ng-repeat="delegationDetails in delegation.givenPermissionBy.delegationDetails | orderBy:'delegateSummary.creditName.content'">
+                                                <a href="<@spring.url '/switch-user?j_username='/>{{delegationDetails.delegateSummary.orcidIdentifier.path}}">{{delegationDetails.delegateSummary.creditName.content}} ({{delegationDetails.delegateSummary.orcidIdentifier.path}})</a>
+                                            </li>
+                                        </ul>
+                                     </li>
+                                </#if>
                                 <li><a href="<@spring.url '/signout'/>"><@orcid.msg 'public-layout.sign_out'/></a></li>
                             </@security.authorize>
 						</ul></li>
