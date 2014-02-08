@@ -14,21 +14,25 @@
  *
  * =============================================================================
  */
-package org.orcid.core.manager;
+package org.orcid.frontend.web.exception;
 
-import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.springframework.security.core.AuthenticationException;
 
 /**
  * 
  * @author Will Simpson
  * 
  */
-public interface SourceManager {
+public class SwitchUserAuthenticationException extends AuthenticationException {
 
-    String retrieveSourceOrcid();
+    private static final long serialVersionUID = 1L;
 
-    boolean isInDelegationMode();
+    public SwitchUserAuthenticationException(String msg) {
+        super(msg);
+    }
 
-    ProfileEntity retrieveSourceProfileEntity();
+    public SwitchUserAuthenticationException(String msg, Throwable t) {
+        super(msg, t);
+    }
 
 }

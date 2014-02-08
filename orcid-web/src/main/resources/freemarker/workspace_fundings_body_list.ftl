@@ -26,8 +26,11 @@
 		<div class="workspace-accordion-header"><a name='workspace-fundings' />
 		    <a href="" ng-click="workspaceSrvc.toggleFunding()" class="toggle-text">
 		  		<i class="glyphicon-chevron-down glyphicon x0" ng-class="{'glyphicon-chevron-right':workspaceSrvc.displayFunding==false}"></i></a>
-		   	</a> 
-		    <a href="" ng-click="workspaceSrvc.toggleFunding()" class="toggle-text"><@orcid.msg 'workspace.Funding'/></a>
+		   	</a>
+		   	<#if fundingImportWizards?size != 0>
+		       <a href="" ng-click="workspaceSrvc.toggleFunding()" class="toggle-text"><@orcid.msg 'workspace.Funding'/></a>
+			</#if>
+			<a class="label btn-primary" ng-click="showTemplateInModal('import-funding-modal')"><@orcid.msg 'workspace.import_funding'/></a>
 			<a href="" class="label btn-primary" ng-click="addFundingModal()"><@orcid.msg 'manual_funding_form_contents.add_grant_manually'/></a>
 		</div>
 		<div ng-show="workspaceSrvc.displayFunding" class="workspace-accordion-content">

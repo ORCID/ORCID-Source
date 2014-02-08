@@ -44,8 +44,12 @@ public class ThirdPartyImportManagerImpl implements ThirdPartyImportManager {
 
     @Cacheable("import-works-clients")
     public List<OrcidClient> findOrcidClientsWithPredefinedOauthScopeWorksImport() {
-
         return getClients(RedirectUriType.IMPORT_WORKS_WIZARD);
+    }
+    
+    @Cacheable("import-funding-clients")
+    public List<OrcidClient> findOrcidClientsWithPredefinedOauthScopeFundingImport() {
+        return getClients(RedirectUriType.IMPORT_FUNDING_WIZARD);
     }
 
     @Override

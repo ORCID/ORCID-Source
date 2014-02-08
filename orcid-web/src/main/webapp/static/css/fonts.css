@@ -15,58 +15,103 @@
  * =============================================================================
  */
  
- 
-@import url("//fast.fonts.net/t/1.css?apiType=css&projectid=f999924a-38ba-48bd-b8a4-d399e1caafc4");
+@import
+	url("//fast.fonts.net/t/1.css?apiType=css&projectid=078e0d2f-8275-4c25-8aa9-5d902d8e4491")
+	;
 
 @font-face {
-	font-family: "Gill Sans W01 Bold";
-	src: url("../ORCID-Fonts-Dot-Com/1a6dec8e-26f9-4243-8495-835709538f92.eot%3Fiefix.html")
-		format("eot");
+	font-family: "Gill Sans W02_n4";
+	src: url("../ORCID-Fonts-Dot-Com/df888e01-3d42-4e4a-bbb8-7b8bbd7d55f0.eot?#iefix")
+		format("eot")
 }
 
 @font-face {
-	font-family: "Gill Sans W01 Bold";
-	src: url("../ORCID-Fonts-Dot-Com/1a6dec8e-26f9-4243-8495-835709538f92.eot%3Fiefix.html");
-	src: url("../ORCID-Fonts-Dot-Com/f05272f9-83e3-4de6-8423-5d57f730c87b.woff.html")
-		format("woff"),
-		url("../ORCID-Fonts-Dot-Com/33f5d8d9-105f-4a49-9351-74ecae7f4a49.ttf.html")
+	font-family: "Gill Sans W02";
+	src: url("../ORCID-Fonts-Dot-Com/df888e01-3d42-4e4a-bbb8-7b8bbd7d55f0.eot?#iefix");
+	src: url("../ORCID-Fonts-Dot-Com/df888e01-3d42-4e4a-bbb8-7b8bbd7d55f0.eot?#iefix")
+		format("eot"), url("../ORCID-Fonts-Dot-Com/ecb83bdf-e0aa-4a30-9394-c5a32be731ff.woff")
+		format("woff"), url("../ORCID-Fonts-Dot-Com/28878a98-b041-4ebc-a448-f6d4b50c87b2.ttf")
 		format("truetype"),
-		url("../ORCID-Fonts-Dot-Com/b56150eb-5caa-4385-b907-373e97ddb2ff.svg")
+		url("../ORCID-Fonts-Dot-Com/782849e5-a129-4cc1-8fa5-934ae2a82537.svg#782849e5-a129-4cc1-8fa5-934ae2a82537")
 		format("svg");
+	font-weight: 400;
+	font-style: normal;
 }
 
 @font-face {
-	font-family: "Gill Sans W01 Medium";
-	src: url("../ORCID-Fonts-Dot-Com/beab4258-af94-4971-a0db-b7bc2bef74bc.eot%3Fiefix.html")
-		format("eot");
+	font-family: "Gill Sans W02_n7";
+	src: url("../ORCID-Fonts-Dot-Com/f5eeb9ee-aa7f-48ee-8450-4034d3587f6d.eot?#iefix")
+		format("eot")
 }
 
 @font-face {
-	font-family: "Gill Sans W01 Medium";
-	src: url("../ORCID-Fonts-Dot-Com/beab4258-af94-4971-a0db-b7bc2bef74bc.eot%3Fiefix.html");
-	src: url("../ORCID-Fonts-Dot-Com/cd5a93fc-2bb1-48df-8982-11119cd6e270.woff.html")
-		format("woff"),
-		url("../ORCID-Fonts-Dot-Com/b6bdc93b-2720-4c92-b68d-48499456178e.ttf.html")
+	font-family: "Gill Sans W02";
+	src: url("../ORCID-Fonts-Dot-Com/f5eeb9ee-aa7f-48ee-8450-4034d3587f6d.eot?#iefix");
+	src: url("../ORCID-Fonts-Dot-Com/f5eeb9ee-aa7f-48ee-8450-4034d3587f6d.eot?#iefix")
+		format("eot"), url("../ORCID-Fonts-Dot-Com/41a107ac-0cb7-4bdf-92fa-3953ffd3624e.woff")
+		format("woff"), url("../ORCID-Fonts-Dot-Com/da53b951-50dc-4a3c-a55a-932bdde8347e.ttf")
 		format("truetype"),
-		url("../ORCID-Fonts-Dot-Com/944cce8d-20bf-41c1-ae29-2bc8199859db.svg")
+		url("../ORCID-Fonts-Dot-Com/7bf70546-8c62-412f-9a7f-ea4d750a97b9.svg#7bf70546-8c62-412f-9a7f-ea4d750a97b9")
 		format("svg");
+	font-weight: 700;
+	font-style: normal;
 }
 
 @font-face {
-	font-family: "Gill Sans W02 Light";
-	src: url("../ORCID-Fonts-Dot-Com/3d3ae305-c5f8-44e9-a93f-68343ef13a1e.eot%3Fiefix.html")
-		format("eot");
+	font-family: "Gill Sans W02_i7";
+	src: url("../ORCID-Fonts-Dot-Com/a4c5f6d1-f02d-4144-aadf-10f97a718263.eot?#iefix")
+		format("eot")
 }
 
 @font-face {
-	font-family: "Gill Sans W02 Light";
-	src: url("../ORCID-Fonts-Dot-Com/3d3ae305-c5f8-44e9-a93f-68343ef13a1e.eot%3Fiefix.html");
-	src: url("../ORCID-Fonts-Dot-Com/2b43682c-fbbf-4d2c-aa8f-53c5e9c07b89.woff.html")
-		format("woff"),
-		url("../ORCID-Fonts-Dot-Com/c7502fea-5840-46ed-9666-3479a56bf828.ttf.html")
+	font-family: "Gill Sans W02";
+	src: url("../ORCID-Fonts-Dot-Com/a4c5f6d1-f02d-4144-aadf-10f97a718263.eot?#iefix");
+	src: url("../ORCID-Fonts-Dot-Com/a4c5f6d1-f02d-4144-aadf-10f97a718263.eot?#iefix")
+		format("eot"), url("../ORCID-Fonts-Dot-Com/a02a57aa-1a49-4b8c-ab1d-08fbd790aabe.woff")
+		format("woff"), url("../ORCID-Fonts-Dot-Com/53ead41e-c0ab-44c3-bb7c-74d70d2c7ed7.ttf")
 		format("truetype"),
-		url("../ORCID-Fonts-Dot-Com/59939f92-3d8b-46f6-8852-3a0db259dea0.svg")
+		url("../ORCID-Fonts-Dot-Com/cba5f716-e0e3-43b2-accd-b5f4173e4695.svg#cba5f716-e0e3-43b2-accd-b5f4173e4695")
 		format("svg");
+	font-weight: 700;
+	font-style: italic;
+}
+
+@font-face {
+	font-family: "Gill Sans W02_i4";
+	src: url("../ORCID-Fonts-Dot-Com/b88d89de-e476-4fd9-83a7-15f1178d78bd.eot?#iefix")
+		format("eot")
+}
+
+@font-face {
+	font-family: "Gill Sans W02";
+	src: url("../ORCID-Fonts-Dot-Com/b88d89de-e476-4fd9-83a7-15f1178d78bd.eot?#iefix");
+	src: url("../ORCID-Fonts-Dot-Com/b88d89de-e476-4fd9-83a7-15f1178d78bd.eot?#iefix")
+		format("eot"), url("../ORCID-Fonts-Dot-Com/5b426dca-cc4e-4627-9ff8-9f4dc55b0290.woff")
+		format("woff"), url("../ORCID-Fonts-Dot-Com/f54382aa-da70-46c5-bb6f-735919625300.ttf")
+		format("truetype"),
+		url("../ORCID-Fonts-Dot-Com/f317c23c-bff8-4972-b8d3-db5a0da45fdf.svg#f317c23c-bff8-4972-b8d3-db5a0da45fdf")
+		format("svg");
+	font-weight: 400;
+	font-style: italic;
+}
+
+@font-face {
+	font-family: "Gill Sans W02_n3";
+	src: url("../ORCID-Fonts-Dot-Com/3d3ae305-c5f8-44e9-a93f-68343ef13a1e.eot?#iefix")
+		format("eot")
+}
+
+@font-face {
+	font-family: "Gill Sans W02";
+	src: url("../ORCID-Fonts-Dot-Com/3d3ae305-c5f8-44e9-a93f-68343ef13a1e.eot?#iefix");
+	src: url("../ORCID-Fonts-Dot-Com/3d3ae305-c5f8-44e9-a93f-68343ef13a1e.eot?#iefix")
+		format("eot"), url("../ORCID-Fonts-Dot-Com/2b43682c-fbbf-4d2c-aa8f-53c5e9c07b89.woff")
+		format("woff"), url("../ORCID-Fonts-Dot-Com/c7502fea-5840-46ed-9666-3479a56bf828.ttf")
+		format("truetype"),
+		url("../ORCID-Fonts-Dot-Com/59939f92-3d8b-46f6-8852-3a0db259dea0.svg#59939f92-3d8b-46f6-8852-3a0db259dea0")
+		format("svg");
+	font-weight: 300;
+	font-style: normal;
 }
 
 @font-face {

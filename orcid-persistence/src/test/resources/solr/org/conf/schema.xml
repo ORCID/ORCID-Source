@@ -524,6 +524,8 @@
 			multiValued="false" />
 		<field name="org-names" type="orcid_text_name" indexed="true" stored="true"
 			multiValued="true" />
+		<field name="is-funding-org" type="boolean" indexed="true" stored="true"
+			multiValued="false" />
 			
 		<!-- Dynamic field definitions. If a field name is not found, dynamicFields 
 			will be used if the name matches any of the patterns. RESTRICTION: the glob-like 

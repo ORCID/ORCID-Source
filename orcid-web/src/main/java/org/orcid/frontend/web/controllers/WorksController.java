@@ -402,7 +402,7 @@ public class WorksController extends BaseWorkspaceController {
             }
 
             // Create profile work relationship
-            profileWorkManager.addProfileWork(currentProfile.getOrcidIdentifier().getPath(), workEntity.getId(), newOw.getVisibility());
+            profileWorkManager.addProfileWork(currentProfile.getOrcidIdentifier().getPath(), workEntity.getId(), newOw.getVisibility(), getRealUserOrcid());
 
             // Set the id (put-code) to the new work
             newOw.setPutCode(String.valueOf(workEntity.getId()));

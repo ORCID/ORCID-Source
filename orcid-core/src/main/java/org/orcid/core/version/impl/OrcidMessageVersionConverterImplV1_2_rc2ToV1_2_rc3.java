@@ -59,7 +59,14 @@ public class OrcidMessageVersionConverterImplV1_2_rc2ToV1_2_rc3 implements Orcid
     }
 
     private void downgradeProfile(OrcidProfile orcidProfile) {
-        // nothing to downgrade
+        if (orcidProfile != null) {
+            if (orcidProfile.getOrcidInternal() != null) {
+                // earlier versions of the XSD don;t have GroupOrcidIdentifier 
+                if (orcidProfile.getOrcidInternal().getGroupOrcidIdentifier() != null) {
+                    orcidProfile.getOrcidInternal().setGroupOrcidIdentifier(null);
+                }
+            }
+        }
     }
 
     private void downgradeSearchResults(OrcidMessage orcidMessage) {
