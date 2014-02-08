@@ -65,6 +65,11 @@
 		<persistence strategy="none" />
 	</cache>
 
+	<cache name="import-funding-clients" maxElementsInMemory="200"
+		eternal="true" copyOnRead="false" copyOnWrite="false">
+		<persistence strategy="none" />
+	</cache>
+
 	<cache name="read-access-clients" maxElementsInMemory="200"
 		eternal="true" copyOnRead="false" copyOnWrite="false">
 		<persistence strategy="none" />

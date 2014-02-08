@@ -128,7 +128,7 @@ public class ManageClientGroup {
     private Validator createValidator() {
         try {
             SchemaFactory factory = SchemaFactory.newInstance("http://www.w3.org/2001/XMLSchema");
-            Schema schema = factory.newSchema(getClass().getResource("/orcid-client-group-1.2.xsd"));
+            Schema schema = factory.newSchema(getClass().getResource("/orcid-client-group-1.3.xsd"));
             return schema.newValidator();
         } catch (SAXException e) {
             throw new RuntimeException("Error reading ORCID client group schema", e);

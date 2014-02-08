@@ -53,11 +53,11 @@
     <client_granted_authority client_details_id="4444-4444-4444-4445" granted_authority="ROLE_CLIENT"/>
 
     <client_redirect_uri client_details_id="4444-4444-4444-4441" redirect_uri="http:://www.4444-4444-4444-4441.com/redirect/oauth" 
-    predefined_client_redirect_scope ="/orcid-profile/create"/>
-    <client_redirect_uri client_details_id="4444-4444-4444-4442" redirect_uri="http:://www.4444-4444-4444-4442.com/redirect/oauth"/>
-    <client_redirect_uri client_details_id="4444-4444-4444-4443" redirect_uri="http:://www.4444-4444-4444-4443.com/redirect/oauth"/>
-    <client_redirect_uri client_details_id="4444-4444-4444-4444" redirect_uri="http:://www.4444-4444-4444-4444.com/redirect/oauth"/>
-    <client_redirect_uri client_details_id="4444-4444-4444-4445" redirect_uri="http:://www.4444-4444-4444-4445.com/redirect/oauth"/>
+    predefined_client_redirect_scope ="/orcid-profile/create" redirect_uri_type="default"/>
+    <client_redirect_uri client_details_id="4444-4444-4444-4442" redirect_uri="http:://www.4444-4444-4444-4442.com/redirect/oauth" redirect_uri_type="default"/>
+    <client_redirect_uri client_details_id="4444-4444-4444-4443" redirect_uri="http:://www.4444-4444-4444-4443.com/redirect/oauth" redirect_uri_type="default"/>
+    <client_redirect_uri client_details_id="4444-4444-4444-4444" redirect_uri="http:://www.4444-4444-4444-4444.com/redirect/oauth" redirect_uri_type="default"/>
+    <client_redirect_uri client_details_id="4444-4444-4444-4445" redirect_uri="http:://www.4444-4444-4444-4445.com/redirect/oauth" redirect_uri_type="default"/>
 
     <client_resource_id client_details_id="4444-4444-4444-4441" resource_id="orcid"/>
     <client_resource_id client_details_id="4444-4444-4444-4442" resource_id="orcid"/>
