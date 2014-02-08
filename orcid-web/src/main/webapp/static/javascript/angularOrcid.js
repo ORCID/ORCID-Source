@@ -1824,6 +1824,7 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc) {
 	$scope.moreInfo = {};
 	$scope.privacyHelp = {};
 	$scope.editTranslatedTitle = false; 
+	$scope.showFundersOnly = false;
 	
 	$scope.toggleClickMoreInfo = function(key) {
 		if (!document.documentElement.className.contains('no-touch')) {
@@ -1913,12 +1914,18 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc) {
 	
 	$scope.bindTypeahead = function () {
 		var numOfResults = 100;
-		
 		$("#fundingName").typeahead({
 			name: 'fundingName',
 			limit: numOfResults,
 			remote: {
-				url: $('body').data('baseurl')+'fundings/disambiguated/name/%QUERY?limit=' + numOfResults
+				replace: function () {
+                    var q = $('body').data('baseurl')+'fundings/disambiguated/name/';
+                    if ($('#fundingName').val()) {
+                        q += encodeURIComponent($('#fundingName').val());
+                    }
+                    q += '?limit=' + numOfResults + '&funders-only=' + $('#fundersOnly').is(':checked');
+                    return q;
+                }
 			},
 			template: function (datum) {
 				   var forDisplay = 
@@ -2067,7 +2074,6 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc) {
     	$('#translatedTitle').toggle();
     	$.colorbox.resize();
 	};
-	
 	$scope.renderTranslatedTitleInfo = function(funding) {		
 		var info = null; 
 		if(funding != null && funding.fundingTitle != null && funding.fundingTitle.translatedTitle != null) {

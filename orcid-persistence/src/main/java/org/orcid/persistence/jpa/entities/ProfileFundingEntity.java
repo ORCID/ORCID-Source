@@ -16,7 +16,6 @@
  */
 package org.orcid.persistence.jpa.entities;
 
-import java.util.Currency;
 import java.util.SortedSet;
 
 import javax.persistence.Basic;
@@ -35,7 +34,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
-import org.apache.commons.lang.StringUtils;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.Sort;
@@ -47,8 +45,7 @@ import org.orcid.utils.NullUtils;
 /**
  * orcid-entities - Dec 6, 2011 - ProfileInstitutionEntity
  * 
- * @author Declan Newman (declan)
- * Angel Montenegro
+ * @author Declan Newman (declan) Angel Montenegro
  */
 
 @Entity
@@ -57,9 +54,9 @@ public class ProfileFundingEntity extends BaseEntity<Long> implements Comparable
 
     private static final long serialVersionUID = -3187757614938904392L;
 
-    private static final String PROFILE_FUNDING = "profileFunding";	
+    private static final String PROFILE_FUNDING = "profileFunding";
 
-	private Long id;
+    private Long id;
     private OrgEntity org;
     private ProfileEntity profile;
     private String title;
@@ -71,55 +68,55 @@ public class ProfileFundingEntity extends BaseEntity<Long> implements Comparable
     private String amount;
     private String url;
     private String contributorsJson;
-	private StartDateEntity startDate;
+    private StartDateEntity startDate;
     private EndDateEntity endDate;
     private Visibility visibility;
     private SortedSet<FundingExternalIdentifierEntity> externalIdentifiers;
     private ProfileEntity source;
-	
+
     @Override
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "profile_funding_seq")
     @SequenceGenerator(name = "profile_funding_seq", sequenceName = "profile_funding_seq")
-	public Long getId() {
-		return id;
-	}
+    public Long getId() {
+        return id;
+    }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	@ManyToOne(fetch = FetchType.LAZY, cascade = { CascadeType.DETACH, CascadeType.REFRESH })
+    @ManyToOne(fetch = FetchType.LAZY, cascade = { CascadeType.DETACH, CascadeType.REFRESH })
     @JoinColumn(name = "org_id", nullable = false)
-	public OrgEntity getOrg() {
-		return org;
-	}
+    public OrgEntity getOrg() {
+        return org;
+    }
 
-	public void setOrg(OrgEntity org) {
-		this.org = org;
-	}
+    public void setOrg(OrgEntity org) {
+        this.org = org;
+    }
 
-	@Override
-	@ManyToOne(cascade = { CascadeType.REFRESH }, fetch = FetchType.EAGER)
+    @Override
+    @ManyToOne(cascade = { CascadeType.REFRESH }, fetch = FetchType.EAGER)
     @JoinColumn(name = "orcid", nullable = false)
-	public ProfileEntity getProfile() {
-		return profile;
-	}
+    public ProfileEntity getProfile() {
+        return profile;
+    }
 
-	public void setProfile(ProfileEntity profile) {
-		this.profile = profile;
-	}
+    public void setProfile(ProfileEntity profile) {
+        this.profile = profile;
+    }
 
-	@Column(name = "title", nullable = false)
-	public String getTitle() {
-		return title;
-	}
+    @Column(name = "title", nullable = false)
+    public String getTitle() {
+        return title;
+    }
 
-	public void setTitle(String title) {
-		this.title = title;
-	}
+    public void setTitle(String title) {
+        this.title = title;
+    }
 
-	@Column(name = "translated_title")
+    @Column(name = "translated_title")
     public String getTranslatedTitle() {
         return translatedTitle;
     }
@@ -137,132 +134,131 @@ public class ProfileFundingEntity extends BaseEntity<Long> implements Comparable
         this.translatedTitleLanguageCode = translatedTitleLanguageCode;
     }
 
-	
-	@Column(name = "description")
-	public String getDescription() {
-		return description;
-	}
+    @Column(name = "description")
+    public String getDescription() {
+        return description;
+    }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-	@Basic
+    @Basic
     @Enumerated(EnumType.STRING)
-	@Column(name="type")
-	public FundingType getType() {
-		return type;
-	}
+    @Column(name = "type")
+    public FundingType getType() {
+        return type;
+    }
 
-	public void setType(FundingType type) {
-		this.type = type;
-	}
+    public void setType(FundingType type) {
+        this.type = type;
+    }
 
-	@Basic    
-	@Column(name="currency_code")
-	public String getCurrencyCode() {
-		return currencyCode;
-	}
+    @Basic
+    @Column(name = "currency_code")
+    public String getCurrencyCode() {
+        return currencyCode;
+    }
 
-	public void setCurrencyCode(String currencyCode) {
-		this.currencyCode = currencyCode;
-	}
+    public void setCurrencyCode(String currencyCode) {
+        this.currencyCode = currencyCode;
+    }
 
-	@Column(name = "amount")
-	public String getAmount() {
-		return amount;
-	}
+    @Column(name = "amount")
+    public String getAmount() {
+        return amount;
+    }
 
-	public void setAmount(String amount) {
-		this.amount = amount;
-	}
+    public void setAmount(String amount) {
+        this.amount = amount;
+    }
 
-	@Column(name = "url")
-	public String getUrl() {
-		return url;
-	}
+    @Column(name = "url")
+    public String getUrl() {
+        return url;
+    }
 
-	public void setUrl(String url) {
-		this.url = url;
-	}
+    public void setUrl(String url) {
+        this.url = url;
+    }
 
-	@Column(name = "contributors_json")
-	public String getContributorsJson() {
-		return contributorsJson;
-	}
+    @Column(name = "contributors_json")
+    public String getContributorsJson() {
+        return contributorsJson;
+    }
 
-	public void setContributorsJson(String contributorsJson) {
-		this.contributorsJson = contributorsJson;
-	}
-	
-	public StartDateEntity getStartDate() {
-		return startDate;
-	}
+    public void setContributorsJson(String contributorsJson) {
+        this.contributorsJson = contributorsJson;
+    }
 
-	public void setStartDate(StartDateEntity startDate) {
-		this.startDate = startDate;
-	}
+    public StartDateEntity getStartDate() {
+        return startDate;
+    }
 
-	public EndDateEntity getEndDate() {
-		return endDate;
-	}
+    public void setStartDate(StartDateEntity startDate) {
+        this.startDate = startDate;
+    }
 
-	public void setEndDate(EndDateEntity endDate) {
-		this.endDate = endDate;
-	}
+    public EndDateEntity getEndDate() {
+        return endDate;
+    }
 
-	@Basic
+    public void setEndDate(EndDateEntity endDate) {
+        this.endDate = endDate;
+    }
+
+    @Basic
     @Enumerated(EnumType.STRING)
-	public Visibility getVisibility() {
-		return visibility;
-	}
+    public Visibility getVisibility() {
+        return visibility;
+    }
 
-	public void setVisibility(Visibility visibility) {
-		this.visibility = visibility;
-	}
+    public void setVisibility(Visibility visibility) {
+        this.visibility = visibility;
+    }
 
-	@OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.LAZY, mappedBy = PROFILE_FUNDING)
-	@Fetch(FetchMode.SUBSELECT)
+    @OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.LAZY, mappedBy = PROFILE_FUNDING)
+    @Fetch(FetchMode.SUBSELECT)
     @Sort(type = SortType.NATURAL)
-	public SortedSet<FundingExternalIdentifierEntity> getExternalIdentifiers() {
-		return externalIdentifiers;
-	}
+    public SortedSet<FundingExternalIdentifierEntity> getExternalIdentifiers() {
+        return externalIdentifiers;
+    }
 
-	public void setExternalIdentifiers(SortedSet<FundingExternalIdentifierEntity> externalIdentifiers) {
-		this.externalIdentifiers = externalIdentifiers;
-	}
+    public void setExternalIdentifiers(SortedSet<FundingExternalIdentifierEntity> externalIdentifiers) {
+        this.externalIdentifiers = externalIdentifiers;
+    }
 
-	@ManyToOne(cascade = { CascadeType.REFRESH }, fetch = FetchType.EAGER)
-	@JoinColumn(name = "source_id", nullable = true, updatable = false)
-	public ProfileEntity getSource() {
-		return source;
-	}
+    @ManyToOne(cascade = { CascadeType.REFRESH }, fetch = FetchType.EAGER)
+    @JoinColumn(name = "source_id", nullable = true, updatable = false)
+    public ProfileEntity getSource() {
+        return source;
+    }
 
-	public void setSource(ProfileEntity source) {
-		this.source = source;
-	}
+    public void setSource(ProfileEntity source) {
+        this.source = source;
+    }
 
-	@Override
-	public int compareTo(ProfileFundingEntity other) {
-		if (other == null) {
+    @Override
+    public int compareTo(ProfileFundingEntity other) {
+        if (other == null) {
             return 1;
-        }				
-		
-		int compareTypes = compareTypes(type, other.getType());
-		if(compareTypes != 0) {
-			return compareTypes;
-		}
-		
-		int compareTitles = compareStrings(title, other.getTitle());
-		if(compareTitles != 0) {
-			return compareTitles;
-		}
-		
-		int compareDescriptions = compareStrings(description, other.getDescription());
-		if(compareDescriptions != 0) {
-			return compareDescriptions;
-		}
-		
+        }
+
+        int compareTypes = compareTypes(type, other.getType());
+        if (compareTypes != 0) {
+            return compareTypes;
+        }
+
+        int compareTitles = compareStrings(title, other.getTitle());
+        if (compareTitles != 0) {
+            return compareTitles;
+        }
+
+        int compareDescriptions = compareStrings(description, other.getDescription());
+        if (compareDescriptions != 0) {
+            return compareDescriptions;
+        }
+
         int compareEnds = compareEnds(endDate, other.getEndDate());
         if (compareEnds != 0) {
             return compareEnds;
@@ -271,44 +267,44 @@ public class ProfileFundingEntity extends BaseEntity<Long> implements Comparable
         if (compareStarts != 0) {
             return compareStarts;
         }
-        
-        int compareAmounts = compareStrings(amount, other.getAmount());
-        if(compareAmounts != 0) {
-        	return compareAmounts;
-        }
-        
-        int compareCurrency = compareStrings(currencyCode, other.getCurrencyCode());
-        if(compareCurrency != 0) {
-        	return compareCurrency;
-        }
-        
-        int compareOrgName = compareStrings(org.getName(), other.getOrg().getName()); 
-        if(compareOrgName != 0) {
-        	return compareOrgName;
-        }
-        
-        int compareOrgCountry = compareStrings(org.getCountry() == null ? null : org.getCountry().value(), 
-        		other.getOrg().getCountry() == null ? null : other.getOrg().getCountry().value());
-        if(compareOrgCountry != 0) {
-        	return compareOrgCountry;
-        }
-        
-        int compareOrgCity = compareStrings(org.getCity(), other.getOrg().getCity());
-        if(compareOrgCity != 0) {
-        	return compareOrgCity;
-        }
-        
-        return compareStrings(url, other.getUrl());
-	}
 
-	private int compareTypes(FundingType type, FundingType otherType){
-		if (NullUtils.anyNull(type, otherType)) {
+        int compareAmounts = compareStrings(amount, other.getAmount());
+        if (compareAmounts != 0) {
+            return compareAmounts;
+        }
+
+        int compareCurrency = compareStrings(currencyCode, other.getCurrencyCode());
+        if (compareCurrency != 0) {
+            return compareCurrency;
+        }
+
+        int compareOrgName = compareStrings(org.getName(), other.getOrg().getName());
+        if (compareOrgName != 0) {
+            return compareOrgName;
+        }
+
+        int compareOrgCountry = compareStrings(org.getCountry() == null ? null : org.getCountry().value(), other.getOrg().getCountry() == null ? null : other.getOrg()
+                .getCountry().value());
+        if (compareOrgCountry != 0) {
+            return compareOrgCountry;
+        }
+
+        int compareOrgCity = compareStrings(org.getCity(), other.getOrg().getCity());
+        if (compareOrgCity != 0) {
+            return compareOrgCity;
+        }
+
+        return compareStrings(url, other.getUrl());
+    }
+
+    private int compareTypes(FundingType type, FundingType otherType) {
+        if (NullUtils.anyNull(type, otherType)) {
             return -NullUtils.compareNulls(type, otherType);
         }
-		return -type.compareTo(otherType);
-	}
-	
-	private int compareEnds(FuzzyDateEntity endDate, FuzzyDateEntity otherEndDate) {
+        return -type.compareTo(otherType);
+    }
+
+    private int compareEnds(FuzzyDateEntity endDate, FuzzyDateEntity otherEndDate) {
         if (NullUtils.anyNull(endDate, otherEndDate)) {
             return -NullUtils.compareNulls(endDate, otherEndDate);
         }
@@ -328,7 +324,7 @@ public class ProfileFundingEntity extends BaseEntity<Long> implements Comparable
         }
         return string.compareTo(otherString);
     }
-       
+
     /**
      * Clean simple fields so that entity can be reused.
      */

@@ -27,5 +27,6 @@ public interface OrgDisambiguatedSolrDao {
     public OrgDisambiguatedSolrDocument findById(Long id);
 
     public List<OrgDisambiguatedSolrDocument> getOrgs(String searchTerm, int firstResult, int maxResult);
+    public List<OrgDisambiguatedSolrDocument> getOrgs(String searchTerm, int firstResult, int maxResult, boolean fundersOnly);    
 
 }
