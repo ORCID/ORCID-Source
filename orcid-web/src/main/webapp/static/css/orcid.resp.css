@@ -3847,8 +3847,16 @@ p.orcid-id-container{
 	
 	.header .search .settings-button i{
 		margin: 10px 0 0 0;
+	}	
+		
+	.main-search{
+		display: block;
+		padding: 0 15px;		
 	}
 	
+	.main-search input[type="text"]{
+		width: 100%;				
+	}
 }
 
 @media (min-width : 768px) and (max-width : 991px) { /* Tablet */
