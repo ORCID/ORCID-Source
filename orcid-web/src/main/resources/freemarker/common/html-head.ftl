@@ -70,9 +70,9 @@
 	>	
 		<link rel="stylesheet" href="${staticLoc}/css/fonts.css?v=${ver}"/>
 		<!-- Always remember to remove Glyphicons font reference when bootstrap is updated -->
-	    <link rel="stylesheet" href="${staticCdn}/twitter-bootstrap/3.0.3/css/bootstrap.min.css?v=${ver}"/>
+	    <link rel="stylesheet" href="${staticCdn}/twitter-bootstrap/3.1.0/css/bootstrap.min.css?v=${ver}"/>
 	    <!--[if lt IE 8]>
-	        <link rel="stylesheet" href="${staticCdn}/twitter-bootstrap/3.0.3/css/bootstrap-ie7.css?v=${ver}"/>	                
+	        <link rel="stylesheet" href="${staticCdn}/twitter-bootstrap/3.1.0/css/bootstrap-ie7.css?v=${ver}"/>	                
 	    <![endif]-->
 
 	    <link rel="stylesheet" href="${staticCdn}/css/orcid.resp.css?v=${ver}"/>	    
