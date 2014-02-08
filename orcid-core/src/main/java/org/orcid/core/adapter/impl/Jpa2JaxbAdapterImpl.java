@@ -1091,6 +1091,8 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
     private OrcidInternal getOrcidInternal(ProfileEntity profileEntity) {
         OrcidInternal orcidInternal = new OrcidInternal();
 
+        orcidInternal.setGroupOrcidIdentifier(new OrcidIdentifier(getOrcidIdBase(profileEntity.getGroupOrcid())));
+        
         SecurityDetails securityDetails = new SecurityDetails();
         orcidInternal.setSecurityDetails(securityDetails);
         securityDetails.setEncryptedPassword(profileEntity.getEncryptedPassword() != null ? new EncryptedPassword(profileEntity.getEncryptedPassword()) : null);
