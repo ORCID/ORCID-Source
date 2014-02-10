@@ -225,10 +225,16 @@
 					</div>
 				</div>
 				<div class="control-group">
-					<span>
-					   <label ng-hide="disambiguatedFunding"><@orcid.msg 'manual_funding_form_contents.label_funding_agency_name'/></label>
-					   <label ng-show="disambiguatedFunding"><@orcid.msg 'manual_funding_form_contents.label_funding_agency_display_name'/></label>
+					<span ng-hide="disambiguatedFunding">												
+					   	<label><@orcid.msg 'manual_funding_form_contents.label_funding_agency_name'/></label>
+					   	<div id="fundingOnlyDiv" class="right show-funding-only">
+							<input type="checkbox" id="fundersOnly" />
+							<label for="fundersOnly"><@orcid.msg 'manual_funding_form_contents.show_only_funders'/></label>
+						</div>					   
 					</span>
+					<span ng-show="disambiguatedFunding">
+						<label><@orcid.msg 'manual_funding_form_contents.label_funding_agency_display_name'/></label>
+					</span>	
 					<div class="relative">
 						<input id="fundingName" class="input-xlarge" name="fundingName" type="text" ng-model="editFunding.fundingName.value" placeholder="<@orcid.msg 'manual_funding_form_contents.add_name'/>" ng-model-onblur/>
 						<span class="required" ng-class="isValidClass(editFunding.fundingName)">*</span>

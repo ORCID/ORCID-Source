@@ -28,6 +28,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 /**
  * 
@@ -36,7 +37,7 @@ import javax.persistence.Table;
  */
 @Table(name = "given_permission_to")
 @Entity
-public class GivenPermissionToEntity extends BaseEntity<Long> {
+public class GivenPermissionToEntity extends BaseEntity<Long> implements ProfileAware {
 
     private static final long serialVersionUID = 1L;
 
@@ -84,6 +85,12 @@ public class GivenPermissionToEntity extends BaseEntity<Long> {
 
     public void setApprovalDate(Date approvalDate) {
         this.approvalDate = approvalDate;
+    }
+    
+    @Override
+    @Transient
+    public ProfileEntity getProfile(){
+        return new ProfileEntity(giver);
     }
 
 }

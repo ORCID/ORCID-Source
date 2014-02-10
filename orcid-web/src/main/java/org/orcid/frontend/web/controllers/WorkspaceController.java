@@ -103,10 +103,17 @@ public class WorkspaceController extends BaseWorkspaceController {
     @Resource(name="languagesMap")
     private LanguagesMap lm;
 
-    @ModelAttribute("thirdPartiesForImport")
-    public List<OrcidClient> retrieveThirdPartiesForImport() {
+    @ModelAttribute("workImportWizards")
+    public List<OrcidClient> retrieveWorkImportWizards() {
         return thirdPartyImportManager.findOrcidClientsWithPredefinedOauthScopeWorksImport();
     }
+    
+
+    @ModelAttribute("fundingImportWizards")
+    public List<OrcidClient> retrieveFundingImportWizards() {
+        return thirdPartyImportManager.findOrcidClientsWithPredefinedOauthScopeFundingImport();
+    }
+
 
     @ModelAttribute("affiliationTypes")
     public Map<String, String> retrieveAffiliationTypesAsMap() {

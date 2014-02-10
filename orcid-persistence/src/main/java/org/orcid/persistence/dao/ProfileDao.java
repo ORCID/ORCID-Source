@@ -38,7 +38,7 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
     List<String> findOrcidsByIndexingStatus(IndexingStatus indexingStatus, int maxResults);
 
     List<String> findOrcidsByIndexingStatus(IndexingStatus indexingStatus, int maxResults, Collection<String> orcidsToExclude);
-    
+
     List<String> findOrcidsByIndexingStatus(Collection<IndexingStatus> indexingStatuses, int maxResults, Collection<String> orcidsToExclude);
 
     List<String> findUnclaimedNotIndexedAfterWaitPeriod(int waitPeriodDays, int maxResults, Collection<String> orcidsToExclude);
@@ -72,26 +72,27 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
     void updateLastModifiedDateWithoutResult(String orcid);
 
     void updateLastModifiedDateAndIndexingStatus(String orcid);
-    
+
     public List<String> findEmailsUnverfiedDays(int daysUnverified, int maxResults, EmailEventType ev);
 
     OrcidType retrieveOrcidType(String orcid);
 
     List<Object[]> findInfoForDecryptionAnalysis();
+
     Locale retrieveLocale(String orcid);
 
     void updateLocale(String orcid, Locale locale);
-    
+
     boolean deprecateProfile(String deprecatedOrcid, String primaryOrcid);
-    
+
     String retrievePrimaryAccountOrcid(String deprecatedOrcid);
-    
-    boolean isProfileDeprecated(String orcid);    
+
+    boolean isProfileDeprecated(String orcid);
 
     void updateEncryptedPassword(String orcid, String encryptedPassword);
 
     void updateSecurityQuestion(String orcid, Integer securityQuestionId, String encryptedSecurityAnswer);
-    
+
     List<ProfileEntity> findProfilesByOrcidType(OrcidType type);
 
 }

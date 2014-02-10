@@ -225,11 +225,6 @@ $(function () {
  
     }
      
-    $('#denialForm').submit(function() {
-    	if (window.location != window.parent.location) parent.$.colorbox.close();
-    	return true;
-    });
-    
     // track when deactived people are pushed to signin page
     if (window.location.href.endsWith("signin#deactivated")) {
     	orcidGA.gaPush(['_trackEvent', 'Disengagement', 'Deactivate_Complete', 'Website']);

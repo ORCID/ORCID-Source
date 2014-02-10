@@ -53,6 +53,9 @@ public class OrgDisambiguatedSolrDocument {
     @Field(SolrConstants.ORG_NAMES)
     private List<String> orgNames;
 
+    @Field(SolrConstants.IS_FUNDING_ORG)
+    private boolean isFundingOrg;
+
     public Long getOrgDisambiguatedId() {
         return orgDisambiguatedId;
     }
@@ -117,4 +120,11 @@ public class OrgDisambiguatedSolrDocument {
         this.orgNames = orgNames;
     }
 
+    public boolean isFundingOrg() {
+        return isFundingOrg;
+    }
+
+    public void setFundingOrg(boolean isFundingOrg) {
+        this.isFundingOrg = isFundingOrg;
+    }
 }

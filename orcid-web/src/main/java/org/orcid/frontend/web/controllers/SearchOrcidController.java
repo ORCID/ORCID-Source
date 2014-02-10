@@ -23,7 +23,6 @@ import javax.validation.Valid;
 
 import org.apache.commons.lang.StringUtils;
 import org.orcid.core.manager.OrcidSearchManager;
-import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.frontend.web.controllers.helper.SearchOrcidSolrCriteria;
 import org.orcid.frontend.web.forms.SearchOrcidBioForm;
 import org.orcid.jaxb.model.message.OrcidMessage;
@@ -50,9 +49,6 @@ public class SearchOrcidController extends BaseController {
 
     @Resource
     private OrcidSearchManager orcidSearchManager;
-
-    @Resource
-    private OrcidUrlManager orcidUrlManager;
 
     public void setOrcidSearchManager(OrcidSearchManager orcidSearchManager) {
         this.orcidSearchManager = orcidSearchManager;
@@ -119,6 +115,13 @@ public class SearchOrcidController extends BaseController {
             mav.addObject("noResultsFound", true);
             return mav;
         }
+        String searchQueryUrl = createSearchUrl(queryFromUser, solrQuery);
+        FRONTEND_WEB_SEARCH_REQUESTS.inc();
+        mav.addObject("searchQueryUrl", searchQueryUrl);
+        return mav;
+    }
+
+    private String createSearchUrl(String queryFromUser, String solrQuery) {
         String searchQueryUrl = createSearchBaseUrl();
         queryFromUser = queryFromUser.trim();
         if (StringUtils.isNotBlank(solrQuery)) {
@@ -129,9 +132,7 @@ public class SearchOrcidController extends BaseController {
             searchQueryUrl += "{!edismax qf='given-and-family-names^50.0 family-name^10.0 given-names^5.0 credit-name^10.0 other-names^5.0 text^1.0' pf='given-and-family-names^50.0' mm=1}"
                     + queryFromUser;
         }
-        FRONTEND_WEB_SEARCH_REQUESTS.inc();
-        mav.addObject("searchQueryUrl", searchQueryUrl);
-        return mav;
+        return searchQueryUrl;
     }
 
     private void incrementSearchMetrics(List<OrcidSearchResult> searchResults) {
@@ -141,12 +142,6 @@ public class SearchOrcidController extends BaseController {
         }
 
         FRONTEND_WEB_SEARCH_RESULTS_FOUND.inc(searchResults.size());
-    }
-
-    private String createSearchBaseUrl() {
-        String baseUrlWithCorrectedProtocol = orcidUrlManager.getBaseUrl().replaceAll("^https?:", "");
-        String baseUrlWithCorrectedContext = baseUrlWithCorrectedProtocol.replaceAll("/orcid-web$", "/orcid-pub-web");
-        return baseUrlWithCorrectedContext + "/search/orcid-bio/?q=";
     }
 
 }

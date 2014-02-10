@@ -68,4 +68,5 @@ public class SolrConstants {
     public static final String ORG_DISAMBIGUATED_TYPE = "org-disambiguated-type";
     public static final String ORG_DISAMBIGUATED_POPULARITY = "org-disambiguated-popularity";
     public static final String ORG_NAMES = "org-names";
+    public static final String IS_FUNDING_ORG = "is-funding-org";
 }
