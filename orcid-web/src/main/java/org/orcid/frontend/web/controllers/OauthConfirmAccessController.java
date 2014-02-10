@@ -22,6 +22,8 @@ import javax.servlet.http.HttpServletRequest;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.ScopePathType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -33,6 +35,9 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller("oauthConfirmAccessController")
 @RequestMapping(value = "/oauth", method = RequestMethod.GET)
 public class OauthConfirmAccessController extends BaseController {
+    
+    private static final Logger LOGGER = LoggerFactory.getLogger(OauthConfirmAccessController.class);
+
 
     private static final String JUST_REGISTERED = "justRegistered";
     @Resource
@@ -42,6 +47,7 @@ public class OauthConfirmAccessController extends BaseController {
     public ModelAndView loginGetHandler(HttpServletRequest request, ModelAndView mav, @RequestParam("client_id") String clientId, @RequestParam("scope") String scope) {
         // XXX Use T2 API
         OrcidProfile clientProfile = orcidProfileManager.retrieveOrcidProfile(clientId);
+        LOGGER.debug("Soon we will start passing the group name to google analytics, here is the id:" + clientProfile.getOrcidInternal().getGroupOrcidIdentifier().getPath());
         Boolean justRegistered = (Boolean) request.getSession().getAttribute(JUST_REGISTERED);
         if (justRegistered != null) {
             request.getSession().removeAttribute(JUST_REGISTERED);

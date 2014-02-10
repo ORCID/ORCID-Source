@@ -111,7 +111,7 @@ kind of variable. This temp value is only used in this macro lib -->
             <#if selected == "" || selected == "public"><button class="btn btn-success dropdown-toggle privacy-toggle">${springMacroRequestContext.getMessage("manage.lipublic")} <span class="caret"></span></button></#if>
             <#if selected == "limited"><button class="btn btn-warning dropdown-toggle privacy-toggle">${springMacroRequestContext.getMessage("manage.lilimited")} <span class="caret"></span></button></#if>
             <#if selected == "private" || selected == "protected"><button class="btn btn-danger dropdown-toggle privacy-toggle">${springMacroRequestContext.getMessage("manage.liprivate")} <span class="caret"></span></button></#if>
-            <ul class="dropdown-menu privacy-menu">
+            <ul class="privacy-dropdown-menu privacy-menu">
                 <li><a class="btn btn-success btn-privacy" href="#public">${springMacroRequestContext.getMessage("manage.lipublic")} <span class="caret"></span></a></li>
                 <li><a class="btn btn-warning btn-privacy" href="#limited">${springMacroRequestContext.getMessage("manage.lilimited")} <span class="caret"></span></a></li>
                 <li><a class="btn btn-danger btn-privacy" href="#private">${springMacroRequestContext.getMessage("manage.liprivate")} <span class="caret"></span></a></li>	

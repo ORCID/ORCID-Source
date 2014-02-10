@@ -29,7 +29,7 @@ The class provides the following features:
 	
 This file shows an example of a valid Orcid Client Request:	
 	
-    <orcid-client-group xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.orcid.org/ns/orcid ../../../../orcid-model/src/main/resources/orcid-client-group-1.2.xsd" xmlns="http://www.orcid.org/ns/orcid" type="premium-institution">
+    <orcid-client-group xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.orcid.org/ns/orcid ../../../../orcid-model/src/main/resources/orcid-client-group-1.3.xsd" xmlns="http://www.orcid.org/ns/orcid" type="premium-institution">
     	<group-name>Elsevier</group-name>
     	<email>orcid-admin@elsevier.com</email>
     	<orcid-client type="creator">
@@ -56,7 +56,7 @@ We can use the example that we use for integration testing as our reference. Thi
 
 Which ultimately conforms to the client group xml schema at:
 	
-	/orcid-model/src/main/resources/orcid-client-group-1.2.xsd
+	/orcid-model/src/main/resources/orcid-client-group-1.3.xsd
 	
 With the client group sample we are adding:
 

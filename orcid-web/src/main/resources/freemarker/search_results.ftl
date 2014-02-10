@@ -36,7 +36,7 @@
                     <#assign profileInfo = searchResult.orcidProfile>
                 <tr>
                     <td>${(searchResult.relevancyScore.value)!}</td>
-                    <td><a href="<@orcid.orcidUrl (profileInfo.orcid.value)!/>">${(profileInfo.orcid.value)!}</td>
+                    <td><a href="<@orcid.orcidUrl (profileInfo.orcidIdentifier.path)!/>">${(profileInfo.orcidIdentifier.path)!}</td>
                      <#if (profileInfo.isDeactivated()) >
                     	 <td colspan="4">${springMacroRequestContext.getMessage("search_results.tdnologneractive")}</td>
 					<#else>                     

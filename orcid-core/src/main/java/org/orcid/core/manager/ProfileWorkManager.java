@@ -78,5 +78,5 @@ public interface ProfileWorkManager {
      * 
      * @return true if the profile work relationship was created
      * */
-    boolean addProfileWork(String orcid, long workId, Visibility visibility);
+    boolean addProfileWork(String orcid, long workId, Visibility visibility, String sourceOrcid);
 }
