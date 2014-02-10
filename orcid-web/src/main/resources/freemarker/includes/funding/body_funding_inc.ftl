@@ -21,7 +21,7 @@
 		<div class="row">        
 			
 			<!-- Information -->
-			<div class="col-md-8 col-sm-8 col-xs-8">
+			<div class="col-md-8 col-sm-8">
 				<h3 class="funding-title">
 					<strong ng-show="funding.fundingTitle.title.value">{{funding.fundingTitle.title.value}}:</strong>
 					<span class="funding-name" ng-bind-html="funding.fundingName.value"></span>
@@ -42,7 +42,7 @@
 			</div>
 			
 			<!-- Privacy Settings -->
-	        <div class="col-md-4 col-sm-4">
+	        <div class="col-md-4 col-sm-4 workspace-toolbar">
 	        	<#include "funding_more_info_inc.ftl"/>
 	        	<#if !(isPublicProfile??)>
 	        		<a href ng-click="deleteFunding(funding)" class="glyphicon glyphicon-trash grey"></a>

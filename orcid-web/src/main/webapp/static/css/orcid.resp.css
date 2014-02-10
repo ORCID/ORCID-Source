@@ -27,7 +27,7 @@ audio,canvas,video {
 	*zoom: 1;
 }
 
-audio:not ([controls] ) {
+audio:not ([controls]) {
 	display: none;
 }
 
@@ -438,8 +438,7 @@ input[type=submit].disabled,input[type=submit][disabled] {
 	filter: alpha(opacity = 65);
 	-webkit-box-shadow: none;
 	-moz-box-shadow: none;
-	box-shadow: none;
-	font-siz:;
+	box-shadow: none;	
 }
 
 input[type=submit] .label,input[type=submit] .badge {
@@ -3212,6 +3211,7 @@ p.orcid-id-container{
 	#loginForm .control-group {
 		padding-left: 15px;
 	}
+	
 	.see-more {
 		margin: 15px 25px 0;
 	}
@@ -3478,8 +3478,8 @@ p.orcid-id-container{
 	}
 
 	/* Forms */
-	input[type="text"],input[type="password"] {
-		width: 96%;
+	input[type="text"],input[type="password"], button {
+		width: 100%;
 	}
 
 	/* Footer */
@@ -3554,13 +3554,15 @@ p.orcid-id-container{
 	}	
 
 	/* Forms */
-	input[type="text"],input[type="password"] {
+	input[type="text"],input[type="password"], select {
 		height: 50px;
 		font-size: 16px;
+		width: 96%; 
 	}
 	
 	.input-xlarge{
-		width:100%;
+		width:96%;
+		height: 50px;
 	}
 	
 	/* Registration */
@@ -3635,18 +3637,26 @@ p.orcid-id-container{
 		padding-left:0;
 	}
 	
+	.workspace-accordion-item{
+		border-top: 1px solid #C9C9C9;
+	}
+	
 	ul.personal-inf-display li{
 		display: block;		
 		margin-top:10px;
 	}
 
-    .workspace-toolbar{
-		border-bottom: 1px solid #CACACA;
+    .workspace-toolbar{		
 	    height: 50px;
 	    margin-top: 15px;
 	    width: 100%;
 	    padding-left: 10px;
 	}
+	
+	.workspace-header{
+		border-bottom: 0 none;
+	}
+	
 	
 	.workspace-private-toolbar .glyphicon {
 		line-height: 26px;
@@ -3772,8 +3782,12 @@ p.orcid-id-container{
 	/* Add work*/
 	
 	.add-work .privacy-control{
-		margin-left: 15px;
 		width: 75%;
+	}
+	
+	.add-work button{
+		width: 100%;
+		
 	}
 	
 	.add-work .popover-help-container .popover{
@@ -3910,7 +3924,6 @@ p.orcid-id-container{
 	
 	#edit-affiliation .privacy-control{
 		width: 70%;
-		margin-left: 15px;
 	}
 	
 	#edit-affiliation .lightbox-container{
@@ -3977,6 +3990,45 @@ p.orcid-id-container{
 	
 	.main-search input[type="text"]{
 		width: 100%;				
+	}	
+
+	#currencyCode {
+		width: 30%;		
+	}
+	
+	#fundingAmount {
+		width: 64%;
+	}
+	
+	.twitter-typeahead{
+		width: 96%;
+	}
+	
+	.tt-hint{
+		width: 100%;
+	}
+	
+	/* Funding*/
+		
+	.cancel-action{
+		display: block;
+		margin-top: 15px;
+	}
+	
+	
+	#edit-funding .popover-help-container .popover{
+		left: -110px;
+	}
+	
+	#edit-funding .popover.bottom .arrow{
+		left: 122px;
+	}	
+
+	
+	#edit-funding .alert {
+	    float: left;
+	    margin-top: 15px;
+	    width: 100%;
 	}
 }
 
@@ -4087,7 +4139,6 @@ p.orcid-id-container{
 	
 	.add-work .privacy-control{
 		margin-left: 15px;
-		width: 35%;
 	}
 	
 	#uvTab{
