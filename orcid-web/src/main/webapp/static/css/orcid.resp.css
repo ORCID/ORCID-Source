@@ -3184,6 +3184,10 @@ p.orcid-id-container{
 	float: left;
 }
 
+.orcid-hide {
+  display: none;
+}
+
 .delegation-mode{
 	background-color: #EFEFEF;
 }
