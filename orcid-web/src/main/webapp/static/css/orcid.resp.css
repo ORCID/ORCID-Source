@@ -1821,18 +1821,18 @@ a:hover {
 #edit-affiliation #startMonth,
 #edit-affiliation #endDay,
 #edit-affiliation #endMonth,
-#edit-funding #startDay,
-#edit-funding #startMonth,
-#edit-funding #endDay,
-#edit-funding #endMonth
+#add-funding #startDay,
+#add-funding #startMonth,
+#add-funding #endDay,
+#add-funding #endMonth
 {
 	width: 80px;	
 }
 
 #edit-affiliation #startYear,
 #edit-affiliation #endYear,
-#edit-funding #startYear,
-#edit-funding #endYear
+#add-funding #startYear,
+#add-funding #endYear
 {
 	width: 100px;
 }
@@ -2499,6 +2499,14 @@ header overrides
 	margin-bottom: 0;
 }
 
+.add-funding label,
+.add-funding input,
+.add-funding textarea,
+.add-funding select
+	{
+	margin-bottom: 0;
+}
+
 .manage-bio label,
 .manage-bio input,
 .manage-bio textarea,
@@ -2855,12 +2863,20 @@ ul.personal-inf-display li{
     margin: 5px 17px 5px 0;    
 }
 
+#add-funding .add-item-link {
+	margin: 5px 40px 5px 0;    
+}
+
 .citation-title{
 	margin: 70px 0 0 0;
 	display: block;
 }
 
 .add-work textarea{
+	height: 60px;
+}
+
+.add-funding textarea{
 	height: 60px;
 }
 
@@ -2875,6 +2891,16 @@ ul.personal-inf-display li{
 }
 
 .add-work #year{
+	width: 100px;
+	margin-bottom:0;
+}
+
+.add-funding #month {
+	width: 100px;
+	margin: 0 10px 0 0; 
+}
+
+.add-funding #year {
 	width: 100px;
 	margin-bottom:0;
 }
@@ -4016,16 +4042,16 @@ p.orcid-id-container{
 	}
 	
 	
-	#edit-funding .popover-help-container .popover{
+	#add-funding .popover-help-container .popover{
 		left: -110px;
 	}
 	
-	#edit-funding .popover.bottom .arrow{
+	#add-funding .popover.bottom .arrow{
 		left: 122px;
 	}	
 
 	
-	#edit-funding .alert {
+	#add-funding .alert {
 	    float: left;
 	    margin-top: 15px;
 	    width: 100%;

@@ -432,9 +432,7 @@ public class FundingsController extends BaseWorkspaceController {
     public @ResponseBody
     FundingForm validateAmount(@RequestBody FundingForm funding) {
         funding.getAmount().setErrors(new ArrayList<String>());
-        if (PojoUtil.isEmpty(funding.getAmount())) {
-            setError(funding.getAmount(), "NotBlank.fundings.amount");
-        } else {
+        if (!PojoUtil.isEmpty(funding.getAmount())) {            
             String amount = funding.getAmount().getValue();
             long lAmount = 0;
             // TODO Chck this regex

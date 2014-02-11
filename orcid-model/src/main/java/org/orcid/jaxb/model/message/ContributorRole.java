@@ -42,16 +42,31 @@ public enum ContributorRole implements Serializable {
     OTHER_INVENTOR("other_inventor"), @XmlEnumValue("principal-investigator")
     PRINCIPAL_INVESTIGATOR("principal_investigator"), @XmlEnumValue("postdoctoral-researcher")
     POSTDOCTORAL_RESEARCHER("postdoctoral_researcher"), @XmlEnumValue("support-staff")
-    SUPPORT_STAFF("support_staff");
+    SUPPORT_STAFF("support_staff"), @XmlEnumValue("lead")
+    LEAD("lead", true), @XmlEnumValue("co-lead")
+    CO_LEAD("co_lead", true), @XmlEnumValue("supported-by")
+    SUPPORTED_BY("supported_by", true), @XmlEnumValue("other-contribution")
+    OTHER_CONTRIBUTION("other_contribution", true);
 
     private final String value;
+    private final boolean fundingRole;
 
     ContributorRole(String v) {
         value = v;
+        fundingRole = false;
+    }
+    
+    ContributorRole(String v, boolean isFunding) {
+        value = v;
+        fundingRole = isFunding;
     }
 
     public String value() {
         return value;
+    }
+    
+    public boolean isFundingRole(){
+        return fundingRole;
     }
 
     public static ContributorRole fromValue(String v) {

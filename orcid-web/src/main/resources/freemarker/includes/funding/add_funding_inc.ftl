@@ -17,17 +17,17 @@
 
 -->
 <script type="text/ng-template" id="add-funding-modal">
-	<div id="edit-funding" class="edit-funding colorbox-content">		 
-		<div class="row">
-			
+	<div id="add-funding" class="add-funding colorbox-content">		 
+		<!-- Title -->		 
+		<div class="row">			
 			<div class="col-md-8 col-sm-8 col-xs-9">
 				<h1 class="lightbox-title pull-left"><@orcid.msg 'manual_funding_form_contents.add_grant'/></h1>
-			</div>
-			
+			</div>		
+				
 			<div class="col-xs-3 visible-xs hidden-sm hidden-md hidden-lg">
 				<a class="btn close-button pull-right" ng-click="closeModal()">X</a>
-			</div>
-			
+			</div>	
+					
 			<div class="col-md-3 col-sm-3 pull-left">
 				<div class="control-group privacy-control">
 		 			<label class="relative">
@@ -37,19 +37,16 @@
 		                   	  "setAddFundingPrivacy('LIMITED', $event)" "setAddFundingPrivacy('PRIVATE', $event)" />		
 		 		</div>
 			</div>
-
+			
 			<div class="col-md-1 col-sm-1 hidden-xs">
 				<a class="btn close-button" ng-click="closeModal()">X</a>
-			</div>
-			
+			</div>			
 		</div>	
 		
 		<div class="row">
 			<div class="col-md-6 col-sm-6 col-xs-12">
 				<div class="control-group">
-					<span>
-						<label><@orcid.msg 'manual_funding_form_contents.grant_type'/></label>
-					</span>
+					<label><@orcid.msg 'manual_funding_form_contents.grant_type'/></label>
 					<div class="relative">						
 						<select id="fundingType" class="input-xlarge" name="fundingType" ng-model="editFunding.fundingType.value" ng-change="serverValidate('fundings/funding/typeValidate.json')">
 							<option value=""><@orcid.msg 'org.orcid.jaxb.model.message.FundingType.empty' /></option>
@@ -64,9 +61,7 @@
 					</div>
 				</div>
 				<div class="control-group">
-					<span>
-					   <label><@orcid.msg 'manual_funding_form_contents.label_title'/></label>					   
-					</span>
+					<label><@orcid.msg 'manual_funding_form_contents.label_title'/></label>					   
 					<div class="relative">
 						<input id="fundingTitle" class="input-xlarge" name="fundingTitle" type="text" ng-model="editFunding.fundingTitle.title.value" placeholder="<@orcid.msg 'manual_funding_form_contents.add_title'/>" ng-change="serverValidate('fundings/funding/titleValidate.json')" ng-model-onblur/>
 						<span class="required" ng-class="isValidClass(editFunding.fundingTitle.title)">*</span>
@@ -112,8 +107,7 @@
 									<option value="${currencyCodeTypes[key]}">${key}</option>
 								</#list>
 							</select>	
-							<input id="fundingAmount" name="fundingAmount" type="text" ng-model="editFunding.amount.value" placeholder="<@orcid.msg 'manual_funding_form_contents.add_amount'/>" ng-change="serverValidate('fundings/funding/amountValidate.json')" ng-model-onblur/>
-							<span class="required" ng-class="isValidClass(editFunding.amount)">*</span>
+							<input id="fundingAmount" name="fundingAmount" type="text" ng-model="editFunding.amount.value" placeholder="<@orcid.msg 'manual_funding_form_contents.add_amount'/>" ng-change="serverValidate('fundings/funding/amountValidate.json')" ng-model-onblur/>							
 						</div>
 						<span class="orcid-error" ng-show="editFunding.currencyCode.errors.length > 0">
 							<div ng-repeat='error in editFunding.currencyCode.errors' ng-bind-html-unsafe="error"></div>
@@ -136,11 +130,6 @@
 								<option value="${key}">${months[key]}</option>
 							</#list>
 			    		</select>
-					    <select id="startDay" name="startDay" ng-model="editFunding.startDate.day">
-							<#list days?keys as key>
-								<option value="${key}">${days[key]}</option>
-							</#list>
-			    		</select>
 		    		</div>
 		    	</div>
 		    	<div class="control-group">
@@ -155,12 +144,7 @@
 							<#list months?keys as key>
 								<option value="${key}">${months[key]}</option>
 							</#list>
-			    		</select>			
-			    		<select id="endDay" name="endDay" ng-model="editFunding.endDate.day">
-							<#list days?keys as key>
-								<option value="${key}">${days[key]}</option>
-							</#list>
-			    		</select>		    
+			    		</select>	    
 		    		</div>
 		    		<span class="orcid-error" ng-show="editFunding.endDate.errors.length > 0">
 						<div ng-repeat='error in editFunding.endDate.errors' ng-bind-html-unsafe="error"></div>
@@ -171,7 +155,7 @@
 				    <div class="relative">    
 						<select id="role" name="role" ng-model="contributor.contributorRole.value">
 							<option value=""><@orcid.msg 'org.orcid.jaxb.model.message.ContributorRole.empty' /></option>
-							<#list roles?keys as key>
+							<#list fundingRoles?keys as key>
 							    <option value="${key}">${roles[key]}</option>
 							</#list>
 			    		</select>
@@ -199,7 +183,7 @@
 					   <label><@orcid.msg 'manual_funding_form_contents.label_description'/></label>					   
 					</span>
 					<div class="relative">
-						<input id="fundingDescription" class="input-xlarge" name="fundingDescription" type="text" ng-model="editFunding.description.value" placeholder="<@orcid.msg 'manual_funding_form_contents.add_description'/>" ng-change="serverValidate('fundings/funding/descriptionValidate.json')" ng-model-onblur/>
+						<textarea id="fundingDescription" class="input-xlarge" name="fundingDescription" type="text" ng-model="editFunding.description.value" placeholder="<@orcid.msg 'manual_funding_form_contents.add_description'/>" ng-change="serverValidate('fundings/funding/descriptionValidate.json')" ng-model-onblur/>
 						<span class="orcid-error" ng-show="editFunding.description.errors.length > 0">
 							<div ng-repeat='error in editFunding.description.errors' ng-bind-html-unsafe="error"></div>
 						</span>
@@ -338,5 +322,6 @@
 					</div>
 				</div>
 			</div>
+		</div>
 	</div>
 </script>
