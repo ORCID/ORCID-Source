@@ -64,7 +64,7 @@ public class SourceManagerImpl implements SourceManager {
 
     private String retrieveEffectiveOrcid(Authentication authentication) {
         if (OrcidProfileUserDetails.class.isAssignableFrom(authentication.getPrincipal().getClass())) {
-            return ((OrcidProfileUserDetails) authentication.getPrincipal()).getRealOrcid();
+            return ((OrcidProfileUserDetails) authentication.getPrincipal()).getOrcid();
         }
         return null;
     }
@@ -92,7 +92,7 @@ public class SourceManagerImpl implements SourceManager {
                         SwitchUserGrantedAuthority suga = (SwitchUserGrantedAuthority) authority;
                         Authentication sourceAuthentication = suga.getSource();
                         if (sourceAuthentication instanceof UsernamePasswordAuthenticationToken && sourceAuthentication.getPrincipal() instanceof OrcidProfileUserDetails) {
-                            return ((OrcidProfileUserDetails) sourceAuthentication.getPrincipal()).getRealOrcid();
+                            return ((OrcidProfileUserDetails) sourceAuthentication.getPrincipal()).getOrcid();
                         }
                     }
                 }

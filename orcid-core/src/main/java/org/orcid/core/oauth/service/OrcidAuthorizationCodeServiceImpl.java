@@ -160,7 +160,7 @@ public class OrcidAuthorizationCodeServiceImpl extends RandomValueAuthorizationC
 
         if (principal instanceof OrcidProfileUserDetails) {
             OrcidProfileUserDetails userDetails = (OrcidProfileUserDetails) principal;
-            String effectiveOrcid = userDetails.getRealOrcid();
+            String effectiveOrcid = userDetails.getOrcid();
             if (effectiveOrcid != null) {
                 entity = profileEntityManager.findByOrcid(effectiveOrcid);
             }

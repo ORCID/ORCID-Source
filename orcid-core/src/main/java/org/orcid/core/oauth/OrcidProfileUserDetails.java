@@ -35,7 +35,7 @@ public class OrcidProfileUserDetails implements UserDetails {
 
     private static final long serialVersionUID = 1L;
 
-    private String realOrcid;
+    private String orcid;
 
     private String primaryEmail;
 
@@ -51,20 +51,20 @@ public class OrcidProfileUserDetails implements UserDetails {
     }
 
     public OrcidProfileUserDetails(String orcid, String primaryEmail, String password) {
-        this.realOrcid = orcid;
+        this.orcid = orcid;
         this.primaryEmail = primaryEmail;
         this.password = password;
     }
 
     public OrcidProfileUserDetails(String orcid, String primaryEmail, String password, OrcidType orcidType) {
-        this.realOrcid = orcid;
+        this.orcid = orcid;
         this.primaryEmail = primaryEmail;
         this.password = password;
         this.orcidType = orcidType;
     }
 
     public OrcidProfileUserDetails(String orcid, String primaryEmail, String password, OrcidType orcidType, ClientType clientType, GroupType groupType) {
-        this.realOrcid = orcid;
+        this.orcid = orcid;
         this.primaryEmail = primaryEmail;
         this.password = password;
         this.orcidType = orcidType;
@@ -142,7 +142,7 @@ public class OrcidProfileUserDetails implements UserDetails {
      */
     @Override
     public String getUsername() {
-        return realOrcid;
+        return orcid;
     }
 
     /**
@@ -193,8 +193,8 @@ public class OrcidProfileUserDetails implements UserDetails {
         return true;
     }
 
-    public String getRealOrcid() {
-        return realOrcid;
+    public String getOrcid() {
+        return orcid;
     }
 
     public String getPrimaryEmail() {
@@ -230,7 +230,7 @@ public class OrcidProfileUserDetails implements UserDetails {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((password == null) ? 0 : password.hashCode());
-        result = prime * result + ((realOrcid == null) ? 0 : realOrcid.hashCode());
+        result = prime * result + ((orcid == null) ? 0 : orcid.hashCode());
         result = prime * result + ((orcidType == null) ? 0 : orcidType.hashCode());
         result = prime * result + ((clientType == null) ? 0 : clientType.hashCode());
         result = prime * result + ((groupType == null) ? 0 : groupType.hashCode());
@@ -251,10 +251,10 @@ public class OrcidProfileUserDetails implements UserDetails {
                 return false;
         } else if (!password.equals(other.password))
             return false;
-        if (realOrcid == null) {
-            if (other.realOrcid != null)
+        if (orcid == null) {
+            if (other.orcid != null)
                 return false;
-        } else if (!realOrcid.equals(other.realOrcid))
+        } else if (!orcid.equals(other.orcid))
             return false;
         if (orcidType == null) {
             if (other.orcidType != null)
