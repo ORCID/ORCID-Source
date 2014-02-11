@@ -120,7 +120,12 @@
                                        </ul>
                                     </li>
                                </#if>
-                               <li><a href="<@spring.url '/signout'/>"><@orcid.msg 'public-layout.sign_out'/></a></li>
+                               <#if inDelegationMode>
+                                   <li><a href="<@spring.url '/switch-user?j_username='/>${realUserOrcid}">Switch back to me</a></li>
+                               <#else>
+                                   <li><a href="<@spring.url '/signout'/>"><@orcid.msg 'public-layout.sign_out'/></a></li>
+                               </#if>
+                               
                            </@security.authorize>
                        </ul>
                    </li>
@@ -181,7 +186,11 @@
                            <a href="<@spring.url "/signin" />" title=""><@orcid.msg 'public-layout.sign_in'/></a>
                        </@security.authorize>
                        <@security.authorize ifAnyGranted="ROLE_USER, ROLE_ADMIN, ROLE_BASIC, ROLE_PREMIUM, ROLE_BASIC_INSTITUTION, ROLE_PREMIUM_INSTITUTION">
-                           <a href="<@spring.url '/signout'/>" id="signout"><@orcid.msg 'public-layout.sign_out'/></a>
+                           <#if inDelegationMode>
+                               <li><a href="<@spring.url '/switch-user?j_username='/>${realUserOrcid}">Switch back</a></li>
+                           <#else>
+                               <li><a href="<@spring.url '/signout'/>"><@orcid.msg 'public-layout.sign_out'/></a></li>
+                           </#if>
                        </@security.authorize>
                    </li>
                </ul>                    
@@ -276,7 +285,11 @@
                                         </ul>
                                      </li>
                                 </#if>
-                                <li><a href="<@spring.url '/signout'/>"><@orcid.msg 'public-layout.sign_out'/></a></li>
+                                <#if inDelegationMode>
+                                    <li><a href="<@spring.url '/switch-user?j_username='/>${realUserOrcid}">Switch back to me</a></li>
+                                <#else>
+                                    <li><a href="<@spring.url '/signout'/>"><@orcid.msg 'public-layout.sign_out'/></a></li>
+                                </#if>
                             </@security.authorize>
 						</ul></li>
 						<li class="expanded"><a href="${aboutUri}/organizations"><@orcid.msg 'public-layout.for_organizations'/></a><ul class="menu"><li class="first leaf"><a href="${aboutUri}/organizations/funders"><@orcid.msg 'public-layout.funders'/></a></li>
@@ -311,7 +324,13 @@
 						</ul></li>
 						<li class="last leaf">
 						    <@security.authorize ifNotGranted="ROLE_USER, ROLE_ADMIN, ROLE_BASIC, ROLE_PREMIUM, ROLE_BASIC_INSTITUTION, ROLE_PREMIUM_INSTITUTION"><a href="<@spring.url "/signin" />" title=""><@orcid.msg 'public-layout.sign_in'/></a></@security.authorize>
-						    <@security.authorize ifAnyGranted="ROLE_USER, ROLE_ADMIN, ROLE_BASIC, ROLE_PREMIUM, ROLE_BASIC_INSTITUTION, ROLE_PREMIUM_INSTITUTION"><a href="<@spring.url '/signout'/>"><@orcid.msg 'public-layout.sign_out'/></a></@security.authorize>
+						    <@security.authorize ifAnyGranted="ROLE_USER, ROLE_ADMIN, ROLE_BASIC, ROLE_PREMIUM, ROLE_BASIC_INSTITUTION, ROLE_PREMIUM_INSTITUTION">
+						        <#if inDelegationMode>
+                                    <li><a href="<@spring.url '/switch-user?j_username='/>${realUserOrcid}">Switch back</a></li>
+                                <#else>
+                                    <li><a href="<@spring.url '/signout'/>"><@orcid.msg 'public-layout.sign_out'/></a></li>
+                                </#if>
+						    </@security.authorize>
 						</li>
 					</ul>
 				</div>
