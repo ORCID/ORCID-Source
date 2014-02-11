@@ -75,6 +75,7 @@ import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
 import org.orcid.password.constants.OrcidPasswordConstants;
 import org.orcid.persistence.dao.GivenPermissionToDao;
+import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.GivenPermissionToEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileSummaryEntity;
@@ -141,6 +142,9 @@ public class ManageProfileController extends BaseWorkspaceController {
 
     @Resource
     private ProfileEntityManager profileEntityManager;
+
+    @Resource
+    private ProfileDao profileDao;
 
     @Resource
     private GivenPermissionToDao givenPermissionToDao;
@@ -292,6 +296,9 @@ public class ManageProfileController extends BaseWorkspaceController {
         List<DelegationDetails> detailsList = new ArrayList<>(1);
         detailsList.add(details);
         notificationManager.sendNotificationToAddedDelegate(currentUser, detailsList);
+        // Clear the delegate's profile from the cache so that the granting user
+        // is visible to them immediately
+        profileDao.updateLastModifiedDate(delegateOrcid);
         return delegateOrcid;
     }
 
