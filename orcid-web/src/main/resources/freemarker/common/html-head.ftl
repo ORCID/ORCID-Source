@@ -23,6 +23,7 @@
     <meta name="description" content="">
     <meta name="author" content="ORCID">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <!-- hack in json3 to allow angular js to work in IE7 -->
     <!-- we also need this JSON parser for orcidVar -->
     <!--[if IE 7]>
