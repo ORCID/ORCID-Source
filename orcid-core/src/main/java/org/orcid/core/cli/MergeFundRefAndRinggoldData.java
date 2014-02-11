@@ -111,13 +111,13 @@ public class MergeFundRefAndRinggoldData {
     // Map with RingGold orgs with duplicated names, this will hold the name of
     // the org and the ids with the same name
     private Map<String, List<String>> ringGoldOrgsWithDuplicatedNames = new HashMap<String, List<String>>();
-    
-    private String EXISTING_ORGS_FILE = "C:/Users/angel.montenegro/Desktop/mergeTest/existingOrgs.csv";
-    private String NEW_ORGS_FILE = "C:/Users/angel.montenegro/Desktop/mergeTest/newOrgs.csv";
-    
+
+    private String EXISTING_ORGS_FILE = "C:/Users/angel.montenegro/Desktop/mergeTest/latest/csv/existingOrgs.csv";
+    private String NEW_ORGS_FILE = "C:/Users/angel.montenegro/Desktop/mergeTest/latest/csv/newOrgs.csv";
+
     private CSVWriter existingOrgsCSV = null;
     private CSVWriter newOrgsCSV = null;
-    
+
     /**
      * INIT
      * */
@@ -129,23 +129,23 @@ public class MergeFundRefAndRinggoldData {
         // Geonames params
         geonamesApiUrl = (String) context.getBean("geonamesApiUrl");
         apiUser = (String) context.getBean("geonamesUser");
-        
+
         // Init the CSV file for existing orgs
         try {
             Writer writer1 = new FileWriter(this.EXISTING_ORGS_FILE);
             existingOrgsCSV = createCSVWriter(writer1);
             // Write headers
-            String [] headers = {"ringgold-id", "fundref-id", "name", "alt-names", "fundref-name", "fundref-alt-name"};
+            String[] headers = { "ringgold-id", "fundref-id", "name", "alt-names", "fundref-name", "fundref-alt-name" };
             existingOrgsCSV.writeNext(headers);
-            
+
             Writer wirter2 = new FileWriter(this.NEW_ORGS_FILE);
             newOrgsCSV = createCSVWriter(wirter2);
-            
-            headers = new String []{"id", "name", "altName", "country", "state", "type", "subtype"};
+
+            headers = new String[] { "id", "name", "altName", "country", "state", "type", "subtype" };
             newOrgsCSV.writeNext(headers);
-            
-        } catch(IOException ioe) {
-            //TODO
+
+        } catch (IOException ioe) {
+            // TODO
         }
     }
 
@@ -170,6 +170,9 @@ public class MergeFundRefAndRinggoldData {
         // Load ringgold organizations
         Map<String, RingGoldOrganization> ringGoldOrgs = loadRinggoldOrgs();
         // Try to match fundref orgs and ringgold orgs
+        System.out.println("Begin comparing orgs");
+        System.out.println();
+        int counter = 0;
         for (FundRefOrganization fOrg : fundRefOrgs) {
             String matchingRingGoldOrgId = findMatchesInRinggoldData(fOrg);
             // If no match is found, create FundRef organization into our
@@ -179,30 +182,21 @@ public class MergeFundRefAndRinggoldData {
             } else {
                 writeMatchInformation(fOrg, ringGoldOrgs.get(matchingRingGoldOrgId));
             }
+            if(counter % 100 == 0)
+                System.out.println(counter);
+            counter += 1;
         }
+        System.out.println();
+        System.out.println("Done comparing orgs");
         try {
             existingOrgsCSV.close();
             newOrgsCSV.close();
-        } catch(IOException ioe) {
+        } catch (IOException ioe) {
             System.out.println("ERROR CLOSING CSV FILES");
         }
         // TODO Write duplicates names into a csv
 
-        System.out.println("");
-        System.out.println("");
-        System.out.println("---------------------------------------------------------------------------------------------------------------------");
-        System.out.println("");
-        System.out.println("");
-
-        for (String key : ringGoldOrgsWithDuplicatedNames.keySet()) {
-            System.out.println("KEY: " + key);
-            System.out.println("Original ID: " + ringGoldNames.get(key).name + "-> " + ringGoldNames.get(key).id + " -> " + ringGoldNames.get(key).isPrimary);
-            System.out.println("Duplicate names ids: ");
-            for (String id : ringGoldOrgsWithDuplicatedNames.get(key)) {
-                System.out.println(" " + id);
-            }
-        }
-
+        
     }
 
     /*****************************************************************************
@@ -214,6 +208,7 @@ public class MergeFundRefAndRinggoldData {
      * */
     private List<FundRefOrganization> loadFundRefOrgs() {
         List<FundRefOrganization> fundRefOrgs = new ArrayList<FundRefOrganization>();
+        System.out.println("Begin loading FundRef orgs");
         try {
             FileInputStream file = new FileInputStream(fundRefFile);
             DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
@@ -223,7 +218,7 @@ public class MergeFundRefAndRinggoldData {
             NodeList nodeList = (NodeList) xPath.compile(conceptsExpression).evaluate(xmlDocument, XPathConstants.NODESET);
             for (int i = 0; i < nodeList.getLength(); i++) {
                 FundRefOrganization fOrg = getFundrefOrganization(xmlDocument, nodeList.item(i).getAttributes());
-                fundRefOrgs.add(fOrg);
+                fundRefOrgs.add(fOrg);               
             }
         } catch (FileNotFoundException fne) {
             LOGGER.error("Unable to read file {}", fundRefFile);
@@ -271,13 +266,13 @@ public class MergeFundRefAndRinggoldData {
             String orgSubType = (String) xPath.compile(orgSubTypeExpression.replace("%s", itemDoi)).evaluate(xmlDocument, XPathConstants.STRING);
 
             // Fill the organization object
-            organization.type = orgType;
-            organization.id = itemDoi;
-            organization.name = orgName;
-            organization.altName = orgAltName;
-            organization.country = countryGeonameUrl;
-            organization.state = stateGeoNameCode;
-            organization.subtype = orgSubType;
+            organization.type = StringUtils.isBlank(orgType) ? null : orgType;
+            organization.id = StringUtils.isBlank(itemDoi) ? null : itemDoi;
+            organization.name = StringUtils.isBlank(orgName) ? null : orgName;
+            organization.altName = StringUtils.isBlank(orgAltName) ? null : orgAltName;
+            organization.country = StringUtils.isBlank(countryGeonameUrl) ? null : countryGeonameUrl;
+            organization.state = StringUtils.isBlank(stateGeoNameCode) ? null : stateGeoNameCode;
+            organization.subtype = StringUtils.isBlank(orgSubType) ? null : orgSubType;
         } catch (XPathExpressionException xpe) {
             LOGGER.error("XPathExpressionException {}", xpe.getMessage());
         }
@@ -299,13 +294,13 @@ public class MergeFundRefAndRinggoldData {
      * Creates a CSV reader file
      * */
     private CSVReader createCSVReader(Reader reader) {
-        return new CSVReader(reader, ',', '"', 1);        
+        return new CSVReader(reader, ',', '"', 1);
     }
 
     private CSVWriter createCSVWriter(Writer writer) {
         return new CSVWriter(writer, ',', '"');
     }
-    
+
     /**
      * Process data from RingGold
      * */
@@ -341,6 +336,7 @@ public class MergeFundRefAndRinggoldData {
     private Map<String, RingGoldOrganization> processParentsReader(Reader reader) throws IOException {
         Map<String, RingGoldOrganization> ringGoldOrgs = new HashMap<String, RingGoldOrganization>();
         int orgsLoaded = 0;
+        System.out.println("Loading parent orgs");
         try (CSVReader csvReader = createCSVReader(reader)) {
             String[] line;
             while ((line = csvReader.readNext()) != null) {
@@ -368,11 +364,15 @@ public class MergeFundRefAndRinggoldData {
 
                 // Put the org into the ringgold orgs map
                 ringGoldOrgs.put(id, org);
-                orgsLoaded++;
+                orgsLoaded++;                
             }
         } finally {
             LOGGER.info("RingGold orgs loaded, total={}", new Object[] { orgsLoaded });
         }
+        
+        System.out.println("---------------------------------------");
+        System.out.println("Orgs names loaded:  " + orgsLoaded);
+        System.out.println("---------------------------------------");
         return ringGoldOrgs;
     }
 
@@ -383,9 +383,9 @@ public class MergeFundRefAndRinggoldData {
         if (StringUtils.isNotBlank(extName)) {
             name = extName;
         }
-        RingGoldOrganization org = new RingGoldOrganization();
-        org.id = pCode;
-        org.name = name;
+        RingGoldOrganization org = new RingGoldOrganization();        
+        org.id = StringUtils.isBlank(pCode) ? null : pCode;
+        org.name = StringUtils.isBlank(name) ? null : name;
         return org;
     }
 
@@ -394,6 +394,7 @@ public class MergeFundRefAndRinggoldData {
      * */
     private Map<String, RingGoldOrganization> processAltNamesCsv(Reader reader, Map<String, RingGoldOrganization> parentOrgs) throws IOException {
         int altNamesLoaded = 0;
+        System.out.println("Loading parent orgs");
         try (CSVReader csvReader = createCSVReader(reader)) {
             String[] line;
             while ((line = csvReader.readNext()) != null) {
@@ -405,38 +406,45 @@ public class MergeFundRefAndRinggoldData {
                 }
 
                 // Check if the org name already exists
-                if (ringGoldNames.containsKey(altName)) {
-                    // If it does, add the name to the list of orgs with
-                    // duplicated names
-                    List<String> duplicatedNamesIds = new ArrayList<String>();
-                    if (ringGoldOrgsWithDuplicatedNames.containsKey(altName)) {
-                        duplicatedNamesIds = ringGoldOrgsWithDuplicatedNames.get(altName);
+                if(StringUtils.isNotBlank(altName)) {
+                    if (ringGoldNames.containsKey(altName)) {
+                        // If it does, add the name to the list of orgs with
+                        // duplicated names
+                        List<String> duplicatedNamesIds = new ArrayList<String>();
+                        if (ringGoldOrgsWithDuplicatedNames.containsKey(altName)) {
+                            duplicatedNamesIds = ringGoldOrgsWithDuplicatedNames.get(altName);
+                        }
+                        duplicatedNamesIds.add(id);
+                        ringGoldOrgsWithDuplicatedNames.put(altName, duplicatedNamesIds);
+                    } else {
+                        // If not, add the name to the list of ringgold names
+                        RingGoldNames rName = new RingGoldNames();
+                        rName.id = id;
+                        rName.name = altName;
+                        rName.isPrimary = false;
+                        ringGoldNames.put(altName, rName);
                     }
-                    duplicatedNamesIds.add(id);
-                    ringGoldOrgsWithDuplicatedNames.put(altName, duplicatedNamesIds);
-                } else {
-                    // If not, add the name to the list of ringgold names
-                    RingGoldNames rName = new RingGoldNames();
-                    rName.id = id;
-                    rName.name = altName;
-                    rName.isPrimary = false;
-                    ringGoldNames.put(altName, rName);
+    
+                    // Add the alt name to the existing parent org in the parentOrgs
+                    // map
+                    RingGoldOrganization parentOrg = parentOrgs.get(id);
+                    List<String> altNames = parentOrg.altNames;
+                    if (altNames == null) {
+                        altNames = new ArrayList<String>();
+                    }
+                    altNames.add(altName);
+                    parentOrg.altNames = altNames;
+                    altNamesLoaded++;                
                 }
-
-                // Add the alt name to the existing parent org in the parentOrgs
-                // map
-                RingGoldOrganization parentOrg = parentOrgs.get(id);
-                List<String> altNames = parentOrg.altNames;
-                if (altNames == null) {
-                    altNames = new ArrayList<String>();
-                }
-                altNames.add(altName);
-                parentOrg.altNames = altNames;
-                altNamesLoaded++;
             }
         } finally {
             LOGGER.info("RingGold alt names loaded, total={}", new Object[] { altNamesLoaded });
         }
+        
+        System.out.println("---------------------------------------");
+        System.out.println("Alt names loaded:  " + altNamesLoaded);
+        System.out.println("---------------------------------------");
+        
         return parentOrgs;
     }
 
@@ -449,10 +457,10 @@ public class MergeFundRefAndRinggoldData {
      * */
     private String findMatchesInRinggoldData(FundRefOrganization org) {
         String ringGoldId = null;
-        if (ringGoldNames.containsKey(org.name)) {
+        if (StringUtils.isNotBlank(org.name) && ringGoldNames.containsKey(org.name)) {
             RingGoldNames rname = ringGoldNames.get(org.name);
             ringGoldId = rname.id;
-        } else if (ringGoldNames.containsKey(org.altName)) {
+        } else if (StringUtils.isNotBlank(org.altName) && ringGoldNames.containsKey(org.altName)) {
             RingGoldNames rname = ringGoldNames.get(org.altName);
             ringGoldId = rname.id;
         }
@@ -469,13 +477,16 @@ public class MergeFundRefAndRinggoldData {
         // By this moment the geonames uris hasnt been resolved, so, resolve
         // them
         // Fetch country code from geonames
-        if(StringUtils.isNotBlank(organization.country))
+        if (StringUtils.isNotBlank(organization.country))
             organization.country = fetchFromGeoNames(organization.country, "countryCode");
         // Fetch state from geonames
-        if(StringUtils.isNotBlank(organization.state))
-            organization.state = fetchFromGeoNames(organization.state, "name");
-        if (StringUtils.isNotBlank(organization.state) && organization.country != null && organization.country.equals("US")) {
-            organization.state = fetchFromGeoNames(organization.state, "adminCode1");
+        if (StringUtils.isNotBlank(organization.state)) {            
+            if ("US".equalsIgnoreCase(organization.country))
+                organization.state = fetchFromGeoNames(organization.state, "adminCode1");
+            else
+                organization.state = fetchFromGeoNames(organization.state, "name");
+                    
+                
         }
         // Get the country code
         Iso3166Country country = StringUtils.isNotBlank(organization.country) ? Iso3166Country.fromValue(organization.country) : null;
@@ -489,12 +500,12 @@ public class MergeFundRefAndRinggoldData {
         orgDisambiguatedEntity.setSourceUrl(organization.id);
         orgDisambiguatedEntity.setSourceType(FUNDREF_SOURCE_TYPE);
         orgDisambiguatedDao.persist(orgDisambiguatedEntity);
-        
+
         writeNewOrgsInformation(organization);
     }
-    
+
     private void writeNewOrgsInformation(FundRefOrganization organization) {
-        //{"id", "name", "altName", "country", "state", "type", "subtype"}
+        // {"id", "name", "altName", "country", "state", "type", "subtype"}
         String[] newOrgLine = new String[7];
         newOrgLine[0] = organization.id;
         newOrgLine[1] = organization.name;
@@ -505,27 +516,27 @@ public class MergeFundRefAndRinggoldData {
         newOrgLine[6] = organization.subtype;
         newOrgsCSV.writeNext(newOrgLine);
     }
-    
-    
+
     /**
      * Writes information about a FundRef org that matches with a Ringgold org
      * */
-    private void writeMatchInformation(FundRefOrganization fOrg, RingGoldOrganization rOrg) {        
-        //{"ringgold-id", "fundref-id", "name", "alt-names", "fundref-name", "fundref-alt-name"}
+    private void writeMatchInformation(FundRefOrganization fOrg, RingGoldOrganization rOrg) {
+        // {"ringgold-id", "fundref-id", "name", "alt-names", "fundref-name",
+        // "fundref-alt-name"}
         String[] organizationMatchLine = new String[6];
-        
+
         organizationMatchLine[0] = rOrg.id;
         organizationMatchLine[1] = fOrg.id;
         organizationMatchLine[2] = rOrg.name;
-        
-        if(rOrg.altNames != null && rOrg.altNames.size() > 0) {
-            Collections.sort(rOrg.altNames);        
-            String altNames = StringUtils.join(rOrg.altNames, '|');                
+
+        if (rOrg.altNames != null && rOrg.altNames.size() > 0) {
+            Collections.sort(rOrg.altNames);
+            String altNames = StringUtils.join(rOrg.altNames, '|');
             organizationMatchLine[3] = altNames;
         }
         organizationMatchLine[4] = fOrg.name;
         organizationMatchLine[5] = fOrg.altName;
-        
+
         existingOrgsCSV.writeNext(organizationMatchLine);
     }
 
