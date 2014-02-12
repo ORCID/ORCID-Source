@@ -782,7 +782,12 @@ select {
 
 .header .navigation>.menu>li.active-trail>.menu {
 	display: block;
-	z-index: 0;
+	/* The z-index here causes a problem for the dropdown when the mouse moves away from the menu area
+	   (the dropdown goes behind other stuff further down on the page). Removing this z-index doesn't
+	   seem to cause any problems, but I have commented out rather than deleted, in case it causes a
+	   problem in browsers I haven't tested yet.
+	   z-index: 0;
+	*/
 }
 
 .header .navigation>.menu>li:hover>a {
