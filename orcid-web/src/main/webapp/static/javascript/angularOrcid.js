@@ -2756,6 +2756,7 @@ function QuickSearchCtrl($scope, $compile){
 	$scope.getResults(10);
 };
 
+// Controller for delegate permissions that have been granted BY the current user
 function DelegatesCtrl($scope, $compile){
 	$scope.results = new Array();
 	$scope.numFound = 0;
@@ -2905,6 +2906,49 @@ function DelegatesCtrl($scope, $compile){
 	
 	// init
 	$scope.getDelegates();
+	
+};
+
+// Controller for delegate permissions that have been granted TO the current user
+function DelegatorsCtrl($scope, $compile){
+	
+	$scope.getDelegators = function() {
+		$.ajax({
+	        url: $('body').data('baseurl') + 'account/delegates.json',
+	        dataType: 'json',
+	        success: function(data) {
+	        	$scope.delegation = data;
+	        	$scope.$apply();
+	        }
+	    }).fail(function() { 
+	    	// something bad is happening!
+	    	console.log("error with delegates");
+	    });
+	};
+	
+	$scope.selectDelegator = function(datum) {
+		window.location.href = $('body').data('baseurl') + 'switch-user?j_username=' + datum.orcid;
+	};
+	
+	$("#delegatorsSearch").typeahead({
+		name: 'delegatorsSearch',
+		remote: {
+			url: $('body').data('baseurl')+'delegators/search/%QUERY?limit=' + 10
+		},
+		template: function (datum) {
+			   var forDisplay = 
+			       '<span style=\'white-space: nowrap; font-weight: bold;\'>' + datum.value + '</span>'
+			      +'<span style=\'font-size: 80%;\'> (' + datum.orcid + ')</span>';
+			   return forDisplay;
+		}
+	});
+	$("#delegatorsSearch").bind("typeahead:selected", function(obj, datum) {        
+		$scope.selectDelegator(datum);
+		$scope.$apply();
+	});
+	
+	// init
+	$scope.getDelegators();
 	
 };
 

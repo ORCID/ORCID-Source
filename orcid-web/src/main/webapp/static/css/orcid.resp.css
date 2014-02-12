@@ -2958,6 +2958,10 @@ ul.personal-inf-display li{
   overflow-y: auto;
 }
 
+#delegatorsSearchForm .tt-dropdown-menu {
+	height: auto;
+}
+
 
 .small-row {	
 	display: inline-block;
