@@ -35,7 +35,7 @@
 	                            <span class="required">*</span>
 	                            <@orcid.passwordHelpPopup />  
 	                            <span class="orcid-error" ng-show="resetPasswordForm.password.errors.length > 0">
-									<div ng-repeat='error in resetPasswordForm.password.errors' ng-bind-html-unsafe="error"></div>
+									<div ng-repeat='error in resetPasswordForm.password.errors' ng-bind-html="error"></div>
 						   		</span>                          
 	                        </div>
 	                        <label for="passwordTypeAndConfirmForm.retypedPassword.value" class="control-label">${springMacroRequestContext.getMessage("password_one_time_reset.labelconfirmpassword")}</label>
@@ -43,7 +43,7 @@
 	                         	<input id="passwordField" type="password" name="retypedPassword" value="${(passwordTypeAndConfirmForm.retypedPassword.value)!}" class="input-xlarge" ng-model="resetPasswordForm.retypedPassword.value" ng-change="serverValidate()"/>                            
 	                            <span class="required">*</span>
 	                            <span class="orcid-error" ng-show="resetPasswordForm.retypedPassword.errors.length > 0">
-									<div ng-repeat='error in resetPasswordForm.retypedPassword.errors' ng-bind-html-unsafe="error"></div>
+									<div ng-repeat='error in resetPasswordForm.retypedPassword.errors' ng-bind-html="error"></div>
 						   		</span>                           
 	                        </div>    
 	                        <div class="controls">

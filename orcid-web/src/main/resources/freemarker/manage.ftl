@@ -62,7 +62,7 @@
 							<!-- we should never see errors here, but just to be safe -->
 							<span class="orcid-error" ng-show="emailsPojo.errors.length > 0">
 								<span ng-repeat='error in emailsPojo.errors'
-								ng-bind-html-unsafe="error"></span>
+								ng-bind-html="error"></span>
 							</span>
 							<!-- Start -->
 							
@@ -117,7 +117,7 @@
 										<span class="orcid-error"
 											ng-show="inputEmail.errors.length > 0"> <span
 											ng-repeat='error in inputEmail.errors'
-											ng-bind-html-unsafe="error"></span>
+											ng-bind-html="error"></span>
 										</span>
 									</div>
 								</div>
@@ -137,7 +137,7 @@
 							<span class="orcid-error"
 								ng-show="changePasswordPojo.errors.length > 0">
 								<div ng-repeat='error in changePasswordPojo.errors'
-									ng-bind-html-unsafe="error"></div>
+									ng-bind-html="error"></div>
 							</span>
 							<div>
 								<label for="passwordField" class="">${springMacroRequestContext.getMessage("change_password.oldpassword")}</label>
@@ -204,7 +204,7 @@
 					<td colspan="2">
 						<div class="editTablePadCell35">
 							<span class="orcid-error" ng-show="errors.length > 0"> <span
-								ng-repeat='error in errors' ng-bind-html-unsafe="error"></span>
+								ng-repeat='error in errors' ng-bind-html="error"></span>
 							</span>
 							<div class="control-group">
 								<label for="changeSecurityQuestionForm.securityQuestionAnswer"
