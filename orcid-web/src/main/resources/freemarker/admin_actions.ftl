@@ -31,7 +31,7 @@
     <h1><@orcid.msg 'admin.profile_deprecation.deprecate_account.confirm'/></h1>
     
     <div ng-show="errors.length">
-		<span class="orcid-error" ng-repeat='error in errors' ng-bind-html-unsafe="error"></span><br />
+		<span class="orcid-error" ng-repeat='error in errors' ng-bind-html="error"></span><br />
 	</div>	    	    
     <div class="bottom-margin-small">
 	    <p><@orcid.msg 'admin.profile_deprecation.deprecate_account.confirm.message.1'/></p>
@@ -126,7 +126,7 @@
       				<input type="text" class="input-xlarge" id="groupName" ng-model="newGroup.groupName.value" placeholder="<@orcid.msg 'manage_groups.name'/>">
     			</div>
 				<span class="orcid-error" ng-show="newGroup.groupName.errors.length > 0">
-					<div ng-repeat='error in newGroup.groupName.errors' ng-bind-html-unsafe="error"></div>
+					<div ng-repeat='error in newGroup.groupName.errors' ng-bind-html="error"></div>
 				</span>
   			</div>
 			<div class="control-group">
@@ -135,7 +135,7 @@
       				<input type="text" class="input-xlarge" id="groupEmail" ng-model="newGroup.email.value" placeholder="<@orcid.msg 'manage_groups.email'/>">
     			</div>
 				<span class="orcid-error" ng-show="newGroup.email.errors.length > 0">
-					<div ng-repeat='error in newGroup.email.errors' ng-bind-html-unsafe="error"></div>
+					<div ng-repeat='error in newGroup.email.errors' ng-bind-html="error"></div>
 				</span>
   			</div>
 			<div class="control-group">
@@ -148,7 +148,7 @@
 					</select> 
     			</div>
 				<span class="orcid-error" ng-show="newGroup.type.errors.length > 0">
-					<div ng-repeat='error in newGroup.type.errors' ng-bind-html-unsafe="error"></div>
+					<div ng-repeat='error in newGroup.type.errors' ng-bind-html="error"></div>
 				</span>
   			</div>
 			<div class="control-group">
@@ -273,7 +273,7 @@
 						<span class="orcid-error"><@orcid.msg 'admin.profile_deprecation.errors.invalid_regex' /></span><br />
 					</div>
 					<div ng-show="deprecatedAccount.errors.length">
-						<span class="orcid-error" ng-repeat='error in deprecatedAccount.errors' ng-bind-html-unsafe="error"></span><br />	
+						<span class="orcid-error" ng-repeat='error in deprecatedAccount.errors' ng-bind-html="error"></span><br />	
 					</div>
 				</div>
 				<div>
@@ -285,7 +285,7 @@
 						<span class="orcid-error"><@orcid.msg 'admin.profile_deprecation.errors.invalid_regex' /></span><br />
 					</div>
 					<div ng-show="primaryAccount.errors.length">
-						<span class="orcid-error" ng-repeat='error in primaryAccount.errors' ng-bind-html-unsafe="error"></span><br />
+						<span class="orcid-error" ng-repeat='error in primaryAccount.errors' ng-bind-html="error"></span><br />
 					</div>				
 				</div>
 				<div class="controls save-btns pull-left">
@@ -308,7 +308,7 @@
 					<input type="text" id="orcid_to_deactivate" ng-model="orcidToDeactivate" placeholder="<@orcid.msg 'admin.profile_deactivation.placeholder.to_deactivate' />" class="input-xlarge" />
 					<span id="bottom-confirm-deactivate-profile" ng-click="confirmDeactivateAccount()" class="btn btn-primary"><@orcid.msg 'admin.profile_deactivation.deactivate_account'/></span>				
 					<div ng-show="deactivatedAccount.errors.length">
-						<span class="orcid-error" ng-repeat='error in deactivatedAccount.errors' ng-bind-html-unsafe="error"></span><br />
+						<span class="orcid-error" ng-repeat='error in deactivatedAccount.errors' ng-bind-html="error"></span><br />
 					</div>		
 				</div>
 			</div>
@@ -328,7 +328,7 @@
 					<input type="text" id="orcid_to_reactivate" ng-model="orcidToReactivate" placeholder="<@orcid.msg 'admin.profile_reactivation.placeholder.to_reactivate' />" class="input-xlarge" />
 					<span id="bottom-confirm-reactivate-profile" ng-click="confirmReactivateAccount()" class="btn btn-primary"><@orcid.msg 'admin.profile_reactivation.reactivate_account'/></span>			
 					<div ng-show="reactivatedAccount.errors.length">
-						<span class="orcid-error" ng-repeat='error in reactivatedAccount.errors' ng-bind-html-unsafe="error"></span><br />
+						<span class="orcid-error" ng-repeat='error in reactivatedAccount.errors' ng-bind-html="error"></span><br />
 					</div>		
 				</div>
 			</div>
