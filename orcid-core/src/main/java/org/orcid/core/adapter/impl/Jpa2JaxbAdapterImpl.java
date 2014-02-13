@@ -550,7 +550,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         String jsonString = profileFundingEntity.getContributorsJson();
         if (jsonString != null) {
             fundingContributors = JsonUtils.readObjectFromJsonString(jsonString, FundingContributors.class);
-            for (Contributor contributor : fundingContributors.getContributor()) {
+            for (FundingContributor contributor : fundingContributors.getContributor()) {
                 // Make sure contributor credit name has the same visibility as
                 // the funding relation
                 CreditName creditName = contributor.getCreditName();

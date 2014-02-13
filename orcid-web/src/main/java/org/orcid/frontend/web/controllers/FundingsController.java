@@ -432,9 +432,7 @@ public class FundingsController extends BaseWorkspaceController {
     public @ResponseBody
     FundingForm validateAmount(@RequestBody FundingForm funding) {
         funding.getAmount().setErrors(new ArrayList<String>());
-        if (PojoUtil.isEmpty(funding.getAmount())) {
-            setError(funding.getAmount(), "NotBlank.fundings.amount");
-        } else {
+        if (!PojoUtil.isEmpty(funding.getAmount())) {            
             String amount = funding.getAmount().getValue();
             long lAmount = 0;
             // TODO Chck this regex
@@ -453,9 +451,7 @@ public class FundingsController extends BaseWorkspaceController {
     public @ResponseBody
     FundingForm validateCurrency(@RequestBody FundingForm funding) {
         funding.getCurrencyCode().setErrors(new ArrayList<String>());
-        if (PojoUtil.isEmpty(funding.getCurrencyCode())) {
-            setError(funding.getCurrencyCode(), "NotBlank.fundings.currency");
-        } else {
+        if (!PojoUtil.isEmpty(funding.getCurrencyCode())) {
             try {
                 Currency.getInstance(funding.getCurrencyCode().getValue());
             } catch (IllegalArgumentException iae) {
@@ -642,6 +638,7 @@ public class FundingsController extends BaseWorkspaceController {
         datum.put("city", orgDisambiguatedDocument.getOrgDisambiguatedCity());
         datum.put("region", orgDisambiguatedDocument.getOrgDisambiguatedRegion());
         datum.put("country", orgDisambiguatedDocument.getOrgDisambiguatedCountry());
+        datum.put("orgType", orgDisambiguatedDocument.getOrgDisambiguatedType());
         datum.put("disambiguatedFundingIdentifier", Long.toString(orgDisambiguatedDocument.getOrgDisambiguatedId()));
         return datum;
     }

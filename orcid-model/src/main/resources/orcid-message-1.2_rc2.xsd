@@ -892,9 +892,6 @@
 		</xs:complexType>
 	</xs:element>
 	
-	
-	
-	
 	<xs:element name="funding-list">
 		<xs:annotation>
 			<xs:documentation>Container for the funding received by the researcher or contributor</xs:documentation>
@@ -1232,7 +1229,7 @@
 		<xs:complexType>
 			<xs:sequence>
 				<xs:element maxOccurs="unbounded" minOccurs="0"
-					ref="orcid:contributor" />
+					ref="orcid:funding-contributor" />
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
@@ -1249,6 +1246,23 @@
 				<xs:element ref="orcid:contributor-email" minOccurs="0"
 					maxOccurs="1" />
 				<xs:element ref="orcid:contributor-attributes" minOccurs="0"
+					maxOccurs="1" />
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="funding-contributor">
+		<xs:annotation>
+			<xs:documentation>A collaborator or other contributor to a work or other orcid-activity</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="orcid:contributor-orcid" minOccurs="0"
+					maxOccurs="1" />
+				<xs:element ref="orcid:credit-name" minOccurs="0"
+					maxOccurs="1" />
+				<xs:element ref="orcid:contributor-email" minOccurs="0"
+					maxOccurs="1" />
+				<xs:element ref="orcid:funding-contributor-attributes" minOccurs="0"
 					maxOccurs="1" />
 			</xs:sequence>
 		</xs:complexType>
@@ -1271,6 +1285,16 @@
 		<xs:complexType>
 			<xs:sequence>
 				<xs:element ref="orcid:contributor-sequence" minOccurs="0" />
+				<xs:element ref="orcid:contributor-role" minOccurs="0" />
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="funding-contributor-attributes">
+		<xs:annotation>
+			<xs:documentation>Provides detail of the nature of the contribution by the collaborator or other contirbutor.</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>				
 				<xs:element ref="orcid:contributor-role" minOccurs="0" />
 			</xs:sequence>
 		</xs:complexType>
