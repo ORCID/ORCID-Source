@@ -2756,6 +2756,7 @@ function QuickSearchCtrl($scope, $compile){
 	$scope.getResults(10);
 };
 
+// Controller for delegate permissions that have been granted BY the current user
 function DelegatesCtrl($scope, $compile){
 	$scope.results = new Array();
 	$scope.numFound = 0;
@@ -2770,8 +2771,14 @@ function DelegatesCtrl($scope, $compile){
 	};
 	
 	$scope.getResults = function(rows){
+		var query = "{!edismax qf='given-and-family-names^50.0 family-name^10.0 given-names^5.0 credit-name^10.0 other-names^5.0 text^1.0' pf='given-and-family-names^50.0' mm=1}" + $scope.userQuery;
+		var orcidRegex = new RegExp("(\\d{4}-){3,}\\d{3}[\\dX]");
+		var regexResult = orcidRegex.exec($scope.userQuery);
+		if(regexResult){
+			query = "orcid:" + regexResult[0];
+		}
 		$.ajax({
-			url: $('#DelegatesCtrl').data('search-query-url') + $scope.userQuery + '&start=' + $scope.start + '&rows=' + $scope.rows,      
+			url: $('#DelegatesCtrl').data('search-query-url') + query + '&start=' + $scope.start + '&rows=' + $scope.rows,      
 			dataType: 'json',
 			headers: { Accept: 'application/json'},
 			success: function(data) {
@@ -2905,6 +2912,49 @@ function DelegatesCtrl($scope, $compile){
 	
 	// init
 	$scope.getDelegates();
+	
+};
+
+// Controller for delegate permissions that have been granted TO the current user
+function DelegatorsCtrl($scope, $compile){
+	
+	$scope.getDelegators = function() {
+		$.ajax({
+	        url: $('body').data('baseurl') + 'account/delegates.json',
+	        dataType: 'json',
+	        success: function(data) {
+	        	$scope.delegation = data;
+	        	$scope.$apply();
+	        }
+	    }).fail(function() { 
+	    	// something bad is happening!
+	    	console.log("error with delegates");
+	    });
+	};
+	
+	$scope.selectDelegator = function(datum) {
+		window.location.href = $('body').data('baseurl') + 'switch-user?j_username=' + datum.orcid;
+	};
+	
+	$("#delegatorsSearch").typeahead({
+		name: 'delegatorsSearch',
+		remote: {
+			url: $('body').data('baseurl')+'delegators/search/%QUERY?limit=' + 10
+		},
+		template: function (datum) {
+			   var forDisplay = 
+			       '<span style=\'white-space: nowrap; font-weight: bold;\'>' + datum.value + '</span>'
+			      +'<span style=\'font-size: 80%;\'> (' + datum.orcid + ')</span>';
+			   return forDisplay;
+		}
+	});
+	$("#delegatorsSearch").bind("typeahead:selected", function(obj, datum) {        
+		$scope.selectDelegator(datum);
+		$scope.$apply();
+	});
+	
+	// init
+	$scope.getDelegators();
 	
 };
 

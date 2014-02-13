@@ -49,13 +49,13 @@
 	request.requestURI?ends_with("${basePath}oauth/confirm_access")||
 	request.requestURI?ends_with("${basePath}my-orcid")||
 	request.requestURI?ends_with("${basePath}statistics")||
-	request.requestURI?ends_with("${basePath}account")||	
+	request.requestURI?ends_with("${basePath}account")||
+	request.requestURI?ends_with("${basePath}delegators")||
 	request.requestURI?matches("(.*)/(?:\\d{4}-){3,}\\d{3}[\\dX]")||
 	request.requestURI?ends_with("${basePath}account/manage-bio-settings")||
 	request.requestURI?matches("(.*)/[a-zA-Z0-9?=]*")||
 	request.requestURI?contains("orcid-search")		
 >
-
 <div class="container">
     <div class="header center">
         <div class="row">        	
@@ -114,13 +114,19 @@
                                    <li ng-controller="SwitchUserCtrl" class="dropdown">
                                        <a ng-click="openMenu($event)" ><@orcid.msg 'public-layout.manage_proxy_account'/></a>
                                        <ul class="dropdown-menu" ng-show="isDroppedDown" ng-cloak>
-                                           <li ng-repeat="delegationDetails in delegation.givenPermissionBy.delegationDetails | orderBy:'delegateSummary.creditName.content'">
+                                           <li ng-repeat="delegationDetails in delegation.givenPermissionBy.delegationDetails | orderBy:'delegateSummary.creditName.content' | limitTo:10">
                                                <a href="<@spring.url '/switch-user?j_username='/>{{delegationDetails.delegateSummary.orcidIdentifier.path}}">{{delegationDetails.delegateSummary.creditName.content}} ({{delegationDetails.delegateSummary.orcidIdentifier.path}})</a>
                                            </li>
+                                           <li><a href="<@spring.url '/delegators?delegates'/>">More...</a></li>
                                        </ul>
                                     </li>
                                </#if>
-                               <li><a href="<@spring.url '/signout'/>"><@orcid.msg 'public-layout.sign_out'/></a></li>
+                               <#if inDelegationMode>
+                                   <li><a href="<@spring.url '/switch-user?j_username='/>${realUserOrcid}">Switch back to me</a></li>
+                               <#else>
+                                   <li><a href="<@spring.url '/signout'/>"><@orcid.msg 'public-layout.sign_out'/></a></li>
+                               </#if>
+                               
                            </@security.authorize>
                        </ul>
                    </li>
@@ -181,7 +187,11 @@
                            <a href="<@spring.url "/signin" />" title=""><@orcid.msg 'public-layout.sign_in'/></a>
                        </@security.authorize>
                        <@security.authorize ifAnyGranted="ROLE_USER, ROLE_ADMIN, ROLE_BASIC, ROLE_PREMIUM, ROLE_BASIC_INSTITUTION, ROLE_PREMIUM_INSTITUTION">
-                           <a href="<@spring.url '/signout'/>" id="signout"><@orcid.msg 'public-layout.sign_out'/></a>
+                           <#if inDelegationMode>
+                               <li><a href="<@spring.url '/switch-user?j_username='/>${realUserOrcid}">Switch back</a></li>
+                           <#else>
+                               <li><a href="<@spring.url '/signout'/>"><@orcid.msg 'public-layout.sign_out'/></a></li>
+                           </#if>
                        </@security.authorize>
                    </li>
                </ul>                    
@@ -270,13 +280,18 @@
                                     <li ng-controller="SwitchUserCtrl" class="dropdown">
                                         <a ng-click="openMenu($event)" ><@orcid.msg 'public-layout.manage_proxy_account'/></a>
                                         <ul class="dropdown-menu" ng-show="isDroppedDown" ng-cloak>
-                                            <li ng-repeat="delegationDetails in delegation.givenPermissionBy.delegationDetails | orderBy:'delegateSummary.creditName.content'">
+                                            <li ng-repeat="delegationDetails in delegation.givenPermissionBy.delegationDetails | orderBy:'delegateSummary.creditName.content' | limitTo:10">
                                                 <a href="<@spring.url '/switch-user?j_username='/>{{delegationDetails.delegateSummary.orcidIdentifier.path}}">{{delegationDetails.delegateSummary.creditName.content}} ({{delegationDetails.delegateSummary.orcidIdentifier.path}})</a>
                                             </li>
+                                            <li><a href="<@spring.url '/delegators?delegates'/>">More...</a></li>
                                         </ul>
                                      </li>
                                 </#if>
-                                <li><a href="<@spring.url '/signout'/>"><@orcid.msg 'public-layout.sign_out'/></a></li>
+                                <#if inDelegationMode>
+                                    <li><a href="<@spring.url '/switch-user?j_username='/>${realUserOrcid}">Switch back to me</a></li>
+                                <#else>
+                                    <li><a href="<@spring.url '/signout'/>"><@orcid.msg 'public-layout.sign_out'/></a></li>
+                                </#if>
                             </@security.authorize>
 						</ul></li>
 						<li class="expanded"><a href="${aboutUri}/organizations"><@orcid.msg 'public-layout.for_organizations'/></a><ul class="menu"><li class="first leaf"><a href="${aboutUri}/organizations/funders"><@orcid.msg 'public-layout.funders'/></a></li>
@@ -311,7 +326,13 @@
 						</ul></li>
 						<li class="last leaf">
 						    <@security.authorize ifNotGranted="ROLE_USER, ROLE_ADMIN, ROLE_BASIC, ROLE_PREMIUM, ROLE_BASIC_INSTITUTION, ROLE_PREMIUM_INSTITUTION"><a href="<@spring.url "/signin" />" title=""><@orcid.msg 'public-layout.sign_in'/></a></@security.authorize>
-						    <@security.authorize ifAnyGranted="ROLE_USER, ROLE_ADMIN, ROLE_BASIC, ROLE_PREMIUM, ROLE_BASIC_INSTITUTION, ROLE_PREMIUM_INSTITUTION"><a href="<@spring.url '/signout'/>"><@orcid.msg 'public-layout.sign_out'/></a></@security.authorize>
+						    <@security.authorize ifAnyGranted="ROLE_USER, ROLE_ADMIN, ROLE_BASIC, ROLE_PREMIUM, ROLE_BASIC_INSTITUTION, ROLE_PREMIUM_INSTITUTION">
+						        <#if inDelegationMode>
+                                    <li><a href="<@spring.url '/switch-user?j_username='/>${realUserOrcid}">Switch back</a></li>
+                                <#else>
+                                    <li><a href="<@spring.url '/signout'/>"><@orcid.msg 'public-layout.sign_out'/></a></li>
+                                </#if>
+						    </@security.authorize>
 						</li>
 					</ul>
 				</div>

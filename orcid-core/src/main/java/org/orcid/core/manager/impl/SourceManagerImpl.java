@@ -59,16 +59,28 @@ public class SourceManagerImpl implements SourceManager {
             return realUserIfInDelegationMode;
         }
         // Normal web user
+        return retrieveEffectiveOrcid(authentication);
+    }
+
+    private String retrieveEffectiveOrcid(Authentication authentication) {
         if (OrcidProfileUserDetails.class.isAssignableFrom(authentication.getPrincipal().getClass())) {
-            return ((OrcidProfileUserDetails) authentication.getPrincipal()).getRealOrcid();
+            return ((OrcidProfileUserDetails) authentication.getPrincipal()).getOrcid();
         }
         return null;
+    }
+
+    private String retrieveEffectiveOrcid() {
+        return retrieveEffectiveOrcid(SecurityContextHolder.getContext().getAuthentication());
     }
 
     @Override
     public boolean isInDelegationMode() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        return getRealUserIfInDelegationMode(authentication) != null;
+        String realUserOrcid = getRealUserIfInDelegationMode(authentication);
+        if (realUserOrcid == null) {
+            return false;
+        }
+        return !retrieveEffectiveOrcid().equals(realUserOrcid);
     }
 
     private String getRealUserIfInDelegationMode(Authentication authentication) {
@@ -80,7 +92,7 @@ public class SourceManagerImpl implements SourceManager {
                         SwitchUserGrantedAuthority suga = (SwitchUserGrantedAuthority) authority;
                         Authentication sourceAuthentication = suga.getSource();
                         if (sourceAuthentication instanceof UsernamePasswordAuthenticationToken && sourceAuthentication.getPrincipal() instanceof OrcidProfileUserDetails) {
-                            return ((OrcidProfileUserDetails) sourceAuthentication.getPrincipal()).getRealOrcid();
+                            return ((OrcidProfileUserDetails) sourceAuthentication.getPrincipal()).getOrcid();
                         }
                     }
                 }

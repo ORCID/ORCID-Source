@@ -16,8 +16,11 @@
  */
 package org.orcid.persistence.dao.impl;
 
+import java.util.List;
+
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 
 import org.orcid.persistence.dao.GivenPermissionToDao;
 import org.orcid.persistence.jpa.entities.GivenPermissionToEntity;
@@ -33,6 +36,16 @@ public class GivenPermissionToDaoImpl extends GenericDaoImpl<GivenPermissionToEn
 
     public GivenPermissionToDaoImpl() {
         super(GivenPermissionToEntity.class);
+    }
+
+    @Override
+    public GivenPermissionToEntity findByGiverAndReceiverOrcid(String giverOrcid, String receiverOrcid) {
+        TypedQuery<GivenPermissionToEntity> query = entityManager.createQuery("from GivenPermissionToEntity where giver_orcid = :giverOrcid and receiver_orcid = :receiverOrcid",
+                GivenPermissionToEntity.class);
+        query.setParameter("giverOrcid", giverOrcid);
+        query.setParameter("receiverOrcid", receiverOrcid);
+        List<GivenPermissionToEntity> results = query.getResultList();
+        return results.isEmpty() ? null : results.get(0);
     }
 
     @Override
