@@ -2771,8 +2771,14 @@ function DelegatesCtrl($scope, $compile){
 	};
 	
 	$scope.getResults = function(rows){
+		var query = "{!edismax qf='given-and-family-names^50.0 family-name^10.0 given-names^5.0 credit-name^10.0 other-names^5.0 text^1.0' pf='given-and-family-names^50.0' mm=1}" + $scope.userQuery;
+		var orcidRegex = new RegExp("(\\d{4}-){3,}\\d{3}[\\dX]");
+		var regexResult = orcidRegex.exec($scope.userQuery);
+		if(regexResult){
+			query = "orcid:" + regexResult[0];
+		}
 		$.ajax({
-			url: $('#DelegatesCtrl').data('search-query-url') + $scope.userQuery + '&start=' + $scope.start + '&rows=' + $scope.rows,      
+			url: $('#DelegatesCtrl').data('search-query-url') + query + '&start=' + $scope.start + '&rows=' + $scope.rows,      
 			dataType: 'json',
 			headers: { Accept: 'application/json'},
 			success: function(data) {
