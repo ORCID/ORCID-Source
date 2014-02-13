@@ -63,10 +63,14 @@ public class MergeFundRefAndRinggoldData {
     }
 
     class RingGoldOrganization {
-        String id, name;
-        List<String> altNames;
+        String id, name, country, city;
+        List<RingGoldOrganizationAltNameAttributes> altNames;
     }
 
+    class RingGoldOrganizationAltNameAttributes {
+        String id, name, country, city;
+    }
+    
     class RingGoldNames {
         String name, id;
         boolean isPrimary;
@@ -174,7 +178,7 @@ public class MergeFundRefAndRinggoldData {
         System.out.println();
         int counter = 0;
         for (FundRefOrganization fOrg : fundRefOrgs) {
-            String matchingRingGoldOrgId = findMatchesInRinggoldData(fOrg);
+            String matchingRingGoldOrgId = findMatchesInRinggoldData(fOrg, ringGoldOrgs);
             // If no match is found, create FundRef organization into our
             // database
             if (matchingRingGoldOrgId == null) {
@@ -259,7 +263,7 @@ public class MergeFundRefAndRinggoldData {
                 NamedNodeMap stateAttrs = stateNode.getAttributes();
                 stateGeoNameCode = stateAttrs.getNamedItem("rdf:resource").getNodeValue();
             }
-
+            
             // Get type
             String orgType = (String) xPath.compile(orgTypeExpression.replace("%s", itemDoi)).evaluate(xmlDocument, XPathConstants.STRING);
             // Get subType
@@ -269,10 +273,23 @@ public class MergeFundRefAndRinggoldData {
             organization.type = StringUtils.isBlank(orgType) ? null : orgType;
             organization.id = StringUtils.isBlank(itemDoi) ? null : itemDoi;
             organization.name = StringUtils.isBlank(orgName) ? null : orgName;
-            organization.altName = StringUtils.isBlank(orgAltName) ? null : orgAltName;
-            organization.country = StringUtils.isBlank(countryGeonameUrl) ? null : countryGeonameUrl;
-            organization.state = StringUtils.isBlank(stateGeoNameCode) ? null : stateGeoNameCode;
+            organization.altName = StringUtils.isBlank(orgAltName) ? null : orgAltName;                        
             organization.subtype = StringUtils.isBlank(orgSubType) ? null : orgSubType;
+            
+            // By this moment the geonames uris hasnt been resolved, so, resolve them
+            // Fetch country code from geonames            
+            if (StringUtils.isNotBlank(countryGeonameUrl))
+                organization.country = fetchFromGeoNames(countryGeonameUrl, "countryCode");
+            // Fetch state from geonames
+            if (StringUtils.isNotBlank(stateGeoNameCode)) {            
+                if ("US".equalsIgnoreCase(organization.country))
+                    organization.state = fetchFromGeoNames(stateGeoNameCode, "adminCode1");
+                else
+                    organization.state = fetchFromGeoNames(stateGeoNameCode, "name");
+                        
+                    
+            }
+            
         } catch (XPathExpressionException xpe) {
             LOGGER.error("XPathExpressionException {}", xpe.getMessage());
         }
@@ -380,12 +397,23 @@ public class MergeFundRefAndRinggoldData {
         String pCode = line[1];
         String name = line[2];
         String extName = line[3];
+        String city = line[4];
+        String country = line[7];
+        
         if (StringUtils.isNotBlank(extName)) {
             name = extName;
+        }
+        
+        // To match country names, change ringgold USA to US, since US is used in fundref
+        if("USA".equals(country)){
+            country = "US";
         }
         RingGoldOrganization org = new RingGoldOrganization();        
         org.id = StringUtils.isBlank(pCode) ? null : pCode;
         org.name = StringUtils.isBlank(name) ? null : name;
+        org.city = city;
+        org.country = country;
+        
         return org;
     }
 
@@ -401,6 +429,9 @@ public class MergeFundRefAndRinggoldData {
                 String id = line[0];
                 String altName = line[1];
                 String altExtName = line[2];
+                String city = line[4];
+                String country = line[6];
+                
                 if (StringUtils.isNotBlank(altExtName)) {
                     altName = altExtName;
                 }
@@ -428,11 +459,17 @@ public class MergeFundRefAndRinggoldData {
                     // Add the alt name to the existing parent org in the parentOrgs
                     // map
                     RingGoldOrganization parentOrg = parentOrgs.get(id);
-                    List<String> altNames = parentOrg.altNames;
+                    List<RingGoldOrganizationAltNameAttributes> altNames = parentOrg.altNames;
                     if (altNames == null) {
-                        altNames = new ArrayList<String>();
+                        altNames = new ArrayList<RingGoldOrganizationAltNameAttributes>();
                     }
-                    altNames.add(altName);
+                    
+                    RingGoldOrganizationAltNameAttributes altNameAtt = new RingGoldOrganizationAltNameAttributes();
+                    altNameAtt.name = altName;
+                    altNameAtt.city = city;
+                    altNameAtt.country = country;
+                    
+                    altNames.add(altNameAtt);
                     parentOrg.altNames = altNames;
                     altNamesLoaded++;                
                 }
@@ -455,18 +492,95 @@ public class MergeFundRefAndRinggoldData {
     /**
      * Find a Ringgold organization that matches the provided RDF organization
      * */
-    private String findMatchesInRinggoldData(FundRefOrganization org) {
+    private String findMatchesInRinggoldData(FundRefOrganization fOrg, Map<String, RingGoldOrganization> ringgoldOrgs) {
         String ringGoldId = null;
-        if (StringUtils.isNotBlank(org.name) && ringGoldNames.containsKey(org.name)) {
-            RingGoldNames rname = ringGoldNames.get(org.name);
-            ringGoldId = rname.id;
-        } else if (StringUtils.isNotBlank(org.altName) && ringGoldNames.containsKey(org.altName)) {
-            RingGoldNames rname = ringGoldNames.get(org.altName);
-            ringGoldId = rname.id;
+        if (StringUtils.isNotBlank(fOrg.name) && ringGoldNames.containsKey(fOrg.name)) {     
+            RingGoldNames rName = ringGoldNames.get(fOrg.name);
+            RingGoldOrganization rOrg = ringgoldOrgs.get(rName.id);
+            //Compare country and city
+            if(StringUtils.isNotBlank(fOrg.country) && fOrg.country.equals(rOrg.country)){
+                System.out.println("Possible Match: " + rName.id + " - " + rName.name + " - " + rName.isPrimary);
+                //If the state is not null, compare states
+                if(StringUtils.isNotBlank(fOrg.state)){
+                    if(StringUtils.isNotBlank(rOrg.city)){
+                        if(fOrg.state.equals(rOrg.city)){
+                            ringGoldId = rOrg.id;
+                        }
+                    }
+                } else {
+                    //If it is null, assume this is a match
+                    ringGoldId = rOrg.id;
+                }
+            }
+            
+        } else if (StringUtils.isNotBlank(fOrg.altName) && ringGoldNames.containsKey(fOrg.altName)) {
+            //Get the alt name object
+            RingGoldNames rAltName = ringGoldNames.get(fOrg.altName);
+            //Get the RingGold organization
+            RingGoldOrganization rOrg = ringgoldOrgs.get(rAltName.id);                        
+            System.out.println("AltName Possible Match: " + rAltName.id + " - " + rAltName.name + " - " + rAltName.isPrimary);
+            //If the match is found with the FundRef alt name, check first the primary name, then check the alt names
+            if(rAltName.isPrimary) {
+                //Compare the alt name with the ringgold primary name
+                if(fOrg.altName.equals(rOrg.name)){
+                    
+                  //Compare country and city
+                    if(StringUtils.isNotBlank(fOrg.country) && fOrg.country.equals(rOrg.country)){
+                        
+                        //If the state is not null, compare states
+                        if(StringUtils.isNotBlank(fOrg.state)){
+                            if(StringUtils.isNotBlank(rOrg.city)){
+                                if(fOrg.state.equals(rOrg.city)){
+                                    ringGoldId = rOrg.id;
+                                }
+                            }
+                        } else {
+                            //If it is null, since they are in the same country, assume this is a match
+                            ringGoldId = rOrg.id;
+                        }
+                    }
+                }
+            } else {
+                //Look for the alt org 
+                RingGoldOrganizationAltNameAttributes altOrg = null;
+                //Compare the alt name with the ringgold alt names    
+                if(rOrg.altNames != null) {
+                    for(RingGoldOrganizationAltNameAttributes altOrgIt : rOrg.altNames) {
+                        if(StringUtils.isNotBlank(altOrgIt.name) && altOrgIt.name.equals(fOrg.altName)){
+                            altOrg = altOrgIt;
+                            break;
+                        }
+                    }
+                }
+                
+                //If the alt org was found
+                if(altOrg != null){
+                    //Compare country and city
+                    if(StringUtils.isNotBlank(fOrg.country) && fOrg.country.equals(altOrg.country)){
+                        
+                        //If the state is not null, compare states
+                        if(StringUtils.isNotBlank(fOrg.state)){
+                            if(StringUtils.isNotBlank(altOrg.city)){
+                                if(fOrg.state.equals(altOrg.city)){
+                                    ringGoldId = altOrg.id;
+                                }
+                            }
+                        } else {
+                            //If it is null, assume this is a match
+                            ringGoldId = altOrg.id;
+                        }
+                    }
+                }
+            }
         }
+        
         return ringGoldId;
     }
-
+    
+    /*****************************************************************************
+     ************* CREATING ORGS OR UPDATING MATCH LIST FUNCTIONS ****************
+     ***************************************************************************** */
+    
     /**
      * Create a new organization in database
      * */
@@ -474,20 +588,6 @@ public class MergeFundRefAndRinggoldData {
         LOGGER.info("Creating disambiguated org {}", organization.name);
         String orgType = organization.type + (StringUtils.isEmpty(organization.subtype) ? "" : "/" + organization.subtype);
 
-        // By this moment the geonames uris hasnt been resolved, so, resolve
-        // them
-        // Fetch country code from geonames
-        if (StringUtils.isNotBlank(organization.country))
-            organization.country = fetchFromGeoNames(organization.country, "countryCode");
-        // Fetch state from geonames
-        if (StringUtils.isNotBlank(organization.state)) {            
-            if ("US".equalsIgnoreCase(organization.country))
-                organization.state = fetchFromGeoNames(organization.state, "adminCode1");
-            else
-                organization.state = fetchFromGeoNames(organization.state, "name");
-                    
-                
-        }
         // Get the country code
         Iso3166Country country = StringUtils.isNotBlank(organization.country) ? Iso3166Country.fromValue(organization.country) : null;
         // Fill the orgDisambiguated entity
@@ -530,8 +630,14 @@ public class MergeFundRefAndRinggoldData {
         organizationMatchLine[2] = rOrg.name;
 
         if (rOrg.altNames != null && rOrg.altNames.size() > 0) {
-            Collections.sort(rOrg.altNames);
-            String altNames = StringUtils.join(rOrg.altNames, '|');
+            
+            List<String> altNameOrgsNames = new ArrayList<>();
+            for(RingGoldOrganizationAltNameAttributes altName : rOrg.altNames) {
+                altNameOrgsNames.add(altName.name);
+            }
+            
+            Collections.sort(altNameOrgsNames);
+            String altNames = StringUtils.join(altNameOrgsNames, '|');
             organizationMatchLine[3] = altNames;
         }
         organizationMatchLine[4] = fOrg.name;
