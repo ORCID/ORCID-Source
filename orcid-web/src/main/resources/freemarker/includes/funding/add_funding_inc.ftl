@@ -48,7 +48,7 @@
 				<div class="control-group">
 					<label><@orcid.msg 'manual_funding_form_contents.grant_type'/></label>
 					<div class="relative">						
-						<select id="fundingType" class="input-xlarge" name="fundingType" ng-model="editFunding.fundingType.value" ng-change="serverValidate('fundings/funding/typeValidate.json')">
+						<select id="fundingType" class="input-xlarge" name="fundingType" ng-model="editFunding.fundingType.value" ng-change="serverValidate('fundings/funding/typeValidate.json'); typeChanged()">
 							<option value=""><@orcid.msg 'org.orcid.jaxb.model.message.FundingType.empty' /></option>
 							<#list fundingTypes?keys as key>
 								<option value="${key}">${fundingTypes[key]}</option>
@@ -56,7 +56,7 @@
 						</select>
 						<span class="required text-error" ng-class="isValidClass(editFunding.fundingType)">*</span>
 						<span class="orcid-error" ng-show="editFunding.fundingType.errors.length > 0">
-							<div ng-repeat='error in editFunding.fundingType.errors' ng-bind-html-unsafe="error"></div>
+							<div ng-repeat='error in editFunding.fundingType.errors' ng-bind-html="error"></div>
 						</span>				
 					</div>
 				</div>
@@ -66,7 +66,7 @@
 						<input id="fundingTitle" class="input-xlarge" name="fundingTitle" type="text" ng-model="editFunding.fundingTitle.title.value" placeholder="<@orcid.msg 'manual_funding_form_contents.add_title'/>" ng-change="serverValidate('fundings/funding/titleValidate.json')" ng-model-onblur/>
 						<span class="required" ng-class="isValidClass(editFunding.fundingTitle.title)">*</span>
 						<span class="orcid-error" ng-show="editFunding.fundingTitle.title.errors.length > 0">
-							<div ng-repeat='error in editFunding.fundingTitle.title.errors' ng-bind-html-unsafe="error"></div>
+							<div ng-repeat='error in editFunding.fundingTitle.title.errors' ng-bind-html="error"></div>
 						</span>						
 						<div class="add-item-link">
 							<span ng-hide="editTranslatedTitle"><a ng-click="toggleTranslatedTitleModal()"><i class="glyphicon glyphicon-plus-sign blue"></i> <@orcid.msg 'manual_funding_form_contents.labelshowtranslatedtitle'/></a></span>
@@ -76,7 +76,7 @@
 				</div>
 				<div id="translatedTitle">
 					<span class="orcid-error" ng-show="editFunding.fundingTitle.translatedTitle.errors.length > 0">
-						<div ng-repeat='error in editFunding.fundingTitle.translatedTitle.errors' ng-bind-html-unsafe="error"></div>
+						<div ng-repeat='error in editFunding.fundingTitle.translatedTitle.errors' ng-bind-html="error"></div>
 					</span>
 					<div class="control-group">
 						<label><@orcid.msg 'manual_funding_form_contents.label_translated_title'/></label>
@@ -98,6 +98,17 @@
 				</div>
 				<div class="control-group">
 					<span>
+					   <label><@orcid.msg 'manual_funding_form_contents.label_description'/></label>					   
+					</span>
+					<div class="relative">
+						<textarea id="fundingDescription" class="input-xlarge" name="fundingDescription" type="text" ng-model="editFunding.description.value" placeholder="<@orcid.msg 'manual_funding_form_contents.add_description'/>" ng-change="serverValidate('fundings/funding/descriptionValidate.json')" ng-model-onblur/>
+						<span class="orcid-error" ng-show="editFunding.description.errors.length > 0">
+							<div ng-repeat='error in editFunding.description.errors' ng-bind-html="error"></div>
+						</span>
+					</div>
+				</div>
+				<div class="control-group">
+					<span>
 						<label><@orcid.msg 'manual_funding_form_contents.label_amount'/></label>
 					</span>
 					<div class="relative">						
@@ -110,10 +121,10 @@
 							<input id="fundingAmount" name="fundingAmount" type="text" ng-model="editFunding.amount.value" placeholder="<@orcid.msg 'manual_funding_form_contents.add_amount'/>" ng-change="serverValidate('fundings/funding/amountValidate.json')" ng-model-onblur/>							
 						</div>
 						<span class="orcid-error" ng-show="editFunding.currencyCode.errors.length > 0">
-							<div ng-repeat='error in editFunding.currencyCode.errors' ng-bind-html-unsafe="error"></div>
+							<div ng-repeat='error in editFunding.currencyCode.errors' ng-bind-html="error"></div>
 						</span>
 						<span class="orcid-error" ng-show="editFunding.amount.errors.length > 0">
-							<div ng-repeat='error in editFunding.amount.errors' ng-bind-html-unsafe="error"></div>
+							<div ng-repeat='error in editFunding.amount.errors' ng-bind-html="error"></div>
 						</span>			
 					</div>
 				</div>		
@@ -147,7 +158,7 @@
 			    		</select>	    
 		    		</div>
 		    		<span class="orcid-error" ng-show="editFunding.endDate.errors.length > 0">
-						<div ng-repeat='error in editFunding.endDate.errors' ng-bind-html-unsafe="error"></div>
+						<div ng-repeat='error in editFunding.endDate.errors' ng-bind-html="error"></div>
 					</span>
 		    	</div>
 				<div class="control-group" ng-repeat="contributor in editFunding.contributors">
@@ -156,54 +167,26 @@
 						<select id="role" name="role" ng-model="contributor.contributorRole.value">
 							<option value=""><@orcid.msg 'org.orcid.jaxb.model.message.ContributorRole.empty' /></option>
 							<#list fundingRoles?keys as key>
-							    <option value="${key}">${roles[key]}</option>
+							    <option value="${key}">${fundingRoles[key]}</option>
 							</#list>
 			    		</select>
 						<span class="orcid-error" ng-show="contributor.contributorRole.errors.length > 0">
-								<div ng-repeat='error in contributor.contributorRole.errors' ng-bind-html-unsafe="error"></div>
+								<div ng-repeat='error in contributor.contributorRole.errors' ng-bind-html="error"></div>
 						</span>
 				    </div>
-				</div>		    	
-				<div class="control-group" ng-repeat="contributor in editFunding.contributors">
-				    <label class="relative"><@orcid.msg 'manual_funding_form_contents.labelcredited'/></label>
-				    <div class="relative">    
-						<select id="sequence" name="sequence" ng-model="contributor.contributorSequence.value">
-							<option value=""><@orcid.msg 'org.orcid.jaxb.model.message.SequenceType.empty'/></option>
-							<#list sequences?keys as key>
-								<option value="${key}">${sequences[key]}</option>
-							</#list>
-			    		</select>
-						<span class="orcid-error" ng-show="contributor.contributorSequence.errors.length > 0">
-								<div ng-repeat='error in contributor.contributorSequence.errors' ng-bind-html-unsafe="error"></div>
-						</span>
-				    </div>
-				</div>
-				<div class="control-group">
-					<span>
-					   <label><@orcid.msg 'manual_funding_form_contents.label_description'/></label>					   
-					</span>
-					<div class="relative">
-						<textarea id="fundingDescription" class="input-xlarge" name="fundingDescription" type="text" ng-model="editFunding.description.value" placeholder="<@orcid.msg 'manual_funding_form_contents.add_description'/>" ng-change="serverValidate('fundings/funding/descriptionValidate.json')" ng-model-onblur/>
-						<span class="orcid-error" ng-show="editFunding.description.errors.length > 0">
-							<div ng-repeat='error in editFunding.description.errors' ng-bind-html-unsafe="error"></div>
-						</span>
-					</div>
-				</div>
+				</div>				
 			</div>
 			<div class="col-md-6 col-sm-6 col-xs-12">
-				<div class="control-group">
-					<span><strong><@orcid.msg 'manual_funding_form_contents.title_funding_agency'/></strong></span>
+				<div class="control-group no-margin-bottom">
+					<strong><@orcid.msg 'manual_funding_form_contents.title_funding_agency'/></strong>
 				</div>
 				<div class="control-group" ng-show="editFunding.disambiguatedFundingSourceId">					
-					<span>
-					   <label><@orcid.msg 'manual_funding_form_contents.label_funding_agency'/></label>
-				    </span>
+					<label><@orcid.msg 'manual_funding_form_contents.label_funding_agency'/></label>
 					<span id="remove-disambiguated" class="pull-right">
 						<a ng-click="removeDisambiguatedFunding()">
 							<span class="glyphicon glyphicon-remove-sign"></span><@orcid.msg 'common.remove'/>
 						</a>
 					</span>
-
 				    <div class="relative" style="font-weight: strong;">
 						<span ng-bind="disambiguatedFunding.value"></span>						
 					</div>
@@ -212,7 +195,7 @@
 					<span ng-hide="disambiguatedFunding">												
 					   	<label><@orcid.msg 'manual_funding_form_contents.label_funding_agency_name'/></label>
 					   	<div id="fundingOnlyDiv" class="right show-funding-only">
-							<input type="checkbox" id="fundersOnly" />
+							<input type="checkbox" id="fundersOnly" checked/>
 							<label for="fundersOnly"><@orcid.msg 'manual_funding_form_contents.show_only_funders'/></label>
 						</div>					   
 					</span>
@@ -223,7 +206,7 @@
 						<input id="fundingName" class="input-xlarge" name="fundingName" type="text" ng-model="editFunding.fundingName.value" placeholder="<@orcid.msg 'manual_funding_form_contents.add_name'/>" ng-model-onblur/>
 						<span class="required" ng-class="isValidClass(editFunding.fundingName)">*</span>
 						<span class="orcid-error" ng-show="editFunding.fundingName.errors.length > 0">
-							<div ng-repeat='error in editFunding.fundingName.errors' ng-bind-html-unsafe="error"></div>
+							<div ng-repeat='error in editFunding.fundingName.errors' ng-bind-html="error"></div>
 						</span>
 					</div>
 				</div>
@@ -234,7 +217,7 @@
 						<input name="city" type="text" class="input-xlarge"  ng-model="editFunding.city.value" placeholder="<@orcid.msg 'manual_funding_form_contents.add_city'/>" ng-change="serverValidate('fundings/funding/cityValidate.json')" ng-model-onblur/>
 						<span class="required" ng-class="isValidClass(editFunding.city)">*</span>
 						<span class="orcid-error" ng-show="editFunding.city.errors.length > 0">
-							<div ng-repeat='error in editFunding.city.errors' ng-bind-html-unsafe="error"></div>
+							<div ng-repeat='error in editFunding.city.errors' ng-bind-html="error"></div>
 						</span>
 					</div>
 				</div>
@@ -244,7 +227,7 @@
 				    <div class="relative">
 						<input name="region" type="text" class="input-xlarge"  ng-model="editFunding.region.value" placeholder="<@orcid.msg 'manual_funding_form_contents.add_region'/>" ng-change="serverValidate('fundings/funding/regionValidate.json')" ng-model-onblur/>
 						<span class="orcid-error" ng-show="editFunding.region.errors.length > 0">
-							<div ng-repeat='error in editFunding.region.errors' ng-bind-html-unsafe="error"></div>
+							<div ng-repeat='error in editFunding.region.errors' ng-bind-html="error"></div>
 						</span>
 					</div>
 				</div>
@@ -260,45 +243,34 @@
 						</select> 
 						<span class="required" ng-class="isValidClass(editFunding.country)">*</span>
 						<span class="orcid-error" ng-show="editFunding.country.errors.length > 0">
-							<div ng-repeat='error in editFunding.country.errors' ng-bind-html-unsafe="error"></div>
+							<div ng-repeat='error in editFunding.country.errors' ng-bind-html="error"></div>
 						</span>
 					</div>
 				</div>					
-		    	<div class="control-group">
-					<span><strong><@orcid.msg 'manual_funding_form_contents.title_external_identifier'/></strong></span>
+		    	<div class="control-group no-margin-bottom">
+					<strong id="funding-ext-ids-title"><@orcid.msg 'manual_funding_form_contents.title_external_identifier'/></strong>
 				</div>
-		    	<div ng-repeat="externalIdentifier in editFunding.externalIdentifiers"> 
-					<!-- Type -->
-					<div class="control-group">
-						<label class="relative"><@orcid.msg 'manual_funding_form_contents.external_identifier.label_type'/></label>
-						<div class="relative">
-		    				<label name="currentFundingExternalIdentifierType" class="input-xlarge type-preset"><@orcid.msg 'manual_funding_form_contents.external_identifier.type_default'/></label>							
-						</div>	
-					</div>
+		    	<div class="control-group" ng-repeat="externalIdentifier in editFunding.externalIdentifiers"> 					
 					<!-- Value -->
 					<div class="control-group">
-						<label class="relative"><@orcid.msg 'manual_funding_form_contents.external_identifier.label_value'/></label>
+						<label class="relative" id="funding-ext-ids-value-label"><@orcid.msg 'manual_funding_form_contents.external_identifier.label_value'/></label>
 						<div class="relative">
-		    				<input name="currentFundingExternalIdentifierValue" type="text" class="input-xlarge" ng-model="externalIdentifier.value.value" placeholder="<@orcid.msg 'manual_funding_form_contents.external_identifier.value'/>" ng-model-onblur/>
+		    				<input name="currentFundingExternalIdentifierValue" id="funding-ext-ids-value-input" type="text" class="input-xlarge" ng-model="externalIdentifier.value.value" placeholder="<@orcid.msg 'manual_funding_form_contents.external_identifier.value'/>" ng-model-onblur/>
 							<span class="orcid-error" ng-show="externalIdentifier.value.errors.length > 0">
-								<div ng-repeat='error in externalIdentifier.value.errors' ng-bind-html-unsafe="error"></div>
+								<div ng-repeat='error in externalIdentifier.value.errors' ng-bind-html="error"></div>
 							</span>
 						</div>	
 					</div>
 					<!-- URL -->
 					<div class="control-group">
-						<label class="relative"><@orcid.msg 'manual_funding_form_contents.external_identifier.label_url'/></label>
+						<label class="relative" id="funding-ext-ids-url-label"><@orcid.msg 'manual_funding_form_contents.external_identifier.label_url'/></label>
 						<div class="relative">
-		    				<input name="currentFundingExternalIdentifierUrl" type="text" class="input-xlarge" ng-model="externalIdentifier.url.value" placeholder="<@orcid.msg 'manual_funding_form_contents.external_identifier.url'/>" ng-model-onblur/>
+		    				<input name="currentFundingExternalIdentifierUrl" id="funding-ext-ids-url-input" type="text" class="input-xlarge" ng-model="externalIdentifier.url.value" placeholder="<@orcid.msg 'manual_funding_form_contents.external_identifier.url'/>" ng-model-onblur/>
 							<span class="orcid-error" ng-show="externalIdentifier.url.errors.length > 0">
-								<div ng-repeat='error in externalIdentifier.url.errors' ng-bind-html-unsafe="error"></div>
+								<div ng-repeat='error in externalIdentifier.url.errors' ng-bind-html="error"></div>
 							</span>
 						</div>	
-					</div>
-					<hr />			   		
-					<div ng-show="$last" class="add-item-link">			
-						<span><a href ng-click="addExternalIdentifier()"><i class="glyphicon glyphicon-plus-sign blue"></i> <@orcid.msg 'manual_funding_form_contents.add_external_identifier' /></a></span>
-					</div>			
+					</div>							
 				</div>
 				<div class="control-group">
 					<span>
@@ -307,19 +279,19 @@
 					<div class="relative">
 						<input id="fundingUrl" class="input-xlarge" name="fundingUrl" type="text" ng-model="editFunding.url.value" placeholder="<@orcid.msg 'manual_funding_form_contents.add_url'/>" ng-change="serverValidate('fundings/funding/urlValidate.json')" ng-model-onblur/>						
 						<span class="orcid-error" ng-show="editFunding.url.errors.length > 0">
-							<div ng-repeat='error in editFunding.url.errors' ng-bind-html-unsafe="error"></div>
+							<div ng-repeat='error in editFunding.url.errors' ng-bind-html="error"></div>
 						</span>
 					</div>
 				</div>		
-		    	<div class="row">
-					<div class="col-md-3 col-sm-3 col-xs-12">	
+		    	<div class="small-row">	
+		    		<div>				
 						<button class="btn btn-primary" ng-click="addFunding()" ng-disabled="addingFunding" ng-class="{disabled:addingFunding}"><@orcid.msg 'manual_funding_form_contents.btnaddtolist'/></button> 
 						<a href="" ng-click="closeModal()" class="cancel-action"><@orcid.msg 'manage.deleteExternalIdentifier.cancel'/></a>
 						<span ng-show="addingFunding">
 							<i class="glyphicon glyphicon-refresh spin x2 green"></i>
 						</span>					
 						<span ng-show="editFunding.errors.length > 0" class="alert"><@orcid.msg 'common.please_fix_errors' /></span>
-					</div>
+					</div>					
 				</div>
 			</div>
 		</div>

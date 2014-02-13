@@ -71,9 +71,30 @@ public class Contributor implements ErrorsInterface, Serializable {
             }
         }
         return c;
-
     }
 
+    public static Contributor valueOf(org.orcid.jaxb.model.message.FundingContributor contributor) {
+        Contributor c = new Contributor();
+        if (contributor != null) {
+            if (contributor.getContributorAttributes() != null) {
+                contributor.getContributorAttributes();
+                if (contributor.getContributorAttributes().getContributorRole() != null)
+                    c.setContributorRole(Text.valueOf(contributor.getContributorAttributes().getContributorRole().value()));
+            }
+            if (contributor.getContributorEmail() != null)
+                c.setEmail(Text.valueOf(contributor.getContributorEmail().getValue()));
+            if (contributor.getContributorOrcid() != null) {
+                c.setOrcid(Text.valueOf(contributor.getContributorOrcid().getPath()));
+                c.setUri(Text.valueOf(contributor.getContributorOrcid().getUri()));
+            }
+            if (contributor.getCreditName() != null) {
+                c.setCreditName(Text.valueOf(contributor.getCreditName().getContent()));
+                c.setCreditNameVisibility(Visibility.valueOf(contributor.getCreditName().getVisibility()));
+            }
+        }
+        return c;
+    }
+    
     public org.orcid.jaxb.model.message.Contributor toContributor() {
         org.orcid.jaxb.model.message.Contributor c = new org.orcid.jaxb.model.message.Contributor();
         if (this.getContributorRole() != null || this.getContributorSequence() != null) {
@@ -82,6 +103,41 @@ public class Contributor implements ErrorsInterface, Serializable {
                 ca.setContributorRole(ContributorRole.fromValue(this.getContributorRole().getValue()));
             if (!PojoUtil.isEmpty(this.getContributorSequence()))
                 ca.setContributorSequence(SequenceType.fromValue(this.getContributorSequence().getValue()));
+            c.setContributorAttributes(ca);
+        }
+        if (this.getEmail() != null)
+            c.setContributorEmail(new ContributorEmail(this.getEmail().getValue()));
+        if (this.getOrcid() != null) {
+            ContributorOrcid contributorOrcid = new ContributorOrcid(this.getOrcid().getValue());
+            if (this.getUri() != null) {
+                String uriString = this.getUri().getValue();
+                if (StringUtils.isNotBlank(uriString)) {
+                    try {
+                        URI uri = new URI(uriString);
+                        contributorOrcid.setHost(uri.getHost());
+                    } catch (URISyntaxException e) {
+                        throw new RuntimeException("Problem parsing contributor orcid uri", e);
+                    }
+                }
+            }
+            contributorOrcid.setUri(this.getUri().getValue());
+
+            c.setContributorOrcid(contributorOrcid);
+        }
+        if (this.getCreditName() != null) {
+            CreditName cn = new CreditName(this.getCreditName().getValue());
+            cn.setVisibility(org.orcid.jaxb.model.message.Visibility.fromValue(this.getCreditNameVisibility().getVisibility().value()));
+            c.setCreditName(cn);
+        }
+        return c;
+    }
+    
+    public org.orcid.jaxb.model.message.FundingContributor toFundingContributor() {
+        org.orcid.jaxb.model.message.FundingContributor c = new org.orcid.jaxb.model.message.FundingContributor();
+        if (this.getContributorRole() != null || this.getContributorSequence() != null) {
+            org.orcid.jaxb.model.message.FundingContributorAttributes ca = new org.orcid.jaxb.model.message.FundingContributorAttributes();
+            if (!PojoUtil.isEmpty(this.getContributorRole()))
+                ca.setContributorRole(ContributorRole.fromValue(this.getContributorRole().getValue()));
             c.setContributorAttributes(ca);
         }
         if (this.getEmail() != null)

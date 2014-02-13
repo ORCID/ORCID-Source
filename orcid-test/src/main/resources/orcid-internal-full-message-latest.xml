@@ -302,17 +302,9 @@
 					<funding-title>
 						<title>Grant # 1</title>
 					</funding-title>
-					<organization>
-						<name>New College</name>
-						<address>
-							<city>Some City</city>
-							<region>CT</region>
-							<country>US</country>
-						</address>
-					</organization>
 					<short-description>1</short-description>
 					<amount currency-code="USD">2500</amount>
-					<url>http://grant1.com</url>					
+					<url>http://grant1.com</url>
 					<start-date>
 						<year>2012</year>
 						<month>04</month>
@@ -321,7 +313,7 @@
 						<year>2014</year>
 						<month>01</month>
 						<day>01</day>
-					</end-date>
+					</end-date>	
 					<funding-external-identifiers>
 						<funding-external-identifier>
 							<funding-external-identifier-type>grant_number</funding-external-identifier-type>
@@ -338,31 +330,37 @@
 						</funding-external-identifier>
 					</funding-external-identifiers>
 					<funding-contributors>
-						<contributor>
+						<funding-contributor>
 							<contributor-orcid>
 								<uri>http://orcid.org/2111-1111-1111-1113</uri>
 								<path>2111-1111-1111-1113</path>
 								<host>orcid.org</host>
 							</contributor-orcid>
 							<credit-name>Credit Name</credit-name>
-							<contributor-attributes>
-								<contributor-sequence>first</contributor-sequence>
+							<funding-contributor-attributes>
 								<contributor-role>postdoctoral-researcher</contributor-role>
-							</contributor-attributes>
-						</contributor>
-						<contributor>
+							</funding-contributor-attributes>
+						</funding-contributor>
+						<funding-contributor>
 							<contributor-orcid>
 								<uri>http://orcid.org/2111-1111-1111-1119</uri>
 								<path>2111-1111-1111-1119</path>
 								<host>orcid.org</host>
 							</contributor-orcid>
 							<credit-name>Credit Name</credit-name>
-							<contributor-attributes>
-								<contributor-sequence>additional</contributor-sequence>
+							<funding-contributor-attributes>
 								<contributor-role>graduate-student</contributor-role>
-							</contributor-attributes>
-						</contributor>
+							</funding-contributor-attributes>
+						</funding-contributor>
 					</funding-contributors>
+					<organization>
+						<name>New College</name>
+						<address>
+							<city>Some City</city>
+							<region>CT</region>
+							<country>US</country>
+						</address>
+					</organization>													
 					<source>
 						<source-orcid>
 							<uri>http://orcid.org/2111-1111-1111-1114</uri>
