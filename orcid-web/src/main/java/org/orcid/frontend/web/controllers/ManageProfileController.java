@@ -276,29 +276,34 @@ public class ManageProfileController extends BaseWorkspaceController {
     @RequestMapping(value = "/addDelegate.json")
     public @ResponseBody
     String addDelegate(@RequestBody String delegateOrcid) {
-        GivenPermissionToEntity permission = new GivenPermissionToEntity();
-        permission.setGiver(getCurrentUserOrcid());
-        ProfileSummaryEntity receiver = new ProfileSummaryEntity(delegateOrcid);
-        permission.setReceiver(receiver);
-        permission.setApprovalDate(new Date());
-        givenPermissionToDao.merge(permission);
-        OrcidProfile currentUser = getEffectiveProfile();
-        ProfileEntity delegateProfile = profileEntityManager.findByOrcid(delegateOrcid);
-        DelegationDetails details = new DelegationDetails();
-        details.setApprovalDate(new ApprovalDate(DateUtils.convertToXMLGregorianCalendar(permission.getApprovalDate())));
-        DelegateSummary summary = new DelegateSummary();
-        details.setDelegateSummary(summary);
-        summary.setOrcidIdentifier(new OrcidIdentifier(delegateOrcid));
-        String creditName = delegateProfile.getCreditName();
-        if (StringUtils.isNotBlank(creditName)) {
-            summary.setCreditName(new CreditName(creditName));
+        String currentUserOrcid = getCurrentUserOrcid();
+        GivenPermissionToEntity existing = givenPermissionToDao.findByGiverAndReceiverOrcid(currentUserOrcid, delegateOrcid);
+        if (existing == null) {
+            GivenPermissionToEntity permission = new GivenPermissionToEntity();
+            permission.setGiver(currentUserOrcid);
+            ProfileSummaryEntity receiver = new ProfileSummaryEntity(delegateOrcid);
+            permission.setReceiver(receiver);
+            permission.setApprovalDate(new Date());
+            givenPermissionToDao.merge(permission);
+            OrcidProfile currentUser = getEffectiveProfile();
+            ProfileEntity delegateProfile = profileEntityManager.findByOrcid(delegateOrcid);
+            DelegationDetails details = new DelegationDetails();
+            details.setApprovalDate(new ApprovalDate(DateUtils.convertToXMLGregorianCalendar(permission.getApprovalDate())));
+            DelegateSummary summary = new DelegateSummary();
+            details.setDelegateSummary(summary);
+            summary.setOrcidIdentifier(new OrcidIdentifier(delegateOrcid));
+            String creditName = delegateProfile.getCreditName();
+            if (StringUtils.isNotBlank(creditName)) {
+                summary.setCreditName(new CreditName(creditName));
+            }
+            List<DelegationDetails> detailsList = new ArrayList<>(1);
+            detailsList.add(details);
+            notificationManager.sendNotificationToAddedDelegate(currentUser, detailsList);
+            // Clear the delegate's profile from the cache so that the granting
+            // user
+            // is visible to them immediately
+            profileDao.updateLastModifiedDate(delegateOrcid);
         }
-        List<DelegationDetails> detailsList = new ArrayList<>(1);
-        detailsList.add(details);
-        notificationManager.sendNotificationToAddedDelegate(currentUser, detailsList);
-        // Clear the delegate's profile from the cache so that the granting user
-        // is visible to them immediately
-        profileDao.updateLastModifiedDate(delegateOrcid);
         return delegateOrcid;
     }
 

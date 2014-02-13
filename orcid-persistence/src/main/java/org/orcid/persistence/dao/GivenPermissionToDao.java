@@ -25,6 +25,8 @@ import org.orcid.persistence.jpa.entities.GivenPermissionToEntity;
  */
 public interface GivenPermissionToDao extends GenericDao<GivenPermissionToEntity, Long> {
 
-    public void remove(String giverOrcid, String receiverOrcid);
+    GivenPermissionToEntity findByGiverAndReceiverOrcid(String giverOrcid, String receiverOrcid);
+
+    void remove(String giverOrcid, String receiverOrcid);
 
 }
