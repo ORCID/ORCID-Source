@@ -16,6 +16,8 @@
  */
 package org.orcid.persistence.jpa.entities.custom;
 
+import java.io.Serializable;
+
 import org.orcid.jaxb.model.message.Visibility;
 
 /**
@@ -24,8 +26,10 @@ import org.orcid.jaxb.model.message.Visibility;
  * 
  * @author Angel Montenegro (amontenegro)
  * */
-public class MinimizedWorkEntity {
-	private Long id;
+public class MinimizedWorkEntity implements Serializable {
+    private static final long serialVersionUID = -6961089690820823167L;
+
+        private Long id;
 	private String title;
 	private String subtitle;
 	private String description;
