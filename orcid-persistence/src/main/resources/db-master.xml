@@ -81,4 +81,5 @@
     <include file="/db/updates/fundings_modify_external_identifier_constraint.xml" />
     <include file="/db/updates/reindex_orgs_to_add_funding_information.xml" />
     <include file="/db/updates/amount_is_not_required_on_fundings.xml" />
+    <include file="/db/updates/resetFundingContributors.xml" />
 </databaseChangeLog>
