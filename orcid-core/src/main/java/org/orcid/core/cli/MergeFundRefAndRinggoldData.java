@@ -63,8 +63,25 @@ public class MergeFundRefAndRinggoldData {
     }
 
     class RingGoldOrganization {
-        String id, name, country, city;
+        String id, name, country, city, state;
         List<RingGoldOrganizationAltNameAttributes> altNames;
+        
+        public String getRingGoldOrganizationAltNameAttributesString() {            
+            if(altNames != null && altNames.size() > 0) {
+                String result = "{";
+                int counter = 0;
+                for(RingGoldOrganizationAltNameAttributes org : altNames) {
+                    counter += 1;
+                    result += "[name:" + org.name + ", country:" + org.country + ", city: " + org.city + "]";
+                    if(counter < altNames.size()) {
+                        result += ", ";
+                    }
+                }
+                result += "}";
+                return result;
+            }
+            return null;
+        }
     }
 
     class RingGoldOrganizationAltNameAttributes {
@@ -116,11 +133,13 @@ public class MergeFundRefAndRinggoldData {
     // the org and the ids with the same name
     private Map<String, List<String>> ringGoldOrgsWithDuplicatedNames = new HashMap<String, List<String>>();
 
-    private String EXISTING_ORGS_FILE = "C:/Users/angel.montenegro/Desktop/mergeTest/latest/csv/existingOrgs.csv";
-    private String NEW_ORGS_FILE = "C:/Users/angel.montenegro/Desktop/mergeTest/latest/csv/newOrgs.csv";
+    private String EXISTING_ORGS_FILE = "C:/Users/Equipo/Desktop/RinggoldAndFundref/results/existingOrgs.csv";
+    private String POSSIBLE_MATCH_FILE = "C:/Users/Equipo/Desktop/RinggoldAndFundref/results/possibleMatch.csv";
+    private String NEW_ORGS_FILE = "C:/Users/Equipo/Desktop/RinggoldAndFundref/results/newOrgs.csv";
 
     private CSVWriter existingOrgsCSV = null;
     private CSVWriter newOrgsCSV = null;
+    private CSVWriter possibleMatchCSV = null;
 
     /**
      * INIT
@@ -147,6 +166,12 @@ public class MergeFundRefAndRinggoldData {
 
             headers = new String[] { "id", "name", "altName", "country", "state", "type", "subtype" };
             newOrgsCSV.writeNext(headers);
+            
+            Writer wirter3 = new FileWriter(this.POSSIBLE_MATCH_FILE);
+            possibleMatchCSV = createCSVWriter(wirter3);
+
+            headers = new String[] { "ringgold_id", "fundref_id", "ringgold_name", "fundref_name", "ringgold_alt_names", "fundref_alt_name", "ringgold_country", "fundref_country", "ringgold_state", "fundref_state"};
+            possibleMatchCSV.writeNext(headers);
 
         } catch (IOException ioe) {
             // TODO
@@ -184,7 +209,12 @@ public class MergeFundRefAndRinggoldData {
             if (matchingRingGoldOrgId == null) {
                 createFundRefOrganization(fOrg);
             } else {
-                writeMatchInformation(fOrg, ringGoldOrgs.get(matchingRingGoldOrgId));
+                if(matchingRingGoldOrgId.startsWith("[P]")) {
+                    matchingRingGoldOrgId = matchingRingGoldOrgId.replaceAll("\\[P\\]", "");
+                    writePossibleMatchInformation(fOrg, ringGoldOrgs.get(matchingRingGoldOrgId));
+                } else {
+                    writeMatchInformation(fOrg, ringGoldOrgs.get(matchingRingGoldOrgId));
+                }                
             }
             if(counter % 100 == 0)
                 System.out.println(counter);
@@ -195,6 +225,7 @@ public class MergeFundRefAndRinggoldData {
         try {
             existingOrgsCSV.close();
             newOrgsCSV.close();
+            possibleMatchCSV.close();
         } catch (IOException ioe) {
             System.out.println("ERROR CLOSING CSV FILES");
         }
@@ -249,6 +280,10 @@ public class MergeFundRefAndRinggoldData {
             LOGGER.info("Processing item {}", itemDoi);
             // Get organization name
             String orgName = (String) xPath.compile(orgNameExpression.replace("%s", itemDoi)).evaluate(xmlDocument, XPathConstants.STRING);
+            
+            //Replace "U.S." with "US" to match RingGold info
+            orgName = orgName.replace("U.S.", "US");
+            
             // Get organization alt name
             String orgAltName = (String) xPath.compile(orgAltNameExpression.replace("%s", itemDoi)).evaluate(xmlDocument, XPathConstants.STRING);
             // Get country geoname id
@@ -399,6 +434,7 @@ public class MergeFundRefAndRinggoldData {
         String extName = line[3];
         String city = line[4];
         String country = line[7];
+        String state = line[8];
         
         if (StringUtils.isNotBlank(extName)) {
             name = extName;
@@ -413,6 +449,7 @@ public class MergeFundRefAndRinggoldData {
         org.name = StringUtils.isBlank(name) ? null : name;
         org.city = city;
         org.country = country;
+        org.state = state;
         
         return org;
     }
@@ -429,8 +466,8 @@ public class MergeFundRefAndRinggoldData {
                 String id = line[0];
                 String altName = line[1];
                 String altExtName = line[2];
-                String city = line[4];
-                String country = line[6];
+                String city = line[3];
+                String country = line[5];
                 
                 if (StringUtils.isNotBlank(altExtName)) {
                     altName = altExtName;
@@ -497,20 +534,12 @@ public class MergeFundRefAndRinggoldData {
         if (StringUtils.isNotBlank(fOrg.name) && ringGoldNames.containsKey(fOrg.name)) {     
             RingGoldNames rName = ringGoldNames.get(fOrg.name);
             RingGoldOrganization rOrg = ringgoldOrgs.get(rName.id);
+            //Put the id as a possible match
+            ringGoldId= "[P]" + rOrg.id;
+            System.out.println("Possible Match: " + rName.id + " - " + rName.name + " - " + rName.isPrimary);
             //Compare country and city
-            if(StringUtils.isNotBlank(fOrg.country) && fOrg.country.equals(rOrg.country)){
-                System.out.println("Possible Match: " + rName.id + " - " + rName.name + " - " + rName.isPrimary);
-                //If the state is not null, compare states
-                if(StringUtils.isNotBlank(fOrg.state)){
-                    if(StringUtils.isNotBlank(rOrg.city)){
-                        if(fOrg.state.equals(rOrg.city)){
-                            ringGoldId = rOrg.id;
-                        }
-                    }
-                } else {
-                    //If it is null, assume this is a match
-                    ringGoldId = rOrg.id;
-                }
+            if(StringUtils.isNotBlank(fOrg.country) && fOrg.country.equals(rOrg.country)){                                                
+                ringGoldId = rOrg.id;
             }
             
         } else if (StringUtils.isNotBlank(fOrg.altName) && ringGoldNames.containsKey(fOrg.altName)) {
@@ -520,24 +549,17 @@ public class MergeFundRefAndRinggoldData {
             RingGoldOrganization rOrg = ringgoldOrgs.get(rAltName.id);                        
             System.out.println("AltName Possible Match: " + rAltName.id + " - " + rAltName.name + " - " + rAltName.isPrimary);
             //If the match is found with the FundRef alt name, check first the primary name, then check the alt names
+            
+            //Put the id as a possible match
+            ringGoldId= "[P]" + rOrg.id; 
+            
             if(rAltName.isPrimary) {
                 //Compare the alt name with the ringgold primary name
                 if(fOrg.altName.equals(rOrg.name)){
                     
                   //Compare country and city
                     if(StringUtils.isNotBlank(fOrg.country) && fOrg.country.equals(rOrg.country)){
-                        
-                        //If the state is not null, compare states
-                        if(StringUtils.isNotBlank(fOrg.state)){
-                            if(StringUtils.isNotBlank(rOrg.city)){
-                                if(fOrg.state.equals(rOrg.city)){
-                                    ringGoldId = rOrg.id;
-                                }
-                            }
-                        } else {
-                            //If it is null, since they are in the same country, assume this is a match
-                            ringGoldId = rOrg.id;
-                        }
+                        ringGoldId = rOrg.id;                        
                     }
                 }
             } else {
@@ -557,18 +579,7 @@ public class MergeFundRefAndRinggoldData {
                 if(altOrg != null){
                     //Compare country and city
                     if(StringUtils.isNotBlank(fOrg.country) && fOrg.country.equals(altOrg.country)){
-                        
-                        //If the state is not null, compare states
-                        if(StringUtils.isNotBlank(fOrg.state)){
-                            if(StringUtils.isNotBlank(altOrg.city)){
-                                if(fOrg.state.equals(altOrg.city)){
-                                    ringGoldId = altOrg.id;
-                                }
-                            }
-                        } else {
-                            //If it is null, assume this is a match
-                            ringGoldId = altOrg.id;
-                        }
+                        ringGoldId = altOrg.id;
                     }
                 }
             }
@@ -644,6 +655,28 @@ public class MergeFundRefAndRinggoldData {
         organizationMatchLine[5] = fOrg.altName;
 
         existingOrgsCSV.writeNext(organizationMatchLine);
+    }
+    
+    
+    /**
+     * Writes a possible match that should be checked manually
+     * */
+    private void writePossibleMatchInformation(FundRefOrganization fOrg, RingGoldOrganization rOrg) {
+        //"ringgold_id", "fundref_id", "ringgold_name", "fundref_name", "ringgold_alt_names", 
+        //"fundref_alt_name", "ringgold_country", "fundref_country", "ringgold_state", "fundref_state"
+        String [] possibleMatchLine = new String[10];
+        possibleMatchLine[0]=rOrg.id;
+        possibleMatchLine[1]=fOrg.id;
+        possibleMatchLine[2]=rOrg.name;
+        possibleMatchLine[3]=fOrg.name;
+        possibleMatchLine[4]=rOrg.getRingGoldOrganizationAltNameAttributesString();
+        possibleMatchLine[5]=fOrg.altName;
+        possibleMatchLine[6]=rOrg.country;
+        possibleMatchLine[7]=fOrg.country;
+        possibleMatchLine[8]=rOrg.state;
+        possibleMatchLine[9]=fOrg.state;
+        
+        possibleMatchCSV.writeNext(possibleMatchLine);
     }
 
     /*****************************************************************************
