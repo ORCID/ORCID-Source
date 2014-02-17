@@ -62,7 +62,7 @@
 							<!-- we should never see errors here, but just to be safe -->
 							<span class="orcid-error" ng-show="emailsPojo.errors.length > 0">
 								<span ng-repeat='error in emailsPojo.errors'
-								ng-bind-html-unsafe="error"></span>
+								ng-bind-html="error"></span>
 							</span>
 							<!-- Start -->
 							
@@ -111,13 +111,13 @@
 							<div class="row bottom-row">
 									<div class="col-md-12 add-email">
 										<input type="email" placeholder="${springMacroRequestContext.getMessage("manage.add_another_email")}"
-											class="input-xlarge" ng-model="inputEmail.value"
-											style="margin: 0px;" required /> <span
+											class="input-xlarge inline-input" ng-model="inputEmail.value"
+											required /> <span
 											ng-click="checkCredentials()" class="btn btn-primary">${springMacroRequestContext.getMessage("manage.spanadd")}</span>
 										<span class="orcid-error"
 											ng-show="inputEmail.errors.length > 0"> <span
 											ng-repeat='error in inputEmail.errors'
-											ng-bind-html-unsafe="error"></span>
+											ng-bind-html="error"></span>
 										</span>
 									</div>
 								</div>
@@ -137,7 +137,7 @@
 							<span class="orcid-error"
 								ng-show="changePasswordPojo.errors.length > 0">
 								<div ng-repeat='error in changePasswordPojo.errors'
-									ng-bind-html-unsafe="error"></div>
+									ng-bind-html="error"></div>
 							</span>
 							<div>
 								<label for="passwordField" class="">${springMacroRequestContext.getMessage("change_password.oldpassword")}</label>
@@ -204,7 +204,7 @@
 					<td colspan="2">
 						<div class="editTablePadCell35">
 							<span class="orcid-error" ng-show="errors.length > 0"> <span
-								ng-repeat='error in errors' ng-bind-html-unsafe="error"></span>
+								ng-repeat='error in errors' ng-bind-html="error"></span>
 							</span>
 							<div class="control-group">
 								<label for="changeSecurityQuestionForm.securityQuestionAnswer"
@@ -281,23 +281,25 @@
 				
 				
 				<tr>
-					<th><a name="ssoPreferences"></a><@orcid.msg 'manage.manage_sso_credentials' /></th>
-					<td><a href="" ng-click="toggleSSOPreferences"
-						ng-bind="ssoPreferencesToggleText"></a></td>
+					<th><a name="ssoPreferences"></a><@orcid.msg 'manage.manage_sso_credentials.title' /></th>
+					<td><a href="" ng-click="toggleSSOPreferences()" ng-bind="ssoPreferencesToggleText"></a></td>
 				</tr>
 				<tr ng-controller="SSOPreferencesCtrl"
 					ng-show="showEditSSOPreferences" ng-cloak>
 					<td colspan="2">
-						<div class="create-sso-credentials">
+						<div class="create-sso-credentials" ng-hide="userCredentials != null">
 							<span>
 								<@orcid.msg 'manage.manage_sso_credentials.create_credentials' />
-								<a href ng-click="showCreateModal()"><@orcid.msg 'manage.manage_sso_credentials.create_credentials_link' /></a>
+								<a href ng-click="fetchEmptyCredentials()"><@orcid.msg 'manage.manage_sso_credentials.create_credentials_link' /></a>
 							</span>
 						</div>
-						<div class="show-sso-credentials">
+						<div class="show-sso-credentials" ng-show="userCredentials != null">
 							<span>
 								<@orcid.msg 'manage.manage_sso_credentials.view_credentials' />
-								<@orcid.msg 'manage.manage_sso_credentials.view_credentials_link' />
+								<a href ng-click="showSSOCredentials()"><@orcid.msg 'manage.manage_sso_credentials.view_credentials_link' /></a>
+								<br />
+								<@orcid.msg 'manage.manage_sso_credentials.revoke_credentials' />
+								<a href ng-click="showRevokeModal()"><@orcid.msg 'manage.manage_sso_credentials.revoke_credentials_link' /></a>								
 							</span>
 						</div>
 					</td>
@@ -391,6 +393,72 @@
 			</tbody>
 		</table>
 		</#if>
+		
+		<#if RequestParameters['delegates']??>
+		<h3>
+			<b>${springMacroRequestContext.getMessage("settings.tdtrustindividual")}</b>
+		</h3>
+		<p>
+			${springMacroRequestContext.getMessage("settings.tdallowpermission")}<br />
+			<a href="http://support.orcid.org/knowledgebase/articles/delegation"
+				target=_blank"">${springMacroRequestContext.getMessage("manage.findoutmore")}</a>
+		</p>
+		<div ng-controller="DelegatesCtrl" id="DelegatesCtrl" data-search-query-url="${searchBaseUrl}">
+			<table class="table table-bordered settings-table normal-width" ng-show="delegation.givenPermissionTo.delegationDetails" ng-cloak>
+				<thead>
+					<tr>
+						<th width="35%">${springMacroRequestContext.getMessage("manage.thproxy")}</th>
+						<th width="5%">${springMacroRequestContext.getMessage("manage.thapprovaldate")}</th>
+						<td width="5%"></td>
+					</tr>
+				</thead>
+				<tbody>
+					<tr ng-repeat="delegationDetails in delegation.givenPermissionTo.delegationDetails | orderBy:'delegateSummary.creditName.content'">
+						<td width="35%"><a href="{{delegationDetails.delegateSummary.orcidIdentifier.uri}}">{{delegationDetails.delegateSummary.creditName.content}}</a></td>
+						<td width="35%">{{delegationDetails.approvalDate.value|date}}</td>
+						<td width="5%"><a
+							ng-click="confirmRevoke(delegationDetails.delegateSummary.creditName.content, delegationDetails.delegateSummary.orcidIdentifier.path)"
+							class="glyphicon glyphicon-trash grey"
+							title="{springMacroRequestContext.getMessage("manage.revokeaccess")}"></a></td>
+					</tr>
+				</tbody>
+			</table>
+			<p>Search for trusted individuals to add.</p>
+			<div>
+				<form ng-submit="search()">
+					<input type="text" placeholder="ORCID or names" class="input-xlarge inline-input" ng-model="userQuery"></input>
+					<input type="submit" class="btn btn-primary" value="Search"></input>
+				</form>
+			</div>
+			<div>
+				<table class="ng-cloak table table-striped" ng-show="areResults()">
+					<thead>
+						<tr>
+							<th>${springMacroRequestContext.getMessage("search_results.thORCIDID")}</th>
+							<th>${springMacroRequestContext.getMessage("search_results.thGivenname")}</th>
+							<th>${springMacroRequestContext.getMessage("search_results.thFamilynames")}</th>
+							<th>${springMacroRequestContext.getMessage("search_results.thInstitutions")}</th>
+							<th></th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr ng-repeat='result in results' class="new-search-result">
+							<td class='search-result-orcid-id'><a href="{{result['orcid-profile']['orcid-id']}}">{{result['orcid-profile'].orcid.value}}</td>
+							<td>{{result['orcid-profile']['orcid-bio']['personal-details']['given-names'].value}}</td>
+							<td>{{result['orcid-profile']['orcid-bio']['personal-details']['family-name'].value}}</td>
+							<td>{{concatPropertyValues(result['orcid-profile']['orcid-bio']['affiliations'], 'affiliation-name')}}</td>
+							<td><span ng-click="confirmAddDelegate(result['orcid-profile']['orcid-bio']['personal-details']['given-names'].value + ' ' + result['orcid-profile']['orcid-bio']['personal-details']['family-name'].value, result['orcid-profile']['orcid']['value'])" class="btn btn-primary">${springMacroRequestContext.getMessage("manage.spanadd")}</span></td>
+						</tr>
+					</tbody>
+				</table>
+				<div id="show-more-button-container">
+					<button id="show-more-button" type="submit" class="ng-cloak btn" ng-click="getMoreResults()" ng-show="areMoreResults">Show more</button>
+					<span id="ajax-loader" class="ng-cloak" ng-show="showLoader"><i class="glyphicon glyphicon-refresh spin x2 green"></i></span>
+				</div>
+				<div id="no-results-alert" class="hide alert alert-error"><@spring.message "orcid.frontend.web.no_results"/></div>
+			</div>
+		</div>
+		</#if>
 	</div>
 </div>
 
@@ -433,14 +501,30 @@
 	</div>
 </script>
 
+<script type="text/ng-template" id="confirm-add-delegate-modal">
+	<div style="padding: 20px;">
+	   <h3>Add delegate</h3>
+	   <p> {{delegateNameToAdd}} ({{delegateToAdd}})</p>
+	   <button class="btn btn-primary" ng-click="addDelegate()">Add</button> 
+	   <a href="" ng-click="closeModal()">Cancel</a>
+	</div>
+</script>
+	
+<script type="text/ng-template" id="revoke-delegate-modal">
+	<div style="padding: 20px;">
+		<h3>Please confirm revocation of delegate</h3>
+		<p> {{delegateNameToRevoke}} ({{delegateToRevoke}})</p>
+		<button class="btn btn-danger" ng-click="revoke()">Revoke</button> 
+		<a href="" ng-click="closeModal()">Cancel</a>
+	<div>
+</script>
+
 <script type="text/ng-template" id="generate-sso-credentials-modal">
 	<div>
 		<h3><@orcid.msg 'manage.manage_sso_credentials.create.title'/></h3>
 		<span><@orcid.msg 'manage.manage_sso_credentials.create.instructions'/></span>
-		
-		
-		<div class="control-group" ng-repeat='rUri in ssoCredentials.redirectUris'>						
-			<label class="control-label" style="margin-right:10px; text-align:left; width:90px"><@orcid.msg 'manage.manage_sso_credentials.redirect_uri'/>:</label>
+		<label class="control-label" style="margin-right:10px; text-align:left; width:90px"><@orcid.msg 'manage.manage_sso_credentials.redirect_uri'/>:</label>
+		<div class="control-group" ng-repeat='rUri in userCredentials.redirectUris'>									
 			<div class="relative">
 				<input type="text" placeholder="<@orcid.msg 'manage.manage_sso_credentials.redirect_uri.placeholder'/>" class="input-xlarge" ng-model="rUri.value.value">
 				<span class="orcid-error" ng-show="rUri.errors.length > 0">
@@ -448,47 +532,35 @@
 				</span>						
 			</div>
 		</div>
-		<input type="text" name="redirectUri" ng-model="redirect_uri.value" />
-		
-		
+		<div ng-show="!ssoCredentials.redirectUris.length">			
+			<a href ng-click="addRedirectURI()" class="icon-plus-sign blue"><@orcid.msg 'manage.manage_sso_credentials.create.add_redirect_uri'/></a>
+		</div>
 		<button class="btn btn-danger" ng-click="submit()"><@orcid.msg 'manage.manage_sso_credentials.create.generate'/></button>
 		<a href="" ng-click="closeModal()"><@orcid.msg 'manage.manage_sso_credentials.create.cancel'/></a>
 	</div>
 </script>
+
+<script type="text/ng-template" id="show-sso-credentials-modal">
+	<div>
+		<h3><@orcid.msg 'manage.manage_sso_credentials.create.title'/></h3>
+		<span><@orcid.msg 'manage.manage_sso_credentials.view.instructions'/></span><br />
+		<span>{{userCredentials.clientSecret.value}}</span><br />
+		<label class="control-label"><@orcid.msg 'manage.manage_sso_credentials.view.redirect_uri'/>:</label>
+		<div class="control-group" ng-repeat='rUri in userCredentials.redirectUris'>									
+			<div class="relative">
+				{{rUri.value.value}}<br />									
+			</div>
+		</div>
+		<a href="" ng-click="closeModal()"><@orcid.msg 'manage.manage_sso_credentials.create.cancel'/></a>
+	</div>
+</script>	
+
+<script type="text/ng-template" id="revoke-sso-credentials-modal">
+	<div>
+		<h3><@orcid.msg 'manage.manage_sso_credentials.revoke.title'/></h3>
+		<span><@orcid.msg 'manage.manage_sso_credentials.revoke.instructions'/></span><br />
+		<button class="btn btn-danger" ng-click="revoke()"><@orcid.msg 'manage.manage_sso_credentials.revoke.submit'/></button>
+		<a href="" ng-click="closeModal()"><@orcid.msg 'manage.manage_sso_credentials.create.cancel'/></a>
+	</div>
+</script>	
 </@protected>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

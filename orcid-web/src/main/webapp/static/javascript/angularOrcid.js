@@ -15,6 +15,19 @@
  * =============================================================================
  */
 
+	function openImportWizardUrl(url) {
+		var win = window.open(url, "_target"); 
+		setTimeout( function() {
+		    if(!win || win.outerHeight === 0) {
+		        //First Checking Condition Works For IE & Firefox
+		        //Second Checking Condition Works For Chrome
+		        window.location.href = url;
+		    } 
+		}, 250);
+		$.colorbox.close();		
+	};
+
+
 var orcidNgModule = angular.module('orcidApp', ['ngCookies','ngSanitize']);
 
 orcidNgModule.directive('ngModelOnblur', function() {
@@ -1842,7 +1855,7 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc) {
 	$scope.disambiguatedFunding = null;
 	$scope.moreInfo = {};
 	$scope.privacyHelp = {};
-	$scope.editTranslatedTitle = false; 
+	$scope.editTranslatedTitle = false; 	
 	
 	$scope.toggleClickMoreInfo = function(key) {
 		if (!document.documentElement.className.contains('no-touch')) {
@@ -1930,14 +1943,32 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc) {
 		});
 	};
 	
+	$scope.showTemplateInModal = function(templateId) {
+		$.colorbox({        	            
+            html : $compile($('#'+templateId).html())($scope),
+            onComplete: function() {$.colorbox.resize();}
+        });
+	};
+	
+	$scope.openImportWizardUrl = function(url) {
+		openImportWizardUrl(url);
+	};
+
+
 	$scope.bindTypeahead = function () {
 		var numOfResults = 100;
-		
 		$("#fundingName").typeahead({
 			name: 'fundingName',
 			limit: numOfResults,
 			remote: {
-				url: $('body').data('baseurl')+'fundings/disambiguated/name/%QUERY?limit=' + numOfResults
+				replace: function () {
+                    var q = $('body').data('baseurl')+'fundings/disambiguated/name/';
+                    if ($('#fundingName').val()) {
+                        q += encodeURIComponent($('#fundingName').val());
+                    }
+                    q += '?limit=' + numOfResults + '&funders-only=' + $('#fundersOnly').is(':checked');
+                    return q;
+                }
 			},
 			template: function (datum) {
 				   var forDisplay = 
@@ -2086,13 +2117,53 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc) {
     	$('#translatedTitle').toggle();
     	$.colorbox.resize();
 	};
-	
 	$scope.renderTranslatedTitleInfo = function(funding) {		
 		var info = null; 
 		if(funding != null && funding.fundingTitle != null && funding.fundingTitle.translatedTitle != null) {
 			info = funding.fundingTitle.translatedTitle.content + ' - ' + funding.fundingTitle.translatedTitle.languageName;										
 		}				
 		return info;
+	};
+	
+	$scope.typeChanged = function() {
+		var selectedType = $scope.editFunding.fundingType.value;
+		switch (selectedType){
+		case 'award':
+			$("#funding-ext-ids-title").text(om.get("funding.add.external_id.title.award"));
+			$("#funding-ext-ids-value-label").text(om.get("funding.add.external_id.value.label.award"));
+			$("#funding-ext-ids-value-input").attr("placeholder", om.get("funding.add.external_id.value.placeholder.award"));
+			$("#funding-ext-ids-url-label").text(om.get("funding.add.external_id.url.label.award"));
+			$("#funding-ext-ids-url-input").attr("placeholder", om.get("funding.add.external_id.url.placeholder.award"));
+			break;
+		case 'contract':
+			$("#funding-ext-ids-title").text(om.get("funding.add.external_id.title.contract"));
+			$("#funding-ext-ids-value-label").text(om.get("funding.add.external_id.value.label.contract"));
+			$("#funding-ext-ids-value-input").attr("placeholder", om.get("funding.add.external_id.value.placeholder.contract"));
+			$("#funding-ext-ids-url-label").text(om.get("funding.add.external_id.url.label.contract"));
+			$("#funding-ext-ids-url-input").attr("placeholder", om.get("funding.add.external_id.url.placeholder.contract"));
+			break;
+		case 'grant':
+			$("#funding-ext-ids-title").text(om.get("funding.add.external_id.title.grant"));
+			$("#funding-ext-ids-value-label").text(om.get("funding.add.external_id.value.label.grant"));
+			$("#funding-ext-ids-value-input").attr("placeholder", om.get("funding.add.external_id.value.placeholder.grant"));
+			$("#funding-ext-ids-url-label").text(om.get("funding.add.external_id.url.label.grant"));
+			$("#funding-ext-ids-url-input").attr("placeholder", om.get("funding.add.external_id.url.placeholder.grant"));
+			break;
+		case 'salary-award':
+			$("#funding-ext-ids-value-label").text(om.get("funding.add.external_id.value.label.award"));
+			$("#funding-ext-ids-value-input").attr("placeholder", om.get("funding.add.external_id.value.placeholder.award"));
+			$("#funding-ext-ids-url-label").text(om.get("funding.add.external_id.url.label.award"));
+			$("#funding-ext-ids-url-input").attr("placeholder", om.get("funding.add.external_id.url.placeholder.award"));
+			$("#funding-ext-ids-title").text(om.get("funding.add.external_id.title.award"));
+			break;
+		default:
+			$("#funding-ext-ids-title").text(om.get("funding.add.external_id.title.grant"));
+			$("#funding-ext-ids-value-label").text(om.get("funding.add.external_id.value.label.grant"));
+			$("#funding-ext-ids-value-input").attr("placeholder", om.get("funding.add.external_id.value.placeholder.grant"));
+			$("#funding-ext-ids-url-label").text(om.get("funding.add.external_id.url.label.grant"));
+			$("#funding-ext-ids-url-input").attr("placeholder", om.get("funding.add.external_id.url.placeholder.grant"));
+			break;
+		}
 	};
 }
 
@@ -2527,16 +2598,7 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 	
 
 	$scope.openImportWizardUrl = function(url) {
-		var win = window.open(url, "_target"); 
-		setTimeout( function() {
-		    if(!win || win.outerHeight === 0) {
-		        //First Checking Condition Works For IE & Firefox
-		        //Second Checking Condition Works For Chrome
-		        window.location.href = url;
-		    } 
-		}, 250);
-		$.colorbox.close();
-		
+		openImportWizardUrl(url);
 	};
 
 	
@@ -2695,31 +2757,33 @@ function QuickSearchCtrl($scope, $compile){
 			dataType: 'json',
 			headers: { Accept: 'application/json'},
 			success: function(data) {
-				var resultsContainer = data['orcid-search-results']; 
-				if(typeof resultsContainer !== 'undefined'){
-					$scope.numFound = resultsContainer['num-found'];
+				$('#ajax-loader').hide();
+				var resultsContainer = data['orcid-search-results'];
+				$scope.numFound = resultsContainer['num-found'];
+				if(resultsContainer['orcid-search-result']){
 					$scope.results = $scope.results.concat(resultsContainer['orcid-search-result']);
 				}
-				else{
+				if(!$scope.numFound){
 					$('#no-results-alert').fadeIn(1200);
 				}
-				$scope.areMoreResults = $scope.numFound >= ($scope.start + $scope.rows);
+				$scope.areMoreResults = $scope.numFound > ($scope.start + $scope.rows);
 				$scope.$apply();
-				$('#ajax-loader').hide();
 				var newSearchResults = $('.new-search-result');
-				newSearchResults.fadeIn(1200);
-				newSearchResults.removeClass('new-search-result');
-				var newSearchResultsTop = newSearchResults.offset().top;
-				var showMoreButtonTop = $('#show-more-button-container').offset().top;
-				var bottom = $(window).height();
-				if(showMoreButtonTop > bottom){
-					$('html, body').animate(
-						{ 
-							scrollTop: newSearchResultsTop
-						},
-						1000, 
-						'easeOutQuint'
-					);
+				if(newSearchResults.length > 0){
+					newSearchResults.fadeIn(1200);
+					newSearchResults.removeClass('new-search-result');
+					var newSearchResultsTop = newSearchResults.offset().top;
+					var showMoreButtonTop = $('#show-more-button-container').offset().top;
+					var bottom = $(window).height();
+					if(showMoreButtonTop > bottom){
+						$('html, body').animate(
+							{ 
+								scrollTop: newSearchResultsTop
+							},
+							1000, 
+							'easeOutQuint'
+						);
+					}
 				}
 			}
 		}).fail(function(){
@@ -2744,11 +2808,243 @@ function QuickSearchCtrl($scope, $compile){
 	};
 	
 	$scope.areResults = function(){
-		return $scope.numFound != 0;
+		return $scope.results.length > 0;
 	};
 	
 	// init
 	$scope.getResults(10);
+};
+
+// Controller for delegate permissions that have been granted BY the current user
+function DelegatesCtrl($scope, $compile){
+	$scope.results = new Array();
+	$scope.numFound = 0;
+	$scope.start = 0;
+	$scope.rows = 10;
+	$scope.showLoader = false;
+	
+	$scope.search = function(){
+		$scope.showLoader = true;
+		$scope.results = new Array();
+		$scope.getResults();
+	};
+	
+	$scope.getResults = function(rows){
+		var query = "{!edismax qf='given-and-family-names^50.0 family-name^10.0 given-names^5.0 credit-name^10.0 other-names^5.0 text^1.0' pf='given-and-family-names^50.0' mm=1}" + $scope.userQuery;
+		var orcidRegex = new RegExp("(\\d{4}-){3,}\\d{3}[\\dX]");
+		var regexResult = orcidRegex.exec($scope.userQuery);
+		if(regexResult){
+			query = "orcid:" + regexResult[0];
+		}
+		$.ajax({
+			url: $('#DelegatesCtrl').data('search-query-url') + query + '&start=' + $scope.start + '&rows=' + $scope.rows,      
+			dataType: 'json',
+			headers: { Accept: 'application/json'},
+			success: function(data) {
+				var resultsContainer = data['orcid-search-results']; 
+				if(typeof resultsContainer !== 'undefined'){
+					$scope.numFound = resultsContainer['num-found'];
+					$scope.results = $scope.results.concat(resultsContainer['orcid-search-result']);
+				}
+				else{
+					$('#no-results-alert').fadeIn(1200);
+				}
+				$scope.areMoreResults = $scope.numFound >= ($scope.start + $scope.rows);
+				$scope.showLoader = false;
+				$scope.$apply();
+				var newSearchResults = $('.new-search-result');
+				newSearchResults.fadeIn(1200);
+				newSearchResults.removeClass('new-search-result');
+				var newSearchResultsTop = newSearchResults.offset().top;
+				var showMoreButtonTop = $('#show-more-button-container').offset().top;
+				var bottom = $(window).height();
+				if(showMoreButtonTop > bottom){
+					$('html, body').animate(
+						{ 
+							scrollTop: newSearchResultsTop
+						},
+						1000, 
+						'easeOutQuint'
+					);
+				}
+			}
+		}).fail(function(){
+			// something bad is happening!
+			console.log("error doing search for delegates");
+		});
+	};
+	
+	$scope.getMoreResults = function(){
+		$scope.showLoader = true;
+		$scope.start += 10;
+		$scope.getResults();
+	};
+	
+	$scope.concatPropertyValues = function(array, propertyName){
+		if(typeof array === 'undefined'){
+			return '';
+		}
+		else{
+			return $.map(array, function(o){ return o[propertyName]; }).join(', ');
+		}
+	};
+	
+	$scope.areResults = function(){
+		return $scope.numFound != 0;
+	};
+	
+	$scope.confirmAddDelegate = function(delegateName, delegateId){
+		$scope.delegateNameToAdd = delegateName;
+		$scope.delegateToAdd = delegateId;
+		$.colorbox({                      
+			html : $compile($('#confirm-add-delegate-modal').html())($scope),
+			transition: 'fade',
+			close: '',
+			onLoad: function() {
+				$('#cboxClose').remove();
+			},
+			onComplete: function() {$.colorbox.resize();},
+			scrolling: true
+		});
+	};
+	
+	$scope.addDelegate = function() {
+		$.ajax({
+	        url: $('body').data('baseurl') + 'account/addDelegate.json',
+	        type: 'POST',
+	        data: $scope.delegateToAdd,
+	        contentType: 'application/json;charset=UTF-8',
+	        success: function(data) {
+	        	$scope.getDelegates();
+	        	$scope.$apply();
+	        	$scope.closeModal();
+	        }
+	    }).fail(function() { 
+	    	console.log("Error adding delegate.");
+	    });
+	};
+	
+	$scope.confirmRevoke = function(delegateName, delegateId) {
+	    $scope.delegateNameToRevoke = delegateName;
+	    $scope.delegateToRevoke = delegateId;
+        $.colorbox({
+            html : $compile($('#revoke-delegate-modal').html())($scope)
+            	
+        });
+        $.colorbox.resize();
+	};
+
+	$scope.revoke = function () {
+		$.ajax({
+	        url: $('body').data('baseurl') + 'account/revokeDelegate.json',
+	        type: 'DELETE',
+	        data:  $scope.delegateToRevoke,
+	        contentType: 'application/json;charset=UTF-8',
+	        success: function(data) {
+				$scope.getDelegates();
+				$scope.$apply();
+	        	$scope.closeModal();
+	        }
+	    }).fail(function() { 
+	    	// something bad is happening!
+	    	console.log("$DelegateCtrl.revoke() error");
+	    });
+	};
+	
+	$scope.getDelegates = function() {
+		$.ajax({
+	        url: $('body').data('baseurl') + 'account/delegates.json',
+	        dataType: 'json',
+	        success: function(data) {
+	        	$scope.delegation = data;
+	        	$scope.$apply();
+	        }
+	    }).fail(function() { 
+	    	// something bad is happening!
+	    	console.log("error with delegates");
+	    });
+	};
+	
+	$scope.closeModal = function() {
+		$.colorbox.close();
+	};
+	
+	// init
+	$scope.getDelegates();
+	
+};
+
+// Controller for delegate permissions that have been granted TO the current user
+function DelegatorsCtrl($scope, $compile){
+	
+	$scope.getDelegators = function() {
+		$.ajax({
+	        url: $('body').data('baseurl') + 'account/delegates.json',
+	        dataType: 'json',
+	        success: function(data) {
+	        	$scope.delegation = data;
+	        	$scope.$apply();
+	        }
+	    }).fail(function() { 
+	    	// something bad is happening!
+	    	console.log("error with delegates");
+	    });
+	};
+	
+	$scope.selectDelegator = function(datum) {
+		window.location.href = $('body').data('baseurl') + 'switch-user?j_username=' + datum.orcid;
+	};
+	
+	$("#delegatorsSearch").typeahead({
+		name: 'delegatorsSearch',
+		remote: {
+			url: $('body').data('baseurl')+'delegators/search/%QUERY?limit=' + 10
+		},
+		template: function (datum) {
+			   var forDisplay = 
+			       '<span style=\'white-space: nowrap; font-weight: bold;\'>' + datum.value + '</span>'
+			      +'<span style=\'font-size: 80%;\'> (' + datum.orcid + ')</span>';
+			   return forDisplay;
+		}
+	});
+	$("#delegatorsSearch").bind("typeahead:selected", function(obj, datum) {        
+		$scope.selectDelegator(datum);
+		$scope.$apply();
+	});
+	
+	// init
+	$scope.getDelegators();
+	
+};
+
+function SwitchUserCtrl($scope, $compile, $document){
+	$scope.isDroppedDown = false;
+	
+	$scope.openMenu = function(event){
+		$scope.getDelegates();
+		$scope.isDroppedDown = true;
+		event.stopPropagation();
+	};
+	
+	$scope.getDelegates = function() {
+		$.ajax({
+	        url: $('body').data('baseurl') + 'account/delegates.json',
+	        dataType: 'json',
+	        success: function(data) {
+	        	$scope.delegation = data;
+	        	$scope.$apply();
+	        }
+	    }).fail(function() { 
+	    	// something bad is happening!
+	    	console.log("error with delegates");
+	    });
+	};
+	
+	$document.bind('click',
+		function(event){
+			$scope.isDroppedDown = false;
+			$scope.$apply();
+		});
 };
 
 function ClientEditCtrl($scope, $compile){	

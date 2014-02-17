@@ -162,7 +162,9 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
         delegateProfile.setOrcidBio(delegateBio);
         PersonalDetails delegatePersonalDetails = new PersonalDetails();
         delegateBio.setPersonalDetails(delegatePersonalDetails);
-        delegatePersonalDetails.setCreditName(new CreditName("H. Shearer"));
+        CreditName delegateCreditName = new CreditName("H. Shearer");
+        delegateCreditName.setVisibility(Visibility.PUBLIC);
+        delegatePersonalDetails.setCreditName(delegateCreditName);
         orcidProfileManager.createOrcidProfile(delegateProfile);
 
         OrcidProfile applicationProfile = new OrcidProfile();

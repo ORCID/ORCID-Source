@@ -25,7 +25,7 @@
 				<div ng-controller="ClaimCtrl">
 					<div>
 						<!-- span class="orcid-error" ng-show="register.errors.length > 0">
-							<div ng-repeat='error in register.errors' ng-bind-html-unsafe="error"></div>
+							<div ng-repeat='error in register.errors' ng-bind-html="error"></div>
 					   	</span -->
 					   	<h4>${springMacroRequestContext.getMessage("claim.almostthere")}</h4>
 					   	<p>${springMacroRequestContext.getMessage("claim.completefields")}</p>
@@ -58,7 +58,7 @@
 								    </div>
 	                            </div>
 	                            <span class="orcid-error" ng-show="register.password.errors.length > 0">
-									<div ng-repeat='error in register.password.errors' ng-bind-html-unsafe="error"></div>
+									<div ng-repeat='error in register.password.errors' ng-bind-html="error"></div>
 					   			</span>
 	                        </div>
 	                    </div>
@@ -68,7 +68,7 @@
 	                            <input type="password" name="confirmPassword" class="input-xlarge" ng-model="register.passwordConfirm.value" ng-change="serverValidate('PasswordConfirm')"/>
 	                            <span class="required" ng-class="isValidClass(register.passwordConfirm)">*</span>
 	                            <span class="orcid-error" ng-show="register.passwordConfirm.errors.length > 0">
-									<div ng-repeat='error in register.passwordConfirm.errors' ng-bind-html-unsafe="error"></div>
+									<div ng-repeat='error in register.passwordConfirm.errors' ng-bind-html="error"></div>
 					   			</span>
 	                        </div>
 	                    </div>
@@ -98,7 +98,7 @@
 		                        	${springMacroRequestContext.getMessage("register.labelconsent")} <a href="${aboutUri}/footer/privacy-policy" target="_blank">${springMacroRequestContext.getMessage("register.labelprivacypolicy")}</a> ${springMacroRequestContext.getMessage("register.labeland")} ${springMacroRequestContext.getMessage("common.termsandconditions1")}<a href="${aboutUri}/content/orcid-terms-use" target="_blank">${springMacroRequestContext.getMessage("common.termsandconditions2")}</a> ${springMacroRequestContext.getMessage("common.termsandconditions3")}</p>
 		                        </label>
 		                        <span class="orcid-error" ng-show="register.termsOfUse.errors.length > 0">
-									<div ng-repeat='error in register.termsOfUse.errors' ng-bind-html-unsafe="error"></div>
+									<div ng-repeat='error in register.termsOfUse.errors' ng-bind-html="error"></div>
 					   			</span>
 		                    </div>
 	                	</div>   

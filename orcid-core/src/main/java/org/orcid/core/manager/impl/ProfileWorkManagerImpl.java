@@ -91,7 +91,7 @@ public class ProfileWorkManagerImpl implements ProfileWorkManager {
      * 
      * @return true if the profile work relationship was created
      * */
-    public boolean addProfileWork(String orcid, long workId, Visibility visibility) {
-        return profileWorkDao.addProfileWork(orcid, workId, visibility);
+    public boolean addProfileWork(String orcid, long workId, Visibility visibility, String sourceOrcid) {
+        return profileWorkDao.addProfileWork(orcid, workId, visibility, sourceOrcid);
     }
 }

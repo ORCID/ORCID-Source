@@ -27,7 +27,7 @@ audio,canvas,video {
 	*zoom: 1;
 }
 
-audio:not ([controls] ) {
+audio:not ([controls]) {
 	display: none;
 }
 
@@ -438,8 +438,7 @@ input[type=submit].disabled,input[type=submit][disabled] {
 	filter: alpha(opacity = 65);
 	-webkit-box-shadow: none;
 	-moz-box-shadow: none;
-	box-shadow: none;
-	font-siz:;
+	box-shadow: none;	
 }
 
 input[type=submit] .label,input[type=submit] .badge {
@@ -783,7 +782,12 @@ select {
 
 .header .navigation>.menu>li.active-trail>.menu {
 	display: block;
-	z-index: 0;
+	/* The z-index here causes a problem for the dropdown when the mouse moves away from the menu area
+	   (the dropdown goes behind other stuff further down on the page). Removing this z-index doesn't
+	   seem to cause any problems, but I have commented out rather than deleted, in case it causes a
+	   problem in browsers I haven't tested yet.
+	   z-index: 0;
+	*/
 }
 
 .header .navigation>.menu>li:hover>a {
@@ -1000,7 +1004,9 @@ h1,h2,h3,h4,h5,h6,b,strong,.table th,.close,.nav-header,.label,.badge,.header .s
 	font-family: 'Gill Sans W02', 'Helvetica', sans-serif;
 	font-weight: bold;
 	font-style: normal;
+	word-break: break-all;
 }
+
 
 .privacyToggle {
 	position: relative;
@@ -1142,6 +1148,10 @@ ul.privacyHelp li.private {
 	padding-left: 0;
 }
 
+.editTablePadCell35 .email{
+	word-break: break-all;
+}
+
 #emailTable td {
 	vertical-align: middle;
 	padding: 0px;
@@ -1215,7 +1225,7 @@ ul.privacyHelp li.private {
 	outline: 0;
 }
 
-.dropdown-menu {
+.privacy-dropdown-menu {
 	position: absolute;
 	top: 100%;
 	left: 0;
@@ -1234,6 +1244,105 @@ ul.privacyHelp li.private {
 	-webkit-border-radius: 6px;
 	-moz-border-radius: 6px;
 	border-radius: 6px;
+	-webkit-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+	-moz-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+	box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+	-webkit-background-clip: padding-box;
+	-moz-background-clip: padding;
+	background-clip: padding-box;
+}
+
+.privacy-dropdown-menu.pull-right {
+	right: 0;
+	left: auto;
+}
+
+.privacy-dropdown-menu .divider {
+	*width: 100%;
+	height: 1px;
+	margin: 9px 1px;
+	*margin: -5px 0 5px;
+	overflow: hidden;
+	background-color: #e5e5e5;
+	border-bottom: 1px solid #ffffff;
+}
+
+.privacy-dropdown-menu a {
+	display: block;
+	padding: 3px 20px;
+	clear: both;
+	font-weight: normal;
+	line-height: 20px;
+	color: #333333;
+	white-space: nowrap;
+	margin-left: 2px;
+}
+
+.privacy-dropdown-menu .disabled>a,.privacy-dropdown-menu .disabled>a:hover {
+	color: #999999;
+}
+
+.privacy-dropdown-menu .disabled>a:hover {
+	text-decoration: none;
+	cursor: default;
+	background-color: transparent;
+}
+
+.open>.privacy-dropdown-menu {
+	display: block;
+}
+
+
+
+.pull-right>.privacy-dropdown-menu {
+	right: 0;
+	left: auto;
+}
+
+.dropup .privacy-dropdown-menu,.navbar-fixed-bottom .dropdown .privacy-dropdown-menu {
+	top: auto;
+	bottom: 100%;
+	margin-bottom: 1px;
+}
+
+.dropdown-submenu>.privacy-dropdown-menu {
+	top: 0;
+	left: 100%;
+	margin-top: -6px;
+	margin-left: -1px;
+	-webkit-border-radius: 0 6px 6px 6px;
+	-moz-border-radius: 0 6px 6px 6px;
+	border-radius: 0 6px 6px 6px;
+}
+
+.dropdown-submenu:hover>.privacy-dropdown-menu {
+	display: block;
+}
+
+.dropdown .privacy-dropdown-menu .nav-header {
+	padding-right: 20px;
+	padding-left: 20px;
+}
+
+.dropdown-menu {
+	position: absolute;
+	top: 100%;
+	left: 0;
+	z-index: 5000;
+	display: block;
+	float: left;
+	min-width: 160px;
+	padding: 5px;
+	margin: 0;
+	list-style: none;
+	background-color: #ffffff;
+	border: 1px solid #ccc;
+	border: 1px solid rgba(0, 0, 0, 0.2);
+	*border-right-width: 2px;
+	*border-bottom-width: 2px;
+	-webkit-border-radius: 6px;
+	-moz-border-radius: 6px;
+	border-radius: 0;
 	-webkit-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
 	-moz-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
 	box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
@@ -1499,7 +1608,7 @@ a:hover {
 .orcid-id{
 	font-size: 10px;
 	line-height: 1;
-	word-wrap:break-word;
+	word-break: break-all;
 	color: #FFF;
 	font-family: 'Gill Sans W02', 'Helvetica', sans-serif;
 	font-weight: bold;
@@ -1634,7 +1743,7 @@ a:hover {
 	font-style: normal;
 	margin: 10px 0 0 !important;
 	line-height: 1;
-	word-wrap:break-word;
+	word-break: break-all;
 }
 
 .privacy-list,.workspace-body-list {
@@ -1693,6 +1802,36 @@ a:hover {
     font-weight: normal !important;
 }
 
+.show-funding-only {
+	padding-right: 38px;	
+}
+
+#add-funding h1 {
+	font-size: 35px;
+}
+
+#add-funding #startDay,
+#add-funding #startMonth,
+#add-funding #endDay,
+#add-funding #endMonth
+{
+	width: 80px;
+}
+
+#add-funding #startYear,
+#add-funding #endYear
+{
+	width: 100px;
+}
+
+#add-funding input[type=checkbox] {
+	margin: 0;
+}
+
+.no-margin-bottom {
+	margin-bottom: 0px;
+}
+
 /* Affiliations */
 .affiliation-date, .funding-date {
     font-style: italic;
@@ -1712,19 +1851,13 @@ a:hover {
 #edit-affiliation #startDay,
 #edit-affiliation #startMonth,
 #edit-affiliation #endDay,
-#edit-affiliation #endMonth,
-#edit-funding #startDay,
-#edit-funding #startMonth,
-#edit-funding #endDay,
-#edit-funding #endMonth
+#edit-affiliation #endMonth
 {
 	width: 80px;	
 }
 
 #edit-affiliation #startYear,
-#edit-affiliation #endYear,
-#edit-funding #startYear,
-#edit-funding #endYear
+#edit-affiliation #endYear
 {
 	width: 100px;
 }
@@ -2391,6 +2524,14 @@ header overrides
 	margin-bottom: 0;
 }
 
+.add-funding label,
+.add-funding input,
+.add-funding textarea,
+.add-funding select
+	{
+	margin-bottom: 0;
+}
+
 .manage-bio label,
 .manage-bio input,
 .manage-bio textarea,
@@ -2473,6 +2614,10 @@ header overrides
 	width: 330px;
 }
 
+.inline-input{
+	margin-bottom: 0px !important;
+}
+
 .relative {
 	position: relative;
 }
@@ -2525,7 +2670,7 @@ header overrides
 
 .workspace-profile p {
 	margin-bottom: 5px;
-	word-wrap: break-word;
+	word-break: break-all;
 }
 
 .work-title {
@@ -2743,12 +2888,20 @@ ul.personal-inf-display li{
     margin: 5px 17px 5px 0;    
 }
 
+#add-funding .add-item-link {
+	margin: 5px 40px 5px 0;    
+}
+
 .citation-title{
 	margin: 70px 0 0 0;
 	display: block;
 }
 
 .add-work textarea{
+	height: 60px;
+}
+
+.add-funding textarea{
 	height: 60px;
 }
 
@@ -2763,6 +2916,16 @@ ul.personal-inf-display li{
 }
 
 .add-work #year{
+	width: 100px;
+	margin-bottom:0;
+}
+
+.add-funding #month {
+	width: 100px;
+	margin: 0 10px 0 0; 
+}
+
+.add-funding #year {
 	width: 100px;
 	margin-bottom:0;
 }
@@ -2844,6 +3007,10 @@ ul.personal-inf-display li{
 .tt-dropdown-menu {
   height: 300px;
   overflow-y: auto;
+}
+
+#delegatorsSearchForm .tt-dropdown-menu {
+	height: auto;
 }
 
 
@@ -3071,6 +3238,14 @@ p.orcid-id-container{
 	float: left;
 }
 
+.orcid-hide {
+  display: none;
+}
+
+.delegation-mode{
+	background-color: #EFEFEF;
+}
+
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */
 		
@@ -3091,6 +3266,7 @@ p.orcid-id-container{
 	#loginForm .control-group {
 		padding-left: 15px;
 	}
+	
 	.see-more {
 		margin: 15px 25px 0;
 	}
@@ -3357,8 +3533,8 @@ p.orcid-id-container{
 	}
 
 	/* Forms */
-	input[type="text"],input[type="password"] {
-		width: 96%;
+	input[type="text"],input[type="password"], button {
+		width: 100%;
 	}
 
 	/* Footer */
@@ -3433,15 +3609,17 @@ p.orcid-id-container{
 	}	
 
 	/* Forms */
-	input[type="text"],input[type="password"] {
+	input[type="text"],input[type="password"], select {
 		height: 50px;
 		font-size: 16px;
+		width: 96%; 
 	}
 	
 	.input-xlarge{
-		width:100%;
+		width:96%;
+		height: 50px;
 	}
-
+	
 	/* Registration */
 	#RegistrationCtr input[type="text"],#RegistrationCtr input[type="password"]
 		{
@@ -3514,18 +3692,26 @@ p.orcid-id-container{
 		padding-left:0;
 	}
 	
+	.workspace-accordion-item{
+		border-top: 1px solid #C9C9C9;
+	}
+	
 	ul.personal-inf-display li{
 		display: block;		
 		margin-top:10px;
 	}
 
-    .workspace-toolbar{
-		border-bottom: 1px solid #CACACA;
+    .workspace-toolbar{		
 	    height: 50px;
 	    margin-top: 15px;
 	    width: 100%;
 	    padding-left: 10px;
 	}
+	
+	.workspace-header{
+		border-bottom: 0 none;
+	}
+	
 	
 	.workspace-private-toolbar .glyphicon {
 		line-height: 26px;
@@ -3651,8 +3837,12 @@ p.orcid-id-container{
 	/* Add work*/
 	
 	.add-work .privacy-control{
-		margin-left: 15px;
 		width: 75%;
+	}
+	
+	.add-work button{
+		width: 100%;
+		
 	}
 	
 	.add-work .popover-help-container .popover{
@@ -3789,7 +3979,6 @@ p.orcid-id-container{
 	
 	#edit-affiliation .privacy-control{
 		width: 70%;
-		margin-left: 15px;
 	}
 	
 	#edit-affiliation .lightbox-container{
@@ -3847,8 +4036,55 @@ p.orcid-id-container{
 	
 	.header .search .settings-button i{
 		margin: 10px 0 0 0;
+	}	
+		
+	.main-search{
+		display: block;
+		padding: 0 15px;		
 	}
 	
+	.main-search input[type="text"]{
+		width: 100%;				
+	}	
+
+	#currencyCode {
+		width: 30%;		
+	}
+	
+	#fundingAmount {
+		width: 64%;
+	}
+	
+	.twitter-typeahead{
+		width: 96%;
+	}
+	
+	.tt-hint{
+		width: 100%;
+	}
+	
+	/* Funding*/
+		
+	.cancel-action{
+		display: block;
+		margin-top: 15px;
+	}
+	
+	
+	#add-funding .popover-help-container .popover{
+		left: -110px;
+	}
+	
+	#add-funding .popover.bottom .arrow{
+		left: 122px;
+	}	
+
+	
+	#add-funding .alert {
+	    float: left;
+	    margin-top: 15px;
+	    width: 100%;
+	}
 }
 
 @media (min-width : 768px) and (max-width : 991px) { /* Tablet */
@@ -3874,7 +4110,7 @@ p.orcid-id-container{
 	}
 	.header .navigation>.menu>li>a {
 		font-size: 12px;
-		word-wrap: break-word;
+		word-break: break-all;
 		padding: 10px;
 		display: block;
 	}
@@ -3958,7 +4194,6 @@ p.orcid-id-container{
 	
 	.add-work .privacy-control{
 		margin-left: 15px;
-		width: 35%;
 	}
 	
 	#uvTab{

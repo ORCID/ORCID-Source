@@ -23,7 +23,7 @@
     adminstrators to the ORCID administrators (as an email attachement). 
 -->
 <orcid-client-group xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
- xsi:schemaLocation="http://www.orcid.org/ns/orcid ../../../../../orcid-model/src/main/resources/orcid-client-group-1.2.xsd"
+ xsi:schemaLocation="http://www.orcid.org/ns/orcid ../../../../../orcid-model/src/main/resources/orcid-client-group-1.3.xsd"
  xmlns="http://www.orcid.org/ns/orcid" type="premium-institution">
     <group-name>Elsevier</group-name>
     <email>orcid-admin@elsevier.com</email>

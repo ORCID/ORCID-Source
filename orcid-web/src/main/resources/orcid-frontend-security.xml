@@ -112,6 +112,7 @@
 	<sec:http access-denied-page="/signin"
 		access-decision-manager-ref="accessDecisionManager" create-session="ifRequired"
 		path-type="regex">
+		<sec:custom-filter position="SWITCH_USER_FILTER" ref="switchUserProcessingFilter" />
 		<sec:intercept-url pattern="/statistics/liveids.json(\?.*)?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/statistics(/)?$"
@@ -229,6 +230,13 @@
     <bean id="jsonpCallbackFilter" class="org.orcid.core.web.filters.JsonpCallbackFilter" />
 		
 	<bean id="oauthAccessDeniedHandler" class="org.springframework.security.oauth2.provider.error.OAuth2AccessDeniedHandler" />
+	
+	<bean id="switchUserProcessingFilter" class="org.orcid.frontend.web.filter.OrcidSwitchUserFilter">
+		<property name="userDetailsService" ref="userDetailsService" />
+		<property name="switchUserUrl" value="/switch-user" />
+		<property name="exitUserUrl" value="/exit-user" />
+		<property name="targetUrl" value="/my-orcid?delegates" />
+	</bean>
 		
 	<bean id="authorizationCodeTokenGranter"
 		class="org.springframework.security.oauth2.provider.code.AuthorizationCodeTokenGranter">

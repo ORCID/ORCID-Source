@@ -47,6 +47,7 @@ import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.OrcidIndexManager;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.manager.OtherNameManager;
+import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.ProfileKeywordManager;
 import org.orcid.core.manager.ResearcherUrlManager;
 import org.orcid.core.manager.impl.OrcidProfileManagerImpl;
@@ -59,6 +60,7 @@ import org.orcid.jaxb.model.message.DelegationDetails;
 import org.orcid.jaxb.model.message.Email;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.persistence.dao.GenericDao;
+import org.orcid.persistence.dao.GivenPermissionToDao;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.GivenPermissionToEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -109,6 +111,12 @@ public class ManageProfileControllerTest extends BaseControllerTest {
     @Mock
     private ProfileKeywordManager profileKeywordManager;
 
+    @Mock
+    private GivenPermissionToDao givenPermissionToDao;
+
+    @Mock
+    private ProfileEntityManager profileEntityManager;
+
     /**
      * The classes loaded from the app context are in fact proxies to the
      * OrcidProfileManagerImpl class, required for transactionality. However we
@@ -131,7 +139,9 @@ public class ManageProfileControllerTest extends BaseControllerTest {
         orcidProfileManagerImpl.setNotificationManager(mockNotificationManager);
         controller.setEncryptionManager(encryptionManager);
         controller.setOrcidProfileManager(orcidProfileManager);
-
+        controller.setGivenPermissionToDao(givenPermissionToDao);
+        controller.setNotificationManager(mockNotificationManager);
+        controller.setProfileEntityManager(profileEntityManager);
     }
 
     @Before
@@ -140,8 +150,12 @@ public class ManageProfileControllerTest extends BaseControllerTest {
     }
 
     @Before
-    public void setUpTestProfile() {
-        String testOrcid = "4444-4444-4444-4446";
+    public void setUpTestProfiles() {
+        createProfileStub("4444-4444-4444-4446");
+        createProfileStub("5555-5555-5555-555X");
+    }
+
+    private void createProfileStub(String testOrcid) {
         ProfileEntity existing = profileDao.find(testOrcid);
         if (existing == null) {
             ProfileEntity testProfile = new ProfileEntity();
@@ -208,7 +222,6 @@ public class ManageProfileControllerTest extends BaseControllerTest {
 
     }
 
-
     @Test
     public void testChangeSecurityDetailsSuccess() throws Exception {
 
@@ -243,19 +256,11 @@ public class ManageProfileControllerTest extends BaseControllerTest {
 
     @Test
     public void testAddDelegateSendsEmailToOnlyNewDelegates() throws Exception {
-
-        // for this test we want to mock part of the profile manager
-        ProfileDao mockProfileDao = mock(ProfileDao.class);
-        OrcidProfileManagerImpl orcidProfileManagerImpl = getTargetObject(orcidProfileManager, OrcidProfileManagerImpl.class);
-        orcidProfileManagerImpl.setProfileDao(mockProfileDao);
-        AddDelegateForm delegateForm = new AddDelegateForm();
-        delegateForm.setDelegateOrcid("delegateOrcid");
-        when(mockProfileDao.find(any(String.class))).thenReturn(orcidWithExistingSingleDelegate());
-        when(mockProfileDao.merge(any(ProfileEntity.class))).thenReturn(orcidWithExistingSingleDelegate());
-        ModelAndView successView = controller.addDelegate(delegateForm);
+        ProfileEntity delegateProfile = new ProfileEntity("5555-5555-5555-555X");
+        delegateProfile.setCreditName("Test Delegate Credit Name");
+        when(profileEntityManager.findByOrcid("5555-5555-5555-555X")).thenReturn(delegateProfile);
+        controller.addDelegate("5555-5555-5555-555X");
         verify(mockNotificationManager, times(1)).sendNotificationToAddedDelegate(any(OrcidProfile.class), (argThat(onlyNewDelegateAdded())));
-        assertEquals("redirect:/account?activeTab=delegation-tab", successView.getViewName());
-
     }
 
     private ProfileEntity orcidWithExistingSingleDelegate() {
@@ -283,16 +288,13 @@ public class ManageProfileControllerTest extends BaseControllerTest {
             public boolean matchesSafely(List<DelegationDetails> delegatesAdded) {
                 if (delegatesAdded != null && delegatesAdded.size() == 1) {
                     DelegationDetails delegationDetails = delegatesAdded.get(0);
-                    return "delegateOrcid".equals(delegationDetails.getDelegateSummary().getOrcidIdentifier().getPath());
+                    return "5555-5555-5555-555X".equals(delegationDetails.getDelegateSummary().getOrcidIdentifier().getPath());
                 }
-
                 return false;
-
             }
 
             @Override
             public void describeTo(Description arg0) {
-
             }
 
         };

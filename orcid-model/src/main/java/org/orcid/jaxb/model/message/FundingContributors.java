@@ -29,6 +29,7 @@ import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
@@ -61,7 +62,8 @@ public class FundingContributors implements Serializable {
      * 
      */
     private static final long serialVersionUID = 1L;
-    protected List<Contributor> contributor;
+    @XmlElement(name = "funding-contributor", required = true)
+    protected List<FundingContributor> contributor;
 
     /**
      * Gets the value of the contributor property.
@@ -85,9 +87,9 @@ public class FundingContributors implements Serializable {
      * 
      * 
      */
-    public List<Contributor> getContributor() {
+    public List<FundingContributor> getContributor() {
         if (contributor == null) {
-            contributor = new ArrayList<Contributor>();
+            contributor = new ArrayList<FundingContributor>();
         }
         return this.contributor;
     }    

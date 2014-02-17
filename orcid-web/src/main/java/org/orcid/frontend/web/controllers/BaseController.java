@@ -24,6 +24,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -41,13 +42,13 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
-import org.codehaus.jackson.JsonGenerationException;
-import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.EmailManager;
 import org.orcid.core.manager.OrcidProfileManager;
+import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.StatisticsManager;
+import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.frontend.web.forms.LoginForm;
 import org.orcid.jaxb.model.message.Email;
@@ -64,7 +65,9 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.switchuser.SwitchUserGrantedAuthority;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -117,6 +120,12 @@ public class BaseController {
 
     @Resource
     private StatisticsManager statisticsManager;
+
+    @Resource
+    private OrcidUrlManager orcidUrlManager;
+
+    @Resource
+    private SourceManager sourceManager;
 
     protected static final String EMPTY = "empty";
 
@@ -272,22 +281,20 @@ public class BaseController {
 
     @ModelAttribute("realUserOrcid")
     public String getRealUserOrcid() {
-        OrcidProfileUserDetails currentUser = getCurrentUser();
-        return currentUser == null ? null : currentUser.getRealOrcid();
+        return sourceManager.retrieveSourceOrcid();
     }
 
     public String getEffectiveUserOrcid() {
         OrcidProfileUserDetails currentUser = getCurrentUser();
-        return currentUser == null ? null : currentUser.getEffectiveOrcid();
+        if (currentUser == null) {
+            return null;
+        }
+        return currentUser.getOrcid();
     }
 
     @ModelAttribute("inDelegationMode")
     public boolean isInDelegationMode() {
-        OrcidProfileUserDetails currentUser = getCurrentUser();
-        if (currentUser == null) {
-            return false;
-        }
-        return currentUser.isInDelegationMode();
+        return sourceManager.isInDelegationMode();
     }
 
     @ModelAttribute("request")
@@ -306,18 +313,17 @@ public class BaseController {
         Locale locale = RequestContextUtils.getLocale(request);
         org.orcid.pojo.Local lPojo = new org.orcid.pojo.Local();
         lPojo.setLocale(locale.toString());
-  
+
         ResourceBundle resources = ResourceBundle.getBundle("i18n/javascript", locale, new UTF8Control());
         lPojo.setMessages(OrcidStringUtils.resourceBundleToMap(resources));
         String messages = "";
         try {
             messages = StringEscapeUtils.escapeEcmaScript(mapper.writeValueAsString(lPojo));
         } catch (IOException e) {
-            LOGGER.error("getJavascriptMessages error:"+ e.toString(), e);
+            LOGGER.error("getJavascriptMessages error:" + e.toString(), e);
         }
-        return messages;      
+        return messages;
     }
-
 
     protected void validateEmailAddress(String email, HttpServletRequest request, BindingResult bindingResult) {
         validateEmailAddress(email, true, request, bindingResult);
@@ -521,6 +527,13 @@ public class BaseController {
 
     protected void setError(ErrorsInterface ei, String msg) {
         ei.getErrors().add(getMessage(msg));
+    }
+
+    @ModelAttribute("searchBaseUrl")
+    protected String createSearchBaseUrl() {
+        String baseUrlWithCorrectedProtocol = orcidUrlManager.getBaseUrl().replaceAll("^https?:", "");
+        String baseUrlWithCorrectedContext = baseUrlWithCorrectedProtocol.replaceAll("/orcid-web$", "/orcid-pub-web");
+        return baseUrlWithCorrectedContext + "/search/orcid-bio/?q=";
     }
 
 }

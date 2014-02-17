@@ -27,6 +27,8 @@ public interface SourceManager {
 
     String retrieveSourceOrcid();
 
+    boolean isInDelegationMode();
+
     ProfileEntity retrieveSourceProfileEntity();
 
 }

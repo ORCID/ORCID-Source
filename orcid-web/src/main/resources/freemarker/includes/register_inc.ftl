@@ -20,7 +20,7 @@
 <div ng-controller="RegistrationCtrl" id="RegistrationCtr">
 <div>
 	<!-- span class="orcid-error" ng-show="register.errors.length > 0">
-		<div ng-repeat='error in register.errors' ng-bind-html-unsafe="error"></div>
+		<div ng-repeat='error in register.errors' ng-bind-html="error"></div>
    	</span -->
 	<div>
         <label class="control-label">${springMacroRequestContext.getMessage("oauth_sign_up.labelfirstname")}
@@ -45,7 +45,7 @@
 			    </div>
             </div>
 			<span class="orcid-error" ng-show="register.givenNames.errors.length > 0">
-				<div ng-repeat='error in register.givenNames.errors' ng-bind-html-unsafe="error"></div>
+				<div ng-repeat='error in register.givenNames.errors' ng-bind-html="error"></div>
    			</span>
         </div>
     </div>				
@@ -54,7 +54,7 @@
         <div class="relative">
             <input name="familyNames" type="text" tabindex="2" class="input-xlarge"  ng-model="register.familyNames.value" ng-model-onblur/>
             <span class="orcid-error" ng-show="register.familyNames.errors.length > 0">
-				<div ng-repeat='error in register.familyNames.errors' ng-bind-html-unsafe="error"></div>
+				<div ng-repeat='error in register.familyNames.errors' ng-bind-html="error"></div>
    			</span>
         </div>
     </div>
@@ -64,7 +64,7 @@
             <input name="email" type="email" tabindex="3" class="input-xlarge" ng-model="register.email.value" ng-model-onblur ng-change="serverValidate('Email')" />
             <span class="required" ng-class="isValidClass(register.email)">*</span>
             <span class="orcid-error" ng-show="register.email.errors.length > 0">
-				<div ng-repeat='error in register.email.errors' ng-bind-html-unsafe="error"></div>
+				<div ng-repeat='error in register.email.errors' ng-bind-html="error"></div>
    			</span>
         </div>
     </div>				
@@ -74,7 +74,7 @@
             <input name="confirmedEmail" type="email" tabindex="4" class="input-xlarge" ng-model="register.emailConfirm.value" ng-model-onblur ng-change="serverValidate('EmailConfirm')" />
             <span class="required" ng-class="isValidClass(register.emailConfirm)">*</span>
             <span class="orcid-error" ng-show="register.emailConfirm.errors.length > 0">
-				<div ng-repeat='error in register.emailConfirm.errors' ng-bind-html-unsafe="error"></div>
+				<div ng-repeat='error in register.emailConfirm.errors' ng-bind-html="error"></div>
    			</span>
         </div>
     </div>				
@@ -85,7 +85,7 @@
             <span class="required" ng-class="isValidClass(register.password)">*</span>
    			<@orcid.passwordHelpPopup />
             <span class="orcid-error" ng-show="register.password.errors.length > 0">
-				<div ng-repeat='error in register.password.errors' ng-bind-html-unsafe="error"></div>
+				<div ng-repeat='error in register.password.errors' ng-bind-html="error"></div>
    			</span>
         </div>
     </div>
@@ -95,7 +95,7 @@
             <input type="password" name="confirmPassword" tabindex="6" class="input-xlarge" ng-model="register.passwordConfirm.value" ng-change="serverValidate('PasswordConfirm')"/>
             <span class="required" ng-class="isValidClass(register.passwordConfirm)">*</span>
             <span class="orcid-error" ng-show="register.passwordConfirm.errors.length > 0">
-				<div ng-repeat='error in register.passwordConfirm.errors' ng-bind-html-unsafe="error"></div>
+				<div ng-repeat='error in register.passwordConfirm.errors' ng-bind-html="error"></div>
    			</span>
         </div>
     </div>
@@ -130,7 +130,7 @@
             ${springMacroRequestContext.getMessage("register.labelconsent")} <a href="${aboutUri}/footer/privacy-policy" target="_blank">${springMacroRequestContext.getMessage("register.labelprivacypolicy")}</a> ${springMacroRequestContext.getMessage("register.labeland")}  ${springMacroRequestContext.getMessage("common.termsandconditions1")}<a href="${aboutUri}/content/orcid-terms-use" target="_blank">${springMacroRequestContext.getMessage("common.termsandconditions2")}</a> ${springMacroRequestContext.getMessage("common.termsandconditions3")}</p>
             </label>
             <span class="orcid-error" ng-show="register.termsOfUse.errors.length > 0">
-				<div ng-repeat='error in register.termsOfUse.errors' ng-bind-html-unsafe="error"></div>
+				<div ng-repeat='error in register.termsOfUse.errors' ng-bind-html="error"></div>
    			</span>
         </div>
 	</div>   

@@ -58,6 +58,7 @@ import org.orcid.jaxb.model.message.FamilyName;
 import org.orcid.jaxb.model.message.GivenNames;
 import org.orcid.jaxb.model.message.OrcidBio;
 import org.orcid.jaxb.model.message.OrcidHistory;
+import org.orcid.jaxb.model.message.OrcidIdentifier;
 import org.orcid.jaxb.model.message.OrcidInternal;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidProfile;
@@ -437,11 +438,19 @@ public class RegistrationController extends BaseController {
                         dr.setEmail(op.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue());
                     }
                 }
-                dr.setFamilyNames(op.getOrcidBio().getPersonalDetails().getFamilyName().getContent());
+                FamilyName familyName = op.getOrcidBio().getPersonalDetails().getFamilyName();
+                if (familyName != null) {
+                    dr.setFamilyNames(familyName.getContent());
+                }
                 dr.setGivenNames(op.getOrcidBio().getPersonalDetails().getGivenNames().getContent());
                 dr.setInstitution(null);
             }
-            dr.setOrcid(op.getOrcidIdentifier().getPath());
+            OrcidIdentifier orcidIdentifier = op.getOrcidIdentifier();
+            // Everything should be reindexed with orcid-identifier by now, but
+            // check for null just in case.
+            if (orcidIdentifier != null) {
+                dr.setOrcid(orcidIdentifier.getPath());
+            }
             drList.add(dr);
         }
 
@@ -753,21 +762,21 @@ public class RegistrationController extends BaseController {
     @RequestMapping(value = "/claim/{encryptedEmail}", method = RequestMethod.GET)
     public ModelAndView verifyClaim(HttpServletRequest request, @PathVariable("encryptedEmail") String encryptedEmail, RedirectAttributes redirectAttributes)
             throws NoSuchRequestHandlingMethodException, UnsupportedEncodingException {
-    	try {    
-    		String decryptedEmail = encryptionManager.decryptForExternalUse(new String(Base64.decodeBase64(encryptedEmail), "UTF-8"));
-	        if (!isEmailOkForCurrentUser(decryptedEmail)) {
-	            return new ModelAndView("wrong_user");
-	        }        
-	        OrcidProfile profileToClaim = orcidProfileManager.retrieveOrcidProfileByEmail(decryptedEmail);
-	        if (profileToClaim.getOrcidHistory().isClaimed()) {
-	            return new ModelAndView("redirect:/signin?alreadyClaimed");
-	        }
-	        ModelAndView mav = new ModelAndView("claim");
-	        return mav;
-        } catch(EncryptionOperationNotPossibleException e){
-        	LOGGER.warn("Error decypting claim email from the claim profile link");
-            return new ModelAndView("redirect:/signin?invalidClaimUrl");        
-        }        
+        try {
+            String decryptedEmail = encryptionManager.decryptForExternalUse(new String(Base64.decodeBase64(encryptedEmail), "UTF-8"));
+            if (!isEmailOkForCurrentUser(decryptedEmail)) {
+                return new ModelAndView("wrong_user");
+            }
+            OrcidProfile profileToClaim = orcidProfileManager.retrieveOrcidProfileByEmail(decryptedEmail);
+            if (profileToClaim.getOrcidHistory().isClaimed()) {
+                return new ModelAndView("redirect:/signin?alreadyClaimed");
+            }
+            ModelAndView mav = new ModelAndView("claim");
+            return mav;
+        } catch (EncryptionOperationNotPossibleException e) {
+            LOGGER.warn("Error decypting claim email from the claim profile link");
+            return new ModelAndView("redirect:/signin?invalidClaimUrl");
+        }
     }
 
     @RequestMapping(value = "/claim/{encryptedEmail}.json", method = RequestMethod.GET)
@@ -903,7 +912,8 @@ public class RegistrationController extends BaseController {
             profileToSave = registrationManager.createMinimalRegistration(profileToSave);
             notificationManager.sendVerificationEmail(profileToSave, uri, profileToSave.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue());
             request.getSession().setAttribute(ManageProfileController.CHECK_EMAIL_VALIDATED, false);
-            LOGGER.info("Created profile from registration orcid={}, email={}, sessionid={}", new Object[] { profileToSave.getOrcidIdentifier().getPath(), email, sessionId });
+            LOGGER.info("Created profile from registration orcid={}, email={}, sessionid={}", new Object[] { profileToSave.getOrcidIdentifier().getPath(), email,
+                    sessionId });
             token = new UsernamePasswordAuthenticationToken(profileToSave.getOrcidIdentifier().getPath(), password);
             token.setDetails(new WebAuthenticationDetails(request));
             Authentication authentication = authenticationManager.authenticate(token);

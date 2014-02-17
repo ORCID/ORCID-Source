@@ -550,7 +550,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         String jsonString = profileFundingEntity.getContributorsJson();
         if (jsonString != null) {
             fundingContributors = JsonUtils.readObjectFromJsonString(jsonString, FundingContributors.class);
-            for (Contributor contributor : fundingContributors.getContributor()) {
+            for (FundingContributor contributor : fundingContributors.getContributor()) {
                 // Make sure contributor credit name has the same visibility as
                 // the funding relation
                 CreditName creditName = contributor.getCreditName();
@@ -703,7 +703,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
             for (GivenPermissionToEntity givenPermissionToEntity : givenPermissionToEntities) {
                 DelegationDetails delegationDetails = new DelegationDetails();
                 DelegateSummary delegateSummary = new DelegateSummary(new OrcidIdentifier(getOrcidIdBase(givenPermissionToEntity.getReceiver().getId())));
-                String receiverCreditName = givenPermissionToEntity.getReceiver().getCreditName();
+                String receiverCreditName = givenPermissionToEntity.getReceiver().getDisplayName();
                 delegateSummary.setCreditName(StringUtils.isNotBlank(receiverCreditName) ? new CreditName(receiverCreditName) : null);
                 delegationDetails.setDelegateSummary(delegateSummary);
                 delegationDetails.setApprovalDate(new ApprovalDate(DateUtils.convertToXMLGregorianCalendar(givenPermissionToEntity.getApprovalDate())));
@@ -719,7 +719,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
             for (GivenPermissionByEntity givenPermissionByEntity : givenPermissionByEntities) {
                 DelegationDetails delegationDetails = new DelegationDetails();
                 DelegateSummary delegateSummary = new DelegateSummary(new OrcidIdentifier(getOrcidIdBase((givenPermissionByEntity.getGiver().getId()))));
-                String creditName = givenPermissionByEntity.getGiver().getCreditName();
+                String creditName = givenPermissionByEntity.getGiver().getDisplayName();
                 delegateSummary.setCreditName(StringUtils.isNotBlank(creditName) ? new CreditName(creditName) : null);
                 delegationDetails.setDelegateSummary(delegateSummary);
                 delegationDetails.setApprovalDate(new ApprovalDate(DateUtils.convertToXMLGregorianCalendar(givenPermissionByEntity.getApprovalDate())));
@@ -1091,6 +1091,8 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
     private OrcidInternal getOrcidInternal(ProfileEntity profileEntity) {
         OrcidInternal orcidInternal = new OrcidInternal();
 
+        orcidInternal.setGroupOrcidIdentifier(new OrcidIdentifier(getOrcidIdBase(profileEntity.getGroupOrcid())));
+        
         SecurityDetails securityDetails = new SecurityDetails();
         orcidInternal.setSecurityDetails(securityDetails);
         securityDetails.setEncryptedPassword(profileEntity.getEncryptedPassword() != null ? new EncryptedPassword(profileEntity.getEncryptedPassword()) : null);

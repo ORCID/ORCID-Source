@@ -23,6 +23,7 @@
     <meta name="description" content="">
     <meta name="author" content="ORCID">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <!-- hack in json3 to allow angular js to work in IE7 -->
     <!-- we also need this JSON parser for orcidVar -->
     <!--[if IE 7]>
@@ -65,13 +66,14 @@
 		request.requestURI?ends_with("${basePath}account")||	
 		request.requestURI?matches("(.*)/(?:\\d{4}-){3,}\\d{3}[\\dX]")||
 		request.requestURI?ends_with("${basePath}account/manage-bio-settings")||
-		request.requestURI?matches("(.*)/[a-zA-Z0-9?=]*")
-		
-	>    	
+		request.requestURI?matches("(.*)/[a-zA-Z0-9?=]*")||
+		request.requestURI?contains("orcid-search")		
+	>	
 		<link rel="stylesheet" href="${staticLoc}/css/fonts.css?v=${ver}"/>
-	    <link rel="stylesheet" href="${staticCdn}/twitter-bootstrap/3.0.3/css/bootstrap.min.css?v=${ver}"/>
+		<!-- Always remember to remove Glyphicons font reference when bootstrap is updated -->
+	    <link rel="stylesheet" href="${staticCdn}/twitter-bootstrap/3.1.0/css/bootstrap.min.css?v=${ver}"/>
 	    <!--[if lt IE 8]>
-	        <link rel="stylesheet" href="${staticCdn}/twitter-bootstrap/3.0.3/css/bootstrap-ie7.css?v=${ver}"/>	                
+	        <link rel="stylesheet" href="${staticCdn}/twitter-bootstrap/3.1.0/css/bootstrap-ie7.css?v=${ver}"/>	                
 	    <![endif]-->
 
 	    <link rel="stylesheet" href="${staticCdn}/css/orcid.resp.css?v=${ver}"/>	    

@@ -19,6 +19,7 @@ package org.orcid.frontend.web.controllers;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -40,26 +41,26 @@ import org.orcid.core.manager.OtherNameManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.ProfileKeywordManager;
 import org.orcid.core.manager.ResearcherUrlManager;
-import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.utils.SolrFieldWeight;
 import org.orcid.core.utils.SolrQueryBuilder;
-import org.orcid.frontend.web.forms.AddDelegateForm;
 import org.orcid.frontend.web.forms.ChangePersonalInfoForm;
 import org.orcid.frontend.web.forms.ChangeSecurityQuestionForm;
 import org.orcid.frontend.web.forms.ManagePasswordOptionsForm;
 import org.orcid.frontend.web.forms.PreferencesForm;
 import org.orcid.frontend.web.forms.SearchForDelegatesForm;
+import org.orcid.jaxb.model.message.ApprovalDate;
+import org.orcid.jaxb.model.message.CreditName;
+import org.orcid.jaxb.model.message.DelegateSummary;
 import org.orcid.jaxb.model.message.Delegation;
 import org.orcid.jaxb.model.message.DelegationDetails;
 import org.orcid.jaxb.model.message.Email;
 import org.orcid.jaxb.model.message.EncryptedSecurityAnswer;
-import org.orcid.jaxb.model.message.GivenPermissionBy;
 import org.orcid.jaxb.model.message.GivenPermissionTo;
 import org.orcid.jaxb.model.message.Keywords;
+import org.orcid.jaxb.model.message.OrcidIdentifier;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidSearchResults;
-import org.orcid.jaxb.model.message.OrcidType;
 import org.orcid.jaxb.model.message.OtherNames;
 import org.orcid.jaxb.model.message.Preferences;
 import org.orcid.jaxb.model.message.ResearcherUrl;
@@ -72,8 +73,13 @@ import org.orcid.jaxb.model.message.UrlName;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
 import org.orcid.password.constants.OrcidPasswordConstants;
+import org.orcid.persistence.dao.ClientDetailsDao;
+import org.orcid.persistence.dao.GivenPermissionToDao;
+import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
+import org.orcid.persistence.jpa.entities.GivenPermissionToEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.orcid.persistence.jpa.entities.ProfileSummaryEntity;
 import org.orcid.persistence.jpa.entities.ResearcherUrlEntity;
 import org.orcid.pojo.ChangePassword;
 import org.orcid.pojo.SecurityQuestion;
@@ -81,10 +87,11 @@ import org.orcid.pojo.ajaxForm.Emails;
 import org.orcid.pojo.ajaxForm.Errors;
 import org.orcid.pojo.ajaxForm.RedirectUri;
 import org.orcid.pojo.ajaxForm.SSOCredentials;
+import org.orcid.pojo.ajaxForm.Text;
+import org.orcid.utils.DateUtils;
 import org.orcid.utils.OrcidWebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.MapBindingResult;
@@ -135,12 +142,21 @@ public class ManageProfileController extends BaseWorkspaceController {
 
     @Resource
     private OtherNameManager otherNameManager;
-    
-    @Resource 
+
+    @Resource
     private OrcidSSOManager orcidSSOManager;
 
     @Resource
     private ProfileEntityManager profileEntityManager;
+
+    @Resource
+    private ProfileDao profileDao;
+
+    @Resource
+    private ClientDetailsDao clientDetailsDao;
+
+    @Resource
+    private GivenPermissionToDao givenPermissionToDao;
 
     public EncryptionManager getEncryptionManager() {
         return encryptionManager;
@@ -164,6 +180,14 @@ public class ManageProfileController extends BaseWorkspaceController {
 
     public void setOtherNameManager(OtherNameManager otherNameManager) {
         this.otherNameManager = otherNameManager;
+    }
+
+    public void setGivenPermissionToDao(GivenPermissionToDao givenPermissionToDao) {
+        this.givenPermissionToDao = givenPermissionToDao;
+    }
+
+    public void setProfileEntityManager(ProfileEntityManager profileEntityManager) {
+        this.profileEntityManager = profileEntityManager;
     }
 
     @ModelAttribute("visibilities")
@@ -250,20 +274,54 @@ public class ManageProfileController extends BaseWorkspaceController {
         return mav;
     }
 
-    @RequestMapping(value = "/add-delegate")
-    public ModelAndView addDelegate(@ModelAttribute AddDelegateForm addDelegateForm) {
-        OrcidProfile profile = addDelegateForm.getOrcidProfile(getCurrentUserOrcid());
-        orcidProfileManager.addDelegates(profile);
-        ModelAndView mav = new ModelAndView("redirect:/account?activeTab=delegation-tab");
-        return mav;
+    @RequestMapping(value = "/delegates.json", method = RequestMethod.GET)
+    public @ResponseBody
+    Delegation getDelegatesJson(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {
+        OrcidProfile currentProfile = getEffectiveProfile();
+        Delegation delegation = currentProfile.getOrcidBio().getDelegation();
+        return delegation;
     }
 
-    @RequestMapping(value = "/revoke-delegate", method = RequestMethod.POST)
-    public ModelAndView revokeDelegate(@RequestParam String receiverOrcid) {
+    @RequestMapping(value = "/addDelegate.json")
+    public @ResponseBody
+    String addDelegate(@RequestBody String delegateOrcid) {
+        String currentUserOrcid = getCurrentUserOrcid();
+        GivenPermissionToEntity existing = givenPermissionToDao.findByGiverAndReceiverOrcid(currentUserOrcid, delegateOrcid);
+        if (existing == null) {
+            GivenPermissionToEntity permission = new GivenPermissionToEntity();
+            permission.setGiver(currentUserOrcid);
+            ProfileSummaryEntity receiver = new ProfileSummaryEntity(delegateOrcid);
+            permission.setReceiver(receiver);
+            permission.setApprovalDate(new Date());
+            givenPermissionToDao.merge(permission);
+            OrcidProfile currentUser = getEffectiveProfile();
+            ProfileEntity delegateProfile = profileEntityManager.findByOrcid(delegateOrcid);
+            DelegationDetails details = new DelegationDetails();
+            details.setApprovalDate(new ApprovalDate(DateUtils.convertToXMLGregorianCalendar(permission.getApprovalDate())));
+            DelegateSummary summary = new DelegateSummary();
+            details.setDelegateSummary(summary);
+            summary.setOrcidIdentifier(new OrcidIdentifier(delegateOrcid));
+            String creditName = delegateProfile.getCreditName();
+            if (StringUtils.isNotBlank(creditName)) {
+                summary.setCreditName(new CreditName(creditName));
+            }
+            List<DelegationDetails> detailsList = new ArrayList<>(1);
+            detailsList.add(details);
+            notificationManager.sendNotificationToAddedDelegate(currentUser, detailsList);
+            // Clear the delegate's profile from the cache so that the granting
+            // user
+            // is visible to them immediately
+            profileDao.updateLastModifiedDate(delegateOrcid);
+        }
+        return delegateOrcid;
+    }
+
+    @RequestMapping(value = "/revokeDelegate.json", method = RequestMethod.DELETE)
+    public @ResponseBody
+    String revokeDelegate(@RequestBody String delegate) {
         String giverOrcid = getCurrentUserOrcid();
-        orcidProfileManager.revokeDelegate(giverOrcid, receiverOrcid);
-        ModelAndView mav = new ModelAndView("redirect:/account?activeTab=delegation-tab");
-        return mav;
+        orcidProfileManager.revokeDelegate(giverOrcid, delegate);
+        return delegate;
     }
 
     @RequestMapping(value = "/revoke-delegate-from-summary-view", method = RequestMethod.GET)
@@ -291,54 +349,12 @@ public class ManageProfileController extends BaseWorkspaceController {
         return mav;
     }
 
-    @RequestMapping(value = "/switch-user", method = RequestMethod.POST)
-    public ModelAndView switchUser(HttpServletRequest request, @RequestParam("giverOrcid") String giverOrcid) {
-        OrcidProfileUserDetails userDetails = getCurrentUser();
-        // Check permissions!
-        if (isInDelegationMode()) {
-            // If already in delegation mode, check that is switching back to
-            // current user
-            if (!getRealUserOrcid().equals(giverOrcid)) {
-                throw new AccessDeniedException("You are not allowed to switch back to that user");
-            }
-        } else {
-            // If not yet in delegation mode, then check that the real user has
-            // permission to become the giver
-            if (!hasDelegatePermission(userDetails, giverOrcid)) {
-                throw new AccessDeniedException("You are not allowed to switch to that user");
-            }
-        }
-        getCurrentUser().switchDelegationMode(giverOrcid);
-        request.getSession().removeAttribute(WORKS_RESULTS_ATTRIBUTE);
-        ModelAndView mav = new ModelAndView("redirect:/my-orcid");
-        return mav;
-    }
-
     @RequestMapping(value = "/admin-switch-user", method = RequestMethod.GET)
     public ModelAndView adminSwitchUser(HttpServletRequest request, @RequestParam("orcid") String targetOrcid) {
-        // Check permissions!
-        if (!OrcidType.ADMIN.equals(getRealProfile().getType())) {
-            throw new AccessDeniedException("You are not allowed to switch to that user");
-        }
-        getCurrentUser().switchDelegationMode(targetOrcid);
-        request.getSession().removeAttribute(WORKS_RESULTS_ATTRIBUTE);
-        ModelAndView mav = new ModelAndView("redirect:/my-orcid");
+        // Redirect to the new way of switching user, which includes admin
+        // access
+        ModelAndView mav = new ModelAndView("redirect:/switch-user?j_username=" + targetOrcid);
         return mav;
-    }
-
-    private boolean hasDelegatePermission(OrcidProfileUserDetails userDetails, String giverOrcid) {
-        Delegation delegation = getRealProfile().getOrcidBio().getDelegation();
-        if (delegation != null) {
-            GivenPermissionBy givenPermissionBy = delegation.getGivenPermissionBy();
-            if (givenPermissionBy != null) {
-                for (DelegationDetails delegationDetails : givenPermissionBy.getDelegationDetails()) {
-                    if (delegationDetails.getDelegateSummary().getOrcidIdentifier().getPath().equals(giverOrcid)) {
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
     }
 
     protected ModelAndView rebuildManageView(String activeTab) {
@@ -413,7 +429,6 @@ public class ManageProfileController extends BaseWorkspaceController {
         // Defunct page, redirect to main account page in case of bookmarks.
         return "redirect:/account";
     }
-
 
     @RequestMapping(value = { "/security-question", "/change-security-question" }, method = RequestMethod.GET)
     public ModelAndView viewChangeSecurityQuestion() {
@@ -864,49 +879,88 @@ public class ManageProfileController extends BaseWorkspaceController {
 
         return upTodateResearcherUrls;
     }
-    
+
+    @RequestMapping(value = "/getEmptySSOCredential.json", method = RequestMethod.GET)
+    public @ResponseBody
+    SSOCredentials getEmptySSOCredentials(HttpServletRequest request) {
+        SSOCredentials emptyObject = new SSOCredentials();
+        emptyObject.setClientSecret(new Text());
+
+        RedirectUri redirectUri = new RedirectUri();
+        redirectUri.setValue(new Text());
+        redirectUri.setType(Text.valueOf("default"));
+
+        Set<RedirectUri> set = new HashSet<RedirectUri>();
+        set.add(redirectUri);
+        emptyObject.setRedirectUris(set);
+        return emptyObject;
+    }
+
     @RequestMapping(value = "/generateSSOCredentials.json", method = RequestMethod.POST)
-    public @ResponseBody List<RedirectUri> generateSSOCredentialsJson(HttpServletRequest request, @RequestBody List<RedirectUri> redirectUris) {
+    public @ResponseBody
+    SSOCredentials generateSSOCredentialsJson(HttpServletRequest request, @RequestBody SSOCredentials ssoCredentials) {
         OrcidProfile profile = getEffectiveProfile();
         String orcid = profile.getOrcidIdentifier().getPath();
         boolean hasErrors = false;
-        
-        for(RedirectUri redirectUri : redirectUris) {
-            try {
-                URI.create(redirectUri.getValue().getValue());
-            } catch (NullPointerException npe) {
-                List<String> errors = new ArrayList<String>();
-                errors.add(getMessage("manage.manage_sso_credentials.empty_redirect_uri"));
-                redirectUri.setErrors(errors);
-                hasErrors = true;
-            } catch (IllegalArgumentException iae) {
-                List<String> errors = new ArrayList<String>();
-                errors.add(getMessage("manage.manage_sso_credentials.invalid_redirect_uri"));
-                redirectUri.setErrors(errors);
-                hasErrors = true;
+        List<String> ssoErrors = new ArrayList<String>();
+        Set<RedirectUri> redirectUris = ssoCredentials.getRedirectUris();
+
+        if (redirectUris == null || redirectUris.isEmpty()) {
+            ssoErrors.add(getMessage("manage.manage_sso_credentials.at_least_one"));
+            hasErrors = true;
+        } else {
+            for (RedirectUri redirectUri : redirectUris) {
+                try {
+                    URI.create(redirectUri.getValue().getValue());
+                } catch (NullPointerException npe) {
+                    List<String> errors = new ArrayList<String>();
+                    errors.add(getMessage("manage.manage_sso_credentials.empty_redirect_uri"));
+                    redirectUri.setErrors(errors);
+                    hasErrors = true;
+                } catch (IllegalArgumentException iae) {
+                    List<String> errors = new ArrayList<String>();
+                    errors.add(getMessage("manage.manage_sso_credentials.invalid_redirect_uri"));
+                    redirectUri.setErrors(errors);
+                    hasErrors = true;
+                }
             }
         }
-                
-        if(!hasErrors) {
+
+        if (!hasErrors) {
             Set<String> redirectUriStrings = new HashSet<String>();
-            for(RedirectUri redirectUri : redirectUris){
+            for (RedirectUri redirectUri : redirectUris) {
                 redirectUriStrings.add(redirectUri.getValue().getValue());
             }
-            orcidSSOManager.generateUserCredentials(orcid, redirectUriStrings);
+            ClientDetailsEntity clientDetails = orcidSSOManager.grantSSOAccess(orcid, redirectUriStrings);
+            ssoCredentials = SSOCredentials.toSSOCredentials(clientDetails);
+        } else {
+            for (RedirectUri redirectUri : redirectUris) {
+                if (redirectUri.getErrors() != null && !redirectUri.getErrors().isEmpty())
+                    ssoErrors.addAll(redirectUri.getErrors());
+            }
+            ssoCredentials.setErrors(ssoErrors);
         }
-        
-        return redirectUris;
+
+        return ssoCredentials;
     }
-    
+
     @RequestMapping(value = "/getSSOCredentials.json", method = RequestMethod.POST)
-    public @ResponseBody SSOCredentials getSSOCredentialsJson(HttpServletRequest request) {
+    public @ResponseBody
+    SSOCredentials getSSOCredentialsJson(HttpServletRequest request) {
         SSOCredentials credentials = new SSOCredentials();
         String userOrcid = getEffectiveUserOrcid();
-        ProfileEntity profileEntity = profileEntityManager.findByOrcid(userOrcid);        
-        ClientDetailsEntity existingClientDetails = profileEntity.getClientDetails();
-        if(existingClientDetails != null) {
+        ClientDetailsEntity existingClientDetails = orcidSSOManager.getUserCredentials(userOrcid);
+        if (existingClientDetails != null) {
             credentials = SSOCredentials.toSSOCredentials(existingClientDetails);
-        }        
+        }
         return credentials;
-    }        
+    }
+
+    @RequestMapping(value = "/revokeSSOCredentials.json", method = RequestMethod.POST)
+    public @ResponseBody
+    SSOCredentials revokeSSOCredentials(HttpServletRequest request) {
+        String userOrcid = getEffectiveUserOrcid();
+        orcidSSOManager.revokeSSOAccess(userOrcid);
+        return this.getEmptySSOCredentials(request);
+    }
 }

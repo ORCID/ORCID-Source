@@ -103,10 +103,17 @@ public class WorkspaceController extends BaseWorkspaceController {
     @Resource(name="languagesMap")
     private LanguagesMap lm;
 
-    @ModelAttribute("thirdPartiesForImport")
-    public List<OrcidClient> retrieveThirdPartiesForImport() {
+    @ModelAttribute("workImportWizards")
+    public List<OrcidClient> retrieveWorkImportWizards() {
         return thirdPartyImportManager.findOrcidClientsWithPredefinedOauthScopeWorksImport();
     }
+    
+
+    @ModelAttribute("fundingImportWizards")
+    public List<OrcidClient> retrieveFundingImportWizards() {
+        return thirdPartyImportManager.findOrcidClientsWithPredefinedOauthScopeFundingImport();
+    }
+
 
     @ModelAttribute("affiliationTypes")
     public Map<String, String> retrieveAffiliationTypesAsMap() {
@@ -228,6 +235,17 @@ public class WorkspaceController extends BaseWorkspaceController {
 
     @ModelAttribute("roles")
     public Map<String, String> retrieveRolesAsMap() {
+        Map<String, String> map = new TreeMap<String, String>();
+
+        for (ContributorRole contributorRole : ContributorRole.values()) {
+            if(!contributorRole.isFundingRole())
+                map.put(contributorRole.value(), getMessage(buildInternationalizationKey(ContributorRole.class, contributorRole.value())));
+        }
+        return FunctionsOverCollections.sortMapsByValues(map);
+    }
+    
+    @ModelAttribute("fundingRoles")
+    public Map<String, String> retrieveFundingRolesAsMap() {
         Map<String, String> map = new TreeMap<String, String>();
 
         for (ContributorRole contributorRole : ContributorRole.values()) {

@@ -35,43 +35,36 @@ public class OrcidProfileUserDetails implements UserDetails {
 
     private static final long serialVersionUID = 1L;
 
-    private String realOrcid;
+    private String orcid;
 
     private String primaryEmail;
 
     private String password;
 
-    private String effectiveOrcid;
-
-    private boolean inDelegationMode;
-
     private OrcidType orcidType;
-    
+
     private ClientType clientType;
-    
+
     private GroupType groupType;
-    
+
     public OrcidProfileUserDetails() {
     }
-    
+
     public OrcidProfileUserDetails(String orcid, String primaryEmail, String password) {
-        this.realOrcid = orcid;
-        this.effectiveOrcid = orcid;
+        this.orcid = orcid;
         this.primaryEmail = primaryEmail;
         this.password = password;
     }
 
     public OrcidProfileUserDetails(String orcid, String primaryEmail, String password, OrcidType orcidType) {
-        this.realOrcid = orcid;
-        this.effectiveOrcid = orcid;
+        this.orcid = orcid;
         this.primaryEmail = primaryEmail;
         this.password = password;
         this.orcidType = orcidType;
     }
-    
+
     public OrcidProfileUserDetails(String orcid, String primaryEmail, String password, OrcidType orcidType, ClientType clientType, GroupType groupType) {
-        this.realOrcid = orcid;
-        this.effectiveOrcid = orcid;
+        this.orcid = orcid;
         this.primaryEmail = primaryEmail;
         this.password = password;
         this.orcidType = orcidType;
@@ -88,14 +81,14 @@ public class OrcidProfileUserDetails implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Collection<OrcidWebRole> result = null;
-        //If the orcid type is null, assume it is a normal user
-        if(orcidType == null) 
+        // If the orcid type is null, assume it is a normal user
+        if (orcidType == null)
             result = Arrays.asList(OrcidWebRole.ROLE_USER);
-        else if(orcidType == OrcidType.ADMIN)
+        else if (orcidType == OrcidType.ADMIN)
             result = Arrays.asList(OrcidWebRole.ROLE_ADMIN, OrcidWebRole.ROLE_USER);
-        else if(orcidType.equals(OrcidType.GROUP)){
-            switch(groupType){
-            case BASIC:  
+        else if (orcidType.equals(OrcidType.GROUP)) {
+            switch (groupType) {
+            case BASIC:
                 result = Arrays.asList(OrcidWebRole.ROLE_BASIC, OrcidWebRole.ROLE_USER);
                 break;
             case PREMIUM:
@@ -108,8 +101,8 @@ public class OrcidProfileUserDetails implements UserDetails {
                 result = Arrays.asList(OrcidWebRole.ROLE_PREMIUM_INSTITUTION, OrcidWebRole.ROLE_USER);
                 break;
             }
-        } else if(orcidType.equals(OrcidType.CLIENT)){
-            switch(clientType){
+        } else if (orcidType.equals(OrcidType.CLIENT)) {
+            switch (clientType) {
             case CREATOR:
                 result = Arrays.asList(OrcidWebRole.ROLE_CREATOR, OrcidWebRole.ROLE_USER);
                 break;
@@ -124,9 +117,9 @@ public class OrcidProfileUserDetails implements UserDetails {
                 break;
             }
         } else {
-        	result = Arrays.asList(OrcidWebRole.ROLE_USER);
+            result = Arrays.asList(OrcidWebRole.ROLE_USER);
         }
-        
+
         return result;
     }
 
@@ -149,7 +142,7 @@ public class OrcidProfileUserDetails implements UserDetails {
      */
     @Override
     public String getUsername() {
-        return realOrcid;
+        return orcid;
     }
 
     /**
@@ -200,63 +193,44 @@ public class OrcidProfileUserDetails implements UserDetails {
         return true;
     }
 
-    public void switchDelegationMode(String effectiveOrcid) {
-        inDelegationMode = !effectiveOrcid.equals(realOrcid);
-        this.effectiveOrcid = effectiveOrcid;
-    }
-
-    public boolean isInDelegationMode() {
-        return inDelegationMode;
-    }
-
-    public void setInDelegationMode(boolean inDelegationMode) {
-        this.inDelegationMode = inDelegationMode;
-    }
-
-    public String getRealOrcid() {
-        return realOrcid;
+    public String getOrcid() {
+        return orcid;
     }
 
     public String getPrimaryEmail() {
         return primaryEmail;
     }
 
-    public String getEffectiveOrcid() {
-        return effectiveOrcid;
+    public OrcidType getOrcidType() {
+        return orcidType;
     }
 
-    public OrcidType getOrcidType() {
-		return orcidType;
-	}
+    public void setOrcidType(OrcidType orcidType) {
+        this.orcidType = orcidType;
+    }
 
-	public void setOrcidType(OrcidType orcidType) {
-		this.orcidType = orcidType;
-	}
+    public ClientType getClientType() {
+        return clientType;
+    }
 
-	public ClientType getClientType() {
-		return clientType;
-	}
+    public void setClientType(ClientType clientType) {
+        this.clientType = clientType;
+    }
 
-	public void setClientType(ClientType clientType) {
-		this.clientType = clientType;
-	}
+    public GroupType getGroupType() {
+        return groupType;
+    }
 
-	public GroupType getGroupType() {
-		return groupType;
-	}
+    public void setGroupType(GroupType groupType) {
+        this.groupType = groupType;
+    }
 
-	public void setGroupType(GroupType groupType) {
-		this.groupType = groupType;
-	}
-
-	@Override
+    @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((effectiveOrcid == null) ? 0 : effectiveOrcid.hashCode());
-        result = prime * result + (inDelegationMode ? 1231 : 1237);
         result = prime * result + ((password == null) ? 0 : password.hashCode());
-        result = prime * result + ((realOrcid == null) ? 0 : realOrcid.hashCode());
+        result = prime * result + ((orcid == null) ? 0 : orcid.hashCode());
         result = prime * result + ((orcidType == null) ? 0 : orcidType.hashCode());
         result = prime * result + ((clientType == null) ? 0 : clientType.hashCode());
         result = prime * result + ((groupType == null) ? 0 : groupType.hashCode());
@@ -272,37 +246,30 @@ public class OrcidProfileUserDetails implements UserDetails {
         if (getClass() != obj.getClass())
             return false;
         OrcidProfileUserDetails other = (OrcidProfileUserDetails) obj;
-        if (effectiveOrcid == null) {
-            if (other.effectiveOrcid != null)
-                return false;
-        } else if (!effectiveOrcid.equals(other.effectiveOrcid))
-            return false;
-        if (inDelegationMode != other.inDelegationMode)
-            return false;
         if (password == null) {
             if (other.password != null)
                 return false;
         } else if (!password.equals(other.password))
             return false;
-        if (realOrcid == null) {
-            if (other.realOrcid != null)
+        if (orcid == null) {
+            if (other.orcid != null)
                 return false;
-        } else if (!realOrcid.equals(other.realOrcid))
+        } else if (!orcid.equals(other.orcid))
             return false;
-        if(orcidType == null){
-            if(other.orcidType != null)
+        if (orcidType == null) {
+            if (other.orcidType != null)
                 return false;
-        } else if(!orcidType.equals(other.orcidType))
+        } else if (!orcidType.equals(other.orcidType))
             return false;
-        
-        if(clientType == null){
-            if(other.clientType != null)
+
+        if (clientType == null) {
+            if (other.clientType != null)
                 return false;
-        } else if(!clientType.equals(other.clientType))
+        } else if (!clientType.equals(other.clientType))
             return false;
-     
-        if(groupType == null){
-            if(other.groupType != null)
+
+        if (groupType == null) {
+            if (other.groupType != null)
                 return false;
         } else if (!groupType.equals(other.groupType))
             return false;
