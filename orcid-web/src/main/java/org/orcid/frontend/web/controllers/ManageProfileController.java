@@ -876,12 +876,12 @@ public class ManageProfileController extends BaseWorkspaceController {
                 URI.create(redirectUri.getValue().getValue());
             } catch (NullPointerException npe) {
                 List<String> errors = new ArrayList<String>();
-                errors.add(getMessage("manage.sso.empty_redirect_uri"));
+                errors.add(getMessage("manage.manage_sso_credentials.empty_redirect_uri"));
                 redirectUri.setErrors(errors);
                 hasErrors = true;
             } catch (IllegalArgumentException iae) {
                 List<String> errors = new ArrayList<String>();
-                errors.add(getMessage("manage.sso.invalid_redirect_uri"));
+                errors.add(getMessage("manage.manage_sso_credentials.invalid_redirect_uri"));
                 redirectUri.setErrors(errors);
                 hasErrors = true;
             }

@@ -289,8 +289,16 @@
 					ng-show="showEditSSOPreferences" ng-cloak>
 					<td colspan="2">
 						<div class="create-sso-credentials">
+							<span>
+								<@orcid.msg 'manage.manage_sso_credentials.create_credentials' />
+								<a href ng-click="showCreateModal()"><@orcid.msg 'manage.manage_sso_credentials.create_credentials_link' /></a>
+							</span>
 						</div>
 						<div class="show-sso-credentials">
+							<span>
+								<@orcid.msg 'manage.manage_sso_credentials.view_credentials' />
+								<@orcid.msg 'manage.manage_sso_credentials.view_credentials_link' />
+							</span>
 						</div>
 					</td>
 				</tr>
@@ -387,51 +395,100 @@
 </div>
 
 <script type="text/ng-template" id="deactivate-account-modal">
-		<div style="padding: 20px;"><h3>${springMacroRequestContext.getMessage("manage.deactivateSend")} {{primaryEmail}}</h3>
-		<button class="btn" ng-click="closeModal()">${springMacroRequestContext.getMessage("manage.deactivateSend.close")}</button>
-	</script>
+	<div style="padding: 20px;"><h3>${springMacroRequestContext.getMessage("manage.deactivateSend")} {{primaryEmail}}</h3>
+	<button class="btn" ng-click="closeModal()">${springMacroRequestContext.getMessage("manage.deactivateSend.close")}</button>
+</script>
 		
-	<script type="text/ng-template" id="verify-email-modal">
-		<div style="padding: 20px;"><h3>${springMacroRequestContext.getMessage("manage.email.verificationEmail")} {{emailsPojo.emails[verifyEmailIdx].value}}</h3>
-		<button class="btn" ng-click="closeModal()">${springMacroRequestContext.getMessage("manage.email.verificationEmail.close")}</button>
-	</script>
+<script type="text/ng-template" id="verify-email-modal">
+	<div style="padding: 20px;"><h3>${springMacroRequestContext.getMessage("manage.email.verificationEmail")} {{emailsPojo.emails[verifyEmailIdx].value}}</h3>
+	<button class="btn" ng-click="closeModal()">${springMacroRequestContext.getMessage("manage.email.verificationEmail.close")}</button>
+</script>
 
-	<script type="text/ng-template" id="delete-email-modal">
-		<div style="padding: 20px;"><h3>${springMacroRequestContext.getMessage("manage.email.pleaseConfirmDeletion")} {{emailsPojo.emails[deleteEmailIdx].value}}</h3>
-		<button class="btn btn-danger" ng-click="deleteEmail()">${springMacroRequestContext.getMessage("manage.email.deleteEmail")}</button> 
-		<a href="" ng-click="closeModal()">${springMacroRequestContext.getMessage("manage.email.cancel")}</a><div>
-	</script>		
-	
-	<#-- Script that will display a modal to ask for user password 												-->
-	<#-- If someone wants to use this modal, it should consider the following: 									-->
-	<#-- 1) There should be a password variable in his scope, there we be saved the value of this input.		-->
-	<#-- 2) There should be a function submitModal() to submit the form with the desired info and the password.	-->
-	<#-- 3) There should be a function closeModal() to close the the modal.										-->
-	<script type="text/ng-template" id="check-password-modal">
-		<div style="padding: 20px;"><h2><@orcid.msg 'check_password_modal.confirm_password' /></h2>		
-		   <label for="check_password_modal.password" class=""><@orcid.msg 'check_password_modal.password' /></label>
-	       <input id="check_password_modal.password" type="password" name="check_password_modal.password" ng-model="password" class="input-xlarge"/>
-	       <br />
-	       <button id="bottom-submit" class="btn btn-primary" ng-click="submitModal()"><@orcid.msg 'check_password_modal.submit'/></button>				
-		   <button class="btn" ng-click="closeModal()"><@orcid.msg 'check_password_modal.close'/></button>
+<script type="text/ng-template" id="delete-email-modal">
+	<div style="padding: 20px;"><h3>${springMacroRequestContext.getMessage("manage.email.pleaseConfirmDeletion")} {{emailsPojo.emails[deleteEmailIdx].value}}</h3>
+	<button class="btn btn-danger" ng-click="deleteEmail()">${springMacroRequestContext.getMessage("manage.email.deleteEmail")}</button> 
+	<a href="" ng-click="closeModal()">${springMacroRequestContext.getMessage("manage.email.cancel")}</a><div>
+</script>		
+
+<#-- Script that will display a modal to ask for user password 												-->
+<#-- If someone wants to use this modal, it should consider the following: 									-->
+<#-- 1) There should be a password variable in his scope, there we be saved the value of this input.		-->
+<#-- 2) There should be a function submitModal() to submit the form with the desired info and the password.	-->
+<#-- 3) There should be a function closeModal() to close the the modal.										-->
+<script type="text/ng-template" id="check-password-modal">
+	<div style="padding: 20px;"><h2><@orcid.msg 'check_password_modal.confirm_password' /></h2>		
+	   <label for="check_password_modal.password" class=""><@orcid.msg 'check_password_modal.password' /></label>
+       <input id="check_password_modal.password" type="password" name="check_password_modal.password" ng-model="password" class="input-xlarge"/>
+       <br />
+       <button id="bottom-submit" class="btn btn-primary" ng-click="submitModal()"><@orcid.msg 'check_password_modal.submit'/></button>				
+	   <button class="btn" ng-click="closeModal()"><@orcid.msg 'check_password_modal.close'/></button>
+	</div>
+</script>
+
+<script type="text/ng-template" id="confirm-revoke-access-modal">
+	<div style="padding: 20px;">
+	   <h3>${springMacroRequestContext.getMessage("manage.application_access.revoke.confirm_revoke")} {{appName}}</h3>
+	   <button class="btn btn-danger" ng-click="revokeAccess()">${springMacroRequestContext.getMessage("manage.application_access.revoke.confirm")}</button> 
+	   <a href="" ng-click="closeModal()">${springMacroRequestContext.getMessage("manage.application_access.revoke.cancel")}</a>
+	</div>
+</script>
+
+<script type="text/ng-template" id="generate-sso-credentials-modal">
+	<div>
+		<h3><@orcid.msg 'manage.manage_sso_credentials.create.title'/></h3>
+		<span><@orcid.msg 'manage.manage_sso_credentials.create.instructions'/></span>
+		
+		
+		<div class="control-group" ng-repeat='rUri in ssoCredentials.redirectUris'>						
+			<label class="control-label" style="margin-right:10px; text-align:left; width:90px"><@orcid.msg 'manage.manage_sso_credentials.redirect_uri'/>:</label>
+			<div class="relative">
+				<input type="text" placeholder="<@orcid.msg 'manage.manage_sso_credentials.redirect_uri.placeholder'/>" class="input-xlarge" ng-model="rUri.value.value">
+				<span class="orcid-error" ng-show="rUri.errors.length > 0">
+					<div ng-repeat='error in rUri.errors' ng-bind-html-unsafe="error"></div>
+				</span>						
+			</div>
 		</div>
-	</script>
-	
-	<script type="text/ng-template" id="confirm-revoke-access-modal">
-		<div style="padding: 20px;">
-		   <h3>${springMacroRequestContext.getMessage("manage.application_access.revoke.confirm_revoke")} {{appName}}</h3>
-		   <button class="btn btn-danger" ng-click="revokeAccess()">${springMacroRequestContext.getMessage("manage.application_access.revoke.confirm")}</button> 
-		   <a href="" ng-click="closeModal()">${springMacroRequestContext.getMessage("manage.application_access.revoke.cancel")}</a>
-		</div>
-	</script>
-	
-	<script type="text/ng-template" id="generate-sso-credentials">
-		<div>
-			<h3><@orcid.msg 'manage.generate_sso_credentials.title'/></h3>
-			<span><@orcid.msg 'manage.generate_sso_credentials.instructions'/></span>
-			<input type="text" name="redirectUri" ng-model="redirect_uri.value" />
-			<button class="btn btn-danger" ng-click="submit()"><@orcid.msg 'manage.generate_sso_credentials.generate'/></button>
-			<a href="" ng-click="closeModal()"><@orcid.msg 'manage.generate_sso_credentials.cancel'/></a>
-		</div>
-	</script>
+		<input type="text" name="redirectUri" ng-model="redirect_uri.value" />
+		
+		
+		<button class="btn btn-danger" ng-click="submit()"><@orcid.msg 'manage.manage_sso_credentials.create.generate'/></button>
+		<a href="" ng-click="closeModal()"><@orcid.msg 'manage.manage_sso_credentials.create.cancel'/></a>
+	</div>
+</script>
 </@protected>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

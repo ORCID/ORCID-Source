@@ -3465,7 +3465,7 @@ function adminGroupsCtrl($scope,$compile){
 function SSOPreferencesCtrl($scope, $compile) {
 	$scope.userCredentials = null;	
 	
-	$scope.getUserCredentials = function() {
+	$scope.getSSOCredentials = function() {
 		$.ajax({
 	        url: orcidVar.baseUri+'/account/getSSOCredentials.json',	        
 	        contentType: 'application/json;charset=UTF-8',
@@ -3483,7 +3483,7 @@ function SSOPreferencesCtrl($scope, $compile) {
 	    });		
 	};
 	
-	$scope.postUserCredentials = function() {
+	$scope.showCreateModal = function() {
 		
 	};
 	
