@@ -27,4 +27,5 @@ public interface ClientRedirectDao extends GenericDao<ClientRedirectUriEntity, C
 
     void addClientRedirectUri(String clientId, String redirectUri);
 
+    void removeClientRedirectUri(String clientId, String redirectUri);
 }

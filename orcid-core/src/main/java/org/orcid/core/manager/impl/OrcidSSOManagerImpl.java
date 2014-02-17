@@ -1,3 +1,19 @@
+/**
+ * =============================================================================
+ *
+ * ORCID (R) Open Source
+ * http://orcid.org
+ *
+ * Copyright (c) 2012-2013 ORCID, Inc.
+ * Licensed under an MIT-Style License (MIT)
+ * http://orcid.org/open-source-license
+ *
+ * This copyright and license information (including a link to the full license)
+ * shall be included in its entirety in all copies or substantial portion of
+ * the software.
+ *
+ * =============================================================================
+ */
 package org.orcid.core.manager.impl;
 
 import java.util.HashSet;
@@ -14,10 +30,13 @@ import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.jaxb.model.clientgroup.RedirectUriType;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.persistence.dao.ClientDetailsDao;
+import org.orcid.persistence.dao.ClientRedirectDao;
+import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ClientRedirectUriEntity;
 import org.orcid.persistence.jpa.entities.ClientScopeEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.orcid.persistence.jpa.entities.keys.ClientScopePk;
 
 public class OrcidSSOManagerImpl implements OrcidSSOManager {
 
@@ -30,10 +49,16 @@ public class OrcidSSOManagerImpl implements OrcidSSOManager {
     @Resource
     private ClientDetailsDao clientDetailsDao;
 
+    @Resource(name = "clientScopeDao")
+    private GenericDao<ClientScopeEntity, ClientScopePk> clientScopeDao;
+
+    @Resource
+    private ClientRedirectDao clientRedirectDao;
+
     private final static String SSO_SCOPE = ScopePathType.AUTHENTICATE.value();
 
     @Override
-    public ClientDetailsEntity generateUserCredentials(String orcid, Set<String> redirectUris) {
+    public ClientDetailsEntity grantSSOAccess(String orcid, Set<String> redirectUris) {
         ProfileEntity profileEntity = profileEntityManager.findByOrcid(orcid);
         if (profileEntity == null) {
             throw new IllegalArgumentException("ORCID does not exist for " + orcid + " cannot continue");
@@ -75,8 +100,59 @@ public class OrcidSSOManagerImpl implements OrcidSSOManager {
 
     @Override
     public ClientDetailsEntity getUserCredentials(String orcid) {
-        // TODO Auto-generated method stub
-        return null;
+        ClientDetailsEntity existingClientDetails = clientDetailsDao.findByClientId(orcid);
+        if (existingClientDetails != null)
+            existingClientDetails.setDecryptedClientSecret(encryptionManager.decryptForInternalUse(existingClientDetails.getClientSecretForJpa()));
+        return existingClientDetails;
+    }
+
+    @Override
+    public void revokeSSOAccess(String orcid) {
+        ProfileEntity profileEntity = profileEntityManager.findByOrcid(orcid);
+        if (profileEntity == null) {
+            throw new IllegalArgumentException("ORCID does not exist for " + orcid + " cannot continue");
+        } else {
+            if (profileEntity.getClientDetails() != null) {
+                ClientDetailsEntity existingClientDetails = profileEntity.getClientDetails();
+                Set<ClientScopeEntity> existingScopes = existingClientDetails.getClientScopes();
+                if (hasSSOScope(existingScopes)) {
+                    // If the SSO scope is the unique scope, delete the complete
+                    // client details entity
+                    if (existingScopes.size() == 1) {
+                        // Delete the client details entity
+                        clientDetailsDao.removeByClientId(orcid);
+                    } else {
+                        // If the user have more that the SSO scope
+                        // Delete the SSO scope
+                        ClientScopePk pk = new ClientScopePk();
+                        pk.setClientDetailsEntity(orcid);
+                        pk.setScopeType(SSO_SCOPE);
+                        clientScopeDao.remove(pk);
+                        // Delete the client redirect uris associated with SSO
+                        // authentication
+                        Set<ClientRedirectUriEntity> redirectUris = existingClientDetails.getClientRegisteredRedirectUris();
+                        if (redirectUris != null && redirectUris.size() > 0) {
+                            for (ClientRedirectUriEntity redirectUri : redirectUris) {
+                                if (RedirectUriType.SSO_AUTHENTICATION.value().equals(redirectUri.getRedirectUriType())) {
+                                    clientRedirectDao.removeClientRedirectUri(orcid, redirectUri.getRedirectUri());
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private boolean hasSSOScope(Set<ClientScopeEntity> scopes) {
+        if (scopes != null && scopes.size() > 0) {
+            for (ClientScopeEntity scope : scopes) {
+                if (SSO_SCOPE.equals(scope.getScopeType())) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     private ClientDetailsEntity populateClientDetailsEntity(String clientId, String clientSecret, Set<String> clientRegisteredRedirectUris) {

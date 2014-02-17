@@ -3779,11 +3779,111 @@ function SSOPreferencesCtrl($scope, $compile) {
 	    });		
 	};
 	
+	// Get an empty modal to add
+	$scope.fetchEmptyCredentials = function(){		
+		$.ajax({
+			url: $('body').data('baseurl') + '/account/getEmptySSOCredential.json',
+			dataType: 'json',
+			success: function(data) {
+				$scope.userCredentials = data;
+				console.log(data);
+				$scope.$apply(function() {
+					$scope.showCreateModal();
+				});
+			}
+		}).fail(function() { 
+	    	console.log("Error fetching client");
+	    });
+	};
+	
 	$scope.showCreateModal = function() {
+		$.colorbox({                      
+			html : $compile($('#generate-sso-credentials-modal').html())($scope),				
+				onLoad: function() {
+				$('#cboxClose').remove();
+			}
+		});
 		
+		$.colorbox.resize({width:"450px" , height:"350px"});
+	};
+	
+	$scope.addRedirectURI = function() {
+		$scope.userCredentials.redirectUris.push({value: '',type: 'default'});
+	};
+	
+	$scope.submit = function() {
+		$.ajax({
+	        url: orcidVar.baseUri+'/account/generateSSOCredentials.json',	        
+	        contentType: 'application/json;charset=UTF-8',
+	        type: 'POST',
+	        dataType: 'json',
+	        data: angular.toJson($scope.userCredentials),	        	       
+	        success: function(data){
+	        	console.log(data);
+	        	$scope.$apply(function(){ 
+	        		$scope.userCredentials = data;
+	        		if(data.errors.length != 0){
+	        			//SHOW ERROR
+	        		} else {	        			
+	        			$scope.closeModal();
+	        		}
+				});
+	        }
+	    }).fail(function(error) { 
+	    	// something bad is happening!	    	
+	    	console.log("Error creating SSO credentials");	    	
+	    });		
+	};
+	
+	$scope.showSuccessModal = function(){
+		console.log("Done: " + angular.toJson($scope.userCredentials));
+	};
+	
+	
+	$scope.showSSOCredentials = function() {		
+		$.colorbox({                      
+			html : $compile($('#show-sso-credentials-modal').html())($scope),				
+				onLoad: function() {
+				$('#cboxClose').remove();
+			}
+		});
+		
+		$.colorbox.resize({width:"450px" , height:"350px"});
+	};
+	
+	$scope.showRevokeModal = function() {		
+		$.colorbox({                      
+			html : $compile($('#revoke-sso-credentials-modal').html())($scope),				
+				onLoad: function() {
+				$('#cboxClose').remove();
+			}
+		});
+		
+		$.colorbox.resize({width:"450px" , height:"350px"});
+	};
+	
+	$scope.revoke = function() {
+		$.ajax({
+	        url: orcidVar.baseUri+'/account/revokeSSOCredentials.json',	        
+	        contentType: 'application/json;charset=UTF-8',
+	        type: 'POST',	                	       
+	        success: function(){
+	        	$scope.$apply(function(){ 
+	        		$scope.userCredentials = null;
+	        		$scope.closeModal();
+				});
+	        }
+	    }).fail(function(error) { 
+	    	// something bad is happening!	    	
+	    	console.log("Error revoking SSO credentials");	    	
+	    });	
+	};
+	
+	$scope.closeModal = function() {
+		$.colorbox.close();
 	};
 	
 	//init
-	$scope.getUserCredentials();
+	$scope.getSSOCredentials();
 	
 };
