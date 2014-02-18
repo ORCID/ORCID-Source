@@ -16,7 +16,9 @@
  */
 package org.orcid.core.manager.impl;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -33,6 +35,7 @@ import org.orcid.persistence.dao.ClientDetailsDao;
 import org.orcid.persistence.dao.ClientRedirectDao;
 import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
+import org.orcid.persistence.jpa.entities.ClientGrantedAuthorityEntity;
 import org.orcid.persistence.jpa.entities.ClientRedirectUriEntity;
 import org.orcid.persistence.jpa.entities.ClientScopeEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -56,6 +59,7 @@ public class OrcidSSOManagerImpl implements OrcidSSOManager {
     private ClientRedirectDao clientRedirectDao;
 
     private final static String SSO_SCOPE = ScopePathType.AUTHENTICATE.value();
+    private final static String SSO_ROLE = "ROLE_PUBLIC";
 
     @Override
     public ClientDetailsEntity grantSSOAccess(String orcid, Set<String> redirectUris) {
@@ -164,6 +168,7 @@ public class OrcidSSOManagerImpl implements OrcidSSOManager {
         clientScopes.add(getClientScopeEntity(SSO_SCOPE, clientDetailsEntity));
         clientDetailsEntity.setClientScopes(clientScopes);
         clientDetailsEntity.setClientRegisteredRedirectUris(getClientRegisteredRedirectUris(clientRegisteredRedirectUris, clientDetailsEntity));
+        clientDetailsEntity.setClientGrantedAuthorities(getClientGrantedAuthorities(clientDetailsEntity));
         return clientDetailsEntity;
     }
 
@@ -184,5 +189,14 @@ public class OrcidSSOManagerImpl implements OrcidSSOManager {
             clientRedirectUriEntities.add(clientRedirectUriEntity);
         }
         return clientRedirectUriEntities;
+    }
+
+    private List<ClientGrantedAuthorityEntity> getClientGrantedAuthorities(ClientDetailsEntity clientDetailsEntity) {
+        List<ClientGrantedAuthorityEntity> clientGrantedAuthorityEntities = new ArrayList<ClientGrantedAuthorityEntity>();
+        ClientGrantedAuthorityEntity clientGrantedAuthorityEntity = new ClientGrantedAuthorityEntity();
+        clientGrantedAuthorityEntity.setClientDetailsEntity(clientDetailsEntity);
+        clientGrantedAuthorityEntity.setAuthority(SSO_ROLE);
+        clientGrantedAuthorityEntities.add(clientGrantedAuthorityEntity);
+        return clientGrantedAuthorityEntities;
     }
 }
