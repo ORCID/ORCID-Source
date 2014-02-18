@@ -34,6 +34,7 @@ import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.persistence.dao.ClientDetailsDao;
 import org.orcid.persistence.dao.ClientRedirectDao;
 import org.orcid.persistence.dao.GenericDao;
+import org.orcid.persistence.jpa.entities.ClientAuthorisedGrantTypeEntity;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ClientGrantedAuthorityEntity;
 import org.orcid.persistence.jpa.entities.ClientRedirectUriEntity;
@@ -58,7 +59,7 @@ public class OrcidSSOManagerImpl implements OrcidSSOManager {
     @Resource
     private ClientRedirectDao clientRedirectDao;
 
-    private final static String SSO_SCOPE = ScopePathType.AUTHENTICATE.value();
+    private final static String SSO_SCOPE = ScopePathType.AUTHORIZE.value();
     private final static String SSO_ROLE = "ROLE_PUBLIC";
 
     @Override
@@ -169,6 +170,9 @@ public class OrcidSSOManagerImpl implements OrcidSSOManager {
         clientDetailsEntity.setClientScopes(clientScopes);
         clientDetailsEntity.setClientRegisteredRedirectUris(getClientRegisteredRedirectUris(clientRegisteredRedirectUris, clientDetailsEntity));
         clientDetailsEntity.setClientGrantedAuthorities(getClientGrantedAuthorities(clientDetailsEntity));
+
+        clientDetailsEntity.setClientAuthorizedGrantTypes(getClientAuthorizedGrantTypes(clientDetailsEntity));
+
         return clientDetailsEntity;
     }
 
@@ -198,5 +202,17 @@ public class OrcidSSOManagerImpl implements OrcidSSOManager {
         clientGrantedAuthorityEntity.setAuthority(SSO_ROLE);
         clientGrantedAuthorityEntities.add(clientGrantedAuthorityEntity);
         return clientGrantedAuthorityEntities;
+    }
+
+    private Set<ClientAuthorisedGrantTypeEntity> getClientAuthorizedGrantTypes(ClientDetailsEntity clientDetailsEntity) {
+        Set<ClientAuthorisedGrantTypeEntity> clientAuthorisedGrantTypeEntities = new HashSet<ClientAuthorisedGrantTypeEntity>();
+        String[] clientAuthorizedGrantTypes = { "authorization_code" };
+        for (String clientAuthorisedGrantType : clientAuthorizedGrantTypes) {
+            ClientAuthorisedGrantTypeEntity grantTypeEntity = new ClientAuthorisedGrantTypeEntity();
+            grantTypeEntity.setClientDetailsEntity(clientDetailsEntity);
+            grantTypeEntity.setGrantType(clientAuthorisedGrantType);
+            clientAuthorisedGrantTypeEntities.add(grantTypeEntity);
+        }
+        return clientAuthorisedGrantTypeEntities;
     }
 }
