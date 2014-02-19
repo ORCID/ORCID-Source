@@ -520,7 +520,7 @@
 </script>
 
 <script type="text/ng-template" id="generate-sso-credentials-modal">
-	<div>
+	<div style="padding: 20px;">
 		<h3><@orcid.msg 'manage.manage_sso_credentials.create.title'/></h3>
 		<span><@orcid.msg 'manage.manage_sso_credentials.create.instructions'/></span>
 		<label class="control-label" style="margin-right:10px; text-align:left; width:90px"><@orcid.msg 'manage.manage_sso_credentials.redirect_uri'/>:</label>
@@ -541,26 +541,31 @@
 </script>
 
 <script type="text/ng-template" id="show-sso-credentials-modal">
-	<div>
-		<h3><@orcid.msg 'manage.manage_sso_credentials.create.title'/></h3>
-		<span><@orcid.msg 'manage.manage_sso_credentials.view.instructions'/></span><br />
+	<div style="padding: 20px;">
+		<h3><@orcid.msg 'manage.manage_sso_credentials.view.title'/></h3>
+		<span><@orcid.msg 'manage.manage_sso_credentials.view.instructions'/></span>
+		<br />
+		<br />
+		<span><strong><@orcid.msg 'manage.manage_sso_credentials.view.secret'/></strong></span>
 		<span>{{userCredentials.clientSecret.value}}</span><br />
-		<label class="control-label"><@orcid.msg 'manage.manage_sso_credentials.view.redirect_uri'/>:</label>
+		<span><strong><@orcid.msg 'manage.manage_sso_credentials.view.redirect_uri'/>:</strong></span><br />
 		<div class="control-group" ng-repeat='rUri in userCredentials.redirectUris'>									
-			<div class="relative">
+			<div style="padding-left:10px;">
 				{{rUri.value.value}}<br />									
 			</div>
 		</div>
-		<a href="" ng-click="closeModal()"><@orcid.msg 'manage.manage_sso_credentials.create.cancel'/></a>
+		<a href="" ng-click="closeModal()"><@orcid.msg 'manage.manage_sso_credentials.close'/></a>
 	</div>
 </script>	
 
 <script type="text/ng-template" id="revoke-sso-credentials-modal">
-	<div>
+	<div style="padding: 20px;">
 		<h3><@orcid.msg 'manage.manage_sso_credentials.revoke.title'/></h3>
-		<span><@orcid.msg 'manage.manage_sso_credentials.revoke.instructions'/></span><br />
-		<button class="btn btn-danger" ng-click="revoke()"><@orcid.msg 'manage.manage_sso_credentials.revoke.submit'/></button>
-		<a href="" ng-click="closeModal()"><@orcid.msg 'manage.manage_sso_credentials.create.cancel'/></a>
+		<span><@orcid.msg 'manage.manage_sso_credentials.revoke.instructions'/></span>
+		<div style="padding-top: 5px;">
+			<button class="btn btn-danger" ng-click="revoke()"><@orcid.msg 'manage.manage_sso_credentials.revoke.submit'/></button>
+			<a href="" ng-click="closeModal()"><@orcid.msg 'manage.manage_sso_credentials.create.cancel'/></a>
+		</div>
 	</div>
 </script>	
 </@protected>
