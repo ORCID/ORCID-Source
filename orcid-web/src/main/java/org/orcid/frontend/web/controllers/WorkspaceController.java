@@ -246,12 +246,13 @@ public class WorkspaceController extends BaseWorkspaceController {
     
     @ModelAttribute("fundingRoles")
     public Map<String, String> retrieveFundingRolesAsMap() {
-        Map<String, String> map = new TreeMap<String, String>();
+        Map<String, String> map = new LinkedHashMap<String, String>();
 
         for (ContributorRole contributorRole : ContributorRole.values()) {
-            map.put(contributorRole.value(), getMessage(buildInternationalizationKey(ContributorRole.class, contributorRole.value())));
+            if(contributorRole.isFundingRole())
+                map.put(contributorRole.value(), getMessage(buildInternationalizationKey(ContributorRole.class, contributorRole.value())));
         }
-        return FunctionsOverCollections.sortMapsByValues(map);
+        return map;
     }
 
     @ModelAttribute("sequences")
