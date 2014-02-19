@@ -215,4 +215,9 @@ public class OrcidSSOManagerImpl implements OrcidSSOManager {
         }
         return clientAuthorisedGrantTypeEntities;
     }
+    
+    
+    public void updateRedirectUris(String orcid, Set<String> redirectUris) {
+        
+    }
 }
