@@ -540,30 +540,6 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link OrcidPatent }
-     * 
-     */
-    public OrcidPatent createOrcidPatent() {
-        return new OrcidPatent();
-    }
-
-    /**
-     * Create an instance of {@link PatentNumber }
-     * 
-     */
-    public PatentNumber createPatentNumber() {
-        return new PatentNumber();
-    }
-
-    /**
-     * Create an instance of {@link PatentIssueDate }
-     * 
-     */
-    public PatentIssueDate createPatentIssueDate() {
-        return new PatentIssueDate();
-    }
-
-    /**
      * Create an instance of {@link Assignee }
      * 
      */
@@ -587,21 +563,6 @@ public class ObjectFactory {
         return new AssigneeName();
     }
 
-    /**
-     * Create an instance of {@link PatentContributors }
-     * 
-     */
-    public PatentContributors createPatentContributors() {
-        return new PatentContributors();
-    }
-
-    /**
-     * Create an instance of {@link PatentSources }
-     * 
-     */
-    public PatentSources createPatentSources() {
-        return new PatentSources();
-    }
 
     /**
      * Create an instance of {@link OrcidPreferences }
@@ -689,14 +650,6 @@ public class ObjectFactory {
      */
     public Url createUrl() {
         return new Url();
-    }
-
-    /**
-     * Create an instance of {@link OrcidPatents }
-     * 
-     */
-    public OrcidPatents createOrcidPatents() {
-        return new OrcidPatents();
     }
 
     /**
