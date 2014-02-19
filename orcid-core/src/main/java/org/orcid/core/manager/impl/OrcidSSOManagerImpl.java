@@ -19,6 +19,7 @@ package org.orcid.core.manager.impl;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -59,7 +60,8 @@ public class OrcidSSOManagerImpl implements OrcidSSOManager {
     @Resource
     private ClientRedirectDao clientRedirectDao;
 
-    private final static String SSO_SCOPE = ScopePathType.AUTHORIZE.value();
+    private final static String SSO_REDIRECT_URI_TYPE = RedirectUriType.SSO_AUTHENTICATION.value();
+    private final static String SSO_SCOPE = ScopePathType.AUTHENTICATE.value();
     private final static String SSO_ROLE = "ROLE_PUBLIC";
 
     @Override
@@ -106,8 +108,21 @@ public class OrcidSSOManagerImpl implements OrcidSSOManager {
     @Override
     public ClientDetailsEntity getUserCredentials(String orcid) {
         ClientDetailsEntity existingClientDetails = clientDetailsDao.findByClientId(orcid);
-        if (existingClientDetails != null)
-            existingClientDetails.setDecryptedClientSecret(encryptionManager.decryptForInternalUse(existingClientDetails.getClientSecretForJpa()));
+        if (existingClientDetails != null) {
+            SortedSet<ClientRedirectUriEntity> allRedirectUris = existingClientDetails.getClientRegisteredRedirectUris();
+            SortedSet<ClientRedirectUriEntity> onlySSORedirectUris = new TreeSet<ClientRedirectUriEntity>();
+            if (allRedirectUris != null) {
+                for (ClientRedirectUriEntity rUri : allRedirectUris) {
+                    // Leave only the redirect uris used for SSO authentication
+                    if (SSO_REDIRECT_URI_TYPE.equals(rUri.getRedirectUriType())) {
+                        onlySSORedirectUris.add(rUri);
+                    }
+                }
+            }
+            existingClientDetails.setClientRegisteredRedirectUris(onlySSORedirectUris);
+            if (existingClientDetails != null)
+                existingClientDetails.setDecryptedClientSecret(encryptionManager.decryptForInternalUse(existingClientDetails.getClientSecretForJpa()));
+        }
         return existingClientDetails;
     }
 
@@ -186,13 +201,18 @@ public class OrcidSSOManagerImpl implements OrcidSSOManager {
     private SortedSet<ClientRedirectUriEntity> getClientRegisteredRedirectUris(Set<String> redirectUris, ClientDetailsEntity clientDetailsEntity) {
         SortedSet<ClientRedirectUriEntity> clientRedirectUriEntities = new TreeSet<ClientRedirectUriEntity>();
         for (String redirectUri : redirectUris) {
-            ClientRedirectUriEntity clientRedirectUriEntity = new ClientRedirectUriEntity();
-            clientRedirectUriEntity.setClientDetailsEntity(clientDetailsEntity);
-            clientRedirectUriEntity.setRedirectUri(redirectUri);
-            clientRedirectUriEntity.setRedirectUriType(RedirectUriType.SSO_AUTHENTICATION.value());
+            ClientRedirectUriEntity clientRedirectUriEntity = populateClientRedirectUriEntity(redirectUri, clientDetailsEntity);
             clientRedirectUriEntities.add(clientRedirectUriEntity);
         }
         return clientRedirectUriEntities;
+    }
+
+    private ClientRedirectUriEntity populateClientRedirectUriEntity(String redirectUri, ClientDetailsEntity clientDetailsEntity) {
+        ClientRedirectUriEntity clientRedirectUriEntity = new ClientRedirectUriEntity();
+        clientRedirectUriEntity.setClientDetailsEntity(clientDetailsEntity);
+        clientRedirectUriEntity.setRedirectUri(redirectUri);
+        clientRedirectUriEntity.setRedirectUriType(SSO_REDIRECT_URI_TYPE);
+        return clientRedirectUriEntity;
     }
 
     private List<ClientGrantedAuthorityEntity> getClientGrantedAuthorities(ClientDetailsEntity clientDetailsEntity) {
@@ -215,9 +235,58 @@ public class OrcidSSOManagerImpl implements OrcidSSOManager {
         }
         return clientAuthorisedGrantTypeEntities;
     }
-    
-    
-    public void updateRedirectUris(String orcid, Set<String> redirectUris) {
-        
+
+    @Override
+    public ClientDetailsEntity updateRedirectUris(String orcid, Set<String> redirectUris) {
+        ProfileEntity profileEntity = profileEntityManager.findByOrcid(orcid);
+        if (profileEntity == null) {
+            throw new IllegalArgumentException("ORCID does not exist for " + orcid + " cannot continue");
+        } else {
+            ClientDetailsEntity clientDetailsEntity = profileEntity.getClientDetails();
+            if (clientDetailsEntity != null) {
+                // Set the decrypted secret
+                if (clientDetailsEntity != null)
+                    clientDetailsEntity.setDecryptedClientSecret(encryptionManager.decryptForInternalUse(clientDetailsEntity.getClientSecretForJpa()));
+                // Get the existing redirect uris
+                SortedSet<ClientRedirectUriEntity> clientRedirectUriEntities = clientDetailsEntity.getClientRegisteredRedirectUris();
+
+                // Create a set with the redirect uris that are not SSO and the
+                // ones that wasnt modified
+                Set<ClientRedirectUriEntity> redirectUrisToAdd = new HashSet<ClientRedirectUriEntity>();
+                for (ClientRedirectUriEntity existingEntity : clientRedirectUriEntities) {
+                    // Add to the set all non SSO redirect uris
+                    if (!SSO_REDIRECT_URI_TYPE.equals(existingEntity.getRedirectUriType())) {
+                        redirectUrisToAdd.add(existingEntity);
+                    } else {
+                        // If the redirect uri exists and also comes in the new
+                        // set of redirect uris, leave it
+                        if (redirectUris.contains(existingEntity.getRedirectUri())) {
+                            redirectUrisToAdd.add(existingEntity);
+                        }
+                    }
+                }
+
+                Map<String, ClientRedirectUriEntity> existingClientRedirectUriEntitiesMap = ClientRedirectUriEntity.mapByUri(redirectUrisToAdd);
+                // Now we need to check which redirect uris are new, in order to
+                // add them
+                for (String redirectUri : redirectUris) {
+                    if (!existingClientRedirectUriEntitiesMap.containsKey(redirectUri)) {
+                        // Add the new key
+                        ClientRedirectUriEntity newRedirectUri = populateClientRedirectUriEntity(redirectUri, clientDetailsEntity);
+                        redirectUrisToAdd.add(newRedirectUri);
+                    }
+                }
+
+                // Clear the set for orphan removal
+                clientRedirectUriEntities.clear();
+                // Fill the collection with the redirect uris that should be
+                // kept
+                clientRedirectUriEntities.addAll(redirectUrisToAdd);
+
+                clientDetailsDao.merge(clientDetailsEntity);
+                return clientDetailsEntity;
+            }
+        }
+        return null;
     }
 }

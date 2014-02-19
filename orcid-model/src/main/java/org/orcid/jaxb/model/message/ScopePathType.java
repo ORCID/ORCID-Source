@@ -75,7 +75,6 @@ import javax.xml.bind.annotation.XmlType;
 public enum ScopePathType implements Serializable {
 
     //@formatter:off
-    @XmlEnumValue("/authorize") AUTHORIZE("/authorize"),
     @XmlEnumValue("/authenticate") AUTHENTICATE("/authenticate"),
     @XmlEnumValue("/read-public") READ_PUBLIC("/read-public"),
     @XmlEnumValue("/webhook") WEBHOOK("/webhook"),

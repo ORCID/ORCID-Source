@@ -3766,10 +3766,9 @@ function SSOPreferencesCtrl($scope, $compile) {
 	        url: orcidVar.baseUri+'/account/getSSOCredentials.json',	        
 	        contentType: 'application/json;charset=UTF-8',
 	        type: 'POST',	                	      
-	        success: function(data){
-	        	console.log(data);
+	        success: function(data){	        	
 	        	$scope.$apply(function(){ 
-	        		if(data.clientSecret != null)
+	        		if(data != null && data.clientSecret != null)
 	        			$scope.userCredentials = data;
 				});
 	        }
@@ -3879,11 +3878,49 @@ function SSOPreferencesCtrl($scope, $compile) {
 	    });	
 	};
 	
+	$scope.showEditModal = function() {
+		$.colorbox({                      
+			html : $compile($('#edit-sso-credentials-modal').html())($scope),				
+				onLoad: function() {
+				$('#cboxClose').remove();
+			}
+		});
+		
+		$.colorbox.resize({width:"450px" , height:"230px"});
+	};
+	
+	$scope.editRedirectUris = function() {
+		$.ajax({
+	        url: orcidVar.baseUri+'/account/updateRedirectUris.json',	        
+	        contentType: 'application/json;charset=UTF-8',
+	        type: 'POST',
+	        dataType: 'json',
+	        data: angular.toJson($scope.userCredentials),	        	       
+	        success: function(data){
+	        	console.log(data);
+	        	$scope.$apply(function(){ 
+	        		$scope.userCredentials = data;
+	        		if(data.errors.length != 0){
+	        			//SHOW ERROR
+	        		} else {	        			
+	        			$scope.closeModal();
+	        		}
+				});
+	        }
+	    }).fail(function(error) { 
+	    	// something bad is happening!	    	
+	    	console.log("Error updating SSO credentials");	    	
+	    });	
+	};
+	
+	$scope.deleteRedirectUri = function(idx) {
+		$scope.userCredentials.redirectUris.splice(idx, 1);
+	};
+	
 	$scope.closeModal = function() {
 		$.colorbox.close();
 	};
 	
 	//init
-	$scope.getSSOCredentials();
-	
+	$scope.getSSOCredentials();	
 };

@@ -294,11 +294,11 @@
 							</span>
 						</div>
 						<div class="show-sso-credentials" ng-show="userCredentials != null">
-							<span>
-								<@orcid.msg 'manage.manage_sso_credentials.view_credentials' />
+							<span>								
 								<a href ng-click="showSSOCredentials()"><@orcid.msg 'manage.manage_sso_credentials.view_credentials_link' /></a>
 								<br />
-								<@orcid.msg 'manage.manage_sso_credentials.revoke_credentials' />
+								<a href ng-click="showEditModal()"><@orcid.msg 'manage.manage_sso_credentials.edit_credentials_link' /></a>
+								<br />								
 								<a href ng-click="showRevokeModal()"><@orcid.msg 'manage.manage_sso_credentials.revoke_credentials_link' /></a>								
 							</span>
 						</div>
@@ -568,4 +568,26 @@
 		</div>
 	</div>
 </script>	
+
+<script type="text/ng-template" id = "edit-sso-credentials-modal">
+	<div style="padding: 20px;">
+		<h3><@orcid.msg 'manage.manage_sso_credentials.edit.title'/></h3>
+		<label class="control-label" style="margin-right:10px; text-align:left; width:90px"><@orcid.msg 'manage.manage_sso_credentials.redirect_uri'/>:</label>
+		<div class="control-group" ng-repeat='rUri in userCredentials.redirectUris'>									
+			<div class="relative">
+				<input type="text" placeholder="<@orcid.msg 'manage.manage_sso_credentials.redirect_uri.placeholder'/>" class="input-xlarge" ng-model="rUri.value.value">
+				<a href ng-click="deleteRedirectUri($index)" class="glyphicon glyphicon-trash blue"></a>
+				<span class="orcid-error" ng-show="rUri.errors.length > 0">
+					<div ng-repeat='error in rUri.errors' ng-bind-html-unsafe="error"></div>
+				</span>						
+			</div>
+		</div>
+		<div ng-show="!ssoCredentials.redirectUris.length">			
+			<a href ng-click="addRedirectURI()" class="icon-plus-sign blue"><@orcid.msg 'manage.manage_sso_credentials.create.add_redirect_uri'/></a>
+		</div>
+		<button class="btn btn-danger" ng-click="editRedirectUris()"><@orcid.msg 'manage.manage_sso_credentials.update'/></button>
+		<a href="" ng-click="closeModal()"><@orcid.msg 'manage.manage_sso_credentials.create.cancel'/></a>
+	</div>
+</script>
+
 </@protected>

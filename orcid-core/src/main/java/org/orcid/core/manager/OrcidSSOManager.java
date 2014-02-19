@@ -24,6 +24,6 @@ public interface OrcidSSOManager {
 
     ClientDetailsEntity grantSSOAccess(String orcid, Set<String> redirectUris);
     ClientDetailsEntity getUserCredentials(String orcid);
-    void revokeSSOAccess(String orcid); 
-    void updateRedirectUris(String orcid, Set<String> redirectUris);
+    ClientDetailsEntity updateRedirectUris(String orcid, Set<String> redirectUris);
+    void revokeSSOAccess(String orcid);     
 }

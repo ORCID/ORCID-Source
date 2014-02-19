@@ -899,48 +899,54 @@ public class ManageProfileController extends BaseWorkspaceController {
     @RequestMapping(value = "/generateSSOCredentials.json", method = RequestMethod.POST)
     public @ResponseBody
     SSOCredentials generateSSOCredentialsJson(HttpServletRequest request, @RequestBody SSOCredentials ssoCredentials) {
-        OrcidProfile profile = getEffectiveProfile();
-        String orcid = profile.getOrcidIdentifier().getPath();
-        boolean hasErrors = false;
-        List<String> ssoErrors = new ArrayList<String>();
-        Set<RedirectUri> redirectUris = ssoCredentials.getRedirectUris();
-
-        if (redirectUris == null || redirectUris.isEmpty()) {
-            ssoErrors.add(getMessage("manage.manage_sso_credentials.at_least_one"));
-            hasErrors = true;
-        } else {
-            for (RedirectUri redirectUri : redirectUris) {
-                try {
-                    URI.create(redirectUri.getValue().getValue());
-                } catch (NullPointerException npe) {
-                    List<String> errors = new ArrayList<String>();
-                    errors.add(getMessage("manage.manage_sso_credentials.empty_redirect_uri"));
-                    redirectUri.setErrors(errors);
-                    hasErrors = true;
-                } catch (IllegalArgumentException iae) {
-                    List<String> errors = new ArrayList<String>();
-                    errors.add(getMessage("manage.manage_sso_credentials.invalid_redirect_uri"));
-                    redirectUri.setErrors(errors);
-                    hasErrors = true;
-                }
-            }
-        }
-
+        boolean hasErrors = validateSSoCredentials(ssoCredentials);
+        
         if (!hasErrors) {
+            OrcidProfile profile = getEffectiveProfile();
+            String orcid = profile.getOrcidIdentifier().getPath();
             Set<String> redirectUriStrings = new HashSet<String>();
-            for (RedirectUri redirectUri : redirectUris) {
+            for (RedirectUri redirectUri : ssoCredentials.getRedirectUris()) {
                 redirectUriStrings.add(redirectUri.getValue().getValue());
             }
             ClientDetailsEntity clientDetails = orcidSSOManager.grantSSOAccess(orcid, redirectUriStrings);
             ssoCredentials = SSOCredentials.toSSOCredentials(clientDetails);
         } else {
-            for (RedirectUri redirectUri : redirectUris) {
+            List<String> errors = ssoCredentials.getErrors();
+            if(errors == null)
+                errors = new ArrayList<String>();
+            for (RedirectUri redirectUri : ssoCredentials.getRedirectUris()) {
                 if (redirectUri.getErrors() != null && !redirectUri.getErrors().isEmpty())
-                    ssoErrors.addAll(redirectUri.getErrors());
+                    errors.addAll(redirectUri.getErrors());
             }
-            ssoCredentials.setErrors(ssoErrors);
+            ssoCredentials.setErrors(errors);
         }
 
+        return ssoCredentials;
+    }
+    
+    @RequestMapping(value = "/updateRedirectUris.json", method = RequestMethod.POST)
+    public @ResponseBody SSOCredentials updateRedirectUris(HttpServletRequest request, @RequestBody SSOCredentials ssoCredentials) {                
+        boolean hasErrors = validateSSoCredentials(ssoCredentials);
+
+        if (!hasErrors) {
+            OrcidProfile profile = getEffectiveProfile();
+            String orcid = profile.getOrcidIdentifier().getPath();
+            Set<String> redirectUriStrings = new HashSet<String>();
+            for (RedirectUri redirectUri : ssoCredentials.getRedirectUris()) {
+                redirectUriStrings.add(redirectUri.getValue().getValue());
+            }
+            ClientDetailsEntity clientDetails = orcidSSOManager.updateRedirectUris(orcid, redirectUriStrings);
+            ssoCredentials = SSOCredentials.toSSOCredentials(clientDetails);
+        } else {
+            List<String> errors = ssoCredentials.getErrors();
+            if(errors == null)
+                errors = new ArrayList<String>();
+            for (RedirectUri redirectUri : ssoCredentials.getRedirectUris()) {
+                if (redirectUri.getErrors() != null && !redirectUri.getErrors().isEmpty())
+                    errors.addAll(redirectUri.getErrors());
+            }
+            ssoCredentials.setErrors(errors);
+        }
         return ssoCredentials;
     }
 
@@ -962,5 +968,50 @@ public class ManageProfileController extends BaseWorkspaceController {
         String userOrcid = getEffectiveUserOrcid();
         orcidSSOManager.revokeSSOAccess(userOrcid);
         return this.getEmptySSOCredentials(request);
+    }        
+    
+    /**
+     * Validates the ssoCredentials object
+     * @param ssoCredentials
+     * @return true if any error is found in the ssoCredentials object
+     * */
+    private boolean validateSSoCredentials(SSOCredentials ssoCredentials) {
+        boolean hasErrors = false;
+        Set<RedirectUri> redirectUris = ssoCredentials.getRedirectUris();
+
+        if (redirectUris == null || redirectUris.isEmpty()) {
+            List<String> errors = new ArrayList<String>();
+            errors.add(getMessage("manage.manage_sso_credentials.at_least_one"));
+            ssoCredentials.setErrors(errors);
+            hasErrors = true;
+        } else {
+            for (RedirectUri redirectUri : redirectUris) {
+                List<String> errors = validateRedirectUri(redirectUri);
+                if(errors != null){
+                    redirectUri.setErrors(errors);
+                    hasErrors = true;
+                }
+            }
+        }
+        return hasErrors;
+    }
+    
+    /**
+     * Checks if a redirect uri contains a valid URI associated to it
+     * @param redirectUri
+     * @return null if there are no errors, an List of strings containing error messages if any error happens
+     * */
+    private List<String> validateRedirectUri(RedirectUri redirectUri){
+        List<String> errors = null;
+        try {
+            URI.create(redirectUri.getValue().getValue());
+        } catch (NullPointerException npe) {
+            errors = new ArrayList<String>();
+            errors.add(getMessage("manage.manage_sso_credentials.empty_redirect_uri"));
+        } catch (IllegalArgumentException iae) {
+            errors = new ArrayList<String>();
+            errors.add(getMessage("manage.manage_sso_credentials.invalid_redirect_uri"));
+        }
+        return errors; 
     }
 }
