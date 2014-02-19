@@ -28,6 +28,7 @@
         <div class="relative">
         	<#if (client_name)??>
         	<input type="hidden" name="client_name" value="${client_name}" />
+        	<input type="hidden" name="client_group_name" value="${client_group_name}" />
         	</#if>
             <input name="givenNames" type="text" tabindex="1" class="input-xlarge" ng-model="register.givenNames.value" ng-model-onblur ng-change="serverValidate('GivenNames')"/>
             <span class="required" ng-class="isValidClass(register.givenNames)">*</span>
