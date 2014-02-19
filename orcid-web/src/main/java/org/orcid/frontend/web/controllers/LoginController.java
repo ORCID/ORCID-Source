@@ -81,7 +81,7 @@ public class LoginController extends BaseController {
             }
         }
         mav.addObject("client_name", client_name);
-        mav.addObject("client_group_name", client_name);
+        mav.addObject("client_group_name", client_group_name);
         mav.setViewName("oauth_login");
         mav.addObject("hideUserVoiceScript", true);
         return mav;
