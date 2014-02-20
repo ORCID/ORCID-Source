@@ -235,7 +235,7 @@
 		<property name="userDetailsService" ref="userDetailsService" />
 		<property name="switchUserUrl" value="/switch-user" />
 		<property name="exitUserUrl" value="/exit-user" />
-		<property name="targetUrl" value="/my-orcid" />
+		<property name="targetUrl" value="/my-orcid?delegates" />
 	</bean>
 		
 	<bean id="authorizationCodeTokenGranter"

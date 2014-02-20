@@ -1836,8 +1836,7 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc) {
 	$scope.disambiguatedFunding = null;
 	$scope.moreInfo = {};
 	$scope.privacyHelp = {};
-	$scope.editTranslatedTitle = false; 
-	$scope.showFundersOnly = false;
+	$scope.editTranslatedTitle = false; 	
 	
 	$scope.toggleClickMoreInfo = function(key) {
 		if (!document.documentElement.className.contains('no-touch')) {
@@ -2105,6 +2104,47 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc) {
 			info = funding.fundingTitle.translatedTitle.content + ' - ' + funding.fundingTitle.translatedTitle.languageName;										
 		}				
 		return info;
+	};
+	
+	$scope.typeChanged = function() {
+		var selectedType = $scope.editFunding.fundingType.value;
+		switch (selectedType){
+		case 'award':
+			$("#funding-ext-ids-title").text(om.get("funding.add.external_id.title.award"));
+			$("#funding-ext-ids-value-label").text(om.get("funding.add.external_id.value.label.award"));
+			$("#funding-ext-ids-value-input").attr("placeholder", om.get("funding.add.external_id.value.placeholder.award"));
+			$("#funding-ext-ids-url-label").text(om.get("funding.add.external_id.url.label.award"));
+			$("#funding-ext-ids-url-input").attr("placeholder", om.get("funding.add.external_id.url.placeholder.award"));
+			break;
+		case 'contract':
+			$("#funding-ext-ids-title").text(om.get("funding.add.external_id.title.contract"));
+			$("#funding-ext-ids-value-label").text(om.get("funding.add.external_id.value.label.contract"));
+			$("#funding-ext-ids-value-input").attr("placeholder", om.get("funding.add.external_id.value.placeholder.contract"));
+			$("#funding-ext-ids-url-label").text(om.get("funding.add.external_id.url.label.contract"));
+			$("#funding-ext-ids-url-input").attr("placeholder", om.get("funding.add.external_id.url.placeholder.contract"));
+			break;
+		case 'grant':
+			$("#funding-ext-ids-title").text(om.get("funding.add.external_id.title.grant"));
+			$("#funding-ext-ids-value-label").text(om.get("funding.add.external_id.value.label.grant"));
+			$("#funding-ext-ids-value-input").attr("placeholder", om.get("funding.add.external_id.value.placeholder.grant"));
+			$("#funding-ext-ids-url-label").text(om.get("funding.add.external_id.url.label.grant"));
+			$("#funding-ext-ids-url-input").attr("placeholder", om.get("funding.add.external_id.url.placeholder.grant"));
+			break;
+		case 'salary-award':
+			$("#funding-ext-ids-value-label").text(om.get("funding.add.external_id.value.label.award"));
+			$("#funding-ext-ids-value-input").attr("placeholder", om.get("funding.add.external_id.value.placeholder.award"));
+			$("#funding-ext-ids-url-label").text(om.get("funding.add.external_id.url.label.award"));
+			$("#funding-ext-ids-url-input").attr("placeholder", om.get("funding.add.external_id.url.placeholder.award"));
+			$("#funding-ext-ids-title").text(om.get("funding.add.external_id.title.award"));
+			break;
+		default:
+			$("#funding-ext-ids-title").text(om.get("funding.add.external_id.title.grant"));
+			$("#funding-ext-ids-value-label").text(om.get("funding.add.external_id.value.label.grant"));
+			$("#funding-ext-ids-value-input").attr("placeholder", om.get("funding.add.external_id.value.placeholder.grant"));
+			$("#funding-ext-ids-url-label").text(om.get("funding.add.external_id.url.label.grant"));
+			$("#funding-ext-ids-url-input").attr("placeholder", om.get("funding.add.external_id.url.placeholder.grant"));
+			break;
+		}
 	};
 }
 
@@ -2756,6 +2796,7 @@ function QuickSearchCtrl($scope, $compile){
 	$scope.getResults(10);
 };
 
+// Controller for delegate permissions that have been granted BY the current user
 function DelegatesCtrl($scope, $compile){
 	$scope.results = new Array();
 	$scope.numFound = 0;
@@ -2770,8 +2811,14 @@ function DelegatesCtrl($scope, $compile){
 	};
 	
 	$scope.getResults = function(rows){
+		var query = "{!edismax qf='given-and-family-names^50.0 family-name^10.0 given-names^5.0 credit-name^10.0 other-names^5.0 text^1.0' pf='given-and-family-names^50.0' mm=1}" + $scope.userQuery;
+		var orcidRegex = new RegExp("(\\d{4}-){3,}\\d{3}[\\dX]");
+		var regexResult = orcidRegex.exec($scope.userQuery);
+		if(regexResult){
+			query = "orcid:" + regexResult[0];
+		}
 		$.ajax({
-			url: $('#DelegatesCtrl').data('search-query-url') + $scope.userQuery + '&start=' + $scope.start + '&rows=' + $scope.rows,      
+			url: $('#DelegatesCtrl').data('search-query-url') + query + '&start=' + $scope.start + '&rows=' + $scope.rows,      
 			dataType: 'json',
 			headers: { Accept: 'application/json'},
 			success: function(data) {
@@ -2905,6 +2952,49 @@ function DelegatesCtrl($scope, $compile){
 	
 	// init
 	$scope.getDelegates();
+	
+};
+
+// Controller for delegate permissions that have been granted TO the current user
+function DelegatorsCtrl($scope, $compile){
+	
+	$scope.getDelegators = function() {
+		$.ajax({
+	        url: $('body').data('baseurl') + 'account/delegates.json',
+	        dataType: 'json',
+	        success: function(data) {
+	        	$scope.delegation = data;
+	        	$scope.$apply();
+	        }
+	    }).fail(function() { 
+	    	// something bad is happening!
+	    	console.log("error with delegates");
+	    });
+	};
+	
+	$scope.selectDelegator = function(datum) {
+		window.location.href = $('body').data('baseurl') + 'switch-user?j_username=' + datum.orcid;
+	};
+	
+	$("#delegatorsSearch").typeahead({
+		name: 'delegatorsSearch',
+		remote: {
+			url: $('body').data('baseurl')+'delegators/search/%QUERY?limit=' + 10
+		},
+		template: function (datum) {
+			   var forDisplay = 
+			       '<span style=\'white-space: nowrap; font-weight: bold;\'>' + datum.value + '</span>'
+			      +'<span style=\'font-size: 80%;\'> (' + datum.orcid + ')</span>';
+			   return forDisplay;
+		}
+	});
+	$("#delegatorsSearch").bind("typeahead:selected", function(obj, datum) {        
+		$scope.selectDelegator(datum);
+		$scope.$apply();
+	});
+	
+	// init
+	$scope.getDelegators();
 	
 };
 

@@ -99,13 +99,18 @@
                                    <li ng-controller="SwitchUserCtrl" class="dropdown">
                                        <a ng-click="openMenu($event)" ><@orcid.msg 'public-layout.manage_proxy_account'/></a>
                                        <ul class="dropdown-menu" ng-show="isDroppedDown" ng-cloak>
-                                           <li ng-repeat="delegationDetails in delegation.givenPermissionBy.delegationDetails | orderBy:'delegateSummary.creditName.content'">
+                                           <li ng-repeat="delegationDetails in delegation.givenPermissionBy.delegationDetails | orderBy:'delegateSummary.creditName.content' | limitTo:10">
                                                <a href="<@spring.url '/switch-user?j_username='/>{{delegationDetails.delegateSummary.orcidIdentifier.path}}">{{delegationDetails.delegateSummary.creditName.content}} ({{delegationDetails.delegateSummary.orcidIdentifier.path}})</a>
                                            </li>
+                                           <li><a href="<@spring.url '/delegators?delegates'/>">More...</a></li>
                                        </ul>
                                     </li>
-                               </#if>                               
-                               <li><a href="<@spring.url '/signout'/>"><@orcid.msg 'public-layout.sign_out'/></a></li>
+                               </#if>
+                               <#if inDelegationMode>
+                                   <li><a href="<@spring.url '/switch-user?j_username='/>${realUserOrcid}">Switch back to me</a></li>
+                               <#else>
+                                   <li><a href="<@spring.url '/signout'/>"><@orcid.msg 'public-layout.sign_out'/></a></li>
+                               </#if>
                            </@security.authorize>
                        </ul>
                    </li>
@@ -166,7 +171,11 @@
                            <a href="<@spring.url "/signin" />" title=""><@orcid.msg 'public-layout.sign_in'/></a>
                        </@security.authorize>
                        <@security.authorize ifAnyGranted="ROLE_USER, ROLE_ADMIN, ROLE_BASIC, ROLE_PREMIUM, ROLE_BASIC_INSTITUTION, ROLE_PREMIUM_INSTITUTION">
-                           <a href="<@spring.url '/signout'/>" id="signout"><@orcid.msg 'public-layout.sign_out'/></a>
+                           <#if inDelegationMode>
+                               <li><a href="<@spring.url '/switch-user?j_username='/>${realUserOrcid}">Switch back</a></li>
+                           <#else>
+                               <li><a href="<@spring.url '/signout'/>"><@orcid.msg 'public-layout.sign_out'/></a></li>
+                           </#if>
                        </@security.authorize>
                    </li>
                </ul>                    
@@ -201,7 +210,6 @@
 	    </div>
     </div>
 </div>
-
 <form action="<@spring.url '/'/>">
     <input id="imageUrl" type="hidden" value="${staticCdn}/images">
 </form> 

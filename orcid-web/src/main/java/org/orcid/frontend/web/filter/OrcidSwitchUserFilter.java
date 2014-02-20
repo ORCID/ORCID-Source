@@ -42,6 +42,11 @@ public class OrcidSwitchUserFilter extends SwitchUserFilter {
     protected Authentication attemptSwitchUser(HttpServletRequest request) throws AuthenticationException {
         String targetUserOrcid = request.getParameter(SPRING_SECURITY_SWITCH_USERNAME_KEY);
         if (sourceManager.isInDelegationMode()) {
+            String realUserOrcid = sourceManager.retrieveSourceOrcid();
+            if (realUserOrcid.equals(targetUserOrcid)) {
+                // Am switching back to self
+                return super.attemptSwitchUser(request);
+            }
             throw new SwitchUserAuthenticationException("Cannot switch user when already in delegation mode");
         }
         ProfileEntity profileEntity = sourceManager.retrieveSourceProfileEntity();
