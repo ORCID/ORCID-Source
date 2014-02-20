@@ -89,13 +89,9 @@
 													    
 	        <@security.authorize ifAnyGranted="ROLE_ADMIN, ROLE_GROUP, ROLE_BASIC, ROLE_BASIC_INSTITUTION, ROLE_PREMIUM, ROLE_PREMIUM_INSTITUTION">
 	        	 <p><a href="<@spring.url "/manage-clients" />">${springMacroRequestContext.getMessage("workspace.ManageClientCredentials")}</a></p>	        	 
-	        </@security.authorize>
-			<@security.authorize ifAnyGranted="ROLE_ADMIN">
-				<p><a href="<@spring.url "/admin-actions" />"><@orcid.msg 'admin.workspace_link' /></a></p>
-			</@security.authorize>
-			
+	        </@security.authorize>	        
 			<p class="hoover-white-fonts">
-	       		<!-- <a href="${baseUriHttp}/${(profile.orcidIdentifier.path)!}" class="label btn-primary"><@orcid.msg 'workspace.ViewPublicORCIDRecord'/></a> -->	       
+	       
 	       		<a href="<@spring.url '/account/manage-bio-settings'/>" id="update-personal-modal-link" class="label btn-primary"><@orcid.msg 'workspace.Update'/></a>
 	        </p>
 			
