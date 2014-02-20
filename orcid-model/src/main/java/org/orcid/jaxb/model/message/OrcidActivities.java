@@ -46,7 +46,6 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element ref="{http://www.orcid.org/ns/orcid}affiliations" minOccurs="0"/>
  *         &lt;element ref="{http://www.orcid.org/ns/orcid}orcid-works" minOccurs="0"/>
  *         &lt;element ref="{http://www.orcid.org/ns/orcid}funding-list" minOccurs="0"/>
- *         &lt;element ref="{http://www.orcid.org/ns/orcid}orcid-patents" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -56,7 +55,7 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType( propOrder = { "affiliations", "orcidWorks", "fundings", "orcidPatents" })
+@XmlType( propOrder = { "affiliations", "orcidWorks", "fundings" })
 @XmlRootElement(name = "orcid-activities")
 public class OrcidActivities implements Serializable {
 
@@ -66,8 +65,6 @@ public class OrcidActivities implements Serializable {
     protected OrcidWorks orcidWorks;
     @XmlElement(name = "funding-list")
     protected FundingList fundings;
-    @XmlElement(name = "orcid-patents")
-    protected OrcidPatents orcidPatents;
 
     /**
      * Gets the value of the affiliations property.
@@ -132,42 +129,19 @@ public class OrcidActivities implements Serializable {
         this.fundings = value;
     }
 
-    /**
-     * Gets the value of the orcidPatents property.
-     * 
-     * @return possible object is {@link OrcidPatents }
-     * 
-     */
-    public OrcidPatents getOrcidPatents() {
-        return orcidPatents;
-    }
-
-    /**
-     * Sets the value of the orcidPatents property.
-     * 
-     * @param value
-     *            allowed object is {@link OrcidPatents }
-     * 
-     */
-    public void setOrcidPatents(OrcidPatents value) {
-        this.orcidPatents = value;
-    }
 
     public void downgradeToWorksOnly() {
         setAffiliations(null);
         setFundings(null);
-        setOrcidPatents(null);
     }
     
     public void downgradeToAffiliationsOnly() {
         setOrcidWorks(null);
         setFundings(null);
-        setOrcidPatents(null);
     }
     
     public void downgradeToFundingsOnly() {
         setOrcidWorks(null);        
-        setOrcidPatents(null);
         setAffiliations(null);
     }
 
@@ -178,7 +152,6 @@ public class OrcidActivities implements Serializable {
         int result = 1;
         result = prime * result + ((affiliations == null) ? 0 : affiliations.hashCode());
         result = prime * result + ((fundings == null) ? 0 : fundings.hashCode());
-        result = prime * result + ((orcidPatents == null) ? 0 : orcidPatents.hashCode());
         result = prime * result + ((orcidWorks == null) ? 0 : orcidWorks.hashCode());
         return result;
     }
@@ -192,26 +165,21 @@ public class OrcidActivities implements Serializable {
         if (getClass() != obj.getClass())
             return false;
         OrcidActivities other = (OrcidActivities) obj;
-        if (affiliations == null) {
-            if (other.affiliations != null)
-                return false;
-        } else if (!affiliations.equals(other.affiliations))
-            return false;        
-        if (fundings == null) {
-            if (other.fundings != null)
-                return false;
-        } else if (!fundings.equals(other.fundings))
-            return false;
-        if (orcidPatents == null) {
-            if (other.orcidPatents != null)
-                return false;
-        } else if (!orcidPatents.equals(other.orcidPatents))
-            return false;
-        if (orcidWorks == null) {
-            if (other.orcidWorks != null)
-                return false;
-        } else if (!orcidWorks.equals(other.orcidWorks))
-            return false;
+        // affiliations 
+        if (affiliations == null && other.affiliations != null) return false;
+        if (affiliations != null && other.affiliations == null) return false;
+        if (!affiliations.equals(other.affiliations)) return false;
+        
+        // funding
+        if (fundings == null && other.fundings != null) return false;
+        if (fundings != null && other.fundings == null) return false;
+        if (!fundings.equals(other.fundings)) return false;
+        
+        // works
+        if (orcidWorks == null && other.orcidWorks != null) return false;
+        if (orcidWorks != null && other.orcidWorks == null) return false;
+        if (!orcidWorks.equals(other.orcidWorks)) return false;
+
         return true;
     }
 

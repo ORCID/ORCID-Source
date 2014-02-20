@@ -262,13 +262,6 @@ public class OrcidProfile implements Serializable {
         this.orcidActivities = orcidActivities;
     }
 
-    /**
-     * 
-     * @return
-     */
-    public OrcidPatents retrieveOrcidPatents() {
-        return orcidActivities != null ? orcidActivities.getOrcidPatents() : null;
-    }
 
     /**
      * 
@@ -289,16 +282,6 @@ public class OrcidProfile implements Serializable {
         return orcidActivities != null ? orcidActivities.getFundings() : null;
     }
 
-    /**
-     * 
-     * @param orcidPatents
-     */
-    public void setOrcidPatents(OrcidPatents orcidPatents) {
-        if (orcidActivities == null) {
-            orcidActivities = new OrcidActivities();
-        }
-        this.orcidActivities.setOrcidPatents(orcidPatents);
-    }
 
     /**
      * 

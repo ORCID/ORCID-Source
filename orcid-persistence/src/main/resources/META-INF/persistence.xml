@@ -40,15 +40,11 @@
         <class>org.orcid.persistence.jpa.entities.OrgDisambiguatedEntity</class>
         <class>org.orcid.persistence.jpa.entities.OrgDisambiguatedExternalIdentifierEntity</class>
         <class>org.orcid.persistence.jpa.entities.OrgEntity</class>
-        <class>org.orcid.persistence.jpa.entities.PatentContributorEntity</class>
-        <class>org.orcid.persistence.jpa.entities.PatentEntity</class>
-        <class>org.orcid.persistence.jpa.entities.PatentSourceEntity</class>
         <class>org.orcid.persistence.jpa.entities.ProfileEntity</class>
         <class>org.orcid.persistence.jpa.entities.ProfileEventEntity</class>
         <class>org.orcid.persistence.jpa.entities.EmailEventEntity</class>
         <class>org.orcid.persistence.jpa.entities.ProfileFundingEntity</class>
         <class>org.orcid.persistence.jpa.entities.ProfileKeywordEntity</class>
-        <class>org.orcid.persistence.jpa.entities.ProfilePatentEntity</class>
         <class>org.orcid.persistence.jpa.entities.ProfileSummaryEntity</class>
         <class>org.orcid.persistence.jpa.entities.ProfileWorkEntity</class>
         <class>org.orcid.persistence.jpa.entities.RefDataEntity</class>       

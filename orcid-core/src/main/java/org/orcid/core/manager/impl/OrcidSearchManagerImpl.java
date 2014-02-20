@@ -29,8 +29,6 @@ import org.orcid.core.manager.OrcidSearchManager;
 import org.orcid.jaxb.model.message.Funding;
 import org.orcid.jaxb.model.message.FundingList;
 import org.orcid.jaxb.model.message.OrcidMessage;
-import org.orcid.jaxb.model.message.OrcidPatent;
-import org.orcid.jaxb.model.message.OrcidPatents;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidSearchResult;
 import org.orcid.jaxb.model.message.OrcidSearchResults;
@@ -116,19 +114,6 @@ public class OrcidSearchManagerImpl implements OrcidSearchManager {
                     }
                 }
 
-                OrcidPatents reducedPatents = new OrcidPatents();
-                OrcidPatents fullOrcidPatents = orcidProfile.retrieveOrcidPatents();
-                if (fullOrcidPatents != null && !fullOrcidPatents.getOrcidPatent().isEmpty()) {
-
-                    for (OrcidPatent fullOrcidPatent : fullOrcidPatents.getOrcidPatent()) {
-                        OrcidPatent reducedPatent = new OrcidPatent();
-                        reducedPatent.setVisibility(fullOrcidPatent.getVisibility());
-                        reducedPatent.setPatentNumber(fullOrcidPatent.getPatentNumber());
-                        reducedPatent.setShortDescription(fullOrcidPatent.getShortDescription());
-                        reducedPatents.getOrcidPatent().add(reducedPatent);
-                    }
-                }
-
                 FundingList reducedFundings = new FundingList();
                 FundingList fullOrcidFundings = orcidProfile.retrieveFundings();
                 if (fullOrcidFundings != null && !fullOrcidFundings.getFundings().isEmpty()) {
@@ -142,7 +127,6 @@ public class OrcidSearchManagerImpl implements OrcidSearchManager {
                     }
                 }
                 orcidProfile.setOrcidWorks(orcidWorksTitlesOnly);
-                orcidProfile.setOrcidPatents(reducedPatents);
                 orcidProfile.setFundings(reducedFundings);
 
                 orcidSearchResult.setOrcidProfile(orcidProfile);
