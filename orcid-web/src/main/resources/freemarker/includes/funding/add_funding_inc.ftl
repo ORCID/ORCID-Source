@@ -203,7 +203,7 @@
 						<label><@orcid.msg 'manual_funding_form_contents.label_funding_agency_display_name'/></label>
 					</span>	
 					<div class="relative">
-						<input id="fundingName" class="input-xlarge" name="fundingName" type="text" ng-model="editFunding.fundingName.value" placeholder="<@orcid.msg 'manual_funding_form_contents.add_name'/>" ng-model-onblur/>
+						<input id="fundingName" class="input-xlarge" name="fundingName" type="text" ng-model="editFunding.fundingName.value" placeholder="<@orcid.msg 'manual_funding_form_contents.add_name'/>" ng-change="serverValidate('fundings/funding/orgNameValidate.json')" ng-model-onblur/>
 						<span class="required" ng-class="isValidClass(editFunding.fundingName)">*</span>
 						<span class="orcid-error" ng-show="editFunding.fundingName.errors.length > 0">
 							<div ng-repeat='error in editFunding.fundingName.errors' ng-bind-html="error"></div>
