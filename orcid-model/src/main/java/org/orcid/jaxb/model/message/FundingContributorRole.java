@@ -24,8 +24,8 @@ import java.io.Serializable;
 /**
  * 2011-2012 - ORCID.
  *
- * @author Declan Newman (declan)
- *         Date: 07/08/2012
+ * @author Angel Montenegro 
+ *         Date: 20/02/2014
  */
 @XmlType(name = "funding-contributor-role")
 @XmlEnum
