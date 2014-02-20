@@ -1978,9 +1978,12 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc) {
 		console.log(angular.toJson(datum));
 		if (datum != undefined && datum != null) {
 			$scope.editFunding.fundingName.value = datum.value;
+			$scope.editFunding.fundingName.errors = [];
 			$scope.editFunding.city.value = datum.city;
+			$scope.editFunding.city.errors = []; 
 			$scope.editFunding.region.value = datum.region;
 			$scope.editFunding.country.value = datum.country;
+			$scope.editFunding.country.errors = [];
 			
 			if (datum.disambiguatedFundingIdentifier != undefined && datum.disambiguatedFundingIdentifier != null) {
 				$scope.getDisambiguatedFunding(datum.disambiguatedFundingIdentifier);
