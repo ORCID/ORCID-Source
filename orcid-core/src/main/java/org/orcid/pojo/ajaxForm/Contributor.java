@@ -27,6 +27,7 @@ import org.orcid.jaxb.model.message.ContributorEmail;
 import org.orcid.jaxb.model.message.ContributorOrcid;
 import org.orcid.jaxb.model.message.ContributorRole;
 import org.orcid.jaxb.model.message.CreditName;
+import org.orcid.jaxb.model.message.FundingContributorRole;
 import org.orcid.jaxb.model.message.SequenceType;
 
 public class Contributor implements ErrorsInterface, Serializable {
@@ -137,7 +138,7 @@ public class Contributor implements ErrorsInterface, Serializable {
         if (this.getContributorRole() != null || this.getContributorSequence() != null) {
             org.orcid.jaxb.model.message.FundingContributorAttributes ca = new org.orcid.jaxb.model.message.FundingContributorAttributes();
             if (!PojoUtil.isEmpty(this.getContributorRole()))
-                ca.setContributorRole(ContributorRole.fromValue(this.getContributorRole().getValue()));
+                ca.setContributorRole(FundingContributorRole.fromValue(this.getContributorRole().getValue()));
             c.setContributorAttributes(ca);
         }
         if (this.getEmail() != null)
