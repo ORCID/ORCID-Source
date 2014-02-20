@@ -245,8 +245,7 @@ public class OrcidSSOManagerImpl implements OrcidSSOManager {
             ClientDetailsEntity clientDetailsEntity = profileEntity.getClientDetails();
             if (clientDetailsEntity != null) {
                 // Set the decrypted secret
-                if (clientDetailsEntity != null)
-                    clientDetailsEntity.setDecryptedClientSecret(encryptionManager.decryptForInternalUse(clientDetailsEntity.getClientSecretForJpa()));
+                clientDetailsEntity.setDecryptedClientSecret(encryptionManager.decryptForInternalUse(clientDetailsEntity.getClientSecretForJpa()));
                 // Get the existing redirect uris
                 SortedSet<ClientRedirectUriEntity> clientRedirectUriEntities = clientDetailsEntity.getClientRegisteredRedirectUris();
 
