@@ -223,113 +223,129 @@
 	</div>
 </script>
 
+
+<!-- Admin main Layout -->
 <div class="row">
-	<div class="span3 lhs override">
+	<!-- Left menu bar -->	
+	<div class="col-md-3 col-sm-3 col-xs-12 lhs override">
 		<ul class="settings-nav">
+			<!-- 
 			<li><a href="<@spring.url "/account" />#account-settings">${springMacroRequestContext.getMessage("manage.accountsettings")}</a></li>
 			<li><a href="<@spring.url "/account" />#manage-permissions">${springMacroRequestContext.getMessage("manage.managepermission")}</a></li>
-			<@security.authorize ifAnyGranted="ROLE_ADMIN">
-				<li><a href="<@spring.url "/admin-actions" />"><@orcid.msg 'admin.workspace_link' /></a></li>
-			</@security.authorize>					
+			 -->
+			<li class="admin-option">
+				<a href="admin-actions#add-client"><@orcid.msg 'manage_groups.admin_groups_title'/></a>	
+			</li>
+			<li class="admin-option">
+				<a href="admin-actions#deprecate-profile"><@orcid.msg 'admin.profile_deprecation' /></a>
+			</li>
+			<li class="admin-option" >
+				<a href="admin-actions#deactivate-profile"><@orcid.msg 'admin.profile_deactivation' /></a>
+			</li>
+			<li class="admin-option">
+				<a href="admin-actions#reactivate-profile"><@orcid.msg 'admin.profile_reactivation' /></a>
+			</li>					
 		</ul>
 	</div>
-	<div class="span9">
-	
+	<!-- Right menu bar -->
+	<div class="col-md-9 col-sm-9 col-xs-12 admin-options">	
+		<!-- Add new client group -->
+		<a name="add-client"></a>
 		<div ng-controller="adminGroupsCtrl" class="workspace-accordion-item" ng-cloak>
 			<p>
-				<@orcid.msg 'manage_groups.add_new_group' />&nbsp;
-				<a ng-show="showAdminGroupsModal" ng-click="toggleReactivationModal()" class="icon-minus-sign blue"></a>
-				<a ng-hide="showAdminGroupsModal" ng-click="toggleReactivationModal()" class="icon-plus-sign blue"></a>				
+				<a ng-show="showAdminGroupsModal" ng-click="toggleReactivationModal()"><span class="glyphicon glyphicon-chevron-down blue"></span><@orcid.msg 'manage_groups.admin_groups_title'/></a>
+				<a ng-hide="showAdminGroupsModal" ng-click="toggleReactivationModal()"><span class="glyphicon glyphicon-chevron-right blue"></span><@orcid.msg 'manage_groups.admin_groups_title'/></a>				
 			</p>
-			<div class="collapsible bottom-margin-small" id="admin_groups_modal" style="display:none;">
-				<h2><@orcid.msg 'manage_groups.admin_groups_title'/></h2>
-	    		<br />
-	    		<div>
-	    			<div class="view-items-link">							
-							<span><a ng-click="showAddGroupModal()" class="glyphicon glyphicon-plus-sign blue"><@orcid.msg 'manage_groups.add_group_link'/></a></span>
-					</div>
-					<div class="add-item-link">
-							<span><a ng-click="listGroups()" class="glyphicon glyphicon-zoom-in blue"><@orcid.msg 'manage_groups.view_all_link'/></a></span>
-					</div>		
+			<div class="collapsible bottom-margin-small admin-modal" id="admin_groups_modal" style="display:none;">				
+	    		<div class="view-items-link">							
+					<a ng-click="showAddGroupModal()">
+						<span  class="glyphicon glyphicon-plus-sign blue"></span>
+						<@orcid.msg 'manage_groups.add_group_link'/>
+					</a>
 				</div>
-			</div>
-		</div>	
-		<br />
+				<div class="view-items-link">
+					<a ng-click="listGroups()">
+						<span class="glyphicon glyphicon-list-alt blue"></span>
+						<@orcid.msg 'manage_groups.view_all_link'/>
+					</a>
+				</div>		
+			</div>			
+		</div>
+		
+		<!-- Deprecate Profile -->
+		<a name="deprecate-profile"></a>
 		<div ng-controller="profileDeprecationCtrl" class="workspace-accordion-item" ng-cloak>
-			<p>
-				<@orcid.msg 'admin.profile_deprecation' />&nbsp;
-				<a ng-hide="showModal" ng-click="toggleDeprecationModal()" class="icon-plus-sign blue"></a>
-				<a ng-show="showModal" ng-click="toggleDeprecationModal()" class="icon-minus-sign blue"></a>
+			<p>				
+				<a ng-hide="showModal" ng-click="toggleDeprecationModal()"><span class="glyphicon glyphicon-chevron-right blue"></span><@orcid.msg 'admin.profile_deprecation' /></a>
+				<a ng-show="showModal" ng-click="toggleDeprecationModal()"><span class="glyphicon glyphicon-chevron-down blue"></span><@orcid.msg 'admin.profile_deprecation' /></a>
 			</p>		
-			<div class="collapsible bottom-margin-small" id="deprecation_modal" style="display:none;">
-		    	<h2><@orcid.msg 'admin.profile_deprecation.deprecate_account.title'/></h2>
-		    	<br />
-				<div>
+			<div class="collapsible bottom-margin-small admin-modal" id="deprecation_modal" style="display:none;">		    	
+				<div class="form-group">
 					<label for="deprecated_orcid"><@orcid.msg 'admin.profile_deprecation.to_deprecate' /></label>
-					<input type="text" id="deprecated_orcid" placeholder="<@orcid.msg 'admin.profile_deprecation.placeholder.account_to_deprecate' />" class="input-xlarge" ng-model="deprecatedAccount.orcid" ng-change="findAccountDetails('deprecated')">
-					<a href class="icon-ok green" ng-show="deprecated_verified"></a>
-					<a href class="icon-remove red" ng-show="deprecated_verified == false"></a>
+					<input type="text" id="deprecated_orcid" placeholder="<@orcid.msg 'admin.profile_deprecation.placeholder.account_to_deprecate' />" class="form-control" ng-model="deprecatedAccount.orcid" ng-change="findAccountDetails('deprecated')">
+					<a href class="glyphicon glyphicon-ok green" ng-show="deprecated_verified"></a>					
 					<div id="invalid-regex-deprecated" ng-show="invalid_regex_deprecated" ng-cloak>
-						<span class="orcid-error"><@orcid.msg 'admin.profile_deprecation.errors.invalid_regex' /></span><br />
+						<span class="orcid-error"><@orcid.msg 'admin.profile_deprecation.errors.invalid_regex' /></span>
 					</div>
 					<div ng-show="deprecatedAccount.errors.length">
-						<span class="orcid-error" ng-repeat='error in deprecatedAccount.errors' ng-bind-html="error"></span><br />	
+						<span class="orcid-error" ng-repeat='error in deprecatedAccount.errors' ng-bind-html="error"></span>	
 					</div>
 				</div>
-				<div>
+				<div class="form-group">
 					<label for="deprecated_orcid"><@orcid.msg 'admin.profile_deprecation.primary' /></label>
-					<input type="text" id="primary_orcid" placeholder="<@orcid.msg 'admin.profile_deprecation.placeholder.primary_account' />" class="input-xlarge" ng-model="primaryAccount.orcid" ng-change="findAccountDetails('primary')">				
-					<a href class="icon-ok green" ng-show="primary_verified"></a>
-					<a href class="icon-remove red" ng-show="primary_verified == false"></a>
+					<input type="text" id="primary_orcid" placeholder="<@orcid.msg 'admin.profile_deprecation.placeholder.primary_account' />" class="form-control" ng-model="primaryAccount.orcid" ng-change="findAccountDetails('primary')">				
+					<a href class="glyphicon glyphicon-ok green" ng-show="primary_verified"></a>					
 					<div id="invalid-regex-primary" ng-show="invalid_regex_primary" ng-cloak>
 						<span class="orcid-error"><@orcid.msg 'admin.profile_deprecation.errors.invalid_regex' /></span><br />
 					</div>
 					<div ng-show="primaryAccount.errors.length">
 						<span class="orcid-error" ng-repeat='error in primaryAccount.errors' ng-bind-html="error"></span><br />
-					</div>				
-				</div>
+					</div>			
+				</div>				
 				<div class="controls save-btns pull-left">
 		    		<span id="bottom-confirm-deprecate-profile" ng-click="confirmDeprecateAccount()" class="btn btn-primary"><@orcid.msg 'admin.profile_deprecation.deprecate_account'/></span>
 				</div>
 			</div>
-		</div>		
-		<br />			  
+		</div>
+				
+		<!-- Deactivate Profile -->
+		<a name="deactivate-profile"></a>			  
 		<div ng-controller="profileDeactivationAndReactivationCtrl" class="workspace-accordion-item" ng-cloak>
 			<p>
-				<@orcid.msg 'admin.profile_deactivation' />&nbsp;
-				<a  ng-show="showDeactivateModal" ng-click="toggleDeactivationModal()" class="icon-minus-sign blue"></a>
-				<a  ng-hide="showDeactivateModal" ng-click="toggleDeactivationModal()" class="icon-plus-sign blue"></a>
+				<a  ng-show="showDeactivateModal" ng-click="toggleDeactivationModal()"><span class="glyphicon glyphicon-chevron-down blue"></span></span><@orcid.msg 'admin.profile_deactivation' /></a>
+				<a  ng-hide="showDeactivateModal" ng-click="toggleDeactivationModal()"><span class="glyphicon glyphicon-chevron-right blue"></span></span><@orcid.msg 'admin.profile_deactivation' /></a>
 			</p>			  	
-			<div class="collapsible bottom-margin-small" id="deactivation_modal" style="display:none;">
-				<h2><@orcid.msg 'admin.profile_deactivation.deactivate_account.title'/></h2>
-	    		<br />
-	    		<div>
+			<div class="collapsible bottom-margin-small admin-modal" id="deactivation_modal" style="display:none;">					    		
+	    		<div class="form-group">
 					<label for="orcid_to_deactivate"><@orcid.msg 'admin.profile_deactivation.to_deactivate' /></label>
-					<input type="text" id="orcid_to_deactivate" ng-model="orcidToDeactivate" placeholder="<@orcid.msg 'admin.profile_deactivation.placeholder.to_deactivate' />" class="input-xlarge" />
-					<span id="bottom-confirm-deactivate-profile" ng-click="confirmDeactivateAccount()" class="btn btn-primary"><@orcid.msg 'admin.profile_deactivation.deactivate_account'/></span>				
+					<input type="text" id="orcid_to_deactivate" ng-model="orcidToDeactivate" placeholder="<@orcid.msg 'admin.profile_deactivation.placeholder.to_deactivate' />" class="form-control" />					
 					<div ng-show="deactivatedAccount.errors.length">
 						<span class="orcid-error" ng-repeat='error in deactivatedAccount.errors' ng-bind-html="error"></span><br />
 					</div>		
 				</div>
+				<div class="controls save-btns pull-left">
+					<span id="bottom-confirm-deactivate-profile" ng-click="confirmDeactivateAccount()" class="btn btn-primary"><@orcid.msg 'admin.profile_deactivation.deactivate_account'/></span>
+				</div>
 			</div>
 		</div>
-		<br />
+		
+		<!-- Reactivate Profile -->
+		<a name="reactivate-profile"></a>
 		<div ng-controller="profileDeactivationAndReactivationCtrl" class="workspace-accordion-item" ng-cloak>
-			<p>
-				<@orcid.msg 'admin.profile_reactivation' />&nbsp;
-				<a ng-show="showReactivateModal" ng-click="toggleReactivationModal()" class="icon-minus-sign blue"></a>
-				<a ng-hide="showReactivateModal" ng-click="toggleReactivationModal()" class="icon-plus-sign blue"></a>
+			<p>				
+				<a ng-show="showReactivateModal" ng-click="toggleReactivationModal()"><span class="glyphicon glyphicon-chevron-down blue"></span><@orcid.msg 'admin.profile_reactivation' /></a>
+				<a ng-hide="showReactivateModal" ng-click="toggleReactivationModal()"><span class="glyphicon glyphicon-chevron-right blue"></span><@orcid.msg 'admin.profile_reactivation' /></a>
 			</p>
-			<div class="collapsible bottom-margin-small" id="reactivation_modal" style="display:none;">
-				<h2><@orcid.msg 'admin.profile_reactivation.reactivate_account.title'/></h2>
-	    		<br />
-	    		<div>
+			<div class="collapsible bottom-margin-small admin-modal" id="reactivation_modal" style="display:none;">					    		
+	    		<div class="form-group">
 					<label for="orcid_to_reactivate"><@orcid.msg 'admin.profile_reactivation.to_reactivate' /></label>
-					<input type="text" id="orcid_to_reactivate" ng-model="orcidToReactivate" placeholder="<@orcid.msg 'admin.profile_reactivation.placeholder.to_reactivate' />" class="input-xlarge" />
-					<span id="bottom-confirm-reactivate-profile" ng-click="confirmReactivateAccount()" class="btn btn-primary"><@orcid.msg 'admin.profile_reactivation.reactivate_account'/></span>			
+					<input type="text" id="orcid_to_reactivate" ng-model="orcidToReactivate" placeholder="<@orcid.msg 'admin.profile_reactivation.placeholder.to_reactivate' />" class="form-control" />
 					<div ng-show="reactivatedAccount.errors.length">
 						<span class="orcid-error" ng-repeat='error in reactivatedAccount.errors' ng-bind-html="error"></span><br />
-					</div>		
+					</div>
+				</div>
+				<div class="controls save-btns pull-left">
+					<span id="bottom-confirm-reactivate-profile" ng-click="confirmReactivateAccount()" class="btn btn-primary"><@orcid.msg 'admin.profile_reactivation.reactivate_account'/></span>		
 				</div>
 			</div>
 		</div>

@@ -80,8 +80,6 @@ import org.orcid.jaxb.model.message.OrcidActivities;
 import org.orcid.jaxb.model.message.OrcidBio;
 import org.orcid.jaxb.model.message.OrcidHistory;
 import org.orcid.jaxb.model.message.OrcidInternal;
-import org.orcid.jaxb.model.message.OrcidPatent;
-import org.orcid.jaxb.model.message.OrcidPatents;
 import org.orcid.jaxb.model.message.OrcidPreferences;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidWork;
@@ -90,8 +88,6 @@ import org.orcid.jaxb.model.message.Organization;
 import org.orcid.jaxb.model.message.OrganizationAddress;
 import org.orcid.jaxb.model.message.OtherName;
 import org.orcid.jaxb.model.message.OtherNames;
-import org.orcid.jaxb.model.message.PatentContributors;
-import org.orcid.jaxb.model.message.PatentSources;
 import org.orcid.jaxb.model.message.PersonalDetails;
 import org.orcid.jaxb.model.message.Preferences;
 import org.orcid.jaxb.model.message.PublicationDate;
@@ -119,13 +115,9 @@ import org.orcid.persistence.jpa.entities.GivenPermissionToEntity;
 import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
 import org.orcid.persistence.jpa.entities.OrgEntity;
 import org.orcid.persistence.jpa.entities.OtherNameEntity;
-import org.orcid.persistence.jpa.entities.PatentContributorEntity;
-import org.orcid.persistence.jpa.entities.PatentEntity;
-import org.orcid.persistence.jpa.entities.PatentSourceEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
 import org.orcid.persistence.jpa.entities.ProfileKeywordEntity;
-import org.orcid.persistence.jpa.entities.ProfilePatentEntity;
 import org.orcid.persistence.jpa.entities.ProfileSummaryEntity;
 import org.orcid.persistence.jpa.entities.ProfileWorkEntity;
 import org.orcid.persistence.jpa.entities.PublicationDateEntity;
@@ -182,17 +174,14 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
 
     private void setActivityDetails(ProfileEntity profileEntity, OrcidActivities orcidActivities) {
         Affiliations affiliations = null;        
-        OrcidPatents orcidPatents = null;
         FundingList orcidFundings = null;
         OrcidWorks orcidWorks = null;
         if (orcidActivities != null) {
             affiliations = orcidActivities.getAffiliations();            
-            orcidPatents = orcidActivities.getOrcidPatents();
             orcidFundings = orcidActivities.getFundings();
             orcidWorks = orcidActivities.getOrcidWorks();
         }
         setOrgAffiliationRelations(profileEntity, affiliations);        
-        setPatents(profileEntity, orcidPatents);        
         setFundings(profileEntity, orcidFundings);
         setWorks(profileEntity, orcidWorks);
     }
@@ -437,82 +426,6 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
         profileEntity.setProfileFunding(existingProfileFundingEntities);
     }           
     
-    private void setPatents(ProfileEntity profileEntity, OrcidPatents orcidPatents) {
-        if (orcidPatents != null && orcidPatents.getOrcidPatent() != null && !orcidPatents.getOrcidPatent().isEmpty()) {
-            List<OrcidPatent> orcidPatentList = orcidPatents.getOrcidPatent();
-            SortedSet<ProfilePatentEntity> profilePatentEntities = new TreeSet<ProfilePatentEntity>();
-            for (OrcidPatent orcidPatent : orcidPatentList) {
-                ProfilePatentEntity profilePatentEntity = getProfilePatentEntity(orcidPatent);
-                if (profilePatentEntity != null) {
-                    profilePatentEntity.setProfile(profileEntity);
-                    profilePatentEntities.add(profilePatentEntity);
-                }
-            }
-            profileEntity.setProfilePatents(profilePatentEntities);
-        }
-    }
-
-    private ProfilePatentEntity getProfilePatentEntity(OrcidPatent orcidPatent) {
-        if (orcidPatent != null) {
-            ProfilePatentEntity profilePatentEntity = new ProfilePatentEntity();
-            profilePatentEntity.setSources(getPatentSources(profilePatentEntity, orcidPatent.getPatentSources()));
-            profilePatentEntity.setPatent(getPatent(orcidPatent));
-            profilePatentEntity.setVisibility(orcidPatent.getVisibility());
-            return profilePatentEntity;
-        }
-        return null;
-    }
-
-    private PatentEntity getPatent(OrcidPatent orcidPatent) {
-        if (orcidPatent != null) {
-            PatentEntity patentEntity = new PatentEntity();
-            patentEntity.setContributors(getPatentContributors(patentEntity, orcidPatent.getPatentContributors()));
-            patentEntity.setCountryOfIssue(orcidPatent.getCountry() != null ? orcidPatent.getCountry().getValue() : null);
-            patentEntity.setIssueDate(orcidPatent.getPatentIssueDate() != null ? toDate(orcidPatent.getPatentIssueDate().getValue()) : null);
-            patentEntity.setPatentNo(orcidPatent.getPatentNumber() != null ? orcidPatent.getPatentNumber().getContent() : null);
-            patentEntity.setShortDescription(orcidPatent.getShortDescription() != null ? orcidPatent.getShortDescription() : null);
-            return patentEntity;
-        }
-        return null;
-    }
-
-    private SortedSet<PatentContributorEntity> getPatentContributors(PatentEntity patentEntity, PatentContributors patentContributors) {
-        if (patentContributors != null && patentContributors.getContributor() != null && !patentContributors.getContributor().isEmpty()) {
-            List<Contributor> contributors = patentContributors.getContributor();
-            SortedSet<PatentContributorEntity> patentContributorEntities = new TreeSet<PatentContributorEntity>();
-            for (Contributor contributor : contributors) {
-                PatentContributorEntity patentContributorEntity = new PatentContributorEntity();
-                patentContributorEntity.setContributorEmail(contributor.getContributorEmail() != null ? contributor.getContributorEmail().getValue() : null);
-                patentContributorEntity.setCreditName(contributor.getCreditName() != null ? contributor.getCreditName().getContent() : null);
-                patentContributorEntity.setPatent(patentEntity);
-                ContributorAttributes contributorAttributes = contributor.getContributorAttributes();
-                ContributorRole contributorRole = contributorAttributes.getContributorRole();
-                SequenceType contributorSequence = contributorAttributes.getContributorSequence();
-                patentContributorEntity.setContributorRole(contributorRole != null ? contributorRole : null);
-                patentContributorEntity.setSequence(contributorSequence != null ? contributorSequence : null);
-                patentContributorEntities.add(patentContributorEntity);
-            }
-            return patentContributorEntities;
-        }
-        return null;
-    }
-
-    private Set<PatentSourceEntity> getPatentSources(ProfilePatentEntity profilePatentEntity, PatentSources patentSources) {
-        if (patentSources != null && patentSources.getSource() != null && !patentSources.getSource().isEmpty()) {
-            Set<PatentSourceEntity> patentSourceEntities = new HashSet<PatentSourceEntity>();
-            List<Source> sources = patentSources.getSource();
-            for (Source source : sources) {
-                PatentSourceEntity patentSourceEntity = new PatentSourceEntity();
-                patentSourceEntity.setProfilePatent(profilePatentEntity);
-                patentSourceEntity.setDepositedDate(source.getSourceDate() != null ? toDate(source.getSourceDate().getValue()) : null);
-                patentSourceEntity.setSponsorOrcid(source.getSourceOrcid() != null ? new ProfileEntity(source.getSourceOrcid().getPath()) : null);
-                patentSourceEntities.add(patentSourceEntity);
-            }
-            return patentSourceEntities;
-        }
-        return null;
-    }
-
     private void setBioDetails(ProfileEntity profileEntity, OrcidBio orcidBio) {
         if (orcidBio != null) {
             setBiographyDetails(profileEntity, orcidBio.getBiography());

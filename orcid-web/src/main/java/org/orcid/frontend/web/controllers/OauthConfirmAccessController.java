@@ -53,7 +53,22 @@ public class OauthConfirmAccessController extends BaseController {
             request.getSession().removeAttribute(JUST_REGISTERED);
             mav.addObject(JUST_REGISTERED, justRegistered);
         }
-        mav.addObject("clientProfile", clientProfile);
+        String client_name = "";
+        String client_group_name = "";
+        if (clientProfile.getOrcidBio() != null && clientProfile.getOrcidBio().getPersonalDetails() != null
+                && clientProfile.getOrcidBio().getPersonalDetails().getCreditName() != null)
+            client_name = clientProfile.getOrcidBio().getPersonalDetails().getCreditName().getContent();
+        if (clientProfile.getOrcidInternal() != null && clientProfile.getOrcidInternal().getGroupOrcidIdentifier() != null) {
+            String client_group_id = clientProfile.getOrcidInternal().getGroupOrcidIdentifier().getPath();
+            OrcidProfile clientGroupProfile = orcidProfileManager.retrieveOrcidProfile(client_group_id);
+            if (clientGroupProfile.getOrcidBio() != null && clientGroupProfile.getOrcidBio().getPersonalDetails() != null
+                    && clientGroupProfile.getOrcidBio().getPersonalDetails().getCreditName() != null)
+                client_group_name = clientGroupProfile.getOrcidBio().getPersonalDetails().getCreditName().getContent();
+        }
+
+        mav.addObject("client_name", client_name);
+        mav.addObject("client_group_name", client_group_name);        
+        mav.addObject("clientProfile", clientProfile);        
         mav.addObject("scopes", ScopePathType.getScopesFromSpaceSeparatedString(scope));
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         mav.addObject("auth", authentication);

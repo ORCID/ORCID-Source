@@ -51,14 +51,11 @@ import org.orcid.jaxb.model.message.OrcidBio;
 import org.orcid.jaxb.model.message.Funding;
 import org.orcid.jaxb.model.message.FundingList;
 import org.orcid.jaxb.model.message.OrcidMessage;
-import org.orcid.jaxb.model.message.OrcidPatent;
-import org.orcid.jaxb.model.message.OrcidPatents;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidWork;
 import org.orcid.jaxb.model.message.OrcidWorks;
 import org.orcid.jaxb.model.message.OtherName;
 import org.orcid.jaxb.model.message.OtherNames;
-import org.orcid.jaxb.model.message.PatentNumber;
 import org.orcid.jaxb.model.message.PersonalDetails;
 import org.orcid.jaxb.model.message.Subtitle;
 import org.orcid.jaxb.model.message.Title;
@@ -130,16 +127,6 @@ public class OrcidIndexManagerImplTest extends BaseTest {
 
     }
 
-    @Test
-    @Rollback
-    public void checkPatentsPersisted() throws Exception {
-
-        OrcidProfile patentsProfileListing = orcidProfileAllLimitedVisibilityPatents();
-        OrcidSolrDocument patentsListing = solrDocWithPatentNumbers();
-        orcidIndexManager.persistProfileInformationForIndexing(patentsProfileListing);
-        verify(solrDao).persist(eq(patentsListing));
-
-    }
 
     @Test
     @Rollback
@@ -210,31 +197,6 @@ public class OrcidIndexManagerImplTest extends BaseTest {
         limitedOrcid.getOrcidBio().getPersonalDetails().getOtherNames().setVisibility(Visibility.LIMITED);
         limitedOrcid.getOrcidBio().getPersonalDetails().getCreditName().setVisibility(Visibility.LIMITED);
         return limitedOrcid;
-    }
-
-    private OrcidProfile orcidProfileAllLimitedVisibilityPatents() {
-        OrcidProfile fullOrcidPatents = getStandardOrcid();
-
-        OrcidPatents orcidPatents = new OrcidPatents();
-        OrcidPatent orcidPatent1 = new OrcidPatent();
-        orcidPatent1.setVisibility(Visibility.PUBLIC);
-        orcidPatent1.setPatentNumber(new PatentNumber("patent 1"));
-
-        OrcidPatent orcidPatent2 = new OrcidPatent();
-        orcidPatent2.setVisibility(Visibility.PUBLIC);
-        orcidPatent2.setPatentNumber(new PatentNumber("patent 2"));
-
-        OrcidPatent orcidPatent3 = new OrcidPatent();
-        orcidPatent3.setVisibility(Visibility.LIMITED);
-        orcidPatent3.setPatentNumber(new PatentNumber("patent 3"));
-
-        OrcidPatent orcidPatent4 = new OrcidPatent();
-        orcidPatent4.setVisibility(Visibility.PUBLIC);
-
-        orcidPatents.getOrcidPatent().addAll(Arrays.asList(new OrcidPatent[] { orcidPatent1, orcidPatent2, orcidPatent3, orcidPatent4 }));
-        fullOrcidPatents.setOrcidPatents(orcidPatents);
-
-        return fullOrcidPatents;
     }
 
     private OrcidProfile orcidProfileAllLimitedVisibilityWorks() {
@@ -511,15 +473,6 @@ public class OrcidIndexManagerImplTest extends BaseTest {
         OrcidSolrDocument orcidSolrDocument = fullyPopulatedSolrDocumentForPersistence();        
         orcidSolrDocument.setFundingTitles(Arrays.asList(new String[] { "grant 1", "grant 2" }));
         OrcidProfile orcidProfile = getOrcidWithGrants();
-        OrcidMessage orcidMessage = createFilteredOrcidMessage(orcidProfile);
-        orcidSolrDocument.setPublicProfileMessage(orcidMessage.toString());
-        return orcidSolrDocument;
-    }
-
-    private OrcidSolrDocument solrDocWithPatentNumbers() {
-        OrcidSolrDocument orcidSolrDocument = fullyPopulatedSolrDocumentForPersistence();
-        orcidSolrDocument.setPatentNumbers(Arrays.asList(new String[] { "patent 1", "patent 2" }));
-        OrcidProfile orcidProfile = orcidProfileAllLimitedVisibilityPatents();
         OrcidMessage orcidMessage = createFilteredOrcidMessage(orcidProfile);
         orcidSolrDocument.setPublicProfileMessage(orcidMessage.toString());
         return orcidSolrDocument;
