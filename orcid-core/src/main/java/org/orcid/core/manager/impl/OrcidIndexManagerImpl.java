@@ -42,7 +42,6 @@ import org.orcid.jaxb.model.message.OrcidBio;
 import org.orcid.jaxb.model.message.OrcidDeprecated;
 import org.orcid.jaxb.model.message.Funding;
 import org.orcid.jaxb.model.message.OrcidMessage;
-import org.orcid.jaxb.model.message.OrcidPatent;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidWork;
 import org.orcid.jaxb.model.message.OtherName;
@@ -302,22 +301,6 @@ public class OrcidIndexManagerImpl implements OrcidIndexManager {
 				profileIndexDocument.setFundingTitles(fundingTitle);
 			}
 
-			List<OrcidPatent> orcidPatents = filteredProfile
-					.retrieveOrcidPatents() != null ? filteredProfile
-					.retrieveOrcidPatents().getOrcidPatent() : null;
-			if (orcidPatents != null) {
-				List<String> patentNumbers = new ArrayList<String>();
-				for (OrcidPatent orcidPatent : orcidPatents) {
-					if (orcidPatent.getPatentNumber() != null
-							&& !StringUtils.isBlank(orcidPatent
-									.getPatentNumber().getContent())) {
-						patentNumbers.add(orcidPatent.getPatentNumber()
-								.getContent());
-					}
-				}
-
-				profileIndexDocument.setPatentNumbers(patentNumbers);
-			}
 		}
 
 		OrcidMessage orcidMessage = new OrcidMessage();

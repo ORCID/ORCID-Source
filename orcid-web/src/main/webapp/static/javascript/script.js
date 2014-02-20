@@ -91,6 +91,9 @@ var OrcidCookie = new function () {
 };
 
 var OrcidGA = function () {	
+	this.buildClientString = function (clientGroupName, clientName) {
+		return  clientGroupName + ' - '+ clientName
+	};
 	this.gaPush = function (trackArray) {
 		if (typeof _gaq != 'undefined') {
 			_gaq.push(trackArray);
@@ -279,7 +282,8 @@ $(function () {
 		}
 		if (basePath.startsWith(baseUrl + 'oauth')) { 
 			var clientName = $('form#loginForm input[name="client_name"]').val();
-		    orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'Sign-In-Submit ' + clientName, 'OAuth']);
+			var clientGroupName = $('form#loginForm input[name="client_group_name"]').val();
+		    orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'Sign-In-Submit ' + orcidGA.buildClientString(clientGroupName, clientName), 'OAuth']);
 		} else
 	    	orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'Sign-In-Submit', 'Website']);	
 		$('form#loginForm').attr('disabled', 'disabled');
@@ -295,7 +299,8 @@ $(function () {
 	            if (data.success) {
 	        	    if (basePath.startsWith(baseUrl + 'oauth/signin')) {
 	        	    	var clientName = $('form#loginForm input[name="client_name"]').val();
-	        		    orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'Sign-In ' + clientName, 'OAuth']);
+	        	    	var clientGroupName = $('div#RegistrationCtr input[name="client_group_name"]').val();
+	        		    orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'Sign-In ' + orcidGA.buildClientString(clientGroupName, clientName), 'OAuth']);
 	        	    } else
 	        	    	orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'Sign-In', 'Website']);
 	        	    orcidGA.windowLocationHrefDelay(data.url + window.location.hash);

@@ -1295,10 +1295,23 @@
 		</xs:annotation>
 		<xs:complexType>
 			<xs:sequence>				
-				<xs:element ref="orcid:contributor-role" minOccurs="0" />
+				<xs:element ref="orcid:funding-contributor-role" minOccurs="0" />
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
+	<xs:element name="funding-contributor-role">
+		<xs:annotation>
+			<xs:documentation>The role performed by the collaborator or other contributor.</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:enumeration value="lead" />
+				<xs:enumeration value="co-lead" />
+				<xs:enumeration value="supported-by" />
+				<xs:enumeration value="other-contribution" />
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>			
 	<xs:element name="contributor-sequence">
 		<xs:annotation>
 			<xs:documentation>Indication of where in the contributor list the collaborator or other contributor's name would appear</xs:documentation>

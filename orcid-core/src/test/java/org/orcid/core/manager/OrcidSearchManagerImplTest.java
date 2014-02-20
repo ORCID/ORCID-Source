@@ -46,15 +46,12 @@ import org.orcid.jaxb.model.message.OrcidBio;
 import org.orcid.jaxb.model.message.Funding;
 import org.orcid.jaxb.model.message.FundingList;
 import org.orcid.jaxb.model.message.OrcidMessage;
-import org.orcid.jaxb.model.message.OrcidPatent;
-import org.orcid.jaxb.model.message.OrcidPatents;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidSearchResult;
 import org.orcid.jaxb.model.message.OrcidWork;
 import org.orcid.jaxb.model.message.OrcidWorks;
 import org.orcid.jaxb.model.message.OtherName;
 import org.orcid.jaxb.model.message.OtherNames;
-import org.orcid.jaxb.model.message.PatentNumber;
 import org.orcid.jaxb.model.message.PersonalDetails;
 import org.orcid.jaxb.model.message.Title;
 import org.orcid.jaxb.model.message.Visibility;
@@ -138,20 +135,7 @@ public class OrcidSearchManagerImplTest extends BaseTest {
         assertEquals("work2-doi1", orcidWork2.getWorkExternalIdentifiers().getWorkExternalIdentifier().get(0).getWorkExternalIdentifierId().getContent());
         assertEquals("work2-doi2", orcidWork2.getWorkExternalIdentifiers().getWorkExternalIdentifier().get(1).getWorkExternalIdentifierId().getContent());
 
-        List<OrcidPatent> orcidPatents = retrievedProfile.retrieveOrcidPatents().getOrcidPatent();
-        assertTrue(orcidPatents.size() == 2);
-        OrcidPatent retrievedPatent1 = orcidPatents.get(0);
-        OrcidPatent retrievedPatent2 = orcidPatents.get(1);
-
-        // check returns a reduced payload
-        assertEquals("patent1", retrievedPatent1.getPatentNumber().getContent());
-        assertEquals("Patent 1 - a short description", retrievedPatent1.getShortDescription());
-        assertNull(retrievedPatent1.getPutCode());
-
-        assertEquals("patent2", retrievedPatent2.getPatentNumber().getContent());
-        assertEquals("Patent 2 - a short description", retrievedPatent2.getShortDescription());
-        assertNull(retrievedPatent2.getPutCode());
-
+        
         List<Funding> fundings = retrievedProfile.retrieveFundings().getFundings();
         Funding funding1 = fundings.get(0);
         Funding funding2 = fundings.get(1);
@@ -336,20 +320,6 @@ public class OrcidSearchManagerImplTest extends BaseTest {
         orcidWorks.getOrcidWork().add(orcidWork1);
         orcidWorks.getOrcidWork().add(orcidWork2);
 
-        OrcidPatents orcidPatents = new OrcidPatents();
-        OrcidPatent orcidPatent1 = new OrcidPatent();
-        orcidPatent1.setPatentNumber(new PatentNumber("patent1"));
-        orcidPatent1.setShortDescription("Patent 1 - a short description");
-        orcidPatent1.setPutCode("patent 1 - put-code");
-
-        OrcidPatent orcidPatent2 = new OrcidPatent();
-        orcidPatent2.setPatentNumber(new PatentNumber("patent2"));
-        orcidPatent2.setShortDescription("Patent 2 - a short description");
-        orcidPatent2.setPutCode("patent 2 - put-code");
-
-        orcidPatents.getOrcidPatent().add(orcidPatent1);
-        orcidPatents.getOrcidPatent().add(orcidPatent2);
-        orcidProfile.setOrcidPatents(orcidPatents);
         orcidProfile.setOrcidWorks(orcidWorks);
 
         FundingList orcidFundings = new FundingList();

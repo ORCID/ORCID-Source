@@ -27,9 +27,7 @@
 			(profile.groupType) = "PREMIUM" || (profile.groupType) =
 			"BASIC_INSTITUTION" || (profile.groupType) = "PREMIUM_INSTITUTION")>
 			<li><a href="<@spring.url "/manage-clients" />">${springMacroRequestContext.getMessage("workspace.ManageClientCredentials")}</a></li>
-			</#if> <@security.authorize ifAnyGranted="ROLE_ADMIN">
-			<li><a href="<@spring.url "/admin-actions" />"><@orcid.msg
-				'admin.workspace_link' /></a></li> </@security.authorize>
+			</#if>			
 		</ul>
 	</div>
 	<div class="col-md-9">

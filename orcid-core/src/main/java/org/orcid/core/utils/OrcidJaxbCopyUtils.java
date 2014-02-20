@@ -34,7 +34,6 @@ import org.orcid.jaxb.model.message.OrcidBio;
 import org.orcid.jaxb.model.message.Funding;
 import org.orcid.jaxb.model.message.FundingList;
 import org.orcid.jaxb.model.message.OrcidHistory;
-import org.orcid.jaxb.model.message.OrcidPatents;
 import org.orcid.jaxb.model.message.OrcidWork;
 import org.orcid.jaxb.model.message.OrcidWorks;
 import org.orcid.jaxb.model.message.OtherNames;
@@ -374,10 +373,6 @@ public class OrcidJaxbCopyUtils {
     }
     
     public static void copyUpdatedFundingListVisibilityInformationOnlyPreservingVisbility(FundingList existingFundingList, FundingList updatedFundingList) {
-        throw new RuntimeException("Not implemented!");
-    }
-
-    public static void copyUpdatedPatentsVisibilityInformationOnlyPreservingVisbility(OrcidPatents existingPatents, OrcidPatents updatedPatents) {
         throw new RuntimeException("Not implemented!");
     }
 

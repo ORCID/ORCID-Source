@@ -123,7 +123,6 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
     private Set<GivenPermissionToEntity> givenPermissionTo;
     private Set<GivenPermissionByEntity> givenPermissionBy;
     private SortedSet<ProfileFundingEntity> profileFunding;
-    private SortedSet<ProfilePatentEntity> profilePatents;
     private SortedSet<ProfileWorkEntity> profileWorks;
     private Locale locale = Locale.EN;
     private Boolean sendChangeNotifications;
@@ -514,23 +513,6 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
      */
     public void setProfileFunding(SortedSet<ProfileFundingEntity> funding) {
         this.profileFunding = funding;
-    }
-
-    /**
-     * @return the patents
-     */
-    @OneToMany(mappedBy = PROFILE, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @Sort(type = SortType.NATURAL)
-    public SortedSet<ProfilePatentEntity> getProfilePatents() {
-        return profilePatents;
-    }
-
-    /**
-     * @param patents
-     *            the works to set
-     */
-    public void setProfilePatents(SortedSet<ProfilePatentEntity> patents) {
-        this.profilePatents = patents;
     }
 
     /**

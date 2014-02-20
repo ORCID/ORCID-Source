@@ -47,6 +47,7 @@ import org.orcid.jaxb.model.message.CitationType;
 import org.orcid.jaxb.model.message.ContributorRole;
 import org.orcid.jaxb.model.message.ExternalIdentifier;
 import org.orcid.jaxb.model.message.ExternalIdentifiers;
+import org.orcid.jaxb.model.message.FundingContributorRole;
 import org.orcid.jaxb.model.message.FundingType;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.SequenceType;
@@ -238,20 +239,19 @@ public class WorkspaceController extends BaseWorkspaceController {
         Map<String, String> map = new TreeMap<String, String>();
 
         for (ContributorRole contributorRole : ContributorRole.values()) {
-            if(!contributorRole.isFundingRole())
-                map.put(contributorRole.value(), getMessage(buildInternationalizationKey(ContributorRole.class, contributorRole.value())));
+            map.put(contributorRole.value(), getMessage(buildInternationalizationKey(ContributorRole.class, contributorRole.value())));
         }
         return FunctionsOverCollections.sortMapsByValues(map);
     }
     
     @ModelAttribute("fundingRoles")
     public Map<String, String> retrieveFundingRolesAsMap() {
-        Map<String, String> map = new TreeMap<String, String>();
+        Map<String, String> map = new LinkedHashMap<String, String>();
 
-        for (ContributorRole contributorRole : ContributorRole.values()) {
-            map.put(contributorRole.value(), getMessage(buildInternationalizationKey(ContributorRole.class, contributorRole.value())));
+        for (FundingContributorRole contributorRole : FundingContributorRole.values()) {
+            map.put(contributorRole.value(), getMessage(buildInternationalizationKey(FundingContributorRole.class, contributorRole.value())));
         }
-        return FunctionsOverCollections.sortMapsByValues(map);
+        return map;
     }
 
     @ModelAttribute("sequences")
