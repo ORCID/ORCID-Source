@@ -294,7 +294,8 @@ public class FundingForm implements ErrorsInterface, Serializable {
             organization.setName(fundingName.getValue());
         OrganizationAddress organizationAddress = new OrganizationAddress();
         organization.setAddress(organizationAddress);
-        organizationAddress.setCity(city.getValue());
+        if(!PojoUtil.isEmpty(city))
+            organizationAddress.setCity(city.getValue());
         if (!PojoUtil.isEmpty(region)) {
             organizationAddress.setRegion(region.getValue());
         }

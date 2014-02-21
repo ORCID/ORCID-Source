@@ -1806,10 +1806,6 @@ a:hover {
 	padding-right: 38px;	
 }
 
-#add-funding h1 {
-	font-size: 35px;
-}
-
 #add-funding #startDay,
 #add-funding #startMonth,
 #add-funding #endDay,
@@ -1827,6 +1823,11 @@ a:hover {
 #add-funding input[type=checkbox] {
 	margin: 0;
 }
+
+#add-funding #remove-disambiguated{
+	padding-right: 32px;
+}
+
 
 .no-margin-bottom {
 	margin-bottom: 0px;

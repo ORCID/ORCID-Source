@@ -461,7 +461,7 @@ public class FundingsController extends BaseWorkspaceController {
         return funding;
     }
 
-    @RequestMapping(value = "/funding/nameValidate.json", method = RequestMethod.POST)
+    @RequestMapping(value = "/funding/orgNameValidate.json", method = RequestMethod.POST)
     public @ResponseBody
     FundingForm validateName(@RequestBody FundingForm funding) {
         funding.getFundingName().setErrors(new ArrayList<String>());
