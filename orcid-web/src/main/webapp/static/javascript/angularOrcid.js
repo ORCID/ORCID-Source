@@ -1868,6 +1868,7 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc) {
 	};
 	
 	$scope.addFundingModal = function(type){
+		$scope.removeDisambiguatedFunding();
 		$.ajax({
 			url: $('body').data('baseurl') + 'fundings/funding.json',
 			dataType: 'json',
@@ -1883,7 +1884,7 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc) {
 	};
 	
 	$scope.showAddModal = function(){
-		$scope.editTranslatedTitle = false;
+		$scope.editTranslatedTitle = false;		
 		$.colorbox({        	
 			html: $compile($('#add-funding-modal').html())($scope),			
 			width: formColorBoxResize(),
