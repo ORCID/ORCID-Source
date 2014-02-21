@@ -31,6 +31,13 @@
     </div>
 </#if>
 
+
+<#if invalidOrcid?? && invalidOrcid>
+    <div class="alert alert-success">
+        <strong><@spring.message "orcid.frontend.web.invalid_switch_orcid"/></strong>
+    </div>
+</#if>
+
 <div class="row workspace-top public-profile">
 
 	<#-- hidden divs that trigger angular -->

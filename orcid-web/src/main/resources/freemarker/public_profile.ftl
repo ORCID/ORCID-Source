@@ -79,8 +79,8 @@
 	        	</div>
         	</#if>
             <div class="workspace-inner workspace-public">            	
-                <#if (profile.orcidBio.biography.content)??>
-                    <h3 class="workspace-header-public no-border">${springMacroRequestContext.getMessage("public_profile.h3PersonalInformation")}</h3>
+                <h3 class="workspace-header-public no-border">${springMacroRequestContext.getMessage("public_profile.h3PersonalInformation")}</h3>
+                <#if (profile.orcidBio.biography.content)?? && (profile.orcidBio.biography.content)?has_content>
                     <p><b>${springMacroRequestContext.getMessage("public_profile.labelBiography")}</b><br /><div style="white-space: pre-wrap;">${(profile.orcidBio.biography.content)!}</div></p>
                 </#if>
                 <#assign publicProfile = true />
