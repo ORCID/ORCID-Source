@@ -59,6 +59,29 @@
           citation="Sue Ellen ewing"
           citation_type="FORMATTED_IEEE"
           work_type="BOOK"          
-            />        
-
+            />
+            
+    <work work_id="5"
+          publication_year="2011"
+          publication_month="2"
+          publication_day="1"
+          title="Journal article A"
+          work_type="JOURNAL_ARTICLE"          
+            />
+            
+    <work work_id="6"
+          publication_year="2011"
+          publication_month="2"
+          publication_day="1"
+          title="Journal article B"
+          work_type="JOURNAL_ARTICLE"          
+            />               
+    <work work_id="7"
+          publication_year="2011"
+          publication_month="2"
+          publication_day="1"
+          title="Journal article C"
+          work_type="JOURNAL_ARTICLE"          
+            />
+                
 </dataset>

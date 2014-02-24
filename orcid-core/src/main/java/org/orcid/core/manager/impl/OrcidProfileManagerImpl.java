@@ -769,11 +769,10 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
     @Transactional
     public OrcidProfile updateOrcidWorks(OrcidProfile updatedOrcidProfile) {
         OrcidProfile existingProfile = retrieveOrcidProfile(updatedOrcidProfile.getOrcidIdentifier().getPath());
-
         if (existingProfile == null) {
             return null;
         }
-
+        OrcidJaxbCopyUtils.copyUpdatedWorksVisibilityInformationOnlyPreservingVisbility(existingProfile.retrieveOrcidWorks(), updatedOrcidProfile.retrieveOrcidWorks());
         existingProfile.setOrcidWorks(updatedOrcidProfile.retrieveOrcidWorks());
         return updateOrcidProfile(existingProfile);
     }

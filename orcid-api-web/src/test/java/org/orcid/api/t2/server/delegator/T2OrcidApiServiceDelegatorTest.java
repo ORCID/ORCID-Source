@@ -18,6 +18,7 @@ package org.orcid.api.t2.server.delegator;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -56,12 +57,16 @@ import org.orcid.jaxb.model.message.OrcidBio;
 import org.orcid.jaxb.model.message.OrcidIdentifier;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidProfile;
+import org.orcid.jaxb.model.message.OrcidWork;
 import org.orcid.jaxb.model.message.OrcidWorks;
 import org.orcid.jaxb.model.message.Organization;
 import org.orcid.jaxb.model.message.OrganizationAddress;
 import org.orcid.jaxb.model.message.PersonalDetails;
 import org.orcid.jaxb.model.message.ScopePathType;
+import org.orcid.jaxb.model.message.Title;
 import org.orcid.jaxb.model.message.Visibility;
+import org.orcid.jaxb.model.message.WorkTitle;
+import org.orcid.jaxb.model.message.WorkType;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.test.DBUnitTest;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -102,13 +107,13 @@ public class T2OrcidApiServiceDelegatorTest extends DBUnitTest {
     @After
     public void after() {
         SecurityContextHolder.clearContext();
-        orcidProfileManager.clearOrcidProfileCache();     
+        orcidProfileManager.clearOrcidProfileCache();
     }
-    
+
     @AfterClass
     public static void removeDBUnitData() throws Exception {
-        List<String> reversedDataFiles = new ArrayList<String>(Arrays.asList("/data/Oauth2TokenDetailsData.xml", 
-        		"/data/ProfileWorksEntityData.xml", "/data/WorksEntityData.xml", "/data/ClientDetailsEntityData.xml"));        
+        List<String> reversedDataFiles = new ArrayList<String>(Arrays.asList("/data/Oauth2TokenDetailsData.xml", "/data/ProfileWorksEntityData.xml",
+                "/data/WorksEntityData.xml", "/data/ClientDetailsEntityData.xml"));
         removeDBUnitData(reversedDataFiles, null);
     }
 
@@ -133,6 +138,49 @@ public class T2OrcidApiServiceDelegatorTest extends DBUnitTest {
         orcidActivities.setOrcidWorks(orcidWorks);
         Response response = t2OrcidApiServiceDelegator.addWorks(mockedUriInfo, "4444-4444-4444-4441", orcidMessage);
         assertNotNull(response);
+    }
+
+    @Test
+    public void testUpdateWithNewWork() {
+        setUpSecurityContext("4444-4444-4444-4446", ScopePathType.ORCID_WORKS_UPDATE);
+        OrcidMessage orcidMessage = new OrcidMessage();
+        orcidMessage.setMessageVersion("1.1");
+        OrcidProfile orcidProfile = new OrcidProfile();
+        orcidMessage.setOrcidProfile(orcidProfile);
+        orcidProfile.setOrcidIdentifier(new OrcidIdentifier("4444-4444-4444-4446"));
+        OrcidActivities orcidActivities = new OrcidActivities();
+        orcidProfile.setOrcidActivities(orcidActivities);
+        OrcidWorks orcidWorks = new OrcidWorks();
+        orcidActivities.setOrcidWorks(orcidWorks);
+        OrcidWork orcidWork = new OrcidWork();
+        orcidWorks.getOrcidWork().add(orcidWork);
+        WorkTitle workTitle = new WorkTitle();
+        workTitle.setTitle(new Title("Added by works update"));
+        orcidWork.setWorkTitle(workTitle);
+        orcidWork.setWorkType(WorkType.ARTISTIC_PERFORMANCE);
+        Response response = t2OrcidApiServiceDelegator.updateWorks(mockedUriInfo, "4444-4444-4444-4446", orcidMessage);
+        assertNotNull(response);
+
+        OrcidProfile retrievedProfile = orcidProfileManager.retrieveOrcidProfile("4444-4444-4444-4446");
+        List<OrcidWork> retreivedWorksList = retrievedProfile.getOrcidActivities().getOrcidWorks().getOrcidWork();
+        boolean foundExisting = false;
+        boolean foundNew = false;
+        // Should have the added work, plus one existing private work
+        for (OrcidWork retrievedWork : retreivedWorksList) {
+            if ("7".equals(retrievedWork.getPutCode())) {
+                // Existing private work
+                assertEquals("Journal article C", retrievedWork.getWorkTitle().getTitle().getContent());
+                assertEquals(Visibility.PRIVATE, retrievedWork.getVisibility());
+                foundExisting = true;
+            } else {
+                // The added work
+                assertEquals("Added by works update", retrievedWork.getWorkTitle().getTitle().getContent());
+                foundNew = true;
+            }
+        }
+        assertTrue("New work should be there", foundNew);
+        assertTrue("Existing private work should be there", foundExisting);
+        assertEquals(2, retreivedWorksList.size());
     }
 
     @Test
@@ -259,11 +307,15 @@ public class T2OrcidApiServiceDelegatorTest extends DBUnitTest {
     }
 
     private void setUpSecurityContext(ScopePathType... scopePathTypes) {
+        setUpSecurityContext("4444-4444-4444-4441", scopePathTypes);
+    }
+
+    private void setUpSecurityContext(String userOrcid, ScopePathType... scopePathTypes) {
         SecurityContextImpl securityContext = new SecurityContextImpl();
         OrcidOAuth2Authentication mockedAuthentication = mock(OrcidOAuth2Authentication.class);
         securityContext.setAuthentication(mockedAuthentication);
         SecurityContextHolder.setContext(securityContext);
-        when(mockedAuthentication.getPrincipal()).thenReturn(new ProfileEntity("4444-4444-4444-4441"));
+        when(mockedAuthentication.getPrincipal()).thenReturn(new ProfileEntity(userOrcid));
         AuthorizationRequest authorizationRequest = mock(AuthorizationRequest.class);
         Set<String> scopes = new HashSet<String>();
         for (ScopePathType scopePathType : scopePathTypes) {

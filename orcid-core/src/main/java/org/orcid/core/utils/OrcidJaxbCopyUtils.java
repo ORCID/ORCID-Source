@@ -17,6 +17,7 @@
 package org.orcid.core.utils;
 
 import java.util.List;
+import java.util.Map;
 
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
 import org.orcid.jaxb.model.message.Address;
@@ -29,10 +30,10 @@ import org.orcid.jaxb.model.message.Contributor;
 import org.orcid.jaxb.model.message.CreditName;
 import org.orcid.jaxb.model.message.Email;
 import org.orcid.jaxb.model.message.ExternalIdentifiers;
-import org.orcid.jaxb.model.message.Keywords;
-import org.orcid.jaxb.model.message.OrcidBio;
 import org.orcid.jaxb.model.message.Funding;
 import org.orcid.jaxb.model.message.FundingList;
+import org.orcid.jaxb.model.message.Keywords;
+import org.orcid.jaxb.model.message.OrcidBio;
 import org.orcid.jaxb.model.message.OrcidHistory;
 import org.orcid.jaxb.model.message.OrcidWork;
 import org.orcid.jaxb.model.message.OrcidWorks;
@@ -102,7 +103,7 @@ public class OrcidJaxbCopyUtils {
         existingAffiliationsList.clear();
         existingAffiliationsList.addAll(updatedAffiliationsList);
     }
-    
+
     public static void copyFundingListToExistingPreservingVisibility(FundingList existingFundings, FundingList updatedFundings) {
         if (updatedFundings == null) {
             return;
@@ -113,7 +114,7 @@ public class OrcidJaxbCopyUtils {
         }
         List<Funding> existingFundingsList = existingFundings.getFundings();
         for (Funding updatedFunding : updatedFundingList) {
-        	mergeFundings(existingFundingsList, updatedFunding);
+            mergeFundings(existingFundingsList, updatedFunding);
         }
         existingFundingsList.clear();
         existingFundingsList.addAll(updatedFundingList);
@@ -329,7 +330,24 @@ public class OrcidJaxbCopyUtils {
             existingWorks = new OrcidWorks();
         }
 
-        // for now we are doing unconditional update on works
+        Map<String, OrcidWork> updatedWorksMap = updatedWorks.retrieveOrcidWorksAsMap();
+
+        for (OrcidWork existingWork : existingWorks.getOrcidWork()) {
+            OrcidWork updatedWork = updatedWorksMap.get(existingWork.getPutCode());
+            if (updatedWork == null) {
+                // Make sure private works are preserved
+                if (Visibility.PRIVATE.equals(existingWork.getVisibility())) {
+                    updatedWorks.getOrcidWork().add(existingWork);
+                }
+            } else {
+                // Make sure privacy preserved if not specified in incoming
+                if (updatedWork.getVisibility() == null) {
+                    updatedWork.setVisibility(existingWork.getVisibility());
+                }
+            }
+        }
+
+        // Set remaining null visibilities to default value
         List<OrcidWork> orcidWorkToUpdate = updatedWorks.getOrcidWork();
         for (OrcidWork orcidWork : orcidWorkToUpdate) {
             if (orcidWork.getVisibility() == null) {
@@ -347,7 +365,6 @@ public class OrcidJaxbCopyUtils {
         }
 
         existingWorks.setOrcidWork(orcidWorkToUpdate);
-
     }
 
     private static Affiliation obtainLikelyEqual(Affiliation toCompare, List<Affiliation> toCompareTo) {
@@ -371,7 +388,7 @@ public class OrcidJaxbCopyUtils {
         }
         return null;
     }
-    
+
     public static void copyUpdatedFundingListVisibilityInformationOnlyPreservingVisbility(FundingList existingFundingList, FundingList updatedFundingList) {
         throw new RuntimeException("Not implemented!");
     }
@@ -392,21 +409,21 @@ public class OrcidJaxbCopyUtils {
                     : OrcidVisibilityDefaults.AFFILIATE_NAME_DEFAULT.getVisibility());
         }
     }
-    
+
     private static void mergeFundings(List<Funding> existingFundings, Funding updatedFunding) {
         Funding likelyExisting = obtainLikelyEqual(updatedFunding, existingFundings);
         if (likelyExisting != null) {
             Visibility likelyExistingFundingInstitutionNameVisibility = likelyExisting.getVisibility();
 
             if (likelyExistingFundingInstitutionNameVisibility == null && updatedFunding.getVisibility() == null) {
-            	updatedFunding.setVisibility(OrcidVisibilityDefaults.FUNDING_DEFAULT.getVisibility());
+                updatedFunding.setVisibility(OrcidVisibilityDefaults.FUNDING_DEFAULT.getVisibility());
             } else if (updatedFunding.getVisibility() == null && likelyExistingFundingInstitutionNameVisibility != null) {
-            	updatedFunding.setVisibility(likelyExistingFundingInstitutionNameVisibility);
+                updatedFunding.setVisibility(likelyExistingFundingInstitutionNameVisibility);
             }
         } else {
             // if you can't match this type, default its value if null
-        	updatedFunding.setVisibility(updatedFunding.getVisibility() != null ? updatedFunding.getVisibility()
-                    : OrcidVisibilityDefaults.FUNDING_DEFAULT.getVisibility());
+            updatedFunding.setVisibility(updatedFunding.getVisibility() != null ? updatedFunding.getVisibility() : OrcidVisibilityDefaults.FUNDING_DEFAULT
+                    .getVisibility());
         }
     }
 
