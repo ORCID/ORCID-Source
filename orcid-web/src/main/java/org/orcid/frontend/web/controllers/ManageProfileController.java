@@ -341,10 +341,16 @@ public class ManageProfileController extends BaseWorkspaceController {
     }
 
     @RequestMapping(value = "/admin-switch-user", method = RequestMethod.GET)
-    public ModelAndView adminSwitchUser(HttpServletRequest request, @RequestParam("orcid") String targetOrcid) {
+    public ModelAndView adminSwitchUser(HttpServletRequest request, @RequestParam("orcid") String targetOrcid, RedirectAttributes redirectAttributes) {
         // Redirect to the new way of switching user, which includes admin
         // access
-        ModelAndView mav = new ModelAndView("redirect:/switch-user?j_username=" + targetOrcid);
+        ModelAndView mav = null;
+        if(profileEntityManager.orcidExists(targetOrcid)) {
+            mav = new ModelAndView("redirect:/switch-user?j_username=" + targetOrcid);
+        } else {
+            redirectAttributes.addFlashAttribute("invalidOrcid", true);
+            mav = new ModelAndView("redirect:/my-orcid");
+        }
         return mav;
     }
 
