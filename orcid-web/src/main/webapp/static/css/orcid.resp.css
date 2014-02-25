@@ -1465,7 +1465,7 @@ ul.privacyHelp li.private {
 	top: 0;
 	left: 0;
 	z-index: 9999;
-	/*overflow: hidden;*/
+	overflow: hidden; /* Do not change */
 }
 
 
@@ -1485,7 +1485,7 @@ ul.privacyHelp li.private {
 }
 
 #cboxLoadedContent {
-	overflow: auto;
+	overflow: scroll;
 }
 
 #cboxTitle {
@@ -1956,6 +1956,7 @@ a:hover {
 
 .colorbox-content {
 	padding: 20px;
+	overflow: hidden;
 }
 
 .alert {
@@ -3820,6 +3821,14 @@ p.orcid-id-container{
 	#cboxContent, 
 	#cboxLoadedContent{
 		width: 100% !important;			
+	}
+	
+	#cboxContent{
+		overflow: auto;
+	}
+	
+	#colorbox{
+		overflow: hidden;
 	}
 	
 	
