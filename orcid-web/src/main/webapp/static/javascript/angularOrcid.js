@@ -1950,7 +1950,7 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc) {
                     if ($('#fundingName').val()) {
                         q += encodeURIComponent($('#fundingName').val());
                     }
-                    q += '?limit=' + numOfResults + '&funders-only=' + $('#fundersOnly').is(':checked');
+                    q += '?limit=' + numOfResults + '&funders-only=true';
                     return q;
                 }
 			},
