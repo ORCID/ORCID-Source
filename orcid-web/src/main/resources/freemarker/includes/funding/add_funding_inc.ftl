@@ -193,11 +193,7 @@
 				</div>
 				<div class="control-group">
 					<span ng-hide="disambiguatedFunding">												
-					   	<label><@orcid.msg 'manual_funding_form_contents.label_funding_agency_name'/></label>
-					   	<div id="fundingOnlyDiv" class="right show-funding-only">
-							<input type="checkbox" id="fundersOnly" checked/>
-							<label for="fundersOnly"><@orcid.msg 'manual_funding_form_contents.show_only_funders'/></label>
-						</div>					   
+					   	<label><@orcid.msg 'manual_funding_form_contents.label_funding_agency_name'/></label>					   					  
 					</span>
 					<span ng-show="disambiguatedFunding">
 						<label><@orcid.msg 'manual_funding_form_contents.label_funding_agency_display_name'/></label>
