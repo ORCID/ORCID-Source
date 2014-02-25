@@ -56,12 +56,12 @@ import org.orcid.core.manager.LoadOptions;
 import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.OrcidGenerationManager;
 import org.orcid.core.manager.OrcidIndexManager;
+import org.orcid.core.manager.OrcidJaxbCopyManager;
 import org.orcid.core.manager.OrcidProfileCleaner;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.security.OrcidWebRole;
 import org.orcid.core.security.visibility.aop.VisibilityControl;
-import org.orcid.core.utils.OrcidJaxbCopyUtils;
 import org.orcid.jaxb.model.message.Affiliation;
 import org.orcid.jaxb.model.message.Affiliations;
 import org.orcid.jaxb.model.message.Biography;
@@ -212,6 +212,9 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
 
     @Resource
     private SourceManager sourceManager;
+
+    @Resource
+    private OrcidJaxbCopyManager orcidJaxbCopyManager;
 
     private int claimWaitPeriodDays = 10;
 
@@ -772,7 +775,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         if (existingProfile == null) {
             return null;
         }
-        OrcidJaxbCopyUtils.copyUpdatedWorksVisibilityInformationOnlyPreservingVisbility(existingProfile.retrieveOrcidWorks(), updatedOrcidProfile.retrieveOrcidWorks());
+        orcidJaxbCopyManager.copyUpdatedWorksPreservingVisbility(existingProfile.retrieveOrcidWorks(), updatedOrcidProfile.retrieveOrcidWorks());
         existingProfile.setOrcidWorks(updatedOrcidProfile.retrieveOrcidWorks());
         return updateOrcidProfile(existingProfile);
     }
@@ -804,7 +807,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
                 updatedExternalIdentifiers.add(ei);
             }
 
-            OrcidJaxbCopyUtils.copyUpdatedExternalIdentifiersToExistingPreservingVisibility(orcidBio, updatedOrcidProfile.getOrcidBio());
+            orcidJaxbCopyManager.copyUpdatedExternalIdentifiersToExistingPreservingVisibility(orcidBio, updatedOrcidProfile.getOrcidBio());
 
             return updateOrcidProfile(existingProfile);
         } else {
@@ -826,7 +829,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
             return null;
         }
         // preserve the visibility settings
-        OrcidJaxbCopyUtils.copyUpdatedBioToExistingWithVisibility(existingProfile.getOrcidBio(), updatedOrcidProfile.getOrcidBio());
+        orcidJaxbCopyManager.copyUpdatedBioToExistingWithVisibility(existingProfile.getOrcidBio(), updatedOrcidProfile.getOrcidBio());
         existingProfile.setOrcidBio(updatedOrcidProfile.getOrcidBio());
         return updateOrcidProfile(existingProfile);
     }
@@ -840,8 +843,8 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
             return null;
         }
 
-        OrcidJaxbCopyUtils.copyUpdatedBioToExistingWithVisibility(existingProfile.getOrcidBio(), updatedOrcidProfile.getOrcidBio());
-        OrcidJaxbCopyUtils.copyUpdatedWorksVisibilityInformationOnlyPreservingVisbility(existingProfile.retrieveOrcidWorks(), updatedOrcidProfile.retrieveOrcidWorks());
+        orcidJaxbCopyManager.copyUpdatedBioToExistingWithVisibility(existingProfile.getOrcidBio(), updatedOrcidProfile.getOrcidBio());
+        orcidJaxbCopyManager.copyUpdatedWorksPreservingVisbility(existingProfile.retrieveOrcidWorks(), updatedOrcidProfile.retrieveOrcidWorks());
         return updateOrcidProfile(existingProfile);
     }
 
@@ -853,8 +856,8 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         if (existingProfile == null) {
             return null;
         }
-        OrcidJaxbCopyUtils.copyRelevantUpdatedHistoryElements(existingProfile.getOrcidHistory(), updatedOrcidProfile.getOrcidHistory());
-        OrcidJaxbCopyUtils.copyUpdatedBioToExistingWithVisibility(existingProfile.getOrcidBio(), updatedOrcidProfile.getOrcidBio());
+        orcidJaxbCopyManager.copyRelevantUpdatedHistoryElements(existingProfile.getOrcidHistory(), updatedOrcidProfile.getOrcidHistory());
+        orcidJaxbCopyManager.copyUpdatedBioToExistingWithVisibility(existingProfile.getOrcidBio(), updatedOrcidProfile.getOrcidBio());
         return updateOrcidProfile(existingProfile);
     }
 
@@ -884,7 +887,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
             existingActivities.setAffiliations(existingAffiliations);
         }
 
-        OrcidJaxbCopyUtils.copyAffiliationsToExistingPreservingVisibility(existingAffiliations, updatedAffiliations);
+        orcidJaxbCopyManager.copyAffiliationsToExistingPreservingVisibility(existingAffiliations, updatedAffiliations);
         return updateOrcidProfile(existingProfile);
     }
 
@@ -914,7 +917,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
             existingActivities.setFundings(existingFundingList);
         }
 
-        OrcidJaxbCopyUtils.copyFundingListToExistingPreservingVisibility(existingFundingList, updatedFundingList);
+        orcidJaxbCopyManager.copyFundingListToExistingPreservingVisibility(existingFundingList, updatedFundingList);
         return updateOrcidProfile(existingProfile);
     }
 

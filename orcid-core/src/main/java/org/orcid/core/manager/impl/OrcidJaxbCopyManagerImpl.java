@@ -14,11 +14,16 @@
  *
  * =============================================================================
  */
-package org.orcid.core.utils;
+package org.orcid.core.manager.impl;
 
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Resource;
+
+import org.orcid.core.exception.WrongSourceException;
+import org.orcid.core.manager.OrcidJaxbCopyManager;
+import org.orcid.core.manager.SourceManager;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
 import org.orcid.jaxb.model.message.Address;
 import org.orcid.jaxb.model.message.Affiliation;
@@ -60,9 +65,13 @@ import org.springframework.util.Assert;
  * @author Declan Newman (declan) Date: 13/03/2012
  */
 
-public class OrcidJaxbCopyUtils {
+public class OrcidJaxbCopyManagerImpl implements OrcidJaxbCopyManager {
 
-    public static void copyRelevantUpdatedHistoryElements(OrcidHistory existing, OrcidHistory updated) {
+    @Resource
+    private SourceManager sourceManager;
+
+    @Override
+    public void copyRelevantUpdatedHistoryElements(OrcidHistory existing, OrcidHistory updated) {
         Assert.notNull(updated, "The updated history is null");
         Assert.notNull(existing, "The existing history is null");
 
@@ -76,7 +85,8 @@ public class OrcidJaxbCopyUtils {
         // TODO: There may be some others that need to be added to this.
     }
 
-    public static void copyUpdatedBioToExistingWithVisibility(OrcidBio existing, OrcidBio updated) {
+    @Override
+    public void copyUpdatedBioToExistingWithVisibility(OrcidBio existing, OrcidBio updated) {
         Assert.notNull(updated, "The updated bio is null");
         Assert.notNull(existing, "The existing bio is null");
 
@@ -88,7 +98,8 @@ public class OrcidJaxbCopyUtils {
         copyUpdatedExternalIdentifiersToExistingPreservingVisibility(existing, updated);
     }
 
-    public static void copyAffiliationsToExistingPreservingVisibility(Affiliations existingAffiliations, Affiliations updatedAffiliations) {
+    @Override
+    public void copyAffiliationsToExistingPreservingVisibility(Affiliations existingAffiliations, Affiliations updatedAffiliations) {
         if (updatedAffiliations == null) {
             return;
         }
@@ -104,7 +115,8 @@ public class OrcidJaxbCopyUtils {
         existingAffiliationsList.addAll(updatedAffiliationsList);
     }
 
-    public static void copyFundingListToExistingPreservingVisibility(FundingList existingFundings, FundingList updatedFundings) {
+    @Override
+    public void copyFundingListToExistingPreservingVisibility(FundingList existingFundings, FundingList updatedFundings) {
         if (updatedFundings == null) {
             return;
         }
@@ -120,7 +132,8 @@ public class OrcidJaxbCopyUtils {
         existingFundingsList.addAll(updatedFundingList);
     }
 
-    public static void copyUpdatedExternalIdentifiersToExistingPreservingVisibility(OrcidBio existing, OrcidBio updated) {
+    @Override
+    public void copyUpdatedExternalIdentifiersToExistingPreservingVisibility(OrcidBio existing, OrcidBio updated) {
         if (updated.getExternalIdentifiers() == null) {
             return;
         }
@@ -138,7 +151,8 @@ public class OrcidJaxbCopyUtils {
         existing.setExternalIdentifiers(updatedExternalIdentifiers);
     }
 
-    public static void copyUpdatedShortDescriptionToExistingPreservingVisibility(OrcidBio existing, OrcidBio updated) {
+    @Override
+    public void copyUpdatedShortDescriptionToExistingPreservingVisibility(OrcidBio existing, OrcidBio updated) {
         if (updated.getBiography() == null) {
             return;
         }
@@ -157,7 +171,8 @@ public class OrcidJaxbCopyUtils {
         existing.setBiography(updatedShortDescription);
     }
 
-    public static void copyUpdatedKeywordsToExistingPreservingVisibility(OrcidBio existing, OrcidBio updated) {
+    @Override
+    public void copyUpdatedKeywordsToExistingPreservingVisibility(OrcidBio existing, OrcidBio updated) {
         if (updated.getKeywords() == null) {
             return;
         }
@@ -171,7 +186,8 @@ public class OrcidJaxbCopyUtils {
         existing.setKeywords(updatedKeywords);
     }
 
-    public static void copyUpdatedContactDetailsToExistingPreservingVisibility(OrcidBio existing, OrcidBio updated) {
+    @Override
+    public void copyUpdatedContactDetailsToExistingPreservingVisibility(OrcidBio existing, OrcidBio updated) {
         if (updated.getContactDetails() == null) {
             return;
         }
@@ -240,7 +256,8 @@ public class OrcidJaxbCopyUtils {
         existing.setContactDetails(updated.getContactDetails());
     }
 
-    public static void copyUpdatedResearcherUrlPreservingVisbility(OrcidBio existing, OrcidBio updated) {
+    @Override
+    public void copyUpdatedResearcherUrlPreservingVisbility(OrcidBio existing, OrcidBio updated) {
         if (updated.getResearcherUrls() == null) {
             return;
         }
@@ -257,7 +274,8 @@ public class OrcidJaxbCopyUtils {
         existing.setResearcherUrls(updatedResearcherUrls);
     }
 
-    public static void copyUpdatedPersonalDetailsToExistingPreservingVisibility(OrcidBio existing, OrcidBio updated) {
+    @Override
+    public void copyUpdatedPersonalDetailsToExistingPreservingVisibility(OrcidBio existing, OrcidBio updated) {
 
         PersonalDetails existingPersonalDetails = existing.getPersonalDetails();
         PersonalDetails updatedPersonalDetails = updated.getPersonalDetails();
@@ -281,7 +299,7 @@ public class OrcidJaxbCopyUtils {
 
     }
 
-    private static void copyOtherNamesPreservingVisibility(PersonalDetails existingPersonalDetails, PersonalDetails updatedPersonalDetails) {
+    private void copyOtherNamesPreservingVisibility(PersonalDetails existingPersonalDetails, PersonalDetails updatedPersonalDetails) {
         OtherNames existingOtherNames = existingPersonalDetails.getOtherNames();
         OtherNames updatedOtherNames = updatedPersonalDetails.getOtherNames();
 
@@ -299,7 +317,7 @@ public class OrcidJaxbCopyUtils {
 
     }
 
-    private static void copyCreditNamePreservingVisibility(PersonalDetails existingPersonalDetails, PersonalDetails updatedPersonalDetails) {
+    private void copyCreditNamePreservingVisibility(PersonalDetails existingPersonalDetails, PersonalDetails updatedPersonalDetails) {
         CreditName existingCreditName = existingPersonalDetails.getCreditName();
         CreditName updatedCreditName = updatedPersonalDetails.getCreditName();
 
@@ -319,7 +337,8 @@ public class OrcidJaxbCopyUtils {
 
     }
 
-    public static void copyUpdatedWorksVisibilityInformationOnlyPreservingVisbility(OrcidWorks existingWorks, OrcidWorks updatedWorks) {
+    @Override
+    public void copyUpdatedWorksPreservingVisbility(OrcidWorks existingWorks, OrcidWorks updatedWorks) {
 
         if (updatedWorks == null) {
             // nothing to update, bale out
@@ -340,6 +359,9 @@ public class OrcidJaxbCopyUtils {
                     updatedWorks.getOrcidWork().add(existingWork);
                 }
             } else {
+                // Check the source of the existing work is the same as the
+                // current source
+                checkSource(existingWork);
                 // Make sure privacy preserved if not specified in incoming
                 if (updatedWork.getVisibility() == null) {
                     updatedWork.setVisibility(existingWork.getVisibility());
@@ -367,7 +389,19 @@ public class OrcidJaxbCopyUtils {
         existingWorks.setOrcidWork(orcidWorkToUpdate);
     }
 
-    private static Affiliation obtainLikelyEqual(Affiliation toCompare, List<Affiliation> toCompareTo) {
+    private void checkSource(OrcidWork existingWork) {
+        String currentSource = sourceManager.retrieveSourceOrcid();
+        if (currentSource == null) {
+            // Not under Spring security so anything goes
+            return;
+        }
+        if (!currentSource.equals(existingWork.getWorkSource().getPath())) {
+            throw new WrongSourceException(
+                    "We have detected changes to activities you are not the source of. This may be do to a out of date list. Please re-get the activities list and repost with only changes to activities your client is the source of.");
+        }
+    }
+
+    private Affiliation obtainLikelyEqual(Affiliation toCompare, List<Affiliation> toCompareTo) {
         if (toCompare != null && toCompareTo != null && !toCompareTo.isEmpty()) {
             for (Affiliation ai : toCompareTo) {
                 if (ai.equals(toCompare)) {
@@ -378,7 +412,7 @@ public class OrcidJaxbCopyUtils {
         return null;
     }
 
-    private static Funding obtainLikelyEqual(Funding toCompare, List<Funding> toCompareTo) {
+    private Funding obtainLikelyEqual(Funding toCompare, List<Funding> toCompareTo) {
         if (toCompare != null && toCompareTo != null && !toCompareTo.isEmpty()) {
             for (Funding ai : toCompareTo) {
                 if (ai.equals(toCompare)) {
@@ -389,11 +423,12 @@ public class OrcidJaxbCopyUtils {
         return null;
     }
 
-    public static void copyUpdatedFundingListVisibilityInformationOnlyPreservingVisbility(FundingList existingFundingList, FundingList updatedFundingList) {
+    @Override
+    public void copyUpdatedFundingListVisibilityInformationOnlyPreservingVisbility(FundingList existingFundingList, FundingList updatedFundingList) {
         throw new RuntimeException("Not implemented!");
     }
 
-    private static void mergeAffiliations(List<Affiliation> existingAffiliations, Affiliation updatedAffiliation) {
+    private void mergeAffiliations(List<Affiliation> existingAffiliations, Affiliation updatedAffiliation) {
         Affiliation likelyExisting = obtainLikelyEqual(updatedAffiliation, existingAffiliations);
         if (likelyExisting != null) {
             Visibility likelyExistingAffiliateInstitutionNameVisibility = likelyExisting.getVisibility();
@@ -410,7 +445,7 @@ public class OrcidJaxbCopyUtils {
         }
     }
 
-    private static void mergeFundings(List<Funding> existingFundings, Funding updatedFunding) {
+    private void mergeFundings(List<Funding> existingFundings, Funding updatedFunding) {
         Funding likelyExisting = obtainLikelyEqual(updatedFunding, existingFundings);
         if (likelyExisting != null) {
             Visibility likelyExistingFundingInstitutionNameVisibility = likelyExisting.getVisibility();

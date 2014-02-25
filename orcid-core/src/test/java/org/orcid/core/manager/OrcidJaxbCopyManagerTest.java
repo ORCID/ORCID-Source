@@ -14,7 +14,7 @@
  *
  * =============================================================================
  */
-package org.orcid.core.utils;
+package org.orcid.core.manager;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -24,12 +24,16 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+
+import javax.annotation.Resource;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.orcid.core.BaseTest;
+import org.orcid.core.manager.OrcidJaxbCopyManager;
 import org.orcid.jaxb.model.message.Address;
 import org.orcid.jaxb.model.message.Affiliation;
 import org.orcid.jaxb.model.message.Affiliations;
@@ -58,14 +62,17 @@ import org.orcid.jaxb.model.message.Visibility;
  * 
  * @author Declan Newman (declan) Date: 13/03/2012
  */
-public class OrcidJaxbCopyUtilsTest {
+public class OrcidJaxbCopyManagerTest extends BaseTest {
 
     private Unmarshaller unmarshaller;
 
     private OrcidMessage protectedOrcidMessage;
     private OrcidMessage publicOrcidMessage;
 
-    public OrcidJaxbCopyUtilsTest() throws JAXBException {
+    @Resource
+    private OrcidJaxbCopyManager orcidJaxbCopyManager;
+
+    public OrcidJaxbCopyManagerTest() throws JAXBException {
         JAXBContext context = JAXBContext.newInstance(OrcidMessage.class);
         unmarshaller = context.createUnmarshaller();
     }
@@ -108,7 +115,7 @@ public class OrcidJaxbCopyUtilsTest {
         nullVisibilityContactAddress.getCountry().setVisibility(null);
         updatedOrcidBioPublic.getContactDetails().setAddress(nullVisibilityContactAddress);
 
-        OrcidJaxbCopyUtils.copyUpdatedBioToExistingWithVisibility(existingOrcidBioProtected, updatedOrcidBioPublic);
+        orcidJaxbCopyManager.copyUpdatedBioToExistingWithVisibility(existingOrcidBioProtected, updatedOrcidBioPublic);
         existingOtherNames = existingOrcidPersonalDetails.getOtherNames();
         assertTrue(existingOtherNames.getOtherName().size() == 2);
         assertEquals("Another 1", existingOtherNames.getOtherName().get(0).getContent());
@@ -123,7 +130,7 @@ public class OrcidJaxbCopyUtilsTest {
         updatedOtherNames.setVisibility(null);
         updatedOrcidPersonalDetails.setOtherNames(updatedOtherNames);
 
-        OrcidJaxbCopyUtils.copyUpdatedBioToExistingWithVisibility(existingOrcidBioProtected, updatedOrcidBioPublic);
+        orcidJaxbCopyManager.copyUpdatedBioToExistingWithVisibility(existingOrcidBioProtected, updatedOrcidBioPublic);
 
         assertTrue(existingOtherNames.getOtherName().size() == 2);
         assertEquals("Another 1", existingOtherNames.getOtherName().get(0).getContent());
@@ -152,14 +159,14 @@ public class OrcidJaxbCopyUtilsTest {
         updatedOrcidPersonalDetails.setCreditName(new CreditName("Don"));
         updatedOrcidPersonalDetails.getCreditName().setVisibility(Visibility.PRIVATE);
 
-        OrcidJaxbCopyUtils.copyUpdatedBioToExistingWithVisibility(existingOrcidBioProtected, updatedOrcidBioPublic);
+        orcidJaxbCopyManager.copyUpdatedBioToExistingWithVisibility(existingOrcidBioProtected, updatedOrcidBioPublic);
         assertEquals(existingOrcidPersonalDetails.getCreditName().getContent(), "Don");
         assertEquals(Visibility.PRIVATE, existingOrcidPersonalDetails.getCreditName().getVisibility());
 
         updatedOrcidPersonalDetails.setCreditName(new CreditName("Jimmy"));
         updatedOrcidPersonalDetails.getCreditName().setVisibility(null);
 
-        OrcidJaxbCopyUtils.copyUpdatedBioToExistingWithVisibility(existingOrcidBioProtected, updatedOrcidBioPublic);
+        orcidJaxbCopyManager.copyUpdatedBioToExistingWithVisibility(existingOrcidBioProtected, updatedOrcidBioPublic);
         assertEquals(existingOrcidBioProtected.getPersonalDetails().getCreditName().getContent(), "Jimmy");
         assertEquals(Visibility.PRIVATE, existingOrcidPersonalDetails.getCreditName().getVisibility());
 
@@ -176,7 +183,7 @@ public class OrcidJaxbCopyUtilsTest {
         assertNull(updatedOrcidBioPublic.getBiography().getVisibility());
         updatedOrcidBioPublic.setBiography(new Biography("A new bio"));
         updatedOrcidBioPublic.getBiography().setVisibility(Visibility.PRIVATE);
-        OrcidJaxbCopyUtils.copyUpdatedBioToExistingWithVisibility(existingOrcidBioProtected, updatedOrcidBioPublic);
+        orcidJaxbCopyManager.copyUpdatedBioToExistingWithVisibility(existingOrcidBioProtected, updatedOrcidBioPublic);
 
         // check that changes have propogated
         assertEquals(Visibility.PRIVATE, existingOrcidBioProtected.getBiography().getVisibility());
@@ -186,7 +193,7 @@ public class OrcidJaxbCopyUtilsTest {
         updatedOrcidBioPublic = publicOrcidMessage.getOrcidProfile().getOrcidBio();
         updatedOrcidBioPublic.setBiography(new Biography("A new and impoved bio"));
 
-        OrcidJaxbCopyUtils.copyUpdatedBioToExistingWithVisibility(existingOrcidBioProtected, updatedOrcidBioPublic);
+        orcidJaxbCopyManager.copyUpdatedBioToExistingWithVisibility(existingOrcidBioProtected, updatedOrcidBioPublic);
         // check that the old values have been retained
         assertEquals(Visibility.PRIVATE, existingOrcidBioProtected.getBiography().getVisibility());
         assertEquals("A new and impoved bio", existingOrcidBioProtected.getBiography().getContent());
@@ -212,7 +219,7 @@ public class OrcidJaxbCopyUtilsTest {
         updatedResearcherUrls.setVisibility(Visibility.LIMITED);
         updatedOrcidBioPublic.setResearcherUrls(updatedResearcherUrls);
 
-        OrcidJaxbCopyUtils.copyUpdatedBioToExistingWithVisibility(existingOrcidBioProtected, updatedOrcidBioPublic);
+        orcidJaxbCopyManager.copyUpdatedBioToExistingWithVisibility(existingOrcidBioProtected, updatedOrcidBioPublic);
         assertTrue(existingOrcidBioProtected.getResearcherUrls().getResearcherUrl().size() == 1);
         assertEquals("http://library.brown.edu/about/hay/carberry.html", existingOrcidBioProtected.getResearcherUrls().getResearcherUrl().get(0).getUrl().getValue());
         assertEquals(existingOrcidBioProtected.getResearcherUrls(), updatedOrcidBioPublic.getResearcherUrls());
@@ -224,7 +231,7 @@ public class OrcidJaxbCopyUtilsTest {
         updatedResearcherUrls.setVisibility(null);
         updatedOrcidBioPublic.setResearcherUrls(updatedResearcherUrls);
 
-        OrcidJaxbCopyUtils.copyUpdatedBioToExistingWithVisibility(existingOrcidBioProtected, updatedOrcidBioPublic);
+        orcidJaxbCopyManager.copyUpdatedBioToExistingWithVisibility(existingOrcidBioProtected, updatedOrcidBioPublic);
         assertTrue(existingOrcidBioProtected.getResearcherUrls().getResearcherUrl().size() == 1);
         assertEquals("http://library.brown.edu/about/hay/carberry.jsp", existingOrcidBioProtected.getResearcherUrls().getResearcherUrl().get(0).getUrl().getValue());
         assertEquals(existingOrcidBioProtected.getResearcherUrls(), updatedOrcidBioPublic.getResearcherUrls());
@@ -255,7 +262,7 @@ public class OrcidJaxbCopyUtilsTest {
         // updating affiliations retains visibility when null - changes content
         updatedAffilationsList.get(0).getOrganization().setName("new affiliation name");
         updatedAffilationsList.get(0).setVisibility(null);
-        OrcidJaxbCopyUtils.copyAffiliationsToExistingPreservingVisibility(existingAffiliations, updatedAffiliations);
+        orcidJaxbCopyManager.copyAffiliationsToExistingPreservingVisibility(existingAffiliations, updatedAffiliations);
         assertEquals("new affiliation name", existingAffilationsList.get(0).getOrganization().getName());
         assertEquals(Visibility.PUBLIC, existingAffilationsList.get(0).getVisibility());
 
@@ -263,7 +270,7 @@ public class OrcidJaxbCopyUtilsTest {
         // content
         updatedAffilationsList.get(0).getOrganization().setName("a seperate affiliation name");
         updatedAffilationsList.get(0).setVisibility(Visibility.PRIVATE);
-        OrcidJaxbCopyUtils.copyAffiliationsToExistingPreservingVisibility(existingAffiliations, updatedAffiliations);
+        orcidJaxbCopyManager.copyAffiliationsToExistingPreservingVisibility(existingAffiliations, updatedAffiliations);
         assertEquals("a seperate affiliation name", existingAffilationsList.get(0).getOrganization().getName());
         assertEquals(Visibility.PRIVATE, existingAffilationsList.get(0).getVisibility());
 
@@ -275,7 +282,7 @@ public class OrcidJaxbCopyUtilsTest {
         organization.setName("extra affiliation");
         updatedAffilationsList.add(extraAffiliation);
 
-        OrcidJaxbCopyUtils.copyAffiliationsToExistingPreservingVisibility(existingAffiliations, updatedAffiliations);
+        orcidJaxbCopyManager.copyAffiliationsToExistingPreservingVisibility(existingAffiliations, updatedAffiliations);
         assertEquals(5, existingAffilationsList.size());
 
         assertEquals("a seperate affiliation name", existingAffilationsList.get(0).getOrganization().getName());
@@ -332,7 +339,7 @@ public class OrcidJaxbCopyUtilsTest {
 
         updatedContactDetails.setAddress(updatedAddress);
 
-        OrcidJaxbCopyUtils.copyUpdatedBioToExistingWithVisibility(existingOrcidBioProtected, updatedOrcidBioPublic);
+        orcidJaxbCopyManager.copyUpdatedBioToExistingWithVisibility(existingOrcidBioProtected, updatedOrcidBioPublic);
         existingContactDetails = existingOrcidBioProtected.getContactDetails();
         assertEquals("jimmyb@semantico.com", existingContactDetails.retrievePrimaryEmail().getValue());
         assertEquals(Visibility.PUBLIC, existingContactDetails.retrievePrimaryEmail().getVisibility());
@@ -369,7 +376,7 @@ public class OrcidJaxbCopyUtilsTest {
         updatedContactDetails.getEmail().clear();
         updatedContactDetails.getEmail().addAll(updatedEmailList);
 
-        OrcidJaxbCopyUtils.copyUpdatedBioToExistingWithVisibility(existingOrcidBioProtected, updatedOrcidBioPublic);
+        orcidJaxbCopyManager.copyUpdatedBioToExistingWithVisibility(existingOrcidBioProtected, updatedOrcidBioPublic);
 
         existingContactDetails = existingOrcidBioProtected.getContactDetails();
         assertEquals("jimmyb2@semantico.com", existingContactDetails.retrievePrimaryEmail().getValue());
@@ -403,7 +410,7 @@ public class OrcidJaxbCopyUtilsTest {
         assertEquals(Visibility.PUBLIC, existingKeywords.getVisibility());
         assertNull(updatedKeywords.getVisibility());
 
-        OrcidJaxbCopyUtils.copyUpdatedBioToExistingWithVisibility(existingOrcidBioProtected, updatedOrcidBioPublic);
+        orcidJaxbCopyManager.copyUpdatedBioToExistingWithVisibility(existingOrcidBioProtected, updatedOrcidBioPublic);
         existingKeywords = existingOrcidBioProtected.getKeywords();
         assertEquals("Pavement Studies", existingKeywords.getKeyword().get(0).getContent());
         assertEquals(Visibility.PUBLIC, existingKeywords.getVisibility());
@@ -411,7 +418,7 @@ public class OrcidJaxbCopyUtilsTest {
         assertEquals("Pavement Studies", existingKeywords.getKeyword().get(0).getContent());
         updatedKeywords.getKeyword().get(0).setContent("Toast Studies");
         updatedKeywords.setVisibility(Visibility.LIMITED);
-        OrcidJaxbCopyUtils.copyUpdatedBioToExistingWithVisibility(existingOrcidBioProtected, updatedOrcidBioPublic);
+        orcidJaxbCopyManager.copyUpdatedBioToExistingWithVisibility(existingOrcidBioProtected, updatedOrcidBioPublic);
         assertEquals("Toast Studies", existingKeywords.getKeyword().get(0).getContent());
         assertEquals(Visibility.LIMITED, existingKeywords.getVisibility());
 
@@ -426,27 +433,27 @@ public class OrcidJaxbCopyUtilsTest {
         assertEquals(Visibility.PUBLIC, protectedOrcidBio.getExternalIdentifiers().getVisibility());
 
         // first time save upgrades null to public
-        OrcidJaxbCopyUtils.copyUpdatedExternalIdentifiersToExistingPreservingVisibility(publicOrcidBio, protectedOrcidBio);
+        orcidJaxbCopyManager.copyUpdatedExternalIdentifiersToExistingPreservingVisibility(publicOrcidBio, protectedOrcidBio);
         assertEquals(Visibility.PUBLIC, publicOrcidBio.getExternalIdentifiers().getVisibility());
         assertEquals(Visibility.PUBLIC, protectedOrcidBio.getExternalIdentifiers().getVisibility());
 
         // now changing the updated one propogates change
         protectedOrcidBio.getExternalIdentifiers().setVisibility(Visibility.LIMITED);
-        OrcidJaxbCopyUtils.copyUpdatedExternalIdentifiersToExistingPreservingVisibility(publicOrcidBio, protectedOrcidBio);
+        orcidJaxbCopyManager.copyUpdatedExternalIdentifiersToExistingPreservingVisibility(publicOrcidBio, protectedOrcidBio);
         assertEquals(Visibility.LIMITED, publicOrcidBio.getExternalIdentifiers().getVisibility());
         assertEquals(Visibility.LIMITED, protectedOrcidBio.getExternalIdentifiers().getVisibility());
 
         // when existing is null - set to the value if existing
         publicOrcidBio.getExternalIdentifiers().setVisibility(null);
         protectedOrcidBio.getExternalIdentifiers().setVisibility(Visibility.LIMITED);
-        OrcidJaxbCopyUtils.copyUpdatedExternalIdentifiersToExistingPreservingVisibility(publicOrcidBio, protectedOrcidBio);
+        orcidJaxbCopyManager.copyUpdatedExternalIdentifiersToExistingPreservingVisibility(publicOrcidBio, protectedOrcidBio);
         assertEquals(Visibility.LIMITED, publicOrcidBio.getExternalIdentifiers().getVisibility());
         assertEquals(Visibility.LIMITED, protectedOrcidBio.getExternalIdentifiers().getVisibility());
 
         // when existing is null - defaults to public and protected update
         // ignored?
         protectedOrcidBio.getExternalIdentifiers().setVisibility(Visibility.PRIVATE);
-        OrcidJaxbCopyUtils.copyUpdatedExternalIdentifiersToExistingPreservingVisibility(publicOrcidBio, protectedOrcidBio);
+        orcidJaxbCopyManager.copyUpdatedExternalIdentifiersToExistingPreservingVisibility(publicOrcidBio, protectedOrcidBio);
         assertEquals(Visibility.PRIVATE, publicOrcidBio.getExternalIdentifiers().getVisibility());
         assertEquals(Visibility.PRIVATE, protectedOrcidBio.getExternalIdentifiers().getVisibility());
 
@@ -473,7 +480,7 @@ public class OrcidJaxbCopyUtilsTest {
         worksToUpdate.getOrcidWork().get(1).getWorkTitle().getTitle().setContent("updated-work-title-2");
         worksToUpdate.getOrcidWork().get(2).getWorkTitle().getTitle().setContent("updated-work-title-3");
 
-        OrcidJaxbCopyUtils.copyUpdatedWorksVisibilityInformationOnlyPreservingVisbility(existingWorks, worksToUpdate);
+        orcidJaxbCopyManager.copyUpdatedWorksPreservingVisbility(existingWorks, worksToUpdate);
         assertEquals("updated-work-title-1", existingWorks.getOrcidWork().get(0).getWorkTitle().getTitle().getContent());
         assertEquals("updated-work-title-2", existingWorks.getOrcidWork().get(1).getWorkTitle().getTitle().getContent());
         assertEquals("updated-work-title-3", existingWorks.getOrcidWork().get(2).getWorkTitle().getTitle().getContent());
@@ -491,7 +498,7 @@ public class OrcidJaxbCopyUtilsTest {
     }
 
     private OrcidMessage getOrcidMessage(String s) throws JAXBException {
-        InputStream inputStream = OrcidJaxbCopyUtilsTest.class.getResourceAsStream(s);
+        InputStream inputStream = OrcidJaxbCopyManagerTest.class.getResourceAsStream(s);
         return (OrcidMessage) unmarshaller.unmarshal(inputStream);
 
     }

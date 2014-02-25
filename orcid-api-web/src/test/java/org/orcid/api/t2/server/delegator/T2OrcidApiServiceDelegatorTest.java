@@ -42,6 +42,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.orcid.core.exception.WrongSourceException;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.oauth.OrcidOAuth2Authentication;
 import org.orcid.jaxb.model.message.Affiliation;
@@ -74,6 +75,8 @@ import org.springframework.security.core.context.SecurityContextImpl;
 import org.springframework.security.oauth2.provider.AuthorizationRequest;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import com.sun.jersey.api.uri.UriBuilderImpl;
 
@@ -141,6 +144,7 @@ public class T2OrcidApiServiceDelegatorTest extends DBUnitTest {
     }
 
     @Test
+    @Transactional
     public void testUpdateWithNewWork() {
         setUpSecurityContext("4444-4444-4444-4446", ScopePathType.ORCID_WORKS_UPDATE);
         OrcidMessage orcidMessage = new OrcidMessage();
@@ -181,6 +185,76 @@ public class T2OrcidApiServiceDelegatorTest extends DBUnitTest {
         assertTrue("New work should be there", foundNew);
         assertTrue("Existing private work should be there", foundExisting);
         assertEquals(2, retreivedWorksList.size());
+    }
+
+    @Test
+    @Transactional
+    public void testUpdateExistingNonPrivateWork() {
+        setUpSecurityContext("4444-4444-4444-4446", ScopePathType.ORCID_WORKS_UPDATE);
+        OrcidMessage orcidMessage = new OrcidMessage();
+        orcidMessage.setMessageVersion("1.1");
+        OrcidProfile orcidProfile = new OrcidProfile();
+        orcidMessage.setOrcidProfile(orcidProfile);
+        orcidProfile.setOrcidIdentifier(new OrcidIdentifier("4444-4444-4444-4446"));
+        OrcidActivities orcidActivities = new OrcidActivities();
+        orcidProfile.setOrcidActivities(orcidActivities);
+        OrcidWorks orcidWorks = new OrcidWorks();
+        orcidActivities.setOrcidWorks(orcidWorks);
+        OrcidWork orcidWork = new OrcidWork();
+        orcidWorks.getOrcidWork().add(orcidWork);
+        orcidWork.setPutCode("5");
+        WorkTitle workTitle = new WorkTitle();
+        workTitle.setTitle(new Title("Updated by works update"));
+        orcidWork.setWorkTitle(workTitle);
+        orcidWork.setWorkType(WorkType.ARTISTIC_PERFORMANCE);
+        Response response = t2OrcidApiServiceDelegator.updateWorks(mockedUriInfo, "4444-4444-4444-4446", orcidMessage);
+        assertNotNull(response);
+
+        OrcidProfile retrievedProfile = orcidProfileManager.retrieveOrcidProfile("4444-4444-4444-4446");
+        List<OrcidWork> retreivedWorksList = retrievedProfile.getOrcidActivities().getOrcidWorks().getOrcidWork();
+        boolean foundUpdated = false;
+        boolean foundExisting = false;
+        // Should have the added work, plus one existing private work
+        for (OrcidWork retrievedWork : retreivedWorksList) {
+            if ("5".equals(retrievedWork.getPutCode())) {
+                // The updated work
+                assertEquals("Updated by works update", retrievedWork.getWorkTitle().getTitle().getContent());
+                assertEquals(Visibility.PUBLIC, retrievedWork.getVisibility());
+                foundUpdated = true;
+            }
+            if ("7".equals(retrievedWork.getPutCode())) {
+                // Existing private work
+                assertEquals("Journal article C", retrievedWork.getWorkTitle().getTitle().getContent());
+                assertEquals(Visibility.PRIVATE, retrievedWork.getVisibility());
+                foundExisting = true;
+            }
+        }
+        assertTrue("Updated work should be there", foundUpdated);
+        assertTrue("Existing private work should be there", foundExisting);
+        assertEquals(2, retreivedWorksList.size());
+    }
+
+    @Test(expected = WrongSourceException.class)
+    @Transactional
+    public void testUpdateWorkWhenNotSource() {
+        setUpSecurityContext("4444-4444-4444-4446", ScopePathType.ORCID_WORKS_UPDATE);
+        OrcidMessage orcidMessage = new OrcidMessage();
+        orcidMessage.setMessageVersion("1.1");
+        OrcidProfile orcidProfile = new OrcidProfile();
+        orcidMessage.setOrcidProfile(orcidProfile);
+        orcidProfile.setOrcidIdentifier(new OrcidIdentifier("4444-4444-4444-4446"));
+        OrcidActivities orcidActivities = new OrcidActivities();
+        orcidProfile.setOrcidActivities(orcidActivities);
+        OrcidWorks orcidWorks = new OrcidWorks();
+        orcidActivities.setOrcidWorks(orcidWorks);
+        OrcidWork orcidWork = new OrcidWork();
+        orcidWorks.getOrcidWork().add(orcidWork);
+        orcidWork.setPutCode("6");
+        WorkTitle workTitle = new WorkTitle();
+        workTitle.setTitle(new Title("Updated by works update"));
+        orcidWork.setWorkTitle(workTitle);
+        orcidWork.setWorkType(WorkType.ARTISTIC_PERFORMANCE);
+        t2OrcidApiServiceDelegator.updateWorks(mockedUriInfo, "4444-4444-4444-4446", orcidMessage);
     }
 
     @Test
