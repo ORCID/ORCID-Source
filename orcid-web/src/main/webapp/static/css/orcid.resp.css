@@ -86,7 +86,7 @@ img {
 }
 
 .centered{
-	text-align:center;
+	text-align:center !important;
 }
 
 .right{
@@ -3306,6 +3306,48 @@ p.orcid-id-container{
 .third-menu-level{
 	margin-left: 15px !important;
 }
+
+/* SSO */
+
+.sso ul{
+	padding-left: 15px;
+}
+
+.sso ul li a span,
+.developer-tools a span
+{
+	font-size: 12px;
+}
+
+/* Developer Tools Layout */
+
+.developer-tools .label-info-green{
+	background-color: #a6ce39;	
+}
+
+.developer-tools .table-header-dt{
+	background-color: #31789B;
+	color: #FFF;	
+}
+
+.developer-tools .sub-table{
+	margin-top: 30px;
+}
+
+.developer-tools .table>tbody>tr>td{
+	border: 0;
+}
+
+.developer-tools .box{
+	margin-top: 20px;
+	margin-left: 0;
+}
+
+.developer-tools .col-md-10{
+	padding-left: 0;
+	padding-right: 0;	
+}
+
 
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */
