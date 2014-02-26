@@ -18,7 +18,6 @@ package org.orcid.pojo.ajaxForm;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.GregorianCalendar;
 import java.util.List;
 
 import org.orcid.jaxb.model.message.Affiliation;
@@ -183,17 +182,30 @@ public class AffiliationForm implements ErrorsInterface, Serializable {
 
     public static AffiliationForm valueOf(Affiliation affiliation) {
         AffiliationForm form = new AffiliationForm();
-        
-        String dateSortString = null;
-        GregorianCalendar cal = new GregorianCalendar(0,0,0);
-        if (affiliation.getStartDate() != null && affiliation.getStartDate().getYear() != null && affiliation.getStartDate().getYear().getValue() != null) {
-            
-        }
-        
+               
         
         form.setPutCode(Text.valueOf(affiliation.getPutCode()));
         form.setVisibility(Visibility.valueOf(affiliation.getVisibility()));
         Organization organization = affiliation.getOrganization();
+        
+        String year = "0";
+        String month = "0";
+        String day = "0";
+        if (affiliation.getStartDate() != null && affiliation.getStartDate().getYear() != null && !PojoUtil.isEmpty(affiliation.getStartDate().getYear().getValue())) {
+            year = affiliation.getStartDate().getYear().getValue();
+            if (affiliation.getStartDate().getMonth() != null && !PojoUtil.isEmpty(affiliation.getStartDate().getMonth().getValue()))
+                month = affiliation.getStartDate().getMonth().getValue();
+            if (affiliation.getStartDate().getDay() != null && !PojoUtil.isEmpty(affiliation.getStartDate().getDay().getValue()))
+                day = affiliation.getStartDate().getDay().getValue();
+        } else if (affiliation.getEndDate() != null && affiliation.getEndDate().getYear() != null && !PojoUtil.isEmpty(affiliation.getEndDate().getYear().getValue())) {
+            year = affiliation.getEndDate().getYear().getValue();
+            if (affiliation.getEndDate().getMonth() != null && !PojoUtil.isEmpty(affiliation.getEndDate().getMonth().getValue()))
+                month = affiliation.getEndDate().getMonth().getValue();
+            if (affiliation.getEndDate().getDay() != null && !PojoUtil.isEmpty(affiliation.getEndDate().getDay().getValue()))
+                day = affiliation.getEndDate().getDay().getValue();
+        }
+        form.setDateSortString(year + "-" + month + '-' + day);
+        
         form.setAffiliationName(Text.valueOf(organization.getName()));
         OrganizationAddress address = organization.getAddress();
         form.setCity(Text.valueOf(address.getCity()));

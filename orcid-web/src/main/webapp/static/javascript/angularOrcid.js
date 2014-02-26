@@ -168,24 +168,6 @@ orcidNgModule.factory("affiliationsSrvc", ['$rootScope', function ($rootScope) {
 	    	    }).fail(function() { 
 	    	    	console.log("Error deleting affiliation.");
 	    	    });
-	    	},
-	    	sortAffValue: function(aff) {
-	    		var val = 0;
-	    		var year = 0;
-	    		var day = 0;
-	    		if (!aff.startDate.year && !isNaN(parseInt(aff.startDate.year))) year = aff.startDate.year; 
-	    		if (!aff.startDate.month && !isNaN(parseInt(aff.startDate.month))) month = aff.startDate.month; 
-	    		if (!aff.startDate.day && !isNaN(parseInt(aff.startDate.day))) day = aff.startDate.day; 
-	    		
-	    		// most not have a start year use end year instead
-	    		if (year == 0) {
-		    		if (!aff.endDate.year && !isNaN(parseInt(aff.endDate.year))) year = aff.endDate.year; 
-		    		if (!aff.endDate.month && !isNaN(parseInt(aff.endDate.month))) month = aff.endDate.month; 
-		    		if (!aff.endDate.day && !isNaN(parseInt(aff.endDate.day))) day = aff.endDate.day; 	    			
-	    		}
-	    		var val = '' + year + '-' + month + '-' + day + ':' + aff.affiliationName.value;
-	    		alert(val);
-	    		return val;
 	    	}
 	}; 
 	return serv;
@@ -1591,28 +1573,7 @@ function AffiliationCtrl($scope, $compile, $filter, affiliationsSrvc, workspaceS
 	$scope.privacyHelp = {};
 	$scope.privacyHelpCurKey = null;
 	$scope.moreInfo = {};
-	$scope.moreInfoCurKey = null;
-	
-	$scope.sortAffValue = function() {
-		return function(aff) {
-			//alert('here');
-			var year = 0;
-			var month = 0;
-			var day = 0;
-			if (!aff.startDate.year && !isNaN(parseInt(aff.startDate.year))) year = aff.startDate.year; 
-			if (!aff.startDate.month && !isNaN(parseInt(aff.startDate.month))) month = aff.startDate.month; 
-			if (!aff.startDate.day && !isNaN(parseInt(aff.startDate.day))) day = aff.startDate.day; 
-			
-			// most not have a start year use end year instead
-			if (year == 0) {
-	    		if (!aff.endDate.year && !isNaN(parseInt(aff.endDate.year))) year = aff.endDate.year; 
-	    		if (!aff.endDate.month && !isNaN(parseInt(aff.endDate.month))) month = aff.endDate.month; 
-	    		if (!aff.endDate.day && !isNaN(parseInt(aff.endDate.day))) day = aff.endDate.day; 	    			
-			}
-			
-			return '' + year + '-' + month + '-' + day + ':' + aff.affiliationName.value;
-		};
-	}
+	$scope.moreInfoCurKey = null;	
 	
 	$scope.toggleClickPrivacyHelp = function(key) {
 		if (!document.documentElement.className.contains('no-touch')) {

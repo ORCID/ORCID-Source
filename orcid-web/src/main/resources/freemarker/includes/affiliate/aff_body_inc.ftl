@@ -18,7 +18,7 @@
 -->
 <div  class="alert">We are migrating to only Education and Employment affiliations. Please delete any affiliations shown here.</div>
 <ul ng-hide="!affiliationsSrvc.affiliations.length" class="workspace-affiliations workspace-body-list bottom-margin-medium" ng-cloak>        
-    <li class="bottom-margin-small" ng-repeat="affiliation in affiliationsSrvc.affiliations | orderBy: affiliationsSrvc.sortAffValue(affiliation)">            	
+    <li class="bottom-margin-small" ng-repeat="affiliation in affiliationsSrvc.affiliations | orderBy:['-dateSortString', 'affiliationName']">            	
 		<#include "aff_row_inc.ftl" />
     </li>           
 </ul>
