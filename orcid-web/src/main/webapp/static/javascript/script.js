@@ -31,6 +31,14 @@ if (!(window.console && console.log)) {
 	};
 };
 
+// add number padding function 
+Number.prototype.pad = function(size) {
+    var s = String(this);
+    if(typeof(size) !== "number"){size = 2;}
+
+    while (s.length < size) {s = "0" + s;}
+    return s;
+}
 
 // add new method to string
 if (typeof String.prototype.startsWith != 'function') {

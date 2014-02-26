@@ -18,6 +18,7 @@ package org.orcid.pojo.ajaxForm;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 import org.orcid.jaxb.model.message.Affiliation;
@@ -65,6 +66,8 @@ public class AffiliationForm implements ErrorsInterface, Serializable {
     private Date endDate;
 
     private String sourceName;
+    
+    private String dateSortString;
 
     public List<String> getErrors() {
         return errors;
@@ -180,6 +183,14 @@ public class AffiliationForm implements ErrorsInterface, Serializable {
 
     public static AffiliationForm valueOf(Affiliation affiliation) {
         AffiliationForm form = new AffiliationForm();
+        
+        String dateSortString = null;
+        GregorianCalendar cal = new GregorianCalendar(0,0,0);
+        if (affiliation.getStartDate() != null && affiliation.getStartDate().getYear() != null && affiliation.getStartDate().getYear().getValue() != null) {
+            
+        }
+        
+        
         form.setPutCode(Text.valueOf(affiliation.getPutCode()));
         form.setVisibility(Visibility.valueOf(affiliation.getVisibility()));
         Organization organization = affiliation.getOrganization();
@@ -280,6 +291,14 @@ public class AffiliationForm implements ErrorsInterface, Serializable {
 
     public void setDisambiguationSource(Text disambiguationSource) {
         this.disambiguationSource = disambiguationSource;
+    }
+
+    public String getDateSortString() {
+        return dateSortString;
+    }
+
+    public void setDateSortString(String dateSortString) {
+        this.dateSortString = dateSortString;
     }
 
 }
