@@ -261,7 +261,7 @@
 							</contributor-orcid>
 							<credit-name>Credit Name</credit-name>
 							<funding-contributor-attributes>
-								<contributor-role>postdoctoral-researcher</contributor-role>
+								<funding-contributor-role>lead</funding-contributor-role>
 							</funding-contributor-attributes>
 						</funding-contributor>
 						<funding-contributor>
@@ -272,7 +272,7 @@
 							</contributor-orcid>
 							<credit-name>Credit Name</credit-name>
 							<funding-contributor-attributes>
-								<contributor-role>graduate-student</contributor-role>
+								<funding-contributor-role>co-lead</funding-contributor-role>
 							</funding-contributor-attributes>
 						</funding-contributor>						
 					</funding-contributors>

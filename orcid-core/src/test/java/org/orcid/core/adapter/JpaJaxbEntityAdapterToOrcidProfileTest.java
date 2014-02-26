@@ -68,7 +68,6 @@ import org.orcid.jaxb.model.message.OrcidWork;
 import org.orcid.jaxb.model.message.OrcidWorks;
 import org.orcid.jaxb.model.message.OrganizationAddress;
 import org.orcid.jaxb.model.message.OtherNames;
-import org.orcid.jaxb.model.message.PatentContributors;
 import org.orcid.jaxb.model.message.PersonalDetails;
 import org.orcid.jaxb.model.message.Preferences;
 import org.orcid.jaxb.model.message.ResearcherUrl;

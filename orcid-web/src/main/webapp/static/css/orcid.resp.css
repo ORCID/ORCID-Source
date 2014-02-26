@@ -1806,10 +1806,6 @@ a:hover {
 	padding-right: 38px;	
 }
 
-#add-funding h1 {
-	font-size: 35px;
-}
-
 #add-funding #startDay,
 #add-funding #startMonth,
 #add-funding #endDay,
@@ -1827,6 +1823,11 @@ a:hover {
 #add-funding input[type=checkbox] {
 	margin: 0;
 }
+
+#add-funding #remove-disambiguated{
+	padding-right: 32px;
+}
+
 
 .no-margin-bottom {
 	margin-bottom: 0px;
@@ -2386,6 +2387,7 @@ TODO: fix up button colours in less
 .btn-primary:hover {
 	background: #a6ce39;
 	text-shadow: none;
+	border-color: #A6CE39; 
 }
 
 /*
@@ -2405,6 +2407,8 @@ header overrides
 	margin-bottom: 10px;
 	text-transform: uppercase;
 }
+
+
 
 .top-green-border{
 	border-top: 10px solid #A3CD39;	
@@ -3246,6 +3250,64 @@ p.orcid-id-container{
 	background-color: #EFEFEF;
 }
 
+/* Administration layout */
+
+.admin-options .workspace-accordion-item{
+	margin: 15px 0;
+}
+
+.admin-options .form-control{
+	width: 145px;
+}
+
+.admin-options .form-group label{
+	width: 100%;
+}
+
+.admin-options .view-items-link{
+	text-align: left;
+	margin: 5px 0;
+}
+
+.admin-options h4{
+	margin-left: 15px;
+}
+
+.admin-options .admin-modal{
+	padding: 20px;
+	background-color: #F5f5f5; 
+}
+
+.admin-options .workspace-accordion-item p a{
+	font-size: 20px;
+	color: #A6CE39;
+}
+
+.admin-options .workspace-accordion-item p a span{
+	margin-right: 5px;
+}
+
+.admin-options .view-items-link a{	
+	font-size: 16px;
+}
+
+.admin-options a span{
+	vertical-align: 1px;
+	font-size: 14px;
+}
+
+.admin-options .view-items-link a span{
+	vertical-align: -1px;
+}
+
+.admin-options .save-btns{
+	margin-top: 0;	
+}
+
+.third-menu-level{
+	margin-left: 15px !important;
+}
+
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */
 		
@@ -4084,6 +4146,14 @@ p.orcid-id-container{
 	    float: left;
 	    margin-top: 15px;
 	    width: 100%;
+	}
+	/* Administration */
+	.admin-options .form-control{
+		width: 90%;		
+	}
+	
+	.admin-options .workspace-accordion-item p{
+		margin-top: 15px;
 	}
 }
 

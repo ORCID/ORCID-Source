@@ -31,6 +31,13 @@
     </div>
 </#if>
 
+
+<#if invalidOrcid?? && invalidOrcid>
+    <div class="alert alert-success">
+        <strong><@spring.message "orcid.frontend.web.invalid_switch_orcid"/></strong>
+    </div>
+</#if>
+
 <div class="row workspace-top public-profile">
 
 	<#-- hidden divs that trigger angular -->
@@ -85,17 +92,9 @@
 		        			<span ng-show="externalIdentifier.externalIdUrl"><a href="{{externalIdentifier.externalIdUrl.value}}" target="_blank">{{externalIdentifier.externalIdCommonName.content}} {{externalIdentifier.externalIdReference.content}}</a></span>
 			   				<a ng-click="deleteExternalIdentifier($index)" class="glyphicon glyphicon-trash grey"></a>       			
        			</div>
-			</div>
-													    
-	        <@security.authorize ifAnyGranted="ROLE_ADMIN, ROLE_GROUP, ROLE_BASIC, ROLE_BASIC_INSTITUTION, ROLE_PREMIUM, ROLE_PREMIUM_INSTITUTION">
-	        	 <p><a href="<@spring.url "/manage-clients" />">${springMacroRequestContext.getMessage("workspace.ManageClientCredentials")}</a></p>	        	 
-	        </@security.authorize>
-			<@security.authorize ifAnyGranted="ROLE_ADMIN">
-				<p><a href="<@spring.url "/admin-actions" />"><@orcid.msg 'admin.workspace_link' /></a></p>
-			</@security.authorize>
-			
-			<p class="hoover-white-fonts">
-	       		<!-- <a href="${baseUriHttp}/${(profile.orcidIdentifier.path)!}" class="label btn-primary"><@orcid.msg 'workspace.ViewPublicORCIDRecord'/></a> -->	       
+			</div>													    
+	        	        
+			<p class="hoover-white-fonts">	       
 	       		<a href="<@spring.url '/account/manage-bio-settings'/>" id="update-personal-modal-link" class="label btn-primary"><@orcid.msg 'workspace.Update'/></a>
 	        </p>
 			

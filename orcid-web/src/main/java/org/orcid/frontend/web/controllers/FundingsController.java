@@ -436,7 +436,7 @@ public class FundingsController extends BaseWorkspaceController {
             String amount = funding.getAmount().getValue();
             long lAmount = 0;
             // TODO Chck this regex
-            String pattern = "[0-9]{1,3}(?:[0-9]*(?:[.,][0-9]{2})?|(?:,[0-9]{3})*(?:\\.[0-9]{2})?|(?:\\.[0-9]{3})*(?:,[0-9]{2})?)";
+            String pattern = "((\\d{1,3}(\\,(\\d){3})*)|\\d*)(.\\d{1,3})?";
             if (!amount.matches(pattern)) {
                 setError(funding.getAmount(), "Invalid.fundings.amount");
             }
@@ -461,7 +461,7 @@ public class FundingsController extends BaseWorkspaceController {
         return funding;
     }
 
-    @RequestMapping(value = "/funding/nameValidate.json", method = RequestMethod.POST)
+    @RequestMapping(value = "/funding/orgNameValidate.json", method = RequestMethod.POST)
     public @ResponseBody
     FundingForm validateName(@RequestBody FundingForm funding) {
         funding.getFundingName().setErrors(new ArrayList<String>());

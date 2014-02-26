@@ -58,8 +58,8 @@ public class FundingContributorAttributes implements Serializable {
      * 
      */
     private static final long serialVersionUID = 1L;
-    @XmlElement(name = "contributor-role", required = true)
-    protected ContributorRole contributorRole;    
+    @XmlElement(name = "funding-contributor-role", required = true)
+    protected FundingContributorRole contributorRole;    
 
     /**
      * Gets the value of the contributorRole property.
@@ -69,7 +69,7 @@ public class FundingContributorAttributes implements Serializable {
      *     {@link String }
      *     
      */
-    public ContributorRole getContributorRole() {
+    public FundingContributorRole getContributorRole() {
         return contributorRole;
     }
 
@@ -81,7 +81,7 @@ public class FundingContributorAttributes implements Serializable {
      *     {@link String }
      *     
      */
-    public void setContributorRole(ContributorRole value) {
+    public void setContributorRole(FundingContributorRole value) {
         this.contributorRole = value;
     }
 

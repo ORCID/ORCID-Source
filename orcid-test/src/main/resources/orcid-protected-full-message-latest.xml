@@ -296,7 +296,7 @@
 							</contributor-orcid>
 							<credit-name visibility="public">Credit Name</credit-name>
 							<funding-contributor-attributes>
-								<contributor-role>postdoctoral-researcher</contributor-role>
+								<funding-contributor-role>lead</funding-contributor-role>
 							</funding-contributor-attributes>
 						</funding-contributor>
 						<funding-contributor>
@@ -325,15 +325,7 @@
 					<funding-type>award</funding-type>
 					<funding-title>
 						<title>Grant # 2</title>
-					</funding-title>
-					<organization>
-						<name>New College</name>
-						<address>
-							<city>Other City</city>
-							<region>NY</region>
-							<country>US</country>
-						</address>
-					</organization>
+					</funding-title>					
 					<short-description>2</short-description>
 					<amount currency-code="USD">3500</amount>	 
 					<url>http://grant2.com</url>																			
@@ -353,14 +345,21 @@
 						</funding-external-identifier>
 					</funding-external-identifiers>
 					<funding-contributors>
-						<contributor>							
+						<funding-contributor>							
 							<credit-name visibility="public">Credit Name</credit-name>
-							<contributor-attributes>
-								<contributor-sequence>first</contributor-sequence>
-								<contributor-role>postdoctoral-researcher</contributor-role>
-							</contributor-attributes>
-						</contributor>						
-					</funding-contributors>					
+							<funding-contributor-attributes>
+								<funding-contributor-role>co-lead</funding-contributor-role>
+							</funding-contributor-attributes>
+						</funding-contributor>						
+					</funding-contributors>	
+					<organization>
+						<name>New College</name>
+						<address>
+							<city>Other City</city>
+							<region>NY</region>
+							<country>US</country>
+						</address>
+					</organization>				
 				</funding>								
 			</funding-list>               
         </orcid-activities>

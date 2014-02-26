@@ -54,52 +54,26 @@
       </#if>
       orcidVar.jsMessages = JSON.parse("${jsMessagesJson}");
     </script>    
-    <#if
-		request.requestURI?ends_with("${basePath}signin")||
-		request.requestURI?ends_with("${basePath}register")||
-		request.requestURI?ends_with("${basePath}reset-password")||
-		request.requestURI?ends_with("${basePath}error")||
-		request.requestURI?ends_with("${basePath}oauth/signin")||		
-		request.requestURI?ends_with("${basePath}oauth/confirm_access")||
-		request.requestURI?ends_with("${basePath}my-orcid")||
-		request.requestURI?ends_with("${basePath}statistics")||
-		request.requestURI?ends_with("${basePath}account")||	
-		request.requestURI?matches("(.*)/(?:\\d{4}-){3,}\\d{3}[\\dX]")||
-		request.requestURI?ends_with("${basePath}account/manage-bio-settings")||
-		request.requestURI?matches("(.*)/[a-zA-Z0-9?=]*")||
-		request.requestURI?contains("orcid-search")		
-	>	
-		<link rel="stylesheet" href="${staticLoc}/css/fonts.css?v=${ver}"/>
-		<!-- Always remember to remove Glyphicons font reference when bootstrap is updated -->
-	    <link rel="stylesheet" href="${staticCdn}/twitter-bootstrap/3.1.0/css/bootstrap.min.css?v=${ver}"/>
-	    <!--[if lt IE 8]>
-	        <link rel="stylesheet" href="${staticCdn}/twitter-bootstrap/3.1.0/css/bootstrap-ie7.css?v=${ver}"/>	                
-	    <![endif]-->
-
-	    <link rel="stylesheet" href="${staticCdn}/css/orcid.resp.css?v=${ver}"/>	    
-	    <!--[if lt IE 8]>
-	    	<link rel="stylesheet" href="${staticCdn}/css/orcid-ie7.css?v=${ver}"/>
-	    <![endif]-->
-	    <link rel="stylesheet" href="${staticCdn}/css/jquery-ui-1.10.0.custom.min.css?v=${ver}"/>
-	    <!-- this is a manually patched version, we should update when they accept our changes -->
-	    <script src="${staticCdn}/javascript/respond.src.js?v=${ver}"></script>
-	    
-	    <!-- Respond.js proxy on external server -->
-	    <link href="${staticCdn}/html/respond-proxy.html" id="respond-proxy" rel="respond-proxy" />
-	    <link href="${staticLoc}/img/respond.proxy.gif" id="respond-redirect" rel="respond-redirect" />
-	    <script src="${staticLoc}/javascript/respond.proxy.js"></script>
     
-    <#else>
-    	<link rel="stylesheet" href="${staticLoc}/css/fonts.css?v=${ver}"/>		
-		<link rel="stylesheet" href="${staticLoc}/ORCID-Fonts-Dot-Com/style.css?v=${ver}"/>		
-	    <link rel="stylesheet" href="${staticCdn}/twitter-bootstrap/2.3.1/css/bootstrap.min.css?v=${ver}"/>
-	    <link rel="stylesheet" href="${staticCdn}/css/orcid.css?v=${ver}"/>	    
-	    <link rel="stylesheet" href="${staticCdn}/css/jquery-ui-1.10.0.custom.min.css?v=${ver}"/>
-	    <link rel="stylesheet" href="${staticLoc}/font-awesome/3.2.1/css/font-awesome.css"/>
-	    <!--[if IE 7]>
-	    	<link href="${staticLoc}/font-awesome/3.0.2/css/font-awesome-ie7.min.css" rel="stylesheet">
-		<![endif]-->
-    </#if>
+	<link rel="stylesheet" href="${staticLoc}/css/fonts.css?v=${ver}"/>
+	<!-- Always remember to remove Glyphicons font reference when bootstrap is updated -->
+    <link rel="stylesheet" href="${staticCdn}/twitter-bootstrap/3.1.0/css/bootstrap.min.css?v=${ver}"/>
+    <!--[if lt IE 8]>
+        <link rel="stylesheet" href="${staticCdn}/twitter-bootstrap/3.1.0/css/bootstrap-ie7.css?v=${ver}"/>	                
+    <![endif]-->
+
+    <link rel="stylesheet" href="${staticCdn}/css/orcid.resp.css?v=${ver}"/>	    
+    <!--[if lt IE 8]>
+    	<link rel="stylesheet" href="${staticCdn}/css/orcid-ie7.css?v=${ver}"/>
+    <![endif]-->
+    <link rel="stylesheet" href="${staticCdn}/css/jquery-ui-1.10.0.custom.min.css?v=${ver}"/>
+    <!-- this is a manually patched version, we should update when they accept our changes -->
+    <script src="${staticCdn}/javascript/respond.src.js?v=${ver}"></script>
+    
+    <!-- Respond.js proxy on external server -->
+    <link href="${staticCdn}/html/respond-proxy.html" id="respond-proxy" rel="respond-proxy" />
+    <link href="${staticLoc}/img/respond.proxy.gif" id="respond-redirect" rel="respond-redirect" />
+    <script src="${staticLoc}/javascript/respond.proxy.js"></script>
     
     <#-- manage bio settings still requires modernizr :-( -->
 	    <#if request.requestURI?ends_with("account/manage-bio-settings")>

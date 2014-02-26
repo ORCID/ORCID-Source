@@ -1144,7 +1144,8 @@ function RegistrationCtrl($scope, $compile) {
 	$scope.postRegister = function () {
 		if (basePath.startsWith(baseUrl + 'oauth')) { 
 			var clientName = $('div#RegistrationCtr input[name="client_name"]').val();
-		    orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'New-Registration-Submit ' + clientName, 'OAuth']);
+			var clientGroupName = $('div#RegistrationCtr input[name="client_group_name"]').val();
+		    orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'New-Registration-Submit ' + orcidGA.buildClientString(clientGroupName, clientName), 'OAuth']);
 		    $scope.register.creationType.value = "Member-referred";
 		} else {
 	    	orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'New-Registration-Submit', 'Website']);
@@ -1181,7 +1182,8 @@ function RegistrationCtrl($scope, $compile) {
 	        success: function(data) {
 	    		if (basePath.startsWith(baseUrl + 'oauth')) {
 	    			var clientName = $('div#RegistrationCtr input[name="client_name"]').val();
-	    		    orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'New-Registration ' + clientName, 'OAuth']);
+	    			var clientGroupName = $('div#RegistrationCtr input[name="client_group_name"]').val();
+	    		    orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'New-Registration ' + orcidGA.buildClientString(clientGroupName, clientName), 'OAuth']);
 	    		}
 	    	    else
 	    	    	orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'New-Registration', 'Website']);
@@ -1905,6 +1907,7 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc) {
 	};
 	
 	$scope.addFundingModal = function(type){
+		$scope.removeDisambiguatedFunding();
 		$.ajax({
 			url: $('body').data('baseurl') + 'fundings/funding.json',
 			dataType: 'json',
@@ -1920,7 +1923,7 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc) {
 	};
 	
 	$scope.showAddModal = function(){
-		$scope.editTranslatedTitle = false;
+		$scope.editTranslatedTitle = false;		
 		$.colorbox({        	
 			html: $compile($('#add-funding-modal').html())($scope),			
 			width: formColorBoxResize(),
@@ -1986,7 +1989,7 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc) {
                     if ($('#fundingName').val()) {
                         q += encodeURIComponent($('#fundingName').val());
                     }
-                    q += '?limit=' + numOfResults + '&funders-only=' + $('#fundersOnly').is(':checked');
+                    q += '?limit=' + numOfResults + '&funders-only=true';
                     return q;
                 }
 			},
@@ -2015,9 +2018,12 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc) {
 		console.log(angular.toJson(datum));
 		if (datum != undefined && datum != null) {
 			$scope.editFunding.fundingName.value = datum.value;
+			$scope.editFunding.fundingName.errors = [];
 			$scope.editFunding.city.value = datum.city;
+			$scope.editFunding.city.errors = []; 
 			$scope.editFunding.region.value = datum.region;
 			$scope.editFunding.country.value = datum.country;
+			$scope.editFunding.country.errors = [];
 			
 			if (datum.disambiguatedFundingIdentifier != undefined && datum.disambiguatedFundingIdentifier != null) {
 				$scope.getDisambiguatedFunding(datum.disambiguatedFundingIdentifier);
