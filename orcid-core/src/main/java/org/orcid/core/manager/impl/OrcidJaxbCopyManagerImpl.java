@@ -380,12 +380,14 @@ public class OrcidJaxbCopyManagerImpl implements OrcidJaxbCopyManager {
 
         Map<String, OrcidWork> updatedWorksMap = updatedWorks.retrieveOrcidWorksAsMap();
 
-        for (OrcidWork existingWork : existingWorks.getOrcidWork()) {
+        for (Iterator<OrcidWork> existingWorkIterator = existingWorks.getOrcidWork().iterator(); existingWorkIterator.hasNext();) {
+            OrcidWork existingWork = existingWorkIterator.next();
             OrcidWork updatedWork = updatedWorksMap.get(existingWork.getPutCode());
             if (updatedWork == null) {
-                // Make sure private works are preserved
-                if (Visibility.PRIVATE.equals(existingWork.getVisibility())) {
-                    updatedWorks.getOrcidWork().add(existingWork);
+                // Make sure private works are preserved and works from a
+                // different source
+                if (!(Visibility.PRIVATE.equals(existingWork.getVisibility()) || isFromDifferentSource(existingWork))) {
+                    existingWorkIterator.remove();
                 }
             } else {
                 // Check the source of the existing work is the same as the
@@ -395,6 +397,9 @@ public class OrcidJaxbCopyManagerImpl implements OrcidJaxbCopyManager {
                 if (updatedWork.getVisibility() == null) {
                     updatedWork.setVisibility(existingWork.getVisibility());
                 }
+                // Can remove existing object because will be replaced by
+                // incoming
+                existingWorkIterator.remove();
             }
         }
 
@@ -414,19 +419,22 @@ public class OrcidJaxbCopyManagerImpl implements OrcidJaxbCopyManager {
                 }
             }
         }
-
-        existingWorks.setOrcidWork(orcidWorkToUpdate);
+        existingWorks.getOrcidWork().addAll(updatedWorks.getOrcidWork());
     }
 
     private void checkSource(OrcidWork existingWork) {
+        if (isFromDifferentSource(existingWork)) {
+            throw new WrongSourceException();
+        }
+    }
+
+    private boolean isFromDifferentSource(OrcidWork existingWork) {
         String currentSource = sourceManager.retrieveSourceOrcid();
         if (currentSource == null) {
             // Not under Spring security so anything goes
-            return;
+            return false;
         }
-        if (!currentSource.equals(existingWork.getWorkSource().getPath())) {
-            throw new WrongSourceException();
-        }
+        return !currentSource.equals(existingWork.getWorkSource().getPath());
     }
 
     private void checkSource(Affiliation existingAffiliation) {

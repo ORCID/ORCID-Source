@@ -776,7 +776,6 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
             return null;
         }
         orcidJaxbCopyManager.copyUpdatedWorksPreservingVisbility(existingProfile.retrieveOrcidWorks(), updatedOrcidProfile.retrieveOrcidWorks());
-        existingProfile.setOrcidWorks(updatedOrcidProfile.retrieveOrcidWorks());
         return updateOrcidProfile(existingProfile);
     }
 

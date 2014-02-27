@@ -166,11 +166,18 @@ public class T2OrcidApiServiceDelegatorTest extends DBUnitTest {
 
         OrcidProfile retrievedProfile = orcidProfileManager.retrieveOrcidProfile("4444-4444-4444-4446");
         List<OrcidWork> retreivedWorksList = retrievedProfile.getOrcidActivities().getOrcidWorks().getOrcidWork();
+        boolean foundWorkFromAnotherSource = false;
         boolean foundExisting = false;
         boolean foundNew = false;
-        // Should have the added work, plus one existing private work
+        // Should have the added work, plus existing private work and work from
+        // another source
         for (OrcidWork retrievedWork : retreivedWorksList) {
-            if ("7".equals(retrievedWork.getPutCode())) {
+            if ("6".equals(retrievedWork.getPutCode())) {
+                assertEquals("Journal article B", retrievedWork.getWorkTitle().getTitle().getContent());
+                assertEquals(Visibility.LIMITED, retrievedWork.getVisibility());
+                foundWorkFromAnotherSource = true;
+            } 
+            else if ("7".equals(retrievedWork.getPutCode())) {
                 // Existing private work
                 assertEquals("Journal article C", retrievedWork.getWorkTitle().getTitle().getContent());
                 assertEquals(Visibility.PRIVATE, retrievedWork.getVisibility());
@@ -181,9 +188,10 @@ public class T2OrcidApiServiceDelegatorTest extends DBUnitTest {
                 foundNew = true;
             }
         }
+        assertTrue("Work from other source should be there", foundWorkFromAnotherSource);
         assertTrue("New work should be there", foundNew);
         assertTrue("Existing private work should be there", foundExisting);
-        assertEquals(2, retreivedWorksList.size());
+        assertEquals(3, retreivedWorksList.size());
     }
 
     @Test
@@ -211,9 +219,9 @@ public class T2OrcidApiServiceDelegatorTest extends DBUnitTest {
 
         OrcidProfile retrievedProfile = orcidProfileManager.retrieveOrcidProfile("4444-4444-4444-4446");
         List<OrcidWork> retreivedWorksList = retrievedProfile.getOrcidActivities().getOrcidWorks().getOrcidWork();
+        boolean foundWorkFromAnotherSource = false;
         boolean foundUpdated = false;
         boolean foundExisting = false;
-        // Should have the added work, plus one existing private work
         for (OrcidWork retrievedWork : retreivedWorksList) {
             if ("5".equals(retrievedWork.getPutCode())) {
                 // The updated work
@@ -221,16 +229,22 @@ public class T2OrcidApiServiceDelegatorTest extends DBUnitTest {
                 assertEquals(Visibility.PUBLIC, retrievedWork.getVisibility());
                 foundUpdated = true;
             }
-            if ("7".equals(retrievedWork.getPutCode())) {
+            else if ("6".equals(retrievedWork.getPutCode())) {
+                assertEquals("Journal article B", retrievedWork.getWorkTitle().getTitle().getContent());
+                assertEquals(Visibility.LIMITED, retrievedWork.getVisibility());
+                foundWorkFromAnotherSource = true;
+            } 
+            else if ("7".equals(retrievedWork.getPutCode())) {
                 // Existing private work
                 assertEquals("Journal article C", retrievedWork.getWorkTitle().getTitle().getContent());
                 assertEquals(Visibility.PRIVATE, retrievedWork.getVisibility());
                 foundExisting = true;
             }
         }
+        assertTrue("Work from other source should be there", foundWorkFromAnotherSource);
         assertTrue("Updated work should be there", foundUpdated);
         assertTrue("Existing private work should be there", foundExisting);
-        assertEquals(2, retreivedWorksList.size());
+        assertEquals(3, retreivedWorksList.size());
     }
 
     @Test(expected = WrongSourceException.class)
@@ -392,7 +406,7 @@ public class T2OrcidApiServiceDelegatorTest extends DBUnitTest {
         assertEquals(Visibility.PRIVATE, existingAffiliation.getVisibility());
         assertEquals("Eine Institution", existingAffiliation.getOrganization().getName());
     }
-    
+
     @Test
     @Transactional
     public void testUpdateExistingNonPrivateAffiliation() {
@@ -430,7 +444,7 @@ public class T2OrcidApiServiceDelegatorTest extends DBUnitTest {
         assertEquals(Visibility.PRIVATE, existingAffiliation.getVisibility());
         assertEquals("Eine Institution", existingAffiliation.getOrganization().getName());
     }
-    
+
     @Test(expected = WrongSourceException.class)
     @Transactional
     public void testUpdateAffiliationWhenNotSource() {
@@ -457,7 +471,6 @@ public class T2OrcidApiServiceDelegatorTest extends DBUnitTest {
         organizationAddress.setCountry(Iso3166Country.GB);
         t2OrcidApiServiceDelegator.updateAffiliations(mockedUriInfo, "4444-4444-4444-4443", orcidMessage);
     }
-
 
     private OrcidMessage createStubOrcidMessage() {
         OrcidMessage orcidMessage = new OrcidMessage();
