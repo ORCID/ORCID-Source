@@ -34,9 +34,12 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 /**
- * <p>Java class for anonymous complex type.
+ * <p>
+ * Java class for anonymous complex type.
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p>
+ * The following schema fragment specifies the expected content contained within
+ * this class.
  * 
  * <pre>
  * &lt;complexType>
@@ -71,42 +74,40 @@ public class FundingList implements Serializable {
      * Gets the value of the Fundings property.
      * 
      * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the Fundings property.
+     * This accessor method returns a reference to the live list, not a
+     * snapshot. Therefore any modification you make to the returned list will
+     * be present inside the JAXB object. This is why there is not a
+     * <CODE>set</CODE> method for the Fundings property.
      * 
      * <p>
      * For example, to add a new item, do as follows:
+     * 
      * <pre>
-     *    getFundings().add(newItem);
+     * getFundings().add(newItem);
      * </pre>
      * 
      * 
      * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link Funding }
+     * Objects of the following type(s) are allowed in the list {@link Funding }
      * 
      * 
      */
     public List<Funding> getFundings() {
         if (fundings == null) {
-        	fundings = new ArrayList<Funding>();
+            fundings = new ArrayList<Funding>();
         }
         return this.fundings;
     }
-    
-    public void setFundings(List<Funding> fundings){
-    	this.fundings = fundings;
+
+    public void setFundings(List<Funding> fundings) {
+        this.fundings = fundings;
     }
 
     /**
      * Gets the value of the scope property.
      * 
-     * @return
-     *     possible object is
-     *     {@link Scope }
-     *     
+     * @return possible object is {@link Scope }
+     * 
      */
     public Scope getScope() {
         return scope;
@@ -116,9 +117,8 @@ public class FundingList implements Serializable {
      * Sets the value of the scope property.
      * 
      * @param value
-     *     allowed object is
-     *     {@link Scope }
-     *     
+     *            allowed object is {@link Scope }
+     * 
      */
     public void setScope(Scope value) {
         this.scope = value;
