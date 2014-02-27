@@ -243,6 +243,7 @@ public class OrcidJaxbCopyManagerTest extends BaseTest {
     public void testUpdatedAffilationsToExistingPreservingVisibility() throws Exception {
 
         OrcidProfile existingOrcidProfile = protectedOrcidMessage.getOrcidProfile();
+
         // create a copy of the profile data for doing a merge
         OrcidProfile updatedOrcidProfile = getOrcidMessage("/orcid-public-full-message-latest.xml").getOrcidProfile();
 
@@ -499,7 +500,14 @@ public class OrcidJaxbCopyManagerTest extends BaseTest {
 
     private OrcidMessage getOrcidMessage(String s) throws JAXBException {
         InputStream inputStream = OrcidJaxbCopyManagerTest.class.getResourceAsStream(s);
-        return (OrcidMessage) unmarshaller.unmarshal(inputStream);
+        OrcidMessage orcidMessage = (OrcidMessage) unmarshaller.unmarshal(inputStream);
+        // Put codes are needed for these tests
+        int putCode = 1;
+        for (Affiliation affiliation : orcidMessage.getOrcidProfile().getOrcidActivities().getAffiliations().getAffiliation()) {
+            affiliation.setPutCode(String.valueOf(putCode));
+            putCode++;
+        }
+        return orcidMessage;
 
     }
 

@@ -29,6 +29,9 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+
+import org.apache.commons.lang3.StringUtils;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -59,7 +62,7 @@ import java.util.Map;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType( propOrder = { "orcidWork" })
+@XmlType(propOrder = { "orcidWork" })
 @XmlRootElement(name = "orcid-works")
 public class OrcidWorks implements Serializable {
 
@@ -103,7 +106,9 @@ public class OrcidWorks implements Serializable {
         Map<String, OrcidWork> workMap = new HashMap<String, OrcidWork>();
         if (orcidWork != null) {
             for (OrcidWork work : orcidWork) {
-                workMap.put(work.putCode, work);
+                if (StringUtils.isNotBlank(work.putCode)) {
+                    workMap.put(work.putCode, work);
+                }
             }
         }
         return workMap;

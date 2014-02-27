@@ -16,6 +16,7 @@
  */
 package org.orcid.core.manager.impl;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -103,16 +104,41 @@ public class OrcidJaxbCopyManagerImpl implements OrcidJaxbCopyManager {
         if (updatedAffiliations == null) {
             return;
         }
-        List<Affiliation> updatedAffiliationsList = updatedAffiliations.getAffiliation();
-        if (updatedAffiliationsList.isEmpty()) {
-            return;
+        if (existingAffiliations == null) {
+            existingAffiliations = new Affiliations();
         }
-        List<Affiliation> existingAffiliationsList = existingAffiliations.getAffiliation();
-        for (Affiliation updatedAffiliation : updatedAffiliationsList) {
-            mergeAffiliations(existingAffiliationsList, updatedAffiliation);
+
+        Map<String, Affiliation> updatedAffiliationsMap = updatedAffiliations.retrieveAffiliationAsMap();
+
+        for (Iterator<Affiliation> existingAffiliationIterator = existingAffiliations.getAffiliation().iterator(); existingAffiliationIterator.hasNext();) {
+            Affiliation existingAffiliation = existingAffiliationIterator.next();
+            Affiliation updatedAffiliation = updatedAffiliationsMap.get(existingAffiliation.getPutCode());
+            if (updatedAffiliation == null) {
+                if (!Visibility.PRIVATE.equals(existingAffiliation.getVisibility())) {
+                    // Remove existing affiliations unless they are private (we
+                    // need to keep those because the API user won't even know
+                    // they are there)
+                    existingAffiliationIterator.remove();
+                }
+
+            } else {
+                if (updatedAffiliation.getVisibility() == null) {
+                    // Keep the visibility from the existing affiliation unless
+                    // was set by API user
+                    updatedAffiliation.setVisibility(existingAffiliation.getVisibility());
+                }
+                // Can remove existing object because will be replaced by
+                // incoming
+                existingAffiliationIterator.remove();
+            }
         }
-        existingAffiliationsList.clear();
-        existingAffiliationsList.addAll(updatedAffiliationsList);
+        for (Affiliation updatedAffiliation : updatedAffiliations.getAffiliation()) {
+            // Set default visibility for any remaining incoming affiliations
+            if (updatedAffiliation.getVisibility() == null) {
+                updatedAffiliation.setVisibility(OrcidVisibilityDefaults.AFFILIATE_NAME_DEFAULT.getVisibility());
+            }
+        }
+        existingAffiliations.getAffiliation().addAll(updatedAffiliations.getAffiliation());
     }
 
     @Override
@@ -401,17 +427,6 @@ public class OrcidJaxbCopyManagerImpl implements OrcidJaxbCopyManager {
         }
     }
 
-    private Affiliation obtainLikelyEqual(Affiliation toCompare, List<Affiliation> toCompareTo) {
-        if (toCompare != null && toCompareTo != null && !toCompareTo.isEmpty()) {
-            for (Affiliation ai : toCompareTo) {
-                if (ai.equals(toCompare)) {
-                    return ai;
-                }
-            }
-        }
-        return null;
-    }
-
     private Funding obtainLikelyEqual(Funding toCompare, List<Funding> toCompareTo) {
         if (toCompare != null && toCompareTo != null && !toCompareTo.isEmpty()) {
             for (Funding ai : toCompareTo) {
@@ -426,23 +441,6 @@ public class OrcidJaxbCopyManagerImpl implements OrcidJaxbCopyManager {
     @Override
     public void copyUpdatedFundingListVisibilityInformationOnlyPreservingVisbility(FundingList existingFundingList, FundingList updatedFundingList) {
         throw new RuntimeException("Not implemented!");
-    }
-
-    private void mergeAffiliations(List<Affiliation> existingAffiliations, Affiliation updatedAffiliation) {
-        Affiliation likelyExisting = obtainLikelyEqual(updatedAffiliation, existingAffiliations);
-        if (likelyExisting != null) {
-            Visibility likelyExistingAffiliateInstitutionNameVisibility = likelyExisting.getVisibility();
-
-            if (likelyExistingAffiliateInstitutionNameVisibility == null && updatedAffiliation.getVisibility() == null) {
-                updatedAffiliation.setVisibility(OrcidVisibilityDefaults.AFFILIATE_NAME_DEFAULT.getVisibility());
-            } else if (updatedAffiliation.getVisibility() == null && likelyExistingAffiliateInstitutionNameVisibility != null) {
-                updatedAffiliation.setVisibility(likelyExistingAffiliateInstitutionNameVisibility);
-            }
-        } else {
-            // if you can't match this type, default its value if null
-            updatedAffiliation.setVisibility(updatedAffiliation.getVisibility() != null ? updatedAffiliation.getVisibility()
-                    : OrcidVisibilityDefaults.AFFILIATE_NAME_DEFAULT.getVisibility());
-        }
     }
 
     private void mergeFundings(List<Funding> existingFundings, Funding updatedFunding) {

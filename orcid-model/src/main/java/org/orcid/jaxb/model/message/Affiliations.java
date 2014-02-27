@@ -34,6 +34,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+import org.apache.commons.lang3.StringUtils;
+
 /**
  * <p>
  * Java class for anonymous complex type.
@@ -57,7 +59,7 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType( propOrder = { "affiliation" })
+@XmlType(propOrder = { "affiliation" })
 @XmlRootElement(name = "orcid-affiliations")
 public class Affiliations implements Serializable {
 
@@ -108,17 +110,18 @@ public class Affiliations implements Serializable {
         }
         return filteredAffilations;
     }
-    
+
     public Map<String, Affiliation> retrieveAffiliationAsMap() {
         Map<String, Affiliation> affMap = new HashMap<String, Affiliation>();
         if (affiliation != null) {
             for (Affiliation aff : affiliation) {
-                affMap.put(aff.putCode, aff);
+                if (StringUtils.isNotBlank(aff.putCode)) {
+                    affMap.put(aff.putCode, aff);
+                }
             }
         }
         return affMap;
     }
-
 
     @Override
     public boolean equals(Object o) {

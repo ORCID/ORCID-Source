@@ -16,7 +16,7 @@
  */
 package org.orcid.api.t2.server.delegator;
 
-import static org.junit.Assert.assertEquals;
+import static junit.framework.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
@@ -76,7 +76,6 @@ import org.springframework.security.oauth2.provider.AuthorizationRequest;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import com.sun.jersey.api.uri.UriBuilderImpl;
 
@@ -355,6 +354,43 @@ public class T2OrcidApiServiceDelegatorTest extends DBUnitTest {
         Affiliation affiliation = affiliationsList.get(0);
         assertEquals("A new affiliation", affiliation.getOrganization().getName());
         assertEquals("4444-4444-4444-4447", affiliation.getSource().getSourceOrcid().getPath());
+    }
+
+    @Test
+    @Transactional
+    public void testUpdateWithNewAffiliation() {
+        setUpSecurityContext("4444-4444-4444-4443", ScopePathType.AFFILIATIONS_UPDATE);
+        OrcidMessage orcidMessage = new OrcidMessage();
+        orcidMessage.setMessageVersion("1.1");
+        OrcidProfile orcidProfile = new OrcidProfile();
+        orcidMessage.setOrcidProfile(orcidProfile);
+        orcidProfile.setOrcidIdentifier(new OrcidIdentifier("4444-4444-4444-4443"));
+        OrcidActivities orcidActivities = new OrcidActivities();
+        orcidProfile.setOrcidActivities(orcidActivities);
+        Affiliations affiliations = new Affiliations();
+        orcidActivities.setAffiliations(affiliations);
+        Affiliation affiliation1 = new Affiliation();
+        affiliations.getAffiliation().add(affiliation1);
+        affiliation1.setType(AffiliationType.EDUCATION);
+        Organization organization1 = new Organization();
+        affiliation1.setOrganization(organization1);
+        organization1.setName("A new affiliation");
+        OrganizationAddress organizationAddress = new OrganizationAddress();
+        organization1.setAddress(organizationAddress);
+        organizationAddress.setCity("Edinburgh");
+        organizationAddress.setCountry(Iso3166Country.GB);
+        Response response = t2OrcidApiServiceDelegator.updateAffiliations(mockedUriInfo, "4444-4444-4444-4443", orcidMessage);
+        assertNotNull(response);
+
+        OrcidProfile retrievedProfile = orcidProfileManager.retrieveOrcidProfile("4444-4444-4444-4443");
+        List<Affiliation> retreivedAffiliationsList = retrievedProfile.getOrcidActivities().getAffiliations().getAffiliation();
+        assertEquals(2, retreivedAffiliationsList.size());
+        Affiliation newAffiliation = retreivedAffiliationsList.get(0);
+        assertEquals("A new affiliation", newAffiliation.getOrganization().getName());
+        assertEquals("4444-4444-4444-4447", newAffiliation.getSource().getSourceOrcid().getPath());
+        Affiliation existingAffiliation = retreivedAffiliationsList.get(1);
+        assertEquals(Visibility.PRIVATE, existingAffiliation.getVisibility());
+        assertEquals("Eine Institution", existingAffiliation.getOrganization().getName());
     }
 
     private OrcidMessage createStubOrcidMessage() {
