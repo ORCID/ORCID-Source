@@ -24,12 +24,10 @@
     <div ng-controller="PublicEmpAffiliation">
     	<#include "includes/affiliate/emp_body_inc.ftl" />
 	</div>
-	<#if RequestParameters['funding']??>
-		<h3 class="workspace-header-public">${springMacroRequestContext.getMessage("workspace.Funding")}</h3>
-		<div ng-controller="PublicFundingCtrl">
-    		<#include "includes/funding/body_funding_inc.ftl" />
-		</div>
-	</#if>
+	<h3 class="workspace-header-public">${springMacroRequestContext.getMessage("workspace.Funding")}</h3>
+	<div ng-controller="PublicFundingCtrl">
+   		<#include "includes/funding/body_funding_inc.ftl" />
+	</div>
 		
     <h3 class="workspace-header-public">${springMacroRequestContext.getMessage("workspace.Works")}</h3>
     <#include "includes/work/public_works_body_list.ftl" />
