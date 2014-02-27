@@ -1845,10 +1845,6 @@ a:hover {
     margin: 10px 0 0 0;
 }
 
-.affiliation-title, .funding-title{
-	margin-top: 0 !important;	
-}
-
 #edit-affiliation #startDay,
 #edit-affiliation #startMonth,
 #edit-affiliation #endDay,
