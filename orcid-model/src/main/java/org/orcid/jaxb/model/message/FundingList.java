@@ -25,13 +25,19 @@ package org.orcid.jaxb.model.message;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * <p>
@@ -59,7 +65,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "fundings" })
 @XmlRootElement(name = "funding-list")
-public class FundingList implements Serializable {
+public class FundingList implements ActivitiesContainer, Serializable {
 
     /**
      * 
@@ -125,6 +131,24 @@ public class FundingList implements Serializable {
     }
 
     @Override
+    public Map<String, ? extends Activity> retrieveActivitiesAsMap() {
+        Map<String, Funding> map = new HashMap<>();
+        if (fundings != null) {
+            for (Funding f : fundings) {
+                if (StringUtils.isNotBlank(f.putCode)) {
+                    map.put(f.putCode, f);
+                }
+            }
+        }
+        return map;
+    }
+
+    @Override
+    public Collection<? extends Activity> retrieveActivities() {
+        return getFundings();
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) {
             return true;
@@ -151,4 +175,5 @@ public class FundingList implements Serializable {
         result = 31 * result + (scope != null ? scope.hashCode() : 0);
         return result;
     }
+
 }

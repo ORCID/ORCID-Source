@@ -171,19 +171,7 @@ public class OrcidJaxbCopyManagerImpl implements OrcidJaxbCopyManager {
 
     @Override
     public void copyFundingListToExistingPreservingVisibility(FundingList existingFundings, FundingList updatedFundings) {
-        if (updatedFundings == null) {
-            return;
-        }
-        List<Funding> updatedFundingList = updatedFundings.getFundings();
-        if (updatedFundingList.isEmpty()) {
-            return;
-        }
-        List<Funding> existingFundingsList = existingFundings.getFundings();
-        for (Funding updatedFunding : updatedFundingList) {
-            mergeFundings(existingFundingsList, updatedFunding);
-        }
-        existingFundingsList.clear();
-        existingFundingsList.addAll(updatedFundingList);
+        copyActivitiesToExistingPreservingVisibility(existingFundings, updatedFundings, OrcidVisibilityDefaults.FUNDING_DEFAULT.getVisibility());
     }
 
     @Override
@@ -396,37 +384,9 @@ public class OrcidJaxbCopyManagerImpl implements OrcidJaxbCopyManager {
         copyActivitiesToExistingPreservingVisibility(existingWorks, updatedWorks, OrcidVisibilityDefaults.WORKS_DEFAULT.getVisibility());
     }
 
-    private Funding obtainLikelyEqual(Funding toCompare, List<Funding> toCompareTo) {
-        if (toCompare != null && toCompareTo != null && !toCompareTo.isEmpty()) {
-            for (Funding ai : toCompareTo) {
-                if (ai.equals(toCompare)) {
-                    return ai;
-                }
-            }
-        }
-        return null;
-    }
-
     @Override
     public void copyUpdatedFundingListVisibilityInformationOnlyPreservingVisbility(FundingList existingFundingList, FundingList updatedFundingList) {
         throw new RuntimeException("Not implemented!");
-    }
-
-    private void mergeFundings(List<Funding> existingFundings, Funding updatedFunding) {
-        Funding likelyExisting = obtainLikelyEqual(updatedFunding, existingFundings);
-        if (likelyExisting != null) {
-            Visibility likelyExistingFundingInstitutionNameVisibility = likelyExisting.getVisibility();
-
-            if (likelyExistingFundingInstitutionNameVisibility == null && updatedFunding.getVisibility() == null) {
-                updatedFunding.setVisibility(OrcidVisibilityDefaults.FUNDING_DEFAULT.getVisibility());
-            } else if (updatedFunding.getVisibility() == null && likelyExistingFundingInstitutionNameVisibility != null) {
-                updatedFunding.setVisibility(likelyExistingFundingInstitutionNameVisibility);
-            }
-        } else {
-            // if you can't match this type, default its value if null
-            updatedFunding.setVisibility(updatedFunding.getVisibility() != null ? updatedFunding.getVisibility() : OrcidVisibilityDefaults.FUNDING_DEFAULT
-                    .getVisibility());
-        }
     }
 
 }
