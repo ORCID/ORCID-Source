@@ -61,7 +61,7 @@ import org.apache.commons.lang3.StringUtils;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "affiliation" })
 @XmlRootElement(name = "orcid-affiliations")
-public class Affiliations implements Serializable {
+public class Affiliations implements Serializable, ActivitiesContainer {
 
     /**
      * 
@@ -111,8 +111,9 @@ public class Affiliations implements Serializable {
         return filteredAffilations;
     }
 
-    public Map<String, Affiliation> retrieveAffiliationAsMap() {
-        Map<String, Affiliation> affMap = new HashMap<String, Affiliation>();
+    @Override
+    public Map<String, Affiliation> retrieveActivitiesAsMap() {
+        Map<String, Affiliation> affMap = new HashMap<>();
         if (affiliation != null) {
             for (Affiliation aff : affiliation) {
                 if (StringUtils.isNotBlank(aff.putCode)) {
@@ -121,6 +122,11 @@ public class Affiliations implements Serializable {
             }
         }
         return affMap;
+    }
+
+    @Override
+    public List<? extends Activity> retrieveActivities() {
+        return getAffiliation();
     }
 
     @Override
@@ -145,4 +151,5 @@ public class Affiliations implements Serializable {
     public int hashCode() {
         return affiliation != null ? affiliation.hashCode() : 0;
     }
+
 }

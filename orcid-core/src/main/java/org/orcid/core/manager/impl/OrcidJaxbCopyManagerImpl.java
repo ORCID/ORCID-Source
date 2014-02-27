@@ -26,13 +26,13 @@ import org.orcid.core.exception.WrongSourceException;
 import org.orcid.core.manager.OrcidJaxbCopyManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
+import org.orcid.jaxb.model.message.ActivitiesContainer;
+import org.orcid.jaxb.model.message.Activity;
 import org.orcid.jaxb.model.message.Address;
-import org.orcid.jaxb.model.message.Affiliation;
 import org.orcid.jaxb.model.message.Affiliations;
 import org.orcid.jaxb.model.message.Biography;
 import org.orcid.jaxb.model.message.Claimed;
 import org.orcid.jaxb.model.message.ContactDetails;
-import org.orcid.jaxb.model.message.Contributor;
 import org.orcid.jaxb.model.message.CreditName;
 import org.orcid.jaxb.model.message.Email;
 import org.orcid.jaxb.model.message.ExternalIdentifiers;
@@ -41,13 +41,11 @@ import org.orcid.jaxb.model.message.FundingList;
 import org.orcid.jaxb.model.message.Keywords;
 import org.orcid.jaxb.model.message.OrcidBio;
 import org.orcid.jaxb.model.message.OrcidHistory;
-import org.orcid.jaxb.model.message.OrcidWork;
 import org.orcid.jaxb.model.message.OrcidWorks;
 import org.orcid.jaxb.model.message.OtherNames;
 import org.orcid.jaxb.model.message.PersonalDetails;
 import org.orcid.jaxb.model.message.ResearcherUrls;
 import org.orcid.jaxb.model.message.Visibility;
-import org.orcid.jaxb.model.message.WorkContributors;
 import org.springframework.util.Assert;
 
 /**
@@ -101,47 +99,74 @@ public class OrcidJaxbCopyManagerImpl implements OrcidJaxbCopyManager {
 
     @Override
     public void copyAffiliationsToExistingPreservingVisibility(Affiliations existingAffiliations, Affiliations updatedAffiliations) {
-        if (updatedAffiliations == null) {
+        copyActivitiesToExistingPreservingVisibility(existingAffiliations, updatedAffiliations, OrcidVisibilityDefaults.AFFILIATE_NAME_DEFAULT.getVisibility());
+    }
+
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    private void copyActivitiesToExistingPreservingVisibility(ActivitiesContainer existingActivities, ActivitiesContainer updatedActivities, Visibility defaultVisibility) {
+        if (updatedActivities == null) {
             return;
         }
-        if (existingAffiliations == null) {
-            existingAffiliations = new Affiliations();
+        if (existingActivities == null) {
+            try {
+                existingActivities = updatedActivities.getClass().newInstance();
+            } catch (InstantiationException e) {
+                e.printStackTrace();
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
         }
 
-        Map<String, Affiliation> updatedAffiliationsMap = updatedAffiliations.retrieveAffiliationAsMap();
+        Map<String, ? extends Activity> updatedActivitiesMap = updatedActivities.retrieveActivitiesAsMap();
 
-        for (Iterator<Affiliation> existingAffiliationIterator = existingAffiliations.getAffiliation().iterator(); existingAffiliationIterator.hasNext();) {
-            Affiliation existingAffiliation = existingAffiliationIterator.next();
-            Affiliation updatedAffiliation = updatedAffiliationsMap.get(existingAffiliation.getPutCode());
-            if (updatedAffiliation == null) {
-                if (!(Visibility.PRIVATE.equals(existingAffiliation.getVisibility()) || isFromDifferentSource(existingAffiliation))) {
-                    // Remove existing affiliations unless they are private (we
+        for (Iterator<? extends Activity> existingActivitiesIterator = existingActivities.retrieveActivities().iterator(); existingActivitiesIterator.hasNext();) {
+            Activity existingActivity = existingActivitiesIterator.next();
+            Activity updatedActivity = updatedActivitiesMap.get(existingActivity.getPutCode());
+            if (updatedActivity == null) {
+                if (!(Visibility.PRIVATE.equals(existingActivity.getVisibility()) || isFromDifferentSource(existingActivity))) {
+                    // Remove existing activities unless they are private (we
                     // need to keep those because the API user won't even know
                     // they are there) or they are from another source
-                    existingAffiliationIterator.remove();
+                    existingActivitiesIterator.remove();
                 }
 
             } else {
-                // Check the source of the existing affiliation is the same as
+                // Check the source of the existing activity is the same as
                 // the current source
-                checkSource(existingAffiliation);
-                if (updatedAffiliation.getVisibility() == null) {
-                    // Keep the visibility from the existing affiliation unless
+                checkSource(existingActivity);
+                if (updatedActivity.getVisibility() == null) {
+                    // Keep the visibility from the existing activity unless
                     // was set by API user
-                    updatedAffiliation.setVisibility(existingAffiliation.getVisibility());
+                    updatedActivity.setVisibility(existingActivity.getVisibility());
                 }
                 // Can remove existing object because will be replaced by
                 // incoming
-                existingAffiliationIterator.remove();
+                existingActivitiesIterator.remove();
             }
         }
-        for (Affiliation updatedAffiliation : updatedAffiliations.getAffiliation()) {
+        for (Activity updatedActivity : updatedActivities.retrieveActivities()) {
             // Set default visibility for any remaining incoming affiliations
-            if (updatedAffiliation.getVisibility() == null) {
-                updatedAffiliation.setVisibility(OrcidVisibilityDefaults.AFFILIATE_NAME_DEFAULT.getVisibility());
+            if (updatedActivity.getVisibility() == null) {
+                updatedActivity.setVisibility(defaultVisibility);
             }
         }
-        existingAffiliations.getAffiliation().addAll(updatedAffiliations.getAffiliation());
+        existingActivities.retrieveActivities().addAll((List) updatedActivities.retrieveActivities());
+    }
+
+    private void checkSource(Activity existingActivity) {
+        if (isFromDifferentSource(existingActivity)) {
+            throw new WrongSourceException();
+        }
+
+    }
+
+    private boolean isFromDifferentSource(Activity existingActivity) {
+        String currentSource = sourceManager.retrieveSourceOrcid();
+        if (currentSource == null) {
+            // Not under Spring security so anything goes
+            return false;
+        }
+        return !currentSource.equals(existingActivity.retrieveSourcePath());
     }
 
     @Override
@@ -368,89 +393,7 @@ public class OrcidJaxbCopyManagerImpl implements OrcidJaxbCopyManager {
 
     @Override
     public void copyUpdatedWorksPreservingVisbility(OrcidWorks existingWorks, OrcidWorks updatedWorks) {
-
-        if (updatedWorks == null) {
-            // nothing to update, bale out
-            return;
-        }
-
-        if (existingWorks == null) {
-            existingWorks = new OrcidWorks();
-        }
-
-        Map<String, OrcidWork> updatedWorksMap = updatedWorks.retrieveOrcidWorksAsMap();
-
-        for (Iterator<OrcidWork> existingWorkIterator = existingWorks.getOrcidWork().iterator(); existingWorkIterator.hasNext();) {
-            OrcidWork existingWork = existingWorkIterator.next();
-            OrcidWork updatedWork = updatedWorksMap.get(existingWork.getPutCode());
-            if (updatedWork == null) {
-                // Make sure private works are preserved and works from a
-                // different source
-                if (!(Visibility.PRIVATE.equals(existingWork.getVisibility()) || isFromDifferentSource(existingWork))) {
-                    existingWorkIterator.remove();
-                }
-            } else {
-                // Check the source of the existing work is the same as the
-                // current source
-                checkSource(existingWork);
-                // Make sure privacy preserved if not specified in incoming
-                if (updatedWork.getVisibility() == null) {
-                    updatedWork.setVisibility(existingWork.getVisibility());
-                }
-                // Can remove existing object because will be replaced by
-                // incoming
-                existingWorkIterator.remove();
-            }
-        }
-
-        // Set remaining null visibilities to default value
-        List<OrcidWork> orcidWorkToUpdate = updatedWorks.getOrcidWork();
-        for (OrcidWork orcidWork : orcidWorkToUpdate) {
-            if (orcidWork.getVisibility() == null) {
-                orcidWork.setVisibility(OrcidVisibilityDefaults.WORKS_DEFAULT.getVisibility());
-            }
-            WorkContributors workContributors = orcidWork.getWorkContributors();
-            if (workContributors != null) {
-                for (Contributor contributor : workContributors.getContributor()) {
-                    CreditName creditName = contributor.getCreditName();
-                    if (creditName != null) {
-                        creditName.setVisibility(orcidWork.getVisibility());
-                    }
-                }
-            }
-        }
-        existingWorks.getOrcidWork().addAll(updatedWorks.getOrcidWork());
-    }
-
-    private void checkSource(OrcidWork existingWork) {
-        if (isFromDifferentSource(existingWork)) {
-            throw new WrongSourceException();
-        }
-    }
-
-    private boolean isFromDifferentSource(OrcidWork existingWork) {
-        String currentSource = sourceManager.retrieveSourceOrcid();
-        if (currentSource == null) {
-            // Not under Spring security so anything goes
-            return false;
-        }
-        return !currentSource.equals(existingWork.getWorkSource().getPath());
-    }
-
-    private void checkSource(Affiliation existingAffiliation) {
-        if (isFromDifferentSource(existingAffiliation)) {
-            throw new WrongSourceException();
-        }
-
-    }
-
-    private boolean isFromDifferentSource(Affiliation existingAffiliation) {
-        String currentSource = sourceManager.retrieveSourceOrcid();
-        if (currentSource == null) {
-            // Not under Spring security so anything goes
-            return false;
-        }
-        return !currentSource.equals(existingAffiliation.getSource().getSourceOrcid().getPath());
+        copyActivitiesToExistingPreservingVisibility(existingWorks, updatedWorks, OrcidVisibilityDefaults.WORKS_DEFAULT.getVisibility());
     }
 
     private Funding obtainLikelyEqual(Funding toCompare, List<Funding> toCompareTo) {

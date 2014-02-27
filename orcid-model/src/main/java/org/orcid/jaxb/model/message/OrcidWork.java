@@ -69,10 +69,10 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "putCode", "workTitle", "journalTitle", "shortDescription", "workCitation", "workType", "publicationDate", "workExternalIdentifiers",
-        "url", "workContributors", "workSource", "languageCode", "country" })
+@XmlType(propOrder = { "putCode", "workTitle", "journalTitle", "shortDescription", "workCitation", "workType", "publicationDate", "workExternalIdentifiers", "url",
+        "workContributors", "workSource", "languageCode", "country" })
 @XmlRootElement(name = "orcid-work")
-public class OrcidWork implements VisibilityType, Serializable {
+public class OrcidWork implements VisibilityType, Activity, Serializable {
 
     private static final long serialVersionUID = 1L;
     @XmlElement(name = "work-title")
@@ -300,6 +300,14 @@ public class OrcidWork implements VisibilityType, Serializable {
      */
     public WorkSource getWorkSource() {
         return workSource;
+    }
+
+    @Override
+    public String retrieveSourcePath() {
+        if (workSource == null) {
+            return null;
+        }
+        return workSource.getPath();
     }
 
     /**
