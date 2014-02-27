@@ -150,8 +150,12 @@ public class ManageProfileControllerTest extends BaseControllerTest {
     }
 
     @Before
-    public void setUpTestProfile() {
-        String testOrcid = "4444-4444-4444-4446";
+    public void setUpTestProfiles() {
+        createProfileStub("4444-4444-4444-4446");
+        createProfileStub("5555-5555-5555-555X");
+    }
+
+    private void createProfileStub(String testOrcid) {
         ProfileEntity existing = profileDao.find(testOrcid);
         if (existing == null) {
             ProfileEntity testProfile = new ProfileEntity();
@@ -252,10 +256,10 @@ public class ManageProfileControllerTest extends BaseControllerTest {
 
     @Test
     public void testAddDelegateSendsEmailToOnlyNewDelegates() throws Exception {
-        ProfileEntity delegateProfile = new ProfileEntity("delegateProfile");
+        ProfileEntity delegateProfile = new ProfileEntity("5555-5555-5555-555X");
         delegateProfile.setCreditName("Test Delegate Credit Name");
-        when(profileEntityManager.findByOrcid("delegateOrcid")).thenReturn(delegateProfile);
-        controller.addDelegate("delegateOrcid");
+        when(profileEntityManager.findByOrcid("5555-5555-5555-555X")).thenReturn(delegateProfile);
+        controller.addDelegate("5555-5555-5555-555X");
         verify(mockNotificationManager, times(1)).sendNotificationToAddedDelegate(any(OrcidProfile.class), (argThat(onlyNewDelegateAdded())));
     }
 
@@ -284,16 +288,13 @@ public class ManageProfileControllerTest extends BaseControllerTest {
             public boolean matchesSafely(List<DelegationDetails> delegatesAdded) {
                 if (delegatesAdded != null && delegatesAdded.size() == 1) {
                     DelegationDetails delegationDetails = delegatesAdded.get(0);
-                    return "delegateOrcid".equals(delegationDetails.getDelegateSummary().getOrcidIdentifier().getPath());
+                    return "5555-5555-5555-555X".equals(delegationDetails.getDelegateSummary().getOrcidIdentifier().getPath());
                 }
-
                 return false;
-
             }
 
             @Override
             public void describeTo(Description arg0) {
-
             }
 
         };

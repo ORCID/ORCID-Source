@@ -1126,7 +1126,8 @@ function RegistrationCtrl($scope, $compile) {
 	$scope.postRegister = function () {
 		if (basePath.startsWith(baseUrl + 'oauth')) { 
 			var clientName = $('div#RegistrationCtr input[name="client_name"]').val();
-		    orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'New-Registration-Submit ' + clientName, 'OAuth']);
+			var clientGroupName = $('div#RegistrationCtr input[name="client_group_name"]').val();
+		    orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'New-Registration-Submit ' + orcidGA.buildClientString(clientGroupName, clientName), 'OAuth']);
 		    $scope.register.creationType.value = "Member-referred";
 		} else {
 	    	orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'New-Registration-Submit', 'Website']);
@@ -1163,7 +1164,8 @@ function RegistrationCtrl($scope, $compile) {
 	        success: function(data) {
 	    		if (basePath.startsWith(baseUrl + 'oauth')) {
 	    			var clientName = $('div#RegistrationCtr input[name="client_name"]').val();
-	    		    orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'New-Registration ' + clientName, 'OAuth']);
+	    			var clientGroupName = $('div#RegistrationCtr input[name="client_group_name"]').val();
+	    		    orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'New-Registration ' + orcidGA.buildClientString(clientGroupName, clientName), 'OAuth']);
 	    		}
 	    	    else
 	    	    	orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'New-Registration', 'Website']);
@@ -1866,6 +1868,7 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc) {
 	};
 	
 	$scope.addFundingModal = function(type){
+		$scope.removeDisambiguatedFunding();
 		$.ajax({
 			url: $('body').data('baseurl') + 'fundings/funding.json',
 			dataType: 'json',
@@ -1881,7 +1884,7 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc) {
 	};
 	
 	$scope.showAddModal = function(){
-		$scope.editTranslatedTitle = false;
+		$scope.editTranslatedTitle = false;		
 		$.colorbox({        	
 			html: $compile($('#add-funding-modal').html())($scope),			
 			width: formColorBoxResize(),
@@ -1947,7 +1950,7 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc) {
                     if ($('#fundingName').val()) {
                         q += encodeURIComponent($('#fundingName').val());
                     }
-                    q += '?limit=' + numOfResults + '&funders-only=' + $('#fundersOnly').is(':checked');
+                    q += '?limit=' + numOfResults + '&funders-only=true';
                     return q;
                 }
 			},
@@ -1976,9 +1979,12 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc) {
 		console.log(angular.toJson(datum));
 		if (datum != undefined && datum != null) {
 			$scope.editFunding.fundingName.value = datum.value;
+			$scope.editFunding.fundingName.errors = [];
 			$scope.editFunding.city.value = datum.city;
+			$scope.editFunding.city.errors = []; 
 			$scope.editFunding.region.value = datum.region;
 			$scope.editFunding.country.value = datum.country;
+			$scope.editFunding.country.errors = [];
 			
 			if (datum.disambiguatedFundingIdentifier != undefined && datum.disambiguatedFundingIdentifier != null) {
 				$scope.getDisambiguatedFunding(datum.disambiguatedFundingIdentifier);
@@ -2796,6 +2802,7 @@ function QuickSearchCtrl($scope, $compile){
 	$scope.getResults(10);
 };
 
+// Controller for delegate permissions that have been granted BY the current user
 function DelegatesCtrl($scope, $compile){
 	$scope.results = new Array();
 	$scope.numFound = 0;
@@ -2810,8 +2817,14 @@ function DelegatesCtrl($scope, $compile){
 	};
 	
 	$scope.getResults = function(rows){
+		var query = "{!edismax qf='given-and-family-names^50.0 family-name^10.0 given-names^5.0 credit-name^10.0 other-names^5.0 text^1.0' pf='given-and-family-names^50.0' mm=1}" + $scope.userQuery;
+		var orcidRegex = new RegExp("(\\d{4}-){3,}\\d{3}[\\dX]");
+		var regexResult = orcidRegex.exec($scope.userQuery);
+		if(regexResult){
+			query = "orcid:" + regexResult[0];
+		}
 		$.ajax({
-			url: $('#DelegatesCtrl').data('search-query-url') + $scope.userQuery + '&start=' + $scope.start + '&rows=' + $scope.rows,      
+			url: $('#DelegatesCtrl').data('search-query-url') + query + '&start=' + $scope.start + '&rows=' + $scope.rows,      
 			dataType: 'json',
 			headers: { Accept: 'application/json'},
 			success: function(data) {
@@ -2945,6 +2958,49 @@ function DelegatesCtrl($scope, $compile){
 	
 	// init
 	$scope.getDelegates();
+	
+};
+
+// Controller for delegate permissions that have been granted TO the current user
+function DelegatorsCtrl($scope, $compile){
+	
+	$scope.getDelegators = function() {
+		$.ajax({
+	        url: $('body').data('baseurl') + 'account/delegates.json',
+	        dataType: 'json',
+	        success: function(data) {
+	        	$scope.delegation = data;
+	        	$scope.$apply();
+	        }
+	    }).fail(function() { 
+	    	// something bad is happening!
+	    	console.log("error with delegates");
+	    });
+	};
+	
+	$scope.selectDelegator = function(datum) {
+		window.location.href = $('body').data('baseurl') + 'switch-user?j_username=' + datum.orcid;
+	};
+	
+	$("#delegatorsSearch").typeahead({
+		name: 'delegatorsSearch',
+		remote: {
+			url: $('body').data('baseurl')+'delegators/search/%QUERY?limit=' + 10
+		},
+		template: function (datum) {
+			   var forDisplay = 
+			       '<span style=\'white-space: nowrap; font-weight: bold;\'>' + datum.value + '</span>'
+			      +'<span style=\'font-size: 80%;\'> (' + datum.orcid + ')</span>';
+			   return forDisplay;
+		}
+	});
+	$("#delegatorsSearch").bind("typeahead:selected", function(obj, datum) {        
+		$scope.selectDelegator(datum);
+		$scope.$apply();
+	});
+	
+	// init
+	$scope.getDelegators();
 	
 };
 

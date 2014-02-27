@@ -23,13 +23,12 @@
 		<ul class="settings-nav">
 			<li><a href="#account-settings">${springMacroRequestContext.getMessage("manage.accountsettings")}</a></li>
 			<li><a href="#manage-permissions">${springMacroRequestContext.getMessage("manage.managepermission")}</a></li>
-			<#if (profile.groupType)?? && ((profile.groupType) = "BASIC" ||
-			(profile.groupType) = "PREMIUM" || (profile.groupType) =
-			"BASIC_INSTITUTION" || (profile.groupType) = "PREMIUM_INSTITUTION")>
-			<li><a href="<@spring.url "/manage-clients" />">${springMacroRequestContext.getMessage("workspace.ManageClientCredentials")}</a></li>
-			</#if> <@security.authorize ifAnyGranted="ROLE_ADMIN">
-			<li><a href="<@spring.url "/admin-actions" />"><@orcid.msg
-				'admin.workspace_link' /></a></li> </@security.authorize>
+			<#if (profile.groupType)?? && ((profile.groupType) = "BASIC" ||	(profile.groupType) = "PREMIUM" || (profile.groupType) = "BASIC_INSTITUTION" || (profile.groupType) = "PREMIUM_INSTITUTION")>
+				<li><a href="<@spring.url "/manage-clients" />">${springMacroRequestContext.getMessage("workspace.ManageClientCredentials")}</a></li>
+			</#if>
+			<@security.authorize ifAnyGranted="ROLE_ADMIN, ROLE_GROUP, ROLE_BASIC, ROLE_BASIC_INSTITUTION, ROLE_PREMIUM, ROLE_PREMIUM_INSTITUTION">
+ 	 			<li><a href="<@spring.url "/manage-clients" />">${springMacroRequestContext.getMessage("workspace.ManageClientCredentials")}</a></li>	        	 
+ 			</@security.authorize>
 		</ul>
 	</div>
 	<div class="col-md-9">

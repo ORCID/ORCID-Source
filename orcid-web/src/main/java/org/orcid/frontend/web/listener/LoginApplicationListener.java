@@ -54,7 +54,7 @@ public class LoginApplicationListener implements ApplicationListener<Application
                 Object principal = token.getPrincipal();
                 if (principal instanceof OrcidProfileUserDetails) {
                     OrcidProfileUserDetails userDetails = (OrcidProfileUserDetails) principal;
-                    String orcid = userDetails.getRealOrcid();
+                    String orcid = userDetails.getOrcid();
                     String email = userDetails.getPrimaryEmail();
                     String sessionId = RequestContextHolder.currentRequestAttributes().getSessionId();
                     LOGGER.info("User logged in with orcid={}, email={}, sessionid={}", new Object[] { orcid, email, sessionId });

@@ -59,6 +59,7 @@ public class LoginController extends BaseController {
         // find client name if available 
         SavedRequest savedRequest = new HttpSessionRequestCache().getRequest(request, response);
         String client_name = "";
+        String client_group_name = "";
         if (savedRequest != null) {
             String url = savedRequest.getRedirectUrl();
             Matcher matcher = clientIdPattern.matcher(url);
@@ -69,10 +70,18 @@ public class LoginController extends BaseController {
                     if (clientProfile.getOrcidBio() != null && clientProfile.getOrcidBio().getPersonalDetails() != null
                             && clientProfile.getOrcidBio().getPersonalDetails().getCreditName() != null)
                         client_name = clientProfile.getOrcidBio().getPersonalDetails().getCreditName().getContent();
+                    if (clientProfile.getOrcidInternal() != null && clientProfile.getOrcidInternal().getGroupOrcidIdentifier() != null) {
+                        String client_group_id = clientProfile.getOrcidInternal().getGroupOrcidIdentifier().getPath();
+                        OrcidProfile clientGroupProfile = orcidProfileManager.retrieveOrcidProfile(client_group_id);
+                        if (clientGroupProfile.getOrcidBio() != null && clientGroupProfile.getOrcidBio().getPersonalDetails() != null
+                                && clientGroupProfile.getOrcidBio().getPersonalDetails().getCreditName() != null)
+                            client_group_name = clientGroupProfile.getOrcidBio().getPersonalDetails().getCreditName().getContent();
+                    }
                 }
             }
         }
         mav.addObject("client_name", client_name);
+        mav.addObject("client_group_name", client_group_name);
         mav.setViewName("oauth_login");
         mav.addObject("hideUserVoiceScript", true);
         return mav;

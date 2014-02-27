@@ -26,6 +26,7 @@
             <@spring.bind "loginForm" />
             <@spring.showErrors "<br/>" "error" />
 			<input type="hidden" name="client_name" value="${client_name}" />
+			<input type="hidden" name="client_group_name" value="${client_group_name}" />
             <div>
                 <label for="userId">${springMacroRequestContext.getMessage("oauth_sign_in.labelemailorID")}</label>
                 <div class="relative">
