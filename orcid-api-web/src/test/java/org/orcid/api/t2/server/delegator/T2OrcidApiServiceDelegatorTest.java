@@ -392,6 +392,72 @@ public class T2OrcidApiServiceDelegatorTest extends DBUnitTest {
         assertEquals(Visibility.PRIVATE, existingAffiliation.getVisibility());
         assertEquals("Eine Institution", existingAffiliation.getOrganization().getName());
     }
+    
+    @Test
+    @Transactional
+    public void testUpdateExistingNonPrivateAffiliation() {
+        setUpSecurityContext("4444-4444-4444-4443", ScopePathType.AFFILIATIONS_UPDATE);
+        OrcidMessage orcidMessage = new OrcidMessage();
+        orcidMessage.setMessageVersion("1.1");
+        OrcidProfile orcidProfile = new OrcidProfile();
+        orcidMessage.setOrcidProfile(orcidProfile);
+        orcidProfile.setOrcidIdentifier(new OrcidIdentifier("4444-4444-4444-4443"));
+        OrcidActivities orcidActivities = new OrcidActivities();
+        orcidProfile.setOrcidActivities(orcidActivities);
+        Affiliations affiliations = new Affiliations();
+        orcidActivities.setAffiliations(affiliations);
+        Affiliation affiliation1 = new Affiliation();
+        affiliations.getAffiliation().add(affiliation1);
+        affiliation1.setPutCode("3");
+        affiliation1.setType(AffiliationType.EDUCATION);
+        Organization organization1 = new Organization();
+        affiliation1.setOrganization(organization1);
+        organization1.setName("Different org");
+        OrganizationAddress organizationAddress = new OrganizationAddress();
+        organization1.setAddress(organizationAddress);
+        organizationAddress.setCity("Edinburgh");
+        organizationAddress.setCountry(Iso3166Country.GB);
+        Response response = t2OrcidApiServiceDelegator.updateAffiliations(mockedUriInfo, "4444-4444-4444-4443", orcidMessage);
+        assertNotNull(response);
+
+        OrcidProfile retrievedProfile = orcidProfileManager.retrieveOrcidProfile("4444-4444-4444-4443");
+        List<Affiliation> retreivedAffiliationsList = retrievedProfile.getOrcidActivities().getAffiliations().getAffiliation();
+        assertEquals(2, retreivedAffiliationsList.size());
+        Affiliation updatedAffiliation = retreivedAffiliationsList.get(0);
+        assertEquals("Different org", updatedAffiliation.getOrganization().getName());
+        assertEquals("4444-4444-4444-4447", updatedAffiliation.getSource().getSourceOrcid().getPath());
+        Affiliation existingAffiliation = retreivedAffiliationsList.get(1);
+        assertEquals(Visibility.PRIVATE, existingAffiliation.getVisibility());
+        assertEquals("Eine Institution", existingAffiliation.getOrganization().getName());
+    }
+    
+    @Test(expected = WrongSourceException.class)
+    @Transactional
+    public void testUpdateAffiliationWhenNotSource() {
+        setUpSecurityContext("4444-4444-4444-4443", ScopePathType.AFFILIATIONS_UPDATE);
+        OrcidMessage orcidMessage = new OrcidMessage();
+        orcidMessage.setMessageVersion("1.1");
+        OrcidProfile orcidProfile = new OrcidProfile();
+        orcidMessage.setOrcidProfile(orcidProfile);
+        orcidProfile.setOrcidIdentifier(new OrcidIdentifier("4444-4444-4444-4443"));
+        OrcidActivities orcidActivities = new OrcidActivities();
+        orcidProfile.setOrcidActivities(orcidActivities);
+        Affiliations affiliations = new Affiliations();
+        orcidActivities.setAffiliations(affiliations);
+        Affiliation affiliation1 = new Affiliation();
+        affiliations.getAffiliation().add(affiliation1);
+        affiliation1.setPutCode("2");
+        affiliation1.setType(AffiliationType.EDUCATION);
+        Organization organization1 = new Organization();
+        affiliation1.setOrganization(organization1);
+        organization1.setName("Different org");
+        OrganizationAddress organizationAddress = new OrganizationAddress();
+        organization1.setAddress(organizationAddress);
+        organizationAddress.setCity("Edinburgh");
+        organizationAddress.setCountry(Iso3166Country.GB);
+        t2OrcidApiServiceDelegator.updateAffiliations(mockedUriInfo, "4444-4444-4444-4443", orcidMessage);
+    }
+
 
     private OrcidMessage createStubOrcidMessage() {
         OrcidMessage orcidMessage = new OrcidMessage();

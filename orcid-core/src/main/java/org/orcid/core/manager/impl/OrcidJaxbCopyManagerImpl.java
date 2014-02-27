@@ -122,6 +122,10 @@ public class OrcidJaxbCopyManagerImpl implements OrcidJaxbCopyManager {
                 }
 
             } else {
+                // Check the source of the existing affiliation is the same as
+                // the
+                // current source
+                checkSource(existingAffiliation);
                 if (updatedAffiliation.getVisibility() == null) {
                     // Keep the visibility from the existing affiliation unless
                     // was set by API user
@@ -422,9 +426,20 @@ public class OrcidJaxbCopyManagerImpl implements OrcidJaxbCopyManager {
             return;
         }
         if (!currentSource.equals(existingWork.getWorkSource().getPath())) {
-            throw new WrongSourceException(
-                    "We have detected changes to activities you are not the source of. This may be do to a out of date list. Please re-get the activities list and repost with only changes to activities your client is the source of.");
+            throw new WrongSourceException();
         }
+    }
+
+    private void checkSource(Affiliation existingAffiliation) {
+        String currentSource = sourceManager.retrieveSourceOrcid();
+        if (currentSource == null) {
+            // Not under Spring security so anything goes
+            return;
+        }
+        if (!currentSource.equals(existingAffiliation.getSource().getSourceOrcid().getPath())) {
+            throw new WrongSourceException();
+        }
+
     }
 
     private Funding obtainLikelyEqual(Funding toCompare, List<Funding> toCompareTo) {

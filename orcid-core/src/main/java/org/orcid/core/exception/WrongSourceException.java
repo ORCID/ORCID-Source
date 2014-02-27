@@ -25,7 +25,10 @@ public class WrongSourceException extends IllegalArgumentException {
 
     private static final long serialVersionUID = 1L;
 
+    private static final String DEFAULT_MESSAGE = "We have detected changes to activities you are not the source of. This may be do to a out of date list. Please re-get the activities list and repost with only changes to activities your client is the source of.";
+
     public WrongSourceException() {
+        super(DEFAULT_MESSAGE);
     }
 
     public WrongSourceException(String message, Throwable cause) {
@@ -37,7 +40,7 @@ public class WrongSourceException extends IllegalArgumentException {
     }
 
     public WrongSourceException(Throwable cause) {
-        super(cause);
+        super(DEFAULT_MESSAGE, cause);
     }
 
 }

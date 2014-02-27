@@ -357,8 +357,8 @@ public class JpaJaxbEntityAdapterToOrcidProfileTest extends DBUnitTest {
 
     private void checkAffiliations(List<Affiliation> affiliations) {
         assertNotNull(affiliations);
-        assertEquals(2, affiliations.size());
-        Affiliation affiliation = affiliations.get(1);
+        assertEquals(3, affiliations.size());
+        Affiliation affiliation = affiliations.get(2);
         assertEquals(Visibility.LIMITED, affiliation.getVisibility());
         assertEquals("An institution", affiliation.getOrganization().getName());
         assertEquals("A Department", affiliation.getDepartmentName());
