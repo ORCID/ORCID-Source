@@ -3307,6 +3307,10 @@ p.orcid-id-container{
 .third-menu-level{
 	margin-left: 15px !important;
 }
+/* Allow workspace Chevron behavior work well*/
+.glyphicon-chevron-right:before {
+  content: "\e080";
+}
 
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */
