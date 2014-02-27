@@ -114,17 +114,16 @@ public class OrcidJaxbCopyManagerImpl implements OrcidJaxbCopyManager {
             Affiliation existingAffiliation = existingAffiliationIterator.next();
             Affiliation updatedAffiliation = updatedAffiliationsMap.get(existingAffiliation.getPutCode());
             if (updatedAffiliation == null) {
-                if (!Visibility.PRIVATE.equals(existingAffiliation.getVisibility())) {
+                if (!(Visibility.PRIVATE.equals(existingAffiliation.getVisibility()) || isFromDifferentSource(existingAffiliation))) {
                     // Remove existing affiliations unless they are private (we
                     // need to keep those because the API user won't even know
-                    // they are there)
+                    // they are there) or they are from another source
                     existingAffiliationIterator.remove();
                 }
 
             } else {
                 // Check the source of the existing affiliation is the same as
-                // the
-                // current source
+                // the current source
                 checkSource(existingAffiliation);
                 if (updatedAffiliation.getVisibility() == null) {
                     // Keep the visibility from the existing affiliation unless
@@ -431,15 +430,19 @@ public class OrcidJaxbCopyManagerImpl implements OrcidJaxbCopyManager {
     }
 
     private void checkSource(Affiliation existingAffiliation) {
-        String currentSource = sourceManager.retrieveSourceOrcid();
-        if (currentSource == null) {
-            // Not under Spring security so anything goes
-            return;
-        }
-        if (!currentSource.equals(existingAffiliation.getSource().getSourceOrcid().getPath())) {
+        if (isFromDifferentSource(existingAffiliation)) {
             throw new WrongSourceException();
         }
 
+    }
+
+    private boolean isFromDifferentSource(Affiliation existingAffiliation) {
+        String currentSource = sourceManager.retrieveSourceOrcid();
+        if (currentSource == null) {
+            // Not under Spring security so anything goes
+            return false;
+        }
+        return !currentSource.equals(existingAffiliation.getSource().getSourceOrcid().getPath());
     }
 
     private Funding obtainLikelyEqual(Funding toCompare, List<Funding> toCompareTo) {

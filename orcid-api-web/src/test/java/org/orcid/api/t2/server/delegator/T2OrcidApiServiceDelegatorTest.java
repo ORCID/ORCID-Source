@@ -384,7 +384,7 @@ public class T2OrcidApiServiceDelegatorTest extends DBUnitTest {
 
         OrcidProfile retrievedProfile = orcidProfileManager.retrieveOrcidProfile("4444-4444-4444-4443");
         List<Affiliation> retreivedAffiliationsList = retrievedProfile.getOrcidActivities().getAffiliations().getAffiliation();
-        assertEquals(2, retreivedAffiliationsList.size());
+        assertEquals(3, retreivedAffiliationsList.size());
         Affiliation newAffiliation = retreivedAffiliationsList.get(0);
         assertEquals("A new affiliation", newAffiliation.getOrganization().getName());
         assertEquals("4444-4444-4444-4447", newAffiliation.getSource().getSourceOrcid().getPath());
@@ -422,7 +422,7 @@ public class T2OrcidApiServiceDelegatorTest extends DBUnitTest {
 
         OrcidProfile retrievedProfile = orcidProfileManager.retrieveOrcidProfile("4444-4444-4444-4443");
         List<Affiliation> retreivedAffiliationsList = retrievedProfile.getOrcidActivities().getAffiliations().getAffiliation();
-        assertEquals(2, retreivedAffiliationsList.size());
+        assertEquals(3, retreivedAffiliationsList.size());
         Affiliation updatedAffiliation = retreivedAffiliationsList.get(0);
         assertEquals("Different org", updatedAffiliation.getOrganization().getName());
         assertEquals("4444-4444-4444-4447", updatedAffiliation.getSource().getSourceOrcid().getPath());
