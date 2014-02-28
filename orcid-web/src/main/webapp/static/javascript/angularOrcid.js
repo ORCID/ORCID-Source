@@ -1127,7 +1127,7 @@ function RegistrationCtrl($scope, $compile) {
 		if (basePath.startsWith(baseUrl + 'oauth')) { 
 			var clientName = $('div#RegistrationCtr input[name="client_name"]').val();
 			var clientGroupName = $('div#RegistrationCtr input[name="client_group_name"]').val();
-		    orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'New-Registration-Submit ' + orcidGA.buildClientString(clientGroupName, clientName), 'OAuth']);
+		    orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'New-Registration-Submit' , 'OAuth ' + orcidGA.buildClientString(clientGroupName, clientName)]);
 		    $scope.register.creationType.value = "Member-referred";
 		} else {
 	    	orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'New-Registration-Submit', 'Website']);
@@ -1165,7 +1165,7 @@ function RegistrationCtrl($scope, $compile) {
 	    		if (basePath.startsWith(baseUrl + 'oauth')) {
 	    			var clientName = $('div#RegistrationCtr input[name="client_name"]').val();
 	    			var clientGroupName = $('div#RegistrationCtr input[name="client_group_name"]').val();
-	    		    orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'New-Registration ' + orcidGA.buildClientString(clientGroupName, clientName), 'OAuth']);
+	    		    orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'New-Registration', 'OAuth '+ orcidGA.buildClientString(clientGroupName, clientName)]);
 	    		}
 	    	    else
 	    	    	orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'New-Registration', 'Website']);
