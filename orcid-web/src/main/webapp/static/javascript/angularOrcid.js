@@ -1666,7 +1666,8 @@ function AffiliationCtrl($scope, $compile, $filter, affiliationsSrvc, workspaceS
 			$scope.editAffiliation.affiliationName.value = datum.value;
 			$scope.editAffiliation.city.value = datum.city;
 			$scope.editAffiliation.region.value = datum.region;
-			$scope.editAffiliation.country.value = datum.country;
+			if(datum.country != undefined && datum.country != null)
+				$scope.editAffiliation.country.value = datum.country;
 			if (datum.disambiguatedAffiliationIdentifier != undefined && datum.disambiguatedAffiliationIdentifier != null) {
 				$scope.getDisambiguatedAffiliation(datum.disambiguatedAffiliationIdentifier);
 				$scope.unbindTypeahead();

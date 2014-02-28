@@ -296,6 +296,7 @@ public class FundingsController extends BaseWorkspaceController {
         validateRegion(funding);
         validateCountry(funding);
 
+        copyErrors(funding.getCity(), funding);
         copyErrors(funding.getFundingName(), funding);
         copyErrors(funding.getAmount(), funding);
         copyErrors(funding.getCurrencyCode(), funding);
@@ -652,9 +653,10 @@ public class FundingsController extends BaseWorkspaceController {
         OrgDisambiguatedEntity orgDisambiguatedEntity = orgDisambiguatedDao.find(id);
         Map<String, String> datum = new HashMap<>();
         datum.put("value", orgDisambiguatedEntity.getName());
-        datum.put("city", orgDisambiguatedEntity.getCity());
+        datum.put("city", orgDisambiguatedEntity.getCity());                
         datum.put("region", orgDisambiguatedEntity.getRegion());
-        datum.put("country", orgDisambiguatedEntity.getCountry().value());
+        if(orgDisambiguatedEntity.getCountry() != null)
+            datum.put("country", orgDisambiguatedEntity.getCountry().value());
         datum.put("sourceId", orgDisambiguatedEntity.getSourceId());
         datum.put("sourceType", orgDisambiguatedEntity.getSourceType());
         return datum;
