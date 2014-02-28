@@ -297,6 +297,8 @@ public class FundingsController extends BaseWorkspaceController {
         validateCountry(funding);
 
         copyErrors(funding.getCity(), funding);
+        copyErrors(funding.getRegion(), funding);
+        copyErrors(funding.getCountry(), funding);        
         copyErrors(funding.getFundingName(), funding);
         copyErrors(funding.getAmount(), funding);
         copyErrors(funding.getCurrencyCode(), funding);
