@@ -283,7 +283,7 @@ $(function () {
 		if (basePath.startsWith(baseUrl + 'oauth')) { 
 			var clientName = $('form#loginForm input[name="client_name"]').val();
 			var clientGroupName = $('form#loginForm input[name="client_group_name"]').val();
-		    orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'Sign-In-Submit ' + orcidGA.buildClientString(clientGroupName, clientName), 'OAuth']);
+		    orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'Sign-In-Submit', 'OAuth ' + orcidGA.buildClientString(clientGroupName, clientName)]);
 		} else
 	    	orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'Sign-In-Submit', 'Website']);	
 		$('form#loginForm').attr('disabled', 'disabled');
@@ -300,7 +300,7 @@ $(function () {
 	        	    if (basePath.startsWith(baseUrl + 'oauth/signin')) {
 	        	    	var clientName = $('form#loginForm input[name="client_name"]').val();
 	        	    	var clientGroupName = $('div#RegistrationCtr input[name="client_group_name"]').val();
-	        		    orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'Sign-In ' + orcidGA.buildClientString(clientGroupName, clientName), 'OAuth']);
+	        		    orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'Sign-In', 'OAuth '+ orcidGA.buildClientString(clientGroupName, clientName)]);
 	        	    } else
 	        	    	orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'Sign-In', 'Website']);
 	        	    orcidGA.windowLocationHrefDelay(data.url + window.location.hash);
