@@ -79,7 +79,7 @@ the software.
         <xs:element ref="orcid:client-id" minOccurs="0"/>
         <xs:element ref="orcid:client-secret" minOccurs="0"/>
       </xs:sequence>
-      <xs:attribute name="type" type="orcid:client-type"/>
+      <xs:attribute name="type" type="orcid:client-type" use="optional"/>
     </xs:complexType>
   </xs:element>
   <xs:element name="type" type="orcid:group-type">

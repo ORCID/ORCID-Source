@@ -263,12 +263,14 @@
 						<@orcid.msg 'manage_groups.add_group_link'/>
 					</a>
 				</div>
-				<div class="view-items-link">
-					<a ng-click="listGroups()">
-						<span class="glyphicon glyphicon-list-alt blue"></span>
-						<@orcid.msg 'manage_groups.view_all_link'/>
-					</a>
-				</div>		
+				<!--  
+					<div class="view-items-link">
+						<a ng-click="listGroups()">
+							<span class="glyphicon glyphicon-list-alt blue"></span>
+							<@orcid.msg 'manage_groups.view_all_link'/>
+						</a>
+					</div>
+				-->		
 			</div>			
 		</div>
 		
