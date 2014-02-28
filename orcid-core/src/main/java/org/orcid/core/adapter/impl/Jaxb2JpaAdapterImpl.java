@@ -410,9 +410,9 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
     	Map<String, ProfileFundingEntity> updatedProfileGrantEntitiesMap = createProfileFundingEntitiesMap(updatedProfileFundingEntities);
     	
     	// Remove orphans
-    	for(Iterator<ProfileFundingEntity> iterator = updatedProfileFundingEntities.iterator(); iterator.hasNext();){
+    	for(Iterator<ProfileFundingEntity> iterator = existingProfileFundingEntities.iterator(); iterator.hasNext();){
     		ProfileFundingEntity existingEntity = iterator.next();
-    		if(existingEntity.getId() != null && !updatedProfileGrantEntitiesMap.containsKey(Long.toString(existingEntity.getId()))){
+    		if(!updatedProfileGrantEntitiesMap.containsKey(String.valueOf(existingEntity.getId()))){
     			iterator.remove();
     		}
     	}
