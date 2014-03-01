@@ -3646,7 +3646,8 @@ function adminGroupsCtrl($scope,$compile){
     	$('#admin_groups_modal').toggle();
 	};
 	
-	$scope.showAddGroupModal = function() {
+	$scope.showAddGroupModal = function() {		
+		$scope.getGroup();
 		$.colorbox({                      
 			html : $compile($('#add-new-group').html())($scope),				
 				onLoad: function() {
@@ -3654,7 +3655,7 @@ function adminGroupsCtrl($scope,$compile){
 			}
 		});
 		
-		$.colorbox.resize({width:"450px" , height:"360px"});
+		$.colorbox.resize({width:"400px" , height:"390px"});
 	};
 	
 	$scope.closeModal = function() {

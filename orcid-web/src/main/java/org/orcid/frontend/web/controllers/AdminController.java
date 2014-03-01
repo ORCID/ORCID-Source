@@ -344,7 +344,7 @@ public class AdminController extends BaseController {
      * */
     @RequestMapping(value = "/create-group.json", method = RequestMethod.POST)
     public @ResponseBody
-    Group createGroup(@RequestBody Group group) {
+    Group createGroup(@RequestBody Group group) {        
         group.setErrors(new ArrayList<String>());
 
         validateGroupEmail(group);
