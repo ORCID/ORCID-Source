@@ -296,6 +296,9 @@ public class FundingsController extends BaseWorkspaceController {
         validateRegion(funding);
         validateCountry(funding);
 
+        copyErrors(funding.getCity(), funding);
+        copyErrors(funding.getRegion(), funding);
+        copyErrors(funding.getCountry(), funding);        
         copyErrors(funding.getFundingName(), funding);
         copyErrors(funding.getAmount(), funding);
         copyErrors(funding.getCurrencyCode(), funding);
@@ -436,7 +439,7 @@ public class FundingsController extends BaseWorkspaceController {
             String amount = funding.getAmount().getValue();
             long lAmount = 0;
             // TODO Chck this regex
-            String pattern = "[0-9]{1,3}(?:[0-9]*(?:[.,][0-9]{2})?|(?:,[0-9]{3})*(?:\\.[0-9]{2})?|(?:\\.[0-9]{3})*(?:,[0-9]{2})?)";
+            String pattern = "((\\d{1,3}(\\,(\\d){3})*)|\\d*)(.\\d{1,3})?";
             if (!amount.matches(pattern)) {
                 setError(funding.getAmount(), "Invalid.fundings.amount");
             }
@@ -461,7 +464,7 @@ public class FundingsController extends BaseWorkspaceController {
         return funding;
     }
 
-    @RequestMapping(value = "/funding/nameValidate.json", method = RequestMethod.POST)
+    @RequestMapping(value = "/funding/orgNameValidate.json", method = RequestMethod.POST)
     public @ResponseBody
     FundingForm validateName(@RequestBody FundingForm funding) {
         funding.getFundingName().setErrors(new ArrayList<String>());
@@ -652,9 +655,10 @@ public class FundingsController extends BaseWorkspaceController {
         OrgDisambiguatedEntity orgDisambiguatedEntity = orgDisambiguatedDao.find(id);
         Map<String, String> datum = new HashMap<>();
         datum.put("value", orgDisambiguatedEntity.getName());
-        datum.put("city", orgDisambiguatedEntity.getCity());
+        datum.put("city", orgDisambiguatedEntity.getCity());                
         datum.put("region", orgDisambiguatedEntity.getRegion());
-        datum.put("country", orgDisambiguatedEntity.getCountry().value());
+        if(orgDisambiguatedEntity.getCountry() != null)
+            datum.put("country", orgDisambiguatedEntity.getCountry().value());
         datum.put("sourceId", orgDisambiguatedEntity.getSourceId());
         datum.put("sourceType", orgDisambiguatedEntity.getSourceType());
         return datum;

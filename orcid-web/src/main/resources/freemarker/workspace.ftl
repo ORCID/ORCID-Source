@@ -31,6 +31,13 @@
     </div>
 </#if>
 
+
+<#if invalidOrcid?? && invalidOrcid>
+    <div class="alert alert-success">
+        <strong><@spring.message "orcid.frontend.web.invalid_switch_orcid"/></strong>
+    </div>
+</#if>
+
 <div class="row workspace-top public-profile">
 
 	<#-- hidden divs that trigger angular -->
@@ -85,17 +92,9 @@
 		        			<span ng-show="externalIdentifier.externalIdUrl"><a href="{{externalIdentifier.externalIdUrl.value}}" target="_blank">{{externalIdentifier.externalIdCommonName.content}} {{externalIdentifier.externalIdReference.content}}</a></span>
 			   				<a ng-click="deleteExternalIdentifier($index)" class="glyphicon glyphicon-trash grey"></a>       			
        			</div>
-			</div>
-													    
-	        <@security.authorize ifAnyGranted="ROLE_ADMIN, ROLE_GROUP, ROLE_BASIC, ROLE_BASIC_INSTITUTION, ROLE_PREMIUM, ROLE_PREMIUM_INSTITUTION">
-	        	 <p><a href="<@spring.url "/manage-clients" />">${springMacroRequestContext.getMessage("workspace.ManageClientCredentials")}</a></p>	        	 
-	        </@security.authorize>
-			<@security.authorize ifAnyGranted="ROLE_ADMIN">
-				<p><a href="<@spring.url "/admin-actions" />"><@orcid.msg 'admin.workspace_link' /></a></p>
-			</@security.authorize>
-			
-			<p class="hoover-white-fonts">
-	       		<!-- <a href="${baseUriHttp}/${(profile.orcidIdentifier.path)!}" class="label btn-primary"><@orcid.msg 'workspace.ViewPublicORCIDRecord'/></a> -->	       
+			</div>													    
+	        	        
+			<p class="hoover-white-fonts">	       
 	       		<a href="<@spring.url '/account/manage-bio-settings'/>" id="update-personal-modal-link" class="label btn-primary"><@orcid.msg 'workspace.Update'/></a>
 	        </p>
 			
@@ -126,21 +125,12 @@
 		                <a href="#workspace-employments" class="btn-update no-icon" ng-click="workspaceSrvc.openEmployment()"><@orcid.msg 'workspace.view'/></a>
 		             </div>
 	                <!-- fundings -->
-					<#if RequestParameters['funding']??>
-						<div class="workspace-overview  col-md-3 col-sm-3 col-xs-6">
-	        				<a href="#workspace-fundings" class="overview-count" ng-click="workspaceSrvc.openFunding()"><span ng-bind="fundingSrvc.fundings.length"></a>
-	        				<a href="#workspace-fundings" class="overview-title" ng-click="workspaceSrvc.openFunding()"><@orcid.msg 'workspace.Funding'/></a>
-	        				<br />
-	        				<a href="#workspace-employments" class="btn-update no-icon" ng-click="workspaceSrvc.openFunding()"><@orcid.msg 'workspace.view'/></a>
-	        			</div>
-					<#else>
-						<div class="workspace-overview  col-md-3 col-sm-3 col-xs-6">
-	        				<a href="#workspace-fundings" class="overview-count">${(profile.orcidActivities.orcidFundings.orcidFunding?size)!0}</a>
-	        				<a href="#workspace-fundings" class="overview-title"><@orcid.msg 'workspace.Funding'/></a>
-	        				<br />
-	        				<a target="_blank" href="http://support.orcid.org/forums/179657-coming-soon" class="btn-update no-icon"><@orcid.msg 'workspace.ComingSoon'/></a>
-	        			</div>
-					</#if>	        		
+					<div class="workspace-overview  col-md-3 col-sm-3 col-xs-6">
+        				<a href="#workspace-fundings" class="overview-count" ng-click="workspaceSrvc.openFunding()"><span ng-bind="fundingSrvc.fundings.length"></a>
+        				<a href="#workspace-fundings" class="overview-title" ng-click="workspaceSrvc.openFunding()"><@orcid.msg 'workspace.Funding'/></a>
+        				<br />
+        				<a href="#workspace-employments" class="btn-update no-icon" ng-click="workspaceSrvc.openFunding()"><@orcid.msg 'workspace.view'/></a>
+        			</div>
 	        	</div>
         	</div>
         	<div class="workspace-accordion" id="workspace-accordion">
@@ -163,9 +153,7 @@
             	<!-- Affiliations -->
                 <#include "workspace_affiliations_body_list.ftl"/>
                 <!-- Fundings -->
-                <#if RequestParameters['funding']??>
-                	<#include "workspace_fundings_body_list.ftl"/>
-                </#if>
+               	<#include "workspace_fundings_body_list.ftl"/>
 		        <!-- Works -->                
                 <div id="workspace-publications" class="workspace-accordion-item workspace-accordion-active" ng-controller="WorkCtrl">
                 	<div class="workspace-accordion-header">

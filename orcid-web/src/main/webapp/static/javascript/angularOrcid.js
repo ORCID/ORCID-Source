@@ -1146,7 +1146,7 @@ function RegistrationCtrl($scope, $compile) {
 		if (basePath.startsWith(baseUrl + 'oauth')) { 
 			var clientName = $('div#RegistrationCtr input[name="client_name"]').val();
 			var clientGroupName = $('div#RegistrationCtr input[name="client_group_name"]').val();
-		    orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'New-Registration-Submit ' + orcidGA.buildClientString(clientGroupName, clientName), 'OAuth']);
+		    orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'New-Registration-Submit' , 'OAuth ' + orcidGA.buildClientString(clientGroupName, clientName)]);
 		    $scope.register.creationType.value = "Member-referred";
 		} else {
 	    	orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'New-Registration-Submit', 'Website']);
@@ -1184,7 +1184,7 @@ function RegistrationCtrl($scope, $compile) {
 	    		if (basePath.startsWith(baseUrl + 'oauth')) {
 	    			var clientName = $('div#RegistrationCtr input[name="client_name"]').val();
 	    			var clientGroupName = $('div#RegistrationCtr input[name="client_group_name"]').val();
-	    		    orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'New-Registration ' + orcidGA.buildClientString(clientGroupName, clientName), 'OAuth']);
+	    		    orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'New-Registration', 'OAuth '+ orcidGA.buildClientString(clientGroupName, clientName)]);
 	    		}
 	    	    else
 	    	    	orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'New-Registration', 'Website']);
@@ -1685,7 +1685,8 @@ function AffiliationCtrl($scope, $compile, $filter, affiliationsSrvc, workspaceS
 			$scope.editAffiliation.affiliationName.value = datum.value;
 			$scope.editAffiliation.city.value = datum.city;
 			$scope.editAffiliation.region.value = datum.region;
-			$scope.editAffiliation.country.value = datum.country;
+			if(datum.country != undefined && datum.country != null)
+				$scope.editAffiliation.country.value = datum.country;
 			if (datum.disambiguatedAffiliationIdentifier != undefined && datum.disambiguatedAffiliationIdentifier != null) {
 				$scope.getDisambiguatedAffiliation(datum.disambiguatedAffiliationIdentifier);
 				$scope.unbindTypeahead();
@@ -1887,6 +1888,7 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc) {
 	};
 	
 	$scope.addFundingModal = function(type){
+		$scope.removeDisambiguatedFunding();
 		$.ajax({
 			url: $('body').data('baseurl') + 'fundings/funding.json',
 			dataType: 'json',
@@ -1902,7 +1904,7 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc) {
 	};
 	
 	$scope.showAddModal = function(){
-		$scope.editTranslatedTitle = false;
+		$scope.editTranslatedTitle = false;		
 		$.colorbox({        	
 			html: $compile($('#add-funding-modal').html())($scope),			
 			width: formColorBoxResize(),
@@ -1968,7 +1970,7 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc) {
                     if ($('#fundingName').val()) {
                         q += encodeURIComponent($('#fundingName').val());
                     }
-                    q += '?limit=' + numOfResults + '&funders-only=' + $('#fundersOnly').is(':checked');
+                    q += '?limit=' + numOfResults + '&funders-only=true';
                     return q;
                 }
 			},
@@ -1997,9 +1999,12 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc) {
 		console.log(angular.toJson(datum));
 		if (datum != undefined && datum != null) {
 			$scope.editFunding.fundingName.value = datum.value;
+			$scope.editFunding.fundingName.errors = [];
 			$scope.editFunding.city.value = datum.city;
+			$scope.editFunding.city.errors = []; 
 			$scope.editFunding.region.value = datum.region;
 			$scope.editFunding.country.value = datum.country;
+			$scope.editFunding.country.errors = [];
 			
 			if (datum.disambiguatedFundingIdentifier != undefined && datum.disambiguatedFundingIdentifier != null) {
 				$scope.getDisambiguatedFunding(datum.disambiguatedFundingIdentifier);
