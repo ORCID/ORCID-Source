@@ -18,7 +18,9 @@ package org.orcid.frontend.web.controllers;
 
 import java.net.MalformedURLException;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -40,6 +42,7 @@ import org.orcid.pojo.ajaxForm.Text;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -101,17 +104,18 @@ public class GroupAdministratorController extends BaseWorkspaceController {
         emptyClient.setClientSecret(Text.valueOf(""));
         emptyClient.setType(Text.valueOf(""));
         ArrayList<RedirectUri> redirectUris = new ArrayList<RedirectUri>();
-        RedirectUri emptyRedirectUri = new RedirectUri();
-        emptyRedirectUri.setType(Text.valueOf(RedirectUriType.DEFAULT.value()));
-        emptyRedirectUri.setValue(Text.valueOf(""));
-        redirectUris.add(emptyRedirectUri);
         emptyClient.setRedirectUris(redirectUris);
         return emptyClient;
     }
     
     private boolean validateUrl(String url){
+        String urlToCheck = url;
+        //Add a dummy http protocol if the redirect uri doesnt start with it.
+        if(!url.startsWith("http://") && !url.startsWith("https://"))
+            urlToCheck = "http://" + urlToCheck;
+        
         try {
-            new java.net.URL(url);
+            new java.net.URL(urlToCheck);
         }
         catch ( MalformedURLException e ) {
             return false;
@@ -267,5 +271,14 @@ public class GroupAdministratorController extends BaseWorkspaceController {
         }
         
         return clients;
+    }
+    
+    @ModelAttribute("redirectUriTypes")
+    public Map<String, String> getRedirectUriTypes(){
+        Map<String, String> redirectUriTypes = new LinkedHashMap<String, String>();
+        for(RedirectUriType rType : RedirectUriType.values()) {
+            redirectUriTypes.put(rType.value(), rType.value());
+        }
+        return redirectUriTypes;
     }
 }

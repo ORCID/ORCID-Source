@@ -16,13 +16,18 @@
  */
 package org.orcid.core.manager.impl;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.manager.EmailManager;
 import org.orcid.jaxb.model.message.Email;
-import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.persistence.dao.EmailDao;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.springframework.transaction.annotation.Transactional;
@@ -80,5 +85,24 @@ public class EmailManagerImpl implements EmailManager {
     @Transactional
     public void removeEmail(String orcid, String email, boolean removeIfPrimary) {
         emailDao.removeEmail(orcid, email, removeIfPrimary);
+    }
+    
+    @Override
+    public Map<String, String> findIdByEmail(String csvEmail) {
+        Map<String, String> emailIds = new TreeMap<String, String>();
+        List<String> emailList = new ArrayList<String>();
+        String [] emails = csvEmail.split(",");
+        for(String email : emails) {
+            if(StringUtils.isNotBlank(email.trim()))
+                emailList.add(email.trim());
+        }
+        List ids = emailDao.findIdByCaseInsensitiveEmail(emailList);
+        for (Iterator it = ids.iterator(); it.hasNext(); ) {
+            Object[] orcidEmail = (Object[]) it.next();
+            String orcid = (String) orcidEmail[0];
+            String email = (String) orcidEmail[1];
+            emailIds.put(email, orcid);
+        }
+        return emailIds;
     }
 }

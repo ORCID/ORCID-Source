@@ -72,7 +72,7 @@ public class AdminController extends BaseController {
 
     @Resource
     ProfileWorkManager profileWorkManager;
-
+    
     @Resource
     ExternalIdentifierManager externalIdentifierManager;
 
@@ -319,6 +319,12 @@ public class AdminController extends BaseController {
         if (result.getErrors() == null || result.getErrors().size() == 0)
             orcidProfileManager.reactivateOrcidProfile(toReactivate);
         return result;
+    }
+    
+    @RequestMapping(value = "/find-id", method = RequestMethod.GET)
+    public @ResponseBody
+    Map<String, String> findIdByEmail(@RequestParam("csvEmails") String csvEmails) {
+        return emailManager.findIdByEmail(csvEmails);
     }
 
     /**

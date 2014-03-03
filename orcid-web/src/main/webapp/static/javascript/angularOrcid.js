@@ -3037,6 +3037,7 @@ function SwitchUserCtrl($scope, $compile, $document){
 function ClientEditCtrl($scope, $compile){	
 	$scope.clients = [];
 	$scope.newClient = null;
+	$scope.emptyRedirectUri = {value: {value: ''},type: {value: 'default'}};
 			
 	// Get the list of clients associated with this user
 	$scope.getClients = function(){
@@ -3081,17 +3082,17 @@ function ClientEditCtrl($scope, $compile){
 			},
 	        scrolling: true
         });
-        $.colorbox.resize({width:"580px" , height:"380px"});
+        $.colorbox.resize({width:"400px" , height:"450px"});
 	};
 	
 	// Add a new uri input field to a new client
 	$scope.addUriToNewClientTable = function(){		
-		$scope.newClient.redirectUris.push({value: '',type: 'default'});
+		$scope.newClient.redirectUris.push({value: {value: ''},type: {value: 'default'}});	
 	};
 	
 	// Add a new uri input field to a existing client
 	$scope.addUriToExistingClientTable = function(){
-		$scope.clientToEdit.redirectUris.push({value: '',type: 'default'});
+		$scope.clientToEdit.redirectUris.push({value: {value: ''},type: {value: 'default'}});
 	};
 	
 	// Display the modal to edit a client
@@ -3106,7 +3107,7 @@ function ClientEditCtrl($scope, $compile){
 			},
 	        scrolling: true
         });		
-        $.colorbox.resize({width:"450px" , height:"420px"});   
+        $.colorbox.resize({width:"400px" , height:"450px"});   
 	};		
 	
 	// Display client details: Client ID and Client secret
@@ -3121,11 +3122,11 @@ function ClientEditCtrl($scope, $compile){
 			scrolling: true
         });
 		
-        $.colorbox.resize({width:"550px" , height:"200px"});
+        $.colorbox.resize({width:"550px" , height:"225px"});
         
 	};
 	
-	$scope.closeColorBox = function(){
+	$scope.closeModal = function(){
 		$.colorbox.close();	
 	};
 	
@@ -3133,7 +3134,12 @@ function ClientEditCtrl($scope, $compile){
 	// Delete an uri input field 
 	$scope.deleteUri = function(idx){
 		$scope.clientToEdit.redirectUris.splice(idx, 1);
-	};
+	};		
+	
+	// Delete an uri input field 
+	$scope.deleteJustCreatedUri = function(idx){
+		$scope.newClient.redirectUris.splice(idx, 1);
+	};	
 	
 	//Submits the client update request
 	$scope.submitEditClient = function(){				
@@ -3292,7 +3298,7 @@ function profileDeactivationAndReactivationCtrl($scope,$compile){
 	$scope.deactivateMessage = om.get('admin.profile_deactivation.success');
 	$scope.reactivateMessage = om.get('admin.profile_reactivation.success');
 	$scope.showDeactivateModal = false;
-	$scope.showReactivateModal = false;
+	$scope.showReactivateModal = false;	
 
 	$scope.toggleDeactivationModal = function(){
 		$scope.showDeactivateModal = !$scope.showDeactivateModal;
@@ -3745,3 +3751,45 @@ function adminGroupsCtrl($scope,$compile){
 	//init 
 	$scope.getGroup();
 };
+
+function findIdsCtrl($scope,$compile){
+	$scope.emails = "";
+	$scope.emailIdsMap = {};
+	$scope.showSection = false;
+	
+	$scope.toggleSection = function(){
+		$scope.showSection = !$scope.showSection;
+    	$('#find_ids_section').toggle();
+	};
+	
+	$scope.findIds = function() {
+		$.ajax({
+	        url: orcidVar.baseUri+'/admin-actions/find-id?csvEmails=' + $scope.emails,	        
+	        type: 'GET',
+	        dataType: 'json',
+	        success: function(data){
+	        	$scope.$apply(function(){ 
+	        		$scope.emailIdsMap = data;
+	        		$scope.showEmailIdsModal();
+				});
+	        }
+	    }).fail(function(error) { 
+	    	// something bad is happening!	    	
+	    	console.log("Error deprecating the account");	    	
+	    });	
+	};
+	
+	$scope.showEmailIdsModal = function() {
+		$.colorbox({                      
+			html : $compile($('#email-ids-modal').html())($scope),
+				scrolling: true,
+				onLoad: function() {
+				$('#cboxClose').remove();
+			},
+			scrolling: true
+		});
+		
+		$.colorbox.resize({width:"450px" , height:"225px"});
+	};	
+};
+

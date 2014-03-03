@@ -25,6 +25,25 @@
   </div>
 </script>
 
+<script type="text/ng-template" id="email-ids-modal">
+	<div style="padding:20px">
+		<h1><@orcid.msg 'admin.ids_by_email'/></h1>
+		<table border="0">
+			<tr>
+				<td><strong><@orcid.msg 'admin.email'/></strong></td>
+				<td><strong><@orcid.msg 'admin.orcid'/></strong></td>
+			</tr>
+			<tr ng-repeat="(email, orcid) in emailIdsMap">
+				<td>{{email}}:</td>
+				<td>{{orcid}}</td>
+			</tr>
+		</table>
+		<div class="control-group">
+			<a href="" class="cancel-action" ng-click="closeModal()"><@orcid.msg 'freemarker.btnclose'/></a>
+		</div>
+	</div>
+</script>
+
 <script type="text/ng-template" id="confirm-deprecation-modal">
   <div style="padding:20px">
     <a id="cboxClose" class="btn pull-right close-button" ng-click="closeModal()">X</a>
@@ -363,6 +382,41 @@
 				</div>
 			</div>
 		</div>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		<!-- Find Ids by email -->
+		<a name="find-ids"></a>
+		<div ng-controller="findIdsCtrl" class="workspace-accordion-item" ng-cloak>
+			<p>
+				<a  ng-show="showSection" ng-click="toggleSection()"><span class="glyphicon glyphicon-chevron-down blue"></span></span><@orcid.msg 'admin.find_ids' /></a>
+				<a  ng-hide="showSection" ng-click="toggleSection()"><span class="glyphicon glyphicon-chevron-right blue"></span></span><@orcid.msg 'admin.find_ids' /></a>
+			</p>			  	
+			<div class="collapsible bottom-margin-small admin-modal" id="find_ids_section" style="display:none;">
+				<div class="form-group">
+				</div>
+				<div class="controls save-btns pull-left">
+					<span id="find-ids" ng-click="findIds()" class="btn btn-primary"><@orcid.msg 'admin.find_ids_by_email'/></span>	
+					<input type="text" id="emails" ng-model="emails" placeholder="<@orcid.msg 'admin.csv_emails' />" class="form-control" />	
+				</div>
+			</div>	
+		</div>
+		
+		
+		
+		
+		
+		
+		
+		
 	</div>
 		
 </div>
