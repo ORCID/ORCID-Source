@@ -62,9 +62,9 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType( propOrder = { "type", "departmentName", "roleTitle", "startDate", "endDate", "organization", "source" })
+@XmlType(propOrder = { "type", "departmentName", "roleTitle", "startDate", "endDate", "organization", "source" })
 @XmlRootElement(name = "affiliation")
-public class Affiliation implements Serializable, VisibilityType {
+public class Affiliation implements Serializable, VisibilityType, Activity {
 
     private final static long serialVersionUID = 1L;
     @XmlElement(name = "type", required = true)
@@ -274,6 +274,18 @@ public class Affiliation implements Serializable, VisibilityType {
         this.putCode = value;
     }
 
+    @Override
+    public String retrieveSourcePath() {
+        if (source == null) {
+            return null;
+        }
+        SourceOrcid sourceOrcid = source.getSourceOrcid();
+        if (sourceOrcid == null) {
+            return null;
+        }
+        return sourceOrcid.getPath();
+    }
+    
     /**
      * 
      * Note that put-code is not part of hashCode or equals! This is to allow

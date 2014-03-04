@@ -120,6 +120,8 @@
 	</bean>
 	
 	<bean id="orcidProfileCacheManager" class="org.orcid.core.manager.impl.OrcidProfileCacheManagerImpl"/>
+	
+	<bean id="orcidJaxbCopyManager" class="org.orcid.core.manager.impl.OrcidJaxbCopyManagerImpl"/>
 
 	<bean id="webhookManager" class="org.orcid.core.manager.impl.WebhookManagerImpl">
 		<property name="maxJobsPerClient" value="${org.orcid.core.maxJobsPerClient:50}" />

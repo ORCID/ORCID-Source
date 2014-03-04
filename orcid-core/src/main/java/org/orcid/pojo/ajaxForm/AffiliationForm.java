@@ -18,6 +18,8 @@ package org.orcid.pojo.ajaxForm;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 import org.orcid.jaxb.model.message.Affiliation;
@@ -182,7 +184,23 @@ public class AffiliationForm implements ErrorsInterface, Serializable {
 
     public static AffiliationForm valueOf(Affiliation affiliation) {
         AffiliationForm form = new AffiliationForm();
-               
+
+        GregorianCalendar cal = new GregorianCalendar(0,0,0);
+        if (affiliation.getStartDate() != null && affiliation.getStartDate().getYear() != null) {
+            if (!PojoUtil.isEmpty(affiliation.getStartDate().getYear().getValue())) {
+                cal.set(Calendar.YEAR, Integer.parseInt(affiliation.getStartDate().getYear().getValue()));
+                if (!PojoUtil.isEmpty(affiliation.getStartDate().getMonth().getValue()))
+                    cal.set(Calendar.MONTH, Integer.parseInt(affiliation.getStartDate().getMonth().getValue())-1);
+                if (!PojoUtil.isEmpty(affiliation.getStartDate().getDay().getValue()))
+                    cal.set(Calendar.DAY_OF_MONTH, Integer.parseInt(affiliation.getStartDate().getDay().getValue()));
+            } else if (!PojoUtil.isEmpty(affiliation.getEndDate().getYear().getValue())) {
+                cal.set(Calendar.YEAR, Integer.parseInt(affiliation.getEndDate().getYear().getValue()));
+                if (!PojoUtil.isEmpty(affiliation.getEndDate().getMonth().getValue()))
+                    cal.set(Calendar.MONTH, Integer.parseInt(affiliation.getEndDate().getMonth().getValue())-1);
+                if (!PojoUtil.isEmpty(affiliation.getEndDate().getDay().getValue()))
+                    cal.set(Calendar.DAY_OF_MONTH, Integer.parseInt(affiliation.getEndDate().getDay().getValue()));
+            }            
+        }
         
         form.setPutCode(Text.valueOf(affiliation.getPutCode()));
         form.setVisibility(Visibility.valueOf(affiliation.getVisibility()));
