@@ -153,7 +153,7 @@
 		    </div>
 		</form>		
 		<div>
-			<a href ng-click="addUriToNewClientTable()" class="glyphicon glyphicon-plus blue"><@orcid.msg 'manage_clients.add_redirect_uri'/></a>
+			<a href ng-click="addUriToNewClientTable()"><span class="glyphicon glyphicon-plus blue"></span> <@orcid.msg 'manage_clients.add_redirect_uri'/></a>
 		</div>
 		<div class="controls save-btns pull-left bottom-margin-small">			
 			<button class="btn btn-primary" ng-click="submitAddClient()"><@orcid.msg 'manage_clients.submit'/></button>
@@ -164,11 +164,8 @@
 
 
 <div class="row">
-	<div class="col-md-3 col-sm-3 col-xs-12 hs override">
-		<ul class="settings-nav">
-			<li><a href="<@spring.url '/account' />#account-settings"><@orcid.msg 'manage.accountsettings'/></a></li>
-			<li><a href="<@spring.url '/account' />#manage-permissions"><@orcid.msg 'manage.managepermission'/></a></li>
-		</ul>
+	<div class="col-md-3 col-sm-3 col-xs-12">		
+		<!-- <#include "admin_menu.ftl"/> -->
 	</div>
 	<div class="col-md-9 col-sm-9 col-xs-12">			
 		<div ng-controller="ClientEditCtrl" class="clients">			
