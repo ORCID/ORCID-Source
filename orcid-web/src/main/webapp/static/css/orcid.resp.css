@@ -1471,7 +1471,7 @@ ul.privacyHelp li.private {
 	top: 0;
 	left: 0;
 	z-index: 9999;
-	/*overflow: hidden;*/
+	overflow: hidden; /* Do not change */
 }
 
 
@@ -1491,7 +1491,7 @@ ul.privacyHelp li.private {
 }
 
 #cboxLoadedContent {
-	overflow: auto;
+	overflow: scroll;
 }
 
 #cboxTitle {
@@ -1851,10 +1851,6 @@ a:hover {
     margin: 10px 0 0 0;
 }
 
-.affiliation-title, .funding-title{
-	margin-top: 0 !important;	
-}
-
 #edit-affiliation #startDay,
 #edit-affiliation #startMonth,
 #edit-affiliation #endDay,
@@ -1976,6 +1972,7 @@ a:hover {
 
 .colorbox-content {
 	padding: 20px;
+	overflow: hidden;
 }
 
 .alert {
@@ -3331,6 +3328,10 @@ p.orcid-id-container{
 .third-menu-level{
 	margin-left: 15px !important;
 }
+/* Allow workspace Chevron behavior work well*/
+.glyphicon-chevron-right:before {
+  content: "\e080";
+}
 
 
 
@@ -3846,6 +3847,14 @@ p.orcid-id-container{
 	#cboxContent, 
 	#cboxLoadedContent{
 		width: 100% !important;			
+	}
+	
+	#cboxContent{
+		overflow: auto;
+	}
+	
+	#colorbox{
+		overflow: hidden;
 	}
 	
 	

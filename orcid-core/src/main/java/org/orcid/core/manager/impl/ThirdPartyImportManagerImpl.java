@@ -59,7 +59,7 @@ public class ThirdPartyImportManagerImpl implements ThirdPartyImportManager {
     }
     
     @Override
-    @CacheEvict(value = {"read-access-clients","import-works-clients"}, allEntries=true)    
+    @CacheEvict(value = {"read-access-clients","import-works-clients","import-funding-clients"}, allEntries=true)    
     public void evictAll() {
         LOGGER.debug("read-access-clients and import-works-clients all keys  evicted");
     }
