@@ -212,7 +212,7 @@ $(function () {
     			wHtml = wHtml + om.get('common.js.domain.warn.template').replace('{{curentDomian}}',window.location.hostname);
     			wHtml = wHtml + '</strong> ';
     			//don't let the warning be disabled for test-warn-dismiss
-    			if (window.location.hostname.toLowerCase() != "sandbox-1.orcid.org") {
+    			if (window.location.hostname.toLowerCase() != "sandbox-1.orcid.org" && window.location.hostname.toLowerCase() != "sandbox.orcid.org") {
     				wHtml = wHtml + ' <div style="float: right" class="small"><a href="#" id="test-warn-dismiss">'
     				wHtml = wHtml + om.get('common.cookies.click_dismiss');
     				wHtml = wHtml + '</a></div>';

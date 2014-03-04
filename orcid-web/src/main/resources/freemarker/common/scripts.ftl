@@ -52,6 +52,4 @@ if (typeof angular == 'undefined') {
 
 <script type="text/javascript" src="${staticCdn}/javascript/script.js?v=${ver}"></script>
 
-<script type="text/javascript" src="${staticCdn}/javascript/aprilFools.js?v=${ver}"></script>
-
 <script type="text/javascript" src="${staticCdn}/javascript/angularOrcid.js?v=${ver}"></script>
