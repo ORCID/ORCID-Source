@@ -1,4 +1,4 @@
-<#--
+<!--
 
     =============================================================================
 
@@ -16,11 +16,13 @@
     =============================================================================
 
 -->
-<#escape x as x?html>
-	<#if (profile.orcidBio.biography.content)?? && (profile.orcidBio.biography.content)?has_content>
-   		<p>
-   			<strong>${springMacroRequestContext.getMessage("manage_bio_settings.labelbiography")}</strong><br />
-   			<div style="white-space: pre-wrap">${(profile.orcidBio.biography.content)}</div>
-   		</p>
-   	</#if>
-</#escape>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+        
+	<changeSet id="CLAIM-ALL-GROUPS" author="Angel Montenegro" dbms="postgresql">
+        <sql>
+            update profile set claimed=true where orcid_type='GROUP';
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>
