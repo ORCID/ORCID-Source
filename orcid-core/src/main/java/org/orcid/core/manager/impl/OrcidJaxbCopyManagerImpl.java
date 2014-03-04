@@ -149,24 +149,32 @@ public class OrcidJaxbCopyManagerImpl implements OrcidJaxbCopyManager {
             if (updatedActivity.getVisibility() == null) {
                 updatedActivity.setVisibility(defaultVisibility);
             }
+            if (updatedActivity.getPutCode() == null) {
+                // Check source is correct for any newly added activities, if
+                // mentioned
+                String newSourcePath = updatedActivity.retrieveSourcePath();
+                if (newSourcePath != null) {
+                    checkSource(updatedActivity);
+                }
+            }
         }
         existingActivities.retrieveActivities().addAll((List) updatedActivities.retrieveActivities());
     }
 
-    private void checkSource(Activity existingActivity) {
-        if (isFromDifferentSource(existingActivity)) {
+    private void checkSource(Activity activity) {
+        if (isFromDifferentSource(activity)) {
             throw new WrongSourceException();
         }
 
     }
 
-    private boolean isFromDifferentSource(Activity existingActivity) {
+    private boolean isFromDifferentSource(Activity activity) {
         String currentSource = sourceManager.retrieveSourceOrcid();
         if (currentSource == null) {
             // Not under Spring security so anything goes
             return false;
         }
-        return !currentSource.equals(existingActivity.retrieveSourcePath());
+        return !currentSource.equals(activity.retrieveSourcePath());
     }
 
     @Override
