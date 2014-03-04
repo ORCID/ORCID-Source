@@ -255,6 +255,12 @@ a:hover {
 	list-style: none;
 }
 
+.privacy-control{
+	width: 130px;
+	padding: 0;
+	margin-right: 20px;	
+}
+
 .row {
 	*zoom: 1;
 }
@@ -1863,6 +1869,20 @@ a:hover {
 	width: 100px;
 }
 
+#edit-affiliation .spin{
+	margin-top: 10px;
+	vertical-align: -10px;
+}
+
+#edit-affiliation .alert{
+	width: 100%;
+	margin-top: 10px;
+}
+
+.add-work{
+	width: 800px;
+}
+
 .add-work input.input-xlarge,
 .add-work #workType{
 	width: 95%;
@@ -2298,6 +2318,10 @@ a:hover {
 
 .manage-bio h4,.save-btns {
 	margin-top: 30px;
+}
+
+.save-btns{
+	margin-right: 20px;
 }
 
 .workspace-help {
@@ -3307,6 +3331,8 @@ p.orcid-id-container{
 .third-menu-level{
 	margin-left: 15px !important;
 }
+
+
 
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */

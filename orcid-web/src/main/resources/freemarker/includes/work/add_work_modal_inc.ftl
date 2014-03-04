@@ -21,16 +21,13 @@
 		<div class="lightbox-container-ie7">		
 		<!-- Title -->
 		<div class="row">
-			<div class="col-md-8 col-sm-8 col-xs-9">
+			
+			<div class="col-md-9 col-sm-9 col-xs-12">
 				<h1 class="lightbox-title pull-left"><@orcid.msg 'manual_work_form_contents.add_work'/></h1>
 			</div>
 			
-			<div class="col-xs-3 visible-xs hidden-sm hidden-md hidden-lg">
-				<a class="btn close-button pull-right" ng-click="closeModal()">X</a>
-			</div>
-			
 			<div class="col-md-3 col-sm-3">
-				<div class="control-group privacy-control pull-left">
+				<div class="control-group privacy-control pull-right">
 			 		<label class="relative">
 						<@orcid.msg 'privacyToggle.help.who_can_see'/>
 					</label>
@@ -38,17 +35,13 @@
 					"setAddWorkPrivacy('LIMITED', $event)" "setAddWorkPrivacy('PRIVATE', $event)" />					
 		 		</div>
 			</div>
-
-			<div class="col-md-1 col-sm-1 hidden-xs">
-				<a class="btn close-button" ng-click="closeModal()">X</a>
-			</div>
+			
 		</div>
 
 		<!-- Main content -->		
 		<div class="row">
 			<!-- Left Column -->			
 			<div class="col-md-6 col-sm-6 col-xs-12">	
-				
 				<div class="control-group">
 		    		<label class="relative"><@orcid.msg 'manual_work_form_contents.labelworkcategory'/></label>
 		    		<div class="relative">
@@ -295,20 +288,16 @@
 						</select>                        
                     </div>
                 </div>
-                
-				<div class="row"> 
-					<div class="col-md-12 col-sm-12 col-xs-12">
-						<button class="btn btn-primary" ng-click="addWork()" ng-disabled="addingWork" ng-class="{disabled:addingWork}"><@orcid.msg 'manual_work_form_contents.btnaddtolist'/></button> 
-						<a href="" class="cancel-action" ng-click="closeModal()"><@orcid.msg 'manage.deleteExternalIdentifier.cancel'/></a>
-						&nbsp;
-						<span ng-show="addingWork">
-							<i class="glyphicon glyphicon-refresh spin x2 green"></i>
-						</span>
-						<span ng-show="editWork.errors.length > 0" class="alert" style><@orcid.msg 'common.please_fix_errors' /></span>					
+				<div class="control-group">
+					<div class="controls save-btns">
+						<button class="btn btn-primary" ng-click="addWork()" ng-disabled="addingWork" ng-class="{disabled:addingWork}"><@orcid.msg 'manual_work_form_contents.btnaddtolist'/></button>
+						<button id="" class="btn close-button" type="reset"  ng-click="closeModal()">${springMacroRequestContext.getMessage("manage.deleteExternalIdentifier.cancel")}</button>
 					</div>
+					<span ng-show="addingWork">
+						<i class="glyphicon glyphicon-refresh spin x2 green"></i>
+					</span>
+					<span ng-show="editWork.errors.length > 0" class="alert" style><@orcid.msg 'common.please_fix_errors' /></span>
 				</div>
-			</div>
-		</div>				
-	<div>
-	<div>
+			</div>			
+		</div>		
 </script>
