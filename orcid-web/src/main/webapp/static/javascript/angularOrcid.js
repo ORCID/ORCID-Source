@@ -3791,9 +3791,9 @@ function findIdsCtrl($scope,$compile){
 				$('#cboxClose').remove();
 			},
 			scrolling: true
-		});
-		
-		$.colorbox.resize({width:"450px" , height:"225px"});
+		});	
+
+		setTimeout(function(){$.colorbox.resize({width:"450px"});},100);		
 	};	
 	
 	$scope.closeModal = function() {

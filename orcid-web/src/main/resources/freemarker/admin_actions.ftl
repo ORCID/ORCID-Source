@@ -29,7 +29,7 @@
 	<div style="padding:20px">
 		<h1><@orcid.msg 'admin.find_ids.results'/></h1>
 		<div ng-show="emailIdsMap">
-			<table border="0">
+			<table class="table table-bordered table-hover">
 				<tr>
 					<td><strong><@orcid.msg 'admin.email'/></strong></td>
 					<td><strong><@orcid.msg 'admin.orcid'/></strong></td>
@@ -414,9 +414,8 @@
 					<span id="find-ids" ng-click="findIds()" class="btn btn-primary"><@orcid.msg 'admin.find_ids.button'/></span>						
 				</div>
 			</div>	
-		</div>
-		
-		
+		</div>		
+		<!-- End Find Ids by email -->
 		
 		
 		
