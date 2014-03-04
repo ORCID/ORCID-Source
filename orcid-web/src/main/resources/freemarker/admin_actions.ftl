@@ -416,10 +416,35 @@
 					<span id="find-ids" ng-click="findIds()" class="btn btn-primary"><@orcid.msg 'admin.find_ids.button'/></span>						
 				</div>
 			</div>	
-		</div>		
-		<!-- End Find Ids by email -->
+		</div>
 		
 		
+		<!-- Reset password -->
+		<a name="reset-password"></a>
+		<div ng-controller="resetPasswordCtrl" class="workspace-accordion-item" ng-cloak>
+			<p>
+				<a  ng-show="showSection" ng-click="toggleSection()"><span class="glyphicon glyphicon-chevron-down blue"></span></span><@orcid.msg 'admin.reset_password' /></a>
+				<a  ng-hide="showSection" ng-click="toggleSection()"><span class="glyphicon glyphicon-chevron-right blue"></span></span><@orcid.msg 'admin.reset_password' /></a>
+			</p>
+			<div class="collapsible bottom-margin-small admin-modal" id="reset_password_section" style="display:none;">			
+				<div class="form-group">
+					<label for="orcid"><@orcid.msg 'admin.reset_password.orcid.label' /></label>
+					<input type="text" id="orcid" ng-model="params.orcid" placeholder="<@orcid.msg 'admin.reset_password.orcid.placeholder' />" class="input-xlarge" />
+					<label for="password"><@orcid.msg 'admin.reset_password.password.label' /></label>
+					<input type="text" id="password" ng-model="params.password" placeholder="<@orcid.msg 'admin.reset_password.password.placeholder' />" class="input-xlarge" />
+					<a href ng-click="randomString()" class="glyphicon glyphicon-random blue"><@orcid.msg 'admin.reset_password.password.random'/></a>
+					<div ng-show="result != ''">
+						<span class="orcid-error" ng-bind-html="result"></span><br />
+					</div>
+				</div>
+				<div class="controls save-btns pull-left">
+					<span id="find-ids" ng-click="resetPassword()" class="btn btn-primary"><@orcid.msg 'admin.reset_password.button'/></span>						
+				</div>
+			
+			
+			</div>
+		</div>
+
 		
 		
 		

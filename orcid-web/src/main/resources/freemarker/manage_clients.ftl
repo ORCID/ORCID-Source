@@ -91,7 +91,7 @@
 		    	</div>
 	    	</div>
 	    	<div>			
-				<a href ng-click="addUriToExistingClientTable()" class="icon-plus-sign blue"><@orcid.msg 'manage_clients.add_redirect_uri'/></a>
+				<a href ng-click="addUriToExistingClientTable()" class="glyphicon glyphicon-plus-sign blue"><@orcid.msg 'manage_clients.add_redirect_uri'/></a>
 			</div>
 			<div class="controls save-btns pull-left bottom-margin-small">
 				<button class="btn btn-primary" ng-click="submitEditClient($index)"><@orcid.msg 'manage_clients.update'/></button>

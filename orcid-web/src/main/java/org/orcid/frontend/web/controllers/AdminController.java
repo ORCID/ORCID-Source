@@ -25,7 +25,9 @@ import java.util.Set;
 import java.util.TreeMap;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.manager.EmailManager;
 import org.orcid.core.manager.ExternalIdentifierManager;
@@ -38,10 +40,12 @@ import org.orcid.jaxb.model.clientgroup.OrcidClientGroup;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidType;
 import org.orcid.jaxb.model.message.Visibility;
+import org.orcid.password.constants.OrcidPasswordConstants;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.ExternalIdentifierEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileWorkEntity;
+import org.orcid.pojo.AdminChangePassword;
 import org.orcid.pojo.ProfileDeprecationRequest;
 import org.orcid.pojo.ProfileDetails;
 import org.orcid.pojo.ajaxForm.Group;
@@ -69,6 +73,8 @@ public class AdminController extends BaseController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AdminController.class);
 
+    private static int RANDOM_STRING_LENGTH = 15;
+    
     @Resource
     ProfileEntityManager profileEntityManager;
 
@@ -86,7 +92,7 @@ public class AdminController extends BaseController {
 
     @Resource
     EmailManager emailManager;
-
+    
     public ProfileEntityManager getProfileEntityManager() {
         return profileEntityManager;
     }
@@ -422,4 +428,40 @@ public class AdminController extends BaseController {
     	}
     	return groups;
     }
+    
+    /**
+     * Generate random string
+     * */
+    @RequestMapping(value = "/generate-random-string.json", method = RequestMethod.GET)
+    public @ResponseBody
+    String generateRandomString(){
+        return RandomStringUtils.random(RANDOM_STRING_LENGTH, OrcidPasswordConstants.getEntirePasswordCharsRange());
+    }
+    
+    
+    /**
+     * Reset password
+     * */
+    @RequestMapping(value = "/reset-password.json", method = RequestMethod.POST)
+    public @ResponseBody
+    String resetPassword(HttpServletRequest request, @RequestBody AdminChangePassword form){  
+        String orcid = form.getOrcid();
+        String password = form.getPassword();
+        if(StringUtils.isNotBlank(password) && password.matches(OrcidPasswordConstants.ORCID_PASSWORD_REGEX)) {
+            OrcidProfile currentProfile = getEffectiveProfile();
+            if(OrcidType.ADMIN.equals(currentProfile.getType())) {                
+                OrcidProfile orcidProfile = orcidProfileManager.retrieveOrcidProfile(orcid);
+                if(orcidProfile != null) {
+                    orcidProfile.setPassword(password);
+                    orcidProfileManager.updatePasswordInformation(orcidProfile);
+                } else {
+                    return getMessage("admin.reset_password.error.invalid_orcid");
+                }
+            }
+        } else {
+            return getMessage("admin.reset_password.error.invalid_password");
+        }
+        
+        return getMessage("admin.reset_password.success");
+    }       
 }
