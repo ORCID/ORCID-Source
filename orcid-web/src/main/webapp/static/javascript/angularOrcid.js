@@ -3801,3 +3801,53 @@ function findIdsCtrl($scope,$compile){
 	};
 };
 
+function resetPasswordCtrl($scope,$compile) {
+	$scope.showSection = false;
+	$scope.params = {orcid:'',password:''};
+	$scope.result = '';
+	
+	$scope.toggleSection = function(){
+		$scope.showSection = !$scope.showSection;
+    	$('#reset_password_section').toggle();
+	};
+	
+	$scope.randomString = function() {
+		$scope.result = '';
+		$.ajax({
+	        url: orcidVar.baseUri+'/admin-actions/generate-random-string.json',	        
+	        type: 'GET',
+	        dataType: 'text',
+	        success: function(data){
+	        	console.log(data);
+	        	$scope.$apply(function(){ 
+	        		$scope.params.password=data;
+				});
+	        }
+	    }).fail(function(error) { 
+	    	console.log(error);
+	    	// something bad is happening!	    	
+	    	console.log("Error generating random string");	    	
+	    });	
+	};
+	
+	$scope.resetPassword = function(){
+		$scope.result = '';
+		console.log(angular.toJson($scope.params));
+		$.ajax({
+	        url: orcidVar.baseUri+'/admin-actions/reset-password.json',	        
+	        type: 'POST',
+	        data: angular.toJson($scope.params),
+	        contentType: 'application/json;charset=UTF-8',
+	        dataType: 'text',
+	        success: function(data){	        	
+		        $scope.$apply(function(){ 
+		        	$scope.result=data;
+				});	        	
+	        }
+	    }).fail(function(error) { 
+	    	// something bad is happening!	    	
+	    	console.log("Error generating random string");	    	
+	    });	
+		
+	};
+};
