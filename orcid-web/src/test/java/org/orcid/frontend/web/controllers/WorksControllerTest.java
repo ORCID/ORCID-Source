@@ -89,36 +89,27 @@ public class WorksControllerTest extends BaseControllerTest {
         
         assertNotNull(work_ids);
         assertEquals(3, work_ids.size());
-        assertTrue(work_ids.contains("1"));
-        assertTrue(work_ids.contains("2"));
-        assertTrue(work_ids.contains("3"));
+        assertTrue(work_ids.contains("5"));
+        assertTrue(work_ids.contains("6"));
+        assertTrue(work_ids.contains("7"));
         
     }
     
     @Test
     public void testGetWorkInfo(){
-    	Work work = worksController.getWorkInfo("1");
+    	Work work = worksController.getWorkInfo("5");
     	assertNotNull(work);
-    	assertEquals("1", work.getPutCode().getValue());        
+    	assertEquals("5", work.getPutCode().getValue());        
         assertNotNull(work.getPublicationDate());        
         assertEquals("2011", work.getPublicationDate().getYear());
         assertEquals("02", work.getPublicationDate().getMonth());
         assertEquals("01", work.getPublicationDate().getDay());              
         assertNotNull(work.getWorkTitle());
         assertNotNull(work.getWorkTitle().getTitle());
-        assertEquals("A day in the life", work.getWorkTitle().getTitle().getValue());
-        assertNotNull(work.getWorkTitle().getSubtitle());
-        assertEquals("Life in a day", work.getWorkTitle().getSubtitle().getValue());
-        assertNotNull(work.getShortDescription());
-        assertNotNull(work.getShortDescription().getValue());
-        assertEquals("Very interesting book about days and life", work.getShortDescription().getValue());
+        assertEquals("Journal article A", work.getWorkTitle().getTitle().getValue());
         assertNotNull(work.getVisibility());
         assertEquals(Visibility.PUBLIC, work.getVisibility());
-        assertNotNull(work.getCitation());
-        assertNotNull(work.getCitation().getCitation());        
-        assertEquals("Bobby Ewing, ", work.getCitation().getCitation().getValue());
-        assertNotNull(work.getWorkType());
-        assertEquals("book", work.getWorkType().getValue());               
+        assertEquals("journal-article", work.getWorkType().getValue());               
     }
     
     @Test

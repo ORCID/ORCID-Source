@@ -29,8 +29,12 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+
+import org.apache.commons.lang3.StringUtils;
+
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -59,9 +63,9 @@ import java.util.Map;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType( propOrder = { "orcidWork" })
+@XmlType(propOrder = { "orcidWork" })
 @XmlRootElement(name = "orcid-works")
-public class OrcidWorks implements Serializable {
+public class OrcidWorks implements Serializable, ActivitiesContainer {
 
     private static final long serialVersionUID = 1L;
     @XmlElement(name = "orcid-work")
@@ -99,15 +103,23 @@ public class OrcidWorks implements Serializable {
         return this.orcidWork;
     }
 
-    public Map<String, OrcidWork> retrieveOrcidWorksAsMap() {
+    public Map<String, OrcidWork> retrieveActivitiesAsMap() {
         Map<String, OrcidWork> workMap = new HashMap<String, OrcidWork>();
         if (orcidWork != null) {
             for (OrcidWork work : orcidWork) {
-                workMap.put(work.putCode, work);
+                if (StringUtils.isNotBlank(work.putCode)) {
+                    workMap.put(work.putCode, work);
+                }
             }
         }
         return workMap;
     }
+    
+    @Override
+    public List<OrcidWork> retrieveActivities() {
+        return getOrcidWork();
+    }
+
 
     public void setOrcidWork(List<OrcidWork> orcidWork) {
         this.orcidWork = orcidWork;
@@ -133,7 +145,7 @@ public class OrcidWorks implements Serializable {
     public void setScope(Scope value) {
         this.scope = value;
     }
-
+    
     @Override
     public boolean equals(Object o) {
         if (this == o)
@@ -157,4 +169,5 @@ public class OrcidWorks implements Serializable {
         result = 31 * result + (scope != null ? scope.hashCode() : 0);
         return result;
     }
+
 }

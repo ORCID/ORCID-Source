@@ -69,7 +69,7 @@ import java.io.Serializable;
 @XmlType(propOrder = { "putCode", "type", "title", "description", "amount", "url", "startDate", "endDate", "fundingExternalIdentifiers", "fundingContributors",
         "organization", "source" })
 @XmlRootElement(name = "funding")
-public class Funding implements VisibilityType, Serializable {
+public class Funding implements VisibilityType, Activity, Serializable {
 
     private final static long serialVersionUID = 1L;
 
@@ -151,6 +151,15 @@ public class Funding implements VisibilityType, Serializable {
         return source;
     }
 
+    @Override
+    public String retrieveSourcePath() {
+        if (source == null) {
+            return null;
+        }
+        SourceOrcid sourceOrcid = source.getSourceOrcid();
+        return sourceOrcid.getPath();
+    }
+
     public void setSource(Source source) {
         this.source = source;
     }
@@ -163,6 +172,7 @@ public class Funding implements VisibilityType, Serializable {
         this.visibility = visibility;
     }
 
+    @Override
     public String getPutCode() {
         return putCode;
     }
@@ -394,4 +404,5 @@ public class Funding implements VisibilityType, Serializable {
         }
         return true;
     }
+
 }
