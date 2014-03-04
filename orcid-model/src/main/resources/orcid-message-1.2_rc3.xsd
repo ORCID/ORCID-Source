@@ -558,6 +558,8 @@
 				<xs:element ref="orcid:application-website" />
 				<xs:element ref="orcid:approval-date" />
 				<xs:element ref="orcid:scope-paths" />
+				<xs:element name="application-group-orcid" type="orcid:orcid-id" />
+				<xs:element name="application-group-name" type="xs:string" />
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>

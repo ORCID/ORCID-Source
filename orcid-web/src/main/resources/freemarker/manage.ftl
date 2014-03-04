@@ -339,7 +339,7 @@
 							"${scopePath.value.declaringClass.name}.${scopePath.value}"/>
 							<#if scopePath_has_next>;&nbsp;</#if> </#list> </#if></td width="35%">
 						<td width="5%"><a
-							ng-click="confirmRevoke('${applicationSummary.applicationName.content?js_string}', '${applicationSummary_index}')"
+							ng-click="confirmRevoke('${applicationSummary.applicationName.content?js_string}','${applicationSummary.applicationGroupName.content?js_string}', '${applicationSummary_index}')"
 							class="glyphicon glyphicon-trash grey"
 							title="${springMacroRequestContext.getMessage("manage.revokeaccess")}"></a></td>
 					</form>

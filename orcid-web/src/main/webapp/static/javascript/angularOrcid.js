@@ -3610,11 +3610,11 @@ function profileDeprecationCtrl($scope,$compile){
 	};
 };
 
-function revokeApplicationFormCtrl($scope,$compile){
-	
-	$scope.confirmRevoke = function(appName, appIndex){
+function revokeApplicationFormCtrl($scope,$compile){	
+	$scope.confirmRevoke = function(appName, appGroupName, appIndex){
 		$scope.appName = appName;
 		$scope.appIndex = appIndex;
+		$scope.appGroupName = appGroupName;
 		$.colorbox({                      
 			html : $compile($('#confirm-revoke-access-modal').html())($scope),
 			transition: 'fade',
@@ -3628,7 +3628,7 @@ function revokeApplicationFormCtrl($scope,$compile){
 	};
 	
 	$scope.revokeAccess = function(){
-		orcidGA.gaPush(['_trackEvent', 'Disengagement', 'Revoke_Access', 'OAuth ' + $scope.appName]);
+		orcidGA.gaPush(['_trackEvent', 'Disengagement', 'Revoke_Access', 'OAuth '+ orcidGA.buildClientString($scope.appGroupName, $scope.appName)]);
 		orcidGA.gaFormSumbitDelay($('#revokeApplicationForm' + $scope.appIndex));
 	};
 	

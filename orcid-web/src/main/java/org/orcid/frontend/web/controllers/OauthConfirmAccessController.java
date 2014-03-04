@@ -47,7 +47,6 @@ public class OauthConfirmAccessController extends BaseController {
     public ModelAndView loginGetHandler(HttpServletRequest request, ModelAndView mav, @RequestParam("client_id") String clientId, @RequestParam("scope") String scope) {
         // XXX Use T2 API
         OrcidProfile clientProfile = orcidProfileManager.retrieveOrcidProfile(clientId);
-        LOGGER.debug("Soon we will start passing the group name to google analytics, here is the id:" + clientProfile.getOrcidInternal().getGroupOrcidIdentifier().getPath());
         Boolean justRegistered = (Boolean) request.getSession().getAttribute(JUST_REGISTERED);
         if (justRegistered != null) {
             request.getSession().removeAttribute(JUST_REGISTERED);

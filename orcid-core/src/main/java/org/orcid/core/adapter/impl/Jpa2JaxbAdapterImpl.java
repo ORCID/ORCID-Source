@@ -33,6 +33,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
 import org.apache.commons.lang.StringUtils;
 import org.orcid.core.adapter.Jpa2JaxbAdapter;
 import org.orcid.core.manager.LoadOptions;
+import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.security.DefaultPermissionChecker;
 import org.orcid.core.security.PermissionChecker;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
@@ -97,6 +98,9 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
 
     @Resource(name = "defaultPermissionChecker")
     private PermissionChecker permissionChecker;
+
+    @Resource
+    private OrcidProfileManager orcidProfileManager;
 
     public Jpa2JaxbAdapterImpl() {
         try {
@@ -747,6 +751,14 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
                             applicationSummary.setApplicationWebsite(new ApplicationWebsite(researcherUrls.first().getUrl()));
                         }
                         applicationSummary.setApprovalDate(new ApprovalDate(DateUtils.convertToXMLGregorianCalendar(tokenDetail.getDateCreated())));
+
+                        
+                        // add group information
+                        if (acceptedClientProfileEntity.getGroupOrcid() != null) {
+                            OrcidProfile clientGroupProfile = orcidProfileManager.retrieveOrcidProfile(acceptedClientProfileEntity.getGroupOrcid());
+                            applicationSummary.setApplicationGroupOrcid(new ApplicationOrcid(profileEntity.getGroupOrcid()));
+                            applicationSummary.setApplicationGroupName(new ApplicationName(clientGroupProfile.getOrcidBio().getPersonalDetails().getCreditName().getContent()));
+                        }
 
                         // Scopes
                         Set<ScopePathType> scopesGrantedToClient = ScopePathType.getScopesFromSpaceSeparatedString(tokenDetail.getScope());
