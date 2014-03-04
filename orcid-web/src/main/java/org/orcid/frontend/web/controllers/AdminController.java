@@ -18,6 +18,7 @@ package org.orcid.frontend.web.controllers;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -25,6 +26,7 @@ import java.util.TreeMap;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.manager.EmailManager;
 import org.orcid.core.manager.ExternalIdentifierManager;
 import org.orcid.core.manager.NotificationManager;
@@ -324,6 +326,8 @@ public class AdminController extends BaseController {
     @RequestMapping(value = "/find-id", method = RequestMethod.GET)
     public @ResponseBody
     Map<String, String> findIdByEmail(@RequestParam("csvEmails") String csvEmails) {
+        if(StringUtils.isBlank(csvEmails))
+            return new HashMap<String, String>();
         return emailManager.findIdByEmail(csvEmails);
     }
 

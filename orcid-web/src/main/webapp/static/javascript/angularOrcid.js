@@ -3769,7 +3769,11 @@ function findIdsCtrl($scope,$compile){
 	        dataType: 'json',
 	        success: function(data){
 	        	$scope.$apply(function(){ 
-	        		$scope.emailIdsMap = data;
+	        		if(!$.isEmptyObject(data)) {	        			
+	        			$scope.emailIdsMap = data;	        			
+	        		} else {
+	        			$scope.emailIdsMap = null;
+	        		}
 	        		$scope.showEmailIdsModal();
 				});
 	        }
@@ -3791,5 +3795,9 @@ function findIdsCtrl($scope,$compile){
 		
 		$.colorbox.resize({width:"450px" , height:"225px"});
 	};	
+	
+	$scope.closeModal = function() {
+		$.colorbox.close();
+	};
 };
 

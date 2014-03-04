@@ -27,19 +27,24 @@
 
 <script type="text/ng-template" id="email-ids-modal">
 	<div style="padding:20px">
-		<h1><@orcid.msg 'admin.ids_by_email'/></h1>
-		<table border="0">
-			<tr>
-				<td><strong><@orcid.msg 'admin.email'/></strong></td>
-				<td><strong><@orcid.msg 'admin.orcid'/></strong></td>
-			</tr>
-			<tr ng-repeat="(email, orcid) in emailIdsMap">
-				<td>{{email}}:</td>
-				<td>{{orcid}}</td>
-			</tr>
-		</table>
-		<div class="control-group">
-			<a href="" class="cancel-action" ng-click="closeModal()"><@orcid.msg 'freemarker.btnclose'/></a>
+		<h1><@orcid.msg 'admin.find_ids.results'/></h1>
+		<div ng-show="emailIdsMap">
+			<table border="0">
+				<tr>
+					<td><strong><@orcid.msg 'admin.email'/></strong></td>
+					<td><strong><@orcid.msg 'admin.orcid'/></strong></td>
+				</tr>
+				<tr ng-repeat="(email, orcid) in emailIdsMap">
+					<td>{{email}}</td>
+					<td>{{orcid}}</td>
+				</tr>
+			</table>
+			<div class="controls save-btns pull-right bottom-margin-small">
+				<a href="" class="cancel-action" ng-click="closeModal()"><@orcid.msg 'freemarker.btnclose'/></a>
+			</div>
+		</div>
+		<div ng-show="!emailIdsMap">
+			<span><@orcid.msg 'admin.find_ids.no_results'/></span>
 		</div>
 	</div>
 </script>
@@ -86,7 +91,7 @@
 		    </tr>	    
 	    </table>
 	</div>		   	
-    <div class="controls save-btns pull-right bottom-margin-small">
+    <div class="controls save-btns pull-left bottom-margin-small">
     	<span id="bottom-deprecate-profile" ng-click="deprecateAccount()" class="btn btn-primary"><@orcid.msg 'admin.profile_deprecation.deprecate_account'/></span>
 	</div>
   </div>
@@ -402,10 +407,11 @@
 			</p>			  	
 			<div class="collapsible bottom-margin-small admin-modal" id="find_ids_section" style="display:none;">
 				<div class="form-group">
+					<label for="emails"><@orcid.msg 'admin.find_ids.label' /></label>
+					<input type="text" id="emails" ng-model="emails" placeholder="<@orcid.msg 'admin.find_ids.placeholder' />" class="input-xlarge" />
 				</div>
 				<div class="controls save-btns pull-left">
-					<span id="find-ids" ng-click="findIds()" class="btn btn-primary"><@orcid.msg 'admin.find_ids_by_email'/></span>	
-					<input type="text" id="emails" ng-model="emails" placeholder="<@orcid.msg 'admin.csv_emails' />" class="form-control" />	
+					<span id="find-ids" ng-click="findIds()" class="btn btn-primary"><@orcid.msg 'admin.find_ids.button'/></span>						
 				</div>
 			</div>	
 		</div>
