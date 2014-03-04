@@ -168,7 +168,7 @@ orcidNgModule.factory("affiliationsSrvc", ['$rootScope', function ($rootScope) {
 	    	    }).fail(function() { 
 	    	    	console.log("Error deleting affiliation.");
 	    	    });
-	    	}  
+	    	}
 	}; 
 	return serv;
 }]);
@@ -1573,7 +1573,7 @@ function AffiliationCtrl($scope, $compile, $filter, affiliationsSrvc, workspaceS
 	$scope.privacyHelp = {};
 	$scope.privacyHelpCurKey = null;
 	$scope.moreInfo = {};
-	$scope.moreInfoCurKey = null;
+	$scope.moreInfoCurKey = null;	
 	
 	$scope.toggleClickPrivacyHelp = function(key) {
 		if (!document.documentElement.className.contains('no-touch')) {

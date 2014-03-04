@@ -16,6 +16,8 @@
  */
 package org.orcid.pojo.ajaxForm;
 
+import org.orcid.jaxb.model.message.FuzzyDate;
+
 public class PojoUtil {
 	
     public static boolean anyIsEmtpy(Text ...texts) {
@@ -45,6 +47,26 @@ public class PojoUtil {
     public static boolean isEmpty(String string) {
         if (string == null || string.trim().isEmpty()) return true;
         return false;
+    }
+    
+    public static String createDateSortString(FuzzyDate start, FuzzyDate end) {
+        String year = "0";
+        String month = "0";
+        String day = "0";
+        if (start != null && start.getYear() != null && !PojoUtil.isEmpty(start.getYear().getValue())) {
+            year = start.getYear().getValue();
+            if (start.getMonth() != null && !PojoUtil.isEmpty(start.getMonth().getValue()))
+                month = start.getMonth().getValue();
+            if (start.getDay() != null && !PojoUtil.isEmpty(start.getDay().getValue()))
+                day = start.getDay().getValue();
+        } else if (end != null && end.getYear() != null && !PojoUtil.isEmpty(end.getYear().getValue())) {
+            year = end.getYear().getValue();
+            if (end.getMonth() != null && !PojoUtil.isEmpty(end.getMonth().getValue()))
+                month = end.getMonth().getValue();
+            if (end.getDay() != null && !PojoUtil.isEmpty(end.getDay().getValue()))
+                day = end.getDay().getValue();
+        }
+        return year + "-" + month + '-' + day;
     }
     
     public static boolean isEmpty(Date date) {
