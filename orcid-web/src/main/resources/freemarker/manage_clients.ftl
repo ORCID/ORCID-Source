@@ -16,7 +16,7 @@
     =============================================================================
 
 -->
-<@public >
+<@public nav="developer">
 
 <#-- View details modal -->
 <script type="text/ng-template" id="view-details-modal">

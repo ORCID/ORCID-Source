@@ -16,7 +16,8 @@
     =============================================================================
 
 -->
-<@public >
+<@public nav="admin">
+
 <script type="text/ng-template" id="success-modal">
   <div style="padding:20px">
     <a id="cboxClose" class="btn pull-right close-button" ng-click="closeModal()">X</a>
@@ -261,6 +262,7 @@
 
 
 <!-- Admin main Layout -->
+
 <div class="row">
 	<!-- Left menu bar -->	
 	<div class="col-md-3 col-sm-3 col-xs-12 lhs override">
