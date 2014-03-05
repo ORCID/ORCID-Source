@@ -99,9 +99,6 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
     @Resource(name = "defaultPermissionChecker")
     private PermissionChecker permissionChecker;
 
-    @Resource
-    private OrcidProfileManager orcidProfileManager;
-
     public Jpa2JaxbAdapterImpl() {
         try {
             datatypeFactory = DatatypeFactory.newInstance();
@@ -754,10 +751,9 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
 
                         
                         // add group information
-                        if (acceptedClientProfileEntity.getGroupOrcid() != null) {
-                            OrcidProfile clientGroupProfile = orcidProfileManager.retrieveOrcidProfile(acceptedClientProfileEntity.getGroupOrcid());
+                        if (acceptedClientProfileEntity.getGroupProfile() != null) {
                             applicationSummary.setApplicationGroupOrcid(new ApplicationOrcid(profileEntity.getGroupOrcid()));
-                            applicationSummary.setApplicationGroupName(new ApplicationName(clientGroupProfile.getOrcidBio().getPersonalDetails().getCreditName().getContent()));
+                            applicationSummary.setApplicationGroupName(new ApplicationName(acceptedClientProfileEntity.getGroupProfile().getCreditName()));
                         }
 
                         // Scopes
