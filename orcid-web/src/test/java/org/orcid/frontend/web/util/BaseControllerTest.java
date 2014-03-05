@@ -64,7 +64,7 @@ public class BaseControllerTest extends DBUnitTest {
         removeDBUnitData(Arrays.asList("/data/ProfileEntityData.xml", "/data/SecurityQuestionEntityData.xml"), null);
     }
 
-    private Authentication getAuthentication() {
+    protected Authentication getAuthentication() {
         if (orcidProfile == null) {
             orcidProfile = getOrcidProfile();
         }

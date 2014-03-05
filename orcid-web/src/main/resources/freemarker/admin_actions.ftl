@@ -266,27 +266,73 @@
 <div class="row">
 	<!-- Left menu bar -->	
 	<div class="col-md-3 col-sm-3 col-xs-12 lhs override">
-		<ul class="settings-nav">
-			<!-- 
-			<li><a href="<@spring.url "/account" />#account-settings">${springMacroRequestContext.getMessage("manage.accountsettings")}</a></li>
-			<li><a href="<@spring.url "/account" />#manage-permissions">${springMacroRequestContext.getMessage("manage.managepermission")}</a></li>
-			 -->
-			<li class="admin-option">
-				<a href="admin-actions#add-client"><@orcid.msg 'manage_groups.admin_groups_title'/></a>	
-			</li>
-			<li class="admin-option">
-				<a href="admin-actions#deprecate-profile"><@orcid.msg 'admin.profile_deprecation' /></a>
-			</li>
-			<li class="admin-option" >
-				<a href="admin-actions#deactivate-profile"><@orcid.msg 'admin.profile_deactivation' /></a>
-			</li>
-			<li class="admin-option">
-				<a href="admin-actions#reactivate-profile"><@orcid.msg 'admin.profile_reactivation' /></a>
-			</li>					
-		</ul>
+		
 	</div>
 	<!-- Right menu bar -->
 	<div class="col-md-9 col-sm-9 col-xs-12 admin-options">	
+		<!-- Find Ids by email -->
+		<a name="find-ids"></a>
+		<div ng-controller="findIdsCtrl" class="workspace-accordion-item" ng-cloak>
+			<p>
+				<a  ng-show="showSection" ng-click="toggleSection()"><span class="glyphicon glyphicon-chevron-down blue"></span></span><@orcid.msg 'admin.find_ids' /></a>
+				<a  ng-hide="showSection" ng-click="toggleSection()"><span class="glyphicon glyphicon-chevron-right blue"></span></span><@orcid.msg 'admin.find_ids' /></a>
+			</p>			  	
+			<div class="collapsible bottom-margin-small admin-modal" id="find_ids_section" style="display:none;">
+				<div class="form-group">
+					<label for="emails"><@orcid.msg 'admin.find_ids.label' /></label>
+					<input type="text" id="emails" ng-model="emails" placeholder="<@orcid.msg 'admin.find_ids.placeholder' />" class="input-xlarge" />
+				</div>
+				<div class="controls save-btns pull-left">
+					<span id="find-ids" ng-click="findIds()" class="btn btn-primary"><@orcid.msg 'admin.find_ids.button'/></span>						
+				</div>
+			</div>	
+		</div>
+		
+		<!-- Reset password -->
+		<a name="reset-password"></a>
+		<div ng-controller="resetPasswordCtrl" class="workspace-accordion-item" ng-cloak>
+			<p>
+				<a  ng-show="showSection" ng-click="toggleSection()"><span class="glyphicon glyphicon-chevron-down blue"></span></span><@orcid.msg 'admin.reset_password' /></a>
+				<a  ng-hide="showSection" ng-click="toggleSection()"><span class="glyphicon glyphicon-chevron-right blue"></span></span><@orcid.msg 'admin.reset_password' /></a>
+			</p>
+			<div class="collapsible bottom-margin-small admin-modal" id="reset_password_section" style="display:none;">			
+				<div class="form-group">
+					<label for="orcid"><@orcid.msg 'admin.reset_password.orcid.label' /></label>
+					<input type="text" id="orcid" ng-model="params.orcid" placeholder="<@orcid.msg 'admin.reset_password.orcid.placeholder' />" class="input-xlarge" />
+					<label for="password"><@orcid.msg 'admin.reset_password.password.label' /></label>
+					<input type="text" id="password" ng-model="params.password" placeholder="<@orcid.msg 'admin.reset_password.password.placeholder' />" class="input-xlarge" />
+					<a href ng-click="randomString()" class="glyphicon glyphicon-random blue"></a>									
+					<div ng-show="result != ''">
+						<span class="orcid-error" ng-bind-html="result"></span><br />
+					</div>
+				</div>
+				<div class="controls save-btns pull-left">
+					<span id="find-ids" ng-click="resetPassword()" class="btn btn-primary"><@orcid.msg 'admin.reset_password.button'/></span>						
+				</div>
+			</div>
+		</div>
+		
+		<!-- Remove security question -->
+		<a name="remove-security-question"></a>
+		<div ng-controller="removeSecQuestionCtrl" class="workspace-accordion-item" ng-cloak>
+			<p>
+				<a  ng-show="showSection" ng-click="toggleSection()"><span class="glyphicon glyphicon-chevron-down blue"></span></span><@orcid.msg 'admin.remove_security_question' /></a>
+				<a  ng-hide="showSection" ng-click="toggleSection()"><span class="glyphicon glyphicon-chevron-right blue"></span></span><@orcid.msg 'admin.remove_security_question' /></a>
+			</p>
+			<div class="collapsible bottom-margin-small admin-modal" id="remove_security_question_section" style="display:none;">
+				<div class="form-group">
+					<label for="orcid"><@orcid.msg 'admin.remove_security_question.orcid.label' /></label>
+					<input type="text" id="orcid" ng-model="orcid" placeholder="<@orcid.msg 'admin.remove_security_question.orcid.placeholder' />" class="input-xlarge" />					
+					<div ng-show="result != ''">
+						<span class="orcid-error" ng-bind-html="result"></span><br />
+					</div>
+				</div>
+				<div class="controls save-btns pull-left">
+					<span id="find-ids" ng-click="removeSecurityQuestion()" class="btn btn-primary"><@orcid.msg 'admin.remove_security_question.button'/></span>						
+				</div>
+			</div>
+		</div>
+		
 		<!-- Add new client group -->
 		<a name="add-client"></a>
 		<div ng-controller="adminGroupsCtrl" class="workspace-accordion-item" ng-cloak>
@@ -300,15 +346,7 @@
 						<span  class="glyphicon glyphicon-plus-sign blue"></span>
 						<@orcid.msg 'manage_groups.add_group_link'/>
 					</a>
-				</div>
-				<!--  
-					<div class="view-items-link">
-						<a ng-click="listGroups()">
-							<span class="glyphicon glyphicon-list-alt blue"></span>
-							<@orcid.msg 'manage_groups.view_all_link'/>
-						</a>
-					</div>
-				-->		
+				</div>				
 			</div>			
 		</div>
 		
@@ -389,49 +427,7 @@
 				</div>
 			</div>
 		</div>
-		
-		<!-- Find Ids by email -->
-		<a name="find-ids"></a>
-		<div ng-controller="findIdsCtrl" class="workspace-accordion-item" ng-cloak>
-			<p>
-				<a  ng-show="showSection" ng-click="toggleSection()"><span class="glyphicon glyphicon-chevron-down blue"></span></span><@orcid.msg 'admin.find_ids' /></a>
-				<a  ng-hide="showSection" ng-click="toggleSection()"><span class="glyphicon glyphicon-chevron-right blue"></span></span><@orcid.msg 'admin.find_ids' /></a>
-			</p>			  	
-			<div class="collapsible bottom-margin-small admin-modal" id="find_ids_section" style="display:none;">
-				<div class="form-group">
-					<label for="emails"><@orcid.msg 'admin.find_ids.label' /></label>
-					<input type="text" id="emails" ng-model="emails" placeholder="<@orcid.msg 'admin.find_ids.placeholder' />" class="input-xlarge" />
-				</div>
-				<div class="controls save-btns pull-left">
-					<span id="find-ids" ng-click="findIds()" class="btn btn-primary"><@orcid.msg 'admin.find_ids.button'/></span>						
-				</div>
-			</div>	
-		</div>
-		
-		<!-- Reset password -->
-		<a name="reset-password"></a>
-		<div ng-controller="resetPasswordCtrl" class="workspace-accordion-item" ng-cloak>
-			<p>
-				<a  ng-show="showSection" ng-click="toggleSection()"><span class="glyphicon glyphicon-chevron-down blue"></span></span><@orcid.msg 'admin.reset_password' /></a>
-				<a  ng-hide="showSection" ng-click="toggleSection()"><span class="glyphicon glyphicon-chevron-right blue"></span></span><@orcid.msg 'admin.reset_password' /></a>
-			</p>
-			<div class="collapsible bottom-margin-small admin-modal" id="reset_password_section" style="display:none;">			
-				<div class="form-group">
-					<label for="orcid"><@orcid.msg 'admin.reset_password.orcid.label' /></label>
-					<input type="text" id="orcid" ng-model="params.orcid" placeholder="<@orcid.msg 'admin.reset_password.orcid.placeholder' />" class="input-xlarge" />
-					<label for="password"><@orcid.msg 'admin.reset_password.password.label' /></label>
-					<input type="text" id="password" ng-model="params.password" placeholder="<@orcid.msg 'admin.reset_password.password.placeholder' />" class="input-xlarge" />
-					<a href ng-click="randomString()" class="glyphicon glyphicon-random blue"></a>									
-					<div ng-show="result != ''">
-						<span class="orcid-error" ng-bind-html="result"></span><br />
-					</div>
-				</div>
-				<div class="controls save-btns pull-left">
-					<span id="find-ids" ng-click="resetPassword()" class="btn btn-primary"><@orcid.msg 'admin.reset_password.button'/></span>						
-				</div>
-			</div>
-		</div>
-
+						
 	</div>
 </div>
 </@public >

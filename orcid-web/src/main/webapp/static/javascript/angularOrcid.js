@@ -3853,3 +3853,47 @@ function resetPasswordCtrl($scope,$compile) {
 		
 	};
 };
+
+function removeSecQuestionCtrl($scope,$compile) {
+	$scope.showSection = false;
+	$scope.orcid = '';
+	$scope.result= '';
+	
+	$scope.toggleSection = function(){
+		$scope.showSection = !$scope.showSection;
+    	$('#remove_security_question_section').toggle();
+	};
+	
+	$scope.removeSecurityQuestion = function() {
+		$.ajax({
+	        url: orcidVar.baseUri+'/admin-actions/remove-security-question.json',	        
+	        type: 'POST',
+	        data: $scope.orcid,
+	        contentType: 'application/json;charset=UTF-8',
+	        dataType: 'text',
+	        success: function(data){	        	
+		        $scope.$apply(function(){ 
+		        	$scope.result=data;
+		        	$scope.orcid='';		        	
+				});	        	
+	        }
+	    }).fail(function(error) { 
+	    	// something bad is happening!	    	
+	    	console.log("Error generating random string");	    	
+	    });	
+	};
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+

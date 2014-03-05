@@ -455,7 +455,7 @@ public class AdminController extends BaseController {
                     orcidProfile.setPassword(password);
                     orcidProfileManager.updatePasswordInformation(orcidProfile);
                 } else {
-                    return getMessage("admin.reset_password.error.invalid_orcid");
+                    return getMessage("admin.error.invalid_orcid");
                 }
             }
         } else {
@@ -463,5 +463,26 @@ public class AdminController extends BaseController {
         }
         
         return getMessage("admin.reset_password.success");
-    }       
+    }
+    
+    /**
+     * Remove security question
+     * */
+    @RequestMapping(value = "/remove-security-question.json", method = RequestMethod.POST)
+    public @ResponseBody String removeSecurityQuestion(HttpServletRequest request, @RequestBody String orcid) {
+        if(StringUtils.isNotEmpty(orcid) && profileEntityManager.orcidExists(orcid)) {
+            OrcidProfile orcidProfile = orcidProfileManager.retrieveOrcidProfile(orcid);
+            if(orcidProfile != null) {
+                orcidProfile.getOrcidInternal().getSecurityDetails().setSecurityQuestionId(null);
+                orcidProfile.setSecurityQuestionAnswer(null);
+                orcidProfileManager.updateSecurityQuestionInformation(orcidProfile);
+            } else {
+                return getMessage("admin.error.invalid_orcid");
+            }
+        } else {
+            return getMessage("admin.error.invalid_orcid");
+        }
+        return getMessage("admin.remove_security_question.success");
+    }
+    
 }
