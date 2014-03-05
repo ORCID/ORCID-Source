@@ -440,7 +440,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         }
         FundingExternalIdentifier fundingExternalIdentifier = new FundingExternalIdentifier();
 
-        fundingExternalIdentifier.setType(fundingExternalIdentifierEntity.getType());
+        fundingExternalIdentifier.setType(FundingExternalIdentifierType.fromValue(fundingExternalIdentifierEntity.getType()));
         fundingExternalIdentifier.setUrl(new Url(fundingExternalIdentifierEntity.getUrl()));
         fundingExternalIdentifier.setValue(fundingExternalIdentifierEntity.getValue());
         fundingExternalIdentifier.setPutCode(String.valueOf(fundingExternalIdentifierEntity.getId()));

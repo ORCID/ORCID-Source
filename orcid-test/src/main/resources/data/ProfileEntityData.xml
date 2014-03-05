@@ -541,7 +541,7 @@
     		title="Grant # 2" 
     		type="GRANT" 
     		currency_code="CRC" 
-    		amount="1,650.000" 
+    		amount="1,650.00" 
     		visibility="PUBLIC" />
     		
     <profile_funding 
@@ -551,7 +551,7 @@
     		title="Grant # 3" 
     		type="GRANT" 
     		currency_code="CRC" 
-    		amount="1.650,000" 
+    		amount="1,650,000" 
     		visibility="PRIVATE" />            
             
     <given_permission_to
