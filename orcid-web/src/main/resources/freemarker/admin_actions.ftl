@@ -390,16 +390,6 @@
 			</div>
 		</div>
 		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
 		<!-- Find Ids by email -->
 		<a name="find-ids"></a>
 		<div ng-controller="findIdsCtrl" class="workspace-accordion-item" ng-cloak>
@@ -418,7 +408,6 @@
 			</div>	
 		</div>
 		
-		
 		<!-- Reset password -->
 		<a name="reset-password"></a>
 		<div ng-controller="resetPasswordCtrl" class="workspace-accordion-item" ng-cloak>
@@ -432,7 +421,7 @@
 					<input type="text" id="orcid" ng-model="params.orcid" placeholder="<@orcid.msg 'admin.reset_password.orcid.placeholder' />" class="input-xlarge" />
 					<label for="password"><@orcid.msg 'admin.reset_password.password.label' /></label>
 					<input type="text" id="password" ng-model="params.password" placeholder="<@orcid.msg 'admin.reset_password.password.placeholder' />" class="input-xlarge" />
-					<a href ng-click="randomString()" class="glyphicon glyphicon-random blue"><@orcid.msg 'admin.reset_password.password.random'/></a>
+					<a href ng-click="randomString()" class="glyphicon glyphicon-random blue"></a>									
 					<div ng-show="result != ''">
 						<span class="orcid-error" ng-bind-html="result"></span><br />
 					</div>
@@ -440,16 +429,9 @@
 				<div class="controls save-btns pull-left">
 					<span id="find-ids" ng-click="resetPassword()" class="btn btn-primary"><@orcid.msg 'admin.reset_password.button'/></span>						
 				</div>
-			
-			
 			</div>
 		</div>
 
-		
-		
-		
-		
 	</div>
-		
 </div>
 </@public >

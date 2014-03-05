@@ -3775,6 +3775,7 @@ function findIdsCtrl($scope,$compile){
 	        		} else {
 	        			$scope.emailIdsMap = null;
 	        		}
+	        		$scope.emails='';
 	        		$scope.showEmailIdsModal();
 				});
 	        }
@@ -3819,7 +3820,6 @@ function resetPasswordCtrl($scope,$compile) {
 	        type: 'GET',
 	        dataType: 'text',
 	        success: function(data){
-	        	console.log(data);
 	        	$scope.$apply(function(){ 
 	        		$scope.params.password=data;
 				});
@@ -3833,7 +3833,6 @@ function resetPasswordCtrl($scope,$compile) {
 	
 	$scope.resetPassword = function(){
 		$scope.result = '';
-		console.log(angular.toJson($scope.params));
 		$.ajax({
 	        url: orcidVar.baseUri+'/admin-actions/reset-password.json',	        
 	        type: 'POST',
@@ -3843,6 +3842,8 @@ function resetPasswordCtrl($scope,$compile) {
 	        success: function(data){	        	
 		        $scope.$apply(function(){ 
 		        	$scope.result=data;
+		        	$scope.params.orcid='';
+		        	$scope.params.password='';
 				});	        	
 	        }
 	    }).fail(function(error) { 
