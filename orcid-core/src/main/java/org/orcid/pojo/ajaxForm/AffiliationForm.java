@@ -185,8 +185,6 @@ public class AffiliationForm implements ErrorsInterface, Serializable {
     public static AffiliationForm valueOf(Affiliation affiliation) {
         AffiliationForm form = new AffiliationForm();
 
-        GregorianCalendar cal = new GregorianCalendar(0,0,0);
-               
         form.setPutCode(Text.valueOf(affiliation.getPutCode()));
         form.setVisibility(Visibility.valueOf(affiliation.getVisibility()));
         Organization organization = affiliation.getOrganization();
