@@ -403,7 +403,7 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
         String accessToken = obtainAccessToken(authorizationCode, scopes);
 
         OrcidMessage orcidMessage = new OrcidMessage();
-        orcidMessage.setMessageVersion("1.2_rc2");
+        orcidMessage.setMessageVersion("1.2_rc3");
         OrcidProfile orcidProfile = new OrcidProfile();
         orcidMessage.setOrcidProfile(orcidProfile);
         OrcidActivities orcidActivities = new OrcidActivities();
