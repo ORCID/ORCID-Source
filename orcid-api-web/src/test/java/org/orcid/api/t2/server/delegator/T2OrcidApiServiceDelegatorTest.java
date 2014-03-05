@@ -16,8 +16,9 @@
  */
 package org.orcid.api.t2.server.delegator;
 
-import static org.junit.Assert.assertEquals;
+import static junit.framework.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -41,6 +42,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.orcid.core.exception.WrongSourceException;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.oauth.OrcidOAuth2Authentication;
 import org.orcid.jaxb.model.message.Affiliation;
@@ -56,12 +58,16 @@ import org.orcid.jaxb.model.message.OrcidBio;
 import org.orcid.jaxb.model.message.OrcidIdentifier;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidProfile;
+import org.orcid.jaxb.model.message.OrcidWork;
 import org.orcid.jaxb.model.message.OrcidWorks;
 import org.orcid.jaxb.model.message.Organization;
 import org.orcid.jaxb.model.message.OrganizationAddress;
 import org.orcid.jaxb.model.message.PersonalDetails;
 import org.orcid.jaxb.model.message.ScopePathType;
+import org.orcid.jaxb.model.message.Title;
 import org.orcid.jaxb.model.message.Visibility;
+import org.orcid.jaxb.model.message.WorkTitle;
+import org.orcid.jaxb.model.message.WorkType;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.test.DBUnitTest;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -69,6 +75,7 @@ import org.springframework.security.core.context.SecurityContextImpl;
 import org.springframework.security.oauth2.provider.AuthorizationRequest;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.sun.jersey.api.uri.UriBuilderImpl;
 
@@ -102,13 +109,13 @@ public class T2OrcidApiServiceDelegatorTest extends DBUnitTest {
     @After
     public void after() {
         SecurityContextHolder.clearContext();
-        orcidProfileManager.clearOrcidProfileCache();     
+        orcidProfileManager.clearOrcidProfileCache();
     }
-    
+
     @AfterClass
     public static void removeDBUnitData() throws Exception {
-        List<String> reversedDataFiles = new ArrayList<String>(Arrays.asList("/data/Oauth2TokenDetailsData.xml", 
-        		"/data/ProfileWorksEntityData.xml", "/data/WorksEntityData.xml", "/data/ClientDetailsEntityData.xml"));        
+        List<String> reversedDataFiles = new ArrayList<String>(Arrays.asList("/data/Oauth2TokenDetailsData.xml", "/data/ProfileWorksEntityData.xml",
+                "/data/WorksEntityData.xml", "/data/ClientDetailsEntityData.xml"));
         removeDBUnitData(reversedDataFiles, null);
     }
 
@@ -133,6 +140,134 @@ public class T2OrcidApiServiceDelegatorTest extends DBUnitTest {
         orcidActivities.setOrcidWorks(orcidWorks);
         Response response = t2OrcidApiServiceDelegator.addWorks(mockedUriInfo, "4444-4444-4444-4441", orcidMessage);
         assertNotNull(response);
+    }
+
+    @Test
+    @Transactional
+    public void testUpdateWithNewWork() {
+        setUpSecurityContext("4444-4444-4444-4446", ScopePathType.ORCID_WORKS_UPDATE);
+        OrcidMessage orcidMessage = new OrcidMessage();
+        orcidMessage.setMessageVersion("1.1");
+        OrcidProfile orcidProfile = new OrcidProfile();
+        orcidMessage.setOrcidProfile(orcidProfile);
+        orcidProfile.setOrcidIdentifier(new OrcidIdentifier("4444-4444-4444-4446"));
+        OrcidActivities orcidActivities = new OrcidActivities();
+        orcidProfile.setOrcidActivities(orcidActivities);
+        OrcidWorks orcidWorks = new OrcidWorks();
+        orcidActivities.setOrcidWorks(orcidWorks);
+        OrcidWork orcidWork = new OrcidWork();
+        orcidWorks.getOrcidWork().add(orcidWork);
+        WorkTitle workTitle = new WorkTitle();
+        workTitle.setTitle(new Title("Added by works update"));
+        orcidWork.setWorkTitle(workTitle);
+        orcidWork.setWorkType(WorkType.ARTISTIC_PERFORMANCE);
+        Response response = t2OrcidApiServiceDelegator.updateWorks(mockedUriInfo, "4444-4444-4444-4446", orcidMessage);
+        assertNotNull(response);
+
+        OrcidProfile retrievedProfile = orcidProfileManager.retrieveOrcidProfile("4444-4444-4444-4446");
+        List<OrcidWork> retreivedWorksList = retrievedProfile.getOrcidActivities().getOrcidWorks().getOrcidWork();
+        boolean foundWorkFromAnotherSource = false;
+        boolean foundExisting = false;
+        boolean foundNew = false;
+        // Should have the added work, plus existing private work and work from
+        // another source
+        for (OrcidWork retrievedWork : retreivedWorksList) {
+            if ("6".equals(retrievedWork.getPutCode())) {
+                assertEquals("Journal article B", retrievedWork.getWorkTitle().getTitle().getContent());
+                assertEquals(Visibility.LIMITED, retrievedWork.getVisibility());
+                foundWorkFromAnotherSource = true;
+            } 
+            else if ("7".equals(retrievedWork.getPutCode())) {
+                // Existing private work
+                assertEquals("Journal article C", retrievedWork.getWorkTitle().getTitle().getContent());
+                assertEquals(Visibility.PRIVATE, retrievedWork.getVisibility());
+                foundExisting = true;
+            } else {
+                // The added work
+                assertEquals("Added by works update", retrievedWork.getWorkTitle().getTitle().getContent());
+                foundNew = true;
+            }
+        }
+        assertTrue("Work from other source should be there", foundWorkFromAnotherSource);
+        assertTrue("New work should be there", foundNew);
+        assertTrue("Existing private work should be there", foundExisting);
+        assertEquals(3, retreivedWorksList.size());
+    }
+
+    @Test
+    @Transactional
+    public void testUpdateExistingNonPrivateWork() {
+        setUpSecurityContext("4444-4444-4444-4446", ScopePathType.ORCID_WORKS_UPDATE);
+        OrcidMessage orcidMessage = new OrcidMessage();
+        orcidMessage.setMessageVersion("1.1");
+        OrcidProfile orcidProfile = new OrcidProfile();
+        orcidMessage.setOrcidProfile(orcidProfile);
+        orcidProfile.setOrcidIdentifier(new OrcidIdentifier("4444-4444-4444-4446"));
+        OrcidActivities orcidActivities = new OrcidActivities();
+        orcidProfile.setOrcidActivities(orcidActivities);
+        OrcidWorks orcidWorks = new OrcidWorks();
+        orcidActivities.setOrcidWorks(orcidWorks);
+        OrcidWork orcidWork = new OrcidWork();
+        orcidWorks.getOrcidWork().add(orcidWork);
+        orcidWork.setPutCode("5");
+        WorkTitle workTitle = new WorkTitle();
+        workTitle.setTitle(new Title("Updated by works update"));
+        orcidWork.setWorkTitle(workTitle);
+        orcidWork.setWorkType(WorkType.ARTISTIC_PERFORMANCE);
+        Response response = t2OrcidApiServiceDelegator.updateWorks(mockedUriInfo, "4444-4444-4444-4446", orcidMessage);
+        assertNotNull(response);
+
+        OrcidProfile retrievedProfile = orcidProfileManager.retrieveOrcidProfile("4444-4444-4444-4446");
+        List<OrcidWork> retreivedWorksList = retrievedProfile.getOrcidActivities().getOrcidWorks().getOrcidWork();
+        boolean foundWorkFromAnotherSource = false;
+        boolean foundUpdated = false;
+        boolean foundExisting = false;
+        for (OrcidWork retrievedWork : retreivedWorksList) {
+            if ("5".equals(retrievedWork.getPutCode())) {
+                // The updated work
+                assertEquals("Updated by works update", retrievedWork.getWorkTitle().getTitle().getContent());
+                assertEquals(Visibility.PUBLIC, retrievedWork.getVisibility());
+                foundUpdated = true;
+            }
+            else if ("6".equals(retrievedWork.getPutCode())) {
+                assertEquals("Journal article B", retrievedWork.getWorkTitle().getTitle().getContent());
+                assertEquals(Visibility.LIMITED, retrievedWork.getVisibility());
+                foundWorkFromAnotherSource = true;
+            } 
+            else if ("7".equals(retrievedWork.getPutCode())) {
+                // Existing private work
+                assertEquals("Journal article C", retrievedWork.getWorkTitle().getTitle().getContent());
+                assertEquals(Visibility.PRIVATE, retrievedWork.getVisibility());
+                foundExisting = true;
+            }
+        }
+        assertTrue("Work from other source should be there", foundWorkFromAnotherSource);
+        assertTrue("Updated work should be there", foundUpdated);
+        assertTrue("Existing private work should be there", foundExisting);
+        assertEquals(3, retreivedWorksList.size());
+    }
+
+    @Test(expected = WrongSourceException.class)
+    @Transactional
+    public void testUpdateWorkWhenNotSource() {
+        setUpSecurityContext("4444-4444-4444-4446", ScopePathType.ORCID_WORKS_UPDATE);
+        OrcidMessage orcidMessage = new OrcidMessage();
+        orcidMessage.setMessageVersion("1.1");
+        OrcidProfile orcidProfile = new OrcidProfile();
+        orcidMessage.setOrcidProfile(orcidProfile);
+        orcidProfile.setOrcidIdentifier(new OrcidIdentifier("4444-4444-4444-4446"));
+        OrcidActivities orcidActivities = new OrcidActivities();
+        orcidProfile.setOrcidActivities(orcidActivities);
+        OrcidWorks orcidWorks = new OrcidWorks();
+        orcidActivities.setOrcidWorks(orcidWorks);
+        OrcidWork orcidWork = new OrcidWork();
+        orcidWorks.getOrcidWork().add(orcidWork);
+        orcidWork.setPutCode("6");
+        WorkTitle workTitle = new WorkTitle();
+        workTitle.setTitle(new Title("Updated by works update"));
+        orcidWork.setWorkTitle(workTitle);
+        orcidWork.setWorkType(WorkType.ARTISTIC_PERFORMANCE);
+        t2OrcidApiServiceDelegator.updateWorks(mockedUriInfo, "4444-4444-4444-4446", orcidMessage);
     }
 
     @Test
@@ -235,6 +370,108 @@ public class T2OrcidApiServiceDelegatorTest extends DBUnitTest {
         assertEquals("4444-4444-4444-4447", affiliation.getSource().getSourceOrcid().getPath());
     }
 
+    @Test
+    @Transactional
+    public void testUpdateWithNewAffiliation() {
+        setUpSecurityContext("4444-4444-4444-4443", ScopePathType.AFFILIATIONS_UPDATE);
+        OrcidMessage orcidMessage = new OrcidMessage();
+        orcidMessage.setMessageVersion("1.1");
+        OrcidProfile orcidProfile = new OrcidProfile();
+        orcidMessage.setOrcidProfile(orcidProfile);
+        orcidProfile.setOrcidIdentifier(new OrcidIdentifier("4444-4444-4444-4443"));
+        OrcidActivities orcidActivities = new OrcidActivities();
+        orcidProfile.setOrcidActivities(orcidActivities);
+        Affiliations affiliations = new Affiliations();
+        orcidActivities.setAffiliations(affiliations);
+        Affiliation affiliation1 = new Affiliation();
+        affiliations.getAffiliation().add(affiliation1);
+        affiliation1.setType(AffiliationType.EDUCATION);
+        Organization organization1 = new Organization();
+        affiliation1.setOrganization(organization1);
+        organization1.setName("A new affiliation");
+        OrganizationAddress organizationAddress = new OrganizationAddress();
+        organization1.setAddress(organizationAddress);
+        organizationAddress.setCity("Edinburgh");
+        organizationAddress.setCountry(Iso3166Country.GB);
+        Response response = t2OrcidApiServiceDelegator.updateAffiliations(mockedUriInfo, "4444-4444-4444-4443", orcidMessage);
+        assertNotNull(response);
+
+        OrcidProfile retrievedProfile = orcidProfileManager.retrieveOrcidProfile("4444-4444-4444-4443");
+        List<Affiliation> retreivedAffiliationsList = retrievedProfile.getOrcidActivities().getAffiliations().getAffiliation();
+        assertEquals(3, retreivedAffiliationsList.size());
+        Affiliation newAffiliation = retreivedAffiliationsList.get(0);
+        assertEquals("A new affiliation", newAffiliation.getOrganization().getName());
+        assertEquals("4444-4444-4444-4447", newAffiliation.getSource().getSourceOrcid().getPath());
+        Affiliation existingAffiliation = retreivedAffiliationsList.get(1);
+        assertEquals(Visibility.PRIVATE, existingAffiliation.getVisibility());
+        assertEquals("Eine Institution", existingAffiliation.getOrganization().getName());
+    }
+
+    @Test
+    @Transactional
+    public void testUpdateExistingNonPrivateAffiliation() {
+        setUpSecurityContext("4444-4444-4444-4443", ScopePathType.AFFILIATIONS_UPDATE);
+        OrcidMessage orcidMessage = new OrcidMessage();
+        orcidMessage.setMessageVersion("1.1");
+        OrcidProfile orcidProfile = new OrcidProfile();
+        orcidMessage.setOrcidProfile(orcidProfile);
+        orcidProfile.setOrcidIdentifier(new OrcidIdentifier("4444-4444-4444-4443"));
+        OrcidActivities orcidActivities = new OrcidActivities();
+        orcidProfile.setOrcidActivities(orcidActivities);
+        Affiliations affiliations = new Affiliations();
+        orcidActivities.setAffiliations(affiliations);
+        Affiliation affiliation1 = new Affiliation();
+        affiliations.getAffiliation().add(affiliation1);
+        affiliation1.setPutCode("3");
+        affiliation1.setType(AffiliationType.EDUCATION);
+        Organization organization1 = new Organization();
+        affiliation1.setOrganization(organization1);
+        organization1.setName("Different org");
+        OrganizationAddress organizationAddress = new OrganizationAddress();
+        organization1.setAddress(organizationAddress);
+        organizationAddress.setCity("Edinburgh");
+        organizationAddress.setCountry(Iso3166Country.GB);
+        Response response = t2OrcidApiServiceDelegator.updateAffiliations(mockedUriInfo, "4444-4444-4444-4443", orcidMessage);
+        assertNotNull(response);
+
+        OrcidProfile retrievedProfile = orcidProfileManager.retrieveOrcidProfile("4444-4444-4444-4443");
+        List<Affiliation> retreivedAffiliationsList = retrievedProfile.getOrcidActivities().getAffiliations().getAffiliation();
+        assertEquals(3, retreivedAffiliationsList.size());
+        Affiliation updatedAffiliation = retreivedAffiliationsList.get(0);
+        assertEquals("Different org", updatedAffiliation.getOrganization().getName());
+        assertEquals("4444-4444-4444-4447", updatedAffiliation.getSource().getSourceOrcid().getPath());
+        Affiliation existingAffiliation = retreivedAffiliationsList.get(1);
+        assertEquals(Visibility.PRIVATE, existingAffiliation.getVisibility());
+        assertEquals("Eine Institution", existingAffiliation.getOrganization().getName());
+    }
+
+    @Test(expected = WrongSourceException.class)
+    @Transactional
+    public void testUpdateAffiliationWhenNotSource() {
+        setUpSecurityContext("4444-4444-4444-4443", ScopePathType.AFFILIATIONS_UPDATE);
+        OrcidMessage orcidMessage = new OrcidMessage();
+        orcidMessage.setMessageVersion("1.1");
+        OrcidProfile orcidProfile = new OrcidProfile();
+        orcidMessage.setOrcidProfile(orcidProfile);
+        orcidProfile.setOrcidIdentifier(new OrcidIdentifier("4444-4444-4444-4443"));
+        OrcidActivities orcidActivities = new OrcidActivities();
+        orcidProfile.setOrcidActivities(orcidActivities);
+        Affiliations affiliations = new Affiliations();
+        orcidActivities.setAffiliations(affiliations);
+        Affiliation affiliation1 = new Affiliation();
+        affiliations.getAffiliation().add(affiliation1);
+        affiliation1.setPutCode("2");
+        affiliation1.setType(AffiliationType.EDUCATION);
+        Organization organization1 = new Organization();
+        affiliation1.setOrganization(organization1);
+        organization1.setName("Different org");
+        OrganizationAddress organizationAddress = new OrganizationAddress();
+        organization1.setAddress(organizationAddress);
+        organizationAddress.setCity("Edinburgh");
+        organizationAddress.setCountry(Iso3166Country.GB);
+        t2OrcidApiServiceDelegator.updateAffiliations(mockedUriInfo, "4444-4444-4444-4443", orcidMessage);
+    }
+
     private OrcidMessage createStubOrcidMessage() {
         OrcidMessage orcidMessage = new OrcidMessage();
         orcidMessage.setMessageVersion("1.1");
@@ -259,11 +496,15 @@ public class T2OrcidApiServiceDelegatorTest extends DBUnitTest {
     }
 
     private void setUpSecurityContext(ScopePathType... scopePathTypes) {
+        setUpSecurityContext("4444-4444-4444-4441", scopePathTypes);
+    }
+
+    private void setUpSecurityContext(String userOrcid, ScopePathType... scopePathTypes) {
         SecurityContextImpl securityContext = new SecurityContextImpl();
         OrcidOAuth2Authentication mockedAuthentication = mock(OrcidOAuth2Authentication.class);
         securityContext.setAuthentication(mockedAuthentication);
         SecurityContextHolder.setContext(securityContext);
-        when(mockedAuthentication.getPrincipal()).thenReturn(new ProfileEntity("4444-4444-4444-4441"));
+        when(mockedAuthentication.getPrincipal()).thenReturn(new ProfileEntity(userOrcid));
         AuthorizationRequest authorizationRequest = mock(AuthorizationRequest.class);
         Set<String> scopes = new HashSet<String>();
         for (ScopePathType scopePathType : scopePathTypes) {

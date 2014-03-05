@@ -83,6 +83,8 @@ public class FundingForm implements ErrorsInterface, Serializable {
     private String countryForDisplay;
 
     private String fundingTypeForDisplay;
+    
+    private String dateSortString;
 
     public List<String> getErrors() {
         return errors;
@@ -334,6 +336,8 @@ public class FundingForm implements ErrorsInterface, Serializable {
     public static FundingForm valueOf(Funding funding) {
         FundingForm result = new FundingForm();
 
+        result.setDateSortString(PojoUtil.createDateSortString(funding.getStartDate(), funding.getEndDate()));
+
         if (StringUtils.isNotEmpty(funding.getPutCode()))
             result.setPutCode(Text.valueOf(funding.getPutCode()));
 
@@ -422,5 +426,13 @@ public class FundingForm implements ErrorsInterface, Serializable {
         }
 
         return result;
+    }
+
+    public String getDateSortString() {
+        return dateSortString;
+    }
+
+    public void setDateSortString(String dateSortString) {
+        this.dateSortString = dateSortString;
     }
 }

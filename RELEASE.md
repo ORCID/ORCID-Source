@@ -4,8 +4,71 @@ We release updates to the Registry regularly. Below is a list of the improvement
 * [2013 Releases](https://trello.com/b/ZgYVAlel)
 * [2012 Releases](https://trello.com/b/vyCDYdvR)
 
+## release-1.1.45.17
+(2014-02-28)
+* Release funding
 
-##  release-1.1.42.1
+* Added fundref data
+
+* Added group name to google analytics tracking.
+
+* Admin page beautification.
+
+* Removed Patents code
+
+* Delegates (hidden)  
+
+* Prevent webhooks notification until solr indexing
+
+* Fix quicksearch results when we have zero results
+
+* Update bootstrap
+
+* Add Add group id to ORCID Internal
+
+
+
+## release-1.1.44.6
+(2014-02-7)
+* Another go at the fonts.
+
+* Require one primary email address in 1.2 APIs.
+
+* Fix password popup layout.
+
+* Add client ID to event labels for OAuth sign-in/registration.
+
+* Fix issue where common first name no Last name was breaking duplicate check.
+
+
+
+## release-1.1.43.18 
+(2014-01-29)
+* Fix issue with grants scope breaking scope authorization.
+
+* Add disk caching 
+
+* Fix message that says 1.1, but has an <orcid> element in it when it should only have an <orcid-id>
+
+* Prevent invalid scopes from being requested and granted.
+
+* Caching of activities in public profiles
+
+* Caching of internalized languages and country names
+
+* Change date format
+
+* Uservoice widget updates
+
+* Next round of funding improvements
+
+* Other small fixes
+
+* Language code enumerated in the XSD
+
+
+ 
+## release-1.1.42.1
 (2014-01-07)
 * Place work duplicate check after adding source information
 

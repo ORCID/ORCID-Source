@@ -464,6 +464,7 @@
             end_month="07"
             end_day="02"
             visibility="PUBLIC"
+            source_id="4444-4444-4444-4442"
             />
 
     <org_affiliation_relation
@@ -482,6 +483,45 @@
             end_month="07"
             end_day="02"
             visibility="LIMITED"
+            source_id="4444-4444-4444-4443"
+            />
+            
+    <org_affiliation_relation
+            id="3"
+            org_id="2"
+            orcid="4444-4444-4444-4443"
+            org_affiliation_relation_role="EDUCATION"
+            org_affiliation_relation_title="Student"
+            department="Another Department"
+            date_created="2010-07-02 15:31:00.00"
+            last_modified="2010-07-02 15:31:00.00"
+            start_year="2011"
+            start_month="08"
+            start_day="02"
+            end_year="2011"
+            end_month="10"
+            end_day="02"
+            visibility="PUBLIC"
+            source_id="4444-4444-4444-4447"
+            />
+            
+    <org_affiliation_relation
+            id="4"
+            org_id="3"
+            orcid="4444-4444-4444-4443"
+            org_affiliation_relation_role="EMPLOYMENT"
+            org_affiliation_relation_title="Researcher"
+            department="A Department 3"
+            date_created="2010-07-02 15:31:00.00"
+            last_modified="2010-07-02 15:31:00.00"
+            start_year="2011"
+            start_month="09"
+            start_day="22"
+            end_year="2012"
+            end_month="11"
+            end_day="07"
+            visibility="PRIVATE"
+            source_id="4444-4444-4444-4443"
             />
             
 	<profile_funding 
@@ -501,7 +541,7 @@
     		title="Grant # 2" 
     		type="GRANT" 
     		currency_code="CRC" 
-    		amount="1,650.000" 
+    		amount="1,650.00" 
     		visibility="PUBLIC" />
     		
     <profile_funding 
@@ -511,7 +551,7 @@
     		title="Grant # 3" 
     		type="GRANT" 
     		currency_code="CRC" 
-    		amount="1.650,000" 
+    		amount="1,650,000" 
     		visibility="PRIVATE" />            
             
     <given_permission_to

@@ -184,8 +184,7 @@ public class AffiliationForm implements ErrorsInterface, Serializable {
 
     public static AffiliationForm valueOf(Affiliation affiliation) {
         AffiliationForm form = new AffiliationForm();
-        
-        String dateSortString = null;
+
         GregorianCalendar cal = new GregorianCalendar(0,0,0);
         if (affiliation.getStartDate() != null && affiliation.getStartDate().getYear() != null) {
             if (!PojoUtil.isEmpty(affiliation.getStartDate().getYear().getValue())) {
@@ -202,11 +201,13 @@ public class AffiliationForm implements ErrorsInterface, Serializable {
                     cal.set(Calendar.DAY_OF_MONTH, Integer.parseInt(affiliation.getEndDate().getDay().getValue()));
             }            
         }
-        dateSortString = Long.toString(cal.getTimeInMillis());
         
         form.setPutCode(Text.valueOf(affiliation.getPutCode()));
         form.setVisibility(Visibility.valueOf(affiliation.getVisibility()));
         Organization organization = affiliation.getOrganization();
+        
+        form.setDateSortString(PojoUtil.createDateSortString(affiliation.getStartDate(), affiliation.getEndDate()));
+        
         form.setAffiliationName(Text.valueOf(organization.getName()));
         OrganizationAddress address = organization.getAddress();
         form.setCity(Text.valueOf(address.getCity()));

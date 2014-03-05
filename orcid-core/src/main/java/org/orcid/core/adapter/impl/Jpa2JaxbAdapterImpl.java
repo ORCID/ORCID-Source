@@ -33,6 +33,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
 import org.apache.commons.lang.StringUtils;
 import org.orcid.core.adapter.Jpa2JaxbAdapter;
 import org.orcid.core.manager.LoadOptions;
+import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.security.DefaultPermissionChecker;
 import org.orcid.core.security.PermissionChecker;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
@@ -439,7 +440,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         }
         FundingExternalIdentifier fundingExternalIdentifier = new FundingExternalIdentifier();
 
-        fundingExternalIdentifier.setType(fundingExternalIdentifierEntity.getType());
+        fundingExternalIdentifier.setType(FundingExternalIdentifierType.fromValue(fundingExternalIdentifierEntity.getType()));
         fundingExternalIdentifier.setUrl(new Url(fundingExternalIdentifierEntity.getUrl()));
         fundingExternalIdentifier.setValue(fundingExternalIdentifierEntity.getValue());
         fundingExternalIdentifier.setPutCode(String.valueOf(fundingExternalIdentifierEntity.getId()));
@@ -747,6 +748,13 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
                             applicationSummary.setApplicationWebsite(new ApplicationWebsite(researcherUrls.first().getUrl()));
                         }
                         applicationSummary.setApprovalDate(new ApprovalDate(DateUtils.convertToXMLGregorianCalendar(tokenDetail.getDateCreated())));
+
+                        
+                        // add group information
+                        if (acceptedClientProfileEntity.getGroupProfile() != null) {
+                            applicationSummary.setApplicationGroupOrcid(new ApplicationOrcid(profileEntity.getGroupOrcid()));
+                            applicationSummary.setApplicationGroupName(new ApplicationName(acceptedClientProfileEntity.getGroupProfile().getCreditName()));
+                        }
 
                         // Scopes
                         Set<ScopePathType> scopesGrantedToClient = ScopePathType.getScopesFromSpaceSeparatedString(tokenDetail.getScope());

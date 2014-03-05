@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.orcid.jaxb.model.message.FundingExternalIdentifier;
+import org.orcid.jaxb.model.message.FundingExternalIdentifierType;
 import org.orcid.jaxb.model.message.Url;
 
 public class FundingExternalIdentifierForm implements ErrorsInterface, Serializable {
@@ -69,7 +70,7 @@ public class FundingExternalIdentifierForm implements ErrorsInterface, Serializa
 	public static FundingExternalIdentifierForm valueOf(FundingExternalIdentifier fundingExternalIdentifier){
 		FundingExternalIdentifierForm result = new FundingExternalIdentifierForm();		
 		if(fundingExternalIdentifier.getType() != null)
-			result.setType(Text.valueOf(fundingExternalIdentifier.getType()));
+			result.setType(Text.valueOf(fundingExternalIdentifier.getType().value()));
 		if(fundingExternalIdentifier.getUrl() != null && !PojoUtil.isEmpty(fundingExternalIdentifier.getUrl().getValue()))
 			result.setUrl(Text.valueOf(fundingExternalIdentifier.getUrl().getValue()));
 		if(!PojoUtil.isEmpty(fundingExternalIdentifier.getValue()))
@@ -82,7 +83,7 @@ public class FundingExternalIdentifierForm implements ErrorsInterface, Serializa
 	public FundingExternalIdentifier toFundingExternalIdentifier() {
 		FundingExternalIdentifier result = new FundingExternalIdentifier();		
 		if(!PojoUtil.isEmpty(type))
-			result.setType(type.getValue());
+			result.setType(FundingExternalIdentifierType.fromValue(type.getValue()));
 		if(!PojoUtil.isEmpty(url))
 			result.setUrl(new Url(url.getValue()));
 		else 

@@ -128,6 +128,7 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
     private Boolean sendChangeNotifications;
     private Boolean sendOrcidNews;
     private String groupOrcid;
+    private ProfileEntity groupProfile;
     private SortedSet<ProfileEntity> clientProfiles;
     private ClientDetailsEntity clientDetails;
     private SortedSet<OrcidOauth2TokenDetail> tokenDetails;
@@ -729,6 +730,17 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
     public void setGroupOrcid(String groupOrcid) {
         this.groupOrcid = groupOrcid;
     }
+    
+    @ManyToOne(cascade = { CascadeType.DETACH, CascadeType.REFRESH }, fetch = FetchType.LAZY)
+    @JoinColumn(name="group_orcid", insertable = false, updatable = false)
+    public ProfileEntity getGroupProfile() {
+        return groupProfile;
+    }
+
+    public void setGroupProfile(ProfileEntity groupProfile) {
+        this.groupProfile = groupProfile;
+    }
+
 
     @OneToMany(cascade = { CascadeType.DETACH, CascadeType.REFRESH }, fetch = FetchType.LAZY)
     @JoinColumn(name = "group_orcid")
@@ -946,5 +958,4 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
     public void setLocale(Locale locale) {
         this.locale = locale;
     }
-
 }
