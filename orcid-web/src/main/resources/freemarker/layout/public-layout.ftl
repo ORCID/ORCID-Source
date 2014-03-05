@@ -21,7 +21,7 @@
 <!DOCTYPE html>
 <html class="no-js oldie ng-app:orcidApp"  ng-app="orcidApp" id="ng-app" lang="en">
 <#include "/common/html-head.ftl" />
-<body data-baseurl="<@spring.url '/'/>" class="<#if inDelegationMode>delegation-mode</#if>">
+<body data-baseurl="<@spring.url '/'/>" data-effective-user-orcid="${effectiveUserOrcid!}" class="<#if inDelegationMode>delegation-mode</#if>">
 <#nested />
 <#include "/common/scripts.ftl" />
 <#if !hideUserVoiceScript??> 

@@ -450,9 +450,15 @@
 	<script type="text/ng-template" id="confirm-add-delegate-modal">
 		<div style="padding: 20px;">
 		   <h3>Add delegate</h3>
-		   <p> {{delegateNameToAdd}} ({{delegateToAdd}})</p>
-		   <button class="btn btn-primary" ng-click="addDelegate()">Add</button> 
-		   <a href="" ng-click="closeModal()">Cancel</a>
+		   <div ng-show="effectiveUserOrcid === delegateToAdd">
+		      <p class="alert alert-error">You can't add yourself as a delegate</p>
+		      <a href="" ng-click="closeModal()">Cancel</a>
+		   </div>
+		   <div ng-hide="effectiveUserOrcid === delegateToAdd">
+		      <p>{{delegateNameToAdd}} ({{delegateToAdd}})</p>
+		      <button class="btn btn-primary" ng-click="addDelegate()">Add</button>
+		      <a href="" ng-click="closeModal()">Cancel</a>
+		   </div>
 		</div>
 	</script>
 	

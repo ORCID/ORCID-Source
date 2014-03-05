@@ -2885,6 +2885,7 @@ function DelegatesCtrl($scope, $compile){
 	$scope.confirmAddDelegate = function(delegateName, delegateId){
 		$scope.delegateNameToAdd = delegateName;
 		$scope.delegateToAdd = delegateId;
+		$scope.effectiveUserOrcid = $('body').data('effective-user-orcid');
 		$.colorbox({                      
 			html : $compile($('#confirm-add-delegate-modal').html())($scope),
 			transition: 'fade',
