@@ -56,6 +56,7 @@ import org.orcid.jaxb.model.message.FundingContributorAttributes;
 import org.orcid.jaxb.model.message.FundingContributorRole;
 import org.orcid.jaxb.model.message.FundingContributors;
 import org.orcid.jaxb.model.message.FundingExternalIdentifier;
+import org.orcid.jaxb.model.message.FundingExternalIdentifierType;
 import org.orcid.jaxb.model.message.FundingExternalIdentifiers;
 import org.orcid.jaxb.model.message.FundingList;
 import org.orcid.jaxb.model.message.FundingTitle;
@@ -431,7 +432,7 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
     	org.setAddress(add);
     	funding.setOrganization(org);
     	FundingExternalIdentifier extIdentifier = new FundingExternalIdentifier();
-    	extIdentifier.setType(EXT_ID_TYPE);
+    	extIdentifier.setType(FundingExternalIdentifierType.fromValue(EXT_ID_TYPE));
     	extIdentifier.setUrl(new Url(EXT_ID_URL));
     	extIdentifier.setValue(EXT_ID_VALUE);
     	FundingExternalIdentifiers extIdentifiers = new FundingExternalIdentifiers();

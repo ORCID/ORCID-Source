@@ -999,7 +999,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
     	for(FundingExternalIdentifier externalIdentifier : externalIdentifierList){
     		FundingExternalIdentifierEntity entity = new FundingExternalIdentifierEntity();    		
     		entity.setProfileFunding(profileFundingEntity);
-    		entity.setType(StringUtils.isNotEmpty(externalIdentifier.getType()) ? externalIdentifier.getType() : null);
+    		entity.setType(externalIdentifier.getType() != null ? externalIdentifier.getType().value() : null);
     		entity.setValue(StringUtils.isNotEmpty(externalIdentifier.getValue()) ? externalIdentifier.getValue() : null);
     		if(externalIdentifier.getUrl() != null)
     			entity.setUrl(StringUtils.isNotEmpty(externalIdentifier.getUrl().getValue()) ? externalIdentifier.getUrl().getValue() : null);    		    		
