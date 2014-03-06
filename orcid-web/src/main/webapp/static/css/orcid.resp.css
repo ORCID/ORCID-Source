@@ -1884,6 +1884,11 @@ a:hover {
 	width: 95%;
 }
 
+.add-work .alert,
+.add-funding .alert{
+	display: block;
+}
+
 .label-clear {
 	background: #fff;
 	border: 1px solid #c9c9c9;
@@ -2955,6 +2960,7 @@ ul.personal-inf-display li{
 	margin-bottom:0;
 }
 
+
 /* Add work */
 .add-work .popover-help-container .popover{
 	left: -200px;
@@ -3972,7 +3978,7 @@ p.orcid-id-container{
 	}
 	
 	.add-work .alert{
-		padding: 0 10px;
+		display: block;
 	}	
 	
 	

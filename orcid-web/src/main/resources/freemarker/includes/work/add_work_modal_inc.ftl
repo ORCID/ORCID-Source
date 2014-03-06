@@ -282,18 +282,18 @@
 	                    	<#list isoCountries?keys as key>
 								<option value="${key}">${isoCountries[key]}</option>								
 							</#list>
-						</select>                        
+						</select>
                     </div>
                 </div>
-				<div class="control-group">
-					<div class="controls save-btns">
-						<button class="btn btn-primary" ng-click="addWork()" ng-disabled="addingWork" ng-class="{disabled:addingWork}"><@orcid.msg 'manual_work_form_contents.btnaddtolist'/></button>
-						<button id="" class="btn close-button" type="reset"  ng-click="closeModal()">${springMacroRequestContext.getMessage("manage.deleteExternalIdentifier.cancel")}</button>
-					</div>
+				<div class="control-group">					
+					<span ng-show="editWork.errors.length > 0" class="alert"><@orcid.msg 'common.please_fix_errors' /></span>
 					<span ng-show="addingWork">
 						<i class="glyphicon glyphicon-refresh spin x2 green"></i>
 					</span>
-					<span ng-show="editWork.errors.length > 0" class="alert" style><@orcid.msg 'common.please_fix_errors' /></span>
+				</div>
+				<div class="control-group">
+					<button class="btn btn-primary" ng-click="addWork()" ng-disabled="addingWork" ng-class="{disabled:addingWork}"><@orcid.msg 'manual_work_form_contents.btnaddtolist'/></button>
+					<button id="" class="btn close-button" type="reset"  ng-click="closeModal()">${springMacroRequestContext.getMessage("manage.deleteExternalIdentifier.cancel")}</button>					
 				</div>
 			</div>			
 		</div>		

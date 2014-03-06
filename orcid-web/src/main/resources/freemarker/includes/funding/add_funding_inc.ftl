@@ -271,13 +271,16 @@
 						</span>
 					</div>
 				</div>
+				<div class="control-group">
+					<span ng-show="editFunding.errors.length > 0" class="alert"><@orcid.msg 'common.please_fix_errors' /></span>
+					<span ng-show="addingFunding">
+						<i class="glyphicon glyphicon-refresh spin x2 green"></i>
+					</span>
+				</div>
 		    	<div class="control-group">				
 					<button class="btn btn-primary" ng-click="addFunding()" ng-disabled="addingFunding" ng-class="{disabled:addingFunding}"><@orcid.msg 'manual_funding_form_contents.btnaddtolist'/></button>
 					<button id="" class="btn close-button" ng-click="closeModal()" type="reset"><@orcid.msg 'manage.deleteExternalIdentifier.cancel'/></button>
-					<span ng-show="addingFunding">
-						<i class="glyphicon glyphicon-refresh spin x2 green"></i>
-					</span>					
-					<span ng-show="editFunding.errors.length > 0" class="alert"><@orcid.msg 'common.please_fix_errors' /></span>										
+															
 				</div>
 			</div>
 		</div>

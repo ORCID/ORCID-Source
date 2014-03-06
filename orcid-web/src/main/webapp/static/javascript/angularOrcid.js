@@ -1899,7 +1899,7 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc) {
 	
 	$scope.addFunding = function(){
 		if ($scope.addingFunding) return; // don't process if adding funding
-		$scope.addingFunding = true;
+		$scope.addingFunding = true;		
 		$scope.editFunding.errors.length = 0;
 		$.ajax({
 			url: $('body').data('baseurl') + 'fundings/funding.json',
@@ -1916,17 +1916,24 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc) {
 		        	if($scope.editFunding.externalIdentifiers.length == 0) {
 		        		$scope.addExternalIdentifier();
 		        	}
-		        	$scope.copyErrorsLeft($scope.editFunding, data);
+		        	$scope.copyErrorsLeft($scope.editFunding, data);		        	
 	        	}
 	        	$scope.addingFunding = false;
-	        	$scope.$apply();
+	        	$scope.$apply();	        	
 	        }
 		}).fail(function(){
 			// something bad is happening!
-			$scope.addingFunding = false;
-	    	console.log("error adding affiliations");
+			$scope.addingFunding = false;						
+	    	console.log("error adding fundings");
 		});
 	};
+	
+	//Resizing window after error message is shown
+	$scope.$watch('addingFunding', function() {
+		 setTimeout(function(){
+			 $.colorbox.resize();; 
+         }, 50);		
+	 });
 	
 	$scope.showTemplateInModal = function(templateId) {
 		$.colorbox({        	            
