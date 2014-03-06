@@ -3832,20 +3832,20 @@ function resetPasswordCtrl($scope,$compile) {
 	};
 	
 	$scope.resetPassword = function(){
-		$scope.result = '';
-		$scope.closeModal();
+		$scope.result = '';		
 		$.ajax({
 	        url: orcidVar.baseUri+'/admin-actions/reset-password.json',	        
 	        type: 'POST',
 	        data: angular.toJson($scope.params),
 	        contentType: 'application/json;charset=UTF-8',
 	        dataType: 'text',
-	        success: function(data){	        	
+	        success: function(data){	      	        	
 		        $scope.$apply(function(){ 
 		        	$scope.result=data;
 		        	$scope.params.orcid='';
 		        	$scope.params.password='';
 				});	        	
+		        $scope.closeModal();
 	        }
 	    }).fail(function(error) { 
 	    	// something bad is happening!	    	
@@ -3887,8 +3887,7 @@ function removeSecQuestionCtrl($scope,$compile) {
     	$('#remove_security_question_section').toggle();
 	};
 	
-	$scope.removeSecurityQuestion = function() {
-		$scope.closeModal();
+	$scope.removeSecurityQuestion = function() {		
 		$.ajax({
 	        url: orcidVar.baseUri+'/admin-actions/remove-security-question.json',	        
 	        type: 'POST',
@@ -3899,7 +3898,8 @@ function removeSecQuestionCtrl($scope,$compile) {
 		        $scope.$apply(function(){ 
 		        	$scope.result=data;
 		        	$scope.orcid = '';
-				});	        	
+				});	     
+		        $scope.closeModal();
 	        }
 	    }).fail(function(error) { 
 	    	// something bad is happening!	    	

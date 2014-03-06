@@ -22,7 +22,10 @@
   <div style="padding:20px">
     <a id="cboxClose" class="btn pull-right close-button" ng-click="closeModal()">X</a>
     <h1><@orcid.msg 'admin.success'/></h1>
-    <p id="success-message">{{successMessage}}</p>    
+    <p id="success-message">{{successMessage}}</p>  
+    <div class="control-group">
+    	<a href="" class="cancel-action" ng-click="closeModal()"><@orcid.msg 'freemarker.btnclose'/></a>
+    </div>  
   </div>
 </script>
 
@@ -92,8 +95,9 @@
 		    </tr>	    
 	    </table>
 	</div>		   	
-    <div class="controls save-btns pull-left bottom-margin-small">
-    	<span id="bottom-deprecate-profile" ng-click="deprecateAccount()" class="btn btn-primary"><@orcid.msg 'admin.profile_deprecation.deprecate_account'/></span>
+	<div class="control-group">
+		<button class="btn btn-primary" id="bottom-deprecate-profile" ng-click="deprecateAccount()"><@orcid.msg 'admin.profile_deprecation.deprecate_account'/></button>
+		<a href="" class="cancel-action" ng-click="closeModal()"><@orcid.msg 'freemarker.btncancel'/></a>
 	</div>
   </div>
 </script>
@@ -119,8 +123,9 @@
 			    </tr>		    
 	    	</table>
 		</div>
-		<div class="controls save-btns pull-right bottom-margin-small">
-	    	<span id="bottom-deactivate-profile" ng-click="deactivateAccount()" class="btn btn-primary"><@orcid.msg 'admin.profile_deactivation.deactivate_account'/></span>
+		<div class="control-group">			
+			<button class="btn btn-primary" id="bottom-deactivate-profile" ng-click="deactivateAccount()"><@orcid.msg 'admin.profile_deactivation.deactivate_account'/></button>
+			<a href="" class="cancel-action" ng-click="closeModal()"><@orcid.msg 'freemarker.btncancel'/></a>
 		</div>
 	</div>
 </script>
@@ -134,8 +139,9 @@
 			<br />
 			<span>{{orcidToReactivate}}</span>				    	
 		</div>
-		<div class="controls save-btns pull-right bottom-margin-small">
-	    	<span id="bottom-deactivate-profile" ng-click="reactivateAccount()" class="btn btn-primary"><@orcid.msg 'admin.profile_reactivation.reactivate_account'/></span>
+		<div class="control-group">			
+			<button class="btn btn-primary" id="bottom-deactivate-profile" ng-click="reactivateAccount()"><@orcid.msg 'admin.profile_reactivation.reactivate_account'/></button>
+			<a href="" class="cancel-action" ng-click="closeModal()"><@orcid.msg 'freemarker.btncancel'/></a>
 		</div>
 	</div>
 </script>
