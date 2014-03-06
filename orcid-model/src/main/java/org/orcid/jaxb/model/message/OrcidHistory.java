@@ -259,6 +259,31 @@ public class OrcidHistory implements Serializable {
     public void setVisibility(Visibility value) {
         this.visibility = value;
     }
+    
+    public ReferredBy getReferredBy() {
+        return referredBy;
+    }
+
+    public void setReferredBy(ReferredBy referredBy) {
+        this.referredBy = referredBy;
+    }
+
+    public VerifiedPrimaryEmail getVerifiedPrimaryEmail() {
+        return verifiedPrimaryEmail;
+    }
+
+    public void setVerifiedPrimaryEmail(VerifiedPrimaryEmail verifiedPrimaryEmail) {
+        this.verifiedPrimaryEmail = verifiedPrimaryEmail;
+    }
+
+    public VerifiedEmail getVerifiedEmail() {
+        return verifiedEmail;
+    }
+
+    public void setVerifiedEmail(VerifiedEmail verifiedEmail) {
+        this.verifiedEmail = verifiedEmail;
+    }
+    
 
     @Override
     public int hashCode() {
@@ -271,6 +296,9 @@ public class OrcidHistory implements Serializable {
         result = prime * result + ((source == null) ? 0 : source.hashCode());
         result = prime * result + ((submissionDate == null) ? 0 : submissionDate.hashCode());
         result = prime * result + ((visibility == null) ? 0 : visibility.hashCode());
+        result = prime * result + ((referredBy == null) ? 0 : referredBy.hashCode());
+        result = prime * result + ((verifiedEmail == null) ? 0 : verifiedEmail.hashCode());
+        result = prime * result + ((verifiedPrimaryEmail == null) ? 0 : verifiedPrimaryEmail.hashCode());
         return result;
     }
 
@@ -312,31 +340,27 @@ public class OrcidHistory implements Serializable {
             return false;
         if (visibility != other.visibility)
             return false;
+        
+        if (referredBy == null) {
+            if (other.referredBy != null)
+                return false;
+        } else if (!referredBy.equals(other.referredBy))
+            return false;
+
+        if (verifiedEmail == null) {
+            if (other.verifiedEmail != null)
+                return false;
+        } else if (!verifiedEmail.equals(other.verifiedEmail))
+            return false;
+
+        if (verifiedPrimaryEmail == null) {
+            if (other.verifiedPrimaryEmail != null)
+                return false;
+        } else if (!verifiedPrimaryEmail.equals(other.verifiedPrimaryEmail))
+            return false;
+
         return true;
     }
 
-    public ReferredBy getReferredBy() {
-        return referredBy;
-    }
-
-    public void setReferredBy(ReferredBy referredBy) {
-        this.referredBy = referredBy;
-    }
-
-    public VerifiedPrimaryEmail getVerifiedPrimaryEmail() {
-        return verifiedPrimaryEmail;
-    }
-
-    public void setVerifiedPrimaryEmail(VerifiedPrimaryEmail verifiedPrimaryEmail) {
-        this.verifiedPrimaryEmail = verifiedPrimaryEmail;
-    }
-
-    public VerifiedEmail getVerifiedEmail() {
-        return verifiedEmail;
-    }
-
-    public void setVerifiedEmail(VerifiedEmail verifiedEmail) {
-        this.verifiedEmail = verifiedEmail;
-    }
 
 }
