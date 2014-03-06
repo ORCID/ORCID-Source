@@ -455,7 +455,7 @@ public class AdminController extends BaseController {
                     orcidProfile.setPassword(password);
                     orcidProfileManager.updatePasswordInformation(orcidProfile);
                 } else {
-                    return getMessage("admin.error.invalid_orcid");
+                    return getMessage("admin.errors.unexisting_orcid");
                 }
             }
         } else {
@@ -471,16 +471,19 @@ public class AdminController extends BaseController {
     @RequestMapping(value = "/remove-security-question.json", method = RequestMethod.POST)
     public @ResponseBody String removeSecurityQuestion(HttpServletRequest request, @RequestBody String orcid) {
         if(StringUtils.isNotEmpty(orcid) && profileEntityManager.orcidExists(orcid)) {
-            OrcidProfile orcidProfile = orcidProfileManager.retrieveOrcidProfile(orcid);
-            if(orcidProfile != null) {
-                orcidProfile.getOrcidInternal().getSecurityDetails().setSecurityQuestionId(null);
-                orcidProfile.setSecurityQuestionAnswer(null);
-                orcidProfileManager.updateSecurityQuestionInformation(orcidProfile);
-            } else {
-                return getMessage("admin.error.invalid_orcid");
-            }
+            OrcidProfile currentProfile = getEffectiveProfile();
+            if(OrcidType.ADMIN.equals(currentProfile.getType())) { 
+                OrcidProfile orcidProfile = orcidProfileManager.retrieveOrcidProfile(orcid);
+                if(orcidProfile != null) {
+                    orcidProfile.getOrcidInternal().getSecurityDetails().setSecurityQuestionId(null);
+                    orcidProfile.setSecurityQuestionAnswer(null);
+                    orcidProfileManager.updateSecurityQuestionInformation(orcidProfile);
+                } else {
+                    return getMessage("admin.errors.unexisting_orcid");
+                }
+            }            
         } else {
-            return getMessage("admin.error.invalid_orcid");
+            return getMessage("admin.errors.unexisting_orcid");
         }
         return getMessage("admin.remove_security_question.success");
     }

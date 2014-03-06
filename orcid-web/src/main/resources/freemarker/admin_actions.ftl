@@ -234,7 +234,6 @@
 
 <script type="text/ng-template" id="list-groups">
 	<div class="colorbox-content">
-		<a id="cboxClose" class="btn pull-right close-button" ng-click="closeModal()">X</a>
     	<h1><@orcid.msg 'manage_groups.group_list_title'/></h1>
 		<div>
 			<div class="relative" ng-show="groups.length">				
@@ -260,9 +259,51 @@
 	</div>
 </script>
 
+<!-- Confirm reset password -->
+<script type="text/ng-template" id="confirm-reset-password">
+	<div class="colorbox-content">
+		<div class="row">
+			<div class="col-md-12 col-sm-12 col-xs-12">	
+    			<h1><@orcid.msg 'admin.reset_password.confirm_title'/></h1>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-12 col-sm-12 col-xs-12">					
+				<div class="control-group">
+    				<label class="relative"><@orcid.msg 'admin.reset_password.confirm.message'/> {{params.orcid}}?</label>    				
+  				</div>
+				<div class="control-group">
+					<button class="btn btn-primary" ng-click="resetPassword()"><@orcid.msg 'admin.reset_password.confirm.button'/></button>
+					<a href="" class="cancel-action" ng-click="closeModal()"><@orcid.msg 'freemarker.btncancel'/></a>
+				</div>
+			</div>				
+		</div>
+	</div>
+</script>
+
+<!-- Confirm remove security question -->
+<script type="text/ng-template" id="confirm-remove-security-question">
+	<div class="colorbox-content">
+		<div class="row">
+			<div class="col-md-12 col-sm-12 col-xs-12">	
+    			<h1><@orcid.msg 'admin.remove_security_question.confirm_title'/></h1>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-12 col-sm-12 col-xs-12">					
+				<div class="control-group">
+    				<label class="relative"><@orcid.msg 'admin.remove_security_question.confirm.message'/> {{orcid}}?</label>    				
+  				</div>
+				<div class="control-group">
+					<button class="btn btn-primary" ng-click="removeSecurityQuestion()"><@orcid.msg 'admin.remove_security_question.confirm.button'/></button>
+					<a href="" class="cancel-action" ng-click="closeModal()"><@orcid.msg 'freemarker.btncancel'/></a>
+				</div>
+			</div>				
+		</div>
+	</div>
+</script>
 
 <!-- Admin main Layout -->
-
 <div class="row">
 	<!-- Left menu bar -->	
 	<div class="col-md-3 col-sm-3 col-xs-12 lhs override">
@@ -307,7 +348,7 @@
 					</div>
 				</div>
 				<div class="controls save-btns pull-left">
-					<span id="find-ids" ng-click="resetPassword()" class="btn btn-primary"><@orcid.msg 'admin.reset_password.button'/></span>						
+					<span id="find-ids" ng-click="confirmResetPassword()" class="btn btn-primary"><@orcid.msg 'admin.reset_password.button'/></span>						
 				</div>
 			</div>
 		</div>
@@ -328,7 +369,7 @@
 					</div>
 				</div>
 				<div class="controls save-btns pull-left">
-					<span id="find-ids" ng-click="removeSecurityQuestion()" class="btn btn-primary"><@orcid.msg 'admin.remove_security_question.button'/></span>						
+					<span id="find-ids" ng-click="confirmRemoveSecurityQuestion()" class="btn btn-primary"><@orcid.msg 'admin.remove_security_question.button'/></span>						
 				</div>
 			</div>
 		</div>

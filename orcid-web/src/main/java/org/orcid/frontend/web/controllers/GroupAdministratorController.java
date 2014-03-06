@@ -29,6 +29,7 @@ import javax.ws.rs.core.MediaType;
 
 import org.orcid.core.exception.OrcidClientGroupManagementException;
 import org.orcid.core.manager.OrcidClientGroupManager;
+import org.orcid.core.manager.ThirdPartyImportManager;
 import org.orcid.jaxb.model.clientgroup.OrcidClient;
 import org.orcid.jaxb.model.clientgroup.OrcidClientGroup;
 import org.orcid.jaxb.model.clientgroup.RedirectUriType;
@@ -63,6 +64,9 @@ public class GroupAdministratorController extends BaseWorkspaceController {
     @Resource
     OrcidClientGroupManager orcidClientGroupManager;
 
+    @Resource
+    private ThirdPartyImportManager thirdPartyImportManager;
+    
     @RequestMapping
     public ModelAndView manageClients() {
         ModelAndView mav = new ModelAndView("manage_clients");
@@ -245,7 +249,8 @@ public class GroupAdministratorController extends BaseWorkspaceController {
             OrcidClient result = null;
 
             try {
-                result = orcidClientGroupManager.updateClientProfile(groupOrcid, client.toOrcidClient());
+                result = orcidClientGroupManager.updateClientProfile(groupOrcid, client.toOrcidClient());                
+                clearCache();
             } catch (OrcidClientGroupManagementException e) {
                 LOGGER.error(e.getMessage());
                 result = new OrcidClient();
@@ -286,5 +291,9 @@ public class GroupAdministratorController extends BaseWorkspaceController {
             redirectUriTypes.put(rType.value(), rType.value());
         }
         return redirectUriTypes;
+    }
+    
+    private void clearCache() {
+        thirdPartyImportManager.evictAll();
     }
 }

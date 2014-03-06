@@ -3833,6 +3833,7 @@ function resetPasswordCtrl($scope,$compile) {
 	
 	$scope.resetPassword = function(){
 		$scope.result = '';
+		$scope.closeModal();
 		$.ajax({
 	        url: orcidVar.baseUri+'/admin-actions/reset-password.json',	        
 	        type: 'POST',
@@ -3852,6 +3853,28 @@ function resetPasswordCtrl($scope,$compile) {
 	    });	
 		
 	};
+	
+	$scope.confirmResetPassword = function(){
+		if($scope.params.orcid != '' && $scope.params.password != '') {
+			$.colorbox({                      
+				html : $compile($('#confirm-reset-password').html())($scope),
+					scrolling: true,
+					onLoad: function() {
+					$('#cboxClose').remove();
+				},
+				scrolling: true
+			});
+			
+			$.colorbox.resize({width:"450px" , height:"150px"});
+		}
+	};
+	
+	$scope.closeModal = function() {
+		$scope.params.orcid='';
+    	$scope.params.password='';
+    	$scope.result= '';
+		$.colorbox.close();
+	};
 };
 
 function removeSecQuestionCtrl($scope,$compile) {
@@ -3865,6 +3888,7 @@ function removeSecQuestionCtrl($scope,$compile) {
 	};
 	
 	$scope.removeSecurityQuestion = function() {
+		$scope.closeModal();
 		$.ajax({
 	        url: orcidVar.baseUri+'/admin-actions/remove-security-question.json',	        
 	        type: 'POST',
@@ -3874,7 +3898,7 @@ function removeSecQuestionCtrl($scope,$compile) {
 	        success: function(data){	        	
 		        $scope.$apply(function(){ 
 		        	$scope.result=data;
-		        	$scope.orcid='';		        	
+		        	$scope.orcid = '';
 				});	        	
 	        }
 	    }).fail(function(error) { 
@@ -3882,6 +3906,27 @@ function removeSecQuestionCtrl($scope,$compile) {
 	    	console.log("Error generating random string");	    	
 	    });	
 	};
+	
+	$scope.confirmRemoveSecurityQuestion = function(){
+		if($scope.orcid != '') {
+			$.colorbox({                      
+				html : $compile($('#confirm-remove-security-question').html())($scope),
+					scrolling: true,
+					onLoad: function() {
+					$('#cboxClose').remove();
+				},
+				scrolling: true
+			});
+			
+			$.colorbox.resize({width:"450px" , height:"150px"});
+		}
+	};
+	
+	$scope.closeModal = function() {
+		$scope.orcid = '';
+		$scope.result= '';
+		$.colorbox.close();
+	};	
 };
 
 
