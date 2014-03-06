@@ -28,7 +28,9 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -37,9 +39,10 @@ import javax.annotation.Resource;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.MockitoAnnotations;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.OrcidProfileManager;
+import org.orcid.core.oauth.OrcidProfileUserDetails;
+import org.orcid.core.security.OrcidWebRole;
 import org.orcid.frontend.web.util.BaseControllerTest;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.persistence.dao.ProfileDao;
@@ -51,7 +54,8 @@ import org.orcid.pojo.ProfileDetails;
 import org.orcid.pojo.ajaxForm.Group;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Text;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -80,7 +84,27 @@ public class AdminControllerTest extends BaseControllerTest {
         assertNotNull(adminController);
         assertNotNull(profileDao);
     }
+    
+    @Override
+    protected Authentication getAuthentication() {
+        orcidProfile = orcidProfileManager.retrieveOrcidProfile("4444-4444-4444-4440");
 
+        OrcidProfileUserDetails details = null;
+        if(orcidProfile.getType() != null){             
+                details = new OrcidProfileUserDetails(orcidProfile.getOrcidIdentifier().getPath(), orcidProfile.getOrcidBio().getContactDetails().getEmail()
+                    .get(0).getValue(), orcidProfile.getOrcidInternal().getSecurityDetails().getEncryptedPassword().getContent(), orcidProfile.getType(), orcidProfile.getClientType(), orcidProfile.getGroupType());
+        } else {
+                details = new OrcidProfileUserDetails(orcidProfile.getOrcidIdentifier().getPath(), orcidProfile.getOrcidBio().getContactDetails().getEmail()
+                    .get(0).getValue(), orcidProfile.getOrcidInternal().getSecurityDetails().getEncryptedPassword().getContent());
+        }
+        UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(details, "4444-4444-4444-4440", getRole());
+        return auth;
+    }
+    
+    protected List<OrcidWebRole> getRole() {
+        return Arrays.asList(OrcidWebRole.ROLE_ADMIN);
+    }
+    
     @Test
     @Transactional("transactionManager")
     public void testCheckOrcid() throws Exception {
@@ -402,6 +426,6 @@ public class AdminControllerTest extends BaseControllerTest {
         form.setPassword("password1");
         adminController.resetPassword(null, form);
         orcidProfile = orcidProfileManager.retrieveOrcidProfile("4444-4444-4444-4441");
-        assertEquals(encryptionManager.hashForInternalUse("password1"),orcidProfile.getPassword());
+        assertFalse("e9adO9I4UpBwqI5tGR+qDodvAZ7mlcISn+T+kyqXPf2Z6PPevg7JijqYr6KGO8VOskOYqVOEK2FEDwebxWKGDrV/TQ9gRfKWZlzxssxsOnA=".equals(orcidProfile.getPassword()));
     }
 }
