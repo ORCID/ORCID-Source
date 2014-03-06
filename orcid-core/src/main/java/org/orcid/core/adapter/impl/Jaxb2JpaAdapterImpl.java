@@ -713,6 +713,9 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
                 source.setId(orcidHistory.getSource().getSourceOrcid().getPath());
                 profileEntity.setSource(source);
             }
+            if (orcidHistory.getReferredBy() != null) {
+                profileEntity.setReferredBy(orcidHistory.getReferredBy().getPath());
+            }
         }
     }
 

@@ -60,7 +60,7 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType( propOrder = { "creationMethod", "completionDate", "submissionDate", "lastModifiedDate", "claimed", "source", "deactivationDate" })
+@XmlType( propOrder = { "creationMethod", "completionDate", "submissionDate", "lastModifiedDate", "claimed", "source", "deactivationDate", "referredBy", "verifiedEmail", "verifiedPrimaryEmail" })
 @XmlRootElement(name = "orcid-history")
 public class OrcidHistory implements Serializable {
 
@@ -77,9 +77,17 @@ public class OrcidHistory implements Serializable {
     protected Source source;
     @XmlElement(name = "deactivation-date")
     protected DeactivationDate deactivationDate;
+    @XmlElement(name = "referred-by")
+    protected ReferredBy referredBy;
+    @XmlElement(name = "verified-email")
+    private VerifiedEmail verifiedEmail;
+    @XmlElement(name = "verified-primary-email")
+    private VerifiedPrimaryEmail verifiedPrimaryEmail;
     @XmlAttribute
     protected Visibility visibility;
-
+    
+    
+    
     /**
      * Gets the value of the creationMethod property.
      * 
@@ -305,6 +313,30 @@ public class OrcidHistory implements Serializable {
         if (visibility != other.visibility)
             return false;
         return true;
+    }
+
+    public ReferredBy getReferredBy() {
+        return referredBy;
+    }
+
+    public void setReferredBy(ReferredBy referredBy) {
+        this.referredBy = referredBy;
+    }
+
+    public VerifiedPrimaryEmail getVerifiedPrimaryEmail() {
+        return verifiedPrimaryEmail;
+    }
+
+    public void setVerifiedPrimaryEmail(VerifiedPrimaryEmail verifiedPrimaryEmail) {
+        this.verifiedPrimaryEmail = verifiedPrimaryEmail;
+    }
+
+    public VerifiedEmail getVerifiedEmail() {
+        return verifiedEmail;
+    }
+
+    public void setVerifiedEmail(VerifiedEmail verifiedEmail) {
+        this.verifiedEmail = verifiedEmail;
     }
 
 }

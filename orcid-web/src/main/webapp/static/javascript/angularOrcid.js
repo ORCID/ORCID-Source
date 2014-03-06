@@ -1126,6 +1126,7 @@ function RegistrationCtrl($scope, $compile) {
 	$scope.postRegister = function () {
 		if (basePath.startsWith(baseUrl + 'oauth')) { 
 			var clientName = $('div#RegistrationCtr input[name="client_name"]').val();
+			$scope.register.referredBy = $('div#RegistrationCtr input[name="client_id"]').val();
 			var clientGroupName = $('div#RegistrationCtr input[name="client_group_name"]').val();
 		    orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'New-Registration-Submit' , 'OAuth ' + orcidGA.buildClientString(clientGroupName, clientName)]);
 		    $scope.register.creationType.value = "Member-referred";

@@ -105,6 +105,7 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
     private Boolean accountNonLocked = Boolean.TRUE;
     private Date credentialsExpiry;
     private Boolean enabled = Boolean.TRUE;
+    private String referredBy;
 
     // Deprecation fields
     private ProfileEntity primaryRecord;
@@ -957,5 +958,14 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
 
     public void setLocale(Locale locale) {
         this.locale = locale;
+    }
+
+    @Column(name = "referred_by")
+    public String getReferredBy() {
+        return referredBy;
+    }
+
+    public void setReferredBy(String referredBy) {
+        this.referredBy = referredBy;
     }
 }

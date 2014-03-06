@@ -59,12 +59,13 @@ public class LoginController extends BaseController {
         // find client name if available 
         SavedRequest savedRequest = new HttpSessionRequestCache().getRequest(request, response);
         String client_name = "";
+        String client_id = "";
         String client_group_name = "";
         if (savedRequest != null) {
             String url = savedRequest.getRedirectUrl();
             Matcher matcher = clientIdPattern.matcher(url);
             if (matcher.find()) {
-                String client_id = matcher.group(1);
+                client_id = matcher.group(1);
                 if (client_id != null) {
                     OrcidProfile clientProfile = orcidProfileManager.retrieveOrcidProfile(client_id);
                     if (clientProfile.getOrcidBio() != null && clientProfile.getOrcidBio().getPersonalDetails() != null
@@ -81,6 +82,7 @@ public class LoginController extends BaseController {
             }
         }
         mav.addObject("client_name", client_name);
+        mav.addObject("client_id", client_id);
         mav.addObject("client_group_name", client_group_name);
         mav.setViewName("oauth_login");
         mav.addObject("hideUserVoiceScript", true);
