@@ -144,7 +144,7 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
     public OrcidClientGroup createOrUpdateOrcidClientGroup(OrcidClientGroup orcidClientGroup) {
         // For each client in the client group, validate the client type
         for (OrcidClient client : orcidClientGroup.getOrcidClient()) {
-            checkClientType(client.getType(), orcidClientGroup.getType());
+            checkAndSetClientType(client, orcidClientGroup.getType());
         }
         String groupOrcid = orcidClientGroup.getGroupOrcid();
         if (groupOrcid == null) {
@@ -159,7 +159,8 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
                 // then raise an error.
                 throw new OrcidClientGroupManagementException("Group ORCID was specified but does not yet exist: " + groupOrcid);
             } else {
-                // If the existing client group is found, then update the name
+                // If the existing client group is found, then update the type,
+                // name
                 // and contact email from the incoming client group, using the
                 // profile DAO
                 if (!orcidClientGroup.getEmail().equals(groupProfileEntity.getPrimaryEmail().getId())) {
@@ -167,6 +168,7 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
                     primaryEmailEntity.setId(orcidClientGroup.getEmail().toLowerCase().trim());
                     primaryEmailEntity.setCurrent(true);
                     primaryEmailEntity.setVerified(true);
+                    groupProfileEntity.setGroupType(orcidClientGroup.getType());
                     primaryEmailEntity.setVisibility(Visibility.PRIVATE);
                     groupProfileEntity.setPrimaryEmail(primaryEmailEntity);
                 }
@@ -212,8 +214,9 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
     }
 
     /**
-     * Check if the client type matches the types that the group is allowed to
-     * add.
+     * If the client type is set, check if the client type matches the types
+     * that the group is allowed to add. If the client type is null, assig it
+     * based on the group type
      * 
      * @param clientType
      *            Type of the client that want to be created
@@ -222,18 +225,23 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
      * @throws OrcidClientGroupManagementException
      *             if the client type cant be added by this group
      * */
-    private void checkClientType(ClientType clientType, GroupType groupType) {
-        switch (groupType) {
-        case BASIC:
-        case PREMIUM:
-            if (clientType.equals(ClientType.CREATOR) || clientType.equals(ClientType.PREMIUM_CREATOR))
-                throw new OrcidClientGroupManagementException("Groups of type basic or premium can only create updator clients");
-            break;
-        case BASIC_INSTITUTION:
-        case PREMIUM_INSTITUTION:
-            if (clientType.equals(ClientType.UPDATER) || clientType.equals(ClientType.PREMIUM_UPDATER))
-                throw new OrcidClientGroupManagementException("Groups of type basic-institution or premium-institution can only create creator clients");
-            break;
+    private void checkAndSetClientType(OrcidClient client, GroupType groupType) {
+        ClientType clientType = client.getType();
+        if (clientType != null) {
+            switch (groupType) {
+            case BASIC:
+            case PREMIUM:
+                if (clientType.equals(ClientType.CREATOR) || clientType.equals(ClientType.PREMIUM_CREATOR))
+                    throw new OrcidClientGroupManagementException("Groups of type basic or premium can only create updator clients");
+                break;
+            case BASIC_INSTITUTION:
+            case PREMIUM_INSTITUTION:
+                if (clientType.equals(ClientType.UPDATER) || clientType.equals(ClientType.PREMIUM_UPDATER))
+                    throw new OrcidClientGroupManagementException("Groups of type basic-institution or premium-institution can only create creator clients");
+                break;
+            }
+        } else {
+            setClientType(groupType, client);
         }
     }
 
@@ -450,6 +458,7 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
     private void updateProfileEntityFromClient(OrcidClient client, ProfileEntity clientProfileEntity, boolean isUpdate) {
         clientProfileEntity.setCreditName(client.getDisplayName());
         clientProfileEntity.setBiography(client.getShortDescription());
+        clientProfileEntity.setClientType(client.getType());
         SortedSet<ResearcherUrlEntity> researcherUrls = new TreeSet<ResearcherUrlEntity>();
         researcherUrls.add(new ResearcherUrlEntity(client.getWebsite(), clientProfileEntity));
         clientProfileEntity.setResearcherUrls(researcherUrls);
@@ -581,11 +590,10 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
     }
 
     private Set<String> updaterScopes() {
-        return new HashSet<>(ScopePathType.getScopesAsStrings(ScopePathType.AFFILIATIONS_CREATE,ScopePathType.AFFILIATIONS_READ_LIMITED,
-        		ScopePathType.AFFILIATIONS_UPDATE,ScopePathType.AUTHENTICATE,ScopePathType.FUNDING_CREATE,ScopePathType.FUNDING_READ_LIMITED,
-        		ScopePathType.FUNDING_UPDATE,ScopePathType.ORCID_BIO_EXTERNAL_IDENTIFIERS_CREATE,ScopePathType.ORCID_BIO_READ_LIMITED,
-        		ScopePathType.ORCID_BIO_UPDATE,ScopePathType.ORCID_PROFILE_READ_LIMITED,ScopePathType.ORCID_WORKS_CREATE,ScopePathType.ORCID_WORKS_READ_LIMITED,
-        		ScopePathType.ORCID_WORKS_UPDATE));
+        return new HashSet<>(ScopePathType.getScopesAsStrings(ScopePathType.AFFILIATIONS_CREATE, ScopePathType.AFFILIATIONS_READ_LIMITED,
+                ScopePathType.AFFILIATIONS_UPDATE, ScopePathType.AUTHENTICATE, ScopePathType.FUNDING_CREATE, ScopePathType.FUNDING_READ_LIMITED,
+                ScopePathType.FUNDING_UPDATE, ScopePathType.ORCID_BIO_EXTERNAL_IDENTIFIERS_CREATE, ScopePathType.ORCID_BIO_READ_LIMITED, ScopePathType.ORCID_BIO_UPDATE,
+                ScopePathType.ORCID_PROFILE_READ_LIMITED, ScopePathType.ORCID_WORKS_CREATE, ScopePathType.ORCID_WORKS_READ_LIMITED, ScopePathType.ORCID_WORKS_UPDATE));
     }
 
     /**
