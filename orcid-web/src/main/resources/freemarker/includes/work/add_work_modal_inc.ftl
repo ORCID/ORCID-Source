@@ -20,22 +20,19 @@
 	<div class="add-work colorbox-content">
 		<div class="lightbox-container-ie7">		
 		<!-- Title -->
-		<div class="row">
-			
-			<div class="col-md-9 col-sm-9 col-xs-12">
+		<div class="row">			
+			<div class="col-md-9 col-sm-8 col-xs-9">
 				<h1 class="lightbox-title pull-left"><@orcid.msg 'manual_work_form_contents.add_work'/></h1>
-			</div>
-			
-			<div class="col-md-3 col-sm-3">
-				<div class="control-group privacy-control pull-right">
+			</div>			
+			<div class="col-md-3 col-sm-3 pull-left">
+				<div class="control-group privacy-control">
 			 		<label class="relative">
 						<@orcid.msg 'privacyToggle.help.who_can_see'/>
 					</label>
 		 			<@orcid.privacyToggle "editWork.visibility" "setAddWorkPrivacy('PUBLIC', $event)" 
 					"setAddWorkPrivacy('LIMITED', $event)" "setAddWorkPrivacy('PRIVATE', $event)" />					
 		 		</div>
-			</div>
-			
+			</div>			
 		</div>
 
 		<!-- Main content -->		

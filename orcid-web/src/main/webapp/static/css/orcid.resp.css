@@ -3933,6 +3933,10 @@ p.orcid-id-container{
 	
 	/* Add work*/
 	
+	.add-work{
+		width: 100%;
+	}
+	
 	.add-work .privacy-control{
 		width: 75%;
 	}
@@ -4174,14 +4178,14 @@ p.orcid-id-container{
 	
 	#add-funding .popover.bottom .arrow{
 		left: 122px;
-	}	
-
+	}
 	
 	#add-funding .alert {
 	    float: left;
 	    margin-top: 15px;
 	    width: 100%;
 	}
+	
 	/* Administration */
 	.admin-options .form-control{
 		width: 90%;		

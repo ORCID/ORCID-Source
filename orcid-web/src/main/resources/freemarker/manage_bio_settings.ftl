@@ -150,9 +150,8 @@
                     <div class="relative">
                        <a href="javascript:void(0)" onClick="top.colorOnCloseBoxDest='<@spring.url '/account#editEmail'/>'; top.$.colorbox.close(); return false;">${springMacroRequestContext.getMessage("manage_bio_settings.editEmail")}</a>
                     </div>
-                </div>
-             	 		
-             	<div class="controls save-btns right">
+                </div>             	 		
+             	<div class="control-group save-btns left">
                     <button id="bottom-submit-affiliates" class="btn btn-primary" type="submit">${springMacroRequestContext.getMessage("manage_bio_settings.btnsavechanges")}</button>
                     <button id="bottom-clear-affiliates" class="btn close-button" type="reset">${springMacroRequestContext.getMessage("manage_bio_settings.btncancel")}</button>
                 </div>
