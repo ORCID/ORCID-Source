@@ -59,7 +59,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:orcid-frontend-web-servlet.xml", "/orcid-core-context.xml" })
+@ContextConfiguration(locations = { "classpath:orcid-frontend-web-servlet.xml", "classpath:orcid-core-context.xml" })
 public class RegistrationControllerTest {
 
     @Resource(name = "registrationController")
