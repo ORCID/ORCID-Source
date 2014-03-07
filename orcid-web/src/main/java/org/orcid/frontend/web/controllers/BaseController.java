@@ -284,6 +284,7 @@ public class BaseController {
         return sourceManager.retrieveSourceOrcid();
     }
 
+    @ModelAttribute("effectiveUserOrcid")
     public String getEffectiveUserOrcid() {
         OrcidProfileUserDetails currentUser = getCurrentUser();
         if (currentUser == null) {
