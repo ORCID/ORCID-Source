@@ -49,7 +49,7 @@ import org.springframework.mail.MailSender;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 
-@ContextConfiguration(locations = { "/test-orcid-core-context.xml" })
+@ContextConfiguration(locations = { "classpath:test-orcid-core-context.xml" })
 public class NotificationManagerTest extends BaseTest {
 
     public static final String ORCID_INTERNAL_FULL_XML = "/orcid-internal-full-message-latest.xml";

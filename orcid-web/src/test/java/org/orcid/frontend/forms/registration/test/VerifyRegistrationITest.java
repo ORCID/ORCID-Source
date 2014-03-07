@@ -38,7 +38,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  * 
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "/test-orcid-frontend-web-servlet.xml" })
+@ContextConfiguration(locations = { "classpath:test-orcid-frontend-web-servlet.xml" })
 public class VerifyRegistrationITest {
 
     @Resource

@@ -55,7 +55,7 @@
                  <@spring.message "${scope.declaringClass.name}.${scope.name()}"/>
              </div>
          </#list>
-         <p><@spring.message "orcid.frontend.web.oauth_is_secure"/></p>
+         <p><@spring.message "orcid.frontend.web.oauth_is_secure"/><a href="${aboutUri}/footer/privacy-policy" target="_blank">. <@orcid.msg 'public-layout.privacy_policy'/></a>.</p>
          <div class="row">
 	        <#assign authOnClick = "">
 	        <#list scopes as scope>
@@ -80,7 +80,7 @@
 	                    	Authorize
 	                    </button>
 	                </form>
-	            </span>
+	            </span>	            
             </div>
         </div>        
     </div>

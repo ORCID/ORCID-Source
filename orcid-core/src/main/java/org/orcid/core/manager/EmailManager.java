@@ -17,6 +17,7 @@
 package org.orcid.core.manager;
 
 import java.util.Collection;
+import java.util.Map;
 
 import org.orcid.jaxb.model.message.Email;
 import org.orcid.persistence.jpa.entities.EmailEntity;
@@ -39,4 +40,6 @@ public interface EmailManager {
     void removeEmail(String orcid, String email);
 
     void removeEmail(String orcid, String email, boolean removeIfPrimary);
+    
+    Map<String, String> findIdByEmail(String email);
 }

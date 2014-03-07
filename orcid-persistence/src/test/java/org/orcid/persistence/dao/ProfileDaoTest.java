@@ -118,9 +118,9 @@ public class ProfileDaoTest extends DBUnitTest {
     public void testFindAll() {
         List<ProfileEntity> all = profileDao.getAll();
         assertNotNull(all);
-        assertEquals(8, all.size());
+        assertEquals(9, all.size());
         Long count = profileDao.countAll();
-        assertEquals(Long.valueOf(8), count);
+        assertEquals(Long.valueOf(9), count);
     }
 
     @Test
@@ -142,7 +142,7 @@ public class ProfileDaoTest extends DBUnitTest {
         assertEquals(dateCreated.getTime(), profile.getDateCreated().getTime());
 
         Long count = profileDao.countAll();
-        assertEquals(Long.valueOf(9), count);
+        assertEquals(Long.valueOf(10), count);
         profile = profileDao.find(newOrcid);
 
         assertNotNull(profile);
@@ -168,7 +168,7 @@ public class ProfileDaoTest extends DBUnitTest {
         assertEquals(dateCreated.getTime(), profile.getDateCreated().getTime());
 
         Long count = profileDao.countAll();
-        assertEquals(Long.valueOf(9), count);
+        assertEquals(Long.valueOf(10), count);
         profile = profileDao.find(newOrcid);
 
         assertNotNull(profile);
@@ -196,7 +196,7 @@ public class ProfileDaoTest extends DBUnitTest {
         assertEquals(dateCreated.getTime(), retrievedProfile.getDateCreated().getTime());
 
         Long count = profileDao.countAll();
-        assertEquals(Long.valueOf(9), count);
+        assertEquals(Long.valueOf(10), count);
     }
 
     @Test
@@ -308,7 +308,7 @@ public class ProfileDaoTest extends DBUnitTest {
         assertNull(profile);       
 
         List<ProfileEntity> all = profileDao.getAll();
-        assertEquals(6, all.size());
+        assertEquals(7, all.size());
     }
 
     @Test
@@ -324,8 +324,8 @@ public class ProfileDaoTest extends DBUnitTest {
     public void testRetrieveSelectableSponsors() {
         List<ProfileEntity> results = profileDao.retrieveSelectableSponsors();
         assertNotNull(results);
-        assertEquals(4, results.size());
-        assertEquals("Billie Holiday", results.get(0).getVocativeName());
+        assertEquals(5, results.size());
+        assertEquals("Admin User", results.get(0).getVocativeName());
     }
 
     @Test
@@ -345,7 +345,7 @@ public class ProfileDaoTest extends DBUnitTest {
         assertEquals("4444-4444-4444-4446", results.get(1));
 
         results = profileDao.findOrcidsByIndexingStatus(IndexingStatus.DONE, Integer.MAX_VALUE);
-        assertEquals(6, results.size());
+        assertEquals(7, results.size());
 
         results = profileDao.findOrcidsByIndexingStatus(IndexingStatus.DONE, 3);
         assertEquals(3, results.size());
@@ -406,12 +406,12 @@ public class ProfileDaoTest extends DBUnitTest {
     public void testGetConfirmedProfileCount() {
         String orcid = "4444-4444-4444-4446";
         Long confirmedProfileCount = profileDao.getConfirmedProfileCount();
-        assertEquals(Long.valueOf(8), confirmedProfileCount);
+        assertEquals(Long.valueOf(9), confirmedProfileCount);
         ProfileEntity profileEntity = profileDao.find(orcid);
         profileEntity.setCompletedDate(null);
         profileDao.persist(profileEntity);
         confirmedProfileCount = profileDao.getConfirmedProfileCount();
-        assertEquals(Long.valueOf(7), confirmedProfileCount);
+        assertEquals(Long.valueOf(8), confirmedProfileCount);
     }
 
     @Test

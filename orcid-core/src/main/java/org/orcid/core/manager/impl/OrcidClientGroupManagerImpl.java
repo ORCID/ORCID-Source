@@ -159,18 +159,17 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
                 // then raise an error.
                 throw new OrcidClientGroupManagementException("Group ORCID was specified but does not yet exist: " + groupOrcid);
             } else {
-                // If the existing client group is found, then update the type,
-                // name
+                // If the existing client group is found, then update the type, name
                 // and contact email from the incoming client group, using the
                 // profile DAO
                 if (!orcidClientGroup.getEmail().equals(groupProfileEntity.getPrimaryEmail().getId())) {
                     EmailEntity primaryEmailEntity = new EmailEntity();
-                    primaryEmailEntity.setId(orcidClientGroup.getEmail().toLowerCase().trim());
+                    primaryEmailEntity.setId(orcidClientGroup.getEmail().toLowerCase().trim());                    
                     primaryEmailEntity.setCurrent(true);
                     primaryEmailEntity.setVerified(true);
                     groupProfileEntity.setGroupType(orcidClientGroup.getType());
                     primaryEmailEntity.setVisibility(Visibility.PRIVATE);
-                    groupProfileEntity.setPrimaryEmail(primaryEmailEntity);
+                    groupProfileEntity.setPrimaryEmail(primaryEmailEntity);                    
                 }
                 groupProfileEntity.setCreditName(orcidClientGroup.getGroupName());
                 profileDao.merge(groupProfileEntity);

@@ -149,7 +149,7 @@ public class AffiliationsController extends BaseWorkspaceController {
         AffiliationForm affiliationForm = new AffiliationForm();
 
         OrcidProfile profile = getEffectiveProfile();
-        Visibility v = Visibility.valueOf(profile.getOrcidInternal().getPreferences().getWorkVisibilityDefault().getValue());
+        Visibility v = Visibility.valueOf(profile.getOrcidInternal().getPreferences().getActivitiesVisibilityDefault().getValue());
         affiliationForm.setVisibility(v);
 
         Text affiliationName = new Text();

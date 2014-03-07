@@ -218,6 +218,28 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         if (profileEntity.getLastModified() != null) {
             history.setLastModifiedDate(new LastModifiedDate(toXMLGregorianCalendar(profileEntity.getLastModified())));
         }
+        
+        boolean verfiedEmail = false;
+        boolean verfiedPrimaryEmail = false;
+        if (profileEntity.getEmails() !=null) {
+            for (EmailEntity emailEntity:profileEntity.getEmails()) {
+                if (emailEntity != null && emailEntity.getVerified()) {
+                    verfiedEmail = true;
+                    if (emailEntity.getPrimary()) {
+                        verfiedPrimaryEmail = true;
+                        break;
+                    }
+                }
+            }
+        }
+        history.setVerifiedEmail(new VerifiedEmail(verfiedEmail));
+        history.setVerifiedPrimaryEmail(new VerifiedPrimaryEmail(verfiedPrimaryEmail));
+        
+        if (profileEntity.getReferredBy() != null) {
+            history.setReferredBy(new ReferredBy(getOrcidIdBase(profileEntity.getReferredBy())));
+        }
+        
+        
         return history;
     }
 
@@ -1026,7 +1048,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         preferences.setSendOrcidNews(profileEntity.getSendOrcidNews() == null ? null : new SendOrcidNews(profileEntity.getSendOrcidNews()));
         // This column is constrained as not null in the DB so don't have to
         // worry about null!
-        preferences.setWorkVisibilityDefault(new WorkVisibilityDefault(profileEntity.getWorkVisibilityDefault()));
+        preferences.setActivitiesVisibilityDefault(new ActivitiesVisibilityDefault(profileEntity.getActivitiesVisibilityDefault()));
 
         return orcidInternal;
     }
