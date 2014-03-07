@@ -611,8 +611,8 @@ function WorksPrivacyPreferencesCtrl($scope, prefsSrvc) {
 			$scope.privacyHelp[key]=!$scope.privacyHelp[key];
 	};
 	
-	$scope.updateWorkVisibilityDefault = function(priv, $event) {
-		$scope.prefsSrvc.prefs.workVisibilityDefault.value = priv;
+	$scope.updateActivitiesVisibilityDefault = function(priv, $event) {
+		$scope.prefsSrvc.prefs.activitiesVisibilityDefault.value = priv;
 		$scope.prefsSrvc.savePrivacyPreferences();
 	};	
 };
@@ -1119,13 +1119,14 @@ function RegistrationCtrl($scope, $compile) {
 	};
 
 	
-	$scope.updateWorkVisibilityDefault = function(priv, $event) {
-		$scope.register.workVisibilityDefault.visibility = priv;
+	$scope.updateActivitiesVisibilityDefault = function(priv, $event) {
+		$scope.register.activitiesVisibilityDefault.visibility = priv;
 	};
 	
 	$scope.postRegister = function () {
 		if (basePath.startsWith(baseUrl + 'oauth')) { 
 			var clientName = $('div#RegistrationCtr input[name="client_name"]').val();
+			$scope.register.referredBy = $('div#RegistrationCtr input[name="client_id"]').val();
 			var clientGroupName = $('div#RegistrationCtr input[name="client_group_name"]').val();
 		    orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'New-Registration-Submit' , 'OAuth ' + orcidGA.buildClientString(clientGroupName, clientName)]);
 		    $scope.register.creationType.value = "Member-referred";
@@ -1307,8 +1308,8 @@ function ClaimCtrl($scope, $compile) {
 		return window.location.href.split("?")[0]+".json";
 	}; 
 	
-	$scope.updateWorkVisibilityDefault = function(priv, $event) {
-		$scope.register.workVisibilityDefault.visibility = priv;
+	$scope.updateActivitiesVisibilityDefault = function(priv, $event) {
+		$scope.register.activitiesVisibilityDefault.visibility = priv;
 	};
 
 	$scope.serverValidate = function (field) {

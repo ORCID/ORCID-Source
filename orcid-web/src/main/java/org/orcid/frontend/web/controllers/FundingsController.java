@@ -131,7 +131,7 @@ public class FundingsController extends BaseWorkspaceController {
         result.setFundingTitle(title);
         result.setUrl(new Text());
         OrcidProfile profile = getEffectiveProfile();
-        Visibility v = Visibility.valueOf(profile.getOrcidInternal().getPreferences().getWorkVisibilityDefault().getValue());
+        Visibility v = Visibility.valueOf(profile.getOrcidInternal().getPreferences().getActivitiesVisibilityDefault().getValue());
         result.setVisibility(v);
         Date startDate = new Date();
         result.setStartDate(startDate);

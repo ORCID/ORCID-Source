@@ -105,6 +105,7 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
     private Boolean accountNonLocked = Boolean.TRUE;
     private Date credentialsExpiry;
     private Boolean enabled = Boolean.TRUE;
+    private String referredBy;
 
     // Deprecation fields
     private ProfileEntity primaryRecord;
@@ -143,7 +144,7 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
     private Visibility externalIdentifiersVisibility;
     private Visibility researcherUrlsVisibility;
     private Visibility profileAddressVisibility;
-    private Visibility workVisibilityDefault = Visibility.PRIVATE;
+    private Visibility activitiesVisibilityDefault = Visibility.PRIVATE;
 
     private Date deactivationDate;
 
@@ -873,12 +874,12 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
     @Basic
     @Enumerated(EnumType.STRING)
     @Column(name = "work_visibility_default")
-    public Visibility getWorkVisibilityDefault() {
-        return workVisibilityDefault;
+    public Visibility getActivitiesVisibilityDefault() {
+        return activitiesVisibilityDefault;
     }
 
-    public void setWorkVisibilityDefault(Visibility workVisibilityDefault) {
-        this.workVisibilityDefault = workVisibilityDefault;
+    public void setActivitiesVisibilityDefault(Visibility activitesVisibilityDefault) {
+        this.activitiesVisibilityDefault = activitesVisibilityDefault;
     }
 
     @Column(name = "profile_deactivation_date")
@@ -957,5 +958,14 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
 
     public void setLocale(Locale locale) {
         this.locale = locale;
+    }
+
+    @Column(name = "referred_by")
+    public String getReferredBy() {
+        return referredBy;
+    }
+
+    public void setReferredBy(String referredBy) {
+        this.referredBy = referredBy;
     }
 }

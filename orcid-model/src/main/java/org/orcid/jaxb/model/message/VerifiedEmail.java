@@ -48,8 +48,8 @@ import java.io.Serializable;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType( propOrder = { "value" })
-@XmlRootElement(name = "verified-primary-email")
-public class Claimed implements Serializable {
+@XmlRootElement(name = "verified-email")
+public class VerifiedEmail implements Serializable {
 
     /**
      * 
@@ -58,11 +58,11 @@ public class Claimed implements Serializable {
     @XmlValue
     protected boolean value;
 
-    public Claimed(boolean value) {
+    public VerifiedEmail(boolean value) {
         this.value = value;
     }
 
-    public Claimed() {
+    public VerifiedEmail() {
         super();
     }
 
@@ -87,11 +87,11 @@ public class Claimed implements Serializable {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof Claimed)) {
+        if (!(o instanceof VerifiedEmail)) {
             return false;
         }
 
-        Claimed claimed = (Claimed) o;
+        VerifiedEmail claimed = (VerifiedEmail) o;
 
         if (value != claimed.value) {
             return false;

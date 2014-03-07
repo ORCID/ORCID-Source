@@ -19,6 +19,7 @@ package org.orcid.pojo;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.orcid.jaxb.model.message.ActivitiesVisibilityDefault;
 import org.orcid.jaxb.model.message.Locale;
 import org.orcid.jaxb.model.message.SendChangeNotifications;
 import org.orcid.jaxb.model.message.SendOrcidNews;
@@ -38,12 +39,14 @@ public class Preferences extends org.orcid.jaxb.model.message.Preferences implem
         this.setSendChangeNotifications(new SendChangeNotifications());
         this.setSendOrcidNews(new SendOrcidNews());
         this.setWorkVisibilityDefault(new WorkVisibilityDefault());
+        this.setActivitiesVisibilityDefault(new ActivitiesVisibilityDefault());
     }
 
     public Preferences(org.orcid.jaxb.model.message.Preferences castPreferences) {
         this.setSendChangeNotifications(castPreferences.getSendChangeNotifications());
         this.setSendOrcidNews(castPreferences.getSendOrcidNews());
         this.setWorkVisibilityDefault(castPreferences.getWorkVisibilityDefault());
+        this.setActivitiesVisibilityDefault(castPreferences.getActivitiesVisibilityDefault());
     }
 
     public List<String> getErrors() {

@@ -18,9 +18,9 @@
 
 -->
 <orcid-message xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://www.orcid.org/ns/orcid ../../../../orcid-model/src/main/resources/orcid-message-1.2_rc3.xsd"
+    xsi:schemaLocation="http://www.orcid.org/ns/orcid ../../../../orcid-model/src/main/resources/orcid-message-1.2_rc4.xsd"
     xmlns="http://www.orcid.org/ns/orcid">
-    <message-version>1.2_rc3</message-version>
+    <message-version>1.2_rc4</message-version>
     <orcid-profile xmlns="http://www.orcid.org/ns/orcid">
         <orcid-identifier>
             <uri>http://orcid.org/4444-4444-4444-4446</uri>
@@ -41,6 +41,8 @@
                 </source-orcid>
                 <source-name>Brown University Library</source-name>
             </source>
+            <verified-email>false</verified-email>
+            <verified-primary-email>false</verified-primary-email>
         </orcid-history>
         <orcid-bio>
             <personal-details>
@@ -199,7 +201,7 @@
             <preferences>
                 <send-change-notifications>true</send-change-notifications>
                 <send-orcid-news>false</send-orcid-news>
-                <work-visibility-default>public</work-visibility-default>
+                <activities-visibility-default>public</activities-visibility-default>
             </preferences>
         </orcid-internal>
     </orcid-profile>

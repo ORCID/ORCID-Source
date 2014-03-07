@@ -297,9 +297,9 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         ProfileEntity existingProfileEntity = profileDao.find(orcidProfile.getOrcidIdentifier().getPath());
         if (existingProfileEntity != null) {
             profileDao.removeChildrenWithGeneratedIds(existingProfileEntity);
-            setWorkPrivacy(orcidProfile, existingProfileEntity.getWorkVisibilityDefault());
-            setAffiliationPrivacy(orcidProfile, existingProfileEntity.getWorkVisibilityDefault());
-            setFundingPrivacy(orcidProfile, existingProfileEntity.getWorkVisibilityDefault());
+            setWorkPrivacy(orcidProfile, existingProfileEntity.getActivitiesVisibilityDefault());
+            setAffiliationPrivacy(orcidProfile, existingProfileEntity.getActivitiesVisibilityDefault());
+            setFundingPrivacy(orcidProfile, existingProfileEntity.getActivitiesVisibilityDefault());
         }
         dedupeProfileWorks(orcidProfile);
         dedupeAffiliations(orcidProfile);
@@ -1007,7 +1007,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         }
         OrcidWorks existingOrcidWorks = existingProfile.retrieveOrcidWorks();
         OrcidWorks updatedOrcidWorks = updatedOrcidProfile.retrieveOrcidWorks();
-        Visibility workVisibilityDefault = existingProfile.getOrcidInternal().getPreferences().getWorkVisibilityDefault().getValue();
+        Visibility workVisibilityDefault = existingProfile.getOrcidInternal().getPreferences().getActivitiesVisibilityDefault().getValue();
         Boolean claimed = existingProfile.getOrcidHistory().isClaimed();
         setWorkPrivacy(updatedOrcidWorks, workVisibilityDefault, claimed == null ? false : claimed);
         String amenderOrcid = sourceManager.retrieveSourceOrcid();
@@ -1267,7 +1267,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         }
         Affiliations existingAffiliations = existingProfile.retrieveAffiliations();
         Affiliations updatedAffiliations = updatedOrcidProfile.retrieveAffiliations();
-        Visibility workVisibilityDefault = existingProfile.getOrcidInternal().getPreferences().getWorkVisibilityDefault().getValue();
+        Visibility workVisibilityDefault = existingProfile.getOrcidInternal().getPreferences().getActivitiesVisibilityDefault().getValue();
         Boolean claimed = existingProfile.getOrcidHistory().isClaimed();
         setAffiliationPrivacy(updatedAffiliations, workVisibilityDefault, claimed == null ? false : claimed);
         updatedAffiliations = dedupeAffiliations(updatedAffiliations);
@@ -1295,7 +1295,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         }
         FundingList existingFundingList = existingProfile.retrieveFundings();
         FundingList updatedFundingList = updatedOrcidProfile.retrieveFundings();
-        Visibility workVisibilityDefault = existingProfile.getOrcidInternal().getPreferences().getWorkVisibilityDefault().getValue();
+        Visibility workVisibilityDefault = existingProfile.getOrcidInternal().getPreferences().getActivitiesVisibilityDefault().getValue();
         Boolean claimed = existingProfile.getOrcidHistory().isClaimed();
         setFundingPrivacy(updatedFundingList, workVisibilityDefault, claimed == null ? false : claimed);
         updatedFundingList = dedupeFundings(updatedFundingList);
