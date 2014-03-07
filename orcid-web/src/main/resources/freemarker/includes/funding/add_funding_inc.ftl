@@ -280,7 +280,6 @@
 		    	<div class="control-group">				
 					<button class="btn btn-primary" ng-click="addFunding()" ng-disabled="addingFunding" ng-class="{disabled:addingFunding}"><@orcid.msg 'manual_funding_form_contents.btnaddtolist'/></button>
 					<button id="" class="btn close-button" ng-click="closeModal()" type="reset"><@orcid.msg 'manage.deleteExternalIdentifier.cancel'/></button>
-															
 				</div>
 			</div>
 		</div>

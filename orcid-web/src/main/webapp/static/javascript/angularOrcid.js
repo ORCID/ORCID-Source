@@ -1749,6 +1749,13 @@ function AffiliationCtrl($scope, $compile, $filter, affiliationsSrvc, workspaceS
 		});
 	};
 	
+	//For resizing color box in case of error
+	$scope.$watch('addingAffiliation', function() {
+		 setTimeout(function(){
+			 $.colorbox.resize();; 
+	     }, 50);		
+	});
+	
 	$scope.deleteAffiliation = function(aff) {
 		$scope.deleAff = aff;
 		
@@ -3759,9 +3766,6 @@ function adminGroupsCtrl($scope,$compile){
 	
 	//init 
 	$scope.getGroup();
-<<<<<<< HEAD
-};
-=======
 };
 
 function findIdsCtrl($scope,$compile){
@@ -3939,18 +3943,3 @@ function removeSecQuestionCtrl($scope,$compile) {
 		$.colorbox.close();
 	};	
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
->>>>>>> master

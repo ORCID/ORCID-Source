@@ -175,14 +175,15 @@
 						<div ng-repeat='error in editAffiliation.endDate.errors' ng-bind-html="error"></div>
 					</span>
 		    	</div>
+				<div class="control-group">
+					<span ng-show="editAffiliation.errors.length > 0" class="alert"><@orcid.msg 'common.please_fix_errors' /></span>
+					<span ng-show="addingAffiliation">
+						<i class="glyphicon glyphicon-refresh spin x2 green"></i>
+					</span>										
+				</div>
 		    	<div class="control-group">					
 					<button class="btn btn-primary" ng-click="addAffiliation()" ng-disabled="addingAffiliation" ng-class="{disabled:addingAffiliation}"><@orcid.msg 'manual_affiliation_form_contents.btnaddtolist'/></button>
 					<button id="" class="btn close-button" ng-click="closeModal()" type="reset">Cancel</button>
-
-					<span ng-show="addingAffiliation">
-						<i class="glyphicon glyphicon-refresh spin x2 green"></i>
-					</span>
-					<span ng-show="editAffiliation.errors.length > 0" class="alert"><@orcid.msg 'common.please_fix_errors' /></span>					
-			</div>			
-	</div>
+				</div>	    				
+		</div>
 </script>
