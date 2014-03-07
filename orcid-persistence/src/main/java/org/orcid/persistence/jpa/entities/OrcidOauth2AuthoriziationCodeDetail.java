@@ -57,8 +57,6 @@ public class OrcidOauth2AuthoriziationCodeDetail extends BaseEntity<String> impl
 
     // Authentication attributes
     private ProfileEntity profileEntity;
-    private String credentials;
-    private String remoteAddress;
     private String sessionId;
     private Boolean authenticated;
 
@@ -126,24 +124,6 @@ public class OrcidOauth2AuthoriziationCodeDetail extends BaseEntity<String> impl
 
     public void setProfileEntity(ProfileEntity profileEntity) {
         this.profileEntity = profileEntity;
-    }
-
-    @Column(name = "credentials", length = 100)
-    public String getCredentials() {
-        return credentials;
-    }
-
-    public void setCredentials(String credentials) {
-        this.credentials = credentials;
-    }
-
-    @Column(name = "remote_address", length = 65)
-    public String getRemoteAddress() {
-        return remoteAddress;
-    }
-
-    public void setRemoteAddress(String remoteAddress) {
-        this.remoteAddress = remoteAddress;
     }
 
     @Column(name = "session_id", length = 155)
