@@ -16,6 +16,8 @@
  */
 package org.orcid.persistence.dao.impl;
 
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.persistence.Query;
@@ -123,4 +125,10 @@ public class EmailDaoImpl extends GenericDaoImpl<EmailEntity, String> implements
         query.executeUpdate();
     }
 
+    @Override
+    public List findIdByCaseInsensitiveEmail(List<String> emails) {        
+        Query query = entityManager.createNativeQuery("select orcid, email from email where trim(lower(email)) in :emails");        
+        query.setParameter("emails", emails);
+        return query.getResultList();
+    }
 }

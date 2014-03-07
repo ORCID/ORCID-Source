@@ -17,6 +17,7 @@
 package org.orcid.frontend.web.util;
 
 import java.util.Arrays;
+import java.util.List;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -46,7 +47,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 @Ignore
 public class BaseControllerTest extends DBUnitTest {
 
-    private OrcidProfile orcidProfile;
+    protected OrcidProfile orcidProfile;
 
     @BeforeClass
     public static void beforeClass() throws Exception {
@@ -64,7 +65,7 @@ public class BaseControllerTest extends DBUnitTest {
         removeDBUnitData(Arrays.asList("/data/ProfileEntityData.xml", "/data/SecurityQuestionEntityData.xml"), null);
     }
 
-    private Authentication getAuthentication() {
+    protected Authentication getAuthentication() {
         if (orcidProfile == null) {
             orcidProfile = getOrcidProfile();
         }

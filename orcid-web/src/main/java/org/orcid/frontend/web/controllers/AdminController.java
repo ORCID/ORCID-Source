@@ -18,13 +18,17 @@ package org.orcid.frontend.web.controllers;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang.RandomStringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.manager.EmailManager;
 import org.orcid.core.manager.ExternalIdentifierManager;
 import org.orcid.core.manager.NotificationManager;
@@ -36,10 +40,12 @@ import org.orcid.jaxb.model.clientgroup.OrcidClientGroup;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidType;
 import org.orcid.jaxb.model.message.Visibility;
+import org.orcid.password.constants.OrcidPasswordConstants;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.ExternalIdentifierEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileWorkEntity;
+import org.orcid.pojo.AdminChangePassword;
 import org.orcid.pojo.ProfileDeprecationRequest;
 import org.orcid.pojo.ProfileDetails;
 import org.orcid.pojo.ajaxForm.Group;
@@ -67,12 +73,14 @@ public class AdminController extends BaseController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AdminController.class);
 
+    private static int RANDOM_STRING_LENGTH = 15;
+    
     @Resource
     ProfileEntityManager profileEntityManager;
 
     @Resource
     ProfileWorkManager profileWorkManager;
-
+    
     @Resource
     ExternalIdentifierManager externalIdentifierManager;
 
@@ -84,7 +92,7 @@ public class AdminController extends BaseController {
 
     @Resource
     EmailManager emailManager;
-
+    
     public ProfileEntityManager getProfileEntityManager() {
         return profileEntityManager;
     }
@@ -320,6 +328,14 @@ public class AdminController extends BaseController {
             orcidProfileManager.reactivateOrcidProfile(toReactivate);
         return result;
     }
+    
+    @RequestMapping(value = "/find-id", method = RequestMethod.GET)
+    public @ResponseBody
+    Map<String, String> findIdByEmail(@RequestParam("csvEmails") String csvEmails) {
+        if(StringUtils.isBlank(csvEmails))
+            return new HashMap<String, String>();
+        return emailManager.findIdByEmail(csvEmails);
+    }
 
     /**
      * Get an empty group
@@ -344,7 +360,7 @@ public class AdminController extends BaseController {
      * */
     @RequestMapping(value = "/create-group.json", method = RequestMethod.POST)
     public @ResponseBody
-    Group createGroup(@RequestBody Group group) {
+    Group createGroup(@RequestBody Group group) {        
         group.setErrors(new ArrayList<String>());
 
         validateGroupEmail(group);
@@ -411,5 +427,97 @@ public class AdminController extends BaseController {
     		groups.add(Group.fromProfileEntity(profile));
     	}
     	return groups;
+    }
+    
+    /**
+     * Generate random string
+     * */
+    @RequestMapping(value = "/generate-random-string.json", method = RequestMethod.GET)
+    public @ResponseBody
+    String generateRandomString(){
+        return RandomStringUtils.random(RANDOM_STRING_LENGTH, OrcidPasswordConstants.getEntirePasswordCharsRange());
+    }
+    
+    
+    /**
+     * Reset password
+     * */
+    @RequestMapping(value = "/reset-password.json", method = RequestMethod.POST)
+    public @ResponseBody
+    String resetPassword(HttpServletRequest request, @RequestBody AdminChangePassword form){  
+        String orcidOrEmail = form.getOrcidOrEmail();
+        String password = form.getPassword();
+        String orcid = null;        
+        if(StringUtils.isNotBlank(password) && password.matches(OrcidPasswordConstants.ORCID_PASSWORD_REGEX)) {
+            OrcidProfile currentProfile = getEffectiveProfile();
+            if(OrcidType.ADMIN.equals(currentProfile.getType())) {   
+                if(StringUtils.isNotBlank(orcidOrEmail))
+                    orcidOrEmail = orcidOrEmail.trim(); 
+                boolean isOrcid = matchesOrcidPattern(orcidOrEmail);
+                //If it is not an orcid, check the value from the emails table
+                if(!isOrcid) {
+                    Map<String, String> email = findIdByEmail(orcidOrEmail);
+                    orcid = email.get(orcidOrEmail);
+                } else {
+                    orcid = orcidOrEmail;
+                }
+                
+                if(StringUtils.isNotEmpty(orcid)) {                
+                    OrcidProfile orcidProfile = orcidProfileManager.retrieveOrcidProfile(orcid);
+                    if(orcidProfile != null) {
+                        orcidProfile.setPassword(password);
+                        orcidProfileManager.updatePasswordInformation(orcidProfile);
+                    } else {
+                        return getMessage("admin.errors.unexisting_orcid");
+                    }
+                } else {
+                    return getMessage("admin.errors.unable_to_fetch_info");
+                }
+            }
+        } else {
+            return getMessage("admin.reset_password.error.invalid_password");
+        }
+        
+        return getMessage("admin.reset_password.success");
+    }
+    
+    /**
+     * Remove security question
+     * */
+    @RequestMapping(value = "/remove-security-question.json", method = RequestMethod.POST)
+    public @ResponseBody String removeSecurityQuestion(HttpServletRequest request, @RequestBody String orcidOrEmail) { 
+        if(StringUtils.isNotBlank(orcidOrEmail))
+            orcidOrEmail = orcidOrEmail.trim();
+        boolean isOrcid = matchesOrcidPattern(orcidOrEmail);
+        String orcid = null;
+        //If it is not an orcid, check the value from the emails table
+        if(!isOrcid) {
+            Map<String, String> email = findIdByEmail(orcidOrEmail);
+            orcid = email.get(orcidOrEmail);
+        } else {
+            orcid = orcidOrEmail;
+        }
+                
+        if(StringUtils.isNotEmpty(orcid) && profileEntityManager.orcidExists(orcid)) {
+            OrcidProfile currentProfile = getEffectiveProfile();
+            if(OrcidType.ADMIN.equals(currentProfile.getType())) { 
+                OrcidProfile orcidProfile = orcidProfileManager.retrieveOrcidProfile(orcid);
+                if(orcidProfile != null) {
+                    orcidProfile.getOrcidInternal().getSecurityDetails().setSecurityQuestionId(null);
+                    orcidProfile.setSecurityQuestionAnswer(null);
+                    orcidProfileManager.updateSecurityQuestionInformation(orcidProfile);
+                } else {
+                    return getMessage("admin.errors.unexisting_orcid");
+                }
+            }            
+        } else {
+            return getMessage("admin.errors.unable_to_fetch_info");
+        }
+        return getMessage("admin.remove_security_question.success");
+    }
+    
+    
+    private boolean matchesOrcidPattern(String orcid){
+        return OrcidStringUtils.isValidOrcid(orcid);
     }
 }

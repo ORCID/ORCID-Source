@@ -16,13 +16,41 @@
     =============================================================================
 
 -->
-<@public >
+<@public nav="admin">
+
 <script type="text/ng-template" id="success-modal">
   <div style="padding:20px">
     <a id="cboxClose" class="btn pull-right close-button" ng-click="closeModal()">X</a>
     <h1><@orcid.msg 'admin.success'/></h1>
-    <p id="success-message">{{successMessage}}</p>    
+    <p id="success-message">{{successMessage}}</p>  
+    <div class="control-group">
+    	<a href="" class="cancel-action" ng-click="closeModal()"><@orcid.msg 'freemarker.btnclose'/></a>
+    </div>  
   </div>
+</script>
+
+<script type="text/ng-template" id="email-ids-modal">
+	<div style="padding:20px">
+		<h1><@orcid.msg 'admin.find_ids.results'/></h1>
+		<div ng-show="emailIdsMap">
+			<table class="table table-bordered table-hover">
+				<tr>
+					<td><strong><@orcid.msg 'admin.email'/></strong></td>
+					<td><strong><@orcid.msg 'admin.orcid'/></strong></td>
+				</tr>
+				<tr ng-repeat="(email, orcid) in emailIdsMap">
+					<td>{{email}}</td>
+					<td>{{orcid}}</td>
+				</tr>
+			</table>
+			<div class="controls save-btns pull-right bottom-margin-small">
+				<a href="" class="cancel-action" ng-click="closeModal()"><@orcid.msg 'freemarker.btnclose'/></a>
+			</div>
+		</div>
+		<div ng-show="!emailIdsMap">
+			<span><@orcid.msg 'admin.find_ids.no_results'/></span>
+		</div>
+	</div>
 </script>
 
 <script type="text/ng-template" id="confirm-deprecation-modal">
@@ -67,8 +95,9 @@
 		    </tr>	    
 	    </table>
 	</div>		   	
-    <div class="controls save-btns pull-right bottom-margin-small">
-    	<span id="bottom-deprecate-profile" ng-click="deprecateAccount()" class="btn btn-primary"><@orcid.msg 'admin.profile_deprecation.deprecate_account'/></span>
+	<div class="control-group">
+		<button class="btn btn-primary" id="bottom-deprecate-profile" ng-click="deprecateAccount()"><@orcid.msg 'admin.profile_deprecation.deprecate_account'/></button>
+		<a href="" class="cancel-action" ng-click="closeModal()"><@orcid.msg 'freemarker.btncancel'/></a>
 	</div>
   </div>
 </script>
@@ -94,8 +123,9 @@
 			    </tr>		    
 	    	</table>
 		</div>
-		<div class="controls save-btns pull-right bottom-margin-small">
-	    	<span id="bottom-deactivate-profile" ng-click="deactivateAccount()" class="btn btn-primary"><@orcid.msg 'admin.profile_deactivation.deactivate_account'/></span>
+		<div class="control-group">			
+			<button class="btn btn-primary" id="bottom-deactivate-profile" ng-click="deactivateAccount()"><@orcid.msg 'admin.profile_deactivation.deactivate_account'/></button>
+			<a href="" class="cancel-action" ng-click="closeModal()"><@orcid.msg 'freemarker.btncancel'/></a>
 		</div>
 	</div>
 </script>
@@ -109,50 +139,57 @@
 			<br />
 			<span>{{orcidToReactivate}}</span>				    	
 		</div>
-		<div class="controls save-btns pull-right bottom-margin-small">
-	    	<span id="bottom-deactivate-profile" ng-click="reactivateAccount()" class="btn btn-primary"><@orcid.msg 'admin.profile_reactivation.reactivate_account'/></span>
+		<div class="control-group">			
+			<button class="btn btn-primary" id="bottom-deactivate-profile" ng-click="reactivateAccount()"><@orcid.msg 'admin.profile_reactivation.reactivate_account'/></button>
+			<a href="" class="cancel-action" ng-click="closeModal()"><@orcid.msg 'freemarker.btncancel'/></a>
 		</div>
 	</div>
 </script>
 
 <script type="text/ng-template" id="add-new-group">
 	<div class="colorbox-content">
-		<a id="cboxClose" class="btn pull-right close-button" ng-click="closeModal()">X</a>
-    	<h1><@orcid.msg 'manage_groups.add_new_group'/></h1>
-		<div>
-			<div class="control-group">
-    			<label class="relative"><@orcid.msg 'manage_groups.group_name'/></label>
-    			<div class="relative">
-      				<input type="text" class="input-xlarge" id="groupName" ng-model="newGroup.groupName.value" placeholder="<@orcid.msg 'manage_groups.name'/>">
-    			</div>
-				<span class="orcid-error" ng-show="newGroup.groupName.errors.length > 0">
-					<div ng-repeat='error in newGroup.groupName.errors' ng-bind-html="error"></div>
-				</span>
-  			</div>
-			<div class="control-group">
-    			<label class="relative"><@orcid.msg 'manage_groups.group_email'/></label>
-    			<div class="relative">
-      				<input type="text" class="input-xlarge" id="groupEmail" ng-model="newGroup.email.value" placeholder="<@orcid.msg 'manage_groups.email'/>">
-    			</div>
-				<span class="orcid-error" ng-show="newGroup.email.errors.length > 0">
-					<div ng-repeat='error in newGroup.email.errors' ng-bind-html="error"></div>
-				</span>
-  			</div>
-			<div class="control-group">
-    			<label class="relative"><@orcid.msg 'manage_groups.group_type'/></label>
-    			<div class="relative">					
-      				<select id="groupType" name="groupType" class="input-xlarge" ng-model="newGroup.type.value">			    		
-						<#list groupTypes?keys as key>
-							<option value="${key}">${groupTypes[key]}</option>
-						</#list>
-					</select> 
-    			</div>
-				<span class="orcid-error" ng-show="newGroup.type.errors.length > 0">
-					<div ng-repeat='error in newGroup.type.errors' ng-bind-html="error"></div>
-				</span>
-  			</div>
-			<div class="control-group">
-				<button class="btn btn-primary" ng-click="addGroup()"><@orcid.msg 'manage_groups.btnadd'/></button>
+		<div class="row">
+			<div class="col-md-12 col-sm-12 col-xs-12">	
+    			<h1><@orcid.msg 'manage_groups.add_new_group'/></h1>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-12 col-sm-12 col-xs-12">	
+				<div class="control-group">
+	    			<label class="relative"><@orcid.msg 'manage_groups.group_name'/></label>
+    				<div class="relative">
+      					<input type="text" class="input-xlarge" id="groupName" ng-model="newGroup.groupName.value" placeholder="<@orcid.msg 'manage_groups.name'/>">
+    				</div>
+					<span class="orcid-error" ng-show="newGroup.groupName.errors.length > 0">
+						<div ng-repeat='error in newGroup.groupName.errors' ng-bind-html="error"></div>
+					</span>
+	  			</div>
+				<div class="control-group">
+    				<label class="relative"><@orcid.msg 'manage_groups.group_email'/></label>
+    					<div class="relative">
+      						<input type="text" class="input-xlarge" id="groupEmail" ng-model="newGroup.email.value" placeholder="<@orcid.msg 'manage_groups.email'/>">
+    				</div>
+					<span class="orcid-error" ng-show="newGroup.email.errors.length > 0">
+						<div ng-repeat='error in newGroup.email.errors' ng-bind-html="error"></div>
+					</span>
+	  			</div>
+				<div class="control-group">
+    				<label class="relative"><@orcid.msg 'manage_groups.group_type'/></label>
+    				<div class="relative">					
+      					<select id="groupType" name="groupType" class="input-xlarge" ng-model="newGroup.type.value">			    		
+							<#list groupTypes?keys as key>
+								<option value="${key}">${groupTypes[key]}</option>
+							</#list>
+						</select> 
+    				</div>
+					<span class="orcid-error" ng-show="newGroup.type.errors.length > 0">
+						<div ng-repeat='error in newGroup.type.errors' ng-bind-html="error"></div>
+					</span>
+  				</div>
+				<div class="control-group">
+					<button class="btn btn-primary" ng-click="addGroup()"><@orcid.msg 'manage_groups.btnadd'/></button>
+					<a href="" class="cancel-action" ng-click="closeModal()"><@orcid.msg 'freemarker.btnclose'/></a>
+				</div>
 			</div>				
 		</div>
 	</div>
@@ -160,44 +197,49 @@
 
 <script type="text/ng-template" id="new-group-info">
 	<div class="colorbox-content">
-		<a id="cboxClose" class="btn pull-right close-button" ng-click="closeModal()">X</a>
-    	<h1><@orcid.msg 'manage_groups.new_group_info'/></h1>
-		<div>
-			<div class="control-group">
-    			<span><strong><@orcid.msg 'manage_groups.group_name'/></strong></span>
-    			<div class="relative">
-      				<span>{{newGroup.groupName.value}}</span>
-    			</div>
-  			</div>
-			<div class="control-group">
-    			<span><strong><@orcid.msg 'manage_groups.group_email'/></strong></span>
-    			<div class="relative">
-      				<span>{{newGroup.email.value}}</span>
-    			</div>
-  			</div>
-			<div class="control-group">
-    			<span><strong><@orcid.msg 'manage_groups.group_orcid'/></strong></span>
-    			<div class="relative">
-      				<span>{{newGroup.groupOrcid.value}}</span>
-    			</div>
-  			</div>
-			<div class="control-group">
-    			<span><strong><@orcid.msg 'manage_groups.instructions_title'/></strong></span>
-    			<div class="relative">
-					<ul>
-      					<li><@orcid.msg 'manage_groups.instructions.1'/></li>
-						<li><@orcid.msg 'manage_groups.instructions.2'/></li>
-						<li><@orcid.msg 'manage_groups.instructions.3'/></li>
-					</ul>
-    			</div>
-  			</div>
+		<div class="row">
+			<div class="col-md-12 col-sm-12 col-xs-12">	
+    			<h1><@orcid.msg 'manage_groups.new_group_info'/></h1>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-12 col-sm-12 col-xs-12">
+				<div class="control-group">
+    				<span><strong><@orcid.msg 'manage_groups.group_name'/></strong></span>
+    				<div class="relative">
+      					<span>{{newGroup.groupName.value}}</span>
+    				</div>
+	  			</div>
+				<div class="control-group">
+    				<span><strong><@orcid.msg 'manage_groups.group_email'/></strong></span>
+    				<div class="relative">
+      					<span>{{newGroup.email.value}}</span>
+    				</div>
+  				</div>
+				<div class="control-group">
+	    			<span><strong><@orcid.msg 'manage_groups.group_orcid'/></strong></span>
+    				<div class="relative">
+      					<span>{{newGroup.groupOrcid.value}}</span>
+    				</div>
+  				</div>
+				<div class="control-group">
+    				<span><strong><@orcid.msg 'manage_groups.instructions_title'/></strong></span>
+    				<div class="relative">
+						<ul>
+      						<li><@orcid.msg 'manage_groups.instructions.1'/></li>
+							<li><@orcid.msg 'manage_groups.instructions.2'/></li>
+							<li><@orcid.msg 'manage_groups.instructions.3'/></li>
+						</ul>
+    				</div>
+					<a href="" class="cancel-action" ng-click="closeModal()"><@orcid.msg 'freemarker.btnclose'/></a>
+  				</div>
+			<div>
 		</div>
 	</div>
 </script>
 
 <script type="text/ng-template" id="list-groups">
 	<div class="colorbox-content">
-		<a id="cboxClose" class="btn pull-right close-button" ng-click="closeModal()">X</a>
     	<h1><@orcid.msg 'manage_groups.group_list_title'/></h1>
 		<div>
 			<div class="relative" ng-show="groups.length">				
@@ -223,32 +265,121 @@
 	</div>
 </script>
 
+<!-- Confirm reset password -->
+<script type="text/ng-template" id="confirm-reset-password">
+	<div class="colorbox-content">
+		<div class="row">
+			<div class="col-md-12 col-sm-12 col-xs-12">	
+    			<h1><@orcid.msg 'admin.reset_password.confirm_title'/></h1>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-12 col-sm-12 col-xs-12">					
+				<div class="control-group">
+    				<label class="relative"><@orcid.msg 'admin.reset_password.confirm.message'/> {{params.orcidOrEmail}}?</label>    				
+  				</div>
+				<div class="control-group">
+					<button class="btn btn-primary" ng-click="resetPassword()"><@orcid.msg 'admin.reset_password.confirm.button'/></button>
+					<a href="" class="cancel-action" ng-click="closeModal()"><@orcid.msg 'freemarker.btncancel'/></a>
+				</div>
+			</div>				
+		</div>
+	</div>
+</script>
+
+<!-- Confirm remove security question -->
+<script type="text/ng-template" id="confirm-remove-security-question">
+	<div class="colorbox-content">
+		<div class="row">
+			<div class="col-md-12 col-sm-12 col-xs-12">	
+    			<h1><@orcid.msg 'admin.remove_security_question.confirm_title'/></h1>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-12 col-sm-12 col-xs-12">					
+				<div class="control-group">
+    				<label class="relative"><@orcid.msg 'admin.remove_security_question.confirm.message'/> {{orcidOrEmail}}?</label>    				
+  				</div>
+				<div class="control-group">
+					<button class="btn btn-primary" ng-click="removeSecurityQuestion()"><@orcid.msg 'admin.remove_security_question.confirm.button'/></button>
+					<a href="" class="cancel-action" ng-click="closeModal()"><@orcid.msg 'freemarker.btncancel'/></a>
+				</div>
+			</div>				
+		</div>
+	</div>
+</script>
 
 <!-- Admin main Layout -->
 <div class="row">
 	<!-- Left menu bar -->	
 	<div class="col-md-3 col-sm-3 col-xs-12 lhs override">
-		<ul class="settings-nav">
-			<!-- 
-			<li><a href="<@spring.url "/account" />#account-settings">${springMacroRequestContext.getMessage("manage.accountsettings")}</a></li>
-			<li><a href="<@spring.url "/account" />#manage-permissions">${springMacroRequestContext.getMessage("manage.managepermission")}</a></li>
-			 -->
-			<li class="admin-option">
-				<a href="admin-actions#add-client"><@orcid.msg 'manage_groups.admin_groups_title'/></a>	
-			</li>
-			<li class="admin-option">
-				<a href="admin-actions#deprecate-profile"><@orcid.msg 'admin.profile_deprecation' /></a>
-			</li>
-			<li class="admin-option" >
-				<a href="admin-actions#deactivate-profile"><@orcid.msg 'admin.profile_deactivation' /></a>
-			</li>
-			<li class="admin-option">
-				<a href="admin-actions#reactivate-profile"><@orcid.msg 'admin.profile_reactivation' /></a>
-			</li>					
-		</ul>
+		
 	</div>
 	<!-- Right menu bar -->
 	<div class="col-md-9 col-sm-9 col-xs-12 admin-options">	
+		<!-- Find Ids by email -->
+		<a name="find-ids"></a>
+		<div ng-controller="findIdsCtrl" class="workspace-accordion-item" ng-cloak>
+			<p>
+				<a  ng-show="showSection" ng-click="toggleSection()"><span class="glyphicon glyphicon-chevron-down blue"></span></span><@orcid.msg 'admin.find_ids' /></a>
+				<a  ng-hide="showSection" ng-click="toggleSection()"><span class="glyphicon glyphicon-chevron-right blue"></span></span><@orcid.msg 'admin.find_ids' /></a>
+			</p>			  	
+			<div class="collapsible bottom-margin-small admin-modal" id="find_ids_section" style="display:none;">
+				<div class="form-group">
+					<label for="emails"><@orcid.msg 'admin.find_ids.label' /></label>
+					<input type="text" id="emails" ng-model="emails" placeholder="<@orcid.msg 'admin.find_ids.placeholder' />" class="input-xlarge" />
+				</div>
+				<div class="controls save-btns pull-left">
+					<span id="find-ids" ng-click="findIds()" class="btn btn-primary"><@orcid.msg 'admin.find_ids.button'/></span>						
+				</div>
+			</div>	
+		</div>
+		
+		<!-- Reset password -->
+		<a name="reset-password"></a>
+		<div ng-controller="resetPasswordCtrl" class="workspace-accordion-item" ng-cloak>
+			<p>
+				<a  ng-show="showSection" ng-click="toggleSection()"><span class="glyphicon glyphicon-chevron-down blue"></span></span><@orcid.msg 'admin.reset_password' /></a>
+				<a  ng-hide="showSection" ng-click="toggleSection()"><span class="glyphicon glyphicon-chevron-right blue"></span></span><@orcid.msg 'admin.reset_password' /></a>
+			</p>
+			<div class="collapsible bottom-margin-small admin-modal" id="reset_password_section" style="display:none;">			
+				<div class="form-group">
+					<label for="orcid"><@orcid.msg 'admin.reset_password.orcid.label' /></label>
+					<input type="text" id="orcid" ng-model="params.orcidOrEmail" placeholder="<@orcid.msg 'admin.reset_password.orcid.placeholder' />" class="input-xlarge" />
+					<label for="password"><@orcid.msg 'admin.reset_password.password.label' /></label>
+					<input type="text" id="password" ng-model="params.password" placeholder="<@orcid.msg 'admin.reset_password.password.placeholder' />" class="input-xlarge" />
+					<a href ng-click="randomString()" class="glyphicon glyphicon-random blue"></a>									
+					<div ng-show="result != ''">
+						<span class="orcid-error" ng-bind-html="result"></span><br />
+					</div>
+				</div>
+				<div class="controls save-btns pull-left">
+					<span id="find-ids" ng-click="confirmResetPassword()" class="btn btn-primary"><@orcid.msg 'admin.reset_password.button'/></span>						
+				</div>
+			</div>
+		</div>
+		
+		<!-- Remove security question -->
+		<a name="remove-security-question"></a>
+		<div ng-controller="removeSecQuestionCtrl" class="workspace-accordion-item" ng-cloak>
+			<p>
+				<a  ng-show="showSection" ng-click="toggleSection()"><span class="glyphicon glyphicon-chevron-down blue"></span></span><@orcid.msg 'admin.remove_security_question' /></a>
+				<a  ng-hide="showSection" ng-click="toggleSection()"><span class="glyphicon glyphicon-chevron-right blue"></span></span><@orcid.msg 'admin.remove_security_question' /></a>
+			</p>
+			<div class="collapsible bottom-margin-small admin-modal" id="remove_security_question_section" style="display:none;">
+				<div class="form-group">
+					<label for="orcid"><@orcid.msg 'admin.remove_security_question.orcid.label' /></label>
+					<input type="text" id="orcid" ng-model="orcidOrEmail" placeholder="<@orcid.msg 'admin.remove_security_question.orcid.placeholder' />" class="input-xlarge" />					
+					<div ng-show="result != ''">
+						<span class="orcid-error" ng-bind-html="result"></span><br />
+					</div>
+				</div>
+				<div class="controls save-btns pull-left">
+					<span id="find-ids" ng-click="confirmRemoveSecurityQuestion()" class="btn btn-primary"><@orcid.msg 'admin.remove_security_question.button'/></span>						
+				</div>
+			</div>
+		</div>
+		
 		<!-- Add new client group -->
 		<a name="add-client"></a>
 		<div ng-controller="adminGroupsCtrl" class="workspace-accordion-item" ng-cloak>
@@ -262,13 +393,7 @@
 						<span  class="glyphicon glyphicon-plus-sign blue"></span>
 						<@orcid.msg 'manage_groups.add_group_link'/>
 					</a>
-				</div>
-				<div class="view-items-link">
-					<a ng-click="listGroups()">
-						<span class="glyphicon glyphicon-list-alt blue"></span>
-						<@orcid.msg 'manage_groups.view_all_link'/>
-					</a>
-				</div>		
+				</div>				
 			</div>			
 		</div>
 		
@@ -349,7 +474,7 @@
 				</div>
 			</div>
 		</div>
+						
 	</div>
-		
 </div>
 </@public >
