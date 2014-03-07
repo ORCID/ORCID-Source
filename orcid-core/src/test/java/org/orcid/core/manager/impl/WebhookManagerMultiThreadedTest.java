@@ -41,7 +41,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  * @author Will Simpson
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "/orcid-core-context.xml" })
+@ContextConfiguration(locations = { "classpath:orcid-core-context.xml" })
 public class WebhookManagerMultiThreadedTest extends DBUnitTest {
 
     @Resource
