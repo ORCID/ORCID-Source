@@ -56,12 +56,12 @@ import org.orcid.core.manager.LoadOptions;
 import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.OrcidGenerationManager;
 import org.orcid.core.manager.OrcidIndexManager;
+import org.orcid.core.manager.OrcidJaxbCopyManager;
 import org.orcid.core.manager.OrcidProfileCleaner;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.security.OrcidWebRole;
 import org.orcid.core.security.visibility.aop.VisibilityControl;
-import org.orcid.core.utils.OrcidJaxbCopyUtils;
 import org.orcid.jaxb.model.message.Affiliation;
 import org.orcid.jaxb.model.message.Affiliations;
 import org.orcid.jaxb.model.message.Biography;
@@ -213,6 +213,9 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
     @Resource
     private SourceManager sourceManager;
 
+    @Resource
+    private OrcidJaxbCopyManager orcidJaxbCopyManager;
+
     private int claimWaitPeriodDays = 10;
 
     private int claimReminderAfterDays = 8;
@@ -294,9 +297,9 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         ProfileEntity existingProfileEntity = profileDao.find(orcidProfile.getOrcidIdentifier().getPath());
         if (existingProfileEntity != null) {
             profileDao.removeChildrenWithGeneratedIds(existingProfileEntity);
-            setWorkPrivacy(orcidProfile, existingProfileEntity.getWorkVisibilityDefault());
-            setAffiliationPrivacy(orcidProfile, existingProfileEntity.getWorkVisibilityDefault());
-            setFundingPrivacy(orcidProfile, existingProfileEntity.getWorkVisibilityDefault());
+            setWorkPrivacy(orcidProfile, existingProfileEntity.getActivitiesVisibilityDefault());
+            setAffiliationPrivacy(orcidProfile, existingProfileEntity.getActivitiesVisibilityDefault());
+            setFundingPrivacy(orcidProfile, existingProfileEntity.getActivitiesVisibilityDefault());
         }
         dedupeProfileWorks(orcidProfile);
         dedupeAffiliations(orcidProfile);
@@ -769,12 +772,10 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
     @Transactional
     public OrcidProfile updateOrcidWorks(OrcidProfile updatedOrcidProfile) {
         OrcidProfile existingProfile = retrieveOrcidProfile(updatedOrcidProfile.getOrcidIdentifier().getPath());
-
         if (existingProfile == null) {
             return null;
         }
-
-        existingProfile.setOrcidWorks(updatedOrcidProfile.retrieveOrcidWorks());
+        orcidJaxbCopyManager.copyUpdatedWorksPreservingVisbility(existingProfile.retrieveOrcidWorks(), updatedOrcidProfile.retrieveOrcidWorks());
         return updateOrcidProfile(existingProfile);
     }
 
@@ -805,7 +806,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
                 updatedExternalIdentifiers.add(ei);
             }
 
-            OrcidJaxbCopyUtils.copyUpdatedExternalIdentifiersToExistingPreservingVisibility(orcidBio, updatedOrcidProfile.getOrcidBio());
+            orcidJaxbCopyManager.copyUpdatedExternalIdentifiersToExistingPreservingVisibility(orcidBio, updatedOrcidProfile.getOrcidBio());
 
             return updateOrcidProfile(existingProfile);
         } else {
@@ -827,7 +828,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
             return null;
         }
         // preserve the visibility settings
-        OrcidJaxbCopyUtils.copyUpdatedBioToExistingWithVisibility(existingProfile.getOrcidBio(), updatedOrcidProfile.getOrcidBio());
+        orcidJaxbCopyManager.copyUpdatedBioToExistingWithVisibility(existingProfile.getOrcidBio(), updatedOrcidProfile.getOrcidBio());
         existingProfile.setOrcidBio(updatedOrcidProfile.getOrcidBio());
         return updateOrcidProfile(existingProfile);
     }
@@ -841,8 +842,8 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
             return null;
         }
 
-        OrcidJaxbCopyUtils.copyUpdatedBioToExistingWithVisibility(existingProfile.getOrcidBio(), updatedOrcidProfile.getOrcidBio());
-        OrcidJaxbCopyUtils.copyUpdatedWorksVisibilityInformationOnlyPreservingVisbility(existingProfile.retrieveOrcidWorks(), updatedOrcidProfile.retrieveOrcidWorks());
+        orcidJaxbCopyManager.copyUpdatedBioToExistingWithVisibility(existingProfile.getOrcidBio(), updatedOrcidProfile.getOrcidBio());
+        orcidJaxbCopyManager.copyUpdatedWorksPreservingVisbility(existingProfile.retrieveOrcidWorks(), updatedOrcidProfile.retrieveOrcidWorks());
         return updateOrcidProfile(existingProfile);
     }
 
@@ -854,8 +855,8 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         if (existingProfile == null) {
             return null;
         }
-        OrcidJaxbCopyUtils.copyRelevantUpdatedHistoryElements(existingProfile.getOrcidHistory(), updatedOrcidProfile.getOrcidHistory());
-        OrcidJaxbCopyUtils.copyUpdatedBioToExistingWithVisibility(existingProfile.getOrcidBio(), updatedOrcidProfile.getOrcidBio());
+        orcidJaxbCopyManager.copyRelevantUpdatedHistoryElements(existingProfile.getOrcidHistory(), updatedOrcidProfile.getOrcidHistory());
+        orcidJaxbCopyManager.copyUpdatedBioToExistingWithVisibility(existingProfile.getOrcidBio(), updatedOrcidProfile.getOrcidBio());
         return updateOrcidProfile(existingProfile);
     }
 
@@ -885,7 +886,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
             existingActivities.setAffiliations(existingAffiliations);
         }
 
-        OrcidJaxbCopyUtils.copyAffiliationsToExistingPreservingVisibility(existingAffiliations, updatedAffiliations);
+        orcidJaxbCopyManager.copyAffiliationsToExistingPreservingVisibility(existingAffiliations, updatedAffiliations);
         return updateOrcidProfile(existingProfile);
     }
 
@@ -915,7 +916,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
             existingActivities.setFundings(existingFundingList);
         }
 
-        OrcidJaxbCopyUtils.copyFundingListToExistingPreservingVisibility(existingFundingList, updatedFundingList);
+        orcidJaxbCopyManager.copyFundingListToExistingPreservingVisibility(existingFundingList, updatedFundingList);
         return updateOrcidProfile(existingProfile);
     }
 
@@ -1006,7 +1007,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         }
         OrcidWorks existingOrcidWorks = existingProfile.retrieveOrcidWorks();
         OrcidWorks updatedOrcidWorks = updatedOrcidProfile.retrieveOrcidWorks();
-        Visibility workVisibilityDefault = existingProfile.getOrcidInternal().getPreferences().getWorkVisibilityDefault().getValue();
+        Visibility workVisibilityDefault = existingProfile.getOrcidInternal().getPreferences().getActivitiesVisibilityDefault().getValue();
         Boolean claimed = existingProfile.getOrcidHistory().isClaimed();
         setWorkPrivacy(updatedOrcidWorks, workVisibilityDefault, claimed == null ? false : claimed);
         String amenderOrcid = sourceManager.retrieveSourceOrcid();
@@ -1266,7 +1267,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         }
         Affiliations existingAffiliations = existingProfile.retrieveAffiliations();
         Affiliations updatedAffiliations = updatedOrcidProfile.retrieveAffiliations();
-        Visibility workVisibilityDefault = existingProfile.getOrcidInternal().getPreferences().getWorkVisibilityDefault().getValue();
+        Visibility workVisibilityDefault = existingProfile.getOrcidInternal().getPreferences().getActivitiesVisibilityDefault().getValue();
         Boolean claimed = existingProfile.getOrcidHistory().isClaimed();
         setAffiliationPrivacy(updatedAffiliations, workVisibilityDefault, claimed == null ? false : claimed);
         updatedAffiliations = dedupeAffiliations(updatedAffiliations);
@@ -1294,7 +1295,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         }
         FundingList existingFundingList = existingProfile.retrieveFundings();
         FundingList updatedFundingList = updatedOrcidProfile.retrieveFundings();
-        Visibility workVisibilityDefault = existingProfile.getOrcidInternal().getPreferences().getWorkVisibilityDefault().getValue();
+        Visibility workVisibilityDefault = existingProfile.getOrcidInternal().getPreferences().getActivitiesVisibilityDefault().getValue();
         Boolean claimed = existingProfile.getOrcidHistory().isClaimed();
         setFundingPrivacy(updatedFundingList, workVisibilityDefault, claimed == null ? false : claimed);
         updatedFundingList = dedupeFundings(updatedFundingList);

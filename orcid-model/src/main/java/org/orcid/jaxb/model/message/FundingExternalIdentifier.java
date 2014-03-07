@@ -64,16 +64,16 @@ public class FundingExternalIdentifier implements Serializable {
 	@XmlAttribute(name = "put-code")
 	protected String putCode;
 	@XmlElement(name="funding-external-identifier-type")
-	protected String type;
+	protected FundingExternalIdentifierType type;
 	@XmlElement(name="funding-external-identifier-value")
 	protected String value;
 	@XmlElement(name="funding-external-identifier-url")
 	protected Url url;	
 	
-	public String getType() {
+	public FundingExternalIdentifierType getType() {
 		return type;
 	}
-	public void setType(String type) {
+	public void setType(FundingExternalIdentifierType type) {
 		this.type = type;
 	}
 	public String getValue() {

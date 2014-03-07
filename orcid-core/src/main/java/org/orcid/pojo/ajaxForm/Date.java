@@ -16,6 +16,7 @@
  */
 package org.orcid.pojo.ajaxForm;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -27,8 +28,9 @@ import org.orcid.jaxb.model.message.Month;
 import org.orcid.jaxb.model.message.PublicationDate;
 import org.orcid.jaxb.model.message.Year;
 
-public class Date implements ErrorsInterface, Required {
+public class Date implements ErrorsInterface, Required, Serializable {
 
+    private static final long serialVersionUID = -1379185374840409915L;
     private List<String> errors = new ArrayList<String>();
     private String month;
     private String day;

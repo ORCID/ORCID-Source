@@ -49,6 +49,7 @@ import org.orcid.frontend.web.forms.ChangeSecurityQuestionForm;
 import org.orcid.frontend.web.forms.EmailAddressForm;
 import org.orcid.frontend.web.forms.OneTimeResetPasswordForm;
 import org.orcid.frontend.web.forms.PasswordTypeAndConfirmForm;
+import org.orcid.jaxb.model.message.ActivitiesVisibilityDefault;
 import org.orcid.jaxb.model.message.Claimed;
 import org.orcid.jaxb.model.message.CompletionDate;
 import org.orcid.jaxb.model.message.ContactDetails;
@@ -65,6 +66,7 @@ import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidSearchResult;
 import org.orcid.jaxb.model.message.PersonalDetails;
 import org.orcid.jaxb.model.message.Preferences;
+import org.orcid.jaxb.model.message.ReferredBy;
 import org.orcid.jaxb.model.message.SecurityQuestionId;
 import org.orcid.jaxb.model.message.SendChangeNotifications;
 import org.orcid.jaxb.model.message.SendOrcidNews;
@@ -79,6 +81,7 @@ import org.orcid.pojo.DupicateResearcher;
 import org.orcid.pojo.Redirect;
 import org.orcid.pojo.ajaxForm.Checkbox;
 import org.orcid.pojo.ajaxForm.Claim;
+import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Registration;
 import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.utils.DateUtils;
@@ -234,6 +237,9 @@ public class RegistrationController extends BaseController {
         orcidHistory.setClaimed(new Claimed(true));
         orcidHistory.setCreationMethod(CreationMethod.fromValue(reg.getCreationType().getValue()));
 
+        if (!PojoUtil.isEmpty(reg.getReferredBy()))
+            orcidHistory.setReferredBy(new ReferredBy(reg.getReferredBy().getValue()));
+        
         profile.setOrcidHistory(orcidHistory);
         orcidHistory.setSubmissionDate(new SubmissionDate(DateUtils.convertToXMLGregorianCalendar(new Date())));
 
@@ -875,7 +881,7 @@ public class RegistrationController extends BaseController {
             }
             preferences.setSendChangeNotifications(new SendChangeNotifications(claim.getSendChangeNotifications().getValue()));
             preferences.setSendOrcidNews(new SendOrcidNews(claim.getSendOrcidNews().getValue()));
-            preferences.setWorkVisibilityDefault(new WorkVisibilityDefault(claim.getWorkVisibilityDefault().getVisibility()));
+            preferences.setActivitiesVisibilityDefault(new ActivitiesVisibilityDefault(claim.getActivitiesVisibilityDefault().getVisibility()));
         }
         return orcidProfileManager.updateOrcidProfile(orcidProfile);
     }

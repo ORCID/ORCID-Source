@@ -17,7 +17,6 @@
 package org.orcid.core.manager.impl;
 
 import java.util.HashMap;
-import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -71,7 +70,7 @@ public class ActivityCacheManagerImpl extends Object implements ActivityCacheMan
         HashMap<String, Affiliation> affiliationMap = new HashMap<String, Affiliation>();
         if (profile.getOrcidActivities() != null) {
             if (profile.getOrcidActivities().getAffiliations() != null) {
-                affiliationMap = (HashMap<String, Affiliation>) profile.getOrcidActivities().getAffiliations().retrieveAffiliationAsMap();
+                affiliationMap = (HashMap<String, Affiliation>) profile.getOrcidActivities().getAffiliations().retrieveActivitiesAsMap();
             }
         }
         return affiliationMap;

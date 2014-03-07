@@ -40,3 +40,4 @@
 ${baseUri}/home?lang=${locale}
 
 <@emailMacros.msg "email.common.you_have_received_this_email" />
+<#include "email_footer.ftl"/>

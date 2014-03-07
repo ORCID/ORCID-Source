@@ -22,13 +22,16 @@ package org.orcid.frontend.web.controllers;
  * @author Angel Montenegro (amontenegro) Date: 29/08/2013
  */
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertFalse;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.Resource;
@@ -36,15 +39,23 @@ import javax.annotation.Resource;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.orcid.core.manager.EncryptionManager;
+import org.orcid.core.manager.OrcidProfileManager;
+import org.orcid.core.oauth.OrcidProfileUserDetails;
+import org.orcid.core.security.OrcidWebRole;
 import org.orcid.frontend.web.util.BaseControllerTest;
+import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.orcid.pojo.AdminChangePassword;
 import org.orcid.pojo.ProfileDeprecationRequest;
 import org.orcid.pojo.ProfileDetails;
 import org.orcid.pojo.ajaxForm.Group;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Text;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -62,12 +73,38 @@ public class AdminControllerTest extends BaseControllerTest {
     @Resource
     private ProfileDao profileDao;
 
+    @Resource
+    protected OrcidProfileManager orcidProfileManager;
+    
+    @Resource
+    private EncryptionManager encryptionManager;
+    
     @Before
     public void init() {
         assertNotNull(adminController);
         assertNotNull(profileDao);
     }
+    
+    @Override
+    protected Authentication getAuthentication() {
+        orcidProfile = orcidProfileManager.retrieveOrcidProfile("4444-4444-4444-4440");
 
+        OrcidProfileUserDetails details = null;
+        if(orcidProfile.getType() != null){             
+                details = new OrcidProfileUserDetails(orcidProfile.getOrcidIdentifier().getPath(), orcidProfile.getOrcidBio().getContactDetails().getEmail()
+                    .get(0).getValue(), orcidProfile.getOrcidInternal().getSecurityDetails().getEncryptedPassword().getContent(), orcidProfile.getType(), orcidProfile.getClientType(), orcidProfile.getGroupType());
+        } else {
+                details = new OrcidProfileUserDetails(orcidProfile.getOrcidIdentifier().getPath(), orcidProfile.getOrcidBio().getContactDetails().getEmail()
+                    .get(0).getValue(), orcidProfile.getOrcidInternal().getSecurityDetails().getEncryptedPassword().getContent());
+        }
+        UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(details, "4444-4444-4444-4440", getRole());
+        return auth;
+    }
+    
+    protected List<OrcidWebRole> getRole() {
+        return Arrays.asList(OrcidWebRole.ROLE_ADMIN);
+    }
+    
     @Test
     @Transactional("transactionManager")
     public void testCheckOrcid() throws Exception {
@@ -351,5 +388,69 @@ public class AdminControllerTest extends BaseControllerTest {
         group = adminController.createGroup(group);
         assertEquals(0, group.getErrors().size());
         assertFalse(PojoUtil.isEmpty(group.getGroupOrcid()));
+    }
+    
+    @Test
+    public void findIdsTest(){
+        Map<String, String> ids = adminController.findIdByEmail("spike@milligan.com,michael@bentine.com,peter@sellers.com,invalid@email.com");
+        assertNotNull(ids);
+        assertEquals(3, ids.size());
+        assertTrue(ids.containsKey("spike@milligan.com"));
+        assertEquals("4444-4444-4444-4441", ids.get("spike@milligan.com"));
+        assertTrue(ids.containsKey("michael@bentine.com"));
+        assertEquals("4444-4444-4444-4442", ids.get("michael@bentine.com"));
+        assertTrue(ids.containsKey("peter@sellers.com"));
+        assertEquals("4444-4444-4444-4443", ids.get("peter@sellers.com"));
+        assertFalse(ids.containsKey("invalid@email.com"));
+    }
+    
+    @Test
+    @Transactional("transactionManager")
+    @Rollback(true)
+    public void removeSecurityQuestionTest() {
+        OrcidProfile orcidProfile = orcidProfileManager.retrieveOrcidProfile("4444-4444-4444-4441"); 
+        assertNotNull(orcidProfile.getSecurityQuestionAnswer());
+        adminController.removeSecurityQuestion(null, "4444-4444-4444-4441");
+        orcidProfile = orcidProfileManager.retrieveOrcidProfile("4444-4444-4444-4441");
+        assertNull(orcidProfile.getSecurityQuestionAnswer());
+    }
+    
+    @Test
+    @Transactional("transactionManager")
+    @Rollback(true)
+    public void removeSecurityQuestionUsingEmailTest() {
+        OrcidProfile orcidProfile = orcidProfileManager.retrieveOrcidProfile("4444-4444-4444-4442"); 
+        assertNotNull(orcidProfile.getSecurityQuestionAnswer());
+        adminController.removeSecurityQuestion(null, "michael@bentine.com");
+        orcidProfile = orcidProfileManager.retrieveOrcidProfile("4444-4444-4444-4442");
+        assertNull(orcidProfile.getSecurityQuestionAnswer());
+    }
+    
+    @Test
+    @Transactional("transactionManager")
+    @Rollback(true)
+    public void resetPasswordTest() {
+        OrcidProfile orcidProfile = orcidProfileManager.retrieveOrcidProfile("4444-4444-4444-4441");
+        assertEquals("e9adO9I4UpBwqI5tGR+qDodvAZ7mlcISn+T+kyqXPf2Z6PPevg7JijqYr6KGO8VOskOYqVOEK2FEDwebxWKGDrV/TQ9gRfKWZlzxssxsOnA=",orcidProfile.getPassword());
+        AdminChangePassword form = new AdminChangePassword();
+        form.setOrcidOrEmail("4444-4444-4444-4441");
+        form.setPassword("password1");
+        adminController.resetPassword(null, form);
+        orcidProfile = orcidProfileManager.retrieveOrcidProfile("4444-4444-4444-4441");
+        assertFalse("e9adO9I4UpBwqI5tGR+qDodvAZ7mlcISn+T+kyqXPf2Z6PPevg7JijqYr6KGO8VOskOYqVOEK2FEDwebxWKGDrV/TQ9gRfKWZlzxssxsOnA=".equals(orcidProfile.getPassword()));
+    }
+    
+    @Test
+    @Transactional("transactionManager")
+    @Rollback(true)
+    public void resetPasswordUsingEmailTest() {
+        OrcidProfile orcidProfile = orcidProfileManager.retrieveOrcidProfile("4444-4444-4444-4442");
+        assertEquals("e9adO9I4UpBwqI5tGR+qDodvAZ7mlcISn+T+kyqXPf2Z6PPevg7JijqYr6KGO8VOskOYqVOEK2FEDwebxWKGDrV/TQ9gRfKWZlzxssxsOnA=",orcidProfile.getPassword());
+        AdminChangePassword form = new AdminChangePassword();
+        form.setOrcidOrEmail("michael@bentine.com");
+        form.setPassword("password1");
+        adminController.resetPassword(null, form);
+        orcidProfile = orcidProfileManager.retrieveOrcidProfile("4444-4444-4444-4442");
+        assertFalse("e9adO9I4UpBwqI5tGR+qDodvAZ7mlcISn+T+kyqXPf2Z6PPevg7JijqYr6KGO8VOskOYqVOEK2FEDwebxWKGDrV/TQ9gRfKWZlzxssxsOnA=".equals(orcidProfile.getPassword()));
     }
 }

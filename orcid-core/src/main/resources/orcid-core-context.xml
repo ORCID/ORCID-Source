@@ -120,6 +120,8 @@
 	</bean>
 	
 	<bean id="orcidProfileCacheManager" class="org.orcid.core.manager.impl.OrcidProfileCacheManagerImpl"/>
+	
+	<bean id="orcidJaxbCopyManager" class="org.orcid.core.manager.impl.OrcidJaxbCopyManagerImpl"/>
 
 	<bean id="webhookManager" class="org.orcid.core.manager.impl.WebhookManagerImpl">
 		<property name="maxJobsPerClient" value="${org.orcid.core.maxJobsPerClient:50}" />
@@ -316,6 +318,22 @@
         <property name="validateBibtex" value="false"/>        
         <property name="version" value="1.2_rc3" />
     </bean>
+
+  <bean id="incomingValidationManagerV1_2_rc4" class="org.orcid.core.manager.impl.ValidationManagerForLegacyApiVersionsImpl">
+        <property name="validationBehaviour"
+            value="${org.orcid.core.manager.validationBehaviour:THROW_VALIDATION_EXCEPTION}" />
+        <property name="version" value="1.2_rc4" />
+        <property name="requireOrcidProfile" value="true"/>        
+        <property name="validateTitle" value="true"/>
+        <property name="validateWorkType" value="true"/>   
+        <property name="validateOnlyOnePrimaryEmail" value="true"/>        
+    </bean>
+    <bean id="outgoingValidationManagerV1_2_rc4" class="org.orcid.core.manager.impl.ValidationManagerImpl">
+        <property name="validationBehaviour"
+            value="${org.orcid.core.manager.validationBehaviour:LOG_WARNING}" />
+        <property name="validateBibtex" value="false"/>        
+        <property name="version" value="1.2_rc4" />
+    </bean>
     
     <bean id="localeManager" class="org.orcid.core.locale.LocaleManagerImpl" />
 
@@ -384,6 +402,7 @@
                 <bean class="org.orcid.core.version.impl.OrcidMessageVersionConverterImplV1_1ToV1_2_rc1"/>
                 <bean class="org.orcid.core.version.impl.OrcidMessageVersionConverterImplV1_2_rc1ToV1_2_rc2"/>
                 <bean class="org.orcid.core.version.impl.OrcidMessageVersionConverterImplV1_2_rc2ToV1_2_rc3"/>
+                <bean class="org.orcid.core.version.impl.OrcidMessageVersionConverterImplV1_2_rc3ToV1_2_rc4"/>
 	        </list>
 	    </property>
 	    <property name="supportOldWorkTypes" value="true" />

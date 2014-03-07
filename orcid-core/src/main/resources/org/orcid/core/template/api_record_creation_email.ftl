@@ -41,3 +41,4 @@ ${verificationUrl}?lang=${locale}
 ${baseUri}
 
 <@emailMacros.msg "email.api_record_creation.you_have_received.1" />${baseUri}/home?lang=${locale}<@emailMacros.msg "email.api_record_creation.you_have_received.2" />
+<#include "email_footer.ftl"/>

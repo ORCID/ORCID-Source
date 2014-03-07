@@ -23,8 +23,8 @@
     <profile_work orcid="4444-4444-4444-4443" work_id="4" visibility="PRIVATE" />    
     <profile_work orcid="4444-4444-4444-4445" work_id="3" visibility="LIMITED" />
     
-    <profile_work orcid="4444-4444-4444-4446" work_id="1" visibility="PUBLIC" />
-    <profile_work orcid="4444-4444-4444-4446" work_id="2" visibility="LIMITED" />
-    <profile_work orcid="4444-4444-4444-4446" work_id="3" visibility="PRIVATE" />            
+    <profile_work orcid="4444-4444-4444-4446" work_id="5" visibility="PUBLIC" source_id="4444-4444-4444-4447"/>
+    <profile_work orcid="4444-4444-4444-4446" work_id="6" visibility="LIMITED" source_id="4444-4444-4444-4443"/>
+    <profile_work orcid="4444-4444-4444-4446" work_id="7" visibility="PRIVATE" source_id="4444-4444-4444-4447"/>            
     
 </dataset>

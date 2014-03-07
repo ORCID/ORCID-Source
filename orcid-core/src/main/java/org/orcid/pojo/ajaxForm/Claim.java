@@ -36,7 +36,7 @@ public class Claim extends Redirect implements ErrorsInterface, Serializable {
 
     private Checkbox termsOfUse;
 
-    private Visibility workVisibilityDefault;
+    private Visibility activitiesVisibilityDefault;
 
     private Text password;
 
@@ -49,7 +49,7 @@ public class Claim extends Redirect implements ErrorsInterface, Serializable {
         sendChangeNotifications = new Checkbox();
         sendOrcidNews = new Checkbox();
         termsOfUse = new Checkbox();
-        workVisibilityDefault = new Visibility();
+        activitiesVisibilityDefault = new Visibility();
 
     }
 
@@ -85,12 +85,12 @@ public class Claim extends Redirect implements ErrorsInterface, Serializable {
         this.sendChangeNotifications = sendChangeNotifications;
     }
 
-    public Visibility getWorkVisibilityDefault() {
-        return workVisibilityDefault;
+    public Visibility getActivitiesVisibilityDefault() {
+        return activitiesVisibilityDefault;
     }
 
-    public void setWorkVisibilityDefault(Visibility workVisibilityDefault) {
-        this.workVisibilityDefault = workVisibilityDefault;
+    public void setActivitiesVisibilityDefault(Visibility activitiesVisibilityDefault) {
+        this.activitiesVisibilityDefault = activitiesVisibilityDefault;
     }
 
     public Checkbox getSendOrcidNews() {

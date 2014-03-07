@@ -19,18 +19,9 @@
 
 <@protected classes=['manage'] nav="settings">
 <div class="row">
-	<div class="col-md-3 lhs override">
-		<ul class="settings-nav">
-			<li><a href="#account-settings">${springMacroRequestContext.getMessage("manage.accountsettings")}</a></li>
-			<li><a href="#manage-permissions">${springMacroRequestContext.getMessage("manage.managepermission")}</a></li>
-			<#if (profile.groupType)?? && ((profile.groupType) = "BASIC" ||	(profile.groupType) = "PREMIUM" || (profile.groupType) = "BASIC_INSTITUTION" || (profile.groupType) = "PREMIUM_INSTITUTION")>
-				<li><a href="<@spring.url "/manage-clients" />">${springMacroRequestContext.getMessage("workspace.ManageClientCredentials")}</a></li>
-			</#if>
-			<@security.authorize ifAnyGranted="ROLE_ADMIN, ROLE_GROUP, ROLE_BASIC, ROLE_BASIC_INSTITUTION, ROLE_PREMIUM, ROLE_PREMIUM_INSTITUTION">
- 	 			<li><a href="<@spring.url "/manage-clients" />">${springMacroRequestContext.getMessage("workspace.ManageClientCredentials")}</a></li>	        	 
- 			</@security.authorize>
-		</ul>
-	</div>
+	<div class="col-md-3 col-sm-3 col-xs-12">
+		<#include "admin_menu.ftl"/>
+	</div>	
 	<div class="col-md-9">
 		<h1 id="account-settings">${springMacroRequestContext.getMessage("manage.account_settings")}</h1>
 		<#assign open = "" />
@@ -184,12 +175,12 @@
 						<div class="editTablePadCell35" id="privacy-settings">
 							${springMacroRequestContext.getMessage("privacy_preferences.labelDefaultprivacyfornewWorks")}<br />
 							<@orcid.privacyToggle
-							angularModel="prefsSrvc.prefs.workVisibilityDefault.value"
+							angularModel="prefsSrvc.prefs.activitiesVisibilityDefault.value"
 							questionClick="toggleClickPrivacyHelp('workPrivHelp')"
 							clickedClassCheck="{'popover-help-container-show':privacyHelp['workPrivHelp']==true}" 
-							publicClick="updateWorkVisibilityDefault('PUBLIC', $event)"
-							limitedClick="updateWorkVisibilityDefault('LIMITED', $event)"
-							privateClick="updateWorkVisibilityDefault('PRIVATE', $event)" />
+							publicClick="updateActivitiesVisibilityDefault('PUBLIC', $event)"
+							limitedClick="updateActivitiesVisibilityDefault('LIMITED', $event)"
+							privateClick="updateActivitiesVisibilityDefault('PRIVATE', $event)" />
 						</div>
 					</td>
 				</tr>
@@ -383,7 +374,7 @@
 							"${scopePath.value.declaringClass.name}.${scopePath.value}"/>
 							<#if scopePath_has_next>;&nbsp;</#if> </#list> </#if></td width="35%">
 						<td width="5%"><a
-							ng-click="confirmRevoke('${applicationSummary.applicationName.content?js_string}', '${applicationSummary_index}')"
+							ng-click="confirmRevoke('${applicationSummary.applicationName.content?js_string}','${applicationSummary.applicationGroupName.content?js_string}', '${applicationSummary_index}')"
 							class="glyphicon glyphicon-trash grey"
 							title="${springMacroRequestContext.getMessage("manage.revokeaccess")}"></a></td>
 					</form>

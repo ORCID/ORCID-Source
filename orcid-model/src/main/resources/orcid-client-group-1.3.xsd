@@ -79,7 +79,7 @@ the software.
         <xs:element ref="orcid:client-id" minOccurs="0"/>
         <xs:element ref="orcid:client-secret" minOccurs="0"/>
       </xs:sequence>
-      <xs:attribute name="type" type="orcid:client-type"/>
+      <xs:attribute name="type" type="orcid:client-type" use="optional"/>
     </xs:complexType>
   </xs:element>
   <xs:element name="type" type="orcid:group-type">
@@ -99,7 +99,7 @@ the software.
         so.</xs:documentation>
     </xs:annotation>
   </xs:element>
-  <xs:element name="short-description" type="orcid:short-text">
+  <xs:element name="short-description" type="orcid:description-text">
     <xs:annotation>
       <xs:documentation>A short description of the client system. This will be shown to the user
         during OAuth2 authorization.</xs:documentation>
@@ -154,6 +154,12 @@ the software.
     <xs:restriction base="xs:string">
       <xs:minLength value="3"/>
       <xs:maxLength value="300"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="description-text">
+    <xs:restriction base="xs:string">
+      <xs:minLength value="3"/>
+      <xs:maxLength value="5000"/>
     </xs:restriction>
   </xs:simpleType>
   <xs:simpleType name="client-type">
