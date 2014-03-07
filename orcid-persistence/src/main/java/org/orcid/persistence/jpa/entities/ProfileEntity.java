@@ -873,7 +873,7 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
 
     @Basic
     @Enumerated(EnumType.STRING)
-    @Column(name = "work_visibility_default")
+    @Column(name = "activities_visibility_default")
     public Visibility getActivitiesVisibilityDefault() {
         return activitiesVisibilityDefault;
     }
