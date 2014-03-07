@@ -63,6 +63,7 @@
 			<p style="font-family: arial,  helvetica, sans-serif;font-size: 15px;color: #666666;">
 				You have received this email as a service announcement related to your ORCID Account.
 			</p>
+			<#include "email_footer.ftl"/>
 		 </div>
 	 </body>
  </html>

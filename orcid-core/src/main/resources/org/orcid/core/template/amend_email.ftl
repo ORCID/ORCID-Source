@@ -29,3 +29,4 @@
 ${baseUri}/home?lang=${locale}
 
 <@emailMacros.msg "email.common.you_have_received_this_email_opt_out.1" />${baseUri}/home?lang=${locale}<@emailMacros.msg "email.common.you_have_received_this_email_opt_out.2" />
+<#include "email_footer.ftl"/>

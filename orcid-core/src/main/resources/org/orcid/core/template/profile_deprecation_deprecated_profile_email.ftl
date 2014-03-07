@@ -23,3 +23,4 @@
 <@emailMacros.msg "email.deprecated_account.deprecated_account.message.3" />${primaryAccount}<@emailMacros.msg "email.deprecated_account.deprecated_account.message.4" />
 
 <@emailMacros.msg "email.common.you_have_received_this_email" />
+<#include "email_footer.ftl"/>
