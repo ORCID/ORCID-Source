@@ -37,7 +37,6 @@
 <#if devSandboxUrl != ''>
     <div class="dev-watermark"></div>
 </#if>
-
 <div class="container">
     <div class="header center">
         <div class="row">        	
@@ -93,10 +92,10 @@
                                <li><a ${(nav=="record")?string('class="active" ', '')}href="<@spring.url '/my-orcid'/>"><@orcid.msg 'public-layout.my_orcid_record'/></a></li>
                                <li><a ${(nav=="settings")?string('class="active" ', '')}href="<@spring.url '/account'/>"><@orcid.msg 'public-layout.account_setting'/></a></li>
                                <@security.authorize ifAnyGranted="ROLE_ADMIN, ROLE_GROUP, ROLE_BASIC, ROLE_BASIC_INSTITUTION, ROLE_PREMIUM, ROLE_PREMIUM_INSTITUTION">
-	        	 					<li><a href="<@spring.url "/manage-clients" />">${springMacroRequestContext.getMessage("workspace.ManageClientCredentials")}</a></li>	        	 
+	        	 					<li><a ${(nav=="developer")?string('class="active" ', '')}href="<@spring.url "/manage-clients" />">${springMacroRequestContext.getMessage("workspace.ManageClientCredentials")}</a></li>	        	 
 	        					</@security.authorize>
                                <@security.authorize ifAnyGranted="ROLE_ADMIN">
-									<li><a ${(nav=="")?string('class="active" ', '')}href="<@spring.url "/admin-actions" />"><@orcid.msg 'admin.workspace_link' /></a></li>								
+									<li><a ${(nav=="admin")?string('class="active" ', '')}href="<@spring.url "/admin-actions" />"><@orcid.msg 'admin.workspace_link' /></a></li>								
 							   </@security.authorize>							   
                                <#if RequestParameters['delegates']?? && isProxy>
                                    <li ng-controller="SwitchUserCtrl" class="dropdown">

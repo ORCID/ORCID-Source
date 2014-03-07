@@ -18,7 +18,9 @@ package org.orcid.frontend.web.controllers;
 
 import java.net.MalformedURLException;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -27,6 +29,7 @@ import javax.ws.rs.core.MediaType;
 
 import org.orcid.core.exception.OrcidClientGroupManagementException;
 import org.orcid.core.manager.OrcidClientGroupManager;
+import org.orcid.core.manager.ThirdPartyImportManager;
 import org.orcid.jaxb.model.clientgroup.OrcidClient;
 import org.orcid.jaxb.model.clientgroup.OrcidClientGroup;
 import org.orcid.jaxb.model.clientgroup.RedirectUriType;
@@ -40,6 +43,7 @@ import org.orcid.pojo.ajaxForm.Text;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -60,6 +64,9 @@ public class GroupAdministratorController extends BaseWorkspaceController {
     @Resource
     OrcidClientGroupManager orcidClientGroupManager;
 
+    @Resource
+    private ThirdPartyImportManager thirdPartyImportManager;
+    
     @RequestMapping
     public ModelAndView manageClients() {
         ModelAndView mav = new ModelAndView("manage_clients");
@@ -101,14 +108,9 @@ public class GroupAdministratorController extends BaseWorkspaceController {
         emptyClient.setClientSecret(Text.valueOf(""));
         emptyClient.setType(Text.valueOf(""));
         ArrayList<RedirectUri> redirectUris = new ArrayList<RedirectUri>();
-        RedirectUri emptyRedirectUri = new RedirectUri();
-        emptyRedirectUri.setType(Text.valueOf(RedirectUriType.DEFAULT.value()));
-        emptyRedirectUri.setValue(Text.valueOf(""));
-        redirectUris.add(emptyRedirectUri);
         emptyClient.setRedirectUris(redirectUris);
         return emptyClient;
     }
-
     private boolean validateUrl(String url) {
         String urlToCheck = null;
         // To validate the URL we need a string with a protocol, so, check if it
@@ -247,7 +249,8 @@ public class GroupAdministratorController extends BaseWorkspaceController {
             OrcidClient result = null;
 
             try {
-                result = orcidClientGroupManager.updateClientProfile(groupOrcid, client.toOrcidClient());
+                result = orcidClientGroupManager.updateClientProfile(groupOrcid, client.toOrcidClient());                
+                clearCache();
             } catch (OrcidClientGroupManagementException e) {
                 LOGGER.error(e.getMessage());
                 result = new OrcidClient();
@@ -279,5 +282,18 @@ public class GroupAdministratorController extends BaseWorkspaceController {
         }
 
         return clients;
+    }
+    
+    @ModelAttribute("redirectUriTypes")
+    public Map<String, String> getRedirectUriTypes(){
+        Map<String, String> redirectUriTypes = new LinkedHashMap<String, String>();
+        for(RedirectUriType rType : RedirectUriType.values()) {
+            redirectUriTypes.put(rType.value(), rType.value());
+        }
+        return redirectUriTypes;
+    }
+    
+    private void clearCache() {
+        thirdPartyImportManager.evictAll();
     }
 }

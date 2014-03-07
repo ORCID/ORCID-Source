@@ -4,6 +4,16 @@ We release updates to the Registry regularly. Below is a list of the improvement
 * [2013 Releases](https://trello.com/b/ZgYVAlel)
 * [2012 Releases](https://trello.com/b/vyCDYdvR)
 
+## release-1.1.46.2
+(2014-03-7)
+* Fix API call (with PUT) deletes private data
+
+* Add group name to GA tracking for revoke
+
+* DATE: Date listing sorting: use end date if no start date
+
+
+
 ## release-1.1.45.17
 (2014-02-28)
 * Release funding

@@ -16,6 +16,8 @@
  */
 package org.orcid.persistence.dao;
 
+import java.util.List;
+
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 
@@ -41,4 +43,6 @@ public interface EmailDao extends GenericDao<EmailEntity, String> {
     void removeEmail(String orcid, String email);
     
     void removeEmail(String orcid, String email, boolean removeIfPrimary);
+    
+    List findIdByCaseInsensitiveEmail(List<String> emails);
 }

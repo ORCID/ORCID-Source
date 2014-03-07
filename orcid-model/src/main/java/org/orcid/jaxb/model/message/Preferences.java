@@ -55,7 +55,7 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType( propOrder = { "sendChangeNotifications", "sendOrcidNews", "workVisibilityDefault" })
+@XmlType( propOrder = { "sendChangeNotifications", "sendOrcidNews", "activitiesVisibilityDefault", "workVisibilityDefault" })
 @XmlRootElement(name = "preferences")
 public class Preferences implements Serializable {
 
@@ -64,8 +64,11 @@ public class Preferences implements Serializable {
     protected SendChangeNotifications sendChangeNotifications;
     @XmlElement(name = "send-orcid-news", required = true)
     protected SendOrcidNews sendOrcidNews;
-    @XmlElement(name = "work-visibility-default", required = true)
+    // as of 1.2_rc4 WorkVisibilityDefault is replaced by ActivitiesVisibilityDefault
+    @XmlElement(name = "work-visibility-default")
     protected WorkVisibilityDefault workVisibilityDefault;
+    @XmlElement(name = "activities-visibility-default")
+    private ActivitiesVisibilityDefault activitiesVisibilityDefault;
  
     
     /**
@@ -113,7 +116,7 @@ public class Preferences implements Serializable {
     /**
      * Gets the value of the workVisibilityDefault property.
      * 
-     * @return possible object is {@link WorkVisibilityDefault }
+     *  @deprecated use {@getActivitiesVisibilityDefault} instead.  
      * 
      */
     public WorkVisibilityDefault getWorkVisibilityDefault() {
@@ -123,13 +126,21 @@ public class Preferences implements Serializable {
     /**
      * Sets the value of the workVisibilityDefault property.
      * 
-     * @param value
-     *            allowed object is {@link WorkVisibilityDefault }
+     *  @deprecated use {@setActivitiesVisibilityDefault} instead.  
      * 
      */
     public void setWorkVisibilityDefault(WorkVisibilityDefault value) {
         this.workVisibilityDefault = value;
     }
+    
+    public ActivitiesVisibilityDefault getActivitiesVisibilityDefault() {
+        return activitiesVisibilityDefault;
+    }
+
+    public void setActivitiesVisibilityDefault(ActivitiesVisibilityDefault activitiesVisibilityDefault) {
+        this.activitiesVisibilityDefault = activitiesVisibilityDefault;
+    }
+
 
     @Override
     public int hashCode() {
@@ -138,6 +149,7 @@ public class Preferences implements Serializable {
         result = prime * result + ((sendChangeNotifications == null) ? 0 : sendChangeNotifications.hashCode());
         result = prime * result + ((sendOrcidNews == null) ? 0 : sendOrcidNews.hashCode());
         result = prime * result + ((workVisibilityDefault == null) ? 0 : workVisibilityDefault.hashCode());
+        result = prime * result + ((activitiesVisibilityDefault == null) ? 0 : activitiesVisibilityDefault.hashCode());
         return result;
     }
 
@@ -164,6 +176,11 @@ public class Preferences implements Serializable {
             if (other.workVisibilityDefault != null)
                 return false;
         } else if (!workVisibilityDefault.equals(other.workVisibilityDefault))
+            return false;
+        if (activitiesVisibilityDefault == null) {
+            if (other.activitiesVisibilityDefault != null)
+                return false;
+        } else if (!activitiesVisibilityDefault.equals(other.activitiesVisibilityDefault))
             return false;
         return true;
     }
