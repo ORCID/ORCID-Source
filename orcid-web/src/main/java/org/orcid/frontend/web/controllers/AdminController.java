@@ -445,17 +445,33 @@ public class AdminController extends BaseController {
     @RequestMapping(value = "/reset-password.json", method = RequestMethod.POST)
     public @ResponseBody
     String resetPassword(HttpServletRequest request, @RequestBody AdminChangePassword form){  
-        String orcid = form.getOrcid();
+        String orcidOrEmail = form.getOrcidOrEmail();
         String password = form.getPassword();
+        String orcid = null;        
         if(StringUtils.isNotBlank(password) && password.matches(OrcidPasswordConstants.ORCID_PASSWORD_REGEX)) {
             OrcidProfile currentProfile = getEffectiveProfile();
-            if(OrcidType.ADMIN.equals(currentProfile.getType())) {                
-                OrcidProfile orcidProfile = orcidProfileManager.retrieveOrcidProfile(orcid);
-                if(orcidProfile != null) {
-                    orcidProfile.setPassword(password);
-                    orcidProfileManager.updatePasswordInformation(orcidProfile);
+            if(OrcidType.ADMIN.equals(currentProfile.getType())) {   
+                if(StringUtils.isNotBlank(orcidOrEmail))
+                    orcidOrEmail = orcidOrEmail.trim(); 
+                boolean isOrcid = matchesOrcidPattern(orcidOrEmail);
+                //If it is not an orcid, check the value from the emails table
+                if(!isOrcid) {
+                    Map<String, String> email = findIdByEmail(orcidOrEmail);
+                    orcid = email.get(orcidOrEmail);
                 } else {
-                    return getMessage("admin.errors.unexisting_orcid");
+                    orcid = orcidOrEmail;
+                }
+                
+                if(StringUtils.isNotEmpty(orcid)) {                
+                    OrcidProfile orcidProfile = orcidProfileManager.retrieveOrcidProfile(orcid);
+                    if(orcidProfile != null) {
+                        orcidProfile.setPassword(password);
+                        orcidProfileManager.updatePasswordInformation(orcidProfile);
+                    } else {
+                        return getMessage("admin.errors.unexisting_orcid");
+                    }
+                } else {
+                    return getMessage("admin.errors.unable_to_fetch_info");
                 }
             }
         } else {
@@ -469,7 +485,19 @@ public class AdminController extends BaseController {
      * Remove security question
      * */
     @RequestMapping(value = "/remove-security-question.json", method = RequestMethod.POST)
-    public @ResponseBody String removeSecurityQuestion(HttpServletRequest request, @RequestBody String orcid) {
+    public @ResponseBody String removeSecurityQuestion(HttpServletRequest request, @RequestBody String orcidOrEmail) { 
+        if(StringUtils.isNotBlank(orcidOrEmail))
+            orcidOrEmail = orcidOrEmail.trim();
+        boolean isOrcid = matchesOrcidPattern(orcidOrEmail);
+        String orcid = null;
+        //If it is not an orcid, check the value from the emails table
+        if(!isOrcid) {
+            Map<String, String> email = findIdByEmail(orcidOrEmail);
+            orcid = email.get(orcidOrEmail);
+        } else {
+            orcid = orcidOrEmail;
+        }
+                
         if(StringUtils.isNotEmpty(orcid) && profileEntityManager.orcidExists(orcid)) {
             OrcidProfile currentProfile = getEffectiveProfile();
             if(OrcidType.ADMIN.equals(currentProfile.getType())) { 
@@ -483,9 +511,13 @@ public class AdminController extends BaseController {
                 }
             }            
         } else {
-            return getMessage("admin.errors.unexisting_orcid");
+            return getMessage("admin.errors.unable_to_fetch_info");
         }
         return getMessage("admin.remove_security_question.success");
     }
     
+    
+    private boolean matchesOrcidPattern(String orcid){
+        return OrcidStringUtils.isValidOrcid(orcid);
+    }
 }

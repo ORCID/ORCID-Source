@@ -276,7 +276,7 @@
 		<div class="row">
 			<div class="col-md-12 col-sm-12 col-xs-12">					
 				<div class="control-group">
-    				<label class="relative"><@orcid.msg 'admin.reset_password.confirm.message'/> {{params.orcid}}?</label>    				
+    				<label class="relative"><@orcid.msg 'admin.reset_password.confirm.message'/> {{params.orcidOrEmail}}?</label>    				
   				</div>
 				<div class="control-group">
 					<button class="btn btn-primary" ng-click="resetPassword()"><@orcid.msg 'admin.reset_password.confirm.button'/></button>
@@ -298,7 +298,7 @@
 		<div class="row">
 			<div class="col-md-12 col-sm-12 col-xs-12">					
 				<div class="control-group">
-    				<label class="relative"><@orcid.msg 'admin.remove_security_question.confirm.message'/> {{orcid}}?</label>    				
+    				<label class="relative"><@orcid.msg 'admin.remove_security_question.confirm.message'/> {{orcidOrEmail}}?</label>    				
   				</div>
 				<div class="control-group">
 					<button class="btn btn-primary" ng-click="removeSecurityQuestion()"><@orcid.msg 'admin.remove_security_question.confirm.button'/></button>
@@ -345,7 +345,7 @@
 			<div class="collapsible bottom-margin-small admin-modal" id="reset_password_section" style="display:none;">			
 				<div class="form-group">
 					<label for="orcid"><@orcid.msg 'admin.reset_password.orcid.label' /></label>
-					<input type="text" id="orcid" ng-model="params.orcid" placeholder="<@orcid.msg 'admin.reset_password.orcid.placeholder' />" class="input-xlarge" />
+					<input type="text" id="orcid" ng-model="params.orcidOrEmail" placeholder="<@orcid.msg 'admin.reset_password.orcid.placeholder' />" class="input-xlarge" />
 					<label for="password"><@orcid.msg 'admin.reset_password.password.label' /></label>
 					<input type="text" id="password" ng-model="params.password" placeholder="<@orcid.msg 'admin.reset_password.password.placeholder' />" class="input-xlarge" />
 					<a href ng-click="randomString()" class="glyphicon glyphicon-random blue"></a>									
@@ -369,7 +369,7 @@
 			<div class="collapsible bottom-margin-small admin-modal" id="remove_security_question_section" style="display:none;">
 				<div class="form-group">
 					<label for="orcid"><@orcid.msg 'admin.remove_security_question.orcid.label' /></label>
-					<input type="text" id="orcid" ng-model="orcid" placeholder="<@orcid.msg 'admin.remove_security_question.orcid.placeholder' />" class="input-xlarge" />					
+					<input type="text" id="orcid" ng-model="orcidOrEmail" placeholder="<@orcid.msg 'admin.remove_security_question.orcid.placeholder' />" class="input-xlarge" />					
 					<div ng-show="result != ''">
 						<span class="orcid-error" ng-bind-html="result"></span><br />
 					</div>

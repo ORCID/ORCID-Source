@@ -17,10 +17,11 @@
 package org.orcid.pojo;
 
 
+
 public class AdminChangePassword {
     private String password;
 
-    private String orcid;
+    private String orcidOrEmail;
 
     public String getPassword() {
         return password;
@@ -30,12 +31,12 @@ public class AdminChangePassword {
         this.password = password;
     }
 
-    public String getOrcid() {
-        return orcid;
+    public String getOrcidOrEmail() {
+        return orcidOrEmail;
     }
 
-    public void setOrcid(String orcid) {
-        this.orcid = orcid;
+    public void setOrcidOrEmail(String orcidOrEmail) {        
+        this.orcidOrEmail = orcidOrEmail;
     }
 
 }

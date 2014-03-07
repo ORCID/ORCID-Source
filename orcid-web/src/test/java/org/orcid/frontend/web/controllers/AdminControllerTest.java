@@ -418,14 +418,39 @@ public class AdminControllerTest extends BaseControllerTest {
     @Test
     @Transactional("transactionManager")
     @Rollback(true)
+    public void removeSecurityQuestionUsingEmailTest() {
+        OrcidProfile orcidProfile = orcidProfileManager.retrieveOrcidProfile("4444-4444-4444-4442"); 
+        assertNotNull(orcidProfile.getSecurityQuestionAnswer());
+        adminController.removeSecurityQuestion(null, "michael@bentine.com");
+        orcidProfile = orcidProfileManager.retrieveOrcidProfile("4444-4444-4444-4442");
+        assertNull(orcidProfile.getSecurityQuestionAnswer());
+    }
+    
+    @Test
+    @Transactional("transactionManager")
+    @Rollback(true)
     public void resetPasswordTest() {
         OrcidProfile orcidProfile = orcidProfileManager.retrieveOrcidProfile("4444-4444-4444-4441");
         assertEquals("e9adO9I4UpBwqI5tGR+qDodvAZ7mlcISn+T+kyqXPf2Z6PPevg7JijqYr6KGO8VOskOYqVOEK2FEDwebxWKGDrV/TQ9gRfKWZlzxssxsOnA=",orcidProfile.getPassword());
         AdminChangePassword form = new AdminChangePassword();
-        form.setOrcid("4444-4444-4444-4441");
+        form.setOrcidOrEmail("4444-4444-4444-4441");
         form.setPassword("password1");
         adminController.resetPassword(null, form);
         orcidProfile = orcidProfileManager.retrieveOrcidProfile("4444-4444-4444-4441");
+        assertFalse("e9adO9I4UpBwqI5tGR+qDodvAZ7mlcISn+T+kyqXPf2Z6PPevg7JijqYr6KGO8VOskOYqVOEK2FEDwebxWKGDrV/TQ9gRfKWZlzxssxsOnA=".equals(orcidProfile.getPassword()));
+    }
+    
+    @Test
+    @Transactional("transactionManager")
+    @Rollback(true)
+    public void resetPasswordUsingEmailTest() {
+        OrcidProfile orcidProfile = orcidProfileManager.retrieveOrcidProfile("4444-4444-4444-4442");
+        assertEquals("e9adO9I4UpBwqI5tGR+qDodvAZ7mlcISn+T+kyqXPf2Z6PPevg7JijqYr6KGO8VOskOYqVOEK2FEDwebxWKGDrV/TQ9gRfKWZlzxssxsOnA=",orcidProfile.getPassword());
+        AdminChangePassword form = new AdminChangePassword();
+        form.setOrcidOrEmail("michael@bentine.com");
+        form.setPassword("password1");
+        adminController.resetPassword(null, form);
+        orcidProfile = orcidProfileManager.retrieveOrcidProfile("4444-4444-4444-4442");
         assertFalse("e9adO9I4UpBwqI5tGR+qDodvAZ7mlcISn+T+kyqXPf2Z6PPevg7JijqYr6KGO8VOskOYqVOEK2FEDwebxWKGDrV/TQ9gRfKWZlzxssxsOnA=".equals(orcidProfile.getPassword()));
     }
 }

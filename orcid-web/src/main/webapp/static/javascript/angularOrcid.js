@@ -3805,7 +3805,7 @@ function findIdsCtrl($scope,$compile){
 
 function resetPasswordCtrl($scope,$compile) {
 	$scope.showSection = false;
-	$scope.params = {orcid:'',password:''};
+	$scope.params = {orcidOrEmail:'',password:''};
 	$scope.result = '';
 	
 	$scope.toggleSection = function(){
@@ -3842,7 +3842,7 @@ function resetPasswordCtrl($scope,$compile) {
 	        success: function(data){	      	        	
 		        $scope.$apply(function(){ 
 		        	$scope.result=data;
-		        	$scope.params.orcid='';
+		        	$scope.params.orcidOrEmail='';
 		        	$scope.params.password='';
 				});	        	
 		        $scope.closeModal();
@@ -3855,7 +3855,7 @@ function resetPasswordCtrl($scope,$compile) {
 	};
 	
 	$scope.confirmResetPassword = function(){
-		if($scope.params.orcid != '' && $scope.params.password != '') {
+		if($scope.params.orcidOrEmail != '' && $scope.params.password != '') {
 			$.colorbox({                      
 				html : $compile($('#confirm-reset-password').html())($scope),
 					scrolling: true,
@@ -3870,7 +3870,7 @@ function resetPasswordCtrl($scope,$compile) {
 	};
 	
 	$scope.closeModal = function() {
-		$scope.params.orcid='';
+		$scope.params.orcidOrEmail='';
     	$scope.params.password='';
     	$scope.result= '';
 		$.colorbox.close();
@@ -3879,7 +3879,7 @@ function resetPasswordCtrl($scope,$compile) {
 
 function removeSecQuestionCtrl($scope,$compile) {
 	$scope.showSection = false;
-	$scope.orcid = '';
+	$scope.orcidOrEmail = '';
 	$scope.result= '';
 	
 	$scope.toggleSection = function(){
@@ -3891,7 +3891,7 @@ function removeSecQuestionCtrl($scope,$compile) {
 		$.ajax({
 	        url: orcidVar.baseUri+'/admin-actions/remove-security-question.json',	        
 	        type: 'POST',
-	        data: $scope.orcid,
+	        data: $scope.orcidOrEmail,
 	        contentType: 'application/json;charset=UTF-8',
 	        dataType: 'text',
 	        success: function(data){	        	
@@ -3923,7 +3923,7 @@ function removeSecQuestionCtrl($scope,$compile) {
 	};
 	
 	$scope.closeModal = function() {
-		$scope.orcid = '';
+		$scope.orcidOrEmail = '';
 		$scope.result= '';
 		$.colorbox.close();
 	};	
