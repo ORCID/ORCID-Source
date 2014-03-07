@@ -260,50 +260,7 @@
 							</p>
 						</div>
 					</td>
-				</tr>
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				<tr>
-					<th><a name="ssoPreferences"></a><@orcid.msg 'manage.manage_sso_credentials.title' /></th>
-					<td><a href="" ng-click="toggleSSOPreferences()" ng-bind="ssoPreferencesToggleText"></a></td>
-				</tr>
-				<tr ng-controller="SSOPreferencesCtrl"
-					ng-show="showEditSSOPreferences" ng-cloak>
-					<td colspan="2">
-						<div class="create-sso-credentials" ng-hide="userCredentials != null">
-							<span>
-								<@orcid.msg 'manage.manage_sso_credentials.create_credentials' />
-								<a href ng-click="fetchEmptyCredentials()"><@orcid.msg 'manage.manage_sso_credentials.create_credentials_link' /></a>
-							</span>
-						</div>
-						<div class="show-sso-credentials" ng-show="userCredentials != null">
-							<span>								
-								<a href ng-click="showSSOCredentials()"><@orcid.msg 'manage.manage_sso_credentials.view_credentials_link' /></a>
-								<br />
-								<a href ng-click="showEditModal()"><@orcid.msg 'manage.manage_sso_credentials.edit_credentials_link' /></a>
-								<br />								
-								<a href ng-click="showRevokeModal()"><@orcid.msg 'manage.manage_sso_credentials.revoke_credentials_link' /></a>								
-							</span>
-						</div>
-					</td>
-				</tr>
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
+				</tr>				
 				
 				<tr>
 					<th><a name="editDeactivate"></a>${springMacroRequestContext.getMessage("manage.close_account")}</th>
@@ -449,6 +406,22 @@
 			</div>
 		</div>
 		</#if>
+		
+		<#if RequestParameters['sso']??>
+			<div class="sso">
+				<h1><@spring.message "manage.manage_sso_credentials.developerTools.title"/></h1>							
+				<p>
+					<@spring.message "manage.manage_sso_credentials.developerTools.content"/>
+				</p>
+				<ul>
+					<li><a href=""><span class="glyphicon glyphicon-link"></span> <@spring.message "manage.manage_sso_credentials.link_1"/></a></li>
+					<li><a href=""><span class="glyphicon glyphicon-link"></span> <@spring.message "manage.manage_sso_credentials.link_2"/></a></li>
+					<li><a href="<@spring.url "/account/developer-tools" />"><span class="glyphicon glyphicon-link"></span> <@spring.message "manage.manage_sso_credentials.link_3"/></a></li>				
+				</ul>
+			</div>
+		</#if>
+		
+		
 	</div>
 </div>
 

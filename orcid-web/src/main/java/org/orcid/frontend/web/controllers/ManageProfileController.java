@@ -1020,4 +1020,10 @@ public class ManageProfileController extends BaseWorkspaceController {
         }
         return errors; 
     }
+    
+    @RequestMapping(value = "/developer-tools", method = RequestMethod.GET)    
+    public ModelAndView renderDeveloperToolsView() {
+        ModelAndView mav = new ModelAndView("developer_tools");
+        return mav;
+    }    
 }
