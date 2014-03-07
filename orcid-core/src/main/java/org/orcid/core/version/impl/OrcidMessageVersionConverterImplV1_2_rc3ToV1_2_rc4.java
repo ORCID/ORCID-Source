@@ -75,6 +75,7 @@ public class OrcidMessageVersionConverterImplV1_2_rc3ToV1_2_rc4 implements Orcid
                     Preferences prefs = orcidProfile.getOrcidInternal().getPreferences();
                     if (prefs.getActivitiesVisibilityDefault() != null && prefs.getActivitiesVisibilityDefault().getValue() != null) {
                         prefs.setWorkVisibilityDefault(new WorkVisibilityDefault(prefs.getActivitiesVisibilityDefault().getValue()));
+                        prefs.setActivitiesVisibilityDefault(null);
                     }
                 }
             }
@@ -88,6 +89,7 @@ public class OrcidMessageVersionConverterImplV1_2_rc3ToV1_2_rc4 implements Orcid
                     Preferences prefs = orcidProfile.getOrcidInternal().getPreferences();
                     if (prefs.getWorkVisibilityDefault() != null && prefs.getWorkVisibilityDefault().getValue() != null) {
                         prefs.setActivitiesVisibilityDefault(new ActivitiesVisibilityDefault(prefs.getWorkVisibilityDefault().getValue()));
+                        prefs.setWorkVisibilityDefault(null);
                     }
                 }
             }

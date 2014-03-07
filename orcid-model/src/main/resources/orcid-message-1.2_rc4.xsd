@@ -55,7 +55,7 @@
 				<xs:enumeration value="1.2_rc1" />
 				<xs:enumeration value="1.2_rc2" />
 				<xs:enumeration value="1.2_rc3" />
-				<xs:enumeration value="1.2_rc4"></xs:enumeration>
+				<xs:enumeration value="1.2_rc4" />
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
