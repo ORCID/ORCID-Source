@@ -599,25 +599,6 @@ function EditTableCtrl($scope) {
 	$scope.showEditSecurityQuestion = (window.location.hash === "#editSecurityQuestion");
 	$scope.securityQuestionUpdateToggleText();	
 	
-	
-	
-	
-	
-	
-	// SSO preferences
-	$scope.ssoPreferencesUpdateToggleText = function () {
-		if ($scope.showSSOPreferences) $scope.ssoPreferencesToggleText = om.get("manage.editTable.hide");
-		else $scope.ssoPreferencesToggleText = om.get("manage.editTable.edit");		
-	};
-
-	$scope.toggleSSOPreferences = function() {
-		$scope.showEditSSOPreferences = !$scope.showEditSSOPreferences;
-		$scope.ssoPreferencesUpdateToggleText();
-	};
-	
-	// init security question
-	$scope.showEditSSOPreferences = (window.location.hash === "#editSSOPreferences");
-	$scope.ssoPreferencesUpdateToggleText();	
 };
 
 
@@ -3773,20 +3754,6 @@ function adminGroupsCtrl($scope,$compile){
 	$scope.getGroup();
 };
 
-<<<<<<< HEAD
-function SSOPreferencesCtrl($scope, $compile) {
-	$scope.userCredentials = null;	
-	
-	$scope.getSSOCredentials = function() {
-		$.ajax({
-	        url: orcidVar.baseUri+'/account/getSSOCredentials.json',	        
-	        contentType: 'application/json;charset=UTF-8',
-	        type: 'POST',	                	      
-	        success: function(data){	        	
-	        	$scope.$apply(function(){ 
-	        		if(data != null && data.clientSecret != null)
-	        			$scope.userCredentials = data;
-=======
 function findIdsCtrl($scope,$compile){
 	$scope.emails = "";
 	$scope.emailIdsMap = {};
@@ -3811,12 +3778,174 @@ function findIdsCtrl($scope,$compile){
 	        		}
 	        		$scope.emails='';
 	        		$scope.showEmailIdsModal();
->>>>>>> master
 				});
 	        }
 	    }).fail(function(error) { 
 	    	// something bad is happening!	    	
-<<<<<<< HEAD
+	    	console.log("Error deprecating the account");	    	
+	    });	
+	};
+	
+	$scope.showEmailIdsModal = function() {
+		$.colorbox({                      
+			html : $compile($('#email-ids-modal').html())($scope),
+				scrolling: true,
+				onLoad: function() {
+				$('#cboxClose').remove();
+			},
+			scrolling: true
+		});	
+
+		setTimeout(function(){$.colorbox.resize({width:"450px"});},100);		
+	};	
+	
+	$scope.closeModal = function() {
+		$.colorbox.close();
+	};
+};
+
+function resetPasswordCtrl($scope,$compile) {
+	$scope.showSection = false;
+	$scope.params = {orcidOrEmail:'',password:''};
+	$scope.result = '';
+	
+	$scope.toggleSection = function(){
+		$scope.showSection = !$scope.showSection;
+    	$('#reset_password_section').toggle();
+	};
+	
+	$scope.randomString = function() {
+		$scope.result = '';
+		$.ajax({
+	        url: orcidVar.baseUri+'/admin-actions/generate-random-string.json',	        
+	        type: 'GET',
+	        dataType: 'text',
+	        success: function(data){
+	        	$scope.$apply(function(){ 
+	        		$scope.params.password=data;
+				});
+	        }
+	    }).fail(function(error) { 
+	    	console.log(error);
+	    	// something bad is happening!	    	
+	    	console.log("Error generating random string");	    	
+	    });	
+	};
+	
+	$scope.resetPassword = function(){
+		$scope.result = '';		
+		$.ajax({
+	        url: orcidVar.baseUri+'/admin-actions/reset-password.json',	        
+	        type: 'POST',
+	        data: angular.toJson($scope.params),
+	        contentType: 'application/json;charset=UTF-8',
+	        dataType: 'text',
+	        success: function(data){	      	        	
+		        $scope.$apply(function(){ 
+		        	$scope.result=data;
+		        	$scope.params.orcidOrEmail='';
+		        	$scope.params.password='';
+				});	        	
+		        $scope.closeModal();
+	        }
+	    }).fail(function(error) { 
+	    	// something bad is happening!	    	
+	    	console.log("Error generating random string");	    	
+	    });	
+		
+	};
+	
+	$scope.confirmResetPassword = function(){
+		if($scope.params.orcidOrEmail != '' && $scope.params.password != '') {
+			$.colorbox({                      
+				html : $compile($('#confirm-reset-password').html())($scope),
+					scrolling: true,
+					onLoad: function() {
+					$('#cboxClose').remove();
+				},
+				scrolling: true
+			});
+			
+			$.colorbox.resize({width:"450px" , height:"150px"});
+		}
+	};
+	
+	$scope.closeModal = function() {
+		$scope.params.orcidOrEmail='';
+    	$scope.params.password='';
+    	$scope.result= '';
+		$.colorbox.close();
+	};
+};
+
+function removeSecQuestionCtrl($scope,$compile) {
+	$scope.showSection = false;
+	$scope.orcidOrEmail = '';
+	$scope.result= '';
+	
+	$scope.toggleSection = function(){
+		$scope.showSection = !$scope.showSection;
+    	$('#remove_security_question_section').toggle();
+	};
+	
+	$scope.removeSecurityQuestion = function() {		
+		$.ajax({
+	        url: orcidVar.baseUri+'/admin-actions/remove-security-question.json',	        
+	        type: 'POST',
+	        data: $scope.orcidOrEmail,
+	        contentType: 'application/json;charset=UTF-8',
+	        dataType: 'text',
+	        success: function(data){	        	
+		        $scope.$apply(function(){ 
+		        	$scope.result=data;
+		        	$scope.orcid = '';
+				});	     
+		        $scope.closeModal();
+	        }
+	    }).fail(function(error) { 
+	    	// something bad is happening!	    	
+	    	console.log("Error generating random string");	    	
+	    });	
+	};
+	
+	$scope.confirmRemoveSecurityQuestion = function(){
+		if($scope.orcid != '') {
+			$.colorbox({                      
+				html : $compile($('#confirm-remove-security-question').html())($scope),
+					scrolling: true,
+					onLoad: function() {
+					$('#cboxClose').remove();
+				},
+				scrolling: true
+			});
+			
+			$.colorbox.resize({width:"450px" , height:"150px"});
+		}
+	};
+	
+	$scope.closeModal = function() {
+		$scope.orcidOrEmail = '';
+		$scope.result= '';
+		$.colorbox.close();
+	};	
+};
+
+function SSOPreferencesCtrl($scope, $compile) {
+	$scope.userCredentials = null;	
+	
+	$scope.getSSOCredentials = function() {
+		$.ajax({
+	        url: orcidVar.baseUri+'/account/getSSOCredentials.json',	        
+	        contentType: 'application/json;charset=UTF-8',
+	        type: 'POST',	                	      
+	        success: function(data){	        	
+	        	$scope.$apply(function(){ 
+	        		if(data != null && data.clientSecret != null)
+	        			$scope.userCredentials = data;
+				});
+	        }
+	    }).fail(function(error) { 
+	    	// something bad is happening!	    	
 	    	console.log("Error obtaining SSO credentials");	    	
 	    });		
 	};
@@ -3967,154 +4096,6 @@ function findIdsCtrl($scope,$compile){
 	//init
 	$scope.getSSOCredentials();	
 };
-=======
-	    	console.log("Error deprecating the account");	    	
-	    });	
-	};
-	
-	$scope.showEmailIdsModal = function() {
-		$.colorbox({                      
-			html : $compile($('#email-ids-modal').html())($scope),
-				scrolling: true,
-				onLoad: function() {
-				$('#cboxClose').remove();
-			},
-			scrolling: true
-		});	
-
-		setTimeout(function(){$.colorbox.resize({width:"450px"});},100);		
-	};	
-	
-	$scope.closeModal = function() {
-		$.colorbox.close();
-	};
-};
-
-function resetPasswordCtrl($scope,$compile) {
-	$scope.showSection = false;
-	$scope.params = {orcidOrEmail:'',password:''};
-	$scope.result = '';
-	
-	$scope.toggleSection = function(){
-		$scope.showSection = !$scope.showSection;
-    	$('#reset_password_section').toggle();
-	};
-	
-	$scope.randomString = function() {
-		$scope.result = '';
-		$.ajax({
-	        url: orcidVar.baseUri+'/admin-actions/generate-random-string.json',	        
-	        type: 'GET',
-	        dataType: 'text',
-	        success: function(data){
-	        	$scope.$apply(function(){ 
-	        		$scope.params.password=data;
-				});
-	        }
-	    }).fail(function(error) { 
-	    	console.log(error);
-	    	// something bad is happening!	    	
-	    	console.log("Error generating random string");	    	
-	    });	
-	};
-	
-	$scope.resetPassword = function(){
-		$scope.result = '';		
-		$.ajax({
-	        url: orcidVar.baseUri+'/admin-actions/reset-password.json',	        
-	        type: 'POST',
-	        data: angular.toJson($scope.params),
-	        contentType: 'application/json;charset=UTF-8',
-	        dataType: 'text',
-	        success: function(data){	      	        	
-		        $scope.$apply(function(){ 
-		        	$scope.result=data;
-		        	$scope.params.orcidOrEmail='';
-		        	$scope.params.password='';
-				});	        	
-		        $scope.closeModal();
-	        }
-	    }).fail(function(error) { 
-	    	// something bad is happening!	    	
-	    	console.log("Error generating random string");	    	
-	    });	
-		
-	};
-	
-	$scope.confirmResetPassword = function(){
-		if($scope.params.orcidOrEmail != '' && $scope.params.password != '') {
-			$.colorbox({                      
-				html : $compile($('#confirm-reset-password').html())($scope),
-					scrolling: true,
-					onLoad: function() {
-					$('#cboxClose').remove();
-				},
-				scrolling: true
-			});
-			
-			$.colorbox.resize({width:"450px" , height:"150px"});
-		}
-	};
-	
-	$scope.closeModal = function() {
-		$scope.params.orcidOrEmail='';
-    	$scope.params.password='';
-    	$scope.result= '';
-		$.colorbox.close();
-	};
-};
-
-function removeSecQuestionCtrl($scope,$compile) {
-	$scope.showSection = false;
-	$scope.orcidOrEmail = '';
-	$scope.result= '';
-	
-	$scope.toggleSection = function(){
-		$scope.showSection = !$scope.showSection;
-    	$('#remove_security_question_section').toggle();
-	};
-	
-	$scope.removeSecurityQuestion = function() {		
-		$.ajax({
-	        url: orcidVar.baseUri+'/admin-actions/remove-security-question.json',	        
-	        type: 'POST',
-	        data: $scope.orcidOrEmail,
-	        contentType: 'application/json;charset=UTF-8',
-	        dataType: 'text',
-	        success: function(data){	        	
-		        $scope.$apply(function(){ 
-		        	$scope.result=data;
-		        	$scope.orcid = '';
-				});	     
-		        $scope.closeModal();
-	        }
-	    }).fail(function(error) { 
-	    	// something bad is happening!	    	
-	    	console.log("Error generating random string");	    	
-	    });	
-	};
-	
-	$scope.confirmRemoveSecurityQuestion = function(){
-		if($scope.orcid != '') {
-			$.colorbox({                      
-				html : $compile($('#confirm-remove-security-question').html())($scope),
-					scrolling: true,
-					onLoad: function() {
-					$('#cboxClose').remove();
-				},
-				scrolling: true
-			});
-			
-			$.colorbox.resize({width:"450px" , height:"150px"});
-		}
-	};
-	
-	$scope.closeModal = function() {
-		$scope.orcidOrEmail = '';
-		$scope.result= '';
-		$.colorbox.close();
-	};	
-};
 
 
 
@@ -4127,6 +4108,3 @@ function removeSecQuestionCtrl($scope,$compile) {
 
 
 
-
-
->>>>>>> master
