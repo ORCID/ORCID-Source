@@ -104,12 +104,12 @@
 	<div style="margin-bottom: 20px; margin-top: 10px;">
         <label class="privacy-toggle-lbl">${springMacroRequestContext.getMessage("register.labelDefaultprivacyfornewworks")}</label>
     	<@orcid.privacyToggle 
-    	    angularModel="register.workVisibilityDefault.visibility" 
+    	    angularModel="register.activitiesVisibilityDefault.visibility" 
     	    questionClick="toggleClickPrivacyHelp('workPrivHelp')"
 			clickedClassCheck="{'popover-help-container-show':privacyHelp['workPrivHelp']==true}" 
-			publicClick="updateWorkVisibilityDefault('PUBLIC', $event)"
-			limitedClick="updateWorkVisibilityDefault('LIMITED', $event)"
-			privateClick="updateWorkVisibilityDefault('PRIVATE', $event)" />
+			publicClick="updateActivitiesVisibilityDefault('PUBLIC', $event)"
+			limitedClick="updateActivitiesVisibilityDefault('LIMITED', $event)"
+			privateClick="updateActivitiesVisibilityDefault('PRIVATE', $event)" />
     </div>                    
     <div style="margin-bottom: 15px;">
         <div class="relative">

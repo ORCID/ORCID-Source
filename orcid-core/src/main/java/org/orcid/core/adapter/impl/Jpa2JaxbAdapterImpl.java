@@ -1048,7 +1048,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         preferences.setSendOrcidNews(profileEntity.getSendOrcidNews() == null ? null : new SendOrcidNews(profileEntity.getSendOrcidNews()));
         // This column is constrained as not null in the DB so don't have to
         // worry about null!
-        preferences.setWorkVisibilityDefault(new WorkVisibilityDefault(profileEntity.getWorkVisibilityDefault()));
+        preferences.setActivitiesVisibilityDefault(new ActivitiesVisibilityDefault(profileEntity.getActivitiesVisibilityDefault()));
 
         return orcidInternal;
     }

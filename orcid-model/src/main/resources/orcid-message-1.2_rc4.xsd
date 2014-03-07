@@ -1816,7 +1816,7 @@
 			<xs:sequence>
 				<xs:element ref="orcid:send-change-notifications" />
 				<xs:element ref="orcid:send-orcid-news" />
-				<xs:element ref="orcid:work-visibility-default" />
+				<xs:element ref="orcid:activities-visibility-default" />
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
@@ -1847,7 +1847,7 @@
 			</xs:simpleContent>
 		</xs:complexType>
 	</xs:element>
-	<xs:element name="work-visibility-default">
+	<xs:element name="activities-visibility-default">
 		<xs:complexType mixed="true">
 			<xs:simpleContent>
 				<xs:extension base="orcid:visibility" />

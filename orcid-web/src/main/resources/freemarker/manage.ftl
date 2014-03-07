@@ -184,12 +184,12 @@
 						<div class="editTablePadCell35" id="privacy-settings">
 							${springMacroRequestContext.getMessage("privacy_preferences.labelDefaultprivacyfornewWorks")}<br />
 							<@orcid.privacyToggle
-							angularModel="prefsSrvc.prefs.workVisibilityDefault.value"
+							angularModel="prefsSrvc.prefs.activitiesVisibilityDefault.value"
 							questionClick="toggleClickPrivacyHelp('workPrivHelp')"
 							clickedClassCheck="{'popover-help-container-show':privacyHelp['workPrivHelp']==true}" 
-							publicClick="updateWorkVisibilityDefault('PUBLIC', $event)"
-							limitedClick="updateWorkVisibilityDefault('LIMITED', $event)"
-							privateClick="updateWorkVisibilityDefault('PRIVATE', $event)" />
+							publicClick="updateActivitiesVisibilityDefault('PUBLIC', $event)"
+							limitedClick="updateActivitiesVisibilityDefault('LIMITED', $event)"
+							privateClick="updateActivitiesVisibilityDefault('PRIVATE', $event)" />
 						</div>
 					</td>
 				</tr>

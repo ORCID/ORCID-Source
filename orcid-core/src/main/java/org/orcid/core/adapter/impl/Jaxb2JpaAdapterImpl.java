@@ -809,11 +809,10 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             if (preferences != null) {
                 profileEntity.setSendChangeNotifications(preferences.getSendChangeNotifications() == null ? null : preferences.getSendChangeNotifications().isValue());
                 profileEntity.setSendOrcidNews(preferences.getSendOrcidNews() == null ? null : preferences.getSendOrcidNews().isValue());
-                // Use the default value in the ProfileEntity class if work
-                // visibility default is not given
-                if (preferences.getWorkVisibilityDefault() != null) {
-                    profileEntity.setWorkVisibilityDefault(preferences.getWorkVisibilityDefault().getValue());
-                }
+                // ActivitiesVisibilityDefault default is WorkVisibilityDefault
+                if (preferences.getActivitiesVisibilityDefault() != null) {
+                    profileEntity.setActivitiesVisibilityDefault(preferences.getActivitiesVisibilityDefault().getValue());
+                } 
             }
 
         }

@@ -49,6 +49,7 @@ import org.orcid.frontend.web.forms.ChangeSecurityQuestionForm;
 import org.orcid.frontend.web.forms.EmailAddressForm;
 import org.orcid.frontend.web.forms.OneTimeResetPasswordForm;
 import org.orcid.frontend.web.forms.PasswordTypeAndConfirmForm;
+import org.orcid.jaxb.model.message.ActivitiesVisibilityDefault;
 import org.orcid.jaxb.model.message.Claimed;
 import org.orcid.jaxb.model.message.CompletionDate;
 import org.orcid.jaxb.model.message.ContactDetails;
@@ -880,7 +881,7 @@ public class RegistrationController extends BaseController {
             }
             preferences.setSendChangeNotifications(new SendChangeNotifications(claim.getSendChangeNotifications().getValue()));
             preferences.setSendOrcidNews(new SendOrcidNews(claim.getSendOrcidNews().getValue()));
-            preferences.setWorkVisibilityDefault(new WorkVisibilityDefault(claim.getWorkVisibilityDefault().getVisibility()));
+            preferences.setActivitiesVisibilityDefault(new ActivitiesVisibilityDefault(claim.getActivitiesVisibilityDefault().getVisibility()));
         }
         return orcidProfileManager.updateOrcidProfile(orcidProfile);
     }

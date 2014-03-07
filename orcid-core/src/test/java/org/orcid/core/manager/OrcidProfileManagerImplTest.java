@@ -41,6 +41,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.orcid.core.manager.impl.OrcidProfileManagerImpl;
+import org.orcid.jaxb.model.message.ActivitiesVisibilityDefault;
 import org.orcid.jaxb.model.message.Affiliation;
 import org.orcid.jaxb.model.message.AffiliationType;
 import org.orcid.jaxb.model.message.Affiliations;
@@ -634,7 +635,7 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
         history.setSubmissionDate(new SubmissionDate(DateUtils.convertToXMLGregorianCalendar(new Date())));
         profile1.setOrcidHistory(history);
         history.setClaimed(new Claimed(true));
-        profile1.getOrcidInternal().getPreferences().setWorkVisibilityDefault(new WorkVisibilityDefault(Visibility.PUBLIC));
+        profile1.getOrcidInternal().getPreferences().setActivitiesVisibilityDefault(new ActivitiesVisibilityDefault(Visibility.PUBLIC));
         orcidProfileManager.createOrcidProfile(profile1);
 
         OrcidProfile profile2 = new OrcidProfile();
@@ -840,7 +841,7 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
     public void testUpdatePreferences() {
         OrcidProfile profile1 = createBasicProfile();
         profile1 = orcidProfileManager.createOrcidProfile(profile1);
-        assertEquals(Visibility.PRIVATE, profile1.getOrcidInternal().getPreferences().getWorkVisibilityDefault().getValue());
+        assertEquals(Visibility.PRIVATE, profile1.getOrcidInternal().getPreferences().getActivitiesVisibilityDefault().getValue());
 
         OrcidProfile profile2 = new OrcidProfile();
         profile2.setOrcidIdentifier(TEST_ORCID);
@@ -850,14 +851,14 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
         internal.setPreferences(preferences);
         preferences.setSendChangeNotifications(new SendChangeNotifications(false));
         preferences.setSendOrcidNews(new SendOrcidNews(true));
-        preferences.setWorkVisibilityDefault(new WorkVisibilityDefault(Visibility.PUBLIC));
+        preferences.setActivitiesVisibilityDefault(new ActivitiesVisibilityDefault(Visibility.PUBLIC));
 
         orcidProfileManager.updatePreferences(profile2);
 
         OrcidProfile retrievedProfile = orcidProfileManager.retrieveOrcidProfile(TEST_ORCID);
         assertEquals(false, retrievedProfile.getOrcidInternal().getPreferences().getSendChangeNotifications().isValue());
         assertEquals(true, retrievedProfile.getOrcidInternal().getPreferences().getSendOrcidNews().isValue());
-        assertEquals(Visibility.PUBLIC, retrievedProfile.getOrcidInternal().getPreferences().getWorkVisibilityDefault().getValue());
+        assertEquals(Visibility.PUBLIC, retrievedProfile.getOrcidInternal().getPreferences().getActivitiesVisibilityDefault().getValue());
     }
 
     @Test

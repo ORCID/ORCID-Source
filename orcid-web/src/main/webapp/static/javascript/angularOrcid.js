@@ -611,8 +611,8 @@ function WorksPrivacyPreferencesCtrl($scope, prefsSrvc) {
 			$scope.privacyHelp[key]=!$scope.privacyHelp[key];
 	};
 	
-	$scope.updateWorkVisibilityDefault = function(priv, $event) {
-		$scope.prefsSrvc.prefs.workVisibilityDefault.value = priv;
+	$scope.updateActivitiesVisibilityDefault = function(priv, $event) {
+		$scope.prefsSrvc.prefs.activitiesVisibilityDefault.value = priv;
 		$scope.prefsSrvc.savePrivacyPreferences();
 	};	
 };
@@ -1119,8 +1119,8 @@ function RegistrationCtrl($scope, $compile) {
 	};
 
 	
-	$scope.updateWorkVisibilityDefault = function(priv, $event) {
-		$scope.register.workVisibilityDefault.visibility = priv;
+	$scope.updateActivitiesVisibilityDefault = function(priv, $event) {
+		$scope.register.activitiesVisibilityDefault.visibility = priv;
 	};
 	
 	$scope.postRegister = function () {
@@ -1308,8 +1308,8 @@ function ClaimCtrl($scope, $compile) {
 		return window.location.href.split("?")[0]+".json";
 	}; 
 	
-	$scope.updateWorkVisibilityDefault = function(priv, $event) {
-		$scope.register.workVisibilityDefault.visibility = priv;
+	$scope.updateActivitiesVisibilityDefault = function(priv, $event) {
+		$scope.register.activitiesVisibilityDefault.visibility = priv;
 	};
 
 	$scope.serverValidate = function (field) {

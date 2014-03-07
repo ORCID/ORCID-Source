@@ -201,7 +201,7 @@
             <preferences>
                 <send-change-notifications>true</send-change-notifications>
                 <send-orcid-news>false</send-orcid-news>
-                <work-visibility-default>public</work-visibility-default>
+                <activities-visibility-default>public</activities-visibility-default>
             </preferences>
         </orcid-internal>
     </orcid-profile>
