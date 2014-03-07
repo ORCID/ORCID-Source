@@ -17,8 +17,8 @@
 package org.orcid.pojo.ajaxForm;
 
 import java.io.Serializable;
+import java.text.NumberFormat;
 import java.util.ArrayList;
-import java.util.Currency;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -83,6 +83,8 @@ public class FundingForm implements ErrorsInterface, Serializable {
     private String countryForDisplay;
 
     private String fundingTypeForDisplay;
+    
+    private String dateSortString;
 
     public List<String> getErrors() {
         return errors;
@@ -294,7 +296,8 @@ public class FundingForm implements ErrorsInterface, Serializable {
             organization.setName(fundingName.getValue());
         OrganizationAddress organizationAddress = new OrganizationAddress();
         organization.setAddress(organizationAddress);
-        organizationAddress.setCity(city.getValue());
+        if (!PojoUtil.isEmpty(city))
+            organizationAddress.setCity(city.getValue());
         if (!PojoUtil.isEmpty(region)) {
             organizationAddress.setRegion(region.getValue());
         }
@@ -333,12 +336,17 @@ public class FundingForm implements ErrorsInterface, Serializable {
     public static FundingForm valueOf(Funding funding) {
         FundingForm result = new FundingForm();
 
+        result.setDateSortString(PojoUtil.createDateSortString(funding.getStartDate(), funding.getEndDate()));
+
         if (StringUtils.isNotEmpty(funding.getPutCode()))
             result.setPutCode(Text.valueOf(funding.getPutCode()));
 
         if (funding.getAmount() != null) {
-            if (StringUtils.isNotEmpty(funding.getAmount().getContent()))
-                result.setAmount(Text.valueOf(funding.getAmount().getContent()));
+            if (StringUtils.isNotEmpty(funding.getAmount().getContent())) {
+                String cleanNumber = funding.getAmount().getContent().replace(",", "");
+                String formattedNumber = NumberFormat.getNumberInstance().format(Double.parseDouble(cleanNumber));
+                result.setAmount(Text.valueOf(formattedNumber));
+            }
             if (funding.getAmount().getCurrencyCode() != null)
                 result.setCurrencyCode(Text.valueOf(funding.getAmount().getCurrencyCode()));
         }
@@ -418,5 +426,13 @@ public class FundingForm implements ErrorsInterface, Serializable {
         }
 
         return result;
+    }
+
+    public String getDateSortString() {
+        return dateSortString;
+    }
+
+    public void setDateSortString(String dateSortString) {
+        this.dateSortString = dateSortString;
     }
 }

@@ -31,6 +31,14 @@ if (!(window.console && console.log)) {
 	};
 };
 
+// add number padding function 
+Number.prototype.pad = function(size) {
+    var s = String(this);
+    if(typeof(size) !== "number"){size = 2;}
+
+    while (s.length < size) {s = "0" + s;}
+    return s;
+}
 
 // add new method to string
 if (typeof String.prototype.startsWith != 'function') {
@@ -212,7 +220,7 @@ $(function () {
     			wHtml = wHtml + om.get('common.js.domain.warn.template').replace('{{curentDomian}}',window.location.hostname);
     			wHtml = wHtml + '</strong> ';
     			//don't let the warning be disabled for test-warn-dismiss
-    			if (window.location.hostname.toLowerCase() != "sandbox-1.orcid.org") {
+    			if (window.location.hostname.toLowerCase() != "sandbox-1.orcid.org" && window.location.hostname.toLowerCase() != "sandbox.orcid.org") {
     				wHtml = wHtml + ' <div style="float: right" class="small"><a href="#" id="test-warn-dismiss">'
     				wHtml = wHtml + om.get('common.cookies.click_dismiss');
     				wHtml = wHtml + '</a></div>';
@@ -283,7 +291,7 @@ $(function () {
 		if (basePath.startsWith(baseUrl + 'oauth')) { 
 			var clientName = $('form#loginForm input[name="client_name"]').val();
 			var clientGroupName = $('form#loginForm input[name="client_group_name"]').val();
-		    orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'Sign-In-Submit ' + orcidGA.buildClientString(clientGroupName, clientName), 'OAuth']);
+		    orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'Sign-In-Submit', 'OAuth ' + orcidGA.buildClientString(clientGroupName, clientName)]);
 		} else
 	    	orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'Sign-In-Submit', 'Website']);	
 		$('form#loginForm').attr('disabled', 'disabled');
@@ -300,7 +308,7 @@ $(function () {
 	        	    if (basePath.startsWith(baseUrl + 'oauth/signin')) {
 	        	    	var clientName = $('form#loginForm input[name="client_name"]').val();
 	        	    	var clientGroupName = $('div#RegistrationCtr input[name="client_group_name"]').val();
-	        		    orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'Sign-In ' + orcidGA.buildClientString(clientGroupName, clientName), 'OAuth']);
+	        		    orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'Sign-In', 'OAuth '+ orcidGA.buildClientString(clientGroupName, clientName)]);
 	        	    } else
 	        	    	orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'Sign-In', 'Website']);
 	        	    orcidGA.windowLocationHrefDelay(data.url + window.location.hash);

@@ -277,7 +277,7 @@ public class WorksController extends BaseWorkspaceController {
         w.setShortDescription(disText);
 
         OrcidProfile profile = getEffectiveProfile();
-        w.setVisibility(profile.getOrcidInternal().getPreferences().getWorkVisibilityDefault().getValue());
+        w.setVisibility(profile.getOrcidInternal().getPreferences().getActivitiesVisibilityDefault().getValue());
 
         // Language code
         Text lc = new Text();

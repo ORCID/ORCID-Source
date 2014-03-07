@@ -17,7 +17,7 @@ Log onto the front end to initialize a session
       HTTP/1.1 302 Moved Temporarily
       Server: Apache-Coyote/1.1
       Date: Mon, 29 Oct 2012 12:56:42 GMT
-      Location: http://sandbox-1.orcid.org/workspace
+      Location: http://sandbox.orcid.org/workspace
       Transfer-Encoding: chunked
       Set-Cookie: JSESSIONID=E8DA6D14CC31863D80E9D7F686FA1EE9; Path=/; HttpOnly
        
@@ -50,7 +50,7 @@ Still in the same session, submit confirmation
       Cache-Control: no-cache
       Cache-Control: no-store
       Date: Mon, 29 Oct 2012 13:26:43 GMT
-      Location: http://sandbox-1.orcid.org/oauth/yourdomain.edu/orcid-callback?code=hSFyhr
+      Location: http://sandbox.orcid.org/oauth/yourdomain.edu/orcid-callback?code=hSFyhr
       Expires: Thu, 01 Jan 1970 00:00:00 GMT
       Pragma: no-cache
       Transfer-Encoding: chunked

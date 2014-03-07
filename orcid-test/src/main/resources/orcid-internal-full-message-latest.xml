@@ -18,9 +18,9 @@
 
 -->
 <orcid-message xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.orcid.org/ns/orcid ../../../../orcid-model/src/main/resources/orcid-message-1.2_rc3.xsd"
+	xsi:schemaLocation="http://www.orcid.org/ns/orcid ../../../../orcid-model/src/main/resources/orcid-message-1.2_rc4.xsd"
 	xmlns="http://www.orcid.org/ns/orcid">
-	<message-version>1.2_rc3</message-version>
+	<message-version>1.2_rc4</message-version>
 	<!-- Error message, if applicable -->
 	<!-- Unable to connect to ORCID, no matching researchers, etc. -->
 	<!-- <error-desc>No researcher found.</error-desc> -->
@@ -50,6 +50,8 @@
 				<source-name>Brown University Library</source-name>
 				<source-date>2012-10-09T15:50:07</source-date>
 			</source>
+			<verified-email>false</verified-email>
+			<verified-primary-email>false</verified-primary-email>
 		</orcid-history>
 		<orcid-bio scope="update">
 			<personal-details>
@@ -143,6 +145,12 @@
 						<scope-path>/orcid-profile/read-limited</scope-path>
 						<scope-path>/orcid-works/create</scope-path>
 					</scope-paths>
+					<application-group-orcid>
+						<uri>http://orcid.org/8888-8888-8888-8880</uri>
+						<path>8888-8888-8888-8880</path>
+						<host>orcid.org</host>
+					</application-group-orcid>
+					<application-group-name>Brown Group</application-group-name>
 				</application-summary>
 			</applications>
 		</orcid-bio>
@@ -383,7 +391,7 @@
 			<preferences>
 				<send-change-notifications>true</send-change-notifications>
 				<send-orcid-news>false</send-orcid-news>
-				<work-visibility-default>public</work-visibility-default>
+				<activities-visibility-default>public</activities-visibility-default>
 			</preferences>
 		</orcid-internal>
 	</orcid-profile>

@@ -49,6 +49,8 @@ public class Registration implements ErrorsInterface, Serializable {
     private Text familyNames;
     
     private Text creationType;
+    
+    private Text referredBy;
 
     public Registration() {
         errors = new ArrayList<String>();
@@ -63,7 +65,7 @@ public class Registration implements ErrorsInterface, Serializable {
         sendOrcidNews = new Checkbox();
         termsOfUse = new Checkbox();
         workVisibilityDefault = new Visibility();
-
+        referredBy = new Text();
     }
 
     public List<String> getErrors() {
@@ -160,6 +162,14 @@ public class Registration implements ErrorsInterface, Serializable {
 
     public void setCreationType(Text creationType) {
         this.creationType = creationType;
+    }
+
+    public Text getReferredBy() {
+        return referredBy;
+    }
+
+    public void setReferredBy(Text referredBy) {
+        this.referredBy = referredBy;
     }
 
 }

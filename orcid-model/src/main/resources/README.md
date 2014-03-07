@@ -7,8 +7,8 @@
         * Public API:   http://pub.orcid.org/v1.1/
         * Member API:   https://api.orcid.org/v1.1/
     * API Base URLs - SANDBOX
-        * Public API:   http://pub.sandbox-1.orcid.org/v1.1/
-        * Member API:   http://api.sandbox-1.orcid.org/v1.1/
+        * Public API:   http://pub.sandbox.orcid.org/v1.1/
+        * Member API:   http://api.sandbox.orcid.org/v1.1/
 
 #### XSD Release Candidate(s)
 
@@ -17,8 +17,17 @@
         * Public API:   http://pub.orcid.org/v1.2_rc3/
         * Member API:   https://api.orcid.org/v1.2_rc3/
     * API Base URLs - SANDBOX
-        * Public API:   http://pub.sandbox-1.orcid.org/v1.2_rc3/
-        * Member API:   http://api.sandbox-1.orcid.org/v1.2_rc3/
+        * Public API:   http://pub.sandbox.orcid.org/v1.2_rc3/
+        * Member API:   http://api.sandbox.orcid.org/v1.2_rc3/
+
+
+* **[ORCID Message 1.2_rc4](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/orcid-message-1.2_rc4.xsd)** <br>_Contains: Verified Email, Verified Primary Email and Referred By in ORCID History
+    * API Base URLs - PRODUCTION
+        * Public API:   http://pub.orcid.org/v1.2_rc4/
+        * Member API:   https://api.orcid.org/v1.2_rc4/
+    * API Base URLs - SANDBOX
+        * Public API:   http://pub.sandbox.orcid.org/v1.2_rc4/
+        * Member API:   http://api.sandbox.orcid.org/v1.2_rc4/
 
 
 * **[ORCID Message 1.2_rc2](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/orcid-message-1.2_rc2.xsd)** <br>_Contains: updates to creation-method field_
@@ -26,16 +35,16 @@
         * Public API:   http://pub.orcid.org/v1.2_rc2/
         * Member API:   https://api.orcid.org/v1.2_rc2/
     * API Base URLs - SANDBOX
-        * Public API:   http://pub.sandbox-1.orcid.org/v1.2_rc2/
-        * Member API:   http://api.sandbox-1.orcid.org/v1.2_rc2/
+        * Public API:   http://pub.sandbox.orcid.org/v1.2_rc2/
+        * Member API:   http://api.sandbox.orcid.org/v1.2_rc2/
 
 * **[ORCID Message 1.2_rc1](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/orcid-message-1.2_rc1.xsd)** <br>_Contains: XSD for Organizational Affiliations_
     * API Base URLs - PRODUCTION
         * Public API:   http://pub.orcid.org/v1.2_rc1/
         * Member API:   https://api.orcid.org/v1.2_rc1/
     * API Base URLs - SANDBOX
-        * Public API:   http://pub.sandbox-1.orcid.org/v1.2_rc1/
-        * Member API:   http://api.sandbox-1.orcid.org/v1.2_rc1/
+        * Public API:   http://pub.sandbox.orcid.org/v1.2_rc1/
+        * Member API:   http://api.sandbox.orcid.org/v1.2_rc1/
 
 #### Deprecated Versions (Will be removed March 2014)
 
@@ -44,8 +53,8 @@
         * Public API:   http://pub.orcid.org
         * Member API:   https://api.orcid.org
     * API Base URLs - SANDBOX
-        * Public API:   http://pub.sandbox-1.orcid.org
-        * Member API:   http://api.sandbox-1.orcid.org
+        * Public API:   http://pub.sandbox.orcid.org
+        * Member API:   http://api.sandbox.orcid.org
 
 _NOTE:<br />API calls for member to ORCID iD holder authorization using OAuth are not affected by XSD versions. Regardless of the XSD version used, the OAuth endpoints are:_
 

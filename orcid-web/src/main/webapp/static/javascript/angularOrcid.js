@@ -168,7 +168,7 @@ orcidNgModule.factory("affiliationsSrvc", ['$rootScope', function ($rootScope) {
 	    	    }).fail(function() { 
 	    	    	console.log("Error deleting affiliation.");
 	    	    });
-	    	}  
+	    	}
 	}; 
 	return serv;
 }]);
@@ -630,8 +630,8 @@ function WorksPrivacyPreferencesCtrl($scope, prefsSrvc) {
 			$scope.privacyHelp[key]=!$scope.privacyHelp[key];
 	};
 	
-	$scope.updateWorkVisibilityDefault = function(priv, $event) {
-		$scope.prefsSrvc.prefs.workVisibilityDefault.value = priv;
+	$scope.updateActivitiesVisibilityDefault = function(priv, $event) {
+		$scope.prefsSrvc.prefs.activitiesVisibilityDefault.value = priv;
 		$scope.prefsSrvc.savePrivacyPreferences();
 	};	
 };
@@ -1138,15 +1138,16 @@ function RegistrationCtrl($scope, $compile) {
 	};
 
 	
-	$scope.updateWorkVisibilityDefault = function(priv, $event) {
-		$scope.register.workVisibilityDefault.visibility = priv;
+	$scope.updateActivitiesVisibilityDefault = function(priv, $event) {
+		$scope.register.activitiesVisibilityDefault.visibility = priv;
 	};
 	
 	$scope.postRegister = function () {
 		if (basePath.startsWith(baseUrl + 'oauth')) { 
 			var clientName = $('div#RegistrationCtr input[name="client_name"]').val();
+			$scope.register.referredBy = $('div#RegistrationCtr input[name="client_id"]').val();
 			var clientGroupName = $('div#RegistrationCtr input[name="client_group_name"]').val();
-		    orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'New-Registration-Submit ' + orcidGA.buildClientString(clientGroupName, clientName), 'OAuth']);
+		    orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'New-Registration-Submit' , 'OAuth ' + orcidGA.buildClientString(clientGroupName, clientName)]);
 		    $scope.register.creationType.value = "Member-referred";
 		} else {
 	    	orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'New-Registration-Submit', 'Website']);
@@ -1184,7 +1185,7 @@ function RegistrationCtrl($scope, $compile) {
 	    		if (basePath.startsWith(baseUrl + 'oauth')) {
 	    			var clientName = $('div#RegistrationCtr input[name="client_name"]').val();
 	    			var clientGroupName = $('div#RegistrationCtr input[name="client_group_name"]').val();
-	    		    orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'New-Registration ' + orcidGA.buildClientString(clientGroupName, clientName), 'OAuth']);
+	    		    orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'New-Registration', 'OAuth '+ orcidGA.buildClientString(clientGroupName, clientName)]);
 	    		}
 	    	    else
 	    	    	orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'New-Registration', 'Website']);
@@ -1326,8 +1327,8 @@ function ClaimCtrl($scope, $compile) {
 		return window.location.href.split("?")[0]+".json";
 	}; 
 	
-	$scope.updateWorkVisibilityDefault = function(priv, $event) {
-		$scope.register.workVisibilityDefault.visibility = priv;
+	$scope.updateActivitiesVisibilityDefault = function(priv, $event) {
+		$scope.register.activitiesVisibilityDefault.visibility = priv;
 	};
 
 	$scope.serverValidate = function (field) {
@@ -1592,7 +1593,7 @@ function AffiliationCtrl($scope, $compile, $filter, affiliationsSrvc, workspaceS
 	$scope.privacyHelp = {};
 	$scope.privacyHelpCurKey = null;
 	$scope.moreInfo = {};
-	$scope.moreInfoCurKey = null;
+	$scope.moreInfoCurKey = null;	
 	
 	$scope.toggleClickPrivacyHelp = function(key) {
 		if (!document.documentElement.className.contains('no-touch')) {
@@ -1685,7 +1686,8 @@ function AffiliationCtrl($scope, $compile, $filter, affiliationsSrvc, workspaceS
 			$scope.editAffiliation.affiliationName.value = datum.value;
 			$scope.editAffiliation.city.value = datum.city;
 			$scope.editAffiliation.region.value = datum.region;
-			$scope.editAffiliation.country.value = datum.country;
+			if(datum.country != undefined && datum.country != null)
+				$scope.editAffiliation.country.value = datum.country;
 			if (datum.disambiguatedAffiliationIdentifier != undefined && datum.disambiguatedAffiliationIdentifier != null) {
 				$scope.getDisambiguatedAffiliation(datum.disambiguatedAffiliationIdentifier);
 				$scope.unbindTypeahead();
@@ -1887,6 +1889,7 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc) {
 	};
 	
 	$scope.addFundingModal = function(type){
+		$scope.removeDisambiguatedFunding();
 		$.ajax({
 			url: $('body').data('baseurl') + 'fundings/funding.json',
 			dataType: 'json',
@@ -1902,7 +1905,7 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc) {
 	};
 	
 	$scope.showAddModal = function(){
-		$scope.editTranslatedTitle = false;
+		$scope.editTranslatedTitle = false;		
 		$.colorbox({        	
 			html: $compile($('#add-funding-modal').html())($scope),			
 			width: formColorBoxResize(),
@@ -1968,7 +1971,7 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc) {
                     if ($('#fundingName').val()) {
                         q += encodeURIComponent($('#fundingName').val());
                     }
-                    q += '?limit=' + numOfResults + '&funders-only=' + $('#fundersOnly').is(':checked');
+                    q += '?limit=' + numOfResults + '&funders-only=true';
                     return q;
                 }
 			},
@@ -1997,9 +2000,12 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc) {
 		console.log(angular.toJson(datum));
 		if (datum != undefined && datum != null) {
 			$scope.editFunding.fundingName.value = datum.value;
+			$scope.editFunding.fundingName.errors = [];
 			$scope.editFunding.city.value = datum.city;
+			$scope.editFunding.city.errors = []; 
 			$scope.editFunding.region.value = datum.region;
 			$scope.editFunding.country.value = datum.country;
+			$scope.editFunding.country.errors = [];
 			
 			if (datum.disambiguatedFundingIdentifier != undefined && datum.disambiguatedFundingIdentifier != null) {
 				$scope.getDisambiguatedFunding(datum.disambiguatedFundingIdentifier);
@@ -3052,6 +3058,7 @@ function SwitchUserCtrl($scope, $compile, $document){
 function ClientEditCtrl($scope, $compile){	
 	$scope.clients = [];
 	$scope.newClient = null;
+	$scope.emptyRedirectUri = {value: {value: ''},type: {value: 'default'}};
 			
 	// Get the list of clients associated with this user
 	$scope.getClients = function(){
@@ -3096,17 +3103,17 @@ function ClientEditCtrl($scope, $compile){
 			},
 	        scrolling: true
         });
-        $.colorbox.resize({width:"580px" , height:"380px"});
+        $.colorbox.resize({width:"400px" , height:"450px"});
 	};
 	
 	// Add a new uri input field to a new client
 	$scope.addUriToNewClientTable = function(){		
-		$scope.newClient.redirectUris.push({value: '',type: 'default'});
+		$scope.newClient.redirectUris.push({value: {value: ''},type: {value: 'default'}});	
 	};
 	
 	// Add a new uri input field to a existing client
 	$scope.addUriToExistingClientTable = function(){
-		$scope.clientToEdit.redirectUris.push({value: '',type: 'default'});
+		$scope.clientToEdit.redirectUris.push({value: {value: ''},type: {value: 'default'}});
 	};
 	
 	// Display the modal to edit a client
@@ -3121,7 +3128,7 @@ function ClientEditCtrl($scope, $compile){
 			},
 	        scrolling: true
         });		
-        $.colorbox.resize({width:"450px" , height:"420px"});   
+        $.colorbox.resize({width:"400px" , height:"450px"});   
 	};		
 	
 	// Display client details: Client ID and Client secret
@@ -3136,11 +3143,11 @@ function ClientEditCtrl($scope, $compile){
 			scrolling: true
         });
 		
-        $.colorbox.resize({width:"550px" , height:"200px"});
+        $.colorbox.resize({width:"550px" , height:"225px"});
         
 	};
 	
-	$scope.closeColorBox = function(){
+	$scope.closeModal = function(){
 		$.colorbox.close();	
 	};
 	
@@ -3148,7 +3155,12 @@ function ClientEditCtrl($scope, $compile){
 	// Delete an uri input field 
 	$scope.deleteUri = function(idx){
 		$scope.clientToEdit.redirectUris.splice(idx, 1);
-	};
+	};		
+	
+	// Delete an uri input field 
+	$scope.deleteJustCreatedUri = function(idx){
+		$scope.newClient.redirectUris.splice(idx, 1);
+	};	
 	
 	//Submits the client update request
 	$scope.submitEditClient = function(){				
@@ -3307,7 +3319,7 @@ function profileDeactivationAndReactivationCtrl($scope,$compile){
 	$scope.deactivateMessage = om.get('admin.profile_deactivation.success');
 	$scope.reactivateMessage = om.get('admin.profile_reactivation.success');
 	$scope.showDeactivateModal = false;
-	$scope.showReactivateModal = false;
+	$scope.showReactivateModal = false;	
 
 	$scope.toggleDeactivationModal = function(){
 		$scope.showDeactivateModal = !$scope.showDeactivateModal;
@@ -3624,11 +3636,11 @@ function profileDeprecationCtrl($scope,$compile){
 	};
 };
 
-function revokeApplicationFormCtrl($scope,$compile){
-	
-	$scope.confirmRevoke = function(appName, appIndex){
+function revokeApplicationFormCtrl($scope,$compile){	
+	$scope.confirmRevoke = function(appName, appGroupName, appIndex){
 		$scope.appName = appName;
 		$scope.appIndex = appIndex;
+		$scope.appGroupName = appGroupName;
 		$.colorbox({                      
 			html : $compile($('#confirm-revoke-access-modal').html())($scope),
 			transition: 'fade',
@@ -3642,7 +3654,7 @@ function revokeApplicationFormCtrl($scope,$compile){
 	};
 	
 	$scope.revokeAccess = function(){
-		orcidGA.gaPush(['_trackEvent', 'Disengagement', 'Revoke_Access', 'OAuth ' + $scope.appName]);
+		orcidGA.gaPush(['_trackEvent', 'Disengagement', 'Revoke_Access', 'OAuth '+ orcidGA.buildClientString($scope.appGroupName, $scope.appName)]);
 		orcidGA.gaFormSumbitDelay($('#revokeApplicationForm' + $scope.appIndex));
 	};
 	
@@ -3661,7 +3673,8 @@ function adminGroupsCtrl($scope,$compile){
     	$('#admin_groups_modal').toggle();
 	};
 	
-	$scope.showAddGroupModal = function() {
+	$scope.showAddGroupModal = function() {		
+		$scope.getGroup();
 		$.colorbox({                      
 			html : $compile($('#add-new-group').html())($scope),				
 				onLoad: function() {
@@ -3669,7 +3682,7 @@ function adminGroupsCtrl($scope,$compile){
 			}
 		});
 		
-		$.colorbox.resize({width:"450px" , height:"360px"});
+		$.colorbox.resize({width:"400px" , height:"390px"});
 	};
 	
 	$scope.closeModal = function() {
@@ -3760,6 +3773,7 @@ function adminGroupsCtrl($scope,$compile){
 	$scope.getGroup();
 };
 
+<<<<<<< HEAD
 function SSOPreferencesCtrl($scope, $compile) {
 	$scope.userCredentials = null;	
 	
@@ -3772,10 +3786,37 @@ function SSOPreferencesCtrl($scope, $compile) {
 	        	$scope.$apply(function(){ 
 	        		if(data != null && data.clientSecret != null)
 	        			$scope.userCredentials = data;
+=======
+function findIdsCtrl($scope,$compile){
+	$scope.emails = "";
+	$scope.emailIdsMap = {};
+	$scope.showSection = false;
+	
+	$scope.toggleSection = function(){
+		$scope.showSection = !$scope.showSection;
+    	$('#find_ids_section').toggle();
+	};
+	
+	$scope.findIds = function() {
+		$.ajax({
+	        url: orcidVar.baseUri+'/admin-actions/find-id?csvEmails=' + $scope.emails,	        
+	        type: 'GET',
+	        dataType: 'json',
+	        success: function(data){
+	        	$scope.$apply(function(){ 
+	        		if(!$.isEmptyObject(data)) {	        			
+	        			$scope.emailIdsMap = data;	        			
+	        		} else {
+	        			$scope.emailIdsMap = null;
+	        		}
+	        		$scope.emails='';
+	        		$scope.showEmailIdsModal();
+>>>>>>> master
 				});
 	        }
 	    }).fail(function(error) { 
 	    	// something bad is happening!	    	
+<<<<<<< HEAD
 	    	console.log("Error obtaining SSO credentials");	    	
 	    });		
 	};
@@ -3926,3 +3967,166 @@ function SSOPreferencesCtrl($scope, $compile) {
 	//init
 	$scope.getSSOCredentials();	
 };
+=======
+	    	console.log("Error deprecating the account");	    	
+	    });	
+	};
+	
+	$scope.showEmailIdsModal = function() {
+		$.colorbox({                      
+			html : $compile($('#email-ids-modal').html())($scope),
+				scrolling: true,
+				onLoad: function() {
+				$('#cboxClose').remove();
+			},
+			scrolling: true
+		});	
+
+		setTimeout(function(){$.colorbox.resize({width:"450px"});},100);		
+	};	
+	
+	$scope.closeModal = function() {
+		$.colorbox.close();
+	};
+};
+
+function resetPasswordCtrl($scope,$compile) {
+	$scope.showSection = false;
+	$scope.params = {orcidOrEmail:'',password:''};
+	$scope.result = '';
+	
+	$scope.toggleSection = function(){
+		$scope.showSection = !$scope.showSection;
+    	$('#reset_password_section').toggle();
+	};
+	
+	$scope.randomString = function() {
+		$scope.result = '';
+		$.ajax({
+	        url: orcidVar.baseUri+'/admin-actions/generate-random-string.json',	        
+	        type: 'GET',
+	        dataType: 'text',
+	        success: function(data){
+	        	$scope.$apply(function(){ 
+	        		$scope.params.password=data;
+				});
+	        }
+	    }).fail(function(error) { 
+	    	console.log(error);
+	    	// something bad is happening!	    	
+	    	console.log("Error generating random string");	    	
+	    });	
+	};
+	
+	$scope.resetPassword = function(){
+		$scope.result = '';		
+		$.ajax({
+	        url: orcidVar.baseUri+'/admin-actions/reset-password.json',	        
+	        type: 'POST',
+	        data: angular.toJson($scope.params),
+	        contentType: 'application/json;charset=UTF-8',
+	        dataType: 'text',
+	        success: function(data){	      	        	
+		        $scope.$apply(function(){ 
+		        	$scope.result=data;
+		        	$scope.params.orcidOrEmail='';
+		        	$scope.params.password='';
+				});	        	
+		        $scope.closeModal();
+	        }
+	    }).fail(function(error) { 
+	    	// something bad is happening!	    	
+	    	console.log("Error generating random string");	    	
+	    });	
+		
+	};
+	
+	$scope.confirmResetPassword = function(){
+		if($scope.params.orcidOrEmail != '' && $scope.params.password != '') {
+			$.colorbox({                      
+				html : $compile($('#confirm-reset-password').html())($scope),
+					scrolling: true,
+					onLoad: function() {
+					$('#cboxClose').remove();
+				},
+				scrolling: true
+			});
+			
+			$.colorbox.resize({width:"450px" , height:"150px"});
+		}
+	};
+	
+	$scope.closeModal = function() {
+		$scope.params.orcidOrEmail='';
+    	$scope.params.password='';
+    	$scope.result= '';
+		$.colorbox.close();
+	};
+};
+
+function removeSecQuestionCtrl($scope,$compile) {
+	$scope.showSection = false;
+	$scope.orcidOrEmail = '';
+	$scope.result= '';
+	
+	$scope.toggleSection = function(){
+		$scope.showSection = !$scope.showSection;
+    	$('#remove_security_question_section').toggle();
+	};
+	
+	$scope.removeSecurityQuestion = function() {		
+		$.ajax({
+	        url: orcidVar.baseUri+'/admin-actions/remove-security-question.json',	        
+	        type: 'POST',
+	        data: $scope.orcidOrEmail,
+	        contentType: 'application/json;charset=UTF-8',
+	        dataType: 'text',
+	        success: function(data){	        	
+		        $scope.$apply(function(){ 
+		        	$scope.result=data;
+		        	$scope.orcid = '';
+				});	     
+		        $scope.closeModal();
+	        }
+	    }).fail(function(error) { 
+	    	// something bad is happening!	    	
+	    	console.log("Error generating random string");	    	
+	    });	
+	};
+	
+	$scope.confirmRemoveSecurityQuestion = function(){
+		if($scope.orcid != '') {
+			$.colorbox({                      
+				html : $compile($('#confirm-remove-security-question').html())($scope),
+					scrolling: true,
+					onLoad: function() {
+					$('#cboxClose').remove();
+				},
+				scrolling: true
+			});
+			
+			$.colorbox.resize({width:"450px" , height:"150px"});
+		}
+	};
+	
+	$scope.closeModal = function() {
+		$scope.orcidOrEmail = '';
+		$scope.result= '';
+		$.colorbox.close();
+	};	
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+>>>>>>> master

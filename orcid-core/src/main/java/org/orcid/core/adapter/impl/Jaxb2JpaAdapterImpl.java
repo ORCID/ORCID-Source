@@ -410,9 +410,9 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
     	Map<String, ProfileFundingEntity> updatedProfileGrantEntitiesMap = createProfileFundingEntitiesMap(updatedProfileFundingEntities);
     	
     	// Remove orphans
-    	for(Iterator<ProfileFundingEntity> iterator = updatedProfileFundingEntities.iterator(); iterator.hasNext();){
+    	for(Iterator<ProfileFundingEntity> iterator = existingProfileFundingEntities.iterator(); iterator.hasNext();){
     		ProfileFundingEntity existingEntity = iterator.next();
-    		if(existingEntity.getId() != null && !updatedProfileGrantEntitiesMap.containsKey(Long.toString(existingEntity.getId()))){
+    		if(!updatedProfileGrantEntitiesMap.containsKey(String.valueOf(existingEntity.getId()))){
     			iterator.remove();
     		}
     	}
@@ -713,6 +713,9 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
                 source.setId(orcidHistory.getSource().getSourceOrcid().getPath());
                 profileEntity.setSource(source);
             }
+            if (orcidHistory.getReferredBy() != null) {
+                profileEntity.setReferredBy(orcidHistory.getReferredBy().getPath());
+            }
         }
     }
 
@@ -806,11 +809,10 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             if (preferences != null) {
                 profileEntity.setSendChangeNotifications(preferences.getSendChangeNotifications() == null ? null : preferences.getSendChangeNotifications().isValue());
                 profileEntity.setSendOrcidNews(preferences.getSendOrcidNews() == null ? null : preferences.getSendOrcidNews().isValue());
-                // Use the default value in the ProfileEntity class if work
-                // visibility default is not given
-                if (preferences.getWorkVisibilityDefault() != null) {
-                    profileEntity.setWorkVisibilityDefault(preferences.getWorkVisibilityDefault().getValue());
-                }
+                // ActivitiesVisibilityDefault default is WorkVisibilityDefault
+                if (preferences.getActivitiesVisibilityDefault() != null) {
+                    profileEntity.setActivitiesVisibilityDefault(preferences.getActivitiesVisibilityDefault().getValue());
+                } 
             }
 
         }
@@ -999,7 +1001,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
     	for(FundingExternalIdentifier externalIdentifier : externalIdentifierList){
     		FundingExternalIdentifierEntity entity = new FundingExternalIdentifierEntity();    		
     		entity.setProfileFunding(profileFundingEntity);
-    		entity.setType(StringUtils.isNotEmpty(externalIdentifier.getType()) ? externalIdentifier.getType() : null);
+    		entity.setType(externalIdentifier.getType() != null ? externalIdentifier.getType().value() : null);
     		entity.setValue(StringUtils.isNotEmpty(externalIdentifier.getValue()) ? externalIdentifier.getValue() : null);
     		if(externalIdentifier.getUrl() != null)
     			entity.setUrl(StringUtils.isNotEmpty(externalIdentifier.getUrl().getValue()) ? externalIdentifier.getUrl().getValue() : null);    		    		

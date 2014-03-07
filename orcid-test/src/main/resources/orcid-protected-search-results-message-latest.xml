@@ -18,9 +18,9 @@
 
 -->
 <orcid-message xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.orcid.org/ns/orcid ../../../../orcid-model/src/main/resources/orcid-message-1.2_rc3.xsd"
+	xsi:schemaLocation="http://www.orcid.org/ns/orcid ../../../../orcid-model/src/main/resources/orcid-message-1.2_rc4.xsd"
 	xmlns="http://www.orcid.org/ns/orcid">
-	<message-version>1.2_rc3</message-version>
+	<message-version>1.2_rc4</message-version>
 	<!-- Error message, if applicable -->
 	<!-- Unable to connect to ORCID, no matching researchers, etc. -->
 	<!-- <error-desc>No researcher found.</error-desc> -->
@@ -50,6 +50,8 @@
                         <source-name>Sponsor 1</source-name>
                         <source-date>2012-11-21T08:56:33</source-date>
                     </source>
+            <verified-email>false</verified-email>
+            <verified-primary-email>false</verified-primary-email>                    
 				</orcid-history>
 				<orcid-bio scope="update">
 					<personal-details>

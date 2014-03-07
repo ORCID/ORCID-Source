@@ -1465,7 +1465,7 @@ ul.privacyHelp li.private {
 	top: 0;
 	left: 0;
 	z-index: 9999;
-	/*overflow: hidden;*/
+	overflow: hidden; /* Do not change */
 }
 
 
@@ -1485,7 +1485,7 @@ ul.privacyHelp li.private {
 }
 
 #cboxLoadedContent {
-	overflow: auto;
+	overflow: scroll;
 }
 
 #cboxTitle {
@@ -1806,10 +1806,6 @@ a:hover {
 	padding-right: 38px;	
 }
 
-#add-funding h1 {
-	font-size: 35px;
-}
-
 #add-funding #startDay,
 #add-funding #startMonth,
 #add-funding #endDay,
@@ -1828,6 +1824,11 @@ a:hover {
 	margin: 0;
 }
 
+#add-funding #remove-disambiguated{
+	padding-right: 32px;
+}
+
+
 .no-margin-bottom {
 	margin-bottom: 0px;
 }
@@ -1842,10 +1843,6 @@ a:hover {
     font-size: 16px;
     font-style: italic;
     margin: 10px 0 0 0;
-}
-
-.affiliation-title, .funding-title{
-	margin-top: 0 !important;	
 }
 
 #edit-affiliation #startDay,
@@ -1955,6 +1952,7 @@ a:hover {
 
 .colorbox-content {
 	padding: 20px;
+	overflow: hidden;
 }
 
 .alert {
@@ -3306,6 +3304,10 @@ p.orcid-id-container{
 .third-menu-level{
 	margin-left: 15px !important;
 }
+/* Allow workspace Chevron behavior work well*/
+.glyphicon-chevron-right:before {
+  content: "\e080";
+}
 
 /* SSO */
 
@@ -3861,6 +3863,14 @@ p.orcid-id-container{
 	#cboxContent, 
 	#cboxLoadedContent{
 		width: 100% !important;			
+	}
+	
+	#cboxContent{
+		overflow: auto;
+	}
+	
+	#colorbox{
+		overflow: hidden;
 	}
 	
 	

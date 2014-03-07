@@ -54,7 +54,7 @@ import java.io.Serializable;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType( propOrder = { "applicationOrcid", "applicationName", "applicationWebsite", "approvalDate", "scopePaths" })
+@XmlType( propOrder = { "applicationOrcid", "applicationName", "applicationWebsite", "approvalDate", "scopePaths", "applicationGroupOrcid", "applicationGroupName"  })
 @XmlRootElement(name = "application-summary")
 public class ApplicationSummary implements Serializable {
 
@@ -66,6 +66,10 @@ public class ApplicationSummary implements Serializable {
     protected ApplicationOrcid applicationOrcid;
     @XmlElement(name = "application-name", required = true)
     protected ApplicationName applicationName;
+    @XmlElement(name = "application-group-orcid", required = true)
+    private ApplicationOrcid applicationGroupOrcid;
+    @XmlElement(name = "application-group-name", required = true)
+    private ApplicationName applicationGroupName;
     @XmlElement(name = "application-website", required = true)
     protected ApplicationWebsite applicationWebsite;
     @XmlElement(name = "approval-date", required = true)
@@ -231,5 +235,21 @@ public class ApplicationSummary implements Serializable {
         result = 31 * result + (approvalDate != null ? approvalDate.hashCode() : 0);
         result = 31 * result + (scopePaths != null ? scopePaths.hashCode() : 0);
         return result;
+    }
+
+    public ApplicationOrcid getApplicationGroupOrcid() {
+        return applicationGroupOrcid;
+    }
+
+    public void setApplicationGroupOrcid(ApplicationOrcid applicationGroupOrcid) {
+        this.applicationGroupOrcid = applicationGroupOrcid;
+    }
+
+    public ApplicationName getApplicationGroupName() {
+        return applicationGroupName;
+    }
+
+    public void setApplicationGroupName(ApplicationName applicationGroupName) {
+        this.applicationGroupName = applicationGroupName;
     }
 }

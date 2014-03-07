@@ -17,9 +17,8 @@
 
 -->
 <ul ng-hide="!fundingSrvc.fundings.length" class="workspace-fundings workspace-body-list bottom-margin-medium" ng-cloak>
-	<li class="bottom-margin-small" ng-repeat="funding in fundingSrvc.fundings | orderBy:['-startDate.year', '-startDate.month', '-startDate.day', '-endDate.year', '-endDate.month', '-endDate.day', 'title.value']"> 
-		<div class="row">        
-			
+	<li class="bottom-margin-small" ng-repeat="funding in fundingSrvc.fundings |  orderBy:['-dateSortString', 'affiliationName']"> 
+		<div class="row">        			
 			<!-- Information -->
 			<div class="col-md-8 col-sm-8">
 				<h3 class="funding-title">
@@ -39,8 +38,7 @@
 					     (<span ng-show="funding.endDate.year">{{funding.endDate.year}}</span><span ng-show="funding.endDate.month">-{{funding.endDate.month}}</span>)
 					</span>
 				</h3>
-			</div>
-			
+			</div>			
 			<!-- Privacy Settings -->
 	        <div class="col-md-4 col-sm-4 workspace-toolbar">
 	        	<#include "funding_more_info_inc.ftl"/>
@@ -56,14 +54,7 @@
 		        	</ul>
 		        </#if>
 			</div>
-		</div>
-		<div class="row">			
-			<div class="col-md-12 col-sm-12 col-xs-12">
-				<div class="funding-details" ng-show="funding.url">
-					<span ng-bind-html="funding.url.value"></span>
-				</div>
-			</div>	
-		</div>
+		</div>		
 	</li>
 </ul>
 <div ng-show="fundingSrvc.loading == true;" class="text-center">

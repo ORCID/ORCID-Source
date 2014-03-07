@@ -17,7 +17,7 @@
 
 -->
 <ul ng-hide="!affiliationsSrvc.educations.length" class="workspace-affiliations workspace-body-list bottom-margin-medium" ng-cloak>
-	<li class="bottom-margin-small" ng-repeat="affiliation in affiliationsSrvc.educations | orderBy:['-startDate.year', '-startDate.month', '-startDate.day', '-endDate.year', '-endDate.month', '-endDate.day', 'affiliationName.value']"> 
+	<li class="bottom-margin-small" ng-repeat="affiliation in affiliationsSrvc.educations | orderBy:['-dateSortString', 'affiliationName']"> 
 		<#include "aff_row_inc.ftl" />
 	</li>
 </ul>

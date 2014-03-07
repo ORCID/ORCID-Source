@@ -17,6 +17,10 @@
 
 -->
 <#escape x as x?html>
-   <p><strong>${springMacroRequestContext.getMessage("manage_bio_settings.labelbiography")}</strong><br />
-   <div style="white-space: pre-wrap">${(profile.orcidBio.biography.content)!"${springMacroRequestContext.getMessage('workspace_personal.Nobiographyaddedyet')}"}</div></p>
+	<#if (profile.orcidBio.biography.content)?? && (profile.orcidBio.biography.content)?has_content>
+   		<p>
+   			<strong>${springMacroRequestContext.getMessage("manage_bio_settings.labelbiography")}</strong><br />
+   			<div style="white-space: pre-wrap">${(profile.orcidBio.biography.content)}</div>
+   		</p>
+   	</#if>
 </#escape>

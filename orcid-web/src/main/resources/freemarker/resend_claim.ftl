@@ -20,10 +20,12 @@
     <@spring.bind "emailAddressForm.*" />    
     <div class="row">
         <div class="col-md-offset-3 col-md-9 col-sm-offset-3 col-sm-3 col-xs-12">
-            <div class="alert alert-success">
-                <@spring.showErrors "orcid-error"/>
-		    </div>
-		    <#if claimResendSuccessful!false>
+        	<#if spring.status.error> 
+	            <div class="alert alert-success">
+	                <@spring.showErrors "orcid-error"/>
+			    </div>
+			</#if>
+		    <#if claimResendSuccessful?? && claimResendSuccessful>
 				<div class="alert alert-success">
 	    			<strong><@spring.message "resend_claim.successful_resend"/></strong>
 				</div>

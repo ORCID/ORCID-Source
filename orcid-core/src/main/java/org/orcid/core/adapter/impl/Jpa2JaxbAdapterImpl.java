@@ -33,6 +33,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
 import org.apache.commons.lang.StringUtils;
 import org.orcid.core.adapter.Jpa2JaxbAdapter;
 import org.orcid.core.manager.LoadOptions;
+import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.security.DefaultPermissionChecker;
 import org.orcid.core.security.PermissionChecker;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
@@ -217,6 +218,28 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         if (profileEntity.getLastModified() != null) {
             history.setLastModifiedDate(new LastModifiedDate(toXMLGregorianCalendar(profileEntity.getLastModified())));
         }
+        
+        boolean verfiedEmail = false;
+        boolean verfiedPrimaryEmail = false;
+        if (profileEntity.getEmails() !=null) {
+            for (EmailEntity emailEntity:profileEntity.getEmails()) {
+                if (emailEntity != null && emailEntity.getVerified()) {
+                    verfiedEmail = true;
+                    if (emailEntity.getPrimary()) {
+                        verfiedPrimaryEmail = true;
+                        break;
+                    }
+                }
+            }
+        }
+        history.setVerifiedEmail(new VerifiedEmail(verfiedEmail));
+        history.setVerifiedPrimaryEmail(new VerifiedPrimaryEmail(verfiedPrimaryEmail));
+        
+        if (profileEntity.getReferredBy() != null) {
+            history.setReferredBy(new ReferredBy(getOrcidIdBase(profileEntity.getReferredBy())));
+        }
+        
+        
         return history;
     }
 
@@ -439,7 +462,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         }
         FundingExternalIdentifier fundingExternalIdentifier = new FundingExternalIdentifier();
 
-        fundingExternalIdentifier.setType(fundingExternalIdentifierEntity.getType());
+        fundingExternalIdentifier.setType(FundingExternalIdentifierType.fromValue(fundingExternalIdentifierEntity.getType()));
         fundingExternalIdentifier.setUrl(new Url(fundingExternalIdentifierEntity.getUrl()));
         fundingExternalIdentifier.setValue(fundingExternalIdentifierEntity.getValue());
         fundingExternalIdentifier.setPutCode(String.valueOf(fundingExternalIdentifierEntity.getId()));
@@ -748,6 +771,13 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
                         }
                         applicationSummary.setApprovalDate(new ApprovalDate(DateUtils.convertToXMLGregorianCalendar(tokenDetail.getDateCreated())));
 
+                        
+                        // add group information
+                        if (acceptedClientProfileEntity.getGroupProfile() != null) {
+                            applicationSummary.setApplicationGroupOrcid(new ApplicationOrcid(profileEntity.getGroupOrcid()));
+                            applicationSummary.setApplicationGroupName(new ApplicationName(acceptedClientProfileEntity.getGroupProfile().getCreditName()));
+                        }
+
                         // Scopes
                         Set<ScopePathType> scopesGrantedToClient = ScopePathType.getScopesFromSpaceSeparatedString(tokenDetail.getScope());
                         if (scopesGrantedToClient != null && !scopesGrantedToClient.isEmpty()) {
@@ -1018,7 +1048,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         preferences.setSendOrcidNews(profileEntity.getSendOrcidNews() == null ? null : new SendOrcidNews(profileEntity.getSendOrcidNews()));
         // This column is constrained as not null in the DB so don't have to
         // worry about null!
-        preferences.setWorkVisibilityDefault(new WorkVisibilityDefault(profileEntity.getWorkVisibilityDefault()));
+        preferences.setActivitiesVisibilityDefault(new ActivitiesVisibilityDefault(profileEntity.getActivitiesVisibilityDefault()));
 
         return orcidInternal;
     }

@@ -558,6 +558,8 @@
 				<xs:element ref="orcid:application-website" />
 				<xs:element ref="orcid:approval-date" />
 				<xs:element ref="orcid:scope-paths" />
+				<xs:element name="application-group-orcid" type="orcid:orcid-id" />
+				<xs:element name="application-group-name" type="xs:string" />
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
@@ -916,14 +918,14 @@
 		<xs:complexType>
 			<xs:sequence>				
 				<xs:element ref="orcid:funding-type" minOccurs="1" maxOccurs="1" />
-				<xs:element ref="orcid:funding-title" minOccurs="0" />							
+				<xs:element ref="orcid:funding-title" minOccurs="1" />							
 				<xs:element ref="orcid:short-description" minOccurs="0"/>			
 				<xs:element ref="orcid:amount" minOccurs="0" maxOccurs="1"/>
 				<xs:element ref="orcid:url" minOccurs="0" maxOccurs="1"/>				
 				<xs:element name="start-date" type="orcid:fuzzy-date" minOccurs="0" maxOccurs="1" />
 				<xs:element name="end-date" type="orcid:fuzzy-date" minOccurs="0" maxOccurs="1" />												
-				<xs:element ref="orcid:funding-external-identifiers" minOccurs="0" maxOccurs="1"/>
-				<xs:element ref="orcid:funding-contributors" minOccurs="0" maxOccurs="1"/>
+				<xs:element ref="orcid:funding-external-identifiers" minOccurs="0"/>
+				<xs:element ref="orcid:funding-contributors" minOccurs="0"/>
 				<xs:element ref="orcid:organization" minOccurs="1" maxOccurs="1"/>				
 				<xs:element ref="orcid:source" minOccurs="0"  maxOccurs="1" />
 			</xs:sequence>
@@ -1217,12 +1219,24 @@
 		</xs:annotation>
 		<xs:complexType>
 			<xs:sequence>				
-				<xs:element name="funding-external-identifier-type" type="orcid:non-empty-string" minOccurs="0" maxOccurs="1" fixed="grant_number"/>
+				<xs:element ref="orcid:funding-external-identifier-type" minOccurs="1" maxOccurs="1"/>
 				<xs:element name="funding-external-identifier-value" type="orcid:string2084" minOccurs="0" maxOccurs="1" />
 				<xs:element name="funding-external-identifier-url" type="xs:anyURI" minOccurs="0" maxOccurs="1" />
 			</xs:sequence>
 		</xs:complexType>
-	</xs:element>			
+	</xs:element>		
+	
+	<xs:element name="funding-external-identifier-type">
+		<xs:annotation>
+			<xs:documentation>The type of the funding external identifier</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:enumeration value="grant_number" />
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	
 	<xs:element name="funding-contributors">
 		<xs:annotation>
 			<xs:documentation>Container for the contributors of a funding.
@@ -1313,7 +1327,7 @@
 				<xs:enumeration value="other-contribution" />
 			</xs:restriction>
 		</xs:simpleType>
-	</xs:element>						
+	</xs:element>					
 	<xs:element name="contributor-sequence">
 		<xs:annotation>
 			<xs:documentation>Indication of where in the contributor list the collaborator or other contributor's name would appear</xs:documentation>
@@ -1617,7 +1631,7 @@
 	</xs:element>
 	<xs:element name="translated-title">
 		<xs:annotation>
-			<xs:documentation>The main title of the work or grant translated into another language. The translated language will be included in the &lt;language-code> attribute.
+			<xs:documentation>The main title of the work or funding translated into another language. The translated language will be included in the &lt;language-code> attribute.
 			</xs:documentation>
 		</xs:annotation>
 		<xs:complexType>
