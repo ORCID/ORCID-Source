@@ -43,3 +43,4 @@ The ORCID Team
 support@orcid.org
 
 You have received this email as a service announcement related to your ORCID Account.
+<#include "email_footer.ftl"/>
