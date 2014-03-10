@@ -81,9 +81,7 @@ public class OrcidOauth2AuthoriziationCodeDetailDaoTest extends DBUnitTest {
 
     private void checkValues(OrcidOauth2AuthoriziationCodeDetail anotherDetail) {
         assertEquals("a-code", anotherDetail.getId());
-        assertEquals("a-password", anotherDetail.getCredentials());
         assertEquals("a-session-id", anotherDetail.getSessionId());
-        assertEquals("192.168.0.1", anotherDetail.getRemoteAddress());
         assertEquals(true, anotherDetail.getApproved());
         assertEquals(true, anotherDetail.getAuthenticated());
         assertEquals(2, anotherDetail.getAuthorities().size());
@@ -100,9 +98,7 @@ public class OrcidOauth2AuthoriziationCodeDetailDaoTest extends DBUnitTest {
         detail.setApproved(true);
         detail.setAuthenticated(true);
         detail.setAuthorities(new HashSet<String>(Arrays.asList("ROLE_USER", "ROLE_CLIENT")));
-        detail.setCredentials("a-password");
         detail.setProfileEntity(profileEntity);
-        detail.setRemoteAddress("192.168.0.1");
         detail.setResourceIds(new HashSet<String>(Arrays.asList("orcid", "porkid")));
         detail.setScopes(new HashSet<String>(Arrays.asList("/orcid-profile/create", "/orcid-profile/update")));
         detail.setSessionId("a-session-id");

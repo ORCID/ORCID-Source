@@ -36,6 +36,7 @@ import org.springframework.security.oauth2.provider.AuthorizationRequest;
 import org.springframework.security.oauth2.provider.DefaultAuthorizationRequest;
 import org.springframework.security.oauth2.provider.code.AuthorizationRequestHolder;
 import org.springframework.security.oauth2.provider.code.RandomValueAuthorizationCodeServices;
+import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -174,8 +175,10 @@ public class OrcidAuthorizationCodeServiceImpl extends RandomValueAuthorizationC
         detail.setAuthenticated(userAuthentication.isAuthenticated());
         Set<String> authorities = getStringSetFromGrantedAuthorities(authenticationRequest.getAuthorities());
         detail.setAuthorities(authorities);
-        String credentials = (String) userAuthentication.getCredentials();
-        detail.setCredentials(credentials);
+        Object authenticationDetails = userAuthentication.getDetails();
+        if (authenticationDetails instanceof WebAuthenticationDetails) {
+            detail.setSessionId(((WebAuthenticationDetails) authenticationDetails).getSessionId());
+        }
         return detail;
     }
 

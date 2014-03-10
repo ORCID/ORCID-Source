@@ -84,5 +84,8 @@
     <include file="/db/updates/resetFundingContributors.xml" />
     <include file="/db/updates/claim_all_groups.xml" />
     <include file="/db/updates/referred-by.xml" />
+    <!-- Leave until updated code is established on production and then comment back in, to remove unused columns
+    <include file="/db/updates/tidy-authorization-code-table.xml" />
+    -->
     <include file="/db/updates/activities_default.xml" />
 </databaseChangeLog>
