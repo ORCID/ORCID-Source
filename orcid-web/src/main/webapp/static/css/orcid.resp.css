@@ -2578,7 +2578,7 @@ header overrides
 
 .websites-vis .privacy-group {
 	left: 370px;
-	top: 10px;
+	top: 0;
 }
 
 .websites .input-xlarge {
