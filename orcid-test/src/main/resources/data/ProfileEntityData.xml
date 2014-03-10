@@ -47,7 +47,7 @@
             encrypted_verification_code="1vLkD2Lm8c24TyALcW0Brg=="
             send_change_notifications="false"
             send_orcid_news="false"
-            work_visibility_default='PRIVATE'
+            activities_visibility_default='PRIVATE'
             credentials_expiry="2013-02-01"
             group_orcid="4444-4444-4444-4446"
             biography="Terence Alan Patrick Seán 'Spike' Milligan KBE (16 April 1918 – 27 February 2002) was a comedian, writer, musician, poet, playwright, soldier and actor."
@@ -83,7 +83,7 @@
             encrypted_verification_code="1vLkD2Lm8c24TyALcW0Brg=="
             send_change_notifications="false"
             send_orcid_news="false"
-            work_visibility_default='PRIVATE'
+            activities_visibility_default='PRIVATE'
             credentials_expiry="2013-02-01"
             biography="Michael Bentine CBE (26 January 1922[1] – 26 November 1996[2]) was a British comedian, comic actor and founding member of the Goons."
             indexing_status="DONE"
@@ -119,7 +119,7 @@
             encrypted_verification_code="1vLkD2Lm8c24TyALcW0Brg=="
             send_change_notifications="true"
             send_orcid_news="false"
-            work_visibility_default='PRIVATE'
+            activities_visibility_default='PRIVATE'
             credentials_expiry="2013-02-01"
             group_orcid="4444-4444-4444-4446"
             biography="Richard Henry Sellers, CBE (8 September 1925 – 24 July 1980), known as Peter Sellers, was a British film actor, comedian and singer."
@@ -154,7 +154,7 @@
             encrypted_verification_code="1vLkD2Lm8c24TyALcW0Brg=="
             send_change_notifications="false"
             send_orcid_news="false"
-            work_visibility_default='PRIVATE'
+            activities_visibility_default='PRIVATE'
             credentials_expiry="2013-02-01"
             group_orcid="4444-4444-4444-4446"
             biography="Sir Harry Donald Secombe, CBE (8 September 1921 – 11 April 2001) was a Welsh entertainer with a talent for comedy and a noted fine tenor singing voice."
@@ -189,7 +189,7 @@
             encrypted_verification_code="1vLkD2Lm8c24TyALcW0Brg=="
             send_change_notifications="false"
             send_orcid_news="false"
-            work_visibility_default='PRIVATE'
+            activities_visibility_default='PRIVATE'
             credentials_expiry="2013-02-01"
             group_orcid="4444-4444-4444-4446"
             biography="Andrew Timothy (1912–9 December 1990) was an Anglican priest and BBC Radio announcer, who is best remembered for being the original announcer of the comedy series The Goon Show."
@@ -224,7 +224,7 @@
             encrypted_verification_code="1vLkD2Lm8c24TyALcW0Brg=="
             send_change_notifications="false"
             send_orcid_news="false"
-            work_visibility_default='PRIVATE'
+            activities_visibility_default='PRIVATE'
             credentials_expiry="2013-02-01"
             biography="Billie Holiday (born Eleanora Harris[1][4] April 7, 1915 – July 17, 1959) was an American jazz singer and songwriter."
             indexing_status="PENDING"
@@ -259,7 +259,7 @@
             encrypted_verification_code="1vLkD2Lm8c24TyALcW0Brg=="
             send_change_notifications="false"
             send_orcid_news="false"
-            work_visibility_default='PRIVATE'
+            activities_visibility_default='PRIVATE'
             credentials_expiry="2013-02-01"
             biography="Otis Ray Redding, Jr. (September 9, 1941 – December 10, 1967) was an American soul singer-songwriter, record producer, arranger, and talent scout."
             indexing_status="DONE"
@@ -292,7 +292,7 @@
             encrypted_verification_code="1vLkD2Lm8c24TyALcW0Brg=="
             send_change_notifications="false"
             send_orcid_news="false"
-            work_visibility_default='PRIVATE'
+            activities_visibility_default='PRIVATE'
             credentials_expiry="2013-02-01"
             biography="Otis Ray Redding, Jr. (September 9, 1941 – December 10, 1967) was an American soul singer-songwriter, record producer, arranger, and talent scout."
             indexing_status="DONE"
@@ -326,7 +326,7 @@
             encrypted_verification_code="1vLkD2Lm8c24TyALcW0Brg=="
             send_change_notifications="false"
             send_orcid_news="false"
-            work_visibility_default='PRIVATE'
+            activities_visibility_default='PRIVATE'
             credentials_expiry="2013-02-01"
             biography="Admin user will be used to execute admin actions on controllers."
             indexing_status="DONE"
