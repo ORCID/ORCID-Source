@@ -713,9 +713,6 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
                 source.setId(orcidHistory.getSource().getSourceOrcid().getPath());
                 profileEntity.setSource(source);
             }
-            if (orcidHistory.getReferredBy() != null) {
-                profileEntity.setReferredBy(orcidHistory.getReferredBy().getPath());
-            }
         }
     }
 
@@ -801,6 +798,11 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
 
                 String verificationCode = securityDetails.getEncryptedVerificationCode() != null ? securityDetails.getEncryptedVerificationCode().getContent() : null;
                 profileEntity.setEncryptedVerificationCode(verificationCode);
+                
+                if (orcidInternal.getReferredBy() != null) {
+                    profileEntity.setReferredBy(orcidInternal.getReferredBy().getPath());
+                }
+
             }
             if (orcidInternal.getGroupOrcidIdentifier() != null) {
                 profileEntity.setGroupOrcid(orcidInternal.getGroupOrcidIdentifier().getPath());
