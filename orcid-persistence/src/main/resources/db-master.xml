@@ -87,4 +87,5 @@
     <!-- Leave until updated code is established on production and then comment back in, to remove unused columns
     <include file="/db/updates/tidy-authorization-code-table.xml" />
     -->
+    <include file="/db/updates/activities_default.xml" />
 </databaseChangeLog>

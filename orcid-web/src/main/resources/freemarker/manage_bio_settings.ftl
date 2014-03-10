@@ -20,12 +20,9 @@
 <div class="colorbox-content manage-bio" id="manage-bio">
     <form id="bio-settings-form" class="" action="<@spring.url '/account/save-bio-settings'/>" method="post" autocomplete="off">
         <div class="row">
-            <div class="col-md-11 col-sm-10 col-xs-10">
+            <div class="col-md-12 col-sm-12 col-xs-12">
                 <h1 class="lightbox-title pull-left">${springMacroRequestContext.getMessage("manage_bio_settings.editpersonalinformation")}</h1>
-            </div>
-            <div class="col-md-1 col-sm-2 col-xs-2">
-            	<a class="btn pull-right close-button">X</a>
-            </div>
+            </div>            
         </div>
         <@spring.bind "changePersonalInfoForm.*" /> 
         <#if spring.status.error>
@@ -153,9 +150,8 @@
                     <div class="relative">
                        <a href="javascript:void(0)" onClick="top.colorOnCloseBoxDest='<@spring.url '/account#editEmail'/>'; top.$.colorbox.close(); return false;">${springMacroRequestContext.getMessage("manage_bio_settings.editEmail")}</a>
                     </div>
-                </div>
-             	 		
-             	<div class="controls save-btns right">
+                </div>             	 		
+             	<div class="control-group save-btns left">
                     <button id="bottom-submit-affiliates" class="btn btn-primary" type="submit">${springMacroRequestContext.getMessage("manage_bio_settings.btnsavechanges")}</button>
                     <button id="bottom-clear-affiliates" class="btn close-button" type="reset">${springMacroRequestContext.getMessage("manage_bio_settings.btncancel")}</button>
                 </div>
