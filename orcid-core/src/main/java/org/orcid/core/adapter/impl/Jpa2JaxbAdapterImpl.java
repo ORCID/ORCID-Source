@@ -233,12 +233,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
             }
         }
         history.setVerifiedEmail(new VerifiedEmail(verfiedEmail));
-        history.setVerifiedPrimaryEmail(new VerifiedPrimaryEmail(verfiedPrimaryEmail));
-        
-        if (profileEntity.getReferredBy() != null) {
-            history.setReferredBy(new ReferredBy(getOrcidIdBase(profileEntity.getReferredBy())));
-        }
-        
+        history.setVerifiedPrimaryEmail(new VerifiedPrimaryEmail(verfiedPrimaryEmail));        
         
         return history;
     }
@@ -1049,6 +1044,10 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         // This column is constrained as not null in the DB so don't have to
         // worry about null!
         preferences.setActivitiesVisibilityDefault(new ActivitiesVisibilityDefault(profileEntity.getActivitiesVisibilityDefault()));
+
+        if (profileEntity.getReferredBy() != null) {
+            orcidInternal.setReferredBy(new ReferredBy(getOrcidIdBase(profileEntity.getReferredBy())));
+        }
 
         return orcidInternal;
     }

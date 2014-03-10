@@ -54,7 +54,7 @@ import java.io.Serializable;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType( propOrder = { "securityDetails", "preferences", "groupOrcidIdentifier" })
+@XmlType( propOrder = { "securityDetails", "preferences", "groupOrcidIdentifier", "referredBy" })
 @XmlRootElement(name = "orcid-internal")
 public class OrcidInternal implements VisibilityType, Serializable {
 
@@ -72,6 +72,9 @@ public class OrcidInternal implements VisibilityType, Serializable {
     
     @XmlElement(name = "group-orcid-identifier")
     private OrcidIdentifier groupOrcidIdentifier;
+
+    @XmlElement(name = "referred-by")
+    private ReferredBy referredBy;
 
 
     /**
@@ -193,6 +196,13 @@ public class OrcidInternal implements VisibilityType, Serializable {
         if (visibility != that.visibility) {
             return false;
         }
+        
+        if (referredBy == null) {
+            if (that.referredBy != null)
+                return false;
+        } else if (!referredBy.equals(that.referredBy))
+            return false;
+
 
         return true;
     }
@@ -201,6 +211,7 @@ public class OrcidInternal implements VisibilityType, Serializable {
     public int hashCode() {
         int result = securityDetails != null ? securityDetails.hashCode() : 0;
         result = 31 * result + (preferences != null ? preferences.hashCode() : 0);
+        result = result + ((referredBy == null) ? 0 : referredBy.hashCode());
         result = 31 * result + (scope != null ? scope.hashCode() : 0);
         result = 31 * result + (visibility != null ? visibility.hashCode() : 0);
         return result;
@@ -212,5 +223,13 @@ public class OrcidInternal implements VisibilityType, Serializable {
 
     public void setGroupOrcidIdentifier(OrcidIdentifier groupOrcidIdentifier) {
         this.groupOrcidIdentifier = groupOrcidIdentifier;
+    }
+
+    public ReferredBy getReferredBy() {
+        return referredBy;
+    }
+
+    public void setReferredBy(ReferredBy referredBy) {
+        this.referredBy = referredBy;
     }
 }
