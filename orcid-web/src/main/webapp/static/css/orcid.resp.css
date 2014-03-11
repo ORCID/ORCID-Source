@@ -3310,24 +3310,46 @@ p.orcid-id-container{
 }
 
 /* SSO */
-
-.sso ul{
-	padding-left: 15px;
+.sso-api ul.sso-links{
+	padding-left: 0;
 }
 
-.sso ul li a span,
+.sso-api ul.sso-links li a span,
 .developer-tools a span
 {
-	font-size: 12px;
+	font-size: 12px;	
 }
 
-.sso-redirect_uris {
+.sso-api .sso-redirect_uris {
 	padding: 10px 0 10px 0;
 }
 
-.sso-add-more-redirect-uris {
+.sso-api .sso-add-more-redirect-uris {
 	padding: 0 0 10px 0;
 }
+
+.sso-api ul.sso-options{
+	list-style: none; 
+	list-style-type: none;
+	padding-left: 0;		
+}
+
+.sso-api ul.sso-options li{
+	display: inline-block;
+	margin-right: 20px;
+}
+
+.sso-api ul.sso-options span{
+	margin-right: 5px;
+	font-size: 12px;
+}
+
+.sso-api .sso-links span{
+	margin-right: 5px;
+}
+
+
+
 
 /* Developer Tools Layout */
 
