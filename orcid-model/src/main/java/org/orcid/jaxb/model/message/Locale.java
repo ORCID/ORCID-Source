@@ -62,6 +62,15 @@ public enum Locale implements Serializable {
     @XmlEnumValue("fr")
     FR("fr"),
 
+    @XmlEnumValue("ko")
+    KO("ko"),
+
+    @XmlEnumValue("pt")
+    PT("pt"),
+
+    @XmlEnumValue("ru")
+    RU("ru"),
+
     @XmlEnumValue("zh_CN")
     ZH_CN("zh_CN"),
 
