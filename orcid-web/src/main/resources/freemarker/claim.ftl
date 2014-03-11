@@ -73,7 +73,7 @@
 	                        </div>
 	                    </div>
 	     				<div class="margin-top-box privacy">
-	                        <label class="privacy-toggle-lbl">${springMacroRequestContext.getMessage("claim.defaultprivacynewworks")}</label>
+	                        <label class="privacy-toggle-lbl">${springMacroRequestContext.getMessage("privacy_preferences.activitiesVisibilityDefault")}</label>
 	                        <@orcid.privacyToggle "register.activitiesVisibilityDefault.visibility" "updateActivitiesVisibilityDefault('PUBLIC', $event)"
 	                        	"updateActivitiesVisibilityDefault('LIMITED', $event)" "updateActivitiesVisibilityDefault('PRIVATE', $event)" />
 	                    </div>                    

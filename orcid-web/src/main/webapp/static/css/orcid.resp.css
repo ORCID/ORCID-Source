@@ -255,6 +255,12 @@ a:hover {
 	list-style: none;
 }
 
+.privacy-control{
+	width: 130px;
+	padding: 0;
+	margin-right: 20px;	
+}
+
 .row {
 	*zoom: 1;
 }
@@ -1848,20 +1854,41 @@ a:hover {
 #edit-affiliation #startDay,
 #edit-affiliation #startMonth,
 #edit-affiliation #endDay,
-#edit-affiliation #endMonth
-{
+#edit-affiliation #endMonth{
 	width: 80px;	
 }
 
 #edit-affiliation #startYear,
-#edit-affiliation #endYear
-{
+#edit-affiliation #endYear{
 	width: 100px;
+}
+
+#edit-affiliation .spin{
+	margin-top: 10px;
+	vertical-align: -10px;
+}
+
+#edit-affiliation .alert{
+	width: 100%;
+	margin-top: 10px;
+}
+
+#edit-affiliation .alert{
+	display: block;	
+}
+
+.add-work{
+	width: 800px;
 }
 
 .add-work input.input-xlarge,
 .add-work #workType{
 	width: 95%;
+}
+
+.add-work .alert,
+.add-funding .alert{
+	display: block;
 }
 
 .label-clear {
@@ -2297,6 +2324,10 @@ a:hover {
 	margin-top: 30px;
 }
 
+.save-btns{
+	margin-right: 20px;
+}
+
 .workspace-help {
 	list-style: none;
 }
@@ -2547,7 +2578,7 @@ header overrides
 
 .websites-vis .privacy-group {
 	left: 370px;
-	top: 10px;
+	top: 0;
 }
 
 .websites .input-xlarge {
@@ -2930,6 +2961,7 @@ ul.personal-inf-display li{
 	width: 100px;
 	margin-bottom:0;
 }
+
 
 /* Add work */
 .add-work .popover-help-container .popover{
@@ -4000,6 +4032,10 @@ p.orcid-id-container{
 	
 	/* Add work*/
 	
+	.add-work{
+		width: 100%;
+	}
+	
 	.add-work .privacy-control{
 		width: 75%;
 	}
@@ -4035,7 +4071,7 @@ p.orcid-id-container{
 	}
 	
 	.add-work .alert{
-		padding: 0 10px;
+		display: block;
 	}	
 	
 	
@@ -4241,14 +4277,14 @@ p.orcid-id-container{
 	
 	#add-funding .popover.bottom .arrow{
 		left: 122px;
-	}	
-
+	}
 	
 	#add-funding .alert {
 	    float: left;
 	    margin-top: 15px;
 	    width: 100%;
 	}
+	
 	/* Administration */
 	.admin-options .form-control{
 		width: 90%;		

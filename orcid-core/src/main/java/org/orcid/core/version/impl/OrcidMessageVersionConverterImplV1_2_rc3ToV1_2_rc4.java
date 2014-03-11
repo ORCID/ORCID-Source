@@ -59,17 +59,20 @@ public class OrcidMessageVersionConverterImplV1_2_rc3ToV1_2_rc4 implements Orcid
     private void downgradeProfile(OrcidProfile orcidProfile) {
         if (orcidProfile != null) {
             if (orcidProfile.getOrcidHistory() != null) {
-                // earlier versions of the XSD don;t have GroupOrcidIdentifier 
-                if (orcidProfile.getOrcidHistory().getReferredBy() != null) {
-                    orcidProfile.getOrcidHistory().setReferredBy(null);
-                }
                 if (orcidProfile.getOrcidHistory().getVerifiedEmail() != null) {
                    orcidProfile.getOrcidHistory().setVerifiedEmail(null);
                 }
                 if (orcidProfile.getOrcidHistory().getVerifiedPrimaryEmail() != null) {
                     orcidProfile.getOrcidHistory().setVerifiedPrimaryEmail(null);
-                 }
+                }
             }
+            if (orcidProfile.getOrcidInternal() != null) {
+                // earlier versions of the XSD don;t have GroupOrcidIdentifier 
+                if (orcidProfile.getOrcidInternal().getReferredBy() != null) {
+                    orcidProfile.getOrcidInternal().setReferredBy(null);
+                }
+            }
+
             if (orcidProfile.getOrcidInternal() != null) {
                 if (orcidProfile.getOrcidInternal().getPreferences() != null) {
                     Preferences prefs = orcidProfile.getOrcidInternal().getPreferences();

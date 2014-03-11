@@ -102,7 +102,7 @@
         </div>
     </div>
 	<div style="margin-bottom: 20px; margin-top: 10px;">
-        <label class="privacy-toggle-lbl">${springMacroRequestContext.getMessage("register.labelDefaultprivacyfornewworks")}</label>
+        <label class="privacy-toggle-lbl">${springMacroRequestContext.getMessage("privacy_preferences.activitiesVisibilityDefault")}</label>
     	<@orcid.privacyToggle 
     	    angularModel="register.activitiesVisibilityDefault.visibility" 
     	    questionClick="toggleClickPrivacyHelp('workPrivHelp')"

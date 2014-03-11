@@ -157,12 +157,6 @@
 				<xs:element ref="orcid:source" minOccurs="0" maxOccurs="1" />
 				<xs:element ref="orcid:deactivation-date" minOccurs="0"
 					maxOccurs="1" />
-				<xs:element name="referred-by" type="orcid:orcid-id"
-					minOccurs="0" maxOccurs="1">
-					<xs:annotation>
-						<xs:documentation>User registration is know to be driven by Member</xs:documentation>
-					</xs:annotation>
-				</xs:element>
 				<xs:element name="verified-email" type="xs:boolean"
 					minOccurs="1" maxOccurs="1">
 					<xs:annotation>
@@ -846,6 +840,9 @@
 				<xs:enumeration value="en" />
 				<xs:enumeration value="es" />
 				<xs:enumeration value="fr" />
+				<xs:enumeration value="ko" />
+				<xs:enumeration value="pt" />
+				<xs:enumeration value="ru" />
 				<xs:enumeration value="zh_CN" />
 				<xs:enumeration value="zh_TW" />
 			</xs:restriction>
@@ -1743,6 +1740,12 @@
 				<xs:element minOccurs="0" ref="orcid:security-details" />
 				<xs:element minOccurs="0" ref="orcid:preferences" />
 				<xs:element minOccurs="0" name="group-orcid-identifier" type="orcid:orcid-id" />
+				<xs:element name="referred-by" type="orcid:orcid-id"
+					minOccurs="0" maxOccurs="1">
+					<xs:annotation>
+						<xs:documentation>User registration is know to be driven by Member</xs:documentation>
+					</xs:annotation>
+				</xs:element>
 			</xs:sequence>
 			<xs:attributeGroup ref="orcid:scope" />
 			<xs:attributeGroup ref="orcid:visibility" />

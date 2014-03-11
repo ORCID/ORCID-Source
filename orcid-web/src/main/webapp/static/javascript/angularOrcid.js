@@ -1749,6 +1749,13 @@ function AffiliationCtrl($scope, $compile, $filter, affiliationsSrvc, workspaceS
 		});
 	};
 	
+	//For resizing color box in case of error
+	$scope.$watch('addingAffiliation', function() {
+		 setTimeout(function(){
+			 $.colorbox.resize();; 
+	     }, 50);		
+	});
+	
 	$scope.deleteAffiliation = function(aff) {
 		$scope.deleAff = aff;
 		
@@ -1900,7 +1907,7 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc) {
 	
 	$scope.addFunding = function(){
 		if ($scope.addingFunding) return; // don't process if adding funding
-		$scope.addingFunding = true;
+		$scope.addingFunding = true;		
 		$scope.editFunding.errors.length = 0;
 		$.ajax({
 			url: $('body').data('baseurl') + 'fundings/funding.json',
@@ -1917,17 +1924,24 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc) {
 		        	if($scope.editFunding.externalIdentifiers.length == 0) {
 		        		$scope.addExternalIdentifier();
 		        	}
-		        	$scope.copyErrorsLeft($scope.editFunding, data);
+		        	$scope.copyErrorsLeft($scope.editFunding, data);		        	
 	        	}
 	        	$scope.addingFunding = false;
-	        	$scope.$apply();
+	        	$scope.$apply();	        	
 	        }
 		}).fail(function(){
 			// something bad is happening!
-			$scope.addingFunding = false;
-	    	console.log("error adding affiliations");
+			$scope.addingFunding = false;						
+	    	console.log("error adding fundings");
 		});
 	};
+	
+	//Resizing window after error message is shown
+	$scope.$watch('addingFunding', function() {
+		 setTimeout(function(){
+			 $.colorbox.resize();; 
+         }, 50);		
+	 });
 	
 	$scope.showTemplateInModal = function(templateId) {
 		$.colorbox({        	            
@@ -2885,6 +2899,7 @@ function DelegatesCtrl($scope, $compile){
 	$scope.confirmAddDelegate = function(delegateName, delegateId){
 		$scope.delegateNameToAdd = delegateName;
 		$scope.delegateToAdd = delegateId;
+		$scope.effectiveUserOrcid = $('body').data('effective-user-orcid');
 		$.colorbox({                      
 			html : $compile($('#confirm-add-delegate-modal').html())($scope),
 			transition: 'fade',
@@ -3071,10 +3086,10 @@ function languageCtrl($scope, $cookies){
 	        	"value": 'fr',
 	    		"label": 'Français'
 	        },	        
-//	        {
-//	        	"value": 'ko',
-//	    		"label": '한국어'
-//	        },
+	        {
+	        	"value": 'ko',
+	    		"label": '한국어'
+	        },
 	        {
 		        "value": 'zh_CN',
 			    "label": '简体中文'
@@ -3764,19 +3779,6 @@ function removeSecQuestionCtrl($scope,$compile) {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 function SSOPreferencesCtrl($scope, $compile) {
 	$scope.userCredentials = null;	
 	
@@ -4159,14 +4161,4 @@ function ClientEditCtrl($scope, $compile){
 	//init
 	$scope.getClients();
 };
-
-
-
-
-
-
-
-
-
-
 

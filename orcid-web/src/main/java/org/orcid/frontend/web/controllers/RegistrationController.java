@@ -220,7 +220,7 @@ public class RegistrationController extends BaseController {
         Preferences preferences = new Preferences();
         preferences.setSendChangeNotifications(new SendChangeNotifications(reg.getSendChangeNotifications().getValue()));
         preferences.setSendOrcidNews(new SendOrcidNews(reg.getSendOrcidNews().getValue()));
-        preferences.setWorkVisibilityDefault(new WorkVisibilityDefault(Visibility.fromValue(reg.getWorkVisibilityDefault().getVisibility().value())));
+        preferences.setActivitiesVisibilityDefault(new ActivitiesVisibilityDefault(Visibility.fromValue(reg.getActivitiesVisibilityDefault().getVisibility().value())));
 
         PersonalDetails personalDetails = new PersonalDetails();
         personalDetails.setFamilyName(new FamilyName(reg.getFamilyNames().getValue()));
@@ -231,14 +231,14 @@ public class RegistrationController extends BaseController {
         OrcidInternal internal = new OrcidInternal();
         internal.setPreferences(preferences);
         profile.setOrcidBio(bio);
+        if (!PojoUtil.isEmpty(reg.getReferredBy()))
+            internal.setReferredBy(new ReferredBy(reg.getReferredBy().getValue()));
+
         profile.setOrcidInternal(internal);
 
         OrcidHistory orcidHistory = new OrcidHistory();
         orcidHistory.setClaimed(new Claimed(true));
         orcidHistory.setCreationMethod(CreationMethod.fromValue(reg.getCreationType().getValue()));
-
-        if (!PojoUtil.isEmpty(reg.getReferredBy()))
-            orcidHistory.setReferredBy(new ReferredBy(reg.getReferredBy().getValue()));
         
         profile.setOrcidHistory(orcidHistory);
         orcidHistory.setSubmissionDate(new SubmissionDate(DateUtils.convertToXMLGregorianCalendar(new Date())));
