@@ -220,7 +220,7 @@ public class RegistrationController extends BaseController {
         Preferences preferences = new Preferences();
         preferences.setSendChangeNotifications(new SendChangeNotifications(reg.getSendChangeNotifications().getValue()));
         preferences.setSendOrcidNews(new SendOrcidNews(reg.getSendOrcidNews().getValue()));
-        preferences.setWorkVisibilityDefault(new WorkVisibilityDefault(Visibility.fromValue(reg.getWorkVisibilityDefault().getVisibility().value())));
+        preferences.setActivitiesVisibilityDefault(new ActivitiesVisibilityDefault(Visibility.fromValue(reg.getActivitiesVisibilityDefault().getVisibility().value())));
 
         PersonalDetails personalDetails = new PersonalDetails();
         personalDetails.setFamilyName(new FamilyName(reg.getFamilyNames().getValue()));

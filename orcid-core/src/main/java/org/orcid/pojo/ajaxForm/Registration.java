@@ -34,7 +34,7 @@ public class Registration implements ErrorsInterface, Serializable {
 
     private Checkbox termsOfUse;
 
-    private Visibility workVisibilityDefault;
+    private Visibility activitiesVisibilityDefault;
 
     private Text password;
 
@@ -64,7 +64,7 @@ public class Registration implements ErrorsInterface, Serializable {
         sendChangeNotifications = new Checkbox();
         sendOrcidNews = new Checkbox();
         termsOfUse = new Checkbox();
-        workVisibilityDefault = new Visibility();
+        activitiesVisibilityDefault = new Visibility();
         referredBy = new Text();
     }
 
@@ -132,12 +132,12 @@ public class Registration implements ErrorsInterface, Serializable {
         this.sendChangeNotifications = sendChangeNotifications;
     }
 
-    public Visibility getWorkVisibilityDefault() {
-        return workVisibilityDefault;
+    public Visibility getActivitiesVisibilityDefault() {
+        return activitiesVisibilityDefault;
     }
 
-    public void setWorkVisibilityDefault(Visibility workVisibilityDefault) {
-        this.workVisibilityDefault = workVisibilityDefault;
+    public void setActivitiesVisibilityDefault(Visibility workVisibilityDefault) {
+        this.activitiesVisibilityDefault = workVisibilityDefault;
     }
 
     public Checkbox getSendOrcidNews() {
