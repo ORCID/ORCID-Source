@@ -61,7 +61,7 @@ public class MailGunManager {
     
     private static final Logger LOGGER = LoggerFactory.getLogger(MailGunManager.class);
 
-    public boolean sendVerifyEmail(String from,String to, String subject, String text, String html) {
+    public boolean sendVerifyEmail(String from, String to, String subject, String text, String html) {
         
         Client client = Client.create();
         client.addFilter(new HTTPBasicAuthFilter("api",
