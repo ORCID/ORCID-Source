@@ -123,7 +123,7 @@
 						
 			<#else>					
 				<!-- Developer public API Applications -->
-				<div ng-controller="SSOPreferencesCtrl">
+				<div ng-controller="SSOPreferencesCtrl" class="sso-api">
 					<div class="row box">
 						<div class="col-md-10">
 							<h2><@orcid.msg 'manage.developer_tools.user.title' /></h2>
@@ -142,15 +142,13 @@
 							</ul>
 						</div>
 						<div class="col-md-12" ng-show="userCredentials.clientSecret.value">
-							<span>								
-								<a href ng-click="showSSOCredentials()"><@orcid.msg 'manage.manage_sso_credentials.view_credentials_link' /></a>
-								<br />
-								<a href ng-click="showEditModal()"><@orcid.msg 'manage.manage_sso_credentials.edit_credentials_link' /></a>
-								<br />								
-								<a href ng-click="showRevokeModal()"><@orcid.msg 'manage.manage_sso_credentials.revoke_credentials_link' /></a>								
-							</span>
+							<ul class="sso-options">
+								<li><a href ng-click="showSSOCredentials()"><span class="glyphicon glyphicon-eye-open"></span><@orcid.msg 'manage.manage_sso_credentials.view_credentials_link' /></a></li>	
+								<li><a href ng-click="showEditModal()"><span class="glyphicon glyphicon-pencil"></span><@orcid.msg 'manage.manage_sso_credentials.edit_credentials_link' /></a></li>
+								<li><a href ng-click="showRevokeModal()"><span class="glyphicon glyphicon-remove"></span><@orcid.msg 'manage.manage_sso_credentials.revoke_credentials_link' /></a></li>
+							</ul>
 							<p><@orcid.msg 'manage.developer_tools.user.registered.info.1' />&nbsp;<a href='manage.developer_tools.user.register_to.info.link_url'><@orcid.msg 'manage.developer_tools.user.register_to.info.link_text'/></a>&nbsp;<@orcid.msg 'manage.developer_tools.user.registered.info.2' /></p>
-							<ul>
+							<ul class="sso-links">
 								<li><a href="<@orcid.msg 'manage.developer_tools.user.register_to.link.1.url'/>"><span class="glyphicon glyphicon-link"></span><@orcid.msg 'manage.developer_tools.user.register_to.link.1.text'/></a></li>
 								<li><a href="<@orcid.msg 'manage.developer_tools.user.register_to.link.2.url'/>"><span class="glyphicon glyphicon-link"></span><@orcid.msg 'manage.developer_tools.user.register_to.link.2.text'/></a></li>
 								<li><a href="<@orcid.msg 'manage.developer_tools.user.register_to.link.3.url'/>"><span class="glyphicon glyphicon-link"></span><@orcid.msg 'manage.developer_tools.user.register_to.link.2.text'/></a></li>
