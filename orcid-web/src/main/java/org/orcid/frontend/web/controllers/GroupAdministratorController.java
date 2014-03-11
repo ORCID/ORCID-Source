@@ -56,7 +56,7 @@ import org.springframework.web.servlet.ModelAndView;
  * @author Angel Montenegro Date: 20/06/2013
  */
 @Controller("GroupAdministratorController")
-@RequestMapping(value = "/manage-clients")
+@RequestMapping(value = "/group/developer-tools")
 public class GroupAdministratorController extends BaseWorkspaceController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GroupAdministratorController.class);

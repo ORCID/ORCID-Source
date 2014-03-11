@@ -20,31 +20,34 @@
 <@protected classes=['developer-tools'] nav="developer-tools">
 <div class="row">
 	<div class="col-md-3 lhs override">
-		<ul class="settings-nav">
-			<li><a href="#account-settings">${springMacroRequestContext.getMessage("manage.accountsettings")}</a></li>
-			<li><a href="#manage-permissions">${springMacroRequestContext.getMessage("manage.managepermission")}</a></li>
-			<#if (profile.groupType)?? && ((profile.groupType) = "BASIC" ||
-			(profile.groupType) = "PREMIUM" || (profile.groupType) =
-			"BASIC_INSTITUTION" || (profile.groupType) = "PREMIUM_INSTITUTION")>
-			<li><a href="<@spring.url "/manage-clients" />">${springMacroRequestContext.getMessage("workspace.ManageClientCredentials")}</a></li>
-			</#if>
-			<li></li>
-		</ul>
+		
 	</div>
 	<div class="col-md-9 developer-tools">
 		<!-- Member API Applications -->
 		<#if (profile.groupType)?? && ((profile.groupType) = "BASIC" || (profile.groupType) = "PREMIUM" || (profile.groupType) = "BASIC_INSTITUTION" || (profile.groupType) = "PREMIUM_INSTITUTION")>		
 			<div class="row box">
 				<div class="col-md-10">
-					<h2>MEMBER API APPLICATIONS</h2>
+					<h2><@orcid.msg 'manage.developer_tools.group.title'/></h2>
 				</div>
-				<div class="col-md-2">
+				<div class="col-md-2">				
+					<@security.authorize ifAnyGranted="ROLE_PREMIUM_INSTITUTION, ROLE_PREMIUM, ROLE_ADMIN">
+						<div class="controls save-btns pull-left">
+							<span id="bottom-create-new-client-premium" ng-click="addClient()" class="btn btn-primary"><@orcid.msg 'manage.developer_tools.group.add'/></span>				
+						</div>
+					</@security.authorize>
+					<@security.authorize ifAnyGranted="ROLE_BASIC_INSTITUTION, ROLE_BASIC">
+						<#if (group)?? && (group.orcidClient)?? && !(group.orcidClient?has_content)> 
+							<div class="controls save-btns pull-left" ng-show="!clients.length">
+								<span id="bottom-create-new-client" ng-click="addClient()" class="btn btn-primary"><@orcid.msg 'manage.developer_tools.group.add'/></span>				
+							</div>
+						</#if>
+					</@security.authorize>
 					<a href=""><span class="label btn-primary cboxElement">Register New</span></a>
 				</div>	
 			</div>		
 			<div class="row">
 				<div class="col-md-12">
-					<p>These are the applications you have registered to use the <u>ORCID Member API</u>:</p>		
+					<p><@orcid.msg 'manage.developer_tools.group.description.1' /><a href="<@orcid.msg 'manage.developer_tools.group.description.link.url' />"><@orcid.msg 'manage.developer_tools.group.description.link.text' /></a><@orcid.msg 'manage.developer_tools.group.description.2' /></p>		
 					<table class="table sub-table">
 						<tbody>
 							<tr>
