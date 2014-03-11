@@ -421,7 +421,7 @@
 		
 		
 		
-		<!-- <#if RequestParameters['sso']??> -->
+		<@security.authorize ifNotGranted="ROLE_GROUP,ROLE_BASIC,ROLE_PREMIUM,ROLE_BASIC_INSTITUTION,ROLE_PREMIUM_INSTITUTION,ROLE_CREATOR,ROLE_PREMIUM_CREATOR,ROLE_UPDATER,ROLE_PREMIUM_UPDATER">
 			<h1 id="manage-permissions"><@spring.message "manage.developer_tools.title"/></h1>		
 			<div class="sso" ng-controller="SSOPreferencesCtrl">
 				<#if profile.orcidInternal?? && profile.orcidInternal.preferences.developerToolsEnabled?? && profile.orcidInternal.preferences.developerToolsEnabled.value == false>
@@ -432,7 +432,7 @@
 					<p><@spring.message "manage.developer_tools.disable.text"/>&nbsp;<a href ng-click="confirmDisableDeveloperTools()"><@spring.message "manage.developer_tools.enable_disable.link.text"/></a></p>
 				</#if>				
 			</div>
-		<!-- </#if> -->
+		</@security.authorize>
 		
 		
 		

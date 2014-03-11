@@ -3348,6 +3348,27 @@ p.orcid-id-container{
 	margin-right: 5px;
 }
 
+/* Group Developer Tools Layout*/
+
+.client-api ul.client-options{
+	list-style: none; 
+	list-style-type: none;
+	padding-left: 0;		
+}
+
+.client-api ul.client-options li{
+	display: inline-block;
+	margin-right: 20px;
+}
+
+.client-api ul.client-options span{
+	margin-right: 5px;
+	font-size: 12px;
+}
+
+.client-api .client-links span{
+	margin-right: 5px;
+}
 
 
 

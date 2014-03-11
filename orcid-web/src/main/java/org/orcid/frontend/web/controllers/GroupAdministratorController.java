@@ -69,7 +69,7 @@ public class GroupAdministratorController extends BaseWorkspaceController {
     
     @RequestMapping
     public ModelAndView manageClients() {
-        ModelAndView mav = new ModelAndView("manage_clients");
+        ModelAndView mav = new ModelAndView("group_developer_tools");
         OrcidProfile profile = getEffectiveProfile();
 
         if (profile.getType() == null || !profile.getType().equals(OrcidType.GROUP)) {

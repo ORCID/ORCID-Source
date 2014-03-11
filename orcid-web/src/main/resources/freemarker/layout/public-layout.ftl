@@ -97,17 +97,17 @@
                                
                                
                                
-                               <!-- <#if RequestParameters['sso']??> -->
-	                               	<@security.authorize ifAnyGranted="ROLE_GROUP, ROLE_BASIC, ROLE_BASIC_INSTITUTION, ROLE_PREMIUM, ROLE_PREMIUM_INSTITUTION">
-		        	 					<li><a ${(nav=="developer-tools")?string('class="active" ', '')}href="<@spring.url "/manage-clients" />">${springMacroRequestContext.getMessage("workspace.ManageClientCredentials")}</a></li>	        	 
-		        					</@security.authorize>
-		        					
+                             	
+                               	<@security.authorize ifAnyGranted="ROLE_GROUP, ROLE_BASIC, ROLE_BASIC_INSTITUTION, ROLE_PREMIUM, ROLE_PREMIUM_INSTITUTION">
+	        	 					<li><a ${(nav=="developer-tools")?string('class="active" ', '')}href="<@spring.url "/group/developer-tools" />">${springMacroRequestContext.getMessage("workspace.developer_tools")}</a></li>	        	 
+	        					</@security.authorize>
+		        				<#if RequestParameters['sso']??>	
 		        					<@security.authorize ifAnyGranted="ROLE_USER">
 		        						<#if profile.orcidInternal?? && profile.orcidInternal.preferences.developerToolsEnabled?? && profile.orcidInternal.preferences.developerToolsEnabled.value == true>
-											<li><a ${(nav=="developer-tools")?string('class="active" ', '')}href="<@spring.url "/developer-tools" />">${springMacroRequestContext.getMessage("workspace.ManageClientCredentials")}</a></li>
+											<li><a ${(nav=="developer-tools")?string('class="active" ', '')}href="<@spring.url "/developer-tools" />">${springMacroRequestContext.getMessage("workspace.developer_tools")}</a></li>
 		        						</#if>
 		        					</@security.authorize>
-	        					<!-- </#if> -->
+	        					</#if>
 	        					
 	        					
 	        					
